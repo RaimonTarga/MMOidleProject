@@ -1,0 +1,42 @@
+{
+  "experimentId": "t3-tundra-class-frame-01",
+  "preparedAt": "2026-09-22",
+  "sourceCommit": "ce9ae8d14da009034996c055e3bfa5d96422e80d",
+  "sourceSha256": "652607c303d600a4339eefef37c91d4ff72f857d614de69c3968fbe9faeaf132",
+  "manifestSha256": "5615531632c9604c8fb8d3be41a13fa3e852d80ebea5ef1cd4277dd62af34aef",
+  "qualificationReceiptsSha256": "7d9dfba4b553aea88a048b3f03acaafecad06c98a1cafc46efbc0ceb21d478f5",
+  "hitboxesSha256": "08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83",
+  "node": "v22.16.0",
+  "qualification": {
+    "planned": 52,
+    "completed": 52,
+    "combatObservations": 0,
+    "reused": 0,
+    "failure": null,
+    "rpCostMin": 34,
+    "rpCostMax": 37,
+    "rpBudget": 38
+  },
+  "focusedTests": {
+    "status": "passed",
+    "files": [
+      "server/test/tundraClassFramePacket.test.ts",
+      "server/test/desertStrategyPacket.test.ts",
+      "server/test/overnightEndurance.test.ts",
+      "server/test/farmingSustain.test.ts",
+      "server/test/playerBreadth.test.ts",
+      "server/test/day2Packet.test.ts"
+    ]
+  },
+  "typecheck": "passed",
+  "diffCheck": "passed",
+  "frozenVerify": "passed from D:/mmo-idle/t3-tundra-class-frame-01/source against D:/mmo-idle/t3-tundra-class-frame-01/packet",
+  "mainRunLaunched": false,
+  "fullSuite": "not run; out of preparation scope",
+  "browserOrLivePlay": "not run",
+  "notes": [
+    "A preliminary plain-node invocation failed before packet or output creation because Node could not load the TypeScript module; the documented package-local tsx invocation was then used for the sole qualification.",
+    "A fresh detached Git checkout normalized working-tree bytes differently. The frozen source was materialized from the already sealed tracked byte set and then passed strict identity verification without resealing.",
+    "Two initially requested test filenames did not exist; the repository's actual neighboring test filenames were located and passed."
+  ]
+}

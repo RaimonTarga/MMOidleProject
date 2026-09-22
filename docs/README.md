@@ -26,6 +26,7 @@ top-level doc.
 
 | Doc | Why |
 |---|---|
+| [T3 Tundra class/frame 01 preparation](../reports/player-fast-pass/t3-tundra-class-frame-01-preparation/README.md) | Sealed 52-observation ordinary-Tundra class/frame screen, 52/52 zero-tick qualified; Squire Slam discarded by user correction, main combat unlaunched. |
 | [Guard coverage 01 handoff](../reports/player-fast-pass/guard-coverage-01-preparation/LUNA_RUN.md) | Integrated measured session correction; 32 fresh Endure comparison cells, zero-tick qualified, execution pending. |
 | [Player package-fit r1 packet](briefs/player-package-fit-operator-packet.md) | Prepared revised AoE/reactive-Brace packages, 36-row ceiling, machine-readable Luna report contract and scoped commit/push requirement; main run not launched. |
 | [Player balance fast-pass packet](briefs/player-balance-fast-pass-operator-packet.md) | Prepared 36-observation T2-T4 player-package screen, frozen source identity, exact commands, qualification, and decision ledger; main batch not launched. |

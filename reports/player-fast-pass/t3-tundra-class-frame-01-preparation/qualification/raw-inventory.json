@@ -1,0 +1,27 @@
+[
+  {
+    "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\t3-tundra-class-frame-01-qualification\\zero-tick\\artifacts\\complete.json",
+    "bytes": 39,
+    "sha256": "3ba788072745ae76f5c5f8344e6bf6886e44e2c86fe9f079a5cc7b3a2ccd87fa"
+  },
+  {
+    "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\t3-tundra-class-frame-01-qualification\\zero-tick\\artifacts\\index.json",
+    "bytes": 992188,
+    "sha256": "3805c1902a848db31d2517096709e3c89db54e807770f56a88dc310cab426ef4"
+  },
+  {
+    "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\t3-tundra-class-frame-01-qualification\\zero-tick\\artifacts\\manifest.json",
+    "bytes": 157429,
+    "sha256": "b8c73e307fd2ffa6abf9534ede128c0f4c964a7a0db73a7bac9b4726a43b3fca"
+  },
+  {
+    "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\t3-tundra-class-frame-01-qualification\\zero-tick\\process.json",
+    "bytes": 798,
+    "sha256": "ada1703c75803ec8b426c250db8c4a3eb53959d2ab5fd05a27cab43b04fcafc2"
+  },
+  {
+    "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\t3-tundra-class-frame-01-qualification\\zero-tick\\process.log",
+    "bytes": 3686,
+    "sha256": "dfa407c64a5c282916cc627f7c548eb34a070d4d129f820c52c2d57963481e9c"
+  }
+]

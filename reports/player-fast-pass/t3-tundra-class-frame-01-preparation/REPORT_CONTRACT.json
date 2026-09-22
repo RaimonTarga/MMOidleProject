@@ -1,0 +1,72 @@
+{
+  "experimentId": "t3-tundra-class-frame-01",
+  "sourceCommit": "ce9ae8d14da009034996c055e3bfa5d96422e80d",
+  "sourceSha256": "652607c303d600a4339eefef37c91d4ff72f857d614de69c3968fbe9faeaf132",
+  "publicationDirectory": "reports/player-fast-pass/t3-tundra-class-frame-01/run-01",
+  "requiredFiles": [
+    "REPORT.md",
+    "results-summary.json",
+    "resolved-builds.json",
+    "identity.json",
+    "manifest.json",
+    "seal.json",
+    "complete.json or partial.json",
+    "raw-inventory.json"
+  ],
+  "reportLimits": {
+    "findings": 5,
+    "decisions": 3
+  },
+  "counts": [
+    "planned",
+    "newCompleted",
+    "failed",
+    "omitted",
+    "notRun"
+  ],
+  "fixedCounts": {
+    "planned": 52,
+    "primary": 36,
+    "alternative": 16,
+    "reused": 0
+  },
+  "rowKeys": [
+    "observationId",
+    "identityId",
+    "block",
+    "comparisonId",
+    "arm",
+    "fixture",
+    "seed",
+    "measuredSourceCommit",
+    "status",
+    "outcome",
+    "elapsedMs",
+    "completedKills",
+    "endpoints",
+    "intervals",
+    "runicPoints",
+    "abilities",
+    "equipment",
+    "deathEvidence",
+    "evidenceDirectory",
+    "initialRosterHash"
+  ],
+  "requiredComparisons": [
+    "six roots by three frames on both seeds using primary rows",
+    "W1-W3 Striker Cataclysm Axe pairs by frame and seed",
+    "W4 Heavy Squire Permafrost pair with Power Strike fixed",
+    "W5 Balanced Slinger Plague Fang pair",
+    "A2 Balanced Apprentice Detonate pair",
+    "W6 Balanced Conduit Permafrost pair",
+    "A3 Balanced Spirit Binding Strike pair"
+  ],
+  "forbiddenInterpretation": [
+    "Squire Slam comparison or recommendation",
+    "universal class, frame, weapon, ability, or charm ranking",
+    "economy, acquisition, guardian, live-player, or deployment claim",
+    "treating death-shortened rates or zero-kill caps as sustainable farming"
+  ],
+  "interpretation": "synthetic=true, economyEligible=false; ordinary T3 Tundra screening packages, two fixed seeds, not universal balance proof",
+  "publication": "Commit and push only scoped compact files; verify remote ref and report bytes; return branch, publication SHA, execution source SHA, report path, and planned/newCompleted/failed/omitted/notRun counts. No rerun on push failure. No deployment."
+}

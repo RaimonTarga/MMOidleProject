@@ -1,0 +1,18 @@
+{
+  "pid": 40220,
+  "argv": [
+    "--import",
+    "file:///C:/Users/osaif/Documents/Claude/Projects/MMO%20idle/node_modules/.pnpm/tsx@4.22.3/node_modules/tsx/dist/loader.mjs",
+    "--conditions=development",
+    "scripts/ttkSurvey.ts",
+    "--trial=t3-tundra-class-frame-01",
+    "--block=qualification",
+    "--mode=qualify",
+    "--revision=ce9ae8d14da009034996c055e3bfa5d96422e80d",
+    "--source-contract=C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\t3-tundra-class-frame-01-execution-packet\\identity.json",
+    "--hitboxes=D:\\mmo-idle\\overnight-endurance-01\\hitboxes.json",
+    "--out=C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\validation\\player-fast-pass\\t3-tundra-class-frame-01-qualification\\zero-tick\\artifacts"
+  ],
+  "status": 0,
+  "reason": null
+}

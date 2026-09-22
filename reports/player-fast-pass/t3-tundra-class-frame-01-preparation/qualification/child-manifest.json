@@ -1,0 +1,4695 @@
+{
+  "schema": 1,
+  "mode": "qualify",
+  "revision": "ce9ae8d14da009034996c055e3bfa5d96422e80d",
+  "navigationDiagnostics": false,
+  "definitionsHash": "df4cd5a352e4605d3749b662ddf0f18ec597f9cee741c28b78d093c607a0af92",
+  "hitboxesSha256": "08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83",
+  "sampleEveryMs": 1000,
+  "block": "qualification",
+  "trial": "t3-tundra-class-frame-01",
+  "synthetic": true,
+  "economyEligible": false,
+  "dtMs": 100,
+  "durationMs": 600000,
+  "seeds": [
+    101009,
+    101021
+  ],
+  "cells": [
+    {
+      "id": "t3-tundra-class-frame-01-striker-light-s101009-primary",
+      "className": "striker",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "frenzy",
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-striker-light-s101009-primary",
+        "classRoot": "cadence-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "cadence-root",
+          "cadence-light",
+          "cadence-range-close"
+        ],
+        "gearItemIds": {
+          "weapon": "volcanic-cinderlash",
+          "armor": "volcanic-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-accelerant"
+        }
+      },
+      "identityId": "breadth-t3-striker-light",
+      "frame": "light",
+      "range": "close",
+      "pathName": "Flurry",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Swift and agile. Trades bulk for a blistering attack pace. Empowered finisher triggers every 4 hits at 1.5× — frequency over raw power.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "offensive-stance remains fixed; no switching or generic Flee rule.",
+        "Close range, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101009,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-striker-light-s101009",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-striker-light-farm",
+      "sourceObservationId": null,
+      "charm": "swamp",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-striker-light-s101009-w1",
+      "className": "striker",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "frenzy",
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-striker-light-s101009-w1",
+        "classRoot": "cadence-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "cadence-root",
+          "cadence-light",
+          "cadence-range-close"
+        ],
+        "gearItemIds": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "volcanic-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-accelerant"
+        }
+      },
+      "identityId": "breadth-t3-striker-light",
+      "frame": "light",
+      "range": "close",
+      "pathName": "Flurry",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Swift and agile. Trades bulk for a blistering attack pace. Empowered finisher triggers every 4 hits at 1.5× — frequency over raw power.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "offensive-stance remains fixed; no switching or generic Flee rule.",
+        "Close range, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim.",
+        "Cinderlash -> Cataclysm Axe; Frenzy, Power Strike, core, stance and defense remain fixed."
+      ],
+      "seed": 101009,
+      "arm": "W1",
+      "block": "alternative",
+      "comparisonId": "t3-tundra-class-frame-01-striker-light-s101009",
+      "alternativeId": "W1",
+      "referenceCaseId": "breadth-t3-striker-light-farm",
+      "sourceObservationId": null,
+      "charm": "swamp",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-squire-light-s101009-primary",
+      "className": "squire",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike",
+          "frenzy"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-squire-light-s101009-primary",
+        "classRoot": "cooldown-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "cooldown-root",
+          "cooldown-light",
+          "cooldown-range-close"
+        ],
+        "gearItemIds": {
+          "weapon": "mountain-avalanche-maul",
+          "armor": "mountain-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-arcanist"
+        }
+      },
+      "identityId": "breadth-t3-squire-light",
+      "frame": "light",
+      "range": "close",
+      "pathName": "Warrior",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "The aggressive tank. Keeps its armored core but trades patience for a fast, hungry tempo. Execution recharges in 5 s at 1.5×.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "defensive-stance remains fixed; no switching or generic Flee rule.",
+        "Close range, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101009,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-squire-light-s101009",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-squire-light-farm",
+      "sourceObservationId": null,
+      "charm": "swamp",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-apprentice-light-s101009-primary",
+      "className": "apprentice",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "frenzy",
+          "hamstring"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-apprentice-light-s101009-primary",
+        "classRoot": "dot-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "dot-root",
+          "dot-light",
+          "dot-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "cave-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-accelerant"
+        }
+      },
+      "identityId": "breadth-t3-apprentice-light",
+      "frame": "light",
+      "range": "mid",
+      "pathName": "Venom vessel",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Poison path. Apply wounds quickly and stay mobile. Up to 8 poison stacks — each hit converts 30% of your attack into lingering poison damage.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "offensive-stance remains fixed; no switching or generic Flee rule.",
+        "Mid-range Keep Distance, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101009,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-apprentice-light-s101009",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-apprentice-light-farm",
+      "sourceObservationId": null,
+      "charm": "swamp",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-slinger-light-s101009-primary",
+      "className": "slinger",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "quick-strike",
+          "hamstring"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-slinger-light-s101009-primary",
+        "classRoot": "reload-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "reload-root",
+          "reload-light",
+          "reload-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-venomthorn-rapier",
+          "armor": "jungle-vest-t3",
+          "recovery": "jungle-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t3-slinger-light",
+      "frame": "light",
+      "range": "mid",
+      "pathName": "Scout",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "All-in on mobility. Small clip (5 rounds), 1.2 s reload, and extra dodge — maximum uptime, minimum profile to hit.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "offensive-stance remains fixed; no switching or generic Flee rule.",
+        "Mid-range Keep Distance, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101009,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-slinger-light-s101009",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-slinger-light-farm",
+      "sourceObservationId": null,
+      "charm": "jungle",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-conduit-light-s101009-primary",
+      "className": "conduit",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "quick-strike",
+          "hamstring"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-conduit-light-s101009-primary",
+        "classRoot": "summoner-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "summoner-root",
+          "summoner-light",
+          "summoner-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-venomthorn-rapier",
+          "armor": "mountain-vest-t3",
+          "recovery": "jungle-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-survivalist"
+        }
+      },
+      "identityId": "breadth-t3-conduit-light",
+      "frame": "light",
+      "range": "mid",
+      "pathName": "Splinter",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Your presence splinters across six small, fast summons. They divide the formation budget rather than multiplying it, but the whole formation carries 20% stronger on-hit and secondary weapon effects. Each loss costs little offense and reconstruction HP; plating and area damage punish the swarm.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "defensive-stance remains fixed; no switching or generic Flee rule.",
+        "Mid-range Keep Distance, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101009,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-conduit-light-s101009",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-conduit-light-farm",
+      "sourceObservationId": null,
+      "charm": "jungle",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-spirit-light-s101009-primary",
+      "className": "spirit",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "frenzy",
+          "hamstring"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-spirit-light-s101009-primary",
+        "classRoot": "energy-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "energy-root",
+          "energy-light",
+          "energy-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "volcanic-cinderlash",
+          "armor": "mountain-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-accelerant"
+        }
+      },
+      "identityId": "breadth-t3-spirit-light",
+      "frame": "light",
+      "range": "mid",
+      "pathName": "Spark",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Pure momentum. Blazing speed and rapid attacks; thrives on frequent discharges and their AoE splash. Gains 20 energy per hit, empowered at 1.5× — fires often.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "offensive-stance remains fixed; no switching or generic Flee rule.",
+        "Mid-range Keep Distance, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101009,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-spirit-light-s101009",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-spirit-light-farm",
+      "sourceObservationId": null,
+      "charm": "mountain",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-striker-balanced-s101009-primary",
+      "className": "striker",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "frenzy",
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-striker-balanced-s101009-primary",
+        "classRoot": "cadence-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "cadence-root",
+          "cadence-balanced",
+          "cadence-range-close"
+        ],
+        "gearItemIds": {
+          "weapon": "volcanic-cinderlash",
+          "armor": "volcanic-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-accelerant"
+        }
+      },
+      "identityId": "breadth-t3-striker-balanced",
+      "frame": "balanced",
+      "range": "close",
+      "pathName": "Skirmisher",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "A measured approach. Modest gains across the board without committing to an extreme. Empowered finisher every 5 hits at 2×.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "offensive-stance remains fixed; no switching or generic Flee rule.",
+        "Close range, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101009,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-striker-balanced-s101009",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-striker-balanced-farm",
+      "sourceObservationId": null,
+      "charm": "swamp",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-striker-balanced-s101009-w2",
+      "className": "striker",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "frenzy",
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-striker-balanced-s101009-w2",
+        "classRoot": "cadence-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "cadence-root",
+          "cadence-balanced",
+          "cadence-range-close"
+        ],
+        "gearItemIds": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "volcanic-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-accelerant"
+        }
+      },
+      "identityId": "breadth-t3-striker-balanced",
+      "frame": "balanced",
+      "range": "close",
+      "pathName": "Skirmisher",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "A measured approach. Modest gains across the board without committing to an extreme. Empowered finisher every 5 hits at 2×.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "offensive-stance remains fixed; no switching or generic Flee rule.",
+        "Close range, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim.",
+        "Cinderlash -> Cataclysm Axe; Frenzy, Power Strike, core, stance and defense remain fixed."
+      ],
+      "seed": 101009,
+      "arm": "W2",
+      "block": "alternative",
+      "comparisonId": "t3-tundra-class-frame-01-striker-balanced-s101009",
+      "alternativeId": "W2",
+      "referenceCaseId": "breadth-t3-striker-balanced-farm",
+      "sourceObservationId": null,
+      "charm": "swamp",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-squire-balanced-s101009-primary",
+      "className": "squire",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike",
+          "frenzy"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-squire-balanced-s101009-primary",
+        "classRoot": "cooldown-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "cooldown-root",
+          "cooldown-balanced",
+          "cooldown-range-close"
+        ],
+        "gearItemIds": {
+          "weapon": "mountain-avalanche-maul",
+          "armor": "mountain-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-arcanist"
+        }
+      },
+      "identityId": "breadth-t3-squire-balanced",
+      "frame": "balanced",
+      "range": "close",
+      "pathName": "Knight",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "A sturdy foundation. Substantial HP and armor amplify the class's defensive identity without tipping into immobility. Execution recharges in 7 s at 2×.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "defensive-stance remains fixed; no switching or generic Flee rule.",
+        "Close range, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101009,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-squire-balanced-s101009",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-squire-balanced-farm",
+      "sourceObservationId": null,
+      "charm": "swamp",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-apprentice-balanced-s101009-primary",
+      "className": "apprentice",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "frenzy",
+          "hamstring"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-apprentice-balanced-s101009-primary",
+        "classRoot": "dot-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "dot-root",
+          "dot-balanced",
+          "dot-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "cave-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t3-apprentice-balanced",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Ember mage",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fire path. A deliberate fighter. Up to 6 burn stacks — each hit converts 50% of your attack into damage over time.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "offensive-stance remains fixed; no switching or generic Flee rule.",
+        "Mid-range Keep Distance, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is omitted from both Balanced Apprentice arms so Fully Afflicted -> Detonate fits 38 RP; Cleanse, Hamstring and movement counterplay remain.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101009,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-apprentice-balanced-s101009",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-apprentice-balanced-farm",
+      "sourceObservationId": null,
+      "charm": "swamp",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-apprentice-balanced-s101009-a2",
+      "className": "apprentice",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "detonate",
+          "hamstring"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "target-max-stacks",
+          "actionId": "use-ability",
+          "targetAbilityId": "detonate"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-apprentice-balanced-s101009-a2",
+        "classRoot": "dot-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "dot-root",
+          "dot-balanced",
+          "dot-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "cave-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t3-apprentice-balanced",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Ember mage",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fire path. A deliberate fighter. Up to 6 burn stacks — each hit converts 50% of your attack into damage over time.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "offensive-stance remains fixed; no switching or generic Flee rule.",
+        "Mid-range Keep Distance, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is omitted from both Balanced Apprentice arms so Fully Afflicted -> Detonate fits 38 RP; Cleanse, Hamstring and movement counterplay remain.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim.",
+        "Frenzy -> Detonate with the existing Fully Afflicted timing rule; weapon, control, core, stance and defense remain fixed."
+      ],
+      "seed": 101009,
+      "arm": "A2",
+      "block": "alternative",
+      "comparisonId": "t3-tundra-class-frame-01-apprentice-balanced-s101009",
+      "alternativeId": "A2",
+      "referenceCaseId": "breadth-t3-apprentice-balanced-farm",
+      "sourceObservationId": null,
+      "charm": "swamp",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-slinger-balanced-s101009-primary",
+      "className": "slinger",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "quick-strike",
+          "hamstring"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-slinger-balanced-s101009-primary",
+        "classRoot": "reload-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "reload-root",
+          "reload-balanced",
+          "reload-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-venomthorn-rapier",
+          "armor": "jungle-vest-t3",
+          "recovery": "jungle-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t3-slinger-balanced",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Marksman",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "A steady burst fighter. Standard 10-round clip, 2.0 s reload, modest avoidance — tempo and staying power in balance.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "offensive-stance remains fixed; no switching or generic Flee rule.",
+        "Mid-range Keep Distance, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101009,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-slinger-balanced-s101009",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-slinger-balanced-farm",
+      "sourceObservationId": null,
+      "charm": "jungle",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-slinger-balanced-s101009-w5",
+      "className": "slinger",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "quick-strike",
+          "hamstring"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-slinger-balanced-s101009-w5",
+        "classRoot": "reload-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "reload-root",
+          "reload-balanced",
+          "reload-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "swamp-blightbrand",
+          "armor": "jungle-vest-t3",
+          "recovery": "jungle-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t3-slinger-balanced",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Marksman",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "A steady burst fighter. Standard 10-round clip, 2.0 s reload, modest avoidance — tempo and staying power in balance.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "offensive-stance remains fixed; no switching or generic Flee rule.",
+        "Mid-range Keep Distance, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim.",
+        "Venomthorn Rapier -> Plague Fang; Quick Strike, Hamstring, core and policy remain fixed."
+      ],
+      "seed": 101009,
+      "arm": "W5",
+      "block": "alternative",
+      "comparisonId": "t3-tundra-class-frame-01-slinger-balanced-s101009",
+      "alternativeId": "W5",
+      "referenceCaseId": "breadth-t3-slinger-balanced-farm",
+      "sourceObservationId": null,
+      "charm": "jungle",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-conduit-balanced-s101009-primary",
+      "className": "conduit",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "quick-strike",
+          "hamstring"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-conduit-balanced-s101009-primary",
+        "classRoot": "summoner-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "summoner-root",
+          "summoner-balanced",
+          "summoner-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "mountain-vest-t3",
+          "recovery": "jungle-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-survivalist"
+        }
+      },
+      "identityId": "breadth-t3-conduit-balanced",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Consort",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Five medium summons hold a formal, stable ensemble. The reference formation: moderate damage, durability, and reconstruction pressure.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "defensive-stance remains fixed; no switching or generic Flee rule.",
+        "Mid-range Keep Distance, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101009,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-conduit-balanced-s101009",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-conduit-balanced-farm",
+      "sourceObservationId": null,
+      "charm": "jungle",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-conduit-balanced-s101009-w6",
+      "className": "conduit",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "quick-strike",
+          "hamstring"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-conduit-balanced-s101009-w6",
+        "classRoot": "summoner-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "summoner-root",
+          "summoner-balanced",
+          "summoner-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "tundra-permafrost-maul",
+          "armor": "mountain-vest-t3",
+          "recovery": "jungle-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-survivalist"
+        }
+      },
+      "identityId": "breadth-t3-conduit-balanced",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Consort",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Five medium summons hold a formal, stable ensemble. The reference formation: moderate damage, durability, and reconstruction pressure.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "defensive-stance remains fixed; no switching or generic Flee rule.",
+        "Mid-range Keep Distance, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim.",
+        "Cataclysm Axe -> Permafrost Maul; Quick Strike, Hamstring, formation, core and policy remain fixed."
+      ],
+      "seed": 101009,
+      "arm": "W6",
+      "block": "alternative",
+      "comparisonId": "t3-tundra-class-frame-01-conduit-balanced-s101009",
+      "alternativeId": "W6",
+      "referenceCaseId": "breadth-t3-conduit-balanced-farm",
+      "sourceObservationId": null,
+      "charm": "jungle",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-spirit-balanced-s101009-primary",
+      "className": "spirit",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "frenzy",
+          "hamstring"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-spirit-balanced-s101009-primary",
+        "classRoot": "energy-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "energy-root",
+          "energy-balanced",
+          "energy-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "mountain-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-accelerant"
+        }
+      },
+      "identityId": "breadth-t3-spirit-balanced",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Wraith",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fast and capable. A bit of extra punch and some light armor without sacrificing mobility. Gains 14 energy per hit, empowered at 2×.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "offensive-stance remains fixed; no switching or generic Flee rule.",
+        "Mid-range Keep Distance, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101009,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-spirit-balanced-s101009",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-spirit-balanced-farm",
+      "sourceObservationId": null,
+      "charm": "mountain",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-spirit-balanced-s101009-a3",
+      "className": "spirit",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "frenzy",
+          "binding-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-spirit-balanced-s101009-a3",
+        "classRoot": "energy-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "energy-root",
+          "energy-balanced",
+          "energy-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "mountain-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-accelerant"
+        }
+      },
+      "identityId": "breadth-t3-spirit-balanced",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Wraith",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fast and capable. A bit of extra punch and some light armor without sacrificing mobility. Gains 14 energy per hit, empowered at 2×.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "offensive-stance remains fixed; no switching or generic Flee rule.",
+        "Mid-range Keep Distance, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim.",
+        "Hamstring -> Binding Strike; equipment, Frenzy, core, stance and policy remain fixed."
+      ],
+      "seed": 101009,
+      "arm": "A3",
+      "block": "alternative",
+      "comparisonId": "t3-tundra-class-frame-01-spirit-balanced-s101009",
+      "alternativeId": "A3",
+      "referenceCaseId": "breadth-t3-spirit-balanced-farm",
+      "sourceObservationId": null,
+      "charm": "mountain",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-striker-heavy-s101009-primary",
+      "className": "striker",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "frenzy",
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-striker-heavy-s101009-primary",
+        "classRoot": "cadence-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "cadence-root",
+          "cadence-heavy",
+          "cadence-range-close"
+        ],
+        "gearItemIds": {
+          "weapon": "volcanic-cinderlash",
+          "armor": "volcanic-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-accelerant"
+        }
+      },
+      "identityId": "breadth-t3-striker-heavy",
+      "frame": "heavy",
+      "range": "close",
+      "pathName": "Breaker",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Endurance over speed. Significant bulk and armor; pays for it in attack pace and footwork. Empowered finisher every 6 hits at 4× — patience rewarded with one enormous blow.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "defensive-stance remains fixed; no switching or generic Flee rule.",
+        "Close range, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101009,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-striker-heavy-s101009",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-striker-heavy-farm",
+      "sourceObservationId": null,
+      "charm": "swamp",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-striker-heavy-s101009-w3",
+      "className": "striker",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "frenzy",
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-striker-heavy-s101009-w3",
+        "classRoot": "cadence-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "cadence-root",
+          "cadence-heavy",
+          "cadence-range-close"
+        ],
+        "gearItemIds": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "volcanic-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-accelerant"
+        }
+      },
+      "identityId": "breadth-t3-striker-heavy",
+      "frame": "heavy",
+      "range": "close",
+      "pathName": "Breaker",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Endurance over speed. Significant bulk and armor; pays for it in attack pace and footwork. Empowered finisher every 6 hits at 4× — patience rewarded with one enormous blow.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "defensive-stance remains fixed; no switching or generic Flee rule.",
+        "Close range, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim.",
+        "Cinderlash -> Cataclysm Axe; Frenzy, Power Strike, core, stance and defense remain fixed."
+      ],
+      "seed": 101009,
+      "arm": "W3",
+      "block": "alternative",
+      "comparisonId": "t3-tundra-class-frame-01-striker-heavy-s101009",
+      "alternativeId": "W3",
+      "referenceCaseId": "breadth-t3-striker-heavy-farm",
+      "sourceObservationId": null,
+      "charm": "swamp",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-squire-heavy-s101009-primary",
+      "className": "squire",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike",
+          "frenzy"
+        ],
+        "guards": [
+          "second-wind",
+          "endure",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-squire-heavy-s101009-primary",
+        "classRoot": "cooldown-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "cooldown-root",
+          "cooldown-heavy",
+          "cooldown-range-close"
+        ],
+        "gearItemIds": {
+          "weapon": "mountain-avalanche-maul",
+          "armor": "mountain-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-arcanist"
+        }
+      },
+      "identityId": "breadth-t3-squire-heavy",
+      "frame": "heavy",
+      "range": "close",
+      "pathName": "Bulwark",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fortress of patience. Maximum bulk makes you a wall, and every blow lands like one — but you move like a boulder and swing even slower. Execution recharges in 9 s at 3×.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "defensive-stance remains fixed; no switching or generic Flee rule.",
+        "Close range, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Endure is the explicitly declared sustained-tanking Guard for Heavy Squire; every other row starts from Brace.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101009,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-squire-heavy-s101009",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-squire-heavy-farm",
+      "sourceObservationId": null,
+      "charm": "swamp",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-squire-heavy-s101009-w4",
+      "className": "squire",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike",
+          "frenzy"
+        ],
+        "guards": [
+          "second-wind",
+          "endure",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-squire-heavy-s101009-w4",
+        "classRoot": "cooldown-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "cooldown-root",
+          "cooldown-heavy",
+          "cooldown-range-close"
+        ],
+        "gearItemIds": {
+          "weapon": "tundra-permafrost-maul",
+          "armor": "mountain-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-arcanist"
+        }
+      },
+      "identityId": "breadth-t3-squire-heavy",
+      "frame": "heavy",
+      "range": "close",
+      "pathName": "Bulwark",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fortress of patience. Maximum bulk makes you a wall, and every blow lands like one — but you move like a boulder and swing even slower. Execution recharges in 9 s at 3×.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "defensive-stance remains fixed; no switching or generic Flee rule.",
+        "Close range, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Endure is the explicitly declared sustained-tanking Guard for Heavy Squire; every other row starts from Brace.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim.",
+        "Avalanche Maul -> Permafrost Maul; Power Strike, core, policy and Endure remain fixed."
+      ],
+      "seed": 101009,
+      "arm": "W4",
+      "block": "alternative",
+      "comparisonId": "t3-tundra-class-frame-01-squire-heavy-s101009",
+      "alternativeId": "W4",
+      "referenceCaseId": "breadth-t3-squire-heavy-farm",
+      "sourceObservationId": null,
+      "charm": "swamp",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-apprentice-heavy-s101009-primary",
+      "className": "apprentice",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "frenzy",
+          "hamstring"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-apprentice-heavy-s101009-primary",
+        "classRoot": "dot-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "dot-root",
+          "dot-heavy",
+          "dot-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "tundra-permafrost-maul",
+          "armor": "cave-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t3-apprentice-heavy",
+      "frame": "heavy",
+      "range": "mid",
+      "pathName": "Rime-Bound",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Frost path. A war of attrition. Up to 3 frost stacks — each hit converts 70% of your attack into deep, lingering wounds.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "defensive-stance remains fixed; no switching or generic Flee rule.",
+        "Mid-range Keep Distance, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101009,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-apprentice-heavy-s101009",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-apprentice-heavy-farm",
+      "sourceObservationId": null,
+      "charm": "swamp",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-slinger-heavy-s101009-primary",
+      "className": "slinger",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "quick-strike",
+          "hamstring"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-slinger-heavy-s101009-primary",
+        "classRoot": "reload-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "reload-root",
+          "reload-heavy",
+          "reload-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-venomthorn-rapier",
+          "armor": "jungle-vest-t3",
+          "recovery": "jungle-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t3-slinger-heavy",
+      "frame": "heavy",
+      "range": "mid",
+      "pathName": "Artillerist",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Slower but harder to put down. Large 20-round clip for sustained bursting, real armor for the first time on this chassis, but reloading takes 3 s — plan your downtime.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "defensive-stance remains fixed; no switching or generic Flee rule.",
+        "Mid-range Keep Distance, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101009,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-slinger-heavy-s101009",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-slinger-heavy-farm",
+      "sourceObservationId": null,
+      "charm": "jungle",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-conduit-heavy-s101009-primary",
+      "className": "conduit",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "quick-strike",
+          "hamstring"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-conduit-heavy-s101009-primary",
+        "classRoot": "summoner-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "summoner-root",
+          "summoner-heavy",
+          "summoner-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "tundra-permafrost-maul",
+          "armor": "mountain-vest-t3",
+          "recovery": "jungle-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-survivalist"
+        }
+      },
+      "identityId": "breadth-t3-conduit-heavy",
+      "frame": "heavy",
+      "range": "mid",
+      "pathName": "Effigy",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Two large, slow summons concentrate the formation budget into consequential bodies. Each loss removes major offense and is expensive to reconstruct.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "defensive-stance remains fixed; no switching or generic Flee rule.",
+        "Mid-range Keep Distance, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101009,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-conduit-heavy-s101009",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-conduit-heavy-farm",
+      "sourceObservationId": null,
+      "charm": "jungle",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-spirit-heavy-s101009-primary",
+      "className": "spirit",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "frenzy",
+          "hamstring"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-spirit-heavy-s101009-primary",
+        "classRoot": "energy-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "energy-root",
+          "energy-heavy",
+          "energy-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "mountain-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t3-spirit-heavy",
+      "frame": "heavy",
+      "range": "mid",
+      "pathName": "Phantasm",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Measured power. A light class wearing heavier armor — durability and a sliver of damage reduction, traded against attack pace. Gains 10 energy per hit, empowered at 6× — builds slowly, hits very hard.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "defensive-stance remains fixed; no switching or generic Flee rule.",
+        "Mid-range Keep Distance, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101009,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-spirit-heavy-s101009",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-spirit-heavy-farm",
+      "sourceObservationId": null,
+      "charm": "mountain",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-striker-light-s101021-w1",
+      "className": "striker",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "frenzy",
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-striker-light-s101021-w1",
+        "classRoot": "cadence-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "cadence-root",
+          "cadence-light",
+          "cadence-range-close"
+        ],
+        "gearItemIds": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "volcanic-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-accelerant"
+        }
+      },
+      "identityId": "breadth-t3-striker-light",
+      "frame": "light",
+      "range": "close",
+      "pathName": "Flurry",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Swift and agile. Trades bulk for a blistering attack pace. Empowered finisher triggers every 4 hits at 1.5× — frequency over raw power.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "offensive-stance remains fixed; no switching or generic Flee rule.",
+        "Close range, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim.",
+        "Cinderlash -> Cataclysm Axe; Frenzy, Power Strike, core, stance and defense remain fixed."
+      ],
+      "seed": 101021,
+      "arm": "W1",
+      "block": "alternative",
+      "comparisonId": "t3-tundra-class-frame-01-striker-light-s101021",
+      "alternativeId": "W1",
+      "referenceCaseId": "breadth-t3-striker-light-farm",
+      "sourceObservationId": null,
+      "charm": "swamp",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-striker-light-s101021-primary",
+      "className": "striker",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "frenzy",
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-striker-light-s101021-primary",
+        "classRoot": "cadence-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "cadence-root",
+          "cadence-light",
+          "cadence-range-close"
+        ],
+        "gearItemIds": {
+          "weapon": "volcanic-cinderlash",
+          "armor": "volcanic-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-accelerant"
+        }
+      },
+      "identityId": "breadth-t3-striker-light",
+      "frame": "light",
+      "range": "close",
+      "pathName": "Flurry",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Swift and agile. Trades bulk for a blistering attack pace. Empowered finisher triggers every 4 hits at 1.5× — frequency over raw power.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "offensive-stance remains fixed; no switching or generic Flee rule.",
+        "Close range, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101021,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-striker-light-s101021",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-striker-light-farm",
+      "sourceObservationId": null,
+      "charm": "swamp",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-squire-light-s101021-primary",
+      "className": "squire",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike",
+          "frenzy"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-squire-light-s101021-primary",
+        "classRoot": "cooldown-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "cooldown-root",
+          "cooldown-light",
+          "cooldown-range-close"
+        ],
+        "gearItemIds": {
+          "weapon": "mountain-avalanche-maul",
+          "armor": "mountain-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-arcanist"
+        }
+      },
+      "identityId": "breadth-t3-squire-light",
+      "frame": "light",
+      "range": "close",
+      "pathName": "Warrior",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "The aggressive tank. Keeps its armored core but trades patience for a fast, hungry tempo. Execution recharges in 5 s at 1.5×.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "defensive-stance remains fixed; no switching or generic Flee rule.",
+        "Close range, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101021,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-squire-light-s101021",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-squire-light-farm",
+      "sourceObservationId": null,
+      "charm": "swamp",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-apprentice-light-s101021-primary",
+      "className": "apprentice",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "frenzy",
+          "hamstring"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-apprentice-light-s101021-primary",
+        "classRoot": "dot-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "dot-root",
+          "dot-light",
+          "dot-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "cave-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-accelerant"
+        }
+      },
+      "identityId": "breadth-t3-apprentice-light",
+      "frame": "light",
+      "range": "mid",
+      "pathName": "Venom vessel",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Poison path. Apply wounds quickly and stay mobile. Up to 8 poison stacks — each hit converts 30% of your attack into lingering poison damage.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "offensive-stance remains fixed; no switching or generic Flee rule.",
+        "Mid-range Keep Distance, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101021,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-apprentice-light-s101021",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-apprentice-light-farm",
+      "sourceObservationId": null,
+      "charm": "swamp",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-slinger-light-s101021-primary",
+      "className": "slinger",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "quick-strike",
+          "hamstring"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-slinger-light-s101021-primary",
+        "classRoot": "reload-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "reload-root",
+          "reload-light",
+          "reload-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-venomthorn-rapier",
+          "armor": "jungle-vest-t3",
+          "recovery": "jungle-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t3-slinger-light",
+      "frame": "light",
+      "range": "mid",
+      "pathName": "Scout",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "All-in on mobility. Small clip (5 rounds), 1.2 s reload, and extra dodge — maximum uptime, minimum profile to hit.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "offensive-stance remains fixed; no switching or generic Flee rule.",
+        "Mid-range Keep Distance, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101021,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-slinger-light-s101021",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-slinger-light-farm",
+      "sourceObservationId": null,
+      "charm": "jungle",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-conduit-light-s101021-primary",
+      "className": "conduit",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "quick-strike",
+          "hamstring"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-conduit-light-s101021-primary",
+        "classRoot": "summoner-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "summoner-root",
+          "summoner-light",
+          "summoner-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-venomthorn-rapier",
+          "armor": "mountain-vest-t3",
+          "recovery": "jungle-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-survivalist"
+        }
+      },
+      "identityId": "breadth-t3-conduit-light",
+      "frame": "light",
+      "range": "mid",
+      "pathName": "Splinter",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Your presence splinters across six small, fast summons. They divide the formation budget rather than multiplying it, but the whole formation carries 20% stronger on-hit and secondary weapon effects. Each loss costs little offense and reconstruction HP; plating and area damage punish the swarm.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "defensive-stance remains fixed; no switching or generic Flee rule.",
+        "Mid-range Keep Distance, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101021,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-conduit-light-s101021",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-conduit-light-farm",
+      "sourceObservationId": null,
+      "charm": "jungle",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-spirit-light-s101021-primary",
+      "className": "spirit",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "frenzy",
+          "hamstring"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-spirit-light-s101021-primary",
+        "classRoot": "energy-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "energy-root",
+          "energy-light",
+          "energy-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "volcanic-cinderlash",
+          "armor": "mountain-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-accelerant"
+        }
+      },
+      "identityId": "breadth-t3-spirit-light",
+      "frame": "light",
+      "range": "mid",
+      "pathName": "Spark",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Pure momentum. Blazing speed and rapid attacks; thrives on frequent discharges and their AoE splash. Gains 20 energy per hit, empowered at 1.5× — fires often.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "offensive-stance remains fixed; no switching or generic Flee rule.",
+        "Mid-range Keep Distance, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101021,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-spirit-light-s101021",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-spirit-light-farm",
+      "sourceObservationId": null,
+      "charm": "mountain",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-striker-balanced-s101021-w2",
+      "className": "striker",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "frenzy",
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-striker-balanced-s101021-w2",
+        "classRoot": "cadence-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "cadence-root",
+          "cadence-balanced",
+          "cadence-range-close"
+        ],
+        "gearItemIds": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "volcanic-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-accelerant"
+        }
+      },
+      "identityId": "breadth-t3-striker-balanced",
+      "frame": "balanced",
+      "range": "close",
+      "pathName": "Skirmisher",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "A measured approach. Modest gains across the board without committing to an extreme. Empowered finisher every 5 hits at 2×.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "offensive-stance remains fixed; no switching or generic Flee rule.",
+        "Close range, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim.",
+        "Cinderlash -> Cataclysm Axe; Frenzy, Power Strike, core, stance and defense remain fixed."
+      ],
+      "seed": 101021,
+      "arm": "W2",
+      "block": "alternative",
+      "comparisonId": "t3-tundra-class-frame-01-striker-balanced-s101021",
+      "alternativeId": "W2",
+      "referenceCaseId": "breadth-t3-striker-balanced-farm",
+      "sourceObservationId": null,
+      "charm": "swamp",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-striker-balanced-s101021-primary",
+      "className": "striker",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "frenzy",
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-striker-balanced-s101021-primary",
+        "classRoot": "cadence-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "cadence-root",
+          "cadence-balanced",
+          "cadence-range-close"
+        ],
+        "gearItemIds": {
+          "weapon": "volcanic-cinderlash",
+          "armor": "volcanic-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-accelerant"
+        }
+      },
+      "identityId": "breadth-t3-striker-balanced",
+      "frame": "balanced",
+      "range": "close",
+      "pathName": "Skirmisher",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "A measured approach. Modest gains across the board without committing to an extreme. Empowered finisher every 5 hits at 2×.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "offensive-stance remains fixed; no switching or generic Flee rule.",
+        "Close range, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101021,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-striker-balanced-s101021",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-striker-balanced-farm",
+      "sourceObservationId": null,
+      "charm": "swamp",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-squire-balanced-s101021-primary",
+      "className": "squire",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike",
+          "frenzy"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-squire-balanced-s101021-primary",
+        "classRoot": "cooldown-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "cooldown-root",
+          "cooldown-balanced",
+          "cooldown-range-close"
+        ],
+        "gearItemIds": {
+          "weapon": "mountain-avalanche-maul",
+          "armor": "mountain-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-arcanist"
+        }
+      },
+      "identityId": "breadth-t3-squire-balanced",
+      "frame": "balanced",
+      "range": "close",
+      "pathName": "Knight",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "A sturdy foundation. Substantial HP and armor amplify the class's defensive identity without tipping into immobility. Execution recharges in 7 s at 2×.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "defensive-stance remains fixed; no switching or generic Flee rule.",
+        "Close range, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101021,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-squire-balanced-s101021",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-squire-balanced-farm",
+      "sourceObservationId": null,
+      "charm": "swamp",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-apprentice-balanced-s101021-a2",
+      "className": "apprentice",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "detonate",
+          "hamstring"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "target-max-stacks",
+          "actionId": "use-ability",
+          "targetAbilityId": "detonate"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-apprentice-balanced-s101021-a2",
+        "classRoot": "dot-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "dot-root",
+          "dot-balanced",
+          "dot-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "cave-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t3-apprentice-balanced",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Ember mage",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fire path. A deliberate fighter. Up to 6 burn stacks — each hit converts 50% of your attack into damage over time.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "offensive-stance remains fixed; no switching or generic Flee rule.",
+        "Mid-range Keep Distance, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is omitted from both Balanced Apprentice arms so Fully Afflicted -> Detonate fits 38 RP; Cleanse, Hamstring and movement counterplay remain.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim.",
+        "Frenzy -> Detonate with the existing Fully Afflicted timing rule; weapon, control, core, stance and defense remain fixed."
+      ],
+      "seed": 101021,
+      "arm": "A2",
+      "block": "alternative",
+      "comparisonId": "t3-tundra-class-frame-01-apprentice-balanced-s101021",
+      "alternativeId": "A2",
+      "referenceCaseId": "breadth-t3-apprentice-balanced-farm",
+      "sourceObservationId": null,
+      "charm": "swamp",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-apprentice-balanced-s101021-primary",
+      "className": "apprentice",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "frenzy",
+          "hamstring"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-apprentice-balanced-s101021-primary",
+        "classRoot": "dot-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "dot-root",
+          "dot-balanced",
+          "dot-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "cave-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t3-apprentice-balanced",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Ember mage",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fire path. A deliberate fighter. Up to 6 burn stacks — each hit converts 50% of your attack into damage over time.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "offensive-stance remains fixed; no switching or generic Flee rule.",
+        "Mid-range Keep Distance, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is omitted from both Balanced Apprentice arms so Fully Afflicted -> Detonate fits 38 RP; Cleanse, Hamstring and movement counterplay remain.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101021,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-apprentice-balanced-s101021",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-apprentice-balanced-farm",
+      "sourceObservationId": null,
+      "charm": "swamp",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-slinger-balanced-s101021-w5",
+      "className": "slinger",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "quick-strike",
+          "hamstring"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-slinger-balanced-s101021-w5",
+        "classRoot": "reload-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "reload-root",
+          "reload-balanced",
+          "reload-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "swamp-blightbrand",
+          "armor": "jungle-vest-t3",
+          "recovery": "jungle-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t3-slinger-balanced",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Marksman",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "A steady burst fighter. Standard 10-round clip, 2.0 s reload, modest avoidance — tempo and staying power in balance.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "offensive-stance remains fixed; no switching or generic Flee rule.",
+        "Mid-range Keep Distance, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim.",
+        "Venomthorn Rapier -> Plague Fang; Quick Strike, Hamstring, core and policy remain fixed."
+      ],
+      "seed": 101021,
+      "arm": "W5",
+      "block": "alternative",
+      "comparisonId": "t3-tundra-class-frame-01-slinger-balanced-s101021",
+      "alternativeId": "W5",
+      "referenceCaseId": "breadth-t3-slinger-balanced-farm",
+      "sourceObservationId": null,
+      "charm": "jungle",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-slinger-balanced-s101021-primary",
+      "className": "slinger",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "quick-strike",
+          "hamstring"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-slinger-balanced-s101021-primary",
+        "classRoot": "reload-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "reload-root",
+          "reload-balanced",
+          "reload-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-venomthorn-rapier",
+          "armor": "jungle-vest-t3",
+          "recovery": "jungle-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t3-slinger-balanced",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Marksman",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "A steady burst fighter. Standard 10-round clip, 2.0 s reload, modest avoidance — tempo and staying power in balance.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "offensive-stance remains fixed; no switching or generic Flee rule.",
+        "Mid-range Keep Distance, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101021,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-slinger-balanced-s101021",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-slinger-balanced-farm",
+      "sourceObservationId": null,
+      "charm": "jungle",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-conduit-balanced-s101021-w6",
+      "className": "conduit",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "quick-strike",
+          "hamstring"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-conduit-balanced-s101021-w6",
+        "classRoot": "summoner-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "summoner-root",
+          "summoner-balanced",
+          "summoner-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "tundra-permafrost-maul",
+          "armor": "mountain-vest-t3",
+          "recovery": "jungle-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-survivalist"
+        }
+      },
+      "identityId": "breadth-t3-conduit-balanced",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Consort",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Five medium summons hold a formal, stable ensemble. The reference formation: moderate damage, durability, and reconstruction pressure.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "defensive-stance remains fixed; no switching or generic Flee rule.",
+        "Mid-range Keep Distance, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim.",
+        "Cataclysm Axe -> Permafrost Maul; Quick Strike, Hamstring, formation, core and policy remain fixed."
+      ],
+      "seed": 101021,
+      "arm": "W6",
+      "block": "alternative",
+      "comparisonId": "t3-tundra-class-frame-01-conduit-balanced-s101021",
+      "alternativeId": "W6",
+      "referenceCaseId": "breadth-t3-conduit-balanced-farm",
+      "sourceObservationId": null,
+      "charm": "jungle",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-conduit-balanced-s101021-primary",
+      "className": "conduit",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "quick-strike",
+          "hamstring"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-conduit-balanced-s101021-primary",
+        "classRoot": "summoner-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "summoner-root",
+          "summoner-balanced",
+          "summoner-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "mountain-vest-t3",
+          "recovery": "jungle-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-survivalist"
+        }
+      },
+      "identityId": "breadth-t3-conduit-balanced",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Consort",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Five medium summons hold a formal, stable ensemble. The reference formation: moderate damage, durability, and reconstruction pressure.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "defensive-stance remains fixed; no switching or generic Flee rule.",
+        "Mid-range Keep Distance, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101021,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-conduit-balanced-s101021",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-conduit-balanced-farm",
+      "sourceObservationId": null,
+      "charm": "jungle",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-spirit-balanced-s101021-a3",
+      "className": "spirit",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "frenzy",
+          "binding-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-spirit-balanced-s101021-a3",
+        "classRoot": "energy-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "energy-root",
+          "energy-balanced",
+          "energy-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "mountain-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-accelerant"
+        }
+      },
+      "identityId": "breadth-t3-spirit-balanced",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Wraith",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fast and capable. A bit of extra punch and some light armor without sacrificing mobility. Gains 14 energy per hit, empowered at 2×.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "offensive-stance remains fixed; no switching or generic Flee rule.",
+        "Mid-range Keep Distance, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim.",
+        "Hamstring -> Binding Strike; equipment, Frenzy, core, stance and policy remain fixed."
+      ],
+      "seed": 101021,
+      "arm": "A3",
+      "block": "alternative",
+      "comparisonId": "t3-tundra-class-frame-01-spirit-balanced-s101021",
+      "alternativeId": "A3",
+      "referenceCaseId": "breadth-t3-spirit-balanced-farm",
+      "sourceObservationId": null,
+      "charm": "mountain",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-spirit-balanced-s101021-primary",
+      "className": "spirit",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "frenzy",
+          "hamstring"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-spirit-balanced-s101021-primary",
+        "classRoot": "energy-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "energy-root",
+          "energy-balanced",
+          "energy-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "mountain-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-accelerant"
+        }
+      },
+      "identityId": "breadth-t3-spirit-balanced",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Wraith",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fast and capable. A bit of extra punch and some light armor without sacrificing mobility. Gains 14 energy per hit, empowered at 2×.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "offensive-stance remains fixed; no switching or generic Flee rule.",
+        "Mid-range Keep Distance, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101021,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-spirit-balanced-s101021",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-spirit-balanced-farm",
+      "sourceObservationId": null,
+      "charm": "mountain",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-striker-heavy-s101021-w3",
+      "className": "striker",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "frenzy",
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-striker-heavy-s101021-w3",
+        "classRoot": "cadence-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "cadence-root",
+          "cadence-heavy",
+          "cadence-range-close"
+        ],
+        "gearItemIds": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "volcanic-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-accelerant"
+        }
+      },
+      "identityId": "breadth-t3-striker-heavy",
+      "frame": "heavy",
+      "range": "close",
+      "pathName": "Breaker",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Endurance over speed. Significant bulk and armor; pays for it in attack pace and footwork. Empowered finisher every 6 hits at 4× — patience rewarded with one enormous blow.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "defensive-stance remains fixed; no switching or generic Flee rule.",
+        "Close range, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim.",
+        "Cinderlash -> Cataclysm Axe; Frenzy, Power Strike, core, stance and defense remain fixed."
+      ],
+      "seed": 101021,
+      "arm": "W3",
+      "block": "alternative",
+      "comparisonId": "t3-tundra-class-frame-01-striker-heavy-s101021",
+      "alternativeId": "W3",
+      "referenceCaseId": "breadth-t3-striker-heavy-farm",
+      "sourceObservationId": null,
+      "charm": "swamp",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-striker-heavy-s101021-primary",
+      "className": "striker",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "frenzy",
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-striker-heavy-s101021-primary",
+        "classRoot": "cadence-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "cadence-root",
+          "cadence-heavy",
+          "cadence-range-close"
+        ],
+        "gearItemIds": {
+          "weapon": "volcanic-cinderlash",
+          "armor": "volcanic-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-accelerant"
+        }
+      },
+      "identityId": "breadth-t3-striker-heavy",
+      "frame": "heavy",
+      "range": "close",
+      "pathName": "Breaker",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Endurance over speed. Significant bulk and armor; pays for it in attack pace and footwork. Empowered finisher every 6 hits at 4× — patience rewarded with one enormous blow.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "defensive-stance remains fixed; no switching or generic Flee rule.",
+        "Close range, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101021,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-striker-heavy-s101021",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-striker-heavy-farm",
+      "sourceObservationId": null,
+      "charm": "swamp",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-squire-heavy-s101021-w4",
+      "className": "squire",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike",
+          "frenzy"
+        ],
+        "guards": [
+          "second-wind",
+          "endure",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-squire-heavy-s101021-w4",
+        "classRoot": "cooldown-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "cooldown-root",
+          "cooldown-heavy",
+          "cooldown-range-close"
+        ],
+        "gearItemIds": {
+          "weapon": "tundra-permafrost-maul",
+          "armor": "mountain-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-arcanist"
+        }
+      },
+      "identityId": "breadth-t3-squire-heavy",
+      "frame": "heavy",
+      "range": "close",
+      "pathName": "Bulwark",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fortress of patience. Maximum bulk makes you a wall, and every blow lands like one — but you move like a boulder and swing even slower. Execution recharges in 9 s at 3×.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "defensive-stance remains fixed; no switching or generic Flee rule.",
+        "Close range, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Endure is the explicitly declared sustained-tanking Guard for Heavy Squire; every other row starts from Brace.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim.",
+        "Avalanche Maul -> Permafrost Maul; Power Strike, core, policy and Endure remain fixed."
+      ],
+      "seed": 101021,
+      "arm": "W4",
+      "block": "alternative",
+      "comparisonId": "t3-tundra-class-frame-01-squire-heavy-s101021",
+      "alternativeId": "W4",
+      "referenceCaseId": "breadth-t3-squire-heavy-farm",
+      "sourceObservationId": null,
+      "charm": "swamp",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-squire-heavy-s101021-primary",
+      "className": "squire",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike",
+          "frenzy"
+        ],
+        "guards": [
+          "second-wind",
+          "endure",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-squire-heavy-s101021-primary",
+        "classRoot": "cooldown-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "cooldown-root",
+          "cooldown-heavy",
+          "cooldown-range-close"
+        ],
+        "gearItemIds": {
+          "weapon": "mountain-avalanche-maul",
+          "armor": "mountain-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-arcanist"
+        }
+      },
+      "identityId": "breadth-t3-squire-heavy",
+      "frame": "heavy",
+      "range": "close",
+      "pathName": "Bulwark",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fortress of patience. Maximum bulk makes you a wall, and every blow lands like one — but you move like a boulder and swing even slower. Execution recharges in 9 s at 3×.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "defensive-stance remains fixed; no switching or generic Flee rule.",
+        "Close range, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Endure is the explicitly declared sustained-tanking Guard for Heavy Squire; every other row starts from Brace.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101021,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-squire-heavy-s101021",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-squire-heavy-farm",
+      "sourceObservationId": null,
+      "charm": "swamp",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-apprentice-heavy-s101021-primary",
+      "className": "apprentice",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "frenzy",
+          "hamstring"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-apprentice-heavy-s101021-primary",
+        "classRoot": "dot-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "dot-root",
+          "dot-heavy",
+          "dot-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "tundra-permafrost-maul",
+          "armor": "cave-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t3-apprentice-heavy",
+      "frame": "heavy",
+      "range": "mid",
+      "pathName": "Rime-Bound",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Frost path. A war of attrition. Up to 3 frost stacks — each hit converts 70% of your attack into deep, lingering wounds.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "defensive-stance remains fixed; no switching or generic Flee rule.",
+        "Mid-range Keep Distance, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101021,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-apprentice-heavy-s101021",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-apprentice-heavy-farm",
+      "sourceObservationId": null,
+      "charm": "swamp",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-slinger-heavy-s101021-primary",
+      "className": "slinger",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "quick-strike",
+          "hamstring"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-slinger-heavy-s101021-primary",
+        "classRoot": "reload-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "reload-root",
+          "reload-heavy",
+          "reload-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-venomthorn-rapier",
+          "armor": "jungle-vest-t3",
+          "recovery": "jungle-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t3-slinger-heavy",
+      "frame": "heavy",
+      "range": "mid",
+      "pathName": "Artillerist",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Slower but harder to put down. Large 20-round clip for sustained bursting, real armor for the first time on this chassis, but reloading takes 3 s — plan your downtime.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "defensive-stance remains fixed; no switching or generic Flee rule.",
+        "Mid-range Keep Distance, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101021,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-slinger-heavy-s101021",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-slinger-heavy-farm",
+      "sourceObservationId": null,
+      "charm": "jungle",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-conduit-heavy-s101021-primary",
+      "className": "conduit",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "quick-strike",
+          "hamstring"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-conduit-heavy-s101021-primary",
+        "classRoot": "summoner-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "summoner-root",
+          "summoner-heavy",
+          "summoner-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "tundra-permafrost-maul",
+          "armor": "mountain-vest-t3",
+          "recovery": "jungle-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-survivalist"
+        }
+      },
+      "identityId": "breadth-t3-conduit-heavy",
+      "frame": "heavy",
+      "range": "mid",
+      "pathName": "Effigy",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Two large, slow summons concentrate the formation budget into consequential bodies. Each loss removes major offense and is expensive to reconstruct.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "defensive-stance remains fixed; no switching or generic Flee rule.",
+        "Mid-range Keep Distance, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101021,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-conduit-heavy-s101021",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-conduit-heavy-farm",
+      "sourceObservationId": null,
+      "charm": "jungle",
+      "policy": "static"
+    },
+    {
+      "id": "t3-tundra-class-frame-01-spirit-heavy-s101021-primary",
+      "className": "spirit",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "frenzy",
+          "hamstring"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t3-tundra-class-frame-01-spirit-heavy-s101021-primary",
+        "classRoot": "energy-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "energy-root",
+          "energy-heavy",
+          "energy-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "mountain-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t3-spirit-heavy",
+      "frame": "heavy",
+      "range": "mid",
+      "pathName": "Phantasm",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Measured power. A light class wearing heavier armor — durability and a sliver of damage reduction, traded against attack pace. Gains 10 energy per hit, empowered at 6× — builds slowly, hits very hard.",
+        "New complete T3 Tundra package; historical generic farming results are contextual, not controls.",
+        "Mature synthetic T3 ownership, legal +5 ordinary equipment, full HP/barrier, production Conduit R2 and native owner targeting.",
+        "defensive-stance remains fixed; no switching or generic Flee rule.",
+        "Mid-range Keep Distance, telegraph stepping, hazard avoidance and Recover First are fixed.",
+        "Brace is the declared burst Guard.",
+        "Break Free is retained for Tundra hard-control pressure.",
+        "Glacial Bulwark is excluded. Unused RP is deliberate headroom, not an optimization claim."
+      ],
+      "seed": 101021,
+      "arm": "primary",
+      "block": "primary",
+      "comparisonId": "t3-tundra-class-frame-01-spirit-heavy-s101021",
+      "alternativeId": null,
+      "referenceCaseId": "breadth-t3-spirit-heavy-farm",
+      "sourceObservationId": null,
+      "charm": "mountain",
+      "policy": "static"
+    }
+  ]
+}
