@@ -1,0 +1,66 @@
+{
+  "qualification": {
+    "planned": 264,
+    "completed": 264,
+    "combatObservations": 0,
+    "reused": 0,
+    "failure": null
+  },
+  "receiptCheck": {
+    "planned": 264,
+    "completed": 264,
+    "combatObservations": 0,
+    "reused": 0,
+    "failure": null
+  },
+  "focusedTests": [
+    {
+      "file": "server/test/t2MultiBiomePacket.test.ts",
+      "status": "passed"
+    },
+    {
+      "file": "server/test/t2ProgressionEconomy.test.ts",
+      "status": "passed"
+    },
+    {
+      "file": "server/test/abilityControl.test.ts",
+      "status": "passed"
+    },
+    {
+      "file": "server/test/runeTargetingPreference.test.ts",
+      "status": "passed"
+    },
+    {
+      "file": "server/test/summonerRuneTargeting.test.ts",
+      "status": "passed"
+    },
+    {
+      "file": "server/test/tundraClassFramePacket.test.ts",
+      "status": "passed"
+    },
+    {
+      "file": "server/test/overnightEndurance.test.ts",
+      "status": "passed"
+    }
+  ],
+  "typecheck": "passed including all package checks and bench, confirmed again on final frozen source",
+  "sharedBuild": "passed",
+  "serverBuild": "passed including hitbox bake",
+  "diffCheck": "passed",
+  "fullSuite": "not run per focused preparation scope",
+  "liveBrowser": "not run",
+  "mainCombatObservations": 0,
+  "preSealIssues": [
+    {
+      "issue": "Build refreshed shadows.json with line-ending-only metadata, causing clean-tree gate to refuse preparation.",
+      "resolution": "Restored only generated shadow file in isolated checkout before the packet existed; prepare/qualify then succeeded. No combat or resealing of a measured packet."
+    },
+    {
+      "issue": "Initial bench typecheck found optional requiredBiomeLevel comparison.",
+      "resolution": "Added explicit defined gate before final source commit; typecheck passed."
+    }
+  ],
+  "rawQualificationDirectory": "D:/mmo-idle/t2-multi-biome-class-01/qualification",
+  "rawReceiptCheckDirectory": "D:/mmo-idle/t2-multi-biome-class-01/receipt-check",
+  "itemEvolutionGates": "passed: all selected gear and parent upgrades reachable at capped T2 mastery"
+}

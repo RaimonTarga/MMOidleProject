@@ -1,0 +1,400 @@
+[
+  {
+    "id": "t3-tundra-class-frame-01-apprentice-balanced-s101009-primary",
+    "measuredSource": "7d0dadb2b4397141c5a654ab9bb658871c56147b",
+    "rawFiles": [
+      "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-balanced-s101009-primary-s101009/events.jsonl",
+      "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-balanced-s101009-primary-s101009/samples.jsonl"
+    ],
+    "windowStart": 31200,
+    "end": 36200,
+    "samples": [
+      {
+        "atMs": 32000,
+        "hp": 215.4872,
+        "barrier": 0,
+        "lastAttackAt": 1800000030600,
+        "target": null,
+        "aggroTypes": [
+          "rime-caster"
+        ]
+      },
+      {
+        "atMs": 33000,
+        "hp": 243.20880000000008,
+        "barrier": 0,
+        "lastAttackAt": 1800000033000,
+        "target": "node-t3-tundra-03_monster-13",
+        "aggroTypes": [
+          "rime-caster"
+        ]
+      },
+      {
+        "atMs": 34000,
+        "hp": 60.00880000000009,
+        "barrier": 0,
+        "lastAttackAt": 1800000033600,
+        "target": "node-t3-tundra-03_monster-13",
+        "aggroTypes": [
+          "rime-caster"
+        ]
+      },
+      {
+        "atMs": 35000,
+        "hp": 56.00880000000009,
+        "barrier": 0,
+        "lastAttackAt": 1800000034800,
+        "target": "node-t3-tundra-03_monster-13",
+        "aggroTypes": [
+          "rime-caster"
+        ]
+      },
+      {
+        "atMs": 36000,
+        "hp": 53.00880000000009,
+        "barrier": 0,
+        "lastAttackAt": 1800000036000,
+        "target": "node-t3-tundra-03_monster-13",
+        "aggroTypes": [
+          "rime-caster"
+        ]
+      }
+    ],
+    "events": [
+      {
+        "atMs": 32000,
+        "event": {
+          "kind": "monster-cast-start",
+          "monsterId": "node-t3-tundra-03_monster-13",
+          "castMs": 1400,
+          "label": "Frostbind",
+          "fx": "frostbind",
+          "at": 1800000032000,
+          "seq": 110
+        }
+      },
+      {
+        "atMs": 32200,
+        "event": {
+          "kind": "ability-activation",
+          "nodeId": "node-t3-tundra-03",
+          "player": {
+            "id": "bench-bot-0",
+            "name": "t3-tundra-class-frame-01-apprentice-balanced-s101009-primary",
+            "actorType": "player"
+          },
+          "abilityId": "cleanse",
+          "slot": "guard",
+          "removedEffects": [
+            {
+              "effectId": "tundra-chill",
+              "stacks": 2
+            }
+          ],
+          "id": 287,
+          "tick": 323,
+          "serverTime": 1800000032200
+        }
+      },
+      {
+        "atMs": 33000,
+        "event": {
+          "kind": "ability-activation",
+          "nodeId": "node-t3-tundra-03",
+          "player": {
+            "id": "bench-bot-0",
+            "name": "t3-tundra-class-frame-01-apprentice-balanced-s101009-primary",
+            "actorType": "player"
+          },
+          "abilityId": "frenzy",
+          "slot": "technique",
+          "id": 299,
+          "tick": 331,
+          "serverTime": 1800000033000
+        }
+      },
+      {
+        "atMs": 33400,
+        "event": {
+          "kind": "monster-cast-end",
+          "monsterId": "node-t3-tundra-03_monster-13",
+          "fired": true,
+          "targetId": "bench-bot-0",
+          "fx": "frostbind",
+          "at": 1800000033400,
+          "seq": 120
+        }
+      },
+      {
+        "atMs": 36200,
+        "event": {
+          "kind": "player-death",
+          "nodeId": "node-t3-tundra-03",
+          "player": {
+            "id": "bench-bot-0",
+            "name": "t3-tundra-class-frame-01-apprentice-balanced-s101009-primary",
+            "actorType": "player"
+          },
+          "cause": {
+            "kind": "ranged",
+            "killer": {
+              "monsterEntityId": "node-t3-tundra-03_monster-13",
+              "monsterTypeId": "rime-caster",
+              "monsterName": "Rime Caster",
+              "isBoss": false,
+              "nodeId": "node-t3-tundra-03"
+            },
+            "damage": 148.5
+          },
+          "id": 317,
+          "tick": 363,
+          "serverTime": 1800000036200
+        }
+      }
+    ],
+    "outgoingHpDamage": [
+      {
+        "atMs": 32400,
+        "target": "Rime Caster",
+        "hpDamage": 0,
+        "damageType": "direct"
+      },
+      {
+        "atMs": 33000,
+        "target": "Rime Caster",
+        "hpDamage": 107,
+        "damageType": "direct"
+      },
+      {
+        "atMs": 33600,
+        "target": "Rime Caster",
+        "hpDamage": 89,
+        "damageType": "direct"
+      },
+      {
+        "atMs": 33900,
+        "target": "Rime Caster",
+        "hpDamage": 131,
+        "damageType": "dot"
+      },
+      {
+        "atMs": 34200,
+        "target": "Rime Caster",
+        "hpDamage": 89,
+        "damageType": "direct"
+      },
+      {
+        "atMs": 34800,
+        "target": "Rime Caster",
+        "hpDamage": 89,
+        "damageType": "direct"
+      },
+      {
+        "atMs": 35400,
+        "target": "Rime Caster",
+        "hpDamage": 169,
+        "damageType": "dot"
+      },
+      {
+        "atMs": 35400,
+        "target": "Rime Caster",
+        "hpDamage": 0,
+        "damageType": "direct"
+      },
+      {
+        "atMs": 36000,
+        "target": "Rime Caster",
+        "hpDamage": 89,
+        "damageType": "direct"
+      }
+    ]
+  },
+  {
+    "id": "t3-tundra-class-frame-01-apprentice-balanced-s101021-primary",
+    "measuredSource": "7d0dadb2b4397141c5a654ab9bb658871c56147b",
+    "rawFiles": [
+      "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-balanced-s101021-primary-s101021/events.jsonl",
+      "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-balanced-s101021-primary-s101021/samples.jsonl"
+    ],
+    "windowStart": 118900,
+    "end": 123900,
+    "samples": [
+      {
+        "atMs": 119000,
+        "hp": 208.53760000000014,
+        "barrier": 0,
+        "lastAttackAt": 1800000118400,
+        "target": "node-t3-tundra-03_monster-7",
+        "aggroTypes": [
+          "rime-caster",
+          "glacier-bear"
+        ]
+      },
+      {
+        "atMs": 120000,
+        "hp": 290.84960000000024,
+        "barrier": 0,
+        "lastAttackAt": 1800000119800,
+        "target": "node-t3-tundra-03_monster-7",
+        "aggroTypes": [
+          "rime-caster",
+          "glacier-bear"
+        ]
+      },
+      {
+        "atMs": 121000,
+        "hp": 215.36560000000034,
+        "barrier": 0,
+        "lastAttackAt": 1800000120600,
+        "target": null,
+        "aggroTypes": [
+          "rime-caster"
+        ]
+      },
+      {
+        "atMs": 122000,
+        "hp": 97.0176000000003,
+        "barrier": 0,
+        "lastAttackAt": 1800000121500,
+        "target": "node-t3-tundra-03_monster-21",
+        "aggroTypes": [
+          "rime-caster"
+        ]
+      },
+      {
+        "atMs": 123000,
+        "hp": 110.59360000000028,
+        "barrier": 0,
+        "lastAttackAt": 1800000122300,
+        "target": "node-t3-tundra-03_monster-21",
+        "aggroTypes": [
+          "rime-caster"
+        ]
+      }
+    ],
+    "events": [
+      {
+        "atMs": 121100,
+        "event": {
+          "kind": "ability-activation",
+          "nodeId": "node-t3-tundra-03",
+          "player": {
+            "id": "bench-bot-0",
+            "name": "t3-tundra-class-frame-01-apprentice-balanced-s101021-primary",
+            "actorType": "player"
+          },
+          "abilityId": "cleanse",
+          "slot": "guard",
+          "removedEffects": [
+            {
+              "effectId": "tundra-chill",
+              "stacks": 2
+            }
+          ],
+          "id": 816,
+          "tick": 1212,
+          "serverTime": 1800000121100
+        }
+      },
+      {
+        "atMs": 121700,
+        "event": {
+          "kind": "ability-activation",
+          "nodeId": "node-t3-tundra-03",
+          "player": {
+            "id": "bench-bot-0",
+            "name": "t3-tundra-class-frame-01-apprentice-balanced-s101021-primary",
+            "actorType": "player"
+          },
+          "abilityId": "hamstring",
+          "slot": "technique",
+          "id": 827,
+          "tick": 1218,
+          "serverTime": 1800000121700
+        }
+      },
+      {
+        "atMs": 123900,
+        "event": {
+          "kind": "player-death",
+          "nodeId": "node-t3-tundra-03",
+          "player": {
+            "id": "bench-bot-0",
+            "name": "t3-tundra-class-frame-01-apprentice-balanced-s101021-primary",
+            "actorType": "player"
+          },
+          "cause": {
+            "kind": "ranged",
+            "killer": {
+              "monsterEntityId": "node-t3-tundra-03_monster-21",
+              "monsterTypeId": "rime-caster",
+              "monsterName": "Rime Caster",
+              "isBoss": false,
+              "nodeId": "node-t3-tundra-03"
+            },
+            "damage": 148.5
+          },
+          "id": 846,
+          "tick": 1240,
+          "serverTime": 1800000123900
+        }
+      }
+    ],
+    "outgoingHpDamage": [
+      {
+        "atMs": 119100,
+        "target": "Glacier Bear",
+        "hpDamage": 0,
+        "damageType": "direct"
+      },
+      {
+        "atMs": 119300,
+        "target": "Glacier Bear",
+        "hpDamage": 185,
+        "damageType": "dot"
+      },
+      {
+        "atMs": 119800,
+        "target": "Glacier Bear",
+        "hpDamage": 109,
+        "damageType": "direct"
+      },
+      {
+        "atMs": 120600,
+        "target": "Glacier Bear",
+        "hpDamage": 84,
+        "damageType": "direct"
+      },
+      {
+        "atMs": 121500,
+        "target": "Rime Caster",
+        "hpDamage": 89,
+        "damageType": "direct"
+      },
+      {
+        "atMs": 122300,
+        "target": "Rime Caster",
+        "hpDamage": 107,
+        "damageType": "direct"
+      },
+      {
+        "atMs": 123000,
+        "target": "Rime Caster",
+        "hpDamage": 107,
+        "damageType": "dot"
+      },
+      {
+        "atMs": 123100,
+        "target": "Rime Caster",
+        "hpDamage": 0,
+        "damageType": "direct"
+      },
+      {
+        "atMs": 123900,
+        "target": "Rime Caster",
+        "hpDamage": 89,
+        "damageType": "direct"
+      }
+    ]
+  }
+]

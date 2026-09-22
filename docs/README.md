@@ -268,6 +268,12 @@ top-level doc.
 `rites-current-state.md` and `stances-current-state.md` double as external-review
 handoffs: both systems have complete machinery and thin, placeholder content.
 
+## Experiment preparation
+
+| Packet | State |
+|---|---|
+| [T2 multi-biome class screen 01](../reports/player-fast-pass/t2-multi-biome-class-01-preparation/README.md) | Prepared: 264 fixed lives across seven T2 biomes; Desert level-4 Focus Lowest HP, melee craft/equip at five minutes. Zero experiment combat run. |
+
 ## In-flight plans
 
 | Doc | State |

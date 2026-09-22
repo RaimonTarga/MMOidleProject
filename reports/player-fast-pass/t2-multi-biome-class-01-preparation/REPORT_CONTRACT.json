@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "experimentId": "t2-multi-biome-class-01",
+  "measuredSource": "41b3d35961bf4393beeea6e70aabfe2ae43ad810",
+  "planned": 264,
+  "blocks": {
+    "A": 216,
+    "B": 12,
+    "D": 36
+  },
+  "deferred": 0,
+  "execution": {
+    "oneWorker": true,
+    "once": true,
+    "retries": 0,
+    "firstScheduledCaseCounts": true,
+    "extraPilots": 0,
+    "sourceAndPackagesFrozen": true
+  },
+  "files": [
+    "REPORT.md",
+    "results-summary.json",
+    "CLASS_ASSESSMENT.md",
+    "complete.json or partial.json",
+    "identity.json",
+    "manifest.json",
+    "seal.json",
+    "resolved-builds.json",
+    "raw-inventory.json",
+    "publication-receipt.json"
+  ],
+  "rawLocation": "D:/mmo-idle/t2-multi-biome-class-01/run-01",
+  "publicationDirectory": "reports/player-fast-pass/t2-multi-biome-class-01/run-01/",
+  "report": {
+    "leadWith": "Outcomes and up to three concrete balance priorities",
+    "primaryMap": "18 identities by seven biomes; both seeds, A and D distinct; B matched locally",
+    "sixRootConclusions": true,
+    "bossEvidenceColumn": "Separate historical evidence only; no new boss observations",
+    "metrics": [
+      "survival or death time",
+      "completed kills",
+      "first-kill latency",
+      "0-5 and 5-10 minute work",
+      "unfinished targets and progress gaps",
+      "owner HP/barrier pressure",
+      "lethal/enemy exposure context",
+      "AoE delivery and relevant Cleanse/Guard activation",
+      "hazard and overpull context",
+      "recovery interruption",
+      "Desert adoption status, timing, recipe, paid cost, RP, before/after rules"
+    ],
+    "decisions": [
+      "retain class values",
+      "promote named strategy/package",
+      "scoped buff candidate",
+      "scoped nerf candidate",
+      "specific designer question/known limitation"
+    ],
+    "constraints": [
+      "No pooled cross-biome kill leaderboard",
+      "Do not impute post-death endpoints",
+      "Death-shortened rates are not sustained farming",
+      "HP progress separate from absorption and summon payment",
+      "No universal win probability or endurance certification",
+      "No automatic tuning or follow-on survey",
+      "At most three actionable priorities; old/new values only when supported",
+      "Pre-midpoint Desert deaths are no exposure to the new rune"
+    ],
+    "evidence": "Synthetic mature ownership, economyEligible=false; no acquisition, live-play or boss certification"
+  },
+  "publication": {
+    "commit": true,
+    "push": true,
+    "forcePush": false,
+    "explicitScopedStage": true,
+    "verifyRemoteSha": true,
+    "verifyPathsAndHashes": true,
+    "return": [
+      "branch",
+      "full publication SHA",
+      "measured SHA",
+      "report path",
+      "planned/completed/failed/deferred/not-run counts"
+    ],
+    "failure": "Preserve report and actual failure; never rerun combat to solve publication"
+  }
+}

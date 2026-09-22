@@ -1,0 +1,2696 @@
+[
+  {
+    "equippedId": "gale-needle",
+    "chain": [
+      {
+        "id": "gale-needle",
+        "recipe": {
+          "id": "gale-needle",
+          "name": "Gale Needle",
+          "recipeGroup": "forest",
+          "requiredBiomeLevel": 7,
+          "slot": "weapon",
+          "lineageId": "rapier",
+          "evolvesFrom": "flash-rapier",
+          "cost": {
+            "green": 60
+          },
+          "reconstructCost": {
+            "green": 210
+          },
+          "reconstructCatalystCost": {
+            "alacrity": 2
+          },
+          "stats": {
+            "attack": 9
+          },
+          "attacksPerSecond": 1.6,
+          "tier": 2,
+          "icon": "items/weapons/gale-needle.png",
+          "description": "A fencing blade machined to an impossible point, humming faintly when drawn.",
+          "upgrades": [
+            {
+              "attacksPerSecond": 0.02,
+              "cost": {
+                "green": 38
+              },
+              "requiredBiomeLevel": 8
+            },
+            {
+              "stats": {
+                "attack": 1
+              },
+              "attacksPerSecond": 0.02,
+              "cost": {
+                "green": 94
+              },
+              "requiredBiomeLevel": 9
+            },
+            {
+              "attacksPerSecond": 0.02,
+              "cost": {
+                "green": 150
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "stats": {
+                "attack": 2
+              },
+              "attacksPerSecond": 0.02,
+              "cost": {
+                "green": 244
+              },
+              "catalystCost": {
+                "alacrity": 1
+              },
+              "requiredBiomeLevel": 11
+            },
+            {
+              "stats": {
+                "attack": 2
+              },
+              "attacksPerSecond": 0.02,
+              "cost": {
+                "green": 414
+              },
+              "catalystCost": {
+                "alacrity": 2
+              },
+              "requiredBiomeLevel": 12
+            }
+          ]
+        },
+        "plus": 5,
+        "actualLevel": 12,
+        "upgradeRequiredLevel": 12
+      },
+      {
+        "id": "flash-rapier",
+        "recipe": {
+          "id": "flash-rapier",
+          "name": "Flash Rapier",
+          "recipeGroup": "forest",
+          "requiredBiomeLevel": 1,
+          "slot": "weapon",
+          "lineageId": "rapier",
+          "cost": {
+            "green": 20
+          },
+          "stats": {
+            "attack": 5
+          },
+          "attacksPerSecond": 1.5,
+          "tier": 1,
+          "icon": "items/weapons/flash-rapier.png",
+          "description": "Forged thin as a reed by duelists who prized speed above all.",
+          "upgrades": [
+            {
+              "attacksPerSecond": 0.02,
+              "cost": {
+                "green": 25
+              },
+              "requiredBiomeLevel": 2
+            },
+            {
+              "stats": {
+                "attack": 1
+              },
+              "attacksPerSecond": 0.02,
+              "cost": {
+                "green": 50
+              },
+              "requiredBiomeLevel": 3
+            },
+            {
+              "attacksPerSecond": 0.02,
+              "cost": {
+                "green": 75
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "attack": 1
+              },
+              "attacksPerSecond": 0.02,
+              "cost": {
+                "green": 125
+              },
+              "requiredBiomeLevel": 5
+            },
+            {
+              "stats": {
+                "attack": 1
+              },
+              "attacksPerSecond": 0.02,
+              "cost": {
+                "green": 155
+              },
+              "catalystCost": {
+                "alacrity": 1
+              },
+              "requiredBiomeLevel": 6
+            }
+          ]
+        },
+        "plus": 5,
+        "actualLevel": 12,
+        "upgradeRequiredLevel": 6
+      }
+    ]
+  },
+  {
+    "equippedId": "plains-vest-t2",
+    "chain": [
+      {
+        "id": "plains-vest-t2",
+        "recipe": {
+          "id": "plains-vest-t2",
+          "name": "Enduring Robe",
+          "recipeGroup": "plains",
+          "requiredBiomeLevel": 8,
+          "slot": "armor",
+          "evolvesFrom": "plains-vest-t1",
+          "cost": {
+            "yellow": 60
+          },
+          "stats": {
+            "maxHp": 43,
+            "plating": 13
+          },
+          "tier": 2,
+          "reconstructCost": {
+            "yellow": 210
+          },
+          "reconstructCatalystCost": {
+            "alacrity": 2
+          },
+          "icon": "items/armor/enduring-robe.png",
+          "description": "Plate that has outlasted the wars it was made for, and the smith who made it.",
+          "upgrades": [
+            {
+              "stats": {
+                "maxHp": 4,
+                "plating": 1
+              },
+              "cost": {
+                "yellow": 36
+              },
+              "requiredBiomeLevel": 9
+            },
+            {
+              "stats": {
+                "maxHp": 4,
+                "plating": 1
+              },
+              "cost": {
+                "yellow": 90
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "stats": {
+                "maxHp": 5,
+                "plating": 1
+              },
+              "cost": {
+                "yellow": 144
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "stats": {
+                "maxHp": 4,
+                "plating": 2
+              },
+              "cost": {
+                "yellow": 234
+              },
+              "catalystCost": {
+                "alacrity": 1
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "stats": {
+                "maxHp": 5,
+                "plating": 1
+              },
+              "cost": {
+                "yellow": 396
+              },
+              "catalystCost": {
+                "alacrity": 2
+              },
+              "requiredBiomeLevel": 10
+            }
+          ]
+        },
+        "plus": 5,
+        "actualLevel": 12,
+        "upgradeRequiredLevel": 10
+      },
+      {
+        "id": "plains-vest-t1",
+        "recipe": {
+          "id": "plains-vest-t1",
+          "name": "Survivor's Robe",
+          "recipeGroup": "plains",
+          "requiredBiomeLevel": 2,
+          "slot": "armor",
+          "cost": {
+            "yellow": 20
+          },
+          "stats": {
+            "maxHp": 24,
+            "plating": 7
+          },
+          "tier": 1,
+          "icon": "items/armor/survivors-robe.png",
+          "description": "Field plate patched and repatched by those who lived to patch it.",
+          "upgrades": [
+            {
+              "stats": {
+                "maxHp": 3,
+                "plating": 1
+              },
+              "cost": {
+                "yellow": 20
+              },
+              "requiredBiomeLevel": 3
+            },
+            {
+              "stats": {
+                "maxHp": 3,
+                "plating": 1
+              },
+              "cost": {
+                "yellow": 45
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "maxHp": 3,
+                "plating": 1
+              },
+              "cost": {
+                "yellow": 70
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "maxHp": 3,
+                "plating": 1
+              },
+              "cost": {
+                "yellow": 115
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "maxHp": 3,
+                "plating": 1
+              },
+              "cost": {
+                "yellow": 150
+              },
+              "catalystCost": {
+                "alacrity": 1
+              },
+              "requiredBiomeLevel": 4
+            }
+          ]
+        },
+        "plus": 5,
+        "actualLevel": 12,
+        "upgradeRequiredLevel": 4
+      }
+    ]
+  },
+  {
+    "equippedId": "swamp-charm-t2",
+    "chain": [
+      {
+        "id": "swamp-charm-t2",
+        "recipe": {
+          "id": "swamp-charm-t2",
+          "name": "Bog Eye",
+          "recipeGroup": "swamp",
+          "requiredBiomeLevel": 9,
+          "slot": "recovery",
+          "evolvesFrom": "swamp-charm-t1",
+          "cost": {
+            "purple": 44
+          },
+          "stats": {
+            "recovery": 4
+          },
+          "reconstructCost": {
+            "purple": 154
+          },
+          "reconstructCatalystCost": {
+            "fortified": 2
+          },
+          "mechanicEffects": {
+            "defense.recovery-pulse-pct": 0.32,
+            "defense.recovery-pulse-interval-ms": 8000,
+            "defense.recovery-pulse-duration-ms": 4000
+          },
+          "tier": 2,
+          "icon": "items/charms/bog-eye.png",
+          "description": "A bog-touched eye that drinks deep and gives quietly back.",
+          "upgrades": [
+            {
+              "mechanicEffects": {
+                "defense.recovery-pulse-pct": 0.02
+              },
+              "cost": {
+                "purple": 18
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "stats": {
+                "recovery": 1
+              },
+              "mechanicEffects": {
+                "defense.recovery-pulse-pct": 0.02
+              },
+              "cost": {
+                "purple": 45
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "mechanicEffects": {
+                "defense.recovery-pulse-pct": 0.02
+              },
+              "cost": {
+                "purple": 72
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "stats": {
+                "recovery": 1
+              },
+              "mechanicEffects": {
+                "defense.recovery-pulse-pct": 0.02
+              },
+              "cost": {
+                "purple": 117
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "mechanicEffects": {
+                "defense.recovery-pulse-pct": 0.02
+              },
+              "cost": {
+                "purple": 198
+              },
+              "catalystCost": {
+                "fortified": 1
+              },
+              "requiredBiomeLevel": 10
+            }
+          ]
+        },
+        "plus": 5,
+        "actualLevel": 12,
+        "upgradeRequiredLevel": 10
+      },
+      {
+        "id": "swamp-charm-t1",
+        "recipe": {
+          "id": "swamp-charm-t1",
+          "name": "Murk Eye",
+          "recipeGroup": "swamp",
+          "requiredBiomeLevel": 3,
+          "slot": "recovery",
+          "cost": {
+            "purple": 18
+          },
+          "stats": {
+            "recovery": 2
+          },
+          "mechanicEffects": {
+            "defense.recovery-pulse-pct": 0.2,
+            "defense.recovery-pulse-interval-ms": 8000,
+            "defense.recovery-pulse-duration-ms": 4000
+          },
+          "tier": 1,
+          "icon": "items/charms/murk-eye.png",
+          "description": "A preserved golem eye, still weeping faint green light.",
+          "upgrades": [
+            {
+              "mechanicEffects": {
+                "defense.recovery-pulse-pct": 0.02
+              },
+              "cost": {
+                "purple": 10
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "mechanicEffects": {
+                "defense.recovery-pulse-pct": 0.02
+              },
+              "cost": {
+                "purple": 25
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "recovery": 1
+              },
+              "mechanicEffects": {
+                "defense.recovery-pulse-pct": 0.02
+              },
+              "cost": {
+                "purple": 40
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "mechanicEffects": {
+                "defense.recovery-pulse-pct": 0.02
+              },
+              "cost": {
+                "purple": 60
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "mechanicEffects": {
+                "defense.recovery-pulse-pct": 0.02
+              },
+              "cost": {
+                "purple": 75
+              },
+              "requiredBiomeLevel": 4
+            }
+          ]
+        },
+        "plus": 5,
+        "actualLevel": 12,
+        "upgradeRequiredLevel": 4
+      }
+    ]
+  },
+  {
+    "equippedId": "mountain-boots-t2",
+    "chain": [
+      {
+        "id": "mountain-boots-t2",
+        "recipe": {
+          "id": "mountain-boots-t2",
+          "name": "Mountain Stride",
+          "recipeGroup": "mountain",
+          "requiredBiomeLevel": 10,
+          "slot": "mobility",
+          "evolvesFrom": "mountain-boots-t1",
+          "cost": {
+            "blue": 42
+          },
+          "stats": {
+            "speed": 29
+          },
+          "tier": 2,
+          "reconstructCost": {
+            "blue": 147
+          },
+          "reconstructCatalystCost": {
+            "heavy": 2
+          },
+          "mechanicEffects": {
+            "mobility.approach-speed-pct": 0.65
+          },
+          "icon": "items/boots/mountain-stride.png",
+          "description": "Forged for those who treat a sheer slope as a road.",
+          "upgrades": [
+            {
+              "stats": {
+                "speed": 2
+              },
+              "mechanicEffects": {
+                "mobility.approach-speed-pct": 0.05
+              },
+              "cost": {
+                "blue": 11
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "stats": {
+                "speed": 1
+              },
+              "mechanicEffects": {
+                "mobility.approach-speed-pct": 0.05
+              },
+              "cost": {
+                "blue": 29
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "stats": {
+                "speed": 2
+              },
+              "mechanicEffects": {
+                "mobility.approach-speed-pct": 0.05
+              },
+              "cost": {
+                "blue": 46
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "stats": {
+                "speed": 1
+              },
+              "mechanicEffects": {
+                "mobility.approach-speed-pct": 0.05
+              },
+              "cost": {
+                "blue": 75
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "stats": {
+                "speed": 2
+              },
+              "mechanicEffects": {
+                "mobility.approach-speed-pct": 0.05
+              },
+              "cost": {
+                "blue": 126
+              },
+              "catalystCost": {
+                "heavy": 1
+              },
+              "requiredBiomeLevel": 10
+            }
+          ]
+        },
+        "plus": 5,
+        "actualLevel": 12,
+        "upgradeRequiredLevel": 10
+      },
+      {
+        "id": "mountain-boots-t1",
+        "recipe": {
+          "id": "mountain-boots-t1",
+          "name": "Iron Treads",
+          "recipeGroup": "mountain",
+          "requiredBiomeLevel": 4,
+          "slot": "mobility",
+          "cost": {
+            "blue": 18
+          },
+          "stats": {
+            "speed": 16
+          },
+          "tier": 1,
+          "mechanicEffects": {
+            "mobility.approach-speed-pct": 0.35
+          },
+          "icon": "items/boots/iron-treads.png",
+          "description": "Heavy soles that bite into scree and loose rock alike.",
+          "upgrades": [
+            {
+              "stats": {
+                "speed": 1
+              },
+              "mechanicEffects": {
+                "mobility.approach-speed-pct": 0.05
+              },
+              "cost": {
+                "blue": 10
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "speed": 1
+              },
+              "mechanicEffects": {
+                "mobility.approach-speed-pct": 0.05
+              },
+              "cost": {
+                "blue": 15
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "speed": 1
+              },
+              "mechanicEffects": {
+                "mobility.approach-speed-pct": 0.05
+              },
+              "cost": {
+                "blue": 25
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "speed": 1
+              },
+              "mechanicEffects": {
+                "mobility.approach-speed-pct": 0.05
+              },
+              "cost": {
+                "blue": 40
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "speed": 1
+              },
+              "mechanicEffects": {
+                "mobility.approach-speed-pct": 0.05
+              },
+              "cost": {
+                "blue": 55
+              },
+              "requiredBiomeLevel": 4
+            }
+          ]
+        },
+        "plus": 5,
+        "actualLevel": 12,
+        "upgradeRequiredLevel": 4
+      }
+    ]
+  },
+  {
+    "equippedId": "core-tempered",
+    "chain": [
+      {
+        "id": "core-tempered",
+        "recipe": {
+          "id": "core-tempered",
+          "name": "Tempered Core",
+          "recipeGroup": "cave",
+          "requiredBiomeLevel": 12,
+          "slot": "core",
+          "coreEligibility": "unrestricted",
+          "lineageId": "core-tempered",
+          "cost": {
+            "red": 500
+          },
+          "catalystCost": {
+            "dominion": 4
+          },
+          "stats": {},
+          "tier": 2,
+          "mechanicEffects": {
+            "core.damage-dealt-pct": 0.12,
+            "core.maxhp-mult": 0.12
+          },
+          "icon": "items/cores/tempered.png",
+          "description": "Balanced for any hand. It asks no commitment, and rewards none in particular."
+        },
+        "plus": 0,
+        "actualLevel": 12,
+        "upgradeRequiredLevel": null
+      }
+    ]
+  },
+  {
+    "equippedId": "quake-hammer",
+    "chain": [
+      {
+        "id": "quake-hammer",
+        "recipe": {
+          "id": "quake-hammer",
+          "name": "Quake Hammer",
+          "recipeGroup": "mountain",
+          "requiredBiomeLevel": 7,
+          "slot": "weapon",
+          "evolvesFrom": "heavy-hammer",
+          "cost": {
+            "blue": 52
+          },
+          "stats": {
+            "attack": 47
+          },
+          "attacksPerSecond": 0.55,
+          "tier": 2,
+          "reconstructCost": {
+            "blue": 182
+          },
+          "reconstructCatalystCost": {
+            "heavy": 2
+          },
+          "icon": "items/weapons/quake-hammer.png",
+          "mechanicEffects": {
+            "weapon.empowered-mult-bonus": 0.26,
+            "technique.cast-speed-pct": 0.15
+          },
+          "description": "When it lands, the ground remembers it longer than the foe does.",
+          "upgrades": [
+            {
+              "stats": {
+                "attack": 4
+              },
+              "mechanicEffects": {
+                "weapon.empowered-mult-bonus": 0.01
+              },
+              "cost": {
+                "blue": 47
+              },
+              "requiredBiomeLevel": 8
+            },
+            {
+              "stats": {
+                "attack": 5
+              },
+              "mechanicEffects": {
+                "weapon.empowered-mult-bonus": 0.02
+              },
+              "cost": {
+                "blue": 117
+              },
+              "requiredBiomeLevel": 9
+            },
+            {
+              "stats": {
+                "attack": 4
+              },
+              "mechanicEffects": {
+                "weapon.empowered-mult-bonus": 0.01
+              },
+              "cost": {
+                "blue": 187
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "stats": {
+                "attack": 5
+              },
+              "mechanicEffects": {
+                "weapon.empowered-mult-bonus": 0.02
+              },
+              "cost": {
+                "blue": 304
+              },
+              "catalystCost": {
+                "heavy": 1
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "stats": {
+                "attack": 5
+              },
+              "mechanicEffects": {
+                "weapon.empowered-mult-bonus": 0.01
+              },
+              "cost": {
+                "blue": 515
+              },
+              "catalystCost": {
+                "heavy": 2
+              },
+              "requiredBiomeLevel": 10
+            }
+          ]
+        },
+        "plus": 5,
+        "actualLevel": 12,
+        "upgradeRequiredLevel": 10
+      },
+      {
+        "id": "heavy-hammer",
+        "recipe": {
+          "id": "heavy-hammer",
+          "name": "Heavy Hammer",
+          "recipeGroup": "mountain",
+          "requiredBiomeLevel": 1,
+          "slot": "weapon",
+          "cost": {
+            "blue": 22
+          },
+          "stats": {
+            "attack": 26
+          },
+          "attacksPerSecond": 0.55,
+          "tier": 1,
+          "icon": "items/weapons/heavy-hammer.png",
+          "mechanicEffects": {
+            "weapon.empowered-mult-bonus": 0.15
+          },
+          "description": "Two-handed, brutal, and honest. It asks only that you find the time to swing it.",
+          "upgrades": [
+            {
+              "stats": {
+                "attack": 2
+              },
+              "mechanicEffects": {
+                "weapon.empowered-mult-bonus": 0.01
+              },
+              "cost": {
+                "blue": 25
+              },
+              "requiredBiomeLevel": 2
+            },
+            {
+              "stats": {
+                "attack": 2
+              },
+              "mechanicEffects": {
+                "weapon.empowered-mult-bonus": 0.01
+              },
+              "cost": {
+                "blue": 45
+              },
+              "requiredBiomeLevel": 3
+            },
+            {
+              "stats": {
+                "attack": 2
+              },
+              "mechanicEffects": {
+                "weapon.empowered-mult-bonus": 0.01
+              },
+              "cost": {
+                "blue": 75
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "attack": 2
+              },
+              "mechanicEffects": {
+                "weapon.empowered-mult-bonus": 0.02
+              },
+              "cost": {
+                "blue": 125
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "attack": 2
+              },
+              "mechanicEffects": {
+                "weapon.empowered-mult-bonus": 0.02
+              },
+              "cost": {
+                "blue": 155
+              },
+              "catalystCost": {
+                "heavy": 1
+              },
+              "requiredBiomeLevel": 4
+            }
+          ]
+        },
+        "plus": 5,
+        "actualLevel": 12,
+        "upgradeRequiredLevel": 4
+      }
+    ]
+  },
+  {
+    "equippedId": "ruinous-axe",
+    "chain": [
+      {
+        "id": "ruinous-axe",
+        "recipe": {
+          "id": "ruinous-axe",
+          "name": "Ruinous Axe",
+          "recipeGroup": "cave",
+          "requiredBiomeLevel": 7,
+          "slot": "weapon",
+          "evolvesFrom": "chaotic-axe",
+          "cost": {
+            "red": 60
+          },
+          "stats": {
+            "attack": 43
+          },
+          "attacksPerSecond": 1.2,
+          "tier": 2,
+          "reconstructCost": {
+            "red": 210
+          },
+          "reconstructCatalystCost": {
+            "swarming": 2
+          },
+          "mechanicEffects": {
+            "weapon.dead-swing-interval": 4
+          },
+          "icon": "items/weapons/ruinous-axe.png",
+          "description": "Bigger, meaner, and somehow better balanced — chaos with the faintest thread of discipline.",
+          "upgrades": [
+            {
+              "stats": {
+                "attack": 4
+              },
+              "cost": {
+                "red": 44
+              },
+              "requiredBiomeLevel": 8
+            },
+            {
+              "stats": {
+                "attack": 4
+              },
+              "cost": {
+                "red": 110
+              },
+              "requiredBiomeLevel": 9
+            },
+            {
+              "stats": {
+                "attack": 5
+              },
+              "cost": {
+                "red": 177
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "stats": {
+                "attack": 4
+              },
+              "cost": {
+                "red": 287
+              },
+              "catalystCost": {
+                "swarming": 1
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "stats": {
+                "attack": 5
+              },
+              "cost": {
+                "red": 486
+              },
+              "catalystCost": {
+                "swarming": 2
+              },
+              "requiredBiomeLevel": 10
+            }
+          ]
+        },
+        "plus": 5,
+        "actualLevel": 12,
+        "upgradeRequiredLevel": 10
+      },
+      {
+        "id": "chaotic-axe",
+        "recipe": {
+          "id": "chaotic-axe",
+          "name": "Chaotic Axe",
+          "recipeGroup": "cave",
+          "requiredBiomeLevel": 1,
+          "slot": "weapon",
+          "cost": {
+            "red": 26
+          },
+          "stats": {
+            "attack": 22
+          },
+          "attacksPerSecond": 1.1,
+          "tier": 1,
+          "mechanicEffects": {
+            "weapon.dead-swing-interval": 3
+          },
+          "icon": "items/weapons/chaotic-axe.png",
+          "description": "A wild, top-heavy thing that fights as much as it is wielded.",
+          "upgrades": [
+            {
+              "stats": {
+                "attack": 1
+              },
+              "cost": {
+                "red": 25
+              },
+              "requiredBiomeLevel": 2
+            },
+            {
+              "stats": {
+                "attack": 2
+              },
+              "cost": {
+                "red": 45
+              },
+              "requiredBiomeLevel": 3
+            },
+            {
+              "stats": {
+                "attack": 2
+              },
+              "cost": {
+                "red": 75
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "attack": 3
+              },
+              "cost": {
+                "red": 125
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "attack": 2
+              },
+              "cost": {
+                "red": 155
+              },
+              "catalystCost": {
+                "swarming": 1
+              },
+              "requiredBiomeLevel": 4
+            }
+          ]
+        },
+        "plus": 5,
+        "actualLevel": 12,
+        "upgradeRequiredLevel": 4
+      }
+    ]
+  },
+  {
+    "equippedId": "swamp-vest-t2",
+    "chain": [
+      {
+        "id": "swamp-vest-t2",
+        "recipe": {
+          "id": "swamp-vest-t2",
+          "name": "Bog Wrappings",
+          "recipeGroup": "swamp",
+          "requiredBiomeLevel": 8,
+          "slot": "armor",
+          "evolvesFrom": "swamp-vest-t1",
+          "cost": {
+            "purple": 54
+          },
+          "stats": {
+            "maxHp": 54,
+            "plating": 7
+          },
+          "reconstructCost": {
+            "purple": 189
+          },
+          "reconstructCatalystCost": {
+            "fortified": 2
+          },
+          "mechanicEffects": {
+            "defense.dot-resistance": 0.34,
+            "defense.hit-to-dot-pct": 0.08
+          },
+          "tier": 2,
+          "icon": "items/armor/bog-wrappings.png",
+          "description": "Cloth drawn from the deepest mire, where even the water has forgotten the sun.",
+          "upgrades": [
+            {
+              "stats": {
+                "maxHp": 5,
+                "plating": 1
+              },
+              "mechanicEffects": {
+                "defense.dot-resistance": 0.02
+              },
+              "cost": {
+                "purple": 45
+              },
+              "requiredBiomeLevel": 9
+            },
+            {
+              "stats": {
+                "maxHp": 5
+              },
+              "mechanicEffects": {
+                "defense.dot-resistance": 0.02
+              },
+              "cost": {
+                "purple": 113
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "stats": {
+                "maxHp": 6,
+                "plating": 1
+              },
+              "mechanicEffects": {
+                "defense.dot-resistance": 0.01
+              },
+              "cost": {
+                "purple": 180
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "stats": {
+                "maxHp": 5,
+                "plating": 1
+              },
+              "mechanicEffects": {
+                "defense.dot-resistance": 0.02
+              },
+              "cost": {
+                "purple": 293
+              },
+              "catalystCost": {
+                "fortified": 1
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "stats": {
+                "maxHp": 6,
+                "plating": 1
+              },
+              "mechanicEffects": {
+                "defense.dot-resistance": 0.01
+              },
+              "cost": {
+                "purple": 494
+              },
+              "catalystCost": {
+                "fortified": 2
+              },
+              "requiredBiomeLevel": 10
+            }
+          ]
+        },
+        "plus": 5,
+        "actualLevel": 12,
+        "upgradeRequiredLevel": 10
+      },
+      {
+        "id": "swamp-vest-t1",
+        "recipe": {
+          "id": "swamp-vest-t1",
+          "name": "Arcane Wrappings",
+          "recipeGroup": "swamp",
+          "requiredBiomeLevel": 2,
+          "slot": "armor",
+          "cost": {
+            "purple": 22
+          },
+          "stats": {
+            "maxHp": 30,
+            "plating": 4
+          },
+          "mechanicEffects": {
+            "defense.dot-resistance": 0.2
+          },
+          "tier": 1,
+          "icon": "items/armor/arcane-wrappings.png",
+          "description": "Marsh-cloth steeped in old wardings against rot and fume.",
+          "upgrades": [
+            {
+              "stats": {
+                "maxHp": 4
+              },
+              "mechanicEffects": {
+                "defense.dot-resistance": 0.02
+              },
+              "cost": {
+                "purple": 20
+              },
+              "requiredBiomeLevel": 3
+            },
+            {
+              "stats": {
+                "maxHp": 4,
+                "plating": 1
+              },
+              "mechanicEffects": {
+                "defense.dot-resistance": 0.02
+              },
+              "cost": {
+                "purple": 45
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "maxHp": 4
+              },
+              "mechanicEffects": {
+                "defense.dot-resistance": 0.02
+              },
+              "cost": {
+                "purple": 70
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "maxHp": 4,
+                "plating": 1
+              },
+              "mechanicEffects": {
+                "defense.dot-resistance": 0.02
+              },
+              "cost": {
+                "purple": 115
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "maxHp": 4
+              },
+              "mechanicEffects": {
+                "defense.dot-resistance": 0.02
+              },
+              "cost": {
+                "purple": 150
+              },
+              "catalystCost": {
+                "fortified": 1
+              },
+              "requiredBiomeLevel": 4
+            }
+          ]
+        },
+        "plus": 5,
+        "actualLevel": 12,
+        "upgradeRequiredLevel": 4
+      }
+    ]
+  },
+  {
+    "equippedId": "desert-boots-t2",
+    "chain": [
+      {
+        "id": "desert-boots-t2",
+        "recipe": {
+          "id": "desert-boots-t2",
+          "name": "Sand Sprint",
+          "recipeGroup": "desert",
+          "requiredBiomeLevel": 4,
+          "slot": "mobility",
+          "cost": {
+            "yellow": 58
+          },
+          "stats": {
+            "speed": 58
+          },
+          "tier": 2,
+          "mechanicEffects": {
+            "mobility.kite-speed-pct": 0.2
+          },
+          "icon": "items/boots/sand-sprint.png",
+          "description": "Wide and light, made to outpace a storm across open dune.",
+          "upgrades": [
+            {
+              "stats": {
+                "speed": 8
+              },
+              "cost": {
+                "yellow": 15
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "speed": 12
+              },
+              "cost": {
+                "yellow": 37
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "speed": 16
+              },
+              "cost": {
+                "yellow": 60
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "speed": 16
+              },
+              "cost": {
+                "yellow": 97
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "speed": 16
+              },
+              "cost": {
+                "yellow": 165
+              },
+              "catalystCost": {
+                "dominion": 1
+              },
+              "requiredBiomeLevel": 4
+            }
+          ]
+        },
+        "plus": 5,
+        "actualLevel": 6,
+        "upgradeRequiredLevel": 4
+      }
+    ]
+  },
+  {
+    "equippedId": "jungle-stinger-rapier",
+    "chain": [
+      {
+        "id": "jungle-stinger-rapier",
+        "recipe": {
+          "id": "jungle-stinger-rapier",
+          "name": "Stinger Rapier",
+          "recipeGroup": "jungle",
+          "requiredBiomeLevel": 1,
+          "slot": "weapon",
+          "cost": {
+            "green": 55
+          },
+          "stats": {
+            "attack": 10,
+            "onHitDamage": 8
+          },
+          "attacksPerSecond": 1.55,
+          "tier": 2,
+          "icon": "items/weapons/stinger-rapier.png",
+          "element": "poison",
+          "description": "A thin blade kept slick with something the jungle distilled and never named.",
+          "upgrades": [
+            {
+              "stats": {
+                "attack": 4,
+                "onHitDamage": 3
+              },
+              "cost": {
+                "green": 40
+              },
+              "requiredBiomeLevel": 2
+            },
+            {
+              "stats": {
+                "attack": 4,
+                "onHitDamage": 3
+              },
+              "cost": {
+                "green": 99
+              },
+              "requiredBiomeLevel": 3
+            },
+            {
+              "stats": {
+                "attack": 4,
+                "onHitDamage": 3
+              },
+              "cost": {
+                "green": 158
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "attack": 4,
+                "onHitDamage": 3
+              },
+              "cost": {
+                "green": 257
+              },
+              "catalystCost": {
+                "alacrity": 1
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "attack": 4,
+                "onHitDamage": 3
+              },
+              "cost": {
+                "green": 436
+              },
+              "catalystCost": {
+                "alacrity": 2
+              },
+              "requiredBiomeLevel": 4
+            }
+          ]
+        },
+        "plus": 5,
+        "actualLevel": 6,
+        "upgradeRequiredLevel": 4
+      }
+    ]
+  },
+  {
+    "equippedId": "mountain-vest-t2",
+    "chain": [
+      {
+        "id": "mountain-vest-t2",
+        "recipe": {
+          "id": "mountain-vest-t2",
+          "name": "Iron Crusader Plate",
+          "recipeGroup": "mountain",
+          "requiredBiomeLevel": 8,
+          "slot": "armor",
+          "evolvesFrom": "mountain-vest-t1",
+          "cost": {
+            "blue": 52
+          },
+          "stats": {
+            "maxHp": 58,
+            "plating": 9
+          },
+          "reconstructCost": {
+            "blue": 182
+          },
+          "reconstructCatalystCost": {
+            "heavy": 2
+          },
+          "mechanicEffects": {
+            "guard.potency-pct": 0.28
+          },
+          "tier": 2,
+          "icon": "items/armor/iron-crusader-plate.png",
+          "description": "Masterwork plate of the old crusades, dented in a hundred places, breached in none.",
+          "upgrades": [
+            {
+              "stats": {
+                "maxHp": 6,
+                "plating": 1
+              },
+              "mechanicEffects": {
+                "guard.potency-pct": 0.02
+              },
+              "cost": {
+                "blue": 42
+              },
+              "requiredBiomeLevel": 9
+            },
+            {
+              "stats": {
+                "maxHp": 5,
+                "plating": 1
+              },
+              "mechanicEffects": {
+                "guard.potency-pct": 0.02
+              },
+              "cost": {
+                "blue": 106
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "stats": {
+                "maxHp": 6,
+                "plating": 1
+              },
+              "mechanicEffects": {
+                "guard.potency-pct": 0.02
+              },
+              "cost": {
+                "blue": 170
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "stats": {
+                "maxHp": 5,
+                "plating": 1
+              },
+              "mechanicEffects": {
+                "guard.potency-pct": 0.02
+              },
+              "cost": {
+                "blue": 276
+              },
+              "catalystCost": {
+                "heavy": 1
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "stats": {
+                "maxHp": 6,
+                "plating": 1
+              },
+              "mechanicEffects": {
+                "guard.potency-pct": 0.02
+              },
+              "cost": {
+                "blue": 468
+              },
+              "catalystCost": {
+                "heavy": 2
+              },
+              "requiredBiomeLevel": 10
+            }
+          ]
+        },
+        "plus": 5,
+        "actualLevel": 12,
+        "upgradeRequiredLevel": 10
+      },
+      {
+        "id": "mountain-vest-t1",
+        "recipe": {
+          "id": "mountain-vest-t1",
+          "name": "Fallen Knight Plate",
+          "recipeGroup": "mountain",
+          "requiredBiomeLevel": 2,
+          "slot": "armor",
+          "cost": {
+            "blue": 22
+          },
+          "stats": {
+            "maxHp": 32,
+            "plating": 5
+          },
+          "mechanicEffects": {
+            "guard.potency-pct": 0.15
+          },
+          "tier": 1,
+          "icon": "items/armor/fallen-knight-plate.png",
+          "description": "Stripped from a knight who fell at the high pass and was never named.",
+          "upgrades": [
+            {
+              "stats": {
+                "maxHp": 4
+              },
+              "mechanicEffects": {
+                "guard.potency-pct": 0.02
+              },
+              "cost": {
+                "blue": 25
+              },
+              "requiredBiomeLevel": 3
+            },
+            {
+              "stats": {
+                "maxHp": 4,
+                "plating": 1
+              },
+              "mechanicEffects": {
+                "guard.potency-pct": 0.02
+              },
+              "cost": {
+                "blue": 45
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "maxHp": 4
+              },
+              "mechanicEffects": {
+                "guard.potency-pct": 0.02
+              },
+              "cost": {
+                "blue": 75
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "maxHp": 4,
+                "plating": 1
+              },
+              "mechanicEffects": {
+                "guard.potency-pct": 0.02
+              },
+              "cost": {
+                "blue": 125
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "maxHp": 4
+              },
+              "mechanicEffects": {
+                "guard.potency-pct": 0.02
+              },
+              "cost": {
+                "blue": 155
+              },
+              "catalystCost": {
+                "heavy": 1
+              },
+              "requiredBiomeLevel": 4
+            }
+          ]
+        },
+        "plus": 5,
+        "actualLevel": 12,
+        "upgradeRequiredLevel": 4
+      }
+    ]
+  },
+  {
+    "equippedId": "mountain-charm-t2",
+    "chain": [
+      {
+        "id": "mountain-charm-t2",
+        "recipe": {
+          "id": "mountain-charm-t2",
+          "name": "Iron Bulwark",
+          "recipeGroup": "mountain",
+          "requiredBiomeLevel": 9,
+          "slot": "recovery",
+          "evolvesFrom": "mountain-charm-t1",
+          "cost": {
+            "blue": 42
+          },
+          "stats": {
+            "recovery": 2
+          },
+          "reconstructCost": {
+            "blue": 147
+          },
+          "reconstructCatalystCost": {
+            "heavy": 2
+          },
+          "mechanicEffects": {
+            "defense.barrier-pct": 0.2
+          },
+          "tier": 2,
+          "icon": "items/charms/iron-bulwark.png",
+          "description": "A ward-stone the mountainfolk pass down, hand to weathered hand.",
+          "upgrades": [
+            {
+              "mechanicEffects": {
+                "defense.barrier-pct": 0.01
+              },
+              "cost": {
+                "blue": 17
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "stats": {
+                "recovery": 1
+              },
+              "mechanicEffects": {
+                "defense.barrier-pct": 0.01
+              },
+              "cost": {
+                "blue": 43
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "mechanicEffects": {
+                "defense.barrier-pct": 0.01
+              },
+              "cost": {
+                "blue": 68
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "mechanicEffects": {
+                "defense.barrier-pct": 0.015
+              },
+              "cost": {
+                "blue": 111
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "mechanicEffects": {
+                "defense.barrier-pct": 0.015
+              },
+              "cost": {
+                "blue": 187
+              },
+              "catalystCost": {
+                "heavy": 1
+              },
+              "requiredBiomeLevel": 10
+            }
+          ]
+        },
+        "plus": 5,
+        "actualLevel": 12,
+        "upgradeRequiredLevel": 10
+      },
+      {
+        "id": "mountain-charm-t1",
+        "recipe": {
+          "id": "mountain-charm-t1",
+          "name": "Granite Barrier",
+          "recipeGroup": "mountain",
+          "requiredBiomeLevel": 3,
+          "slot": "recovery",
+          "cost": {
+            "blue": 18
+          },
+          "stats": {
+            "recovery": 1
+          },
+          "mechanicEffects": {
+            "defense.barrier-pct": 0.12
+          },
+          "tier": 1,
+          "icon": "items/charms/granite-barrier.png",
+          "description": "A palm of carved granite, cold and patient as the peak it came from.",
+          "upgrades": [
+            {
+              "mechanicEffects": {
+                "defense.barrier-pct": 0.01
+              },
+              "cost": {
+                "blue": 10
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "mechanicEffects": {
+                "defense.barrier-pct": 0.01
+              },
+              "cost": {
+                "blue": 25
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "recovery": 1
+              },
+              "mechanicEffects": {
+                "defense.barrier-pct": 0.01
+              },
+              "cost": {
+                "blue": 40
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "mechanicEffects": {
+                "defense.barrier-pct": 0.015
+              },
+              "cost": {
+                "blue": 60
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "mechanicEffects": {
+                "defense.barrier-pct": 0.015
+              },
+              "cost": {
+                "blue": 75
+              },
+              "requiredBiomeLevel": 4
+            }
+          ]
+        },
+        "plus": 5,
+        "actualLevel": 12,
+        "upgradeRequiredLevel": 4
+      }
+    ]
+  },
+  {
+    "equippedId": "cave-boots-t2",
+    "chain": [
+      {
+        "id": "cave-boots-t2",
+        "recipe": {
+          "id": "cave-boots-t2",
+          "name": "Cavern Sprints",
+          "recipeGroup": "cave",
+          "requiredBiomeLevel": 10,
+          "slot": "mobility",
+          "evolvesFrom": "cave-boots-t1",
+          "cost": {
+            "red": 33
+          },
+          "stats": {
+            "speed": 36
+          },
+          "tier": 2,
+          "reconstructCost": {
+            "red": 116
+          },
+          "reconstructCatalystCost": {
+            "swarming": 2
+          },
+          "mechanicEffects": {
+            "mobility.stealth-pct": 0.38
+          },
+          "icon": "items/boots/cavern-sprints.png",
+          "description": "Worn smooth on tunnel floors no map has ever charted.",
+          "upgrades": [
+            {
+              "stats": {
+                "speed": 2
+              },
+              "mechanicEffects": {
+                "mobility.stealth-pct": 0.02
+              },
+              "cost": {
+                "red": 12
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "stats": {
+                "speed": 2
+              },
+              "mechanicEffects": {
+                "mobility.stealth-pct": 0.02
+              },
+              "cost": {
+                "red": 30
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "stats": {
+                "speed": 2
+              },
+              "mechanicEffects": {
+                "mobility.stealth-pct": 0.02
+              },
+              "cost": {
+                "red": 48
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "stats": {
+                "speed": 2
+              },
+              "mechanicEffects": {
+                "mobility.stealth-pct": 0.02
+              },
+              "cost": {
+                "red": 78
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "stats": {
+                "speed": 2
+              },
+              "mechanicEffects": {
+                "mobility.stealth-pct": 0.02
+              },
+              "cost": {
+                "red": 132
+              },
+              "catalystCost": {
+                "swarming": 1
+              },
+              "requiredBiomeLevel": 10
+            }
+          ]
+        },
+        "plus": 5,
+        "actualLevel": 12,
+        "upgradeRequiredLevel": 10
+      },
+      {
+        "id": "cave-boots-t1",
+        "recipe": {
+          "id": "cave-boots-t1",
+          "name": "Bat Wing Boots",
+          "recipeGroup": "cave",
+          "requiredBiomeLevel": 4,
+          "slot": "mobility",
+          "cost": {
+            "red": 18
+          },
+          "stats": {
+            "speed": 20
+          },
+          "tier": 1,
+          "mechanicEffects": {
+            "mobility.stealth-pct": 0.25
+          },
+          "icon": "items/boots/bat-wing-boots.png",
+          "description": "Stretched membrane that falls on stone without a whisper.",
+          "upgrades": [
+            {
+              "stats": {
+                "speed": 1
+              },
+              "mechanicEffects": {
+                "mobility.stealth-pct": 0.02
+              },
+              "cost": {
+                "red": 10
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "speed": 1
+              },
+              "mechanicEffects": {
+                "mobility.stealth-pct": 0.02
+              },
+              "cost": {
+                "red": 15
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "speed": 1
+              },
+              "mechanicEffects": {
+                "mobility.stealth-pct": 0.02
+              },
+              "cost": {
+                "red": 25
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "speed": 1
+              },
+              "mechanicEffects": {
+                "mobility.stealth-pct": 0.02
+              },
+              "cost": {
+                "red": 40
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "speed": 1
+              },
+              "mechanicEffects": {
+                "mobility.stealth-pct": 0.02
+              },
+              "cost": {
+                "red": 55
+              },
+              "requiredBiomeLevel": 4
+            }
+          ]
+        },
+        "plus": 5,
+        "actualLevel": 12,
+        "upgradeRequiredLevel": 4
+      }
+    ]
+  },
+  {
+    "equippedId": "cave-vest-t2",
+    "chain": [
+      {
+        "id": "cave-vest-t2",
+        "recipe": {
+          "id": "cave-vest-t2",
+          "name": "Dire Bestial Hide",
+          "recipeGroup": "cave",
+          "requiredBiomeLevel": 8,
+          "slot": "armor",
+          "evolvesFrom": "cave-vest-t1",
+          "cost": {
+            "red": 54
+          },
+          "stats": {
+            "maxHp": 50,
+            "plating": 7,
+            "damageReduction": 0.13
+          },
+          "tier": 2,
+          "reconstructCost": {
+            "red": 189
+          },
+          "reconstructCatalystCost": {
+            "swarming": 2
+          },
+          "icon": "items/armor/dire-bestial-hide.png",
+          "description": "From a beast the deep-cavern folk name only in low voices.",
+          "upgrades": [
+            {
+              "stats": {
+                "maxHp": 5,
+                "plating": 1,
+                "damageReduction": 0.01
+              },
+              "cost": {
+                "red": 46
+              },
+              "requiredBiomeLevel": 9
+            },
+            {
+              "stats": {
+                "maxHp": 5,
+                "plating": 1,
+                "damageReduction": 0.01
+              },
+              "cost": {
+                "red": 116
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "stats": {
+                "maxHp": 5,
+                "plating": 1,
+                "damageReduction": 0.01
+              },
+              "cost": {
+                "red": 185
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "stats": {
+                "maxHp": 5,
+                "plating": 1,
+                "damageReduction": 0.01
+              },
+              "cost": {
+                "red": 300
+              },
+              "catalystCost": {
+                "swarming": 1
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "stats": {
+                "maxHp": 6
+              },
+              "cost": {
+                "red": 508
+              },
+              "catalystCost": {
+                "swarming": 2
+              },
+              "requiredBiomeLevel": 10
+            }
+          ]
+        },
+        "plus": 5,
+        "actualLevel": 12,
+        "upgradeRequiredLevel": 10
+      },
+      {
+        "id": "cave-vest-t1",
+        "recipe": {
+          "id": "cave-vest-t1",
+          "name": "Bestial Hide",
+          "recipeGroup": "cave",
+          "requiredBiomeLevel": 2,
+          "slot": "armor",
+          "cost": {
+            "red": 22
+          },
+          "stats": {
+            "maxHp": 28,
+            "plating": 4,
+            "damageReduction": 0.06
+          },
+          "tier": 1,
+          "icon": "items/armor/bestial-hide.png",
+          "description": "The hide of something large and unlucky, cured to a stubborn toughness.",
+          "upgrades": [
+            {
+              "stats": {
+                "maxHp": 3,
+                "damageReduction": 0.01
+              },
+              "cost": {
+                "red": 30
+              },
+              "requiredBiomeLevel": 3
+            },
+            {
+              "stats": {
+                "maxHp": 3,
+                "plating": 1,
+                "damageReduction": 0.01
+              },
+              "cost": {
+                "red": 60
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "maxHp": 3,
+                "damageReduction": 0.01
+              },
+              "cost": {
+                "red": 95
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "maxHp": 3,
+                "plating": 1,
+                "damageReduction": 0.01
+              },
+              "cost": {
+                "red": 155
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "maxHp": 2,
+                "damageReduction": 0.01
+              },
+              "cost": {
+                "red": 195
+              },
+              "catalystCost": {
+                "swarming": 1
+              },
+              "requiredBiomeLevel": 4
+            }
+          ]
+        },
+        "plus": 5,
+        "actualLevel": 12,
+        "upgradeRequiredLevel": 4
+      }
+    ]
+  },
+  {
+    "equippedId": "core-survivalist",
+    "chain": [
+      {
+        "id": "core-survivalist",
+        "recipe": {
+          "id": "core-survivalist",
+          "name": "Survivalist Core",
+          "recipeGroup": "jungle",
+          "requiredBiomeLevel": 6,
+          "slot": "core",
+          "coreEligibility": "unrestricted",
+          "lineageId": "core-survivalist",
+          "cost": {
+            "green": 500
+          },
+          "catalystCost": {
+            "fortified": 4
+          },
+          "stats": {},
+          "tier": 2,
+          "mechanicEffects": {
+            "core.recovery-mult": 0.3,
+            "core.maxhp-mult": 0.15
+          },
+          "icon": "items/cores/survivalist.png",
+          "description": "Wound-knit heartwood. It does not stop the blow — it shortens the time you spend regretting it."
+        },
+        "plus": 0,
+        "actualLevel": 6,
+        "upgradeRequiredLevel": null
+      }
+    ]
+  },
+  {
+    "equippedId": "knight-steelsword",
+    "chain": [
+      {
+        "id": "knight-steelsword",
+        "recipe": {
+          "id": "knight-steelsword",
+          "name": "Knight's Steelsword",
+          "recipeGroup": "plains",
+          "requiredBiomeLevel": 7,
+          "slot": "weapon",
+          "evolvesFrom": "iron-broadsword",
+          "cost": {
+            "yellow": 45
+          },
+          "stats": {
+            "attack": 18
+          },
+          "attacksPerSecond": 1,
+          "tier": 2,
+          "reconstructCost": {
+            "yellow": 180
+          },
+          "icon": "items/weapons/knight-steelsword.png",
+          "mechanicEffects": {
+            "technique.cooldown-reduction-pct": 0.12
+          },
+          "description": "A knight sidearm kept keen by habit and pride — plain, proven, never flashy.",
+          "upgrades": [
+            {
+              "stats": {
+                "attack": 2
+              },
+              "mechanicEffects": {
+                "technique.cooldown-reduction-pct": 0.01
+              },
+              "cost": {
+                "yellow": 27
+              },
+              "requiredBiomeLevel": 8
+            },
+            {
+              "stats": {
+                "attack": 2
+              },
+              "mechanicEffects": {
+                "technique.cooldown-reduction-pct": 0.01
+              },
+              "cost": {
+                "yellow": 68
+              },
+              "requiredBiomeLevel": 9
+            },
+            {
+              "stats": {
+                "attack": 2
+              },
+              "mechanicEffects": {
+                "technique.cooldown-reduction-pct": 0.01
+              },
+              "cost": {
+                "yellow": 108
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "stats": {
+                "attack": 2
+              },
+              "mechanicEffects": {
+                "technique.cooldown-reduction-pct": 0.01
+              },
+              "cost": {
+                "yellow": 176
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "stats": {
+                "attack": 1
+              },
+              "mechanicEffects": {
+                "technique.cooldown-reduction-pct": 0.01
+              },
+              "cost": {
+                "yellow": 296
+              },
+              "requiredBiomeLevel": 10
+            }
+          ]
+        },
+        "plus": 5,
+        "actualLevel": 12,
+        "upgradeRequiredLevel": 10
+      },
+      {
+        "id": "iron-broadsword",
+        "recipe": {
+          "id": "iron-broadsword",
+          "name": "Iron Broadsword",
+          "recipeGroup": "plains",
+          "requiredBiomeLevel": 1,
+          "slot": "weapon",
+          "cost": {
+            "yellow": 10
+          },
+          "stats": {
+            "attack": 10
+          },
+          "attacksPerSecond": 0.8,
+          "tier": 1,
+          "mechanicEffects": {
+            "technique.cooldown-reduction-pct": 0.06
+          },
+          "icon": "items/weapons/iron-broadsword.png",
+          "description": "Mass-forged for the ranks, dependable as sunrise. Ten thousand like it have won quiet wars.",
+          "upgrades": [
+            {
+              "stats": {
+                "attack": 1
+              },
+              "mechanicEffects": {
+                "technique.cooldown-reduction-pct": 0.01
+              },
+              "cost": {
+                "yellow": 10
+              },
+              "requiredBiomeLevel": 2
+            },
+            {
+              "stats": {
+                "attack": 1
+              },
+              "mechanicEffects": {
+                "technique.cooldown-reduction-pct": 0.01
+              },
+              "cost": {
+                "yellow": 25
+              },
+              "requiredBiomeLevel": 3
+            },
+            {
+              "stats": {
+                "attack": 1
+              },
+              "mechanicEffects": {
+                "technique.cooldown-reduction-pct": 0.01
+              },
+              "cost": {
+                "yellow": 35
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "attack": 1
+              },
+              "mechanicEffects": {
+                "technique.cooldown-reduction-pct": 0.01
+              },
+              "cost": {
+                "yellow": 60
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "attack": 1
+              },
+              "mechanicEffects": {
+                "technique.cooldown-reduction-pct": 0.01
+              },
+              "cost": {
+                "yellow": 75
+              },
+              "requiredBiomeLevel": 4
+            }
+          ]
+        },
+        "plus": 5,
+        "actualLevel": 12,
+        "upgradeRequiredLevel": 4
+      }
+    ]
+  },
+  {
+    "equippedId": "jungle-vest-t2",
+    "chain": [
+      {
+        "id": "jungle-vest-t2",
+        "recipe": {
+          "id": "jungle-vest-t2",
+          "name": "Verdant Weave",
+          "recipeGroup": "jungle",
+          "requiredBiomeLevel": 2,
+          "slot": "armor",
+          "cost": {
+            "green": 48,
+            "yellow": 12
+          },
+          "stats": {
+            "maxHp": 44,
+            "plating": 6,
+            "evasion": 0.15
+          },
+          "tier": 2,
+          "icon": "items/armor/verdant-weave.png",
+          "description": "A living mesh of leaf and creeper, too quick and too giving to be struck square.",
+          "upgrades": [
+            {
+              "stats": {
+                "maxHp": 12,
+                "plating": 2,
+                "evasion": 0.04
+              },
+              "cost": {
+                "green": 31,
+                "yellow": 8
+              },
+              "requiredBiomeLevel": 3
+            },
+            {
+              "stats": {
+                "maxHp": 12,
+                "plating": 2,
+                "evasion": 0.04
+              },
+              "cost": {
+                "green": 78,
+                "yellow": 20
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "maxHp": 12,
+                "plating": 2,
+                "evasion": 0.04
+              },
+              "cost": {
+                "green": 125,
+                "yellow": 31
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "maxHp": 12,
+                "plating": 2,
+                "evasion": 0.04
+              },
+              "cost": {
+                "green": 203,
+                "yellow": 51
+              },
+              "catalystCost": {
+                "alacrity": 1
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "maxHp": 12,
+                "plating": 2,
+                "evasion": 0.04
+              },
+              "cost": {
+                "green": 342,
+                "yellow": 86
+              },
+              "catalystCost": {
+                "alacrity": 2
+              },
+              "requiredBiomeLevel": 4
+            }
+          ]
+        },
+        "plus": 5,
+        "actualLevel": 6,
+        "upgradeRequiredLevel": 4
+      }
+    ]
+  },
+  {
+    "equippedId": "swamp-mirebrand",
+    "chain": [
+      {
+        "id": "swamp-mirebrand",
+        "recipe": {
+          "id": "swamp-mirebrand",
+          "name": "Venom Knife",
+          "recipeGroup": "swamp",
+          "requiredBiomeLevel": 7,
+          "slot": "weapon",
+          "evolvesFrom": "ashbrand-blade",
+          "cost": {
+            "purple": 52
+          },
+          "stats": {
+            "attack": 18
+          },
+          "attacksPerSecond": 1,
+          "tier": 2,
+          "reconstructCost": {
+            "purple": 182
+          },
+          "reconstructCatalystCost": {
+            "fortified": 2
+          },
+          "weaponDot": {
+            "effectId": "swamp-mirebrand-burn",
+            "convPct": 0.5,
+            "tickIntervalMs": 1000,
+            "drainDurationMs": 4500,
+            "dotMultiplier": 1.5,
+            "element": "poison"
+          },
+          "icon": "items/weapons/venom-knife.png",
+          "description": "The venom runs deeper now; what it touches keeps rotting.",
+          "upgrades": [
+            {
+              "stats": {
+                "attack": 2
+              },
+              "cost": {
+                "purple": 47
+              },
+              "requiredBiomeLevel": 8
+            },
+            {
+              "stats": {
+                "attack": 2
+              },
+              "cost": {
+                "purple": 117
+              },
+              "requiredBiomeLevel": 9
+            },
+            {
+              "stats": {
+                "attack": 2
+              },
+              "cost": {
+                "purple": 187
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "stats": {
+                "attack": 2
+              },
+              "cost": {
+                "purple": 304
+              },
+              "catalystCost": {
+                "fortified": 1
+              },
+              "requiredBiomeLevel": 10
+            },
+            {
+              "stats": {
+                "attack": 1
+              },
+              "cost": {
+                "purple": 515
+              },
+              "catalystCost": {
+                "fortified": 2
+              },
+              "requiredBiomeLevel": 10
+            }
+          ]
+        },
+        "plus": 5,
+        "actualLevel": 12,
+        "upgradeRequiredLevel": 10
+      },
+      {
+        "id": "ashbrand-blade",
+        "recipe": {
+          "id": "ashbrand-blade",
+          "name": "Poison Dagger",
+          "recipeGroup": "swamp",
+          "requiredBiomeLevel": 1,
+          "slot": "weapon",
+          "cost": {
+            "purple": 22
+          },
+          "stats": {
+            "attack": 10
+          },
+          "attacksPerSecond": 0.9,
+          "tier": 1,
+          "weaponDot": {
+            "effectId": "poison-dagger-burn",
+            "convPct": 0.5,
+            "tickIntervalMs": 1000,
+            "drainDurationMs": 4500,
+            "dotMultiplier": 1.5,
+            "element": "poison"
+          },
+          "icon": "items/weapons/poison-dagger.png",
+          "description": "A short blade kept slick with mire-venom that refuses to dry.",
+          "upgrades": [
+            {
+              "stats": {
+                "attack": 1
+              },
+              "cost": {
+                "purple": 20
+              },
+              "requiredBiomeLevel": 2
+            },
+            {
+              "stats": {
+                "attack": 1
+              },
+              "cost": {
+                "purple": 45
+              },
+              "requiredBiomeLevel": 3
+            },
+            {
+              "stats": {
+                "attack": 1
+              },
+              "cost": {
+                "purple": 70
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "attack": 1
+              },
+              "cost": {
+                "purple": 115
+              },
+              "requiredBiomeLevel": 4
+            },
+            {
+              "stats": {
+                "attack": 1
+              },
+              "cost": {
+                "purple": 150
+              },
+              "catalystCost": {
+                "fortified": 1
+              },
+              "requiredBiomeLevel": 4
+            }
+          ]
+        },
+        "plus": 5,
+        "actualLevel": 12,
+        "upgradeRequiredLevel": 4
+      }
+    ]
+  }
+]

@@ -1,0 +1,4469 @@
+[
+  {
+    "id": "node-t2-plains-03",
+    "node": {
+      "biomeGroup": "plains",
+      "biomeTier": 2,
+      "regionId": "t2",
+      "kind": "normal",
+      "displayName": "Stampede Fields",
+      "map": {
+        "row": 3,
+        "col": 11
+      },
+      "modifier": "swarming",
+      "isDungeon": false,
+      "featureSetId": "plains",
+      "featureVariant": 2
+    },
+    "initialRosters": [
+      {
+        "seed": 101009,
+        "hash": "25de2f364c575810cda1e68e81abc95305a0b61208f537e6be9becc37741574d",
+        "roster": [
+          {
+            "id": "node-t2-plains-03_monster-54",
+            "type": "savanna-hawk",
+            "hp": 250,
+            "maxHp": 250,
+            "pos": {
+              "x": 1654,
+              "y": 3991
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-53",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 487.99999999999994,
+              "y": 600.2538660821072
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-52",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 488,
+              "y": 745.7461339178928
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-51",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 614,
+              "y": 673
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-50",
+            "type": "prairie-wolf",
+            "hp": 260,
+            "maxHp": 260,
+            "pos": {
+              "x": 530,
+              "y": 673
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-49",
+            "type": "savanna-hawk",
+            "hp": 250,
+            "maxHp": 250,
+            "pos": {
+              "x": 4453,
+              "y": 4685
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-48",
+            "type": "savanna-hawk",
+            "hp": 250,
+            "maxHp": 250,
+            "pos": {
+              "x": 3907,
+              "y": 1447
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-47",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 372.99999999999994,
+              "y": 3085.2538660821074
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-46",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 373,
+              "y": 3230.7461339178926
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-45",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 499,
+              "y": 3158
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-44",
+            "type": "prairie-wolf",
+            "hp": 260,
+            "maxHp": 260,
+            "pos": {
+              "x": 415,
+              "y": 3158
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-43",
+            "type": "stampede-bull",
+            "hp": 495,
+            "maxHp": 495,
+            "pos": {
+              "x": 2016.417609114443,
+              "y": 759.9120020104136
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-42",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 2863,
+              "y": 637.2538660821072
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-41",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 2863,
+              "y": 782.7461339178928
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-40",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 2989,
+              "y": 710
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-39",
+            "type": "prairie-wolf",
+            "hp": 260,
+            "maxHp": 260,
+            "pos": {
+              "x": 2905,
+              "y": 710
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-38",
+            "type": "savanna-hawk",
+            "hp": 250,
+            "maxHp": 250,
+            "pos": {
+              "x": 1146,
+              "y": 1189
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-37",
+            "type": "savanna-hawk",
+            "hp": 250,
+            "maxHp": 250,
+            "pos": {
+              "x": 4671,
+              "y": 3010
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-36",
+            "type": "savanna-hawk",
+            "hp": 250,
+            "maxHp": 250,
+            "pos": {
+              "x": 2166,
+              "y": 1653
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-35",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 3067,
+              "y": 2072.2538660821074
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-34",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 3067,
+              "y": 2217.7461339178926
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-33",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 3193,
+              "y": 2145
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-32",
+            "type": "prairie-wolf",
+            "hp": 260,
+            "maxHp": 260,
+            "pos": {
+              "x": 3109,
+              "y": 2145
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-31",
+            "type": "savanna-hawk",
+            "hp": 250,
+            "maxHp": 250,
+            "pos": {
+              "x": 4397,
+              "y": 2128
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-30",
+            "type": "savanna-hawk",
+            "hp": 250,
+            "maxHp": 250,
+            "pos": {
+              "x": 998,
+              "y": 157
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-29",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 2430,
+              "y": 3284.2538660821074
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-28",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 2430,
+              "y": 3429.7461339178926
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-27",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 2556,
+              "y": 3357
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-26",
+            "type": "prairie-wolf",
+            "hp": 260,
+            "maxHp": 260,
+            "pos": {
+              "x": 2472,
+              "y": 3357
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-25",
+            "type": "savanna-hawk",
+            "hp": 250,
+            "maxHp": 250,
+            "pos": {
+              "x": 2464,
+              "y": 2741
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-24",
+            "type": "stampede-bull",
+            "hp": 495,
+            "maxHp": 495,
+            "pos": {
+              "x": 2231.3492120396836,
+              "y": 971.5232959784702
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-23",
+            "type": "savanna-hawk",
+            "hp": 250,
+            "maxHp": 250,
+            "pos": {
+              "x": 3751,
+              "y": 3724
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-22",
+            "type": "savanna-hawk",
+            "hp": 250,
+            "maxHp": 250,
+            "pos": {
+              "x": 4282,
+              "y": 4122
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-21",
+            "type": "stampede-bull",
+            "hp": 495,
+            "maxHp": 495,
+            "pos": {
+              "x": 2191.135888105242,
+              "y": 749.1075434214395
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-20",
+            "type": "savanna-hawk",
+            "hp": 250,
+            "maxHp": 250,
+            "pos": {
+              "x": 2549,
+              "y": 2083
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-19",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 1395,
+              "y": 1804.2538660821072
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-18",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 1395,
+              "y": 1949.7461339178928
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-17",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 1521,
+              "y": 1877
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-16",
+            "type": "prairie-wolf",
+            "hp": 260,
+            "maxHp": 260,
+            "pos": {
+              "x": 1437,
+              "y": 1877
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-15",
+            "type": "stampede-bull",
+            "hp": 495,
+            "maxHp": 495,
+            "pos": {
+              "x": 2150.916713585348,
+              "y": 508.51955161149766
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-14",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 3758,
+              "y": 471.25386608210715
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-13",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 3758,
+              "y": 616.7461339178928
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-12",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 3884,
+              "y": 544
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-11",
+            "type": "prairie-wolf",
+            "hp": 260,
+            "maxHp": 260,
+            "pos": {
+              "x": 3800,
+              "y": 544
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-10",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 487.99999999999994,
+              "y": 4492.253866082107
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-9",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 488,
+              "y": 4637.746133917893
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-8",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 614,
+              "y": 4565
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-7",
+            "type": "prairie-wolf",
+            "hp": 260,
+            "maxHp": 260,
+            "pos": {
+              "x": 530,
+              "y": 4565
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-6",
+            "type": "savanna-hawk",
+            "hp": 250,
+            "maxHp": 250,
+            "pos": {
+              "x": 1320,
+              "y": 3123
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-5",
+            "type": "stampede-bull",
+            "hp": 495,
+            "maxHp": 495,
+            "pos": {
+              "x": 1951,
+              "y": 572
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-4",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 840,
+              "y": 2408.2538660821074
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-3",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 840,
+              "y": 2553.7461339178926
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-2",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 966,
+              "y": 2481
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-1",
+            "type": "prairie-wolf",
+            "hp": 260,
+            "maxHp": 260,
+            "pos": {
+              "x": 882,
+              "y": 2481
+            }
+          }
+        ]
+      },
+      {
+        "seed": 101021,
+        "hash": "81a58a35395691f136ac218b72e01d1d8083f9cf32d50dce5360f6471a96ffb6",
+        "roster": [
+          {
+            "id": "node-t2-plains-03_monster-54",
+            "type": "stampede-bull",
+            "hp": 495,
+            "maxHp": 495,
+            "pos": {
+              "x": 931.9066834177355,
+              "y": 2779.726516858624
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-53",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 2584,
+              "y": 3436.2538660821074
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-52",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 2584,
+              "y": 3581.7461339178926
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-51",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 2710,
+              "y": 3509
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-50",
+            "type": "prairie-wolf",
+            "hp": 260,
+            "maxHp": 260,
+            "pos": {
+              "x": 2626,
+              "y": 3509
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-49",
+            "type": "stampede-bull",
+            "hp": 495,
+            "maxHp": 495,
+            "pos": {
+              "x": 1317.386002987001,
+              "y": 2443.657536672202
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-48",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 302.99999999999994,
+              "y": 1046.2538660821072
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-47",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 303,
+              "y": 1191.7461339178928
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-46",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 429,
+              "y": 1119
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-45",
+            "type": "prairie-wolf",
+            "hp": 260,
+            "maxHp": 260,
+            "pos": {
+              "x": 345,
+              "y": 1119
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-44",
+            "type": "stampede-bull",
+            "hp": 495,
+            "maxHp": 495,
+            "pos": {
+              "x": 1135.9844364931632,
+              "y": 2568.399605664932
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-43",
+            "type": "stampede-bull",
+            "hp": 495,
+            "maxHp": 495,
+            "pos": {
+              "x": 1123,
+              "y": 2809
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-42",
+            "type": "stampede-bull",
+            "hp": 495,
+            "maxHp": 495,
+            "pos": {
+              "x": 511.8750237588922,
+              "y": 4444.337769702368
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-41",
+            "type": "savanna-hawk",
+            "hp": 250,
+            "maxHp": 250,
+            "pos": {
+              "x": 997,
+              "y": 484
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-40",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 2127,
+              "y": 98.25386608210717
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-39",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 2127,
+              "y": 243.74613391789285
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-38",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 2253,
+              "y": 171
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-37",
+            "type": "prairie-wolf",
+            "hp": 260,
+            "maxHp": 260,
+            "pos": {
+              "x": 2169,
+              "y": 171
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-36",
+            "type": "savanna-hawk",
+            "hp": 250,
+            "maxHp": 250,
+            "pos": {
+              "x": 4635,
+              "y": 3818
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-35",
+            "type": "savanna-hawk",
+            "hp": 250,
+            "maxHp": 250,
+            "pos": {
+              "x": 2352,
+              "y": 2053
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-34",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 3253,
+              "y": 2652.2538660821074
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-33",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 3253,
+              "y": 2797.7461339178926
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-32",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 3379,
+              "y": 2725
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-31",
+            "type": "prairie-wolf",
+            "hp": 260,
+            "maxHp": 260,
+            "pos": {
+              "x": 3295,
+              "y": 2725
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-30",
+            "type": "savanna-hawk",
+            "hp": 250,
+            "maxHp": 250,
+            "pos": {
+              "x": 340,
+              "y": 3160
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-29",
+            "type": "stampede-bull",
+            "hp": 495,
+            "maxHp": 495,
+            "pos": {
+              "x": 456.03354037436964,
+              "y": 4204.649235865201
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-28",
+            "type": "savanna-hawk",
+            "hp": 250,
+            "maxHp": 250,
+            "pos": {
+              "x": 4437,
+              "y": 931
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-27",
+            "type": "savanna-hawk",
+            "hp": 250,
+            "maxHp": 250,
+            "pos": {
+              "x": 3333,
+              "y": 4064
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-26",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 2966,
+              "y": 648.2538660821072
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-25",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 2966,
+              "y": 793.7461339178928
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-24",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 3092,
+              "y": 721
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-23",
+            "type": "prairie-wolf",
+            "hp": 260,
+            "maxHp": 260,
+            "pos": {
+              "x": 3008,
+              "y": 721
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-22",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 4543,
+              "y": 2370.2538660821074
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-21",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 4543,
+              "y": 2515.7461339178926
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-20",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 4669,
+              "y": 2443
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-19",
+            "type": "prairie-wolf",
+            "hp": 260,
+            "maxHp": 260,
+            "pos": {
+              "x": 4585,
+              "y": 2443
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-18",
+            "type": "stampede-bull",
+            "hp": 495,
+            "maxHp": 495,
+            "pos": {
+              "x": 321,
+              "y": 4321
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-17",
+            "type": "savanna-hawk",
+            "hp": 250,
+            "maxHp": 250,
+            "pos": {
+              "x": 592,
+              "y": 3798
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-16",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 1891,
+              "y": 2589.2538660821074
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-15",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 1891,
+              "y": 2734.7461339178926
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-14",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 2017,
+              "y": 2662
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-13",
+            "type": "prairie-wolf",
+            "hp": 260,
+            "maxHp": 260,
+            "pos": {
+              "x": 1933,
+              "y": 2662
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-12",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 4434,
+              "y": 4554.253866082107
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-11",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 4434,
+              "y": 4699.746133917893
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-10",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 4560,
+              "y": 4627
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-9",
+            "type": "prairie-wolf",
+            "hp": 260,
+            "maxHp": 260,
+            "pos": {
+              "x": 4476,
+              "y": 4627
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-8",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 2806,
+              "y": 1456.2538660821072
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-7",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 2806,
+              "y": 1601.7461339178928
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-6",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 2932,
+              "y": 1529
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-5",
+            "type": "prairie-wolf",
+            "hp": 260,
+            "maxHp": 260,
+            "pos": {
+              "x": 2848,
+              "y": 1529
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-4",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 1253,
+              "y": 3419.2538660821074
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-3",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 1253,
+              "y": 3564.7461339178926
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-2",
+            "type": "prairie-yearling",
+            "hp": 130,
+            "maxHp": 130,
+            "pos": {
+              "x": 1379,
+              "y": 3492
+            }
+          },
+          {
+            "id": "node-t2-plains-03_monster-1",
+            "type": "prairie-wolf",
+            "hp": 260,
+            "maxHp": 260,
+            "pos": {
+              "x": 1295,
+              "y": 3492
+            }
+          }
+        ]
+      }
+    ],
+    "progressionRole": "Ordinary native modifier node; not boss, arrival or equal-difficulty calibration",
+    "nativePool": [
+      "stampede-bull",
+      "prairie-wolf",
+      "savanna-hawk"
+    ],
+    "authoredDensity": 48,
+    "observedPopulation": [
+      {
+        "seed": 101009,
+        "count": 54,
+        "types": [
+          "savanna-hawk",
+          "prairie-yearling",
+          "prairie-wolf",
+          "stampede-bull"
+        ]
+      },
+      {
+        "seed": 101021,
+        "count": 54,
+        "types": [
+          "stampede-bull",
+          "prairie-yearling",
+          "prairie-wolf",
+          "savanna-hawk"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "node-t2-forest-03",
+    "node": {
+      "biomeGroup": "forest",
+      "biomeTier": 2,
+      "regionId": "t2",
+      "kind": "normal",
+      "displayName": "Timbercrown Reach",
+      "map": {
+        "row": 2,
+        "col": 10
+      },
+      "modifier": "dominion",
+      "isDungeon": false,
+      "featureSetId": "forest",
+      "featureVariant": 2
+    },
+    "initialRosters": [
+      {
+        "seed": 101009,
+        "hash": "2500fa15652a33c5a78673b5ba26a22ec81f89b5458eade660081eac3bbe43e1",
+        "roster": [
+          {
+            "id": "node-t2-forest-03_monster-34",
+            "type": "dire-whelp",
+            "hp": 171,
+            "maxHp": 171,
+            "pos": {
+              "x": 2677,
+              "y": 3358.2538660821074
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-33",
+            "type": "dire-whelp",
+            "hp": 171,
+            "maxHp": 171,
+            "pos": {
+              "x": 2677,
+              "y": 3503.7461339178926
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-32",
+            "type": "dire-whelp",
+            "hp": 171,
+            "maxHp": 171,
+            "pos": {
+              "x": 2803,
+              "y": 3431
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-31",
+            "type": "ancient-wolf",
+            "hp": 1733,
+            "maxHp": 1733,
+            "pos": {
+              "x": 2719,
+              "y": 3431
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-30",
+            "type": "dire-whelp",
+            "hp": 171,
+            "maxHp": 171,
+            "pos": {
+              "x": 3865,
+              "y": 1374.2538660821072
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-29",
+            "type": "dire-whelp",
+            "hp": 171,
+            "maxHp": 171,
+            "pos": {
+              "x": 3865,
+              "y": 1519.7461339178928
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-28",
+            "type": "dire-whelp",
+            "hp": 171,
+            "maxHp": 171,
+            "pos": {
+              "x": 3991,
+              "y": 1447
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-27",
+            "type": "ancient-wolf",
+            "hp": 1733,
+            "maxHp": 1733,
+            "pos": {
+              "x": 3907,
+              "y": 1447
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-26",
+            "type": "ironwood-golem",
+            "hp": 1040,
+            "maxHp": 1040,
+            "pos": {
+              "x": 2145,
+              "y": 1015
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-25",
+            "type": "ironwood-golem",
+            "hp": 1040,
+            "maxHp": 1040,
+            "pos": {
+              "x": 1518,
+              "y": 1428
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-24",
+            "type": "ironwood-golem",
+            "hp": 1040,
+            "maxHp": 1040,
+            "pos": {
+              "x": 4450,
+              "y": 169
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-23",
+            "type": "ironwood-golem",
+            "hp": 1040,
+            "maxHp": 1040,
+            "pos": {
+              "x": 321,
+              "y": 585
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-22",
+            "type": "canopy-sprite",
+            "hp": 330,
+            "maxHp": 330,
+            "pos": {
+              "x": 3330,
+              "y": 1946
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-21",
+            "type": "dire-whelp",
+            "hp": 171,
+            "maxHp": 171,
+            "pos": {
+              "x": 438.99999999999994,
+              "y": 3104.2538660821074
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-20",
+            "type": "dire-whelp",
+            "hp": 171,
+            "maxHp": 171,
+            "pos": {
+              "x": 439,
+              "y": 3249.7461339178926
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-19",
+            "type": "dire-whelp",
+            "hp": 171,
+            "maxHp": 171,
+            "pos": {
+              "x": 565,
+              "y": 3177
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-18",
+            "type": "ancient-wolf",
+            "hp": 1733,
+            "maxHp": 1733,
+            "pos": {
+              "x": 481,
+              "y": 3177
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-17",
+            "type": "ironwood-golem",
+            "hp": 1040,
+            "maxHp": 1040,
+            "pos": {
+              "x": 2214,
+              "y": 3109
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-16",
+            "type": "ironwood-golem",
+            "hp": 1040,
+            "maxHp": 1040,
+            "pos": {
+              "x": 2128,
+              "y": 2075
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-15",
+            "type": "canopy-sprite",
+            "hp": 330,
+            "maxHp": 330,
+            "pos": {
+              "x": 4630,
+              "y": 998
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-14",
+            "type": "ironwood-golem",
+            "hp": 1040,
+            "maxHp": 1040,
+            "pos": {
+              "x": 3696,
+              "y": 2565
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-13",
+            "type": "canopy-sprite",
+            "hp": 330,
+            "maxHp": 330,
+            "pos": {
+              "x": 1464,
+              "y": 2001
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-12",
+            "type": "canopy-sprite",
+            "hp": 330,
+            "maxHp": 330,
+            "pos": {
+              "x": 2174,
+              "y": 4209
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-11",
+            "type": "canopy-sprite",
+            "hp": 330,
+            "maxHp": 330,
+            "pos": {
+              "x": 4369,
+              "y": 2997
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-10",
+            "type": "canopy-sprite",
+            "hp": 330,
+            "maxHp": 330,
+            "pos": {
+              "x": 1985,
+              "y": 444
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-9",
+            "type": "ironwood-golem",
+            "hp": 1040,
+            "maxHp": 1040,
+            "pos": {
+              "x": 3435,
+              "y": 3298
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-8",
+            "type": "ironwood-golem",
+            "hp": 1040,
+            "maxHp": 1040,
+            "pos": {
+              "x": 2934.0175141537816,
+              "y": 4059.1199594919894
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-7",
+            "type": "ironwood-golem",
+            "hp": 1040,
+            "maxHp": 1040,
+            "pos": {
+              "x": 4052,
+              "y": 4525
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-6",
+            "type": "canopy-sprite",
+            "hp": 330,
+            "maxHp": 330,
+            "pos": {
+              "x": 4114,
+              "y": 3690
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-5",
+            "type": "ironwood-golem",
+            "hp": 1040,
+            "maxHp": 1040,
+            "pos": {
+              "x": 578,
+              "y": 4353
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-4",
+            "type": "ironwood-golem",
+            "hp": 1040,
+            "maxHp": 1040,
+            "pos": {
+              "x": 3532,
+              "y": 4031
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-3",
+            "type": "ironwood-golem",
+            "hp": 1040,
+            "maxHp": 1040,
+            "pos": {
+              "x": 3394,
+              "y": 945
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-2",
+            "type": "canopy-sprite",
+            "hp": 330,
+            "maxHp": 330,
+            "pos": {
+              "x": 2540,
+              "y": 1557
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-1",
+            "type": "ironwood-golem",
+            "hp": 1040,
+            "maxHp": 1040,
+            "pos": {
+              "x": 882,
+              "y": 2481
+            }
+          }
+        ]
+      },
+      {
+        "seed": 101021,
+        "hash": "82064f826ceb6681ef296094441f90916896c954ccd597ac73f09e29eaa26475",
+        "roster": [
+          {
+            "id": "node-t2-forest-03_monster-33",
+            "type": "canopy-sprite",
+            "hp": 330,
+            "maxHp": 330,
+            "pos": {
+              "x": 813,
+              "y": 3185
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-32",
+            "type": "ironwood-golem",
+            "hp": 1040,
+            "maxHp": 1040,
+            "pos": {
+              "x": 1803,
+              "y": 1268
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-31",
+            "type": "dire-whelp",
+            "hp": 171,
+            "maxHp": 171,
+            "pos": {
+              "x": 2234,
+              "y": 233.25386608210715
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-30",
+            "type": "dire-whelp",
+            "hp": 171,
+            "maxHp": 171,
+            "pos": {
+              "x": 2234,
+              "y": 378.74613391789285
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-29",
+            "type": "dire-whelp",
+            "hp": 171,
+            "maxHp": 171,
+            "pos": {
+              "x": 2360,
+              "y": 306
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-28",
+            "type": "ancient-wolf",
+            "hp": 1733,
+            "maxHp": 1733,
+            "pos": {
+              "x": 2276,
+              "y": 306
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-27",
+            "type": "ironwood-golem",
+            "hp": 1040,
+            "maxHp": 1040,
+            "pos": {
+              "x": 173,
+              "y": 559
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-26",
+            "type": "ironwood-golem",
+            "hp": 1040,
+            "maxHp": 1040,
+            "pos": {
+              "x": 575,
+              "y": 4683
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-25",
+            "type": "canopy-sprite",
+            "hp": 330,
+            "maxHp": 330,
+            "pos": {
+              "x": 4064,
+              "y": 1498
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-24",
+            "type": "ironwood-golem",
+            "hp": 1040,
+            "maxHp": 1040,
+            "pos": {
+              "x": 4582,
+              "y": 899
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-23",
+            "type": "dire-whelp",
+            "hp": 171,
+            "maxHp": 171,
+            "pos": {
+              "x": 3098,
+              "y": 4121.253866082107
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-22",
+            "type": "dire-whelp",
+            "hp": 171,
+            "maxHp": 171,
+            "pos": {
+              "x": 3098,
+              "y": 4266.746133917893
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-21",
+            "type": "dire-whelp",
+            "hp": 171,
+            "maxHp": 171,
+            "pos": {
+              "x": 3224,
+              "y": 4194
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-20",
+            "type": "ancient-wolf",
+            "hp": 1733,
+            "maxHp": 1733,
+            "pos": {
+              "x": 3140,
+              "y": 4194
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-19",
+            "type": "dire-whelp",
+            "hp": 171,
+            "maxHp": 171,
+            "pos": {
+              "x": 1904,
+              "y": 2472.2538660821074
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-18",
+            "type": "dire-whelp",
+            "hp": 171,
+            "maxHp": 171,
+            "pos": {
+              "x": 1904,
+              "y": 2617.7461339178926
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-17",
+            "type": "dire-whelp",
+            "hp": 171,
+            "maxHp": 171,
+            "pos": {
+              "x": 2030,
+              "y": 2545
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-16",
+            "type": "ancient-wolf",
+            "hp": 1733,
+            "maxHp": 1733,
+            "pos": {
+              "x": 1946,
+              "y": 2545
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-15",
+            "type": "canopy-sprite",
+            "hp": 330,
+            "maxHp": 330,
+            "pos": {
+              "x": 1349,
+              "y": 1774
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-14",
+            "type": "dire-whelp",
+            "hp": 171,
+            "maxHp": 171,
+            "pos": {
+              "x": 461.99999999999994,
+              "y": 1058.2538660821072
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-13",
+            "type": "dire-whelp",
+            "hp": 171,
+            "maxHp": 171,
+            "pos": {
+              "x": 462,
+              "y": 1203.7461339178928
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-12",
+            "type": "dire-whelp",
+            "hp": 171,
+            "maxHp": 171,
+            "pos": {
+              "x": 588,
+              "y": 1131
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-11",
+            "type": "ancient-wolf",
+            "hp": 1733,
+            "maxHp": 1733,
+            "pos": {
+              "x": 504,
+              "y": 1131
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-10",
+            "type": "dire-whelp",
+            "hp": 171,
+            "maxHp": 171,
+            "pos": {
+              "x": 4058,
+              "y": 3111.2538660821074
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-9",
+            "type": "dire-whelp",
+            "hp": 171,
+            "maxHp": 171,
+            "pos": {
+              "x": 4058,
+              "y": 3256.7461339178926
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-8",
+            "type": "dire-whelp",
+            "hp": 171,
+            "maxHp": 171,
+            "pos": {
+              "x": 4184,
+              "y": 3184
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-7",
+            "type": "ancient-wolf",
+            "hp": 1733,
+            "maxHp": 1733,
+            "pos": {
+              "x": 4100,
+              "y": 3184
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-6",
+            "type": "dire-whelp",
+            "hp": 171,
+            "maxHp": 171,
+            "pos": {
+              "x": 3090,
+              "y": 2657.2538660821074
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-5",
+            "type": "dire-whelp",
+            "hp": 171,
+            "maxHp": 171,
+            "pos": {
+              "x": 3090,
+              "y": 2802.7461339178926
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-4",
+            "type": "dire-whelp",
+            "hp": 171,
+            "maxHp": 171,
+            "pos": {
+              "x": 3216,
+              "y": 2730
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-3",
+            "type": "ancient-wolf",
+            "hp": 1733,
+            "maxHp": 1733,
+            "pos": {
+              "x": 3132,
+              "y": 2730
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-2",
+            "type": "canopy-sprite",
+            "hp": 330,
+            "maxHp": 330,
+            "pos": {
+              "x": 3146,
+              "y": 627
+            }
+          },
+          {
+            "id": "node-t2-forest-03_monster-1",
+            "type": "ironwood-golem",
+            "hp": 1040,
+            "maxHp": 1040,
+            "pos": {
+              "x": 1295,
+              "y": 3492
+            }
+          }
+        ]
+      }
+    ],
+    "progressionRole": "Ordinary native modifier node; not boss, arrival or equal-difficulty calibration",
+    "nativePool": [
+      "ancient-wolf",
+      "ironwood-golem",
+      "canopy-sprite"
+    ],
+    "authoredDensity": 36,
+    "observedPopulation": [
+      {
+        "seed": 101009,
+        "count": 34,
+        "types": [
+          "dire-whelp",
+          "ancient-wolf",
+          "ironwood-golem",
+          "canopy-sprite"
+        ]
+      },
+      {
+        "seed": 101021,
+        "count": 33,
+        "types": [
+          "canopy-sprite",
+          "ironwood-golem",
+          "dire-whelp",
+          "ancient-wolf"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "node-t2-swamp-03",
+    "node": {
+      "biomeGroup": "swamp",
+      "biomeTier": 2,
+      "regionId": "t2",
+      "kind": "normal",
+      "displayName": "Mirehive Expanse",
+      "map": {
+        "row": 7,
+        "col": 10
+      },
+      "modifier": "swarming",
+      "isDungeon": false,
+      "featureSetId": "swamp",
+      "featureVariant": 2
+    },
+    "initialRosters": [
+      {
+        "seed": 101009,
+        "hash": "902b01a14a117cd70e2587581cc34c831e674dcbd2cdabd2844f279144dcc986",
+        "roster": [
+          {
+            "id": "node-t2-swamp-03_monster-22",
+            "type": "mire-stalker",
+            "hp": 275,
+            "maxHp": 275,
+            "pos": {
+              "x": 4057,
+              "y": 941
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-21",
+            "type": "bog-witch",
+            "hp": 220,
+            "maxHp": 220,
+            "pos": {
+              "x": 899.6899457924724,
+              "y": 3876.195184107829
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-20",
+            "type": "mire-stalker",
+            "hp": 275,
+            "maxHp": 275,
+            "pos": {
+              "x": 552,
+              "y": 1813
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-19",
+            "type": "mire-stalker",
+            "hp": 275,
+            "maxHp": 275,
+            "pos": {
+              "x": 467.9653031934679,
+              "y": 1253.549476682964
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-18",
+            "type": "bog-witch",
+            "hp": 220,
+            "maxHp": 220,
+            "pos": {
+              "x": 804,
+              "y": 72
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-17",
+            "type": "swamp-hydra",
+            "hp": 680,
+            "maxHp": 680,
+            "pos": {
+              "x": 3356.26840969519,
+              "y": 3560.7461022059047
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-16",
+            "type": "swamp-hydra",
+            "hp": 680,
+            "maxHp": 680,
+            "pos": {
+              "x": 2566.4163772365355,
+              "y": 927.9428021511782
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-15",
+            "type": "bog-witch",
+            "hp": 220,
+            "maxHp": 220,
+            "pos": {
+              "x": 1426.0803545495232,
+              "y": 3415.8382256928307
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-14",
+            "type": "mire-stalker",
+            "hp": 275,
+            "maxHp": 275,
+            "pos": {
+              "x": 2449.8956211900763,
+              "y": 1322.6688380755384
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-13",
+            "type": "bog-witch",
+            "hp": 220,
+            "maxHp": 220,
+            "pos": {
+              "x": 1098.3897622681945,
+              "y": 3874.186709372518
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-12",
+            "type": "bog-witch",
+            "hp": 220,
+            "maxHp": 220,
+            "pos": {
+              "x": 1702.439031113029,
+              "y": 3052.0790926383024
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-11",
+            "type": "bog-witch",
+            "hp": 220,
+            "maxHp": 220,
+            "pos": {
+              "x": 836.9709629443116,
+              "y": 3141.7145340136494
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-10",
+            "type": "swamp-hydra",
+            "hp": 680,
+            "maxHp": 680,
+            "pos": {
+              "x": 1061.1861305619482,
+              "y": 1487.5149316839836
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-9",
+            "type": "bog-witch",
+            "hp": 220,
+            "maxHp": 220,
+            "pos": {
+              "x": 1410.9423017727793,
+              "y": 2174.3666227250683
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-8",
+            "type": "mire-stalker",
+            "hp": 275,
+            "maxHp": 275,
+            "pos": {
+              "x": 2859.7929540787563,
+              "y": 2759.942117274206
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-7",
+            "type": "swamp-hydra",
+            "hp": 680,
+            "maxHp": 680,
+            "pos": {
+              "x": 1777.2736578559613,
+              "y": 3565.5028522318075
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-6",
+            "type": "bog-witch",
+            "hp": 220,
+            "maxHp": 220,
+            "pos": {
+              "x": 3700.2032926525117,
+              "y": 2899.021307294961
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-5",
+            "type": "bog-witch",
+            "hp": 220,
+            "maxHp": 220,
+            "pos": {
+              "x": 1303.0320264420384,
+              "y": 1328.694631811843
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-4",
+            "type": "bog-witch",
+            "hp": 220,
+            "maxHp": 220,
+            "pos": {
+              "x": 2527.8955870750347,
+              "y": 3485.5103961792665
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-3",
+            "type": "swamp-hydra",
+            "hp": 680,
+            "maxHp": 680,
+            "pos": {
+              "x": 1809.3109902504157,
+              "y": 2228.4072478171784
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-2",
+            "type": "bog-witch",
+            "hp": 220,
+            "maxHp": 220,
+            "pos": {
+              "x": 2544.50323333169,
+              "y": 3232.221040386919
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-1",
+            "type": "bog-witch",
+            "hp": 220,
+            "maxHp": 220,
+            "pos": {
+              "x": 2756.7495806278207,
+              "y": 3039.2634642293965
+            }
+          }
+        ]
+      },
+      {
+        "seed": 101021,
+        "hash": "e4db84062ac26bc20f20d2f2c420973eb8fd3ea88beec13a4426d76f2e810537",
+        "roster": [
+          {
+            "id": "node-t2-swamp-03_monster-22",
+            "type": "mire-stalker",
+            "hp": 275,
+            "maxHp": 275,
+            "pos": {
+              "x": 3759.7817466388415,
+              "y": 3276.5181991948634
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-21",
+            "type": "bog-witch",
+            "hp": 220,
+            "maxHp": 220,
+            "pos": {
+              "x": 3762,
+              "y": 2001
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-20",
+            "type": "mire-stalker",
+            "hp": 275,
+            "maxHp": 275,
+            "pos": {
+              "x": 691.4489158315553,
+              "y": 799.3747239029946
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-19",
+            "type": "swamp-hydra",
+            "hp": 680,
+            "maxHp": 680,
+            "pos": {
+              "x": 2110.9230493309356,
+              "y": 1358.4277371004546
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-18",
+            "type": "swamp-hydra",
+            "hp": 680,
+            "maxHp": 680,
+            "pos": {
+              "x": 2180.5247722982267,
+              "y": 3817.0884870803293
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-17",
+            "type": "bog-witch",
+            "hp": 220,
+            "maxHp": 220,
+            "pos": {
+              "x": 1103.189830865855,
+              "y": 3111.7548520559135
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-16",
+            "type": "bog-witch",
+            "hp": 220,
+            "maxHp": 220,
+            "pos": {
+              "x": 1191.1194747127106,
+              "y": 3882.814101714447
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-15",
+            "type": "mire-stalker",
+            "hp": 275,
+            "maxHp": 275,
+            "pos": {
+              "x": 4100,
+              "y": 3184
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-14",
+            "type": "bog-witch",
+            "hp": 220,
+            "maxHp": 220,
+            "pos": {
+              "x": 2967.1184907284046,
+              "y": 2635.565504888184
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-13",
+            "type": "swamp-hydra",
+            "hp": 680,
+            "maxHp": 680,
+            "pos": {
+              "x": 455.3850116245782,
+              "y": 1061.102792962284
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-12",
+            "type": "mire-stalker",
+            "hp": 275,
+            "maxHp": 275,
+            "pos": {
+              "x": 1807.667661463924,
+              "y": 3709.211901697634
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-11",
+            "type": "swamp-hydra",
+            "hp": 680,
+            "maxHp": 680,
+            "pos": {
+              "x": 2834.8146353164043,
+              "y": 3436.0179343646173
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-10",
+            "type": "bog-witch",
+            "hp": 220,
+            "maxHp": 220,
+            "pos": {
+              "x": 1474.5000703299365,
+              "y": 3399.327187374593
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-9",
+            "type": "swamp-hydra",
+            "hp": 680,
+            "maxHp": 680,
+            "pos": {
+              "x": 1274.9805934224669,
+              "y": 1415.93561229775
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-8",
+            "type": "bog-witch",
+            "hp": 220,
+            "maxHp": 220,
+            "pos": {
+              "x": 782.4907898212904,
+              "y": 3114.4713730577996
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-7",
+            "type": "bog-witch",
+            "hp": 220,
+            "maxHp": 220,
+            "pos": {
+              "x": 1333.6550119002436,
+              "y": 1670.4228552339316
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-6",
+            "type": "mire-stalker",
+            "hp": 275,
+            "maxHp": 275,
+            "pos": {
+              "x": 2561.1178187524533,
+              "y": 3268.347859363731
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-5",
+            "type": "bog-witch",
+            "hp": 220,
+            "maxHp": 220,
+            "pos": {
+              "x": 2111.8692237933024,
+              "y": 832.1671236292834
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-4",
+            "type": "swamp-hydra",
+            "hp": 680,
+            "maxHp": 680,
+            "pos": {
+              "x": 1728.7287748206438,
+              "y": 1459.4981156931487
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-3",
+            "type": "bog-witch",
+            "hp": 220,
+            "maxHp": 220,
+            "pos": {
+              "x": 1804.1827890906825,
+              "y": 3057.422462782175
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-2",
+            "type": "bog-witch",
+            "hp": 220,
+            "maxHp": 220,
+            "pos": {
+              "x": 2404.5989815292814,
+              "y": 3664.6805394059793
+            }
+          },
+          {
+            "id": "node-t2-swamp-03_monster-1",
+            "type": "bog-witch",
+            "hp": 220,
+            "maxHp": 220,
+            "pos": {
+              "x": 3212.1629423817053,
+              "y": 2671.619557988844
+            }
+          }
+        ]
+      }
+    ],
+    "progressionRole": "Ordinary native modifier node; not boss, arrival or equal-difficulty calibration",
+    "nativePool": [
+      "swamp-hydra",
+      "bog-witch",
+      "mire-stalker"
+    ],
+    "authoredDensity": 20,
+    "observedPopulation": [
+      {
+        "seed": 101009,
+        "count": 22,
+        "types": [
+          "mire-stalker",
+          "bog-witch",
+          "swamp-hydra"
+        ]
+      },
+      {
+        "seed": 101021,
+        "count": 22,
+        "types": [
+          "mire-stalker",
+          "bog-witch",
+          "swamp-hydra"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "node-t2-mountain-03",
+    "node": {
+      "biomeGroup": "mountain",
+      "biomeTier": 2,
+      "regionId": "t2",
+      "kind": "normal",
+      "displayName": "Crownstone Overlook",
+      "map": {
+        "row": 5,
+        "col": 13
+      },
+      "modifier": "dominion",
+      "isDungeon": false,
+      "featureSetId": "mountain",
+      "featureVariant": 2
+    },
+    "initialRosters": [
+      {
+        "seed": 101009,
+        "hash": "d1b3667d71098d84eb2e5b631a3f6eb1641d006556de823e260c2bf0f6f6c865",
+        "roster": [
+          {
+            "id": "node-t2-mountain-03_monster-22",
+            "type": "granite-titan",
+            "hp": 1822,
+            "maxHp": 1822,
+            "pos": {
+              "x": 545,
+              "y": 1134
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-21",
+            "type": "peak-archer",
+            "hp": 424,
+            "maxHp": 424,
+            "pos": {
+              "x": 266,
+              "y": 4093
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-20",
+            "type": "granite-titan",
+            "hp": 1822,
+            "maxHp": 1822,
+            "pos": {
+              "x": 404,
+              "y": 3312
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-19",
+            "type": "granite-titan",
+            "hp": 1822,
+            "maxHp": 1822,
+            "pos": {
+              "x": 2423,
+              "y": 530
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-18",
+            "type": "stone-eagle",
+            "hp": 374,
+            "maxHp": 374,
+            "pos": {
+              "x": 1413,
+              "y": 3137
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-17",
+            "type": "granite-titan",
+            "hp": 1822,
+            "maxHp": 1822,
+            "pos": {
+              "x": 4377,
+              "y": 321
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-16",
+            "type": "peak-archer",
+            "hp": 424,
+            "maxHp": 424,
+            "pos": {
+              "x": 4005.026082650416,
+              "y": 2793.937336916177
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-15",
+            "type": "peak-archer",
+            "hp": 424,
+            "maxHp": 424,
+            "pos": {
+              "x": 3061.6978341583954,
+              "y": 4029.5568957385062
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-14",
+            "type": "granite-titan",
+            "hp": 1822,
+            "maxHp": 1822,
+            "pos": {
+              "x": 4470,
+              "y": 2976
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-13",
+            "type": "stone-eagle",
+            "hp": 374,
+            "maxHp": 374,
+            "pos": {
+              "x": 4673,
+              "y": 4002
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-12",
+            "type": "peak-archer",
+            "hp": 424,
+            "maxHp": 424,
+            "pos": {
+              "x": 1420.5891313285344,
+              "y": 4035.6442572615492
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-11",
+            "type": "peak-archer",
+            "hp": 424,
+            "maxHp": 424,
+            "pos": {
+              "x": 2761.2553645735275,
+              "y": 3322.160403125325
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-10",
+            "type": "peak-archer",
+            "hp": 424,
+            "maxHp": 424,
+            "pos": {
+              "x": 1910.2359662133126,
+              "y": 1492.8194152866174
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-9",
+            "type": "peak-archer",
+            "hp": 424,
+            "maxHp": 424,
+            "pos": {
+              "x": 773.9891553028602,
+              "y": 2624.226248807967
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-8",
+            "type": "granite-titan",
+            "hp": 1822,
+            "maxHp": 1822,
+            "pos": {
+              "x": 3222,
+              "y": 4086
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-7",
+            "type": "peak-archer",
+            "hp": 424,
+            "maxHp": 424,
+            "pos": {
+              "x": 2892.681439653994,
+              "y": 1466.0206012902888
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-6",
+            "type": "granite-titan",
+            "hp": 1822,
+            "maxHp": 1822,
+            "pos": {
+              "x": 4672,
+              "y": 1985
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-5",
+            "type": "stone-eagle",
+            "hp": 374,
+            "maxHp": 374,
+            "pos": {
+              "x": 3711,
+              "y": 3201
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-4",
+            "type": "granite-titan",
+            "hp": 1822,
+            "maxHp": 1822,
+            "pos": {
+              "x": 3220,
+              "y": 2270
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-3",
+            "type": "stone-eagle",
+            "hp": 374,
+            "maxHp": 374,
+            "pos": {
+              "x": 3223,
+              "y": 1273.25
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-2",
+            "type": "peak-archer",
+            "hp": 424,
+            "maxHp": 424,
+            "pos": {
+              "x": 1496.6434520921043,
+              "y": 776.9792823880581
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-1",
+            "type": "stone-eagle",
+            "hp": 374,
+            "maxHp": 374,
+            "pos": {
+              "x": 882,
+              "y": 2481
+            }
+          }
+        ]
+      },
+      {
+        "seed": 101021,
+        "hash": "c2e5d910e86a128ce7b87816bf31044dd9a272101f363c5e7809814a2809f9db",
+        "roster": [
+          {
+            "id": "node-t2-mountain-03_monster-22",
+            "type": "granite-titan",
+            "hp": 1822,
+            "maxHp": 1822,
+            "pos": {
+              "x": 4671,
+              "y": 3250
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-21",
+            "type": "stone-eagle",
+            "hp": 374,
+            "maxHp": 374,
+            "pos": {
+              "x": 3073,
+              "y": 2353
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-20",
+            "type": "stone-eagle",
+            "hp": 374,
+            "maxHp": 374,
+            "pos": {
+              "x": 4691,
+              "y": 411
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-19",
+            "type": "stone-eagle",
+            "hp": 374,
+            "maxHp": 374,
+            "pos": {
+              "x": 1476,
+              "y": 844
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-18",
+            "type": "peak-archer",
+            "hp": 424,
+            "maxHp": 424,
+            "pos": {
+              "x": 2761.2007789724676,
+              "y": 3321.9173245587326
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-17",
+            "type": "granite-titan",
+            "hp": 1822,
+            "maxHp": 1822,
+            "pos": {
+              "x": 1986,
+              "y": 4070
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-16",
+            "type": "peak-archer",
+            "hp": 424,
+            "maxHp": 424,
+            "pos": {
+              "x": 2892.9875926279165,
+              "y": 1500.8767677894991
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-15",
+            "type": "granite-titan",
+            "hp": 1822,
+            "maxHp": 1822,
+            "pos": {
+              "x": 2378,
+              "y": 827
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-14",
+            "type": "peak-archer",
+            "hp": 424,
+            "maxHp": 424,
+            "pos": {
+              "x": 1911.2423845819403,
+              "y": 1481.9457146874493
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-13",
+            "type": "stone-eagle",
+            "hp": 374,
+            "maxHp": 374,
+            "pos": {
+              "x": 705.75,
+              "y": 827
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-12",
+            "type": "granite-titan",
+            "hp": 1822,
+            "maxHp": 1822,
+            "pos": {
+              "x": 1061,
+              "y": 4490
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-11",
+            "type": "stone-eagle",
+            "hp": 374,
+            "maxHp": 374,
+            "pos": {
+              "x": 4671,
+              "y": 2292
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-10",
+            "type": "stone-eagle",
+            "hp": 374,
+            "maxHp": 374,
+            "pos": {
+              "x": 209,
+              "y": 1522
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-9",
+            "type": "stone-eagle",
+            "hp": 374,
+            "maxHp": 374,
+            "pos": {
+              "x": 1452,
+              "y": 145
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-8",
+            "type": "peak-archer",
+            "hp": 424,
+            "maxHp": 424,
+            "pos": {
+              "x": 3069.7770336887006,
+              "y": 4027.815827684915
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-7",
+            "type": "peak-archer",
+            "hp": 424,
+            "maxHp": 424,
+            "pos": {
+              "x": 777.7563400179165,
+              "y": 2633.187331517135
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-6",
+            "type": "granite-titan",
+            "hp": 1822,
+            "maxHp": 1822,
+            "pos": {
+              "x": 3774,
+              "y": 3115
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-5",
+            "type": "stone-eagle",
+            "hp": 374,
+            "maxHp": 374,
+            "pos": {
+              "x": 503,
+              "y": 2834
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-4",
+            "type": "stone-eagle",
+            "hp": 374,
+            "maxHp": 374,
+            "pos": {
+              "x": 3231,
+              "y": 1105
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-3",
+            "type": "stone-eagle",
+            "hp": 374,
+            "maxHp": 374,
+            "pos": {
+              "x": 2145,
+              "y": 1933
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-2",
+            "type": "stone-eagle",
+            "hp": 374,
+            "maxHp": 374,
+            "pos": {
+              "x": 4595,
+              "y": 4224
+            }
+          },
+          {
+            "id": "node-t2-mountain-03_monster-1",
+            "type": "stone-eagle",
+            "hp": 374,
+            "maxHp": 374,
+            "pos": {
+              "x": 1295,
+              "y": 3492
+            }
+          }
+        ]
+      }
+    ],
+    "progressionRole": "Ordinary native modifier node; not boss, arrival or equal-difficulty calibration",
+    "nativePool": [
+      "granite-titan",
+      "stone-eagle",
+      "peak-archer"
+    ],
+    "authoredDensity": 24,
+    "observedPopulation": [
+      {
+        "seed": 101009,
+        "count": 22,
+        "types": [
+          "granite-titan",
+          "peak-archer",
+          "stone-eagle"
+        ]
+      },
+      {
+        "seed": 101021,
+        "count": 22,
+        "types": [
+          "granite-titan",
+          "stone-eagle",
+          "peak-archer"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "node-t2-cave-03",
+    "node": {
+      "biomeGroup": "cave",
+      "biomeTier": 2,
+      "regionId": "t2",
+      "kind": "normal",
+      "displayName": "Broodroot Grotto",
+      "map": {
+        "row": 5,
+        "col": 9
+      },
+      "modifier": "swarming",
+      "isDungeon": false,
+      "featureSetId": "cave",
+      "featureVariant": 2
+    },
+    "initialRosters": [
+      {
+        "seed": 101009,
+        "hash": "fb6bcbae0090bfc5fa688a152c09bd17178f67249d842f5084a1b6d1e469ade1",
+        "roster": [
+          {
+            "id": "node-t2-cave-03_monster-18",
+            "type": "cave-gargoyle",
+            "hp": 415,
+            "maxHp": 415,
+            "pos": {
+              "x": 2075,
+              "y": 75
+            }
+          },
+          {
+            "id": "node-t2-cave-03_monster-17",
+            "type": "cave-troll",
+            "hp": 1584,
+            "maxHp": 1584,
+            "pos": {
+              "x": 3227,
+              "y": 441
+            }
+          },
+          {
+            "id": "node-t2-cave-03_monster-16",
+            "type": "cave-gargoyle",
+            "hp": 415,
+            "maxHp": 415,
+            "pos": {
+              "x": 2382,
+              "y": 1953
+            }
+          },
+          {
+            "id": "node-t2-cave-03_monster-15",
+            "type": "giant-spider",
+            "hp": 350,
+            "maxHp": 350,
+            "pos": {
+              "x": 4159,
+              "y": 2030
+            }
+          },
+          {
+            "id": "node-t2-cave-03_monster-14",
+            "type": "cave-gargoyle",
+            "hp": 415,
+            "maxHp": 415,
+            "pos": {
+              "x": 3751,
+              "y": 3724
+            }
+          },
+          {
+            "id": "node-t2-cave-03_monster-13",
+            "type": "cave-gargoyle",
+            "hp": 415,
+            "maxHp": 415,
+            "pos": {
+              "x": 4282,
+              "y": 4122
+            }
+          },
+          {
+            "id": "node-t2-cave-03_monster-12",
+            "type": "cave-troll",
+            "hp": 1584,
+            "maxHp": 1584,
+            "pos": {
+              "x": 1614,
+              "y": 4277
+            }
+          },
+          {
+            "id": "node-t2-cave-03_monster-11",
+            "type": "giant-spider",
+            "hp": 350,
+            "maxHp": 350,
+            "pos": {
+              "x": 2893,
+              "y": 1340
+            }
+          },
+          {
+            "id": "node-t2-cave-03_monster-10",
+            "type": "giant-spider",
+            "hp": 350,
+            "maxHp": 350,
+            "pos": {
+              "x": 674,
+              "y": 3770
+            }
+          },
+          {
+            "id": "node-t2-cave-03_monster-9",
+            "type": "cave-troll",
+            "hp": 1584,
+            "maxHp": 1584,
+            "pos": {
+              "x": 4028,
+              "y": 831
+            }
+          },
+          {
+            "id": "node-t2-cave-03_monster-8",
+            "type": "giant-spider",
+            "hp": 350,
+            "maxHp": 350,
+            "pos": {
+              "x": 3112,
+              "y": 3881
+            }
+          },
+          {
+            "id": "node-t2-cave-03_monster-7",
+            "type": "cave-troll",
+            "hp": 1584,
+            "maxHp": 1584,
+            "pos": {
+              "x": 4608,
+              "y": 2511
+            }
+          },
+          {
+            "id": "node-t2-cave-03_monster-6",
+            "type": "cave-troll",
+            "hp": 1584,
+            "maxHp": 1584,
+            "pos": {
+              "x": 2638,
+              "y": 3223
+            }
+          },
+          {
+            "id": "node-t2-cave-03_monster-5",
+            "type": "cave-troll",
+            "hp": 1584,
+            "maxHp": 1584,
+            "pos": {
+              "x": 1951,
+              "y": 572
+            }
+          },
+          {
+            "id": "node-t2-cave-03_monster-4",
+            "type": "cave-gargoyle",
+            "hp": 415,
+            "maxHp": 415,
+            "pos": {
+              "x": 1627,
+              "y": 1534
+            }
+          },
+          {
+            "id": "node-t2-cave-03_monster-3",
+            "type": "cave-troll",
+            "hp": 1584,
+            "maxHp": 1584,
+            "pos": {
+              "x": 1003.4576255567372,
+              "y": 2420.3189176507294
+            }
+          },
+          {
+            "id": "node-t2-cave-03_monster-2",
+            "type": "cave-troll",
+            "hp": 1584,
+            "maxHp": 1584,
+            "pos": {
+              "x": 2357.3340295515954,
+              "y": 1003.4576255567372
+            }
+          },
+          {
+            "id": "node-t2-cave-03_monster-1",
+            "type": "cave-troll",
+            "hp": 1584,
+            "maxHp": 1584,
+            "pos": {
+              "x": 1003.4576255567372,
+              "y": 1003.4576255567372
+            }
+          }
+        ]
+      },
+      {
+        "seed": 101021,
+        "hash": "2ad4bf0b47beab1d075c03d1033ab4abf5121ac8dd70e0f8f316c819a74c5329",
+        "roster": [
+          {
+            "id": "node-t2-cave-03_monster-18",
+            "type": "giant-spider",
+            "hp": 350,
+            "maxHp": 350,
+            "pos": {
+              "x": 2276,
+              "y": 306
+            }
+          },
+          {
+            "id": "node-t2-cave-03_monster-17",
+            "type": "cave-troll",
+            "hp": 1584,
+            "maxHp": 1584,
+            "pos": {
+              "x": 173,
+              "y": 559
+            }
+          },
+          {
+            "id": "node-t2-cave-03_monster-16",
+            "type": "cave-troll",
+            "hp": 1584,
+            "maxHp": 1584,
+            "pos": {
+              "x": 575,
+              "y": 4683
+            }
+          },
+          {
+            "id": "node-t2-cave-03_monster-15",
+            "type": "cave-gargoyle",
+            "hp": 415,
+            "maxHp": 415,
+            "pos": {
+              "x": 3371,
+              "y": 1927
+            }
+          },
+          {
+            "id": "node-t2-cave-03_monster-14",
+            "type": "cave-troll",
+            "hp": 1584,
+            "maxHp": 1584,
+            "pos": {
+              "x": 870,
+              "y": 181
+            }
+          },
+          {
+            "id": "node-t2-cave-03_monster-13",
+            "type": "cave-troll",
+            "hp": 1584,
+            "maxHp": 1584,
+            "pos": {
+              "x": 3008,
+              "y": 721
+            }
+          },
+          {
+            "id": "node-t2-cave-03_monster-12",
+            "type": "cave-gargoyle",
+            "hp": 415,
+            "maxHp": 415,
+            "pos": {
+              "x": 2849,
+              "y": 4490
+            }
+          },
+          {
+            "id": "node-t2-cave-03_monster-11",
+            "type": "cave-gargoyle",
+            "hp": 415,
+            "maxHp": 415,
+            "pos": {
+              "x": 1224,
+              "y": 3401
+            }
+          },
+          {
+            "id": "node-t2-cave-03_monster-10",
+            "type": "cave-gargoyle",
+            "hp": 415,
+            "maxHp": 415,
+            "pos": {
+              "x": 3508,
+              "y": 1349
+            }
+          },
+          {
+            "id": "node-t2-cave-03_monster-9",
+            "type": "giant-spider",
+            "hp": 350,
+            "maxHp": 350,
+            "pos": {
+              "x": 3456,
+              "y": 3379
+            }
+          },
+          {
+            "id": "node-t2-cave-03_monster-8",
+            "type": "cave-troll",
+            "hp": 1584,
+            "maxHp": 1584,
+            "pos": {
+              "x": 2145,
+              "y": 1933
+            }
+          },
+          {
+            "id": "node-t2-cave-03_monster-7",
+            "type": "cave-troll",
+            "hp": 1584,
+            "maxHp": 1584,
+            "pos": {
+              "x": 1003.4576255567372,
+              "y": 2420.3189176507294
+            }
+          },
+          {
+            "id": "node-t2-cave-03_monster-6",
+            "type": "cave-gargoyle",
+            "hp": 415,
+            "maxHp": 415,
+            "pos": {
+              "x": 4627,
+              "y": 1998
+            }
+          },
+          {
+            "id": "node-t2-cave-03_monster-5",
+            "type": "cave-gargoyle",
+            "hp": 415,
+            "maxHp": 415,
+            "pos": {
+              "x": 4224,
+              "y": 1227
+            }
+          },
+          {
+            "id": "node-t2-cave-03_monster-4",
+            "type": "cave-troll",
+            "hp": 1584,
+            "maxHp": 1584,
+            "pos": {
+              "x": 2357.3340295515954,
+              "y": 1003.4576255567372
+            }
+          },
+          {
+            "id": "node-t2-cave-03_monster-3",
+            "type": "giant-spider",
+            "hp": 350,
+            "maxHp": 350,
+            "pos": {
+              "x": 3909,
+              "y": 408
+            }
+          },
+          {
+            "id": "node-t2-cave-03_monster-2",
+            "type": "cave-gargoyle",
+            "hp": 415,
+            "maxHp": 415,
+            "pos": {
+              "x": 522,
+              "y": 2268
+            }
+          },
+          {
+            "id": "node-t2-cave-03_monster-1",
+            "type": "cave-troll",
+            "hp": 1584,
+            "maxHp": 1584,
+            "pos": {
+              "x": 1003.4576255567372,
+              "y": 1003.4576255567372
+            }
+          }
+        ]
+      }
+    ],
+    "progressionRole": "Ordinary native modifier node; not boss, arrival or equal-difficulty calibration",
+    "nativePool": [
+      "giant-spider",
+      "cave-troll",
+      "cave-gargoyle"
+    ],
+    "authoredDensity": 16,
+    "observedPopulation": [
+      {
+        "seed": 101009,
+        "count": 18,
+        "types": [
+          "cave-gargoyle",
+          "cave-troll",
+          "giant-spider"
+        ]
+      },
+      {
+        "seed": 101021,
+        "count": 18,
+        "types": [
+          "giant-spider",
+          "cave-troll",
+          "cave-gargoyle"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "node-t2-jungle-03",
+    "node": {
+      "biomeGroup": "jungle",
+      "biomeTier": 2,
+      "regionId": "t2",
+      "kind": "normal",
+      "displayName": "Crownfang Thicket",
+      "map": {
+        "row": 6,
+        "col": 12
+      },
+      "modifier": "dominion",
+      "isDungeon": false,
+      "featureSetId": "jungle",
+      "featureVariant": 2
+    },
+    "initialRosters": [
+      {
+        "seed": 101009,
+        "hash": "3bdcdf4c64ebee000f2a1a0b4cb71911979669d183295417b119c43f628b8770",
+        "roster": [
+          {
+            "id": "node-t2-jungle-03_monster-37",
+            "type": "jungle-blowdarter",
+            "hp": 495,
+            "maxHp": 495,
+            "pos": {
+              "x": 3986,
+              "y": 1960
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-36",
+            "type": "jungle-blowdarter",
+            "hp": 495,
+            "maxHp": 495,
+            "pos": {
+              "x": 1842,
+              "y": 4170
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-35",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 238,
+              "y": 2766
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-34",
+            "type": "jungle-ape",
+            "hp": 1320,
+            "maxHp": 1320,
+            "pos": {
+              "x": 1278,
+              "y": 761
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-33",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 81,
+              "y": 1577
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-32",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 1149,
+              "y": 4571
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-31",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 1700,
+              "y": 3498
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-30",
+            "type": "jungle-ape",
+            "hp": 1320,
+            "maxHp": 1320,
+            "pos": {
+              "x": 2816,
+              "y": 310
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-29",
+            "type": "jungle-blowdarter",
+            "hp": 495,
+            "maxHp": 495,
+            "pos": {
+              "x": 4226,
+              "y": 616
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-28",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 3282,
+              "y": 4633
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-27",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 2208,
+              "y": 1013
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-26",
+            "type": "jungle-ape",
+            "hp": 1320,
+            "maxHp": 1320,
+            "pos": {
+              "x": 530,
+              "y": 673
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-25",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 888,
+              "y": 3698
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-24",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 845,
+              "y": 1468
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-23",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 1514,
+              "y": 2800
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-22",
+            "type": "jungle-blowdarter",
+            "hp": 495,
+            "maxHp": 495,
+            "pos": {
+              "x": 169,
+              "y": 237
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-21",
+            "type": "jungle-ape",
+            "hp": 1320,
+            "maxHp": 1320,
+            "pos": {
+              "x": 1743,
+              "y": 1361
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-20",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 2709,
+              "y": 2469
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-19",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 73,
+              "y": 4617
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-18",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 481,
+              "y": 3177
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-17",
+            "type": "jungle-ape",
+            "hp": 1320,
+            "maxHp": 1320,
+            "pos": {
+              "x": 2214,
+              "y": 3109
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-16",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 2128,
+              "y": 2075
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-15",
+            "type": "jungle-blowdarter",
+            "hp": 495,
+            "maxHp": 495,
+            "pos": {
+              "x": 4630,
+              "y": 998
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-14",
+            "type": "jungle-ape",
+            "hp": 1320,
+            "maxHp": 1320,
+            "pos": {
+              "x": 3696,
+              "y": 2565
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-13",
+            "type": "jungle-blowdarter",
+            "hp": 495,
+            "maxHp": 495,
+            "pos": {
+              "x": 1464,
+              "y": 2001
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-12",
+            "type": "jungle-blowdarter",
+            "hp": 495,
+            "maxHp": 495,
+            "pos": {
+              "x": 2174,
+              "y": 4209
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-11",
+            "type": "jungle-blowdarter",
+            "hp": 495,
+            "maxHp": 495,
+            "pos": {
+              "x": 4369,
+              "y": 2997
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-10",
+            "type": "jungle-blowdarter",
+            "hp": 495,
+            "maxHp": 495,
+            "pos": {
+              "x": 1985,
+              "y": 444
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-9",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 3435,
+              "y": 3298
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-8",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 2929,
+              "y": 4057
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-7",
+            "type": "jungle-ape",
+            "hp": 1320,
+            "maxHp": 1320,
+            "pos": {
+              "x": 4052,
+              "y": 4525
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-6",
+            "type": "jungle-blowdarter",
+            "hp": 495,
+            "maxHp": 495,
+            "pos": {
+              "x": 4114,
+              "y": 3690
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-5",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 578,
+              "y": 4353
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-4",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 3532,
+              "y": 4031
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-3",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 3394,
+              "y": 945
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-2",
+            "type": "jungle-ape",
+            "hp": 1320,
+            "maxHp": 1320,
+            "pos": {
+              "x": 2540,
+              "y": 1557
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-1",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 882,
+              "y": 2481
+            }
+          }
+        ]
+      },
+      {
+        "seed": 101021,
+        "hash": "4df7c229b51913c2210378962725f2b4702ce0b79425a960153c8b525530f76e",
+        "roster": [
+          {
+            "id": "node-t2-jungle-03_monster-37",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 3200,
+              "y": 180
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-36",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 4128,
+              "y": 4567
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-35",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 4709,
+              "y": 4485
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-34",
+            "type": "jungle-blowdarter",
+            "hp": 495,
+            "maxHp": 495,
+            "pos": {
+              "x": 225,
+              "y": 3680
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-33",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 1873,
+              "y": 3901
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-32",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 2295,
+              "y": 146
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-31",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 754,
+              "y": 2281
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-30",
+            "type": "jungle-ape",
+            "hp": 1320,
+            "maxHp": 1320,
+            "pos": {
+              "x": 2325,
+              "y": 4126
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-29",
+            "type": "jungle-blowdarter",
+            "hp": 495,
+            "maxHp": 495,
+            "pos": {
+              "x": 179,
+              "y": 981
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-28",
+            "type": "jungle-blowdarter",
+            "hp": 495,
+            "maxHp": 495,
+            "pos": {
+              "x": 1205,
+              "y": 4250
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-27",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 3373,
+              "y": 3508
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-26",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 2909.5136585487094,
+              "y": 4334.624885168571
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-25",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 1175,
+              "y": 820
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-24",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 3769,
+              "y": 2626
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-23",
+            "type": "jungle-blowdarter",
+            "hp": 495,
+            "maxHp": 495,
+            "pos": {
+              "x": 118,
+              "y": 2502
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-22",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 4637,
+              "y": 3641
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-21",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 1123,
+              "y": 2809
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-20",
+            "type": "jungle-blowdarter",
+            "hp": 495,
+            "maxHp": 495,
+            "pos": {
+              "x": 4651,
+              "y": 310
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-19",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 4671,
+              "y": 2292
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-18",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 1876,
+              "y": 2657
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-17",
+            "type": "jungle-ape",
+            "hp": 1320,
+            "maxHp": 1320,
+            "pos": {
+              "x": 1522,
+              "y": 1803
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-16",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 4323,
+              "y": 3034
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-15",
+            "type": "jungle-ape",
+            "hp": 1320,
+            "maxHp": 1320,
+            "pos": {
+              "x": 2725,
+              "y": 1247
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-14",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 3911,
+              "y": 340
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-13",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 4131,
+              "y": 1666
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-12",
+            "type": "jungle-ape",
+            "hp": 1320,
+            "maxHp": 1320,
+            "pos": {
+              "x": 2222,
+              "y": 1976
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-11",
+            "type": "jungle-ape",
+            "hp": 1320,
+            "maxHp": 1320,
+            "pos": {
+              "x": 4582,
+              "y": 899
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-10",
+            "type": "jungle-ape",
+            "hp": 1320,
+            "maxHp": 1320,
+            "pos": {
+              "x": 2616,
+              "y": 3060
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-9",
+            "type": "jungle-ape",
+            "hp": 1320,
+            "maxHp": 1320,
+            "pos": {
+              "x": 647,
+              "y": 1293
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-8",
+            "type": "jungle-blowdarter",
+            "hp": 495,
+            "maxHp": 495,
+            "pos": {
+              "x": 4023,
+              "y": 3645
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-7",
+            "type": "jungle-ape",
+            "hp": 1320,
+            "maxHp": 1320,
+            "pos": {
+              "x": 3112,
+              "y": 1726
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-6",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 752,
+              "y": 4210
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-5",
+            "type": "jungle-ape",
+            "hp": 1320,
+            "maxHp": 1320,
+            "pos": {
+              "x": 810,
+              "y": 132
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-4",
+            "type": "jungle-ape",
+            "hp": 1320,
+            "maxHp": 1320,
+            "pos": {
+              "x": 1688,
+              "y": 1133
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-3",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 3132,
+              "y": 2730
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-2",
+            "type": "jungle-blowdarter",
+            "hp": 495,
+            "maxHp": 495,
+            "pos": {
+              "x": 3146,
+              "y": 627
+            }
+          },
+          {
+            "id": "node-t2-jungle-03_monster-1",
+            "type": "jungle-snake",
+            "hp": 528,
+            "maxHp": 528,
+            "pos": {
+              "x": 1295,
+              "y": 3492
+            }
+          }
+        ]
+      }
+    ],
+    "progressionRole": "Ordinary native modifier node; not boss, arrival or equal-difficulty calibration",
+    "nativePool": [
+      "jungle-snake",
+      "jungle-snake",
+      "jungle-ape",
+      "jungle-blowdarter"
+    ],
+    "authoredDensity": 40,
+    "observedPopulation": [
+      {
+        "seed": 101009,
+        "count": 37,
+        "types": [
+          "jungle-blowdarter",
+          "jungle-snake",
+          "jungle-ape"
+        ]
+      },
+      {
+        "seed": 101021,
+        "count": 37,
+        "types": [
+          "jungle-snake",
+          "jungle-blowdarter",
+          "jungle-ape"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "node-t2-desert-03",
+    "node": {
+      "biomeGroup": "desert",
+      "biomeTier": 2,
+      "regionId": "t2",
+      "kind": "normal",
+      "displayName": "Sun-Crowned Expanse",
+      "map": {
+        "row": 7,
+        "col": 11
+      },
+      "modifier": "dominion",
+      "isDungeon": false,
+      "featureSetId": "desert",
+      "featureVariant": 2
+    },
+    "initialRosters": [
+      {
+        "seed": 101009,
+        "hash": "c16252368ab3d56f1d55cfee7bab4a72957812d408644f8badd25e3ee04b1227",
+        "roster": [
+          {
+            "id": "node-t2-desert-03_monster-16",
+            "type": "dust-djinn",
+            "hp": 429,
+            "maxHp": 429,
+            "pos": {
+              "x": 4510,
+              "y": 98
+            }
+          },
+          {
+            "id": "node-t2-desert-03_monster-15",
+            "type": "sand-scorpion",
+            "hp": 1502,
+            "maxHp": 1502,
+            "pos": {
+              "x": 4446,
+              "y": 98
+            }
+          },
+          {
+            "id": "node-t2-desert-03_monster-14",
+            "type": "dust-djinn",
+            "hp": 429,
+            "maxHp": 429,
+            "pos": {
+              "x": 4736,
+              "y": 1985
+            }
+          },
+          {
+            "id": "node-t2-desert-03_monster-13",
+            "type": "stone-basilisk",
+            "hp": 1502,
+            "maxHp": 1502,
+            "pos": {
+              "x": 4672,
+              "y": 1985
+            }
+          },
+          {
+            "id": "node-t2-desert-03_monster-12",
+            "type": "dust-djinn",
+            "hp": 429,
+            "maxHp": 429,
+            "pos": {
+              "x": 2957,
+              "y": 1340
+            }
+          },
+          {
+            "id": "node-t2-desert-03_monster-11",
+            "type": "sand-scorpion",
+            "hp": 1502,
+            "maxHp": 1502,
+            "pos": {
+              "x": 2893,
+              "y": 1340
+            }
+          },
+          {
+            "id": "node-t2-desert-03_monster-10",
+            "type": "dust-djinn",
+            "hp": 429,
+            "maxHp": 429,
+            "pos": {
+              "x": 4116,
+              "y": 4525
+            }
+          },
+          {
+            "id": "node-t2-desert-03_monster-9",
+            "type": "sand-scorpion",
+            "hp": 1502,
+            "maxHp": 1502,
+            "pos": {
+              "x": 4052,
+              "y": 4525
+            }
+          },
+          {
+            "id": "node-t2-desert-03_monster-8",
+            "type": "dust-djinn",
+            "hp": 429,
+            "maxHp": 429,
+            "pos": {
+              "x": 3945,
+              "y": 1436
+            }
+          },
+          {
+            "id": "node-t2-desert-03_monster-7",
+            "type": "stone-basilisk",
+            "hp": 1502,
+            "maxHp": 1502,
+            "pos": {
+              "x": 3881,
+              "y": 1436
+            }
+          },
+          {
+            "id": "node-t2-desert-03_monster-6",
+            "type": "dust-djinn",
+            "hp": 429,
+            "maxHp": 429,
+            "pos": {
+              "x": 1691,
+              "y": 3532
+            }
+          },
+          {
+            "id": "node-t2-desert-03_monster-5",
+            "type": "sand-scorpion",
+            "hp": 1502,
+            "maxHp": 1502,
+            "pos": {
+              "x": 1627,
+              "y": 3532
+            }
+          },
+          {
+            "id": "node-t2-desert-03_monster-4",
+            "type": "dust-djinn",
+            "hp": 429,
+            "maxHp": 429,
+            "pos": {
+              "x": 2015,
+              "y": 572
+            }
+          },
+          {
+            "id": "node-t2-desert-03_monster-3",
+            "type": "sand-scorpion",
+            "hp": 1502,
+            "maxHp": 1502,
+            "pos": {
+              "x": 1951,
+              "y": 572
+            }
+          },
+          {
+            "id": "node-t2-desert-03_monster-2",
+            "type": "dust-djinn",
+            "hp": 429,
+            "maxHp": 429,
+            "pos": {
+              "x": 946,
+              "y": 2481
+            }
+          },
+          {
+            "id": "node-t2-desert-03_monster-1",
+            "type": "sand-scorpion",
+            "hp": 1502,
+            "maxHp": 1502,
+            "pos": {
+              "x": 882,
+              "y": 2481
+            }
+          }
+        ]
+      },
+      {
+        "seed": 101021,
+        "hash": "de74da2d7b0b4aba144cb92c23b35fc3e236520767a049432d283c836824bec4",
+        "roster": [
+          {
+            "id": "node-t2-desert-03_monster-16",
+            "type": "dust-djinn",
+            "hp": 429,
+            "maxHp": 429,
+            "pos": {
+              "x": 3165,
+              "y": 4582
+            }
+          },
+          {
+            "id": "node-t2-desert-03_monster-15",
+            "type": "stone-basilisk",
+            "hp": 1502,
+            "maxHp": 1502,
+            "pos": {
+              "x": 3101,
+              "y": 4582
+            }
+          },
+          {
+            "id": "node-t2-desert-03_monster-14",
+            "type": "dust-djinn",
+            "hp": 429,
+            "maxHp": 429,
+            "pos": {
+              "x": 567,
+              "y": 2834
+            }
+          },
+          {
+            "id": "node-t2-desert-03_monster-13",
+            "type": "sand-scorpion",
+            "hp": 1502,
+            "maxHp": 1502,
+            "pos": {
+              "x": 503,
+              "y": 2834
+            }
+          },
+          {
+            "id": "node-t2-desert-03_monster-12",
+            "type": "dust-djinn",
+            "hp": 429,
+            "maxHp": 429,
+            "pos": {
+              "x": 2288,
+              "y": 3710
+            }
+          },
+          {
+            "id": "node-t2-desert-03_monster-11",
+            "type": "stone-basilisk",
+            "hp": 1502,
+            "maxHp": 1502,
+            "pos": {
+              "x": 2224,
+              "y": 3710
+            }
+          },
+          {
+            "id": "node-t2-desert-03_monster-10",
+            "type": "dust-djinn",
+            "hp": 429,
+            "maxHp": 429,
+            "pos": {
+              "x": 1308,
+              "y": 2163
+            }
+          },
+          {
+            "id": "node-t2-desert-03_monster-9",
+            "type": "stone-basilisk",
+            "hp": 1502,
+            "maxHp": 1502,
+            "pos": {
+              "x": 1244,
+              "y": 2163
+            }
+          },
+          {
+            "id": "node-t2-desert-03_monster-8",
+            "type": "dust-djinn",
+            "hp": 429,
+            "maxHp": 429,
+            "pos": {
+              "x": 1997,
+              "y": 2662
+            }
+          },
+          {
+            "id": "node-t2-desert-03_monster-7",
+            "type": "sand-scorpion",
+            "hp": 1502,
+            "maxHp": 1502,
+            "pos": {
+              "x": 1933,
+              "y": 2662
+            }
+          },
+          {
+            "id": "node-t2-desert-03_monster-6",
+            "type": "dust-djinn",
+            "hp": 429,
+            "maxHp": 429,
+            "pos": {
+              "x": 4540,
+              "y": 4627
+            }
+          },
+          {
+            "id": "node-t2-desert-03_monster-5",
+            "type": "stone-basilisk",
+            "hp": 1502,
+            "maxHp": 1502,
+            "pos": {
+              "x": 4476,
+              "y": 4627
+            }
+          },
+          {
+            "id": "node-t2-desert-03_monster-4",
+            "type": "dust-djinn",
+            "hp": 429,
+            "maxHp": 429,
+            "pos": {
+              "x": 2912,
+              "y": 1529
+            }
+          },
+          {
+            "id": "node-t2-desert-03_monster-3",
+            "type": "sand-scorpion",
+            "hp": 1502,
+            "maxHp": 1502,
+            "pos": {
+              "x": 2848,
+              "y": 1529
+            }
+          },
+          {
+            "id": "node-t2-desert-03_monster-2",
+            "type": "dust-djinn",
+            "hp": 429,
+            "maxHp": 429,
+            "pos": {
+              "x": 1359,
+              "y": 3492
+            }
+          },
+          {
+            "id": "node-t2-desert-03_monster-1",
+            "type": "sand-scorpion",
+            "hp": 1502,
+            "maxHp": 1502,
+            "pos": {
+              "x": 1295,
+              "y": 3492
+            }
+          }
+        ]
+      }
+    ],
+    "progressionRole": "Ordinary native modifier node; not boss, arrival or equal-difficulty calibration",
+    "nativePool": [
+      "sand-scorpion",
+      "stone-basilisk"
+    ],
+    "authoredDensity": 16,
+    "observedPopulation": [
+      {
+        "seed": 101009,
+        "count": 16,
+        "types": [
+          "dust-djinn",
+          "sand-scorpion",
+          "stone-basilisk"
+        ]
+      },
+      {
+        "seed": 101021,
+        "count": 16,
+        "types": [
+          "dust-djinn",
+          "stone-basilisk",
+          "sand-scorpion"
+        ]
+      }
+    ]
+  }
+]

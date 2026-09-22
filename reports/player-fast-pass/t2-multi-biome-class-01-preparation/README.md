@@ -1,0 +1,13 @@
+# T2 multi-biome class screen 01 — prepared, not run
+
+264 planned lives: A 216, B 12, D 36. All 18 T2 identities across seven ordinary fixtures, seeds 101009 and 101021, one worker, 100 ms steps, first death or 600,000 ms. Five- and ten-minute endpoints belong to the same continuous life. No pilots, revivals, retries, extra seeds, tuning, bosses or extensions.
+
+The user's direct requirements supersede SOURCE_BRIEF.md: move Focus Lowest HP from Swamp to **T2 Desert level 4**, retain the 90-essence amount using yellow, and permit melee Desert characters to craft/equip it at **300,000 ms**. D is authorized and included. The stale T4 action label is now T2. Existing ownership remains compatible through the unchanged recipe ID.
+
+This is mature synthetic T2 ownership, not an acquisition experiment. All reachable biome levels start capped (Desert 6), and the 12 melee Desert lives start with an explicitly reserved 90 yellow essence. The rune is neither owned nor equipped initially. If alive at five minutes, they make exactly one production craft attempt and a normal validated Rune loadout edit. No midpoint resource or mastery grant, healing, recovery reset, enemy change, forced target selection, or retry. The first endpoint is taken before adoption. Early deaths are reported as not reaching adoption. If the craft gate/resources are unavailable, preserve craft-unavailable and do not invent a rescue.
+
+Measured source: `41b3d35961bf4393beeea6e70aabfe2ae43ad810`, source SHA-256 `32b44f4faec8ad7e52d9f0f4b97b12bd3f3b22f537043dcb29ed7b0bb6220e94`. Frozen execution checkout: `D:/mmo-idle/t2-multi-biome-class-01/source`. Packet: `D:/mmo-idle/t2-multi-biome-class-01/packet`. Hitboxes: `D:/mmo-idle/t2-multi-biome-class-01/hitboxes.json`, SHA-256 `6a75e0e8417e0936bdaffe389f1d5b73b06a78b49d163961e02cf18ecca166bf`. Publication is a descendant containing this handoff, not the measured revision.
+
+Baseline begins at e504a0db1b74764249c60558bf507b56d8cf35f3. The four existing movement-only Hamstring files were copied into the isolated baseline (runtime, focused regression, HUD wording, ability documentation), preserving the original checkout's uncommitted files. Conduit R2 and accepted owner-target/session behavior remain production code. Heat remains in provenance; no Heat fixture/treatment is included. Wait It Out stays unequipped.
+
+Read LUNA_RUN.md for execution, PACKAGES.md and PACKAGE_CATALOGUE.json for exact choices/legal readbacks, FIXTURES.json for native node/roster facts, OBSERVATION_LEDGER.json for order, CLASS_ASSESSMENT.md for historical context, and REPORT_CONTRACT.json for the publication contract. Qualification and receipt-check contain zero combat observations. Full-suite and human/live-browser evidence are not claimed.

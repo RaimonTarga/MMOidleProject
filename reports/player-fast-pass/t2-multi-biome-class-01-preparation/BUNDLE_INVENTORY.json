@@ -1,0 +1,101 @@
+{
+  "measuredSource": "41b3d35961bf4393beeea6e70aabfe2ae43ad810",
+  "files": [
+    {
+      "path": "reports/player-fast-pass/t2-multi-biome-class-01-preparation/.gitattributes",
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    {
+      "path": "reports/player-fast-pass/t2-multi-biome-class-01-preparation/APPRENTICE_PRIOR_TRACE.json",
+      "bytes": 10406,
+      "sha256": "75b999642c01f8587446e3691a739f8b1aa3be0625c3ca738346d2a97cd77c11"
+    },
+    {
+      "path": "reports/player-fast-pass/t2-multi-biome-class-01-preparation/CHECKS.json",
+      "bytes": 2097,
+      "sha256": "0fc7c87a01e096df2a1f4e9e2b3165c816f0e5b60e67f29101303fc46c542ceb"
+    },
+    {
+      "path": "reports/player-fast-pass/t2-multi-biome-class-01-preparation/CLASS_ASSESSMENT.md",
+      "bytes": 7169,
+      "sha256": "85d9a4c6635994ba746e823052a2b75ecd4ad935d489a80a6aeff9c7409bc372"
+    },
+    {
+      "path": "reports/player-fast-pass/t2-multi-biome-class-01-preparation/FIXTURES.json",
+      "bytes": 110887,
+      "sha256": "f35355848a9fe129a63e173dcb6e94ae6b6c5feb4ab40a1bc11231ce92b7e0ed"
+    },
+    {
+      "path": "reports/player-fast-pass/t2-multi-biome-class-01-preparation/ITEM_GATES.json",
+      "bytes": 68944,
+      "sha256": "c91afbd796bae93e8e94ffe2ca02ab0d0191f0d180be41b0110fb8459ad3605f"
+    },
+    {
+      "path": "reports/player-fast-pass/t2-multi-biome-class-01-preparation/LUNA_RUN.md",
+      "bytes": 4933,
+      "sha256": "03ec9149f82f366393a9a80308725f1119bcd58853772beead1022978e0c66ba"
+    },
+    {
+      "path": "reports/player-fast-pass/t2-multi-biome-class-01-preparation/OBSERVATION_LEDGER.json",
+      "bytes": 108729,
+      "sha256": "0e1de062383c796346562ea754d6fe8015978cd7704bf83334e1dba4c21fabdd"
+    },
+    {
+      "path": "reports/player-fast-pass/t2-multi-biome-class-01-preparation/PACKAGES.md",
+      "bytes": 5784,
+      "sha256": "e60f237503e23b4ef20904d08778ffe5572b2982804ac17efedebc76a0a8706a"
+    },
+    {
+      "path": "reports/player-fast-pass/t2-multi-biome-class-01-preparation/PACKAGE_CATALOGUE.json",
+      "bytes": 1320105,
+      "sha256": "cc6f9742988f33f1e28ab10cb1f3e69c2944c2827b0f02a9ac01dd5f9aaec803"
+    },
+    {
+      "path": "reports/player-fast-pass/t2-multi-biome-class-01-preparation/packet/identity.json",
+      "bytes": 147103,
+      "sha256": "5c9690016238c3a0f8956b11b91f6c58695af1baf3720e97386c9bc12fae0452"
+    },
+    {
+      "path": "reports/player-fast-pass/t2-multi-biome-class-01-preparation/packet/manifest.json",
+      "bytes": 766962,
+      "sha256": "43c64ed8e713176cafc6f21abfd02bb66bdbd447e256b1dc447ece6a6b248989"
+    },
+    {
+      "path": "reports/player-fast-pass/t2-multi-biome-class-01-preparation/packet/qualified.json",
+      "bytes": 291,
+      "sha256": "c65700213ac39c23a29a46d31a6b037d1b97cad8fcff4986f7b4a06753a7d175"
+    },
+    {
+      "path": "reports/player-fast-pass/t2-multi-biome-class-01-preparation/packet/receipt-verified.json",
+      "bytes": 466,
+      "sha256": "443dcad239acc91e6d06297edc13be476f94ea130e990c96df8a07235ae61ce0"
+    },
+    {
+      "path": "reports/player-fast-pass/t2-multi-biome-class-01-preparation/packet/seal.json",
+      "bytes": 177,
+      "sha256": "4b6b6eab7e02611b7a83dea044920f313bd01a91fa64ee17475ac8abef6b7b97"
+    },
+    {
+      "path": "reports/player-fast-pass/t2-multi-biome-class-01-preparation/QUALIFICATION_RECEIPTS.json",
+      "bytes": 334371,
+      "sha256": "d1a857444306fcdf89d955f2c89c021d430a9b6b113c0ba8b2f9950de494baff"
+    },
+    {
+      "path": "reports/player-fast-pass/t2-multi-biome-class-01-preparation/README.md",
+      "bytes": 2763,
+      "sha256": "b7864d12d7f7a21cd6af236864d93d9dc0f782f05de390f2c6af0b6eb06112b8"
+    },
+    {
+      "path": "reports/player-fast-pass/t2-multi-biome-class-01-preparation/REPORT_CONTRACT.json",
+      "bytes": 2876,
+      "sha256": "6f3ec2315127ff41f5e7643b983383ba296e6fbffdfed4b79bd10a8ee9266426"
+    },
+    {
+      "path": "reports/player-fast-pass/t2-multi-biome-class-01-preparation/SOURCE_BRIEF.md",
+      "bytes": 21642,
+      "sha256": "66fcf7f5964f9368257905a569f65df56cba766920733fe6dc3093cb1b10509e"
+    }
+  ],
+  "experimentId": "t2-multi-biome-class-01"
+}
