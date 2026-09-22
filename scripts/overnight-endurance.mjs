@@ -12,17 +12,18 @@ const require=createRequire(join(root,'server/package.json'));
 const enduranceSpec=require('../server/bench/balance/overnightEnduranceSpec.ts');
 const args=Object.fromEntries(process.argv.slice(2).map(a=>{const i=a.indexOf('=');assert(i>2);return [a.slice(2,i),a.slice(i+1)];}));
 assert(['prepare','verify','qualify','receipt-check','run'].includes(args.mode));assert(args.packet);
-const t2Multi=args.trial==='t2-multi-biome-class-01';
+const followup=args.trial==='t2-spirit-desert-followup-01';
+const t2Multi=args.trial==='t2-multi-biome-class-01'||followup;
 const tundraClassFrame=args.trial==='t3-tundra-class-frame-01';
 const desert=args.trial==='desert-strategy-01';
 const guardCoverage=args.trial==='guard-coverage-01';
 const day2=args.trial==='day2-bounded-01';
 const family=args.family;
 if(day2)assert(['A-control','A-candidate','B'].includes(family));
-const cells=t2Multi?require('../server/bench/balance/t2MultiBiomeSpec.ts').T2_MULTI_CELLS:tundraClassFrame?require('../server/bench/balance/tundraClassFrameSpec.ts').TUNDRA_CLASS_FRAME_CELLS:desert?require('../server/bench/balance/desertStrategySpec.ts').DESERT_CELLS:guardCoverage?require('../server/bench/balance/guardCoverageSpec.ts').GUARD_COVERAGE_CELLS:day2?require('../server/bench/balance/day2Spec.ts').DAY2_CELLS.filter(c=>family==='B'?c.block==='B':c.block==='A' && `A-${c.arm}`===family):enduranceSpec.ENDURANCE_CELLS;
+const cells=followup?require('../server/bench/balance/t2SpiritDesertSpec.ts').FOLLOWUP_CELLS:t2Multi?require('../server/bench/balance/t2MultiBiomeSpec.ts').T2_MULTI_CELLS:tundraClassFrame?require('../server/bench/balance/tundraClassFrameSpec.ts').TUNDRA_CLASS_FRAME_CELLS:desert?require('../server/bench/balance/desertStrategySpec.ts').DESERT_CELLS:guardCoverage?require('../server/bench/balance/guardCoverageSpec.ts').GUARD_COVERAGE_CELLS:day2?require('../server/bench/balance/day2Spec.ts').DAY2_CELLS.filter(c=>family==='B'?c.block==='B':c.block==='A' && `A-${c.arm}`===family):enduranceSpec.ENDURANCE_CELLS;
 const seeds=[...new Set(cells.map(c=>c.seed))];
 const planned=cells.length, capMs=(t2Multi||tundraClassFrame||desert)?600000:day2 && family!=='B'?300000:1800000;
-const experimentId=t2Multi?'t2-multi-biome-class-01':tundraClassFrame?'t3-tundra-class-frame-01':desert?'desert-strategy-01':guardCoverage?'guard-coverage-01':day2?'day2-bounded-01':'overnight-endurance-01';
+const experimentId=followup?'t2-spirit-desert-followup-01':t2Multi?'t2-multi-biome-class-01':tundraClassFrame?'t3-tundra-class-frame-01':desert?'desert-strategy-01':guardCoverage?'guard-coverage-01':day2?'day2-bounded-01':'overnight-endurance-01';
 const packet=resolve(args.packet), sha=b=>createHash('sha256').update(b).digest('hex');
 const json=p=>JSON.parse(readFileSync(p,'utf8'));
 const write=(p,v)=>writeFileSync(p,JSON.stringify(v,null,2)+'\n');
@@ -42,10 +43,10 @@ if(args.mode==='prepare') {
   assert(args.hitboxes && !existsSync(packet));assert.equal(git('status','--porcelain','--untracked-files=no'),'');
   mkdirSync(packet,{recursive:true});
   write(join(packet,'manifest.json'),{experimentId,status:'prepared-unrun',planned,family:family??null,
-    blocks:t2Multi?{A:216,B:12,D:36}:tundraClassFrame?{primary:36,alternatives:16,discardedSquireSlam:0}:desert?{targeting:24}:guardCoverage?{coverage:32}:day2?{A:cells.filter(c=>c.block==='A').length,B:cells.filter(c=>c.block==='B').length}:{A:288,B:48,C:0},...(t2Multi?{candidateDisposition:'T2 Desert level-4 Focus Lowest HP; one declared melee craft/equip at 300000ms; no other treatments'}:tundraClassFrame?{candidateDisposition:'52-case T3 Tundra class/frame screen; Squire Slam discarded by designer; production R2, session correction and native owner targeting unchanged'}:desert?{candidateDisposition:'Native targeting only; production R2 and integrated session correction unchanged'}:guardCoverage?{candidateDisposition:'Normal R2 plus integrated measured session correction; fixed Endure packages'}:day2?{candidateDisposition:'Separate candidate checkout only; Block B retains control gameplay'}:{optionalC:{included:false,candidate:null,reason:'Existing diagnosis has no qualified candidate; see CONDUIT_DIAGNOSIS.md'}}),
+    blocks:followup?{A:24,B:8}:t2Multi?{A:216,B:12,D:36}:tundraClassFrame?{primary:36,alternatives:16,discardedSquireSlam:0}:desert?{targeting:24}:guardCoverage?{coverage:32}:day2?{A:cells.filter(c=>c.block==='A').length,B:cells.filter(c=>c.block==='B').length}:{A:288,B:48,C:0},...(followup?{candidateDisposition:'32 fresh comparisons, zero reused; whole weapons and opening production craft/equip; no numerical gameplay changes'}:t2Multi?{candidateDisposition:'T2 Desert level-4 Focus Lowest HP; one declared melee craft/equip at 300000ms; no other treatments'}:tundraClassFrame?{candidateDisposition:'52-case T3 Tundra class/frame screen; Squire Slam discarded by designer; production R2, session correction and native owner targeting unchanged'}:desert?{candidateDisposition:'Native targeting only; production R2 and integrated session correction unchanged'}:guardCoverage?{candidateDisposition:'Normal R2 plus integrated measured session correction; fixed Endure packages'}:day2?{candidateDisposition:'Separate candidate checkout only; Block B retains control gameplay'}:{optionalC:{included:false,candidate:null,reason:'Existing diagnosis has no qualified candidate; see CONDUIT_DIAGNOSIS.md'}}),
     reused:args.reuse?json(resolve(args.reuse)):null,
     seeds,dtMs:100,capMs,endpointsMs:((t2Multi||tundraClassFrame||desert)?[300000,600000]:[300000,900000,1800000]).filter(x=>x<=capMs),synthetic:true,economyEligible:false,
-    stopOnFirstDeath:true,watchdogs,sharedFailureFamily:t2Multi?'T2 multi-biome (264 cells, one common source)':tundraClassFrame?'T3 Tundra class/frame (52 cells, one common source)':desert?'Desert strategy (24 cells, one common source)':guardCoverage?'Guard coverage (32 cells, one common source)':day2?(family==='B'?'B':'A'):'all A/B ordinary-farm children',cases:cells});
+    stopOnFirstDeath:true,watchdogs,sharedFailureFamily:followup?'All 32 follow-up cells':t2Multi?'T2 multi-biome (264 cells, one common source)':tundraClassFrame?'T3 Tundra class/frame (52 cells, one common source)':desert?'Desert strategy (24 cells, one common source)':guardCoverage?'Guard coverage (32 cells, one common source)':day2?(family==='B'?'B':'A'):'all A/B ordinary-farm children',cases:cells});
   write(join(packet,'identity.json'),identity(args.hitboxes));
   write(join(packet,'seal.json'),Object.fromEntries(['manifest.json','identity.json'].map(p=>[p,sha(readFileSync(join(packet,p)))])));
   console.log(`Sealed ${planned} planned observations; no combat.`);process.exit(0);
@@ -162,6 +163,11 @@ function receipt(c,r,m){
   if(t2Multi){
     assert(rec.packageReadback.runicPoints.cost<=rec.packageReadback.runicPoints.budget);
     assert(rec.t2Preparation);
+    if(followup){
+      assert.equal(rec.packageReadback.runicPoints.budget,30);
+      assert.equal(rec.packageReadback.runicPoints.cost,c.block==='B'&&!c.openingFocus?27:30);
+      if(c.openingFocus){assert.equal(rec.t2Preparation.opening.after.yellow,0);assert.equal(rec.t2Preparation.opening.after.owned,true);assert.equal(rec.t2Preparation.opening.atMs,0);}
+    }
     const paired=receipts.find(x=>cells.find(y=>y.id===x.observationId).comparisonId===c.comparisonId);
     if(paired)assert.equal(paired.initialRosterHash,rec.initialRosterHash,'Weapon pair initial ecology mismatch');
   }
@@ -204,7 +210,7 @@ try{
       const cp=join(detail,'conduit.json'),conduit=existsSync(cp)?json(cp):null;
       if(c.className==='conduit')assert(conduit);
       Object.assign(r,{status:'complete',reason:null,outcome:s.outcome,elapsedMs:s.elapsedMs,completedKills:s.counts.killed,
-        ...((t2Multi||guardCoverage||desert)?{guards:s.guards}:{}),...(t2Multi?{focusAdoption:s.focusAdoption}:{}),...(desert?{strategy:s.strategy}:{}),sessions:s.sessions??null,historicalReferenceObservationId:c.sourceObservationId??null,unfinishedTargets:s.counts.censored,targetRegainCount:s.counts.hpRegain,minHpFraction:s.minHpFraction,
+        ...((t2Multi||guardCoverage||desert)?{guards:s.guards}:{}),...(t2Multi?{focusAdoption:s.focusAdoption}:{}),...((desert||followup)?{strategy:s.strategy}:{}),sessions:s.sessions??null,historicalReferenceObservationId:c.sourceObservationId??null,unfinishedTargets:s.counts.censored,targetRegainCount:s.counts.hpRegain,minHpFraction:s.minHpFraction,
         endpoints:s.endpoints,intervals:s.intervals,work:s.work,sustain:s.sustain,terminalOwner:s.terminalOwner,
         deathEvidence:s.playerDeathEvidence,incomingHpDamage:s.incomingDamage,runicPoints:ready.packageReadback.runicPoints,
         conduit:conduit ? Object.fromEntries(Object.entries(conduit).filter(([k])=>!['events','snapshots','lives','episodes','damageDelivery'].includes(k))) : null,

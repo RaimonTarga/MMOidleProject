@@ -49,8 +49,8 @@ export function prepareT2Ownership(c: T2MultiCell, bot: PlayerEntity) {
 }
 
 /** One declared player-like loadout edit; never changes health, targets, or ecology. */
-export function attemptT2Focus(world: World, bot: PlayerEntity, elapsedMs: number) {
-  assert.equal(elapsedMs, 300000, 'Exactly the midpoint; no late retries');
+export function attemptT2Focus(world: World, bot: PlayerEntity, elapsedMs: number, opening = false) {
+  assert.equal(elapsedMs, opening ? 0 : 300000, 'Only the declared adoption time; no retries');
   const p = bot.tracksProgression;
   const before = { yellow: p.essences.yellow, desertLevel: p.biomeLevel.desert, hp: bot.hasHealth.hp,
     rules: structuredClone(p.runesEquipped) };

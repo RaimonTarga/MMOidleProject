@@ -1,3 +1,4 @@
+import { FOLLOWUP_BLOCKS, type FollowupCell } from '../bench/balance/t2SpiritDesertSpec';
 import { T2_MULTI_BLOCKS, T2_MULTI_ENDPOINTS, type T2MultiCell } from '../bench/balance/t2MultiBiomeSpec';
 import { prepareT2Ownership, attemptT2Focus } from '../bench/balance/t2MultiBiomePreparation';
 import { DESERT_BLOCKS, DESERT_ENDPOINTS } from '../bench/balance/desertStrategySpec';
@@ -79,7 +80,8 @@ import { getAutoTargetId } from '../src/systems/combat/ai/targetPriority';
 
 const args=Object.fromEntries(process.argv.slice(2).map(x=>{const i=x.indexOf('=');return i<0?[x.replace(/^--/,''),'true']:[x.slice(2,i),x.slice(i+1)];}));
 const desert = args.trial === 'desert-strategy-01';
-const t2Multi = args.trial === 't2-multi-biome-class-01';
+const followup = args.trial === 't2-spirit-desert-followup-01';
+const t2Multi = args.trial === 't2-multi-biome-class-01' || followup;
 const tundraClassFrame = args.trial === 't3-tundra-class-frame-01';
 const guardCoverage = args.trial === 'guard-coverage-01';
 const day2 = args.trial === 'day2-bounded-01';
@@ -91,7 +93,7 @@ if (breadth) assertBreadthDefinitions();
 const packageFit = args.trial === 'player-package-fit';
 const fastPass = args.trial === 'player-fast-pass' || packageFit || breadth;
 if (packageFit) assertPackageFitDefinitions();
-const fastBlock = fastPass ? (t2Multi ? T2_MULTI_BLOCKS : tundraClassFrame ? TUNDRA_CLASS_FRAME_BLOCKS : desert ? DESERT_BLOCKS : guardCoverage ? GUARD_COVERAGE_BLOCKS : day2 ? DAY2_BLOCKS : endurance ? ENDURANCE_BLOCKS : farmingSustain ? FARMING_SUSTAIN_BLOCKS : farmingStance ? FARMING_STANCE_BLOCKS : breadth ? BREADTH_BLOCKS : packageFit ? PACKAGE_FIT_BLOCKS : FAST_PASS_BLOCKS)[args.block] : undefined;
+const fastBlock = fastPass ? (followup ? FOLLOWUP_BLOCKS : t2Multi ? T2_MULTI_BLOCKS : tundraClassFrame ? TUNDRA_CLASS_FRAME_BLOCKS : desert ? DESERT_BLOCKS : guardCoverage ? GUARD_COVERAGE_BLOCKS : day2 ? DAY2_BLOCKS : endurance ? ENDURANCE_BLOCKS : farmingSustain ? FARMING_SUSTAIN_BLOCKS : farmingStance ? FARMING_STANCE_BLOCKS : breadth ? BREADTH_BLOCKS : packageFit ? PACKAGE_FIT_BLOCKS : FAST_PASS_BLOCKS)[args.block] : undefined;
 if (fastPass) { assert(fastBlock && fastBlock.cells.every(c => c.role === 'farm'), 'Unknown farm block'); assertFastPassDefinitions(); }
 const night5=args.trial==='durability37'?DURABILITY37_BLOCKS[args.block]:args.trial==='durability36'?DURABILITY36_BLOCKS[args.block]:args.trial==='durability35'?DURABILITY35_BLOCKS[args.block]:args.trial==='durability34'?DURABILITY34_BLOCKS[args.block]:args.trial==='durability33'?DURABILITY33_BLOCKS[args.block]:args.trial==='durability32'?DURABILITY32_BLOCKS[args.block]:args.trial==='durability30'?DURABILITY30_BLOCKS[args.block]:args.trial==='durability29'?DURABILITY29_BLOCKS[args.block]:args.trial==='durability28'?DURABILITY28_BLOCKS[args.block]:args.trial==='durability27'?DURABILITY27_BLOCKS[args.block]:args.trial==='durability26'?DURABILITY26_BLOCKS[args.block]:args.trial==='durability25'?DURABILITY25_BLOCKS[args.block]:args.trial==='durability24'?DURABILITY24_BLOCKS[args.block as keyof typeof DURABILITY24_BLOCKS]:args.trial==='durability23'?DURABILITY23_BLOCKS[args.block]:args.trial==='durability22'?DURABILITY22_BLOCKS[args.block]:args.trial==='durability21'?DURABILITY21_BLOCKS[args.block]:args.trial==='night5'?NIGHT5_BLOCKS[args.block]:undefined;
 if(['night5','durability21','durability22','durability23','durability24','durability25','durability26','durability27','durability28','durability29','durability30','durability32','durability33','durability34','durability35','durability36','durability37'].includes(args.trial)) assert(night5,'Unknown night5 block');
@@ -153,8 +155,14 @@ function run(cell:SurveyCell,seed:number) {
   try {
     const target={nodeId:cell.nodeId,biomeGroup:NODE_BIOMES[cell.nodeId].biomeGroup,contentTier:cell.tier,isDungeon:false};
     setupArena(world,target);
-    const {bot}=prepareSurveyBot(world,cell,safeSpawn(cell.nodeId));
-    const t2Preparation = t2Multi ? prepareT2Ownership(cell as T2MultiCell,bot) : null;
+    const initialCell = followup ? structuredClone(cell) as FollowupCell : cell;
+    if (followup) initialCell.runeRules = initialCell.runeRules!.filter(r => r.actionId !== 'focus-lowest-hp');
+    const {bot}=prepareSurveyBot(world,initialCell,safeSpawn(cell.nodeId));
+    const ownership = t2Multi ? prepareT2Ownership(initialCell as T2MultiCell,bot) : null;
+    if (followup && (cell as FollowupCell).block === 'B') bot.tracksProgression.essences.yellow = 90;
+    const opening = followup && (cell as FollowupCell).openingFocus ? attemptT2Focus(world,bot,0,true) : null;
+    if (opening) assert.equal(opening.status,'crafted-and-equipped');
+    const t2Preparation = followup ? { ...ownership, startingEssences: { ...ownership!.startingEssences, ...(cell.nodeId === 'node-t2-desert-03' ? {yellow:90} : {}) }, opening } : ownership;
     const view=composePlayerView(bot)!;
     const conduit = breadth ? prepareConduitRecorder(world,bot,cell as BreadthCell) : null;
     const roster=()=>[...world.monsterEntitiesInNode(cell.nodeId)].map(m=>({id:m.entityId,type:m.isMonster.monsterTypeId,hp:m.hasHealth.hp,maxHp:m.hasHealth.maxHp,pos:{...m.hasPosition.current}}));
@@ -185,7 +193,7 @@ function run(cell:SurveyCell,seed:number) {
     if(mode==='qualify') return ready;
     const dir=join(out,cell.id+'-s'+seed);mkdirSync(dir);
     writeFileSync(join(dir,'ready.json'),JSON.stringify(ready,null,2));
-    const strategy = desert ? new DesertStrategyRecorder(world,bot) : null;
+    const strategy = (desert || (followup && (cell as FollowupCell).block === 'B')) ? new DesertStrategyRecorder(world,bot) : null;
     const guards = (t2Multi||guardCoverage||desert) ? new GuardCoverageRecorder(world,bot) : null;
     const sustain = farmingSustain ? new FarmingSustainRecorder(world,bot,1800000000000) : null;
     const sessions=day2 && (cell as EnduranceCell).block==='A'?new Day2SessionRecorder(world,bot):null;
@@ -203,7 +211,7 @@ function run(cell:SurveyCell,seed:number) {
     // Durability37's integration block mixes families with different windows, so the
     // window is resolved PER CELL there and falls back to the block duration elsewhere.
     const windowMs=args.trial==='durability37'&&mode!=='pilot'?durability37WindowMs(cell as Night5Cell):manifest.durationMs;
-    let focusAdoption: unknown = t2Multi && (cell as T2MultiCell).delayedFocus ? {status:'not-reached',atMs:null} : null;
+    let focusAdoption: unknown = opening ?? (t2Multi && (cell as T2MultiCell).delayedFocus ? {status:'not-reached',atMs:null} : null);
     let elapsed=0,outcome='window-ended',minHp=1,attackBeats=0,lastAttack=0;
     let maxTickWallMs=0;
     const wallStart=realNow();
