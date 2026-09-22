@@ -1,0 +1,2742 @@
+{
+  "experimentId": "t2-spirit-desert-followup-01",
+  "status": "prepared-unrun",
+  "planned": 32,
+  "family": null,
+  "blocks": {
+    "A": 24,
+    "B": 8
+  },
+  "candidateDisposition": "32 fresh comparisons, zero reused; whole weapons and opening production craft/equip; no numerical gameplay changes",
+  "reused": null,
+  "seeds": [
+    101009,
+    101021
+  ],
+  "dtMs": 100,
+  "capMs": 600000,
+  "endpointsMs": [
+    300000,
+    600000
+  ],
+  "synthetic": true,
+  "economyEligible": false,
+  "stopOnFirstDeath": true,
+  "watchdogs": {
+    "minimumDiskFreeBytes": 5368709120,
+    "minimumHostFreeMemoryBytes": 1073741824,
+    "maximumChildRssBytes": 2147483648,
+    "heartbeatTimeoutMs": 120000,
+    "pollMs": 5000,
+    "absoluteWallCeilingMs": null,
+    "maximumChildren": 1,
+    "retries": 0
+  },
+  "sharedFailureFamily": "All 32 follow-up cells",
+  "cases": [
+    {
+      "id": "t2sd-spirit-light-swamp-s101009-stinger",
+      "className": "spirit",
+      "tier": 2,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t2-swamp-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t2sd-spirit-light-swamp-s101009-stinger",
+        "classRoot": "energy-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "energy-root",
+          "energy-light"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-stinger-rapier",
+          "armor": "swamp-vest-t2",
+          "recovery": "swamp-charm-t2",
+          "mobility": "desert-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t2-spirit-light",
+      "frame": "light",
+      "range": null,
+      "pathName": "Spark",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Pure momentum. Blazing speed and rapid attacks; thrives on frequent discharges and their AoE splash. Gains 20 energy per hit, empowered at 1.5× — fires often.",
+        "Mature synthetic T2; original mastery, ordinary +5 clamped per item, core unchanged.",
+        "Fixed 32-cell follow-up; no midpoint edits, extra combat, Wait It Out, Endure or numerical treatments.",
+        "Fixed support and Technique; whole weapon comparison."
+      ],
+      "seed": 101009,
+      "block": "A",
+      "arm": "stinger",
+      "comparisonId": "t2sd-spirit-light-swamp-s101009",
+      "referenceCaseId": "t2mb-spirit-light-swamp-s101009-primary",
+      "sourceObservationId": null,
+      "biome": "swamp",
+      "policy": "static",
+      "delayedFocus": false,
+      "openingFocus": false
+    },
+    {
+      "id": "t2sd-spirit-light-swamp-s101009-axe",
+      "className": "spirit",
+      "tier": 2,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t2-swamp-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t2sd-spirit-light-swamp-s101009-axe",
+        "classRoot": "energy-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "energy-root",
+          "energy-light"
+        ],
+        "gearItemIds": {
+          "weapon": "ruinous-axe",
+          "armor": "swamp-vest-t2",
+          "recovery": "swamp-charm-t2",
+          "mobility": "desert-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t2-spirit-light",
+      "frame": "light",
+      "range": null,
+      "pathName": "Spark",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Pure momentum. Blazing speed and rapid attacks; thrives on frequent discharges and their AoE splash. Gains 20 energy per hit, empowered at 1.5× — fires often.",
+        "Mature synthetic T2; original mastery, ordinary +5 clamped per item, core unchanged.",
+        "Fixed 32-cell follow-up; no midpoint edits, extra combat, Wait It Out, Endure or numerical treatments.",
+        "Fixed support and Technique; whole weapon comparison."
+      ],
+      "seed": 101009,
+      "block": "A",
+      "arm": "axe",
+      "comparisonId": "t2sd-spirit-light-swamp-s101009",
+      "referenceCaseId": "t2mb-spirit-light-swamp-s101009-primary",
+      "sourceObservationId": null,
+      "biome": "swamp",
+      "policy": "static",
+      "delayedFocus": false,
+      "openingFocus": false
+    },
+    {
+      "id": "t2sd-spirit-light-mountain-s101009-stinger",
+      "className": "spirit",
+      "tier": 2,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t2-mountain-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t2sd-spirit-light-mountain-s101009-stinger",
+        "classRoot": "energy-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "energy-root",
+          "energy-light"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-stinger-rapier",
+          "armor": "mountain-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "cave-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t2-spirit-light",
+      "frame": "light",
+      "range": null,
+      "pathName": "Spark",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Pure momentum. Blazing speed and rapid attacks; thrives on frequent discharges and their AoE splash. Gains 20 energy per hit, empowered at 1.5× — fires often.",
+        "Mature synthetic T2; original mastery, ordinary +5 clamped per item, core unchanged.",
+        "Fixed 32-cell follow-up; no midpoint edits, extra combat, Wait It Out, Endure or numerical treatments.",
+        "Fixed support and Technique; whole weapon comparison."
+      ],
+      "seed": 101009,
+      "block": "A",
+      "arm": "stinger",
+      "comparisonId": "t2sd-spirit-light-mountain-s101009",
+      "referenceCaseId": "t2mb-spirit-light-mountain-s101009-primary",
+      "sourceObservationId": null,
+      "biome": "mountain",
+      "policy": "static",
+      "delayedFocus": false,
+      "openingFocus": false
+    },
+    {
+      "id": "t2sd-spirit-light-mountain-s101009-axe",
+      "className": "spirit",
+      "tier": 2,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t2-mountain-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t2sd-spirit-light-mountain-s101009-axe",
+        "classRoot": "energy-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "energy-root",
+          "energy-light"
+        ],
+        "gearItemIds": {
+          "weapon": "ruinous-axe",
+          "armor": "mountain-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "cave-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t2-spirit-light",
+      "frame": "light",
+      "range": null,
+      "pathName": "Spark",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Pure momentum. Blazing speed and rapid attacks; thrives on frequent discharges and their AoE splash. Gains 20 energy per hit, empowered at 1.5× — fires often.",
+        "Mature synthetic T2; original mastery, ordinary +5 clamped per item, core unchanged.",
+        "Fixed 32-cell follow-up; no midpoint edits, extra combat, Wait It Out, Endure or numerical treatments.",
+        "Fixed support and Technique; whole weapon comparison."
+      ],
+      "seed": 101009,
+      "block": "A",
+      "arm": "axe",
+      "comparisonId": "t2sd-spirit-light-mountain-s101009",
+      "referenceCaseId": "t2mb-spirit-light-mountain-s101009-primary",
+      "sourceObservationId": null,
+      "biome": "mountain",
+      "policy": "static",
+      "delayedFocus": false,
+      "openingFocus": false
+    },
+    {
+      "id": "t2sd-spirit-balanced-swamp-s101009-stinger",
+      "className": "spirit",
+      "tier": 2,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t2-swamp-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t2sd-spirit-balanced-swamp-s101009-stinger",
+        "classRoot": "energy-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "energy-root",
+          "energy-balanced"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-stinger-rapier",
+          "armor": "swamp-vest-t2",
+          "recovery": "swamp-charm-t2",
+          "mobility": "desert-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t2-spirit-balanced",
+      "frame": "balanced",
+      "range": null,
+      "pathName": "Wraith",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fast and capable. A bit of extra punch and some light armor without sacrificing mobility. Gains 14 energy per hit, empowered at 2×.",
+        "Mature synthetic T2; original mastery, ordinary +5 clamped per item, core unchanged.",
+        "Fixed 32-cell follow-up; no midpoint edits, extra combat, Wait It Out, Endure or numerical treatments.",
+        "Fixed support and Technique; whole weapon comparison."
+      ],
+      "seed": 101009,
+      "block": "A",
+      "arm": "stinger",
+      "comparisonId": "t2sd-spirit-balanced-swamp-s101009",
+      "referenceCaseId": "t2mb-spirit-balanced-swamp-s101009-primary",
+      "sourceObservationId": null,
+      "biome": "swamp",
+      "policy": "static",
+      "delayedFocus": false,
+      "openingFocus": false
+    },
+    {
+      "id": "t2sd-spirit-balanced-swamp-s101009-axe",
+      "className": "spirit",
+      "tier": 2,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t2-swamp-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t2sd-spirit-balanced-swamp-s101009-axe",
+        "classRoot": "energy-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "energy-root",
+          "energy-balanced"
+        ],
+        "gearItemIds": {
+          "weapon": "ruinous-axe",
+          "armor": "swamp-vest-t2",
+          "recovery": "swamp-charm-t2",
+          "mobility": "desert-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t2-spirit-balanced",
+      "frame": "balanced",
+      "range": null,
+      "pathName": "Wraith",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fast and capable. A bit of extra punch and some light armor without sacrificing mobility. Gains 14 energy per hit, empowered at 2×.",
+        "Mature synthetic T2; original mastery, ordinary +5 clamped per item, core unchanged.",
+        "Fixed 32-cell follow-up; no midpoint edits, extra combat, Wait It Out, Endure or numerical treatments.",
+        "Fixed support and Technique; whole weapon comparison."
+      ],
+      "seed": 101009,
+      "block": "A",
+      "arm": "axe",
+      "comparisonId": "t2sd-spirit-balanced-swamp-s101009",
+      "referenceCaseId": "t2mb-spirit-balanced-swamp-s101009-primary",
+      "sourceObservationId": null,
+      "biome": "swamp",
+      "policy": "static",
+      "delayedFocus": false,
+      "openingFocus": false
+    },
+    {
+      "id": "t2sd-spirit-balanced-mountain-s101009-stinger",
+      "className": "spirit",
+      "tier": 2,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t2-mountain-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t2sd-spirit-balanced-mountain-s101009-stinger",
+        "classRoot": "energy-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "energy-root",
+          "energy-balanced"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-stinger-rapier",
+          "armor": "mountain-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "cave-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t2-spirit-balanced",
+      "frame": "balanced",
+      "range": null,
+      "pathName": "Wraith",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fast and capable. A bit of extra punch and some light armor without sacrificing mobility. Gains 14 energy per hit, empowered at 2×.",
+        "Mature synthetic T2; original mastery, ordinary +5 clamped per item, core unchanged.",
+        "Fixed 32-cell follow-up; no midpoint edits, extra combat, Wait It Out, Endure or numerical treatments.",
+        "Fixed support and Technique; whole weapon comparison."
+      ],
+      "seed": 101009,
+      "block": "A",
+      "arm": "stinger",
+      "comparisonId": "t2sd-spirit-balanced-mountain-s101009",
+      "referenceCaseId": "t2mb-spirit-balanced-mountain-s101009-primary",
+      "sourceObservationId": null,
+      "biome": "mountain",
+      "policy": "static",
+      "delayedFocus": false,
+      "openingFocus": false
+    },
+    {
+      "id": "t2sd-spirit-balanced-mountain-s101009-axe",
+      "className": "spirit",
+      "tier": 2,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t2-mountain-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t2sd-spirit-balanced-mountain-s101009-axe",
+        "classRoot": "energy-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "energy-root",
+          "energy-balanced"
+        ],
+        "gearItemIds": {
+          "weapon": "ruinous-axe",
+          "armor": "mountain-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "cave-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t2-spirit-balanced",
+      "frame": "balanced",
+      "range": null,
+      "pathName": "Wraith",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fast and capable. A bit of extra punch and some light armor without sacrificing mobility. Gains 14 energy per hit, empowered at 2×.",
+        "Mature synthetic T2; original mastery, ordinary +5 clamped per item, core unchanged.",
+        "Fixed 32-cell follow-up; no midpoint edits, extra combat, Wait It Out, Endure or numerical treatments.",
+        "Fixed support and Technique; whole weapon comparison."
+      ],
+      "seed": 101009,
+      "block": "A",
+      "arm": "axe",
+      "comparisonId": "t2sd-spirit-balanced-mountain-s101009",
+      "referenceCaseId": "t2mb-spirit-balanced-mountain-s101009-primary",
+      "sourceObservationId": null,
+      "biome": "mountain",
+      "policy": "static",
+      "delayedFocus": false,
+      "openingFocus": false
+    },
+    {
+      "id": "t2sd-slinger-light-swamp-s101009-stinger",
+      "className": "slinger",
+      "tier": 2,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t2-swamp-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t2sd-slinger-light-swamp-s101009-stinger",
+        "classRoot": "reload-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "reload-root",
+          "reload-light"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-stinger-rapier",
+          "armor": "swamp-vest-t2",
+          "recovery": "swamp-charm-t2",
+          "mobility": "desert-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t2-slinger-light",
+      "frame": "light",
+      "range": null,
+      "pathName": "Scout",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "All-in on mobility. Small clip (5 rounds), 1.2 s reload, and extra dodge — maximum uptime, minimum profile to hit.",
+        "Mature synthetic T2; original mastery, ordinary +5 clamped per item, core unchanged.",
+        "Fixed 32-cell follow-up; no midpoint edits, extra combat, Wait It Out, Endure or numerical treatments.",
+        "Fixed support and Technique; whole weapon comparison."
+      ],
+      "seed": 101009,
+      "block": "A",
+      "arm": "stinger",
+      "comparisonId": "t2sd-slinger-light-swamp-s101009",
+      "referenceCaseId": "t2mb-slinger-light-swamp-s101009-primary",
+      "sourceObservationId": null,
+      "biome": "swamp",
+      "policy": "static",
+      "delayedFocus": false,
+      "openingFocus": false
+    },
+    {
+      "id": "t2sd-slinger-light-swamp-s101009-axe",
+      "className": "slinger",
+      "tier": 2,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t2-swamp-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t2sd-slinger-light-swamp-s101009-axe",
+        "classRoot": "reload-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "reload-root",
+          "reload-light"
+        ],
+        "gearItemIds": {
+          "weapon": "ruinous-axe",
+          "armor": "swamp-vest-t2",
+          "recovery": "swamp-charm-t2",
+          "mobility": "desert-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t2-slinger-light",
+      "frame": "light",
+      "range": null,
+      "pathName": "Scout",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "All-in on mobility. Small clip (5 rounds), 1.2 s reload, and extra dodge — maximum uptime, minimum profile to hit.",
+        "Mature synthetic T2; original mastery, ordinary +5 clamped per item, core unchanged.",
+        "Fixed 32-cell follow-up; no midpoint edits, extra combat, Wait It Out, Endure or numerical treatments.",
+        "Fixed support and Technique; whole weapon comparison."
+      ],
+      "seed": 101009,
+      "block": "A",
+      "arm": "axe",
+      "comparisonId": "t2sd-slinger-light-swamp-s101009",
+      "referenceCaseId": "t2mb-slinger-light-swamp-s101009-primary",
+      "sourceObservationId": null,
+      "biome": "swamp",
+      "policy": "static",
+      "delayedFocus": false,
+      "openingFocus": false
+    },
+    {
+      "id": "t2sd-slinger-light-mountain-s101009-stinger",
+      "className": "slinger",
+      "tier": 2,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t2-mountain-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t2sd-slinger-light-mountain-s101009-stinger",
+        "classRoot": "reload-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "reload-root",
+          "reload-light"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-stinger-rapier",
+          "armor": "mountain-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "cave-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t2-slinger-light",
+      "frame": "light",
+      "range": null,
+      "pathName": "Scout",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "All-in on mobility. Small clip (5 rounds), 1.2 s reload, and extra dodge — maximum uptime, minimum profile to hit.",
+        "Mature synthetic T2; original mastery, ordinary +5 clamped per item, core unchanged.",
+        "Fixed 32-cell follow-up; no midpoint edits, extra combat, Wait It Out, Endure or numerical treatments.",
+        "Fixed support and Technique; whole weapon comparison."
+      ],
+      "seed": 101009,
+      "block": "A",
+      "arm": "stinger",
+      "comparisonId": "t2sd-slinger-light-mountain-s101009",
+      "referenceCaseId": "t2mb-slinger-light-mountain-s101009-primary",
+      "sourceObservationId": null,
+      "biome": "mountain",
+      "policy": "static",
+      "delayedFocus": false,
+      "openingFocus": false
+    },
+    {
+      "id": "t2sd-slinger-light-mountain-s101009-axe",
+      "className": "slinger",
+      "tier": 2,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t2-mountain-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t2sd-slinger-light-mountain-s101009-axe",
+        "classRoot": "reload-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "reload-root",
+          "reload-light"
+        ],
+        "gearItemIds": {
+          "weapon": "ruinous-axe",
+          "armor": "mountain-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "cave-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t2-slinger-light",
+      "frame": "light",
+      "range": null,
+      "pathName": "Scout",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "All-in on mobility. Small clip (5 rounds), 1.2 s reload, and extra dodge — maximum uptime, minimum profile to hit.",
+        "Mature synthetic T2; original mastery, ordinary +5 clamped per item, core unchanged.",
+        "Fixed 32-cell follow-up; no midpoint edits, extra combat, Wait It Out, Endure or numerical treatments.",
+        "Fixed support and Technique; whole weapon comparison."
+      ],
+      "seed": 101009,
+      "block": "A",
+      "arm": "axe",
+      "comparisonId": "t2sd-slinger-light-mountain-s101009",
+      "referenceCaseId": "t2mb-slinger-light-mountain-s101009-primary",
+      "sourceObservationId": null,
+      "biome": "mountain",
+      "policy": "static",
+      "delayedFocus": false,
+      "openingFocus": false
+    },
+    {
+      "id": "t2sd-striker-light-desert-s101009-native",
+      "className": "striker",
+      "tier": 2,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t2-desert-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t2sd-striker-light-desert-s101009-native",
+        "classRoot": "cadence-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "cadence-root",
+          "cadence-light"
+        ],
+        "gearItemIds": {
+          "weapon": "gale-needle",
+          "armor": "mountain-vest-t2",
+          "recovery": "swamp-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t2-striker-light",
+      "frame": "light",
+      "range": null,
+      "pathName": "Flurry",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Swift and agile. Trades bulk for a blistering attack pace. Empowered finisher triggers every 4 hits at 1.5× — frequency over raw power.",
+        "Mature synthetic T2; original mastery, ordinary +5 clamped per item, core unchanged.",
+        "Fixed 32-cell follow-up; no midpoint edits, extra combat, Wait It Out, Endure or numerical treatments.",
+        "Both policies reserve 90 yellow initially; candidate crafts and validates Focus Lowest HP at time zero."
+      ],
+      "seed": 101009,
+      "block": "B",
+      "arm": "native",
+      "comparisonId": "t2sd-striker-light-desert-s101009",
+      "referenceCaseId": "t2mb-striker-light-desert-s101009-primary",
+      "sourceObservationId": null,
+      "biome": "desert",
+      "policy": "static",
+      "delayedFocus": false,
+      "openingFocus": false
+    },
+    {
+      "id": "t2sd-striker-light-desert-s101009-opening-lowhp",
+      "className": "striker",
+      "tier": 2,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t2-desert-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "in-combat",
+          "actionId": "focus-lowest-hp"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t2sd-striker-light-desert-s101009-opening-lowhp",
+        "classRoot": "cadence-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "cadence-root",
+          "cadence-light"
+        ],
+        "gearItemIds": {
+          "weapon": "gale-needle",
+          "armor": "mountain-vest-t2",
+          "recovery": "swamp-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t2-striker-light",
+      "frame": "light",
+      "range": null,
+      "pathName": "Flurry",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Swift and agile. Trades bulk for a blistering attack pace. Empowered finisher triggers every 4 hits at 1.5× — frequency over raw power.",
+        "Mature synthetic T2; original mastery, ordinary +5 clamped per item, core unchanged.",
+        "Fixed 32-cell follow-up; no midpoint edits, extra combat, Wait It Out, Endure or numerical treatments.",
+        "Both policies reserve 90 yellow initially; candidate crafts and validates Focus Lowest HP at time zero."
+      ],
+      "seed": 101009,
+      "block": "B",
+      "arm": "opening-lowhp",
+      "comparisonId": "t2sd-striker-light-desert-s101009",
+      "referenceCaseId": "t2mb-striker-light-desert-s101009-primary",
+      "sourceObservationId": null,
+      "biome": "desert",
+      "policy": "static",
+      "delayedFocus": false,
+      "openingFocus": true
+    },
+    {
+      "id": "t2sd-striker-balanced-desert-s101009-native",
+      "className": "striker",
+      "tier": 2,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t2-desert-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t2sd-striker-balanced-desert-s101009-native",
+        "classRoot": "cadence-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "cadence-root",
+          "cadence-balanced"
+        ],
+        "gearItemIds": {
+          "weapon": "gale-needle",
+          "armor": "mountain-vest-t2",
+          "recovery": "swamp-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t2-striker-balanced",
+      "frame": "balanced",
+      "range": null,
+      "pathName": "Skirmisher",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "A measured approach. Modest gains across the board without committing to an extreme. Empowered finisher every 5 hits at 2×.",
+        "Mature synthetic T2; original mastery, ordinary +5 clamped per item, core unchanged.",
+        "Fixed 32-cell follow-up; no midpoint edits, extra combat, Wait It Out, Endure or numerical treatments.",
+        "Both policies reserve 90 yellow initially; candidate crafts and validates Focus Lowest HP at time zero."
+      ],
+      "seed": 101009,
+      "block": "B",
+      "arm": "native",
+      "comparisonId": "t2sd-striker-balanced-desert-s101009",
+      "referenceCaseId": "t2mb-striker-balanced-desert-s101009-primary",
+      "sourceObservationId": null,
+      "biome": "desert",
+      "policy": "static",
+      "delayedFocus": false,
+      "openingFocus": false
+    },
+    {
+      "id": "t2sd-striker-balanced-desert-s101009-opening-lowhp",
+      "className": "striker",
+      "tier": 2,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t2-desert-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "in-combat",
+          "actionId": "focus-lowest-hp"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t2sd-striker-balanced-desert-s101009-opening-lowhp",
+        "classRoot": "cadence-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "cadence-root",
+          "cadence-balanced"
+        ],
+        "gearItemIds": {
+          "weapon": "gale-needle",
+          "armor": "mountain-vest-t2",
+          "recovery": "swamp-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t2-striker-balanced",
+      "frame": "balanced",
+      "range": null,
+      "pathName": "Skirmisher",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "A measured approach. Modest gains across the board without committing to an extreme. Empowered finisher every 5 hits at 2×.",
+        "Mature synthetic T2; original mastery, ordinary +5 clamped per item, core unchanged.",
+        "Fixed 32-cell follow-up; no midpoint edits, extra combat, Wait It Out, Endure or numerical treatments.",
+        "Both policies reserve 90 yellow initially; candidate crafts and validates Focus Lowest HP at time zero."
+      ],
+      "seed": 101009,
+      "block": "B",
+      "arm": "opening-lowhp",
+      "comparisonId": "t2sd-striker-balanced-desert-s101009",
+      "referenceCaseId": "t2mb-striker-balanced-desert-s101009-primary",
+      "sourceObservationId": null,
+      "biome": "desert",
+      "policy": "static",
+      "delayedFocus": false,
+      "openingFocus": true
+    },
+    {
+      "id": "t2sd-spirit-light-swamp-s101021-axe",
+      "className": "spirit",
+      "tier": 2,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t2-swamp-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t2sd-spirit-light-swamp-s101021-axe",
+        "classRoot": "energy-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "energy-root",
+          "energy-light"
+        ],
+        "gearItemIds": {
+          "weapon": "ruinous-axe",
+          "armor": "swamp-vest-t2",
+          "recovery": "swamp-charm-t2",
+          "mobility": "desert-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t2-spirit-light",
+      "frame": "light",
+      "range": null,
+      "pathName": "Spark",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Pure momentum. Blazing speed and rapid attacks; thrives on frequent discharges and their AoE splash. Gains 20 energy per hit, empowered at 1.5× — fires often.",
+        "Mature synthetic T2; original mastery, ordinary +5 clamped per item, core unchanged.",
+        "Fixed 32-cell follow-up; no midpoint edits, extra combat, Wait It Out, Endure or numerical treatments.",
+        "Fixed support and Technique; whole weapon comparison."
+      ],
+      "seed": 101021,
+      "block": "A",
+      "arm": "axe",
+      "comparisonId": "t2sd-spirit-light-swamp-s101021",
+      "referenceCaseId": "t2mb-spirit-light-swamp-s101021-primary",
+      "sourceObservationId": null,
+      "biome": "swamp",
+      "policy": "static",
+      "delayedFocus": false,
+      "openingFocus": false
+    },
+    {
+      "id": "t2sd-spirit-light-swamp-s101021-stinger",
+      "className": "spirit",
+      "tier": 2,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t2-swamp-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t2sd-spirit-light-swamp-s101021-stinger",
+        "classRoot": "energy-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "energy-root",
+          "energy-light"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-stinger-rapier",
+          "armor": "swamp-vest-t2",
+          "recovery": "swamp-charm-t2",
+          "mobility": "desert-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t2-spirit-light",
+      "frame": "light",
+      "range": null,
+      "pathName": "Spark",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Pure momentum. Blazing speed and rapid attacks; thrives on frequent discharges and their AoE splash. Gains 20 energy per hit, empowered at 1.5× — fires often.",
+        "Mature synthetic T2; original mastery, ordinary +5 clamped per item, core unchanged.",
+        "Fixed 32-cell follow-up; no midpoint edits, extra combat, Wait It Out, Endure or numerical treatments.",
+        "Fixed support and Technique; whole weapon comparison."
+      ],
+      "seed": 101021,
+      "block": "A",
+      "arm": "stinger",
+      "comparisonId": "t2sd-spirit-light-swamp-s101021",
+      "referenceCaseId": "t2mb-spirit-light-swamp-s101021-primary",
+      "sourceObservationId": null,
+      "biome": "swamp",
+      "policy": "static",
+      "delayedFocus": false,
+      "openingFocus": false
+    },
+    {
+      "id": "t2sd-spirit-light-mountain-s101021-axe",
+      "className": "spirit",
+      "tier": 2,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t2-mountain-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t2sd-spirit-light-mountain-s101021-axe",
+        "classRoot": "energy-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "energy-root",
+          "energy-light"
+        ],
+        "gearItemIds": {
+          "weapon": "ruinous-axe",
+          "armor": "mountain-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "cave-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t2-spirit-light",
+      "frame": "light",
+      "range": null,
+      "pathName": "Spark",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Pure momentum. Blazing speed and rapid attacks; thrives on frequent discharges and their AoE splash. Gains 20 energy per hit, empowered at 1.5× — fires often.",
+        "Mature synthetic T2; original mastery, ordinary +5 clamped per item, core unchanged.",
+        "Fixed 32-cell follow-up; no midpoint edits, extra combat, Wait It Out, Endure or numerical treatments.",
+        "Fixed support and Technique; whole weapon comparison."
+      ],
+      "seed": 101021,
+      "block": "A",
+      "arm": "axe",
+      "comparisonId": "t2sd-spirit-light-mountain-s101021",
+      "referenceCaseId": "t2mb-spirit-light-mountain-s101021-primary",
+      "sourceObservationId": null,
+      "biome": "mountain",
+      "policy": "static",
+      "delayedFocus": false,
+      "openingFocus": false
+    },
+    {
+      "id": "t2sd-spirit-light-mountain-s101021-stinger",
+      "className": "spirit",
+      "tier": 2,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t2-mountain-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t2sd-spirit-light-mountain-s101021-stinger",
+        "classRoot": "energy-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "energy-root",
+          "energy-light"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-stinger-rapier",
+          "armor": "mountain-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "cave-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t2-spirit-light",
+      "frame": "light",
+      "range": null,
+      "pathName": "Spark",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Pure momentum. Blazing speed and rapid attacks; thrives on frequent discharges and their AoE splash. Gains 20 energy per hit, empowered at 1.5× — fires often.",
+        "Mature synthetic T2; original mastery, ordinary +5 clamped per item, core unchanged.",
+        "Fixed 32-cell follow-up; no midpoint edits, extra combat, Wait It Out, Endure or numerical treatments.",
+        "Fixed support and Technique; whole weapon comparison."
+      ],
+      "seed": 101021,
+      "block": "A",
+      "arm": "stinger",
+      "comparisonId": "t2sd-spirit-light-mountain-s101021",
+      "referenceCaseId": "t2mb-spirit-light-mountain-s101021-primary",
+      "sourceObservationId": null,
+      "biome": "mountain",
+      "policy": "static",
+      "delayedFocus": false,
+      "openingFocus": false
+    },
+    {
+      "id": "t2sd-spirit-balanced-swamp-s101021-axe",
+      "className": "spirit",
+      "tier": 2,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t2-swamp-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t2sd-spirit-balanced-swamp-s101021-axe",
+        "classRoot": "energy-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "energy-root",
+          "energy-balanced"
+        ],
+        "gearItemIds": {
+          "weapon": "ruinous-axe",
+          "armor": "swamp-vest-t2",
+          "recovery": "swamp-charm-t2",
+          "mobility": "desert-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t2-spirit-balanced",
+      "frame": "balanced",
+      "range": null,
+      "pathName": "Wraith",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fast and capable. A bit of extra punch and some light armor without sacrificing mobility. Gains 14 energy per hit, empowered at 2×.",
+        "Mature synthetic T2; original mastery, ordinary +5 clamped per item, core unchanged.",
+        "Fixed 32-cell follow-up; no midpoint edits, extra combat, Wait It Out, Endure or numerical treatments.",
+        "Fixed support and Technique; whole weapon comparison."
+      ],
+      "seed": 101021,
+      "block": "A",
+      "arm": "axe",
+      "comparisonId": "t2sd-spirit-balanced-swamp-s101021",
+      "referenceCaseId": "t2mb-spirit-balanced-swamp-s101021-primary",
+      "sourceObservationId": null,
+      "biome": "swamp",
+      "policy": "static",
+      "delayedFocus": false,
+      "openingFocus": false
+    },
+    {
+      "id": "t2sd-spirit-balanced-swamp-s101021-stinger",
+      "className": "spirit",
+      "tier": 2,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t2-swamp-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t2sd-spirit-balanced-swamp-s101021-stinger",
+        "classRoot": "energy-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "energy-root",
+          "energy-balanced"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-stinger-rapier",
+          "armor": "swamp-vest-t2",
+          "recovery": "swamp-charm-t2",
+          "mobility": "desert-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t2-spirit-balanced",
+      "frame": "balanced",
+      "range": null,
+      "pathName": "Wraith",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fast and capable. A bit of extra punch and some light armor without sacrificing mobility. Gains 14 energy per hit, empowered at 2×.",
+        "Mature synthetic T2; original mastery, ordinary +5 clamped per item, core unchanged.",
+        "Fixed 32-cell follow-up; no midpoint edits, extra combat, Wait It Out, Endure or numerical treatments.",
+        "Fixed support and Technique; whole weapon comparison."
+      ],
+      "seed": 101021,
+      "block": "A",
+      "arm": "stinger",
+      "comparisonId": "t2sd-spirit-balanced-swamp-s101021",
+      "referenceCaseId": "t2mb-spirit-balanced-swamp-s101021-primary",
+      "sourceObservationId": null,
+      "biome": "swamp",
+      "policy": "static",
+      "delayedFocus": false,
+      "openingFocus": false
+    },
+    {
+      "id": "t2sd-spirit-balanced-mountain-s101021-axe",
+      "className": "spirit",
+      "tier": 2,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t2-mountain-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t2sd-spirit-balanced-mountain-s101021-axe",
+        "classRoot": "energy-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "energy-root",
+          "energy-balanced"
+        ],
+        "gearItemIds": {
+          "weapon": "ruinous-axe",
+          "armor": "mountain-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "cave-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t2-spirit-balanced",
+      "frame": "balanced",
+      "range": null,
+      "pathName": "Wraith",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fast and capable. A bit of extra punch and some light armor without sacrificing mobility. Gains 14 energy per hit, empowered at 2×.",
+        "Mature synthetic T2; original mastery, ordinary +5 clamped per item, core unchanged.",
+        "Fixed 32-cell follow-up; no midpoint edits, extra combat, Wait It Out, Endure or numerical treatments.",
+        "Fixed support and Technique; whole weapon comparison."
+      ],
+      "seed": 101021,
+      "block": "A",
+      "arm": "axe",
+      "comparisonId": "t2sd-spirit-balanced-mountain-s101021",
+      "referenceCaseId": "t2mb-spirit-balanced-mountain-s101021-primary",
+      "sourceObservationId": null,
+      "biome": "mountain",
+      "policy": "static",
+      "delayedFocus": false,
+      "openingFocus": false
+    },
+    {
+      "id": "t2sd-spirit-balanced-mountain-s101021-stinger",
+      "className": "spirit",
+      "tier": 2,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t2-mountain-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t2sd-spirit-balanced-mountain-s101021-stinger",
+        "classRoot": "energy-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "energy-root",
+          "energy-balanced"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-stinger-rapier",
+          "armor": "mountain-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "cave-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t2-spirit-balanced",
+      "frame": "balanced",
+      "range": null,
+      "pathName": "Wraith",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fast and capable. A bit of extra punch and some light armor without sacrificing mobility. Gains 14 energy per hit, empowered at 2×.",
+        "Mature synthetic T2; original mastery, ordinary +5 clamped per item, core unchanged.",
+        "Fixed 32-cell follow-up; no midpoint edits, extra combat, Wait It Out, Endure or numerical treatments.",
+        "Fixed support and Technique; whole weapon comparison."
+      ],
+      "seed": 101021,
+      "block": "A",
+      "arm": "stinger",
+      "comparisonId": "t2sd-spirit-balanced-mountain-s101021",
+      "referenceCaseId": "t2mb-spirit-balanced-mountain-s101021-primary",
+      "sourceObservationId": null,
+      "biome": "mountain",
+      "policy": "static",
+      "delayedFocus": false,
+      "openingFocus": false
+    },
+    {
+      "id": "t2sd-slinger-light-swamp-s101021-axe",
+      "className": "slinger",
+      "tier": 2,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t2-swamp-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t2sd-slinger-light-swamp-s101021-axe",
+        "classRoot": "reload-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "reload-root",
+          "reload-light"
+        ],
+        "gearItemIds": {
+          "weapon": "ruinous-axe",
+          "armor": "swamp-vest-t2",
+          "recovery": "swamp-charm-t2",
+          "mobility": "desert-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t2-slinger-light",
+      "frame": "light",
+      "range": null,
+      "pathName": "Scout",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "All-in on mobility. Small clip (5 rounds), 1.2 s reload, and extra dodge — maximum uptime, minimum profile to hit.",
+        "Mature synthetic T2; original mastery, ordinary +5 clamped per item, core unchanged.",
+        "Fixed 32-cell follow-up; no midpoint edits, extra combat, Wait It Out, Endure or numerical treatments.",
+        "Fixed support and Technique; whole weapon comparison."
+      ],
+      "seed": 101021,
+      "block": "A",
+      "arm": "axe",
+      "comparisonId": "t2sd-slinger-light-swamp-s101021",
+      "referenceCaseId": "t2mb-slinger-light-swamp-s101021-primary",
+      "sourceObservationId": null,
+      "biome": "swamp",
+      "policy": "static",
+      "delayedFocus": false,
+      "openingFocus": false
+    },
+    {
+      "id": "t2sd-slinger-light-swamp-s101021-stinger",
+      "className": "slinger",
+      "tier": 2,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t2-swamp-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t2sd-slinger-light-swamp-s101021-stinger",
+        "classRoot": "reload-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "reload-root",
+          "reload-light"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-stinger-rapier",
+          "armor": "swamp-vest-t2",
+          "recovery": "swamp-charm-t2",
+          "mobility": "desert-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t2-slinger-light",
+      "frame": "light",
+      "range": null,
+      "pathName": "Scout",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "All-in on mobility. Small clip (5 rounds), 1.2 s reload, and extra dodge — maximum uptime, minimum profile to hit.",
+        "Mature synthetic T2; original mastery, ordinary +5 clamped per item, core unchanged.",
+        "Fixed 32-cell follow-up; no midpoint edits, extra combat, Wait It Out, Endure or numerical treatments.",
+        "Fixed support and Technique; whole weapon comparison."
+      ],
+      "seed": 101021,
+      "block": "A",
+      "arm": "stinger",
+      "comparisonId": "t2sd-slinger-light-swamp-s101021",
+      "referenceCaseId": "t2mb-slinger-light-swamp-s101021-primary",
+      "sourceObservationId": null,
+      "biome": "swamp",
+      "policy": "static",
+      "delayedFocus": false,
+      "openingFocus": false
+    },
+    {
+      "id": "t2sd-slinger-light-mountain-s101021-axe",
+      "className": "slinger",
+      "tier": 2,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t2-mountain-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t2sd-slinger-light-mountain-s101021-axe",
+        "classRoot": "reload-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "reload-root",
+          "reload-light"
+        ],
+        "gearItemIds": {
+          "weapon": "ruinous-axe",
+          "armor": "mountain-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "cave-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t2-slinger-light",
+      "frame": "light",
+      "range": null,
+      "pathName": "Scout",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "All-in on mobility. Small clip (5 rounds), 1.2 s reload, and extra dodge — maximum uptime, minimum profile to hit.",
+        "Mature synthetic T2; original mastery, ordinary +5 clamped per item, core unchanged.",
+        "Fixed 32-cell follow-up; no midpoint edits, extra combat, Wait It Out, Endure or numerical treatments.",
+        "Fixed support and Technique; whole weapon comparison."
+      ],
+      "seed": 101021,
+      "block": "A",
+      "arm": "axe",
+      "comparisonId": "t2sd-slinger-light-mountain-s101021",
+      "referenceCaseId": "t2mb-slinger-light-mountain-s101021-primary",
+      "sourceObservationId": null,
+      "biome": "mountain",
+      "policy": "static",
+      "delayedFocus": false,
+      "openingFocus": false
+    },
+    {
+      "id": "t2sd-slinger-light-mountain-s101021-stinger",
+      "className": "slinger",
+      "tier": 2,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t2-mountain-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t2sd-slinger-light-mountain-s101021-stinger",
+        "classRoot": "reload-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "reload-root",
+          "reload-light"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-stinger-rapier",
+          "armor": "mountain-vest-t2",
+          "recovery": "mountain-charm-t2",
+          "mobility": "cave-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t2-slinger-light",
+      "frame": "light",
+      "range": null,
+      "pathName": "Scout",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "All-in on mobility. Small clip (5 rounds), 1.2 s reload, and extra dodge — maximum uptime, minimum profile to hit.",
+        "Mature synthetic T2; original mastery, ordinary +5 clamped per item, core unchanged.",
+        "Fixed 32-cell follow-up; no midpoint edits, extra combat, Wait It Out, Endure or numerical treatments.",
+        "Fixed support and Technique; whole weapon comparison."
+      ],
+      "seed": 101021,
+      "block": "A",
+      "arm": "stinger",
+      "comparisonId": "t2sd-slinger-light-mountain-s101021",
+      "referenceCaseId": "t2mb-slinger-light-mountain-s101021-primary",
+      "sourceObservationId": null,
+      "biome": "mountain",
+      "policy": "static",
+      "delayedFocus": false,
+      "openingFocus": false
+    },
+    {
+      "id": "t2sd-striker-light-desert-s101021-opening-lowhp",
+      "className": "striker",
+      "tier": 2,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t2-desert-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "in-combat",
+          "actionId": "focus-lowest-hp"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t2sd-striker-light-desert-s101021-opening-lowhp",
+        "classRoot": "cadence-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "cadence-root",
+          "cadence-light"
+        ],
+        "gearItemIds": {
+          "weapon": "gale-needle",
+          "armor": "mountain-vest-t2",
+          "recovery": "swamp-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t2-striker-light",
+      "frame": "light",
+      "range": null,
+      "pathName": "Flurry",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Swift and agile. Trades bulk for a blistering attack pace. Empowered finisher triggers every 4 hits at 1.5× — frequency over raw power.",
+        "Mature synthetic T2; original mastery, ordinary +5 clamped per item, core unchanged.",
+        "Fixed 32-cell follow-up; no midpoint edits, extra combat, Wait It Out, Endure or numerical treatments.",
+        "Both policies reserve 90 yellow initially; candidate crafts and validates Focus Lowest HP at time zero."
+      ],
+      "seed": 101021,
+      "block": "B",
+      "arm": "opening-lowhp",
+      "comparisonId": "t2sd-striker-light-desert-s101021",
+      "referenceCaseId": "t2mb-striker-light-desert-s101021-primary",
+      "sourceObservationId": null,
+      "biome": "desert",
+      "policy": "static",
+      "delayedFocus": false,
+      "openingFocus": true
+    },
+    {
+      "id": "t2sd-striker-light-desert-s101021-native",
+      "className": "striker",
+      "tier": 2,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t2-desert-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t2sd-striker-light-desert-s101021-native",
+        "classRoot": "cadence-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "cadence-root",
+          "cadence-light"
+        ],
+        "gearItemIds": {
+          "weapon": "gale-needle",
+          "armor": "mountain-vest-t2",
+          "recovery": "swamp-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t2-striker-light",
+      "frame": "light",
+      "range": null,
+      "pathName": "Flurry",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Swift and agile. Trades bulk for a blistering attack pace. Empowered finisher triggers every 4 hits at 1.5× — frequency over raw power.",
+        "Mature synthetic T2; original mastery, ordinary +5 clamped per item, core unchanged.",
+        "Fixed 32-cell follow-up; no midpoint edits, extra combat, Wait It Out, Endure or numerical treatments.",
+        "Both policies reserve 90 yellow initially; candidate crafts and validates Focus Lowest HP at time zero."
+      ],
+      "seed": 101021,
+      "block": "B",
+      "arm": "native",
+      "comparisonId": "t2sd-striker-light-desert-s101021",
+      "referenceCaseId": "t2mb-striker-light-desert-s101021-primary",
+      "sourceObservationId": null,
+      "biome": "desert",
+      "policy": "static",
+      "delayedFocus": false,
+      "openingFocus": false
+    },
+    {
+      "id": "t2sd-striker-balanced-desert-s101021-opening-lowhp",
+      "className": "striker",
+      "tier": 2,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t2-desert-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "in-combat",
+          "actionId": "focus-lowest-hp"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t2sd-striker-balanced-desert-s101021-opening-lowhp",
+        "classRoot": "cadence-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "cadence-root",
+          "cadence-balanced"
+        ],
+        "gearItemIds": {
+          "weapon": "gale-needle",
+          "armor": "mountain-vest-t2",
+          "recovery": "swamp-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t2-striker-balanced",
+      "frame": "balanced",
+      "range": null,
+      "pathName": "Skirmisher",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "A measured approach. Modest gains across the board without committing to an extreme. Empowered finisher every 5 hits at 2×.",
+        "Mature synthetic T2; original mastery, ordinary +5 clamped per item, core unchanged.",
+        "Fixed 32-cell follow-up; no midpoint edits, extra combat, Wait It Out, Endure or numerical treatments.",
+        "Both policies reserve 90 yellow initially; candidate crafts and validates Focus Lowest HP at time zero."
+      ],
+      "seed": 101021,
+      "block": "B",
+      "arm": "opening-lowhp",
+      "comparisonId": "t2sd-striker-balanced-desert-s101021",
+      "referenceCaseId": "t2mb-striker-balanced-desert-s101021-primary",
+      "sourceObservationId": null,
+      "biome": "desert",
+      "policy": "static",
+      "delayedFocus": false,
+      "openingFocus": true
+    },
+    {
+      "id": "t2sd-striker-balanced-desert-s101021-native",
+      "className": "striker",
+      "tier": 2,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t2-desert-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "t2sd-striker-balanced-desert-s101021-native",
+        "classRoot": "cadence-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "cadence-root",
+          "cadence-balanced"
+        ],
+        "gearItemIds": {
+          "weapon": "gale-needle",
+          "armor": "mountain-vest-t2",
+          "recovery": "swamp-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t2-striker-balanced",
+      "frame": "balanced",
+      "range": null,
+      "pathName": "Skirmisher",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "A measured approach. Modest gains across the board without committing to an extreme. Empowered finisher every 5 hits at 2×.",
+        "Mature synthetic T2; original mastery, ordinary +5 clamped per item, core unchanged.",
+        "Fixed 32-cell follow-up; no midpoint edits, extra combat, Wait It Out, Endure or numerical treatments.",
+        "Both policies reserve 90 yellow initially; candidate crafts and validates Focus Lowest HP at time zero."
+      ],
+      "seed": 101021,
+      "block": "B",
+      "arm": "native",
+      "comparisonId": "t2sd-striker-balanced-desert-s101021",
+      "referenceCaseId": "t2mb-striker-balanced-desert-s101021-primary",
+      "sourceObservationId": null,
+      "biome": "desert",
+      "policy": "static",
+      "delayedFocus": false,
+      "openingFocus": false
+    }
+  ]
+}
