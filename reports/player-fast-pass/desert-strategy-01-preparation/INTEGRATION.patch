@@ -2,35 +2,15 @@ diff --git a/server/src/systems/classes/archetypes/summoner/ai.ts b/server/src/s
 index 9f0ae6fa..95c3b487 100644
 --- a/server/src/systems/classes/archetypes/summoner/ai.ts
 +++ b/server/src/systems/classes/archetypes/summoner/ai.ts
-@@ -2,13 +2,14 @@
-  * Minion AI driver â€” runs once per minion per tick.
-  *
-  * Each slime:
+@@ -5 +5 @@
 - *   1. Picks an attack target (closest monster within the player's leash).
 + *   1. Follows an active owner targeting Rune, otherwise its formation policy.
-  *   2. Moves toward that target up to the leash boundary.
-  *   3. If no target is in leash range, returns toward its follow offset.
-  *   4. If in attack range and cooldown ready, drives `runPlayerAttack` with
-  *      the slime's position as the FX origin (player retains all modifiers).
-  */
- import {
+@@ -11,0 +12 @@ import {
 +  ACTION_DATABASE,
-   distanceSq,
-   type Vec2,
- } from '@mmo-idle/shared';
-@@ -28,6 +29,8 @@ import {
-   resolveCommandedMoveDestination,
- } from './command';
- import { summonerProfileFor } from './profile';
+@@ -30,0 +32,2 @@ import { summonerProfileFor } from './profile';
 +import { getRuneDecisions } from '../../../combat/ai/runeConfig';
 +import { getAutoTargetId } from '../../../combat/ai/targetPriority';
- 
- // Pixels â€” how close to the follow offset is "close enough" to idle.
- const FOLLOW_HOVER_TOL = 10;
-@@ -42,6 +45,21 @@ export function computeLeashRadius(owner: PlayerEntity): number {
-   return summonerProfileFor(owner).leashRadius;
- }
- 
+@@ -44,0 +48,15 @@ export function computeLeashRadius(owner: PlayerEntity): number {
 +/** Consume the owner's native selection, including channel arbitration and gates.
 + * Undefined means no active targeting rule; null means the rule currently has no
 + * valid in-leash target. Do not silently replace that preference with nearest.
@@ -46,20 +26,10 @@ index 9f0ae6fa..95c3b487 100644
 +  return target;
 +}
 +
- /** Pick the closest in-leash monster. Returns null if none in range. */
- function findMinionTarget(
-   world: World,
-@@ -176,10 +194,11 @@ export function driveMinion(
-     return;
-   }
- 
+@@ -179 +197,2 @@ export function driveMinion(
 -  const target = focusOverride ?? (isSwarm
 +  const inherited = inheritedRuneTarget(world, owner, leashRadius);
 +  const target = focusOverride ?? (inherited !== undefined ? inherited : isSwarm
-     ? findSwarmMinionTarget(world, owner, minion, leashRadius)
-     : findMinionTarget(world, owner, leashRadius));
+@@ -182 +201 @@ export function driveMinion(
 -  const stickyTarget = isSwarm || !!focusOverride;
 +  const stickyTarget = isSwarm || !!focusOverride || !!inherited;
- 
-   if (target) {
-     if (stickyTarget) {
