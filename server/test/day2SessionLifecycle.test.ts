@@ -1,9 +1,9 @@
 import strict from 'node:assert/strict';
-import { MONSTER_DATABASE, getCounter } from '@mmo-idle/shared';
+import { MONSTER_DATABASE, getCounter, setCounter } from '@mmo-idle/shared';
 import { setAggroTarget } from '../src/systems/combat/ai/targeting';
 import { updateMonsters } from '../src/systems/combat/ai/ai';
 import { updateCombat, runPlayerAttack } from '../src/systems/combat/engine/combat';
-import { refreshEnemyShieldState, applyEnemyShield } from '../src/systems/combat/engine/monsterMechanics';
+import { refreshEnemyShieldState, applyEnemyShield, chargedCastEndsAt } from '../src/systems/combat/engine/monsterMechanics';
 import { despawnMinion, despawnMinionsForOwner } from '../src/systems/classes/archetypes/summoner/spawn';
 import { observeMonsterSession } from '../src/systems/combat/engine/sessionObservation';
 import {
@@ -138,6 +138,11 @@ try {
       else despawnMinion(f.world,f.bodies[0]);
       strict.equal(f.bear.hasAggroTarget,undefined,reason+' ends session');
     }
+    now=10000;const cast=fixture();now=10100;cast.bodies[0].hasHealth.hp=0;
+    setCounter(cast.bear.tracksCombat,'chargeCastEndsAt',12000);
+    strict.equal(chargedCastEndsAt(cast.bear),12000,'pending cast established');
+    despawnMinion(cast.world,cast.bodies[0]);
+    strict.equal(chargedCastEndsAt(cast.bear),0,'lost-victim cast cancels during handover');
     // Owner continues attacking while the last selected physical body dies.
     now=10000;const f2=fixture();now=10100;
     f2.bodies.forEach(m=>m.hasHealth.hp=0);f2.owner.hasPosition.current={x:450,y:400};

@@ -1,3 +1,5 @@
+import { abortMonsterCast } from '../engine/combat';
+import { abortEngageSequence } from './engageSequence';
 import { distanceSq } from '@mmo-idle/shared';
 import type { MonsterEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
@@ -21,6 +23,9 @@ export function handoverLostSummonTarget(world: World, monster: MonsterEntity, n
   if(next.kind==='player' ? next.entity!==owner : next.entity.isMinion.ownerPlayerId!==owner.isPlayer.id) return false;
   if(next.entity.hasAttackTarget?.targetId!==monster.isMonster.id) return false;
   const id=next.kind==='player'?next.entity.isPlayer.id:next.entity.isMinion.id;
+  // Keep target-loss cast cancellation; only the engagement timestamp survives.
+  abortMonsterCast(world,monster);
+  abortEngageSequence(world,monster);
   setAggroTarget(world,monster,{id,kind:next.kind},now);
   setAttackTarget(world,monster,null);
   return true;
