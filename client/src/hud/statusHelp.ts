@@ -167,7 +167,7 @@ const TARGET_HELP: Record<string, StatusHelp> = {
   'dot-conf': d('Conflagration', 'The target’s burn has caught properly and is running at an accelerated rate.'),
   slow: d('Slow', 'The target’s movement speed is cut, so it closes on you and repositions more slowly.'),
   root: d('Root', 'The target cannot move. It can usually still attack anything already in reach.'),
-  'ability-slowed': d('Hamstrung', 'Hamstring has crippled the target’s stride: movement is reduced and its attack cooldown is lengthened. It can still attack and cast; this is soft control, not a root or stun.'),
+  'ability-slowed': d('Hamstrung', 'Hamstring has crippled the target’s stride: movement is reduced, but its attack cadence is unchanged. It can still attack and cast; this is soft control, not a root or stun.'),
   'ability-rooted': d('Bound', 'Binding Strike has pinned the target in place. It can still attack anything already in reach, but cannot reposition until the bind ends.'),
   stunned: d('Stunned', 'The target cannot move or act until this hard-control window ends. This is the control applied by Stunning Strike or a frost shatter; slow resistance does not help.'),
   'stun-immune': b('Stun ward', 'The target is protected from another stun while this ward lasts, including the tail after the current stun. It does not reduce damage or prevent slows.'),
