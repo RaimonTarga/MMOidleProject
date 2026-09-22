@@ -50,6 +50,19 @@ const ARCHETYPE_FOR_ROOT: Record<string, CombatArchetype> = {
   "summoner-root": "summoner",
 };
 
+// A progressionEntry route consumes a named checkpoint snapshot at runtime;
+// its inherited inventory/unlocks are validated by that snapshot contract, not
+// by the fresh-character route walk below. The harness still validates build
+// schema and compatibility against the complete authored vocabulary.
+const SEALED_ENTRY_GM = 1_000_000;
+const ALL_AUTHORED_RUNE_IDS = [
+  ...new Set([
+    ...STARTER_RUNE_IDS,
+    ...Array.from(RUNE_RECIPE_DATABASE.values(), (recipe) => recipe.runeId)
+      .filter((id): id is string => !!id),
+  ]),
+];
+
 function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(`assertion failed: ${message}`);
 }
@@ -488,6 +501,9 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
       }
     };
     collectRunes(route.steps);
+    if (route.progressionEntry) {
+      for (const runeId of ALL_AUTHORED_RUNE_IDS) craftedRuneIds.add(runeId);
+    }
 
     // A route that starts from a tier-entry template already OWNS everything the
     // preceding tier earned. Without seeding that, static validation reads a
@@ -533,7 +549,9 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
       minimumBiomeLevels[group] = Math.max(minimumBiomeLevels[group] ?? 0, level);
     }
     const currentRuneBudget = (): { gm: number; budget: number } => {
-      const gm = globalMastery(minimumBiomeLevels);
+      const gm = route.progressionEntry
+        ? SEALED_ENTRY_GM
+        : globalMastery(minimumBiomeLevels);
       return { gm, budget: runeBudgetForGlobalMastery(gm) };
     };
     const checkRef = (ref: NodeRef, where: string): void => {
@@ -711,26 +729,29 @@ function snapshot(partial: Partial<DeltaSnapshot>): DeltaSnapshot {
   };
   for (const route of ROUTES.values()) {
     // A tier-entry route inherits the previous tier's crafted gear, learned
-    // abilities and rune catalogue. Seeding them is what makes ordering checks
-    // ("equipped only after crafting", "slotted only after learning") mean the
-    // same thing for a Tier-2 route as they do for a Tier-1 one.
+    // abilities and rune catalogue. A progressionEntry route likewise starts
+    // from an authored checkpoint snapshot, so its ordering checks use the
+    // complete authored vocabulary while runtime snapshot validation stays authoritative.
+    const sealedEntry = route.progressionEntry !== undefined;
     const entry = route.startsFromTierEntry
       ? [earnedT1Profile, earnedT3Profile, ...TIER_ENTRY_PROFILES.values()].find(
           (p) => p.targetTier === route.startsFromTierEntry && p.classRoot === route.classRoot,
         )
       : undefined;
     const craftedItems = new Set<string>([
+      ...(sealedEntry ? RECIPE_DATABASE.keys() : []),
       ...(route.entryItems ?? []),
       ...(entry?.inventory ?? []),
       ...Object.values(entry?.equipment ?? {}).filter((id): id is string => !!id),
     ]);
     const learnedAbilities = new Set<string>([
+      ...(sealedEntry ? ABILITY_DATABASE.keys() : []),
       ...(entry?.knownAbilities ?? []),
       ...(route.entryKnownAbilities ?? []),
     ]);
-    const knownStances = new Set(entry?.knownStances ?? []);
-    const knownRites = new Set(entry?.knownRites ?? []);
-    const ownedRunes = new Set(STARTER_RUNE_IDS);
+    const knownStances = new Set<string>(sealedEntry ? STANCE_DATABASE.keys() : entry?.knownStances ?? []);
+    const knownRites = new Set<string>(sealedEntry ? RITE_DATABASE.keys() : entry?.knownRites ?? []);
+    const ownedRunes = new Set<string>(sealedEntry ? ALL_AUTHORED_RUNE_IDS : STARTER_RUNE_IDS);
     for (const recipeId of entry?.runeRecipesCrafted ?? []) {
       const runeId = RUNE_RECIPE_DATABASE.get(recipeId)?.runeId;
       if (runeId) ownedRunes.add(runeId);

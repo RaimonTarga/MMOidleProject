@@ -27,8 +27,8 @@ assert(
   "Mire Stalker should be a fast, erratic predator without a forced pool route",
 );
 assert(
-  snapper?.stats.hp === 340 && snapper.shellUp?.castMs === 500 && snapper.dotEffect?.durationMs === 4_500,
-  "Moss-Shell Snapper should have a deeper health pool, telegraph Shell Up, and maintain its venom long enough to matter",
+  snapper?.stats.hp === 680 && snapper.shellUp?.castMs === 500 && snapper.dotEffect?.durationMs === 4_500,
+  "Moss-Shell Snapper should retain its adopted health pool, telegraph Shell Up, and maintain its venom long enough to matter",
 );
 
 // ── Packs + call-allies (forest identity, e.g. `wolf`) ─────────────────────────

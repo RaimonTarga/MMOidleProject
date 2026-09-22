@@ -2,6 +2,19 @@ import assert from 'node:assert/strict';
 import { MONSTER_DATABASE } from '@mmo-idle/shared';
 import { DURABILITY8_CELLS, installDurability8Treatment } from '../bench/balance/durability8Spec';
 
+function comparable(entries: Array<[string, any]>): Array<[string, any]> {
+  return entries.map(([id, definition]) => {
+    const copy = structuredClone(definition);
+    // The expected overlay and the installer multiply in different orders. The
+    // resulting shield percentages differ only in the last IEEE-754 bit while
+    // preserving the same absolute shield capacity.
+    if (copy.enemyShield?.shieldPct !== undefined) {
+      copy.enemyShield.shieldPct = Number(copy.enemyShield.shieldPct.toPrecision(15));
+    }
+    return [id, copy];
+  });
+}
+
 assert.equal(DURABILITY8_CELLS.length, 48);
 assert.equal(new Set(DURABILITY8_CELLS.map(c => c.id)).size, 48);
 const original = JSON.stringify([...MONSTER_DATABASE]);
@@ -16,7 +29,7 @@ for (const cell of DURABILITY8_CELLS) {
     if (cell.treatment.endsWith('fixed-shell')) def.enemyShield.shieldPct *= oldHp / def.stats.hp;
   }
   const overlay = installDurability8Treatment(cell);
-  try { assert.deepEqual([...MONSTER_DATABASE], [...expected], 'No dealer, companion, attack or other mechanic changes'); }
+  try { assert.deepEqual(comparable([...MONSTER_DATABASE]), comparable([...expected]), 'No dealer, companion, attack or other mechanic changes'); }
   finally { overlay.restore(); }
   assert.equal(JSON.stringify([...MONSTER_DATABASE]), original, 'Restore HP and nested shell between Worlds');
 }

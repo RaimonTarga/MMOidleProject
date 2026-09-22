@@ -38,6 +38,8 @@ function makeSnapshot(runesOwned: string[], runeRecipesCrafted: string[] = []): 
       unlockedSkills: ["cooldown-root", "cooldown-heavy"],
       activeStance: null,
       equippedStances: { default: null },
+      selectedSubVariant: null,
+      selectedRange: null,
       equipment: {},
       runesOwned,
       runeRecipesCrafted,

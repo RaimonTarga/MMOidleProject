@@ -96,10 +96,11 @@ for (const [id, want] of Object.entries(ADOPTED)) {
   assert(MONSTER_DATABASE.get('hadal-stalker')!.stats.hp !== 21000,
     'hadal-stalker 21000 was REJECTED and must never be written');
 
-  // The Jungle correction is HP-only: no ramp, cadence or finisher parameter moved.
+  // The Jungle correction is HP-only: the old private ramp was already removed
+  // in favor of the shared Chestbeat rally; cadence and finisher parameters stay put.
   const apex = MONSTER_DATABASE.get('apex-silverback')!;
-  assert(apex.rampOnCombat?.perTickPct === 0.03 && apex.rampOnCombat?.maxPct === 0.45,
-    'the Jungle ladder is HP-only; the Apex ramp must be untouched');
+  assert(apex.rampOnCombat === undefined,
+    'the removed Apex private ramp must stay absent from the HP-only Jungle ladder');
   assert(apex.stats.attackCooldown === 1800, 'Apex cadence unchanged');
   const constrictor = MONSTER_DATABASE.get('emerald-constrictor')!;
   assert(constrictor.cadenceFinisher?.everyNAttacks === 4
