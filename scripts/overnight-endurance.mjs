@@ -9,9 +9,16 @@ import { createRequire } from 'node:module';
 import { freemem } from 'node:os';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const require=createRequire(join(root,'server/package.json'));
-const {ENDURANCE_CELLS:cells,ENDURANCE_SEEDS:seeds}=require('../server/bench/balance/overnightEnduranceSpec.ts');
+const enduranceSpec=require('../server/bench/balance/overnightEnduranceSpec.ts');
 const args=Object.fromEntries(process.argv.slice(2).map(a=>{const i=a.indexOf('=');assert(i>2);return [a.slice(2,i),a.slice(i+1)];}));
 assert(['prepare','verify','qualify','run'].includes(args.mode));assert(args.packet);
+const day2=args.trial==='day2-bounded-01';
+const family=args.family;
+if(day2)assert(['A-control','A-candidate','B'].includes(family));
+const cells=day2?require('../server/bench/balance/day2Spec.ts').DAY2_CELLS.filter(c=>family==='B'?c.block==='B':c.block==='A' && `A-${c.arm}`===family):enduranceSpec.ENDURANCE_CELLS;
+const seeds=[...new Set(cells.map(c=>c.seed))];
+const planned=cells.length, capMs=day2 && family!=='B'?300000:1800000;
+const experimentId=day2?'day2-bounded-01':'overnight-endurance-01';
 const packet=resolve(args.packet), sha=b=>createHash('sha256').update(b).digest('hex');
 const json=p=>JSON.parse(readFileSync(p,'utf8'));
 const write=(p,v)=>writeFileSync(p,JSON.stringify(v,null,2)+'\n');
@@ -29,27 +36,27 @@ function identity(hitboxes) {
 if(args.mode==='prepare') {
   assert(args.hitboxes && !existsSync(packet));assert.equal(git('status','--porcelain','--untracked-files=no'),'');
   mkdirSync(packet,{recursive:true});
-  write(join(packet,'manifest.json'),{experimentId:'overnight-endurance-01',status:'prepared-unrun',planned:336,
-    blocks:{A:288,B:48,C:0},optionalC:{included:false,candidate:null,reason:'Existing diagnosis has no qualified candidate; see CONDUIT_DIAGNOSIS.md'},
-    seeds,dtMs:100,capMs:1800000,endpointsMs:[300000,900000,1800000],synthetic:true,economyEligible:false,
+  write(join(packet,'manifest.json'),{experimentId,status:'prepared-unrun',planned,family:family??null,
+    blocks:day2?{A:cells.filter(c=>c.block==='A').length,B:cells.filter(c=>c.block==='B').length}:{A:288,B:48,C:0},optionalC:{included:false,candidate:null,reason:'Existing diagnosis has no qualified candidate; see CONDUIT_DIAGNOSIS.md'},
+    seeds,dtMs:100,capMs,endpointsMs:[300000,900000,1800000].filter(x=>x<=capMs),synthetic:true,economyEligible:false,
     stopOnFirstDeath:true,watchdogs,sharedFailureFamily:'all A/B ordinary-farm children',cases:cells});
   write(join(packet,'identity.json'),identity(args.hitboxes));
   write(join(packet,'seal.json'),Object.fromEntries(['manifest.json','identity.json'].map(p=>[p,sha(readFileSync(join(packet,p)))])));
-  console.log('Sealed 336 planned observations; no combat.');process.exit(0);
+  console.log(`Sealed ${planned} planned observations; no combat.`);process.exit(0);
 }
 const manifest=json(join(packet,'manifest.json')),frozen=json(join(packet,'identity.json'));
 function verify() {
   for(const [p,h] of Object.entries(json(join(packet,'seal.json'))))assert.equal(sha(readFileSync(join(packet,p))),h,`Packet drift: ${p}`);
   assert.deepEqual(identity(frozen.hitboxes),frozen,'Source/runtime drift; stop, do not reseal');
-  assert.deepEqual(manifest.cases,cells);assert.deepEqual(manifest.watchdogs,watchdogs);
+  if(day2)assert.equal(manifest.family,family);assert.equal(manifest.experimentId,experimentId);assert.deepEqual(manifest.cases,cells);assert.deepEqual(manifest.watchdogs,watchdogs);
 }
 verify();
-if(args.mode==='verify'){console.log('Fixed checkout, source, runtime, hitboxes and 336-case ledger verified.');process.exit(0);}
+if(args.mode==='verify'){console.log(`Fixed checkout, source, runtime, hitboxes and ${planned}-case ledger verified.`);process.exit(0);}
 assert(args.out);const out=resolve(args.out);assert(!existsSync(out),'Fresh output only');
 const marker=join(packet,`${args.mode}-launched.json`);assert(!existsSync(marker),'No retries');
 const qualification=args.mode==='run'?json(join(packet,'qualified.json')):null;
 if(qualification){
-  assert.equal(qualification.completed,336);assert.equal(qualification.combatObservations,0);
+  assert.equal(qualification.completed,planned);assert.equal(qualification.combatObservations,0);
   assert.equal(qualification.manifestSha256,sha(readFileSync(join(packet,'manifest.json'))));
   assert.equal(sha(readFileSync(join(qualification.out,'resolved-builds.json'))),qualification.receiptsSha256);
 }
@@ -59,7 +66,7 @@ const receipts=[],inventory=[],rows=cells.map(c=>({observationId:c.id,identityId
   seed:c.seed,tier:c.tier,root:c.className,frame:c.frame,path:c.pathName,skillPath:c.build.skillPath,range:c.range,fixture:c.nodeId,arm:c.arm,
   status:'not-run',outcome:null,elapsedMs:null,completedKills:null,endpoints:null,intervals:null,reason:'Not started'}));
 function publish(){
-  const counts={planned:336,completed:rows.filter(r=>r.status==='complete').length,failed:rows.filter(r=>r.status==='failure').length,
+  const counts={planned,completed:rows.filter(r=>r.status==='complete').length,failed:rows.filter(r=>r.status==='failure').length,
     notRun:rows.filter(r=>r.status==='not-run').length,qualified:rows.filter(r=>r.status==='qualified').length};
   write(join(out,'results-summary.json'),{experimentId:manifest.experimentId,mode:args.mode,actualExecutionSource:frozen.sourceCommit,
     sourceSha256:frozen.sourceSha256,hitboxesSha256:frozen.hitboxesSha256,synthetic:true,economyEligible:false,counts,rows});
@@ -73,7 +80,7 @@ async function addInventory(dir){for(const e of readdirSync(dir,{withFileTypes:t
 async function child(block,mode,dest){
   mkdirSync(dest,{recursive:true});
   const childOut=join(dest,'artifacts');
-  const argv=['--import',pathToFileURL(require.resolve('tsx')).href,'--conditions=development','scripts/ttkSurvey.ts','--trial=overnight-endurance-01',
+  const argv=['--import',pathToFileURL(require.resolve('tsx')).href,'--conditions=development','scripts/ttkSurvey.ts',`--trial=${experimentId}`,
     `--block=${block}`,`--mode=${mode}`,`--revision=${frozen.sourceCommit}`,`--source-contract=${join(packet,'identity.json')}`,
     `--hitboxes=${frozen.hitboxes}`,`--out=${childOut}`];
   const fd=openSync(join(dest,'process.log'),'w');
@@ -97,14 +104,14 @@ async function child(block,mode,dest){
   clearInterval(timer);closeSync(fd);write(join(dest,'process.json'),{pid:cp.pid,argv,status,reason});
   assert.equal(status,0,reason??`Child failure; inspect ${dest}/process.log`);verify();
   const m=json(join(childOut,'manifest.json'));
-  assert.equal(m.revision,frozen.sourceCommit);assert.equal(m.durationMs,1800000);assert.equal(m.dtMs,100);
+  assert.equal(m.revision,frozen.sourceCommit);assert.equal(m.durationMs,capMs);assert.equal(m.dtMs,100);
   assert.equal(m.hitboxesSha256,frozen.hitboxesSha256);assert(existsSync(join(childOut,'complete.json')));
   assert(!existsSync(join(childOut,'failed.json')));
   return {childOut,m};
 }
 function receipt(c,r,m){
   assert.equal(r.cell,c.id);assert.equal(r.seed,c.seed);assert.equal(r.runtime.seed,c.seed);assert.equal(r.runtime.arm,c.arm);
-  assert.equal(r.runtime.revision,frozen.sourceCommit);assert.equal(r.runtime.durationMs,1800000);assert.equal(r.runtime.dtMs,100);
+  assert.equal(r.runtime.revision,frozen.sourceCommit);assert.equal(r.runtime.durationMs,capMs);assert.equal(r.runtime.dtMs,100);
   assert.equal(r.view.activeStance,c.stance);assert.deepEqual(r.view.attunedStances,[c.stance]);
   assert.deepEqual(r.packageReadback.declared.abilities,c.abilities);assert.deepEqual(r.packageReadback.declared.runeRules,c.runeRules);
   assert.deepEqual(r.packageReadback.skillPath,c.build.skillPath);assert.equal(r.definitionsIdentity.treated,false);
@@ -113,7 +120,7 @@ function receipt(c,r,m){
   const rec={observationId:c.id,seed:c.seed,identityId:c.identityId,referenceCaseId:c.referenceCaseId,path:c.pathName,range:c.range,
     packageReadback:r.packageReadback,conduitProfile:r.conduitProfile,initialRosterHash:r.initialRosterHash,
     initialRoster:r.initialRoster,definitionsIdentity:r.definitionsIdentity,initialView:r.view,sustainReadback:r.sustainReadback,runtime:r.runtime};
-  const partner=receipts.find(x=>cells.find(c=>c.id===x.observationId).comparisonId===c.comparisonId);
+  const partner=!day2 && receipts.find(x=>cells.find(c=>c.id===x.observationId).comparisonId===c.comparisonId);
   if(partner){
     assert.equal(partner.initialRosterHash,rec.initialRosterHash,'Paired initial ecology mismatch');
     const mountain=c.charm==='mountain'?rec:partner,volcanic=c.charm==='volcanic'?rec:partner;
@@ -127,9 +134,9 @@ function receipt(c,r,m){
 publish();let failure=null;
 try{
   if(args.mode==='qualify'){
-    const {childOut,m}=await child('qualification','qualify',join(out,'zero-tick'));
+    const {childOut,m}=await child(day2?`qualification-${family}`:'qualification','qualify',join(out,'zero-tick'));
     assert.deepEqual(m.cells,cells);assert.deepEqual(m.seeds,seeds);
-    const ready=json(join(childOut,'index.json'));assert.equal(ready.length,336);
+    const ready=json(join(childOut,'index.json'));assert.equal(ready.length,planned);
     for(let i=0;i<cells.length;i++){receipts.push(receipt(cells[i],ready[i],m));rows[i].status='qualified';rows[i].reason=null;}
     await addInventory(join(out,'zero-tick'));publish();
   }else for(let i=0;i<cells.length;i++){
@@ -143,19 +150,19 @@ try{
       const cp=join(detail,'conduit.json'),conduit=existsSync(cp)?json(cp):null;
       if(c.className==='conduit')assert(conduit);
       Object.assign(r,{status:'complete',reason:null,outcome:s.outcome,elapsedMs:s.elapsedMs,completedKills:s.counts.killed,
-        unfinishedTargets:s.counts.censored,targetRegainCount:s.counts.hpRegain,minHpFraction:s.minHpFraction,
+        sessions:s.sessions??null,sourceObservationId:c.sourceObservationId??null,unfinishedTargets:s.counts.censored,targetRegainCount:s.counts.hpRegain,minHpFraction:s.minHpFraction,
         endpoints:s.endpoints,intervals:s.intervals,work:s.work,sustain:s.sustain,terminalOwner:s.terminalOwner,
         deathEvidence:s.playerDeathEvidence,incomingHpDamage:s.incomingDamage,runicPoints:ready.packageReadback.runicPoints,
         conduit:conduit ? Object.fromEntries(Object.entries(conduit).filter(([k])=>!['events','snapshots','lives','episodes','damageDelivery'].includes(k))) : null,
         evidenceDirectory:detail,initialRosterHash:ready.initialRosterHash});
     }catch(e){r.status='failure';r.reason=String(e);r.outcome='operationally-censored';failure=String(e);}
-    if(existsSync(dest))await addInventory(dest);publish();console.log(`${i+1}/336 ${c.id}: ${r.status}`);
+    if(existsSync(dest))await addInventory(dest);publish();console.log(`${i+1}/${planned} ${c.id}: ${r.status}`);
     if(failure)break;
   }
 }catch(e){failure=String(e);if(args.mode==='qualify'){rows[receipts.length].status='failure';rows[receipts.length].reason=failure;}}
 publish();
 const completed=rows.filter(r=>['complete','qualified'].includes(r.status)).length;
-write(join(out,completed===336?'complete.json':'partial.json'),{planned:336,completed,combatObservations:args.mode==='qualify'?0:rows.filter(r=>r.status==='complete').length,failure});
-if(args.mode==='qualify' && completed===336)write(join(packet,'qualified.json'),{out,completed,combatObservations:0,
+write(join(out,completed===planned?'complete.json':'partial.json'),{planned,completed,combatObservations:args.mode==='qualify'?0:rows.filter(r=>r.status==='complete').length,failure});
+if(args.mode==='qualify' && completed===planned)write(join(packet,'qualified.json'),{out,completed,combatObservations:0,
   manifestSha256:sha(readFileSync(join(packet,'manifest.json'))),receiptsSha256:sha(readFileSync(join(out,'resolved-builds.json')))});
-if(completed!==336)process.exitCode=1;
+if(completed!==planned)process.exitCode=1;

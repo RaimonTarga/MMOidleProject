@@ -1,3 +1,4 @@
+import { emitMonsterSession } from '../engine/sessionObservation';
 import { attachComponent, detachComponent } from '../../../ecs/markerHelpers';
 import { MONSTER_DATABASE } from '@mmo-idle/shared';
 import type { AggroTargetKind } from '@mmo-idle/shared';
@@ -13,6 +14,7 @@ export function setAggroTarget(
   now: number,
 ): void {
   if (target === null) {
+    emitMonsterSession(monster, 'aggro-clear-before', now);
     detachComponent(world, monster, 'hasAggroTarget');
     monster.controlsMonster.chargeRemainingMs = 0;
     return;
@@ -37,6 +39,7 @@ export function setAggroTarget(
     lastAggroAt: now,
     sinceMs,
   });
+  emitMonsterSession(monster, hadAggro ? 'aggro-handover' : 'aggro-start', now);
 }
 
 export function setAttackTarget(

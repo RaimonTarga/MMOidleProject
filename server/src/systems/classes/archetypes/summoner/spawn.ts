@@ -1,3 +1,4 @@
+import { emitMonsterSession } from '../../../combat/engine/sessionObservation';
 /**
  * Minion spawn / despawn helpers for the summoner archetype.
  *
@@ -257,6 +258,7 @@ export function despawnMinion(world: World, minion: MinionEntity): void {
 function dropMonsterAggroOnMinion(world: World, minionId: string): void {
   for (const m of world.aggroedMonsters) {
     if (m.hasAggroTarget.targetKind === 'minion' && m.hasAggroTarget.targetId === minionId) {
+      emitMonsterSession(m, 'despawn-aggro-clear-before', Date.now());
       detachComponent(world, m, 'hasAggroTarget');
       m.controlsMonster.chargeRemainingMs = 0;
     }

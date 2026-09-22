@@ -1,3 +1,5 @@
+import { Day2SessionRecorder } from '../bench/balance/day2SessionRecorder';
+import { DAY2_BLOCKS } from '../bench/balance/day2Spec';
 import { ENDURANCE_BLOCKS, ENDURANCE_CAP_MS, ENDURANCE_ENDPOINTS, type EnduranceCell } from '../bench/balance/overnightEnduranceSpec';
 import { EnduranceProgress, endpointIntervals } from '../bench/balance/enduranceProgress';
 import { FarmingSustainRecorder, sustainState } from '../bench/balance/farmingSustainRecorder';
@@ -69,7 +71,8 @@ import { DURABILITY20_CELLS, DURABILITY20_SEEDS, installDurability20Treatment, a
 import { getAutoTargetId } from '../src/systems/combat/ai/targetPriority';
 
 const args=Object.fromEntries(process.argv.slice(2).map(x=>{const i=x.indexOf('=');return i<0?[x.replace(/^--/,''),'true']:[x.slice(2,i),x.slice(i+1)];}));
-const endurance = args.trial === 'overnight-endurance-01';
+const day2 = args.trial === 'day2-bounded-01';
+const endurance = args.trial === 'overnight-endurance-01' || day2;
 const farmingSustain = args.trial === 'farming-sustain-01' || endurance;
 const farmingStance = args.trial === 'farming-stance-01';
 const breadth = args.trial === 'player-breadth' || farmingStance || farmingSustain;
@@ -77,12 +80,12 @@ if (breadth) assertBreadthDefinitions();
 const packageFit = args.trial === 'player-package-fit';
 const fastPass = args.trial === 'player-fast-pass' || packageFit || breadth;
 if (packageFit) assertPackageFitDefinitions();
-const fastBlock = fastPass ? (endurance ? ENDURANCE_BLOCKS : farmingSustain ? FARMING_SUSTAIN_BLOCKS : farmingStance ? FARMING_STANCE_BLOCKS : breadth ? BREADTH_BLOCKS : packageFit ? PACKAGE_FIT_BLOCKS : FAST_PASS_BLOCKS)[args.block] : undefined;
+const fastBlock = fastPass ? (day2 ? DAY2_BLOCKS : endurance ? ENDURANCE_BLOCKS : farmingSustain ? FARMING_SUSTAIN_BLOCKS : farmingStance ? FARMING_STANCE_BLOCKS : breadth ? BREADTH_BLOCKS : packageFit ? PACKAGE_FIT_BLOCKS : FAST_PASS_BLOCKS)[args.block] : undefined;
 if (fastPass) { assert(fastBlock && fastBlock.cells.every(c => c.role === 'farm'), 'Unknown farm block'); assertFastPassDefinitions(); }
 const night5=args.trial==='durability37'?DURABILITY37_BLOCKS[args.block]:args.trial==='durability36'?DURABILITY36_BLOCKS[args.block]:args.trial==='durability35'?DURABILITY35_BLOCKS[args.block]:args.trial==='durability34'?DURABILITY34_BLOCKS[args.block]:args.trial==='durability33'?DURABILITY33_BLOCKS[args.block]:args.trial==='durability32'?DURABILITY32_BLOCKS[args.block]:args.trial==='durability30'?DURABILITY30_BLOCKS[args.block]:args.trial==='durability29'?DURABILITY29_BLOCKS[args.block]:args.trial==='durability28'?DURABILITY28_BLOCKS[args.block]:args.trial==='durability27'?DURABILITY27_BLOCKS[args.block]:args.trial==='durability26'?DURABILITY26_BLOCKS[args.block]:args.trial==='durability25'?DURABILITY25_BLOCKS[args.block]:args.trial==='durability24'?DURABILITY24_BLOCKS[args.block as keyof typeof DURABILITY24_BLOCKS]:args.trial==='durability23'?DURABILITY23_BLOCKS[args.block]:args.trial==='durability22'?DURABILITY22_BLOCKS[args.block]:args.trial==='durability21'?DURABILITY21_BLOCKS[args.block]:args.trial==='night5'?NIGHT5_BLOCKS[args.block]:undefined;
 if(['night5','durability21','durability22','durability23','durability24','durability25','durability26','durability27','durability28','durability29','durability30','durability32','durability33','durability34','durability35','durability36','durability37'].includes(args.trial)) assert(night5,'Unknown night5 block');
 const mode=args.mode??'qualify';
-if(endurance) assert(mode==='qualify' || (mode==='run' && args.block!=='qualification'), 'No extra endurance pilots or aggregate combat block'); assert(['qualify','pilot','run'].includes(mode));
+if(endurance) assert(mode==='qualify' || (mode==='run' && !args.block.startsWith('qualification')), 'No extra endurance pilots or aggregate combat block'); assert(['qualify','pilot','run'].includes(mode));
 assert(!args.trial || fastPass || ['durability37','durability36','durability35','durability34','durability33','durability32','durability30','durability29','durability28','durability27','durability26','durability25','durability24','durability23','durability22','durability21','night5','durability20','durability19','durability18','durability17','durability16','durability15','durability13movement','durability13swarm','durability12movement','durability12swarm','durability11','durability10swamp','durability10jungle','durability9roster','durability9bear','durability','durability2','durability3','durability4','durability5','durability6','durability7','durability8','night4survey','night4followup','night4aoe'].includes(args.trial));
 const trialCells = fastBlock ? fastBlock.cells : night5 ? night5.cells : args.trial === 'durability20' ? DURABILITY20_CELLS : args.trial === 'durability19' ? DURABILITY19_CELLS : args.trial === 'durability18' ? DURABILITY18_CELLS : args.trial === 'durability17' ? DURABILITY17_CELLS : args.trial === 'durability16' ? DURABILITY16_CELLS : args.trial === 'durability15' ? DURABILITY15_CELLS : args.trial === 'durability13movement' ? DURABILITY13_MOVEMENT : args.trial === 'durability13swarm' ? DURABILITY13_SWARM : args.trial === 'durability12movement' ? DURABILITY12_MOVEMENT : args.trial === 'durability12swarm' ? DURABILITY12_SWARM : args.trial === 'durability11' ? DURABILITY11_CELLS : args.trial === 'durability10swamp' ? DURABILITY10_SWAMP : args.trial === 'durability10jungle' ? DURABILITY10_JUNGLE : args.trial === 'durability9roster' ? DURABILITY9_ROSTER : args.trial === 'durability9bear' ? DURABILITY9_BEAR : args.trial === 'night4survey' ? NIGHT4_SURVEY : args.trial === 'night4followup' ? NIGHT4_FOLLOWUP : args.trial === 'night4aoe' ? NIGHT4_AOE : args.trial === 'durability8' ? DURABILITY8_CELLS : args.trial === 'durability7' ? DURABILITY7_CELLS : args.trial === 'durability6' ? DURABILITY6_CELLS : args.trial === 'durability5' ? DURABILITY5_CELLS : args.trial === 'durability4' ? DURABILITY4_CELLS : args.trial === 'durability3' ? DURABILITY3_CELLS : args.trial === 'durability2' ? DURABILITY2_CELLS : args.trial === 'durability' ? DURABILITY_CELLS : SURVEY_CELLS;
 const trialSeeds=endurance?[...(new Set((trialCells as EnduranceCell[]).map(c=>c.seed)))]:fastPass?[FAST_PASS_SEED]:args.trial==='durability37'?(args.block==='mob-integration'?DURABILITY37_INTEGRATION_SEEDS:DURABILITY37_LADDER_SEEDS):args.trial==='durability36'?(args.block==='mountain-armor'?DURABILITY36_ARMOR_SEEDS:DURABILITY36_LADDER_SEEDS):args.trial==='durability35'?DURABILITY35_SEEDS:args.trial==='durability34'?(args.block==='mountain-guard'?DURABILITY34_MOUNTAIN_SEEDS:DURABILITY34_JUNGLE_SEEDS):args.trial==='durability33'?(args.block==='jungle-repair'?DURABILITY33_REPAIR_SEEDS:args.block==='mountain-entry'?DURABILITY33_ENTRY_SEEDS:DURABILITY33_BREADTH_SEEDS):args.trial==='durability32'?(args.block==='jungle-repair'?DURABILITY32_REPAIR_SEEDS:DURABILITY32_SEEDS):args.trial==='durability30'?(args.block==='jungle'?DURABILITY30_JUNGLE_SEEDS:DURABILITY30_SEEDS):args.trial==='durability29'?DURABILITY29_SEEDS:args.trial==='durability28'?DURABILITY28_SEEDS:args.trial==='durability27'?DURABILITY27_SEEDS:args.trial==='durability26'?DURABILITY26_SEEDS:args.trial==='durability25'?DURABILITY25_SEEDS:args.trial==='durability24'?DURABILITY24_SEEDS:args.trial==='durability23'?DURABILITY23_SEEDS:args.trial==='durability22'?DURABILITY22_SEEDS:args.trial==='durability21'?DURABILITY21_SEEDS:night5?NIGHT5_SEEDS:args.trial==='durability20'?DURABILITY20_SEEDS:args.trial==='durability19'?DURABILITY19_SEEDS:args.trial==='durability18'?DURABILITY18_SEEDS:args.trial==='durability17'?DURABILITY17_SEEDS:args.trial==='durability16'?DURABILITY16_SEEDS:args.trial==='durability15'?DURABILITY15_SEEDS:args.trial==='durability13movement'?DURABILITY13_MOVEMENT_SEEDS:args.trial==='durability13swarm'?DURABILITY13_SWARM_SEEDS:args.trial==='durability12movement'?DURABILITY12_MOVEMENT_SEEDS:args.trial==='durability12swarm'?DURABILITY12_SEEDS:args.trial==='durability11'?DURABILITY11_SEEDS:args.trial==='durability7'?DURABILITY7_SEEDS:args.trial==='durability5'?DURABILITY5_SEEDS:args.trial==='durability4'?DURABILITY4_SEEDS:SURVEY_SEEDS;
@@ -120,7 +123,7 @@ if (farmingStance || farmingSustain) {
 }
 mkdirSync(out,{recursive:true});
 const manifest={schema:1,mode,revision,navigationDiagnostics:args['navigation-diagnostics']==='true',definitionsHash:checkpointDefinitionsHash(),hitboxesSha256:sha(readFileSync(args.hitboxes)),
-  sampleEveryMs:args.trial==='durability12movement'||args.trial==='durability13movement'?100:1000,block:args.block,trial:args.trial??'ttk-survey',synthetic:true,economyEligible:false,dtMs:100,durationMs:endurance?ENDURANCE_CAP_MS:mode==='pilot'?30000:night5?.durationMs??300000,seeds:trialSeeds,cells:trialCells};
+  sampleEveryMs:args.trial==='durability12movement'||args.trial==='durability13movement'?100:1000,block:args.block,trial:args.trial??'ttk-survey',synthetic:true,economyEligible:false,dtMs:100,durationMs:day2?fastBlock!.durationMs:endurance?ENDURANCE_CAP_MS:mode==='pilot'?30000:night5?.durationMs??300000,seeds:trialSeeds,cells:trialCells};
 writeFileSync(join(out,'manifest.json'),JSON.stringify(manifest,null,2));
 const realNow=Date.now,realRandom=Math.random;
 function safeSpawn(node:string) {
@@ -170,6 +173,7 @@ function run(cell:SurveyCell,seed:number) {
     const dir=join(out,cell.id+'-s'+seed);mkdirSync(dir);
     writeFileSync(join(dir,'ready.json'),JSON.stringify(ready,null,2));
     const sustain = farmingSustain ? new FarmingSustainRecorder(world,bot,1800000000000) : null;
+    const sessions=day2 && (cell as EnduranceCell).block==='A'?new Day2SessionRecorder(world,bot):null;
     const metrics=new SurveyMetrics(bot.isPlayer.id);
     const register=()=>{for(const m of world.monsterEntitiesInNode(cell.nodeId)) metrics.register(m.entityId,m.isMonster.monsterTypeId,MONSTER_DATABASE.get(m.isMonster.monsterTypeId)?.name??m.isMonster.monsterTypeId,m.hasHealth.maxHp);};
     register(); const log:unknown[]=[],samples:unknown[]=[];
@@ -190,9 +194,9 @@ function run(cell:SurveyCell,seed:number) {
     world.worldLogJournal=[];world.worldLogByPlayer.clear();world.takeNodeEvents(cell.nodeId);
     for(;elapsed<windowMs;elapsed+=100) {
       if(!endurance && realNow()-wallStart>120000) {outcome='wall-ceiling';break;}
-      now=1800000000000+elapsed; register();
+      now=1800000000000+elapsed; register();sessions?.register();
       conduit?.beforeTick(elapsed,100,now);
-      const tickWallStart=realNow();world.tick(100,now);conduit?.afterTick();sustain?.afterTick(elapsed,now);maxTickWallMs=Math.max(maxTickWallMs,realNow()-tickWallStart);recordNavigationTick(elapsed,realNow()-tickWallStart);
+      const tickWallStart=realNow();world.tick(100,now);sessions?.afterTick(now);conduit?.afterTick();sustain?.afterTick(elapsed,now);maxTickWallMs=Math.max(maxTickWallMs,realNow()-tickWallStart);recordNavigationTick(elapsed,realNow()-tickWallStart);
       for(const m of world.monsterEntitiesInNode(cell.nodeId)) {
         const previous=lastHp.get(m.entityId);
         if(previous!==undefined && m.hasHealth.hp>previous+0.001) {const t=metrics.targets.get(m.entityId);if(t&&t.firstDamageMs!==null)t.hpRegainObserved=true;}
@@ -222,6 +226,7 @@ function run(cell:SurveyCell,seed:number) {
         staticDamageContacts:activePlayerDamageFeatures(world,cell.nodeId).filter(f=>playerInFeatureContact(bot.hasPosition.current,f)).map(f=>({id:f.id,effect:f.damage?.effectId})),
         lastOutgoingDamageMs:Math.max(0,...[...metrics.targets.values()].map(t=>t.lastDamageMs??0)), blockedApproach:getString(bot.tracksCombat,'autoApproachBlocked'), selectedTargetId:getAutoTargetId(bot), motion:bot.isMoving?.motion??null, movement:bot.hasMovePath ? structuredClone(bot.hasMovePath) : null, monsters:roster().map(m=>({id:m.id,type:m.type,hp:m.hp,pos:m.pos,aggro:structuredClone(world.getMonsterEntity(m.id)?.hasAggroTarget),awareness:structuredClone(world.getMonsterEntity(m.id)?.hasAwareness)}))});
       if(endurance) {
+        stream('session-events.jsonl',sessions?.events.splice(0)??[]);
         stream('events.jsonl',log.splice(0));stream('samples.jsonl',samples.splice(0));
         stream('conduit-events.jsonl',conduit?.events.splice(0)??[]);
         stream('conduit-snapshots.jsonl',conduit?.snapshots.splice(0)??[]);
@@ -245,6 +250,7 @@ function run(cell:SurveyCell,seed:number) {
     metrics.close(elapsed,outcome);
     const result={cell:cell.id,seed,outcome,elapsedMs:elapsed,windowMs,
       ...(sustain ? {sustain:sustain.finish()} : {}),
+      ...(sessions ? {sessions:sessions.finish()} : {}),
       ...(endurance ? {endpoints,intervals:endpointIntervals(endpoints),work:progress!.snapshot(elapsed),terminalTargets:roster(),streamedHistories:true,timing:'Legacy event times label tick starts; endpoint states follow completed 100ms steps; no post-death endpoints.'} : {}),
       ...(breadth ? {terminalOwner:{hp:bot.hasHealth.hp,maxHp:bot.hasHealth.maxHp,barrier:composePlayerView(bot)!.barrier},playerDeathEvidence:endurance?deathEvents:log.filter((x:any)=>x.event?.kind==='player-death')} : {}),minHpFraction:minHp,attackBeats,minionAttackBeats,wallElapsedMs:realNow()-wallStart,maxTickWallMs,totalAttackBeats:attackBeats+minionAttackBeats,initialRosterHash:ready.initialRosterHash,...metrics.result()};
     if(!endurance) writeFileSync(join(dir,'events.jsonl'),log.map(e=>JSON.stringify(e)).join('\n')+'\n');

@@ -1,3 +1,4 @@
+import { emitMonsterSession } from './sessionObservation';
 import {
   MONSTER_DATABASE,
   NODE_BIOMES,
@@ -666,6 +667,7 @@ export function refreshEnemyShieldState(
   const session = combatSession(monster, now);
 
   if (getCounter(cs, SHIELD_SESSION_KEY) !== session) {
+    emitMonsterSession(monster, 'shield-session', now);
     setCounter(cs, SHIELD_SESSION_KEY, session);
     setCounter(cs, SHIELD_NEXT_KEY, session);
     setCounter(cs, SHIELD_AMOUNT_KEY, 0);
