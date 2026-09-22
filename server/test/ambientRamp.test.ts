@@ -41,7 +41,7 @@ const CLEAR_SPOT = { x: 150, y: 150 };
 const HEAT = RESOLVED_NODE_FEATURES[HEAT_NODE].find((f) => f.ambientRamp)?.ambientRamp;
 assert(HEAT !== undefined, `${HEAT_NODE} must author an ambientRamp feature`);
 const RAMP_MS = HEAT!.rampMs;
-const MAX_STACKS = HEAT!.maxStacks;
+const BREAKPOINT = HEAT!.payload.damageSoftcapStacks!;
 const TAKEN_PER_STACK = HEAT!.payload.incomingDamagePct ?? 0;
 const DEALT_PER_STACK = HEAT!.payload.outgoingDamagePct ?? 0;
 
@@ -173,7 +173,7 @@ initCombatSystems();
   );
 }
 
-// ── The ramp climbs while fighting, caps, and drives BOTH amplifiers ──────────
+// ── The uncapped ramp drives BOTH amplifiers, with a linear first ten stacks ──
 {
   const world = new World();
   const player = world.attachPlayerEntity(makePlayerSlices('ramp', HEAT_NODE), 'ramp');
@@ -199,18 +199,18 @@ initCombatSystems();
     'the ramp gains exactly one stack per rampMs of combat',
   );
 
-  tickFeatures(world, player, RAMP_MS * MAX_STACKS, true);
+  tickFeatures(world, player, RAMP_MS * (BREAKPOINT - 3), true);
   const full = getStatusEffect(cs, VOLCANIC_HEAT_EFFECT_ID)!;
-  assert(full.stacks === MAX_STACKS, 'the ramp stops at the authored maxStacks');
+  assert(full.stacks === BREAKPOINT && full.maxStacks === 0, 'Heat reaches ten without a stack cap');
 
   const taken = playerIncomingDamageMult(cs) - 1;
   const dealt = playerOutgoingDamageMult(cs) - 1;
   assert(
-    Math.abs(taken - MAX_STACKS * TAKEN_PER_STACK) < 1e-9,
+    Math.abs(taken - BREAKPOINT * TAKEN_PER_STACK) < 1e-9,
     'P3 must read the ramp payload as the incoming amplifier',
   );
   assert(
-    Math.abs(dealt - MAX_STACKS * DEALT_PER_STACK) < 1e-9,
+    Math.abs(dealt - BREAKPOINT * DEALT_PER_STACK) < 1e-9,
     'the SAME status must also drive the outgoing amplifier',
   );
   assert(
@@ -225,17 +225,19 @@ initCombatSystems();
   syncPlayerBuffs(world, Date.now());
   const tile = player.hasStatus.activeBuffs.find((b) => b.id === 'debuff-volcanic-heat');
   assert(tile !== undefined, 'the ramp must project a buff tile');
-  assert(tile!.stacks === MAX_STACKS, 'the tile reports live stacks');
-  assert(tile!.durationPct === 100, 'a full ramp reads as a full fill, not a countdown');
+  assert(tile!.stacks === BREAKPOINT, 'the tile reports live stacks');
+  assert(tile!.durationPct === -1, 'uncapped Heat must not display a full-stack ceiling');
+  assert(tile!.values?.some(v => v.label === 'Damage dealt' && v.value === '+30%') === true, 'tile reports actual dealt bonus');
+  assert(tile!.values?.some(v => v.label === 'Damage taken' && v.value === '+45%') === true, 'tile reports actual taken bonus');
   assert(tile!.speedMult === 1, 'volcano payload carries no move slow');
 
   // Disengaging sheds the ramp one stack at a time, and clears it.
   tickFeatures(world, player, RAMP_MS * 2, false);
   assert(
-    getStatusEffect(cs, VOLCANIC_HEAT_EFFECT_ID)!.stacks === MAX_STACKS - 2,
+    getStatusEffect(cs, VOLCANIC_HEAT_EFFECT_ID)!.stacks === BREAKPOINT - 2,
     'the ramp decays gradually out of combat, not in one cliff',
   );
-  tickFeatures(world, player, RAMP_MS * MAX_STACKS, false);
+  tickFeatures(world, player, RAMP_MS * BREAKPOINT, false);
   assert(
     getStatusEffect(cs, VOLCANIC_HEAT_EFFECT_ID) === undefined,
     'a fully shed ramp removes its status',
@@ -260,6 +262,85 @@ initCombatSystems();
     getStatusEffect(cs, VOLCANIC_HEAT_EFFECT_ID) === undefined,
     'leaving the biome clears the ramp on the next pass, even mid-fight',
   );
+}
+
+// Beyond ten, Heat keeps growing but its marginal effect shrinks; HUD uses the same curve.
+{
+  const world = new World();
+  const player = world.attachPlayerEntity(makePlayerSlices('hot', HEAT_NODE), 'hot');
+  tickFeatures(world, player, 100, true);
+  const heat = ambientRampStatus(player.tracksCombat)!;
+  let lastBonus = 0;
+  let lastIncrement = Infinity;
+  for (let stacks = 1; stacks <= 100; stacks++) {
+    heat.stacks = stacks;
+    const bonus = playerOutgoingDamageMult(player.tracksCombat) - 1;
+    const increment = bonus - lastBonus;
+    assert(increment > 0, 'every stack must still matter');
+    if (stacks <= 10) assert(Math.abs(bonus - stacks * 0.03) < 1e-9, 'first ten stacks are linear');
+    if (stacks > 10) assert(increment < lastIncrement, 'each post-breakpoint stack adds less');
+    lastBonus = bonus;
+    lastIncrement = increment;
+  }
+  assert(playerOutgoingDamageMult(player.tracksCombat) > 1.5, 'Heat exceeds the former outgoing cap');
+  assert(playerIncomingDamageMult(player.tracksCombat) > 2, 'Heat exceeds the former incoming cap');
+  syncPlayerBuffs(world, Date.now());
+  const tile = player.hasStatus.activeBuffs.find(b => b.id === 'debuff-volcanic-heat')!;
+  assert(tile.values?.some(v => v.label === 'Damage dealt' && v.value === '+74.2%') === true, 'high-stack HUD reflects logarithmic damage');
+  tickFeatures(world, player, RAMP_MS, true);
+  assert(heat.stacks === 101, 'live accumulation continues above all former ceilings');
+
+  // Cooling consumes elapsed time at the interval for EACH stack, slowing as Heat falls.
+  heat.stacks = 100;
+  tickFeatures(world, player, 300, false);
+  assert(heat.stacks === 99, '100 Heat loses its first stack in 0.3 seconds');
+  tickFeatures(world, player, 300, false);
+  assert(heat.stacks === 99, '99 Heat needs slightly longer for its next stack');
+  tickFeatures(world, player, 100, false);
+  assert(heat.stacks === 98, 'cooling carries fractional elapsed time');
+
+  // Re-entering combat must not bank cooling progress or turn it into growth.
+  tickFeatures(world, player, 100, true);
+  assert(heat.stacks === 98, 'resuming combat does not convert cooling into growth');
+  heat.stacks = 10;
+  tickFeatures(world, player, 2900, false);
+  assert(heat.stacks === 10, 'low Heat needs a fresh three seconds to cool');
+  tickFeatures(world, player, 100, false);
+  assert(heat.stacks === 9, 'cooling returns to baseline at ten stacks');
+  tickFeatures(world, player, 27_000, false);
+  assert(!ambientRampStatus(player.tracksCombat), 'cooling clears the final stack');
+}
+
+// A larger server step must traverse the same cooling intervals as small steps.
+{
+  const snapshots: Array<{ stacks: number; elapsed: number }> = [];
+  for (const dt of [100, 1000]) {
+    const world = new World();
+    const player = world.attachPlayerEntity(makePlayerSlices(`cool-${dt}`, HEAT_NODE), `cool-${dt}`);
+    tickFeatures(world, player, 100, true);
+    const heat = ambientRampStatus(player.tracksCombat)!;
+    heat.stacks = 100;
+    player.tracksEngagement = undefined;
+    for (let ms = 0; ms < 30_000; ms += dt) updateNodeFeatures(world, dt);
+    snapshots.push({ stacks: heat.stacks, elapsed: heat.data.coolingAccum });
+  }
+  assert(snapshots[0].stacks === snapshots[1].stacks, 'cooling count is independent of tick size');
+  assert(Math.abs(snapshots[0].elapsed - snapshots[1].elapsed) < 1e-8, 'cooling preserves elapsed remainder across tick sizes');
+  assert(snapshots[0].stacks < 50 && snapshots[0].stacks > 10, 'high Heat cools quickly while retaining a gradual tail');
+}
+
+// Generic amplifiers remain additive, without a hidden global cap on either axis.
+{
+  const world = new World();
+  const player = world.attachPlayerEntity(makePlayerSlices('uncapped', COLD_NODE), 'uncapped');
+  for (const id of ['source-one', 'source-two']) {
+    applyStatusEffect(player.tracksCombat, {
+      id, maxStacks: 1, remainingMs: 5000, sourceId: 'test',
+      data: { [DAMAGE_DEALT_PCT_KEY]: 0.4, [DAMAGE_TAKEN_PCT_KEY]: 0.75 },
+    });
+  }
+  assert(Math.abs(playerOutgoingDamageMult(player.tracksCombat) - 1.8) < 1e-9, 'outgoing sources add beyond 50%');
+  assert(playerIncomingDamageMult(player.tracksCombat) === 2.5, 'incoming sources add beyond 100%');
 }
 
 // Admin teleport and normal node accounting share immediate cleanup in both directions.
@@ -327,6 +408,26 @@ for (const nodeId of [HEAT_NODE, 'node-t4-tundra-01']) {
     }),
     'volcanic heat stays net-harmful despite paying out damage dealt',
   );
+}
+
+// Cosmetic events report actual gains only, including the first stack and capped Chill.
+for (const nodeId of [HEAT_NODE, 'node-t4-tundra-01']) {
+  const world = new World();
+  const player = world.attachPlayerEntity(makePlayerSlices('flash', nodeId), 'flash');
+  tickFeatures(world, player, 100, true);
+  const effect = ambientRampStatus(player.tracksCombat)!;
+  const first = world.takeNodeEvents(nodeId).filter(e => e.kind === 'ambient-stack-gain');
+  assert(first.length === 1 && first[0].kind === 'ambient-stack-gain' && first[0].effectId === effect.id, 'initial stack emits the correct Heat/Chill cue');
+  const interval = effect.data.rampMs;
+  tickFeatures(world, player, interval * 2, true);
+  assert(world.takeNodeEvents(nodeId).filter(e => e.kind === 'ambient-stack-gain').length === 2, 'each gained stack emits one cue');
+  tickFeatures(world, player, interval * 2, false);
+  assert(!world.takeNodeEvents(nodeId).some(e => e.kind === 'ambient-stack-gain'), 'cooling never flashes');
+  if (effect.maxStacks > 0) {
+    effect.stacks = effect.maxStacks;
+    tickFeatures(world, player, interval * 2, true);
+    assert(!world.takeNodeEvents(nodeId).some(e => e.kind === 'ambient-stack-gain'), 'capped Chill never emits fake gains');
+  }
 }
 
 console.log('ambientRamp.test.ts: ok');

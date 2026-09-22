@@ -47,6 +47,7 @@ export function applyDelta(
   options: { stateSync?: boolean } = {},
 ): void {
   if (snapshot.full) {
+    state.ambientStackFlash.clear();
     clearOwnMovePath(state);
     const destination = scene.targetMarker.destination;
     if (options.stateSync || !destination ||

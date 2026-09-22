@@ -216,8 +216,9 @@ export function clearInvalidAmbientRamp(
 /**
  * P4 — the ambient node ramp. For every live player: if their node authors an
  * `ambientRamp` feature AND they are in combat, the ramp status gains a stack every
- * `rampMs` up to `maxStacks`. Out of combat it sheds a stack at the same cadence
- * and clears at zero. Leaving the owning biome or dying clears it immediately.
+ * `rampMs` up to `maxStacks` (0 = uncapped). Out of combat it sheds stacks at the
+ * base cadence or faster with authored high-stack cooling, clearing at zero.
+ * Leaving the owning biome or dying clears it immediately.
  *
  * The pass owns the COUNTER only. What a stack does is the authored payload, read
  * wherever it is relevant by systems that key off status `data` rather than status
@@ -244,10 +245,12 @@ function updateAmbientRamp(world: World, dt: number, now: number): void {
       ? {
           ...base,
           rampMs: Math.max(200, Math.round(base.rampMs * (override?.rampMsMult ?? 1))),
-          maxStacks: base.maxStacks + (override?.maxStacksAdd ?? 0),
+          maxStacks: base.maxStacks > 0 ? base.maxStacks + (override?.maxStacksAdd ?? 0) : 0,
         }
       : undefined;
-    const floor = ramp ? Math.min(override?.minStacks ?? 0, ramp.maxStacks) : 0;
+    const floor = ramp
+      ? Math.min(override?.minStacks ?? 0, ramp.maxStacks > 0 ? ramp.maxStacks : Infinity)
+      : 0;
 
     if (!ramp || !isPlayerInCombat(player, now)) {
       if (effect) decayAmbientRamp(cs, effect, dt, ramp ? floor : 0);
@@ -264,6 +267,7 @@ function updateAmbientRamp(world: World, dt: number, now: number): void {
         refreshable: false,
         data: ambientRampData(ramp.payload, ramp),
       });
+      emitAmbientStackGain(world, player, ramp.effectId);
       continue;
     }
 
@@ -285,18 +289,29 @@ function updateAmbientRamp(world: World, dt: number, now: number): void {
       now,
     );
     effect.data.rampAccum = (effect.data.rampAccum ?? 0) + dt * accel;
-    while (effect.data.rampAccum >= ramp.rampMs && effect.stacks < ramp.maxStacks) {
+    // Growth and cooling have independent clocks, so combat cannot prepay cooling.
+    delete effect.data.coolingAccum;
+    while (effect.data.rampAccum >= ramp.rampMs && (ramp.maxStacks === 0 || effect.stacks < ramp.maxStacks)) {
       effect.stacks++;
+      emitAmbientStackGain(world, player, ramp.effectId);
       effect.data.rampAccum -= ramp.rampMs;
     }
     // At full stacks the accumulator would otherwise run away and make the first
     // decay step instant.
-    if (effect.stacks >= ramp.maxStacks) effect.data.rampAccum = 0;
+    if (ramp.maxStacks > 0 && effect.stacks >= ramp.maxStacks) effect.data.rampAccum = 0;
   }
 }
 
+function emitAmbientStackGain(world: World, player: PlayerEntity, effectId: string): void {
+  if (effectId !== 'volcanic-heat' && effectId !== 'tundra-chill') return;
+  world.pushEvent(player.hasPosition.nodeId, {
+    kind: 'ambient-stack-gain', playerId: player.isPlayer.id, effectId,
+  });
+}
+
 /**
- * Cool down: shed one stack per `rampMs` of elapsed time; clear the status at zero.
+ * Cool down: shed one stack per `rampMs`, or faster at high stacks when authored.
+ * Re-evaluate the interval after every lost stack; clear the status at zero.
  * `floor` is a boss-imposed minimum the ramp cannot decay below (0 normally) — at a
  * non-zero floor the status is held rather than removed.
  */
@@ -307,6 +322,20 @@ function decayAmbientRamp(
   floor: number,
 ): void {
   const rampMs = effect.data.rampMs ?? 3000;
+  const coolingScale = effect.data.coolingScaleStacks ?? 0;
+  if (coolingScale > 0) {
+    effect.data.rampAccum = 0;
+    let elapsed = (effect.data.coolingAccum ?? 0) + dt;
+    while (effect.stacks > floor) {
+      const interval = rampMs / Math.max(1, effect.stacks / coolingScale);
+      if (elapsed < interval) break;
+      elapsed -= interval;
+      effect.stacks--;
+    }
+    effect.data.coolingAccum = effect.stacks > floor ? elapsed : 0;
+    if (effect.stacks <= 0) removeStatusEffect(cs, effect.id);
+    return;
+  }
   effect.data.rampAccum = (effect.data.rampAccum ?? 0) + dt;
   while (effect.data.rampAccum >= rampMs && effect.stacks > floor) {
     effect.stacks--;

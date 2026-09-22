@@ -2,7 +2,6 @@ import {
   DAMAGE_DEALT_PCT_KEY,
   DAMAGE_TAKEN_PCT_KEY,
   GAME_CONFIG,
-  MAX_DAMAGE_TAKEN_PCT,
   MONSTER_DATABASE,
   STARTER_RUNE_IDS,
   SUNDERED_EFFECT_ID,
@@ -118,7 +117,7 @@ initCombatSystems();
   );
 }
 
-// ── P3: the pure helpers sum across stacks and clamp at their caps ───────────
+// ── P3: the pure helpers sum across stacks without global amplifier caps ─────
 {
   const world = new World();
   const player = world.attachPlayerEntity(makePlayerSlices('amp-helpers'), 'amp-helpers');
@@ -166,8 +165,8 @@ initCombatSystems();
     data: { [DAMAGE_TAKEN_PCT_KEY]: 5.0, totalMs: 4_000 },
   });
   assert(
-    playerIncomingDamageMult(cs) === 1 + MAX_DAMAGE_TAKEN_PCT,
-    'the summed incoming amplifier must clamp at MAX_DAMAGE_TAKEN_PCT',
+    Math.abs(playerIncomingDamageMult(cs) - 6.4) < 1e-9,
+    'independent incoming amplifiers sum without a global cap',
   );
 
   removeStatusEffect(cs, SUNDERED_EFFECT_ID);

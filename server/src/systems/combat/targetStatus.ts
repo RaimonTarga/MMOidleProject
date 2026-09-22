@@ -1,6 +1,5 @@
 import {
   DAMAGE_TAKEN_PCT_KEY,
-  MAX_DAMAGE_TAKEN_PCT,
   weaponDotProfileForEffect,
   SUMMONER_CHORUS_EFFECT_ID,
   SUMMONER_HARRIER_EFFECT_ID,
@@ -91,7 +90,7 @@ function statusValues(fx: StatusEffect, weaponReservoir: boolean): StatusValue[]
 
   const takenPct = fx.data[DAMAGE_TAKEN_PCT_KEY];
   if (takenPct !== undefined && takenPct !== 0) {
-    const total = Math.min(MAX_DAMAGE_TAKEN_PCT, takenPct * Math.max(1, fx.stacks));
+    const total = takenPct * Math.max(1, fx.stacks);
     values.push({ label: 'Damage taken', value: `+${Math.round(total * 100)}%`, good: true });
   }
 

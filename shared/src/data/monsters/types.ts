@@ -760,7 +760,7 @@ export interface MonsterDefinition {
    * Desert "sundering" — on every landed hit this monster stacks the player's
    * `sundered` status (up to `maxStacks`), raising the damage the player TAKES from
    * EVERY source by `damageTakenPct` per stack (read by `playerIncomingDamageMult`,
-   * capped by `MAX_DAMAGE_TAKEN_PCT`). Decays `durationMs` after the last hit
+   * without a global amplifier cap). Decays `durationMs` after the last hit
    * (refreshed each hit). The controller half of the Desert pair: the tanky mob that
    * pins you barely scratches you itself — it makes its kiting dealer's shots land
    * twice as hard. Cleanse strips it. Skipped on an evaded hit.

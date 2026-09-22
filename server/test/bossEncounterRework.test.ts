@@ -606,7 +606,7 @@ initCombatSystems();
   );
 }
 
-// ── `stoke-ramp` bends the node's ambient ramp, and the room cools when cleared ─
+// ── The Sovereign leaves Heat uncapped and lets the room fully cool ──────────
 {
   const HEAT_NODE = 'node-t4-volcanic-dungeon';
   const world = new World();
@@ -622,14 +622,14 @@ initCombatSystems();
   updateNodeFeatures(world, 100);
   const fresh = ambientRampStatus(player.tracksCombat);
   assert(!!fresh, 'a volcanic node should apply its Heat ramp in combat');
-  const baseCeiling = fresh.maxStacks;
-  assert(baseCeiling > 0, 'the Heat ramp should have an authored ceiling');
+  assert(fresh.maxStacks === 0, 'Heat has no authored stack ceiling');
+  fresh.stacks = 100;
 
   // THE SOVEREIGN NO LONGER STOKES ITS ROOM (2026-09-04 redesign, §5.7 "remove
   // repeated floor/cap stokes"). A boss shoving a floor under the room's Heat takes
   // the choice away: the whole encounter is whether the PLAYER accepts Heat for the
   // damage it pays, and a floor means they are carrying it whether they chose to or
-  // not. Heat is now raised only by standing in the Vent, which they can leave.
+  // not. Vents accelerate combat Heat; leaving one restores the baseline rate.
   boss.hasHealth.hp = boss.hasHealth.maxHp * 0.20;
   updateBossScripts(world, 100);
   assert(
@@ -638,8 +638,7 @@ initCombatSystems();
   );
 
   // With no floor holding it, Heat now FULLY COOLS once the player disengages. That
-  // is the point of removing the stoke: walking out of the vent, or out of the
-  // fight, is a real answer again rather than a partial one.
+  // is the point of removing the stoke: disengaging can shed all accumulated Heat.
   player.tracksEngagement = undefined;
   for (let i = 0; i < 60; i++) updateNodeFeatures(world, 5_000);
   assert(

@@ -22,6 +22,8 @@ export interface CombatEventTiming {
 export type CombatEvent = CombatEventTiming & CombatEventPayload;
 
 type CombatEventPayload =
+  // One cosmetic beat per authoritative ambient stack gain, never for cooling.
+  | { kind: 'ambient-stack-gain'; playerId: string; effectId: 'volcanic-heat' | 'tundra-chill' }
   // Damage-only presentation for paths without an attack/tick animation event.
   // Amount is finalized HP damage (including overkill), never a health authority.
   // `empowered` is crit STYLING only (yellow, enlarged, '!'), never a damage

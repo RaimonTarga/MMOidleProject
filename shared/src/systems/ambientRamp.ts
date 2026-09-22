@@ -8,8 +8,9 @@ import { DAMAGE_DEALT_PCT_KEY, DAMAGE_TAKEN_PCT_KEY } from './playerAmplifiers';
  * A node-wide, in-combat-gated stack counter: the longer you fight in the node,
  * the more the ROOM presses on you. It is the generalization of the old volcanic
  * `ambientHeat` (which only knew how to burn) — one stacking status per player,
- * ramping one stack per `rampMs` up to `maxStacks` and shedding one per `rampMs`
- * once you disengage, clearing immediately on biome exit or death, with a data-authored payload saying what a stack
+ * ramping one stack per `rampMs` up to `maxStacks` (0 = uncapped). Once disengaged,
+ * stacks shed at the base cadence or faster with authored high-stack cooling.
+ * It clears immediately on biome exit or death, with a data-authored payload saying what a stack
  * actually does.
  *
  * The payload deliberately reuses primitives that already exist rather than
@@ -24,6 +25,10 @@ import { DAMAGE_DEALT_PCT_KEY, DAMAGE_TAKEN_PCT_KEY } from './playerAmplifiers';
  * (`{ moveSlowPct }` — all cost, no upside).
  */
 export interface AmbientRampPayload {
+  /** Linear damage stacks through this breakpoint, then a logarithmic tail. */
+  damageSoftcapStacks?: number;
+  /** Tail width: breakpoint + scale * log1p(excess / scale). */
+  damageSoftcapScale?: number;
   /** Per stack: added fraction of damage the player TAKES (P3 incoming amplifier). */
   incomingDamagePct?: number;
   /** Per stack: added fraction of damage the player DEALS (P3 outgoing amplifier). */
@@ -67,17 +72,19 @@ export function ambientRampStatus(cs: TracksCombat): StatusEffect | undefined {
 /** Status `data` for a ramp, built from its authored payload. */
 export function ambientRampData(
   payload: AmbientRampPayload,
-  ramp: { maxStacks: number; rampMs: number },
+  ramp: { maxStacks: number; rampMs: number; coolingScaleStacks?: number },
 ): Record<string, number> {
   const data: Record<string, number> = {
     [AMBIENT_RAMP_KEY]: 1,
     maxStacks: ramp.maxStacks,
     rampMs: ramp.rampMs,
     rampAccum: 0,
-    // Buff-UI clocks read totalMs; a ramp fills rather than expires, so the
-    // "duration" it reports is the time to reach full stacks.
+    // Capped ramps report time to full stacks; uncapped ramps have no fill clock.
     totalMs: ramp.rampMs * ramp.maxStacks,
   };
+  if (payload.damageSoftcapStacks) data.damageSoftcapStacks = payload.damageSoftcapStacks;
+  if (payload.damageSoftcapScale) data.damageSoftcapScale = payload.damageSoftcapScale;
+  if (ramp.coolingScaleStacks) data.coolingScaleStacks = ramp.coolingScaleStacks;
   if (payload.incomingDamagePct) {
     data[DAMAGE_TAKEN_PCT_KEY] = payload.incomingDamagePct;
   }
@@ -100,7 +107,7 @@ export function ambientRampMoveMult(effect: StatusEffect): number {
   const perStack = effect.data[MOVE_SLOW_PCT_KEY] ?? 0;
   if (perStack <= 0) return 1;
   const maxStacks = effect.data['maxStacks'] ?? effect.stacks;
-  const stacks = Math.min(effect.stacks, maxStacks);
+  const stacks = maxStacks > 0 ? Math.min(effect.stacks, maxStacks) : effect.stacks;
   return Math.max(0.05, 1 - perStack * stacks);
 }
 
@@ -124,7 +131,7 @@ export function ambientRampScalingMult(
   const effect = ambientRampStatus(cs);
   if (!effect) return 1;
   const maxStacks = effect.data['maxStacks'] ?? effect.stacks;
-  const stacks = Math.min(effect.stacks, maxStacks);
+  const stacks = maxStacks > 0 ? Math.min(effect.stacks, maxStacks) : effect.stacks;
   if (stacks <= 0) return 1;
   return 1 + Math.min(scaling.maxPct, stacks * scaling.perStackPct);
 }
@@ -142,7 +149,7 @@ export function ambientRampAttackSlowPct(effect: StatusEffect): number {
   const perStack = effect.data[ATTACK_SLOW_PCT_KEY] ?? 0;
   if (perStack <= 0) return 0;
   const maxStacks = effect.data['maxStacks'] ?? effect.stacks;
-  const stacks = Math.min(effect.stacks, maxStacks);
+  const stacks = maxStacks > 0 ? Math.min(effect.stacks, maxStacks) : effect.stacks;
   return Math.min(1, perStack * stacks);
 }
 

@@ -101,8 +101,9 @@ export interface NodeFeatureSpec {
   /**
    * P4 — the NODE-WIDE ambient ramp (the shape is ignored; it is not positional).
    * While a player is in this node AND in combat, stacks ramp every `rampMs` up to
-   * `maxStacks`; out of combat — or once they leave — the stacks shed at the same
-   * cadence. What a stack DOES is entirely `payload` (see `AmbientRampPayload`), so
+   * `maxStacks` (0 means uncapped); out of combat stacks shed at the base cadence,
+   * accelerated by `coolingScaleStacks` when authored. Biome exit clears them.
+   * What a stack DOES is entirely `payload` (see `AmbientRampPayload`), so
    * a biome's soft timer is data: Volcano ramps damage dealt AND taken, Tundra
    * ramps a move slow. One per node.
    */
@@ -110,6 +111,8 @@ export interface NodeFeatureSpec {
     effectId: string;
     maxStacks: number;
     rampMs: number;
+    /** Above this count, cooling speed scales as current stacks / this value. */
+    coolingScaleStacks?: number;
     payload: AmbientRampPayload;
   };
 }
@@ -476,12 +479,11 @@ function lavaVent(id: string, x: number, y: number, radius: number): NodeFeature
  *
  * The caldera is a GREED ramp, not a burn: every stack makes you hit harder AND
  * makes everything hit you harder, and the taken side climbs faster than the dealt
- * side, so overstaying is self-limiting rather than free. That asymmetry is the
- * whole guard — volcano mobs already carry `rampOnCombat`, so the dealt half
- * compounds with monsters that are themselves getting hotter. Positional fire
+ * side, so prolonged fights become increasingly risky. Heat owns this escalation;
+ * its logarithmic tail keeps high stack counts from growing linearly. Positional fire
  * damage stays where it always was: the lava vents.
  *
- * Placeholder values — user balance pass (Step 15).
+ * Linear through ten stacks, then diminishing returns with no stack ceiling.
  */
 function volcanicHeat(id: string): NodeFeatureSpec {
   const cx = GAME_CONFIG.NODE_WIDTH / 2;
@@ -495,9 +497,13 @@ function volcanicHeat(id: string): NodeFeatureSpec {
     shape: { kind: "circle", x: cx, y: cy, radius: 1 },
     ambientRamp: {
       effectId: "volcanic-heat",
-      maxStacks: 6,
+      maxStacks: 0,
       rampMs: 3000,
-      payload: { outgoingDamagePct: 0.05, incomingDamagePct: 0.08 },
+      coolingScaleStacks: 10,
+      payload: {
+        outgoingDamagePct: 0.03, incomingDamagePct: 0.045,
+        damageSoftcapStacks: 10, damageSoftcapScale: 5,
+      },
     },
   };
 }

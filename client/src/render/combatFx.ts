@@ -854,6 +854,16 @@ export function dispatchCombatEvent(
   presentation?: PlayerAttackPresentation,
 ): void {
   if (ev.kind === 'damage') return; // Amount-only events render in deltaApplier.
+  if (ev.kind === 'ambient-stack-gain') {
+    const player = state.view.get(ev.playerId) as PlayerView | undefined;
+    if (shouldRunClientFx() && state.kind.get(ev.playerId) === 'player' && player && !player.isDead) {
+      // Replace the short pulse, never queue tweens or extend an old animation.
+      state.ambientStackFlash.set(ev.playerId, {
+        startedAt: performance.now(), nodeId: player.nodeId, effectId: ev.effectId,
+      });
+    }
+    return;
+  }
   if (ev.kind === "stance-switch") {
     if (ev.playerId === scene.myId) notifyStanceCooldownStarted();
     return;

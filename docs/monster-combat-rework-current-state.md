@@ -264,8 +264,11 @@ only; `updateMonsters` stays the single executor.
 
 Both are node features, not monster fields.
 
-- **Volcano Heat** (`volcanicHeat`): +5% damage dealt, +8% damage taken per stack, 6 stacks,
-  3 s ramp. Unchanged by this pass — but it is now the *only* ramp in the biome.
+- **Volcano Heat** (`volcanicHeat`): uncapped stacks, one every 3 s in combat (3x in
+  boss vents). First ten stacks give +3% damage dealt / +4.5% damage taken each;
+  above ten, effective stacks are `10 + 5 * ln(1 + (stacks - 10) / 5)`.
+  Out of combat, the next stack takes `3 / max(1, stacks / 10)` seconds to cool.
+  Biome exit and death clear Heat. See §19 of `biome-ecology-current-state.md`.
 - **Tundra Chill** (`tundraChill`): 5% move slow **+ 4% attack cooldown** per stack, 6 stacks,
   4 s ramp. The attack-slow term is new (`AmbientRampPayload.attackSlowPct`), read at the
   player attack gate in [`combat.ts`](../server/src/systems/combat/engine/combat.ts) **additively**

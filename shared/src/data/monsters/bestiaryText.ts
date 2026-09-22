@@ -396,7 +396,7 @@ export const BESTIARY_TEXT: Readonly<Record<string, BestiaryText>> = {
   },
   'cinder-shell-magma-salamander': {
     profile: 'Recurring magma-vent boss',
-    description: 'Cinder-Shell Magma-Salamander closes its shell repeatedly as the room heats up. Each shell leaves a magma Vent: standing in it accelerates the heat, while leaving it gives the arena a chance to cool.',
+    description: 'Cinder-Shell Magma-Salamander closes its shell repeatedly as the room heats up. Each shell leaves a magma Vent: standing in it accelerates Heat, while stepping out returns buildup to its normal rate. Heat starts cooling once you leave combat.',
   },
   'caldera-sovereign': {
     profile: 'Cataclysmic heat boss',
@@ -505,4 +505,3 @@ export const BESTIARY_TEXT: Readonly<Record<string, BestiaryText>> = {
     description: 'Void Hulks are the heavy shapes inside an abyssal wave. They open with a rush and deliver a regular empowered strike, giving the add phase both a body to clear and a beat to respect.',
   },
 } as const;
-

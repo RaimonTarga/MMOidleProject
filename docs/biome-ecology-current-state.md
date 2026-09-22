@@ -352,7 +352,7 @@ without extending the altar-art contract.
 P3, the last shared primitive, plus its first consumer. Volcano (Session 5) takes a
 dependency on both halves, so they land here proven against Desert first.
 
-**The amplifiers** — `shared/src/systems/playerAmplifiers.ts`. Two capped, status-driven
+**The amplifiers** — `shared/src/systems/playerAmplifiers.ts`. Two uncapped, status-driven
 multipliers on the player, the mirror of `getAntiHealMult`:
 
 - Neither is owned by a status id. **Any** status on the player contributes by carrying
@@ -373,7 +373,10 @@ multipliers on the player, the mirror of `getAntiHealMult`:
   path that resolves a player hit through the pipeline is covered, and
   `ctx.metadata.incomingGross` stays honest as "what the monster swung for" (Avenger /
   Vengeance scale off it and shouldn't be paid twice for a debuff).
-- Caps are `MAX_DAMAGE_TAKEN_PCT` (1.0) and `MAX_DAMAGE_DEALT_PCT` (0.5). Placeholders.
+- The former global +100% taken / +50% dealt caps were removed. Status contributions
+  sum without a global ceiling; individual effects retain their authored stack limits.
+  Heat alone authors a logarithmic stack curve. Stances remain separate multiplicative
+  layers, and equipment's per-hit damage-cap mechanic is unchanged.
 
 **`MonsterDefinition.appliesVulnerability`** — `{ damageTakenPct, maxStacks, durationMs }`.
 Stacks the cleansable `sundered` status on every landed hit, applied next to
@@ -417,7 +420,8 @@ P4, the last shared primitive, plus its first consumer and a standing hazard cle
 generalization of the old volcano-only `ambientHeat` (which only knew how to burn). One
 per node, non-positional (its shape is a formality). `updateAmbientRamp` in
 `server/src/systems/world/nodeFeatures.ts` owns the COUNTER only: a stack every `rampMs`
-while the player is in the node AND in combat, one shed per `rampMs` out of combat,
+while the player is in the node AND in combat, one shed per `rampMs` out of combat
+(faster at high stacks when `coolingScaleStacks` is authored),
 cleared at zero. Biome exit (including admin teleport) and death clear the effect and
 its buff icon immediately. Moving within the same biome preserves its ramp.
 
@@ -442,9 +446,23 @@ status carries a generic `isAmbientRamp` marker in its `data`, which is how the 
 a stale ramp to clear when the destination does not author the same effect, and how
 `isHarmfulPlayerStatusEffect` counts any future ramp as cleansable without an edit.
 
-**Volcano is now a GREED ramp, not a burn.** `{ outgoingDamagePct: 0.05,
-incomingDamagePct: 0.08 }` × 6 stacks: every stack pays you more damage dealt and charges
-you more damage taken, and the taken side climbs faster so overstaying is self-limiting.
+**Volcano is a GREED ramp, not a burn.** Stacks are uncapped (`maxStacks: 0`).
+Combat starts at one stack and adds one every 3000 ms, accelerated 3x in boss vents.
+The first ten stacks give +3% damage dealt / +4.5% damage taken each: +30% / +45% at ten.
+Above ten, effective damage stacks are `10 + 5 * ln(1 + (stacks - 10) / 5)`;
+multiply by 0.03 / 0.045 for the respective bonuses. Every stack still matters,
+but marginal gains decrease continuously. Combat and HUD share the same formula;
+the Heat tile shows actual stacks and bonuses to one decimal, with no maximum-fill ring.
+Out of combat the next stack takes `3000 / max(1, stacks / 10)` ms to cool,
+recomputed after each lost stack, preserving elapsed remainder. Growth and cooling
+use separate clocks, reset on direction changes; neither can bank the other's progress.
+Ten or fewer stacks cool at one per three seconds. Biome exit and death clear Heat.
+Heat and Chill emit an `ambient-stack-gain` event for each actual gained stack,
+including the first. The client applies a soft 180 ms red (Heat) or light-blue
+(Chill) sprite tint, fading into the current aura/Flash Shift tint. Gains retrigger
+the pulse without queued tweens; boss vents naturally repeat Heat pulses about
+once per second. Cooling and capped Chill emit no gain cues. Death, removal,
+node changes, full sync and render pauses discard transient flashes.
 The burn is gone entirely (`tickHeatBurn` deleted) — positional fire damage stays where it
 always was, on the lava vents. One status carries both dimensions, exactly as §18 predicted
 it should.

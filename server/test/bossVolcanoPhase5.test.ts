@@ -248,6 +248,22 @@ function layVent(world: World, boss: ReturnType<typeof ventedWorld>['boss']): Ru
   const hot = ambientRampStatus(player.tracksCombat)?.stacks ?? 0;
   const cool = ambientRampStatus(outside.tracksCombat)?.stacks ?? 0;
   assert(hot > 0, 'the player in the vent should be carrying Heat');
+  ambientRampStatus(player.tracksCombat)!.stacks = 10;
+  ambientRampStatus(outside.tracksCombat)!.stacks = 10;
+  world.takeNodeEvents(HEAT_NODE);
+  for (let i = 0; i < 30; i++) {
+    player.tracksEngagement = Date.now();
+    outside.tracksEngagement = Date.now();
+    updateNodeFeatures(world, 100);
+  }
+  assert(
+    ambientRampStatus(player.tracksCombat)!.stacks > ambientRampStatus(outside.tracksCombat)!.stacks,
+    'the boss vent still accelerates Heat above the diminishing-return breakpoint',
+  );
+  const gainEvents = world.takeNodeEvents(HEAT_NODE).filter(e => e.kind === 'ambient-stack-gain');
+  const hotCues = gainEvents.filter(e => e.kind === 'ambient-stack-gain' && e.playerId === player.isPlayer.id);
+  const coolCues = gainEvents.filter(e => e.kind === 'ambient-stack-gain' && e.playerId === outside.isPlayer.id);
+  assert(hotCues.length === 3 && coolCues.length === 1, 'vent produces three real flash cues per baseline cue, including above ten stacks');
   assert(
     hot > cool,
     `standing in the vent should heat you faster (${hot} in vs ${cool} out)`,

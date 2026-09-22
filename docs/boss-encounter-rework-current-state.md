@@ -665,7 +665,9 @@ beat is the lesson.
    `bossScripts.ts`; adds use normal AI leash. Narrower after the §4a pass: **Plains (T1/T2)
    is now the only lineage using `spawn-adds` at all**; Wasteland's tide comes from
    `raise-dead` on corpses the player already made.
-6. **Volcanic Heat magnitudes are placeholders** (`nodeFeatures.ts`: 6 stacks, 3s, +5%
-   out / +8% in). The T4 stoke multiplies a number nobody has balanced yet.
+6. **Volcanic Heat tuning needs live validation.** Heat now has uncapped stacks,
+   +30% dealt / +45% taken at ten, then logarithmic growth. Boss vents accelerate
+   accumulation 3x even above ten; out-of-combat cooling accelerates at high stacks.
+   See `biome-ecology-current-state.md` for formulas. The T4 stoke was removed.
 7. **`void-overlord` is untouched legacy.** Not redesigned, not rebalanced, not part of the
    active design table.

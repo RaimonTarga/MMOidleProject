@@ -32,6 +32,32 @@ import {
 } from "../input/pathPrediction";
 import { flashShiftTint, spawnFlashAttackAfterimage } from "./movementEffects";
 import { auraTint } from "../fx/aura";
+import { ambientStackFlashTint } from './ambientStackFlash';
+import { shouldRunClientFx } from '../fx/guard';
+
+function playerTint(state: RenderState, player: PlayerView): number | null {
+  const base = flashShiftTint(player) ?? auraTint(player);
+  const flash = state.ambientStackFlash.get(player.id);
+  if (!flash) return base;
+  if (!player.isDead && flash.nodeId === player.nodeId && shouldRunClientFx()) {
+    const tint = ambientStackFlashTint(flash, performance.now(), base ?? 0xffffff);
+    if (tint !== null) return tint;
+  }
+  state.ambientStackFlash.delete(player.id);
+  return base;
+}
+
+/** Runs even when render-paused, restoring tints and dropping expired pulses. */
+export function updateAmbientStackFlashes(state: RenderState): void {
+  for (const id of state.ambientStackFlash.keys()) {
+    const player = state.view.get(id) as PlayerView | undefined;
+    const sprite = state.sprite.get(id);
+    if (!player || !sprite) { state.ambientStackFlash.delete(id); continue; }
+    const tint = playerTint(state, player);
+    if (!player.isDead && tint !== null) applySpriteTint(sprite, tint);
+    else resetSpriteTint(sprite, id === state.ownId ? 0x44ff88 : 0x4488ff);
+  }
+}
 
 // Server position is authoritative; the client extrapolates ahead toward the
 // motion target between 5 Hz snapshots. Beyond this error the prediction has
@@ -147,7 +173,7 @@ export function upsertPlayer(
     }
     const sprite = state.sprite.get(player.id);
     if (!player.isDead) {
-      const tint = flashShiftTint(player) ?? auraTint(player);
+      const tint = playerTint(state, player);
       if (sprite && tint !== null) applySpriteTint(sprite, tint);
       syncTierOutline(state, player);
     }
@@ -178,6 +204,7 @@ export function upsertPlayer(
   const prevAttackAt = prev?.lastAttackAt ?? 0;
 
   if (player.isDead) {
+    state.ambientStackFlash.delete(player.id);
     if (isOwn) {
       clearOwnMovePath(state);
       setManualActive(false);
@@ -192,7 +219,10 @@ export function upsertPlayer(
       isPlayer: true,
     });
     const deadSprite = state.sprite.get(player.id);
-    if (deadSprite) clearSpriteOutline(deadSprite);
+    if (deadSprite) {
+      clearSpriteOutline(deadSprite);
+      resetSpriteTint(deadSprite, isOwn ? 0x44ff88 : 0x4488ff);
+    }
     ensureLabel(state, player.id, player, scene);
     updateLabelForGrave(state, player.id, player, scene);
     destroyHpBar(state, player.id);
@@ -258,7 +288,7 @@ export function upsertPlayer(
   const sprite = state.sprite.get(player.id);
   // Flash shift tint takes priority; otherwise a transformation aura (e.g. Surge)
   // tints the sprite to match its glow.
-  const tint = flashShiftTint(player) ?? auraTint(player);
+  const tint = playerTint(state, player);
   if (sprite) {
     if (tint !== null) {
       applySpriteTint(sprite, tint);
@@ -268,7 +298,7 @@ export function upsertPlayer(
     syncTierOutline(state, player);
     if (
       isOwn &&
-      tint !== null &&
+      (flashShiftTint(player) ?? auraTint(player)) !== null &&
       player.lastAttackAt > prevAttackAt &&
       (player.summonsMinions ?? 0) === 0
     ) {

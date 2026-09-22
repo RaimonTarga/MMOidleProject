@@ -17,8 +17,7 @@ import {
   PLATING_SHRED_EFFECT_ID,
   DAMAGE_DEALT_PCT_KEY,
   DAMAGE_TAKEN_PCT_KEY,
-  MAX_DAMAGE_DEALT_PCT,
-  MAX_DAMAGE_TAKEN_PCT,
+  statusDamageAmplifierPct,
   ambientRampAttackSlowPct,
   ambientRampFillPct,
   ambientRampMoveMult,
@@ -282,24 +281,14 @@ const DEBUFF_BUFFS = [
       if (!playerCs) return null;
       const heat = getStatusEffect(playerCs, VOLCANIC_HEAT_EFFECT_ID);
       if (!heat || heat.stacks <= 0) return null;
-      const dealtPct = Math.round(
-        Math.min(
-          MAX_DAMAGE_DEALT_PCT,
-          heat.stacks * (heat.data[DAMAGE_DEALT_PCT_KEY] ?? 0),
-        ) * 100,
-      );
-      const takenPct = Math.round(
-        Math.min(
-          MAX_DAMAGE_TAKEN_PCT,
-          heat.stacks * (heat.data[DAMAGE_TAKEN_PCT_KEY] ?? 0),
-        ) * 100,
-      );
+      const dealtPct = Math.round(statusDamageAmplifierPct(heat, DAMAGE_DEALT_PCT_KEY) * 1000) / 10;
+      const takenPct = Math.round(statusDamageAmplifierPct(heat, DAMAGE_TAKEN_PCT_KEY) * 1000) / 10;
       return {
         id: "debuff-volcanic-heat",
         label: "Heat",
         stacks: heat.stacks,
-        // Fill toward max stacks (the soft-timer read), not a fixed duration.
-        durationPct: ambientRampFillPct(heat) * 100,
+        // Uncapped Heat has no full-stack clock; show its count and actual bonuses.
+        durationPct: -1,
         // Volcano's payload carries no move slow (Tundra's chill does); the client
         // extrapolation reads this to stay in step with the server either way.
         speedMult: slowResistedMult(player, ambientRampMoveMult(heat)),
@@ -356,12 +345,7 @@ const DEBUFF_BUFFS = [
       if (!sundered || sundered.stacks <= 0) return null;
       const totalMs = sundered.data["totalMs"] ?? sundered.remainingMs;
       const source = world.getMonsterEntity(sundered.sourceId);
-      const takenPct = Math.round(
-        Math.min(
-          MAX_DAMAGE_TAKEN_PCT,
-          sundered.stacks * (sundered.data[DAMAGE_TAKEN_PCT_KEY] ?? 0),
-        ) * 100,
-      );
+      const takenPct = Math.round(statusDamageAmplifierPct(sundered, DAMAGE_TAKEN_PCT_KEY) * 100);
       return {
         id: "debuff-sundered",
         label: "Sundered",

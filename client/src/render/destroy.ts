@@ -54,5 +54,6 @@ export function destroyEntity(
   state.techniqueArmed.delete(id);
   state.allyAoeFootprintPulse.delete(id);
   state.reloadTiming.delete(id);
+  state.ambientStackFlash.delete(id);
   clearMovementEffectsForEntity(state, id);
 }

@@ -3,6 +3,7 @@ import { CombatPlaybackClock } from './combatPlaybackClock';
 import type { DetonateWindupState } from '../fx/detonateWindup';
 import type { AllyAoeFootprintState } from '../fx/allyAoeFootprint';
 import type { CombatPlaybackItem } from './combatPlayback';
+import type { AmbientStackFlash } from './ambientStackFlash';
 import type {
   NetworkedEntity,
   NodeGateEntity,
@@ -35,6 +36,7 @@ export interface DamageNumberHint {
 
 export interface RenderState {
   combatPlayback: CombatPlaybackClock<CombatPlaybackItem>;
+  ambientStackFlash: Map<NetworkId, AmbientStackFlash>;
   ids: Set<NetworkId>;
   kind: Map<NetworkId, "player" | "monster" | "minion">;
   entity: Map<NetworkId, NetworkedEntity>;
@@ -256,6 +258,7 @@ export function createRenderState(): RenderState {
     skillCallout: new Map(),
     techniqueArmed: new Map(),
     reloadTiming: new Map(),
+    ambientStackFlash: new Map(),
     hpBarCache: new Map(),
     cdBarCache: new Map(),
     effectOverlays: new Map(),
