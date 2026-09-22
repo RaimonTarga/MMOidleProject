@@ -136,6 +136,12 @@ initCombatSystems();
     composeMonsterView(target).speed < baseSpeed,
     `slow should cut the monster's speed (${composeMonsterView(target).speed} vs ${baseSpeed})`,
   );
+  const baseAttackCooldown = target.performsAttack.attackCooldown;
+  assert(
+    target.hasStatus.monsterAttackCooldownMult === undefined &&
+      monsterAttackCooldown(target) === baseAttackCooldown,
+    "Hamstring must not lengthen the target's attack cooldown",
+  );
   // The rung's whole identity: it is still allowed to fight back.
   assert(target.isRooted === undefined, "a SLOW must never root the target");
   assert(target.cannotAttack === undefined, "a SLOW must never stop the target attacking");
@@ -269,7 +275,7 @@ for (const speed of [0, 5, 200, 600]) {
       `slow must reduce actual movement at speed ${speed}: moved ${moved}`);
     assert(composeMonsterView(target).speed === speed * 0.5, "client speed agrees with movement");
     assert(target.hasPosition.speed === speed, "slow must not corrupt authored speed");
-    assert(monsterAttackCooldown(target) === Math.round(777 * 1.5), "slow preserves authored cadence");
+    assert(monsterAttackCooldown(target) === 777, "Hamstring preserves authored cadence");
   }
   updateCombatState(world, 4100);
   updateMonsterSlows(world);
