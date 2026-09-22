@@ -1,4 +1,5 @@
 import { DESERT_BLOCKS, DESERT_ENDPOINTS } from '../bench/balance/desertStrategySpec';
+import { TUNDRA_CLASS_FRAME_BLOCKS, TUNDRA_CLASS_FRAME_ENDPOINTS } from '../bench/balance/tundraClassFrameSpec';
 import { DesertStrategyRecorder, desertTargetingReadback } from '../bench/balance/desertStrategyRecorder';
 import { GUARD_COVERAGE_BLOCKS } from '../bench/balance/guardCoverageSpec';
 import { GuardCoverageRecorder, guardCoverageReadback } from '../bench/balance/guardCoverageRecorder';
@@ -76,9 +77,10 @@ import { getAutoTargetId } from '../src/systems/combat/ai/targetPriority';
 
 const args=Object.fromEntries(process.argv.slice(2).map(x=>{const i=x.indexOf('=');return i<0?[x.replace(/^--/,''),'true']:[x.slice(2,i),x.slice(i+1)];}));
 const desert = args.trial === 'desert-strategy-01';
+const tundraClassFrame = args.trial === 't3-tundra-class-frame-01';
 const guardCoverage = args.trial === 'guard-coverage-01';
 const day2 = args.trial === 'day2-bounded-01';
-const endurance = args.trial === 'overnight-endurance-01' || day2 || guardCoverage || desert;
+const endurance = args.trial === 'overnight-endurance-01' || day2 || guardCoverage || desert || tundraClassFrame;
 const farmingSustain = args.trial === 'farming-sustain-01' || endurance;
 const farmingStance = args.trial === 'farming-stance-01';
 const breadth = args.trial === 'player-breadth' || farmingStance || farmingSustain;
@@ -86,7 +88,7 @@ if (breadth) assertBreadthDefinitions();
 const packageFit = args.trial === 'player-package-fit';
 const fastPass = args.trial === 'player-fast-pass' || packageFit || breadth;
 if (packageFit) assertPackageFitDefinitions();
-const fastBlock = fastPass ? (desert ? DESERT_BLOCKS : guardCoverage ? GUARD_COVERAGE_BLOCKS : day2 ? DAY2_BLOCKS : endurance ? ENDURANCE_BLOCKS : farmingSustain ? FARMING_SUSTAIN_BLOCKS : farmingStance ? FARMING_STANCE_BLOCKS : breadth ? BREADTH_BLOCKS : packageFit ? PACKAGE_FIT_BLOCKS : FAST_PASS_BLOCKS)[args.block] : undefined;
+const fastBlock = fastPass ? (tundraClassFrame ? TUNDRA_CLASS_FRAME_BLOCKS : desert ? DESERT_BLOCKS : guardCoverage ? GUARD_COVERAGE_BLOCKS : day2 ? DAY2_BLOCKS : endurance ? ENDURANCE_BLOCKS : farmingSustain ? FARMING_SUSTAIN_BLOCKS : farmingStance ? FARMING_STANCE_BLOCKS : breadth ? BREADTH_BLOCKS : packageFit ? PACKAGE_FIT_BLOCKS : FAST_PASS_BLOCKS)[args.block] : undefined;
 if (fastPass) { assert(fastBlock && fastBlock.cells.every(c => c.role === 'farm'), 'Unknown farm block'); assertFastPassDefinitions(); }
 const night5=args.trial==='durability37'?DURABILITY37_BLOCKS[args.block]:args.trial==='durability36'?DURABILITY36_BLOCKS[args.block]:args.trial==='durability35'?DURABILITY35_BLOCKS[args.block]:args.trial==='durability34'?DURABILITY34_BLOCKS[args.block]:args.trial==='durability33'?DURABILITY33_BLOCKS[args.block]:args.trial==='durability32'?DURABILITY32_BLOCKS[args.block]:args.trial==='durability30'?DURABILITY30_BLOCKS[args.block]:args.trial==='durability29'?DURABILITY29_BLOCKS[args.block]:args.trial==='durability28'?DURABILITY28_BLOCKS[args.block]:args.trial==='durability27'?DURABILITY27_BLOCKS[args.block]:args.trial==='durability26'?DURABILITY26_BLOCKS[args.block]:args.trial==='durability25'?DURABILITY25_BLOCKS[args.block]:args.trial==='durability24'?DURABILITY24_BLOCKS[args.block as keyof typeof DURABILITY24_BLOCKS]:args.trial==='durability23'?DURABILITY23_BLOCKS[args.block]:args.trial==='durability22'?DURABILITY22_BLOCKS[args.block]:args.trial==='durability21'?DURABILITY21_BLOCKS[args.block]:args.trial==='night5'?NIGHT5_BLOCKS[args.block]:undefined;
 if(['night5','durability21','durability22','durability23','durability24','durability25','durability26','durability27','durability28','durability29','durability30','durability32','durability33','durability34','durability35','durability36','durability37'].includes(args.trial)) assert(night5,'Unknown night5 block');
@@ -129,7 +131,7 @@ if (farmingStance || farmingSustain) {
 }
 mkdirSync(out,{recursive:true});
 const manifest={schema:1,mode,revision,navigationDiagnostics:args['navigation-diagnostics']==='true',definitionsHash:checkpointDefinitionsHash(),hitboxesSha256:sha(readFileSync(args.hitboxes)),
-  sampleEveryMs:args.trial==='durability12movement'||args.trial==='durability13movement'?100:1000,block:args.block,trial:args.trial??'ttk-survey',synthetic:true,economyEligible:false,dtMs:100,durationMs:(day2||desert)?fastBlock!.durationMs:endurance?ENDURANCE_CAP_MS:mode==='pilot'?30000:night5?.durationMs??300000,seeds:trialSeeds,cells:trialCells};
+  sampleEveryMs:args.trial==='durability12movement'||args.trial==='durability13movement'?100:1000,block:args.block,trial:args.trial??'ttk-survey',synthetic:true,economyEligible:false,dtMs:100,durationMs:(day2||desert||tundraClassFrame)?fastBlock!.durationMs:endurance?ENDURANCE_CAP_MS:mode==='pilot'?30000:night5?.durationMs??300000,seeds:trialSeeds,cells:trialCells};
 writeFileSync(join(out,'manifest.json'),JSON.stringify(manifest,null,2));
 const realNow=Date.now,realRandom=Math.random;
 function safeSpawn(node:string) {
@@ -242,11 +244,11 @@ function run(cell:SurveyCell,seed:number) {
         stream('conduit-snapshots.jsonl',conduit?.snapshots.splice(0)??[]);
         stream('sustain-transitions.jsonl',sustain?.transitions.splice(0)??[]);
         const measuredMs=elapsed+100;
-        if((desert?DESERT_ENDPOINTS:ENDURANCE_ENDPOINTS).includes(measuredMs) && !bot.isDead && bot.hasHealth.hp>0) {
+        if((tundraClassFrame?TUNDRA_CLASS_FRAME_ENDPOINTS:desert?DESERT_ENDPOINTS:ENDURANCE_ENDPOINTS).includes(measuredMs) && !bot.isDead && bot.hasHealth.hp>0) {
           endpoints.push({atMs:measuredMs,work:progress!.snapshot(measuredMs),owner:{hp:v.hp,maxHp:v.maxHp,barrier:v.barrier,minHpFraction:minHp},sustain:sustain?.finish()});
           writeFileSync(join(dir,'endpoints.json'),JSON.stringify(endpoints,null,2));
         }
-        if(realNow()-heartbeatAt>=5000 || (desert?DESERT_ENDPOINTS:ENDURANCE_ENDPOINTS).includes(measuredMs)) {
+        if(realNow()-heartbeatAt>=5000 || (tundraClassFrame?TUNDRA_CLASS_FRAME_ENDPOINTS:desert?DESERT_ENDPOINTS:ENDURANCE_ENDPOINTS).includes(measuredMs)) {
           const disk=statfsSync(out),rss=process.memoryUsage().rss;
           writeFileSync(join(out,'heartbeat.json'),JSON.stringify({at:new Date(realNow()).toISOString(),elapsedMs:measuredMs,rss,cell:cell.id}));
           heartbeatAt=realNow();
@@ -263,7 +265,7 @@ function run(cell:SurveyCell,seed:number) {
       ...(guards ? {guards:guards.finish()} : {}),
       ...(sustain ? {sustain:sustain.finish()} : {}),
       ...(sessions ? {sessions:sessions.finish()} : {}),
-      ...(endurance ? {endpoints,intervals:endpointIntervals(endpoints,desert?DESERT_ENDPOINTS:ENDURANCE_ENDPOINTS),work:progress!.snapshot(elapsed),terminalTargets:roster(),streamedHistories:true,timing:'Legacy event times label tick starts; endpoint states follow completed 100ms steps; no post-death endpoints.'} : {}),
+      ...(endurance ? {endpoints,intervals:endpointIntervals(endpoints,tundraClassFrame?TUNDRA_CLASS_FRAME_ENDPOINTS:desert?DESERT_ENDPOINTS:ENDURANCE_ENDPOINTS),work:progress!.snapshot(elapsed),terminalTargets:roster(),streamedHistories:true,timing:'Legacy event times label tick starts; endpoint states follow completed 100ms steps; no post-death endpoints.'} : {}),
       ...(breadth ? {terminalOwner:{hp:bot.hasHealth.hp,maxHp:bot.hasHealth.maxHp,barrier:composePlayerView(bot)!.barrier},playerDeathEvidence:endurance?deathEvents:log.filter((x:any)=>x.event?.kind==='player-death')} : {}),minHpFraction:minHp,attackBeats,minionAttackBeats,wallElapsedMs:realNow()-wallStart,maxTickWallMs,totalAttackBeats:attackBeats+minionAttackBeats,initialRosterHash:ready.initialRosterHash,...metrics.result()};
     if(!endurance) writeFileSync(join(dir,'events.jsonl'),log.map(e=>JSON.stringify(e)).join('\n')+'\n');
     if(!endurance) writeFileSync(join(dir,'samples.jsonl'),samples.map(e=>JSON.stringify(e)).join('\n')+'\n');

@@ -12,15 +12,16 @@ const require=createRequire(join(root,'server/package.json'));
 const enduranceSpec=require('../server/bench/balance/overnightEnduranceSpec.ts');
 const args=Object.fromEntries(process.argv.slice(2).map(a=>{const i=a.indexOf('=');assert(i>2);return [a.slice(2,i),a.slice(i+1)];}));
 assert(['prepare','verify','qualify','run'].includes(args.mode));assert(args.packet);
+const tundraClassFrame=args.trial==='t3-tundra-class-frame-01';
 const desert=args.trial==='desert-strategy-01';
 const guardCoverage=args.trial==='guard-coverage-01';
 const day2=args.trial==='day2-bounded-01';
 const family=args.family;
 if(day2)assert(['A-control','A-candidate','B'].includes(family));
-const cells=desert?require('../server/bench/balance/desertStrategySpec.ts').DESERT_CELLS:guardCoverage?require('../server/bench/balance/guardCoverageSpec.ts').GUARD_COVERAGE_CELLS:day2?require('../server/bench/balance/day2Spec.ts').DAY2_CELLS.filter(c=>family==='B'?c.block==='B':c.block==='A' && `A-${c.arm}`===family):enduranceSpec.ENDURANCE_CELLS;
+const cells=tundraClassFrame?require('../server/bench/balance/tundraClassFrameSpec.ts').TUNDRA_CLASS_FRAME_CELLS:desert?require('../server/bench/balance/desertStrategySpec.ts').DESERT_CELLS:guardCoverage?require('../server/bench/balance/guardCoverageSpec.ts').GUARD_COVERAGE_CELLS:day2?require('../server/bench/balance/day2Spec.ts').DAY2_CELLS.filter(c=>family==='B'?c.block==='B':c.block==='A' && `A-${c.arm}`===family):enduranceSpec.ENDURANCE_CELLS;
 const seeds=[...new Set(cells.map(c=>c.seed))];
-const planned=cells.length, capMs=desert?600000:day2 && family!=='B'?300000:1800000;
-const experimentId=desert?'desert-strategy-01':guardCoverage?'guard-coverage-01':day2?'day2-bounded-01':'overnight-endurance-01';
+const planned=cells.length, capMs=(tundraClassFrame||desert)?600000:day2 && family!=='B'?300000:1800000;
+const experimentId=tundraClassFrame?'t3-tundra-class-frame-01':desert?'desert-strategy-01':guardCoverage?'guard-coverage-01':day2?'day2-bounded-01':'overnight-endurance-01';
 const packet=resolve(args.packet), sha=b=>createHash('sha256').update(b).digest('hex');
 const json=p=>JSON.parse(readFileSync(p,'utf8'));
 const write=(p,v)=>writeFileSync(p,JSON.stringify(v,null,2)+'\n');
@@ -40,10 +41,10 @@ if(args.mode==='prepare') {
   assert(args.hitboxes && !existsSync(packet));assert.equal(git('status','--porcelain','--untracked-files=no'),'');
   mkdirSync(packet,{recursive:true});
   write(join(packet,'manifest.json'),{experimentId,status:'prepared-unrun',planned,family:family??null,
-    blocks:desert?{targeting:24}:guardCoverage?{coverage:32}:day2?{A:cells.filter(c=>c.block==='A').length,B:cells.filter(c=>c.block==='B').length}:{A:288,B:48,C:0},...(desert?{candidateDisposition:'Native targeting only; production R2 and integrated session correction unchanged'}:guardCoverage?{candidateDisposition:'Normal R2 plus integrated measured session correction; fixed Endure packages'}:day2?{candidateDisposition:'Separate candidate checkout only; Block B retains control gameplay'}:{optionalC:{included:false,candidate:null,reason:'Existing diagnosis has no qualified candidate; see CONDUIT_DIAGNOSIS.md'}}),
+    blocks:tundraClassFrame?{primary:36,alternatives:16,discardedSquireSlam:0}:desert?{targeting:24}:guardCoverage?{coverage:32}:day2?{A:cells.filter(c=>c.block==='A').length,B:cells.filter(c=>c.block==='B').length}:{A:288,B:48,C:0},...(tundraClassFrame?{candidateDisposition:'52-case T3 Tundra class/frame screen; Squire Slam discarded by designer; production R2, session correction and native owner targeting unchanged'}:desert?{candidateDisposition:'Native targeting only; production R2 and integrated session correction unchanged'}:guardCoverage?{candidateDisposition:'Normal R2 plus integrated measured session correction; fixed Endure packages'}:day2?{candidateDisposition:'Separate candidate checkout only; Block B retains control gameplay'}:{optionalC:{included:false,candidate:null,reason:'Existing diagnosis has no qualified candidate; see CONDUIT_DIAGNOSIS.md'}}),
     reused:args.reuse?json(resolve(args.reuse)):null,
-    seeds,dtMs:100,capMs,endpointsMs:(desert?[300000,600000]:[300000,900000,1800000]).filter(x=>x<=capMs),synthetic:true,economyEligible:false,
-    stopOnFirstDeath:true,watchdogs,sharedFailureFamily:desert?'Desert strategy (24 cells, one common source)':guardCoverage?'Guard coverage (32 cells, one common source)':day2?(family==='B'?'B':'A'):'all A/B ordinary-farm children',cases:cells});
+    seeds,dtMs:100,capMs,endpointsMs:((tundraClassFrame||desert)?[300000,600000]:[300000,900000,1800000]).filter(x=>x<=capMs),synthetic:true,economyEligible:false,
+    stopOnFirstDeath:true,watchdogs,sharedFailureFamily:tundraClassFrame?'T3 Tundra class/frame (52 cells, one common source)':desert?'Desert strategy (24 cells, one common source)':guardCoverage?'Guard coverage (32 cells, one common source)':day2?(family==='B'?'B':'A'):'all A/B ordinary-farm children',cases:cells});
   write(join(packet,'identity.json'),identity(args.hitboxes));
   write(join(packet,'seal.json'),Object.fromEntries(['manifest.json','identity.json'].map(p=>[p,sha(readFileSync(join(packet,p)))])));
   console.log(`Sealed ${planned} planned observations; no combat.`);process.exit(0);
@@ -75,7 +76,7 @@ function publish(){
   write(join(out,'results-summary.json'),{experimentId:manifest.experimentId,mode:args.mode,actualExecutionSource:frozen.sourceCommit,
     sourceSha256:frozen.sourceSha256,hitboxesSha256:frozen.hitboxesSha256,synthetic:true,economyEligible:false,counts,rows});
   write(join(out,'resolved-builds.json'),receipts);write(join(out,'raw-inventory.json'),inventory);
-  writeFileSync(join(out,'PARTIAL.md'),`# Overnight endurance 01 — ${args.mode}\n\n${JSON.stringify(counts)}\n\n`+
+  writeFileSync(join(out,'PARTIAL.md'),`# ${experimentId} — ${args.mode}\n\n${JSON.stringify(counts)}\n\n`+
     '| Identity | Seed | Fixture | Arm | Status | Kills | Elapsed ms |\n|---|---|---|---|---|---|---|\n'+
     rows.filter(r=>r.status!=='not-run').map(r=>`| ${r.identityId} | ${r.seed} | ${r.fixture} | ${r.arm} | ${r.status} | ${r.completedKills??''} | ${r.elapsedMs??''} |`).join('\n')+'\n');
 }
@@ -134,7 +135,7 @@ function receipt(c,r,m){
   const rec={observationId:c.id,seed:c.seed,identityId:c.identityId,referenceCaseId:c.referenceCaseId,path:c.pathName,range:c.range,
     ...((guardCoverage||desert)?{guardReadback:r.guardReadback}:{}),...(desert?{targetingReadback:r.targetingReadback}:{}),packageReadback:r.packageReadback,conduitProfile:r.conduitProfile,initialRosterHash:r.initialRosterHash,
     initialRoster:r.initialRoster,definitionsIdentity:r.definitionsIdentity,initialView:r.view,sustainReadback:r.sustainReadback,runtime:r.runtime};
-  const partner=!desert && !day2 && !guardCoverage && receipts.find(x=>cells.find(c=>c.id===x.observationId).comparisonId===c.comparisonId);
+  const partner=!tundraClassFrame && !desert && !day2 && !guardCoverage && receipts.find(x=>cells.find(c=>c.id===x.observationId).comparisonId===c.comparisonId);
   if(partner){
     assert.equal(partner.initialRosterHash,rec.initialRosterHash,'Paired initial ecology mismatch');
     const mountain=c.charm==='mountain'?rec:partner,volcanic=c.charm==='volcanic'?rec:partner;
@@ -148,6 +149,12 @@ function receipt(c,r,m){
     const expected= ['apprentice','spirit'].includes(c.className)?43:40;
     assert.equal(rec.packageReadback.runicPoints.budget,47);
     assert.equal(rec.packageReadback.runicPoints.cost,expected+(c.arm==='lowhp-targeting'?3:0));
+  }
+  if(tundraClassFrame){
+    assert.equal(rec.packageReadback.runicPoints.budget,38);
+    assert(rec.packageReadback.runicPoints.cost<=38);
+    assert(!rec.packageReadback.declared.abilities.techniques.includes('slam'));
+    assert(!rec.packageReadback.declared.runeRules.some(r=>r.actionId==='flee'));
   }
   if(qualification)assert.deepEqual(rec,json(join(qualification.out,'resolved-builds.json')).find(x=>x.observationId===c.id),'Applied package drift');
   return rec;
