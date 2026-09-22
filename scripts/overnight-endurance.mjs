@@ -12,13 +12,14 @@ const require=createRequire(join(root,'server/package.json'));
 const enduranceSpec=require('../server/bench/balance/overnightEnduranceSpec.ts');
 const args=Object.fromEntries(process.argv.slice(2).map(a=>{const i=a.indexOf('=');assert(i>2);return [a.slice(2,i),a.slice(i+1)];}));
 assert(['prepare','verify','qualify','run'].includes(args.mode));assert(args.packet);
+const guardCoverage=args.trial==='guard-coverage-01';
 const day2=args.trial==='day2-bounded-01';
 const family=args.family;
 if(day2)assert(['A-control','A-candidate','B'].includes(family));
-const cells=day2?require('../server/bench/balance/day2Spec.ts').DAY2_CELLS.filter(c=>family==='B'?c.block==='B':c.block==='A' && `A-${c.arm}`===family):enduranceSpec.ENDURANCE_CELLS;
+const cells=guardCoverage?require('../server/bench/balance/guardCoverageSpec.ts').GUARD_COVERAGE_CELLS:day2?require('../server/bench/balance/day2Spec.ts').DAY2_CELLS.filter(c=>family==='B'?c.block==='B':c.block==='A' && `A-${c.arm}`===family):enduranceSpec.ENDURANCE_CELLS;
 const seeds=[...new Set(cells.map(c=>c.seed))];
 const planned=cells.length, capMs=day2 && family!=='B'?300000:1800000;
-const experimentId=day2?'day2-bounded-01':'overnight-endurance-01';
+const experimentId=guardCoverage?'guard-coverage-01':day2?'day2-bounded-01':'overnight-endurance-01';
 const packet=resolve(args.packet), sha=b=>createHash('sha256').update(b).digest('hex');
 const json=p=>JSON.parse(readFileSync(p,'utf8'));
 const write=(p,v)=>writeFileSync(p,JSON.stringify(v,null,2)+'\n');
@@ -38,10 +39,10 @@ if(args.mode==='prepare') {
   assert(args.hitboxes && !existsSync(packet));assert.equal(git('status','--porcelain','--untracked-files=no'),'');
   mkdirSync(packet,{recursive:true});
   write(join(packet,'manifest.json'),{experimentId,status:'prepared-unrun',planned,family:family??null,
-    blocks:day2?{A:cells.filter(c=>c.block==='A').length,B:cells.filter(c=>c.block==='B').length}:{A:288,B:48,C:0},...(day2?{candidateDisposition:'Separate candidate checkout only; Block B retains control gameplay'}:{optionalC:{included:false,candidate:null,reason:'Existing diagnosis has no qualified candidate; see CONDUIT_DIAGNOSIS.md'}}),
+    blocks:guardCoverage?{coverage:32}:day2?{A:cells.filter(c=>c.block==='A').length,B:cells.filter(c=>c.block==='B').length}:{A:288,B:48,C:0},...(guardCoverage?{candidateDisposition:'Normal R2 plus integrated measured session correction; fixed Endure packages'}:day2?{candidateDisposition:'Separate candidate checkout only; Block B retains control gameplay'}:{optionalC:{included:false,candidate:null,reason:'Existing diagnosis has no qualified candidate; see CONDUIT_DIAGNOSIS.md'}}),
     reused:args.reuse?json(resolve(args.reuse)):null,
     seeds,dtMs:100,capMs,endpointsMs:[300000,900000,1800000].filter(x=>x<=capMs),synthetic:true,economyEligible:false,
-    stopOnFirstDeath:true,watchdogs,sharedFailureFamily:day2?(family==='B'?'B':'A'):'all A/B ordinary-farm children',cases:cells});
+    stopOnFirstDeath:true,watchdogs,sharedFailureFamily:guardCoverage?'Guard coverage (32 cells, one common source)':day2?(family==='B'?'B':'A'):'all A/B ordinary-farm children',cases:cells});
   write(join(packet,'identity.json'),identity(args.hitboxes));
   write(join(packet,'seal.json'),Object.fromEntries(['manifest.json','identity.json'].map(p=>[p,sha(readFileSync(join(packet,p)))])));
   console.log(`Sealed ${planned} planned observations; no combat.`);process.exit(0);
@@ -130,9 +131,9 @@ function receipt(c,r,m){
   assert.equal(r.definitionsIdentity.live,m.definitionsHash);assert.deepEqual(r.hpTreatment,[]);
   assert.equal(r.view.hp,r.view.maxHp);assert.equal(r.view.barrier,r.view.barrierMax);
   const rec={observationId:c.id,seed:c.seed,identityId:c.identityId,referenceCaseId:c.referenceCaseId,path:c.pathName,range:c.range,
-    packageReadback:r.packageReadback,conduitProfile:r.conduitProfile,initialRosterHash:r.initialRosterHash,
+    ...(guardCoverage?{guardReadback:r.guardReadback}:{}),packageReadback:r.packageReadback,conduitProfile:r.conduitProfile,initialRosterHash:r.initialRosterHash,
     initialRoster:r.initialRoster,definitionsIdentity:r.definitionsIdentity,initialView:r.view,sustainReadback:r.sustainReadback,runtime:r.runtime};
-  const partner=!day2 && receipts.find(x=>cells.find(c=>c.id===x.observationId).comparisonId===c.comparisonId);
+  const partner=!day2 && !guardCoverage && receipts.find(x=>cells.find(c=>c.id===x.observationId).comparisonId===c.comparisonId);
   if(partner){
     assert.equal(partner.initialRosterHash,rec.initialRosterHash,'Paired initial ecology mismatch');
     const mountain=c.charm==='mountain'?rec:partner,volcanic=c.charm==='volcanic'?rec:partner;
@@ -170,7 +171,7 @@ try{
       const cp=join(detail,'conduit.json'),conduit=existsSync(cp)?json(cp):null;
       if(c.className==='conduit')assert(conduit);
       Object.assign(r,{status:'complete',reason:null,outcome:s.outcome,elapsedMs:s.elapsedMs,completedKills:s.counts.killed,
-        sessions:s.sessions??null,historicalReferenceObservationId:c.sourceObservationId??null,unfinishedTargets:s.counts.censored,targetRegainCount:s.counts.hpRegain,minHpFraction:s.minHpFraction,
+        ...(guardCoverage?{guards:s.guards}:{}),sessions:s.sessions??null,historicalReferenceObservationId:c.sourceObservationId??null,unfinishedTargets:s.counts.censored,targetRegainCount:s.counts.hpRegain,minHpFraction:s.minHpFraction,
         endpoints:s.endpoints,intervals:s.intervals,work:s.work,sustain:s.sustain,terminalOwner:s.terminalOwner,
         deathEvidence:s.playerDeathEvidence,incomingHpDamage:s.incomingDamage,runicPoints:ready.packageReadback.runicPoints,
         conduit:conduit ? Object.fromEntries(Object.entries(conduit).filter(([k])=>!['events','snapshots','lives','episodes','damageDelivery'].includes(k))) : null,

@@ -1,3 +1,5 @@
+import { GUARD_COVERAGE_BLOCKS } from '../bench/balance/guardCoverageSpec';
+import { GuardCoverageRecorder, guardCoverageReadback } from '../bench/balance/guardCoverageRecorder';
 import { Day2SessionRecorder } from '../bench/balance/day2SessionRecorder';
 import { DAY2_BLOCKS } from '../bench/balance/day2Spec';
 import { ENDURANCE_BLOCKS, ENDURANCE_CAP_MS, ENDURANCE_ENDPOINTS, type EnduranceCell } from '../bench/balance/overnightEnduranceSpec';
@@ -71,8 +73,9 @@ import { DURABILITY20_CELLS, DURABILITY20_SEEDS, installDurability20Treatment, a
 import { getAutoTargetId } from '../src/systems/combat/ai/targetPriority';
 
 const args=Object.fromEntries(process.argv.slice(2).map(x=>{const i=x.indexOf('=');return i<0?[x.replace(/^--/,''),'true']:[x.slice(2,i),x.slice(i+1)];}));
+const guardCoverage = args.trial === 'guard-coverage-01';
 const day2 = args.trial === 'day2-bounded-01';
-const endurance = args.trial === 'overnight-endurance-01' || day2;
+const endurance = args.trial === 'overnight-endurance-01' || day2 || guardCoverage;
 const farmingSustain = args.trial === 'farming-sustain-01' || endurance;
 const farmingStance = args.trial === 'farming-stance-01';
 const breadth = args.trial === 'player-breadth' || farmingStance || farmingSustain;
@@ -80,7 +83,7 @@ if (breadth) assertBreadthDefinitions();
 const packageFit = args.trial === 'player-package-fit';
 const fastPass = args.trial === 'player-fast-pass' || packageFit || breadth;
 if (packageFit) assertPackageFitDefinitions();
-const fastBlock = fastPass ? (day2 ? DAY2_BLOCKS : endurance ? ENDURANCE_BLOCKS : farmingSustain ? FARMING_SUSTAIN_BLOCKS : farmingStance ? FARMING_STANCE_BLOCKS : breadth ? BREADTH_BLOCKS : packageFit ? PACKAGE_FIT_BLOCKS : FAST_PASS_BLOCKS)[args.block] : undefined;
+const fastBlock = fastPass ? (guardCoverage ? GUARD_COVERAGE_BLOCKS : day2 ? DAY2_BLOCKS : endurance ? ENDURANCE_BLOCKS : farmingSustain ? FARMING_SUSTAIN_BLOCKS : farmingStance ? FARMING_STANCE_BLOCKS : breadth ? BREADTH_BLOCKS : packageFit ? PACKAGE_FIT_BLOCKS : FAST_PASS_BLOCKS)[args.block] : undefined;
 if (fastPass) { assert(fastBlock && fastBlock.cells.every(c => c.role === 'farm'), 'Unknown farm block'); assertFastPassDefinitions(); }
 const night5=args.trial==='durability37'?DURABILITY37_BLOCKS[args.block]:args.trial==='durability36'?DURABILITY36_BLOCKS[args.block]:args.trial==='durability35'?DURABILITY35_BLOCKS[args.block]:args.trial==='durability34'?DURABILITY34_BLOCKS[args.block]:args.trial==='durability33'?DURABILITY33_BLOCKS[args.block]:args.trial==='durability32'?DURABILITY32_BLOCKS[args.block]:args.trial==='durability30'?DURABILITY30_BLOCKS[args.block]:args.trial==='durability29'?DURABILITY29_BLOCKS[args.block]:args.trial==='durability28'?DURABILITY28_BLOCKS[args.block]:args.trial==='durability27'?DURABILITY27_BLOCKS[args.block]:args.trial==='durability26'?DURABILITY26_BLOCKS[args.block]:args.trial==='durability25'?DURABILITY25_BLOCKS[args.block]:args.trial==='durability24'?DURABILITY24_BLOCKS[args.block as keyof typeof DURABILITY24_BLOCKS]:args.trial==='durability23'?DURABILITY23_BLOCKS[args.block]:args.trial==='durability22'?DURABILITY22_BLOCKS[args.block]:args.trial==='durability21'?DURABILITY21_BLOCKS[args.block]:args.trial==='night5'?NIGHT5_BLOCKS[args.block]:undefined;
 if(['night5','durability21','durability22','durability23','durability24','durability25','durability26','durability27','durability28','durability29','durability30','durability32','durability33','durability34','durability35','durability36','durability37'].includes(args.trial)) assert(night5,'Unknown night5 block');
@@ -149,7 +152,7 @@ function run(cell:SurveyCell,seed:number) {
     const initial=roster(); assert(initial.length>0,'Empty initial population');
     const sharedEntry=realpathSync(require.resolve('@mmo-idle/shared'));
     if(endurance) assert(sharedEntry.startsWith(realpathSync(resolve(__dirname,'../../shared'))), 'Shared module escaped frozen checkout');
-    const ready={cell:cell.id,seed,synthetic:true,view,
+    const ready={...(guardCoverage?{guardReadback:guardCoverageReadback(bot)}:{}),cell:cell.id,seed,synthetic:true,view,
       ...(endurance ? {runtime:{sharedEntry,sharedEntrySha256:sha(readFileSync(sharedEntry)),revision,seed,durationMs:manifest.durationMs,dtMs:manifest.dtMs,arm:(cell as EnduranceCell).arm}} : {}),
       ...(farmingSustain ? {sustainReadback:{...sustainState(world,bot,1800000000000),gates:sustainGates(cell as FarmingSustainCell,bot)}} : {}),
       ...(breadth ? {playerTreatment:(cell as BreadthCell).playerTreatment,controlCaseId:(cell as BreadthCell).controlCaseId,conduitProfile:conduit?.profileReceipt() ?? null} : {}),
@@ -172,6 +175,7 @@ function run(cell:SurveyCell,seed:number) {
     if(mode==='qualify') return ready;
     const dir=join(out,cell.id+'-s'+seed);mkdirSync(dir);
     writeFileSync(join(dir,'ready.json'),JSON.stringify(ready,null,2));
+    const guards = guardCoverage ? new GuardCoverageRecorder(world,bot) : null;
     const sustain = farmingSustain ? new FarmingSustainRecorder(world,bot,1800000000000) : null;
     const sessions=day2 && (cell as EnduranceCell).block==='A'?new Day2SessionRecorder(world,bot):null;
     const metrics=new SurveyMetrics(bot.isPlayer.id);
@@ -195,8 +199,8 @@ function run(cell:SurveyCell,seed:number) {
     for(;elapsed<windowMs;elapsed+=100) {
       if(!endurance && realNow()-wallStart>120000) {outcome='wall-ceiling';break;}
       now=1800000000000+elapsed; register();sessions?.register();
-      conduit?.beforeTick(elapsed,100,now);
-      const tickWallStart=realNow();world.tick(100,now);sessions?.afterTick(now);conduit?.afterTick();sustain?.afterTick(elapsed,now);maxTickWallMs=Math.max(maxTickWallMs,realNow()-tickWallStart);recordNavigationTick(elapsed,realNow()-tickWallStart);
+      conduit?.beforeTick(elapsed,100,now);guards?.beforeTick();
+      const tickWallStart=realNow();world.tick(100,now);guards?.afterTick(elapsed);sessions?.afterTick(now);conduit?.afterTick();sustain?.afterTick(elapsed,now);maxTickWallMs=Math.max(maxTickWallMs,realNow()-tickWallStart);recordNavigationTick(elapsed,realNow()-tickWallStart);
       for(const m of world.monsterEntitiesInNode(cell.nodeId)) {
         const previous=lastHp.get(m.entityId);
         if(previous!==undefined && m.hasHealth.hp>previous+0.001) {const t=metrics.targets.get(m.entityId);if(t&&t.firstDamageMs!==null)t.hpRegainObserved=true;}
@@ -226,6 +230,7 @@ function run(cell:SurveyCell,seed:number) {
         staticDamageContacts:activePlayerDamageFeatures(world,cell.nodeId).filter(f=>playerInFeatureContact(bot.hasPosition.current,f)).map(f=>({id:f.id,effect:f.damage?.effectId})),
         lastOutgoingDamageMs:Math.max(0,...[...metrics.targets.values()].map(t=>t.lastDamageMs??0)), blockedApproach:getString(bot.tracksCombat,'autoApproachBlocked'), selectedTargetId:getAutoTargetId(bot), motion:bot.isMoving?.motion??null, movement:bot.hasMovePath ? structuredClone(bot.hasMovePath) : null, monsters:roster().map(m=>({id:m.id,type:m.type,hp:m.hp,pos:m.pos,aggro:structuredClone(world.getMonsterEntity(m.id)?.hasAggroTarget),awareness:structuredClone(world.getMonsterEntity(m.id)?.hasAwareness)}))});
       if(endurance) {
+        stream('guard-events.jsonl',guards?.events.splice(0)??[]);
         stream('session-events.jsonl',sessions?.events.splice(0)??[]);
         stream('events.jsonl',log.splice(0));stream('samples.jsonl',samples.splice(0));
         stream('conduit-events.jsonl',conduit?.events.splice(0)??[]);
@@ -249,6 +254,7 @@ function run(cell:SurveyCell,seed:number) {
     }
     metrics.close(elapsed,outcome);
     const result={cell:cell.id,seed,outcome,elapsedMs:elapsed,windowMs,
+      ...(guards ? {guards:guards.finish()} : {}),
       ...(sustain ? {sustain:sustain.finish()} : {}),
       ...(sessions ? {sessions:sessions.finish()} : {}),
       ...(endurance ? {endpoints,intervals:endpointIntervals(endpoints),work:progress!.snapshot(elapsed),terminalTargets:roster(),streamedHistories:true,timing:'Legacy event times label tick starts; endpoint states follow completed 100ms steps; no post-death endpoints.'} : {}),
