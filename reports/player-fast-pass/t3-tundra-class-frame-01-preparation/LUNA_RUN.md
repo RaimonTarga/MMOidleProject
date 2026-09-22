@@ -1,5 +1,7 @@
 # Luna handoff — T3 Tundra class/frame 01
 
+> **SUPERSEDED FOR EXECUTION:** `run-01` stopped with zero accepted observations. Use `../t3-tundra-class-frame-01-recovery-preparation/LUNA_RUN.md` for the separately sealed run-02 recovery. Preserve this file and run-01 as historical records.
+
 **Prepared and zero-tick qualified; NOT launched. Execute only when assigned this packet.** Ceiling: 52 observations, one worker, zero retries, no extra seeds, arms, pilots, or cap extensions.
 
 Read `README.md`, `PACKAGES.md`, `CHECKS.json`, `REPORT_CONTRACT.json`, and the sealed manifest. The user's correction supersedes the source brief: Squire Slam is out of scope. Do not add A1 or any substitute.

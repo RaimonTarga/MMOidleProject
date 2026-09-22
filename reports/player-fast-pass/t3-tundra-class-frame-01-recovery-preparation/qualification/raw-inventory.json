@@ -1,0 +1,27 @@
+[
+  {
+    "path": "D:\\t3r\\qualification\\zero-tick\\artifacts\\complete.json",
+    "bytes": 39,
+    "sha256": "3ba788072745ae76f5c5f8344e6bf6886e44e2c86fe9f079a5cc7b3a2ccd87fa"
+  },
+  {
+    "path": "D:\\t3r\\qualification\\zero-tick\\artifacts\\index.json",
+    "bytes": 989952,
+    "sha256": "53dccbb2df4df40ccba370493c9f29fff30a55fbcf7a80c02dad78470ff50121"
+  },
+  {
+    "path": "D:\\t3r\\qualification\\zero-tick\\artifacts\\manifest.json",
+    "bytes": 157429,
+    "sha256": "8042f8c63cfb8afe68a7b03631efed6969d7c4e6bd31eda1ea75bfa2f500fb86"
+  },
+  {
+    "path": "D:\\t3r\\qualification\\zero-tick\\process.json",
+    "bytes": 567,
+    "sha256": "94bf8bff46ecfe14f5d51ac5b1aafd0c1754045f153036ce3f38a7c537cca636"
+  },
+  {
+    "path": "D:\\t3r\\qualification\\zero-tick\\process.log",
+    "bytes": 3686,
+    "sha256": "dfa407c64a5c282916cc627f7c548eb34a070d4d129f820c52c2d57963481e9c"
+  }
+]

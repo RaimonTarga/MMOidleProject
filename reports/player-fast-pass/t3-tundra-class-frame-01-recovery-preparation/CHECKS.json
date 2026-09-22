@@ -1,0 +1,37 @@
+{
+  "experimentId": "t3-tundra-class-frame-01",
+  "attempt": "run-02",
+  "preparedAt": "2026-09-22",
+  "sourceCommit": "7d0dadb2b4397141c5a654ab9bb658871c56147b",
+  "sourceSha256": "202d007f010df4380680f420a540f63fc911fe98be6d03f800f20c47b164a18d",
+  "identitySha256": "e7eb17a12715a19975de72a503b80df828a1aea1a64ef5658054276874d735e2",
+  "manifestSha256": "5615531632c9604c8fb8d3be41a13fa3e852d80ebea5ef1cd4277dd62af34aef",
+  "sealSha256": "6edfadb1cf018ff9f6318564c4030eef2bd5539eaa3b8bdbe104eaa8fe6a4240",
+  "qualificationReceiptsSha256": "36e04cbd8a26aa6855339fb0eb076ab84b97bd31d464bdc691dcb620f669a63f",
+  "receiptCheckReceiptsSha256": "36e04cbd8a26aa6855339fb0eb076ab84b97bd31d464bdc691dcb620f669a63f",
+  "hitboxesSha256": "08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83",
+  "node": "v22.16.0",
+  "qualification": { "planned": 52, "completed": 52, "combatObservations": 0, "reused": 0, "failure": null },
+  "receiptCheck": {
+    "planned": 52,
+    "completed": 52,
+    "combatObservations": 0,
+    "failure": null,
+    "runtimeSharedEntry": "D:\\t3r\\src\\shared\\src\\index.ts",
+    "fullReceiptsByteIdentical": true
+  },
+  "focusedTests": {
+    "abilityControl": "passed",
+    "tundraClassFramePacket": "passed",
+    "overnightEndurance": "passed",
+    "runnerSyntax": "passed"
+  },
+  "typecheck": "passed",
+  "diffCheck": "passed",
+  "mainRunLaunched": false,
+  "run02Exists": false,
+  "run01Preserved": true,
+  "fullSuite": "not run for this recovery; the completed Hamstring task reported 266/267 with one unrelated desertPairs failure",
+  "browserOrLivePlay": "not run",
+  "heatBaseline": "excluded; separate work was still in progress and was not mixed into the frozen source"
+}

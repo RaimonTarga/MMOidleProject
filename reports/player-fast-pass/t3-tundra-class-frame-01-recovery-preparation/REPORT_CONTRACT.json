@@ -1,0 +1,40 @@
+{
+  "experimentId": "t3-tundra-class-frame-01",
+  "attempt": "run-02",
+  "sourceCommit": "7d0dadb2b4397141c5a654ab9bb658871c56147b",
+  "sourceSha256": "202d007f010df4380680f420a540f63fc911fe98be6d03f800f20c47b164a18d",
+  "publicationDirectory": "reports/player-fast-pass/t3-tundra-class-frame-01/run-02",
+  "requiredFiles": [
+    "REPORT.md",
+    "results-summary.json",
+    "resolved-builds.json",
+    "identity.json",
+    "manifest.json",
+    "seal.json",
+    "complete.json or partial.json",
+    "raw-inventory.json"
+  ],
+  "reportLimits": { "findings": 5, "decisions": 3 },
+  "counts": ["planned", "newCompleted", "failed", "omitted", "notRun"],
+  "fixedCounts": { "planned": 52, "primary": 36, "alternative": 16, "reused": 0 },
+  "requiredContext": [
+    "run-01 remains separate with zero accepted observations, one failed row, and 51 not run",
+    "movement-only Hamstring is part of run-02 and old Hamstring evidence is not same-baseline control",
+    "Squire Slam remains excluded",
+    "completed farming and boss evidence is contextual and retains its own source identity"
+  ],
+  "rowKeys": [
+    "observationId", "identityId", "block", "comparisonId", "arm", "fixture", "seed",
+    "measuredSourceCommit", "status", "outcome", "elapsedMs", "completedKills", "endpoints",
+    "intervals", "work", "unfinishedTargets", "targetRegainCount", "minHpFraction", "runicPoints",
+    "deathEvidence", "conduit", "evidenceDirectory", "initialRosterHash"
+  ],
+  "forbiddenInterpretation": [
+    "reuse or acceptance of run-01's 42 kills",
+    "old and movement-only Hamstring as same-mechanics controls",
+    "Squire Slam comparison or recommendation",
+    "universal class, frame, weapon, ability, or charm ranking",
+    "economy, acquisition, live-player, or deployment claim"
+  ],
+  "publication": "Commit and push scoped compact files, verify remote ref and report bytes, and return branch, publication SHA, execution source SHA, report path, and reconciled counts. No rerun on push failure."
+}

@@ -1,0 +1,18 @@
+{
+  "pid": 46304,
+  "argv": [
+    "--import",
+    "file:///D:/t3r/src/node_modules/.pnpm/tsx@4.22.3/node_modules/tsx/dist/loader.mjs",
+    "--conditions=development",
+    "scripts/ttkSurvey.ts",
+    "--trial=t3-tundra-class-frame-01",
+    "--block=qualification",
+    "--mode=qualify",
+    "--revision=7d0dadb2b4397141c5a654ab9bb658871c56147b",
+    "--source-contract=D:\\t3r\\packet\\identity.json",
+    "--hitboxes=D:\\mmo-idle\\overnight-endurance-01\\hitboxes.json",
+    "--out=D:\\t3r\\qualification\\zero-tick\\artifacts"
+  ],
+  "status": 0,
+  "reason": null
+}

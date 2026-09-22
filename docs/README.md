@@ -26,6 +26,7 @@ top-level doc.
 
 | Doc | Why |
 |---|---|
+| [T3 Tundra class/frame recovery preparation](../reports/player-fast-pass/t3-tundra-class-frame-01-recovery-preparation/README.md) | Replacement run-02 packet on movement-only Hamstring; 52/52 qualified and full receipt-replay verified from the final launch checkout, combat unlaunched. |
 | [T3 Tundra class/frame 01 preparation](../reports/player-fast-pass/t3-tundra-class-frame-01-preparation/README.md) | Sealed 52-observation ordinary-Tundra class/frame screen, 52/52 zero-tick qualified; Squire Slam discarded by user correction, main combat unlaunched. |
 | [Guard coverage 01 handoff](../reports/player-fast-pass/guard-coverage-01-preparation/LUNA_RUN.md) | Integrated measured session correction; 32 fresh Endure comparison cells, zero-tick qualified, execution pending. |
 | [Player package-fit r1 packet](briefs/player-package-fit-operator-packet.md) | Prepared revised AoE/reactive-Brace packages, 36-row ceiling, machine-readable Luna report contract and scoped commit/push requirement; main run not launched. |
