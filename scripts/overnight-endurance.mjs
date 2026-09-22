@@ -34,12 +34,14 @@ function identity(hitboxes) {
     hitboxes:resolve(hitboxes),hitboxesSha256:sha(readFileSync(hitboxes))};
 }
 if(args.mode==='prepare') {
+  if(args.reuse)assert(day2 && family==='B','Reuse only in Block B');
   assert(args.hitboxes && !existsSync(packet));assert.equal(git('status','--porcelain','--untracked-files=no'),'');
   mkdirSync(packet,{recursive:true});
   write(join(packet,'manifest.json'),{experimentId,status:'prepared-unrun',planned,family:family??null,
-    blocks:day2?{A:cells.filter(c=>c.block==='A').length,B:cells.filter(c=>c.block==='B').length}:{A:288,B:48,C:0},optionalC:{included:false,candidate:null,reason:'Existing diagnosis has no qualified candidate; see CONDUIT_DIAGNOSIS.md'},
+    blocks:day2?{A:cells.filter(c=>c.block==='A').length,B:cells.filter(c=>c.block==='B').length}:{A:288,B:48,C:0},...(day2?{candidateDisposition:'Separate candidate checkout only; Block B retains control gameplay'}:{optionalC:{included:false,candidate:null,reason:'Existing diagnosis has no qualified candidate; see CONDUIT_DIAGNOSIS.md'}}),
+    reused:args.reuse?json(resolve(args.reuse)):null,
     seeds,dtMs:100,capMs,endpointsMs:[300000,900000,1800000].filter(x=>x<=capMs),synthetic:true,economyEligible:false,
-    stopOnFirstDeath:true,watchdogs,sharedFailureFamily:'all A/B ordinary-farm children',cases:cells});
+    stopOnFirstDeath:true,watchdogs,sharedFailureFamily:day2?(family==='B'?'B':'A'):'all A/B ordinary-farm children',cases:cells});
   write(join(packet,'identity.json'),identity(args.hitboxes));
   write(join(packet,'seal.json'),Object.fromEntries(['manifest.json','identity.json'].map(p=>[p,sha(readFileSync(join(packet,p)))])));
   console.log(`Sealed ${planned} planned observations; no combat.`);process.exit(0);
@@ -64,9 +66,9 @@ mkdirSync(out,{recursive:true});write(marker,{out,at:new Date().toISOString(),so
 write(join(out,'manifest.json'),manifest);write(join(out,'identity.json'),frozen);
 const receipts=[],inventory=[],rows=cells.map(c=>({observationId:c.id,identityId:c.identityId,block:c.block,comparisonId:c.comparisonId,
   seed:c.seed,tier:c.tier,root:c.className,frame:c.frame,path:c.pathName,skillPath:c.build.skillPath,range:c.range,fixture:c.nodeId,arm:c.arm,
-  status:'not-run',outcome:null,elapsedMs:null,completedKills:null,endpoints:null,intervals:null,reason:'Not started'}));
+  measuredSourceCommit:frozen.sourceCommit,sourceObservationId:null,status:'not-run',outcome:null,elapsedMs:null,completedKills:null,endpoints:null,intervals:null,reason:'Not started'}));
 function publish(){
-  const counts={planned,completed:rows.filter(r=>r.status==='complete').length,failed:rows.filter(r=>r.status==='failure').length,
+  const counts={planned,completed:rows.filter(r=>['complete','reused'].includes(r.status)).length,newCompleted:rows.filter(r=>r.status==='complete').length,reused:rows.filter(r=>r.status==='reused').length,omitted:0,failed:rows.filter(r=>r.status==='failure').length,
     notRun:rows.filter(r=>r.status==='not-run').length,qualified:rows.filter(r=>r.status==='qualified').length};
   write(join(out,'results-summary.json'),{experimentId:manifest.experimentId,mode:args.mode,actualExecutionSource:frozen.sourceCommit,
     sourceSha256:frozen.sourceSha256,hitboxesSha256:frozen.hitboxesSha256,synthetic:true,economyEligible:false,counts,rows});
@@ -109,6 +111,16 @@ async function child(block,mode,dest){
   assert(!existsSync(join(childOut,'failed.json')));
   return {childOut,m};
 }
+function validateReuse(c,qualified,reused) {
+  assert(day2 && family==='B' && c.arm==='control');
+  const old=reused.receipt,result=reused.result;
+  assert.equal(result.observationId,c.sourceObservationId);assert.equal(old.observationId,c.sourceObservationId);
+  assert.equal(result.status,'complete');assert.equal(result.seed,c.seed);assert.equal(result.fixture,c.nodeId);
+  assert.equal(old.runtime.seed,c.seed);assert.equal(old.runtime.durationMs,capMs);assert.equal(old.runtime.dtMs,100);
+  assert.equal(old.runtime.revision,manifest.reused.measuredSourceCommit);
+  for(const k of ['packageReadback','conduitProfile','initialRosterHash','initialRoster','sustainReadback','definitionsIdentity']) assert.deepEqual(old[k],qualified[k],`Reuse ${k} mismatch`);
+  const view=x=>({...x.initialView,name:''});assert.deepEqual(view(old),view(qualified),'Reuse applied view mismatch');
+}
 function receipt(c,r,m){
   assert.equal(r.cell,c.id);assert.equal(r.seed,c.seed);assert.equal(r.runtime.seed,c.seed);assert.equal(r.runtime.arm,c.arm);
   assert.equal(r.runtime.revision,frozen.sourceCommit);assert.equal(r.runtime.durationMs,capMs);assert.equal(r.runtime.dtMs,100);
@@ -137,10 +149,18 @@ try{
     const {childOut,m}=await child(day2?`qualification-${family}`:'qualification','qualify',join(out,'zero-tick'));
     assert.deepEqual(m.cells,cells);assert.deepEqual(m.seeds,seeds);
     const ready=json(join(childOut,'index.json'));assert.equal(ready.length,planned);
-    for(let i=0;i<cells.length;i++){receipts.push(receipt(cells[i],ready[i],m));rows[i].status='qualified';rows[i].reason=null;}
+    for(let i=0;i<cells.length;i++){receipts.push(receipt(cells[i],ready[i],m));const reused=manifest.reused?.observations.find(x=>x.cellId===cells[i].id);if(reused)validateReuse(cells[i],receipts[i],reused);rows[i].status='qualified';rows[i].reason=null;}
     await addInventory(join(out,'zero-tick'));publish();
   }else for(let i=0;i<cells.length;i++){
     const c=cells[i],r=rows[i],dest=join(out,c.id);
+    const reused=manifest.reused?.observations.find(x=>x.cellId===c.id);
+    if(reused) {
+      const qualified=json(join(qualification.out,'resolved-builds.json')).find(x=>x.observationId===c.id);
+      validateReuse(c,qualified,reused);
+      Object.assign(r,reused.result,{observationId:c.id,block:c.block,arm:c.arm,comparisonId:c.comparisonId,status:'reused',reason:null,
+        sourceObservationId:reused.result.observationId,measuredSourceCommit:manifest.reused.measuredSourceCommit});
+      receipts.push({...reused.receipt,observationId:c.id,sourceObservationId:reused.receipt.observationId,reused:true});publish();continue;
+    }
     try{
       verify();const {childOut,m}=await child(c.id,'run',dest);
       assert.deepEqual(m.cells,[c]);assert.deepEqual(m.seeds,[c.seed]);
@@ -150,7 +170,7 @@ try{
       const cp=join(detail,'conduit.json'),conduit=existsSync(cp)?json(cp):null;
       if(c.className==='conduit')assert(conduit);
       Object.assign(r,{status:'complete',reason:null,outcome:s.outcome,elapsedMs:s.elapsedMs,completedKills:s.counts.killed,
-        sessions:s.sessions??null,sourceObservationId:c.sourceObservationId??null,unfinishedTargets:s.counts.censored,targetRegainCount:s.counts.hpRegain,minHpFraction:s.minHpFraction,
+        sessions:s.sessions??null,historicalReferenceObservationId:c.sourceObservationId??null,unfinishedTargets:s.counts.censored,targetRegainCount:s.counts.hpRegain,minHpFraction:s.minHpFraction,
         endpoints:s.endpoints,intervals:s.intervals,work:s.work,sustain:s.sustain,terminalOwner:s.terminalOwner,
         deathEvidence:s.playerDeathEvidence,incomingHpDamage:s.incomingDamage,runicPoints:ready.packageReadback.runicPoints,
         conduit:conduit ? Object.fromEntries(Object.entries(conduit).filter(([k])=>!['events','snapshots','lives','episodes','damageDelivery'].includes(k))) : null,
@@ -161,8 +181,8 @@ try{
   }
 }catch(e){failure=String(e);if(args.mode==='qualify'){rows[receipts.length].status='failure';rows[receipts.length].reason=failure;}}
 publish();
-const completed=rows.filter(r=>['complete','qualified'].includes(r.status)).length;
-write(join(out,completed===planned?'complete.json':'partial.json'),{planned,completed,combatObservations:args.mode==='qualify'?0:rows.filter(r=>r.status==='complete').length,failure});
+const completed=rows.filter(r=>['complete','qualified','reused'].includes(r.status)).length;
+write(join(out,completed===planned?'complete.json':'partial.json'),{planned,completed,combatObservations:args.mode==='qualify'?0:rows.filter(r=>r.status==='complete').length,reused:rows.filter(r=>r.status==='reused').length,failure});
 if(args.mode==='qualify' && completed===planned)write(join(packet,'qualified.json'),{out,completed,combatObservations:0,
   manifestSha256:sha(readFileSync(join(packet,'manifest.json'))),receiptsSha256:sha(readFileSync(join(out,'resolved-builds.json')))});
 if(completed!==planned)process.exitCode=1;
