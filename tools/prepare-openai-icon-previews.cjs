@@ -8,6 +8,8 @@ const groups = [
   ['classes', 96, 80],
   ['frames', 96, 54],
   ['ranges', 96, 54],
+  ['ranges/classes', 96, 54],
+  ['paths', 96, 54],
   ['abilities', 64, 44],
   ['stances', 64, 22],
   ['rites', 64, 22],

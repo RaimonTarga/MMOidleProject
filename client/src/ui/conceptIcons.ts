@@ -255,6 +255,16 @@ export function classFrameEmblemIconSource(
   return source('frames', `${archetype}-${subVariant}`, 'class-crests-v2');
 }
 
+/** The class-specific crest for a tier-3 range choice. */
+export function classRangeEmblemIconSource(nodeId: string): AssetIconSource {
+  return source('ranges/classes', nodeId, 'class-range-crests-v1');
+}
+
+/** The path crest for a tier-4 specialization choice. */
+export function classPathEmblemIconSource(nodeId: string): AssetIconSource {
+  return source('paths', nodeId, 'class-path-crests-v1');
+}
+
 export function conceptAbilityIconSource(id: string): AssetIconSource | null {
   const iconId = ABILITY_ICON_ALIASES[id] ?? id;
   return ABILITY_IDS.has(iconId) ? source('abilities', iconId) : null;
@@ -414,7 +424,7 @@ export function bossEffectIconSource(id: string): AssetIconSource | null {
   return aliasedStatusIconSource(BOSS_EFFECT_ALIASES[id]);
 }
 
-/** Concept vocabulary exists only for the first three tiers of the tree. */
+/** Concept vocabulary exists for authored class-tree tiers through path choice. */
 export function skillVocabularyIconSource(
   node: Pick<SkillNode, 'id' | 'tier' | 'classId' | 'subVariantId'>,
 ): AssetIconSource | null {
@@ -428,9 +438,12 @@ export function skillVocabularyIconSource(
     }
     return source('frames', node.subVariantId);
   }
-  if (node.tier !== 2) return null;
-  if (node.id.endsWith('-range-close')) return source('ranges', 'close');
-  if (node.id.endsWith('-range-mid')) return source('ranges', 'medium');
-  if (node.id.endsWith('-range-far')) return source('ranges', 'far');
+  if (node.tier === 2) {
+    if (node.id.endsWith('-range-close') || node.id.endsWith('-range-mid') || node.id.endsWith('-range-far')) {
+      return classRangeEmblemIconSource(node.id);
+    }
+    return null;
+  }
+  if (node.tier === 3) return classPathEmblemIconSource(node.id);
   return null;
 }

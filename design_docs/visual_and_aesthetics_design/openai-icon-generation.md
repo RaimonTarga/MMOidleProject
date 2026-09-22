@@ -58,6 +58,110 @@ Change only <palette/object/detail>. Preserve the silhouette, geometry,
 proportions, framing, background, and visual identity. Add no new objects.
 ```
 
+## Class-tree emblem pass: ranges and paths
+
+The skill-tree code uses zero-based tier numbers, so the product language and
+the code language differ by one at this point:
+
+- Product Tier 3 is the range choice (close, medium, or far), represented by
+  `SkillNode.tier === 2` and IDs such as `cadence-range-close`.
+- Product Tier 4 is the path specialization, represented by
+  `SkillNode.tier === 3` and IDs such as `cadence-light-t3-a`.
+- Later product tiers are path-locked progression and remain intentionally
+  unillustrated until their own art is authored.
+
+This pass generated one 1254 x 1254 square image per approved node with one
+Codex built-in image-generation call per asset. The accepted full-resolution
+working copies live locally in the ignored review folders
+`art/candidates/openai-icons/ranges/classes/` and
+`art/candidates/openai-icons/paths/`; the committed runtime derivatives are
+96 x 96 PNGs in `client/public/assets/concept-icons/ranges/classes/` and
+`client/public/assets/concept-icons/paths/`. Run
+`node tools/prepare-openai-icon-previews.cjs` after adding or replacing a
+candidate. The script now prepares both class-specific groups alongside the
+older generic icon groups.
+
+### Visual recipe
+
+Start every emblem with the shared semi-painterly fantasy game-icon direction
+above: one centered heraldic silhouette, dark charcoal full-square backdrop,
+strong value separation, broad readable forms, dramatic material lighting, and
+no text, frame, watermark, or tiny decorative noise.
+
+For a range emblem, use the class-root crest as the lineage anchor and make
+the range fantasy the subject. The approved examples established the pattern:
+Striker keeps its blade-and-impact identity while close becomes a brawler,
+medium becomes a lancer, and far becomes an arcane phantom-blade. Apply the
+same translation to each other class. Apprentice's three range emblems are
+element-agnostic because poison, flame, and frost share the same DoT-range
+nodes. These are deliberately class-specific replacements for the older
+generic `ranges/close.png`, `medium.png`, and `far.png` assets.
+
+For a path emblem, the Tier 2 frame is a lineage reference for material,
+palette, and visual weight, but the path name and specialization fantasy are
+the primary subject. This is the divergence point: move clearly beyond the
+root/frame identity, give each path its own silhouette and symbolism, and
+increase ornament and complexity one step without treating Tier 4 as the
+finished maximum. There should still be room for Tiers 5-8 to become more
+ornate and prestigious.
+
+Conduit is the reference-driven exception. Each path emblem uses its matching
+unique summon sprite from `art/src/sprites/monsters/` as a subject reference
+while preserving the overall emblem palette and semi-painterly drawing style.
+The two Covenanter summon sprites are both relevant to that emblem. This keeps
+the summon silhouettes legible instead of inventing generic summoner symbols.
+
+Other deliberate exceptions are narrow and explicit: Apprentice/Cultist uses
+deep purple Doom imagery rather than the normal poison language; Spirit's
+Voidwalker uses a dark void treatment; Slinger may use arcane or lightly
+steampunk low-tech firearms, never modern assault rifles or SMGs. These
+exceptions should not become the default for later nodes.
+
+### Naming and wiring
+
+Use the exact canonical skill-node ID as the filename. Do not use the visible
+class label: labels can be renamed, while IDs are persisted and rendered by
+the live tree. The resolver in `client/src/ui/conceptIcons.ts` maps:
+
+| Product tier | Runtime directory | Revision | Example |
+| --- | --- | --- | --- |
+| Tier 3 range | `concept-icons/ranges/classes/` | `class-range-crests-v1` | `cadence-range-close.png` |
+| Tier 4 path | `concept-icons/paths/` | `class-path-crests-v1` | `cadence-light-t3-a.png` |
+
+The query-string revisions are intentional cache busters. Bump the relevant
+revision when replacing an already-shipped crest. Keep the generic
+`concept-icons/ranges/` files available for non-class-specific vocabulary;
+only the passive-tree resolver switches to the class-specific set.
+
+### Reusable prompt skeleton
+
+For future Tier 5 work, start from the approved Tier 4 path emblem and the
+matching Tier 2 frame, then add the next specialization's mechanic or sprite
+reference. Keep the lineage explicit and keep the tier ladder in mind:
+
+```text
+Use case: stylized-concept
+Asset type: heraldic fantasy MMO class-tree emblem displayed at 96px
+Input images: Image 1 = matching Tier 2 frame lineage; Image 2 = approved
+prior-tier emblem for continuity; Image 3 = mechanic/summon reference when
+the path has a specific subject
+Primary request: an original emblem for <canonical node id and class fantasy>
+Composition: one centered bold silhouette, generous padding, readable at 32px
+Style: semi-painterly fantasy game emblem, richer and more ornate than the
+prior tier but still a single clean silhouette
+Color palette: inherit the frame lineage, with <path-specific accent>
+Constraints: no text, letters, numbers, logo, watermark, border, UI frame,
+transparent checkerboard, modern firearm, or unrelated extra objects
+Avoid: generic range symbolism when this is a path emblem; visual sameness
+with the parent frame; detail so fine that it disappears at 96px
+```
+
+Inspect both the generated 1254 px image and the prepared 96 px derivative.
+The 96 px result is the acceptance target. The first Striker Tier 4 batch and
+the first four Apprentice attempt images were review-only variants and are not
+part of the shipped set; do not resurrect them when using this pass as a
+reference.
+
 ## Visual language
 
 The icon should communicate one mechanic before it communicates atmosphere.
