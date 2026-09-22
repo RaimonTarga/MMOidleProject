@@ -20,7 +20,7 @@
     "git diff --check"
   ],
   "scope": "Focused tests are correctness fixtures, not balance observations. No allocated case/prefix run.",
-  "candidatePatchSha256": "93c2e345682f3384bb560672285ac92943852e9fa4bb6299173b8fe3b99025e7",
+  "candidatePatchSha256": "b5a9858382e7425fd2293cc44a21ebf576036fd2155dc35785b5165522038ddd",
   "finalVerification": {
     "families": [
       "B",
@@ -34,5 +34,6 @@
     "combatObservationsRun": 0,
     "runOutputExists": false
   },
-  "historicalReportPreservedSha256": "046269c307e568100b567f0f3cfdc71754bce779cbbca2bdd6f977d4eef15032"
+  "historicalReportPreservedSha256": "046269c307e568100b567f0f3cfdc71754bce779cbbca2bdd6f977d4eef15032",
+  "candidatePatchFormat": "git diff --binary --unified=0; validate/apply with git apply --unidiff-zero; execution checkout already contains it"
 }
