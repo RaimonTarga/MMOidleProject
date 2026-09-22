@@ -278,7 +278,6 @@ for (const [id, spec] of Object.entries(ABILITY_COSTS)) {
 
 const SWAMP_T2_RUNES: Array<{ id: string; level: number; cost: number }> = [
   { id: "rune-recipe-surrounded", level: 7, cost: 70 },
-  { id: "rune-recipe-focus-lowest-hp", level: 8, cost: 90 },
   { id: "rune-recipe-let-dots-finish", level: 9, cost: 90 },
   { id: "rune-recipe-spread-dots", level: 10, cost: 120 },
 ];

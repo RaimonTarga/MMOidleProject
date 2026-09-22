@@ -161,10 +161,11 @@ numbers of one status:
 | **Binding Strike** | stopped | allowed | no | medium |
 | **Stunning Strike** | stopped | **stopped** | **yes** | high |
 
-`monsterControl.ts` is the **single writer for a monster's slowed speed**. Chill, Freeze and
-an ability slow all overwrite `hasPosition.speed` and `performsAttack.attackCooldown` with
+`monsterControl.ts` is the **single writer for a monster's slowed speed**. Chill and Freeze can
+slow both movement and attack cadence; an ability slow affects movement only. Before this
+reconciler, the sources overwrote `hasPosition.speed` and `performsAttack.attackCooldown` with
 absolute values read back from `MONSTER_DATABASE`; two independent writers each treating the
-other's output as "the clean base" ratchet against each other every tick. Every source
+other's output as "the clean base" ratcheted against each other every tick. Every source
 registers here and `updateMonsterSlows` applies the **strongest of each axis** once per tick
 (never the sum — summing a chill onto a Hamstring would pin the target, and pinned is *root*,
 a different rung with a different cost), restoring the database values when no source remains.

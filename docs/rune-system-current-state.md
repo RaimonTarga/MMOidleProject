@@ -81,7 +81,7 @@ Actions:
 - `step-back` (shown as "Step Back")
 - `follow-and-assist`
 - `focus-closest`
-- `focus-lowest-hp`
+- `focus-lowest-hp`: T2 Desert level 4, crafted for 90 yellow essence; action costs 2 RP (3 RP with In Combat). Existing crafted ownership is retained by recipe ID.
 - `let-dots-finish` (shown as "Let DoTs Finish"; DoT classes only)
 - `spread-dots` (shown as "Spread DoTs"; DoT classes only)
 - `tactical-reload` (shown as "Reload Safely"; reload classes only)

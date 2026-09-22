@@ -231,12 +231,12 @@ const recipes: RuneRecipe[] = [
     description: "Unlocks target selection for finishing weakened enemies.",
     kind: "unlock-rune",
     tier: 2,
-    // T2 economy pass (2026-08-29): moved out of Swamp's T1 band (was L2) into L8.
-    recipeGroup: "swamp",
-    requiredBiomeLevel: 8,
+    // T2 Desert teaches melee counterplay against bonded dealer/tank pairs.
+    recipeGroup: "desert",
+    requiredBiomeLevel: 4,
     runeId: "focus-lowest-hp",
     runeKind: "action",
-    cost: { purple: 90 },
+    cost: { yellow: 90 },
   },
   {
     id: "rune-recipe-let-dots-finish",

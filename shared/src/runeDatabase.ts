@@ -496,7 +496,7 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       name: "Focus Lowest HP",
       blurb: "Prefer fast kills to reduce enemy count.",
       cost: 2,
-      tier: 4,
+      tier: 2,
       channel: "TARGETING",
       allowedConditionIds: TARGETING_CONDITIONS,
     },
