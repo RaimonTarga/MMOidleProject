@@ -1,0 +1,9 @@
+{
+  "out": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\receipt-check",
+  "completed": 32,
+  "combatObservations": 0,
+  "sourceCommit": "3e27da0bdecd442b0a40e2c2ab41afbf013f6fa6",
+  "manifestSha256": "7446623d08167f6a6a51951ef22ed5613b3becf0a4a0909eb567674390319974",
+  "qualificationReceiptsSha256": "33f54434bbe2e1ac484a5695047e1d29ddfc9dedc50df26fe238eba9387e70a2",
+  "verificationReceiptsSha256": "33f54434bbe2e1ac484a5695047e1d29ddfc9dedc50df26fe238eba9387e70a2"
+}

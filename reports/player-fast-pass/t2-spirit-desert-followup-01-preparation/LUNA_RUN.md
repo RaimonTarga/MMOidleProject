@@ -1,8 +1,10 @@
-# Luna handoff — prepared, not launched
+# Luna handoff — executed and compact publication prepared
+
+> Execution completed on 2026-09-22 from the exact frozen source: 32/32 fresh combat observations, 27 cap outcomes, 5 valid gameplay deaths, 0 reused/failed/not-run rows. Compact output is in reports/player-fast-pass/t2-spirit-desert-followup-01/run-01; raw histories remain at D:/mmo-idle/t2-spirit-desert-followup-01/run-01.
 
 Execute only when assigned this packet. Read README.md, PACKAGES.md, ENTRY_PROFILE_APPENDIX.md and REPORT_CONTRACT.json. Fixed allocation: A24 + B8 = 32 fresh cells, zero reused. No pilot. Preparation source is `3e27da0bdecd442b0a40e2c2ab41afbf013f6fa6`; source/hitbox hashes are in packet/identity.json. Keep the actual frozen source checkout unchanged.
 
-Preparation and independent receipt check already passed 32/32 through the actual child with zero ticks. The verify command below is exercised; the run command is intentionally unexecuted. Do not rerun preparation, qualification, receipt checks or install dependencies as part of execution.
+Preparation and independent receipt check passed 32/32 through the actual child with zero ticks. At handoff the verify command had been exercised and the run command was intentionally unexecuted; it was launched only after assignment. Do not rerun preparation, qualification, receipt checks or install dependencies as part of execution.
 
 ```powershell
 Set-Location 'D:/mmo-idle/t2-spirit-desert-followup-01/source'

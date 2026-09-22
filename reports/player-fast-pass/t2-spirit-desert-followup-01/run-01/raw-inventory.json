@@ -1,0 +1,2417 @@
+[
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101009-stinger\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101009-stinger\\artifacts\\heartbeat.json",
+    "bytes": 117,
+    "sha256": "c0719ecd2d5ed0fdbf0319f7c2526f73f63e2724898b9edb9e9407956ef76acd"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101009-stinger\\artifacts\\index.json",
+    "bytes": 124244,
+    "sha256": "e6cdb07c42fe88e423667107a5ed3a31ff768058cfd01b7a78d1da4e5082508e"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101009-stinger\\artifacts\\manifest.json",
+    "bytes": 3098,
+    "sha256": "4015c7013a14f03b69f85d4c2f375480e26b06c2b16037a80919699dee448f45"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101009-stinger\\artifacts\\t2sd-spirit-light-swamp-s101009-stinger-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101009-stinger\\artifacts\\t2sd-spirit-light-swamp-s101009-stinger-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101009-stinger\\artifacts\\t2sd-spirit-light-swamp-s101009-stinger-s101009\\endpoints.json",
+    "bytes": 5186,
+    "sha256": "5d22ca0b1501715d93226194103d8ef1208dfbcea7e7814d470679c52003d33e"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101009-stinger\\artifacts\\t2sd-spirit-light-swamp-s101009-stinger-s101009\\events.jsonl",
+    "bytes": 1232551,
+    "sha256": "d5269d982b0dd37229ae2e19012a1a6ea54253cf1590aff0a1d2b721b9f0b28a"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101009-stinger\\artifacts\\t2sd-spirit-light-swamp-s101009-stinger-s101009\\guard-events.jsonl",
+    "bytes": 5767729,
+    "sha256": "80102955b37a8eaff6a7557cfcc42175685881e82ffb4d1813fa38d9315d0031"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101009-stinger\\artifacts\\t2sd-spirit-light-swamp-s101009-stinger-s101009\\ready.json",
+    "bytes": 22207,
+    "sha256": "48503e14dfb25b8593da46d33b212d5802020a126d0007a2c60b08fff8af5880"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101009-stinger\\artifacts\\t2sd-spirit-light-swamp-s101009-stinger-s101009\\samples.jsonl",
+    "bytes": 3266194,
+    "sha256": "7215fb9c3137e054b6013e2f1a6144edbee4bcb882b48006c5331da1f1a758d1"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101009-stinger\\artifacts\\t2sd-spirit-light-swamp-s101009-stinger-s101009\\summary.json",
+    "bytes": 114508,
+    "sha256": "fcacee8495ba21f205e0d998fc59c1f45f815d07f312c5d0d6db47d34d48cbf9"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101009-stinger\\artifacts\\t2sd-spirit-light-swamp-s101009-stinger-s101009\\sustain-transitions.jsonl",
+    "bytes": 499048,
+    "sha256": "635a1ca822d651d6d5cd88dd79060f0777e2190c081ebd5829184e91ec0cf49d"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101009-stinger\\process.json",
+    "bytes": 729,
+    "sha256": "d5f22f4831634b60bfba8a1c0088a2277d43472cd1590292e94a4f9e8722cbd0"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101009-stinger\\process.log",
+    "bytes": 56,
+    "sha256": "898248414ed44c9d46d5f60896e5b6458a7c41409af30c164e7b0e3339363a19"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101009-axe\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101009-axe\\artifacts\\heartbeat.json",
+    "bytes": 113,
+    "sha256": "fe907b9d8b031417e82e0d47d71a35a08e0fad4030f854f2ac5d80aa4e605ab2"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101009-axe\\artifacts\\index.json",
+    "bytes": 105943,
+    "sha256": "a5d255d021cac585d0cd7ef69f777ee2208166d4adb6f52f7e578ce7eda49fb5"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101009-axe\\artifacts\\manifest.json",
+    "bytes": 3072,
+    "sha256": "c175650396da23dc33396cf81cd9a9490f48dcb8412312bf19a5e57086a97985"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101009-axe\\artifacts\\t2sd-spirit-light-swamp-s101009-axe-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101009-axe\\artifacts\\t2sd-spirit-light-swamp-s101009-axe-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101009-axe\\artifacts\\t2sd-spirit-light-swamp-s101009-axe-s101009\\endpoints.json",
+    "bytes": 5149,
+    "sha256": "fe1679b75c2d1039bf97b070b7411f8dc699ed5460ba7fef381a9bd8751db7d9"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101009-axe\\artifacts\\t2sd-spirit-light-swamp-s101009-axe-s101009\\events.jsonl",
+    "bytes": 1180844,
+    "sha256": "3320230299282db8bed666c6eeef19f59a522edd24a6b451abdd35d62f512e5a"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101009-axe\\artifacts\\t2sd-spirit-light-swamp-s101009-axe-s101009\\guard-events.jsonl",
+    "bytes": 6139104,
+    "sha256": "cb2f1bdf730ea977c24dd5a85cf3caf24ea6fb0f8e998d174a22b60813df2426"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101009-axe\\artifacts\\t2sd-spirit-light-swamp-s101009-axe-s101009\\ready.json",
+    "bytes": 22193,
+    "sha256": "d686023aad6d2d8f822da981424c90285ef983b456890341088e1ba92581b94f"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101009-axe\\artifacts\\t2sd-spirit-light-swamp-s101009-axe-s101009\\samples.jsonl",
+    "bytes": 3269561,
+    "sha256": "0597433ea00489f4d5aca84eb259fbb0489feaaa0112c53ed9f03d905c9ea41c"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101009-axe\\artifacts\\t2sd-spirit-light-swamp-s101009-axe-s101009\\summary.json",
+    "bytes": 97633,
+    "sha256": "d55a4039a5cea1fa266e8e78da62ec3dbe0d4c15e2b7cff27d7ac8c84dd5731e"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101009-axe\\artifacts\\t2sd-spirit-light-swamp-s101009-axe-s101009\\sustain-transitions.jsonl",
+    "bytes": 394744,
+    "sha256": "ea98af99cee6ec4e926ccb98aaa4f4d1cf28966b5190529d43c6d9d9f8a6df54"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101009-axe\\process.json",
+    "bytes": 721,
+    "sha256": "08d6da337a34755ea2b540a73075a24a71fe5aea3e6e2ad0a228135134e8091b"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101009-axe\\process.log",
+    "bytes": 52,
+    "sha256": "e61272390e64127d2062e4f0482c51d6cd6c56d2ec441d7cd41ed15b9f3a143d"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101009-stinger\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101009-stinger\\artifacts\\heartbeat.json",
+    "bytes": 120,
+    "sha256": "8281af2d78448bee9362666b898fda5217cecbc98132b338757eb5f2b6d395bb"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101009-stinger\\artifacts\\index.json",
+    "bytes": 71844,
+    "sha256": "acc52db147cda5ca772233e67a2c4be24a6787a0dc073b54f507c1028e4e93c4"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101009-stinger\\artifacts\\manifest.json",
+    "bytes": 3130,
+    "sha256": "8591999a126760d27ae1ed4fa92265facff52ea4c3f9a3447736ce43c42657d2"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101009-stinger\\artifacts\\t2sd-spirit-light-mountain-s101009-stinger-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101009-stinger\\artifacts\\t2sd-spirit-light-mountain-s101009-stinger-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101009-stinger\\artifacts\\t2sd-spirit-light-mountain-s101009-stinger-s101009\\endpoints.json",
+    "bytes": 5156,
+    "sha256": "fc46447f4c3d6bb484b06d43f506d8df6ad0d533cf350514b27be32c244a4a68"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101009-stinger\\artifacts\\t2sd-spirit-light-mountain-s101009-stinger-s101009\\events.jsonl",
+    "bytes": 685278,
+    "sha256": "92c9752d63eceed993f8b2b05cd74760e885130b09500e2acce7864aa2445717"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101009-stinger\\artifacts\\t2sd-spirit-light-mountain-s101009-stinger-s101009\\guard-events.jsonl",
+    "bytes": 4713890,
+    "sha256": "226b8280fb696125af549af3cba4aa45c18dbdfe6d90324ea501eb697893e780"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101009-stinger\\artifacts\\t2sd-spirit-light-mountain-s101009-stinger-s101009\\ready.json",
+    "bytes": 22250,
+    "sha256": "0a856002c05099b340a138ad1790e04c8019e081685ec2cd5559a4246eb35f2f"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101009-stinger\\artifacts\\t2sd-spirit-light-mountain-s101009-stinger-s101009\\samples.jsonl",
+    "bytes": 3389018,
+    "sha256": "0b39d4e91f38d20a54c4f2e8572f704b8fd07a069a31d1690b09d442de770711"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101009-stinger\\artifacts\\t2sd-spirit-light-mountain-s101009-stinger-s101009\\summary.json",
+    "bytes": 66308,
+    "sha256": "c5b30575cf3a5f86a647b2755cb6bffb859abb865091bde23052040bfd55b1bd"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101009-stinger\\artifacts\\t2sd-spirit-light-mountain-s101009-stinger-s101009\\sustain-transitions.jsonl",
+    "bytes": 190765,
+    "sha256": "7c04904643e85ee9a8287df841b378845f240e6c6ee5664d5cd99da74aaf6fe5"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101009-stinger\\process.json",
+    "bytes": 735,
+    "sha256": "10153892442a0bab5547a9f793af8dc678c922fd8bae5351695c36a6c7f2de74"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101009-stinger\\process.log",
+    "bytes": 59,
+    "sha256": "e6f05dd346d65e170523d3ec5e959342d74ee4eb9bea218aab83ed1732604dbf"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101009-axe\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101009-axe\\artifacts\\heartbeat.json",
+    "bytes": 116,
+    "sha256": "1762aabba5b4bc7224ff13142beab2481fdc6ac36583ba1970aac01ba3cc83ae"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101009-axe\\artifacts\\index.json",
+    "bytes": 67080,
+    "sha256": "b7c2b91cd9febad570f7de7bad854cc266c28f467e7094b496b34aae97e81f6b"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101009-axe\\artifacts\\manifest.json",
+    "bytes": 3104,
+    "sha256": "57ac3252a8a0ec967c5db46b761e87730f667e806dc8851cd48330191326f879"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101009-axe\\artifacts\\t2sd-spirit-light-mountain-s101009-axe-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101009-axe\\artifacts\\t2sd-spirit-light-mountain-s101009-axe-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101009-axe\\artifacts\\t2sd-spirit-light-mountain-s101009-axe-s101009\\endpoints.json",
+    "bytes": 4976,
+    "sha256": "6e36e0ae54f3440b2884c698ec8fa59949e7ebe06c05ab26f1995b0acaa01f58"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101009-axe\\artifacts\\t2sd-spirit-light-mountain-s101009-axe-s101009\\events.jsonl",
+    "bytes": 671339,
+    "sha256": "2bdc2dfa8a5bd26fc549047cf182135659e1c8aaeb8108c72a709757bd812e96"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101009-axe\\artifacts\\t2sd-spirit-light-mountain-s101009-axe-s101009\\guard-events.jsonl",
+    "bytes": 5975012,
+    "sha256": "92849c3038f201dad6af1af2a58f40ca54efee5006949ac63b41fa575ca904e7"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101009-axe\\artifacts\\t2sd-spirit-light-mountain-s101009-axe-s101009\\ready.json",
+    "bytes": 22236,
+    "sha256": "017e09450c0e2d1e669ef29f1ce34fd6fdf38de69f6a31c2844dad8af77031ac"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101009-axe\\artifacts\\t2sd-spirit-light-mountain-s101009-axe-s101009\\samples.jsonl",
+    "bytes": 3358626,
+    "sha256": "5cdbb09f874c8a21aa2499f9b6e3475a2c56990e7d38ea422b1c503f68d033ef"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101009-axe\\artifacts\\t2sd-spirit-light-mountain-s101009-axe-s101009\\summary.json",
+    "bytes": 61920,
+    "sha256": "c2c84f072990acda4040f3b2b35c6920e4ab3866ba59cd25328a36fce1fa22fc"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101009-axe\\artifacts\\t2sd-spirit-light-mountain-s101009-axe-s101009\\sustain-transitions.jsonl",
+    "bytes": 188726,
+    "sha256": "160b83087ae3b529bcbf0b3bc2210e1e6a5ec701b82665fd23a1396e7410428c"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101009-axe\\process.json",
+    "bytes": 727,
+    "sha256": "1c6ae7f2e00a4b6fa254a9a0297d65045a60fde9ab3b7d1062ea37201f2da143"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101009-axe\\process.log",
+    "bytes": 55,
+    "sha256": "c61af87c8b39316a413e41de55b3a1443a46965b1d04a1e886864400c10ce1c5"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101009-stinger\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101009-stinger\\artifacts\\heartbeat.json",
+    "bytes": 120,
+    "sha256": "c6f573cfbc0b5dbeff0ef9012789f661d1d488dbebfcab17c7436229db84426d"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101009-stinger\\artifacts\\index.json",
+    "bytes": 122187,
+    "sha256": "9b995ef2e29f2de2d6570195f78addc76b1862fdab6dcf5aab5769bd94a2518d"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101009-stinger\\artifacts\\manifest.json",
+    "bytes": 3094,
+    "sha256": "9012aa644a765e1fa267379d7050ed758b5ba62beedf4358ace61a780a59dde8"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101009-stinger\\artifacts\\t2sd-spirit-balanced-swamp-s101009-stinger-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101009-stinger\\artifacts\\t2sd-spirit-balanced-swamp-s101009-stinger-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101009-stinger\\artifacts\\t2sd-spirit-balanced-swamp-s101009-stinger-s101009\\endpoints.json",
+    "bytes": 5020,
+    "sha256": "6c7533732f1df328e1b73547a42fe0087064cb4ab3ea2fe9b2d1829e018b4bab"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101009-stinger\\artifacts\\t2sd-spirit-balanced-swamp-s101009-stinger-s101009\\events.jsonl",
+    "bytes": 1179738,
+    "sha256": "b9c7c046a5aa5b0de64ea660904b17c250fe628299f6c668b29e970ca89d22c8"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101009-stinger\\artifacts\\t2sd-spirit-balanced-swamp-s101009-stinger-s101009\\guard-events.jsonl",
+    "bytes": 6072631,
+    "sha256": "183fc7ccd80d70c8229f1c0fc1993edcd301815d470237f88f8f986b018ad83d"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101009-stinger\\artifacts\\t2sd-spirit-balanced-swamp-s101009-stinger-s101009\\ready.json",
+    "bytes": 22230,
+    "sha256": "9472985fa383511a7550aa84d078a6d69458e4c9e17a0254ee6bb8fe99d2f687"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101009-stinger\\artifacts\\t2sd-spirit-balanced-swamp-s101009-stinger-s101009\\samples.jsonl",
+    "bytes": 3285242,
+    "sha256": "c196f679ee4478ee7aff2af74142d09e3de84461a6e97e08b328949706f3880f"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101009-stinger\\artifacts\\t2sd-spirit-balanced-swamp-s101009-stinger-s101009\\summary.json",
+    "bytes": 112575,
+    "sha256": "7e562324b8c8431a57122f77e6971a4909c2f61fb9dca5218514831343e43848"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101009-stinger\\artifacts\\t2sd-spirit-balanced-swamp-s101009-stinger-s101009\\sustain-transitions.jsonl",
+    "bytes": 515175,
+    "sha256": "5bfd3ce40188544697d9f00d7e13c8dc173e1cefa3ae369b75683e3b5038af7b"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101009-stinger\\process.json",
+    "bytes": 735,
+    "sha256": "27fe7368d9147e3a8c998c29c6f39def56b0f88f5f995ed321ebf0b739c0153f"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101009-stinger\\process.log",
+    "bytes": 59,
+    "sha256": "74d5f4de6a7b4194a9dc7aeb741c3f59388394b5e2915cf9e0a4f896aecf31a6"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101009-axe\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101009-axe\\artifacts\\heartbeat.json",
+    "bytes": 116,
+    "sha256": "b6bb02865d4deb28724826bec75c2927197072a70ae9467953e0bde8c2723604"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101009-axe\\artifacts\\index.json",
+    "bytes": 97383,
+    "sha256": "ff7ea0aa0964e586498a4039c424b988766ea627775af07b9ed9c45dd3dc517b"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101009-axe\\artifacts\\manifest.json",
+    "bytes": 3068,
+    "sha256": "2b3380705853b6ce79fd2e21475ab186de29e55f913085e0c3b2d9e75721680c"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101009-axe\\artifacts\\t2sd-spirit-balanced-swamp-s101009-axe-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101009-axe\\artifacts\\t2sd-spirit-balanced-swamp-s101009-axe-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101009-axe\\artifacts\\t2sd-spirit-balanced-swamp-s101009-axe-s101009\\endpoints.json",
+    "bytes": 5167,
+    "sha256": "2472e6e340aa22ddf07ac24c2cd2b465e149c707188ef2da2bb1edd264a89c10"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101009-axe\\artifacts\\t2sd-spirit-balanced-swamp-s101009-axe-s101009\\events.jsonl",
+    "bytes": 1150881,
+    "sha256": "f39214155151cefa4cc73bd6beaab9ee36e4efac320b35d96f740277f05b836a"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101009-axe\\artifacts\\t2sd-spirit-balanced-swamp-s101009-axe-s101009\\guard-events.jsonl",
+    "bytes": 5960223,
+    "sha256": "0685e25aef2ea2a511c01da290914e29bebdf16a3a26e161f5aed11e5c08cc39"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101009-axe\\artifacts\\t2sd-spirit-balanced-swamp-s101009-axe-s101009\\ready.json",
+    "bytes": 22216,
+    "sha256": "97a889f99281788ff19abfde335cdf0d5ea4c0ed7dac35badb506d9a6dba3c43"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101009-axe\\artifacts\\t2sd-spirit-balanced-swamp-s101009-axe-s101009\\samples.jsonl",
+    "bytes": 3287077,
+    "sha256": "17dfe6296e11ee439b675f313e35cc3001603e314fc00a4767caf5d3c97cd9c8"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101009-axe\\artifacts\\t2sd-spirit-balanced-swamp-s101009-axe-s101009\\summary.json",
+    "bytes": 89753,
+    "sha256": "29183225a068fa59be46cc3324eab7e2ea29ebcbf3fc65cf99a38052f06062c9"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101009-axe\\artifacts\\t2sd-spirit-balanced-swamp-s101009-axe-s101009\\sustain-transitions.jsonl",
+    "bytes": 382261,
+    "sha256": "ed793234834eedf7ab3c34fe30aaeffd8e7a77839f2528e02028ffbc95a7551b"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101009-axe\\process.json",
+    "bytes": 727,
+    "sha256": "2c4b057a27e1fe6ae5ea9243b5020219ba796146be04cee272644aeda7530f68"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101009-axe\\process.log",
+    "bytes": 55,
+    "sha256": "d346a251769526f3f3ca6da9dd4163d3c04d85058edeb333fa8c1bbf73462ccd"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101009-stinger\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101009-stinger\\artifacts\\heartbeat.json",
+    "bytes": 123,
+    "sha256": "b582ff147f6680d2f1cb809a4d2b9fe26b7be0ec4800c27a618519f2b0c0ef29"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101009-stinger\\artifacts\\index.json",
+    "bytes": 64024,
+    "sha256": "520be401555ee7107a4b1942df324a8f56e3ef45ee2f6cc7f4b23353394120e9"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101009-stinger\\artifacts\\manifest.json",
+    "bytes": 3126,
+    "sha256": "309f19890d24c1ba549093429d3a16dfa4356b6cd2df09cf2d1ba10c599fd10d"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101009-stinger\\artifacts\\t2sd-spirit-balanced-mountain-s101009-stinger-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101009-stinger\\artifacts\\t2sd-spirit-balanced-mountain-s101009-stinger-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101009-stinger\\artifacts\\t2sd-spirit-balanced-mountain-s101009-stinger-s101009\\endpoints.json",
+    "bytes": 5082,
+    "sha256": "0d6001cc1fff80bbf05214af958967bd1e3fa8aa32de35f49bbba47c86b54407"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101009-stinger\\artifacts\\t2sd-spirit-balanced-mountain-s101009-stinger-s101009\\events.jsonl",
+    "bytes": 730800,
+    "sha256": "00a5c78bc33a49e12fd99f08ef1420e693f544d0e1d13d76bdb4a0afee003f33"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101009-stinger\\artifacts\\t2sd-spirit-balanced-mountain-s101009-stinger-s101009\\guard-events.jsonl",
+    "bytes": 4709117,
+    "sha256": "6ef9e46dd07f0bf625e353f68d4b4acdcfd1c73ae394b34eb1651b26ed9223fe"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101009-stinger\\artifacts\\t2sd-spirit-balanced-mountain-s101009-stinger-s101009\\ready.json",
+    "bytes": 22273,
+    "sha256": "3317336f7f6719d636bd517b251aaeaf7e9f1967260579c27ef18f73054086c4"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101009-stinger\\artifacts\\t2sd-spirit-balanced-mountain-s101009-stinger-s101009\\samples.jsonl",
+    "bytes": 3343762,
+    "sha256": "0e392650fab606a12d460535231d97e855fdd61c17f1989b6e37b44d3e02d7f2"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101009-stinger\\artifacts\\t2sd-spirit-balanced-mountain-s101009-stinger-s101009\\summary.json",
+    "bytes": 59104,
+    "sha256": "5d5d9cdc78916b1e208e96d3d3f1030332dea3728051a6e43623a601cc4d261c"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101009-stinger\\artifacts\\t2sd-spirit-balanced-mountain-s101009-stinger-s101009\\sustain-transitions.jsonl",
+    "bytes": 181010,
+    "sha256": "fbbaa826494bcd13ddfb2f9253d729aa05033a1377a15f14965ea4c8e938d65e"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101009-stinger\\process.json",
+    "bytes": 741,
+    "sha256": "540add0d6a9afdfd6152c738a1f41627252f36d2900308146b1dfd8a1c407883"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101009-stinger\\process.log",
+    "bytes": 62,
+    "sha256": "774887f06d4d9b3db018054e103418927e0364973a2225a91674b2405c328b35"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101009-axe\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101009-axe\\artifacts\\heartbeat.json",
+    "bytes": 119,
+    "sha256": "f8d515515d534c2fde4cc50b4e1606d9bf097016d0aedccfdbdabc6c894beeaf"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101009-axe\\artifacts\\index.json",
+    "bytes": 57977,
+    "sha256": "cc53f22c32f6305cc24199b6334e896182167a3a7a55b3693cbb6df46a0e31f9"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101009-axe\\artifacts\\manifest.json",
+    "bytes": 3100,
+    "sha256": "1f4a9734fd0d513cd7133cc174ee7442c9ebedb91cfd8faf976d8d5b4850edfd"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101009-axe\\artifacts\\t2sd-spirit-balanced-mountain-s101009-axe-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101009-axe\\artifacts\\t2sd-spirit-balanced-mountain-s101009-axe-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101009-axe\\artifacts\\t2sd-spirit-balanced-mountain-s101009-axe-s101009\\endpoints.json",
+    "bytes": 4951,
+    "sha256": "f91b12f2cf42755394805b63c7a88ec612bc7b00580e5dbb73945f770a35b250"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101009-axe\\artifacts\\t2sd-spirit-balanced-mountain-s101009-axe-s101009\\events.jsonl",
+    "bytes": 699055,
+    "sha256": "94594539d629fa804754cc52268dd93a4601845a9a612fa30d5a0c5d86b0e1de"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101009-axe\\artifacts\\t2sd-spirit-balanced-mountain-s101009-axe-s101009\\guard-events.jsonl",
+    "bytes": 4900657,
+    "sha256": "0d85657315c00a9f09eda6908c7e954cb7a7f0eb30a9681b1e38064d223403fe"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101009-axe\\artifacts\\t2sd-spirit-balanced-mountain-s101009-axe-s101009\\ready.json",
+    "bytes": 22259,
+    "sha256": "d824024fc7ee13bb706fffe372fb6f3529c1089ff934708c7436b1be787b9633"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101009-axe\\artifacts\\t2sd-spirit-balanced-mountain-s101009-axe-s101009\\samples.jsonl",
+    "bytes": 3344121,
+    "sha256": "52f7085cf517ec7b81a61144a5f69d0c07f017d17fbf4f63ad590ec3da9a2ae7"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101009-axe\\artifacts\\t2sd-spirit-balanced-mountain-s101009-axe-s101009\\summary.json",
+    "bytes": 53535,
+    "sha256": "2641d1a453b9cb2425c203507c06323da96ad19ba65ad05c5a4433190f9cb7d3"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101009-axe\\artifacts\\t2sd-spirit-balanced-mountain-s101009-axe-s101009\\sustain-transitions.jsonl",
+    "bytes": 180389,
+    "sha256": "ec05a12b1c5759fac959d15deffca9dfda4d4ede24b336811dca9f4af7195cf3"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101009-axe\\process.json",
+    "bytes": 733,
+    "sha256": "3f647346deb1cf57722de23a9e630b4c22f0b7d73ee16f734220fa773a405b29"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101009-axe\\process.log",
+    "bytes": 58,
+    "sha256": "5c9a7f1eefd78b6960c3e589e72859faa5ec6e2d5240a439927ea3c6cf8ca641"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101009-stinger\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101009-stinger\\artifacts\\heartbeat.json",
+    "bytes": 118,
+    "sha256": "8a9876441b0489c1556a94d59042182ad8ed8c7b2e23f804cecc65c4473d8592"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101009-stinger\\artifacts\\index.json",
+    "bytes": 110293,
+    "sha256": "921a3edcbac8723e04b439f5fa46d18f9d932022ad1db19c8a34855b33f96780"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101009-stinger\\artifacts\\manifest.json",
+    "bytes": 3060,
+    "sha256": "b32f7003556c530bd1ffa2b944542d7fb7783bf4f13ea5016fa3d2c7ab5b87d7"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101009-stinger\\artifacts\\t2sd-slinger-light-swamp-s101009-stinger-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101009-stinger\\artifacts\\t2sd-slinger-light-swamp-s101009-stinger-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101009-stinger\\artifacts\\t2sd-slinger-light-swamp-s101009-stinger-s101009\\endpoints.json",
+    "bytes": 5050,
+    "sha256": "39c513a0465421ea41ed341ab47d158deb82914046cec4830928828b246d6f16"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101009-stinger\\artifacts\\t2sd-slinger-light-swamp-s101009-stinger-s101009\\events.jsonl",
+    "bytes": 1561935,
+    "sha256": "92e82a49dda2485f89845f895c0c7b5741c6396e8ce1af2a3d438b42027e91b8"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101009-stinger\\artifacts\\t2sd-slinger-light-swamp-s101009-stinger-s101009\\guard-events.jsonl",
+    "bytes": 6545510,
+    "sha256": "dc5b5301689d5f2ea6eede89a16cffb43095730854719808f4b8b4f0f2ac3258"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101009-stinger\\artifacts\\t2sd-slinger-light-swamp-s101009-stinger-s101009\\ready.json",
+    "bytes": 22443,
+    "sha256": "afbda3d6c510ed2938a548a719fd239dabb235ca20a61dc7b7c0d9278c83962d"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101009-stinger\\artifacts\\t2sd-slinger-light-swamp-s101009-stinger-s101009\\samples.jsonl",
+    "bytes": 3278827,
+    "sha256": "0e580dee300d71d3b026a2685011ac28d62e849a381b7c5145eb539d6cd9ecaa"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101009-stinger\\artifacts\\t2sd-slinger-light-swamp-s101009-stinger-s101009\\summary.json",
+    "bytes": 101631,
+    "sha256": "4000e13a0a37e5da3997eef6043e8667516d4ff09ca34570cd5b9eb0144b7c73"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101009-stinger\\artifacts\\t2sd-slinger-light-swamp-s101009-stinger-s101009\\sustain-transitions.jsonl",
+    "bytes": 425041,
+    "sha256": "7c7bc1f3b781acbaa947a6e80fd7306d70f1c87fe51134afa25f7f03c26823ac"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101009-stinger\\process.json",
+    "bytes": 731,
+    "sha256": "70b1d457e224a8659f9e1ed3598a10cc52036a361e30c531319a26be90807803"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101009-stinger\\process.log",
+    "bytes": 57,
+    "sha256": "04c57efd27b9bb0926a84c707104f8810dac6c0400a6be7dca5a749dbaffc22e"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101009-axe\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101009-axe\\artifacts\\heartbeat.json",
+    "bytes": 114,
+    "sha256": "bc403c760a90111e4665877bf3469a380f84e363f479157c0198602c4e05fe0f"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101009-axe\\artifacts\\index.json",
+    "bytes": 83446,
+    "sha256": "8fd17341ac0c4366c4e2f42fa27c113b566f21f9e02031d5b71318a93a60914b"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101009-axe\\artifacts\\manifest.json",
+    "bytes": 3034,
+    "sha256": "2a2983a23fe10474fbcfb53268b3888b103c3f36b937710572334dc104a033fd"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101009-axe\\artifacts\\t2sd-slinger-light-swamp-s101009-axe-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101009-axe\\artifacts\\t2sd-slinger-light-swamp-s101009-axe-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101009-axe\\artifacts\\t2sd-slinger-light-swamp-s101009-axe-s101009\\endpoints.json",
+    "bytes": 5183,
+    "sha256": "9a204f8dd1dedd212484a0becd9311cd9d7ea7424956387adaf9204eb57cf570"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101009-axe\\artifacts\\t2sd-slinger-light-swamp-s101009-axe-s101009\\events.jsonl",
+    "bytes": 1662316,
+    "sha256": "c72d08ffea4ade317fddcfa8ae5fb2c25c358f747bc3057ade1526c5f0dddae3"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101009-axe\\artifacts\\t2sd-slinger-light-swamp-s101009-axe-s101009\\guard-events.jsonl",
+    "bytes": 6535758,
+    "sha256": "d660278e2fce18b8b75ebc8e17f34a638687470697a17dc0a02cfd39616398bc"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101009-axe\\artifacts\\t2sd-slinger-light-swamp-s101009-axe-s101009\\ready.json",
+    "bytes": 22429,
+    "sha256": "1b91ce721ae2088ea4c400d9535d8c9479d0bf09fad2570fac4b484665e869f0"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101009-axe\\artifacts\\t2sd-slinger-light-swamp-s101009-axe-s101009\\samples.jsonl",
+    "bytes": 3275297,
+    "sha256": "b1c9a894d3225469fe4513eaa856aa03066d5929e3fcf76ab508f06d83152dd7"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101009-axe\\artifacts\\t2sd-slinger-light-swamp-s101009-axe-s101009\\summary.json",
+    "bytes": 77074,
+    "sha256": "95597cada769d5d72a29cf086e87c0bf9bf57d8e056a523067bbddd4620ac4a5"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101009-axe\\artifacts\\t2sd-slinger-light-swamp-s101009-axe-s101009\\sustain-transitions.jsonl",
+    "bytes": 377188,
+    "sha256": "7989e5c7164fac68d6fe06f1b9b2a8d9570ede02e2f465364bc42c7c67cb8fef"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101009-axe\\process.json",
+    "bytes": 723,
+    "sha256": "a148f69f4f242788bd9181f3d10cba53fbb58d84dd019f98299a00c2e4fd3cb8"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101009-axe\\process.log",
+    "bytes": 53,
+    "sha256": "a98acf19412e04d4882afdc241218098042ebf44cc6ce27a8416d0fd6f28e04a"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101009-stinger\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101009-stinger\\artifacts\\heartbeat.json",
+    "bytes": 121,
+    "sha256": "b3c099ea338c9082c3809e7f3335625c752ec2e5abf113b902759f38892646bf"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101009-stinger\\artifacts\\index.json",
+    "bytes": 49699,
+    "sha256": "f282e2798e25bb9e38f8a1e629b248234e99ba196e68a870351f824b0d00b8df"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101009-stinger\\artifacts\\manifest.json",
+    "bytes": 3092,
+    "sha256": "5d360b5edfce185840332cc7b450685a5f4d8c66b011d578e62952baaae79a31"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101009-stinger\\artifacts\\t2sd-slinger-light-mountain-s101009-stinger-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101009-stinger\\artifacts\\t2sd-slinger-light-mountain-s101009-stinger-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101009-stinger\\artifacts\\t2sd-slinger-light-mountain-s101009-stinger-s101009\\endpoints.json",
+    "bytes": 4861,
+    "sha256": "21bf7d31580f4fe9cb7dda87afd6ac2ba78d389caa7ab9c2da22e25bcd116ede"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101009-stinger\\artifacts\\t2sd-slinger-light-mountain-s101009-stinger-s101009\\events.jsonl",
+    "bytes": 1032268,
+    "sha256": "97f7fc50c6533516844e96bd381fc1c0a4b882740b5ef80b93900183b3bda1d4"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101009-stinger\\artifacts\\t2sd-slinger-light-mountain-s101009-stinger-s101009\\guard-events.jsonl",
+    "bytes": 5180935,
+    "sha256": "faad3664e08a343dfe4723e06b4b22d0fcaa02f946ae9ea3ada2d3674e21fd1b"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101009-stinger\\artifacts\\t2sd-slinger-light-mountain-s101009-stinger-s101009\\ready.json",
+    "bytes": 22526,
+    "sha256": "2d97677491fd345e6c814f92dd94c8141ae50028f7ecbe07a42e73099e7e8f03"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101009-stinger\\artifacts\\t2sd-slinger-light-mountain-s101009-stinger-s101009\\samples.jsonl",
+    "bytes": 3320801,
+    "sha256": "b7c6645d09886daa15da50e183e931786748bc61e83903f3a4b233c31e9cb5d0"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101009-stinger\\artifacts\\t2sd-slinger-light-mountain-s101009-stinger-s101009\\summary.json",
+    "bytes": 45963,
+    "sha256": "3ec132706ca67456b18589c530eb5a9ebf4720110944aed7ff0386619a8a7752"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101009-stinger\\artifacts\\t2sd-slinger-light-mountain-s101009-stinger-s101009\\sustain-transitions.jsonl",
+    "bytes": 203800,
+    "sha256": "93f58718fb8aa5f52b27557189459a836d6758aa80cf5a6f154a85955b912da9"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101009-stinger\\process.json",
+    "bytes": 737,
+    "sha256": "cdac8491a71191c1848f984bdaa120bec94d43206d900183cc72aa782e7d8bc7"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101009-stinger\\process.log",
+    "bytes": 60,
+    "sha256": "be6ef04da3395dea603953f7cd6e60754f97757276b9d2f39af9f8d55fc8c75a"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101009-axe\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101009-axe\\artifacts\\heartbeat.json",
+    "bytes": 117,
+    "sha256": "ef93c5abbcbeeb5df218d457b0cfcedce8607aa37da54f138df53f42fdb60c2e"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101009-axe\\artifacts\\index.json",
+    "bytes": 52572,
+    "sha256": "a35abddfa65ba5f5b23b0cc44ec1dd149834e5ef68bd57fe55d968d19028cdce"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101009-axe\\artifacts\\manifest.json",
+    "bytes": 3066,
+    "sha256": "6f565a9b155831f4f411f15f82099eb4ef6a661d0d04132454f46f8b60e36c27"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101009-axe\\artifacts\\t2sd-slinger-light-mountain-s101009-axe-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101009-axe\\artifacts\\t2sd-slinger-light-mountain-s101009-axe-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101009-axe\\artifacts\\t2sd-slinger-light-mountain-s101009-axe-s101009\\endpoints.json",
+    "bytes": 5049,
+    "sha256": "f6e5ca0666125edac37843cc86b2834321db1dc2e52bd52aa4562ad19c97993b"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101009-axe\\artifacts\\t2sd-slinger-light-mountain-s101009-axe-s101009\\events.jsonl",
+    "bytes": 1024754,
+    "sha256": "bf0b12d3b26f2f770c127427d260d1c535e7af9fc6b2cdda4f058fdb1a8c8d72"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101009-axe\\artifacts\\t2sd-slinger-light-mountain-s101009-axe-s101009\\guard-events.jsonl",
+    "bytes": 5173094,
+    "sha256": "1be4cd3be101136cf07313dab1eece06bdee48a99cbb5ddb60cbe6b3e833a7d1"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101009-axe\\artifacts\\t2sd-slinger-light-mountain-s101009-axe-s101009\\ready.json",
+    "bytes": 22512,
+    "sha256": "70285eb4f0f2e297c6c90660938866fac08d5c09a6ed2fcb3565793dda5e2ded"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101009-axe\\artifacts\\t2sd-slinger-light-mountain-s101009-axe-s101009\\samples.jsonl",
+    "bytes": 3312602,
+    "sha256": "0a2563cf6c882cb0bd6760aab91aa647476781825bcd5bccb910661e354f61a8"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101009-axe\\artifacts\\t2sd-slinger-light-mountain-s101009-axe-s101009\\summary.json",
+    "bytes": 48550,
+    "sha256": "9459ddd5c7b7469828f9c1486fa9cb3c7e9b5e7347b685209b84f68e23839024"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101009-axe\\artifacts\\t2sd-slinger-light-mountain-s101009-axe-s101009\\sustain-transitions.jsonl",
+    "bytes": 189872,
+    "sha256": "9d99e3a25816c36d42e635df77dd2518c95797e8b16d738a1e45ea55aaaf35c9"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101009-axe\\process.json",
+    "bytes": 729,
+    "sha256": "a32e0c379ab18ef81399aa1e33deab347294f348be229fc64a1fd77b55ba653a"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101009-axe\\process.log",
+    "bytes": 56,
+    "sha256": "b5916f575db192c850c9ee571bc71b5f56ddda4543e854618beb2afdc5c8016e"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101009-native\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101009-native\\artifacts\\heartbeat.json",
+    "bytes": 115,
+    "sha256": "ae7ab24d6c5c2cb4b2d6dde24b9bcd9da7cc36646ccf8966367ef69498025832"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101009-native\\artifacts\\index.json",
+    "bytes": 19567,
+    "sha256": "3f1b059ca30cf91725e8c0225536dd1a57d2ccd2e7d5ed93f7d999461405f099"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101009-native\\artifacts\\manifest.json",
+    "bytes": 3052,
+    "sha256": "328d047728384f0ada25619583b77510dc7259bb5ea8f37f025c1b35d368dc29"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101009-native\\artifacts\\t2sd-striker-light-desert-s101009-native-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101009-native\\artifacts\\t2sd-striker-light-desert-s101009-native-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101009-native\\artifacts\\t2sd-striker-light-desert-s101009-native-s101009\\events.jsonl",
+    "bytes": 58473,
+    "sha256": "02f9d57223004f8920af4f44066e99108a43ef0d8687e0d5817b49c91072ba5c"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101009-native\\artifacts\\t2sd-striker-light-desert-s101009-native-s101009\\guard-events.jsonl",
+    "bytes": 221714,
+    "sha256": "85f976ee220e6b28e757210b5ebe70ed653ae4c5a78e00b27dd6a711c862ce96"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101009-native\\artifacts\\t2sd-striker-light-desert-s101009-native-s101009\\ready.json",
+    "bytes": 19718,
+    "sha256": "990386fb9bdd769a95c2560596acbc3c90aea474dc99f4a732ca27fb08923b0a"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101009-native\\artifacts\\t2sd-striker-light-desert-s101009-native-s101009\\samples.jsonl",
+    "bytes": 75452,
+    "sha256": "c5547b1b10b8927f0b22621fc4efeca44e170ddd4857a46a2b1256be26f5a86a"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101009-native\\artifacts\\t2sd-striker-light-desert-s101009-native-s101009\\strategy-events.jsonl",
+    "bytes": 1864346,
+    "sha256": "162e65a786e0b485156fd3e6d6f5900d020c942b1f9a5dd9b1e193145fcea57e"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101009-native\\artifacts\\t2sd-striker-light-desert-s101009-native-s101009\\summary.json",
+    "bytes": 18177,
+    "sha256": "47de7e6a5c5a62cb59a0790c9e27d00f0124512efa71a9ba2ec21ab61fe41ba8"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101009-native\\artifacts\\t2sd-striker-light-desert-s101009-native-s101009\\sustain-transitions.jsonl",
+    "bytes": 2293,
+    "sha256": "e12124b3b1bacd549ea2abf13903630976ed67ae09e74a6e35a40605441e83e2"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101009-native\\process.json",
+    "bytes": 731,
+    "sha256": "85ce752e3623114143ed4058eccba6b60436a18a908aea3b4a64c10bd7ab6a48"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101009-native\\process.log",
+    "bytes": 57,
+    "sha256": "960bdc116e5fe56c554d5bf5ecf4ecddab0ff99314a2f44229da4c8b9f800a44"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101009-opening-lowhp\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101009-opening-lowhp\\artifacts\\heartbeat.json",
+    "bytes": 125,
+    "sha256": "c77559ee4d97d188e4eb6e0d710ddda53aab7fbabc616c23377349c0e8f9f51c"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101009-opening-lowhp\\artifacts\\index.json",
+    "bytes": 63992,
+    "sha256": "150d87374e939f3c23f26ff64a75a25276b85b0cfdec85152ff556c60c79b890"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101009-opening-lowhp\\artifacts\\manifest.json",
+    "bytes": 3178,
+    "sha256": "010ba4d9417f539c38703cc1bd1eb345943f38f65717ef0cf8eacdb9668b2e8e"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101009-opening-lowhp\\artifacts\\t2sd-striker-light-desert-s101009-opening-lowhp-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101009-opening-lowhp\\artifacts\\t2sd-striker-light-desert-s101009-opening-lowhp-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101009-opening-lowhp\\artifacts\\t2sd-striker-light-desert-s101009-opening-lowhp-s101009\\endpoints.json",
+    "bytes": 5224,
+    "sha256": "01904367e88303b97964f225b90899947dfff30e2f15d57a896cf30afbb62644"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101009-opening-lowhp\\artifacts\\t2sd-striker-light-desert-s101009-opening-lowhp-s101009\\events.jsonl",
+    "bytes": 2039921,
+    "sha256": "5b56c56da230be155362c83e87b261eca114ab91ebd7e0ce45e34d4531792fbb"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101009-opening-lowhp\\artifacts\\t2sd-striker-light-desert-s101009-opening-lowhp-s101009\\guard-events.jsonl",
+    "bytes": 8233394,
+    "sha256": "5fb45d08f19e0414ee2bc730070d656baa75e78cb35729bb62971754a3c17e5a"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101009-opening-lowhp\\artifacts\\t2sd-striker-light-desert-s101009-opening-lowhp-s101009\\ready.json",
+    "bytes": 21525,
+    "sha256": "49014aa1e365f3789b752623e73f2e9d3b15e7e957dce9d851fd212a66f05b75"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101009-opening-lowhp\\artifacts\\t2sd-striker-light-desert-s101009-opening-lowhp-s101009\\samples.jsonl",
+    "bytes": 2593540,
+    "sha256": "a6993f2801b70286446fdf8ad98aa84632bc21e52b4ada4b4be8f42817298a7c"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101009-opening-lowhp\\artifacts\\t2sd-striker-light-desert-s101009-opening-lowhp-s101009\\strategy-events.jsonl",
+    "bytes": 61081273,
+    "sha256": "75927b133911933c632656bd3a85867d6d321f66c857d08cfdb898c4ddb2a8c0"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101009-opening-lowhp\\artifacts\\t2sd-striker-light-desert-s101009-opening-lowhp-s101009\\summary.json",
+    "bytes": 59512,
+    "sha256": "3aa4e293421c0a892212e5b31f285336e015cad3476ddb2ed07d07239794d2b0"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101009-opening-lowhp\\artifacts\\t2sd-striker-light-desert-s101009-opening-lowhp-s101009\\sustain-transitions.jsonl",
+    "bytes": 86052,
+    "sha256": "2d4dbb07cd0331953867920d1fa0ec809cab8e4e34349b64cea865d54c52eded"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101009-opening-lowhp\\process.json",
+    "bytes": 745,
+    "sha256": "2b2fd0b02576ec09680ce271c73970a16b3994e6e41def5de5266d02cfce734b"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101009-opening-lowhp\\process.log",
+    "bytes": 64,
+    "sha256": "8c3523958725875f3c662961222616ba217c76afbe21039a95ea7f8a3b261ad0"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101009-native\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101009-native\\artifacts\\heartbeat.json",
+    "bytes": 118,
+    "sha256": "de04e078cf43db8099d0797638210965d9e84b80480ac19d031f6b063bfe2cf3"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101009-native\\artifacts\\index.json",
+    "bytes": 19532,
+    "sha256": "0f562b24f2a050d6b59612841407206fca9f02a66ca30d153614a5dace59b5bb"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101009-native\\artifacts\\manifest.json",
+    "bytes": 3066,
+    "sha256": "e6b4fd6cf5941162fb5a8ebfb62228f522b18fcc2175f3df14aff2cd7fb56104"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101009-native\\artifacts\\t2sd-striker-balanced-desert-s101009-native-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101009-native\\artifacts\\t2sd-striker-balanced-desert-s101009-native-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101009-native\\artifacts\\t2sd-striker-balanced-desert-s101009-native-s101009\\events.jsonl",
+    "bytes": 65761,
+    "sha256": "d3c2c4efd2e9f22cf5ed55ae074d3769c2f8cf7dcd56848027b5f9e74762a6d3"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101009-native\\artifacts\\t2sd-striker-balanced-desert-s101009-native-s101009\\guard-events.jsonl",
+    "bytes": 237770,
+    "sha256": "3772d81221e54f01112d59672c065bd8392015926f0881d5d713b0004d4e1a3e"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101009-native\\artifacts\\t2sd-striker-balanced-desert-s101009-native-s101009\\ready.json",
+    "bytes": 19732,
+    "sha256": "5baf7788b45cf87f50555f697dcbb39737acd4d273035e53073e3704888ae0a5"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101009-native\\artifacts\\t2sd-striker-balanced-desert-s101009-native-s101009\\samples.jsonl",
+    "bytes": 83969,
+    "sha256": "b42ea6fc4323654fc14ea0b8577eb4b584c4266d3b66e8235e8bab1e9447fa29"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101009-native\\artifacts\\t2sd-striker-balanced-desert-s101009-native-s101009\\strategy-events.jsonl",
+    "bytes": 2042634,
+    "sha256": "64e6ac805a937e401509771f7747146f9ef088ebee498d8462ab91f4c57dca3d"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101009-native\\artifacts\\t2sd-striker-balanced-desert-s101009-native-s101009\\summary.json",
+    "bytes": 18144,
+    "sha256": "055d19621987e3d540d3b81b8dbc0d8509808d4470da1e300954ddc5eec982f1"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101009-native\\artifacts\\t2sd-striker-balanced-desert-s101009-native-s101009\\sustain-transitions.jsonl",
+    "bytes": 2293,
+    "sha256": "09fe6f5f019ad86c9f8ffd7abec78ba677dfd7a8b451774a881306b8dc787f9c"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101009-native\\process.json",
+    "bytes": 737,
+    "sha256": "3f2261586c1934357df4639ef877cbc3731636cd39d04bf4605493edb7e0de8b"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101009-native\\process.log",
+    "bytes": 60,
+    "sha256": "cc0013008e1de076acb47d072a49b77f047835093f4d19c6a627a795e1327eed"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101009-opening-lowhp\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101009-opening-lowhp\\artifacts\\heartbeat.json",
+    "bytes": 125,
+    "sha256": "77106d84fe7bc4a8349612be5e6e170bfb79b8c0629a40db8615db72ab47ddbe"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101009-opening-lowhp\\artifacts\\index.json",
+    "bytes": 28407,
+    "sha256": "394e61515b41dd630c8c105ed9f33c508ceaee8fa4807ea9ebe85ef1b19592ad"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101009-opening-lowhp\\artifacts\\manifest.json",
+    "bytes": 3192,
+    "sha256": "14d5e109f11ddccb5ed2e01464a0c27d258c568c6fb689e29fc38c3a936867a5"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101009-opening-lowhp\\artifacts\\t2sd-striker-balanced-desert-s101009-opening-lowhp-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101009-opening-lowhp\\artifacts\\t2sd-striker-balanced-desert-s101009-opening-lowhp-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101009-opening-lowhp\\artifacts\\t2sd-striker-balanced-desert-s101009-opening-lowhp-s101009\\events.jsonl",
+    "bytes": 405249,
+    "sha256": "d8850e57147355a63304ede835e82f76cb9d94b42ea46e08a24f90b6c1249dc5"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101009-opening-lowhp\\artifacts\\t2sd-striker-balanced-desert-s101009-opening-lowhp-s101009\\guard-events.jsonl",
+    "bytes": 1630296,
+    "sha256": "6467d598d8076a21f228a352cc3ebd24a64adaecf1a82b01cf5370d8c195361e"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101009-opening-lowhp\\artifacts\\t2sd-striker-balanced-desert-s101009-opening-lowhp-s101009\\ready.json",
+    "bytes": 21539,
+    "sha256": "f1c8cb5b57efab1ec701c00e4caa391695b62abde329fbad3518b24038ba195c"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101009-opening-lowhp\\artifacts\\t2sd-striker-balanced-desert-s101009-opening-lowhp-s101009\\samples.jsonl",
+    "bytes": 522755,
+    "sha256": "fdc05b430f12f0215fc8768523da97eceea2bb4e4758f73e1c5d63a2c36768fc"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101009-opening-lowhp\\artifacts\\t2sd-striker-balanced-desert-s101009-opening-lowhp-s101009\\strategy-events.jsonl",
+    "bytes": 12279238,
+    "sha256": "5630e6976a06654a5bdf4e584b6fe370c3e8d31e63a35278e1f1b08aad5f5324"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101009-opening-lowhp\\artifacts\\t2sd-striker-balanced-desert-s101009-opening-lowhp-s101009\\summary.json",
+    "bytes": 26369,
+    "sha256": "1e89d32909c8eba741c3f14a9f03fe490a90c72bcb18142fc01b223a8e0320de"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101009-opening-lowhp\\artifacts\\t2sd-striker-balanced-desert-s101009-opening-lowhp-s101009\\sustain-transitions.jsonl",
+    "bytes": 17544,
+    "sha256": "a3f230a79a000246e374ca3bf4235fef207f804b61a513df356e25ceca783771"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101009-opening-lowhp\\process.json",
+    "bytes": 751,
+    "sha256": "b5cf306a0a722c96ce3e412a2cb405fbf7c1e3ed899f1f423e53679ac62e2c3c"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101009-opening-lowhp\\process.log",
+    "bytes": 67,
+    "sha256": "01e4dedb8921e95eeba3da32eaad8d6712573dc4d2938b19ec1c69e9d1b0c3a9"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101021-axe\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101021-axe\\artifacts\\heartbeat.json",
+    "bytes": 113,
+    "sha256": "f31aa450c4b3b5b9c3709d3eca6e3d1a8e76df7c4a4ac23793cbf0465b232a67"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101021-axe\\artifacts\\index.json",
+    "bytes": 109231,
+    "sha256": "f8bd5ff18855c319231df34d582e1cdcf49672b4e038e734e8743da75944553b"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101021-axe\\artifacts\\manifest.json",
+    "bytes": 3072,
+    "sha256": "a8ed2323fc2628dcdb03f927608b72f61857e2284246227810363e84ab75e48f"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101021-axe\\artifacts\\t2sd-spirit-light-swamp-s101021-axe-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101021-axe\\artifacts\\t2sd-spirit-light-swamp-s101021-axe-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101021-axe\\artifacts\\t2sd-spirit-light-swamp-s101021-axe-s101021\\endpoints.json",
+    "bytes": 5006,
+    "sha256": "629c929ed26f88f1b4e1e4149855b45c2520f697fcce642c5fd610c0cbd6a981"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101021-axe\\artifacts\\t2sd-spirit-light-swamp-s101021-axe-s101021\\events.jsonl",
+    "bytes": 1127768,
+    "sha256": "ccaf265066430267cc4cc623707f35ebf98091740f33fda4df23cf812e6cbd2a"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101021-axe\\artifacts\\t2sd-spirit-light-swamp-s101021-axe-s101021\\guard-events.jsonl",
+    "bytes": 5978852,
+    "sha256": "217c2bcd93f618377106656fcfae4baa10679c9ab4bb039149a3c21306ffbcae"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101021-axe\\artifacts\\t2sd-spirit-light-swamp-s101021-axe-s101021\\ready.json",
+    "bytes": 22229,
+    "sha256": "a5daf612adeff9811fc027f8254bf87bb22891e753162282f973e0905995b4a2"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101021-axe\\artifacts\\t2sd-spirit-light-swamp-s101021-axe-s101021\\samples.jsonl",
+    "bytes": 3275998,
+    "sha256": "6a9d9ab3cb64373fbd5898dc4966632a84b4fcb28dbd03b9e3ab38e90f0b7752"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101021-axe\\artifacts\\t2sd-spirit-light-swamp-s101021-axe-s101021\\summary.json",
+    "bytes": 100673,
+    "sha256": "7b7845c5d3011d66d299dd62522db4f49e976700b52ca93735c267a0016587a3"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101021-axe\\artifacts\\t2sd-spirit-light-swamp-s101021-axe-s101021\\sustain-transitions.jsonl",
+    "bytes": 406787,
+    "sha256": "1f83909a9e9fb631dea7036c0f3ed7fd9d99ad230c82b7e4b3ad6ff0c95bf505"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101021-axe\\process.json",
+    "bytes": 721,
+    "sha256": "fdd246305d62924f0f60e19e4554aa518e362879b0df7af27664e57c351cf035"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101021-axe\\process.log",
+    "bytes": 52,
+    "sha256": "bb041613125a073c34866cd6545c2cb531e2774723c47815f84d07d2334fa70a"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101021-stinger\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101021-stinger\\artifacts\\heartbeat.json",
+    "bytes": 117,
+    "sha256": "98139beb6f19a22bd8feb54928520cf982becec79a509bbbdfda83a524c1ec4f"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101021-stinger\\artifacts\\index.json",
+    "bytes": 131016,
+    "sha256": "af602342018b756b74210384c8aa10b82d083caa764146e25d8714ed299508f7"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101021-stinger\\artifacts\\manifest.json",
+    "bytes": 3098,
+    "sha256": "3ced9a725e7739122667514304350aec5b68d94c3fe78d1647d82204620c3cde"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101021-stinger\\artifacts\\t2sd-spirit-light-swamp-s101021-stinger-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101021-stinger\\artifacts\\t2sd-spirit-light-swamp-s101021-stinger-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101021-stinger\\artifacts\\t2sd-spirit-light-swamp-s101021-stinger-s101021\\endpoints.json",
+    "bytes": 5148,
+    "sha256": "2134b809911435d11bae0f1d0d543cb27c1fe37ba203cf2970889d1118ca35ff"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101021-stinger\\artifacts\\t2sd-spirit-light-swamp-s101021-stinger-s101021\\events.jsonl",
+    "bytes": 1162989,
+    "sha256": "a8180b01cd6effb9921789a42ff7cfc46e8ba58078d0ed6250cc187e8e864099"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101021-stinger\\artifacts\\t2sd-spirit-light-swamp-s101021-stinger-s101021\\guard-events.jsonl",
+    "bytes": 5779592,
+    "sha256": "dde71a9e5064a38a71edaf18a205c593a67043609dbb3470a66b38d7ed64340a"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101021-stinger\\artifacts\\t2sd-spirit-light-swamp-s101021-stinger-s101021\\ready.json",
+    "bytes": 22243,
+    "sha256": "874a9b704feb62eec70a1e98c4d04df94bc91120712148cf9602ccbd3da60fbd"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101021-stinger\\artifacts\\t2sd-spirit-light-swamp-s101021-stinger-s101021\\samples.jsonl",
+    "bytes": 3275018,
+    "sha256": "10c70bd61c839555b5ab72b8a597aa38e65cc51028c9929b6984079a971ec325"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101021-stinger\\artifacts\\t2sd-spirit-light-swamp-s101021-stinger-s101021\\summary.json",
+    "bytes": 120716,
+    "sha256": "17c81c1ba2ca91eee5567fa31dbc825489bdd34c5aad39651fed1663e9c3c035"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101021-stinger\\artifacts\\t2sd-spirit-light-swamp-s101021-stinger-s101021\\sustain-transitions.jsonl",
+    "bytes": 500003,
+    "sha256": "1a11a1594339ccb45c46d2292b0f9c84748bbba83c4f3643d90a28404ea8638f"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101021-stinger\\process.json",
+    "bytes": 729,
+    "sha256": "343586552c7683076d12237b4c2a22bf066c72d34c0a666cdf1de340f7cfcc8c"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-swamp-s101021-stinger\\process.log",
+    "bytes": 56,
+    "sha256": "5b5f1d1451f4aa33668a2ac42bff4ab72a4c30dcb35b6a7cbe054622527118b9"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101021-axe\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101021-axe\\artifacts\\heartbeat.json",
+    "bytes": 116,
+    "sha256": "d7e6b2d0001c3ef2422802572d1f3e093ead8aa4e6568a6d6cc6e0c119e9fa6a"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101021-axe\\artifacts\\index.json",
+    "bytes": 58491,
+    "sha256": "477295b967159ed2b47f18322a331608c9edbfad77a67ba3f070f3e0fa1b5e87"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101021-axe\\artifacts\\manifest.json",
+    "bytes": 3104,
+    "sha256": "a9a8d66491bb51053a6ab853f10ee487a0d96aef2a8b47080d176a1cb831bfb7"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101021-axe\\artifacts\\t2sd-spirit-light-mountain-s101021-axe-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101021-axe\\artifacts\\t2sd-spirit-light-mountain-s101021-axe-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101021-axe\\artifacts\\t2sd-spirit-light-mountain-s101021-axe-s101021\\endpoints.json",
+    "bytes": 5006,
+    "sha256": "cf4e4a6f868358a25a4d7d48bcf05fcdcb9e99b1a91489d357ae03fd76ad0c4d"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101021-axe\\artifacts\\t2sd-spirit-light-mountain-s101021-axe-s101021\\events.jsonl",
+    "bytes": 693320,
+    "sha256": "04127c216a5db2489f584d9c3f166ef5bd55d8490f1bd7deb8611fc5e02c3b6f"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101021-axe\\artifacts\\t2sd-spirit-light-mountain-s101021-axe-s101021\\guard-events.jsonl",
+    "bytes": 4719590,
+    "sha256": "18ca503206eb98723d5101634c03520aee587357ffaa4e24726d1343631fe4b4"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101021-axe\\artifacts\\t2sd-spirit-light-mountain-s101021-axe-s101021\\ready.json",
+    "bytes": 22136,
+    "sha256": "b5391142f12662a152a0f9a040294c3738220c79680d7a13271a6bec86d00a57"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101021-axe\\artifacts\\t2sd-spirit-light-mountain-s101021-axe-s101021\\samples.jsonl",
+    "bytes": 3359275,
+    "sha256": "c55a47fcb26995604ddd8b34f4c2dffd1637dfc5943d1b9c50042cc4387a27c6"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101021-axe\\artifacts\\t2sd-spirit-light-mountain-s101021-axe-s101021\\summary.json",
+    "bytes": 54105,
+    "sha256": "3ebe77a1476ba71aae17e970703b5ebdec48bcaee0a5d25198b0a45faafd3439"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101021-axe\\artifacts\\t2sd-spirit-light-mountain-s101021-axe-s101021\\sustain-transitions.jsonl",
+    "bytes": 211617,
+    "sha256": "911b21ce3f326332ac36cf806129b2187371edc05c24ca71c86b79f5a69a2427"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101021-axe\\process.json",
+    "bytes": 727,
+    "sha256": "f055c6ccc47b5780c4684fe8a36e0951e0c1ff5e202ca605ba9ae2458cc1e456"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101021-axe\\process.log",
+    "bytes": 55,
+    "sha256": "c1527f8c10e8c90f0e246523d8635965c111b8a1cbabdbd92f2ec8cf91193617"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101021-stinger\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101021-stinger\\artifacts\\heartbeat.json",
+    "bytes": 120,
+    "sha256": "1072b1c91c892d1e8976fffaa91ba57b34c62fb32a0ed93b05afd1f19e6034df"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101021-stinger\\artifacts\\index.json",
+    "bytes": 67179,
+    "sha256": "5a7b7fe17671f55aa6dea328e518512a52a98049a80ddd7e4012705cbc1ce9de"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101021-stinger\\artifacts\\manifest.json",
+    "bytes": 3130,
+    "sha256": "db82dbf2d9ae7f5bfac606ae31a41569ff27f82175bc7521b582d960198f85a3"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101021-stinger\\artifacts\\t2sd-spirit-light-mountain-s101021-stinger-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101021-stinger\\artifacts\\t2sd-spirit-light-mountain-s101021-stinger-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101021-stinger\\artifacts\\t2sd-spirit-light-mountain-s101021-stinger-s101021\\endpoints.json",
+    "bytes": 4787,
+    "sha256": "c14b7f161a0ea9e5baf49e3bc1444188b356f036b45d2977e25daf1184af40a2"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101021-stinger\\artifacts\\t2sd-spirit-light-mountain-s101021-stinger-s101021\\events.jsonl",
+    "bytes": 740619,
+    "sha256": "f740d3b098ab645676e1874e131b19c62e09b609d8dba8ddf1874287b7b1506d"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101021-stinger\\artifacts\\t2sd-spirit-light-mountain-s101021-stinger-s101021\\guard-events.jsonl",
+    "bytes": 4709811,
+    "sha256": "cb4d2ec9223f56dd7ca9331ff4179abf1ffa93d6f8eb3a3404093c6cb34fda7c"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101021-stinger\\artifacts\\t2sd-spirit-light-mountain-s101021-stinger-s101021\\ready.json",
+    "bytes": 22150,
+    "sha256": "fd8f24fec4cc17af437b4513d548f035381c67f5e70a4b8ff2de18968289e9f9"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101021-stinger\\artifacts\\t2sd-spirit-light-mountain-s101021-stinger-s101021\\samples.jsonl",
+    "bytes": 3388899,
+    "sha256": "cf33049e259ec3cb7334d31a0f8761514b275cde77f6dba511988e6e1ab431e0"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101021-stinger\\artifacts\\t2sd-spirit-light-mountain-s101021-stinger-s101021\\summary.json",
+    "bytes": 62001,
+    "sha256": "15fb1759a5395bcf3ae9c65687998d03eb5b32121aef95d57c46cd9fedeaf8f9"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101021-stinger\\artifacts\\t2sd-spirit-light-mountain-s101021-stinger-s101021\\sustain-transitions.jsonl",
+    "bytes": 177825,
+    "sha256": "c01e2302d71bee2e9ca74809ba3fbdd2519a0a734681e0ccba72946b7526c797"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101021-stinger\\process.json",
+    "bytes": 734,
+    "sha256": "4f17309dbad59d9467cdcf3b3057184f482a324a4d943ca10088c7d7c56a1430"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-light-mountain-s101021-stinger\\process.log",
+    "bytes": 59,
+    "sha256": "dd7ea46b6378fbae9df5d88c170c50277dbfa80cb5220a9226dce39b26abbf00"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101021-axe\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101021-axe\\artifacts\\heartbeat.json",
+    "bytes": 116,
+    "sha256": "cd66eeedb458918f7293ace0d32ced2f333c8f22020709ef9752b5c9ddade87c"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101021-axe\\artifacts\\index.json",
+    "bytes": 115837,
+    "sha256": "e39061921bc659180539182d506082cca81b0a7717ffb1c8031a70629d2f2b6f"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101021-axe\\artifacts\\manifest.json",
+    "bytes": 3068,
+    "sha256": "8d4354380200e2544761deb94e98a618027a3c44a96740114e48d3a43e41ed1e"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101021-axe\\artifacts\\t2sd-spirit-balanced-swamp-s101021-axe-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101021-axe\\artifacts\\t2sd-spirit-balanced-swamp-s101021-axe-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101021-axe\\artifacts\\t2sd-spirit-balanced-swamp-s101021-axe-s101021\\endpoints.json",
+    "bytes": 5158,
+    "sha256": "476dc12398631818d69a5a8615724f3d67c141c843aa4431c078ed08f9b1ab9c"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101021-axe\\artifacts\\t2sd-spirit-balanced-swamp-s101021-axe-s101021\\events.jsonl",
+    "bytes": 1159091,
+    "sha256": "d6ddcfa3d96f6ed64855ea88f101d2f5afd96838f31502c1eb77ae020de60b6a"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101021-axe\\artifacts\\t2sd-spirit-balanced-swamp-s101021-axe-s101021\\guard-events.jsonl",
+    "bytes": 5874437,
+    "sha256": "480484018a0b5a22495fb83d3dc1e8eb577154268948242eaf0e5d2751ab9713"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101021-axe\\artifacts\\t2sd-spirit-balanced-swamp-s101021-axe-s101021\\ready.json",
+    "bytes": 22252,
+    "sha256": "04eadda71dc9d92d2568f6760add03c3eee68e89757ef40a2b14c50a774d39e6"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101021-axe\\artifacts\\t2sd-spirit-balanced-swamp-s101021-axe-s101021\\samples.jsonl",
+    "bytes": 3284290,
+    "sha256": "dbfd0210ab51277b214ab4b049d335ca8851eee159e37fefefed0fdf64081667"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101021-axe\\artifacts\\t2sd-spirit-balanced-swamp-s101021-axe-s101021\\summary.json",
+    "bytes": 106749,
+    "sha256": "cb5d8cd31e63fc43df948e1fb2b28d7f3ba68368c3b0fbc68bffc3fa1b3433dc"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101021-axe\\artifacts\\t2sd-spirit-balanced-swamp-s101021-axe-s101021\\sustain-transitions.jsonl",
+    "bytes": 399430,
+    "sha256": "649c2983057b193ed2457288e339e85adfde2a2d8599588e11cde6511d26603e"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101021-axe\\process.json",
+    "bytes": 727,
+    "sha256": "8a253268c38fffbbb9fe2dbd216cc7c0b30cdf76b74b0f5b0b6ed6b59751bf25"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101021-axe\\process.log",
+    "bytes": 55,
+    "sha256": "1326ec3af11c673b552752717e5e7b40fea6707967ff74a2ac786c8a67aa94cb"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101021-stinger\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101021-stinger\\artifacts\\heartbeat.json",
+    "bytes": 120,
+    "sha256": "cad4f4d95197779f60bb8d595d1b87dd348db116ffe8809c18aa80de061fbaaa"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101021-stinger\\artifacts\\index.json",
+    "bytes": 118722,
+    "sha256": "78bc02f049848163d75ac1d892c854978021c7537a5e7bb8eb2c29e568e21f89"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101021-stinger\\artifacts\\manifest.json",
+    "bytes": 3094,
+    "sha256": "f82f3ead5f10cb5f4d00812c824e845f678063e24bb21e6dfe68eb3602da13c7"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101021-stinger\\artifacts\\t2sd-spirit-balanced-swamp-s101021-stinger-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101021-stinger\\artifacts\\t2sd-spirit-balanced-swamp-s101021-stinger-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101021-stinger\\artifacts\\t2sd-spirit-balanced-swamp-s101021-stinger-s101021\\endpoints.json",
+    "bytes": 5052,
+    "sha256": "e26b219f6b0c155459503d4da21348c3327f61dfc697b81427d2a212244a401a"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101021-stinger\\artifacts\\t2sd-spirit-balanced-swamp-s101021-stinger-s101021\\events.jsonl",
+    "bytes": 1150589,
+    "sha256": "a7c392091ddcc378e8343b32fffdb85b71c5788485ff6945e4781adb1e685cd0"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101021-stinger\\artifacts\\t2sd-spirit-balanced-swamp-s101021-stinger-s101021\\guard-events.jsonl",
+    "bytes": 5890026,
+    "sha256": "c2bf399ad8e20c1809249539081006567bf82f68853eeeda0ab0767cd7bfdbf5"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101021-stinger\\artifacts\\t2sd-spirit-balanced-swamp-s101021-stinger-s101021\\ready.json",
+    "bytes": 22266,
+    "sha256": "f4067bff0898c3e4b357ce8a4160cac8a66d76ecf6c1d7e0430cef7857794438"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101021-stinger\\artifacts\\t2sd-spirit-balanced-swamp-s101021-stinger-s101021\\samples.jsonl",
+    "bytes": 3285442,
+    "sha256": "33ba2df59b0a6b49679cb12c0060f6de9805fc3fa0f06276fa9f1b5919b55f03"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101021-stinger\\artifacts\\t2sd-spirit-balanced-swamp-s101021-stinger-s101021\\summary.json",
+    "bytes": 109428,
+    "sha256": "37cf2320bf0fcc648c0b0cbf549f4dcd03c4ca8591c35d9178a786a360dd4d01"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101021-stinger\\artifacts\\t2sd-spirit-balanced-swamp-s101021-stinger-s101021\\sustain-transitions.jsonl",
+    "bytes": 454128,
+    "sha256": "4754e150d462dbc362b5e447523cd625dd8b4255736a9e20343f9789b7af5364"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101021-stinger\\process.json",
+    "bytes": 735,
+    "sha256": "6f625f8f092bf72cb24e917cc20a19cf22d13946b0892ad6771efe4a79a7ed8a"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-swamp-s101021-stinger\\process.log",
+    "bytes": 59,
+    "sha256": "f28c6e61938c9ce400df9ddcdd9b1d5315fa91b58f7eaff69cbf88868b217f5c"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101021-axe\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101021-axe\\artifacts\\heartbeat.json",
+    "bytes": 119,
+    "sha256": "a1caf5fbf6dc4ae05d69516a9b7a31203cd9788f3cf843b3d8c554fdb9d8d7b8"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101021-axe\\artifacts\\index.json",
+    "bytes": 62131,
+    "sha256": "42496d6937f1c4a3885cc3fe5efe95aff9ca61cebf2d419cf8fec4af594e6ab3"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101021-axe\\artifacts\\manifest.json",
+    "bytes": 3100,
+    "sha256": "8c45b353088ccea8e4cadf09188c979969aef66ec7615eb66d1897779502749b"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101021-axe\\artifacts\\t2sd-spirit-balanced-mountain-s101021-axe-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101021-axe\\artifacts\\t2sd-spirit-balanced-mountain-s101021-axe-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101021-axe\\artifacts\\t2sd-spirit-balanced-mountain-s101021-axe-s101021\\endpoints.json",
+    "bytes": 5172,
+    "sha256": "6a9527eddc08d39def333b3fbe9ce7fc41fd8845da45d8783e7ffbe94d9e92aa"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101021-axe\\artifacts\\t2sd-spirit-balanced-mountain-s101021-axe-s101021\\events.jsonl",
+    "bytes": 627740,
+    "sha256": "9f7aac74b0fd0f78f179c6865a7460b0d5784f4539db6b1187af0bd6bba6cb40"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101021-axe\\artifacts\\t2sd-spirit-balanced-mountain-s101021-axe-s101021\\guard-events.jsonl",
+    "bytes": 4869318,
+    "sha256": "c9735dece9ff4862b7235ad75e66a8823d8263e0b0975988306c1a8cb8d97cee"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101021-axe\\artifacts\\t2sd-spirit-balanced-mountain-s101021-axe-s101021\\ready.json",
+    "bytes": 22159,
+    "sha256": "c2804b5e66a4063c86cc9ec5254e65c2b3b50fa4071717929b409213c05fa958"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101021-axe\\artifacts\\t2sd-spirit-balanced-mountain-s101021-axe-s101021\\samples.jsonl",
+    "bytes": 3372419,
+    "sha256": "01280c01786459c5cdbf3b3bf85f1a5de5f2f3576e1267046581f8fe298c33cd"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101021-axe\\artifacts\\t2sd-spirit-balanced-mountain-s101021-axe-s101021\\summary.json",
+    "bytes": 57373,
+    "sha256": "f24c3c899c1385384beae98362d002ad8943b4fcfd1a86411c76b7748143a753"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101021-axe\\artifacts\\t2sd-spirit-balanced-mountain-s101021-axe-s101021\\sustain-transitions.jsonl",
+    "bytes": 178598,
+    "sha256": "371c967950cb518613c1861987388ad6e2363458c2c28ea45136a22863c8dd94"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101021-axe\\process.json",
+    "bytes": 733,
+    "sha256": "646ae3dbf096b94b049764fce0dfdb9b3774f2793c018c4aef772cd0bddc717c"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101021-axe\\process.log",
+    "bytes": 58,
+    "sha256": "e357424d7d4a32c0578f7b0bae7c135114694801bcd5b7649c5351e7ecba2341"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101021-stinger\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101021-stinger\\artifacts\\heartbeat.json",
+    "bytes": 123,
+    "sha256": "f4623d6ccfadf22891a11e2911d8413f1932d398dc13f3d22eb2f297d5d863f5"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101021-stinger\\artifacts\\index.json",
+    "bytes": 67269,
+    "sha256": "3ec483438e2eeec54fa8ea8dd70a25e3ac2f0170c9cfcf4c8425ce75d2146d50"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101021-stinger\\artifacts\\manifest.json",
+    "bytes": 3126,
+    "sha256": "663d04f728243cfc54f5d3c1e595c025e01327f52d6e809d2ad56b25959d3d47"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101021-stinger\\artifacts\\t2sd-spirit-balanced-mountain-s101021-stinger-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101021-stinger\\artifacts\\t2sd-spirit-balanced-mountain-s101021-stinger-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101021-stinger\\artifacts\\t2sd-spirit-balanced-mountain-s101021-stinger-s101021\\endpoints.json",
+    "bytes": 5116,
+    "sha256": "a3a9e6bdac6133f9a67cca1b347918ce02aab569f8e4e12d9b2e5e52cf339e59"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101021-stinger\\artifacts\\t2sd-spirit-balanced-mountain-s101021-stinger-s101021\\events.jsonl",
+    "bytes": 703150,
+    "sha256": "dd8e3e0bb939e329cb012da45cf76343d56dd246a9fb5c5ca8e70be218c12920"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101021-stinger\\artifacts\\t2sd-spirit-balanced-mountain-s101021-stinger-s101021\\guard-events.jsonl",
+    "bytes": 4725055,
+    "sha256": "98007f31a5f6f0f8868fe8d10207b2b840ee212ebb5c73f5855aeefc2035f865"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101021-stinger\\artifacts\\t2sd-spirit-balanced-mountain-s101021-stinger-s101021\\ready.json",
+    "bytes": 22173,
+    "sha256": "f014be675a75f9d6666d350e1bbd4d1482b5db91fa2960f216f904fe09e2ff4c"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101021-stinger\\artifacts\\t2sd-spirit-balanced-mountain-s101021-stinger-s101021\\samples.jsonl",
+    "bytes": 3338343,
+    "sha256": "25276a0504716ba42adc08c1cd7e957434089ece3f78ce29fcd695483f4e2645"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101021-stinger\\artifacts\\t2sd-spirit-balanced-mountain-s101021-stinger-s101021\\summary.json",
+    "bytes": 62109,
+    "sha256": "c0d71fb4a11c3d6607f7916cb25df71e469e64ec9cb46068f1ddb3300797f258"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101021-stinger\\artifacts\\t2sd-spirit-balanced-mountain-s101021-stinger-s101021\\sustain-transitions.jsonl",
+    "bytes": 197294,
+    "sha256": "2f5e0f40e3204671e52602f66b2aedfe5a37dd4de92e68c1b4c903c994bc6d1f"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101021-stinger\\process.json",
+    "bytes": 741,
+    "sha256": "8b00bd2f882334a618c275e1a9c59cd5bdd3bab544a9309cc56b663afaf0bdb8"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-spirit-balanced-mountain-s101021-stinger\\process.log",
+    "bytes": 62,
+    "sha256": "2638da7efd7b66fe679d7a010e83fd97de6347c2628b33028ee3ffafadd5a791"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101021-axe\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101021-axe\\artifacts\\heartbeat.json",
+    "bytes": 114,
+    "sha256": "dd367133b3705dcd27a77fda4b1275a742ef0bcd5ed5f67a5070edb3e014b759"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101021-axe\\artifacts\\index.json",
+    "bytes": 86265,
+    "sha256": "157601ecbf5a20e27915050f94abbefb380b4ece0428d33e31ac1d78890345cf"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101021-axe\\artifacts\\manifest.json",
+    "bytes": 3034,
+    "sha256": "a1d946c2023540e1fc76902cfd189ffa1553a44fe7b1d7eb47cf981fea76bfa3"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101021-axe\\artifacts\\t2sd-slinger-light-swamp-s101021-axe-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101021-axe\\artifacts\\t2sd-slinger-light-swamp-s101021-axe-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101021-axe\\artifacts\\t2sd-slinger-light-swamp-s101021-axe-s101021\\endpoints.json",
+    "bytes": 4959,
+    "sha256": "37ff177d35bd9bd9967a55d83650915b5ff1ea0d199397a15678cc82c9c94fc5"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101021-axe\\artifacts\\t2sd-slinger-light-swamp-s101021-axe-s101021\\events.jsonl",
+    "bytes": 1666089,
+    "sha256": "be57039f2bfde53786df1828e918eafa74361dd6e5073553ebc70a5f5da96e28"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101021-axe\\artifacts\\t2sd-slinger-light-swamp-s101021-axe-s101021\\guard-events.jsonl",
+    "bytes": 6433284,
+    "sha256": "eaec9aeda210d8fc82c13865adedceaa48cf11a4d40bff5a9e077fe6d6c035fc"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101021-axe\\artifacts\\t2sd-slinger-light-swamp-s101021-axe-s101021\\ready.json",
+    "bytes": 22465,
+    "sha256": "659a9b4c5b249d165306e8fee231e67867ac4992ec7f2cc3030597342398685f"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101021-axe\\artifacts\\t2sd-slinger-light-swamp-s101021-axe-s101021\\samples.jsonl",
+    "bytes": 3267135,
+    "sha256": "281eb0f96ded4c870becc86f791c4453897e172387dd3961426f9a908e83b826"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101021-axe\\artifacts\\t2sd-slinger-light-swamp-s101021-axe-s101021\\summary.json",
+    "bytes": 79549,
+    "sha256": "d528b6d26c1307bd794d0febebb896c6e77615967c60d96062552f6f1a22a370"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101021-axe\\artifacts\\t2sd-slinger-light-swamp-s101021-axe-s101021\\sustain-transitions.jsonl",
+    "bytes": 392611,
+    "sha256": "d6a703ad139ae3fbed64b2e854a7e3ef914dfb25859f62ab7bc144700a5e094d"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101021-axe\\process.json",
+    "bytes": 722,
+    "sha256": "d02ce58d1261d7c9fb4878546cc4bf696c84aeb7f1d8d4c925f499604babed66"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101021-axe\\process.log",
+    "bytes": 53,
+    "sha256": "37b10a3bf917eba5db64c5e40350113e1c9c138f93888a49234435086e44c871"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101021-stinger\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101021-stinger\\artifacts\\heartbeat.json",
+    "bytes": 118,
+    "sha256": "0a10631c54d1c4b1b6f0f83ecac7f486221c3c9f3939b5d22b416779e82fe760"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101021-stinger\\artifacts\\index.json",
+    "bytes": 109796,
+    "sha256": "e3f78005839e1262656f824f91515ca5cb4bee8c41f932ed7da210aaaedbdac3"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101021-stinger\\artifacts\\manifest.json",
+    "bytes": 3060,
+    "sha256": "b7f27f21f4b81d163f92c102eee4d33a39b30f582abd30930a418be994280729"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101021-stinger\\artifacts\\t2sd-slinger-light-swamp-s101021-stinger-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101021-stinger\\artifacts\\t2sd-slinger-light-swamp-s101021-stinger-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101021-stinger\\artifacts\\t2sd-slinger-light-swamp-s101021-stinger-s101021\\endpoints.json",
+    "bytes": 4899,
+    "sha256": "65ea228ed2d812b1c49d0e69a07d9e7b7e59a04190642657619657dbf96fa088"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101021-stinger\\artifacts\\t2sd-slinger-light-swamp-s101021-stinger-s101021\\events.jsonl",
+    "bytes": 1648277,
+    "sha256": "19510b69c5f3e1b8772cc9226d6fc564b919e19849e6c8d604c98f7aabcf0b70"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101021-stinger\\artifacts\\t2sd-slinger-light-swamp-s101021-stinger-s101021\\guard-events.jsonl",
+    "bytes": 6631259,
+    "sha256": "0ba8e8ea68aae887b3d400a06b9214a6671eea84d44dc6a3b100483eb91b1cea"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101021-stinger\\artifacts\\t2sd-slinger-light-swamp-s101021-stinger-s101021\\ready.json",
+    "bytes": 22479,
+    "sha256": "92234ab9fed37e6e5711e79aa19c4db1b7e5c3da29ae50b2d8d557adf41c3d1e"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101021-stinger\\artifacts\\t2sd-slinger-light-swamp-s101021-stinger-s101021\\samples.jsonl",
+    "bytes": 3271590,
+    "sha256": "7c931e870cc2b52e30aca5cb2ec3ef61c45b1594e307afd87eff3154cb487def"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101021-stinger\\artifacts\\t2sd-slinger-light-swamp-s101021-stinger-s101021\\summary.json",
+    "bytes": 101188,
+    "sha256": "697484eea1ec20b2d2cb394028c1fb24733cae328f1abf1f0f74d8b5a918c362"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101021-stinger\\artifacts\\t2sd-slinger-light-swamp-s101021-stinger-s101021\\sustain-transitions.jsonl",
+    "bytes": 412447,
+    "sha256": "7f28a584caf495de9ffa31b75cdb6f1c0718ca4949b44812a2c10af23ab40a9b"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101021-stinger\\process.json",
+    "bytes": 730,
+    "sha256": "8d1d68089ed4d03f810e9d769b901c73266b6fe7216e3bd6f022012bb68f9a4b"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-swamp-s101021-stinger\\process.log",
+    "bytes": 57,
+    "sha256": "46a447b029a84af1454f7b6ddd87b5cf3f84276763a1b88a1f12929acc249463"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101021-axe\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101021-axe\\artifacts\\heartbeat.json",
+    "bytes": 117,
+    "sha256": "99653dedce00f4d601c0a1b86269009ecd5a2388d9aaac6234631720ee7a589e"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101021-axe\\artifacts\\index.json",
+    "bytes": 52958,
+    "sha256": "600db62785cff73b40de4845dfef389f00b8c0c20554ca363d296e0f3336e9f0"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101021-axe\\artifacts\\manifest.json",
+    "bytes": 3066,
+    "sha256": "3e7c71b7cb2b6ed0f8a7624f3987ff46f4d62af8994a3cdc46db85e94b9bd065"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101021-axe\\artifacts\\t2sd-slinger-light-mountain-s101021-axe-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101021-axe\\artifacts\\t2sd-slinger-light-mountain-s101021-axe-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101021-axe\\artifacts\\t2sd-slinger-light-mountain-s101021-axe-s101021\\endpoints.json",
+    "bytes": 4986,
+    "sha256": "e3a5d33d1ec6ea49bb30ab7125fb22dc9e159db98bdeea3f928e877e6dd7089f"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101021-axe\\artifacts\\t2sd-slinger-light-mountain-s101021-axe-s101021\\events.jsonl",
+    "bytes": 973635,
+    "sha256": "8fde1caa946fb98f5a59e17ed1527858835e547632e9938de1a3eedb2f295809"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101021-axe\\artifacts\\t2sd-slinger-light-mountain-s101021-axe-s101021\\guard-events.jsonl",
+    "bytes": 5207217,
+    "sha256": "5bd40c1ca7844414db337e92311ee4b061b15c923bbfb8a607f805179f3b92b8"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101021-axe\\artifacts\\t2sd-slinger-light-mountain-s101021-axe-s101021\\ready.json",
+    "bytes": 22412,
+    "sha256": "069e63c33805d6f2b0cb1df388d3a1772cc981325241ff50b960c5374155acf3"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101021-axe\\artifacts\\t2sd-slinger-light-mountain-s101021-axe-s101021\\samples.jsonl",
+    "bytes": 3318038,
+    "sha256": "64433cb800d88557f26a5ae6c3ab4db1533414e222a4951b523e7e682253ff36"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101021-axe\\artifacts\\t2sd-slinger-light-mountain-s101021-axe-s101021\\summary.json",
+    "bytes": 48942,
+    "sha256": "15489985af03b1b28ba6a27127747763c117b1f8cef3deae20505ba53c191865"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101021-axe\\artifacts\\t2sd-slinger-light-mountain-s101021-axe-s101021\\sustain-transitions.jsonl",
+    "bytes": 200656,
+    "sha256": "da9284a7fb8ca312a22b194792ebfa3e9add3d5c37718f58c7b476ec97ff8e55"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101021-axe\\process.json",
+    "bytes": 729,
+    "sha256": "ae28d7f6d40c1ce76be8765762a046885c775d88d2aff64ab5ee810bad227af4"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101021-axe\\process.log",
+    "bytes": 56,
+    "sha256": "6013aa3802ef370b9124eb5fed71bedfac3a315ea538e59ef6266111137aa644"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101021-stinger\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101021-stinger\\artifacts\\heartbeat.json",
+    "bytes": 121,
+    "sha256": "6677e509419778352b70fcd0d8533ec1156a1aa73c175c54d3173b67c2bc4dfd"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101021-stinger\\artifacts\\index.json",
+    "bytes": 58820,
+    "sha256": "774e8436f398566bb03da0f3557f90a7bb8f0c311b0d5c2a2e751a6fca1e1141"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101021-stinger\\artifacts\\manifest.json",
+    "bytes": 3092,
+    "sha256": "a3e50b5f95ef55e8a05a45642b9ad5f903c3e8bca5ed01b11b56099b792012e5"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101021-stinger\\artifacts\\t2sd-slinger-light-mountain-s101021-stinger-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101021-stinger\\artifacts\\t2sd-slinger-light-mountain-s101021-stinger-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101021-stinger\\artifacts\\t2sd-slinger-light-mountain-s101021-stinger-s101021\\endpoints.json",
+    "bytes": 5080,
+    "sha256": "5b06011658ae5581cb7bcd3a8adeca56c51e4f1fe538627f06584bb3aea6b98b"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101021-stinger\\artifacts\\t2sd-slinger-light-mountain-s101021-stinger-s101021\\events.jsonl",
+    "bytes": 1032632,
+    "sha256": "49bd0710d7283f2dedae5bc58fa4095daf00305357dc78519d0732501ce7027b"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101021-stinger\\artifacts\\t2sd-slinger-light-mountain-s101021-stinger-s101021\\guard-events.jsonl",
+    "bytes": 5897481,
+    "sha256": "a1e681f9626d97a93f97b7d31cb0683b36dd29c91780ad45c9e5034d45147688"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101021-stinger\\artifacts\\t2sd-slinger-light-mountain-s101021-stinger-s101021\\ready.json",
+    "bytes": 22426,
+    "sha256": "9e58dee6ef10c1ad95f4faa1eed8c04c7148c7fc0553df37c7265017d5369184"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101021-stinger\\artifacts\\t2sd-slinger-light-mountain-s101021-stinger-s101021\\samples.jsonl",
+    "bytes": 3346702,
+    "sha256": "584d7c840a74b388922b57069ad6f5a39f58e18d2c889d561a9b128e4b3dfa1b"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101021-stinger\\artifacts\\t2sd-slinger-light-mountain-s101021-stinger-s101021\\summary.json",
+    "bytes": 54314,
+    "sha256": "67f334ecffe5cd90d2fa97c1224a60ecba0e2918ba932833c1d2a7596fb4081a"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101021-stinger\\artifacts\\t2sd-slinger-light-mountain-s101021-stinger-s101021\\sustain-transitions.jsonl",
+    "bytes": 196626,
+    "sha256": "b7147c26f77de8b8f036c48f1b10419f182c961a13d526536aa69017e540da4e"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101021-stinger\\process.json",
+    "bytes": 737,
+    "sha256": "b94a427ae43dfb590cba5fe641e4822381e9c61053d22e97e1abcb0b62872c5f"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-slinger-light-mountain-s101021-stinger\\process.log",
+    "bytes": 60,
+    "sha256": "dd33ebeb512a2d60569fb979a670831d874e1e513b2abd7549f153c8245873c3"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101021-opening-lowhp\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101021-opening-lowhp\\artifacts\\heartbeat.json",
+    "bytes": 125,
+    "sha256": "1e81441f40cdf51a2cdc36fa5eb6e6167388524d6abf31d2a207f7a65ef49960"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101021-opening-lowhp\\artifacts\\index.json",
+    "bytes": 67127,
+    "sha256": "fb04d58721f9c8c6228608516d3d13996678dd874f37f99415b5f22f4b6aa8f1"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101021-opening-lowhp\\artifacts\\manifest.json",
+    "bytes": 3178,
+    "sha256": "333255d60261702df1cbe6e6e39f8bd82e79aadaa1aa42a97e8ef3fbf08f36f4"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101021-opening-lowhp\\artifacts\\t2sd-striker-light-desert-s101021-opening-lowhp-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101021-opening-lowhp\\artifacts\\t2sd-striker-light-desert-s101021-opening-lowhp-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101021-opening-lowhp\\artifacts\\t2sd-striker-light-desert-s101021-opening-lowhp-s101021\\endpoints.json",
+    "bytes": 5222,
+    "sha256": "ae12de68d0c97d12f0ee7f657218b27575298a573597aee61fde202301c0a7a8"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101021-opening-lowhp\\artifacts\\t2sd-striker-light-desert-s101021-opening-lowhp-s101021\\events.jsonl",
+    "bytes": 2136486,
+    "sha256": "dbb704e5fe1c1aa0bd85a23ac740ad96a5db1aae3b5cbaaebb181190a6588c0f"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101021-opening-lowhp\\artifacts\\t2sd-striker-light-desert-s101021-opening-lowhp-s101021\\guard-events.jsonl",
+    "bytes": 8540764,
+    "sha256": "e523122a607e26ef5cf050d9c2ef88c0f4035036a5fd41bef424bac00393ce99"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101021-opening-lowhp\\artifacts\\t2sd-striker-light-desert-s101021-opening-lowhp-s101021\\ready.json",
+    "bytes": 21537,
+    "sha256": "a7393c5d08b83e88748164f27d6f392bfbb7de0d65c01d9a82b07064fb841de3"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101021-opening-lowhp\\artifacts\\t2sd-striker-light-desert-s101021-opening-lowhp-s101021\\samples.jsonl",
+    "bytes": 2602353,
+    "sha256": "0b2440e21c1563ff9f7343b78f595ddf72999c8567ab4df675b50ce22ade5e6d"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101021-opening-lowhp\\artifacts\\t2sd-striker-light-desert-s101021-opening-lowhp-s101021\\strategy-events.jsonl",
+    "bytes": 61406211,
+    "sha256": "db96283c175d2c64c340c600e43bebb58cf275c52a6011e6d121cd11317a2d6d"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101021-opening-lowhp\\artifacts\\t2sd-striker-light-desert-s101021-opening-lowhp-s101021\\summary.json",
+    "bytes": 62429,
+    "sha256": "58e73f7490cc5199b4f507fd3844301a704f06c479a28813348e97a981840a97"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101021-opening-lowhp\\artifacts\\t2sd-striker-light-desert-s101021-opening-lowhp-s101021\\sustain-transitions.jsonl",
+    "bytes": 89326,
+    "sha256": "4499fac3b09d5ef4b94b44d45bd670299fb995167f980b4e38d5b6d64e5e49d2"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101021-opening-lowhp\\process.json",
+    "bytes": 745,
+    "sha256": "e290a660b0d584398e0e5892046898d3dc00bbf015e060f1c62ea72a394fb81f"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101021-opening-lowhp\\process.log",
+    "bytes": 64,
+    "sha256": "4b622a00ac2b9e02335cf4dfdbec2194f09887a638f9c5d463fb461847a9206c"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101021-native\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101021-native\\artifacts\\heartbeat.json",
+    "bytes": 115,
+    "sha256": "60e508f1222eb5e13762813adc2a80b14c8e13dc3b8f58f4cab5512a29c20625"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101021-native\\artifacts\\index.json",
+    "bytes": 19575,
+    "sha256": "0ca10feac985ef4d807314c90fdbc15c90854df26d7184056ce8d091b8354303"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101021-native\\artifacts\\manifest.json",
+    "bytes": 3052,
+    "sha256": "14ebd18d77a755f074a089942b406a8c199dcec535b73924125efe215f0881ff"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101021-native\\artifacts\\t2sd-striker-light-desert-s101021-native-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101021-native\\artifacts\\t2sd-striker-light-desert-s101021-native-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101021-native\\artifacts\\t2sd-striker-light-desert-s101021-native-s101021\\events.jsonl",
+    "bytes": 58940,
+    "sha256": "a5e68197b14ba28b6aebb85ef40d7534032cf2f32c7e6044d98287bfd97c443e"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101021-native\\artifacts\\t2sd-striker-light-desert-s101021-native-s101021\\guard-events.jsonl",
+    "bytes": 194218,
+    "sha256": "b177d43e9017c57951de8f1f3b29c0e8b0b97231f6e77fb13984d92c63306f2c"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101021-native\\artifacts\\t2sd-striker-light-desert-s101021-native-s101021\\ready.json",
+    "bytes": 19730,
+    "sha256": "58a7ff117853a3899e400a62fc1db8bbb6822a271f7ce697291ad8628751edbf"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101021-native\\artifacts\\t2sd-striker-light-desert-s101021-native-s101021\\samples.jsonl",
+    "bytes": 58134,
+    "sha256": "87a9d46f703d3b63a13c68a379f0ba03cde4c8f1efa5d8175e248e191a85f74e"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101021-native\\artifacts\\t2sd-striker-light-desert-s101021-native-s101021\\strategy-events.jsonl",
+    "bytes": 1453241,
+    "sha256": "07a5614cfe1142bb743a4ffd4b21939840ef2428c7a3cd5b3b1e9ca308b576cd"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101021-native\\artifacts\\t2sd-striker-light-desert-s101021-native-s101021\\summary.json",
+    "bytes": 18185,
+    "sha256": "ba9b45437b5a957c5a0e5b1c88483225182928806639e4adc533b6fb2c817622"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101021-native\\artifacts\\t2sd-striker-light-desert-s101021-native-s101021\\sustain-transitions.jsonl",
+    "bytes": 2292,
+    "sha256": "b71d36cb3bac85b0984468d3dfe077755b5dedbc90e96c6610904e208a30ad1e"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101021-native\\process.json",
+    "bytes": 731,
+    "sha256": "6f92747b27cae0af8e79333b06002a8d656b5735fd9be0e6be2a61ce4d33d652"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-light-desert-s101021-native\\process.log",
+    "bytes": 57,
+    "sha256": "584208870b5b37a7203ca2ed3097dec86b764cab58df4f00b17821b070775ce7"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101021-opening-lowhp\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101021-opening-lowhp\\artifacts\\heartbeat.json",
+    "bytes": 128,
+    "sha256": "8285d007edef55a7a03996fe08846794424854cd10edc07af3643f98f0c5d8ab"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101021-opening-lowhp\\artifacts\\index.json",
+    "bytes": 68500,
+    "sha256": "b22c6353affff15f81f0bc2f5b1fe97b8c1a51bf87682533e4bd33d84873a27d"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101021-opening-lowhp\\artifacts\\manifest.json",
+    "bytes": 3192,
+    "sha256": "84e58cfe4a1ba2fc1c084feebaabb0d1c95cef90105a0f5902d2dd6173a226cb"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101021-opening-lowhp\\artifacts\\t2sd-striker-balanced-desert-s101021-opening-lowhp-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101021-opening-lowhp\\artifacts\\t2sd-striker-balanced-desert-s101021-opening-lowhp-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101021-opening-lowhp\\artifacts\\t2sd-striker-balanced-desert-s101021-opening-lowhp-s101021\\endpoints.json",
+    "bytes": 5267,
+    "sha256": "342e0127ae530c1ab95a740bf600ec34823caae7b0da070c6ec80454c5434c3a"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101021-opening-lowhp\\artifacts\\t2sd-striker-balanced-desert-s101021-opening-lowhp-s101021\\events.jsonl",
+    "bytes": 2150798,
+    "sha256": "cd906d177d9196fe35caf43e55579b4c3d034b205db3e2ca50aeef89034fdfd3"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101021-opening-lowhp\\artifacts\\t2sd-striker-balanced-desert-s101021-opening-lowhp-s101021\\guard-events.jsonl",
+    "bytes": 8427537,
+    "sha256": "027da45b1a339ffdb3286d227b6271d0b8e226bb7af5b2c7cf1800b82f6a8c84"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101021-opening-lowhp\\artifacts\\t2sd-striker-balanced-desert-s101021-opening-lowhp-s101021\\ready.json",
+    "bytes": 21551,
+    "sha256": "1908db7ddaccd7ca6842fbf3eeeacf1ed3a46afef19aa3cbfc846d1f18407f33"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101021-opening-lowhp\\artifacts\\t2sd-striker-balanced-desert-s101021-opening-lowhp-s101021\\samples.jsonl",
+    "bytes": 2604077,
+    "sha256": "6c53af0d09dfcd336803874e7f181634ced257af06044c85386647801b1e51c0"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101021-opening-lowhp\\artifacts\\t2sd-striker-balanced-desert-s101021-opening-lowhp-s101021\\strategy-events.jsonl",
+    "bytes": 61336928,
+    "sha256": "ca1a67b6b37c4e082ac79dd0789d560128a72f069eea22a4d4d47c060c41e7d5"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101021-opening-lowhp\\artifacts\\t2sd-striker-balanced-desert-s101021-opening-lowhp-s101021\\summary.json",
+    "bytes": 63694,
+    "sha256": "61fadbf105f90df3567970ae073f220cac7d07c1855e9b9e4986528e9da20c7d"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101021-opening-lowhp\\artifacts\\t2sd-striker-balanced-desert-s101021-opening-lowhp-s101021\\sustain-transitions.jsonl",
+    "bytes": 96598,
+    "sha256": "114740f8ed9787f0791c38f003a56c33b2dabde539e67d4daad1175d17492a60"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101021-opening-lowhp\\process.json",
+    "bytes": 751,
+    "sha256": "e3fb95872f2e53d1a753066921262a5a6e354e5cdd1d69767b53ec20cc18761c"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101021-opening-lowhp\\process.log",
+    "bytes": 67,
+    "sha256": "17c89c075eba9f22fca57234a9893a95aeff3f3e1ec25dbe09ff4995a0934310"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101021-native\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101021-native\\artifacts\\heartbeat.json",
+    "bytes": 118,
+    "sha256": "cadc52f89a664bea62a76f3895ebf9ed73534d2bea829b68fe0043e9155dca0e"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101021-native\\artifacts\\index.json",
+    "bytes": 19536,
+    "sha256": "db5a7d20e81fdaf1c8d822cdfb2ed2735c8dc5142508ef21b180381ae84f6d3c"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101021-native\\artifacts\\manifest.json",
+    "bytes": 3066,
+    "sha256": "905618c67a15e0750be3ef36f4b8d58c7290caa62699cae5e991fc5e41c0b1bd"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101021-native\\artifacts\\t2sd-striker-balanced-desert-s101021-native-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101021-native\\artifacts\\t2sd-striker-balanced-desert-s101021-native-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101021-native\\artifacts\\t2sd-striker-balanced-desert-s101021-native-s101021\\events.jsonl",
+    "bytes": 65303,
+    "sha256": "fc39d10a32de9097ddb431c314383944f9a71d8956146e8af7e068a1e1676214"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101021-native\\artifacts\\t2sd-striker-balanced-desert-s101021-native-s101021\\guard-events.jsonl",
+    "bytes": 207817,
+    "sha256": "4ff3d3404af504f0ccd531a0159bb25c65028c7ae97f9971cd8e9f8019f19342"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101021-native\\artifacts\\t2sd-striker-balanced-desert-s101021-native-s101021\\ready.json",
+    "bytes": 19744,
+    "sha256": "65da0ba64ce0ed428d5281d2b250878f8fefb34c60d49bfc3dfea6a7a53fb8cb"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101021-native\\artifacts\\t2sd-striker-balanced-desert-s101021-native-s101021\\samples.jsonl",
+    "bytes": 62370,
+    "sha256": "c58c97623265096886a559f00526a4a67844a7cea6794174964d3334b14c8482"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101021-native\\artifacts\\t2sd-striker-balanced-desert-s101021-native-s101021\\strategy-events.jsonl",
+    "bytes": 1580880,
+    "sha256": "d2ad0f3b7661273eb1fd7e3bfbe237ab89c9fe09c93d8ab10f6d9f99dd6772e2"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101021-native\\artifacts\\t2sd-striker-balanced-desert-s101021-native-s101021\\summary.json",
+    "bytes": 18148,
+    "sha256": "c36da5edd555e188c623f41580097b51379fbbfad3c51c4d86359b384ee719d5"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101021-native\\artifacts\\t2sd-striker-balanced-desert-s101021-native-s101021\\sustain-transitions.jsonl",
+    "bytes": 2292,
+    "sha256": "b27a4ef7f020fc18005febdd42351f430e03ccd0c36c09b108d837742ac76111"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101021-native\\process.json",
+    "bytes": 737,
+    "sha256": "d42167a66e6a8667fe1b42fcd2d66cb07fc94c6dacbb536f92aa571aab89f5e5"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-desert-followup-01\\run-01\\t2sd-striker-balanced-desert-s101021-native\\process.log",
+    "bytes": 60,
+    "sha256": "22d12896dde6329536496922b641ec0fc3d01cb2d52f9c4235765edbb84f752c"
+  }
+]
