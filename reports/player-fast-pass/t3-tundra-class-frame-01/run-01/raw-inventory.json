@@ -1,0 +1,72 @@
+[
+  {
+    "path": "D:\\mmo-idle\\t3-tundra-class-frame-01\\run-01\\t3-tundra-class-frame-01-striker-light-s101009-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\t3-tundra-class-frame-01\\run-01\\t3-tundra-class-frame-01-striker-light-s101009-primary\\artifacts\\heartbeat.json",
+    "bytes": 132,
+    "sha256": "a2628321f66f4eb9b0bc0455f4e9924b50758a525a2c4cbac3a2169dd35a2031"
+  },
+  {
+    "path": "D:\\mmo-idle\\t3-tundra-class-frame-01\\run-01\\t3-tundra-class-frame-01-striker-light-s101009-primary\\artifacts\\index.json",
+    "bytes": 48415,
+    "sha256": "af7c3d0acd31ff3ff257f39c731becd72b3e57312de580efee0a647efa2afabf"
+  },
+  {
+    "path": "D:\\mmo-idle\\t3-tundra-class-frame-01\\run-01\\t3-tundra-class-frame-01-striker-light-s101009-primary\\artifacts\\manifest.json",
+    "bytes": 3462,
+    "sha256": "2c40c864e3fcd5f16c9187c1088fa3230677c0e02ce860f74669dd25dbfa31b3"
+  },
+  {
+    "path": "D:\\mmo-idle\\t3-tundra-class-frame-01\\run-01\\t3-tundra-class-frame-01-striker-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-striker-light-s101009-primary-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t3-tundra-class-frame-01\\run-01\\t3-tundra-class-frame-01-striker-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-striker-light-s101009-primary-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\t3-tundra-class-frame-01\\run-01\\t3-tundra-class-frame-01-striker-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-striker-light-s101009-primary-s101009\\endpoints.json",
+    "bytes": 4785,
+    "sha256": "358e2a23008bdd7e9d846f05b37f3718ee63ad7cb834a391e6db970b3ed958c6"
+  },
+  {
+    "path": "D:\\mmo-idle\\t3-tundra-class-frame-01\\run-01\\t3-tundra-class-frame-01-striker-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-striker-light-s101009-primary-s101009\\events.jsonl",
+    "bytes": 2652347,
+    "sha256": "c0f397983dab5af042f62a42c31aad5122848db3e589e71779196b54722c989c"
+  },
+  {
+    "path": "D:\\mmo-idle\\t3-tundra-class-frame-01\\run-01\\t3-tundra-class-frame-01-striker-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-striker-light-s101009-primary-s101009\\ready.json",
+    "bytes": 16904,
+    "sha256": "cc7a51c9bd5290cb57dd48eb6ecabd165b4094502e6ba9c21e21854df715064f"
+  },
+  {
+    "path": "D:\\mmo-idle\\t3-tundra-class-frame-01\\run-01\\t3-tundra-class-frame-01-striker-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-striker-light-s101009-primary-s101009\\samples.jsonl",
+    "bytes": 2236884,
+    "sha256": "db5c803f9b959fb4e273fabe31fd8aa69828cc94fb9494a5a8a3be5d6f862334"
+  },
+  {
+    "path": "D:\\mmo-idle\\t3-tundra-class-frame-01\\run-01\\t3-tundra-class-frame-01-striker-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-striker-light-s101009-primary-s101009\\summary.json",
+    "bytes": 44693,
+    "sha256": "156ea2dd337cfbce306fd942773ae1de9c99f2b1e7565a507c0510324ae02fa5"
+  },
+  {
+    "path": "D:\\mmo-idle\\t3-tundra-class-frame-01\\run-01\\t3-tundra-class-frame-01-striker-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-striker-light-s101009-primary-s101009\\sustain-transitions.jsonl",
+    "bytes": 146057,
+    "sha256": "f77a45c69d20b103b53fbb49be6993dfdf45a7df8645c171ab22b08c762a5820"
+  },
+  {
+    "path": "D:\\mmo-idle\\t3-tundra-class-frame-01\\run-01\\t3-tundra-class-frame-01-striker-light-s101009-primary\\process.json",
+    "bytes": 737,
+    "sha256": "210db57c13c3a9edab9b4369066c104356eee2ea95e86181e53435d09e93885d"
+  },
+  {
+    "path": "D:\\mmo-idle\\t3-tundra-class-frame-01\\run-01\\t3-tundra-class-frame-01-striker-light-s101009-primary\\process.log",
+    "bytes": 71,
+    "sha256": "723d22a74ea51496c44bb6982762b10e156fea6dcc31611157ca19fd5f175c8c"
+  }
+]

@@ -1,0 +1,7 @@
+{
+  "planned": 52,
+  "completed": 0,
+  "combatObservations": 0,
+  "reused": 0,
+  "failure": "AssertionError [ERR_ASSERTION]: Applied package drift\n+ actual - expected\n... Skipped lines\n\n  {\n    conduitProfile: null,\n    definitionsIdentity: {\n      base: 'df4cd5a352e4605d3749b662ddf0f18ec597f9cee741c28b78d093c607a0af92',\n      live: 'df4cd5a352e4605d3749b662ddf0f18ec597f9cee741c28b78d093c607a0af92',\n...\n      seed: 101009,\n+     sharedEntry: 'D:\\\\mmo-idle\\\\t3-tundra-class-frame-01\\\\source\\\\shared\\\\src\\\\index.ts',\n-     sharedEntry: 'C:\\\\Users\\\\osaif\\\\Documents\\\\Claude\\\\Projects\\\\MMO idle\\\\shared\\\\src\\\\index.ts',\n      sharedEntrySha256: 'a7d7a12efe39f078ee6279af76d9dae6e657c58bb25aed28305202798a6f25df'\n    },\n    seed: 101009,\n    sustainReadback: {\n      activeFraction: 1,\n"
+}
