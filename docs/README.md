@@ -26,6 +26,7 @@ top-level doc.
 
 | Doc | Why |
 |---|---|
+| [Guard coverage 01 handoff](../reports/player-fast-pass/guard-coverage-01-preparation/LUNA_RUN.md) | Integrated measured session correction; 32 fresh Endure comparison cells, zero-tick qualified, execution pending. |
 | [Player package-fit r1 packet](briefs/player-package-fit-operator-packet.md) | Prepared revised AoE/reactive-Brace packages, 36-row ceiling, machine-readable Luna report contract and scoped commit/push requirement; main run not launched. |
 | [Player balance fast-pass packet](briefs/player-balance-fast-pass-operator-packet.md) | Prepared 36-observation T2-T4 player-package screen, frozen source identity, exact commands, qualification, and decision ledger; main batch not launched. |
 | [Conduit recovery preparation](../reports/player-fast-pass/conduit-recovery-preparation/README.md) | Local production R1 adoption, 102 historical farm-only completions, and optional 24-observation R1/R2 packet; combat batches unrun. |

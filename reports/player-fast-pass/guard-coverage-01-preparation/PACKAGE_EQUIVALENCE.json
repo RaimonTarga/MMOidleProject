@@ -1,0 +1,354 @@
+[
+  {
+    "observationId": "guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-static",
+    "baselineReceipt": "day2-b-endurance-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-mountain-candidate",
+    "exactEquipmentMasteryRitesSkillsProfileRosterSustainExceptDeclaredRp": true,
+    "rp": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    }
+  },
+  {
+    "observationId": "guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-endure",
+    "baselineReceipt": "day2-b-endurance-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-mountain-candidate",
+    "exactEquipmentMasteryRitesSkillsProfileRosterSustainExceptDeclaredRp": true,
+    "rp": {
+      "budget": 47,
+      "cost": 46,
+      "unused": 1,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    }
+  },
+  {
+    "observationId": "guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-static",
+    "baselineReceipt": "day2-b-endurance-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-mountain-candidate",
+    "exactEquipmentMasteryRitesSkillsProfileRosterSustainExceptDeclaredRp": true,
+    "rp": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    }
+  },
+  {
+    "observationId": "guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-endure",
+    "baselineReceipt": "day2-b-endurance-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-mountain-candidate",
+    "exactEquipmentMasteryRitesSkillsProfileRosterSustainExceptDeclaredRp": true,
+    "rp": {
+      "budget": 47,
+      "cost": 46,
+      "unused": 1,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    }
+  },
+  {
+    "observationId": "guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-static",
+    "baselineReceipt": "day2-b-endurance-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-mountain-candidate",
+    "exactEquipmentMasteryRitesSkillsProfileRosterSustainExceptDeclaredRp": true,
+    "rp": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    }
+  },
+  {
+    "observationId": "guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-endure",
+    "baselineReceipt": "day2-b-endurance-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-mountain-candidate",
+    "exactEquipmentMasteryRitesSkillsProfileRosterSustainExceptDeclaredRp": true,
+    "rp": {
+      "budget": 47,
+      "cost": 46,
+      "unused": 1,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    }
+  },
+  {
+    "observationId": "guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-static",
+    "baselineReceipt": "day2-b-endurance-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-mountain-candidate",
+    "exactEquipmentMasteryRitesSkillsProfileRosterSustainExceptDeclaredRp": true,
+    "rp": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    }
+  },
+  {
+    "observationId": "guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-endure",
+    "baselineReceipt": "day2-b-endurance-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-mountain-candidate",
+    "exactEquipmentMasteryRitesSkillsProfileRosterSustainExceptDeclaredRp": true,
+    "rp": {
+      "budget": 47,
+      "cost": 46,
+      "unused": 1,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    }
+  },
+  {
+    "observationId": "guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-static",
+    "baselineReceipt": "day2-b-endurance-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-mountain-candidate",
+    "exactEquipmentMasteryRitesSkillsProfileRosterSustainExceptDeclaredRp": true,
+    "rp": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    }
+  },
+  {
+    "observationId": "guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-endure",
+    "baselineReceipt": "day2-b-endurance-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-mountain-candidate",
+    "exactEquipmentMasteryRitesSkillsProfileRosterSustainExceptDeclaredRp": true,
+    "rp": {
+      "budget": 47,
+      "cost": 46,
+      "unused": 1,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    }
+  },
+  {
+    "observationId": "guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-static",
+    "baselineReceipt": "day2-b-endurance-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-mountain-candidate",
+    "exactEquipmentMasteryRitesSkillsProfileRosterSustainExceptDeclaredRp": true,
+    "rp": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    }
+  },
+  {
+    "observationId": "guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-endure",
+    "baselineReceipt": "day2-b-endurance-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-mountain-candidate",
+    "exactEquipmentMasteryRitesSkillsProfileRosterSustainExceptDeclaredRp": true,
+    "rp": {
+      "budget": 47,
+      "cost": 46,
+      "unused": 1,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    }
+  },
+  {
+    "observationId": "guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-static",
+    "baselineReceipt": "day2-b-endurance-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-mountain-candidate",
+    "exactEquipmentMasteryRitesSkillsProfileRosterSustainExceptDeclaredRp": true,
+    "rp": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    }
+  },
+  {
+    "observationId": "guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-endure",
+    "baselineReceipt": "day2-b-endurance-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-mountain-candidate",
+    "exactEquipmentMasteryRitesSkillsProfileRosterSustainExceptDeclaredRp": true,
+    "rp": {
+      "budget": 47,
+      "cost": 46,
+      "unused": 1,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    }
+  },
+  {
+    "observationId": "guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-static",
+    "baselineReceipt": "day2-b-endurance-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-mountain-candidate",
+    "exactEquipmentMasteryRitesSkillsProfileRosterSustainExceptDeclaredRp": true,
+    "rp": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    }
+  },
+  {
+    "observationId": "guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-endure",
+    "baselineReceipt": "day2-b-endurance-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-mountain-candidate",
+    "exactEquipmentMasteryRitesSkillsProfileRosterSustainExceptDeclaredRp": true,
+    "rp": {
+      "budget": 47,
+      "cost": 46,
+      "unused": 1,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    }
+  },
+  {
+    "observationId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-static",
+    "baselineReceipt": "day2-b-endurance-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-control",
+    "exactEquipmentMasteryRitesSkillsProfileRosterSustainExceptDeclaredRp": true,
+    "rp": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    }
+  },
+  {
+    "observationId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-endure",
+    "baselineReceipt": "day2-b-endurance-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-control",
+    "exactEquipmentMasteryRitesSkillsProfileRosterSustainExceptDeclaredRp": true,
+    "rp": {
+      "budget": 47,
+      "cost": 46,
+      "unused": 1,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    }
+  },
+  {
+    "observationId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-static",
+    "baselineReceipt": "day2-b-endurance-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-candidate",
+    "exactEquipmentMasteryRitesSkillsProfileRosterSustainExceptDeclaredRp": true,
+    "rp": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    }
+  },
+  {
+    "observationId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-endure",
+    "baselineReceipt": "day2-b-endurance-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-candidate",
+    "exactEquipmentMasteryRitesSkillsProfileRosterSustainExceptDeclaredRp": true,
+    "rp": {
+      "budget": 47,
+      "cost": 46,
+      "unused": 1,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    }
+  },
+  {
+    "observationId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-static",
+    "baselineReceipt": "day2-b-endurance-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-control",
+    "exactEquipmentMasteryRitesSkillsProfileRosterSustainExceptDeclaredRp": true,
+    "rp": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    }
+  },
+  {
+    "observationId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-endure",
+    "baselineReceipt": "day2-b-endurance-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-control",
+    "exactEquipmentMasteryRitesSkillsProfileRosterSustainExceptDeclaredRp": true,
+    "rp": {
+      "budget": 47,
+      "cost": 46,
+      "unused": 1,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    }
+  },
+  {
+    "observationId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-static",
+    "baselineReceipt": "day2-b-endurance-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-candidate",
+    "exactEquipmentMasteryRitesSkillsProfileRosterSustainExceptDeclaredRp": true,
+    "rp": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    }
+  },
+  {
+    "observationId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-endure",
+    "baselineReceipt": "day2-b-endurance-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-candidate",
+    "exactEquipmentMasteryRitesSkillsProfileRosterSustainExceptDeclaredRp": true,
+    "rp": {
+      "budget": 47,
+      "cost": 46,
+      "unused": 1,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    }
+  },
+  {
+    "observationId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-static",
+    "baselineReceipt": "day2-b-endurance-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-control",
+    "exactEquipmentMasteryRitesSkillsProfileRosterSustainExceptDeclaredRp": true,
+    "rp": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    }
+  },
+  {
+    "observationId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-endure",
+    "baselineReceipt": "day2-b-endurance-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-control",
+    "exactEquipmentMasteryRitesSkillsProfileRosterSustainExceptDeclaredRp": true,
+    "rp": {
+      "budget": 47,
+      "cost": 46,
+      "unused": 1,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    }
+  },
+  {
+    "observationId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-static",
+    "baselineReceipt": "day2-b-endurance-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-candidate",
+    "exactEquipmentMasteryRitesSkillsProfileRosterSustainExceptDeclaredRp": true,
+    "rp": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    }
+  },
+  {
+    "observationId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-endure",
+    "baselineReceipt": "day2-b-endurance-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-candidate",
+    "exactEquipmentMasteryRitesSkillsProfileRosterSustainExceptDeclaredRp": true,
+    "rp": {
+      "budget": 47,
+      "cost": 46,
+      "unused": 1,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    }
+  },
+  {
+    "observationId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-static",
+    "baselineReceipt": "day2-b-endurance-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-control",
+    "exactEquipmentMasteryRitesSkillsProfileRosterSustainExceptDeclaredRp": true,
+    "rp": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    }
+  },
+  {
+    "observationId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-endure",
+    "baselineReceipt": "day2-b-endurance-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-control",
+    "exactEquipmentMasteryRitesSkillsProfileRosterSustainExceptDeclaredRp": true,
+    "rp": {
+      "budget": 47,
+      "cost": 46,
+      "unused": 1,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    }
+  },
+  {
+    "observationId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-static",
+    "baselineReceipt": "day2-b-endurance-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-candidate",
+    "exactEquipmentMasteryRitesSkillsProfileRosterSustainExceptDeclaredRp": true,
+    "rp": {
+      "budget": 47,
+      "cost": 40,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    }
+  },
+  {
+    "observationId": "guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-endure",
+    "baselineReceipt": "day2-b-endurance-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-candidate",
+    "exactEquipmentMasteryRitesSkillsProfileRosterSustainExceptDeclaredRp": true,
+    "rp": {
+      "budget": 47,
+      "cost": 46,
+      "unused": 1,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    }
+  }
+]

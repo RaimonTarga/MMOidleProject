@@ -1,0 +1,68 @@
+{
+  "experimentId": "guard-coverage-01",
+  "sourceCommit": "15aef70b72bc0eead1511a32a93f72a97299ea7c",
+  "publicationDirectory": "reports/player-fast-pass/guard-coverage-01/run-01",
+  "requiredFiles": [
+    "REPORT.md",
+    "results-summary.json",
+    "resolved-builds.json",
+    "manifest.json",
+    "identity.json",
+    "seal.json",
+    "complete.json or partial.json",
+    "raw-inventory.json"
+  ],
+  "reportLimits": {
+    "findings": 5,
+    "decisions": 3
+  },
+  "counts": [
+    "planned",
+    "newCompleted",
+    "reused",
+    "failed",
+    "omitted",
+    "notRun"
+  ],
+  "rowKeys": [
+    "observationId",
+    "identityId",
+    "arm",
+    "comparisonId",
+    "fixture",
+    "seed",
+    "measuredSourceCommit",
+    "status",
+    "outcome",
+    "elapsedMs",
+    "completedKills",
+    "endpoints",
+    "intervals",
+    "work",
+    "unfinishedTargets",
+    "targetRegainCount",
+    "runicPoints",
+    "guards",
+    "deathEvidence",
+    "conduit",
+    "evidenceDirectory",
+    "initialRosterHash"
+  ],
+  "requiredDerivedFields": [
+    "endpoint values at 300000/900000/1800000 or explicit null",
+    "supported incoming/outgoing HP damage and absorption separately",
+    "Guard activation counts, sampled active time and Brace overlap",
+    "death active/inactive/cooldown with synchronous hit-state or declared uncertainty",
+    "last 15 seconds of owner damage/debuff/recovery context per death, with external raw reference",
+    "first-engagement HP/barrier/payment context for Champion Desert 101021",
+    "final-interval work for cap survivors"
+  ],
+  "counterPolicy": "completedKills is lifetime counter; endpoints.work.kills is interval counter; do not silently reconcile",
+  "unavailable": [
+    "source-specific effective healing",
+    "overheal",
+    "counterfactual damage or healing"
+  ],
+  "interpretation": "synthetic=true, economyEligible=false; fixture/seed-specific practical packages, not universal charm ranking",
+  "publication": "Commit AND push scoped compact files; verify remote ref and file bytes; return branch, publication SHA, execution source SHA, report path, counts and integration state. No rerun on push failure. No deployment."
+}

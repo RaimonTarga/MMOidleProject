@@ -1,0 +1,3991 @@
+{
+  "basis": "day2-bounded-01/run-01/REPORT.md",
+  "scope": "Catalogue references only; no live equipment defaults changed",
+  "references": [
+    {
+      "identityId": "breadth-t3-apprentice-light",
+      "referenceObservationId": "day2-b-endurance-01-breadth-t3-apprentice-light-node-t3-volcanic-03-s101009-volcanic-candidate",
+      "disposition": "improved, not endurance-cleared: 2/4 caps; residual deaths 1111.5 and 1173.5 seconds",
+      "packageReadback": {
+        "declared": {
+          "stance": "defensive-stance",
+          "abilities": {
+            "techniques": [
+              "sweep",
+              "frenzy"
+            ],
+            "guards": [
+              "second-wind",
+              "brace",
+              "cleanse"
+            ]
+          },
+          "runeRules": [
+            {
+              "conditionId": "always",
+              "actionId": "auto-path-enemy"
+            },
+            {
+              "conditionId": "inside-telegraph",
+              "actionId": "step-back"
+            },
+            {
+              "conditionId": "in-combat",
+              "actionId": "orbit"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "avoid-hazards"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "wait-for-regen"
+            }
+          ],
+          "upgradeLevel": 5,
+          "sources": {
+            "stance": "explicit",
+            "abilities": "explicit",
+            "runeRules": "explicit",
+            "upgradeLevel": "explicit"
+          }
+        },
+        "skillPath": [
+          "dot-root",
+          "dot-light",
+          "dot-range-mid"
+        ],
+        "equipment": {
+          "inventory": [],
+          "equipment": {
+            "weapon": "jungle-venomthorn-rapier",
+            "armor": "jungle-vest-t3",
+            "recovery": "volcanic-charm-t3",
+            "mobility": "mountain-boots-t3",
+            "core": "core-accelerant",
+            "relic": null
+          },
+          "itemUpgrades": {
+            "jungle-venomthorn-rapier": 5,
+            "jungle-vest-t3": 5,
+            "volcanic-charm-t3": 5,
+            "mountain-boots-t3": 5,
+            "core-accelerant": 0
+          }
+        },
+        "mastery": {
+          "biomeLevel": {
+            "cave": 18,
+            "forest": 12,
+            "mountain": 18,
+            "plains": 12,
+            "swamp": 18,
+            "desert": 12,
+            "jungle": 12,
+            "tundra": 6,
+            "volcanic": 6
+          },
+          "globalMastery": 114
+        },
+        "runicPoints": {
+          "budget": 38,
+          "cost": 36,
+          "unused": 2,
+          "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+        },
+        "access": "Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.",
+        "skillPoints": 0,
+        "knownAbilities": [
+          "binding-strike",
+          "detonate",
+          "frenzy",
+          "quick-strike",
+          "charge",
+          "contagion",
+          "hamstring",
+          "slam",
+          "expose-weakness",
+          "power-strike",
+          "sweep",
+          "break-free",
+          "bramble-guard",
+          "endure",
+          "brace",
+          "cleanse",
+          "second-wind"
+        ],
+        "rites": []
+      },
+      "range": "mid",
+      "sustainReadback": {
+        "hp": 335,
+        "maxHp": 335,
+        "barrier": 0,
+        "recovery": 21,
+        "stance": "defensive-stance",
+        "phase": "OUT_OF_COMBAT",
+        "activeFraction": 1,
+        "killWindowMs": 0,
+        "killFraction": 0,
+        "killDurationMs": 4000,
+        "switchCooldownMs": 0,
+        "autoIntent": null,
+        "gates": {
+          "evolutionChain": [
+            {
+              "id": "volcanic-charm-t3",
+              "evolvesFrom": "plains-charm-t2",
+              "tier": 3,
+              "group": "volcanic",
+              "requiredMastery": 3,
+              "actualMastery": 6,
+              "equipped": true
+            },
+            {
+              "id": "plains-charm-t2",
+              "evolvesFrom": "plains-charm-t1",
+              "tier": 2,
+              "group": "plains",
+              "requiredMastery": 9,
+              "actualMastery": 12,
+              "equipped": false
+            },
+            {
+              "id": "plains-charm-t1",
+              "evolvesFrom": null,
+              "tier": 1,
+              "group": "plains",
+              "requiredMastery": 3,
+              "actualMastery": 12,
+              "equipped": false
+            }
+          ],
+          "acquisition": "Synthetic mature equipment; chain gates checked, no acquisition/cost claim",
+          "upgrade": {
+            "plus": 5,
+            "requiredMastery": 4
+          },
+          "stanceGates": [
+            {
+              "id": "defensive-stance",
+              "recipeId": "stance-recipe-defensive",
+              "group": "plains",
+              "requiredMastery": 7,
+              "actualMastery": 12
+            }
+          ],
+          "reserved": {
+            "abilities": 26,
+            "stances": 1,
+            "logic": 9,
+            "rites": 0,
+            "total": 36
+          },
+          "recoveryPassives": {
+            "defense.recovery-active-pct": 0.16,
+            "defense.recovery-on-kill-pct": 0.14
+          }
+        }
+      }
+    },
+    {
+      "identityId": "breadth-t4-striker-heavy-a",
+      "referenceObservationId": "day2-b-endurance-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-mountain-candidate",
+      "disposition": "preferred tested Graveyard reference; both Desert seeds died",
+      "packageReadback": {
+        "declared": {
+          "stance": "offensive-stance",
+          "abilities": {
+            "techniques": [
+              "sweep",
+              "frenzy",
+              "expose-weakness"
+            ],
+            "guards": [
+              "second-wind",
+              "brace",
+              "cleanse"
+            ]
+          },
+          "runeRules": [
+            {
+              "conditionId": "always",
+              "actionId": "auto-path-enemy"
+            },
+            {
+              "conditionId": "inside-telegraph",
+              "actionId": "step-back"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "avoid-hazards"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "wait-for-regen"
+            }
+          ],
+          "upgradeLevel": 5,
+          "sources": {
+            "stance": "explicit",
+            "abilities": "explicit",
+            "runeRules": "explicit",
+            "upgradeLevel": "explicit"
+          }
+        },
+        "skillPath": [
+          "cadence-root",
+          "cadence-heavy",
+          "cadence-range-close",
+          "cadence-heavy-t3-a"
+        ],
+        "equipment": {
+          "inventory": [],
+          "equipment": {
+            "weapon": "mountain-warmaul",
+            "armor": "mountain-vest-t4",
+            "recovery": "volcanic-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-bruiser",
+            "relic": "relic-colossus-heart"
+          },
+          "itemUpgrades": {
+            "mountain-warmaul": 5,
+            "mountain-vest-t4": 5,
+            "volcanic-charm-t4": 5,
+            "mountain-boots-t4": 5,
+            "core-bruiser": 0,
+            "relic-colossus-heart": 0
+          }
+        },
+        "mastery": {
+          "biomeLevel": {
+            "cave": 18,
+            "forest": 12,
+            "mountain": 24,
+            "plains": 12,
+            "swamp": 18,
+            "desert": 18,
+            "jungle": 18,
+            "tundra": 12,
+            "volcanic": 12,
+            "graveyard": 6,
+            "trench": 6
+          },
+          "globalMastery": 156
+        },
+        "runicPoints": {
+          "budget": 47,
+          "cost": 40,
+          "unused": 7,
+          "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+        },
+        "access": "Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.",
+        "skillPoints": 0,
+        "knownAbilities": [
+          "disengage",
+          "imbue-lightning",
+          "snipe",
+          "stunning-strike",
+          "binding-strike",
+          "detonate",
+          "frenzy",
+          "quick-strike",
+          "charge",
+          "contagion",
+          "hamstring",
+          "slam",
+          "expose-weakness",
+          "power-strike",
+          "sweep",
+          "recuperate",
+          "break-free",
+          "bramble-guard",
+          "endure",
+          "brace",
+          "cleanse",
+          "second-wind"
+        ],
+        "rites": []
+      },
+      "range": "close",
+      "sustainReadback": {
+        "hp": 674,
+        "maxHp": 674,
+        "barrier": 0,
+        "recovery": 26,
+        "stance": "offensive-stance",
+        "phase": "OUT_OF_COMBAT",
+        "activeFraction": 1,
+        "killWindowMs": 0,
+        "killFraction": 0,
+        "killDurationMs": 4000,
+        "switchCooldownMs": 0,
+        "autoIntent": null,
+        "gates": {
+          "evolutionChain": [
+            {
+              "id": "volcanic-charm-t4",
+              "evolvesFrom": "volcanic-charm-t3",
+              "tier": 4,
+              "group": "volcanic",
+              "requiredMastery": 9,
+              "actualMastery": 12,
+              "equipped": true
+            },
+            {
+              "id": "volcanic-charm-t3",
+              "evolvesFrom": "plains-charm-t2",
+              "tier": 3,
+              "group": "volcanic",
+              "requiredMastery": 3,
+              "actualMastery": 12,
+              "equipped": false
+            },
+            {
+              "id": "plains-charm-t2",
+              "evolvesFrom": "plains-charm-t1",
+              "tier": 2,
+              "group": "plains",
+              "requiredMastery": 9,
+              "actualMastery": 12,
+              "equipped": false
+            },
+            {
+              "id": "plains-charm-t1",
+              "evolvesFrom": null,
+              "tier": 1,
+              "group": "plains",
+              "requiredMastery": 3,
+              "actualMastery": 12,
+              "equipped": false
+            }
+          ],
+          "acquisition": "Synthetic mature equipment; chain gates checked, no acquisition/cost claim",
+          "upgrade": {
+            "plus": 5,
+            "requiredMastery": 10
+          },
+          "stanceGates": [
+            {
+              "id": "offensive-stance",
+              "recipeId": "stance-recipe-offensive",
+              "group": "plains",
+              "requiredMastery": 7,
+              "actualMastery": 12
+            }
+          ],
+          "reserved": {
+            "abilities": 33,
+            "stances": 1,
+            "logic": 6,
+            "rites": 0,
+            "total": 40
+          },
+          "recoveryPassives": {
+            "defense.recovery-active-pct": 0.16,
+            "defense.recovery-on-kill-pct": 0.14,
+            "defense.recovery-pulse-interval-ms": 6000,
+            "defense.recovery-pulse-duration-ms": 4000,
+            "defense.recovery-pulse-pct": 0.30000000000000004
+          }
+        }
+      }
+    },
+    {
+      "identityId": "breadth-t4-conduit-heavy-b",
+      "referenceObservationId": "day2-b-endurance-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-control",
+      "disposition": "explicit charm alternative; no universal default; adverse Desert 101021 preserved",
+      "packageReadback": {
+        "declared": {
+          "stance": "offensive-stance",
+          "abilities": {
+            "techniques": [
+              "sweep",
+              "frenzy",
+              "expose-weakness"
+            ],
+            "guards": [
+              "second-wind",
+              "brace",
+              "cleanse"
+            ]
+          },
+          "runeRules": [
+            {
+              "conditionId": "always",
+              "actionId": "auto-path-enemy"
+            },
+            {
+              "conditionId": "inside-telegraph",
+              "actionId": "step-back"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "avoid-hazards"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "wait-for-regen"
+            }
+          ],
+          "upgradeLevel": 5,
+          "sources": {
+            "stance": "explicit",
+            "abilities": "explicit",
+            "runeRules": "explicit",
+            "upgradeLevel": "explicit"
+          }
+        },
+        "skillPath": [
+          "summoner-root",
+          "summoner-heavy",
+          "summoner-range-close",
+          "summoner-heavy-t3-b"
+        ],
+        "equipment": {
+          "inventory": [],
+          "equipment": {
+            "weapon": "jungle-deathfang-rapier",
+            "armor": "mountain-vest-t4",
+            "recovery": "mountain-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-survivalist",
+            "relic": "relic-colossus-heart"
+          },
+          "itemUpgrades": {
+            "jungle-deathfang-rapier": 5,
+            "mountain-vest-t4": 5,
+            "mountain-charm-t4": 5,
+            "mountain-boots-t4": 5,
+            "core-survivalist": 0,
+            "relic-colossus-heart": 0
+          }
+        },
+        "mastery": {
+          "biomeLevel": {
+            "cave": 18,
+            "forest": 12,
+            "mountain": 24,
+            "plains": 12,
+            "swamp": 18,
+            "desert": 18,
+            "jungle": 18,
+            "tundra": 12,
+            "volcanic": 12,
+            "graveyard": 6,
+            "trench": 6
+          },
+          "globalMastery": 156
+        },
+        "runicPoints": {
+          "budget": 47,
+          "cost": 40,
+          "unused": 7,
+          "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+        },
+        "access": "Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.",
+        "skillPoints": 0,
+        "knownAbilities": [
+          "disengage",
+          "imbue-lightning",
+          "snipe",
+          "stunning-strike",
+          "binding-strike",
+          "detonate",
+          "frenzy",
+          "quick-strike",
+          "charge",
+          "contagion",
+          "hamstring",
+          "slam",
+          "expose-weakness",
+          "power-strike",
+          "sweep",
+          "recuperate",
+          "break-free",
+          "bramble-guard",
+          "endure",
+          "brace",
+          "cleanse",
+          "second-wind"
+        ],
+        "rites": []
+      },
+      "range": "close",
+      "sustainReadback": {
+        "hp": 568,
+        "maxHp": 568,
+        "barrier": 239,
+        "recovery": 25,
+        "stance": "offensive-stance",
+        "phase": "OUT_OF_COMBAT",
+        "activeFraction": 1,
+        "killWindowMs": 0,
+        "killFraction": 0,
+        "killDurationMs": 4000,
+        "switchCooldownMs": 0,
+        "autoIntent": null,
+        "gates": {
+          "evolutionChain": [
+            {
+              "id": "mountain-charm-t4",
+              "evolvesFrom": "mountain-charm-t3",
+              "tier": 4,
+              "group": "mountain",
+              "requiredMastery": 21,
+              "actualMastery": 24,
+              "equipped": true
+            },
+            {
+              "id": "mountain-charm-t3",
+              "evolvesFrom": "mountain-charm-t2",
+              "tier": 3,
+              "group": "mountain",
+              "requiredMastery": 15,
+              "actualMastery": 24,
+              "equipped": false
+            },
+            {
+              "id": "mountain-charm-t2",
+              "evolvesFrom": "mountain-charm-t1",
+              "tier": 2,
+              "group": "mountain",
+              "requiredMastery": 9,
+              "actualMastery": 24,
+              "equipped": false
+            },
+            {
+              "id": "mountain-charm-t1",
+              "evolvesFrom": null,
+              "tier": 1,
+              "group": "mountain",
+              "requiredMastery": 3,
+              "actualMastery": 24,
+              "equipped": false
+            }
+          ],
+          "acquisition": "Synthetic mature equipment; chain gates checked, no acquisition/cost claim",
+          "upgrade": {
+            "plus": 5,
+            "requiredMastery": 22
+          },
+          "stanceGates": [
+            {
+              "id": "offensive-stance",
+              "recipeId": "stance-recipe-offensive",
+              "group": "plains",
+              "requiredMastery": 7,
+              "actualMastery": 12
+            }
+          ],
+          "reserved": {
+            "abilities": 33,
+            "stances": 1,
+            "logic": 6,
+            "rites": 0,
+            "total": 40
+          },
+          "recoveryPassives": {
+            "core.recovery-mult": 0.3
+          }
+        }
+      }
+    },
+    {
+      "identityId": "breadth-t4-conduit-heavy-b",
+      "referenceObservationId": "day2-b-endurance-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-candidate",
+      "disposition": "explicit charm alternative; no universal default; adverse Desert 101021 preserved",
+      "packageReadback": {
+        "declared": {
+          "stance": "offensive-stance",
+          "abilities": {
+            "techniques": [
+              "sweep",
+              "frenzy",
+              "expose-weakness"
+            ],
+            "guards": [
+              "second-wind",
+              "brace",
+              "cleanse"
+            ]
+          },
+          "runeRules": [
+            {
+              "conditionId": "always",
+              "actionId": "auto-path-enemy"
+            },
+            {
+              "conditionId": "inside-telegraph",
+              "actionId": "step-back"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "avoid-hazards"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "wait-for-regen"
+            }
+          ],
+          "upgradeLevel": 5,
+          "sources": {
+            "stance": "explicit",
+            "abilities": "explicit",
+            "runeRules": "explicit",
+            "upgradeLevel": "explicit"
+          }
+        },
+        "skillPath": [
+          "summoner-root",
+          "summoner-heavy",
+          "summoner-range-close",
+          "summoner-heavy-t3-b"
+        ],
+        "equipment": {
+          "inventory": [],
+          "equipment": {
+            "weapon": "jungle-deathfang-rapier",
+            "armor": "mountain-vest-t4",
+            "recovery": "volcanic-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-survivalist",
+            "relic": "relic-colossus-heart"
+          },
+          "itemUpgrades": {
+            "jungle-deathfang-rapier": 5,
+            "mountain-vest-t4": 5,
+            "volcanic-charm-t4": 5,
+            "mountain-boots-t4": 5,
+            "core-survivalist": 0,
+            "relic-colossus-heart": 0
+          }
+        },
+        "mastery": {
+          "biomeLevel": {
+            "cave": 18,
+            "forest": 12,
+            "mountain": 24,
+            "plains": 12,
+            "swamp": 18,
+            "desert": 18,
+            "jungle": 18,
+            "tundra": 12,
+            "volcanic": 12,
+            "graveyard": 6,
+            "trench": 6
+          },
+          "globalMastery": 156
+        },
+        "runicPoints": {
+          "budget": 47,
+          "cost": 40,
+          "unused": 7,
+          "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+        },
+        "access": "Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.",
+        "skillPoints": 0,
+        "knownAbilities": [
+          "disengage",
+          "imbue-lightning",
+          "snipe",
+          "stunning-strike",
+          "binding-strike",
+          "detonate",
+          "frenzy",
+          "quick-strike",
+          "charge",
+          "contagion",
+          "hamstring",
+          "slam",
+          "expose-weakness",
+          "power-strike",
+          "sweep",
+          "recuperate",
+          "break-free",
+          "bramble-guard",
+          "endure",
+          "brace",
+          "cleanse",
+          "second-wind"
+        ],
+        "rites": []
+      },
+      "range": "close",
+      "sustainReadback": {
+        "hp": 568,
+        "maxHp": 568,
+        "barrier": 0,
+        "recovery": 34,
+        "stance": "offensive-stance",
+        "phase": "OUT_OF_COMBAT",
+        "activeFraction": 1,
+        "killWindowMs": 0,
+        "killFraction": 0,
+        "killDurationMs": 4000,
+        "switchCooldownMs": 0,
+        "autoIntent": null,
+        "gates": {
+          "evolutionChain": [
+            {
+              "id": "volcanic-charm-t4",
+              "evolvesFrom": "volcanic-charm-t3",
+              "tier": 4,
+              "group": "volcanic",
+              "requiredMastery": 9,
+              "actualMastery": 12,
+              "equipped": true
+            },
+            {
+              "id": "volcanic-charm-t3",
+              "evolvesFrom": "plains-charm-t2",
+              "tier": 3,
+              "group": "volcanic",
+              "requiredMastery": 3,
+              "actualMastery": 12,
+              "equipped": false
+            },
+            {
+              "id": "plains-charm-t2",
+              "evolvesFrom": "plains-charm-t1",
+              "tier": 2,
+              "group": "plains",
+              "requiredMastery": 9,
+              "actualMastery": 12,
+              "equipped": false
+            },
+            {
+              "id": "plains-charm-t1",
+              "evolvesFrom": null,
+              "tier": 1,
+              "group": "plains",
+              "requiredMastery": 3,
+              "actualMastery": 12,
+              "equipped": false
+            }
+          ],
+          "acquisition": "Synthetic mature equipment; chain gates checked, no acquisition/cost claim",
+          "upgrade": {
+            "plus": 5,
+            "requiredMastery": 10
+          },
+          "stanceGates": [
+            {
+              "id": "offensive-stance",
+              "recipeId": "stance-recipe-offensive",
+              "group": "plains",
+              "requiredMastery": 7,
+              "actualMastery": 12
+            }
+          ],
+          "reserved": {
+            "abilities": 33,
+            "stances": 1,
+            "logic": 6,
+            "rites": 0,
+            "total": 40
+          },
+          "recoveryPassives": {
+            "defense.recovery-active-pct": 0.16,
+            "defense.recovery-on-kill-pct": 0.14,
+            "core.recovery-mult": 0.3
+          }
+        }
+      }
+    },
+    {
+      "identityId": "breadth-t4-striker-heavy-c",
+      "referenceObservationId": "day2-b-endurance-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-mountain-candidate",
+      "disposition": "preferred tested Graveyard reference; both Desert seeds died",
+      "packageReadback": {
+        "declared": {
+          "stance": "offensive-stance",
+          "abilities": {
+            "techniques": [
+              "sweep",
+              "frenzy",
+              "expose-weakness"
+            ],
+            "guards": [
+              "second-wind",
+              "brace",
+              "cleanse"
+            ]
+          },
+          "runeRules": [
+            {
+              "conditionId": "always",
+              "actionId": "auto-path-enemy"
+            },
+            {
+              "conditionId": "inside-telegraph",
+              "actionId": "step-back"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "avoid-hazards"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "wait-for-regen"
+            }
+          ],
+          "upgradeLevel": 5,
+          "sources": {
+            "stance": "explicit",
+            "abilities": "explicit",
+            "runeRules": "explicit",
+            "upgradeLevel": "explicit"
+          }
+        },
+        "skillPath": [
+          "cadence-root",
+          "cadence-heavy",
+          "cadence-range-close",
+          "cadence-heavy-t3-c"
+        ],
+        "equipment": {
+          "inventory": [],
+          "equipment": {
+            "weapon": "mountain-warmaul",
+            "armor": "mountain-vest-t4",
+            "recovery": "volcanic-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-bruiser",
+            "relic": "relic-colossus-heart"
+          },
+          "itemUpgrades": {
+            "mountain-warmaul": 5,
+            "mountain-vest-t4": 5,
+            "volcanic-charm-t4": 5,
+            "mountain-boots-t4": 5,
+            "core-bruiser": 0,
+            "relic-colossus-heart": 0
+          }
+        },
+        "mastery": {
+          "biomeLevel": {
+            "cave": 18,
+            "forest": 12,
+            "mountain": 24,
+            "plains": 12,
+            "swamp": 18,
+            "desert": 18,
+            "jungle": 18,
+            "tundra": 12,
+            "volcanic": 12,
+            "graveyard": 6,
+            "trench": 6
+          },
+          "globalMastery": 156
+        },
+        "runicPoints": {
+          "budget": 47,
+          "cost": 40,
+          "unused": 7,
+          "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+        },
+        "access": "Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.",
+        "skillPoints": 0,
+        "knownAbilities": [
+          "disengage",
+          "imbue-lightning",
+          "snipe",
+          "stunning-strike",
+          "binding-strike",
+          "detonate",
+          "frenzy",
+          "quick-strike",
+          "charge",
+          "contagion",
+          "hamstring",
+          "slam",
+          "expose-weakness",
+          "power-strike",
+          "sweep",
+          "recuperate",
+          "break-free",
+          "bramble-guard",
+          "endure",
+          "brace",
+          "cleanse",
+          "second-wind"
+        ],
+        "rites": []
+      },
+      "range": "close",
+      "sustainReadback": {
+        "hp": 674,
+        "maxHp": 674,
+        "barrier": 0,
+        "recovery": 26,
+        "stance": "offensive-stance",
+        "phase": "OUT_OF_COMBAT",
+        "activeFraction": 1,
+        "killWindowMs": 0,
+        "killFraction": 0,
+        "killDurationMs": 4000,
+        "switchCooldownMs": 0,
+        "autoIntent": null,
+        "gates": {
+          "evolutionChain": [
+            {
+              "id": "volcanic-charm-t4",
+              "evolvesFrom": "volcanic-charm-t3",
+              "tier": 4,
+              "group": "volcanic",
+              "requiredMastery": 9,
+              "actualMastery": 12,
+              "equipped": true
+            },
+            {
+              "id": "volcanic-charm-t3",
+              "evolvesFrom": "plains-charm-t2",
+              "tier": 3,
+              "group": "volcanic",
+              "requiredMastery": 3,
+              "actualMastery": 12,
+              "equipped": false
+            },
+            {
+              "id": "plains-charm-t2",
+              "evolvesFrom": "plains-charm-t1",
+              "tier": 2,
+              "group": "plains",
+              "requiredMastery": 9,
+              "actualMastery": 12,
+              "equipped": false
+            },
+            {
+              "id": "plains-charm-t1",
+              "evolvesFrom": null,
+              "tier": 1,
+              "group": "plains",
+              "requiredMastery": 3,
+              "actualMastery": 12,
+              "equipped": false
+            }
+          ],
+          "acquisition": "Synthetic mature equipment; chain gates checked, no acquisition/cost claim",
+          "upgrade": {
+            "plus": 5,
+            "requiredMastery": 10
+          },
+          "stanceGates": [
+            {
+              "id": "offensive-stance",
+              "recipeId": "stance-recipe-offensive",
+              "group": "plains",
+              "requiredMastery": 7,
+              "actualMastery": 12
+            }
+          ],
+          "reserved": {
+            "abilities": 33,
+            "stances": 1,
+            "logic": 6,
+            "rites": 0,
+            "total": 40
+          },
+          "recoveryPassives": {
+            "defense.recovery-active-pct": 0.16,
+            "defense.recovery-on-kill-pct": 0.14,
+            "defense.recovery-pulse-interval-ms": 6000,
+            "defense.recovery-pulse-duration-ms": 4000,
+            "defense.recovery-pulse-pct": 0.30000000000000004
+          }
+        }
+      }
+    },
+    {
+      "identityId": "breadth-t3-apprentice-light",
+      "referenceObservationId": "day2-b-endurance-01-breadth-t3-apprentice-light-node-t3-tundra-03-s101009-volcanic-candidate",
+      "disposition": "improved, not endurance-cleared: 2/4 caps; residual deaths 1111.5 and 1173.5 seconds",
+      "packageReadback": {
+        "declared": {
+          "stance": "defensive-stance",
+          "abilities": {
+            "techniques": [
+              "sweep",
+              "frenzy"
+            ],
+            "guards": [
+              "second-wind",
+              "brace",
+              "cleanse"
+            ]
+          },
+          "runeRules": [
+            {
+              "conditionId": "always",
+              "actionId": "auto-path-enemy"
+            },
+            {
+              "conditionId": "inside-telegraph",
+              "actionId": "step-back"
+            },
+            {
+              "conditionId": "in-combat",
+              "actionId": "orbit"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "avoid-hazards"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "wait-for-regen"
+            }
+          ],
+          "upgradeLevel": 5,
+          "sources": {
+            "stance": "explicit",
+            "abilities": "explicit",
+            "runeRules": "explicit",
+            "upgradeLevel": "explicit"
+          }
+        },
+        "skillPath": [
+          "dot-root",
+          "dot-light",
+          "dot-range-mid"
+        ],
+        "equipment": {
+          "inventory": [],
+          "equipment": {
+            "weapon": "jungle-venomthorn-rapier",
+            "armor": "jungle-vest-t3",
+            "recovery": "volcanic-charm-t3",
+            "mobility": "mountain-boots-t3",
+            "core": "core-accelerant",
+            "relic": null
+          },
+          "itemUpgrades": {
+            "jungle-venomthorn-rapier": 5,
+            "jungle-vest-t3": 5,
+            "volcanic-charm-t3": 5,
+            "mountain-boots-t3": 5,
+            "core-accelerant": 0
+          }
+        },
+        "mastery": {
+          "biomeLevel": {
+            "cave": 18,
+            "forest": 12,
+            "mountain": 18,
+            "plains": 12,
+            "swamp": 18,
+            "desert": 12,
+            "jungle": 12,
+            "tundra": 6,
+            "volcanic": 6
+          },
+          "globalMastery": 114
+        },
+        "runicPoints": {
+          "budget": 38,
+          "cost": 36,
+          "unused": 2,
+          "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+        },
+        "access": "Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.",
+        "skillPoints": 0,
+        "knownAbilities": [
+          "binding-strike",
+          "detonate",
+          "frenzy",
+          "quick-strike",
+          "charge",
+          "contagion",
+          "hamstring",
+          "slam",
+          "expose-weakness",
+          "power-strike",
+          "sweep",
+          "break-free",
+          "bramble-guard",
+          "endure",
+          "brace",
+          "cleanse",
+          "second-wind"
+        ],
+        "rites": []
+      },
+      "range": "mid",
+      "sustainReadback": {
+        "hp": 335,
+        "maxHp": 335,
+        "barrier": 0,
+        "recovery": 21,
+        "stance": "defensive-stance",
+        "phase": "OUT_OF_COMBAT",
+        "activeFraction": 1,
+        "killWindowMs": 0,
+        "killFraction": 0,
+        "killDurationMs": 4000,
+        "switchCooldownMs": 0,
+        "autoIntent": null,
+        "gates": {
+          "evolutionChain": [
+            {
+              "id": "volcanic-charm-t3",
+              "evolvesFrom": "plains-charm-t2",
+              "tier": 3,
+              "group": "volcanic",
+              "requiredMastery": 3,
+              "actualMastery": 6,
+              "equipped": true
+            },
+            {
+              "id": "plains-charm-t2",
+              "evolvesFrom": "plains-charm-t1",
+              "tier": 2,
+              "group": "plains",
+              "requiredMastery": 9,
+              "actualMastery": 12,
+              "equipped": false
+            },
+            {
+              "id": "plains-charm-t1",
+              "evolvesFrom": null,
+              "tier": 1,
+              "group": "plains",
+              "requiredMastery": 3,
+              "actualMastery": 12,
+              "equipped": false
+            }
+          ],
+          "acquisition": "Synthetic mature equipment; chain gates checked, no acquisition/cost claim",
+          "upgrade": {
+            "plus": 5,
+            "requiredMastery": 4
+          },
+          "stanceGates": [
+            {
+              "id": "defensive-stance",
+              "recipeId": "stance-recipe-defensive",
+              "group": "plains",
+              "requiredMastery": 7,
+              "actualMastery": 12
+            }
+          ],
+          "reserved": {
+            "abilities": 26,
+            "stances": 1,
+            "logic": 9,
+            "rites": 0,
+            "total": 36
+          },
+          "recoveryPassives": {
+            "defense.recovery-active-pct": 0.16,
+            "defense.recovery-on-kill-pct": 0.14
+          }
+        }
+      }
+    },
+    {
+      "identityId": "breadth-t4-striker-heavy-a",
+      "referenceObservationId": "day2-b-endurance-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-mountain-candidate",
+      "disposition": "preferred tested Graveyard reference; both Desert seeds died",
+      "packageReadback": {
+        "declared": {
+          "stance": "offensive-stance",
+          "abilities": {
+            "techniques": [
+              "sweep",
+              "frenzy",
+              "expose-weakness"
+            ],
+            "guards": [
+              "second-wind",
+              "brace",
+              "cleanse"
+            ]
+          },
+          "runeRules": [
+            {
+              "conditionId": "always",
+              "actionId": "auto-path-enemy"
+            },
+            {
+              "conditionId": "inside-telegraph",
+              "actionId": "step-back"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "avoid-hazards"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "wait-for-regen"
+            }
+          ],
+          "upgradeLevel": 5,
+          "sources": {
+            "stance": "explicit",
+            "abilities": "explicit",
+            "runeRules": "explicit",
+            "upgradeLevel": "explicit"
+          }
+        },
+        "skillPath": [
+          "cadence-root",
+          "cadence-heavy",
+          "cadence-range-close",
+          "cadence-heavy-t3-a"
+        ],
+        "equipment": {
+          "inventory": [],
+          "equipment": {
+            "weapon": "mountain-warmaul",
+            "armor": "mountain-vest-t4",
+            "recovery": "volcanic-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-bruiser",
+            "relic": "relic-colossus-heart"
+          },
+          "itemUpgrades": {
+            "mountain-warmaul": 5,
+            "mountain-vest-t4": 5,
+            "volcanic-charm-t4": 5,
+            "mountain-boots-t4": 5,
+            "core-bruiser": 0,
+            "relic-colossus-heart": 0
+          }
+        },
+        "mastery": {
+          "biomeLevel": {
+            "cave": 18,
+            "forest": 12,
+            "mountain": 24,
+            "plains": 12,
+            "swamp": 18,
+            "desert": 18,
+            "jungle": 18,
+            "tundra": 12,
+            "volcanic": 12,
+            "graveyard": 6,
+            "trench": 6
+          },
+          "globalMastery": 156
+        },
+        "runicPoints": {
+          "budget": 47,
+          "cost": 40,
+          "unused": 7,
+          "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+        },
+        "access": "Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.",
+        "skillPoints": 0,
+        "knownAbilities": [
+          "disengage",
+          "imbue-lightning",
+          "snipe",
+          "stunning-strike",
+          "binding-strike",
+          "detonate",
+          "frenzy",
+          "quick-strike",
+          "charge",
+          "contagion",
+          "hamstring",
+          "slam",
+          "expose-weakness",
+          "power-strike",
+          "sweep",
+          "recuperate",
+          "break-free",
+          "bramble-guard",
+          "endure",
+          "brace",
+          "cleanse",
+          "second-wind"
+        ],
+        "rites": []
+      },
+      "range": "close",
+      "sustainReadback": {
+        "hp": 674,
+        "maxHp": 674,
+        "barrier": 0,
+        "recovery": 26,
+        "stance": "offensive-stance",
+        "phase": "OUT_OF_COMBAT",
+        "activeFraction": 1,
+        "killWindowMs": 0,
+        "killFraction": 0,
+        "killDurationMs": 4000,
+        "switchCooldownMs": 0,
+        "autoIntent": null,
+        "gates": {
+          "evolutionChain": [
+            {
+              "id": "volcanic-charm-t4",
+              "evolvesFrom": "volcanic-charm-t3",
+              "tier": 4,
+              "group": "volcanic",
+              "requiredMastery": 9,
+              "actualMastery": 12,
+              "equipped": true
+            },
+            {
+              "id": "volcanic-charm-t3",
+              "evolvesFrom": "plains-charm-t2",
+              "tier": 3,
+              "group": "volcanic",
+              "requiredMastery": 3,
+              "actualMastery": 12,
+              "equipped": false
+            },
+            {
+              "id": "plains-charm-t2",
+              "evolvesFrom": "plains-charm-t1",
+              "tier": 2,
+              "group": "plains",
+              "requiredMastery": 9,
+              "actualMastery": 12,
+              "equipped": false
+            },
+            {
+              "id": "plains-charm-t1",
+              "evolvesFrom": null,
+              "tier": 1,
+              "group": "plains",
+              "requiredMastery": 3,
+              "actualMastery": 12,
+              "equipped": false
+            }
+          ],
+          "acquisition": "Synthetic mature equipment; chain gates checked, no acquisition/cost claim",
+          "upgrade": {
+            "plus": 5,
+            "requiredMastery": 10
+          },
+          "stanceGates": [
+            {
+              "id": "offensive-stance",
+              "recipeId": "stance-recipe-offensive",
+              "group": "plains",
+              "requiredMastery": 7,
+              "actualMastery": 12
+            }
+          ],
+          "reserved": {
+            "abilities": 33,
+            "stances": 1,
+            "logic": 6,
+            "rites": 0,
+            "total": 40
+          },
+          "recoveryPassives": {
+            "defense.recovery-active-pct": 0.16,
+            "defense.recovery-on-kill-pct": 0.14,
+            "defense.recovery-pulse-interval-ms": 6000,
+            "defense.recovery-pulse-duration-ms": 4000,
+            "defense.recovery-pulse-pct": 0.30000000000000004
+          }
+        }
+      }
+    },
+    {
+      "identityId": "breadth-t4-conduit-heavy-b",
+      "referenceObservationId": "day2-b-endurance-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-control",
+      "disposition": "explicit charm alternative; no universal default; adverse Desert 101021 preserved",
+      "packageReadback": {
+        "declared": {
+          "stance": "offensive-stance",
+          "abilities": {
+            "techniques": [
+              "sweep",
+              "frenzy",
+              "expose-weakness"
+            ],
+            "guards": [
+              "second-wind",
+              "brace",
+              "cleanse"
+            ]
+          },
+          "runeRules": [
+            {
+              "conditionId": "always",
+              "actionId": "auto-path-enemy"
+            },
+            {
+              "conditionId": "inside-telegraph",
+              "actionId": "step-back"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "avoid-hazards"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "wait-for-regen"
+            }
+          ],
+          "upgradeLevel": 5,
+          "sources": {
+            "stance": "explicit",
+            "abilities": "explicit",
+            "runeRules": "explicit",
+            "upgradeLevel": "explicit"
+          }
+        },
+        "skillPath": [
+          "summoner-root",
+          "summoner-heavy",
+          "summoner-range-close",
+          "summoner-heavy-t3-b"
+        ],
+        "equipment": {
+          "inventory": [],
+          "equipment": {
+            "weapon": "jungle-deathfang-rapier",
+            "armor": "mountain-vest-t4",
+            "recovery": "mountain-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-survivalist",
+            "relic": "relic-colossus-heart"
+          },
+          "itemUpgrades": {
+            "jungle-deathfang-rapier": 5,
+            "mountain-vest-t4": 5,
+            "mountain-charm-t4": 5,
+            "mountain-boots-t4": 5,
+            "core-survivalist": 0,
+            "relic-colossus-heart": 0
+          }
+        },
+        "mastery": {
+          "biomeLevel": {
+            "cave": 18,
+            "forest": 12,
+            "mountain": 24,
+            "plains": 12,
+            "swamp": 18,
+            "desert": 18,
+            "jungle": 18,
+            "tundra": 12,
+            "volcanic": 12,
+            "graveyard": 6,
+            "trench": 6
+          },
+          "globalMastery": 156
+        },
+        "runicPoints": {
+          "budget": 47,
+          "cost": 40,
+          "unused": 7,
+          "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+        },
+        "access": "Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.",
+        "skillPoints": 0,
+        "knownAbilities": [
+          "disengage",
+          "imbue-lightning",
+          "snipe",
+          "stunning-strike",
+          "binding-strike",
+          "detonate",
+          "frenzy",
+          "quick-strike",
+          "charge",
+          "contagion",
+          "hamstring",
+          "slam",
+          "expose-weakness",
+          "power-strike",
+          "sweep",
+          "recuperate",
+          "break-free",
+          "bramble-guard",
+          "endure",
+          "brace",
+          "cleanse",
+          "second-wind"
+        ],
+        "rites": []
+      },
+      "range": "close",
+      "sustainReadback": {
+        "hp": 568,
+        "maxHp": 568,
+        "barrier": 239,
+        "recovery": 25,
+        "stance": "offensive-stance",
+        "phase": "OUT_OF_COMBAT",
+        "activeFraction": 1,
+        "killWindowMs": 0,
+        "killFraction": 0,
+        "killDurationMs": 4000,
+        "switchCooldownMs": 0,
+        "autoIntent": null,
+        "gates": {
+          "evolutionChain": [
+            {
+              "id": "mountain-charm-t4",
+              "evolvesFrom": "mountain-charm-t3",
+              "tier": 4,
+              "group": "mountain",
+              "requiredMastery": 21,
+              "actualMastery": 24,
+              "equipped": true
+            },
+            {
+              "id": "mountain-charm-t3",
+              "evolvesFrom": "mountain-charm-t2",
+              "tier": 3,
+              "group": "mountain",
+              "requiredMastery": 15,
+              "actualMastery": 24,
+              "equipped": false
+            },
+            {
+              "id": "mountain-charm-t2",
+              "evolvesFrom": "mountain-charm-t1",
+              "tier": 2,
+              "group": "mountain",
+              "requiredMastery": 9,
+              "actualMastery": 24,
+              "equipped": false
+            },
+            {
+              "id": "mountain-charm-t1",
+              "evolvesFrom": null,
+              "tier": 1,
+              "group": "mountain",
+              "requiredMastery": 3,
+              "actualMastery": 24,
+              "equipped": false
+            }
+          ],
+          "acquisition": "Synthetic mature equipment; chain gates checked, no acquisition/cost claim",
+          "upgrade": {
+            "plus": 5,
+            "requiredMastery": 22
+          },
+          "stanceGates": [
+            {
+              "id": "offensive-stance",
+              "recipeId": "stance-recipe-offensive",
+              "group": "plains",
+              "requiredMastery": 7,
+              "actualMastery": 12
+            }
+          ],
+          "reserved": {
+            "abilities": 33,
+            "stances": 1,
+            "logic": 6,
+            "rites": 0,
+            "total": 40
+          },
+          "recoveryPassives": {
+            "core.recovery-mult": 0.3
+          }
+        }
+      }
+    },
+    {
+      "identityId": "breadth-t4-conduit-heavy-b",
+      "referenceObservationId": "day2-b-endurance-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-candidate",
+      "disposition": "explicit charm alternative; no universal default; adverse Desert 101021 preserved",
+      "packageReadback": {
+        "declared": {
+          "stance": "offensive-stance",
+          "abilities": {
+            "techniques": [
+              "sweep",
+              "frenzy",
+              "expose-weakness"
+            ],
+            "guards": [
+              "second-wind",
+              "brace",
+              "cleanse"
+            ]
+          },
+          "runeRules": [
+            {
+              "conditionId": "always",
+              "actionId": "auto-path-enemy"
+            },
+            {
+              "conditionId": "inside-telegraph",
+              "actionId": "step-back"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "avoid-hazards"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "wait-for-regen"
+            }
+          ],
+          "upgradeLevel": 5,
+          "sources": {
+            "stance": "explicit",
+            "abilities": "explicit",
+            "runeRules": "explicit",
+            "upgradeLevel": "explicit"
+          }
+        },
+        "skillPath": [
+          "summoner-root",
+          "summoner-heavy",
+          "summoner-range-close",
+          "summoner-heavy-t3-b"
+        ],
+        "equipment": {
+          "inventory": [],
+          "equipment": {
+            "weapon": "jungle-deathfang-rapier",
+            "armor": "mountain-vest-t4",
+            "recovery": "volcanic-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-survivalist",
+            "relic": "relic-colossus-heart"
+          },
+          "itemUpgrades": {
+            "jungle-deathfang-rapier": 5,
+            "mountain-vest-t4": 5,
+            "volcanic-charm-t4": 5,
+            "mountain-boots-t4": 5,
+            "core-survivalist": 0,
+            "relic-colossus-heart": 0
+          }
+        },
+        "mastery": {
+          "biomeLevel": {
+            "cave": 18,
+            "forest": 12,
+            "mountain": 24,
+            "plains": 12,
+            "swamp": 18,
+            "desert": 18,
+            "jungle": 18,
+            "tundra": 12,
+            "volcanic": 12,
+            "graveyard": 6,
+            "trench": 6
+          },
+          "globalMastery": 156
+        },
+        "runicPoints": {
+          "budget": 47,
+          "cost": 40,
+          "unused": 7,
+          "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+        },
+        "access": "Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.",
+        "skillPoints": 0,
+        "knownAbilities": [
+          "disengage",
+          "imbue-lightning",
+          "snipe",
+          "stunning-strike",
+          "binding-strike",
+          "detonate",
+          "frenzy",
+          "quick-strike",
+          "charge",
+          "contagion",
+          "hamstring",
+          "slam",
+          "expose-weakness",
+          "power-strike",
+          "sweep",
+          "recuperate",
+          "break-free",
+          "bramble-guard",
+          "endure",
+          "brace",
+          "cleanse",
+          "second-wind"
+        ],
+        "rites": []
+      },
+      "range": "close",
+      "sustainReadback": {
+        "hp": 568,
+        "maxHp": 568,
+        "barrier": 0,
+        "recovery": 34,
+        "stance": "offensive-stance",
+        "phase": "OUT_OF_COMBAT",
+        "activeFraction": 1,
+        "killWindowMs": 0,
+        "killFraction": 0,
+        "killDurationMs": 4000,
+        "switchCooldownMs": 0,
+        "autoIntent": null,
+        "gates": {
+          "evolutionChain": [
+            {
+              "id": "volcanic-charm-t4",
+              "evolvesFrom": "volcanic-charm-t3",
+              "tier": 4,
+              "group": "volcanic",
+              "requiredMastery": 9,
+              "actualMastery": 12,
+              "equipped": true
+            },
+            {
+              "id": "volcanic-charm-t3",
+              "evolvesFrom": "plains-charm-t2",
+              "tier": 3,
+              "group": "volcanic",
+              "requiredMastery": 3,
+              "actualMastery": 12,
+              "equipped": false
+            },
+            {
+              "id": "plains-charm-t2",
+              "evolvesFrom": "plains-charm-t1",
+              "tier": 2,
+              "group": "plains",
+              "requiredMastery": 9,
+              "actualMastery": 12,
+              "equipped": false
+            },
+            {
+              "id": "plains-charm-t1",
+              "evolvesFrom": null,
+              "tier": 1,
+              "group": "plains",
+              "requiredMastery": 3,
+              "actualMastery": 12,
+              "equipped": false
+            }
+          ],
+          "acquisition": "Synthetic mature equipment; chain gates checked, no acquisition/cost claim",
+          "upgrade": {
+            "plus": 5,
+            "requiredMastery": 10
+          },
+          "stanceGates": [
+            {
+              "id": "offensive-stance",
+              "recipeId": "stance-recipe-offensive",
+              "group": "plains",
+              "requiredMastery": 7,
+              "actualMastery": 12
+            }
+          ],
+          "reserved": {
+            "abilities": 33,
+            "stances": 1,
+            "logic": 6,
+            "rites": 0,
+            "total": 40
+          },
+          "recoveryPassives": {
+            "defense.recovery-active-pct": 0.16,
+            "defense.recovery-on-kill-pct": 0.14,
+            "core.recovery-mult": 0.3
+          }
+        }
+      }
+    },
+    {
+      "identityId": "breadth-t4-striker-heavy-c",
+      "referenceObservationId": "day2-b-endurance-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-mountain-candidate",
+      "disposition": "preferred tested Graveyard reference; both Desert seeds died",
+      "packageReadback": {
+        "declared": {
+          "stance": "offensive-stance",
+          "abilities": {
+            "techniques": [
+              "sweep",
+              "frenzy",
+              "expose-weakness"
+            ],
+            "guards": [
+              "second-wind",
+              "brace",
+              "cleanse"
+            ]
+          },
+          "runeRules": [
+            {
+              "conditionId": "always",
+              "actionId": "auto-path-enemy"
+            },
+            {
+              "conditionId": "inside-telegraph",
+              "actionId": "step-back"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "avoid-hazards"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "wait-for-regen"
+            }
+          ],
+          "upgradeLevel": 5,
+          "sources": {
+            "stance": "explicit",
+            "abilities": "explicit",
+            "runeRules": "explicit",
+            "upgradeLevel": "explicit"
+          }
+        },
+        "skillPath": [
+          "cadence-root",
+          "cadence-heavy",
+          "cadence-range-close",
+          "cadence-heavy-t3-c"
+        ],
+        "equipment": {
+          "inventory": [],
+          "equipment": {
+            "weapon": "mountain-warmaul",
+            "armor": "mountain-vest-t4",
+            "recovery": "volcanic-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-bruiser",
+            "relic": "relic-colossus-heart"
+          },
+          "itemUpgrades": {
+            "mountain-warmaul": 5,
+            "mountain-vest-t4": 5,
+            "volcanic-charm-t4": 5,
+            "mountain-boots-t4": 5,
+            "core-bruiser": 0,
+            "relic-colossus-heart": 0
+          }
+        },
+        "mastery": {
+          "biomeLevel": {
+            "cave": 18,
+            "forest": 12,
+            "mountain": 24,
+            "plains": 12,
+            "swamp": 18,
+            "desert": 18,
+            "jungle": 18,
+            "tundra": 12,
+            "volcanic": 12,
+            "graveyard": 6,
+            "trench": 6
+          },
+          "globalMastery": 156
+        },
+        "runicPoints": {
+          "budget": 47,
+          "cost": 40,
+          "unused": 7,
+          "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+        },
+        "access": "Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.",
+        "skillPoints": 0,
+        "knownAbilities": [
+          "disengage",
+          "imbue-lightning",
+          "snipe",
+          "stunning-strike",
+          "binding-strike",
+          "detonate",
+          "frenzy",
+          "quick-strike",
+          "charge",
+          "contagion",
+          "hamstring",
+          "slam",
+          "expose-weakness",
+          "power-strike",
+          "sweep",
+          "recuperate",
+          "break-free",
+          "bramble-guard",
+          "endure",
+          "brace",
+          "cleanse",
+          "second-wind"
+        ],
+        "rites": []
+      },
+      "range": "close",
+      "sustainReadback": {
+        "hp": 674,
+        "maxHp": 674,
+        "barrier": 0,
+        "recovery": 26,
+        "stance": "offensive-stance",
+        "phase": "OUT_OF_COMBAT",
+        "activeFraction": 1,
+        "killWindowMs": 0,
+        "killFraction": 0,
+        "killDurationMs": 4000,
+        "switchCooldownMs": 0,
+        "autoIntent": null,
+        "gates": {
+          "evolutionChain": [
+            {
+              "id": "volcanic-charm-t4",
+              "evolvesFrom": "volcanic-charm-t3",
+              "tier": 4,
+              "group": "volcanic",
+              "requiredMastery": 9,
+              "actualMastery": 12,
+              "equipped": true
+            },
+            {
+              "id": "volcanic-charm-t3",
+              "evolvesFrom": "plains-charm-t2",
+              "tier": 3,
+              "group": "volcanic",
+              "requiredMastery": 3,
+              "actualMastery": 12,
+              "equipped": false
+            },
+            {
+              "id": "plains-charm-t2",
+              "evolvesFrom": "plains-charm-t1",
+              "tier": 2,
+              "group": "plains",
+              "requiredMastery": 9,
+              "actualMastery": 12,
+              "equipped": false
+            },
+            {
+              "id": "plains-charm-t1",
+              "evolvesFrom": null,
+              "tier": 1,
+              "group": "plains",
+              "requiredMastery": 3,
+              "actualMastery": 12,
+              "equipped": false
+            }
+          ],
+          "acquisition": "Synthetic mature equipment; chain gates checked, no acquisition/cost claim",
+          "upgrade": {
+            "plus": 5,
+            "requiredMastery": 10
+          },
+          "stanceGates": [
+            {
+              "id": "offensive-stance",
+              "recipeId": "stance-recipe-offensive",
+              "group": "plains",
+              "requiredMastery": 7,
+              "actualMastery": 12
+            }
+          ],
+          "reserved": {
+            "abilities": 33,
+            "stances": 1,
+            "logic": 6,
+            "rites": 0,
+            "total": 40
+          },
+          "recoveryPassives": {
+            "defense.recovery-active-pct": 0.16,
+            "defense.recovery-on-kill-pct": 0.14,
+            "defense.recovery-pulse-interval-ms": 6000,
+            "defense.recovery-pulse-duration-ms": 4000,
+            "defense.recovery-pulse-pct": 0.30000000000000004
+          }
+        }
+      }
+    },
+    {
+      "identityId": "breadth-t3-apprentice-light",
+      "referenceObservationId": "day2-b-endurance-01-breadth-t3-apprentice-light-node-t3-volcanic-03-s101021-volcanic-candidate",
+      "disposition": "improved, not endurance-cleared: 2/4 caps; residual deaths 1111.5 and 1173.5 seconds",
+      "packageReadback": {
+        "declared": {
+          "stance": "defensive-stance",
+          "abilities": {
+            "techniques": [
+              "sweep",
+              "frenzy"
+            ],
+            "guards": [
+              "second-wind",
+              "brace",
+              "cleanse"
+            ]
+          },
+          "runeRules": [
+            {
+              "conditionId": "always",
+              "actionId": "auto-path-enemy"
+            },
+            {
+              "conditionId": "inside-telegraph",
+              "actionId": "step-back"
+            },
+            {
+              "conditionId": "in-combat",
+              "actionId": "orbit"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "avoid-hazards"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "wait-for-regen"
+            }
+          ],
+          "upgradeLevel": 5,
+          "sources": {
+            "stance": "explicit",
+            "abilities": "explicit",
+            "runeRules": "explicit",
+            "upgradeLevel": "explicit"
+          }
+        },
+        "skillPath": [
+          "dot-root",
+          "dot-light",
+          "dot-range-mid"
+        ],
+        "equipment": {
+          "inventory": [],
+          "equipment": {
+            "weapon": "jungle-venomthorn-rapier",
+            "armor": "jungle-vest-t3",
+            "recovery": "volcanic-charm-t3",
+            "mobility": "mountain-boots-t3",
+            "core": "core-accelerant",
+            "relic": null
+          },
+          "itemUpgrades": {
+            "jungle-venomthorn-rapier": 5,
+            "jungle-vest-t3": 5,
+            "volcanic-charm-t3": 5,
+            "mountain-boots-t3": 5,
+            "core-accelerant": 0
+          }
+        },
+        "mastery": {
+          "biomeLevel": {
+            "cave": 18,
+            "forest": 12,
+            "mountain": 18,
+            "plains": 12,
+            "swamp": 18,
+            "desert": 12,
+            "jungle": 12,
+            "tundra": 6,
+            "volcanic": 6
+          },
+          "globalMastery": 114
+        },
+        "runicPoints": {
+          "budget": 38,
+          "cost": 36,
+          "unused": 2,
+          "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+        },
+        "access": "Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.",
+        "skillPoints": 0,
+        "knownAbilities": [
+          "binding-strike",
+          "detonate",
+          "frenzy",
+          "quick-strike",
+          "charge",
+          "contagion",
+          "hamstring",
+          "slam",
+          "expose-weakness",
+          "power-strike",
+          "sweep",
+          "break-free",
+          "bramble-guard",
+          "endure",
+          "brace",
+          "cleanse",
+          "second-wind"
+        ],
+        "rites": []
+      },
+      "range": "mid",
+      "sustainReadback": {
+        "hp": 335,
+        "maxHp": 335,
+        "barrier": 0,
+        "recovery": 21,
+        "stance": "defensive-stance",
+        "phase": "OUT_OF_COMBAT",
+        "activeFraction": 1,
+        "killWindowMs": 0,
+        "killFraction": 0,
+        "killDurationMs": 4000,
+        "switchCooldownMs": 0,
+        "autoIntent": null,
+        "gates": {
+          "evolutionChain": [
+            {
+              "id": "volcanic-charm-t3",
+              "evolvesFrom": "plains-charm-t2",
+              "tier": 3,
+              "group": "volcanic",
+              "requiredMastery": 3,
+              "actualMastery": 6,
+              "equipped": true
+            },
+            {
+              "id": "plains-charm-t2",
+              "evolvesFrom": "plains-charm-t1",
+              "tier": 2,
+              "group": "plains",
+              "requiredMastery": 9,
+              "actualMastery": 12,
+              "equipped": false
+            },
+            {
+              "id": "plains-charm-t1",
+              "evolvesFrom": null,
+              "tier": 1,
+              "group": "plains",
+              "requiredMastery": 3,
+              "actualMastery": 12,
+              "equipped": false
+            }
+          ],
+          "acquisition": "Synthetic mature equipment; chain gates checked, no acquisition/cost claim",
+          "upgrade": {
+            "plus": 5,
+            "requiredMastery": 4
+          },
+          "stanceGates": [
+            {
+              "id": "defensive-stance",
+              "recipeId": "stance-recipe-defensive",
+              "group": "plains",
+              "requiredMastery": 7,
+              "actualMastery": 12
+            }
+          ],
+          "reserved": {
+            "abilities": 26,
+            "stances": 1,
+            "logic": 9,
+            "rites": 0,
+            "total": 36
+          },
+          "recoveryPassives": {
+            "defense.recovery-active-pct": 0.16,
+            "defense.recovery-on-kill-pct": 0.14
+          }
+        }
+      }
+    },
+    {
+      "identityId": "breadth-t4-striker-heavy-a",
+      "referenceObservationId": "day2-b-endurance-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-mountain-candidate",
+      "disposition": "preferred tested Graveyard reference; both Desert seeds died",
+      "packageReadback": {
+        "declared": {
+          "stance": "offensive-stance",
+          "abilities": {
+            "techniques": [
+              "sweep",
+              "frenzy",
+              "expose-weakness"
+            ],
+            "guards": [
+              "second-wind",
+              "brace",
+              "cleanse"
+            ]
+          },
+          "runeRules": [
+            {
+              "conditionId": "always",
+              "actionId": "auto-path-enemy"
+            },
+            {
+              "conditionId": "inside-telegraph",
+              "actionId": "step-back"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "avoid-hazards"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "wait-for-regen"
+            }
+          ],
+          "upgradeLevel": 5,
+          "sources": {
+            "stance": "explicit",
+            "abilities": "explicit",
+            "runeRules": "explicit",
+            "upgradeLevel": "explicit"
+          }
+        },
+        "skillPath": [
+          "cadence-root",
+          "cadence-heavy",
+          "cadence-range-close",
+          "cadence-heavy-t3-a"
+        ],
+        "equipment": {
+          "inventory": [],
+          "equipment": {
+            "weapon": "mountain-warmaul",
+            "armor": "mountain-vest-t4",
+            "recovery": "volcanic-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-bruiser",
+            "relic": "relic-colossus-heart"
+          },
+          "itemUpgrades": {
+            "mountain-warmaul": 5,
+            "mountain-vest-t4": 5,
+            "volcanic-charm-t4": 5,
+            "mountain-boots-t4": 5,
+            "core-bruiser": 0,
+            "relic-colossus-heart": 0
+          }
+        },
+        "mastery": {
+          "biomeLevel": {
+            "cave": 18,
+            "forest": 12,
+            "mountain": 24,
+            "plains": 12,
+            "swamp": 18,
+            "desert": 18,
+            "jungle": 18,
+            "tundra": 12,
+            "volcanic": 12,
+            "graveyard": 6,
+            "trench": 6
+          },
+          "globalMastery": 156
+        },
+        "runicPoints": {
+          "budget": 47,
+          "cost": 40,
+          "unused": 7,
+          "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+        },
+        "access": "Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.",
+        "skillPoints": 0,
+        "knownAbilities": [
+          "disengage",
+          "imbue-lightning",
+          "snipe",
+          "stunning-strike",
+          "binding-strike",
+          "detonate",
+          "frenzy",
+          "quick-strike",
+          "charge",
+          "contagion",
+          "hamstring",
+          "slam",
+          "expose-weakness",
+          "power-strike",
+          "sweep",
+          "recuperate",
+          "break-free",
+          "bramble-guard",
+          "endure",
+          "brace",
+          "cleanse",
+          "second-wind"
+        ],
+        "rites": []
+      },
+      "range": "close",
+      "sustainReadback": {
+        "hp": 674,
+        "maxHp": 674,
+        "barrier": 0,
+        "recovery": 26,
+        "stance": "offensive-stance",
+        "phase": "OUT_OF_COMBAT",
+        "activeFraction": 1,
+        "killWindowMs": 0,
+        "killFraction": 0,
+        "killDurationMs": 4000,
+        "switchCooldownMs": 0,
+        "autoIntent": null,
+        "gates": {
+          "evolutionChain": [
+            {
+              "id": "volcanic-charm-t4",
+              "evolvesFrom": "volcanic-charm-t3",
+              "tier": 4,
+              "group": "volcanic",
+              "requiredMastery": 9,
+              "actualMastery": 12,
+              "equipped": true
+            },
+            {
+              "id": "volcanic-charm-t3",
+              "evolvesFrom": "plains-charm-t2",
+              "tier": 3,
+              "group": "volcanic",
+              "requiredMastery": 3,
+              "actualMastery": 12,
+              "equipped": false
+            },
+            {
+              "id": "plains-charm-t2",
+              "evolvesFrom": "plains-charm-t1",
+              "tier": 2,
+              "group": "plains",
+              "requiredMastery": 9,
+              "actualMastery": 12,
+              "equipped": false
+            },
+            {
+              "id": "plains-charm-t1",
+              "evolvesFrom": null,
+              "tier": 1,
+              "group": "plains",
+              "requiredMastery": 3,
+              "actualMastery": 12,
+              "equipped": false
+            }
+          ],
+          "acquisition": "Synthetic mature equipment; chain gates checked, no acquisition/cost claim",
+          "upgrade": {
+            "plus": 5,
+            "requiredMastery": 10
+          },
+          "stanceGates": [
+            {
+              "id": "offensive-stance",
+              "recipeId": "stance-recipe-offensive",
+              "group": "plains",
+              "requiredMastery": 7,
+              "actualMastery": 12
+            }
+          ],
+          "reserved": {
+            "abilities": 33,
+            "stances": 1,
+            "logic": 6,
+            "rites": 0,
+            "total": 40
+          },
+          "recoveryPassives": {
+            "defense.recovery-active-pct": 0.16,
+            "defense.recovery-on-kill-pct": 0.14,
+            "defense.recovery-pulse-interval-ms": 6000,
+            "defense.recovery-pulse-duration-ms": 4000,
+            "defense.recovery-pulse-pct": 0.30000000000000004
+          }
+        }
+      }
+    },
+    {
+      "identityId": "breadth-t4-conduit-heavy-b",
+      "referenceObservationId": "day2-b-endurance-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-control",
+      "disposition": "explicit charm alternative; no universal default; adverse Desert 101021 preserved",
+      "packageReadback": {
+        "declared": {
+          "stance": "offensive-stance",
+          "abilities": {
+            "techniques": [
+              "sweep",
+              "frenzy",
+              "expose-weakness"
+            ],
+            "guards": [
+              "second-wind",
+              "brace",
+              "cleanse"
+            ]
+          },
+          "runeRules": [
+            {
+              "conditionId": "always",
+              "actionId": "auto-path-enemy"
+            },
+            {
+              "conditionId": "inside-telegraph",
+              "actionId": "step-back"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "avoid-hazards"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "wait-for-regen"
+            }
+          ],
+          "upgradeLevel": 5,
+          "sources": {
+            "stance": "explicit",
+            "abilities": "explicit",
+            "runeRules": "explicit",
+            "upgradeLevel": "explicit"
+          }
+        },
+        "skillPath": [
+          "summoner-root",
+          "summoner-heavy",
+          "summoner-range-close",
+          "summoner-heavy-t3-b"
+        ],
+        "equipment": {
+          "inventory": [],
+          "equipment": {
+            "weapon": "jungle-deathfang-rapier",
+            "armor": "mountain-vest-t4",
+            "recovery": "mountain-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-survivalist",
+            "relic": "relic-colossus-heart"
+          },
+          "itemUpgrades": {
+            "jungle-deathfang-rapier": 5,
+            "mountain-vest-t4": 5,
+            "mountain-charm-t4": 5,
+            "mountain-boots-t4": 5,
+            "core-survivalist": 0,
+            "relic-colossus-heart": 0
+          }
+        },
+        "mastery": {
+          "biomeLevel": {
+            "cave": 18,
+            "forest": 12,
+            "mountain": 24,
+            "plains": 12,
+            "swamp": 18,
+            "desert": 18,
+            "jungle": 18,
+            "tundra": 12,
+            "volcanic": 12,
+            "graveyard": 6,
+            "trench": 6
+          },
+          "globalMastery": 156
+        },
+        "runicPoints": {
+          "budget": 47,
+          "cost": 40,
+          "unused": 7,
+          "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+        },
+        "access": "Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.",
+        "skillPoints": 0,
+        "knownAbilities": [
+          "disengage",
+          "imbue-lightning",
+          "snipe",
+          "stunning-strike",
+          "binding-strike",
+          "detonate",
+          "frenzy",
+          "quick-strike",
+          "charge",
+          "contagion",
+          "hamstring",
+          "slam",
+          "expose-weakness",
+          "power-strike",
+          "sweep",
+          "recuperate",
+          "break-free",
+          "bramble-guard",
+          "endure",
+          "brace",
+          "cleanse",
+          "second-wind"
+        ],
+        "rites": []
+      },
+      "range": "close",
+      "sustainReadback": {
+        "hp": 568,
+        "maxHp": 568,
+        "barrier": 239,
+        "recovery": 25,
+        "stance": "offensive-stance",
+        "phase": "OUT_OF_COMBAT",
+        "activeFraction": 1,
+        "killWindowMs": 0,
+        "killFraction": 0,
+        "killDurationMs": 4000,
+        "switchCooldownMs": 0,
+        "autoIntent": null,
+        "gates": {
+          "evolutionChain": [
+            {
+              "id": "mountain-charm-t4",
+              "evolvesFrom": "mountain-charm-t3",
+              "tier": 4,
+              "group": "mountain",
+              "requiredMastery": 21,
+              "actualMastery": 24,
+              "equipped": true
+            },
+            {
+              "id": "mountain-charm-t3",
+              "evolvesFrom": "mountain-charm-t2",
+              "tier": 3,
+              "group": "mountain",
+              "requiredMastery": 15,
+              "actualMastery": 24,
+              "equipped": false
+            },
+            {
+              "id": "mountain-charm-t2",
+              "evolvesFrom": "mountain-charm-t1",
+              "tier": 2,
+              "group": "mountain",
+              "requiredMastery": 9,
+              "actualMastery": 24,
+              "equipped": false
+            },
+            {
+              "id": "mountain-charm-t1",
+              "evolvesFrom": null,
+              "tier": 1,
+              "group": "mountain",
+              "requiredMastery": 3,
+              "actualMastery": 24,
+              "equipped": false
+            }
+          ],
+          "acquisition": "Synthetic mature equipment; chain gates checked, no acquisition/cost claim",
+          "upgrade": {
+            "plus": 5,
+            "requiredMastery": 22
+          },
+          "stanceGates": [
+            {
+              "id": "offensive-stance",
+              "recipeId": "stance-recipe-offensive",
+              "group": "plains",
+              "requiredMastery": 7,
+              "actualMastery": 12
+            }
+          ],
+          "reserved": {
+            "abilities": 33,
+            "stances": 1,
+            "logic": 6,
+            "rites": 0,
+            "total": 40
+          },
+          "recoveryPassives": {
+            "core.recovery-mult": 0.3
+          }
+        }
+      }
+    },
+    {
+      "identityId": "breadth-t4-conduit-heavy-b",
+      "referenceObservationId": "day2-b-endurance-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-candidate",
+      "disposition": "explicit charm alternative; no universal default; adverse Desert 101021 preserved",
+      "packageReadback": {
+        "declared": {
+          "stance": "offensive-stance",
+          "abilities": {
+            "techniques": [
+              "sweep",
+              "frenzy",
+              "expose-weakness"
+            ],
+            "guards": [
+              "second-wind",
+              "brace",
+              "cleanse"
+            ]
+          },
+          "runeRules": [
+            {
+              "conditionId": "always",
+              "actionId": "auto-path-enemy"
+            },
+            {
+              "conditionId": "inside-telegraph",
+              "actionId": "step-back"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "avoid-hazards"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "wait-for-regen"
+            }
+          ],
+          "upgradeLevel": 5,
+          "sources": {
+            "stance": "explicit",
+            "abilities": "explicit",
+            "runeRules": "explicit",
+            "upgradeLevel": "explicit"
+          }
+        },
+        "skillPath": [
+          "summoner-root",
+          "summoner-heavy",
+          "summoner-range-close",
+          "summoner-heavy-t3-b"
+        ],
+        "equipment": {
+          "inventory": [],
+          "equipment": {
+            "weapon": "jungle-deathfang-rapier",
+            "armor": "mountain-vest-t4",
+            "recovery": "volcanic-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-survivalist",
+            "relic": "relic-colossus-heart"
+          },
+          "itemUpgrades": {
+            "jungle-deathfang-rapier": 5,
+            "mountain-vest-t4": 5,
+            "volcanic-charm-t4": 5,
+            "mountain-boots-t4": 5,
+            "core-survivalist": 0,
+            "relic-colossus-heart": 0
+          }
+        },
+        "mastery": {
+          "biomeLevel": {
+            "cave": 18,
+            "forest": 12,
+            "mountain": 24,
+            "plains": 12,
+            "swamp": 18,
+            "desert": 18,
+            "jungle": 18,
+            "tundra": 12,
+            "volcanic": 12,
+            "graveyard": 6,
+            "trench": 6
+          },
+          "globalMastery": 156
+        },
+        "runicPoints": {
+          "budget": 47,
+          "cost": 40,
+          "unused": 7,
+          "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+        },
+        "access": "Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.",
+        "skillPoints": 0,
+        "knownAbilities": [
+          "disengage",
+          "imbue-lightning",
+          "snipe",
+          "stunning-strike",
+          "binding-strike",
+          "detonate",
+          "frenzy",
+          "quick-strike",
+          "charge",
+          "contagion",
+          "hamstring",
+          "slam",
+          "expose-weakness",
+          "power-strike",
+          "sweep",
+          "recuperate",
+          "break-free",
+          "bramble-guard",
+          "endure",
+          "brace",
+          "cleanse",
+          "second-wind"
+        ],
+        "rites": []
+      },
+      "range": "close",
+      "sustainReadback": {
+        "hp": 568,
+        "maxHp": 568,
+        "barrier": 0,
+        "recovery": 34,
+        "stance": "offensive-stance",
+        "phase": "OUT_OF_COMBAT",
+        "activeFraction": 1,
+        "killWindowMs": 0,
+        "killFraction": 0,
+        "killDurationMs": 4000,
+        "switchCooldownMs": 0,
+        "autoIntent": null,
+        "gates": {
+          "evolutionChain": [
+            {
+              "id": "volcanic-charm-t4",
+              "evolvesFrom": "volcanic-charm-t3",
+              "tier": 4,
+              "group": "volcanic",
+              "requiredMastery": 9,
+              "actualMastery": 12,
+              "equipped": true
+            },
+            {
+              "id": "volcanic-charm-t3",
+              "evolvesFrom": "plains-charm-t2",
+              "tier": 3,
+              "group": "volcanic",
+              "requiredMastery": 3,
+              "actualMastery": 12,
+              "equipped": false
+            },
+            {
+              "id": "plains-charm-t2",
+              "evolvesFrom": "plains-charm-t1",
+              "tier": 2,
+              "group": "plains",
+              "requiredMastery": 9,
+              "actualMastery": 12,
+              "equipped": false
+            },
+            {
+              "id": "plains-charm-t1",
+              "evolvesFrom": null,
+              "tier": 1,
+              "group": "plains",
+              "requiredMastery": 3,
+              "actualMastery": 12,
+              "equipped": false
+            }
+          ],
+          "acquisition": "Synthetic mature equipment; chain gates checked, no acquisition/cost claim",
+          "upgrade": {
+            "plus": 5,
+            "requiredMastery": 10
+          },
+          "stanceGates": [
+            {
+              "id": "offensive-stance",
+              "recipeId": "stance-recipe-offensive",
+              "group": "plains",
+              "requiredMastery": 7,
+              "actualMastery": 12
+            }
+          ],
+          "reserved": {
+            "abilities": 33,
+            "stances": 1,
+            "logic": 6,
+            "rites": 0,
+            "total": 40
+          },
+          "recoveryPassives": {
+            "defense.recovery-active-pct": 0.16,
+            "defense.recovery-on-kill-pct": 0.14,
+            "core.recovery-mult": 0.3
+          }
+        }
+      }
+    },
+    {
+      "identityId": "breadth-t4-striker-heavy-c",
+      "referenceObservationId": "day2-b-endurance-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-mountain-candidate",
+      "disposition": "preferred tested Graveyard reference; both Desert seeds died",
+      "packageReadback": {
+        "declared": {
+          "stance": "offensive-stance",
+          "abilities": {
+            "techniques": [
+              "sweep",
+              "frenzy",
+              "expose-weakness"
+            ],
+            "guards": [
+              "second-wind",
+              "brace",
+              "cleanse"
+            ]
+          },
+          "runeRules": [
+            {
+              "conditionId": "always",
+              "actionId": "auto-path-enemy"
+            },
+            {
+              "conditionId": "inside-telegraph",
+              "actionId": "step-back"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "avoid-hazards"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "wait-for-regen"
+            }
+          ],
+          "upgradeLevel": 5,
+          "sources": {
+            "stance": "explicit",
+            "abilities": "explicit",
+            "runeRules": "explicit",
+            "upgradeLevel": "explicit"
+          }
+        },
+        "skillPath": [
+          "cadence-root",
+          "cadence-heavy",
+          "cadence-range-close",
+          "cadence-heavy-t3-c"
+        ],
+        "equipment": {
+          "inventory": [],
+          "equipment": {
+            "weapon": "mountain-warmaul",
+            "armor": "mountain-vest-t4",
+            "recovery": "volcanic-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-bruiser",
+            "relic": "relic-colossus-heart"
+          },
+          "itemUpgrades": {
+            "mountain-warmaul": 5,
+            "mountain-vest-t4": 5,
+            "volcanic-charm-t4": 5,
+            "mountain-boots-t4": 5,
+            "core-bruiser": 0,
+            "relic-colossus-heart": 0
+          }
+        },
+        "mastery": {
+          "biomeLevel": {
+            "cave": 18,
+            "forest": 12,
+            "mountain": 24,
+            "plains": 12,
+            "swamp": 18,
+            "desert": 18,
+            "jungle": 18,
+            "tundra": 12,
+            "volcanic": 12,
+            "graveyard": 6,
+            "trench": 6
+          },
+          "globalMastery": 156
+        },
+        "runicPoints": {
+          "budget": 47,
+          "cost": 40,
+          "unused": 7,
+          "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+        },
+        "access": "Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.",
+        "skillPoints": 0,
+        "knownAbilities": [
+          "disengage",
+          "imbue-lightning",
+          "snipe",
+          "stunning-strike",
+          "binding-strike",
+          "detonate",
+          "frenzy",
+          "quick-strike",
+          "charge",
+          "contagion",
+          "hamstring",
+          "slam",
+          "expose-weakness",
+          "power-strike",
+          "sweep",
+          "recuperate",
+          "break-free",
+          "bramble-guard",
+          "endure",
+          "brace",
+          "cleanse",
+          "second-wind"
+        ],
+        "rites": []
+      },
+      "range": "close",
+      "sustainReadback": {
+        "hp": 674,
+        "maxHp": 674,
+        "barrier": 0,
+        "recovery": 26,
+        "stance": "offensive-stance",
+        "phase": "OUT_OF_COMBAT",
+        "activeFraction": 1,
+        "killWindowMs": 0,
+        "killFraction": 0,
+        "killDurationMs": 4000,
+        "switchCooldownMs": 0,
+        "autoIntent": null,
+        "gates": {
+          "evolutionChain": [
+            {
+              "id": "volcanic-charm-t4",
+              "evolvesFrom": "volcanic-charm-t3",
+              "tier": 4,
+              "group": "volcanic",
+              "requiredMastery": 9,
+              "actualMastery": 12,
+              "equipped": true
+            },
+            {
+              "id": "volcanic-charm-t3",
+              "evolvesFrom": "plains-charm-t2",
+              "tier": 3,
+              "group": "volcanic",
+              "requiredMastery": 3,
+              "actualMastery": 12,
+              "equipped": false
+            },
+            {
+              "id": "plains-charm-t2",
+              "evolvesFrom": "plains-charm-t1",
+              "tier": 2,
+              "group": "plains",
+              "requiredMastery": 9,
+              "actualMastery": 12,
+              "equipped": false
+            },
+            {
+              "id": "plains-charm-t1",
+              "evolvesFrom": null,
+              "tier": 1,
+              "group": "plains",
+              "requiredMastery": 3,
+              "actualMastery": 12,
+              "equipped": false
+            }
+          ],
+          "acquisition": "Synthetic mature equipment; chain gates checked, no acquisition/cost claim",
+          "upgrade": {
+            "plus": 5,
+            "requiredMastery": 10
+          },
+          "stanceGates": [
+            {
+              "id": "offensive-stance",
+              "recipeId": "stance-recipe-offensive",
+              "group": "plains",
+              "requiredMastery": 7,
+              "actualMastery": 12
+            }
+          ],
+          "reserved": {
+            "abilities": 33,
+            "stances": 1,
+            "logic": 6,
+            "rites": 0,
+            "total": 40
+          },
+          "recoveryPassives": {
+            "defense.recovery-active-pct": 0.16,
+            "defense.recovery-on-kill-pct": 0.14,
+            "defense.recovery-pulse-interval-ms": 6000,
+            "defense.recovery-pulse-duration-ms": 4000,
+            "defense.recovery-pulse-pct": 0.30000000000000004
+          }
+        }
+      }
+    },
+    {
+      "identityId": "breadth-t3-apprentice-light",
+      "referenceObservationId": "day2-b-endurance-01-breadth-t3-apprentice-light-node-t3-tundra-03-s101021-volcanic-candidate",
+      "disposition": "improved, not endurance-cleared: 2/4 caps; residual deaths 1111.5 and 1173.5 seconds",
+      "packageReadback": {
+        "declared": {
+          "stance": "defensive-stance",
+          "abilities": {
+            "techniques": [
+              "sweep",
+              "frenzy"
+            ],
+            "guards": [
+              "second-wind",
+              "brace",
+              "cleanse"
+            ]
+          },
+          "runeRules": [
+            {
+              "conditionId": "always",
+              "actionId": "auto-path-enemy"
+            },
+            {
+              "conditionId": "inside-telegraph",
+              "actionId": "step-back"
+            },
+            {
+              "conditionId": "in-combat",
+              "actionId": "orbit"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "avoid-hazards"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "wait-for-regen"
+            }
+          ],
+          "upgradeLevel": 5,
+          "sources": {
+            "stance": "explicit",
+            "abilities": "explicit",
+            "runeRules": "explicit",
+            "upgradeLevel": "explicit"
+          }
+        },
+        "skillPath": [
+          "dot-root",
+          "dot-light",
+          "dot-range-mid"
+        ],
+        "equipment": {
+          "inventory": [],
+          "equipment": {
+            "weapon": "jungle-venomthorn-rapier",
+            "armor": "jungle-vest-t3",
+            "recovery": "volcanic-charm-t3",
+            "mobility": "mountain-boots-t3",
+            "core": "core-accelerant",
+            "relic": null
+          },
+          "itemUpgrades": {
+            "jungle-venomthorn-rapier": 5,
+            "jungle-vest-t3": 5,
+            "volcanic-charm-t3": 5,
+            "mountain-boots-t3": 5,
+            "core-accelerant": 0
+          }
+        },
+        "mastery": {
+          "biomeLevel": {
+            "cave": 18,
+            "forest": 12,
+            "mountain": 18,
+            "plains": 12,
+            "swamp": 18,
+            "desert": 12,
+            "jungle": 12,
+            "tundra": 6,
+            "volcanic": 6
+          },
+          "globalMastery": 114
+        },
+        "runicPoints": {
+          "budget": 38,
+          "cost": 36,
+          "unused": 2,
+          "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+        },
+        "access": "Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.",
+        "skillPoints": 0,
+        "knownAbilities": [
+          "binding-strike",
+          "detonate",
+          "frenzy",
+          "quick-strike",
+          "charge",
+          "contagion",
+          "hamstring",
+          "slam",
+          "expose-weakness",
+          "power-strike",
+          "sweep",
+          "break-free",
+          "bramble-guard",
+          "endure",
+          "brace",
+          "cleanse",
+          "second-wind"
+        ],
+        "rites": []
+      },
+      "range": "mid",
+      "sustainReadback": {
+        "hp": 335,
+        "maxHp": 335,
+        "barrier": 0,
+        "recovery": 21,
+        "stance": "defensive-stance",
+        "phase": "OUT_OF_COMBAT",
+        "activeFraction": 1,
+        "killWindowMs": 0,
+        "killFraction": 0,
+        "killDurationMs": 4000,
+        "switchCooldownMs": 0,
+        "autoIntent": null,
+        "gates": {
+          "evolutionChain": [
+            {
+              "id": "volcanic-charm-t3",
+              "evolvesFrom": "plains-charm-t2",
+              "tier": 3,
+              "group": "volcanic",
+              "requiredMastery": 3,
+              "actualMastery": 6,
+              "equipped": true
+            },
+            {
+              "id": "plains-charm-t2",
+              "evolvesFrom": "plains-charm-t1",
+              "tier": 2,
+              "group": "plains",
+              "requiredMastery": 9,
+              "actualMastery": 12,
+              "equipped": false
+            },
+            {
+              "id": "plains-charm-t1",
+              "evolvesFrom": null,
+              "tier": 1,
+              "group": "plains",
+              "requiredMastery": 3,
+              "actualMastery": 12,
+              "equipped": false
+            }
+          ],
+          "acquisition": "Synthetic mature equipment; chain gates checked, no acquisition/cost claim",
+          "upgrade": {
+            "plus": 5,
+            "requiredMastery": 4
+          },
+          "stanceGates": [
+            {
+              "id": "defensive-stance",
+              "recipeId": "stance-recipe-defensive",
+              "group": "plains",
+              "requiredMastery": 7,
+              "actualMastery": 12
+            }
+          ],
+          "reserved": {
+            "abilities": 26,
+            "stances": 1,
+            "logic": 9,
+            "rites": 0,
+            "total": 36
+          },
+          "recoveryPassives": {
+            "defense.recovery-active-pct": 0.16,
+            "defense.recovery-on-kill-pct": 0.14
+          }
+        }
+      }
+    },
+    {
+      "identityId": "breadth-t4-striker-heavy-a",
+      "referenceObservationId": "day2-b-endurance-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-mountain-candidate",
+      "disposition": "preferred tested Graveyard reference; both Desert seeds died",
+      "packageReadback": {
+        "declared": {
+          "stance": "offensive-stance",
+          "abilities": {
+            "techniques": [
+              "sweep",
+              "frenzy",
+              "expose-weakness"
+            ],
+            "guards": [
+              "second-wind",
+              "brace",
+              "cleanse"
+            ]
+          },
+          "runeRules": [
+            {
+              "conditionId": "always",
+              "actionId": "auto-path-enemy"
+            },
+            {
+              "conditionId": "inside-telegraph",
+              "actionId": "step-back"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "avoid-hazards"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "wait-for-regen"
+            }
+          ],
+          "upgradeLevel": 5,
+          "sources": {
+            "stance": "explicit",
+            "abilities": "explicit",
+            "runeRules": "explicit",
+            "upgradeLevel": "explicit"
+          }
+        },
+        "skillPath": [
+          "cadence-root",
+          "cadence-heavy",
+          "cadence-range-close",
+          "cadence-heavy-t3-a"
+        ],
+        "equipment": {
+          "inventory": [],
+          "equipment": {
+            "weapon": "mountain-warmaul",
+            "armor": "mountain-vest-t4",
+            "recovery": "volcanic-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-bruiser",
+            "relic": "relic-colossus-heart"
+          },
+          "itemUpgrades": {
+            "mountain-warmaul": 5,
+            "mountain-vest-t4": 5,
+            "volcanic-charm-t4": 5,
+            "mountain-boots-t4": 5,
+            "core-bruiser": 0,
+            "relic-colossus-heart": 0
+          }
+        },
+        "mastery": {
+          "biomeLevel": {
+            "cave": 18,
+            "forest": 12,
+            "mountain": 24,
+            "plains": 12,
+            "swamp": 18,
+            "desert": 18,
+            "jungle": 18,
+            "tundra": 12,
+            "volcanic": 12,
+            "graveyard": 6,
+            "trench": 6
+          },
+          "globalMastery": 156
+        },
+        "runicPoints": {
+          "budget": 47,
+          "cost": 40,
+          "unused": 7,
+          "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+        },
+        "access": "Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.",
+        "skillPoints": 0,
+        "knownAbilities": [
+          "disengage",
+          "imbue-lightning",
+          "snipe",
+          "stunning-strike",
+          "binding-strike",
+          "detonate",
+          "frenzy",
+          "quick-strike",
+          "charge",
+          "contagion",
+          "hamstring",
+          "slam",
+          "expose-weakness",
+          "power-strike",
+          "sweep",
+          "recuperate",
+          "break-free",
+          "bramble-guard",
+          "endure",
+          "brace",
+          "cleanse",
+          "second-wind"
+        ],
+        "rites": []
+      },
+      "range": "close",
+      "sustainReadback": {
+        "hp": 674,
+        "maxHp": 674,
+        "barrier": 0,
+        "recovery": 26,
+        "stance": "offensive-stance",
+        "phase": "OUT_OF_COMBAT",
+        "activeFraction": 1,
+        "killWindowMs": 0,
+        "killFraction": 0,
+        "killDurationMs": 4000,
+        "switchCooldownMs": 0,
+        "autoIntent": null,
+        "gates": {
+          "evolutionChain": [
+            {
+              "id": "volcanic-charm-t4",
+              "evolvesFrom": "volcanic-charm-t3",
+              "tier": 4,
+              "group": "volcanic",
+              "requiredMastery": 9,
+              "actualMastery": 12,
+              "equipped": true
+            },
+            {
+              "id": "volcanic-charm-t3",
+              "evolvesFrom": "plains-charm-t2",
+              "tier": 3,
+              "group": "volcanic",
+              "requiredMastery": 3,
+              "actualMastery": 12,
+              "equipped": false
+            },
+            {
+              "id": "plains-charm-t2",
+              "evolvesFrom": "plains-charm-t1",
+              "tier": 2,
+              "group": "plains",
+              "requiredMastery": 9,
+              "actualMastery": 12,
+              "equipped": false
+            },
+            {
+              "id": "plains-charm-t1",
+              "evolvesFrom": null,
+              "tier": 1,
+              "group": "plains",
+              "requiredMastery": 3,
+              "actualMastery": 12,
+              "equipped": false
+            }
+          ],
+          "acquisition": "Synthetic mature equipment; chain gates checked, no acquisition/cost claim",
+          "upgrade": {
+            "plus": 5,
+            "requiredMastery": 10
+          },
+          "stanceGates": [
+            {
+              "id": "offensive-stance",
+              "recipeId": "stance-recipe-offensive",
+              "group": "plains",
+              "requiredMastery": 7,
+              "actualMastery": 12
+            }
+          ],
+          "reserved": {
+            "abilities": 33,
+            "stances": 1,
+            "logic": 6,
+            "rites": 0,
+            "total": 40
+          },
+          "recoveryPassives": {
+            "defense.recovery-active-pct": 0.16,
+            "defense.recovery-on-kill-pct": 0.14,
+            "defense.recovery-pulse-interval-ms": 6000,
+            "defense.recovery-pulse-duration-ms": 4000,
+            "defense.recovery-pulse-pct": 0.30000000000000004
+          }
+        }
+      }
+    },
+    {
+      "identityId": "breadth-t4-conduit-heavy-b",
+      "referenceObservationId": "day2-b-endurance-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-control",
+      "disposition": "explicit charm alternative; no universal default; adverse Desert 101021 preserved",
+      "packageReadback": {
+        "declared": {
+          "stance": "offensive-stance",
+          "abilities": {
+            "techniques": [
+              "sweep",
+              "frenzy",
+              "expose-weakness"
+            ],
+            "guards": [
+              "second-wind",
+              "brace",
+              "cleanse"
+            ]
+          },
+          "runeRules": [
+            {
+              "conditionId": "always",
+              "actionId": "auto-path-enemy"
+            },
+            {
+              "conditionId": "inside-telegraph",
+              "actionId": "step-back"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "avoid-hazards"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "wait-for-regen"
+            }
+          ],
+          "upgradeLevel": 5,
+          "sources": {
+            "stance": "explicit",
+            "abilities": "explicit",
+            "runeRules": "explicit",
+            "upgradeLevel": "explicit"
+          }
+        },
+        "skillPath": [
+          "summoner-root",
+          "summoner-heavy",
+          "summoner-range-close",
+          "summoner-heavy-t3-b"
+        ],
+        "equipment": {
+          "inventory": [],
+          "equipment": {
+            "weapon": "jungle-deathfang-rapier",
+            "armor": "mountain-vest-t4",
+            "recovery": "mountain-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-survivalist",
+            "relic": "relic-colossus-heart"
+          },
+          "itemUpgrades": {
+            "jungle-deathfang-rapier": 5,
+            "mountain-vest-t4": 5,
+            "mountain-charm-t4": 5,
+            "mountain-boots-t4": 5,
+            "core-survivalist": 0,
+            "relic-colossus-heart": 0
+          }
+        },
+        "mastery": {
+          "biomeLevel": {
+            "cave": 18,
+            "forest": 12,
+            "mountain": 24,
+            "plains": 12,
+            "swamp": 18,
+            "desert": 18,
+            "jungle": 18,
+            "tundra": 12,
+            "volcanic": 12,
+            "graveyard": 6,
+            "trench": 6
+          },
+          "globalMastery": 156
+        },
+        "runicPoints": {
+          "budget": 47,
+          "cost": 40,
+          "unused": 7,
+          "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+        },
+        "access": "Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.",
+        "skillPoints": 0,
+        "knownAbilities": [
+          "disengage",
+          "imbue-lightning",
+          "snipe",
+          "stunning-strike",
+          "binding-strike",
+          "detonate",
+          "frenzy",
+          "quick-strike",
+          "charge",
+          "contagion",
+          "hamstring",
+          "slam",
+          "expose-weakness",
+          "power-strike",
+          "sweep",
+          "recuperate",
+          "break-free",
+          "bramble-guard",
+          "endure",
+          "brace",
+          "cleanse",
+          "second-wind"
+        ],
+        "rites": []
+      },
+      "range": "close",
+      "sustainReadback": {
+        "hp": 568,
+        "maxHp": 568,
+        "barrier": 239,
+        "recovery": 25,
+        "stance": "offensive-stance",
+        "phase": "OUT_OF_COMBAT",
+        "activeFraction": 1,
+        "killWindowMs": 0,
+        "killFraction": 0,
+        "killDurationMs": 4000,
+        "switchCooldownMs": 0,
+        "autoIntent": null,
+        "gates": {
+          "evolutionChain": [
+            {
+              "id": "mountain-charm-t4",
+              "evolvesFrom": "mountain-charm-t3",
+              "tier": 4,
+              "group": "mountain",
+              "requiredMastery": 21,
+              "actualMastery": 24,
+              "equipped": true
+            },
+            {
+              "id": "mountain-charm-t3",
+              "evolvesFrom": "mountain-charm-t2",
+              "tier": 3,
+              "group": "mountain",
+              "requiredMastery": 15,
+              "actualMastery": 24,
+              "equipped": false
+            },
+            {
+              "id": "mountain-charm-t2",
+              "evolvesFrom": "mountain-charm-t1",
+              "tier": 2,
+              "group": "mountain",
+              "requiredMastery": 9,
+              "actualMastery": 24,
+              "equipped": false
+            },
+            {
+              "id": "mountain-charm-t1",
+              "evolvesFrom": null,
+              "tier": 1,
+              "group": "mountain",
+              "requiredMastery": 3,
+              "actualMastery": 24,
+              "equipped": false
+            }
+          ],
+          "acquisition": "Synthetic mature equipment; chain gates checked, no acquisition/cost claim",
+          "upgrade": {
+            "plus": 5,
+            "requiredMastery": 22
+          },
+          "stanceGates": [
+            {
+              "id": "offensive-stance",
+              "recipeId": "stance-recipe-offensive",
+              "group": "plains",
+              "requiredMastery": 7,
+              "actualMastery": 12
+            }
+          ],
+          "reserved": {
+            "abilities": 33,
+            "stances": 1,
+            "logic": 6,
+            "rites": 0,
+            "total": 40
+          },
+          "recoveryPassives": {
+            "core.recovery-mult": 0.3
+          }
+        }
+      }
+    },
+    {
+      "identityId": "breadth-t4-conduit-heavy-b",
+      "referenceObservationId": "day2-b-endurance-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-candidate",
+      "disposition": "explicit charm alternative; no universal default; adverse Desert 101021 preserved",
+      "packageReadback": {
+        "declared": {
+          "stance": "offensive-stance",
+          "abilities": {
+            "techniques": [
+              "sweep",
+              "frenzy",
+              "expose-weakness"
+            ],
+            "guards": [
+              "second-wind",
+              "brace",
+              "cleanse"
+            ]
+          },
+          "runeRules": [
+            {
+              "conditionId": "always",
+              "actionId": "auto-path-enemy"
+            },
+            {
+              "conditionId": "inside-telegraph",
+              "actionId": "step-back"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "avoid-hazards"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "wait-for-regen"
+            }
+          ],
+          "upgradeLevel": 5,
+          "sources": {
+            "stance": "explicit",
+            "abilities": "explicit",
+            "runeRules": "explicit",
+            "upgradeLevel": "explicit"
+          }
+        },
+        "skillPath": [
+          "summoner-root",
+          "summoner-heavy",
+          "summoner-range-close",
+          "summoner-heavy-t3-b"
+        ],
+        "equipment": {
+          "inventory": [],
+          "equipment": {
+            "weapon": "jungle-deathfang-rapier",
+            "armor": "mountain-vest-t4",
+            "recovery": "volcanic-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-survivalist",
+            "relic": "relic-colossus-heart"
+          },
+          "itemUpgrades": {
+            "jungle-deathfang-rapier": 5,
+            "mountain-vest-t4": 5,
+            "volcanic-charm-t4": 5,
+            "mountain-boots-t4": 5,
+            "core-survivalist": 0,
+            "relic-colossus-heart": 0
+          }
+        },
+        "mastery": {
+          "biomeLevel": {
+            "cave": 18,
+            "forest": 12,
+            "mountain": 24,
+            "plains": 12,
+            "swamp": 18,
+            "desert": 18,
+            "jungle": 18,
+            "tundra": 12,
+            "volcanic": 12,
+            "graveyard": 6,
+            "trench": 6
+          },
+          "globalMastery": 156
+        },
+        "runicPoints": {
+          "budget": 47,
+          "cost": 40,
+          "unused": 7,
+          "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+        },
+        "access": "Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.",
+        "skillPoints": 0,
+        "knownAbilities": [
+          "disengage",
+          "imbue-lightning",
+          "snipe",
+          "stunning-strike",
+          "binding-strike",
+          "detonate",
+          "frenzy",
+          "quick-strike",
+          "charge",
+          "contagion",
+          "hamstring",
+          "slam",
+          "expose-weakness",
+          "power-strike",
+          "sweep",
+          "recuperate",
+          "break-free",
+          "bramble-guard",
+          "endure",
+          "brace",
+          "cleanse",
+          "second-wind"
+        ],
+        "rites": []
+      },
+      "range": "close",
+      "sustainReadback": {
+        "hp": 568,
+        "maxHp": 568,
+        "barrier": 0,
+        "recovery": 34,
+        "stance": "offensive-stance",
+        "phase": "OUT_OF_COMBAT",
+        "activeFraction": 1,
+        "killWindowMs": 0,
+        "killFraction": 0,
+        "killDurationMs": 4000,
+        "switchCooldownMs": 0,
+        "autoIntent": null,
+        "gates": {
+          "evolutionChain": [
+            {
+              "id": "volcanic-charm-t4",
+              "evolvesFrom": "volcanic-charm-t3",
+              "tier": 4,
+              "group": "volcanic",
+              "requiredMastery": 9,
+              "actualMastery": 12,
+              "equipped": true
+            },
+            {
+              "id": "volcanic-charm-t3",
+              "evolvesFrom": "plains-charm-t2",
+              "tier": 3,
+              "group": "volcanic",
+              "requiredMastery": 3,
+              "actualMastery": 12,
+              "equipped": false
+            },
+            {
+              "id": "plains-charm-t2",
+              "evolvesFrom": "plains-charm-t1",
+              "tier": 2,
+              "group": "plains",
+              "requiredMastery": 9,
+              "actualMastery": 12,
+              "equipped": false
+            },
+            {
+              "id": "plains-charm-t1",
+              "evolvesFrom": null,
+              "tier": 1,
+              "group": "plains",
+              "requiredMastery": 3,
+              "actualMastery": 12,
+              "equipped": false
+            }
+          ],
+          "acquisition": "Synthetic mature equipment; chain gates checked, no acquisition/cost claim",
+          "upgrade": {
+            "plus": 5,
+            "requiredMastery": 10
+          },
+          "stanceGates": [
+            {
+              "id": "offensive-stance",
+              "recipeId": "stance-recipe-offensive",
+              "group": "plains",
+              "requiredMastery": 7,
+              "actualMastery": 12
+            }
+          ],
+          "reserved": {
+            "abilities": 33,
+            "stances": 1,
+            "logic": 6,
+            "rites": 0,
+            "total": 40
+          },
+          "recoveryPassives": {
+            "defense.recovery-active-pct": 0.16,
+            "defense.recovery-on-kill-pct": 0.14,
+            "core.recovery-mult": 0.3
+          }
+        }
+      }
+    },
+    {
+      "identityId": "breadth-t4-striker-heavy-c",
+      "referenceObservationId": "day2-b-endurance-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-mountain-candidate",
+      "disposition": "preferred tested Graveyard reference; both Desert seeds died",
+      "packageReadback": {
+        "declared": {
+          "stance": "offensive-stance",
+          "abilities": {
+            "techniques": [
+              "sweep",
+              "frenzy",
+              "expose-weakness"
+            ],
+            "guards": [
+              "second-wind",
+              "brace",
+              "cleanse"
+            ]
+          },
+          "runeRules": [
+            {
+              "conditionId": "always",
+              "actionId": "auto-path-enemy"
+            },
+            {
+              "conditionId": "inside-telegraph",
+              "actionId": "step-back"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "avoid-hazards"
+            },
+            {
+              "conditionId": "always",
+              "actionId": "wait-for-regen"
+            }
+          ],
+          "upgradeLevel": 5,
+          "sources": {
+            "stance": "explicit",
+            "abilities": "explicit",
+            "runeRules": "explicit",
+            "upgradeLevel": "explicit"
+          }
+        },
+        "skillPath": [
+          "cadence-root",
+          "cadence-heavy",
+          "cadence-range-close",
+          "cadence-heavy-t3-c"
+        ],
+        "equipment": {
+          "inventory": [],
+          "equipment": {
+            "weapon": "mountain-warmaul",
+            "armor": "mountain-vest-t4",
+            "recovery": "volcanic-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-bruiser",
+            "relic": "relic-colossus-heart"
+          },
+          "itemUpgrades": {
+            "mountain-warmaul": 5,
+            "mountain-vest-t4": 5,
+            "volcanic-charm-t4": 5,
+            "mountain-boots-t4": 5,
+            "core-bruiser": 0,
+            "relic-colossus-heart": 0
+          }
+        },
+        "mastery": {
+          "biomeLevel": {
+            "cave": 18,
+            "forest": 12,
+            "mountain": 24,
+            "plains": 12,
+            "swamp": 18,
+            "desert": 18,
+            "jungle": 18,
+            "tundra": 12,
+            "volcanic": 12,
+            "graveyard": 6,
+            "trench": 6
+          },
+          "globalMastery": 156
+        },
+        "runicPoints": {
+          "budget": 47,
+          "cost": 40,
+          "unused": 7,
+          "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+        },
+        "access": "Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.",
+        "skillPoints": 0,
+        "knownAbilities": [
+          "disengage",
+          "imbue-lightning",
+          "snipe",
+          "stunning-strike",
+          "binding-strike",
+          "detonate",
+          "frenzy",
+          "quick-strike",
+          "charge",
+          "contagion",
+          "hamstring",
+          "slam",
+          "expose-weakness",
+          "power-strike",
+          "sweep",
+          "recuperate",
+          "break-free",
+          "bramble-guard",
+          "endure",
+          "brace",
+          "cleanse",
+          "second-wind"
+        ],
+        "rites": []
+      },
+      "range": "close",
+      "sustainReadback": {
+        "hp": 674,
+        "maxHp": 674,
+        "barrier": 0,
+        "recovery": 26,
+        "stance": "offensive-stance",
+        "phase": "OUT_OF_COMBAT",
+        "activeFraction": 1,
+        "killWindowMs": 0,
+        "killFraction": 0,
+        "killDurationMs": 4000,
+        "switchCooldownMs": 0,
+        "autoIntent": null,
+        "gates": {
+          "evolutionChain": [
+            {
+              "id": "volcanic-charm-t4",
+              "evolvesFrom": "volcanic-charm-t3",
+              "tier": 4,
+              "group": "volcanic",
+              "requiredMastery": 9,
+              "actualMastery": 12,
+              "equipped": true
+            },
+            {
+              "id": "volcanic-charm-t3",
+              "evolvesFrom": "plains-charm-t2",
+              "tier": 3,
+              "group": "volcanic",
+              "requiredMastery": 3,
+              "actualMastery": 12,
+              "equipped": false
+            },
+            {
+              "id": "plains-charm-t2",
+              "evolvesFrom": "plains-charm-t1",
+              "tier": 2,
+              "group": "plains",
+              "requiredMastery": 9,
+              "actualMastery": 12,
+              "equipped": false
+            },
+            {
+              "id": "plains-charm-t1",
+              "evolvesFrom": null,
+              "tier": 1,
+              "group": "plains",
+              "requiredMastery": 3,
+              "actualMastery": 12,
+              "equipped": false
+            }
+          ],
+          "acquisition": "Synthetic mature equipment; chain gates checked, no acquisition/cost claim",
+          "upgrade": {
+            "plus": 5,
+            "requiredMastery": 10
+          },
+          "stanceGates": [
+            {
+              "id": "offensive-stance",
+              "recipeId": "stance-recipe-offensive",
+              "group": "plains",
+              "requiredMastery": 7,
+              "actualMastery": 12
+            }
+          ],
+          "reserved": {
+            "abilities": 33,
+            "stances": 1,
+            "logic": 6,
+            "rites": 0,
+            "total": 40
+          },
+          "recoveryPassives": {
+            "defense.recovery-active-pct": 0.16,
+            "defense.recovery-on-kill-pct": 0.14,
+            "defense.recovery-pulse-interval-ms": 6000,
+            "defense.recovery-pulse-duration-ms": 4000,
+            "defense.recovery-pulse-pct": 0.30000000000000004
+          }
+        }
+      }
+    }
+  ],
+  "parked": "Apprentice late deaths and other outliers remain tracked; no more tuning in this packet"
+}

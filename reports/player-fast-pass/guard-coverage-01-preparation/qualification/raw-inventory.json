@@ -1,0 +1,27 @@
+[
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\qualification\\zero-tick\\artifacts\\complete.json",
+    "bytes": 39,
+    "sha256": "56bc88b459a4b13840b72d5bfe8c4611552cb753ca149d26051dfc26f91231f0"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\qualification\\zero-tick\\artifacts\\index.json",
+    "bytes": 841570,
+    "sha256": "44ba913e04da5e999aca5a8be941f94b06a1f942fe45b186b9aec01334b5fdeb"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\qualification\\zero-tick\\artifacts\\manifest.json",
+    "bytes": 116883,
+    "sha256": "38bf0cff3c5a90b67421eb1181127fc6d987dfa8638e5c4e543cbeb49f601c24"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\qualification\\zero-tick\\process.json",
+    "bytes": 634,
+    "sha256": "c8ca7a79c87b69192cb03c769087de73d12d43e10992fd4f3aea257fa858048f"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\qualification\\zero-tick\\process.log",
+    "bytes": 3320,
+    "sha256": "32c5a7a24ae174d427fbc04ca243bb0ed8c7bc68f8533358367df7f41c8d1045"
+  }
+]
