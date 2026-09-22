@@ -1,0 +1,137 @@
+[
+  {
+    "path": ".gitattributes",
+    "bytes": 31,
+    "sha256": "5d2c66adb84298fd3a0322767edd663cc96af4554d31257ad64fd2d4ddbd70c6"
+  },
+  {
+    "path": "ABILITY_READBACK.json",
+    "bytes": 682,
+    "sha256": "297ed28ff9d6de96889017281d535be8182caa6afdffee2a75c4edbd44cf46b8"
+  },
+  {
+    "path": "CHECKS.json",
+    "bytes": 1954,
+    "sha256": "b1942a94727a3445dbfe34929a8502497a013dc9aa14645781f90a91d7c0bb1d"
+  },
+  {
+    "path": "HISTORICAL_CONTEXT.md",
+    "bytes": 3469,
+    "sha256": "05dee0418448b4a620283c3bd3de18ee8a25d621d47939a4059e807341bcf47c"
+  },
+  {
+    "path": "LUNA_RUN.md",
+    "bytes": 4144,
+    "sha256": "3f6c47f8233dacb0f147e51f12fffbdb105ac9fd164d5e178151f23ad1d3d94a"
+  },
+  {
+    "path": "ORDERED_CASES.tsv",
+    "bytes": 2279,
+    "sha256": "c4e7cb5dc99dd5be07bf022445d224705747edbec7aa9be3f7a91f9672c01012"
+  },
+  {
+    "path": "PACKAGES.json",
+    "bytes": 71556,
+    "sha256": "77b0b438d13acff25661d2f6d33353ab0b5cbdc454a69d77abc1c67b3ce54bb2"
+  },
+  {
+    "path": "PACKAGES.md",
+    "bytes": 4293,
+    "sha256": "1b48181d5bc3c7b814d59e2f1fbaf98ad6873810fd6d01d7d671d08153eaa1fe"
+  },
+  {
+    "path": "packet/identity.json",
+    "bytes": 147574,
+    "sha256": "656e8bc2b2fc77890b7234ce01f43d74ede08fd3cb00a5167eef1e463eb23ef9"
+  },
+  {
+    "path": "packet/manifest.json",
+    "bytes": 42056,
+    "sha256": "5ec4369864816d8921e37f47c45eb7f8c6353935b7c2177f71ea5e43b1da16d7"
+  },
+  {
+    "path": "packet/qualified.json",
+    "bytes": 293,
+    "sha256": "6c0c0a3b7291112160b5d13b21e330c874942595754266ac6e512792b5eba7a8"
+  },
+  {
+    "path": "packet/qualify-launched.json",
+    "bytes": 169,
+    "sha256": "a6c21eaf6787838b234e3f2005423c9e27f160b2546371221f0918421a9566d0"
+  },
+  {
+    "path": "packet/receipt-check-launched.json",
+    "bytes": 169,
+    "sha256": "9261a296a79d1dce21dc33496eea1ad7b84a0550d63c2e9dfcad4ed2b5a3ccbf"
+  },
+  {
+    "path": "packet/receipt-verified.json",
+    "bytes": 468,
+    "sha256": "c17087faba155bad958b8ace2ec7b8b3126039330929bbffd83a9ebb361f49bd"
+  },
+  {
+    "path": "packet/seal.json",
+    "bytes": 177,
+    "sha256": "c5aee9a5fe011d631b62e0434f8b9d4448f6e4a2efeabcf4827455dab8e569d8"
+  },
+  {
+    "path": "qualification/complete.json",
+    "bytes": 100,
+    "sha256": "4e85832fc9afbb913d8fda1e22c9dd41f196177064077400a547ea189ce5b2b2"
+  },
+  {
+    "path": "qualification/raw-inventory.json",
+    "bytes": 23483,
+    "sha256": "482fe78456dd3910315d53126ab1236948e86363d1b91fb42a66a7e2ecd47802"
+  },
+  {
+    "path": "qualification/resolved-builds.json",
+    "bytes": 322957,
+    "sha256": "9fc163e1b213ff4826623083b2d545064ca18b5d5d93e9cd8332fa9d916da494"
+  },
+  {
+    "path": "qualification/results-summary.json",
+    "bytes": 13792,
+    "sha256": "9cf2fda56603dd55432de11875f788e197752637ffcee0d33742bbc3f459748f"
+  },
+  {
+    "path": "README.md",
+    "bytes": 3209,
+    "sha256": "8f874cc41d46e74fffe006ac2fa03f2d99417ec2a2111b760d785a0112faf178"
+  },
+  {
+    "path": "receipt-check/complete.json",
+    "bytes": 100,
+    "sha256": "4e85832fc9afbb913d8fda1e22c9dd41f196177064077400a547ea189ce5b2b2"
+  },
+  {
+    "path": "receipt-check/raw-inventory.json",
+    "bytes": 23483,
+    "sha256": "1c6959127cca1bb76ebc6b089b4a96da9a4ad48013ace9ee95e556a4038a421b"
+  },
+  {
+    "path": "receipt-check/results-summary.json",
+    "bytes": 13798,
+    "sha256": "855e15ad18908c1803791c2e9a6044226f707aed3a52a88dc7ef0cbb8c690644"
+  },
+  {
+    "path": "REPORT_CONTRACT.json",
+    "bytes": 1356,
+    "sha256": "08787121c770a9a4e4d429222dc9028906041488c9a2f44d1fa3d63054cd05ba"
+  },
+  {
+    "path": "SOURCE_BRIEF.md",
+    "bytes": 19252,
+    "sha256": "1e013ef048082b54dff8624643aaee50df693ed00742f544ac0f2bb2792ab61f"
+  },
+  {
+    "path": "SOURCE_PROVENANCE.json",
+    "bytes": 1483,
+    "sha256": "279f1f13524455120ff3548988685c9b0aaeeb14e8aedd0edbb99ade605b0b0b"
+  },
+  {
+    "path": "SPIRIT_SOURCE.md",
+    "bytes": 5052,
+    "sha256": "ace57804995de7f25bc1ac6128ca3c35ba205d062cf3f42399ce9af3a8ae724e"
+  }
+]

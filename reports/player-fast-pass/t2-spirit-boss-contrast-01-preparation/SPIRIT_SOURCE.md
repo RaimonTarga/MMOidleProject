@@ -1,0 +1,25 @@
+# Spirit source note
+
+Source: `3a1488a7c78bb47f4a90e20ec06db1652594fe16`, direct descendant of measured `3e27da0bdecd442b0a40e2c2ab41afbf013f6fa6`. No production gameplay file differs. See SOURCE_PROVENANCE.json for the exact delta and sealed hashes. This is implementation analysis, not measured boss performance.
+
+| T2 frame (live name) | Energy per ordinary hit | Base discharge multiplier | Frame attack speed | Frame movement |
+|---|---:|---:|---:|---:|
+| Light (Spark) | 20 | 1.5 | +12% | +12% |
+| Balanced (Wraith) | 14 | 2.0 | +6% | +6% |
+| Heavy (Phantasm) | 10 | 6.0 | -10% | -8% |
+
+`shared/src/data/skillTree/rootsAndFrames.ts` defines these frame values. The root adds +15% attack, +3% HP, +12% attack speed, +12% movement, 130 attack range, and `defense.barrier-pct: 0.30`. Heavy adds +10% attack, +14% HP, +12% plating and +0.02 damage reduction; Balanced adds +8% attack, +7% HP and +6% plating; Light adds +7% attack and +3% HP. Gear, stance and core still apply; compare resolved receipts, not isolated coefficients.
+
+`server/src/systems/classes/archetypes/energy/energyPrototype.ts` registers the real afterHit charge path. Fresh energy is zero with capacity 100. Ordinary resolved attacks add the frame gain, capped at capacity; reaching it resets energy to zero and arms the NEXT attack. Empowered hits do not build energy. Cancelled attacks do not reach afterHit. The code explicitly preserves an armed discharge on a chaotic weapon miss; an ordinary chaotic miss can still build energy. Do not generalize that to full evades or every attempted swing.
+
+`server/src/systems/combat/engine/empoweredAttacks.ts` consumes the armed flag in onHit, scales damage and marks `empoweredAttack`. Universal additive bonuses precede the weapon multiplier. Quake Hammer +5 supplies `weapon.empowered-mult-bonus = 0.33`, so Heavy's nominal resolved multiplier is 6 * 1.33 = 7.98 before damage rounding and later defenses. This is a calculation under those fixed assumptions, not observed delivered damage. With uninterrupted ordinary attacks and no misses/casts, five, eight and ten energy-generating hits precede the next Light, Balanced and Heavy discharge respectively. Actual cadence, travel, Technique occupation, deaths and protection change their realized output.
+
+`server/src/systems/combat/engine/combat.ts` applies the empowered onHit multiplier before adding the separately mitigated on-hit payload. Stinger +5 has authored attack 30 and on-hit damage 23 before class/equipment layers; the on-hit component is not simply multiplied by the frame discharge multiplier. There is no inherent empowered AoE splash in this source despite the Light frame tooltip's stale splash wording. Weapon procs follow their existing listeners; no new proc observer or causal decomposition is introduced.
+
+Power Strike II is the T2 production-resolved cast: 3.5x attack, 1600 ms base cast, 10000 ms cooldown (`shared/src/abilities.ts`). Its completed cast uses `applyPlayerAoe` via `abilityEffects.ts`, rather than an ordinary onHit/afterHit attack. It does not itself charge or consume the base energy discharge. Its occupation of the shared offensive channel delays normal attacks; Quake's +15% cast-speed passive affects its real cast. Do not multiply Power Strike by 7.98 or count a Technique event as a Spirit discharge.
+
+The Mountain charm +5 adds 0.26 barrier fraction to the Spirit root's 0.30. The barrier implementation (`server/src/systems/defense/barrier/barrier.ts`) refills after four undamaged seconds at 25% of capacity per second; both direct hits and DoT restart the delay. Successful avoidance can therefore allow recharge even within a long encounter. Offensive stance, Mountain armor, native evasion, Second Wind and Brace also affect survival. The readbacks retain their actual values.
+
+Brace's Rune replaces its default timing only for Brace (`abilityFiring.ts: shouldFire`). `guardableThreats.ts` excludes ordered pattern casts explicitly marked `guardable: false`; Stoneplate is authored that way. The subsequent Stoneplate Charge qualifies. Before/after-tick guard records expose cooldown, status effects, actual threats and the boss pattern, allowing impact-versus-coverage analysis without predicting future hits. Second Wind keeps its native trigger.
+
+Evidence uses existing canonical `player-hit` events with `empowered: true` for landed discharge count/timing, never a damage threshold or per-tick armed flag. Matching whole-strike HP damage and absorption are separate. Recorded HP damage can exceed remaining HP and includes the whole strike: useful HP contribution, incremental discharge bonus and exact overkill remain null. Per-tick raw state and production events support energy cycles, Forest ramp and Mountain plate/charge interpretation. Counts of native state transitions must distinguish barrier break from expiry/drop and actual damage from a cast merely starting. A fight ending before a cycle completes cannot establish sustained output; no boss result reconstructs farming overkill.

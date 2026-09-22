@@ -1,0 +1,502 @@
+[
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-light-forest-s101009\\artifacts\\complete.json",
+    "bytes": 148,
+    "sha256": "d5549dc0d3c1ca795ea19d5793b050766e2d3c21c8f5af897ad003f33728a0a6"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-light-forest-s101009\\artifacts\\index.json",
+    "bytes": 16205,
+    "sha256": "ec103e1d69ea7e2e7b15163b34dee4167f041644e091d96cc9588ea7c613fd9e"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-light-forest-s101009\\artifacts\\manifest.json",
+    "bytes": 2668,
+    "sha256": "c44b36aee1740eb4d695322e3f17cbf86605a61ce551f2fa97b26589cb7fb7eb"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-light-forest-s101009\\process.json",
+    "bytes": 715,
+    "sha256": "949aea46e20945d42886e7fe83d7419e02f4308bbd698e70fb19d65125e3e21e"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-light-forest-s101009\\process.log",
+    "bytes": 131,
+    "sha256": "d4576e9910157a853f6555a5cec6f1cad1a1613482f13579e963bbde960eeedb"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-light-mountain-s101009\\artifacts\\complete.json",
+    "bytes": 150,
+    "sha256": "7a32ed3cf7e197363c2afb9c04f6842ac7974f75181826a2e01001cbba14d401"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-light-mountain-s101009\\artifacts\\index.json",
+    "bytes": 16242,
+    "sha256": "d33a3b22a0f4edd6303e2da91b50f4ec4ac10d11353c2eb03814834dc3ba40ac"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-light-mountain-s101009\\artifacts\\manifest.json",
+    "bytes": 2694,
+    "sha256": "6aca8d98ed3eb48d52155dfd90c7769918f4f90aa1469f74ba12bb7057da0c8f"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-light-mountain-s101009\\process.json",
+    "bytes": 719,
+    "sha256": "795f4ba01d180ef8b7a1ea2a127474e082bb1a12123a2c49ce3844544918bed6"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-light-mountain-s101009\\process.log",
+    "bytes": 135,
+    "sha256": "5561962981e2d28c871d8bcb7aa17d9b4730d14c718ad64681b3b142c37c0f91"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-balanced-forest-s101009\\artifacts\\complete.json",
+    "bytes": 151,
+    "sha256": "ef4623a8123ddca4ef211620e678682f6bf627f5c56398c5e08cf2f108191660"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-balanced-forest-s101009\\artifacts\\index.json",
+    "bytes": 16234,
+    "sha256": "c7cba8c3e8e8317fff795f9e7089d137f169928c1f99e8672dbf470e4b690e54"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-balanced-forest-s101009\\artifacts\\manifest.json",
+    "bytes": 2687,
+    "sha256": "47f7139843a0b5acc24a7e726885ca285b9edd1681bae8c826785f62955a54d1"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-balanced-forest-s101009\\process.json",
+    "bytes": 721,
+    "sha256": "d7a948c7d4cb3ddf544f14241cc839a3ae060f156c9a7e7ddf508f2dd88cd260"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-balanced-forest-s101009\\process.log",
+    "bytes": 137,
+    "sha256": "596719e554ea43653835d848552a0f4523c6ef0e26053bc3cd3cf59916ed8de0"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-balanced-mountain-s101009\\artifacts\\complete.json",
+    "bytes": 153,
+    "sha256": "9f7f9a885950d1aba45ba34ad0b2c6ef51c2b3ab289cc84e4e27e562ac91a9c2"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-balanced-mountain-s101009\\artifacts\\index.json",
+    "bytes": 16271,
+    "sha256": "153bfee9389cd7ee4197e850f7feb5313175124b7636697594b5a2baf265c456"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-balanced-mountain-s101009\\artifacts\\manifest.json",
+    "bytes": 2713,
+    "sha256": "10cd6029ad94df406877500b65643ef5e4084f4406c263a38f4a279ba5c0318c"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-balanced-mountain-s101009\\process.json",
+    "bytes": 725,
+    "sha256": "b21007423f94a906ad945a8e90d212cced90d8dea8111d60daadccfbd4567568"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-balanced-mountain-s101009\\process.log",
+    "bytes": 141,
+    "sha256": "dc08bb2acb337da16cf1fcc6595fff3b5fa2e15c0487c74e1a1ff174df2f3b54"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-heavy-forest-s101009\\artifacts\\complete.json",
+    "bytes": 148,
+    "sha256": "3cec0e0f52a27a27a82ad9adc4f12a5017f145079625395a1d8f64f693b24404"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-heavy-forest-s101009\\artifacts\\index.json",
+    "bytes": 16246,
+    "sha256": "d739360e418dd4af90224565810d3a227f1c4e424dc7f75d0ad53339327c7dc6"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-heavy-forest-s101009\\artifacts\\manifest.json",
+    "bytes": 2662,
+    "sha256": "8046eb2c1a405d1beac5845e81b830911d7d18b5a761c4ec899a70b7cfcbdbbc"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-heavy-forest-s101009\\process.json",
+    "bytes": 715,
+    "sha256": "060a584978d7e232e38f3bdc47828ae661fae0dfbd3f26188326193b8c7c4020"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-heavy-forest-s101009\\process.log",
+    "bytes": 131,
+    "sha256": "a7564e3458a9ce022c8f0d68439e2e37d5dfcc9081b1cd5db264a2ad14644d19"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-heavy-mountain-s101009\\artifacts\\complete.json",
+    "bytes": 150,
+    "sha256": "f9924eedb24d23a4a6fe1e97dde0dac4f35c7f7ca7c50c521515b43d68f9b7c3"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-heavy-mountain-s101009\\artifacts\\index.json",
+    "bytes": 16283,
+    "sha256": "994969c5aab2282ca913fb95b9cf8d52b991ceac96734d38c769c0ef09c3b055"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-heavy-mountain-s101009\\artifacts\\manifest.json",
+    "bytes": 2688,
+    "sha256": "32282573970d79646033863807f7a1c0a16f3e9226fe49cb3a28f66445547543"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-heavy-mountain-s101009\\process.json",
+    "bytes": 719,
+    "sha256": "e9328cf1c6bec7aff5e1c26cc44a5b5a1e67bbaa968256b414a59b459b969a38"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-heavy-mountain-s101009\\process.log",
+    "bytes": 135,
+    "sha256": "97c3f2a76c03c4a1260c80c4ab443ed75d38be81fac40c7dcd5ffa4b94263a31"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-slinger-light-forest-s101009\\artifacts\\complete.json",
+    "bytes": 149,
+    "sha256": "f802ee3955eaa604d1d685efe7e42ff1d08429e17a684151135e7fdf4c5b7fa4"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-slinger-light-forest-s101009\\artifacts\\index.json",
+    "bytes": 15842,
+    "sha256": "794baa28e1600c5c2d2be1858d25f8b8f9f0584a8b86e10b92b25c262e1a3e7e"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-slinger-light-forest-s101009\\artifacts\\manifest.json",
+    "bytes": 2668,
+    "sha256": "fc22254a7e1d69c5533ab5d16580e813ffda664f6b63e43912edddc6fa0c1f71"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-slinger-light-forest-s101009\\process.json",
+    "bytes": 717,
+    "sha256": "c595d3270f796b33e465dcb7cff905d5321a44427c43c6522498cd847e963348"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-slinger-light-forest-s101009\\process.log",
+    "bytes": 133,
+    "sha256": "0c572c2b66a4ae31dfaed13ea0c44eb236e821cd5ea6ab26427b365fa50f48ca"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-slinger-light-mountain-s101009\\artifacts\\complete.json",
+    "bytes": 151,
+    "sha256": "9b5973550c54564ed74ccfd4d195040ba5a3df62be630ba432ec24eebf57052c"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-slinger-light-mountain-s101009\\artifacts\\index.json",
+    "bytes": 15801,
+    "sha256": "f23e06802e0c84a2cf63959eab09e7e8babb998281982f68def08efbbca8b26f"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-slinger-light-mountain-s101009\\artifacts\\manifest.json",
+    "bytes": 2699,
+    "sha256": "9ca12d336b7ebd852819792d49ac8c939e72e6cc76c39f30e6f49160a3c9d51e"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-slinger-light-mountain-s101009\\process.json",
+    "bytes": 721,
+    "sha256": "0383f19b4adf01008b0f199fdcc397a449f3e47f79ca0dbe1ab5aa8af36fb757"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-slinger-light-mountain-s101009\\process.log",
+    "bytes": 137,
+    "sha256": "a053744a5c60292cf6e57d3947691a4bcecdc1846d9e1e79940680aadd54fea8"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-squire-heavy-forest-s101009\\artifacts\\complete.json",
+    "bytes": 148,
+    "sha256": "32c33e4c9342f05aff84c17c58aac9c43fb6f11c9479e86f371a6840a74b4917"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-squire-heavy-forest-s101009\\artifacts\\index.json",
+    "bytes": 15675,
+    "sha256": "b2d4430ee7bbb40d8f4f91ddce1141d52decbbe6a21d1b19ab00a35da7ce5ed0"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-squire-heavy-forest-s101009\\artifacts\\manifest.json",
+    "bytes": 2575,
+    "sha256": "a6be9d23f66f44071511075b39b092f3c33d67923cd4d510d9c92466b91ccd0b"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-squire-heavy-forest-s101009\\process.json",
+    "bytes": 715,
+    "sha256": "cfedceda9bc18590f82ad703b0214b1de75a18893cd28dba3064824bc50a0373"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-squire-heavy-forest-s101009\\process.log",
+    "bytes": 131,
+    "sha256": "bfb5a0d68a78a44f0663f71edb8ff4c91f22b5761219f2108aa017eddd73c670"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-squire-heavy-mountain-s101009\\artifacts\\complete.json",
+    "bytes": 150,
+    "sha256": "3b7bed3fdf1795f54cbcc71e7bd864cdc8d63d5934eb2026499dca3b676b7d44"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-squire-heavy-mountain-s101009\\artifacts\\index.json",
+    "bytes": 15662,
+    "sha256": "f9b9f16bd77705220e5cea7332df692824284d4ed72e20c09646b97571495750"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-squire-heavy-mountain-s101009\\artifacts\\manifest.json",
+    "bytes": 2606,
+    "sha256": "4ddc69edb3bb00b1172b153419dca49d711aa2b1577156b221454a9590bb7c3b"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-squire-heavy-mountain-s101009\\process.json",
+    "bytes": 718,
+    "sha256": "07b9ee681c3a28eb6f14919725dbdb36f47818f46ec434478d53b940ac9f5516"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-squire-heavy-mountain-s101009\\process.log",
+    "bytes": 135,
+    "sha256": "5a201a003dff7cd061a036895b527e570fbcaeb00b4b0629e8caff966ffca3d5"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-squire-heavy-forest-s101021\\artifacts\\complete.json",
+    "bytes": 148,
+    "sha256": "ce8585642a6e7bc5fa5b9fa445985e460931b62963fc3cb5d77cf4ba3a2af751"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-squire-heavy-forest-s101021\\artifacts\\index.json",
+    "bytes": 15675,
+    "sha256": "025f699800705279d93def57e9653909d11386070da026097bfd3324215bc8bf"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-squire-heavy-forest-s101021\\artifacts\\manifest.json",
+    "bytes": 2575,
+    "sha256": "4b8adb3e8ecdbc218ad0d3effa6de825e07afcbbbcd9e65759373d22816a1380"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-squire-heavy-forest-s101021\\process.json",
+    "bytes": 715,
+    "sha256": "4b2b233e2d9c4de1cedaa270d74e6fd0a4d9331c4fc64f9586b9ab8c4889f4fd"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-squire-heavy-forest-s101021\\process.log",
+    "bytes": 131,
+    "sha256": "0af90adffcf50a095dc576c24c77030f6494d2c275668de3a116eae4af6117aa"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-squire-heavy-mountain-s101021\\artifacts\\complete.json",
+    "bytes": 150,
+    "sha256": "d5240cd41342c6b8bc9f9bada99e2e4612dc0c9053d86b53edc1ff40267b741f"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-squire-heavy-mountain-s101021\\artifacts\\index.json",
+    "bytes": 15662,
+    "sha256": "c3fb4a72242d77c5052c6d2fdb8b5b5a3932d1c3cb54b2918399971015944c0f"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-squire-heavy-mountain-s101021\\artifacts\\manifest.json",
+    "bytes": 2606,
+    "sha256": "9e228460216a607bea023345b25193eda1b23a4917658e8f2a3705236d93d4da"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-squire-heavy-mountain-s101021\\process.json",
+    "bytes": 719,
+    "sha256": "464e99918607676c4546204727a240496651a867b2a281f8128f77a6c4fcee93"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-squire-heavy-mountain-s101021\\process.log",
+    "bytes": 135,
+    "sha256": "9d9124a3e8377ce130e1e052de8feaf20f6a9af106b5d88bc15f273f60edd141"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-slinger-light-forest-s101021\\artifacts\\complete.json",
+    "bytes": 149,
+    "sha256": "8591d7cdaa1ad72518e794ab0e3678daba55c2d897f1ce205ad5dfb0e79ab121"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-slinger-light-forest-s101021\\artifacts\\index.json",
+    "bytes": 15842,
+    "sha256": "dbb2c561fbf807bab801c091c2536a29de5b0f7bcfbe458417644bf6facff7a2"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-slinger-light-forest-s101021\\artifacts\\manifest.json",
+    "bytes": 2668,
+    "sha256": "c6827ced4b9fd14ef3359c58813c22cb6ee8912886e252139e69bed96fab0e2f"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-slinger-light-forest-s101021\\process.json",
+    "bytes": 717,
+    "sha256": "20403723746c1fcb9c779e799dde47a3edf588b00f534259373091211dfa625e"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-slinger-light-forest-s101021\\process.log",
+    "bytes": 133,
+    "sha256": "12fa4fbe58f28ad82524beb0e862130af00ec64efc4230bd6f43fca7e13a41b2"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-slinger-light-mountain-s101021\\artifacts\\complete.json",
+    "bytes": 151,
+    "sha256": "d98bc680599160ffc9f0281af71d1e0707355222de784c5c50ea02b2531bb3b7"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-slinger-light-mountain-s101021\\artifacts\\index.json",
+    "bytes": 15801,
+    "sha256": "157e576d571acabdbfebe6e69d33b4a018058e890e73f5752a2287534f824ed8"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-slinger-light-mountain-s101021\\artifacts\\manifest.json",
+    "bytes": 2699,
+    "sha256": "eaf0d6f995f5daa775504f51e03012f805c6449831999d1ae85e383a1a505d8f"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-slinger-light-mountain-s101021\\process.json",
+    "bytes": 720,
+    "sha256": "ca23f850eb49c34e1f02e77c8334fc91821475a2e17b5b22ad51fb5c40850b88"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-slinger-light-mountain-s101021\\process.log",
+    "bytes": 137,
+    "sha256": "3de5dd41e04d21a6122ad983efc747edae4cdc2cd538fa3ea97ae80f443a7d39"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-heavy-forest-s101021\\artifacts\\complete.json",
+    "bytes": 148,
+    "sha256": "4ff8d3a1bf8e3796227afa2789026589a0ad09af8b366572de659a9aa064ec63"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-heavy-forest-s101021\\artifacts\\index.json",
+    "bytes": 16246,
+    "sha256": "197e0e85e7882ea5fd2cf79b404c9e43d0d4bf88ae84ebe77ad981ae52538105"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-heavy-forest-s101021\\artifacts\\manifest.json",
+    "bytes": 2662,
+    "sha256": "e13b146f7411c87c18900d1c76b10d165c96c8c498becc52664cbd90152136fb"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-heavy-forest-s101021\\process.json",
+    "bytes": 715,
+    "sha256": "1bbc0ded3ef7754d5849fb97c2d54316f06b22a8df23f98daaf81934fecf5cd3"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-heavy-forest-s101021\\process.log",
+    "bytes": 131,
+    "sha256": "98964238bb6700bd8ddb02a3ddec72c3c5429fc31a9734659bb0fee992ec6d3a"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-heavy-mountain-s101021\\artifacts\\complete.json",
+    "bytes": 150,
+    "sha256": "664a1e32adfa19fc6435b4f2d1273ea0415cc05a570dc9d0633b067e10229415"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-heavy-mountain-s101021\\artifacts\\index.json",
+    "bytes": 16283,
+    "sha256": "9d64a2aacaa9e44bb1e55f943c5af3e3d8516b344ad02ee8b71f075783430ada"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-heavy-mountain-s101021\\artifacts\\manifest.json",
+    "bytes": 2688,
+    "sha256": "feb8fc8f86d79aa7855e35c1dddfe570b50497cca9da7ea6b04e4630c50b5849"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-heavy-mountain-s101021\\process.json",
+    "bytes": 719,
+    "sha256": "06e757082546bd1fe15e0cb9ce4ef691f925f1d33af76381648a45b7f6999acd"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-heavy-mountain-s101021\\process.log",
+    "bytes": 135,
+    "sha256": "96f12b15e4a503f1c560cf9e8192bb821308fd5685c22946c8207ce6bd1ff835"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-balanced-forest-s101021\\artifacts\\complete.json",
+    "bytes": 151,
+    "sha256": "582ab327dce79e8b0cc0514486755805fc665d7356daaae99c365df016d999b3"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-balanced-forest-s101021\\artifacts\\index.json",
+    "bytes": 16234,
+    "sha256": "32e597aa7cb5cca8b874a7b4eae5a01ed322412fd417c38605c08c5ea1cc4bc5"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-balanced-forest-s101021\\artifacts\\manifest.json",
+    "bytes": 2687,
+    "sha256": "d0af54fdc8f123f70228583da94e04c2feeba9a55886231e69ddb132159f63ba"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-balanced-forest-s101021\\process.json",
+    "bytes": 721,
+    "sha256": "37ce40ae9287283c63351d7a7f52f21c5eb151352e67a2f645e285ec791621ea"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-balanced-forest-s101021\\process.log",
+    "bytes": 137,
+    "sha256": "02b2918dd30cb0a620b43172bbd89788be0bd10a06f3614b3afead294ee5d5a2"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-balanced-mountain-s101021\\artifacts\\complete.json",
+    "bytes": 153,
+    "sha256": "8224172f62d785d61be36b9a1b70fc550fa38b73cf0719d60ea1ba36fa61da95"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-balanced-mountain-s101021\\artifacts\\index.json",
+    "bytes": 16271,
+    "sha256": "3f532e1c2391c53cd59afbaf2746057a9d9d71b1c9f3da26e95b60b3ba282393"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-balanced-mountain-s101021\\artifacts\\manifest.json",
+    "bytes": 2713,
+    "sha256": "b89be8f9e303fecda4e6066694860868e7b10e5e842cfc82d724e6fb7523a5a5"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-balanced-mountain-s101021\\process.json",
+    "bytes": 725,
+    "sha256": "20125c9d1c16d73e40fd2482b8a4825a31f9ab026444059d875aa72904c97f89"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-balanced-mountain-s101021\\process.log",
+    "bytes": 141,
+    "sha256": "54d6cdbf58fa3d57712ab8747fb50dfb5b79923a221e6ec505aacfebf2e525c8"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-light-forest-s101021\\artifacts\\complete.json",
+    "bytes": 148,
+    "sha256": "4049a5821468dee252cc335934a1d47835903bd30a021a5be28b718a767bf675"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-light-forest-s101021\\artifacts\\index.json",
+    "bytes": 16205,
+    "sha256": "bef57258b5123b857393830fbfcf850037ede1b304693e3ce8ea1142b950714c"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-light-forest-s101021\\artifacts\\manifest.json",
+    "bytes": 2668,
+    "sha256": "82c3bd2ed27225aa6f97671ce765adf9fdbc6c867e4195e03e595b6911533c5a"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-light-forest-s101021\\process.json",
+    "bytes": 715,
+    "sha256": "893879f9df33522ef45a1e2808c426bead49d90e2329cb9fb4e68082e3151f33"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-light-forest-s101021\\process.log",
+    "bytes": 131,
+    "sha256": "0e5ee7e392e9cb330bbeb2e6800869bf09fe29825709316e87e670bc6e61a727"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-light-mountain-s101021\\artifacts\\complete.json",
+    "bytes": 150,
+    "sha256": "7f4c94908d9763adbdb97861acf811103c8936d006adcdd4ec456623b912ea1f"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-light-mountain-s101021\\artifacts\\index.json",
+    "bytes": 16242,
+    "sha256": "2f84e88e6e99fd72758e2c61a96c84ec41f3d34e8aee17b5e4ad16a5dcd6c6e6"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-light-mountain-s101021\\artifacts\\manifest.json",
+    "bytes": 2694,
+    "sha256": "04182fb6b462d8cf93dddd88a888ea941c8dcf2ea789cd7581b9759f59cefe04"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-light-mountain-s101021\\process.json",
+    "bytes": 719,
+    "sha256": "71e8160b1b5fc0941f93d10e6c9c46fd361c4ce6ed3737624461408f99a1af6b"
+  },
+  {
+    "path": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\receipt-check\\sbc-spirit-light-mountain-s101021\\process.log",
+    "bytes": 135,
+    "sha256": "ef96e9ce3f5c30a537cbfbf10d01797f878ccf2da3099227721928bb016a9173"
+  }
+]

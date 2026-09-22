@@ -1,0 +1,39 @@
+[
+  {
+    "id": "power-strike",
+    "name": "Power Strike II",
+    "rank": {
+      "effect": {
+        "kind": "cast-strike",
+        "damageMult": 3.5
+      },
+      "cooldownMs": 10000,
+      "castMs": 1600
+    }
+  },
+  {
+    "id": "second-wind",
+    "name": "Second Wind II",
+    "rank": {
+      "effect": {
+        "kind": "heal",
+        "recoveryPct": 0.6,
+        "durationMs": 4000
+      },
+      "cooldownMs": 12000
+    }
+  },
+  {
+    "id": "brace",
+    "name": "Brace II",
+    "rank": {
+      "effect": {
+        "kind": "damage-reduction",
+        "drPct": 0.4,
+        "durationMs": 3000,
+        "knockbackResistPct": 0.55
+      },
+      "cooldownMs": 10000
+    }
+  }
+]

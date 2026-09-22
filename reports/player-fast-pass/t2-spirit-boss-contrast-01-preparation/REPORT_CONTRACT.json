@@ -1,0 +1,35 @@
+{
+  "planned": 20,
+  "new": 20,
+  "reused": 0,
+  "capMs": 300000,
+  "dtMs": 100,
+  "seeds": [
+    101009,
+    101021
+  ],
+  "maxFindings": 5,
+  "maxDecisions": 3,
+  "required": [
+    "20-row ledger including failed/not-run",
+    "authoritative boss kill and simultaneous event evidence",
+    "initial/terminal boss HP and barrier; failed net HP fraction removed",
+    "owner minimum/terminal HP and barrier",
+    "60/120/300s available endpoints; null after termination",
+    "attack/Technique deliveries; Brace/Second Wind timing and coverage",
+    "Forest ramp; Mountain plate breaks and actual charges dodged/taken when evidenced",
+    "Spirit first/landed discharge timing, counts and explicitly bounded damage attribution",
+    "Heavy boss payoff and charging/protection costs",
+    "Light/Balanced advantage or tradeoff versus peers",
+    "one exact supported Spirit proposal, or unchanged plus one precise unresolved question"
+  ],
+  "prohibited": [
+    "tuning/adoption",
+    "extra observations or retries",
+    "reused historical controls",
+    "farming overkill inference from boss result",
+    "combining successful TTK and fast death into DPS average"
+  ],
+  "rawRoot": "D:/mmo-idle/t2-spirit-boss-contrast-01/run-01",
+  "reportPath": "reports/player-fast-pass/t2-spirit-boss-contrast-01/run-01/REPORT.md"
+}

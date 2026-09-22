@@ -1,0 +1,20 @@
+{
+  "referenceMeasuredCommit": "3e27da0bdecd442b0a40e2c2ab41afbf013f6fa6",
+  "referenceSourceSha256": "f1dd63a98cb1031fd3c0005e7621bf18862f30bc68f096f7469f83474929f644",
+  "referencePublicationCommit": "183ded66cd412d1442b53d8f82f72fcd20040632",
+  "executionCommit": "3a1488a7c78bb47f4a90e20ec06db1652594fe16",
+  "executionSourceSha256": "39110e1a573a22639c718487c653822e2f0ed87410f6bc1c16eb9905f9f04572",
+  "hitboxesSha256": "6a75e0e8417e0936bdaffe389f1d5b73b06a78b49d163961e02cf18ecca166bf",
+  "node": "v22.16.0",
+  "changedPaths": [
+    "scripts/overnight-endurance.mjs",
+    "server/bench/balance/t2SpiritBossEvidence.ts",
+    "server/bench/balance/t2SpiritBossSpec.ts",
+    "server/scripts/bossScreen.ts",
+    "server/test/t2SpiritBossPacket.test.ts"
+  ],
+  "productionGameplayDelta": [],
+  "reconciliation": "Exact measured baseline plus scoped bench definitions, dispatcher/encounter readouts and fixture tests. No runtime/class/weapon/boss/AI/progression/asset changes. Movement-only Hamstring, Conduit R2, session/target inheritance, Desert unlock and Heat remain exactly the measured source. Current develop and dirty worktree are intentionally excluded.",
+  "initialization": "Same production boss encounter and guardian stripping; new trial calls tickDungeons once to spawn without the old unmeasured 100ms full World tick. Both qualification and run use this identical initialization, no charge/cooldown/movement warmup.",
+  "noCombatPilots": true
+}

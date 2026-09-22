@@ -1,0 +1,59 @@
+{
+  "status": "prepared-unexecuted",
+  "executionCommit": "3a1488a7c78bb47f4a90e20ec06db1652594fe16",
+  "checks": [
+    {
+      "command": "pnpm install --frozen-lockfile",
+      "status": "passed; no lockfile changes"
+    },
+    {
+      "command": "pnpm typecheck",
+      "status": "passed including typecheck:bench"
+    },
+    {
+      "command": "pnpm --filter @mmo-idle/server exec tsx --conditions=development test/t2SpiritBossPacket.test.ts",
+      "status": "passed; pure definitions/event fixtures, zero World ticks"
+    },
+    {
+      "command": "pnpm --filter @mmo-idle/server exec tsx --conditions=development test/bossTerminal.test.ts",
+      "status": "passed; pure terminal fixtures"
+    },
+    {
+      "command": "git diff --check",
+      "status": "passed"
+    },
+    {
+      "command": "overnight-endurance.mjs --trial=t2-spirit-boss-contrast-01 --mode=verify (exact command in LUNA_RUN.md)",
+      "status": "passed"
+    },
+    {
+      "command": "actual dispatcher --mode=qualify",
+      "status": "20/20 passed, zero World ticks"
+    },
+    {
+      "command": "actual dispatcher --mode=receipt-check",
+      "status": "20/20 passed, byte-identical resolved build and initial-state receipts"
+    }
+  ],
+  "rawInventories": "both verified path/size/SHA256 against retained external artifacts",
+  "mainRunCounts": {
+    "planned": 20,
+    "completed": 0,
+    "new": 0,
+    "failed": 0,
+    "notRun": 20,
+    "reused": 0
+  },
+  "qualificationCounts": {
+    "planned": 20,
+    "qualified": 20,
+    "failed": 0,
+    "combatObservations": 0
+  },
+  "fullRepositoryTestSuite": "not run; no blanket green claim",
+  "applicationBuild": "not run; bench/preparation-only change",
+  "liveBrowserPlaytest": "not run",
+  "developmentPreparation": "one extra zero-tick Forest construction before sealing; zero combat observations",
+  "runRootExists": false,
+  "runLaunchMarkerExists": false
+}
