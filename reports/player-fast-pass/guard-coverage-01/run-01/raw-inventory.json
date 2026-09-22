@@ -1,0 +1,2452 @@
+[
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-static\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-static-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-static-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-static-s101009\\endpoints.json",
+    "bytes": 4841,
+    "sha256": "8168e0c62d1a275bd7b09ff5519bbbd68d7b8e0700f31b59c46047e495cb0203"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-static-s101009\\events.jsonl",
+    "bytes": 6908823,
+    "sha256": "da691ddb04f9364be1bd5fa7231e32f52eb0909f35fa283a96bf208acaa1586f"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-static-s101009\\guard-events.jsonl",
+    "bytes": 32329186,
+    "sha256": "e18cf833983d74646aa563cf7c5cb39f62e35830d35505ce2ce8e391489dc8ca"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-static-s101009\\ready.json",
+    "bytes": 19746,
+    "sha256": "818ec18852399200e61be72789c9fd8a34191fbf81ac85f0a132e32e986adc80"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-static-s101009\\samples.jsonl",
+    "bytes": 5976549,
+    "sha256": "3479e2f4ccfdbf99105fe01f9835f5c5f8230bca08b46302c837acbe54bb2dd6"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-static-s101009\\summary.json",
+    "bytes": 105270,
+    "sha256": "13b466b56a6ec922a8ed83624c8bdbaeac78ad82b3a690c03415cff1bcfe5bda"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-static-s101009\\sustain-transitions.jsonl",
+    "bytes": 295281,
+    "sha256": "4370ad9a9e7395d6c1373f90d5a2c0c29d23ee0dbf08a54efb748a31a999bf9a"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-static\\artifacts\\heartbeat.json",
+    "bytes": 164,
+    "sha256": "9a9315b5779889a129e7a7599978a009d7cf4311eddca19d89ca1c3bc05fdb06"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-static\\artifacts\\index.json",
+    "bytes": 113648,
+    "sha256": "aa420cff189ec94111d084d5dab2fe695b69c345bf1be226a9c98735f2d9a946"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-static\\artifacts\\manifest.json",
+    "bytes": 4056,
+    "sha256": "c6a83c3b4709233c6595c557ee9b2de2c6233ce01e61bfded9ce73c875842f4c"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-static\\process.json",
+    "bytes": 771,
+    "sha256": "33077455345f71b5ca390516cf3c29c12fbd487268e920f02ddc55cad84cfce1"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-static\\process.log",
+    "bytes": 102,
+    "sha256": "71a358209d786aca4edbcb435cc8d2c0060e15efd1b862f0b5532bd389398f77"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-endure\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-endure-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-endure-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-endure-s101009\\endpoints.json",
+    "bytes": 7189,
+    "sha256": "6bb376dee9c1c14a328c216aba94953a53380eb536a3b32a0c05bfa74ca7d402"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-endure-s101009\\events.jsonl",
+    "bytes": 7934434,
+    "sha256": "94d53fe15eb2feb1c1d76f0b15660797ccbadd592a0b6edf35de28c896caa42d"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-endure-s101009\\guard-events.jsonl",
+    "bytes": 41333935,
+    "sha256": "3cfd17e53fdabe23212ae6d6260d4dd8f82af4777579885429a8d0e72da1c7cd"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-endure-s101009\\ready.json",
+    "bytes": 20203,
+    "sha256": "65e90f8af0178e00113bf77ed34901806d62db5ee75ee27470bc8e4d9e880f9b"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-endure-s101009\\samples.jsonl",
+    "bytes": 7001035,
+    "sha256": "4adbd8ba1a1b8b62eee1ee18b755719bd7cfb273996f2ad7d505ebbdc174cb00"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-endure-s101009\\summary.json",
+    "bytes": 123497,
+    "sha256": "9f37cd4abbba712e8b38d47e3f2aa3d146bc0f66cc9cb57f748ad673599c7a2d"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-endure-s101009\\sustain-transitions.jsonl",
+    "bytes": 342709,
+    "sha256": "06f4cb4467466321958a7dc6b123511f15e7d3fe4c27cba0b3ad0d32b5c75cd1"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-endure\\artifacts\\heartbeat.json",
+    "bytes": 164,
+    "sha256": "66d10a00ef63c63fbf4fb5769f5b87593a4950597b8b7fbddd58dbea0853061e"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-endure\\artifacts\\index.json",
+    "bytes": 133247,
+    "sha256": "bfc35ee62b2c3612da142e97efd753bfd39f6754be15c68ce6e12a110dadf2bf"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-endure\\artifacts\\manifest.json",
+    "bytes": 4076,
+    "sha256": "a08f0f52d9d84ff22a6fc9a281f0e58fd49e4baf0d2f68f35d174844d31fb03e"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-endure\\process.json",
+    "bytes": 771,
+    "sha256": "3014cdb6fc991eae84039e16cbc4e1512aa29441ffc9ff4c5a37608203066552"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101009-inferno-endure\\process.log",
+    "bytes": 102,
+    "sha256": "4af638b18c4e6cdc858edae16f68e3ef922b00e34d82eeb6909284486c747f8d"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-static\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-static-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-static-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-static-s101021\\events.jsonl",
+    "bytes": 995844,
+    "sha256": "beb46e96cc9e0b37672fe20ea6bf18ab3db2f10d2c2f3a6a120ae94577791b5f"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-static-s101021\\guard-events.jsonl",
+    "bytes": 4577400,
+    "sha256": "0723a4c8043e8437d25e1c4d55efabc0cf5be81e11d5fc88563f5a46821e0721"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-static-s101021\\ready.json",
+    "bytes": 19769,
+    "sha256": "00e7e35ce73daff1feeaa7583ae3ba7c0f29114d682d257622a7acf409b8ea15"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-static-s101021\\samples.jsonl",
+    "bytes": 824946,
+    "sha256": "08794b09596aba6d7b7bb1c23b7c6dcf3104604648718dfb0e31a164aeea1fb9"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-static-s101021\\summary.json",
+    "bytes": 24415,
+    "sha256": "3c604def237fa7e197c3f908ec4a9411a97260d39ca0d7a3d2480a67b8e0fc55"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-static-s101021\\sustain-transitions.jsonl",
+    "bytes": 39548,
+    "sha256": "a39006ae8e6774ab92d044e9918c183cd1eb336af70e135471418a8de0607e4b"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-static\\artifacts\\heartbeat.json",
+    "bytes": 160,
+    "sha256": "432da9b93b77818fe436ad7285b8591a3ebc30e6dce81cc6ad646dca30fd2c0b"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-static\\artifacts\\index.json",
+    "bytes": 26391,
+    "sha256": "197e45d73c270e4e11eedecf4a77204d9c4705412ef652ce1f159f82809b546e"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-static\\artifacts\\manifest.json",
+    "bytes": 4056,
+    "sha256": "ad93abb5d9fed1fa44e03e1a2847a7d3ff25431d4021684effd4f67bba5f8595"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-static\\process.json",
+    "bytes": 770,
+    "sha256": "5ba631505a0c1455a3a29f23f8986b9fbabc90df999bdcf0f8b80081ac9a80f2"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-static\\process.log",
+    "bytes": 102,
+    "sha256": "f27f3acc152440d22c2b19370531e9792e7f789dfbcffc146a570f79316f1105"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-endure\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-endure-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-endure-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-endure-s101021\\endpoints.json",
+    "bytes": 7270,
+    "sha256": "e0fb63e7b837b8895bc68219afe1afc8cc9b0ca85a5e5b386fd5eb3fed92bea2"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-endure-s101021\\events.jsonl",
+    "bytes": 7882804,
+    "sha256": "89a01cafd091e2aa46d0dfc77bdc84f3133896032fc751abfd80605080c54334"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-endure-s101021\\guard-events.jsonl",
+    "bytes": 41356687,
+    "sha256": "85427f5d5a5918c6981f84fc0ca519ed2c7f9463d84c89ce13e25cbd2f12d2eb"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-endure-s101021\\ready.json",
+    "bytes": 20226,
+    "sha256": "d965229e0de69033a0e2bcc60209116c827173193b66a752521e3aa8276c0d16"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-endure-s101021\\samples.jsonl",
+    "bytes": 6993469,
+    "sha256": "9f94aed470e6eddff7f28ce91745fb9885bac60e46e94f48924cdebf5c1ecbd5"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-endure-s101021\\summary.json",
+    "bytes": 122841,
+    "sha256": "0ce149c5100e3641b9cbd4ff9e54e06a7b3399cd849ab2c5b57a423d09df3dbb"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-endure-s101021\\sustain-transitions.jsonl",
+    "bytes": 347126,
+    "sha256": "17fbb78747d2ea4e46a11c234fb26f9b71ca1cf890b832f639a14083bc410ba3"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-endure\\artifacts\\heartbeat.json",
+    "bytes": 164,
+    "sha256": "820fda689376ec0ddd025478a5ede33c6e8b1426c0dc3db5460f1271149f2d75"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-endure\\artifacts\\index.json",
+    "bytes": 132561,
+    "sha256": "736ccdbb34bf93c9f16814627f3c6a8302510ef6576d88ea9cfb39ae41f15cf7"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-endure\\artifacts\\manifest.json",
+    "bytes": 4076,
+    "sha256": "391fccccfb978640eb2dabfa70406d60c7ed56a1c283cab6d7710a087f34502b"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-endure\\process.json",
+    "bytes": 771,
+    "sha256": "da256ee2ed65028aab6c951145f598a549715000bffcee6c36f864dbf8ff1e59"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-desert-03-s101021-inferno-endure\\process.log",
+    "bytes": 102,
+    "sha256": "c6dfbf1b93851b4445392bba0301d00a23638f19bc2a0541312f036f852746fd"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-static-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-static-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-static-s101009\\endpoints.json",
+    "bytes": 7048,
+    "sha256": "4ee3632cf7c7effa53ca408bc8fa1b6b5f30163e4e26740e526260e9dd66b031"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-static-s101009\\events.jsonl",
+    "bytes": 7022223,
+    "sha256": "30d7255fd16e7649919ee1751ff00f8d67c39bbf18a7d547f61cd4d98282f247"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-static-s101009\\guard-events.jsonl",
+    "bytes": 34293720,
+    "sha256": "10290666aff9d0c419b80f39bed4712f4e247c405a02582856c48c80f622bbd8"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-static-s101009\\ready.json",
+    "bytes": 26223,
+    "sha256": "6df2814449a195f4c5b65b4fa1ffb425fcfdc5595414bb594a12cfd03bd2bab5"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-static-s101009\\samples.jsonl",
+    "bytes": 14273315,
+    "sha256": "9b901234679d70e82bb4731ef6d69bd85f84ca5e777594d62475f097d3551453"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-static-s101009\\summary.json",
+    "bytes": 196152,
+    "sha256": "82d994c948944fde7bc111c9595bc72dea95c620195fbdfbd111cdc667c66fec"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-static-s101009\\sustain-transitions.jsonl",
+    "bytes": 611806,
+    "sha256": "4f75a8d3b1862c21850a08e49711ec7535e093912a227e6d07cd1be3c0c7c10f"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\heartbeat.json",
+    "bytes": 167,
+    "sha256": "c42f7f7e20a78351739209716430501de65e60f7b11f49668a2e504609b4f4dd"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\index.json",
+    "bytes": 210970,
+    "sha256": "574ff257b86de8c2e25a23673483fbf015c4a7b9d3a5b444f51d37a6adb2b567"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\manifest.json",
+    "bytes": 4074,
+    "sha256": "fd87413cbd0c93d4fd9e3b65405745ddda4dc08ec548774d915a5e154a06fe54"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-static\\process.json",
+    "bytes": 777,
+    "sha256": "565d2f3832ac7e42233a59f7b64ac44a9b188ca899d505c225308da3f491aa9f"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-static\\process.log",
+    "bytes": 105,
+    "sha256": "ce265a6fd421cf06047f79d4b4e5e3de1789b519427f0397718a9612886eeb4f"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-endure-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-endure-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-endure-s101009\\endpoints.json",
+    "bytes": 7049,
+    "sha256": "22b2cc10d59b079b26a56e719b580ccf588feaf93105233f0dae1bb2273af873"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-endure-s101009\\events.jsonl",
+    "bytes": 7029307,
+    "sha256": "85c865d8177c5d1126e81394572fbb2d114359f8bba7107464925b4c3a3888c9"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-endure-s101009\\guard-events.jsonl",
+    "bytes": 35897576,
+    "sha256": "f0c3e434d4829da25b0bbedc20d194c5e1bea0b16a356946993bb8954eebcb44"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-endure-s101009\\ready.json",
+    "bytes": 26680,
+    "sha256": "cbb8c871254891df933b89325381b836796a43b14f3e2eeae7e68c754a743d9e"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-endure-s101009\\samples.jsonl",
+    "bytes": 14273204,
+    "sha256": "34f3b8335ebe10988df779624f303c744c33c91386c08153ba42e6761f62485a"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-endure-s101009\\summary.json",
+    "bytes": 196283,
+    "sha256": "03bda4d6c109644afe74926fe6c45f1e77376b612bc18731e29a9852d42928f2"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-endure-s101009\\sustain-transitions.jsonl",
+    "bytes": 611752,
+    "sha256": "2f0980caa155969c94cc9b45bfe0d1d2b9ad521c2c5ea7e7e24a8079a97928c1"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\heartbeat.json",
+    "bytes": 167,
+    "sha256": "caa102a0af6440e37a2cefc867dc91a206b29ee4c8bff033934382a9e0889a89"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\index.json",
+    "bytes": 211109,
+    "sha256": "6d59cd4aa6463a66868e31a9bd7ea0453ecddff6e00760711735a4e24ac2128c"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\manifest.json",
+    "bytes": 4094,
+    "sha256": "c6f86c8fbf9fc82dcd3976636d7b599912d5b21254a565a1f0513167befdd4a5"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-endure\\process.json",
+    "bytes": 775,
+    "sha256": "64795d541d9dc3c598c6283515e7663c99b1f0ad59e9453bdca0e0b5014c360b"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101009-inferno-endure\\process.log",
+    "bytes": 105,
+    "sha256": "1c6c943c1e45995d3c8e03f2e225d62770ed18ed1ef3efe1a6708ec778a3a0b7"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-static-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-static-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-static-s101021\\endpoints.json",
+    "bytes": 7269,
+    "sha256": "746a68338ec3dc81ce31b4df6df839408bc7136b5b49fe3bf26260331fa29e52"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-static-s101021\\events.jsonl",
+    "bytes": 6964154,
+    "sha256": "aa8b0d3c0873a517aea55d2309bdcf3fac93efa21426d2aa6fc392ed286e10ad"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-static-s101021\\guard-events.jsonl",
+    "bytes": 34940065,
+    "sha256": "cbf8fcef6579b21dafca3d43acead02ed17e6808356bd641c7c176de1bb258ff"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-static-s101021\\ready.json",
+    "bytes": 26332,
+    "sha256": "49a332a0239ed3630cd5e8dc1e3ad86fc5c36c99e2655775905fc36d6e57d36d"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-static-s101021\\samples.jsonl",
+    "bytes": 14272671,
+    "sha256": "3693ca0c1537e93c61b7633eaf97b4fd53792bbeff888c8a7b8074cf4fd102b4"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-static-s101021\\summary.json",
+    "bytes": 209415,
+    "sha256": "0461eed0dacf80ef5ba623b0a0da876e4e50096c2f078ba0fe1ed186ca4ce6d8"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-static-s101021\\sustain-transitions.jsonl",
+    "bytes": 631358,
+    "sha256": "333d1e8f11aa2bc651009ff35f0b9f23836d200ad284ee66a83c0e5fcbba54fe"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\heartbeat.json",
+    "bytes": 167,
+    "sha256": "fde6e447e05edc79ef31569845718849e0270fafdbecb623c1a22c02da4c3080"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\index.json",
+    "bytes": 225449,
+    "sha256": "9f556989c76e908f1a41888b1675dc13b8a40e676d89f81eddf738c25f3d8930"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\manifest.json",
+    "bytes": 4074,
+    "sha256": "f21da43218bb0851912d9cac6aa0a9eb1a4c6577ff5f4f8fc4470946923c1f14"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-static\\process.json",
+    "bytes": 777,
+    "sha256": "1ffec9cc2cde4b84a1080357c55e491cc0b1f0343ed4bb03b62f021354fd1316"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-static\\process.log",
+    "bytes": 105,
+    "sha256": "4649d6c0b66660e84e5f2a1e47540651afcdd8cb26b5b38eeab8d5f4ba991dc9"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-endure-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-endure-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-endure-s101021\\endpoints.json",
+    "bytes": 7272,
+    "sha256": "338751782a2ed23f15f88a46a59388142664d77b49d0e18ce4607ce6837edb0f"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-endure-s101021\\events.jsonl",
+    "bytes": 6939161,
+    "sha256": "a855edd9b799c03c7d5a8bac7d7a936e7fba3dd3b12ee21e0d52d6082e41fa90"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-endure-s101021\\guard-events.jsonl",
+    "bytes": 36917003,
+    "sha256": "91485e636e89d0ca958e11fd7d4bd1ba00171e2278ed35bf7647fde403457d96"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-endure-s101021\\ready.json",
+    "bytes": 26789,
+    "sha256": "8a2836f218deabcaed44f47fcd9c92d8e3902dbfe0f5bc2ee4b1c0d1d2e9bec2"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-endure-s101021\\samples.jsonl",
+    "bytes": 14265113,
+    "sha256": "6ed2845b96162e4464ea5973879f0643667f81c5ad3a1432c2674c5929e0b5d8"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-endure-s101021\\summary.json",
+    "bytes": 203089,
+    "sha256": "1ece9fdba73ccbccd2facf7129755008987698190ba6b0a983bba82cf96842ae"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-endure-s101021\\sustain-transitions.jsonl",
+    "bytes": 631139,
+    "sha256": "1aaa53ad34ac8b88b6f7017eb57f38a1d35a3c249bef8fb03caa55954a3a75ca"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\heartbeat.json",
+    "bytes": 167,
+    "sha256": "6e35a38cea7c35951c743cd0094c23740f1adbfdec433835958f823233af7691"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\index.json",
+    "bytes": 218633,
+    "sha256": "d3b7be3a147a77d9b880d0dae835b7583897b1dc112bc86a68a7d4d3d554d024"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\manifest.json",
+    "bytes": 4094,
+    "sha256": "a1bab5c653c4ce124b3154fca0bbc0a66fa7488ec29d8b923961d0d7841597bc"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-endure\\process.json",
+    "bytes": 777,
+    "sha256": "e43a09874c1a49d91d1d5cb99e3f7f90cc98a88fa6afeca1e0794634cf84af53"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-a-node-t4-graveyard-03-s101021-inferno-endure\\process.log",
+    "bytes": 105,
+    "sha256": "a47e05f45cf7e995334fbd11619d52c118c2e2abccc0809f6866b92d8c03071c"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-static\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-static-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-static-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-static-s101009\\endpoints.json",
+    "bytes": 2375,
+    "sha256": "c7a58cd74a81e5d247c9f9d1b9ac7ce9efecffda6fcf8229d99a04b5ef73044d"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-static-s101009\\events.jsonl",
+    "bytes": 2226012,
+    "sha256": "1487f02e3d1f40d5afbc7034c5eece6b68184850204be667b0a9dbac5f71062b"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-static-s101009\\guard-events.jsonl",
+    "bytes": 8958459,
+    "sha256": "4ea05e079f989e3a5f8aaa2e2e5535bb9c9cfc5d34987828bf694e3ddef24dd8"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-static-s101009\\ready.json",
+    "bytes": 19612,
+    "sha256": "0a624a3b78eaca98acb8726a2aacb54138610c3363bca559fdd1238b4f4fd417"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-static-s101009\\samples.jsonl",
+    "bytes": 1663442,
+    "sha256": "6d73297fa55bc15e1fd7993f6f66b3faff992c0607833f66cd07233f7b8c6fef"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-static-s101009\\summary.json",
+    "bytes": 34073,
+    "sha256": "f37ae909afe78824c58adb9b2859655cebd33b9006478a509f877101973afcd6"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-static-s101009\\sustain-transitions.jsonl",
+    "bytes": 66895,
+    "sha256": "25a5e037e935677646d7b7b5685f6c9f4537dc1d543d05f33678e463277a53e6"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-static\\artifacts\\heartbeat.json",
+    "bytes": 163,
+    "sha256": "323a633ed1bc190f2063255fd2e70600d1536213600a960b1259f6fe36a5ee7f"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-static\\artifacts\\index.json",
+    "bytes": 36777,
+    "sha256": "4dcb7ab5912bc88776e7dbefbdcc4042caa3dc770db2f6c69d1e0f376941ed40"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-static\\artifacts\\manifest.json",
+    "bytes": 4050,
+    "sha256": "9d9a1ce361c67762b79b8616f03650849c1075c2ebab68314ea102b79e19c7f1"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-static\\process.json",
+    "bytes": 771,
+    "sha256": "74c21b2bb62330a50bb7c22e730a5d3b059a8c945e4c30bc61ad0bf7977b717c"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-static\\process.log",
+    "bytes": 102,
+    "sha256": "6d0479b94fdb8481cb318568e4c9015bb549b5418d6d6df659a8c0f4b8eef2b4"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-endure\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-endure-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-endure-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-endure-s101009\\endpoints.json",
+    "bytes": 7084,
+    "sha256": "60d7139bccb9193a3f65a02a5df0635578d0123b26be342949d163202c147e7b"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-endure-s101009\\events.jsonl",
+    "bytes": 9627672,
+    "sha256": "3d71996caa8ca4cde76397c1378706661cfcb2a563f57da9212ac38a72a59675"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-endure-s101009\\guard-events.jsonl",
+    "bytes": 42653427,
+    "sha256": "6d68057ac6651a3f4043c5e1b0744efb1072bccf3ede670aebdbcff0e2c73fdc"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-endure-s101009\\ready.json",
+    "bytes": 20069,
+    "sha256": "fe7cd7a816c0f5bbd1d935a3db312eaf832fd8fc6d2f648c23086dda8482e33d"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-endure-s101009\\samples.jsonl",
+    "bytes": 7021957,
+    "sha256": "1292bc52ad1404954e0cc9718d59ad54cd86b44669570eb17da98af056936a6e"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-endure-s101009\\summary.json",
+    "bytes": 93691,
+    "sha256": "a2959fe700c6dfc417385347e81d5f7494180eab335da30c3169cfae549703f3"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-endure-s101009\\sustain-transitions.jsonl",
+    "bytes": 248110,
+    "sha256": "d7f36105a4ece5cd9e1cef89f22836185842677c1ad34abae286121ecd95ce5a"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-endure\\artifacts\\heartbeat.json",
+    "bytes": 164,
+    "sha256": "2ac1e81e57867d2b07282da00fea173b536f27c9504fff956f3430bc16c189ec"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-endure\\artifacts\\index.json",
+    "bytes": 101053,
+    "sha256": "3b9840c46c5f65ae6907002e6e941a3b61c07084dd6315695e3a6807bc4c2d7e"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-endure\\artifacts\\manifest.json",
+    "bytes": 4070,
+    "sha256": "2fcdfb13ed5697daed619edd2208b1b74d5bab9b9b1d3df7b697621c72e98752"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-endure\\process.json",
+    "bytes": 771,
+    "sha256": "12ea4b1ce4646cebad45fcfe95a62709d08711f88e34796a726f60004f057f42"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101009-inferno-endure\\process.log",
+    "bytes": 102,
+    "sha256": "b7841fec079188539b77eec412b5f3352380f74e706252150dfe3aca5d2543c3"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-static\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-static-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-static-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-static-s101021\\endpoints.json",
+    "bytes": 2362,
+    "sha256": "9767c1db7b11f7814cb8819a9ef1db32197b8da903c9a35c974fd93038c7c7b7"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-static-s101021\\events.jsonl",
+    "bytes": 2621724,
+    "sha256": "89c42f87b06b7c142efe2e6f7f5032be95ae6409b5ba7f097d9bfe4ec253f843"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-static-s101021\\guard-events.jsonl",
+    "bytes": 10166948,
+    "sha256": "24f26533f06dad96299bab8c2474c53989f28fb5b33d1c2d0c8dada9ee266fc1"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-static-s101021\\ready.json",
+    "bytes": 19635,
+    "sha256": "d0804d3d72264b04bbb7cf3656ef8442de8d4936d467cef05859f2280366e48e"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-static-s101021\\samples.jsonl",
+    "bytes": 1880113,
+    "sha256": "7f7bc99a2afe3cc8bfda56ca51147420a32a8ff07f433fd3c85da66e6290c656"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-static-s101021\\summary.json",
+    "bytes": 34321,
+    "sha256": "78cd965f1d5b4511c15eaa755bc6af512f48d0b6eab3420625b0aa35126919da"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-static-s101021\\sustain-transitions.jsonl",
+    "bytes": 67770,
+    "sha256": "6f1d0b944c9f88d61f0c765a85d71035a66fe9631d01b2c35c486cd13d7af31f"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-static\\artifacts\\heartbeat.json",
+    "bytes": 163,
+    "sha256": "b07c724a6825bede45dfff6fab73258e2748c54d2c36ffc4a8daa1ef5b1863cb"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-static\\artifacts\\index.json",
+    "bytes": 37045,
+    "sha256": "88e9244c76c19980ed0fe618d702a4e383867cbc337035e1841231f50ad2406d"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-static\\artifacts\\manifest.json",
+    "bytes": 4050,
+    "sha256": "102212b8963aa237f7a9a747b4adae70524b4d1467133b0ddbdd008ab51b3ffb"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-static\\process.json",
+    "bytes": 771,
+    "sha256": "2db42095d8cb5067136868ab869a53afb81edefcea27af5ca983b4726f75ef02"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-static\\process.log",
+    "bytes": 102,
+    "sha256": "0060adc87afd11c8bb98a8fb04a386d337055e629b46a5ca6b1de63e915d9b90"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-endure\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-endure-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-endure-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-endure-s101021\\endpoints.json",
+    "bytes": 7106,
+    "sha256": "ab154aca284f19602c4e6590db69b8aa477db6fa47586e84f150fe06bc3849c4"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-endure-s101021\\events.jsonl",
+    "bytes": 9645620,
+    "sha256": "08f81b0484aac1d34da4cea4a37826f30146d4a91bb3ccae8c20f21cc50464be"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-endure-s101021\\guard-events.jsonl",
+    "bytes": 42315611,
+    "sha256": "8334bd51683bcb50a16cad4cbb6e6c7634b1ab667bacd816a81b2f57e90334e7"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-endure-s101021\\ready.json",
+    "bytes": 20092,
+    "sha256": "22f3628cf527bb8f54f5c772d0036692b34660f5fd7cd0512fe71ecca581fe49"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-endure-s101021\\samples.jsonl",
+    "bytes": 7024985,
+    "sha256": "c810739401bef3f2c631b334cc0655060de7b59599dea1839c30232ae30fbb4d"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-endure-s101021\\summary.json",
+    "bytes": 92342,
+    "sha256": "e8b57d1c085dbc19ac504dca73f99e44ee763d2e9ba37300b2b23caab6f628c0"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-endure-s101021\\sustain-transitions.jsonl",
+    "bytes": 250402,
+    "sha256": "31e1456494066ba383e800aea36dcda9815e712be5956f8b28c887bac58c9205"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-endure\\artifacts\\heartbeat.json",
+    "bytes": 164,
+    "sha256": "e4aa6afa3f8e2f83dd95641335592cda5374e6a7fe44e00b076d5ffcc5ab746f"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-endure\\artifacts\\index.json",
+    "bytes": 99606,
+    "sha256": "122e85f5b1d0fa0bc60ae5bd80bb48960020f1c4410c22981301802db98fb108"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-endure\\artifacts\\manifest.json",
+    "bytes": 4070,
+    "sha256": "9068644092ba2a27b91323842dcd4b265759d94ba44855623428c4ea281dd138"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-endure\\process.json",
+    "bytes": 771,
+    "sha256": "66105a36fae0ca6a60ea0d53cfa604a98ca53b035e2a1f2daadb7c5d5805ef32"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-desert-03-s101021-inferno-endure\\process.log",
+    "bytes": 102,
+    "sha256": "0b2047669fef9107df3ada162977ac6b8940eea19faa9887ca8093499f6b6e70"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-static-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-static-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-static-s101009\\endpoints.json",
+    "bytes": 7154,
+    "sha256": "f98f7a7b1606b26979d93f5ff05fa0673d0ec48fbb1041d673cbdd3d7969cb9c"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-static-s101009\\events.jsonl",
+    "bytes": 8963130,
+    "sha256": "f4d50bf848f8bcaacea0b9945a7a1abb554b4d0605c3b35c54ed99767edcd96d"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-static-s101009\\guard-events.jsonl",
+    "bytes": 33838713,
+    "sha256": "996997c329743782899b49e202bfb29edfe420185ff1b84ed4cc3439232dbff6"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-static-s101009\\ready.json",
+    "bytes": 26089,
+    "sha256": "2759a05df780b1d739e2d3ba21fed5029466f7e01dfd1796043ed8b77aa52d96"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-static-s101009\\samples.jsonl",
+    "bytes": 14287747,
+    "sha256": "e7b5bf7b2032828b921504e961c13f7c7f01b0886da5c56c0f1c672096ecdf55"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-static-s101009\\summary.json",
+    "bytes": 182134,
+    "sha256": "96ff52e1d42b98e286cc3fd4193d5bfdc763f0f8747f09987521206b3b7baf70"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-static-s101009\\sustain-transitions.jsonl",
+    "bytes": 459604,
+    "sha256": "2be0cb451d20611ea3c78a72e061031136296ea4935fd50a79e4c26a263bf315"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\heartbeat.json",
+    "bytes": 167,
+    "sha256": "10f612a3fd277e0f96cb761941a95ae8b10ab855be95a956f525d29808756fb0"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\index.json",
+    "bytes": 196236,
+    "sha256": "0ba119eb447d74578fea889b2b895080b0eeccb320b11eed5bf4e4baf83b6446"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\manifest.json",
+    "bytes": 4068,
+    "sha256": "c11b0832b35bd1f5e241b67118b6af9628d7ab4882c2dd90b40c07419612d6aa"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-static\\process.json",
+    "bytes": 777,
+    "sha256": "24044a6794c9c6c7a6cd8b08bf8e52eb145aeca7b78bf6a4cbbbb1887732de42"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-static\\process.log",
+    "bytes": 105,
+    "sha256": "6e2eb1b5cac9034ba31240dab9a7067897b07c27ae9ed623fd04a3860746b983"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-endure-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-endure-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-endure-s101009\\endpoints.json",
+    "bytes": 7274,
+    "sha256": "c8cbb2b0cb5b4048e1413f4a8c037aa2cafa8d085252000980db6fc76ce75f9c"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-endure-s101009\\events.jsonl",
+    "bytes": 8799671,
+    "sha256": "caf40697f036fb927ff0f6ba76b626b493b3262a8f04ef5296d8395f3f8b63af"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-endure-s101009\\guard-events.jsonl",
+    "bytes": 35364555,
+    "sha256": "ed3bdcaec2fdee0dbb405dda0bb9cc75ca15f34c5db99986a4683b5780862bdf"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-endure-s101009\\ready.json",
+    "bytes": 26546,
+    "sha256": "c496d3bd633d6890e0b81b2dd94cc57d723f32a29a5e30674a1a9ba353b8bdb0"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-endure-s101009\\samples.jsonl",
+    "bytes": 14279661,
+    "sha256": "52aee562320feb830934809a0da8d4104fa6664fffbc5e65ed67fa0872c16dc8"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-endure-s101009\\summary.json",
+    "bytes": 183038,
+    "sha256": "b6e1ff4e12295bf102c0b559504c821098d4c07204e54f855426bcc42fc99479"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-endure-s101009\\sustain-transitions.jsonl",
+    "bytes": 475148,
+    "sha256": "48b8e1ae8c20d5307c70af77c89ac83882789f4d1d18af8a9844ecd776124837"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\heartbeat.json",
+    "bytes": 167,
+    "sha256": "a507e076c006aaa34bc8875ffc5a9b609ae402fb6e2cadbdd3c91136277e2b94"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\index.json",
+    "bytes": 197222,
+    "sha256": "40fe771d6f4d418e1adcbd8aca2ee90fdb72b9a2e9fa4f9cd91004f9f9f62c8b"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\manifest.json",
+    "bytes": 4088,
+    "sha256": "1af773ce3918d58b18623f9fa09aa2f0cbace6f7c09cffdf6c3fa54b22702304"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-endure\\process.json",
+    "bytes": 777,
+    "sha256": "9136387d7d2ab058fe359778703dbb7c99237851ef3edf5b82594ae4a3ada512"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101009-inferno-endure\\process.log",
+    "bytes": 105,
+    "sha256": "beb923f0238f2d7a43340323e2d1f47b539d10bc922eba890689c2a0443c6613"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-static-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-static-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-static-s101021\\endpoints.json",
+    "bytes": 7188,
+    "sha256": "942c10720f7fd449b2433d41ecb9d54d6cba236b19acd14cb50c787732ae74bc"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-static-s101021\\events.jsonl",
+    "bytes": 9126818,
+    "sha256": "ed8bda0a487883372d5d589f7b6d5f050b46dbdcfe76d58f5b373631bb6a330c"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-static-s101021\\guard-events.jsonl",
+    "bytes": 36682648,
+    "sha256": "210504e59ad1d1846727738a2f1a9a1ca1074618c38d81ed9d1ebcef6a5d1598"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-static-s101021\\ready.json",
+    "bytes": 26198,
+    "sha256": "fe65dae5cdfcb314e6c24259f6642853e571d63bcbe3376d6a65ea16e05f53d2"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-static-s101021\\samples.jsonl",
+    "bytes": 14206412,
+    "sha256": "2d8921c2f52be0ada1b63d62d47cf4a427b10233561a1ef5cb2b3a5a28c2076a"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-static-s101021\\summary.json",
+    "bytes": 156128,
+    "sha256": "4e8cfdaf0d66e4969e32aab5e32b2e8336871dda2b902cbcd5068fe1636dd27d"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-static-s101021\\sustain-transitions.jsonl",
+    "bytes": 513952,
+    "sha256": "3879f28a5c8f2464e32d61f86dd8ed0d5414c5e26d362f30a8337ae6663bd78b"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\heartbeat.json",
+    "bytes": 167,
+    "sha256": "f74298ef432ba397cfc9346878b95bd999cfa41e6030fded87c8f864362c278f"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\index.json",
+    "bytes": 168038,
+    "sha256": "ca55ac4293a7bebd282e25d80c729bab9fb1a57609256c110e284e7e5cfaa6bc"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\manifest.json",
+    "bytes": 4068,
+    "sha256": "a47a415719d15bdebbf307b96f237f26879b1a1a547b2c82deaffa6839bae0ca"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-static\\process.json",
+    "bytes": 776,
+    "sha256": "8cb326c91202cfee25c5d347533e5447082bb05cc4602ff06bddd9de65fba344"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-static\\process.log",
+    "bytes": 105,
+    "sha256": "cf7e3d21634f3ead9dfbd1fb011cccf5e648e6bc45f7bcc9b2961b972622ca89"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-endure-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-endure-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-endure-s101021\\endpoints.json",
+    "bytes": 7182,
+    "sha256": "ba1f83b2595f8c052c8b8a5d9f4f8b228f09c4efa62f3b0a913e2d7471dd16e8"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-endure-s101021\\events.jsonl",
+    "bytes": 9090923,
+    "sha256": "7c02c29ff325b227a1d00ecf824857e6d4b59ddec7ac2200af337536bf24538a"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-endure-s101021\\guard-events.jsonl",
+    "bytes": 38343247,
+    "sha256": "617b117e4da7815359d1ba6f12b8986d6be7974a6f8ca6eedae9078388a80dfe"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-endure-s101021\\ready.json",
+    "bytes": 26655,
+    "sha256": "044713a6b89fa0d59036261a4c25dedf2a62e1f022ba6e2c90e28aba6e68062f"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-endure-s101021\\samples.jsonl",
+    "bytes": 14213846,
+    "sha256": "0f47718890ba0b93220a6395448f9df946e8ab83b7cd95b4655249546b0b755e"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-endure-s101021\\summary.json",
+    "bytes": 159559,
+    "sha256": "cb716b2426bc9781d373880b5c6a2b4cd2e12a878704c5101f18c582d8d666cf"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-endure-s101021\\sustain-transitions.jsonl",
+    "bytes": 513328,
+    "sha256": "884f0d3371e9dca4d71e5319b5fc1739fca628753abbc1a183501e2d532c8e94"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\heartbeat.json",
+    "bytes": 167,
+    "sha256": "767554106093ea0bb87915c0b068ad8f07ce618ec580472d1afeb34ab6332ed7"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\index.json",
+    "bytes": 171691,
+    "sha256": "57d13054939f57c152bc17179e68d34175de4920b0ccb1287da0e8263b6096e7"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\manifest.json",
+    "bytes": 4088,
+    "sha256": "0f7c8e9d78a287a3d02c9f4f6e4485ec170b0e43781b508dcc4c9a244321e8c3"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-endure\\process.json",
+    "bytes": 777,
+    "sha256": "a8f7d2150d6598289b2a3074d2ff8b1375c83cbd00574bdd0e67288b973f386c"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-striker-heavy-c-node-t4-graveyard-03-s101021-inferno-endure\\process.log",
+    "bytes": 105,
+    "sha256": "2fd45e794db29166d1cc7e1ff558a60b15ca9a82ac13799e3ea21a0a128b6738"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-static\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-static-s101009\\conduit-events.jsonl",
+    "bytes": 188145,
+    "sha256": "7891b8cc819442f96bea8d6543783915ea966073db1669fa7e9d96945e7240ef"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-static-s101009\\conduit-snapshots.jsonl",
+    "bytes": 239502,
+    "sha256": "0d06e1cb64682eec3194cd5a314690636a5d16737af72d3720307d359b7e207a"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-static-s101009\\conduit.json",
+    "bytes": 29469,
+    "sha256": "b2507aa81a8f5b22aa5c81e3146b5d135166dd300415db9a49c956153514cd95"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-static-s101009\\endpoints.json",
+    "bytes": 2450,
+    "sha256": "025371cd626be026e71ec2024096aca8cb365157a441225939cefb80d533071a"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-static-s101009\\events.jsonl",
+    "bytes": 4636279,
+    "sha256": "3c7b9e2a0fd29cbb9214ea38be28929e948f784b215db29979d4fa81595a97d3"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-static-s101009\\guard-events.jsonl",
+    "bytes": 13088869,
+    "sha256": "4adc38f548d70fcf35b1051cb3dcdd8a950adc3f663022ec3dceb21ec810964a"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-static-s101009\\ready.json",
+    "bytes": 21567,
+    "sha256": "797ad6c0b64cd159a4ed4442a1e7378c664ffb194abb42c88f526ed6033fbbd0"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-static-s101009\\samples.jsonl",
+    "bytes": 2968097,
+    "sha256": "e3d762e994b88cd48409a8fe9b7b8b658e846a6517dcc507e0d30ef9a28f704d"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-static-s101009\\summary.json",
+    "bytes": 48023,
+    "sha256": "635c0511d0e585280d84b391a7a51ff5033b56cc82bda24307521e07b34e2e82"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-static-s101009\\sustain-transitions.jsonl",
+    "bytes": 113301,
+    "sha256": "6b51842a0b5e85b914a284d5d9b56ee5109a7e877b09ad67fdb50b93b50c1e40"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-static\\artifacts\\heartbeat.json",
+    "bytes": 164,
+    "sha256": "7bc6abd91bc352a9dc412145f6262e376f3e54ba0199be27794ab38db56d06a9"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-static\\artifacts\\index.json",
+    "bytes": 51861,
+    "sha256": "3eacfcfc55444c2d37cd190bc2dc75e398a0714cdf58a543e59891281691e4ac"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-static\\artifacts\\manifest.json",
+    "bytes": 4375,
+    "sha256": "25f01a3909640a653fa5c78d6dba32b0b4830f5594002f5fb54f799d41a51ae9"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-static\\process.json",
+    "bytes": 773,
+    "sha256": "c437f9ccf752cc13ef51284e0c70dc5118515aa9cd51ac9961b429500717112f"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-static\\process.log",
+    "bytes": 103,
+    "sha256": "f9b84a6463cafad54e1cfd3a97a975dca506830f45a45787c6e058959718c4a8"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-endure\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-endure-s101009\\conduit-events.jsonl",
+    "bytes": 484328,
+    "sha256": "12609453e5373a1312d3b6079feab83a4027176b8c7b830ec144e8483337e98e"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-endure-s101009\\conduit-snapshots.jsonl",
+    "bytes": 605949,
+    "sha256": "8b357dce4e1a12551e9171305cdba171001cf538ad86ea7588809b6d5c960d9f"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-endure-s101009\\conduit.json",
+    "bytes": 72263,
+    "sha256": "18af9bef3755f9053bd7799967a7e57b40c3a8f8299063837055f22b7a0cbdab"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-endure-s101009\\endpoints.json",
+    "bytes": 7016,
+    "sha256": "9751b8cdc25976efbe84b12b7bc482eccd58611be275ac0017056f6930effbb8"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-endure-s101009\\events.jsonl",
+    "bytes": 11589019,
+    "sha256": "e1addfa83b29c3e09035456f8344c99069edc7889bb5a17a80cb93b60b26e06f"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-endure-s101009\\guard-events.jsonl",
+    "bytes": 37985423,
+    "sha256": "48bca0e9b45d0f9ee6ff5241292eb57c8ae7ddc5941e23a094dea04760fa9875"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-endure-s101009\\ready.json",
+    "bytes": 22024,
+    "sha256": "e7b5f26345d177b43eb6a839c18333176e7c21e70e036d89c63ada2593fa403a"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-endure-s101009\\samples.jsonl",
+    "bytes": 7476434,
+    "sha256": "eaf8cf34f4f6423bf9c05212680abcfa05c8690c17acaddd47fbe2d4497568a1"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-endure-s101009\\summary.json",
+    "bytes": 108337,
+    "sha256": "6fc8489d99fd849c6a014addf18caffd1fd82f7a0ef7928342b1500a0e104337"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-endure-s101009\\sustain-transitions.jsonl",
+    "bytes": 278381,
+    "sha256": "6f0a72a48e30fb16410ea096cf7459161884ac14e10ba8c95b30e229a84323d0"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-endure\\artifacts\\heartbeat.json",
+    "bytes": 165,
+    "sha256": "64f1b3e37d85b11cc7c28c449c1d193cd2647bf34b8bb5bb8e465d8c8783fb0f"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-endure\\artifacts\\index.json",
+    "bytes": 116903,
+    "sha256": "54cdf2274bbccb992e58de1401cbb2fa20557979ae6ce9c1df1416a9242031e2"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-endure\\artifacts\\manifest.json",
+    "bytes": 4395,
+    "sha256": "79508c81b8febec5541cef42533d401344bbded77c9c86bf28ea9e8209153b8e"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-endure\\process.json",
+    "bytes": 773,
+    "sha256": "ae99b5e5d91e4ef23a3aab33d98b30ae980d9ba09ff1b7a608fe99f1a70823df"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-mountain-endure\\process.log",
+    "bytes": 103,
+    "sha256": "7a86e3aca383a74553684845e5082c314f7e0bfc864532ad89d2add2319a090d"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-static\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-static-s101009\\conduit-events.jsonl",
+    "bytes": 469219,
+    "sha256": "d98c243e14ddf37ac1264df95ec22cf3de1ee6fd87be5c29167fc19da67f354d"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-static-s101009\\conduit-snapshots.jsonl",
+    "bytes": 605856,
+    "sha256": "028206315adaebf4212e2ae1230276bab28af3cde795687806b22945e9226d00"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-static-s101009\\conduit.json",
+    "bytes": 81266,
+    "sha256": "7299b7774b5d66f16f9eb40ed036a2162eb10756f42645052bd402f01c4d60c1"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-static-s101009\\endpoints.json",
+    "bytes": 7099,
+    "sha256": "ebfcb2e911c75dfc963baf37c4bfbd38c0da711b50bea87212152c4264262160"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-static-s101009\\events.jsonl",
+    "bytes": 14107251,
+    "sha256": "e280b6c903afe2a19d90604d8f64f6d75723cba32cc87afbbb8ba835dff355a3"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-static-s101009\\guard-events.jsonl",
+    "bytes": 34630481,
+    "sha256": "66328205ef150d60a8295c87628d6dd9b8e03fbdf8981582f6ae469bdef05e9c"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-static-s101009\\ready.json",
+    "bytes": 21687,
+    "sha256": "7173bace2a638dab1a6fd6776ea258b06e627dc73b3999730781188d333a6e64"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-static-s101009\\samples.jsonl",
+    "bytes": 7537464,
+    "sha256": "cf4de40d5293377825697baee8466c7ede88f1d869a3d5931fb79d55c2816ac4"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-static-s101009\\summary.json",
+    "bytes": 103529,
+    "sha256": "e10eec50a59e1a6e2f26085471becd462556e1703591f9b391d6fa6ed4c3a6ad"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-static-s101009\\sustain-transitions.jsonl",
+    "bytes": 273343,
+    "sha256": "15aa3c9335cc34b7b410e1a44d35f7ff3a711ee6a72b9d4aa8cac5683d55a9f5"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-static\\artifacts\\heartbeat.json",
+    "bytes": 164,
+    "sha256": "e5c6960d0a2fde61883d04ce86c51468cea072df0b6ec367f0e434822065a1cf"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-static\\artifacts\\index.json",
+    "bytes": 111725,
+    "sha256": "5e0a7deeb594d4a65b43779e999ea961cf09fdb8e104f885e4b8a97893bd1501"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-static\\artifacts\\manifest.json",
+    "bytes": 4373,
+    "sha256": "c17e9f5b8d3fc5cf0314aed965c5fe9b86d21870a22c483e8634f0711dfea9d8"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-static\\process.json",
+    "bytes": 771,
+    "sha256": "aea4a63c4e8bfe26f54c2bd61697daea0f9925499386078759f8c3a2064f35c4"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-static\\process.log",
+    "bytes": 102,
+    "sha256": "e8f5964920c5b14ad202908e9dcd95335032c539bafdd85f311905cbaf40e713"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-endure\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-endure-s101009\\conduit-events.jsonl",
+    "bytes": 494282,
+    "sha256": "6bcff0c7b0221658b875641f30938f41785c35e0b281cf1c43ebf7402bc8305b"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-endure-s101009\\conduit-snapshots.jsonl",
+    "bytes": 612519,
+    "sha256": "312b2b28f3ce66e04365f6be23c3198b3b4c3d97092191c2ea7a10f30a0f4085"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-endure-s101009\\conduit.json",
+    "bytes": 82418,
+    "sha256": "68de9896b341eb0ea6332f045e18843462514c85a9220f007dae9890b27d3d48"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-endure-s101009\\endpoints.json",
+    "bytes": 7186,
+    "sha256": "bff81e402bc1751df0ee7375ec5c9745c59b92adc197f34a5073aff7229422b8"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-endure-s101009\\events.jsonl",
+    "bytes": 14472143,
+    "sha256": "5467a3e04a13d1e0f62c9b2b59892e5a94f00aee48263463b05828c6b190b812"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-endure-s101009\\guard-events.jsonl",
+    "bytes": 38016740,
+    "sha256": "5ab13777a109f2bbb9fc39d3f9f27accbe4ae92ef90c979da61aed4fcd665b51"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-endure-s101009\\ready.json",
+    "bytes": 22144,
+    "sha256": "b7ffafe1ad5978451ab0cc1d7c19f84a7474048d08a77a9408bfc56b04e3228d"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-endure-s101009\\samples.jsonl",
+    "bytes": 7483807,
+    "sha256": "709b31371e069fea4fa2461fd6e30ae780e4ffcb536210da4751385ddf3c4954"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-endure-s101009\\summary.json",
+    "bytes": 112155,
+    "sha256": "79819a961db7f374a47f8756d86287693df70ddbcc79706c46505528637fb6b8"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-endure-s101009\\sustain-transitions.jsonl",
+    "bytes": 303402,
+    "sha256": "4b2731391ad25f7fafee9b411f9448f124bdae191bc05bc1dd9ae3f86217c42b"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-endure\\artifacts\\heartbeat.json",
+    "bytes": 164,
+    "sha256": "43bd5a921c39d776b0925060e3098a1a8d50e58334fc98547fc2b1a11f7fef36"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-endure\\artifacts\\index.json",
+    "bytes": 121029,
+    "sha256": "b61c5361152955cc9be09ef6bb57fc1a57bcb0bf964f82cb4c3fc1f213f53c0a"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-endure\\artifacts\\manifest.json",
+    "bytes": 4393,
+    "sha256": "e613d808690224a34f0fc793140cf45173fb53a1bfca14607f89526746ba8a3f"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-endure\\process.json",
+    "bytes": 771,
+    "sha256": "c87a1d873e7ef7f21ff58a52139bb2f149c196a402e94758591a249a9ff28acc"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101009-inferno-endure\\process.log",
+    "bytes": 102,
+    "sha256": "380155f7ab19095582a2230bc4d1150dfdb656df445f7faca7d501baa22a4f93"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-static\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-static-s101021\\conduit-events.jsonl",
+    "bytes": 20689,
+    "sha256": "c14c29ab20681b81dc54a589f3160255a8fb5b2e3d1fe5d5393130a9776b2498"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-static-s101021\\conduit-snapshots.jsonl",
+    "bytes": 29032,
+    "sha256": "0652a8fb5eff01d8f7cebb7a80f33c593cf306714e8de9631a50627b58db68b0"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-static-s101021\\conduit.json",
+    "bytes": 3939,
+    "sha256": "e6f3b047fc1c23834e977a890ea0ef043618b8dc4f16bb236478b0e4843beb92"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-static-s101021\\events.jsonl",
+    "bytes": 632575,
+    "sha256": "3ad748bb79f5c1efdd540103280dd093a4f56424ccc9ee67b041ccbaf7738da5"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-static-s101021\\guard-events.jsonl",
+    "bytes": 1679239,
+    "sha256": "015a94bda3f7e8ba423504c615e3e89134dc14f0336c88f4ff8046ddc2b5bdad"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-static-s101021\\ready.json",
+    "bytes": 21590,
+    "sha256": "fb7ed5f471d47e31a7ffeb80686f765c8d59f39222aa9516e16e30b4e7fe4965"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-static-s101021\\samples.jsonl",
+    "bytes": 365669,
+    "sha256": "49f6d2567ae4a1178ee10e9f540bc23889617c6b02f39ba46002350ee1106906"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-static-s101021\\summary.json",
+    "bytes": 15488,
+    "sha256": "5271507d40f20a3ba140cf0dca8f419ab817307c0a418b9b608efb360a85bd00"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-static-s101021\\sustain-transitions.jsonl",
+    "bytes": 9570,
+    "sha256": "f42cfcb05380f63572aca90d43e8826d2e070ef552e5b410cc47fd41aa5776d2"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-static\\artifacts\\heartbeat.json",
+    "bytes": 161,
+    "sha256": "c10d1b0489041d62f6998eb23a160e9536e6a14863483bc556a5c3c633f86845"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-static\\artifacts\\index.json",
+    "bytes": 16740,
+    "sha256": "4253f3abb8bfabffd10f11c2ee4fcf1ca8ac543827d6d111c20d1493e58adde0"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-static\\artifacts\\manifest.json",
+    "bytes": 4375,
+    "sha256": "66e47a183b9349e43b7413cbed8b79cb7967c80901d06e222cff80d1c0a219d1"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-static\\process.json",
+    "bytes": 773,
+    "sha256": "cd0dda3845152f2110dd0eb6a9e9b3ad6e58e54ac252e4756e73618a1ee7a1f0"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-static\\process.log",
+    "bytes": 103,
+    "sha256": "edc76330898b53c6d9a8cc7d1f59dc11c24aba5489c2150d430a4c9f4fa268a0"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-endure\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-endure-s101021\\conduit-events.jsonl",
+    "bytes": 491162,
+    "sha256": "b5b386342af880c1978b13335d2a74e7c9d551720c6f042fdfd8f5f00c00d992"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-endure-s101021\\conduit-snapshots.jsonl",
+    "bytes": 607484,
+    "sha256": "91365026fe829fd2c74571f426d7c4d82d4f9d4808561c96576fc67bab1c86c2"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-endure-s101021\\conduit.json",
+    "bytes": 69474,
+    "sha256": "a3caba3db3857f875c5c4a23786a40523d66e58d11d8c68e33c481489842242b"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-endure-s101021\\endpoints.json",
+    "bytes": 7010,
+    "sha256": "7625e44cc84038a25ecb942ba8ad309d933119f954d58b814adfaed657c88a83"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-endure-s101021\\events.jsonl",
+    "bytes": 11550196,
+    "sha256": "77f4b192211d975778e6a3f84ae89d34b2a6795896be3634e45699300146ca01"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-endure-s101021\\guard-events.jsonl",
+    "bytes": 37783601,
+    "sha256": "7caab0e26d65a44382c01840b491dd413754507504d31f8f453721bdc12d4caf"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-endure-s101021\\ready.json",
+    "bytes": 22047,
+    "sha256": "0f7935f710295f74b3df4eee5d6225fa52fe3b2dc0bd67b2b2e26ab9989c64bf"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-endure-s101021\\samples.jsonl",
+    "bytes": 7524336,
+    "sha256": "29855675bef92e8faed7a083fd6fbe4ad012a8d83e256fd2c72db0372ea7160a"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-endure-s101021\\summary.json",
+    "bytes": 104788,
+    "sha256": "8982099680e177ef80e948cc000dca8f10cbeeec5aea8ccf30dfb4f831f7678d"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-endure-s101021\\sustain-transitions.jsonl",
+    "bytes": 280941,
+    "sha256": "89952d134e21bbce7491fb2aa410554e72f8608a79c9d1c865303ba62eb5991b"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-endure\\artifacts\\heartbeat.json",
+    "bytes": 165,
+    "sha256": "ba89217a0d9bf632d1841b92424e2b739333193e8c7a2bd159dc194a8309ba6c"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-endure\\artifacts\\index.json",
+    "bytes": 113086,
+    "sha256": "142290abf59a48656e16e15dd601dbc23d10d3fc0d4c86828e33b293d881a13b"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-endure\\artifacts\\manifest.json",
+    "bytes": 4395,
+    "sha256": "1c5563bccae8361f6b5217e88cd845e0f9e407a98084c33dab329c28e07de95c"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-endure\\process.json",
+    "bytes": 773,
+    "sha256": "1c32ffcf7f7a91b15ab19a7819c159d45d7e471c4ba20ee4b083c85f121415c9"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-mountain-endure\\process.log",
+    "bytes": 103,
+    "sha256": "95411830db4d72821608bbed3177013923be36f778fd2a0bd642f18584017823"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-static\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-static-s101021\\conduit-events.jsonl",
+    "bytes": 13518,
+    "sha256": "c1bd6a3b2c16c113593505627eb94d93c01a51e9bec1f36ff2a33d5d80853d4c"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-static-s101021\\conduit-snapshots.jsonl",
+    "bytes": 14414,
+    "sha256": "48b3a9b47bfcf03476c6719c2aade82df3c3fcb0891637f98f7f273bd65bf3a5"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-static-s101021\\conduit.json",
+    "bytes": 4014,
+    "sha256": "483b1cdb8d8bd4397b47be4e0062376938d0afabcfe2f799f1793d2cd203b88d"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-static-s101021\\events.jsonl",
+    "bytes": 362253,
+    "sha256": "1c2372ce2b862d250e2971a5faee604dc955d21e26e5a0662abb7a707ba81781"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-static-s101021\\guard-events.jsonl",
+    "bytes": 817646,
+    "sha256": "ebc1f6c056b67943dd7d0699b75e25517fe5e8b124f2a9e0763f0eb6aa2fdb2b"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-static-s101021\\ready.json",
+    "bytes": 21710,
+    "sha256": "243a3f5e96b1bd74165553f46a28652b9dee85631868d4280d3e114f8ebc2b46"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-static-s101021\\samples.jsonl",
+    "bytes": 178020,
+    "sha256": "3fa2e0d56f32472d223f657101d68e6eca984b10479ae12ab9c43ec0ff5499bc"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-static-s101021\\summary.json",
+    "bytes": 14017,
+    "sha256": "842843ac9e7f9e2ee284a4c4c040e10e4895634227a965fe1e41719fa3e2eda3"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-static-s101021\\sustain-transitions.jsonl",
+    "bytes": 4872,
+    "sha256": "3d9c742e81785b67b7b5cc54239bb3eaed72658edfea6a1fcec9ce4569549e49"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-static\\artifacts\\heartbeat.json",
+    "bytes": 160,
+    "sha256": "d7cfad10600e88574031a7138872fc043ec03eb8cdd7236c3c92428bb68ebbc6"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-static\\artifacts\\index.json",
+    "bytes": 15153,
+    "sha256": "00448540ffb9f10502a8138d53ba9cdf996a41c770ccfd54e53de848256260e1"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-static\\artifacts\\manifest.json",
+    "bytes": 4373,
+    "sha256": "d32bb2e869bf380b47dd6a49e5426f8c60ccc78c8d3c989898b92a5b29489230"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-static\\process.json",
+    "bytes": 771,
+    "sha256": "2758914fabe0224e54427567a15ec80b7458c754005d506a346be00f2361e889"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-static\\process.log",
+    "bytes": 102,
+    "sha256": "c8e91fce2483183e472f892dd6f8a0e24f4e73f4299afa1568961746fb7df7b4"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-endure\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-endure-s101021\\conduit-events.jsonl",
+    "bytes": 487972,
+    "sha256": "37b29e3947f3f63cbab78c9339b9e13d3cf47239921653dd3279bcee427c075b"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-endure-s101021\\conduit-snapshots.jsonl",
+    "bytes": 611763,
+    "sha256": "3c250aba204b48d9ef33d865796519c345267ac84482682eb8b2b6844540b3cf"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-endure-s101021\\conduit.json",
+    "bytes": 81989,
+    "sha256": "0980f7cfbbb4e3df7e7614d7d3bd192820a5f6f8b8efcc862d581b1925717dbd"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-endure-s101021\\endpoints.json",
+    "bytes": 7193,
+    "sha256": "84ece88a95458854de052e186c472229695abce3c8a9b2737d652ad1dcc1ae1d"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-endure-s101021\\events.jsonl",
+    "bytes": 14713501,
+    "sha256": "194f8093029f1dbfb2211dbca45edebd8fbcef095331d0c16967945fec33becf"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-endure-s101021\\guard-events.jsonl",
+    "bytes": 38718951,
+    "sha256": "99fabfa14daa4b58515bab85411695fe0e98e89940b2e3db1610aacc96796973"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-endure-s101021\\ready.json",
+    "bytes": 22167,
+    "sha256": "83049a1dfe41641984f2c4e0c94ffb09b6c8235406333150ab688e9c88c3a857"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-endure-s101021\\samples.jsonl",
+    "bytes": 7548926,
+    "sha256": "b9d69be21ed760eb590ce72912b9cf64f3256ae80a6f94a8aed2da78f932dd41"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-endure-s101021\\summary.json",
+    "bytes": 107248,
+    "sha256": "47cc8b59e3713f54a4db93ec3c2ee7e80fb45b4f1a29dbd3b336d3caf01cb867"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-endure-s101021\\sustain-transitions.jsonl",
+    "bytes": 294944,
+    "sha256": "d78234fb1e1990734036cf77311de47fbfa1d0be34f0748f3ab2036415d1cb63"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-endure\\artifacts\\heartbeat.json",
+    "bytes": 164,
+    "sha256": "3ba155d2b4e19d7249e0276c0b1947ced72aa8d226f756bdce0214228fdc9f76"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-endure\\artifacts\\index.json",
+    "bytes": 115728,
+    "sha256": "1b597251b56279fb7f524d92c4ff5be98f7482caa7d629abbc998da73fe24e38"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-endure\\artifacts\\manifest.json",
+    "bytes": 4393,
+    "sha256": "d6ced18b87c4017cde0c78975cd168d056f4a878db095ab72c0c9f5776393605"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-endure\\process.json",
+    "bytes": 771,
+    "sha256": "0cec3a1fb51a9702093871960d83120d5d5865b566655b916c67b791f9b4a9fd"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-desert-03-s101021-inferno-endure\\process.log",
+    "bytes": 102,
+    "sha256": "2ff1593a66b602cb0a204d013a1834731563c737927e2a027047a820af11bd1f"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-static\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-static-s101009\\conduit-events.jsonl",
+    "bytes": 34159,
+    "sha256": "5b34c930e5da1be4beb861fda2f286da7a7ec0ba62e1200224f1b5ab62b721ad"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-static-s101009\\conduit-snapshots.jsonl",
+    "bytes": 58326,
+    "sha256": "8f8f27731c9eda473666969a49f05c4072edf57612b59a4dcb543c4e8224e414"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-static-s101009\\conduit.json",
+    "bytes": 18268,
+    "sha256": "30ac671aa1f7086ffe0879266efb9731ed191cb815c89fcabb2735e274ad0ea1"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-static-s101009\\events.jsonl",
+    "bytes": 837840,
+    "sha256": "12001ca4f59498be37dcb15a607ec4e9683d37265206bcf73da76618da51895a"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-static-s101009\\guard-events.jsonl",
+    "bytes": 2823419,
+    "sha256": "852cf6f84fe9dfc4341ccb52c398c48ad179c228b085e40b70fbee4d8f299bcb"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-static-s101009\\ready.json",
+    "bytes": 28044,
+    "sha256": "99a3465c81f6ad5157607184779a397ea10c55be1af26bf505cdaae2f213295b"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-static-s101009\\samples.jsonl",
+    "bytes": 1444988,
+    "sha256": "a312b3fb9f219fc63f97ce46e09f7831101f91dc70ee561d01331d347a609c84"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-static-s101009\\summary.json",
+    "bytes": 40759,
+    "sha256": "d18b6862ab3c402ce54fc6417fed507262c5a244c5956b49443659dcd4b3a989"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-static-s101009\\sustain-transitions.jsonl",
+    "bytes": 63738,
+    "sha256": "db0cdc199479b52a03964814f11221f9a6cc2405a66f2c164f964f446f2b7384"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-static\\artifacts\\heartbeat.json",
+    "bytes": 164,
+    "sha256": "ee87b911d06f8ad6317c3fbf893ca898d100f14ec0711e2f03cd2f74343df487"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-static\\artifacts\\index.json",
+    "bytes": 44103,
+    "sha256": "35c5bccff38550e42466c4c6b3b96b55685129dc27eb5a70d933f75669702557"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-static\\artifacts\\manifest.json",
+    "bytes": 4393,
+    "sha256": "33f6973abc2b8a58ef40afffc015b090ec346bb4ed8183965cd8a6313cb1d738"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-static\\process.json",
+    "bytes": 779,
+    "sha256": "0a19d44a7b160e92b427c59fe4e3d55abed0f5c65b326672e287caf91e1b9057"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-static\\process.log",
+    "bytes": 106,
+    "sha256": "a8158d1374acce5a8102a41ba8e612cea47453d1d63d4d5de0dbd76582735f2b"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-endure\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-endure-s101009\\conduit-events.jsonl",
+    "bytes": 396857,
+    "sha256": "38a4e9813b84dfd85d5fc05fe3fb0d15e949fa438d97152929e02c14701169d3"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-endure-s101009\\conduit-snapshots.jsonl",
+    "bytes": 599549,
+    "sha256": "aee4384dead0d13cec8ec7bc446ecf16924d9cd99aa9c8faf4001ee1842f2a64"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-endure-s101009\\conduit.json",
+    "bytes": 192477,
+    "sha256": "36b8016c34fa229e328d5f400f3fdd0d160ee5a74b6aa1c70441187a7c4d623e"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-endure-s101009\\endpoints.json",
+    "bytes": 7210,
+    "sha256": "91f02a22eb7f0426000178f94492f65b5ed28291eb68abffdf6d5aec88543c47"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-endure-s101009\\events.jsonl",
+    "bytes": 9486942,
+    "sha256": "476aed876f7d08793dd41534631ea1b5fb1b234fced8c4b30c0e8d3066a01249"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-endure-s101009\\guard-events.jsonl",
+    "bytes": 32251461,
+    "sha256": "d9dc57b900d9d6d5c228a842da91991cc6f6639ccf6610b8b30ca11ae3895d31"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-endure-s101009\\ready.json",
+    "bytes": 28501,
+    "sha256": "7387f2d1d2b882bc7bb818db1da8e32a74bb287e4e849eee9e3c80ccabf408f3"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-endure-s101009\\samples.jsonl",
+    "bytes": 14672493,
+    "sha256": "772f6348b1b7e4671a5d4636a4da86b5d0ea4024ce58b31029190197a146295c"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-endure-s101009\\summary.json",
+    "bytes": 279947,
+    "sha256": "8e13b16716998d563765358f0d4eae0b8f90b415441f771e635be791a321cfbd"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-endure-s101009\\sustain-transitions.jsonl",
+    "bytes": 675548,
+    "sha256": "9464f320d536d66fdb3cebf090138b2140a4273961b94a489215d0d297af4e2f"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-endure\\artifacts\\heartbeat.json",
+    "bytes": 168,
+    "sha256": "ef5aa2bdeba181c46cc66e8ed10ae4f66bbecfe98d3ea4d3d59aaaf55b62e5c8"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-endure\\artifacts\\index.json",
+    "bytes": 302563,
+    "sha256": "f29296ce0c22396c0040e6f4ece57d15ceab7f49f894a6c23d21d6c2f0fe56b8"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-endure\\artifacts\\manifest.json",
+    "bytes": 4413,
+    "sha256": "b47896db73d2912a740b3c783c53bc7b744a730383e055e49d38cba4246b83a1"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-endure\\process.json",
+    "bytes": 779,
+    "sha256": "47cd1deb70f96a7ffa58bfa7a91466f1b5eabc940f66f7c13879457cf8a4eb39"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-mountain-endure\\process.log",
+    "bytes": 106,
+    "sha256": "e311c9da22863be11243f30205f1acd7dc0341dcd9476b9d8cb2b4a233e8ad1f"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-static-s101009\\conduit-events.jsonl",
+    "bytes": 456449,
+    "sha256": "c274cb9a1f56af9c9a52b40f5d2d7f002fe9ff46192fa8055271fcf854d1578f"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-static-s101009\\conduit-snapshots.jsonl",
+    "bytes": 606202,
+    "sha256": "19c1ab3d69d85e7c9fd2a2de52ca8f7774e590821508958f0a0954d7b5306a54"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-static-s101009\\conduit.json",
+    "bytes": 222418,
+    "sha256": "321c145a2e3f13e50bd89e3d36cbcdb99305bde31d5a52259b7e3388c06c7080"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-static-s101009\\endpoints.json",
+    "bytes": 7168,
+    "sha256": "7b5239c4f444a93cf9332f5fd0b438507471419a78b322475bf8f0fe64132f06"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-static-s101009\\events.jsonl",
+    "bytes": 12449225,
+    "sha256": "aba07323c3920321ece176156edb567a2eade5909cf75076b3028997fec4041a"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-static-s101009\\guard-events.jsonl",
+    "bytes": 31740733,
+    "sha256": "51d6aade62cf7bced4563330ca177362670af66bcf81d868abcc0c83ee34eb49"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-static-s101009\\ready.json",
+    "bytes": 28164,
+    "sha256": "89043fae72230fb6cb23a6b284c6937e12866c0eff5d84786a8da3e841fb75da"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-static-s101009\\samples.jsonl",
+    "bytes": 14789013,
+    "sha256": "9fe9257dc90d878df56271580cdcacd260dfeb639282b181c6145549753656ce"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-static-s101009\\summary.json",
+    "bytes": 311240,
+    "sha256": "c4b87b4c2d9416a17a8fb4c48f688c2841c028ebfcd7bc77ddb0005f72e8f646"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-static-s101009\\sustain-transitions.jsonl",
+    "bytes": 754625,
+    "sha256": "f0d3c41b72aac6f7898dee0f3fc34e977a28aa60ee834e3e4b595c8a5002e41e"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\heartbeat.json",
+    "bytes": 167,
+    "sha256": "3b91410686a50577b1ad55b18bd92e24fe4aa4c20cd45186046aea10c11cfe04"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\index.json",
+    "bytes": 336178,
+    "sha256": "1484c5081f7ba6897d04d42cef6c5ee57a8f99850e9eba94b84145750a3c9f30"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-static\\artifacts\\manifest.json",
+    "bytes": 4391,
+    "sha256": "4522e0b3f8fead6f6a51820f415789c54d5b03fea94fe96a0d0e829db08a05b2"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-static\\process.json",
+    "bytes": 777,
+    "sha256": "bbb1bc82eb6913960b99c33a8a8a70245471a3f3c634e1b49abfad81a85ff42d"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-static\\process.log",
+    "bytes": 105,
+    "sha256": "c622b6f892f4743ca7527d7c3e48758d7428f8fe02e07273fce76d726da27f47"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-endure-s101009\\conduit-events.jsonl",
+    "bytes": 455329,
+    "sha256": "440ca270636e46e318559edbaa0d734ffa9c4ad70557a090cc33a55d4029e1ae"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-endure-s101009\\conduit-snapshots.jsonl",
+    "bytes": 605463,
+    "sha256": "9c205087f36b51282ebd1595be2eada50f4a685dbcd17203ce7516834f018dc7"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-endure-s101009\\conduit.json",
+    "bytes": 217670,
+    "sha256": "c009d94f32fe5f269abed8e254411011df864b8e2737eba359e9654cf409eccd"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-endure-s101009\\endpoints.json",
+    "bytes": 7149,
+    "sha256": "66f0f64ab24e5702da28a76ee13f80aca7bb3b3be88f521b9f6d6038faac4dcf"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-endure-s101009\\events.jsonl",
+    "bytes": 12107450,
+    "sha256": "80a5f255907c6a96569c84440d69ceedd12030fd369b13753c966808dd1f7fd9"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-endure-s101009\\guard-events.jsonl",
+    "bytes": 33048299,
+    "sha256": "fe225241905b29e0d8d9b2ca71554e61d44f85461ea7a7cf930b3aad14027b97"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-endure-s101009\\ready.json",
+    "bytes": 28621,
+    "sha256": "3b2900e9ee64b3042240c95c572138cba5d5d4096af316b52505f112191cd26c"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-endure-s101009\\samples.jsonl",
+    "bytes": 14772798,
+    "sha256": "077010b4dc8a12485c97a51bf4a5523791f1e5f510a49ee57b06a7306a2326f6"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-endure-s101009\\summary.json",
+    "bytes": 303449,
+    "sha256": "faadbf547b60d7873fd997f970e004fc6a9ee98c8c2eeda2f11af7a1adead4f9"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-endure-s101009\\sustain-transitions.jsonl",
+    "bytes": 744254,
+    "sha256": "df84eb40a73d1b12cf51517f396b013d42d08bfed070d5a8774608661a58e196"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\heartbeat.json",
+    "bytes": 167,
+    "sha256": "87d164f49947b02fb5accf7055a69d1c5bff58452230c742ac8021c2eca95f65"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\index.json",
+    "bytes": 327773,
+    "sha256": "4fdd048211d3d3d2c70158a4ae18e1c29a08f62b73125e155bedbf0297e4e616"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-endure\\artifacts\\manifest.json",
+    "bytes": 4411,
+    "sha256": "593a9754e6564de88be5f46d960cdf0a0498a04b7f106be3848e0eac53e6a76c"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-endure\\process.json",
+    "bytes": 777,
+    "sha256": "8887289cd85161cd80eefdfc91390e85a439d177f5bdf0f504a77bd04c1009ed"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101009-inferno-endure\\process.log",
+    "bytes": 105,
+    "sha256": "a3ca0b90109fc950249c48235c4f04da77cfddd046738ce925b6ffa0e7c669fc"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-static\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-static-s101021\\conduit-events.jsonl",
+    "bytes": 6353,
+    "sha256": "7f827c7071a19a4b786c75cfa482e6ec4b9d18e6f9ccf894a9fa49cab5863677"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-static-s101021\\conduit-snapshots.jsonl",
+    "bytes": 9687,
+    "sha256": "af04e0f24bf6caa2782b885c1f2a5e13a1a26a8ecc88cc0bdde2ec9cdee5b54b"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-static-s101021\\conduit.json",
+    "bytes": 5151,
+    "sha256": "562af59d7e29438fb601a5e1a939addd843c96e6b6acdbda776b9c80615692b8"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-static-s101021\\events.jsonl",
+    "bytes": 176521,
+    "sha256": "718ec1260d5f2abaaa1c8c64095f161c320e0b38007581907cfc5bfa9e4b288d"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-static-s101021\\guard-events.jsonl",
+    "bytes": 565456,
+    "sha256": "1695041930dbf6d12036637af6d19b80183ecd008a0debe2705b8eae0dc102cb"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-static-s101021\\ready.json",
+    "bytes": 28153,
+    "sha256": "98ba5257114758f99180cf4cd9eb42bf4cb6e9d397053e8fe3bc83a36b105f4c"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-static-s101021\\samples.jsonl",
+    "bytes": 233803,
+    "sha256": "a0ed28f25fe66ae3630a2710d73b51b934da0b88853637a8c2ca0205b1e7f479"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-static-s101021\\summary.json",
+    "bytes": 22100,
+    "sha256": "fda94fc58e22e8018fac8b5b187daabadd5dcfe0fa4854aaa6488db4933e54cb"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-static-s101021\\sustain-transitions.jsonl",
+    "bytes": 11533,
+    "sha256": "6f19c347479e8e437be49438a54ea911858652d8a8d921aef01df6f6edd440ac"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-static\\artifacts\\heartbeat.json",
+    "bytes": 164,
+    "sha256": "1c6ea29c304c9ea7916cc53e2e695c2248ba17a36c760488db9b060efdd14a05"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-static\\artifacts\\index.json",
+    "bytes": 23924,
+    "sha256": "97e8aa5374fb28bac340f9d0fca15999288d3211c1e63145e0ab04315995f577"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-static\\artifacts\\manifest.json",
+    "bytes": 4393,
+    "sha256": "929df02b5880e66fc1960cc1de8a90e8c8696f24af58970079029bee6de6d049"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-static\\process.json",
+    "bytes": 779,
+    "sha256": "2651b1d8c605a3c807179ed0d5827d9643e8286481b401e9f1433094b48cba50"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-static\\process.log",
+    "bytes": 106,
+    "sha256": "197f1609e4b012b04bfbeea72c4cbf205a14fb7008dbc087e9a4a3f49e2b6b55"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-endure\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-endure-s101021\\conduit-events.jsonl",
+    "bytes": 6832,
+    "sha256": "27412776f1ab4dc4985b8a4cef8b6e9fa43ff90f0117d86e1dbe697dc0435419"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-endure-s101021\\conduit-snapshots.jsonl",
+    "bytes": 10052,
+    "sha256": "3f1aa5634c9bec31d5a43514efa1b83bfce11df536ddada611549aaab95a1808"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-endure-s101021\\conduit.json",
+    "bytes": 5151,
+    "sha256": "dfcf02e97a800958b4a0c0862c5ea724bc27267f83bc7b684e7f708dcf87befe"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-endure-s101021\\events.jsonl",
+    "bytes": 186643,
+    "sha256": "5d55fa817030af39970b79af081fff65451796cd639ef72b4cf6ae0ec686ad33"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-endure-s101021\\guard-events.jsonl",
+    "bytes": 637012,
+    "sha256": "40f0d7c036ce9c79c8ca44fea432e1a5b29121d9b3046b4f4f99a4cafa297899"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-endure-s101021\\ready.json",
+    "bytes": 28610,
+    "sha256": "c5f3c6c177321010043bd8583318e8fba1d81f8859fb83d945b360914fb81351"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-endure-s101021\\samples.jsonl",
+    "bytes": 242550,
+    "sha256": "7f3a8c940ee2a2badd998d6cc502446cf79301aab492480311ee270a6cc32871"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-endure-s101021\\summary.json",
+    "bytes": 23072,
+    "sha256": "d99e40929e50d8fca1a574f5f97db87a3839262e4d4764a2dd923c3a8102e124"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-endure-s101021\\sustain-transitions.jsonl",
+    "bytes": 13015,
+    "sha256": "a064b953052acb1f06db5a99171cbe49df94949e6e6b1d26a270137ea9e1a1bf"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-endure\\artifacts\\heartbeat.json",
+    "bytes": 164,
+    "sha256": "5aa7368d261e648157f1931aededf6f62c59155f47f886bdf41fb88bbec70d83"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-endure\\artifacts\\index.json",
+    "bytes": 24960,
+    "sha256": "ce800a62a05ae908aad2241312310726761ab85cbb63162c49fe0be80524ea9b"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-endure\\artifacts\\manifest.json",
+    "bytes": 4413,
+    "sha256": "9a67e150bd4aed7ea1de853c181233bd9704601a4f3423273c6732ac2384a58c"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-endure\\process.json",
+    "bytes": 779,
+    "sha256": "cddac7df6d0ea65180234eaa05fadd1f8be8229898ee2aecd31721305b3e34fa"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-mountain-endure\\process.log",
+    "bytes": 106,
+    "sha256": "826fb304e0e00b6047c3af2f3a852fb311fecbd56537e7cc813d763c6f67d9c5"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-static-s101021\\conduit-events.jsonl",
+    "bytes": 462478,
+    "sha256": "bcf8544c168a249e6930e89522a686c6dbd1e10579f57172ff21cd2ead794657"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-static-s101021\\conduit-snapshots.jsonl",
+    "bytes": 608218,
+    "sha256": "4464605931f97e7774848c7bc11a574f7bbd5f490d9e47d278675885479ae8ba"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-static-s101021\\conduit.json",
+    "bytes": 220844,
+    "sha256": "c35c9a08f94117decc0b73f4e272efef5cab88498ca1f66cc9ed77b1b112acb0"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-static-s101021\\endpoints.json",
+    "bytes": 7024,
+    "sha256": "91c7b3c46ed8888fa05df1292245027523191b51e5bef709d5cdc74143d79cf2"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-static-s101021\\events.jsonl",
+    "bytes": 12339505,
+    "sha256": "5daf9c3bcab50b554a0949eea4bc1f2b5549e4f23f3341a1cf17839965ffbe5c"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-static-s101021\\guard-events.jsonl",
+    "bytes": 31152370,
+    "sha256": "1291aa84e39310f0ca38fa069aae1b09f08a4d761e45428757beb907a5f922f5"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-static-s101021\\ready.json",
+    "bytes": 28273,
+    "sha256": "1a6f1afcaff0a94740b5c927fe1143b1b4a4c4bc5336c89ad1e013106c9acf70"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-static-s101021\\samples.jsonl",
+    "bytes": 14776184,
+    "sha256": "b68a900987bc3d8083d7c4003bc7b77a625f1a6f55617dc4375c140cd2ef0ee2"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-static-s101021\\summary.json",
+    "bytes": 302096,
+    "sha256": "93780d36a8ba0908bde00e208e9f2964c4b73cb69d4456f87110cf87583bcaf8"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-static-s101021\\sustain-transitions.jsonl",
+    "bytes": 719315,
+    "sha256": "a303aa1a014316d60e4b0f565ab3a1e9e922418ddb609bec41ec06fa842260b6"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\heartbeat.json",
+    "bytes": 167,
+    "sha256": "6a53f852bf11fc645cdf685ca9a0215fe66d197da3f3a1db3a699619bb4a255d"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\index.json",
+    "bytes": 326224,
+    "sha256": "9d8268b4e66d422d8b54a0cbb225085555a165ce3db207c3a8d07128dc608f0e"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-static\\artifacts\\manifest.json",
+    "bytes": 4391,
+    "sha256": "9a76accd77f87161828bcbb6ae82722ccf7a512c8b4a31d8d585ed6ed2d9f34c"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-static\\process.json",
+    "bytes": 777,
+    "sha256": "722efe73920833b8d619f57a2ef2300c74689c4cac725349735f100a9b0c6156"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-static\\process.log",
+    "bytes": 105,
+    "sha256": "5a468fe82830bbf32a1b85676cc45dbc136d9586c88515d909c669c64e40881b"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-endure-s101021\\conduit-events.jsonl",
+    "bytes": 463353,
+    "sha256": "7eb6fed6395979f930638162d58b7cc5a45bb3b6abec7c5c2d6a5123406757ba"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-endure-s101021\\conduit-snapshots.jsonl",
+    "bytes": 602826,
+    "sha256": "5c69b8075af4128b38c9ba5b6766b46f96151a827a6e1d07a2ddad5b3e00fd81"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-endure-s101021\\conduit.json",
+    "bytes": 218400,
+    "sha256": "6086dc5d331b1c474cfd670f1d0c45cfc84950a266e53984f75b65596e177012"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-endure-s101021\\endpoints.json",
+    "bytes": 7272,
+    "sha256": "121728bd0e73570befa7dba29854e6f9f62d3f256725a17c2a3f0e4aadbb5f92"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-endure-s101021\\events.jsonl",
+    "bytes": 12584258,
+    "sha256": "dbe00e1c682081642d50b9d3a0bf1e6c8577b1678b13db46384b45716edf582b"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-endure-s101021\\guard-events.jsonl",
+    "bytes": 33661604,
+    "sha256": "14441f96ba98dfaeb5739a6596bd3e92b6f034faea232c04b9c0c17c77e455eb"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-endure-s101021\\ready.json",
+    "bytes": 28730,
+    "sha256": "6196c065ba755fddac31bf2c535f7d64737978c8a81cea9876662d2241984bb9"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-endure-s101021\\samples.jsonl",
+    "bytes": 14776380,
+    "sha256": "dc2177e0779aa0880a9b3e98095cceae03c0545440f5711339aa229473c6616c"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-endure-s101021\\summary.json",
+    "bytes": 303099,
+    "sha256": "e16abcdf453ab0352821bdb1844361fe99ac2743dbac68ac591f5c40c78f33f4"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-endure-s101021\\sustain-transitions.jsonl",
+    "bytes": 737588,
+    "sha256": "dffe0e7df7f2c3c14bdd832cc287e57bdf39696c7b193a4372eec1b35f2974f9"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\heartbeat.json",
+    "bytes": 167,
+    "sha256": "6d7566de56c26e80c32481c891c3326d7d62d06d1ac54d823bdbb827293b792d"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\index.json",
+    "bytes": 327285,
+    "sha256": "de89ab229dfdde2d84df817f9432213a69d6f53d9736d931c632eec1b2936d82"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-endure\\artifacts\\manifest.json",
+    "bytes": 4411,
+    "sha256": "98d8e3ae548ef12736e30fa7d2ef792c64f7b1e4ca93251788a76396139ca4de"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-endure\\process.json",
+    "bytes": 777,
+    "sha256": "65a1c2520cc579e9db597f6f3fe913671bc2f0f6e8646318e454cfef9840f50d"
+  },
+  {
+    "path": "D:\\mmo-idle\\guard-coverage-01\\run-01\\guard-coverage-01-breadth-t4-conduit-heavy-b-node-t4-graveyard-03-s101021-inferno-endure\\process.log",
+    "bytes": 105,
+    "sha256": "9761d1bbcf527883e9c621ea7a4f70c48bf109fa1490e0e756207751b38832f8"
+  }
+]
