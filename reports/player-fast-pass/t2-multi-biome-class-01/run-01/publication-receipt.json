@@ -1,0 +1,66 @@
+{
+  "experimentId": "t2-multi-biome-class-01",
+  "publicationDirectory": "reports/player-fast-pass/t2-multi-biome-class-01/run-01",
+  "executionSourceCommit": "41b3d35961bf4393beeea6e70aabfe2ae43ad810",
+  "sourceSha256": "32b44f4faec8ad7e52d9f0f4b97b12bd3f3b22f537043dcb29ed7b0bb6220e94",
+  "hitboxesSha256": "6a75e0e8417e0936bdaffe389f1d5b73b06a78b49d163961e02cf18ecca166bf",
+  "measuredArtifact": "results-summary.json",
+  "measuredSha256": "60c83a496e8af8dc96f12d7e21c22bb394be22260d06c3e4ecf5d7bd3bb0ade7",
+  "counts": {
+    "planned": 264,
+    "completed": 264,
+    "failed": 0,
+    "deferred": 0,
+    "notRun": 0,
+    "reused": 0,
+    "combatObservations": 264,
+    "playerDied": 7,
+    "windowEnded": 257
+  },
+  "rawInventoryValidation": {
+    "retainedRoot": "D:\\mmo-idle\\t2-multi-biome-class-01\\run-01",
+    "entries": 4004,
+    "totalBytes": 3202308680,
+    "missing": 0,
+    "mismatches": 0
+  },
+  "publicationFiles": {
+    "REPORT.md": {
+      "bytes": 19220,
+      "sha256": "c1b7a89d16d0906ce2f8d3db024303ce1067fbf930492e34e05e915ac529c6c3"
+    },
+    "CLASS_ASSESSMENT.md": {
+      "bytes": 11939,
+      "sha256": "c18c1468918d9e23b2f8c75d442ea42fb477fd14cc006a500726e7240f0d5789"
+    },
+    "results-summary.json": {
+      "bytes": 3802736,
+      "sha256": "60c83a496e8af8dc96f12d7e21c22bb394be22260d06c3e4ecf5d7bd3bb0ade7"
+    },
+    "resolved-builds.json": {
+      "bytes": 5942702,
+      "sha256": "4a9b7d96d772e60b4f75c2b7eba58b2d814fa979bd1cd7eba711fba0bb4def71"
+    },
+    "raw-inventory.json": {
+      "bytes": 1087344,
+      "sha256": "1f2ebbd6f2e886024e1a49ef222a87549825084350a54e1f7d6b5f6fab92c38d"
+    },
+    "complete.json": {
+      "bytes": 104,
+      "sha256": "07c799a46fc2e20906f20f41b728a5a4ea4b3f2fc71953069661e7f5e7ee66f9"
+    },
+    "identity.json": {
+      "bytes": 147103,
+      "sha256": "5c9690016238c3a0f8956b11b91f6c58695af1baf3720e97386c9bc12fae0452"
+    },
+    "manifest.json": {
+      "bytes": 766962,
+      "sha256": "43c64ed8e713176cafc6f21abfd02bb66bdbd447e256b1dc447ece6a6b248989"
+    },
+    "seal.json": {
+      "bytes": 177,
+      "sha256": "4b6b6eab7e02611b7a83dea044920f313bd01a91fa64ee17475ac8abef6b7b97"
+    }
+  },
+  "scope": "Compact evidence only; raw event, sample, guard, and transition streams remain at the retained D: root."
+}
