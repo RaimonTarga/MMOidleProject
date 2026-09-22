@@ -1,0 +1,9 @@
+{
+  "out": "D:\\t3r\\receipt-check",
+  "completed": 52,
+  "combatObservations": 0,
+  "sourceCommit": "7d0dadb2b4397141c5a654ab9bb658871c56147b",
+  "manifestSha256": "5615531632c9604c8fb8d3be41a13fa3e852d80ebea5ef1cd4277dd62af34aef",
+  "qualificationReceiptsSha256": "36e04cbd8a26aa6855339fb0eb076ab84b97bd31d464bdc691dcb620f669a63f",
+  "verificationReceiptsSha256": "36e04cbd8a26aa6855339fb0eb076ab84b97bd31d464bdc691dcb620f669a63f"
+}

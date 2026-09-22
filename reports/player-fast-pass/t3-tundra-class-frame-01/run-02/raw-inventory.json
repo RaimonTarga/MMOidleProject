@@ -1,0 +1,3672 @@
+[
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101009-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101009-primary\\artifacts\\heartbeat.json",
+    "bytes": 132,
+    "sha256": "81ce43f2e48101ad712aee8805e03f588bb0435c8c4c2df7fa5da4e53919335b"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101009-primary\\artifacts\\index.json",
+    "bytes": 48415,
+    "sha256": "0b54b1f8342b72aa969ff9d3e3241e31402895639c9562e31144606136374bfb"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101009-primary\\artifacts\\manifest.json",
+    "bytes": 3462,
+    "sha256": "94bb295efd1d760195a7a8c57692882c1383575524874a11be7575332d1adbde"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-striker-light-s101009-primary-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-striker-light-s101009-primary-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-striker-light-s101009-primary-s101009\\endpoints.json",
+    "bytes": 4785,
+    "sha256": "358e2a23008bdd7e9d846f05b37f3718ee63ad7cb834a391e6db970b3ed958c6"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-striker-light-s101009-primary-s101009\\events.jsonl",
+    "bytes": 2652347,
+    "sha256": "c0f397983dab5af042f62a42c31aad5122848db3e589e71779196b54722c989c"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-striker-light-s101009-primary-s101009\\ready.json",
+    "bytes": 16870,
+    "sha256": "8e3d65735317eaff96ed1e94d3fdc0de57a5406e2746de9a779ab79cecc7319c"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-striker-light-s101009-primary-s101009\\samples.jsonl",
+    "bytes": 2236884,
+    "sha256": "db5c803f9b959fb4e273fabe31fd8aa69828cc94fb9494a5a8a3be5d6f862334"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-striker-light-s101009-primary-s101009\\summary.json",
+    "bytes": 44693,
+    "sha256": "3720697effa8002b591fcf58989a7a3279508de6f6d85dc76cca9bf58f33187f"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-striker-light-s101009-primary-s101009\\sustain-transitions.jsonl",
+    "bytes": 146057,
+    "sha256": "f77a45c69d20b103b53fbb49be6993dfdf45a7df8645c171ab22b08c762a5820"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101009-primary\\process.json",
+    "bytes": 642,
+    "sha256": "fd3e5eb8291da646e08ac3fccf0e1a4ab7fcd3515b8a82a2a63db7a6ee42f7e1"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101009-primary\\process.log",
+    "bytes": 71,
+    "sha256": "723d22a74ea51496c44bb6982762b10e156fea6dcc31611157ca19fd5f175c8c"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101009-w1\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101009-w1\\artifacts\\heartbeat.json",
+    "bytes": 127,
+    "sha256": "f2a087dc720d0d744bd9fcaef6c7922e5ccc1fa4557be5c67dfbb0f845e165ec"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101009-w1\\artifacts\\index.json",
+    "bytes": 47145,
+    "sha256": "1700f5951f425b1a0b974921af2276a65b11b35144e48c81a68a27881dd459b3"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101009-w1\\artifacts\\manifest.json",
+    "bytes": 3546,
+    "sha256": "c2edd671caac5ec74d570425c2b83b17730351110d830731639c5ccb57590d15"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101009-w1\\artifacts\\t3-tundra-class-frame-01-striker-light-s101009-w1-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101009-w1\\artifacts\\t3-tundra-class-frame-01-striker-light-s101009-w1-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101009-w1\\artifacts\\t3-tundra-class-frame-01-striker-light-s101009-w1-s101009\\endpoints.json",
+    "bytes": 4701,
+    "sha256": "1290b3ea298c94f17cf47160f474614cd7e8c751ff87f0fc7da173763176fb38"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101009-w1\\artifacts\\t3-tundra-class-frame-01-striker-light-s101009-w1-s101009\\events.jsonl",
+    "bytes": 2244439,
+    "sha256": "ff12ad555bfc58a36bf09edc6b74b0b4c00ec2850ff3a46461825b26a8762257"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101009-w1\\artifacts\\t3-tundra-class-frame-01-striker-light-s101009-w1-s101009\\ready.json",
+    "bytes": 16825,
+    "sha256": "3857888f522e6126bdd09915d663ee65d9ad1b4a558b31f3b3e2f2dce4b49505"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101009-w1\\artifacts\\t3-tundra-class-frame-01-striker-light-s101009-w1-s101009\\samples.jsonl",
+    "bytes": 2226623,
+    "sha256": "2b65397a872c4264e342b6278c3ebebcc02066aef184d2b387952f6a417b1775"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101009-w1\\artifacts\\t3-tundra-class-frame-01-striker-light-s101009-w1-s101009\\summary.json",
+    "bytes": 43517,
+    "sha256": "8a1a23b99ce2ca25084b04ac70d126b2ff2d232bf9a4dc43a9077bb912a0ba0e"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101009-w1\\artifacts\\t3-tundra-class-frame-01-striker-light-s101009-w1-s101009\\sustain-transitions.jsonl",
+    "bytes": 144189,
+    "sha256": "06b86fa46cf28afc215818f4c884e851f838b7cee81ce612526bb3a976b90647"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101009-w1\\process.json",
+    "bytes": 632,
+    "sha256": "ba7e37d4bf2abd70bcd64df33b421d6adf547615045e0ebe1ebea368c4b9ea45"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101009-w1\\process.log",
+    "bytes": 66,
+    "sha256": "b29e310c663817270b187483dae2d9913b4ff67231593762b8e70e7045fe0e0f"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-light-s101009-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-light-s101009-primary\\artifacts\\heartbeat.json",
+    "bytes": 131,
+    "sha256": "ef779be5a288e2334eea2f43af054083810ff00fb8c4794e8ac2baad1484c08b"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-light-s101009-primary\\artifacts\\index.json",
+    "bytes": 43706,
+    "sha256": "32b8db6a0af6f1648c9b04de3a3d0eb7596d2615bd0fd3175a0ab52fca273b7b"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-light-s101009-primary\\artifacts\\manifest.json",
+    "bytes": 3450,
+    "sha256": "64c83b56b8cafa6adaed61ae3e18b26818a91fec13e4dd38683cd081c2eec262"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-squire-light-s101009-primary-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-squire-light-s101009-primary-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-squire-light-s101009-primary-s101009\\endpoints.json",
+    "bytes": 4707,
+    "sha256": "7c42a600a62426055b5d2e5c54a04b84b0c26f5578e30e75feab0ba1884ec578"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-squire-light-s101009-primary-s101009\\events.jsonl",
+    "bytes": 1668050,
+    "sha256": "78142ec42e6887754c185528ddd53388982255f432b3a8a8b6411352c888e1a4"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-squire-light-s101009-primary-s101009\\ready.json",
+    "bytes": 16911,
+    "sha256": "d4c0fc851ea2b6d910257d82af365d63d8cc84b10e1154a5293e2be146a663ac"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-squire-light-s101009-primary-s101009\\samples.jsonl",
+    "bytes": 2185445,
+    "sha256": "27993fc647c701adb5297de5e882d68d5f05faedae1de151056df910034ac6a2"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-squire-light-s101009-primary-s101009\\summary.json",
+    "bytes": 40350,
+    "sha256": "770c588affbf934f00a981cdd40a45045d81b025932bd822650f531aa10aed5b"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-squire-light-s101009-primary-s101009\\sustain-transitions.jsonl",
+    "bytes": 127460,
+    "sha256": "fc4dd0b9a6beaf37ca02c08ad96a15ea77aea89f7e7a5d3bcac93a6f5b06fe11"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-light-s101009-primary\\process.json",
+    "bytes": 640,
+    "sha256": "c81a0865135932bbd58db1232ebfcca91e7d58af56383bbf0e164c118a4c9222"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-light-s101009-primary\\process.log",
+    "bytes": 70,
+    "sha256": "ba0521301ef023aead4fcb0a231f561b6ee64a091bdc3607e208617a68c4d79d"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-light-s101009-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-light-s101009-primary\\artifacts\\heartbeat.json",
+    "bytes": 135,
+    "sha256": "9be0c7e5077dde9709a23ca799b80189e0dac3e35cddaeb0cd5ab6554cc6dbdf"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-light-s101009-primary\\artifacts\\index.json",
+    "bytes": 49039,
+    "sha256": "e382a33cad27d5484fa177121f9efd7bb8d557fea2ea8be4278b0b56c3682d9d"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-light-s101009-primary\\artifacts\\manifest.json",
+    "bytes": 3565,
+    "sha256": "acb9dc32a6022abc096cc5963749792c50bc32b0b19d11042c97e183b9b4416a"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-light-s101009-primary-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-light-s101009-primary-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-light-s101009-primary-s101009\\endpoints.json",
+    "bytes": 5082,
+    "sha256": "f8f307aa038ca8bfbe4547267d33c248f318ed88c9f9ccffa53b3d21c342010d"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-light-s101009-primary-s101009\\events.jsonl",
+    "bytes": 2335797,
+    "sha256": "6eeb50caedde98a87abf04c500acae5846a922991dd837b487c0c8f05dbde588"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-light-s101009-primary-s101009\\ready.json",
+    "bytes": 16885,
+    "sha256": "dc15968f526edb279892f4bdf03009bd6b4196ba673691c4ee8740be6009bfe4"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-light-s101009-primary-s101009\\samples.jsonl",
+    "bytes": 2316827,
+    "sha256": "04c26e6b46364da05aa71d72b591874beb9881fb168ebd8955b880ff86d1527d"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-light-s101009-primary-s101009\\summary.json",
+    "bytes": 45291,
+    "sha256": "ed1c8c7285b0c03b424209486d2e5648339ce3864998f874f7d0606786b8f781"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-light-s101009-primary-s101009\\sustain-transitions.jsonl",
+    "bytes": 129716,
+    "sha256": "2c8286a86c1bfe195ec1eff37104752df407c6c5b7189b929d728b3fc37c2955"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-light-s101009-primary\\process.json",
+    "bytes": 648,
+    "sha256": "187924fbde96c931b128a69e6546564e78c42842261f2480cdf422db4cb2f5aa"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-light-s101009-primary\\process.log",
+    "bytes": 74,
+    "sha256": "413afdab019395f93baf0d30936cc9ec754dc8c56640d757ef3c0db89ef87a16"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-light-s101009-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-light-s101009-primary\\artifacts\\heartbeat.json",
+    "bytes": 132,
+    "sha256": "8d68ffcf23fe5f5173d0bcf09bd5e99500cfbef4dfe4bd3e000ffbf69b549326"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-light-s101009-primary\\artifacts\\index.json",
+    "bytes": 44169,
+    "sha256": "c381e96ee2a44ae2f9ece9ba6c7f9e3b8fe34e66814ace5cb45971f7b129a105"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-light-s101009-primary\\artifacts\\manifest.json",
+    "bytes": 3536,
+    "sha256": "569b185f5faa999e0106ab7ae164cf53dc8e309378f6affd126c5a4a52ddf4d2"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-slinger-light-s101009-primary-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-slinger-light-s101009-primary-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-slinger-light-s101009-primary-s101009\\endpoints.json",
+    "bytes": 5109,
+    "sha256": "618f0a1ffb1435cb154f1ced9ff76de9ac06872a5aed6a36dce0e44dbc7670c5"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-slinger-light-s101009-primary-s101009\\events.jsonl",
+    "bytes": 2316703,
+    "sha256": "e6f4e35313f6ce4f4aadb7b244053e114049dd76d8d9ce186bbbd3bfbfc2a864"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-slinger-light-s101009-primary-s101009\\ready.json",
+    "bytes": 16808,
+    "sha256": "974d631ce49e3a3e4c90648327332f57bb87664c738e0130cad731a25ba8b2f5"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-slinger-light-s101009-primary-s101009\\samples.jsonl",
+    "bytes": 2303633,
+    "sha256": "062d58da3d0420974b013a1c466f176c4676e272b29b0a167ee3ca17fdc5da43"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-slinger-light-s101009-primary-s101009\\summary.json",
+    "bytes": 40867,
+    "sha256": "1022751df84bd2fbba805a0c966d7dd4645a7fb67cf981b194187f9b489a2a01"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-slinger-light-s101009-primary-s101009\\sustain-transitions.jsonl",
+    "bytes": 134078,
+    "sha256": "233aa2d6cc10e33c477d37ac53e92a82097bf70963c622bd991e757e036b6520"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-light-s101009-primary\\process.json",
+    "bytes": 641,
+    "sha256": "8a9e94119bbe57cfb07f204178ba3550d465232c705a4d73de74670476171118"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-light-s101009-primary\\process.log",
+    "bytes": 71,
+    "sha256": "55e7e865f9138e9731da13ccc5c701f3aaee7843673f0224c4d7e975df13d309"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-light-s101009-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-light-s101009-primary\\artifacts\\heartbeat.json",
+    "bytes": 132,
+    "sha256": "f3672be397782f2af71b783540f9769296cab705e35dcc2fa251a616370e2423"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-light-s101009-primary\\artifacts\\index.json",
+    "bytes": 39528,
+    "sha256": "b897ca4eda3a19be80564b6c4fd93acc9d1febcfdad56c833a680e314ac5a00d"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-light-s101009-primary\\artifacts\\manifest.json",
+    "bytes": 3730,
+    "sha256": "43d425aed5c79ba4254921679c733904545c358c7feeb5c2d72de84aca6ddc45"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-conduit-light-s101009-primary-s101009\\conduit-events.jsonl",
+    "bytes": 1214102,
+    "sha256": "7ea185f774143245976d635196620da29196ba72b06fe489c3ba9681815fb0e9"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-conduit-light-s101009-primary-s101009\\conduit-snapshots.jsonl",
+    "bytes": 527453,
+    "sha256": "86eeeee4abb39ae3e110af4fc6115e81d56e33eb30d00966d230d7f51c17a757"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-conduit-light-s101009-primary-s101009\\conduit.json",
+    "bytes": 76318,
+    "sha256": "654ef628ff6314a995f871954cc2a3a45532d660c47b8f0edff479cc7c3e460e"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-conduit-light-s101009-primary-s101009\\endpoints.json",
+    "bytes": 5300,
+    "sha256": "a089a42a47bdf96bd93fd84e54875a37f9352232b06117ceb8db4ddea911e742"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-conduit-light-s101009-primary-s101009\\events.jsonl",
+    "bytes": 4807359,
+    "sha256": "7525327b27027dd3f505d3b105490253093f06775d55fd00e33bbdd29a766ee7"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-conduit-light-s101009-primary-s101009\\ready.json",
+    "bytes": 22182,
+    "sha256": "6721efd8517ab92bdfded1a1e670f325dd6b5fdcaaf742aac3e729cf165adb0b"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-conduit-light-s101009-primary-s101009\\samples.jsonl",
+    "bytes": 3411165,
+    "sha256": "95d6980fa226aaeaf5e649f4847ad5b56d78a775183a21a524abc1477d01881b"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-conduit-light-s101009-primary-s101009\\summary.json",
+    "bytes": 36508,
+    "sha256": "4ef1731c54c48b93b5ad6f5f40d63bc3721c2712fc5180930fdce1b4a879a7f8"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-conduit-light-s101009-primary-s101009\\sustain-transitions.jsonl",
+    "bytes": 243506,
+    "sha256": "50c71a401ebaa22b9541eba224779241f999786ca0f7ad83359dc957c3c3c289"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-light-s101009-primary\\process.json",
+    "bytes": 642,
+    "sha256": "ef76240130ce2d2b119c51d63a97cced38d2dd1cfc2bc3d19988eba28f3212b2"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-light-s101009-primary\\process.log",
+    "bytes": 71,
+    "sha256": "34f3fd2784835246935a4f48d3c61276365a5abe1f76cea64aedc7149c28ff2d"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-light-s101009-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-light-s101009-primary\\artifacts\\heartbeat.json",
+    "bytes": 131,
+    "sha256": "ee53390c8e60d4d3e77e4df1e2f24d0c2c2a67f525df213957295fb3cf2d0b08"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-light-s101009-primary\\artifacts\\index.json",
+    "bytes": 63999,
+    "sha256": "57406cb1516be2a22a49867e76046390b60123bb44319ea37871e6604c40261f"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-light-s101009-primary\\artifacts\\manifest.json",
+    "bytes": 3571,
+    "sha256": "4f6ae7fe3c7b12b2ecb02d4fad7be98db161ff182886fc5e71c721944cfc1518"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-spirit-light-s101009-primary-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-spirit-light-s101009-primary-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-spirit-light-s101009-primary-s101009\\endpoints.json",
+    "bytes": 5051,
+    "sha256": "c8d8a11e0740c539704da3e0ec955018301ea81eee11c91297007a4133d745a3"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-spirit-light-s101009-primary-s101009\\events.jsonl",
+    "bytes": 1940968,
+    "sha256": "22992266fba03f96dc7255f7854a32103c0b01ab48a8aa5e16dead84d4b39138"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-spirit-light-s101009-primary-s101009\\ready.json",
+    "bytes": 16677,
+    "sha256": "e1dabf0d5fd3469851157b8b1fe510748ff544c4789f67ed3cdf1d8732ec288b"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-spirit-light-s101009-primary-s101009\\samples.jsonl",
+    "bytes": 2272465,
+    "sha256": "c242979b671dde2cfd41b61f9dc7570d86602107f123d9abf03100b53c23cc2e"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-spirit-light-s101009-primary-s101009\\summary.json",
+    "bytes": 59031,
+    "sha256": "248f9cdc9798ab70a95bc994711d74c2279be73775177b194c3cb320835ea9fa"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-light-s101009-primary\\artifacts\\t3-tundra-class-frame-01-spirit-light-s101009-primary-s101009\\sustain-transitions.jsonl",
+    "bytes": 171292,
+    "sha256": "33cb1000faf0dcf55d5eb4383db2aa735a8d91c21a1339410a9d8d3b866a7716"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-light-s101009-primary\\process.json",
+    "bytes": 640,
+    "sha256": "944eef5a0f0dc982faa91bf8bdd4c0fb045009260d63fd8d47f69818cd6564a0"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-light-s101009-primary\\process.log",
+    "bytes": 70,
+    "sha256": "34a97766399744f81c5a21db390a8b09902057ba8131ad8cd6a9c8b8fc78f094"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101009-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101009-primary\\artifacts\\heartbeat.json",
+    "bytes": 135,
+    "sha256": "2c833f41d4cb94e5e5cd5ce2cce108fdb2a1e0c5c88e0897a73d6d9f91cfdc1c"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101009-primary\\artifacts\\index.json",
+    "bytes": 47580,
+    "sha256": "9adb48537bae4c0065f570477060582dc7da5db1b0ca57edaa063617142dd444"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101009-primary\\artifacts\\manifest.json",
+    "bytes": 3476,
+    "sha256": "8992c94e70e1deb22487905032e67e5b2a66b7d752341b5f08ed9d69bdd3aa20"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-striker-balanced-s101009-primary-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-striker-balanced-s101009-primary-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-striker-balanced-s101009-primary-s101009\\endpoints.json",
+    "bytes": 4989,
+    "sha256": "689819bed9487841f447823a4eec8a35b40ec690d2295cad1238f805d36ee605"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-striker-balanced-s101009-primary-s101009\\events.jsonl",
+    "bytes": 2601341,
+    "sha256": "e011f2d0981f7e500029754977a61f53bac3a2c9fb82a695c8cb02ea7f44c4f7"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-striker-balanced-s101009-primary-s101009\\ready.json",
+    "bytes": 16884,
+    "sha256": "5ab9a72abc9ce2784819ede6ebb9d68dec800eacba24cbf45dc8924c097ceb27"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-striker-balanced-s101009-primary-s101009\\samples.jsonl",
+    "bytes": 2234028,
+    "sha256": "2389fdcd891b24e2acb03219176ed7841b7321238420a392b4380623e651404a"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-striker-balanced-s101009-primary-s101009\\summary.json",
+    "bytes": 43932,
+    "sha256": "668a44ffefeef18aeb826d317bdab0ffd1c0dc5fcad377a27b33536af701ef33"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-striker-balanced-s101009-primary-s101009\\sustain-transitions.jsonl",
+    "bytes": 142902,
+    "sha256": "10216e92b8627440fcac713ca6cfda2c1c8875bbb8f1440f629d32b33f375a9a"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101009-primary\\process.json",
+    "bytes": 648,
+    "sha256": "ce797c45cd59a003d98b2eb6d64b3cf8a752e4d14c0561ba2c8e8dfd4ffe437e"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101009-primary\\process.log",
+    "bytes": 74,
+    "sha256": "a04d77069f9d581542924a9eac36f38e79c2691c3b04ad7150efd07c9d7a377e"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101009-w2\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101009-w2\\artifacts\\heartbeat.json",
+    "bytes": 130,
+    "sha256": "48515fdce8c9ecd4ceffda2a83ef9d107e1ca3588a7644ed89b3a8ac0cb1795a"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101009-w2\\artifacts\\index.json",
+    "bytes": 47166,
+    "sha256": "8a6acb56da890fce9409e4fe7cbdd10595f90b7fabc15f26e8850d2b15197543"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101009-w2\\artifacts\\manifest.json",
+    "bytes": 3560,
+    "sha256": "6dd0b6d4085d71c87c8bd1d511c52d2c95151d646359c3d1246a4bceecc7c8ef"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101009-w2\\artifacts\\t3-tundra-class-frame-01-striker-balanced-s101009-w2-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101009-w2\\artifacts\\t3-tundra-class-frame-01-striker-balanced-s101009-w2-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101009-w2\\artifacts\\t3-tundra-class-frame-01-striker-balanced-s101009-w2-s101009\\endpoints.json",
+    "bytes": 4690,
+    "sha256": "66469f9e6389571533b0029463263f6891aa651e3683151b33b39b161149f4e6"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101009-w2\\artifacts\\t3-tundra-class-frame-01-striker-balanced-s101009-w2-s101009\\events.jsonl",
+    "bytes": 2169744,
+    "sha256": "b5bf4b469bfe3204da69af938cf2319f92b6571734cdb5449abdc947b208fad3"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101009-w2\\artifacts\\t3-tundra-class-frame-01-striker-balanced-s101009-w2-s101009\\ready.json",
+    "bytes": 16839,
+    "sha256": "accad9d89b31881fe7ef1ec9e56212c0301277ea0e04e15f27029f92dd78db01"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101009-w2\\artifacts\\t3-tundra-class-frame-01-striker-balanced-s101009-w2-s101009\\samples.jsonl",
+    "bytes": 2220645,
+    "sha256": "a1ddface2228c00b71a66a9191cd1583982954bfb8ebeaff39e5e44581e3e321"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101009-w2\\artifacts\\t3-tundra-class-frame-01-striker-balanced-s101009-w2-s101009\\summary.json",
+    "bytes": 43538,
+    "sha256": "0ba03d08753251495b457d70af5567a3da606cfeaeab2bbb7343cd109d8929ea"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101009-w2\\artifacts\\t3-tundra-class-frame-01-striker-balanced-s101009-w2-s101009\\sustain-transitions.jsonl",
+    "bytes": 144757,
+    "sha256": "daa81c33c52480d0805ad9fb9c9c2fa680128b7e4e6dda5600feb1429fb87d97"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101009-w2\\process.json",
+    "bytes": 638,
+    "sha256": "5ef02eb48c674a8d9babee989dff1d0550f61a31cb1fba61ac2624b54c30b571"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101009-w2\\process.log",
+    "bytes": 69,
+    "sha256": "9b8289da35d9a78a6a265dafd20e1ed0d846f78d7c98a76d33b5260d0dda3fa4"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-balanced-s101009-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-balanced-s101009-primary\\artifacts\\heartbeat.json",
+    "bytes": 134,
+    "sha256": "668cc1a590c3aa6c5a97ad172889f44310a70bf2631c940d9b7999955cc8cd49"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-balanced-s101009-primary\\artifacts\\index.json",
+    "bytes": 39453,
+    "sha256": "5e80e0befae7956d8e908beea43c84131921c41f484e07184d25e02fd5ede672"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-balanced-s101009-primary\\artifacts\\manifest.json",
+    "bytes": 3499,
+    "sha256": "cc57a37aaf9cf0560612a7ed6acd4ddbf5d08387bc4c5d8ea818bd710bc9542b"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-squire-balanced-s101009-primary-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-squire-balanced-s101009-primary-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-squire-balanced-s101009-primary-s101009\\endpoints.json",
+    "bytes": 4698,
+    "sha256": "677d51b0b3c017c09ccc684d02a4f977cd273f7866e9de17a7f2114c3f629de7"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-squire-balanced-s101009-primary-s101009\\events.jsonl",
+    "bytes": 1579847,
+    "sha256": "bc45216ec202dfe5a6366d4a69d094505d36126dbcbcea8a4b2afe2d853bf446"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-squire-balanced-s101009-primary-s101009\\ready.json",
+    "bytes": 16923,
+    "sha256": "53455fae58f320cda87ceca1cb2686db66a1e25caecdf2e18affab0347c7393a"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-squire-balanced-s101009-primary-s101009\\samples.jsonl",
+    "bytes": 2227708,
+    "sha256": "4236e695bbf11fe12c694be3956d8f04a1ec492c84c2ddc289df05df069cfe07"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-squire-balanced-s101009-primary-s101009\\summary.json",
+    "bytes": 36437,
+    "sha256": "e008facee308fcdb423c760166cce0ef6eb207931c03aa0b93e33ab5bf8d78bb"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-squire-balanced-s101009-primary-s101009\\sustain-transitions.jsonl",
+    "bytes": 105168,
+    "sha256": "64bf914121469661bcb3642a7ef4e323b41b2eb9d242b812cf560855c154a902"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-balanced-s101009-primary\\process.json",
+    "bytes": 646,
+    "sha256": "9c7666792e5920e13fa26461d7a8bbb00dfde408e7b1c7c68bda02da5459c1c4"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-balanced-s101009-primary\\process.log",
+    "bytes": 73,
+    "sha256": "0ad354e2697627b9030b49a1bfc1c8df3d232b469f1105a2adb876abbbfe5348"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101009-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101009-primary\\artifacts\\heartbeat.json",
+    "bytes": 135,
+    "sha256": "5a06037471406a11967b94675e8fe6f1cc26146d587e85d7c84055d56fa24a19"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101009-primary\\artifacts\\index.json",
+    "bytes": 9075,
+    "sha256": "7cc730e36016a88c4c771eb108a93e14a6911667e46d081d99538e0848940161"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101009-primary\\artifacts\\manifest.json",
+    "bytes": 3629,
+    "sha256": "b4fe2faf1e40ee97f8db0e6b18d39f35f4479b3b8cc1f8b7d9d4ecbbfc4d15c9"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-balanced-s101009-primary-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-balanced-s101009-primary-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-balanced-s101009-primary-s101009\\events.jsonl",
+    "bytes": 151878,
+    "sha256": "8fee30434d16d766476ded3e9878304de83d3ca285cc82af53cc15648b71b7d9"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-balanced-s101009-primary-s101009\\ready.json",
+    "bytes": 16846,
+    "sha256": "6bda8cafb1ded54f981e7c5a99bd9234a318d2257154eb96433801734b01e775"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-balanced-s101009-primary-s101009\\samples.jsonl",
+    "bytes": 142241,
+    "sha256": "19c77ef1caaa234b592052cebdc918d03b4d85c5ef72529cd7f7489abaac9fe1"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-balanced-s101009-primary-s101009\\summary.json",
+    "bytes": 8351,
+    "sha256": "4fb365b83d154c6c0c437e591bbe6b510c16326cab7484994c2816846fbf1a8f"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-balanced-s101009-primary-s101009\\sustain-transitions.jsonl",
+    "bytes": 5990,
+    "sha256": "8caa56d7ad02d55a484464177c0933c18cdc31ee1d3af3c9ff17a374d3a06476"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101009-primary\\process.json",
+    "bytes": 654,
+    "sha256": "fb410d271d62402dc8d94147eb375c86c769030771f8111148e8fc30e57f639d"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101009-primary\\process.log",
+    "bytes": 77,
+    "sha256": "c6950bba9aa45dd6f678a73ffb999afde5bf1bf155d1c39414d5099cf76f5361"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101009-a2\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101009-a2\\artifacts\\heartbeat.json",
+    "bytes": 133,
+    "sha256": "a93641e279c1f14cb881f11022fc9a3d4563239b12dc4fb62524b0e3f4bde36c"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101009-a2\\artifacts\\index.json",
+    "bytes": 22527,
+    "sha256": "9cc2fa1de54ac13b951e426e2006fc2a38cb85ada582ddc4b682cf3c616fe223"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101009-a2\\artifacts\\manifest.json",
+    "bytes": 3892,
+    "sha256": "385fd5f629fc4ffd13ac64f36f6e766b5959b0f5a6d6caea9e1455995711b066"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101009-a2\\artifacts\\t3-tundra-class-frame-01-apprentice-balanced-s101009-a2-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101009-a2\\artifacts\\t3-tundra-class-frame-01-apprentice-balanced-s101009-a2-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101009-a2\\artifacts\\t3-tundra-class-frame-01-apprentice-balanced-s101009-a2-s101009\\endpoints.json",
+    "bytes": 2569,
+    "sha256": "70a78de46f9edabb8beac33a8cfe4e9aa453ba01d26a769d662e0f8670e2b6ef"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101009-a2\\artifacts\\t3-tundra-class-frame-01-apprentice-balanced-s101009-a2-s101009\\events.jsonl",
+    "bytes": 1328368,
+    "sha256": "a37455fccc4356a24a3d1bb5766d6d3c7b48a167917ffa442dbf059955de4878"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101009-a2\\artifacts\\t3-tundra-class-frame-01-apprentice-balanced-s101009-a2-s101009\\ready.json",
+    "bytes": 17114,
+    "sha256": "34d2f29d806e716d0d17ac7fec18e267bf3c712db1b91db8ab1bb9e02cc5dbc5"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101009-a2\\artifacts\\t3-tundra-class-frame-01-apprentice-balanced-s101009-a2-s101009\\samples.jsonl",
+    "bytes": 1785026,
+    "sha256": "bbff8499b9b7b1453f7292f0e7d86bbf30883544722848c29092aba95e7ebd2b"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101009-a2\\artifacts\\t3-tundra-class-frame-01-apprentice-balanced-s101009-a2-s101009\\summary.json",
+    "bytes": 20879,
+    "sha256": "44d2cf177703010740bf0632359bb014039fd6468809f5806161e5cdd1805bed"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101009-a2\\artifacts\\t3-tundra-class-frame-01-apprentice-balanced-s101009-a2-s101009\\sustain-transitions.jsonl",
+    "bytes": 126275,
+    "sha256": "7f45644b5c46e85cc77102c34d3497b26e6ebc9a61b06c51fc0c6f95b2b9bed0"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101009-a2\\process.json",
+    "bytes": 643,
+    "sha256": "75661b754686ce1237572a12d3a30cedb8220423ed75537e7d211605ae1c912c"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101009-a2\\process.log",
+    "bytes": 72,
+    "sha256": "9b11db1c2b5c133d6896b8022008e3ec4e30d1903019cf0a6e9c56e485bcbf8c"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101009-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101009-primary\\artifacts\\heartbeat.json",
+    "bytes": 135,
+    "sha256": "2a7e4e80978a9e1988c03a71d1ae25d80c66ea84f1208f849eb470b79a4b7db1"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101009-primary\\artifacts\\index.json",
+    "bytes": 28986,
+    "sha256": "1c9535f2ae7c875fa46ceceb555aba9f5780cf669b12759945f3268e9aaa3580"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101009-primary\\artifacts\\manifest.json",
+    "bytes": 3565,
+    "sha256": "829823e5c2b9638f714067ed0d454434f7d6b9135f679c6b35d59383c8527578"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-slinger-balanced-s101009-primary-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-slinger-balanced-s101009-primary-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-slinger-balanced-s101009-primary-s101009\\endpoints.json",
+    "bytes": 5110,
+    "sha256": "f784e5bafb0787e6203823656790f30c51b6c02ea4154cf1791d250a630ab528"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-slinger-balanced-s101009-primary-s101009\\events.jsonl",
+    "bytes": 2118538,
+    "sha256": "b368fecdfe759f8495eb5b1a65e6869a7d3c9165ba2bfcb50a9cb5b05d1736aa"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-slinger-balanced-s101009-primary-s101009\\ready.json",
+    "bytes": 16823,
+    "sha256": "97d553dd5307daccdb8222bff8c8488fea16ad5f85532acc8936167801e6a15b"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-slinger-balanced-s101009-primary-s101009\\samples.jsonl",
+    "bytes": 2332205,
+    "sha256": "421a3b3a40bba1105e8116e6f7ce261c5e371323a4880d711b9ec99fa00936a4"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-slinger-balanced-s101009-primary-s101009\\summary.json",
+    "bytes": 26908,
+    "sha256": "bed56ae6a5f7b65b8fb16b69611a74942c7b988c9a20dbe5c7291de960b4b81b"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-slinger-balanced-s101009-primary-s101009\\sustain-transitions.jsonl",
+    "bytes": 107564,
+    "sha256": "b7f4a7d8e5adf11cec3dcfa8fb9f5bead0aed41419b5984c987a0d7b4ac25adb"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101009-primary\\process.json",
+    "bytes": 648,
+    "sha256": "398f0bd7635c13472dec62e2ef8bff0caf8dd7d6389e5ea1061f101d64e423e9"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101009-primary\\process.log",
+    "bytes": 74,
+    "sha256": "de53868b38b99d304266a067f52b327273cb9c278fcfc104eb761e0f00beba5d"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101009-w5\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101009-w5\\artifacts\\heartbeat.json",
+    "bytes": 130,
+    "sha256": "f55da05ceac33f9d1cd9d52a87231a6ddcfe023a17b99af76e3c67aeb75bf5d1"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101009-w5\\artifacts\\index.json",
+    "bytes": 22911,
+    "sha256": "4eaaaca1dcdc8ba5a0f6a843517411f44a93bfe410f73de1e6ec3264506dac84"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101009-w5\\artifacts\\manifest.json",
+    "bytes": 3642,
+    "sha256": "a5db2504c3588eee46c45d3f92fec8d93698579837ee0e10563e9e8e7b21f230"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101009-w5\\artifacts\\t3-tundra-class-frame-01-slinger-balanced-s101009-w5-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101009-w5\\artifacts\\t3-tundra-class-frame-01-slinger-balanced-s101009-w5-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101009-w5\\artifacts\\t3-tundra-class-frame-01-slinger-balanced-s101009-w5-s101009\\endpoints.json",
+    "bytes": 5130,
+    "sha256": "f86dcc8ff41ec7b45c6cb70ebbdb2155d065b97dcac8081d04c67013c88b8010"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101009-w5\\artifacts\\t3-tundra-class-frame-01-slinger-balanced-s101009-w5-s101009\\events.jsonl",
+    "bytes": 2713896,
+    "sha256": "45936e39a6f37c2ae26b3288431241f968067871ea85e263a6d56510f3b12c01"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101009-w5\\artifacts\\t3-tundra-class-frame-01-slinger-balanced-s101009-w5-s101009\\ready.json",
+    "bytes": 16779,
+    "sha256": "830e088e22979cbdc9213b27c8fed5ec93487cac58787e0adf8fa393fd6838f8"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101009-w5\\artifacts\\t3-tundra-class-frame-01-slinger-balanced-s101009-w5-s101009\\samples.jsonl",
+    "bytes": 2346830,
+    "sha256": "5c5ffde1428f115b2fdf21778de7b4c89840731d82b82de2d19929e7b67990c4"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101009-w5\\artifacts\\t3-tundra-class-frame-01-slinger-balanced-s101009-w5-s101009\\summary.json",
+    "bytes": 21273,
+    "sha256": "152346e27416ca9e01df35aa76a78b6851df31a1f455f80956481c39fc80d7c3"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101009-w5\\artifacts\\t3-tundra-class-frame-01-slinger-balanced-s101009-w5-s101009\\sustain-transitions.jsonl",
+    "bytes": 70651,
+    "sha256": "91dc0d6fd0739c1080eb8955f2987ea5edd49bc6abcb11c572b04aa36edac101"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101009-w5\\process.json",
+    "bytes": 638,
+    "sha256": "872db5a374c84029a5d05ff3e709b449da41847dd7e2e3ced4e215767a26e359"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101009-w5\\process.log",
+    "bytes": 69,
+    "sha256": "23738d0038048a993b04e28befaddde9637c074f835e095b3c49638227fc0ea3"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101009-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101009-primary\\artifacts\\heartbeat.json",
+    "bytes": 135,
+    "sha256": "da3d95a778513209d149cdcf1a0022c070341ab66c5d68aa34508d63bb932af2"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101009-primary\\artifacts\\index.json",
+    "bytes": 32766,
+    "sha256": "de67a1e4af130275c32502d7539f448d157a410e4ece97e0990d86aeb02d08fb"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101009-primary\\artifacts\\manifest.json",
+    "bytes": 3587,
+    "sha256": "b1efa3962294c0dfaaac08fb13bf962d87a9fc282df73cf9767ba1291ac2c49b"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101009-primary-s101009\\conduit-events.jsonl",
+    "bytes": 698218,
+    "sha256": "4208375878e5ee00906f16ff295e5e44df1b0a80641fe0fb6038467ba437b8d3"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101009-primary-s101009\\conduit-snapshots.jsonl",
+    "bytes": 442953,
+    "sha256": "7a9ccf870f987cff317a9a68a586936a036b87213029c1860f4783b9f06a2219"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101009-primary-s101009\\conduit.json",
+    "bytes": 77855,
+    "sha256": "4fbbb17b84e70d0397402a1ad1d48eb40182165fc86182e3de60cdc384f40822"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101009-primary-s101009\\endpoints.json",
+    "bytes": 5305,
+    "sha256": "6b9e068210b780406778248fc5f35ad18e3c27e61dc22eae2407904631e955f9"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101009-primary-s101009\\events.jsonl",
+    "bytes": 3265365,
+    "sha256": "9ee917c408060f2f44c70c66bd6ae83d7e48995c378940a8c84a2444b4e7ace0"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101009-primary-s101009\\ready.json",
+    "bytes": 21041,
+    "sha256": "2cda566d89cee2cff30ad23b72932bb3cde5cca5cd8339e79544b2bde060e2c5"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101009-primary-s101009\\samples.jsonl",
+    "bytes": 3241970,
+    "sha256": "8b8d48bd1b9ebaf8cdcff6e685aaa199c5eed267dc5ab561b98cde72d57a2842"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101009-primary-s101009\\summary.json",
+    "bytes": 30290,
+    "sha256": "41e7942d43afdae43e8e9ee1eb1de45867822485eb460c8281a1a958f4c78135"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101009-primary-s101009\\sustain-transitions.jsonl",
+    "bytes": 270202,
+    "sha256": "42aa43c3ec069cd753a53b3b6922a5e9bb4138970a82ea04060ecaf478f1e9f6"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101009-primary\\process.json",
+    "bytes": 648,
+    "sha256": "cc823db707f16a9989153feaaa1d59950609b66bcdad569d52749332948652a0"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101009-primary\\process.log",
+    "bytes": 74,
+    "sha256": "9d44cb89558bbcc14b16688e9fc412882cabffda29362a6f77017597bf401a93"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101009-w6\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101009-w6\\artifacts\\heartbeat.json",
+    "bytes": 130,
+    "sha256": "e68f96a17fed6b6c58438af3fe2430e43b7f54a587bfaf1ed44ba70be245a8d8"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101009-w6\\artifacts\\index.json",
+    "bytes": 33645,
+    "sha256": "3d1d1d9b68d2f8bbb6859c477657f5ae6f3a8d5518d36295232898d82c144f38"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101009-w6\\artifacts\\manifest.json",
+    "bytes": 3686,
+    "sha256": "eb2def700d2dbbe24f21001c2371cca5070d05d339a93cb4b4e58eba924aaa5c"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101009-w6\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101009-w6-s101009\\conduit-events.jsonl",
+    "bytes": 384245,
+    "sha256": "8230932f8acaaa48782d699fa5fd2cde17ce44ae6c76e14c77d8083c90e31bcb"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101009-w6\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101009-w6-s101009\\conduit-snapshots.jsonl",
+    "bytes": 443877,
+    "sha256": "1352e4c0edfe8779da832bb581561e62b3c6567400999993175c7e819b3e9663"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101009-w6\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101009-w6-s101009\\conduit.json",
+    "bytes": 76794,
+    "sha256": "8489fc4790246910f8118a686cf30a56ee1a9e62b09431db74b3a14231bccfdc"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101009-w6\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101009-w6-s101009\\endpoints.json",
+    "bytes": 5311,
+    "sha256": "e4c28620f4b3f8f76098f20f90a2ea1401b3d961bf7d50940537bbc55484d631"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101009-w6\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101009-w6-s101009\\events.jsonl",
+    "bytes": 2004764,
+    "sha256": "c159646c379937931e8755d2ec70235508b411f0e430766310d0fede6dc5fbb5"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101009-w6\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101009-w6-s101009\\ready.json",
+    "bytes": 21106,
+    "sha256": "0721347836391b8a735cd935529b95fec9c415a77778b65e7d3eed35ae362042"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101009-w6\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101009-w6-s101009\\samples.jsonl",
+    "bytes": 3227192,
+    "sha256": "3ef62656ad007a9036621450fb12aa06748972ff156e740704009cd1e04fb900"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101009-w6\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101009-w6-s101009\\summary.json",
+    "bytes": 31105,
+    "sha256": "9c4fd7ee546f4c8b090aaa133b3faa5b7170f2f7628936c8627bc8eebb3122c9"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101009-w6\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101009-w6-s101009\\sustain-transitions.jsonl",
+    "bytes": 264540,
+    "sha256": "38b737439c5e18e36bca0d674c5e31743b6a9b6179c4f388b1122205b8ea95df"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101009-w6\\process.json",
+    "bytes": 638,
+    "sha256": "df786f5c942f9a7636daf237329687640b90ba3323dba49ec833867fa4013c94"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101009-w6\\process.log",
+    "bytes": 69,
+    "sha256": "b82ea953c36e7d744cff91ca69df9511ad5404b1ffc7c83220691253f2875238"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101009-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101009-primary\\artifacts\\heartbeat.json",
+    "bytes": 134,
+    "sha256": "44c1336cf5dc7571c79a4a2a49cc6075377432446d418106b8e3df543ae5bf08"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101009-primary\\artifacts\\index.json",
+    "bytes": 55369,
+    "sha256": "bd149715d47625a6443016a9f82c7a38a5b830eb9845a547ab98c0d131534db7"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101009-primary\\artifacts\\manifest.json",
+    "bytes": 3566,
+    "sha256": "75a3e65ffcdb941c91c8aea88e3e8e71ad8af80f0bc3bb8c2bb5f074bbafa888"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-spirit-balanced-s101009-primary-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-spirit-balanced-s101009-primary-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-spirit-balanced-s101009-primary-s101009\\endpoints.json",
+    "bytes": 5278,
+    "sha256": "a474cbcb9c48239ee44ece6820e637494f5fbfe65b5fa2a600bb613e09836872"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-spirit-balanced-s101009-primary-s101009\\events.jsonl",
+    "bytes": 1544759,
+    "sha256": "7aac8b4701cba530829a0c9f9c01976a2ed0fddb9c2fc0a5d3798ebb41ef17b9"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-spirit-balanced-s101009-primary-s101009\\ready.json",
+    "bytes": 16669,
+    "sha256": "d0315e826afc51c65cfeeac9e39c05aa59ae3fd4f34ffefe4deb36b75abf7160"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-spirit-balanced-s101009-primary-s101009\\samples.jsonl",
+    "bytes": 2319490,
+    "sha256": "3c1ae74c1221d0be9a68cb621d97fc9dd1eee44aebe1996a8e7f13a96867ed62"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-spirit-balanced-s101009-primary-s101009\\summary.json",
+    "bytes": 51105,
+    "sha256": "b5f91af3b2637b072c9b9ef19c302bb71e6dfaa78c138ae0e8d5a105a413f302"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101009-primary\\artifacts\\t3-tundra-class-frame-01-spirit-balanced-s101009-primary-s101009\\sustain-transitions.jsonl",
+    "bytes": 139022,
+    "sha256": "c242d870e65122546738b1c55e14de7717cfc1d43542fc91ab764a16044ce98b"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101009-primary\\process.json",
+    "bytes": 646,
+    "sha256": "a06c87162727e295d7e854eb7ef2c6be8bbbce7173d5d12228c7baa532c09179"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101009-primary\\process.log",
+    "bytes": 73,
+    "sha256": "74588fc60929a03da2a8f52a3769b1278ecb534aed3d46c3234694008c4e8b92"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101009-a3\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101009-a3\\artifacts\\heartbeat.json",
+    "bytes": 129,
+    "sha256": "097ab2a2a5f4d51cf66a75b57df187efe1710857bb4a89eb1ac2823262373156"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101009-a3\\artifacts\\index.json",
+    "bytes": 51673,
+    "sha256": "69455cb724ee4b7e8cc2985dfd5d9e0885a2deea1c428f2b778ef3dd47cfdd21"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101009-a3\\artifacts\\manifest.json",
+    "bytes": 3652,
+    "sha256": "bdbbecd7ffbc7d0cef3f9aab0a7d6aa9cd0bb8173b6639ac6a2dedb0cf2af073"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101009-a3\\artifacts\\t3-tundra-class-frame-01-spirit-balanced-s101009-a3-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101009-a3\\artifacts\\t3-tundra-class-frame-01-spirit-balanced-s101009-a3-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101009-a3\\artifacts\\t3-tundra-class-frame-01-spirit-balanced-s101009-a3-s101009\\endpoints.json",
+    "bytes": 4861,
+    "sha256": "80ed41a33ad435dfb8ba9356d4dd0050f7953d8d228d17298a30c4ccc8069097"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101009-a3\\artifacts\\t3-tundra-class-frame-01-spirit-balanced-s101009-a3-s101009\\events.jsonl",
+    "bytes": 1392047,
+    "sha256": "88dbcd5b76691fc441d1d99b06c930ed69276b782d9b6687f17887ea1cbd89e9"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101009-a3\\artifacts\\t3-tundra-class-frame-01-spirit-balanced-s101009-a3-s101009\\ready.json",
+    "bytes": 16664,
+    "sha256": "0e5fe3720501bddb8747dddd5ae6111573a3e7f3d9e3c80391cf0cc779e68311"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101009-a3\\artifacts\\t3-tundra-class-frame-01-spirit-balanced-s101009-a3-s101009\\samples.jsonl",
+    "bytes": 2296431,
+    "sha256": "0066dcaadd07163da839fd372c9c7707052d341d6014d11058a9687440d0be96"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101009-a3\\artifacts\\t3-tundra-class-frame-01-spirit-balanced-s101009-a3-s101009\\summary.json",
+    "bytes": 47691,
+    "sha256": "2c2fb2279f657d6b31569c31982fe4b6ee04856773abe250aa8df1a31a5de0fe"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101009-a3\\artifacts\\t3-tundra-class-frame-01-spirit-balanced-s101009-a3-s101009\\sustain-transitions.jsonl",
+    "bytes": 131073,
+    "sha256": "16f1347d213ded353b500a2c8e758058b5ce2662dc30240d376a587ab18fc2a8"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101009-a3\\process.json",
+    "bytes": 636,
+    "sha256": "568287a2bcf3c2d836426325d244cd85f14e662bc0a42bae307e1ce7b638189a"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101009-a3\\process.log",
+    "bytes": 68,
+    "sha256": "1ed28d0b10fedfae2864fe193f1c86e4b6dc2bf0fe0dbf8a7ef43f416e3e6f19"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101009-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101009-primary\\artifacts\\heartbeat.json",
+    "bytes": 132,
+    "sha256": "8e4338ff92956d4aecc939bdf3d25babccd75de5b61bc2a08905faed2a361c08"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101009-primary\\artifacts\\index.json",
+    "bytes": 43857,
+    "sha256": "9b614b93613c2609cee1728c519f8b4f9b66c7d36000f4069601423fb64cc617"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101009-primary\\artifacts\\manifest.json",
+    "bytes": 3500,
+    "sha256": "f37fa41c2e1fff49bade27641d89a2355a82c12b1731ffd1ffb279af9065d64a"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-striker-heavy-s101009-primary-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-striker-heavy-s101009-primary-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-striker-heavy-s101009-primary-s101009\\endpoints.json",
+    "bytes": 4778,
+    "sha256": "238287d71b25d213364d49fb3ba29100432e307cf612e944735d99fc92a96355"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-striker-heavy-s101009-primary-s101009\\events.jsonl",
+    "bytes": 2202804,
+    "sha256": "a9138af944b7ce89cf974c58dd28aabcbcf859f1495fc2d2cccca2d34744f3cf"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-striker-heavy-s101009-primary-s101009\\ready.json",
+    "bytes": 16888,
+    "sha256": "2b488f5070fab7abfcafeb0dc202c4cbdfdee4a05611e9bb5e9d074a55b7429f"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-striker-heavy-s101009-primary-s101009\\samples.jsonl",
+    "bytes": 2211874,
+    "sha256": "5d556fb910233e63181d8af31a158363e7a1f2a025e0a8ef7f0cd581f6568846"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-striker-heavy-s101009-primary-s101009\\summary.json",
+    "bytes": 40493,
+    "sha256": "eeb69f32e0e98c96881ce954823f938181e6c270eb231b6019000c7952b21c20"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-striker-heavy-s101009-primary-s101009\\sustain-transitions.jsonl",
+    "bytes": 125394,
+    "sha256": "36ae67ce2320063fcd2af83fa1ebd657d141bb9ebbb2db4c337ad1fced781512"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101009-primary\\process.json",
+    "bytes": 642,
+    "sha256": "a65d2402ad0f2a25f4ba93e17719ebd61adce4e5636ef431679196cf1a59f29d"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101009-primary\\process.log",
+    "bytes": 71,
+    "sha256": "5c99539ac92da30d97a4df42015c8a23c9acdbf3de2e78dc0d6b723b8b9e851a"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101009-w3\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101009-w3\\artifacts\\heartbeat.json",
+    "bytes": 127,
+    "sha256": "1816cdb890fcdc07be14564ee2b417b2f753ce6195431c12c611f101ec1a0b4e"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101009-w3\\artifacts\\index.json",
+    "bytes": 42790,
+    "sha256": "d36d27531e0df40027165a4754e3f31c83e05b50b83a332c6bbd82e0daf503cb"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101009-w3\\artifacts\\manifest.json",
+    "bytes": 3584,
+    "sha256": "2ea9411e02260915a3b88b6331ed8b456c6cfda85073f7de93a28336211458c8"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101009-w3\\artifacts\\t3-tundra-class-frame-01-striker-heavy-s101009-w3-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101009-w3\\artifacts\\t3-tundra-class-frame-01-striker-heavy-s101009-w3-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101009-w3\\artifacts\\t3-tundra-class-frame-01-striker-heavy-s101009-w3-s101009\\endpoints.json",
+    "bytes": 4655,
+    "sha256": "79f85b899f69c05452f358f71e4f85b42db60f192d7b85507d21af140e5242ac"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101009-w3\\artifacts\\t3-tundra-class-frame-01-striker-heavy-s101009-w3-s101009\\events.jsonl",
+    "bytes": 1826573,
+    "sha256": "fdfe6b3d688b269ae169cbbadcc6b3479f16d208cda83ff711dd774c0aad02b6"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101009-w3\\artifacts\\t3-tundra-class-frame-01-striker-heavy-s101009-w3-s101009\\ready.json",
+    "bytes": 16843,
+    "sha256": "63682d36c03496ed0b585b58c71d1c06ec9d46aceb1c3fe8ba990c556a02e845"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101009-w3\\artifacts\\t3-tundra-class-frame-01-striker-heavy-s101009-w3-s101009\\samples.jsonl",
+    "bytes": 2227212,
+    "sha256": "6b1a8977f576bce49cff3dbc3ebc241b0084dedd512c21386115d332d0d83c45"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101009-w3\\artifacts\\t3-tundra-class-frame-01-striker-heavy-s101009-w3-s101009\\summary.json",
+    "bytes": 39502,
+    "sha256": "e7dd28314df545db7006c18d799c372a515740b4719bfc9aea4d548f134c31e2"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101009-w3\\artifacts\\t3-tundra-class-frame-01-striker-heavy-s101009-w3-s101009\\sustain-transitions.jsonl",
+    "bytes": 120233,
+    "sha256": "ac54754008252fdcd3b7e2aee45d8e7569a1204519d016efcd459ac94d93d291"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101009-w3\\process.json",
+    "bytes": 632,
+    "sha256": "5470b1b0bedfaef1a1c4aa7ab3ed45c148d5fddc46a0de352921b8680632a640"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101009-w3\\process.log",
+    "bytes": 66,
+    "sha256": "7b2a1b47b457a6944f83c9287cab0afbec24807b3c79b8825d6e95570eedf32f"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101009-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101009-primary\\artifacts\\heartbeat.json",
+    "bytes": 131,
+    "sha256": "b8fcec6cf51b2533ce9b90f80b40293e018aef1daa686edc0f616cd6b1bc5e85"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101009-primary\\artifacts\\index.json",
+    "bytes": 40608,
+    "sha256": "27c7213de901f33b0f09f641b814250202fa348172e6a0156571624234fe5f2a"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101009-primary\\artifacts\\manifest.json",
+    "bytes": 3573,
+    "sha256": "d5be04ed03cb093b18924f4a63c25a7b8928e3d99ad38bf898ea2528cd414f2d"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-squire-heavy-s101009-primary-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-squire-heavy-s101009-primary-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-squire-heavy-s101009-primary-s101009\\endpoints.json",
+    "bytes": 4769,
+    "sha256": "c6f8f934ba5d0e5ed02d100a866c9849c6e875cf6f784c042a74eed6aff586ce"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-squire-heavy-s101009-primary-s101009\\events.jsonl",
+    "bytes": 1418726,
+    "sha256": "651535146e060afabf87a504c9416b6480fd8a5e2d6f6b07f9663b8e25ddf8bb"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-squire-heavy-s101009-primary-s101009\\ready.json",
+    "bytes": 16896,
+    "sha256": "ba5c427a7a5c053783e7f182926b541ee5fda47b49f1d1af0ff9f44c832767da"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-squire-heavy-s101009-primary-s101009\\samples.jsonl",
+    "bytes": 2238500,
+    "sha256": "86a66de8a23621412bdd1144207b73b5925c4a0b6d8e0ec28e73c2609cf6c1ca"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-squire-heavy-s101009-primary-s101009\\summary.json",
+    "bytes": 37498,
+    "sha256": "08d4a3413ac55f2b5176692261d421225bda081ae8a4610c6b487d3a0e001f81"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-squire-heavy-s101009-primary-s101009\\sustain-transitions.jsonl",
+    "bytes": 115682,
+    "sha256": "92df01eddd094d8af0bcd9f7a314c4d85170a99b38732ef0d1fdb4b1ca85941c"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101009-primary\\process.json",
+    "bytes": 640,
+    "sha256": "3e373bb3731308adbcc58ae28ff1d6a6c101981cef93780fef9a5403eac0ea6b"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101009-primary\\process.log",
+    "bytes": 70,
+    "sha256": "745da60d654df56b613ee6cb8e1a1175a866f1f0d17b4b3c9a095f7e95eeeff0"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101009-w4\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101009-w4\\artifacts\\heartbeat.json",
+    "bytes": 126,
+    "sha256": "931018e39b7997f5b486e6afc89492af7fc8efe781faa7ffeee6e9936c146e34"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101009-w4\\artifacts\\index.json",
+    "bytes": 52612,
+    "sha256": "5c4b0406563cf67ff4b88a20d2fb38afd9d75a1d8a36ef07ca0f18175430bfd6"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101009-w4\\artifacts\\manifest.json",
+    "bytes": 3654,
+    "sha256": "9b4f61af1616feb4400da5e69d9d4672b9f335e307003402dd2b192ee0d36e71"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101009-w4\\artifacts\\t3-tundra-class-frame-01-squire-heavy-s101009-w4-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101009-w4\\artifacts\\t3-tundra-class-frame-01-squire-heavy-s101009-w4-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101009-w4\\artifacts\\t3-tundra-class-frame-01-squire-heavy-s101009-w4-s101009\\endpoints.json",
+    "bytes": 4811,
+    "sha256": "2a5499f92b22c16e70066aa3b61d5bdde14cef552650ccd4617571c5ccd8d44f"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101009-w4\\artifacts\\t3-tundra-class-frame-01-squire-heavy-s101009-w4-s101009\\events.jsonl",
+    "bytes": 1241540,
+    "sha256": "8ab28cf23cba4cd3e3f3ba96ca93796e73d53f645093a5928fafd475b6e5538b"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101009-w4\\artifacts\\t3-tundra-class-frame-01-squire-heavy-s101009-w4-s101009\\ready.json",
+    "bytes": 16936,
+    "sha256": "df8a30c083c5519a7239724860f51aafe802f6426843b9ee25e2cc6e11cb917c"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101009-w4\\artifacts\\t3-tundra-class-frame-01-squire-heavy-s101009-w4-s101009\\samples.jsonl",
+    "bytes": 2259195,
+    "sha256": "5ed7bb09c5a81a362e0464bb38691abe879152e177a6c9284fa36330bade6099"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101009-w4\\artifacts\\t3-tundra-class-frame-01-squire-heavy-s101009-w4-s101009\\summary.json",
+    "bytes": 48550,
+    "sha256": "1a8e691d3e9e45940a44ffd786d5d4f149f484c8234314e8c2aab354ea9fbe50"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101009-w4\\artifacts\\t3-tundra-class-frame-01-squire-heavy-s101009-w4-s101009\\sustain-transitions.jsonl",
+    "bytes": 153981,
+    "sha256": "4cff2589fb0a13d737e82fe0de70c287518f50c9a72e377385965cae3e879ddf"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101009-w4\\process.json",
+    "bytes": 630,
+    "sha256": "acfe3965ef26ad2f56363db63b2fb7bfa5ba560d709a8d71b2fbb175da619215"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101009-w4\\process.log",
+    "bytes": 65,
+    "sha256": "d0491fedb5c2b0a741e4191d1f225f94e9c519080015ccc0d61c4785c85dbdb2"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-heavy-s101009-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-heavy-s101009-primary\\artifacts\\heartbeat.json",
+    "bytes": 135,
+    "sha256": "a50f43889ccd84668c78601a9a994add0943441567c1e799f377050099f53019"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-heavy-s101009-primary\\artifacts\\index.json",
+    "bytes": 34664,
+    "sha256": "4405b40ff34c0408d27e3225f8a0e77c4775ed08a93c86925b8a14447239a30b"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-heavy-s101009-primary\\artifacts\\manifest.json",
+    "bytes": 3544,
+    "sha256": "2d9716c87779777151e71e0862280887546c929d3ffc45a4fd6f0185bf8c3add"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-heavy-s101009-primary-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-heavy-s101009-primary-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-heavy-s101009-primary-s101009\\endpoints.json",
+    "bytes": 5190,
+    "sha256": "0b752af08686f54831d16c4231cdccc05e8dc6432a5f455b535fd38d2e6c0f50"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-heavy-s101009-primary-s101009\\events.jsonl",
+    "bytes": 1372383,
+    "sha256": "fedebdb15f1f935c6f1057b08d35370088a22a66afa5901761ce6acb73a76c24"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-heavy-s101009-primary-s101009\\ready.json",
+    "bytes": 16971,
+    "sha256": "997ffd5eafed3e35c9a090d6bee1670991eff89299237d2c16fcd2f46d2aad23"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-heavy-s101009-primary-s101009\\samples.jsonl",
+    "bytes": 2308386,
+    "sha256": "8a978a49c7eb51d27eee37aef9054bb23ea1da4617457c957165f7f1da07f361"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-heavy-s101009-primary-s101009\\summary.json",
+    "bytes": 32168,
+    "sha256": "609d0011df5114206b3c23640a08053c1ff6b8abd8d9b2c094dd9a660de80285"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-heavy-s101009-primary-s101009\\sustain-transitions.jsonl",
+    "bytes": 133773,
+    "sha256": "b5a1e70efce399cfee748cfaadb666c49d419e420287df1780d32f363e944496"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-heavy-s101009-primary\\process.json",
+    "bytes": 648,
+    "sha256": "0c6a21c28a2191264ce10fe4f6361380895698bb5c163d9389c72d530e755096"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-heavy-s101009-primary\\process.log",
+    "bytes": 74,
+    "sha256": "d2588657829f0f14a6d98a2818d1187b6cd2ae8e6053008681550b13ba484727"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-heavy-s101009-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-heavy-s101009-primary\\artifacts\\heartbeat.json",
+    "bytes": 132,
+    "sha256": "0606f02d45a843a589e66beeafcbf0609626b2776e5a98d79377952ad42f7d62"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-heavy-s101009-primary\\artifacts\\index.json",
+    "bytes": 26587,
+    "sha256": "40e651e3ff72298f21e7e87accbf22b28da9db9358795ea01ea79b06b227aaa2"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-heavy-s101009-primary\\artifacts\\manifest.json",
+    "bytes": 3595,
+    "sha256": "8934762f56855b81644c054f42cae6b48b5810d1c882b18c62206c3bf73ada29"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-slinger-heavy-s101009-primary-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-slinger-heavy-s101009-primary-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-slinger-heavy-s101009-primary-s101009\\endpoints.json",
+    "bytes": 5106,
+    "sha256": "bfaed8d632f5222662fb6108dfb6b5c20c4f17c282d7675db0163fc301c2d2bb"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-slinger-heavy-s101009-primary-s101009\\events.jsonl",
+    "bytes": 2483194,
+    "sha256": "84e3122090fd2b5926b13f27fb9c1c2d1808cef4c39a462231abaf679aa4e565"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-slinger-heavy-s101009-primary-s101009\\ready.json",
+    "bytes": 16809,
+    "sha256": "3cb612c041fa1f7c7d6910bd8c30bfc259f1942d5b545499a7e08ab9a20f5f64"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-slinger-heavy-s101009-primary-s101009\\samples.jsonl",
+    "bytes": 2373480,
+    "sha256": "e0c9a63d94e0bbefe98a0572116090b10bc436057fe4e064f218b303744460ea"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-slinger-heavy-s101009-primary-s101009\\summary.json",
+    "bytes": 24679,
+    "sha256": "8c085140a345e5d2c148628f0fd7572eb5e4cbda629ac8dccde53ad5f92d49eb"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-slinger-heavy-s101009-primary-s101009\\sustain-transitions.jsonl",
+    "bytes": 117690,
+    "sha256": "27265a3256f1f07906da5817985f7484c43f17be7c46e307e3932675e3d69764"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-heavy-s101009-primary\\process.json",
+    "bytes": 641,
+    "sha256": "260b6fe7e36b2e30334e1328397a391bd062fe995c8e8e16c6bc70af2f3a4efa"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-heavy-s101009-primary\\process.log",
+    "bytes": 71,
+    "sha256": "c2a8650dc5cf82dc6fcee4200a577f1dcb97076a627390ab3b6c1d6fdcac3221"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-heavy-s101009-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-heavy-s101009-primary\\artifacts\\heartbeat.json",
+    "bytes": 132,
+    "sha256": "b4d466e5ba58b259c95e64192dd925075e57b6302de30a8bd34b43c865a9f06e"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-heavy-s101009-primary\\artifacts\\index.json",
+    "bytes": 29244,
+    "sha256": "dd3378de680abce71bb34ec7be1e3ba45e5f2335ed9fea20db4cb81e78af568a"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-heavy-s101009-primary\\artifacts\\manifest.json",
+    "bytes": 3580,
+    "sha256": "96c770bc6cf913dd1507d12d3a52c04d8e24103bd212cb4aa81fbd4e532edb3b"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-conduit-heavy-s101009-primary-s101009\\conduit-events.jsonl",
+    "bytes": 133967,
+    "sha256": "6d0f5567af40980a1514ded2c8f7f92276ee63332dcce6dd365313a0d0389e5a"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-conduit-heavy-s101009-primary-s101009\\conduit-snapshots.jsonl",
+    "bytes": 253060,
+    "sha256": "6835e303e6a13947de1392efdb935fd585ea3f04130195fe1afb79865573236c"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-conduit-heavy-s101009-primary-s101009\\conduit.json",
+    "bytes": 59668,
+    "sha256": "fed36d55a8b7808447d879cb0a7c5b13ab98d5713d2b68f420464476c2cf2212"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-conduit-heavy-s101009-primary-s101009\\endpoints.json",
+    "bytes": 5289,
+    "sha256": "28439f4782f0e094e6df10e03c856daf8f81418e5a920c8e65289d7d77f8c219"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-conduit-heavy-s101009-primary-s101009\\events.jsonl",
+    "bytes": 1554258,
+    "sha256": "088b0638174dfe5f4c61fed5b7d2b97e13b2ec3bb42c908b50443301d417b19b"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-conduit-heavy-s101009-primary-s101009\\ready.json",
+    "bytes": 19831,
+    "sha256": "e150f95973529fbd0c922bfdb91b2965de2aa5811e6b318d9fd16e1ba7b8d677"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-conduit-heavy-s101009-primary-s101009\\samples.jsonl",
+    "bytes": 2688156,
+    "sha256": "348832ed0d135b3be9be9f2d83dcdec6201777df2f3a0d642ed9f8faf08505a1"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-conduit-heavy-s101009-primary-s101009\\summary.json",
+    "bytes": 27040,
+    "sha256": "5840704929beb01410e44fbff58cc3dac705e92a76cc1ac5c50111c4d223db8f"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-conduit-heavy-s101009-primary-s101009\\sustain-transitions.jsonl",
+    "bytes": 127284,
+    "sha256": "980fd7f1d90e38f5804891738f7cac020e4f508b0359e09187d32713a9ebb904"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-heavy-s101009-primary\\process.json",
+    "bytes": 642,
+    "sha256": "47642df55caa2b5f031c3ddab528803569e59e3b85d25e7d77a0fb0312638f79"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-heavy-s101009-primary\\process.log",
+    "bytes": 71,
+    "sha256": "fc15a78c2755c33af40a75866b985fb233eeb47226b59bebde41c8b91ff6cb22"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-heavy-s101009-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-heavy-s101009-primary\\artifacts\\heartbeat.json",
+    "bytes": 131,
+    "sha256": "199d1e7ceb101d19a5129911c5fb774700f0452c9c1a4ac43d358b6c84224822"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-heavy-s101009-primary\\artifacts\\index.json",
+    "bytes": 37877,
+    "sha256": "159d928734c2d555827752f34cc7e34f8325f611f18c613892bb55b83ceec52e"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-heavy-s101009-primary\\artifacts\\manifest.json",
+    "bytes": 3615,
+    "sha256": "3cfcd837af99a80977f312709d7795b9137feb5a31233ca7b23cdb78a58a0857"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-spirit-heavy-s101009-primary-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-spirit-heavy-s101009-primary-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-spirit-heavy-s101009-primary-s101009\\endpoints.json",
+    "bytes": 2529,
+    "sha256": "a54c8c817208c124517ce5999e6ed1b6eea72f8ee9bf931dfa7f3134de174cb8"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-spirit-heavy-s101009-primary-s101009\\events.jsonl",
+    "bytes": 1384531,
+    "sha256": "be89e20f8df04ec9c2faa9560c4a0472465477db0b7015dce9bf353c3b7b587c"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-spirit-heavy-s101009-primary-s101009\\ready.json",
+    "bytes": 16654,
+    "sha256": "61d096ef55e58c25650ba60346e69c6bf26e3c03308b7d69fa48599add1f6df9"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-spirit-heavy-s101009-primary-s101009\\samples.jsonl",
+    "bytes": 2074734,
+    "sha256": "99b0637d1e5a15c9da9014a9fc3002bb2098267dded18e3541d63d33e9272d9f"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-spirit-heavy-s101009-primary-s101009\\summary.json",
+    "bytes": 34969,
+    "sha256": "ae77c2ea1d674f58d01ee88c5f2a05379f8721c146e94560b04af24421728978"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-heavy-s101009-primary\\artifacts\\t3-tundra-class-frame-01-spirit-heavy-s101009-primary-s101009\\sustain-transitions.jsonl",
+    "bytes": 96183,
+    "sha256": "c833d988fffdae0b3b0d861255c20a5463e0ad3a074d171108443143b0d016e8"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-heavy-s101009-primary\\process.json",
+    "bytes": 640,
+    "sha256": "9d825a208270ea66195dacf708a4edda0b6eb7535ffdde048a0cee536dce771d"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-heavy-s101009-primary\\process.log",
+    "bytes": 70,
+    "sha256": "fb895e024bc0ca2b390496969406504b50be1cac8915d602c9b611f2dff8f6e7"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101021-w1\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101021-w1\\artifacts\\heartbeat.json",
+    "bytes": 127,
+    "sha256": "55c7a918f012f8b4055a662a2e74f70551e236881f9c07045e4bf52112fbdf72"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101021-w1\\artifacts\\index.json",
+    "bytes": 44749,
+    "sha256": "fc8fb74c80982ea1bdb9ee9c00a973a1e9576eb7ae4228fef7edbd649c1c1726"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101021-w1\\artifacts\\manifest.json",
+    "bytes": 3546,
+    "sha256": "be1870be99b47917f986c83d9b94fe65f99b2c4d3370a44b17af87b6361dc242"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101021-w1\\artifacts\\t3-tundra-class-frame-01-striker-light-s101021-w1-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101021-w1\\artifacts\\t3-tundra-class-frame-01-striker-light-s101021-w1-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101021-w1\\artifacts\\t3-tundra-class-frame-01-striker-light-s101021-w1-s101021\\endpoints.json",
+    "bytes": 4871,
+    "sha256": "75cb993d6cc00cbe377ddff17d0dd9c32c4bcd6d25fbd15ff99d4c44ed864748"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101021-w1\\artifacts\\t3-tundra-class-frame-01-striker-light-s101021-w1-s101021\\events.jsonl",
+    "bytes": 2390063,
+    "sha256": "ed13cd49682dfd83380651466a8651497e4c0311e7d8fdf8234e6cdd90519b55"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101021-w1\\artifacts\\t3-tundra-class-frame-01-striker-light-s101021-w1-s101021\\ready.json",
+    "bytes": 16828,
+    "sha256": "d0ee5f956f2e5c14ba5bbe1ec2ae1b3d616583923af15e4b5e77e7d9ee8c3b0d"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101021-w1\\artifacts\\t3-tundra-class-frame-01-striker-light-s101021-w1-s101021\\samples.jsonl",
+    "bytes": 2238192,
+    "sha256": "830d664ac02a33a1a30527137b2f3b259fddad1cf12dc409188d8f5e1ba5dc1c"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101021-w1\\artifacts\\t3-tundra-class-frame-01-striker-light-s101021-w1-s101021\\summary.json",
+    "bytes": 41311,
+    "sha256": "aa7f17a3aedb413d765ea3f46e6b6726102c1e9fcc3462a7d0185156acf72380"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101021-w1\\artifacts\\t3-tundra-class-frame-01-striker-light-s101021-w1-s101021\\sustain-transitions.jsonl",
+    "bytes": 136661,
+    "sha256": "fdccef18ee93212c3e7509778701796ec27ce99a2129f9c7ced0709c56958e38"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101021-w1\\process.json",
+    "bytes": 632,
+    "sha256": "c06909cddd127dfc1d606df9b97507015b4ee34982d8b9c58e18f2511aa684db"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101021-w1\\process.log",
+    "bytes": 66,
+    "sha256": "133a60902aab07c01fe0bad21d6d4896ec054e5b4116e1ed7ec4b3f2c27f2686"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101021-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101021-primary\\artifacts\\heartbeat.json",
+    "bytes": 132,
+    "sha256": "925336ff68769ac00be98d88ad2209bd164de5a8bb25d6efe2565fa92e1b49e6"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101021-primary\\artifacts\\index.json",
+    "bytes": 47425,
+    "sha256": "644f4a0f697689841776377d66e3873bc95fede4c5a0facc3671cd6777796bf1"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101021-primary\\artifacts\\manifest.json",
+    "bytes": 3462,
+    "sha256": "c86dfbcb10328299deffe9a078b00d687f19770fe924df3d961257f7007cccfb"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-striker-light-s101021-primary-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-striker-light-s101021-primary-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-striker-light-s101021-primary-s101021\\endpoints.json",
+    "bytes": 4871,
+    "sha256": "6cf1e05e320ed198cc69c176d1f5137771d6c34b18fe78b4b4a433b990371de3"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-striker-light-s101021-primary-s101021\\events.jsonl",
+    "bytes": 2632116,
+    "sha256": "efb48b5992aea3c1cad748ee852f37afac629a48e98edfde29cfedb2088675b6"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-striker-light-s101021-primary-s101021\\ready.json",
+    "bytes": 16873,
+    "sha256": "11bf0e651869ab5388190a17880d3fcd88928b414248f26ee664059e910d54f8"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-striker-light-s101021-primary-s101021\\samples.jsonl",
+    "bytes": 2249556,
+    "sha256": "c50e5084006ac004ddf1d5e9ab44924b56f983bcf4ef458ddbb9d1ecc2f9de86"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-striker-light-s101021-primary-s101021\\summary.json",
+    "bytes": 43783,
+    "sha256": "fb2e2cd8ada500415b523dcfa270118fb7b89770c700ae086813460eddea390b"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-striker-light-s101021-primary-s101021\\sustain-transitions.jsonl",
+    "bytes": 144576,
+    "sha256": "3aae9e551b43d33c1abd09213fda8e8cbe356fcd7518f9ba3eec86337c5801c5"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101021-primary\\process.json",
+    "bytes": 642,
+    "sha256": "8f9500904831238868fb54cb8fa43b5bbd6881f22c38f58ab89f8d107cf10351"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-light-s101021-primary\\process.log",
+    "bytes": 71,
+    "sha256": "1dca22f15d363b5db00dd673cda0d6389ee0483be176ab5840c8fc80b47e3de6"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-light-s101021-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-light-s101021-primary\\artifacts\\heartbeat.json",
+    "bytes": 131,
+    "sha256": "c34752d125e271a3dfc296e8398fb63eac839a4de6abc607089bdf7619769146"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-light-s101021-primary\\artifacts\\index.json",
+    "bytes": 40630,
+    "sha256": "f070bb2caa396a864a64e4a463a4c214bb5bf5e0e19b096d01346203619846de"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-light-s101021-primary\\artifacts\\manifest.json",
+    "bytes": 3450,
+    "sha256": "27cb4db6e2a498c95d4fdb53ab2edb0bad580996f5451aeec5a361f61803f187"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-squire-light-s101021-primary-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-squire-light-s101021-primary-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-squire-light-s101021-primary-s101021\\endpoints.json",
+    "bytes": 4923,
+    "sha256": "07c9f9ad50dba843148792f283f4ba02a2835a2da8cc2ea7650c270ce89d7c6c"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-squire-light-s101021-primary-s101021\\events.jsonl",
+    "bytes": 1658132,
+    "sha256": "8d550acd048ea988f3608ad1b1a074e3aa4f13e230208adecc93d81fb630dd33"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-squire-light-s101021-primary-s101021\\ready.json",
+    "bytes": 16914,
+    "sha256": "45d9fa86a6bd613723a18bc013345b166d6d500b135c077c2384e4cefb211813"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-squire-light-s101021-primary-s101021\\samples.jsonl",
+    "bytes": 2225199,
+    "sha256": "86096cdb8d30f58b960aaf939192c93e1244a1bbe43119ee1491548d39be6ca3"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-squire-light-s101021-primary-s101021\\summary.json",
+    "bytes": 37528,
+    "sha256": "23c8ca14c5afcb09724c3fdb80f85aebd35604aa36c40c3bcf2ccd16421cf313"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-squire-light-s101021-primary-s101021\\sustain-transitions.jsonl",
+    "bytes": 117612,
+    "sha256": "8345d8825569ba15c44c80aa12a0c124737557fe1399274568aee48f81fff83c"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-light-s101021-primary\\process.json",
+    "bytes": 640,
+    "sha256": "3c4193d4b04abc1c33855d86b66298a0424d0dbf14e8a04a6ce2c12a776560cc"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-light-s101021-primary\\process.log",
+    "bytes": 70,
+    "sha256": "774182869476ef6be411da8821db3f2d03a1395cef27807665a5f6a98c1f7c50"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-light-s101021-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-light-s101021-primary\\artifacts\\heartbeat.json",
+    "bytes": 135,
+    "sha256": "c1d1b296deb0c916d25acc377842570a76dab9f48d42f13f10c18995f85d246a"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-light-s101021-primary\\artifacts\\index.json",
+    "bytes": 41456,
+    "sha256": "b9f807cd52a6b2768b9c15bdf1ccbe97aa8dfe8f22c383b4e0d261686a201913"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-light-s101021-primary\\artifacts\\manifest.json",
+    "bytes": 3565,
+    "sha256": "5335690bd222ad1b7e2ab37a50b99708817d86fa5c5245d98a7e55936fd50c70"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-light-s101021-primary-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-light-s101021-primary-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-light-s101021-primary-s101021\\endpoints.json",
+    "bytes": 4977,
+    "sha256": "a57035f8ef8bd2496dce33f7d50ac670aab447ea079583b8e90ae40c0c99a8e4"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-light-s101021-primary-s101021\\events.jsonl",
+    "bytes": 2423000,
+    "sha256": "afc913c45d020214d8bcf3bdaea30ab7f5bc397ed5b1228aa8080142d66bcd14"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-light-s101021-primary-s101021\\ready.json",
+    "bytes": 16888,
+    "sha256": "3e3b1dabd5e375ed7aee8d648b890db3e35444a9fc7ad0b32b6c2abd4c993437"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-light-s101021-primary-s101021\\samples.jsonl",
+    "bytes": 2306883,
+    "sha256": "624ea4ce91149842331d0031911aa1860d3396e97b2c0d670ba39870c5502f39"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-light-s101021-primary-s101021\\summary.json",
+    "bytes": 38366,
+    "sha256": "162792645b9111db73c228a8e105ee4556be66a5c97cb7d74d9cc528b62c9002"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-light-s101021-primary-s101021\\sustain-transitions.jsonl",
+    "bytes": 126540,
+    "sha256": "cc53da9011536ca362740fa4c936b4bab1f1fd76590db731eebc99c27d11bf8b"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-light-s101021-primary\\process.json",
+    "bytes": 648,
+    "sha256": "6b2425c0dbc169ba60600fc718f0bd37057dbfc36ee52f08abed1f5cc460a853"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-light-s101021-primary\\process.log",
+    "bytes": 74,
+    "sha256": "6f44f7b5d715428cbd93adf4e2742a10af9cfc2e84fe7cf1336121b8cb9a2cb3"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-light-s101021-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-light-s101021-primary\\artifacts\\heartbeat.json",
+    "bytes": 132,
+    "sha256": "bf8dd8503ba4fe276bc6dd48e4da0992e08d70f459ed0bba3645a2dfe0802af9"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-light-s101021-primary\\artifacts\\index.json",
+    "bytes": 44396,
+    "sha256": "71d9432ea399e6dfa78746b7c0209d1aeca785210378ce46155874d1c038771f"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-light-s101021-primary\\artifacts\\manifest.json",
+    "bytes": 3536,
+    "sha256": "dcdeeb4765e81e5227421b4896300c13bde25a5c01e70aa835c60e2f931d4779"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-slinger-light-s101021-primary-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-slinger-light-s101021-primary-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-slinger-light-s101021-primary-s101021\\endpoints.json",
+    "bytes": 5024,
+    "sha256": "8f8ef97a8ebfefeee2c49215c63f50b471a3bc7db6188dd599808b333e22ef68"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-slinger-light-s101021-primary-s101021\\events.jsonl",
+    "bytes": 2131676,
+    "sha256": "fadcf2177a0b66d73e63c1070d434bc7e1857dc43fe608baff6908069c39f332"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-slinger-light-s101021-primary-s101021\\ready.json",
+    "bytes": 16811,
+    "sha256": "7e192018a1739839eff80e51ceb1d76d4c88690fb0a020e1dd22cc0cced23b62"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-slinger-light-s101021-primary-s101021\\samples.jsonl",
+    "bytes": 2325327,
+    "sha256": "eb5e7ed561109d2d5c14549bb08dcb553dbe7e8fdec08c2136c2fc67b867d8f4"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-slinger-light-s101021-primary-s101021\\summary.json",
+    "bytes": 41068,
+    "sha256": "18c7cf6919f5693c11039e822f47ee0b5d1244421e96ac0aed68ec52106984ce"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-slinger-light-s101021-primary-s101021\\sustain-transitions.jsonl",
+    "bytes": 122837,
+    "sha256": "3b7615fb332bc3fd6351cd75edf7f12e829fd1476817c84448898a717c4ea41d"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-light-s101021-primary\\process.json",
+    "bytes": 642,
+    "sha256": "40f43347ac167dd699817bda117ebf9a163b3a31ccc4e955577b14ebbfcf9458"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-light-s101021-primary\\process.log",
+    "bytes": 71,
+    "sha256": "aab175fa699c608ac4d01bd46cf6da00be2a5c0f9d52a4843802e7e0d22a1caf"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-light-s101021-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-light-s101021-primary\\artifacts\\heartbeat.json",
+    "bytes": 132,
+    "sha256": "b5f0ef0051604f6b97ab0ce84a72f55631cee90fb000d8b892b38283aea9b225"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-light-s101021-primary\\artifacts\\index.json",
+    "bytes": 37079,
+    "sha256": "975da150f0d039327fe2edc5876310623a7e219069fa453ce72846b53a8e6633"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-light-s101021-primary\\artifacts\\manifest.json",
+    "bytes": 3730,
+    "sha256": "f7e4cda9511ccfc4c8dfb73c656622e8a1e01707c55974c4f9e2a8494d9ea635"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-conduit-light-s101021-primary-s101021\\conduit-events.jsonl",
+    "bytes": 1230230,
+    "sha256": "6566f379f8ec99f91e8c905bea6f713ff2fe0d6de5bc031b96964a69ba7c6b8e"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-conduit-light-s101021-primary-s101021\\conduit-snapshots.jsonl",
+    "bytes": 529442,
+    "sha256": "1f0900b3930bbfb20f73f60d62da2ceee8f41dae194976aabf2d15f7b1492706"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-conduit-light-s101021-primary-s101021\\conduit.json",
+    "bytes": 74798,
+    "sha256": "48b6a440e64ea67f7c53f1eb4600a36a4f365494cc2c829097d9fd5104b29be2"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-conduit-light-s101021-primary-s101021\\endpoints.json",
+    "bytes": 5307,
+    "sha256": "7cc08d4b6e4707088feb035fd171a9d3867bd120ba077c1ebc4cf006f39c1225"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-conduit-light-s101021-primary-s101021\\events.jsonl",
+    "bytes": 4909591,
+    "sha256": "cc812e8c08055040c5d58c9ce1032377f2a1214d11b4bd1b30451507ffc9283d"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-conduit-light-s101021-primary-s101021\\ready.json",
+    "bytes": 22185,
+    "sha256": "0dab41a76cfc499f879e00aa505918a444dc286631e4421b97ea71a99aa0fd31"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-conduit-light-s101021-primary-s101021\\samples.jsonl",
+    "bytes": 3458671,
+    "sha256": "19f5af3d670a3beccaa5067603a0e449a13596f9bf89b06e5374eef97fdfd1f8"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-conduit-light-s101021-primary-s101021\\summary.json",
+    "bytes": 34263,
+    "sha256": "7e7dd4a6cd3051056ec2aa3d60f7e5d3e4339e6e4ee8b52f7dea4953b0d2b658"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-conduit-light-s101021-primary-s101021\\sustain-transitions.jsonl",
+    "bytes": 242097,
+    "sha256": "3de74fc57c9ae516bf82c5581d4dca322926fb7e4a7aa4211ee59488d9847f0f"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-light-s101021-primary\\process.json",
+    "bytes": 642,
+    "sha256": "e4537e692838f2512ca77e7a788d66528bb0685d98eea8af54c61d11537cf398"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-light-s101021-primary\\process.log",
+    "bytes": 71,
+    "sha256": "9c1634baf98e0f06c2ce4aff19f5b241e4fbc90f9c3369546bdf011308267155"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-light-s101021-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-light-s101021-primary\\artifacts\\heartbeat.json",
+    "bytes": 131,
+    "sha256": "4eeed9ae5a260b1292be2a447fb5a0818692e42ce545c5ea86e5408c0617e3e8"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-light-s101021-primary\\artifacts\\index.json",
+    "bytes": 63874,
+    "sha256": "a31b6fbc0781a707e0cf64ddad7a96d880b64255b3677314d9ed8b58e863aa73"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-light-s101021-primary\\artifacts\\manifest.json",
+    "bytes": 3571,
+    "sha256": "ece9b0e2eb1fdf3ab18c24d4eaf2e14a836f8cf0f15e9690c0c6b36f70088814"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-spirit-light-s101021-primary-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-spirit-light-s101021-primary-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-spirit-light-s101021-primary-s101021\\endpoints.json",
+    "bytes": 4975,
+    "sha256": "ebee21782150def61cd11ea9e1712e7d5ecc907078bba4d0a987fc652f09e8f8"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-spirit-light-s101021-primary-s101021\\events.jsonl",
+    "bytes": 1934537,
+    "sha256": "89cb66ae50d255ba8cd769521a843f1599f5d53341b882bcbc0389b22d0e5e46"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-spirit-light-s101021-primary-s101021\\ready.json",
+    "bytes": 16680,
+    "sha256": "d1a0103562eb1d32d0e706635bce11e11f12403c5b2eb3e145739732676a38c6"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-spirit-light-s101021-primary-s101021\\samples.jsonl",
+    "bytes": 2303518,
+    "sha256": "093b92a3492e9edecb89774dfae8833a7166c1cd87372be8fbc76da8e7d5f3e1"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-spirit-light-s101021-primary-s101021\\summary.json",
+    "bytes": 58932,
+    "sha256": "041484425df8df680f504483cd186eb741ff15957102da5d6c6dc4745890df3d"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-light-s101021-primary\\artifacts\\t3-tundra-class-frame-01-spirit-light-s101021-primary-s101021\\sustain-transitions.jsonl",
+    "bytes": 159339,
+    "sha256": "29a10b88730efe125876c38c6bdd47b3063984359879388e7d52f4af755b5e9c"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-light-s101021-primary\\process.json",
+    "bytes": 639,
+    "sha256": "c615d836a1e096b1731fef45354a960d67c0b7754e4fdc849200eeffbc18a68b"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-light-s101021-primary\\process.log",
+    "bytes": 70,
+    "sha256": "e134bf3f9e13f9ad17a9316105c3ac89c0915703a212eba6ab81de19c4b2862e"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101021-w2\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101021-w2\\artifacts\\heartbeat.json",
+    "bytes": 130,
+    "sha256": "b0ad39ec9b901d8bdcbf20670ab02978b0b6935173c9910aa0a08159843dd052"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101021-w2\\artifacts\\index.json",
+    "bytes": 52422,
+    "sha256": "a1e7e0f76b3d11103a1770d0390a0e9ff5017ac1ad23a67da3eca61cb6589160"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101021-w2\\artifacts\\manifest.json",
+    "bytes": 3560,
+    "sha256": "09c47e945cab0a366aed2a3bce6f6750fcc19f7570ff939aafb623b688e747c4"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101021-w2\\artifacts\\t3-tundra-class-frame-01-striker-balanced-s101021-w2-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101021-w2\\artifacts\\t3-tundra-class-frame-01-striker-balanced-s101021-w2-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101021-w2\\artifacts\\t3-tundra-class-frame-01-striker-balanced-s101021-w2-s101021\\endpoints.json",
+    "bytes": 4670,
+    "sha256": "0d7f62fbf45d9482cb6aa826f6b7eaa82b5743b6ee857808032efcdcb2ecd0ba"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101021-w2\\artifacts\\t3-tundra-class-frame-01-striker-balanced-s101021-w2-s101021\\events.jsonl",
+    "bytes": 2098459,
+    "sha256": "67b664d38fd7fbd7e2f696982939fdc3979fe41eac5e9a1cffca962ecac4326a"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101021-w2\\artifacts\\t3-tundra-class-frame-01-striker-balanced-s101021-w2-s101021\\ready.json",
+    "bytes": 16842,
+    "sha256": "bd086b58baeecc46ce52eac55345e011bdd33efcff7a4e4cd14be32d1e7df877"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101021-w2\\artifacts\\t3-tundra-class-frame-01-striker-balanced-s101021-w2-s101021\\samples.jsonl",
+    "bytes": 2240105,
+    "sha256": "4146ea53d2a0100d04eba9dbfc87b41f2044f1d08e67ec2a9ba622f7aac260dd"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101021-w2\\artifacts\\t3-tundra-class-frame-01-striker-balanced-s101021-w2-s101021\\summary.json",
+    "bytes": 48386,
+    "sha256": "37a442b5f5b262ce8634d6abdfa4e2f688a0d05482a9353d4673eac42d6b52e4"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101021-w2\\artifacts\\t3-tundra-class-frame-01-striker-balanced-s101021-w2-s101021\\sustain-transitions.jsonl",
+    "bytes": 165618,
+    "sha256": "57df3b16d7d902af7faf37d4aa22700680a20566a3aea3e7f59bc9ca9e1cd644"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101021-w2\\process.json",
+    "bytes": 638,
+    "sha256": "bd938d7e62fd8172b0eeb97360aed419b27c9e9cbf684a6c75b939cdbcfd0ff4"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101021-w2\\process.log",
+    "bytes": 69,
+    "sha256": "2581f0c0d3d3d44b3d6efe92bbeb9fe0b569b785e16c565010044e56edda4071"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101021-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101021-primary\\artifacts\\heartbeat.json",
+    "bytes": 135,
+    "sha256": "74b41c3d67203c2810b9d2d664dc7ca312710a5dabe8dddb41bfc625994c832e"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101021-primary\\artifacts\\index.json",
+    "bytes": 46106,
+    "sha256": "370644cd5c5adb863936d934f8d852ba8837b467321ebee3e32e867ca2feeeb7"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101021-primary\\artifacts\\manifest.json",
+    "bytes": 3476,
+    "sha256": "f68648eba743acdbba7871960a26c29a3c1b82fced7ecdb52dbfede4202e01ed"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-striker-balanced-s101021-primary-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-striker-balanced-s101021-primary-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-striker-balanced-s101021-primary-s101021\\endpoints.json",
+    "bytes": 4886,
+    "sha256": "f6fd94a940179cad62bd408f1c8386e67103d3bfb28d38a505df48950ff90f16"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-striker-balanced-s101021-primary-s101021\\events.jsonl",
+    "bytes": 2592782,
+    "sha256": "c6a1cdad2a6531567494b6ed722aecaa0b1ebc75de40e86f7a948a3f8cbea1c5"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-striker-balanced-s101021-primary-s101021\\ready.json",
+    "bytes": 16887,
+    "sha256": "102e66b9116c4d81598991055cd3f924a17fcc556db5c8ad7abb5bbcf8f87ad6"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-striker-balanced-s101021-primary-s101021\\samples.jsonl",
+    "bytes": 2239762,
+    "sha256": "e3ffd1ee4a06d6ba835728d7bb528551f93b38f380ce7d16baf1bbdde2b36c3d"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-striker-balanced-s101021-primary-s101021\\summary.json",
+    "bytes": 42564,
+    "sha256": "cd86741c674887673cc09bb751322de13ee34ffa32f4bafa53cb65d8b586c9fe"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-striker-balanced-s101021-primary-s101021\\sustain-transitions.jsonl",
+    "bytes": 138727,
+    "sha256": "96d461d0ddd2bbf91a8d919a473e6aecf7357cc4a96f77516b501e622125da42"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101021-primary\\process.json",
+    "bytes": 648,
+    "sha256": "ab76aeb77505e85cdb92bb8938d1dab3f8586b528b6492f32ff2e482e70dba38"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-balanced-s101021-primary\\process.log",
+    "bytes": 74,
+    "sha256": "bae5dbe4a168ab03557c608f1d31fd2167189cc0e1242769fd99989bef7b8667"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-balanced-s101021-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-balanced-s101021-primary\\artifacts\\heartbeat.json",
+    "bytes": 134,
+    "sha256": "e89162b6117c7a9c44f82f3250ea0b9d11c6015f85afdadc7f2bdb1ca6b1a751"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-balanced-s101021-primary\\artifacts\\index.json",
+    "bytes": 38691,
+    "sha256": "ef45a39ecafdda6c6a1dacef1cad2dba22e6c1e95ebec1d6fc6f2ae25210e8ce"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-balanced-s101021-primary\\artifacts\\manifest.json",
+    "bytes": 3499,
+    "sha256": "357837af839e85509c1a6159606f27147ddfc3d8f8fac11a21ace4dde87b0966"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-squire-balanced-s101021-primary-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-squire-balanced-s101021-primary-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-squire-balanced-s101021-primary-s101021\\endpoints.json",
+    "bytes": 4799,
+    "sha256": "190288296ecd9ceda8128a05beab67cc25c208e2c3b828fbb2cf991bd9402100"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-squire-balanced-s101021-primary-s101021\\events.jsonl",
+    "bytes": 1603745,
+    "sha256": "c661bcf693a39283c6cc1a65dc52a7990cc17d94da2f810a8125de5d5df92633"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-squire-balanced-s101021-primary-s101021\\ready.json",
+    "bytes": 16926,
+    "sha256": "b1762fafe41af655c41e842cf3d1b282878a105a514a89e7afd28648f876b63f"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-squire-balanced-s101021-primary-s101021\\samples.jsonl",
+    "bytes": 2225046,
+    "sha256": "cc5b24566c55eeae8bb5034721122bba55ade73c663ffa7f7527f2af5680636b"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-squire-balanced-s101021-primary-s101021\\summary.json",
+    "bytes": 35735,
+    "sha256": "4b1435bd097a1a042b0a9994edcd6b5f79edb61e100fa79232e982f87bbc90e7"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-squire-balanced-s101021-primary-s101021\\sustain-transitions.jsonl",
+    "bytes": 107913,
+    "sha256": "8f99166fef14bdbe242a71cc0bf92a556bd7193b3855c3df0a7977b3d40c67d5"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-balanced-s101021-primary\\process.json",
+    "bytes": 646,
+    "sha256": "f479fdafc3da92e8b7bfc958ecedc6dfc2120fac39a8a2aca598abedfb11b674"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-balanced-s101021-primary\\process.log",
+    "bytes": 73,
+    "sha256": "c5febceab9591e4d1137671493e26a3280153be452daa186f99c4ab4c45c39b1"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101021-a2\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101021-a2\\artifacts\\heartbeat.json",
+    "bytes": 133,
+    "sha256": "8918229b7f3c26550e45e489cf0d86b655f284084514ae0b8baa4eab27a1f90b"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101021-a2\\artifacts\\index.json",
+    "bytes": 31401,
+    "sha256": "962e46a23c630fd92574efdd4c982f9c5888259b68174e3b120e64c3fdedaff8"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101021-a2\\artifacts\\manifest.json",
+    "bytes": 3892,
+    "sha256": "9c561e33f8eb5713cb6f82f14e6a7c3335f7539406c01130648f9aa3deb681d4"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101021-a2\\artifacts\\t3-tundra-class-frame-01-apprentice-balanced-s101021-a2-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101021-a2\\artifacts\\t3-tundra-class-frame-01-apprentice-balanced-s101021-a2-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101021-a2\\artifacts\\t3-tundra-class-frame-01-apprentice-balanced-s101021-a2-s101021\\endpoints.json",
+    "bytes": 5149,
+    "sha256": "cb13cbd7fb49a5ae2c120a61c1a99299e6bdd44ac1811e4cbc51257ff22b05c6"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101021-a2\\artifacts\\t3-tundra-class-frame-01-apprentice-balanced-s101021-a2-s101021\\events.jsonl",
+    "bytes": 1788248,
+    "sha256": "53b1444cb5f8968c384f68f1b643a85ffce08e6a15dbd1c4491e3987c6d532b3"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101021-a2\\artifacts\\t3-tundra-class-frame-01-apprentice-balanced-s101021-a2-s101021\\ready.json",
+    "bytes": 17117,
+    "sha256": "5d8e5a030054347f1045a517d409ecc68a48cceb14901fd58cc5062a05d65d35"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101021-a2\\artifacts\\t3-tundra-class-frame-01-apprentice-balanced-s101021-a2-s101021\\samples.jsonl",
+    "bytes": 2364965,
+    "sha256": "315a6e4258b5506d6b6b13050a39606d84c060aa353e80888251e39ff3a526e2"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101021-a2\\artifacts\\t3-tundra-class-frame-01-apprentice-balanced-s101021-a2-s101021\\summary.json",
+    "bytes": 29175,
+    "sha256": "8c8c7bbea002eafa825be56d13e4c247c3e4fd16c411956446cb6a653fb376e9"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101021-a2\\artifacts\\t3-tundra-class-frame-01-apprentice-balanced-s101021-a2-s101021\\sustain-transitions.jsonl",
+    "bytes": 162842,
+    "sha256": "1fb5ee54224b5fe0e9740b7ca677a66139b69be7bb02c4d7763c10c0e789c5f3"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101021-a2\\process.json",
+    "bytes": 644,
+    "sha256": "f8b031466055db8ed85c4d6cda69ca321e3bed7e9bea7349e33d4b21af5d3b90"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101021-a2\\process.log",
+    "bytes": 72,
+    "sha256": "9ac1ad871808298de5bb909008f9251913b525978fa69c2b39ed65308f71d170"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101021-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101021-primary\\artifacts\\heartbeat.json",
+    "bytes": 135,
+    "sha256": "18e4a8023faeabe95ddb1a8e623f8828d6c890cce15ef7f4ec355d78622ebb33"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101021-primary\\artifacts\\index.json",
+    "bytes": 12097,
+    "sha256": "0d3da87a82f183941f277561f250802e0bb8ed305e38680de019ad47d64dd32f"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101021-primary\\artifacts\\manifest.json",
+    "bytes": 3629,
+    "sha256": "34788e292b23d6cb4f2fd67e71741d8255623a21e71907298f27fd64c41378be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-balanced-s101021-primary-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-balanced-s101021-primary-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-balanced-s101021-primary-s101021\\events.jsonl",
+    "bytes": 435004,
+    "sha256": "8cd51653ee82537ecba67011eccd79043ebc2e7f4e0c43a5e6e2e6a6aa63a284"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-balanced-s101021-primary-s101021\\ready.json",
+    "bytes": 16849,
+    "sha256": "0a8907f9ba8a6f5bddf12f58ea2569011b4259f93e2b0c5c8bc3526447af3577"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-balanced-s101021-primary-s101021\\samples.jsonl",
+    "bytes": 479946,
+    "sha256": "64e4150c3633c32018827b5940d2bef29758a87cbb92f38fd42918f4e8782267"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-balanced-s101021-primary-s101021\\summary.json",
+    "bytes": 11155,
+    "sha256": "fa778ae0a2e68ec8f07148d82599569016824a2fdc5a6f6458b0beb96a94f4b1"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-balanced-s101021-primary-s101021\\sustain-transitions.jsonl",
+    "bytes": 22559,
+    "sha256": "1c754c206fa101a107eccd461243dd8ce87e9fb69fd0a1fda14a9c889f4bec5f"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101021-primary\\process.json",
+    "bytes": 654,
+    "sha256": "af7c8277bc0d0b1e6d42f3e4618cf49b50e7e0bda63d0e95d0121f90d6f7944e"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-balanced-s101021-primary\\process.log",
+    "bytes": 77,
+    "sha256": "7a2ce9ddc47acf748f21495ba15bc7e7cdccf7f30f2c5083d8e5dee1eebc7ebf"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101021-w5\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101021-w5\\artifacts\\heartbeat.json",
+    "bytes": 130,
+    "sha256": "1376bf6e787dbd3510c15219b2a5b568a23f190eccbb4ad274b682c495814e55"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101021-w5\\artifacts\\index.json",
+    "bytes": 24894,
+    "sha256": "b6b39a87d09843797e2d82551d6d24acabbbe4a52aac4b75de125a8438398942"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101021-w5\\artifacts\\manifest.json",
+    "bytes": 3642,
+    "sha256": "9310a88b7e00d99e35d17115d2768f7f21bf8247a6daec2bc5120618565e2263"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101021-w5\\artifacts\\t3-tundra-class-frame-01-slinger-balanced-s101021-w5-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101021-w5\\artifacts\\t3-tundra-class-frame-01-slinger-balanced-s101021-w5-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101021-w5\\artifacts\\t3-tundra-class-frame-01-slinger-balanced-s101021-w5-s101021\\endpoints.json",
+    "bytes": 5086,
+    "sha256": "fee9473e104917f166815edc3d18eb4d728b7f6c59ac48cf4909df9749817cd7"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101021-w5\\artifacts\\t3-tundra-class-frame-01-slinger-balanced-s101021-w5-s101021\\events.jsonl",
+    "bytes": 2498050,
+    "sha256": "aa66b384f968fadfd955d3f0a6b7eaa0310aaf42915cb42eeae0929ecc4dc79c"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101021-w5\\artifacts\\t3-tundra-class-frame-01-slinger-balanced-s101021-w5-s101021\\ready.json",
+    "bytes": 16782,
+    "sha256": "4d26a9ceb8a37a9767fb53764bab93aa3c8c4102a50899ca5030d810c73362b9"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101021-w5\\artifacts\\t3-tundra-class-frame-01-slinger-balanced-s101021-w5-s101021\\samples.jsonl",
+    "bytes": 2358466,
+    "sha256": "f286431212ff55bfe8dd0c52b7fb98ebb94e957e37d21d06450ca2f5b1f3e799"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101021-w5\\artifacts\\t3-tundra-class-frame-01-slinger-balanced-s101021-w5-s101021\\summary.json",
+    "bytes": 23086,
+    "sha256": "3a08bd67435e4a4c8bae8993f6eceb07abd3c7b106b7092f7f127671dc25ec44"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101021-w5\\artifacts\\t3-tundra-class-frame-01-slinger-balanced-s101021-w5-s101021\\sustain-transitions.jsonl",
+    "bytes": 71570,
+    "sha256": "63db4fdd0c97f75f026a9eb19bfe5333897891d39767fd1860cf8f1481be5fe3"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101021-w5\\process.json",
+    "bytes": 638,
+    "sha256": "91f9500812ffcfaa7385d61cfb4d9c3b34bd06a3bc5e9b24daf9fdd00cd9203b"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101021-w5\\process.log",
+    "bytes": 69,
+    "sha256": "bf4f0c3e4ea8226508890f56250267cb0cad2c28e670d8b0866283e5587e742f"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101021-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101021-primary\\artifacts\\heartbeat.json",
+    "bytes": 135,
+    "sha256": "5b252dfa7aa0b0d658a14c8bbeb1efb7898219a7b8e70187007bae885e27792e"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101021-primary\\artifacts\\index.json",
+    "bytes": 34485,
+    "sha256": "2be4e439391caa753d6d348477987390870552a413d4a7ca1fddbcb7d81d7177"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101021-primary\\artifacts\\manifest.json",
+    "bytes": 3565,
+    "sha256": "651d76b2d727765d4183db935df2ba158b43bcd544f794e786d72cd7c7e79589"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-slinger-balanced-s101021-primary-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-slinger-balanced-s101021-primary-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-slinger-balanced-s101021-primary-s101021\\endpoints.json",
+    "bytes": 5096,
+    "sha256": "01a72fdf445126573b32aa75fae06f8626c7d07cb4a382389d3c87dc2edace42"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-slinger-balanced-s101021-primary-s101021\\events.jsonl",
+    "bytes": 2248286,
+    "sha256": "673e71a0b1484762f1fa30c9b565c49e93934b26116ef92815bbd2466f8dc2ea"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-slinger-balanced-s101021-primary-s101021\\ready.json",
+    "bytes": 16826,
+    "sha256": "1e4c190c47daf43929173b8335c4678ce5aca89a9c1fd0c75a520bf19c0e3343"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-slinger-balanced-s101021-primary-s101021\\samples.jsonl",
+    "bytes": 2349987,
+    "sha256": "e33bdefb666b752d4776393d4084779722349e847d3c3aa5d5f7e2d87d68929b"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-slinger-balanced-s101021-primary-s101021\\summary.json",
+    "bytes": 31999,
+    "sha256": "78da6b8a5199f27bb00ca73e3ed1babe5b7e778c5059dc8e93fe01d8ce4d93ee"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-slinger-balanced-s101021-primary-s101021\\sustain-transitions.jsonl",
+    "bytes": 129957,
+    "sha256": "886631c4d6bb4d2fbfaf3c8cc9b8a324b8f82f66e268cadfeebfd9b1d599b84f"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101021-primary\\process.json",
+    "bytes": 648,
+    "sha256": "e046444a1338d610a46975d3a49627311cdd7dca56d377cef306e60f43b46c57"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-balanced-s101021-primary\\process.log",
+    "bytes": 74,
+    "sha256": "494726fa67107751ba9754d79fd4b33a546ee8f101bfc70076bfd1a3439c6e49"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101021-w6\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101021-w6\\artifacts\\heartbeat.json",
+    "bytes": 130,
+    "sha256": "2e8cc9231b5f46bf7c8e72b0a1778fcb5c9f91b62fccd2ead0794c25c29c5577"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101021-w6\\artifacts\\index.json",
+    "bytes": 35271,
+    "sha256": "bd13b94cd12d5f7cf885117e158f4bf9d14c4625a28559d2706ac76bab4adc17"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101021-w6\\artifacts\\manifest.json",
+    "bytes": 3686,
+    "sha256": "fae57dc90e625d9f8795edd65fe553d000307a9faa4a76ae46ee57dd09548dd6"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101021-w6\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101021-w6-s101021\\conduit-events.jsonl",
+    "bytes": 376594,
+    "sha256": "60901e2bab40328bbb242bf33d8c707003957f75cd04d63025a34c4bfbd21104"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101021-w6\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101021-w6-s101021\\conduit-snapshots.jsonl",
+    "bytes": 440981,
+    "sha256": "4a017d4d7ec481b4e5c2b42af2395e9ae058763e3bcef6f7498d2ed9eee71470"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101021-w6\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101021-w6-s101021\\conduit.json",
+    "bytes": 76593,
+    "sha256": "867ffe1de24eeeee85d64015e6a77edb4f1e094eaf6a196020c953d1e7838c50"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101021-w6\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101021-w6-s101021\\endpoints.json",
+    "bytes": 5305,
+    "sha256": "b23dd8e3aedae61fe397fbbb0ad57ea9ce99bf5b1d7aed4eab2e17a863164d72"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101021-w6\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101021-w6-s101021\\events.jsonl",
+    "bytes": 1955652,
+    "sha256": "4a728a7d053b84f655f3745cdc21f9674e5edd52a5fee880ce206119f038b9c7"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101021-w6\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101021-w6-s101021\\ready.json",
+    "bytes": 21109,
+    "sha256": "908f633c9b0222aee05ee7808a6f02b343ea4fa7be4e053016d23fb5ec0fa9da"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101021-w6\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101021-w6-s101021\\samples.jsonl",
+    "bytes": 3217004,
+    "sha256": "809fe633279b96aa1816cc5ce427811c6c5d786c6cd5179dde26ae6097187bf8"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101021-w6\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101021-w6-s101021\\summary.json",
+    "bytes": 32591,
+    "sha256": "16480168ef3c57806c390933734810f0f96af5a391a3df4f428bf8a5442c8568"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101021-w6\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101021-w6-s101021\\sustain-transitions.jsonl",
+    "bytes": 264728,
+    "sha256": "061707dd872d9c57c798035e09219c2b395a802ea42df15f5f3498d9f9667b67"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101021-w6\\process.json",
+    "bytes": 638,
+    "sha256": "6e693e2c736ec7a4f6dc8ddcb1905e21af49e2ac7b1f354f43d4d7f497b7d912"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101021-w6\\process.log",
+    "bytes": 69,
+    "sha256": "6ce395a3454e531e5b7eee95fd191221df0f555fe455e95be5c94803d31bb590"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101021-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101021-primary\\artifacts\\heartbeat.json",
+    "bytes": 135,
+    "sha256": "78c418c567fb30cd1a3da5b8183834909d255270181b52e3477883378f3295d9"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101021-primary\\artifacts\\index.json",
+    "bytes": 34292,
+    "sha256": "d6ab320ef7cff91e9ca00349d55c91b67ae6a5250d060ef433ad591048730c45"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101021-primary\\artifacts\\manifest.json",
+    "bytes": 3587,
+    "sha256": "cd5f749e65d2cd9b59a4f1babd11e038b68b2e78e171c6cab540158308eab3b9"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101021-primary-s101021\\conduit-events.jsonl",
+    "bytes": 691144,
+    "sha256": "234827dff87df573b8ef7525bbcd6389196d551bda3bbcd32c39e7c71ba940ac"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101021-primary-s101021\\conduit-snapshots.jsonl",
+    "bytes": 441351,
+    "sha256": "5ac84aea3fc18e57b98936696c650f251537ced46908b329a5e05a972440a4b9"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101021-primary-s101021\\conduit.json",
+    "bytes": 79437,
+    "sha256": "b9b1ddb13bc361c117d3b9c79e3c938bfcfdff88b3e8a1bf117e4da2a8bec4e4"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101021-primary-s101021\\endpoints.json",
+    "bytes": 5199,
+    "sha256": "8c97139e51017fbff9bfcdfe69ef8e00dbb76fe1ab3139090df90975ee055066"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101021-primary-s101021\\events.jsonl",
+    "bytes": 3253248,
+    "sha256": "a2ee1fe10fd145ca0ece72daaf89f7f76536c2c96a7db418ea9cc42daa8f19a1"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101021-primary-s101021\\ready.json",
+    "bytes": 21044,
+    "sha256": "95653cd8260f42b480cbd989a6cb4f91640e493223aace6e1f3cef1406dde10a"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101021-primary-s101021\\samples.jsonl",
+    "bytes": 3216440,
+    "sha256": "88b80ecda539abd2f00d2f9de4db3e1f5830cc45b1078cb281fc81dafc498f0e"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101021-primary-s101021\\summary.json",
+    "bytes": 31696,
+    "sha256": "61829c2f3f501ce9d7b8a93fcfb4d1cfd624d61a64fba4a364f03a25569b99a3"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-conduit-balanced-s101021-primary-s101021\\sustain-transitions.jsonl",
+    "bytes": 272387,
+    "sha256": "d5ee0cd8b667ec3327671300e57a93e227917cd925c0f5e2aa83007fddc7653c"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101021-primary\\process.json",
+    "bytes": 648,
+    "sha256": "7b63e7f48efff70b37939c7d468a367fa34aa5e1222f563b26f09af3e5c51a27"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-balanced-s101021-primary\\process.log",
+    "bytes": 74,
+    "sha256": "b6ebe92fce84c78ac203a12f45c5833b89dfee19b3e3a26ad5123750e2c97284"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101021-a3\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101021-a3\\artifacts\\heartbeat.json",
+    "bytes": 129,
+    "sha256": "dc7648442dceff23d3cdcc63a27f52721f419c09b09480e14a1f2579ea9d5b5d"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101021-a3\\artifacts\\index.json",
+    "bytes": 51570,
+    "sha256": "2bbc98e9c3533184ac01c0a87b13463258c13486061a3881b5b00b8707de72f6"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101021-a3\\artifacts\\manifest.json",
+    "bytes": 3652,
+    "sha256": "1d5c9f09e26160bf3cefb5a366b25b079e73a68d94bbe875f215e7c0ca4d8718"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101021-a3\\artifacts\\t3-tundra-class-frame-01-spirit-balanced-s101021-a3-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101021-a3\\artifacts\\t3-tundra-class-frame-01-spirit-balanced-s101021-a3-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101021-a3\\artifacts\\t3-tundra-class-frame-01-spirit-balanced-s101021-a3-s101021\\endpoints.json",
+    "bytes": 5154,
+    "sha256": "0de4bc166ae4ac05cc967bccfc645361c95ccf8fa8bce19bdb61f227a63f7f61"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101021-a3\\artifacts\\t3-tundra-class-frame-01-spirit-balanced-s101021-a3-s101021\\events.jsonl",
+    "bytes": 1465947,
+    "sha256": "0981be258b5c739ff50af27550d809617deb7a14db41dbd790afc0b09997c25a"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101021-a3\\artifacts\\t3-tundra-class-frame-01-spirit-balanced-s101021-a3-s101021\\ready.json",
+    "bytes": 16667,
+    "sha256": "441c6df7b1139ae63737740d96f0d1d7f6a3a8f013e482a624013f6368c419d8"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101021-a3\\artifacts\\t3-tundra-class-frame-01-spirit-balanced-s101021-a3-s101021\\samples.jsonl",
+    "bytes": 2303212,
+    "sha256": "59333a52cb0a3b7a9b725c2e11fac8d70faa92c8b5fe54029c265c7918c9bcae"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101021-a3\\artifacts\\t3-tundra-class-frame-01-spirit-balanced-s101021-a3-s101021\\summary.json",
+    "bytes": 47636,
+    "sha256": "dacbeb289ccaf2001a9cd7f6f1bde26c60200a60346877a15fda2de9e9b726d7"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101021-a3\\artifacts\\t3-tundra-class-frame-01-spirit-balanced-s101021-a3-s101021\\sustain-transitions.jsonl",
+    "bytes": 136066,
+    "sha256": "5db81ab3c13b8055089b48b2b616fb43e6007b41b414c9fdb4445844e1743f85"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101021-a3\\process.json",
+    "bytes": 636,
+    "sha256": "b8262cf2b14d79fb12296a45410121c68c8c67946c913e5c255cfe64afb9bafe"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101021-a3\\process.log",
+    "bytes": 68,
+    "sha256": "067e1b3e5e81b2e40153e51d84d17e7dc29d47ace3e13338af2fc6f2b5c01165"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101021-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101021-primary\\artifacts\\heartbeat.json",
+    "bytes": 134,
+    "sha256": "ff3e54ea7119dd480f86db50de223f97adc78c8b9dda758eaa0357701513dbbe"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101021-primary\\artifacts\\index.json",
+    "bytes": 56437,
+    "sha256": "d656de2c6ebbdf4050da45896e8e4afd515cc9242b0a8f5ee4ada03945cfb57a"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101021-primary\\artifacts\\manifest.json",
+    "bytes": 3566,
+    "sha256": "66c9d6ef0bea98afc50f2aa80253c7d14998c74fb52447c379a5c5e9853f0cc7"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-spirit-balanced-s101021-primary-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-spirit-balanced-s101021-primary-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-spirit-balanced-s101021-primary-s101021\\endpoints.json",
+    "bytes": 5091,
+    "sha256": "747542f731e707b44775cc649a3932b38b5615d4aaa481ef33626ddb9c1a4e78"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-spirit-balanced-s101021-primary-s101021\\events.jsonl",
+    "bytes": 1464168,
+    "sha256": "1af5f756d443448427f6363d75cb09176ebfed690c58d1b2242898e46cb7b580"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-spirit-balanced-s101021-primary-s101021\\ready.json",
+    "bytes": 16672,
+    "sha256": "b95dbb921acbf3980f0a1e2a9f76901d2ef7f7b2545fee521564721db051dc29"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-spirit-balanced-s101021-primary-s101021\\samples.jsonl",
+    "bytes": 2316421,
+    "sha256": "1f3dbda21e9f7d193ada41bb8b6f69eab16a7dbbc91d801318d403770f899af4"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-spirit-balanced-s101021-primary-s101021\\summary.json",
+    "bytes": 52081,
+    "sha256": "4986ecf135a4be8d53d243627150fdd8bbf5eabeea6daebc2541a4f2ed35a1a3"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101021-primary\\artifacts\\t3-tundra-class-frame-01-spirit-balanced-s101021-primary-s101021\\sustain-transitions.jsonl",
+    "bytes": 141169,
+    "sha256": "6314d782d90e02db354c018eda5945a8378ae3a027a7231177adc0fc5b54357e"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101021-primary\\process.json",
+    "bytes": 646,
+    "sha256": "d0cd114fde5ea4efa0241a7c2e3cd9a82efceecdfa3fa5bcbd6a4c0e5ae794bc"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-balanced-s101021-primary\\process.log",
+    "bytes": 73,
+    "sha256": "80d3e63b01c75d78d4a36512d1fd305cd23e7868a1485e57e6c05fc406f7accf"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101021-w3\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101021-w3\\artifacts\\heartbeat.json",
+    "bytes": 127,
+    "sha256": "79af68bf70d3cdc3720ad38e58f6c000877a5122569a1733b759b75762bba86f"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101021-w3\\artifacts\\index.json",
+    "bytes": 43803,
+    "sha256": "d89f9408f55a5c62c28ce186efba4b8a91cb698c3b84448ccf3e41bff4a087f2"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101021-w3\\artifacts\\manifest.json",
+    "bytes": 3584,
+    "sha256": "b7de5db626bb92e1b1e9e4e1bef647680933a123c9289fddefa8d674f3d21550"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101021-w3\\artifacts\\t3-tundra-class-frame-01-striker-heavy-s101021-w3-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101021-w3\\artifacts\\t3-tundra-class-frame-01-striker-heavy-s101021-w3-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101021-w3\\artifacts\\t3-tundra-class-frame-01-striker-heavy-s101021-w3-s101021\\endpoints.json",
+    "bytes": 4784,
+    "sha256": "7e168d5e2daf271ca0e8b4fa193f8a78048cef726da580790e6db38770777c43"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101021-w3\\artifacts\\t3-tundra-class-frame-01-striker-heavy-s101021-w3-s101021\\events.jsonl",
+    "bytes": 1759496,
+    "sha256": "5a87e25ce879b24dfd954e51131df003cba4e4269b9e41cc75218285cabb26b9"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101021-w3\\artifacts\\t3-tundra-class-frame-01-striker-heavy-s101021-w3-s101021\\ready.json",
+    "bytes": 16846,
+    "sha256": "5b5bbe5c78d1b5999ca9134a6cc99c98dc23c63d0d4b1a7b294ec22f1b6ee457"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101021-w3\\artifacts\\t3-tundra-class-frame-01-striker-heavy-s101021-w3-s101021\\samples.jsonl",
+    "bytes": 2230142,
+    "sha256": "de171e44adafbcf8dae799e9c7e82cc1dd6ff25814e1c6ccb8b1ed79b3b747aa"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101021-w3\\artifacts\\t3-tundra-class-frame-01-striker-heavy-s101021-w3-s101021\\summary.json",
+    "bytes": 40439,
+    "sha256": "e6062223d996720f1a12d32dc1a69273777bf314c4f555cf7a80c73f85fe49b5"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101021-w3\\artifacts\\t3-tundra-class-frame-01-striker-heavy-s101021-w3-s101021\\sustain-transitions.jsonl",
+    "bytes": 128749,
+    "sha256": "19237a54e02951134d399cd1bf37cd872cc03ca091286b342f75cfed932169f4"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101021-w3\\process.json",
+    "bytes": 632,
+    "sha256": "07a639c1ab7130172f3b501024bc73521fcab2b1446af6915cffb9afe41bb0e7"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101021-w3\\process.log",
+    "bytes": 66,
+    "sha256": "5811c0ef490a221408afff76be2b65265a3c79070a0ca41ca1bcb08a501cda35"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101021-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101021-primary\\artifacts\\heartbeat.json",
+    "bytes": 132,
+    "sha256": "c4ccc12b979e43841934992ca14d873f16dfb1d1a222784610da0bebd5b9735c"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101021-primary\\artifacts\\index.json",
+    "bytes": 44682,
+    "sha256": "1ff897b6cfa76ecbd5dc4df24fead5347db2097f5e47e577d4926f1da366d94e"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101021-primary\\artifacts\\manifest.json",
+    "bytes": 3500,
+    "sha256": "8976e49d011648249e5c6437b8b282a3f69acde76214c8869c962aa1ff5b4eb4"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-striker-heavy-s101021-primary-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-striker-heavy-s101021-primary-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-striker-heavy-s101021-primary-s101021\\endpoints.json",
+    "bytes": 4764,
+    "sha256": "1d76a4bed580c66cd3c912ea96b3fb76c662f900b28f88a01f49c17fa478acfc"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-striker-heavy-s101021-primary-s101021\\events.jsonl",
+    "bytes": 2115599,
+    "sha256": "8b15d388d0816c7229eeaad88908ad7de395e799a2c4520f39d9e7dd117e3c5f"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-striker-heavy-s101021-primary-s101021\\ready.json",
+    "bytes": 16891,
+    "sha256": "01e892694e729ad5dd0f42e58e3a37f4a2a1cbfc9f05cdbb88755902df995842"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-striker-heavy-s101021-primary-s101021\\samples.jsonl",
+    "bytes": 2223646,
+    "sha256": "5b1d84233a0046c52ea4fac6c28803da492bb5cffb8257d043693ecc3a61a468"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-striker-heavy-s101021-primary-s101021\\summary.json",
+    "bytes": 41250,
+    "sha256": "f0d09df5e35f84f0c040d0482745b9b797c7ca8b6208e50ba0baf207d24f4f41"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-striker-heavy-s101021-primary-s101021\\sustain-transitions.jsonl",
+    "bytes": 129523,
+    "sha256": "7df5a46cbefb401143e64dfe1d0e49724a0750c3573b93174d60001165cf6e79"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101021-primary\\process.json",
+    "bytes": 642,
+    "sha256": "c13a01358606723e2093c93956728bb3e53c90eb0006beceae77678a7931112e"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-striker-heavy-s101021-primary\\process.log",
+    "bytes": 71,
+    "sha256": "4a46e4311d829e01226b4cc4e71e3ccdb3f83735e7c2b1d67f33d921a4ab255f"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101021-w4\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101021-w4\\artifacts\\heartbeat.json",
+    "bytes": 126,
+    "sha256": "9f2923430936fc7c3be9269e5d7e287d937325bb9d45e5d5433d4d59a5a41b84"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101021-w4\\artifacts\\index.json",
+    "bytes": 54241,
+    "sha256": "ace0dc2549bcfe1f4a0b17ffcd3510eec617132e8547359174dbc5f994c145ac"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101021-w4\\artifacts\\manifest.json",
+    "bytes": 3654,
+    "sha256": "08902e6cc001a1492cb0a21205704365784aaf3f4476f27105b5a108cda509cc"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101021-w4\\artifacts\\t3-tundra-class-frame-01-squire-heavy-s101021-w4-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101021-w4\\artifacts\\t3-tundra-class-frame-01-squire-heavy-s101021-w4-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101021-w4\\artifacts\\t3-tundra-class-frame-01-squire-heavy-s101021-w4-s101021\\endpoints.json",
+    "bytes": 4783,
+    "sha256": "6dbd38057c3a6f9b5138e25dcc8e961a085b76615e46be6e5d43dfaf8bf40ce0"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101021-w4\\artifacts\\t3-tundra-class-frame-01-squire-heavy-s101021-w4-s101021\\events.jsonl",
+    "bytes": 1193252,
+    "sha256": "8dd22ab4619a5e86724306d4e02baa1a2442c43a485d0060f7220508d67a1224"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101021-w4\\artifacts\\t3-tundra-class-frame-01-squire-heavy-s101021-w4-s101021\\ready.json",
+    "bytes": 16939,
+    "sha256": "a9f617f7550e5092403b0314109678c0e62506a2adcfb79ad6220b83f402b6cf"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101021-w4\\artifacts\\t3-tundra-class-frame-01-squire-heavy-s101021-w4-s101021\\samples.jsonl",
+    "bytes": 2256348,
+    "sha256": "24aeba5b6510c22a43e8e8b701df143da7b381510939f12cba4fffd5f55a313b"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101021-w4\\artifacts\\t3-tundra-class-frame-01-squire-heavy-s101021-w4-s101021\\summary.json",
+    "bytes": 50043,
+    "sha256": "31f2c408dee99fb42d57310d435f923200d96c272c7d2bb3ff20ab11b22b82a0"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101021-w4\\artifacts\\t3-tundra-class-frame-01-squire-heavy-s101021-w4-s101021\\sustain-transitions.jsonl",
+    "bytes": 161477,
+    "sha256": "1b545f4c94b1a3904f4e579ff7a20e6dbc61b4b8e3f3207529edbb178e0b1320"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101021-w4\\process.json",
+    "bytes": 630,
+    "sha256": "1f80e5042d66bee8068b48da556ee2af7c78135cc138f482986efaeec06c03b7"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101021-w4\\process.log",
+    "bytes": 65,
+    "sha256": "055f5f0766ba936a75ce16a9cf6477e56807eb5a57d33790cee804d56f418aa7"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101021-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101021-primary\\artifacts\\heartbeat.json",
+    "bytes": 131,
+    "sha256": "351ab1fde69e8798a42dd7cd1ca82071a41f56a9aa884848e440b47382554b5d"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101021-primary\\artifacts\\index.json",
+    "bytes": 38648,
+    "sha256": "39897e0c41c5e23716ce80aa4e904088998c4ed67910c13c680c76a397561ea6"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101021-primary\\artifacts\\manifest.json",
+    "bytes": 3573,
+    "sha256": "8742c685035bf93489ff6d37bab189055a944c3ddf687f668e7cf12c35225b3c"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-squire-heavy-s101021-primary-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-squire-heavy-s101021-primary-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-squire-heavy-s101021-primary-s101021\\endpoints.json",
+    "bytes": 4727,
+    "sha256": "5f0de09bb8dc71d1b24b25accdf3d91886ac1941dcff63dc205f2571efe8843e"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-squire-heavy-s101021-primary-s101021\\events.jsonl",
+    "bytes": 1388982,
+    "sha256": "d740c9004e06bb12c5d647d1c24505b39e16079034b07700fba51fd80306f8db"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-squire-heavy-s101021-primary-s101021\\ready.json",
+    "bytes": 16899,
+    "sha256": "7e915c62fd1676ed80af2e9748b0db04e2e59bdc6fb3fb192d5123a4ac33bef6"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-squire-heavy-s101021-primary-s101021\\samples.jsonl",
+    "bytes": 2240987,
+    "sha256": "f096e3715222b92f9fc165e0bc4d3522b43ea6fcc1a594ce1078ddda739ac31e"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-squire-heavy-s101021-primary-s101021\\summary.json",
+    "bytes": 35700,
+    "sha256": "e2c63fca55e4ea95b94b4513db52a1a299c472a263f42061a5caf92d17acc7ee"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-squire-heavy-s101021-primary-s101021\\sustain-transitions.jsonl",
+    "bytes": 105730,
+    "sha256": "0d84fe9b056483666200cde5a5ee0f41d576ad861a9f9a1c88c6831f4a93cd77"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101021-primary\\process.json",
+    "bytes": 640,
+    "sha256": "39816fe878504f21bddf76b25da5856b4e4a7eb1a55232d010cffdef7e1daf4b"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-squire-heavy-s101021-primary\\process.log",
+    "bytes": 70,
+    "sha256": "d163d5276f18ed97d006839d5ec07ffafa7fecb21fb7d933fdb862214557b679"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-heavy-s101021-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-heavy-s101021-primary\\artifacts\\heartbeat.json",
+    "bytes": 135,
+    "sha256": "6a9e51bc4489b32b1f00475bbea7da92752434b437564bae271b0fdb5fda4e18"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-heavy-s101021-primary\\artifacts\\index.json",
+    "bytes": 45290,
+    "sha256": "a9651de53ba31947be8722232261204d94ec970490d169f5fe958e10a816b20d"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-heavy-s101021-primary\\artifacts\\manifest.json",
+    "bytes": 3544,
+    "sha256": "ea9c1b0317fb7eabc20575337e6cf05ba991ce0903cc088020e6d66a0e8c546e"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-heavy-s101021-primary-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-heavy-s101021-primary-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-heavy-s101021-primary-s101021\\endpoints.json",
+    "bytes": 5061,
+    "sha256": "0c7a4c259b4c5863c59c7cbc1dbf9c005f1da13e09cd9fc939248b8d3c49c447"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-heavy-s101021-primary-s101021\\events.jsonl",
+    "bytes": 1218564,
+    "sha256": "71b6b45d687839e4bb03e6e667873ddbdbd5f21ada5e2c5085c7d95467d702e8"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-heavy-s101021-primary-s101021\\ready.json",
+    "bytes": 16974,
+    "sha256": "462c7eab36b59dfdd70b47bad633b1205142dcbeb469849471663d3db354d677"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-heavy-s101021-primary-s101021\\samples.jsonl",
+    "bytes": 2317119,
+    "sha256": "13a4c42261a479c9793a820fbeb778190d3fc594e4be819cb0ba0f98d90455c7"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-heavy-s101021-primary-s101021\\summary.json",
+    "bytes": 41852,
+    "sha256": "3f131266a3ceb0c9a64c22721b9a68ebfc4f5102be8163a64fe610c4264c2ee9"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-apprentice-heavy-s101021-primary-s101021\\sustain-transitions.jsonl",
+    "bytes": 131409,
+    "sha256": "5015811f567ffdf8e5987dd384c9f112965f66db878bae90b67472321ba08a96"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-heavy-s101021-primary\\process.json",
+    "bytes": 648,
+    "sha256": "b44b58355b2f89ce0dde234b27b85c5932beba4f4226a408658ac26f3b815d4d"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-apprentice-heavy-s101021-primary\\process.log",
+    "bytes": 74,
+    "sha256": "8fbf8be42b5295853996bd5ea5ca3f456d306ca6e02180a2bcaef14de4b36b13"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-heavy-s101021-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-heavy-s101021-primary\\artifacts\\heartbeat.json",
+    "bytes": 132,
+    "sha256": "83d3931c9d749e791fdabb5c86e45690803f6997ecfc28415fa7c1434d16ab0e"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-heavy-s101021-primary\\artifacts\\index.json",
+    "bytes": 27180,
+    "sha256": "f38a8d2914fd1e25665c8182b42c986fe4456b9c9799d35d8b18de6bf94f4919"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-heavy-s101021-primary\\artifacts\\manifest.json",
+    "bytes": 3595,
+    "sha256": "fcd9ba2967ae7abe0d2cf9e4083336e2d652fc70928b4949157b1620cfa7b41f"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-slinger-heavy-s101021-primary-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-slinger-heavy-s101021-primary-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-slinger-heavy-s101021-primary-s101021\\endpoints.json",
+    "bytes": 5099,
+    "sha256": "bec5993c85a6c68ca388b45630321fbeb4aba67479ecea09af54c0c111271568"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-slinger-heavy-s101021-primary-s101021\\events.jsonl",
+    "bytes": 2437290,
+    "sha256": "397684f973ede3c775a4819a6f8630a57c5e25c17075db6a596df180e7104d5f"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-slinger-heavy-s101021-primary-s101021\\ready.json",
+    "bytes": 16812,
+    "sha256": "f5cf7147bf853e88b3586365d2fb1ae20f671f861243bf326958db45eedf3c7f"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-slinger-heavy-s101021-primary-s101021\\samples.jsonl",
+    "bytes": 2362402,
+    "sha256": "94f267abb4a84bb14ed35c4be54ff76667c1c2781250a874a2ebdd29068d92a6"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-slinger-heavy-s101021-primary-s101021\\summary.json",
+    "bytes": 25238,
+    "sha256": "cae231f77191f4a8074b74af5743fba98b567ec606ec8d86ee9dedf318ed4bbb"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-slinger-heavy-s101021-primary-s101021\\sustain-transitions.jsonl",
+    "bytes": 116045,
+    "sha256": "e49b422e502d72bcdcf775328b1c1e1042699b96cc9d7c6f5f8775591031b60d"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-heavy-s101021-primary\\process.json",
+    "bytes": 642,
+    "sha256": "05eac9aaa31ddcad24605abd32f0bf90c5430919ee59d3ee71f30efee9215897"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-slinger-heavy-s101021-primary\\process.log",
+    "bytes": 71,
+    "sha256": "a1de90e5a26ca4dfcd0c7da272fcd0c0cd2c2ed89fc028529c4b6be62d43caf4"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-heavy-s101021-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-heavy-s101021-primary\\artifacts\\heartbeat.json",
+    "bytes": 132,
+    "sha256": "f1e808e37c9262a4df32c2e97f87c5a92ed2df8bc0039f236a2138c5e8ed4a47"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-heavy-s101021-primary\\artifacts\\index.json",
+    "bytes": 34459,
+    "sha256": "d25fcdffa13b79864d3f28669f312374aad73e28ccaeeca464c7b802599c97f2"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-heavy-s101021-primary\\artifacts\\manifest.json",
+    "bytes": 3580,
+    "sha256": "bedc4bc20c9ed6771ba9a0286eb8c7a6856c8e79bad46cab5f2eb14744e2745b"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-conduit-heavy-s101021-primary-s101021\\conduit-events.jsonl",
+    "bytes": 133098,
+    "sha256": "08fb743da51bc8284d8982071a3736284a68f42c24d722470a1d6c559271bd66"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-conduit-heavy-s101021-primary-s101021\\conduit-snapshots.jsonl",
+    "bytes": 252946,
+    "sha256": "825c47b0ef374f7f5b2fbed3fb6602c4fe1494b2b3c9d0f4a04c1283a4439177"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-conduit-heavy-s101021-primary-s101021\\conduit.json",
+    "bytes": 65057,
+    "sha256": "446d4bb51cb8b89e0e1e406e8596bcf7ba30ce2b644d5e6ad7cead3db71026d0"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-conduit-heavy-s101021-primary-s101021\\endpoints.json",
+    "bytes": 5304,
+    "sha256": "967540d9d7c9c8286a76ca56ee637c0487550bccacdcf76a3c7383f410da480f"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-conduit-heavy-s101021-primary-s101021\\events.jsonl",
+    "bytes": 1591608,
+    "sha256": "78db9b6077210b3aa49872f4e7d5644ddb8110348df46c4fb903f96c2e046a03"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-conduit-heavy-s101021-primary-s101021\\ready.json",
+    "bytes": 19834,
+    "sha256": "4545256bd4b2dfa19410fc81d8ca1f5bb49a9359d23ea3d53d032c2db621887e"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-conduit-heavy-s101021-primary-s101021\\samples.jsonl",
+    "bytes": 2696502,
+    "sha256": "8a8be6f5635786955979793ee9e6768a12e4856b1b250352c9ff53a4f27f62c1"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-conduit-heavy-s101021-primary-s101021\\summary.json",
+    "bytes": 31851,
+    "sha256": "6d996464139424f3fdb1a01f2b799abaa3f982fdb1dc6bd3f447646f936efa78"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-conduit-heavy-s101021-primary-s101021\\sustain-transitions.jsonl",
+    "bytes": 134709,
+    "sha256": "b49bb9d36f82377e96569a2b9c6e85b5ba4111c6672f01208816d1dce3fd7af9"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-heavy-s101021-primary\\process.json",
+    "bytes": 642,
+    "sha256": "6002934b4c261fd128806916d10f62baed6efef50a133c7f0b750106068c992c"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-conduit-heavy-s101021-primary\\process.log",
+    "bytes": 71,
+    "sha256": "6f16f17994c81ae7aeef3c74206196a22c3063877d3e2cec2cf55b830c85b726"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-heavy-s101021-primary\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-heavy-s101021-primary\\artifacts\\heartbeat.json",
+    "bytes": 131,
+    "sha256": "4fddd9409e8dbae051607fa0db66ea79a300e7f239011c88552577253e05264f"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-heavy-s101021-primary\\artifacts\\index.json",
+    "bytes": 40512,
+    "sha256": "9657701028d141ef6a9a336f3dd13fa8c340da5493d625567245e078ed308535"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-heavy-s101021-primary\\artifacts\\manifest.json",
+    "bytes": 3615,
+    "sha256": "5cc6ec00db4a76818cf28c51f92e76962d81708fdd08e3f1f3d20d8fc696982d"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-spirit-heavy-s101021-primary-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-spirit-heavy-s101021-primary-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-spirit-heavy-s101021-primary-s101021\\endpoints.json",
+    "bytes": 5065,
+    "sha256": "48f3f11d3e954e7650b597dca01889c1dea6e1c56ff180a266d8c9401b89eaa1"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-spirit-heavy-s101021-primary-s101021\\events.jsonl",
+    "bytes": 1461114,
+    "sha256": "6676e8ae17ea4de5a0275919372c88b5b443b4deb8c4a875f25f8600b75d8a0d"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-spirit-heavy-s101021-primary-s101021\\ready.json",
+    "bytes": 16657,
+    "sha256": "8ac54698d08cd1a429ed9df556bcbfcdc924a8dfeb9db4e043b9dc85dd87a6c2"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-spirit-heavy-s101021-primary-s101021\\samples.jsonl",
+    "bytes": 2342732,
+    "sha256": "ff5b83686317f4a4106768ee8870f1778ec290175d3814ea36ab7f8556062e95"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-spirit-heavy-s101021-primary-s101021\\summary.json",
+    "bytes": 37482,
+    "sha256": "96eb92731abc440aa118810de6fb3e6e548f87e4b7b6666bd1cee682e4821070"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-heavy-s101021-primary\\artifacts\\t3-tundra-class-frame-01-spirit-heavy-s101021-primary-s101021\\sustain-transitions.jsonl",
+    "bytes": 105760,
+    "sha256": "efaffaf5d65889c66875cfd05d177bbdcea8ebbccb09e6b5ea38d81924024599"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-heavy-s101021-primary\\process.json",
+    "bytes": 640,
+    "sha256": "d4ca4ad0e1369dd7c41da4efb6bec6a889eb3a5e4809df3916bb4b38a1eb88bd"
+  },
+  {
+    "path": "D:\\t3r\\run-02\\t3-tundra-class-frame-01-spirit-heavy-s101021-primary\\process.log",
+    "bytes": 70,
+    "sha256": "cdbc579f9ee85170717a857026efe9e22cb70910c561789459caa53adb042029"
+  }
+]

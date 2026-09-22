@@ -1,0 +1,45 @@
+{
+  "experimentId": "t3-tundra-class-frame-01",
+  "attempt": "run-02",
+  "publicationDirectory": "reports/player-fast-pass/t3-tundra-class-frame-01/run-02",
+  "executionSourceCommit": "7d0dadb2b4397141c5a654ab9bb658871c56147b",
+  "sourceSha256": "202d007f010df4380680f420a540f63fc911fe98be6d03f800f20c47b164a18d",
+  "identitySha256": "e7eb17a12715a19975de72a503b80df828a1aea1a64ef5658054276874d735e2",
+  "manifestSha256": "5615531632c9604c8fb8d3be41a13fa3e852d80ebea5ef1cd4277dd62af34aef",
+  "sealSha256": "6edfadb1cf018ff9f6318564c4030eef2bd5539eaa3b8bdbe104eaa8fe6a4240",
+  "qualificationReceiptsSha256": "36e04cbd8a26aa6855339fb0eb076ab84b97bd31d464bdc691dcb620f669a63f",
+  "hitboxesSha256": "08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83",
+  "measuredArtifact": "results-summary.json",
+  "measuredSha256": "3692598e04a98e523a2bf49e9e4b55ed04da41a6c22fa09e3b56037c28ec2249",
+  "counts": {
+    "planned": 52,
+    "newCompleted": 52,
+    "failed": 0,
+    "omitted": 0,
+    "notRun": 0,
+    "reused": 0,
+    "playerDied": 4,
+    "windowEnded": 48
+  },
+  "rawInventoryValidation": {
+    "retainedRoot": "D:\\t3r\\run-02",
+    "entries": 734,
+    "totalBytes": 247246889,
+    "mismatches": 0
+  },
+  "publicationFiles": {
+    "REPORT.md": { "bytes": 10796, "sha256": "7e2953c9491ec9373f096581d11ba55e94e9e213787b619815b309160c5a4a84" },
+    "complete.json": { "bytes": 101, "sha256": "942e3e7dd5d26e2f4004afe7aa2f485bb9948af2b3125abc97362d5ef95281c5" },
+    "identity.json": { "bytes": 146527, "sha256": "e7eb17a12715a19975de72a503b80df828a1aea1a64ef5658054276874d735e2" },
+    "manifest.json": { "bytes": 157856, "sha256": "5615531632c9604c8fb8d3be41a13fa3e852d80ebea5ef1cd4277dd62af34aef" },
+    "packet-qualified.json": { "bytes": 260, "sha256": "9bf8ff8675bb8df92bc9d940d4236d68e3f05dc1929f1926a0b18dc8c81dc09b" },
+    "packet-receipt-verified.json": { "bytes": 435, "sha256": "9263e0272e6e40a2ad818655dae7a382e4387192994bec3c43a051dbbd31e253" },
+    "qualification-complete.json": { "bytes": 100, "sha256": "e9031d8253d8999d27446c8e4d34e4096d6c588ce5eb9a2f3ca05e70d9e88447" },
+    "raw-inventory.json": { "bytes": 189719, "sha256": "512467a998a1ad860902b48cc8b737ea3d90076775674fbd6d2a6bf3ec3a405e" },
+    "receipt-check-complete.json": { "bytes": 100, "sha256": "e9031d8253d8999d27446c8e4d34e4096d6c588ce5eb9a2f3ca05e70d9e88447" },
+    "resolved-builds.json": { "bytes": 860853, "sha256": "36e04cbd8a26aa6855339fb0eb076ab84b97bd31d464bdc691dcb620f669a63f" },
+    "results-summary.json": { "bytes": 532041, "sha256": "3692598e04a98e523a2bf49e9e4b55ed04da41a6c22fa09e3b56037c28ec2249" },
+    "seal.json": { "bytes": 177, "sha256": "6edfadb1cf018ff9f6318564c4030eef2bd5539eaa3b8bdbe104eaa8fe6a4240" }
+  },
+  "scope": "Compact evidence only; raw event and sample streams remain at the retained D: root."
+}
