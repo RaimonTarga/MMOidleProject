@@ -11,7 +11,7 @@ const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const require=createRequire(join(root,'server/package.json'));
 const enduranceSpec=require('../server/bench/balance/overnightEnduranceSpec.ts');
 const args=Object.fromEntries(process.argv.slice(2).map(a=>{const i=a.indexOf('=');assert(i>2);return [a.slice(2,i),a.slice(i+1)];}));
-assert(['prepare','verify','qualify','run'].includes(args.mode));assert(args.packet);
+assert(['prepare','verify','qualify','receipt-check','run'].includes(args.mode));assert(args.packet);
 const tundraClassFrame=args.trial==='t3-tundra-class-frame-01';
 const desert=args.trial==='desert-strategy-01';
 const guardCoverage=args.trial==='guard-coverage-01';
@@ -57,13 +57,21 @@ function verify() {
 }
 verify();
 if(args.mode==='verify'){console.log(`Fixed checkout, source, runtime, hitboxes and ${planned}-case ledger verified.`);process.exit(0);}
+if(args.mode==='receipt-check')assert(tundraClassFrame,'Receipt check is scoped to the T3 Tundra recovery packet');
 assert(args.out);const out=resolve(args.out);assert(!existsSync(out),'Fresh output only');
 const marker=join(packet,`${args.mode}-launched.json`);assert(!existsSync(marker),'No retries');
-const qualification=args.mode==='run'?json(join(packet,'qualified.json')):null;
+const qualification=['receipt-check','run'].includes(args.mode)?json(join(packet,'qualified.json')):null;
 if(qualification){
   assert.equal(qualification.completed,planned);assert.equal(qualification.combatObservations,0);
   assert.equal(qualification.manifestSha256,sha(readFileSync(join(packet,'manifest.json'))));
   assert.equal(sha(readFileSync(join(qualification.out,'resolved-builds.json'))),qualification.receiptsSha256);
+}
+if(args.mode==='run' && tundraClassFrame){
+  const checked=json(join(packet,'receipt-verified.json'));
+  assert.equal(checked.sourceCommit,frozen.sourceCommit);
+  assert.equal(checked.manifestSha256,sha(readFileSync(join(packet,'manifest.json'))));
+  assert.equal(checked.qualificationReceiptsSha256,qualification.receiptsSha256);
+  assert.equal(sha(readFileSync(join(checked.out,'resolved-builds.json'))),checked.verificationReceiptsSha256);
 }
 mkdirSync(out,{recursive:true});write(marker,{out,at:new Date().toISOString(),sourceCommit:frozen.sourceCommit});
 write(join(out,'manifest.json'),manifest);write(join(out,'identity.json'),frozen);
@@ -161,7 +169,7 @@ function receipt(c,r,m){
 }
 publish();let failure=null;
 try{
-  if(args.mode==='qualify'){
+  if(args.mode==='qualify' || args.mode==='receipt-check'){
     const {childOut,m}=await child(day2?`qualification-${family}`:'qualification','qualify',join(out,'zero-tick'));
     assert.deepEqual(m.cells,cells);assert.deepEqual(m.seeds,seeds);
     const ready=json(join(childOut,'index.json'));assert.equal(ready.length,planned);
@@ -195,10 +203,13 @@ try{
     if(existsSync(dest))await addInventory(dest);publish();console.log(`${i+1}/${planned} ${c.id}: ${r.status}`);
     if(failure)break;
   }
-}catch(e){failure=String(e);if(args.mode==='qualify'){rows[receipts.length].status='failure';rows[receipts.length].reason=failure;}}
+}catch(e){failure=String(e);if(args.mode==='qualify' || args.mode==='receipt-check'){rows[receipts.length].status='failure';rows[receipts.length].reason=failure;}}
 publish();
 const completed=rows.filter(r=>['complete','qualified','reused'].includes(r.status)).length;
-write(join(out,completed===planned?'complete.json':'partial.json'),{planned,completed,combatObservations:args.mode==='qualify'?0:rows.filter(r=>r.status==='complete').length,reused:rows.filter(r=>r.status==='reused').length,failure});
+write(join(out,completed===planned?'complete.json':'partial.json'),{planned,completed,combatObservations:['qualify','receipt-check'].includes(args.mode)?0:rows.filter(r=>r.status==='complete').length,reused:rows.filter(r=>r.status==='reused').length,failure});
 if(args.mode==='qualify' && completed===planned)write(join(packet,'qualified.json'),{out,completed,combatObservations:0,
   manifestSha256:sha(readFileSync(join(packet,'manifest.json'))),receiptsSha256:sha(readFileSync(join(out,'resolved-builds.json')))});
+if(args.mode==='receipt-check' && completed===planned)write(join(packet,'receipt-verified.json'),{out,completed,combatObservations:0,
+  sourceCommit:frozen.sourceCommit,manifestSha256:sha(readFileSync(join(packet,'manifest.json'))),
+  qualificationReceiptsSha256:qualification.receiptsSha256,verificationReceiptsSha256:sha(readFileSync(join(out,'resolved-builds.json')))});
 if(completed!==planned)process.exitCode=1;
