@@ -34,8 +34,8 @@ export class EnduranceProgress {
   }
 }
 
-export function endpointIntervals(endpoints: { atMs: number; work: { kills: number } }[]) {
-  return [300000,900000,1800000].map((endMs,i,ends) => {
+export function endpointIntervals(endpoints: { atMs: number; work: { kills: number } }[], boundaries = [300000,900000,1800000]) {
+  return boundaries.map((endMs,i,ends) => {
     const end=endpoints.find(e=>e.atMs===endMs), start=i ? endpoints.find(e=>e.atMs===ends[i-1]) : null;
     return {startMs:i ? ends[i-1] : 0,endMs,observed:!!end && (i===0 || !!start),
       kills:end && (i===0 || start) ? end.work.kills-(start?.work.kills??0) : null};
