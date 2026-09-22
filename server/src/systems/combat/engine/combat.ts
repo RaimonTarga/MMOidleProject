@@ -1,3 +1,4 @@
+import { handoverLostSummonTarget } from '../ai/summonTargetHandover';
 import { mitigateOnHitDamage } from '@mmo-idle/shared';
 import { outgoingFinalDamage } from '../damage/finalDamage';
 import { coordinateRally } from '../ai/packs';
@@ -2666,6 +2667,7 @@ export function updateCombat(world: World, dt: number, now: number) {
       minion.hasHealth.hp <= 0
     ) {
       abortMonsterCast(world, e);
+      if (handoverLostSummonTarget(world, e, now)) continue;
       setAggroTarget(world, e, null, now);
       setAttackTarget(world, e, null);
       continue;
