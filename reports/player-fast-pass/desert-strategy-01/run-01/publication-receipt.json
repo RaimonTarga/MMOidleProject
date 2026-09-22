@@ -1,0 +1,73 @@
+{
+  "experimentId": "desert-strategy-01",
+  "publicationDirectory": "reports/player-fast-pass/desert-strategy-01/run-01",
+  "executionSourceCommit": "0cfa240338e364bcd7bccb499cb6301d3bdb96cb",
+  "sourceSha256": "694ff2d3d04e78922638d5a1c57fc6bd1800b391f97e15962389223e5e9633bb",
+  "hitboxesSha256": "08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83",
+  "measuredArtifact": "results-summary.json",
+  "measuredSha256": "3ad8652ff59f5a67a786287d7c3cf643a4cf7923b101a2f282cc8f994fdc7b45",
+  "counts": {
+    "planned": 24,
+    "completed": 24,
+    "newCompleted": 24,
+    "reused": 0,
+    "failed": 0,
+    "notRun": 0,
+    "combatObservations": 24,
+    "playerDied": 2,
+    "windowEnded": 22
+  },
+  "rawInventoryValidation": {
+    "retainedRoot": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01",
+    "entries": 386,
+    "totalBytes": 1673127137,
+    "mismatches": 0
+  },
+  "publicationFiles": {
+    "REPORT.md": {
+      "bytes": 12808,
+      "sha256": "1beb3d4df8648d6be173741b7ae3d06021df0b1c9fea95b001e7d42c5e674292"
+    },
+    "complete.json": {
+      "bytes": 101,
+      "sha256": "323de12d47e9587082092da6a30c0324218e81bb1d38e1f2f072a226bb56e55d"
+    },
+    "DESIGNER_DECISION.json": {
+      "bytes": 1175,
+      "sha256": "f9d62a9680bfe69b3c05584042174c5ff59a5ec62bec17ae715999af45930311"
+    },
+    "identity.json": {
+      "bytes": 146289,
+      "sha256": "7d35980c92eb38f53b895cc9822eae58c446a78b43376e99789ba218798c9ec6"
+    },
+    "manifest.json": {
+      "bytes": 85725,
+      "sha256": "923d7f1b122e3070f7cf36b93052312eb09940639e08957401a9a9079ea9ff7e"
+    },
+    "packet-qualified.json": {
+      "bytes": 288,
+      "sha256": "d521fcfb530d0e31f8774c92f798a1761303312fbf07aa16e3c29ad98d4b28de"
+    },
+    "packet-seal.json": {
+      "bytes": 177,
+      "sha256": "0640dab5d979452f6940ded66421ab08cadbf15d7e04212128c6d87f1f9a38ee"
+    },
+    "qualification-complete.json": {
+      "bytes": 100,
+      "sha256": "7e9b0d6a6f0292a33b3ecb93567d5824cb7f80c120a805644e8221e263b0a473"
+    },
+    "raw-inventory.json": {
+      "bytes": 122903,
+      "sha256": "67b68a81047adca70b32191a456f2ede7416602bf41451ecb113297f9dfecf0b"
+    },
+    "resolved-builds.json": {
+      "bytes": 494143,
+      "sha256": "ff890ce9ab560c602467a6c5675c6bbe7d43b117ff8a94662e956f8b10f7b0ad"
+    },
+    "results-summary.json": {
+      "bytes": 1313522,
+      "sha256": "3ad8652ff59f5a67a786287d7c3cf643a4cf7923b101a2f282cc8f994fdc7b45"
+    }
+  },
+  "scope": "Compact evidence only; raw event and sample streams remain at the retained D: root."
+}

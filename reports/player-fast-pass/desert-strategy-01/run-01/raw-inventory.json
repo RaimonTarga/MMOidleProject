@@ -1,0 +1,1932 @@
+[
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-baseline-targeting\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-baseline-targeting-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-baseline-targeting-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-baseline-targeting-s101009\\endpoints.json",
+    "bytes": 4910,
+    "sha256": "e6ed71d342061358e221f50b609b1efdd1dd32622bc7358c312f5744b369fc1e"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-baseline-targeting-s101009\\events.jsonl",
+    "bytes": 2552315,
+    "sha256": "e34997ef0553ca377d7fc605be426f3792552ca33b1306c36079f71abd3c52d9"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-baseline-targeting-s101009\\guard-events.jsonl",
+    "bytes": 12303653,
+    "sha256": "3f5dbfd0a6c50bf1246693b6b347d94d726ec760b37fe07c9390527db7b97dee"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-baseline-targeting-s101009\\ready.json",
+    "bytes": 21070,
+    "sha256": "2e4ee3fe82244c87e52fa9e254054e3cbfba0777ffb74a8428fa44e35926df66"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-baseline-targeting-s101009\\samples.jsonl",
+    "bytes": 2318565,
+    "sha256": "3c83034bd62d326c1b9a957cc98e46f6f83c828efc0c5af63060a7fc5bce49d9"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-baseline-targeting-s101009\\strategy-events.jsonl",
+    "bytes": 58729346,
+    "sha256": "6c8cc3ee31650083df5c03698e020988b9511a89e3a767786c449f6f6cad92c6"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-baseline-targeting-s101009\\summary.json",
+    "bytes": 80726,
+    "sha256": "0fbac0d67bb56fa55a8fd0aac409417755a090035fd160cf2e17a60c068f6328"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-baseline-targeting-s101009\\sustain-transitions.jsonl",
+    "bytes": 118338,
+    "sha256": "197a8796c1fcf8ed0d40b38bced466a17272d80795478d6231f73c03cc309d81"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-baseline-targeting\\artifacts\\heartbeat.json",
+    "bytes": 150,
+    "sha256": "9c2571e5c6da8d76aedb4dc149b076cf10dafef1b03c13787afdfe73b89779e9"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-baseline-targeting\\artifacts\\index.json",
+    "bytes": 86726,
+    "sha256": "1465a52f92851b23205abbfb901f65d08d71d765b4bf766978f5cfc5682f8f0a"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-baseline-targeting\\artifacts\\manifest.json",
+    "bytes": 3998,
+    "sha256": "29550012d57641802549cac621dbc0b0c8e8b34f85fa30b6ad8d7a8b3b1c7862"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-baseline-targeting\\process.json",
+    "bytes": 758,
+    "sha256": "ef63a0883f4b88a8bcd129287426186fb7a2414d7fc6aabc187aa44e623ba376"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-baseline-targeting\\process.log",
+    "bytes": 89,
+    "sha256": "b40ca2debefa6ca3b89616b281ea18858daa6b5a98d2940decb7829a06d9879f"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-lowhp-targeting\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-lowhp-targeting-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-lowhp-targeting-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-lowhp-targeting-s101009\\endpoints.json",
+    "bytes": 5262,
+    "sha256": "db4d9fb1ad3ec1cc52f0ec05c2c0eeadb33bc6a0ac4f17386eb6e3197b3f81e4"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-lowhp-targeting-s101009\\events.jsonl",
+    "bytes": 1901628,
+    "sha256": "c8dd5bab859909f4d6a5e6517db122946d155617cb97a2ddc0237614c03eab17"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-lowhp-targeting-s101009\\guard-events.jsonl",
+    "bytes": 11854383,
+    "sha256": "94bb96d8d9fbda8a5b55f8492e4c3b04730508c65589c7a05238ade9f1aed198"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-lowhp-targeting-s101009\\ready.json",
+    "bytes": 21391,
+    "sha256": "5bb391b40f40550a382470742bfca267decadf26d0273f102890738dfd1dc7e0"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-lowhp-targeting-s101009\\samples.jsonl",
+    "bytes": 2518027,
+    "sha256": "3801497dd230a9ba4850311dd846b069b7923b72315408b1f0109e46c431ceae"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-lowhp-targeting-s101009\\strategy-events.jsonl",
+    "bytes": 59454864,
+    "sha256": "c0a5508ee864a445861c8f84112f6a2b0ecb64994a2ad7778ea50ce985a9662e"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-lowhp-targeting-s101009\\summary.json",
+    "bytes": 82751,
+    "sha256": "c16b42d0ab7c1848525dd2b0c34743fddd1bbfa1f2596846cb52069187681152"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-lowhp-targeting-s101009\\sustain-transitions.jsonl",
+    "bytes": 124516,
+    "sha256": "3d2d4951efd57c50e7ce7b1f6f9e5f2aff60a4cfbdf29a397584afc16fbcdc0e"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-lowhp-targeting\\artifacts\\heartbeat.json",
+    "bytes": 147,
+    "sha256": "76c7e036c5acb3073262766efbec2bd6ba0324854cd24c622f02d4b6e72d8cca"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-lowhp-targeting\\artifacts\\index.json",
+    "bytes": 88905,
+    "sha256": "88bab1d238878ad5e78dcffce1011baebef4181a46f1c84adb99e8d78acb1894"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-lowhp-targeting\\artifacts\\manifest.json",
+    "bytes": 4085,
+    "sha256": "694fbd19a562110dafb66962a223f07c3cc6a60165f927e6cc55b9b82bad797c"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-lowhp-targeting\\process.json",
+    "bytes": 752,
+    "sha256": "2402abdb96211728e78f3968a343db086c1f378af51a6a783159ea780b8472e2"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101009-lowhp-targeting\\process.log",
+    "bytes": 86,
+    "sha256": "939686ae0d83cd840715843374b49fb1a7d2c7062e9ad7d4d784cb3d15fee4d3"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-baseline-targeting\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-baseline-targeting-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-baseline-targeting-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-baseline-targeting-s101009\\endpoints.json",
+    "bytes": 4732,
+    "sha256": "10c845413df1bbe137c2172085a3cccd0ba357c2d2bea5f27cd65e638b2bf536"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-baseline-targeting-s101009\\events.jsonl",
+    "bytes": 2049488,
+    "sha256": "1e3e99f58b0f2f6b9f8bda7a194fbdaf478a6dc1848bc18719092f834c6bf30a"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-baseline-targeting-s101009\\guard-events.jsonl",
+    "bytes": 11120402,
+    "sha256": "3f9938a38c4126582c51e2c19ba74351b6a61a419dbff19ffff81e536c09edda"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-baseline-targeting-s101009\\ready.json",
+    "bytes": 20527,
+    "sha256": "643d12c90cd37af2abb98e81b888a486cbbb6d3ab55dc22118e8344ddb45736d"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-baseline-targeting-s101009\\samples.jsonl",
+    "bytes": 2357294,
+    "sha256": "5e72a0427a1a50d693a9896711c69044976e6856153959ed03d99d53badfc7eb"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-baseline-targeting-s101009\\strategy-events.jsonl",
+    "bytes": 59001957,
+    "sha256": "8bcd29078c7e7232a25a413fab03b381d46afe0fcad3b4a61da8b4dc35eee67a"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-baseline-targeting-s101009\\summary.json",
+    "bytes": 80414,
+    "sha256": "9536800ad388f84be5bfaeabe7dc8fdcc04e819d0ac3f6e4468089689eb0d27e"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-baseline-targeting-s101009\\sustain-transitions.jsonl",
+    "bytes": 98992,
+    "sha256": "fed8c01565c5b8e6624033f6598007ea06705e9058493a73d3bdf7498067f279"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-baseline-targeting\\artifacts\\heartbeat.json",
+    "bytes": 149,
+    "sha256": "9f16aacd4bf5545cc32efdc6945b1c5a84c4f780576d1c592de7ab2f863d9bf1"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-baseline-targeting\\artifacts\\index.json",
+    "bytes": 86398,
+    "sha256": "2cc208b2d0667682796ceda406f91407e080cab07ca4ea1f1a5a9a70b49899f4"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-baseline-targeting\\artifacts\\manifest.json",
+    "bytes": 3925,
+    "sha256": "9995a82aec3ba32c7eead43c1abf86249646bf9dddd564094243da317c812b98"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-baseline-targeting\\process.json",
+    "bytes": 756,
+    "sha256": "85db3dae848f1fbeeca4fb6c9cefa4df7c216466e8f5d289f25b437b3a63e028"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-baseline-targeting\\process.log",
+    "bytes": 88,
+    "sha256": "b98c1c268be050703ab660ce28097d9bf5de19ce56e596c7018580ff7c39e6ce"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-lowhp-targeting\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-lowhp-targeting-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-lowhp-targeting-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-lowhp-targeting-s101009\\endpoints.json",
+    "bytes": 5233,
+    "sha256": "8b78b97e9284a80286159e281f8b0ff9670ee08356402f07f9b7b1263ea9f904"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-lowhp-targeting-s101009\\events.jsonl",
+    "bytes": 1588983,
+    "sha256": "6733bc0edbbd23d3128f97eade050843d40b81b6042b23961c3aa00b41499da4"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-lowhp-targeting-s101009\\guard-events.jsonl",
+    "bytes": 10769428,
+    "sha256": "63fdc99456cf74b61499f631f66f898c497f96df10dbffb28e0e71a2b59227f2"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-lowhp-targeting-s101009\\ready.json",
+    "bytes": 20848,
+    "sha256": "9cdb1fe205ff5098f0530b7c54e3c6795c5fd7a604f797ce96e9c3cdebe175e0"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-lowhp-targeting-s101009\\samples.jsonl",
+    "bytes": 2522536,
+    "sha256": "f15a5829c051bd597b9cc9213ed6fe52c8109a7f5dbdf80dbf61b89d9617ee3a"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-lowhp-targeting-s101009\\strategy-events.jsonl",
+    "bytes": 59964843,
+    "sha256": "7c07f71264358adefdc22b29e7cc3f1a833b2439d42ad19aaaa4a5b1d7281b71"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-lowhp-targeting-s101009\\summary.json",
+    "bytes": 70275,
+    "sha256": "a0af24fac1e79de0f332970d86156beedf5df43ca95065f14c9574bf49e30ac4"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-lowhp-targeting-s101009\\sustain-transitions.jsonl",
+    "bytes": 91306,
+    "sha256": "29201e4b8b11010ae7f23c397d84ffd587f3887573f74566445187f63d060f86"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-lowhp-targeting\\artifacts\\heartbeat.json",
+    "bytes": 146,
+    "sha256": "bde59503c5ed5f5d29c6594b3abeb0c3eacc2fc9c980e3bb39648f87c0740620"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-lowhp-targeting\\artifacts\\index.json",
+    "bytes": 75489,
+    "sha256": "f21945972e4bc1995f413766264091591e754c242349be0f9275133d12096a65"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-lowhp-targeting\\artifacts\\manifest.json",
+    "bytes": 4012,
+    "sha256": "9c76a7bff898e9c71d673f72ab225b397f9be12e4fe5383cd8a2ef33bfb1469c"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-lowhp-targeting\\process.json",
+    "bytes": 750,
+    "sha256": "a3dce90a04365ec2b07103002dd79099e7b68c249cbf912977c19d6c4cf3d9bc"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101009-lowhp-targeting\\process.log",
+    "bytes": 85,
+    "sha256": "8d24f4606f0376976ed25a5ef832fbff61f5d83099f37e2ae070d4350a33d657"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-baseline-targeting\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-baseline-targeting-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-baseline-targeting-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-baseline-targeting-s101009\\endpoints.json",
+    "bytes": 5118,
+    "sha256": "5db07c58c76e68f4ac112fcf66eb46d5df43570d39d9aee1daf173f4c80c6a62"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-baseline-targeting-s101009\\events.jsonl",
+    "bytes": 1034005,
+    "sha256": "0174a4ffd5c2fde86a4c6a655eee6089edc7daddc94b16d409276865807926bc"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-baseline-targeting-s101009\\guard-events.jsonl",
+    "bytes": 7818343,
+    "sha256": "891b3dfa59abaefb5e7745c0c682e1186977ef8a77d14bbc364915bbf47bd92f"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-baseline-targeting-s101009\\ready.json",
+    "bytes": 20681,
+    "sha256": "010235e6b64ac5c21d6b9d35048f7c02077bdffb1694d297d82c931d9089b538"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-baseline-targeting-s101009\\samples.jsonl",
+    "bytes": 2495180,
+    "sha256": "72cba850d91fce374d0ca335d4c7d5a0e0fa5200edd7ffaa0cb533de5234fe34"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-baseline-targeting-s101009\\strategy-events.jsonl",
+    "bytes": 58476044,
+    "sha256": "f7883e51524e0fd9b9d66c858a98ce097e9ee208cad88a799394e3cab92342e0"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-baseline-targeting-s101009\\summary.json",
+    "bytes": 75561,
+    "sha256": "421ce8dee7ec1d5541f88743e1d442ea3af6617320852b323c25a1c9c5629ef0"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-baseline-targeting-s101009\\sustain-transitions.jsonl",
+    "bytes": 132537,
+    "sha256": "6ba9440b0f15343bd1b82169c9fdc85d998fd7e74faa28f20621891f3fc7c010"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-baseline-targeting\\artifacts\\heartbeat.json",
+    "bytes": 153,
+    "sha256": "76a07d2b964a0d3fef244306fc5168cdc1566ac0484ab9aa003e0be3dc9c8f2d"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-baseline-targeting\\artifacts\\index.json",
+    "bytes": 80971,
+    "sha256": "77aa9d9351e1f3daa714076b6e7f120d24bcfb0991388081490382c173ae4be5"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-baseline-targeting\\artifacts\\manifest.json",
+    "bytes": 4038,
+    "sha256": "a3f58e22befe45e69f94d44cd25ba1eb9cb8a8a88ccab7bb79338699cb01e280"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-baseline-targeting\\process.json",
+    "bytes": 764,
+    "sha256": "8bdbde8409eaef0b9d9c1c9e049f5d08b75687f0e98afb0440b96909ae2918df"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-baseline-targeting\\process.log",
+    "bytes": 92,
+    "sha256": "b396f66b3584bd33a21969c2af21910da91437a37b1e0491f9770fd316fe9581"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-lowhp-targeting\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-lowhp-targeting-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-lowhp-targeting-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-lowhp-targeting-s101009\\endpoints.json",
+    "bytes": 5202,
+    "sha256": "2d73763602802edaae68b4454c82a6a82ec20521243e53ed170a538f6c7e4b6e"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-lowhp-targeting-s101009\\events.jsonl",
+    "bytes": 1705630,
+    "sha256": "f0a89ec4b38edf849e934b3a5cb933d75818d9b908f14cf5e8f5584ec55ae8ee"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-lowhp-targeting-s101009\\guard-events.jsonl",
+    "bytes": 9678045,
+    "sha256": "eee410eded48e8ae53871ccac59c81249f22fb0a9f61ced805e078763d2a835f"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-lowhp-targeting-s101009\\ready.json",
+    "bytes": 21003,
+    "sha256": "fe1a8c704fd9ecf65c2f734e138659ba722ba9cdc29aab4172492f1742bf5d52"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-lowhp-targeting-s101009\\samples.jsonl",
+    "bytes": 2485527,
+    "sha256": "f737af5d47605c57be8a88b56c92e6426c8e99818295b7bfe13f66e9d441b974"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-lowhp-targeting-s101009\\strategy-events.jsonl",
+    "bytes": 57317056,
+    "sha256": "a447c033c04aea28f7745edeff66239889e9b7ea4e7e116f4cb0b3a8e3b1801b"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-lowhp-targeting-s101009\\summary.json",
+    "bytes": 86082,
+    "sha256": "97495cfdc1a8430e65b9cdba19eb78344230c6661d4608d6238f5a7e2707ab64"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-lowhp-targeting-s101009\\sustain-transitions.jsonl",
+    "bytes": 144250,
+    "sha256": "1259f19aa3c5f3cde7b4a8ed0ce5bc3887b13eedd3a2bf97bf60f1ef11b74907"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-lowhp-targeting\\artifacts\\heartbeat.json",
+    "bytes": 150,
+    "sha256": "e77b831a5ac1e22e64dcf059ea7d24c5317559a7b4c2287ab22607a09b7490fa"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-lowhp-targeting\\artifacts\\index.json",
+    "bytes": 92484,
+    "sha256": "0be4522d93b1ec575dec0a9d72406e9aef86c3ab906738367ab4e4cbbbfe4b89"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-lowhp-targeting\\artifacts\\manifest.json",
+    "bytes": 4125,
+    "sha256": "00db10b8dd8a9a6d7242008cca78008ed974dcab9305d233e4bbc7dc87f9219e"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-lowhp-targeting\\process.json",
+    "bytes": 758,
+    "sha256": "ce8eb4f598dc2cc1d6f60af92d6ec51bf90ddd7e873ede7a6ed1a57384d5c6ed"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101009-lowhp-targeting\\process.log",
+    "bytes": 89,
+    "sha256": "e106159e95e338c1fd676965a18ed6a2d1421b7a1397acd561258bbb336ffc64"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-baseline-targeting\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-baseline-targeting-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-baseline-targeting-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-baseline-targeting-s101009\\endpoints.json",
+    "bytes": 4678,
+    "sha256": "99ad15b3368e48df19b1619508cb9f3c104250a6d8ca38fed78d9ff4ef5f201e"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-baseline-targeting-s101009\\events.jsonl",
+    "bytes": 4110774,
+    "sha256": "700817703df8cdc64010a8e3a6a5e0d89953835ac8f3e7d88c6b37835f27e795"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-baseline-targeting-s101009\\guard-events.jsonl",
+    "bytes": 10169337,
+    "sha256": "e07fe56e01e45aa8b65962c47934a938af358a4a33605df49a2a01d057c2a9d2"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-baseline-targeting-s101009\\ready.json",
+    "bytes": 20472,
+    "sha256": "080896b5e314e0a7cff839efbe5ce769d4e197516a3a419f665d5f83e6511083"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-baseline-targeting-s101009\\samples.jsonl",
+    "bytes": 2310510,
+    "sha256": "0c0e97697cb7d80977b9849bd9b64967924495708f1c495a3ca9edcee74f21b7"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-baseline-targeting-s101009\\strategy-events.jsonl",
+    "bytes": 56769982,
+    "sha256": "4f882493e0eaa5a6a47a27cbd07d1d36db6f193ab3d65277e21eaaf55da6db1e"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-baseline-targeting-s101009\\summary.json",
+    "bytes": 115889,
+    "sha256": "ad267dbc7bf3b488aec148e6ca1da84082a63834f147079a1473f7c1473b4bb1"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-baseline-targeting-s101009\\sustain-transitions.jsonl",
+    "bytes": 153844,
+    "sha256": "1dc6813385589bda13639a46b54dec45101a49339d0f7c7898b5b117c1845b35"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-baseline-targeting\\artifacts\\heartbeat.json",
+    "bytes": 150,
+    "sha256": "4877d4d9272fb27c997700ceeb866eb68d86c44c291ceb132feab72426f8ddfe"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-baseline-targeting\\artifacts\\index.json",
+    "bytes": 124575,
+    "sha256": "70f65afd9613c32ce27d8377213430df3dc92610648f21f27fc62c2798e030f7"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-baseline-targeting\\artifacts\\manifest.json",
+    "bytes": 4099,
+    "sha256": "07e651a40a2ddab1ff14e485c6dc994892b5159d799e2e581788c7ec984e63b4"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-baseline-targeting\\process.json",
+    "bytes": 758,
+    "sha256": "db337d581bfc2588fc90a60d5760e73a972b3dca784d45f3dcf76d32e5349d61"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-baseline-targeting\\process.log",
+    "bytes": 89,
+    "sha256": "77eb46f4d367f475621e553069fac89e3a84959c1c8610203f268782081a3278"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-lowhp-targeting\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-lowhp-targeting-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-lowhp-targeting-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-lowhp-targeting-s101009\\endpoints.json",
+    "bytes": 5228,
+    "sha256": "a4d13f2a1b23972a762e6ea43afc03fe2337b9819760a41974403f0ff7b9b17d"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-lowhp-targeting-s101009\\events.jsonl",
+    "bytes": 3977210,
+    "sha256": "a3c6ab9920237d04a88f936bc6581ae123a53d291629c5b9a863ae5a180b1132"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-lowhp-targeting-s101009\\guard-events.jsonl",
+    "bytes": 10112180,
+    "sha256": "15202a225542a89592512fe75c88ede8518ec2c9aa1b92bfcad763de52eacbbe"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-lowhp-targeting-s101009\\ready.json",
+    "bytes": 20793,
+    "sha256": "2641840201dd2c402dc2971dee97df97c220764d4e2c57e2687bb5e36212ea1b"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-lowhp-targeting-s101009\\samples.jsonl",
+    "bytes": 2472131,
+    "sha256": "1163360cae23f270074bbfd0223490304d0f0a7669ad63a4f4bb8e09d02e60ef"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-lowhp-targeting-s101009\\strategy-events.jsonl",
+    "bytes": 56978635,
+    "sha256": "7a4b705ad280fcfc03fcbb4aa64ff5ef91d615d9f47708b61a3b51f20259b185"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-lowhp-targeting-s101009\\summary.json",
+    "bytes": 117522,
+    "sha256": "efae7a928b979b09063a3a1eeef0559f13d6d75d6e9acce4cad683cbd2699ced"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-lowhp-targeting-s101009\\sustain-transitions.jsonl",
+    "bytes": 188668,
+    "sha256": "b98870d102a0c3688e1b129730c23a3a3e0e5311351ef0b2d9dc551fc1af8f77"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-lowhp-targeting\\artifacts\\heartbeat.json",
+    "bytes": 147,
+    "sha256": "6d453f7c4bc7432063bd21606da7d3897adc5f8236330ec44f338d95450b2e9d"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-lowhp-targeting\\artifacts\\index.json",
+    "bytes": 126326,
+    "sha256": "9bcbf135203a1f0f262684e4574f2a3c9bd3daf218bb3daf6a44d982b08d3b29"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-lowhp-targeting\\artifacts\\manifest.json",
+    "bytes": 4186,
+    "sha256": "6c68590b0a9725a641a823b9a74599a8fa6a3ff6eff139b1b6b9413fcb11607a"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-lowhp-targeting\\process.json",
+    "bytes": 752,
+    "sha256": "075ef0fa90ed9bce318bac42eff29282472f66a1e49c547e8351c36edb056a61"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101009-lowhp-targeting\\process.log",
+    "bytes": 86,
+    "sha256": "1b93f7cb45858563dee9ab7080137f280b55f62172648a3df255d35972e1f2a7"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-baseline-targeting\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-baseline-targeting-s101009\\conduit-events.jsonl",
+    "bytes": 151810,
+    "sha256": "c68f762dc7e09993f44988dfd1251be95cd965b3bf629267ffbb74fecac11ff6"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-baseline-targeting-s101009\\conduit-snapshots.jsonl",
+    "bytes": 199905,
+    "sha256": "8be700f7e3f676f40d1cba100338452936118a9367c163ad9302fa24b9b69887"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-baseline-targeting-s101009\\conduit.json",
+    "bytes": 28750,
+    "sha256": "bab423c48db7c21bca1b5933a9fd3660c00ce38d04760bebef3c80771a335646"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-baseline-targeting-s101009\\endpoints.json",
+    "bytes": 4941,
+    "sha256": "c13d546b36adf9124404644749e97edbe3ea1123d75ca4a7ba93e7fa1e913670"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-baseline-targeting-s101009\\events.jsonl",
+    "bytes": 4512241,
+    "sha256": "72b682b599a7502c3b42837fd25b2aef8d937fc6d730ba72e3df45c071b2c7de"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-baseline-targeting-s101009\\guard-events.jsonl",
+    "bytes": 11517374,
+    "sha256": "147bce4ffba6f0aac755e5ce9dcc364085942867c63c10f8ca59b5f75ff49312"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-baseline-targeting-s101009\\ready.json",
+    "bytes": 23011,
+    "sha256": "45500e0dde027a1fa28c1ab5615f066cc5eaa92762df67f8dbf23e8e0e76f450"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-baseline-targeting-s101009\\samples.jsonl",
+    "bytes": 2506220,
+    "sha256": "c91b3ab6198b479278fc9b3580e840cd1b2abea8e6e72494fd2df5aba95ef666"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-baseline-targeting-s101009\\strategy-events.jsonl",
+    "bytes": 60184023,
+    "sha256": "fef9f697c07795a1273b019f89ad9fb89116dbd6c2b5a71322c3bcdf286c733d"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-baseline-targeting-s101009\\summary.json",
+    "bytes": 68453,
+    "sha256": "dd7b9c15de248ce4c2848f1f53494767a8f05f0a8db229ea2cb2b4ba50f6ba48"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-baseline-targeting-s101009\\sustain-transitions.jsonl",
+    "bytes": 92435,
+    "sha256": "6a6874f62d5366825c4a72aff09661ea1e33459d0fff31a17d3331a8c38cf56a"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-baseline-targeting\\artifacts\\heartbeat.json",
+    "bytes": 150,
+    "sha256": "b967de00c00e55bfcdc57dc39b7fa407410e28360928e3c12faa4cf961f0e77f"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-baseline-targeting\\artifacts\\index.json",
+    "bytes": 73525,
+    "sha256": "67a3897f1db96e1b438fb885d4d24490d8d2d0f8208bb66f75ad0987e311e77b"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-baseline-targeting\\artifacts\\manifest.json",
+    "bytes": 4315,
+    "sha256": "6ad0a6b034a0e46a3d69f5e0afae877cbbc77eca422063c401789cb5e4a4fd8e"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-baseline-targeting\\process.json",
+    "bytes": 758,
+    "sha256": "aefe01de43468a8dbd1a2dc070fcd381f5ea84cfc2b337bdbaabaff6407dd1c9"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-baseline-targeting\\process.log",
+    "bytes": 89,
+    "sha256": "ccb510713e8352d72d0e2852a9abca2f6d9d50345d7cfe0cfa0971637b7945d5"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-lowhp-targeting\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-lowhp-targeting-s101009\\conduit-events.jsonl",
+    "bytes": 174140,
+    "sha256": "aec2e932e935b0fb608c981bb838f0e9f1ba43412f644e3fd0ed7944adc05607"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-lowhp-targeting-s101009\\conduit-snapshots.jsonl",
+    "bytes": 203242,
+    "sha256": "c3f8c5cbf965144a9b4b65fe67251572c60e1ae58f35e7f7373609e6a4b666f6"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-lowhp-targeting-s101009\\conduit.json",
+    "bytes": 29435,
+    "sha256": "d9baf540c7f96756cd84f97d4203f93da55580ca6c158f4abfd6678c16a125e1"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-lowhp-targeting-s101009\\endpoints.json",
+    "bytes": 5338,
+    "sha256": "81011364d6ce826269f75acd387c2686c4150dc69efdb8a5b1a9ccbbfcd6c6af"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-lowhp-targeting-s101009\\events.jsonl",
+    "bytes": 4009731,
+    "sha256": "db77da45bacd65f11839600a66babbdefd345fc78a08f86654eb4bf9f5fffaaf"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-lowhp-targeting-s101009\\guard-events.jsonl",
+    "bytes": 10798865,
+    "sha256": "35327acd4ea595cb42ea54f2a58f9c855fedb05f03812791212fd942c643b792"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-lowhp-targeting-s101009\\ready.json",
+    "bytes": 23332,
+    "sha256": "d6492edd7b888465ec1af79719e0d81127b5459d6abf8780c0efbfad36d6b05f"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-lowhp-targeting-s101009\\samples.jsonl",
+    "bytes": 2696805,
+    "sha256": "a0b936150bea15a6b537e2f31f8609335026567ed0503903b26801ff3e30cf9e"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-lowhp-targeting-s101009\\strategy-events.jsonl",
+    "bytes": 61254524,
+    "sha256": "229dd0e8538cb7f780750101c9cb9fcba6d45d909c9992f644383d33780bed42"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-lowhp-targeting-s101009\\summary.json",
+    "bytes": 77372,
+    "sha256": "25b11d90fbd5b9575da2d6ae2142ccd418d335314db4db120fe987685b7066d9"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-lowhp-targeting-s101009\\sustain-transitions.jsonl",
+    "bytes": 94795,
+    "sha256": "e48fd5078534184d7ea6efcaa30a50ccaa992bc17d98eefbcc2c26e889d4d6c2"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-lowhp-targeting\\artifacts\\heartbeat.json",
+    "bytes": 147,
+    "sha256": "754bc47bcadc5c509a98759fb25de9839c68ed81b08d5434f318d13cae7f2aaa"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-lowhp-targeting\\artifacts\\index.json",
+    "bytes": 83126,
+    "sha256": "010e2567d9b3a87e005c7b433737e8f9ede087131db2ce092d2bdd726ea6af5c"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-lowhp-targeting\\artifacts\\manifest.json",
+    "bytes": 4402,
+    "sha256": "4fc7055eb0fd8f537aa8760de14ce198d6ab4fbe5fe911f81dc4636919949e36"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-lowhp-targeting\\process.json",
+    "bytes": 752,
+    "sha256": "af06a3781558b9ffa48b7df35f32f6052620e6e99e56a87c2bf0fbbc8b8dd665"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101009-lowhp-targeting\\process.log",
+    "bytes": 86,
+    "sha256": "dc253c26303f43cfcf09a590b8494fcba8fc2521b94036ec300a9a592371268e"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-baseline-targeting\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-baseline-targeting-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-baseline-targeting-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-baseline-targeting-s101009\\endpoints.json",
+    "bytes": 5087,
+    "sha256": "637e0dd43cbb650e67c54c851a5288266b50c61c19e922e5cec6ca07273574a0"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-baseline-targeting-s101009\\events.jsonl",
+    "bytes": 1592723,
+    "sha256": "a5edcd5c854a25f04cdd6708af36a1fbb0f75564a6bc96f35258232414bf2280"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-baseline-targeting-s101009\\guard-events.jsonl",
+    "bytes": 9403911,
+    "sha256": "8cf410f0fab6b13a3430012c239e66697a544c6667b965c1e164ac7679d33ea3"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-baseline-targeting-s101009\\ready.json",
+    "bytes": 20495,
+    "sha256": "5e28f21bf08e0f310fe1faf32fc8f3d999a30f0f9823d140008fb9af08b54c63"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-baseline-targeting-s101009\\samples.jsonl",
+    "bytes": 2514232,
+    "sha256": "1855a704072cbb2881ec2517d694e4b80885ce035c36b4cbc44979613c5bcc0a"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-baseline-targeting-s101009\\strategy-events.jsonl",
+    "bytes": 59478703,
+    "sha256": "caa4ccd42968810a2217a90f10ea1d8282a0464c78b0e20eab4117ea8558b41a"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-baseline-targeting-s101009\\summary.json",
+    "bytes": 92288,
+    "sha256": "40ed85446eb24c77b48815bd2bb64e8c1810fbf75d0d056c46f1d655f153b8ab"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-baseline-targeting-s101009\\sustain-transitions.jsonl",
+    "bytes": 157041,
+    "sha256": "4f067bbbb1e4aa6831913adb2f7c4107c4320b44d1b6a2160d602dda7339a100"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-baseline-targeting\\artifacts\\heartbeat.json",
+    "bytes": 149,
+    "sha256": "b77fe5fb731df20f72eb8f38dca8f7896403ca6c7d8507238b97a36f91fd172f"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-baseline-targeting\\artifacts\\index.json",
+    "bytes": 98994,
+    "sha256": "4818be945cb0ef62ddedcfc08f810a7d097f2341214e14ea877daa7daed4f0d1"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-baseline-targeting\\artifacts\\manifest.json",
+    "bytes": 4068,
+    "sha256": "b79862cccfa3f7fa919f6c276bab8c048230280c3b501e82bbfaa9e0d54eb081"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-baseline-targeting\\process.json",
+    "bytes": 756,
+    "sha256": "e088b9cb84aaedd885cd9b2ee8cb0b7238e21f01f51bcbd4e76b50f3ec0c0656"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-baseline-targeting\\process.log",
+    "bytes": 88,
+    "sha256": "c9e7a3233df037d340d73e08be988cf8f579a586e4c72e5fb04cd001d2e17d36"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-lowhp-targeting\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-lowhp-targeting-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-lowhp-targeting-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-lowhp-targeting-s101009\\endpoints.json",
+    "bytes": 5431,
+    "sha256": "d9af630c966fe6d21c1cf0d3fdc88541752d6dadbc74fd74d0a881df99889ad4"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-lowhp-targeting-s101009\\events.jsonl",
+    "bytes": 1943238,
+    "sha256": "eb81baf6fca855d9e178a6df6c4b0367b06aab6400e30520fe78fae5be2b8144"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-lowhp-targeting-s101009\\guard-events.jsonl",
+    "bytes": 10847894,
+    "sha256": "7129afe573ca73efdca722b4552546cf0f08b120763586e537727221219d8d8a"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-lowhp-targeting-s101009\\ready.json",
+    "bytes": 20817,
+    "sha256": "864e7b84f4a700fd91cf801a800e87471c2b91f3763bfc81561d289dd157ace0"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-lowhp-targeting-s101009\\samples.jsonl",
+    "bytes": 2447468,
+    "sha256": "ef5d2a9a40acf6832dcdfb6e4cf5ce58bdae84e3d9fce6ff69dc89e37ca43c6b"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-lowhp-targeting-s101009\\strategy-events.jsonl",
+    "bytes": 57584396,
+    "sha256": "d4c79ae4530b44204fa50ce1801c6fe65300b21cf5102c483a847ee46d59e865"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-lowhp-targeting-s101009\\summary.json",
+    "bytes": 95494,
+    "sha256": "8bc816680b3b0db14ff6ce3a2e30182569d2450eea29c63995da6ae58b3318d1"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-lowhp-targeting-s101009\\sustain-transitions.jsonl",
+    "bytes": 150164,
+    "sha256": "d9b815289cd884590ac817c1b2e7a8f05e976be3f01912668290bea0fbbe1b67"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-lowhp-targeting\\artifacts\\heartbeat.json",
+    "bytes": 146,
+    "sha256": "f58ec22fdff44b555b002491a727f023f8fff09628c7a954ae831f5fc5042f27"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-lowhp-targeting\\artifacts\\index.json",
+    "bytes": 102618,
+    "sha256": "c53ea0e7c167b3910f4a11c059b670a1c685c94a7d7b2422f95ae63612bd6f96"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-lowhp-targeting\\artifacts\\manifest.json",
+    "bytes": 4155,
+    "sha256": "4b39cd150c36002ab37184484e7e9659be2afbe5a4d5e377cded18c29148e1c5"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-lowhp-targeting\\process.json",
+    "bytes": 750,
+    "sha256": "1b96d0ce1f2e05f5fa18a3d3c0624c24295bacbd8ef532984feeb5258c0fc487"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101009-lowhp-targeting\\process.log",
+    "bytes": 85,
+    "sha256": "43e0742730b2a7dd0f22aa1bc869d0022cf0256239ed055228f146455ca32e9c"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-lowhp-targeting\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-lowhp-targeting-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-lowhp-targeting-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-lowhp-targeting-s101021\\endpoints.json",
+    "bytes": 5335,
+    "sha256": "c6e54b4cc0c831b5f9419e911c8fe63c607922991ebfee539f26401e9020ceec"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-lowhp-targeting-s101021\\events.jsonl",
+    "bytes": 1981318,
+    "sha256": "51ce15d5addea7fd302cceb7e5a5615049bb1e0321378988351c49a53d6046bd"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-lowhp-targeting-s101021\\guard-events.jsonl",
+    "bytes": 12031062,
+    "sha256": "50414a0f64cc5f0c20e430c41ba90b20613f8e8928c933531213fff4894d08e4"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-lowhp-targeting-s101021\\ready.json",
+    "bytes": 21414,
+    "sha256": "7ff6d2e1b8b028ebeecf48d3aa8582138aac15f42a5cb966aab591c3555d539f"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-lowhp-targeting-s101021\\samples.jsonl",
+    "bytes": 2492225,
+    "sha256": "c4808993b2772c4ae38df2bf4ae929aba87a562b894d60217810122ae18e9da0"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-lowhp-targeting-s101021\\strategy-events.jsonl",
+    "bytes": 59779707,
+    "sha256": "848074821ba7ef662d0e091f957feb47f90bd8f88c4138117fe89023717650ae"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-lowhp-targeting-s101021\\summary.json",
+    "bytes": 77095,
+    "sha256": "1800ab4d6509c6b752c754872e7f186f44b902e0c78067941ed6f12f75f5745d"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-lowhp-targeting-s101021\\sustain-transitions.jsonl",
+    "bytes": 110995,
+    "sha256": "520d47d8aab425456659d8ad55e775f48655b22a301f0dc78caed48cb09d179d"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-lowhp-targeting\\artifacts\\heartbeat.json",
+    "bytes": 147,
+    "sha256": "f17b4b796eeb67c4389532275c6e8187d3cf0afc875ad549deeb245db39dab3f"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-lowhp-targeting\\artifacts\\index.json",
+    "bytes": 82811,
+    "sha256": "413e9ef42a7267e15343a275a4c9c9f47bb186a8b3ca53e0a342f16ac41ec58f"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-lowhp-targeting\\artifacts\\manifest.json",
+    "bytes": 4085,
+    "sha256": "c75b780e7524356a51c636ddb68206985131d856b90c33995da7e071dbb59b10"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-lowhp-targeting\\process.json",
+    "bytes": 752,
+    "sha256": "0249aae6680bc189221bc9664e8a73c12f200c0991b8392abbc9c8757ddae687"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-lowhp-targeting\\process.log",
+    "bytes": 86,
+    "sha256": "0efc7d31ae0efd6bb866c84e22026e9c49695920ffd7e5ee556b482285c19f40"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-baseline-targeting\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-baseline-targeting-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-baseline-targeting-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-baseline-targeting-s101021\\events.jsonl",
+    "bytes": 964176,
+    "sha256": "aa7c9a0491c0439fac3f5ea80e012aff01af805b212bc2f59cbe01ee2b7e5e7b"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-baseline-targeting-s101021\\guard-events.jsonl",
+    "bytes": 4576802,
+    "sha256": "01da132953de039b1c1a90ff923aaa54a98a5ea5ffef723af584e67980d13911"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-baseline-targeting-s101021\\ready.json",
+    "bytes": 21093,
+    "sha256": "b81acc6b4ab84d08105a1c5cd98eb78bb79b81d0886a148cb6afafefad297b34"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-baseline-targeting-s101021\\samples.jsonl",
+    "bytes": 824946,
+    "sha256": "08794b09596aba6d7b7bb1c23b7c6dcf3104604648718dfb0e31a164aeea1fb9"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-baseline-targeting-s101021\\strategy-events.jsonl",
+    "bytes": 21170080,
+    "sha256": "1e02ec8c0c8f53247dc4370974648d6bd442b80a14cd315b12c375f20367d61e"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-baseline-targeting-s101021\\summary.json",
+    "bytes": 38746,
+    "sha256": "25ebcc7e98bf7c36ce74c2d13645be8f5c148dcc065905a707c344d1eb94381b"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-baseline-targeting-s101021\\sustain-transitions.jsonl",
+    "bytes": 39548,
+    "sha256": "a39006ae8e6774ab92d044e9918c183cd1eb336af70e135471418a8de0607e4b"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-baseline-targeting\\artifacts\\heartbeat.json",
+    "bytes": 147,
+    "sha256": "bb8ad280b7c3d26bafa29fbb82969957a070017f20a9ec6b1c7a77a8df057b73"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-baseline-targeting\\artifacts\\index.json",
+    "bytes": 41658,
+    "sha256": "4c9f7be0e428a983ccc3aab26da7198c74acd8ff8c364e2d5918874ef784d944"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-baseline-targeting\\artifacts\\manifest.json",
+    "bytes": 3998,
+    "sha256": "36a88c4612ad0d107af4ae4ebd6c66b7f8e1c7748f462a265d066fb9a0973e28"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-baseline-targeting\\process.json",
+    "bytes": 758,
+    "sha256": "bb9af50e20a8514b9cd70bf3a2b11efb7d10b9a61027980cd5d779120fb47b3d"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-striker-heavy-a-s101021-baseline-targeting\\process.log",
+    "bytes": 89,
+    "sha256": "525127dbdaeee78be3f29e69c839756ca9afd40fbc945c9d1ce20093b2c7b3bc"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-lowhp-targeting\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-lowhp-targeting-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-lowhp-targeting-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-lowhp-targeting-s101021\\endpoints.json",
+    "bytes": 5333,
+    "sha256": "2276221187df2b62723ff6be4cea80956bfe7b372da38c23368ba1bd6936b31b"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-lowhp-targeting-s101021\\events.jsonl",
+    "bytes": 1635563,
+    "sha256": "21f22fd78e9212773b9d9f84aa443e37d1d38fdda6e0bc23a319d366c1bb06b7"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-lowhp-targeting-s101021\\guard-events.jsonl",
+    "bytes": 11080326,
+    "sha256": "953df3c134d1e4cb260ec048aae0772585fca8d17956ca692fa2dc194b04ec16"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-lowhp-targeting-s101021\\ready.json",
+    "bytes": 20871,
+    "sha256": "f604ac9775e954cbd53d217f3165645ecdb4a83386f5fe468ff62d16b532fba8"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-lowhp-targeting-s101021\\samples.jsonl",
+    "bytes": 2523375,
+    "sha256": "a1214908fc07d2c1e30281896b68bc0e9146e6753a8fe26788164cc3970788b7"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-lowhp-targeting-s101021\\strategy-events.jsonl",
+    "bytes": 60361888,
+    "sha256": "decfb10576f991f69f54f41b7d30a9a5f31bebbcc14b0e757325fa620eaa8410"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-lowhp-targeting-s101021\\summary.json",
+    "bytes": 66324,
+    "sha256": "dacc7279a29fdf7def4b5f65c54970af623961a11dabf711e99a6efc6425b77b"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-lowhp-targeting-s101021\\sustain-transitions.jsonl",
+    "bytes": 83318,
+    "sha256": "2149d1a13c541c7ce4cbb4f40916624a531433dbe924eb3d62863896316b8034"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-lowhp-targeting\\artifacts\\heartbeat.json",
+    "bytes": 146,
+    "sha256": "38424ea1627ccd9e8965ff261014836e9822b33dbef5ed7698f7624abab672ab"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-lowhp-targeting\\artifacts\\index.json",
+    "bytes": 71238,
+    "sha256": "fddd092fc30fdf1d80f6ba70c223440ad86c49e8425906ef39660058ddfd5360"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-lowhp-targeting\\artifacts\\manifest.json",
+    "bytes": 4012,
+    "sha256": "8e03024dc294b47e4f62330e171e491f896ad743b6a7f49a15793487454d5ffd"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-lowhp-targeting\\process.json",
+    "bytes": 750,
+    "sha256": "8ed535c82cce1a528f8326ad07ef8a54768dbeb3503cc0e1d41cbe0f6a4c39d4"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-lowhp-targeting\\process.log",
+    "bytes": 85,
+    "sha256": "db8405e8c3f80102f73b1a2fd316cc8c86ecb409d65c49ba0e5d8a2255ed8981"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-baseline-targeting\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-baseline-targeting-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-baseline-targeting-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-baseline-targeting-s101021\\endpoints.json",
+    "bytes": 4840,
+    "sha256": "8b08c4ca5fd0ad3fb6cde0821d1eac40f1fe8413e79f8983a1a9a344a8c29bb4"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-baseline-targeting-s101021\\events.jsonl",
+    "bytes": 2081827,
+    "sha256": "859a34f6d14c3e085c6b1c5049f62d7496a686e7be62bef52411d989ff446023"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-baseline-targeting-s101021\\guard-events.jsonl",
+    "bytes": 11475961,
+    "sha256": "e25037fa7ca718778ca5e7a8e331da3599336ce0a8ffa1ee56a1b7a3df8a70e4"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-baseline-targeting-s101021\\ready.json",
+    "bytes": 20550,
+    "sha256": "fb3bb4ebd2c715640f3fd9fc7803e22f4586bbdaace69221d24b7c9d4dcba5f7"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-baseline-targeting-s101021\\samples.jsonl",
+    "bytes": 2334290,
+    "sha256": "c56f289bb6e5286e97d4c084ac7120b4f51488b5096dd975c02ffceac42deddf"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-baseline-targeting-s101021\\strategy-events.jsonl",
+    "bytes": 59070291,
+    "sha256": "f67a07ce40dfeff2e597e570eabbdeaa6df401b7c605f728dd9eec495724e3da"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-baseline-targeting-s101021\\summary.json",
+    "bytes": 75305,
+    "sha256": "576e7b5b34f90e754eed3bb1fcd055f89da33ea87c2c7991e4cf5a86c6d4a96b"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-baseline-targeting-s101021\\sustain-transitions.jsonl",
+    "bytes": 95048,
+    "sha256": "b862e03d4d6ad9a22b9d303e100debdc01ed431636e5e5c4e04911e081fa33f6"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-baseline-targeting\\artifacts\\heartbeat.json",
+    "bytes": 149,
+    "sha256": "fdb9988f268b40349ac27c1fc45308f168cbc66e458a7ce586c8c42868a7eb80"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-baseline-targeting\\artifacts\\index.json",
+    "bytes": 80889,
+    "sha256": "e9d5cb033b4785e147ea5b7ff57f43819803004fabd7addfa1e96e294fc3d5f3"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-baseline-targeting\\artifacts\\manifest.json",
+    "bytes": 3925,
+    "sha256": "3962af03208704c03612a20ddb68436f1caa03c8d84f53583ab2e5a25ffe9461"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-baseline-targeting\\process.json",
+    "bytes": 756,
+    "sha256": "2278f407097b55832ab680bca4032af0a8f26d88d5116510dd3f6da4b4204ff2"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-squire-heavy-a-s101021-baseline-targeting\\process.log",
+    "bytes": 88,
+    "sha256": "efeb403265a098ca5e2b263a20a5208ffa448618ffe1bde49117aadf75817132"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-lowhp-targeting\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-lowhp-targeting-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-lowhp-targeting-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-lowhp-targeting-s101021\\endpoints.json",
+    "bytes": 5404,
+    "sha256": "9b54004f4f0f63f89e6ff94f79714ddc0fbb8080a99d6c2f4c7cf9f9725d7f94"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-lowhp-targeting-s101021\\events.jsonl",
+    "bytes": 1732498,
+    "sha256": "5a32291665dd658dc68f0c7823675d3d63f434a49d3c9cb8d05d0f6b29f4bde6"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-lowhp-targeting-s101021\\guard-events.jsonl",
+    "bytes": 9647271,
+    "sha256": "1c7195adde9403f11a25d51207bd114c422c59b8a1b3c34df911f7a2f254a371"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-lowhp-targeting-s101021\\ready.json",
+    "bytes": 21026,
+    "sha256": "8f9787eb5f382ee83e5caebd267f379e72980c137561bdcdd5f8b95e4a3ab4ea"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-lowhp-targeting-s101021\\samples.jsonl",
+    "bytes": 2479339,
+    "sha256": "996e217a6927a95621216646de6c7a4aabf570b1bec277ceb53d88c54e935d66"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-lowhp-targeting-s101021\\strategy-events.jsonl",
+    "bytes": 57232944,
+    "sha256": "cff01bc7741a0c9a6d90904d67e381f643e0f9bdb9be3a4473b6a247639200bb"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-lowhp-targeting-s101021\\summary.json",
+    "bytes": 81331,
+    "sha256": "53d0a977173e5e98d3ffabd1d5bd1f0ce3b176d2df5f2ef5d1095cd850f3e443"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-lowhp-targeting-s101021\\sustain-transitions.jsonl",
+    "bytes": 130865,
+    "sha256": "3a77d33f9f4604039b56c2d0f96072a7a324ae9123b27c7dcae97e396987dd5b"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-lowhp-targeting\\artifacts\\heartbeat.json",
+    "bytes": 150,
+    "sha256": "2ebebfd5459b299f99eaf7c1260f1b9c26d11a228be6a0e01908cc4397b91b1f"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-lowhp-targeting\\artifacts\\index.json",
+    "bytes": 87367,
+    "sha256": "91a7804dd6a644345ef158d2bc3e40776e00040d37448285fe65c6ae95f6e628"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-lowhp-targeting\\artifacts\\manifest.json",
+    "bytes": 4125,
+    "sha256": "004b86cdbbe98b2ddcf95877eecfd45bb8917c2657aaa583d2922ef6fc0dc39d"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-lowhp-targeting\\process.json",
+    "bytes": 757,
+    "sha256": "cbbac439bc20a1617daba6ba2b2c370d93f75eca7cd18a69dab249e017c38acf"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-lowhp-targeting\\process.log",
+    "bytes": 89,
+    "sha256": "45c5e60e4c27847fb9e95ed42eff621bcbe483558fe5f3a301a713fe00be5afc"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-baseline-targeting\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-baseline-targeting-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-baseline-targeting-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-baseline-targeting-s101021\\endpoints.json",
+    "bytes": 5065,
+    "sha256": "eb1310cfdebf344d7c97b433ab25a054da1e0bdf3380ef8e38b0575f44a385ff"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-baseline-targeting-s101021\\events.jsonl",
+    "bytes": 996511,
+    "sha256": "3a0efcb8bae9a5405cb714f50f7ec4b98b7c21cd1bec0a147c481abcde962087"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-baseline-targeting-s101021\\guard-events.jsonl",
+    "bytes": 7894100,
+    "sha256": "548fd0fa4322988e2b96efc459c4f6520c0c9127ecdee4c12df9004620eb3490"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-baseline-targeting-s101021\\ready.json",
+    "bytes": 20704,
+    "sha256": "9978da58bdf4940b30542b521d29db7db8439db50c15c5e84554ab694298a05b"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-baseline-targeting-s101021\\samples.jsonl",
+    "bytes": 2476853,
+    "sha256": "7a666ded3160f831f3cd31e25df4a82ac7b753b135a072a745cc79732e7a2236"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-baseline-targeting-s101021\\strategy-events.jsonl",
+    "bytes": 57853432,
+    "sha256": "9fb5fa20471b3fdd8cd5380bb99a4f263f51cfef1b2b457c0652a0a98ffb4be6"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-baseline-targeting-s101021\\summary.json",
+    "bytes": 73103,
+    "sha256": "f5153fe5ed4696fa2527484962953f795534e8f016bf68e748de896c2385303f"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-baseline-targeting-s101021\\sustain-transitions.jsonl",
+    "bytes": 121218,
+    "sha256": "1017e89e4f27bf4c0179ef1256df7546a16871332e6800171d955b8bb6589953"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-baseline-targeting\\artifacts\\heartbeat.json",
+    "bytes": 153,
+    "sha256": "35eb6e0ed4d516ef7abefd0635ae3e7e991c91590c91755d812ea09dcf5b9b4a"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-baseline-targeting\\artifacts\\index.json",
+    "bytes": 78341,
+    "sha256": "c5acf48ca76375c6a60aaf381335483320d065d0a1a9fb370e9ecb6851629f95"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-baseline-targeting\\artifacts\\manifest.json",
+    "bytes": 4038,
+    "sha256": "ac99097befe15b2bc6c3ac8a22310d8f3a5aba4d43d8ea1425bccc72b95765e0"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-baseline-targeting\\process.json",
+    "bytes": 764,
+    "sha256": "89f95ee7d54a792e8d1c0d0bb308504fc52663b8523bc6ad61ea00d086a2dfcf"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-apprentice-heavy-a-s101021-baseline-targeting\\process.log",
+    "bytes": 92,
+    "sha256": "f44bc422470d89ef44a80b4b6b8eae9b5e0be8bca9ce2d8cdccbe30305542647"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-lowhp-targeting\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-lowhp-targeting-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-lowhp-targeting-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-lowhp-targeting-s101021\\endpoints.json",
+    "bytes": 4870,
+    "sha256": "67a7f3b8a6006947197d0d150f17f8cd982f130b4126a2987b1d11695d47c4c7"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-lowhp-targeting-s101021\\events.jsonl",
+    "bytes": 3992655,
+    "sha256": "73966569ca3dda27556e0c5429895317f0c8a0b62a902ba44ac8f739d8e2219e"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-lowhp-targeting-s101021\\guard-events.jsonl",
+    "bytes": 10125391,
+    "sha256": "45fdf48bd7b85b919a8aadd819fad6fe1621fa412e7e0448f9eaea1e328ff4b7"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-lowhp-targeting-s101021\\ready.json",
+    "bytes": 20816,
+    "sha256": "cbb03e3d6c4cc21dbf049baf2c4a23ed0ca68791dc77e0f28edb0735e950223e"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-lowhp-targeting-s101021\\samples.jsonl",
+    "bytes": 2473233,
+    "sha256": "7885515625983e0789cd4dd99e303a66c2caf177fa25530afadf46397ef94be2"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-lowhp-targeting-s101021\\strategy-events.jsonl",
+    "bytes": 56890105,
+    "sha256": "a208a123dece70e8b95510d49fa91778c6856d6410bad7bfbaad19daac2c891c"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-lowhp-targeting-s101021\\summary.json",
+    "bytes": 102295,
+    "sha256": "e717b1ae1c40cf8ca02b1e97ebef72c3d60c9cf93ac5896888a76c14b45d7b14"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-lowhp-targeting-s101021\\sustain-transitions.jsonl",
+    "bytes": 173106,
+    "sha256": "baf375c02388e181f64e03688a3c1b0a6bd48ceb887724c60fc49e06d841af7d"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-lowhp-targeting\\artifacts\\heartbeat.json",
+    "bytes": 147,
+    "sha256": "27dadd458a1d0e7e5eb96503cd4a82cc65157b9dff2b3a693e292cfd06fa1b8c"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-lowhp-targeting\\artifacts\\index.json",
+    "bytes": 109939,
+    "sha256": "1dcbabad78ae2228631ce253f76ad62a34373051df121c720efc796c799d8984"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-lowhp-targeting\\artifacts\\manifest.json",
+    "bytes": 4186,
+    "sha256": "24302fd154e9745ed70c3598dcf657ade060889a0dca861f98d2ec30aa2fec2d"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-lowhp-targeting\\process.json",
+    "bytes": 752,
+    "sha256": "fde363120d482905061ddbaa36d510b2fc7bf92bf1fab492e4b9c3c1d360a27f"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-lowhp-targeting\\process.log",
+    "bytes": 86,
+    "sha256": "41c026e6976946462805cce9097eeacb28d2ac6bea33a49e85649ffde3870ba0"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-baseline-targeting\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-baseline-targeting-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-baseline-targeting-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-baseline-targeting-s101021\\endpoints.json",
+    "bytes": 4783,
+    "sha256": "607da52f6e31e41ad01d1a4a7ed6072abe9889cd934ad2c1f9468fc5f121bb70"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-baseline-targeting-s101021\\events.jsonl",
+    "bytes": 4087954,
+    "sha256": "95b54946f4b03d6a55250fba71fe2bbe1bf8a35cc1a08b1c7c6c48d6b2f0eab4"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-baseline-targeting-s101021\\guard-events.jsonl",
+    "bytes": 10144614,
+    "sha256": "a9a1372e49b94b7bf08bdc96a3dde3aff0a41bda23ac182a02166954367ee1e4"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-baseline-targeting-s101021\\ready.json",
+    "bytes": 20495,
+    "sha256": "72b715721b34563035606b869fcb85130c63372002273ceb61468d85c466a294"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-baseline-targeting-s101021\\samples.jsonl",
+    "bytes": 2318423,
+    "sha256": "5868937553a0f3c5d8b3114eefa24ed5270922e92fce2c2434c232f8ef35cf4f"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-baseline-targeting-s101021\\strategy-events.jsonl",
+    "bytes": 56997602,
+    "sha256": "4b450c932a9910feaefac2ea75bfb31f2e00fe4e26a6300bf17dee9eb57d0cba"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-baseline-targeting-s101021\\summary.json",
+    "bytes": 105453,
+    "sha256": "bdda7e51f6a3d41218d92895e72887dc9f5fab70cb02f4931c7ae5503e3702c7"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-baseline-targeting-s101021\\sustain-transitions.jsonl",
+    "bytes": 142868,
+    "sha256": "9217649acecb23df727b76452e251711e4b2cde013db96a68a77486fee81afc1"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-baseline-targeting\\artifacts\\heartbeat.json",
+    "bytes": 150,
+    "sha256": "63dcc54a731537c9e3d5ff8407288aa6d6b011ce317ff31e4d1d16c5dec8d80f"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-baseline-targeting\\artifacts\\index.json",
+    "bytes": 113335,
+    "sha256": "134ca2eaddfe79bc0594ffb54b454337f17020c0ea6a15f7de026b1d20322f11"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-baseline-targeting\\artifacts\\manifest.json",
+    "bytes": 4099,
+    "sha256": "0def29e81a78c4eab27d5d42eaf3529418b1422c185a63200450e0adf7cfb8a2"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-baseline-targeting\\process.json",
+    "bytes": 758,
+    "sha256": "90f343a2590bffa3a5d11adf1c4f991512b32ec7dd397b5f451a8466333cec61"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-slinger-heavy-a-s101021-baseline-targeting\\process.log",
+    "bytes": 89,
+    "sha256": "9317690fd4f6cba38dea3e1dde33447d82f2e79c1f95d783e349b969b90bea59"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-lowhp-targeting\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-lowhp-targeting-s101021\\conduit-events.jsonl",
+    "bytes": 174999,
+    "sha256": "5e95adb4ead28c9e3e0219b408936afacd434abc0a2fe196ca0239f85f940fb0"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-lowhp-targeting-s101021\\conduit-snapshots.jsonl",
+    "bytes": 204260,
+    "sha256": "8a121377487113c8405b54a22e76957528345aabf99037bf37454f2af46aaa25"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-lowhp-targeting-s101021\\conduit.json",
+    "bytes": 28281,
+    "sha256": "14d13bf1275a42b49e006a464cb69d45417e717a81238306a3bcf098191c947e"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-lowhp-targeting-s101021\\endpoints.json",
+    "bytes": 5322,
+    "sha256": "5272ae3ac73e9e0d9bd22de934d17b7df6c5395dd1a107439fcf92d818158e9e"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-lowhp-targeting-s101021\\events.jsonl",
+    "bytes": 3925895,
+    "sha256": "c5aff684be230cab78647aac79866409ce34796449a230258a4db0d438f2085c"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-lowhp-targeting-s101021\\guard-events.jsonl",
+    "bytes": 10717159,
+    "sha256": "e633d2c83662437b5a1fc5e85c724b340e3c1678d74f8654f7f3b5b62da2284e"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-lowhp-targeting-s101021\\ready.json",
+    "bytes": 23355,
+    "sha256": "b4a59e67d836da3818d2e7d0345ea9cd24d81311ad05e910c957651f7f52989b"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-lowhp-targeting-s101021\\samples.jsonl",
+    "bytes": 2710372,
+    "sha256": "8b6347044921be424a95add7142e9760b8cad09d0f89fb9440d33b8a70664707"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-lowhp-targeting-s101021\\strategy-events.jsonl",
+    "bytes": 61334310,
+    "sha256": "e6263980d42fb7943f285fd5e1e3f6797ccbee3e9c8858ab68beb69faff8024c"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-lowhp-targeting-s101021\\summary.json",
+    "bytes": 74202,
+    "sha256": "6f5bac0b7ad68483575af68e33ed380a3bfc3b65e2542a7b6b3e0ca7ae318b49"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-lowhp-targeting-s101021\\sustain-transitions.jsonl",
+    "bytes": 93550,
+    "sha256": "1888922c95958093c373d6ed7f37a15275f139a45514b79e015762a823fe8e80"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-lowhp-targeting\\artifacts\\heartbeat.json",
+    "bytes": 147,
+    "sha256": "d3ac7339a3f1aabca1326d6421011bec06aaaadddfc6577020ce078554cc0b05"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-lowhp-targeting\\artifacts\\index.json",
+    "bytes": 79670,
+    "sha256": "ecd86ffa5947be5be5ad328d14becff09a33d6ce8af93c4e017619d84205bf8a"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-lowhp-targeting\\artifacts\\manifest.json",
+    "bytes": 4402,
+    "sha256": "47ee3b8e753fc6f1105eb1bc1992e74e7cb0c3a22375c549fbdb0e12c5b2a265"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-lowhp-targeting\\process.json",
+    "bytes": 752,
+    "sha256": "9ed72773532a72e576f7bccdddb69d2856bef06cf32f8a535ed4eb945ef342ec"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-lowhp-targeting\\process.log",
+    "bytes": 86,
+    "sha256": "342fe43f98a54c04d55a59e3ffbd42faa2c65c4a98f8a9cb1fcddb6e7b0738ec"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-baseline-targeting\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-baseline-targeting-s101021\\conduit-events.jsonl",
+    "bytes": 13518,
+    "sha256": "c1bd6a3b2c16c113593505627eb94d93c01a51e9bec1f36ff2a33d5d80853d4c"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-baseline-targeting-s101021\\conduit-snapshots.jsonl",
+    "bytes": 14414,
+    "sha256": "48b3a9b47bfcf03476c6719c2aade82df3c3fcb0891637f98f7f273bd65bf3a5"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-baseline-targeting-s101021\\conduit.json",
+    "bytes": 4014,
+    "sha256": "483b1cdb8d8bd4397b47be4e0062376938d0afabcfe2f799f1793d2cd203b88d"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-baseline-targeting-s101021\\events.jsonl",
+    "bytes": 353530,
+    "sha256": "08d7d56a35ba43d43e91c6378d4fa8061ce518ab31da67b91307f4ed01ea200a"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-baseline-targeting-s101021\\guard-events.jsonl",
+    "bytes": 817555,
+    "sha256": "b71e33464c8944f3dfb4bff09a4b8aacda503b7d2045bccf2854829a8476bb35"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-baseline-targeting-s101021\\ready.json",
+    "bytes": 23034,
+    "sha256": "6ed554a4a4283edc7ae2cfa210970047ecf1dd39af9fb4dc6017c0dd5da3f509"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-baseline-targeting-s101021\\samples.jsonl",
+    "bytes": 178020,
+    "sha256": "3fa2e0d56f32472d223f657101d68e6eca984b10479ae12ab9c43ec0ff5499bc"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-baseline-targeting-s101021\\strategy-events.jsonl",
+    "bytes": 4405674,
+    "sha256": "dc915b73425f9dc3cc63854bc7058a49ba98a3d0905c69ddd3e5f2812007b851"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-baseline-targeting-s101021\\summary.json",
+    "bytes": 21487,
+    "sha256": "cfa350a731606644ebd0ea483ca3851afcca23e8727819bf16cdfe4d5edc5ae8"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-baseline-targeting-s101021\\sustain-transitions.jsonl",
+    "bytes": 4872,
+    "sha256": "3d9c742e81785b67b7b5cc54239bb3eaed72658edfea6a1fcec9ce4569549e49"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-baseline-targeting\\artifacts\\heartbeat.json",
+    "bytes": 147,
+    "sha256": "467a2eb53207561c3a6f8c0194a94ee64bfc91d5ad99f7e90db54e0090540b34"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-baseline-targeting\\artifacts\\index.json",
+    "bytes": 23095,
+    "sha256": "7409677a7c9776a11602d06c4b750144d8ddb8fa4f258ddb33aaeca2c2a4e01f"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-baseline-targeting\\artifacts\\manifest.json",
+    "bytes": 4315,
+    "sha256": "3c57cd6c97e2c16038662ef0a5588aa048735bc95aeb521d0ef7a9bc85a10671"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-baseline-targeting\\process.json",
+    "bytes": 758,
+    "sha256": "d2cb3629f2ba517b6e6486ad30a2b58bd93238457f43c1f84a0064e5d5ccf296"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-conduit-heavy-b-s101021-baseline-targeting\\process.log",
+    "bytes": 89,
+    "sha256": "25133eb755eee03a54e25b5461237d393b9af8657c86d16ced7c2950cb4935ee"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-lowhp-targeting\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-lowhp-targeting-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-lowhp-targeting-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-lowhp-targeting-s101021\\endpoints.json",
+    "bytes": 5359,
+    "sha256": "7865a810cb2ef530cfec008d0e8842dcc6682eb165b121de68c7d0e6d63f964b"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-lowhp-targeting-s101021\\events.jsonl",
+    "bytes": 2050230,
+    "sha256": "755b42de8899f2ec27b6d8646989001243dfd23d84c3476c2d5032d4ed38442f"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-lowhp-targeting-s101021\\guard-events.jsonl",
+    "bytes": 10956466,
+    "sha256": "3202e8df9b020a7da5f94f9c10e8462d6bc532d40976605a2c817aaceee060e4"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-lowhp-targeting-s101021\\ready.json",
+    "bytes": 20840,
+    "sha256": "0f47d243d828be7170600d95d64e6060a6a8d786077edebb756cbe9168f0f29e"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-lowhp-targeting-s101021\\samples.jsonl",
+    "bytes": 2453980,
+    "sha256": "18dae31622f8eff3f5ad9cf3c9bcb0c1305cb043f60ef3d20ba59f800b2e768b"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-lowhp-targeting-s101021\\strategy-events.jsonl",
+    "bytes": 57609381,
+    "sha256": "5df62e4ff3c0c292b8bdb138b45a2140bcf61c15535556a03c5c66902f2003f5"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-lowhp-targeting-s101021\\summary.json",
+    "bytes": 98998,
+    "sha256": "d69edc3200448dfe0702549d1230c1b7b05020fa5addb4f8400ed378a14ec021"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-lowhp-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-lowhp-targeting-s101021\\sustain-transitions.jsonl",
+    "bytes": 151742,
+    "sha256": "61886dc72d30c2f7bbb97d2aba6a5e1f302fccce71e563a17a1c1f99fd5caf2c"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-lowhp-targeting\\artifacts\\heartbeat.json",
+    "bytes": 146,
+    "sha256": "3acd1084b5b17363a64071e16f02760f4fdc2ca833799fb93e9131fed1997592"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-lowhp-targeting\\artifacts\\index.json",
+    "bytes": 106378,
+    "sha256": "5dace62a6544218fa7c9cc377fbdee0b9b989db70101da2ed66a2169198dde61"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-lowhp-targeting\\artifacts\\manifest.json",
+    "bytes": 4155,
+    "sha256": "fa502f6bbe49fbc389c38784a5d044ad628b9cd61b8ad1b76448e165a89dbf34"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-lowhp-targeting\\process.json",
+    "bytes": 750,
+    "sha256": "86699265a60b6c4167dae62143395751d10a384bd999b6acbafeaa4c2d8d9fc8"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-lowhp-targeting\\process.log",
+    "bytes": 85,
+    "sha256": "97455258f7491e2d56f6454d4f6af3f47a0d8f5037f0d4fcb4175a5a46613892"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-baseline-targeting\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-baseline-targeting-s101021\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-baseline-targeting-s101021\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-baseline-targeting-s101021\\endpoints.json",
+    "bytes": 5074,
+    "sha256": "742ba6c69d1560d06c2ab13b31aa5961aa1696442151cd704bf37e7dd67fd921"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-baseline-targeting-s101021\\events.jsonl",
+    "bytes": 1606459,
+    "sha256": "00a30c68c61826f7e114852b5c59fa5f837ac973681e73c6f2b2a8883d8359c9"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-baseline-targeting-s101021\\guard-events.jsonl",
+    "bytes": 9391492,
+    "sha256": "6c84281e31f1b42cf2787f8ed8d85523b3c3488eab7968be4147bf52e89917d9"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-baseline-targeting-s101021\\ready.json",
+    "bytes": 20518,
+    "sha256": "ec2580e9ca4289dcce89df907221e579a97fe8e94efc432e661aed8842105fae"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-baseline-targeting-s101021\\samples.jsonl",
+    "bytes": 2512214,
+    "sha256": "b85c81124d659e0323f147b1f870a42964e2f62aa41fe7c2a840f02b98fc8ced"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-baseline-targeting-s101021\\strategy-events.jsonl",
+    "bytes": 59317458,
+    "sha256": "0ebfeb50569ace27a0b59eda49048d07520e94e5011312764d7d14b438e2279b"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-baseline-targeting-s101021\\summary.json",
+    "bytes": 89663,
+    "sha256": "8722c8513e327baf6f6c278a2c1860f763ef7695d74e2a1c7f9091adf84164d5"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-baseline-targeting\\artifacts\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-baseline-targeting-s101021\\sustain-transitions.jsonl",
+    "bytes": 145783,
+    "sha256": "b5c32a5dd66559b369a669322f17e7e2183b43f4b73d6ecf5b3151f48ca901dc"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-baseline-targeting\\artifacts\\heartbeat.json",
+    "bytes": 149,
+    "sha256": "1e4dea67f967a4d316b7cd4ab5dedf62fe32af56c19aa79dba4564187c8f060d"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-baseline-targeting\\artifacts\\index.json",
+    "bytes": 96175,
+    "sha256": "20a9210b5dfe87a634e9234466ce98f8250095f1dd5179ac7612912d3b8c8b87"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-baseline-targeting\\artifacts\\manifest.json",
+    "bytes": 4068,
+    "sha256": "cfe6c41f6bac448887c97704843a0ea42c170d94f22d13eea11e3f8f4bba954c"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-baseline-targeting\\process.json",
+    "bytes": 756,
+    "sha256": "9b91bfe7e7eb0e5dd3f811c7f578b3e2271866da63b9071fa8cd91379021eaa7"
+  },
+  {
+    "path": "D:\\mmo-idle\\desert-strategy-01-r1\\run-01\\desert-strategy-01-breadth-t4-spirit-heavy-a-s101021-baseline-targeting\\process.log",
+    "bytes": 88,
+    "sha256": "0dd9e858d25ff2b7740e18e5625e28b89dd46b6341ec1becee3650608ded6ee2"
+  }
+]
