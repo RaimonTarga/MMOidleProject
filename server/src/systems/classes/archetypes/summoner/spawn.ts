@@ -1,3 +1,4 @@
+import { handoverLostSummonTarget } from '../../../combat/ai/summonTargetHandover';
 import { emitMonsterSession } from '../../../combat/engine/sessionObservation';
 /**
  * Minion spawn / despawn helpers for the summoner archetype.
@@ -251,13 +252,14 @@ export function despawnMinion(world: World, minion: MinionEntity): void {
       owner.summonsMinions.minionIds[slot] = '';
     }
   }
-  dropMonsterAggroOnMinion(world, minion.isMinion.id);
+  dropMonsterAggroOnMinion(world, minion.isMinion.id, true);
   world.removeMinionEntity(minion.isMinion.id);
 }
 
-function dropMonsterAggroOnMinion(world: World, minionId: string): void {
+function dropMonsterAggroOnMinion(world: World, minionId: string, allowHandover = false): void {
   for (const m of world.aggroedMonsters) {
     if (m.hasAggroTarget.targetKind === 'minion' && m.hasAggroTarget.targetId === minionId) {
+      if (allowHandover && handoverLostSummonTarget(world, m, Date.now())) continue;
       emitMonsterSession(m, 'despawn-aggro-clear-before', Date.now());
       detachComponent(world, m, 'hasAggroTarget');
       m.controlsMonster.chargeRemainingMs = 0;

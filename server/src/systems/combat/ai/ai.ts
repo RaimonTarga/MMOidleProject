@@ -1,3 +1,4 @@
+import { handoverLostSummonTarget } from './summonTargetHandover';
 import type { World } from "../../../world/World";
 import type {
   MinionEntity,
@@ -326,7 +327,8 @@ export function updateMonsters(world: World, dt: number, now: number) {
 
     // Resolve and validate the current aggro target.
     // Drop it only if the target left the node, disconnected, or (for minions) died.
-    const target = resolveAggroTarget(world, e);
+    let target = resolveAggroTarget(world, e);
+    if (!target && handoverLostSummonTarget(world, e, now)) target = resolveAggroTarget(world, e);
     if (e.hasAggroTarget && !target) {
       abortEngageSequence(world, e);
       setAggroTarget(world, e, null, now);
