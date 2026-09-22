@@ -1,0 +1,790 @@
+[
+  {
+    "identityId": "breadth-t3-striker-balanced",
+    "status": "preferred reference for these tested ordinary settings only",
+    "measuredSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observations": [
+      "endurance-01-breadth-t3-striker-balanced-node-t3-volcanic-03-s101009-volcanic",
+      "endurance-01-breadth-t3-striker-balanced-node-t3-tundra-03-s101009-volcanic",
+      "endurance-01-breadth-t3-striker-balanced-node-t3-volcanic-03-s101021-volcanic",
+      "endurance-01-breadth-t3-striker-balanced-node-t3-tundra-03-s101021-volcanic"
+    ],
+    "fixtures": [
+      "node-t3-tundra-03",
+      "node-t3-volcanic-03"
+    ],
+    "packageReadback": {
+      "declared": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "sweep",
+            "frenzy"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skillPath": [
+        "cadence-root",
+        "cadence-balanced",
+        "cadence-range-close"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "jungle-venomthorn-rapier",
+          "armor": "mountain-vest-t3",
+          "recovery": "volcanic-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-bruiser",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "jungle-venomthorn-rapier": 5,
+          "mountain-vest-t3": 5,
+          "volcanic-charm-t3": 5,
+          "mountain-boots-t3": 5,
+          "core-bruiser": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 18,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 12,
+          "jungle": 12,
+          "tundra": 6,
+          "volcanic": 6
+        },
+        "globalMastery": 114
+      },
+      "runicPoints": {
+        "budget": 38,
+        "cost": 33,
+        "unused": 5,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "access": "Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.",
+      "skillPoints": 0,
+      "knownAbilities": [
+        "binding-strike",
+        "detonate",
+        "frenzy",
+        "quick-strike",
+        "charge",
+        "contagion",
+        "hamstring",
+        "slam",
+        "expose-weakness",
+        "power-strike",
+        "sweep",
+        "break-free",
+        "bramble-guard",
+        "endure",
+        "brace",
+        "cleanse",
+        "second-wind"
+      ],
+      "rites": []
+    },
+    "conduitProfile": null,
+    "mountainAlternativeObservations": [
+      "endurance-01-breadth-t3-striker-balanced-node-t3-volcanic-03-s101009-mountain",
+      "endurance-01-breadth-t3-striker-balanced-node-t3-tundra-03-s101009-mountain",
+      "endurance-01-breadth-t3-striker-balanced-node-t3-volcanic-03-s101021-mountain",
+      "endurance-01-breadth-t3-striker-balanced-node-t3-tundra-03-s101021-mountain"
+    ]
+  },
+  {
+    "identityId": "breadth-t3-striker-heavy",
+    "status": "preferred reference for these tested ordinary settings only",
+    "measuredSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observations": [
+      "endurance-01-breadth-t3-striker-heavy-node-t3-volcanic-03-s101009-volcanic",
+      "endurance-01-breadth-t3-striker-heavy-node-t3-tundra-03-s101009-volcanic",
+      "endurance-01-breadth-t3-striker-heavy-node-t3-volcanic-03-s101021-volcanic",
+      "endurance-01-breadth-t3-striker-heavy-node-t3-tundra-03-s101021-volcanic"
+    ],
+    "fixtures": [
+      "node-t3-tundra-03",
+      "node-t3-volcanic-03"
+    ],
+    "packageReadback": {
+      "declared": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "sweep",
+            "frenzy"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skillPath": [
+        "cadence-root",
+        "cadence-heavy",
+        "cadence-range-close"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "mountain-avalanche-maul",
+          "armor": "mountain-vest-t3",
+          "recovery": "volcanic-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-bruiser",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "mountain-avalanche-maul": 5,
+          "mountain-vest-t3": 5,
+          "volcanic-charm-t3": 5,
+          "mountain-boots-t3": 5,
+          "core-bruiser": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 18,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 12,
+          "jungle": 12,
+          "tundra": 6,
+          "volcanic": 6
+        },
+        "globalMastery": 114
+      },
+      "runicPoints": {
+        "budget": 38,
+        "cost": 33,
+        "unused": 5,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "access": "Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.",
+      "skillPoints": 0,
+      "knownAbilities": [
+        "binding-strike",
+        "detonate",
+        "frenzy",
+        "quick-strike",
+        "charge",
+        "contagion",
+        "hamstring",
+        "slam",
+        "expose-weakness",
+        "power-strike",
+        "sweep",
+        "break-free",
+        "bramble-guard",
+        "endure",
+        "brace",
+        "cleanse",
+        "second-wind"
+      ],
+      "rites": []
+    },
+    "conduitProfile": null,
+    "mountainAlternativeObservations": [
+      "endurance-01-breadth-t3-striker-heavy-node-t3-volcanic-03-s101009-mountain",
+      "endurance-01-breadth-t3-striker-heavy-node-t3-tundra-03-s101009-mountain",
+      "endurance-01-breadth-t3-striker-heavy-node-t3-volcanic-03-s101021-mountain",
+      "endurance-01-breadth-t3-striker-heavy-node-t3-tundra-03-s101021-mountain"
+    ]
+  },
+  {
+    "identityId": "breadth-t3-squire-balanced",
+    "status": "preferred reference for these tested ordinary settings only",
+    "measuredSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observations": [
+      "endurance-01-breadth-t3-squire-balanced-node-t3-volcanic-03-s101009-volcanic",
+      "endurance-01-breadth-t3-squire-balanced-node-t3-tundra-03-s101009-volcanic",
+      "endurance-01-breadth-t3-squire-balanced-node-t3-volcanic-03-s101021-volcanic",
+      "endurance-01-breadth-t3-squire-balanced-node-t3-tundra-03-s101021-volcanic"
+    ],
+    "fixtures": [
+      "node-t3-tundra-03",
+      "node-t3-volcanic-03"
+    ],
+    "packageReadback": {
+      "declared": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "slam",
+            "frenzy"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skillPath": [
+        "cooldown-root",
+        "cooldown-balanced",
+        "cooldown-range-close"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "mountain-avalanche-maul",
+          "armor": "mountain-vest-t3",
+          "recovery": "volcanic-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-arcanist",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "mountain-avalanche-maul": 5,
+          "mountain-vest-t3": 5,
+          "volcanic-charm-t3": 5,
+          "mountain-boots-t3": 5,
+          "core-arcanist": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 18,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 12,
+          "jungle": 12,
+          "tundra": 6,
+          "volcanic": 6
+        },
+        "globalMastery": 114
+      },
+      "runicPoints": {
+        "budget": 38,
+        "cost": 33,
+        "unused": 5,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "access": "Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.",
+      "skillPoints": 0,
+      "knownAbilities": [
+        "binding-strike",
+        "detonate",
+        "frenzy",
+        "quick-strike",
+        "charge",
+        "contagion",
+        "hamstring",
+        "slam",
+        "expose-weakness",
+        "power-strike",
+        "sweep",
+        "break-free",
+        "bramble-guard",
+        "endure",
+        "brace",
+        "cleanse",
+        "second-wind"
+      ],
+      "rites": []
+    },
+    "conduitProfile": null,
+    "mountainAlternativeObservations": [
+      "endurance-01-breadth-t3-squire-balanced-node-t3-volcanic-03-s101009-mountain",
+      "endurance-01-breadth-t3-squire-balanced-node-t3-tundra-03-s101009-mountain",
+      "endurance-01-breadth-t3-squire-balanced-node-t3-volcanic-03-s101021-mountain",
+      "endurance-01-breadth-t3-squire-balanced-node-t3-tundra-03-s101021-mountain"
+    ]
+  },
+  {
+    "identityId": "breadth-t3-squire-light",
+    "status": "preferred reference for these tested ordinary settings only",
+    "measuredSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observations": [
+      "endurance-01-breadth-t3-squire-light-node-t3-volcanic-03-s101009-volcanic",
+      "endurance-01-breadth-t3-squire-light-node-t3-tundra-03-s101009-volcanic",
+      "endurance-01-breadth-t3-squire-light-node-t3-volcanic-03-s101021-volcanic",
+      "endurance-01-breadth-t3-squire-light-node-t3-tundra-03-s101021-volcanic"
+    ],
+    "fixtures": [
+      "node-t3-tundra-03",
+      "node-t3-volcanic-03"
+    ],
+    "packageReadback": {
+      "declared": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "sweep",
+            "frenzy"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skillPath": [
+        "cooldown-root",
+        "cooldown-light",
+        "cooldown-range-close"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "jungle-venomthorn-rapier",
+          "armor": "mountain-vest-t3",
+          "recovery": "volcanic-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-bruiser",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "jungle-venomthorn-rapier": 5,
+          "mountain-vest-t3": 5,
+          "volcanic-charm-t3": 5,
+          "mountain-boots-t3": 5,
+          "core-bruiser": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 18,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 12,
+          "jungle": 12,
+          "tundra": 6,
+          "volcanic": 6
+        },
+        "globalMastery": 114
+      },
+      "runicPoints": {
+        "budget": 38,
+        "cost": 33,
+        "unused": 5,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "access": "Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.",
+      "skillPoints": 0,
+      "knownAbilities": [
+        "binding-strike",
+        "detonate",
+        "frenzy",
+        "quick-strike",
+        "charge",
+        "contagion",
+        "hamstring",
+        "slam",
+        "expose-weakness",
+        "power-strike",
+        "sweep",
+        "break-free",
+        "bramble-guard",
+        "endure",
+        "brace",
+        "cleanse",
+        "second-wind"
+      ],
+      "rites": []
+    },
+    "conduitProfile": null,
+    "mountainAlternativeObservations": [
+      "endurance-01-breadth-t3-squire-light-node-t3-volcanic-03-s101009-mountain",
+      "endurance-01-breadth-t3-squire-light-node-t3-tundra-03-s101009-mountain",
+      "endurance-01-breadth-t3-squire-light-node-t3-volcanic-03-s101021-mountain",
+      "endurance-01-breadth-t3-squire-light-node-t3-tundra-03-s101021-mountain"
+    ]
+  },
+  {
+    "identityId": "breadth-t4-squire-heavy-a",
+    "status": "preferred reference for these tested ordinary settings only",
+    "measuredSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observations": [
+      "endurance-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-s101009-volcanic",
+      "endurance-01-breadth-t4-squire-heavy-a-node-t4-desert-03-s101009-volcanic",
+      "endurance-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-s101021-volcanic",
+      "endurance-01-breadth-t4-squire-heavy-a-node-t4-desert-03-s101021-volcanic"
+    ],
+    "fixtures": [
+      "node-t4-desert-03",
+      "node-t4-graveyard-03"
+    ],
+    "packageReadback": {
+      "declared": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "slam",
+            "frenzy",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skillPath": [
+        "cooldown-root",
+        "cooldown-heavy",
+        "cooldown-range-close",
+        "cooldown-heavy-t3-a"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "mountain-warmaul",
+          "armor": "mountain-vest-t4",
+          "recovery": "volcanic-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-arcanist",
+          "relic": "relic-colossus-heart"
+        },
+        "itemUpgrades": {
+          "mountain-warmaul": 5,
+          "mountain-vest-t4": 5,
+          "volcanic-charm-t4": 5,
+          "mountain-boots-t4": 5,
+          "core-arcanist": 0,
+          "relic-colossus-heart": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 24,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 18,
+          "jungle": 18,
+          "tundra": 12,
+          "volcanic": 12,
+          "graveyard": 6,
+          "trench": 6
+        },
+        "globalMastery": 156
+      },
+      "runicPoints": {
+        "budget": 47,
+        "cost": 40,
+        "unused": 7,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "access": "Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.",
+      "skillPoints": 0,
+      "knownAbilities": [
+        "disengage",
+        "imbue-lightning",
+        "snipe",
+        "stunning-strike",
+        "binding-strike",
+        "detonate",
+        "frenzy",
+        "quick-strike",
+        "charge",
+        "contagion",
+        "hamstring",
+        "slam",
+        "expose-weakness",
+        "power-strike",
+        "sweep",
+        "recuperate",
+        "break-free",
+        "bramble-guard",
+        "endure",
+        "brace",
+        "cleanse",
+        "second-wind"
+      ],
+      "rites": []
+    },
+    "conduitProfile": null,
+    "mountainAlternativeObservations": [
+      "endurance-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-s101009-mountain",
+      "endurance-01-breadth-t4-squire-heavy-a-node-t4-desert-03-s101009-mountain",
+      "endurance-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-s101021-mountain",
+      "endurance-01-breadth-t4-squire-heavy-a-node-t4-desert-03-s101021-mountain"
+    ]
+  },
+  {
+    "identityId": "breadth-t4-squire-heavy-b",
+    "status": "preferred reference for these tested ordinary settings only",
+    "measuredSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+    "observations": [
+      "endurance-01-breadth-t4-squire-heavy-b-node-t4-graveyard-03-s101009-volcanic",
+      "endurance-01-breadth-t4-squire-heavy-b-node-t4-desert-03-s101009-volcanic",
+      "endurance-01-breadth-t4-squire-heavy-b-node-t4-graveyard-03-s101021-volcanic",
+      "endurance-01-breadth-t4-squire-heavy-b-node-t4-desert-03-s101021-volcanic"
+    ],
+    "fixtures": [
+      "node-t4-desert-03",
+      "node-t4-graveyard-03"
+    ],
+    "packageReadback": {
+      "declared": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "slam",
+            "frenzy",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 5,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skillPath": [
+        "cooldown-root",
+        "cooldown-heavy",
+        "cooldown-range-close",
+        "cooldown-heavy-t3-b"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "mountain-warmaul",
+          "armor": "mountain-vest-t4",
+          "recovery": "volcanic-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-arcanist",
+          "relic": "relic-colossus-heart"
+        },
+        "itemUpgrades": {
+          "mountain-warmaul": 5,
+          "mountain-vest-t4": 5,
+          "volcanic-charm-t4": 5,
+          "mountain-boots-t4": 5,
+          "core-arcanist": 0,
+          "relic-colossus-heart": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "cave": 18,
+          "forest": 12,
+          "mountain": 24,
+          "plains": 12,
+          "swamp": 18,
+          "desert": 18,
+          "jungle": 18,
+          "tundra": 12,
+          "volcanic": 12,
+          "graveyard": 6,
+          "trench": 6
+        },
+        "globalMastery": 156
+      },
+      "runicPoints": {
+        "budget": 47,
+        "cost": 40,
+        "unused": 7,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "access": "Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.",
+      "skillPoints": 0,
+      "knownAbilities": [
+        "disengage",
+        "imbue-lightning",
+        "snipe",
+        "stunning-strike",
+        "binding-strike",
+        "detonate",
+        "frenzy",
+        "quick-strike",
+        "charge",
+        "contagion",
+        "hamstring",
+        "slam",
+        "expose-weakness",
+        "power-strike",
+        "sweep",
+        "recuperate",
+        "break-free",
+        "bramble-guard",
+        "endure",
+        "brace",
+        "cleanse",
+        "second-wind"
+      ],
+      "rites": []
+    },
+    "conduitProfile": null,
+    "mountainAlternativeObservations": [
+      "endurance-01-breadth-t4-squire-heavy-b-node-t4-graveyard-03-s101009-mountain",
+      "endurance-01-breadth-t4-squire-heavy-b-node-t4-desert-03-s101009-mountain",
+      "endurance-01-breadth-t4-squire-heavy-b-node-t4-graveyard-03-s101021-mountain",
+      "endurance-01-breadth-t4-squire-heavy-b-node-t4-desert-03-s101021-mountain"
+    ]
+  }
+]

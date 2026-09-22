@@ -1,0 +1,13 @@
+{
+  "qualifiedCells": 40,
+  "plannedNew": 24,
+  "reused": 16,
+  "failedQualification": 0,
+  "newCombatObservations": 0,
+  "families": {
+    "B": "B",
+    "A-control": "A-control",
+    "A-candidate": "A-candidate-final"
+  },
+  "crossArmChecks": "Matching A package/profile/roster; B item/stance deltas and recipient stats checked; all16 reuse readbacks validated by dispatcher."
+}

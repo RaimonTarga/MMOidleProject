@@ -1,0 +1,12 @@
+{
+  "overnightMeasuredSource": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+  "basePublication": "74e79df2f8d48a05481c49037fe941b616ecf4fa",
+  "gameplayDiffFiles": [
+    "server/src/systems/classes/archetypes/summoner/spawn.ts",
+    "server/src/systems/combat/ai/targeting.ts",
+    "server/src/systems/combat/engine/monsterMechanics.ts",
+    "server/src/systems/combat/engine/sessionObservation.ts"
+  ],
+  "verification": "Removing only observation imports/calls reproduces the overnight gameplay text exactly; shared/src and bot/src unchanged. No observer installed in B. No R2 treatment installer invoked.",
+  "combatProbes": 0
+}

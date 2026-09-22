@@ -1,0 +1,62 @@
+[
+  {
+    "path": "D:\\mmo-idle\\day2-bounded-01\\sealed\\qualification-B\\complete.json",
+    "bytes": 100,
+    "sha256": "40472d4322c24d9bee9b04a48ea2326164b2638873bfc0c86f2cb2c91e919263"
+  },
+  {
+    "path": "D:\\mmo-idle\\day2-bounded-01\\sealed\\qualification-B\\resolved-builds.json",
+    "bytes": 640293,
+    "sha256": "9e6a2ee931203c9802faccea903cf61dcde381ea3b0216cce8ca618138a6874a"
+  },
+  {
+    "path": "D:\\mmo-idle\\day2-bounded-01\\sealed\\qualification-B\\results-summary.json",
+    "bytes": 30329,
+    "sha256": "42032c5a00a2559ec367a1e313bae8101df0ac7f468205a0336efb9e76f1332e"
+  },
+  {
+    "path": "D:\\mmo-idle\\day2-bounded-01\\sealed\\qualification-B\\raw-inventory.json",
+    "bytes": 1056,
+    "sha256": "b27825e088d15f8c27c38b2517671a3eeb05337b45c35887b1e4f5c2cb594434"
+  },
+  {
+    "path": "D:\\mmo-idle\\day2-bounded-01\\sealed\\qualification-A-control\\complete.json",
+    "bytes": 98,
+    "sha256": "65cbea7d9f45a27cd0afbba7542bd9c60ce2b9f05b717bd966bfe6aea34dc933"
+  },
+  {
+    "path": "D:\\mmo-idle\\day2-bounded-01\\sealed\\qualification-A-control\\resolved-builds.json",
+    "bytes": 71833,
+    "sha256": "767185a19d6c103c66c5507de6c6ed79e8204cadcdff773a09622a70f8271d7d"
+  },
+  {
+    "path": "D:\\mmo-idle\\day2-bounded-01\\sealed\\qualification-A-control\\results-summary.json",
+    "bytes": 3685,
+    "sha256": "df3413268bd67783129cae481167f8d09f449c1de57303fac01549cfc573eee0"
+  },
+  {
+    "path": "D:\\mmo-idle\\day2-bounded-01\\sealed\\qualification-A-control\\raw-inventory.json",
+    "bytes": 1093,
+    "sha256": "38635727d047ef8895e0e1f358154028741ab5dc6f9518bc003e8d71eb1f25bc"
+  },
+  {
+    "path": "D:\\mmo-idle\\day2-bounded-01\\sealed\\qualification-A-candidate-final\\complete.json",
+    "bytes": 98,
+    "sha256": "65cbea7d9f45a27cd0afbba7542bd9c60ce2b9f05b717bd966bfe6aea34dc933"
+  },
+  {
+    "path": "D:\\mmo-idle\\day2-bounded-01\\sealed\\qualification-A-candidate-final\\resolved-builds.json",
+    "bytes": 71865,
+    "sha256": "e4ef8e31b74d7e1f85dfdd53ce0bba50afd7b14444d3a4950716ab4b7f660a06"
+  },
+  {
+    "path": "D:\\mmo-idle\\day2-bounded-01\\sealed\\qualification-A-candidate-final\\results-summary.json",
+    "bytes": 3701,
+    "sha256": "1f72fd52ab32d576956caa468d8055f6657a6c163c05aed12d0384a073177b12"
+  },
+  {
+    "path": "D:\\mmo-idle\\day2-bounded-01\\sealed\\qualification-A-candidate-final\\raw-inventory.json",
+    "bytes": 1133,
+    "sha256": "64127fb1d68d5a81d73ad79b035269013596ac8afaf63e4e9a0d49a012ff99ce"
+  }
+]

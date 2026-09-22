@@ -1,0 +1,397 @@
+{
+  "experimentId": "day2-bounded-01",
+  "status": "prepared-unrun",
+  "planned": 4,
+  "family": "A-candidate",
+  "blocks": {
+    "A": 4,
+    "B": 0
+  },
+  "candidateDisposition": "Separate candidate checkout only; Block B retains control gameplay",
+  "reused": null,
+  "seeds": [
+    101003,
+    101009
+  ],
+  "dtMs": 100,
+  "capMs": 300000,
+  "endpointsMs": [
+    300000
+  ],
+  "synthetic": true,
+  "economyEligible": false,
+  "stopOnFirstDeath": true,
+  "watchdogs": {
+    "minimumDiskFreeBytes": 5368709120,
+    "minimumHostFreeMemoryBytes": 1073741824,
+    "maximumChildRssBytes": 2147483648,
+    "heartbeatTimeoutMs": 120000,
+    "pollMs": 5000,
+    "absoluteWallCeilingMs": null,
+    "maximumChildren": 1,
+    "retries": 0
+  },
+  "sharedFailureFamily": "A",
+  "cases": [
+    {
+      "id": "day2-a-conduit-s101003-candidate",
+      "className": "conduit",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "day2-a-conduit-s101003-candidate",
+        "classRoot": "summoner-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "summoner-root",
+          "summoner-balanced",
+          "summoner-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-venomthorn-rapier",
+          "armor": "mountain-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-survivalist"
+        }
+      },
+      "identityId": "breadth-t3-conduit-balanced",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Consort",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Five medium summons hold a formal, stable ensemble. The reference formation: moderate damage, durability, and reconstruction pressure.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Survivalist funds ordinary Recovery and queue-scoped Recovery without changing payment/safety ratios.",
+        "sweep has first offensive priority; multiple delivery opportunities support Sweep.",
+        "Orbit retained except historical T3 balanced/mid farming and owner-melee Champion. Pair copies are identical.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation.",
+        "defensive stance is attuned and active throughout; no stance switching."
+      ],
+      "arm": "candidate",
+      "comparisonId": "day2-a-conduit-s101003",
+      "originalCaseId": "breadth-t3-conduit-balanced-farm",
+      "reconstructionPolicy": "production-r2",
+      "block": "A",
+      "seed": 101003,
+      "sourceObservationId": null,
+      "referenceCaseId": "stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-defensive",
+      "charm": "mountain",
+      "policy": "static",
+      "displacedAbility": null
+    },
+    {
+      "id": "day2-a-slinger-s101003-candidate",
+      "className": "slinger",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "day2-a-slinger-s101003-candidate",
+        "classRoot": "reload-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "reload-root",
+          "reload-balanced",
+          "reload-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-venomthorn-rapier",
+          "armor": "jungle-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t3-slinger-balanced",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Marksman",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "A steady burst fighter. Standard 10-round clip, 2.0 s reload, modest avoidance — tempo and staying power in balance.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "sweep has first offensive priority; multiple delivery opportunities support Sweep.",
+        "Offensive stance is always active; no stance switching.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ],
+      "comparisonId": "day2-a-slinger-s101003",
+      "seed": 101003,
+      "block": "A",
+      "arm": "candidate",
+      "charm": "mountain",
+      "policy": "static",
+      "referenceCaseId": "endurance-01-breadth-t3-slinger-balanced-node-t3-tundra-03-s101009-mountain",
+      "originalCaseId": "breadth-t3-slinger-balanced-farm",
+      "displacedAbility": null,
+      "reconstructionPolicy": "not-applicable",
+      "sourceObservationId": null
+    },
+    {
+      "id": "day2-a-conduit-s101009-candidate",
+      "className": "conduit",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "day2-a-conduit-s101009-candidate",
+        "classRoot": "summoner-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "summoner-root",
+          "summoner-balanced",
+          "summoner-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-venomthorn-rapier",
+          "armor": "mountain-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-survivalist"
+        }
+      },
+      "identityId": "breadth-t3-conduit-balanced",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Consort",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Five medium summons hold a formal, stable ensemble. The reference formation: moderate damage, durability, and reconstruction pressure.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Survivalist funds ordinary Recovery and queue-scoped Recovery without changing payment/safety ratios.",
+        "sweep has first offensive priority; multiple delivery opportunities support Sweep.",
+        "Orbit retained except historical T3 balanced/mid farming and owner-melee Champion. Pair copies are identical.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation.",
+        "defensive stance is attuned and active throughout; no stance switching."
+      ],
+      "arm": "candidate",
+      "comparisonId": "day2-a-conduit-s101009",
+      "originalCaseId": "breadth-t3-conduit-balanced-farm",
+      "reconstructionPolicy": "production-r2",
+      "block": "A",
+      "seed": 101009,
+      "sourceObservationId": null,
+      "referenceCaseId": "stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-defensive",
+      "charm": "mountain",
+      "policy": "static",
+      "displacedAbility": null
+    },
+    {
+      "id": "day2-a-slinger-s101009-candidate",
+      "className": "slinger",
+      "tier": 3,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t3-tundra-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "day2-a-slinger-s101009-candidate",
+        "classRoot": "reload-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "reload-root",
+          "reload-balanced",
+          "reload-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-venomthorn-rapier",
+          "armor": "jungle-vest-t3",
+          "recovery": "mountain-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "identityId": "breadth-t3-slinger-balanced",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Marksman",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "A steady burst fighter. Standard 10-round clip, 2.0 s reload, modest avoidance — tempo and staying power in balance.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "sweep has first offensive priority; multiple delivery opportunities support Sweep.",
+        "Offensive stance is always active; no stance switching.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ],
+      "comparisonId": "day2-a-slinger-s101009",
+      "seed": 101009,
+      "block": "A",
+      "arm": "candidate",
+      "charm": "mountain",
+      "policy": "static",
+      "referenceCaseId": "endurance-01-breadth-t3-slinger-balanced-node-t3-tundra-03-s101009-mountain",
+      "originalCaseId": "breadth-t3-slinger-balanced-farm",
+      "displacedAbility": null,
+      "reconstructionPolicy": "not-applicable",
+      "sourceObservationId": null
+    }
+  ]
+}
