@@ -5,12 +5,11 @@ import {
   resolvePlayerFrame,
   SKILL_TREE,
   type CharacterSummary,
-  type SubVariant,
 } from '@mmo-idle/shared';
 import { GameIcon } from '../ui/GameIcon';
 import {
   classEmblemIconSource,
-  classFrameEmblemIconSource,
+  skillVocabularyIconSource,
 } from '../ui/conceptIcons';
 
 interface AtlasFrame {
@@ -47,21 +46,17 @@ function loadAtlasImage(): Promise<HTMLImageElement> {
   return atlasImagePromise;
 }
 
-const CLASS_BRANCHES: readonly SubVariant[] = ['light', 'balanced', 'heavy'];
-
 /**
- * Follow the newest named node in the character's class path. The passive-tree
- * art currently has root and branch crests; a T3 node carries its branch key,
- * so it should still resolve to that branch's newest authored crest rather
- * than falling back to the root emblem.
+ * Follow the highest authored emblem in the character's class path. The
+ * passive-tree resolver owns the product-tier mapping: root, frame, class
+ * range, and path emblems all come from the same canonical node identity.
  */
 function classEmblemFor(character: CharacterSummary) {
   const archetype = character.combatArchetype;
   if (!archetype) return null;
 
   const rootId = character.selectedClass ?? `${archetype}-root`;
-  let latestVariantTier = -1;
-  let latestVariant: SubVariant | null = null;
+  let latestNode = SKILL_TREE.get(rootId) ?? null;
 
   for (const skillId of character.unlockedSkills) {
     const node = SKILL_TREE.get(skillId);
@@ -69,22 +64,15 @@ function classEmblemFor(character: CharacterSummary) {
     const belongsToClass = node.tier === 0
       ? node.id === rootId
       : node.classId === rootId;
-    if (!belongsToClass || !node.subVariantId) continue;
-    if (node.tier >= latestVariantTier) {
-      latestVariantTier = node.tier;
-      latestVariant = node.subVariantId;
-    }
+    if (!belongsToClass) continue;
+    if (!latestNode || node.tier >= latestNode.tier) latestNode = node;
   }
 
-  const variant = latestVariant
-    ?? CLASS_BRANCHES.find((candidate) => character.unlockedSkills.includes(`${archetype}-${candidate}`))
-    ?? null;
+  const source = latestNode
+    ? skillVocabularyIconSource(latestNode)
+    : classEmblemIconSource(archetype);
 
-  return {
-    source: variant
-      ? classFrameEmblemIconSource(archetype, variant)
-      : classEmblemIconSource(archetype),
-  };
+  return source ? { source } : null;
 }
 
 export function CharacterPortrait({ character }: { character: CharacterSummary }) {
