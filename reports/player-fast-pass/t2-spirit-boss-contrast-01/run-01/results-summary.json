@@ -1,0 +1,5241 @@
+{
+  "experimentId": "t2-spirit-boss-contrast-01",
+  "mode": "run",
+  "actualExecutionSource": "3a1488a7c78bb47f4a90e20ec06db1652594fe16",
+  "sourceSha256": "39110e1a573a22639c718487c653822e2f0ed87410f6bc1c16eb9905f9f04572",
+  "hitboxesSha256": "6a75e0e8417e0936bdaffe389f1d5b73b06a78b49d163961e02cf18ecca166bf",
+  "synthetic": true,
+  "economyEligible": false,
+  "counts": {
+    "planned": 20,
+    "completed": 20,
+    "newCompleted": 20,
+    "reused": 0,
+    "omitted": 0,
+    "failed": 0,
+    "notRun": 0,
+    "qualified": 0
+  },
+  "rows": [
+    {
+      "observationId": "sbc-spirit-light-forest-s101009",
+      "identityId": "breadth-t2-spirit-light",
+      "seed": 101009,
+      "tier": 2,
+      "root": "spirit",
+      "frame": "light",
+      "path": "Spark",
+      "skillPath": [
+        "energy-root",
+        "energy-light"
+      ],
+      "range": null,
+      "fixture": "node-t2-forest-dungeon",
+      "measuredSourceCommit": "3a1488a7c78bb47f4a90e20ec06db1652594fe16",
+      "sourceObservationId": null,
+      "status": "complete",
+      "outcome": "boss-killed",
+      "elapsedMs": 18900,
+      "completedKills": 1,
+      "endpoints": {
+        "60000": null,
+        "120000": null,
+        "300000": null
+      },
+      "reason": null,
+      "cell": "sbc-spirit-light-forest-s101009",
+      "windowMs": 300000,
+      "terminalState": {
+        "owner": {
+          "hp": 221,
+          "maxHp": 221,
+          "barrier": 46,
+          "barrierMax": 124,
+          "pos": {
+            "x": 1381.904035503506,
+            "y": 3340.598114919006
+          },
+          "energy": {
+            "energy": 20,
+            "energyMax": 100,
+            "csReservoir": 0,
+            "smChargePool": 0,
+            "seInitialized": false,
+            "flashBaseAttackCooldown": 0,
+            "flashBaseDodgeRate": 0,
+            "flashBaseMoveSpeed": 0,
+            "flashSpeedBonusPct": 0,
+            "flashEvasionBonusPct": 0,
+            "overdriveActive": false,
+            "upkeepTimerMs": 0,
+            "binaryDischargeState": false,
+            "binaryBaseCd": 0,
+            "binaryAppliedCd": 0,
+            "criticalMassStacks": 0,
+            "criticalMassGapMs": 0,
+            "awakenedCharges": 0,
+            "dischargeEnergy": 0
+          },
+          "execution": null,
+          "empowered": false,
+          "cooldowns": {
+            "stance.switch.cd": 0,
+            "ability.cd.power-strike": 5100,
+            "ability.tempo.floor.power-strike": 0,
+            "ability.cd.brace": 0,
+            "ability.guard.window": 0
+          },
+          "statusEffects": []
+        },
+        "boss": {
+          "id": "node-t2-forest-dungeon_monster-13",
+          "hp": -23,
+          "maxHp": 3750,
+          "barrier": 0,
+          "pos": {
+            "x": 1411.1137161558809,
+            "y": 3497.172205242489
+          },
+          "pattern": null,
+          "statusEffects": [],
+          "counters": {
+            "hitsReceived": 31,
+            "enemyShieldLastHitAt": 1800000018800,
+            "chargeSession": 1800000000000,
+            "chargeCdNextAt": 1800000018600,
+            "chargeCastEndsAt": 0,
+            "chargeAoeActive": 0,
+            "chargeAoeX": 2328.520730001174,
+            "chargeAoeY": 4670.337340593099,
+            "buffCastEndsAt": 0,
+            "lowHealthWardCastEndsAt": 0,
+            "monsterAbilityCastEndsAt": 0,
+            "monsterAbilityAreaActive": 0,
+            "bossEscapeInstinct": 0,
+            "bossChargeInstinct": 0
+          }
+        },
+        "distance": 159.27539422158046
+      },
+      "minBarrier": 46,
+      "terminalOwner": {
+        "hp": 221,
+        "maxHp": 221,
+        "barrier": 46,
+        "barrierMax": 124,
+        "pos": {
+          "x": 1381.904035503506,
+          "y": 3340.598114919006
+        },
+        "energy": {
+          "energy": 20,
+          "energyMax": 100,
+          "csReservoir": 0,
+          "smChargePool": 0,
+          "seInitialized": false,
+          "flashBaseAttackCooldown": 0,
+          "flashBaseDodgeRate": 0,
+          "flashBaseMoveSpeed": 0,
+          "flashSpeedBonusPct": 0,
+          "flashEvasionBonusPct": 0,
+          "overdriveActive": false,
+          "upkeepTimerMs": 0,
+          "binaryDischargeState": false,
+          "binaryBaseCd": 0,
+          "binaryAppliedCd": 0,
+          "criticalMassStacks": 0,
+          "criticalMassGapMs": 0,
+          "awakenedCharges": 0,
+          "dischargeEnergy": 0
+        },
+        "execution": null,
+        "empowered": false,
+        "cooldowns": {
+          "stance.switch.cd": 0,
+          "ability.cd.power-strike": 5100,
+          "ability.tempo.floor.power-strike": 0,
+          "ability.cd.brace": 0,
+          "ability.guard.window": 0
+        },
+        "statusEffects": []
+      },
+      "delivery": {
+        "ownerHitsOnBoss": 31,
+        "spirit": {
+          "firstDischargeAtMs": 4700,
+          "landedDischargeCount": 5,
+          "discharges": [
+            {
+              "atMs": 4700,
+              "recordedHpDamage": 135,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 7700,
+              "recordedHpDamage": 135,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 10700,
+              "recordedHpDamage": 135,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 15300,
+              "recordedHpDamage": 135,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 18300,
+              "recordedHpDamage": 135,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            }
+          ],
+          "recordedHpDamage": 675,
+          "absorbed": 0,
+          "usefulHpContribution": null,
+          "incrementalDischargeBonus": null,
+          "overkill": null,
+          "limitation": "Canonical delivered empowered-hit payload, after mitigation/shield; HP damage may exceed remaining HP. It includes the whole strike, not a causal incremental bonus. No farming overkill attribution."
+        }
+      },
+      "eventTimeConvention": "Event atMs is tick start; completed tick elapsed/endpoints are tick end. Initial state has no World ticks.",
+      "bossKilled": true,
+      "bossKillEvidence": {
+        "atMs": 18800,
+        "victimId": "node-t2-forest-dungeon_monster-13",
+        "victimName": "Apex Timberclaw",
+        "killerId": "bench-bot-0"
+      },
+      "playerDeathEvidence": null,
+      "encounterResetEvidence": null,
+      "killedAtMs": 18800,
+      "bossMaxHp": 3750,
+      "bossHpRemaining": 0,
+      "terminalBossHpSupported": true,
+      "bossHpFractionRemoved": 1,
+      "crossedHalfAtMs": 9700,
+      "castsStarted": 5,
+      "castLabels": [
+        "Stunning Swipe",
+        "Bestial Frenzy"
+      ],
+      "maxAddsAlive": 0,
+      "damageFromBoss": 0,
+      "damageFromAdds": {},
+      "attackBeats": 63,
+      "minionAttackBeats": 0,
+      "totalAttackBeats": 63,
+      "hpLost": 0,
+      "peakBurst1s": 0,
+      "minHpFraction": 1,
+      "wallElapsedMs": 482,
+      "initialRosterHash": "c0bce4606e4e1ea1d4625aae10294350aae99529ab81ddf18ee09bd0a4999bf0",
+      "targets": [
+        {
+          "id": "node-t2-forest-dungeon_monster-13",
+          "type": "apex-timberclaw",
+          "name": "Apex Timberclaw",
+          "maxHp": 3750,
+          "firstDamageMs": 600,
+          "lastDamageMs": 18800,
+          "killedAtMs": 18800,
+          "hpRegainObserved": false,
+          "maxDamageGapMs": 1700,
+          "damageEvents": 33,
+          "castsStarted": 5,
+          "castsFired": 3,
+          "ttkMs": 18200,
+          "clean": true
+        }
+      ],
+      "episodes": [
+        {
+          "startMs": 600,
+          "endMs": 18800,
+          "durationMs": 18200,
+          "members": [
+            "node-t2-forest-dungeon_monster-13"
+          ],
+          "initialMembers": [
+            "node-t2-forest-dungeon_monster-13"
+          ],
+          "lateJoiners": 0,
+          "outcome": "cleared"
+        }
+      ],
+      "recovery": [
+        {
+          "afterClearMs": 18800,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": false
+        }
+      ],
+      "incomingDamage": 0,
+      "largestHit": 0,
+      "maxDamageIn1s": 0,
+      "counts": {
+        "damaged": 1,
+        "killed": 1,
+        "censored": 0,
+        "hpRegain": 0
+      },
+      "cleanTtkMs": {
+        "n": 1,
+        "p10": 18200,
+        "median": 18200,
+        "p90": 18200
+      },
+      "bossId": "apex-timberclaw",
+      "sessions": null,
+      "historicalReferenceObservationId": null,
+      "unfinishedTargets": 0,
+      "targetRegainCount": 0,
+      "deathEvidence": null,
+      "incomingHpDamage": 0,
+      "runicPoints": {
+        "budget": 30,
+        "cost": 30,
+        "unused": 0,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "conduit": null,
+      "evidenceDirectory": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\run-01\\sbc-spirit-light-forest-s101009\\artifacts\\sbc-spirit-light-forest-s101009-s101009"
+    },
+    {
+      "observationId": "sbc-spirit-light-mountain-s101009",
+      "identityId": "breadth-t2-spirit-light",
+      "seed": 101009,
+      "tier": 2,
+      "root": "spirit",
+      "frame": "light",
+      "path": "Spark",
+      "skillPath": [
+        "energy-root",
+        "energy-light"
+      ],
+      "range": null,
+      "fixture": "node-t2-mountain-dungeon",
+      "measuredSourceCommit": "3a1488a7c78bb47f4a90e20ec06db1652594fe16",
+      "sourceObservationId": null,
+      "status": "complete",
+      "outcome": "boss-killed",
+      "elapsedMs": 43100,
+      "completedKills": 1,
+      "endpoints": {
+        "60000": null,
+        "120000": null,
+        "300000": null
+      },
+      "reason": null,
+      "cell": "sbc-spirit-light-mountain-s101009",
+      "windowMs": 300000,
+      "terminalState": {
+        "owner": {
+          "hp": 221,
+          "maxHp": 221,
+          "barrier": 124,
+          "barrierMax": 124,
+          "pos": {
+            "x": 2048.763999199669,
+            "y": 3732.904231141325
+          },
+          "energy": {
+            "energy": 40,
+            "energyMax": 100,
+            "csReservoir": 0,
+            "smChargePool": 0,
+            "seInitialized": false,
+            "flashBaseAttackCooldown": 0,
+            "flashBaseDodgeRate": 0,
+            "flashBaseMoveSpeed": 0,
+            "flashSpeedBonusPct": 0,
+            "flashEvasionBonusPct": 0,
+            "overdriveActive": false,
+            "upkeepTimerMs": 0,
+            "binaryDischargeState": false,
+            "binaryBaseCd": 0,
+            "binaryAppliedCd": 0,
+            "criticalMassStacks": 0,
+            "criticalMassGapMs": 0,
+            "awakenedCharges": 0,
+            "dischargeEnergy": 0
+          },
+          "execution": null,
+          "empowered": false,
+          "cooldowns": {
+            "stance.switch.cd": 0,
+            "ability.cd.power-strike": 4100,
+            "ability.tempo.floor.power-strike": 0,
+            "ability.cd.brace": 0,
+            "ability.guard.window": 0
+          },
+          "statusEffects": []
+        },
+        "boss": {
+          "id": "node-t2-mountain-dungeon_monster-5",
+          "hp": -33,
+          "maxHp": 5000,
+          "barrier": 0,
+          "pos": {
+            "x": 1910.7264583985693,
+            "y": 3672.3256024511375
+          },
+          "pattern": null,
+          "statusEffects": [],
+          "counters": {
+            "bossPatternSession": 1800000000000,
+            "bossPatternCdNextAt": 1800000044600,
+            "hitsReceived": 56,
+            "enemyShieldLastHitAt": 1800000043000,
+            "bossChargeInstinct": 0,
+            "bossEscapeInstinct": 0
+          }
+        },
+        "distance": 150.74525838114724
+      },
+      "minBarrier": 124,
+      "terminalOwner": {
+        "hp": 221,
+        "maxHp": 221,
+        "barrier": 124,
+        "barrierMax": 124,
+        "pos": {
+          "x": 2048.763999199669,
+          "y": 3732.904231141325
+        },
+        "energy": {
+          "energy": 40,
+          "energyMax": 100,
+          "csReservoir": 0,
+          "smChargePool": 0,
+          "seInitialized": false,
+          "flashBaseAttackCooldown": 0,
+          "flashBaseDodgeRate": 0,
+          "flashBaseMoveSpeed": 0,
+          "flashSpeedBonusPct": 0,
+          "flashEvasionBonusPct": 0,
+          "overdriveActive": false,
+          "upkeepTimerMs": 0,
+          "binaryDischargeState": false,
+          "binaryBaseCd": 0,
+          "binaryAppliedCd": 0,
+          "criticalMassStacks": 0,
+          "criticalMassGapMs": 0,
+          "awakenedCharges": 0,
+          "dischargeEnergy": 0
+        },
+        "execution": null,
+        "empowered": false,
+        "cooldowns": {
+          "stance.switch.cd": 0,
+          "ability.cd.power-strike": 4100,
+          "ability.tempo.floor.power-strike": 0,
+          "ability.cd.brace": 0,
+          "ability.guard.window": 0
+        },
+        "statusEffects": []
+      },
+      "delivery": {
+        "ownerHitsOnBoss": 56,
+        "spirit": {
+          "firstDischargeAtMs": 4700,
+          "landedDischargeCount": 9,
+          "discharges": [
+            {
+              "atMs": 4700,
+              "recordedHpDamage": 111,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 10600,
+              "recordedHpDamage": 111,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 15300,
+              "recordedHpDamage": 111,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 18700,
+              "recordedHpDamage": 0,
+              "absorbed": 111,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 23300,
+              "recordedHpDamage": 111,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 27900,
+              "recordedHpDamage": 111,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 32600,
+              "recordedHpDamage": 111,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 37500,
+              "recordedHpDamage": 0,
+              "absorbed": 111,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 42000,
+              "recordedHpDamage": 111,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            }
+          ],
+          "recordedHpDamage": 777,
+          "absorbed": 222,
+          "usefulHpContribution": null,
+          "incrementalDischargeBonus": null,
+          "overkill": null,
+          "limitation": "Canonical delivered empowered-hit payload, after mitigation/shield; HP damage may exceed remaining HP. It includes the whole strike, not a causal incremental bonus. No farming overkill attribution."
+        }
+      },
+      "eventTimeConvention": "Event atMs is tick start; completed tick elapsed/endpoints are tick end. Initial state has no World ticks.",
+      "bossKilled": true,
+      "bossKillEvidence": {
+        "atMs": 43000,
+        "victimId": "node-t2-mountain-dungeon_monster-5",
+        "victimName": "Stoneplate Juggernaut",
+        "killerId": "bench-bot-0"
+      },
+      "playerDeathEvidence": null,
+      "encounterResetEvidence": null,
+      "killedAtMs": 43000,
+      "bossMaxHp": 5000,
+      "bossHpRemaining": 0,
+      "terminalBossHpSupported": true,
+      "bossHpFractionRemoved": 1,
+      "crossedHalfAtMs": 23300,
+      "castsStarted": 8,
+      "castLabels": [
+        "Stoneplate",
+        "Stoneplate Charge"
+      ],
+      "maxAddsAlive": 0,
+      "damageFromBoss": 0,
+      "damageFromAdds": {},
+      "attackBeats": 120,
+      "minionAttackBeats": 0,
+      "totalAttackBeats": 120,
+      "hpLost": 0,
+      "peakBurst1s": 0,
+      "minHpFraction": 1,
+      "wallElapsedMs": 760,
+      "initialRosterHash": "ffc488333d6a91b0252b8abeaf1746d3ed17ccd5f09c17d83e29fdda4f04a0aa",
+      "targets": [
+        {
+          "id": "node-t2-mountain-dungeon_monster-5",
+          "type": "stoneplate-juggernaut",
+          "name": "Stoneplate Juggernaut",
+          "maxHp": 5000,
+          "firstDamageMs": 600,
+          "lastDamageMs": 43000,
+          "killedAtMs": 43000,
+          "hpRegainObserved": false,
+          "maxDamageGapMs": 2100,
+          "damageEvents": 60,
+          "castsStarted": 8,
+          "castsFired": 0,
+          "ttkMs": 42400,
+          "clean": true
+        }
+      ],
+      "episodes": [
+        {
+          "startMs": 600,
+          "endMs": 43000,
+          "durationMs": 42400,
+          "members": [
+            "node-t2-mountain-dungeon_monster-5"
+          ],
+          "initialMembers": [
+            "node-t2-mountain-dungeon_monster-5"
+          ],
+          "lateJoiners": 0,
+          "outcome": "cleared"
+        }
+      ],
+      "recovery": [
+        {
+          "afterClearMs": 43000,
+          "recoveredAtMs": 43000,
+          "interruptedByNextPull": false
+        }
+      ],
+      "incomingDamage": 0,
+      "largestHit": 0,
+      "maxDamageIn1s": 0,
+      "counts": {
+        "damaged": 1,
+        "killed": 1,
+        "censored": 0,
+        "hpRegain": 0
+      },
+      "cleanTtkMs": {
+        "n": 1,
+        "p10": 42400,
+        "median": 42400,
+        "p90": 42400
+      },
+      "bossId": "stoneplate-juggernaut",
+      "sessions": null,
+      "historicalReferenceObservationId": null,
+      "unfinishedTargets": 0,
+      "targetRegainCount": 0,
+      "deathEvidence": null,
+      "incomingHpDamage": 0,
+      "runicPoints": {
+        "budget": 30,
+        "cost": 30,
+        "unused": 0,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "conduit": null,
+      "evidenceDirectory": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\run-01\\sbc-spirit-light-mountain-s101009\\artifacts\\sbc-spirit-light-mountain-s101009-s101009"
+    },
+    {
+      "observationId": "sbc-spirit-balanced-forest-s101009",
+      "identityId": "breadth-t2-spirit-balanced",
+      "seed": 101009,
+      "tier": 2,
+      "root": "spirit",
+      "frame": "balanced",
+      "path": "Wraith",
+      "skillPath": [
+        "energy-root",
+        "energy-balanced"
+      ],
+      "range": null,
+      "fixture": "node-t2-forest-dungeon",
+      "measuredSourceCommit": "3a1488a7c78bb47f4a90e20ec06db1652594fe16",
+      "sourceObservationId": null,
+      "status": "complete",
+      "outcome": "boss-killed",
+      "elapsedMs": 22300,
+      "completedKills": 1,
+      "endpoints": {
+        "60000": null,
+        "120000": null,
+        "300000": null
+      },
+      "reason": null,
+      "cell": "sbc-spirit-balanced-forest-s101009",
+      "windowMs": 300000,
+      "terminalState": {
+        "owner": {
+          "hp": 230,
+          "maxHp": 230,
+          "barrier": 24.199999999999918,
+          "barrierMax": 129,
+          "pos": {
+            "x": 4738.017875669401,
+            "y": 4448.029709743801
+          },
+          "energy": {
+            "energy": 56,
+            "energyMax": 100,
+            "csReservoir": 0,
+            "smChargePool": 0,
+            "seInitialized": false,
+            "flashBaseAttackCooldown": 0,
+            "flashBaseDodgeRate": 0,
+            "flashBaseMoveSpeed": 0,
+            "flashSpeedBonusPct": 0,
+            "flashEvasionBonusPct": 0,
+            "overdriveActive": false,
+            "upkeepTimerMs": 0,
+            "binaryDischargeState": false,
+            "binaryBaseCd": 0,
+            "binaryAppliedCd": 0,
+            "criticalMassStacks": 0,
+            "criticalMassGapMs": 0,
+            "awakenedCharges": 0,
+            "dischargeEnergy": 0
+          },
+          "execution": null,
+          "empowered": false,
+          "cooldowns": {
+            "stance.switch.cd": 0,
+            "ability.cd.power-strike": 1700,
+            "ability.tempo.floor.power-strike": 0,
+            "ability.cd.brace": 9100,
+            "ability.guard.window": 0
+          },
+          "statusEffects": [
+            {
+              "id": "ability-guard",
+              "stacks": 1,
+              "maxStacks": 0,
+              "remainingMs": 2100,
+              "refreshable": true,
+              "instanced": false,
+              "sourceId": "bench-bot-0",
+              "data": {
+                "totalMs": 3000,
+                "drPct": 0.5519999999999999,
+                "knockbackResistPct": 0.759
+              }
+            }
+          ]
+        },
+        "boss": {
+          "id": "node-t2-forest-dungeon_monster-13",
+          "hp": -61,
+          "maxHp": 3750,
+          "barrier": 0,
+          "pos": {
+            "x": 4720.422636347351,
+            "y": 4540.610072060474
+          },
+          "pattern": null,
+          "statusEffects": [],
+          "counters": {
+            "hitsReceived": 31,
+            "enemyShieldLastHitAt": 1800000022200,
+            "chargeSession": 1800000000000,
+            "chargeCdNextAt": 1800000029700,
+            "chargeCastEndsAt": 0,
+            "chargeAoeActive": 0,
+            "chargeAoeX": 4713.390336359182,
+            "chargeAoeY": 4482.235207740756,
+            "buffCastEndsAt": 0,
+            "lowHealthWardCastEndsAt": 0,
+            "monsterAbilityCastEndsAt": 0,
+            "monsterAbilityAreaActive": 0,
+            "bossEscapeInstinct": 0,
+            "bossChargeInstinct": 0
+          }
+        },
+        "distance": 94.23755054906023
+      },
+      "minBarrier": 20.799999999999955,
+      "terminalOwner": {
+        "hp": 230,
+        "maxHp": 230,
+        "barrier": 24.199999999999918,
+        "barrierMax": 129,
+        "pos": {
+          "x": 4738.017875669401,
+          "y": 4448.029709743801
+        },
+        "energy": {
+          "energy": 56,
+          "energyMax": 100,
+          "csReservoir": 0,
+          "smChargePool": 0,
+          "seInitialized": false,
+          "flashBaseAttackCooldown": 0,
+          "flashBaseDodgeRate": 0,
+          "flashBaseMoveSpeed": 0,
+          "flashSpeedBonusPct": 0,
+          "flashEvasionBonusPct": 0,
+          "overdriveActive": false,
+          "upkeepTimerMs": 0,
+          "binaryDischargeState": false,
+          "binaryBaseCd": 0,
+          "binaryAppliedCd": 0,
+          "criticalMassStacks": 0,
+          "criticalMassGapMs": 0,
+          "awakenedCharges": 0,
+          "dischargeEnergy": 0
+        },
+        "execution": null,
+        "empowered": false,
+        "cooldowns": {
+          "stance.switch.cd": 0,
+          "ability.cd.power-strike": 1700,
+          "ability.tempo.floor.power-strike": 0,
+          "ability.cd.brace": 9100,
+          "ability.guard.window": 0
+        },
+        "statusEffects": [
+          {
+            "id": "ability-guard",
+            "stacks": 1,
+            "maxStacks": 0,
+            "remainingMs": 2100,
+            "refreshable": true,
+            "instanced": false,
+            "sourceId": "bench-bot-0",
+            "data": {
+              "totalMs": 3000,
+              "drPct": 0.5519999999999999,
+              "knockbackResistPct": 0.759
+            }
+          }
+        ]
+      },
+      "delivery": {
+        "ownerHitsOnBoss": 31,
+        "spirit": {
+          "firstDischargeAtMs": 7000,
+          "landedDischargeCount": 3,
+          "discharges": [
+            {
+              "atMs": 7000,
+              "recordedHpDamage": 171,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 14400,
+              "recordedHpDamage": 171,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 19800,
+              "recordedHpDamage": 171,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            }
+          ],
+          "recordedHpDamage": 513,
+          "absorbed": 0,
+          "usefulHpContribution": null,
+          "incrementalDischargeBonus": null,
+          "overkill": null,
+          "limitation": "Canonical delivered empowered-hit payload, after mitigation/shield; HP damage may exceed remaining HP. It includes the whole strike, not a causal incremental bonus. No farming overkill attribution."
+        }
+      },
+      "eventTimeConvention": "Event atMs is tick start; completed tick elapsed/endpoints are tick end. Initial state has no World ticks.",
+      "bossKilled": true,
+      "bossKillEvidence": {
+        "atMs": 22200,
+        "victimId": "node-t2-forest-dungeon_monster-13",
+        "victimName": "Apex Timberclaw",
+        "killerId": "bench-bot-0"
+      },
+      "playerDeathEvidence": null,
+      "encounterResetEvidence": null,
+      "killedAtMs": 22200,
+      "bossMaxHp": 3750,
+      "bossHpRemaining": 0,
+      "terminalBossHpSupported": true,
+      "bossHpFractionRemoved": 1,
+      "crossedHalfAtMs": 11200,
+      "castsStarted": 6,
+      "castLabels": [
+        "Stunning Swipe",
+        "Bestial Frenzy"
+      ],
+      "maxAddsAlive": 0,
+      "damageFromBoss": 0,
+      "damageFromAdds": {},
+      "attackBeats": 63,
+      "minionAttackBeats": 0,
+      "totalAttackBeats": 63,
+      "hpLost": 0,
+      "peakBurst1s": 0,
+      "minHpFraction": 1,
+      "wallElapsedMs": 450,
+      "initialRosterHash": "c0bce4606e4e1ea1d4625aae10294350aae99529ab81ddf18ee09bd0a4999bf0",
+      "targets": [
+        {
+          "id": "node-t2-forest-dungeon_monster-13",
+          "type": "apex-timberclaw",
+          "name": "Apex Timberclaw",
+          "maxHp": 3750,
+          "firstDamageMs": 600,
+          "lastDamageMs": 22200,
+          "killedAtMs": 22200,
+          "hpRegainObserved": false,
+          "maxDamageGapMs": 2100,
+          "damageEvents": 33,
+          "castsStarted": 6,
+          "castsFired": 5,
+          "ttkMs": 21600,
+          "clean": true
+        }
+      ],
+      "episodes": [
+        {
+          "startMs": 600,
+          "endMs": 22200,
+          "durationMs": 21600,
+          "members": [
+            "node-t2-forest-dungeon_monster-13"
+          ],
+          "initialMembers": [
+            "node-t2-forest-dungeon_monster-13"
+          ],
+          "lateJoiners": 0,
+          "outcome": "cleared"
+        }
+      ],
+      "recovery": [
+        {
+          "afterClearMs": 22200,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": false
+        }
+      ],
+      "incomingDamage": 0,
+      "largestHit": 0,
+      "maxDamageIn1s": 0,
+      "counts": {
+        "damaged": 1,
+        "killed": 1,
+        "censored": 0,
+        "hpRegain": 0
+      },
+      "cleanTtkMs": {
+        "n": 1,
+        "p10": 21600,
+        "median": 21600,
+        "p90": 21600
+      },
+      "bossId": "apex-timberclaw",
+      "sessions": null,
+      "historicalReferenceObservationId": null,
+      "unfinishedTargets": 0,
+      "targetRegainCount": 0,
+      "deathEvidence": null,
+      "incomingHpDamage": 0,
+      "runicPoints": {
+        "budget": 30,
+        "cost": 30,
+        "unused": 0,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "conduit": null,
+      "evidenceDirectory": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\run-01\\sbc-spirit-balanced-forest-s101009\\artifacts\\sbc-spirit-balanced-forest-s101009-s101009"
+    },
+    {
+      "observationId": "sbc-spirit-balanced-mountain-s101009",
+      "identityId": "breadth-t2-spirit-balanced",
+      "seed": 101009,
+      "tier": 2,
+      "root": "spirit",
+      "frame": "balanced",
+      "path": "Wraith",
+      "skillPath": [
+        "energy-root",
+        "energy-balanced"
+      ],
+      "range": null,
+      "fixture": "node-t2-mountain-dungeon",
+      "measuredSourceCommit": "3a1488a7c78bb47f4a90e20ec06db1652594fe16",
+      "sourceObservationId": null,
+      "status": "complete",
+      "outcome": "boss-killed",
+      "elapsedMs": 45600,
+      "completedKills": 1,
+      "endpoints": {
+        "60000": null,
+        "120000": null,
+        "300000": null
+      },
+      "reason": null,
+      "cell": "sbc-spirit-balanced-mountain-s101009",
+      "windowMs": 300000,
+      "terminalState": {
+        "owner": {
+          "hp": 230,
+          "maxHp": 230,
+          "barrier": 129,
+          "barrierMax": 129,
+          "pos": {
+            "x": 2222.390799704273,
+            "y": 3599.6887667654296
+          },
+          "energy": {
+            "energy": 14,
+            "energyMax": 100,
+            "csReservoir": 0,
+            "smChargePool": 0,
+            "seInitialized": false,
+            "flashBaseAttackCooldown": 0,
+            "flashBaseDodgeRate": 0,
+            "flashBaseMoveSpeed": 0,
+            "flashSpeedBonusPct": 0,
+            "flashEvasionBonusPct": 0,
+            "overdriveActive": false,
+            "upkeepTimerMs": 0,
+            "binaryDischargeState": false,
+            "binaryBaseCd": 0,
+            "binaryAppliedCd": 0,
+            "criticalMassStacks": 0,
+            "criticalMassGapMs": 0,
+            "awakenedCharges": 0,
+            "dischargeEnergy": 0
+          },
+          "execution": null,
+          "empowered": false,
+          "cooldowns": {
+            "stance.switch.cd": 0,
+            "ability.cd.power-strike": 1700,
+            "ability.tempo.floor.power-strike": 0,
+            "ability.cd.brace": 0,
+            "ability.guard.window": 0
+          },
+          "statusEffects": []
+        },
+        "boss": {
+          "id": "node-t2-mountain-dungeon_monster-5",
+          "hp": -42,
+          "maxHp": 5000,
+          "barrier": 0,
+          "pos": {
+            "x": 2056.2802961840766,
+            "y": 3597.2220376523155
+          },
+          "pattern": null,
+          "statusEffects": [],
+          "counters": {
+            "bossPatternSession": 1800000000000,
+            "bossPatternCdNextAt": 1800000053400,
+            "hitsReceived": 55,
+            "enemyShieldLastHitAt": 1800000045500,
+            "bossChargeInstinct": 0,
+            "bossEscapeInstinct": 0
+          }
+        },
+        "distance": 166.12881788615312
+      },
+      "minBarrier": 129,
+      "terminalOwner": {
+        "hp": 230,
+        "maxHp": 230,
+        "barrier": 129,
+        "barrierMax": 129,
+        "pos": {
+          "x": 2222.390799704273,
+          "y": 3599.6887667654296
+        },
+        "energy": {
+          "energy": 14,
+          "energyMax": 100,
+          "csReservoir": 0,
+          "smChargePool": 0,
+          "seInitialized": false,
+          "flashBaseAttackCooldown": 0,
+          "flashBaseDodgeRate": 0,
+          "flashBaseMoveSpeed": 0,
+          "flashSpeedBonusPct": 0,
+          "flashEvasionBonusPct": 0,
+          "overdriveActive": false,
+          "upkeepTimerMs": 0,
+          "binaryDischargeState": false,
+          "binaryBaseCd": 0,
+          "binaryAppliedCd": 0,
+          "criticalMassStacks": 0,
+          "criticalMassGapMs": 0,
+          "awakenedCharges": 0,
+          "dischargeEnergy": 0
+        },
+        "execution": null,
+        "empowered": false,
+        "cooldowns": {
+          "stance.switch.cd": 0,
+          "ability.cd.power-strike": 1700,
+          "ability.tempo.floor.power-strike": 0,
+          "ability.cd.brace": 0,
+          "ability.guard.window": 0
+        },
+        "statusEffects": []
+      },
+      "delivery": {
+        "ownerHitsOnBoss": 55,
+        "spirit": {
+          "firstDischargeAtMs": 8300,
+          "landedDischargeCount": 6,
+          "discharges": [
+            {
+              "atMs": 8300,
+              "recordedHpDamage": 0,
+              "absorbed": 139,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 15700,
+              "recordedHpDamage": 139,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 22700,
+              "recordedHpDamage": 139,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 31200,
+              "recordedHpDamage": 139,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 39500,
+              "recordedHpDamage": 139,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 44900,
+              "recordedHpDamage": 139,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            }
+          ],
+          "recordedHpDamage": 695,
+          "absorbed": 139,
+          "usefulHpContribution": null,
+          "incrementalDischargeBonus": null,
+          "overkill": null,
+          "limitation": "Canonical delivered empowered-hit payload, after mitigation/shield; HP damage may exceed remaining HP. It includes the whole strike, not a causal incremental bonus. No farming overkill attribution."
+        }
+      },
+      "eventTimeConvention": "Event atMs is tick start; completed tick elapsed/endpoints are tick end. Initial state has no World ticks.",
+      "bossKilled": true,
+      "bossKillEvidence": {
+        "atMs": 45500,
+        "victimId": "node-t2-mountain-dungeon_monster-5",
+        "victimName": "Stoneplate Juggernaut",
+        "killerId": "bench-bot-0"
+      },
+      "playerDeathEvidence": null,
+      "encounterResetEvidence": null,
+      "killedAtMs": 45500,
+      "bossMaxHp": 5000,
+      "bossHpRemaining": 0,
+      "terminalBossHpSupported": true,
+      "bossHpFractionRemoved": 1,
+      "crossedHalfAtMs": 25600,
+      "castsStarted": 9,
+      "castLabels": [
+        "Stoneplate",
+        "Stoneplate Charge"
+      ],
+      "maxAddsAlive": 0,
+      "damageFromBoss": 0,
+      "damageFromAdds": {},
+      "attackBeats": 119,
+      "minionAttackBeats": 0,
+      "totalAttackBeats": 119,
+      "hpLost": 0,
+      "peakBurst1s": 0,
+      "minHpFraction": 1,
+      "wallElapsedMs": 742,
+      "initialRosterHash": "ffc488333d6a91b0252b8abeaf1746d3ed17ccd5f09c17d83e29fdda4f04a0aa",
+      "targets": [
+        {
+          "id": "node-t2-mountain-dungeon_monster-5",
+          "type": "stoneplate-juggernaut",
+          "name": "Stoneplate Juggernaut",
+          "maxHp": 5000,
+          "firstDamageMs": 700,
+          "lastDamageMs": 45500,
+          "killedAtMs": 45500,
+          "hpRegainObserved": false,
+          "maxDamageGapMs": 2200,
+          "damageEvents": 59,
+          "castsStarted": 9,
+          "castsFired": 0,
+          "ttkMs": 44800,
+          "clean": true
+        }
+      ],
+      "episodes": [
+        {
+          "startMs": 700,
+          "endMs": 45500,
+          "durationMs": 44800,
+          "members": [
+            "node-t2-mountain-dungeon_monster-5"
+          ],
+          "initialMembers": [
+            "node-t2-mountain-dungeon_monster-5"
+          ],
+          "lateJoiners": 0,
+          "outcome": "cleared"
+        }
+      ],
+      "recovery": [
+        {
+          "afterClearMs": 45500,
+          "recoveredAtMs": 45500,
+          "interruptedByNextPull": false
+        }
+      ],
+      "incomingDamage": 0,
+      "largestHit": 0,
+      "maxDamageIn1s": 0,
+      "counts": {
+        "damaged": 1,
+        "killed": 1,
+        "censored": 0,
+        "hpRegain": 0
+      },
+      "cleanTtkMs": {
+        "n": 1,
+        "p10": 44800,
+        "median": 44800,
+        "p90": 44800
+      },
+      "bossId": "stoneplate-juggernaut",
+      "sessions": null,
+      "historicalReferenceObservationId": null,
+      "unfinishedTargets": 0,
+      "targetRegainCount": 0,
+      "deathEvidence": null,
+      "incomingHpDamage": 0,
+      "runicPoints": {
+        "budget": 30,
+        "cost": 30,
+        "unused": 0,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "conduit": null,
+      "evidenceDirectory": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\run-01\\sbc-spirit-balanced-mountain-s101009\\artifacts\\sbc-spirit-balanced-mountain-s101009-s101009"
+    },
+    {
+      "observationId": "sbc-spirit-heavy-forest-s101009",
+      "identityId": "breadth-t2-spirit-heavy",
+      "seed": 101009,
+      "tier": 2,
+      "root": "spirit",
+      "frame": "heavy",
+      "path": "Phantasm",
+      "skillPath": [
+        "energy-root",
+        "energy-heavy"
+      ],
+      "range": null,
+      "fixture": "node-t2-forest-dungeon",
+      "measuredSourceCommit": "3a1488a7c78bb47f4a90e20ec06db1652594fe16",
+      "sourceObservationId": null,
+      "status": "complete",
+      "outcome": "boss-killed",
+      "elapsedMs": 25100,
+      "completedKills": 1,
+      "endpoints": {
+        "60000": null,
+        "120000": null,
+        "300000": null
+      },
+      "reason": null,
+      "cell": "sbc-spirit-heavy-forest-s101009",
+      "windowMs": 300000,
+      "terminalState": {
+        "owner": {
+          "hp": 167.46339999999992,
+          "maxHp": 244,
+          "barrier": 0,
+          "barrierMax": 137,
+          "pos": {
+            "x": 4759.138910898015,
+            "y": 3740.1669580655503
+          },
+          "energy": {
+            "energy": 0,
+            "energyMax": 100,
+            "csReservoir": 0,
+            "smChargePool": 0,
+            "seInitialized": false,
+            "flashBaseAttackCooldown": 0,
+            "flashBaseDodgeRate": 0,
+            "flashBaseMoveSpeed": 0,
+            "flashSpeedBonusPct": 0,
+            "flashEvasionBonusPct": 0,
+            "overdriveActive": false,
+            "upkeepTimerMs": 0,
+            "binaryDischargeState": false,
+            "binaryBaseCd": 0,
+            "binaryAppliedCd": 0,
+            "criticalMassStacks": 0,
+            "criticalMassGapMs": 0,
+            "awakenedCharges": 0,
+            "dischargeEnergy": 0
+          },
+          "execution": null,
+          "empowered": false,
+          "cooldowns": {
+            "stance.switch.cd": 0,
+            "ability.cd.power-strike": 10000,
+            "ability.tempo.floor.power-strike": 0,
+            "ability.cd.brace": 600,
+            "ability.guard.window": 0,
+            "ability.cd.second-wind": 10900
+          },
+          "statusEffects": [
+            {
+              "id": "ability-second-wind",
+              "stacks": 1,
+              "maxStacks": 0,
+              "remainingMs": 2900,
+              "refreshable": true,
+              "instanced": false,
+              "sourceId": "bench-bot-0",
+              "data": {
+                "totalMs": 4000,
+                "recoveryPct": 0.6
+              }
+            }
+          ]
+        },
+        "boss": {
+          "id": "node-t2-forest-dungeon_monster-13",
+          "hp": -142,
+          "maxHp": 3750,
+          "barrier": 0,
+          "pos": {
+            "x": 4750.278389858087,
+            "y": 3898.7819578523117
+          },
+          "pattern": null,
+          "statusEffects": [],
+          "counters": {
+            "hitsReceived": 11,
+            "enemyShieldLastHitAt": 1800000022000,
+            "chargeSession": 1800000000000,
+            "chargeCdNextAt": 1800000024100,
+            "chargeCastEndsAt": 0,
+            "chargeAoeActive": 0,
+            "chargeAoeX": 3929.23330135724,
+            "chargeAoeY": 4586.863789855493,
+            "bossEscapeInstinct": 0,
+            "bossChargeInstinct": 0
+          }
+        },
+        "distance": 158.8622893906963
+      },
+      "minBarrier": 0,
+      "terminalOwner": {
+        "hp": 167.46339999999992,
+        "maxHp": 244,
+        "barrier": 0,
+        "barrierMax": 137,
+        "pos": {
+          "x": 4759.138910898015,
+          "y": 3740.1669580655503
+        },
+        "energy": {
+          "energy": 0,
+          "energyMax": 100,
+          "csReservoir": 0,
+          "smChargePool": 0,
+          "seInitialized": false,
+          "flashBaseAttackCooldown": 0,
+          "flashBaseDodgeRate": 0,
+          "flashBaseMoveSpeed": 0,
+          "flashSpeedBonusPct": 0,
+          "flashEvasionBonusPct": 0,
+          "overdriveActive": false,
+          "upkeepTimerMs": 0,
+          "binaryDischargeState": false,
+          "binaryBaseCd": 0,
+          "binaryAppliedCd": 0,
+          "criticalMassStacks": 0,
+          "criticalMassGapMs": 0,
+          "awakenedCharges": 0,
+          "dischargeEnergy": 0
+        },
+        "execution": null,
+        "empowered": false,
+        "cooldowns": {
+          "stance.switch.cd": 0,
+          "ability.cd.power-strike": 10000,
+          "ability.tempo.floor.power-strike": 0,
+          "ability.cd.brace": 600,
+          "ability.guard.window": 0,
+          "ability.cd.second-wind": 10900
+        },
+        "statusEffects": [
+          {
+            "id": "ability-second-wind",
+            "stacks": 1,
+            "maxStacks": 0,
+            "remainingMs": 2900,
+            "refreshable": true,
+            "instanced": false,
+            "sourceId": "bench-bot-0",
+            "data": {
+              "totalMs": 4000,
+              "recoveryPct": 0.6
+            }
+          }
+        ]
+      },
+      "delivery": {
+        "ownerHitsOnBoss": 11,
+        "spirit": {
+          "firstDischargeAtMs": 22000,
+          "landedDischargeCount": 1,
+          "discharges": [
+            {
+              "atMs": 22000,
+              "recordedHpDamage": 1088,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            }
+          ],
+          "recordedHpDamage": 1088,
+          "absorbed": 0,
+          "usefulHpContribution": null,
+          "incrementalDischargeBonus": null,
+          "overkill": null,
+          "limitation": "Canonical delivered empowered-hit payload, after mitigation/shield; HP damage may exceed remaining HP. It includes the whole strike, not a causal incremental bonus. No farming overkill attribution."
+        }
+      },
+      "eventTimeConvention": "Event atMs is tick start; completed tick elapsed/endpoints are tick end. Initial state has no World ticks.",
+      "bossKilled": true,
+      "bossKillEvidence": {
+        "atMs": 25000,
+        "victimId": "node-t2-forest-dungeon_monster-13",
+        "victimName": "Apex Timberclaw",
+        "killerId": "bench-bot-0"
+      },
+      "playerDeathEvidence": null,
+      "encounterResetEvidence": null,
+      "killedAtMs": 25000,
+      "bossMaxHp": 3750,
+      "bossHpRemaining": 0,
+      "terminalBossHpSupported": true,
+      "bossHpFractionRemoved": 1,
+      "crossedHalfAtMs": 15200,
+      "castsStarted": 6,
+      "castLabels": [
+        "Stunning Swipe",
+        "Bestial Frenzy"
+      ],
+      "maxAddsAlive": 0,
+      "damageFromBoss": 99.37500000000006,
+      "damageFromAdds": {},
+      "attackBeats": 53,
+      "minionAttackBeats": 0,
+      "totalAttackBeats": 53,
+      "hpLost": 99.37500000000006,
+      "peakBurst1s": 70,
+      "minHpFraction": 0.5927254098360654,
+      "wallElapsedMs": 511,
+      "initialRosterHash": "c0bce4606e4e1ea1d4625aae10294350aae99529ab81ddf18ee09bd0a4999bf0",
+      "targets": [
+        {
+          "id": "node-t2-forest-dungeon_monster-13",
+          "type": "apex-timberclaw",
+          "name": "Apex Timberclaw",
+          "maxHp": 3750,
+          "firstDamageMs": 700,
+          "lastDamageMs": 25000,
+          "killedAtMs": 25000,
+          "hpRegainObserved": false,
+          "maxDamageGapMs": 3000,
+          "damageEvents": 14,
+          "castsStarted": 6,
+          "castsFired": 5,
+          "ttkMs": 24300,
+          "clean": true
+        }
+      ],
+      "episodes": [
+        {
+          "startMs": 700,
+          "endMs": 25000,
+          "durationMs": 24300,
+          "members": [
+            "node-t2-forest-dungeon_monster-13"
+          ],
+          "initialMembers": [
+            "node-t2-forest-dungeon_monster-13"
+          ],
+          "lateJoiners": 0,
+          "outcome": "cleared"
+        }
+      ],
+      "recovery": [
+        {
+          "afterClearMs": 25000,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": false
+        }
+      ],
+      "incomingDamage": 99.37500000000006,
+      "largestHit": 35,
+      "maxDamageIn1s": 70,
+      "counts": {
+        "damaged": 1,
+        "killed": 1,
+        "censored": 0,
+        "hpRegain": 0
+      },
+      "cleanTtkMs": {
+        "n": 1,
+        "p10": 24300,
+        "median": 24300,
+        "p90": 24300
+      },
+      "bossId": "apex-timberclaw",
+      "sessions": null,
+      "historicalReferenceObservationId": null,
+      "unfinishedTargets": 0,
+      "targetRegainCount": 0,
+      "deathEvidence": null,
+      "incomingHpDamage": 99.37500000000006,
+      "runicPoints": {
+        "budget": 30,
+        "cost": 30,
+        "unused": 0,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "conduit": null,
+      "evidenceDirectory": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\run-01\\sbc-spirit-heavy-forest-s101009\\artifacts\\sbc-spirit-heavy-forest-s101009-s101009"
+    },
+    {
+      "observationId": "sbc-spirit-heavy-mountain-s101009",
+      "identityId": "breadth-t2-spirit-heavy",
+      "seed": 101009,
+      "tier": 2,
+      "root": "spirit",
+      "frame": "heavy",
+      "path": "Phantasm",
+      "skillPath": [
+        "energy-root",
+        "energy-heavy"
+      ],
+      "range": null,
+      "fixture": "node-t2-mountain-dungeon",
+      "measuredSourceCommit": "3a1488a7c78bb47f4a90e20ec06db1652594fe16",
+      "sourceObservationId": null,
+      "status": "complete",
+      "outcome": "boss-killed",
+      "elapsedMs": 50800,
+      "completedKills": 1,
+      "endpoints": {
+        "60000": null,
+        "120000": null,
+        "300000": null
+      },
+      "reason": null,
+      "cell": "sbc-spirit-heavy-mountain-s101009",
+      "windowMs": 300000,
+      "terminalState": {
+        "owner": {
+          "hp": 244,
+          "maxHp": 244,
+          "barrier": 137,
+          "barrierMax": 137,
+          "pos": {
+            "x": 2140.79307779764,
+            "y": 3952.9029813886123
+          },
+          "energy": {
+            "energy": 90,
+            "energyMax": 100,
+            "csReservoir": 0,
+            "smChargePool": 0,
+            "seInitialized": false,
+            "flashBaseAttackCooldown": 0,
+            "flashBaseDodgeRate": 0,
+            "flashBaseMoveSpeed": 0,
+            "flashSpeedBonusPct": 0,
+            "flashEvasionBonusPct": 0,
+            "overdriveActive": false,
+            "upkeepTimerMs": 0,
+            "binaryDischargeState": false,
+            "binaryBaseCd": 0,
+            "binaryAppliedCd": 0,
+            "criticalMassStacks": 0,
+            "criticalMassGapMs": 0,
+            "awakenedCharges": 0,
+            "dischargeEnergy": 0
+          },
+          "execution": null,
+          "empowered": false,
+          "cooldowns": {
+            "stance.switch.cd": 0,
+            "ability.cd.power-strike": 8400,
+            "ability.tempo.floor.power-strike": 0,
+            "ability.cd.brace": 5000,
+            "ability.guard.window": 0
+          },
+          "statusEffects": []
+        },
+        "boss": {
+          "id": "node-t2-mountain-dungeon_monster-5",
+          "hp": -17,
+          "maxHp": 5000,
+          "barrier": 0,
+          "pos": {
+            "x": 2283.6124201748335,
+            "y": 4017.2081353981825
+          },
+          "pattern": null,
+          "statusEffects": [],
+          "counters": {
+            "bossPatternSession": 1800000000000,
+            "bossPatternCdNextAt": 1800000053400,
+            "hitsReceived": 20,
+            "enemyShieldLastHitAt": 1800000050700,
+            "bossChargeInstinct": 0,
+            "bossEscapeInstinct": 0
+          }
+        },
+        "distance": 156.62859697146175
+      },
+      "minBarrier": 137,
+      "terminalOwner": {
+        "hp": 244,
+        "maxHp": 244,
+        "barrier": 137,
+        "barrierMax": 137,
+        "pos": {
+          "x": 2140.79307779764,
+          "y": 3952.9029813886123
+        },
+        "energy": {
+          "energy": 90,
+          "energyMax": 100,
+          "csReservoir": 0,
+          "smChargePool": 0,
+          "seInitialized": false,
+          "flashBaseAttackCooldown": 0,
+          "flashBaseDodgeRate": 0,
+          "flashBaseMoveSpeed": 0,
+          "flashSpeedBonusPct": 0,
+          "flashEvasionBonusPct": 0,
+          "overdriveActive": false,
+          "upkeepTimerMs": 0,
+          "binaryDischargeState": false,
+          "binaryBaseCd": 0,
+          "binaryAppliedCd": 0,
+          "criticalMassStacks": 0,
+          "criticalMassGapMs": 0,
+          "awakenedCharges": 0,
+          "dischargeEnergy": 0
+        },
+        "execution": null,
+        "empowered": false,
+        "cooldowns": {
+          "stance.switch.cd": 0,
+          "ability.cd.power-strike": 8400,
+          "ability.tempo.floor.power-strike": 0,
+          "ability.cd.brace": 5000,
+          "ability.guard.window": 0
+        },
+        "statusEffects": []
+      },
+      "delivery": {
+        "ownerHitsOnBoss": 20,
+        "spirit": {
+          "firstDischargeAtMs": 26600,
+          "landedDischargeCount": 1,
+          "discharges": [
+            {
+              "atMs": 26600,
+              "recordedHpDamage": 935,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            }
+          ],
+          "recordedHpDamage": 935,
+          "absorbed": 0,
+          "usefulHpContribution": null,
+          "incrementalDischargeBonus": null,
+          "overkill": null,
+          "limitation": "Canonical delivered empowered-hit payload, after mitigation/shield; HP damage may exceed remaining HP. It includes the whole strike, not a causal incremental bonus. No farming overkill attribution."
+        }
+      },
+      "eventTimeConvention": "Event atMs is tick start; completed tick elapsed/endpoints are tick end. Initial state has no World ticks.",
+      "bossKilled": true,
+      "bossKillEvidence": {
+        "atMs": 50700,
+        "victimId": "node-t2-mountain-dungeon_monster-5",
+        "victimName": "Stoneplate Juggernaut",
+        "killerId": "bench-bot-0"
+      },
+      "playerDeathEvidence": null,
+      "encounterResetEvidence": null,
+      "killedAtMs": 50700,
+      "bossMaxHp": 5000,
+      "bossHpRemaining": 0,
+      "terminalBossHpSupported": true,
+      "bossHpFractionRemoved": 1,
+      "crossedHalfAtMs": 26600,
+      "castsStarted": 10,
+      "castLabels": [
+        "Stoneplate",
+        "Stoneplate Charge"
+      ],
+      "maxAddsAlive": 0,
+      "damageFromBoss": 0,
+      "damageFromAdds": {},
+      "attackBeats": 91,
+      "minionAttackBeats": 0,
+      "totalAttackBeats": 91,
+      "hpLost": 0,
+      "peakBurst1s": 0,
+      "minHpFraction": 1,
+      "wallElapsedMs": 823,
+      "initialRosterHash": "ffc488333d6a91b0252b8abeaf1746d3ed17ccd5f09c17d83e29fdda4f04a0aa",
+      "targets": [
+        {
+          "id": "node-t2-mountain-dungeon_monster-5",
+          "type": "stoneplate-juggernaut",
+          "name": "Stoneplate Juggernaut",
+          "maxHp": 5000,
+          "firstDamageMs": 700,
+          "lastDamageMs": 50700,
+          "killedAtMs": 50700,
+          "hpRegainObserved": false,
+          "maxDamageGapMs": 4300,
+          "damageEvents": 25,
+          "castsStarted": 10,
+          "castsFired": 0,
+          "ttkMs": 50000,
+          "clean": true
+        }
+      ],
+      "episodes": [
+        {
+          "startMs": 700,
+          "endMs": 50700,
+          "durationMs": 50000,
+          "members": [
+            "node-t2-mountain-dungeon_monster-5"
+          ],
+          "initialMembers": [
+            "node-t2-mountain-dungeon_monster-5"
+          ],
+          "lateJoiners": 0,
+          "outcome": "cleared"
+        }
+      ],
+      "recovery": [
+        {
+          "afterClearMs": 50700,
+          "recoveredAtMs": 50700,
+          "interruptedByNextPull": false
+        }
+      ],
+      "incomingDamage": 0,
+      "largestHit": 0,
+      "maxDamageIn1s": 0,
+      "counts": {
+        "damaged": 1,
+        "killed": 1,
+        "censored": 0,
+        "hpRegain": 0
+      },
+      "cleanTtkMs": {
+        "n": 1,
+        "p10": 50000,
+        "median": 50000,
+        "p90": 50000
+      },
+      "bossId": "stoneplate-juggernaut",
+      "sessions": null,
+      "historicalReferenceObservationId": null,
+      "unfinishedTargets": 0,
+      "targetRegainCount": 0,
+      "deathEvidence": null,
+      "incomingHpDamage": 0,
+      "runicPoints": {
+        "budget": 30,
+        "cost": 30,
+        "unused": 0,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "conduit": null,
+      "evidenceDirectory": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\run-01\\sbc-spirit-heavy-mountain-s101009\\artifacts\\sbc-spirit-heavy-mountain-s101009-s101009"
+    },
+    {
+      "observationId": "sbc-slinger-light-forest-s101009",
+      "identityId": "breadth-t2-slinger-light",
+      "seed": 101009,
+      "tier": 2,
+      "root": "slinger",
+      "frame": "light",
+      "path": "Scout",
+      "skillPath": [
+        "reload-root",
+        "reload-light"
+      ],
+      "range": null,
+      "fixture": "node-t2-forest-dungeon",
+      "measuredSourceCommit": "3a1488a7c78bb47f4a90e20ec06db1652594fe16",
+      "sourceObservationId": null,
+      "status": "complete",
+      "outcome": "boss-killed",
+      "elapsedMs": 25600,
+      "completedKills": 1,
+      "endpoints": {
+        "60000": null,
+        "120000": null,
+        "300000": null
+      },
+      "reason": null,
+      "cell": "sbc-slinger-light-forest-s101009",
+      "windowMs": 300000,
+      "terminalState": {
+        "owner": {
+          "hp": 206.72032000000073,
+          "maxHp": 253,
+          "barrier": 0,
+          "barrierMax": 0,
+          "pos": {
+            "x": 3881.4911722563406,
+            "y": 3351.973539693725
+          },
+          "energy": null,
+          "execution": null,
+          "empowered": false,
+          "cooldowns": {
+            "stance.switch.cd": 0,
+            "recoveryPulse": 6500,
+            "ability.cd.power-strike": 10000,
+            "ability.tempo.floor.power-strike": 0,
+            "ability.cd.brace": 6900,
+            "ability.guard.window": 0
+          },
+          "statusEffects": []
+        },
+        "boss": {
+          "id": "node-t2-forest-dungeon_monster-13",
+          "hp": -62,
+          "maxHp": 3750,
+          "barrier": 0,
+          "pos": {
+            "x": 3886.911316230964,
+            "y": 3505.21924679851
+          },
+          "pattern": null,
+          "statusEffects": [],
+          "counters": {
+            "hitsReceived": 43,
+            "enemyShieldLastHitAt": 1800000023700,
+            "chargeSession": 1800000000000,
+            "chargeCdNextAt": 1800000030800,
+            "chargeCastEndsAt": 0,
+            "chargeAoeActive": 0,
+            "chargeAoeX": 3991.868541968388,
+            "chargeAoeY": 3651.6942991932488,
+            "buffCastEndsAt": 0,
+            "lowHealthWardCastEndsAt": 0,
+            "monsterAbilityCastEndsAt": 0,
+            "monsterAbilityAreaActive": 0,
+            "bossEscapeInstinct": 0,
+            "bossChargeInstinct": 0
+          }
+        },
+        "distance": 153.34152962179311
+      },
+      "minBarrier": 0,
+      "terminalOwner": {
+        "hp": 206.72032000000073,
+        "maxHp": 253,
+        "barrier": 0,
+        "barrierMax": 0,
+        "pos": {
+          "x": 3881.4911722563406,
+          "y": 3351.973539693725
+        },
+        "energy": null,
+        "execution": null,
+        "empowered": false,
+        "cooldowns": {
+          "stance.switch.cd": 0,
+          "recoveryPulse": 6500,
+          "ability.cd.power-strike": 10000,
+          "ability.tempo.floor.power-strike": 0,
+          "ability.cd.brace": 6900,
+          "ability.guard.window": 0
+        },
+        "statusEffects": []
+      },
+      "delivery": {
+        "ownerHitsOnBoss": 43,
+        "spirit": null
+      },
+      "eventTimeConvention": "Event atMs is tick start; completed tick elapsed/endpoints are tick end. Initial state has no World ticks.",
+      "bossKilled": true,
+      "bossKillEvidence": {
+        "atMs": 25500,
+        "victimId": "node-t2-forest-dungeon_monster-13",
+        "victimName": "Apex Timberclaw",
+        "killerId": "bench-bot-0"
+      },
+      "playerDeathEvidence": null,
+      "encounterResetEvidence": null,
+      "killedAtMs": 25500,
+      "bossMaxHp": 3750,
+      "bossHpRemaining": 0,
+      "terminalBossHpSupported": true,
+      "bossHpFractionRemoved": 1,
+      "crossedHalfAtMs": 13900,
+      "castsStarted": 7,
+      "castLabels": [
+        "Stunning Swipe",
+        "Bestial Frenzy"
+      ],
+      "maxAddsAlive": 0,
+      "damageFromBoss": 161,
+      "damageFromAdds": {},
+      "attackBeats": 91,
+      "minionAttackBeats": 0,
+      "totalAttackBeats": 91,
+      "hpLost": 155.89951999999997,
+      "peakBurst1s": 45.29983999999999,
+      "minHpFraction": 0.6462608695652184,
+      "wallElapsedMs": 546,
+      "initialRosterHash": "c0bce4606e4e1ea1d4625aae10294350aae99529ab81ddf18ee09bd0a4999bf0",
+      "targets": [
+        {
+          "id": "node-t2-forest-dungeon_monster-13",
+          "type": "apex-timberclaw",
+          "name": "Apex Timberclaw",
+          "maxHp": 3750,
+          "firstDamageMs": 600,
+          "lastDamageMs": 25500,
+          "killedAtMs": 25500,
+          "hpRegainObserved": false,
+          "maxDamageGapMs": 1800,
+          "damageEvents": 46,
+          "castsStarted": 7,
+          "castsFired": 5,
+          "ttkMs": 24900,
+          "clean": true
+        }
+      ],
+      "episodes": [
+        {
+          "startMs": 600,
+          "endMs": 25500,
+          "durationMs": 24900,
+          "members": [
+            "node-t2-forest-dungeon_monster-13"
+          ],
+          "initialMembers": [
+            "node-t2-forest-dungeon_monster-13"
+          ],
+          "lateJoiners": 0,
+          "outcome": "cleared"
+        }
+      ],
+      "recovery": [
+        {
+          "afterClearMs": 25500,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": false
+        }
+      ],
+      "incomingDamage": 161,
+      "largestHit": 36,
+      "maxDamageIn1s": 47,
+      "counts": {
+        "damaged": 1,
+        "killed": 1,
+        "censored": 0,
+        "hpRegain": 0
+      },
+      "cleanTtkMs": {
+        "n": 1,
+        "p10": 24900,
+        "median": 24900,
+        "p90": 24900
+      },
+      "bossId": "apex-timberclaw",
+      "sessions": null,
+      "historicalReferenceObservationId": null,
+      "unfinishedTargets": 0,
+      "targetRegainCount": 0,
+      "deathEvidence": null,
+      "incomingHpDamage": 161,
+      "runicPoints": {
+        "budget": 30,
+        "cost": 30,
+        "unused": 0,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "conduit": null,
+      "evidenceDirectory": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\run-01\\sbc-slinger-light-forest-s101009\\artifacts\\sbc-slinger-light-forest-s101009-s101009"
+    },
+    {
+      "observationId": "sbc-slinger-light-mountain-s101009",
+      "identityId": "breadth-t2-slinger-light",
+      "seed": 101009,
+      "tier": 2,
+      "root": "slinger",
+      "frame": "light",
+      "path": "Scout",
+      "skillPath": [
+        "reload-root",
+        "reload-light"
+      ],
+      "range": null,
+      "fixture": "node-t2-mountain-dungeon",
+      "measuredSourceCommit": "3a1488a7c78bb47f4a90e20ec06db1652594fe16",
+      "sourceObservationId": null,
+      "status": "complete",
+      "outcome": "boss-killed",
+      "elapsedMs": 52700,
+      "completedKills": 1,
+      "endpoints": {
+        "60000": null,
+        "120000": null,
+        "300000": null
+      },
+      "reason": null,
+      "cell": "sbc-slinger-light-mountain-s101009",
+      "windowMs": 300000,
+      "terminalState": {
+        "owner": {
+          "hp": 231,
+          "maxHp": 231,
+          "barrier": 60,
+          "barrierMax": 60,
+          "pos": {
+            "x": 2021.0197611564577,
+            "y": 3791.422411750054
+          },
+          "energy": null,
+          "execution": null,
+          "empowered": false,
+          "cooldowns": {
+            "stance.switch.cd": 0,
+            "ability.cd.power-strike": 9200,
+            "ability.tempo.floor.power-strike": 0,
+            "ability.cd.brace": 0,
+            "ability.guard.window": 0
+          },
+          "statusEffects": []
+        },
+        "boss": {
+          "id": "node-t2-mountain-dungeon_monster-5",
+          "hp": -23,
+          "maxHp": 5000,
+          "barrier": 0,
+          "pos": {
+            "x": 2103.5105228804623,
+            "y": 3929.613069742498
+          },
+          "pattern": null,
+          "statusEffects": [],
+          "counters": {
+            "bossPatternSession": 1800000000000,
+            "bossPatternCdNextAt": 1800000055600,
+            "hitsReceived": 74,
+            "enemyShieldLastHitAt": 1800000052600,
+            "bossChargeInstinct": 0,
+            "bossEscapeInstinct": 0
+          }
+        },
+        "distance": 160.9390683649906
+      },
+      "minBarrier": 60,
+      "terminalOwner": {
+        "hp": 231,
+        "maxHp": 231,
+        "barrier": 60,
+        "barrierMax": 60,
+        "pos": {
+          "x": 2021.0197611564577,
+          "y": 3791.422411750054
+        },
+        "energy": null,
+        "execution": null,
+        "empowered": false,
+        "cooldowns": {
+          "stance.switch.cd": 0,
+          "ability.cd.power-strike": 9200,
+          "ability.tempo.floor.power-strike": 0,
+          "ability.cd.brace": 0,
+          "ability.guard.window": 0
+        },
+        "statusEffects": []
+      },
+      "delivery": {
+        "ownerHitsOnBoss": 74,
+        "spirit": null
+      },
+      "eventTimeConvention": "Event atMs is tick start; completed tick elapsed/endpoints are tick end. Initial state has no World ticks.",
+      "bossKilled": true,
+      "bossKillEvidence": {
+        "atMs": 52600,
+        "victimId": "node-t2-mountain-dungeon_monster-5",
+        "victimName": "Stoneplate Juggernaut",
+        "killerId": "bench-bot-0"
+      },
+      "playerDeathEvidence": null,
+      "encounterResetEvidence": null,
+      "killedAtMs": 52600,
+      "bossMaxHp": 5000,
+      "bossHpRemaining": 0,
+      "terminalBossHpSupported": true,
+      "bossHpFractionRemoved": 1,
+      "crossedHalfAtMs": 27600,
+      "castsStarted": 10,
+      "castLabels": [
+        "Stoneplate",
+        "Stoneplate Charge"
+      ],
+      "maxAddsAlive": 0,
+      "damageFromBoss": 0,
+      "damageFromAdds": {},
+      "attackBeats": 167,
+      "minionAttackBeats": 0,
+      "totalAttackBeats": 167,
+      "hpLost": 0,
+      "peakBurst1s": 0,
+      "minHpFraction": 1,
+      "wallElapsedMs": 894,
+      "initialRosterHash": "ffc488333d6a91b0252b8abeaf1746d3ed17ccd5f09c17d83e29fdda4f04a0aa",
+      "targets": [
+        {
+          "id": "node-t2-mountain-dungeon_monster-5",
+          "type": "stoneplate-juggernaut",
+          "name": "Stoneplate Juggernaut",
+          "maxHp": 5000,
+          "firstDamageMs": 700,
+          "lastDamageMs": 52600,
+          "killedAtMs": 52600,
+          "hpRegainObserved": false,
+          "maxDamageGapMs": 2700,
+          "damageEvents": 79,
+          "castsStarted": 10,
+          "castsFired": 0,
+          "ttkMs": 51900,
+          "clean": true
+        }
+      ],
+      "episodes": [
+        {
+          "startMs": 700,
+          "endMs": 52600,
+          "durationMs": 51900,
+          "members": [
+            "node-t2-mountain-dungeon_monster-5"
+          ],
+          "initialMembers": [
+            "node-t2-mountain-dungeon_monster-5"
+          ],
+          "lateJoiners": 0,
+          "outcome": "cleared"
+        }
+      ],
+      "recovery": [
+        {
+          "afterClearMs": 52600,
+          "recoveredAtMs": 52600,
+          "interruptedByNextPull": false
+        }
+      ],
+      "incomingDamage": 0,
+      "largestHit": 0,
+      "maxDamageIn1s": 0,
+      "counts": {
+        "damaged": 1,
+        "killed": 1,
+        "censored": 0,
+        "hpRegain": 0
+      },
+      "cleanTtkMs": {
+        "n": 1,
+        "p10": 51900,
+        "median": 51900,
+        "p90": 51900
+      },
+      "bossId": "stoneplate-juggernaut",
+      "sessions": null,
+      "historicalReferenceObservationId": null,
+      "unfinishedTargets": 0,
+      "targetRegainCount": 0,
+      "deathEvidence": null,
+      "incomingHpDamage": 0,
+      "runicPoints": {
+        "budget": 30,
+        "cost": 30,
+        "unused": 0,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "conduit": null,
+      "evidenceDirectory": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\run-01\\sbc-slinger-light-mountain-s101009\\artifacts\\sbc-slinger-light-mountain-s101009-s101009"
+    },
+    {
+      "observationId": "sbc-squire-heavy-forest-s101009",
+      "identityId": "breadth-t2-squire-heavy",
+      "seed": 101009,
+      "tier": 2,
+      "root": "squire",
+      "frame": "heavy",
+      "path": "Bulwark",
+      "skillPath": [
+        "cooldown-root",
+        "cooldown-heavy"
+      ],
+      "range": null,
+      "fixture": "node-t2-forest-dungeon",
+      "measuredSourceCommit": "3a1488a7c78bb47f4a90e20ec06db1652594fe16",
+      "sourceObservationId": null,
+      "status": "complete",
+      "outcome": "boss-killed",
+      "elapsedMs": 25800,
+      "completedKills": 1,
+      "endpoints": {
+        "60000": null,
+        "120000": null,
+        "300000": null
+      },
+      "reason": null,
+      "cell": "sbc-squire-heavy-forest-s101009",
+      "windowMs": 300000,
+      "terminalState": {
+        "owner": {
+          "hp": 170.83679999999933,
+          "maxHp": 281,
+          "barrier": 0,
+          "barrierMax": 0,
+          "pos": {
+            "x": 2566.467471409447,
+            "y": 2619.616391949772
+          },
+          "energy": null,
+          "execution": {
+            "executionCooldownPct": 100,
+            "initialized": true,
+            "executionCooldownMs": 0,
+            "batteryTimerAcc": 0,
+            "singularNoTargetMs": 0,
+            "reverbAttackCount": 0,
+            "reverbStoredBonus": 0,
+            "vengeanceDamageTaken": 0,
+            "ruptureWindowMs": 0
+          },
+          "empowered": true,
+          "cooldowns": {
+            "stance.switch.cd": 0,
+            "recoveryPulse": 6300,
+            "ability.cd.power-strike": 10000,
+            "ability.tempo.floor.power-strike": 0,
+            "ability.cd.brace": 300,
+            "ability.guard.window": 0,
+            "ability.cd.second-wind": 7400
+          },
+          "statusEffects": []
+        },
+        "boss": {
+          "id": "node-t2-forest-dungeon_monster-13",
+          "hp": -12,
+          "maxHp": 3750,
+          "barrier": 0,
+          "pos": {
+            "x": 2526.717471409447,
+            "y": 2609.9224548471743
+          },
+          "pattern": null,
+          "statusEffects": [],
+          "counters": {
+            "hitsReceived": 9,
+            "enemyShieldLastHitAt": 1800000024000,
+            "chargeSession": 1800000000000,
+            "chargeCdNextAt": 1800000024500,
+            "chargeCastEndsAt": 0,
+            "chargeAoeActive": 0,
+            "chargeAoeX": 2508.1758511130743,
+            "chargeAoeY": 2613.5448986119422,
+            "buffCastEndsAt": 0,
+            "lowHealthWardCastEndsAt": 0,
+            "monsterAbilityCastEndsAt": 0,
+            "monsterAbilityAreaActive": 0,
+            "bossEscapeInstinct": 0,
+            "bossChargeInstinct": 0
+          }
+        },
+        "distance": 40.91497178966549
+      },
+      "minBarrier": 0,
+      "terminalOwner": {
+        "hp": 170.83679999999933,
+        "maxHp": 281,
+        "barrier": 0,
+        "barrierMax": 0,
+        "pos": {
+          "x": 2566.467471409447,
+          "y": 2619.616391949772
+        },
+        "energy": null,
+        "execution": {
+          "executionCooldownPct": 100,
+          "initialized": true,
+          "executionCooldownMs": 0,
+          "batteryTimerAcc": 0,
+          "singularNoTargetMs": 0,
+          "reverbAttackCount": 0,
+          "reverbStoredBonus": 0,
+          "vengeanceDamageTaken": 0,
+          "ruptureWindowMs": 0
+        },
+        "empowered": true,
+        "cooldowns": {
+          "stance.switch.cd": 0,
+          "recoveryPulse": 6300,
+          "ability.cd.power-strike": 10000,
+          "ability.tempo.floor.power-strike": 0,
+          "ability.cd.brace": 300,
+          "ability.guard.window": 0,
+          "ability.cd.second-wind": 7400
+        },
+        "statusEffects": []
+      },
+      "delivery": {
+        "ownerHitsOnBoss": 9,
+        "spirit": null
+      },
+      "eventTimeConvention": "Event atMs is tick start; completed tick elapsed/endpoints are tick end. Initial state has no World ticks.",
+      "bossKilled": true,
+      "bossKillEvidence": {
+        "atMs": 25700,
+        "victimId": "node-t2-forest-dungeon_monster-13",
+        "victimName": "Apex Timberclaw",
+        "killerId": "bench-bot-0"
+      },
+      "playerDeathEvidence": null,
+      "encounterResetEvidence": null,
+      "killedAtMs": 25700,
+      "bossMaxHp": 3750,
+      "bossHpRemaining": 0,
+      "terminalBossHpSupported": true,
+      "bossHpFractionRemoved": 1,
+      "crossedHalfAtMs": 14300,
+      "castsStarted": 7,
+      "castLabels": [
+        "Stunning Swipe",
+        "Bestial Frenzy"
+      ],
+      "maxAddsAlive": 0,
+      "damageFromBoss": 502,
+      "damageFromAdds": {},
+      "attackBeats": 51,
+      "minionAttackBeats": 0,
+      "totalAttackBeats": 51,
+      "hpLost": 466.12192000000005,
+      "peakBurst1s": 75.10079999999999,
+      "minHpFraction": 0.40636014234875223,
+      "wallElapsedMs": 517,
+      "initialRosterHash": "c0bce4606e4e1ea1d4625aae10294350aae99529ab81ddf18ee09bd0a4999bf0",
+      "targets": [
+        {
+          "id": "node-t2-forest-dungeon_monster-13",
+          "type": "apex-timberclaw",
+          "name": "Apex Timberclaw",
+          "maxHp": 3750,
+          "firstDamageMs": 1400,
+          "lastDamageMs": 25700,
+          "killedAtMs": 25700,
+          "hpRegainObserved": false,
+          "maxDamageGapMs": 3100,
+          "damageEvents": 12,
+          "castsStarted": 7,
+          "castsFired": 5,
+          "ttkMs": 24300,
+          "clean": true
+        }
+      ],
+      "episodes": [
+        {
+          "startMs": 1400,
+          "endMs": 25700,
+          "durationMs": 24300,
+          "members": [
+            "node-t2-forest-dungeon_monster-13"
+          ],
+          "initialMembers": [
+            "node-t2-forest-dungeon_monster-13"
+          ],
+          "lateJoiners": 0,
+          "outcome": "cleared"
+        }
+      ],
+      "recovery": [
+        {
+          "afterClearMs": 25700,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": false
+        }
+      ],
+      "incomingDamage": 502,
+      "largestHit": 19,
+      "maxDamageIn1s": 76,
+      "counts": {
+        "damaged": 1,
+        "killed": 1,
+        "censored": 0,
+        "hpRegain": 0
+      },
+      "cleanTtkMs": {
+        "n": 1,
+        "p10": 24300,
+        "median": 24300,
+        "p90": 24300
+      },
+      "bossId": "apex-timberclaw",
+      "sessions": null,
+      "historicalReferenceObservationId": null,
+      "unfinishedTargets": 0,
+      "targetRegainCount": 0,
+      "deathEvidence": null,
+      "incomingHpDamage": 502,
+      "runicPoints": {
+        "budget": 30,
+        "cost": 27,
+        "unused": 3,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "conduit": null,
+      "evidenceDirectory": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\run-01\\sbc-squire-heavy-forest-s101009\\artifacts\\sbc-squire-heavy-forest-s101009-s101009"
+    },
+    {
+      "observationId": "sbc-squire-heavy-mountain-s101009",
+      "identityId": "breadth-t2-squire-heavy",
+      "seed": 101009,
+      "tier": 2,
+      "root": "squire",
+      "frame": "heavy",
+      "path": "Bulwark",
+      "skillPath": [
+        "cooldown-root",
+        "cooldown-heavy"
+      ],
+      "range": null,
+      "fixture": "node-t2-mountain-dungeon",
+      "measuredSourceCommit": "3a1488a7c78bb47f4a90e20ec06db1652594fe16",
+      "sourceObservationId": null,
+      "status": "complete",
+      "outcome": "boss-killed",
+      "elapsedMs": 52500,
+      "completedKills": 1,
+      "endpoints": {
+        "60000": null,
+        "120000": null,
+        "300000": null
+      },
+      "reason": null,
+      "cell": "sbc-squire-heavy-mountain-s101009",
+      "windowMs": 300000,
+      "terminalState": {
+        "owner": {
+          "hp": 274.0733000000021,
+          "maxHp": 317,
+          "barrier": 0,
+          "barrierMax": 82,
+          "pos": {
+            "x": 2507.7394371421915,
+            "y": 3771.39936661129
+          },
+          "energy": null,
+          "execution": {
+            "executionCooldownPct": 100,
+            "initialized": true,
+            "executionCooldownMs": 8000,
+            "batteryTimerAcc": 0,
+            "singularNoTargetMs": 0,
+            "reverbAttackCount": 0,
+            "reverbStoredBonus": 0,
+            "vengeanceDamageTaken": 0,
+            "ruptureWindowMs": 0
+          },
+          "empowered": false,
+          "cooldowns": {
+            "stance.switch.cd": 0,
+            "ability.cd.power-strike": 0,
+            "ability.tempo.floor.power-strike": 0,
+            "ability.cd.brace": 0,
+            "ability.guard.window": 0,
+            "ability.cd.second-wind": 0
+          },
+          "statusEffects": []
+        },
+        "boss": {
+          "id": "node-t2-mountain-dungeon_monster-5",
+          "hp": -119,
+          "maxHp": 5000,
+          "barrier": 0,
+          "pos": {
+            "x": 2452.1667601165313,
+            "y": 3767.6152162114136
+          },
+          "pattern": null,
+          "statusEffects": [],
+          "counters": {
+            "bossPatternSession": 1800000000000,
+            "bossPatternCdNextAt": 1800000053400,
+            "hitsReceived": 11,
+            "enemyShieldLastHitAt": 1800000052400,
+            "bossChargeInstinct": 0,
+            "bossEscapeInstinct": 0
+          }
+        },
+        "distance": 55.70136646481144
+      },
+      "minBarrier": 0,
+      "terminalOwner": {
+        "hp": 274.0733000000021,
+        "maxHp": 317,
+        "barrier": 0,
+        "barrierMax": 82,
+        "pos": {
+          "x": 2507.7394371421915,
+          "y": 3771.39936661129
+        },
+        "energy": null,
+        "execution": {
+          "executionCooldownPct": 100,
+          "initialized": true,
+          "executionCooldownMs": 8000,
+          "batteryTimerAcc": 0,
+          "singularNoTargetMs": 0,
+          "reverbAttackCount": 0,
+          "reverbStoredBonus": 0,
+          "vengeanceDamageTaken": 0,
+          "ruptureWindowMs": 0
+        },
+        "empowered": false,
+        "cooldowns": {
+          "stance.switch.cd": 0,
+          "ability.cd.power-strike": 0,
+          "ability.tempo.floor.power-strike": 0,
+          "ability.cd.brace": 0,
+          "ability.guard.window": 0,
+          "ability.cd.second-wind": 0
+        },
+        "statusEffects": []
+      },
+      "delivery": {
+        "ownerHitsOnBoss": 11,
+        "spirit": null
+      },
+      "eventTimeConvention": "Event atMs is tick start; completed tick elapsed/endpoints are tick end. Initial state has no World ticks.",
+      "bossKilled": true,
+      "bossKillEvidence": {
+        "atMs": 52400,
+        "victimId": "node-t2-mountain-dungeon_monster-5",
+        "victimName": "Stoneplate Juggernaut",
+        "killerId": "bench-bot-0"
+      },
+      "playerDeathEvidence": null,
+      "encounterResetEvidence": null,
+      "killedAtMs": 52400,
+      "bossMaxHp": 5000,
+      "bossHpRemaining": 0,
+      "terminalBossHpSupported": true,
+      "bossHpFractionRemoved": 1,
+      "crossedHalfAtMs": 26400,
+      "castsStarted": 10,
+      "castLabels": [
+        "Stoneplate",
+        "Stoneplate Charge"
+      ],
+      "maxAddsAlive": 0,
+      "damageFromBoss": 309.8500000000001,
+      "damageFromAdds": {},
+      "attackBeats": 67,
+      "minionAttackBeats": 0,
+      "totalAttackBeats": 67,
+      "hpLost": 306.9653,
+      "peakBurst1s": 99.43789999999998,
+      "minHpFraction": 0.45700410094637356,
+      "wallElapsedMs": 786,
+      "initialRosterHash": "ffc488333d6a91b0252b8abeaf1746d3ed17ccd5f09c17d83e29fdda4f04a0aa",
+      "targets": [
+        {
+          "id": "node-t2-mountain-dungeon_monster-5",
+          "type": "stoneplate-juggernaut",
+          "name": "Stoneplate Juggernaut",
+          "maxHp": 5000,
+          "firstDamageMs": 1700,
+          "lastDamageMs": 52400,
+          "killedAtMs": 52400,
+          "hpRegainObserved": false,
+          "maxDamageGapMs": 8200,
+          "damageEvents": 15,
+          "castsStarted": 10,
+          "castsFired": 0,
+          "ttkMs": 50700,
+          "clean": true
+        }
+      ],
+      "episodes": [
+        {
+          "startMs": 1200,
+          "endMs": 52400,
+          "durationMs": 51200,
+          "members": [
+            "node-t2-mountain-dungeon_monster-5"
+          ],
+          "initialMembers": [
+            "node-t2-mountain-dungeon_monster-5"
+          ],
+          "lateJoiners": 0,
+          "outcome": "cleared"
+        }
+      ],
+      "recovery": [
+        {
+          "afterClearMs": 52400,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": false
+        }
+      ],
+      "incomingDamage": 309.8500000000001,
+      "largestHit": 99.85,
+      "maxDamageIn1s": 99.85,
+      "counts": {
+        "damaged": 1,
+        "killed": 1,
+        "censored": 0,
+        "hpRegain": 0
+      },
+      "cleanTtkMs": {
+        "n": 1,
+        "p10": 50700,
+        "median": 50700,
+        "p90": 50700
+      },
+      "bossId": "stoneplate-juggernaut",
+      "sessions": null,
+      "historicalReferenceObservationId": null,
+      "unfinishedTargets": 0,
+      "targetRegainCount": 0,
+      "deathEvidence": null,
+      "incomingHpDamage": 309.8500000000001,
+      "runicPoints": {
+        "budget": 30,
+        "cost": 27,
+        "unused": 3,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "conduit": null,
+      "evidenceDirectory": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\run-01\\sbc-squire-heavy-mountain-s101009\\artifacts\\sbc-squire-heavy-mountain-s101009-s101009"
+    },
+    {
+      "observationId": "sbc-squire-heavy-forest-s101021",
+      "identityId": "breadth-t2-squire-heavy",
+      "seed": 101021,
+      "tier": 2,
+      "root": "squire",
+      "frame": "heavy",
+      "path": "Bulwark",
+      "skillPath": [
+        "cooldown-root",
+        "cooldown-heavy"
+      ],
+      "range": null,
+      "fixture": "node-t2-forest-dungeon",
+      "measuredSourceCommit": "3a1488a7c78bb47f4a90e20ec06db1652594fe16",
+      "sourceObservationId": null,
+      "status": "complete",
+      "outcome": "boss-killed",
+      "elapsedMs": 25800,
+      "completedKills": 1,
+      "endpoints": {
+        "60000": null,
+        "120000": null,
+        "300000": null
+      },
+      "reason": null,
+      "cell": "sbc-squire-heavy-forest-s101021",
+      "windowMs": 300000,
+      "terminalState": {
+        "owner": {
+          "hp": 170.83679999999933,
+          "maxHp": 281,
+          "barrier": 0,
+          "barrierMax": 0,
+          "pos": {
+            "x": 2566.467471409447,
+            "y": 2619.616391949772
+          },
+          "energy": null,
+          "execution": {
+            "executionCooldownPct": 100,
+            "initialized": true,
+            "executionCooldownMs": 0,
+            "batteryTimerAcc": 0,
+            "singularNoTargetMs": 0,
+            "reverbAttackCount": 0,
+            "reverbStoredBonus": 0,
+            "vengeanceDamageTaken": 0,
+            "ruptureWindowMs": 0
+          },
+          "empowered": true,
+          "cooldowns": {
+            "stance.switch.cd": 0,
+            "recoveryPulse": 6300,
+            "ability.cd.power-strike": 10000,
+            "ability.tempo.floor.power-strike": 0,
+            "ability.cd.brace": 300,
+            "ability.guard.window": 0,
+            "ability.cd.second-wind": 7400
+          },
+          "statusEffects": []
+        },
+        "boss": {
+          "id": "node-t2-forest-dungeon_monster-13",
+          "hp": -12,
+          "maxHp": 3750,
+          "barrier": 0,
+          "pos": {
+            "x": 2526.717471409447,
+            "y": 2609.9224548471743
+          },
+          "pattern": null,
+          "statusEffects": [],
+          "counters": {
+            "hitsReceived": 9,
+            "enemyShieldLastHitAt": 1800000024000,
+            "chargeSession": 1800000000000,
+            "chargeCdNextAt": 1800000024500,
+            "chargeCastEndsAt": 0,
+            "chargeAoeActive": 0,
+            "chargeAoeX": 2508.1758511130743,
+            "chargeAoeY": 2613.5448986119422,
+            "buffCastEndsAt": 0,
+            "lowHealthWardCastEndsAt": 0,
+            "monsterAbilityCastEndsAt": 0,
+            "monsterAbilityAreaActive": 0,
+            "bossEscapeInstinct": 0,
+            "bossChargeInstinct": 0
+          }
+        },
+        "distance": 40.91497178966549
+      },
+      "minBarrier": 0,
+      "terminalOwner": {
+        "hp": 170.83679999999933,
+        "maxHp": 281,
+        "barrier": 0,
+        "barrierMax": 0,
+        "pos": {
+          "x": 2566.467471409447,
+          "y": 2619.616391949772
+        },
+        "energy": null,
+        "execution": {
+          "executionCooldownPct": 100,
+          "initialized": true,
+          "executionCooldownMs": 0,
+          "batteryTimerAcc": 0,
+          "singularNoTargetMs": 0,
+          "reverbAttackCount": 0,
+          "reverbStoredBonus": 0,
+          "vengeanceDamageTaken": 0,
+          "ruptureWindowMs": 0
+        },
+        "empowered": true,
+        "cooldowns": {
+          "stance.switch.cd": 0,
+          "recoveryPulse": 6300,
+          "ability.cd.power-strike": 10000,
+          "ability.tempo.floor.power-strike": 0,
+          "ability.cd.brace": 300,
+          "ability.guard.window": 0,
+          "ability.cd.second-wind": 7400
+        },
+        "statusEffects": []
+      },
+      "delivery": {
+        "ownerHitsOnBoss": 9,
+        "spirit": null
+      },
+      "eventTimeConvention": "Event atMs is tick start; completed tick elapsed/endpoints are tick end. Initial state has no World ticks.",
+      "bossKilled": true,
+      "bossKillEvidence": {
+        "atMs": 25700,
+        "victimId": "node-t2-forest-dungeon_monster-13",
+        "victimName": "Apex Timberclaw",
+        "killerId": "bench-bot-0"
+      },
+      "playerDeathEvidence": null,
+      "encounterResetEvidence": null,
+      "killedAtMs": 25700,
+      "bossMaxHp": 3750,
+      "bossHpRemaining": 0,
+      "terminalBossHpSupported": true,
+      "bossHpFractionRemoved": 1,
+      "crossedHalfAtMs": 14300,
+      "castsStarted": 7,
+      "castLabels": [
+        "Stunning Swipe",
+        "Bestial Frenzy"
+      ],
+      "maxAddsAlive": 0,
+      "damageFromBoss": 502,
+      "damageFromAdds": {},
+      "attackBeats": 51,
+      "minionAttackBeats": 0,
+      "totalAttackBeats": 51,
+      "hpLost": 466.12192000000005,
+      "peakBurst1s": 75.10079999999999,
+      "minHpFraction": 0.40636014234875223,
+      "wallElapsedMs": 489,
+      "initialRosterHash": "c0bce4606e4e1ea1d4625aae10294350aae99529ab81ddf18ee09bd0a4999bf0",
+      "targets": [
+        {
+          "id": "node-t2-forest-dungeon_monster-13",
+          "type": "apex-timberclaw",
+          "name": "Apex Timberclaw",
+          "maxHp": 3750,
+          "firstDamageMs": 1400,
+          "lastDamageMs": 25700,
+          "killedAtMs": 25700,
+          "hpRegainObserved": false,
+          "maxDamageGapMs": 3100,
+          "damageEvents": 12,
+          "castsStarted": 7,
+          "castsFired": 5,
+          "ttkMs": 24300,
+          "clean": true
+        }
+      ],
+      "episodes": [
+        {
+          "startMs": 1400,
+          "endMs": 25700,
+          "durationMs": 24300,
+          "members": [
+            "node-t2-forest-dungeon_monster-13"
+          ],
+          "initialMembers": [
+            "node-t2-forest-dungeon_monster-13"
+          ],
+          "lateJoiners": 0,
+          "outcome": "cleared"
+        }
+      ],
+      "recovery": [
+        {
+          "afterClearMs": 25700,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": false
+        }
+      ],
+      "incomingDamage": 502,
+      "largestHit": 19,
+      "maxDamageIn1s": 76,
+      "counts": {
+        "damaged": 1,
+        "killed": 1,
+        "censored": 0,
+        "hpRegain": 0
+      },
+      "cleanTtkMs": {
+        "n": 1,
+        "p10": 24300,
+        "median": 24300,
+        "p90": 24300
+      },
+      "bossId": "apex-timberclaw",
+      "sessions": null,
+      "historicalReferenceObservationId": null,
+      "unfinishedTargets": 0,
+      "targetRegainCount": 0,
+      "deathEvidence": null,
+      "incomingHpDamage": 502,
+      "runicPoints": {
+        "budget": 30,
+        "cost": 27,
+        "unused": 3,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "conduit": null,
+      "evidenceDirectory": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\run-01\\sbc-squire-heavy-forest-s101021\\artifacts\\sbc-squire-heavy-forest-s101021-s101021"
+    },
+    {
+      "observationId": "sbc-squire-heavy-mountain-s101021",
+      "identityId": "breadth-t2-squire-heavy",
+      "seed": 101021,
+      "tier": 2,
+      "root": "squire",
+      "frame": "heavy",
+      "path": "Bulwark",
+      "skillPath": [
+        "cooldown-root",
+        "cooldown-heavy"
+      ],
+      "range": null,
+      "fixture": "node-t2-mountain-dungeon",
+      "measuredSourceCommit": "3a1488a7c78bb47f4a90e20ec06db1652594fe16",
+      "sourceObservationId": null,
+      "status": "complete",
+      "outcome": "boss-killed",
+      "elapsedMs": 52500,
+      "completedKills": 1,
+      "endpoints": {
+        "60000": null,
+        "120000": null,
+        "300000": null
+      },
+      "reason": null,
+      "cell": "sbc-squire-heavy-mountain-s101021",
+      "windowMs": 300000,
+      "terminalState": {
+        "owner": {
+          "hp": 274.0733000000021,
+          "maxHp": 317,
+          "barrier": 0,
+          "barrierMax": 82,
+          "pos": {
+            "x": 2507.7394371421915,
+            "y": 3771.39936661129
+          },
+          "energy": null,
+          "execution": {
+            "executionCooldownPct": 100,
+            "initialized": true,
+            "executionCooldownMs": 8000,
+            "batteryTimerAcc": 0,
+            "singularNoTargetMs": 0,
+            "reverbAttackCount": 0,
+            "reverbStoredBonus": 0,
+            "vengeanceDamageTaken": 0,
+            "ruptureWindowMs": 0
+          },
+          "empowered": false,
+          "cooldowns": {
+            "stance.switch.cd": 0,
+            "ability.cd.power-strike": 0,
+            "ability.tempo.floor.power-strike": 0,
+            "ability.cd.brace": 0,
+            "ability.guard.window": 0,
+            "ability.cd.second-wind": 0
+          },
+          "statusEffects": []
+        },
+        "boss": {
+          "id": "node-t2-mountain-dungeon_monster-5",
+          "hp": -119,
+          "maxHp": 5000,
+          "barrier": 0,
+          "pos": {
+            "x": 2452.1667601165313,
+            "y": 3767.6152162114136
+          },
+          "pattern": null,
+          "statusEffects": [],
+          "counters": {
+            "bossPatternSession": 1800000000000,
+            "bossPatternCdNextAt": 1800000053400,
+            "hitsReceived": 11,
+            "enemyShieldLastHitAt": 1800000052400,
+            "bossChargeInstinct": 0,
+            "bossEscapeInstinct": 0
+          }
+        },
+        "distance": 55.70136646481144
+      },
+      "minBarrier": 0,
+      "terminalOwner": {
+        "hp": 274.0733000000021,
+        "maxHp": 317,
+        "barrier": 0,
+        "barrierMax": 82,
+        "pos": {
+          "x": 2507.7394371421915,
+          "y": 3771.39936661129
+        },
+        "energy": null,
+        "execution": {
+          "executionCooldownPct": 100,
+          "initialized": true,
+          "executionCooldownMs": 8000,
+          "batteryTimerAcc": 0,
+          "singularNoTargetMs": 0,
+          "reverbAttackCount": 0,
+          "reverbStoredBonus": 0,
+          "vengeanceDamageTaken": 0,
+          "ruptureWindowMs": 0
+        },
+        "empowered": false,
+        "cooldowns": {
+          "stance.switch.cd": 0,
+          "ability.cd.power-strike": 0,
+          "ability.tempo.floor.power-strike": 0,
+          "ability.cd.brace": 0,
+          "ability.guard.window": 0,
+          "ability.cd.second-wind": 0
+        },
+        "statusEffects": []
+      },
+      "delivery": {
+        "ownerHitsOnBoss": 11,
+        "spirit": null
+      },
+      "eventTimeConvention": "Event atMs is tick start; completed tick elapsed/endpoints are tick end. Initial state has no World ticks.",
+      "bossKilled": true,
+      "bossKillEvidence": {
+        "atMs": 52400,
+        "victimId": "node-t2-mountain-dungeon_monster-5",
+        "victimName": "Stoneplate Juggernaut",
+        "killerId": "bench-bot-0"
+      },
+      "playerDeathEvidence": null,
+      "encounterResetEvidence": null,
+      "killedAtMs": 52400,
+      "bossMaxHp": 5000,
+      "bossHpRemaining": 0,
+      "terminalBossHpSupported": true,
+      "bossHpFractionRemoved": 1,
+      "crossedHalfAtMs": 26400,
+      "castsStarted": 10,
+      "castLabels": [
+        "Stoneplate",
+        "Stoneplate Charge"
+      ],
+      "maxAddsAlive": 0,
+      "damageFromBoss": 309.8500000000001,
+      "damageFromAdds": {},
+      "attackBeats": 67,
+      "minionAttackBeats": 0,
+      "totalAttackBeats": 67,
+      "hpLost": 306.9653,
+      "peakBurst1s": 99.43789999999998,
+      "minHpFraction": 0.45700410094637356,
+      "wallElapsedMs": 752,
+      "initialRosterHash": "ffc488333d6a91b0252b8abeaf1746d3ed17ccd5f09c17d83e29fdda4f04a0aa",
+      "targets": [
+        {
+          "id": "node-t2-mountain-dungeon_monster-5",
+          "type": "stoneplate-juggernaut",
+          "name": "Stoneplate Juggernaut",
+          "maxHp": 5000,
+          "firstDamageMs": 1700,
+          "lastDamageMs": 52400,
+          "killedAtMs": 52400,
+          "hpRegainObserved": false,
+          "maxDamageGapMs": 8200,
+          "damageEvents": 15,
+          "castsStarted": 10,
+          "castsFired": 0,
+          "ttkMs": 50700,
+          "clean": true
+        }
+      ],
+      "episodes": [
+        {
+          "startMs": 1200,
+          "endMs": 52400,
+          "durationMs": 51200,
+          "members": [
+            "node-t2-mountain-dungeon_monster-5"
+          ],
+          "initialMembers": [
+            "node-t2-mountain-dungeon_monster-5"
+          ],
+          "lateJoiners": 0,
+          "outcome": "cleared"
+        }
+      ],
+      "recovery": [
+        {
+          "afterClearMs": 52400,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": false
+        }
+      ],
+      "incomingDamage": 309.8500000000001,
+      "largestHit": 99.85,
+      "maxDamageIn1s": 99.85,
+      "counts": {
+        "damaged": 1,
+        "killed": 1,
+        "censored": 0,
+        "hpRegain": 0
+      },
+      "cleanTtkMs": {
+        "n": 1,
+        "p10": 50700,
+        "median": 50700,
+        "p90": 50700
+      },
+      "bossId": "stoneplate-juggernaut",
+      "sessions": null,
+      "historicalReferenceObservationId": null,
+      "unfinishedTargets": 0,
+      "targetRegainCount": 0,
+      "deathEvidence": null,
+      "incomingHpDamage": 309.8500000000001,
+      "runicPoints": {
+        "budget": 30,
+        "cost": 27,
+        "unused": 3,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "conduit": null,
+      "evidenceDirectory": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\run-01\\sbc-squire-heavy-mountain-s101021\\artifacts\\sbc-squire-heavy-mountain-s101021-s101021"
+    },
+    {
+      "observationId": "sbc-slinger-light-forest-s101021",
+      "identityId": "breadth-t2-slinger-light",
+      "seed": 101021,
+      "tier": 2,
+      "root": "slinger",
+      "frame": "light",
+      "path": "Scout",
+      "skillPath": [
+        "reload-root",
+        "reload-light"
+      ],
+      "range": null,
+      "fixture": "node-t2-forest-dungeon",
+      "measuredSourceCommit": "3a1488a7c78bb47f4a90e20ec06db1652594fe16",
+      "sourceObservationId": null,
+      "status": "complete",
+      "outcome": "boss-killed",
+      "elapsedMs": 25600,
+      "completedKills": 1,
+      "endpoints": {
+        "60000": null,
+        "120000": null,
+        "300000": null
+      },
+      "reason": null,
+      "cell": "sbc-slinger-light-forest-s101021",
+      "windowMs": 300000,
+      "terminalState": {
+        "owner": {
+          "hp": 206.72032000000073,
+          "maxHp": 253,
+          "barrier": 0,
+          "barrierMax": 0,
+          "pos": {
+            "x": 3881.4911722563406,
+            "y": 3351.973539693725
+          },
+          "energy": null,
+          "execution": null,
+          "empowered": false,
+          "cooldowns": {
+            "stance.switch.cd": 0,
+            "recoveryPulse": 6500,
+            "ability.cd.power-strike": 10000,
+            "ability.tempo.floor.power-strike": 0,
+            "ability.cd.brace": 6900,
+            "ability.guard.window": 0
+          },
+          "statusEffects": []
+        },
+        "boss": {
+          "id": "node-t2-forest-dungeon_monster-13",
+          "hp": -62,
+          "maxHp": 3750,
+          "barrier": 0,
+          "pos": {
+            "x": 3886.911316230964,
+            "y": 3505.21924679851
+          },
+          "pattern": null,
+          "statusEffects": [],
+          "counters": {
+            "hitsReceived": 43,
+            "enemyShieldLastHitAt": 1800000023700,
+            "chargeSession": 1800000000000,
+            "chargeCdNextAt": 1800000030800,
+            "chargeCastEndsAt": 0,
+            "chargeAoeActive": 0,
+            "chargeAoeX": 3991.868541968388,
+            "chargeAoeY": 3651.6942991932488,
+            "buffCastEndsAt": 0,
+            "lowHealthWardCastEndsAt": 0,
+            "monsterAbilityCastEndsAt": 0,
+            "monsterAbilityAreaActive": 0,
+            "bossEscapeInstinct": 0,
+            "bossChargeInstinct": 0
+          }
+        },
+        "distance": 153.34152962179311
+      },
+      "minBarrier": 0,
+      "terminalOwner": {
+        "hp": 206.72032000000073,
+        "maxHp": 253,
+        "barrier": 0,
+        "barrierMax": 0,
+        "pos": {
+          "x": 3881.4911722563406,
+          "y": 3351.973539693725
+        },
+        "energy": null,
+        "execution": null,
+        "empowered": false,
+        "cooldowns": {
+          "stance.switch.cd": 0,
+          "recoveryPulse": 6500,
+          "ability.cd.power-strike": 10000,
+          "ability.tempo.floor.power-strike": 0,
+          "ability.cd.brace": 6900,
+          "ability.guard.window": 0
+        },
+        "statusEffects": []
+      },
+      "delivery": {
+        "ownerHitsOnBoss": 43,
+        "spirit": null
+      },
+      "eventTimeConvention": "Event atMs is tick start; completed tick elapsed/endpoints are tick end. Initial state has no World ticks.",
+      "bossKilled": true,
+      "bossKillEvidence": {
+        "atMs": 25500,
+        "victimId": "node-t2-forest-dungeon_monster-13",
+        "victimName": "Apex Timberclaw",
+        "killerId": "bench-bot-0"
+      },
+      "playerDeathEvidence": null,
+      "encounterResetEvidence": null,
+      "killedAtMs": 25500,
+      "bossMaxHp": 3750,
+      "bossHpRemaining": 0,
+      "terminalBossHpSupported": true,
+      "bossHpFractionRemoved": 1,
+      "crossedHalfAtMs": 13900,
+      "castsStarted": 7,
+      "castLabels": [
+        "Stunning Swipe",
+        "Bestial Frenzy"
+      ],
+      "maxAddsAlive": 0,
+      "damageFromBoss": 161,
+      "damageFromAdds": {},
+      "attackBeats": 91,
+      "minionAttackBeats": 0,
+      "totalAttackBeats": 91,
+      "hpLost": 155.89951999999997,
+      "peakBurst1s": 45.29983999999999,
+      "minHpFraction": 0.6462608695652184,
+      "wallElapsedMs": 502,
+      "initialRosterHash": "c0bce4606e4e1ea1d4625aae10294350aae99529ab81ddf18ee09bd0a4999bf0",
+      "targets": [
+        {
+          "id": "node-t2-forest-dungeon_monster-13",
+          "type": "apex-timberclaw",
+          "name": "Apex Timberclaw",
+          "maxHp": 3750,
+          "firstDamageMs": 600,
+          "lastDamageMs": 25500,
+          "killedAtMs": 25500,
+          "hpRegainObserved": false,
+          "maxDamageGapMs": 1800,
+          "damageEvents": 46,
+          "castsStarted": 7,
+          "castsFired": 5,
+          "ttkMs": 24900,
+          "clean": true
+        }
+      ],
+      "episodes": [
+        {
+          "startMs": 600,
+          "endMs": 25500,
+          "durationMs": 24900,
+          "members": [
+            "node-t2-forest-dungeon_monster-13"
+          ],
+          "initialMembers": [
+            "node-t2-forest-dungeon_monster-13"
+          ],
+          "lateJoiners": 0,
+          "outcome": "cleared"
+        }
+      ],
+      "recovery": [
+        {
+          "afterClearMs": 25500,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": false
+        }
+      ],
+      "incomingDamage": 161,
+      "largestHit": 36,
+      "maxDamageIn1s": 47,
+      "counts": {
+        "damaged": 1,
+        "killed": 1,
+        "censored": 0,
+        "hpRegain": 0
+      },
+      "cleanTtkMs": {
+        "n": 1,
+        "p10": 24900,
+        "median": 24900,
+        "p90": 24900
+      },
+      "bossId": "apex-timberclaw",
+      "sessions": null,
+      "historicalReferenceObservationId": null,
+      "unfinishedTargets": 0,
+      "targetRegainCount": 0,
+      "deathEvidence": null,
+      "incomingHpDamage": 161,
+      "runicPoints": {
+        "budget": 30,
+        "cost": 30,
+        "unused": 0,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "conduit": null,
+      "evidenceDirectory": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\run-01\\sbc-slinger-light-forest-s101021\\artifacts\\sbc-slinger-light-forest-s101021-s101021"
+    },
+    {
+      "observationId": "sbc-slinger-light-mountain-s101021",
+      "identityId": "breadth-t2-slinger-light",
+      "seed": 101021,
+      "tier": 2,
+      "root": "slinger",
+      "frame": "light",
+      "path": "Scout",
+      "skillPath": [
+        "reload-root",
+        "reload-light"
+      ],
+      "range": null,
+      "fixture": "node-t2-mountain-dungeon",
+      "measuredSourceCommit": "3a1488a7c78bb47f4a90e20ec06db1652594fe16",
+      "sourceObservationId": null,
+      "status": "complete",
+      "outcome": "boss-killed",
+      "elapsedMs": 52700,
+      "completedKills": 1,
+      "endpoints": {
+        "60000": null,
+        "120000": null,
+        "300000": null
+      },
+      "reason": null,
+      "cell": "sbc-slinger-light-mountain-s101021",
+      "windowMs": 300000,
+      "terminalState": {
+        "owner": {
+          "hp": 231,
+          "maxHp": 231,
+          "barrier": 60,
+          "barrierMax": 60,
+          "pos": {
+            "x": 2021.0197611564577,
+            "y": 3791.422411750054
+          },
+          "energy": null,
+          "execution": null,
+          "empowered": false,
+          "cooldowns": {
+            "stance.switch.cd": 0,
+            "ability.cd.power-strike": 9200,
+            "ability.tempo.floor.power-strike": 0,
+            "ability.cd.brace": 0,
+            "ability.guard.window": 0
+          },
+          "statusEffects": []
+        },
+        "boss": {
+          "id": "node-t2-mountain-dungeon_monster-5",
+          "hp": -23,
+          "maxHp": 5000,
+          "barrier": 0,
+          "pos": {
+            "x": 2103.5105228804623,
+            "y": 3929.613069742498
+          },
+          "pattern": null,
+          "statusEffects": [],
+          "counters": {
+            "bossPatternSession": 1800000000000,
+            "bossPatternCdNextAt": 1800000055600,
+            "hitsReceived": 74,
+            "enemyShieldLastHitAt": 1800000052600,
+            "bossChargeInstinct": 0,
+            "bossEscapeInstinct": 0
+          }
+        },
+        "distance": 160.9390683649906
+      },
+      "minBarrier": 60,
+      "terminalOwner": {
+        "hp": 231,
+        "maxHp": 231,
+        "barrier": 60,
+        "barrierMax": 60,
+        "pos": {
+          "x": 2021.0197611564577,
+          "y": 3791.422411750054
+        },
+        "energy": null,
+        "execution": null,
+        "empowered": false,
+        "cooldowns": {
+          "stance.switch.cd": 0,
+          "ability.cd.power-strike": 9200,
+          "ability.tempo.floor.power-strike": 0,
+          "ability.cd.brace": 0,
+          "ability.guard.window": 0
+        },
+        "statusEffects": []
+      },
+      "delivery": {
+        "ownerHitsOnBoss": 74,
+        "spirit": null
+      },
+      "eventTimeConvention": "Event atMs is tick start; completed tick elapsed/endpoints are tick end. Initial state has no World ticks.",
+      "bossKilled": true,
+      "bossKillEvidence": {
+        "atMs": 52600,
+        "victimId": "node-t2-mountain-dungeon_monster-5",
+        "victimName": "Stoneplate Juggernaut",
+        "killerId": "bench-bot-0"
+      },
+      "playerDeathEvidence": null,
+      "encounterResetEvidence": null,
+      "killedAtMs": 52600,
+      "bossMaxHp": 5000,
+      "bossHpRemaining": 0,
+      "terminalBossHpSupported": true,
+      "bossHpFractionRemoved": 1,
+      "crossedHalfAtMs": 27600,
+      "castsStarted": 10,
+      "castLabels": [
+        "Stoneplate",
+        "Stoneplate Charge"
+      ],
+      "maxAddsAlive": 0,
+      "damageFromBoss": 0,
+      "damageFromAdds": {},
+      "attackBeats": 167,
+      "minionAttackBeats": 0,
+      "totalAttackBeats": 167,
+      "hpLost": 0,
+      "peakBurst1s": 0,
+      "minHpFraction": 1,
+      "wallElapsedMs": 836,
+      "initialRosterHash": "ffc488333d6a91b0252b8abeaf1746d3ed17ccd5f09c17d83e29fdda4f04a0aa",
+      "targets": [
+        {
+          "id": "node-t2-mountain-dungeon_monster-5",
+          "type": "stoneplate-juggernaut",
+          "name": "Stoneplate Juggernaut",
+          "maxHp": 5000,
+          "firstDamageMs": 700,
+          "lastDamageMs": 52600,
+          "killedAtMs": 52600,
+          "hpRegainObserved": false,
+          "maxDamageGapMs": 2700,
+          "damageEvents": 79,
+          "castsStarted": 10,
+          "castsFired": 0,
+          "ttkMs": 51900,
+          "clean": true
+        }
+      ],
+      "episodes": [
+        {
+          "startMs": 700,
+          "endMs": 52600,
+          "durationMs": 51900,
+          "members": [
+            "node-t2-mountain-dungeon_monster-5"
+          ],
+          "initialMembers": [
+            "node-t2-mountain-dungeon_monster-5"
+          ],
+          "lateJoiners": 0,
+          "outcome": "cleared"
+        }
+      ],
+      "recovery": [
+        {
+          "afterClearMs": 52600,
+          "recoveredAtMs": 52600,
+          "interruptedByNextPull": false
+        }
+      ],
+      "incomingDamage": 0,
+      "largestHit": 0,
+      "maxDamageIn1s": 0,
+      "counts": {
+        "damaged": 1,
+        "killed": 1,
+        "censored": 0,
+        "hpRegain": 0
+      },
+      "cleanTtkMs": {
+        "n": 1,
+        "p10": 51900,
+        "median": 51900,
+        "p90": 51900
+      },
+      "bossId": "stoneplate-juggernaut",
+      "sessions": null,
+      "historicalReferenceObservationId": null,
+      "unfinishedTargets": 0,
+      "targetRegainCount": 0,
+      "deathEvidence": null,
+      "incomingHpDamage": 0,
+      "runicPoints": {
+        "budget": 30,
+        "cost": 30,
+        "unused": 0,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "conduit": null,
+      "evidenceDirectory": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\run-01\\sbc-slinger-light-mountain-s101021\\artifacts\\sbc-slinger-light-mountain-s101021-s101021"
+    },
+    {
+      "observationId": "sbc-spirit-heavy-forest-s101021",
+      "identityId": "breadth-t2-spirit-heavy",
+      "seed": 101021,
+      "tier": 2,
+      "root": "spirit",
+      "frame": "heavy",
+      "path": "Phantasm",
+      "skillPath": [
+        "energy-root",
+        "energy-heavy"
+      ],
+      "range": null,
+      "fixture": "node-t2-forest-dungeon",
+      "measuredSourceCommit": "3a1488a7c78bb47f4a90e20ec06db1652594fe16",
+      "sourceObservationId": null,
+      "status": "complete",
+      "outcome": "boss-killed",
+      "elapsedMs": 25100,
+      "completedKills": 1,
+      "endpoints": {
+        "60000": null,
+        "120000": null,
+        "300000": null
+      },
+      "reason": null,
+      "cell": "sbc-spirit-heavy-forest-s101021",
+      "windowMs": 300000,
+      "terminalState": {
+        "owner": {
+          "hp": 167.46339999999992,
+          "maxHp": 244,
+          "barrier": 0,
+          "barrierMax": 137,
+          "pos": {
+            "x": 4759.138910898015,
+            "y": 3740.1669580655503
+          },
+          "energy": {
+            "energy": 0,
+            "energyMax": 100,
+            "csReservoir": 0,
+            "smChargePool": 0,
+            "seInitialized": false,
+            "flashBaseAttackCooldown": 0,
+            "flashBaseDodgeRate": 0,
+            "flashBaseMoveSpeed": 0,
+            "flashSpeedBonusPct": 0,
+            "flashEvasionBonusPct": 0,
+            "overdriveActive": false,
+            "upkeepTimerMs": 0,
+            "binaryDischargeState": false,
+            "binaryBaseCd": 0,
+            "binaryAppliedCd": 0,
+            "criticalMassStacks": 0,
+            "criticalMassGapMs": 0,
+            "awakenedCharges": 0,
+            "dischargeEnergy": 0
+          },
+          "execution": null,
+          "empowered": false,
+          "cooldowns": {
+            "stance.switch.cd": 0,
+            "ability.cd.power-strike": 10000,
+            "ability.tempo.floor.power-strike": 0,
+            "ability.cd.brace": 600,
+            "ability.guard.window": 0,
+            "ability.cd.second-wind": 10900
+          },
+          "statusEffects": [
+            {
+              "id": "ability-second-wind",
+              "stacks": 1,
+              "maxStacks": 0,
+              "remainingMs": 2900,
+              "refreshable": true,
+              "instanced": false,
+              "sourceId": "bench-bot-0",
+              "data": {
+                "totalMs": 4000,
+                "recoveryPct": 0.6
+              }
+            }
+          ]
+        },
+        "boss": {
+          "id": "node-t2-forest-dungeon_monster-13",
+          "hp": -142,
+          "maxHp": 3750,
+          "barrier": 0,
+          "pos": {
+            "x": 4750.278389858087,
+            "y": 3898.7819578523117
+          },
+          "pattern": null,
+          "statusEffects": [],
+          "counters": {
+            "hitsReceived": 11,
+            "enemyShieldLastHitAt": 1800000022000,
+            "chargeSession": 1800000000000,
+            "chargeCdNextAt": 1800000024100,
+            "chargeCastEndsAt": 0,
+            "chargeAoeActive": 0,
+            "chargeAoeX": 3929.23330135724,
+            "chargeAoeY": 4586.863789855493,
+            "bossEscapeInstinct": 0,
+            "bossChargeInstinct": 0
+          }
+        },
+        "distance": 158.8622893906963
+      },
+      "minBarrier": 0,
+      "terminalOwner": {
+        "hp": 167.46339999999992,
+        "maxHp": 244,
+        "barrier": 0,
+        "barrierMax": 137,
+        "pos": {
+          "x": 4759.138910898015,
+          "y": 3740.1669580655503
+        },
+        "energy": {
+          "energy": 0,
+          "energyMax": 100,
+          "csReservoir": 0,
+          "smChargePool": 0,
+          "seInitialized": false,
+          "flashBaseAttackCooldown": 0,
+          "flashBaseDodgeRate": 0,
+          "flashBaseMoveSpeed": 0,
+          "flashSpeedBonusPct": 0,
+          "flashEvasionBonusPct": 0,
+          "overdriveActive": false,
+          "upkeepTimerMs": 0,
+          "binaryDischargeState": false,
+          "binaryBaseCd": 0,
+          "binaryAppliedCd": 0,
+          "criticalMassStacks": 0,
+          "criticalMassGapMs": 0,
+          "awakenedCharges": 0,
+          "dischargeEnergy": 0
+        },
+        "execution": null,
+        "empowered": false,
+        "cooldowns": {
+          "stance.switch.cd": 0,
+          "ability.cd.power-strike": 10000,
+          "ability.tempo.floor.power-strike": 0,
+          "ability.cd.brace": 600,
+          "ability.guard.window": 0,
+          "ability.cd.second-wind": 10900
+        },
+        "statusEffects": [
+          {
+            "id": "ability-second-wind",
+            "stacks": 1,
+            "maxStacks": 0,
+            "remainingMs": 2900,
+            "refreshable": true,
+            "instanced": false,
+            "sourceId": "bench-bot-0",
+            "data": {
+              "totalMs": 4000,
+              "recoveryPct": 0.6
+            }
+          }
+        ]
+      },
+      "delivery": {
+        "ownerHitsOnBoss": 11,
+        "spirit": {
+          "firstDischargeAtMs": 22000,
+          "landedDischargeCount": 1,
+          "discharges": [
+            {
+              "atMs": 22000,
+              "recordedHpDamage": 1088,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            }
+          ],
+          "recordedHpDamage": 1088,
+          "absorbed": 0,
+          "usefulHpContribution": null,
+          "incrementalDischargeBonus": null,
+          "overkill": null,
+          "limitation": "Canonical delivered empowered-hit payload, after mitigation/shield; HP damage may exceed remaining HP. It includes the whole strike, not a causal incremental bonus. No farming overkill attribution."
+        }
+      },
+      "eventTimeConvention": "Event atMs is tick start; completed tick elapsed/endpoints are tick end. Initial state has no World ticks.",
+      "bossKilled": true,
+      "bossKillEvidence": {
+        "atMs": 25000,
+        "victimId": "node-t2-forest-dungeon_monster-13",
+        "victimName": "Apex Timberclaw",
+        "killerId": "bench-bot-0"
+      },
+      "playerDeathEvidence": null,
+      "encounterResetEvidence": null,
+      "killedAtMs": 25000,
+      "bossMaxHp": 3750,
+      "bossHpRemaining": 0,
+      "terminalBossHpSupported": true,
+      "bossHpFractionRemoved": 1,
+      "crossedHalfAtMs": 15200,
+      "castsStarted": 6,
+      "castLabels": [
+        "Stunning Swipe",
+        "Bestial Frenzy"
+      ],
+      "maxAddsAlive": 0,
+      "damageFromBoss": 99.37500000000006,
+      "damageFromAdds": {},
+      "attackBeats": 53,
+      "minionAttackBeats": 0,
+      "totalAttackBeats": 53,
+      "hpLost": 99.37500000000006,
+      "peakBurst1s": 70,
+      "minHpFraction": 0.5927254098360654,
+      "wallElapsedMs": 510,
+      "initialRosterHash": "c0bce4606e4e1ea1d4625aae10294350aae99529ab81ddf18ee09bd0a4999bf0",
+      "targets": [
+        {
+          "id": "node-t2-forest-dungeon_monster-13",
+          "type": "apex-timberclaw",
+          "name": "Apex Timberclaw",
+          "maxHp": 3750,
+          "firstDamageMs": 700,
+          "lastDamageMs": 25000,
+          "killedAtMs": 25000,
+          "hpRegainObserved": false,
+          "maxDamageGapMs": 3000,
+          "damageEvents": 14,
+          "castsStarted": 6,
+          "castsFired": 5,
+          "ttkMs": 24300,
+          "clean": true
+        }
+      ],
+      "episodes": [
+        {
+          "startMs": 700,
+          "endMs": 25000,
+          "durationMs": 24300,
+          "members": [
+            "node-t2-forest-dungeon_monster-13"
+          ],
+          "initialMembers": [
+            "node-t2-forest-dungeon_monster-13"
+          ],
+          "lateJoiners": 0,
+          "outcome": "cleared"
+        }
+      ],
+      "recovery": [
+        {
+          "afterClearMs": 25000,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": false
+        }
+      ],
+      "incomingDamage": 99.37500000000006,
+      "largestHit": 35,
+      "maxDamageIn1s": 70,
+      "counts": {
+        "damaged": 1,
+        "killed": 1,
+        "censored": 0,
+        "hpRegain": 0
+      },
+      "cleanTtkMs": {
+        "n": 1,
+        "p10": 24300,
+        "median": 24300,
+        "p90": 24300
+      },
+      "bossId": "apex-timberclaw",
+      "sessions": null,
+      "historicalReferenceObservationId": null,
+      "unfinishedTargets": 0,
+      "targetRegainCount": 0,
+      "deathEvidence": null,
+      "incomingHpDamage": 99.37500000000006,
+      "runicPoints": {
+        "budget": 30,
+        "cost": 30,
+        "unused": 0,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "conduit": null,
+      "evidenceDirectory": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\run-01\\sbc-spirit-heavy-forest-s101021\\artifacts\\sbc-spirit-heavy-forest-s101021-s101021"
+    },
+    {
+      "observationId": "sbc-spirit-heavy-mountain-s101021",
+      "identityId": "breadth-t2-spirit-heavy",
+      "seed": 101021,
+      "tier": 2,
+      "root": "spirit",
+      "frame": "heavy",
+      "path": "Phantasm",
+      "skillPath": [
+        "energy-root",
+        "energy-heavy"
+      ],
+      "range": null,
+      "fixture": "node-t2-mountain-dungeon",
+      "measuredSourceCommit": "3a1488a7c78bb47f4a90e20ec06db1652594fe16",
+      "sourceObservationId": null,
+      "status": "complete",
+      "outcome": "boss-killed",
+      "elapsedMs": 50800,
+      "completedKills": 1,
+      "endpoints": {
+        "60000": null,
+        "120000": null,
+        "300000": null
+      },
+      "reason": null,
+      "cell": "sbc-spirit-heavy-mountain-s101021",
+      "windowMs": 300000,
+      "terminalState": {
+        "owner": {
+          "hp": 244,
+          "maxHp": 244,
+          "barrier": 137,
+          "barrierMax": 137,
+          "pos": {
+            "x": 2140.79307779764,
+            "y": 3952.9029813886123
+          },
+          "energy": {
+            "energy": 90,
+            "energyMax": 100,
+            "csReservoir": 0,
+            "smChargePool": 0,
+            "seInitialized": false,
+            "flashBaseAttackCooldown": 0,
+            "flashBaseDodgeRate": 0,
+            "flashBaseMoveSpeed": 0,
+            "flashSpeedBonusPct": 0,
+            "flashEvasionBonusPct": 0,
+            "overdriveActive": false,
+            "upkeepTimerMs": 0,
+            "binaryDischargeState": false,
+            "binaryBaseCd": 0,
+            "binaryAppliedCd": 0,
+            "criticalMassStacks": 0,
+            "criticalMassGapMs": 0,
+            "awakenedCharges": 0,
+            "dischargeEnergy": 0
+          },
+          "execution": null,
+          "empowered": false,
+          "cooldowns": {
+            "stance.switch.cd": 0,
+            "ability.cd.power-strike": 8400,
+            "ability.tempo.floor.power-strike": 0,
+            "ability.cd.brace": 5000,
+            "ability.guard.window": 0
+          },
+          "statusEffects": []
+        },
+        "boss": {
+          "id": "node-t2-mountain-dungeon_monster-5",
+          "hp": -17,
+          "maxHp": 5000,
+          "barrier": 0,
+          "pos": {
+            "x": 2283.6124201748335,
+            "y": 4017.2081353981825
+          },
+          "pattern": null,
+          "statusEffects": [],
+          "counters": {
+            "bossPatternSession": 1800000000000,
+            "bossPatternCdNextAt": 1800000053400,
+            "hitsReceived": 20,
+            "enemyShieldLastHitAt": 1800000050700,
+            "bossChargeInstinct": 0,
+            "bossEscapeInstinct": 0
+          }
+        },
+        "distance": 156.62859697146175
+      },
+      "minBarrier": 137,
+      "terminalOwner": {
+        "hp": 244,
+        "maxHp": 244,
+        "barrier": 137,
+        "barrierMax": 137,
+        "pos": {
+          "x": 2140.79307779764,
+          "y": 3952.9029813886123
+        },
+        "energy": {
+          "energy": 90,
+          "energyMax": 100,
+          "csReservoir": 0,
+          "smChargePool": 0,
+          "seInitialized": false,
+          "flashBaseAttackCooldown": 0,
+          "flashBaseDodgeRate": 0,
+          "flashBaseMoveSpeed": 0,
+          "flashSpeedBonusPct": 0,
+          "flashEvasionBonusPct": 0,
+          "overdriveActive": false,
+          "upkeepTimerMs": 0,
+          "binaryDischargeState": false,
+          "binaryBaseCd": 0,
+          "binaryAppliedCd": 0,
+          "criticalMassStacks": 0,
+          "criticalMassGapMs": 0,
+          "awakenedCharges": 0,
+          "dischargeEnergy": 0
+        },
+        "execution": null,
+        "empowered": false,
+        "cooldowns": {
+          "stance.switch.cd": 0,
+          "ability.cd.power-strike": 8400,
+          "ability.tempo.floor.power-strike": 0,
+          "ability.cd.brace": 5000,
+          "ability.guard.window": 0
+        },
+        "statusEffects": []
+      },
+      "delivery": {
+        "ownerHitsOnBoss": 20,
+        "spirit": {
+          "firstDischargeAtMs": 26600,
+          "landedDischargeCount": 1,
+          "discharges": [
+            {
+              "atMs": 26600,
+              "recordedHpDamage": 935,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            }
+          ],
+          "recordedHpDamage": 935,
+          "absorbed": 0,
+          "usefulHpContribution": null,
+          "incrementalDischargeBonus": null,
+          "overkill": null,
+          "limitation": "Canonical delivered empowered-hit payload, after mitigation/shield; HP damage may exceed remaining HP. It includes the whole strike, not a causal incremental bonus. No farming overkill attribution."
+        }
+      },
+      "eventTimeConvention": "Event atMs is tick start; completed tick elapsed/endpoints are tick end. Initial state has no World ticks.",
+      "bossKilled": true,
+      "bossKillEvidence": {
+        "atMs": 50700,
+        "victimId": "node-t2-mountain-dungeon_monster-5",
+        "victimName": "Stoneplate Juggernaut",
+        "killerId": "bench-bot-0"
+      },
+      "playerDeathEvidence": null,
+      "encounterResetEvidence": null,
+      "killedAtMs": 50700,
+      "bossMaxHp": 5000,
+      "bossHpRemaining": 0,
+      "terminalBossHpSupported": true,
+      "bossHpFractionRemoved": 1,
+      "crossedHalfAtMs": 26600,
+      "castsStarted": 10,
+      "castLabels": [
+        "Stoneplate",
+        "Stoneplate Charge"
+      ],
+      "maxAddsAlive": 0,
+      "damageFromBoss": 0,
+      "damageFromAdds": {},
+      "attackBeats": 91,
+      "minionAttackBeats": 0,
+      "totalAttackBeats": 91,
+      "hpLost": 0,
+      "peakBurst1s": 0,
+      "minHpFraction": 1,
+      "wallElapsedMs": 1012,
+      "initialRosterHash": "ffc488333d6a91b0252b8abeaf1746d3ed17ccd5f09c17d83e29fdda4f04a0aa",
+      "targets": [
+        {
+          "id": "node-t2-mountain-dungeon_monster-5",
+          "type": "stoneplate-juggernaut",
+          "name": "Stoneplate Juggernaut",
+          "maxHp": 5000,
+          "firstDamageMs": 700,
+          "lastDamageMs": 50700,
+          "killedAtMs": 50700,
+          "hpRegainObserved": false,
+          "maxDamageGapMs": 4300,
+          "damageEvents": 25,
+          "castsStarted": 10,
+          "castsFired": 0,
+          "ttkMs": 50000,
+          "clean": true
+        }
+      ],
+      "episodes": [
+        {
+          "startMs": 700,
+          "endMs": 50700,
+          "durationMs": 50000,
+          "members": [
+            "node-t2-mountain-dungeon_monster-5"
+          ],
+          "initialMembers": [
+            "node-t2-mountain-dungeon_monster-5"
+          ],
+          "lateJoiners": 0,
+          "outcome": "cleared"
+        }
+      ],
+      "recovery": [
+        {
+          "afterClearMs": 50700,
+          "recoveredAtMs": 50700,
+          "interruptedByNextPull": false
+        }
+      ],
+      "incomingDamage": 0,
+      "largestHit": 0,
+      "maxDamageIn1s": 0,
+      "counts": {
+        "damaged": 1,
+        "killed": 1,
+        "censored": 0,
+        "hpRegain": 0
+      },
+      "cleanTtkMs": {
+        "n": 1,
+        "p10": 50000,
+        "median": 50000,
+        "p90": 50000
+      },
+      "bossId": "stoneplate-juggernaut",
+      "sessions": null,
+      "historicalReferenceObservationId": null,
+      "unfinishedTargets": 0,
+      "targetRegainCount": 0,
+      "deathEvidence": null,
+      "incomingHpDamage": 0,
+      "runicPoints": {
+        "budget": 30,
+        "cost": 30,
+        "unused": 0,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "conduit": null,
+      "evidenceDirectory": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\run-01\\sbc-spirit-heavy-mountain-s101021\\artifacts\\sbc-spirit-heavy-mountain-s101021-s101021"
+    },
+    {
+      "observationId": "sbc-spirit-balanced-forest-s101021",
+      "identityId": "breadth-t2-spirit-balanced",
+      "seed": 101021,
+      "tier": 2,
+      "root": "spirit",
+      "frame": "balanced",
+      "path": "Wraith",
+      "skillPath": [
+        "energy-root",
+        "energy-balanced"
+      ],
+      "range": null,
+      "fixture": "node-t2-forest-dungeon",
+      "measuredSourceCommit": "3a1488a7c78bb47f4a90e20ec06db1652594fe16",
+      "sourceObservationId": null,
+      "status": "complete",
+      "outcome": "boss-killed",
+      "elapsedMs": 22300,
+      "completedKills": 1,
+      "endpoints": {
+        "60000": null,
+        "120000": null,
+        "300000": null
+      },
+      "reason": null,
+      "cell": "sbc-spirit-balanced-forest-s101021",
+      "windowMs": 300000,
+      "terminalState": {
+        "owner": {
+          "hp": 230,
+          "maxHp": 230,
+          "barrier": 24.199999999999918,
+          "barrierMax": 129,
+          "pos": {
+            "x": 4738.017875669401,
+            "y": 4448.029709743801
+          },
+          "energy": {
+            "energy": 56,
+            "energyMax": 100,
+            "csReservoir": 0,
+            "smChargePool": 0,
+            "seInitialized": false,
+            "flashBaseAttackCooldown": 0,
+            "flashBaseDodgeRate": 0,
+            "flashBaseMoveSpeed": 0,
+            "flashSpeedBonusPct": 0,
+            "flashEvasionBonusPct": 0,
+            "overdriveActive": false,
+            "upkeepTimerMs": 0,
+            "binaryDischargeState": false,
+            "binaryBaseCd": 0,
+            "binaryAppliedCd": 0,
+            "criticalMassStacks": 0,
+            "criticalMassGapMs": 0,
+            "awakenedCharges": 0,
+            "dischargeEnergy": 0
+          },
+          "execution": null,
+          "empowered": false,
+          "cooldowns": {
+            "stance.switch.cd": 0,
+            "ability.cd.power-strike": 1700,
+            "ability.tempo.floor.power-strike": 0,
+            "ability.cd.brace": 9100,
+            "ability.guard.window": 0
+          },
+          "statusEffects": [
+            {
+              "id": "ability-guard",
+              "stacks": 1,
+              "maxStacks": 0,
+              "remainingMs": 2100,
+              "refreshable": true,
+              "instanced": false,
+              "sourceId": "bench-bot-0",
+              "data": {
+                "totalMs": 3000,
+                "drPct": 0.5519999999999999,
+                "knockbackResistPct": 0.759
+              }
+            }
+          ]
+        },
+        "boss": {
+          "id": "node-t2-forest-dungeon_monster-13",
+          "hp": -61,
+          "maxHp": 3750,
+          "barrier": 0,
+          "pos": {
+            "x": 4720.422636347351,
+            "y": 4540.610072060474
+          },
+          "pattern": null,
+          "statusEffects": [],
+          "counters": {
+            "hitsReceived": 31,
+            "enemyShieldLastHitAt": 1800000022200,
+            "chargeSession": 1800000000000,
+            "chargeCdNextAt": 1800000029700,
+            "chargeCastEndsAt": 0,
+            "chargeAoeActive": 0,
+            "chargeAoeX": 4713.390336359182,
+            "chargeAoeY": 4482.235207740756,
+            "buffCastEndsAt": 0,
+            "lowHealthWardCastEndsAt": 0,
+            "monsterAbilityCastEndsAt": 0,
+            "monsterAbilityAreaActive": 0,
+            "bossEscapeInstinct": 0,
+            "bossChargeInstinct": 0
+          }
+        },
+        "distance": 94.23755054906023
+      },
+      "minBarrier": 20.799999999999955,
+      "terminalOwner": {
+        "hp": 230,
+        "maxHp": 230,
+        "barrier": 24.199999999999918,
+        "barrierMax": 129,
+        "pos": {
+          "x": 4738.017875669401,
+          "y": 4448.029709743801
+        },
+        "energy": {
+          "energy": 56,
+          "energyMax": 100,
+          "csReservoir": 0,
+          "smChargePool": 0,
+          "seInitialized": false,
+          "flashBaseAttackCooldown": 0,
+          "flashBaseDodgeRate": 0,
+          "flashBaseMoveSpeed": 0,
+          "flashSpeedBonusPct": 0,
+          "flashEvasionBonusPct": 0,
+          "overdriveActive": false,
+          "upkeepTimerMs": 0,
+          "binaryDischargeState": false,
+          "binaryBaseCd": 0,
+          "binaryAppliedCd": 0,
+          "criticalMassStacks": 0,
+          "criticalMassGapMs": 0,
+          "awakenedCharges": 0,
+          "dischargeEnergy": 0
+        },
+        "execution": null,
+        "empowered": false,
+        "cooldowns": {
+          "stance.switch.cd": 0,
+          "ability.cd.power-strike": 1700,
+          "ability.tempo.floor.power-strike": 0,
+          "ability.cd.brace": 9100,
+          "ability.guard.window": 0
+        },
+        "statusEffects": [
+          {
+            "id": "ability-guard",
+            "stacks": 1,
+            "maxStacks": 0,
+            "remainingMs": 2100,
+            "refreshable": true,
+            "instanced": false,
+            "sourceId": "bench-bot-0",
+            "data": {
+              "totalMs": 3000,
+              "drPct": 0.5519999999999999,
+              "knockbackResistPct": 0.759
+            }
+          }
+        ]
+      },
+      "delivery": {
+        "ownerHitsOnBoss": 31,
+        "spirit": {
+          "firstDischargeAtMs": 7000,
+          "landedDischargeCount": 3,
+          "discharges": [
+            {
+              "atMs": 7000,
+              "recordedHpDamage": 171,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 14400,
+              "recordedHpDamage": 171,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 19800,
+              "recordedHpDamage": 171,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            }
+          ],
+          "recordedHpDamage": 513,
+          "absorbed": 0,
+          "usefulHpContribution": null,
+          "incrementalDischargeBonus": null,
+          "overkill": null,
+          "limitation": "Canonical delivered empowered-hit payload, after mitigation/shield; HP damage may exceed remaining HP. It includes the whole strike, not a causal incremental bonus. No farming overkill attribution."
+        }
+      },
+      "eventTimeConvention": "Event atMs is tick start; completed tick elapsed/endpoints are tick end. Initial state has no World ticks.",
+      "bossKilled": true,
+      "bossKillEvidence": {
+        "atMs": 22200,
+        "victimId": "node-t2-forest-dungeon_monster-13",
+        "victimName": "Apex Timberclaw",
+        "killerId": "bench-bot-0"
+      },
+      "playerDeathEvidence": null,
+      "encounterResetEvidence": null,
+      "killedAtMs": 22200,
+      "bossMaxHp": 3750,
+      "bossHpRemaining": 0,
+      "terminalBossHpSupported": true,
+      "bossHpFractionRemoved": 1,
+      "crossedHalfAtMs": 11200,
+      "castsStarted": 6,
+      "castLabels": [
+        "Stunning Swipe",
+        "Bestial Frenzy"
+      ],
+      "maxAddsAlive": 0,
+      "damageFromBoss": 0,
+      "damageFromAdds": {},
+      "attackBeats": 63,
+      "minionAttackBeats": 0,
+      "totalAttackBeats": 63,
+      "hpLost": 0,
+      "peakBurst1s": 0,
+      "minHpFraction": 1,
+      "wallElapsedMs": 495,
+      "initialRosterHash": "c0bce4606e4e1ea1d4625aae10294350aae99529ab81ddf18ee09bd0a4999bf0",
+      "targets": [
+        {
+          "id": "node-t2-forest-dungeon_monster-13",
+          "type": "apex-timberclaw",
+          "name": "Apex Timberclaw",
+          "maxHp": 3750,
+          "firstDamageMs": 600,
+          "lastDamageMs": 22200,
+          "killedAtMs": 22200,
+          "hpRegainObserved": false,
+          "maxDamageGapMs": 2100,
+          "damageEvents": 33,
+          "castsStarted": 6,
+          "castsFired": 5,
+          "ttkMs": 21600,
+          "clean": true
+        }
+      ],
+      "episodes": [
+        {
+          "startMs": 600,
+          "endMs": 22200,
+          "durationMs": 21600,
+          "members": [
+            "node-t2-forest-dungeon_monster-13"
+          ],
+          "initialMembers": [
+            "node-t2-forest-dungeon_monster-13"
+          ],
+          "lateJoiners": 0,
+          "outcome": "cleared"
+        }
+      ],
+      "recovery": [
+        {
+          "afterClearMs": 22200,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": false
+        }
+      ],
+      "incomingDamage": 0,
+      "largestHit": 0,
+      "maxDamageIn1s": 0,
+      "counts": {
+        "damaged": 1,
+        "killed": 1,
+        "censored": 0,
+        "hpRegain": 0
+      },
+      "cleanTtkMs": {
+        "n": 1,
+        "p10": 21600,
+        "median": 21600,
+        "p90": 21600
+      },
+      "bossId": "apex-timberclaw",
+      "sessions": null,
+      "historicalReferenceObservationId": null,
+      "unfinishedTargets": 0,
+      "targetRegainCount": 0,
+      "deathEvidence": null,
+      "incomingHpDamage": 0,
+      "runicPoints": {
+        "budget": 30,
+        "cost": 30,
+        "unused": 0,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "conduit": null,
+      "evidenceDirectory": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\run-01\\sbc-spirit-balanced-forest-s101021\\artifacts\\sbc-spirit-balanced-forest-s101021-s101021"
+    },
+    {
+      "observationId": "sbc-spirit-balanced-mountain-s101021",
+      "identityId": "breadth-t2-spirit-balanced",
+      "seed": 101021,
+      "tier": 2,
+      "root": "spirit",
+      "frame": "balanced",
+      "path": "Wraith",
+      "skillPath": [
+        "energy-root",
+        "energy-balanced"
+      ],
+      "range": null,
+      "fixture": "node-t2-mountain-dungeon",
+      "measuredSourceCommit": "3a1488a7c78bb47f4a90e20ec06db1652594fe16",
+      "sourceObservationId": null,
+      "status": "complete",
+      "outcome": "boss-killed",
+      "elapsedMs": 45600,
+      "completedKills": 1,
+      "endpoints": {
+        "60000": null,
+        "120000": null,
+        "300000": null
+      },
+      "reason": null,
+      "cell": "sbc-spirit-balanced-mountain-s101021",
+      "windowMs": 300000,
+      "terminalState": {
+        "owner": {
+          "hp": 230,
+          "maxHp": 230,
+          "barrier": 129,
+          "barrierMax": 129,
+          "pos": {
+            "x": 2222.390799704273,
+            "y": 3599.6887667654296
+          },
+          "energy": {
+            "energy": 14,
+            "energyMax": 100,
+            "csReservoir": 0,
+            "smChargePool": 0,
+            "seInitialized": false,
+            "flashBaseAttackCooldown": 0,
+            "flashBaseDodgeRate": 0,
+            "flashBaseMoveSpeed": 0,
+            "flashSpeedBonusPct": 0,
+            "flashEvasionBonusPct": 0,
+            "overdriveActive": false,
+            "upkeepTimerMs": 0,
+            "binaryDischargeState": false,
+            "binaryBaseCd": 0,
+            "binaryAppliedCd": 0,
+            "criticalMassStacks": 0,
+            "criticalMassGapMs": 0,
+            "awakenedCharges": 0,
+            "dischargeEnergy": 0
+          },
+          "execution": null,
+          "empowered": false,
+          "cooldowns": {
+            "stance.switch.cd": 0,
+            "ability.cd.power-strike": 1700,
+            "ability.tempo.floor.power-strike": 0,
+            "ability.cd.brace": 0,
+            "ability.guard.window": 0
+          },
+          "statusEffects": []
+        },
+        "boss": {
+          "id": "node-t2-mountain-dungeon_monster-5",
+          "hp": -42,
+          "maxHp": 5000,
+          "barrier": 0,
+          "pos": {
+            "x": 2056.2802961840766,
+            "y": 3597.2220376523155
+          },
+          "pattern": null,
+          "statusEffects": [],
+          "counters": {
+            "bossPatternSession": 1800000000000,
+            "bossPatternCdNextAt": 1800000053400,
+            "hitsReceived": 55,
+            "enemyShieldLastHitAt": 1800000045500,
+            "bossChargeInstinct": 0,
+            "bossEscapeInstinct": 0
+          }
+        },
+        "distance": 166.12881788615312
+      },
+      "minBarrier": 129,
+      "terminalOwner": {
+        "hp": 230,
+        "maxHp": 230,
+        "barrier": 129,
+        "barrierMax": 129,
+        "pos": {
+          "x": 2222.390799704273,
+          "y": 3599.6887667654296
+        },
+        "energy": {
+          "energy": 14,
+          "energyMax": 100,
+          "csReservoir": 0,
+          "smChargePool": 0,
+          "seInitialized": false,
+          "flashBaseAttackCooldown": 0,
+          "flashBaseDodgeRate": 0,
+          "flashBaseMoveSpeed": 0,
+          "flashSpeedBonusPct": 0,
+          "flashEvasionBonusPct": 0,
+          "overdriveActive": false,
+          "upkeepTimerMs": 0,
+          "binaryDischargeState": false,
+          "binaryBaseCd": 0,
+          "binaryAppliedCd": 0,
+          "criticalMassStacks": 0,
+          "criticalMassGapMs": 0,
+          "awakenedCharges": 0,
+          "dischargeEnergy": 0
+        },
+        "execution": null,
+        "empowered": false,
+        "cooldowns": {
+          "stance.switch.cd": 0,
+          "ability.cd.power-strike": 1700,
+          "ability.tempo.floor.power-strike": 0,
+          "ability.cd.brace": 0,
+          "ability.guard.window": 0
+        },
+        "statusEffects": []
+      },
+      "delivery": {
+        "ownerHitsOnBoss": 55,
+        "spirit": {
+          "firstDischargeAtMs": 8300,
+          "landedDischargeCount": 6,
+          "discharges": [
+            {
+              "atMs": 8300,
+              "recordedHpDamage": 0,
+              "absorbed": 139,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 15700,
+              "recordedHpDamage": 139,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 22700,
+              "recordedHpDamage": 139,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 31200,
+              "recordedHpDamage": 139,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 39500,
+              "recordedHpDamage": 139,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 44900,
+              "recordedHpDamage": 139,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            }
+          ],
+          "recordedHpDamage": 695,
+          "absorbed": 139,
+          "usefulHpContribution": null,
+          "incrementalDischargeBonus": null,
+          "overkill": null,
+          "limitation": "Canonical delivered empowered-hit payload, after mitigation/shield; HP damage may exceed remaining HP. It includes the whole strike, not a causal incremental bonus. No farming overkill attribution."
+        }
+      },
+      "eventTimeConvention": "Event atMs is tick start; completed tick elapsed/endpoints are tick end. Initial state has no World ticks.",
+      "bossKilled": true,
+      "bossKillEvidence": {
+        "atMs": 45500,
+        "victimId": "node-t2-mountain-dungeon_monster-5",
+        "victimName": "Stoneplate Juggernaut",
+        "killerId": "bench-bot-0"
+      },
+      "playerDeathEvidence": null,
+      "encounterResetEvidence": null,
+      "killedAtMs": 45500,
+      "bossMaxHp": 5000,
+      "bossHpRemaining": 0,
+      "terminalBossHpSupported": true,
+      "bossHpFractionRemoved": 1,
+      "crossedHalfAtMs": 25600,
+      "castsStarted": 9,
+      "castLabels": [
+        "Stoneplate",
+        "Stoneplate Charge"
+      ],
+      "maxAddsAlive": 0,
+      "damageFromBoss": 0,
+      "damageFromAdds": {},
+      "attackBeats": 119,
+      "minionAttackBeats": 0,
+      "totalAttackBeats": 119,
+      "hpLost": 0,
+      "peakBurst1s": 0,
+      "minHpFraction": 1,
+      "wallElapsedMs": 782,
+      "initialRosterHash": "ffc488333d6a91b0252b8abeaf1746d3ed17ccd5f09c17d83e29fdda4f04a0aa",
+      "targets": [
+        {
+          "id": "node-t2-mountain-dungeon_monster-5",
+          "type": "stoneplate-juggernaut",
+          "name": "Stoneplate Juggernaut",
+          "maxHp": 5000,
+          "firstDamageMs": 700,
+          "lastDamageMs": 45500,
+          "killedAtMs": 45500,
+          "hpRegainObserved": false,
+          "maxDamageGapMs": 2200,
+          "damageEvents": 59,
+          "castsStarted": 9,
+          "castsFired": 0,
+          "ttkMs": 44800,
+          "clean": true
+        }
+      ],
+      "episodes": [
+        {
+          "startMs": 700,
+          "endMs": 45500,
+          "durationMs": 44800,
+          "members": [
+            "node-t2-mountain-dungeon_monster-5"
+          ],
+          "initialMembers": [
+            "node-t2-mountain-dungeon_monster-5"
+          ],
+          "lateJoiners": 0,
+          "outcome": "cleared"
+        }
+      ],
+      "recovery": [
+        {
+          "afterClearMs": 45500,
+          "recoveredAtMs": 45500,
+          "interruptedByNextPull": false
+        }
+      ],
+      "incomingDamage": 0,
+      "largestHit": 0,
+      "maxDamageIn1s": 0,
+      "counts": {
+        "damaged": 1,
+        "killed": 1,
+        "censored": 0,
+        "hpRegain": 0
+      },
+      "cleanTtkMs": {
+        "n": 1,
+        "p10": 44800,
+        "median": 44800,
+        "p90": 44800
+      },
+      "bossId": "stoneplate-juggernaut",
+      "sessions": null,
+      "historicalReferenceObservationId": null,
+      "unfinishedTargets": 0,
+      "targetRegainCount": 0,
+      "deathEvidence": null,
+      "incomingHpDamage": 0,
+      "runicPoints": {
+        "budget": 30,
+        "cost": 30,
+        "unused": 0,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "conduit": null,
+      "evidenceDirectory": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\run-01\\sbc-spirit-balanced-mountain-s101021\\artifacts\\sbc-spirit-balanced-mountain-s101021-s101021"
+    },
+    {
+      "observationId": "sbc-spirit-light-forest-s101021",
+      "identityId": "breadth-t2-spirit-light",
+      "seed": 101021,
+      "tier": 2,
+      "root": "spirit",
+      "frame": "light",
+      "path": "Spark",
+      "skillPath": [
+        "energy-root",
+        "energy-light"
+      ],
+      "range": null,
+      "fixture": "node-t2-forest-dungeon",
+      "measuredSourceCommit": "3a1488a7c78bb47f4a90e20ec06db1652594fe16",
+      "sourceObservationId": null,
+      "status": "complete",
+      "outcome": "boss-killed",
+      "elapsedMs": 18900,
+      "completedKills": 1,
+      "endpoints": {
+        "60000": null,
+        "120000": null,
+        "300000": null
+      },
+      "reason": null,
+      "cell": "sbc-spirit-light-forest-s101021",
+      "windowMs": 300000,
+      "terminalState": {
+        "owner": {
+          "hp": 221,
+          "maxHp": 221,
+          "barrier": 46,
+          "barrierMax": 124,
+          "pos": {
+            "x": 1381.904035503506,
+            "y": 3340.598114919006
+          },
+          "energy": {
+            "energy": 20,
+            "energyMax": 100,
+            "csReservoir": 0,
+            "smChargePool": 0,
+            "seInitialized": false,
+            "flashBaseAttackCooldown": 0,
+            "flashBaseDodgeRate": 0,
+            "flashBaseMoveSpeed": 0,
+            "flashSpeedBonusPct": 0,
+            "flashEvasionBonusPct": 0,
+            "overdriveActive": false,
+            "upkeepTimerMs": 0,
+            "binaryDischargeState": false,
+            "binaryBaseCd": 0,
+            "binaryAppliedCd": 0,
+            "criticalMassStacks": 0,
+            "criticalMassGapMs": 0,
+            "awakenedCharges": 0,
+            "dischargeEnergy": 0
+          },
+          "execution": null,
+          "empowered": false,
+          "cooldowns": {
+            "stance.switch.cd": 0,
+            "ability.cd.power-strike": 5100,
+            "ability.tempo.floor.power-strike": 0,
+            "ability.cd.brace": 0,
+            "ability.guard.window": 0
+          },
+          "statusEffects": []
+        },
+        "boss": {
+          "id": "node-t2-forest-dungeon_monster-13",
+          "hp": -23,
+          "maxHp": 3750,
+          "barrier": 0,
+          "pos": {
+            "x": 1411.1137161558809,
+            "y": 3497.172205242489
+          },
+          "pattern": null,
+          "statusEffects": [],
+          "counters": {
+            "hitsReceived": 31,
+            "enemyShieldLastHitAt": 1800000018800,
+            "chargeSession": 1800000000000,
+            "chargeCdNextAt": 1800000018600,
+            "chargeCastEndsAt": 0,
+            "chargeAoeActive": 0,
+            "chargeAoeX": 2328.520730001174,
+            "chargeAoeY": 4670.337340593099,
+            "buffCastEndsAt": 0,
+            "lowHealthWardCastEndsAt": 0,
+            "monsterAbilityCastEndsAt": 0,
+            "monsterAbilityAreaActive": 0,
+            "bossEscapeInstinct": 0,
+            "bossChargeInstinct": 0
+          }
+        },
+        "distance": 159.27539422158046
+      },
+      "minBarrier": 46,
+      "terminalOwner": {
+        "hp": 221,
+        "maxHp": 221,
+        "barrier": 46,
+        "barrierMax": 124,
+        "pos": {
+          "x": 1381.904035503506,
+          "y": 3340.598114919006
+        },
+        "energy": {
+          "energy": 20,
+          "energyMax": 100,
+          "csReservoir": 0,
+          "smChargePool": 0,
+          "seInitialized": false,
+          "flashBaseAttackCooldown": 0,
+          "flashBaseDodgeRate": 0,
+          "flashBaseMoveSpeed": 0,
+          "flashSpeedBonusPct": 0,
+          "flashEvasionBonusPct": 0,
+          "overdriveActive": false,
+          "upkeepTimerMs": 0,
+          "binaryDischargeState": false,
+          "binaryBaseCd": 0,
+          "binaryAppliedCd": 0,
+          "criticalMassStacks": 0,
+          "criticalMassGapMs": 0,
+          "awakenedCharges": 0,
+          "dischargeEnergy": 0
+        },
+        "execution": null,
+        "empowered": false,
+        "cooldowns": {
+          "stance.switch.cd": 0,
+          "ability.cd.power-strike": 5100,
+          "ability.tempo.floor.power-strike": 0,
+          "ability.cd.brace": 0,
+          "ability.guard.window": 0
+        },
+        "statusEffects": []
+      },
+      "delivery": {
+        "ownerHitsOnBoss": 31,
+        "spirit": {
+          "firstDischargeAtMs": 4700,
+          "landedDischargeCount": 5,
+          "discharges": [
+            {
+              "atMs": 4700,
+              "recordedHpDamage": 135,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 7700,
+              "recordedHpDamage": 135,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 10700,
+              "recordedHpDamage": 135,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 15300,
+              "recordedHpDamage": 135,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 18300,
+              "recordedHpDamage": 135,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            }
+          ],
+          "recordedHpDamage": 675,
+          "absorbed": 0,
+          "usefulHpContribution": null,
+          "incrementalDischargeBonus": null,
+          "overkill": null,
+          "limitation": "Canonical delivered empowered-hit payload, after mitigation/shield; HP damage may exceed remaining HP. It includes the whole strike, not a causal incremental bonus. No farming overkill attribution."
+        }
+      },
+      "eventTimeConvention": "Event atMs is tick start; completed tick elapsed/endpoints are tick end. Initial state has no World ticks.",
+      "bossKilled": true,
+      "bossKillEvidence": {
+        "atMs": 18800,
+        "victimId": "node-t2-forest-dungeon_monster-13",
+        "victimName": "Apex Timberclaw",
+        "killerId": "bench-bot-0"
+      },
+      "playerDeathEvidence": null,
+      "encounterResetEvidence": null,
+      "killedAtMs": 18800,
+      "bossMaxHp": 3750,
+      "bossHpRemaining": 0,
+      "terminalBossHpSupported": true,
+      "bossHpFractionRemoved": 1,
+      "crossedHalfAtMs": 9700,
+      "castsStarted": 5,
+      "castLabels": [
+        "Stunning Swipe",
+        "Bestial Frenzy"
+      ],
+      "maxAddsAlive": 0,
+      "damageFromBoss": 0,
+      "damageFromAdds": {},
+      "attackBeats": 63,
+      "minionAttackBeats": 0,
+      "totalAttackBeats": 63,
+      "hpLost": 0,
+      "peakBurst1s": 0,
+      "minHpFraction": 1,
+      "wallElapsedMs": 448,
+      "initialRosterHash": "c0bce4606e4e1ea1d4625aae10294350aae99529ab81ddf18ee09bd0a4999bf0",
+      "targets": [
+        {
+          "id": "node-t2-forest-dungeon_monster-13",
+          "type": "apex-timberclaw",
+          "name": "Apex Timberclaw",
+          "maxHp": 3750,
+          "firstDamageMs": 600,
+          "lastDamageMs": 18800,
+          "killedAtMs": 18800,
+          "hpRegainObserved": false,
+          "maxDamageGapMs": 1700,
+          "damageEvents": 33,
+          "castsStarted": 5,
+          "castsFired": 3,
+          "ttkMs": 18200,
+          "clean": true
+        }
+      ],
+      "episodes": [
+        {
+          "startMs": 600,
+          "endMs": 18800,
+          "durationMs": 18200,
+          "members": [
+            "node-t2-forest-dungeon_monster-13"
+          ],
+          "initialMembers": [
+            "node-t2-forest-dungeon_monster-13"
+          ],
+          "lateJoiners": 0,
+          "outcome": "cleared"
+        }
+      ],
+      "recovery": [
+        {
+          "afterClearMs": 18800,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": false
+        }
+      ],
+      "incomingDamage": 0,
+      "largestHit": 0,
+      "maxDamageIn1s": 0,
+      "counts": {
+        "damaged": 1,
+        "killed": 1,
+        "censored": 0,
+        "hpRegain": 0
+      },
+      "cleanTtkMs": {
+        "n": 1,
+        "p10": 18200,
+        "median": 18200,
+        "p90": 18200
+      },
+      "bossId": "apex-timberclaw",
+      "sessions": null,
+      "historicalReferenceObservationId": null,
+      "unfinishedTargets": 0,
+      "targetRegainCount": 0,
+      "deathEvidence": null,
+      "incomingHpDamage": 0,
+      "runicPoints": {
+        "budget": 30,
+        "cost": 30,
+        "unused": 0,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "conduit": null,
+      "evidenceDirectory": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\run-01\\sbc-spirit-light-forest-s101021\\artifacts\\sbc-spirit-light-forest-s101021-s101021"
+    },
+    {
+      "observationId": "sbc-spirit-light-mountain-s101021",
+      "identityId": "breadth-t2-spirit-light",
+      "seed": 101021,
+      "tier": 2,
+      "root": "spirit",
+      "frame": "light",
+      "path": "Spark",
+      "skillPath": [
+        "energy-root",
+        "energy-light"
+      ],
+      "range": null,
+      "fixture": "node-t2-mountain-dungeon",
+      "measuredSourceCommit": "3a1488a7c78bb47f4a90e20ec06db1652594fe16",
+      "sourceObservationId": null,
+      "status": "complete",
+      "outcome": "boss-killed",
+      "elapsedMs": 43100,
+      "completedKills": 1,
+      "endpoints": {
+        "60000": null,
+        "120000": null,
+        "300000": null
+      },
+      "reason": null,
+      "cell": "sbc-spirit-light-mountain-s101021",
+      "windowMs": 300000,
+      "terminalState": {
+        "owner": {
+          "hp": 221,
+          "maxHp": 221,
+          "barrier": 124,
+          "barrierMax": 124,
+          "pos": {
+            "x": 2048.763999199669,
+            "y": 3732.904231141325
+          },
+          "energy": {
+            "energy": 40,
+            "energyMax": 100,
+            "csReservoir": 0,
+            "smChargePool": 0,
+            "seInitialized": false,
+            "flashBaseAttackCooldown": 0,
+            "flashBaseDodgeRate": 0,
+            "flashBaseMoveSpeed": 0,
+            "flashSpeedBonusPct": 0,
+            "flashEvasionBonusPct": 0,
+            "overdriveActive": false,
+            "upkeepTimerMs": 0,
+            "binaryDischargeState": false,
+            "binaryBaseCd": 0,
+            "binaryAppliedCd": 0,
+            "criticalMassStacks": 0,
+            "criticalMassGapMs": 0,
+            "awakenedCharges": 0,
+            "dischargeEnergy": 0
+          },
+          "execution": null,
+          "empowered": false,
+          "cooldowns": {
+            "stance.switch.cd": 0,
+            "ability.cd.power-strike": 4100,
+            "ability.tempo.floor.power-strike": 0,
+            "ability.cd.brace": 0,
+            "ability.guard.window": 0
+          },
+          "statusEffects": []
+        },
+        "boss": {
+          "id": "node-t2-mountain-dungeon_monster-5",
+          "hp": -33,
+          "maxHp": 5000,
+          "barrier": 0,
+          "pos": {
+            "x": 1910.7264583985693,
+            "y": 3672.3256024511375
+          },
+          "pattern": null,
+          "statusEffects": [],
+          "counters": {
+            "bossPatternSession": 1800000000000,
+            "bossPatternCdNextAt": 1800000044600,
+            "hitsReceived": 56,
+            "enemyShieldLastHitAt": 1800000043000,
+            "bossChargeInstinct": 0,
+            "bossEscapeInstinct": 0
+          }
+        },
+        "distance": 150.74525838114724
+      },
+      "minBarrier": 124,
+      "terminalOwner": {
+        "hp": 221,
+        "maxHp": 221,
+        "barrier": 124,
+        "barrierMax": 124,
+        "pos": {
+          "x": 2048.763999199669,
+          "y": 3732.904231141325
+        },
+        "energy": {
+          "energy": 40,
+          "energyMax": 100,
+          "csReservoir": 0,
+          "smChargePool": 0,
+          "seInitialized": false,
+          "flashBaseAttackCooldown": 0,
+          "flashBaseDodgeRate": 0,
+          "flashBaseMoveSpeed": 0,
+          "flashSpeedBonusPct": 0,
+          "flashEvasionBonusPct": 0,
+          "overdriveActive": false,
+          "upkeepTimerMs": 0,
+          "binaryDischargeState": false,
+          "binaryBaseCd": 0,
+          "binaryAppliedCd": 0,
+          "criticalMassStacks": 0,
+          "criticalMassGapMs": 0,
+          "awakenedCharges": 0,
+          "dischargeEnergy": 0
+        },
+        "execution": null,
+        "empowered": false,
+        "cooldowns": {
+          "stance.switch.cd": 0,
+          "ability.cd.power-strike": 4100,
+          "ability.tempo.floor.power-strike": 0,
+          "ability.cd.brace": 0,
+          "ability.guard.window": 0
+        },
+        "statusEffects": []
+      },
+      "delivery": {
+        "ownerHitsOnBoss": 56,
+        "spirit": {
+          "firstDischargeAtMs": 4700,
+          "landedDischargeCount": 9,
+          "discharges": [
+            {
+              "atMs": 4700,
+              "recordedHpDamage": 111,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 10600,
+              "recordedHpDamage": 111,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 15300,
+              "recordedHpDamage": 111,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 18700,
+              "recordedHpDamage": 0,
+              "absorbed": 111,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 23300,
+              "recordedHpDamage": 111,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 27900,
+              "recordedHpDamage": 111,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 32600,
+              "recordedHpDamage": 111,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 37500,
+              "recordedHpDamage": 0,
+              "absorbed": 111,
+              "usefulHpContribution": null
+            },
+            {
+              "atMs": 42000,
+              "recordedHpDamage": 111,
+              "absorbed": 0,
+              "usefulHpContribution": null
+            }
+          ],
+          "recordedHpDamage": 777,
+          "absorbed": 222,
+          "usefulHpContribution": null,
+          "incrementalDischargeBonus": null,
+          "overkill": null,
+          "limitation": "Canonical delivered empowered-hit payload, after mitigation/shield; HP damage may exceed remaining HP. It includes the whole strike, not a causal incremental bonus. No farming overkill attribution."
+        }
+      },
+      "eventTimeConvention": "Event atMs is tick start; completed tick elapsed/endpoints are tick end. Initial state has no World ticks.",
+      "bossKilled": true,
+      "bossKillEvidence": {
+        "atMs": 43000,
+        "victimId": "node-t2-mountain-dungeon_monster-5",
+        "victimName": "Stoneplate Juggernaut",
+        "killerId": "bench-bot-0"
+      },
+      "playerDeathEvidence": null,
+      "encounterResetEvidence": null,
+      "killedAtMs": 43000,
+      "bossMaxHp": 5000,
+      "bossHpRemaining": 0,
+      "terminalBossHpSupported": true,
+      "bossHpFractionRemoved": 1,
+      "crossedHalfAtMs": 23300,
+      "castsStarted": 8,
+      "castLabels": [
+        "Stoneplate",
+        "Stoneplate Charge"
+      ],
+      "maxAddsAlive": 0,
+      "damageFromBoss": 0,
+      "damageFromAdds": {},
+      "attackBeats": 120,
+      "minionAttackBeats": 0,
+      "totalAttackBeats": 120,
+      "hpLost": 0,
+      "peakBurst1s": 0,
+      "minHpFraction": 1,
+      "wallElapsedMs": 682,
+      "initialRosterHash": "ffc488333d6a91b0252b8abeaf1746d3ed17ccd5f09c17d83e29fdda4f04a0aa",
+      "targets": [
+        {
+          "id": "node-t2-mountain-dungeon_monster-5",
+          "type": "stoneplate-juggernaut",
+          "name": "Stoneplate Juggernaut",
+          "maxHp": 5000,
+          "firstDamageMs": 600,
+          "lastDamageMs": 43000,
+          "killedAtMs": 43000,
+          "hpRegainObserved": false,
+          "maxDamageGapMs": 2100,
+          "damageEvents": 60,
+          "castsStarted": 8,
+          "castsFired": 0,
+          "ttkMs": 42400,
+          "clean": true
+        }
+      ],
+      "episodes": [
+        {
+          "startMs": 600,
+          "endMs": 43000,
+          "durationMs": 42400,
+          "members": [
+            "node-t2-mountain-dungeon_monster-5"
+          ],
+          "initialMembers": [
+            "node-t2-mountain-dungeon_monster-5"
+          ],
+          "lateJoiners": 0,
+          "outcome": "cleared"
+        }
+      ],
+      "recovery": [
+        {
+          "afterClearMs": 43000,
+          "recoveredAtMs": 43000,
+          "interruptedByNextPull": false
+        }
+      ],
+      "incomingDamage": 0,
+      "largestHit": 0,
+      "maxDamageIn1s": 0,
+      "counts": {
+        "damaged": 1,
+        "killed": 1,
+        "censored": 0,
+        "hpRegain": 0
+      },
+      "cleanTtkMs": {
+        "n": 1,
+        "p10": 42400,
+        "median": 42400,
+        "p90": 42400
+      },
+      "bossId": "stoneplate-juggernaut",
+      "sessions": null,
+      "historicalReferenceObservationId": null,
+      "unfinishedTargets": 0,
+      "targetRegainCount": 0,
+      "deathEvidence": null,
+      "incomingHpDamage": 0,
+      "runicPoints": {
+        "budget": 30,
+        "cost": 30,
+        "unused": 0,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "conduit": null,
+      "evidenceDirectory": "D:\\mmo-idle\\t2-spirit-boss-contrast-01\\run-01\\sbc-spirit-light-mountain-s101021\\artifacts\\sbc-spirit-light-mountain-s101021-s101021"
+    }
+  ]
+}
