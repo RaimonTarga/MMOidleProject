@@ -1,0 +1,4163 @@
+{
+  "experimentId": "farming-sustain-01",
+  "mode": "run",
+  "actualExecutionSource": "d056896dffd62dc24f0d13ead7b887e61d357006",
+  "sourceSha256": "75dc1afaaed8a676568d1efedf4895540ebd1fadff56c9e8e6f063c6eb59ed77",
+  "hitboxesSha256": "08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83",
+  "seed": 101003,
+  "dtMs": 100,
+  "capMs": 300000,
+  "counts": {
+    "planned": 20,
+    "completed": 20,
+    "failed": 0,
+    "notRun": 0,
+    "qualified": 0
+  },
+  "publicationStatus": "local-unpublished",
+  "synthetic": true,
+  "economyEligible": false,
+  "rows": [
+    {
+      "observationId": "sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03-mountain-static",
+      "identityId": "breadth-t3-striker-balanced",
+      "arm": "mountain-static",
+      "comparisonId": "sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03",
+      "tier": 3,
+      "root": "striker",
+      "frame": "balanced",
+      "path": "Skirmisher",
+      "range": "close",
+      "fixture": "node-t3-volcanic-03",
+      "reconstructionPolicy": "not-applicable",
+      "itemId": "mountain-charm-t3",
+      "defaultStanceId": "offensive-stance",
+      "recoveryRule": null,
+      "displacedAbility": null,
+      "status": "complete",
+      "outcome": "player-died",
+      "elapsedMs": 105000,
+      "completedKills": 24,
+      "unfinishedDamagedTargets": 1,
+      "minHpFraction": 0,
+      "targetRegainCount": 0,
+      "contactIndicators": {
+        "sampleCount": 106,
+        "sampleEveryMs": 1000,
+        "staticDamageContactSamples": 0,
+        "staticDamageFeatureIds": []
+      },
+      "liveAuthoredOffenseFraction": null,
+      "zeroBodyExposureMs": null,
+      "readyHpBlockedMs": null,
+      "effectiveReconstruction": null,
+      "paths": {
+        "ready": "sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03-mountain-static/sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03-mountain-static-s101003/ready.json",
+        "summary": "sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03-mountain-static/sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03-mountain-static-s101003/summary.json",
+        "terminal": "sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03-mountain-static/complete.json",
+        "rawInventory": "raw-inventory.json",
+        "conduit": null,
+        "sustainTransitions": "sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03-mountain-static/sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03-mountain-static-s101003/sustain-transitions.json"
+      },
+      "unavailableReasons": {
+        "contactIndicators": "Only recorded static-feature sample contacts; no continuous contact-duration or incoming-target-contact aggregate",
+        "conduit": "Not a Conduit package"
+      },
+      "firstKillDelayMs": 5300,
+      "units": {
+        "time": "ms",
+        "health": "HP",
+        "hpFraction": "fraction"
+      },
+      "recordedIncomingHpDamage": 2420.1499999999996,
+      "recoveryEpisodes": [
+        {
+          "afterClearMs": 10300,
+          "recoveredAtMs": 17900,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 29500,
+          "recoveredAtMs": 37000,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 52700,
+          "recoveredAtMs": 60000,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 69500,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 74800,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 85600,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        }
+      ],
+      "deathEvidence": [
+        {
+          "atMs": 105000,
+          "event": {
+            "kind": "player-death",
+            "nodeId": "node-t3-volcanic-03",
+            "player": {
+              "id": "bench-bot-0",
+              "name": "sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03-mountain-static",
+              "actorType": "player"
+            },
+            "cause": {
+              "kind": "ranged",
+              "killer": {
+                "monsterEntityId": "node-t3-volcanic-03_monster-15",
+                "monsterTypeId": "ash-slinger",
+                "monsterName": "Ash Salamander",
+                "isBoss": false,
+                "nodeId": "node-t3-volcanic-03"
+              },
+              "damage": 78
+            },
+            "id": 993,
+            "tick": 1051,
+            "serverTime": 1800000105000
+          }
+        }
+      ],
+      "sustain": {
+        "units": {
+          "time": "ms",
+          "health": "HP",
+          "fraction": "fraction"
+        },
+        "observation": "100ms post-tick samples; transitions may occur within a tick; refresh count is a lower bound",
+        "measuredMs": 105100,
+        "recuperatingMs": {
+          "ACTIVE": 0,
+          "POST_COMBAT": 0,
+          "OUT_OF_COMBAT": 0
+        },
+        "killWindowObservedMs": 0,
+        "observedKillWindowStartsOrRefreshes": 0,
+        "cooldownDelayedReturnObservedMs": 0,
+        "minimumBarrier": 0,
+        "minimumHp": 0,
+        "terminal": {
+          "hp": 0,
+          "maxHp": 430,
+          "barrier": 0,
+          "recovery": 15,
+          "stance": "offensive-stance",
+          "phase": "OUT_OF_COMBAT",
+          "activeFraction": 1,
+          "killWindowMs": 0,
+          "killFraction": 0,
+          "killDurationMs": 4000,
+          "switchCooldownMs": 0,
+          "autoIntent": null
+        },
+        "meanObservedActiveFraction": 0.5117031398667935,
+        "sourceSpecificHealingHp": null,
+        "overhealHp": null,
+        "counterfactualDamageLostHp": null,
+        "unavailableReasons": {
+          "healing": "Existing heal events round applied HP, omit sub-1 HP applications, and do not label Recovery source; use them as recorded healing only.",
+          "overheal": "Not emitted by existing stream",
+          "damageLost": "Counterfactual damage is not observable; compare paired completed progress and actual damage during stance intervals."
+        }
+      },
+      "runicPoints": {
+        "budget": 38,
+        "cost": 33,
+        "unused": 5,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "terminalOwner": {
+        "hp": 0,
+        "maxHp": 430,
+        "barrier": 0
+      }
+    },
+    {
+      "observationId": "sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03-volcanic-static",
+      "identityId": "breadth-t3-striker-balanced",
+      "arm": "volcanic-static",
+      "comparisonId": "sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03",
+      "tier": 3,
+      "root": "striker",
+      "frame": "balanced",
+      "path": "Skirmisher",
+      "range": "close",
+      "fixture": "node-t3-volcanic-03",
+      "reconstructionPolicy": "not-applicable",
+      "itemId": "volcanic-charm-t3",
+      "defaultStanceId": "offensive-stance",
+      "recoveryRule": null,
+      "displacedAbility": null,
+      "status": "complete",
+      "outcome": "window-ended",
+      "elapsedMs": 300000,
+      "completedKills": 76,
+      "unfinishedDamagedTargets": 1,
+      "minHpFraction": 0.3299813953488364,
+      "targetRegainCount": 0,
+      "contactIndicators": {
+        "sampleCount": 300,
+        "sampleEveryMs": 1000,
+        "staticDamageContactSamples": 0,
+        "staticDamageFeatureIds": []
+      },
+      "liveAuthoredOffenseFraction": null,
+      "zeroBodyExposureMs": null,
+      "readyHpBlockedMs": null,
+      "effectiveReconstruction": null,
+      "paths": {
+        "ready": "sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03-volcanic-static/sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03-volcanic-static-s101003/ready.json",
+        "summary": "sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03-volcanic-static/sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03-volcanic-static-s101003/summary.json",
+        "terminal": "sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03-volcanic-static/complete.json",
+        "rawInventory": "raw-inventory.json",
+        "conduit": null,
+        "sustainTransitions": "sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03-volcanic-static/sustain-01-breadth-t3-striker-balanced-node-t3-volcanic-03-volcanic-static-s101003/sustain-transitions.json"
+      },
+      "unavailableReasons": {
+        "contactIndicators": "Only recorded static-feature sample contacts; no continuous contact-duration or incoming-target-contact aggregate",
+        "conduit": "Not a Conduit package"
+      },
+      "firstKillDelayMs": 5300,
+      "units": {
+        "time": "ms",
+        "health": "HP",
+        "hpFraction": "fraction"
+      },
+      "recordedIncomingHpDamage": 9279,
+      "recoveryEpisodes": [
+        {
+          "afterClearMs": 10300,
+          "recoveredAtMs": 10300,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 25000,
+          "recoveredAtMs": 26500,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 32100,
+          "recoveredAtMs": 32900,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 42600,
+          "recoveredAtMs": 43900,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 52600,
+          "recoveredAtMs": 52600,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 71100,
+          "recoveredAtMs": 73900,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 81600,
+          "recoveredAtMs": 82600,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 91000,
+          "recoveredAtMs": 91400,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 98600,
+          "recoveredAtMs": 100000,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 125900,
+          "recoveredAtMs": 128900,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 155600,
+          "recoveredAtMs": 157300,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 172200,
+          "recoveredAtMs": 174000,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 181700,
+          "recoveredAtMs": 182700,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 189800,
+          "recoveredAtMs": 190500,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 196100,
+          "recoveredAtMs": 196200,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 214000,
+          "recoveredAtMs": 214900,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 222000,
+          "recoveredAtMs": 222500,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 233000,
+          "recoveredAtMs": 233000,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 243700,
+          "recoveredAtMs": 243700,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 250800,
+          "recoveredAtMs": 250800,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 261200,
+          "recoveredAtMs": 262200,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 273700,
+          "recoveredAtMs": 273700,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 277900,
+          "recoveredAtMs": 277900,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 279600,
+          "recoveredAtMs": 279600,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 281500,
+          "recoveredAtMs": 281500,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 284200,
+          "recoveredAtMs": 284200,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 285900,
+          "recoveredAtMs": 285900,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 289700,
+          "recoveredAtMs": 289700,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 294700,
+          "recoveredAtMs": 296000,
+          "interruptedByNextPull": false
+        }
+      ],
+      "deathEvidence": [],
+      "sustain": {
+        "units": {
+          "time": "ms",
+          "health": "HP",
+          "fraction": "fraction"
+        },
+        "observation": "100ms post-tick samples; transitions may occur within a tick; refresh count is a lower bound",
+        "measuredMs": 300000,
+        "recuperatingMs": {
+          "ACTIVE": 0,
+          "POST_COMBAT": 0,
+          "OUT_OF_COMBAT": 0
+        },
+        "killWindowObservedMs": 184800,
+        "observedKillWindowStartsOrRefreshes": 74,
+        "cooldownDelayedReturnObservedMs": 0,
+        "minimumBarrier": 0,
+        "minimumHp": 141.89199999999965,
+        "terminal": {
+          "hp": 234.3905999999999,
+          "maxHp": 430,
+          "barrier": 0,
+          "recovery": 21,
+          "stance": "offensive-stance",
+          "phase": "ACTIVE",
+          "activeFraction": 0.30000000000000004,
+          "killWindowMs": 3900,
+          "killFraction": 0.14,
+          "killDurationMs": 4000,
+          "switchCooldownMs": 0,
+          "autoIntent": {
+            "kind": "idle",
+            "reason": "No worthy target nearby",
+            "source": "",
+            "matchedRunes": [
+              {
+                "conditionId": "always",
+                "actionId": "auto-path-enemy"
+              },
+              {
+                "conditionId": "always",
+                "actionId": "avoid-hazards"
+              }
+            ]
+          }
+        },
+        "meanObservedActiveFraction": 0.6496666666666666,
+        "sourceSpecificHealingHp": null,
+        "overhealHp": null,
+        "counterfactualDamageLostHp": null,
+        "unavailableReasons": {
+          "healing": "Existing heal events round applied HP, omit sub-1 HP applications, and do not label Recovery source; use them as recorded healing only.",
+          "overheal": "Not emitted by existing stream",
+          "damageLost": "Counterfactual damage is not observable; compare paired completed progress and actual damage during stance intervals."
+        }
+      },
+      "runicPoints": {
+        "budget": 38,
+        "cost": 33,
+        "unused": 5,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "terminalOwner": {
+        "hp": 234.3905999999999,
+        "maxHp": 430,
+        "barrier": 0
+      }
+    },
+    {
+      "observationId": "sustain-01-breadth-t3-striker-balanced-node-t3-tundra-03-mountain-static",
+      "identityId": "breadth-t3-striker-balanced",
+      "arm": "mountain-static",
+      "comparisonId": "sustain-01-breadth-t3-striker-balanced-node-t3-tundra-03",
+      "tier": 3,
+      "root": "striker",
+      "frame": "balanced",
+      "path": "Skirmisher",
+      "range": "close",
+      "fixture": "node-t3-tundra-03",
+      "reconstructionPolicy": "not-applicable",
+      "itemId": "mountain-charm-t3",
+      "defaultStanceId": "offensive-stance",
+      "recoveryRule": null,
+      "displacedAbility": null,
+      "status": "complete",
+      "outcome": "window-ended",
+      "elapsedMs": 300000,
+      "completedKills": 24,
+      "unfinishedDamagedTargets": 0,
+      "minHpFraction": 0.2724534883720931,
+      "targetRegainCount": 0,
+      "contactIndicators": {
+        "sampleCount": 300,
+        "sampleEveryMs": 1000,
+        "staticDamageContactSamples": 0,
+        "staticDamageFeatureIds": []
+      },
+      "liveAuthoredOffenseFraction": null,
+      "zeroBodyExposureMs": null,
+      "readyHpBlockedMs": null,
+      "effectiveReconstruction": null,
+      "paths": {
+        "ready": "sustain-01-breadth-t3-striker-balanced-node-t3-tundra-03-mountain-static/sustain-01-breadth-t3-striker-balanced-node-t3-tundra-03-mountain-static-s101003/ready.json",
+        "summary": "sustain-01-breadth-t3-striker-balanced-node-t3-tundra-03-mountain-static/sustain-01-breadth-t3-striker-balanced-node-t3-tundra-03-mountain-static-s101003/summary.json",
+        "terminal": "sustain-01-breadth-t3-striker-balanced-node-t3-tundra-03-mountain-static/complete.json",
+        "rawInventory": "raw-inventory.json",
+        "conduit": null,
+        "sustainTransitions": "sustain-01-breadth-t3-striker-balanced-node-t3-tundra-03-mountain-static/sustain-01-breadth-t3-striker-balanced-node-t3-tundra-03-mountain-static-s101003/sustain-transitions.json"
+      },
+      "unavailableReasons": {
+        "contactIndicators": "Only recorded static-feature sample contacts; no continuous contact-duration or incoming-target-contact aggregate",
+        "conduit": "Not a Conduit package"
+      },
+      "firstKillDelayMs": 14800,
+      "units": {
+        "time": "ms",
+        "health": "HP",
+        "hpFraction": "fraction"
+      },
+      "recordedIncomingHpDamage": 6787.900000000001,
+      "recoveryEpisodes": [
+        {
+          "afterClearMs": 14800,
+          "recoveredAtMs": 20500,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 27200,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 43900,
+          "recoveredAtMs": 48800,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 53700,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 61600,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 71600,
+          "recoveredAtMs": 78600,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 82800,
+          "recoveredAtMs": 90300,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 93900,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 102600,
+          "recoveredAtMs": 110300,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 114900,
+          "recoveredAtMs": 122400,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 128600,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 146300,
+          "recoveredAtMs": 152200,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 157900,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 166000,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 177200,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 186400,
+          "recoveredAtMs": 193900,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 200500,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 208100,
+          "recoveredAtMs": 214900,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 231100,
+          "recoveredAtMs": 236800,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 241500,
+          "recoveredAtMs": 246900,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 251900,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 262000,
+          "recoveredAtMs": 269500,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 274200,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 293200,
+          "recoveredAtMs": 299100,
+          "interruptedByNextPull": false
+        }
+      ],
+      "deathEvidence": [],
+      "sustain": {
+        "units": {
+          "time": "ms",
+          "health": "HP",
+          "fraction": "fraction"
+        },
+        "observation": "100ms post-tick samples; transitions may occur within a tick; refresh count is a lower bound",
+        "measuredMs": 300000,
+        "recuperatingMs": {
+          "ACTIVE": 0,
+          "POST_COMBAT": 0,
+          "OUT_OF_COMBAT": 0
+        },
+        "killWindowObservedMs": 0,
+        "observedKillWindowStartsOrRefreshes": 0,
+        "cooldownDelayedReturnObservedMs": 0,
+        "minimumBarrier": 0,
+        "minimumHp": 117.15500000000003,
+        "terminal": {
+          "hp": 430,
+          "maxHp": 430,
+          "barrier": 146,
+          "recovery": 15,
+          "stance": "offensive-stance",
+          "phase": "OUT_OF_COMBAT",
+          "activeFraction": 1,
+          "killWindowMs": 0,
+          "killFraction": 0,
+          "killDurationMs": 4000,
+          "switchCooldownMs": 0,
+          "autoIntent": {
+            "kind": "attack",
+            "targetMonsterTypeId": "rime-caster",
+            "reason": "Nearest eligible target",
+            "source": "",
+            "matchedRunes": [
+              {
+                "conditionId": "always",
+                "actionId": "wait-for-regen"
+              },
+              {
+                "conditionId": "always",
+                "actionId": "auto-path-enemy"
+              },
+              {
+                "conditionId": "always",
+                "actionId": "avoid-hazards"
+              }
+            ]
+          }
+        },
+        "meanObservedActiveFraction": 0.6311,
+        "sourceSpecificHealingHp": null,
+        "overhealHp": null,
+        "counterfactualDamageLostHp": null,
+        "unavailableReasons": {
+          "healing": "Existing heal events round applied HP, omit sub-1 HP applications, and do not label Recovery source; use them as recorded healing only.",
+          "overheal": "Not emitted by existing stream",
+          "damageLost": "Counterfactual damage is not observable; compare paired completed progress and actual damage during stance intervals."
+        }
+      },
+      "runicPoints": {
+        "budget": 38,
+        "cost": 33,
+        "unused": 5,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "terminalOwner": {
+        "hp": 430,
+        "maxHp": 430,
+        "barrier": 146
+      }
+    },
+    {
+      "observationId": "sustain-01-breadth-t3-striker-balanced-node-t3-tundra-03-volcanic-static",
+      "identityId": "breadth-t3-striker-balanced",
+      "arm": "volcanic-static",
+      "comparisonId": "sustain-01-breadth-t3-striker-balanced-node-t3-tundra-03",
+      "tier": 3,
+      "root": "striker",
+      "frame": "balanced",
+      "path": "Skirmisher",
+      "range": "close",
+      "fixture": "node-t3-tundra-03",
+      "reconstructionPolicy": "not-applicable",
+      "itemId": "volcanic-charm-t3",
+      "defaultStanceId": "offensive-stance",
+      "recoveryRule": null,
+      "displacedAbility": null,
+      "status": "complete",
+      "outcome": "window-ended",
+      "elapsedMs": 300000,
+      "completedKills": 24,
+      "unfinishedDamagedTargets": 0,
+      "minHpFraction": 0.1766804651162783,
+      "targetRegainCount": 0,
+      "contactIndicators": {
+        "sampleCount": 300,
+        "sampleEveryMs": 1000,
+        "staticDamageContactSamples": 0,
+        "staticDamageFeatureIds": []
+      },
+      "liveAuthoredOffenseFraction": null,
+      "zeroBodyExposureMs": null,
+      "readyHpBlockedMs": null,
+      "effectiveReconstruction": null,
+      "paths": {
+        "ready": "sustain-01-breadth-t3-striker-balanced-node-t3-tundra-03-volcanic-static/sustain-01-breadth-t3-striker-balanced-node-t3-tundra-03-volcanic-static-s101003/ready.json",
+        "summary": "sustain-01-breadth-t3-striker-balanced-node-t3-tundra-03-volcanic-static/sustain-01-breadth-t3-striker-balanced-node-t3-tundra-03-volcanic-static-s101003/summary.json",
+        "terminal": "sustain-01-breadth-t3-striker-balanced-node-t3-tundra-03-volcanic-static/complete.json",
+        "rawInventory": "raw-inventory.json",
+        "conduit": null,
+        "sustainTransitions": "sustain-01-breadth-t3-striker-balanced-node-t3-tundra-03-volcanic-static/sustain-01-breadth-t3-striker-balanced-node-t3-tundra-03-volcanic-static-s101003/sustain-transitions.json"
+      },
+      "unavailableReasons": {
+        "contactIndicators": "Only recorded static-feature sample contacts; no continuous contact-duration or incoming-target-contact aggregate",
+        "conduit": "Not a Conduit package"
+      },
+      "firstKillDelayMs": 14800,
+      "units": {
+        "time": "ms",
+        "health": "HP",
+        "hpFraction": "fraction"
+      },
+      "recordedIncomingHpDamage": 11339,
+      "recoveryEpisodes": [
+        {
+          "afterClearMs": 14800,
+          "recoveredAtMs": 17000,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 24800,
+          "recoveredAtMs": 24800,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 39400,
+          "recoveredAtMs": 39400,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 45200,
+          "recoveredAtMs": 48100,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 54200,
+          "recoveredAtMs": 56000,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 63900,
+          "recoveredAtMs": 65100,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 73100,
+          "recoveredAtMs": 77300,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 83200,
+          "recoveredAtMs": 87400,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 93600,
+          "recoveredAtMs": 95000,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 111200,
+          "recoveredAtMs": 112800,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 119700,
+          "recoveredAtMs": 122600,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 129100,
+          "recoveredAtMs": 131300,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 147600,
+          "recoveredAtMs": 149700,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 156400,
+          "recoveredAtMs": 157500,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 173700,
+          "recoveredAtMs": 175700,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 181900,
+          "recoveredAtMs": 181900,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 198500,
+          "recoveredAtMs": 202400,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 219500,
+          "recoveredAtMs": 221800,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 229500,
+          "recoveredAtMs": 232100,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 251700,
+          "recoveredAtMs": 253800,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 260900,
+          "recoveredAtMs": 263400,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 271300,
+          "recoveredAtMs": 271300,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 281700,
+          "recoveredAtMs": 283400,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 298500,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": false
+        }
+      ],
+      "deathEvidence": [],
+      "sustain": {
+        "units": {
+          "time": "ms",
+          "health": "HP",
+          "fraction": "fraction"
+        },
+        "observation": "100ms post-tick samples; transitions may occur within a tick; refresh count is a lower bound",
+        "measuredMs": 300000,
+        "recuperatingMs": {
+          "ACTIVE": 0,
+          "POST_COMBAT": 0,
+          "OUT_OF_COMBAT": 0
+        },
+        "killWindowObservedMs": 91200,
+        "observedKillWindowStartsOrRefreshes": 24,
+        "cooldownDelayedReturnObservedMs": 0,
+        "minimumBarrier": 0,
+        "minimumHp": 75.97259999999967,
+        "terminal": {
+          "hp": 358.88520000000005,
+          "maxHp": 430,
+          "barrier": 0,
+          "recovery": 21,
+          "stance": "offensive-stance",
+          "phase": "POST_COMBAT",
+          "activeFraction": 0.6000000000000001,
+          "killWindowMs": 2500,
+          "killFraction": 0.14,
+          "killDurationMs": 4000,
+          "switchCooldownMs": 0,
+          "autoIntent": {
+            "kind": "idle",
+            "reason": "Waiting to recover to full health",
+            "source": "Convalescent",
+            "activeRune": {
+              "conditionId": "always",
+              "actionId": "wait-for-regen"
+            },
+            "matchedRunes": [
+              {
+                "conditionId": "always",
+                "actionId": "wait-for-regen"
+              },
+              {
+                "conditionId": "always",
+                "actionId": "auto-path-enemy"
+              },
+              {
+                "conditionId": "always",
+                "actionId": "avoid-hazards"
+              }
+            ]
+          }
+        },
+        "meanObservedActiveFraction": 0.7305533333333334,
+        "sourceSpecificHealingHp": null,
+        "overhealHp": null,
+        "counterfactualDamageLostHp": null,
+        "unavailableReasons": {
+          "healing": "Existing heal events round applied HP, omit sub-1 HP applications, and do not label Recovery source; use them as recorded healing only.",
+          "overheal": "Not emitted by existing stream",
+          "damageLost": "Counterfactual damage is not observable; compare paired completed progress and actual damage during stance intervals."
+        }
+      },
+      "runicPoints": {
+        "budget": 38,
+        "cost": 33,
+        "unused": 5,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "terminalOwner": {
+        "hp": 358.88520000000005,
+        "maxHp": 430,
+        "barrier": 0
+      }
+    },
+    {
+      "observationId": "sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03-mountain-static",
+      "identityId": "breadth-t3-squire-balanced",
+      "arm": "mountain-static",
+      "comparisonId": "sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03",
+      "tier": 3,
+      "root": "squire",
+      "frame": "balanced",
+      "path": "Knight",
+      "range": "close",
+      "fixture": "node-t3-volcanic-03",
+      "reconstructionPolicy": "not-applicable",
+      "itemId": "mountain-charm-t3",
+      "defaultStanceId": "offensive-stance",
+      "recoveryRule": null,
+      "displacedAbility": null,
+      "status": "complete",
+      "outcome": "player-died",
+      "elapsedMs": 29900,
+      "completedKills": 6,
+      "unfinishedDamagedTargets": 4,
+      "minHpFraction": 0,
+      "targetRegainCount": 0,
+      "contactIndicators": {
+        "sampleCount": 30,
+        "sampleEveryMs": 1000,
+        "staticDamageContactSamples": 0,
+        "staticDamageFeatureIds": []
+      },
+      "liveAuthoredOffenseFraction": null,
+      "zeroBodyExposureMs": null,
+      "readyHpBlockedMs": null,
+      "effectiveReconstruction": null,
+      "paths": {
+        "ready": "sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03-mountain-static/sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03-mountain-static-s101003/ready.json",
+        "summary": "sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03-mountain-static/sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03-mountain-static-s101003/summary.json",
+        "terminal": "sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03-mountain-static/complete.json",
+        "rawInventory": "raw-inventory.json",
+        "conduit": null,
+        "sustainTransitions": "sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03-mountain-static/sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03-mountain-static-s101003/sustain-transitions.json"
+      },
+      "unavailableReasons": {
+        "contactIndicators": "Only recorded static-feature sample contacts; no continuous contact-duration or incoming-target-contact aggregate",
+        "conduit": "Not a Conduit package"
+      },
+      "firstKillDelayMs": 6100,
+      "units": {
+        "time": "ms",
+        "health": "HP",
+        "hpFraction": "fraction"
+      },
+      "recordedIncomingHpDamage": 921,
+      "recoveryEpisodes": [
+        {
+          "afterClearMs": 11100,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        }
+      ],
+      "deathEvidence": [
+        {
+          "atMs": 29900,
+          "event": {
+            "kind": "player-death",
+            "nodeId": "node-t3-volcanic-03",
+            "player": {
+              "id": "bench-bot-0",
+              "name": "sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03-mountain-static",
+              "actorType": "player"
+            },
+            "cause": {
+              "kind": "melee",
+              "killer": {
+                "monsterEntityId": "node-t3-volcanic-03_monster-43",
+                "monsterTypeId": "magma-brute",
+                "monsterName": "Magma Tortoise",
+                "isBoss": false,
+                "nodeId": "node-t3-volcanic-03"
+              },
+              "damage": 107
+            },
+            "id": 286,
+            "tick": 300,
+            "serverTime": 1800000029900
+          }
+        }
+      ],
+      "sustain": {
+        "units": {
+          "time": "ms",
+          "health": "HP",
+          "fraction": "fraction"
+        },
+        "observation": "100ms post-tick samples; transitions may occur within a tick; refresh count is a lower bound",
+        "measuredMs": 30000,
+        "recuperatingMs": {
+          "ACTIVE": 0,
+          "POST_COMBAT": 0,
+          "OUT_OF_COMBAT": 0
+        },
+        "killWindowObservedMs": 0,
+        "observedKillWindowStartsOrRefreshes": 0,
+        "cooldownDelayedReturnObservedMs": 0,
+        "minimumBarrier": 0,
+        "minimumHp": 0,
+        "terminal": {
+          "hp": 0,
+          "maxHp": 389,
+          "barrier": 0,
+          "recovery": 15,
+          "stance": "offensive-stance",
+          "phase": "OUT_OF_COMBAT",
+          "activeFraction": 1,
+          "killWindowMs": 0,
+          "killFraction": 0,
+          "killDurationMs": 4000,
+          "switchCooldownMs": 0,
+          "autoIntent": null
+        },
+        "meanObservedActiveFraction": 0.4866666666666667,
+        "sourceSpecificHealingHp": null,
+        "overhealHp": null,
+        "counterfactualDamageLostHp": null,
+        "unavailableReasons": {
+          "healing": "Existing heal events round applied HP, omit sub-1 HP applications, and do not label Recovery source; use them as recorded healing only.",
+          "overheal": "Not emitted by existing stream",
+          "damageLost": "Counterfactual damage is not observable; compare paired completed progress and actual damage during stance intervals."
+        }
+      },
+      "runicPoints": {
+        "budget": 38,
+        "cost": 33,
+        "unused": 5,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "terminalOwner": {
+        "hp": 0,
+        "maxHp": 389,
+        "barrier": 0
+      }
+    },
+    {
+      "observationId": "sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03-volcanic-static",
+      "identityId": "breadth-t3-squire-balanced",
+      "arm": "volcanic-static",
+      "comparisonId": "sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03",
+      "tier": 3,
+      "root": "squire",
+      "frame": "balanced",
+      "path": "Knight",
+      "range": "close",
+      "fixture": "node-t3-volcanic-03",
+      "reconstructionPolicy": "not-applicable",
+      "itemId": "volcanic-charm-t3",
+      "defaultStanceId": "offensive-stance",
+      "recoveryRule": null,
+      "displacedAbility": null,
+      "status": "complete",
+      "outcome": "window-ended",
+      "elapsedMs": 300000,
+      "completedKills": 60,
+      "unfinishedDamagedTargets": 0,
+      "minHpFraction": 0.35344457583547656,
+      "targetRegainCount": 0,
+      "contactIndicators": {
+        "sampleCount": 300,
+        "sampleEveryMs": 1000,
+        "staticDamageContactSamples": 0,
+        "staticDamageFeatureIds": []
+      },
+      "liveAuthoredOffenseFraction": null,
+      "zeroBodyExposureMs": null,
+      "readyHpBlockedMs": null,
+      "effectiveReconstruction": null,
+      "paths": {
+        "ready": "sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03-volcanic-static/sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03-volcanic-static-s101003/ready.json",
+        "summary": "sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03-volcanic-static/sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03-volcanic-static-s101003/summary.json",
+        "terminal": "sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03-volcanic-static/complete.json",
+        "rawInventory": "raw-inventory.json",
+        "conduit": null,
+        "sustainTransitions": "sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03-volcanic-static/sustain-01-breadth-t3-squire-balanced-node-t3-volcanic-03-volcanic-static-s101003/sustain-transitions.json"
+      },
+      "unavailableReasons": {
+        "contactIndicators": "Only recorded static-feature sample contacts; no continuous contact-duration or incoming-target-contact aggregate",
+        "conduit": "Not a Conduit package"
+      },
+      "firstKillDelayMs": 6100,
+      "units": {
+        "time": "ms",
+        "health": "HP",
+        "hpFraction": "fraction"
+      },
+      "recordedIncomingHpDamage": 9857,
+      "recoveryEpisodes": [
+        {
+          "afterClearMs": 11100,
+          "recoveredAtMs": 11100,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 37100,
+          "recoveredAtMs": 37900,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 48900,
+          "recoveredAtMs": 49700,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 68100,
+          "recoveredAtMs": 70600,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 98800,
+          "recoveredAtMs": 99200,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 110400,
+          "recoveredAtMs": 110400,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 120600,
+          "recoveredAtMs": 121300,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 130200,
+          "recoveredAtMs": 130500,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 145700,
+          "recoveredAtMs": 145700,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 152300,
+          "recoveredAtMs": 153000,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 178100,
+          "recoveredAtMs": 178700,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 199500,
+          "recoveredAtMs": 199900,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 206000,
+          "recoveredAtMs": 206700,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 229700,
+          "recoveredAtMs": 229700,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 258300,
+          "recoveredAtMs": 258500,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 264300,
+          "recoveredAtMs": 264300,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 292400,
+          "recoveredAtMs": 293800,
+          "interruptedByNextPull": false
+        }
+      ],
+      "deathEvidence": [],
+      "sustain": {
+        "units": {
+          "time": "ms",
+          "health": "HP",
+          "fraction": "fraction"
+        },
+        "observation": "100ms post-tick samples; transitions may occur within a tick; refresh count is a lower bound",
+        "measuredMs": 300000,
+        "recuperatingMs": {
+          "ACTIVE": 0,
+          "POST_COMBAT": 0,
+          "OUT_OF_COMBAT": 0
+        },
+        "killWindowObservedMs": 178700,
+        "observedKillWindowStartsOrRefreshes": 57,
+        "cooldownDelayedReturnObservedMs": 0,
+        "minimumBarrier": 0,
+        "minimumHp": 137.4899400000004,
+        "terminal": {
+          "hp": 389,
+          "maxHp": 389,
+          "barrier": 0,
+          "recovery": 21,
+          "stance": "offensive-stance",
+          "phase": "OUT_OF_COMBAT",
+          "activeFraction": 1,
+          "killWindowMs": 0,
+          "killFraction": 0,
+          "killDurationMs": 4000,
+          "switchCooldownMs": 0,
+          "autoIntent": {
+            "kind": "attack",
+            "targetMonsterTypeId": "ember-scuttler",
+            "reason": "Nearest eligible target",
+            "source": "",
+            "matchedRunes": [
+              {
+                "conditionId": "always",
+                "actionId": "wait-for-regen"
+              },
+              {
+                "conditionId": "always",
+                "actionId": "auto-path-enemy"
+              },
+              {
+                "conditionId": "always",
+                "actionId": "avoid-hazards"
+              }
+            ]
+          }
+        },
+        "meanObservedActiveFraction": 0.7132733333333333,
+        "sourceSpecificHealingHp": null,
+        "overhealHp": null,
+        "counterfactualDamageLostHp": null,
+        "unavailableReasons": {
+          "healing": "Existing heal events round applied HP, omit sub-1 HP applications, and do not label Recovery source; use them as recorded healing only.",
+          "overheal": "Not emitted by existing stream",
+          "damageLost": "Counterfactual damage is not observable; compare paired completed progress and actual damage during stance intervals."
+        }
+      },
+      "runicPoints": {
+        "budget": 38,
+        "cost": 33,
+        "unused": 5,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "terminalOwner": {
+        "hp": 389,
+        "maxHp": 389,
+        "barrier": 0
+      }
+    },
+    {
+      "observationId": "sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03-mountain-static",
+      "identityId": "breadth-t3-squire-balanced",
+      "arm": "mountain-static",
+      "comparisonId": "sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03",
+      "tier": 3,
+      "root": "squire",
+      "frame": "balanced",
+      "path": "Knight",
+      "range": "close",
+      "fixture": "node-t3-tundra-03",
+      "reconstructionPolicy": "not-applicable",
+      "itemId": "mountain-charm-t3",
+      "defaultStanceId": "offensive-stance",
+      "recoveryRule": null,
+      "displacedAbility": null,
+      "status": "complete",
+      "outcome": "window-ended",
+      "elapsedMs": 300000,
+      "completedKills": 17,
+      "unfinishedDamagedTargets": 0,
+      "minHpFraction": 0.2824845758354709,
+      "targetRegainCount": 0,
+      "contactIndicators": {
+        "sampleCount": 300,
+        "sampleEveryMs": 1000,
+        "staticDamageContactSamples": 0,
+        "staticDamageFeatureIds": []
+      },
+      "liveAuthoredOffenseFraction": null,
+      "zeroBodyExposureMs": null,
+      "readyHpBlockedMs": null,
+      "effectiveReconstruction": null,
+      "paths": {
+        "ready": "sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03-mountain-static/sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03-mountain-static-s101003/ready.json",
+        "summary": "sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03-mountain-static/sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03-mountain-static-s101003/summary.json",
+        "terminal": "sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03-mountain-static/complete.json",
+        "rawInventory": "raw-inventory.json",
+        "conduit": null,
+        "sustainTransitions": "sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03-mountain-static/sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03-mountain-static-s101003/sustain-transitions.json"
+      },
+      "unavailableReasons": {
+        "contactIndicators": "Only recorded static-feature sample contacts; no continuous contact-duration or incoming-target-contact aggregate",
+        "conduit": "Not a Conduit package"
+      },
+      "firstKillDelayMs": 27300,
+      "units": {
+        "time": "ms",
+        "health": "HP",
+        "hpFraction": "fraction"
+      },
+      "recordedIncomingHpDamage": 5862,
+      "recoveryEpisodes": [
+        {
+          "afterClearMs": 27300,
+          "recoveredAtMs": 34800,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 42800,
+          "recoveredAtMs": 50400,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 72300,
+          "recoveredAtMs": 78500,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 84300,
+          "recoveredAtMs": 90500,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 95400,
+          "recoveredAtMs": 103000,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 107800,
+          "recoveredAtMs": 113800,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 118400,
+          "recoveredAtMs": 125900,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 132400,
+          "recoveredAtMs": 138400,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 165200,
+          "recoveredAtMs": 171400,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 178600,
+          "recoveredAtMs": 184600,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 189600,
+          "recoveredAtMs": 197300,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 219000,
+          "recoveredAtMs": 225200,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 230800,
+          "recoveredAtMs": 238300,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 261700,
+          "recoveredAtMs": 267800,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 272800,
+          "recoveredAtMs": 280400,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 287900,
+          "recoveredAtMs": 294100,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 299100,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": false
+        }
+      ],
+      "deathEvidence": [],
+      "sustain": {
+        "units": {
+          "time": "ms",
+          "health": "HP",
+          "fraction": "fraction"
+        },
+        "observation": "100ms post-tick samples; transitions may occur within a tick; refresh count is a lower bound",
+        "measuredMs": 300000,
+        "recuperatingMs": {
+          "ACTIVE": 0,
+          "POST_COMBAT": 0,
+          "OUT_OF_COMBAT": 0
+        },
+        "killWindowObservedMs": 0,
+        "observedKillWindowStartsOrRefreshes": 0,
+        "cooldownDelayedReturnObservedMs": 0,
+        "minimumBarrier": 0,
+        "minimumHp": 109.88649999999818,
+        "terminal": {
+          "hp": 274.00599999999986,
+          "maxHp": 389,
+          "barrier": 0,
+          "recovery": 15,
+          "stance": "offensive-stance",
+          "phase": "POST_COMBAT",
+          "activeFraction": 0.30000000000000004,
+          "killWindowMs": 0,
+          "killFraction": 0,
+          "killDurationMs": 4000,
+          "switchCooldownMs": 0,
+          "autoIntent": {
+            "kind": "idle",
+            "reason": "Waiting to recover to full health",
+            "source": "Convalescent",
+            "activeRune": {
+              "conditionId": "always",
+              "actionId": "wait-for-regen"
+            },
+            "matchedRunes": [
+              {
+                "conditionId": "always",
+                "actionId": "wait-for-regen"
+              },
+              {
+                "conditionId": "always",
+                "actionId": "auto-path-enemy"
+              },
+              {
+                "conditionId": "always",
+                "actionId": "avoid-hazards"
+              }
+            ]
+          }
+        },
+        "meanObservedActiveFraction": 0.6105666666666667,
+        "sourceSpecificHealingHp": null,
+        "overhealHp": null,
+        "counterfactualDamageLostHp": null,
+        "unavailableReasons": {
+          "healing": "Existing heal events round applied HP, omit sub-1 HP applications, and do not label Recovery source; use them as recorded healing only.",
+          "overheal": "Not emitted by existing stream",
+          "damageLost": "Counterfactual damage is not observable; compare paired completed progress and actual damage during stance intervals."
+        }
+      },
+      "runicPoints": {
+        "budget": 38,
+        "cost": 33,
+        "unused": 5,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "terminalOwner": {
+        "hp": 274.00599999999986,
+        "maxHp": 389,
+        "barrier": 0
+      }
+    },
+    {
+      "observationId": "sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03-volcanic-static",
+      "identityId": "breadth-t3-squire-balanced",
+      "arm": "volcanic-static",
+      "comparisonId": "sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03",
+      "tier": 3,
+      "root": "squire",
+      "frame": "balanced",
+      "path": "Knight",
+      "range": "close",
+      "fixture": "node-t3-tundra-03",
+      "reconstructionPolicy": "not-applicable",
+      "itemId": "volcanic-charm-t3",
+      "defaultStanceId": "offensive-stance",
+      "recoveryRule": null,
+      "displacedAbility": null,
+      "status": "complete",
+      "outcome": "window-ended",
+      "elapsedMs": 300000,
+      "completedKills": 18,
+      "unfinishedDamagedTargets": 1,
+      "minHpFraction": 0.45844431876606856,
+      "targetRegainCount": 0,
+      "contactIndicators": {
+        "sampleCount": 300,
+        "sampleEveryMs": 1000,
+        "staticDamageContactSamples": 0,
+        "staticDamageFeatureIds": []
+      },
+      "liveAuthoredOffenseFraction": null,
+      "zeroBodyExposureMs": null,
+      "readyHpBlockedMs": null,
+      "effectiveReconstruction": null,
+      "paths": {
+        "ready": "sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03-volcanic-static/sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03-volcanic-static-s101003/ready.json",
+        "summary": "sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03-volcanic-static/sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03-volcanic-static-s101003/summary.json",
+        "terminal": "sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03-volcanic-static/complete.json",
+        "rawInventory": "raw-inventory.json",
+        "conduit": null,
+        "sustainTransitions": "sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03-volcanic-static/sustain-01-breadth-t3-squire-balanced-node-t3-tundra-03-volcanic-static-s101003/sustain-transitions.json"
+      },
+      "unavailableReasons": {
+        "contactIndicators": "Only recorded static-feature sample contacts; no continuous contact-duration or incoming-target-contact aggregate",
+        "conduit": "Not a Conduit package"
+      },
+      "firstKillDelayMs": 27300,
+      "units": {
+        "time": "ms",
+        "health": "HP",
+        "hpFraction": "fraction"
+      },
+      "recordedIncomingHpDamage": 9318,
+      "recoveryEpisodes": [
+        {
+          "afterClearMs": 27300,
+          "recoveredAtMs": 29500,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 38800,
+          "recoveredAtMs": 39800,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 66200,
+          "recoveredAtMs": 66200,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 75800,
+          "recoveredAtMs": 76900,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 85400,
+          "recoveredAtMs": 87300,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 99100,
+          "recoveredAtMs": 99100,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 106800,
+          "recoveredAtMs": 110300,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 119800,
+          "recoveredAtMs": 119900,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 149800,
+          "recoveredAtMs": 150000,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 161300,
+          "recoveredAtMs": 161300,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 190500,
+          "recoveredAtMs": 190700,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 203400,
+          "recoveredAtMs": 204400,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 211600,
+          "recoveredAtMs": 214900,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 240500,
+          "recoveredAtMs": 240700,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 250100,
+          "recoveredAtMs": 251200,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 261600,
+          "recoveredAtMs": 263900,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 271400,
+          "recoveredAtMs": 271400,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 281000,
+          "recoveredAtMs": 283300,
+          "interruptedByNextPull": false
+        }
+      ],
+      "deathEvidence": [],
+      "sustain": {
+        "units": {
+          "time": "ms",
+          "health": "HP",
+          "fraction": "fraction"
+        },
+        "observation": "100ms post-tick samples; transitions may occur within a tick; refresh count is a lower bound",
+        "measuredMs": 300000,
+        "recuperatingMs": {
+          "ACTIVE": 0,
+          "POST_COMBAT": 0,
+          "OUT_OF_COMBAT": 0
+        },
+        "killWindowObservedMs": 70200,
+        "observedKillWindowStartsOrRefreshes": 18,
+        "cooldownDelayedReturnObservedMs": 0,
+        "minimumBarrier": 0,
+        "minimumHp": 178.33484000000067,
+        "terminal": {
+          "hp": 298.1091400000014,
+          "maxHp": 389,
+          "barrier": 0,
+          "recovery": 21,
+          "stance": "offensive-stance",
+          "phase": "ACTIVE",
+          "activeFraction": 0.4600000000000001,
+          "killWindowMs": 0,
+          "killFraction": 0,
+          "killDurationMs": 4000,
+          "switchCooldownMs": 0,
+          "autoIntent": {
+            "kind": "attack",
+            "targetMonsterTypeId": "glacier-bear",
+            "reason": "Nearest eligible target",
+            "source": "",
+            "matchedRunes": [
+              {
+                "conditionId": "always",
+                "actionId": "auto-path-enemy"
+              },
+              {
+                "conditionId": "always",
+                "actionId": "avoid-hazards"
+              }
+            ]
+          }
+        },
+        "meanObservedActiveFraction": 0.7351333333333333,
+        "sourceSpecificHealingHp": null,
+        "overhealHp": null,
+        "counterfactualDamageLostHp": null,
+        "unavailableReasons": {
+          "healing": "Existing heal events round applied HP, omit sub-1 HP applications, and do not label Recovery source; use them as recorded healing only.",
+          "overheal": "Not emitted by existing stream",
+          "damageLost": "Counterfactual damage is not observable; compare paired completed progress and actual damage during stance intervals."
+        }
+      },
+      "runicPoints": {
+        "budget": 38,
+        "cost": 33,
+        "unused": 5,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "terminalOwner": {
+        "hp": 298.1091400000014,
+        "maxHp": 389,
+        "barrier": 0
+      }
+    },
+    {
+      "observationId": "sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-mountain-static",
+      "identityId": "breadth-t3-apprentice-balanced",
+      "arm": "mountain-static",
+      "comparisonId": "sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03",
+      "tier": 3,
+      "root": "apprentice",
+      "frame": "balanced",
+      "path": "Ember mage",
+      "range": "mid",
+      "fixture": "node-t3-volcanic-03",
+      "reconstructionPolicy": "not-applicable",
+      "itemId": "mountain-charm-t3",
+      "defaultStanceId": "offensive-stance",
+      "recoveryRule": null,
+      "displacedAbility": null,
+      "status": "complete",
+      "outcome": "player-died",
+      "elapsedMs": 118000,
+      "completedKills": 23,
+      "unfinishedDamagedTargets": 0,
+      "minHpFraction": 0,
+      "targetRegainCount": 0,
+      "contactIndicators": {
+        "sampleCount": 119,
+        "sampleEveryMs": 1000,
+        "staticDamageContactSamples": 0,
+        "staticDamageFeatureIds": []
+      },
+      "liveAuthoredOffenseFraction": null,
+      "zeroBodyExposureMs": null,
+      "readyHpBlockedMs": null,
+      "effectiveReconstruction": null,
+      "paths": {
+        "ready": "sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-mountain-static/sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-mountain-static-s101003/ready.json",
+        "summary": "sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-mountain-static/sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-mountain-static-s101003/summary.json",
+        "terminal": "sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-mountain-static/complete.json",
+        "rawInventory": "raw-inventory.json",
+        "conduit": null,
+        "sustainTransitions": "sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-mountain-static/sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-mountain-static-s101003/sustain-transitions.json"
+      },
+      "unavailableReasons": {
+        "contactIndicators": "Only recorded static-feature sample contacts; no continuous contact-duration or incoming-target-contact aggregate",
+        "conduit": "Not a Conduit package"
+      },
+      "firstKillDelayMs": 9400,
+      "units": {
+        "time": "ms",
+        "health": "HP",
+        "hpFraction": "fraction"
+      },
+      "recordedIncomingHpDamage": 1100.495,
+      "recoveryEpisodes": [
+        {
+          "afterClearMs": 12100,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 21100,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 25800,
+          "recoveredAtMs": 25800,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 31400,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 36600,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 41300,
+          "recoveredAtMs": 43900,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 49900,
+          "recoveredAtMs": 49900,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 54600,
+          "recoveredAtMs": 57600,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 69600,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 80500,
+          "recoveredAtMs": 87200,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 117000,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": false
+        }
+      ],
+      "deathEvidence": [
+        {
+          "atMs": 118000,
+          "event": {
+            "kind": "player-death",
+            "nodeId": "node-t3-volcanic-03",
+            "player": {
+              "id": "bench-bot-0",
+              "name": "sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-mountain-static",
+              "actorType": "player"
+            },
+            "cause": {
+              "kind": "debt",
+              "damage": 2,
+              "nodeId": "node-t3-volcanic-03",
+              "killer": {
+                "monsterEntityId": "node-t3-volcanic-03_monster-59",
+                "monsterTypeId": "ash-slinger",
+                "monsterName": "Ash Salamander",
+                "isBoss": false,
+                "nodeId": "node-t3-volcanic-03"
+              }
+            },
+            "id": 596,
+            "tick": 1181,
+            "serverTime": 1800000118000
+          }
+        }
+      ],
+      "sustain": {
+        "units": {
+          "time": "ms",
+          "health": "HP",
+          "fraction": "fraction"
+        },
+        "observation": "100ms post-tick samples; transitions may occur within a tick; refresh count is a lower bound",
+        "measuredMs": 118100,
+        "recuperatingMs": {
+          "ACTIVE": 0,
+          "POST_COMBAT": 0,
+          "OUT_OF_COMBAT": 0
+        },
+        "killWindowObservedMs": 0,
+        "observedKillWindowStartsOrRefreshes": 0,
+        "cooldownDelayedReturnObservedMs": 0,
+        "minimumBarrier": 0,
+        "minimumHp": 0,
+        "terminal": {
+          "hp": 0,
+          "maxHp": 393,
+          "barrier": 0,
+          "recovery": 15,
+          "stance": "offensive-stance",
+          "phase": "OUT_OF_COMBAT",
+          "activeFraction": 1,
+          "killWindowMs": 0,
+          "killFraction": 0,
+          "killDurationMs": 4000,
+          "switchCooldownMs": 0,
+          "autoIntent": null
+        },
+        "meanObservedActiveFraction": 0.21922099915325996,
+        "sourceSpecificHealingHp": null,
+        "overhealHp": null,
+        "counterfactualDamageLostHp": null,
+        "unavailableReasons": {
+          "healing": "Existing heal events round applied HP, omit sub-1 HP applications, and do not label Recovery source; use them as recorded healing only.",
+          "overheal": "Not emitted by existing stream",
+          "damageLost": "Counterfactual damage is not observable; compare paired completed progress and actual damage during stance intervals."
+        }
+      },
+      "runicPoints": {
+        "budget": 38,
+        "cost": 36,
+        "unused": 2,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "terminalOwner": {
+        "hp": 0,
+        "maxHp": 393,
+        "barrier": 0
+      }
+    },
+    {
+      "observationId": "sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-volcanic-static",
+      "identityId": "breadth-t3-apprentice-balanced",
+      "arm": "volcanic-static",
+      "comparisonId": "sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03",
+      "tier": 3,
+      "root": "apprentice",
+      "frame": "balanced",
+      "path": "Ember mage",
+      "range": "mid",
+      "fixture": "node-t3-volcanic-03",
+      "reconstructionPolicy": "not-applicable",
+      "itemId": "volcanic-charm-t3",
+      "defaultStanceId": "offensive-stance",
+      "recoveryRule": null,
+      "displacedAbility": null,
+      "status": "complete",
+      "outcome": "window-ended",
+      "elapsedMs": 300000,
+      "completedKills": 56,
+      "unfinishedDamagedTargets": 1,
+      "minHpFraction": 0.40538010178116846,
+      "targetRegainCount": 0,
+      "contactIndicators": {
+        "sampleCount": 300,
+        "sampleEveryMs": 1000,
+        "staticDamageContactSamples": 0,
+        "staticDamageFeatureIds": []
+      },
+      "liveAuthoredOffenseFraction": null,
+      "zeroBodyExposureMs": null,
+      "readyHpBlockedMs": null,
+      "effectiveReconstruction": null,
+      "paths": {
+        "ready": "sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-volcanic-static/sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-volcanic-static-s101003/ready.json",
+        "summary": "sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-volcanic-static/sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-volcanic-static-s101003/summary.json",
+        "terminal": "sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-volcanic-static/complete.json",
+        "rawInventory": "raw-inventory.json",
+        "conduit": null,
+        "sustainTransitions": "sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-volcanic-static/sustain-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-volcanic-static-s101003/sustain-transitions.json"
+      },
+      "unavailableReasons": {
+        "contactIndicators": "Only recorded static-feature sample contacts; no continuous contact-duration or incoming-target-contact aggregate",
+        "conduit": "Not a Conduit package"
+      },
+      "firstKillDelayMs": 9400,
+      "units": {
+        "time": "ms",
+        "health": "HP",
+        "hpFraction": "fraction"
+      },
+      "recordedIncomingHpDamage": 4785.500000000001,
+      "recoveryEpisodes": [
+        {
+          "afterClearMs": 12100,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 19100,
+          "recoveredAtMs": 19100,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 23000,
+          "recoveredAtMs": 23000,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 30700,
+          "recoveredAtMs": 30700,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 44200,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 50300,
+          "recoveredAtMs": 50400,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 56500,
+          "recoveredAtMs": 56500,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 67500,
+          "recoveredAtMs": 67500,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 88700,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 130800,
+          "recoveredAtMs": 137300,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 145800,
+          "recoveredAtMs": 150400,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 165400,
+          "recoveredAtMs": 169400,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 197100,
+          "recoveredAtMs": 202900,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 214200,
+          "recoveredAtMs": 220200,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 239200,
+          "recoveredAtMs": 244400,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 252900,
+          "recoveredAtMs": 257500,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 280900,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        }
+      ],
+      "deathEvidence": [],
+      "sustain": {
+        "units": {
+          "time": "ms",
+          "health": "HP",
+          "fraction": "fraction"
+        },
+        "observation": "100ms post-tick samples; transitions may occur within a tick; refresh count is a lower bound",
+        "measuredMs": 300000,
+        "recuperatingMs": {
+          "ACTIVE": 0,
+          "POST_COMBAT": 0,
+          "OUT_OF_COMBAT": 0
+        },
+        "killWindowObservedMs": 157800,
+        "observedKillWindowStartsOrRefreshes": 55,
+        "cooldownDelayedReturnObservedMs": 0,
+        "minimumBarrier": 0,
+        "minimumHp": 159.3143799999992,
+        "terminal": {
+          "hp": 294.0370000000015,
+          "maxHp": 393,
+          "barrier": 0,
+          "recovery": 21,
+          "stance": "offensive-stance",
+          "phase": "ACTIVE",
+          "activeFraction": 0.16,
+          "killWindowMs": 0,
+          "killFraction": 0,
+          "killDurationMs": 4000,
+          "switchCooldownMs": 0,
+          "autoIntent": {
+            "kind": "attack",
+            "targetMonsterTypeId": "magma-brute",
+            "reason": "Nearest eligible target",
+            "source": "",
+            "activeRune": {
+              "conditionId": "in-combat",
+              "actionId": "orbit"
+            },
+            "matchedRunes": [
+              {
+                "conditionId": "in-combat",
+                "actionId": "orbit"
+              },
+              {
+                "conditionId": "always",
+                "actionId": "auto-path-enemy"
+              },
+              {
+                "conditionId": "always",
+                "actionId": "avoid-hazards"
+              }
+            ]
+          }
+        },
+        "meanObservedActiveFraction": 0.4097133333333333,
+        "sourceSpecificHealingHp": null,
+        "overhealHp": null,
+        "counterfactualDamageLostHp": null,
+        "unavailableReasons": {
+          "healing": "Existing heal events round applied HP, omit sub-1 HP applications, and do not label Recovery source; use them as recorded healing only.",
+          "overheal": "Not emitted by existing stream",
+          "damageLost": "Counterfactual damage is not observable; compare paired completed progress and actual damage during stance intervals."
+        }
+      },
+      "runicPoints": {
+        "budget": 38,
+        "cost": 36,
+        "unused": 2,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "terminalOwner": {
+        "hp": 294.0370000000015,
+        "maxHp": 393,
+        "barrier": 0
+      }
+    },
+    {
+      "observationId": "sustain-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-mountain-static",
+      "identityId": "breadth-t3-apprentice-balanced",
+      "arm": "mountain-static",
+      "comparisonId": "sustain-01-breadth-t3-apprentice-balanced-node-t3-tundra-03",
+      "tier": 3,
+      "root": "apprentice",
+      "frame": "balanced",
+      "path": "Ember mage",
+      "range": "mid",
+      "fixture": "node-t3-tundra-03",
+      "reconstructionPolicy": "not-applicable",
+      "itemId": "mountain-charm-t3",
+      "defaultStanceId": "offensive-stance",
+      "recoveryRule": null,
+      "displacedAbility": null,
+      "status": "complete",
+      "outcome": "window-ended",
+      "elapsedMs": 300000,
+      "completedKills": 15,
+      "unfinishedDamagedTargets": 0,
+      "minHpFraction": 0.061475826972009304,
+      "targetRegainCount": 1,
+      "contactIndicators": {
+        "sampleCount": 300,
+        "sampleEveryMs": 1000,
+        "staticDamageContactSamples": 0,
+        "staticDamageFeatureIds": []
+      },
+      "liveAuthoredOffenseFraction": null,
+      "zeroBodyExposureMs": null,
+      "readyHpBlockedMs": null,
+      "effectiveReconstruction": null,
+      "paths": {
+        "ready": "sustain-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-mountain-static/sustain-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-mountain-static-s101003/ready.json",
+        "summary": "sustain-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-mountain-static/sustain-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-mountain-static-s101003/summary.json",
+        "terminal": "sustain-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-mountain-static/complete.json",
+        "rawInventory": "raw-inventory.json",
+        "conduit": null,
+        "sustainTransitions": "sustain-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-mountain-static/sustain-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-mountain-static-s101003/sustain-transitions.json"
+      },
+      "unavailableReasons": {
+        "contactIndicators": "Only recorded static-feature sample contacts; no continuous contact-duration or incoming-target-contact aggregate",
+        "conduit": "Not a Conduit package"
+      },
+      "firstKillDelayMs": 21500,
+      "units": {
+        "time": "ms",
+        "health": "HP",
+        "hpFraction": "fraction"
+      },
+      "recordedIncomingHpDamage": 3964.3000000000025,
+      "recoveryEpisodes": [
+        {
+          "afterClearMs": 21500,
+          "recoveredAtMs": 27200,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 45800,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 62200,
+          "recoveredAtMs": 70600,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 94100,
+          "recoveredAtMs": 104100,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 112100,
+          "recoveredAtMs": 112100,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 132700,
+          "recoveredAtMs": 137100,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 143600,
+          "recoveredAtMs": 143600,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 150700,
+          "recoveredAtMs": 150700,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 255200,
+          "recoveredAtMs": 261200,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 269300,
+          "recoveredAtMs": 274900,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 296100,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": false
+        }
+      ],
+      "deathEvidence": [],
+      "sustain": {
+        "units": {
+          "time": "ms",
+          "health": "HP",
+          "fraction": "fraction"
+        },
+        "observation": "100ms post-tick samples; transitions may occur within a tick; refresh count is a lower bound",
+        "measuredMs": 300000,
+        "recuperatingMs": {
+          "ACTIVE": 0,
+          "POST_COMBAT": 0,
+          "OUT_OF_COMBAT": 0
+        },
+        "killWindowObservedMs": 0,
+        "observedKillWindowStartsOrRefreshes": 0,
+        "cooldownDelayedReturnObservedMs": 0,
+        "minimumBarrier": 0,
+        "minimumHp": 24.159999999999656,
+        "terminal": {
+          "hp": 251.52000000000038,
+          "maxHp": 393,
+          "barrier": 97.14999999999996,
+          "recovery": 15,
+          "stance": "offensive-stance",
+          "phase": "OUT_OF_COMBAT",
+          "activeFraction": 1,
+          "killWindowMs": 0,
+          "killFraction": 0,
+          "killDurationMs": 4000,
+          "switchCooldownMs": 0,
+          "autoIntent": {
+            "kind": "idle",
+            "reason": "Waiting to recover to full health",
+            "source": "Convalescent",
+            "activeRune": {
+              "conditionId": "always",
+              "actionId": "wait-for-regen"
+            },
+            "matchedRunes": [
+              {
+                "conditionId": "always",
+                "actionId": "wait-for-regen"
+              },
+              {
+                "conditionId": "always",
+                "actionId": "auto-path-enemy"
+              },
+              {
+                "conditionId": "always",
+                "actionId": "avoid-hazards"
+              }
+            ]
+          }
+        },
+        "meanObservedActiveFraction": 0.3593,
+        "sourceSpecificHealingHp": null,
+        "overhealHp": null,
+        "counterfactualDamageLostHp": null,
+        "unavailableReasons": {
+          "healing": "Existing heal events round applied HP, omit sub-1 HP applications, and do not label Recovery source; use them as recorded healing only.",
+          "overheal": "Not emitted by existing stream",
+          "damageLost": "Counterfactual damage is not observable; compare paired completed progress and actual damage during stance intervals."
+        }
+      },
+      "runicPoints": {
+        "budget": 38,
+        "cost": 36,
+        "unused": 2,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "terminalOwner": {
+        "hp": 251.52000000000038,
+        "maxHp": 393,
+        "barrier": 97.14999999999996
+      }
+    },
+    {
+      "observationId": "sustain-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-volcanic-static",
+      "identityId": "breadth-t3-apprentice-balanced",
+      "arm": "volcanic-static",
+      "comparisonId": "sustain-01-breadth-t3-apprentice-balanced-node-t3-tundra-03",
+      "tier": 3,
+      "root": "apprentice",
+      "frame": "balanced",
+      "path": "Ember mage",
+      "range": "mid",
+      "fixture": "node-t3-tundra-03",
+      "reconstructionPolicy": "not-applicable",
+      "itemId": "volcanic-charm-t3",
+      "defaultStanceId": "offensive-stance",
+      "recoveryRule": null,
+      "displacedAbility": null,
+      "status": "complete",
+      "outcome": "window-ended",
+      "elapsedMs": 300000,
+      "completedKills": 19,
+      "unfinishedDamagedTargets": 0,
+      "minHpFraction": 0.31320956743002243,
+      "targetRegainCount": 0,
+      "contactIndicators": {
+        "sampleCount": 300,
+        "sampleEveryMs": 1000,
+        "staticDamageContactSamples": 0,
+        "staticDamageFeatureIds": []
+      },
+      "liveAuthoredOffenseFraction": null,
+      "zeroBodyExposureMs": null,
+      "readyHpBlockedMs": null,
+      "effectiveReconstruction": null,
+      "paths": {
+        "ready": "sustain-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-volcanic-static/sustain-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-volcanic-static-s101003/ready.json",
+        "summary": "sustain-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-volcanic-static/sustain-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-volcanic-static-s101003/summary.json",
+        "terminal": "sustain-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-volcanic-static/complete.json",
+        "rawInventory": "raw-inventory.json",
+        "conduit": null,
+        "sustainTransitions": "sustain-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-volcanic-static/sustain-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-volcanic-static-s101003/sustain-transitions.json"
+      },
+      "unavailableReasons": {
+        "contactIndicators": "Only recorded static-feature sample contacts; no continuous contact-duration or incoming-target-contact aggregate",
+        "conduit": "Not a Conduit package"
+      },
+      "firstKillDelayMs": 21500,
+      "units": {
+        "time": "ms",
+        "health": "HP",
+        "hpFraction": "fraction"
+      },
+      "recordedIncomingHpDamage": 5600.299999999998,
+      "recoveryEpisodes": [
+        {
+          "afterClearMs": 21500,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 42000,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 51600,
+          "recoveredAtMs": 51600,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 72300,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 82600,
+          "recoveredAtMs": 82600,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 101400,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 110400,
+          "recoveredAtMs": 110400,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 120800,
+          "recoveredAtMs": 126600,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 143800,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 153900,
+          "recoveredAtMs": 153900,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 168200,
+          "recoveredAtMs": 168200,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 177500,
+          "recoveredAtMs": 177500,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 186400,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 200200,
+          "recoveredAtMs": 200200,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 210600,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 231700,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 241200,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 262300,
+          "recoveredAtMs": 268800,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 290600,
+          "recoveredAtMs": 298300,
+          "interruptedByNextPull": false
+        }
+      ],
+      "deathEvidence": [],
+      "sustain": {
+        "units": {
+          "time": "ms",
+          "health": "HP",
+          "fraction": "fraction"
+        },
+        "observation": "100ms post-tick samples; transitions may occur within a tick; refresh count is a lower bound",
+        "measuredMs": 300000,
+        "recuperatingMs": {
+          "ACTIVE": 0,
+          "POST_COMBAT": 0,
+          "OUT_OF_COMBAT": 0
+        },
+        "killWindowObservedMs": 74100,
+        "observedKillWindowStartsOrRefreshes": 19,
+        "cooldownDelayedReturnObservedMs": 0,
+        "minimumBarrier": 0,
+        "minimumHp": 123.09135999999882,
+        "terminal": {
+          "hp": 393,
+          "maxHp": 393,
+          "barrier": 0,
+          "recovery": 21,
+          "stance": "offensive-stance",
+          "phase": "OUT_OF_COMBAT",
+          "activeFraction": 1,
+          "killWindowMs": 0,
+          "killFraction": 0,
+          "killDurationMs": 4000,
+          "switchCooldownMs": 0,
+          "autoIntent": {
+            "kind": "attack",
+            "targetMonsterTypeId": "glacier-bear",
+            "reason": "Nearest eligible target",
+            "source": "",
+            "matchedRunes": [
+              {
+                "conditionId": "always",
+                "actionId": "wait-for-regen"
+              },
+              {
+                "conditionId": "always",
+                "actionId": "auto-path-enemy"
+              },
+              {
+                "conditionId": "always",
+                "actionId": "avoid-hazards"
+              }
+            ]
+          }
+        },
+        "meanObservedActiveFraction": 0.4841933333333333,
+        "sourceSpecificHealingHp": null,
+        "overhealHp": null,
+        "counterfactualDamageLostHp": null,
+        "unavailableReasons": {
+          "healing": "Existing heal events round applied HP, omit sub-1 HP applications, and do not label Recovery source; use them as recorded healing only.",
+          "overheal": "Not emitted by existing stream",
+          "damageLost": "Counterfactual damage is not observable; compare paired completed progress and actual damage during stance intervals."
+        }
+      },
+      "runicPoints": {
+        "budget": 38,
+        "cost": 36,
+        "unused": 2,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "terminalOwner": {
+        "hp": 393,
+        "maxHp": 393,
+        "barrier": 0
+      }
+    },
+    {
+      "observationId": "sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-static",
+      "identityId": "breadth-t4-conduit-heavy-a",
+      "arm": "mountain-static",
+      "comparisonId": "sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03",
+      "tier": 4,
+      "root": "conduit",
+      "frame": "heavy",
+      "path": "Covenanter",
+      "range": "mid",
+      "fixture": "node-t4-graveyard-03",
+      "reconstructionPolicy": "production-r2",
+      "itemId": "mountain-charm-t4",
+      "defaultStanceId": "offensive-stance",
+      "recoveryRule": null,
+      "displacedAbility": "expose-weakness",
+      "status": "complete",
+      "outcome": "window-ended",
+      "elapsedMs": 300000,
+      "completedKills": 35,
+      "unfinishedDamagedTargets": 4,
+      "minHpFraction": 0.4931623931623932,
+      "targetRegainCount": 4,
+      "contactIndicators": {
+        "sampleCount": 300,
+        "sampleEveryMs": 1000,
+        "staticDamageContactSamples": 0,
+        "staticDamageFeatureIds": []
+      },
+      "liveAuthoredOffenseFraction": 0.9516505501833945,
+      "zeroBodyExposureMs": 4400,
+      "readyHpBlockedMs": 0,
+      "effectiveReconstruction": {
+        "intervalMs": 5600,
+        "tickQuantizedIntervalMs": 5600,
+        "factors": {
+          "baseMs": 3500,
+          "frame": 1.12,
+          "specialization": 1,
+          "passive": 1,
+          "range": 1,
+          "preRelicMs": 3920,
+          "postRelicMs": 5600,
+          "floorMs": 2500,
+          "floorBinds": false
+        }
+      },
+      "paths": {
+        "ready": "sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-static/sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-static-s101003/ready.json",
+        "summary": "sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-static/sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-static-s101003/summary.json",
+        "terminal": "sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-static/complete.json",
+        "rawInventory": "raw-inventory.json",
+        "conduit": "sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-static/sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-static-s101003/conduit.json",
+        "sustainTransitions": "sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-static/sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-static-s101003/sustain-transitions.json"
+      },
+      "unavailableReasons": {
+        "contactIndicators": "Only recorded static-feature sample contacts; no continuous contact-duration or incoming-target-contact aggregate"
+      },
+      "firstKillDelayMs": 1800,
+      "units": {
+        "time": "ms",
+        "health": "HP",
+        "hpFraction": "fraction"
+      },
+      "recordedIncomingHpDamage": 2972.5,
+      "recoveryEpisodes": [
+        {
+          "afterClearMs": 1800,
+          "recoveredAtMs": 1800,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 9700,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 9900,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 13400,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 25500,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 26300,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 27400,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 38200,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 51200,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 61400,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 62500,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 72100,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        }
+      ],
+      "deathEvidence": [],
+      "sustain": {
+        "units": {
+          "time": "ms",
+          "health": "HP",
+          "fraction": "fraction"
+        },
+        "observation": "100ms post-tick samples; transitions may occur within a tick; refresh count is a lower bound",
+        "measuredMs": 300000,
+        "recuperatingMs": {
+          "ACTIVE": 0,
+          "POST_COMBAT": 0,
+          "OUT_OF_COMBAT": 0
+        },
+        "killWindowObservedMs": 0,
+        "observedKillWindowStartsOrRefreshes": 0,
+        "cooldownDelayedReturnObservedMs": 0,
+        "minimumBarrier": 0,
+        "minimumHp": 288.5,
+        "terminal": {
+          "hp": 511.10000000000014,
+          "maxHp": 585,
+          "barrier": 0,
+          "recovery": 25,
+          "stance": "offensive-stance",
+          "phase": "ACTIVE",
+          "activeFraction": 0,
+          "killWindowMs": 0,
+          "killFraction": 0,
+          "killDurationMs": 4000,
+          "switchCooldownMs": 0,
+          "autoIntent": {
+            "kind": "attack",
+            "targetMonsterTypeId": "gravewright",
+            "reason": "Nearest eligible target",
+            "source": "",
+            "activeRune": {
+              "conditionId": "in-combat",
+              "actionId": "orbit"
+            },
+            "matchedRunes": [
+              {
+                "conditionId": "in-combat",
+                "actionId": "orbit"
+              },
+              {
+                "conditionId": "always",
+                "actionId": "auto-path-enemy"
+              },
+              {
+                "conditionId": "always",
+                "actionId": "avoid-hazards"
+              }
+            ]
+          }
+        },
+        "meanObservedActiveFraction": 0.15443333333333334,
+        "sourceSpecificHealingHp": null,
+        "overhealHp": null,
+        "counterfactualDamageLostHp": null,
+        "unavailableReasons": {
+          "healing": "Existing heal events round applied HP, omit sub-1 HP applications, and do not label Recovery source; use them as recorded healing only.",
+          "overheal": "Not emitted by existing stream",
+          "damageLost": "Counterfactual damage is not observable; compare paired completed progress and actual damage during stance intervals."
+        }
+      },
+      "runicPoints": {
+        "budget": 47,
+        "cost": 36,
+        "unused": 11,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "terminalOwner": {
+        "hp": 511.10000000000014,
+        "maxHp": 585,
+        "barrier": 0
+      }
+    },
+    {
+      "observationId": "sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-recuperating",
+      "identityId": "breadth-t4-conduit-heavy-a",
+      "arm": "mountain-recuperating",
+      "comparisonId": "sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03",
+      "tier": 4,
+      "root": "conduit",
+      "frame": "heavy",
+      "path": "Covenanter",
+      "range": "mid",
+      "fixture": "node-t4-graveyard-03",
+      "reconstructionPolicy": "production-r2",
+      "itemId": "mountain-charm-t4",
+      "defaultStanceId": "offensive-stance",
+      "recoveryRule": {
+        "conditionId": "hp-below-25",
+        "actionId": "switch-stance",
+        "targetStanceId": "recuperating-stance"
+      },
+      "displacedAbility": "expose-weakness",
+      "status": "complete",
+      "outcome": "window-ended",
+      "elapsedMs": 300000,
+      "completedKills": 35,
+      "unfinishedDamagedTargets": 4,
+      "minHpFraction": 0.4931623931623932,
+      "targetRegainCount": 4,
+      "contactIndicators": {
+        "sampleCount": 300,
+        "sampleEveryMs": 1000,
+        "staticDamageContactSamples": 0,
+        "staticDamageFeatureIds": []
+      },
+      "liveAuthoredOffenseFraction": 0.9516505501833945,
+      "zeroBodyExposureMs": 4400,
+      "readyHpBlockedMs": 0,
+      "effectiveReconstruction": {
+        "intervalMs": 5600,
+        "tickQuantizedIntervalMs": 5600,
+        "factors": {
+          "baseMs": 3500,
+          "frame": 1.12,
+          "specialization": 1,
+          "passive": 1,
+          "range": 1,
+          "preRelicMs": 3920,
+          "postRelicMs": 5600,
+          "floorMs": 2500,
+          "floorBinds": false
+        }
+      },
+      "paths": {
+        "ready": "sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-recuperating/sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-recuperating-s101003/ready.json",
+        "summary": "sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-recuperating/sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-recuperating-s101003/summary.json",
+        "terminal": "sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-recuperating/complete.json",
+        "rawInventory": "raw-inventory.json",
+        "conduit": "sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-recuperating/sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-recuperating-s101003/conduit.json",
+        "sustainTransitions": "sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-recuperating/sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-mountain-recuperating-s101003/sustain-transitions.json"
+      },
+      "unavailableReasons": {
+        "contactIndicators": "Only recorded static-feature sample contacts; no continuous contact-duration or incoming-target-contact aggregate"
+      },
+      "firstKillDelayMs": 1800,
+      "units": {
+        "time": "ms",
+        "health": "HP",
+        "hpFraction": "fraction"
+      },
+      "recordedIncomingHpDamage": 2972.5,
+      "recoveryEpisodes": [
+        {
+          "afterClearMs": 1800,
+          "recoveredAtMs": 1800,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 9700,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 9900,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 13400,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 25500,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 26300,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 27400,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 38200,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 51200,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 61400,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 62500,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 72100,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        }
+      ],
+      "deathEvidence": [],
+      "sustain": {
+        "units": {
+          "time": "ms",
+          "health": "HP",
+          "fraction": "fraction"
+        },
+        "observation": "100ms post-tick samples; transitions may occur within a tick; refresh count is a lower bound",
+        "measuredMs": 300000,
+        "recuperatingMs": {
+          "ACTIVE": 0,
+          "POST_COMBAT": 0,
+          "OUT_OF_COMBAT": 0
+        },
+        "killWindowObservedMs": 0,
+        "observedKillWindowStartsOrRefreshes": 0,
+        "cooldownDelayedReturnObservedMs": 0,
+        "minimumBarrier": 0,
+        "minimumHp": 288.5,
+        "terminal": {
+          "hp": 511.10000000000014,
+          "maxHp": 585,
+          "barrier": 0,
+          "recovery": 25,
+          "stance": "offensive-stance",
+          "phase": "ACTIVE",
+          "activeFraction": 0,
+          "killWindowMs": 0,
+          "killFraction": 0,
+          "killDurationMs": 4000,
+          "switchCooldownMs": 0,
+          "autoIntent": {
+            "kind": "attack",
+            "targetMonsterTypeId": "gravewright",
+            "reason": "Nearest eligible target",
+            "source": "",
+            "activeRune": {
+              "conditionId": "in-combat",
+              "actionId": "orbit"
+            },
+            "matchedRunes": [
+              {
+                "conditionId": "in-combat",
+                "actionId": "orbit"
+              },
+              {
+                "conditionId": "always",
+                "actionId": "auto-path-enemy"
+              },
+              {
+                "conditionId": "always",
+                "actionId": "avoid-hazards"
+              }
+            ]
+          }
+        },
+        "meanObservedActiveFraction": 0.15443333333333334,
+        "sourceSpecificHealingHp": null,
+        "overhealHp": null,
+        "counterfactualDamageLostHp": null,
+        "unavailableReasons": {
+          "healing": "Existing heal events round applied HP, omit sub-1 HP applications, and do not label Recovery source; use them as recorded healing only.",
+          "overheal": "Not emitted by existing stream",
+          "damageLost": "Counterfactual damage is not observable; compare paired completed progress and actual damage during stance intervals."
+        }
+      },
+      "runicPoints": {
+        "budget": 47,
+        "cost": 41,
+        "unused": 6,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "terminalOwner": {
+        "hp": 511.10000000000014,
+        "maxHp": 585,
+        "barrier": 0
+      }
+    },
+    {
+      "observationId": "sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-static",
+      "identityId": "breadth-t4-conduit-heavy-a",
+      "arm": "volcanic-static",
+      "comparisonId": "sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03",
+      "tier": 4,
+      "root": "conduit",
+      "frame": "heavy",
+      "path": "Covenanter",
+      "range": "mid",
+      "fixture": "node-t4-graveyard-03",
+      "reconstructionPolicy": "production-r2",
+      "itemId": "volcanic-charm-t4",
+      "defaultStanceId": "offensive-stance",
+      "recoveryRule": null,
+      "displacedAbility": "expose-weakness",
+      "status": "complete",
+      "outcome": "window-ended",
+      "elapsedMs": 300000,
+      "completedKills": 40,
+      "unfinishedDamagedTargets": 5,
+      "minHpFraction": 0.49656615384615393,
+      "targetRegainCount": 4,
+      "contactIndicators": {
+        "sampleCount": 300,
+        "sampleEveryMs": 1000,
+        "staticDamageContactSamples": 0,
+        "staticDamageFeatureIds": []
+      },
+      "liveAuthoredOffenseFraction": 0.9720740246748917,
+      "zeroBodyExposureMs": 0,
+      "readyHpBlockedMs": 0,
+      "effectiveReconstruction": {
+        "intervalMs": 5600,
+        "tickQuantizedIntervalMs": 5600,
+        "factors": {
+          "baseMs": 3500,
+          "frame": 1.12,
+          "specialization": 1,
+          "passive": 1,
+          "range": 1,
+          "preRelicMs": 3920,
+          "postRelicMs": 5600,
+          "floorMs": 2500,
+          "floorBinds": false
+        }
+      },
+      "paths": {
+        "ready": "sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-static/sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-static-s101003/ready.json",
+        "summary": "sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-static/sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-static-s101003/summary.json",
+        "terminal": "sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-static/complete.json",
+        "rawInventory": "raw-inventory.json",
+        "conduit": "sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-static/sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-static-s101003/conduit.json",
+        "sustainTransitions": "sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-static/sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-static-s101003/sustain-transitions.json"
+      },
+      "unavailableReasons": {
+        "contactIndicators": "Only recorded static-feature sample contacts; no continuous contact-duration or incoming-target-contact aggregate"
+      },
+      "firstKillDelayMs": 1800,
+      "units": {
+        "time": "ms",
+        "health": "HP",
+        "hpFraction": "fraction"
+      },
+      "recordedIncomingHpDamage": 5763,
+      "recoveryEpisodes": [
+        {
+          "afterClearMs": 1800,
+          "recoveredAtMs": 1800,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 9700,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 9900,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 11000,
+          "recoveredAtMs": 11400,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 14400,
+          "recoveredAtMs": 14400,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 24300,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 24400,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 25500,
+          "recoveredAtMs": 26600,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 31100,
+          "recoveredAtMs": 31100,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 41900,
+          "recoveredAtMs": 41900,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 50400,
+          "recoveredAtMs": 50400,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 58800,
+          "recoveredAtMs": 58800,
+          "interruptedByNextPull": false
+        }
+      ],
+      "deathEvidence": [],
+      "sustain": {
+        "units": {
+          "time": "ms",
+          "health": "HP",
+          "fraction": "fraction"
+        },
+        "observation": "100ms post-tick samples; transitions may occur within a tick; refresh count is a lower bound",
+        "measuredMs": 300000,
+        "recuperatingMs": {
+          "ACTIVE": 0,
+          "POST_COMBAT": 0,
+          "OUT_OF_COMBAT": 0
+        },
+        "killWindowObservedMs": 131800,
+        "observedKillWindowStartsOrRefreshes": 37,
+        "cooldownDelayedReturnObservedMs": 0,
+        "minimumBarrier": 0,
+        "minimumHp": 290.49120000000005,
+        "terminal": {
+          "hp": 585,
+          "maxHp": 585,
+          "barrier": 0,
+          "recovery": 34,
+          "stance": "offensive-stance",
+          "phase": "ACTIVE",
+          "activeFraction": 0.16,
+          "killWindowMs": 0,
+          "killFraction": 0,
+          "killDurationMs": 4000,
+          "switchCooldownMs": 0,
+          "autoIntent": {
+            "kind": "attack",
+            "targetMonsterTypeId": "plague-rat",
+            "reason": "Nearest eligible target",
+            "source": "",
+            "activeRune": {
+              "conditionId": "in-combat",
+              "actionId": "orbit"
+            },
+            "matchedRunes": [
+              {
+                "conditionId": "in-combat",
+                "actionId": "orbit"
+              },
+              {
+                "conditionId": "always",
+                "actionId": "auto-path-enemy"
+              },
+              {
+                "conditionId": "always",
+                "actionId": "avoid-hazards"
+              }
+            ]
+          }
+        },
+        "meanObservedActiveFraction": 0.28754,
+        "sourceSpecificHealingHp": null,
+        "overhealHp": null,
+        "counterfactualDamageLostHp": null,
+        "unavailableReasons": {
+          "healing": "Existing heal events round applied HP, omit sub-1 HP applications, and do not label Recovery source; use them as recorded healing only.",
+          "overheal": "Not emitted by existing stream",
+          "damageLost": "Counterfactual damage is not observable; compare paired completed progress and actual damage during stance intervals."
+        }
+      },
+      "runicPoints": {
+        "budget": 47,
+        "cost": 36,
+        "unused": 11,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "terminalOwner": {
+        "hp": 585,
+        "maxHp": 585,
+        "barrier": 0
+      }
+    },
+    {
+      "observationId": "sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-recuperating",
+      "identityId": "breadth-t4-conduit-heavy-a",
+      "arm": "volcanic-recuperating",
+      "comparisonId": "sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03",
+      "tier": 4,
+      "root": "conduit",
+      "frame": "heavy",
+      "path": "Covenanter",
+      "range": "mid",
+      "fixture": "node-t4-graveyard-03",
+      "reconstructionPolicy": "production-r2",
+      "itemId": "volcanic-charm-t4",
+      "defaultStanceId": "offensive-stance",
+      "recoveryRule": {
+        "conditionId": "hp-below-25",
+        "actionId": "switch-stance",
+        "targetStanceId": "recuperating-stance"
+      },
+      "displacedAbility": "expose-weakness",
+      "status": "complete",
+      "outcome": "window-ended",
+      "elapsedMs": 300000,
+      "completedKills": 40,
+      "unfinishedDamagedTargets": 5,
+      "minHpFraction": 0.49656615384615393,
+      "targetRegainCount": 4,
+      "contactIndicators": {
+        "sampleCount": 300,
+        "sampleEveryMs": 1000,
+        "staticDamageContactSamples": 0,
+        "staticDamageFeatureIds": []
+      },
+      "liveAuthoredOffenseFraction": 0.9720740246748917,
+      "zeroBodyExposureMs": 0,
+      "readyHpBlockedMs": 0,
+      "effectiveReconstruction": {
+        "intervalMs": 5600,
+        "tickQuantizedIntervalMs": 5600,
+        "factors": {
+          "baseMs": 3500,
+          "frame": 1.12,
+          "specialization": 1,
+          "passive": 1,
+          "range": 1,
+          "preRelicMs": 3920,
+          "postRelicMs": 5600,
+          "floorMs": 2500,
+          "floorBinds": false
+        }
+      },
+      "paths": {
+        "ready": "sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-recuperating/sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-recuperating-s101003/ready.json",
+        "summary": "sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-recuperating/sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-recuperating-s101003/summary.json",
+        "terminal": "sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-recuperating/complete.json",
+        "rawInventory": "raw-inventory.json",
+        "conduit": "sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-recuperating/sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-recuperating-s101003/conduit.json",
+        "sustainTransitions": "sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-recuperating/sustain-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-volcanic-recuperating-s101003/sustain-transitions.json"
+      },
+      "unavailableReasons": {
+        "contactIndicators": "Only recorded static-feature sample contacts; no continuous contact-duration or incoming-target-contact aggregate"
+      },
+      "firstKillDelayMs": 1800,
+      "units": {
+        "time": "ms",
+        "health": "HP",
+        "hpFraction": "fraction"
+      },
+      "recordedIncomingHpDamage": 5763,
+      "recoveryEpisodes": [
+        {
+          "afterClearMs": 1800,
+          "recoveredAtMs": 1800,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 9700,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 9900,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 11000,
+          "recoveredAtMs": 11400,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 14400,
+          "recoveredAtMs": 14400,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 24300,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 24400,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 25500,
+          "recoveredAtMs": 26600,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 31100,
+          "recoveredAtMs": 31100,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 41900,
+          "recoveredAtMs": 41900,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 50400,
+          "recoveredAtMs": 50400,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 58800,
+          "recoveredAtMs": 58800,
+          "interruptedByNextPull": false
+        }
+      ],
+      "deathEvidence": [],
+      "sustain": {
+        "units": {
+          "time": "ms",
+          "health": "HP",
+          "fraction": "fraction"
+        },
+        "observation": "100ms post-tick samples; transitions may occur within a tick; refresh count is a lower bound",
+        "measuredMs": 300000,
+        "recuperatingMs": {
+          "ACTIVE": 0,
+          "POST_COMBAT": 0,
+          "OUT_OF_COMBAT": 0
+        },
+        "killWindowObservedMs": 131800,
+        "observedKillWindowStartsOrRefreshes": 37,
+        "cooldownDelayedReturnObservedMs": 0,
+        "minimumBarrier": 0,
+        "minimumHp": 290.49120000000005,
+        "terminal": {
+          "hp": 585,
+          "maxHp": 585,
+          "barrier": 0,
+          "recovery": 34,
+          "stance": "offensive-stance",
+          "phase": "ACTIVE",
+          "activeFraction": 0.16,
+          "killWindowMs": 0,
+          "killFraction": 0,
+          "killDurationMs": 4000,
+          "switchCooldownMs": 0,
+          "autoIntent": {
+            "kind": "attack",
+            "targetMonsterTypeId": "plague-rat",
+            "reason": "Nearest eligible target",
+            "source": "",
+            "activeRune": {
+              "conditionId": "in-combat",
+              "actionId": "orbit"
+            },
+            "matchedRunes": [
+              {
+                "conditionId": "in-combat",
+                "actionId": "orbit"
+              },
+              {
+                "conditionId": "always",
+                "actionId": "auto-path-enemy"
+              },
+              {
+                "conditionId": "always",
+                "actionId": "avoid-hazards"
+              }
+            ]
+          }
+        },
+        "meanObservedActiveFraction": 0.28754,
+        "sourceSpecificHealingHp": null,
+        "overhealHp": null,
+        "counterfactualDamageLostHp": null,
+        "unavailableReasons": {
+          "healing": "Existing heal events round applied HP, omit sub-1 HP applications, and do not label Recovery source; use them as recorded healing only.",
+          "overheal": "Not emitted by existing stream",
+          "damageLost": "Counterfactual damage is not observable; compare paired completed progress and actual damage during stance intervals."
+        }
+      },
+      "runicPoints": {
+        "budget": 47,
+        "cost": 41,
+        "unused": 6,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "terminalOwner": {
+        "hp": 585,
+        "maxHp": 585,
+        "barrier": 0
+      }
+    },
+    {
+      "observationId": "sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-static",
+      "identityId": "breadth-t4-squire-heavy-a",
+      "arm": "mountain-static",
+      "comparisonId": "sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03",
+      "tier": 4,
+      "root": "squire",
+      "frame": "heavy",
+      "path": "Avenger",
+      "range": "close",
+      "fixture": "node-t4-graveyard-03",
+      "reconstructionPolicy": "not-applicable",
+      "itemId": "mountain-charm-t4",
+      "defaultStanceId": "offensive-stance",
+      "recoveryRule": null,
+      "displacedAbility": null,
+      "status": "complete",
+      "outcome": "player-died",
+      "elapsedMs": 182100,
+      "completedKills": 36,
+      "unfinishedDamagedTargets": 1,
+      "minHpFraction": 0,
+      "targetRegainCount": 0,
+      "contactIndicators": {
+        "sampleCount": 183,
+        "sampleEveryMs": 1000,
+        "staticDamageContactSamples": 0,
+        "staticDamageFeatureIds": []
+      },
+      "liveAuthoredOffenseFraction": null,
+      "zeroBodyExposureMs": null,
+      "readyHpBlockedMs": null,
+      "effectiveReconstruction": null,
+      "paths": {
+        "ready": "sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-static/sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-static-s101003/ready.json",
+        "summary": "sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-static/sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-static-s101003/summary.json",
+        "terminal": "sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-static/complete.json",
+        "rawInventory": "raw-inventory.json",
+        "conduit": null,
+        "sustainTransitions": "sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-static/sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-static-s101003/sustain-transitions.json"
+      },
+      "unavailableReasons": {
+        "contactIndicators": "Only recorded static-feature sample contacts; no continuous contact-duration or incoming-target-contact aggregate",
+        "conduit": "Not a Conduit package"
+      },
+      "firstKillDelayMs": 2000,
+      "units": {
+        "time": "ms",
+        "health": "HP",
+        "hpFraction": "fraction"
+      },
+      "recordedIncomingHpDamage": 2624.95,
+      "recoveryEpisodes": [
+        {
+          "afterClearMs": 2000,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 12200,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 13300,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 19200,
+          "recoveredAtMs": 21200,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 31100,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 31300,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 32400,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 41600,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 46600,
+          "recoveredAtMs": 46900,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 83700,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 92900,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 125100,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 131600,
+          "recoveredAtMs": 136200,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 152800,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 162400,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        }
+      ],
+      "deathEvidence": [
+        {
+          "atMs": 182100,
+          "event": {
+            "kind": "player-death",
+            "nodeId": "node-t4-graveyard-03",
+            "player": {
+              "id": "bench-bot-0",
+              "name": "sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-static",
+              "actorType": "player"
+            },
+            "cause": {
+              "kind": "ranged",
+              "killer": {
+                "monsterEntityId": "node-t4-graveyard-03_monster-3",
+                "monsterTypeId": "gravewright",
+                "monsterName": "Gravewright",
+                "isBoss": false,
+                "nodeId": "node-t4-graveyard-03"
+              },
+              "damage": 13
+            },
+            "id": 1386,
+            "tick": 1822,
+            "serverTime": 1800000182100
+          }
+        }
+      ],
+      "sustain": {
+        "units": {
+          "time": "ms",
+          "health": "HP",
+          "fraction": "fraction"
+        },
+        "observation": "100ms post-tick samples; transitions may occur within a tick; refresh count is a lower bound",
+        "measuredMs": 182200,
+        "recuperatingMs": {
+          "ACTIVE": 0,
+          "POST_COMBAT": 0,
+          "OUT_OF_COMBAT": 0
+        },
+        "killWindowObservedMs": 0,
+        "observedKillWindowStartsOrRefreshes": 0,
+        "cooldownDelayedReturnObservedMs": 0,
+        "minimumBarrier": 0,
+        "minimumHp": 0,
+        "terminal": {
+          "hp": 0,
+          "maxHp": 616,
+          "barrier": 0,
+          "recovery": 19,
+          "stance": "offensive-stance",
+          "phase": "OUT_OF_COMBAT",
+          "activeFraction": 1,
+          "killWindowMs": 0,
+          "killFraction": 0,
+          "killDurationMs": 4000,
+          "switchCooldownMs": 0,
+          "autoIntent": null
+        },
+        "meanObservedActiveFraction": 0.3710757409440176,
+        "sourceSpecificHealingHp": null,
+        "overhealHp": null,
+        "counterfactualDamageLostHp": null,
+        "unavailableReasons": {
+          "healing": "Existing heal events round applied HP, omit sub-1 HP applications, and do not label Recovery source; use them as recorded healing only.",
+          "overheal": "Not emitted by existing stream",
+          "damageLost": "Counterfactual damage is not observable; compare paired completed progress and actual damage during stance intervals."
+        }
+      },
+      "runicPoints": {
+        "budget": 47,
+        "cost": 40,
+        "unused": 7,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "terminalOwner": {
+        "hp": 0,
+        "maxHp": 616,
+        "barrier": 0
+      }
+    },
+    {
+      "observationId": "sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-recuperating",
+      "identityId": "breadth-t4-squire-heavy-a",
+      "arm": "mountain-recuperating",
+      "comparisonId": "sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03",
+      "tier": 4,
+      "root": "squire",
+      "frame": "heavy",
+      "path": "Avenger",
+      "range": "close",
+      "fixture": "node-t4-graveyard-03",
+      "reconstructionPolicy": "not-applicable",
+      "itemId": "mountain-charm-t4",
+      "defaultStanceId": "offensive-stance",
+      "recoveryRule": {
+        "conditionId": "hp-below-25",
+        "actionId": "switch-stance",
+        "targetStanceId": "recuperating-stance"
+      },
+      "displacedAbility": null,
+      "status": "complete",
+      "outcome": "player-died",
+      "elapsedMs": 184300,
+      "completedKills": 36,
+      "unfinishedDamagedTargets": 1,
+      "minHpFraction": 0,
+      "targetRegainCount": 0,
+      "contactIndicators": {
+        "sampleCount": 185,
+        "sampleEveryMs": 1000,
+        "staticDamageContactSamples": 0,
+        "staticDamageFeatureIds": []
+      },
+      "liveAuthoredOffenseFraction": null,
+      "zeroBodyExposureMs": null,
+      "readyHpBlockedMs": null,
+      "effectiveReconstruction": null,
+      "paths": {
+        "ready": "sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-recuperating/sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-recuperating-s101003/ready.json",
+        "summary": "sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-recuperating/sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-recuperating-s101003/summary.json",
+        "terminal": "sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-recuperating/complete.json",
+        "rawInventory": "raw-inventory.json",
+        "conduit": null,
+        "sustainTransitions": "sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-recuperating/sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-recuperating-s101003/sustain-transitions.json"
+      },
+      "unavailableReasons": {
+        "contactIndicators": "Only recorded static-feature sample contacts; no continuous contact-duration or incoming-target-contact aggregate",
+        "conduit": "Not a Conduit package"
+      },
+      "firstKillDelayMs": 2000,
+      "units": {
+        "time": "ms",
+        "health": "HP",
+        "hpFraction": "fraction"
+      },
+      "recordedIncomingHpDamage": 2881.95,
+      "recoveryEpisodes": [
+        {
+          "afterClearMs": 2000,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 12200,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 13300,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 19200,
+          "recoveredAtMs": 21200,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 31100,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 31300,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 32400,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 41600,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 46600,
+          "recoveredAtMs": 46900,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 83700,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 92900,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 125100,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 131600,
+          "recoveredAtMs": 136200,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 152800,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 162400,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        }
+      ],
+      "deathEvidence": [
+        {
+          "atMs": 184300,
+          "event": {
+            "kind": "player-death",
+            "nodeId": "node-t4-graveyard-03",
+            "player": {
+              "id": "bench-bot-0",
+              "name": "sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-mountain-recuperating",
+              "actorType": "player"
+            },
+            "cause": {
+              "kind": "dot",
+              "killer": {
+                "monsterEntityId": "node-t4-graveyard-03_monster-6",
+                "monsterTypeId": "plague-hound",
+                "monsterName": "Plague Hound",
+                "isBoss": false,
+                "nodeId": "node-t4-graveyard-03"
+              },
+              "effectName": "Hound Plague",
+              "damage": 116,
+              "stacks": 5
+            },
+            "id": 1420,
+            "tick": 1844,
+            "serverTime": 1800000184300
+          }
+        }
+      ],
+      "sustain": {
+        "units": {
+          "time": "ms",
+          "health": "HP",
+          "fraction": "fraction"
+        },
+        "observation": "100ms post-tick samples; transitions may occur within a tick; refresh count is a lower bound",
+        "measuredMs": 184400,
+        "recuperatingMs": {
+          "ACTIVE": 1700,
+          "POST_COMBAT": 0,
+          "OUT_OF_COMBAT": 100
+        },
+        "killWindowObservedMs": 0,
+        "observedKillWindowStartsOrRefreshes": 0,
+        "cooldownDelayedReturnObservedMs": 700,
+        "minimumBarrier": 0,
+        "minimumHp": 0,
+        "terminal": {
+          "hp": 0,
+          "maxHp": 616,
+          "barrier": 0,
+          "recovery": 19,
+          "stance": "recuperating-stance",
+          "phase": "OUT_OF_COMBAT",
+          "activeFraction": 1,
+          "killWindowMs": 0,
+          "killFraction": 0,
+          "killDurationMs": 4000,
+          "switchCooldownMs": 0,
+          "autoIntent": null
+        },
+        "meanObservedActiveFraction": 0.37760303687635577,
+        "sourceSpecificHealingHp": null,
+        "overhealHp": null,
+        "counterfactualDamageLostHp": null,
+        "unavailableReasons": {
+          "healing": "Existing heal events round applied HP, omit sub-1 HP applications, and do not label Recovery source; use them as recorded healing only.",
+          "overheal": "Not emitted by existing stream",
+          "damageLost": "Counterfactual damage is not observable; compare paired completed progress and actual damage during stance intervals."
+        }
+      },
+      "runicPoints": {
+        "budget": 47,
+        "cost": 45,
+        "unused": 2,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "terminalOwner": {
+        "hp": 0,
+        "maxHp": 616,
+        "barrier": 0
+      }
+    },
+    {
+      "observationId": "sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-volcanic-static",
+      "identityId": "breadth-t4-squire-heavy-a",
+      "arm": "volcanic-static",
+      "comparisonId": "sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03",
+      "tier": 4,
+      "root": "squire",
+      "frame": "heavy",
+      "path": "Avenger",
+      "range": "close",
+      "fixture": "node-t4-graveyard-03",
+      "reconstructionPolicy": "not-applicable",
+      "itemId": "volcanic-charm-t4",
+      "defaultStanceId": "offensive-stance",
+      "recoveryRule": null,
+      "displacedAbility": null,
+      "status": "complete",
+      "outcome": "window-ended",
+      "elapsedMs": 300000,
+      "completedKills": 51,
+      "unfinishedDamagedTargets": 1,
+      "minHpFraction": 0.4110664935064944,
+      "targetRegainCount": 0,
+      "contactIndicators": {
+        "sampleCount": 300,
+        "sampleEveryMs": 1000,
+        "staticDamageContactSamples": 0,
+        "staticDamageFeatureIds": []
+      },
+      "liveAuthoredOffenseFraction": null,
+      "zeroBodyExposureMs": null,
+      "readyHpBlockedMs": null,
+      "effectiveReconstruction": null,
+      "paths": {
+        "ready": "sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-volcanic-static/sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-volcanic-static-s101003/ready.json",
+        "summary": "sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-volcanic-static/sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-volcanic-static-s101003/summary.json",
+        "terminal": "sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-volcanic-static/complete.json",
+        "rawInventory": "raw-inventory.json",
+        "conduit": null,
+        "sustainTransitions": "sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-volcanic-static/sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-volcanic-static-s101003/sustain-transitions.json"
+      },
+      "unavailableReasons": {
+        "contactIndicators": "Only recorded static-feature sample contacts; no continuous contact-duration or incoming-target-contact aggregate",
+        "conduit": "Not a Conduit package"
+      },
+      "firstKillDelayMs": 2000,
+      "units": {
+        "time": "ms",
+        "health": "HP",
+        "hpFraction": "fraction"
+      },
+      "recordedIncomingHpDamage": 6948,
+      "recoveryEpisodes": [
+        {
+          "afterClearMs": 2000,
+          "recoveredAtMs": 2000,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 12200,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 13300,
+          "recoveredAtMs": 14700,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 18500,
+          "recoveredAtMs": 18500,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 30500,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 30700,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 31800,
+          "recoveredAtMs": 32600,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 38800,
+          "recoveredAtMs": 38800,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 42900,
+          "recoveredAtMs": 42900,
+          "interruptedByNextPull": false
+        }
+      ],
+      "deathEvidence": [],
+      "sustain": {
+        "units": {
+          "time": "ms",
+          "health": "HP",
+          "fraction": "fraction"
+        },
+        "observation": "100ms post-tick samples; transitions may occur within a tick; refresh count is a lower bound",
+        "measuredMs": 300000,
+        "recuperatingMs": {
+          "ACTIVE": 0,
+          "POST_COMBAT": 0,
+          "OUT_OF_COMBAT": 0
+        },
+        "killWindowObservedMs": 162100,
+        "observedKillWindowStartsOrRefreshes": 46,
+        "cooldownDelayedReturnObservedMs": 0,
+        "minimumBarrier": 0,
+        "minimumHp": 253.21696000000054,
+        "terminal": {
+          "hp": 616,
+          "maxHp": 616,
+          "barrier": 0,
+          "recovery": 26,
+          "stance": "offensive-stance",
+          "phase": "POST_COMBAT",
+          "activeFraction": 0.6000000000000001,
+          "killWindowMs": 1500,
+          "killFraction": 0.14,
+          "killDurationMs": 4000,
+          "switchCooldownMs": 0,
+          "autoIntent": {
+            "kind": "attack",
+            "targetMonsterTypeId": "bone-crawler",
+            "reason": "Nearest eligible target",
+            "source": "",
+            "matchedRunes": [
+              {
+                "conditionId": "always",
+                "actionId": "wait-for-regen"
+              },
+              {
+                "conditionId": "always",
+                "actionId": "auto-path-enemy"
+              },
+              {
+                "conditionId": "always",
+                "actionId": "avoid-hazards"
+              }
+            ]
+          }
+        },
+        "meanObservedActiveFraction": 0.5781333333333334,
+        "sourceSpecificHealingHp": null,
+        "overhealHp": null,
+        "counterfactualDamageLostHp": null,
+        "unavailableReasons": {
+          "healing": "Existing heal events round applied HP, omit sub-1 HP applications, and do not label Recovery source; use them as recorded healing only.",
+          "overheal": "Not emitted by existing stream",
+          "damageLost": "Counterfactual damage is not observable; compare paired completed progress and actual damage during stance intervals."
+        }
+      },
+      "runicPoints": {
+        "budget": 47,
+        "cost": 40,
+        "unused": 7,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "terminalOwner": {
+        "hp": 616,
+        "maxHp": 616,
+        "barrier": 0
+      }
+    },
+    {
+      "observationId": "sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-volcanic-recuperating",
+      "identityId": "breadth-t4-squire-heavy-a",
+      "arm": "volcanic-recuperating",
+      "comparisonId": "sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03",
+      "tier": 4,
+      "root": "squire",
+      "frame": "heavy",
+      "path": "Avenger",
+      "range": "close",
+      "fixture": "node-t4-graveyard-03",
+      "reconstructionPolicy": "not-applicable",
+      "itemId": "volcanic-charm-t4",
+      "defaultStanceId": "offensive-stance",
+      "recoveryRule": {
+        "conditionId": "hp-below-25",
+        "actionId": "switch-stance",
+        "targetStanceId": "recuperating-stance"
+      },
+      "displacedAbility": null,
+      "status": "complete",
+      "outcome": "window-ended",
+      "elapsedMs": 300000,
+      "completedKills": 51,
+      "unfinishedDamagedTargets": 1,
+      "minHpFraction": 0.4110664935064944,
+      "targetRegainCount": 0,
+      "contactIndicators": {
+        "sampleCount": 300,
+        "sampleEveryMs": 1000,
+        "staticDamageContactSamples": 0,
+        "staticDamageFeatureIds": []
+      },
+      "liveAuthoredOffenseFraction": null,
+      "zeroBodyExposureMs": null,
+      "readyHpBlockedMs": null,
+      "effectiveReconstruction": null,
+      "paths": {
+        "ready": "sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-volcanic-recuperating/sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-volcanic-recuperating-s101003/ready.json",
+        "summary": "sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-volcanic-recuperating/sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-volcanic-recuperating-s101003/summary.json",
+        "terminal": "sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-volcanic-recuperating/complete.json",
+        "rawInventory": "raw-inventory.json",
+        "conduit": null,
+        "sustainTransitions": "sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-volcanic-recuperating/sustain-01-breadth-t4-squire-heavy-a-node-t4-graveyard-03-volcanic-recuperating-s101003/sustain-transitions.json"
+      },
+      "unavailableReasons": {
+        "contactIndicators": "Only recorded static-feature sample contacts; no continuous contact-duration or incoming-target-contact aggregate",
+        "conduit": "Not a Conduit package"
+      },
+      "firstKillDelayMs": 2000,
+      "units": {
+        "time": "ms",
+        "health": "HP",
+        "hpFraction": "fraction"
+      },
+      "recordedIncomingHpDamage": 6948,
+      "recoveryEpisodes": [
+        {
+          "afterClearMs": 2000,
+          "recoveredAtMs": 2000,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 12200,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 13300,
+          "recoveredAtMs": 14700,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 18500,
+          "recoveredAtMs": 18500,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 30500,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 30700,
+          "recoveredAtMs": null,
+          "interruptedByNextPull": true
+        },
+        {
+          "afterClearMs": 31800,
+          "recoveredAtMs": 32600,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 38800,
+          "recoveredAtMs": 38800,
+          "interruptedByNextPull": false
+        },
+        {
+          "afterClearMs": 42900,
+          "recoveredAtMs": 42900,
+          "interruptedByNextPull": false
+        }
+      ],
+      "deathEvidence": [],
+      "sustain": {
+        "units": {
+          "time": "ms",
+          "health": "HP",
+          "fraction": "fraction"
+        },
+        "observation": "100ms post-tick samples; transitions may occur within a tick; refresh count is a lower bound",
+        "measuredMs": 300000,
+        "recuperatingMs": {
+          "ACTIVE": 0,
+          "POST_COMBAT": 0,
+          "OUT_OF_COMBAT": 0
+        },
+        "killWindowObservedMs": 162100,
+        "observedKillWindowStartsOrRefreshes": 46,
+        "cooldownDelayedReturnObservedMs": 0,
+        "minimumBarrier": 0,
+        "minimumHp": 253.21696000000054,
+        "terminal": {
+          "hp": 616,
+          "maxHp": 616,
+          "barrier": 0,
+          "recovery": 26,
+          "stance": "offensive-stance",
+          "phase": "POST_COMBAT",
+          "activeFraction": 0.6000000000000001,
+          "killWindowMs": 1500,
+          "killFraction": 0.14,
+          "killDurationMs": 4000,
+          "switchCooldownMs": 0,
+          "autoIntent": {
+            "kind": "attack",
+            "targetMonsterTypeId": "bone-crawler",
+            "reason": "Nearest eligible target",
+            "source": "",
+            "matchedRunes": [
+              {
+                "conditionId": "always",
+                "actionId": "wait-for-regen"
+              },
+              {
+                "conditionId": "always",
+                "actionId": "auto-path-enemy"
+              },
+              {
+                "conditionId": "always",
+                "actionId": "avoid-hazards"
+              }
+            ]
+          }
+        },
+        "meanObservedActiveFraction": 0.5781333333333334,
+        "sourceSpecificHealingHp": null,
+        "overhealHp": null,
+        "counterfactualDamageLostHp": null,
+        "unavailableReasons": {
+          "healing": "Existing heal events round applied HP, omit sub-1 HP applications, and do not label Recovery source; use them as recorded healing only.",
+          "overheal": "Not emitted by existing stream",
+          "damageLost": "Counterfactual damage is not observable; compare paired completed progress and actual damage during stance intervals."
+        }
+      },
+      "runicPoints": {
+        "budget": 47,
+        "cost": 45,
+        "unused": 2,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "terminalOwner": {
+        "hp": 616,
+        "maxHp": 616,
+        "barrier": 0
+      }
+    }
+  ]
+}

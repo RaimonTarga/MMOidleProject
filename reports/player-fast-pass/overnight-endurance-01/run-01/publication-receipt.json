@@ -1,0 +1,63 @@
+{
+  "experimentId": "overnight-endurance-01",
+  "publicationDirectory": "reports/player-fast-pass/overnight-endurance-01/run-01",
+  "executionSourceCommit": "e26fdccd3baaa96fe1d19263349d57d9c5abc626",
+  "sourceSha256": "6f49c74da2c23037d06b1185ba4ba1682a8b9160552475e8deb517889ebddd3b",
+  "hitboxesSha256": "08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83",
+  "measuredArtifact": "results-summary.json",
+  "measuredSha256": "4df7fa0695fa9167d182adae90989b9731e240ad85aa4876104619a5ab25a69f",
+  "counts": {
+    "planned": 336,
+    "completed": 336,
+    "failed": 0,
+    "notRun": 0,
+    "combatObservations": 336,
+    "playerDied": 104,
+    "windowEnded": 232
+  },
+  "rawInventoryValidation": {
+    "retainedRoot": "D:\\mmo-idle\\overnight-endurance-01\\run-01",
+    "entries": 4682,
+    "totalBytes": 4865211362,
+    "mismatches": 0
+  },
+  "publicationFiles": {
+    "complete.json": {
+      "bytes": 89,
+      "sha256": "4d205a9307c6590225ca1fd7acbc3e11ae4e67a0179319c4fe0d488b30c90aeb"
+    },
+    "identity.json": {
+      "bytes": 144639,
+      "sha256": "ca5272e5e41d57134b3a6d226a8548d4fb5c9e8b2c4b26e55ca8a4da4e99301a"
+    },
+    "manifest.json": {
+      "bytes": 1128237,
+      "sha256": "bfec17c558301886a80a98d2ba136573e2f6bd92350e5be0bf6bbcb28eb0eb7c"
+    },
+    "packet-qualified.json": {
+      "bytes": 290,
+      "sha256": "ca02d387f3ceb5722803b6a3c0d81bcac767f4f622bbac9dafd0d5cd356069fd"
+    },
+    "packet-seal.json": {
+      "bytes": 177,
+      "sha256": "e046153aecf575239c7a30253b207c19c4d866bce94643c253907d611fea5d10"
+    },
+    "qualification-complete.json": {
+      "bytes": 87,
+      "sha256": "976e82847b91b8a177c6f3a4b54534d45b979aa75dbc213553bb2467a6482d9c"
+    },
+    "raw-inventory.json": {
+      "bytes": 1506709,
+      "sha256": "a4df04fbb7721baf3277e81235133c71850ca7655f2430999ce3207a91a60242"
+    },
+    "resolved-builds.json": {
+      "bytes": 6678931,
+      "sha256": "bdb0f3dd1e5605a774ab3b0a0f6a0d8fb6a40973454b49d7d02b26e453796375"
+    },
+    "results-summary.json": {
+      "bytes": 3792511,
+      "sha256": "4df7fa0695fa9167d182adae90989b9731e240ad85aa4876104619a5ab25a69f"
+    }
+  },
+  "scope": "Compact evidence only; raw event and sample streams remain at the retained D: root."
+}
