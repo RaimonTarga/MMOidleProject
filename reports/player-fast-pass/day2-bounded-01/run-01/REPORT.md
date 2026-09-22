@@ -6,7 +6,7 @@ This is synthetic bounded gameplay evidence. Every run summary reports `syntheti
 
 ## Scope and identity
 
-- Block A: four matched pairs per arm, 100 ms steps, 300,000 ms cap, Tundra-03, seeds 101003/101009, original Defensive Conduit and Offensive Slinger. Control source: `61c12e67cc023c61cff6498fd2e799b3f6b55d50`; candidate source: `f021845bd18f43c032e8044a60af071868000e80`.
+- Block A: four matched pairs, with four cells in each arm; 100 ms steps, 300,000 ms cap, Tundra-03, seeds 101003/101009, original Defensive Conduit and Offensive Slinger. Control source: `61c12e67cc023c61cff6498fd2e799b3f6b55d50`; candidate source: `f021845bd18f43c032e8044a60af071868000e80`.
 - Block B: sixteen matched pairs, 100 ms steps, 1,800,000 ms cap, seeds 101009/101021, the four declared packages across Graveyard-03, Desert-03, Volcanic-03, and Tundra-03. New B gameplay used control source `61c12e67cc023c61cff6498fd2e799b3f6b55d50`; the sixteen reused B controls retain measured source `e26fdccd3baaa96fe1d19263349d57d9c5abc626`.
 - Stop rule: first death. Watchdogs: one child, at least 5 GiB free disk and 1 GiB host RAM, at most 2 GiB child RSS, and 120 seconds without heartbeat advance; retries were zero.
 - The B arm had no session observer. A session evidence is therefore not silently generalized to B.
@@ -60,6 +60,7 @@ The Slinger negative-control cells were also exposed to Glacier Bear shield sess
 - A endpoints are at 300 seconds. B endpoints are at 5, 15, and 30 minutes. A post-death endpoint is `null`, not zero; the ledger preserves that distinction.
 - `hpDamage` and `absorbed` are separate work fields. Absorption is not HP progress, and a shield-session hook is not ordinary cadence.
 - Positive lifetime kills establish work before death, not uninterrupted late-window progress. Use the recorded endpoint and longest-progress-gap fields for late-window claims.
+- In the ledger, `kills=` is the summary row's lifetime `completedKills`; the 5/15/30-minute triplets are endpoint `work.kills`. They are intentionally shown separately because death/final-stream reconciliation can differ; endpoint triplets are the values used for late-window comparisons.
 - B reused controls retain their historical artifact roots and measured source; they are not relabeled as new measurements.
 
 ## Matched-comparison ledger — Block A
