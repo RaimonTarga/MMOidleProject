@@ -1,3 +1,5 @@
+import { SPIRIT_BOSS_CELLS, SPIRIT_BOSS_BLOCKS, assertSpiritBossDefinitions } from '../bench/balance/t2SpiritBossSpec';
+import { bossContrastSnapshot, bossContrastDelivery } from '../bench/balance/t2SpiritBossEvidence';
 import { BREADTH_BLOCKS, assertBreadthDefinitions, type BreadthCell } from '../bench/balance/playerBreadthSpec';
 import { prepareConduitRecorder } from '../bench/balance/conduitRecorder';
 import { FAST_PASS_BLOCKS, FAST_PASS_BOSSES, FAST_PASS_CAP_MS, FAST_PASS_SEED, assertFastPassDefinitions, fastPassReadback, assertFastPassHitboxes } from '../bench/balance/playerFastPassSpec';
@@ -57,7 +59,7 @@ import { prepareSurveyBot, resolveSurveyPackage } from '../bench/balance/ttkSurv
 import { SurveyMetrics } from '../bench/balance/ttkSurveyMetrics';
 import { hydrateHitboxCacheFromArtifact } from '../src/hitbox/cache';
 import { checkpointDefinitionsHash } from '../src/admin/progressionCheckpoint';
-import { ensureDungeon } from '../src/systems/world/dungeons/dungeon';
+import { ensureDungeon, tickDungeons } from '../src/systems/world/dungeons/dungeon';
 import { effectiveMonsterDot } from '../src/systems/combat/engine/monsterMechanics';
 import {
   BOSS1_BLOCKS,
@@ -119,7 +121,9 @@ const realNow = Date.now, realRandom = Math.random;
 const sha = (v: string | Buffer): string => createHash('sha256').update(v).digest('hex');
 
 const trial = args.trial ?? 'boss1';
+const spiritBoss = trial === 't2-spirit-boss-contrast-01';
 const mode = (args.mode ?? 'run') as 'qualify' | 'pilot' | 'run';
+if (spiritBoss) assert(['qualify', 'run'].includes(mode), 'No combat pilots');
 const out = resolve(args.out!);
 assert(args.out && args.hitboxes, '--out and --hitboxes are required');
 
@@ -157,6 +161,11 @@ const TRIALS: Record<string, {
    */
   installTreatment?: (cell: Night5Cell) => { changes: unknown[]; restore: () => void } | null;
 }> = {
+  't2-spirit-boss-contrast-01': {
+    defaultBlock: SPIRIT_BOSS_CELLS[0].id, blocks: SPIRIT_BOSS_BLOCKS,
+    perBlock: Object.fromEntries(SPIRIT_BOSS_CELLS.map(c => [c.id, { bossId: c.boss, capMs: 300000, seeds: [c.seed], escorts: {} }])),
+    assertDefinitions: assertSpiritBossDefinitions,
+  },
   'player-breadth': {
     defaultBlock: 'breadth-t2-striker-light-boss',
     blocks: Object.fromEntries(Object.entries(BREADTH_BLOCKS).filter(([,b]) => b.cells[0].role === 'boss')),
@@ -281,6 +290,7 @@ assert(hydrateHitboxCacheFromArtifact(args.hitboxes) > 0, 'Valid baked hitbox ar
 const revision = args.revision
   ?? execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
 
+if (spiritBoss) assert.equal(execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(), revision, 'Wrong frozen boss checkout');
 const manifest = {
   schema: 1,
   mode,
@@ -376,11 +386,12 @@ function run(cell: Night5Cell, seed: number) {
     const { bot, view } = prepareSurveyBot(world, cell, BOT_SPAWN);
 
     const conduit = trial === 'player-breadth' ? prepareConduitRecorder(world,bot,cell as BreadthCell) : null;
-    const packageReadback = ['player-fast-pass', 'player-package-fit', 'player-breadth'].includes(trial) ? fastPassReadback(cell, bot, view.globalMastery) : undefined;
+    const packageReadback = ['player-fast-pass', 'player-package-fit', 'player-breadth', 't2-spirit-boss-contrast-01'].includes(trial) ? fastPassReadback(cell, bot, view.globalMastery) : undefined;
     // Tick once so the boss actually spawns before the receipt is written; a
     // receipt taken before the wake-up records an empty arena.
     if (conduit) conduit.atMs = -100; // Wake/initialization precedes the measured clock.
-    world.tick(100, now);
+    // New packet uses only production dungeon initialization: zero World/combat ticks.
+    if (spiritBoss) tickDungeons(world, now); else world.tick(100, now);
     conduit?.afterTick();
     const boss = findBoss(world, cell.nodeId);
     assert(boss, `${cell.id}: boss never woke — the encounter was not exercised`);
@@ -397,11 +408,13 @@ function run(cell: Night5Cell, seed: number) {
       dr: m.mitigatesDamage.damageReduction,
     }));
 
-    if(['player-fast-pass', 'player-package-fit', 'player-breadth'].includes(trial)) assertFastPassHitboxes([bot, ...world.monsterEntitiesInNode(cell.nodeId)]);
+    if(['player-fast-pass', 'player-package-fit', 'player-breadth', 't2-spirit-boss-contrast-01'].includes(trial)) assertFastPassHitboxes([bot, ...world.monsterEntitiesInNode(cell.nodeId)]);
     const initial = roster();
     const ready = {
       cell: cell.id,
       seed,
+      ...(spiritBoss ? { runtime: { seed, revision, dtMs: 100, durationMs: manifest.durationMs },
+        initialState: bossContrastSnapshot(bot, boss), rngStateAfterInitialization: randomState, worldTicks: 0 } : {}),
       synthetic: true,
       ...(trial === 'player-breadth' ? {playerTreatment:(cell as BreadthCell).playerTreatment,controlCaseId:(cell as BreadthCell).controlCaseId,conduitProfile:conduit?.profileReceipt() ?? null} : {}),
       ...(packageReadback ? { packageReadback } : {}),
@@ -484,7 +497,7 @@ function run(cell: Night5Cell, seed: number) {
         nodeId: cell.nodeId,
         isDungeon: true,
         guardHandling: 'stripped-before-spawn',
-        bossWake: 'forced-immediate',
+        bossWake: spiritBoss ? 'forced-immediate-production-dungeon-initialization-zero-world-ticks' : 'forced-immediate',
         capMs: manifest.durationMs,
         seed,
         nonBossBodiesAtStart: initial.filter((m) => m.type !== spec.bossId).length,
@@ -570,7 +583,9 @@ function run(cell: Night5Cell, seed: number) {
     };
     register();
 
-    const log: unknown[] = [], samples: unknown[] = [];
+    const log: { atMs: number; event: any }[] = [], samples: unknown[] = [];
+    const endpoints: Record<string, unknown> = { '60000': null, '120000': null, '300000': null };
+    let minBarrier = view.barrier;
     const windowMs = manifest.durationMs;
     const bossMaxHp = boss.hasHealth.maxHp;
     let elapsed = 0, outcome = 'capped', minHp = 1, attackBeats = 0, lastAttack = 0;
@@ -605,8 +620,9 @@ function run(cell: Night5Cell, seed: number) {
       if (realNow() - wallStart > 300000) { outcome = 'wall-ceiling'; break; }
       now = 1800000000000 + elapsed;
       register();
-      if (trial === 'player-package-fit') log.push({ atMs: elapsed, event: {
+      if (trial === 'player-package-fit' || spiritBoss) log.push({ atMs: elapsed, event: {
         kind: 'package-fit-guard-boundary', phase: 'before-tick',
+        ...(spiritBoss ? { contrast: bossContrastSnapshot(bot, boss) } : {}),
         threats: guardableThreatsAgainstPlayer(world, bot.isPlayer.id, now),
         braceCooldownMs: getCooldown(bot.tracksCombat, 'ability.cd.brace'),
         guardWindowMs: getCooldown(bot.tracksCombat, 'ability.guard.window'),
@@ -615,8 +631,9 @@ function run(cell: Night5Cell, seed: number) {
       conduit?.beforeTick(elapsed,100,now);
       world.tick(100, now);
       conduit?.afterTick();
-      if (trial === 'player-package-fit') log.push({ atMs: elapsed, event: {
+      if (trial === 'player-package-fit' || spiritBoss) log.push({ atMs: elapsed, event: {
         kind: 'package-fit-guard-boundary', phase: 'after-tick',
+        ...(spiritBoss ? { contrast: bossContrastSnapshot(bot, boss) } : {}),
         braceCooldownMs: getCooldown(bot.tracksCombat, 'ability.cd.brace'),
         statusEffects: structuredClone(bot.tracksCombat.statusEffects),
       }});
@@ -673,7 +690,7 @@ function run(cell: Night5Cell, seed: number) {
             casts.push({ atMs: elapsed, label: (e as { label?: string }).label ?? 'unlabelled' });
           }
           log.push({ atMs: elapsed, event: e });
-        } else if (trial === 'player-package-fit' || trial === 'player-breadth') log.push({ atMs: elapsed, event: e });
+        } else if (trial === 'player-package-fit' || trial === 'player-breadth' || spiritBoss) log.push({ atMs: elapsed, event: e });
       }
 
       const live = findBoss(world, cell.nodeId);
@@ -703,6 +720,14 @@ function run(cell: Night5Cell, seed: number) {
 
       const v = composePlayerView(bot)!;
       minHp = Math.min(minHp, v.hp / v.maxHp);
+      if (spiritBoss) {
+        minBarrier = Math.min(minBarrier, v.barrier);
+        if (elapsed % 1000 === 0) {
+          samples.push({ atMs: elapsed + 100, contrast: bossContrastSnapshot(bot, boss) });
+          writeFileSync(join(out, 'heartbeat.json'), JSON.stringify({ elapsedMs: elapsed + 100, rssBytes: process.memoryUsage().rss }));
+        }
+        if (terminal === null && Object.hasOwn(endpoints, String(elapsed + 100))) endpoints[String(elapsed + 100)] = bossContrastSnapshot(bot, boss);
+      }
       if (v.lastAttackAt !== lastAttack) { attackBeats++; lastAttack = v.lastAttackAt; }
       for (const minion of world.minionEntities) {
         if (minion.isMinion.ownerPlayerId !== bot.isPlayer.id) continue;
@@ -723,7 +748,11 @@ function run(cell: Night5Cell, seed: number) {
 
     const terminalHp = resolveTerminalBossHp(terminal, lastSupportedBossHp);
     const result = {
-      cell: cell.id, seed, outcome, elapsedMs: elapsed, windowMs,
+      cell: cell.id, seed, outcome, elapsedMs: spiritBoss ? Math.min(windowMs, elapsed + (terminal ? 100 : 0)) : elapsed, windowMs,
+      ...(spiritBoss ? { endpoints, terminalState: bossContrastSnapshot(bot, boss), minBarrier,
+        terminalOwner: bossContrastSnapshot(bot, boss).owner,
+        delivery: bossContrastDelivery(log, bot.isPlayer.id, bossEntityId, cell.className === 'spirit'),
+        eventTimeConvention: 'Event atMs is tick start; completed tick elapsed/endpoints are tick end. Initial state has no World ticks.' } : {}),
       ...(trial === 'player-breadth' ? {terminalOwner:{hp:bot.hasHealth.hp,maxHp:bot.hasHealth.maxHp,barrier:composePlayerView(bot)!.barrier}} : {}),
       /** Terminal outcome FIRST; every number below is read in its light. */
       bossKilled: isVictory(terminal),
