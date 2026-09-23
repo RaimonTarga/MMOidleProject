@@ -383,6 +383,8 @@ export class World {
    * Set by the balance bench only so full-node clears can complete without repop.
    */
   suppressRepopulation = false;
+  /** Fixed synthetic survey checkpoints only; live worlds leave this empty. */
+  fixedBiomeMasteryPlayers = new Set<string>();
 
   readonly nextMonsterIdByNode = new Map<string, number>();
   readonly nextMinionIdByOwner = new Map<string, number>();

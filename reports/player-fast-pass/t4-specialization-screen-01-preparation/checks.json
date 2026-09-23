@@ -1,0 +1,13 @@
+{
+  "status": "draft-unsealed",
+  "constructionPackages": 216,
+  "worldTicks": 0,
+  "combatObservations": 0,
+  "finalChildQualification": "not-run",
+  "receiptReplay": "not-run",
+  "fullSuite": "not-run",
+  "browserPlay": "not-run",
+  "typecheck": "passed (workspace and bench)",
+  "diffCheck": "passed",
+  "constructionNote": "Initial support-import defect fixed before successful 216-package construction; no combat attempt"
+}

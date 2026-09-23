@@ -1,3 +1,4 @@
+import { snapshotReceipts } from './progressionSnapshot';
 import assert from 'node:assert/strict';
 import { DUNGEON_DEFS, MONSTER_DATABASE, NODE_BIOMES, runicPointLoadoutCost, runeBudgetForGlobalMastery } from '@mmo-idle/shared';
 import { SURVEY_CLASSES, resolveSurveyPackage, type SurveyCell } from './ttkSurveySpec';
@@ -87,10 +88,10 @@ export function fastPassReadback(cell: SurveyCell, bot: PlayerEntity, globalMast
     stances: p.attunedStances ?? [], rites: p.equippedRites });
   const budget = runeBudgetForGlobalMastery(globalMastery);
   assert(cost <= budget);
-  return { declared, skillPath: [...bot.usesSkills.unlockedSkills], equipment: structuredClone(bot.holdsInventory),
+  return { ...(cell.progressionSnapshot ? {progression: snapshotReceipts.get(bot)} : {}), declared, skillPath: [...bot.usesSkills.unlockedSkills], equipment: structuredClone(bot.holdsInventory),
     mastery: { biomeLevel: { ...p.biomeLevel }, globalMastery }, runicPoints: { budget, cost, unused: budget - cost,
       reason: 'Fixed practical package; headroom is deliberate, not an optimal-loadout claim.' },
-    access: 'Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.',
+    access: cell.progressionSnapshot ? 'Fixed declared synthetic route checkpoint; prior paid ownership, no acquisition or guardian evidence.' : 'Synthetic mature tier; capped reachable biomes, declared gear only; no acquisition or guardian evidence.',
     skillPoints: p.skillPoints, knownAbilities: [...p.knownAbilities], rites: [...p.equippedRites] };
 }
 
