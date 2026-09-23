@@ -357,7 +357,9 @@ export function upsertMonster(
     });
   }
 
-  if (monster.lastAttackAt > prevAttackAt && monster.attackTargetId) {
+  // Hard control advances lastAttackAt to hold the server cooldown, even though
+  // no attack occurred. Keep the snapshot above current without replaying FX.
+  if (!monster.hardControlled && monster.lastAttackAt > prevAttackAt && monster.attackTargetId) {
     const vmSprite = state.sprite.get(monster.id);
     const targetInterp = state.interpolation.get(monster.attackTargetId);
     const targetSprite = state.sprite.get(monster.attackTargetId);
