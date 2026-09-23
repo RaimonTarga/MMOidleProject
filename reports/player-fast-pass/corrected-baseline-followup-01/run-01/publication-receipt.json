@@ -1,0 +1,104 @@
+{
+  "experimentId": "corrected-baseline-followup-01",
+  "attempt": "run-01",
+  "publicationDirectory": "reports/player-fast-pass/corrected-baseline-followup-01/run-01",
+  "executionSourceCommit": "22a349bf7dab6e42a412a231444fa4b8df41f28e",
+  "sourceSha256": "b24ec13fc716c3a69bace754745819166569ea25499d63c1225719f65bebad68",
+  "identitySha256": "0023518c22ccdb718439d64377ca68d2a467856db0f7a135f38ce7c0e34c9a92",
+  "manifestSha256": "1235a82423b1632d4e11bda53f384c51132424e500cb10ed41cdddf08ab43a48",
+  "sealSha256": "b312d5b159a70fd57ef979ba2198c36f13b596e07d97e816466efc890a81ef63",
+  "packetSealSha256": "f19177585cdb7b5aee4c5ec2c5d351aced91de5be68fbb90dda368aadfe62010",
+  "qualificationReceiptsSha256": "84ea8e9933e049bd43bd2ed55175e23f3034ec689ac131c4661c3c30c3b141aa",
+  "hitboxesSha256": "08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83",
+  "measuredArtifact": "results-summary.json",
+  "measuredSha256": "debe88ed64cecbf67aa4ddcbfb2c29e5fbb0fac61e110181ff56b614e88c2410",
+  "counts": {
+    "planned": 32,
+    "completed": 32,
+    "newCompleted": 32,
+    "failed": 0,
+    "omitted": 0,
+    "notRun": 0,
+    "combatObservations": 32,
+    "playerDied": 11,
+    "windowEnded": 13,
+    "bossKilled": 8
+  },
+  "rawInventoryValidation": {
+    "retainedRoot": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01",
+    "entries": 467,
+    "totalBytes": 332980288,
+    "mismatches": 0
+  },
+  "publicationFiles": {
+    "REPORT.md": {
+      "bytes": 15789,
+      "sha256": "621fe6647f73aa8dc43d6068a390c75d1b9d868390d71af626d3b5f9fe9d533b"
+    },
+    ".gitattributes": {
+      "bytes": 40,
+      "sha256": "7fd4ea58f168800cc8c68564a82393d6c162bb811991e5251a19dbe595b223c5"
+    },
+    "SOURCE_COMPARISON.md": {
+      "bytes": 6835,
+      "sha256": "79662f228df106ad2dcbbc9aa2ca64427e91007940c5d5f99a6ec724ea3f0fa1"
+    },
+    "applied-build-details.json": {
+      "bytes": 885650,
+      "sha256": "5fbc4f57449a7b80b53f6c3ed2e944b2526a78405c5a07599f5e096ca981779a"
+    },
+    "complete.json": {
+      "bytes": 265,
+      "sha256": "3037948788aa63a32044118c666014e712b55fa20e5e472b891bff842d5c60f1"
+    },
+    "historical-comparison.json": {
+      "bytes": 253676,
+      "sha256": "ed4fa3867cbbc87e84beb60a20b2b5bef4ef420fc53bd2ed9169ae446a6f3895"
+    },
+    "identity.json": {
+      "bytes": 148157,
+      "sha256": "0023518c22ccdb718439d64377ca68d2a467856db0f7a135f38ce7c0e34c9a92"
+    },
+    "manifest.json": {
+      "bytes": 117546,
+      "sha256": "1235a82423b1632d4e11bda53f384c51132424e500cb10ed41cdddf08ab43a48"
+    },
+    "packet-qualified.json": {
+      "bytes": 297,
+      "sha256": "df01e7dbc55d2bda61c7480975eb9ddafc219436426693301758fca70044b994"
+    },
+    "packet-receipt-verified.json": {
+      "bytes": 297,
+      "sha256": "7573ccb9a515db8608fcac280aefb95486799b8e473edf6c4c18b1d04a034ef8"
+    },
+    "packet-seal.json": {
+      "bytes": 369,
+      "sha256": "f19177585cdb7b5aee4c5ec2c5d351aced91de5be68fbb90dda368aadfe62010"
+    },
+    "qualification-complete.json": {
+      "bytes": 266,
+      "sha256": "84ea8e9933e049bd43bd2ed55175e23f3034ec689ac131c4661c3c30c3b141aa"
+    },
+    "raw-inventory.json": {
+      "bytes": 126309,
+      "sha256": "d03e9e94399e27b9c02e3c9126b81c8c4c724f07bad2fedc2909d87464c0b56f"
+    },
+    "receipt-check-complete.json": {
+      "bytes": 272,
+      "sha256": "9801b7b84cc2e86036562f189af4ab76b07cd3837f1f744e2821c0fa8b51fef1"
+    },
+    "resolved-builds.json": {
+      "bytes": 1328400,
+      "sha256": "44f3ff6aa63bf3b251ad22529059e41f1ae69b93934f8a43ce868c13f186696d"
+    },
+    "results-summary.json": {
+      "bytes": 97612,
+      "sha256": "debe88ed64cecbf67aa4ddcbfb2c29e5fbb0fac61e110181ff56b614e88c2410"
+    },
+    "seal.json": {
+      "bytes": 177,
+      "sha256": "b312d5b159a70fd57ef979ba2198c36f13b596e07d97e816466efc890a81ef63"
+    }
+  },
+  "scope": "Compact evidence only; raw event and sample streams remain at the retained D: root."
+}

@@ -1,0 +1,2337 @@
+[
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-F2-s101009\\artifacts\\cbf01-t4-conduit-balanced-c-F2-s101009-s101009\\conduit-events.jsonl",
+    "bytes": 1165802,
+    "sha256": "0af2fe0bd52592f03dbf13e5a5d5213e7b1821c8f0645fe520c39031a1f0dce2"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-F2-s101009\\artifacts\\cbf01-t4-conduit-balanced-c-F2-s101009-s101009\\conduit-snapshots.jsonl",
+    "bytes": 528274,
+    "sha256": "9bc1b035eb31ac12e894d619f06fc6f123f5412f401ff78b856188a2c5278d2f"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-F2-s101009\\artifacts\\cbf01-t4-conduit-balanced-c-F2-s101009-s101009\\conduit.json",
+    "bytes": 51874,
+    "sha256": "b3a4c2b0c4a0589edef79cb4c151f79ff8644ecd4036430f0c156804721236ed"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-F2-s101009\\artifacts\\cbf01-t4-conduit-balanced-c-F2-s101009-s101009\\endpoints.json",
+    "bytes": 5259,
+    "sha256": "b90cccf153f01c74167f892f67d692f1113caa14c1071721b1587a0c5ed6e9dd"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-F2-s101009\\artifacts\\cbf01-t4-conduit-balanced-c-F2-s101009-s101009\\events.jsonl",
+    "bytes": 4646933,
+    "sha256": "8abbd09abe7c811237041f29e7201a109fec3edc27f4af98ec472feab46cde82"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-F2-s101009\\artifacts\\cbf01-t4-conduit-balanced-c-F2-s101009-s101009\\guard-events.jsonl",
+    "bytes": 8645640,
+    "sha256": "797132f914fd94e87e67aac86b62e9fb071aee15907ddcff124ccf9d0e21c391"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-F2-s101009\\artifacts\\cbf01-t4-conduit-balanced-c-F2-s101009-s101009\\ready.json",
+    "bytes": 36401,
+    "sha256": "243a9fe343f3b47929215df8132bf35b49372991df267c3d46538e925ac39699"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-F2-s101009\\artifacts\\cbf01-t4-conduit-balanced-c-F2-s101009-s101009\\samples.jsonl",
+    "bytes": 4258771,
+    "sha256": "eb2dfa24b6fa43acbeb76fedebb20b3e21e17620315ff0417e0db2c5f0d93576"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-F2-s101009\\artifacts\\cbf01-t4-conduit-balanced-c-F2-s101009-s101009\\summary.json",
+    "bytes": 30757,
+    "sha256": "3752a819694975c57dadd4ad64f6d2a2e55aec64a3956c8549cf7c0dca821fb4"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-F2-s101009\\artifacts\\cbf01-t4-conduit-balanced-c-F2-s101009-s101009\\sustain-transitions.jsonl",
+    "bytes": 177768,
+    "sha256": "7b4b15936e7d9f8ec4e385266d74a883e3ae4675ad962f2e71f65c9aa0e1c556"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-F2-s101009\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-F2-s101009\\artifacts\\heartbeat.json",
+    "bytes": 116,
+    "sha256": "e31d20cd313ed871caa987d0beaaa442463391443cdacb08ad89d5393b57216f"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-F2-s101009\\artifacts\\index.json",
+    "bytes": 33219,
+    "sha256": "895abee0f41a29f43b286e5fa9a37543f3e32e54056cf5fc80db6ae7e1f0e70b"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-F2-s101009\\artifacts\\manifest.json",
+    "bytes": 4327,
+    "sha256": "c8a12c747cd22fac38fbefe4359afd86ca715689b6a759cafdfa587469c75cf5"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-F2-s101009\\process.json",
+    "bytes": 745,
+    "sha256": "2a49510d22ccd6a75c79deab1a82e419930a86d1781b3521f269d44022c400da"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-F2-s101009\\process.log",
+    "bytes": 55,
+    "sha256": "5e6d93e02ad1c0b9e1b08ef2467a8957156c5da71335a3724d0f95d94525ccf9"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-plains-t1-developed-s101009\\artifacts\\cbf01-op-t1-conduit-plains-t1-developed-s101009-s101009\\conduit-events.jsonl",
+    "bytes": 508678,
+    "sha256": "b248a71386b3543acae58fdfa966df94dbcdeb3b0a001ee182f8a02668b7e86d"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-plains-t1-developed-s101009\\artifacts\\cbf01-op-t1-conduit-plains-t1-developed-s101009-s101009\\conduit-snapshots.jsonl",
+    "bytes": 669742,
+    "sha256": "498abe8c1242ec96f476726fc054fc5fb8196c3116f2607afe5844981e8b9349"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-plains-t1-developed-s101009\\artifacts\\cbf01-op-t1-conduit-plains-t1-developed-s101009-s101009\\conduit.json",
+    "bytes": 210146,
+    "sha256": "c11c8f1fe048a68ed5fc3f1861dfffbcfe5620b382a193293524f2d306977b07"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-plains-t1-developed-s101009\\artifacts\\cbf01-op-t1-conduit-plains-t1-developed-s101009-s101009\\endpoints.json",
+    "bytes": 7236,
+    "sha256": "f68415c1f37a4e94e640df086064fdb0f7970108acd16ab43450091d78f95dfc"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-plains-t1-developed-s101009\\artifacts\\cbf01-op-t1-conduit-plains-t1-developed-s101009-s101009\\events.jsonl",
+    "bytes": 2829204,
+    "sha256": "404fe90443f901f3857191a9fc53a5f0f085fe258c095d37a782b262a24119a8"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-plains-t1-developed-s101009\\artifacts\\cbf01-op-t1-conduit-plains-t1-developed-s101009-s101009\\guard-events.jsonl",
+    "bytes": 10188609,
+    "sha256": "06afbd197c07e54c258d899feaeea1b1cec407080bf6dfe5ca6ca5049b57a8a7"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-plains-t1-developed-s101009\\artifacts\\cbf01-op-t1-conduit-plains-t1-developed-s101009-s101009\\ready.json",
+    "bytes": 37129,
+    "sha256": "c7526aaf3d4620ec7b4158601f47150940faa9293b4126df7cbe7c1f9fe3d255"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-plains-t1-developed-s101009\\artifacts\\cbf01-op-t1-conduit-plains-t1-developed-s101009-s101009\\samples.jsonl",
+    "bytes": 14480854,
+    "sha256": "41b4a9080c8f1d68f535d3194cb493630ab12ec33e17d5be5cb5ec30c0960b91"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-plains-t1-developed-s101009\\artifacts\\cbf01-op-t1-conduit-plains-t1-developed-s101009-s101009\\summary.json",
+    "bytes": 152158,
+    "sha256": "d1ca837758858bcaf5fa675c3d7eb5467889794edc572c03348cd15bcc480860"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-plains-t1-developed-s101009\\artifacts\\cbf01-op-t1-conduit-plains-t1-developed-s101009-s101009\\sustain-transitions.jsonl",
+    "bytes": 420568,
+    "sha256": "169fbe19c99778f30c6db29dc1918524cc0dd383e72459668865f694f2457616"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-plains-t1-developed-s101009\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-plains-t1-developed-s101009\\artifacts\\heartbeat.json",
+    "bytes": 126,
+    "sha256": "7c397b15f08726108b112cdd282ea6361e23cb5e15b15b544eb08bf2a286618f"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-plains-t1-developed-s101009\\artifacts\\index.json",
+    "bytes": 164622,
+    "sha256": "041cbce6e9c8a9118f523f00a70abc4814b1d21cbffc80158ab82c24ed3605e6"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-plains-t1-developed-s101009\\artifacts\\manifest.json",
+    "bytes": 2959,
+    "sha256": "f87f35c2fb74e5b514e5f753c21ea9b7b6e695096774ceaf67047fa6621625b5"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-plains-t1-developed-s101009\\process.json",
+    "bytes": 763,
+    "sha256": "9534903783dbb4d66fa5700f22823f35b77d0f81f6dbb408a19133fa02f99b42"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-plains-t1-developed-s101009\\process.log",
+    "bytes": 64,
+    "sha256": "7c350e6604aa66a2cb2c3483c8045601b1e3d01fda9a6a210a4dda2fd3ae85e9"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-striker-light-c-F1-s101009\\artifacts\\cbf01-t4-striker-light-c-F1-s101009-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-striker-light-c-F1-s101009\\artifacts\\cbf01-t4-striker-light-c-F1-s101009-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-striker-light-c-F1-s101009\\artifacts\\cbf01-t4-striker-light-c-F1-s101009-s101009\\events.jsonl",
+    "bytes": 142764,
+    "sha256": "63e0dcdc1bd3ea73dfff8ceebc3e0fb88940c56abfeafebf7a9a39da11c056b2"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-striker-light-c-F1-s101009\\artifacts\\cbf01-t4-striker-light-c-F1-s101009-s101009\\guard-events.jsonl",
+    "bytes": 867486,
+    "sha256": "60032c025dd638fce45d30c8115eb8a5644e4aec081110aa9b42b136ec47818f"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-striker-light-c-F1-s101009\\artifacts\\cbf01-t4-striker-light-c-F1-s101009-s101009\\ready.json",
+    "bytes": 37986,
+    "sha256": "10c6a85368a177e47bb8abcbea359ab3a72cd22c49b12ed91ae095d62b877659"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-striker-light-c-F1-s101009\\artifacts\\cbf01-t4-striker-light-c-F1-s101009-s101009\\samples.jsonl",
+    "bytes": 274858,
+    "sha256": "42e7106d2b08eb0ad755fd46b3e26f196cdfa641045e18e49c445f7549871ac6"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-striker-light-c-F1-s101009\\artifacts\\cbf01-t4-striker-light-c-F1-s101009-s101009\\summary.json",
+    "bytes": 23748,
+    "sha256": "e5ed8106c104c52a2ad6ea56d420070263fc8e02b6ef7316513862da3c1b6d3a"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-striker-light-c-F1-s101009\\artifacts\\cbf01-t4-striker-light-c-F1-s101009-s101009\\sustain-transitions.jsonl",
+    "bytes": 13643,
+    "sha256": "e5a26b6958653fcb9849969258f31d750d5ecc555f828a5e81924a16d41ee9bb"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-striker-light-c-F1-s101009\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-striker-light-c-F1-s101009\\artifacts\\heartbeat.json",
+    "bytes": 110,
+    "sha256": "8bde90d87b1734e0ce3a2e564ce287f86024987ec95da8e937dfe73306408284"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-striker-light-c-F1-s101009\\artifacts\\index.json",
+    "bytes": 25726,
+    "sha256": "8ec99f756f3b47555e2fb695502ab33eb10479f1ab9f71583d6ac679d6f578b6"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-striker-light-c-F1-s101009\\artifacts\\manifest.json",
+    "bytes": 4165,
+    "sha256": "814b9f890210f2364806928f5c04ef780329a94cd054ac1311210474d09af5db"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-striker-light-c-F1-s101009\\process.json",
+    "bytes": 739,
+    "sha256": "c8054dd04ec66d784f73539c3b79255814ea584ec51fe158b7dacc39fdf6fdaf"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-striker-light-c-F1-s101009\\process.log",
+    "bytes": 52,
+    "sha256": "48b2446c0c19b863dabb3f69e89c3ffa593225a558a8d2503ffba57f98a4ef92"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-F2-s101009\\artifacts\\cbf01-t4-conduit-light-c-F2-s101009-s101009\\conduit-events.jsonl",
+    "bytes": 1297466,
+    "sha256": "4f3e604db6cd322bcde5f5084e6e66342317b3fc82e5e72be3d88b97786017bc"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-F2-s101009\\artifacts\\cbf01-t4-conduit-light-c-F2-s101009-s101009\\conduit-snapshots.jsonl",
+    "bytes": 580336,
+    "sha256": "58c48b0b873dc896a12ddcc3beaeb6d16c1439f99d36f9864a14ff9e097b2d25"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-F2-s101009\\artifacts\\cbf01-t4-conduit-light-c-F2-s101009-s101009\\conduit.json",
+    "bytes": 84101,
+    "sha256": "3745ea8585d03b24b03274c40ec69a8326e9a588e6db619243a040476a1f8ba4"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-F2-s101009\\artifacts\\cbf01-t4-conduit-light-c-F2-s101009-s101009\\endpoints.json",
+    "bytes": 5287,
+    "sha256": "d9e351b60eb63a62dbf09c0c39bdc079163ab9c15358d0e641c57839e5353699"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-F2-s101009\\artifacts\\cbf01-t4-conduit-light-c-F2-s101009-s101009\\events.jsonl",
+    "bytes": 4978183,
+    "sha256": "e18b5bb8c14263b0cb1e919ca7b43cf494d85b7c9639d70842713e1f527aa104"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-F2-s101009\\artifacts\\cbf01-t4-conduit-light-c-F2-s101009-s101009\\guard-events.jsonl",
+    "bytes": 8655538,
+    "sha256": "9f979f4fc8f285badd5487ef0d54cd275c4bcccbeff29b6d8cc42f7a5b6aa700"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-F2-s101009\\artifacts\\cbf01-t4-conduit-light-c-F2-s101009-s101009\\ready.json",
+    "bytes": 37670,
+    "sha256": "13f72eef709724d417931983fd089951467a6371761a4abf8ce2f7cbb56e6361"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-F2-s101009\\artifacts\\cbf01-t4-conduit-light-c-F2-s101009-s101009\\samples.jsonl",
+    "bytes": 4407767,
+    "sha256": "307b44fc7c32227574bb80a817addbf2007f2b19b625cee5e7510ddc2ea9bb0b"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-F2-s101009\\artifacts\\cbf01-t4-conduit-light-c-F2-s101009-s101009\\summary.json",
+    "bytes": 34779,
+    "sha256": "a9207f73c53303748ffee5891eb9d66793b5f41d2537b918828583c140dff94e"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-F2-s101009\\artifacts\\cbf01-t4-conduit-light-c-F2-s101009-s101009\\sustain-transitions.jsonl",
+    "bytes": 258231,
+    "sha256": "7a1d7c8c836b937d82c4cb2c7f9afdc8c263f2eee75f30b4d88f8765fc3be891"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-F2-s101009\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-F2-s101009\\artifacts\\heartbeat.json",
+    "bytes": 113,
+    "sha256": "17fa99be36841bad29064f61e62bceb63ad399f92cd522a2807316b7bff8bc7a"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-F2-s101009\\artifacts\\index.json",
+    "bytes": 37585,
+    "sha256": "5abf95fc5d124697d3a4acc0f3fd629c9e8381999d52425bd81952c2287ff810"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-F2-s101009\\artifacts\\manifest.json",
+    "bytes": 4349,
+    "sha256": "d65c4a92e829fd785c0dff92a0bc38104b85c424c585853811e5d9382679db33"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-F2-s101009\\process.json",
+    "bytes": 739,
+    "sha256": "d547745d38a2d5d9ee2b3c75671a964149d819afae2cc0ab9b5d15ab06960e40"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-F2-s101009\\process.log",
+    "bytes": 52,
+    "sha256": "3e412d2214a57188d2cbe4d9f16ef1d626ec9094273aa1cbf950d6b754302cde"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-cave-t1-developed-s101009\\artifacts\\cbf01-op-t1-conduit-cave-t1-developed-s101009-s101009\\conduit-events.jsonl",
+    "bytes": 482882,
+    "sha256": "54bd78befe33b3378b99dd6f5daeef53817b1bbab60ff8c5eb52b77d245c7815"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-cave-t1-developed-s101009\\artifacts\\cbf01-op-t1-conduit-cave-t1-developed-s101009-s101009\\conduit-snapshots.jsonl",
+    "bytes": 613198,
+    "sha256": "267a56c7b1560e5be58fa42b7884402fa7d99f984fb908df28b5bbea620f7b8b"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-cave-t1-developed-s101009\\artifacts\\cbf01-op-t1-conduit-cave-t1-developed-s101009-s101009\\conduit.json",
+    "bytes": 134243,
+    "sha256": "28b6ad99489e70d16794dcb26523304400e41a09bb28bdcb9b3f7af48df5017a"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-cave-t1-developed-s101009\\artifacts\\cbf01-op-t1-conduit-cave-t1-developed-s101009-s101009\\endpoints.json",
+    "bytes": 7173,
+    "sha256": "fe0f37d1f5d41781b099eebdb71625389797493d5f9e661677dbd9e4f11b6203"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-cave-t1-developed-s101009\\artifacts\\cbf01-op-t1-conduit-cave-t1-developed-s101009-s101009\\events.jsonl",
+    "bytes": 2437406,
+    "sha256": "4bdcaa36667d51bb8757c4ab75c94a09c133543f5058c495929dd62873c7b2e1"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-cave-t1-developed-s101009\\artifacts\\cbf01-op-t1-conduit-cave-t1-developed-s101009-s101009\\guard-events.jsonl",
+    "bytes": 11576250,
+    "sha256": "926e9702870120dc8c882c4603b8f9b99901e1fba70445d948b68604f995f2e3"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-cave-t1-developed-s101009\\artifacts\\cbf01-op-t1-conduit-cave-t1-developed-s101009-s101009\\ready.json",
+    "bytes": 25485,
+    "sha256": "c511dac65edae1f78e9e70e4ee5ea9a7c9b4791e5750a16a8265983de4f7eedc"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-cave-t1-developed-s101009\\artifacts\\cbf01-op-t1-conduit-cave-t1-developed-s101009-s101009\\samples.jsonl",
+    "bytes": 6504474,
+    "sha256": "c63efdce355f42809db3623f1bea83e9078b436eb02a3aadd416e86481d935c7"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-cave-t1-developed-s101009\\artifacts\\cbf01-op-t1-conduit-cave-t1-developed-s101009-s101009\\summary.json",
+    "bytes": 58328,
+    "sha256": "7afa5406829cc27b582cc5abd707cf484fb096685c96d85c43dda354c97fb093"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-cave-t1-developed-s101009\\artifacts\\cbf01-op-t1-conduit-cave-t1-developed-s101009-s101009\\sustain-transitions.jsonl",
+    "bytes": 310832,
+    "sha256": "c11c282300dde6b6e7f9d8d53cb6d8ae92a90cc79357d1e14a8eced5123c51bf"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-cave-t1-developed-s101009\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-cave-t1-developed-s101009\\artifacts\\heartbeat.json",
+    "bytes": 124,
+    "sha256": "2ad00cf04cc431dd1a60d767d1a6ec83506bb70e012e710fbf19703996c275c7"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-cave-t1-developed-s101009\\artifacts\\index.json",
+    "bytes": 63168,
+    "sha256": "41c30ffc16d0f1f862a16eafdd11270b5d8585fa6448b30e708ef357044aa3bb"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-cave-t1-developed-s101009\\artifacts\\manifest.json",
+    "bytes": 2940,
+    "sha256": "a4c7cf161c8f6d568f76376a133423177a4dc617a4e8b38683b738e2e33c3593"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-cave-t1-developed-s101009\\process.json",
+    "bytes": 759,
+    "sha256": "6d90bdd26f7843dafef7b57cfd7176e5fe68a6a7630a6e86dd11a65736520afc"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-cave-t1-developed-s101009\\process.log",
+    "bytes": 62,
+    "sha256": "61da8b50d01faa6610abe7ef692ab44213d429a6f6ed0ab317ca96d3b7c8a5c6"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-squire-heavy-a-F1-s101009\\artifacts\\cbf01-t4-squire-heavy-a-F1-s101009-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-squire-heavy-a-F1-s101009\\artifacts\\cbf01-t4-squire-heavy-a-F1-s101009-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-squire-heavy-a-F1-s101009\\artifacts\\cbf01-t4-squire-heavy-a-F1-s101009-s101009\\events.jsonl",
+    "bytes": 526989,
+    "sha256": "7c3c7ad2b2b67824360e1224c20baed2e8ebd50ab502fd6afa111d51fc439899"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-squire-heavy-a-F1-s101009\\artifacts\\cbf01-t4-squire-heavy-a-F1-s101009-s101009\\guard-events.jsonl",
+    "bytes": 3824347,
+    "sha256": "d529e4233dbb658bb171071897a7bc19b5fa8dde8f9109730ff40c24fab26b65"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-squire-heavy-a-F1-s101009\\artifacts\\cbf01-t4-squire-heavy-a-F1-s101009-s101009\\ready.json",
+    "bytes": 37947,
+    "sha256": "fa9ada82de7e267285004436dd62f13707b61e0fc3d4d7c4b86458a8040bd91b"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-squire-heavy-a-F1-s101009\\artifacts\\cbf01-t4-squire-heavy-a-F1-s101009-s101009\\samples.jsonl",
+    "bytes": 1253709,
+    "sha256": "2a3d8f604fa804b9679d5e0085f8c672db3a7b9f2489c558b5b0c818a4392f59"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-squire-heavy-a-F1-s101009\\artifacts\\cbf01-t4-squire-heavy-a-F1-s101009-s101009\\summary.json",
+    "bytes": 33139,
+    "sha256": "6794451cc89857f6ea0bf4e994afa8bce7cd02ca772c0b4d0221ea052b007ca0"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-squire-heavy-a-F1-s101009\\artifacts\\cbf01-t4-squire-heavy-a-F1-s101009-s101009\\sustain-transitions.jsonl",
+    "bytes": 25257,
+    "sha256": "4207efd5a445becf35c3195227a1e573f2ce91bca63f25ced1401dacc24f624b"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-squire-heavy-a-F1-s101009\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-squire-heavy-a-F1-s101009\\artifacts\\heartbeat.json",
+    "bytes": 109,
+    "sha256": "1a6a219af3d073ca0c7fc103cf1bce56508f1c20a4a407bd6fc69114bfa35c5e"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-squire-heavy-a-F1-s101009\\artifacts\\index.json",
+    "bytes": 35875,
+    "sha256": "f63f6055c9d569a8135eb33119d525381712626a4ca5cc17e169fd3acb778253"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-squire-heavy-a-F1-s101009\\artifacts\\manifest.json",
+    "bytes": 4354,
+    "sha256": "a3f3b339897c7a497f1113383f31adc836f85b3c62fda25f5bd8f080a69b417f"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-squire-heavy-a-F1-s101009\\process.json",
+    "bytes": 737,
+    "sha256": "60f233f7483fc1b667018af7f354b3cce0ddbf76a52b69bd1510984c70837082"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-squire-heavy-a-F1-s101009\\process.log",
+    "bytes": 51,
+    "sha256": "4655dce0c5b990be565f5d4401e8eb44afc394ae397237e2185ddd6cde0771ee"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-F2-s101009\\artifacts\\cbf01-t4-conduit-heavy-c-F2-s101009-s101009\\conduit-events.jsonl",
+    "bytes": 171205,
+    "sha256": "cdd11ffbacce995cd92c0d67d4d468b5c2e6de148ad85a5338dfd0ed9c41c4dc"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-F2-s101009\\artifacts\\cbf01-t4-conduit-heavy-c-F2-s101009-s101009\\conduit-snapshots.jsonl",
+    "bytes": 191808,
+    "sha256": "622a2c7ff232ed10b26cbfd20a5b7594592c083534ad54b4f93044dc08c534d8"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-F2-s101009\\artifacts\\cbf01-t4-conduit-heavy-c-F2-s101009-s101009\\conduit.json",
+    "bytes": 22231,
+    "sha256": "a3201fa5c81ea1c4e9d145fcdde5e625e51658f69c4b8642bf1235d399747edf"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-F2-s101009\\artifacts\\cbf01-t4-conduit-heavy-c-F2-s101009-s101009\\endpoints.json",
+    "bytes": 5184,
+    "sha256": "4d0b15a7b5be883c574eb85c4b26a59340761429940bbb777834c6381389dbb5"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-F2-s101009\\artifacts\\cbf01-t4-conduit-heavy-c-F2-s101009-s101009\\events.jsonl",
+    "bytes": 1104853,
+    "sha256": "ad815cb426ded96d3bc5148e2d9763f57f33fc8d11c4c4736d2e7a4a9fc3b2be"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-F2-s101009\\artifacts\\cbf01-t4-conduit-heavy-c-F2-s101009-s101009\\guard-events.jsonl",
+    "bytes": 10340772,
+    "sha256": "3113ef7e3fb8c3e36a9a33ca9bc700b853613cf856d48aa43d4824baaeda27c0"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-F2-s101009\\artifacts\\cbf01-t4-conduit-heavy-c-F2-s101009-s101009\\ready.json",
+    "bytes": 34234,
+    "sha256": "862be710a8dddd9858607e3bcd177fe5f1ce87e0923a87ca7e9ce2180692c9b2"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-F2-s101009\\artifacts\\cbf01-t4-conduit-heavy-c-F2-s101009-s101009\\samples.jsonl",
+    "bytes": 3405817,
+    "sha256": "cd5fb80b9c7fc993f9c491899fcb70dab5f9a6553e2569908df72274fdea196c"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-F2-s101009\\artifacts\\cbf01-t4-conduit-heavy-c-F2-s101009-s101009\\summary.json",
+    "bytes": 23561,
+    "sha256": "6ade6efcd3cc1f4feed0ee2993660d6cb8c4043243c46670b3c1832211000f61"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-F2-s101009\\artifacts\\cbf01-t4-conduit-heavy-c-F2-s101009-s101009\\sustain-transitions.jsonl",
+    "bytes": 112251,
+    "sha256": "0330acc38521a7761d7282453b5b94467ca39e35a8ee2c7948cb57bf2fb17804"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-F2-s101009\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-F2-s101009\\artifacts\\heartbeat.json",
+    "bytes": 113,
+    "sha256": "13429107bbcef55e933c801f21b9db4ef6429dea6d389048d7af9a52a5b6fb39"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-F2-s101009\\artifacts\\index.json",
+    "bytes": 25343,
+    "sha256": "e31cbfea35623a077a9660bed8e5c4d2524c29e9fce02e0626e51f8096566daf"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-F2-s101009\\artifacts\\manifest.json",
+    "bytes": 4289,
+    "sha256": "1e72f4c8f51caed2bf6ef3c937964a02147e3fb80387c2b71188d2a56a6408e3"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-F2-s101009\\process.json",
+    "bytes": 739,
+    "sha256": "cbfb12a75c65287ae0967cea774d467601619463892ae5bd3d2259962c12f93e"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-F2-s101009\\process.log",
+    "bytes": 52,
+    "sha256": "b698ca164461da0d4806ffa7bfd79f919e134a3d814c3f2ca6070f45ced7dd47"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-apprentice-balanced-a-F1-s101009\\artifacts\\cbf01-t4-apprentice-balanced-a-F1-s101009-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-apprentice-balanced-a-F1-s101009\\artifacts\\cbf01-t4-apprentice-balanced-a-F1-s101009-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-apprentice-balanced-a-F1-s101009\\artifacts\\cbf01-t4-apprentice-balanced-a-F1-s101009-s101009\\events.jsonl",
+    "bytes": 212615,
+    "sha256": "10dbceb82e7a14384e8c8c8a820d4a8807f6076e2c6caaa595a3b7d219b4f881"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-apprentice-balanced-a-F1-s101009\\artifacts\\cbf01-t4-apprentice-balanced-a-F1-s101009-s101009\\guard-events.jsonl",
+    "bytes": 1683075,
+    "sha256": "e46c2a535894cbbc960b7c6fc522059c3e1d730432e0d0e464a804d63953ff29"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-apprentice-balanced-a-F1-s101009\\artifacts\\cbf01-t4-apprentice-balanced-a-F1-s101009-s101009\\ready.json",
+    "bytes": 38682,
+    "sha256": "a8916740674bb33a1016a9e365be896b11c13092904f9f8f087be3c17a226886"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-apprentice-balanced-a-F1-s101009\\artifacts\\cbf01-t4-apprentice-balanced-a-F1-s101009-s101009\\samples.jsonl",
+    "bytes": 642108,
+    "sha256": "ddaa03b3ba734206068be1266312aa5017a2e3683b848706995c6607b864e66a"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-apprentice-balanced-a-F1-s101009\\artifacts\\cbf01-t4-apprentice-balanced-a-F1-s101009-s101009\\summary.json",
+    "bytes": 27627,
+    "sha256": "c9decf9bbb534c1b40a52253fa58c5d3e28165a8334ab31e698e556c7a85fd41"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-apprentice-balanced-a-F1-s101009\\artifacts\\cbf01-t4-apprentice-balanced-a-F1-s101009-s101009\\sustain-transitions.jsonl",
+    "bytes": 35927,
+    "sha256": "1dd0e5e04b98b99f063face1070dc7d467ac89cd8c316f570531cfe3ba74b2d2"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-apprentice-balanced-a-F1-s101009\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-apprentice-balanced-a-F1-s101009\\artifacts\\heartbeat.json",
+    "bytes": 116,
+    "sha256": "19454310e5b9e3474d0361486285ffaffd8b8d6699363e4c6b10188a78a6323d"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-apprentice-balanced-a-F1-s101009\\artifacts\\index.json",
+    "bytes": 29951,
+    "sha256": "4bad1c3f07b4ab8dd86947ac5e562777ab0e573a43bf6f48752330e675fdd8d2"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-apprentice-balanced-a-F1-s101009\\artifacts\\manifest.json",
+    "bytes": 4527,
+    "sha256": "be3856ccd83a53cb99ae532e574527b4cfe07ef5734eeece47916b7fbf636ad8"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-apprentice-balanced-a-F1-s101009\\process.json",
+    "bytes": 751,
+    "sha256": "368a7608728a49ae529f8d45f34afc4277672edc185a7693fad0a0ed6010d382"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-apprentice-balanced-a-F1-s101009\\process.log",
+    "bytes": 58,
+    "sha256": "b057309e667f811b26064d597c287e48ca4dc7c5408c5ec9aa7a47dd9d4aca56"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-F2-s101009\\artifacts\\cbf01-t4-conduit-heavy-b-F2-s101009-s101009\\conduit-events.jsonl",
+    "bytes": 167388,
+    "sha256": "af3e10dce1b632c79e9af75e6c8c2aa129eada4a63238fcaf80f4352f0763c21"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-F2-s101009\\artifacts\\cbf01-t4-conduit-heavy-b-F2-s101009-s101009\\conduit-snapshots.jsonl",
+    "bytes": 201742,
+    "sha256": "631311844a462b7aee7da4965dced5172756baaf6e4998ddd44eaaaf5909b504"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-F2-s101009\\artifacts\\cbf01-t4-conduit-heavy-b-F2-s101009-s101009\\conduit.json",
+    "bytes": 16659,
+    "sha256": "5d0fe3607f8a6b0ba05eb1ce0d0026f9aa69217910571b7d1b4cad3710a0dc71"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-F2-s101009\\artifacts\\cbf01-t4-conduit-heavy-b-F2-s101009-s101009\\endpoints.json",
+    "bytes": 4897,
+    "sha256": "68f3dfd7c706ad0e39f3f593eed6dfab221da3ace3fbc3e136e3ae03c261797f"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-F2-s101009\\artifacts\\cbf01-t4-conduit-heavy-b-F2-s101009-s101009\\events.jsonl",
+    "bytes": 2113374,
+    "sha256": "f6779378c6ab7b0134386b26f6901d2ae028f4884325bcc9a9ee37cded274fd2"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-F2-s101009\\artifacts\\cbf01-t4-conduit-heavy-b-F2-s101009-s101009\\guard-events.jsonl",
+    "bytes": 8679850,
+    "sha256": "b615c1b012fd16f5b0ca73e01fb42d46162d1dcbb150b3cba91aea4891ff312e"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-F2-s101009\\artifacts\\cbf01-t4-conduit-heavy-b-F2-s101009-s101009\\ready.json",
+    "bytes": 33815,
+    "sha256": "a09c89b50c4cd84b54307b6663fad52fb7a16777626b41a47b31786a95a1bea0"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-F2-s101009\\artifacts\\cbf01-t4-conduit-heavy-b-F2-s101009-s101009\\samples.jsonl",
+    "bytes": 3236652,
+    "sha256": "bb4bd3c89e30f7d18b9c79476a96016a668812334365a3c0da3a3a5f1cc6b32b"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-F2-s101009\\artifacts\\cbf01-t4-conduit-heavy-b-F2-s101009-s101009\\summary.json",
+    "bytes": 39431,
+    "sha256": "963971e8ac8efd757543aec2340bcd9117404dae80f6c7c0b24c2d175f532bf1"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-F2-s101009\\artifacts\\cbf01-t4-conduit-heavy-b-F2-s101009-s101009\\sustain-transitions.jsonl",
+    "bytes": 110491,
+    "sha256": "cdccf05c320d48aa78b1db8490bf56f1e6c8b902ba701b7abd2dc85989bee57c"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-F2-s101009\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-F2-s101009\\artifacts\\heartbeat.json",
+    "bytes": 113,
+    "sha256": "dd3bb46eb269d1438a6675438a85d470d964cbd8064d7636dd89743411d015e8"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-F2-s101009\\artifacts\\index.json",
+    "bytes": 42629,
+    "sha256": "c71d1a25ec6e79002f8ef04777aa3f4be8a799c491fd63a0e9a88cefa56cef68"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-F2-s101009\\artifacts\\manifest.json",
+    "bytes": 4262,
+    "sha256": "48351be9b9842e4e6f5fa54664ff097ead8b788edb2891e4bc516c069caad8e9"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-F2-s101009\\process.json",
+    "bytes": 739,
+    "sha256": "91ec6af2a55140e70a4928d3db0205cd7f9e94ab767a7a06bd914c92f1789c6b"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-F2-s101009\\process.log",
+    "bytes": 52,
+    "sha256": "ed55e175a60040d4207546d99cd687ef246ff58eb1adc652b1b4cca671dfbd4c"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-heavy-a-F1-s101009\\artifacts\\cbf01-t4-slinger-heavy-a-F1-s101009-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-heavy-a-F1-s101009\\artifacts\\cbf01-t4-slinger-heavy-a-F1-s101009-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-heavy-a-F1-s101009\\artifacts\\cbf01-t4-slinger-heavy-a-F1-s101009-s101009\\events.jsonl",
+    "bytes": 527574,
+    "sha256": "1e15141136c619894e3041fc0386745cd8c3dfb215223fcd0ce1c94379e7cc58"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-heavy-a-F1-s101009\\artifacts\\cbf01-t4-slinger-heavy-a-F1-s101009-s101009\\guard-events.jsonl",
+    "bytes": 2341676,
+    "sha256": "3d20298f570f651a1fbfcda8f61a51ad99a9bacdeec32b2a65ad2d1e6d5f95b8"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-heavy-a-F1-s101009\\artifacts\\cbf01-t4-slinger-heavy-a-F1-s101009-s101009\\ready.json",
+    "bytes": 37897,
+    "sha256": "266c53adee7431db30bd4ab82fb84b2d83f1947f6271f969b81df9488fff6997"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-heavy-a-F1-s101009\\artifacts\\cbf01-t4-slinger-heavy-a-F1-s101009-s101009\\samples.jsonl",
+    "bytes": 792933,
+    "sha256": "e51044374c7803d03a15dfc1a00dbfd2e428fb8ecf3d4d57b73bb013c468c346"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-heavy-a-F1-s101009\\artifacts\\cbf01-t4-slinger-heavy-a-F1-s101009-s101009\\summary.json",
+    "bytes": 35873,
+    "sha256": "4cea815da514b5e35c97f365355bc59a43d65062e067c6d90cef86a54de45135"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-heavy-a-F1-s101009\\artifacts\\cbf01-t4-slinger-heavy-a-F1-s101009-s101009\\sustain-transitions.jsonl",
+    "bytes": 31307,
+    "sha256": "fd2960e709c88bdf8945fabd231675a6569c34b428a548db5f07dd34aa20916a"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-heavy-a-F1-s101009\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-heavy-a-F1-s101009\\artifacts\\heartbeat.json",
+    "bytes": 110,
+    "sha256": "833c73519b203c289683ae2106501a00ad29edad0edc30ef7d8c47e12afa008a"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-heavy-a-F1-s101009\\artifacts\\index.json",
+    "bytes": 38809,
+    "sha256": "de3f9486f6e729244db689a10dba8bb842d1fca4517eff8756e3680cfc658060"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-heavy-a-F1-s101009\\artifacts\\manifest.json",
+    "bytes": 4253,
+    "sha256": "615be01b558e21ee9e30fe8f6f11abe3086a9881e37d3ace94da735d1fd012c2"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-heavy-a-F1-s101009\\process.json",
+    "bytes": 739,
+    "sha256": "897f5bdad8ad169b44bd26715e7296c6392b6ff942c8017a8a10df71c1b8237d"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-heavy-a-F1-s101009\\process.log",
+    "bytes": 52,
+    "sha256": "919bb099ac7645580c4bdd0d6618876cbfe1aa6c747a182755c0c52ec58e8241"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-B1-s101009\\artifacts\\cbf01-t4-conduit-balanced-c-B1-s101009-s101009\\conduit-events.jsonl",
+    "bytes": 293001,
+    "sha256": "268d47e6bef5e50f2ffdc5b55273c3ff5eb3b54cbf11f5e27d1cd34b4cc93d2f"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-B1-s101009\\artifacts\\cbf01-t4-conduit-balanced-c-B1-s101009-s101009\\conduit-snapshots.jsonl",
+    "bytes": 169372,
+    "sha256": "3dd0265d0404d655c9b8f89cbd38b89c043231dbe8795c37b077bcb021a6e0cf"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-B1-s101009\\artifacts\\cbf01-t4-conduit-balanced-c-B1-s101009-s101009\\conduit.json",
+    "bytes": 46220,
+    "sha256": "e3ebeb44e0647b36e3f442e2ac5c130234e478735afe108361354a0c56e8bcf0"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-B1-s101009\\artifacts\\cbf01-t4-conduit-balanced-c-B1-s101009-s101009\\events.jsonl",
+    "bytes": 1538358,
+    "sha256": "58a448129e3075aa9c377f3a1f29dfdd4efde7859c5c09deb336bf8b8c466136"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-B1-s101009\\artifacts\\cbf01-t4-conduit-balanced-c-B1-s101009-s101009\\ready.json",
+    "bytes": 32145,
+    "sha256": "11f3ddae6306e86cbbad39e10bfcda48abe214675e04f198d1de58bbb707257f"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-B1-s101009\\artifacts\\cbf01-t4-conduit-balanced-c-B1-s101009-s101009\\samples.jsonl",
+    "bytes": 49674,
+    "sha256": "1e4a3e6d137899e30a4cec3a14db3a288f0e964fa857cbab8258e1d1f1ed5c26"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-B1-s101009\\artifacts\\cbf01-t4-conduit-balanced-c-B1-s101009-s101009\\summary.json",
+    "bytes": 5717,
+    "sha256": "aea76de9359f5c3fb98c31d90f954f197ee3f7ac02d9fa8bcc020ec883bcd5ec"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-B1-s101009\\artifacts\\complete.json",
+    "bytes": 155,
+    "sha256": "130498acaee6d8e5009e338380ae5b400b21303636ef5dd21c3922e5a7c690e9"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-B1-s101009\\artifacts\\heartbeat.json",
+    "bytes": 33,
+    "sha256": "358cbe4eed19d5bbaa0ec8e27b4950dd19406de84a2389c05043a45da1b4c77a"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-B1-s101009\\artifacts\\index.json",
+    "bytes": 6193,
+    "sha256": "e8298c508d5e0bcbc7e81f72c2897f33508358e8aaab66398f011e07eb5d2514"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-B1-s101009\\artifacts\\manifest.json",
+    "bytes": 4503,
+    "sha256": "7481cd1173b6a38bd41fc5011a5f5ea1d0b9ce6ab7e3165152e75ac8596e55e5"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-B1-s101009\\process.json",
+    "bytes": 746,
+    "sha256": "c5c5b7fa4444a8ff2b9eefc520457c16ea38dcdcefea73a9a001370d084b0153"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-B1-s101009\\process.log",
+    "bytes": 145,
+    "sha256": "b76b4d339d104d5f62718bb7c80e81a9e879c423f54be9ef4efdb5f406ff9394"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-light-a-F1-s101009\\artifacts\\cbf01-t4-slinger-light-a-F1-s101009-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-light-a-F1-s101009\\artifacts\\cbf01-t4-slinger-light-a-F1-s101009-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-light-a-F1-s101009\\artifacts\\cbf01-t4-slinger-light-a-F1-s101009-s101009\\endpoints.json",
+    "bytes": 2608,
+    "sha256": "cdc2a9452fd965684325a08974acf2d0768bba88e303b7421e2818c1bdc241d8"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-light-a-F1-s101009\\artifacts\\cbf01-t4-slinger-light-a-F1-s101009-s101009\\events.jsonl",
+    "bytes": 2850208,
+    "sha256": "ee2e56513299b5faee8fac90b41a66cc946bcf3b634f78ef0c69a3803c6d08c8"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-light-a-F1-s101009\\artifacts\\cbf01-t4-slinger-light-a-F1-s101009-s101009\\guard-events.jsonl",
+    "bytes": 14654978,
+    "sha256": "624a7a28a5f1ab606efd11bfeaa365aa680788c0a9518363480555fbf5ee0d1c"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-light-a-F1-s101009\\artifacts\\cbf01-t4-slinger-light-a-F1-s101009-s101009\\ready.json",
+    "bytes": 38266,
+    "sha256": "9832b58d638f9261d60ebbcf47e2ab5644d52f6d826018d5e8b4f409bd1976f8"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-light-a-F1-s101009\\artifacts\\cbf01-t4-slinger-light-a-F1-s101009-s101009\\samples.jsonl",
+    "bytes": 5278916,
+    "sha256": "1bc0e1d546ac5dc074801c86cf0e54345f8d11bcbd6f44e6047d9179da43d46b"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-light-a-F1-s101009\\artifacts\\cbf01-t4-slinger-light-a-F1-s101009-s101009\\summary.json",
+    "bytes": 99667,
+    "sha256": "e6ffea5c94b5dae24e7db013457b9e8c1df49733ab9147519f2b8990fb373257"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-light-a-F1-s101009\\artifacts\\cbf01-t4-slinger-light-a-F1-s101009-s101009\\sustain-transitions.jsonl",
+    "bytes": 319036,
+    "sha256": "2cf2bd114c4a0f8dae40fd8dc6394ef77a5c1dc851bbf79fca3dcf55b73c210b"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-light-a-F1-s101009\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-light-a-F1-s101009\\artifacts\\heartbeat.json",
+    "bytes": 113,
+    "sha256": "f838ef7319e9f2269d83dd95042c68987855e7722060b772b49fcb61b8fc1d64"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-light-a-F1-s101009\\artifacts\\index.json",
+    "bytes": 107619,
+    "sha256": "6bfc38a75f596456ae23f97eabf95cde558e474a8fa7521717716497f584319e"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-light-a-F1-s101009\\artifacts\\manifest.json",
+    "bytes": 4278,
+    "sha256": "da01ea445d52d3d2f661e16c757be95328692e5e6a1615564e4ab21f8fb91c86"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-light-a-F1-s101009\\process.json",
+    "bytes": 739,
+    "sha256": "3e6edf4090b96a2f372b201b1653f2bf100162dbed1e61ddf45edd2482a290d3"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-light-a-F1-s101009\\process.log",
+    "bytes": 52,
+    "sha256": "c0d99abdf9df8616315c394fa110e310de7b7c5547c6cb3df5af56c4c8cc2755"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-B1-s101009\\artifacts\\cbf01-t4-conduit-light-c-B1-s101009-s101009\\conduit-events.jsonl",
+    "bytes": 269151,
+    "sha256": "575f1d0b599254ff7fcf2d14e1c58c190c2d9f620a39a70a3fd041367bc7c25c"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-B1-s101009\\artifacts\\cbf01-t4-conduit-light-c-B1-s101009-s101009\\conduit-snapshots.jsonl",
+    "bytes": 145079,
+    "sha256": "d193db5c1149c6b49c3afe4a8205cda237232c180f9a67c4c278d083ac08f7e0"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-B1-s101009\\artifacts\\cbf01-t4-conduit-light-c-B1-s101009-s101009\\conduit.json",
+    "bytes": 48163,
+    "sha256": "df602b607352019a0ef497bfa65e12e7a49d3a20ffb6496252725576fd6eace6"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-B1-s101009\\artifacts\\cbf01-t4-conduit-light-c-B1-s101009-s101009\\events.jsonl",
+    "bytes": 1268819,
+    "sha256": "3cca1d0fd62a79e41ec13694e1307900f5568a951905732a15f3f2f6ef8f0fb1"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-B1-s101009\\artifacts\\cbf01-t4-conduit-light-c-B1-s101009-s101009\\ready.json",
+    "bytes": 33451,
+    "sha256": "bd870410668afb61c09678f68969f6711dfe311ce02794c8b4478422528219b5"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-B1-s101009\\artifacts\\cbf01-t4-conduit-light-c-B1-s101009-s101009\\samples.jsonl",
+    "bytes": 41954,
+    "sha256": "0dc15b196eeb76c48dca339a26952f3ba764269347be8179a755f59cfec9edf4"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-B1-s101009\\artifacts\\cbf01-t4-conduit-light-c-B1-s101009-s101009\\summary.json",
+    "bytes": 6174,
+    "sha256": "542769afcf0a89c8f4d2fd7777466f13872f9cbe5d030f3010965700d82588bc"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-B1-s101009\\artifacts\\complete.json",
+    "bytes": 152,
+    "sha256": "66888aac6cddf23a75461494b83cce50ec285b7468145f35faed8901670a9c28"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-B1-s101009\\artifacts\\heartbeat.json",
+    "bytes": 33,
+    "sha256": "da626515c251c4142e2cadc49436d6fc15a957ab60e823905a6337d00d52b305"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-B1-s101009\\artifacts\\index.json",
+    "bytes": 6676,
+    "sha256": "80c7501109664da0026ea95c7bafa7251ba1461e3125f5a87e7dd9d92448a3e7"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-B1-s101009\\artifacts\\manifest.json",
+    "bytes": 4525,
+    "sha256": "bd0fd3bbecdb231c551537f566f00b6e50596eb18092714f8885963a2a13de03"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-B1-s101009\\process.json",
+    "bytes": 740,
+    "sha256": "4133e13f9a26ce56350a0213dc0309b3125448248e397d0ad24ad7e3e9ec6e00"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-B1-s101009\\process.log",
+    "bytes": 139,
+    "sha256": "fc38cc5d3cd578c9ddc8043f7e499ddad307b2000492e8337ad835065d79c867"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-spirit-balanced-c-F1-s101009\\artifacts\\cbf01-t4-spirit-balanced-c-F1-s101009-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-spirit-balanced-c-F1-s101009\\artifacts\\cbf01-t4-spirit-balanced-c-F1-s101009-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-spirit-balanced-c-F1-s101009\\artifacts\\cbf01-t4-spirit-balanced-c-F1-s101009-s101009\\events.jsonl",
+    "bytes": 213341,
+    "sha256": "a31f5d4af1c5cc17473585e25b194a1a23aadf8f4606a41d0fcd21e2bdadd19d"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-spirit-balanced-c-F1-s101009\\artifacts\\cbf01-t4-spirit-balanced-c-F1-s101009-s101009\\guard-events.jsonl",
+    "bytes": 1361589,
+    "sha256": "fd5959b22f600574a9386ae96728e1e492564bf4b64c6a921df90445b76af70e"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-spirit-balanced-c-F1-s101009\\artifacts\\cbf01-t4-spirit-balanced-c-F1-s101009-s101009\\ready.json",
+    "bytes": 38094,
+    "sha256": "268e33c05c61c78c74b683dcecdbc0ac9429238d0a610e83b975245529a65991"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-spirit-balanced-c-F1-s101009\\artifacts\\cbf01-t4-spirit-balanced-c-F1-s101009-s101009\\samples.jsonl",
+    "bytes": 501318,
+    "sha256": "7d392924604d5d9c945acb4a11c350168214845e2b28437c197f956ca3be7cfe"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-spirit-balanced-c-F1-s101009\\artifacts\\cbf01-t4-spirit-balanced-c-F1-s101009-s101009\\summary.json",
+    "bytes": 26877,
+    "sha256": "0a7713b824f056d72c01596973e2654ad9168dbb32564db3e3f1b8619dced542"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-spirit-balanced-c-F1-s101009\\artifacts\\cbf01-t4-spirit-balanced-c-F1-s101009-s101009\\sustain-transitions.jsonl",
+    "bytes": 30694,
+    "sha256": "33ce7b72ce5c324a33b9b507fb3713a67e00bae3b2752eea2dfc4f4cc57fc873"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-spirit-balanced-c-F1-s101009\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-spirit-balanced-c-F1-s101009\\artifacts\\heartbeat.json",
+    "bytes": 112,
+    "sha256": "f70622bdd1ff496a4e9b1fa7d17711521d2bf9e910687230db49fbec7d11e870"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-spirit-balanced-c-F1-s101009\\artifacts\\index.json",
+    "bytes": 29129,
+    "sha256": "b82a3e79da63465e5df5017e5245db1090ffa0ab01cf12f3028501b2e319af22"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-spirit-balanced-c-F1-s101009\\artifacts\\manifest.json",
+    "bytes": 4361,
+    "sha256": "bed7e8d27f2a23e25ce28e5a5d9430bced43058f144adbcecd6d3588782b428a"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-spirit-balanced-c-F1-s101009\\process.json",
+    "bytes": 743,
+    "sha256": "4d5d0c50da3bda815ef9118917d0566c22558134c796882ae8e8ea3fb9f21272"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-spirit-balanced-c-F1-s101009\\process.log",
+    "bytes": 54,
+    "sha256": "19730743cbfc559b391c48dadea0cfe66e17e2de0cfef9773a335103f5854912"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-B1-s101009\\artifacts\\cbf01-t4-conduit-heavy-c-B1-s101009-s101009\\conduit-events.jsonl",
+    "bytes": 27098,
+    "sha256": "2130fef9a022825e468ac654c612dc53a523b9e72d078c891bd1eb4f0710ec7f"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-B1-s101009\\artifacts\\cbf01-t4-conduit-heavy-c-B1-s101009-s101009\\conduit-snapshots.jsonl",
+    "bytes": 36913,
+    "sha256": "5c05cabe0087d2816d0f7d03aa840f680f3b42279b57f56f56ac04fa98cd8135"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-B1-s101009\\artifacts\\cbf01-t4-conduit-heavy-c-B1-s101009-s101009\\conduit.json",
+    "bytes": 3608,
+    "sha256": "69869e9728e4fd20396bca1f1144b57672674b62c1a83a97cd33de309978883d"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-B1-s101009\\artifacts\\cbf01-t4-conduit-heavy-c-B1-s101009-s101009\\events.jsonl",
+    "bytes": 239608,
+    "sha256": "e277bdf34f0b172a638ec2c15322c662c5a065221565381d05ae09c5b59eb844"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-B1-s101009\\artifacts\\cbf01-t4-conduit-heavy-c-B1-s101009-s101009\\ready.json",
+    "bytes": 29963,
+    "sha256": "4aef28b449d57173185c85d3da44e3faa96e13897254e47970f774edd0bac541"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-B1-s101009\\artifacts\\cbf01-t4-conduit-heavy-c-B1-s101009-s101009\\samples.jsonl",
+    "bytes": 18510,
+    "sha256": "857de340b41797a9317d26dced11dd42fd3f13ffa8f72e382a2a98951ecb0129"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-B1-s101009\\artifacts\\cbf01-t4-conduit-heavy-c-B1-s101009-s101009\\summary.json",
+    "bytes": 5187,
+    "sha256": "2076e1e9e99f5495c73fe13dc5998b96f42ed180d56565f436b0c201a966f3c9"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-B1-s101009\\artifacts\\complete.json",
+    "bytes": 152,
+    "sha256": "1c19372dc305ea43c8b50ae253a261eb0ac452d4a25df2121858aa985446a49a"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-B1-s101009\\artifacts\\heartbeat.json",
+    "bytes": 33,
+    "sha256": "d178a1924cedf34af81eaf87c3b62d236ca24643119917cefe44a2d4038f9279"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-B1-s101009\\artifacts\\index.json",
+    "bytes": 5621,
+    "sha256": "2370a387a9894415f6c32cdcc7af044cb50e45a3dde1148749ce0f1d19c936e4"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-B1-s101009\\artifacts\\manifest.json",
+    "bytes": 4465,
+    "sha256": "9b77441fd33b947111ea9b8c5f07ae6595e8fb039acb1f15e451934a780180a6"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-B1-s101009\\process.json",
+    "bytes": 740,
+    "sha256": "4ea57a4d8a5ed2b99a1cc9ba7585f0082030d101c7502ff709b34a7f2c40cd3a"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-B1-s101009\\process.log",
+    "bytes": 139,
+    "sha256": "bdbae81bf9c7ddc04567905af3742934428bcde3fc6fd8a51d3c98f8168f863f"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-B1-s101009\\artifacts\\cbf01-t4-conduit-heavy-b-B1-s101009-s101009\\conduit-events.jsonl",
+    "bytes": 21159,
+    "sha256": "c63bbf08505d6223ad092ee24ac16bf80487e86d2d8f4bd6e299380432db0bab"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-B1-s101009\\artifacts\\cbf01-t4-conduit-heavy-b-B1-s101009-s101009\\conduit-snapshots.jsonl",
+    "bytes": 36347,
+    "sha256": "f0fd966a0bb59ca72da60a9151116c999ee340af726f050b0d751b9b853f3607"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-B1-s101009\\artifacts\\cbf01-t4-conduit-heavy-b-B1-s101009-s101009\\conduit.json",
+    "bytes": 3854,
+    "sha256": "fb6ced20dc5facbd152196bb391f834f9ee6fce7a9fcb7c42355bcbd4fa0268d"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-B1-s101009\\artifacts\\cbf01-t4-conduit-heavy-b-B1-s101009-s101009\\events.jsonl",
+    "bytes": 440582,
+    "sha256": "6729e00e25aa06c49dc2309471887b88dba406ec1dff88ec907e04bb784e1623"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-B1-s101009\\artifacts\\cbf01-t4-conduit-heavy-b-B1-s101009-s101009\\ready.json",
+    "bytes": 29387,
+    "sha256": "418ee9b59e26537b90b803064b7a7e5b2437615826918ffcb0690dbd65a7f0cd"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-B1-s101009\\artifacts\\cbf01-t4-conduit-heavy-b-B1-s101009-s101009\\samples.jsonl",
+    "bytes": 19053,
+    "sha256": "25fa8e6f2d3cd5d8017c0bb2e49cc39816792d1a9e0b0e4554c5192570336003"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-B1-s101009\\artifacts\\cbf01-t4-conduit-heavy-b-B1-s101009-s101009\\summary.json",
+    "bytes": 5209,
+    "sha256": "2adaea2c2b9144aa984fffc5deaf41bb6dbb1dbbc0071c01d34c1a10cb9620aa"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-B1-s101009\\artifacts\\complete.json",
+    "bytes": 152,
+    "sha256": "a4f07deec0af5e1d345dc61456377b12fd720a17d2b44ce353c1a9f24fa0db46"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-B1-s101009\\artifacts\\heartbeat.json",
+    "bytes": 33,
+    "sha256": "927ad48b68054244765d9dd23b6c59cc6d3fd496370b112411ae9cbcf09b00bd"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-B1-s101009\\artifacts\\index.json",
+    "bytes": 5643,
+    "sha256": "e3de34e5bcadf730e30cbedc366ce605d9598bf9a612ecfe1a477a49ef4f9bcd"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-B1-s101009\\artifacts\\manifest.json",
+    "bytes": 4438,
+    "sha256": "4a762d705c29a50ddf19c0ed570f1242470121cb798e86f635186ee6b452ad5f"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-B1-s101009\\process.json",
+    "bytes": 740,
+    "sha256": "b46ed9d84721dc97e222099d2480dcf479f647f53a1a8b3ac8c074fb6b440905"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-B1-s101009\\process.log",
+    "bytes": 139,
+    "sha256": "49671ef1683b960773226f087a81851d4f88208ecc84dddbc58d300986b97113"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-F2-s101033\\artifacts\\cbf01-t4-conduit-balanced-c-F2-s101033-s101033\\conduit-events.jsonl",
+    "bytes": 1063006,
+    "sha256": "0e2979f0f10f2af65d6d3cb25ec4f69702afcebd5b455f7893a032c57a9ca9ef"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-F2-s101033\\artifacts\\cbf01-t4-conduit-balanced-c-F2-s101033-s101033\\conduit-snapshots.jsonl",
+    "bytes": 520264,
+    "sha256": "d4913e026132632459bef7f52844e7d057eb02575600cbf1633784af5b13d472"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-F2-s101033\\artifacts\\cbf01-t4-conduit-balanced-c-F2-s101033-s101033\\conduit.json",
+    "bytes": 51921,
+    "sha256": "d0750f809edf6c10d530c10f3ec80088f2f46dc4003ef72b2c112b0d3005653d"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-F2-s101033\\artifacts\\cbf01-t4-conduit-balanced-c-F2-s101033-s101033\\endpoints.json",
+    "bytes": 5296,
+    "sha256": "c30d2885b07ab6cdac67b0f3c58c7f656d63f5dd51d1e7b58a76ba2f7a839654"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-F2-s101033\\artifacts\\cbf01-t4-conduit-balanced-c-F2-s101033-s101033\\events.jsonl",
+    "bytes": 4287236,
+    "sha256": "4c2b045ef26f0071d2b50720a3ffd11150f30b846bbd5f9fcb6330ef6cbd3fb1"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-F2-s101033\\artifacts\\cbf01-t4-conduit-balanced-c-F2-s101033-s101033\\guard-events.jsonl",
+    "bytes": 8586735,
+    "sha256": "2adb196fce76d08a4d63d6de2dc8dc421bb40e4f35469e6826c2ae5376c3daba"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-F2-s101033\\artifacts\\cbf01-t4-conduit-balanced-c-F2-s101033-s101033\\ready.json",
+    "bytes": 36382,
+    "sha256": "e7b44981b7de952090016829fc5803f6efeefefd6f68f19c659daf4b8207e456"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-F2-s101033\\artifacts\\cbf01-t4-conduit-balanced-c-F2-s101033-s101033\\samples.jsonl",
+    "bytes": 4195460,
+    "sha256": "f866b24024a1ca63bd07a0001be700de818fda6cc4d6151a29191a46f8f6755f"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-F2-s101033\\artifacts\\cbf01-t4-conduit-balanced-c-F2-s101033-s101033\\summary.json",
+    "bytes": 36167,
+    "sha256": "5c16f7ebf92af05218b97ca559d1cd6c7e30142581906e782b9792e05d70ad35"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-F2-s101033\\artifacts\\cbf01-t4-conduit-balanced-c-F2-s101033-s101033\\sustain-transitions.jsonl",
+    "bytes": 181024,
+    "sha256": "dcd78056ec21bb531c15d67d84ca092159f3b6985e87cb85e20a66f23da4cca2"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-F2-s101033\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-F2-s101033\\artifacts\\heartbeat.json",
+    "bytes": 116,
+    "sha256": "5d44440ec37889ea5146bb65e4a4b4a7e22359e53f477aea24e72edeca0b9f92"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-F2-s101033\\artifacts\\index.json",
+    "bytes": 39081,
+    "sha256": "ad87ead19e20159074b50f35f4f495a45508eab751b80cb8ebeaee1756a5846f"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-F2-s101033\\artifacts\\manifest.json",
+    "bytes": 4327,
+    "sha256": "251fe190fb6b967f9a355f2db6c97c23949a1ef75ff029c0efd608cdf6dbce08"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-F2-s101033\\process.json",
+    "bytes": 745,
+    "sha256": "ae0e5d222eec1483f57808078386e42fb27db3e6e90b1299e2f125436fedfec4"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-F2-s101033\\process.log",
+    "bytes": 55,
+    "sha256": "19d28e532852e874bbdebc068f22b5bb055d18f1bd811df6fa1e548d64108ed0"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-plains-t1-developed-s101033\\artifacts\\cbf01-op-t1-conduit-plains-t1-developed-s101033-s101033\\conduit-events.jsonl",
+    "bytes": 505910,
+    "sha256": "aa49a2180964cd1f50298afffe59a4ab6b084beda736aff6fddc7bf96f289ddf"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-plains-t1-developed-s101033\\artifacts\\cbf01-op-t1-conduit-plains-t1-developed-s101033-s101033\\conduit-snapshots.jsonl",
+    "bytes": 670364,
+    "sha256": "f29d53cce9fe8925d753821ab9a12ac82faf5939530c76139f632ffc191285b3"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-plains-t1-developed-s101033\\artifacts\\cbf01-op-t1-conduit-plains-t1-developed-s101033-s101033\\conduit.json",
+    "bytes": 209171,
+    "sha256": "a5edf3a2a17045467c5175ef6eb389e9fc3c6e8e47dbb3669479b80e094604b0"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-plains-t1-developed-s101033\\artifacts\\cbf01-op-t1-conduit-plains-t1-developed-s101033-s101033\\endpoints.json",
+    "bytes": 7255,
+    "sha256": "c5636c49a4439aaf1b1f406ceca7f5f03813371e82b369b532c41b7e5e8966f2"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-plains-t1-developed-s101033\\artifacts\\cbf01-op-t1-conduit-plains-t1-developed-s101033-s101033\\events.jsonl",
+    "bytes": 2802153,
+    "sha256": "327ac4bb8b2bdbe24e9d9aece42f72ec6475ae302498ae7791f9a3a20692671f"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-plains-t1-developed-s101033\\artifacts\\cbf01-op-t1-conduit-plains-t1-developed-s101033-s101033\\guard-events.jsonl",
+    "bytes": 10173642,
+    "sha256": "bc8df3f020fc7e0ff2282996b19842b6e08b1c32164f65047808af39b16b36a4"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-plains-t1-developed-s101033\\artifacts\\cbf01-op-t1-conduit-plains-t1-developed-s101033-s101033\\ready.json",
+    "bytes": 37132,
+    "sha256": "a27f50b244645643c957ae30b78f05a9425ce32b8946677cdfd66eee80fd48ca"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-plains-t1-developed-s101033\\artifacts\\cbf01-op-t1-conduit-plains-t1-developed-s101033-s101033\\samples.jsonl",
+    "bytes": 14493973,
+    "sha256": "2ff1c6759f7c79729995c8374ec0e22eb966600219a69da2afdce9c04679472b"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-plains-t1-developed-s101033\\artifacts\\cbf01-op-t1-conduit-plains-t1-developed-s101033-s101033\\summary.json",
+    "bytes": 143216,
+    "sha256": "9d552e9f1ca4b63b76c6db1b4510765fe42afb26de773a0676246c74db264eee"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-plains-t1-developed-s101033\\artifacts\\cbf01-op-t1-conduit-plains-t1-developed-s101033-s101033\\sustain-transitions.jsonl",
+    "bytes": 417486,
+    "sha256": "ef498a23ee635015c8ec582a2039abf05dd4a4309493e533bd6b9f340efe9eaa"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-plains-t1-developed-s101033\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-plains-t1-developed-s101033\\artifacts\\heartbeat.json",
+    "bytes": 126,
+    "sha256": "d7140d068b2a902b2efd9206476e62653b937b6cacfe8e7ff5d2da131be10581"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-plains-t1-developed-s101033\\artifacts\\index.json",
+    "bytes": 154890,
+    "sha256": "af0220456ece03e21fd1bab9ece2e4c377341d435b85b6dd95ca34fb645f7971"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-plains-t1-developed-s101033\\artifacts\\manifest.json",
+    "bytes": 2959,
+    "sha256": "b7d61988e1332174f7107f337eeb315c84ab2656579fc1b99cf166f16c9a9514"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-plains-t1-developed-s101033\\process.json",
+    "bytes": 763,
+    "sha256": "b65f34dbe7312c09ec988d7020ccf7598dc23404fc140670badf65a45301001e"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-plains-t1-developed-s101033\\process.log",
+    "bytes": 64,
+    "sha256": "1eb74de681a8ba1ca744f812c15319b5303a77bfd54d11dfc5d683724301dd7e"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-striker-light-c-F1-s101033\\artifacts\\cbf01-t4-striker-light-c-F1-s101033-s101033\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-striker-light-c-F1-s101033\\artifacts\\cbf01-t4-striker-light-c-F1-s101033-s101033\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-striker-light-c-F1-s101033\\artifacts\\cbf01-t4-striker-light-c-F1-s101033-s101033\\events.jsonl",
+    "bytes": 241777,
+    "sha256": "a1e5f988c6a951a772ab846795ca159e567b3b71028fdba6b9ae617d3b3f581d"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-striker-light-c-F1-s101033\\artifacts\\cbf01-t4-striker-light-c-F1-s101033-s101033\\guard-events.jsonl",
+    "bytes": 1331078,
+    "sha256": "6f80ff0522e23e6639dbfcad1ad46cdb6d8bc6723a458b7248490a8b7a56d501"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-striker-light-c-F1-s101033\\artifacts\\cbf01-t4-striker-light-c-F1-s101033-s101033\\ready.json",
+    "bytes": 39191,
+    "sha256": "8a63c757c834a5066994c5f68c21a30a09a59efdaaeb327d7a8d0ae6dba87ac7"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-striker-light-c-F1-s101033\\artifacts\\cbf01-t4-striker-light-c-F1-s101033-s101033\\samples.jsonl",
+    "bytes": 387621,
+    "sha256": "7c3240bb3c74d8c21f5009826d2a352707d2318c76da4c3b5ab754ef6366d953"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-striker-light-c-F1-s101033\\artifacts\\cbf01-t4-striker-light-c-F1-s101033-s101033\\summary.json",
+    "bytes": 24457,
+    "sha256": "ed33c02e1d90e7c4e81bbcfff274518244cfcb60ec9103891ee6cde2a3d439da"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-striker-light-c-F1-s101033\\artifacts\\cbf01-t4-striker-light-c-F1-s101033-s101033\\sustain-transitions.jsonl",
+    "bytes": 14469,
+    "sha256": "5a915b4af93e82d867a230529ac608a67904db8abc57350d2b2e5bc1bd101dda"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-striker-light-c-F1-s101033\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-striker-light-c-F1-s101033\\artifacts\\heartbeat.json",
+    "bytes": 110,
+    "sha256": "3a897923e70d198e55fb38880e01695cb7768e3ec98b2eaae11d5b54804ac72c"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-striker-light-c-F1-s101033\\artifacts\\index.json",
+    "bytes": 26473,
+    "sha256": "15f102c9b8615a2216382cf3e93e4932622423ecd4dfd0da7c5b70ea0dc16d01"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-striker-light-c-F1-s101033\\artifacts\\manifest.json",
+    "bytes": 4165,
+    "sha256": "41b72d4eb91cd7a8cc7221491c0fd9d5abadcb1a7a7ad9cfbe88f89a0d431e50"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-striker-light-c-F1-s101033\\process.json",
+    "bytes": 739,
+    "sha256": "91cd278fa1d3fbd9a90cdf1779dfb77e3fd1e19a6e1e894072004eea5c998101"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-striker-light-c-F1-s101033\\process.log",
+    "bytes": 52,
+    "sha256": "f6cc9fd9e37bfb80274583ac9ae177678df5c04ba874137d971c571505af1326"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-F2-s101033\\artifacts\\cbf01-t4-conduit-light-c-F2-s101033-s101033\\conduit-events.jsonl",
+    "bytes": 1192855,
+    "sha256": "db100df01ae8859fde17b0dcde439851a02e6a776ef0983f5530b292c3e77848"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-F2-s101033\\artifacts\\cbf01-t4-conduit-light-c-F2-s101033-s101033\\conduit-snapshots.jsonl",
+    "bytes": 572125,
+    "sha256": "a2501ad1024d9eefc8c810bf94e70dc536d67e5c4cefbfd0b2c1c4ecbca8bc70"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-F2-s101033\\artifacts\\cbf01-t4-conduit-light-c-F2-s101033-s101033\\conduit.json",
+    "bytes": 88504,
+    "sha256": "a289f075f485cbec0b6589ae795e3c6648f55547adc4688acb49f87ee5b6c995"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-F2-s101033\\artifacts\\cbf01-t4-conduit-light-c-F2-s101033-s101033\\endpoints.json",
+    "bytes": 5284,
+    "sha256": "2d6b1ba0fd31a2fd7d64bcbd0d075b6cac7e60e188a3a09e0e04bc9060164f77"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-F2-s101033\\artifacts\\cbf01-t4-conduit-light-c-F2-s101033-s101033\\events.jsonl",
+    "bytes": 4576983,
+    "sha256": "d193c6886920068d9ab936f25eebaed9e709d6114f348901c15c09b8e863b97e"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-F2-s101033\\artifacts\\cbf01-t4-conduit-light-c-F2-s101033-s101033\\guard-events.jsonl",
+    "bytes": 8619771,
+    "sha256": "d9b3566d0d997c39212bee0906ac93c4c10a41f25e252b02a5a5d7753b5c645f"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-F2-s101033\\artifacts\\cbf01-t4-conduit-light-c-F2-s101033-s101033\\ready.json",
+    "bytes": 37651,
+    "sha256": "12f91a620fb5504613f3c82765f2e26c0712088a8ed336b045c49d687a538f52"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-F2-s101033\\artifacts\\cbf01-t4-conduit-light-c-F2-s101033-s101033\\samples.jsonl",
+    "bytes": 4393703,
+    "sha256": "35b668fd695cda150e5d3a4e27455e2db29c41c1b599ff4568c0f6da98698f0d"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-F2-s101033\\artifacts\\cbf01-t4-conduit-light-c-F2-s101033-s101033\\summary.json",
+    "bytes": 38834,
+    "sha256": "7fe385bfd1e659f826742d60ed20f1c927c7a20472a91ea319eef5788fc95717"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-F2-s101033\\artifacts\\cbf01-t4-conduit-light-c-F2-s101033-s101033\\sustain-transitions.jsonl",
+    "bytes": 266109,
+    "sha256": "4697c874a2b9ebbdd9413c00ec33224f1772393528a032b2220823c5787cd3a3"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-F2-s101033\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-F2-s101033\\artifacts\\heartbeat.json",
+    "bytes": 113,
+    "sha256": "38f747d4ff8b14292b0b4559dfed6912bb0bf49ca1ba5804294959db0cea0757"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-F2-s101033\\artifacts\\index.json",
+    "bytes": 41980,
+    "sha256": "0599c11f82718ea255a1122f1b7ae3f4386f688b12af19315b6f411af8ba1100"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-F2-s101033\\artifacts\\manifest.json",
+    "bytes": 4349,
+    "sha256": "b6af3c83076951dfd48d3dadbcf9983b3a8855178359e5962e97cf89f4af64ad"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-F2-s101033\\process.json",
+    "bytes": 739,
+    "sha256": "1c774416091361453c4329cfcadce27110750a3dfd8bbbf63ea6f69a9825bc1a"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-F2-s101033\\process.log",
+    "bytes": 52,
+    "sha256": "bc0ac1e5653f9ccb59e327b0bcc6b5c72203877179fe381ffdd46537bed9be8a"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-cave-t1-developed-s101033\\artifacts\\cbf01-op-t1-conduit-cave-t1-developed-s101033-s101033\\conduit-events.jsonl",
+    "bytes": 502981,
+    "sha256": "06dd673e782629c237f46f493f1394e7402e2db502f711d09153a92415eb5122"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-cave-t1-developed-s101033\\artifacts\\cbf01-op-t1-conduit-cave-t1-developed-s101033-s101033\\conduit-snapshots.jsonl",
+    "bytes": 608217,
+    "sha256": "5db14bb0f48b0475422ac102a24bb1e9997b9af3f1f513083b376b0e9a7c379d"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-cave-t1-developed-s101033\\artifacts\\cbf01-op-t1-conduit-cave-t1-developed-s101033-s101033\\conduit.json",
+    "bytes": 139340,
+    "sha256": "44dfc83a6bfdff5101474203bfbb7a2abdc2d55512908316c295879c7545b305"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-cave-t1-developed-s101033\\artifacts\\cbf01-op-t1-conduit-cave-t1-developed-s101033-s101033\\endpoints.json",
+    "bytes": 7590,
+    "sha256": "d8a3b121609a5337bb4178f8c1bbac8bbc6b5b9265c619bfb8a10743e4b6b85e"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-cave-t1-developed-s101033\\artifacts\\cbf01-op-t1-conduit-cave-t1-developed-s101033-s101033\\events.jsonl",
+    "bytes": 2583552,
+    "sha256": "d044aff1a110400648ea21e0417b5872c8da6d9bf240c9f10e69544beb5520bb"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-cave-t1-developed-s101033\\artifacts\\cbf01-op-t1-conduit-cave-t1-developed-s101033-s101033\\guard-events.jsonl",
+    "bytes": 11506392,
+    "sha256": "48c00c13eb7c7d0e56544d068fdb2f814726951cc06a5ebae30a81cdf86c0301"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-cave-t1-developed-s101033\\artifacts\\cbf01-op-t1-conduit-cave-t1-developed-s101033-s101033\\ready.json",
+    "bytes": 25487,
+    "sha256": "8af9d2a7b275e39a447a18052a4b4a538fbef9433d04d22ce9d199ac896320e7"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-cave-t1-developed-s101033\\artifacts\\cbf01-op-t1-conduit-cave-t1-developed-s101033-s101033\\samples.jsonl",
+    "bytes": 6485308,
+    "sha256": "17f390e9cd54296e9057310fbe9791bdb0bcfee0b6a738aea7d35194fe48b3f9"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-cave-t1-developed-s101033\\artifacts\\cbf01-op-t1-conduit-cave-t1-developed-s101033-s101033\\summary.json",
+    "bytes": 60752,
+    "sha256": "36a5afd60198a4dcd7c5b3f77d3de6bb7edaed3f13360dbe037437e00b7ddd74"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-cave-t1-developed-s101033\\artifacts\\cbf01-op-t1-conduit-cave-t1-developed-s101033-s101033\\sustain-transitions.jsonl",
+    "bytes": 317493,
+    "sha256": "1caaeead3cb7dad4ccb9832655eb5c0d41fe5ad25ccc2a1c122f16b710f177ef"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-cave-t1-developed-s101033\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-cave-t1-developed-s101033\\artifacts\\heartbeat.json",
+    "bytes": 124,
+    "sha256": "15b23ffd7c97ba1405e2e0743b9fa7fcea510fa40273011e505eee4d3e05d6c9"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-cave-t1-developed-s101033\\artifacts\\index.json",
+    "bytes": 65802,
+    "sha256": "d55f8db3a38b62d312999dc0d81179069815cbcd1d5b1facff1c25f3a2c8fbcc"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-cave-t1-developed-s101033\\artifacts\\manifest.json",
+    "bytes": 2940,
+    "sha256": "c7ed069e4ab88376c937fca40408e14babfd74dec47397ac4fda527beb9f5198"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-cave-t1-developed-s101033\\process.json",
+    "bytes": 759,
+    "sha256": "55c579ec9eae10ed5a76b905bcb4a7573d8f60c528abf0b0b311177bb7ec9a8a"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-op-t1-conduit-cave-t1-developed-s101033\\process.log",
+    "bytes": 62,
+    "sha256": "8ca109aa47f5030351ff0c5dba604dfb556aabdfa0514f2938b50b6095b58145"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-squire-heavy-a-F1-s101033\\artifacts\\cbf01-t4-squire-heavy-a-F1-s101033-s101033\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-squire-heavy-a-F1-s101033\\artifacts\\cbf01-t4-squire-heavy-a-F1-s101033-s101033\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-squire-heavy-a-F1-s101033\\artifacts\\cbf01-t4-squire-heavy-a-F1-s101033-s101033\\events.jsonl",
+    "bytes": 244233,
+    "sha256": "18571623e83cb8b11e086f6bbe12cefe551cec4c0a767dbbffd3e99fcb6e51c8"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-squire-heavy-a-F1-s101033\\artifacts\\cbf01-t4-squire-heavy-a-F1-s101033-s101033\\guard-events.jsonl",
+    "bytes": 1533251,
+    "sha256": "2c54e945a4918f8e7723910a8692744a829eb5270eedb58cb1de7b54ed224042"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-squire-heavy-a-F1-s101033\\artifacts\\cbf01-t4-squire-heavy-a-F1-s101033-s101033\\ready.json",
+    "bytes": 39152,
+    "sha256": "25d3f632e833432b5c6db35273f477cce907a03855bedb43a1b32e6caeb3c2c6"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-squire-heavy-a-F1-s101033\\artifacts\\cbf01-t4-squire-heavy-a-F1-s101033-s101033\\samples.jsonl",
+    "bytes": 510090,
+    "sha256": "8958f190a41070abdfb572ef71b38e063c5e7a21c23cfac10f59db2b3f1ed5dd"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-squire-heavy-a-F1-s101033\\artifacts\\cbf01-t4-squire-heavy-a-F1-s101033-s101033\\summary.json",
+    "bytes": 26583,
+    "sha256": "30b89dd8a19fc2d81be92a62d041ccc3cb29034efb07261010a87008c7927faa"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-squire-heavy-a-F1-s101033\\artifacts\\cbf01-t4-squire-heavy-a-F1-s101033-s101033\\sustain-transitions.jsonl",
+    "bytes": 11718,
+    "sha256": "36492fc02faa9fed5350fe647eb6b9f97494aa72b0e494b67430f9b8fbf8cdea"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-squire-heavy-a-F1-s101033\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-squire-heavy-a-F1-s101033\\artifacts\\heartbeat.json",
+    "bytes": 109,
+    "sha256": "825ef3c2f91a51b7dbcfed80a2178574b21b8e470846c69b038949844779c2eb"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-squire-heavy-a-F1-s101033\\artifacts\\index.json",
+    "bytes": 28735,
+    "sha256": "30b1991ea5283320b1f4e8ca543b9f59be506e1fd706e4c9a59dfd8cd319c51f"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-squire-heavy-a-F1-s101033\\artifacts\\manifest.json",
+    "bytes": 4354,
+    "sha256": "1f5240a92ebccf2708ea9c68be312f40623b5e3ff46e78d63d2baecc655b18cd"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-squire-heavy-a-F1-s101033\\process.json",
+    "bytes": 737,
+    "sha256": "e393e00b32b87b56df55e3def935d2dabbb076fe5fbafb2039dbdd661d5b3db0"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-squire-heavy-a-F1-s101033\\process.log",
+    "bytes": 51,
+    "sha256": "7c221e953e377cb5953d7d9d38651fcadcc5e4b1689ec6e56365cdb5f2f4f780"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-F2-s101033\\artifacts\\cbf01-t4-conduit-heavy-c-F2-s101033-s101033\\conduit-events.jsonl",
+    "bytes": 171170,
+    "sha256": "880607e34f2094f61dd05d636e1e6d355bf0607f0f032fbf77efb026c7bd1e70"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-F2-s101033\\artifacts\\cbf01-t4-conduit-heavy-c-F2-s101033-s101033\\conduit-snapshots.jsonl",
+    "bytes": 193666,
+    "sha256": "0ae69b3bb9f13150cfdf5e8cf870df8ad812a6f2fa0c03865a640e774cee7915"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-F2-s101033\\artifacts\\cbf01-t4-conduit-heavy-c-F2-s101033-s101033\\conduit.json",
+    "bytes": 20252,
+    "sha256": "93418f105ebae923e48f2d5e5b772acad5206d5038c70f08094f42b2a15b6576"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-F2-s101033\\artifacts\\cbf01-t4-conduit-heavy-c-F2-s101033-s101033\\endpoints.json",
+    "bytes": 5305,
+    "sha256": "d76191d6a15f370ea96bfa4515f0391e71c11b04ae97ac039065a7feddbe63c9"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-F2-s101033\\artifacts\\cbf01-t4-conduit-heavy-c-F2-s101033-s101033\\events.jsonl",
+    "bytes": 1104541,
+    "sha256": "139cc8b2fac10a3c7abe97e45bca4a9e063635f298420045e8c171c23fc43e9c"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-F2-s101033\\artifacts\\cbf01-t4-conduit-heavy-c-F2-s101033-s101033\\guard-events.jsonl",
+    "bytes": 10238191,
+    "sha256": "66a0a45892ecd6b5dea8d1ef8584bc50e14fa8bfc9a83ef7ad59036dfc2391aa"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-F2-s101033\\artifacts\\cbf01-t4-conduit-heavy-c-F2-s101033-s101033\\ready.json",
+    "bytes": 34215,
+    "sha256": "ba6bf233b0a9a3ef82d5a65f0fa8d3566cae32b4145f4df4ba752bae356e6220"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-F2-s101033\\artifacts\\cbf01-t4-conduit-heavy-c-F2-s101033-s101033\\samples.jsonl",
+    "bytes": 3388852,
+    "sha256": "c1de1259dfd5a3f38cb2e21dd304c767d8e7bf5e0945cc3ef7d0c98de3b3415b"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-F2-s101033\\artifacts\\cbf01-t4-conduit-heavy-c-F2-s101033-s101033\\summary.json",
+    "bytes": 23237,
+    "sha256": "b7baab3c46dbcb02a0c9e04a0eaa43c3ae3e407720d299b53060d9f6d01860db"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-F2-s101033\\artifacts\\cbf01-t4-conduit-heavy-c-F2-s101033-s101033\\sustain-transitions.jsonl",
+    "bytes": 95602,
+    "sha256": "3a9cace26562f1237564cd307dc7848a6985cbe3c4dfe4dcf1b4a94fe73dc9cc"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-F2-s101033\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-F2-s101033\\artifacts\\heartbeat.json",
+    "bytes": 113,
+    "sha256": "2d949c8522a026853fecee5c588c5dd6113aaf8eb557b5ce667cd225da6c3313"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-F2-s101033\\artifacts\\index.json",
+    "bytes": 24995,
+    "sha256": "568b781ce56ad0cdf78c81e6426ef91df1b495a971323773c034a5a8c1154d34"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-F2-s101033\\artifacts\\manifest.json",
+    "bytes": 4289,
+    "sha256": "f389018b9e9ede302e5fdf60ad587145ae0ea0f4458de9ecddfeef43e2c7109a"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-F2-s101033\\process.json",
+    "bytes": 739,
+    "sha256": "37d6729a93a6033dedc6fb350e232e8da892ab3b1672ec9c898274fcb36c1668"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-F2-s101033\\process.log",
+    "bytes": 52,
+    "sha256": "38058b371942f9f0227c0938fb28bfee71e64e3795cbaa9cfcb278e193c97c49"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-apprentice-balanced-a-F1-s101033\\artifacts\\cbf01-t4-apprentice-balanced-a-F1-s101033-s101033\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-apprentice-balanced-a-F1-s101033\\artifacts\\cbf01-t4-apprentice-balanced-a-F1-s101033-s101033\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-apprentice-balanced-a-F1-s101033\\artifacts\\cbf01-t4-apprentice-balanced-a-F1-s101033-s101033\\events.jsonl",
+    "bytes": 355839,
+    "sha256": "018aa682540522392e75c7fa62d7ccdc1c8158b0f0da05e3ff6414154092de72"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-apprentice-balanced-a-F1-s101033\\artifacts\\cbf01-t4-apprentice-balanced-a-F1-s101033-s101033\\guard-events.jsonl",
+    "bytes": 2220578,
+    "sha256": "0483410dd3e84cb82a507a6c602dd4b6847cbc340a243e5ba713aeaa8eaa1abc"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-apprentice-balanced-a-F1-s101033\\artifacts\\cbf01-t4-apprentice-balanced-a-F1-s101033-s101033\\ready.json",
+    "bytes": 39887,
+    "sha256": "051f103c40354f2ea7cc5ce82d77ec4cfe1cdada54ed8d8d6432c35dd4ed7afc"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-apprentice-balanced-a-F1-s101033\\artifacts\\cbf01-t4-apprentice-balanced-a-F1-s101033-s101033\\samples.jsonl",
+    "bytes": 806478,
+    "sha256": "dbe0f2044ae437a46bce96e909e35e8729768383df7cab2e83f4b6bbc9ce0805"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-apprentice-balanced-a-F1-s101033\\artifacts\\cbf01-t4-apprentice-balanced-a-F1-s101033-s101033\\summary.json",
+    "bytes": 28288,
+    "sha256": "40d8c6c20629dfa68ee4ce6b91fa764de1a663a612f7e41f85ce46e944ea3238"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-apprentice-balanced-a-F1-s101033\\artifacts\\cbf01-t4-apprentice-balanced-a-F1-s101033-s101033\\sustain-transitions.jsonl",
+    "bytes": 53691,
+    "sha256": "778c14348ca32c215ed7a56e1898e71c954f840d6e4f0b57ec7261aa9c0c5336"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-apprentice-balanced-a-F1-s101033\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-apprentice-balanced-a-F1-s101033\\artifacts\\heartbeat.json",
+    "bytes": 116,
+    "sha256": "6853f52d580005817d49617dc38f0c868c233284c0a4e92e608ca01dce90ece5"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-apprentice-balanced-a-F1-s101033\\artifacts\\index.json",
+    "bytes": 30612,
+    "sha256": "289a1b840339dbf71adcf0a48760731f0cd877b89d4cbcb08d7c133bc76656ba"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-apprentice-balanced-a-F1-s101033\\artifacts\\manifest.json",
+    "bytes": 4527,
+    "sha256": "a069aaa35b1e8c63236f151a1aa9308522cd45f4714ef88cd0054a35a392ed5a"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-apprentice-balanced-a-F1-s101033\\process.json",
+    "bytes": 750,
+    "sha256": "fcefec4f08efb2c920aba36e2384feb6d0acf7c5dd5982c18d98d2b92f5e6e86"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-apprentice-balanced-a-F1-s101033\\process.log",
+    "bytes": 58,
+    "sha256": "6b652d0c8b260c736bdf683f225fc15fd89275ef403247701919bdab9d9472b9"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-F2-s101033\\artifacts\\cbf01-t4-conduit-heavy-b-F2-s101033-s101033\\conduit-events.jsonl",
+    "bytes": 170608,
+    "sha256": "fce2fcd58dd8ca27c469ce85f22c1ca894c751782aecb5c268fe877d1a873f4e"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-F2-s101033\\artifacts\\cbf01-t4-conduit-heavy-b-F2-s101033-s101033\\conduit-snapshots.jsonl",
+    "bytes": 201170,
+    "sha256": "c30c4ce676c185a5bd5bd6553f7ac16f077c9fa4f90d87f74cb03182699a951c"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-F2-s101033\\artifacts\\cbf01-t4-conduit-heavy-b-F2-s101033-s101033\\conduit.json",
+    "bytes": 17361,
+    "sha256": "8446d60f857a1d27a5a920684e0a7cf24f617c701d1d3f961c3d9944168907cf"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-F2-s101033\\artifacts\\cbf01-t4-conduit-heavy-b-F2-s101033-s101033\\endpoints.json",
+    "bytes": 4656,
+    "sha256": "fb9cedd473297736463a7e61d08bf33c182e251c0481025a9368ea14583e9cc3"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-F2-s101033\\artifacts\\cbf01-t4-conduit-heavy-b-F2-s101033-s101033\\events.jsonl",
+    "bytes": 2155600,
+    "sha256": "e1c7f3d7d0db75ebd245da244da473c20b7b8f757c19337ffd2480fac8b866e1"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-F2-s101033\\artifacts\\cbf01-t4-conduit-heavy-b-F2-s101033-s101033\\guard-events.jsonl",
+    "bytes": 9101128,
+    "sha256": "32b702fcf9e6891974740ab50813cc1b4b154482233ddf815d48eba1f85a467b"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-F2-s101033\\artifacts\\cbf01-t4-conduit-heavy-b-F2-s101033-s101033\\ready.json",
+    "bytes": 33796,
+    "sha256": "a9ed89ae5e1a944b176f525fd66e325c586ebe88c9f6de5c77ce76dfdcf84817"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-F2-s101033\\artifacts\\cbf01-t4-conduit-heavy-b-F2-s101033-s101033\\samples.jsonl",
+    "bytes": 3251680,
+    "sha256": "e19bf5760973f336bf21b8aa2cc1f18fbcf89df9940ef856c9afba277d77e306"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-F2-s101033\\artifacts\\cbf01-t4-conduit-heavy-b-F2-s101033-s101033\\summary.json",
+    "bytes": 39748,
+    "sha256": "7151049565d311f19afacf1aff1a0556a7c1e72a42fc175119335b88f3d52733"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-F2-s101033\\artifacts\\cbf01-t4-conduit-heavy-b-F2-s101033-s101033\\sustain-transitions.jsonl",
+    "bytes": 114863,
+    "sha256": "1d88167a9d1dfa18a14ea45dcf099ff422b32b88b8a3ba8e10cb7d25229ec13a"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-F2-s101033\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-F2-s101033\\artifacts\\heartbeat.json",
+    "bytes": 113,
+    "sha256": "d3408069e806192f266bcf6c7d0e804518e70f1e5d206667d4c10c46f5d9836a"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-F2-s101033\\artifacts\\index.json",
+    "bytes": 42964,
+    "sha256": "918f3b2de364ffc3d1e6877cfdcc5b1c1cbbb2dc5d30a996215f35e3d2da28eb"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-F2-s101033\\artifacts\\manifest.json",
+    "bytes": 4262,
+    "sha256": "3df4c1bfa10be572e2c2c1f9cff6c073c7af3ed30c078eef9243230c66423cc6"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-F2-s101033\\process.json",
+    "bytes": 739,
+    "sha256": "0b1be4ad0e6d4880548f46ff0e846a5606e48d6e3c00dfe5d146585c475cb85d"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-F2-s101033\\process.log",
+    "bytes": 52,
+    "sha256": "74904d199a8ede53c9a5c36de8a49d423a7891f2fa4baaacfb675a3fbf0fd4eb"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-heavy-a-F1-s101033\\artifacts\\cbf01-t4-slinger-heavy-a-F1-s101033-s101033\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-heavy-a-F1-s101033\\artifacts\\cbf01-t4-slinger-heavy-a-F1-s101033-s101033\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-heavy-a-F1-s101033\\artifacts\\cbf01-t4-slinger-heavy-a-F1-s101033-s101033\\events.jsonl",
+    "bytes": 237002,
+    "sha256": "3ac4c0f16fad93a2d5ef7192b0839c1b5c8873938be0f691f13dff9d17ca4a35"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-heavy-a-F1-s101033\\artifacts\\cbf01-t4-slinger-heavy-a-F1-s101033-s101033\\guard-events.jsonl",
+    "bytes": 916654,
+    "sha256": "d83350dc40a91c13f1a88daaf386be6a31460878297242db45b20112a6a19c6d"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-heavy-a-F1-s101033\\artifacts\\cbf01-t4-slinger-heavy-a-F1-s101033-s101033\\ready.json",
+    "bytes": 39102,
+    "sha256": "cac905f00fb4c4f00ef0dec87de4fd342eb96f746dd9a204bbd743eaed373f9a"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-heavy-a-F1-s101033\\artifacts\\cbf01-t4-slinger-heavy-a-F1-s101033-s101033\\samples.jsonl",
+    "bytes": 331068,
+    "sha256": "6a11e288a1e978167977dd01b4fb6633fe3c684bf92985a3b92745b0864c9c09"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-heavy-a-F1-s101033\\artifacts\\cbf01-t4-slinger-heavy-a-F1-s101033-s101033\\summary.json",
+    "bytes": 25842,
+    "sha256": "691399453d827cdba3b1b3de0be87171f6f9ed4dc6aff0c4a623773763e67030"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-heavy-a-F1-s101033\\artifacts\\cbf01-t4-slinger-heavy-a-F1-s101033-s101033\\sustain-transitions.jsonl",
+    "bytes": 9196,
+    "sha256": "6554232445ee376742f55de20420d0757b3ff8135b67179dde573d63709d4a1f"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-heavy-a-F1-s101033\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-heavy-a-F1-s101033\\artifacts\\heartbeat.json",
+    "bytes": 110,
+    "sha256": "41e61f20ac8e7ccb62fa12db5ebf0c985f1b3e364fc8dd56b7909f7dd7dc5de7"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-heavy-a-F1-s101033\\artifacts\\index.json",
+    "bytes": 27926,
+    "sha256": "9509e44e738ff5cb00c8636b21e89a7f7571975a9fbccc6f1735c553605260ac"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-heavy-a-F1-s101033\\artifacts\\manifest.json",
+    "bytes": 4253,
+    "sha256": "57d4f6203493e1e5a9380f48e763acb3c8f001aff93a8fc6450a7bdd28854d31"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-heavy-a-F1-s101033\\process.json",
+    "bytes": 739,
+    "sha256": "0443533c7c9def7126d523473b89bc56f29b7c6efc11032477194b843fc939f9"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-heavy-a-F1-s101033\\process.log",
+    "bytes": 52,
+    "sha256": "b2434f2a3d8d75fad70362c445a5c67547d86ae720cb394a2bb4066d7d26a0fa"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-B1-s101033\\artifacts\\cbf01-t4-conduit-balanced-c-B1-s101033-s101033\\conduit-events.jsonl",
+    "bytes": 293001,
+    "sha256": "268d47e6bef5e50f2ffdc5b55273c3ff5eb3b54cbf11f5e27d1cd34b4cc93d2f"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-B1-s101033\\artifacts\\cbf01-t4-conduit-balanced-c-B1-s101033-s101033\\conduit-snapshots.jsonl",
+    "bytes": 169372,
+    "sha256": "3dd0265d0404d655c9b8f89cbd38b89c043231dbe8795c37b077bcb021a6e0cf"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-B1-s101033\\artifacts\\cbf01-t4-conduit-balanced-c-B1-s101033-s101033\\conduit.json",
+    "bytes": 46220,
+    "sha256": "e3ebeb44e0647b36e3f442e2ac5c130234e478735afe108361354a0c56e8bcf0"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-B1-s101033\\artifacts\\cbf01-t4-conduit-balanced-c-B1-s101033-s101033\\events.jsonl",
+    "bytes": 1538358,
+    "sha256": "0aaf8e88df44b713ceab0efa93877579ffb463a63474fc37a1bcbb067d5e6cca"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-B1-s101033\\artifacts\\cbf01-t4-conduit-balanced-c-B1-s101033-s101033\\ready.json",
+    "bytes": 32145,
+    "sha256": "e9741f6c558411186a5f3ccce3117a8d98ebeb52b221683f559ebe0f8e24a948"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-B1-s101033\\artifacts\\cbf01-t4-conduit-balanced-c-B1-s101033-s101033\\samples.jsonl",
+    "bytes": 49674,
+    "sha256": "1e4a3e6d137899e30a4cec3a14db3a288f0e964fa857cbab8258e1d1f1ed5c26"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-B1-s101033\\artifacts\\cbf01-t4-conduit-balanced-c-B1-s101033-s101033\\summary.json",
+    "bytes": 5717,
+    "sha256": "57fc0dcb2865885dc2082a48417750c1555f4c4b73bcdbb2b63ee4739e9a182c"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-B1-s101033\\artifacts\\complete.json",
+    "bytes": 155,
+    "sha256": "7befbccf9196b01d62971e787165e9df5df2f8d6ebb311543527cd91c4781f99"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-B1-s101033\\artifacts\\heartbeat.json",
+    "bytes": 33,
+    "sha256": "adbd97d44cf9704af7b011245fc4dd4a1e2ef01632b554b63bb220e340015693"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-B1-s101033\\artifacts\\index.json",
+    "bytes": 6193,
+    "sha256": "855ad6b6c9df74ea6077e5d87b26df43f180561f933dcc5f2d5fa8c6430f94da"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-B1-s101033\\artifacts\\manifest.json",
+    "bytes": 4503,
+    "sha256": "8ac4fa1f118deb1784b9e90cf16b3e1f4b65236672e85d826130efac76087701"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-B1-s101033\\process.json",
+    "bytes": 746,
+    "sha256": "cc6b53cd35b1cb455b9adae08dc0414d66a953b2572a6c7ef83acd6bf4dfb095"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-balanced-c-B1-s101033\\process.log",
+    "bytes": 145,
+    "sha256": "6b43f903800fea8dbd2961e3b96db791d9b17877433646ab2876b195fc635c6e"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-light-a-F1-s101033\\artifacts\\cbf01-t4-slinger-light-a-F1-s101033-s101033\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-light-a-F1-s101033\\artifacts\\cbf01-t4-slinger-light-a-F1-s101033-s101033\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-light-a-F1-s101033\\artifacts\\cbf01-t4-slinger-light-a-F1-s101033-s101033\\endpoints.json",
+    "bytes": 4910,
+    "sha256": "6d57a2fb7c833d9f663c60adb1a4cfc8101b7089556339e9007cf3f93deeb015"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-light-a-F1-s101033\\artifacts\\cbf01-t4-slinger-light-a-F1-s101033-s101033\\events.jsonl",
+    "bytes": 1068360,
+    "sha256": "494d21e9d4d31c03b00c0149e459acf9360bbcbd4a755577e4d4bdb61ca8ea4d"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-light-a-F1-s101033\\artifacts\\cbf01-t4-slinger-light-a-F1-s101033-s101033\\guard-events.jsonl",
+    "bytes": 9791974,
+    "sha256": "6c84f0cf8ca9161cdf50c8e1a5b228458d4e8d198f06017ea48ea33df37c8fc5"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-light-a-F1-s101033\\artifacts\\cbf01-t4-slinger-light-a-F1-s101033-s101033\\ready.json",
+    "bytes": 39471,
+    "sha256": "c6e0042cab8940d2243fbafcdd311c1b15420a11e07714047dad9f61fb5b34cb"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-light-a-F1-s101033\\artifacts\\cbf01-t4-slinger-light-a-F1-s101033-s101033\\samples.jsonl",
+    "bytes": 5074732,
+    "sha256": "445df4500321023e1124ee90c7b5d112f43d6a3a5b30dc8e4bbf5e3bb1b2fdcc"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-light-a-F1-s101033\\artifacts\\cbf01-t4-slinger-light-a-F1-s101033-s101033\\summary.json",
+    "bytes": 42625,
+    "sha256": "c1b64b4c5e181f1e3744ee5ab6a4392dbec59f29da2e39844d14051d9c19ab77"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-light-a-F1-s101033\\artifacts\\cbf01-t4-slinger-light-a-F1-s101033-s101033\\sustain-transitions.jsonl",
+    "bytes": 416284,
+    "sha256": "a5908f248beb2e1fe1738e986eaf775ceeade9c9d9ef9bd1fb68ce68359952f2"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-light-a-F1-s101033\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-light-a-F1-s101033\\artifacts\\heartbeat.json",
+    "bytes": 113,
+    "sha256": "dd2fdcfe3c5ab094edf01307b494f445ceafc373f06caf96b07ac40b40f83eaf"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-light-a-F1-s101033\\artifacts\\index.json",
+    "bytes": 45997,
+    "sha256": "16e02acb398959270c362786cb2519bc0413aaedb5a2e6b5021074c48fe721a2"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-light-a-F1-s101033\\artifacts\\manifest.json",
+    "bytes": 4278,
+    "sha256": "674ed0dd03dc4090f0905060fb0a8ee9ab3bf4235ecb2fe65a8c86b8dc39b16f"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-light-a-F1-s101033\\process.json",
+    "bytes": 739,
+    "sha256": "01379a95657a43f236c3cfcc44f93c63ab4066887b529761d2ece8d7a15168ce"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-slinger-light-a-F1-s101033\\process.log",
+    "bytes": 52,
+    "sha256": "345e351b0c09fbb45a1acd19b61efe7d99f1f01be6e498efad6381309b6ff5a5"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-B1-s101033\\artifacts\\cbf01-t4-conduit-light-c-B1-s101033-s101033\\conduit-events.jsonl",
+    "bytes": 269151,
+    "sha256": "575f1d0b599254ff7fcf2d14e1c58c190c2d9f620a39a70a3fd041367bc7c25c"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-B1-s101033\\artifacts\\cbf01-t4-conduit-light-c-B1-s101033-s101033\\conduit-snapshots.jsonl",
+    "bytes": 145079,
+    "sha256": "d193db5c1149c6b49c3afe4a8205cda237232c180f9a67c4c278d083ac08f7e0"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-B1-s101033\\artifacts\\cbf01-t4-conduit-light-c-B1-s101033-s101033\\conduit.json",
+    "bytes": 48163,
+    "sha256": "df602b607352019a0ef497bfa65e12e7a49d3a20ffb6496252725576fd6eace6"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-B1-s101033\\artifacts\\cbf01-t4-conduit-light-c-B1-s101033-s101033\\events.jsonl",
+    "bytes": 1268819,
+    "sha256": "88cdd0a2a4f6e89f93fdfcfb129d3b43e2dbb73014a9168c1f17061573b68630"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-B1-s101033\\artifacts\\cbf01-t4-conduit-light-c-B1-s101033-s101033\\ready.json",
+    "bytes": 33451,
+    "sha256": "c8717e72e792a9f1aa374790f334bb2d50c0ecc7f026270108c90dcdc8de8bcc"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-B1-s101033\\artifacts\\cbf01-t4-conduit-light-c-B1-s101033-s101033\\samples.jsonl",
+    "bytes": 41954,
+    "sha256": "0dc15b196eeb76c48dca339a26952f3ba764269347be8179a755f59cfec9edf4"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-B1-s101033\\artifacts\\cbf01-t4-conduit-light-c-B1-s101033-s101033\\summary.json",
+    "bytes": 6174,
+    "sha256": "8c909d6133d9ba364ce8f23b46af2f6c9107b0f5ad123f6e4f4ad2a420f15039"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-B1-s101033\\artifacts\\complete.json",
+    "bytes": 152,
+    "sha256": "368baef708c11463868c1a8438ca3d4be9cc368a866e5186cb9ae8db2c32d8b7"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-B1-s101033\\artifacts\\heartbeat.json",
+    "bytes": 33,
+    "sha256": "31f389ec84d948354b3d2ea1c800150f5e8420bb4712335a5248a9c410f2b0c4"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-B1-s101033\\artifacts\\index.json",
+    "bytes": 6676,
+    "sha256": "51d64526dd77daf227b42a47ae53e0164fdb6c5927902874e971666477107bb4"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-B1-s101033\\artifacts\\manifest.json",
+    "bytes": 4525,
+    "sha256": "18360af81811cef5e4b3b8ff5d6f9baac459af070cabfbd2cfa11ae42fe282c3"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-B1-s101033\\process.json",
+    "bytes": 740,
+    "sha256": "b49b631fa735c7dad40069d1d7134369ecf1e080c13575a4f71d6ec3a4535d81"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-light-c-B1-s101033\\process.log",
+    "bytes": 139,
+    "sha256": "e34e64373a50b13332027172fe28bde7a7b1b10c88abfc1bf73fabfd40fa1f3e"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-spirit-balanced-c-F1-s101033\\artifacts\\cbf01-t4-spirit-balanced-c-F1-s101033-s101033\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-spirit-balanced-c-F1-s101033\\artifacts\\cbf01-t4-spirit-balanced-c-F1-s101033-s101033\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-spirit-balanced-c-F1-s101033\\artifacts\\cbf01-t4-spirit-balanced-c-F1-s101033-s101033\\endpoints.json",
+    "bytes": 2567,
+    "sha256": "6dd4ce65d11f66190fb8f961d016ae69a7739b148e67ef9c4b36e9ae37708afc"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-spirit-balanced-c-F1-s101033\\artifacts\\cbf01-t4-spirit-balanced-c-F1-s101033-s101033\\events.jsonl",
+    "bytes": 1487596,
+    "sha256": "24e28873172c18d6a26cfc2453719acace2f51a34d9eccc75ba80366d98a8cc6"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-spirit-balanced-c-F1-s101033\\artifacts\\cbf01-t4-spirit-balanced-c-F1-s101033-s101033\\guard-events.jsonl",
+    "bytes": 9495074,
+    "sha256": "1b450801a6012a347bd66344b963b3c1a73c96eda086d16df139c1a2cfdf7b98"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-spirit-balanced-c-F1-s101033\\artifacts\\cbf01-t4-spirit-balanced-c-F1-s101033-s101033\\ready.json",
+    "bytes": 39299,
+    "sha256": "0be17d37a8e578dd373fe2d2a59137223715bcb91459f238a85623c6788c638b"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-spirit-balanced-c-F1-s101033\\artifacts\\cbf01-t4-spirit-balanced-c-F1-s101033-s101033\\samples.jsonl",
+    "bytes": 3342812,
+    "sha256": "c8649d789908908b59e05bcb7bb67a3504c2dd0f0c6310c0fe4d3cb58a442a2b"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-spirit-balanced-c-F1-s101033\\artifacts\\cbf01-t4-spirit-balanced-c-F1-s101033-s101033\\summary.json",
+    "bytes": 76598,
+    "sha256": "154ddcb2917b906b86d9a2e078c6bfa7350dcc36b6efcaab56686cd15ffb2015"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-spirit-balanced-c-F1-s101033\\artifacts\\cbf01-t4-spirit-balanced-c-F1-s101033-s101033\\sustain-transitions.jsonl",
+    "bytes": 183099,
+    "sha256": "f2d8845a2230ebc75c17022e9a8fd523f79192f9b78bbb59eeef7db8a25421ab"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-spirit-balanced-c-F1-s101033\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-spirit-balanced-c-F1-s101033\\artifacts\\heartbeat.json",
+    "bytes": 115,
+    "sha256": "c2515db9e1e2720caed24f8eacf2de8e5f41a00a9744f8fe2521ae7c897cb110"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-spirit-balanced-c-F1-s101033\\artifacts\\index.json",
+    "bytes": 82712,
+    "sha256": "7505a17809ce0e60f4aade3d00a76f71ac5a9bb05af3ccd60e3cec7a25cb2e94"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-spirit-balanced-c-F1-s101033\\artifacts\\manifest.json",
+    "bytes": 4361,
+    "sha256": "41677404f1543dbf868a26bc429553b374ec3af9f0f0ee9538765ff6cd6a6fb7"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-spirit-balanced-c-F1-s101033\\process.json",
+    "bytes": 743,
+    "sha256": "257a36feb30146db25d52c6e0555776aa442679043d2f34d77caebb0a200a736"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-spirit-balanced-c-F1-s101033\\process.log",
+    "bytes": 54,
+    "sha256": "00e2e497d4bc5a3b470ac01c5d88633a27a556acd19a7dd3fa50bba11d396899"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-B1-s101033\\artifacts\\cbf01-t4-conduit-heavy-c-B1-s101033-s101033\\conduit-events.jsonl",
+    "bytes": 27098,
+    "sha256": "2130fef9a022825e468ac654c612dc53a523b9e72d078c891bd1eb4f0710ec7f"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-B1-s101033\\artifacts\\cbf01-t4-conduit-heavy-c-B1-s101033-s101033\\conduit-snapshots.jsonl",
+    "bytes": 36913,
+    "sha256": "5c05cabe0087d2816d0f7d03aa840f680f3b42279b57f56f56ac04fa98cd8135"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-B1-s101033\\artifacts\\cbf01-t4-conduit-heavy-c-B1-s101033-s101033\\conduit.json",
+    "bytes": 3608,
+    "sha256": "69869e9728e4fd20396bca1f1144b57672674b62c1a83a97cd33de309978883d"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-B1-s101033\\artifacts\\cbf01-t4-conduit-heavy-c-B1-s101033-s101033\\events.jsonl",
+    "bytes": 239608,
+    "sha256": "4f3f750dc1ff0845c7eb6c841c04843f84b7ee7df87aec0b3e202a716079b4d2"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-B1-s101033\\artifacts\\cbf01-t4-conduit-heavy-c-B1-s101033-s101033\\ready.json",
+    "bytes": 29963,
+    "sha256": "621d12ccf63f65b47a35ee405d7c0c2328aa31ef3d066687df430f8f5e451165"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-B1-s101033\\artifacts\\cbf01-t4-conduit-heavy-c-B1-s101033-s101033\\samples.jsonl",
+    "bytes": 18510,
+    "sha256": "857de340b41797a9317d26dced11dd42fd3f13ffa8f72e382a2a98951ecb0129"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-B1-s101033\\artifacts\\cbf01-t4-conduit-heavy-c-B1-s101033-s101033\\summary.json",
+    "bytes": 5187,
+    "sha256": "2e0aee26adbbd5ec42ec4eba2755a97e8649f2b6c1feac70dbe51b32c3b79a7e"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-B1-s101033\\artifacts\\complete.json",
+    "bytes": 152,
+    "sha256": "e319f5d79463c265aa661499aa7a17cf40b2a7904bb3d843930f00ff74e575c6"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-B1-s101033\\artifacts\\heartbeat.json",
+    "bytes": 33,
+    "sha256": "884f331c29d6a3e4669283a790d2913ac7018d9b869ea110f4ac386134723056"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-B1-s101033\\artifacts\\index.json",
+    "bytes": 5621,
+    "sha256": "4819958fa8d31a1a5afed579be18701ee66ffaeb492b55507d76e7247a073a0c"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-B1-s101033\\artifacts\\manifest.json",
+    "bytes": 4465,
+    "sha256": "d677b1e3cf75a3d9e80dba15626c571869b7e05c4b67ae0982b7bd1d2ac8a3db"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-B1-s101033\\process.json",
+    "bytes": 739,
+    "sha256": "5924501c80efa5665bda27ef2a8ea645d159a0b0a9c0102d11c6f16180054b2a"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-c-B1-s101033\\process.log",
+    "bytes": 139,
+    "sha256": "140b375852865d6ee15785db0479cefea645d02367edb1d027d777d53a808d30"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-B1-s101033\\artifacts\\cbf01-t4-conduit-heavy-b-B1-s101033-s101033\\conduit-events.jsonl",
+    "bytes": 21159,
+    "sha256": "c63bbf08505d6223ad092ee24ac16bf80487e86d2d8f4bd6e299380432db0bab"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-B1-s101033\\artifacts\\cbf01-t4-conduit-heavy-b-B1-s101033-s101033\\conduit-snapshots.jsonl",
+    "bytes": 36347,
+    "sha256": "f0fd966a0bb59ca72da60a9151116c999ee340af726f050b0d751b9b853f3607"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-B1-s101033\\artifacts\\cbf01-t4-conduit-heavy-b-B1-s101033-s101033\\conduit.json",
+    "bytes": 3854,
+    "sha256": "fb6ced20dc5facbd152196bb391f834f9ee6fce7a9fcb7c42355bcbd4fa0268d"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-B1-s101033\\artifacts\\cbf01-t4-conduit-heavy-b-B1-s101033-s101033\\events.jsonl",
+    "bytes": 440582,
+    "sha256": "9bd32b458445ab204ff91af7cfcd2ac6cf26c7f8a71e8544fbf838297799ed43"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-B1-s101033\\artifacts\\cbf01-t4-conduit-heavy-b-B1-s101033-s101033\\ready.json",
+    "bytes": 29387,
+    "sha256": "bc1ddcca2cbab8a388c91cb1068e913055520fdd25e3b8c099e2ffa6332d0b8d"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-B1-s101033\\artifacts\\cbf01-t4-conduit-heavy-b-B1-s101033-s101033\\samples.jsonl",
+    "bytes": 19053,
+    "sha256": "25fa8e6f2d3cd5d8017c0bb2e49cc39816792d1a9e0b0e4554c5192570336003"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-B1-s101033\\artifacts\\cbf01-t4-conduit-heavy-b-B1-s101033-s101033\\summary.json",
+    "bytes": 5209,
+    "sha256": "8639b03f6bb8ed97604f4b7e60032b79b826fdb2a699fb342acd9e4da2e22d66"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-B1-s101033\\artifacts\\complete.json",
+    "bytes": 152,
+    "sha256": "1264a1d8b686249b7848ba1a85a5d91a923a2c689352c11927cc8075afe1f5ff"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-B1-s101033\\artifacts\\heartbeat.json",
+    "bytes": 33,
+    "sha256": "83f02394dfb50700868270e282c0ff617c077cfac9afb109d0ac1c6def0bc042"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-B1-s101033\\artifacts\\index.json",
+    "bytes": 5643,
+    "sha256": "5db75f555c7d9e52cdab5a85f5731be047b0aba1d35345b478c33516138f86fa"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-B1-s101033\\artifacts\\manifest.json",
+    "bytes": 4438,
+    "sha256": "aec6f2c1b4f38bc8b28658b7b48c783d067b019e449a0e854a15564a0f258681"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-B1-s101033\\process.json",
+    "bytes": 740,
+    "sha256": "0e625ba464347867bd881da77425d347c783b40d3524ee6a34f047ca339bd5e6"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\run-01\\cbf01-t4-conduit-heavy-b-B1-s101033\\process.log",
+    "bytes": 139,
+    "sha256": "1cb4a7fdccfc33fa1ea5a6891a288dbdb6295cffe962b9b9cd67603bd451e241"
+  }
+]
