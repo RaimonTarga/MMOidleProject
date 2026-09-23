@@ -1,0 +1,75 @@
+{
+  "experimentId": "overnight-t1-t3-progression-01",
+  "publicationDirectory": "reports/player-fast-pass/overnight-t1-t3-progression-01/run-01",
+  "executionSourceCommit": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6",
+  "sourceSha256": "0eba7df7facfbfb6454b6cc0e9e8a1930ba0b16d0e1bf64c8bed52e130ba91b4",
+  "hitboxesSha256": "08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83",
+  "measuredArtifact": "results-summary.json",
+  "measuredSha256": "dcd101e296e538d35e5ccbd59e5774a96978af38c59a270756729db81fe8f225",
+  "rawInventorySha256": "6996de47bcd7bbcb01e595f2cd93c9b9558d65df13428b1288484af67dd49fb9",
+  "counts": {
+    "planned": 720,
+    "completed": 720,
+    "newCompleted": 720,
+    "failed": 0,
+    "omitted": 0,
+    "notRun": 0,
+    "qualified": 720,
+    "farmRows": 552,
+    "farmWindowEnded": 463,
+    "farmPlayerDied": 89,
+    "bossRows": 168,
+    "bossKilled": 109,
+    "botDied": 59
+  },
+  "rawInventoryValidation": {
+    "retainedRoot": "D:\\mmo-idle\\overnight-t1-t3-progression-01\\run-01",
+    "entries": 10061,
+    "totalBytes": 11849121912,
+    "missing": 0,
+    "mismatches": 0
+  },
+  "publicationFiles": {
+    "REPORT.md": {
+      "bytes": 18948,
+      "sha256": "cd48baeb38efd3bf7585cabaa8403bb4f74c98fa8a7f02c0ab062331a1bde084"
+    },
+    "results-summary.json": {
+      "bytes": 2165733,
+      "sha256": "dcd101e296e538d35e5ccbd59e5774a96978af38c59a270756729db81fe8f225"
+    },
+    "resolved-builds.json": {
+      "bytes": 23620950,
+      "sha256": "ba30afe862585b03a9757e100b2f3c48d19aa58676a361bd41f4838d98010246"
+    },
+    "raw-inventory.json": {
+      "bytes": 2872828,
+      "sha256": "6996de47bcd7bbcb01e595f2cd93c9b9558d65df13428b1288484af67dd49fb9"
+    },
+    "identity.json": {
+      "bytes": 147345,
+      "sha256": "adb97d74dee830cbcedbede617946f4e1b26da0d4ffc889f0df85b143e571c1c"
+    },
+    "manifest.json": {
+      "bytes": 1756563,
+      "sha256": "ac29c4764fd97d58dd3f3d41c7c52d956fcd1d701cac130289755de490822d9d"
+    },
+    "complete.json": {
+      "bytes": 255,
+      "sha256": "f75b7a73798192669cc8242297f6bacda6e7bda3e5252b21bf09accf9af25ab0"
+    },
+    "packet-seal.json": {
+      "bytes": 177,
+      "sha256": "aee3b43b3e7337281df510c915731d6f50690b538e9717ea3ff9fd5de26e1c1b"
+    },
+    "packet-qualified.json": {
+      "bytes": 298,
+      "sha256": "6f78c99f0ede361f2faa309e5d0039a5e160af0eaff1573fe9237159b0127f57"
+    },
+    "qualification-complete.json": {
+      "bytes": 255,
+      "sha256": "a95262a318dc0c4f015a04f2ad504c7df7044b2c4bb592ce9ee4edc14881dfd4"
+    }
+  },
+  "scope": "Compact evidence only; raw event, sample, target-history, and ready streams remain at the retained D: root."
+}
