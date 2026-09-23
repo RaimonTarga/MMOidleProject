@@ -1,0 +1,86 @@
+[
+  {
+    "observationId": "op-t3-apprentice-light-mountain-boss-s101009",
+    "outcome": "bot-died",
+    "elapsedMs": 72500,
+    "bossHpFractionRemoved": 0.8227572878080206,
+    "bossKilled": false
+  },
+  {
+    "observationId": "op-t3-apprentice-light-volcanic-boss-s101009",
+    "outcome": "bot-died",
+    "elapsedMs": 65300,
+    "bossHpFractionRemoved": 0.898534287209911,
+    "bossKilled": false
+  },
+  {
+    "observationId": "op-t3-apprentice-balanced-mountain-boss-s101009",
+    "outcome": "bot-died",
+    "elapsedMs": 72400,
+    "bossHpFractionRemoved": 0.8710742470607183,
+    "bossKilled": false
+  },
+  {
+    "observationId": "op-t3-apprentice-balanced-volcanic-boss-s101009",
+    "outcome": "bot-died",
+    "elapsedMs": 62700,
+    "bossHpFractionRemoved": 0.8780317571104519,
+    "bossKilled": false
+  },
+  {
+    "observationId": "op-t3-apprentice-heavy-mountain-boss-s101009",
+    "outcome": "bot-died",
+    "elapsedMs": 70600,
+    "bossHpFractionRemoved": 0.9027218553712353,
+    "bossKilled": false
+  },
+  {
+    "observationId": "op-t3-apprentice-heavy-volcanic-boss-s101009",
+    "outcome": "bot-died",
+    "elapsedMs": 59400,
+    "bossHpFractionRemoved": 0.8707904379689408,
+    "bossKilled": false
+  },
+  {
+    "observationId": "op-t3-apprentice-light-mountain-boss-s101033",
+    "outcome": "bot-died",
+    "elapsedMs": 72500,
+    "bossHpFractionRemoved": 0.8227572878080206,
+    "bossKilled": false
+  },
+  {
+    "observationId": "op-t3-apprentice-light-volcanic-boss-s101033",
+    "outcome": "bot-died",
+    "elapsedMs": 65300,
+    "bossHpFractionRemoved": 0.898534287209911,
+    "bossKilled": false
+  },
+  {
+    "observationId": "op-t3-apprentice-balanced-mountain-boss-s101033",
+    "outcome": "bot-died",
+    "elapsedMs": 72400,
+    "bossHpFractionRemoved": 0.8710742470607183,
+    "bossKilled": false
+  },
+  {
+    "observationId": "op-t3-apprentice-balanced-volcanic-boss-s101033",
+    "outcome": "bot-died",
+    "elapsedMs": 62700,
+    "bossHpFractionRemoved": 0.8780317571104519,
+    "bossKilled": false
+  },
+  {
+    "observationId": "op-t3-apprentice-heavy-mountain-boss-s101033",
+    "outcome": "bot-died",
+    "elapsedMs": 70600,
+    "bossHpFractionRemoved": 0.9027218553712353,
+    "bossKilled": false
+  },
+  {
+    "observationId": "op-t3-apprentice-heavy-volcanic-boss-s101033",
+    "outcome": "bot-died",
+    "elapsedMs": 59400,
+    "bossHpFractionRemoved": 0.8707904379689408,
+    "bossKilled": false
+  }
+]

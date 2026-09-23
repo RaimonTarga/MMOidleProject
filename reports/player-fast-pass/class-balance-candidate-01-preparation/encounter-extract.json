@@ -1,0 +1,2215 @@
+[
+  {
+    "id": "op-t3-striker-light-jungle-t3-developed-s101009",
+    "elapsedMs": 129200,
+    "work": {
+      "kills": 11,
+      "firstKillMs": 5500,
+      "hpDamage": 22374,
+      "absorbed": 0,
+      "damageEvents": 171,
+      "lastKillMs": 111100,
+      "lastHpProgressMs": 129000,
+      "longestKillGapMs": 18100,
+      "longestHpProgressGapMs": 8400
+    },
+    "bossProgress": null,
+    "declared": {
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "upgradeLevel": 3,
+      "sources": {
+        "stance": "explicit",
+        "abilities": "explicit",
+        "runeRules": "explicit",
+        "upgradeLevel": "explicit"
+      }
+    },
+    "incomingByTypeAndSource": {
+      "direct / Jungle Stalker": 526.5,
+      "debt / Jungle Stalker": 23,
+      "direct / Silverback": 1989.0,
+      "debt / Silverback": 73,
+      "direct / Canopy Chameleon": 756.0,
+      "debt / Canopy Chameleon": 57
+    },
+    "last20sIncoming": {
+      "direct / Canopy Chameleon": 259.2,
+      "debt / Canopy Chameleon": 28,
+      "direct / Silverback": 585.0,
+      "debt / Silverback": 1
+    },
+    "lastIncoming": [
+      {
+        "atMs": 127300,
+        "hpDamage": 58.5,
+        "type": "direct",
+        "source": "Silverback"
+      },
+      {
+        "atMs": 127500,
+        "hpDamage": 21.6,
+        "type": "direct",
+        "source": "Canopy Chameleon"
+      },
+      {
+        "atMs": 127500,
+        "hpDamage": 4,
+        "type": "debt",
+        "source": "Canopy Chameleon"
+      },
+      {
+        "atMs": 128000,
+        "hpDamage": 58.5,
+        "type": "direct",
+        "source": "Silverback"
+      },
+      {
+        "atMs": 128500,
+        "hpDamage": 58.5,
+        "type": "direct",
+        "source": "Silverback"
+      },
+      {
+        "atMs": 128500,
+        "hpDamage": 21.6,
+        "type": "direct",
+        "source": "Canopy Chameleon"
+      },
+      {
+        "atMs": 128500,
+        "hpDamage": 5,
+        "type": "debt",
+        "source": "Canopy Chameleon"
+      },
+      {
+        "atMs": 129200,
+        "hpDamage": 58.5,
+        "type": "direct",
+        "source": "Silverback"
+      }
+    ],
+    "casts": {
+      "sweep": 34,
+      "second-wind": 5
+    },
+    "sampleCount": 130,
+    "staticContactSampleTimes": [],
+    "aoeFootprintCount": 34,
+    "exampleFootprint": {
+      "atMs": 127500,
+      "event": {
+        "kind": "player-aoe-footprint",
+        "playerId": "bench-bot-0",
+        "pos": {
+          "x": 3833.1086075152484,
+          "y": 2383.1709362122424
+        },
+        "radius": 90,
+        "at": 1800000127500,
+        "seq": 614
+      }
+    },
+    "healSources": {
+      "unknown": 580
+    },
+    "maxAddsAlive": null,
+    "bossDamage": null,
+    "addDamage": null,
+    "death": [
+      {
+        "atMs": 129200,
+        "event": {
+          "kind": "player-death",
+          "nodeId": "node-t3-jungle-01",
+          "player": {
+            "id": "bench-bot-0",
+            "name": "op-t3-striker-light-jungle-t3-developed-s101009",
+            "actorType": "player"
+          },
+          "cause": {
+            "kind": "melee",
+            "killer": {
+              "monsterEntityId": "node-t3-jungle-01_monster-44",
+              "monsterTypeId": "silverback",
+              "monsterName": "Silverback",
+              "isBoss": false,
+              "nodeId": "node-t3-jungle-01"
+            },
+            "damage": 58.5
+          },
+          "id": 1080,
+          "tick": 1293,
+          "serverTime": 1800000129200
+        }
+      }
+    ],
+    "lastCastAndFx": [
+      {
+        "atMs": 103700,
+        "event": {
+          "kind": "player-guard",
+          "playerId": "bench-bot-0",
+          "ability": "second-wind",
+          "at": 1800000103700,
+          "seq": 487
+        }
+      },
+      {
+        "atMs": 104300,
+        "event": {
+          "kind": "monster-cast-start",
+          "monsterId": "node-t3-jungle-01_monster-15",
+          "castMs": 1000,
+          "label": "Canopy Barrage",
+          "fx": "barrage",
+          "at": 1800000104300,
+          "seq": 494
+        }
+      },
+      {
+        "atMs": 105300,
+        "event": {
+          "kind": "monster-cast-end",
+          "monsterId": "node-t3-jungle-01_monster-15",
+          "fired": true,
+          "fx": "barrage",
+          "at": 1800000105300,
+          "seq": 501
+        }
+      },
+      {
+        "atMs": 121000,
+        "event": {
+          "kind": "monster-cast-start",
+          "monsterId": "node-t3-jungle-01_monster-37",
+          "castMs": 1000,
+          "label": "Canopy Barrage",
+          "fx": "barrage",
+          "at": 1800000121000,
+          "seq": 561
+        }
+      },
+      {
+        "atMs": 121100,
+        "event": {
+          "kind": "monster-cast-start",
+          "monsterId": "node-t3-jungle-01_monster-14",
+          "castMs": 1300,
+          "label": "Chestbeat",
+          "fx": "chest-beat",
+          "at": 1800000121100,
+          "seq": 564
+        }
+      },
+      {
+        "atMs": 122000,
+        "event": {
+          "kind": "monster-cast-end",
+          "monsterId": "node-t3-jungle-01_monster-37",
+          "fired": true,
+          "fx": "barrage",
+          "at": 1800000122000,
+          "seq": 571
+        }
+      },
+      {
+        "atMs": 122400,
+        "event": {
+          "kind": "monster-cast-end",
+          "monsterId": "node-t3-jungle-01_monster-14",
+          "fired": true,
+          "fx": "chest-beat",
+          "at": 1800000122400,
+          "seq": 573
+        }
+      },
+      {
+        "atMs": 123800,
+        "event": {
+          "kind": "player-guard",
+          "playerId": "bench-bot-0",
+          "ability": "second-wind",
+          "at": 1800000123800,
+          "seq": 585
+        }
+      },
+      {
+        "atMs": 124200,
+        "event": {
+          "kind": "monster-cast-start",
+          "monsterId": "node-t3-jungle-01_monster-44",
+          "castMs": 1300,
+          "label": "Chestbeat",
+          "fx": "chest-beat",
+          "at": 1800000124200,
+          "seq": 589
+        }
+      },
+      {
+        "atMs": 125500,
+        "event": {
+          "kind": "monster-cast-end",
+          "monsterId": "node-t3-jungle-01_monster-44",
+          "fired": true,
+          "fx": "chest-beat",
+          "at": 1800000125500,
+          "seq": 600
+        }
+      }
+    ],
+    "crowdMaxAttackingOrChasing": 3,
+    "terminalSampleCrowds": [
+      3,
+      3,
+      3
+    ],
+    "heatEvents": []
+  },
+  {
+    "id": "op-t3-apprentice-balanced-jungle-t3-developed-s101009",
+    "elapsedMs": 368200,
+    "work": {
+      "kills": 27,
+      "firstKillMs": 6600,
+      "hpDamage": 56001,
+      "absorbed": 0,
+      "damageEvents": 557,
+      "lastKillMs": 345900,
+      "lastHpProgressMs": 368200,
+      "longestKillGapMs": 23000,
+      "longestHpProgressGapMs": 8000
+    },
+    "bossProgress": null,
+    "declared": {
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "upgradeLevel": 3,
+      "sources": {
+        "stance": "explicit",
+        "abilities": "explicit",
+        "runeRules": "explicit",
+        "upgradeLevel": "explicit"
+      }
+    },
+    "incomingByTypeAndSource": {
+      "direct / Jungle Stalker": 1209.6,
+      "debt / Jungle Stalker": 87,
+      "direct / Silverback": 3108.8,
+      "debt / Silverback": 224,
+      "direct / Canopy Chameleon": 1360,
+      "debt / Canopy Chameleon": 81
+    },
+    "last20sIncoming": {
+      "debt / Jungle Stalker": 19,
+      "direct / Silverback": 268.0,
+      "debt / Silverback": 14,
+      "direct / Jungle Stalker": 304.0,
+      "direct / Canopy Chameleon": 20
+    },
+    "lastIncoming": [
+      {
+        "atMs": 366100,
+        "hpDamage": 6,
+        "type": "debt",
+        "source": "Silverback"
+      },
+      {
+        "atMs": 366700,
+        "hpDamage": 28.8,
+        "type": "direct",
+        "source": "Jungle Stalker"
+      },
+      {
+        "atMs": 366800,
+        "hpDamage": 28.8,
+        "type": "direct",
+        "source": "Jungle Stalker"
+      },
+      {
+        "atMs": 367100,
+        "hpDamage": 5,
+        "type": "debt",
+        "source": "Jungle Stalker"
+      },
+      {
+        "atMs": 367600,
+        "hpDamage": 28.8,
+        "type": "direct",
+        "source": "Jungle Stalker"
+      },
+      {
+        "atMs": 367700,
+        "hpDamage": 28.8,
+        "type": "direct",
+        "source": "Jungle Stalker"
+      },
+      {
+        "atMs": 368100,
+        "hpDamage": 5,
+        "type": "debt",
+        "source": "Jungle Stalker"
+      },
+      {
+        "atMs": 368200,
+        "hpDamage": 20,
+        "type": "direct",
+        "source": "Canopy Chameleon"
+      }
+    ],
+    "casts": {
+      "sweep": 85,
+      "second-wind": 11
+    },
+    "sampleCount": 369,
+    "staticContactSampleTimes": [],
+    "aoeFootprintCount": 85,
+    "exampleFootprint": {
+      "atMs": 366400,
+      "event": {
+        "kind": "player-aoe-footprint",
+        "playerId": "bench-bot-0",
+        "pos": {
+          "x": 281.4058919420574,
+          "y": 2920.5471505678915
+        },
+        "radius": 90,
+        "at": 1800000366400,
+        "seq": 1676
+      }
+    },
+    "healSources": {
+      "unknown": 1451
+    },
+    "maxAddsAlive": null,
+    "bossDamage": null,
+    "addDamage": null,
+    "death": [
+      {
+        "atMs": 368200,
+        "event": {
+          "kind": "player-death",
+          "nodeId": "node-t3-jungle-01",
+          "player": {
+            "id": "bench-bot-0",
+            "name": "op-t3-apprentice-balanced-jungle-t3-developed-s101009",
+            "actorType": "player"
+          },
+          "cause": {
+            "kind": "ranged",
+            "killer": {
+              "monsterEntityId": "node-t3-jungle-01_monster-44",
+              "monsterTypeId": "canopy-harrier",
+              "monsterName": "Canopy Chameleon",
+              "isBoss": false,
+              "nodeId": "node-t3-jungle-01"
+            },
+            "damage": 20
+          },
+          "id": 2993,
+          "tick": 3683,
+          "serverTime": 1800000368200
+        }
+      }
+    ],
+    "lastCastAndFx": [
+      {
+        "atMs": 291900,
+        "event": {
+          "kind": "monster-cast-end",
+          "monsterId": "node-t3-jungle-01_monster-46",
+          "fired": true,
+          "fx": "barrage",
+          "at": 1800000291900,
+          "seq": 1359
+        }
+      },
+      {
+        "atMs": 311800,
+        "event": {
+          "kind": "monster-cast-start",
+          "monsterId": "node-t3-jungle-01_monster-13",
+          "castMs": 1000,
+          "label": "Canopy Barrage",
+          "fx": "barrage",
+          "at": 1800000311800,
+          "seq": 1433
+        }
+      },
+      {
+        "atMs": 312800,
+        "event": {
+          "kind": "monster-cast-end",
+          "monsterId": "node-t3-jungle-01_monster-13",
+          "fired": true,
+          "fx": "barrage",
+          "at": 1800000312800,
+          "seq": 1440
+        }
+      },
+      {
+        "atMs": 322600,
+        "event": {
+          "kind": "monster-cast-start",
+          "monsterId": "node-t3-jungle-01_monster-54",
+          "castMs": 1300,
+          "label": "Chestbeat",
+          "fx": "chest-beat",
+          "at": 1800000322600,
+          "seq": 1467
+        }
+      },
+      {
+        "atMs": 323900,
+        "event": {
+          "kind": "monster-cast-end",
+          "monsterId": "node-t3-jungle-01_monster-54",
+          "fired": true,
+          "fx": "chest-beat",
+          "at": 1800000323900,
+          "seq": 1472
+        }
+      },
+      {
+        "atMs": 334600,
+        "event": {
+          "kind": "player-guard",
+          "playerId": "bench-bot-0",
+          "ability": "second-wind",
+          "at": 1800000334600,
+          "seq": 1535
+        }
+      },
+      {
+        "atMs": 353900,
+        "event": {
+          "kind": "monster-cast-start",
+          "monsterId": "node-t3-jungle-01_monster-21",
+          "castMs": 1300,
+          "label": "Chestbeat",
+          "fx": "chest-beat",
+          "at": 1800000353900,
+          "seq": 1600
+        }
+      },
+      {
+        "atMs": 355200,
+        "event": {
+          "kind": "monster-cast-end",
+          "monsterId": "node-t3-jungle-01_monster-21",
+          "fired": true,
+          "fx": "chest-beat",
+          "at": 1800000355200,
+          "seq": 1605
+        }
+      },
+      {
+        "atMs": 362800,
+        "event": {
+          "kind": "player-guard",
+          "playerId": "bench-bot-0",
+          "ability": "second-wind",
+          "at": 1800000362800,
+          "seq": 1647
+        }
+      },
+      {
+        "atMs": 367500,
+        "event": {
+          "kind": "monster-cast-start",
+          "monsterId": "node-t3-jungle-01_monster-21",
+          "castMs": 1300,
+          "label": "Chestbeat",
+          "fx": "chest-beat",
+          "at": 1800000367500,
+          "seq": 1686
+        }
+      }
+    ],
+    "crowdMaxAttackingOrChasing": 4,
+    "terminalSampleCrowds": [
+      3,
+      3,
+      4
+    ],
+    "heatEvents": []
+  },
+  {
+    "id": "op-t3-striker-light-volcanic-t3-developed-s101009",
+    "elapsedMs": 16700,
+    "work": {
+      "kills": 3,
+      "firstKillMs": 6600,
+      "hpDamage": 3688,
+      "absorbed": 0,
+      "damageEvents": 29,
+      "lastKillMs": 15700,
+      "lastHpProgressMs": 16700,
+      "longestKillGapMs": 6600,
+      "longestHpProgressGapMs": 4100
+    },
+    "bossProgress": null,
+    "declared": {
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "brace"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "upgradeLevel": 3,
+      "sources": {
+        "stance": "explicit",
+        "abilities": "explicit",
+        "runeRules": "explicit",
+        "upgradeLevel": "explicit"
+      }
+    },
+    "incomingByTypeAndSource": {
+      "direct / Ember Scuttler": 163,
+      "direct / Ash Salamander": 366,
+      "direct / Cinder Hound": 294
+    },
+    "last20sIncoming": {
+      "direct / Ember Scuttler": 163,
+      "direct / Ash Salamander": 366,
+      "direct / Cinder Hound": 294
+    },
+    "lastIncoming": [
+      {
+        "atMs": 13300,
+        "hpDamage": 21,
+        "type": "direct",
+        "source": "Ember Scuttler"
+      },
+      {
+        "atMs": 13300,
+        "hpDamage": 70,
+        "type": "direct",
+        "source": "Ash Salamander"
+      },
+      {
+        "atMs": 13500,
+        "hpDamage": 65,
+        "type": "direct",
+        "source": "Cinder Hound"
+      },
+      {
+        "atMs": 14700,
+        "hpDamage": 21,
+        "type": "direct",
+        "source": "Ember Scuttler"
+      },
+      {
+        "atMs": 14700,
+        "hpDamage": 65,
+        "type": "direct",
+        "source": "Cinder Hound"
+      },
+      {
+        "atMs": 15000,
+        "hpDamage": 70,
+        "type": "direct",
+        "source": "Ash Salamander"
+      },
+      {
+        "atMs": 16100,
+        "hpDamage": 22,
+        "type": "direct",
+        "source": "Ember Scuttler"
+      },
+      {
+        "atMs": 16700,
+        "hpDamage": 72,
+        "type": "direct",
+        "source": "Ash Salamander"
+      }
+    ],
+    "casts": {
+      "sweep": 5,
+      "second-wind": 1,
+      "brace": 1
+    },
+    "sampleCount": 17,
+    "staticContactSampleTimes": [],
+    "aoeFootprintCount": 5,
+    "exampleFootprint": {
+      "atMs": 16200,
+      "event": {
+        "kind": "player-aoe-footprint",
+        "playerId": "bench-bot-0",
+        "pos": {
+          "x": 3697.3269064007295,
+          "y": 2454.1763485227575
+        },
+        "radius": 90,
+        "at": 1800000016200,
+        "seq": 92
+      }
+    },
+    "healSources": {
+      "unknown": 65
+    },
+    "maxAddsAlive": null,
+    "bossDamage": null,
+    "addDamage": null,
+    "death": [
+      {
+        "atMs": 16700,
+        "event": {
+          "kind": "player-death",
+          "nodeId": "node-t3-volcanic-01",
+          "player": {
+            "id": "bench-bot-0",
+            "name": "op-t3-striker-light-volcanic-t3-developed-s101009",
+            "actorType": "player"
+          },
+          "cause": {
+            "kind": "ranged",
+            "killer": {
+              "monsterEntityId": "node-t3-volcanic-01_monster-31",
+              "monsterTypeId": "ash-slinger",
+              "monsterName": "Ash Salamander",
+              "isBoss": false,
+              "nodeId": "node-t3-volcanic-01"
+            },
+            "damage": 72
+          },
+          "id": 143,
+          "tick": 168,
+          "serverTime": 1800000016700
+        }
+      }
+    ],
+    "lastCastAndFx": [
+      {
+        "atMs": 9200,
+        "event": {
+          "kind": "player-guard",
+          "playerId": "bench-bot-0",
+          "ability": "second-wind",
+          "at": 1800000009200,
+          "seq": 32
+        }
+      },
+      {
+        "atMs": 10000,
+        "event": {
+          "kind": "player-guard",
+          "playerId": "bench-bot-0",
+          "ability": "brace",
+          "at": 1800000010000,
+          "seq": 43
+        }
+      }
+    ],
+    "crowdMaxAttackingOrChasing": 4,
+    "terminalSampleCrowds": [
+      3,
+      3,
+      2
+    ],
+    "heatEvents": [
+      {
+        "atMs": 3600,
+        "kind": "buff-gain",
+        "stacks": 1,
+        "details": "+3% damage dealt, +4.5% damage taken \u2014 the room pays you to overstay, then collects"
+      },
+      {
+        "atMs": 3600,
+        "kind": "ambient-stack-gain",
+        "stacks": null,
+        "details": null
+      },
+      {
+        "atMs": 6600,
+        "kind": "buff-update",
+        "stacks": 2,
+        "details": "+6% damage dealt, +9% damage taken \u2014 the room pays you to overstay, then collects"
+      },
+      {
+        "atMs": 6600,
+        "kind": "ambient-stack-gain",
+        "stacks": null,
+        "details": null
+      },
+      {
+        "atMs": 9600,
+        "kind": "buff-update",
+        "stacks": 3,
+        "details": "+9% damage dealt, +13.5% damage taken \u2014 the room pays you to overstay, then collects"
+      },
+      {
+        "atMs": 9600,
+        "kind": "ambient-stack-gain",
+        "stacks": null,
+        "details": null
+      },
+      {
+        "atMs": 12600,
+        "kind": "buff-update",
+        "stacks": 4,
+        "details": "+12% damage dealt, +18% damage taken \u2014 the room pays you to overstay, then collects"
+      },
+      {
+        "atMs": 12600,
+        "kind": "ambient-stack-gain",
+        "stacks": null,
+        "details": null
+      },
+      {
+        "atMs": 15600,
+        "kind": "buff-update",
+        "stacks": 5,
+        "details": "+15% damage dealt, +22.5% damage taken \u2014 the room pays you to overstay, then collects"
+      },
+      {
+        "atMs": 15600,
+        "kind": "ambient-stack-gain",
+        "stacks": null,
+        "details": null
+      }
+    ]
+  },
+  {
+    "id": "op-t3-apprentice-balanced-volcanic-t3-developed-s101009",
+    "elapsedMs": 76100,
+    "work": {
+      "kills": 14,
+      "firstKillMs": 5900,
+      "hpDamage": 12903,
+      "absorbed": 0,
+      "damageEvents": 128,
+      "lastKillMs": 75900,
+      "lastHpProgressMs": 76100,
+      "longestKillGapMs": 20800,
+      "longestHpProgressGapMs": 16400
+    },
+    "bossProgress": null,
+    "declared": {
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "brace"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "upgradeLevel": 3,
+      "sources": {
+        "stance": "explicit",
+        "abilities": "explicit",
+        "runeRules": "explicit",
+        "upgradeLevel": "explicit"
+      }
+    },
+    "incomingByTypeAndSource": {
+      "direct / Ash Salamander": 576.8,
+      "debt / Ash Salamander": 67,
+      "direct / Ember Scuttler": 578.8,
+      "debt / Ember Scuttler": 77,
+      "direct / Cinder Hound": 668.1,
+      "debt / Cinder Hound": 28
+    },
+    "last20sIncoming": {
+      "debt / Ember Scuttler": 28,
+      "direct / Ember Scuttler": 277.3,
+      "direct / Ash Salamander": 208.8,
+      "debt / Ash Salamander": 14,
+      "direct / Cinder Hound": 159.8
+    },
+    "lastIncoming": [
+      {
+        "atMs": 74700,
+        "hpDamage": 21.6,
+        "type": "direct",
+        "source": "Ember Scuttler"
+      },
+      {
+        "atMs": 74700,
+        "hpDamage": 21.6,
+        "type": "direct",
+        "source": "Ember Scuttler"
+      },
+      {
+        "atMs": 74700,
+        "hpDamage": 21.6,
+        "type": "direct",
+        "source": "Ember Scuttler"
+      },
+      {
+        "atMs": 74800,
+        "hpDamage": 7,
+        "type": "debt",
+        "source": "Ember Scuttler"
+      },
+      {
+        "atMs": 75800,
+        "hpDamage": 5,
+        "type": "debt",
+        "source": "Ember Scuttler"
+      },
+      {
+        "atMs": 76100,
+        "hpDamage": 21.6,
+        "type": "direct",
+        "source": "Ember Scuttler"
+      },
+      {
+        "atMs": 76100,
+        "hpDamage": 21.6,
+        "type": "direct",
+        "source": "Ember Scuttler"
+      },
+      {
+        "atMs": 76100,
+        "hpDamage": 68.4,
+        "type": "direct",
+        "source": "Cinder Hound"
+      }
+    ],
+    "casts": {
+      "sweep": 16,
+      "second-wind": 5,
+      "brace": 5
+    },
+    "sampleCount": 77,
+    "staticContactSampleTimes": [],
+    "aoeFootprintCount": 15,
+    "exampleFootprint": {
+      "atMs": 73100,
+      "event": {
+        "kind": "player-aoe-footprint",
+        "playerId": "bench-bot-0",
+        "pos": {
+          "x": 289.84144252897295,
+          "y": 3583.1127847739817
+        },
+        "radius": 90,
+        "at": 1800000073100,
+        "seq": 380
+      }
+    },
+    "healSources": {
+      "unknown": 336
+    },
+    "maxAddsAlive": null,
+    "bossDamage": null,
+    "addDamage": null,
+    "death": [
+      {
+        "atMs": 76100,
+        "event": {
+          "kind": "player-death",
+          "nodeId": "node-t3-volcanic-01",
+          "player": {
+            "id": "bench-bot-0",
+            "name": "op-t3-apprentice-balanced-volcanic-t3-developed-s101009",
+            "actorType": "player"
+          },
+          "cause": {
+            "kind": "melee",
+            "killer": {
+              "monsterEntityId": "node-t3-volcanic-01_monster-6",
+              "monsterTypeId": "cinder-hound",
+              "monsterName": "Cinder Hound",
+              "isBoss": false,
+              "nodeId": "node-t3-volcanic-01"
+            },
+            "damage": 68.4
+          },
+          "id": 871,
+          "tick": 762,
+          "serverTime": 1800000076100
+        }
+      }
+    ],
+    "lastCastAndFx": [
+      {
+        "atMs": 26100,
+        "event": {
+          "kind": "player-guard",
+          "playerId": "bench-bot-0",
+          "ability": "brace",
+          "at": 1800000026100,
+          "seq": 144
+        }
+      },
+      {
+        "atMs": 27200,
+        "event": {
+          "kind": "player-guard",
+          "playerId": "bench-bot-0",
+          "ability": "second-wind",
+          "at": 1800000027200,
+          "seq": 152
+        }
+      },
+      {
+        "atMs": 41200,
+        "event": {
+          "kind": "player-guard",
+          "playerId": "bench-bot-0",
+          "ability": "second-wind",
+          "at": 1800000041200,
+          "seq": 207
+        }
+      },
+      {
+        "atMs": 41400,
+        "event": {
+          "kind": "player-guard",
+          "playerId": "bench-bot-0",
+          "ability": "brace",
+          "at": 1800000041400,
+          "seq": 210
+        }
+      },
+      {
+        "atMs": 51400,
+        "event": {
+          "kind": "player-guard",
+          "playerId": "bench-bot-0",
+          "ability": "brace",
+          "at": 1800000051400,
+          "seq": 284
+        }
+      },
+      {
+        "atMs": 53200,
+        "event": {
+          "kind": "player-guard",
+          "playerId": "bench-bot-0",
+          "ability": "second-wind",
+          "at": 1800000053200,
+          "seq": 287
+        }
+      },
+      {
+        "atMs": 67900,
+        "event": {
+          "kind": "player-guard",
+          "playerId": "bench-bot-0",
+          "ability": "second-wind",
+          "at": 1800000067900,
+          "seq": 337
+        }
+      },
+      {
+        "atMs": 69800,
+        "event": {
+          "kind": "player-guard",
+          "playerId": "bench-bot-0",
+          "ability": "brace",
+          "at": 1800000069800,
+          "seq": 355
+        }
+      },
+      {
+        "atMs": 73100,
+        "event": {
+          "kind": "monster-cast-start",
+          "monsterId": "node-t3-volcanic-01_monster-42",
+          "castMs": 1000,
+          "label": "Molten Guard",
+          "fx": "volcanic-guard",
+          "at": 1800000073100,
+          "seq": 383
+        }
+      },
+      {
+        "atMs": 74100,
+        "event": {
+          "kind": "monster-cast-end",
+          "monsterId": "node-t3-volcanic-01_monster-42",
+          "fired": true,
+          "pos": {
+            "x": 289.84144252897295,
+            "y": 3583.1127847739817
+          },
+          "fx": "volcanic-guard",
+          "at": 1800000074100,
+          "seq": 389
+        }
+      }
+    ],
+    "crowdMaxAttackingOrChasing": 9,
+    "terminalSampleCrowds": [
+      6,
+      6,
+      5
+    ],
+    "heatEvents": [
+      {
+        "atMs": 56800,
+        "kind": "buff-update",
+        "stacks": 7,
+        "details": "+21% damage dealt, +31.5% damage taken \u2014 the room pays you to overstay, then collects"
+      },
+      {
+        "atMs": 58300,
+        "kind": "buff-update",
+        "stacks": 6,
+        "details": "+18% damage dealt, +27% damage taken \u2014 the room pays you to overstay, then collects"
+      },
+      {
+        "atMs": 59800,
+        "kind": "buff-update",
+        "stacks": 5,
+        "details": "+15% damage dealt, +22.5% damage taken \u2014 the room pays you to overstay, then collects"
+      },
+      {
+        "atMs": 61300,
+        "kind": "buff-update",
+        "stacks": 4,
+        "details": "+12% damage dealt, +18% damage taken \u2014 the room pays you to overstay, then collects"
+      },
+      {
+        "atMs": 64700,
+        "kind": "buff-update",
+        "stacks": 5,
+        "details": "+15% damage dealt, +22.5% damage taken \u2014 the room pays you to overstay, then collects"
+      },
+      {
+        "atMs": 64700,
+        "kind": "ambient-stack-gain",
+        "stacks": null,
+        "details": null
+      },
+      {
+        "atMs": 67700,
+        "kind": "buff-update",
+        "stacks": 6,
+        "details": "+18% damage dealt, +27% damage taken \u2014 the room pays you to overstay, then collects"
+      },
+      {
+        "atMs": 67700,
+        "kind": "ambient-stack-gain",
+        "stacks": null,
+        "details": null
+      },
+      {
+        "atMs": 70700,
+        "kind": "buff-update",
+        "stacks": 7,
+        "details": "+21% damage dealt, +31.5% damage taken \u2014 the room pays you to overstay, then collects"
+      },
+      {
+        "atMs": 70700,
+        "kind": "ambient-stack-gain",
+        "stacks": null,
+        "details": null
+      },
+      {
+        "atMs": 73700,
+        "kind": "buff-update",
+        "stacks": 8,
+        "details": "+24% damage dealt, +36% damage taken \u2014 the room pays you to overstay, then collects"
+      },
+      {
+        "atMs": 73700,
+        "kind": "ambient-stack-gain",
+        "stacks": null,
+        "details": null
+      }
+    ]
+  },
+  {
+    "id": "op-t2-striker-light-plains-boss-s101009",
+    "elapsedMs": 9700,
+    "work": null,
+    "bossProgress": 0.28725,
+    "declared": {
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "upgradeLevel": 4,
+      "sources": {
+        "stance": "explicit",
+        "abilities": "explicit",
+        "runeRules": "explicit",
+        "upgradeLevel": "explicit"
+      }
+    },
+    "incomingByTypeAndSource": {
+      "direct / Gorging Razortusk": 335,
+      "direct / Field Hare": 2
+    },
+    "last20sIncoming": {
+      "direct / Gorging Razortusk": 335,
+      "direct / Field Hare": 2
+    },
+    "lastIncoming": [
+      {
+        "atMs": 1200,
+        "hpDamage": 67,
+        "type": "direct",
+        "source": "Gorging Razortusk"
+      },
+      {
+        "atMs": 3400,
+        "hpDamage": 67,
+        "type": "direct",
+        "source": "Gorging Razortusk"
+      },
+      {
+        "atMs": 5600,
+        "hpDamage": 67,
+        "type": "direct",
+        "source": "Gorging Razortusk"
+      },
+      {
+        "atMs": 7900,
+        "hpDamage": 67,
+        "type": "direct",
+        "source": "Gorging Razortusk"
+      },
+      {
+        "atMs": 8900,
+        "hpDamage": 1,
+        "type": "direct",
+        "source": "Field Hare"
+      },
+      {
+        "atMs": 9400,
+        "hpDamage": 1,
+        "type": "direct",
+        "source": "Field Hare"
+      },
+      {
+        "atMs": 9700,
+        "hpDamage": 67,
+        "type": "direct",
+        "source": "Gorging Razortusk"
+      }
+    ],
+    "casts": {
+      "sweep": 4,
+      "second-wind": 1
+    },
+    "sampleCount": 10,
+    "staticContactSampleTimes": [],
+    "aoeFootprintCount": 4,
+    "exampleFootprint": {
+      "atMs": 9600,
+      "event": {
+        "kind": "player-aoe-footprint",
+        "playerId": "bench-bot-0",
+        "pos": {
+          "x": 2400,
+          "y": 2527.9999999999995
+        },
+        "radius": 90,
+        "at": 1800000009600,
+        "seq": 51
+      }
+    },
+    "healSources": {
+      "unknown": 85
+    },
+    "maxAddsAlive": 2,
+    "bossDamage": 335,
+    "addDamage": {
+      "plains-slime": 2
+    },
+    "death": {
+      "atMs": 9700,
+      "cause": {
+        "kind": "melee",
+        "killer": {
+          "monsterEntityId": "node-t2-plains-dungeon_monster-13",
+          "monsterTypeId": "gorging-razortusk",
+          "monsterName": "Gorging Razortusk",
+          "isBoss": true,
+          "nodeId": "node-t2-plains-dungeon"
+        },
+        "damage": 67
+      }
+    },
+    "lastCastAndFx": [
+      {
+        "atMs": 3500,
+        "event": {
+          "kind": "player-guard",
+          "playerId": "bench-bot-0",
+          "ability": "second-wind",
+          "at": 1800000003500,
+          "seq": 16
+        }
+      },
+      {
+        "atMs": 5900,
+        "event": {
+          "kind": "monster-cast-start",
+          "monsterId": "node-t2-plains-dungeon_monster-13",
+          "castMs": 2000,
+          "label": "Rallying Cry",
+          "at": 1800000005900,
+          "seq": 27
+        }
+      },
+      {
+        "atMs": 5900,
+        "event": {
+          "kind": "boss-fx",
+          "monsterId": "node-t2-plains-dungeon_monster-13",
+          "pos": {
+            "x": 2400,
+            "y": 2527.9999999999995
+          },
+          "fx": "roar",
+          "radius": 360,
+          "at": 1800000005900,
+          "seq": 28
+        }
+      },
+      {
+        "atMs": 7900,
+        "event": {
+          "kind": "boss-fx",
+          "monsterId": "node-t2-plains-dungeon_monster-14",
+          "pos": {
+            "x": 2258.5756488447864,
+            "y": 2408.4578010428622
+          },
+          "fx": "summon",
+          "at": 1800000007900,
+          "seq": 39
+        }
+      },
+      {
+        "atMs": 7900,
+        "event": {
+          "kind": "boss-fx",
+          "monsterId": "node-t2-plains-dungeon_monster-15",
+          "pos": {
+            "x": 2306.327301243192,
+            "y": 2464.2538121637476
+          },
+          "fx": "summon",
+          "at": 1800000007900,
+          "seq": 40
+        }
+      },
+      {
+        "atMs": 7900,
+        "event": {
+          "kind": "boss-fx",
+          "monsterId": "node-t2-plains-dungeon_monster-13",
+          "pos": {
+            "x": 2400,
+            "y": 2527.9999999999995
+          },
+          "fx": "roar",
+          "radius": 300,
+          "at": 1800000007900,
+          "seq": 41
+        }
+      },
+      {
+        "atMs": 7900,
+        "event": {
+          "kind": "monster-cast-end",
+          "monsterId": "node-t2-plains-dungeon_monster-13",
+          "fired": true,
+          "at": 1800000007900,
+          "seq": 42
+        }
+      }
+    ],
+    "crowdMaxAttackingOrChasing": 0,
+    "terminalSampleCrowds": [
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "id": "op-t2-squire-light-plains-boss-s101009",
+    "elapsedMs": 9700,
+    "work": null,
+    "bossProgress": 0.19074999999999998,
+    "declared": {
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "slam"
+        ],
+        "guards": [
+          "second-wind"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "upgradeLevel": 4,
+      "sources": {
+        "stance": "explicit",
+        "abilities": "explicit",
+        "runeRules": "explicit",
+        "upgradeLevel": "explicit"
+      }
+    },
+    "incomingByTypeAndSource": {
+      "direct / Gorging Razortusk": 365,
+      "direct / Field Hare": 2
+    },
+    "last20sIncoming": {
+      "direct / Gorging Razortusk": 365,
+      "direct / Field Hare": 2
+    },
+    "lastIncoming": [
+      {
+        "atMs": 1200,
+        "hpDamage": 73,
+        "type": "direct",
+        "source": "Gorging Razortusk"
+      },
+      {
+        "atMs": 3400,
+        "hpDamage": 73,
+        "type": "direct",
+        "source": "Gorging Razortusk"
+      },
+      {
+        "atMs": 5600,
+        "hpDamage": 73,
+        "type": "direct",
+        "source": "Gorging Razortusk"
+      },
+      {
+        "atMs": 7900,
+        "hpDamage": 73,
+        "type": "direct",
+        "source": "Gorging Razortusk"
+      },
+      {
+        "atMs": 9000,
+        "hpDamage": 1,
+        "type": "direct",
+        "source": "Field Hare"
+      },
+      {
+        "atMs": 9400,
+        "hpDamage": 1,
+        "type": "direct",
+        "source": "Field Hare"
+      },
+      {
+        "atMs": 9700,
+        "hpDamage": 73,
+        "type": "direct",
+        "source": "Gorging Razortusk"
+      }
+    ],
+    "casts": {
+      "slam": 1,
+      "second-wind": 1
+    },
+    "sampleCount": 10,
+    "staticContactSampleTimes": [],
+    "aoeFootprintCount": 0,
+    "exampleFootprint": null,
+    "healSources": {
+      "unknown": 42
+    },
+    "maxAddsAlive": 2,
+    "bossDamage": 365,
+    "addDamage": {
+      "plains-slime": 2
+    },
+    "death": {
+      "atMs": 9700,
+      "cause": {
+        "kind": "melee",
+        "killer": {
+          "monsterEntityId": "node-t2-plains-dungeon_monster-13",
+          "monsterTypeId": "gorging-razortusk",
+          "monsterName": "Gorging Razortusk",
+          "isBoss": true,
+          "nodeId": "node-t2-plains-dungeon"
+        },
+        "damage": 73
+      }
+    },
+    "lastCastAndFx": [
+      {
+        "atMs": 3500,
+        "event": {
+          "kind": "player-guard",
+          "playerId": "bench-bot-0",
+          "ability": "second-wind",
+          "at": 1800000003500,
+          "seq": 8
+        }
+      },
+      {
+        "atMs": 5900,
+        "event": {
+          "kind": "monster-cast-start",
+          "monsterId": "node-t2-plains-dungeon_monster-13",
+          "castMs": 2000,
+          "label": "Rallying Cry",
+          "at": 1800000005900,
+          "seq": 11
+        }
+      },
+      {
+        "atMs": 5900,
+        "event": {
+          "kind": "boss-fx",
+          "monsterId": "node-t2-plains-dungeon_monster-13",
+          "pos": {
+            "x": 2400,
+            "y": 2527.9999999999995
+          },
+          "fx": "roar",
+          "radius": 360,
+          "at": 1800000005900,
+          "seq": 12
+        }
+      },
+      {
+        "atMs": 7900,
+        "event": {
+          "kind": "boss-fx",
+          "monsterId": "node-t2-plains-dungeon_monster-14",
+          "pos": {
+            "x": 2258.5756488447864,
+            "y": 2408.4578010428622
+          },
+          "fx": "summon",
+          "at": 1800000007900,
+          "seq": 15
+        }
+      },
+      {
+        "atMs": 7900,
+        "event": {
+          "kind": "boss-fx",
+          "monsterId": "node-t2-plains-dungeon_monster-15",
+          "pos": {
+            "x": 2306.327301243192,
+            "y": 2464.2538121637476
+          },
+          "fx": "summon",
+          "at": 1800000007900,
+          "seq": 16
+        }
+      },
+      {
+        "atMs": 7900,
+        "event": {
+          "kind": "boss-fx",
+          "monsterId": "node-t2-plains-dungeon_monster-13",
+          "pos": {
+            "x": 2400,
+            "y": 2527.9999999999995
+          },
+          "fx": "roar",
+          "radius": 300,
+          "at": 1800000007900,
+          "seq": 17
+        }
+      },
+      {
+        "atMs": 7900,
+        "event": {
+          "kind": "monster-cast-end",
+          "monsterId": "node-t2-plains-dungeon_monster-13",
+          "fired": true,
+          "at": 1800000007900,
+          "seq": 18
+        }
+      }
+    ],
+    "crowdMaxAttackingOrChasing": 0,
+    "terminalSampleCrowds": [
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "id": "op-t3-apprentice-balanced-mountain-boss-s101009",
+    "elapsedMs": 72400,
+    "work": null,
+    "bossProgress": 0.8710742470607183,
+    "declared": {
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "target-casting",
+          "actionId": "use-ability",
+          "targetAbilityId": "brace"
+        }
+      ],
+      "upgradeLevel": 4,
+      "sources": {
+        "stance": "explicit",
+        "abilities": "explicit",
+        "runeRules": "explicit",
+        "upgradeLevel": "explicit"
+      }
+    },
+    "incomingByTypeAndSource": {
+      "direct / Crag-Gorged Horn-Behemoth": 1584.9,
+      "debt / Crag-Gorged Horn-Behemoth": 101
+    },
+    "last20sIncoming": {
+      "debt / Crag-Gorged Horn-Behemoth": 22,
+      "direct / Crag-Gorged Horn-Behemoth": 604.8
+    },
+    "lastIncoming": [
+      {
+        "atMs": 65900,
+        "hpDamage": 2,
+        "type": "debt",
+        "source": "Crag-Gorged Horn-Behemoth"
+      },
+      {
+        "atMs": 66900,
+        "hpDamage": 1,
+        "type": "debt",
+        "source": "Crag-Gorged Horn-Behemoth"
+      },
+      {
+        "atMs": 67900,
+        "hpDamage": 1,
+        "type": "debt",
+        "source": "Crag-Gorged Horn-Behemoth"
+      },
+      {
+        "atMs": 68900,
+        "hpDamage": 1,
+        "type": "debt",
+        "source": "Crag-Gorged Horn-Behemoth"
+      },
+      {
+        "atMs": 69900,
+        "hpDamage": 1,
+        "type": "debt",
+        "source": "Crag-Gorged Horn-Behemoth"
+      },
+      {
+        "atMs": 71500,
+        "hpDamage": 108.9,
+        "type": "direct",
+        "source": "Crag-Gorged Horn-Behemoth"
+      },
+      {
+        "atMs": 71900,
+        "hpDamage": 2,
+        "type": "debt",
+        "source": "Crag-Gorged Horn-Behemoth"
+      },
+      {
+        "atMs": 72400,
+        "hpDamage": 278.1,
+        "type": "direct",
+        "source": "Crag-Gorged Horn-Behemoth"
+      }
+    ],
+    "casts": {
+      "power-strike": 10,
+      "brace": 6,
+      "second-wind": 2
+    },
+    "sampleCount": 73,
+    "staticContactSampleTimes": [],
+    "aoeFootprintCount": 0,
+    "exampleFootprint": null,
+    "healSources": {
+      "unknown": 302
+    },
+    "maxAddsAlive": 0,
+    "bossDamage": 1685.9,
+    "addDamage": {},
+    "death": {
+      "atMs": 72400,
+      "cause": {
+        "kind": "melee",
+        "killer": {
+          "monsterEntityId": "node-t3-mountain-dungeon_monster-5",
+          "monsterTypeId": "crag-gorged-horn-behemoth",
+          "monsterName": "Crag-Gorged Horn-Behemoth",
+          "isBoss": true,
+          "nodeId": "node-t3-mountain-dungeon"
+        },
+        "abilityName": "Cragbreaker",
+        "damage": 278.1
+      }
+    },
+    "lastCastAndFx": [
+      {
+        "atMs": 53400,
+        "event": {
+          "kind": "player-guard",
+          "playerId": "bench-bot-0",
+          "ability": "brace",
+          "at": 1800000053400,
+          "seq": 171
+        }
+      },
+      {
+        "atMs": 55000,
+        "event": {
+          "kind": "boss-fx",
+          "monsterId": "node-t3-mountain-dungeon_monster-5",
+          "pos": {
+            "x": 1904.3342898290691,
+            "y": 4320.2016177872665
+          },
+          "fx": "stagger",
+          "at": 1800000055000,
+          "seq": 177
+        }
+      },
+      {
+        "atMs": 60000,
+        "event": {
+          "kind": "monster-cast-start",
+          "monsterId": "node-t3-mountain-dungeon_monster-5",
+          "castMs": 1175.9999999999998,
+          "label": "Cragbreaker Charge",
+          "fx": "charge-lane",
+          "at": 1800000060000,
+          "seq": 190
+        }
+      },
+      {
+        "atMs": 62000,
+        "event": {
+          "kind": "boss-fx",
+          "monsterId": "node-t3-mountain-dungeon_monster-5",
+          "pos": {
+            "x": 2620.0217538678007,
+            "y": 4575.919145183824
+          },
+          "fx": "stagger",
+          "at": 1800000062000,
+          "seq": 198
+        }
+      },
+      {
+        "atMs": 66600,
+        "event": {
+          "kind": "monster-cast-start",
+          "monsterId": "node-t3-mountain-dungeon_monster-5",
+          "castMs": 823.1999999999998,
+          "label": "Cragbreaker Charge",
+          "fx": "charge-lane",
+          "at": 1800000066600,
+          "seq": 211
+        }
+      },
+      {
+        "atMs": 66700,
+        "event": {
+          "kind": "player-guard",
+          "playerId": "bench-bot-0",
+          "ability": "brace",
+          "at": 1800000066700,
+          "seq": 212
+        }
+      },
+      {
+        "atMs": 68100,
+        "event": {
+          "kind": "boss-fx",
+          "monsterId": "node-t3-mountain-dungeon_monster-5",
+          "pos": {
+            "x": 1907.3641501337256,
+            "y": 4776
+          },
+          "fx": "stagger",
+          "at": 1800000068100,
+          "seq": 217
+        }
+      },
+      {
+        "atMs": 70800,
+        "event": {
+          "kind": "monster-cast-start",
+          "monsterId": "node-t3-mountain-dungeon_monster-5",
+          "castMs": 576.2399999999998,
+          "label": "Cragbreaker Charge",
+          "fx": "charge-lane",
+          "at": 1800000070800,
+          "seq": 224
+        }
+      },
+      {
+        "atMs": 71500,
+        "event": {
+          "kind": "monster-cast-start",
+          "monsterId": "node-t3-mountain-dungeon_monster-5",
+          "castMs": 900,
+          "label": "Cragbreaker",
+          "fx": "ground-slam",
+          "at": 1800000071500,
+          "seq": 227
+        }
+      },
+      {
+        "atMs": 72400,
+        "event": {
+          "kind": "monster-cast-end",
+          "monsterId": "node-t3-mountain-dungeon_monster-5",
+          "fired": false,
+          "at": 1800000072400,
+          "seq": 231
+        }
+      }
+    ],
+    "crowdMaxAttackingOrChasing": 0,
+    "terminalSampleCrowds": [
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "id": "op-t3-apprentice-balanced-volcanic-boss-s101009",
+    "elapsedMs": 62700,
+    "work": null,
+    "bossProgress": 0.8780317571104519,
+    "declared": {
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "endure"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "target-casting",
+          "actionId": "use-ability",
+          "targetAbilityId": "brace"
+        }
+      ],
+      "upgradeLevel": 4,
+      "sources": {
+        "stance": "explicit",
+        "abilities": "explicit",
+        "runeRules": "explicit",
+        "upgradeLevel": "explicit"
+      }
+    },
+    "incomingByTypeAndSource": {
+      "direct / Cinder-Shell Magma-Salamander": 1106.4,
+      "debt / Cinder-Shell Magma-Salamander": 85,
+      "dot / Cinder-Shell Magma-Salamander \u2014 Magma Vent": 162
+    },
+    "last20sIncoming": {
+      "debt / Cinder-Shell Magma-Salamander": 50,
+      "direct / Cinder-Shell Magma-Salamander": 621.1,
+      "dot / Cinder-Shell Magma-Salamander \u2014 Magma Vent": 72
+    },
+    "lastIncoming": [
+      {
+        "atMs": 57700,
+        "hpDamage": 1,
+        "type": "debt",
+        "source": "Cinder-Shell Magma-Salamander"
+      },
+      {
+        "atMs": 58500,
+        "hpDamage": 9,
+        "type": "dot",
+        "source": "Cinder-Shell Magma-Salamander \u2014 Magma Vent"
+      },
+      {
+        "atMs": 58700,
+        "hpDamage": 1,
+        "type": "debt",
+        "source": "Cinder-Shell Magma-Salamander"
+      },
+      {
+        "atMs": 59500,
+        "hpDamage": 9,
+        "type": "dot",
+        "source": "Cinder-Shell Magma-Salamander \u2014 Magma Vent"
+      },
+      {
+        "atMs": 59700,
+        "hpDamage": 1,
+        "type": "debt",
+        "source": "Cinder-Shell Magma-Salamander"
+      },
+      {
+        "atMs": 60700,
+        "hpDamage": 1,
+        "type": "debt",
+        "source": "Cinder-Shell Magma-Salamander"
+      },
+      {
+        "atMs": 62200,
+        "hpDamage": 348,
+        "type": "direct",
+        "source": "Cinder-Shell Magma-Salamander"
+      },
+      {
+        "atMs": 62700,
+        "hpDamage": 11,
+        "type": "debt",
+        "source": "Cinder-Shell Magma-Salamander"
+      }
+    ],
+    "casts": {
+      "sweep": 16,
+      "endure": 3,
+      "second-wind": 2,
+      "brace": 1
+    },
+    "sampleCount": 63,
+    "staticContactSampleTimes": [],
+    "aoeFootprintCount": 16,
+    "exampleFootprint": {
+      "atMs": 60800,
+      "event": {
+        "kind": "player-aoe-footprint",
+        "playerId": "bench-bot-0",
+        "pos": {
+          "x": 1255.0333006304545,
+          "y": 310.62701634718786
+        },
+        "radius": 90,
+        "at": 1800000060800,
+        "seq": 349
+      }
+    },
+    "healSources": {
+      "unknown": 229
+    },
+    "maxAddsAlive": 0,
+    "bossDamage": 1191.4,
+    "addDamage": {
+      "Cinder-Shell Magma-Salamander \u00e2\u20ac\u201d Magma Vent": 162
+    },
+    "death": {
+      "atMs": 62700,
+      "cause": {
+        "kind": "debt",
+        "damage": 11,
+        "nodeId": "node-t3-volcanic-dungeon",
+        "killer": {
+          "monsterEntityId": "node-t3-volcanic-dungeon_monster-13",
+          "monsterTypeId": "cinder-shell-magma-salamander",
+          "monsterName": "Cinder-Shell Magma-Salamander",
+          "isBoss": true,
+          "nodeId": "node-t3-volcanic-dungeon"
+        }
+      }
+    },
+    "lastCastAndFx": [
+      {
+        "atMs": 41800,
+        "event": {
+          "kind": "player-guard",
+          "playerId": "bench-bot-0",
+          "ability": "second-wind",
+          "at": 1800000041800,
+          "seq": 227
+        }
+      },
+      {
+        "atMs": 41900,
+        "event": {
+          "kind": "player-guard",
+          "playerId": "bench-bot-0",
+          "ability": "endure",
+          "at": 1800000041900,
+          "seq": 228
+        }
+      },
+      {
+        "atMs": 52400,
+        "event": {
+          "kind": "player-knockback",
+          "playerId": "bench-bot-0",
+          "pos": {
+            "x": 1220.4566687883982,
+            "y": 290.5159116918266
+          },
+          "reason": "pull",
+          "at": 1800000052400,
+          "seq": 285
+        }
+      },
+      {
+        "atMs": 53800,
+        "event": {
+          "kind": "monster-cast-start",
+          "monsterId": "node-t3-volcanic-dungeon_monster-13",
+          "castMs": 8000,
+          "label": "Final Eruption",
+          "fx": "cataclysm-cast",
+          "at": 1800000053800,
+          "seq": 298
+        }
+      },
+      {
+        "atMs": 53800,
+        "event": {
+          "kind": "player-guard",
+          "playerId": "bench-bot-0",
+          "ability": "second-wind",
+          "at": 1800000053800,
+          "seq": 299
+        }
+      },
+      {
+        "atMs": 53900,
+        "event": {
+          "kind": "player-guard",
+          "playerId": "bench-bot-0",
+          "ability": "brace",
+          "at": 1800000053900,
+          "seq": 300
+        }
+      },
+      {
+        "atMs": 55900,
+        "event": {
+          "kind": "player-guard",
+          "playerId": "bench-bot-0",
+          "ability": "endure",
+          "at": 1800000055900,
+          "seq": 314
+        }
+      },
+      {
+        "atMs": 61800,
+        "event": {
+          "kind": "monster-cast-start",
+          "monsterId": "node-t3-volcanic-dungeon_monster-13",
+          "castMs": 400,
+          "label": "Final Eruption",
+          "fx": "cataclysm-impact",
+          "at": 1800000061800,
+          "seq": 354
+        }
+      },
+      {
+        "atMs": 62200,
+        "event": {
+          "kind": "monster-cast-end",
+          "monsterId": "node-t3-volcanic-dungeon_monster-13",
+          "fired": true,
+          "pos": {
+            "x": 1255.0333006304545,
+            "y": 310.62701634718786
+          },
+          "radius": 2000,
+          "fx": "cataclysm-impact",
+          "at": 1800000062200,
+          "seq": 356
+        }
+      },
+      {
+        "atMs": 62200,
+        "event": {
+          "kind": "boss-fx",
+          "monsterId": "node-t3-volcanic-dungeon_monster-13",
+          "pos": {
+            "x": 1255.0333006304545,
+            "y": 310.62701634718786
+          },
+          "fx": "stagger",
+          "at": 1800000062200,
+          "seq": 357
+        }
+      }
+    ],
+    "crowdMaxAttackingOrChasing": 0,
+    "terminalSampleCrowds": [
+      0,
+      0,
+      0
+    ]
+  }
+]

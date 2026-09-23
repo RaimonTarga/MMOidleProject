@@ -1,0 +1,668 @@
+{
+  "passed": true,
+  "combatObservations": 0,
+  "qualified": 56,
+  "pairedReceipts": 28,
+  "negativeDriftAssertions": 56,
+  "spiritReadbacksPerArm": 10,
+  "conduitReadbacksPerArm": 52,
+  "sources": {
+    "control": "dd2c06f2bca8380323bdcfe2f65add2d7d51989d",
+    "candidate": "5ffbfb414b62d3addc8cb485d5b149b14e7de7ca"
+  },
+  "pairs": [
+    {
+      "comparisonId": "cbc-S1-sbc-spirit-light-forest-s101009",
+      "block": "S1",
+      "attack": [
+        55,
+        53
+      ],
+      "attackCooldown": [
+        481,
+        512
+      ],
+      "allowedDifferences": [
+        ".cell",
+        ".definitionsIdentity.base",
+        ".definitionsIdentity.live",
+        ".effectiveStats.attack",
+        ".effectiveStats.attackCooldown",
+        ".view.attack",
+        ".view.attackCooldown",
+        ".view.name"
+      ]
+    },
+    {
+      "comparisonId": "cbc-S1-sbc-spirit-light-mountain-s101009",
+      "block": "S1",
+      "attack": [
+        55,
+        53
+      ],
+      "attackCooldown": [
+        481,
+        512
+      ],
+      "allowedDifferences": [
+        ".cell",
+        ".definitionsIdentity.base",
+        ".definitionsIdentity.live",
+        ".effectiveStats.attack",
+        ".effectiveStats.attackCooldown",
+        ".view.attack",
+        ".view.attackCooldown",
+        ".view.name"
+      ]
+    },
+    {
+      "comparisonId": "cbc-S1-sbc-spirit-balanced-forest-s101009",
+      "block": "S1",
+      "attack": [
+        55,
+        53
+      ],
+      "attackCooldown": [
+        504,
+        529
+      ],
+      "allowedDifferences": [
+        ".cell",
+        ".definitionsIdentity.base",
+        ".definitionsIdentity.live",
+        ".effectiveStats.attack",
+        ".effectiveStats.attackCooldown",
+        ".view.attack",
+        ".view.attackCooldown",
+        ".view.name"
+      ]
+    },
+    {
+      "comparisonId": "cbc-S1-sbc-spirit-balanced-mountain-s101009",
+      "block": "S1",
+      "attack": [
+        55,
+        53
+      ],
+      "attackCooldown": [
+        504,
+        529
+      ],
+      "allowedDifferences": [
+        ".cell",
+        ".definitionsIdentity.base",
+        ".definitionsIdentity.live",
+        ".effectiveStats.attack",
+        ".effectiveStats.attackCooldown",
+        ".view.attack",
+        ".view.attackCooldown",
+        ".view.name"
+      ]
+    },
+    {
+      "comparisonId": "cbc-N1-sbc-spirit-heavy-forest-s101009",
+      "block": "N1",
+      "attack": [
+        106,
+        106
+      ],
+      "attackCooldown": [
+        1623,
+        1623
+      ],
+      "allowedDifferences": [
+        ".cell",
+        ".definitionsIdentity.base",
+        ".definitionsIdentity.live",
+        ".view.name"
+      ]
+    },
+    {
+      "comparisonId": "cbc-S2-op-t2-spirit-light-desert-t2-desert-arrival-s101009",
+      "block": "S2",
+      "attack": [
+        50,
+        48
+      ],
+      "attackCooldown": [
+        481,
+        512
+      ],
+      "allowedDifferences": [
+        ".cell",
+        ".definitionsIdentity.base",
+        ".definitionsIdentity.live",
+        ".runtime.arm",
+        ".runtime.revision",
+        ".runtime.sharedEntry",
+        ".view.attack",
+        ".view.attackCooldown",
+        ".view.name"
+      ]
+    },
+    {
+      "comparisonId": "cbc-S2-op-t2-spirit-balanced-desert-t2-desert-arrival-s101009",
+      "block": "S2",
+      "attack": [
+        92,
+        89
+      ],
+      "attackCooldown": [
+        651,
+        683
+      ],
+      "allowedDifferences": [
+        ".cell",
+        ".definitionsIdentity.base",
+        ".definitionsIdentity.live",
+        ".runtime.arm",
+        ".runtime.revision",
+        ".runtime.sharedEntry",
+        ".view.attack",
+        ".view.attackCooldown",
+        ".view.name"
+      ]
+    },
+    {
+      "comparisonId": "cbc-S2-op-t2-spirit-light-desert-t2-desert-arrival-s101033",
+      "block": "S2",
+      "attack": [
+        50,
+        48
+      ],
+      "attackCooldown": [
+        481,
+        512
+      ],
+      "allowedDifferences": [
+        ".cell",
+        ".definitionsIdentity.base",
+        ".definitionsIdentity.live",
+        ".runtime.arm",
+        ".runtime.revision",
+        ".runtime.sharedEntry",
+        ".view.attack",
+        ".view.attackCooldown",
+        ".view.name"
+      ]
+    },
+    {
+      "comparisonId": "cbc-S2-op-t2-spirit-balanced-desert-t2-desert-arrival-s101033",
+      "block": "S2",
+      "attack": [
+        92,
+        89
+      ],
+      "attackCooldown": [
+        651,
+        683
+      ],
+      "allowedDifferences": [
+        ".cell",
+        ".definitionsIdentity.base",
+        ".definitionsIdentity.live",
+        ".runtime.arm",
+        ".runtime.revision",
+        ".runtime.sharedEntry",
+        ".view.attack",
+        ".view.attackCooldown",
+        ".view.name"
+      ]
+    },
+    {
+      "comparisonId": "cbc-S3-op-t3-spirit-light-swamp-t3-developed-s101009",
+      "block": "S3",
+      "attack": [
+        63,
+        60
+      ],
+      "attackCooldown": [
+        439,
+        466
+      ],
+      "allowedDifferences": [
+        ".cell",
+        ".definitionsIdentity.base",
+        ".definitionsIdentity.live",
+        ".runtime.arm",
+        ".runtime.revision",
+        ".runtime.sharedEntry",
+        ".view.attack",
+        ".view.attackCooldown",
+        ".view.name"
+      ]
+    },
+    {
+      "comparisonId": "cbc-S3-op-t3-spirit-balanced-swamp-t3-developed-s101009",
+      "block": "S3",
+      "attack": [
+        151,
+        145
+      ],
+      "attackCooldown": [
+        631,
+        661
+      ],
+      "allowedDifferences": [
+        ".cell",
+        ".definitionsIdentity.base",
+        ".definitionsIdentity.live",
+        ".runtime.arm",
+        ".runtime.revision",
+        ".runtime.sharedEntry",
+        ".view.attack",
+        ".view.attackCooldown",
+        ".view.name"
+      ]
+    },
+    {
+      "comparisonId": "cbc-S3-op-t3-spirit-light-swamp-t3-developed-s101033",
+      "block": "S3",
+      "attack": [
+        63,
+        60
+      ],
+      "attackCooldown": [
+        439,
+        466
+      ],
+      "allowedDifferences": [
+        ".cell",
+        ".definitionsIdentity.base",
+        ".definitionsIdentity.live",
+        ".runtime.arm",
+        ".runtime.revision",
+        ".runtime.sharedEntry",
+        ".view.attack",
+        ".view.attackCooldown",
+        ".view.name"
+      ]
+    },
+    {
+      "comparisonId": "cbc-S3-op-t3-spirit-balanced-swamp-t3-developed-s101033",
+      "block": "S3",
+      "attack": [
+        151,
+        145
+      ],
+      "attackCooldown": [
+        631,
+        661
+      ],
+      "allowedDifferences": [
+        ".cell",
+        ".definitionsIdentity.base",
+        ".definitionsIdentity.live",
+        ".runtime.arm",
+        ".runtime.revision",
+        ".runtime.sharedEntry",
+        ".view.attack",
+        ".view.attackCooldown",
+        ".view.name"
+      ]
+    },
+    {
+      "comparisonId": "cbc-S4-op-t3-spirit-light-mountain-boss-s101009",
+      "block": "S4",
+      "attack": [
+        68,
+        65
+      ],
+      "attackCooldown": [
+        473,
+        505
+      ],
+      "allowedDifferences": [
+        ".cell",
+        ".definitionsIdentity.base",
+        ".definitionsIdentity.live",
+        ".effectiveStats.attack",
+        ".effectiveStats.attackCooldown",
+        ".view.attack",
+        ".view.attackCooldown",
+        ".view.name"
+      ]
+    },
+    {
+      "comparisonId": "cbc-S4-op-t3-spirit-balanced-mountain-boss-s101009",
+      "block": "S4",
+      "attack": [
+        160,
+        154
+      ],
+      "attackCooldown": [
+        683,
+        718
+      ],
+      "allowedDifferences": [
+        ".cell",
+        ".definitionsIdentity.base",
+        ".definitionsIdentity.live",
+        ".effectiveStats.attack",
+        ".effectiveStats.attackCooldown",
+        ".view.attack",
+        ".view.attackCooldown",
+        ".view.name"
+      ]
+    },
+    {
+      "comparisonId": "cbc-S4-op-t3-spirit-light-mountain-boss-s101033",
+      "block": "S4",
+      "attack": [
+        68,
+        65
+      ],
+      "attackCooldown": [
+        473,
+        505
+      ],
+      "allowedDifferences": [
+        ".cell",
+        ".definitionsIdentity.base",
+        ".definitionsIdentity.live",
+        ".effectiveStats.attack",
+        ".effectiveStats.attackCooldown",
+        ".view.attack",
+        ".view.attackCooldown",
+        ".view.name"
+      ]
+    },
+    {
+      "comparisonId": "cbc-S4-op-t3-spirit-balanced-mountain-boss-s101033",
+      "block": "S4",
+      "attack": [
+        160,
+        154
+      ],
+      "attackCooldown": [
+        683,
+        718
+      ],
+      "allowedDifferences": [
+        ".cell",
+        ".definitionsIdentity.base",
+        ".definitionsIdentity.live",
+        ".effectiveStats.attack",
+        ".effectiveStats.attackCooldown",
+        ".view.attack",
+        ".view.attackCooldown",
+        ".view.name"
+      ]
+    },
+    {
+      "comparisonId": "cbc-C1-op-t1-conduit-plains-t1-developed-s101009",
+      "block": "C1",
+      "attack": [
+        45,
+        45
+      ],
+      "attackCooldown": [
+        874,
+        874
+      ],
+      "allowedDifferences": [
+        ".cell",
+        ".conduitProfile.profile.reconstructionFactors.frame",
+        ".conduitProfile.profile.reconstructionFactors.postRelicMs",
+        ".conduitProfile.profile.reconstructionFactors.preRelicMs",
+        ".conduitProfile.profile.reconstructionIntervalMs",
+        ".conduitProfile.tickQuantizedIntervalMs",
+        ".definitionsIdentity.base",
+        ".definitionsIdentity.live",
+        ".runtime.arm",
+        ".runtime.revision",
+        ".runtime.sharedEntry",
+        ".view.name"
+      ]
+    },
+    {
+      "comparisonId": "cbc-C1-op-t1-conduit-cave-t1-developed-s101009",
+      "block": "C1",
+      "attack": [
+        45,
+        45
+      ],
+      "attackCooldown": [
+        874,
+        874
+      ],
+      "allowedDifferences": [
+        ".cell",
+        ".conduitProfile.profile.reconstructionFactors.frame",
+        ".conduitProfile.profile.reconstructionFactors.postRelicMs",
+        ".conduitProfile.profile.reconstructionFactors.preRelicMs",
+        ".conduitProfile.profile.reconstructionIntervalMs",
+        ".conduitProfile.tickQuantizedIntervalMs",
+        ".definitionsIdentity.base",
+        ".definitionsIdentity.live",
+        ".runtime.arm",
+        ".runtime.revision",
+        ".runtime.sharedEntry",
+        ".view.name"
+      ]
+    },
+    {
+      "comparisonId": "cbc-C1-op-t1-conduit-plains-t1-complete-s101009",
+      "block": "C1",
+      "attack": [
+        51,
+        51
+      ],
+      "attackCooldown": [
+        874,
+        874
+      ],
+      "allowedDifferences": [
+        ".cell",
+        ".conduitProfile.profile.reconstructionFactors.frame",
+        ".conduitProfile.profile.reconstructionFactors.postRelicMs",
+        ".conduitProfile.profile.reconstructionFactors.preRelicMs",
+        ".conduitProfile.profile.reconstructionIntervalMs",
+        ".conduitProfile.tickQuantizedIntervalMs",
+        ".definitionsIdentity.base",
+        ".definitionsIdentity.live",
+        ".runtime.arm",
+        ".runtime.revision",
+        ".runtime.sharedEntry",
+        ".view.name"
+      ]
+    },
+    {
+      "comparisonId": "cbc-C1-op-t1-conduit-cave-t1-complete-s101009",
+      "block": "C1",
+      "attack": [
+        51,
+        51
+      ],
+      "attackCooldown": [
+        874,
+        874
+      ],
+      "allowedDifferences": [
+        ".cell",
+        ".conduitProfile.profile.reconstructionFactors.frame",
+        ".conduitProfile.profile.reconstructionFactors.postRelicMs",
+        ".conduitProfile.profile.reconstructionFactors.preRelicMs",
+        ".conduitProfile.profile.reconstructionIntervalMs",
+        ".conduitProfile.tickQuantizedIntervalMs",
+        ".definitionsIdentity.base",
+        ".definitionsIdentity.live",
+        ".runtime.arm",
+        ".runtime.revision",
+        ".runtime.sharedEntry",
+        ".view.name"
+      ]
+    },
+    {
+      "comparisonId": "cbc-C1-op-t1-conduit-plains-t1-developed-s101033",
+      "block": "C1",
+      "attack": [
+        45,
+        45
+      ],
+      "attackCooldown": [
+        874,
+        874
+      ],
+      "allowedDifferences": [
+        ".cell",
+        ".conduitProfile.profile.reconstructionFactors.frame",
+        ".conduitProfile.profile.reconstructionFactors.postRelicMs",
+        ".conduitProfile.profile.reconstructionFactors.preRelicMs",
+        ".conduitProfile.profile.reconstructionIntervalMs",
+        ".conduitProfile.tickQuantizedIntervalMs",
+        ".definitionsIdentity.base",
+        ".definitionsIdentity.live",
+        ".runtime.arm",
+        ".runtime.revision",
+        ".runtime.sharedEntry",
+        ".view.name"
+      ]
+    },
+    {
+      "comparisonId": "cbc-C1-op-t1-conduit-cave-t1-developed-s101033",
+      "block": "C1",
+      "attack": [
+        45,
+        45
+      ],
+      "attackCooldown": [
+        874,
+        874
+      ],
+      "allowedDifferences": [
+        ".cell",
+        ".conduitProfile.profile.reconstructionFactors.frame",
+        ".conduitProfile.profile.reconstructionFactors.postRelicMs",
+        ".conduitProfile.profile.reconstructionFactors.preRelicMs",
+        ".conduitProfile.profile.reconstructionIntervalMs",
+        ".conduitProfile.tickQuantizedIntervalMs",
+        ".definitionsIdentity.base",
+        ".definitionsIdentity.live",
+        ".runtime.arm",
+        ".runtime.revision",
+        ".runtime.sharedEntry",
+        ".view.name"
+      ]
+    },
+    {
+      "comparisonId": "cbc-C1-op-t1-conduit-plains-t1-complete-s101033",
+      "block": "C1",
+      "attack": [
+        51,
+        51
+      ],
+      "attackCooldown": [
+        874,
+        874
+      ],
+      "allowedDifferences": [
+        ".cell",
+        ".conduitProfile.profile.reconstructionFactors.frame",
+        ".conduitProfile.profile.reconstructionFactors.postRelicMs",
+        ".conduitProfile.profile.reconstructionFactors.preRelicMs",
+        ".conduitProfile.profile.reconstructionIntervalMs",
+        ".conduitProfile.tickQuantizedIntervalMs",
+        ".definitionsIdentity.base",
+        ".definitionsIdentity.live",
+        ".runtime.arm",
+        ".runtime.revision",
+        ".runtime.sharedEntry",
+        ".view.name"
+      ]
+    },
+    {
+      "comparisonId": "cbc-C1-op-t1-conduit-cave-t1-complete-s101033",
+      "block": "C1",
+      "attack": [
+        51,
+        51
+      ],
+      "attackCooldown": [
+        874,
+        874
+      ],
+      "allowedDifferences": [
+        ".cell",
+        ".conduitProfile.profile.reconstructionFactors.frame",
+        ".conduitProfile.profile.reconstructionFactors.postRelicMs",
+        ".conduitProfile.profile.reconstructionFactors.preRelicMs",
+        ".conduitProfile.profile.reconstructionIntervalMs",
+        ".conduitProfile.tickQuantizedIntervalMs",
+        ".definitionsIdentity.base",
+        ".definitionsIdentity.live",
+        ".runtime.arm",
+        ".runtime.revision",
+        ".runtime.sharedEntry",
+        ".view.name"
+      ]
+    },
+    {
+      "comparisonId": "cbc-C2-op-t1-conduit-plains-boss-s101009",
+      "block": "C2",
+      "attack": [
+        45,
+        45
+      ],
+      "attackCooldown": [
+        874,
+        874
+      ],
+      "allowedDifferences": [
+        ".cell",
+        ".conduitProfile.profile.reconstructionFactors.frame",
+        ".conduitProfile.profile.reconstructionFactors.postRelicMs",
+        ".conduitProfile.profile.reconstructionFactors.preRelicMs",
+        ".conduitProfile.profile.reconstructionIntervalMs",
+        ".conduitProfile.tickQuantizedIntervalMs",
+        ".definitionsIdentity.base",
+        ".definitionsIdentity.live",
+        ".view.name"
+      ]
+    },
+    {
+      "comparisonId": "cbc-C2-op-t1-conduit-mountain-boss-s101009",
+      "block": "C2",
+      "attack": [
+        45,
+        45
+      ],
+      "attackCooldown": [
+        874,
+        874
+      ],
+      "allowedDifferences": [
+        ".cell",
+        ".conduitProfile.profile.reconstructionFactors.frame",
+        ".conduitProfile.profile.reconstructionFactors.postRelicMs",
+        ".conduitProfile.profile.reconstructionFactors.preRelicMs",
+        ".conduitProfile.profile.reconstructionIntervalMs",
+        ".conduitProfile.tickQuantizedIntervalMs",
+        ".definitionsIdentity.base",
+        ".definitionsIdentity.live",
+        ".view.name"
+      ]
+    },
+    {
+      "comparisonId": "cbc-N2-op-t2-conduit-balanced-desert-t2-desert-established-s101009",
+      "block": "N2",
+      "attack": [
+        81,
+        81
+      ],
+      "attackCooldown": [
+        731,
+        731
+      ],
+      "allowedDifferences": [
+        ".cell",
+        ".definitionsIdentity.base",
+        ".definitionsIdentity.live",
+        ".runtime.arm",
+        ".runtime.revision",
+        ".runtime.sharedEntry",
+        ".view.name"
+      ]
+    }
+  ]
+}

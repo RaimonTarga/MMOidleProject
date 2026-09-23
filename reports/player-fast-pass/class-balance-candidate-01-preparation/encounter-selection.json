@@ -1,0 +1,13 @@
+{
+  "rule": "Seed101009 preferred; primary packages only. Ordinary settings: Light Striker melee and Balanced Apprentice ranged chosen by class/frame before detailed extraction. T2 Plains: Light Striker and Light Squire. Apprentice: specified Balanced bosses. Compact outcomes confirm all eight are deaths. No successful contrasts selected; zero new observations.",
+  "ids": [
+    "op-t3-striker-light-jungle-t3-developed-s101009",
+    "op-t3-apprentice-balanced-jungle-t3-developed-s101009",
+    "op-t3-striker-light-volcanic-t3-developed-s101009",
+    "op-t3-apprentice-balanced-volcanic-t3-developed-s101009",
+    "op-t2-striker-light-plains-boss-s101009",
+    "op-t2-squire-light-plains-boss-s101009",
+    "op-t3-apprentice-balanced-mountain-boss-s101009",
+    "op-t3-apprentice-balanced-volcanic-boss-s101009"
+  ]
+}

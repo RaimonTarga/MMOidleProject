@@ -1,0 +1,18 @@
+{
+  "experimentId": "class-balance-candidate-01",
+  "status": "prepared-unrun",
+  "planned": 56,
+  "plannedNew": 56,
+  "completed": 0,
+  "failed": 0,
+  "notRun": 56,
+  "reused": 0,
+  "qualified": 56,
+  "combatObservations": 0,
+  "supersededQualification": {
+    "qualified": 56,
+    "combatObservations": 0,
+    "path": "D:\\mmo-idle\\class-balance-candidate-01\\qualification",
+    "reason": "Shared reference import adjusted for benchmark typecheck before any combat; superseded source identities retained."
+  }
+}
