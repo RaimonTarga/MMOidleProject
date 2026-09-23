@@ -57,7 +57,7 @@ async function child(block,mode,dest){
  const m=json(join(childOut,'manifest.json'));assert.equal(m.revision,frozen.sourceCommit);assert.equal(m.durationMs,b.durationMs);assert.equal(m.dtMs,100);assert.equal(m.hitboxesSha256,frozen.hitboxesSha256);assert(existsSync(join(childOut,'complete.json')));assert(!existsSync(join(childOut,'failed.json')));return childOut;
 }
 function receipt(c,r){assert.equal(r.cell,c.id);assert.equal(r.seed,c.seed);assert.equal(r.view.hp,r.view.maxHp);assert.equal(r.view.barrier,r.view.barrierMax);if(c.progressionSnapshot){assert.deepEqual(r.packageReadback.progression.snapshot,c.progressionSnapshot);assert.equal(r.packageReadback.runicPoints.budget,c.progressionSnapshot.rp);}else {assert.equal(r.view.globalMastery,72);assert.equal(r.packageReadback.runicPoints.budget,30);}assert.equal(r.packageReadback.declared.stance,c.stance);assert.deepEqual(r.packageReadback.declared.abilities,c.abilities);assert.deepEqual(r.packageReadback.declared.runeRules,c.runeRules);
- const rec={observationId:c.id,snapshotId:c.snapshotId,sourceCommit:identities[c.arm].sourceCommit,ready:r};
+ const rec={observationId:c.id,snapshotId:c.snapshotId??null,sourceCommit:identities[c.arm].sourceCommit,ready:r};
  const pair=receipts.find(x=>cells.find(y=>y.id===x.observationId).comparisonId===c.comparisonId);if(pair){assert.equal(pair.ready.initialRosterHash,r.initialRosterHash,'Paired ecology drift');for(const key of ['mastery','skillPath','declared','equipment','progression','runicPoints'])assert.deepEqual(pair.ready.packageReadback[key],r.packageReadback[key],`Paired ${key} drift`);}
  if(qualification)assert.deepEqual(rec,expected.find(x=>x.observationId===c.id),'Applied receipt drift');return rec;
 }
