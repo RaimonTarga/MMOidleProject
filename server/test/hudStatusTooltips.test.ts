@@ -284,7 +284,7 @@ function assertLegible(content: Parameters<typeof readableStrings>[0], what: str
   const sweep: AbilityDef | undefined = abilityDef("sweep");
   assert(sweep !== undefined, "test needs the sweep ability to exist");
 
-  const lowTier = { playerTier: sweep.tier, passives: {}, attack: 100, maxHp: 500, attackRange: 60 };
+  const lowTier = { playerTier: sweep.tier, passives: {}, combatArchetype: "summoner" as const, attack: 100, maxHp: 500, attackRange: 60 };
   const highTier = { ...lowTier, playerTier: sweep.tier + sweep.ranks.length - 1 };
 
   const ready = abilityTooltipContent(sweep, lowTier, { state: "ready" });
@@ -303,6 +303,8 @@ function assertLegible(content: Parameters<typeof readableStrings>[0], what: str
     ready.classSpecific?.some((r) => r.label === "Conduit" && r.value.includes("normalized Sweep budget")),
     "an ability tooltip must expose its Conduit adapter in a separate class-specific section",
   );
+  const squire = abilityTooltipContent(sweep, { ...lowTier, combatArchetype: "cooldown" }, { state: "ready" });
+  assert((squire.classSpecific ?? []).length === 0, "Squire must not see another class's adapter");
 
   const deep = abilityTooltipContent(sweep, highTier, { state: "ready" });
   assert(

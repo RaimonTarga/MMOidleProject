@@ -19,6 +19,7 @@ import {
   type AbilityDef,
   type AbilityEffectSpec,
   type AbilityTrigger,
+  type CombatArchetype,
 } from '@mmo-idle/shared';
 
 /**
@@ -47,6 +48,8 @@ export interface AbilityContext {
   equipmentSources?: { id: string; name: string; effects: Record<string, number>; inactiveReason?: string }[];
   playerTier: number;
   passives: Record<string, number>;
+  /** Active class adapter to explain; omitted for class-agnostic previews. */
+  combatArchetype?: CombatArchetype;
   /** Current attack power, for turning a damage multiplier into real damage. */
   attack?: number;
   /** Current max HP, for turning a heal percentage into real health. */
@@ -360,11 +363,21 @@ const CLASS_SPECIFIC_COPY: Readonly<Record<string, readonly AbilityClassSpecific
   ],
 };
 
-function classSpecificLines(ability: AbilityDef): AbilityClassSpecific[] {
-  return (CLASS_SPECIFIC_COPY[ability.id] ?? []).map((copy, index) => ({
-    key: `${ability.id}:${index}`,
-    ...copy,
-  }));
+const ADAPTER_ARCHETYPE_BY_CLASS_NAME: Readonly<Record<string, Exclude<CombatArchetype, null>>> = {
+  Apprentice: 'dot',
+  Slinger: 'reload',
+  Conduit: 'summoner',
+};
+
+function classSpecificLines(ability: AbilityDef, context: AbilityContext): AbilityClassSpecific[] {
+  const activeArchetype = context.combatArchetype;
+  if (!activeArchetype) return [];
+  return (CLASS_SPECIFIC_COPY[ability.id] ?? [])
+    .filter(copy => ADAPTER_ARCHETYPE_BY_CLASS_NAME[copy.className] === activeArchetype)
+    .map((copy, index) => ({
+      key: `${ability.id}:${index}`,
+      ...copy,
+    }));
 }
 
 // ── Entry point ───────────────────────────────────────────────────────────────
@@ -421,7 +434,7 @@ export function describeAbility(
     shape: SHAPE_SENTENCES[ability.shape],
     tags: abilityTags(ability).map(id => ({ id, ...ABILITY_TAG_INFO[id] })),
     lines,
-    classSpecific: classSpecificLines(ability),
+    classSpecific: classSpecificLines(ability, context),
   };
 }
 

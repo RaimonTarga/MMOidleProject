@@ -105,24 +105,27 @@ assert(
   "a multiplied value must name the multiplier and its authored base",
 );
 
-const sweepAdapters = describeAbility(sweep, { ...context, playerTier: sweep.tier, passives: {} }).classSpecific;
-assert(
-  sweepAdapters.some((line) => line.className === "Apprentice" && line.text.includes("exactly one Apprentice DoT stack")),
-  "Sweep must explain the Apprentice one-stack adapter",
-);
-assert(
-  sweepAdapters.some((line) => line.className === "Slinger" && line.text.includes("clip-wide Sweep")),
-  "Sweep must explain the Slinger clip adapter",
-);
-assert(
-  sweepAdapters.some((line) => line.className === "Conduit" && line.text.includes("normalized Sweep budget")),
-  "Sweep must explain the Conduit formation adapter",
-);
+const sweepAdaptersByClass = [
+  ["dot", "Apprentice", "exactly one Apprentice DoT stack"],
+  ["reload", "Slinger", "clip-wide Sweep"],
+  ["summoner", "Conduit", "normalized Sweep budget"],
+] as const;
+for (const [combatArchetype, className, phrase] of sweepAdaptersByClass) {
+  const adapters = describeAbility(sweep, { ...context, playerTier: sweep.tier, passives: {}, combatArchetype }).classSpecific;
+  assert(adapters.length === 1 && adapters[0].className === className && adapters[0].text.includes(phrase),
+    `Sweep must show only the ${className} adapter for ${combatArchetype}`);
+}
+for (const combatArchetype of ["cadence", "cooldown", "energy", null] as const) {
+  assert(
+    describeAbility(sweep, { ...context, combatArchetype }).classSpecific.length === 0,
+    `Sweep must not show an adapter for ${combatArchetype ?? "an unselected class"}`,
+  );
+}
 
-const powerStrikeAdapters = describeAbility(ABILITY_DATABASE.get("power-strike")!, context).classSpecific;
+const powerStrikeAdapters = describeAbility(ABILITY_DATABASE.get("power-strike")!, { ...context, combatArchetype: "summoner" }).classSpecific;
 assert(
-  powerStrikeAdapters.some((line) => line.className === "Conduit" && line.text.includes("one full payload")),
-  "targeted casts must explain the Conduit summon-cast adapter",
+  powerStrikeAdapters.length === 1 && powerStrikeAdapters[0].className === "Conduit" && powerStrikeAdapters[0].text.includes("one full payload"),
+  "targeted casts must explain only the Conduit summon-cast adapter",
 );
 assert(
   describeAbility(ABILITY_DATABASE.get("brace")!, context).classSpecific.length === 0,

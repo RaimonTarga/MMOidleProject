@@ -3,7 +3,7 @@ import { LoadoutFeedback } from "./LoadoutFeedback";
 import { useAtomValue } from "jotai";
 import { ABILITY_DATABASE, abilityBlurbAt, abilityDisplayName, attunedAbilityIds, attunedForFamily, runicPointLoadoutCost, runeBudgetForGlobalMastery } from "@mmo-idle/shared";
 import { hudBus } from "../hudBus";
-import { attunedAbilitiesAtom, knownAbilitiesAtom, playerTierAtom, runesEquippedAtom, equippedRitesAtom, attunedStancesAtom, globalMasteryAtom, passivesAtom, attackAtom, maxHpAtom, attackRangeAtom } from "../hud/atoms";
+import { attunedAbilitiesAtom, knownAbilitiesAtom, playerTierAtom, runesEquippedAtom, equippedRitesAtom, attunedStancesAtom, globalMasteryAtom, passivesAtom, attackAtom, maxHpAtom, attackRangeAtom, combatArchetypeAtom } from "../hud/atoms";
 import { abilityTiming } from "./describe/abilityTiming";
 import { describeAbility } from "./describe/abilityText";
 import { AbilityDetails } from "./AbilityDetails";
@@ -20,7 +20,8 @@ export function AbilitiesPanelContent() {
   const rites = useAtomValue(equippedRitesAtom);
   const stances = useAtomValue(attunedStancesAtom);
   const tier = useAtomValue(playerTierAtom);
-  const context = { playerTier: tier, passives: useAtomValue(passivesAtom), attack: useAtomValue(attackAtom), maxHp: useAtomValue(maxHpAtom), attackRange: useAtomValue(attackRangeAtom) };
+  const combatArchetype = useAtomValue(combatArchetypeAtom);
+  const context = { playerTier: tier, passives: useAtomValue(passivesAtom), combatArchetype, attack: useAtomValue(attackAtom), maxHp: useAtomValue(maxHpAtom), attackRange: useAtomValue(attackRangeAtom) };
   const budget = runeBudgetForGlobalMastery(useAtomValue(globalMasteryAtom));
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const panelId = useId();

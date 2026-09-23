@@ -6,6 +6,7 @@ import {
   maxHpAtom,
   passivesAtom,
   playerTierAtom,
+  combatArchetypeAtom,
   equipmentAtom, itemUpgradesAtom, selectedRangeAtom,
 } from '../../hud/atoms';
 import type { AbilityContext } from './abilityText';
@@ -34,6 +35,7 @@ export function useAbilityContext(): AbilityContext {
     }),
     playerTier: useAtomValue(playerTierAtom),
     passives: useAtomValue(passivesAtom) ?? {},
+    combatArchetype: useAtomValue(combatArchetypeAtom),
     attack: useAtomValue(attackAtom),
     maxHp: useAtomValue(maxHpAtom),
     attackRange: useAtomValue(attackRangeAtom),
