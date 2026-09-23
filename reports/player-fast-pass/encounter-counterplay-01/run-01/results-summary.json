@@ -1,0 +1,2069 @@
+{
+  "experimentId": "encounter-counterplay-01",
+  "mode": "run",
+  "sources": {
+    "control": "7c3bf6bc0035feff0c0e432b4cda4a4e804281ad",
+    "candidate": "7c3bf6bc0035feff0c0e432b4cda4a4e804281ad"
+  },
+  "counts": {
+    "planned": 24,
+    "completed": 24,
+    "newCompleted": 24,
+    "failed": 0,
+    "omitted": 0,
+    "notRun": 0,
+    "qualified": 0
+  },
+  "rows": [
+    {
+      "observationId": "ec-J1-s101009-control",
+      "block": "J1",
+      "identityId": "t3-striker-light",
+      "snapshotId": "t3-developed",
+      "referenceObservationId": "op-t3-striker-light-jungle-t3-developed-s101009",
+      "fixture": "node-t3-jungle-01",
+      "seed": 101009,
+      "arm": "control",
+      "comparisonId": "ec-J1-s101009",
+      "setting": "farm",
+      "sourceCommit": "7c3bf6bc0035feff0c0e432b4cda4a4e804281ad",
+      "status": "complete",
+      "reason": null,
+      "outcome": "player-died",
+      "elapsedMs": 129200,
+      "firstKillMs": 5500,
+      "endpoints": [],
+      "intervals": [
+        {
+          "startMs": 0,
+          "endMs": 300000,
+          "observed": false,
+          "kills": null
+        },
+        {
+          "startMs": 300000,
+          "endMs": 600000,
+          "observed": false,
+          "kills": null
+        }
+      ],
+      "externalSummary": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101009-control\\artifacts\\ec-J1-s101009-control-s101009\\summary.json"
+    },
+    {
+      "observationId": "ec-J1-s101009-candidate",
+      "block": "J1",
+      "identityId": "t3-striker-light",
+      "snapshotId": "t3-developed",
+      "referenceObservationId": "op-t3-striker-light-jungle-t3-developed-s101009",
+      "fixture": "node-t3-jungle-01",
+      "seed": 101009,
+      "arm": "candidate",
+      "comparisonId": "ec-J1-s101009",
+      "setting": "farm",
+      "sourceCommit": "7c3bf6bc0035feff0c0e432b4cda4a4e804281ad",
+      "status": "complete",
+      "reason": null,
+      "outcome": "window-ended",
+      "elapsedMs": 600000,
+      "firstKillMs": 5500,
+      "endpoints": [
+        {
+          "atMs": 300000,
+          "work": {
+            "kills": 25,
+            "firstKillMs": 5500,
+            "hpDamage": 53550,
+            "absorbed": 0,
+            "damageEvents": 408,
+            "lastKillMs": 295700,
+            "lastHpProgressMs": 295700,
+            "longestKillGapMs": 20600,
+            "longestHpProgressGapMs": 8600
+          },
+          "owner": {
+            "hp": 354,
+            "maxHp": 354,
+            "barrier": 0,
+            "minHpFraction": 0.5557727683615821
+          }
+        },
+        {
+          "atMs": 600000,
+          "work": {
+            "kills": 52,
+            "firstKillMs": 5500,
+            "hpDamage": 105451,
+            "absorbed": 0,
+            "damageEvents": 804,
+            "lastKillMs": 597700,
+            "lastHpProgressMs": 597700,
+            "longestKillGapMs": 20600,
+            "longestHpProgressGapMs": 8800
+          },
+          "owner": {
+            "hp": 354,
+            "maxHp": 354,
+            "barrier": 0,
+            "minHpFraction": 0.45986824858757064
+          }
+        }
+      ],
+      "intervals": [
+        {
+          "startMs": 0,
+          "endMs": 300000,
+          "observed": true,
+          "kills": 25
+        },
+        {
+          "startMs": 300000,
+          "endMs": 600000,
+          "observed": true,
+          "kills": 27
+        }
+      ],
+      "externalSummary": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101009-candidate\\artifacts\\ec-J1-s101009-candidate-s101009\\summary.json"
+    },
+    {
+      "observationId": "ec-J1-s101033-candidate",
+      "block": "J1",
+      "identityId": "t3-striker-light",
+      "snapshotId": "t3-developed",
+      "referenceObservationId": "op-t3-striker-light-jungle-t3-developed-s101033",
+      "fixture": "node-t3-jungle-01",
+      "seed": 101033,
+      "arm": "candidate",
+      "comparisonId": "ec-J1-s101033",
+      "setting": "farm",
+      "sourceCommit": "7c3bf6bc0035feff0c0e432b4cda4a4e804281ad",
+      "status": "complete",
+      "reason": null,
+      "outcome": "player-died",
+      "elapsedMs": 209500,
+      "firstKillMs": 5800,
+      "endpoints": [],
+      "intervals": [
+        {
+          "startMs": 0,
+          "endMs": 300000,
+          "observed": false,
+          "kills": null
+        },
+        {
+          "startMs": 300000,
+          "endMs": 600000,
+          "observed": false,
+          "kills": null
+        }
+      ],
+      "externalSummary": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101033-candidate\\artifacts\\ec-J1-s101033-candidate-s101033\\summary.json"
+    },
+    {
+      "observationId": "ec-J1-s101033-control",
+      "block": "J1",
+      "identityId": "t3-striker-light",
+      "snapshotId": "t3-developed",
+      "referenceObservationId": "op-t3-striker-light-jungle-t3-developed-s101033",
+      "fixture": "node-t3-jungle-01",
+      "seed": 101033,
+      "arm": "control",
+      "comparisonId": "ec-J1-s101033",
+      "setting": "farm",
+      "sourceCommit": "7c3bf6bc0035feff0c0e432b4cda4a4e804281ad",
+      "status": "complete",
+      "reason": null,
+      "outcome": "player-died",
+      "elapsedMs": 140900,
+      "firstKillMs": 5800,
+      "endpoints": [],
+      "intervals": [
+        {
+          "startMs": 0,
+          "endMs": 300000,
+          "observed": false,
+          "kills": null
+        },
+        {
+          "startMs": 300000,
+          "endMs": 600000,
+          "observed": false,
+          "kills": null
+        }
+      ],
+      "externalSummary": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101033-control\\artifacts\\ec-J1-s101033-control-s101033\\summary.json"
+    },
+    {
+      "observationId": "ec-J2-s101009-control",
+      "block": "J2",
+      "identityId": "t3-apprentice-balanced",
+      "snapshotId": "t3-developed",
+      "referenceObservationId": "op-t3-apprentice-balanced-jungle-t3-developed-s101009",
+      "fixture": "node-t3-jungle-01",
+      "seed": 101009,
+      "arm": "control",
+      "comparisonId": "ec-J2-s101009",
+      "setting": "farm",
+      "sourceCommit": "7c3bf6bc0035feff0c0e432b4cda4a4e804281ad",
+      "status": "complete",
+      "reason": null,
+      "outcome": "player-died",
+      "elapsedMs": 368200,
+      "firstKillMs": 6600,
+      "endpoints": [
+        {
+          "atMs": 300000,
+          "work": {
+            "kills": 23,
+            "firstKillMs": 6600,
+            "hpDamage": 44938,
+            "absorbed": 0,
+            "damageEvents": 448,
+            "lastKillMs": 293800,
+            "lastHpProgressMs": 293800,
+            "longestKillGapMs": 23000,
+            "longestHpProgressGapMs": 8000
+          },
+          "owner": {
+            "hp": 330,
+            "maxHp": 330,
+            "barrier": 0,
+            "minHpFraction": 0.3926242424242434
+          }
+        }
+      ],
+      "intervals": [
+        {
+          "startMs": 0,
+          "endMs": 300000,
+          "observed": true,
+          "kills": 23
+        },
+        {
+          "startMs": 300000,
+          "endMs": 600000,
+          "observed": false,
+          "kills": null
+        }
+      ],
+      "externalSummary": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101009-control\\artifacts\\ec-J2-s101009-control-s101009\\summary.json"
+    },
+    {
+      "observationId": "ec-J2-s101009-candidate",
+      "block": "J2",
+      "identityId": "t3-apprentice-balanced",
+      "snapshotId": "t3-developed",
+      "referenceObservationId": "op-t3-apprentice-balanced-jungle-t3-developed-s101009",
+      "fixture": "node-t3-jungle-01",
+      "seed": 101009,
+      "arm": "candidate",
+      "comparisonId": "ec-J2-s101009",
+      "setting": "farm",
+      "sourceCommit": "7c3bf6bc0035feff0c0e432b4cda4a4e804281ad",
+      "status": "complete",
+      "reason": null,
+      "outcome": "player-died",
+      "elapsedMs": 294000,
+      "firstKillMs": 6600,
+      "endpoints": [],
+      "intervals": [
+        {
+          "startMs": 0,
+          "endMs": 300000,
+          "observed": false,
+          "kills": null
+        },
+        {
+          "startMs": 300000,
+          "endMs": 600000,
+          "observed": false,
+          "kills": null
+        }
+      ],
+      "externalSummary": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101009-candidate\\artifacts\\ec-J2-s101009-candidate-s101009\\summary.json"
+    },
+    {
+      "observationId": "ec-J2-s101033-candidate",
+      "block": "J2",
+      "identityId": "t3-apprentice-balanced",
+      "snapshotId": "t3-developed",
+      "referenceObservationId": "op-t3-apprentice-balanced-jungle-t3-developed-s101033",
+      "fixture": "node-t3-jungle-01",
+      "seed": 101033,
+      "arm": "candidate",
+      "comparisonId": "ec-J2-s101033",
+      "setting": "farm",
+      "sourceCommit": "7c3bf6bc0035feff0c0e432b4cda4a4e804281ad",
+      "status": "complete",
+      "reason": null,
+      "outcome": "player-died",
+      "elapsedMs": 20700,
+      "firstKillMs": 6800,
+      "endpoints": [],
+      "intervals": [
+        {
+          "startMs": 0,
+          "endMs": 300000,
+          "observed": false,
+          "kills": null
+        },
+        {
+          "startMs": 300000,
+          "endMs": 600000,
+          "observed": false,
+          "kills": null
+        }
+      ],
+      "externalSummary": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101033-candidate\\artifacts\\ec-J2-s101033-candidate-s101033\\summary.json"
+    },
+    {
+      "observationId": "ec-J2-s101033-control",
+      "block": "J2",
+      "identityId": "t3-apprentice-balanced",
+      "snapshotId": "t3-developed",
+      "referenceObservationId": "op-t3-apprentice-balanced-jungle-t3-developed-s101033",
+      "fixture": "node-t3-jungle-01",
+      "seed": 101033,
+      "arm": "control",
+      "comparisonId": "ec-J2-s101033",
+      "setting": "farm",
+      "sourceCommit": "7c3bf6bc0035feff0c0e432b4cda4a4e804281ad",
+      "status": "complete",
+      "reason": null,
+      "outcome": "player-died",
+      "elapsedMs": 20500,
+      "firstKillMs": 6800,
+      "endpoints": [],
+      "intervals": [
+        {
+          "startMs": 0,
+          "endMs": 300000,
+          "observed": false,
+          "kills": null
+        },
+        {
+          "startMs": 300000,
+          "endMs": 600000,
+          "observed": false,
+          "kills": null
+        }
+      ],
+      "externalSummary": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101033-control\\artifacts\\ec-J2-s101033-control-s101033\\summary.json"
+    },
+    {
+      "observationId": "ec-V1-s101009-control",
+      "block": "V1",
+      "identityId": "t3-striker-light",
+      "snapshotId": "t3-developed",
+      "referenceObservationId": "op-t3-striker-light-volcanic-t3-developed-s101009",
+      "fixture": "node-t3-volcanic-01",
+      "seed": 101009,
+      "arm": "control",
+      "comparisonId": "ec-V1-s101009",
+      "setting": "farm",
+      "sourceCommit": "7c3bf6bc0035feff0c0e432b4cda4a4e804281ad",
+      "status": "complete",
+      "reason": null,
+      "outcome": "player-died",
+      "elapsedMs": 16700,
+      "firstKillMs": 6600,
+      "endpoints": [],
+      "intervals": [
+        {
+          "startMs": 0,
+          "endMs": 300000,
+          "observed": false,
+          "kills": null
+        },
+        {
+          "startMs": 300000,
+          "endMs": 600000,
+          "observed": false,
+          "kills": null
+        }
+      ],
+      "externalSummary": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101009-control\\artifacts\\ec-V1-s101009-control-s101009\\summary.json"
+    },
+    {
+      "observationId": "ec-V1-s101009-candidate",
+      "block": "V1",
+      "identityId": "t3-striker-light",
+      "snapshotId": "t3-developed",
+      "referenceObservationId": "op-t3-striker-light-volcanic-t3-developed-s101009",
+      "fixture": "node-t3-volcanic-01",
+      "seed": 101009,
+      "arm": "candidate",
+      "comparisonId": "ec-V1-s101009",
+      "setting": "farm",
+      "sourceCommit": "7c3bf6bc0035feff0c0e432b4cda4a4e804281ad",
+      "status": "complete",
+      "reason": null,
+      "outcome": "player-died",
+      "elapsedMs": 67000,
+      "firstKillMs": 7100,
+      "endpoints": [],
+      "intervals": [
+        {
+          "startMs": 0,
+          "endMs": 300000,
+          "observed": false,
+          "kills": null
+        },
+        {
+          "startMs": 300000,
+          "endMs": 600000,
+          "observed": false,
+          "kills": null
+        }
+      ],
+      "externalSummary": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101009-candidate\\artifacts\\ec-V1-s101009-candidate-s101009\\summary.json"
+    },
+    {
+      "observationId": "ec-V1-s101033-candidate",
+      "block": "V1",
+      "identityId": "t3-striker-light",
+      "snapshotId": "t3-developed",
+      "referenceObservationId": "op-t3-striker-light-volcanic-t3-developed-s101033",
+      "fixture": "node-t3-volcanic-01",
+      "seed": 101033,
+      "arm": "candidate",
+      "comparisonId": "ec-V1-s101033",
+      "setting": "farm",
+      "sourceCommit": "7c3bf6bc0035feff0c0e432b4cda4a4e804281ad",
+      "status": "complete",
+      "reason": null,
+      "outcome": "player-died",
+      "elapsedMs": 127100,
+      "firstKillMs": 4800,
+      "endpoints": [],
+      "intervals": [
+        {
+          "startMs": 0,
+          "endMs": 300000,
+          "observed": false,
+          "kills": null
+        },
+        {
+          "startMs": 300000,
+          "endMs": 600000,
+          "observed": false,
+          "kills": null
+        }
+      ],
+      "externalSummary": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101033-candidate\\artifacts\\ec-V1-s101033-candidate-s101033\\summary.json"
+    },
+    {
+      "observationId": "ec-V1-s101033-control",
+      "block": "V1",
+      "identityId": "t3-striker-light",
+      "snapshotId": "t3-developed",
+      "referenceObservationId": "op-t3-striker-light-volcanic-t3-developed-s101033",
+      "fixture": "node-t3-volcanic-01",
+      "seed": 101033,
+      "arm": "control",
+      "comparisonId": "ec-V1-s101033",
+      "setting": "farm",
+      "sourceCommit": "7c3bf6bc0035feff0c0e432b4cda4a4e804281ad",
+      "status": "complete",
+      "reason": null,
+      "outcome": "player-died",
+      "elapsedMs": 56800,
+      "firstKillMs": 4300,
+      "endpoints": [],
+      "intervals": [
+        {
+          "startMs": 0,
+          "endMs": 300000,
+          "observed": false,
+          "kills": null
+        },
+        {
+          "startMs": 300000,
+          "endMs": 600000,
+          "observed": false,
+          "kills": null
+        }
+      ],
+      "externalSummary": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101033-control\\artifacts\\ec-V1-s101033-control-s101033\\summary.json"
+    },
+    {
+      "observationId": "ec-P1-s101009-control",
+      "block": "P1",
+      "identityId": "t2-squire-light",
+      "snapshotId": "t2-desert-established",
+      "referenceObservationId": "op-t2-squire-light-plains-boss-s101009",
+      "fixture": "node-t2-plains-dungeon",
+      "seed": 101009,
+      "arm": "control",
+      "comparisonId": "ec-P1-s101009",
+      "setting": "boss",
+      "sourceCommit": "7c3bf6bc0035feff0c0e432b4cda4a4e804281ad",
+      "status": "complete",
+      "reason": null,
+      "outcome": "bot-died",
+      "elapsedMs": 9700,
+      "firstKillMs": null,
+      "bossKilled": false,
+      "bossKillEvidence": null,
+      "bossHpFractionRemoved": 0.19074999999999998,
+      "checkpoints": [],
+      "terminalCombat": {
+        "owner": {
+          "hp": 0,
+          "maxHp": 242,
+          "barrier": 0,
+          "barrierMax": 0,
+          "pos": {
+            "x": 2390.295299457159,
+            "y": 2575.498647941234
+          },
+          "energy": null,
+          "execution": {
+            "executionCooldownPct": 72,
+            "initialized": true,
+            "executionCooldownMs": 1400,
+            "batteryTimerAcc": 0,
+            "singularNoTargetMs": 0,
+            "reverbAttackCount": 0,
+            "reverbStoredBonus": 0,
+            "vengeanceDamageTaken": 0,
+            "ruptureWindowMs": 0
+          },
+          "empowered": false,
+          "cooldowns": {},
+          "statusEffects": []
+        },
+        "boss": {
+          "id": "node-t2-plains-dungeon_monster-13",
+          "hp": 3237,
+          "maxHp": 4000,
+          "barrier": 0,
+          "pos": {
+            "x": 2400,
+            "y": 2527.9999999999995
+          },
+          "pattern": null,
+          "statusEffects": [
+            {
+              "id": "boss-roar-haste",
+              "stacks": 1,
+              "maxStacks": 1,
+              "remainingMs": 4200,
+              "refreshable": true,
+              "instanced": false,
+              "sourceId": "node-t2-plains-dungeon_monster-13",
+              "data": {
+                "attackSpeedPct": 0.25,
+                "totalMs": 6000
+              }
+            }
+          ],
+          "counters": {
+            "hitsReceived": 4,
+            "enemyShieldLastHitAt": 1800000007800,
+            "bossEscapeInstinct": 0,
+            "bossChargeInstinct": 0
+          }
+        },
+        "distance": 48.479921296053725
+      },
+      "externalSummary": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101009-control\\artifacts\\ec-P1-s101009-control-s101009\\summary.json"
+    },
+    {
+      "observationId": "ec-P1-s101009-candidate",
+      "block": "P1",
+      "identityId": "t2-squire-light",
+      "snapshotId": "t2-desert-established",
+      "referenceObservationId": "op-t2-squire-light-plains-boss-s101009",
+      "fixture": "node-t2-plains-dungeon",
+      "seed": 101009,
+      "arm": "candidate",
+      "comparisonId": "ec-P1-s101009",
+      "setting": "boss",
+      "sourceCommit": "7c3bf6bc0035feff0c0e432b4cda4a4e804281ad",
+      "status": "complete",
+      "reason": null,
+      "outcome": "bot-died",
+      "elapsedMs": 11500,
+      "firstKillMs": null,
+      "bossKilled": false,
+      "bossKillEvidence": null,
+      "bossHpFractionRemoved": 0.24624999999999997,
+      "checkpoints": [],
+      "terminalCombat": {
+        "owner": {
+          "hp": 0,
+          "maxHp": 242,
+          "barrier": 0,
+          "barrierMax": 0,
+          "pos": {
+            "x": 2390.2425078351034,
+            "y": 2575.432416380534
+          },
+          "energy": null,
+          "execution": {
+            "executionCooldownPct": 6,
+            "initialized": true,
+            "executionCooldownMs": 4700,
+            "batteryTimerAcc": 0,
+            "singularNoTargetMs": 0,
+            "reverbAttackCount": 0,
+            "reverbStoredBonus": 0,
+            "vengeanceDamageTaken": 0,
+            "ruptureWindowMs": 0
+          },
+          "empowered": false,
+          "cooldowns": {},
+          "statusEffects": []
+        },
+        "boss": {
+          "id": "node-t2-plains-dungeon_monster-13",
+          "hp": 3015,
+          "maxHp": 4000,
+          "barrier": 0,
+          "pos": {
+            "x": 2400,
+            "y": 2527.9999999999995
+          },
+          "pattern": null,
+          "statusEffects": [
+            {
+              "id": "boss-roar-haste",
+              "stacks": 1,
+              "maxStacks": 1,
+              "remainingMs": 2400,
+              "refreshable": true,
+              "instanced": false,
+              "sourceId": "node-t2-plains-dungeon_monster-13",
+              "data": {
+                "attackSpeedPct": 0.25,
+                "totalMs": 6000
+              }
+            }
+          ],
+          "counters": {
+            "hitsReceived": 5,
+            "enemyShieldLastHitAt": 1800000011200,
+            "bossEscapeInstinct": 0,
+            "bossChargeInstinct": 0
+          }
+        },
+        "distance": 48.42564173084767
+      },
+      "externalSummary": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101009-candidate\\artifacts\\ec-P1-s101009-candidate-s101009\\summary.json"
+    },
+    {
+      "observationId": "ec-P1-s101033-candidate",
+      "block": "P1",
+      "identityId": "t2-squire-light",
+      "snapshotId": "t2-desert-established",
+      "referenceObservationId": "op-t2-squire-light-plains-boss-s101033",
+      "fixture": "node-t2-plains-dungeon",
+      "seed": 101033,
+      "arm": "candidate",
+      "comparisonId": "ec-P1-s101033",
+      "setting": "boss",
+      "sourceCommit": "7c3bf6bc0035feff0c0e432b4cda4a4e804281ad",
+      "status": "complete",
+      "reason": null,
+      "outcome": "bot-died",
+      "elapsedMs": 11500,
+      "firstKillMs": null,
+      "bossKilled": false,
+      "bossKillEvidence": null,
+      "bossHpFractionRemoved": 0.24624999999999997,
+      "checkpoints": [],
+      "terminalCombat": {
+        "owner": {
+          "hp": 0,
+          "maxHp": 242,
+          "barrier": 0,
+          "barrierMax": 0,
+          "pos": {
+            "x": 2390.4271326888274,
+            "y": 2579.887717714635
+          },
+          "energy": null,
+          "execution": {
+            "executionCooldownPct": 6,
+            "initialized": true,
+            "executionCooldownMs": 4700,
+            "batteryTimerAcc": 0,
+            "singularNoTargetMs": 0,
+            "reverbAttackCount": 0,
+            "reverbStoredBonus": 0,
+            "vengeanceDamageTaken": 0,
+            "ruptureWindowMs": 0
+          },
+          "empowered": false,
+          "cooldowns": {},
+          "statusEffects": []
+        },
+        "boss": {
+          "id": "node-t2-plains-dungeon_monster-13",
+          "hp": 3015,
+          "maxHp": 4000,
+          "barrier": 0,
+          "pos": {
+            "x": 2400,
+            "y": 2527.9999999999995
+          },
+          "pattern": null,
+          "statusEffects": [
+            {
+              "id": "boss-roar-haste",
+              "stacks": 1,
+              "maxStacks": 1,
+              "remainingMs": 2400,
+              "refreshable": true,
+              "instanced": false,
+              "sourceId": "node-t2-plains-dungeon_monster-13",
+              "data": {
+                "attackSpeedPct": 0.25,
+                "totalMs": 6000
+              }
+            }
+          ],
+          "counters": {
+            "hitsReceived": 5,
+            "enemyShieldLastHitAt": 1800000011200,
+            "bossEscapeInstinct": 0,
+            "bossChargeInstinct": 0
+          }
+        },
+        "distance": 52.763387288829534
+      },
+      "externalSummary": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101033-candidate\\artifacts\\ec-P1-s101033-candidate-s101033\\summary.json"
+    },
+    {
+      "observationId": "ec-P1-s101033-control",
+      "block": "P1",
+      "identityId": "t2-squire-light",
+      "snapshotId": "t2-desert-established",
+      "referenceObservationId": "op-t2-squire-light-plains-boss-s101033",
+      "fixture": "node-t2-plains-dungeon",
+      "seed": 101033,
+      "arm": "control",
+      "comparisonId": "ec-P1-s101033",
+      "setting": "boss",
+      "sourceCommit": "7c3bf6bc0035feff0c0e432b4cda4a4e804281ad",
+      "status": "complete",
+      "reason": null,
+      "outcome": "bot-died",
+      "elapsedMs": 9700,
+      "firstKillMs": null,
+      "bossKilled": false,
+      "bossKillEvidence": null,
+      "bossHpFractionRemoved": 0.19074999999999998,
+      "checkpoints": [],
+      "terminalCombat": {
+        "owner": {
+          "hp": 0,
+          "maxHp": 242,
+          "barrier": 0,
+          "barrierMax": 0,
+          "pos": {
+            "x": 2390.4271326888274,
+            "y": 2579.887717714635
+          },
+          "energy": null,
+          "execution": {
+            "executionCooldownPct": 72,
+            "initialized": true,
+            "executionCooldownMs": 1400,
+            "batteryTimerAcc": 0,
+            "singularNoTargetMs": 0,
+            "reverbAttackCount": 0,
+            "reverbStoredBonus": 0,
+            "vengeanceDamageTaken": 0,
+            "ruptureWindowMs": 0
+          },
+          "empowered": false,
+          "cooldowns": {},
+          "statusEffects": []
+        },
+        "boss": {
+          "id": "node-t2-plains-dungeon_monster-13",
+          "hp": 3237,
+          "maxHp": 4000,
+          "barrier": 0,
+          "pos": {
+            "x": 2400,
+            "y": 2527.9999999999995
+          },
+          "pattern": null,
+          "statusEffects": [
+            {
+              "id": "boss-roar-haste",
+              "stacks": 1,
+              "maxStacks": 1,
+              "remainingMs": 4200,
+              "refreshable": true,
+              "instanced": false,
+              "sourceId": "node-t2-plains-dungeon_monster-13",
+              "data": {
+                "attackSpeedPct": 0.25,
+                "totalMs": 6000
+              }
+            }
+          ],
+          "counters": {
+            "hitsReceived": 4,
+            "enemyShieldLastHitAt": 1800000007800,
+            "bossEscapeInstinct": 0,
+            "bossChargeInstinct": 0
+          }
+        },
+        "distance": 52.763387288829534
+      },
+      "externalSummary": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101033-control\\artifacts\\ec-P1-s101033-control-s101033\\summary.json"
+    },
+    {
+      "observationId": "ec-M1-s101009-control",
+      "block": "M1",
+      "identityId": "t3-apprentice-balanced",
+      "snapshotId": "t3-tundra-arrival",
+      "referenceObservationId": "op-t3-apprentice-balanced-mountain-boss-s101009",
+      "fixture": "node-t3-mountain-dungeon",
+      "seed": 101009,
+      "arm": "control",
+      "comparisonId": "ec-M1-s101009",
+      "setting": "boss",
+      "sourceCommit": "7c3bf6bc0035feff0c0e432b4cda4a4e804281ad",
+      "status": "complete",
+      "reason": null,
+      "outcome": "bot-died",
+      "elapsedMs": 72400,
+      "firstKillMs": null,
+      "bossKilled": false,
+      "bossKillEvidence": null,
+      "bossHpFractionRemoved": 0.8710742470607183,
+      "checkpoints": [
+        {
+          "atMs": 60000,
+          "owner": {
+            "hp": 328.9889599999998,
+            "maxHp": 358,
+            "barrier": 0,
+            "barrierMax": 0,
+            "pos": {
+              "x": 2016.5283196922398,
+              "y": 4297.150604921466
+            },
+            "energy": null,
+            "execution": null,
+            "empowered": false,
+            "cooldowns": {
+              "stance.switch.cd": 0,
+              "recoveryPulse": 4100,
+              "debtTick": 1000,
+              "ability.cd.power-strike": 1200,
+              "ability.tempo.floor.power-strike": 0,
+              "ability.cd.brace": 3500,
+              "ability.guard.window": 0,
+              "ability.cd.second-wind": 1900
+            },
+            "statusEffects": []
+          },
+          "boss": {
+            "id": "node-t3-mountain-dungeon_monster-5",
+            "hp": 3512,
+            "maxHp": 12418,
+            "barrier": 0,
+            "pos": {
+              "x": 1904.3342898290691,
+              "y": 4320.2016177872665
+            },
+            "pattern": {
+              "patternId": "cragbreaker",
+              "stepIndex": 0,
+              "stepEndsAtMs": 1800000059900,
+              "stepStarted": false,
+              "targetId": "bench-bot-0",
+              "barrierSourceIds": [],
+              "chargeHitIds": [],
+              "skippedStepIndexes": [],
+              "staggered": false,
+              "ownsRoot": true,
+              "ownsCannotAttack": true
+            },
+            "statusEffects": [
+              {
+                "id": "dot",
+                "stacks": 6,
+                "maxStacks": 6,
+                "remainingMs": 4800,
+                "refreshable": true,
+                "instanced": false,
+                "sourceId": "bench-bot-0",
+                "data": {
+                  "damagePerStack": 23,
+                  "nextTickIn": 1100,
+                  "tickIntervalMs": 1500,
+                  "tickOnExpire": 1
+                }
+              }
+            ],
+            "counters": {
+              "bossPatternSession": 1800000000000,
+              "bossPatternCdNextAt": 1800000066402,
+              "hitsReceived": 35,
+              "enemyShieldLastHitAt": 1800000059200,
+              "bossChargeInstinct": 2
+            }
+          },
+          "distance": 114.53754638142617
+        }
+      ],
+      "terminalCombat": {
+        "owner": {
+          "hp": 0,
+          "maxHp": 358,
+          "barrier": 0,
+          "barrierMax": 0,
+          "pos": {
+            "x": 1863.0686840671437,
+            "y": 4541.090757040032
+          },
+          "energy": null,
+          "execution": null,
+          "empowered": false,
+          "cooldowns": {},
+          "statusEffects": []
+        },
+        "boss": {
+          "id": "node-t3-mountain-dungeon_monster-5",
+          "hp": 1601,
+          "maxHp": 12418,
+          "barrier": 0,
+          "pos": {
+            "x": 2024.4443414236077,
+            "y": 4708.388841102044
+          },
+          "pattern": null,
+          "statusEffects": [
+            {
+              "id": "dot",
+              "stacks": 6,
+              "maxStacks": 6,
+              "remainingMs": 4600,
+              "refreshable": true,
+              "instanced": false,
+              "sourceId": "bench-bot-0",
+              "data": {
+                "damagePerStack": 23,
+                "nextTickIn": 600,
+                "tickIntervalMs": 1500,
+                "tickOnExpire": 1
+              }
+            }
+          ],
+          "counters": {
+            "bossPatternSession": 1800000000000,
+            "bossPatternCdNextAt": 1800000077800,
+            "hitsReceived": 41,
+            "enemyShieldLastHitAt": 1800000071500,
+            "bossChargeInstinct": 0,
+            "bossEscapeInstinct": 0
+          }
+        },
+        "distance": 232.44515851712407
+      },
+      "externalSummary": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101009-control\\artifacts\\ec-M1-s101009-control-s101009\\summary.json"
+    },
+    {
+      "observationId": "ec-M1-s101009-candidate",
+      "block": "M1",
+      "identityId": "t3-apprentice-balanced",
+      "snapshotId": "t3-tundra-arrival",
+      "referenceObservationId": "op-t3-apprentice-balanced-mountain-boss-s101009",
+      "fixture": "node-t3-mountain-dungeon",
+      "seed": 101009,
+      "arm": "candidate",
+      "comparisonId": "ec-M1-s101009",
+      "setting": "boss",
+      "sourceCommit": "7c3bf6bc0035feff0c0e432b4cda4a4e804281ad",
+      "status": "complete",
+      "reason": null,
+      "outcome": "boss-killed",
+      "elapsedMs": 80500,
+      "firstKillMs": null,
+      "bossKilled": true,
+      "bossKillEvidence": {
+        "atMs": 80500,
+        "victimId": "node-t3-mountain-dungeon_monster-5",
+        "victimName": "Crag-Gorged Horn-Behemoth",
+        "killerId": "bench-bot-0"
+      },
+      "bossHpFractionRemoved": 1,
+      "checkpoints": [
+        {
+          "atMs": 60000,
+          "owner": {
+            "hp": 328.9889599999998,
+            "maxHp": 358,
+            "barrier": 0,
+            "barrierMax": 0,
+            "pos": {
+              "x": 2016.5283196922398,
+              "y": 4297.150604921466
+            },
+            "energy": null,
+            "execution": null,
+            "empowered": false,
+            "cooldowns": {
+              "stance.switch.cd": 0,
+              "recoveryPulse": 4100,
+              "debtTick": 1000,
+              "ability.cd.power-strike": 1200,
+              "ability.tempo.floor.power-strike": 0,
+              "ability.cd.brace": 3500,
+              "ability.guard.window": 0,
+              "ability.cd.endure": 0,
+              "ability.cd.second-wind": 0
+            },
+            "statusEffects": []
+          },
+          "boss": {
+            "id": "node-t3-mountain-dungeon_monster-5",
+            "hp": 3512,
+            "maxHp": 12418,
+            "barrier": 0,
+            "pos": {
+              "x": 1904.3342898290691,
+              "y": 4320.2016177872665
+            },
+            "pattern": {
+              "patternId": "cragbreaker",
+              "stepIndex": 0,
+              "stepEndsAtMs": 1800000059900,
+              "stepStarted": false,
+              "targetId": "bench-bot-0",
+              "barrierSourceIds": [],
+              "chargeHitIds": [],
+              "skippedStepIndexes": [],
+              "staggered": false,
+              "ownsRoot": true,
+              "ownsCannotAttack": true
+            },
+            "statusEffects": [
+              {
+                "id": "dot",
+                "stacks": 6,
+                "maxStacks": 6,
+                "remainingMs": 4800,
+                "refreshable": true,
+                "instanced": false,
+                "sourceId": "bench-bot-0",
+                "data": {
+                  "damagePerStack": 23,
+                  "nextTickIn": 1100,
+                  "tickIntervalMs": 1500,
+                  "tickOnExpire": 1
+                }
+              }
+            ],
+            "counters": {
+              "bossPatternSession": 1800000000000,
+              "bossPatternCdNextAt": 1800000066402,
+              "hitsReceived": 35,
+              "enemyShieldLastHitAt": 1800000059200,
+              "bossChargeInstinct": 2
+            }
+          },
+          "distance": 114.53754638142617
+        }
+      ],
+      "terminalCombat": {
+        "owner": {
+          "hp": 256.32223999999997,
+          "maxHp": 358,
+          "barrier": 0,
+          "barrierMax": 0,
+          "pos": {
+            "x": 1965.8155821382547,
+            "y": 4563.1400779864625
+          },
+          "energy": null,
+          "execution": null,
+          "empowered": false,
+          "cooldowns": {
+            "stance.switch.cd": 0,
+            "recoveryPulse": 7500,
+            "debtTick": 400,
+            "ability.cd.power-strike": 7500,
+            "ability.tempo.floor.power-strike": 0,
+            "ability.cd.brace": 7500,
+            "ability.guard.window": 0,
+            "ability.cd.endure": 12300,
+            "ability.cd.second-wind": 3900
+          },
+          "statusEffects": [
+            {
+              "id": "ability-guard",
+              "stacks": 1,
+              "maxStacks": 0,
+              "remainingMs": 500,
+              "refreshable": true,
+              "instanced": false,
+              "sourceId": "bench-bot-0",
+              "data": {
+                "totalMs": 3000,
+                "drPct": 0.6705,
+                "knockbackResistPct": 0.894
+              }
+            },
+            {
+              "id": "ability-guard-2",
+              "stacks": 1,
+              "maxStacks": 0,
+              "remainingMs": 6300,
+              "refreshable": true,
+              "instanced": false,
+              "sourceId": "bench-bot-0",
+              "data": {
+                "totalMs": 8000,
+                "drPct": 0.298
+              }
+            }
+          ]
+        },
+        "boss": {
+          "id": "node-t3-mountain-dungeon_monster-5",
+          "hp": -112,
+          "maxHp": 12418,
+          "barrier": 0,
+          "pos": {
+            "x": 1931.1928596188468,
+            "y": 4662.343633520622
+          },
+          "pattern": null,
+          "statusEffects": [
+            {
+              "id": "dot",
+              "stacks": 6,
+              "maxStacks": 6,
+              "remainingMs": 5400,
+              "refreshable": true,
+              "instanced": false,
+              "sourceId": "bench-bot-0",
+              "data": {
+                "damagePerStack": 23,
+                "nextTickIn": 0,
+                "tickIntervalMs": 1500,
+                "tickOnExpire": 1
+              }
+            }
+          ],
+          "counters": {
+            "bossPatternSession": 1800000000000,
+            "bossPatternCdNextAt": 1800000084100,
+            "hitsReceived": 48,
+            "enemyShieldLastHitAt": 1800000080400,
+            "bossChargeInstinct": 0,
+            "bossEscapeInstinct": 0
+          }
+        },
+        "distance": 105.07177711105344
+      },
+      "externalSummary": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101009-candidate\\artifacts\\ec-M1-s101009-candidate-s101009\\summary.json"
+    },
+    {
+      "observationId": "ec-M1-s101033-candidate",
+      "block": "M1",
+      "identityId": "t3-apprentice-balanced",
+      "snapshotId": "t3-tundra-arrival",
+      "referenceObservationId": "op-t3-apprentice-balanced-mountain-boss-s101033",
+      "fixture": "node-t3-mountain-dungeon",
+      "seed": 101033,
+      "arm": "candidate",
+      "comparisonId": "ec-M1-s101033",
+      "setting": "boss",
+      "sourceCommit": "7c3bf6bc0035feff0c0e432b4cda4a4e804281ad",
+      "status": "complete",
+      "reason": null,
+      "outcome": "boss-killed",
+      "elapsedMs": 80500,
+      "firstKillMs": null,
+      "bossKilled": true,
+      "bossKillEvidence": {
+        "atMs": 80500,
+        "victimId": "node-t3-mountain-dungeon_monster-5",
+        "victimName": "Crag-Gorged Horn-Behemoth",
+        "killerId": "bench-bot-0"
+      },
+      "bossHpFractionRemoved": 1,
+      "checkpoints": [
+        {
+          "atMs": 60000,
+          "owner": {
+            "hp": 328.9889599999998,
+            "maxHp": 358,
+            "barrier": 0,
+            "barrierMax": 0,
+            "pos": {
+              "x": 2016.5283196922398,
+              "y": 4297.150604921466
+            },
+            "energy": null,
+            "execution": null,
+            "empowered": false,
+            "cooldowns": {
+              "stance.switch.cd": 0,
+              "recoveryPulse": 4100,
+              "debtTick": 1000,
+              "ability.cd.power-strike": 1200,
+              "ability.tempo.floor.power-strike": 0,
+              "ability.cd.brace": 3500,
+              "ability.guard.window": 0,
+              "ability.cd.endure": 0,
+              "ability.cd.second-wind": 0
+            },
+            "statusEffects": []
+          },
+          "boss": {
+            "id": "node-t3-mountain-dungeon_monster-5",
+            "hp": 3512,
+            "maxHp": 12418,
+            "barrier": 0,
+            "pos": {
+              "x": 1904.3342898290691,
+              "y": 4320.2016177872665
+            },
+            "pattern": {
+              "patternId": "cragbreaker",
+              "stepIndex": 0,
+              "stepEndsAtMs": 1800000059900,
+              "stepStarted": false,
+              "targetId": "bench-bot-0",
+              "barrierSourceIds": [],
+              "chargeHitIds": [],
+              "skippedStepIndexes": [],
+              "staggered": false,
+              "ownsRoot": true,
+              "ownsCannotAttack": true
+            },
+            "statusEffects": [
+              {
+                "id": "dot",
+                "stacks": 6,
+                "maxStacks": 6,
+                "remainingMs": 4800,
+                "refreshable": true,
+                "instanced": false,
+                "sourceId": "bench-bot-0",
+                "data": {
+                  "damagePerStack": 23,
+                  "nextTickIn": 1100,
+                  "tickIntervalMs": 1500,
+                  "tickOnExpire": 1
+                }
+              }
+            ],
+            "counters": {
+              "bossPatternSession": 1800000000000,
+              "bossPatternCdNextAt": 1800000066402,
+              "hitsReceived": 35,
+              "enemyShieldLastHitAt": 1800000059200,
+              "bossChargeInstinct": 2
+            }
+          },
+          "distance": 114.53754638142617
+        }
+      ],
+      "terminalCombat": {
+        "owner": {
+          "hp": 256.32223999999997,
+          "maxHp": 358,
+          "barrier": 0,
+          "barrierMax": 0,
+          "pos": {
+            "x": 1965.8155821382547,
+            "y": 4563.1400779864625
+          },
+          "energy": null,
+          "execution": null,
+          "empowered": false,
+          "cooldowns": {
+            "stance.switch.cd": 0,
+            "recoveryPulse": 7500,
+            "debtTick": 400,
+            "ability.cd.power-strike": 7500,
+            "ability.tempo.floor.power-strike": 0,
+            "ability.cd.brace": 7500,
+            "ability.guard.window": 0,
+            "ability.cd.endure": 12300,
+            "ability.cd.second-wind": 3900
+          },
+          "statusEffects": [
+            {
+              "id": "ability-guard",
+              "stacks": 1,
+              "maxStacks": 0,
+              "remainingMs": 500,
+              "refreshable": true,
+              "instanced": false,
+              "sourceId": "bench-bot-0",
+              "data": {
+                "totalMs": 3000,
+                "drPct": 0.6705,
+                "knockbackResistPct": 0.894
+              }
+            },
+            {
+              "id": "ability-guard-2",
+              "stacks": 1,
+              "maxStacks": 0,
+              "remainingMs": 6300,
+              "refreshable": true,
+              "instanced": false,
+              "sourceId": "bench-bot-0",
+              "data": {
+                "totalMs": 8000,
+                "drPct": 0.298
+              }
+            }
+          ]
+        },
+        "boss": {
+          "id": "node-t3-mountain-dungeon_monster-5",
+          "hp": -112,
+          "maxHp": 12418,
+          "barrier": 0,
+          "pos": {
+            "x": 1931.1928596188468,
+            "y": 4662.343633520622
+          },
+          "pattern": null,
+          "statusEffects": [
+            {
+              "id": "dot",
+              "stacks": 6,
+              "maxStacks": 6,
+              "remainingMs": 5400,
+              "refreshable": true,
+              "instanced": false,
+              "sourceId": "bench-bot-0",
+              "data": {
+                "damagePerStack": 23,
+                "nextTickIn": 0,
+                "tickIntervalMs": 1500,
+                "tickOnExpire": 1
+              }
+            }
+          ],
+          "counters": {
+            "bossPatternSession": 1800000000000,
+            "bossPatternCdNextAt": 1800000084100,
+            "hitsReceived": 48,
+            "enemyShieldLastHitAt": 1800000080400,
+            "bossChargeInstinct": 0,
+            "bossEscapeInstinct": 0
+          }
+        },
+        "distance": 105.07177711105344
+      },
+      "externalSummary": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101033-candidate\\artifacts\\ec-M1-s101033-candidate-s101033\\summary.json"
+    },
+    {
+      "observationId": "ec-M1-s101033-control",
+      "block": "M1",
+      "identityId": "t3-apprentice-balanced",
+      "snapshotId": "t3-tundra-arrival",
+      "referenceObservationId": "op-t3-apprentice-balanced-mountain-boss-s101033",
+      "fixture": "node-t3-mountain-dungeon",
+      "seed": 101033,
+      "arm": "control",
+      "comparisonId": "ec-M1-s101033",
+      "setting": "boss",
+      "sourceCommit": "7c3bf6bc0035feff0c0e432b4cda4a4e804281ad",
+      "status": "complete",
+      "reason": null,
+      "outcome": "bot-died",
+      "elapsedMs": 72400,
+      "firstKillMs": null,
+      "bossKilled": false,
+      "bossKillEvidence": null,
+      "bossHpFractionRemoved": 0.8710742470607183,
+      "checkpoints": [
+        {
+          "atMs": 60000,
+          "owner": {
+            "hp": 328.9889599999998,
+            "maxHp": 358,
+            "barrier": 0,
+            "barrierMax": 0,
+            "pos": {
+              "x": 2016.5283196922398,
+              "y": 4297.150604921466
+            },
+            "energy": null,
+            "execution": null,
+            "empowered": false,
+            "cooldowns": {
+              "stance.switch.cd": 0,
+              "recoveryPulse": 4100,
+              "debtTick": 1000,
+              "ability.cd.power-strike": 1200,
+              "ability.tempo.floor.power-strike": 0,
+              "ability.cd.brace": 3500,
+              "ability.guard.window": 0,
+              "ability.cd.second-wind": 1900
+            },
+            "statusEffects": []
+          },
+          "boss": {
+            "id": "node-t3-mountain-dungeon_monster-5",
+            "hp": 3512,
+            "maxHp": 12418,
+            "barrier": 0,
+            "pos": {
+              "x": 1904.3342898290691,
+              "y": 4320.2016177872665
+            },
+            "pattern": {
+              "patternId": "cragbreaker",
+              "stepIndex": 0,
+              "stepEndsAtMs": 1800000059900,
+              "stepStarted": false,
+              "targetId": "bench-bot-0",
+              "barrierSourceIds": [],
+              "chargeHitIds": [],
+              "skippedStepIndexes": [],
+              "staggered": false,
+              "ownsRoot": true,
+              "ownsCannotAttack": true
+            },
+            "statusEffects": [
+              {
+                "id": "dot",
+                "stacks": 6,
+                "maxStacks": 6,
+                "remainingMs": 4800,
+                "refreshable": true,
+                "instanced": false,
+                "sourceId": "bench-bot-0",
+                "data": {
+                  "damagePerStack": 23,
+                  "nextTickIn": 1100,
+                  "tickIntervalMs": 1500,
+                  "tickOnExpire": 1
+                }
+              }
+            ],
+            "counters": {
+              "bossPatternSession": 1800000000000,
+              "bossPatternCdNextAt": 1800000066402,
+              "hitsReceived": 35,
+              "enemyShieldLastHitAt": 1800000059200,
+              "bossChargeInstinct": 2
+            }
+          },
+          "distance": 114.53754638142617
+        }
+      ],
+      "terminalCombat": {
+        "owner": {
+          "hp": 0,
+          "maxHp": 358,
+          "barrier": 0,
+          "barrierMax": 0,
+          "pos": {
+            "x": 1863.0686840671437,
+            "y": 4541.090757040032
+          },
+          "energy": null,
+          "execution": null,
+          "empowered": false,
+          "cooldowns": {},
+          "statusEffects": []
+        },
+        "boss": {
+          "id": "node-t3-mountain-dungeon_monster-5",
+          "hp": 1601,
+          "maxHp": 12418,
+          "barrier": 0,
+          "pos": {
+            "x": 2024.4443414236077,
+            "y": 4708.388841102044
+          },
+          "pattern": null,
+          "statusEffects": [
+            {
+              "id": "dot",
+              "stacks": 6,
+              "maxStacks": 6,
+              "remainingMs": 4600,
+              "refreshable": true,
+              "instanced": false,
+              "sourceId": "bench-bot-0",
+              "data": {
+                "damagePerStack": 23,
+                "nextTickIn": 600,
+                "tickIntervalMs": 1500,
+                "tickOnExpire": 1
+              }
+            }
+          ],
+          "counters": {
+            "bossPatternSession": 1800000000000,
+            "bossPatternCdNextAt": 1800000077800,
+            "hitsReceived": 41,
+            "enemyShieldLastHitAt": 1800000071500,
+            "bossChargeInstinct": 0,
+            "bossEscapeInstinct": 0
+          }
+        },
+        "distance": 232.44515851712407
+      },
+      "externalSummary": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101033-control\\artifacts\\ec-M1-s101033-control-s101033\\summary.json"
+    },
+    {
+      "observationId": "ec-E1-s101009-control",
+      "block": "E1",
+      "identityId": "t3-apprentice-balanced",
+      "snapshotId": "t3-tundra-arrival",
+      "referenceObservationId": "op-t3-apprentice-balanced-volcanic-boss-s101009",
+      "fixture": "node-t3-volcanic-dungeon",
+      "seed": 101009,
+      "arm": "control",
+      "comparisonId": "ec-E1-s101009",
+      "setting": "boss",
+      "sourceCommit": "7c3bf6bc0035feff0c0e432b4cda4a4e804281ad",
+      "status": "complete",
+      "reason": null,
+      "outcome": "bot-died",
+      "elapsedMs": 62700,
+      "firstKillMs": null,
+      "bossKilled": false,
+      "bossKillEvidence": null,
+      "bossHpFractionRemoved": 0.8780317571104519,
+      "checkpoints": [
+        {
+          "atMs": 60000,
+          "owner": {
+            "hp": 358,
+            "maxHp": 358,
+            "barrier": 0,
+            "barrierMax": 0,
+            "pos": {
+              "x": 1150.3130855846919,
+              "y": 289.63660391473223
+            },
+            "energy": null,
+            "execution": null,
+            "empowered": false,
+            "cooldowns": {
+              "stance.switch.cd": 0,
+              "ability.cd.sweep": 6400,
+              "ability.tempo.floor.sweep": 2400,
+              "recoveryPulse": 4100,
+              "debtTick": 800,
+              "ability.cd.endure": 10000,
+              "ability.guard.window": 0,
+              "ability.cd.second-wind": 5900,
+              "ability.cd.brace": 4000
+            },
+            "statusEffects": [
+              {
+                "id": "volcanic-heat",
+                "stacks": 31,
+                "maxStacks": 0,
+                "remainingMs": -1,
+                "refreshable": false,
+                "instanced": false,
+                "sourceId": "node-feature:volcanic-heat",
+                "data": {
+                  "isAmbientRamp": 1,
+                  "maxStacks": 0,
+                  "rampMs": 3000,
+                  "rampAccum": 2200,
+                  "totalMs": 0,
+                  "damageSoftcapStacks": 10,
+                  "damageSoftcapScale": 5,
+                  "coolingScaleStacks": 10,
+                  "damageTakenPct": 0.045,
+                  "damageDealtPct": 0.03
+                }
+              },
+              {
+                "id": "ability-guard-2",
+                "stacks": 1,
+                "maxStacks": 0,
+                "remainingMs": 4000,
+                "refreshable": true,
+                "instanced": false,
+                "sourceId": "bench-bot-0",
+                "data": {
+                  "totalMs": 8000,
+                  "drPct": 0.298
+                }
+              }
+            ]
+          },
+          "boss": {
+            "id": "node-t3-volcanic-dungeon_monster-13",
+            "hp": 1866,
+            "maxHp": 11462,
+            "barrier": 0,
+            "pos": {
+              "x": 1255.0333006304545,
+              "y": 310.62701634718786
+            },
+            "pattern": {
+              "patternId": "final-eruption",
+              "stepIndex": 0,
+              "stepEndsAtMs": 1800000061800,
+              "stepStarted": true,
+              "targetId": "bench-bot-0",
+              "barrierSourceIds": [],
+              "chargeHitIds": [],
+              "skippedStepIndexes": [],
+              "staggered": false,
+              "ownsRoot": false,
+              "ownsCannotAttack": false
+            },
+            "statusEffects": [
+              {
+                "id": "dot",
+                "stacks": 6,
+                "maxStacks": 6,
+                "remainingMs": 4800,
+                "refreshable": true,
+                "instanced": false,
+                "sourceId": "bench-bot-0",
+                "data": {
+                  "damagePerStack": 23,
+                  "nextTickIn": 900,
+                  "tickIntervalMs": 1500,
+                  "tickOnExpire": 1
+                }
+              }
+            ],
+            "counters": {
+              "hitsReceived": 74,
+              "enemyShieldLastHitAt": 1800000059200,
+              "shellUpUsed": 1,
+              "shellUpEndsAt": 0,
+              "shellUpNextAt": 1800000072200,
+              "bossPatternSession": 1800000000000,
+              "bossPatternCdNextAt": 1800000113700,
+              "bossPatternUsed": 1
+            }
+          },
+          "distance": 106.80318746795602
+        }
+      ],
+      "terminalCombat": {
+        "owner": {
+          "hp": 0,
+          "maxHp": 358,
+          "barrier": 0,
+          "barrierMax": 0,
+          "pos": {
+            "x": 1064.5466856147686,
+            "y": 301.07397570718626
+          },
+          "energy": null,
+          "execution": null,
+          "empowered": false,
+          "cooldowns": {},
+          "statusEffects": []
+        },
+        "boss": {
+          "id": "node-t3-volcanic-dungeon_monster-13",
+          "hp": 1398,
+          "maxHp": 11462,
+          "barrier": 0,
+          "pos": {
+            "x": 1255.0333006304545,
+            "y": 310.62701634718786
+          },
+          "pattern": null,
+          "statusEffects": [
+            {
+              "id": "dot",
+              "stacks": 6,
+              "maxStacks": 6,
+              "remainingMs": 4400,
+              "refreshable": true,
+              "instanced": false,
+              "sourceId": "bench-bot-0",
+              "data": {
+                "damagePerStack": 23,
+                "nextTickIn": 1100,
+                "tickIntervalMs": 1500,
+                "tickOnExpire": 1
+              }
+            }
+          ],
+          "counters": {
+            "hitsReceived": 77,
+            "enemyShieldLastHitAt": 1800000061600,
+            "shellUpUsed": 1,
+            "shellUpEndsAt": 0,
+            "shellUpNextAt": 1800000072200,
+            "bossPatternSession": 1800000000000,
+            "bossPatternCdNextAt": 1800000113700,
+            "bossPatternUsed": 1,
+            "bossEscapeInstinct": 0,
+            "bossChargeInstinct": 0
+          }
+        },
+        "distance": 190.72601051142354
+      },
+      "externalSummary": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101009-control\\artifacts\\ec-E1-s101009-control-s101009\\summary.json"
+    },
+    {
+      "observationId": "ec-E1-s101009-candidate",
+      "block": "E1",
+      "identityId": "t3-apprentice-balanced",
+      "snapshotId": "t3-tundra-arrival",
+      "referenceObservationId": "op-t3-apprentice-balanced-volcanic-boss-s101009",
+      "fixture": "node-t3-volcanic-dungeon",
+      "seed": 101009,
+      "arm": "candidate",
+      "comparisonId": "ec-E1-s101009",
+      "setting": "boss",
+      "sourceCommit": "7c3bf6bc0035feff0c0e432b4cda4a4e804281ad",
+      "status": "complete",
+      "reason": null,
+      "outcome": "bot-died",
+      "elapsedMs": 47700,
+      "firstKillMs": null,
+      "bossKilled": false,
+      "bossKillEvidence": null,
+      "bossHpFractionRemoved": 0.6332228232420172,
+      "checkpoints": [],
+      "terminalCombat": {
+        "owner": {
+          "hp": 0,
+          "maxHp": 358,
+          "barrier": 0,
+          "barrierMax": 0,
+          "pos": {
+            "x": 4391.368051187914,
+            "y": 1802.2159381389522
+          },
+          "energy": null,
+          "execution": null,
+          "empowered": false,
+          "cooldowns": {},
+          "statusEffects": []
+        },
+        "boss": {
+          "id": "node-t3-volcanic-dungeon_monster-13",
+          "hp": 4204,
+          "maxHp": 11462,
+          "barrier": 0,
+          "pos": {
+            "x": 4362.583834916228,
+            "y": 1829.991267005139
+          },
+          "pattern": null,
+          "statusEffects": [
+            {
+              "id": "dot",
+              "stacks": 6,
+              "maxStacks": 6,
+              "remainingMs": 5000,
+              "refreshable": true,
+              "instanced": false,
+              "sourceId": "bench-bot-0",
+              "data": {
+                "damagePerStack": 23,
+                "nextTickIn": 1400,
+                "tickIntervalMs": 1500,
+                "tickOnExpire": 1
+              }
+            }
+          ],
+          "counters": {
+            "hitsReceived": 50,
+            "enemyShieldLastHitAt": 1800000047200,
+            "shellUpUsed": 1,
+            "shellUpEndsAt": 0,
+            "shellUpNextAt": 1800000051700,
+            "bossEscapeInstinct": 0,
+            "bossChargeInstinct": 0
+          }
+        },
+        "distance": 40.00000000000034
+      },
+      "externalSummary": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101009-candidate\\artifacts\\ec-E1-s101009-candidate-s101009\\summary.json"
+    },
+    {
+      "observationId": "ec-E1-s101033-candidate",
+      "block": "E1",
+      "identityId": "t3-apprentice-balanced",
+      "snapshotId": "t3-tundra-arrival",
+      "referenceObservationId": "op-t3-apprentice-balanced-volcanic-boss-s101033",
+      "fixture": "node-t3-volcanic-dungeon",
+      "seed": 101033,
+      "arm": "candidate",
+      "comparisonId": "ec-E1-s101033",
+      "setting": "boss",
+      "sourceCommit": "7c3bf6bc0035feff0c0e432b4cda4a4e804281ad",
+      "status": "complete",
+      "reason": null,
+      "outcome": "bot-died",
+      "elapsedMs": 47700,
+      "firstKillMs": null,
+      "bossKilled": false,
+      "bossKillEvidence": null,
+      "bossHpFractionRemoved": 0.6332228232420172,
+      "checkpoints": [],
+      "terminalCombat": {
+        "owner": {
+          "hp": 0,
+          "maxHp": 358,
+          "barrier": 0,
+          "barrierMax": 0,
+          "pos": {
+            "x": 4391.368051187914,
+            "y": 1802.2159381389522
+          },
+          "energy": null,
+          "execution": null,
+          "empowered": false,
+          "cooldowns": {},
+          "statusEffects": []
+        },
+        "boss": {
+          "id": "node-t3-volcanic-dungeon_monster-13",
+          "hp": 4204,
+          "maxHp": 11462,
+          "barrier": 0,
+          "pos": {
+            "x": 4362.583834916228,
+            "y": 1829.991267005139
+          },
+          "pattern": null,
+          "statusEffects": [
+            {
+              "id": "dot",
+              "stacks": 6,
+              "maxStacks": 6,
+              "remainingMs": 5000,
+              "refreshable": true,
+              "instanced": false,
+              "sourceId": "bench-bot-0",
+              "data": {
+                "damagePerStack": 23,
+                "nextTickIn": 1400,
+                "tickIntervalMs": 1500,
+                "tickOnExpire": 1
+              }
+            }
+          ],
+          "counters": {
+            "hitsReceived": 50,
+            "enemyShieldLastHitAt": 1800000047200,
+            "shellUpUsed": 1,
+            "shellUpEndsAt": 0,
+            "shellUpNextAt": 1800000051700,
+            "bossEscapeInstinct": 0,
+            "bossChargeInstinct": 0
+          }
+        },
+        "distance": 40.00000000000034
+      },
+      "externalSummary": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101033-candidate\\artifacts\\ec-E1-s101033-candidate-s101033\\summary.json"
+    },
+    {
+      "observationId": "ec-E1-s101033-control",
+      "block": "E1",
+      "identityId": "t3-apprentice-balanced",
+      "snapshotId": "t3-tundra-arrival",
+      "referenceObservationId": "op-t3-apprentice-balanced-volcanic-boss-s101033",
+      "fixture": "node-t3-volcanic-dungeon",
+      "seed": 101033,
+      "arm": "control",
+      "comparisonId": "ec-E1-s101033",
+      "setting": "boss",
+      "sourceCommit": "7c3bf6bc0035feff0c0e432b4cda4a4e804281ad",
+      "status": "complete",
+      "reason": null,
+      "outcome": "bot-died",
+      "elapsedMs": 62700,
+      "firstKillMs": null,
+      "bossKilled": false,
+      "bossKillEvidence": null,
+      "bossHpFractionRemoved": 0.8780317571104519,
+      "checkpoints": [
+        {
+          "atMs": 60000,
+          "owner": {
+            "hp": 358,
+            "maxHp": 358,
+            "barrier": 0,
+            "barrierMax": 0,
+            "pos": {
+              "x": 1150.3130855846919,
+              "y": 289.63660391473223
+            },
+            "energy": null,
+            "execution": null,
+            "empowered": false,
+            "cooldowns": {
+              "stance.switch.cd": 0,
+              "ability.cd.sweep": 6400,
+              "ability.tempo.floor.sweep": 2400,
+              "recoveryPulse": 4100,
+              "debtTick": 800,
+              "ability.cd.endure": 10000,
+              "ability.guard.window": 0,
+              "ability.cd.second-wind": 5900,
+              "ability.cd.brace": 4000
+            },
+            "statusEffects": [
+              {
+                "id": "volcanic-heat",
+                "stacks": 31,
+                "maxStacks": 0,
+                "remainingMs": -1,
+                "refreshable": false,
+                "instanced": false,
+                "sourceId": "node-feature:volcanic-heat",
+                "data": {
+                  "isAmbientRamp": 1,
+                  "maxStacks": 0,
+                  "rampMs": 3000,
+                  "rampAccum": 2200,
+                  "totalMs": 0,
+                  "damageSoftcapStacks": 10,
+                  "damageSoftcapScale": 5,
+                  "coolingScaleStacks": 10,
+                  "damageTakenPct": 0.045,
+                  "damageDealtPct": 0.03
+                }
+              },
+              {
+                "id": "ability-guard-2",
+                "stacks": 1,
+                "maxStacks": 0,
+                "remainingMs": 4000,
+                "refreshable": true,
+                "instanced": false,
+                "sourceId": "bench-bot-0",
+                "data": {
+                  "totalMs": 8000,
+                  "drPct": 0.298
+                }
+              }
+            ]
+          },
+          "boss": {
+            "id": "node-t3-volcanic-dungeon_monster-13",
+            "hp": 1866,
+            "maxHp": 11462,
+            "barrier": 0,
+            "pos": {
+              "x": 1255.0333006304545,
+              "y": 310.62701634718786
+            },
+            "pattern": {
+              "patternId": "final-eruption",
+              "stepIndex": 0,
+              "stepEndsAtMs": 1800000061800,
+              "stepStarted": true,
+              "targetId": "bench-bot-0",
+              "barrierSourceIds": [],
+              "chargeHitIds": [],
+              "skippedStepIndexes": [],
+              "staggered": false,
+              "ownsRoot": false,
+              "ownsCannotAttack": false
+            },
+            "statusEffects": [
+              {
+                "id": "dot",
+                "stacks": 6,
+                "maxStacks": 6,
+                "remainingMs": 4800,
+                "refreshable": true,
+                "instanced": false,
+                "sourceId": "bench-bot-0",
+                "data": {
+                  "damagePerStack": 23,
+                  "nextTickIn": 900,
+                  "tickIntervalMs": 1500,
+                  "tickOnExpire": 1
+                }
+              }
+            ],
+            "counters": {
+              "hitsReceived": 74,
+              "enemyShieldLastHitAt": 1800000059200,
+              "shellUpUsed": 1,
+              "shellUpEndsAt": 0,
+              "shellUpNextAt": 1800000072200,
+              "bossPatternSession": 1800000000000,
+              "bossPatternCdNextAt": 1800000113700,
+              "bossPatternUsed": 1
+            }
+          },
+          "distance": 106.80318746795602
+        }
+      ],
+      "terminalCombat": {
+        "owner": {
+          "hp": 0,
+          "maxHp": 358,
+          "barrier": 0,
+          "barrierMax": 0,
+          "pos": {
+            "x": 1064.5466856147686,
+            "y": 301.07397570718626
+          },
+          "energy": null,
+          "execution": null,
+          "empowered": false,
+          "cooldowns": {},
+          "statusEffects": []
+        },
+        "boss": {
+          "id": "node-t3-volcanic-dungeon_monster-13",
+          "hp": 1398,
+          "maxHp": 11462,
+          "barrier": 0,
+          "pos": {
+            "x": 1255.0333006304545,
+            "y": 310.62701634718786
+          },
+          "pattern": null,
+          "statusEffects": [
+            {
+              "id": "dot",
+              "stacks": 6,
+              "maxStacks": 6,
+              "remainingMs": 4400,
+              "refreshable": true,
+              "instanced": false,
+              "sourceId": "bench-bot-0",
+              "data": {
+                "damagePerStack": 23,
+                "nextTickIn": 1100,
+                "tickIntervalMs": 1500,
+                "tickOnExpire": 1
+              }
+            }
+          ],
+          "counters": {
+            "hitsReceived": 77,
+            "enemyShieldLastHitAt": 1800000061600,
+            "shellUpUsed": 1,
+            "shellUpEndsAt": 0,
+            "shellUpNextAt": 1800000072200,
+            "bossPatternSession": 1800000000000,
+            "bossPatternCdNextAt": 1800000113700,
+            "bossPatternUsed": 1,
+            "bossEscapeInstinct": 0,
+            "bossChargeInstinct": 0
+          }
+        },
+        "distance": 190.72601051142354
+      },
+      "externalSummary": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101033-control\\artifacts\\ec-E1-s101033-control-s101033\\summary.json"
+    }
+  ]
+}

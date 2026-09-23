@@ -1,0 +1,1452 @@
+[
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101009-control\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101009-control\\artifacts\\ec-J1-s101009-control-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101009-control\\artifacts\\ec-J1-s101009-control-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101009-control\\artifacts\\ec-J1-s101009-control-s101009\\events.jsonl",
+    "bytes": 479628,
+    "sha256": "d419801311e769075842ef435826c50a4c89abbd635608fc04e930934c7efeb9"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101009-control\\artifacts\\ec-J1-s101009-control-s101009\\guard-events.jsonl",
+    "bytes": 1469309,
+    "sha256": "db67059cb498462702b1c2811cc533bbc6366b051da492ebaebc2ca237a7dfd8"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101009-control\\artifacts\\ec-J1-s101009-control-s101009\\ready.json",
+    "bytes": 33360,
+    "sha256": "e245882af3932fc92e05e2f5eec5d85894d7e1b96c48c1355eb61947315cdca0"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101009-control\\artifacts\\ec-J1-s101009-control-s101009\\samples.jsonl",
+    "bytes": 1134267,
+    "sha256": "273776906df7200d12f8854ed9a33032111a0ef6b1a20672f95444d5a1d1b60e"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101009-control\\artifacts\\ec-J1-s101009-control-s101009\\summary.json",
+    "bytes": 24520,
+    "sha256": "ebe32417cafed845303e1f8484b6040b462c116e2fe02276b4234d64a7db0b9a"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101009-control\\artifacts\\ec-J1-s101009-control-s101009\\sustain-transitions.jsonl",
+    "bytes": 38567,
+    "sha256": "29d582463f0380b8320eec8595e0d93480d94324cd7dc369349c29991a139511"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101009-control\\artifacts\\heartbeat.json",
+    "bytes": 96,
+    "sha256": "2f5d27daec5a2c87ca8820f3a34b42f307259bc7203ac3a1b657666846da6541"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101009-control\\artifacts\\index.json",
+    "bytes": 26638,
+    "sha256": "fe2225d18bd4f991db71f7d20f856b331268301e0dba32c808cbcd4621311651"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101009-control\\artifacts\\manifest.json",
+    "bytes": 3102,
+    "sha256": "cc14f5316d6aaa9292dbf05917346f909a280d5a4a359fb150e26cd85cfecda9"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101009-control\\process.json",
+    "bytes": 681,
+    "sha256": "79e0ea22dedfd6521fb0fa876962b35826493143905bab7a2b01ca825a11b8eb"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101009-control\\process.log",
+    "bytes": 38,
+    "sha256": "8bb9524da5c1f364191fe8d091f415e3222597def608b2576b4f9b21c144a0b4"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101009-candidate\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101009-candidate\\artifacts\\ec-J1-s101009-candidate-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101009-candidate\\artifacts\\ec-J1-s101009-candidate-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101009-candidate\\artifacts\\ec-J1-s101009-candidate-s101009\\endpoints.json",
+    "bytes": 4871,
+    "sha256": "0a1fc27097341574c9fd17af55333a0b31f83d191a3ee13a2dc46be1d2722a92"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101009-candidate\\artifacts\\ec-J1-s101009-candidate-s101009\\events.jsonl",
+    "bytes": 1796012,
+    "sha256": "3411b3bab991499b967cee334238dc82bb00c8c4b604dbb5659ae6cb416df7f7"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101009-candidate\\artifacts\\ec-J1-s101009-candidate-s101009\\guard-events.jsonl",
+    "bytes": 6849536,
+    "sha256": "e9f19aae7621996ceffe1f3c14ec4ebdf6369d548de323cbeaa40607a2250e09"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101009-candidate\\artifacts\\ec-J1-s101009-candidate-s101009\\ready.json",
+    "bytes": 33389,
+    "sha256": "d282c0b8b4236525bcb6ac064a6f856ecc1f821699a62daffb72d7f913dd57da"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101009-candidate\\artifacts\\ec-J1-s101009-candidate-s101009\\samples.jsonl",
+    "bytes": 5253261,
+    "sha256": "b7d0e3bb54fd44c21776d32160bdf7878a7220e5a80827ffae6e2e93bf575fba"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101009-candidate\\artifacts\\ec-J1-s101009-candidate-s101009\\summary.json",
+    "bytes": 60034,
+    "sha256": "698650f39ee69471fa5140f88f245cc6e411baa65a2877a208861e13c784f6e8"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101009-candidate\\artifacts\\ec-J1-s101009-candidate-s101009\\sustain-transitions.jsonl",
+    "bytes": 160002,
+    "sha256": "c44a064511cacdfeef84a368cb52a3564342b7e53bcfe01d857b03657d2dd53a"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101009-candidate\\artifacts\\heartbeat.json",
+    "bytes": 101,
+    "sha256": "ed7defa8cd58b373ace2e1527375dfe95750641976c55966f1f928db0b5afed1"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101009-candidate\\artifacts\\index.json",
+    "bytes": 65054,
+    "sha256": "c369ec10d477e4a9f946ad7ffd1e7a7ed6880970dbf52a43482d5e03dd15a4ad"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101009-candidate\\artifacts\\manifest.json",
+    "bytes": 3113,
+    "sha256": "8041b390c9d6a53780c66d46c169fd375cd7404a287deea39274c2057b9e8de9"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101009-candidate\\process.json",
+    "bytes": 686,
+    "sha256": "273b9d81d5103bd55c2783e3c43dc36585d7af355c6abe73a9a097cb538819ca"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101009-candidate\\process.log",
+    "bytes": 40,
+    "sha256": "2f47c11e6d3aa0d5ab5de4d9f2af203f417696f7600ac636af275d7c80298f1a"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101033-candidate\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101033-candidate\\artifacts\\ec-J1-s101033-candidate-s101033\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101033-candidate\\artifacts\\ec-J1-s101033-candidate-s101033\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101033-candidate\\artifacts\\ec-J1-s101033-candidate-s101033\\events.jsonl",
+    "bytes": 712332,
+    "sha256": "35fea88daf8149713407e5ff46c582ca14548980b43b10bbdcaefeaad128dc63"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101033-candidate\\artifacts\\ec-J1-s101033-candidate-s101033\\guard-events.jsonl",
+    "bytes": 2413485,
+    "sha256": "287d74b0c71b9f61bcb406dd79340228c554a851bf50f4fcfec194f9c0794578"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101033-candidate\\artifacts\\ec-J1-s101033-candidate-s101033\\ready.json",
+    "bytes": 33327,
+    "sha256": "4b621bf932652262bd5f487409403d7c61f0629cd2b6be0a3c0c8be39a81aac8"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101033-candidate\\artifacts\\ec-J1-s101033-candidate-s101033\\samples.jsonl",
+    "bytes": 1823548,
+    "sha256": "46125291c00b809d3852bf9ef546047476a74f6462e75440abb6a07b1ea33cff"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101033-candidate\\artifacts\\ec-J1-s101033-candidate-s101033\\summary.json",
+    "bytes": 28736,
+    "sha256": "360ae8b58c3da2e6aadcc93651524d6367f0fa44cf37e8aa4b8ff84810814d2c"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101033-candidate\\artifacts\\ec-J1-s101033-candidate-s101033\\sustain-transitions.jsonl",
+    "bytes": 54682,
+    "sha256": "e3e50eb7d22a6de7a82c454114296790ba3df2066b076778584ce44196001ded"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101033-candidate\\artifacts\\heartbeat.json",
+    "bytes": 101,
+    "sha256": "766e1976f072789912807c9566738d3f3012236e066a263e0a82e211859703ad"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101033-candidate\\artifacts\\index.json",
+    "bytes": 31226,
+    "sha256": "376fbd85a80e8dc535032b42e55132b45f822104ca38f329aac60115644304d4"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101033-candidate\\artifacts\\manifest.json",
+    "bytes": 3113,
+    "sha256": "15c7eba6b422235e26e82082d327569dc15eaaa29dc0b29c0445d073a97040b9"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101033-candidate\\process.json",
+    "bytes": 687,
+    "sha256": "84bcae0bdfc4e857f319c20ac8bfaf52843d564e770d84727bd5609452c6ee2b"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101033-candidate\\process.log",
+    "bytes": 40,
+    "sha256": "d056de7666823aba8f092b8cf2affdab13b1b3dfd73051bb4e0de22f66fd1396"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101033-control\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101033-control\\artifacts\\ec-J1-s101033-control-s101033\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101033-control\\artifacts\\ec-J1-s101033-control-s101033\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101033-control\\artifacts\\ec-J1-s101033-control-s101033\\events.jsonl",
+    "bytes": 541028,
+    "sha256": "31f390f192b23b566ff2b6221309725c1ede6830b7b49721635041e579c6a906"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101033-control\\artifacts\\ec-J1-s101033-control-s101033\\guard-events.jsonl",
+    "bytes": 1571447,
+    "sha256": "b8a792a21b66f15e3afe0db004d6ce0e5e75e0bec9ec1bf5103d6571e0af4d14"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101033-control\\artifacts\\ec-J1-s101033-control-s101033\\ready.json",
+    "bytes": 33298,
+    "sha256": "e85d566982249c3f4168cd386285483eb957a182416fd98e27a916574b5b831b"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101033-control\\artifacts\\ec-J1-s101033-control-s101033\\samples.jsonl",
+    "bytes": 1230365,
+    "sha256": "03ee0d37c9e3ba035c2e3e25fc31fac3c64cdf7231397db5b9907c13d415a0ab"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101033-control\\artifacts\\ec-J1-s101033-control-s101033\\summary.json",
+    "bytes": 24031,
+    "sha256": "b80c85cd64196285d38788c78b36da3dd60b5831359da8e6d63b23a54ef3260c"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101033-control\\artifacts\\ec-J1-s101033-control-s101033\\sustain-transitions.jsonl",
+    "bytes": 35320,
+    "sha256": "e938e5ffb85331b21682a241bfd63d94025fa220f96abb272c48413b7b55c7c1"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101033-control\\artifacts\\heartbeat.json",
+    "bytes": 96,
+    "sha256": "92370861f3d381bd97a611b16fdecc1ff740c88cd22cda370a8d67eb7851ae5b"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101033-control\\artifacts\\index.json",
+    "bytes": 26113,
+    "sha256": "e1c01929d1b98aa1a2409fffedd0b1d84688b8c256107276325650be8d2aed85"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101033-control\\artifacts\\manifest.json",
+    "bytes": 3102,
+    "sha256": "f25ae3e7bd92c51a0973f7c0be257a16eebe1daf95680ff71f92b39e7d853198"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101033-control\\process.json",
+    "bytes": 681,
+    "sha256": "d4a8e993fd024d9679a27d230f177631668fc0a201d5316f7cbd293f8b23d374"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J1-s101033-control\\process.log",
+    "bytes": 38,
+    "sha256": "b56fc2951e191f176bd9cf587025f16b948e4dac00670848faa70b1898f46a30"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101009-control\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101009-control\\artifacts\\ec-J2-s101009-control-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101009-control\\artifacts\\ec-J2-s101009-control-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101009-control\\artifacts\\ec-J2-s101009-control-s101009\\endpoints.json",
+    "bytes": 2440,
+    "sha256": "9d5e466799edc31cbf558e21aa14e3d13412464f4ddf0df930d42c66536dc6f1"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101009-control\\artifacts\\ec-J2-s101009-control-s101009\\events.jsonl",
+    "bytes": 1346731,
+    "sha256": "e1957c43cc00d36bc5b25a1f4e5af235f60b826020a3b815cb2866865d846b2a"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101009-control\\artifacts\\ec-J2-s101009-control-s101009\\guard-events.jsonl",
+    "bytes": 4074032,
+    "sha256": "e990e523a14c45948f3afaec043e2aa28eb367f5483461333dd6fe9e38e0a5bf"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101009-control\\artifacts\\ec-J2-s101009-control-s101009\\ready.json",
+    "bytes": 33704,
+    "sha256": "f50a1651e5a6ba83eb8692e9e831b8e720ebaa40a77536385ca3cfbac07d1f9c"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101009-control\\artifacts\\ec-J2-s101009-control-s101009\\samples.jsonl",
+    "bytes": 3282229,
+    "sha256": "0700ecd62f24ed21dd9d8ae7282b0e1e726a63910192332797a6f07cd5142319"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101009-control\\artifacts\\ec-J2-s101009-control-s101009\\summary.json",
+    "bytes": 31771,
+    "sha256": "8f596271a212d8d4ced0e49ceb63d37f492814f182d5c8cb1df82dc992192b47"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101009-control\\artifacts\\ec-J2-s101009-control-s101009\\sustain-transitions.jsonl",
+    "bytes": 94734,
+    "sha256": "b72c0a1b88efd61a708c6bff8c2129955c2773e5d280b2e82c1723edb265c721"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101009-control\\artifacts\\heartbeat.json",
+    "bytes": 99,
+    "sha256": "1683e462ff388f8d7f21f6c8ee0aee1bb7ff01d02146870d77e03aba205842b1"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101009-control\\artifacts\\index.json",
+    "bytes": 34327,
+    "sha256": "f655126bbfcdb2b0e8bc11cf767a8e33e1b78da7395e636664dcd02e8580857f"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101009-control\\artifacts\\manifest.json",
+    "bytes": 3187,
+    "sha256": "8d26b473a7dff3064243788217fc96c5fab058721ef7d0eaf562655b9c1da2c5"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101009-control\\process.json",
+    "bytes": 681,
+    "sha256": "cc62617f65741d62628d74c36bfde7eb32e27a5a8f92b5cd4d40dff3302e35af"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101009-control\\process.log",
+    "bytes": 38,
+    "sha256": "39fd09e790d25db26f87e5ad5c383f824142a0006b4e6b80e1a93ef1589fb81a"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101009-candidate\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101009-candidate\\artifacts\\ec-J2-s101009-candidate-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101009-candidate\\artifacts\\ec-J2-s101009-candidate-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101009-candidate\\artifacts\\ec-J2-s101009-candidate-s101009\\events.jsonl",
+    "bytes": 1207283,
+    "sha256": "3ebfc254d9053925dc377718451f4e8753734f4c995f83fa3585d8c3c234ceb4"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101009-candidate\\artifacts\\ec-J2-s101009-candidate-s101009\\guard-events.jsonl",
+    "bytes": 3231765,
+    "sha256": "95348fbb1ff70b979469bd44286cba316f5010a3ff8d2c2be511450af88dfe53"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101009-candidate\\artifacts\\ec-J2-s101009-candidate-s101009\\ready.json",
+    "bytes": 33900,
+    "sha256": "6bdb16ce73bd24d7862416acb1bd6b909682f3a9469e7136e5142f3ad85e4e26"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101009-candidate\\artifacts\\ec-J2-s101009-candidate-s101009\\samples.jsonl",
+    "bytes": 2632659,
+    "sha256": "23209588d34789abf2db6976cc0c881577945b2d3f0a5a7435c6c60a19e6018a"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101009-candidate\\artifacts\\ec-J2-s101009-candidate-s101009\\summary.json",
+    "bytes": 27635,
+    "sha256": "15eadf843146d144f49ae2da14c5dd5307ce9c4eb594623e75ae9125a7bd94c4"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101009-candidate\\artifacts\\ec-J2-s101009-candidate-s101009\\sustain-transitions.jsonl",
+    "bytes": 59866,
+    "sha256": "4f28b4bda9fb5383c6cf16eba171e7fc2057e3708b1736a74ae58095ab16ba57"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101009-candidate\\artifacts\\heartbeat.json",
+    "bytes": 101,
+    "sha256": "40f3e21592b8d39c2269e1d7a159f2907d700cfd403afdc9e33bd1816b2c257a"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101009-candidate\\artifacts\\index.json",
+    "bytes": 29907,
+    "sha256": "a3bd782ff01186f124fd2f1dfdf49ac7e739606566ec046fa705970c71037875"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101009-candidate\\artifacts\\manifest.json",
+    "bytes": 3198,
+    "sha256": "2d122abe8674cd07cf2c46f6a69c4ac73f8a992fdbaf34a0bae4eac82efc5fc2"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101009-candidate\\process.json",
+    "bytes": 687,
+    "sha256": "99f29c3969b54f19705db57cb21a42d11f622ad9e3dcffdf06033e0cc894d616"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101009-candidate\\process.log",
+    "bytes": 40,
+    "sha256": "a2f5472df5e617ca9f79eb1f86c16ac9044e6da2914b45ce229e1cc892b2b6f4"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101033-candidate\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101033-candidate\\artifacts\\ec-J2-s101033-candidate-s101033\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101033-candidate\\artifacts\\ec-J2-s101033-candidate-s101033\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101033-candidate\\artifacts\\ec-J2-s101033-candidate-s101033\\events.jsonl",
+    "bytes": 105465,
+    "sha256": "b86bd069502c5040f91174248fe4a68bfd9b87617ff67d9ea9c35d306ca4961e"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101033-candidate\\artifacts\\ec-J2-s101033-candidate-s101033\\guard-events.jsonl",
+    "bytes": 215292,
+    "sha256": "5046232c061ac41d18c6bb30004974d38a78d4aba1fe2337da233dd26c08c961"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101033-candidate\\artifacts\\ec-J2-s101033-candidate-s101033\\ready.json",
+    "bytes": 33838,
+    "sha256": "eeb431018a46c9e0258786376739a8818857b680207ae8187f578ad1159ba833"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101033-candidate\\artifacts\\ec-J2-s101033-candidate-s101033\\samples.jsonl",
+    "bytes": 186370,
+    "sha256": "09343994b3e2cbd4f108bbbec5b28a00eaa344f35069f9ab2b072333249d9e8e"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101033-candidate\\artifacts\\ec-J2-s101033-candidate-s101033\\summary.json",
+    "bytes": 16513,
+    "sha256": "0a4be514d1e01e748bcab2fdece15964c24cf9022f749542dca30a765a7e5375"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101033-candidate\\artifacts\\ec-J2-s101033-candidate-s101033\\sustain-transitions.jsonl",
+    "bytes": 4879,
+    "sha256": "a3244969a4f4934b8613a559fcafc38f4b9a2983bf46f6e34bb84795d5e759b9"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101033-candidate\\artifacts\\heartbeat.json",
+    "bytes": 98,
+    "sha256": "e67cdd3f67f7b42ea9590db4d42f5c45ee7ea637dba9c6193a9d503b03ed1be0"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101033-candidate\\artifacts\\index.json",
+    "bytes": 17947,
+    "sha256": "39da113896ea1706a9510f179cbb31caaf99249f89ad7970ad27177b340e4e99"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101033-candidate\\artifacts\\manifest.json",
+    "bytes": 3198,
+    "sha256": "722b1a5439f33f72fdd187e04e2ba24077259931496c74c52b4e438e18085999"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101033-candidate\\process.json",
+    "bytes": 687,
+    "sha256": "1ebfbea2af1f7a547ee438f60725fc3da01fcf7bafa88119ce330441c64033bd"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101033-candidate\\process.log",
+    "bytes": 40,
+    "sha256": "5019c3930995d65eb96826b15e15fc7fd40482f84bac7d3acb1568053e4309a2"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101033-control\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101033-control\\artifacts\\ec-J2-s101033-control-s101033\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101033-control\\artifacts\\ec-J2-s101033-control-s101033\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101033-control\\artifacts\\ec-J2-s101033-control-s101033\\events.jsonl",
+    "bytes": 103660,
+    "sha256": "e100e0d753b59fb9b2158d9ec295152b367ae8f3921f59fb380a09e483a5bc16"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101033-control\\artifacts\\ec-J2-s101033-control-s101033\\guard-events.jsonl",
+    "bytes": 212705,
+    "sha256": "d4531b0442a7655308c540dcb33df8818399b189d1c255e4af3a5cf5c0e2de78"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101033-control\\artifacts\\ec-J2-s101033-control-s101033\\ready.json",
+    "bytes": 33642,
+    "sha256": "1f853b0ccb1fd157b2c7a5e347c6fea96a339dbec58983b4c8db9d291ca4c4fb"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101033-control\\artifacts\\ec-J2-s101033-control-s101033\\samples.jsonl",
+    "bytes": 186386,
+    "sha256": "998d945f88efdbdc54aec71f675fdb5b167939600fa54c6d731418e14105a768"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101033-control\\artifacts\\ec-J2-s101033-control-s101033\\summary.json",
+    "bytes": 16481,
+    "sha256": "c4dd1d59074eee5aacf06f6c70905718e9936b3aeb3ee2070349e96a62a8e696"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101033-control\\artifacts\\ec-J2-s101033-control-s101033\\sustain-transitions.jsonl",
+    "bytes": 4878,
+    "sha256": "dc9f9628dc82e97bda7f2635b481f309b9a40dea401a42454111706ce9217f2a"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101033-control\\artifacts\\heartbeat.json",
+    "bytes": 96,
+    "sha256": "257ed1dfd337a28ff0693421b40abb2857f369af02c7d2b84b3b7a77d8050d8b"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101033-control\\artifacts\\index.json",
+    "bytes": 17915,
+    "sha256": "80985b0880960f3823603b9cfc2b2397d71ca8e83b2237fc82e73cd0605f138f"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101033-control\\artifacts\\manifest.json",
+    "bytes": 3187,
+    "sha256": "16ee89bb72011a5af0333fa920486e635b0da0e71b38a19e5e58964e4f496843"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101033-control\\process.json",
+    "bytes": 681,
+    "sha256": "314296258d46fff26639a8c20b2254d333dd64f755bdfe7ec31f479038bdfad4"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-J2-s101033-control\\process.log",
+    "bytes": 38,
+    "sha256": "ec82799052aeae11e75cc7ea51382fc4e48d77c96886d2acea30d5bc4d769f8e"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101009-control\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101009-control\\artifacts\\ec-V1-s101009-control-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101009-control\\artifacts\\ec-V1-s101009-control-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101009-control\\artifacts\\ec-V1-s101009-control-s101009\\events.jsonl",
+    "bytes": 69332,
+    "sha256": "683461caa4ca8b40432379bca3495f03ef5a8dbd0c0bc632d67b81265521fe8c"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101009-control\\artifacts\\ec-V1-s101009-control-s101009\\guard-events.jsonl",
+    "bytes": 297283,
+    "sha256": "756a30b6b0e366a1e935e158cc4f13f3b24e41c0b1605b32623ed68705154fda"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101009-control\\artifacts\\ec-V1-s101009-control-s101009\\ready.json",
+    "bytes": 32539,
+    "sha256": "ea24e184552dba480021fb13c765735c394f21332f8ea89f6eb11bc612f5feb6"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101009-control\\artifacts\\ec-V1-s101009-control-s101009\\samples.jsonl",
+    "bytes": 138717,
+    "sha256": "01f1ed65b3a460fc0a7c9af73cb376de86b119e689696d368976d910eac06e23"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101009-control\\artifacts\\ec-V1-s101009-control-s101009\\summary.json",
+    "bytes": 18932,
+    "sha256": "28302e38b89fd7494aac558ab905e6f6ac7774da99baa4ebff877d8ea1a18638"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101009-control\\artifacts\\ec-V1-s101009-control-s101009\\sustain-transitions.jsonl",
+    "bytes": 5266,
+    "sha256": "6952e3cc5530805e45464bcdf65e6786ffa6d3a5fc066a366a9720f3236162af"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101009-control\\artifacts\\heartbeat.json",
+    "bytes": 96,
+    "sha256": "5bf4e9888f55f0dfbf6633de7f7aa23d734d619bb6eb06d0adf7dd119003922b"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101009-control\\artifacts\\index.json",
+    "bytes": 20550,
+    "sha256": "2b5e2e4cca884875fa012cf6246f8715d58a6a8a5c62d36b0a5280825bc599c2"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101009-control\\artifacts\\manifest.json",
+    "bytes": 3107,
+    "sha256": "35c42e4a6010bd37884d2341eb9d9183ef17b23d17d3cca9874608e5ea120b32"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101009-control\\process.json",
+    "bytes": 681,
+    "sha256": "080403ae15d5f1645dd43306f122c4ed4755e00a8d05e61fa7a6edc416e915b0"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101009-control\\process.log",
+    "bytes": 38,
+    "sha256": "2a0f7570a672ce5325f8f27606c33f32a95d4d49ad9bf384fff555fb659b594d"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101009-candidate\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101009-candidate\\artifacts\\ec-V1-s101009-candidate-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101009-candidate\\artifacts\\ec-V1-s101009-candidate-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101009-candidate\\artifacts\\ec-V1-s101009-candidate-s101009\\events.jsonl",
+    "bytes": 319381,
+    "sha256": "01a8514a4699f1f8a28cefdef0348abcc9826e67ff07475d85833cbc7d112832"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101009-candidate\\artifacts\\ec-V1-s101009-candidate-s101009\\guard-events.jsonl",
+    "bytes": 1367782,
+    "sha256": "c757c4bfeb357aca4f4b14c0567e989180b82c4d41c6efcbca024f5a65db0209"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101009-candidate\\artifacts\\ec-V1-s101009-candidate-s101009\\ready.json",
+    "bytes": 32559,
+    "sha256": "0ec85e3f10d952a83d55559b536dc1c8180be2f1a9868a40ae00f34cb7cf6e0d"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101009-candidate\\artifacts\\ec-V1-s101009-candidate-s101009\\samples.jsonl",
+    "bytes": 557211,
+    "sha256": "16a2c10b19990ce69f7eb65275ae87171b558b396782146ca7d5ba81f52c217c"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101009-candidate\\artifacts\\ec-V1-s101009-candidate-s101009\\summary.json",
+    "bytes": 23546,
+    "sha256": "629b6dfee1ae0d210c4e288e547f834fd788ccee94f6fb54f3a4744d4b5a26e4"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101009-candidate\\artifacts\\ec-V1-s101009-candidate-s101009\\sustain-transitions.jsonl",
+    "bytes": 16222,
+    "sha256": "df1705e928fab5dc725c929d12109fc2b448a745463ad6e69fa68916eb7c5a02"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101009-candidate\\artifacts\\heartbeat.json",
+    "bytes": 98,
+    "sha256": "731a87ff6a0ec006ac975cac1d5bd57bc9a1ef259bf6daac6a2322e4e55f0558"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101009-candidate\\artifacts\\index.json",
+    "bytes": 25496,
+    "sha256": "d5d682a9d183c119ada1352331300b9c8c96afc10172f25a80a7d39e16964ac3"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101009-candidate\\artifacts\\manifest.json",
+    "bytes": 3115,
+    "sha256": "d1e26c57857d749c48743efebe85744e5fb84fdc801b747cf490b69384cc21f5"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101009-candidate\\process.json",
+    "bytes": 687,
+    "sha256": "f9c3774f21c3e6730265e07de5568792857f7d4844055fb0de0605729bf57487"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101009-candidate\\process.log",
+    "bytes": 40,
+    "sha256": "a6ea07c5cfffea14fb8fc6a90ab3b86be4898a654d1a975d9c73f844d39cc39f"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101033-candidate\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101033-candidate\\artifacts\\ec-V1-s101033-candidate-s101033\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101033-candidate\\artifacts\\ec-V1-s101033-candidate-s101033\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101033-candidate\\artifacts\\ec-V1-s101033-candidate-s101033\\events.jsonl",
+    "bytes": 554026,
+    "sha256": "e90e9d267b563488c65f28c99068d316448268ac14a85a1aae51a142a795c1fa"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101033-candidate\\artifacts\\ec-V1-s101033-candidate-s101033\\guard-events.jsonl",
+    "bytes": 2588019,
+    "sha256": "89404edf78161d5e107e20da90f36a31bcc235fe337e3052f844e00ddc0d1b38"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101033-candidate\\artifacts\\ec-V1-s101033-candidate-s101033\\ready.json",
+    "bytes": 33702,
+    "sha256": "a554779996af883ff504428433f428af12426a689685dde1160d2fc539ac8742"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101033-candidate\\artifacts\\ec-V1-s101033-candidate-s101033\\samples.jsonl",
+    "bytes": 1086731,
+    "sha256": "848bad760fe9b5351b7cbf27404c75a84068d1d0f37d73335030811016888e53"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101033-candidate\\artifacts\\ec-V1-s101033-candidate-s101033\\summary.json",
+    "bytes": 28546,
+    "sha256": "734bf64a98a166069933c5b8c4dc6aa178f9400615456e93c03704241393954f"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101033-candidate\\artifacts\\ec-V1-s101033-candidate-s101033\\sustain-transitions.jsonl",
+    "bytes": 37221,
+    "sha256": "d0f66a191159140352503ae5c9e9930cdde558f10657006f4720e6369ee3a472"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101033-candidate\\artifacts\\heartbeat.json",
+    "bytes": 98,
+    "sha256": "27c4b8d2cfe92e6c0d3e58154016aca804e9e029eb94bb97d4ff69098518e3a7"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101033-candidate\\artifacts\\index.json",
+    "bytes": 30888,
+    "sha256": "6649daf0aa6faaecadb9221a676b9b24f59cf60de858facc717919c3e426b635"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101033-candidate\\artifacts\\manifest.json",
+    "bytes": 3115,
+    "sha256": "bc7143b169fee7279212881b97b250188d0bf53ad1c78eb1423013432a228aec"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101033-candidate\\process.json",
+    "bytes": 687,
+    "sha256": "7006dd3e107263d41327070218bf2453a9c20bca876c6f5571f058281fa7ea33"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101033-candidate\\process.log",
+    "bytes": 40,
+    "sha256": "660254edc4bcd5061c08bd54dacada3030d2cb88d5470c53434beab29ad775aa"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101033-control\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101033-control\\artifacts\\ec-V1-s101033-control-s101033\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101033-control\\artifacts\\ec-V1-s101033-control-s101033\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101033-control\\artifacts\\ec-V1-s101033-control-s101033\\events.jsonl",
+    "bytes": 251416,
+    "sha256": "58558414f034571117ba9835805996823e74387fb6f2c88effcf251a9663671d"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101033-control\\artifacts\\ec-V1-s101033-control-s101033\\guard-events.jsonl",
+    "bytes": 1157963,
+    "sha256": "a7afb6b746cff8c70466186e3f9907f67b5efd964450bca787e370e54c24b5f3"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101033-control\\artifacts\\ec-V1-s101033-control-s101033\\ready.json",
+    "bytes": 33682,
+    "sha256": "c01d02ef15aaa156307d6464b10ec6c71614f9b1d8519c3452d96a39351b0697"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101033-control\\artifacts\\ec-V1-s101033-control-s101033\\samples.jsonl",
+    "bytes": 481661,
+    "sha256": "8192d39937e7e2bcd5ab1f38072feae3c3ea7c0fae364e79a8a1030b48559920"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101033-control\\artifacts\\ec-V1-s101033-control-s101033\\summary.json",
+    "bytes": 23309,
+    "sha256": "20e9e0d81696f259fc19eb23f1d4d609bb943b099be19a93da2606306e005ad2"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101033-control\\artifacts\\ec-V1-s101033-control-s101033\\sustain-transitions.jsonl",
+    "bytes": 17521,
+    "sha256": "1a4ee43ae2b445fd4f62e3e32ce82afc622ed0a575143372de0d2803b16f5bfd"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101033-control\\artifacts\\heartbeat.json",
+    "bytes": 96,
+    "sha256": "28261b5ef9bb900759d2db213365567e88b13533dbc25ab6152679e99fdf6377"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101033-control\\artifacts\\index.json",
+    "bytes": 25247,
+    "sha256": "115228875c87e20b6a21241a5ca74144477363281758015e6decc7f4fe94c0a8"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101033-control\\artifacts\\manifest.json",
+    "bytes": 3107,
+    "sha256": "ca60562c79f1a4b3fd46af8c3f9f215e05bbfa957f89c2fc0ec88c2a71bf18d7"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101033-control\\process.json",
+    "bytes": 681,
+    "sha256": "766458d2520cc4ef3f711fa5428df5870a26e4faf1245be0059d8505decfadc6"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-V1-s101033-control\\process.log",
+    "bytes": 38,
+    "sha256": "b2987a999cbe00abccdb2edb13f5bdd0ad0a4ea617caaa8026125fb652b9c59c"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101009-control\\artifacts\\complete.json",
+    "bytes": 132,
+    "sha256": "3c85645a5e6aab6c5875d751986cd216047328d739595aa925c8b4d8365fc298"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101009-control\\artifacts\\ec-P1-s101009-control-s101009\\events.jsonl",
+    "bytes": 24155,
+    "sha256": "dc87b1f0918af67cbe4bb5b26e255721b7a7e3b45623358f6a371a0393bed2f1"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101009-control\\artifacts\\ec-P1-s101009-control-s101009\\ready.json",
+    "bytes": 20742,
+    "sha256": "fd1df68a441d6760af4c6f903dd53364c208761218ddfde8771bdbb50ccf09fb"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101009-control\\artifacts\\ec-P1-s101009-control-s101009\\samples.jsonl",
+    "bytes": 1583,
+    "sha256": "ab91678b1b409398430b60cda8427f7274d26b160b33500505b6edfd5e2b3d51"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101009-control\\artifacts\\ec-P1-s101009-control-s101009\\summary.json",
+    "bytes": 4423,
+    "sha256": "265d64b6ad63654fc9c6637d2614e53f59c871a9040b50d1d4d8ecd628b56f58"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101009-control\\artifacts\\heartbeat.json",
+    "bytes": 33,
+    "sha256": "3467a5167a681ffa73c4bca1c35854cc84bc3b4910c99761a0bd530d726b9c30"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101009-control\\artifacts\\index.json",
+    "bytes": 4807,
+    "sha256": "c24cbd8aa681a4efd7c7058be45c0ef579d25e64e8c9fed5e258dbd9a54d2228"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101009-control\\artifacts\\manifest.json",
+    "bytes": 3023,
+    "sha256": "f7e7f9d4c449f76eeee1703c7dd03677f86587ce69ddf2da9ec2cde970adc52f"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101009-control\\process.json",
+    "bytes": 682,
+    "sha256": "0b559489adafc43bde6fcd87ede1938011a03b6605984c771a6b1f3f0b66ca48"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101009-control\\process.log",
+    "bytes": 105,
+    "sha256": "2e5f77d8396f2bf9b8d291acf138237e88a04ad00af8d137a02f3ee8f0c8082b"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101009-candidate\\artifacts\\complete.json",
+    "bytes": 134,
+    "sha256": "67c2d0fdea276140c649827bc3bb9f0464fe2dbd661d73d4b81345581c60fc3f"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101009-candidate\\artifacts\\ec-P1-s101009-candidate-s101009\\events.jsonl",
+    "bytes": 31489,
+    "sha256": "480df88e62d6cbd9280a6328a9378ce4a7783632002ae68f5d875b4511f034c9"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101009-candidate\\artifacts\\ec-P1-s101009-candidate-s101009\\ready.json",
+    "bytes": 21060,
+    "sha256": "2b5c77e509be9b3762080f7a2095fb1155330019b359ffae90401578fef82026"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101009-candidate\\artifacts\\ec-P1-s101009-candidate-s101009\\samples.jsonl",
+    "bytes": 1936,
+    "sha256": "3dcd47a2089b47dca3d7076cd0b6ee431e5c79b7a9a37a3e171a96fc55bc7c91"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101009-candidate\\artifacts\\ec-P1-s101009-candidate-s101009\\summary.json",
+    "bytes": 4430,
+    "sha256": "ab341a3cca8a52c3a3981c6dbdcf43329563b3773c1c0185e198af7f76ba7469"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101009-candidate\\artifacts\\heartbeat.json",
+    "bytes": 33,
+    "sha256": "f950c5e323a82d2eb970ada5591589308a2232bce545cdbaa2777c10979c73d8"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101009-candidate\\artifacts\\index.json",
+    "bytes": 4814,
+    "sha256": "deac3ad3dcc1f495a2cbda70a96ef70251b5d10e1c449adf0f0940dccb8b9085"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101009-candidate\\artifacts\\manifest.json",
+    "bytes": 3050,
+    "sha256": "f22b14e15852d6d3a769e6110fe3d35256d454e9b47a265860f748d5a2326d94"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101009-candidate\\process.json",
+    "bytes": 688,
+    "sha256": "f3fe8674e869b483d777e4957a69ad25f7b549336555aeb76fe3d83bf37dea70"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101009-candidate\\process.log",
+    "bytes": 109,
+    "sha256": "4f7ae0b2691d721fdf8e0952bc7767d871f08ad3b7c505d9a677f9a00ef21d4d"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101033-candidate\\artifacts\\complete.json",
+    "bytes": 134,
+    "sha256": "5c4482c444bdfb9263123d1baf6cef2972ccbe1036a4d904d8e9299796f634c4"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101033-candidate\\artifacts\\ec-P1-s101033-candidate-s101033\\events.jsonl",
+    "bytes": 31488,
+    "sha256": "84044ca63048cf8701c6f4cca95d292efc178b971a0c806f2556abd548259557"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101033-candidate\\artifacts\\ec-P1-s101033-candidate-s101033\\ready.json",
+    "bytes": 21060,
+    "sha256": "1737b9b5acf1d08b6a63c62f92493bb6d52bf27d2bb00c9b696a8c0d015cb04a"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101033-candidate\\artifacts\\ec-P1-s101033-candidate-s101033\\samples.jsonl",
+    "bytes": 1936,
+    "sha256": "a00d6869ad0f3fb836de0297776ebe60674c3ccdf3099b801eb8c2b0c8dfc842"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101033-candidate\\artifacts\\ec-P1-s101033-candidate-s101033\\summary.json",
+    "bytes": 4431,
+    "sha256": "d8aabbd32e0f687b3ebb66ac57f8286436b1cff6514e6eff2ab8c311c3d954ad"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101033-candidate\\artifacts\\heartbeat.json",
+    "bytes": 33,
+    "sha256": "9c1c76f99ca6326384d85eda7110c28f40c20e976396d1ccfcadeb3fb083043f"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101033-candidate\\artifacts\\index.json",
+    "bytes": 4815,
+    "sha256": "74176e03de149fef915691f5fcfea9b1ce569a2b4f8903efa71684ffd6f9cfdf"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101033-candidate\\artifacts\\manifest.json",
+    "bytes": 3050,
+    "sha256": "631da38eab2f9d79acc08f143beaf6154d8351602643eb22ee33e0ff346f3fc5"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101033-candidate\\process.json",
+    "bytes": 688,
+    "sha256": "6a823e3933a3e9b53f2d56afaf1f0d3a9060c7a2df7c9bf98c237929292c1efc"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101033-candidate\\process.log",
+    "bytes": 109,
+    "sha256": "ca7218b40a927164f86dbfc5f6d6f3db0a4797d17e370ea15baf7ce4fe68a335"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101033-control\\artifacts\\complete.json",
+    "bytes": 132,
+    "sha256": "efa0503b9fc710b4fdf78ad39c00dbcb7c5f906ff3bf60fcbd59ac8b84e92c3d"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101033-control\\artifacts\\ec-P1-s101033-control-s101033\\events.jsonl",
+    "bytes": 24152,
+    "sha256": "cb8cdc7a3ffae35f357cec748ebb024573e5ebd66602b8486ddcdac33dc86a8d"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101033-control\\artifacts\\ec-P1-s101033-control-s101033\\ready.json",
+    "bytes": 20742,
+    "sha256": "af4b650cc0935ee22376a505607641a6ba538a6631a135af38c9d2e6747ae2ca"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101033-control\\artifacts\\ec-P1-s101033-control-s101033\\samples.jsonl",
+    "bytes": 1582,
+    "sha256": "195d9107579572d6fc0e2b884f3acc0e5d8c7517979e9a91a274351142f251c7"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101033-control\\artifacts\\ec-P1-s101033-control-s101033\\summary.json",
+    "bytes": 4424,
+    "sha256": "8d8e66b353c98ef84a30a9cca73e9bf27bd0d485fb6c05191bca73c0c4211104"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101033-control\\artifacts\\heartbeat.json",
+    "bytes": 33,
+    "sha256": "d8bec09b22287ee1315b6525be64dadcb7ee76f2c0c9467265136c9cdb872d5f"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101033-control\\artifacts\\index.json",
+    "bytes": 4808,
+    "sha256": "9c48edb86680677de34173085910560c6881291e655cbeb39765c85e98215fe3"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101033-control\\artifacts\\manifest.json",
+    "bytes": 3023,
+    "sha256": "39fef8c7c392a0747a1a4e07f59180879993b4442883641d61726683135d0aea"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101033-control\\process.json",
+    "bytes": 682,
+    "sha256": "a7e55fe33b82970e5605de36e4192ecf52bcac0a6742bcd7697a27e93db14079"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-P1-s101033-control\\process.log",
+    "bytes": 105,
+    "sha256": "efde93a3ddc14b72a566c439b6236959b9d0d064f2c659482de96d31f244b213"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101009-control\\artifacts\\complete.json",
+    "bytes": 132,
+    "sha256": "bf10a7870ed66105400396c1dbac1e0a71312af0c89ffc4eaad42473f076a523"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101009-control\\artifacts\\ec-M1-s101009-control-s101009\\events.jsonl",
+    "bytes": 288688,
+    "sha256": "5b4bcdb7b429fbec3dfbce2bffa73738f3d2f313a97b9f2839c77147c7629ba5"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101009-control\\artifacts\\ec-M1-s101009-control-s101009\\ready.json",
+    "bytes": 23391,
+    "sha256": "aca8b1d74618b52c448cb39951926c8a5096ddb9a76ddf93067811b9a01256b7"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101009-control\\artifacts\\ec-M1-s101009-control-s101009\\samples.jsonl",
+    "bytes": 12672,
+    "sha256": "d7625c314d718b72763fdc2f5247a1f3dd1dc545fbae13a3b0c5523820f3aa2e"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101009-control\\artifacts\\ec-M1-s101009-control-s101009\\summary.json",
+    "bytes": 5973,
+    "sha256": "43546447c4408086e0a06dfdc05d9630f3da80c111d0c5cfa53436a4e666445c"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101009-control\\artifacts\\heartbeat.json",
+    "bytes": 33,
+    "sha256": "af41a230856899551f365a99b110799cd2485b9800989ac0ea495816ae56ed02"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101009-control\\artifacts\\index.json",
+    "bytes": 6461,
+    "sha256": "d4a60a9388ee5a8689cd9940383044e50967917f8bdd6226469437c909d10ace"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101009-control\\artifacts\\manifest.json",
+    "bytes": 3391,
+    "sha256": "62158cb39e86286ad5167d04534ded4239a52f2f01f0bc5eb63c9d663a040452"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101009-control\\process.json",
+    "bytes": 682,
+    "sha256": "753e3685b5a33ffddae7dd2ef1d6699ca4bdca6502da5d8390a47c2540f9b89a"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101009-control\\process.log",
+    "bytes": 105,
+    "sha256": "4397e38af6a56bd470a264f15cc0f72bef5ec21b6d2d12d9ad6636a436a94ad4"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101009-candidate\\artifacts\\complete.json",
+    "bytes": 134,
+    "sha256": "c499a48692a9f2c0c032839da36fd3c66839cbba12b9c29193a972653afd2bd9"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101009-candidate\\artifacts\\ec-M1-s101009-candidate-s101009\\events.jsonl",
+    "bytes": 333105,
+    "sha256": "77f071cff8ec5a40319987651af4fc85cc47099989a6f6f94e8a37b428c00890"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101009-candidate\\artifacts\\ec-M1-s101009-candidate-s101009\\ready.json",
+    "bytes": 23722,
+    "sha256": "329b186d15664b2d20fc87d51c50cc0526c96a35bb8f0e5d1f6a8186b51caef8"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101009-candidate\\artifacts\\ec-M1-s101009-candidate-s101009\\samples.jsonl",
+    "bytes": 14138,
+    "sha256": "77ffce19d6373a03d7cb113ac824d396a1386673625a124a46c897d7262cced5"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101009-candidate\\artifacts\\ec-M1-s101009-candidate-s101009\\summary.json",
+    "bytes": 6889,
+    "sha256": "b06e5cb53259df6adbbc4f78cc2c7e059d7bfae581c3fb40f2807075d72ba15a"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101009-candidate\\artifacts\\heartbeat.json",
+    "bytes": 33,
+    "sha256": "0382a45e5f137585fb5510be3eabccc9199f27ef33d14b4a89dd372db246f81b"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101009-candidate\\artifacts\\index.json",
+    "bytes": 7443,
+    "sha256": "a51eb7bc1b5286ba427ece9ff019716a9b3678f170ed5de7d7bf748b73124d51"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101009-candidate\\artifacts\\manifest.json",
+    "bytes": 3419,
+    "sha256": "f029cb853c028d1369fc24416f785d9a555cf5dbc54cf36396bf434400672d9e"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101009-candidate\\process.json",
+    "bytes": 688,
+    "sha256": "7fb9139c6740fffffd1d789f96145a3a6c61c4f93efd84d6c2e18b1378a27cb0"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101009-candidate\\process.log",
+    "bytes": 109,
+    "sha256": "52288d64a7a23697b412984de60053879dd31b278b645318b1c596e3d208f0a8"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101033-candidate\\artifacts\\complete.json",
+    "bytes": 134,
+    "sha256": "0bd9018dcff78e65abf95a9fc7722bd85a68a2138e26882bf172db6763d9a2d5"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101033-candidate\\artifacts\\ec-M1-s101033-candidate-s101033\\events.jsonl",
+    "bytes": 333105,
+    "sha256": "ab3979ec7f264c19b0b4f23e1f961e4f79808c3d20089d0ef0ed87aa4e4cfbc4"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101033-candidate\\artifacts\\ec-M1-s101033-candidate-s101033\\ready.json",
+    "bytes": 23722,
+    "sha256": "d5e21c84342bb6d0c29ece3ae2e2dbbf32d3201aec716ab19502d8ebd1e6dcdd"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101033-candidate\\artifacts\\ec-M1-s101033-candidate-s101033\\samples.jsonl",
+    "bytes": 14138,
+    "sha256": "77ffce19d6373a03d7cb113ac824d396a1386673625a124a46c897d7262cced5"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101033-candidate\\artifacts\\ec-M1-s101033-candidate-s101033\\summary.json",
+    "bytes": 6889,
+    "sha256": "d388a13522effb81f7a9e905b03fe81834e8a1fadfe46ab28507024c6d6e2611"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101033-candidate\\artifacts\\heartbeat.json",
+    "bytes": 33,
+    "sha256": "68eb56aa1c397ff7a14352c463be34cf6f9bab694130f91f1134063414906d3f"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101033-candidate\\artifacts\\index.json",
+    "bytes": 7443,
+    "sha256": "1242b5176c04293999c0546cb96157f44158d76da4af978711fd804d753ec004"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101033-candidate\\artifacts\\manifest.json",
+    "bytes": 3419,
+    "sha256": "82131a04f68cdd97069732872f1b096e09774f007859d47a8f50d92668c7347c"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101033-candidate\\process.json",
+    "bytes": 688,
+    "sha256": "ab5ead79cf446d898528e3f18a9e4b7bbd5ab8fd9770cd1ad0f2964ba869c3f3"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101033-candidate\\process.log",
+    "bytes": 109,
+    "sha256": "18f80d13e3bd2aa6fac827e1fe0595e6e5b4b465b558bfc3ebe8d02f2a26866a"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101033-control\\artifacts\\complete.json",
+    "bytes": 132,
+    "sha256": "0f4c966aa87444766e00895d2307f9d4e5b73bb912879b792c83af8cdda8e89b"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101033-control\\artifacts\\ec-M1-s101033-control-s101033\\events.jsonl",
+    "bytes": 288688,
+    "sha256": "746c1fb907d1597641318c9edb73c3ee0a8180e700ca83bec5ffa95def6999b2"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101033-control\\artifacts\\ec-M1-s101033-control-s101033\\ready.json",
+    "bytes": 23391,
+    "sha256": "be22f950425c84e97ffe21e6b5ee95469daf45cea106bc6161dd10c3f3d2c03c"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101033-control\\artifacts\\ec-M1-s101033-control-s101033\\samples.jsonl",
+    "bytes": 12672,
+    "sha256": "d7625c314d718b72763fdc2f5247a1f3dd1dc545fbae13a3b0c5523820f3aa2e"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101033-control\\artifacts\\ec-M1-s101033-control-s101033\\summary.json",
+    "bytes": 5974,
+    "sha256": "2fa760143873facc0fd2ef9da7bb8210d7c0401611689f3e000e5f92663d8ac5"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101033-control\\artifacts\\heartbeat.json",
+    "bytes": 33,
+    "sha256": "86e378b31d122c9076fa0fa064df49070adfbc3360373d001e07eb3210fa5c61"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101033-control\\artifacts\\index.json",
+    "bytes": 6462,
+    "sha256": "d940c56f10d331006696445a81e76e5711738f7e0213f2fc9b491152411f7fdd"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101033-control\\artifacts\\manifest.json",
+    "bytes": 3391,
+    "sha256": "9b3e060952232de75aab106ba8d771fd8e5782831c5a916286bdb13b3c90324b"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101033-control\\process.json",
+    "bytes": 682,
+    "sha256": "310b425e858a7137433aab2f822387c39e2331b889bef0816edfe07d62a1e66a"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-M1-s101033-control\\process.log",
+    "bytes": 105,
+    "sha256": "82a9795a249dd6cae3a43a22630cbbbff5661bf305c987ecb839c14982cb1b9a"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101009-control\\artifacts\\complete.json",
+    "bytes": 132,
+    "sha256": "9ccd9ac684dac866cd711b056198ee99c6c5fa0ebf309fd2107b0663e1b0c036"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101009-control\\artifacts\\ec-E1-s101009-control-s101009\\events.jsonl",
+    "bytes": 331140,
+    "sha256": "9c8f3bbf42590f840093ef60d1ce1736bc1d2909d0267cea3f3e6412dec00c3d"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101009-control\\artifacts\\ec-E1-s101009-control-s101009\\ready.json",
+    "bytes": 24359,
+    "sha256": "65bf7c1de137173a2ad1209803688f52511b505e34f3dda7b5aca079f7cffd5d"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101009-control\\artifacts\\ec-E1-s101009-control-s101009\\samples.jsonl",
+    "bytes": 10436,
+    "sha256": "c5b2b273d8287462137fde0ab36287ac3e5581cd3d427a8af3b5b4d59e485cbf"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101009-control\\artifacts\\ec-E1-s101009-control-s101009\\summary.json",
+    "bytes": 7263,
+    "sha256": "945f50c36d02cd4b57087da7c4df5586650234ab8a04cccb50cd4d57f91e5df0"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101009-control\\artifacts\\heartbeat.json",
+    "bytes": 33,
+    "sha256": "472df85d844b3ae582b7b85d9c49721fe73fc5c4e3a265ac8591deb71f0779b0"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101009-control\\artifacts\\index.json",
+    "bytes": 7839,
+    "sha256": "9f99d8902765448a16bc1e33465fc54ea8259f3b13afd7d15a7771aaa04a32ff"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101009-control\\artifacts\\manifest.json",
+    "bytes": 3512,
+    "sha256": "dd2e77be64d720931f50dd68b41acb0997f2e4d4bd65af9b4a1c8578af48946d"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101009-control\\process.json",
+    "bytes": 682,
+    "sha256": "021eb077cde176885de1c4ddd88d788499254c77296f7c83b5b5565ff9c13a90"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101009-control\\process.log",
+    "bytes": 105,
+    "sha256": "de49eb0da819bc098f43a650a9e47ee66aadb93c57e8f03540cb0eaa9a3785e3"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101009-candidate\\artifacts\\complete.json",
+    "bytes": 134,
+    "sha256": "63bba2516e0b10fe4b36b826b076cdb51c653fd6436027835ebafe877ec9354b"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101009-candidate\\artifacts\\ec-E1-s101009-candidate-s101009\\events.jsonl",
+    "bytes": 205683,
+    "sha256": "63435fb766d470215a12dc26931e6fb10eb34796af2fcc3a6f2ae0f6d18bb12f"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101009-candidate\\artifacts\\ec-E1-s101009-candidate-s101009\\ready.json",
+    "bytes": 24416,
+    "sha256": "c5669362c326221de208f0ed111df6630473cc0813ce909164378bfa27cefd54"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101009-candidate\\artifacts\\ec-E1-s101009-candidate-s101009\\samples.jsonl",
+    "bytes": 8031,
+    "sha256": "c82956842f8cfbbc29c4831ac017d77536337772a9e47a2b8bfb7fb176873141"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101009-candidate\\artifacts\\ec-E1-s101009-candidate-s101009\\summary.json",
+    "bytes": 3899,
+    "sha256": "68bda6f11998783f8a915d6a6cd69caf88e7d14cf45b5a958b33c693d80a3101"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101009-candidate\\artifacts\\heartbeat.json",
+    "bytes": 33,
+    "sha256": "69998f857713dee272771c926d2d0193dd18d1750a28404dde9c02779344b0dc"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101009-candidate\\artifacts\\index.json",
+    "bytes": 4233,
+    "sha256": "407b5eac3f12f464835e4cc624eb8a8358b7de63cc16bf4649c8ed7f0e4c7da6"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101009-candidate\\artifacts\\manifest.json",
+    "bytes": 3529,
+    "sha256": "1e3401a30a140feafbe21ecf233b0977e59defa0f4208d1a969af250f6f2462a"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101009-candidate\\process.json",
+    "bytes": 688,
+    "sha256": "bcd7de74beed5716d16f702be7db17afa73b04da578952ac560776dc1ff92e51"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101009-candidate\\process.log",
+    "bytes": 109,
+    "sha256": "0e0025c1b4c87a883578706a6839994bafa7f21ab83635d23db9146fc4a81aef"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101033-candidate\\artifacts\\complete.json",
+    "bytes": 134,
+    "sha256": "47a2371bc7cdfc1773691b30fc243f5408c9355f1a861c7d3a50186975a7a39d"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101033-candidate\\artifacts\\ec-E1-s101033-candidate-s101033\\events.jsonl",
+    "bytes": 205683,
+    "sha256": "2e6443f8524bdc960fa5ccb8a61c3370bf0b4c9d63744b6c624e60d3f6f06f62"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101033-candidate\\artifacts\\ec-E1-s101033-candidate-s101033\\ready.json",
+    "bytes": 24416,
+    "sha256": "72ffff1e211e594e937276e5fac119ef6a9911970763ccdad268f52dd01b47bc"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101033-candidate\\artifacts\\ec-E1-s101033-candidate-s101033\\samples.jsonl",
+    "bytes": 8031,
+    "sha256": "c82956842f8cfbbc29c4831ac017d77536337772a9e47a2b8bfb7fb176873141"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101033-candidate\\artifacts\\ec-E1-s101033-candidate-s101033\\summary.json",
+    "bytes": 3899,
+    "sha256": "953686b25d5720631d3ebe12d939063c1de8e6dbbff1252681b51e7432e70c53"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101033-candidate\\artifacts\\heartbeat.json",
+    "bytes": 33,
+    "sha256": "709372c34c828e730246b8b2dddaf99fdf05ff7a5d7ccd44ba453f049e9c1bb3"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101033-candidate\\artifacts\\index.json",
+    "bytes": 4233,
+    "sha256": "dc79a717f13249039da53c3a122be4294cb9e4a7beb3ae870fc1fb878498e971"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101033-candidate\\artifacts\\manifest.json",
+    "bytes": 3529,
+    "sha256": "05e4a65e3037bf26d5cb234da882b7d1c16e59a3ac173302bf3ed167987899a1"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101033-candidate\\process.json",
+    "bytes": 688,
+    "sha256": "030f396127d585eca7d4d7d567aee926df3002d223a626fda1bcbf20f7f95871"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101033-candidate\\process.log",
+    "bytes": 109,
+    "sha256": "fd1ba31768b98e5be903bedbae4badff551222293f5adc8796f69b8b29220531"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101033-control\\artifacts\\complete.json",
+    "bytes": 132,
+    "sha256": "cecc7efbcf3668105eac9be9f7c5aff68d63b9071652184956058e969433ed16"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101033-control\\artifacts\\ec-E1-s101033-control-s101033\\events.jsonl",
+    "bytes": 331140,
+    "sha256": "a16d53dfe092c02f3a2fd4fc4b7243f12bcff88f8e8bdcbd2e43741b22bcd0bd"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101033-control\\artifacts\\ec-E1-s101033-control-s101033\\ready.json",
+    "bytes": 24359,
+    "sha256": "63591a9e66d65e7e8c2b965c2a2bbe5d065209c60710d37e81c3af039462f114"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101033-control\\artifacts\\ec-E1-s101033-control-s101033\\samples.jsonl",
+    "bytes": 10436,
+    "sha256": "c5b2b273d8287462137fde0ab36287ac3e5581cd3d427a8af3b5b4d59e485cbf"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101033-control\\artifacts\\ec-E1-s101033-control-s101033\\summary.json",
+    "bytes": 7263,
+    "sha256": "14bb2d457ea3d4373acccc4c1c7f69588f36cb55fbdf1b0003f2eda7fc16e447"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101033-control\\artifacts\\heartbeat.json",
+    "bytes": 33,
+    "sha256": "bb8853203790107db46b183beae524ed565155198825e96bb4a42263fb8d72a0"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101033-control\\artifacts\\index.json",
+    "bytes": 7839,
+    "sha256": "99ec54eb040993e3dd785266a9ced9319034dac82910890450bc2e934cc33e72"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101033-control\\artifacts\\manifest.json",
+    "bytes": 3512,
+    "sha256": "ddedbae7518fed13a39b64f9c2e2f7e3085753bdff86550ff0c1529891272273"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101033-control\\process.json",
+    "bytes": 682,
+    "sha256": "11200febc9d97023696870d6c85b681d67860d3d1b20279ab09f39efa25dfc1d"
+  },
+  {
+    "path": "D:\\mmo-idle\\encounter-counterplay-01\\run-01\\ec-E1-s101033-control\\process.log",
+    "bytes": 105,
+    "sha256": "b4e19a2c5844ad8cde384e9be7f53a8181482b28c5ef07ab3913c42d3f5d5685"
+  }
+]
