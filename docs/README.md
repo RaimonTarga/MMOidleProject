@@ -395,4 +395,4 @@ Generated balance packets (`reports/dps-*`, `ehp-*`, `mob-*`,
 
 - [Desert strategy 01 Luna packet](../reports/player-fast-pass/desert-strategy-01-preparation/README.md) — prepared and zero-tick qualified, main run unlaunched; 24 T4 targeting observations on the canonical formation Rune inheritance fix, source/readbacks and six-root evidence seed.
 
-- [T4 specialization screen 01 preparation (draft)](../reports/player-fast-pass/t4-specialization-screen-01-preparation/REPORT.md) — 54 paths, four contexts, source choice pending; no combat.
+- [T4 specialization screen 01 sealed preparation](../reports/player-fast-pass/t4-specialization-screen-01-preparation/REPORT.md) — 54 paths, four contexts, 432 qualified lives; Luna handoff ready, no combat.

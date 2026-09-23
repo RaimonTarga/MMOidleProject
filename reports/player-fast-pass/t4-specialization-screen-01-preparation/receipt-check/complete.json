@@ -1,0 +1,14 @@
+{
+  "planned": 432,
+  "completed": 0,
+  "newCompleted": 0,
+  "dead": 0,
+  "failed": 0,
+  "omitted": 0,
+  "notRun": 0,
+  "qualified": 432,
+  "mode": "receipt-check",
+  "sourceCommit": "3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+  "combatObservations": 0,
+  "failure": null
+}

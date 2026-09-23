@@ -1,13 +1,21 @@
 {
-  "status": "draft-unsealed",
-  "constructionPackages": 216,
-  "worldTicks": 0,
+  "status": "prepared-unrun",
+  "sourceCommit": "3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+  "uniquePackageConstruction": 216,
+  "qualified": 432,
+  "receiptReplay": 432,
+  "worldTicksDuringQualificationAndReplay": 0,
   "combatObservations": 0,
-  "finalChildQualification": "not-run",
-  "receiptReplay": "not-run",
+  "typecheck": "workspace and bench passed",
+  "focusedTests": [
+    "abilityControl: ok",
+    "ambientRamp.test.ts: ok"
+  ],
+  "diffCheck": "passed",
   "fullSuite": "not-run",
   "browserPlay": "not-run",
-  "typecheck": "passed (workspace and bench)",
-  "diffCheck": "passed",
-  "constructionNote": "Initial support-import defect fixed before successful 216-package construction; no combat attempt"
+  "receiptSha256": "9887f09e3320c70f8fe1b5a8aac8d6cd9bff7876b671956924cb988be4e5cad6",
+  "sourceCommitHeat": "a3adb0b2cac11f3988c57a25f862e7d410b7a580",
+  "sourceCommitHamstring": "6b7e5268fd3cae1200b52e38b40448d2920a43f4",
+  "conduitInProgressEditsIncluded": false
 }

@@ -1,0 +1,83 @@
+{
+  "executionSource": "3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+  "files": [
+    {
+      "path": "packet/manifest.json",
+      "externalSource": "D:\\mmo-idle\\t4-specialization-screen-01\\packet\\manifest.json",
+      "bytes": 1660610,
+      "sha256": "ea13a5e5977a0087efb7ffbb5af04a847fd8614e247cc1634e742635522d36c1"
+    },
+    {
+      "path": "packet/identity.json",
+      "externalSource": "D:\\mmo-idle\\t4-specialization-screen-01\\packet\\identity.json",
+      "bytes": 300853,
+      "sha256": "26c0a467e40368a80862e137e54ef8911a06c87aacf4505cb0d7d898540b5c27"
+    },
+    {
+      "path": "packet/control-identity.json",
+      "externalSource": "D:\\mmo-idle\\t4-specialization-screen-01\\packet\\control-identity.json",
+      "bytes": 147801,
+      "sha256": "2c43747d8bd3ecdd7738718f4fcd13b7dd4230d25609f729c9b9b8ef32fc7d6f"
+    },
+    {
+      "path": "packet/candidate-identity.json",
+      "externalSource": "D:\\mmo-idle\\t4-specialization-screen-01\\packet\\candidate-identity.json",
+      "bytes": 147801,
+      "sha256": "2c43747d8bd3ecdd7738718f4fcd13b7dd4230d25609f729c9b9b8ef32fc7d6f"
+    },
+    {
+      "path": "packet/seal.json",
+      "externalSource": "D:\\mmo-idle\\t4-specialization-screen-01\\packet\\seal.json",
+      "bytes": 369,
+      "sha256": "e488c3e95a63c22c39987801a8709a26179c38a48445a84f7a038633cb1bdfc9"
+    },
+    {
+      "path": "packet/qualified.json",
+      "externalSource": "D:\\mmo-idle\\t4-specialization-screen-01\\packet\\qualified.json",
+      "bytes": 295,
+      "sha256": "143aab9079b0d7abe15ab5e7bda6acbc5ecd1c99a2d8215558e4bdef5244e12d"
+    },
+    {
+      "path": "packet/receipt-checked.json",
+      "externalSource": "D:\\mmo-idle\\t4-specialization-screen-01\\packet\\receipt-checked.json",
+      "bytes": 295,
+      "sha256": "a0377c2ea8724fe29b49527cd7003538e7b508a446238def2a6b5b4fd520ddd8"
+    },
+    {
+      "path": "qualification/complete.json",
+      "externalSource": "D:\\mmo-idle\\t4-specialization-screen-01\\qualification\\complete.json",
+      "bytes": 268,
+      "sha256": "8c1b37d75b6f7208c31f08f80fe46c738d713a4e3c195652cc4770159de4a95c"
+    },
+    {
+      "path": "qualification/results-summary.json",
+      "externalSource": "D:\\mmo-idle\\t4-specialization-screen-01\\qualification\\results-summary.json",
+      "bytes": 233642,
+      "sha256": "d9076b7b074781a4601f0680e49f19280078fde9ec933ee61fd3559b2b56ccce"
+    },
+    {
+      "path": "qualification/resolved-builds.json",
+      "externalSource": "D:\\mmo-idle\\t4-specialization-screen-01\\qualification\\resolved-builds.json",
+      "bytes": 16484789,
+      "sha256": "9887f09e3320c70f8fe1b5a8aac8d6cd9bff7876b671956924cb988be4e5cad6"
+    },
+    {
+      "path": "qualification/raw-inventory.json",
+      "externalSource": "D:\\mmo-idle\\t4-specialization-screen-01\\qualification\\raw-inventory.json",
+      "bytes": 9079,
+      "sha256": "a6af9ff4f411cc17ce2a3bda6c6dc7f8d07055fa55f1aaeb1c2979a54a6104f7"
+    },
+    {
+      "path": "receipt-check/complete.json",
+      "externalSource": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\complete.json",
+      "bytes": 274,
+      "sha256": "802d73379c8fa8febf80a7fb88f145362a84ef3d54506331a0817d61c46313be"
+    },
+    {
+      "path": "receipt-check/raw-inventory.json",
+      "externalSource": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\raw-inventory.json",
+      "bytes": 9079,
+      "sha256": "e04cbbbe4c72ed1caacd379077e5f6032a532f08b3e575dab77a9ef6e92b085f"
+    }
+  ]
+}

@@ -1,0 +1,202 @@
+[
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101009-F1\\artifacts\\complete.json",
+    "bytes": 39,
+    "sha256": "9bca596cbd789d9b98b203015f2b87d550533e541017be65f98eee4d8d4aca8d"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101009-F1\\artifacts\\index.json",
+    "bytes": 2287511,
+    "sha256": "bf96afadfd721dcee367b1d711a6a532914f11eebee064e2072f3795e23c6f4f"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101009-F1\\artifacts\\manifest.json",
+    "bytes": 204314,
+    "sha256": "9c6eaad8288449cc6586d76541316836471d5acd8954c3296288464bd844a894"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101009-F1\\process.json",
+    "bytes": 711,
+    "sha256": "86472bd81a2256b92059420f3c593f596bbf51325f40644070ccc49ab71a4af7"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101009-F1\\process.log",
+    "bytes": 2547,
+    "sha256": "dca8d06cf305fabf4306038b9bb4d74cd1955e5f564583e85566002462573996"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101009-F2\\artifacts\\complete.json",
+    "bytes": 39,
+    "sha256": "9bca596cbd789d9b98b203015f2b87d550533e541017be65f98eee4d8d4aca8d"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101009-F2\\artifacts\\index.json",
+    "bytes": 1906205,
+    "sha256": "1ccfdcae73d4f6cbaf23c51dee7379809bb25d2ad85cb194fdb8ce9044ea94cf"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101009-F2\\artifacts\\manifest.json",
+    "bytes": 203090,
+    "sha256": "2eba8fbf581455e14daa1e7261ec99411df0ee4f9251d6e07f29afef6090ddd0"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101009-F2\\process.json",
+    "bytes": 711,
+    "sha256": "ac28a50c378462b9a6f8eb924291d10360c10c201a0b71fd961b268920236875"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101009-F2\\process.log",
+    "bytes": 2547,
+    "sha256": "b6e68020de73e34f774eaec383b4471e71b05b6c8743eb7f9611612fe0bec9c9"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101009-B1\\artifacts\\complete.json",
+    "bytes": 143,
+    "sha256": "246c00fab1f47c97386f585b39c61ed9608300d34981f5ba112880057b8dc751"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101009-B1\\artifacts\\index.json",
+    "bytes": 1658399,
+    "sha256": "4e5e4b1cf0f7c517e861f0a53a5ac492509a77fa9d6f1276e324373ef62811f1"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101009-B1\\artifacts\\manifest.json",
+    "bytes": 209992,
+    "sha256": "8b5646683742d26e24f716ac3a33e4def268edb65bca72c22673e26a0ea7eef2"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101009-B1\\process.json",
+    "bytes": 712,
+    "sha256": "23d2d3aa1413ef330a0d6a5c52da7dd7f213cbf7ffcb7576f78a5a63c3b2ba63"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101009-B1\\process.log",
+    "bytes": 2624,
+    "sha256": "44c3d207cd41794c26b6981c622bd9f6a2fdb881d47e5288e1fac201c86afff0"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101009-B2\\artifacts\\complete.json",
+    "bytes": 143,
+    "sha256": "58ec3b3dc124214f930f91aa133cdbfa7c98f1e4cbdc363d18423cc74295a2f1"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101009-B2\\artifacts\\index.json",
+    "bytes": 1706896,
+    "sha256": "ee732b79fe8a627bd62c22b55d53b2920b5870bf09c2e39f661e0f7c7da9368b"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101009-B2\\artifacts\\manifest.json",
+    "bytes": 214409,
+    "sha256": "0c9a7cfc24f5f4a2fd4d81e094d3ec5d116a5b2c35c65b7bca85d783b834ad74"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101009-B2\\process.json",
+    "bytes": 712,
+    "sha256": "741a61653e268fb0786125636effac2a6e41ba5a374b4ae45def36ab4d609472"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101009-B2\\process.log",
+    "bytes": 2624,
+    "sha256": "a97c0ba138525dfada49b76f0596cbf7c30521dd3314d35142e89d70f946820b"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101033-F1\\artifacts\\complete.json",
+    "bytes": 39,
+    "sha256": "9bca596cbd789d9b98b203015f2b87d550533e541017be65f98eee4d8d4aca8d"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101033-F1\\artifacts\\index.json",
+    "bytes": 2358089,
+    "sha256": "b33387b246dd1ddb80f0b5c0b3bee7a29b852abf8a09f92a25c0a6f8afd60203"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101033-F1\\artifacts\\manifest.json",
+    "bytes": 204314,
+    "sha256": "28e35ba0a069c1255d87921604ac80787b9ca421936b5ae17cc358d1997a1eee"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101033-F1\\process.json",
+    "bytes": 711,
+    "sha256": "999ada395979fb376dc11c8c4b38d24dfcbd94920cd5bbf65208a4f807b64f70"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101033-F1\\process.log",
+    "bytes": 2547,
+    "sha256": "862ea0cac2091a8bb845e973a1ee170eff15619f9c4c0d6458c098c4dfcf679f"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101033-F2\\artifacts\\complete.json",
+    "bytes": 39,
+    "sha256": "9bca596cbd789d9b98b203015f2b87d550533e541017be65f98eee4d8d4aca8d"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101033-F2\\artifacts\\index.json",
+    "bytes": 1905179,
+    "sha256": "0ff22475d5bca4bb22bf0d140ce793e065b38267bdbb077c27bf0ab804e1e306"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101033-F2\\artifacts\\manifest.json",
+    "bytes": 203090,
+    "sha256": "833d7e00b629aa4226800256187d309bb7ef5209be459bcd8902afc2b1cd9c26"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101033-F2\\process.json",
+    "bytes": 711,
+    "sha256": "d8fd380acae93a9edf8d78efa6a6654f343e94028e6c054adad4436629a4fcf6"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101033-F2\\process.log",
+    "bytes": 2547,
+    "sha256": "efef8f4efc06597837ef27dc02b075f97ff39f66e482a97ecd80b32b9871f7fd"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101033-B1\\artifacts\\complete.json",
+    "bytes": 143,
+    "sha256": "4889e36f5364cc15d8a8133a8c035d60433e64877cfd2256aacf769edf51c619"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101033-B1\\artifacts\\index.json",
+    "bytes": 1658399,
+    "sha256": "f433674afa4e1eb771762799638ee7fa6ef17cdd9e1fbe4d73857f288f079866"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101033-B1\\artifacts\\manifest.json",
+    "bytes": 209992,
+    "sha256": "0e882dda758d371d42d91c81cc13e94d20cda310b6479163a62f285125c93fb2"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101033-B1\\process.json",
+    "bytes": 712,
+    "sha256": "c4c918fee54606a9b27d47cf75773fda3068b29c1012f235881cc722a3931e71"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101033-B1\\process.log",
+    "bytes": 2624,
+    "sha256": "063917b3dc957def2861d57b01a3a1726cd472cc93269c1454bffdbdd3145b4d"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101033-B2\\artifacts\\complete.json",
+    "bytes": 143,
+    "sha256": "3cee55df829e5004584fc6d016c633f5c221c8dc5fcd395e5703a690b03f5a8f"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101033-B2\\artifacts\\index.json",
+    "bytes": 1706896,
+    "sha256": "c63ba5a6bc2cf45c89ee0cb914cba5a13c3dd0fb2fa87eb46c94b7c76e58a3de"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101033-B2\\artifacts\\manifest.json",
+    "bytes": 214409,
+    "sha256": "6312190dda9773b7928580680f1ab96186071a63eabfd555750a18b54a879fe5"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101033-B2\\process.json",
+    "bytes": 712,
+    "sha256": "c647c932516d65327b44d424604e5b2c95615e75bd891027032757282b060a2a"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-specialization-screen-01\\receipt-check\\qualification-101033-B2\\process.log",
+    "bytes": 2624,
+    "sha256": "66002c2ae70f16ca7a7a239a330903195937b2e0d2ec1925505544b87f265ff3"
+  }
+]
