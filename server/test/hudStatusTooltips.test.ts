@@ -299,6 +299,10 @@ function assertLegible(content: Parameters<typeof readableStrings>[0], what: str
     (ready.rows ?? []).every((r) => r.key !== "ability:rank"),
     "the rank row is in the title already and must not be repeated as a row",
   );
+  assert(
+    ready.classSpecific?.some((r) => r.label === "Conduit" && r.value.includes("normalized Sweep budget")),
+    "an ability tooltip must expose its Conduit adapter in a separate class-specific section",
+  );
 
   const deep = abilityTooltipContent(sweep, highTier, { state: "ready" });
   assert(

@@ -214,7 +214,7 @@ function NodeDesc({
             lines={stats}
             empty={mechanics.length === 0 ? 'No direct stat changes.' : undefined}
           />
-          <DetailLines title="Mechanics" lines={mechanics} explain />
+          <DetailLines title="Class mechanic changes" lines={mechanics} explain />
         </div>
       </div>
 

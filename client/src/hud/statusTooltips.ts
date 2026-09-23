@@ -171,7 +171,9 @@ export function abilityTooltipContent(
   // `abilityLines` leads with a Rank row; the title already carries the numeral,
   // so it is dropped rather than said twice.
   const rows: TooltipRow[] = abilityLines(ability, context)
-    .filter((line) => line.key !== 'ability:rank' && line.key !== 'ability:default-trigger')
+    .filter((line) => line.key !== 'ability:rank'
+      && line.key !== 'ability:default-trigger'
+      && !line.key.startsWith('ability:class-specific:'))
     .map((line) => ({
       key: line.key,
       label: line.label,
@@ -206,6 +208,11 @@ export function abilityTooltipContent(
     body: abilityBlurbAt(ability, context.playerTier),
     rows,
     rowsTitle: 'At this rank',
+    classSpecific: described.classSpecific.map(line => ({
+      key: `class-specific:${line.key}`,
+      label: line.className,
+      value: line.text,
+    })),
     current,
     // Trigger and shape are the two sentences a player needs to predict WHEN it
     // goes off — abilities are automatic, so that is the only control they have.

@@ -97,7 +97,7 @@ export const rootsAndFramesEntries = [
     id: 'cadence-root', name: 'Striker', tier: 0,
     classId: 'cadence-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Find the rhythm of battle. Every few hits your attack surges with accumulated force. A balanced bruiser — your recovery rate surges on a fixed cycle, sustaining you through prolonged engagements.',
+    description: 'Class mechanic — a five-hit finisher cycle, plus a Recovery pulse that activates 20% of your Recovery every 6s for 4s. Hits above 25% of max HP apply only half of their excess damage. A balanced bruiser — your recovery rate surges on a fixed cycle, sustaining you through prolonged engagements.',
     cost: 1, statEffects: {
       attackPct: 0.08, maxHpPct: 0.18, platingPct: 0.15,
       attackSpeedPct: 0.06, moveSpeedPct: 0.04, damageReduction: 0.02,
@@ -114,7 +114,7 @@ export const rootsAndFramesEntries = [
     id: 'cooldown-root', name: 'Squire', tier: 0,
     classId: 'cooldown-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Patience is power. Prepare a devastating strike on a set cycle. The heaviest chassis in the game — enormous bulk and armor, bought with the slowest hands and feet — and 10% of your Recovery rate stays active even while you fight.',
+    description: 'Class mechanic — prepare a timed execution on the 7s reference cycle at ×2; 10% of your Recovery stays active while you fight. The heaviest chassis in the game — enormous bulk and armor, bought with the slowest hands and feet.',
     cost: 1, statEffects: {
       attackPct: 0.18, maxHpPct: 0.30, platingPct: 0.30,
       attackSpeedPct: -0.15, moveSpeedPct: -0.10, damageReduction: 0.04,
@@ -127,7 +127,7 @@ export const rootsAndFramesEntries = [
     id: 'reload-root', name: 'Slinger', tier: 0,
     classId: 'reload-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Unleash a rapid clip, then reload. Weapon Attack damage retains 65% effectiveness at this extreme cadence. Flat on-hit damage stays at full strength, while weapon damage converted into damage over time retains 85% effectiveness.',
+    description: 'Class mechanics — unleash a rapid clip, then reload. Weapon Attack damage retains 65% effectiveness at this extreme cadence. Flat on-hit damage stays at full strength, while weapon damage converted into damage over time retains 85% effectiveness. Kills activate 20% of your Recovery for 4s, evades gain 20% extra damage mitigation, and target acquisition radius is ×2.5.',
     cost: 1, statEffects: {
       attackPct: 0.20, maxHpPct: 0.07,
       attackSpeedPct: 0.10, moveSpeedPct: 0.10,
@@ -145,7 +145,7 @@ export const rootsAndFramesEntries = [
     id: 'energy-root', name: 'Spirit', tier: 0,
     classId: 'energy-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Channel each blow into a building surge of power. The lightest, fastest, highest-output chassis — almost no natural bulk, so a barrier worth 30% of your max HP takes the hits that do reach you. It recharges between fights, not during them.',
+    description: 'Class mechanic — channel each blow into a building surge of power. The lightest, fastest, highest-output chassis — almost no natural bulk, so a barrier worth 30% of your max HP takes the hits that do reach you. It recharges between fights, not during them.',
     cost: 1, statEffects: {
       attackPct: 0.15, maxHpPct: 0.03,
       attackSpeedPct: 0.12, moveSpeedPct: 0.12,
@@ -159,7 +159,7 @@ export const rootsAndFramesEntries = [
     id: 'dot-root', name: 'Apprentice', tier: 0,
     classId: 'dot-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Your strikes leave lingering wounds. Stack the pain until nothing survives. The middle chassis — no extreme in any direction — and a toxin-hardened body that resists DoT damage by 18% and converts 10% of incoming direct hits into delayed damage you can outlast.',
+    description: 'Class mechanics — your strikes leave lingering wounds; stack the pain until nothing survives. The middle chassis — no extreme in any direction — and a toxin-hardened body with 18% DoT resistance that converts 10% of incoming direct hits into delayed damage you can outlast.',
     cost: 1, statEffects: {
       attackPct: 0.10, maxHpPct: 0.12, platingPct: 0.08,
       attackSpeedPct: 0.02, moveSpeedPct: 0.03,
@@ -173,7 +173,7 @@ export const rootsAndFramesEntries = [
     id: 'summoner-root', name: 'Conduit', tier: 0,
     classId: 'summoner-root', subVariantId: null,
     parent: null, children: ['summoner-light', 'summoner-balanced', 'summoner-heavy'],
-    description: 'Four persistent summons fight in your place. Your weapon sets their damage and cadence, while every body divides one shared formation offense and secondary-effect budget. Fallen slots rebuild one at a time, costing HP without crossing your safety floor.',
+    description: 'Class mechanic — maximum formation: 4 persistent summons before relic expansion. They fight in your place: your weapon sets their damage and cadence, while every body divides one shared formation offense and secondary-effect budget. Fallen slots rebuild one at a time, costing HP without crossing your safety floor.',
     cost: 1, statEffects: {
       attackPct: 0.08, maxHpPct: 0.08,
       attackSpeedPct: 0.04, moveSpeedPct: 0.05,
@@ -199,7 +199,7 @@ export const rootsAndFramesEntries = [
     id: 'summoner-light', name: 'Splinter', tier: 1,
     classId: 'summoner-root', subVariantId: 'light',
     parent: 'summoner-root', children: ['summoner-light-t3-a', 'summoner-light-t3-b', 'summoner-light-t3-c'],
-    description: 'Your presence splinters across six small, fast summons. They divide the formation budget rather than multiplying it, but the whole formation carries 20% stronger on-hit and secondary weapon effects. Each loss costs little offense and reconstruction HP; plating and area damage punish the swarm.',
+    description: 'Formation mechanic — maximum summons before relic expansion: 6 (+2 from Conduit\'s 4). Six small, fast bodies share one formation budget: ×1.05 formation offense, 66% total summon-HP budget, ×1.18 movement, ×0.72 body size, and ×1.20 on-hit/secondary weapon effects. Reconstruction starts at 2.0s with a 1.5s floor; each loss costs little offense and reconstruction HP, while plating and area damage punish the swarm.',
     cost: 1, statEffects: {
       maxHpPct: 0.04, attackSpeedPct: 0.06, moveSpeedPct: 0.08,
     },
@@ -210,7 +210,7 @@ export const rootsAndFramesEntries = [
     id: 'summoner-balanced', name: 'Consort', tier: 1,
     classId: 'summoner-root', subVariantId: 'balanced',
     parent: 'summoner-root', children: ['summoner-balanced-t3-a', 'summoner-balanced-t3-b', 'summoner-balanced-t3-c'],
-    description: 'Five medium summons hold a formal, stable ensemble. The reference formation: moderate damage, durability, and reconstruction pressure.',
+    description: 'Formation mechanic — maximum summons before relic expansion: 5 (+1 from Conduit\'s 4). Five medium bodies form the reference ensemble: ×1.00 formation offense, 100% total summon-HP budget, baseline movement and size, and 2.5s reconstruction with a 1.5s floor. Damage, durability, and reconstruction pressure stay moderate.',
     cost: 1, statEffects: {
       maxHpPct: 0.08, platingPct: 0.06, moveSpeedPct: 0.02,
     },
@@ -221,7 +221,7 @@ export const rootsAndFramesEntries = [
     id: 'summoner-heavy', name: 'Effigy', tier: 1,
     classId: 'summoner-root', subVariantId: 'heavy',
     parent: 'summoner-root', children: ['summoner-heavy-t3-a', 'summoner-heavy-t3-b', 'summoner-heavy-t3-c'],
-    description: 'Two large, slow summons concentrate the formation budget into consequential bodies. Each loss removes major offense and is expensive to reconstruct.',
+    description: 'Formation mechanic — maximum summons before relic expansion: 2 (−2 from Conduit\'s 4). Two large bodies concentrate the budget: ×0.98 formation offense, 140% total summon-HP budget, ×0.78 movement, ×1.75 body size, and 3.92s reconstruction with a 2.5s floor. Each loss removes major offense and is expensive to reconstruct.',
     cost: 1, statEffects: {
       maxHpPct: 0.16, platingPct: 0.12,
       attackSpeedPct: -0.06, moveSpeedPct: -0.06, damageReduction: 0.01,
@@ -234,7 +234,7 @@ export const rootsAndFramesEntries = [
     id: 'cadence-light', name: 'Flurry', tier: 1,
     classId: 'cadence-root', subVariantId: 'light',
     parent: 'cadence-root', children: [],
-    description: 'Swift and agile. Trades bulk for a blistering attack pace. Empowered finisher triggers every 4 hits at 1.5× — frequency over raw power.',
+    description: 'Cadence change — a 4-hit finisher cycle at ×1.5 empowered damage. Swift and agile, this frame trades bulk for a blistering attack pace: frequency over raw power.',
     cost: 1, statEffects: {
       attackPct: 0.06, maxHpPct: 0.04, attackSpeedPct: 0.12, moveSpeedPct: 0.10,
     },
@@ -245,7 +245,7 @@ export const rootsAndFramesEntries = [
     id: 'cadence-balanced', name: 'Skirmisher', tier: 1,
     classId: 'cadence-root', subVariantId: 'balanced',
     parent: 'cadence-root', children: [],
-    description: 'A measured approach. Modest gains across the board without committing to an extreme. Empowered finisher every 5 hits at 2×.',
+    description: 'Cadence change — a 5-hit finisher cycle at ×2 empowered damage. A measured approach with modest gains across the board and no commitment to either extreme.',
     cost: 1, statEffects: {
       attackPct: 0.07, maxHpPct: 0.10, platingPct: 0.10,
       attackSpeedPct: 0.04, moveSpeedPct: 0.03,
@@ -257,7 +257,7 @@ export const rootsAndFramesEntries = [
     id: 'cadence-heavy', name: 'Breaker', tier: 1,
     classId: 'cadence-root', subVariantId: 'heavy',
     parent: 'cadence-root', children: [],
-    description: 'Endurance over speed. Significant bulk and armor; pays for it in attack pace and footwork. Empowered finisher every 6 hits at 4× — patience rewarded with one enormous blow.',
+    description: 'Cadence change — a 6-hit finisher cycle at ×4 empowered damage. Endurance over speed: significant bulk and armor, paid for in attack pace and footwork; patience is rewarded with one enormous blow.',
     cost: 1, statEffects: {
       attackPct: 0.05, maxHpPct: 0.18, platingPct: 0.20,
       attackSpeedPct: -0.10, moveSpeedPct: -0.10, damageReduction: 0.02,
@@ -270,7 +270,7 @@ export const rootsAndFramesEntries = [
     id: 'cooldown-light', name: 'Warrior', tier: 1,
     classId: 'cooldown-root', subVariantId: 'light',
     parent: 'cooldown-root', children: [],
-    description: 'The aggressive tank. Keeps its armored core but trades patience for a fast, hungry tempo. Execution recharges in 5 s at 1.5×.',
+    description: 'Execution change — 5s recharge at ×1.5 damage. The aggressive tank keeps its armored core but trades patience for a fast, hungry tempo.',
     cost: 1, statEffects: {
       attackPct: 0.07, maxHpPct: 0.05, platingPct: 0.05,
       attackSpeedPct: 0.12, moveSpeedPct: 0.10,
@@ -282,7 +282,7 @@ export const rootsAndFramesEntries = [
     id: 'cooldown-balanced', name: 'Knight', tier: 1,
     classId: 'cooldown-root', subVariantId: 'balanced',
     parent: 'cooldown-root', children: [],
-    description: 'A sturdy foundation. Substantial HP and armor amplify the class\'s defensive identity without tipping into immobility. Execution recharges in 7 s at 2×.',
+    description: 'Execution change — 7s recharge at ×2 damage. A sturdy foundation: substantial HP and armor amplify the class\'s defensive identity without tipping into immobility.',
     cost: 1, statEffects: {
       attackPct: 0.08, maxHpPct: 0.12, platingPct: 0.15,
       attackSpeedPct: 0.03, moveSpeedPct: -0.02, damageReduction: 0.02,
@@ -297,7 +297,7 @@ export const rootsAndFramesEntries = [
     // Bulwark keeps real ATTACK affinity on purpose: the fantasy is enormous
     // individual hits, not merely maximum defense. Its sustained throughput is
     // constrained by the attack-speed penalty, not by a weak attack stat.
-    description: 'Fortress of patience. Maximum bulk makes you a wall, and every blow lands like one — but you move like a boulder and swing even slower. Execution recharges in 9 s at 3×.',
+    description: 'Execution change — 8s recharge at ×3.5 damage. Fortress of patience: maximum bulk makes you a wall, and every blow lands like one — but you move like a boulder and swing even slower.',
     cost: 1, statEffects: {
       attackPct: 0.10, maxHpPct: 0.22, platingPct: 0.25,
       attackSpeedPct: -0.12, moveSpeedPct: -0.12, damageReduction: 0.03,
@@ -310,7 +310,7 @@ export const rootsAndFramesEntries = [
     id: 'dot-light', name: 'Venom vessel', tier: 1,
     classId: 'dot-root', subVariantId: 'light',
     parent: 'dot-root', children: [],
-    description: 'Poison path. Apply wounds quickly and stay mobile. Up to 8 poison stacks — each hit converts 30% of your attack into lingering poison damage.',
+    description: 'DoT change — up to 8 poison stacks; each hit converts 30% of your attack into poison. Ticks every 1s for 5s at ×1.25 DoT output. Apply wounds quickly and stay mobile.',
     cost: 1, statEffects: {
       attackPct: 0.06, maxHpPct: 0.04, attackSpeedPct: 0.10, moveSpeedPct: 0.10,
     },
@@ -324,7 +324,7 @@ export const rootsAndFramesEntries = [
     id: 'dot-balanced', name: 'Ember mage', tier: 1,
     classId: 'dot-root', subVariantId: 'balanced',
     parent: 'dot-root', children: [],
-    description: 'Fire path. A deliberate fighter. Up to 6 burn stacks — each hit converts 50% of your attack into damage over time.',
+    description: 'DoT change — up to 6 burn stacks; each hit converts 50% of your attack into burn. Ticks every 1.5s for 5.5s at ×1.20 DoT output. A deliberate fighter who rewards measured pressure.',
     cost: 1, statEffects: {
       attackPct: 0.07, maxHpPct: 0.10, platingPct: 0.10, attackSpeedPct: 0.03,
     },
@@ -338,7 +338,7 @@ export const rootsAndFramesEntries = [
     id: 'dot-heavy', name: 'Rime-Bound', tier: 1,
     classId: 'dot-root', subVariantId: 'heavy',
     parent: 'dot-root', children: [],
-    description: 'Frost path. A war of attrition. Up to 3 frost stacks — each hit converts 70% of your attack into deep, lingering wounds.',
+    description: 'DoT change — up to 3 frost stacks; each hit converts 70% of your attack into frost. Ticks every 2s for 6.5s at ×1.15 DoT output. A slow war of attrition built around deep, lingering wounds.',
     cost: 1, statEffects: {
       attackPct: 0.08, maxHpPct: 0.18, platingPct: 0.20,
       attackSpeedPct: -0.10, moveSpeedPct: -0.10, damageReduction: 0.03,
@@ -359,7 +359,7 @@ export const rootsAndFramesEntries = [
     id: 'reload-light', name: 'Scout', tier: 1,
     classId: 'reload-root', subVariantId: 'light',
     parent: 'reload-root', children: [],
-    description: 'All-in on mobility. Small clip (5 rounds), 1.2 s reload, and extra dodge — maximum uptime, minimum profile to hit.',
+    description: 'Reload change — 5-round clip and 1.2s reload. All-in on mobility with extra dodge: maximum uptime and a minimum profile to hit.',
     cost: 1, statEffects: {
       attackPct: 0.08, maxHpPct: 0.04,
       attackSpeedPct: 0.10, moveSpeedPct: 0.10, evasion: 0.07,
@@ -371,7 +371,7 @@ export const rootsAndFramesEntries = [
     id: 'reload-balanced', name: 'Marksman', tier: 1,
     classId: 'reload-root', subVariantId: 'balanced',
     parent: 'reload-root', children: [],
-    description: 'A steady burst fighter. Standard 10-round clip, 2.0 s reload, modest avoidance — tempo and staying power in balance.',
+    description: 'Reload change — 10-round clip and 2.0s reload. A steady burst fighter with modest avoidance: tempo and staying power in balance.',
     cost: 1, statEffects: {
       attackPct: 0.08, maxHpPct: 0.08,
       attackSpeedPct: 0.04, moveSpeedPct: 0.04, evasion: 0.04,
@@ -383,7 +383,7 @@ export const rootsAndFramesEntries = [
     id: 'reload-heavy', name: 'Artillerist', tier: 1,
     classId: 'reload-root', subVariantId: 'heavy',
     parent: 'reload-root', children: [],
-    description: 'Slower but harder to put down. Large 20-round clip for sustained bursting, real armor for the first time on this chassis, but reloading takes 3 s — plan your downtime.',
+    description: 'Reload change — 20-round clip and 3.0s reload. Slower but harder to put down: sustained bursting and real armor for the first time on this chassis, with longer planned downtime.',
     cost: 1, statEffects: {
       attackPct: 0.10, maxHpPct: 0.14, platingPct: 0.12,
       attackSpeedPct: -0.04, moveSpeedPct: -0.05,
@@ -396,7 +396,7 @@ export const rootsAndFramesEntries = [
     id: 'energy-light', name: 'Spark', tier: 1,
     classId: 'energy-root', subVariantId: 'light',
     parent: 'energy-root', children: [],
-    description: 'Pure momentum. Blazing speed and rapid attacks; thrives on frequent discharges and their AoE splash. Gains 20 energy per hit, empowered at 1.5× — fires often.',
+    description: 'Energy change — gain 20 energy per hit and discharge at ×1.5 damage. Pure momentum: blazing speed and rapid attacks thrive on frequent discharges and their AoE splash.',
     cost: 1, statEffects: {
       attackPct: 0.02, maxHpPct: 0.03, attackSpeedPct: 0.04, moveSpeedPct: 0.12,
     },
@@ -407,7 +407,7 @@ export const rootsAndFramesEntries = [
     id: 'energy-balanced', name: 'Wraith', tier: 1,
     classId: 'energy-root', subVariantId: 'balanced',
     parent: 'energy-root', children: [],
-    description: 'Fast and capable. A bit of extra punch and some light armor without sacrificing mobility. Gains 14 energy per hit, empowered at 2×.',
+    description: 'Energy change — gain 14 energy per hit and discharge at ×2 damage. Fast and capable, with extra punch and light armor without sacrificing mobility.',
     cost: 1, statEffects: {
       attackPct: 0.03, maxHpPct: 0.07, platingPct: 0.06,
       attackSpeedPct: 0.00, moveSpeedPct: 0.06,
@@ -419,7 +419,7 @@ export const rootsAndFramesEntries = [
     id: 'energy-heavy', name: 'Phantasm', tier: 1,
     classId: 'energy-root', subVariantId: 'heavy',
     parent: 'energy-root', children: [],
-    description: 'Measured power. A light class wearing heavier armor — durability and a sliver of damage reduction, traded against attack pace. Gains 10 energy per hit, empowered at 6× — builds slowly, hits very hard.',
+    description: 'Energy change — gain 10 energy per hit and discharge at ×6 damage. Measured power: heavier armor and damage reduction traded against attack pace; it builds slowly and hits very hard.',
     cost: 1, statEffects: {
       attackPct: 0.10, maxHpPct: 0.14, platingPct: 0.12,
       attackSpeedPct: -0.10, moveSpeedPct: -0.08, damageReduction: 0.02,

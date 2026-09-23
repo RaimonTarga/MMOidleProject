@@ -64,8 +64,21 @@ export interface AbilityLine {
   breakdown?: string;
 }
 
+export interface AbilityClassSpecific {
+  /** Stable key for surfaces that render the same description in a different shape. */
+  key: string;
+  /** Player-facing class name, not the internal archetype id. */
+  className: string;
+  /** The adapter's behavior in this ability's terms. */
+  text: string;
+}
+
+type AbilityClassSpecificCopy = Omit<AbilityClassSpecific, 'key'>;
+
 export interface AbilityDescription {
   equipmentModifiers: { key: string; source: string; label: string; value: string }[];
+  /** Class execution adapters, omitted when the ability follows its normal path. */
+  classSpecific: AbilityClassSpecific[];
   /** Rank numeral for this character, e.g. "III". */
   rank: string;
   /** Current authored rank, without implying a final progression ceiling. */
@@ -238,6 +251,122 @@ const SHAPE_SENTENCES: Record<AbilityDef['shape'], string> = {
   instant: 'Resolves immediately on yourself the moment it fires.',
 };
 
+/**
+ * Player-facing explanation of execution adapters.
+ *
+ * These are intentionally kept out of the authored ability ranks: the ranks own
+ * the ability's normal payload, while this table explains the class pipeline that
+ * consumes that payload. It mirrors the authoritative summoner ownership rules,
+ * plus the two non-summoner Sweep adapters and the per-hit Imbue interaction.
+ * Classes that use the ordinary ability path are absent rather than being given
+ * a redundant "works normally" paragraph.
+ */
+const CLASS_SPECIFIC_COPY: Readonly<Record<string, readonly AbilityClassSpecificCopy[]>> = {
+  sweep: [
+    {
+      className: 'Apprentice',
+      text: 'The primary hit keeps its normal DoT application. Each nearby secondary target receives exactly one Apprentice DoT stack instead of direct splash damage.',
+    },
+    {
+      className: 'Slinger',
+      text: 'The first ammo-backed shot starts a clip-wide Sweep. Every shot in the magazine carries an equal reduced share; the total is a 1.5× Sweep budget spread across the clip and then uses Slinger’s normal 65%-effective weapon damage.',
+    },
+    {
+      className: 'Conduit',
+      text: 'Each living summon snapshotted when Sweep arms delivers it once. The formation shares one normalized Sweep budget, so summons do not each deal a full Sweep; Battle Bond keeps the owner-delivered version.',
+    },
+  ],
+  'expose-weakness': [
+    {
+      className: 'Conduit',
+      text: 'On formation paths, each snapshotted summon can deliver the armed debuff once. The target receives one shared vulnerability window rather than a separate full ability per summon; Battle Bond keeps the owner-delivered version.',
+    },
+  ],
+  'hamstring': [
+    {
+      className: 'Conduit',
+      text: 'On formation paths, each snapshotted summon can deliver the slow once. The control lands on the struck target normally, while the damage rider is divided across the formation; Battle Bond keeps the owner-delivered version.',
+    },
+  ],
+  'power-strike': [
+    {
+      className: 'Conduit',
+      text: 'On formation paths, one living engaged summon performs the wind-up using your stats. The cast resolves as one full payload, not once per summon; if none is eligible, the owner casts normally. Battle Bond always uses the owner.',
+    },
+  ],
+  charge: [
+    {
+      className: 'Conduit',
+      text: 'The owner winds up once, then eligible living summons rush the target while the owner stays put. Each arrival delivers its normalized share of the empowered rider; dead, controlled or replaced bodies cannot transfer their share. Battle Bond uses the normal owner Charge.',
+    },
+  ],
+  contagion: [
+    {
+      className: 'Conduit',
+      text: 'On formation paths, one living engaged summon performs the wind-up, but the full spread still uses the owner’s DoTs and stats. It resolves once rather than once per summon; if none is eligible, the owner casts normally. Battle Bond always uses the owner.',
+    },
+  ],
+  slam: [
+    {
+      className: 'Conduit',
+      text: 'On formation paths, one living engaged summon performs the wind-up using your stats. The area resolves as one full Slam payload, not once per summon; if none is eligible, the owner casts normally. Battle Bond always uses the owner.',
+    },
+  ],
+  'binding-strike': [
+    {
+      className: 'Conduit',
+      text: 'On formation paths, each snapshotted summon can deliver the root once. The control lands on the struck target normally, while the damage rider is divided across the formation; Battle Bond keeps the owner-delivered version.',
+    },
+  ],
+  frenzy: [
+    {
+      className: 'Conduit',
+      text: 'The Conduit casts one owner buff. Summon attack timing reads that shared haste window, so it speeds the formation instead of creating a separate buff per summon.',
+    },
+  ],
+  'quick-strike': [
+    {
+      className: 'Conduit',
+      text: 'On formation paths, each snapshotted summon can deliver Quick Strike once. The empowered bonus is normalized across the formation, so the summons do not each add a full Quick Strike; Battle Bond keeps the owner-delivered version.',
+    },
+  ],
+  detonate: [
+    {
+      className: 'Conduit',
+      text: 'On formation paths, one living engaged summon performs the wind-up, but Detonate consumes the owner’s DoTs and uses the owner’s stats. It resolves as one full burst, not once per summon; if none is eligible, the owner casts normally. Battle Bond always uses the owner.',
+    },
+  ],
+  snipe: [
+    {
+      className: 'Conduit',
+      text: 'On formation paths, one living engaged summon performs the wind-up; its own reach plus Snipe’s ability reach determine whether it can cast. The payload still uses your stats and resolves once; Battle Bond always uses the owner.',
+    },
+  ],
+  'stunning-strike': [
+    {
+      className: 'Conduit',
+      text: 'On formation paths, one living engaged summon performs the wind-up using your stats. The stun and damage resolve as one full payload, not once per summon; if none is eligible, the owner casts normally. Battle Bond always uses the owner.',
+    },
+  ],
+  'imbue-lightning': [
+    {
+      className: 'Slinger',
+      text: 'Each landed bullet spends one Imbue charge, so a single clip can consume several charges.',
+    },
+    {
+      className: 'Conduit',
+      text: 'The Conduit casts one shared charge window. Owner and summon hits consume its charges one at a time, and summon bonus damage is formation-weighted; summons do not each receive a separate window.',
+    },
+  ],
+};
+
+function classSpecificLines(ability: AbilityDef): AbilityClassSpecific[] {
+  return (CLASS_SPECIFIC_COPY[ability.id] ?? []).map((copy, index) => ({
+    key: `${ability.id}:${index}`,
+    ...copy,
+  }));
+}
+
 // ── Entry point ───────────────────────────────────────────────────────────────
 
 export function describeAbility(
@@ -292,6 +421,7 @@ export function describeAbility(
     shape: SHAPE_SENTENCES[ability.shape],
     tags: abilityTags(ability).map(id => ({ id, ...ABILITY_TAG_INFO[id] })),
     lines,
+    classSpecific: classSpecificLines(ability),
   };
 }
 

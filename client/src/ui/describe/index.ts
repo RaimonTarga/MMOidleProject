@@ -12,7 +12,7 @@ import { passiveLines } from './passiveText';
 import { stanceModifierLines, statEffectLines } from './statEffectText';
 
 export { describeAbility, abilitySummary, triggerSentence } from './abilityText';
-export type { AbilityContext, AbilityDescription, AbilityLine } from './abilityText';
+export type { AbilityContext, AbilityClassSpecific, AbilityDescription, AbilityLine } from './abilityText';
 export { passiveLines, passiveSummary, passiveNamespaceLabel, formatPassiveValue } from './passiveText';
 export type { PassiveLine } from './passiveText';
 export { statEffectLines, stanceModifierLines, statEffectGlyph, statEffectChipValue } from './statEffectText';
@@ -181,6 +181,11 @@ export function abilityLines(
       label: line.label,
       value: line.value,
       help: line.breakdown,
+    })),
+    ...described.classSpecific.map((line) => ({
+      key: `ability:class-specific:${line.key}`,
+      label: line.className,
+      value: line.text,
     })),
   ];
 }

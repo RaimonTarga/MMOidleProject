@@ -55,6 +55,11 @@ for (const ability of ABILITY_DATABASE.values()) {
     assert(!BAD.test(line.value), `${ability.id}/${line.key}: bad value "${line.value}"`);
     assert(line.label.length > 0, `${ability.id}/${line.key}: no label`);
   }
+  for (const line of described.classSpecific) {
+    assert(line.className.length > 0, `${ability.id}: class-specific line has no class name`);
+    assert(line.text.length > 0, `${ability.id}/${line.className}: empty class-specific text`);
+    assert(!BAD.test(line.text), `${ability.id}/${line.className}: bad class-specific text`);
+  }
 
   // Cooldown is universal — an ability that cannot state its cooldown is a hole
   // in the readout, whatever else it manages to say.
@@ -98,6 +103,30 @@ assert(poweredSplash.value !== homeSplash.value, "Technique Power did not change
 assert(
   poweredSplash.breakdown?.includes("Technique Power") === true,
   "a multiplied value must name the multiplier and its authored base",
+);
+
+const sweepAdapters = describeAbility(sweep, { ...context, playerTier: sweep.tier, passives: {} }).classSpecific;
+assert(
+  sweepAdapters.some((line) => line.className === "Apprentice" && line.text.includes("exactly one Apprentice DoT stack")),
+  "Sweep must explain the Apprentice one-stack adapter",
+);
+assert(
+  sweepAdapters.some((line) => line.className === "Slinger" && line.text.includes("clip-wide Sweep")),
+  "Sweep must explain the Slinger clip adapter",
+);
+assert(
+  sweepAdapters.some((line) => line.className === "Conduit" && line.text.includes("normalized Sweep budget")),
+  "Sweep must explain the Conduit formation adapter",
+);
+
+const powerStrikeAdapters = describeAbility(ABILITY_DATABASE.get("power-strike")!, context).classSpecific;
+assert(
+  powerStrikeAdapters.some((line) => line.className === "Conduit" && line.text.includes("one full payload")),
+  "targeted casts must explain the Conduit summon-cast adapter",
+);
+assert(
+  describeAbility(ABILITY_DATABASE.get("brace")!, context).classSpecific.length === 0,
+  "ordinary Guard abilities must not grow a redundant class-specific section",
 );
 
 // Every ability past its last authored rank clamps rather than reading past the

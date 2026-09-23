@@ -43,6 +43,8 @@ export interface TooltipCardContent {
   rows?: TooltipRow[];
   /** Optional heading for the static rows, when they need naming. */
   rowsTitle?: string;
+  /** Class execution adapters; absent when the normal ability path is used. */
+  classSpecific?: TooltipRow[];
   /** Resolved values applying right now. Rendered under a CURRENT heading. */
   current?: TooltipRow[];
   /** Trailing note, e.g. a caveat or a source. */
@@ -69,7 +71,7 @@ function Rows({ rows, live }: { rows: readonly TooltipRow[]; live: boolean }) {
 }
 
 export function TooltipCard({ content }: { content: TooltipCardContent }): ReactNode {
-  const { title, kicker, body, rows, rowsTitle, current, footnote } = content;
+  const { title, kicker, body, rows, rowsTitle, classSpecific, current, footnote } = content;
   return (
     <div className="tip-card">
       <div className="tip-card__title">{title}</div>
@@ -80,6 +82,12 @@ export function TooltipCard({ content }: { content: TooltipCardContent }): React
         <div className="tip-card__section">
           {rowsTitle && <div className="tip-card__heading">{rowsTitle}</div>}
           <Rows rows={rows} live={false} />
+        </div>
+      )}
+      {classSpecific && classSpecific.length > 0 && (
+        <div className="tip-card__section tip-card__section--class-specific">
+          <div className="tip-card__heading">Class-specific</div>
+          <Rows rows={classSpecific} live={false} />
         </div>
       )}
       {current && current.length > 0 && (

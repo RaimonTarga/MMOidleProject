@@ -17,6 +17,7 @@ function DetailRow({ line, explain }: { line: DetailLine; explain?: boolean }) {
   const classes = [
     'detail-line',
     line.key === 'ability:default-trigger' ? 'detail-line--behavior' : '',
+    line.key.startsWith('ability:class-specific:') ? 'detail-line--class-specific' : '',
     line.help ? 'detail-line--help' : '',
     line.good === false ? 'detail-line--down' : '',
   ].filter(Boolean).join(' ');
@@ -60,10 +61,17 @@ export function DetailLines({
     return empty ? <div className="detail-lines__empty">{empty}</div> : null;
   }
 
+  const regularLines = lines.filter(line => !line.key.startsWith('ability:class-specific:'));
+  const classSpecificLines = lines.filter(line => line.key.startsWith('ability:class-specific:'));
+
   return (
     <div className={['detail-lines', className].filter(Boolean).join(' ')}>
       {title && <div className="detail-lines__title">{title}</div>}
-      {lines.map((line) => <DetailRow key={line.key} line={line} explain={explain} />)}
+      {regularLines.map((line) => <DetailRow key={line.key} line={line} explain={explain} />)}
+      {classSpecificLines.length > 0 && <>
+        <div className="detail-lines__title detail-lines__title--class-specific">Class-specific</div>
+        {classSpecificLines.map((line) => <DetailRow key={line.key} line={line} explain={explain} />)}
+      </>}
     </div>
   );
 }

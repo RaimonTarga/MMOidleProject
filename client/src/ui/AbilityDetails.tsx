@@ -53,6 +53,13 @@ export function AbilityDetails({ description }: { description: AbilityDescriptio
   return <div className="ability-numbers">
     <AbilityTags tags={description.tags.map(tag => tag.id)} />
     {description.lines.map(line => <AbilityNumber key={line.key} line={line} rank={description.rank} />)}
+    {description.classSpecific.length > 0 && <section className="ability-class-specific">
+      <div className="detail-lines__title">Class-specific</div>
+      {description.classSpecific.map(line => <div className="ability-class-specific__row" key={line.key}>
+        <strong>{line.className}</strong>
+        <span>{line.text}</span>
+      </div>)}
+    </section>}
     {description.equipmentModifiers.length > 0 && <div className="ability-equipment">
       <div className="detail-lines__title">Equipment bonuses</div>
       {description.equipmentModifiers.map(line => <div className="detail-line" key={line.key}>
