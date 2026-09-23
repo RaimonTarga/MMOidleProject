@@ -368,6 +368,8 @@ export interface MonsterOnDeath {
  * they crumble the moment the raiser dies. That is the whole counterplay.
  */
 export interface MonsterRaisesDead {
+  /** Node corpse lifetime while this living, non-risen raiser is engaged. */
+  corpseLifetimeMs?: number;
   /** Cadence between raise attempts once the first one has come due. */
   intervalMs: number;
   /** Delay after the aggro session starts, so a raise is never the opener. */

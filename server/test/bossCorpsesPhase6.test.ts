@@ -24,6 +24,7 @@ import {
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { updateRaisers } from '../src/systems/combat/ai/raiseDead';
+import { updateBossScripts } from '../src/systems/combat/ai/bossScripts';
 import { setAggroTarget } from '../src/systems/combat/ai/targeting';
 import {
   buildCorpseViews,
@@ -142,6 +143,54 @@ function sovereign(world: World, playerId: string): MonsterEntity {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Slow Sovereign pulls keep bodies visible and usable by the actual phase cast.
+{
+  const world = new World();
+  world.attachPlayerEntity(playerSlices('slow-pull'), 'slow-pull');
+  const boss = sovereign(world, 'slow-pull');
+  updateBossScripts(world, 100);
+  for (const add of [...world.monsterEntitiesInNode(NODE)].filter(m => m !== boss)) {
+    world.removeMonsterEntity(add.isMonster.id);
+  }
+  for (let i = 0; i < 3; i++) makeCorpse(world, 'bone-crawler', 420 + i * 20, 400);
+  const now = Date.now();
+  for (const corpse of world.corpses.get(NODE)!) corpse.diedAtMs = now - 120_000;
+  updateCorpses(world, now);
+  const views = buildCorpseViews(world, NODE, now);
+  assert(views?.length === 3, 'two-minute-old bodies must survive an engaged Sovereign');
+  assert(views.every(v => v.remainingMs === 480_000), 'client decay must match the extended lifetime');
+  boss.hasHealth.hp = boss.hasHealth.maxHp * 0.49;
+  updateBossScripts(world, 100);
+  assert(world.takeNodeEvents(NODE).some(event => event.kind === 'monster-cast-start'
+    && event.label === 'Mass Resurrection'), 'the half-health phase must start its cast');
+  updateCorpses(world, now + 1_800);
+  updateBossScripts(world, 1_800);
+  assert([...world.monsterEntitiesInNode(NODE)].filter(m => m.isRaised).length === 3,
+    'the completed phase cast must raise all three old bodies');
+  assert(!world.corpses.has(NODE), 'resurrection still consumes bodies');
+}
+
+// Extended decay is local to a living, engaged Sovereign and remains bounded.
+for (const end of ['reset', 'death', 'removed', 'timeout'] as const) {
+  const world = new World();
+  const boss = sovereign(world, 'decay-target');
+  makeCorpse(world, 'bone-crawler', 420, 400);
+  const now = Date.now();
+  world.corpses.get(NODE)![0]!.diedAtMs = now - 120_000;
+  const otherNode = 'node-5-4';
+  const other = world.createMonster(otherNode, 'bone-crawler', { x: 400, y: 400 })!;
+  recordCorpse(world, other);
+  world.corpses.get(otherNode)![0]!.diedAtMs = now - 120_000;
+  updateCorpses(world, now);
+  assert(world.corpses.has(NODE), 'engaged boss extends local corpse lifetime');
+  assert(!world.corpses.has(otherNode), 'other nodes keep normal decay');
+  if (end === 'reset') setAggroTarget(world, boss, null, now);
+  if (end === 'death') boss.hasHealth.hp = 0;
+  if (end === 'removed') world.removeMonsterEntity(boss.isMonster.id);
+  updateCorpses(world, end === 'timeout' ? now + 480_000 : now);
+  assert(!world.corpses.has(NODE), `${end} must allow old corpses to expire`);
+}
+
 // Reservation.
 // ─────────────────────────────────────────────────────────────────────────────
 

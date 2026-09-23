@@ -494,6 +494,8 @@ export const bossMonsterEntriesT4 = [
     // and Plains already owns spawning. Placeholder numbers.
     raisesDead: {
       intervalMs: 8000, initialDelayMs: 5000, corpseRange: 520, maxAlive: 4,
+      // Keep seed bodies available through slow pulls and the half-health cast.
+      corpseLifetimeMs: 600_000,
       hpMult: 0.75, damageMult: 0.80,
       castMs: 1300, castName: 'Raise Dead', castFx: 'raise-dead',
     },
@@ -510,8 +512,8 @@ export const bossMonsterEntriesT4 = [
           { type: 'spawn-adds', monsterTypeId: 'plague-hound', count: 1, maxAlive: 5, offsetRange: 260 },
           { type: 'spawn-adds', monsterTypeId: 'carrion-vulture', count: 1, maxAlive: 5, offsetRange: 260 },
         ] },
-        // ONE major Mass Resurrection: everything put down in the last few seconds
-        // gets up at once, and the tide is allowed to stand two deeper. There is no
+        // ONE major Mass Resurrection: up to three remaining bodies get up at
+        // once, and the tide is allowed to stand two deeper. There is no
         // second wave — a low-health repeat would make the first one meaningless.
         { hpPct: 0.5, actions: [
           { type: 'cast', castMs: 1800, label: 'Mass Resurrection', fx: 'roar', actions: [

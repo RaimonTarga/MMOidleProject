@@ -27,19 +27,23 @@ export interface RuntimeCorpse {
 }
 
 /**
- * How long a corpse stays raisable. Short on purpose: the necromancer's tide has
- * to track the fight happening NOW, not a pile banked minutes ago. Placeholder —
- * the balance pass owns it.
- *
- * Raised from 15s by the boss encounter rework: the Charnel-Crown Sovereign's Mass
- * Resurrection fires on an HP threshold, not on a timer, so at 15s a phase burst
- * routinely found an empty registry and did nothing at all. 30s still cannot bank a
- * pile from a previous pull (the boss fight is longer than that), but it does mean
- * "everything you have put down recently gets back up" is reliably true.
+ * Default corpse lifetime outside encounters that explicitly extend it.
+ * The Sovereign needs longer-lived bodies for its health-triggered resurrection.
  */
 export const CORPSE_TTL_MS = 30_000;
 /** Ring-buffer bound. The oldest corpse is dropped once a node is this full. */
 export const MAX_CORPSES_PER_NODE = 16;
+
+/** Match raise-dead's engagement gate; death or reset restores normal decay. */
+function corpseLifetimeMs(world: World, nodeId: string): number {
+  let lifetime = CORPSE_TTL_MS;
+  for (const monster of world.monsterEntitiesInNode(nodeId)) {
+    if (!monster.hasAggroTarget || monster.hasHealth.hp <= 0 || monster.isRaised) continue;
+    const override = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId)?.raisesDead?.corpseLifetimeMs;
+    if (override !== undefined) lifetime = Math.max(lifetime, override);
+  }
+  return lifetime;
+}
 
 function corpsesFor(world: World, nodeId: string): RuntimeCorpse[] {
   let list = world.corpses.get(nodeId);
@@ -166,12 +170,13 @@ export function buildCorpseViews(
 ): CorpseView[] | undefined {
   const list = world.corpses.get(nodeId);
   if (!list || list.length === 0) return undefined;
+  const lifetime = corpseLifetimeMs(world, nodeId);
   return list.map<CorpseView>((corpse) => ({
     id: corpse.id,
     monsterTypeId: corpse.monsterTypeId,
     x: corpse.pos.x,
     y: corpse.pos.y,
-    remainingMs: Math.max(0, corpse.diedAtMs + CORPSE_TTL_MS - now),
+    remainingMs: Math.max(0, corpse.diedAtMs + lifetime - now),
     ...(corpse.reservedBy ? { reservedBy: corpse.reservedBy } : {}),
   }));
 }
@@ -179,7 +184,8 @@ export function buildCorpseViews(
 /** Drop corpses past their TTL. Runs before the raisers read them. */
 export function updateCorpses(world: World, now: number): void {
   for (const [nodeId, list] of [...world.corpses]) {
-    const kept = list.filter((corpse) => now < corpse.diedAtMs + CORPSE_TTL_MS);
+    const lifetime = corpseLifetimeMs(world, nodeId);
+    const kept = list.filter((corpse) => now < corpse.diedAtMs + lifetime);
     if (kept.length === 0) world.corpses.delete(nodeId);
     else if (kept.length !== list.length) world.corpses.set(nodeId, kept);
   }
