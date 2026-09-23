@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { PROGRESSION_CELLS, type ProgressionCell } from './overnightProgressionSpec';
-import mature from './classBalanceMatureReferences.json';
+const mature = require('./classBalanceMatureReferences.json') as ProgressionCell[];
 export const CLASS_BALANCE_ID='class-balance-candidate-01';
 export type CandidateCell=ProgressionCell & {referenceObservationId:string;referenceSource:string;durationMs:number};
 export const CLASS_BALANCE_CELLS:CandidateCell[]=[];
