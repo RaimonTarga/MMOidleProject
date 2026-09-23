@@ -1,0 +1,67 @@
+{
+  "status": "published",
+  "experimentId": "t4-specialization-screen-01",
+  "publicationRoot": "D:/t4s1pub/reports/player-fast-pass/t4-specialization-screen-01/run-01",
+  "externalRunRoot": "D:/mmo-idle/t4-specialization-screen-01/run-01",
+  "rawJsonlExternal": true,
+  "rawInventoryFiles": 5449,
+  "rawInventoryBytes": 2269526634,
+  "files": [
+    {
+      "path": "REPORT.md",
+      "bytes": 24490,
+      "sha256": "ede3853148bf30627f027d9b5ad0f856a6ecd9183241ae7514b80f060576f88b"
+    },
+    {
+      "path": "manifest.json",
+      "bytes": 1660610,
+      "sha256": "ea13a5e5977a0087efb7ffbb5af04a847fd8614e247cc1634e742635522d36c1"
+    },
+    {
+      "path": "identity.json",
+      "bytes": 147864,
+      "sha256": "7532811d0b22b307e9826cdc9511eef733594242fc540e8ad814b3983621beb2"
+    },
+    {
+      "path": "seal.json",
+      "bytes": 369,
+      "sha256": "e488c3e95a63c22c39987801a8709a26179c38a48445a84f7a038633cb1bdfc9"
+    },
+    {
+      "path": "complete.json",
+      "bytes": 270,
+      "sha256": "313328c48092e4e59890c5c83c75c6b492d98d01eed4e59eafbab8022b14826c"
+    },
+    {
+      "path": "results-summary.json",
+      "bytes": 1456314,
+      "sha256": "68b668a031d4b0879af3a3acfb270e505032c68876021830f9e20ca6bfa44e1b"
+    },
+    {
+      "path": "resolved-builds.json",
+      "bytes": 16484789,
+      "sha256": "712eaaade0541f533e391a3c94e9de7150387864cc848277a9b87f3090e36065"
+    },
+    {
+      "path": "applied-build-details.json",
+      "bytes": 7139925,
+      "sha256": "cc7c765b152003734024d4a8e89aad3c128c0fa552960d148953b9be88c8e447"
+    },
+    {
+      "path": "raw-inventory.json",
+      "bytes": 1374300,
+      "sha256": "1ad7c563e83b254ba0353bf1cb439ca843b43c50f179191b917ec63e85ad9bf6"
+    },
+    {
+      "path": "checks.json",
+      "bytes": 1009,
+      "sha256": "bb240dd98e37e9f488a3ee3939cdcb5d53e4401cce11912ce6a5fe91a95fdd52"
+    },
+    {
+      "path": ".gitattributes",
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    }
+  ],
+  "publicationInventorySelfExcludedFromFiles": true
+}
