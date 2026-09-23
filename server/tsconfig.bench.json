@@ -14,5 +14,5 @@
   // own cleanup. `bossScreen.ts` is listed individually because it is new, it is
   // clean, and an unchecked experiment runner is how a rename bug reaches a frozen
   // packet unnoticed.
-  "include": ["src", "bench", "scripts/bossScreen.ts"]
+  "include": ["src", "bench", "scripts/bossScreen.ts", "scripts/t4ClosingConstruction.ts"]
 }

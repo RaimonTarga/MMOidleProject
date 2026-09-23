@@ -1,0 +1,6 @@
+# Preserve the exact executable packet bytes across publication checkouts.
+/scripts/t4-overnight-closing-pass.mjs -text
+/server/bench/balance/t4ClosingSpec.ts -text
+/server/bench/balance/t4SpecializationSpec.ts -text
+/server/scripts/t4ClosingConstruction.ts -text
+/server/tsconfig.bench.json -text
