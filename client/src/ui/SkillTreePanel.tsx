@@ -46,6 +46,25 @@ function costLabel(cost: number): string {
   return `${cost} pt${cost !== 1 ? 's' : ''}`;
 }
 
+/**
+ * A mechanic description belongs with the mechanic rows, not above the stats
+ * table. Path nodes (the player-facing Tier 4 choices) and Conduit profiles
+ * are included even when their runtime behavior is authored outside the
+ * numeric `mechanicEffects` map.
+ */
+function classMechanicSummaryFor(node: SkillNode, mechanicLineCount: number): string | undefined {
+  if (isPlaceholder(node)) return undefined;
+  if (
+    mechanicLineCount > 0
+    || node.tier === 0
+    || node.tier >= 3
+    || node.classId === 'summoner-root'
+  ) {
+    return nodeDescription(node);
+  }
+  return undefined;
+}
+
 type NodeStatus = 'unlocked' | 'available' | 'locked';
 
 interface SkillPlayer {
@@ -192,6 +211,7 @@ function NodeDesc({
 
   const status = getNodeStatus(node, player);
   const { stats, mechanics } = skillNodeLines(node);
+  const classMechanicSummary = classMechanicSummaryFor(node, mechanics.length);
   const check = status === 'locked' ? unlockCheck(node, player) : null;
   const blocked = check && !check.ok ? check.reason : undefined;
 
@@ -205,7 +225,7 @@ function NodeDesc({
 
       <div className="skill-desc__body">
         <div className="skill-desc__preview"><SkillCharacterPreview node={node} owned={player?.unlockedSkills ?? []} /></div>
-        {node.description && <div className="skill-desc__text">{nodeDescription(node)}</div>}
+        {node.description && !classMechanicSummary && <div className="skill-desc__text">{nodeDescription(node)}</div>}
         <ClassIdentity key={node.id} classId={node.classId ?? node.id} expanded={node.tier === 0} />
         {node.tier === 2 && <p className="skill-desc__text">Range changes your fighting distance and head crest. The body keeps your chosen style.</p>}
         <div className="skill-desc__effects">
@@ -214,7 +234,13 @@ function NodeDesc({
             lines={stats}
             empty={mechanics.length === 0 ? 'No direct stat changes.' : undefined}
           />
-          <DetailLines title="Class mechanic changes" lines={mechanics} explain />
+          <DetailLines
+            title="Class mechanics"
+            className="detail-lines--class-mechanics"
+            intro={classMechanicSummary}
+            lines={mechanics}
+            explain
+          />
         </div>
       </div>
 

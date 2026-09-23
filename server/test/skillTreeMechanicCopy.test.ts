@@ -14,6 +14,9 @@ const requiredFragments: Record<string, string[]> = {
   "energy-root": ["Class mechanic", "30% of your max HP"],
   "dot-root": ["Class mechanics", "18% DoT resistance", "10% of incoming direct hits"],
   "summoner-root": ["maximum formation: 4", "before relic expansion"],
+  "summoner-range-close": ["18px", "×1.25 summon HP", "55%"],
+  "summoner-range-mid": ["96px", "50% to the Conduit"],
+  "summoner-range-far": ["190px", "×0.70 summon HP", "×0.85"],
 
   "summoner-light": ["maximum summons before relic expansion: 6", "(+2 from Conduit's 4)", "66% total summon-HP budget", "×1.20"],
   "summoner-balanced": ["maximum summons before relic expansion: 5", "(+1 from Conduit's 4)", "100% total summon-HP budget"],
@@ -38,6 +41,16 @@ const requiredFragments: Record<string, string[]> = {
   "energy-light": ["Energy change", "20 energy per hit", "×1.5 damage"],
   "energy-balanced": ["Energy change", "14 energy per hit", "×2 damage"],
   "energy-heavy": ["Energy change", "10 energy per hit", "×6 damage"],
+
+  "cooldown-balanced-t3-b": ["8 flat damage"],
+  "cooldown-heavy-t3-a": ["fixed 8s window"],
+  "cooldown-heavy-t3-b": ["4s", "4× instead of 3.5×"],
+  "reload-light-t3-c": ["at or above 95% health"],
+  "reload-balanced-t3-b": ["40% of normal attack damage"],
+  "energy-heavy-t3-a": ["20 energy per hit"],
+  "dot-light-t3-b": ["1.5s live total"],
+  "dot-balanced-t3-a": ["1.25× the max-stack DoT damage"],
+  "dot-heavy-t3-c": ["1.05× frost multiplier"],
 };
 
 for (const [id, fragments] of Object.entries(requiredFragments)) {
@@ -49,6 +62,18 @@ for (const [id, fragments] of Object.entries(requiredFragments)) {
       `${id}: mechanic copy is missing "${fragment}"`,
     );
   }
+}
+
+// Tier 3 is the player-facing Tier 4 path. These are not placeholder nodes:
+// every implemented path choice must carry class-mechanic copy even when its
+// runtime behavior is authored outside numeric `mechanicEffects` (as Conduit
+// specializations are).
+const implementedPathNodes = [...SKILL_TREE.values()].filter((node) => (
+  node.tier === 3 && !node.description.startsWith('[Placeholder]')
+));
+assert(implementedPathNodes.length === 54, `expected 54 implemented Tier 4 path nodes, found ${implementedPathNodes.length}`);
+for (const node of implementedPathNodes) {
+  assert(node.description.trim().length > 20, `${node.id}: Tier 4 class-mechanic copy is missing`);
 }
 
 console.log("skillTreeMechanicCopy: ok");

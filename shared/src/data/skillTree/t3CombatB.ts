@@ -105,7 +105,7 @@ export const t3CombatEntriesB = [
     id: 'energy-heavy-t3-a', name: 'Voidwalker', tier: 3,
     classId: 'energy-root', subVariantId: 'heavy',
     parent: 'energy-heavy', children: [],
-    description: 'Doubles your max energy (200), and +100 more for each tier beyond this one (300 next tier, 400 after, …). Energy generation accelerates the fuller the pool. If a basic hit would kill via the discharge\'s projected damage, it triggers an immediate early discharge, spending the stored energy.',
+    description: 'Doubles your max energy (200), and +100 more for each tier beyond this one (300 next tier, 400 after, …). You gain 20 energy per hit on the live heavy path, and generation accelerates the fuller the pool. If a basic hit would kill via the discharge\'s projected damage, it triggers an immediate early discharge, spending the stored energy.',
     cost: 1, statEffects: {},
     mechanicEffects: {
       'energy.singularity-execute': 1,
@@ -162,7 +162,7 @@ export const t3CombatEntriesB = [
     id: 'dot-light-t3-b', name: 'Cultist', tier: 3,
     classId: 'dot-root', subVariantId: 'light',
     parent: 'dot-light', children: [],
-    description: 'Your doom has no stack limit. The first 8 stacks deal full damage per tick. Each additional stack beyond 8 adds damage at 50% effectiveness, naturally plateauing around 30–40 stacks. Ticks twice as fast (same total damage). Rewards long, sustained fights.',
+    description: 'Your doom has no stack limit. The first 8 stacks deal full damage per tick. Each additional stack beyond 8 adds damage at 50% effectiveness, naturally plateauing around 30–40 stacks. The light frame\'s 1s tick interval gains 500ms (1.5s live total), preserving the same total damage while extending the cadence. Rewards long, sustained fights.',
     cost: 1, statEffects: {},
     mechanicEffects: {
       'dot.eternal-doom': 1,
@@ -192,7 +192,7 @@ export const t3CombatEntriesB = [
     id: 'dot-balanced-t3-a', name: 'Pyromancer', tier: 3,
     classId: 'dot-root', subVariantId: 'balanced',
     parent: 'dot-balanced', children: [],
-    description: 'Each hit applies 2 burn stacks instead of 1, but each stack deals 50% of normal tick damage. Hitting a target already at max stacks deals bonus direct damage equal to 2× the max-stack DoT damage.',
+    description: 'Each hit applies 2 burn stacks instead of 1, but each stack deals 50% of normal tick damage. Hitting a target already at max stacks deals bonus direct damage equal to 1.25× the max-stack DoT damage.',
     cost: 1, statEffects: {},
     mechanicEffects: {
       'dot.fan-the-flames': 1,
@@ -232,7 +232,7 @@ export const t3CombatEntriesB = [
     id: 'dot-heavy-t3-a', name: 'Icebreaker', tier: 3,
     classId: 'dot-root', subVariantId: 'heavy',
     parent: 'dot-heavy', children: [],
-    description: 'Below max frost stacks, attacks convert at the normal 70%. At max stacks (3), your direct attacks deal full damage (0% conversion) while the frost keeps ticking — and the target takes an 5% damage-reduction debuff, so the full-power hits land even harder.',
+    description: 'Below max frost stacks, attacks convert at the normal 70%. At max stacks (3), your direct attacks deal full damage (0% conversion) while the frost keeps ticking — and the target takes a 5% damage-reduction debuff, so the full-power hits land even harder.',
     cost: 1, statEffects: {},
     // TODO(balance): verify full-power direct hits interact correctly with high-plating enemies.
     mechanicEffects: {
@@ -263,7 +263,7 @@ export const t3CombatEntriesB = [
     id: 'dot-heavy-t3-c', name: 'Wind Spirit', tier: 3,
     classId: 'dot-root', subVariantId: 'heavy',
     parent: 'dot-heavy', children: [],
-    description: 'Your frost conversion becomes total: 100% of attack damage is converted into DoT, with a stronger frost multiplier. Hitting a target already at max frost stacks applies Frostbite, increasing DoT damage taken by 2% per stack, up to 10 stacks for 4 seconds.',
+    description: 'Your frost conversion becomes total: 100% of attack damage is converted into DoT, with a 1.05× frost multiplier on the live path. Hitting a target already at max frost stacks applies Frostbite, increasing DoT damage taken by 2% per stack, up to 10 stacks for 4 seconds.',
     cost: 1, statEffects: {},
     mechanicEffects: {
       'dot.wind-spirit': 1,

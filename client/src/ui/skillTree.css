@@ -580,11 +580,14 @@
 .skill-desc__body::-webkit-scrollbar-track { background: transparent; }
 .skill-desc__body::-webkit-scrollbar-thumb { background: rgba(80, 72, 52, 0.45); border-radius: 3px; }
 
-/* Stats and mechanics side by side while there is room: a node grants both, and
-   stacking them pushed the mechanics below the fold on the taller nodes. */
+/* Keep Stats and class mechanics in a predictable reading order: the authored
+   mechanic contract follows the numeric stat deltas instead of competing with
+   them in a second column. */
 .skill-desc__effects {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  /* Keep the mechanics block directly below Stats so the player reads the
+     numeric deltas first and the class-behavior contract second. */
+  grid-template-columns: minmax(0, 1fr);
   gap: 4px 20px;
   margin-top: 8px;
 }

@@ -17,6 +17,19 @@
   text-transform: uppercase;
 }
 
+.detail-lines--class-mechanics .detail-lines__title {
+  color: var(--hud-primary-strong);
+}
+
+.detail-lines__intro {
+  margin: 0 4px 4px;
+  color: var(--hud-text-muted);
+  font-family: inherit;
+  font-size: 11px;
+  font-style: normal;
+  line-height: 1.45;
+}
+
 .detail-lines__title--class-specific {
   border-top: 1px solid #ffffff20;
   margin-top: 8px;

@@ -173,7 +173,7 @@ export const rootsAndFramesEntries = [
     id: 'summoner-root', name: 'Conduit', tier: 0,
     classId: 'summoner-root', subVariantId: null,
     parent: null, children: ['summoner-light', 'summoner-balanced', 'summoner-heavy'],
-    description: 'Class mechanic — maximum formation: 4 persistent summons before relic expansion. They fight in your place: your weapon sets their damage and cadence, while every body divides one shared formation offense and secondary-effect budget. Fallen slots rebuild one at a time, costing HP without crossing your safety floor.',
+    description: 'Class mechanic — maximum formation: 4 persistent summons before relic expansion. They fight in your place: your weapon sets their damage and cadence, while every body divides one shared formation offense and secondary-effect budget. Fallen slots rebuild one at a time from a 3.5s base (2.5s floor), costing 30% of the summon\'s max HP without taking you below 20% of your max HP.',
     cost: 1, statEffects: {
       attackPct: 0.08, maxHpPct: 0.08,
       attackSpeedPct: 0.04, moveSpeedPct: 0.05,
@@ -626,7 +626,7 @@ export const rootsAndFramesEntries = [
     id: 'summoner-range-close', name: 'Vigil', tier: 2,
     classId: 'summoner-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Your summons keep watch at your shoulder. Durable melee bodies provide the strongest interception, so each reconstruction is expensive. The Conduit keeps the smallest share of the defensive budget.',
+    description: 'Your summons keep watch at your shoulder. Melee bodies attack at 18px, gain ×1.25 summon HP and ×1.50 size, redirect 55% of incoming damage, and leave 25% of the defensive budget on the Conduit. Reconstructions keep the base interval, so this is the most protective but most expensive formation.',
     cost: 1, statEffects: {
       maxHpPct: 0.06, platingPct: 0.04,
     },
@@ -636,7 +636,7 @@ export const rootsAndFramesEntries = [
     id: 'summoner-range-mid', name: 'Procession', tier: 2,
     classId: 'summoner-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Your summons move with you in ordered formation. Short-ranged bodies maintain a reliable orbit with moderate durability, interception, and reconstruction cost.',
+    description: 'Your summons move with you in ordered formation. Reach bodies attack at 96px from a 72px preferred distance, use ×1.25 size, redirect 30% of incoming damage, and split defense evenly (50% to the Conduit, 50% to the formation). Reconstruction keeps the base interval.',
     cost: 1, statEffects: {
       maxHpPct: 0.10, platingPct: 0.06, moveSpeedPct: 0.02,
     },
@@ -645,7 +645,7 @@ export const rootsAndFramesEntries = [
     id: 'summoner-range-far', name: 'Harrier', tier: 2,
     classId: 'summoner-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Your summons are cast out ahead. Fragile ranged bodies kite at distance and offer little interception. Cheap bodies leave much more of the defensive budget on the Conduit.',
+    description: 'Your summons are cast out ahead. Ranged bodies attack at 190px from a 165px preferred distance, have ×0.70 summon HP and ×1.12 movement, redirect only 8% of incoming damage, and leave 75% of the defensive budget on the Conduit. Their reconstruction interval is ×0.85 of base.',
     cost: 1, statEffects: {
       maxHpPct: 0.18, platingPct: 0.12, moveSpeedPct: 0.10, damageReduction: 0.02,
     },

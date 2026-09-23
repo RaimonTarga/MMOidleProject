@@ -151,7 +151,7 @@ export const t3CombatEntriesA = [
     id: 'cooldown-balanced-t3-b', name: 'Dynamo', tier: 3,
     classId: 'cooldown-root', subVariantId: 'balanced',
     parent: 'cooldown-balanced', children: [],
-    description: 'Every second your execution cooldown ticks down, you gain a stack of accumulated power. Each stack adds 2 damage to regular attacks and your execution; the execution then spends all stacks.',
+    description: 'Every second your execution cooldown ticks down, you gain a stack of accumulated power. Each stack adds 8 flat damage to regular attacks and your execution; the execution then spends all stacks.',
     cost: 1, statEffects: {},
     mechanicEffects: {
       'cooldown.battery': 1,
@@ -179,7 +179,7 @@ export const t3CombatEntriesA = [
     id: 'cooldown-heavy-t3-a', name: 'Avenger', tier: 3,
     classId: 'cooldown-root', subVariantId: 'heavy',
     parent: 'cooldown-heavy', children: [],
-    description: 'Your execution deals bonus damage equal to a portion of all damage you have taken since your last execution (with a minimum floor so it never feels dead). The fixed 9s window makes the payoff predictable.',
+    description: 'Your execution deals bonus damage equal to a portion of all damage you have taken since your last execution (with a minimum floor so it never feels dead). The heavy frame\'s fixed 8s window makes the payoff predictable.',
     cost: 1, statEffects: {},
     mechanicEffects: { 'cooldown.vengeance': 1, 'cooldown.vengeance-mult': 1.5, 'cooldown.vengeance-floor': 30 },
   }],
@@ -187,9 +187,9 @@ export const t3CombatEntriesA = [
     id: 'cooldown-heavy-t3-b', name: 'Destroyer', tier: 3,
     classId: 'cooldown-root', subVariantId: 'heavy',
     parent: 'cooldown-heavy', children: [],
-    description: 'Normal attacks deal no damage. Your execution fires on a greatly shortened cooldown (4s) and hits for far more (5× instead of 3×). On-hit gear and charm triggers still fire on regular attacks. Out of combat, your execution stays primed — the first strike on a new target is an execution."',
+    description: 'Normal attacks deal no damage. Your execution fires on a greatly shortened cooldown (4s) and hits for far more (4× instead of 3.5×). On-hit gear and charm triggers still fire on regular attacks. Out of combat, your execution stays primed — the first strike on a new target is an execution.',
     cost: 1, statEffects: {},
-    // Heavy frame is 9000ms / 3.5×; deltas land it at 4000ms / 5.0× (3.5 + 1.5).
+    // Heavy frame is 8000ms / 3.5×; deltas land it at 4000ms / 4.0× (3.5 + 0.5).
     mechanicEffects: { 'cooldown.singular-extraction': 1, 'cooldown.empowered-cd-ms': -4000, 'cooldown.empowered-mult': 0.50, 'cooldown.singular-no-target-ms': 4000 },
   }],
   ['cooldown-heavy-t3-c', {
@@ -230,7 +230,7 @@ export const t3CombatEntriesA = [
     id: 'reload-light-t3-c', name: 'Sniper', tier: 3,
     classId: 'reload-root', subVariantId: 'light',
     parent: 'reload-light', children: [],
-    description: 'Loads only 3 heavy shells and fires at a hard-set 0.5 APS, ignoring weapon attack speed entirely. Your bonus attack-speed stat is converted into per-shot damage instead, and shots deal 2× damage against full-health targets. Fast 1.2s reload.',
+    description: 'Loads only 3 heavy shells and fires at a hard-set 0.5 APS, ignoring weapon attack speed entirely. Your bonus attack-speed stat is converted into per-shot damage instead, and shots deal 2× damage against targets at or above 95% health. Fast 1.2s reload.',
     cost: 1, statEffects: {
       attackRange: 100,
     },
@@ -259,7 +259,7 @@ export const t3CombatEntriesA = [
     id: 'reload-balanced-t3-b', name: 'Blunderbuss', tier: 3,
     classId: 'reload-root', subVariantId: 'balanced',
     parent: 'reload-balanced', children: [],
-    description: 'Fires all 10 rounds at once as a point-blank volley, then reloads (2s). Close range mandatory — the reach penalty is preserved. Each pellet deals normal damage; the burst shoves enemies back.',
+    description: 'Fires all 10 rounds at once as a point-blank volley, then reloads (2s). Close range mandatory — the reach penalty is preserved. Each pellet deals 40% of normal attack damage; the burst shoves enemies back.',
     cost: 1, statEffects: { attackRange: -100 },
     mechanicEffects: {
       'reload.blunderbuss': 1,

@@ -29,7 +29,7 @@ export function SkillBuildView({ owned }: { owned: string[] }) {
     {summary.nodes.map(node => <details key={node.id} className="skill-build-choice">
       <summary><SkillEmblem node={node} size={24} />{node.description.startsWith('[Placeholder]') ? `Tier ${node.tier} · In development` : node.name}</summary>
       <p>{node.description.startsWith('[Placeholder]') ? 'This choice currently grants no effects.' : node.description}</p>
-      <DetailLines title="Mechanics added by this choice" lines={skillNodeLines(node).mechanics} explain />
+      <DetailLines title="Class mechanics" lines={skillNodeLines(node).mechanics} explain />
     </details>)}
   </div>;
 }

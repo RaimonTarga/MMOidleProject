@@ -46,6 +46,7 @@ export function DetailLines({
   lines,
   title,
   className,
+  intro,
   empty,
   explain,
 }: {
@@ -53,11 +54,13 @@ export function DetailLines({
   /** Section heading, e.g. "Effects". Omit for an unlabelled block. */
   title?: string;
   className?: string;
+  /** Short authored explanation shown directly below the section heading. */
+  intro?: string;
   /** Shown instead of the list when there is nothing to report. */
   empty?: string;
   explain?: boolean;
 }) {
-  if (lines.length === 0) {
+  if (lines.length === 0 && !intro) {
     return empty ? <div className="detail-lines__empty">{empty}</div> : null;
   }
 
@@ -67,6 +70,7 @@ export function DetailLines({
   return (
     <div className={['detail-lines', className].filter(Boolean).join(' ')}>
       {title && <div className="detail-lines__title">{title}</div>}
+      {intro && <p className="detail-lines__intro">{intro}</p>}
       {regularLines.map((line) => <DetailRow key={line.key} line={line} explain={explain} />)}
       {classSpecificLines.length > 0 && <>
         <div className="detail-lines__title detail-lines__title--class-specific">Class-specific</div>
