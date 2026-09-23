@@ -1,0 +1,135 @@
+{
+  "externalQualificationFilesVerified": 80,
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    {
+      "path": "BRIEF.md",
+      "bytes": 34189,
+      "sha256": "26d874ed224332c6e7d9c34724adb7cc750cc8b70fecac9222fcdaa4d6611a95"
+    },
+    {
+      "path": "CATALOGUE.md",
+      "bytes": 50770,
+      "sha256": "1b199acaa4b88b450dc3fbc23c228a936be933c32cad27fd030a5a733c25b0e7"
+    },
+    {
+      "path": "HISTORICAL_STALL.md",
+      "bytes": 1566,
+      "sha256": "051d2b9ab3543d74ce4390f497b4db2e6e5ab0e6ee33662da771c16bf4defd2a"
+    },
+    {
+      "path": "LOADOUT_CHANGES.md",
+      "bytes": 57652,
+      "sha256": "63d8fe3ce9d9c528b833f6a73c8be5f48cc1184d0bab2cd5a929ad4ba4071737"
+    },
+    {
+      "path": "LUNA_RUN.md",
+      "bytes": 9387,
+      "sha256": "4e94c061c7ec2d493516bbd1788e767613049e4725ff2e5e1c99d63e2d7b1437"
+    },
+    {
+      "path": "ORDERED_CASES.tsv",
+      "bytes": 43052,
+      "sha256": "543932a136e8c53d7f3e4a20a5b0a1978e337f81ed49f3d19ea574f9c1b46e81"
+    },
+    {
+      "path": "PREPARATION.md",
+      "bytes": 3320,
+      "sha256": "760751bbc22445be2ae44c81e15b93bbd47a4b486e3d2951643cfc539f79b3ae"
+    },
+    {
+      "path": "SOURCE_COMPARISON.md",
+      "bytes": 2177,
+      "sha256": "aff9c375c143014a413ddff44033035f8eeba47325ae3bc9694508d047b2ccaf"
+    },
+    {
+      "path": "baseline-support.diff",
+      "bytes": 1343,
+      "sha256": "d5d29945b41510bf789d6b62f441d64f185f7125cead0cfa89f0ffac7e34e630"
+    },
+    {
+      "path": "candidate-identity.json",
+      "bytes": 148061,
+      "sha256": "5d2056d04ad42c586da2ee49020a6313ab18cade6c9731612236e881eb403dfc"
+    },
+    {
+      "path": "control-identity.json",
+      "bytes": 148061,
+      "sha256": "5d2056d04ad42c586da2ee49020a6313ab18cade6c9731612236e881eb403dfc"
+    },
+    {
+      "path": "duelist-historical-stall.json",
+      "bytes": 4213,
+      "sha256": "4a625cb5430981abfdc842bba67602bc6449124f169d13622c985a2f604cd0fe"
+    },
+    {
+      "path": "historical-context.json",
+      "bytes": 257646,
+      "sha256": "9e360aae0f66eb98689332ae8288759125f800723f0b303d06c165914193aa38"
+    },
+    {
+      "path": "identity.json",
+      "bytes": 301383,
+      "sha256": "eae4b7a1b07396086e55913def2b61e79ecc4d89cb9cce5ac912734d87f439b6"
+    },
+    {
+      "path": "loadout-diff.json",
+      "bytes": 359784,
+      "sha256": "b22f3de8c2eb401604e5891b3bd94f6437799203550b5fe1f7d62f225e95db74"
+    },
+    {
+      "path": "manifest.json",
+      "bytes": 1826713,
+      "sha256": "37e49db8ff95a1346cf3ad0390714366f8e5b47e86c1c9ef9050be0e1311616c"
+    },
+    {
+      "path": "qualification-complete.json",
+      "bytes": 398,
+      "sha256": "d458473fbc6c03327e35aad8092c79d8462ea871f39eea8c4a3bb165459b7543"
+    },
+    {
+      "path": "qualification-raw-inventory.json",
+      "bytes": 9077,
+      "sha256": "ef3314d97377a8ffc9d1817fe31f979deb9c7a1c2c5f6344fd24e4789ccc103b"
+    },
+    {
+      "path": "qualified.json",
+      "bytes": 296,
+      "sha256": "6513020410fab38652ce09799b4fd49c1294b435a4ccc7a6ac0d6c7deb67ad3e"
+    },
+    {
+      "path": "receipt-check-complete.json",
+      "bytes": 404,
+      "sha256": "06e3d01e57ac20bb83d1ff3dac308a25e41bf2f13f6619ae387f114fe921b23b"
+    },
+    {
+      "path": "receipt-check-raw-inventory.json",
+      "bytes": 9077,
+      "sha256": "a2d99b83b888bfcdea9b9bbbef05b9c7dc2e0835a80f4fa91b32e290f6ff19f9"
+    },
+    {
+      "path": "receipt-checked.json",
+      "bytes": 296,
+      "sha256": "d889dbdf8249a86e721e86f38f40fd855fc00544fb13db4456199be4c9e26e06"
+    },
+    {
+      "path": "resolved-builds.json",
+      "bytes": 18173598,
+      "sha256": "165f9a16f7e3ae604d689ddcae5e5b8b36af509c556dedbe93ca49b1bbd66d05"
+    },
+    {
+      "path": "seal.json",
+      "bytes": 369,
+      "sha256": "f38059dcb66477ac88b8c5a7d14307e44edc5c292420fecc9a08d87557f8ee72"
+    },
+    {
+      "path": "validation.json",
+      "bytes": 1552,
+      "sha256": "ccd9de289a517cc3e26e5e67807bd39052bbf3dc5ac22932a8ddcdd5d4f78ece"
+    }
+  ]
+}

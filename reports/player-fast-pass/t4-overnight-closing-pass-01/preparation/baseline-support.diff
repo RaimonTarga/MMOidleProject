@@ -1,0 +1,26 @@
+diff --git a/server/src/systems/player/progression/rewards.ts b/server/src/systems/player/progression/rewards.ts
+index 15471a5d..20fe74bf 100644
+--- a/server/src/systems/player/progression/rewards.ts
++++ b/server/src/systems/player/progression/rewards.ts
+@@ -113,7 +113,7 @@ function applyBiomeXP(
+   // growing, so a legacy save can sit ABOVE its cap — it keeps that level and the Global
+   // Mastery it confers (globalMastery() sums raw biomeLevel and has no ceiling), it just
+   // banks no further XP here. Nothing below writes a lower level.
+-  if (prevLevel >= levelCap) {
++  if (world.fixedBiomeMasteryPlayers.has(entity.isPlayer.id) || prevLevel >= levelCap) {
+     return { xpGain: 0, prevLevel, newLevel: prevLevel, unlockedRecipeIds: [] };
+   }
+ 
+diff --git a/server/src/world/World.ts b/server/src/world/World.ts
+index 11357887..e15d32b2 100644
+--- a/server/src/world/World.ts
++++ b/server/src/world/World.ts
+@@ -383,6 +383,8 @@ export class World {
+    * Set by the balance bench only so full-node clears can complete without repop.
+    */
+   suppressRepopulation = false;
++  /** Fixed synthetic survey checkpoints only; live worlds leave this empty. */
++  fixedBiomeMasteryPlayers = new Set<string>();
+ 
+   readonly nextMonsterIdByNode = new Map<string, number>();
+   readonly nextMinionIdByOwner = new Map<string, number>();

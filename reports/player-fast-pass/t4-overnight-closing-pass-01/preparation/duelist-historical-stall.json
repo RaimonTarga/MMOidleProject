@@ -1,0 +1,171 @@
+{
+  "measuredSha": "22a349bf7dab6e42a412a231444fa4b8df41f28e",
+  "externalSummary": "D:/mmo-idle/corrected-baseline-followup-01/run-01/cbf01-t4-slinger-light-a-F1-s101033/artifacts/cbf01-t4-slinger-light-a-F1-s101033-s101033/summary.json",
+  "externalSamples": "D:/mmo-idle/corrected-baseline-followup-01/run-01/cbf01-t4-slinger-light-a-F1-s101033/artifacts/cbf01-t4-slinger-light-a-F1-s101033-s101033/samples.jsonl",
+  "samplesSha256": "445df4500321023e1124ee90c7b5d112f43d6a3a5b30dc8e4bbf5e3bb1b2fdcc",
+  "interval": [
+    300000,
+    600000
+  ],
+  "samples": 300,
+  "uniquePositions": 300,
+  "targets": {
+    "null": 300
+  },
+  "selected": {
+    "\"node-t4-volcanic-01_monster-11\"": 165,
+    "\"node-t4-volcanic-01_monster-42\"": 60,
+    "\"node-t4-volcanic-01_monster-47\"": 75
+  },
+  "phases": {
+    "\"OUT_OF_COMBAT\"": 300
+  },
+  "blocked": {
+    "\"\"": 300
+  },
+  "first": {
+    "atMs": 300000,
+    "pos": {
+      "x": 1335.7920594296797,
+      "y": 2266.7953621567967
+    },
+    "target": null,
+    "selectedTargetId": "node-t4-volcanic-01_monster-11",
+    "autoIntent": {
+      "kind": "attack",
+      "targetMonsterTypeId": "ember-skink",
+      "reason": "Nearest eligible target",
+      "source": "",
+      "matchedRunes": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ]
+    },
+    "motion": {
+      "direction": {
+        "x": -0.9835505141570233,
+        "y": 0.1806332917860248
+      },
+      "magnitude": 23.312960384955048
+    },
+    "movement": {
+      "goal": {
+        "x": 1312.8625852565349,
+        "y": 2271.0064589324083
+      },
+      "waypoints": [
+        {
+          "x": 1312.8625852565349,
+          "y": 2271.0064589324083
+        }
+      ],
+      "mover": "player",
+      "avoidHazards": true,
+      "dynamicHazardSignature": ""
+    },
+    "blockedApproach": "",
+    "hp": 482,
+    "barrier": 195,
+    "lastAttackAt": 1800000161100,
+    "lastOutgoingDamageMs": 161100
+  },
+  "last": {
+    "atMs": 599000,
+    "pos": {
+      "x": 1345.6852092097824,
+      "y": 2268.5247819851043
+    },
+    "target": null,
+    "selectedTargetId": "node-t4-volcanic-01_monster-47",
+    "autoIntent": {
+      "kind": "attack",
+      "targetMonsterTypeId": "ember-skink",
+      "reason": "Nearest eligible target",
+      "source": "",
+      "matchedRunes": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ]
+    },
+    "motion": {
+      "direction": {
+        "x": -0.9723235802653996,
+        "y": -0.23363830007058983
+      },
+      "magnitude": 585.5706611568911
+    },
+    "movement": {
+      "goal": {
+        "x": 776.321047455337,
+        "y": 2131.713048141197
+      },
+      "waypoints": [
+        {
+          "x": 776.321047455337,
+          "y": 2131.713048141197
+        }
+      ],
+      "mover": "player",
+      "avoidHazards": true,
+      "dynamicHazardSignature": ""
+    },
+    "blockedApproach": "",
+    "hp": 482,
+    "barrier": 195,
+    "lastAttackAt": 1800000161100,
+    "lastOutgoingDamageMs": 161100
+  },
+  "endpointWork": [
+    {
+      "atMs": 300000,
+      "work": {
+        "kills": 35,
+        "firstKillMs": 4900,
+        "hpDamage": 61286,
+        "absorbed": 3252,
+        "damageEvents": 353,
+        "lastKillMs": 161100,
+        "lastHpProgressMs": 161100,
+        "longestKillGapMs": 138900,
+        "longestHpProgressGapMs": 138900
+      }
+    },
+    {
+      "atMs": 600000,
+      "work": {
+        "kills": 35,
+        "firstKillMs": 4900,
+        "hpDamage": 61286,
+        "absorbed": 3252,
+        "damageEvents": 353,
+        "lastKillMs": 161100,
+        "lastHpProgressMs": 161100,
+        "longestKillGapMs": 438900,
+        "longestHpProgressGapMs": 438900
+      }
+    }
+  ],
+  "unfinishedDamagedTargets": [],
+  "motionSamples": 300,
+  "distinctMotionSamples": 285
+}

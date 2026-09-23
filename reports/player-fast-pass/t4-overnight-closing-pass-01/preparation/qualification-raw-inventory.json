@@ -1,0 +1,202 @@
+[
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101009-V\\artifacts\\complete.json",
+    "bytes": 39,
+    "sha256": "9bca596cbd789d9b98b203015f2b87d550533e541017be65f98eee4d8d4aca8d"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101009-V\\artifacts\\index.json",
+    "bytes": 2310989,
+    "sha256": "72a7a9f251f93e53df64ad3f0dd19fa04434a17dea1b7fd2a94d4a385cab6dc5"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101009-V\\artifacts\\manifest.json",
+    "bytes": 210682,
+    "sha256": "cf30a9d50bd5f6d5250012f0d7e93b992fe3faa681dfd19bd3f01e25401d9cbe"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101009-V\\process.json",
+    "bytes": 713,
+    "sha256": "8f0a1d8b40475d6285ca97910b6c877fcd98ab139755b7ebd6d4fc5af09887bc"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101009-V\\process.log",
+    "bytes": 2763,
+    "sha256": "e1b357c15b8ec7dc78b989a1681321c5b3b939218343fc39107c9892e82a1619"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101009-T\\artifacts\\complete.json",
+    "bytes": 39,
+    "sha256": "5f9496b59183f2783eac6e0b75e929d01d3bdf04b166232363412da16c7a7a35"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101009-T\\artifacts\\index.json",
+    "bytes": 2194650,
+    "sha256": "a1357aab7797f8ec235ac371e346f70a35c47d6e667988dc3288d82dca31d367"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101009-T\\artifacts\\manifest.json",
+    "bytes": 239193,
+    "sha256": "60f90dd45df8ed09d3402683245836a71d6cb0bd8d39ba63c9edd7a63eba41c3"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101009-T\\process.json",
+    "bytes": 714,
+    "sha256": "e4294789e865afa90d637b6a5aa0bfc9fd653af76467b5f04f832e8fca4fbaee"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101009-T\\process.log",
+    "bytes": 3149,
+    "sha256": "5bee278311a5932871a8cf30921d8d8d8fd31d5a35597f04b14a0ac383c9e156"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101009-D\\artifacts\\complete.json",
+    "bytes": 39,
+    "sha256": "9bca596cbd789d9b98b203015f2b87d550533e541017be65f98eee4d8d4aca8d"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101009-D\\artifacts\\index.json",
+    "bytes": 1930692,
+    "sha256": "e456b80324b5871a4d52db58e27690d0f3bdbd1681e7a8b3ebcc2cc9247c21ea"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101009-D\\artifacts\\manifest.json",
+    "bytes": 218571,
+    "sha256": "77961807276008464382f56b3471ca5ce8a686e2f200d4f90db2efc403e05b07"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101009-D\\process.json",
+    "bytes": 714,
+    "sha256": "cfcf5edb345126195f62c133c2a978407252eb48164e2f218cb5f802557d1561"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101009-D\\process.log",
+    "bytes": 2763,
+    "sha256": "08cbf03f6efa64476d120d8457fd846dcef58970c6386b1d94583906de0098bd"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101009-M\\artifacts\\complete.json",
+    "bytes": 143,
+    "sha256": "5a9df0ca9538c142e025e5ae09f102033633344893e5f7adf6768b6034b9bef0"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101009-M\\artifacts\\index.json",
+    "bytes": 1900245,
+    "sha256": "51891bf8fa24b8859238f20ab46da9cd9de5ed52c3619c2f51baea73a2578369"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101009-M\\artifacts\\manifest.json",
+    "bytes": 246278,
+    "sha256": "6b01995d6df774dda815ba007701c1f8a3b439d2d983b6c2c60986c35f7e2acd"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101009-M\\process.json",
+    "bytes": 715,
+    "sha256": "e3421017101fb0f63ba7e81f6e0684e649bee55f987b4b80cd6ba2d2427164ac"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101009-M\\process.log",
+    "bytes": 3226,
+    "sha256": "c939159373fc908bac18217e0f2c9f0443004fb999ab733ef0b328c43d6151d3"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101033-V\\artifacts\\complete.json",
+    "bytes": 39,
+    "sha256": "9bca596cbd789d9b98b203015f2b87d550533e541017be65f98eee4d8d4aca8d"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101033-V\\artifacts\\index.json",
+    "bytes": 2381567,
+    "sha256": "1e7932a170d80e931289544adf3ae58323b04237bbcd15db76e95352138ace9a"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101033-V\\artifacts\\manifest.json",
+    "bytes": 210682,
+    "sha256": "e8bb6d42f08bdbdaadeb1cdc09e34a2557c3057401f068f84725aaa587589d2c"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101033-V\\process.json",
+    "bytes": 714,
+    "sha256": "d02fdc799eb20f3f62b6149f684b30700acd5ac840e52626f41e98f664f776a8"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101033-V\\process.log",
+    "bytes": 2763,
+    "sha256": "d010b64f2976add6ba77a6277d9c7819c87c6a4e5c28abb977bc815c5ce5b41f"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101033-T\\artifacts\\complete.json",
+    "bytes": 39,
+    "sha256": "5f9496b59183f2783eac6e0b75e929d01d3bdf04b166232363412da16c7a7a35"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101033-T\\artifacts\\index.json",
+    "bytes": 2193491,
+    "sha256": "0d23a9bd1abe0db4caaa297e8ebbe64333c9532b91453c958c16221e3fc5da0e"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101033-T\\artifacts\\manifest.json",
+    "bytes": 239193,
+    "sha256": "aed354bece49526ef4701e2d0d47830ba7b3d0e026896a80eb6b23c5b612d63b"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101033-T\\process.json",
+    "bytes": 714,
+    "sha256": "344286355c3b8df7edd94b4d43f579d7a88aa412708b1ec381f6550008e0444c"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101033-T\\process.log",
+    "bytes": 3149,
+    "sha256": "81fcf84a9a658e6c021373f846d4a85ae15764952dcbd3b35f2d0bc722e9c8a7"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101033-D\\artifacts\\complete.json",
+    "bytes": 39,
+    "sha256": "9bca596cbd789d9b98b203015f2b87d550533e541017be65f98eee4d8d4aca8d"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101033-D\\artifacts\\index.json",
+    "bytes": 1931016,
+    "sha256": "c84ad0a46a17bcd9f10a5925d7dc2b936b7234e9c6debfccc53513beed722937"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101033-D\\artifacts\\manifest.json",
+    "bytes": 218571,
+    "sha256": "a6569c4d18dad8d7a8128bff1f189f02d0e2758292e473060c35469ab983f5e4"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101033-D\\process.json",
+    "bytes": 714,
+    "sha256": "4d73221a3ab0fb2b1a794b3d3a6d385ba8a009b0c2ce18ad2c5986c695f1d529"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101033-D\\process.log",
+    "bytes": 2763,
+    "sha256": "916f7679eb0f196ee279faab19b58deb4e076c979d41785fc8c74de72d628105"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101033-M\\artifacts\\complete.json",
+    "bytes": 143,
+    "sha256": "f541dee013b95339877ab57bcf559cd3668eed1066da9e7a75bb86bb262c9c79"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101033-M\\artifacts\\index.json",
+    "bytes": 1900245,
+    "sha256": "895c266bd230b99d395538134636ac9c9d607b1d2cd8055af666eccb34870e9d"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101033-M\\artifacts\\manifest.json",
+    "bytes": 246278,
+    "sha256": "27beef7b7723fad2de445013c1cfa9deb9017f9a6a795a97210a82a82a78f1d9"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101033-M\\process.json",
+    "bytes": 715,
+    "sha256": "3b0ad7ed1af0d3700025746be3d9b48feda449c3911897fac89dd688246c275e"
+  },
+  {
+    "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\qualification\\qualification-101033-M\\process.log",
+    "bytes": 3226,
+    "sha256": "87281195386f4b247b2c533e399450d8988ea74d9037d56789ee58b671de3312"
+  }
+]

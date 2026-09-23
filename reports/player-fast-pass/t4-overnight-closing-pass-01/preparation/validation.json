@@ -1,0 +1,37 @@
+{
+  "executionSha": "056b5cd66c2f6aeccca840265a0cbce30a2a77f3",
+  "gameplayBaseline": "5b81ddf5f5ed1099ea9e282ed4b9eb9946fc20eb",
+  "planned": 460,
+  "primary": 432,
+  "alternative": 28,
+  "qualified": 460,
+  "receiptReplayed": 460,
+  "combatCompleted": 0,
+  "combatNotRun": 460,
+  "combatObservations": 0,
+  "rpRange": [
+    39,
+    45
+  ],
+  "sameReceiptSha256": "165f9a16f7e3ae604d689ddcae5e5b8b36af509c556dedbe93ca49b1bbd66d05",
+  "checks": {
+    "productionConstruction230": "passed, zero World ticks",
+    "qualification460": "passed, actual children guarded against World.tick",
+    "receiptReplay460": "passed from same final execution checkout",
+    "sourceVerify": "passed",
+    "typecheck": "passed (including bench and construction script)",
+    "sharedBuild": "passed",
+    "serverBuild": "passed",
+    "sourceDiffCheck": "passed with core.whitespace=cr-at-eol for byte-preserved CRLF",
+    "fullSuite": "not run",
+    "liveBrowserPlay": "not run",
+    "combatRunBranch": "not exercised; no combat pilot authorized",
+    "softDeadline": "sealed 28800000 ms, code-reviewed between-observation guard; no eight-hour combat test"
+  },
+  "briefApproval": {
+    "idolwright": "User explicitly authorized revised medium Plague Axe / Equilibrium / useful Technique-Frenzy direction",
+    "waitItOut": "not equipped",
+    "unsupportedExtraAlternatives": "Idolwright optional contrast omitted; not reallocated"
+  },
+  "unrelatedWorkspace": "Original develop checkout left unchanged; existing untracked reports and human-playtest traces preserved"
+}
