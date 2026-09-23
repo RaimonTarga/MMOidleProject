@@ -2302,7 +2302,7 @@ export function updateCombat(world: World, dt: number, now: number) {
     // §5.2) — the cost of the burst. MOVEMENT is deliberately NOT suppressed, so
     // casting never fights rune-driven autocombat pathing. Holding lastAttackAt
     // means the attack timer resumes from the end of the cast, not mid-swing.
-    if (player.isCastingAbility || player.isChargingAbility) {
+    if ((player.isCastingAbility && !player.isCastingAbility.casterMinionId) || player.isChargingAbility) {
       player.performsAttack.lastAttackAt = now;
       continue;
     }

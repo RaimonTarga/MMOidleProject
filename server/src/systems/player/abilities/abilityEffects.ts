@@ -50,6 +50,7 @@ import {
   consumeFormationTechniqueDelivery,
   type FormationTechniqueDelivery,
 } from "../../classes/archetypes/summoner/formationTechnique";
+import { usesSummonTechniques } from "../../classes/archetypes/summoner/profile";
 import { actorFromMonster, actorFromPlayer } from "../../../world/worldLogActors";
 import { recordWorldLogEvent } from "../../../world/worldLog";
 import type { CombatContext } from "../../combat/engine/combatPipeline";
@@ -159,7 +160,7 @@ export function initAbilitySystems(): void {
 
     // Restored state, or a Conduit armed while its formation was down: convert
     // only once a living formation exists. With no summons, preserve the charge.
-    if (ctx.attacker.summonsMinions) {
+    if (usesSummonTechniques(ctx.attacker)) {
       const state = beginFormationTechnique(world, ctx.attacker, armed.abilityId);
       if (!state) return;
       detachComponent(world, ctx.attacker, "hasArmedAbility");
@@ -173,6 +174,8 @@ export function initAbilitySystems(): void {
       return;
     }
 
+    // Champion's bonded summon cannot steal an owner-fired Technique.
+    if (ctx.formation?.side === 'summon') return;
     detachComponent(world, ctx.attacker, "hasArmedAbility");
     const ability = ABILITY_DATABASE.get(armed.abilityId);
     if (!ability) return;
@@ -378,7 +381,7 @@ function applyTechniqueRider(
   if (ctx.attackerType !== "player" || ctx.defenderType !== "monster") return;
 
   const effect = techniqueEffect(ctx.attacker, ability);
-  const formationBasis = ctx.formation
+  const formationBasis = formationDelivery
     ? Math.max(1, Math.round(
       ctx.attacker.dealsDamage.attack * resolveSummonerProfile({
         selectedSubVariant: ctx.attacker.usesSkills.selectedSubVariant,

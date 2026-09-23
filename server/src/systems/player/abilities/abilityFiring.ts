@@ -52,6 +52,8 @@ import { beginAbilityCast } from "./abilityCasting";
 import { applyBrambleGuard } from "./abilityBramble";
 import { abilityTarget, gapToTarget, nearestMonsterGap } from "./abilityTargeting";
 import { armTechnique } from "./abilityArming";
+import { usesSummonTechniques } from "../../classes/archetypes/summoner/profile";
+import { formationChargeHasGap } from "./formationCharge";
 import { actorFromPlayer } from "../../../world/worldLogActors";
 import { recordWorldLogEvent } from "../../../world/worldLog";
 import { attachComponent, detachComponent } from "../../../ecs/markerHelpers";
@@ -267,8 +269,29 @@ function removeQueuedAbility(
 }
 
 function buildFireContext(world: World, player: PlayerEntity): FireContext {
+  // Formation Techniques are delivered by summons, so their active combat must
+  // satisfy the default trigger even when the owner has no direct attack target.
+  // Keep defensive aggro counts owner-only: summons taking hits is not pressure
+  // on the player's body for Bramble Guard.
+  const livingSummonIds = new Set<string>();
+  let summonsInCombat = false;
+  for (const id of player.summonsMinions?.minionIds ?? []) {
+    const minion = world.getMinionEntity(id);
+    if (!minion || minion.isMinion.ownerPlayerId !== player.isPlayer.id
+      || minion.hasHealth.hp <= 0
+      || minion.hasPosition.nodeId !== player.hasPosition.nodeId) continue;
+    livingSummonIds.add(id);
+    const targetId = minion.hasAttackTarget?.targetId;
+    const target = targetId ? world.getMonsterEntity(targetId) : undefined;
+    if (target && target.hasHealth.hp > 0
+      && target.hasPosition.nodeId === player.hasPosition.nodeId) summonsInCombat = true;
+  }
   let aggroCount = 0;
   for (const monster of world.aggroedMonsters) {
+    if (monster.hasAggroTarget.targetKind === "minion"
+      && livingSummonIds.has(monster.hasAggroTarget.targetId)
+      && monster.hasHealth.hp > 0
+      && monster.hasPosition.nodeId === player.hasPosition.nodeId) summonsInCombat = true;
     if (
       monster.hasAggroTarget.targetKind === "player" &&
       monster.hasAggroTarget.targetId === player.isPlayer.id
@@ -279,7 +302,7 @@ function buildFireContext(world: World, player: PlayerEntity): FireContext {
   const attackTargetId = player.hasAttackTarget?.targetId;
   const inCombat =
     (attackTargetId !== undefined && world.hasMonster(attackTargetId)) ||
-    aggroCount > 0;
+    aggroCount > 0 || summonsInCombat;
   const hasHarmfulDebuff = player.tracksCombat.statusEffects.some(
     (e) => e.stacks > 0 && isHarmfulPlayerStatusEffect(e.id, e.data),
   );
@@ -322,6 +345,9 @@ function triggerActive(
       // Charge feel pointless.
       const target = abilityTarget(world, player, ability);
       if (!target) return false;
+      if (ability.shape === 'charge' && usesSummonTechniques(player)) {
+        return formationChargeHasGap(world, player, target, ability, trigger.minGapPx);
+      }
       return gapToTarget(player, target) >= trigger.minGapPx;
     }
     case "enemy-within": {
@@ -361,7 +387,7 @@ function maybeFireTechnique(
   if (player.isChanneling) return DECLINED_TECHNIQUE;
   if (
     player.isRooted
-    && (ability.shape === "reposition" || ability.shape === "charge")
+    && (ability.shape === "reposition" || (ability.shape === "charge" && !usesSummonTechniques(player)))
   ) return DECLINED_TECHNIQUE;
 
   // A self-facing offensive buff is not an attack: it neither waits for the
@@ -396,6 +422,7 @@ function maybeFireTechnique(
   if (
     player.hasArmedAbility ||
     player.hasFormationTechnique ||
+    player.hasFormationCharge ||
     player.isCastingAbility ||
     player.isChargingAbility
   ) return CLAIMED_TECHNIQUE;

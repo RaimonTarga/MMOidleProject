@@ -23,6 +23,7 @@ import { markSliceDirty } from '../../../../ecs/dirtyHelpers';
 import { setEntityMotion, stopEntity } from '../../../world/movement';
 import { setAttackTarget } from '../../../combat/ai/targeting';
 import { runFormationAttack } from './formationAttack';
+import { attackHasteBonus } from '../../../combat/engine/attackCadence';
 import { computeMinionSpeed, despawnMinion, getFollowOffset } from './spawn';
 import {
   resolveCommandedFocusTarget,
@@ -182,6 +183,16 @@ export function driveMinion(
   const moveDest = resolveCommandedMoveDestination(owner, leashRadius);
   const cm = minion.controlsMinion;
 
+  // The ability lifecycle owns rush movement and the arrival strike.
+  if (minion.isChargingAbility && owner.hasFormationCharge) return;
+
+  // Only the chosen caster commits its attacks/movement to this wind-up.
+  if (owner.isCastingAbility?.casterMinionId === minion.entityId) {
+    stopEntity(world, minion);
+    minion.performsAttack.lastAttackAt = now;
+    return;
+  }
+
   if (moveDest) {
     const distToDest = distance(minion.hasPosition.current, moveDest);
     if (distToDest > FOLLOW_HOVER_TOL) {
@@ -227,7 +238,9 @@ export function driveMinion(
         cm.currentTargetId = target.isMonster.id;
       }
 
-      if (now - minion.performsAttack.lastAttackAt >= minion.performsAttack.attackCooldown) {
+      // Inherit offensive haste without copying body-local environmental slows.
+      if (now - minion.performsAttack.lastAttackAt >=
+        minion.performsAttack.attackCooldown / (1 + attackHasteBonus(owner.tracksCombat))) {
         const outcome = runFormationAttack(world, owner, minion, target, now);
         if (outcome !== 'cancelled') {
           minion.performsAttack.lastAttackAt = now;

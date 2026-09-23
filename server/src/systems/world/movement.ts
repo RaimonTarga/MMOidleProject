@@ -550,7 +550,7 @@ export function updateMovement(world: World, dt: number, now: number) {
       continue;
     }
 
-    processMoverStep(world, e, dt, 1, 'monster', now);
+    processMoverStep(world, e, dt, e.isChargingAbility?.speedMult ?? 1, 'monster', now);
 
     const node = NODE_REGISTRY.get(e.hasPosition.nodeId);
     if (node) {

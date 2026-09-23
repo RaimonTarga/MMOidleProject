@@ -1290,16 +1290,17 @@ export function dispatchCombatEvent(
   }
 
   if (ev.kind === "player-reposition") {
+    const actorId = ev.casterMinionId ?? ev.playerId;
     // A reposition is an instant server-side move: without a trail along the old
     // path the sprite just blinks and nothing tells the player an ability fired.
     if (shouldRunClientFx()) {
       const fx = REPOSITION_FX_BY_ABILITY[ev.ability];
       if (fx) fx(scene, ev.from, ev.to);
-      if (state.sprite.has(ev.playerId)) {
+      if (state.sprite.has(actorId)) {
         spawnSkillCallout(
           state,
           scene,
-          ev.playerId,
+          actorId,
           abilityDef(ev.ability)?.name ?? ev.ability,
           TECHNIQUE_CALLOUT_COLOR,
         );
@@ -1318,7 +1319,7 @@ export function dispatchCombatEvent(
     // the floating skill-name label and the red cooldown-bar tint both apply.
     startCastBar(
       state,
-      ev.playerId,
+      ev.casterMinionId ?? ev.playerId,
       ev.castMs,
       abilityDef(ev.ability)?.name ?? ev.ability,
     );
@@ -1417,7 +1418,7 @@ export function dispatchCombatEvent(
   }
 
   if (ev.kind === "player-cast-end") {
-    endCastBar(state, ev.playerId);
+    endCastBar(state, ev.casterMinionId ?? ev.playerId);
     // Runs for BOTH outcomes: an interrupted cast must stop drawing its wind-up
     // just as surely as a resolved one, and this is the only event that fires
     // for both.
@@ -1428,7 +1429,7 @@ export function dispatchCombatEvent(
     // `player-hit` for it. Node-wide, so allies see each other's casts land.
     if (ev.fired && shouldRunClientFx()) {
       const fx = CAST_FX_BY_ABILITY[ev.ability];
-      const origin = state.sprite.get(ev.playerId);
+      const origin = state.sprite.get(ev.casterMinionId ?? ev.playerId);
       // A SELF-cast carries no `targetPos` — it never had a target. Both
       // endpoints collapse onto the caster rather than the FX being skipped,
       // which is what would happen if this still required an impact point.

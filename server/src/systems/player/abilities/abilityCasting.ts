@@ -44,8 +44,10 @@ import {
   afflictionTechniqueHasWork,
   detonateWindupElement,
 } from "./abilityAffliction";
-import { abilityEngagementRange, abilityTarget } from "./abilityTargeting";
+import { abilityEngagementRange, abilityTarget, summonAbilityCast, summonCanCastAt } from "./abilityTargeting";
 import { armTechnique } from "./abilityArming";
+import { usesSummonTechniques } from "../../classes/archetypes/summoner/profile";
+import { beginFormationCharge, cancelFormationCharge, formationChargeMinions, updateFormationCharge } from "./formationCharge";
 
 /**
  * Begin a wind-up. Returns true when the cast started (claiming the offensive
@@ -73,7 +75,8 @@ export function beginAbilityCast(
   // A cast needs something to resolve INTO. Resolved through the ability's own
   // reach, not the player's, so a `rangeBonus` cast can open on something the
   // player could not otherwise touch.
-  const target = abilityTarget(world, player, ability, currentTargetOnly);
+  const summonCast = summonAbilityCast(world, player, ability, currentTargetOnly);
+  const target = summonCast?.target ?? abilityTarget(world, player, ability, currentTargetOnly);
   if (!target) return false;
 
   // Situational payloads decline rather than wind up on nothing. Contagion with
@@ -89,6 +92,7 @@ export function beginAbilityCast(
     endsAt: now + effectiveMs,
     castMs: effectiveMs,
     targetId: target.isMonster.id,
+    ...(summonCast ? { casterMinionId: summonCast.caster.entityId } : {}),
   });
 
   // The wind-up FX tracks the TARGET, not the caster — an affliction being drawn
@@ -111,6 +115,7 @@ export function beginAbilityCast(
     ability: ability.id,
     castMs: effectiveMs,
     targetId: target.isMonster.id,
+    ...(summonCast ? { casterMinionId: summonCast.caster.entityId } : {}),
     ...(windupElement ? { element: windupElement } : {}),
     ...(footprintRadius ? { aoeRadius: footprintRadius } : {}),
   });
@@ -154,11 +159,12 @@ function beginSelfCast(
  * so ordinary casts still walk with the fight.
  */
 export function holdsPositionWhileCasting(player: PlayerEntity): boolean {
+  if (player.hasFormationCharge) return true;
   const casting = player.isCastingAbility;
   if (!casting) return false;
   const ability = ABILITY_DATABASE.get(casting.abilityId);
   if (!ability) return false;
-  return abilityRangeBonus(ability, player.tracksProgression.playerTier) > 0;
+  return !casting.casterMinionId && abilityRangeBonus(ability, player.tracksProgression.playerTier) > 0;
 }
 
 /**
@@ -215,11 +221,16 @@ export function updateAbilityCasts(world: World, now: number): void {
 
     // Target died, left the node, or we drifted out of the ability's reach.
     const target = world.getMonsterEntity(casting.targetId);
+    const caster = casting.casterMinionId ? world.getMinionEntity(casting.casterMinionId) : undefined;
     if (
       !target ||
       target.hasHealth.hp <= 0 ||
       target.hasPosition.nodeId !== player.hasPosition.nodeId ||
-      !world.collision.canReach(player, target, abilityEngagementRange(player, ability))
+      (ability.shape === 'charge' && usesSummonTechniques(player)
+        ? formationChargeMinions(world, player, target, ability).length === 0
+        : casting.casterMinionId
+        ? !caster || !summonCanCastAt(world, player, caster, target, ability)
+        : !world.collision.canReach(player, target, abilityEngagementRange(player, ability)))
     ) {
       abortCast(world, player, casting.abilityId);
       continue;
@@ -250,6 +261,7 @@ export function updateAbilityCasts(world: World, now: number): void {
       ability: ability.id,
       fired: true,
       targetPos: { ...target.hasPosition.current },
+      ...(casting.casterMinionId ? { casterMinionId: casting.casterMinionId } : {}),
     });
   }
 }
@@ -266,7 +278,7 @@ function beginAbilityCharge(
   target: NonNullable<ReturnType<typeof abilityTarget>>,
   now: number,
 ): boolean {
-  if (player.isRooted) return false;
+  if (player.isRooted && !usesSummonTechniques(player)) return false;
   const rank = abilityRankAt(ability, player.tracksProgression.playerTier);
   const effect = resolveAbilityEffect(ability, {
     playerTier: player.tracksProgression.playerTier,
@@ -284,6 +296,9 @@ function beginAbilityCharge(
     return false;
   }
 
+  if (usesSummonTechniques(player)) {
+    return beginFormationCharge(world, player, target, ability, now, speedMult, chargeMaxMs);
+  }
   const from = { ...player.hasPosition.current };
   attachComponent(world, player, "isChargingAbility", {
     abilityId: ability.id,
@@ -327,6 +342,10 @@ function chargeVisualDestination(
 /** Advance each live charge; called after casts and before the movement tick. */
 export function updateAbilityCharges(world: World, now: number): void {
   for (const player of world.livePlayers) {
+    if (player.hasFormationCharge) {
+      updateFormationCharge(world, player, ABILITY_DATABASE.get(player.hasFormationCharge.abilityId), now);
+      continue;
+    }
     const charging = player.isChargingAbility;
     if (!charging) continue;
 
@@ -374,12 +393,14 @@ function abortCharge(world: World, player: PlayerEntity): void {
 }
 
 function abortCast(world: World, player: PlayerEntity, abilityId: string): void {
+  const casterMinionId = player.isCastingAbility?.casterMinionId;
   detachComponent(world, player, "isCastingAbility");
   world.pushEvent(player.hasPosition.nodeId, {
     kind: "player-cast-end",
     playerId: player.isPlayer.id,
     ability: abilityId,
     fired: false,
+    ...(casterMinionId ? { casterMinionId } : {}),
   });
 }
 
@@ -399,6 +420,7 @@ function abortCast(world: World, player: PlayerEntity, abilityId: string): void 
  * payload, no cooldown, one end event.
  */
 export function cancelAbilityCast(world: World, player: PlayerEntity): void {
+  if (player.hasFormationCharge) cancelFormationCharge(world, player);
   const casting = player.isCastingAbility;
   if (!casting) return;
   abortCast(world, player, casting.abilityId);

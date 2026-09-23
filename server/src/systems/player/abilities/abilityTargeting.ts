@@ -17,12 +17,54 @@
  */
 import {
   abilityRangeBonus,
+  distanceSq,
   posHitboxFromEntity,
   reachGap,
   type AbilityDef,
 } from "@mmo-idle/shared";
-import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
+import type { MinionEntity, MonsterEntity, PlayerEntity } from "../../../ecs/entity";
 import type { World } from "../../../world/World";
+import { isHardControlled } from "../../combat/status/playerHardControl";
+import { afflictionTechniqueHasWork } from "./abilityAffliction";
+import { summonerProfileFor, usesSummonTechniques } from "../../classes/archetypes/summoner/profile";
+import { formationChargeTarget } from "./formationCharge";
+
+/** Validate the physical caster again throughout its wind-up. */
+export function summonCanCastAt(
+  world: World, player: PlayerEntity, minion: MinionEntity,
+  target: MonsterEntity, ability: AbilityDef,
+): boolean {
+  return usesSummonTechniques(player)
+    && player.summonsMinions?.minionIds.includes(minion.entityId) === true
+    && player.hasSummonerCommand?.kind !== 'move'
+    && minion.isMinion.ownerPlayerId === player.isPlayer.id
+    && minion.hasHealth.hp > 0 && target.hasHealth.hp > 0
+    && !target.isConcealed && !target.isInvulnerable
+    && minion.hasPosition.nodeId === player.hasPosition.nodeId
+    && target.hasPosition.nodeId === player.hasPosition.nodeId
+    && !isHardControlled(minion.tracksCombat)
+    && distanceSq(target.hasPosition.current, player.hasPosition.current)
+      <= summonerProfileFor(player).leashRadius ** 2
+    && world.collision.canReach(minion, target,
+      minion.performsAttack.attackRange + abilityRangeBonus(ability, player.tracksProgression.playerTier));
+}
+
+/** One engaged physical summon performs a targeted cast, in stable slot order. */
+export function summonAbilityCast(
+  world: World, player: PlayerEntity, ability: AbilityDef, currentOnly = false,
+): { caster: MinionEntity; target: MonsterEntity } | null {
+  if (ability.shape !== "cast" || !usesSummonTechniques(player) || !player.summonsMinions) return null;
+  const currentId = player.hasAttackTarget?.targetId ?? player.summonsMinions.formationTargetId;
+  for (const id of player.summonsMinions.minionIds) {
+    const caster = world.getMinionEntity(id);
+    const targetId = caster?.hasAttackTarget?.targetId;
+    if (!caster || !targetId || (currentOnly && currentId && targetId !== currentId)) continue;
+    const target = world.getMonsterEntity(targetId);
+    if (target && summonCanCastAt(world, player, caster, target, ability)
+      && afflictionTechniqueHasWork(world, player, ability, target)) return { caster, target };
+  }
+  return null;
+}
 
 /** How far this ability can engage, in px, for the player's current rank. */
 export function abilityEngagementRange(
@@ -30,7 +72,12 @@ export function abilityEngagementRange(
   ability: AbilityDef,
 ): number {
   const bonus = abilityRangeBonus(ability, player.tracksProgression.playerTier);
-  return player.performsAttack.attackRange + bonus;
+  const range = player.performsAttack.attackRange + bonus;
+  // A defensive reposition must be able to select the threat that satisfied
+  // its spacing trigger, even outside a short-range character's basic reach.
+  return ability.shape === "reposition" && ability.trigger.kind === "enemy-within"
+    ? Math.max(range, ability.trigger.maxGapPx)
+    : range;
 }
 
 /**
@@ -48,6 +95,11 @@ export function abilityTarget(
   ability: AbilityDef,
   currentOnly = false,
 ): MonsterEntity | null {
+  if (ability.shape === 'charge' && usesSummonTechniques(player)) {
+    return formationChargeTarget(world, player, ability, currentOnly);
+  }
+  const summonCast = summonAbilityCast(world, player, ability, currentOnly);
+  if (summonCast) return summonCast.target;
   const range = abilityEngagementRange(player, ability);
   const currentId = player.hasAttackTarget?.targetId;
   const current = currentId ? world.getMonsterEntity(currentId) : undefined;

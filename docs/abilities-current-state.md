@@ -126,6 +126,54 @@ before combat resolves.
 the one trigger that must work while the player cannot act) · **`target-beyond-reach`**
 (Charge) · **`enemy-within`** (Disengage).
 
+For Conduit, the default `in-combat` trigger also recognizes a living, owned summon
+in the same node targeting a living monster, or being targeted by one. Sweep can
+therefore arm its formation adapter while the owner stays out of direct combat.
+Summon aggro does not contribute to the owner's `n-aggro` Guard trigger; custom
+Rune conditions retain their own requirements.
+
+### Summoner ability ownership
+
+**Champion** (`summoner-heavy-t3-b`, Tier 3, `battle-bond`) is the direct-attacking
+exception: targeted casts use the owner's body/range, armed Techniques are held
+for the owner's next hit, and Charge moves the owner. The bonded summon cannot
+consume an owner-armed Technique. The following formation rules apply to the
+other Summoner paths; self-buffs and Guards remain owner-cast on every path.
+
+- **Sweep, Expose Weakness, Hamstring, Binding Strike, Quick Strike:** the owner
+  arms one formation Technique; snapshotted summons deliver it through their hits.
+  Damage riders share one normalized budget rather than multiplying by body count.
+- **Power Strike, Slam, Snipe, Stunning Strike, Contagion, Detonate:** prefer one
+  living engaged summon in slot order. That physical summon holds position and
+  basic attacks during the wind-up; other summons continue attacking. Its range
+  plus the ability's range bonus determines reach. The cast delivers one full
+  payload using owner stats, with owner cooldown/control rules. Death, removal,
+  hard control, range/node/leash loss, or a formation move command aborts without
+  cooldown; replacements cannot inherit the cast. With no eligible summon, normal
+  owner targeting remains available. Contagion/Detonate still require owned DoTs
+  (and Contagion a recipient). Cast events identify the physical summon for FX.
+- **Frenzy:** the summoner owns the buff. Minion attack timing reads the owner's
+  temporary haste bonus, so the haste actually affects the formation;
+  the stored base cooldown is never mutated.
+- **Imbue Lightning:** the summoner performs the self-cast and owns the shared
+  charge window. Summon hits consume it; summons do not cast the buff individually.
+  Each physical hit deliberately spends one whole charge while damage remains
+  formation-weighted. The smaller burst on large formations is accepted; there
+  is no fractional-charge adapter or extra per-summon charge pool.
+- **Second Wind, Recuperate, Brace, Endure, Cleanse, Break Free, Bramble Guard:**
+  summoner-owned defenses, triggered by the owner's health, debuffs, hard control,
+  or incoming aggro. They do not heal, cleanse, or shield each summon.
+- **Disengage:** moves the summoner away from a threat within its authored 90px
+  trigger distance; target selection covers that distance even for a short-range
+  owner.
+- **Charge:** the summoner winds up one command, then eligible living summons
+  rush toward the selected target while the owner stays in place. Each physical
+  summon delivers its share of one formation-wide empowered rider on arrival.
+  Rush movement uses the authored speed/duration, ordinary collision, and the
+  formation leash. Dead, controlled, out-of-reach, or replaced bodies cannot
+  transfer unpaid shares; target loss, move commands, timeout, and owner death
+  cancel unfinished rushes. Champion retains the ordinary owner Charge instead.
+
 ## Execution shapes
 
 | Shape | Mechanism | Worked by |

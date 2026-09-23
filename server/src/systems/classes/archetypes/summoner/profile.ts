@@ -14,6 +14,11 @@ export function summonerProfileFor(owner: PlayerEntity): SummonerProfile {
   });
 }
 
+/** Champion fights directly; every other Conduit delivers Techniques via summons. */
+export function usesSummonTechniques(owner: PlayerEntity): boolean {
+  return !!owner.summonsMinions && summonerProfileFor(owner).specialization !== 'battle-bond';
+}
+
 
 /**
  * One body's share of a single logical formation attack: its raw slot weight

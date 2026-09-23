@@ -156,6 +156,8 @@ export interface HasFormationTechnique {
  */
 export interface IsCastingAbility {
   abilityId: string;
+  /** Physical summon performing this cast; replacements cannot inherit it. */
+  casterMinionId?: string;
   /** Loadout index that started the cast, so the resolve credits the right slot. */
   /** Wall-clock ms when the wind-up completes. */
   endsAt: number;
@@ -273,6 +275,8 @@ export interface ServerEntity {
   hasFormationTechnique?: HasFormationTechnique;
   isCastingAbility?: IsCastingAbility;
   isChargingAbility?: IsChargingAbility;
+  /** One owner command, with physical summon IDs that cannot transfer on reconstruction. */
+  hasFormationCharge?: IsChargingAbility & { pendingEntityIds: string[] };
   hasEnvironmentalDot?: HasEnvironmentalDot;
   hasNodeFeatureEffect?: HasNodeFeatureEffect;
   isDead?: IsDead;

@@ -3,6 +3,7 @@ import type { World } from "../../../world/World";
 import type { PlayerEntity } from "../../../ecs/entity";
 import { attachComponent } from "../../../ecs/markerHelpers";
 import { beginFormationTechnique } from "../../classes/archetypes/summoner/formationTechnique";
+import { usesSummonTechniques } from "../../classes/archetypes/summoner/profile";
 
 /**
  * Conduit Techniques belong to the current summon formation; every other player
@@ -13,7 +14,7 @@ export function armTechnique(
   player: PlayerEntity,
   abilityId: string,
 ): void {
-  if (player.summonsMinions && beginFormationTechnique(world, player, abilityId)) return;
+  if (usesSummonTechniques(player) && beginFormationTechnique(world, player, abilityId)) return;
   // A Conduit with no living summons keeps the legacy armed marker. The first
   // reconstructed summon hit can convert it instead of silently wasting it.
   attachComponent(world, player, "hasArmedAbility", { abilityId });
