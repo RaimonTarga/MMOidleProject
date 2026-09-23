@@ -1,0 +1,103 @@
+diff --git a/server/src/systems/combat/status/monsterControl.ts b/server/src/systems/combat/status/monsterControl.ts
+index 24dedc21..5c1e117f 100644
+--- a/server/src/systems/combat/status/monsterControl.ts
++++ b/server/src/systems/combat/status/monsterControl.ts
+@@ -39,8 +39,8 @@ import {
+ const OWNS_ROOT_FLAG = "abilityOwnsRoot";
+ 
+ /**
+- * Apply a SLOW to a monster: a fraction of its movement speed for
+- * `durationMs`. Ability slows do not alter the target's attack cadence.
++ * Apply a SLOW to a monster: a fraction of its movement speed and a matching
++ * lengthening of its attack cadence, for `durationMs`.
+  *
+  * Slow is deliberately NOT a soft root: the target still attacks, still casts,
+  * and still closes — just more slowly. It exists for kiting, for maintaining
+@@ -61,7 +61,7 @@ export function applyMonsterSlow(
+     refreshable: true,
+     sourceId,
+     // `totalMs` is required for the buff-bar clock on every timed effect.
+-    data: { totalMs: durationMs, moveSlowPct: slowPct },
++    data: { totalMs: durationMs, moveSlowPct: slowPct, attackSlowPct: slowPct },
+   });
+   attachMarker(world, monster, "hasAbilitySlow");
+ }
+diff --git a/server/src/systems/world/nodeFeatures.ts b/server/src/systems/world/nodeFeatures.ts
+index 2bde0687..258b34f6 100644
+--- a/server/src/systems/world/nodeFeatures.ts
++++ b/server/src/systems/world/nodeFeatures.ts
+@@ -321,7 +321,7 @@ function decayAmbientRamp(
+   dt: number,
+   floor: number,
+ ): void {
+-  const rampMs = (effect.data.rampMs ?? 3000) / (effect.data.coolingRateMult ?? 1);
++  const rampMs = effect.data.rampMs ?? 3000;
+   const coolingScale = effect.data.coolingScaleStacks ?? 0;
+   if (coolingScale > 0) {
+     effect.data.rampAccum = 0;
+diff --git a/shared/src/data/skillTree/rootsAndFrames.ts b/shared/src/data/skillTree/rootsAndFrames.ts
+index 991b6a00..afcbf8fe 100644
+--- a/shared/src/data/skillTree/rootsAndFrames.ts
++++ b/shared/src/data/skillTree/rootsAndFrames.ts
+@@ -398,7 +398,7 @@ export const rootsAndFramesEntries = [
+     parent: 'energy-root', children: [],
+     description: 'Pure momentum. Blazing speed and rapid attacks; thrives on frequent discharges and their AoE splash. Gains 20 energy per hit, empowered at 1.5× — fires often.',
+     cost: 1, statEffects: {
+-      attackPct: 0.07, maxHpPct: 0.03, attackSpeedPct: 0.12, moveSpeedPct: 0.12,
++      attackPct: 0.02, maxHpPct: 0.03, attackSpeedPct: 0.04, moveSpeedPct: 0.12,
+     },
+     mechanicEffects: { 'energy.per-hit': 20, 'energy.empowered-mult': 1.5 } as Record<string, number>,
+   }],
+@@ -409,8 +409,8 @@ export const rootsAndFramesEntries = [
+     parent: 'energy-root', children: [],
+     description: 'Fast and capable. A bit of extra punch and some light armor without sacrificing mobility. Gains 14 energy per hit, empowered at 2×.',
+     cost: 1, statEffects: {
+-      attackPct: 0.08, maxHpPct: 0.07, platingPct: 0.06,
+-      attackSpeedPct: 0.06, moveSpeedPct: 0.06,
++      attackPct: 0.03, maxHpPct: 0.07, platingPct: 0.06,
++      attackSpeedPct: 0.00, moveSpeedPct: 0.06,
+     },
+     mechanicEffects: { 'energy.per-hit': 14, 'energy.empowered-mult': 2.0 } as Record<string, number>,
+   }],
+diff --git a/shared/src/systems/ambientRamp.ts b/shared/src/systems/ambientRamp.ts
+index f2e9c530..f97b558b 100644
+--- a/shared/src/systems/ambientRamp.ts
++++ b/shared/src/systems/ambientRamp.ts
+@@ -72,7 +72,7 @@ export function ambientRampStatus(cs: TracksCombat): StatusEffect | undefined {
+ /** Status `data` for a ramp, built from its authored payload. */
+ export function ambientRampData(
+   payload: AmbientRampPayload,
+-  ramp: { maxStacks: number; rampMs: number; coolingScaleStacks?: number; coolingRateMult?: number },
++  ramp: { maxStacks: number; rampMs: number; coolingScaleStacks?: number },
+ ): Record<string, number> {
+   const data: Record<string, number> = {
+     [AMBIENT_RAMP_KEY]: 1,
+@@ -85,7 +85,6 @@ export function ambientRampData(
+   if (payload.damageSoftcapStacks) data.damageSoftcapStacks = payload.damageSoftcapStacks;
+   if (payload.damageSoftcapScale) data.damageSoftcapScale = payload.damageSoftcapScale;
+   if (ramp.coolingScaleStacks) data.coolingScaleStacks = ramp.coolingScaleStacks;
+-  if (ramp.coolingRateMult) data.coolingRateMult = ramp.coolingRateMult;
+   if (payload.incomingDamagePct) {
+     data[DAMAGE_TAKEN_PCT_KEY] = payload.incomingDamagePct;
+   }
+diff --git a/shared/src/world/nodeFeatures.ts b/shared/src/world/nodeFeatures.ts
+index a3aafbb7..5c91c0e8 100644
+--- a/shared/src/world/nodeFeatures.ts
++++ b/shared/src/world/nodeFeatures.ts
+@@ -113,8 +113,6 @@ export interface NodeFeatureSpec {
+     rampMs: number;
+     /** Above this count, cooling speed scales as current stacks / this value. */
+     coolingScaleStacks?: number;
+-    /** Multiplies out-of-combat cooling speed at every stack count; default 1. */
+-    coolingRateMult?: number;
+     payload: AmbientRampPayload;
+   };
+ }
+@@ -502,7 +500,6 @@ function volcanicHeat(id: string): NodeFeatureSpec {
+       maxStacks: 0,
+       rampMs: 3000,
+       coolingScaleStacks: 10,
+-      coolingRateMult: 2,
+       payload: {
+         outgoingDamagePct: 0.03, incomingDamagePct: 0.045,
+         damageSoftcapStacks: 10, damageSoftcapScale: 5,

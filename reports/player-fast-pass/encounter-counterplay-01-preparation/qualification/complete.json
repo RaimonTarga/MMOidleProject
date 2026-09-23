@@ -1,0 +1,13 @@
+{
+  "planned": 24,
+  "completed": 0,
+  "newCompleted": 0,
+  "failed": 0,
+  "omitted": 0,
+  "notRun": 0,
+  "qualified": 24,
+  "mode": "qualify",
+  "sourceCommit": "7c3bf6bc0035feff0c0e432b4cda4a4e804281ad",
+  "combatObservations": 0,
+  "failure": null
+}

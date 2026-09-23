@@ -1,0 +1,13 @@
+# Root Conduit: existing evidence only
+
+**Disposition: retain the 3,500 ms playtest baseline.** The rejected 2,500 ms candidate shows a real payment/safety-floor interaction near collapse, combined with ordinary enemy pressure and a Brace cooldown gap. These traces do not identify a safe replacement interval or establish that removing payments would have saved this diverged encounter. No revision is proposed from this one sequence.
+
+Read `conduit-extract.json` for the two observations' own 950,000-986,500 ms timelines, profile values, event/state extracts and hashes of the external raw streams. The candidate's terminal event is labelled 986,400 ms; its summary measures through the completed 986,500 ms step. They are the same life, not two deaths.
+
+Candidate chronology: repeated Lurker hits at 969.3, 970.8, 972.4, 974.0 and 975.7 seconds dealt 18 HP each. Formation availability fell to zero in the 977/978-second samples. Brace activated at 977.3 seconds; it was actually active for the 979.4-second Lurker hit (10 HP) and 979.8-second Brute hit (32 HP). At 982.9 seconds Brace had expired, with 4.4 seconds of cooldown left; the Brute dealt 56 HP. A further 56-HP hit at 986.4 seconds killed the owner: the incoming-pipeline state records 35.5616 HP, no active Guard, Brace cooldown 900 ms and Second Wind cooldown 1,400 ms. This is state evidence, not an expiration inferred from cast counts.
+
+Reconstruction cost was 9 HP per body, with a 31.2-HP safety floor (20% of max HP 156). A payment therefore required at least 40.2 HP. Payments occurred at 975.7, 978.2 and 980.7 seconds, then the next payment waited until 985.4 seconds instead of the normal 983.2-second ready time. The lifetime recorder reports 2,200 ms of ready-but-HP-blocked reconstruction. After that late payment, the 986-second sample had 33.9392 HP and two of four summons. Recovery remained active: the 975-986.5-second emitted heal events total 83 HP, but rounded heal events are not an exact partition of recovery sources. Payment constrained the recovery margin; it did not disable the safety floor, and the floor does not protect against enemy hits.
+
+The control, on its own diverged route, was full at 975-980 seconds and had three/four summons, no owner enemy-damage events in this inspected window, and paid at 980.7/984.2 seconds before recovering. Its lifetime ready-HP-blocked time was zero. Its target was monster-52, while the candidate's collapse involved Lurker-57 and Brute-63 in another location. These equal clock labels are not matched exposure and cannot isolate timer causation. Higher payment per minute, or the final Brute label alone, would be inadequate explanations.
+
+No new Conduit combat, cost/timer/damage change, or broad audit was performed.

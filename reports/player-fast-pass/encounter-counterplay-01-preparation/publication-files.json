@@ -1,0 +1,152 @@
+[
+  {
+    "path": ".gitattributes",
+    "bytes": 9,
+    "sha256": "8b9c3028d6467ff3be7c793141927841d70f47f52d0590677438f488ca154992"
+  },
+  {
+    "path": "ADOPTION.md",
+    "bytes": 1746,
+    "sha256": "868219ff42546c3eebe19069fb1b239afc51d4673614510611babbe7a70bd2dd"
+  },
+  {
+    "path": "BRIEF.md",
+    "bytes": 27117,
+    "sha256": "0e87ee77d308bb67c439e117ccad6a0750db758ef4b14c1e7d254b661828a173"
+  },
+  {
+    "path": "checks.json",
+    "bytes": 896,
+    "sha256": "256e78c87db4b84f44cf0e0554ead81dcdc451efa95726498fb5027749ac816e"
+  },
+  {
+    "path": "conduit-extract.json",
+    "bytes": 1096517,
+    "sha256": "4135ed49f83e5fe3def168b088918a261c0361e53f7368b2ba072eca3b34e79d"
+  },
+  {
+    "path": "CONDUIT_FINDING.md",
+    "bytes": 2757,
+    "sha256": "26c05b33336d74e376910f7b730696ff2ac50f8c316453e41cb1507a8f0ecf13"
+  },
+  {
+    "path": "historical-reference-receipts.json",
+    "bytes": 417185,
+    "sha256": "374bc8e0ac15998566a59a0e17f5feaeb9e701e1a8c688fce888f3a4ed9def57"
+  },
+  {
+    "path": "LUNA_RUN.md",
+    "bytes": 5049,
+    "sha256": "e8f5d974497edcb13b524de01f4ede929e10a83874af0e7d3bb6f6d1fe0f98f8"
+  },
+  {
+    "path": "ORDERED_CASES.tsv",
+    "bytes": 3311,
+    "sha256": "1e2232f2bc9446ec161b12e83a6916cb61d20f52b765dc730c10ddb73335d942"
+  },
+  {
+    "path": "packet/candidate-identity.json",
+    "bytes": 147461,
+    "sha256": "f94a5b252ef18ac9955e1f7a04d5a20a7160c04b069feeae84e9db47959163a3"
+  },
+  {
+    "path": "packet/control-identity.json",
+    "bytes": 147461,
+    "sha256": "f94a5b252ef18ac9955e1f7a04d5a20a7160c04b069feeae84e9db47959163a3"
+  },
+  {
+    "path": "packet/identity.json",
+    "bytes": 300155,
+    "sha256": "69ba82e8bb6c9525d7ba712697414a39194f2bf6fee633fb3c5229959e9ad045"
+  },
+  {
+    "path": "packet/manifest.json",
+    "bytes": 67312,
+    "sha256": "226b8e2f832b3ad9cd2f8068d146ec6025bf8267ce8ea6d853a4d87699d81e12"
+  },
+  {
+    "path": "packet/qualified.json",
+    "bytes": 291,
+    "sha256": "95ca4bf24ed4d5e4900b5ea614dfeb270ff9ea1425f20bb70aa2a42a8391a22b"
+  },
+  {
+    "path": "packet/seal.json",
+    "bytes": 369,
+    "sha256": "c7f310154db635044290f0a20412aee03ef4bb7c7115679daa567bc766dcc3b7"
+  },
+  {
+    "path": "pre-adoption-readbacks.json",
+    "bytes": 197082,
+    "sha256": "c2c256eb91b35decfbc06c232efc9537a5eb3a374897ff3c8aa1895ce019fb16"
+  },
+  {
+    "path": "qualification/complete.json",
+    "bytes": 253,
+    "sha256": "d813732ae16150a06d7d400adaeb2270f1a390822e029bd98645c79d13af9b31"
+  },
+  {
+    "path": "qualification/resolved-builds.json",
+    "bytes": 803775,
+    "sha256": "3e2aa50c4f30f1eca00a3306b7bfa94fee0a7f5ef25bbb7a39d3917f33a01ad3"
+  },
+  {
+    "path": "qualification/results-summary.json",
+    "bytes": 12770,
+    "sha256": "b4fa50a7266f25bfe2de4c92620035a434b8a6a8461f0a420bd1d56b7e006b6d"
+  },
+  {
+    "path": "README.md",
+    "bytes": 4538,
+    "sha256": "5ca78bac169d838c3d1f420fb80d7a8ce78898e68c1d48eca88f385a110b9cab"
+  },
+  {
+    "path": "receipt-check/complete.json",
+    "bytes": 259,
+    "sha256": "9ed32fe586fb11ec350d72df19ee38cee21b8fbc37f8dc984cbc58aaf9563038"
+  },
+  {
+    "path": "receipt-check/resolved-builds.json",
+    "bytes": 803775,
+    "sha256": "3e2aa50c4f30f1eca00a3306b7bfa94fee0a7f5ef25bbb7a39d3917f33a01ad3"
+  },
+  {
+    "path": "receipt-check/results-summary.json",
+    "bytes": 12776,
+    "sha256": "b1b66a92c9b8181d0ad5dee306c3160d51a16b808a48c6fb2f6250ab2adf444e"
+  },
+  {
+    "path": "SOURCE_DIFF.patch",
+    "bytes": 5211,
+    "sha256": "0a48460d83076a1a889bf81a94662b12ed25e7c5b538bd578e5f52835bc8e75e"
+  },
+  {
+    "path": "spirit-readbacks.json",
+    "bytes": 197073,
+    "sha256": "aa64ef6ead906cc88a78171c7564a492c5c8f763db844a5359dfea8d7bf05759"
+  },
+  {
+    "path": "SPIRIT.patch",
+    "bytes": 1448,
+    "sha256": "7b29973d427b5f9eaa75970a4d71184e05bfdb5016adc14e9d9f0f276536d9f0"
+  },
+  {
+    "path": "t4-catalogue.json",
+    "bytes": 186672,
+    "sha256": "a2cb705891f96607879c98c0fab4b014de43bc8a9f2a41b55882987074080909"
+  },
+  {
+    "path": "T4_COVERAGE_PLAN.md",
+    "bytes": 10983,
+    "sha256": "8ccb57f128d142d4759e2c2d7019fe6a7662f7be146f4aab742a26d79d35b62c"
+  },
+  {
+    "path": "verification.json",
+    "bytes": 7057,
+    "sha256": "27e9acd60a98b6e7c09fc6e2b94987dfaee94ff464f06b3af6186721c0780d22"
+  },
+  {
+    "path": "verify_preparation.py",
+    "bytes": 4332,
+    "sha256": "d566c6cff1bf2d0e5c26765c0a0059a4995a4783648991ff790353509c4a4699"
+  }
+]

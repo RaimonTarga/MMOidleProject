@@ -1,0 +1,273 @@
+{
+  "passed": true,
+  "packages": 24,
+  "historicalControlsExact": 12,
+  "receiptReplaysExact": 24,
+  "combatObservations": 0,
+  "checks": [
+    {
+      "id": "ec-J1-s101009-control",
+      "rp": {
+        "budget": 36,
+        "cost": 22,
+        "unused": 14,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "maxHp": 340,
+      "plating": 23
+    },
+    {
+      "id": "ec-J1-s101009-candidate",
+      "rp": {
+        "budget": 36,
+        "cost": 22,
+        "unused": 14,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "maxHp": 354,
+      "plating": 29
+    },
+    {
+      "id": "ec-J1-s101033-candidate",
+      "rp": {
+        "budget": 36,
+        "cost": 22,
+        "unused": 14,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "maxHp": 354,
+      "plating": 29
+    },
+    {
+      "id": "ec-J1-s101033-control",
+      "rp": {
+        "budget": 36,
+        "cost": 22,
+        "unused": 14,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "maxHp": 340,
+      "plating": 23
+    },
+    {
+      "id": "ec-J2-s101009-control",
+      "rp": {
+        "budget": 36,
+        "cost": 25,
+        "unused": 11,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "maxHp": 330,
+      "plating": 22
+    },
+    {
+      "id": "ec-J2-s101009-candidate",
+      "rp": {
+        "budget": 36,
+        "cost": 25,
+        "unused": 11,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "maxHp": 344,
+      "plating": 29
+    },
+    {
+      "id": "ec-J2-s101033-candidate",
+      "rp": {
+        "budget": 36,
+        "cost": 25,
+        "unused": 11,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "maxHp": 344,
+      "plating": 29
+    },
+    {
+      "id": "ec-J2-s101033-control",
+      "rp": {
+        "budget": 36,
+        "cost": 25,
+        "unused": 11,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "maxHp": 330,
+      "plating": 22
+    },
+    {
+      "id": "ec-V1-s101009-control",
+      "rp": {
+        "budget": 36,
+        "cost": 24,
+        "unused": 12,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "maxHp": 354,
+      "plating": 29
+    },
+    {
+      "id": "ec-V1-s101009-candidate",
+      "rp": {
+        "budget": 36,
+        "cost": 24,
+        "unused": 12,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "maxHp": 354,
+      "plating": 35
+    },
+    {
+      "id": "ec-V1-s101033-candidate",
+      "rp": {
+        "budget": 36,
+        "cost": 24,
+        "unused": 12,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "maxHp": 354,
+      "plating": 35
+    },
+    {
+      "id": "ec-V1-s101033-control",
+      "rp": {
+        "budget": 36,
+        "cost": 24,
+        "unused": 12,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "maxHp": 354,
+      "plating": 29
+    },
+    {
+      "id": "ec-P1-s101009-control",
+      "rp": {
+        "budget": 30,
+        "cost": 17,
+        "unused": 13,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "maxHp": 242,
+      "plating": 27
+    },
+    {
+      "id": "ec-P1-s101009-candidate",
+      "rp": {
+        "budget": 30,
+        "cost": 22,
+        "unused": 8,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "maxHp": 242,
+      "plating": 27
+    },
+    {
+      "id": "ec-P1-s101033-candidate",
+      "rp": {
+        "budget": 30,
+        "cost": 22,
+        "unused": 8,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "maxHp": 242,
+      "plating": 27
+    },
+    {
+      "id": "ec-P1-s101033-control",
+      "rp": {
+        "budget": 30,
+        "cost": 17,
+        "unused": 13,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "maxHp": 242,
+      "plating": 27
+    },
+    {
+      "id": "ec-M1-s101009-control",
+      "rp": {
+        "budget": 37,
+        "cost": 28,
+        "unused": 9,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "maxHp": 358,
+      "plating": 36
+    },
+    {
+      "id": "ec-M1-s101009-candidate",
+      "rp": {
+        "budget": 37,
+        "cost": 34,
+        "unused": 3,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "maxHp": 358,
+      "plating": 36
+    },
+    {
+      "id": "ec-M1-s101033-candidate",
+      "rp": {
+        "budget": 37,
+        "cost": 34,
+        "unused": 3,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "maxHp": 358,
+      "plating": 36
+    },
+    {
+      "id": "ec-M1-s101033-control",
+      "rp": {
+        "budget": 37,
+        "cost": 28,
+        "unused": 9,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "maxHp": 358,
+      "plating": 36
+    },
+    {
+      "id": "ec-E1-s101009-control",
+      "rp": {
+        "budget": 37,
+        "cost": 36,
+        "unused": 1,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "maxHp": 358,
+      "plating": 36
+    },
+    {
+      "id": "ec-E1-s101009-candidate",
+      "rp": {
+        "budget": 37,
+        "cost": 36,
+        "unused": 1,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "maxHp": 358,
+      "plating": 36
+    },
+    {
+      "id": "ec-E1-s101033-candidate",
+      "rp": {
+        "budget": 37,
+        "cost": 36,
+        "unused": 1,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "maxHp": 358,
+      "plating": 36
+    },
+    {
+      "id": "ec-E1-s101033-control",
+      "rp": {
+        "budget": 37,
+        "cost": 36,
+        "unused": 1,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "maxHp": 358,
+      "plating": 36
+    }
+  ]
+}

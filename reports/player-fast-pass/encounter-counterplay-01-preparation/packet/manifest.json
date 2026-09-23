@@ -1,0 +1,2530 @@
+{
+  "experimentId": "encounter-counterplay-01",
+  "status": "prepared-unrun",
+  "planned": 24,
+  "synthetic": true,
+  "economyEligible": false,
+  "seeds": [
+    101009,
+    101033
+  ],
+  "dtMs": 100,
+  "farmingCapMs": 600000,
+  "bossCapMs": 300000,
+  "endpointsMs": [
+    300000,
+    600000
+  ],
+  "stopOnFirstDeath": true,
+  "watchdogs": {
+    "minimumDiskFreeBytes": 5368709120,
+    "minimumHostFreeMemoryBytes": 1073741824,
+    "maximumChildRssBytes": 2147483648,
+    "heartbeatTimeoutMs": 120000,
+    "pollMs": 5000,
+    "maximumChildren": 1,
+    "retries": 0
+  },
+  "snapshots": {
+    "t1-developed": {
+      "id": "t1-developed",
+      "tier": 1,
+      "mastery": {
+        "plains": 4,
+        "forest": 4,
+        "swamp": 4,
+        "mountain": 5,
+        "cave": 5
+      },
+      "gm": 22,
+      "rp": 20,
+      "plus": 3
+    },
+    "t1-complete": {
+      "id": "t1-complete",
+      "tier": 1,
+      "mastery": {
+        "plains": 6,
+        "forest": 6,
+        "swamp": 6,
+        "mountain": 6,
+        "cave": 6
+      },
+      "gm": 30,
+      "rp": 22,
+      "plus": 5
+    },
+    "t2-jungle-arrival": {
+      "id": "t2-jungle-arrival",
+      "tier": 2,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 12,
+        "mountain": 12,
+        "cave": 12,
+        "jungle": 0,
+        "desert": 0
+      },
+      "gm": 60,
+      "rp": 28,
+      "plus": 3
+    },
+    "t2-jungle-established": {
+      "id": "t2-jungle-established",
+      "tier": 2,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 12,
+        "mountain": 12,
+        "cave": 12,
+        "jungle": 4,
+        "desert": 0
+      },
+      "gm": 64,
+      "rp": 28,
+      "plus": 4
+    },
+    "t2-desert-arrival": {
+      "id": "t2-desert-arrival",
+      "tier": 2,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 12,
+        "mountain": 12,
+        "cave": 12,
+        "jungle": 6,
+        "desert": 0
+      },
+      "gm": 66,
+      "rp": 29,
+      "plus": 4
+    },
+    "t2-desert-established": {
+      "id": "t2-desert-established",
+      "tier": 2,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 12,
+        "mountain": 12,
+        "cave": 12,
+        "jungle": 6,
+        "desert": 4
+      },
+      "gm": 70,
+      "rp": 30,
+      "plus": 4
+    },
+    "t3-developed": {
+      "id": "t3-developed",
+      "tier": 3,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "mountain": 18,
+        "cave": 18,
+        "jungle": 12,
+        "desert": 12,
+        "volcanic": 0,
+        "tundra": 0
+      },
+      "gm": 102,
+      "rp": 36,
+      "plus": 3
+    },
+    "t3-tundra-arrival": {
+      "id": "t3-tundra-arrival",
+      "tier": 3,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "mountain": 18,
+        "cave": 18,
+        "jungle": 12,
+        "desert": 12,
+        "volcanic": 6,
+        "tundra": 0
+      },
+      "gm": 108,
+      "rp": 37,
+      "plus": 4
+    }
+  },
+  "cases": [
+    {
+      "id": "ec-J1-s101009-control",
+      "identityId": "t3-striker-light",
+      "className": "striker",
+      "frame": "light",
+      "pathName": "light",
+      "range": "close",
+      "tier": 3,
+      "role": "farm",
+      "nodeId": "node-t3-jungle-01",
+      "isDungeon": false,
+      "alternate": false,
+      "targetTypes": [],
+      "treatment": "control",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+        "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+      ],
+      "seed": 101009,
+      "block": "J1",
+      "arm": "control",
+      "comparisonId": "ec-J1-s101009",
+      "snapshotId": "t3-developed",
+      "progressionSnapshot": {
+        "id": "t3-developed",
+        "tier": 3,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "mountain": 18,
+          "cave": 18,
+          "jungle": 12,
+          "desert": 12,
+          "volcanic": 0,
+          "tundra": 0
+        },
+        "gm": 102,
+        "rp": 36,
+        "plus": 3
+      },
+      "upgradeLevel": 3,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "ec-J1-s101009-control",
+        "classRoot": "cadence-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "cadence-root",
+          "cadence-light",
+          "cadence-range-close"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-venomthorn-rapier",
+          "armor": "swamp-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "durationMs": 600000,
+      "referenceObservationId": "op-t3-striker-light-jungle-t3-developed-s101009",
+      "referenceSource": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6"
+    },
+    {
+      "id": "ec-J1-s101009-candidate",
+      "identityId": "t3-striker-light",
+      "className": "striker",
+      "frame": "light",
+      "pathName": "light",
+      "range": "close",
+      "tier": 3,
+      "role": "farm",
+      "nodeId": "node-t3-jungle-01",
+      "isDungeon": false,
+      "alternate": false,
+      "targetTypes": [],
+      "treatment": "control",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+        "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+      ],
+      "seed": 101009,
+      "block": "J1",
+      "arm": "candidate",
+      "comparisonId": "ec-J1-s101009",
+      "snapshotId": "t3-developed",
+      "progressionSnapshot": {
+        "id": "t3-developed",
+        "tier": 3,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "mountain": 18,
+          "cave": 18,
+          "jungle": 12,
+          "desert": 12,
+          "volcanic": 0,
+          "tundra": 0
+        },
+        "gm": 102,
+        "rp": 36,
+        "plus": 3
+      },
+      "upgradeLevel": 3,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "ec-J1-s101009-candidate",
+        "classRoot": "cadence-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "cadence-root",
+          "cadence-light",
+          "cadence-range-close"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-venomthorn-rapier",
+          "armor": "mountain-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "durationMs": 600000,
+      "referenceObservationId": "op-t3-striker-light-jungle-t3-developed-s101009",
+      "referenceSource": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6"
+    },
+    {
+      "id": "ec-J1-s101033-candidate",
+      "identityId": "t3-striker-light",
+      "className": "striker",
+      "frame": "light",
+      "pathName": "light",
+      "range": "close",
+      "tier": 3,
+      "role": "farm",
+      "nodeId": "node-t3-jungle-01",
+      "isDungeon": false,
+      "alternate": false,
+      "targetTypes": [],
+      "treatment": "control",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+        "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+      ],
+      "seed": 101033,
+      "block": "J1",
+      "arm": "candidate",
+      "comparisonId": "ec-J1-s101033",
+      "snapshotId": "t3-developed",
+      "progressionSnapshot": {
+        "id": "t3-developed",
+        "tier": 3,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "mountain": 18,
+          "cave": 18,
+          "jungle": 12,
+          "desert": 12,
+          "volcanic": 0,
+          "tundra": 0
+        },
+        "gm": 102,
+        "rp": 36,
+        "plus": 3
+      },
+      "upgradeLevel": 3,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "ec-J1-s101033-candidate",
+        "classRoot": "cadence-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "cadence-root",
+          "cadence-light",
+          "cadence-range-close"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-venomthorn-rapier",
+          "armor": "mountain-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "durationMs": 600000,
+      "referenceObservationId": "op-t3-striker-light-jungle-t3-developed-s101033",
+      "referenceSource": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6"
+    },
+    {
+      "id": "ec-J1-s101033-control",
+      "identityId": "t3-striker-light",
+      "className": "striker",
+      "frame": "light",
+      "pathName": "light",
+      "range": "close",
+      "tier": 3,
+      "role": "farm",
+      "nodeId": "node-t3-jungle-01",
+      "isDungeon": false,
+      "alternate": false,
+      "targetTypes": [],
+      "treatment": "control",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+        "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+      ],
+      "seed": 101033,
+      "block": "J1",
+      "arm": "control",
+      "comparisonId": "ec-J1-s101033",
+      "snapshotId": "t3-developed",
+      "progressionSnapshot": {
+        "id": "t3-developed",
+        "tier": 3,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "mountain": 18,
+          "cave": 18,
+          "jungle": 12,
+          "desert": 12,
+          "volcanic": 0,
+          "tundra": 0
+        },
+        "gm": 102,
+        "rp": 36,
+        "plus": 3
+      },
+      "upgradeLevel": 3,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "ec-J1-s101033-control",
+        "classRoot": "cadence-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "cadence-root",
+          "cadence-light",
+          "cadence-range-close"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-venomthorn-rapier",
+          "armor": "swamp-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "durationMs": 600000,
+      "referenceObservationId": "op-t3-striker-light-jungle-t3-developed-s101033",
+      "referenceSource": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6"
+    },
+    {
+      "id": "ec-J2-s101009-control",
+      "identityId": "t3-apprentice-balanced",
+      "className": "apprentice",
+      "frame": "balanced",
+      "pathName": "balanced",
+      "range": "mid",
+      "tier": 3,
+      "role": "farm",
+      "nodeId": "node-t3-jungle-01",
+      "isDungeon": false,
+      "alternate": false,
+      "targetTypes": [],
+      "treatment": "control",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+        "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+      ],
+      "seed": 101009,
+      "block": "J2",
+      "arm": "control",
+      "comparisonId": "ec-J2-s101009",
+      "snapshotId": "t3-developed",
+      "progressionSnapshot": {
+        "id": "t3-developed",
+        "tier": 3,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "mountain": 18,
+          "cave": 18,
+          "jungle": 12,
+          "desert": 12,
+          "volcanic": 0,
+          "tundra": 0
+        },
+        "gm": 102,
+        "rp": 36,
+        "plus": 3
+      },
+      "upgradeLevel": 3,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "ec-J2-s101009-control",
+        "classRoot": "dot-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "dot-root",
+          "dot-balanced",
+          "dot-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "swamp-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "durationMs": 600000,
+      "referenceObservationId": "op-t3-apprentice-balanced-jungle-t3-developed-s101009",
+      "referenceSource": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6"
+    },
+    {
+      "id": "ec-J2-s101009-candidate",
+      "identityId": "t3-apprentice-balanced",
+      "className": "apprentice",
+      "frame": "balanced",
+      "pathName": "balanced",
+      "range": "mid",
+      "tier": 3,
+      "role": "farm",
+      "nodeId": "node-t3-jungle-01",
+      "isDungeon": false,
+      "alternate": false,
+      "targetTypes": [],
+      "treatment": "control",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+        "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+      ],
+      "seed": 101009,
+      "block": "J2",
+      "arm": "candidate",
+      "comparisonId": "ec-J2-s101009",
+      "snapshotId": "t3-developed",
+      "progressionSnapshot": {
+        "id": "t3-developed",
+        "tier": 3,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "mountain": 18,
+          "cave": 18,
+          "jungle": 12,
+          "desert": 12,
+          "volcanic": 0,
+          "tundra": 0
+        },
+        "gm": 102,
+        "rp": 36,
+        "plus": 3
+      },
+      "upgradeLevel": 3,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "ec-J2-s101009-candidate",
+        "classRoot": "dot-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "dot-root",
+          "dot-balanced",
+          "dot-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "mountain-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "durationMs": 600000,
+      "referenceObservationId": "op-t3-apprentice-balanced-jungle-t3-developed-s101009",
+      "referenceSource": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6"
+    },
+    {
+      "id": "ec-J2-s101033-candidate",
+      "identityId": "t3-apprentice-balanced",
+      "className": "apprentice",
+      "frame": "balanced",
+      "pathName": "balanced",
+      "range": "mid",
+      "tier": 3,
+      "role": "farm",
+      "nodeId": "node-t3-jungle-01",
+      "isDungeon": false,
+      "alternate": false,
+      "targetTypes": [],
+      "treatment": "control",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+        "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+      ],
+      "seed": 101033,
+      "block": "J2",
+      "arm": "candidate",
+      "comparisonId": "ec-J2-s101033",
+      "snapshotId": "t3-developed",
+      "progressionSnapshot": {
+        "id": "t3-developed",
+        "tier": 3,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "mountain": 18,
+          "cave": 18,
+          "jungle": 12,
+          "desert": 12,
+          "volcanic": 0,
+          "tundra": 0
+        },
+        "gm": 102,
+        "rp": 36,
+        "plus": 3
+      },
+      "upgradeLevel": 3,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "ec-J2-s101033-candidate",
+        "classRoot": "dot-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "dot-root",
+          "dot-balanced",
+          "dot-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "mountain-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "durationMs": 600000,
+      "referenceObservationId": "op-t3-apprentice-balanced-jungle-t3-developed-s101033",
+      "referenceSource": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6"
+    },
+    {
+      "id": "ec-J2-s101033-control",
+      "identityId": "t3-apprentice-balanced",
+      "className": "apprentice",
+      "frame": "balanced",
+      "pathName": "balanced",
+      "range": "mid",
+      "tier": 3,
+      "role": "farm",
+      "nodeId": "node-t3-jungle-01",
+      "isDungeon": false,
+      "alternate": false,
+      "targetTypes": [],
+      "treatment": "control",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+        "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+      ],
+      "seed": 101033,
+      "block": "J2",
+      "arm": "control",
+      "comparisonId": "ec-J2-s101033",
+      "snapshotId": "t3-developed",
+      "progressionSnapshot": {
+        "id": "t3-developed",
+        "tier": 3,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "mountain": 18,
+          "cave": 18,
+          "jungle": 12,
+          "desert": 12,
+          "volcanic": 0,
+          "tundra": 0
+        },
+        "gm": 102,
+        "rp": 36,
+        "plus": 3
+      },
+      "upgradeLevel": 3,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "ec-J2-s101033-control",
+        "classRoot": "dot-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "dot-root",
+          "dot-balanced",
+          "dot-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "swamp-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "durationMs": 600000,
+      "referenceObservationId": "op-t3-apprentice-balanced-jungle-t3-developed-s101033",
+      "referenceSource": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6"
+    },
+    {
+      "id": "ec-V1-s101009-control",
+      "identityId": "t3-striker-light",
+      "className": "striker",
+      "frame": "light",
+      "pathName": "light",
+      "range": "close",
+      "tier": 3,
+      "role": "farm",
+      "nodeId": "node-t3-volcanic-01",
+      "isDungeon": false,
+      "alternate": false,
+      "targetTypes": [],
+      "treatment": "control",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+        "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+      ],
+      "seed": 101009,
+      "block": "V1",
+      "arm": "control",
+      "comparisonId": "ec-V1-s101009",
+      "snapshotId": "t3-developed",
+      "progressionSnapshot": {
+        "id": "t3-developed",
+        "tier": 3,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "mountain": 18,
+          "cave": 18,
+          "jungle": 12,
+          "desert": 12,
+          "volcanic": 0,
+          "tundra": 0
+        },
+        "gm": 102,
+        "rp": 36,
+        "plus": 3
+      },
+      "upgradeLevel": 3,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "brace"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "ec-V1-s101009-control",
+        "classRoot": "cadence-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "cadence-root",
+          "cadence-light",
+          "cadence-range-close"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-venomthorn-rapier",
+          "armor": "mountain-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "durationMs": 600000,
+      "referenceObservationId": "op-t3-striker-light-volcanic-t3-developed-s101009",
+      "referenceSource": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6"
+    },
+    {
+      "id": "ec-V1-s101009-candidate",
+      "identityId": "t3-striker-light",
+      "className": "striker",
+      "frame": "light",
+      "pathName": "light",
+      "range": "close",
+      "tier": 3,
+      "role": "farm",
+      "nodeId": "node-t3-volcanic-01",
+      "isDungeon": false,
+      "alternate": false,
+      "targetTypes": [],
+      "treatment": "control",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+        "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+      ],
+      "seed": 101009,
+      "block": "V1",
+      "arm": "candidate",
+      "comparisonId": "ec-V1-s101009",
+      "snapshotId": "t3-developed",
+      "progressionSnapshot": {
+        "id": "t3-developed",
+        "tier": 3,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "mountain": 18,
+          "cave": 18,
+          "jungle": 12,
+          "desert": 12,
+          "volcanic": 0,
+          "tundra": 0
+        },
+        "gm": 102,
+        "rp": 36,
+        "plus": 3
+      },
+      "upgradeLevel": 3,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "brace"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "ec-V1-s101009-candidate",
+        "classRoot": "cadence-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "cadence-root",
+          "cadence-light",
+          "cadence-range-close"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-venomthorn-rapier",
+          "armor": "mountain-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "durationMs": 600000,
+      "referenceObservationId": "op-t3-striker-light-volcanic-t3-developed-s101009",
+      "referenceSource": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6"
+    },
+    {
+      "id": "ec-V1-s101033-candidate",
+      "identityId": "t3-striker-light",
+      "className": "striker",
+      "frame": "light",
+      "pathName": "light",
+      "range": "close",
+      "tier": 3,
+      "role": "farm",
+      "nodeId": "node-t3-volcanic-01",
+      "isDungeon": false,
+      "alternate": false,
+      "targetTypes": [],
+      "treatment": "control",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+        "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+      ],
+      "seed": 101033,
+      "block": "V1",
+      "arm": "candidate",
+      "comparisonId": "ec-V1-s101033",
+      "snapshotId": "t3-developed",
+      "progressionSnapshot": {
+        "id": "t3-developed",
+        "tier": 3,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "mountain": 18,
+          "cave": 18,
+          "jungle": 12,
+          "desert": 12,
+          "volcanic": 0,
+          "tundra": 0
+        },
+        "gm": 102,
+        "rp": 36,
+        "plus": 3
+      },
+      "upgradeLevel": 3,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "brace"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "ec-V1-s101033-candidate",
+        "classRoot": "cadence-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "cadence-root",
+          "cadence-light",
+          "cadence-range-close"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-venomthorn-rapier",
+          "armor": "mountain-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "durationMs": 600000,
+      "referenceObservationId": "op-t3-striker-light-volcanic-t3-developed-s101033",
+      "referenceSource": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6"
+    },
+    {
+      "id": "ec-V1-s101033-control",
+      "identityId": "t3-striker-light",
+      "className": "striker",
+      "frame": "light",
+      "pathName": "light",
+      "range": "close",
+      "tier": 3,
+      "role": "farm",
+      "nodeId": "node-t3-volcanic-01",
+      "isDungeon": false,
+      "alternate": false,
+      "targetTypes": [],
+      "treatment": "control",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+        "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+      ],
+      "seed": 101033,
+      "block": "V1",
+      "arm": "control",
+      "comparisonId": "ec-V1-s101033",
+      "snapshotId": "t3-developed",
+      "progressionSnapshot": {
+        "id": "t3-developed",
+        "tier": 3,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "mountain": 18,
+          "cave": 18,
+          "jungle": 12,
+          "desert": 12,
+          "volcanic": 0,
+          "tundra": 0
+        },
+        "gm": 102,
+        "rp": 36,
+        "plus": 3
+      },
+      "upgradeLevel": 3,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "brace"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "ec-V1-s101033-control",
+        "classRoot": "cadence-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "cadence-root",
+          "cadence-light",
+          "cadence-range-close"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-venomthorn-rapier",
+          "armor": "mountain-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "durationMs": 600000,
+      "referenceObservationId": "op-t3-striker-light-volcanic-t3-developed-s101033",
+      "referenceSource": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6"
+    },
+    {
+      "id": "ec-P1-s101009-control",
+      "identityId": "t2-squire-light",
+      "className": "squire",
+      "frame": "light",
+      "pathName": "light",
+      "range": null,
+      "tier": 2,
+      "role": "boss",
+      "nodeId": "node-t2-plains-dungeon",
+      "isDungeon": true,
+      "alternate": false,
+      "targetTypes": [
+        "gorging-razortusk"
+      ],
+      "treatment": "control",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+        "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+      ],
+      "seed": 101009,
+      "block": "P1",
+      "arm": "control",
+      "comparisonId": "ec-P1-s101009",
+      "snapshotId": "t2-desert-established",
+      "progressionSnapshot": {
+        "id": "t2-desert-established",
+        "tier": 2,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 12,
+          "mountain": 12,
+          "cave": 12,
+          "jungle": 6,
+          "desert": 4
+        },
+        "gm": 70,
+        "rp": 30,
+        "plus": 4
+      },
+      "upgradeLevel": 4,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "slam"
+        ],
+        "guards": [
+          "second-wind"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "boss": "gorging-razortusk",
+      "build": {
+        "id": "ec-P1-s101009-control",
+        "classRoot": "cooldown-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "cooldown-root",
+          "cooldown-light"
+        ],
+        "gearItemIds": {
+          "weapon": "quake-hammer",
+          "armor": "plains-vest-t2",
+          "recovery": "plains-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "durationMs": 300000,
+      "referenceObservationId": "op-t2-squire-light-plains-boss-s101009",
+      "referenceSource": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6"
+    },
+    {
+      "id": "ec-P1-s101009-candidate",
+      "identityId": "t2-squire-light",
+      "className": "squire",
+      "frame": "light",
+      "pathName": "light",
+      "range": null,
+      "tier": 2,
+      "role": "boss",
+      "nodeId": "node-t2-plains-dungeon",
+      "isDungeon": true,
+      "alternate": false,
+      "targetTypes": [
+        "gorging-razortusk"
+      ],
+      "treatment": "control",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+        "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+      ],
+      "seed": 101009,
+      "block": "P1",
+      "arm": "candidate",
+      "comparisonId": "ec-P1-s101009",
+      "snapshotId": "t2-desert-established",
+      "progressionSnapshot": {
+        "id": "t2-desert-established",
+        "tier": 2,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 12,
+          "mountain": 12,
+          "cave": 12,
+          "jungle": 6,
+          "desert": 4
+        },
+        "gm": 70,
+        "rp": 30,
+        "plus": 4
+      },
+      "upgradeLevel": 4,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "slam"
+        ],
+        "guards": [
+          "second-wind",
+          "brace"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "boss": "gorging-razortusk",
+      "build": {
+        "id": "ec-P1-s101009-candidate",
+        "classRoot": "cooldown-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "cooldown-root",
+          "cooldown-light"
+        ],
+        "gearItemIds": {
+          "weapon": "quake-hammer",
+          "armor": "plains-vest-t2",
+          "recovery": "plains-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "durationMs": 300000,
+      "referenceObservationId": "op-t2-squire-light-plains-boss-s101009",
+      "referenceSource": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6"
+    },
+    {
+      "id": "ec-P1-s101033-candidate",
+      "identityId": "t2-squire-light",
+      "className": "squire",
+      "frame": "light",
+      "pathName": "light",
+      "range": null,
+      "tier": 2,
+      "role": "boss",
+      "nodeId": "node-t2-plains-dungeon",
+      "isDungeon": true,
+      "alternate": false,
+      "targetTypes": [
+        "gorging-razortusk"
+      ],
+      "treatment": "control",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+        "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+      ],
+      "seed": 101033,
+      "block": "P1",
+      "arm": "candidate",
+      "comparisonId": "ec-P1-s101033",
+      "snapshotId": "t2-desert-established",
+      "progressionSnapshot": {
+        "id": "t2-desert-established",
+        "tier": 2,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 12,
+          "mountain": 12,
+          "cave": 12,
+          "jungle": 6,
+          "desert": 4
+        },
+        "gm": 70,
+        "rp": 30,
+        "plus": 4
+      },
+      "upgradeLevel": 4,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "slam"
+        ],
+        "guards": [
+          "second-wind",
+          "brace"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "boss": "gorging-razortusk",
+      "build": {
+        "id": "ec-P1-s101033-candidate",
+        "classRoot": "cooldown-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "cooldown-root",
+          "cooldown-light"
+        ],
+        "gearItemIds": {
+          "weapon": "quake-hammer",
+          "armor": "plains-vest-t2",
+          "recovery": "plains-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "durationMs": 300000,
+      "referenceObservationId": "op-t2-squire-light-plains-boss-s101033",
+      "referenceSource": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6"
+    },
+    {
+      "id": "ec-P1-s101033-control",
+      "identityId": "t2-squire-light",
+      "className": "squire",
+      "frame": "light",
+      "pathName": "light",
+      "range": null,
+      "tier": 2,
+      "role": "boss",
+      "nodeId": "node-t2-plains-dungeon",
+      "isDungeon": true,
+      "alternate": false,
+      "targetTypes": [
+        "gorging-razortusk"
+      ],
+      "treatment": "control",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+        "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+      ],
+      "seed": 101033,
+      "block": "P1",
+      "arm": "control",
+      "comparisonId": "ec-P1-s101033",
+      "snapshotId": "t2-desert-established",
+      "progressionSnapshot": {
+        "id": "t2-desert-established",
+        "tier": 2,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 12,
+          "mountain": 12,
+          "cave": 12,
+          "jungle": 6,
+          "desert": 4
+        },
+        "gm": 70,
+        "rp": 30,
+        "plus": 4
+      },
+      "upgradeLevel": 4,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "slam"
+        ],
+        "guards": [
+          "second-wind"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "boss": "gorging-razortusk",
+      "build": {
+        "id": "ec-P1-s101033-control",
+        "classRoot": "cooldown-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "cooldown-root",
+          "cooldown-light"
+        ],
+        "gearItemIds": {
+          "weapon": "quake-hammer",
+          "armor": "plains-vest-t2",
+          "recovery": "plains-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered"
+        }
+      },
+      "durationMs": 300000,
+      "referenceObservationId": "op-t2-squire-light-plains-boss-s101033",
+      "referenceSource": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6"
+    },
+    {
+      "id": "ec-M1-s101009-control",
+      "identityId": "t3-apprentice-balanced",
+      "className": "apprentice",
+      "frame": "balanced",
+      "pathName": "balanced",
+      "range": "mid",
+      "tier": 3,
+      "role": "boss",
+      "nodeId": "node-t3-mountain-dungeon",
+      "isDungeon": true,
+      "alternate": false,
+      "targetTypes": [
+        "crag-gorged-horn-behemoth"
+      ],
+      "treatment": "control",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+        "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+      ],
+      "seed": 101009,
+      "block": "M1",
+      "arm": "control",
+      "comparisonId": "ec-M1-s101009",
+      "snapshotId": "t3-tundra-arrival",
+      "progressionSnapshot": {
+        "id": "t3-tundra-arrival",
+        "tier": 3,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "mountain": 18,
+          "cave": 18,
+          "jungle": 12,
+          "desert": 12,
+          "volcanic": 6,
+          "tundra": 0
+        },
+        "gm": 108,
+        "rp": 37,
+        "plus": 4
+      },
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "target-casting",
+          "actionId": "use-ability",
+          "targetAbilityId": "brace"
+        }
+      ],
+      "boss": "crag-gorged-horn-behemoth",
+      "build": {
+        "id": "ec-M1-s101009-control",
+        "classRoot": "dot-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "dot-root",
+          "dot-balanced",
+          "dot-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "mountain-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "cave-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "durationMs": 300000,
+      "referenceObservationId": "op-t3-apprentice-balanced-mountain-boss-s101009",
+      "referenceSource": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6"
+    },
+    {
+      "id": "ec-M1-s101009-candidate",
+      "identityId": "t3-apprentice-balanced",
+      "className": "apprentice",
+      "frame": "balanced",
+      "pathName": "balanced",
+      "range": "mid",
+      "tier": 3,
+      "role": "boss",
+      "nodeId": "node-t3-mountain-dungeon",
+      "isDungeon": true,
+      "alternate": false,
+      "targetTypes": [
+        "crag-gorged-horn-behemoth"
+      ],
+      "treatment": "control",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+        "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+      ],
+      "seed": 101009,
+      "block": "M1",
+      "arm": "candidate",
+      "comparisonId": "ec-M1-s101009",
+      "snapshotId": "t3-tundra-arrival",
+      "progressionSnapshot": {
+        "id": "t3-tundra-arrival",
+        "tier": 3,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "mountain": 18,
+          "cave": 18,
+          "jungle": 12,
+          "desert": 12,
+          "volcanic": 6,
+          "tundra": 0
+        },
+        "gm": 108,
+        "rp": 37,
+        "plus": 4
+      },
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "endure"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "target-casting",
+          "actionId": "use-ability",
+          "targetAbilityId": "brace"
+        }
+      ],
+      "boss": "crag-gorged-horn-behemoth",
+      "build": {
+        "id": "ec-M1-s101009-candidate",
+        "classRoot": "dot-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "dot-root",
+          "dot-balanced",
+          "dot-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "mountain-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "cave-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "durationMs": 300000,
+      "referenceObservationId": "op-t3-apprentice-balanced-mountain-boss-s101009",
+      "referenceSource": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6"
+    },
+    {
+      "id": "ec-M1-s101033-candidate",
+      "identityId": "t3-apprentice-balanced",
+      "className": "apprentice",
+      "frame": "balanced",
+      "pathName": "balanced",
+      "range": "mid",
+      "tier": 3,
+      "role": "boss",
+      "nodeId": "node-t3-mountain-dungeon",
+      "isDungeon": true,
+      "alternate": false,
+      "targetTypes": [
+        "crag-gorged-horn-behemoth"
+      ],
+      "treatment": "control",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+        "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+      ],
+      "seed": 101033,
+      "block": "M1",
+      "arm": "candidate",
+      "comparisonId": "ec-M1-s101033",
+      "snapshotId": "t3-tundra-arrival",
+      "progressionSnapshot": {
+        "id": "t3-tundra-arrival",
+        "tier": 3,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "mountain": 18,
+          "cave": 18,
+          "jungle": 12,
+          "desert": 12,
+          "volcanic": 6,
+          "tundra": 0
+        },
+        "gm": 108,
+        "rp": 37,
+        "plus": 4
+      },
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "endure"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "target-casting",
+          "actionId": "use-ability",
+          "targetAbilityId": "brace"
+        }
+      ],
+      "boss": "crag-gorged-horn-behemoth",
+      "build": {
+        "id": "ec-M1-s101033-candidate",
+        "classRoot": "dot-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "dot-root",
+          "dot-balanced",
+          "dot-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "mountain-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "cave-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "durationMs": 300000,
+      "referenceObservationId": "op-t3-apprentice-balanced-mountain-boss-s101033",
+      "referenceSource": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6"
+    },
+    {
+      "id": "ec-M1-s101033-control",
+      "identityId": "t3-apprentice-balanced",
+      "className": "apprentice",
+      "frame": "balanced",
+      "pathName": "balanced",
+      "range": "mid",
+      "tier": 3,
+      "role": "boss",
+      "nodeId": "node-t3-mountain-dungeon",
+      "isDungeon": true,
+      "alternate": false,
+      "targetTypes": [
+        "crag-gorged-horn-behemoth"
+      ],
+      "treatment": "control",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+        "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+      ],
+      "seed": 101033,
+      "block": "M1",
+      "arm": "control",
+      "comparisonId": "ec-M1-s101033",
+      "snapshotId": "t3-tundra-arrival",
+      "progressionSnapshot": {
+        "id": "t3-tundra-arrival",
+        "tier": 3,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "mountain": 18,
+          "cave": 18,
+          "jungle": 12,
+          "desert": 12,
+          "volcanic": 6,
+          "tundra": 0
+        },
+        "gm": 108,
+        "rp": 37,
+        "plus": 4
+      },
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "brace"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "target-casting",
+          "actionId": "use-ability",
+          "targetAbilityId": "brace"
+        }
+      ],
+      "boss": "crag-gorged-horn-behemoth",
+      "build": {
+        "id": "ec-M1-s101033-control",
+        "classRoot": "dot-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "dot-root",
+          "dot-balanced",
+          "dot-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "mountain-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "cave-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "durationMs": 300000,
+      "referenceObservationId": "op-t3-apprentice-balanced-mountain-boss-s101033",
+      "referenceSource": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6"
+    },
+    {
+      "id": "ec-E1-s101009-control",
+      "identityId": "t3-apprentice-balanced",
+      "className": "apprentice",
+      "frame": "balanced",
+      "pathName": "balanced",
+      "range": "mid",
+      "tier": 3,
+      "role": "boss",
+      "nodeId": "node-t3-volcanic-dungeon",
+      "isDungeon": true,
+      "alternate": false,
+      "targetTypes": [
+        "cinder-shell-magma-salamander"
+      ],
+      "treatment": "control",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+        "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+      ],
+      "seed": 101009,
+      "block": "E1",
+      "arm": "control",
+      "comparisonId": "ec-E1-s101009",
+      "snapshotId": "t3-tundra-arrival",
+      "progressionSnapshot": {
+        "id": "t3-tundra-arrival",
+        "tier": 3,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "mountain": 18,
+          "cave": 18,
+          "jungle": 12,
+          "desert": 12,
+          "volcanic": 6,
+          "tundra": 0
+        },
+        "gm": 108,
+        "rp": 37,
+        "plus": 4
+      },
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "endure"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "target-casting",
+          "actionId": "use-ability",
+          "targetAbilityId": "brace"
+        }
+      ],
+      "boss": "cinder-shell-magma-salamander",
+      "build": {
+        "id": "ec-E1-s101009-control",
+        "classRoot": "dot-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "dot-root",
+          "dot-balanced",
+          "dot-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "mountain-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "durationMs": 300000,
+      "referenceObservationId": "op-t3-apprentice-balanced-volcanic-boss-s101009",
+      "referenceSource": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6"
+    },
+    {
+      "id": "ec-E1-s101009-candidate",
+      "identityId": "t3-apprentice-balanced",
+      "className": "apprentice",
+      "frame": "balanced",
+      "pathName": "balanced",
+      "range": "mid",
+      "tier": 3,
+      "role": "boss",
+      "nodeId": "node-t3-volcanic-dungeon",
+      "isDungeon": true,
+      "alternate": false,
+      "targetTypes": [
+        "cinder-shell-magma-salamander"
+      ],
+      "treatment": "control",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+        "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+      ],
+      "seed": 101009,
+      "block": "E1",
+      "arm": "candidate",
+      "comparisonId": "ec-E1-s101009",
+      "snapshotId": "t3-tundra-arrival",
+      "progressionSnapshot": {
+        "id": "t3-tundra-arrival",
+        "tier": 3,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "mountain": 18,
+          "cave": 18,
+          "jungle": 12,
+          "desert": 12,
+          "volcanic": 6,
+          "tundra": 0
+        },
+        "gm": 108,
+        "rp": 37,
+        "plus": 4
+      },
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "detonate"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "endure"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "target-max-stacks",
+          "actionId": "use-ability",
+          "targetAbilityId": "detonate"
+        }
+      ],
+      "boss": "cinder-shell-magma-salamander",
+      "build": {
+        "id": "ec-E1-s101009-candidate",
+        "classRoot": "dot-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "dot-root",
+          "dot-balanced",
+          "dot-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "mountain-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "durationMs": 300000,
+      "referenceObservationId": "op-t3-apprentice-balanced-volcanic-boss-s101009",
+      "referenceSource": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6"
+    },
+    {
+      "id": "ec-E1-s101033-candidate",
+      "identityId": "t3-apprentice-balanced",
+      "className": "apprentice",
+      "frame": "balanced",
+      "pathName": "balanced",
+      "range": "mid",
+      "tier": 3,
+      "role": "boss",
+      "nodeId": "node-t3-volcanic-dungeon",
+      "isDungeon": true,
+      "alternate": false,
+      "targetTypes": [
+        "cinder-shell-magma-salamander"
+      ],
+      "treatment": "control",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+        "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+      ],
+      "seed": 101033,
+      "block": "E1",
+      "arm": "candidate",
+      "comparisonId": "ec-E1-s101033",
+      "snapshotId": "t3-tundra-arrival",
+      "progressionSnapshot": {
+        "id": "t3-tundra-arrival",
+        "tier": 3,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "mountain": 18,
+          "cave": 18,
+          "jungle": 12,
+          "desert": 12,
+          "volcanic": 6,
+          "tundra": 0
+        },
+        "gm": 108,
+        "rp": 37,
+        "plus": 4
+      },
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "detonate"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "endure"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "target-max-stacks",
+          "actionId": "use-ability",
+          "targetAbilityId": "detonate"
+        }
+      ],
+      "boss": "cinder-shell-magma-salamander",
+      "build": {
+        "id": "ec-E1-s101033-candidate",
+        "classRoot": "dot-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "dot-root",
+          "dot-balanced",
+          "dot-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "mountain-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "durationMs": 300000,
+      "referenceObservationId": "op-t3-apprentice-balanced-volcanic-boss-s101033",
+      "referenceSource": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6"
+    },
+    {
+      "id": "ec-E1-s101033-control",
+      "identityId": "t3-apprentice-balanced",
+      "className": "apprentice",
+      "frame": "balanced",
+      "pathName": "balanced",
+      "range": "mid",
+      "tier": 3,
+      "role": "boss",
+      "nodeId": "node-t3-volcanic-dungeon",
+      "isDungeon": true,
+      "alternate": false,
+      "targetTypes": [
+        "cinder-shell-magma-salamander"
+      ],
+      "treatment": "control",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+        "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+      ],
+      "seed": 101033,
+      "block": "E1",
+      "arm": "control",
+      "comparisonId": "ec-E1-s101033",
+      "snapshotId": "t3-tundra-arrival",
+      "progressionSnapshot": {
+        "id": "t3-tundra-arrival",
+        "tier": 3,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "mountain": 18,
+          "cave": 18,
+          "jungle": 12,
+          "desert": 12,
+          "volcanic": 6,
+          "tundra": 0
+        },
+        "gm": 108,
+        "rp": 37,
+        "plus": 4
+      },
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "endure"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "target-casting",
+          "actionId": "use-ability",
+          "targetAbilityId": "brace"
+        }
+      ],
+      "boss": "cinder-shell-magma-salamander",
+      "build": {
+        "id": "ec-E1-s101033-control",
+        "classRoot": "dot-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "dot-root",
+          "dot-balanced",
+          "dot-range-mid"
+        ],
+        "gearItemIds": {
+          "weapon": "cave-cataclysm-axe",
+          "armor": "mountain-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-tempered"
+        }
+      },
+      "durationMs": 300000,
+      "referenceObservationId": "op-t3-apprentice-balanced-volcanic-boss-s101033",
+      "referenceSource": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6"
+    }
+  ],
+  "resourcesAtSeal": {
+    "freeDiskBytes": 652455030784,
+    "freeMemoryBytes": 7758245888,
+    "totalMemoryBytes": 34282242048
+  },
+  "progression": "Mastery/XP fixed by World.fixedBiomeMasteryPlayers; essence, catalysts, lifetime level, quest and boss records can accrue. No loadout/gear/skill purchases or recalculation from mastery."
+}

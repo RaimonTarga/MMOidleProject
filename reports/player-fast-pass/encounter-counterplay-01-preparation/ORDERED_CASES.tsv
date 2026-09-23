@@ -1,0 +1,25 @@
+order	pair	seed	arm	observationId	referenceObservationId	nodeId	boss	capMs
+1	J1	101009	control	ec-J1-s101009-control	op-t3-striker-light-jungle-t3-developed-s101009	node-t3-jungle-01		600000
+2	J1	101009	candidate	ec-J1-s101009-candidate	op-t3-striker-light-jungle-t3-developed-s101009	node-t3-jungle-01		600000
+3	J1	101033	candidate	ec-J1-s101033-candidate	op-t3-striker-light-jungle-t3-developed-s101033	node-t3-jungle-01		600000
+4	J1	101033	control	ec-J1-s101033-control	op-t3-striker-light-jungle-t3-developed-s101033	node-t3-jungle-01		600000
+5	J2	101009	control	ec-J2-s101009-control	op-t3-apprentice-balanced-jungle-t3-developed-s101009	node-t3-jungle-01		600000
+6	J2	101009	candidate	ec-J2-s101009-candidate	op-t3-apprentice-balanced-jungle-t3-developed-s101009	node-t3-jungle-01		600000
+7	J2	101033	candidate	ec-J2-s101033-candidate	op-t3-apprentice-balanced-jungle-t3-developed-s101033	node-t3-jungle-01		600000
+8	J2	101033	control	ec-J2-s101033-control	op-t3-apprentice-balanced-jungle-t3-developed-s101033	node-t3-jungle-01		600000
+9	V1	101009	control	ec-V1-s101009-control	op-t3-striker-light-volcanic-t3-developed-s101009	node-t3-volcanic-01		600000
+10	V1	101009	candidate	ec-V1-s101009-candidate	op-t3-striker-light-volcanic-t3-developed-s101009	node-t3-volcanic-01		600000
+11	V1	101033	candidate	ec-V1-s101033-candidate	op-t3-striker-light-volcanic-t3-developed-s101033	node-t3-volcanic-01		600000
+12	V1	101033	control	ec-V1-s101033-control	op-t3-striker-light-volcanic-t3-developed-s101033	node-t3-volcanic-01		600000
+13	P1	101009	control	ec-P1-s101009-control	op-t2-squire-light-plains-boss-s101009	node-t2-plains-dungeon	gorging-razortusk	300000
+14	P1	101009	candidate	ec-P1-s101009-candidate	op-t2-squire-light-plains-boss-s101009	node-t2-plains-dungeon	gorging-razortusk	300000
+15	P1	101033	candidate	ec-P1-s101033-candidate	op-t2-squire-light-plains-boss-s101033	node-t2-plains-dungeon	gorging-razortusk	300000
+16	P1	101033	control	ec-P1-s101033-control	op-t2-squire-light-plains-boss-s101033	node-t2-plains-dungeon	gorging-razortusk	300000
+17	M1	101009	control	ec-M1-s101009-control	op-t3-apprentice-balanced-mountain-boss-s101009	node-t3-mountain-dungeon	crag-gorged-horn-behemoth	300000
+18	M1	101009	candidate	ec-M1-s101009-candidate	op-t3-apprentice-balanced-mountain-boss-s101009	node-t3-mountain-dungeon	crag-gorged-horn-behemoth	300000
+19	M1	101033	candidate	ec-M1-s101033-candidate	op-t3-apprentice-balanced-mountain-boss-s101033	node-t3-mountain-dungeon	crag-gorged-horn-behemoth	300000
+20	M1	101033	control	ec-M1-s101033-control	op-t3-apprentice-balanced-mountain-boss-s101033	node-t3-mountain-dungeon	crag-gorged-horn-behemoth	300000
+21	E1	101009	control	ec-E1-s101009-control	op-t3-apprentice-balanced-volcanic-boss-s101009	node-t3-volcanic-dungeon	cinder-shell-magma-salamander	300000
+22	E1	101009	candidate	ec-E1-s101009-candidate	op-t3-apprentice-balanced-volcanic-boss-s101009	node-t3-volcanic-dungeon	cinder-shell-magma-salamander	300000
+23	E1	101033	candidate	ec-E1-s101033-candidate	op-t3-apprentice-balanced-volcanic-boss-s101033	node-t3-volcanic-dungeon	cinder-shell-magma-salamander	300000
+24	E1	101033	control	ec-E1-s101033-control	op-t3-apprentice-balanced-volcanic-boss-s101033	node-t3-volcanic-dungeon	cinder-shell-magma-salamander	300000

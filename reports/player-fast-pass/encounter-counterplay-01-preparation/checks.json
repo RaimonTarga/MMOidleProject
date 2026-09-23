@@ -1,0 +1,28 @@
+{
+  "executionSha": "7c3bf6bc0035feff0c0e432b4cda4a4e804281ad",
+  "integratedSpiritSha": "d073dc19c4f9df9c90b4661899d2454972b2c5b3",
+  "spiritPush": "succeeded; remote develop verified equal",
+  "workspaceAndBenchTypecheck": "passed",
+  "sharedBuild": "passed",
+  "gitDiffCheck": "passed",
+  "sourceStatus": "clean",
+  "qualification": 24,
+  "zeroTickReceiptReplay": 24,
+  "historicalControlsExactlyMatched": 12,
+  "spiritMatchesTestedCandidateReadbacks": true,
+  "conduitMatchesControlProfiles": true,
+  "rootHeavySpiritMatchesControl": true,
+  "t4ProductionIdentities": 54,
+  "packetVerify": "passed at final checkout",
+  "fullSuite": "not run",
+  "livePlay": "not performed",
+  "combat": {
+    "planned": 24,
+    "completed": 0,
+    "gameplayDeaths": 0,
+    "operationalFailures": 0,
+    "omitted": 0,
+    "notRun": 24
+  },
+  "qualificationCombatObservations": 0
+}
