@@ -90,7 +90,7 @@ export const SUMMONER_FRAME_TUNING: Record<SummonerFrame, SummonerFrameTuning> =
     totalSummonHpPct: 0.8,
     moveSpeedMult: 1,
     sizeMult: 1,
-    reconstructionIntervalMult: 1,
+    reconstructionIntervalMult: 2500 / 3500,
     minimumReconstructionIntervalMs: 2500,
   },
   light: {
