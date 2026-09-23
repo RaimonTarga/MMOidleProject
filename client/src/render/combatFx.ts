@@ -235,6 +235,8 @@ export interface PlayerAttackPresentation {
   player: PlayerView;
   from: Vec2;
   to: Vec2;
+  /** Node-space lunge destination retained after the target leaves render state. */
+  targetBase?: Vec2;
   targetSize: number;
   killedBoss: boolean;
 }
@@ -246,6 +248,7 @@ export function capturePlayerAttack(
   const player = state.view.get(ev.playerId) as PlayerView | undefined;
   const actor = state.sprite.get(ev.playerId);
   const target = state.sprite.get(ev.targetId);
+  const targetBase = state.interpolation.get(ev.targetId)?.base;
   if (!player || !actor || !target) return undefined;
   return {
     player,
@@ -253,6 +256,7 @@ export function capturePlayerAttack(
     to: ev.kind === 'player-hit' && ev.targetPos
       ? nodeToScene(ev.targetPos.x, ev.targetPos.y)
       : { x: target.x, y: target.y },
+    targetBase: targetBase ? { ...targetBase } : undefined,
     targetSize: Math.max(target.displayWidth, target.displayHeight),
     killedBoss: state.entity.get(ev.targetId)?.isMonster?.isBoss ?? false,
   };
@@ -1542,7 +1546,7 @@ function runFxForAttackStyle(
   const actorSprite = state.sprite.get(actorId);
   const targetSprite = state.sprite.get(ev.targetId);
   const player = presentation?.player ?? state.view.get(actorId) as PlayerView | undefined;
-  const targetInterp = state.interpolation.get(ev.targetId);
+  const lungeTarget = state.interpolation.get(ev.targetId)?.base ?? presentation?.targetBase;
   const isFlashTeleport = ev.effects?.includes(FLASH_CLIENT_EFFECT) ?? false;
   const isSwiftblade = ev.effects?.includes(SWIFTBLADE_CLIENT_EFFECT) ?? false;
   const isHolyBeam = ev.effects?.includes(CHANNEL_BEAM_CLIENT_EFFECT) ?? false;
@@ -1771,9 +1775,9 @@ function runFxForAttackStyle(
     !isHolyFlash &&
     !isFlashTeleport &&
     !isRangedPlayerView(player) &&
-    targetInterp
+    lungeTarget
   ) {
-    applyLunge(state, actorId, { ...targetInterp.base }, scene);
+    applyLunge(state, actorId, { ...lungeTarget }, scene);
   }
 }
 
