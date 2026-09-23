@@ -321,7 +321,7 @@ function decayAmbientRamp(
   dt: number,
   floor: number,
 ): void {
-  const rampMs = effect.data.rampMs ?? 3000;
+  const rampMs = (effect.data.rampMs ?? 3000) / (effect.data.coolingRateMult ?? 1);
   const coolingScale = effect.data.coolingScaleStacks ?? 0;
   if (coolingScale > 0) {
     effect.data.rampAccum = 0;

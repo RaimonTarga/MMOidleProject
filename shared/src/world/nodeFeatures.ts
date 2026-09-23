@@ -113,6 +113,8 @@ export interface NodeFeatureSpec {
     rampMs: number;
     /** Above this count, cooling speed scales as current stacks / this value. */
     coolingScaleStacks?: number;
+    /** Multiplies out-of-combat cooling speed at every stack count; default 1. */
+    coolingRateMult?: number;
     payload: AmbientRampPayload;
   };
 }
@@ -500,6 +502,7 @@ function volcanicHeat(id: string): NodeFeatureSpec {
       maxStacks: 0,
       rampMs: 3000,
       coolingScaleStacks: 10,
+      coolingRateMult: 2,
       payload: {
         outgoingDamagePct: 0.03, incomingDamagePct: 0.045,
         damageSoftcapStacks: 10, damageSoftcapScale: 5,

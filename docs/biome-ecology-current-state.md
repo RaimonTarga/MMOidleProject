@@ -453,13 +453,15 @@ Above ten, effective damage stacks are `10 + 5 * ln(1 + (stacks - 10) / 5)`;
 multiply by 0.03 / 0.045 for the respective bonuses. Every stack still matters,
 but marginal gains decrease continuously. Combat and HUD share the same formula;
 the Heat tile shows actual stacks and bonuses to one decimal, with no maximum-fill ring.
-Out of combat the next stack takes `3000 / max(1, stacks / 10)` ms to cool,
+Out of combat the next stack takes `1500 / max(1, stacks / 10)` ms to cool
+(`coolingRateMult: 2` doubles cooling at every stack count without changing buildup),
 recomputed after each lost stack, preserving elapsed remainder. Growth and cooling
 use separate clocks, reset on direction changes; neither can bank the other's progress.
-Ten or fewer stacks cool at one per three seconds. Biome exit and death clear Heat.
+Ten or fewer stacks cool at one per 1.5 seconds. Biome exit and death clear Heat.
 Heat and Chill emit an `ambient-stack-gain` event for each actual gained stack,
-including the first. The client applies a soft 180 ms red (Heat) or light-blue
-(Chill) sprite tint, fading into the current aura/Flash Shift tint. Gains retrigger
+including the first. The client applies a 360 ms red (Heat) or light-blue
+(Chill) sprite tint at 85% peak strength, holding for 60 ms before fading into
+the current aura/Flash Shift tint. Gains retrigger
 the pulse without queued tweens; boss vents naturally repeat Heat pulses about
 once per second. Cooling and capped Chill emit no gain cues. Death, removal,
 node changes, full sync and render pauses discard transient flashes.
