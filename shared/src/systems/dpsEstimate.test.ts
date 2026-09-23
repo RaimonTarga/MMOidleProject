@@ -193,6 +193,14 @@ function part(estimate: ReturnType<typeof estimatePlayerDps>, label: string): nu
 }
 
 function testSlingerSecondaryDamageBreakdown(): void {
+  const empoweredEstimate = estimatePlayerDps({
+    attack: 100, onHitDamage: 0, attackCooldownMs: 1_000,
+    weaponId: 'ashbrand-blade', archetype: 'reload',
+    passives: { 'reload.empowered-mult': 1.5 },
+  });
+  const empoweredDot = ((9 * 100 + 150) / 0.65 * 0.85) * 0.5 * 1.5 / 11.6;
+  assert(Math.abs(part(empoweredEstimate, 'Weapon damage over time') - Math.round(empoweredDot * 10) / 10) < 1e-9,
+    'Slinger reservoir estimate includes the empowered last shot exactly once');
   const estimate = estimatePlayerDps({
     attack: 65,
     onHitDamage: 20,

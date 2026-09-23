@@ -1,5 +1,6 @@
 import {
   GAME_CONFIG,
+  BURN_FAMILY,
   SLINGER_DIRECT_ATTACK_EFFECTIVENESS,
   emptyEquipment,
   getStatusEffect,
@@ -12,6 +13,8 @@ import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
 import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { runPlayerAttack } from '../src/systems/combat/engine/combat';
+import { setEmpoweredAttack } from '../src/systems/combat/engine/empoweredAttacks';
+import { updateWeaponEffects } from '../src/systems/combat/damage/weaponEffects';
 import type { CombatContext, FormationAttackContribution } from '../src/systems/combat/engine/combatPipeline';
 import { playerOnHitDamage } from '../src/systems/combat/engine/onHitDamage';
 import { consumeWeightedProc } from '../src/systems/classes/archetypes/summoner/formationAttack';
@@ -64,7 +67,7 @@ function attach(world: World, id: string, archetype: 'reload' | 'summoner' | nul
   return player;
 }
 
-function attackOnce(world: World, player: PlayerEntity): { damage: number; pool: number } {
+function attackOnce(world: World, player: PlayerEntity, effectId = 'poison-dagger-burn') {
   const target = world.createMonster(NODE, 'plains-slime', { x: 450, y: 400 });
   if (!target) throw new Error('failed to create reservoir target');
   target.hasHealth.maxHp = 10_000;
@@ -78,8 +81,9 @@ function attackOnce(world: World, player: PlayerEntity): { damage: number; pool:
   });
   assert(outcome === 'hit', `${player.isPlayer.id} reservoir attack should land`);
   return {
+    target,
     damage: before - target.hasHealth.hp,
-    pool: getStatusEffect(target.tracksCombat, 'poison-dagger-burn')?.data.pool ?? 0,
+    pool: getStatusEffect(target.tracksCombat, effectId)?.data.pool ?? 0,
   };
 }
 
@@ -135,6 +139,32 @@ initCombatSystems();
   const ordinaryHit = attackOnce(world, ordinary);
   close(ordinaryHit.pool, 65 * 0.5 * 1.5,
     'non-Slinger weapon reservoir must remain unchanged');
+}
+
+// Every reservoir inherits the resolved empowered hit once, including its ticks.
+for (const profile of BURN_FAMILY) {
+  const world = new World();
+  const player = attach(world, `empowered-${profile.weaponId}`, 'reload');
+  player.holdsInventory.equipment.weapon = profile.weaponId;
+  player.dealsDamage.attack = 100;
+  player.dealsDamage.onHitDamage = 0;
+  player.usesSkills.passives['reload.empowered-mult'] = 1.5;
+  player.usesReload!.ammo = 10;
+  player.usesReload!.ammoMax = 10;
+  const normal = attackOnce(world, player, profile.effectId);
+  setEmpoweredAttack(world, player);
+  const empowered = attackOnce(world, player, profile.effectId);
+  close(empowered.pool, normal.pool * 1.5,
+    `${profile.weaponId} must store the empowered bonus exactly once`);
+  close(empowered.damage, Math.max(1, Math.round(150 * (1 - profile.convPct))),
+    `${profile.weaponId} retains its direct conversion fraction`);
+  const hpBeforeTick = empowered.target.hasHealth.hp;
+  updateWeaponEffects(world, profile.tickIntervalMs);
+  const remainingPool = getStatusEffect(empowered.target.tracksCombat, profile.effectId)!.data.pool;
+  const drained = empowered.pool - remainingPool;
+  assert(drained > 0, `${profile.weaponId} must drain stored damage`);
+  close(hpBeforeTick - empowered.target.hasHealth.hp, drained,
+    `${profile.weaponId} must not empower stored damage again on tick`);
 }
 
 // Raw slot weights stay normalized; the resolved formation multiplier biases

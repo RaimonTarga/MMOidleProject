@@ -260,12 +260,10 @@ export function initWeaponEffects(): void {
     if (!profile) return;
     if (evadeBlocksDebuffs(ctx)) return;
 
-    const empoweredBonus =
-      typeof ctx.metadata["empoweredBonus"] === "number"
-        ? ctx.metadata["empoweredBonus"]
-        : 0;
+    // Class listeners already applied empowerment; store that resolved damage
+    // without removing the bonus or multiplying it a second time.
     const reservoirBasis = weaponDotBasisFromResolvedDirectDamage(
-      Math.max(0, ctx.damage - empoweredBonus),
+      ctx.damage,
       player.usesSkills.combatArchetype,
       player.usesSkills.passives,
     );

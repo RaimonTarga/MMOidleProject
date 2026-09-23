@@ -355,7 +355,7 @@ Guards:
 On hit:
 
 1. Resolve the weapon profile.
-2. Remove `ctx.metadata["empoweredBonus"]` from the reservoir basis if present.
+2. Use the resolved remaining direct damage, including any empowered bonus, as the reservoir basis (with the existing Slinger effectiveness adjustment).
 3. Add `basis * conversionPct * dotMultiplier` to `effect.data.pool`.
 4. Apply/refresh the weapon status effect.
 5. Attach `hasAshbrandBurn` or `hasVoidCorruption`.
@@ -363,7 +363,8 @@ On hit:
 
 Because class listeners register before weapon listeners, class DoT conversion
 happens first. Weapon conversion only sees the remaining direct damage. Generic
-weapon reservoirs do not inherit empowered bonus damage.
+weapon reservoirs inherit empowered damage once through that resolved hit; their
+ticks do not apply the empowered multiplier again.
 
 Weapon reservoir status effects do not stack. Internally they use
 `maxStacks: 1`; repeated hits refresh duration and add to `data.pool`.
@@ -447,7 +448,6 @@ Inventory/crafting tooltip text for reservoir weapons now describes:
 - reservoir storage multiplier,
 - drain timing,
 - class DoT conversion happening first,
-- empowered bonus damage not increasing reservoir storage,
 - Edge corruption slow.
 
 For weapon reservoir debuffs, the target tile's numeric badge is not a stack

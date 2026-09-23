@@ -282,7 +282,7 @@ export function estimatePlayerDps(input: DpsEstimateInput): DpsEstimate {
       }
       if (weaponDot) {
         const reservoirBasis = weaponDotBasisFromResolvedDirectDamage(
-          baseDirect,
+          normalShots * baseDirect + (empowered ? lastDirect : 0),
           input.archetype,
           input.passives,
         );
@@ -291,7 +291,6 @@ export function estimatePlayerDps(input: DpsEstimateInput): DpsEstimate {
           dps: reservoirBasis
             * weaponDot.convPct
             * weaponDot.dotMultiplier
-            * magazine
             / cycleSec,
         });
         caveats.push('Weapon damage over time uses the post-mitigation hit as its reservoir basis, then drains without further plating or damage reduction.');

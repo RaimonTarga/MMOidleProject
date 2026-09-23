@@ -740,7 +740,6 @@ export function formatWeaponEffects(weaponId: string): string[] {
     lines.push(`${convPct}% of remaining direct hit damage enters a DoT reservoir; ${keepPct}% is dealt directly`);
     lines.push(`Reservoir gains ${mult}x stored DoT value, then drains as ${burn.element} damage every ${tickSec}s over ${durSec}s`);
     lines.push('Class DoT conversion happens first; this weapon converts only the direct damage left afterward');
-    lines.push('Empowered hit bonus damage does not increase the stored reservoir value');
     lines.push('Repeated hits refresh the reservoir window; the target badge shows stored damage');
   }
 
