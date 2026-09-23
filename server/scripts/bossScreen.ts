@@ -1,3 +1,4 @@
+import { CLASS_BALANCE_BLOCKS, CLASS_BALANCE_ID, assertClassBalanceDefinitions } from '../bench/balance/classBalanceCandidateSpec';
 import { PROGRESSION_BLOCKS, PROGRESSION_ID, assertProgressionDefinitions, type ProgressionCell } from '../bench/balance/overnightProgressionSpec';
 import { bossContrastSnapshot, bossContrastDelivery } from '../bench/balance/t2SpiritBossEvidence';
 import { BREADTH_BLOCKS, assertBreadthDefinitions, type BreadthCell } from '../bench/balance/playerBreadthSpec';
@@ -120,7 +121,8 @@ const args = Object.fromEntries(process.argv.slice(2).map((s) => {
 const realNow = Date.now, realRandom = Math.random;
 const sha = (v: string | Buffer): string => createHash('sha256').update(v).digest('hex');
 
-const progression = args.trial === 'overnight-t1-t3-progression-01';
+const classBalance = args.trial === CLASS_BALANCE_ID;
+const progression = args.trial === 'overnight-t1-t3-progression-01' || classBalance;
 const trial = args.trial ?? 'boss1';
 const mode = (args.mode ?? 'run') as 'qualify' | 'pilot' | 'run';
 const out = resolve(args.out!);
@@ -160,6 +162,9 @@ const TRIALS: Record<string, {
    */
   installTreatment?: (cell: Night5Cell) => { changes: unknown[]; restore: () => void } | null;
 }> = {
+  [CLASS_BALANCE_ID]: { defaultBlock:'none', blocks:CLASS_BALANCE_BLOCKS,
+    perBlock:Object.fromEntries(Object.entries(CLASS_BALANCE_BLOCKS).filter(([,b])=>b.cells[0].role==='boss').map(([id,b])=>[id,{bossId:b.cells[0].boss!,capMs:300000,seeds:[b.cells[0].seed],escorts:{}}])),
+    assertDefinitions:assertClassBalanceDefinitions },
   [PROGRESSION_ID]: { defaultBlock:'none', blocks:PROGRESSION_BLOCKS,
     perBlock:Object.fromEntries(Object.entries(PROGRESSION_BLOCKS).filter(([,b])=>b.cells[0].role==='boss').map(([id,b])=>[id,{bossId:b.cells[0].boss!,capMs:300000,seeds:[b.cells[0].seed],escorts:{}}])),
     assertDefinitions:assertProgressionDefinitions },
@@ -391,7 +396,7 @@ function run(cell: Night5Cell, seed: number) {
     const { bot, view } = prepareSurveyBot(world, cell, BOT_SPAWN);
 
     const conduit = (trial === 'player-breadth' || progression) ? prepareConduitRecorder(world,bot,cell as BreadthCell) : null;
-    const packageReadback = ['player-fast-pass', 'player-package-fit', 'player-breadth', PROGRESSION_ID].includes(trial) ? fastPassReadback(cell, bot, view.globalMastery) : undefined;
+    const packageReadback = ['player-fast-pass', 'player-package-fit', 'player-breadth', PROGRESSION_ID, CLASS_BALANCE_ID].includes(trial) ? fastPassReadback(cell, bot, view.globalMastery) : undefined;
     // Tick once so the boss actually spawns before the receipt is written; a
     // receipt taken before the wake-up records an empty arena.
     if (conduit) conduit.atMs = -100; // Wake/initialization precedes the measured clock.
@@ -412,7 +417,7 @@ function run(cell: Night5Cell, seed: number) {
       dr: m.mitigatesDamage.damageReduction,
     }));
 
-    if(['player-fast-pass', 'player-package-fit', 'player-breadth', PROGRESSION_ID].includes(trial)) assertFastPassHitboxes([bot, ...world.monsterEntitiesInNode(cell.nodeId)]);
+    if(['player-fast-pass', 'player-package-fit', 'player-breadth', PROGRESSION_ID, CLASS_BALANCE_ID].includes(trial)) assertFastPassHitboxes([bot, ...world.monsterEntitiesInNode(cell.nodeId)]);
     const initial = roster();
     const ready = {
       cell: cell.id,

@@ -1,3 +1,4 @@
+import { CLASS_BALANCE_BLOCKS, CLASS_BALANCE_ID, assertClassBalanceDefinitions } from '../bench/balance/classBalanceCandidateSpec';
 import { PROGRESSION_BLOCKS, PROGRESSION_ENDPOINTS } from '../bench/balance/overnightProgressionSpec';
 import { DESERT_BLOCKS, DESERT_ENDPOINTS } from '../bench/balance/desertStrategySpec';
 import { TUNDRA_CLASS_FRAME_BLOCKS, TUNDRA_CLASS_FRAME_ENDPOINTS } from '../bench/balance/tundraClassFrameSpec';
@@ -77,7 +78,8 @@ import { DURABILITY20_CELLS, DURABILITY20_SEEDS, installDurability20Treatment, a
 import { getAutoTargetId } from '../src/systems/combat/ai/targetPriority';
 
 const args=Object.fromEntries(process.argv.slice(2).map(x=>{const i=x.indexOf('=');return i<0?[x.replace(/^--/,''),'true']:[x.slice(2,i),x.slice(i+1)];}));
-const progression = args.trial === 'overnight-t1-t3-progression-01';
+const classBalance = args.trial === CLASS_BALANCE_ID;
+const progression = args.trial === 'overnight-t1-t3-progression-01' || classBalance;
 const desert = args.trial === 'desert-strategy-01';
 const tundraClassFrame = args.trial === 't3-tundra-class-frame-01';
 const guardCoverage = args.trial === 'guard-coverage-01';
@@ -90,7 +92,7 @@ if (breadth) assertBreadthDefinitions();
 const packageFit = args.trial === 'player-package-fit';
 const fastPass = args.trial === 'player-fast-pass' || packageFit || breadth;
 if (packageFit) assertPackageFitDefinitions();
-const fastBlock = fastPass ? (progression ? PROGRESSION_BLOCKS : tundraClassFrame ? TUNDRA_CLASS_FRAME_BLOCKS : desert ? DESERT_BLOCKS : guardCoverage ? GUARD_COVERAGE_BLOCKS : day2 ? DAY2_BLOCKS : endurance ? ENDURANCE_BLOCKS : farmingSustain ? FARMING_SUSTAIN_BLOCKS : farmingStance ? FARMING_STANCE_BLOCKS : breadth ? BREADTH_BLOCKS : packageFit ? PACKAGE_FIT_BLOCKS : FAST_PASS_BLOCKS)[args.block] : undefined;
+const fastBlock = fastPass ? (classBalance ? CLASS_BALANCE_BLOCKS : progression ? PROGRESSION_BLOCKS : tundraClassFrame ? TUNDRA_CLASS_FRAME_BLOCKS : desert ? DESERT_BLOCKS : guardCoverage ? GUARD_COVERAGE_BLOCKS : day2 ? DAY2_BLOCKS : endurance ? ENDURANCE_BLOCKS : farmingSustain ? FARMING_SUSTAIN_BLOCKS : farmingStance ? FARMING_STANCE_BLOCKS : breadth ? BREADTH_BLOCKS : packageFit ? PACKAGE_FIT_BLOCKS : FAST_PASS_BLOCKS)[args.block] : undefined;
 if (fastPass) { assert(fastBlock && fastBlock.cells.every(c => c.role === 'farm'), 'Unknown farm block'); assertFastPassDefinitions(); }
 const night5=args.trial==='durability37'?DURABILITY37_BLOCKS[args.block]:args.trial==='durability36'?DURABILITY36_BLOCKS[args.block]:args.trial==='durability35'?DURABILITY35_BLOCKS[args.block]:args.trial==='durability34'?DURABILITY34_BLOCKS[args.block]:args.trial==='durability33'?DURABILITY33_BLOCKS[args.block]:args.trial==='durability32'?DURABILITY32_BLOCKS[args.block]:args.trial==='durability30'?DURABILITY30_BLOCKS[args.block]:args.trial==='durability29'?DURABILITY29_BLOCKS[args.block]:args.trial==='durability28'?DURABILITY28_BLOCKS[args.block]:args.trial==='durability27'?DURABILITY27_BLOCKS[args.block]:args.trial==='durability26'?DURABILITY26_BLOCKS[args.block]:args.trial==='durability25'?DURABILITY25_BLOCKS[args.block]:args.trial==='durability24'?DURABILITY24_BLOCKS[args.block as keyof typeof DURABILITY24_BLOCKS]:args.trial==='durability23'?DURABILITY23_BLOCKS[args.block]:args.trial==='durability22'?DURABILITY22_BLOCKS[args.block]:args.trial==='durability21'?DURABILITY21_BLOCKS[args.block]:args.trial==='night5'?NIGHT5_BLOCKS[args.block]:undefined;
 if(['night5','durability21','durability22','durability23','durability24','durability25','durability26','durability27','durability28','durability29','durability30','durability32','durability33','durability34','durability35','durability36','durability37'].includes(args.trial)) assert(night5,'Unknown night5 block');

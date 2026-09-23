@@ -1,0 +1,402 @@
+[
+  {
+    "id": "sbc-spirit-light-forest-s101009",
+    "className": "spirit",
+    "tier": 2,
+    "role": "boss",
+    "alternate": false,
+    "nodeId": "node-t2-forest-dungeon",
+    "isDungeon": true,
+    "treatment": "authored-source",
+    "targetTypes": [
+      "apex-timberclaw"
+    ],
+    "upgradeLevel": 5,
+    "stance": "offensive-stance",
+    "abilities": {
+      "techniques": [
+        "power-strike"
+      ],
+      "guards": [
+        "second-wind",
+        "brace"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "target-casting",
+        "actionId": "use-ability",
+        "targetAbilityId": "brace"
+      }
+    ],
+    "build": {
+      "id": "sbc-spirit-light-forest-s101009",
+      "classRoot": "energy-root",
+      "contentTier": 2,
+      "playerTier": 2,
+      "gearTier": 2,
+      "skillPath": [
+        "energy-root",
+        "energy-light"
+      ],
+      "gearItemIds": {
+        "weapon": "jungle-stinger-rapier",
+        "armor": "mountain-vest-t2",
+        "recovery": "mountain-charm-t2",
+        "mobility": "desert-boots-t2",
+        "core": "core-tempered"
+      }
+    },
+    "identityId": "breadth-t2-spirit-light",
+    "frame": "light",
+    "range": null,
+    "pathName": "Spark",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "Fixed designer boss package; mature synthetic T2; no rites/relic, tuning or rescue variant."
+    ],
+    "seed": 101009,
+    "boss": "apex-timberclaw"
+  },
+  {
+    "id": "sbc-spirit-light-mountain-s101009",
+    "className": "spirit",
+    "tier": 2,
+    "role": "boss",
+    "alternate": false,
+    "nodeId": "node-t2-mountain-dungeon",
+    "isDungeon": true,
+    "treatment": "authored-source",
+    "targetTypes": [
+      "stoneplate-juggernaut"
+    ],
+    "upgradeLevel": 5,
+    "stance": "offensive-stance",
+    "abilities": {
+      "techniques": [
+        "power-strike"
+      ],
+      "guards": [
+        "second-wind",
+        "brace"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "target-casting",
+        "actionId": "use-ability",
+        "targetAbilityId": "brace"
+      }
+    ],
+    "build": {
+      "id": "sbc-spirit-light-mountain-s101009",
+      "classRoot": "energy-root",
+      "contentTier": 2,
+      "playerTier": 2,
+      "gearTier": 2,
+      "skillPath": [
+        "energy-root",
+        "energy-light"
+      ],
+      "gearItemIds": {
+        "weapon": "jungle-stinger-rapier",
+        "armor": "mountain-vest-t2",
+        "recovery": "mountain-charm-t2",
+        "mobility": "desert-boots-t2",
+        "core": "core-tempered"
+      }
+    },
+    "identityId": "breadth-t2-spirit-light",
+    "frame": "light",
+    "range": null,
+    "pathName": "Spark",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "Fixed designer boss package; mature synthetic T2; no rites/relic, tuning or rescue variant."
+    ],
+    "seed": 101009,
+    "boss": "stoneplate-juggernaut"
+  },
+  {
+    "id": "sbc-spirit-balanced-forest-s101009",
+    "className": "spirit",
+    "tier": 2,
+    "role": "boss",
+    "alternate": false,
+    "nodeId": "node-t2-forest-dungeon",
+    "isDungeon": true,
+    "treatment": "authored-source",
+    "targetTypes": [
+      "apex-timberclaw"
+    ],
+    "upgradeLevel": 5,
+    "stance": "offensive-stance",
+    "abilities": {
+      "techniques": [
+        "power-strike"
+      ],
+      "guards": [
+        "second-wind",
+        "brace"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "target-casting",
+        "actionId": "use-ability",
+        "targetAbilityId": "brace"
+      }
+    ],
+    "build": {
+      "id": "sbc-spirit-balanced-forest-s101009",
+      "classRoot": "energy-root",
+      "contentTier": 2,
+      "playerTier": 2,
+      "gearTier": 2,
+      "skillPath": [
+        "energy-root",
+        "energy-balanced"
+      ],
+      "gearItemIds": {
+        "weapon": "jungle-stinger-rapier",
+        "armor": "mountain-vest-t2",
+        "recovery": "mountain-charm-t2",
+        "mobility": "desert-boots-t2",
+        "core": "core-tempered"
+      }
+    },
+    "identityId": "breadth-t2-spirit-balanced",
+    "frame": "balanced",
+    "range": null,
+    "pathName": "Wraith",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "Fixed designer boss package; mature synthetic T2; no rites/relic, tuning or rescue variant."
+    ],
+    "seed": 101009,
+    "boss": "apex-timberclaw"
+  },
+  {
+    "id": "sbc-spirit-balanced-mountain-s101009",
+    "className": "spirit",
+    "tier": 2,
+    "role": "boss",
+    "alternate": false,
+    "nodeId": "node-t2-mountain-dungeon",
+    "isDungeon": true,
+    "treatment": "authored-source",
+    "targetTypes": [
+      "stoneplate-juggernaut"
+    ],
+    "upgradeLevel": 5,
+    "stance": "offensive-stance",
+    "abilities": {
+      "techniques": [
+        "power-strike"
+      ],
+      "guards": [
+        "second-wind",
+        "brace"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "target-casting",
+        "actionId": "use-ability",
+        "targetAbilityId": "brace"
+      }
+    ],
+    "build": {
+      "id": "sbc-spirit-balanced-mountain-s101009",
+      "classRoot": "energy-root",
+      "contentTier": 2,
+      "playerTier": 2,
+      "gearTier": 2,
+      "skillPath": [
+        "energy-root",
+        "energy-balanced"
+      ],
+      "gearItemIds": {
+        "weapon": "jungle-stinger-rapier",
+        "armor": "mountain-vest-t2",
+        "recovery": "mountain-charm-t2",
+        "mobility": "desert-boots-t2",
+        "core": "core-tempered"
+      }
+    },
+    "identityId": "breadth-t2-spirit-balanced",
+    "frame": "balanced",
+    "range": null,
+    "pathName": "Wraith",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "Fixed designer boss package; mature synthetic T2; no rites/relic, tuning or rescue variant."
+    ],
+    "seed": 101009,
+    "boss": "stoneplate-juggernaut"
+  },
+  {
+    "id": "sbc-spirit-heavy-forest-s101009",
+    "className": "spirit",
+    "tier": 2,
+    "role": "boss",
+    "alternate": false,
+    "nodeId": "node-t2-forest-dungeon",
+    "isDungeon": true,
+    "treatment": "authored-source",
+    "targetTypes": [
+      "apex-timberclaw"
+    ],
+    "upgradeLevel": 5,
+    "stance": "offensive-stance",
+    "abilities": {
+      "techniques": [
+        "power-strike"
+      ],
+      "guards": [
+        "second-wind",
+        "brace"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "target-casting",
+        "actionId": "use-ability",
+        "targetAbilityId": "brace"
+      }
+    ],
+    "build": {
+      "id": "sbc-spirit-heavy-forest-s101009",
+      "classRoot": "energy-root",
+      "contentTier": 2,
+      "playerTier": 2,
+      "gearTier": 2,
+      "skillPath": [
+        "energy-root",
+        "energy-heavy"
+      ],
+      "gearItemIds": {
+        "weapon": "quake-hammer",
+        "armor": "mountain-vest-t2",
+        "recovery": "mountain-charm-t2",
+        "mobility": "desert-boots-t2",
+        "core": "core-tempered"
+      }
+    },
+    "identityId": "breadth-t2-spirit-heavy",
+    "frame": "heavy",
+    "range": null,
+    "pathName": "Phantasm",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "Fixed designer boss package; mature synthetic T2; no rites/relic, tuning or rescue variant."
+    ],
+    "seed": 101009,
+    "boss": "apex-timberclaw"
+  }
+]
