@@ -398,7 +398,7 @@ export const rootsAndFramesEntries = [
     parent: 'energy-root', children: [],
     description: 'Pure momentum. Blazing speed and rapid attacks; thrives on frequent discharges and their AoE splash. Gains 20 energy per hit, empowered at 1.5× — fires often.',
     cost: 1, statEffects: {
-      attackPct: 0.07, maxHpPct: 0.03, attackSpeedPct: 0.12, moveSpeedPct: 0.12,
+      attackPct: 0.02, maxHpPct: 0.03, attackSpeedPct: 0.04, moveSpeedPct: 0.12,
     },
     mechanicEffects: { 'energy.per-hit': 20, 'energy.empowered-mult': 1.5 } as Record<string, number>,
   }],
@@ -409,8 +409,8 @@ export const rootsAndFramesEntries = [
     parent: 'energy-root', children: [],
     description: 'Fast and capable. A bit of extra punch and some light armor without sacrificing mobility. Gains 14 energy per hit, empowered at 2×.',
     cost: 1, statEffects: {
-      attackPct: 0.08, maxHpPct: 0.07, platingPct: 0.06,
-      attackSpeedPct: 0.06, moveSpeedPct: 0.06,
+      attackPct: 0.03, maxHpPct: 0.07, platingPct: 0.06,
+      attackSpeedPct: 0.00, moveSpeedPct: 0.06,
     },
     mechanicEffects: { 'energy.per-hit': 14, 'energy.empowered-mult': 2.0 } as Record<string, number>,
   }],
