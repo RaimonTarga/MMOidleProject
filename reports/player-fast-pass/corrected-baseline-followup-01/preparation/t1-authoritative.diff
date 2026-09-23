@@ -1,0 +1,1134 @@
+diff --git a/server/src/ecs/entity.ts b/server/src/ecs/entity.ts
+index 6ef6aa27..43aa09ee 100644
+--- a/server/src/ecs/entity.ts
++++ b/server/src/ecs/entity.ts
+@@ -156,6 +156,8 @@ export interface HasFormationTechnique {
+  */
+ export interface IsCastingAbility {
+   abilityId: string;
++  /** Physical summon performing this cast; replacements cannot inherit it. */
++  casterMinionId?: string;
+   /** Loadout index that started the cast, so the resolve credits the right slot. */
+   /** Wall-clock ms when the wind-up completes. */
+   endsAt: number;
+@@ -273,6 +275,8 @@ export interface ServerEntity {
+   hasFormationTechnique?: HasFormationTechnique;
+   isCastingAbility?: IsCastingAbility;
+   isChargingAbility?: IsChargingAbility;
++  /** One owner command, with physical summon IDs that cannot transfer on reconstruction. */
++  hasFormationCharge?: IsChargingAbility & { pendingEntityIds: string[] };
+   hasEnvironmentalDot?: HasEnvironmentalDot;
+   hasNodeFeatureEffect?: HasNodeFeatureEffect;
+   isDead?: IsDead;
+diff --git a/server/src/systems/classes/archetypes/summoner/ai.ts b/server/src/systems/classes/archetypes/summoner/ai.ts
+index 95c3b487..e9110e36 100644
+--- a/server/src/systems/classes/archetypes/summoner/ai.ts
++++ b/server/src/systems/classes/archetypes/summoner/ai.ts
+@@ -23,6 +23,7 @@ import { markSliceDirty } from '../../../../ecs/dirtyHelpers';
+ import { setEntityMotion, stopEntity } from '../../../world/movement';
+ import { setAttackTarget } from '../../../combat/ai/targeting';
+ import { runFormationAttack } from './formationAttack';
++import { attackHasteBonus } from '../../../combat/engine/attackCadence';
+ import { computeMinionSpeed, despawnMinion, getFollowOffset } from './spawn';
+ import {
+   resolveCommandedFocusTarget,
+@@ -182,6 +183,16 @@ export function driveMinion(
+   const moveDest = resolveCommandedMoveDestination(owner, leashRadius);
+   const cm = minion.controlsMinion;
+ 
++  // The ability lifecycle owns rush movement and the arrival strike.
++  if (minion.isChargingAbility && owner.hasFormationCharge) return;
++
++  // Only the chosen caster commits its attacks/movement to this wind-up.
++  if (owner.isCastingAbility?.casterMinionId === minion.entityId) {
++    stopEntity(world, minion);
++    minion.performsAttack.lastAttackAt = now;
++    return;
++  }
++
+   if (moveDest) {
+     const distToDest = distance(minion.hasPosition.current, moveDest);
+     if (distToDest > FOLLOW_HOVER_TOL) {
+@@ -227,7 +238,9 @@ export function driveMinion(
+         cm.currentTargetId = target.isMonster.id;
+       }
+ 
+-      if (now - minion.performsAttack.lastAttackAt >= minion.performsAttack.attackCooldown) {
++      // Inherit offensive haste without copying body-local environmental slows.
++      if (now - minion.performsAttack.lastAttackAt >=
++        minion.performsAttack.attackCooldown / (1 + attackHasteBonus(owner.tracksCombat))) {
+         const outcome = runFormationAttack(world, owner, minion, target, now);
+         if (outcome !== 'cancelled') {
+           minion.performsAttack.lastAttackAt = now;
+diff --git a/server/src/systems/classes/archetypes/summoner/profile.ts b/server/src/systems/classes/archetypes/summoner/profile.ts
+index 7308764b..9f6874db 100644
+--- a/server/src/systems/classes/archetypes/summoner/profile.ts
++++ b/server/src/systems/classes/archetypes/summoner/profile.ts
+@@ -14,6 +14,11 @@ export function summonerProfileFor(owner: PlayerEntity): SummonerProfile {
+   });
+ }
+ 
++/** Champion fights directly; every other Conduit delivers Techniques via summons. */
++export function usesSummonTechniques(owner: PlayerEntity): boolean {
++  return !!owner.summonsMinions && summonerProfileFor(owner).specialization !== 'battle-bond';
++}
++
+ 
+ /**
+  * One body's share of a single logical formation attack: its raw slot weight
+diff --git a/server/src/systems/combat/damage/weaponEffects.ts b/server/src/systems/combat/damage/weaponEffects.ts
+index c47408c3..8812682b 100644
+--- a/server/src/systems/combat/damage/weaponEffects.ts
++++ b/server/src/systems/combat/damage/weaponEffects.ts
+@@ -260,12 +260,10 @@ export function initWeaponEffects(): void {
+     if (!profile) return;
+     if (evadeBlocksDebuffs(ctx)) return;
+ 
+-    const empoweredBonus =
+-      typeof ctx.metadata["empoweredBonus"] === "number"
+-        ? ctx.metadata["empoweredBonus"]
+-        : 0;
++    // Class listeners already applied empowerment; store that resolved damage
++    // without removing the bonus or multiplying it a second time.
+     const reservoirBasis = weaponDotBasisFromResolvedDirectDamage(
+-      Math.max(0, ctx.damage - empoweredBonus),
++      ctx.damage,
+       player.usesSkills.combatArchetype,
+       player.usesSkills.passives,
+     );
+diff --git a/server/src/systems/combat/engine/combat.ts b/server/src/systems/combat/engine/combat.ts
+index 41960ae5..023355af 100644
+--- a/server/src/systems/combat/engine/combat.ts
++++ b/server/src/systems/combat/engine/combat.ts
+@@ -2302,7 +2302,7 @@ export function updateCombat(world: World, dt: number, now: number) {
+     // §5.2) — the cost of the burst. MOVEMENT is deliberately NOT suppressed, so
+     // casting never fights rune-driven autocombat pathing. Holding lastAttackAt
+     // means the attack timer resumes from the end of the cast, not mid-swing.
+-    if (player.isCastingAbility || player.isChargingAbility) {
++    if ((player.isCastingAbility && !player.isCastingAbility.casterMinionId) || player.isChargingAbility) {
+       player.performsAttack.lastAttackAt = now;
+       continue;
+     }
+diff --git a/server/src/systems/player/abilities/abilityArming.ts b/server/src/systems/player/abilities/abilityArming.ts
+index f6e20faf..31b9e184 100644
+--- a/server/src/systems/player/abilities/abilityArming.ts
++++ b/server/src/systems/player/abilities/abilityArming.ts
+@@ -3,6 +3,7 @@ import type { World } from "../../../world/World";
+ import type { PlayerEntity } from "../../../ecs/entity";
+ import { attachComponent } from "../../../ecs/markerHelpers";
+ import { beginFormationTechnique } from "../../classes/archetypes/summoner/formationTechnique";
++import { usesSummonTechniques } from "../../classes/archetypes/summoner/profile";
+ 
+ /**
+  * Conduit Techniques belong to the current summon formation; every other player
+@@ -13,7 +14,7 @@ export function armTechnique(
+   player: PlayerEntity,
+   abilityId: string,
+ ): void {
+-  if (player.summonsMinions && beginFormationTechnique(world, player, abilityId)) return;
++  if (usesSummonTechniques(player) && beginFormationTechnique(world, player, abilityId)) return;
+   // A Conduit with no living summons keeps the legacy armed marker. The first
+   // reconstructed summon hit can convert it instead of silently wasting it.
+   attachComponent(world, player, "hasArmedAbility", { abilityId });
+diff --git a/server/src/systems/player/abilities/abilityCasting.ts b/server/src/systems/player/abilities/abilityCasting.ts
+index 67631ed3..e37830b7 100644
+--- a/server/src/systems/player/abilities/abilityCasting.ts
++++ b/server/src/systems/player/abilities/abilityCasting.ts
+@@ -44,8 +44,10 @@ import {
+   afflictionTechniqueHasWork,
+   detonateWindupElement,
+ } from "./abilityAffliction";
+-import { abilityEngagementRange, abilityTarget } from "./abilityTargeting";
++import { abilityEngagementRange, abilityTarget, summonAbilityCast, summonCanCastAt } from "./abilityTargeting";
+ import { armTechnique } from "./abilityArming";
++import { usesSummonTechniques } from "../../classes/archetypes/summoner/profile";
++import { beginFormationCharge, cancelFormationCharge, formationChargeMinions, updateFormationCharge } from "./formationCharge";
+ 
+ /**
+  * Begin a wind-up. Returns true when the cast started (claiming the offensive
+@@ -73,7 +75,8 @@ export function beginAbilityCast(
+   // A cast needs something to resolve INTO. Resolved through the ability's own
+   // reach, not the player's, so a `rangeBonus` cast can open on something the
+   // player could not otherwise touch.
+-  const target = abilityTarget(world, player, ability, currentTargetOnly);
++  const summonCast = summonAbilityCast(world, player, ability, currentTargetOnly);
++  const target = summonCast?.target ?? abilityTarget(world, player, ability, currentTargetOnly);
+   if (!target) return false;
+ 
+   // Situational payloads decline rather than wind up on nothing. Contagion with
+@@ -89,6 +92,7 @@ export function beginAbilityCast(
+     endsAt: now + effectiveMs,
+     castMs: effectiveMs,
+     targetId: target.isMonster.id,
++    ...(summonCast ? { casterMinionId: summonCast.caster.entityId } : {}),
+   });
+ 
+   // The wind-up FX tracks the TARGET, not the caster — an affliction being drawn
+@@ -111,6 +115,7 @@ export function beginAbilityCast(
+     ability: ability.id,
+     castMs: effectiveMs,
+     targetId: target.isMonster.id,
++    ...(summonCast ? { casterMinionId: summonCast.caster.entityId } : {}),
+     ...(windupElement ? { element: windupElement } : {}),
+     ...(footprintRadius ? { aoeRadius: footprintRadius } : {}),
+   });
+@@ -154,11 +159,12 @@ function beginSelfCast(
+  * so ordinary casts still walk with the fight.
+  */
+ export function holdsPositionWhileCasting(player: PlayerEntity): boolean {
++  if (player.hasFormationCharge) return true;
+   const casting = player.isCastingAbility;
+   if (!casting) return false;
+   const ability = ABILITY_DATABASE.get(casting.abilityId);
+   if (!ability) return false;
+-  return abilityRangeBonus(ability, player.tracksProgression.playerTier) > 0;
++  return !casting.casterMinionId && abilityRangeBonus(ability, player.tracksProgression.playerTier) > 0;
+ }
+ 
+ /**
+@@ -215,11 +221,16 @@ export function updateAbilityCasts(world: World, now: number): void {
+ 
+     // Target died, left the node, or we drifted out of the ability's reach.
+     const target = world.getMonsterEntity(casting.targetId);
++    const caster = casting.casterMinionId ? world.getMinionEntity(casting.casterMinionId) : undefined;
+     if (
+       !target ||
+       target.hasHealth.hp <= 0 ||
+       target.hasPosition.nodeId !== player.hasPosition.nodeId ||
+-      !world.collision.canReach(player, target, abilityEngagementRange(player, ability))
++      (ability.shape === 'charge' && usesSummonTechniques(player)
++        ? formationChargeMinions(world, player, target, ability).length === 0
++        : casting.casterMinionId
++        ? !caster || !summonCanCastAt(world, player, caster, target, ability)
++        : !world.collision.canReach(player, target, abilityEngagementRange(player, ability)))
+     ) {
+       abortCast(world, player, casting.abilityId);
+       continue;
+@@ -250,6 +261,7 @@ export function updateAbilityCasts(world: World, now: number): void {
+       ability: ability.id,
+       fired: true,
+       targetPos: { ...target.hasPosition.current },
++      ...(casting.casterMinionId ? { casterMinionId: casting.casterMinionId } : {}),
+     });
+   }
+ }
+@@ -266,7 +278,7 @@ function beginAbilityCharge(
+   target: NonNullable<ReturnType<typeof abilityTarget>>,
+   now: number,
+ ): boolean {
+-  if (player.isRooted) return false;
++  if (player.isRooted && !usesSummonTechniques(player)) return false;
+   const rank = abilityRankAt(ability, player.tracksProgression.playerTier);
+   const effect = resolveAbilityEffect(ability, {
+     playerTier: player.tracksProgression.playerTier,
+@@ -284,6 +296,9 @@ function beginAbilityCharge(
+     return false;
+   }
+ 
++  if (usesSummonTechniques(player)) {
++    return beginFormationCharge(world, player, target, ability, now, speedMult, chargeMaxMs);
++  }
+   const from = { ...player.hasPosition.current };
+   attachComponent(world, player, "isChargingAbility", {
+     abilityId: ability.id,
+@@ -327,6 +342,10 @@ function chargeVisualDestination(
+ /** Advance each live charge; called after casts and before the movement tick. */
+ export function updateAbilityCharges(world: World, now: number): void {
+   for (const player of world.livePlayers) {
++    if (player.hasFormationCharge) {
++      updateFormationCharge(world, player, ABILITY_DATABASE.get(player.hasFormationCharge.abilityId), now);
++      continue;
++    }
+     const charging = player.isChargingAbility;
+     if (!charging) continue;
+ 
+@@ -374,12 +393,14 @@ function abortCharge(world: World, player: PlayerEntity): void {
+ }
+ 
+ function abortCast(world: World, player: PlayerEntity, abilityId: string): void {
++  const casterMinionId = player.isCastingAbility?.casterMinionId;
+   detachComponent(world, player, "isCastingAbility");
+   world.pushEvent(player.hasPosition.nodeId, {
+     kind: "player-cast-end",
+     playerId: player.isPlayer.id,
+     ability: abilityId,
+     fired: false,
++    ...(casterMinionId ? { casterMinionId } : {}),
+   });
+ }
+ 
+@@ -399,6 +420,7 @@ function abortCast(world: World, player: PlayerEntity, abilityId: string): void
+  * payload, no cooldown, one end event.
+  */
+ export function cancelAbilityCast(world: World, player: PlayerEntity): void {
++  if (player.hasFormationCharge) cancelFormationCharge(world, player);
+   const casting = player.isCastingAbility;
+   if (!casting) return;
+   abortCast(world, player, casting.abilityId);
+diff --git a/server/src/systems/player/abilities/abilityEffects.ts b/server/src/systems/player/abilities/abilityEffects.ts
+index 32b73bbf..b9b42e4f 100644
+--- a/server/src/systems/player/abilities/abilityEffects.ts
++++ b/server/src/systems/player/abilities/abilityEffects.ts
+@@ -50,6 +50,7 @@ import {
+   consumeFormationTechniqueDelivery,
+   type FormationTechniqueDelivery,
+ } from "../../classes/archetypes/summoner/formationTechnique";
++import { usesSummonTechniques } from "../../classes/archetypes/summoner/profile";
+ import { actorFromMonster, actorFromPlayer } from "../../../world/worldLogActors";
+ import { recordWorldLogEvent } from "../../../world/worldLog";
+ import type { CombatContext } from "../../combat/engine/combatPipeline";
+@@ -159,7 +160,7 @@ export function initAbilitySystems(): void {
+ 
+     // Restored state, or a Conduit armed while its formation was down: convert
+     // only once a living formation exists. With no summons, preserve the charge.
+-    if (ctx.attacker.summonsMinions) {
++    if (usesSummonTechniques(ctx.attacker)) {
+       const state = beginFormationTechnique(world, ctx.attacker, armed.abilityId);
+       if (!state) return;
+       detachComponent(world, ctx.attacker, "hasArmedAbility");
+@@ -173,6 +174,8 @@ export function initAbilitySystems(): void {
+       return;
+     }
+ 
++    // Champion's bonded summon cannot steal an owner-fired Technique.
++    if (ctx.formation?.side === 'summon') return;
+     detachComponent(world, ctx.attacker, "hasArmedAbility");
+     const ability = ABILITY_DATABASE.get(armed.abilityId);
+     if (!ability) return;
+@@ -378,7 +381,7 @@ function applyTechniqueRider(
+   if (ctx.attackerType !== "player" || ctx.defenderType !== "monster") return;
+ 
+   const effect = techniqueEffect(ctx.attacker, ability);
+-  const formationBasis = ctx.formation
++  const formationBasis = formationDelivery
+     ? Math.max(1, Math.round(
+       ctx.attacker.dealsDamage.attack * resolveSummonerProfile({
+         selectedSubVariant: ctx.attacker.usesSkills.selectedSubVariant,
+diff --git a/server/src/systems/player/abilities/abilityFiring.ts b/server/src/systems/player/abilities/abilityFiring.ts
+index 20d7a794..6161f0a8 100644
+--- a/server/src/systems/player/abilities/abilityFiring.ts
++++ b/server/src/systems/player/abilities/abilityFiring.ts
+@@ -52,6 +52,8 @@ import { beginAbilityCast } from "./abilityCasting";
+ import { applyBrambleGuard } from "./abilityBramble";
+ import { abilityTarget, gapToTarget, nearestMonsterGap } from "./abilityTargeting";
+ import { armTechnique } from "./abilityArming";
++import { usesSummonTechniques } from "../../classes/archetypes/summoner/profile";
++import { formationChargeHasGap } from "./formationCharge";
+ import { actorFromPlayer } from "../../../world/worldLogActors";
+ import { recordWorldLogEvent } from "../../../world/worldLog";
+ import { attachComponent, detachComponent } from "../../../ecs/markerHelpers";
+@@ -267,8 +269,29 @@ function removeQueuedAbility(
+ }
+ 
+ function buildFireContext(world: World, player: PlayerEntity): FireContext {
++  // Formation Techniques are delivered by summons, so their active combat must
++  // satisfy the default trigger even when the owner has no direct attack target.
++  // Keep defensive aggro counts owner-only: summons taking hits is not pressure
++  // on the player's body for Bramble Guard.
++  const livingSummonIds = new Set<string>();
++  let summonsInCombat = false;
++  for (const id of player.summonsMinions?.minionIds ?? []) {
++    const minion = world.getMinionEntity(id);
++    if (!minion || minion.isMinion.ownerPlayerId !== player.isPlayer.id
++      || minion.hasHealth.hp <= 0
++      || minion.hasPosition.nodeId !== player.hasPosition.nodeId) continue;
++    livingSummonIds.add(id);
++    const targetId = minion.hasAttackTarget?.targetId;
++    const target = targetId ? world.getMonsterEntity(targetId) : undefined;
++    if (target && target.hasHealth.hp > 0
++      && target.hasPosition.nodeId === player.hasPosition.nodeId) summonsInCombat = true;
++  }
+   let aggroCount = 0;
+   for (const monster of world.aggroedMonsters) {
++    if (monster.hasAggroTarget.targetKind === "minion"
++      && livingSummonIds.has(monster.hasAggroTarget.targetId)
++      && monster.hasHealth.hp > 0
++      && monster.hasPosition.nodeId === player.hasPosition.nodeId) summonsInCombat = true;
+     if (
+       monster.hasAggroTarget.targetKind === "player" &&
+       monster.hasAggroTarget.targetId === player.isPlayer.id
+@@ -279,7 +302,7 @@ function buildFireContext(world: World, player: PlayerEntity): FireContext {
+   const attackTargetId = player.hasAttackTarget?.targetId;
+   const inCombat =
+     (attackTargetId !== undefined && world.hasMonster(attackTargetId)) ||
+-    aggroCount > 0;
++    aggroCount > 0 || summonsInCombat;
+   const hasHarmfulDebuff = player.tracksCombat.statusEffects.some(
+     (e) => e.stacks > 0 && isHarmfulPlayerStatusEffect(e.id, e.data),
+   );
+@@ -322,6 +345,9 @@ function triggerActive(
+       // Charge feel pointless.
+       const target = abilityTarget(world, player, ability);
+       if (!target) return false;
++      if (ability.shape === 'charge' && usesSummonTechniques(player)) {
++        return formationChargeHasGap(world, player, target, ability, trigger.minGapPx);
++      }
+       return gapToTarget(player, target) >= trigger.minGapPx;
+     }
+     case "enemy-within": {
+@@ -361,7 +387,7 @@ function maybeFireTechnique(
+   if (player.isChanneling) return DECLINED_TECHNIQUE;
+   if (
+     player.isRooted
+-    && (ability.shape === "reposition" || ability.shape === "charge")
++    && (ability.shape === "reposition" || (ability.shape === "charge" && !usesSummonTechniques(player)))
+   ) return DECLINED_TECHNIQUE;
+ 
+   // A self-facing offensive buff is not an attack: it neither waits for the
+@@ -396,6 +422,7 @@ function maybeFireTechnique(
+   if (
+     player.hasArmedAbility ||
+     player.hasFormationTechnique ||
++    player.hasFormationCharge ||
+     player.isCastingAbility ||
+     player.isChargingAbility
+   ) return CLAIMED_TECHNIQUE;
+diff --git a/server/src/systems/player/abilities/abilityTargeting.ts b/server/src/systems/player/abilities/abilityTargeting.ts
+index 3d12a5dc..3afba846 100644
+--- a/server/src/systems/player/abilities/abilityTargeting.ts
++++ b/server/src/systems/player/abilities/abilityTargeting.ts
+@@ -17,12 +17,54 @@
+  */
+ import {
+   abilityRangeBonus,
++  distanceSq,
+   posHitboxFromEntity,
+   reachGap,
+   type AbilityDef,
+ } from "@mmo-idle/shared";
+-import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
++import type { MinionEntity, MonsterEntity, PlayerEntity } from "../../../ecs/entity";
+ import type { World } from "../../../world/World";
++import { isHardControlled } from "../../combat/status/playerHardControl";
++import { afflictionTechniqueHasWork } from "./abilityAffliction";
++import { summonerProfileFor, usesSummonTechniques } from "../../classes/archetypes/summoner/profile";
++import { formationChargeTarget } from "./formationCharge";
++
++/** Validate the physical caster again throughout its wind-up. */
++export function summonCanCastAt(
++  world: World, player: PlayerEntity, minion: MinionEntity,
++  target: MonsterEntity, ability: AbilityDef,
++): boolean {
++  return usesSummonTechniques(player)
++    && player.summonsMinions?.minionIds.includes(minion.entityId) === true
++    && player.hasSummonerCommand?.kind !== 'move'
++    && minion.isMinion.ownerPlayerId === player.isPlayer.id
++    && minion.hasHealth.hp > 0 && target.hasHealth.hp > 0
++    && !target.isConcealed && !target.isInvulnerable
++    && minion.hasPosition.nodeId === player.hasPosition.nodeId
++    && target.hasPosition.nodeId === player.hasPosition.nodeId
++    && !isHardControlled(minion.tracksCombat)
++    && distanceSq(target.hasPosition.current, player.hasPosition.current)
++      <= summonerProfileFor(player).leashRadius ** 2
++    && world.collision.canReach(minion, target,
++      minion.performsAttack.attackRange + abilityRangeBonus(ability, player.tracksProgression.playerTier));
++}
++
++/** One engaged physical summon performs a targeted cast, in stable slot order. */
++export function summonAbilityCast(
++  world: World, player: PlayerEntity, ability: AbilityDef, currentOnly = false,
++): { caster: MinionEntity; target: MonsterEntity } | null {
++  if (ability.shape !== "cast" || !usesSummonTechniques(player) || !player.summonsMinions) return null;
++  const currentId = player.hasAttackTarget?.targetId ?? player.summonsMinions.formationTargetId;
++  for (const id of player.summonsMinions.minionIds) {
++    const caster = world.getMinionEntity(id);
++    const targetId = caster?.hasAttackTarget?.targetId;
++    if (!caster || !targetId || (currentOnly && currentId && targetId !== currentId)) continue;
++    const target = world.getMonsterEntity(targetId);
++    if (target && summonCanCastAt(world, player, caster, target, ability)
++      && afflictionTechniqueHasWork(world, player, ability, target)) return { caster, target };
++  }
++  return null;
++}
+ 
+ /** How far this ability can engage, in px, for the player's current rank. */
+ export function abilityEngagementRange(
+@@ -30,7 +72,12 @@ export function abilityEngagementRange(
+   ability: AbilityDef,
+ ): number {
+   const bonus = abilityRangeBonus(ability, player.tracksProgression.playerTier);
+-  return player.performsAttack.attackRange + bonus;
++  const range = player.performsAttack.attackRange + bonus;
++  // A defensive reposition must be able to select the threat that satisfied
++  // its spacing trigger, even outside a short-range character's basic reach.
++  return ability.shape === "reposition" && ability.trigger.kind === "enemy-within"
++    ? Math.max(range, ability.trigger.maxGapPx)
++    : range;
+ }
+ 
+ /**
+@@ -48,6 +95,11 @@ export function abilityTarget(
+   ability: AbilityDef,
+   currentOnly = false,
+ ): MonsterEntity | null {
++  if (ability.shape === 'charge' && usesSummonTechniques(player)) {
++    return formationChargeTarget(world, player, ability, currentOnly);
++  }
++  const summonCast = summonAbilityCast(world, player, ability, currentOnly);
++  if (summonCast) return summonCast.target;
+   const range = abilityEngagementRange(player, ability);
+   const currentId = player.hasAttackTarget?.targetId;
+   const current = currentId ? world.getMonsterEntity(currentId) : undefined;
+diff --git a/server/src/systems/player/abilities/formationCharge.ts b/server/src/systems/player/abilities/formationCharge.ts
+new file mode 100644
+index 00000000..dccfa840
+--- /dev/null
++++ b/server/src/systems/player/abilities/formationCharge.ts
+@@ -0,0 +1,114 @@
++import { abilityRangeBonus, distanceSq, posHitboxFromEntity, reachGap, type AbilityDef } from '@mmo-idle/shared';
++import type { MinionEntity, MonsterEntity, PlayerEntity } from '../../../ecs/entity';
++import type { World } from '../../../world/World';
++import { attachComponent, detachComponent } from '../../../ecs/markerHelpers';
++import { summonerProfileFor, usesSummonTechniques } from '../../classes/archetypes/summoner/profile';
++import { beginFormationTechnique } from '../../classes/archetypes/summoner/formationTechnique';
++import { runFormationAttack } from '../../classes/archetypes/summoner/formationAttack';
++import { isHardControlled } from '../../combat/status/playerHardControl';
++import { setAttackTarget } from '../../combat/ai/targeting';
++import { setEntityMotion, stopEntity } from '../../world/movement';
++
++/** Physical participants only: neither replacements nor another owner's summons join. */
++export function formationChargeMinions(world: World, owner: PlayerEntity, target: MonsterEntity, ability: AbilityDef): MinionEntity[] {
++  if (!usesSummonTechniques(owner) || owner.hasSummonerCommand?.kind === 'move'
++    || target.hasHealth.hp <= 0 || target.isConcealed || target.isInvulnerable
++    || target.hasPosition.nodeId !== owner.hasPosition.nodeId
++    || distanceSq(target.hasPosition.current, owner.hasPosition.current) > summonerProfileFor(owner).leashRadius ** 2) return [];
++  return (owner.summonsMinions?.minionIds ?? []).flatMap(id => {
++    const m = world.getMinionEntity(id);
++    return m && m.isMinion.ownerPlayerId === owner.isPlayer.id && m.hasHealth.hp > 0
++      && m.hasPosition.nodeId === owner.hasPosition.nodeId && !m.isRooted && !isHardControlled(m.tracksCombat)
++      && reachGap(posHitboxFromEntity(m), posHitboxFromEntity(target))
++        <= m.performsAttack.attackRange + abilityRangeBonus(ability, owner.tracksProgression.playerTier)
++      ? [m] : [];
++  });
++}
++
++export function formationChargeTarget(world: World, owner: PlayerEntity, ability: AbilityDef, currentOnly: boolean): MonsterEntity | null {
++  const ids = [owner.hasAttackTarget?.targetId, owner.summonsMinions?.formationTargetId,
++    ...(owner.summonsMinions?.minionIds ?? []).map(id => world.getMinionEntity(id)?.hasAttackTarget?.targetId)];
++  if (!currentOnly) {
++    ids.push(...[...world.monsterEntitiesInNode(owner.hasPosition.nodeId)]
++      .sort((a, b) => distanceSq(a.hasPosition.current, owner.hasPosition.current)
++        - distanceSq(b.hasPosition.current, owner.hasPosition.current)).map(m => m.entityId));
++  }
++  for (const id of new Set(ids)) {
++    const target = id ? world.getMonsterEntity(id) : undefined;
++    if (target && formationChargeMinions(world, owner, target, ability).length) return target;
++  }
++  return null;
++}
++
++export function formationChargeHasGap(world: World, owner: PlayerEntity, target: MonsterEntity, ability: AbilityDef, minGap: number): boolean {
++  return formationChargeMinions(world, owner, target, ability).some(m =>
++    reachGap(posHitboxFromEntity(m), posHitboxFromEntity(target)) >= minGap);
++}
++
++export function beginFormationCharge(world: World, owner: PlayerEntity, target: MonsterEntity, ability: AbilityDef,
++  now: number, speedMult: number, durationMs: number): boolean {
++  const minions = formationChargeMinions(world, owner, target, ability);
++  if (!minions.length) return false;
++  const rider = beginFormationTechnique(world, owner, ability.id);
++  if (!rider) return false;
++  const ids = minions.map(m => m.entityId);
++  // Ineligible bodies forfeit their share rather than increasing survivors' damage.
++  rider.pendingEntityIds = rider.pendingEntityIds.filter(id => ids.includes(id));
++  const charge = { abilityId: ability.id, targetId: target.entityId, speedMult, endsAt: now + durationMs };
++  attachComponent(world, owner, 'hasFormationCharge', { ...charge, pendingEntityIds: ids });
++  stopEntity(world, owner);
++  for (const m of minions) {
++    attachComponent(world, m, 'isChargingAbility', { ...charge });
++    setAttackTarget(world, m, target.entityId);
++    m.controlsMinion.currentTargetId = target.entityId;
++    setEntityMotion(world, m, target.hasPosition.current);
++    world.pushEvent(owner.hasPosition.nodeId, { kind: 'player-reposition', playerId: owner.isPlayer.id,
++      casterMinionId: m.entityId, ability: ability.id, from: { ...m.hasPosition.current }, to: { ...target.hasPosition.current } });
++  }
++  return true;
++}
++
++function finishMember(world: World, owner: PlayerEntity, id: string, forfeit: boolean): void {
++  const m = world.getMinionEntity(id);
++  if (m) {
++    detachComponent(world, m, 'isChargingAbility');
++    stopEntity(world, m);
++  }
++  const rider = owner.hasFormationTechnique;
++  if (forfeit && rider && rider.abilityId === owner.hasFormationCharge?.abilityId) {
++    rider.pendingEntityIds = rider.pendingEntityIds.filter(member => member !== id);
++    if (!rider.pendingEntityIds.length) detachComponent(world, owner, 'hasFormationTechnique');
++  }
++}
++
++export function cancelFormationCharge(world: World, owner: PlayerEntity): void {
++  for (const id of owner.hasFormationCharge?.pendingEntityIds ?? []) finishMember(world, owner, id, true);
++  detachComponent(world, owner, 'hasFormationCharge');
++}
++
++export function updateFormationCharge(world: World, owner: PlayerEntity, ability: AbilityDef | undefined, now: number): void {
++  const charge = owner.hasFormationCharge;
++  if (!charge) return;
++  const target = world.getMonsterEntity(charge.targetId);
++  if (!ability || !target || owner.hasHealth.hp <= 0 || isHardControlled(owner.tracksCombat)
++    || !usesSummonTechniques(owner) || now >= charge.endsAt) {
++    cancelFormationCharge(world, owner);
++    return;
++  }
++  const eligible = new Set(formationChargeMinions(world, owner, target, ability).map(m => m.entityId));
++  const pending: string[] = [];
++  for (const id of charge.pendingEntityIds) {
++    const m = world.getMinionEntity(id);
++    if (!m || !eligible.has(id) || target.hasHealth.hp <= 0) { finishMember(world, owner, id, true); continue; }
++    if (world.collision.canReach(m, target, m.performsAttack.attackRange)) {
++      finishMember(world, owner, id, false);
++      runFormationAttack(world, owner, m, target, now);
++      m.performsAttack.lastAttackAt = now;
++    } else {
++      setEntityMotion(world, m, target.hasPosition.current);
++      pending.push(id);
++    }
++  }
++  if (pending.length) charge.pendingEntityIds = pending;
++  else detachComponent(world, owner, 'hasFormationCharge');
++}
+diff --git a/server/src/systems/player/progression/rewards.ts b/server/src/systems/player/progression/rewards.ts
+index 20fe74bf..15471a5d 100644
+--- a/server/src/systems/player/progression/rewards.ts
++++ b/server/src/systems/player/progression/rewards.ts
+@@ -113,7 +113,7 @@ function applyBiomeXP(
+   // growing, so a legacy save can sit ABOVE its cap — it keeps that level and the Global
+   // Mastery it confers (globalMastery() sums raw biomeLevel and has no ceiling), it just
+   // banks no further XP here. Nothing below writes a lower level.
+-  if (world.fixedBiomeMasteryPlayers.has(entity.isPlayer.id) || prevLevel >= levelCap) {
++  if (prevLevel >= levelCap) {
+     return { xpGain: 0, prevLevel, newLevel: prevLevel, unlockedRecipeIds: [] };
+   }
+ 
+diff --git a/server/src/systems/world/movement.ts b/server/src/systems/world/movement.ts
+index 821edee4..287bd02c 100644
+--- a/server/src/systems/world/movement.ts
++++ b/server/src/systems/world/movement.ts
+@@ -550,7 +550,7 @@ export function updateMovement(world: World, dt: number, now: number) {
+       continue;
+     }
+ 
+-    processMoverStep(world, e, dt, 1, 'monster', now);
++    processMoverStep(world, e, dt, e.isChargingAbility?.speedMult ?? 1, 'monster', now);
+ 
+     const node = NODE_REGISTRY.get(e.hasPosition.nodeId);
+     if (node) {
+diff --git a/server/src/world/World.ts b/server/src/world/World.ts
+index e15d32b2..11357887 100644
+--- a/server/src/world/World.ts
++++ b/server/src/world/World.ts
+@@ -383,8 +383,6 @@ export class World {
+    * Set by the balance bench only so full-node clears can complete without repop.
+    */
+   suppressRepopulation = false;
+-  /** Fixed synthetic survey checkpoints only; live worlds leave this empty. */
+-  fixedBiomeMasteryPlayers = new Set<string>();
+ 
+   readonly nextMonsterIdByNode = new Map<string, number>();
+   readonly nextMinionIdByOwner = new Map<string, number>();
+diff --git a/shared/src/data/skillTree/rootsAndFrames.ts b/shared/src/data/skillTree/rootsAndFrames.ts
+index 991b6a00..98dc5aa4 100644
+--- a/shared/src/data/skillTree/rootsAndFrames.ts
++++ b/shared/src/data/skillTree/rootsAndFrames.ts
+@@ -97,7 +97,7 @@ export const rootsAndFramesEntries = [
+     id: 'cadence-root', name: 'Striker', tier: 0,
+     classId: 'cadence-root', subVariantId: null,
+     parent: null, children: [],
+-    description: 'Find the rhythm of battle. Every few hits your attack surges with accumulated force. A balanced bruiser — your recovery rate surges on a fixed cycle, sustaining you through prolonged engagements.',
++    description: 'Class mechanic — a five-hit finisher cycle, plus a Recovery pulse that activates 20% of your Recovery every 6s for 4s. Hits above 25% of max HP apply only half of their excess damage. A balanced bruiser — your recovery rate surges on a fixed cycle, sustaining you through prolonged engagements.',
+     cost: 1, statEffects: {
+       attackPct: 0.08, maxHpPct: 0.18, platingPct: 0.15,
+       attackSpeedPct: 0.06, moveSpeedPct: 0.04, damageReduction: 0.02,
+@@ -114,7 +114,7 @@ export const rootsAndFramesEntries = [
+     id: 'cooldown-root', name: 'Squire', tier: 0,
+     classId: 'cooldown-root', subVariantId: null,
+     parent: null, children: [],
+-    description: 'Patience is power. Prepare a devastating strike on a set cycle. The heaviest chassis in the game — enormous bulk and armor, bought with the slowest hands and feet — and 10% of your Recovery rate stays active even while you fight.',
++    description: 'Class mechanic — prepare a timed execution on the 7s reference cycle at ×2; 10% of your Recovery stays active while you fight. The heaviest chassis in the game — enormous bulk and armor, bought with the slowest hands and feet.',
+     cost: 1, statEffects: {
+       attackPct: 0.18, maxHpPct: 0.30, platingPct: 0.30,
+       attackSpeedPct: -0.15, moveSpeedPct: -0.10, damageReduction: 0.04,
+@@ -127,7 +127,7 @@ export const rootsAndFramesEntries = [
+     id: 'reload-root', name: 'Slinger', tier: 0,
+     classId: 'reload-root', subVariantId: null,
+     parent: null, children: [],
+-    description: 'Unleash a rapid clip, then reload. Weapon Attack damage retains 65% effectiveness at this extreme cadence. Flat on-hit damage stays at full strength, while weapon damage converted into damage over time retains 85% effectiveness.',
++    description: 'Class mechanics — unleash a rapid clip, then reload. Weapon Attack damage retains 65% effectiveness at this extreme cadence. Flat on-hit damage stays at full strength, while weapon damage converted into damage over time retains 85% effectiveness. Kills activate 20% of your Recovery for 4s, evades gain 20% extra damage mitigation, and target acquisition radius is ×2.5.',
+     cost: 1, statEffects: {
+       attackPct: 0.20, maxHpPct: 0.07,
+       attackSpeedPct: 0.10, moveSpeedPct: 0.10,
+@@ -145,7 +145,7 @@ export const rootsAndFramesEntries = [
+     id: 'energy-root', name: 'Spirit', tier: 0,
+     classId: 'energy-root', subVariantId: null,
+     parent: null, children: [],
+-    description: 'Channel each blow into a building surge of power. The lightest, fastest, highest-output chassis — almost no natural bulk, so a barrier worth 30% of your max HP takes the hits that do reach you. It recharges between fights, not during them.',
++    description: 'Class mechanic — channel each blow into a building surge of power. The lightest, fastest, highest-output chassis — almost no natural bulk, so a barrier worth 30% of your max HP takes the hits that do reach you. It recharges between fights, not during them.',
+     cost: 1, statEffects: {
+       attackPct: 0.15, maxHpPct: 0.03,
+       attackSpeedPct: 0.12, moveSpeedPct: 0.12,
+@@ -159,7 +159,7 @@ export const rootsAndFramesEntries = [
+     id: 'dot-root', name: 'Apprentice', tier: 0,
+     classId: 'dot-root', subVariantId: null,
+     parent: null, children: [],
+-    description: 'Your strikes leave lingering wounds. Stack the pain until nothing survives. The middle chassis — no extreme in any direction — and a toxin-hardened body that resists DoT damage by 18% and converts 10% of incoming direct hits into delayed damage you can outlast.',
++    description: 'Class mechanics — your strikes leave lingering wounds; stack the pain until nothing survives. The middle chassis — no extreme in any direction — and a toxin-hardened body with 18% DoT resistance that converts 10% of incoming direct hits into delayed damage you can outlast.',
+     cost: 1, statEffects: {
+       attackPct: 0.10, maxHpPct: 0.12, platingPct: 0.08,
+       attackSpeedPct: 0.02, moveSpeedPct: 0.03,
+@@ -173,7 +173,7 @@ export const rootsAndFramesEntries = [
+     id: 'summoner-root', name: 'Conduit', tier: 0,
+     classId: 'summoner-root', subVariantId: null,
+     parent: null, children: ['summoner-light', 'summoner-balanced', 'summoner-heavy'],
+-    description: 'Four persistent summons fight in your place. Your weapon sets their damage and cadence, while every body divides one shared formation offense and secondary-effect budget. Fallen slots rebuild one at a time, costing HP without crossing your safety floor.',
++    description: 'Class mechanic — maximum formation: 4 persistent summons before relic expansion. They fight in your place: your weapon sets their damage and cadence, while every body divides one shared formation offense and secondary-effect budget. Fallen slots rebuild one at a time from a 3.5s base (2.5s floor), costing 30% of the summon\'s max HP without taking you below 20% of your max HP.',
+     cost: 1, statEffects: {
+       attackPct: 0.08, maxHpPct: 0.08,
+       attackSpeedPct: 0.04, moveSpeedPct: 0.05,
+@@ -199,7 +199,7 @@ export const rootsAndFramesEntries = [
+     id: 'summoner-light', name: 'Splinter', tier: 1,
+     classId: 'summoner-root', subVariantId: 'light',
+     parent: 'summoner-root', children: ['summoner-light-t3-a', 'summoner-light-t3-b', 'summoner-light-t3-c'],
+-    description: 'Your presence splinters across six small, fast summons. They divide the formation budget rather than multiplying it, but the whole formation carries 20% stronger on-hit and secondary weapon effects. Each loss costs little offense and reconstruction HP; plating and area damage punish the swarm.',
++    description: 'Formation mechanic — maximum summons before relic expansion: 6 (+2 from Conduit\'s 4). Six small, fast bodies share one formation budget: ×1.05 formation offense, 66% total summon-HP budget, ×1.18 movement, ×0.72 body size, and ×1.20 on-hit/secondary weapon effects. Reconstruction starts at 2.0s with a 1.5s floor; each loss costs little offense and reconstruction HP, while plating and area damage punish the swarm.',
+     cost: 1, statEffects: {
+       maxHpPct: 0.04, attackSpeedPct: 0.06, moveSpeedPct: 0.08,
+     },
+@@ -210,7 +210,7 @@ export const rootsAndFramesEntries = [
+     id: 'summoner-balanced', name: 'Consort', tier: 1,
+     classId: 'summoner-root', subVariantId: 'balanced',
+     parent: 'summoner-root', children: ['summoner-balanced-t3-a', 'summoner-balanced-t3-b', 'summoner-balanced-t3-c'],
+-    description: 'Five medium summons hold a formal, stable ensemble. The reference formation: moderate damage, durability, and reconstruction pressure.',
++    description: 'Formation mechanic — maximum summons before relic expansion: 5 (+1 from Conduit\'s 4). Five medium bodies form the reference ensemble: ×1.00 formation offense, 100% total summon-HP budget, baseline movement and size, and 2.5s reconstruction with a 1.5s floor. Damage, durability, and reconstruction pressure stay moderate.',
+     cost: 1, statEffects: {
+       maxHpPct: 0.08, platingPct: 0.06, moveSpeedPct: 0.02,
+     },
+@@ -221,7 +221,7 @@ export const rootsAndFramesEntries = [
+     id: 'summoner-heavy', name: 'Effigy', tier: 1,
+     classId: 'summoner-root', subVariantId: 'heavy',
+     parent: 'summoner-root', children: ['summoner-heavy-t3-a', 'summoner-heavy-t3-b', 'summoner-heavy-t3-c'],
+-    description: 'Two large, slow summons concentrate the formation budget into consequential bodies. Each loss removes major offense and is expensive to reconstruct.',
++    description: 'Formation mechanic — maximum summons before relic expansion: 2 (−2 from Conduit\'s 4). Two large bodies concentrate the budget: ×0.98 formation offense, 140% total summon-HP budget, ×0.78 movement, ×1.75 body size, and 3.92s reconstruction with a 2.5s floor. Each loss removes major offense and is expensive to reconstruct.',
+     cost: 1, statEffects: {
+       maxHpPct: 0.16, platingPct: 0.12,
+       attackSpeedPct: -0.06, moveSpeedPct: -0.06, damageReduction: 0.01,
+@@ -234,7 +234,7 @@ export const rootsAndFramesEntries = [
+     id: 'cadence-light', name: 'Flurry', tier: 1,
+     classId: 'cadence-root', subVariantId: 'light',
+     parent: 'cadence-root', children: [],
+-    description: 'Swift and agile. Trades bulk for a blistering attack pace. Empowered finisher triggers every 4 hits at 1.5× — frequency over raw power.',
++    description: 'Cadence change — a 4-hit finisher cycle at ×1.5 empowered damage. Swift and agile, this frame trades bulk for a blistering attack pace: frequency over raw power.',
+     cost: 1, statEffects: {
+       attackPct: 0.06, maxHpPct: 0.04, attackSpeedPct: 0.12, moveSpeedPct: 0.10,
+     },
+@@ -245,7 +245,7 @@ export const rootsAndFramesEntries = [
+     id: 'cadence-balanced', name: 'Skirmisher', tier: 1,
+     classId: 'cadence-root', subVariantId: 'balanced',
+     parent: 'cadence-root', children: [],
+-    description: 'A measured approach. Modest gains across the board without committing to an extreme. Empowered finisher every 5 hits at 2×.',
++    description: 'Cadence change — a 5-hit finisher cycle at ×2 empowered damage. A measured approach with modest gains across the board and no commitment to either extreme.',
+     cost: 1, statEffects: {
+       attackPct: 0.07, maxHpPct: 0.10, platingPct: 0.10,
+       attackSpeedPct: 0.04, moveSpeedPct: 0.03,
+@@ -257,7 +257,7 @@ export const rootsAndFramesEntries = [
+     id: 'cadence-heavy', name: 'Breaker', tier: 1,
+     classId: 'cadence-root', subVariantId: 'heavy',
+     parent: 'cadence-root', children: [],
+-    description: 'Endurance over speed. Significant bulk and armor; pays for it in attack pace and footwork. Empowered finisher every 6 hits at 4× — patience rewarded with one enormous blow.',
++    description: 'Cadence change — a 6-hit finisher cycle at ×4 empowered damage. Endurance over speed: significant bulk and armor, paid for in attack pace and footwork; patience is rewarded with one enormous blow.',
+     cost: 1, statEffects: {
+       attackPct: 0.05, maxHpPct: 0.18, platingPct: 0.20,
+       attackSpeedPct: -0.10, moveSpeedPct: -0.10, damageReduction: 0.02,
+@@ -270,7 +270,7 @@ export const rootsAndFramesEntries = [
+     id: 'cooldown-light', name: 'Warrior', tier: 1,
+     classId: 'cooldown-root', subVariantId: 'light',
+     parent: 'cooldown-root', children: [],
+-    description: 'The aggressive tank. Keeps its armored core but trades patience for a fast, hungry tempo. Execution recharges in 5 s at 1.5×.',
++    description: 'Execution change — 5s recharge at ×1.5 damage. The aggressive tank keeps its armored core but trades patience for a fast, hungry tempo.',
+     cost: 1, statEffects: {
+       attackPct: 0.07, maxHpPct: 0.05, platingPct: 0.05,
+       attackSpeedPct: 0.12, moveSpeedPct: 0.10,
+@@ -282,7 +282,7 @@ export const rootsAndFramesEntries = [
+     id: 'cooldown-balanced', name: 'Knight', tier: 1,
+     classId: 'cooldown-root', subVariantId: 'balanced',
+     parent: 'cooldown-root', children: [],
+-    description: 'A sturdy foundation. Substantial HP and armor amplify the class\'s defensive identity without tipping into immobility. Execution recharges in 7 s at 2×.',
++    description: 'Execution change — 7s recharge at ×2 damage. A sturdy foundation: substantial HP and armor amplify the class\'s defensive identity without tipping into immobility.',
+     cost: 1, statEffects: {
+       attackPct: 0.08, maxHpPct: 0.12, platingPct: 0.15,
+       attackSpeedPct: 0.03, moveSpeedPct: -0.02, damageReduction: 0.02,
+@@ -297,7 +297,7 @@ export const rootsAndFramesEntries = [
+     // Bulwark keeps real ATTACK affinity on purpose: the fantasy is enormous
+     // individual hits, not merely maximum defense. Its sustained throughput is
+     // constrained by the attack-speed penalty, not by a weak attack stat.
+-    description: 'Fortress of patience. Maximum bulk makes you a wall, and every blow lands like one — but you move like a boulder and swing even slower. Execution recharges in 9 s at 3×.',
++    description: 'Execution change — 8s recharge at ×3.5 damage. Fortress of patience: maximum bulk makes you a wall, and every blow lands like one — but you move like a boulder and swing even slower.',
+     cost: 1, statEffects: {
+       attackPct: 0.10, maxHpPct: 0.22, platingPct: 0.25,
+       attackSpeedPct: -0.12, moveSpeedPct: -0.12, damageReduction: 0.03,
+@@ -310,7 +310,7 @@ export const rootsAndFramesEntries = [
+     id: 'dot-light', name: 'Venom vessel', tier: 1,
+     classId: 'dot-root', subVariantId: 'light',
+     parent: 'dot-root', children: [],
+-    description: 'Poison path. Apply wounds quickly and stay mobile. Up to 8 poison stacks — each hit converts 30% of your attack into lingering poison damage.',
++    description: 'DoT change — up to 8 poison stacks; each hit converts 30% of your attack into poison. Ticks every 1s for 5s at ×1.25 DoT output. Apply wounds quickly and stay mobile.',
+     cost: 1, statEffects: {
+       attackPct: 0.06, maxHpPct: 0.04, attackSpeedPct: 0.10, moveSpeedPct: 0.10,
+     },
+@@ -324,7 +324,7 @@ export const rootsAndFramesEntries = [
+     id: 'dot-balanced', name: 'Ember mage', tier: 1,
+     classId: 'dot-root', subVariantId: 'balanced',
+     parent: 'dot-root', children: [],
+-    description: 'Fire path. A deliberate fighter. Up to 6 burn stacks — each hit converts 50% of your attack into damage over time.',
++    description: 'DoT change — up to 6 burn stacks; each hit converts 50% of your attack into burn. Ticks every 1.5s for 5.5s at ×1.20 DoT output. A deliberate fighter who rewards measured pressure.',
+     cost: 1, statEffects: {
+       attackPct: 0.07, maxHpPct: 0.10, platingPct: 0.10, attackSpeedPct: 0.03,
+     },
+@@ -338,7 +338,7 @@ export const rootsAndFramesEntries = [
+     id: 'dot-heavy', name: 'Rime-Bound', tier: 1,
+     classId: 'dot-root', subVariantId: 'heavy',
+     parent: 'dot-root', children: [],
+-    description: 'Frost path. A war of attrition. Up to 3 frost stacks — each hit converts 70% of your attack into deep, lingering wounds.',
++    description: 'DoT change — up to 3 frost stacks; each hit converts 70% of your attack into frost. Ticks every 2s for 6.5s at ×1.15 DoT output. A slow war of attrition built around deep, lingering wounds.',
+     cost: 1, statEffects: {
+       attackPct: 0.08, maxHpPct: 0.18, platingPct: 0.20,
+       attackSpeedPct: -0.10, moveSpeedPct: -0.10, damageReduction: 0.03,
+@@ -359,7 +359,7 @@ export const rootsAndFramesEntries = [
+     id: 'reload-light', name: 'Scout', tier: 1,
+     classId: 'reload-root', subVariantId: 'light',
+     parent: 'reload-root', children: [],
+-    description: 'All-in on mobility. Small clip (5 rounds), 1.2 s reload, and extra dodge — maximum uptime, minimum profile to hit.',
++    description: 'Reload change — 5-round clip and 1.2s reload. All-in on mobility with extra dodge: maximum uptime and a minimum profile to hit.',
+     cost: 1, statEffects: {
+       attackPct: 0.08, maxHpPct: 0.04,
+       attackSpeedPct: 0.10, moveSpeedPct: 0.10, evasion: 0.07,
+@@ -371,7 +371,7 @@ export const rootsAndFramesEntries = [
+     id: 'reload-balanced', name: 'Marksman', tier: 1,
+     classId: 'reload-root', subVariantId: 'balanced',
+     parent: 'reload-root', children: [],
+-    description: 'A steady burst fighter. Standard 10-round clip, 2.0 s reload, modest avoidance — tempo and staying power in balance.',
++    description: 'Reload change — 10-round clip and 2.0s reload. A steady burst fighter with modest avoidance: tempo and staying power in balance.',
+     cost: 1, statEffects: {
+       attackPct: 0.08, maxHpPct: 0.08,
+       attackSpeedPct: 0.04, moveSpeedPct: 0.04, evasion: 0.04,
+@@ -383,7 +383,7 @@ export const rootsAndFramesEntries = [
+     id: 'reload-heavy', name: 'Artillerist', tier: 1,
+     classId: 'reload-root', subVariantId: 'heavy',
+     parent: 'reload-root', children: [],
+-    description: 'Slower but harder to put down. Large 20-round clip for sustained bursting, real armor for the first time on this chassis, but reloading takes 3 s — plan your downtime.',
++    description: 'Reload change — 20-round clip and 3.0s reload. Slower but harder to put down: sustained bursting and real armor for the first time on this chassis, with longer planned downtime.',
+     cost: 1, statEffects: {
+       attackPct: 0.10, maxHpPct: 0.14, platingPct: 0.12,
+       attackSpeedPct: -0.04, moveSpeedPct: -0.05,
+@@ -396,9 +396,9 @@ export const rootsAndFramesEntries = [
+     id: 'energy-light', name: 'Spark', tier: 1,
+     classId: 'energy-root', subVariantId: 'light',
+     parent: 'energy-root', children: [],
+-    description: 'Pure momentum. Blazing speed and rapid attacks; thrives on frequent discharges and their AoE splash. Gains 20 energy per hit, empowered at 1.5× — fires often.',
++    description: 'Energy change — gain 20 energy per hit and discharge at ×1.5 damage. Pure momentum: blazing speed and rapid attacks thrive on frequent discharges and their AoE splash.',
+     cost: 1, statEffects: {
+-      attackPct: 0.07, maxHpPct: 0.03, attackSpeedPct: 0.12, moveSpeedPct: 0.12,
++      attackPct: 0.02, maxHpPct: 0.03, attackSpeedPct: 0.04, moveSpeedPct: 0.12,
+     },
+     mechanicEffects: { 'energy.per-hit': 20, 'energy.empowered-mult': 1.5 } as Record<string, number>,
+   }],
+@@ -407,10 +407,10 @@ export const rootsAndFramesEntries = [
+     id: 'energy-balanced', name: 'Wraith', tier: 1,
+     classId: 'energy-root', subVariantId: 'balanced',
+     parent: 'energy-root', children: [],
+-    description: 'Fast and capable. A bit of extra punch and some light armor without sacrificing mobility. Gains 14 energy per hit, empowered at 2×.',
++    description: 'Energy change — gain 14 energy per hit and discharge at ×2 damage. Fast and capable, with extra punch and light armor without sacrificing mobility.',
+     cost: 1, statEffects: {
+-      attackPct: 0.08, maxHpPct: 0.07, platingPct: 0.06,
+-      attackSpeedPct: 0.06, moveSpeedPct: 0.06,
++      attackPct: 0.03, maxHpPct: 0.07, platingPct: 0.06,
++      attackSpeedPct: 0.00, moveSpeedPct: 0.06,
+     },
+     mechanicEffects: { 'energy.per-hit': 14, 'energy.empowered-mult': 2.0 } as Record<string, number>,
+   }],
+@@ -419,7 +419,7 @@ export const rootsAndFramesEntries = [
+     id: 'energy-heavy', name: 'Phantasm', tier: 1,
+     classId: 'energy-root', subVariantId: 'heavy',
+     parent: 'energy-root', children: [],
+-    description: 'Measured power. A light class wearing heavier armor — durability and a sliver of damage reduction, traded against attack pace. Gains 10 energy per hit, empowered at 6× — builds slowly, hits very hard.',
++    description: 'Energy change — gain 10 energy per hit and discharge at ×6 damage. Measured power: heavier armor and damage reduction traded against attack pace; it builds slowly and hits very hard.',
+     cost: 1, statEffects: {
+       attackPct: 0.10, maxHpPct: 0.14, platingPct: 0.12,
+       attackSpeedPct: -0.10, moveSpeedPct: -0.08, damageReduction: 0.02,
+@@ -626,7 +626,7 @@ export const rootsAndFramesEntries = [
+     id: 'summoner-range-close', name: 'Vigil', tier: 2,
+     classId: 'summoner-root', subVariantId: null,
+     parent: null, children: [],
+-    description: 'Your summons keep watch at your shoulder. Durable melee bodies provide the strongest interception, so each reconstruction is expensive. The Conduit keeps the smallest share of the defensive budget.',
++    description: 'Your summons keep watch at your shoulder. Melee bodies attack at 18px, gain ×1.25 summon HP and ×1.50 size, redirect 55% of incoming damage, and leave 25% of the defensive budget on the Conduit. Reconstructions keep the base interval, so this is the most protective but most expensive formation.',
+     cost: 1, statEffects: {
+       maxHpPct: 0.06, platingPct: 0.04,
+     },
+@@ -636,7 +636,7 @@ export const rootsAndFramesEntries = [
+     id: 'summoner-range-mid', name: 'Procession', tier: 2,
+     classId: 'summoner-root', subVariantId: null,
+     parent: null, children: [],
+-    description: 'Your summons move with you in ordered formation. Short-ranged bodies maintain a reliable orbit with moderate durability, interception, and reconstruction cost.',
++    description: 'Your summons move with you in ordered formation. Reach bodies attack at 96px from a 72px preferred distance, use ×1.25 size, redirect 30% of incoming damage, and split defense evenly (50% to the Conduit, 50% to the formation). Reconstruction keeps the base interval.',
+     cost: 1, statEffects: {
+       maxHpPct: 0.10, platingPct: 0.06, moveSpeedPct: 0.02,
+     },
+@@ -645,7 +645,7 @@ export const rootsAndFramesEntries = [
+     id: 'summoner-range-far', name: 'Harrier', tier: 2,
+     classId: 'summoner-root', subVariantId: null,
+     parent: null, children: [],
+-    description: 'Your summons are cast out ahead. Fragile ranged bodies kite at distance and offer little interception. Cheap bodies leave much more of the defensive budget on the Conduit.',
++    description: 'Your summons are cast out ahead. Ranged bodies attack at 190px from a 165px preferred distance, have ×0.70 summon HP and ×1.12 movement, redirect only 8% of incoming damage, and leave 75% of the defensive budget on the Conduit. Their reconstruction interval is ×0.85 of base.',
+     cost: 1, statEffects: {
+       maxHpPct: 0.18, platingPct: 0.12, moveSpeedPct: 0.10, damageReduction: 0.02,
+     },
+diff --git a/shared/src/data/skillTree/t3CombatA.ts b/shared/src/data/skillTree/t3CombatA.ts
+index 7a8e02b2..a4303163 100644
+--- a/shared/src/data/skillTree/t3CombatA.ts
++++ b/shared/src/data/skillTree/t3CombatA.ts
+@@ -151,7 +151,7 @@ export const t3CombatEntriesA = [
+     id: 'cooldown-balanced-t3-b', name: 'Dynamo', tier: 3,
+     classId: 'cooldown-root', subVariantId: 'balanced',
+     parent: 'cooldown-balanced', children: [],
+-    description: 'Every second your execution cooldown ticks down, you gain a stack of accumulated power. Each stack adds 2 damage to regular attacks and your execution; the execution then spends all stacks.',
++    description: 'Every second your execution cooldown ticks down, you gain a stack of accumulated power. Each stack adds 8 flat damage to regular attacks and your execution; the execution then spends all stacks.',
+     cost: 1, statEffects: {},
+     mechanicEffects: {
+       'cooldown.battery': 1,
+@@ -179,7 +179,7 @@ export const t3CombatEntriesA = [
+     id: 'cooldown-heavy-t3-a', name: 'Avenger', tier: 3,
+     classId: 'cooldown-root', subVariantId: 'heavy',
+     parent: 'cooldown-heavy', children: [],
+-    description: 'Your execution deals bonus damage equal to a portion of all damage you have taken since your last execution (with a minimum floor so it never feels dead). The fixed 9s window makes the payoff predictable.',
++    description: 'Your execution deals bonus damage equal to a portion of all damage you have taken since your last execution (with a minimum floor so it never feels dead). The heavy frame\'s fixed 8s window makes the payoff predictable.',
+     cost: 1, statEffects: {},
+     mechanicEffects: { 'cooldown.vengeance': 1, 'cooldown.vengeance-mult': 1.5, 'cooldown.vengeance-floor': 30 },
+   }],
+@@ -187,9 +187,9 @@ export const t3CombatEntriesA = [
+     id: 'cooldown-heavy-t3-b', name: 'Destroyer', tier: 3,
+     classId: 'cooldown-root', subVariantId: 'heavy',
+     parent: 'cooldown-heavy', children: [],
+-    description: 'Normal attacks deal no damage. Your execution fires on a greatly shortened cooldown (4s) and hits for far more (5× instead of 3×). On-hit gear and charm triggers still fire on regular attacks. Out of combat, your execution stays primed — the first strike on a new target is an execution."',
++    description: 'Normal attacks deal no damage. Your execution fires on a greatly shortened cooldown (4s) and hits for far more (4× instead of 3.5×). On-hit gear and charm triggers still fire on regular attacks. Out of combat, your execution stays primed — the first strike on a new target is an execution.',
+     cost: 1, statEffects: {},
+-    // Heavy frame is 9000ms / 3.5×; deltas land it at 4000ms / 5.0× (3.5 + 1.5).
++    // Heavy frame is 8000ms / 3.5×; deltas land it at 4000ms / 4.0× (3.5 + 0.5).
+     mechanicEffects: { 'cooldown.singular-extraction': 1, 'cooldown.empowered-cd-ms': -4000, 'cooldown.empowered-mult': 0.50, 'cooldown.singular-no-target-ms': 4000 },
+   }],
+   ['cooldown-heavy-t3-c', {
+@@ -230,7 +230,7 @@ export const t3CombatEntriesA = [
+     id: 'reload-light-t3-c', name: 'Sniper', tier: 3,
+     classId: 'reload-root', subVariantId: 'light',
+     parent: 'reload-light', children: [],
+-    description: 'Loads only 3 heavy shells and fires at a hard-set 0.5 APS, ignoring weapon attack speed entirely. Your bonus attack-speed stat is converted into per-shot damage instead, and shots deal 2× damage against full-health targets. Fast 1.2s reload.',
++    description: 'Loads only 3 heavy shells and fires at a hard-set 0.5 APS, ignoring weapon attack speed entirely. Your bonus attack-speed stat is converted into per-shot damage instead, and shots deal 2× damage against targets at or above 95% health. Fast 1.2s reload.',
+     cost: 1, statEffects: {
+       attackRange: 100,
+     },
+@@ -259,7 +259,7 @@ export const t3CombatEntriesA = [
+     id: 'reload-balanced-t3-b', name: 'Blunderbuss', tier: 3,
+     classId: 'reload-root', subVariantId: 'balanced',
+     parent: 'reload-balanced', children: [],
+-    description: 'Fires all 10 rounds at once as a point-blank volley, then reloads (2s). Close range mandatory — the reach penalty is preserved. Each pellet deals normal damage; the burst shoves enemies back.',
++    description: 'Fires all 10 rounds at once as a point-blank volley, then reloads (2s). Close range mandatory — the reach penalty is preserved. Each pellet deals 40% of normal attack damage; the burst shoves enemies back.',
+     cost: 1, statEffects: { attackRange: -100 },
+     mechanicEffects: {
+       'reload.blunderbuss': 1,
+diff --git a/shared/src/data/skillTree/t3CombatB.ts b/shared/src/data/skillTree/t3CombatB.ts
+index 3076ca4b..953321f6 100644
+--- a/shared/src/data/skillTree/t3CombatB.ts
++++ b/shared/src/data/skillTree/t3CombatB.ts
+@@ -105,7 +105,7 @@ export const t3CombatEntriesB = [
+     id: 'energy-heavy-t3-a', name: 'Voidwalker', tier: 3,
+     classId: 'energy-root', subVariantId: 'heavy',
+     parent: 'energy-heavy', children: [],
+-    description: 'Doubles your max energy (200), and +100 more for each tier beyond this one (300 next tier, 400 after, …). Energy generation accelerates the fuller the pool. If a basic hit would kill via the discharge\'s projected damage, it triggers an immediate early discharge, spending the stored energy.',
++    description: 'Doubles your max energy (200), and +100 more for each tier beyond this one (300 next tier, 400 after, …). You gain 20 energy per hit on the live heavy path, and generation accelerates the fuller the pool. If a basic hit would kill via the discharge\'s projected damage, it triggers an immediate early discharge, spending the stored energy.',
+     cost: 1, statEffects: {},
+     mechanicEffects: {
+       'energy.singularity-execute': 1,
+@@ -162,7 +162,7 @@ export const t3CombatEntriesB = [
+     id: 'dot-light-t3-b', name: 'Cultist', tier: 3,
+     classId: 'dot-root', subVariantId: 'light',
+     parent: 'dot-light', children: [],
+-    description: 'Your doom has no stack limit. The first 8 stacks deal full damage per tick. Each additional stack beyond 8 adds damage at 50% effectiveness, naturally plateauing around 30–40 stacks. Ticks twice as fast (same total damage). Rewards long, sustained fights.',
++    description: 'Your doom has no stack limit. The first 8 stacks deal full damage per tick. Each additional stack beyond 8 adds damage at 50% effectiveness, naturally plateauing around 30–40 stacks. The light frame\'s 1s tick interval gains 500ms (1.5s live total), preserving the same total damage while extending the cadence. Rewards long, sustained fights.',
+     cost: 1, statEffects: {},
+     mechanicEffects: {
+       'dot.eternal-doom': 1,
+@@ -192,7 +192,7 @@ export const t3CombatEntriesB = [
+     id: 'dot-balanced-t3-a', name: 'Pyromancer', tier: 3,
+     classId: 'dot-root', subVariantId: 'balanced',
+     parent: 'dot-balanced', children: [],
+-    description: 'Each hit applies 2 burn stacks instead of 1, but each stack deals 50% of normal tick damage. Hitting a target already at max stacks deals bonus direct damage equal to 2× the max-stack DoT damage.',
++    description: 'Each hit applies 2 burn stacks instead of 1, but each stack deals 50% of normal tick damage. Hitting a target already at max stacks deals bonus direct damage equal to 1.25× the max-stack DoT damage.',
+     cost: 1, statEffects: {},
+     mechanicEffects: {
+       'dot.fan-the-flames': 1,
+@@ -232,7 +232,7 @@ export const t3CombatEntriesB = [
+     id: 'dot-heavy-t3-a', name: 'Icebreaker', tier: 3,
+     classId: 'dot-root', subVariantId: 'heavy',
+     parent: 'dot-heavy', children: [],
+-    description: 'Below max frost stacks, attacks convert at the normal 70%. At max stacks (3), your direct attacks deal full damage (0% conversion) while the frost keeps ticking — and the target takes an 5% damage-reduction debuff, so the full-power hits land even harder.',
++    description: 'Below max frost stacks, attacks convert at the normal 70%. At max stacks (3), your direct attacks deal full damage (0% conversion) while the frost keeps ticking — and the target takes a 5% damage-reduction debuff, so the full-power hits land even harder.',
+     cost: 1, statEffects: {},
+     // TODO(balance): verify full-power direct hits interact correctly with high-plating enemies.
+     mechanicEffects: {
+@@ -263,7 +263,7 @@ export const t3CombatEntriesB = [
+     id: 'dot-heavy-t3-c', name: 'Wind Spirit', tier: 3,
+     classId: 'dot-root', subVariantId: 'heavy',
+     parent: 'dot-heavy', children: [],
+-    description: 'Your frost conversion becomes total: 100% of attack damage is converted into DoT, with a stronger frost multiplier. Hitting a target already at max frost stacks applies Frostbite, increasing DoT damage taken by 2% per stack, up to 10 stacks for 4 seconds.',
++    description: 'Your frost conversion becomes total: 100% of attack damage is converted into DoT, with a 1.05× frost multiplier on the live path. Hitting a target already at max frost stacks applies Frostbite, increasing DoT damage taken by 2% per stack, up to 10 stacks for 4 seconds.',
+     cost: 1, statEffects: {},
+     mechanicEffects: {
+       'dot.wind-spirit': 1,
+diff --git a/shared/src/data/skillTree/t3Summoner.ts b/shared/src/data/skillTree/t3Summoner.ts
+index 3d5e7986..25184ce9 100644
+--- a/shared/src/data/skillTree/t3Summoner.ts
++++ b/shared/src/data/skillTree/t3Summoner.ts
+@@ -9,21 +9,21 @@ export const t3SummonerEntries = [
+     id: 'summoner-light-t3-a', name: 'Inquisitor', tier: 3,
+     classId: 'summoner-root', subVariantId: 'light',
+     parent: 'summoner-light', children: [],
+-    description: 'Each unique living summon can name the focused enemy once. A complete formation sustains the strongest accusation, rewarding deterministic focus fire and formation uptime.',
++    description: 'Each unique living summon can mark the focused enemy once. Every mark makes your formation deal 3.5% more damage to that target for 5 seconds, so a complete formation sustains the strongest accusation and rewards deterministic focus fire.',
+     cost: 1, statEffects: {}, mechanicEffects: {},
+   }],
+   ['summoner-light-t3-b', {
+     id: 'summoner-light-t3-b', name: 'Kilnmaster', tier: 3,
+     classId: 'summoner-root', subVariantId: 'light',
+     parent: 'summoner-light', children: [],
+-    description: 'Fire the formation in one larger batch: eight smaller summons. They still divide one direct-offense budget, while the whole formation carries 30% stronger on-hit and secondary weapon effects. Coverage rises, as does vulnerability to plating and area damage.',
++    description: 'Fire the formation in one larger batch: 8 smaller summons instead of 6. They still divide one direct-offense budget, while the whole formation carries ×1.30 on-hit and secondary weapon effects and a ×0.80 reconstruction interval (1.6s before the 1.5s floor). Coverage rises, as does vulnerability to plating and area damage.',
+     cost: 1, statEffects: {}, mechanicEffects: {},
+   }],
+   ['summoner-light-t3-c', {
+     id: 'summoner-light-t3-c', name: 'Iconoclast', tier: 3,
+     classId: 'summoner-root', subVariantId: 'light',
+     parent: 'summoner-light', children: [],
+-    description: 'You break your own works. Natural summon deaths explode modestly, and at fixed intervals one living slot is marked to shatter for a stronger weapon-scaled blast, then enters the shared reconstruction queue.',
++    description: 'You break your own works. Natural summon deaths explode for ×0.45 weapon-scaled damage; every 8 seconds one living slot is marked to shatter for a ×1.35 weapon-scaled blast in a 78px radius, then enters the shared reconstruction queue.',
+     cost: 1, statEffects: {}, mechanicEffects: {},
+   }],
+ 
+@@ -31,21 +31,21 @@ export const t3SummonerEntries = [
+     id: 'summoner-balanced-t3-a', name: 'Marshal', tier: 3,
+     classId: 'summoner-root', subVariantId: 'balanced',
+     parent: 'summoner-balanced', children: [],
+-    description: 'You drill the formation. Each summon gains one opening strike against a new target, and complete formation attack cycles build toward a deterministic coordinated strike.',
++    description: 'You drill the formation. Each summon gains one ×1.45 opening strike against a new target, and every 4 complete formation attack cycles deliver a deterministic coordinated strike at ×1.65 of the living formation offense.',
+     cost: 1, statEffects: {}, mechanicEffects: {},
+   }],
+   ['summoner-balanced-t3-b', {
+     id: 'summoner-balanced-t3-b', name: 'Chorister', tier: 3,
+     classId: 'summoner-root', subVariantId: 'balanced',
+     parent: 'summoner-balanced', children: [],
+-    description: 'Each unique living slot establishes one withering voice on a target. Any living summon can refresh the established chorus, making sustained full-formation focus its strongest state.',
++    description: 'Each unique living slot establishes one withering voice on a target. Every voice deals 4.5% of your Attack as DoT each second; the chorus lasts 6 seconds and any living summon can refresh it, making sustained full-formation focus its strongest state.',
+     cost: 1, statEffects: {}, mechanicEffects: {},
+   }],
+   ['summoner-balanced-t3-c', {
+     id: 'summoner-balanced-t3-c', name: 'Ritualist', tier: 3,
+     classId: 'summoner-root', subVariantId: 'balanced',
+     parent: 'summoner-balanced', children: [],
+-    description: 'Every 10 seconds you call the rite, and each currently living summon empowers its next two attacks. Missing slots receive no charges until the next ritual.',
++    description: 'Every 10 seconds you call the rite, and each currently living summon receives 2 charges; each charge empowers one attack by ×1.60. Missing slots receive no charges until the next ritual.',
+     cost: 1, statEffects: {}, mechanicEffects: {},
+   }],
+ 
+@@ -53,21 +53,21 @@ export const t3SummonerEntries = [
+     id: 'summoner-heavy-t3-a', name: 'Covenanter', tier: 3,
+     classId: 'summoner-root', subVariantId: 'heavy',
+     parent: 'summoner-heavy', children: [],
+-    description: 'You bind your pair under separate terms: an offense twin carries most formation damage while a defense twin carries most durability and interception. A survivor gains only a bounded fallback.',
++    description: 'You bind your pair under separate terms: the offense twin carries 75% of formation offense and 30% of formation defense, while the defense twin carries 25% of offense and 70% of defense. A survivor gains only a bounded fallback.',
+     cost: 1, statEffects: {}, mechanicEffects: {},
+   }],
+   ['summoner-heavy-t3-b', {
+     id: 'summoner-heavy-t3-b', name: 'Champion', tier: 3,
+     classId: 'summoner-root', subVariantId: 'heavy',
+     parent: 'summoner-heavy', children: [],
+-    description: 'You stop conducting and take the field yourself, fighting beside one bonded summon. Your weapon offense and proc budget are split between both sides; alternating attacks build a deterministic linked strike.',
++    description: 'You stop conducting and take the field yourself, fighting beside one bonded summon. Your weapon carries 45% of the offense budget and the bonded summon 55%; alternating attacks build a deterministic linked strike after 8 fixed contributions.',
+     cost: 1, statEffects: {}, mechanicEffects: {},
+   }],
+   ['summoner-heavy-t3-c', {
+     id: 'summoner-heavy-t3-c', name: 'Idolwright', tier: 3,
+     classId: 'summoner-root', subVariantId: 'heavy',
+     parent: 'summoner-heavy', children: [],
+-    description: 'Condense the Effigy formation into one enormous summon with concentrated offense, a single durable body, and a longer, more costly reconstruction.',
++    description: 'Condense the Effigy formation into one enormous summon: ×1.50 body size, concentrated offense, a single durable body, and ×1.35 reconstruction time.',
+     cost: 1, statEffects: {}, mechanicEffects: {},
+   }],
+ ] satisfies [string, SkillNode][];
+diff --git a/shared/src/protocol/combatEvents.ts b/shared/src/protocol/combatEvents.ts
+index 2f19cb2a..e4289128 100644
+--- a/shared/src/protocol/combatEvents.ts
++++ b/shared/src/protocol/combatEvents.ts
+@@ -191,7 +191,7 @@ type CombatEventPayload =
+   // are carried because a dash reads as a TRAIL: the client cannot reconstruct
+   // where the player came from once the authoritative position has already
+   // changed. Purely cosmetic — the movement is server-authoritative.
+-  | { kind: 'player-reposition'; playerId: string; ability: string; from: Vec2; to: Vec2 }
++  | { kind: 'player-reposition'; playerId: string; ability: string; from: Vec2; to: Vec2; casterMinionId?: string }
+   // A casted Technique began its wind-up. Mirrors `monster-cast-start`: the client
+   // shows a cast bar over the player for `castMs` plus a skill-name callout.
+   //
+@@ -217,13 +217,13 @@ type CombatEventPayload =
+   // The footprint is always centred on `targetId`, which is also where the
+   // payload resolves: Slam's impact point, and the afflicted monster Contagion
+   // spreads outward from.
+-  | { kind: 'player-cast-start'; playerId: string; ability: string; castMs: number; targetId?: string; element?: DamageElement; aoeRadius?: number }
++  | { kind: 'player-cast-start'; playerId: string; ability: string; castMs: number; targetId?: string; element?: DamageElement; aoeRadius?: number; casterMinionId?: string }
+   // The wind-up ended. `fired: false` means it was interrupted by hard CC or lost
+   // its target, so the client clears the bar without playing the resolve FX.
+   // `targetPos` is present only when it fired, and is where the payload landed —
+   // a cast resolves on its own target rather than riding an attack, so there is
+   // no `player-hit` to hang its FX on.
+-  | { kind: 'player-cast-end'; playerId: string; ability: string; fired: boolean; targetPos?: Vec2 }
++  | { kind: 'player-cast-end'; playerId: string; ability: string; fired: boolean; targetPos?: Vec2; casterMinionId?: string }
+   // A player payload's AREA actually resolved. Sent once per real AoE resolution,
+   // carrying the exact centre and radius the server tested with — today, Sweep's
+   // cleave splashing around the primary monster the armed attack landed on.
+diff --git a/shared/src/systems/dpsEstimate.test.ts b/shared/src/systems/dpsEstimate.test.ts
+index 8d2aebf2..971d7481 100644
+--- a/shared/src/systems/dpsEstimate.test.ts
++++ b/shared/src/systems/dpsEstimate.test.ts
+@@ -193,6 +193,14 @@ function part(estimate: ReturnType<typeof estimatePlayerDps>, label: string): nu
+ }
+ 
+ function testSlingerSecondaryDamageBreakdown(): void {
++  const empoweredEstimate = estimatePlayerDps({
++    attack: 100, onHitDamage: 0, attackCooldownMs: 1_000,
++    weaponId: 'ashbrand-blade', archetype: 'reload',
++    passives: { 'reload.empowered-mult': 1.5 },
++  });
++  const empoweredDot = ((9 * 100 + 150) / 0.65 * 0.85) * 0.5 * 1.5 / 11.6;
++  assert(Math.abs(part(empoweredEstimate, 'Weapon damage over time') - Math.round(empoweredDot * 10) / 10) < 1e-9,
++    'Slinger reservoir estimate includes the empowered last shot exactly once');
+   const estimate = estimatePlayerDps({
+     attack: 65,
+     onHitDamage: 20,
+diff --git a/shared/src/systems/dpsEstimate.ts b/shared/src/systems/dpsEstimate.ts
+index 25ea207b..73532ea7 100644
+--- a/shared/src/systems/dpsEstimate.ts
++++ b/shared/src/systems/dpsEstimate.ts
+@@ -282,7 +282,7 @@ export function estimatePlayerDps(input: DpsEstimateInput): DpsEstimate {
+       }
+       if (weaponDot) {
+         const reservoirBasis = weaponDotBasisFromResolvedDirectDamage(
+-          baseDirect,
++          normalShots * baseDirect + (empowered ? lastDirect : 0),
+           input.archetype,
+           input.passives,
+         );
+@@ -291,7 +291,6 @@ export function estimatePlayerDps(input: DpsEstimateInput): DpsEstimate {
+           dps: reservoirBasis
+             * weaponDot.convPct
+             * weaponDot.dotMultiplier
+-            * magazine
+             / cycleSec,
+         });
+         caveats.push('Weapon damage over time uses the post-mitigation hit as its reservoir basis, then drains without further plating or damage reduction.');

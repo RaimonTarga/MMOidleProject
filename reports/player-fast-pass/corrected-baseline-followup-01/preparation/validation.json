@@ -1,0 +1,19 @@
+{
+  "typecheck": "pnpm typecheck passed including bench",
+  "serverBuild": "pnpm --filter @mmo-idle/server build passed; generated shadows restored before seal",
+  "benchAfterSampleRetention": "tsc --noEmit -p tsconfig.bench.json passed",
+  "diffCheck": "git diff f5835903 HEAD --check passed",
+  "fullSuite": "not run; no full-suite repair or broad combat tests",
+  "mainCombat": "not run",
+  "qualification": {
+    "passed": 32,
+    "worldTicks": 0
+  },
+  "presealPreparationIssue": "First prepare invocation rejected a server-build-generated shadows.json modification before creating the packet; generated asset restored. No qualification or combat retry.",
+  "receiptReplay": {
+    "passed": 32,
+    "worldTicks": 0,
+    "receiptSha256": "6ba6f423bc942166027d9b97c592f155e0854e8f742dc67fbe99534f6ac99306",
+    "identical": true
+  }
+}

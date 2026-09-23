@@ -1,0 +1,252 @@
+[
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101009-node-t4-tundra-01\\artifacts\\complete.json",
+    "bytes": 37,
+    "sha256": "bf2f294d91cfd0614f296e781ac604f6d4e6a590fe10a821e3857453c6904203"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101009-node-t4-tundra-01\\artifacts\\index.json",
+    "bytes": 154404,
+    "sha256": "11bdd7c5bea93b70c796b19e21e395b8566ebec57097a5675b8d25365fbad35d"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101009-node-t4-tundra-01\\artifacts\\manifest.json",
+    "bytes": 15560,
+    "sha256": "3c58d0dc3fbcfd46cca63c195b380ff8a7abc4fbb3126d64152eac5e8008a15a"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101009-node-t4-tundra-01\\process.json",
+    "bytes": 756,
+    "sha256": "64e72e8555c64901e765345402f1cad6e828118d13541d7fa3f4b6fdadbe027c"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101009-node-t4-tundra-01\\process.log",
+    "bytes": 211,
+    "sha256": "a0e87d0fc2b040a8ee3242da0a90c4e1326d212668bd005e0d1e9c2669d940b0"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101009-node-t1-plains-03\\artifacts\\complete.json",
+    "bytes": 37,
+    "sha256": "9c7eba0876bf7fedc32f932738fd71014cd794be387e281111813f5d1cc06cc6"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101009-node-t1-plains-03\\artifacts\\index.json",
+    "bytes": 40605,
+    "sha256": "6f40c08059e46d313d21b8a7c182c1502d81b52a61e70b01830ea11ee5b7fcdc"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101009-node-t1-plains-03\\artifacts\\manifest.json",
+    "bytes": 2954,
+    "sha256": "985112bc948498c0601bbcd6a25550cb601f5446e7d4a156397736040f4e5e90"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101009-node-t1-plains-03\\process.json",
+    "bytes": 755,
+    "sha256": "707df18e66826e24d2dabfb18322799ab49be12088fa29a1a4d4fce09ed95e01"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101009-node-t1-plains-03\\process.log",
+    "bytes": 64,
+    "sha256": "7c350e6604aa66a2cb2c3483c8045601b1e3d01fda9a6a210a4dda2fd3ae85e9"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101009-node-t4-volcanic-01\\artifacts\\complete.json",
+    "bytes": 37,
+    "sha256": "8b7a1678f5314c3ab719b9bf4a89b2128e181eed6e5d2902d5523caae244cb16"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101009-node-t4-volcanic-01\\artifacts\\index.json",
+    "bytes": 249400,
+    "sha256": "edff530d84b40deac5a117b82abc9b148dfca38f9a99871998c82e027eafbe01"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101009-node-t4-volcanic-01\\artifacts\\manifest.json",
+    "bytes": 23155,
+    "sha256": "8f5426629ce74cbe6de888a45255aeb4568c7f75ca6451ded55393d1682af094"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101009-node-t4-volcanic-01\\process.json",
+    "bytes": 760,
+    "sha256": "f8b95db9f572abd4453b3a883ae7543e8fc64b6f5cc480e5b11a7a2a536da568"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101009-node-t4-volcanic-01\\process.log",
+    "bytes": 319,
+    "sha256": "1345260cad9bb0f2293f088a39a8701b5cef9bd81b999dd3f31b93c7a9954a0a"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101009-node-t1-cave-02\\artifacts\\complete.json",
+    "bytes": 37,
+    "sha256": "9c7eba0876bf7fedc32f932738fd71014cd794be387e281111813f5d1cc06cc6"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101009-node-t1-cave-02\\artifacts\\index.json",
+    "bytes": 27773,
+    "sha256": "66de316ac7f8da5e72f996e5a12b5ff432b0ed0bbdc7f3cb9259acfc6c61b75c"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101009-node-t1-cave-02\\artifacts\\manifest.json",
+    "bytes": 2935,
+    "sha256": "1d8a57f8af54eb81593cdfca6d6bfc4bf417b8674d9efb89159fea8167beb4b9"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101009-node-t1-cave-02\\process.json",
+    "bytes": 752,
+    "sha256": "bad297f8e74c98ec60704bb7db609d77ae8ab843183fe94002c18a9a7b8b66c1"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101009-node-t1-cave-02\\process.log",
+    "bytes": 62,
+    "sha256": "61da8b50d01faa6610abe7ef692ab44213d429a6f6ed0ab317ca96d3b7c8a5c6"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101009-node-t4-mountain-dungeon\\artifacts\\complete.json",
+    "bytes": 166,
+    "sha256": "be91b1de9472e8ed41bc1fccf52aad8ab6501128dde2e4b19cba6e0258fe2c1b"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101009-node-t4-mountain-dungeon\\artifacts\\index.json",
+    "bytes": 135650,
+    "sha256": "9b6567c55e2701806c4da3cd3a0a6a1e028f6ba30316ac60aa5daa0aecb51e9f"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101009-node-t4-mountain-dungeon\\artifacts\\manifest.json",
+    "bytes": 16124,
+    "sha256": "b73da753ded78007ddb88d8b1833c4f084ebdc30c13dc072fc0449feb8a613ab"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101009-node-t4-mountain-dungeon\\process.json",
+    "bytes": 771,
+    "sha256": "0f5f4db1a34591a1f5c676976cf7eecd8eacfea04376b5ae3b9f52e6fe95694d"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101009-node-t4-mountain-dungeon\\process.log",
+    "bytes": 312,
+    "sha256": "836fb616df12093dd0e52e6d32f0f185976ff7a7d6acc1e5d6dcfd5fc4c8c1cb"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101033-node-t4-tundra-01\\artifacts\\complete.json",
+    "bytes": 37,
+    "sha256": "bf2f294d91cfd0614f296e781ac604f6d4e6a590fe10a821e3857453c6904203"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101033-node-t4-tundra-01\\artifacts\\index.json",
+    "bytes": 154328,
+    "sha256": "dbf84d145419437b8b5f8a37d853ede7a133e28696b897aadc7a845c6e0bddb0"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101033-node-t4-tundra-01\\artifacts\\manifest.json",
+    "bytes": 15560,
+    "sha256": "6164c3ac8e8d1605f78fb4cd040cce78ca64822e13496a44aebcae3742f96899"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101033-node-t4-tundra-01\\process.json",
+    "bytes": 756,
+    "sha256": "7b138db9b28f4c73549eeab77ab12e289afa2892ffd3ae5f59fb014422937d41"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101033-node-t4-tundra-01\\process.log",
+    "bytes": 211,
+    "sha256": "247fe64cf77fa10a331dd3eacc5f6d501e3e3de85df1492a0d9f044e4752ea58"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101033-node-t1-plains-03\\artifacts\\complete.json",
+    "bytes": 37,
+    "sha256": "9c7eba0876bf7fedc32f932738fd71014cd794be387e281111813f5d1cc06cc6"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101033-node-t1-plains-03\\artifacts\\index.json",
+    "bytes": 40608,
+    "sha256": "cd5d3f2bc352fd46af0df863952b77ccc0e7707d064e75fffbd5f7af6cd8a23e"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101033-node-t1-plains-03\\artifacts\\manifest.json",
+    "bytes": 2954,
+    "sha256": "868639fd20005964f92cb0a56fefe4063bcaad574f515265f1e4c0a90fe05c3c"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101033-node-t1-plains-03\\process.json",
+    "bytes": 756,
+    "sha256": "b40f0a2c84b91458ff2777e5e73708a20ad0ffccec1ce4787a49d508522e1562"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101033-node-t1-plains-03\\process.log",
+    "bytes": 64,
+    "sha256": "1eb74de681a8ba1ca744f812c15319b5303a77bfd54d11dfc5d683724301dd7e"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101033-node-t4-volcanic-01\\artifacts\\complete.json",
+    "bytes": 37,
+    "sha256": "8b7a1678f5314c3ab719b9bf4a89b2128e181eed6e5d2902d5523caae244cb16"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101033-node-t4-volcanic-01\\artifacts\\index.json",
+    "bytes": 257242,
+    "sha256": "31d1866d2bd85fc081b47de9f4c7c0042c4608eca24fcfd8f2a25d2b4d814843"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101033-node-t4-volcanic-01\\artifacts\\manifest.json",
+    "bytes": 23155,
+    "sha256": "4f9047e5b6ac321478913e525b6b125fa3060b0fd2b8f1faacbfef93a5eba71c"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101033-node-t4-volcanic-01\\process.json",
+    "bytes": 760,
+    "sha256": "c4c29e770c50bebea435e1d88637e2bbdf48d2591d9a4c6fc6f008b283cec07e"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101033-node-t4-volcanic-01\\process.log",
+    "bytes": 319,
+    "sha256": "f3627c009efc9a6e147cfcb0aec76ef53ddb93c6b7fa0b566b19c75413d1acbe"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101033-node-t1-cave-02\\artifacts\\complete.json",
+    "bytes": 37,
+    "sha256": "9c7eba0876bf7fedc32f932738fd71014cd794be387e281111813f5d1cc06cc6"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101033-node-t1-cave-02\\artifacts\\index.json",
+    "bytes": 27775,
+    "sha256": "b2fb502bec9b703697df9c6b35cabd3ce33efc18f1dde11f1b35a69b54eed417"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101033-node-t1-cave-02\\artifacts\\manifest.json",
+    "bytes": 2935,
+    "sha256": "80b69234939d3341678ebef81ce486141a163740a78e2822ee524b8427dde6d6"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101033-node-t1-cave-02\\process.json",
+    "bytes": 752,
+    "sha256": "5019b4030984db9c2fa5c6bf231f6ad73f4ee7391cf5a7827574e9b4d683fe2a"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101033-node-t1-cave-02\\process.log",
+    "bytes": 62,
+    "sha256": "8ca109aa47f5030351ff0c5dba604dfb556aabdfa0514f2938b50b6095b58145"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101033-node-t4-mountain-dungeon\\artifacts\\complete.json",
+    "bytes": 166,
+    "sha256": "7a8e50b27218074288dfc4a9f8b41fb7b1ead75d5644b414ee37f8355eb04b70"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101033-node-t4-mountain-dungeon\\artifacts\\index.json",
+    "bytes": 135650,
+    "sha256": "801a1c2065e88924aeb8c2432f05c58859d32ebdecc428b4f12ecba616bd672a"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101033-node-t4-mountain-dungeon\\artifacts\\manifest.json",
+    "bytes": 16124,
+    "sha256": "2077178e39ca3b8876ac8c3cb0e6a34a8339ac111ae256be6fef471a3952e879"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101033-node-t4-mountain-dungeon\\process.json",
+    "bytes": 771,
+    "sha256": "318523324f85235129dcdf0650b4548855fc0dd35437e8bfc18be1b430765fe7"
+  },
+  {
+    "path": "D:\\mmo-idle\\corrected-baseline-followup-01\\qualification\\qualification-101033-node-t4-mountain-dungeon\\process.log",
+    "bytes": 312,
+    "sha256": "5df098e34424c586fbcfb9d61c9472358dfa3f2fb624b9d1fcc7f5e8ce5abda5"
+  }
+]

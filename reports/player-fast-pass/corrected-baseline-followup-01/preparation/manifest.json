@@ -1,0 +1,3822 @@
+{
+  "experimentId": "corrected-baseline-followup-01",
+  "status": "prepared-unrun",
+  "planned": 32,
+  "synthetic": true,
+  "economyEligible": false,
+  "seeds": [
+    101009,
+    101033
+  ],
+  "dtMs": 100,
+  "farmingCapMs": 600000,
+  "bossCapMs": 300000,
+  "endpointsMs": [
+    300000,
+    600000,
+    1200000
+  ],
+  "stopOnFirstDeath": true,
+  "watchdogs": {
+    "minimumDiskFreeBytes": 5368709120,
+    "minimumHostFreeMemoryBytes": 1073741824,
+    "maximumChildRssBytes": 2147483648,
+    "heartbeatTimeoutMs": 120000,
+    "pollMs": 5000,
+    "maximumChildren": 1,
+    "retries": 0
+  },
+  "snapshots": {
+    "t4-established-gm148": {
+      "id": "t4-established-gm148",
+      "tier": 4,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "gm": 148,
+      "rp": 45,
+      "plus": 4,
+      "priorBossClears": [
+        "forest:1",
+        "mountain:1",
+        "plains:2",
+        "swamp:2",
+        "desert:2",
+        "cave:3",
+        "mountain:3",
+        "jungle:3",
+        "desert:3"
+      ]
+    },
+    "t1-developed": {
+      "id": "t1-developed",
+      "tier": 1,
+      "mastery": {
+        "plains": 4,
+        "forest": 4,
+        "swamp": 4,
+        "mountain": 5,
+        "cave": 5
+      },
+      "gm": 22,
+      "rp": 20,
+      "plus": 3
+    }
+  },
+  "cases": [
+    {
+      "id": "cbf01-t4-conduit-balanced-c-F2-s101009",
+      "className": "conduit",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-tundra-01",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        }
+      ],
+      "build": {
+        "id": "cbf01-t4-conduit-balanced-c-F2-s101009",
+        "classRoot": "summoner-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "summoner-root",
+          "summoner-balanced",
+          "summoner-range-mid",
+          "summoner-balanced-t3-c"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-survivalist",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "identityId": "breadth-t4-conduit-balanced-c",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Ritualist",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Every 10 seconds you call the rite, and each currently living summon empowers its next two attacks. Missing slots receive no charges until the next ritual.",
+        "Established GM148/45 RP; ordinary T4 +4, core/relic +0; finite prior paid ownership, no acquisition-time claim.",
+        "Defensive stance throughout; native Guard triggers; telegraph escape and hazard avoidance remain. No Wait It Out or low-health Flee.",
+        "Native close exception or mid-range Orbit as declared.",
+        "Single-target Expose Weakness; no automatic AoE windup at a lone target.",
+        "Persistent mitigation and recovery complement reactive Guard cooldown gaps.",
+        "Unused RP preserves the defining mechanism and avoids redundant casts; this is one credible package, not an optimum."
+      ],
+      "seed": 101009,
+      "block": "C4",
+      "arm": "control",
+      "comparisonId": "cbf01-t4-conduit-balanced-c-F2-s101009",
+      "snapshotId": "t4-established-gm148",
+      "progressionSnapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "referenceObservationId": "t4-conduit-balanced-c-F2-s101009",
+      "referenceSource": "3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+      "durationMs": 600000
+    },
+    {
+      "id": "cbf01-op-t1-conduit-plains-t1-developed-s101009",
+      "identityId": "t1-conduit",
+      "className": "conduit",
+      "frame": "balanced",
+      "pathName": "root",
+      "range": null,
+      "tier": 1,
+      "role": "farm",
+      "nodeId": "node-t1-plains-03",
+      "isDungeon": false,
+      "alternate": false,
+      "targetTypes": [],
+      "treatment": "control",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+        "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+      ],
+      "seed": 101009,
+      "block": "C1",
+      "arm": "control",
+      "comparisonId": "cbf01-op-t1-conduit-plains-t1-developed-s101009",
+      "snapshotId": "t1-developed",
+      "progressionSnapshot": {
+        "id": "t1-developed",
+        "tier": 1,
+        "mastery": {
+          "plains": 4,
+          "forest": 4,
+          "swamp": 4,
+          "mountain": 5,
+          "cave": 5
+        },
+        "gm": 22,
+        "rp": 20,
+        "plus": 3
+      },
+      "upgradeLevel": 3,
+      "stance": null,
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "cbf01-op-t1-conduit-plains-t1-developed-s101009",
+        "classRoot": "summoner-root",
+        "contentTier": 1,
+        "playerTier": 1,
+        "gearTier": 1,
+        "skillPath": [
+          "summoner-root"
+        ],
+        "gearItemIds": {
+          "weapon": "chaotic-axe",
+          "armor": "plains-vest-t1",
+          "recovery": "swamp-charm-t1",
+          "mobility": "swamp-boots-t1"
+        }
+      },
+      "referenceObservationId": "op-t1-conduit-plains-t1-developed-s101009",
+      "referenceSource": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6",
+      "durationMs": 1200000
+    },
+    {
+      "id": "cbf01-t4-striker-light-c-F1-s101009",
+      "className": "striker",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-volcanic-01",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "cbf01-t4-striker-light-c-F1-s101009",
+        "classRoot": "cadence-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "cadence-root",
+          "cadence-light",
+          "cadence-range-close",
+          "cadence-light-t3-c"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-bruiser",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "identityId": "breadth-t4-striker-light-c",
+      "frame": "light",
+      "range": "close",
+      "pathName": "Swiftblade",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Your finisher strikes twice. The second hit deals 70% of the finalized first-hit damage. Neither hit counts toward the next combo.",
+        "Established GM148/45 RP; ordinary T4 +4, core/relic +0; finite prior paid ownership, no acquisition-time claim.",
+        "Defensive stance throughout; native Guard triggers; telegraph escape and hazard avoidance remain. No Wait It Out or low-health Flee.",
+        "Native close exception or mid-range Orbit as declared.",
+        "sweep: production native delivery; repeated add/pack work.",
+        "Persistent mitigation and recovery complement reactive Guard cooldown gaps.",
+        "Unused RP preserves the defining mechanism and avoids redundant casts; this is one credible package, not an optimum."
+      ],
+      "seed": 101009,
+      "block": "V4",
+      "arm": "control",
+      "comparisonId": "cbf01-t4-striker-light-c-F1-s101009",
+      "snapshotId": "t4-established-gm148",
+      "progressionSnapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "referenceObservationId": "t4-striker-light-c-F1-s101009",
+      "referenceSource": "3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+      "durationMs": 600000
+    },
+    {
+      "id": "cbf01-t4-conduit-light-c-F2-s101009",
+      "className": "conduit",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-tundra-01",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        }
+      ],
+      "build": {
+        "id": "cbf01-t4-conduit-light-c-F2-s101009",
+        "classRoot": "summoner-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "summoner-root",
+          "summoner-light",
+          "summoner-range-mid",
+          "summoner-light-t3-c"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-catalyst",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "identityId": "breadth-t4-conduit-light-c",
+      "frame": "light",
+      "range": "mid",
+      "pathName": "Iconoclast",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "You break your own works. Natural summon deaths explode modestly, and at fixed intervals one living slot is marked to shatter for a stronger weapon-scaled blast, then enters the shared reconstruction queue.",
+        "Established GM148/45 RP; ordinary T4 +4, core/relic +0; finite prior paid ownership, no acquisition-time claim.",
+        "Defensive stance throughout; native Guard triggers; telegraph escape and hazard avoidance remain. No Wait It Out or low-health Flee.",
+        "Native close exception or mid-range Orbit as declared.",
+        "Single-target Expose Weakness; no automatic AoE windup at a lone target.",
+        "Persistent mitigation and recovery complement reactive Guard cooldown gaps.",
+        "Unused RP preserves the defining mechanism and avoids redundant casts; this is one credible package, not an optimum."
+      ],
+      "seed": 101009,
+      "block": "C4",
+      "arm": "control",
+      "comparisonId": "cbf01-t4-conduit-light-c-F2-s101009",
+      "snapshotId": "t4-established-gm148",
+      "progressionSnapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "referenceObservationId": "t4-conduit-light-c-F2-s101009",
+      "referenceSource": "3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+      "durationMs": 600000
+    },
+    {
+      "id": "cbf01-op-t1-conduit-cave-t1-developed-s101009",
+      "identityId": "t1-conduit",
+      "className": "conduit",
+      "frame": "balanced",
+      "pathName": "root",
+      "range": null,
+      "tier": 1,
+      "role": "farm",
+      "nodeId": "node-t1-cave-02",
+      "isDungeon": false,
+      "alternate": false,
+      "targetTypes": [],
+      "treatment": "control",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+        "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+      ],
+      "seed": 101009,
+      "block": "C1",
+      "arm": "control",
+      "comparisonId": "cbf01-op-t1-conduit-cave-t1-developed-s101009",
+      "snapshotId": "t1-developed",
+      "progressionSnapshot": {
+        "id": "t1-developed",
+        "tier": 1,
+        "mastery": {
+          "plains": 4,
+          "forest": 4,
+          "swamp": 4,
+          "mountain": 5,
+          "cave": 5
+        },
+        "gm": 22,
+        "rp": 20,
+        "plus": 3
+      },
+      "upgradeLevel": 3,
+      "stance": null,
+      "abilities": {
+        "techniques": [],
+        "guards": [
+          "second-wind",
+          "brace"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "cbf01-op-t1-conduit-cave-t1-developed-s101009",
+        "classRoot": "summoner-root",
+        "contentTier": 1,
+        "playerTier": 1,
+        "gearTier": 1,
+        "skillPath": [
+          "summoner-root"
+        ],
+        "gearItemIds": {
+          "weapon": "chaotic-axe",
+          "armor": "mountain-vest-t1",
+          "recovery": "swamp-charm-t1",
+          "mobility": "cave-boots-t1"
+        }
+      },
+      "referenceObservationId": "op-t1-conduit-cave-t1-developed-s101009",
+      "referenceSource": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6",
+      "durationMs": 1200000
+    },
+    {
+      "id": "cbf01-t4-squire-heavy-a-F1-s101009",
+      "className": "squire",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-volcanic-01",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "slam",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "n-aggro-3",
+          "actionId": "use-ability",
+          "targetAbilityId": "slam"
+        }
+      ],
+      "build": {
+        "id": "cbf01-t4-squire-heavy-a-F1-s101009",
+        "classRoot": "cooldown-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "cooldown-root",
+          "cooldown-heavy",
+          "cooldown-range-close",
+          "cooldown-heavy-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "mountain-warmaul",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-arcanist",
+          "relic": "relic-colossus-heart"
+        }
+      },
+      "identityId": "breadth-t4-squire-heavy-a",
+      "frame": "heavy",
+      "range": "close",
+      "pathName": "Avenger",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Your execution deals bonus damage equal to a portion of all damage you have taken since your last execution (with a minimum floor so it never feels dead). The fixed 9s window makes the payoff predictable.",
+        "Established GM148/45 RP; ordinary T4 +4, core/relic +0; finite prior paid ownership, no acquisition-time claim.",
+        "Defensive stance throughout; native Guard triggers; telegraph escape and hazard avoidance remain. No Wait It Out or low-health Flee.",
+        "Native close exception or mid-range Orbit as declared.",
+        "slam: Surrounded (3 aggro) only; repeated add/pack work.",
+        "Persistent mitigation and recovery complement reactive Guard cooldown gaps.",
+        "Unused RP preserves the defining mechanism and avoids redundant casts; this is one credible package, not an optimum."
+      ],
+      "seed": 101009,
+      "block": "V4",
+      "arm": "control",
+      "comparisonId": "cbf01-t4-squire-heavy-a-F1-s101009",
+      "snapshotId": "t4-established-gm148",
+      "progressionSnapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "referenceObservationId": "t4-squire-heavy-a-F1-s101009",
+      "referenceSource": "3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+      "durationMs": 600000
+    },
+    {
+      "id": "cbf01-t4-conduit-heavy-c-F2-s101009",
+      "className": "conduit",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-tundra-01",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        }
+      ],
+      "build": {
+        "id": "cbf01-t4-conduit-heavy-c-F2-s101009",
+        "classRoot": "summoner-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "summoner-root",
+          "summoner-heavy",
+          "summoner-range-mid",
+          "summoner-heavy-t3-c"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-survivalist",
+          "relic": "relic-colossus-heart"
+        }
+      },
+      "identityId": "breadth-t4-conduit-heavy-c",
+      "frame": "heavy",
+      "range": "mid",
+      "pathName": "Idolwright",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Condense the Effigy formation into one enormous summon with concentrated offense, a single durable body, and a longer, more costly reconstruction.",
+        "Established GM148/45 RP; ordinary T4 +4, core/relic +0; finite prior paid ownership, no acquisition-time claim.",
+        "Defensive stance throughout; native Guard triggers; telegraph escape and hazard avoidance remain. No Wait It Out or low-health Flee.",
+        "Native close exception or mid-range Orbit as declared.",
+        "Single-target Expose Weakness; no automatic AoE windup at a lone target.",
+        "Persistent mitigation and recovery complement reactive Guard cooldown gaps.",
+        "Unused RP preserves the defining mechanism and avoids redundant casts; this is one credible package, not an optimum."
+      ],
+      "seed": 101009,
+      "block": "C4",
+      "arm": "control",
+      "comparisonId": "cbf01-t4-conduit-heavy-c-F2-s101009",
+      "snapshotId": "t4-established-gm148",
+      "progressionSnapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "referenceObservationId": "t4-conduit-heavy-c-F2-s101009",
+      "referenceSource": "3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+      "durationMs": 600000
+    },
+    {
+      "id": "cbf01-t4-apprentice-balanced-a-F1-s101009",
+      "className": "apprentice",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-volcanic-01",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "contagion",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "target-max-stacks",
+          "actionId": "use-ability",
+          "targetAbilityId": "contagion"
+        }
+      ],
+      "build": {
+        "id": "cbf01-t4-apprentice-balanced-a-F1-s101009",
+        "classRoot": "dot-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "dot-root",
+          "dot-balanced",
+          "dot-range-mid",
+          "dot-balanced-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "graveyard-plague-axe",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "identityId": "breadth-t4-apprentice-balanced-a",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Pyromancer",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Each hit applies 2 burn stacks instead of 1, but each stack deals 50% of normal tick damage. Hitting a target already at max stacks deals bonus direct damage equal to 2× the max-stack DoT damage.",
+        "Established GM148/45 RP; ordinary T4 +4, core/relic +0; finite prior paid ownership, no acquisition-time claim.",
+        "Defensive stance throughout; native Guard triggers; telegraph escape and hazard avoidance remain. No Wait It Out or low-health Flee.",
+        "Native close exception or mid-range Orbit as declared.",
+        "contagion: Fully Afflicted; copies owned payload without consuming it; repeated add/pack work.",
+        "Persistent mitigation and recovery complement reactive Guard cooldown gaps.",
+        "Unused RP preserves the defining mechanism and avoids redundant casts; this is one credible package, not an optimum."
+      ],
+      "seed": 101009,
+      "block": "V4",
+      "arm": "control",
+      "comparisonId": "cbf01-t4-apprentice-balanced-a-F1-s101009",
+      "snapshotId": "t4-established-gm148",
+      "progressionSnapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "referenceObservationId": "t4-apprentice-balanced-a-F1-s101009",
+      "referenceSource": "3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+      "durationMs": 600000
+    },
+    {
+      "id": "cbf01-t4-conduit-heavy-b-F2-s101009",
+      "className": "conduit",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-tundra-01",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "cbf01-t4-conduit-heavy-b-F2-s101009",
+        "classRoot": "summoner-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "summoner-root",
+          "summoner-heavy",
+          "summoner-range-close",
+          "summoner-heavy-t3-b"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-survivalist",
+          "relic": "relic-colossus-heart"
+        }
+      },
+      "identityId": "breadth-t4-conduit-heavy-b",
+      "frame": "heavy",
+      "range": "close",
+      "pathName": "Champion",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "You stop conducting and take the field yourself, fighting beside one bonded summon. Your weapon offense and proc budget are split between both sides; alternating attacks build a deterministic linked strike.",
+        "Established GM148/45 RP; ordinary T4 +4, core/relic +0; finite prior paid ownership, no acquisition-time claim.",
+        "Defensive stance throughout; native Guard triggers; telegraph escape and hazard avoidance remain. No Wait It Out or low-health Flee.",
+        "Native close exception or mid-range Orbit as declared.",
+        "Single-target Expose Weakness; no automatic AoE windup at a lone target.",
+        "Persistent mitigation and recovery complement reactive Guard cooldown gaps.",
+        "Unused RP preserves the defining mechanism and avoids redundant casts; this is one credible package, not an optimum."
+      ],
+      "seed": 101009,
+      "block": "C4",
+      "arm": "control",
+      "comparisonId": "cbf01-t4-conduit-heavy-b-F2-s101009",
+      "snapshotId": "t4-established-gm148",
+      "progressionSnapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "referenceObservationId": "t4-conduit-heavy-b-F2-s101009",
+      "referenceSource": "3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+      "durationMs": 600000
+    },
+    {
+      "id": "cbf01-t4-slinger-heavy-a-F1-s101009",
+      "className": "slinger",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-volcanic-01",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "cbf01-t4-slinger-heavy-a-F1-s101009",
+        "classRoot": "reload-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "reload-root",
+          "reload-heavy",
+          "reload-range-mid",
+          "reload-heavy-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-catalyst",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "identityId": "breadth-t4-slinger-heavy-a",
+      "frame": "heavy",
+      "range": "mid",
+      "pathName": "Melter",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Replaces your magazine with a continuous laser. It fires continuously while a target is in range, building Heat from 0% to 100%. At 100% Heat it overheats and cannot fire again until fully cooled.",
+        "Established GM148/45 RP; ordinary T4 +4, core/relic +0; finite prior paid ownership, no acquisition-time claim.",
+        "Defensive stance throughout; native Guard triggers; telegraph escape and hazard avoidance remain. No Wait It Out or low-health Flee.",
+        "Stationary/channel payoff: Orbit omitted; deliberate danger escape can interrupt payoff.",
+        "sweep: production native delivery; repeated add/pack work.",
+        "Persistent mitigation and recovery complement reactive Guard cooldown gaps.",
+        "Unused RP preserves the defining mechanism and avoids redundant casts; this is one credible package, not an optimum."
+      ],
+      "seed": 101009,
+      "block": "V4",
+      "arm": "control",
+      "comparisonId": "cbf01-t4-slinger-heavy-a-F1-s101009",
+      "snapshotId": "t4-established-gm148",
+      "progressionSnapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "referenceObservationId": "t4-slinger-heavy-a-F1-s101009",
+      "referenceSource": "3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+      "durationMs": 600000
+    },
+    {
+      "id": "cbf01-t4-conduit-balanced-c-B1-s101009",
+      "className": "conduit",
+      "tier": 4,
+      "role": "boss",
+      "alternate": false,
+      "nodeId": "node-t4-mountain-dungeon",
+      "isDungeon": true,
+      "treatment": "authored-source",
+      "targetTypes": [
+        "iron-crest-titan"
+      ],
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "endure"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        }
+      ],
+      "build": {
+        "id": "cbf01-t4-conduit-balanced-c-B1-s101009",
+        "classRoot": "summoner-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "summoner-root",
+          "summoner-balanced",
+          "summoner-range-mid",
+          "summoner-balanced-t3-c"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-survivalist",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "identityId": "breadth-t4-conduit-balanced-c",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Ritualist",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Every 10 seconds you call the rite, and each currently living summon empowers its next two attacks. Missing slots receive no charges until the next ritual.",
+        "Established GM148/45 RP; ordinary T4 +4, core/relic +0; finite prior paid ownership, no acquisition-time claim.",
+        "Defensive stance throughout; native Guard triggers; telegraph escape and hazard avoidance remain. No Wait It Out or low-health Flee.",
+        "Native close exception or mid-range Orbit as declared.",
+        "Single-target Expose Weakness; no automatic AoE windup at a lone target.",
+        "T4 Titan Charge -> conditional Earthshatter -> fault lines; native Endure tanking support plus lane escape, not inherited T3 timing.",
+        "Unused RP preserves the defining mechanism and avoids redundant casts; this is one credible package, not an optimum."
+      ],
+      "seed": 101009,
+      "block": "C4",
+      "arm": "control",
+      "comparisonId": "cbf01-t4-conduit-balanced-c-B1-s101009",
+      "snapshotId": "t4-established-gm148",
+      "progressionSnapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "referenceObservationId": "t4-conduit-balanced-c-B1-s101009",
+      "referenceSource": "3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+      "durationMs": 300000,
+      "boss": "iron-crest-titan"
+    },
+    {
+      "id": "cbf01-t4-slinger-light-a-F1-s101009",
+      "className": "slinger",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-volcanic-01",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        }
+      ],
+      "build": {
+        "id": "cbf01-t4-slinger-light-a-F1-s101009",
+        "classRoot": "reload-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "reload-root",
+          "reload-light",
+          "reload-range-mid",
+          "reload-light-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "identityId": "breadth-t4-slinger-light-a",
+      "frame": "light",
+      "range": "mid",
+      "pathName": "Duelist",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "The last bullet of every clip fires as an empowered shot (5.0×) with a splash — and like all empowered attacks, it scales with empowered-damage gear and passives.",
+        "Established GM148/45 RP; ordinary T4 +4, core/relic +0; finite prior paid ownership, no acquisition-time claim.",
+        "Defensive stance throughout; native Guard triggers; telegraph escape and hazard avoidance remain. No Wait It Out or low-health Flee.",
+        "Native close exception or mid-range Orbit as declared.",
+        "sweep: production native delivery; repeated add/pack work.",
+        "Persistent mitigation and recovery complement reactive Guard cooldown gaps.",
+        "Unused RP preserves the defining mechanism and avoids redundant casts; this is one credible package, not an optimum."
+      ],
+      "seed": 101009,
+      "block": "V4",
+      "arm": "control",
+      "comparisonId": "cbf01-t4-slinger-light-a-F1-s101009",
+      "snapshotId": "t4-established-gm148",
+      "progressionSnapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "referenceObservationId": "t4-slinger-light-a-F1-s101009",
+      "referenceSource": "3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+      "durationMs": 600000
+    },
+    {
+      "id": "cbf01-t4-conduit-light-c-B1-s101009",
+      "className": "conduit",
+      "tier": 4,
+      "role": "boss",
+      "alternate": false,
+      "nodeId": "node-t4-mountain-dungeon",
+      "isDungeon": true,
+      "treatment": "authored-source",
+      "targetTypes": [
+        "iron-crest-titan"
+      ],
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "endure"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        }
+      ],
+      "build": {
+        "id": "cbf01-t4-conduit-light-c-B1-s101009",
+        "classRoot": "summoner-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "summoner-root",
+          "summoner-light",
+          "summoner-range-mid",
+          "summoner-light-t3-c"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-catalyst",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "identityId": "breadth-t4-conduit-light-c",
+      "frame": "light",
+      "range": "mid",
+      "pathName": "Iconoclast",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "You break your own works. Natural summon deaths explode modestly, and at fixed intervals one living slot is marked to shatter for a stronger weapon-scaled blast, then enters the shared reconstruction queue.",
+        "Established GM148/45 RP; ordinary T4 +4, core/relic +0; finite prior paid ownership, no acquisition-time claim.",
+        "Defensive stance throughout; native Guard triggers; telegraph escape and hazard avoidance remain. No Wait It Out or low-health Flee.",
+        "Native close exception or mid-range Orbit as declared.",
+        "Single-target Expose Weakness; no automatic AoE windup at a lone target.",
+        "T4 Titan Charge -> conditional Earthshatter -> fault lines; native Endure tanking support plus lane escape, not inherited T3 timing.",
+        "Unused RP preserves the defining mechanism and avoids redundant casts; this is one credible package, not an optimum."
+      ],
+      "seed": 101009,
+      "block": "C4",
+      "arm": "control",
+      "comparisonId": "cbf01-t4-conduit-light-c-B1-s101009",
+      "snapshotId": "t4-established-gm148",
+      "progressionSnapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "referenceObservationId": "t4-conduit-light-c-B1-s101009",
+      "referenceSource": "3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+      "durationMs": 300000,
+      "boss": "iron-crest-titan"
+    },
+    {
+      "id": "cbf01-t4-spirit-balanced-c-F1-s101009",
+      "className": "spirit",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-volcanic-01",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        }
+      ],
+      "build": {
+        "id": "cbf01-t4-spirit-balanced-c-F1-s101009",
+        "classRoot": "energy-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "energy-root",
+          "energy-balanced",
+          "energy-range-mid",
+          "energy-balanced-t3-c"
+        ],
+        "gearItemIds": {
+          "weapon": "volcanic-eruption-lash",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "identityId": "breadth-t4-spirit-balanced-c",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Aetherist",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Your attack damage oscillates with your current energy: 0.5× at empty, 1× at half (neutral), up to 2× at full. A continuous wave — strongest just before discharge, weakest right after. Neutral on average, all about timing.",
+        "Established GM148/45 RP; ordinary T4 +4, core/relic +0; finite prior paid ownership, no acquisition-time claim.",
+        "Defensive stance throughout; native Guard triggers; telegraph escape and hazard avoidance remain. No Wait It Out or low-health Flee.",
+        "Native close exception or mid-range Orbit as declared.",
+        "sweep: production native delivery; repeated add/pack work.",
+        "Persistent mitigation and recovery complement reactive Guard cooldown gaps.",
+        "Unused RP preserves the defining mechanism and avoids redundant casts; this is one credible package, not an optimum."
+      ],
+      "seed": 101009,
+      "block": "V4",
+      "arm": "control",
+      "comparisonId": "cbf01-t4-spirit-balanced-c-F1-s101009",
+      "snapshotId": "t4-established-gm148",
+      "progressionSnapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "referenceObservationId": "t4-spirit-balanced-c-F1-s101009",
+      "referenceSource": "3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+      "durationMs": 600000
+    },
+    {
+      "id": "cbf01-t4-conduit-heavy-c-B1-s101009",
+      "className": "conduit",
+      "tier": 4,
+      "role": "boss",
+      "alternate": false,
+      "nodeId": "node-t4-mountain-dungeon",
+      "isDungeon": true,
+      "treatment": "authored-source",
+      "targetTypes": [
+        "iron-crest-titan"
+      ],
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "endure"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        }
+      ],
+      "build": {
+        "id": "cbf01-t4-conduit-heavy-c-B1-s101009",
+        "classRoot": "summoner-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "summoner-root",
+          "summoner-heavy",
+          "summoner-range-mid",
+          "summoner-heavy-t3-c"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-survivalist",
+          "relic": "relic-colossus-heart"
+        }
+      },
+      "identityId": "breadth-t4-conduit-heavy-c",
+      "frame": "heavy",
+      "range": "mid",
+      "pathName": "Idolwright",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Condense the Effigy formation into one enormous summon with concentrated offense, a single durable body, and a longer, more costly reconstruction.",
+        "Established GM148/45 RP; ordinary T4 +4, core/relic +0; finite prior paid ownership, no acquisition-time claim.",
+        "Defensive stance throughout; native Guard triggers; telegraph escape and hazard avoidance remain. No Wait It Out or low-health Flee.",
+        "Native close exception or mid-range Orbit as declared.",
+        "Single-target Expose Weakness; no automatic AoE windup at a lone target.",
+        "T4 Titan Charge -> conditional Earthshatter -> fault lines; native Endure tanking support plus lane escape, not inherited T3 timing.",
+        "Unused RP preserves the defining mechanism and avoids redundant casts; this is one credible package, not an optimum."
+      ],
+      "seed": 101009,
+      "block": "C4",
+      "arm": "control",
+      "comparisonId": "cbf01-t4-conduit-heavy-c-B1-s101009",
+      "snapshotId": "t4-established-gm148",
+      "progressionSnapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "referenceObservationId": "t4-conduit-heavy-c-B1-s101009",
+      "referenceSource": "3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+      "durationMs": 300000,
+      "boss": "iron-crest-titan"
+    },
+    {
+      "id": "cbf01-t4-conduit-heavy-b-B1-s101009",
+      "className": "conduit",
+      "tier": 4,
+      "role": "boss",
+      "alternate": false,
+      "nodeId": "node-t4-mountain-dungeon",
+      "isDungeon": true,
+      "treatment": "authored-source",
+      "targetTypes": [
+        "iron-crest-titan"
+      ],
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "endure"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "cbf01-t4-conduit-heavy-b-B1-s101009",
+        "classRoot": "summoner-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "summoner-root",
+          "summoner-heavy",
+          "summoner-range-close",
+          "summoner-heavy-t3-b"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-survivalist",
+          "relic": "relic-colossus-heart"
+        }
+      },
+      "identityId": "breadth-t4-conduit-heavy-b",
+      "frame": "heavy",
+      "range": "close",
+      "pathName": "Champion",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "You stop conducting and take the field yourself, fighting beside one bonded summon. Your weapon offense and proc budget are split between both sides; alternating attacks build a deterministic linked strike.",
+        "Established GM148/45 RP; ordinary T4 +4, core/relic +0; finite prior paid ownership, no acquisition-time claim.",
+        "Defensive stance throughout; native Guard triggers; telegraph escape and hazard avoidance remain. No Wait It Out or low-health Flee.",
+        "Native close exception or mid-range Orbit as declared.",
+        "Single-target Expose Weakness; no automatic AoE windup at a lone target.",
+        "T4 Titan Charge -> conditional Earthshatter -> fault lines; native Endure tanking support plus lane escape, not inherited T3 timing.",
+        "Unused RP preserves the defining mechanism and avoids redundant casts; this is one credible package, not an optimum."
+      ],
+      "seed": 101009,
+      "block": "C4",
+      "arm": "control",
+      "comparisonId": "cbf01-t4-conduit-heavy-b-B1-s101009",
+      "snapshotId": "t4-established-gm148",
+      "progressionSnapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "referenceObservationId": "t4-conduit-heavy-b-B1-s101009",
+      "referenceSource": "3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+      "durationMs": 300000,
+      "boss": "iron-crest-titan"
+    },
+    {
+      "id": "cbf01-t4-conduit-balanced-c-F2-s101033",
+      "className": "conduit",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-tundra-01",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        }
+      ],
+      "build": {
+        "id": "cbf01-t4-conduit-balanced-c-F2-s101033",
+        "classRoot": "summoner-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "summoner-root",
+          "summoner-balanced",
+          "summoner-range-mid",
+          "summoner-balanced-t3-c"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-survivalist",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "identityId": "breadth-t4-conduit-balanced-c",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Ritualist",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Every 10 seconds you call the rite, and each currently living summon empowers its next two attacks. Missing slots receive no charges until the next ritual.",
+        "Established GM148/45 RP; ordinary T4 +4, core/relic +0; finite prior paid ownership, no acquisition-time claim.",
+        "Defensive stance throughout; native Guard triggers; telegraph escape and hazard avoidance remain. No Wait It Out or low-health Flee.",
+        "Native close exception or mid-range Orbit as declared.",
+        "Single-target Expose Weakness; no automatic AoE windup at a lone target.",
+        "Persistent mitigation and recovery complement reactive Guard cooldown gaps.",
+        "Unused RP preserves the defining mechanism and avoids redundant casts; this is one credible package, not an optimum."
+      ],
+      "seed": 101033,
+      "block": "C4",
+      "arm": "control",
+      "comparisonId": "cbf01-t4-conduit-balanced-c-F2-s101033",
+      "snapshotId": "t4-established-gm148",
+      "progressionSnapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "referenceObservationId": "t4-conduit-balanced-c-F2-s101033",
+      "referenceSource": "3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+      "durationMs": 600000
+    },
+    {
+      "id": "cbf01-op-t1-conduit-plains-t1-developed-s101033",
+      "identityId": "t1-conduit",
+      "className": "conduit",
+      "frame": "balanced",
+      "pathName": "root",
+      "range": null,
+      "tier": 1,
+      "role": "farm",
+      "nodeId": "node-t1-plains-03",
+      "isDungeon": false,
+      "alternate": false,
+      "targetTypes": [],
+      "treatment": "control",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+        "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+      ],
+      "seed": 101033,
+      "block": "C1",
+      "arm": "control",
+      "comparisonId": "cbf01-op-t1-conduit-plains-t1-developed-s101033",
+      "snapshotId": "t1-developed",
+      "progressionSnapshot": {
+        "id": "t1-developed",
+        "tier": 1,
+        "mastery": {
+          "plains": 4,
+          "forest": 4,
+          "swamp": 4,
+          "mountain": 5,
+          "cave": 5
+        },
+        "gm": 22,
+        "rp": 20,
+        "plus": 3
+      },
+      "upgradeLevel": 3,
+      "stance": null,
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "cbf01-op-t1-conduit-plains-t1-developed-s101033",
+        "classRoot": "summoner-root",
+        "contentTier": 1,
+        "playerTier": 1,
+        "gearTier": 1,
+        "skillPath": [
+          "summoner-root"
+        ],
+        "gearItemIds": {
+          "weapon": "chaotic-axe",
+          "armor": "plains-vest-t1",
+          "recovery": "swamp-charm-t1",
+          "mobility": "swamp-boots-t1"
+        }
+      },
+      "referenceObservationId": "op-t1-conduit-plains-t1-developed-s101033",
+      "referenceSource": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6",
+      "durationMs": 1200000
+    },
+    {
+      "id": "cbf01-t4-striker-light-c-F1-s101033",
+      "className": "striker",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-volcanic-01",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "cbf01-t4-striker-light-c-F1-s101033",
+        "classRoot": "cadence-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "cadence-root",
+          "cadence-light",
+          "cadence-range-close",
+          "cadence-light-t3-c"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-bruiser",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "identityId": "breadth-t4-striker-light-c",
+      "frame": "light",
+      "range": "close",
+      "pathName": "Swiftblade",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Your finisher strikes twice. The second hit deals 70% of the finalized first-hit damage. Neither hit counts toward the next combo.",
+        "Established GM148/45 RP; ordinary T4 +4, core/relic +0; finite prior paid ownership, no acquisition-time claim.",
+        "Defensive stance throughout; native Guard triggers; telegraph escape and hazard avoidance remain. No Wait It Out or low-health Flee.",
+        "Native close exception or mid-range Orbit as declared.",
+        "sweep: production native delivery; repeated add/pack work.",
+        "Persistent mitigation and recovery complement reactive Guard cooldown gaps.",
+        "Unused RP preserves the defining mechanism and avoids redundant casts; this is one credible package, not an optimum."
+      ],
+      "seed": 101033,
+      "block": "V4",
+      "arm": "control",
+      "comparisonId": "cbf01-t4-striker-light-c-F1-s101033",
+      "snapshotId": "t4-established-gm148",
+      "progressionSnapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "referenceObservationId": "t4-striker-light-c-F1-s101033",
+      "referenceSource": "3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+      "durationMs": 600000
+    },
+    {
+      "id": "cbf01-t4-conduit-light-c-F2-s101033",
+      "className": "conduit",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-tundra-01",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        }
+      ],
+      "build": {
+        "id": "cbf01-t4-conduit-light-c-F2-s101033",
+        "classRoot": "summoner-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "summoner-root",
+          "summoner-light",
+          "summoner-range-mid",
+          "summoner-light-t3-c"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-catalyst",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "identityId": "breadth-t4-conduit-light-c",
+      "frame": "light",
+      "range": "mid",
+      "pathName": "Iconoclast",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "You break your own works. Natural summon deaths explode modestly, and at fixed intervals one living slot is marked to shatter for a stronger weapon-scaled blast, then enters the shared reconstruction queue.",
+        "Established GM148/45 RP; ordinary T4 +4, core/relic +0; finite prior paid ownership, no acquisition-time claim.",
+        "Defensive stance throughout; native Guard triggers; telegraph escape and hazard avoidance remain. No Wait It Out or low-health Flee.",
+        "Native close exception or mid-range Orbit as declared.",
+        "Single-target Expose Weakness; no automatic AoE windup at a lone target.",
+        "Persistent mitigation and recovery complement reactive Guard cooldown gaps.",
+        "Unused RP preserves the defining mechanism and avoids redundant casts; this is one credible package, not an optimum."
+      ],
+      "seed": 101033,
+      "block": "C4",
+      "arm": "control",
+      "comparisonId": "cbf01-t4-conduit-light-c-F2-s101033",
+      "snapshotId": "t4-established-gm148",
+      "progressionSnapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "referenceObservationId": "t4-conduit-light-c-F2-s101033",
+      "referenceSource": "3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+      "durationMs": 600000
+    },
+    {
+      "id": "cbf01-op-t1-conduit-cave-t1-developed-s101033",
+      "identityId": "t1-conduit",
+      "className": "conduit",
+      "frame": "balanced",
+      "pathName": "root",
+      "range": null,
+      "tier": 1,
+      "role": "farm",
+      "nodeId": "node-t1-cave-02",
+      "isDungeon": false,
+      "alternate": false,
+      "targetTypes": [],
+      "treatment": "control",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+        "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+      ],
+      "seed": 101033,
+      "block": "C1",
+      "arm": "control",
+      "comparisonId": "cbf01-op-t1-conduit-cave-t1-developed-s101033",
+      "snapshotId": "t1-developed",
+      "progressionSnapshot": {
+        "id": "t1-developed",
+        "tier": 1,
+        "mastery": {
+          "plains": 4,
+          "forest": 4,
+          "swamp": 4,
+          "mountain": 5,
+          "cave": 5
+        },
+        "gm": 22,
+        "rp": 20,
+        "plus": 3
+      },
+      "upgradeLevel": 3,
+      "stance": null,
+      "abilities": {
+        "techniques": [],
+        "guards": [
+          "second-wind",
+          "brace"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "cbf01-op-t1-conduit-cave-t1-developed-s101033",
+        "classRoot": "summoner-root",
+        "contentTier": 1,
+        "playerTier": 1,
+        "gearTier": 1,
+        "skillPath": [
+          "summoner-root"
+        ],
+        "gearItemIds": {
+          "weapon": "chaotic-axe",
+          "armor": "mountain-vest-t1",
+          "recovery": "swamp-charm-t1",
+          "mobility": "cave-boots-t1"
+        }
+      },
+      "referenceObservationId": "op-t1-conduit-cave-t1-developed-s101033",
+      "referenceSource": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6",
+      "durationMs": 1200000
+    },
+    {
+      "id": "cbf01-t4-squire-heavy-a-F1-s101033",
+      "className": "squire",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-volcanic-01",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "slam",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "n-aggro-3",
+          "actionId": "use-ability",
+          "targetAbilityId": "slam"
+        }
+      ],
+      "build": {
+        "id": "cbf01-t4-squire-heavy-a-F1-s101033",
+        "classRoot": "cooldown-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "cooldown-root",
+          "cooldown-heavy",
+          "cooldown-range-close",
+          "cooldown-heavy-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "mountain-warmaul",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-arcanist",
+          "relic": "relic-colossus-heart"
+        }
+      },
+      "identityId": "breadth-t4-squire-heavy-a",
+      "frame": "heavy",
+      "range": "close",
+      "pathName": "Avenger",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Your execution deals bonus damage equal to a portion of all damage you have taken since your last execution (with a minimum floor so it never feels dead). The fixed 9s window makes the payoff predictable.",
+        "Established GM148/45 RP; ordinary T4 +4, core/relic +0; finite prior paid ownership, no acquisition-time claim.",
+        "Defensive stance throughout; native Guard triggers; telegraph escape and hazard avoidance remain. No Wait It Out or low-health Flee.",
+        "Native close exception or mid-range Orbit as declared.",
+        "slam: Surrounded (3 aggro) only; repeated add/pack work.",
+        "Persistent mitigation and recovery complement reactive Guard cooldown gaps.",
+        "Unused RP preserves the defining mechanism and avoids redundant casts; this is one credible package, not an optimum."
+      ],
+      "seed": 101033,
+      "block": "V4",
+      "arm": "control",
+      "comparisonId": "cbf01-t4-squire-heavy-a-F1-s101033",
+      "snapshotId": "t4-established-gm148",
+      "progressionSnapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "referenceObservationId": "t4-squire-heavy-a-F1-s101033",
+      "referenceSource": "3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+      "durationMs": 600000
+    },
+    {
+      "id": "cbf01-t4-conduit-heavy-c-F2-s101033",
+      "className": "conduit",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-tundra-01",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        }
+      ],
+      "build": {
+        "id": "cbf01-t4-conduit-heavy-c-F2-s101033",
+        "classRoot": "summoner-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "summoner-root",
+          "summoner-heavy",
+          "summoner-range-mid",
+          "summoner-heavy-t3-c"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-survivalist",
+          "relic": "relic-colossus-heart"
+        }
+      },
+      "identityId": "breadth-t4-conduit-heavy-c",
+      "frame": "heavy",
+      "range": "mid",
+      "pathName": "Idolwright",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Condense the Effigy formation into one enormous summon with concentrated offense, a single durable body, and a longer, more costly reconstruction.",
+        "Established GM148/45 RP; ordinary T4 +4, core/relic +0; finite prior paid ownership, no acquisition-time claim.",
+        "Defensive stance throughout; native Guard triggers; telegraph escape and hazard avoidance remain. No Wait It Out or low-health Flee.",
+        "Native close exception or mid-range Orbit as declared.",
+        "Single-target Expose Weakness; no automatic AoE windup at a lone target.",
+        "Persistent mitigation and recovery complement reactive Guard cooldown gaps.",
+        "Unused RP preserves the defining mechanism and avoids redundant casts; this is one credible package, not an optimum."
+      ],
+      "seed": 101033,
+      "block": "C4",
+      "arm": "control",
+      "comparisonId": "cbf01-t4-conduit-heavy-c-F2-s101033",
+      "snapshotId": "t4-established-gm148",
+      "progressionSnapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "referenceObservationId": "t4-conduit-heavy-c-F2-s101033",
+      "referenceSource": "3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+      "durationMs": 600000
+    },
+    {
+      "id": "cbf01-t4-apprentice-balanced-a-F1-s101033",
+      "className": "apprentice",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-volcanic-01",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "contagion",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "target-max-stacks",
+          "actionId": "use-ability",
+          "targetAbilityId": "contagion"
+        }
+      ],
+      "build": {
+        "id": "cbf01-t4-apprentice-balanced-a-F1-s101033",
+        "classRoot": "dot-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "dot-root",
+          "dot-balanced",
+          "dot-range-mid",
+          "dot-balanced-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "graveyard-plague-axe",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "identityId": "breadth-t4-apprentice-balanced-a",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Pyromancer",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Each hit applies 2 burn stacks instead of 1, but each stack deals 50% of normal tick damage. Hitting a target already at max stacks deals bonus direct damage equal to 2× the max-stack DoT damage.",
+        "Established GM148/45 RP; ordinary T4 +4, core/relic +0; finite prior paid ownership, no acquisition-time claim.",
+        "Defensive stance throughout; native Guard triggers; telegraph escape and hazard avoidance remain. No Wait It Out or low-health Flee.",
+        "Native close exception or mid-range Orbit as declared.",
+        "contagion: Fully Afflicted; copies owned payload without consuming it; repeated add/pack work.",
+        "Persistent mitigation and recovery complement reactive Guard cooldown gaps.",
+        "Unused RP preserves the defining mechanism and avoids redundant casts; this is one credible package, not an optimum."
+      ],
+      "seed": 101033,
+      "block": "V4",
+      "arm": "control",
+      "comparisonId": "cbf01-t4-apprentice-balanced-a-F1-s101033",
+      "snapshotId": "t4-established-gm148",
+      "progressionSnapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "referenceObservationId": "t4-apprentice-balanced-a-F1-s101033",
+      "referenceSource": "3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+      "durationMs": 600000
+    },
+    {
+      "id": "cbf01-t4-conduit-heavy-b-F2-s101033",
+      "className": "conduit",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-tundra-01",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "cbf01-t4-conduit-heavy-b-F2-s101033",
+        "classRoot": "summoner-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "summoner-root",
+          "summoner-heavy",
+          "summoner-range-close",
+          "summoner-heavy-t3-b"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-survivalist",
+          "relic": "relic-colossus-heart"
+        }
+      },
+      "identityId": "breadth-t4-conduit-heavy-b",
+      "frame": "heavy",
+      "range": "close",
+      "pathName": "Champion",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "You stop conducting and take the field yourself, fighting beside one bonded summon. Your weapon offense and proc budget are split between both sides; alternating attacks build a deterministic linked strike.",
+        "Established GM148/45 RP; ordinary T4 +4, core/relic +0; finite prior paid ownership, no acquisition-time claim.",
+        "Defensive stance throughout; native Guard triggers; telegraph escape and hazard avoidance remain. No Wait It Out or low-health Flee.",
+        "Native close exception or mid-range Orbit as declared.",
+        "Single-target Expose Weakness; no automatic AoE windup at a lone target.",
+        "Persistent mitigation and recovery complement reactive Guard cooldown gaps.",
+        "Unused RP preserves the defining mechanism and avoids redundant casts; this is one credible package, not an optimum."
+      ],
+      "seed": 101033,
+      "block": "C4",
+      "arm": "control",
+      "comparisonId": "cbf01-t4-conduit-heavy-b-F2-s101033",
+      "snapshotId": "t4-established-gm148",
+      "progressionSnapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "referenceObservationId": "t4-conduit-heavy-b-F2-s101033",
+      "referenceSource": "3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+      "durationMs": 600000
+    },
+    {
+      "id": "cbf01-t4-slinger-heavy-a-F1-s101033",
+      "className": "slinger",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-volcanic-01",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "cbf01-t4-slinger-heavy-a-F1-s101033",
+        "classRoot": "reload-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "reload-root",
+          "reload-heavy",
+          "reload-range-mid",
+          "reload-heavy-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-catalyst",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "identityId": "breadth-t4-slinger-heavy-a",
+      "frame": "heavy",
+      "range": "mid",
+      "pathName": "Melter",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Replaces your magazine with a continuous laser. It fires continuously while a target is in range, building Heat from 0% to 100%. At 100% Heat it overheats and cannot fire again until fully cooled.",
+        "Established GM148/45 RP; ordinary T4 +4, core/relic +0; finite prior paid ownership, no acquisition-time claim.",
+        "Defensive stance throughout; native Guard triggers; telegraph escape and hazard avoidance remain. No Wait It Out or low-health Flee.",
+        "Stationary/channel payoff: Orbit omitted; deliberate danger escape can interrupt payoff.",
+        "sweep: production native delivery; repeated add/pack work.",
+        "Persistent mitigation and recovery complement reactive Guard cooldown gaps.",
+        "Unused RP preserves the defining mechanism and avoids redundant casts; this is one credible package, not an optimum."
+      ],
+      "seed": 101033,
+      "block": "V4",
+      "arm": "control",
+      "comparisonId": "cbf01-t4-slinger-heavy-a-F1-s101033",
+      "snapshotId": "t4-established-gm148",
+      "progressionSnapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "referenceObservationId": "t4-slinger-heavy-a-F1-s101033",
+      "referenceSource": "3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+      "durationMs": 600000
+    },
+    {
+      "id": "cbf01-t4-conduit-balanced-c-B1-s101033",
+      "className": "conduit",
+      "tier": 4,
+      "role": "boss",
+      "alternate": false,
+      "nodeId": "node-t4-mountain-dungeon",
+      "isDungeon": true,
+      "treatment": "authored-source",
+      "targetTypes": [
+        "iron-crest-titan"
+      ],
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "endure"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        }
+      ],
+      "build": {
+        "id": "cbf01-t4-conduit-balanced-c-B1-s101033",
+        "classRoot": "summoner-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "summoner-root",
+          "summoner-balanced",
+          "summoner-range-mid",
+          "summoner-balanced-t3-c"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-survivalist",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "identityId": "breadth-t4-conduit-balanced-c",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Ritualist",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Every 10 seconds you call the rite, and each currently living summon empowers its next two attacks. Missing slots receive no charges until the next ritual.",
+        "Established GM148/45 RP; ordinary T4 +4, core/relic +0; finite prior paid ownership, no acquisition-time claim.",
+        "Defensive stance throughout; native Guard triggers; telegraph escape and hazard avoidance remain. No Wait It Out or low-health Flee.",
+        "Native close exception or mid-range Orbit as declared.",
+        "Single-target Expose Weakness; no automatic AoE windup at a lone target.",
+        "T4 Titan Charge -> conditional Earthshatter -> fault lines; native Endure tanking support plus lane escape, not inherited T3 timing.",
+        "Unused RP preserves the defining mechanism and avoids redundant casts; this is one credible package, not an optimum."
+      ],
+      "seed": 101033,
+      "block": "C4",
+      "arm": "control",
+      "comparisonId": "cbf01-t4-conduit-balanced-c-B1-s101033",
+      "snapshotId": "t4-established-gm148",
+      "progressionSnapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "referenceObservationId": "t4-conduit-balanced-c-B1-s101033",
+      "referenceSource": "3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+      "durationMs": 300000,
+      "boss": "iron-crest-titan"
+    },
+    {
+      "id": "cbf01-t4-slinger-light-a-F1-s101033",
+      "className": "slinger",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-volcanic-01",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        }
+      ],
+      "build": {
+        "id": "cbf01-t4-slinger-light-a-F1-s101033",
+        "classRoot": "reload-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "reload-root",
+          "reload-light",
+          "reload-range-mid",
+          "reload-light-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "identityId": "breadth-t4-slinger-light-a",
+      "frame": "light",
+      "range": "mid",
+      "pathName": "Duelist",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "The last bullet of every clip fires as an empowered shot (5.0×) with a splash — and like all empowered attacks, it scales with empowered-damage gear and passives.",
+        "Established GM148/45 RP; ordinary T4 +4, core/relic +0; finite prior paid ownership, no acquisition-time claim.",
+        "Defensive stance throughout; native Guard triggers; telegraph escape and hazard avoidance remain. No Wait It Out or low-health Flee.",
+        "Native close exception or mid-range Orbit as declared.",
+        "sweep: production native delivery; repeated add/pack work.",
+        "Persistent mitigation and recovery complement reactive Guard cooldown gaps.",
+        "Unused RP preserves the defining mechanism and avoids redundant casts; this is one credible package, not an optimum."
+      ],
+      "seed": 101033,
+      "block": "V4",
+      "arm": "control",
+      "comparisonId": "cbf01-t4-slinger-light-a-F1-s101033",
+      "snapshotId": "t4-established-gm148",
+      "progressionSnapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "referenceObservationId": "t4-slinger-light-a-F1-s101033",
+      "referenceSource": "3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+      "durationMs": 600000
+    },
+    {
+      "id": "cbf01-t4-conduit-light-c-B1-s101033",
+      "className": "conduit",
+      "tier": 4,
+      "role": "boss",
+      "alternate": false,
+      "nodeId": "node-t4-mountain-dungeon",
+      "isDungeon": true,
+      "treatment": "authored-source",
+      "targetTypes": [
+        "iron-crest-titan"
+      ],
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "endure"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        }
+      ],
+      "build": {
+        "id": "cbf01-t4-conduit-light-c-B1-s101033",
+        "classRoot": "summoner-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "summoner-root",
+          "summoner-light",
+          "summoner-range-mid",
+          "summoner-light-t3-c"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-catalyst",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "identityId": "breadth-t4-conduit-light-c",
+      "frame": "light",
+      "range": "mid",
+      "pathName": "Iconoclast",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "You break your own works. Natural summon deaths explode modestly, and at fixed intervals one living slot is marked to shatter for a stronger weapon-scaled blast, then enters the shared reconstruction queue.",
+        "Established GM148/45 RP; ordinary T4 +4, core/relic +0; finite prior paid ownership, no acquisition-time claim.",
+        "Defensive stance throughout; native Guard triggers; telegraph escape and hazard avoidance remain. No Wait It Out or low-health Flee.",
+        "Native close exception or mid-range Orbit as declared.",
+        "Single-target Expose Weakness; no automatic AoE windup at a lone target.",
+        "T4 Titan Charge -> conditional Earthshatter -> fault lines; native Endure tanking support plus lane escape, not inherited T3 timing.",
+        "Unused RP preserves the defining mechanism and avoids redundant casts; this is one credible package, not an optimum."
+      ],
+      "seed": 101033,
+      "block": "C4",
+      "arm": "control",
+      "comparisonId": "cbf01-t4-conduit-light-c-B1-s101033",
+      "snapshotId": "t4-established-gm148",
+      "progressionSnapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "referenceObservationId": "t4-conduit-light-c-B1-s101033",
+      "referenceSource": "3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+      "durationMs": 300000,
+      "boss": "iron-crest-titan"
+    },
+    {
+      "id": "cbf01-t4-spirit-balanced-c-F1-s101033",
+      "className": "spirit",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-volcanic-01",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        }
+      ],
+      "build": {
+        "id": "cbf01-t4-spirit-balanced-c-F1-s101033",
+        "classRoot": "energy-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "energy-root",
+          "energy-balanced",
+          "energy-range-mid",
+          "energy-balanced-t3-c"
+        ],
+        "gearItemIds": {
+          "weapon": "volcanic-eruption-lash",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "identityId": "breadth-t4-spirit-balanced-c",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Aetherist",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Your attack damage oscillates with your current energy: 0.5× at empty, 1× at half (neutral), up to 2× at full. A continuous wave — strongest just before discharge, weakest right after. Neutral on average, all about timing.",
+        "Established GM148/45 RP; ordinary T4 +4, core/relic +0; finite prior paid ownership, no acquisition-time claim.",
+        "Defensive stance throughout; native Guard triggers; telegraph escape and hazard avoidance remain. No Wait It Out or low-health Flee.",
+        "Native close exception or mid-range Orbit as declared.",
+        "sweep: production native delivery; repeated add/pack work.",
+        "Persistent mitigation and recovery complement reactive Guard cooldown gaps.",
+        "Unused RP preserves the defining mechanism and avoids redundant casts; this is one credible package, not an optimum."
+      ],
+      "seed": 101033,
+      "block": "V4",
+      "arm": "control",
+      "comparisonId": "cbf01-t4-spirit-balanced-c-F1-s101033",
+      "snapshotId": "t4-established-gm148",
+      "progressionSnapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "referenceObservationId": "t4-spirit-balanced-c-F1-s101033",
+      "referenceSource": "3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+      "durationMs": 600000
+    },
+    {
+      "id": "cbf01-t4-conduit-heavy-c-B1-s101033",
+      "className": "conduit",
+      "tier": 4,
+      "role": "boss",
+      "alternate": false,
+      "nodeId": "node-t4-mountain-dungeon",
+      "isDungeon": true,
+      "treatment": "authored-source",
+      "targetTypes": [
+        "iron-crest-titan"
+      ],
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "endure"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        }
+      ],
+      "build": {
+        "id": "cbf01-t4-conduit-heavy-c-B1-s101033",
+        "classRoot": "summoner-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "summoner-root",
+          "summoner-heavy",
+          "summoner-range-mid",
+          "summoner-heavy-t3-c"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-survivalist",
+          "relic": "relic-colossus-heart"
+        }
+      },
+      "identityId": "breadth-t4-conduit-heavy-c",
+      "frame": "heavy",
+      "range": "mid",
+      "pathName": "Idolwright",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Condense the Effigy formation into one enormous summon with concentrated offense, a single durable body, and a longer, more costly reconstruction.",
+        "Established GM148/45 RP; ordinary T4 +4, core/relic +0; finite prior paid ownership, no acquisition-time claim.",
+        "Defensive stance throughout; native Guard triggers; telegraph escape and hazard avoidance remain. No Wait It Out or low-health Flee.",
+        "Native close exception or mid-range Orbit as declared.",
+        "Single-target Expose Weakness; no automatic AoE windup at a lone target.",
+        "T4 Titan Charge -> conditional Earthshatter -> fault lines; native Endure tanking support plus lane escape, not inherited T3 timing.",
+        "Unused RP preserves the defining mechanism and avoids redundant casts; this is one credible package, not an optimum."
+      ],
+      "seed": 101033,
+      "block": "C4",
+      "arm": "control",
+      "comparisonId": "cbf01-t4-conduit-heavy-c-B1-s101033",
+      "snapshotId": "t4-established-gm148",
+      "progressionSnapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "referenceObservationId": "t4-conduit-heavy-c-B1-s101033",
+      "referenceSource": "3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+      "durationMs": 300000,
+      "boss": "iron-crest-titan"
+    },
+    {
+      "id": "cbf01-t4-conduit-heavy-b-B1-s101033",
+      "className": "conduit",
+      "tier": 4,
+      "role": "boss",
+      "alternate": false,
+      "nodeId": "node-t4-mountain-dungeon",
+      "isDungeon": true,
+      "treatment": "authored-source",
+      "targetTypes": [
+        "iron-crest-titan"
+      ],
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "endure"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "cbf01-t4-conduit-heavy-b-B1-s101033",
+        "classRoot": "summoner-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "summoner-root",
+          "summoner-heavy",
+          "summoner-range-close",
+          "summoner-heavy-t3-b"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-survivalist",
+          "relic": "relic-colossus-heart"
+        }
+      },
+      "identityId": "breadth-t4-conduit-heavy-b",
+      "frame": "heavy",
+      "range": "close",
+      "pathName": "Champion",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "You stop conducting and take the field yourself, fighting beside one bonded summon. Your weapon offense and proc budget are split between both sides; alternating attacks build a deterministic linked strike.",
+        "Established GM148/45 RP; ordinary T4 +4, core/relic +0; finite prior paid ownership, no acquisition-time claim.",
+        "Defensive stance throughout; native Guard triggers; telegraph escape and hazard avoidance remain. No Wait It Out or low-health Flee.",
+        "Native close exception or mid-range Orbit as declared.",
+        "Single-target Expose Weakness; no automatic AoE windup at a lone target.",
+        "T4 Titan Charge -> conditional Earthshatter -> fault lines; native Endure tanking support plus lane escape, not inherited T3 timing.",
+        "Unused RP preserves the defining mechanism and avoids redundant casts; this is one credible package, not an optimum."
+      ],
+      "seed": 101033,
+      "block": "C4",
+      "arm": "control",
+      "comparisonId": "cbf01-t4-conduit-heavy-b-B1-s101033",
+      "snapshotId": "t4-established-gm148",
+      "progressionSnapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "referenceObservationId": "t4-conduit-heavy-b-B1-s101033",
+      "referenceSource": "3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+      "durationMs": 300000,
+      "boss": "iron-crest-titan"
+    }
+  ],
+  "resourcesAtSeal": {
+    "freeDiskBytes": 649566961664,
+    "freeMemoryBytes": 5420167168,
+    "totalMemoryBytes": 34282242048
+  },
+  "progression": "Mastery/XP fixed by World.fixedBiomeMasteryPlayers; essence, catalysts, lifetime level, quest and boss records can accrue. No loadout/gear/skill purchases or recalculation from mastery."
+}
