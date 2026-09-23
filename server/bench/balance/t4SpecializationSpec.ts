@@ -3,7 +3,8 @@ import { SKILL_TREE, NODE_BIOMES, DUNGEON_DEFS, runicPointLoadoutCost } from '@m
 import { BREADTH_CELLS } from './playerBreadthSpec';
 import type { EncounterCell } from './encounterCounterplaySpec';
 export const T4_ID='t4-specialization-screen-01';
-export const T4_SNAPSHOT={id:'t4-established-gm148',tier:4,mastery:{plains:12,forest:12,swamp:18,cave:18,mountain:24,jungle:18,desert:18,volcanic:12,tundra:12,graveyard:4,trench:0},gm:148,rp:45,plus:4};
+export const T4_SNAPSHOT={id:'t4-established-gm148',tier:4,mastery:{plains:12,forest:12,swamp:18,cave:18,mountain:24,jungle:18,desert:18,volcanic:12,tundra:12,graveyard:4,trench:0},gm:148,rp:45,plus:4,
+ priorBossClears:['forest:1','mountain:1','plains:2','swamp:2','desert:2','cave:3','mountain:3','jungle:3','desert:3']};
 export const T4_CONTEXTS=[
  {id:'F1',node:'node-t4-volcanic-01',boss:null},
  {id:'F2',node:'node-t4-tundra-01',boss:null},

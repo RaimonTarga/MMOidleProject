@@ -61,7 +61,7 @@ import { prepareSurveyBot, resolveSurveyPackage } from '../bench/balance/ttkSurv
 import { SurveyMetrics } from '../bench/balance/ttkSurveyMetrics';
 import { hydrateHitboxCacheFromArtifact } from '../src/hitbox/cache';
 import { checkpointDefinitionsHash } from '../src/admin/progressionCheckpoint';
-import { ensureDungeon } from '../src/systems/world/dungeons/dungeon';
+import { ensureDungeon, tickDungeons } from '../src/systems/world/dungeons/dungeon';
 import { effectiveMonsterDot } from '../src/systems/combat/engine/monsterMechanics';
 import {
   BOSS1_BLOCKS,
@@ -388,6 +388,7 @@ function run(cell: Night5Cell, seed: number) {
     throw error;
   }
   const world = createBalanceWorld();
+  if(t4 && mode==='qualify')world.tick=()=>{throw Error('T4 qualification must not tick World');};
   try {
     setupArena(world, {
       nodeId: cell.nodeId,
@@ -404,9 +405,15 @@ function run(cell: Night5Cell, seed: number) {
     const packageReadback = ['player-fast-pass', 'player-package-fit', 'player-breadth', PROGRESSION_ID, ENCOUNTER_ID, T4_ID].includes(trial) ? fastPassReadback(cell, bot, view.globalMastery) : undefined;
     // Tick once so the boss actually spawns before the receipt is written; a
     // receipt taken before the wake-up records an empty arena.
-    if (conduit) conduit.atMs = -100; // Wake/initialization precedes the measured clock.
-    world.tick(100, now);
-    conduit?.afterTick();
+    if(t4){
+      // Production dungeon spawning only: no unmeasured combat tick. Identical
+      // initialization in qualification and the eventual measured child.
+      tickDungeons(world,now);
+    }else{
+      if (conduit) conduit.atMs = -100;
+      world.tick(100, now);
+      conduit?.afterTick();
+    }
     const boss = findBoss(world, cell.nodeId);
     assert(boss, `${cell.id}: boss never woke — the encounter was not exercised`);
     /** Pinned at wake so kill evidence can be matched to THIS boss entity. */
@@ -507,6 +514,7 @@ function run(cell: Night5Cell, seed: number) {
       },
       /** How the encounter was initialized, stated rather than assumed. */
       encounterSetup: {
+        ...(t4?{initializationWorldTicks:0,initialization:'production tickDungeons spawn only; formation initializes during measurement'}:{}),
         nodeId: cell.nodeId,
         isDungeon: true,
         guardHandling: 'stripped-before-spawn',

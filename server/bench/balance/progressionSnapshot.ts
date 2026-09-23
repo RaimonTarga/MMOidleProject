@@ -3,11 +3,11 @@ import { ABILITY_RECIPE_DATABASE, STANCE_RECIPE_DATABASE, RUNE_RECIPE_DATABASE, 
   RECIPE_DATABASE, ITEM_DATABASE, globalMastery, runeBudgetForGlobalMastery, biomeLevelCap,
   getMaxUpgrade, requiredBiomeLevelForUpgrade, upgradeCeilingFromGlobalMastery,
   upgradeCostFor, upgradeCatalystCostFor, isAbilityRecipeUnlocked, isStanceRecipeUnlocked, isRuneRecipeUnlocked,
-  checkReconstruct, ABILITY_DATABASE, abilityRankNumber } from '@mmo-idle/shared';
+  checkReconstruct, ABILITY_DATABASE, abilityRankNumber, bossSealSourcesAtTier, sealsRequiredForTier, sealsHeldAtTier, SKILL_TREE } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../src/ecs/entity';
 import type { SurveyCell } from './ttkSurveySpec';
 
-export interface ProgressionSnapshot { id:string; tier:number; mastery:Record<string,number>; gm:number; rp:number; plus:number }
+export interface ProgressionSnapshot { id:string; tier:number; mastery:Record<string,number>; gm:number; rp:number; plus:number; priorBossClears?:string[] }
 const early={plains:12,forest:12,swamp:12,mountain:12,cave:12};
 const returning={plains:12,forest:12,swamp:18,mountain:18,cave:18,jungle:12,desert:12,volcanic:0,tundra:0};
 export const PROGRESSION_SNAPSHOTS:Record<string,ProgressionSnapshot>=Object.fromEntries([
@@ -30,6 +30,12 @@ export function applyProgressionSnapshot(bot:PlayerEntity,cell:SurveyCell) {
   for(const [g,n] of Object.entries(s.mastery)) assert(n>=0 && n<=biomeLevelCap(s.tier,g));
   const p=bot.tracksProgression;
   p.biomeLevel={...s.mastery}; p.biomeXP={}; p.level=0;
+  if(s.priorBossClears){
+    p.bossesCleared=[...s.priorBossClears];
+    for(const key of p.bossesCleared){const [group,tier]=key.split(':');assert(bossSealSourcesAtTier(Number(tier)).includes(group),`Invalid prior seal ${key}`);}
+    for(let tier=1;tier<s.tier;tier++)assert(sealsHeldAtTier(p.bossesCleared,tier)>=sealsRequiredForTier(tier),`Missing T${tier} prior seals`);
+    assert(cell.build.skillPath.reduce((sum,id)=>sum+SKILL_TREE.get(id)!.cost,0)<=s.tier,'Class purchases exceed earned tier skill points');
+  }
   p.knownAbilities=[];p.knownStances=[];p.knownRites=[];p.equippedRites=[];
   p.runesOwned=[...STARTER_RUNE_IDS];p.runeRecipesCrafted=[];
   const purchases:{id:string;kind:string;cost:Record<string,number>;catalysts:Record<string,number>}[]=[];
@@ -69,6 +75,7 @@ export function applyProgressionSnapshot(bot:PlayerEntity,cell:SurveyCell) {
     for(const [k,v]of Object.entries(values))totals[axis][k]=(totals[axis][k]??0)+v;
   p.essences={red:0,blue:0,green:0,yellow:0,purple:0};p.catalysts={};
   return {snapshot:s,purchases,priorResources:totals,remainingResources:{essences:p.essences,catalysts:p.catalysts},
+    ...(s.priorBossClears?{priorBossClears:[...p.bossesCleared],priorSealOwnership:'Synthetic earned prior clears assumed; no acquisition combat measured',classSkillPointBudget:s.tier,classSkillPointsSpent:cell.build.skillPath.reduce((sum,id)=>sum+SKILL_TREE.get(id)!.cost,0)}:{}),
     acquisition:'Synthetic prior paid ownership; direct reconstruction at production price. No acquisition time measured.',
     abilityRanks:Object.fromEntries(p.knownAbilities.map(id=>[id,abilityRankNumber(ABILITY_DATABASE.get(id)!,s.tier)])),knownAbilities:[...p.knownAbilities],knownStances:[...p.knownStances],runesOwned:[...p.runesOwned],runeRecipesCrafted:[...p.runeRecipesCrafted]};
 }
