@@ -1,0 +1,209 @@
+diff --git a/docs/rites-current-state.md b/docs/rites-current-state.md
+index 99cbc327..b8933e8f 100644
+--- a/docs/rites-current-state.md
++++ b/docs/rites-current-state.md
+@@ -3 +3 @@
+-- **Code audit:** 2026-08-09
++- **Code audit:** 2026-09-24 (retirement proposal branch)
+@@ -43 +42,0 @@ Lingering Battle adds 50% to the base exit delay. Swift Repose removes 50%. Equi
+-| Blood Offering | 3 | On credited kill, heals 5% maximum HP through `applyHealToPlayer` |
+@@ -56 +55 @@ Mechanic Renewal mappings:
+-Blood Offering uses the existing player-credit `onKill` pipeline, so direct attacks, abilities, player DoTs, summons, and supported player-owned indirect damage share attribution.
++Blood Offering has no active kill listener, including for stale saved equipped IDs.
+@@ -67 +66 @@ Rites remain `knownRites: string[]` and `equippedRites: string[]` in progression
+-| Hunter's Instinct | Blood Offering |
++| Hunter's Instinct | Retired Blood Offering acquisition history only |
+@@ -76 +75 @@ No SQL migration is required. `PlayerView.riteSlots` remains temporarily as a co
+-- Crafting contains all six Rite recipes in the T3 mastery band.
++- Crafting contains the five active Rite recipes in the T3 mastery band.
+@@ -88 +86,0 @@ effect answers that biome's pressure:
+-| Blood Offering | volcanic (5) | Kill-credit recovery wants the biome that supplies the chain |
+@@ -103 +101 @@ New Rites currently reuse the closest existing Rite glyphs until dedicated conce
+-`server/test/rites.test.ts` covers opposed boundary timing, full harmful cleanup with source-owned hazard preservation, Energy renewal, ability cooldown reduction, exact-once combat-end dispatch, shared-RP competition, and stale-ID filtering. Existing combat kill-hook coverage exercises the common player-credit pipeline used by Blood Offering.
++`server/test/rites.test.ts` covers opposed boundary timing, full harmful cleanup with source-owned hazard preservation, Energy renewal, ability cooldown reduction, exact-once combat-end dispatch, shared-RP competition, and stale-ID filtering. Retirement checks cover stale acquisition/equip rejection, no kill healing or RP charge, preserved acquisition history and idempotent migration.
+@@ -105,0 +104,5 @@ Known balance follow-ups: tune percentages/RP/gates; provide explicit combat-end
++
++
++## Blood Offering retirement proposal (unmerged branch)
++
++Blood Offering is removed from active definitions and recipes. Stale craft and equip requests fail. The kill-healing listener is removed, so even an unsanitized saved equipped ID has no effect and costs no RP. Hydration retains the canonical `blood-offering` ID in known acquisition history (including the old `hunters-instinct` alias), removes it from equipped Rites, and preserves all unrelated save fields. Migration is idempotent. There is no bulk database edit and no currency/item refund. Existing historical experiment reports remain unchanged. Adoption requires the designer's normal approval.
+diff --git a/server/src/db/playerRepo.ts b/server/src/db/playerRepo.ts
+index 2185d19d..65ed5a96 100644
+--- a/server/src/db/playerRepo.ts
++++ b/server/src/db/playerRepo.ts
+@@ -28 +28 @@ import {
+-  validRiteIds,
++  migrateSavedRiteIds,
+@@ -487,11 +486,0 @@ function pruneUnknownItems(inv: HoldsInventory): void {
+-const LEGACY_RITE_IDS: Record<string, string> = {
+-  "quickened-breath": "swift-repose",
+-  "cleansing-breath": "purification",
+-  "lingering-momentum": "lingering-battle",
+-  "hunters-instinct": "blood-offering",
+-};
+-
+-function migrateRiteIds(ids: readonly string[] | undefined): string[] {
+-  return validRiteIds((ids ?? []).map((id) => LEGACY_RITE_IDS[id] ?? id));
+-}
+-
+@@ -512,2 +501,2 @@ function hydratePlayerSlices(row: CharacterRow): PersistedPlayerSlices {
+-  const knownRites = migrateRiteIds(tracksProgression.knownRites);
+-  const equippedRites = migrateRiteIds(tracksProgression.equippedRites)
++  const knownRites = migrateSavedRiteIds(tracksProgression.knownRites, true);
++  const equippedRites = migrateSavedRiteIds(tracksProgression.equippedRites)
+diff --git a/server/src/systems/player/rites/riteOoc.ts b/server/src/systems/player/rites/riteOoc.ts
+index 8e2c7937..772454c6 100644
+--- a/server/src/systems/player/rites/riteOoc.ts
++++ b/server/src/systems/player/rites/riteOoc.ts
+@@ -9,2 +8,0 @@ import { markSliceDirty } from "../../../ecs/dirtyHelpers";
+-import { registerCombatListener } from "../../combat/engine/combatPipeline";
+-import { applyHealToPlayer } from "../../defense/regen/healing";
+@@ -18 +15,0 @@ const ABILITY_REPRIEVE_FRACTION = 0.3;
+-const BLOOD_OFFERING_MAX_HP_FRACTION = 0.05;
+@@ -125,11 +122,2 @@ export function applyCombatEndRites(world: World, player: PlayerEntity): void {
+-export function initRiteListeners(): void {
+-  registerCombatListener("onKill", (ctx, world) => {
+-    if (ctx.attackerType !== "player" || !hasRite(ctx.attacker, "blood-offering")) return;
+-    applyHealToPlayer(
+-      ctx.attacker,
+-      ctx.attacker.tracksCombat,
+-      ctx.attacker.hasHealth.maxHp * BLOOD_OFFERING_MAX_HP_FRACTION,
+-      world,
+-    );
+-  });
+-}
++/** Compatibility bootstrap hook: retired kill-healing has no listener. */
++export function initRiteListeners(): void {}
+diff --git a/server/test/equippedEvolutionAbilityTags.test.ts b/server/test/equippedEvolutionAbilityTags.test.ts
+index 64fa89f3..299cda43 100644
+--- a/server/test/equippedEvolutionAbilityTags.test.ts
++++ b/server/test/equippedEvolutionAbilityTags.test.ts
+@@ -124,0 +125,19 @@ for (const slot of ['weapon', 'armor', 'recovery', 'mobility'] as const) {
++// Compressed Swamp progression must preserve resistance when +5 is consumed.
++for (const id of ['swamp-boots-t2', 'swamp-boots-t3']) {
++  const recipe = RECIPE_DATABASE.get(id)!;
++  const pred = recipe.evolvesFrom!;
++  const p = player();
++  p.tracksProgression.unlockedRecipes.push(id);
++  p.holdsInventory.inventory.push(pred);
++  p.holdsInventory.itemUpgrades[pred] = 5;
++  assert(equipItem(world, p, pred));
++  const beforeResistance = p.usesSkills.passives['mobility.slow-resistance'];
++  const beforeSpeed = p.hasPosition.speed;
++  for (const [k, v] of Object.entries(recipe.cost)) p.tracksProgression.essences[k as keyof typeof p.tracksProgression.essences] = v!;
++  p.tracksProgression.catalysts = { ...recipe.catalystCost } as Record<string, number>;
++  assert(evolveItem(world, p, id, 'evolve').success);
++  assert.equal(p.holdsInventory.equipment.mobility, id);
++  assert.equal(p.holdsInventory.itemUpgrades[id] ?? 0, 0);
++  assert(Math.abs(p.usesSkills.passives['mobility.slow-resistance'] - beforeResistance) < 1e-12, 'Swamp evolution preserves completed predecessor resistance');
++  assert(p.hasPosition.speed >= beforeSpeed, 'Swamp evolution does not reduce flat movement speed');
++}
+diff --git a/server/test/rites.test.ts b/server/test/rites.test.ts
+index c588d4db..cc24e9fb 100644
+--- a/server/test/rites.test.ts
++++ b/server/test/rites.test.ts
+@@ -2 +2 @@ import {
+-  GAME_CONFIG,
++  GAME_CONFIG, RITE_DATABASE, RITE_RECIPE_DATABASE, riteLoadoutCost, migrateSavedRiteIds,
+@@ -10,0 +11 @@ import {
++import { craftRiteRecipe, setRiteLoadout } from "../src/systems/player/economy/riteCrafting";
+@@ -80 +81 @@ emitCombatEvent("onKill", kill, world);
+-assert(player.hasHealth.hp === beforeOffering + player.hasHealth.maxHp * 0.05, "Blood Offering should heal through credited onKill events");
++assert(player.hasHealth.hp === beforeOffering, "Retired saved ID must never grant kill healing");
+@@ -81,0 +83,24 @@ assert(player.hasHealth.hp === beforeOffering + player.hasHealth.maxHp * 0.05, "
++assert(!RITE_DATABASE.has("blood-offering"), "retired rite absent from discovery");
++assert(!RITE_RECIPE_DATABASE.has("rite-recipe-blood-offering"), "retired recipe absent");
++assert(!craftRiteRecipe(world, player, "rite-recipe-blood-offering").success, "stale acquisition blocked");
++player.tracksProgression.knownRites.push("blood-offering");
++assert(!setRiteLoadout(world, player, ["blood-offering"]).success, "stale equip blocked even when known");
++assert(riteLoadoutCost(["blood-offering"]) === 0, "no retired RP charge");
++assert(runicPointLoadoutCost({ abilities: { techniques: [], guards: ["brace"] }, stances: [], rules: [], rites: ["blood-offering", "hunters-instinct", "swift-repose"] }) ===
++  runicPointLoadoutCost({ abilities: { techniques: [], guards: ["brace"] }, stances: [], rules: [], rites: ["swift-repose"] }), "legacy retirement releases RP in the complete loadout");
++assert(migrateSavedRiteIds(undefined).length === 0, "pre-Rite saves normalize safely");
++assert(migrateSavedRiteIds(["unknown", "hunters-instinct", "blood-offering"]).length === 0, "unknown and retired equipped IDs are ignored");
++const resourcesBefore = JSON.stringify([player.tracksProgression.essences, player.tracksProgression.catalysts]);
++migrateSavedRiteIds(["blood-offering"], true);
++assert(!craftRiteRecipe(world, player, "rite-recipe-blood-offering").success, "retired craft remains rejected");
++assert(JSON.stringify([player.tracksProgression.essences, player.tracksProgression.catalysts]) === resourcesBefore, "retirement gives no essence or catalyst refund");
++const saved=["hunters-instinct","blood-offering","swift-repose"];
++const known=migrateSavedRiteIds(saved,true), equipped=migrateSavedRiteIds(saved);
++assert(JSON.stringify(known) === JSON.stringify(["blood-offering","swift-repose"]), "retain historical acquisition");
++assert(JSON.stringify(equipped) === JSON.stringify(["swift-repose"]), "retired effect removed on load");
++assert(JSON.stringify(migrateSavedRiteIds(known,true)) === JSON.stringify(known), "known migration idempotent");
++assert(JSON.stringify(migrateSavedRiteIds(equipped)) === JSON.stringify(equipped), "equipped migration idempotent");
++const oldSave=makePlayerSlices();oldSave.tracksProgression.knownRites=known;oldSave.tracksProgression.equippedRites=equipped;
++const loaded=world.attachPlayerEntity(oldSave,"legacy-rite-owner");
++assert(loaded.tracksProgression.knownRites.includes("blood-offering"), "legacy acquisition loads without loss");
++assert(combatExitDelay(loaded,5000)===2500,"other owned Rite remains effective");
+diff --git a/shared/src/data/recipes/desert.recipes.ts b/shared/src/data/recipes/desert.recipes.ts
+index 0768a534..89579d38 100644
+--- a/shared/src/data/recipes/desert.recipes.ts
++++ b/shared/src/data/recipes/desert.recipes.ts
+@@ -167 +167 @@ export const desertRecipeEntries = [
+-    mechanicEffects: { 'mobility.kite-speed-pct': 0.30 },
++    mechanicEffects: { 'mobility.kite-speed-pct': 0.25 },
+@@ -265 +265 @@ export const desertRecipeEntries = [
+-    mechanicEffects: { 'mobility.kite-speed-pct': 0.40 },
++    mechanicEffects: { 'mobility.kite-speed-pct': 0.30 },
+diff --git a/shared/src/data/recipes/mountain.recipes.ts b/shared/src/data/recipes/mountain.recipes.ts
+index a93321b2..10fefb58 100644
+--- a/shared/src/data/recipes/mountain.recipes.ts
++++ b/shared/src/data/recipes/mountain.recipes.ts
+@@ -510 +510 @@ export const mountainRecipeEntries = [
+-    mechanicEffects: { 'technique.cooldown-reduction-pct': 0.20, 'technique.power-pct': 0.20 },
++    mechanicEffects: { 'technique.cooldown-reduction-pct': 0.20, 'technique.power-pct': 0.30 },
+diff --git a/shared/src/data/recipes/swamp.recipes.ts b/shared/src/data/recipes/swamp.recipes.ts
+index f4349967..00d2c28a 100644
+--- a/shared/src/data/recipes/swamp.recipes.ts
++++ b/shared/src/data/recipes/swamp.recipes.ts
+@@ -209 +209 @@ export const swampRecipeEntries = [
+-    mechanicEffects: { 'mobility.slow-resistance': 0.45 },
++    mechanicEffects: { 'mobility.slow-resistance': 0.40 },
+@@ -213,2 +213,2 @@ export const swampRecipeEntries = [
+-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: { purple: 12 }, requiredBiomeLevel: 10 },
+-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: { purple: 30 }, requiredBiomeLevel: 10 },
++      { stats: { speed: 2 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: { purple: 12 }, requiredBiomeLevel: 10 },
++      { stats: { speed: 2 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: { purple: 30 }, requiredBiomeLevel: 10 },
+@@ -216 +216 @@ export const swampRecipeEntries = [
+-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: { purple: 78 }, requiredBiomeLevel: 10 },
++      { stats: { speed: 2 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: { purple: 78 }, requiredBiomeLevel: 10 },
+@@ -303 +303 @@ export const swampRecipeEntries = [
+-    mechanicEffects: { 'mobility.slow-resistance': 0.62 },
++    mechanicEffects: { 'mobility.slow-resistance': 0.50 },
+diff --git a/shared/src/riteRecipes.ts b/shared/src/riteRecipes.ts
+index 5ac112ff..ebb53e2f 100644
+--- a/shared/src/riteRecipes.ts
++++ b/shared/src/riteRecipes.ts
+@@ -32 +32 @@ export interface RiteRecipe {
+-//  · All six rites still total 20 RP against a 19-RP budget at max T3 Global Mastery, by
++//  · The five active rites total 17 RP against a 19-RP budget at max T3 Global Mastery, by
+@@ -45,4 +44,0 @@ const recipes: RiteRecipe[] = [
+-  // Volcanic is the swarm biome (native Swarming). Kill-credit recovery is a chain-farming
+-  // mechanic, so it wants the biome that supplies the chain. Volcanic starts at T3, so its
+-  // whole T3 band is levels 1-6.
+-  { id: "rite-recipe-blood-offering", name: "Blood Offering", description: "Recover health from credited kills.", riteId: "blood-offering", tier: 3, recipeGroup: "volcanic", requiredBiomeLevel: 5, cost: { red: 130, green: 40 }, catalystCost: { swarming: 2 } },
+diff --git a/shared/src/rites.ts b/shared/src/rites.ts
+index b57ca2ec..4e3a18ae 100644
+--- a/shared/src/rites.ts
++++ b/shared/src/rites.ts
+@@ -52,7 +52 @@ const rites: RiteDef[] = [
+-  {
+-    id: "blood-offering",
+-    name: "Blood Offering",
+-    blurb: "Recover 5% of maximum health whenever you receive kill credit.",
+-    runeCost: 3,
+-    icon: "blood-offering",
+-  },
++
+@@ -73,0 +68,11 @@ export function riteLoadoutCost(ids: readonly string[]): number {
++
++/** Retained acquisition identity only; never an active/equippable Rite. */
++export const RETIRED_RITE_IDS = new Set(["blood-offering"]);
++const LEGACY_RITE_IDS: Record<string,string> = {
++  "quickened-breath":"swift-repose", "cleansing-breath":"purification",
++  "lingering-momentum":"lingering-battle", "hunters-instinct":"blood-offering",
++};
++export function migrateSavedRiteIds(ids: readonly string[] | undefined, preserveAcquisition = false): string[] {
++  return [...new Set((ids ?? []).map(id => LEGACY_RITE_IDS[id] ?? id))]
++    .filter(id => RITE_DATABASE.has(id) || (preserveAcquisition && RETIRED_RITE_IDS.has(id)));
++}

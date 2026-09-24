@@ -1,0 +1,157 @@
+{
+  "status": "pass",
+  "qualified": 24,
+  "replayed": 24,
+  "freshCombatObservations": 0,
+  "historicalEquippedPackagesExact": 24,
+  "ownershipDifferences": [
+    {
+      "observationId": "subsystem-desert-flash-control-s101009",
+      "addedUnequippedStarterRunes": [
+        "tactical-reload",
+        "wait-for-execution",
+        "wait-for-summons"
+      ],
+      "source": "develop ca90ec3f; shared by both arms"
+    },
+    {
+      "observationId": "subsystem-desert-flash-candidate-s101009",
+      "addedUnequippedStarterRunes": [
+        "tactical-reload",
+        "wait-for-execution",
+        "wait-for-summons"
+      ],
+      "source": "develop ca90ec3f; shared by both arms"
+    },
+    {
+      "observationId": "subsystem-desert-flash-control-s101033",
+      "addedUnequippedStarterRunes": [
+        "tactical-reload",
+        "wait-for-execution",
+        "wait-for-summons"
+      ],
+      "source": "develop ca90ec3f; shared by both arms"
+    },
+    {
+      "observationId": "subsystem-desert-flash-candidate-s101033",
+      "addedUnequippedStarterRunes": [
+        "tactical-reload",
+        "wait-for-execution",
+        "wait-for-summons"
+      ],
+      "source": "develop ca90ec3f; shared by both arms"
+    }
+  ],
+  "candidateFiles": [
+    "docs/rites-current-state.md",
+    "server/src/db/playerRepo.ts",
+    "server/src/systems/player/rites/riteOoc.ts",
+    "server/test/equippedEvolutionAbilityTags.test.ts",
+    "server/test/rites.test.ts",
+    "shared/src/data/recipes/desert.recipes.ts",
+    "shared/src/data/recipes/mountain.recipes.ts",
+    "shared/src/data/recipes/swamp.recipes.ts",
+    "shared/src/riteRecipes.ts",
+    "shared/src/rites.ts"
+  ],
+  "comparisons": [
+    {
+      "observationId": "subsystem-arcanist-reverb-candidate-s101009",
+      "referenceObservationId": "outlier-arcanist-reverb-current-s101009",
+      "passive": "technique.power-pct",
+      "control": 0.2,
+      "candidate": 0.3,
+      "historicalEquippedBuildExact": true
+    },
+    {
+      "observationId": "subsystem-arcanist-reverb-candidate-s101033",
+      "referenceObservationId": "outlier-arcanist-reverb-current-s101033",
+      "passive": "technique.power-pct",
+      "control": 0.2,
+      "candidate": 0.3,
+      "historicalEquippedBuildExact": true
+    },
+    {
+      "observationId": "subsystem-arcanist-idolwright-candidate-s101009",
+      "referenceObservationId": "outlier-arcanist-idolwright-current-s101009",
+      "passive": "technique.power-pct",
+      "control": 0.2,
+      "candidate": 0.3,
+      "historicalEquippedBuildExact": true
+    },
+    {
+      "observationId": "subsystem-arcanist-idolwright-candidate-s101033",
+      "referenceObservationId": "outlier-arcanist-idolwright-current-s101033",
+      "passive": "technique.power-pct",
+      "control": 0.2,
+      "candidate": 0.3,
+      "historicalEquippedBuildExact": true
+    },
+    {
+      "observationId": "subsystem-desert-ranger-candidate-s101009",
+      "referenceObservationId": "outlier-desert-ranger-control-s101009",
+      "passive": "mobility.kite-speed-pct",
+      "control": 0.4,
+      "candidate": 0.3,
+      "historicalEquippedBuildExact": true
+    },
+    {
+      "observationId": "subsystem-desert-ranger-candidate-s101033",
+      "referenceObservationId": "outlier-desert-ranger-control-s101033",
+      "passive": "mobility.kite-speed-pct",
+      "control": 0.4,
+      "candidate": 0.3,
+      "historicalEquippedBuildExact": true
+    },
+    {
+      "observationId": "subsystem-desert-flash-candidate-s101009",
+      "referenceObservationId": "closing-spirit-light-a-T-s101009",
+      "passive": "mobility.kite-speed-pct",
+      "control": 0.4,
+      "candidate": 0.3,
+      "historicalEquippedBuildExact": true
+    },
+    {
+      "observationId": "subsystem-desert-flash-candidate-s101033",
+      "referenceObservationId": "closing-spirit-light-a-T-s101033",
+      "passive": "mobility.kite-speed-pct",
+      "control": 0.4,
+      "candidate": 0.3,
+      "historicalEquippedBuildExact": true
+    },
+    {
+      "observationId": "subsystem-swamp-t2-candidate-s101009",
+      "referenceObservationId": "outlier-swamp-t2-control-s101009",
+      "passive": "mobility.slow-resistance",
+      "control": 0.56,
+      "candidate": 0.48000000000000004,
+      "historicalEquippedBuildExact": true
+    },
+    {
+      "observationId": "subsystem-swamp-t2-candidate-s101033",
+      "referenceObservationId": "outlier-swamp-t2-control-s101033",
+      "passive": "mobility.slow-resistance",
+      "control": 0.56,
+      "candidate": 0.48000000000000004,
+      "historicalEquippedBuildExact": true
+    },
+    {
+      "observationId": "subsystem-swamp-t3-candidate-s101009",
+      "referenceObservationId": "outlier-swamp-t3-control-s101009",
+      "passive": "mobility.slow-resistance",
+      "control": 0.6799999999999999,
+      "candidate": 0.56,
+      "historicalEquippedBuildExact": true
+    },
+    {
+      "observationId": "subsystem-swamp-t3-candidate-s101033",
+      "referenceObservationId": "outlier-swamp-t3-control-s101033",
+      "passive": "mobility.slow-resistance",
+      "control": 0.6799999999999999,
+      "candidate": 0.56,
+      "historicalEquippedBuildExact": true
+    }
+  ],
+  "qualifiedReceiptsSha256": "15d9842f570cedcff52b4c9f090b3540905e79a5366d94862ad406a061a9b083",
+  "replayReceiptsSha256": "15d9842f570cedcff52b4c9f090b3540905e79a5366d94862ad406a061a9b083"
+}

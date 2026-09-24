@@ -24,13 +24,15 @@
     "sha256": "093d31154a5b287770d2103e01b520c9c583d95dd307f917687ded93281e2722",
     "samples": 600,
     "kiteSamples": 328,
-    "notes": "First 600s retained historical samples; no new combat. Keep Distance action ID orbit."
+    "notes": "First 600s retained historical samples; no new combat. Keep Distance action ID orbit.",
+    "originalRawInventoryMatched": true
   },
   {
     "path": "D:/mmo-idle/t4-overnight-closing-pass-01/run-01/closing-spirit-light-a-T-s101033/artifacts/closing-spirit-light-a-T-s101033-s101033/samples.jsonl",
     "sha256": "9eae9097c5157096f2d76cdffa7c1e6d5fbf23da39dc345f064a4b74561c00e1",
     "samples": 600,
     "kiteSamples": 257,
-    "notes": "First 600s retained historical samples; no new combat. Keep Distance action ID orbit."
+    "notes": "First 600s retained historical samples; no new combat. Keep Distance action ID orbit.",
+    "originalRawInventoryMatched": true
   }
 ]

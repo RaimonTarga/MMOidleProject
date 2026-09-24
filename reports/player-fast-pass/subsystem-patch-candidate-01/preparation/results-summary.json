@@ -1,0 +1,254 @@
+{
+  "experimentId": "subsystem-patch-candidate-01",
+  "status": "prepared-qualified-unrun",
+  "synthetic": true,
+  "economyEligible": false,
+  "counts": {
+    "planned": 24,
+    "qualified": 24,
+    "receiptReplayed": 24,
+    "freshCombatObservations": 0,
+    "combatCompleted": 0,
+    "combatFailed": 0,
+    "combatNotRun": 24
+  },
+  "seeds": [
+    101009,
+    101033
+  ],
+  "dtMs": 100,
+  "capMs": 600000,
+  "endpointsMs": [
+    300000,
+    600000
+  ],
+  "blocks": {
+    "A": 8,
+    "B": 8,
+    "C": 8
+  },
+  "decisions": {
+    "desert": "pending regression",
+    "swamp": "pending regression",
+    "arcanist": "pending regression",
+    "bloodOffering": "ready for designer review"
+  },
+  "rows": [
+    {
+      "observationId": "subsystem-arcanist-reverb-control-s101009",
+      "block": "A",
+      "arm": "control",
+      "seed": 101009,
+      "referenceObservationId": "outlier-arcanist-reverb-current-s101009",
+      "status": "qualified-unrun",
+      "combatResult": null
+    },
+    {
+      "observationId": "subsystem-arcanist-reverb-candidate-s101009",
+      "block": "A",
+      "arm": "candidate",
+      "seed": 101009,
+      "referenceObservationId": "outlier-arcanist-reverb-current-s101009",
+      "status": "qualified-unrun",
+      "combatResult": null
+    },
+    {
+      "observationId": "subsystem-arcanist-reverb-control-s101033",
+      "block": "A",
+      "arm": "control",
+      "seed": 101033,
+      "referenceObservationId": "outlier-arcanist-reverb-current-s101033",
+      "status": "qualified-unrun",
+      "combatResult": null
+    },
+    {
+      "observationId": "subsystem-arcanist-reverb-candidate-s101033",
+      "block": "A",
+      "arm": "candidate",
+      "seed": 101033,
+      "referenceObservationId": "outlier-arcanist-reverb-current-s101033",
+      "status": "qualified-unrun",
+      "combatResult": null
+    },
+    {
+      "observationId": "subsystem-arcanist-idolwright-control-s101009",
+      "block": "A",
+      "arm": "control",
+      "seed": 101009,
+      "referenceObservationId": "outlier-arcanist-idolwright-current-s101009",
+      "status": "qualified-unrun",
+      "combatResult": null
+    },
+    {
+      "observationId": "subsystem-arcanist-idolwright-candidate-s101009",
+      "block": "A",
+      "arm": "candidate",
+      "seed": 101009,
+      "referenceObservationId": "outlier-arcanist-idolwright-current-s101009",
+      "status": "qualified-unrun",
+      "combatResult": null
+    },
+    {
+      "observationId": "subsystem-arcanist-idolwright-control-s101033",
+      "block": "A",
+      "arm": "control",
+      "seed": 101033,
+      "referenceObservationId": "outlier-arcanist-idolwright-current-s101033",
+      "status": "qualified-unrun",
+      "combatResult": null
+    },
+    {
+      "observationId": "subsystem-arcanist-idolwright-candidate-s101033",
+      "block": "A",
+      "arm": "candidate",
+      "seed": 101033,
+      "referenceObservationId": "outlier-arcanist-idolwright-current-s101033",
+      "status": "qualified-unrun",
+      "combatResult": null
+    },
+    {
+      "observationId": "subsystem-desert-ranger-control-s101009",
+      "block": "B",
+      "arm": "control",
+      "seed": 101009,
+      "referenceObservationId": "outlier-desert-ranger-control-s101009",
+      "status": "qualified-unrun",
+      "combatResult": null
+    },
+    {
+      "observationId": "subsystem-desert-ranger-candidate-s101009",
+      "block": "B",
+      "arm": "candidate",
+      "seed": 101009,
+      "referenceObservationId": "outlier-desert-ranger-control-s101009",
+      "status": "qualified-unrun",
+      "combatResult": null
+    },
+    {
+      "observationId": "subsystem-desert-ranger-control-s101033",
+      "block": "B",
+      "arm": "control",
+      "seed": 101033,
+      "referenceObservationId": "outlier-desert-ranger-control-s101033",
+      "status": "qualified-unrun",
+      "combatResult": null
+    },
+    {
+      "observationId": "subsystem-desert-ranger-candidate-s101033",
+      "block": "B",
+      "arm": "candidate",
+      "seed": 101033,
+      "referenceObservationId": "outlier-desert-ranger-control-s101033",
+      "status": "qualified-unrun",
+      "combatResult": null
+    },
+    {
+      "observationId": "subsystem-desert-flash-control-s101009",
+      "block": "B",
+      "arm": "control",
+      "seed": 101009,
+      "referenceObservationId": "closing-spirit-light-a-T-s101009",
+      "status": "qualified-unrun",
+      "combatResult": null
+    },
+    {
+      "observationId": "subsystem-desert-flash-candidate-s101009",
+      "block": "B",
+      "arm": "candidate",
+      "seed": 101009,
+      "referenceObservationId": "closing-spirit-light-a-T-s101009",
+      "status": "qualified-unrun",
+      "combatResult": null
+    },
+    {
+      "observationId": "subsystem-desert-flash-control-s101033",
+      "block": "B",
+      "arm": "control",
+      "seed": 101033,
+      "referenceObservationId": "closing-spirit-light-a-T-s101033",
+      "status": "qualified-unrun",
+      "combatResult": null
+    },
+    {
+      "observationId": "subsystem-desert-flash-candidate-s101033",
+      "block": "B",
+      "arm": "candidate",
+      "seed": 101033,
+      "referenceObservationId": "closing-spirit-light-a-T-s101033",
+      "status": "qualified-unrun",
+      "combatResult": null
+    },
+    {
+      "observationId": "subsystem-swamp-t2-control-s101009",
+      "block": "C",
+      "arm": "control",
+      "seed": 101009,
+      "referenceObservationId": "outlier-swamp-t2-control-s101009",
+      "status": "qualified-unrun",
+      "combatResult": null
+    },
+    {
+      "observationId": "subsystem-swamp-t2-candidate-s101009",
+      "block": "C",
+      "arm": "candidate",
+      "seed": 101009,
+      "referenceObservationId": "outlier-swamp-t2-control-s101009",
+      "status": "qualified-unrun",
+      "combatResult": null
+    },
+    {
+      "observationId": "subsystem-swamp-t2-control-s101033",
+      "block": "C",
+      "arm": "control",
+      "seed": 101033,
+      "referenceObservationId": "outlier-swamp-t2-control-s101033",
+      "status": "qualified-unrun",
+      "combatResult": null
+    },
+    {
+      "observationId": "subsystem-swamp-t2-candidate-s101033",
+      "block": "C",
+      "arm": "candidate",
+      "seed": 101033,
+      "referenceObservationId": "outlier-swamp-t2-control-s101033",
+      "status": "qualified-unrun",
+      "combatResult": null
+    },
+    {
+      "observationId": "subsystem-swamp-t3-control-s101009",
+      "block": "C",
+      "arm": "control",
+      "seed": 101009,
+      "referenceObservationId": "outlier-swamp-t3-control-s101009",
+      "status": "qualified-unrun",
+      "combatResult": null
+    },
+    {
+      "observationId": "subsystem-swamp-t3-candidate-s101009",
+      "block": "C",
+      "arm": "candidate",
+      "seed": 101009,
+      "referenceObservationId": "outlier-swamp-t3-control-s101009",
+      "status": "qualified-unrun",
+      "combatResult": null
+    },
+    {
+      "observationId": "subsystem-swamp-t3-control-s101033",
+      "block": "C",
+      "arm": "control",
+      "seed": 101033,
+      "referenceObservationId": "outlier-swamp-t3-control-s101033",
+      "status": "qualified-unrun",
+      "combatResult": null
+    },
+    {
+      "observationId": "subsystem-swamp-t3-candidate-s101033",
+      "block": "C",
+      "arm": "candidate",
+      "seed": 101033,
+      "referenceObservationId": "outlier-swamp-t3-control-s101033",
+      "status": "qualified-unrun",
+      "combatResult": null
+    }
+  ]
+}
