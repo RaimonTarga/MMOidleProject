@@ -38,8 +38,8 @@
 
 .release-card {
   position: relative;
-  width: min(760px, calc(100vw - 32px));
-  max-height: min(820px, calc(100vh - 48px));
+  width: min(760px, calc((100vw - 48px) / var(--ui-font-scale, 1)));
+  max-height: min(820px, calc((100dvh - 48px) / var(--ui-font-scale, 1)));
   display: flex;
   flex-direction: column;
   border-top: 2px solid var(--bevel-light);
@@ -76,6 +76,7 @@
 }
 
 .release-card__header {
+  flex-shrink: 0;
   padding: 28px 56px 18px 28px;
   border-bottom: 1px solid rgba(80, 72, 52, 0.35);
 }
@@ -180,6 +181,7 @@
 }
 
 .release-card__footer {
+  flex-shrink: 0;
   display: flex;
   justify-content: flex-end;
   padding: 16px 28px 20px;
@@ -212,8 +214,8 @@
   }
 
   .release-card {
-    width: calc(100vw - 24px);
-    max-height: calc(100vh - 24px);
+    width: calc((100vw - 24px) / var(--ui-font-scale, 1));
+    max-height: calc((100dvh - 24px) / var(--ui-font-scale, 1));
   }
 
   .release-card__header,

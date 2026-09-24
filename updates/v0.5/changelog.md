@@ -6,7 +6,7 @@
 
 - Other players move smoothly between network updates, with corrected positions when entering a node or returning to the game.
 - Restored other players' melee attack lunges and ability-specific attack effects.
-- On mobile, the changelog is now under **Settings → Updates**, instead of floating over the game. The desktop panel remains available.
+- On mobile, the changelog is now under **Settings → Updates**, instead of floating over the game. The desktop panel remains available, and the notes fit the screen at larger UI scales.
 
 ## Playtest fixes
 
