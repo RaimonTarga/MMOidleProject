@@ -1,0 +1,93 @@
+{
+  "receipt": "t4-overnight-closing-pass-01 publication receipt",
+  "experimentId": "t4-overnight-closing-pass-01",
+  "publicationCheckout": "D:/t4c1pub",
+  "publicationBranch": "codex/t4-overnight-closing-pass-01-packet",
+  "publicationPath": "reports/player-fast-pass/t4-overnight-closing-pass-01/run-01",
+  "measuredSource": {
+    "checkout": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\source",
+    "commit": "056b5cd66c2f6aeccca840265a0cbce30a2a77f3",
+    "sourceSha256": "779b644650b7c4221c62c99d36151cbd77fd1edae25c1459ecb61cdd686de009",
+    "hitboxesSha256": "08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83"
+  },
+  "rawRoot": "D:/mmo-idle/t4-overnight-closing-pass-01/run-01",
+  "counts": {
+    "planned": 460,
+    "primary": 432,
+    "alternative": 28,
+    "completed": 460,
+    "gameplayDead": 90,
+    "failed": 0,
+    "omitted": 0,
+    "notRun": 0
+  },
+  "wallElapsedMs": 11025012,
+  "terminal": {
+    "mode": "run",
+    "stopReason": null,
+    "failure": null
+  },
+  "compactArtifacts": [
+    {
+      "file": "REPORT.md",
+      "sha256": "933cef89baa72e3993c59932f7642647a2d0129ac651e850bbed7d7cd60b7841"
+    },
+    {
+      "file": "PATCH_PROPOSALS.md",
+      "sha256": "18cbe69303d49eec0b824008ab7dffd1f179d875f1178478d62964ab40c50574"
+    },
+    {
+      "file": "results-summary.json",
+      "sha256": "db1c5a5440f369b2e7b5713028cf4f21337252217259b4c936d2a46ff814698f"
+    },
+    {
+      "file": "manifest.json",
+      "sha256": "37e49db8ff95a1346cf3ad0390714366f8e5b47e86c1c9ef9050be0e1311616c"
+    },
+    {
+      "file": "identity.json",
+      "sha256": "647fd7f2ef98c28e7f3296fe690ca6601c4f60154834ad5a162ba51bc777f196"
+    },
+    {
+      "file": "resolved-builds.json",
+      "sha256": "cbae4350bce26e7573f2ab76754a5462a5d828d4ad518b01adcf03404a5876a8"
+    },
+    {
+      "file": "complete.json",
+      "sha256": "430cd014518459114a07255b58aa16c6e3c8bbe61c3d5967f01515b12a02a650"
+    },
+    {
+      "file": "raw-inventory.json",
+      "sha256": "05b93c74160d631c9b92bc7b39cec544c7a5f3989095d51de853c2c9f77e5c12"
+    },
+    {
+      "file": "seal.json",
+      "sha256": "f38059dcb66477ac88b8c5a7d14307e44edc5c292420fecc9a08d87557f8ee72"
+    },
+    {
+      "file": "qualification-complete.json",
+      "sha256": "d458473fbc6c03327e35aad8092c79d8462ea871f39eea8c4a3bb165459b7543"
+    },
+    {
+      "file": "receipt-check-complete.json",
+      "sha256": "06e3d01e57ac20bb83d1ff3dac308a25e41bf2f13f6619ae387f114fe921b23b"
+    },
+    {
+      "file": "publication-validation.json",
+      "sha256": "24db7beb23527ef6ab5a51cae0b39a2d415292e75720722f234fce512cd03527"
+    }
+  ],
+  "rawInventoryValidation": {
+    "file": "raw-inventory.json",
+    "bytes": 1689334,
+    "sha256": "05b93c74160d631c9b92bc7b39cec544c7a5f3989095d51de853c2c9f77e5c12",
+    "entries": 6430,
+    "checked": 6430,
+    "totalExternalBytes": 17144135228,
+    "missing": 0,
+    "bytesMismatch": 0,
+    "hashMismatch": 0,
+    "examples": []
+  },
+  "validationPass": true
+}
