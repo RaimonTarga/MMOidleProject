@@ -122,6 +122,25 @@ for (const slot of ['weapon', 'armor', 'recovery', 'mobility'] as const) {
   assert.deepEqual(p.usesSkills.passives, equivalent.usesSkills.passives, 'evolution immediately rebuilds item effects');
   assert.equal(p.hasHealth.maxHp, equivalent.hasHealth.maxHp);
 }
+// Compressed Swamp progression must preserve resistance when +5 is consumed.
+for (const id of ['swamp-boots-t2', 'swamp-boots-t3']) {
+  const recipe = RECIPE_DATABASE.get(id)!;
+  const pred = recipe.evolvesFrom!;
+  const p = player();
+  p.tracksProgression.unlockedRecipes.push(id);
+  p.holdsInventory.inventory.push(pred);
+  p.holdsInventory.itemUpgrades[pred] = 5;
+  assert(equipItem(world, p, pred));
+  const beforeResistance = p.usesSkills.passives['mobility.slow-resistance'];
+  const beforeSpeed = p.hasPosition.speed;
+  for (const [k, v] of Object.entries(recipe.cost)) p.tracksProgression.essences[k as keyof typeof p.tracksProgression.essences] = v!;
+  p.tracksProgression.catalysts = { ...recipe.catalystCost } as Record<string, number>;
+  assert(evolveItem(world, p, id, 'evolve').success);
+  assert.equal(p.holdsInventory.equipment.mobility, id);
+  assert.equal(p.holdsInventory.itemUpgrades[id] ?? 0, 0);
+  assert(Math.abs(p.usesSkills.passives['mobility.slow-resistance'] - beforeResistance) < 1e-12, 'Swamp evolution preserves completed predecessor resistance');
+  assert(p.hasPosition.speed >= beforeSpeed, 'Swamp evolution does not reduce flat movement speed');
+}
 // A sole equipped predecessor needs no temporary unequip. Reconstruction leaves it alone.
 {
   const recipe = [...RECIPE_DATABASE.values()].find(r => r.slot === 'weapon' && r.evolvesFrom)!;

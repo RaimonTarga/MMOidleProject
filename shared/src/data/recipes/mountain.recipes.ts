@@ -507,7 +507,7 @@ export const mountainRecipeEntries = [
     stats: {}, tier: 3,
     // Worth little when abilities are a minor part of the build — the specialisation
     // IS the opportunity cost, so no explicit penalty is authored.
-    mechanicEffects: { 'technique.cooldown-reduction-pct': 0.20, 'technique.power-pct': 0.20 },
+    mechanicEffects: { 'technique.cooldown-reduction-pct': 0.20, 'technique.power-pct': 0.30 },
     icon: 'items/cores/arcanist.png',
     description: 'Thin air, long thoughts. The gap between what you can do and how often shrinks.',
   }],

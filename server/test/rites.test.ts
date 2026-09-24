@@ -86,6 +86,14 @@ assert(!craftRiteRecipe(world, player, "rite-recipe-blood-offering").success, "s
 player.tracksProgression.knownRites.push("blood-offering");
 assert(!setRiteLoadout(world, player, ["blood-offering"]).success, "stale equip blocked even when known");
 assert(riteLoadoutCost(["blood-offering"]) === 0, "no retired RP charge");
+assert(runicPointLoadoutCost({ abilities: { techniques: [], guards: ["brace"] }, stances: [], rules: [], rites: ["blood-offering", "hunters-instinct", "swift-repose"] }) ===
+  runicPointLoadoutCost({ abilities: { techniques: [], guards: ["brace"] }, stances: [], rules: [], rites: ["swift-repose"] }), "legacy retirement releases RP in the complete loadout");
+assert(migrateSavedRiteIds(undefined).length === 0, "pre-Rite saves normalize safely");
+assert(migrateSavedRiteIds(["unknown", "hunters-instinct", "blood-offering"]).length === 0, "unknown and retired equipped IDs are ignored");
+const resourcesBefore = JSON.stringify([player.tracksProgression.essences, player.tracksProgression.catalysts]);
+migrateSavedRiteIds(["blood-offering"], true);
+assert(!craftRiteRecipe(world, player, "rite-recipe-blood-offering").success, "retired craft remains rejected");
+assert(JSON.stringify([player.tracksProgression.essences, player.tracksProgression.catalysts]) === resourcesBefore, "retirement gives no essence or catalyst refund");
 const saved=["hunters-instinct","blood-offering","swift-repose"];
 const known=migrateSavedRiteIds(saved,true), equipped=migrateSavedRiteIds(saved);
 assert(JSON.stringify(known) === JSON.stringify(["blood-offering","swift-repose"]), "retain historical acquisition");

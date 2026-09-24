@@ -206,14 +206,14 @@ export const swampRecipeEntries = [
     evolvesFrom: 'swamp-boots-t1',
     cost: { purple: 44 }, stats: { speed: 32 }, tier: 2, // family-tag: swamp mobility → Fortified
     reconstructCost: { purple: 154 }, reconstructCatalystCost: { fortified: 2 },
-    mechanicEffects: { 'mobility.slow-resistance': 0.45 },
+    mechanicEffects: { 'mobility.slow-resistance': 0.40 },
     icon: 'items/boots/wetland-wraps.png',
     description: 'Enchanted bindings that find footing where there should be none.',
     upgrades: [
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: { purple: 12 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: { purple: 30 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 2 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: { purple: 12 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 2 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: { purple: 30 }, requiredBiomeLevel: 10 },
       { stats: { speed: 1 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: { purple: 48 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: { purple: 78 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 2 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: { purple: 78 }, requiredBiomeLevel: 10 },
       { stats: { speed: 2 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: { purple: 132 }, catalystCost: { fortified: 1 }, requiredBiomeLevel: 10 },
     ],
   }],
@@ -300,7 +300,7 @@ export const swampRecipeEntries = [
     evolvesFrom: 'swamp-boots-t2',
     cost: { purple: 100 }, stats: { speed: 58 }, tier: 3, // family-tag: swamp mobility → Fortified
     reconstructCost: { purple: 350 }, reconstructCatalystCost: { fortified: 3 },
-    mechanicEffects: { 'mobility.slow-resistance': 0.62 },
+    mechanicEffects: { 'mobility.slow-resistance': 0.50 },
     icon: 'items/boots/mire-striders.png',
     description: 'Nothing the bog grips holds them; they walk free of any mire that tries to keep them.',
     upgrades: [
