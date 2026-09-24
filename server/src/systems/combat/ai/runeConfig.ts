@@ -27,6 +27,7 @@ import { POWERING_UP_ID, poweringUpFullyCharged } from "../../player/stances/sta
 export const RUNE_FLEE_FLAG = "rune.flee";
 export const RUNE_KEEP_DISTANCE_FLAG = "rune.keepDistance";
 export const RUNE_WAIT_FOR_REGEN_FLAG = "rune.waitForRegen";
+export const RUNE_WAIT_FOR_SUMMONS_FLAG = "rune.waitForSummons";
 export const RUNE_WAIT_IT_OUT_FLAG = "rune.waitItOut";
 export const RUNE_WAIT_FOR_EXECUTION_FLAG = "rune.waitForExecution";
 export const RUNE_TACTICAL_RELOAD_FLAG = "rune.tacticalReload";
@@ -233,6 +234,36 @@ export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
       RUNE_WAIT_IT_OUT_FLAG,
       d.waitItOut && playerHasWaitOutStatus(world, player),
     );
+    const summons = player.summonsMinions;
+    let missingSummon = false;
+    let summonsEngaged = false;
+    if (d.waitForSummons && summons) {
+      for (let slot = 0; slot < summons.targetCount; slot++) {
+        const minion = world.getMinionEntity(summons.minionIds[slot] ?? "");
+        if (!minion || minion.hasHealth.hp <= 0) {
+          missingSummon = true;
+          continue;
+        }
+        const targetId = minion.hasAttackTarget?.targetId;
+        const target = targetId ? world.getMonsterEntity(targetId) : undefined;
+        if (target && target.hasHealth.hp > 0 && target.hasPosition.nodeId === player.hasPosition.nodeId) {
+          summonsEngaged = true;
+        }
+      }
+      // Conduit fights through its bodies: an enemy attacking a surviving
+      // summon must also interrupt the hold, even if the owner has no target.
+      if (missingSummon && !summonsEngaged) {
+        for (const monster of world.aggroedMonsters) {
+          if (monster.hasAggroTarget.targetKind === "minion" &&
+            summons.minionIds.includes(monster.hasAggroTarget.targetId) &&
+            monster.hasHealth.hp > 0 && monster.hasPosition.nodeId === player.hasPosition.nodeId) {
+            summonsEngaged = true;
+            break;
+          }
+        }
+      }
+    }
+    setFlag(player.tracksCombat, RUNE_WAIT_FOR_SUMMONS_FLAG, d.waitForSummons && missingSummon && !summonsEngaged);
     setFlag(player.tracksCombat, RUNE_WAIT_FOR_EXECUTION_FLAG, d.waitForExecution);
     setFlag(player.tracksCombat, RUNE_TACTICAL_RELOAD_FLAG, d.tacticalReload);
     setFlag(player.tracksCombat, RUNE_FOLLOW_LEADER_FLAG, d.followLeader);

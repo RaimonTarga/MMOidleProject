@@ -10,6 +10,7 @@
  */
 import {
   ACTION_DATABASE,
+  getFlag,
   distanceSq,
   type Vec2,
 } from '@mmo-idle/shared';
@@ -30,7 +31,7 @@ import {
   resolveCommandedMoveDestination,
 } from './command';
 import { summonerProfileFor } from './profile';
-import { getRuneDecisions } from '../../../combat/ai/runeConfig';
+import { getRuneDecisions, RUNE_WAIT_FOR_SUMMONS_FLAG } from '../../../combat/ai/runeConfig';
 import { getAutoTargetId } from '../../../combat/ai/targetPriority';
 
 // Pixels — how close to the follow offset is "close enough" to idle.
@@ -206,7 +207,8 @@ export function driveMinion(
   }
 
   const inherited = inheritedRuneTarget(world, owner, leashRadius);
-  const target = focusOverride ?? (inherited !== undefined ? inherited : isSwarm
+  const rebuilding = owner.usesAutocombat.auto && getFlag(owner.tracksCombat, RUNE_WAIT_FOR_SUMMONS_FLAG);
+  const target = focusOverride ?? (rebuilding ? null : inherited !== undefined ? inherited : isSwarm
     ? findSwarmMinionTarget(world, owner, minion, leashRadius)
     : findMinionTarget(world, owner, leashRadius));
   const stickyTarget = isSwarm || !!focusOverride || !!inherited;

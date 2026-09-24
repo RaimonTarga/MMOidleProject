@@ -86,6 +86,7 @@ Actions:
 - `spread-dots` (shown as "Spread DoTs"; DoT classes only)
 - `tactical-reload` (shown as "Reload Safely"; reload classes only)
 - `wait-for-execution` (shown as "Ready Execution"; cooldown classes only)
+- `wait-for-summons` (shown as "Rebuild Formation"; summoner classes only)
 - `wait-for-regen` (shown as "Recover First")
 - `auto-path-enemy` (shown as "Find Enemies")
 - `avoid-hazards`
@@ -98,6 +99,18 @@ New players start with all situation fragments as baseline vocabulary, including
 `inside-telegraph`, plus the responses required by the default loadout and a small
 set of basic timing/party responses. Additional responses come from one-time rune
 forge recipes. `step-back` unlocks at Cave mastery level 2.
+
+Reload Safely, Ready Execution, and Rebuild Formation are baseline class actions,
+available without crafting but absent from the default loadout. The editor only
+shows them to the matching archetype (including its later class evolutions). The
+old reload/execution recipes are deprecated, hidden, and rejected by the server;
+their IDs remain valid for saved crafting history. Each action costs 1 RP.
+
+With **Always**, these actions hold as soon as active combat ends, even during the
+combat grace period. **Out of Combat** waits until that period expires. Active
+combat takes priority. Rebuild Formation waits for missing formation slots only,
+never for living summons to reach full HP, and prevents autonomous summon pulls
+while rebuilding. Maintenance actions compose with Recover First and Wait It Out.
 
 ## Budget
 
@@ -174,6 +187,7 @@ The derived rune result is translated into existing AI controls:
 - `inside-telegraph -> step-back` sets `rune.evadeTelegraph`
 - `wait-for-regen` sets `rune.waitForRegen`
 - `wait-for-execution` sets `rune.waitForExecution`
+- `wait-for-summons` sets `rune.waitForSummons` while a formation slot is absent and neither owner nor surviving summons are fighting
 - `tactical-reload` sets `rune.tacticalReload`
 - `follow-and-assist` sets `rune.followLeader` and `focusLeaderTarget`
 - `lead-the-way` sets `rune.leadTheWay` and uses the same local enemy-search
@@ -245,8 +259,10 @@ speed.
 gone, including during the post-combat regen cooldown. Once regeneration is
 allowed, it keeps the player stopped until HP is full.
 
-`wait-for-execution` stops cooldown classes out of combat until their execution
-is armed (`hasEmpoweredAttack`), then normal targeting/search resumes.
+`wait-for-execution` stops cooldown classes until their execution is armed
+(`hasEmpoweredAttack`), then normal targeting/search resumes. Its condition chooses
+immediate disengagement (`always`) or grace-period expiry (`when-idle`), as with
+Reload Safely and Rebuild Formation.
 
 `avoid-hazards` and `careful-pulling` now use independent channels, so a player
 can safely approach a target without losing either behavior. `avoid-enemies` is

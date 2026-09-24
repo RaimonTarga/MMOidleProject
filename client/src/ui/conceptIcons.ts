@@ -71,6 +71,7 @@ const ACTION_IDS = new Set([
   'focus-elites',
   'tactical-reload',
   'wait-for-execution',
+  'wait-for-summons',
   'wait-for-regen',
   'wait-it-out',
   'auto-path-enemy',

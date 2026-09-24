@@ -28,6 +28,7 @@ import {
   RUNE_WAIT_FOR_EXECUTION_FLAG,
   RUNE_WAIT_FOR_REGEN_FLAG,
   RUNE_WAIT_IT_OUT_FLAG,
+  RUNE_WAIT_FOR_SUMMONS_FLAG,
   getRuneDecisions,
 } from "../combat/ai/runeConfig";
 
@@ -216,6 +217,17 @@ function travelIntent(
 
 function maintenanceIntent(player: PlayerEntity): HasAutoIntent | null {
   if (
+    getFlag(player.tracksCombat, RUNE_WAIT_FOR_SUMMONS_FLAG) &&
+    player.hasAttackTarget === undefined
+  ) {
+    return {
+      kind: "idle",
+      reason: "Waiting for missing summons to reconstruct",
+      source: ruleLabel(player, "wait-for-summons"),
+      activeRune: runeTrace(player, "wait-for-summons"),
+    };
+  }
+  if (
     getFlag(player.tracksCombat, RUNE_WAIT_FOR_REGEN_FLAG) &&
     player.hasAttackTarget === undefined &&
     player.hasHealth.hp < player.hasHealth.maxHp
@@ -255,7 +267,7 @@ function maintenanceIntent(player: PlayerEntity): HasAutoIntent | null {
     getFlag(player.tracksCombat, RUNE_TACTICAL_RELOAD_FLAG) &&
     player.hasAttackTarget === undefined &&
     player.usesReload !== undefined &&
-    player.usesReload.reloadingMs > 0
+    (player.usesReload.reloadingMs > 0 || player.usesReload.ammo < player.usesReload.ammoMax)
   ) {
     return {
       kind: "idle",

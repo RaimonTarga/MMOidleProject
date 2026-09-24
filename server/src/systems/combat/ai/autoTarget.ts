@@ -43,6 +43,7 @@ import {
   RUNE_WAIT_FOR_EXECUTION_FLAG,
   RUNE_WAIT_FOR_REGEN_FLAG,
   RUNE_WAIT_IT_OUT_FLAG,
+  RUNE_WAIT_FOR_SUMMONS_FLAG,
 } from "./runeConfig";
 import { steerOutOfTelegraphs } from "./telegraphEvasion";
 import { steerOutOfPersistentHazards } from "./dynamicHazardAvoidance";
@@ -654,7 +655,8 @@ export function updateAutoTargets(world: World, now: number) {
     }
 
     if (
-      getFlag(player.tracksCombat, RUNE_WAIT_IT_OUT_FLAG) &&
+      (getFlag(player.tracksCombat, RUNE_WAIT_IT_OUT_FLAG) ||
+        getFlag(player.tracksCombat, RUNE_WAIT_FOR_SUMMONS_FLAG)) &&
       player.hasAttackTarget === undefined
     ) {
       setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
@@ -677,7 +679,7 @@ export function updateAutoTargets(world: World, now: number) {
       getFlag(player.tracksCombat, RUNE_TACTICAL_RELOAD_FLAG) &&
       player.hasAttackTarget === undefined &&
       player.usesReload !== undefined &&
-      player.usesReload.reloadingMs > 0
+      (player.usesReload.reloadingMs > 0 || player.usesReload.ammo < player.usesReload.ammoMax)
     ) {
       setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
       stopEntity(world, player);
@@ -772,7 +774,7 @@ export function steerTowardTarget(
   if (
     getFlag(player.tracksCombat, RUNE_TACTICAL_RELOAD_FLAG) &&
     player.usesReload &&
-    player.usesReload.reloadingMs > 0 &&
+    (player.usesReload.reloadingMs > 0 || player.usesReload.ammo < player.usesReload.ammoMax) &&
     !targetIsAggroed &&
     player.hasAttackTarget === undefined
   ) {

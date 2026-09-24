@@ -92,6 +92,7 @@ export type RuneActionId =
   | "focus-elites"
   | "tactical-reload"
   | "wait-for-execution"
+  | "wait-for-summons"
   | "wait-for-regen"
   | "wait-it-out"
   | "auto-path-enemy"
@@ -557,11 +558,11 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
     {
       id: "tactical-reload",
       name: "Reload Safely",
-      blurb: "Out of combat, pause to refill reload-class clips.",
+      blurb: "Pause to refill your clip. Always holds as soon as combat disengages; Out of Combat waits for the combat grace period to expire.",
       cost: 1,
       tier: 1,
       channel: "RESOURCE_MAINTENANCE",
-      allowedConditionIds: RECOVERY_CONDITIONS,
+      allowedConditionIds: RECOVER_FIRST_CONDITIONS,
       requiredArchetype: "reload",
     },
   ],
@@ -570,12 +571,25 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
     {
       id: "wait-for-execution",
       name: "Ready Execution",
-      blurb: "Out of combat, wait until your cooldown-class execution is ready.",
+      blurb: "Wait until your execution is ready. Always holds as soon as combat disengages; Out of Combat waits for the combat grace period to expire.",
       cost: 1,
       tier: 1,
       channel: "OOC_MAINTENANCE",
-      allowedConditionIds: RECOVERY_CONDITIONS,
+      allowedConditionIds: RECOVER_FIRST_CONDITIONS,
       requiredArchetype: "cooldown",
+    },
+  ],
+  [
+    "wait-for-summons",
+    {
+      id: "wait-for-summons",
+      name: "Rebuild Formation",
+      blurb: "Wait until every missing summon is reconstructed, without waiting for full summon HP. Always holds as soon as combat disengages; Out of Combat waits for the combat grace period to expire.",
+      cost: 1,
+      tier: 1,
+      channel: "OOC_MAINTENANCE",
+      allowedConditionIds: WAIT_IT_OUT_CONDITIONS,
+      requiredArchetype: "summoner",
     },
   ],
   [
@@ -759,6 +773,10 @@ export const STARTER_RUNE_IDS: string[] = Array.from(
     // `craftRuneRecipe` before any essence is spent.
     "wait-for-regen",
     "wait-it-out",
+    // Class maintenance is baseline vocabulary, filtered by requiredArchetype.
+    "tactical-reload",
+    "wait-for-execution",
+    "wait-for-summons",
     "flee",
     "while-traveling",
     "fight-back",
@@ -1320,6 +1338,7 @@ export interface DerivedRuneConfig {
   waitItOut: boolean;
   tacticalReload: boolean;
   waitForExecution: boolean;
+  waitForSummons: boolean;
   followLeader: boolean;
   leadTheWay: boolean;
   tauntCurrentTarget: boolean;
@@ -1422,6 +1441,7 @@ export function deriveAutoConfigFromRunes(
     waitItOut: false,
     tacticalReload: false,
     waitForExecution: false,
+    waitForSummons: false,
     followLeader: false,
     leadTheWay: false,
     tauntCurrentTarget: false,
@@ -1442,7 +1462,8 @@ export function deriveAutoConfigFromRunes(
     // running. They self-gate on actual engagement, so they stop the player from
     // seeking the next enemy only after nothing is attacking them.
     const holdsWhileDisengaged =
-      action.channel === "OOC_MAINTENANCE" && condition.id === "always" && !engaged;
+      (action.channel === "OOC_MAINTENANCE" || action.channel === "RESOURCE_MAINTENANCE") &&
+      condition.id === "always" && !engaged;
     if (
       (action.channel === "OOC_MAINTENANCE" ||
         action.channel === "RESOURCE_MAINTENANCE") &&
@@ -1555,6 +1576,9 @@ export function deriveAutoConfigFromRunes(
   }
   if (derived.resourceMaintenanceAction === "tactical-reload") {
     derived.tacticalReload = true;
+  }
+  if (oocMaintenanceActions.has("wait-for-summons")) {
+    derived.waitForSummons = true;
   }
   if (oocMaintenanceActions.has("wait-for-execution")) {
     derived.waitForExecution = true;

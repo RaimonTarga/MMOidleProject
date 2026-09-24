@@ -37,6 +37,7 @@ import {
   RUNE_WAIT_FOR_EXECUTION_FLAG,
   RUNE_WAIT_FOR_REGEN_FLAG,
   RUNE_WAIT_IT_OUT_FLAG,
+  RUNE_WAIT_FOR_SUMMONS_FLAG,
 } from "../combat/ai/runeConfig";
 import { isPlayerActivelyInCombat } from "../combat/ai/engagement";
 import { clearAutoTarget } from "../combat/ai/targetPriority";
@@ -267,10 +268,11 @@ function travelMaintenanceOwns(player: PlayerEntity): boolean {
     (getFlag(player.tracksCombat, RUNE_WAIT_FOR_REGEN_FLAG) &&
       player.hasHealth.hp < player.hasHealth.maxHp) ||
     getFlag(player.tracksCombat, RUNE_WAIT_IT_OUT_FLAG) ||
+    getFlag(player.tracksCombat, RUNE_WAIT_FOR_SUMMONS_FLAG) ||
     (getFlag(player.tracksCombat, RUNE_WAIT_FOR_EXECUTION_FLAG) &&
       player.usesCooldown !== undefined && player.hasEmpoweredAttack === undefined) ||
     (getFlag(player.tracksCombat, RUNE_TACTICAL_RELOAD_FLAG) &&
-      player.usesReload !== undefined && player.usesReload.reloadingMs > 0)
+      player.usesReload !== undefined && (player.usesReload.reloadingMs > 0 || player.usesReload.ammo < player.usesReload.ammoMax))
   );
 }
 

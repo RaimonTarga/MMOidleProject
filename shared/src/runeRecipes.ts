@@ -65,6 +65,8 @@ const recipes: RuneRecipe[] = [
   },
   {
     id: "rune-recipe-reload-safely",
+    // Baseline class action; retain the recipe ID only for existing saves.
+    deprecated: true,
     name: "Reload Safely",
     description: "Unlocks out-of-combat reload maintenance for reload classes.",
     kind: "unlock-rune",
@@ -77,6 +79,8 @@ const recipes: RuneRecipe[] = [
   },
   {
     id: "rune-recipe-ready-execution",
+    // Baseline class action; retain the recipe ID only for existing saves.
+    deprecated: true,
     name: "Ready Execution",
     description: "Unlocks out-of-combat execution waiting for cooldown classes.",
     kind: "unlock-rune",
