@@ -443,6 +443,15 @@ export function SettingsPanel({ onClose, onSwitchCharacter }: Props) {
           </div>
         ) : (
           <div className="settings-gameplay">
+            {/* Temporary notice while we develop the audio system and replace placeholder sounds. */}
+            <div className="settings-audio-notice">
+              <strong>Audio preview</strong>
+              <p>
+                Audio is still a work in progress and starts muted for this playtest.
+                Enable it below if you’d like to try it. The current sounds are
+                placeholders and don’t reflect the planned final audio.
+              </p>
+            </div>
             <label className="settings-toggle-row">
               <input
                 type="checkbox"

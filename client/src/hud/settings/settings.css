@@ -244,6 +244,22 @@
   padding: 4px 0 8px;
 }
 
+.settings-audio-notice {
+  margin-bottom: 16px;
+  padding: 12px;
+  border: 1px solid var(--hud-edge-divider);
+  border-radius: 2px;
+  background: var(--btn-bg);
+  color: var(--hud-text);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.settings-audio-notice p {
+  margin: 4px 0 0;
+  color: var(--hud-text-muted);
+}
+
 .settings-toggle-row {
   display: flex;
   align-items: center;

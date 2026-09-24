@@ -8,15 +8,17 @@ export interface AudioSettings {
   musicMuted: boolean;
 }
 
-// Bump the version to retire saved (louder) defaults — clients re-seed from the
-// quieter DEFAULTS below on next load. Old keys are simply ignored.
-const STORAGE_KEY = 'mmo_audio_settings_v2';
+// TEMPORARY PLAYTEST POLICY: start audio muted until the system matures with
+// better authored sounds. Revisit these defaults and the Audio Settings notice
+// when that work is ready. v3 retires saved v2 preferences so returning players
+// also start muted; subsequent opt-in and volume choices persist normally.
+const STORAGE_KEY = 'mmo_audio_settings_v3';
 
 const DEFAULTS: AudioSettings = {
   sfxVolume: 0.3,
   musicVolume: 0.2,
-  sfxMuted: false,
-  musicMuted: false,
+  sfxMuted: true,
+  musicMuted: true,
 };
 
 function clamp01(n: number): number {
