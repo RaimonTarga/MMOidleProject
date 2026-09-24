@@ -8,7 +8,7 @@
   "comparisonGroups": 20,
   "sourceCommit": "0d392fdddaec7ed31876699589f291c8c840a5e5",
   "files": {
-    ".gitattributes": "8b9c3028d6467ff3be7c793141927841d70f47f52d0590677438f488ca154992",
+    ".gitattributes": "5992700fbc04d30a9f6602eff31110034a401b1ec36438890051b346bbc9ef1a",
     "BACKLOG.md": "570593b874ec33b933694b58e09b76e6d84159eabd7994a644b0d486d8727b56",
     "BRIEF.md": "417c77515f5a1abcdd4a7bdc797c85a96c7230fa10b22b195245a03d1c55fddb",
     "candidate-identity.json": "09181fd1d47ea8901a04fa61e0d9004fc5faa409e4140d472c774c0c8898ab47",
@@ -39,6 +39,6 @@
     "rite-opportunity-evidence.json": "8cb3654321735dbadabeb8463d085cf5c02fd481599efae3cb34c654adc52aca",
     "seal.json": "aa9cfe59eecc0ea6d776bc6af863b0208a5f5567439461240a350cbaefaa5d46",
     "validate-preparation.mjs": "df8ec405c2e8e856b4e4e04001ff3f2bb24915072d7efbc7e6df37b0e6b63608",
-    "VALIDATION.md": "437d3d407141f0da9f570277e1a9f512b2214797dcb754950babc57af8a83bdd"
+    "VALIDATION.md": "ac2fa04ca0a1cf7ea100f326cbc17bf14858ce8e7239fbbf23e7d1376253043b"
   }
 }

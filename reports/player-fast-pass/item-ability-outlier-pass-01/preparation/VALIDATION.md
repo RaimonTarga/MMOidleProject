@@ -10,3 +10,5 @@
 - Receipt replay44/44 passed, zero combat;474436ms wall time. Full resolved-builds bytes match qualification (SHA256 `7a4c59e333ad0d817f9f36351955fd4a5f5f98ed4816c54aef540b498f067b2a`).
 - Independent retirement branch: `rites.test.ts`, `pnpm typecheck`, shared build and server build passed. Generated build artifact was restored; only scoped retirement changes committed. No DB migration/bulk edit/compensation.
 - Full test suite and browser/live-play tests were not run. No live combat balance conclusion is claimed. No real scheduled observation has started.
+
+The attached BRIEF.md retains its original Markdown hard-break spaces; its per-file whitespace attribute permits those intentional line endings. Final packet validation and source verify passed; main-worktree dirty paths were unchanged.
