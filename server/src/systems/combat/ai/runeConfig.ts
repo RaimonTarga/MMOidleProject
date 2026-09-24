@@ -1,3 +1,4 @@
+import { updateHeatManagement, heatManagementState, heatEngagementTargets } from "./heatManagement";
 import {
   deriveAutoConfigFromRunes,
   getFlag,
@@ -117,6 +118,7 @@ function isEliteTarget(world: World, targetId: string | undefined): boolean {
  * are written to the server-only combat-state bag.
  */
 export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
+  for (const player of world.playerEntities) updateHeatManagement(world, player);
   for (const player of world.livePlayers) {
     const { count: currentAggroCount, charging: enemyCharging } = aggroStats(
       world,
@@ -132,8 +134,10 @@ export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
       targetHpPct: attackTarget
         ? attackTarget.hasHealth.hp / Math.max(1, attackTarget.hasHealth.maxHp)
         : undefined,
-      inCombat: currentAggroCount > 0 || isPlayerInCombat(player, now),
-      activelyEngaged: isPlayerActivelyInCombat(world, player),
+      inCombat: currentAggroCount > 0 || isPlayerInCombat(player, now) ||
+        (heatManagementState(player) === "requested" && heatEngagementTargets(world, player).size > 0),
+      activelyEngaged: isPlayerActivelyInCombat(world, player) ||
+        (heatManagementState(player) === "requested" && heatEngagementTargets(world, player).size > 0),
       inParty: player.inParty !== undefined,
       aggroCount: currentAggroCount,
       combatArchetype: player.usesSkills.combatArchetype,
@@ -172,6 +176,7 @@ export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
       ctx,
     );
 
+    setString(player.tracksCombat, "rune.heatManagement", heatManagementState(player));
     const ac = player.usesAutocombat;
     runeDecisions.set(player, [
       ...Object.entries(d.claimed).flatMap(([channel, claim]) =>
@@ -231,7 +236,8 @@ export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
     setFlag(
       player.tracksCombat,
       RUNE_WAIT_IT_OUT_FLAG,
-      d.waitItOut && playerHasWaitOutStatus(world, player),
+      heatManagementState(player) === "waiting" ||
+        (d.waitItOut && d.oocMaintenanceClaims.some(c => c.action.id === "wait-it-out" && c.rule.waitOutMode !== "heat-managed") && playerHasWaitOutStatus(world, player)),
     );
     setFlag(player.tracksCombat, RUNE_WAIT_FOR_EXECUTION_FLAG, d.waitForExecution);
     setFlag(player.tracksCombat, RUNE_TACTICAL_RELOAD_FLAG, d.tacticalReload);

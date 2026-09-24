@@ -21,7 +21,7 @@ export function gameplayBuild(p: PlayerEntity): GameplayBuild {
     techniques: [...p.tracksProgression.attunedAbilities.techniques], guards: [...p.tracksProgression.attunedAbilities.guards],
     stances: [...(p.tracksProgression.attunedStances ?? [])], defaultStance: p.tracksProgression.equippedStances.default,
     rites: [...p.tracksProgression.equippedRites],
-    runes: p.tracksProgression.runesEquipped.map(r => ({ conditionId: r.conditionId, actionId: r.actionId, targetStanceId: r.targetStanceId, targetAbilityId: r.targetAbilityId })),
+    runes: p.tracksProgression.runesEquipped.map(r => ({ conditionId: r.conditionId, actionId: r.actionId, targetStanceId: r.targetStanceId, targetAbilityId: r.targetAbilityId, waitOutMode: r.waitOutMode })),
     auto: p.usesAutocombat.auto, autoTraverse: p.usesAutocombat.autoTraverse,
     priorityMode: p.usesAutocombat.priorityMode, acquireRadius: p.usesAutocombat.acquireRadius,
     focusLeaderTarget: p.usesAutocombat.focusLeaderTarget,

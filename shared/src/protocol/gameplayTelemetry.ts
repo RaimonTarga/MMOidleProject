@@ -16,7 +16,7 @@ export interface GameplayBuild {
   stances: string[];
   defaultStance: string | null;
   rites: string[];
-  runes: Array<{ conditionId: string; actionId: string; targetStanceId?: string; targetAbilityId?: string }>;
+  runes: Array<{ conditionId: string; actionId: string; targetStanceId?: string; targetAbilityId?: string; waitOutMode?: "all" | "heat-managed" }>;
   auto: boolean;
   autoTraverse: boolean;
   priorityMode: string;

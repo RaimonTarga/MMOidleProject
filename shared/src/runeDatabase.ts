@@ -132,6 +132,7 @@ export interface EquippedRule {
   /** Required destination for switch-stance; invalid and ignored on other actions. */
   targetStanceId?: string;
   targetAbilityId?: string;
+  waitOutMode?: "all" | "heat-managed";
 }
 
 export const RUNE_CHANNELS: RuneChannel[] = [
@@ -783,6 +784,7 @@ export function normalizeRuneRule(rule: EquippedRule): EquippedRule {
   return {
     conditionId: LEGACY_CONDITION_IDS[rule.conditionId] ?? rule.conditionId,
     actionId: LEGACY_ACTION_IDS[rule.actionId] ?? rule.actionId,
+    ...(rule.waitOutMode !== undefined ? { waitOutMode: rule.waitOutMode } : {}),
     ...(rule.actionId === "use-ability" && typeof rule.targetAbilityId === "string" ? { targetAbilityId: rule.targetAbilityId } : {}),
     ...(rule.actionId === "switch-stance" && typeof rule.targetStanceId === "string"
       ? { targetStanceId: rule.targetStanceId }
@@ -867,6 +869,9 @@ export function isRuneRuleCompatibleForArchetype(
   const condition = CONDITION_DATABASE.get(rule.conditionId);
   const action = ACTION_DATABASE.get(rule.actionId);
   if (!condition || !action) return false;
+  if (rule.waitOutMode !== undefined && (rule.actionId !== "wait-it-out" ||
+      !["all", "heat-managed"].includes(rule.waitOutMode) ||
+      (rule.waitOutMode === "heat-managed" && rule.conditionId !== "always"))) return false;
   if (
     action.requiredArchetype !== undefined &&
     action.requiredArchetype !== combatArchetype
@@ -920,6 +925,7 @@ export function sanitizeRuneLoadout(
     sanitized.push({
       conditionId: raw.conditionId,
       actionId: raw.actionId,
+      ...(raw.waitOutMode !== undefined ? { waitOutMode: raw.waitOutMode } : {}),
       ...(raw.targetAbilityId ? { targetAbilityId: raw.targetAbilityId } : {}),
       ...(raw.targetStanceId ? { targetStanceId: raw.targetStanceId } : {}),
     });
@@ -1468,6 +1474,7 @@ export function deriveAutoConfigFromRunes(
     const rule: EquippedRule = {
       conditionId: condition.id,
       actionId: action.id,
+      ...(raw.waitOutMode !== undefined ? { waitOutMode: raw.waitOutMode } : {}),
       ...(raw.targetAbilityId ? { targetAbilityId: raw.targetAbilityId } : {}),
       ...(raw.targetStanceId ? { targetStanceId: raw.targetStanceId } : {}),
     };

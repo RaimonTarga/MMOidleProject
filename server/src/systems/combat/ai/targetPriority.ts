@@ -1,3 +1,4 @@
+import { heatAllowsTarget } from "./heatManagement";
 import type { World } from "../../../world/World";
 import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
 import { suppressedFeatureIdsForNode } from "../../world/pathMotion";
@@ -176,6 +177,7 @@ export function selectAutoCombatAction(
 
   let eligible = [...world.monsterEntitiesInNode(player.hasPosition.nodeId)].filter(
     (monster) =>
+      heatAllowsTarget(world, player, monster) &&
       (!options?.aggressorsOnly || isAggroedOnPlayer(monster, player)) &&
       passesGates(world, player, monster, ctx),
   );
@@ -590,6 +592,7 @@ export function nearestEngageableMonster(
 
   const candidates: Array<{ monster: MonsterEntity; distSq: number }> = [];
   for (const monster of world.monsterEntitiesInNode(nodeId)) {
+    if (!heatAllowsTarget(world, player, monster)) continue;
     if (skipBosses && monster.isMonster.isBoss) continue;
     if (monster.isInvulnerable) continue;
     if (monster.isConcealed) continue;

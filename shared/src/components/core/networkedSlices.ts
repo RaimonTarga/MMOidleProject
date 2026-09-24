@@ -285,6 +285,7 @@ export type AutoIntentKind = 'attack' | 'follow' | 'travel' | 'flee' | 'idle';
 
 /** Compact server-authored explanation of a Rune decision. */
 export interface RuneTraceRule {
+  waitOutMode?: "all" | "heat-managed";
   conditionId: string;
   actionId: string;
   targetStanceId?: string;

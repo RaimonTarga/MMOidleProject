@@ -112,6 +112,7 @@ export function BuildRunesTab() {
       ? {
           conditionId: draft.conditionId,
           actionId: draft.actionId,
+          ...(draft.waitOutMode ? { waitOutMode: draft.waitOutMode } : {}),
           ...(draft.targetAbilityId ? { targetAbilityId: draft.targetAbilityId } : {}),
           ...(draft.targetStanceId
             ? { targetStanceId: draft.targetStanceId }
@@ -215,7 +216,7 @@ export function BuildRunesTab() {
               {draft.actionId ? <div className="rune-step-summary">
                 <GameIcon source={runeResponse({ conditionId: draft.conditionId, actionId: draft.actionId }, abilities).icon} size={28} decorative fallback="◇" />
                 <span title={response?.detail}><strong>{ACTION_DATABASE.get(draft.actionId)?.name ?? draft.actionId}</strong><small>{ACTION_DATABASE.get(draft.actionId)?.cost} RP</small></span>
-                <button type="button" aria-label="Change Do response" onClick={() => setDraft({ ...draft, actionId: "", targetAbilityId: undefined, targetStanceId: undefined })}>↶ Change</button>
+                <button type="button" aria-label="Change Do response" onClick={() => setDraft({ ...draft, actionId: "", waitOutMode: undefined, targetAbilityId: undefined, targetStanceId: undefined })}>↶ Change</button>
               </div> : <div className="rune-choice-grid">
                 {actions.map((a) => {
                   const view = runeResponse(
@@ -231,6 +232,7 @@ export function BuildRunesTab() {
                         setDraft({
                           ...draft,
                           actionId: a.id,
+                          waitOutMode: undefined,
                           targetStanceId:
                             a.id === "switch-stance"
                               ? draft.targetStanceId
@@ -254,6 +256,7 @@ export function BuildRunesTab() {
               </div>}
               {response && draft.actionId !== "use-ability" && draft.actionId !== "switch-stance" && <p className="rune-detail">{response.detail}</p>}
             </section>
+            {draft.actionId === "wait-it-out" && <section aria-label="Wait mode"><button type="button" aria-pressed={draft.waitOutMode !== "heat-managed"} onClick={() => setDraft({ ...draft, waitOutMode: "all" })}>All eligible statuses</button><button type="button" disabled={draft.conditionId !== "always"} aria-pressed={draft.waitOutMode === "heat-managed"} onClick={() => setDraft({ ...draft, waitOutMode: "heat-managed" })}>Manage Heat</button><p>Always only. Ordinary Volcano: 25 Heat to request a break; resume at 10. Current fights finish first.</p></section>}
             {draft.actionId === "use-ability" && <section ref={destinationSection} tabIndex={-1} aria-label="Choose attuned ability" className="rune-editor__destinations"><h3>Choose attuned ability</h3><div className="rune-choice-grid">{[...abilities.techniques, ...abilities.guards].map(id => <button className="rune-ability-choice" type="button" key={id} aria-pressed={draft.targetAbilityId === id} onClick={() => setDraft({ ...draft, targetAbilityId: id })}>{ABILITY_DATABASE.get(id)?.name}<small>Default: {triggerSentence(ABILITY_DATABASE.get(id)!.trigger)}</small></button>)}</div><p>Attunement is already paid. This rule costs only its logic.</p></section>}
             {draft.actionId === "switch-stance" && (
               <section
