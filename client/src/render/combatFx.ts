@@ -1482,8 +1482,8 @@ export function dispatchCombatEvent(
   if (!isOwnPlayerEvent && !isWatchedPlayerEvent && ev.kind !== 'player-hit') return;
   const actorId = isOwnPlayerEvent ? state.ownId : ev.playerId;
 
-  // Remote continuous beams/teleports retain their lightweight style renderer;
-  // they must never activate the local player's beam or movement controllers.
+  // Remote hits use the complete attack renderer, except continuous beams and
+  // teleports, which must never activate the local beam/movement controllers.
   if (!isOwnPlayerEvent && !isWatchedPlayerEvent && ev.kind === 'player-hit') {
     const player = presentation?.player ?? state.view.get(ev.playerId) as PlayerView | undefined;
     const from = state.sprite.get(ev.playerId) ?? presentation?.from;
