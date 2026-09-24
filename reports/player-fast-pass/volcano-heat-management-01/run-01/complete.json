@@ -1,0 +1,19 @@
+{
+  "planned": 26,
+  "primary": 18,
+  "alternative": 8,
+  "completed": 26,
+  "newCompleted": 26,
+  "dead": 0,
+  "failed": 0,
+  "omitted": 0,
+  "notRun": 0,
+  "qualified": 0,
+  "mode": "run",
+  "sourceCommit": "25289e490d4bfb53dd440ba436a67f596e5b91c4",
+  "launchAt": "2026-09-24T07:28:13.832Z",
+  "wallElapsedMs": 2735289,
+  "stopReason": null,
+  "combatObservations": 26,
+  "failure": null
+}

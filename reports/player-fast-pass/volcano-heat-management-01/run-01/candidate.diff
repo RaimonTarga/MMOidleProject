@@ -1,0 +1,603 @@
+diff --git a/client/src/ui/BuildRunesTab.tsx b/client/src/ui/BuildRunesTab.tsx
+index 4b3cdae1..5607aa4c 100644
+--- a/client/src/ui/BuildRunesTab.tsx
++++ b/client/src/ui/BuildRunesTab.tsx
+@@ -112,6 +112,7 @@ export function BuildRunesTab() {
+       ? {
+           conditionId: draft.conditionId,
+           actionId: draft.actionId,
++          ...(draft.waitOutMode ? { waitOutMode: draft.waitOutMode } : {}),
+           ...(draft.targetAbilityId ? { targetAbilityId: draft.targetAbilityId } : {}),
+           ...(draft.targetStanceId
+             ? { targetStanceId: draft.targetStanceId }
+@@ -215,7 +216,7 @@ export function BuildRunesTab() {
+               {draft.actionId ? <div className="rune-step-summary">
+                 <GameIcon source={runeResponse({ conditionId: draft.conditionId, actionId: draft.actionId }, abilities).icon} size={28} decorative fallback="◇" />
+                 <span title={response?.detail}><strong>{ACTION_DATABASE.get(draft.actionId)?.name ?? draft.actionId}</strong><small>{ACTION_DATABASE.get(draft.actionId)?.cost} RP</small></span>
+-                <button type="button" aria-label="Change Do response" onClick={() => setDraft({ ...draft, actionId: "", targetAbilityId: undefined, targetStanceId: undefined })}>↶ Change</button>
++                <button type="button" aria-label="Change Do response" onClick={() => setDraft({ ...draft, actionId: "", waitOutMode: undefined, targetAbilityId: undefined, targetStanceId: undefined })}>↶ Change</button>
+               </div> : <div className="rune-choice-grid">
+                 {actions.map((a) => {
+                   const view = runeResponse(
+@@ -231,6 +232,7 @@ export function BuildRunesTab() {
+                         setDraft({
+                           ...draft,
+                           actionId: a.id,
++                          waitOutMode: undefined,
+                           targetStanceId:
+                             a.id === "switch-stance"
+                               ? draft.targetStanceId
+@@ -254,6 +256,7 @@ export function BuildRunesTab() {
+               </div>}
+               {response && draft.actionId !== "use-ability" && draft.actionId !== "switch-stance" && <p className="rune-detail">{response.detail}</p>}
+             </section>
++            {draft.actionId === "wait-it-out" && <section aria-label="Wait mode"><button type="button" aria-pressed={draft.waitOutMode !== "heat-managed"} onClick={() => setDraft({ ...draft, waitOutMode: "all" })}>All eligible statuses</button><button type="button" disabled={draft.conditionId !== "always"} aria-pressed={draft.waitOutMode === "heat-managed"} onClick={() => setDraft({ ...draft, waitOutMode: "heat-managed" })}>Manage Heat</button><p>Always only. Ordinary Volcano: 25 Heat to request a break; resume at 10. Current fights finish first.</p></section>}
+             {draft.actionId === "use-ability" && <section ref={destinationSection} tabIndex={-1} aria-label="Choose attuned ability" className="rune-editor__destinations"><h3>Choose attuned ability</h3><div className="rune-choice-grid">{[...abilities.techniques, ...abilities.guards].map(id => <button className="rune-ability-choice" type="button" key={id} aria-pressed={draft.targetAbilityId === id} onClick={() => setDraft({ ...draft, targetAbilityId: id })}>{ABILITY_DATABASE.get(id)?.name}<small>Default: {triggerSentence(ABILITY_DATABASE.get(id)!.trigger)}</small></button>)}</div><p>Attunement is already paid. This rule costs only its logic.</p></section>}
+             {draft.actionId === "switch-stance" && (
+               <section
+diff --git a/client/src/ui/RuneClause.tsx b/client/src/ui/RuneClause.tsx
+index 92155a50..0782fccd 100644
+--- a/client/src/ui/RuneClause.tsx
++++ b/client/src/ui/RuneClause.tsx
+@@ -39,6 +39,7 @@ export function runeResponse(rule: EquippedRule, abilities: AttunedAbilities) {
+         "Return to your default posture when this rule no longer applies.",
+     };
+   }
++  if (rule.actionId === "wait-it-out" && rule.waitOutMode === "heat-managed") return { name: "Wait It Out / Manage Heat", icon: runeActionIconSource(rule.actionId), missing: false, detail: "Ordinary Volcano only: 25 Heat to request a break; resume at 10. Current fights finish first. Other afflictions do not extend this wait." };
+   const action = ACTION_DATABASE.get(rule.actionId);
+   return {
+     name: action?.name ?? rule.actionId,
+diff --git a/server/src/analytics/gameplayRecorder.ts b/server/src/analytics/gameplayRecorder.ts
+index 12360b09..c541b65d 100644
+--- a/server/src/analytics/gameplayRecorder.ts
++++ b/server/src/analytics/gameplayRecorder.ts
+@@ -21,7 +21,7 @@ export function gameplayBuild(p: PlayerEntity): GameplayBuild {
+     techniques: [...p.tracksProgression.attunedAbilities.techniques], guards: [...p.tracksProgression.attunedAbilities.guards],
+     stances: [...(p.tracksProgression.attunedStances ?? [])], defaultStance: p.tracksProgression.equippedStances.default,
+     rites: [...p.tracksProgression.equippedRites],
+-    runes: p.tracksProgression.runesEquipped.map(r => ({ conditionId: r.conditionId, actionId: r.actionId, targetStanceId: r.targetStanceId, targetAbilityId: r.targetAbilityId })),
++    runes: p.tracksProgression.runesEquipped.map(r => ({ conditionId: r.conditionId, actionId: r.actionId, targetStanceId: r.targetStanceId, targetAbilityId: r.targetAbilityId, waitOutMode: r.waitOutMode })),
+     auto: p.usesAutocombat.auto, autoTraverse: p.usesAutocombat.autoTraverse,
+     priorityMode: p.usesAutocombat.priorityMode, acquireRadius: p.usesAutocombat.acquireRadius,
+     focusLeaderTarget: p.usesAutocombat.focusLeaderTarget,
+diff --git a/server/src/systems/classes/archetypes/cooldown/t3/ticks/heavy/channeledBeam.ts b/server/src/systems/classes/archetypes/cooldown/t3/ticks/heavy/channeledBeam.ts
+index 36d26d41..c7f45538 100644
+--- a/server/src/systems/classes/archetypes/cooldown/t3/ticks/heavy/channeledBeam.ts
++++ b/server/src/systems/classes/archetypes/cooldown/t3/ticks/heavy/channeledBeam.ts
+@@ -1,3 +1,4 @@
++import { heatAllowsTarget } from '../../../../../../combat/ai/heatManagement';
+ import { mitigateOnHitDamage } from '@mmo-idle/shared';
+ import { playerOnHitDamage } from '../../../../../../combat/engine/onHitDamage';
+ import { outgoingFinalDamage } from '../../../../../../combat/damage/finalDamage';
+@@ -180,6 +181,7 @@ function findBeamTarget(world: World, player: PlayerEntity, excludeId?: string):
+   const attackRange = player.performsAttack.attackRange;
+ 
+   for (const entity of world.monsterEntitiesInNode(player.hasPosition.nodeId)) {
++    if (!heatAllowsTarget(world, player, entity)) continue;
+     if (excludeId && entity.isMonster.id === excludeId) continue;
+     if (isInvulnerableMonster(entity)) continue;
+     const monsterPH = posHitboxFromEntity(entity);
+diff --git a/server/src/systems/classes/archetypes/reload/t3/ticks/laser.ts b/server/src/systems/classes/archetypes/reload/t3/ticks/laser.ts
+index 719e1299..b9a0613e 100644
+--- a/server/src/systems/classes/archetypes/reload/t3/ticks/laser.ts
++++ b/server/src/systems/classes/archetypes/reload/t3/ticks/laser.ts
+@@ -1,3 +1,4 @@
++import { heatAllowsTarget } from '../../../../../combat/ai/heatManagement';
+ import { mitigateOnHitDamage } from '@mmo-idle/shared';
+ import { outgoingFinalDamage } from '../../../../../combat/damage/finalDamage';
+ import { resolveLaserProfile } from '@mmo-idle/shared';
+@@ -76,6 +77,7 @@ function findNearestTarget(world: World, player: PlayerEntity): MonsterEntity |
+   const attackRange = player.performsAttack.attackRange;
+ 
+   for (const entity of world.monsterEntitiesInNode(player.hasPosition.nodeId)) {
++    if (!heatAllowsTarget(world, player, entity)) continue;
+     const monsterPH = posHitboxFromEntity(entity);
+     if (!inAttackRange(playerPH, monsterPH, attackRange)) continue;
+     const gap = hitboxGap(playerPH, monsterPH);
+diff --git a/server/src/systems/classes/archetypes/summoner/ai.ts b/server/src/systems/classes/archetypes/summoner/ai.ts
+index e9110e36..945acf41 100644
+--- a/server/src/systems/classes/archetypes/summoner/ai.ts
++++ b/server/src/systems/classes/archetypes/summoner/ai.ts
+@@ -1,3 +1,4 @@
++import { heatAllowsTarget } from "../../../combat/ai/heatManagement";
+ /**
+  * Minion AI driver — runs once per minion per tick.
+  *
+@@ -72,6 +73,7 @@ function findMinionTarget(
+   let bestDistSq = Infinity;
+   for (const m of world.monsterEntitiesInNode(owner.hasPosition.nodeId)) {
+     if (m.hasHealth.hp <= 0) continue;
++    if (!heatAllowsTarget(world, owner, m)) continue;
+     const distSq = distanceSq(m.hasPosition.current, owner.hasPosition.current);
+     if (distSq > leashSq) continue;
+     if (distSq < bestDistSq) {
+@@ -93,6 +95,7 @@ function countMinionsTargetingMonster(
+     if (m.isMinion.ownerPlayerId !== ownerId) continue;
+     if (excludeMinionId && m.isMinion.id === excludeMinionId) continue;
+     if (m.hasHealth.hp <= 0) continue;
++
+     if (m.controlsMinion.currentTargetId === monsterId) count++;
+   }
+   return count;
+@@ -116,6 +119,7 @@ function findSwarmMinionTarget(
+ 
+   for (const m of world.monsterEntitiesInNode(nodeId)) {
+     if (m.hasHealth.hp <= 0) continue;
++    if (!heatAllowsTarget(world, owner, m)) continue;
+     if (distanceSq(m.hasPosition.current, ownerPos) > leashSq) continue;
+     candidates.push(m);
+   }
+diff --git a/server/src/systems/combat/ai/heatManagement.ts b/server/src/systems/combat/ai/heatManagement.ts
+new file mode 100644
+index 00000000..f3c52fa7
+--- /dev/null
++++ b/server/src/systems/combat/ai/heatManagement.ts
+@@ -0,0 +1,70 @@
++import type { World } from '../../../world/World';
++import type { PlayerEntity, MonsterEntity } from '../../../ecs/entity';
++import { NODE_REGISTRY } from '../../../world/nodeRegistry';
++
++export type HeatManagementState = 'normal' | 'requested' | 'waiting' | 'resumed';
++interface Request { targets: Set<string>; state: HeatManagementState }
++const requests = new WeakMap<PlayerEntity, Request>();
++
++function enabled(player: PlayerEntity): boolean {
++  const node = NODE_REGISTRY.get(player.hasPosition.nodeId);
++  return !!node && node.biomeGroup === 'volcanic' && !node.isDungeon
++    && !player.isDead && player.hasHealth.hp > 0 && player.usesAutocombat.auto
++    && !player.hasManualMoveIntent && !player.hasSummonerCommand
++    && player.tracksProgression.runesEquipped.some(r => r.actionId === 'wait-it-out'
++      && r.conditionId === 'always' && r.waitOutMode === 'heat-managed');
++}
++
++/** Include the whole formation; never manufacture disengagement by clearing targets. */
++export function heatEngagementTargets(world: World, player: PlayerEntity): Set<string> {
++  const targets = new Set<string>();
++  const minions = [...world.minionEntities].filter(m => m.isMinion.ownerPlayerId === player.isPlayer.id
++    && m.hasHealth.hp > 0 && m.hasPosition.nodeId === player.hasPosition.nodeId);
++  const ids = new Set(minions.map(m => m.isMinion.id));
++  if (player.hasAttackTarget) targets.add(player.hasAttackTarget.targetId);
++  if (player.isChanneling) targets.add(player.isChanneling.targetId);
++  for (const m of minions) {
++    if (m.hasAttackTarget) targets.add(m.hasAttackTarget.targetId);
++    if (m.controlsMinion.currentTargetId) targets.add(m.controlsMinion.currentTargetId);
++  }
++  for (const m of world.monsterEntitiesInNode(player.hasPosition.nodeId)) {
++    const a = m.hasAggroTarget;
++    if (a && (a.targetKind === 'player' ? a.targetId === player.isPlayer.id : ids.has(a.targetId))) targets.add(m.isMonster.id);
++  }
++  for (const id of targets) {
++    const m = world.getMonsterEntity(id);
++    if (!m || m.hasHealth.hp <= 0 || m.hasPosition.nodeId !== player.hasPosition.nodeId) targets.delete(id);
++  }
++  return targets;
++}
++
++export function updateHeatManagement(world: World, player: PlayerEntity): void {
++  if (!enabled(player)) { requests.delete(player); return; }
++  const heat = player.tracksCombat.statusEffects.find(e => e.id === 'volcanic-heat')?.stacks ?? 0;
++  let request = requests.get(player);
++  if (heat <= 10) {
++    if (request) requests.set(player, { targets: new Set(), state: 'resumed' });
++    return;
++  }
++  if ((!request || request.state === 'resumed') && heat < 25) return;
++  if (!request || request.state === 'resumed') request = { targets: new Set(), state: 'requested' };
++  for (const id of heatEngagementTargets(world, player)) request.targets.add(id);
++  for (const id of request.targets) {
++    const m = world.getMonsterEntity(id);
++    if (!m || m.hasHealth.hp <= 0 || m.hasPosition.nodeId !== player.hasPosition.nodeId) request.targets.delete(id);
++  }
++  request.state = request.targets.size ? 'requested' : 'waiting';
++  requests.set(player, request);
++}
++
++export function heatManagementState(player: PlayerEntity): HeatManagementState {
++  return enabled(player) ? requests.get(player)?.state ?? 'normal' : 'normal';
++}
++
++/** A narrow acquisition veto. Existing targets and newly attacking threats remain legal. */
++export function heatAllowsTarget(world: World, player: PlayerEntity, monster: MonsterEntity): boolean {
++  const state = heatManagementState(player);
++  if (state !== 'requested' && state !== 'waiting') return true;
++  return requests.get(player)!.targets.has(monster.isMonster.id)
++    || heatEngagementTargets(world, player).has(monster.isMonster.id);
++}
+diff --git a/server/src/systems/combat/ai/runeConfig.ts b/server/src/systems/combat/ai/runeConfig.ts
+index 6fc49b55..ef75d17b 100644
+--- a/server/src/systems/combat/ai/runeConfig.ts
++++ b/server/src/systems/combat/ai/runeConfig.ts
+@@ -1,3 +1,4 @@
++import { updateHeatManagement, heatManagementState, heatEngagementTargets } from "./heatManagement";
+ import {
+   deriveAutoConfigFromRunes,
+   getFlag,
+@@ -117,6 +118,7 @@ function isEliteTarget(world: World, targetId: string | undefined): boolean {
+  * are written to the server-only combat-state bag.
+  */
+ export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
++  for (const player of world.playerEntities) updateHeatManagement(world, player);
+   for (const player of world.livePlayers) {
+     const { count: currentAggroCount, charging: enemyCharging } = aggroStats(
+       world,
+@@ -132,8 +134,10 @@ export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
+       targetHpPct: attackTarget
+         ? attackTarget.hasHealth.hp / Math.max(1, attackTarget.hasHealth.maxHp)
+         : undefined,
+-      inCombat: currentAggroCount > 0 || isPlayerInCombat(player, now),
+-      activelyEngaged: isPlayerActivelyInCombat(world, player),
++      inCombat: currentAggroCount > 0 || isPlayerInCombat(player, now) ||
++        (heatManagementState(player) === "requested" && heatEngagementTargets(world, player).size > 0),
++      activelyEngaged: isPlayerActivelyInCombat(world, player) ||
++        (heatManagementState(player) === "requested" && heatEngagementTargets(world, player).size > 0),
+       inParty: player.inParty !== undefined,
+       aggroCount: currentAggroCount,
+       combatArchetype: player.usesSkills.combatArchetype,
+@@ -172,6 +176,7 @@ export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
+       ctx,
+     );
+ 
++    setString(player.tracksCombat, "rune.heatManagement", heatManagementState(player));
+     const ac = player.usesAutocombat;
+     runeDecisions.set(player, [
+       ...Object.entries(d.claimed).flatMap(([channel, claim]) =>
+@@ -231,7 +236,8 @@ export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
+     setFlag(
+       player.tracksCombat,
+       RUNE_WAIT_IT_OUT_FLAG,
+-      d.waitItOut && playerHasWaitOutStatus(world, player),
++      heatManagementState(player) === "waiting" ||
++        (d.waitItOut && d.oocMaintenanceClaims.some(c => c.action.id === "wait-it-out" && c.rule.waitOutMode !== "heat-managed") && playerHasWaitOutStatus(world, player)),
+     );
+     setFlag(player.tracksCombat, RUNE_WAIT_FOR_EXECUTION_FLAG, d.waitForExecution);
+     setFlag(player.tracksCombat, RUNE_TACTICAL_RELOAD_FLAG, d.tacticalReload);
+diff --git a/server/src/systems/combat/ai/targetPriority.ts b/server/src/systems/combat/ai/targetPriority.ts
+index 861f17f5..37b99a8d 100644
+--- a/server/src/systems/combat/ai/targetPriority.ts
++++ b/server/src/systems/combat/ai/targetPriority.ts
+@@ -1,3 +1,4 @@
++import { heatAllowsTarget } from "./heatManagement";
+ import type { World } from "../../../world/World";
+ import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
+ import { suppressedFeatureIdsForNode } from "../../world/pathMotion";
+@@ -176,6 +177,7 @@ export function selectAutoCombatAction(
+ 
+   let eligible = [...world.monsterEntitiesInNode(player.hasPosition.nodeId)].filter(
+     (monster) =>
++      heatAllowsTarget(world, player, monster) &&
+       (!options?.aggressorsOnly || isAggroedOnPlayer(monster, player)) &&
+       passesGates(world, player, monster, ctx),
+   );
+@@ -590,6 +592,7 @@ export function nearestEngageableMonster(
+ 
+   const candidates: Array<{ monster: MonsterEntity; distSq: number }> = [];
+   for (const monster of world.monsterEntitiesInNode(nodeId)) {
++    if (!heatAllowsTarget(world, player, monster)) continue;
+     if (skipBosses && monster.isMonster.isBoss) continue;
+     if (monster.isInvulnerable) continue;
+     if (monster.isConcealed) continue;
+diff --git a/server/src/systems/world/autoIntent.ts b/server/src/systems/world/autoIntent.ts
+index 13c27b3b..c88247fe 100644
+--- a/server/src/systems/world/autoIntent.ts
++++ b/server/src/systems/world/autoIntent.ts
+@@ -233,7 +233,7 @@ function maintenanceIntent(player: PlayerEntity): HasAutoIntent | null {
+   ) {
+     return {
+       kind: "idle",
+-      reason: "Waiting for harmful effects to fade",
++      reason: runeTrace(player, "wait-it-out")?.waitOutMode === "heat-managed" ? "Cooling Heat to 10" : "Waiting for harmful effects to fade",
+       source: ruleLabel(player, "wait-it-out"),
+       activeRune: runeTrace(player, "wait-it-out"),
+     };
+@@ -331,6 +331,7 @@ function ruleLabel(
+     (entry) => entry.actionId === actionId,
+   );
+   if (!rule) return "";
++  if (rule.waitOutMode === "heat-managed") return "Wait It Out / Manage Heat";
+   return (
+     getRuleName(rule.conditionId, rule.actionId)?.name ??
+     ACTION_DATABASE.get(actionId)?.name ??
+@@ -377,13 +378,16 @@ function sameIntent(
+     a.destBiomeGroup === b.destBiomeGroup
+     && a.activeRune?.conditionId === b.activeRune?.conditionId
+     && a.activeRune?.actionId === b.activeRune?.actionId
++    && a.activeRune?.waitOutMode === b.activeRune?.waitOutMode
+     && a.activeRune?.targetStanceId === b.activeRune?.targetStanceId
+     && JSON.stringify(a.matchedRunes) === JSON.stringify(b.matchedRunes)
+     && a.overrideRune?.conditionId === b.overrideRune?.conditionId
+     && a.overrideRune?.actionId === b.overrideRune?.actionId
++    && a.overrideRune?.waitOutMode === b.overrideRune?.waitOutMode
+     && a.overrideRune?.targetStanceId === b.overrideRune?.targetStanceId
+     && a.overriddenRune?.conditionId === b.overriddenRune?.conditionId
+     && a.overriddenRune?.actionId === b.overriddenRune?.actionId
++    && a.overriddenRune?.waitOutMode === b.overriddenRune?.waitOutMode
+     && a.overriddenRune?.targetStanceId === b.overriddenRune?.targetStanceId
+     && a.travelPaused === b.travelPaused
+   );
+diff --git a/server/test/heatManagement.test.ts b/server/test/heatManagement.test.ts
+new file mode 100644
+index 00000000..d16d4b6c
+--- /dev/null
++++ b/server/test/heatManagement.test.ts
+@@ -0,0 +1,210 @@
++import {
++  ACTION_DATABASE,
++  DEFAULT_AUTOCOMBAT_CONFIG,
++  GAME_CONFIG,
++  RESOLVED_NODE_FEATURES,
++  STARTER_RUNE_IDS,
++  ambientRampData,
++  analyzeRuneLoadoutConflicts,
++  applyStatusEffect,
++  composeRuneEdit,
++  deriveAutoConfigFromRunes,
++  emptyEquipment,
++  getFlag,
++  getStatusEffect,
++  tickStatusEffectDurations,
++  type EquippedRule,
++} from "@mmo-idle/shared";
++import type { PersistedPlayerSlices } from "../src/db/playerRepo";
++import type { PlayerEntity } from "../src/ecs/entity";
++import { updateAutoTargets } from "../src/systems/combat/ai/autoTarget";
++import {
++  clearEngagement,
++  markEngaged,
++} from "../src/systems/combat/ai/engagement";
++import {
++  RUNE_WAIT_FOR_REGEN_FLAG,
++  RUNE_WAIT_IT_OUT_FLAG,
++  updateRuneDerivedConfig,
++} from "../src/systems/combat/ai/runeConfig";
++import { setAttackTarget } from "../src/systems/combat/ai/targeting";
++import { setEntityMotion } from "../src/systems/world/movement";
++import { updateNodeFeatures } from "../src/systems/world/nodeFeatures";
++import { World } from "../src/world/World";
++
++function assert(condition: boolean, message: string): void {
++  if (!condition) throw new Error(message);
++}
++
++const CLEARING_NODE = "node-5-5";
++const ALWAYS_WAIT: EquippedRule[] = [
++  { conditionId: "always", actionId: "auto-path-enemy" },
++  { conditionId: "always", actionId: "wait-it-out" },
++];
++
++function makePlayerSlices(
++  id: string,
++  nodeId = CLEARING_NODE,
++  hp = GAME_CONFIG.PLAYER_MAX_HP,
++): PersistedPlayerSlices {
++  return {
++    isPlayer: { id, name: id },
++    hasPosition: {
++      current: { x: 400, y: 400 },
++      nodeId,
++      speed: GAME_CONFIG.PLAYER_SPEED,
++    },
++    hasHealth: {
++      hp,
++      maxHp: GAME_CONFIG.PLAYER_MAX_HP,
++      recovery: GAME_CONFIG.PLAYER_RECOVERY,
++    },
++    tracksProgression: {
++      level: 0,
++      skillPoints: 0,
++      essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
++      catalysts: {},
++      catalystProgress: {},
++      biomeXP: {},
++      biomeLevel: {},
++      unlockedRecipes: [],
++      questProgress: {},
++      playerTier: 0,
++      currentSkillTier: 0,
++      bossesCleared: [],
++      clearedNodes: [],
++      runesOwned: [...STARTER_RUNE_IDS],
++      runeRecipesCrafted: [],
++      runesEquipped: [],
++      knownAbilities: [],
++      attunedAbilities: { technique: null, guard: null },
++      knownStances: [],
++      equippedStances: { default: null },
++      activeStance: null,
++      knownRites: [],
++      equippedRites: [],
++    },
++    holdsInventory: {
++      inventory: [],
++      equipment: emptyEquipment(),
++      itemUpgrades: {},
++    },
++    usesSkills: {
++      unlockedSkills: [],
++      passives: {},
++      selectedClass: null,
++      selectedSubVariant: null,
++      selectedRange: null,
++      combatArchetype: null,
++    },
++  };
++}
++
++function makeAutoPlayer(
++  id: string,
++  rules: EquippedRule[] = ALWAYS_WAIT,
++  nodeId = CLEARING_NODE,
++  hp = GAME_CONFIG.PLAYER_MAX_HP,
++): { world: World; player: PlayerEntity } {
++  const world = new World();
++  const player = world.attachPlayerEntity(makePlayerSlices(id, nodeId, hp), id);
++  Object.assign(player.usesAutocombat, DEFAULT_AUTOCOMBAT_CONFIG, {
++    auto: true,
++    focusLeaderTarget: false,
++  });
++  player.tracksProgression.runesEquipped = rules;
++  return { world, player };
++}
++
++
++import strict from 'node:assert/strict';
++import { heatManagementState, heatAllowsTarget } from '../src/systems/combat/ai/heatManagement';
++import { selectAutoCombatAction } from '../src/systems/combat/ai/targetPriority';
++import { setAggroTarget } from '../src/systems/combat/ai/targeting';
++import { sanitizeRuneLoadout } from '@mmo-idle/shared';
++import { registerPlayerHandlers, type PlayerHandlerDeps } from '../src/net/playerHandlers';
++import { saveCharacter, loadCharacter } from '../src/db/playerRepo';
++import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
++import { updateSummonerArchetype } from '../src/systems/classes/archetypes/summoner/summonerPrototype';
++import { driveMinion } from '../src/systems/classes/archetypes/summoner/ai';
++import { updateReloadT3Ticks } from '../src/systems/classes/archetypes/reload/t3/ticks/laser';
++import { updateChanneledBeam } from '../src/systems/classes/archetypes/cooldown/t3/ticks/heavy/channeledBeam';
++async function main(){
++const mode:EquippedRule={conditionId:'always',actionId:'wait-it-out',waitOutMode:'heat-managed'};
++const node='node-t4-volcanic-01';
++function scenario(nodeId=node){
++ const s=makeAutoPlayer('heat-test',[...ALWAYS_WAIT.slice(0,1),mode],nodeId);
++ const ramp=RESOLVED_NODE_FEATURES[node]?.find(f=>f.ambientRamp)!.ambientRamp!;
++ const effect=applyStatusEffect(s.player.tracksCombat,{id:'volcanic-heat',sourceId:'node-feature:volcanic-heat',remainingMs:-1,maxStacks:0,data:ambientRampData(ramp.payload,ramp)});
++ effect.stacks=24;return {...s,effect};
++}
++{
++ const {world,player,effect}=scenario();
++ const fresh=world.createMonster(node,'plains-slime',{x:440,y:400})!;
++ updateRuneDerivedConfig(world,1000);strict.equal(heatManagementState(player),'normal');strict(heatAllowsTarget(world,player,fresh));
++ effect.stacks=25;updateRuneDerivedConfig(world,1000);strict.equal(heatManagementState(player),'waiting');strict(!heatAllowsTarget(world,player,fresh));
++ strict.equal(selectAutoCombatAction(world,player,player.usesAutocombat,1000).kind,'idle');
++ markEngaged(world,player,1000);updateNodeFeatures(world,100,1100);strict.equal(effect.stacks,25,'grace must not cool');
++ effect.stacks=24;updateRuneDerivedConfig(world,1100);strict.equal(heatManagementState(player),'waiting');
++ setAggroTarget(world,fresh,{id:player.isPlayer.id,kind:'player'},1200);updateRuneDerivedConfig(world,1200);
++ strict.equal(heatManagementState(player),'requested');strict(!getFlag(player.tracksCombat,RUNE_WAIT_IT_OUT_FLAG));
++ strict.equal(selectAutoCombatAction(world,player,player.usesAutocombat,1200).kind,'attack');
++ fresh.hasHealth.hp=0;setAttackTarget(world,player,null);updateRuneDerivedConfig(world,1300);strict.equal(heatManagementState(player),'waiting');
++ clearEngagement(world,player);updateNodeFeatures(world,1000,2000);strict(effect.stacks<24,'native cooling');
++ effect.stacks=10;updateRuneDerivedConfig(world,2100);strict.equal(heatManagementState(player),'resumed');strict(!getFlag(player.tracksCombat,RUNE_WAIT_IT_OUT_FLAG));
++ for(const cancel of ['auto','death','exit','unequip','manual']){
++  effect.stacks=25;updateRuneDerivedConfig(world,2200);strict.equal(heatManagementState(player),'waiting');
++  if(cancel==='auto')player.usesAutocombat.auto=false;
++  if(cancel==='death')player.hasHealth.hp=0;
++  if(cancel==='exit')player.hasPosition.nodeId='node-t4-tundra-01';
++  if(cancel==='unequip')player.tracksProgression.runesEquipped=[];
++  if(cancel==='manual')world.ecs.addComponent(player,'hasManualMoveIntent',{destination:{x:800,y:400}} as any);
++  updateRuneDerivedConfig(world,2300);strict.equal(heatManagementState(player),'normal');
++  player.usesAutocombat.auto=true;player.hasHealth.hp=player.hasHealth.maxHp;player.hasPosition.nodeId=node;player.tracksProgression.runesEquipped=[mode];
++  if(player.hasManualMoveIntent)world.ecs.removeComponent(player,'hasManualMoveIntent');
++ }
++ effect.stacks=25;updateRuneDerivedConfig(world,2400);player.tracksCombat.statusEffects=[];updateRuneDerivedConfig(world,2500);strict.equal(heatManagementState(player),'resumed');
++}
++{
++ const {world,player,effect}=scenario();effect.stacks=10;
++ applyStatusEffect(player.tracksCombat,{id:'poison-dagger-burn',sourceId:'test',remainingMs:1000,data:{isDot:1,damagePerStack:1,totalMs:1000}});
++ updateRuneDerivedConfig(world,1000);strict(!getFlag(player.tracksCombat,RUNE_WAIT_IT_OUT_FLAG),'managed mode ignores other afflictions');
++ player.tracksProgression.runesEquipped=[{...mode,waitOutMode:'all'}];updateRuneDerivedConfig(world,1000);strict(getFlag(player.tracksCombat,RUNE_WAIT_IT_OUT_FLAG),'explicit all retains generic behavior');
++}
++for(const nodeId of ['node-t4-tundra-01','node-t3-volcanic-dungeon']){
++ const {world,player,effect}=scenario(nodeId);effect.stacks=100;updateRuneDerivedConfig(world,1000);strict.equal(heatManagementState(player),'normal');strict(!getFlag(player.tracksCombat,RUNE_WAIT_IT_OUT_FLAG));
++}
++{
++ const {world,player,effect}=scenario();player.usesSkills.unlockedSkills=['summoner-root'];player.usesSkills.combatArchetype='summoner';player.usesSkills.selectedClass='summoner-root';syncArchetypeSlices(world,player);updateSummonerArchetype(world,0,1000);
++ const minion=world.getMinionEntity(player.summonsMinions!.minionIds[0])!;
++ const threat=world.createMonster(node,'plains-slime',{x:440,y:400})!;
++ const fresh=world.createMonster(node,'plains-slime',{x:420,y:400})!;
++ setAttackTarget(world,minion,threat.isMonster.id);setAggroTarget(world,threat,{id:minion.isMinion.id,kind:'minion'},1000);
++ effect.stacks=25;player.hasHealth.hp=50;player.tracksProgression.runesEquipped.push({conditionId:'always',actionId:'wait-for-regen'});
++ updateRuneDerivedConfig(world,1000);strict.equal(heatManagementState(player),'requested');strict(!getFlag(player.tracksCombat,RUNE_WAIT_FOR_REGEN_FLAG));strict(heatAllowsTarget(world,player,threat));strict(!heatAllowsTarget(world,player,fresh));
++ minion.performsAttack.lastAttackAt=100000;driveMinion(world,minion,player,1000);strict.equal(minion.controlsMinion.currentTargetId,threat.isMonster.id);
++}
++{
++ const {world,player}=scenario();const handlers=new Map<string,Function>(),emits:any[]=[];
++ const socket={id:player.isPlayer.id,on:(k:string,fn:Function)=>handlers.set(k,fn),emit:(...v:any[])=>emits.push(v)} as unknown as Parameters<typeof registerPlayerHandlers>[0];
++ registerPlayerHandlers(socket,{world,db:{},session:{accountId:'test',characterId:'test'},sessionsBySocket:new Map(),adminControls:{emitPlayerSummaries:()=>{},emitTelemetry:()=>{}},socketByAccount:new Map(),inactiveSockets:new Set(),sessionStartedAtBySocket:new Map(),recordSessionEnd:()=>{},emitBossFelledState:()=>{}} as unknown as PlayerHandlerDeps);
++ handlers.get('rune:setLoadout')!([mode]);strict.equal(emits.at(-1)[1].success,true);strict.deepEqual(player.tracksProgression.runesEquipped,[mode]);
++ for(const bad of [{...mode,waitOutMode:'bogus'},{...mode,actionId:'auto-path-enemy'},{...mode,conditionId:'when-idle'}]){handlers.get('rune:setLoadout')!([bad]);strict.equal(emits.at(-1)[1].success,false);strict.deepEqual(player.tracksProgression.runesEquipped,[mode]);}
++ let row:any={id:'test',accountId:'test'};
++ const db:any={update:()=>({set:(values:any)=>({where:()=>{row={...row,...values};return {returning:async()=>[row]}}})})};
++ await saveCharacter(db,'test',player);const loaded=await loadCharacter(db,'test','test');strict(loaded);strict.deepEqual(loaded.tracksProgression.runesEquipped,[mode]);
++ const restored=new World().attachPlayerEntity(loaded,'restored');strict.deepEqual(restored.tracksProgression.runesEquipped,[mode]);
++}
++{
++ const {world,player,effect}=scenario();effect.stacks=25;updateRuneDerivedConfig(world,1000);
++ const fresh=world.createMonster(node,'plains-slime',{x:410,y:400})!;const hp=fresh.hasHealth.hp;
++ player.usesSkills.combatArchetype='reload';syncArchetypeSlices(world,player);player.usesSkills.passives['reload.laser']=1;player.performsAttack.attackRange=500;
++ updateReloadT3Ticks(world,100,1100);strict.equal(fresh.hasHealth.hp,hp);strict.equal(player.hasAttackTarget,undefined,'laser must not acquire fresh target');
++ player.usesSkills.combatArchetype='cooldown';syncArchetypeSlices(world,player);
++ world.ecs.addComponent(player,'isChanneling',{targetId:'removed-target',remainingMs:5000,nextTickMs:100,pct:0} as any);
++ updateChanneledBeam(world,100,1200);strict.equal(player.isChanneling,undefined,'beam must not acquire fresh target');strict.equal(fresh.hasHealth.hp,hp);
++}
++console.log('heatManagement: ok (bounded synthetic checks; no experiment lives)');
++
++}
++main().catch(e=>{console.error(e);process.exitCode=1});
+diff --git a/shared/src/components/core/networkedSlices.ts b/shared/src/components/core/networkedSlices.ts
+index 45a5a493..05b0cc35 100644
+--- a/shared/src/components/core/networkedSlices.ts
++++ b/shared/src/components/core/networkedSlices.ts
+@@ -285,6 +285,7 @@ export type AutoIntentKind = 'attack' | 'follow' | 'travel' | 'flee' | 'idle';
+ 
+ /** Compact server-authored explanation of a Rune decision. */
+ export interface RuneTraceRule {
++  waitOutMode?: "all" | "heat-managed";
+   conditionId: string;
+   actionId: string;
+   targetStanceId?: string;
+diff --git a/shared/src/protocol/gameplayTelemetry.ts b/shared/src/protocol/gameplayTelemetry.ts
+index 65d33ace..d8694cea 100644
+--- a/shared/src/protocol/gameplayTelemetry.ts
++++ b/shared/src/protocol/gameplayTelemetry.ts
+@@ -16,7 +16,7 @@ export interface GameplayBuild {
+   stances: string[];
+   defaultStance: string | null;
+   rites: string[];
+-  runes: Array<{ conditionId: string; actionId: string; targetStanceId?: string; targetAbilityId?: string }>;
++  runes: Array<{ conditionId: string; actionId: string; targetStanceId?: string; targetAbilityId?: string; waitOutMode?: "all" | "heat-managed" }>;
+   auto: boolean;
+   autoTraverse: boolean;
+   priorityMode: string;
+diff --git a/shared/src/runeDatabase.ts b/shared/src/runeDatabase.ts
+index 2e9bcde4..df911453 100644
+--- a/shared/src/runeDatabase.ts
++++ b/shared/src/runeDatabase.ts
+@@ -132,6 +132,7 @@ export interface EquippedRule {
+   /** Required destination for switch-stance; invalid and ignored on other actions. */
+   targetStanceId?: string;
+   targetAbilityId?: string;
++  waitOutMode?: "all" | "heat-managed";
+ }
+ 
+ export const RUNE_CHANNELS: RuneChannel[] = [
+@@ -783,6 +784,7 @@ export function normalizeRuneRule(rule: EquippedRule): EquippedRule {
+   return {
+     conditionId: LEGACY_CONDITION_IDS[rule.conditionId] ?? rule.conditionId,
+     actionId: LEGACY_ACTION_IDS[rule.actionId] ?? rule.actionId,
++    ...(rule.waitOutMode !== undefined ? { waitOutMode: rule.waitOutMode } : {}),
+     ...(rule.actionId === "use-ability" && typeof rule.targetAbilityId === "string" ? { targetAbilityId: rule.targetAbilityId } : {}),
+     ...(rule.actionId === "switch-stance" && typeof rule.targetStanceId === "string"
+       ? { targetStanceId: rule.targetStanceId }
+@@ -867,6 +869,9 @@ export function isRuneRuleCompatibleForArchetype(
+   const condition = CONDITION_DATABASE.get(rule.conditionId);
+   const action = ACTION_DATABASE.get(rule.actionId);
+   if (!condition || !action) return false;
++  if (rule.waitOutMode !== undefined && (rule.actionId !== "wait-it-out" ||
++      !["all", "heat-managed"].includes(rule.waitOutMode) ||
++      (rule.waitOutMode === "heat-managed" && rule.conditionId !== "always"))) return false;
+   if (
+     action.requiredArchetype !== undefined &&
+     action.requiredArchetype !== combatArchetype
+@@ -920,6 +925,7 @@ export function sanitizeRuneLoadout(
+     sanitized.push({
+       conditionId: raw.conditionId,
+       actionId: raw.actionId,
++      ...(raw.waitOutMode !== undefined ? { waitOutMode: raw.waitOutMode } : {}),
+       ...(raw.targetAbilityId ? { targetAbilityId: raw.targetAbilityId } : {}),
+       ...(raw.targetStanceId ? { targetStanceId: raw.targetStanceId } : {}),
+     });
+@@ -1468,6 +1474,7 @@ export function deriveAutoConfigFromRunes(
+     const rule: EquippedRule = {
+       conditionId: condition.id,
+       actionId: action.id,
++      ...(raw.waitOutMode !== undefined ? { waitOutMode: raw.waitOutMode } : {}),
+       ...(raw.targetAbilityId ? { targetAbilityId: raw.targetAbilityId } : {}),
+       ...(raw.targetStanceId ? { targetStanceId: raw.targetStanceId } : {}),
+     };

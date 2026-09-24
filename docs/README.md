@@ -397,4 +397,5 @@ Generated balance packets (`reports/dps-*`, `ehp-*`, `mob-*`,
 
 ## Balance closeout candidate
 
-- [Volcano Heat management 01 preparation](../reports/player-fast-pass/volcano-heat-management-01/preparation/PREPARATION.md): isolated opt-in candidate, fixed 26-case packet and class-closeout ledger; preparation only, not adopted or executed.
+- [Volcano Heat management 01 run 01](../reports/player-fast-pass/volcano-heat-management-01/run-01/REPORT.md): exact sealed 26-case execution completed 26/26 with zero deaths or operational faults; H2 reduced bounded Heat hold and improved aggregate fixed-fixture work, but the interruption contract needs a named revision before adoption.
+- [Volcano Heat management 01 preparation](../reports/player-fast-pass/volcano-heat-management-01/preparation/PREPARATION.md): isolated opt-in candidate, fixed 26-case packet and class-closeout ledger; preparation receipts and inherited release-risk ledger.

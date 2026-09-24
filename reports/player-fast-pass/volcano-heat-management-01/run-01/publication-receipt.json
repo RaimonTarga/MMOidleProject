@@ -1,0 +1,115 @@
+{
+  "experimentId": "volcano-heat-management-01",
+  "attempt": "run-01",
+  "publicationDirectory": "reports/player-fast-pass/volcano-heat-management-01/run-01",
+  "executionSourceCommit": "25289e490d4bfb53dd440ba436a67f596e5b91c4",
+  "sourceSha256": "880133f8c727489979a523191862ecae9f7431034b800606b2ebfee0caa3abe3",
+  "controlSourceCommit": "268148d269b87311eaa1ae4b053baeb6571c747a",
+  "controlSourceSha256": "472792d6bdaceb6bcf719f9a09da0fd4e513f6f32d91c557fdfffac0b8182649",
+  "identitySha256": "8d811cbf295fea683f4d506f44dc5f026c5763204dc559001a8e7154f4f72672",
+  "candidateIdentitySha256": "cde2496e2cb858a299ace5738506e70b9d12c0238df578367bb3fb68ca04b9df",
+  "controlIdentitySha256": "781204e6bb4ab2e9bf9ba02ea6f925c697e80c06152fbbaf6f90b1d469e76233",
+  "manifestSha256": "3487b42cdad9cae37213e3b679ab141336cd529f9943b0704cedc1a5e93efb00",
+  "sealSha256": "0a51fc71f49329c5b3f3d618bc3b75741d24f2d691da826508f885dddfb45213",
+  "preparationReceiptReplaySha256": "8df4b0e15a49b48a73755952a17b5d251498c9c41ecb12cacd3636946252d754",
+  "hitboxesSha256": "08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83",
+  "measuredArtifact": "results-summary.json",
+  "measuredSha256": "7b12b6f8525c49bc4895c0f133ca2a5cdf1eda020e90cadcd4e90e6f34476325",
+  "resolvedBuildsSha256": "8df4b0e15a49b48a73755952a17b5d251498c9c41ecb12cacd3636946252d754",
+  "counts": {
+    "planned": 26,
+    "primary": 18,
+    "alternative": 8,
+    "completed": 26,
+    "newCompleted": 26,
+    "failed": 0,
+    "omitted": 0,
+    "notRun": 0,
+    "qualified": 0,
+    "playerDied": 0,
+    "windowEnded": 22,
+    "bossKilled": 4
+  },
+  "rawInventoryValidation": {
+    "retainedRoot": "D:/mmo-idle/volcano-heat-management-01/run-01",
+    "entries": 374,
+    "totalBytes": 1578592821,
+    "missing": 0,
+    "mismatches": 0
+  },
+  "publicationFiles": {
+    ".gitattributes": {
+      "bytes": 150,
+      "sha256": "b1f9f4d4db573d114eb9bef8bd16f079575145e776aff74aba65e417f6b1f7d9"
+    },
+    "candidate-identity.json": {
+      "bytes": 192718,
+      "sha256": "cde2496e2cb858a299ace5738506e70b9d12c0238df578367bb3fb68ca04b9df"
+    },
+    "candidate.diff": {
+      "bytes": 35113,
+      "sha256": "1b54982f86a583c675121303967fba9bdb0df27d3d6d378162a6e17a6a200d46"
+    },
+    "CLASS_CLOSEOUT.md": {
+      "bytes": 3491,
+      "sha256": "60644456d34e203e0bd618f5af8d545a67e676bc4d5d2e635fe782a195c08ce7"
+    },
+    "complete.json": {
+      "bytes": 393,
+      "sha256": "44b90a9aa6c2b3e1a454dcde1ef564263496ce6bf2df25e3236ab8bdad9a5476"
+    },
+    "control-identity.json": {
+      "bytes": 192486,
+      "sha256": "781204e6bb4ab2e9bf9ba02ea6f925c697e80c06152fbbaf6f90b1d469e76233"
+    },
+    "identity.json": {
+      "bytes": 392122,
+      "sha256": "8d811cbf295fea683f4d506f44dc5f026c5763204dc559001a8e7154f4f72672"
+    },
+    "manifest.json": {
+      "bytes": 100720,
+      "sha256": "3487b42cdad9cae37213e3b679ab141336cd529f9943b0704cedc1a5e93efb00"
+    },
+    "packet-qualified.json": {
+      "bytes": 293,
+      "sha256": "ee7e630bbb47d59d709c1d541894bd6120bd4c52361e34e42468b223f7e80dbd"
+    },
+    "packet-receipt-verified.json": {
+      "bytes": 293,
+      "sha256": "e6b91f518508a2d02572374fd0dc8c5b3cd98935bbe349647bc26fe22f5ea3d2"
+    },
+    "preparation-validation.json": {
+      "bytes": 2181,
+      "sha256": "367c4ddc971f4ed8c1a7e61bbbdd684a1d309ae74954f85c222f0f322c319449"
+    },
+    "qualification-complete.json": {
+      "bytes": 394,
+      "sha256": "a0afe5a3463bdf15eecd2233fd30d60f193b989c7a5772221866a810a788800d"
+    },
+    "raw-inventory.json": {
+      "bytes": 95871,
+      "sha256": "c48f32574a666364205630dd202403f7c93a3ae356392ac49b1c7a914febaff2"
+    },
+    "receipt-check-complete.json": {
+      "bytes": 400,
+      "sha256": "79b8141e71c7045d06ed372d25b816c6b38ef412133d230145b4799648dee1ba"
+    },
+    "REPORT.md": {
+      "bytes": 14141,
+      "sha256": "fa4b7fa2676b67f48e05712fca5a48e39cebc00538338d4eea7b5af23e10f54e"
+    },
+    "resolved-builds.json": {
+      "bytes": 1130782,
+      "sha256": "8df4b0e15a49b48a73755952a17b5d251498c9c41ecb12cacd3636946252d754"
+    },
+    "results-summary.json": {
+      "bytes": 4745185,
+      "sha256": "7b12b6f8525c49bc4895c0f133ca2a5cdf1eda020e90cadcd4e90e6f34476325"
+    },
+    "seal.json": {
+      "bytes": 369,
+      "sha256": "0a51fc71f49329c5b3f3d618bc3b75741d24f2d691da826508f885dddfb45213"
+    }
+  },
+  "scope": "Compact evidence only; raw event and sample streams remain at the retained D: root."
+}
