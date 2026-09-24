@@ -103,3 +103,8 @@ New Rites currently reuse the closest existing Rite glyphs until dedicated conce
 `server/test/rites.test.ts` covers opposed boundary timing, full harmful cleanup with source-owned hazard preservation, Energy renewal, ability cooldown reduction, exact-once combat-end dispatch, shared-RP competition, and stale-ID filtering. Existing combat kill-hook coverage exercises the common player-credit pipeline used by Blood Offering.
 
 Known balance follow-ups: tune percentages/RP/gates; provide explicit combat-end and heal feedback; decide a future DoT-class interpretation if a portable player-side state is introduced.
+
+
+## Blood Offering retirement proposal (unmerged branch)
+
+Blood Offering is removed from active definitions and recipes. Stale craft and equip requests fail. The kill-healing listener is removed, so even an unsanitized saved equipped ID has no effect and costs no RP. Hydration retains the canonical `blood-offering` ID in known acquisition history (including the old `hunters-instinct` alias), removes it from equipped Rites, and preserves all unrelated save fields. Migration is idempotent. There is no bulk database edit and no currency/item refund. Existing historical experiment reports remain unchanged. Adoption requires the designer's normal approval.

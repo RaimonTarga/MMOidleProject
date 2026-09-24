@@ -49,13 +49,7 @@ const rites: RiteDef[] = [
     runeCost: 5,
     icon: "ability-reprieve",
   },
-  {
-    id: "blood-offering",
-    name: "Blood Offering",
-    blurb: "Recover 5% of maximum health whenever you receive kill credit.",
-    runeCost: 3,
-    icon: "blood-offering",
-  },
+
 ];
 
 export const RITE_DATABASE = new Map<string, RiteDef>(rites.map((r) => [r.id, r]));
@@ -70,4 +64,15 @@ export function validRiteIds(ids: readonly string[]): string[] {
 
 export function riteLoadoutCost(ids: readonly string[]): number {
   return validRiteIds(ids).reduce((sum, id) => sum + (RITE_DATABASE.get(id)?.runeCost ?? 0), 0);
+}
+
+/** Retained acquisition identity only; never an active/equippable Rite. */
+export const RETIRED_RITE_IDS = new Set(["blood-offering"]);
+const LEGACY_RITE_IDS: Record<string,string> = {
+  "quickened-breath":"swift-repose", "cleansing-breath":"purification",
+  "lingering-momentum":"lingering-battle", "hunters-instinct":"blood-offering",
+};
+export function migrateSavedRiteIds(ids: readonly string[] | undefined, preserveAcquisition = false): string[] {
+  return [...new Set((ids ?? []).map(id => LEGACY_RITE_IDS[id] ?? id))]
+    .filter(id => RITE_DATABASE.has(id) || (preserveAcquisition && RETIRED_RITE_IDS.has(id)));
 }

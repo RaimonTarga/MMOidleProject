@@ -25,7 +25,7 @@ import {
   emptyEquippedRites,
   globalMastery,
   runeIdsFromCraftedRecipes,
-  validRiteIds,
+  migrateSavedRiteIds,
   NODE_MODIFIER_FAMILIES,
   CLEARING_NODE_ID,
   WORLD_NODES,
@@ -484,17 +484,6 @@ function pruneUnknownItems(inv: HoldsInventory): void {
   }
 }
 
-const LEGACY_RITE_IDS: Record<string, string> = {
-  "quickened-breath": "swift-repose",
-  "cleansing-breath": "purification",
-  "lingering-momentum": "lingering-battle",
-  "hunters-instinct": "blood-offering",
-};
-
-function migrateRiteIds(ids: readonly string[] | undefined): string[] {
-  return validRiteIds((ids ?? []).map((id) => LEGACY_RITE_IDS[id] ?? id));
-}
-
 function hydratePlayerSlices(row: CharacterRow): PersistedPlayerSlices {
   const holdsInventory = parseSlice<HoldsInventory>(row.holdsInventory);
   holdsInventory.equipment = normalizeEquipment(holdsInventory.equipment);
@@ -509,8 +498,8 @@ function hydratePlayerSlices(row: CharacterRow): PersistedPlayerSlices {
   const runeRecipesCrafted = tracksProgression.runeRecipesCrafted ?? [];
   const attunement = migrateAttunement(tracksProgression);
   delete (tracksProgression as unknown as { equippedAbilities?: unknown }).equippedAbilities;
-  const knownRites = migrateRiteIds(tracksProgression.knownRites);
-  const equippedRites = migrateRiteIds(tracksProgression.equippedRites)
+  const knownRites = migrateSavedRiteIds(tracksProgression.knownRites, true);
+  const equippedRites = migrateSavedRiteIds(tracksProgression.equippedRites)
     .filter((id) => knownRites.includes(id));
 
   return {
