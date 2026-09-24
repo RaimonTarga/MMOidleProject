@@ -42,9 +42,6 @@ const recipes: RiteRecipe[] = [
   // Mountain is ponderous by identity (native Heavy) and bans Alacrity. A rite about staying
   // in the combat state longer belongs to the slowest biome in the game.
   { id: "rite-recipe-lingering-battle", name: "Lingering Battle", description: "Remain in combat state longer between engagements.", riteId: "lingering-battle", tier: 3, recipeGroup: "mountain", requiredBiomeLevel: 15, cost: { blue: 130, yellow: 40 }, catalystCost: { heavy: 2 } },
-  // Volcanic is the swarm biome (native Swarming). Kill-credit recovery is a chain-farming
-  // mechanic, so it wants the biome that supplies the chain. Volcanic starts at T3, so its
-  // whole T3 band is levels 1-6.
   // Tundra starts at T3 (band 1-6) and BANS Alacrity; its native family is Heavy.
   { id: "rite-recipe-mechanic-renewal", name: "Mechanic Renewal", description: "Prepare your class mechanic when combat ends.", riteId: "mechanic-renewal", tier: 3, recipeGroup: "tundra", requiredBiomeLevel: 5, cost: { blue: 160, yellow: 60 }, catalystCost: { heavy: 3 } },
   // Desert starts at T2, so its T3 cap is level 12.
