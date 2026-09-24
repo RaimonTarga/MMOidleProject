@@ -1,38 +1,46 @@
 import assert from 'node:assert/strict';
 import { createRenderState } from '../../client/src/render/state';
 import { resetPlayerNodePosition } from '../../client/src/render/playerNodePosition';
-import { stepRemotePlayerPosition } from '../../client/src/render/remotePlayerPosition';
+import { RemotePlayerPosition, REMOTE_PLAYER_DELAY_MS } from '../../client/src/render/remotePlayerPosition';
 import { snapRenderStateOnTabVisible } from '../../client/src/fx/guard';
 import { stepInterpolation } from '../../client/src/render/interpolation';
 import type { GameScene } from '../../client/src/scenes/GameScene';
 
-// A stopped/rooted remote player must converge even if its speed is now zero.
-// The old speed-limited target chase could retain this error indefinitely.
-let position = { x: 0, y: 0 };
-for (let i = 0; i < 60; i++) position = stepRemotePlayerPosition(position, { x: 60, y: 0 }, 1 / 60);
-assert.deepEqual(position, { x: 60, y: 0 });
-
-// Packet silence cannot keep driving the sprite toward an old, distant goal.
-for (let i = 0; i < 600; i++) position = stepRemotePlayerPosition(position, { x: 60, y: 0 }, 1 / 60);
-assert.deepEqual(position, { x: 60, y: 0 });
-
-// 5 Hz observations turn a corner and stop. No frame runs beyond authority.
-position = { x: 0, y: 0 };
-for (const observed of [{ x: 24, y: 0 }, { x: 48, y: 0 }, { x: 48, y: 24 }, { x: 48, y: 48 }]) {
-  for (let frame = 0; frame < 12; frame++) {
-    const next = stepRemotePlayerPosition(position, observed, 1 / 60);
-    assert(next.x >= position.x && next.x <= observed.x);
-    assert(next.y >= position.y && next.y <= observed.y);
-    position = next;
+// At 5 Hz, steady walking must have a steady rendered velocity between
+// packets, even with arrival jitter, different frame rates, and clock origins.
+for (const fps of [30, 60, 144]) {
+  for (const epoch of [0, 9_000_000_000_000]) {
+    const timeline = new RemotePlayerPosition();
+    let packet = 0;
+    let previous: number | undefined;
+    for (let frame = 0; frame < fps * 3; frame++) {
+      const now = frame * 1000 / fps;
+      while (packet * 200 + 100 + [0, 30, 10, 40][packet % 4] <= now) {
+        timeline.observe('node', epoch + packet * 200,
+          { x: packet * 24, y: 0 }, packet * 200 + 100 + [0, 30, 10, 40][packet % 4]);
+        packet++;
+      }
+      const pos = timeline.position(now);
+      if (now > 600 && pos) {
+        assert(Math.abs(pos.x - (now - 100 - REMOTE_PLAYER_DELAY_MS) * 0.12) < 1e-6);
+        if (previous !== undefined) assert(Math.abs(pos.x - previous - 120 / fps) < 1e-6);
+        previous = pos.x;
+      }
+    }
+    assert.deepEqual(timeline.position(100000), { x: (packet - 1) * 24, y: 0 }, 'packet silence holds latest authority');
   }
 }
-const after = (fps: number) => {
-  let p = { x: 0, y: 0 };
-  for (let i = 0; i < fps / 10; i++) p = stepRemotePlayerPosition(p, { x: 100, y: 0 }, 1 / fps);
-  return p.x;
-};
-assert(Math.abs(after(30) - after(120)) < 1e-9);
-assert.deepEqual(stepRemotePlayerPosition({ x: 0, y: 0 }, { x: 1000, y: 800 }, 1 / 60), { x: 1000, y: 800 });
+const timeline = new RemotePlayerPosition();
+timeline.observe('a', 0, { x: 0, y: 0 }, 0);
+timeline.observe('a', 200, { x: 24, y: 0 }, 200);
+timeline.observe('a', 400, { x: 24, y: 24 }, 400);
+assert.deepEqual(timeline.position(550), { x: 24, y: 12 }, 'retain corner samples');
+timeline.observe('b', 600, { x: 4700, y: 100 }, 600);
+assert.deepEqual(timeline.position(600), { x: 4700, y: 100 }, 'node change snaps immediately');
+timeline.observe('b', 800, { x: 1000, y: 800 }, 800);
+assert.deepEqual(timeline.position(800), { x: 1000, y: 800 }, 'large displacement resets');
+timeline.observe('b', 3000, { x: 1010, y: 800 }, 3000);
+assert.deepEqual(timeline.position(3000), { x: 1010, y: 800 }, 'long interruption discards stale path');
 
 const state = createRenderState();
 state.ids.add('party');
@@ -47,7 +55,9 @@ assert.deepEqual(state.interpolation.get('party')!.lungeOffset, { x: 0, y: 0 });
 // A requested state sync rebases a retained same-node sprite without walking
 // through the stale interval. Ordinary full node-membership refreshes do not.
 const sync = { id: 'party', nodeId: 'same-node', pos: { x: 500, y: 600 }, target: { x: 800, y: 600 } };
+state.remotePlayerPositions.set('party', timeline);
 resetPlayerNodePosition(state, 'same-node', sync, true);
+assert.equal(state.remotePlayerPositions.has('party'), false, 'resync discards buffered motion');
 assert.deepEqual(drawn, sync.pos);
 assert.deepEqual(state.interpolation.get('party')!.base, sync.pos);
 assert.deepEqual(state.transform.get('party')!.target, sync.target);
@@ -62,4 +72,14 @@ state.transform.get('party')!.pos = { x: 520, y: 620 };
 const renderScene = { state } as GameScene;
 for (let i = 0; i < 120; i++) stepInterpolation(renderScene, 1 / 60);
 assert.deepEqual(drawn, { x: 520, y: 620 });
+const renderTimeline = new RemotePlayerPosition();
+const receipt = performance.now();
+for (const at of [0, 200, 400]) {
+  renderTimeline.observe('same-node', at, { x: at * 0.12, y: 0 }, receipt - 400 + at);
+}
+state.remotePlayerPositions.set('party', renderTimeline);
+state.transform.get('party')!.pos = { x: 48, y: 0 };
+stepInterpolation(renderScene, 1 / 60);
+assert(drawn.x >= 18 && drawn.x < 48, 'renderer uses delayed snapshots, not newest position');
+assert.equal(drawn.y, 0);
 console.log('playerSync: ok');

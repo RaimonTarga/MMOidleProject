@@ -35,6 +35,7 @@ import { syncCorpses } from "../render/corpses";
 import { syncTombstones } from "../render/tombstones";
 import { syncStunOrbits } from "../render/stunOrbit";
 import { clearOwnMovePath } from '../input/pathPrediction';
+import { RemotePlayerPosition } from '../render/remotePlayerPosition';
 
 // Last frame's resolved target — lets us detect when a target dies (its id
 // vanishes from view) so the target frame can drain HP to 0 before fading.
@@ -167,6 +168,20 @@ export function applyDelta(
       if (!liveIds.has(id)) destroyEntity(state, id, scene);
     }
     getDefaultStore().set(nodeLoadingAtom, { active: false, nodeId: null });
+  }
+
+  // Include unchanged players: empty deltas still confirm a stopped position.
+  if (Number.isFinite(snapshot.serverTime)) {
+    const receivedAt = performance.now();
+    for (const [id, view] of state.view) {
+      if (id === state.ownId || state.kind.get(id) !== 'player') continue;
+      let timeline = state.remotePlayerPositions.get(id);
+      if (!timeline) {
+        timeline = new RemotePlayerPosition();
+        state.remotePlayerPositions.set(id, timeline);
+      }
+      timeline.observe(view.nodeId, snapshot.serverTime!, view.pos, receivedAt);
+    }
   }
 
   const own = getOwnView(state);

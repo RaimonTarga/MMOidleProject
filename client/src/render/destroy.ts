@@ -48,6 +48,7 @@ export function destroyEntity(
   state.view.delete(id);
   state.transform.delete(id);
   state.interpolation.delete(id);
+  state.remotePlayerPositions.delete(id);
   state.spriteMeta.delete(id);
   state.debugRanges.delete(id);
   state.ledgeHopNextAt.delete(id);

@@ -38,10 +38,12 @@ Corrections prepared locally:
 
 - A retained player's node change resets its interpolation base, target, and
   lunge offset, including remote party members sharing a destination snapshot.
-- Remote players ease toward the latest authoritative position, rather than
-  stepping indefinitely toward a movement intent at the reported speed. This
-  converges after a stop/root/speed change and stops predicting during packet
-  silence. Easing is frame-rate independent; errors above 240 px snap.
+- Remote players interpolate a bounded history of authoritative positions,
+  250 ms behind the server timeline. This replaces the per-packet easing that
+  repeatedly accelerated and decelerated at 5 Hz. Every packet samples stationary
+  players too. Playback holds the latest confirmed position during packet silence;
+  node changes, explicit resyncs, death/respawn, long interruptions, and position
+  jumps above 240 px discard stale history. Own-player prediction is unchanged.
 - Returning from a hidden tab restores the last observed position, not a possibly
   distant movement target. Explicit state syncs rebase same-node player sprites;
   ordinary full membership refreshes still preserve smoothing.
@@ -62,8 +64,8 @@ typecheck and production client build pass. Full gameplay suite was started but
 stopped before completion; it is not a pass claim for this patch.
 
 Remaining acceptance: two clients under latency/jitter, short reposition skills,
-death/respawn, and reconnect/tab-return during party travel. Remote easing adds
-presentation lag behind the most recently received position; assess that feel
+death/respawn, and reconnect/tab-return during party travel. Remote buffering adds
+250 ms of presentation delay behind the server timeline; assess that feel
 before deployment. Local input still has no sequence-based replay and retains
 its existing correction thresholds; this review does not claim all sync issues
 are eliminated.
@@ -123,3 +125,9 @@ same-scene live comparison; CPU geometry probes are not measured FPS gains.
 ## Implementation handoff outcome
 
 The root agent wrote the specification and split shared/server/client work among three `gpt-5.6-luna` agents. They hit a usage limit before completing their assignments. The root completed integration, corrected partial edits (including an accidentally recursive server branch and a sliding path follower), added independent tests, and performed final review. No commit, push, deployment, paid art generation, or art packing was part of this work.
+
+Remote smoothness follow-up: `playerSync.test.ts` verifies constant rendered
+velocity for 5 Hz walking with 0-40 ms arrival jitter at 30/60/144 FPS, widely
+different server clock origins, retained corner samples, no extrapolation, and
+history reset on node changes, large jumps, interruption, and explicit resync.
+Live two-client visual acceptance remains pending; this work is not deployed.

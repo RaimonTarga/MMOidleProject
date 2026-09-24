@@ -4,12 +4,13 @@ import { nodeToScene } from './sceneCoords';
 
 /** Positions are node-local: never interpolate a retained sprite across nodes. */
 export function resetPlayerNodePosition(
-  state: Pick<RenderState, 'interpolation' | 'transform' | 'sprite'>,
+  state: Pick<RenderState, 'interpolation' | 'transform' | 'sprite' | 'remotePlayerPositions'>,
   previousNodeId: string | undefined,
   player: Pick<PlayerView, 'id' | 'nodeId' | 'pos' | 'target'>,
   resetPosition = false,
 ): void {
   if (!resetPosition && (previousNodeId === undefined || previousNodeId === player.nodeId)) return;
+  state.remotePlayerPositions.delete(player.id);
   const interp = state.interpolation.get(player.id);
   if (interp) {
     interp.base = { ...player.pos };
