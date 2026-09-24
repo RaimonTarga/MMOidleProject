@@ -24,6 +24,7 @@ import {
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { grantMonsterRewards } from "../src/systems/player/progression/rewards";
 import { World } from "../src/world/World";
+import { attachComponent } from '../src/ecs/markerHelpers';
 import { displayedCatalystProgress } from "../../client/src/hud/catalystProgress";
 
 function assert(condition: boolean, message: string): void {
@@ -236,5 +237,34 @@ assert(clampRewardMultiplier(1e9) === DEBUG_REWARD_MULT_MAX, "above-range clamps
 assert(clampRewardMultiplier("25") === 25, "numeric strings off the wire are accepted");
 assert(clampRewardMultiplier(2.5) === 2.5, "fractional multipliers survive");
 assert(clampRewardMultiplier(1.23456) === 1.23, "multipliers round to 2 decimals");
+
+// Reward presentation must use the credited amount, including party shares,
+// and must never manufacture a drop for a non-rewarding raised monster.
+{
+  const world = new World();
+  world.rewardMultiplier = 7;
+  const players = ['mote-killer', 'mote-party', 'mote-away'].map(id =>
+    world.attachPlayerEntity(makePlayer(id), id));
+  for (const player of players) {
+    attachComponent(world, player, 'inParty', { leaderId: 'mote-killer', members: [] });
+    player.hasPosition.nodeId = FARM_NODE;
+  }
+  players[2].hasPosition.nodeId = 'node-clearing';
+  const wolf = world.createMonster(FARM_NODE, 'wolf', { x: 800, y: 900 })!;
+  world.clearNodeEvents(FARM_NODE);
+  grantMonsterRewards(world, 'mote-killer', wolf);
+  const drops = world.takeNodeEvents(FARM_NODE).filter(ev => ev.kind === 'essence-drop');
+  assert(drops.length === 2, 'one mote event per eligible reward recipient');
+  for (const drop of drops) {
+    const recipient = players.find(player => player.isPlayer.id === drop.playerId)!;
+    assert(drop.amount === recipient.tracksProgression.essences[drop.essenceType], 'motes use actual wallet credit');
+    assert(drop.targetId === wolf.isMonster.id && drop.pos.x === 800 && drop.pos.y === 900, 'drop retains death location');
+  }
+  wolf.hasPosition.current.x = 1200;
+  assert(drops[0].pos.x === 800, 'event position is copied, not live entity state');
+  attachComponent(world, wolf, 'isRaised', { raiserId: 'test-raiser' });
+  assert(grantMonsterRewards(world, 'mote-killer', wolf) === null, 'raised monster has no reward');
+  assert(world.takeNodeEvents(FARM_NODE).length === 0, 'raised monster emits no reward cosmetics');
+}
 
 console.log("rewardMultiplier.test: ok");

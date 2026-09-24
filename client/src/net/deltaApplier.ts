@@ -20,6 +20,7 @@ import { upsertMinion } from "../render/minions";
 import { destroyEntity } from "../render/destroy";
 import { getOwnView } from "../render/state";
 import { dispatchCombatEvent } from "../render/combatFx";
+import { clearEssenceMotes } from '../fx/essenceMotes';
 import { beginCombatPlayback, queuePlayerAttack, queueCombatDeath } from '../render/combatPlayback';
 import { prepareCombatText, renderCombatText } from '../render/combatText';
 import { spawnDamageNumber } from '../fx/particles';
@@ -48,6 +49,7 @@ export function applyDelta(
   options: { stateSync?: boolean } = {},
 ): void {
   state.serverClock.observe(snapshot.serverTime);
+  if (options.stateSync || snapshot.nodeId !== state.ownNodeId) clearEssenceMotes(scene);
   if (snapshot.full) {
     state.ambientStackFlash.clear();
     clearOwnMovePath(state);

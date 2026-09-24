@@ -89,6 +89,7 @@ import {
 } from "../../sprites";
 import { stepInterpolation, getOwnBase } from "../../render/interpolation";
 import { stepCombatPlayback } from '../../render/combatPlayback';
+import { updateEssenceMotes } from '../../fx/essenceMotes';
 import { updateAmbientStackFlashes } from '../../render/players';
 import { CORPSE_REMAINS_ART } from "../../render/corpseRemains";
 import { drawShadows } from "../../render/shadows";
@@ -670,6 +671,7 @@ export function updateGameScene(scene: GameScene, delta: number): void {
   // slide; the slide is purely a camera pan, so client and server never diverge.
   stepInterpolation(scene, dt);
   stepCombatPlayback(scene.state, scene);
+  updateEssenceMotes(scene, delta);
   updateAmbientStackFlashes(scene.state);
   drawShadows(scene.state);
   drawLabels(scene.state);
