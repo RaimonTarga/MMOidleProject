@@ -1,6 +1,11 @@
 {
   "files": [
     {
+      "path": ".gitattributes",
+      "bytes": 150,
+      "sha256": "b1f9f4d4db573d114eb9bef8bd16f079575145e776aff74aba65e417f6b1f7d9"
+    },
+    {
       "path": "BRIEF.md",
       "bytes": 21326,
       "sha256": "591f11dce262bc3a883cdef8ddda8a5d50fe4e9f2bbb6b801f5e369f29638791"
