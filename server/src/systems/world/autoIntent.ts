@@ -245,7 +245,7 @@ function maintenanceIntent(player: PlayerEntity): HasAutoIntent | null {
   ) {
     return {
       kind: "idle",
-      reason: "Waiting for harmful effects to fade",
+      reason: runeTrace(player, "wait-it-out")?.waitOutMode === "heat-managed" ? "Cooling Heat to 10" : "Waiting for harmful effects to fade",
       source: ruleLabel(player, "wait-it-out"),
       activeRune: runeTrace(player, "wait-it-out"),
     };
@@ -343,6 +343,7 @@ function ruleLabel(
     (entry) => entry.actionId === actionId,
   );
   if (!rule) return "";
+  if (rule.waitOutMode === "heat-managed") return "Wait It Out / Manage Heat";
   return (
     getRuleName(rule.conditionId, rule.actionId)?.name ??
     ACTION_DATABASE.get(actionId)?.name ??
@@ -389,13 +390,16 @@ function sameIntent(
     a.destBiomeGroup === b.destBiomeGroup
     && a.activeRune?.conditionId === b.activeRune?.conditionId
     && a.activeRune?.actionId === b.activeRune?.actionId
+    && a.activeRune?.waitOutMode === b.activeRune?.waitOutMode
     && a.activeRune?.targetStanceId === b.activeRune?.targetStanceId
     && JSON.stringify(a.matchedRunes) === JSON.stringify(b.matchedRunes)
     && a.overrideRune?.conditionId === b.overrideRune?.conditionId
     && a.overrideRune?.actionId === b.overrideRune?.actionId
+    && a.overrideRune?.waitOutMode === b.overrideRune?.waitOutMode
     && a.overrideRune?.targetStanceId === b.overrideRune?.targetStanceId
     && a.overriddenRune?.conditionId === b.overriddenRune?.conditionId
     && a.overriddenRune?.actionId === b.overriddenRune?.actionId
+    && a.overriddenRune?.waitOutMode === b.overriddenRune?.waitOutMode
     && a.overriddenRune?.targetStanceId === b.overriddenRune?.targetStanceId
     && a.travelPaused === b.travelPaused
   );

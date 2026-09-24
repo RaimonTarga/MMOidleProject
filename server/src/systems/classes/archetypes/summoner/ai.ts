@@ -1,3 +1,4 @@
+import { heatAllowsTarget } from "../../../combat/ai/heatManagement";
 /**
  * Minion AI driver — runs once per minion per tick.
  *
@@ -73,6 +74,7 @@ function findMinionTarget(
   let bestDistSq = Infinity;
   for (const m of world.monsterEntitiesInNode(owner.hasPosition.nodeId)) {
     if (m.hasHealth.hp <= 0) continue;
+    if (!heatAllowsTarget(world, owner, m)) continue;
     const distSq = distanceSq(m.hasPosition.current, owner.hasPosition.current);
     if (distSq > leashSq) continue;
     if (distSq < bestDistSq) {
@@ -94,6 +96,7 @@ function countMinionsTargetingMonster(
     if (m.isMinion.ownerPlayerId !== ownerId) continue;
     if (excludeMinionId && m.isMinion.id === excludeMinionId) continue;
     if (m.hasHealth.hp <= 0) continue;
+
     if (m.controlsMinion.currentTargetId === monsterId) count++;
   }
   return count;
@@ -117,6 +120,7 @@ function findSwarmMinionTarget(
 
   for (const m of world.monsterEntitiesInNode(nodeId)) {
     if (m.hasHealth.hp <= 0) continue;
+    if (!heatAllowsTarget(world, owner, m)) continue;
     if (distanceSq(m.hasPosition.current, ownerPos) > leashSq) continue;
     candidates.push(m);
   }

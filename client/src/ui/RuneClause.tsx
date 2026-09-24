@@ -39,6 +39,7 @@ export function runeResponse(rule: EquippedRule, abilities: AttunedAbilities) {
         "Return to your default posture when this rule no longer applies.",
     };
   }
+  if (rule.actionId === "wait-it-out" && rule.waitOutMode === "heat-managed") return { name: "Wait It Out / Manage Heat", icon: runeActionIconSource(rule.actionId), missing: false, detail: "Ordinary Volcano only: 25 Heat to request a break; resume at 10. Current fights finish first. Other afflictions do not extend this wait." };
   const action = ACTION_DATABASE.get(rule.actionId);
   return {
     name: action?.name ?? rule.actionId,

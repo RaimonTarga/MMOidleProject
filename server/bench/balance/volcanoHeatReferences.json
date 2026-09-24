@@ -1,0 +1,5114 @@
+{
+  "closing-striker-balanced-b-V-s101009": {
+    "source": "056b5cd66c2f6aeccca840265a0cbce30a2a77f3",
+    "path": "D:/mmo-idle/t4-overnight-closing-pass-01/run-01/closing-striker-balanced-b-V-s101009/artifacts/closing-striker-balanced-b-V-s101009-s101009/ready.json",
+    "sha256": "b75a0f57eea371fc633e768b85c86dd32a84f4845072b4064af0aeb2c45f791d",
+    "packageReadback": {
+      "progression": {
+        "snapshot": {
+          "id": "t4-established-gm148",
+          "tier": 4,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "cave": 18,
+            "mountain": 24,
+            "jungle": 18,
+            "desert": 18,
+            "volcanic": 12,
+            "tundra": 12,
+            "graveyard": 4,
+            "trench": 0
+          },
+          "gm": 148,
+          "rp": 45,
+          "plus": 4,
+          "priorBossClears": [
+            "forest:1",
+            "mountain:1",
+            "plains:2",
+            "swamp:2",
+            "desert:2",
+            "cave:3",
+            "mountain:3",
+            "jungle:3",
+            "desert:3"
+          ]
+        },
+        "purchases": [
+          {
+            "id": "ability-recipe-sweep",
+            "kind": "learn-ability",
+            "cost": {
+              "yellow": 25
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-frenzy",
+            "kind": "learn-ability",
+            "cost": {
+              "red": 175
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-expose-weakness",
+            "kind": "learn-ability",
+            "cost": {
+              "red": 85
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-second-wind",
+            "kind": "learn-ability",
+            "cost": {
+              "green": 25
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-brace",
+            "kind": "learn-ability",
+            "cost": {
+              "blue": 45
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-cleanse",
+            "kind": "learn-ability",
+            "cost": {
+              "purple": 30
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "stance-recipe-offensive",
+            "kind": "learn-stance",
+            "cost": {
+              "yellow": 60
+            },
+            "catalysts": {
+              "alacrity": 1
+            }
+          },
+          {
+            "id": "rune-recipe-step-back",
+            "kind": "learn-rune",
+            "cost": {
+              "red": 35
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "rune-recipe-avoid-hazards",
+            "kind": "learn-rune",
+            "cost": {
+              "purple": 25
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-eruption-lash",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "red": 1078
+            },
+            "catalysts": {
+              "swarming": 4
+            }
+          },
+          {
+            "id": "volcanic-eruption-lash+1",
+            "kind": "upgrade",
+            "cost": {
+              "red": 191
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-eruption-lash+2",
+            "kind": "upgrade",
+            "cost": {
+              "red": 477
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-eruption-lash+3",
+            "kind": "upgrade",
+            "cost": {
+              "red": 764
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-eruption-lash+4",
+            "kind": "upgrade",
+            "cost": {
+              "red": 1241
+            },
+            "catalysts": {
+              "swarming": 3
+            }
+          },
+          {
+            "id": "volcanic-vest-t4",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "red": 770,
+              "yellow": 193
+            },
+            "catalysts": {
+              "alacrity": 4
+            }
+          },
+          {
+            "id": "volcanic-vest-t4+1",
+            "kind": "upgrade",
+            "cost": {
+              "red": 126,
+              "yellow": 32
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-vest-t4+2",
+            "kind": "upgrade",
+            "cost": {
+              "red": 316,
+              "yellow": 79
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-vest-t4+3",
+            "kind": "upgrade",
+            "cost": {
+              "red": 506,
+              "yellow": 126
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-vest-t4+4",
+            "kind": "upgrade",
+            "cost": {
+              "red": 822,
+              "yellow": 205
+            },
+            "catalysts": {
+              "alacrity": 3
+            }
+          },
+          {
+            "id": "volcanic-charm-t4",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "red": 700,
+              "yellow": 175
+            },
+            "catalysts": {
+              "alacrity": 4
+            }
+          },
+          {
+            "id": "volcanic-charm-t4+1",
+            "kind": "upgrade",
+            "cost": {
+              "red": 62,
+              "yellow": 16
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-charm-t4+2",
+            "kind": "upgrade",
+            "cost": {
+              "red": 156,
+              "yellow": 39
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-charm-t4+3",
+            "kind": "upgrade",
+            "cost": {
+              "red": 250,
+              "yellow": 62
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-charm-t4+4",
+            "kind": "upgrade",
+            "cost": {
+              "red": 406,
+              "yellow": 101
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "mountain-boots-t4",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "blue": 770
+            },
+            "catalysts": {
+              "heavy": 4
+            }
+          },
+          {
+            "id": "mountain-boots-t4+1",
+            "kind": "upgrade",
+            "cost": {
+              "blue": 44
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "mountain-boots-t4+2",
+            "kind": "upgrade",
+            "cost": {
+              "blue": 110
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "mountain-boots-t4+3",
+            "kind": "upgrade",
+            "cost": {
+              "blue": 175
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "mountain-boots-t4+4",
+            "kind": "upgrade",
+            "cost": {
+              "blue": 285
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "core-bruiser",
+            "kind": "craft",
+            "cost": {
+              "green": 1350
+            },
+            "catalysts": {
+              "alacrity": 6
+            }
+          },
+          {
+            "id": "relic-equilibrium-shard",
+            "kind": "craft",
+            "cost": {
+              "blue": 2500
+            },
+            "catalysts": {
+              "heavy": 8
+            }
+          }
+        ],
+        "priorResources": {
+          "essences": {
+            "red": 8160,
+            "blue": 3929,
+            "green": 1375,
+            "yellow": 1113,
+            "purple": 55
+          },
+          "catalysts": {
+            "alacrity": 18,
+            "swarming": 7,
+            "heavy": 12
+          }
+        },
+        "remainingResources": {
+          "essences": {
+            "red": 0,
+            "blue": 0,
+            "green": 0,
+            "yellow": 0,
+            "purple": 0
+          },
+          "catalysts": {}
+        },
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ],
+        "priorSealOwnership": "Synthetic earned prior clears assumed; no acquisition combat measured",
+        "classSkillPointBudget": 4,
+        "classSkillPointsSpent": 4,
+        "acquisition": "Synthetic prior paid ownership; direct reconstruction at production price. No acquisition time measured.",
+        "abilityRanks": {
+          "sweep": 4,
+          "frenzy": 2,
+          "expose-weakness": 4,
+          "second-wind": 4,
+          "brace": 4,
+          "cleanse": 4
+        },
+        "knownAbilities": [
+          "sweep",
+          "frenzy",
+          "expose-weakness",
+          "second-wind",
+          "brace",
+          "cleanse"
+        ],
+        "knownStances": [
+          "offensive-stance"
+        ],
+        "runesOwned": [
+          "always",
+          "in-combat",
+          "when-idle",
+          "hp-below-25",
+          "hp-above-90",
+          "target-hp-below-25",
+          "has-debuff",
+          "in-party",
+          "n-aggro-3",
+          "inside-telegraph",
+          "target-casting",
+          "stance-charged",
+          "before-empowered",
+          "target-elite",
+          "target-max-stacks",
+          "while-traveling",
+          "auto-path-enemy",
+          "chase-enemy",
+          "wait-for-regen",
+          "flee",
+          "fight-back",
+          "lead-the-way",
+          "follow-and-assist",
+          "taunt-current-target",
+          "focus-closest",
+          "use-ability",
+          "switch-stance",
+          "wait-it-out",
+          "avoid-enemies",
+          "step-back",
+          "avoid-hazards"
+        ],
+        "runeRecipesCrafted": [
+          "rune-recipe-step-back",
+          "rune-recipe-avoid-hazards"
+        ]
+      },
+      "declared": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "sweep",
+            "frenzy",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 4,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skillPath": [
+        "cadence-root",
+        "cadence-balanced",
+        "cadence-range-close",
+        "cadence-balanced-t3-b"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "volcanic-eruption-lash",
+          "armor": "volcanic-vest-t4",
+          "recovery": "volcanic-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-bruiser",
+          "relic": "relic-equilibrium-shard"
+        },
+        "itemUpgrades": {
+          "volcanic-eruption-lash": 4,
+          "volcanic-vest-t4": 4,
+          "volcanic-charm-t4": 4,
+          "mountain-boots-t4": 4,
+          "core-bruiser": 0,
+          "relic-equilibrium-shard": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "globalMastery": 148
+      },
+      "runicPoints": {
+        "budget": 45,
+        "cost": 40,
+        "unused": 5,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "access": "Fixed declared synthetic route checkpoint; prior paid ownership, no acquisition or guardian evidence.",
+      "skillPoints": 0,
+      "knownAbilities": [
+        "sweep",
+        "frenzy",
+        "expose-weakness",
+        "second-wind",
+        "brace",
+        "cleanse"
+      ],
+      "rites": []
+    }
+  },
+  "closing-apprentice-balanced-a-V-s101009": {
+    "source": "056b5cd66c2f6aeccca840265a0cbce30a2a77f3",
+    "path": "D:/mmo-idle/t4-overnight-closing-pass-01/run-01/closing-apprentice-balanced-a-V-s101009/artifacts/closing-apprentice-balanced-a-V-s101009-s101009/ready.json",
+    "sha256": "a078e2d015ac185da4c8007817cb6d62335ece232ee22dcb4ac30c52af8639f0",
+    "packageReadback": {
+      "progression": {
+        "snapshot": {
+          "id": "t4-established-gm148",
+          "tier": 4,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "cave": 18,
+            "mountain": 24,
+            "jungle": 18,
+            "desert": 18,
+            "volcanic": 12,
+            "tundra": 12,
+            "graveyard": 4,
+            "trench": 0
+          },
+          "gm": 148,
+          "rp": 45,
+          "plus": 4,
+          "priorBossClears": [
+            "forest:1",
+            "mountain:1",
+            "plains:2",
+            "swamp:2",
+            "desert:2",
+            "cave:3",
+            "mountain:3",
+            "jungle:3",
+            "desert:3"
+          ]
+        },
+        "purchases": [
+          {
+            "id": "ability-recipe-contagion",
+            "kind": "learn-ability",
+            "cost": {
+              "purple": 90
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-frenzy",
+            "kind": "learn-ability",
+            "cost": {
+              "red": 175
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-second-wind",
+            "kind": "learn-ability",
+            "cost": {
+              "green": 25
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-brace",
+            "kind": "learn-ability",
+            "cost": {
+              "blue": 45
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-cleanse",
+            "kind": "learn-ability",
+            "cost": {
+              "purple": 30
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "stance-recipe-defensive",
+            "kind": "learn-stance",
+            "cost": {
+              "yellow": 60
+            },
+            "catalysts": {
+              "fortified": 1
+            }
+          },
+          {
+            "id": "rune-recipe-step-back",
+            "kind": "learn-rune",
+            "cost": {
+              "red": 35
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "rune-recipe-avoid-hazards",
+            "kind": "learn-rune",
+            "cost": {
+              "purple": 25
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "rune-recipe-keep-distance",
+            "kind": "learn-rune",
+            "cost": {
+              "blue": 45
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "graveyard-plague-axe",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "purple": 945
+            },
+            "catalysts": {
+              "swarming": 4
+            }
+          },
+          {
+            "id": "graveyard-plague-axe+1",
+            "kind": "upgrade",
+            "cost": {
+              "purple": 175
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "graveyard-plague-axe+2",
+            "kind": "upgrade",
+            "cost": {
+              "purple": 439
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "graveyard-plague-axe+3",
+            "kind": "upgrade",
+            "cost": {
+              "purple": 702
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "graveyard-plague-axe+4",
+            "kind": "upgrade",
+            "cost": {
+              "purple": 1140
+            },
+            "catalysts": {
+              "swarming": 3
+            }
+          },
+          {
+            "id": "volcanic-vest-t4",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "red": 770,
+              "yellow": 193
+            },
+            "catalysts": {
+              "alacrity": 4
+            }
+          },
+          {
+            "id": "volcanic-vest-t4+1",
+            "kind": "upgrade",
+            "cost": {
+              "red": 126,
+              "yellow": 32
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-vest-t4+2",
+            "kind": "upgrade",
+            "cost": {
+              "red": 316,
+              "yellow": 79
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-vest-t4+3",
+            "kind": "upgrade",
+            "cost": {
+              "red": 506,
+              "yellow": 126
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-vest-t4+4",
+            "kind": "upgrade",
+            "cost": {
+              "red": 822,
+              "yellow": 205
+            },
+            "catalysts": {
+              "alacrity": 3
+            }
+          },
+          {
+            "id": "volcanic-charm-t4",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "red": 700,
+              "yellow": 175
+            },
+            "catalysts": {
+              "alacrity": 4
+            }
+          },
+          {
+            "id": "volcanic-charm-t4+1",
+            "kind": "upgrade",
+            "cost": {
+              "red": 62,
+              "yellow": 16
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-charm-t4+2",
+            "kind": "upgrade",
+            "cost": {
+              "red": 156,
+              "yellow": 39
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-charm-t4+3",
+            "kind": "upgrade",
+            "cost": {
+              "red": 250,
+              "yellow": 62
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-charm-t4+4",
+            "kind": "upgrade",
+            "cost": {
+              "red": 406,
+              "yellow": 101
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "desert-boots-t4",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "yellow": 693
+            },
+            "catalysts": {
+              "dominion": 4
+            }
+          },
+          {
+            "id": "desert-boots-t4+1",
+            "kind": "upgrade",
+            "cost": {
+              "yellow": 61
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "desert-boots-t4+2",
+            "kind": "upgrade",
+            "cost": {
+              "yellow": 153
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "desert-boots-t4+3",
+            "kind": "upgrade",
+            "cost": {
+              "yellow": 245
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "desert-boots-t4+4",
+            "kind": "upgrade",
+            "cost": {
+              "yellow": 398
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "core-tempered",
+            "kind": "craft",
+            "cost": {
+              "red": 500
+            },
+            "catalysts": {
+              "dominion": 4
+            }
+          },
+          {
+            "id": "relic-equilibrium-shard",
+            "kind": "craft",
+            "cost": {
+              "blue": 2500
+            },
+            "catalysts": {
+              "heavy": 8
+            }
+          }
+        ],
+        "priorResources": {
+          "essences": {
+            "red": 4824,
+            "blue": 2590,
+            "green": 25,
+            "yellow": 2638,
+            "purple": 3546
+          },
+          "catalysts": {
+            "fortified": 1,
+            "swarming": 7,
+            "alacrity": 11,
+            "dominion": 8,
+            "heavy": 8
+          }
+        },
+        "remainingResources": {
+          "essences": {
+            "red": 0,
+            "blue": 0,
+            "green": 0,
+            "yellow": 0,
+            "purple": 0
+          },
+          "catalysts": {}
+        },
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ],
+        "priorSealOwnership": "Synthetic earned prior clears assumed; no acquisition combat measured",
+        "classSkillPointBudget": 4,
+        "classSkillPointsSpent": 4,
+        "acquisition": "Synthetic prior paid ownership; direct reconstruction at production price. No acquisition time measured.",
+        "abilityRanks": {
+          "contagion": 3,
+          "frenzy": 2,
+          "second-wind": 4,
+          "brace": 4,
+          "cleanse": 4
+        },
+        "knownAbilities": [
+          "contagion",
+          "frenzy",
+          "second-wind",
+          "brace",
+          "cleanse"
+        ],
+        "knownStances": [
+          "defensive-stance"
+        ],
+        "runesOwned": [
+          "always",
+          "in-combat",
+          "when-idle",
+          "hp-below-25",
+          "hp-above-90",
+          "target-hp-below-25",
+          "has-debuff",
+          "in-party",
+          "n-aggro-3",
+          "inside-telegraph",
+          "target-casting",
+          "stance-charged",
+          "before-empowered",
+          "target-elite",
+          "target-max-stacks",
+          "while-traveling",
+          "auto-path-enemy",
+          "chase-enemy",
+          "wait-for-regen",
+          "flee",
+          "fight-back",
+          "lead-the-way",
+          "follow-and-assist",
+          "taunt-current-target",
+          "focus-closest",
+          "use-ability",
+          "switch-stance",
+          "wait-it-out",
+          "avoid-enemies",
+          "step-back",
+          "avoid-hazards",
+          "orbit"
+        ],
+        "runeRecipesCrafted": [
+          "rune-recipe-step-back",
+          "rune-recipe-avoid-hazards",
+          "rune-recipe-keep-distance"
+        ]
+      },
+      "declared": {
+        "stance": "defensive-stance",
+        "abilities": {
+          "techniques": [
+            "contagion",
+            "frenzy"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "target-max-stacks",
+            "actionId": "use-ability",
+            "targetAbilityId": "contagion"
+          }
+        ],
+        "upgradeLevel": 4,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skillPath": [
+        "dot-root",
+        "dot-balanced",
+        "dot-range-mid",
+        "dot-balanced-t3-a"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "graveyard-plague-axe",
+          "armor": "volcanic-vest-t4",
+          "recovery": "volcanic-charm-t4",
+          "mobility": "desert-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-equilibrium-shard"
+        },
+        "itemUpgrades": {
+          "graveyard-plague-axe": 4,
+          "volcanic-vest-t4": 4,
+          "volcanic-charm-t4": 4,
+          "desert-boots-t4": 4,
+          "core-tempered": 0,
+          "relic-equilibrium-shard": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "globalMastery": 148
+      },
+      "runicPoints": {
+        "budget": 45,
+        "cost": 40,
+        "unused": 5,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "access": "Fixed declared synthetic route checkpoint; prior paid ownership, no acquisition or guardian evidence.",
+      "skillPoints": 0,
+      "knownAbilities": [
+        "contagion",
+        "frenzy",
+        "second-wind",
+        "brace",
+        "cleanse"
+      ],
+      "rites": []
+    }
+  },
+  "closing-slinger-light-a-V-s101009": {
+    "source": "056b5cd66c2f6aeccca840265a0cbce30a2a77f3",
+    "path": "D:/mmo-idle/t4-overnight-closing-pass-01/run-01/closing-slinger-light-a-V-s101009/artifacts/closing-slinger-light-a-V-s101009-s101009/ready.json",
+    "sha256": "70855e1ae2f7cec242a48ea443070bffb498d09e54748efe62935c950e5c48f6",
+    "packageReadback": {
+      "progression": {
+        "snapshot": {
+          "id": "t4-established-gm148",
+          "tier": 4,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "cave": 18,
+            "mountain": 24,
+            "jungle": 18,
+            "desert": 18,
+            "volcanic": 12,
+            "tundra": 12,
+            "graveyard": 4,
+            "trench": 0
+          },
+          "gm": 148,
+          "rp": 45,
+          "plus": 4,
+          "priorBossClears": [
+            "forest:1",
+            "mountain:1",
+            "plains:2",
+            "swamp:2",
+            "desert:2",
+            "cave:3",
+            "mountain:3",
+            "jungle:3",
+            "desert:3"
+          ]
+        },
+        "purchases": [
+          {
+            "id": "ability-recipe-sweep",
+            "kind": "learn-ability",
+            "cost": {
+              "yellow": 25
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-frenzy",
+            "kind": "learn-ability",
+            "cost": {
+              "red": 175
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-expose-weakness",
+            "kind": "learn-ability",
+            "cost": {
+              "red": 85
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-second-wind",
+            "kind": "learn-ability",
+            "cost": {
+              "green": 25
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-brace",
+            "kind": "learn-ability",
+            "cost": {
+              "blue": 45
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-cleanse",
+            "kind": "learn-ability",
+            "cost": {
+              "purple": 30
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "stance-recipe-offensive",
+            "kind": "learn-stance",
+            "cost": {
+              "yellow": 60
+            },
+            "catalysts": {
+              "alacrity": 1
+            }
+          },
+          {
+            "id": "rune-recipe-step-back",
+            "kind": "learn-rune",
+            "cost": {
+              "red": 35
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "rune-recipe-avoid-hazards",
+            "kind": "learn-rune",
+            "cost": {
+              "purple": 25
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "rune-recipe-keep-distance",
+            "kind": "learn-rune",
+            "cost": {
+              "blue": 45
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "jungle-deathfang-rapier",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "green": 924
+            },
+            "catalysts": {
+              "alacrity": 4
+            }
+          },
+          {
+            "id": "jungle-deathfang-rapier+1",
+            "kind": "upgrade",
+            "cost": {
+              "green": 157
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "jungle-deathfang-rapier+2",
+            "kind": "upgrade",
+            "cost": {
+              "green": 392
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "jungle-deathfang-rapier+3",
+            "kind": "upgrade",
+            "cost": {
+              "green": 627
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "jungle-deathfang-rapier+4",
+            "kind": "upgrade",
+            "cost": {
+              "green": 1018
+            },
+            "catalysts": {
+              "alacrity": 3
+            }
+          },
+          {
+            "id": "volcanic-vest-t4",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "red": 770,
+              "yellow": 193
+            },
+            "catalysts": {
+              "alacrity": 4
+            }
+          },
+          {
+            "id": "volcanic-vest-t4+1",
+            "kind": "upgrade",
+            "cost": {
+              "red": 126,
+              "yellow": 32
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-vest-t4+2",
+            "kind": "upgrade",
+            "cost": {
+              "red": 316,
+              "yellow": 79
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-vest-t4+3",
+            "kind": "upgrade",
+            "cost": {
+              "red": 506,
+              "yellow": 126
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-vest-t4+4",
+            "kind": "upgrade",
+            "cost": {
+              "red": 822,
+              "yellow": 205
+            },
+            "catalysts": {
+              "alacrity": 3
+            }
+          },
+          {
+            "id": "volcanic-charm-t4",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "red": 700,
+              "yellow": 175
+            },
+            "catalysts": {
+              "alacrity": 4
+            }
+          },
+          {
+            "id": "volcanic-charm-t4+1",
+            "kind": "upgrade",
+            "cost": {
+              "red": 62,
+              "yellow": 16
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-charm-t4+2",
+            "kind": "upgrade",
+            "cost": {
+              "red": 156,
+              "yellow": 39
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-charm-t4+3",
+            "kind": "upgrade",
+            "cost": {
+              "red": 250,
+              "yellow": 62
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-charm-t4+4",
+            "kind": "upgrade",
+            "cost": {
+              "red": 406,
+              "yellow": 101
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "desert-boots-t4",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "yellow": 693
+            },
+            "catalysts": {
+              "dominion": 4
+            }
+          },
+          {
+            "id": "desert-boots-t4+1",
+            "kind": "upgrade",
+            "cost": {
+              "yellow": 61
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "desert-boots-t4+2",
+            "kind": "upgrade",
+            "cost": {
+              "yellow": 153
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "desert-boots-t4+3",
+            "kind": "upgrade",
+            "cost": {
+              "yellow": 245
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "desert-boots-t4+4",
+            "kind": "upgrade",
+            "cost": {
+              "yellow": 398
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "core-catalyst",
+            "kind": "craft",
+            "cost": {
+              "red": 2300
+            },
+            "catalysts": {
+              "swarming": 8
+            }
+          },
+          {
+            "id": "relic-equilibrium-shard",
+            "kind": "craft",
+            "cost": {
+              "blue": 2500
+            },
+            "catalysts": {
+              "heavy": 8
+            }
+          }
+        ],
+        "priorResources": {
+          "essences": {
+            "red": 6709,
+            "blue": 2590,
+            "green": 3143,
+            "yellow": 2663,
+            "purple": 55
+          },
+          "catalysts": {
+            "alacrity": 19,
+            "dominion": 4,
+            "swarming": 8,
+            "heavy": 8
+          }
+        },
+        "remainingResources": {
+          "essences": {
+            "red": 0,
+            "blue": 0,
+            "green": 0,
+            "yellow": 0,
+            "purple": 0
+          },
+          "catalysts": {}
+        },
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ],
+        "priorSealOwnership": "Synthetic earned prior clears assumed; no acquisition combat measured",
+        "classSkillPointBudget": 4,
+        "classSkillPointsSpent": 4,
+        "acquisition": "Synthetic prior paid ownership; direct reconstruction at production price. No acquisition time measured.",
+        "abilityRanks": {
+          "sweep": 4,
+          "frenzy": 2,
+          "expose-weakness": 4,
+          "second-wind": 4,
+          "brace": 4,
+          "cleanse": 4
+        },
+        "knownAbilities": [
+          "sweep",
+          "frenzy",
+          "expose-weakness",
+          "second-wind",
+          "brace",
+          "cleanse"
+        ],
+        "knownStances": [
+          "offensive-stance"
+        ],
+        "runesOwned": [
+          "always",
+          "in-combat",
+          "when-idle",
+          "hp-below-25",
+          "hp-above-90",
+          "target-hp-below-25",
+          "has-debuff",
+          "in-party",
+          "n-aggro-3",
+          "inside-telegraph",
+          "target-casting",
+          "stance-charged",
+          "before-empowered",
+          "target-elite",
+          "target-max-stacks",
+          "while-traveling",
+          "auto-path-enemy",
+          "chase-enemy",
+          "wait-for-regen",
+          "flee",
+          "fight-back",
+          "lead-the-way",
+          "follow-and-assist",
+          "taunt-current-target",
+          "focus-closest",
+          "use-ability",
+          "switch-stance",
+          "wait-it-out",
+          "avoid-enemies",
+          "step-back",
+          "avoid-hazards",
+          "orbit"
+        ],
+        "runeRecipesCrafted": [
+          "rune-recipe-step-back",
+          "rune-recipe-avoid-hazards",
+          "rune-recipe-keep-distance"
+        ]
+      },
+      "declared": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "sweep",
+            "frenzy",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          }
+        ],
+        "upgradeLevel": 4,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skillPath": [
+        "reload-root",
+        "reload-light",
+        "reload-range-mid",
+        "reload-light-t3-a"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "volcanic-vest-t4",
+          "recovery": "volcanic-charm-t4",
+          "mobility": "desert-boots-t4",
+          "core": "core-catalyst",
+          "relic": "relic-equilibrium-shard"
+        },
+        "itemUpgrades": {
+          "jungle-deathfang-rapier": 4,
+          "volcanic-vest-t4": 4,
+          "volcanic-charm-t4": 4,
+          "desert-boots-t4": 4,
+          "core-catalyst": 0,
+          "relic-equilibrium-shard": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "globalMastery": 148
+      },
+      "runicPoints": {
+        "budget": 45,
+        "cost": 43,
+        "unused": 2,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "access": "Fixed declared synthetic route checkpoint; prior paid ownership, no acquisition or guardian evidence.",
+      "skillPoints": 0,
+      "knownAbilities": [
+        "sweep",
+        "frenzy",
+        "expose-weakness",
+        "second-wind",
+        "brace",
+        "cleanse"
+      ],
+      "rites": []
+    }
+  },
+  "closing-striker-balanced-b-V-s101033": {
+    "source": "056b5cd66c2f6aeccca840265a0cbce30a2a77f3",
+    "path": "D:/mmo-idle/t4-overnight-closing-pass-01/run-01/closing-striker-balanced-b-V-s101033/artifacts/closing-striker-balanced-b-V-s101033-s101033/ready.json",
+    "sha256": "426c084cb064fbe6fb694be50c3b303fc15b1a67cf39ef692eba85e39de961b1",
+    "packageReadback": {
+      "progression": {
+        "snapshot": {
+          "id": "t4-established-gm148",
+          "tier": 4,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "cave": 18,
+            "mountain": 24,
+            "jungle": 18,
+            "desert": 18,
+            "volcanic": 12,
+            "tundra": 12,
+            "graveyard": 4,
+            "trench": 0
+          },
+          "gm": 148,
+          "rp": 45,
+          "plus": 4,
+          "priorBossClears": [
+            "forest:1",
+            "mountain:1",
+            "plains:2",
+            "swamp:2",
+            "desert:2",
+            "cave:3",
+            "mountain:3",
+            "jungle:3",
+            "desert:3"
+          ]
+        },
+        "purchases": [
+          {
+            "id": "ability-recipe-sweep",
+            "kind": "learn-ability",
+            "cost": {
+              "yellow": 25
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-frenzy",
+            "kind": "learn-ability",
+            "cost": {
+              "red": 175
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-expose-weakness",
+            "kind": "learn-ability",
+            "cost": {
+              "red": 85
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-second-wind",
+            "kind": "learn-ability",
+            "cost": {
+              "green": 25
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-brace",
+            "kind": "learn-ability",
+            "cost": {
+              "blue": 45
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-cleanse",
+            "kind": "learn-ability",
+            "cost": {
+              "purple": 30
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "stance-recipe-offensive",
+            "kind": "learn-stance",
+            "cost": {
+              "yellow": 60
+            },
+            "catalysts": {
+              "alacrity": 1
+            }
+          },
+          {
+            "id": "rune-recipe-step-back",
+            "kind": "learn-rune",
+            "cost": {
+              "red": 35
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "rune-recipe-avoid-hazards",
+            "kind": "learn-rune",
+            "cost": {
+              "purple": 25
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-eruption-lash",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "red": 1078
+            },
+            "catalysts": {
+              "swarming": 4
+            }
+          },
+          {
+            "id": "volcanic-eruption-lash+1",
+            "kind": "upgrade",
+            "cost": {
+              "red": 191
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-eruption-lash+2",
+            "kind": "upgrade",
+            "cost": {
+              "red": 477
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-eruption-lash+3",
+            "kind": "upgrade",
+            "cost": {
+              "red": 764
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-eruption-lash+4",
+            "kind": "upgrade",
+            "cost": {
+              "red": 1241
+            },
+            "catalysts": {
+              "swarming": 3
+            }
+          },
+          {
+            "id": "volcanic-vest-t4",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "red": 770,
+              "yellow": 193
+            },
+            "catalysts": {
+              "alacrity": 4
+            }
+          },
+          {
+            "id": "volcanic-vest-t4+1",
+            "kind": "upgrade",
+            "cost": {
+              "red": 126,
+              "yellow": 32
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-vest-t4+2",
+            "kind": "upgrade",
+            "cost": {
+              "red": 316,
+              "yellow": 79
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-vest-t4+3",
+            "kind": "upgrade",
+            "cost": {
+              "red": 506,
+              "yellow": 126
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-vest-t4+4",
+            "kind": "upgrade",
+            "cost": {
+              "red": 822,
+              "yellow": 205
+            },
+            "catalysts": {
+              "alacrity": 3
+            }
+          },
+          {
+            "id": "volcanic-charm-t4",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "red": 700,
+              "yellow": 175
+            },
+            "catalysts": {
+              "alacrity": 4
+            }
+          },
+          {
+            "id": "volcanic-charm-t4+1",
+            "kind": "upgrade",
+            "cost": {
+              "red": 62,
+              "yellow": 16
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-charm-t4+2",
+            "kind": "upgrade",
+            "cost": {
+              "red": 156,
+              "yellow": 39
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-charm-t4+3",
+            "kind": "upgrade",
+            "cost": {
+              "red": 250,
+              "yellow": 62
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-charm-t4+4",
+            "kind": "upgrade",
+            "cost": {
+              "red": 406,
+              "yellow": 101
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "mountain-boots-t4",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "blue": 770
+            },
+            "catalysts": {
+              "heavy": 4
+            }
+          },
+          {
+            "id": "mountain-boots-t4+1",
+            "kind": "upgrade",
+            "cost": {
+              "blue": 44
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "mountain-boots-t4+2",
+            "kind": "upgrade",
+            "cost": {
+              "blue": 110
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "mountain-boots-t4+3",
+            "kind": "upgrade",
+            "cost": {
+              "blue": 175
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "mountain-boots-t4+4",
+            "kind": "upgrade",
+            "cost": {
+              "blue": 285
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "core-bruiser",
+            "kind": "craft",
+            "cost": {
+              "green": 1350
+            },
+            "catalysts": {
+              "alacrity": 6
+            }
+          },
+          {
+            "id": "relic-equilibrium-shard",
+            "kind": "craft",
+            "cost": {
+              "blue": 2500
+            },
+            "catalysts": {
+              "heavy": 8
+            }
+          }
+        ],
+        "priorResources": {
+          "essences": {
+            "red": 8160,
+            "blue": 3929,
+            "green": 1375,
+            "yellow": 1113,
+            "purple": 55
+          },
+          "catalysts": {
+            "alacrity": 18,
+            "swarming": 7,
+            "heavy": 12
+          }
+        },
+        "remainingResources": {
+          "essences": {
+            "red": 0,
+            "blue": 0,
+            "green": 0,
+            "yellow": 0,
+            "purple": 0
+          },
+          "catalysts": {}
+        },
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ],
+        "priorSealOwnership": "Synthetic earned prior clears assumed; no acquisition combat measured",
+        "classSkillPointBudget": 4,
+        "classSkillPointsSpent": 4,
+        "acquisition": "Synthetic prior paid ownership; direct reconstruction at production price. No acquisition time measured.",
+        "abilityRanks": {
+          "sweep": 4,
+          "frenzy": 2,
+          "expose-weakness": 4,
+          "second-wind": 4,
+          "brace": 4,
+          "cleanse": 4
+        },
+        "knownAbilities": [
+          "sweep",
+          "frenzy",
+          "expose-weakness",
+          "second-wind",
+          "brace",
+          "cleanse"
+        ],
+        "knownStances": [
+          "offensive-stance"
+        ],
+        "runesOwned": [
+          "always",
+          "in-combat",
+          "when-idle",
+          "hp-below-25",
+          "hp-above-90",
+          "target-hp-below-25",
+          "has-debuff",
+          "in-party",
+          "n-aggro-3",
+          "inside-telegraph",
+          "target-casting",
+          "stance-charged",
+          "before-empowered",
+          "target-elite",
+          "target-max-stacks",
+          "while-traveling",
+          "auto-path-enemy",
+          "chase-enemy",
+          "wait-for-regen",
+          "flee",
+          "fight-back",
+          "lead-the-way",
+          "follow-and-assist",
+          "taunt-current-target",
+          "focus-closest",
+          "use-ability",
+          "switch-stance",
+          "wait-it-out",
+          "avoid-enemies",
+          "step-back",
+          "avoid-hazards"
+        ],
+        "runeRecipesCrafted": [
+          "rune-recipe-step-back",
+          "rune-recipe-avoid-hazards"
+        ]
+      },
+      "declared": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "sweep",
+            "frenzy",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "upgradeLevel": 4,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skillPath": [
+        "cadence-root",
+        "cadence-balanced",
+        "cadence-range-close",
+        "cadence-balanced-t3-b"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "volcanic-eruption-lash",
+          "armor": "volcanic-vest-t4",
+          "recovery": "volcanic-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-bruiser",
+          "relic": "relic-equilibrium-shard"
+        },
+        "itemUpgrades": {
+          "volcanic-eruption-lash": 4,
+          "volcanic-vest-t4": 4,
+          "volcanic-charm-t4": 4,
+          "mountain-boots-t4": 4,
+          "core-bruiser": 0,
+          "relic-equilibrium-shard": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "globalMastery": 148
+      },
+      "runicPoints": {
+        "budget": 45,
+        "cost": 40,
+        "unused": 5,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "access": "Fixed declared synthetic route checkpoint; prior paid ownership, no acquisition or guardian evidence.",
+      "skillPoints": 0,
+      "knownAbilities": [
+        "sweep",
+        "frenzy",
+        "expose-weakness",
+        "second-wind",
+        "brace",
+        "cleanse"
+      ],
+      "rites": []
+    }
+  },
+  "closing-apprentice-balanced-a-V-s101033": {
+    "source": "056b5cd66c2f6aeccca840265a0cbce30a2a77f3",
+    "path": "D:/mmo-idle/t4-overnight-closing-pass-01/run-01/closing-apprentice-balanced-a-V-s101033/artifacts/closing-apprentice-balanced-a-V-s101033-s101033/ready.json",
+    "sha256": "0efe21eebed48b2ed975431388cd9d1d69676f698c10e842951b3fa65848f2c2",
+    "packageReadback": {
+      "progression": {
+        "snapshot": {
+          "id": "t4-established-gm148",
+          "tier": 4,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "cave": 18,
+            "mountain": 24,
+            "jungle": 18,
+            "desert": 18,
+            "volcanic": 12,
+            "tundra": 12,
+            "graveyard": 4,
+            "trench": 0
+          },
+          "gm": 148,
+          "rp": 45,
+          "plus": 4,
+          "priorBossClears": [
+            "forest:1",
+            "mountain:1",
+            "plains:2",
+            "swamp:2",
+            "desert:2",
+            "cave:3",
+            "mountain:3",
+            "jungle:3",
+            "desert:3"
+          ]
+        },
+        "purchases": [
+          {
+            "id": "ability-recipe-contagion",
+            "kind": "learn-ability",
+            "cost": {
+              "purple": 90
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-frenzy",
+            "kind": "learn-ability",
+            "cost": {
+              "red": 175
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-second-wind",
+            "kind": "learn-ability",
+            "cost": {
+              "green": 25
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-brace",
+            "kind": "learn-ability",
+            "cost": {
+              "blue": 45
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-cleanse",
+            "kind": "learn-ability",
+            "cost": {
+              "purple": 30
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "stance-recipe-defensive",
+            "kind": "learn-stance",
+            "cost": {
+              "yellow": 60
+            },
+            "catalysts": {
+              "fortified": 1
+            }
+          },
+          {
+            "id": "rune-recipe-step-back",
+            "kind": "learn-rune",
+            "cost": {
+              "red": 35
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "rune-recipe-avoid-hazards",
+            "kind": "learn-rune",
+            "cost": {
+              "purple": 25
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "rune-recipe-keep-distance",
+            "kind": "learn-rune",
+            "cost": {
+              "blue": 45
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "graveyard-plague-axe",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "purple": 945
+            },
+            "catalysts": {
+              "swarming": 4
+            }
+          },
+          {
+            "id": "graveyard-plague-axe+1",
+            "kind": "upgrade",
+            "cost": {
+              "purple": 175
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "graveyard-plague-axe+2",
+            "kind": "upgrade",
+            "cost": {
+              "purple": 439
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "graveyard-plague-axe+3",
+            "kind": "upgrade",
+            "cost": {
+              "purple": 702
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "graveyard-plague-axe+4",
+            "kind": "upgrade",
+            "cost": {
+              "purple": 1140
+            },
+            "catalysts": {
+              "swarming": 3
+            }
+          },
+          {
+            "id": "volcanic-vest-t4",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "red": 770,
+              "yellow": 193
+            },
+            "catalysts": {
+              "alacrity": 4
+            }
+          },
+          {
+            "id": "volcanic-vest-t4+1",
+            "kind": "upgrade",
+            "cost": {
+              "red": 126,
+              "yellow": 32
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-vest-t4+2",
+            "kind": "upgrade",
+            "cost": {
+              "red": 316,
+              "yellow": 79
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-vest-t4+3",
+            "kind": "upgrade",
+            "cost": {
+              "red": 506,
+              "yellow": 126
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-vest-t4+4",
+            "kind": "upgrade",
+            "cost": {
+              "red": 822,
+              "yellow": 205
+            },
+            "catalysts": {
+              "alacrity": 3
+            }
+          },
+          {
+            "id": "volcanic-charm-t4",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "red": 700,
+              "yellow": 175
+            },
+            "catalysts": {
+              "alacrity": 4
+            }
+          },
+          {
+            "id": "volcanic-charm-t4+1",
+            "kind": "upgrade",
+            "cost": {
+              "red": 62,
+              "yellow": 16
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-charm-t4+2",
+            "kind": "upgrade",
+            "cost": {
+              "red": 156,
+              "yellow": 39
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-charm-t4+3",
+            "kind": "upgrade",
+            "cost": {
+              "red": 250,
+              "yellow": 62
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-charm-t4+4",
+            "kind": "upgrade",
+            "cost": {
+              "red": 406,
+              "yellow": 101
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "desert-boots-t4",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "yellow": 693
+            },
+            "catalysts": {
+              "dominion": 4
+            }
+          },
+          {
+            "id": "desert-boots-t4+1",
+            "kind": "upgrade",
+            "cost": {
+              "yellow": 61
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "desert-boots-t4+2",
+            "kind": "upgrade",
+            "cost": {
+              "yellow": 153
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "desert-boots-t4+3",
+            "kind": "upgrade",
+            "cost": {
+              "yellow": 245
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "desert-boots-t4+4",
+            "kind": "upgrade",
+            "cost": {
+              "yellow": 398
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "core-tempered",
+            "kind": "craft",
+            "cost": {
+              "red": 500
+            },
+            "catalysts": {
+              "dominion": 4
+            }
+          },
+          {
+            "id": "relic-equilibrium-shard",
+            "kind": "craft",
+            "cost": {
+              "blue": 2500
+            },
+            "catalysts": {
+              "heavy": 8
+            }
+          }
+        ],
+        "priorResources": {
+          "essences": {
+            "red": 4824,
+            "blue": 2590,
+            "green": 25,
+            "yellow": 2638,
+            "purple": 3546
+          },
+          "catalysts": {
+            "fortified": 1,
+            "swarming": 7,
+            "alacrity": 11,
+            "dominion": 8,
+            "heavy": 8
+          }
+        },
+        "remainingResources": {
+          "essences": {
+            "red": 0,
+            "blue": 0,
+            "green": 0,
+            "yellow": 0,
+            "purple": 0
+          },
+          "catalysts": {}
+        },
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ],
+        "priorSealOwnership": "Synthetic earned prior clears assumed; no acquisition combat measured",
+        "classSkillPointBudget": 4,
+        "classSkillPointsSpent": 4,
+        "acquisition": "Synthetic prior paid ownership; direct reconstruction at production price. No acquisition time measured.",
+        "abilityRanks": {
+          "contagion": 3,
+          "frenzy": 2,
+          "second-wind": 4,
+          "brace": 4,
+          "cleanse": 4
+        },
+        "knownAbilities": [
+          "contagion",
+          "frenzy",
+          "second-wind",
+          "brace",
+          "cleanse"
+        ],
+        "knownStances": [
+          "defensive-stance"
+        ],
+        "runesOwned": [
+          "always",
+          "in-combat",
+          "when-idle",
+          "hp-below-25",
+          "hp-above-90",
+          "target-hp-below-25",
+          "has-debuff",
+          "in-party",
+          "n-aggro-3",
+          "inside-telegraph",
+          "target-casting",
+          "stance-charged",
+          "before-empowered",
+          "target-elite",
+          "target-max-stacks",
+          "while-traveling",
+          "auto-path-enemy",
+          "chase-enemy",
+          "wait-for-regen",
+          "flee",
+          "fight-back",
+          "lead-the-way",
+          "follow-and-assist",
+          "taunt-current-target",
+          "focus-closest",
+          "use-ability",
+          "switch-stance",
+          "wait-it-out",
+          "avoid-enemies",
+          "step-back",
+          "avoid-hazards",
+          "orbit"
+        ],
+        "runeRecipesCrafted": [
+          "rune-recipe-step-back",
+          "rune-recipe-avoid-hazards",
+          "rune-recipe-keep-distance"
+        ]
+      },
+      "declared": {
+        "stance": "defensive-stance",
+        "abilities": {
+          "techniques": [
+            "contagion",
+            "frenzy"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "target-max-stacks",
+            "actionId": "use-ability",
+            "targetAbilityId": "contagion"
+          }
+        ],
+        "upgradeLevel": 4,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skillPath": [
+        "dot-root",
+        "dot-balanced",
+        "dot-range-mid",
+        "dot-balanced-t3-a"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "graveyard-plague-axe",
+          "armor": "volcanic-vest-t4",
+          "recovery": "volcanic-charm-t4",
+          "mobility": "desert-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-equilibrium-shard"
+        },
+        "itemUpgrades": {
+          "graveyard-plague-axe": 4,
+          "volcanic-vest-t4": 4,
+          "volcanic-charm-t4": 4,
+          "desert-boots-t4": 4,
+          "core-tempered": 0,
+          "relic-equilibrium-shard": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "globalMastery": 148
+      },
+      "runicPoints": {
+        "budget": 45,
+        "cost": 40,
+        "unused": 5,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "access": "Fixed declared synthetic route checkpoint; prior paid ownership, no acquisition or guardian evidence.",
+      "skillPoints": 0,
+      "knownAbilities": [
+        "contagion",
+        "frenzy",
+        "second-wind",
+        "brace",
+        "cleanse"
+      ],
+      "rites": []
+    }
+  },
+  "closing-slinger-light-a-V-s101033": {
+    "source": "056b5cd66c2f6aeccca840265a0cbce30a2a77f3",
+    "path": "D:/mmo-idle/t4-overnight-closing-pass-01/run-01/closing-slinger-light-a-V-s101033/artifacts/closing-slinger-light-a-V-s101033-s101033/ready.json",
+    "sha256": "7cd771e9ac89b6537a5204dd05af6f4c24f54f2d9f2268d403f21d71d37c7537",
+    "packageReadback": {
+      "progression": {
+        "snapshot": {
+          "id": "t4-established-gm148",
+          "tier": 4,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "cave": 18,
+            "mountain": 24,
+            "jungle": 18,
+            "desert": 18,
+            "volcanic": 12,
+            "tundra": 12,
+            "graveyard": 4,
+            "trench": 0
+          },
+          "gm": 148,
+          "rp": 45,
+          "plus": 4,
+          "priorBossClears": [
+            "forest:1",
+            "mountain:1",
+            "plains:2",
+            "swamp:2",
+            "desert:2",
+            "cave:3",
+            "mountain:3",
+            "jungle:3",
+            "desert:3"
+          ]
+        },
+        "purchases": [
+          {
+            "id": "ability-recipe-sweep",
+            "kind": "learn-ability",
+            "cost": {
+              "yellow": 25
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-frenzy",
+            "kind": "learn-ability",
+            "cost": {
+              "red": 175
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-expose-weakness",
+            "kind": "learn-ability",
+            "cost": {
+              "red": 85
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-second-wind",
+            "kind": "learn-ability",
+            "cost": {
+              "green": 25
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-brace",
+            "kind": "learn-ability",
+            "cost": {
+              "blue": 45
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-cleanse",
+            "kind": "learn-ability",
+            "cost": {
+              "purple": 30
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "stance-recipe-offensive",
+            "kind": "learn-stance",
+            "cost": {
+              "yellow": 60
+            },
+            "catalysts": {
+              "alacrity": 1
+            }
+          },
+          {
+            "id": "rune-recipe-step-back",
+            "kind": "learn-rune",
+            "cost": {
+              "red": 35
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "rune-recipe-avoid-hazards",
+            "kind": "learn-rune",
+            "cost": {
+              "purple": 25
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "rune-recipe-keep-distance",
+            "kind": "learn-rune",
+            "cost": {
+              "blue": 45
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "jungle-deathfang-rapier",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "green": 924
+            },
+            "catalysts": {
+              "alacrity": 4
+            }
+          },
+          {
+            "id": "jungle-deathfang-rapier+1",
+            "kind": "upgrade",
+            "cost": {
+              "green": 157
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "jungle-deathfang-rapier+2",
+            "kind": "upgrade",
+            "cost": {
+              "green": 392
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "jungle-deathfang-rapier+3",
+            "kind": "upgrade",
+            "cost": {
+              "green": 627
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "jungle-deathfang-rapier+4",
+            "kind": "upgrade",
+            "cost": {
+              "green": 1018
+            },
+            "catalysts": {
+              "alacrity": 3
+            }
+          },
+          {
+            "id": "volcanic-vest-t4",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "red": 770,
+              "yellow": 193
+            },
+            "catalysts": {
+              "alacrity": 4
+            }
+          },
+          {
+            "id": "volcanic-vest-t4+1",
+            "kind": "upgrade",
+            "cost": {
+              "red": 126,
+              "yellow": 32
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-vest-t4+2",
+            "kind": "upgrade",
+            "cost": {
+              "red": 316,
+              "yellow": 79
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-vest-t4+3",
+            "kind": "upgrade",
+            "cost": {
+              "red": 506,
+              "yellow": 126
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-vest-t4+4",
+            "kind": "upgrade",
+            "cost": {
+              "red": 822,
+              "yellow": 205
+            },
+            "catalysts": {
+              "alacrity": 3
+            }
+          },
+          {
+            "id": "volcanic-charm-t4",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "red": 700,
+              "yellow": 175
+            },
+            "catalysts": {
+              "alacrity": 4
+            }
+          },
+          {
+            "id": "volcanic-charm-t4+1",
+            "kind": "upgrade",
+            "cost": {
+              "red": 62,
+              "yellow": 16
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-charm-t4+2",
+            "kind": "upgrade",
+            "cost": {
+              "red": 156,
+              "yellow": 39
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-charm-t4+3",
+            "kind": "upgrade",
+            "cost": {
+              "red": 250,
+              "yellow": 62
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "volcanic-charm-t4+4",
+            "kind": "upgrade",
+            "cost": {
+              "red": 406,
+              "yellow": 101
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "desert-boots-t4",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "yellow": 693
+            },
+            "catalysts": {
+              "dominion": 4
+            }
+          },
+          {
+            "id": "desert-boots-t4+1",
+            "kind": "upgrade",
+            "cost": {
+              "yellow": 61
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "desert-boots-t4+2",
+            "kind": "upgrade",
+            "cost": {
+              "yellow": 153
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "desert-boots-t4+3",
+            "kind": "upgrade",
+            "cost": {
+              "yellow": 245
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "desert-boots-t4+4",
+            "kind": "upgrade",
+            "cost": {
+              "yellow": 398
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "core-catalyst",
+            "kind": "craft",
+            "cost": {
+              "red": 2300
+            },
+            "catalysts": {
+              "swarming": 8
+            }
+          },
+          {
+            "id": "relic-equilibrium-shard",
+            "kind": "craft",
+            "cost": {
+              "blue": 2500
+            },
+            "catalysts": {
+              "heavy": 8
+            }
+          }
+        ],
+        "priorResources": {
+          "essences": {
+            "red": 6709,
+            "blue": 2590,
+            "green": 3143,
+            "yellow": 2663,
+            "purple": 55
+          },
+          "catalysts": {
+            "alacrity": 19,
+            "dominion": 4,
+            "swarming": 8,
+            "heavy": 8
+          }
+        },
+        "remainingResources": {
+          "essences": {
+            "red": 0,
+            "blue": 0,
+            "green": 0,
+            "yellow": 0,
+            "purple": 0
+          },
+          "catalysts": {}
+        },
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ],
+        "priorSealOwnership": "Synthetic earned prior clears assumed; no acquisition combat measured",
+        "classSkillPointBudget": 4,
+        "classSkillPointsSpent": 4,
+        "acquisition": "Synthetic prior paid ownership; direct reconstruction at production price. No acquisition time measured.",
+        "abilityRanks": {
+          "sweep": 4,
+          "frenzy": 2,
+          "expose-weakness": 4,
+          "second-wind": 4,
+          "brace": 4,
+          "cleanse": 4
+        },
+        "knownAbilities": [
+          "sweep",
+          "frenzy",
+          "expose-weakness",
+          "second-wind",
+          "brace",
+          "cleanse"
+        ],
+        "knownStances": [
+          "offensive-stance"
+        ],
+        "runesOwned": [
+          "always",
+          "in-combat",
+          "when-idle",
+          "hp-below-25",
+          "hp-above-90",
+          "target-hp-below-25",
+          "has-debuff",
+          "in-party",
+          "n-aggro-3",
+          "inside-telegraph",
+          "target-casting",
+          "stance-charged",
+          "before-empowered",
+          "target-elite",
+          "target-max-stacks",
+          "while-traveling",
+          "auto-path-enemy",
+          "chase-enemy",
+          "wait-for-regen",
+          "flee",
+          "fight-back",
+          "lead-the-way",
+          "follow-and-assist",
+          "taunt-current-target",
+          "focus-closest",
+          "use-ability",
+          "switch-stance",
+          "wait-it-out",
+          "avoid-enemies",
+          "step-back",
+          "avoid-hazards",
+          "orbit"
+        ],
+        "runeRecipesCrafted": [
+          "rune-recipe-step-back",
+          "rune-recipe-avoid-hazards",
+          "rune-recipe-keep-distance"
+        ]
+      },
+      "declared": {
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "sweep",
+            "frenzy",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          }
+        ],
+        "upgradeLevel": 4,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skillPath": [
+        "reload-root",
+        "reload-light",
+        "reload-range-mid",
+        "reload-light-t3-a"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "volcanic-vest-t4",
+          "recovery": "volcanic-charm-t4",
+          "mobility": "desert-boots-t4",
+          "core": "core-catalyst",
+          "relic": "relic-equilibrium-shard"
+        },
+        "itemUpgrades": {
+          "jungle-deathfang-rapier": 4,
+          "volcanic-vest-t4": 4,
+          "volcanic-charm-t4": 4,
+          "desert-boots-t4": 4,
+          "core-catalyst": 0,
+          "relic-equilibrium-shard": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "globalMastery": 148
+      },
+      "runicPoints": {
+        "budget": 45,
+        "cost": 43,
+        "unused": 2,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "access": "Fixed declared synthetic route checkpoint; prior paid ownership, no acquisition or guardian evidence.",
+      "skillPoints": 0,
+      "knownAbilities": [
+        "sweep",
+        "frenzy",
+        "expose-weakness",
+        "second-wind",
+        "brace",
+        "cleanse"
+      ],
+      "rites": []
+    }
+  },
+  "closing-conduit-balanced-c-T-s101009": {
+    "source": "056b5cd66c2f6aeccca840265a0cbce30a2a77f3",
+    "path": "D:/mmo-idle/t4-overnight-closing-pass-01/run-01/closing-conduit-balanced-c-T-s101009/artifacts/closing-conduit-balanced-c-T-s101009-s101009/ready.json",
+    "sha256": "0301194818c6deee9d49724b612251bf20a4a49df1f377983b90b38d172984fb",
+    "packageReadback": {
+      "progression": {
+        "snapshot": {
+          "id": "t4-established-gm148",
+          "tier": 4,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "cave": 18,
+            "mountain": 24,
+            "jungle": 18,
+            "desert": 18,
+            "volcanic": 12,
+            "tundra": 12,
+            "graveyard": 4,
+            "trench": 0
+          },
+          "gm": 148,
+          "rp": 45,
+          "plus": 4,
+          "priorBossClears": [
+            "forest:1",
+            "mountain:1",
+            "plains:2",
+            "swamp:2",
+            "desert:2",
+            "cave:3",
+            "mountain:3",
+            "jungle:3",
+            "desert:3"
+          ]
+        },
+        "purchases": [
+          {
+            "id": "ability-recipe-power-strike",
+            "kind": "learn-ability",
+            "cost": {
+              "blue": 190
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-frenzy",
+            "kind": "learn-ability",
+            "cost": {
+              "red": 175
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-hamstring",
+            "kind": "learn-ability",
+            "cost": {
+              "green": 70
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-second-wind",
+            "kind": "learn-ability",
+            "cost": {
+              "green": 25
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-brace",
+            "kind": "learn-ability",
+            "cost": {
+              "blue": 45
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-cleanse",
+            "kind": "learn-ability",
+            "cost": {
+              "purple": 30
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-break-free",
+            "kind": "learn-ability",
+            "cost": {
+              "blue": 190
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "stance-recipe-defensive",
+            "kind": "learn-stance",
+            "cost": {
+              "yellow": 60
+            },
+            "catalysts": {
+              "fortified": 1
+            }
+          },
+          {
+            "id": "rune-recipe-step-back",
+            "kind": "learn-rune",
+            "cost": {
+              "red": 35
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "rune-recipe-avoid-hazards",
+            "kind": "learn-rune",
+            "cost": {
+              "purple": 25
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "rune-recipe-keep-distance",
+            "kind": "learn-rune",
+            "cost": {
+              "blue": 45
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "graveyard-plague-axe",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "purple": 945
+            },
+            "catalysts": {
+              "swarming": 4
+            }
+          },
+          {
+            "id": "graveyard-plague-axe+1",
+            "kind": "upgrade",
+            "cost": {
+              "purple": 175
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "graveyard-plague-axe+2",
+            "kind": "upgrade",
+            "cost": {
+              "purple": 439
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "graveyard-plague-axe+3",
+            "kind": "upgrade",
+            "cost": {
+              "purple": 702
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "graveyard-plague-axe+4",
+            "kind": "upgrade",
+            "cost": {
+              "purple": 1140
+            },
+            "catalysts": {
+              "swarming": 3
+            }
+          },
+          {
+            "id": "mountain-vest-t4",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "blue": 896,
+              "red": 224
+            },
+            "catalysts": {
+              "heavy": 4
+            }
+          },
+          {
+            "id": "mountain-vest-t4+1",
+            "kind": "upgrade",
+            "cost": {
+              "blue": 132,
+              "red": 33
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "mountain-vest-t4+2",
+            "kind": "upgrade",
+            "cost": {
+              "blue": 331,
+              "red": 83
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "mountain-vest-t4+3",
+            "kind": "upgrade",
+            "cost": {
+              "blue": 530,
+              "red": 132
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "mountain-vest-t4+4",
+            "kind": "upgrade",
+            "cost": {
+              "blue": 860,
+              "red": 215
+            },
+            "catalysts": {
+              "heavy": 3
+            }
+          },
+          {
+            "id": "mountain-charm-t4",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "blue": 770,
+              "red": 105
+            },
+            "catalysts": {
+              "heavy": 4
+            }
+          },
+          {
+            "id": "mountain-charm-t4+1",
+            "kind": "upgrade",
+            "cost": {
+              "blue": 57,
+              "red": 8
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "mountain-charm-t4+2",
+            "kind": "upgrade",
+            "cost": {
+              "blue": 143,
+              "red": 19
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "mountain-charm-t4+3",
+            "kind": "upgrade",
+            "cost": {
+              "blue": 229,
+              "red": 31
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "mountain-charm-t4+4",
+            "kind": "upgrade",
+            "cost": {
+              "blue": 371,
+              "red": 51
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "desert-boots-t4",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "yellow": 693
+            },
+            "catalysts": {
+              "dominion": 4
+            }
+          },
+          {
+            "id": "desert-boots-t4+1",
+            "kind": "upgrade",
+            "cost": {
+              "yellow": 61
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "desert-boots-t4+2",
+            "kind": "upgrade",
+            "cost": {
+              "yellow": 153
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "desert-boots-t4+3",
+            "kind": "upgrade",
+            "cost": {
+              "yellow": 245
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "desert-boots-t4+4",
+            "kind": "upgrade",
+            "cost": {
+              "yellow": 398
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "core-survivalist",
+            "kind": "craft",
+            "cost": {
+              "green": 500
+            },
+            "catalysts": {
+              "fortified": 4
+            }
+          },
+          {
+            "id": "relic-equilibrium-shard",
+            "kind": "craft",
+            "cost": {
+              "blue": 2500
+            },
+            "catalysts": {
+              "heavy": 8
+            }
+          }
+        ],
+        "priorResources": {
+          "essences": {
+            "red": 1111,
+            "blue": 7289,
+            "green": 595,
+            "yellow": 1610,
+            "purple": 3456
+          },
+          "catalysts": {
+            "fortified": 5,
+            "swarming": 7,
+            "heavy": 19,
+            "dominion": 4
+          }
+        },
+        "remainingResources": {
+          "essences": {
+            "red": 0,
+            "blue": 0,
+            "green": 0,
+            "yellow": 0,
+            "purple": 0
+          },
+          "catalysts": {}
+        },
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ],
+        "priorSealOwnership": "Synthetic earned prior clears assumed; no acquisition combat measured",
+        "classSkillPointBudget": 4,
+        "classSkillPointsSpent": 4,
+        "acquisition": "Synthetic prior paid ownership; direct reconstruction at production price. No acquisition time measured.",
+        "abilityRanks": {
+          "power-strike": 4,
+          "frenzy": 2,
+          "hamstring": 3,
+          "second-wind": 4,
+          "brace": 4,
+          "cleanse": 4,
+          "break-free": 2
+        },
+        "knownAbilities": [
+          "power-strike",
+          "frenzy",
+          "hamstring",
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ],
+        "knownStances": [
+          "defensive-stance"
+        ],
+        "runesOwned": [
+          "always",
+          "in-combat",
+          "when-idle",
+          "hp-below-25",
+          "hp-above-90",
+          "target-hp-below-25",
+          "has-debuff",
+          "in-party",
+          "n-aggro-3",
+          "inside-telegraph",
+          "target-casting",
+          "stance-charged",
+          "before-empowered",
+          "target-elite",
+          "target-max-stacks",
+          "while-traveling",
+          "auto-path-enemy",
+          "chase-enemy",
+          "wait-for-regen",
+          "flee",
+          "fight-back",
+          "lead-the-way",
+          "follow-and-assist",
+          "taunt-current-target",
+          "focus-closest",
+          "use-ability",
+          "switch-stance",
+          "wait-it-out",
+          "avoid-enemies",
+          "step-back",
+          "avoid-hazards",
+          "orbit"
+        ],
+        "runeRecipesCrafted": [
+          "rune-recipe-step-back",
+          "rune-recipe-avoid-hazards",
+          "rune-recipe-keep-distance"
+        ]
+      },
+      "declared": {
+        "stance": "defensive-stance",
+        "abilities": {
+          "techniques": [
+            "power-strike",
+            "frenzy",
+            "hamstring"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse",
+            "break-free"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          }
+        ],
+        "upgradeLevel": 4,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skillPath": [
+        "summoner-root",
+        "summoner-balanced",
+        "summoner-range-mid",
+        "summoner-balanced-t3-c"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "graveyard-plague-axe",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "desert-boots-t4",
+          "core": "core-survivalist",
+          "relic": "relic-equilibrium-shard"
+        },
+        "itemUpgrades": {
+          "graveyard-plague-axe": 4,
+          "mountain-vest-t4": 4,
+          "mountain-charm-t4": 4,
+          "desert-boots-t4": 4,
+          "core-survivalist": 0,
+          "relic-equilibrium-shard": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "globalMastery": 148
+      },
+      "runicPoints": {
+        "budget": 45,
+        "cost": 43,
+        "unused": 2,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "access": "Fixed declared synthetic route checkpoint; prior paid ownership, no acquisition or guardian evidence.",
+      "skillPoints": 0,
+      "knownAbilities": [
+        "power-strike",
+        "frenzy",
+        "hamstring",
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ],
+      "rites": []
+    }
+  },
+  "closing-conduit-balanced-c-T-s101033": {
+    "source": "056b5cd66c2f6aeccca840265a0cbce30a2a77f3",
+    "path": "D:/mmo-idle/t4-overnight-closing-pass-01/run-01/closing-conduit-balanced-c-T-s101033/artifacts/closing-conduit-balanced-c-T-s101033-s101033/ready.json",
+    "sha256": "b80406dcbae1d3a3b8925152aa87e42dd66a6eb1e520e19892ba41b790dc7846",
+    "packageReadback": {
+      "progression": {
+        "snapshot": {
+          "id": "t4-established-gm148",
+          "tier": 4,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "cave": 18,
+            "mountain": 24,
+            "jungle": 18,
+            "desert": 18,
+            "volcanic": 12,
+            "tundra": 12,
+            "graveyard": 4,
+            "trench": 0
+          },
+          "gm": 148,
+          "rp": 45,
+          "plus": 4,
+          "priorBossClears": [
+            "forest:1",
+            "mountain:1",
+            "plains:2",
+            "swamp:2",
+            "desert:2",
+            "cave:3",
+            "mountain:3",
+            "jungle:3",
+            "desert:3"
+          ]
+        },
+        "purchases": [
+          {
+            "id": "ability-recipe-power-strike",
+            "kind": "learn-ability",
+            "cost": {
+              "blue": 190
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-frenzy",
+            "kind": "learn-ability",
+            "cost": {
+              "red": 175
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-hamstring",
+            "kind": "learn-ability",
+            "cost": {
+              "green": 70
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-second-wind",
+            "kind": "learn-ability",
+            "cost": {
+              "green": 25
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-brace",
+            "kind": "learn-ability",
+            "cost": {
+              "blue": 45
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-cleanse",
+            "kind": "learn-ability",
+            "cost": {
+              "purple": 30
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-break-free",
+            "kind": "learn-ability",
+            "cost": {
+              "blue": 190
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "stance-recipe-defensive",
+            "kind": "learn-stance",
+            "cost": {
+              "yellow": 60
+            },
+            "catalysts": {
+              "fortified": 1
+            }
+          },
+          {
+            "id": "rune-recipe-step-back",
+            "kind": "learn-rune",
+            "cost": {
+              "red": 35
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "rune-recipe-avoid-hazards",
+            "kind": "learn-rune",
+            "cost": {
+              "purple": 25
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "rune-recipe-keep-distance",
+            "kind": "learn-rune",
+            "cost": {
+              "blue": 45
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "graveyard-plague-axe",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "purple": 945
+            },
+            "catalysts": {
+              "swarming": 4
+            }
+          },
+          {
+            "id": "graveyard-plague-axe+1",
+            "kind": "upgrade",
+            "cost": {
+              "purple": 175
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "graveyard-plague-axe+2",
+            "kind": "upgrade",
+            "cost": {
+              "purple": 439
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "graveyard-plague-axe+3",
+            "kind": "upgrade",
+            "cost": {
+              "purple": 702
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "graveyard-plague-axe+4",
+            "kind": "upgrade",
+            "cost": {
+              "purple": 1140
+            },
+            "catalysts": {
+              "swarming": 3
+            }
+          },
+          {
+            "id": "mountain-vest-t4",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "blue": 896,
+              "red": 224
+            },
+            "catalysts": {
+              "heavy": 4
+            }
+          },
+          {
+            "id": "mountain-vest-t4+1",
+            "kind": "upgrade",
+            "cost": {
+              "blue": 132,
+              "red": 33
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "mountain-vest-t4+2",
+            "kind": "upgrade",
+            "cost": {
+              "blue": 331,
+              "red": 83
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "mountain-vest-t4+3",
+            "kind": "upgrade",
+            "cost": {
+              "blue": 530,
+              "red": 132
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "mountain-vest-t4+4",
+            "kind": "upgrade",
+            "cost": {
+              "blue": 860,
+              "red": 215
+            },
+            "catalysts": {
+              "heavy": 3
+            }
+          },
+          {
+            "id": "mountain-charm-t4",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "blue": 770,
+              "red": 105
+            },
+            "catalysts": {
+              "heavy": 4
+            }
+          },
+          {
+            "id": "mountain-charm-t4+1",
+            "kind": "upgrade",
+            "cost": {
+              "blue": 57,
+              "red": 8
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "mountain-charm-t4+2",
+            "kind": "upgrade",
+            "cost": {
+              "blue": 143,
+              "red": 19
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "mountain-charm-t4+3",
+            "kind": "upgrade",
+            "cost": {
+              "blue": 229,
+              "red": 31
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "mountain-charm-t4+4",
+            "kind": "upgrade",
+            "cost": {
+              "blue": 371,
+              "red": 51
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "desert-boots-t4",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "yellow": 693
+            },
+            "catalysts": {
+              "dominion": 4
+            }
+          },
+          {
+            "id": "desert-boots-t4+1",
+            "kind": "upgrade",
+            "cost": {
+              "yellow": 61
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "desert-boots-t4+2",
+            "kind": "upgrade",
+            "cost": {
+              "yellow": 153
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "desert-boots-t4+3",
+            "kind": "upgrade",
+            "cost": {
+              "yellow": 245
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "desert-boots-t4+4",
+            "kind": "upgrade",
+            "cost": {
+              "yellow": 398
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "core-survivalist",
+            "kind": "craft",
+            "cost": {
+              "green": 500
+            },
+            "catalysts": {
+              "fortified": 4
+            }
+          },
+          {
+            "id": "relic-equilibrium-shard",
+            "kind": "craft",
+            "cost": {
+              "blue": 2500
+            },
+            "catalysts": {
+              "heavy": 8
+            }
+          }
+        ],
+        "priorResources": {
+          "essences": {
+            "red": 1111,
+            "blue": 7289,
+            "green": 595,
+            "yellow": 1610,
+            "purple": 3456
+          },
+          "catalysts": {
+            "fortified": 5,
+            "swarming": 7,
+            "heavy": 19,
+            "dominion": 4
+          }
+        },
+        "remainingResources": {
+          "essences": {
+            "red": 0,
+            "blue": 0,
+            "green": 0,
+            "yellow": 0,
+            "purple": 0
+          },
+          "catalysts": {}
+        },
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ],
+        "priorSealOwnership": "Synthetic earned prior clears assumed; no acquisition combat measured",
+        "classSkillPointBudget": 4,
+        "classSkillPointsSpent": 4,
+        "acquisition": "Synthetic prior paid ownership; direct reconstruction at production price. No acquisition time measured.",
+        "abilityRanks": {
+          "power-strike": 4,
+          "frenzy": 2,
+          "hamstring": 3,
+          "second-wind": 4,
+          "brace": 4,
+          "cleanse": 4,
+          "break-free": 2
+        },
+        "knownAbilities": [
+          "power-strike",
+          "frenzy",
+          "hamstring",
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ],
+        "knownStances": [
+          "defensive-stance"
+        ],
+        "runesOwned": [
+          "always",
+          "in-combat",
+          "when-idle",
+          "hp-below-25",
+          "hp-above-90",
+          "target-hp-below-25",
+          "has-debuff",
+          "in-party",
+          "n-aggro-3",
+          "inside-telegraph",
+          "target-casting",
+          "stance-charged",
+          "before-empowered",
+          "target-elite",
+          "target-max-stacks",
+          "while-traveling",
+          "auto-path-enemy",
+          "chase-enemy",
+          "wait-for-regen",
+          "flee",
+          "fight-back",
+          "lead-the-way",
+          "follow-and-assist",
+          "taunt-current-target",
+          "focus-closest",
+          "use-ability",
+          "switch-stance",
+          "wait-it-out",
+          "avoid-enemies",
+          "step-back",
+          "avoid-hazards",
+          "orbit"
+        ],
+        "runeRecipesCrafted": [
+          "rune-recipe-step-back",
+          "rune-recipe-avoid-hazards",
+          "rune-recipe-keep-distance"
+        ]
+      },
+      "declared": {
+        "stance": "defensive-stance",
+        "abilities": {
+          "techniques": [
+            "power-strike",
+            "frenzy",
+            "hamstring"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse",
+            "break-free"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          }
+        ],
+        "upgradeLevel": 4,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skillPath": [
+        "summoner-root",
+        "summoner-balanced",
+        "summoner-range-mid",
+        "summoner-balanced-t3-c"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "graveyard-plague-axe",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "desert-boots-t4",
+          "core": "core-survivalist",
+          "relic": "relic-equilibrium-shard"
+        },
+        "itemUpgrades": {
+          "graveyard-plague-axe": 4,
+          "mountain-vest-t4": 4,
+          "mountain-charm-t4": 4,
+          "desert-boots-t4": 4,
+          "core-survivalist": 0,
+          "relic-equilibrium-shard": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "globalMastery": 148
+      },
+      "runicPoints": {
+        "budget": 45,
+        "cost": 43,
+        "unused": 2,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "access": "Fixed declared synthetic route checkpoint; prior paid ownership, no acquisition or guardian evidence.",
+      "skillPoints": 0,
+      "knownAbilities": [
+        "power-strike",
+        "frenzy",
+        "hamstring",
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ],
+      "rites": []
+    }
+  },
+  "op-t3-slinger-heavy-volcanic-boss-s101009": {
+    "source": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6",
+    "path": "D:/mmo-idle/overnight-t1-t3-progression-01/run-01/op-t3-slinger-heavy-volcanic-boss-s101009/artifacts/op-t3-slinger-heavy-volcanic-boss-s101009-s101009/ready.json",
+    "sha256": "61bd021d65bc300637b59b0f567ae7e92a4bb14a00115e70627c4cda5f862c5e",
+    "packageReadback": {
+      "progression": {
+        "snapshot": {
+          "id": "t3-tundra-arrival",
+          "tier": 3,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "mountain": 18,
+            "cave": 18,
+            "jungle": 12,
+            "desert": 12,
+            "volcanic": 6,
+            "tundra": 0
+          },
+          "gm": 108,
+          "rp": 37,
+          "plus": 4
+        },
+        "purchases": [
+          {
+            "id": "ability-recipe-sweep",
+            "kind": "learn-ability",
+            "cost": {
+              "yellow": 25
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-second-wind",
+            "kind": "learn-ability",
+            "cost": {
+              "green": 25
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-brace",
+            "kind": "learn-ability",
+            "cost": {
+              "blue": 45
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-endure",
+            "kind": "learn-ability",
+            "cost": {
+              "yellow": 90
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "stance-recipe-defensive",
+            "kind": "learn-stance",
+            "cost": {
+              "yellow": 60
+            },
+            "catalysts": {
+              "fortified": 1
+            }
+          },
+          {
+            "id": "rune-recipe-step-back",
+            "kind": "learn-rune",
+            "cost": {
+              "red": 35
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "rune-recipe-keep-distance",
+            "kind": "learn-rune",
+            "cost": {
+              "blue": 45
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "rune-recipe-avoid-hazards",
+            "kind": "learn-rune",
+            "cost": {
+              "purple": 25
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "jungle-venomthorn-rapier",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "green": 420
+            },
+            "catalysts": {
+              "alacrity": 3
+            }
+          },
+          {
+            "id": "jungle-venomthorn-rapier+1",
+            "kind": "upgrade",
+            "cost": {
+              "green": 79
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "jungle-venomthorn-rapier+2",
+            "kind": "upgrade",
+            "cost": {
+              "green": 197
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "jungle-venomthorn-rapier+3",
+            "kind": "upgrade",
+            "cost": {
+              "green": 315
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "jungle-venomthorn-rapier+4",
+            "kind": "upgrade",
+            "cost": {
+              "green": 512
+            },
+            "catalysts": {
+              "alacrity": 2
+            }
+          },
+          {
+            "id": "mountain-vest-t3",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "blue": 406,
+              "red": 102
+            },
+            "catalysts": {
+              "heavy": 3
+            }
+          },
+          {
+            "id": "mountain-vest-t3+1",
+            "kind": "upgrade",
+            "cost": {
+              "blue": 66,
+              "red": 17
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "mountain-vest-t3+2",
+            "kind": "upgrade",
+            "cost": {
+              "blue": 166,
+              "red": 42
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "mountain-vest-t3+3",
+            "kind": "upgrade",
+            "cost": {
+              "blue": 266,
+              "red": 67
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "mountain-vest-t3+4",
+            "kind": "upgrade",
+            "cost": {
+              "blue": 434,
+              "red": 108
+            },
+            "catalysts": {
+              "heavy": 2
+            }
+          },
+          {
+            "id": "swamp-charm-t3",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "purple": 350
+            },
+            "catalysts": {
+              "fortified": 3
+            }
+          },
+          {
+            "id": "swamp-charm-t3+1",
+            "kind": "upgrade",
+            "cost": {
+              "purple": 36
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "swamp-charm-t3+2",
+            "kind": "upgrade",
+            "cost": {
+              "purple": 89
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "swamp-charm-t3+3",
+            "kind": "upgrade",
+            "cost": {
+              "purple": 142
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "swamp-charm-t3+4",
+            "kind": "upgrade",
+            "cost": {
+              "purple": 231
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "desert-boots-t3",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "yellow": 315
+            },
+            "catalysts": {
+              "dominion": 3
+            }
+          },
+          {
+            "id": "desert-boots-t3+1",
+            "kind": "upgrade",
+            "cost": {
+              "yellow": 31
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "desert-boots-t3+2",
+            "kind": "upgrade",
+            "cost": {
+              "yellow": 77
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "desert-boots-t3+3",
+            "kind": "upgrade",
+            "cost": {
+              "yellow": 124
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "desert-boots-t3+4",
+            "kind": "upgrade",
+            "cost": {
+              "yellow": 201
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "core-tempered",
+            "kind": "craft",
+            "cost": {
+              "red": 500
+            },
+            "catalysts": {
+              "dominion": 4
+            }
+          }
+        ],
+        "priorResources": {
+          "essences": {
+            "red": 871,
+            "blue": 1428,
+            "green": 1548,
+            "yellow": 923,
+            "purple": 873
+          },
+          "catalysts": {
+            "fortified": 4,
+            "alacrity": 5,
+            "heavy": 5,
+            "dominion": 7
+          }
+        },
+        "remainingResources": {
+          "essences": {
+            "red": 0,
+            "blue": 0,
+            "green": 0,
+            "yellow": 0,
+            "purple": 0
+          },
+          "catalysts": {}
+        },
+        "acquisition": "Synthetic prior paid ownership; direct reconstruction at production price. No acquisition time measured.",
+        "abilityRanks": {
+          "sweep": 3,
+          "second-wind": 3,
+          "brace": 3,
+          "endure": 2
+        },
+        "knownAbilities": [
+          "sweep",
+          "second-wind",
+          "brace",
+          "endure"
+        ],
+        "knownStances": [
+          "defensive-stance"
+        ],
+        "runesOwned": [
+          "always",
+          "in-combat",
+          "when-idle",
+          "hp-below-25",
+          "hp-above-90",
+          "target-hp-below-25",
+          "has-debuff",
+          "in-party",
+          "n-aggro-3",
+          "inside-telegraph",
+          "target-casting",
+          "stance-charged",
+          "before-empowered",
+          "target-elite",
+          "target-max-stacks",
+          "while-traveling",
+          "auto-path-enemy",
+          "chase-enemy",
+          "wait-for-regen",
+          "flee",
+          "fight-back",
+          "lead-the-way",
+          "follow-and-assist",
+          "taunt-current-target",
+          "focus-closest",
+          "use-ability",
+          "switch-stance",
+          "wait-it-out",
+          "avoid-enemies",
+          "step-back",
+          "orbit",
+          "avoid-hazards"
+        ],
+        "runeRecipesCrafted": [
+          "rune-recipe-step-back",
+          "rune-recipe-keep-distance",
+          "rune-recipe-avoid-hazards"
+        ]
+      },
+      "declared": {
+        "stance": "defensive-stance",
+        "abilities": {
+          "techniques": [
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "endure"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "upgradeLevel": 4,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skillPath": [
+        "reload-root",
+        "reload-heavy",
+        "reload-range-mid"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "jungle-venomthorn-rapier",
+          "armor": "mountain-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "jungle-venomthorn-rapier": 4,
+          "mountain-vest-t3": 4,
+          "swamp-charm-t3": 4,
+          "desert-boots-t3": 4,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "mountain": 18,
+          "cave": 18,
+          "jungle": 12,
+          "desert": 12,
+          "volcanic": 6,
+          "tundra": 0
+        },
+        "globalMastery": 108
+      },
+      "runicPoints": {
+        "budget": 37,
+        "cost": 36,
+        "unused": 1,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "access": "Fixed declared synthetic route checkpoint; prior paid ownership, no acquisition or guardian evidence.",
+      "skillPoints": 0,
+      "knownAbilities": [
+        "sweep",
+        "second-wind",
+        "brace",
+        "endure"
+      ],
+      "rites": []
+    }
+  },
+  "op-t3-slinger-heavy-volcanic-boss-s101033": {
+    "source": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6",
+    "path": "D:/mmo-idle/overnight-t1-t3-progression-01/run-01/op-t3-slinger-heavy-volcanic-boss-s101033/artifacts/op-t3-slinger-heavy-volcanic-boss-s101033-s101033/ready.json",
+    "sha256": "017fdab2b44af1c75f9d0ac21fb334653f667c74dc1289ff31f51253c64e3fbd",
+    "packageReadback": {
+      "progression": {
+        "snapshot": {
+          "id": "t3-tundra-arrival",
+          "tier": 3,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "mountain": 18,
+            "cave": 18,
+            "jungle": 12,
+            "desert": 12,
+            "volcanic": 6,
+            "tundra": 0
+          },
+          "gm": 108,
+          "rp": 37,
+          "plus": 4
+        },
+        "purchases": [
+          {
+            "id": "ability-recipe-sweep",
+            "kind": "learn-ability",
+            "cost": {
+              "yellow": 25
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-second-wind",
+            "kind": "learn-ability",
+            "cost": {
+              "green": 25
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-brace",
+            "kind": "learn-ability",
+            "cost": {
+              "blue": 45
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "ability-recipe-endure",
+            "kind": "learn-ability",
+            "cost": {
+              "yellow": 90
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "stance-recipe-defensive",
+            "kind": "learn-stance",
+            "cost": {
+              "yellow": 60
+            },
+            "catalysts": {
+              "fortified": 1
+            }
+          },
+          {
+            "id": "rune-recipe-step-back",
+            "kind": "learn-rune",
+            "cost": {
+              "red": 35
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "rune-recipe-keep-distance",
+            "kind": "learn-rune",
+            "cost": {
+              "blue": 45
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "rune-recipe-avoid-hazards",
+            "kind": "learn-rune",
+            "cost": {
+              "purple": 25
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "jungle-venomthorn-rapier",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "green": 420
+            },
+            "catalysts": {
+              "alacrity": 3
+            }
+          },
+          {
+            "id": "jungle-venomthorn-rapier+1",
+            "kind": "upgrade",
+            "cost": {
+              "green": 79
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "jungle-venomthorn-rapier+2",
+            "kind": "upgrade",
+            "cost": {
+              "green": 197
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "jungle-venomthorn-rapier+3",
+            "kind": "upgrade",
+            "cost": {
+              "green": 315
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "jungle-venomthorn-rapier+4",
+            "kind": "upgrade",
+            "cost": {
+              "green": 512
+            },
+            "catalysts": {
+              "alacrity": 2
+            }
+          },
+          {
+            "id": "mountain-vest-t3",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "blue": 406,
+              "red": 102
+            },
+            "catalysts": {
+              "heavy": 3
+            }
+          },
+          {
+            "id": "mountain-vest-t3+1",
+            "kind": "upgrade",
+            "cost": {
+              "blue": 66,
+              "red": 17
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "mountain-vest-t3+2",
+            "kind": "upgrade",
+            "cost": {
+              "blue": 166,
+              "red": 42
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "mountain-vest-t3+3",
+            "kind": "upgrade",
+            "cost": {
+              "blue": 266,
+              "red": 67
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "mountain-vest-t3+4",
+            "kind": "upgrade",
+            "cost": {
+              "blue": 434,
+              "red": 108
+            },
+            "catalysts": {
+              "heavy": 2
+            }
+          },
+          {
+            "id": "swamp-charm-t3",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "purple": 350
+            },
+            "catalysts": {
+              "fortified": 3
+            }
+          },
+          {
+            "id": "swamp-charm-t3+1",
+            "kind": "upgrade",
+            "cost": {
+              "purple": 36
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "swamp-charm-t3+2",
+            "kind": "upgrade",
+            "cost": {
+              "purple": 89
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "swamp-charm-t3+3",
+            "kind": "upgrade",
+            "cost": {
+              "purple": 142
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "swamp-charm-t3+4",
+            "kind": "upgrade",
+            "cost": {
+              "purple": 231
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "desert-boots-t3",
+            "kind": "paid-reconstruction",
+            "cost": {
+              "yellow": 315
+            },
+            "catalysts": {
+              "dominion": 3
+            }
+          },
+          {
+            "id": "desert-boots-t3+1",
+            "kind": "upgrade",
+            "cost": {
+              "yellow": 31
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "desert-boots-t3+2",
+            "kind": "upgrade",
+            "cost": {
+              "yellow": 77
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "desert-boots-t3+3",
+            "kind": "upgrade",
+            "cost": {
+              "yellow": 124
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "desert-boots-t3+4",
+            "kind": "upgrade",
+            "cost": {
+              "yellow": 201
+            },
+            "catalysts": {}
+          },
+          {
+            "id": "core-tempered",
+            "kind": "craft",
+            "cost": {
+              "red": 500
+            },
+            "catalysts": {
+              "dominion": 4
+            }
+          }
+        ],
+        "priorResources": {
+          "essences": {
+            "red": 871,
+            "blue": 1428,
+            "green": 1548,
+            "yellow": 923,
+            "purple": 873
+          },
+          "catalysts": {
+            "fortified": 4,
+            "alacrity": 5,
+            "heavy": 5,
+            "dominion": 7
+          }
+        },
+        "remainingResources": {
+          "essences": {
+            "red": 0,
+            "blue": 0,
+            "green": 0,
+            "yellow": 0,
+            "purple": 0
+          },
+          "catalysts": {}
+        },
+        "acquisition": "Synthetic prior paid ownership; direct reconstruction at production price. No acquisition time measured.",
+        "abilityRanks": {
+          "sweep": 3,
+          "second-wind": 3,
+          "brace": 3,
+          "endure": 2
+        },
+        "knownAbilities": [
+          "sweep",
+          "second-wind",
+          "brace",
+          "endure"
+        ],
+        "knownStances": [
+          "defensive-stance"
+        ],
+        "runesOwned": [
+          "always",
+          "in-combat",
+          "when-idle",
+          "hp-below-25",
+          "hp-above-90",
+          "target-hp-below-25",
+          "has-debuff",
+          "in-party",
+          "n-aggro-3",
+          "inside-telegraph",
+          "target-casting",
+          "stance-charged",
+          "before-empowered",
+          "target-elite",
+          "target-max-stacks",
+          "while-traveling",
+          "auto-path-enemy",
+          "chase-enemy",
+          "wait-for-regen",
+          "flee",
+          "fight-back",
+          "lead-the-way",
+          "follow-and-assist",
+          "taunt-current-target",
+          "focus-closest",
+          "use-ability",
+          "switch-stance",
+          "wait-it-out",
+          "avoid-enemies",
+          "step-back",
+          "orbit",
+          "avoid-hazards"
+        ],
+        "runeRecipesCrafted": [
+          "rune-recipe-step-back",
+          "rune-recipe-keep-distance",
+          "rune-recipe-avoid-hazards"
+        ]
+      },
+      "declared": {
+        "stance": "defensive-stance",
+        "abilities": {
+          "techniques": [
+            "sweep"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "endure"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "target-casting",
+            "actionId": "use-ability",
+            "targetAbilityId": "brace"
+          }
+        ],
+        "upgradeLevel": 4,
+        "sources": {
+          "stance": "explicit",
+          "abilities": "explicit",
+          "runeRules": "explicit",
+          "upgradeLevel": "explicit"
+        }
+      },
+      "skillPath": [
+        "reload-root",
+        "reload-heavy",
+        "reload-range-mid"
+      ],
+      "equipment": {
+        "inventory": [],
+        "equipment": {
+          "weapon": "jungle-venomthorn-rapier",
+          "armor": "mountain-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "desert-boots-t3",
+          "core": "core-tempered",
+          "relic": null
+        },
+        "itemUpgrades": {
+          "jungle-venomthorn-rapier": 4,
+          "mountain-vest-t3": 4,
+          "swamp-charm-t3": 4,
+          "desert-boots-t3": 4,
+          "core-tempered": 0
+        }
+      },
+      "mastery": {
+        "biomeLevel": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "mountain": 18,
+          "cave": 18,
+          "jungle": 12,
+          "desert": 12,
+          "volcanic": 6,
+          "tundra": 0
+        },
+        "globalMastery": 108
+      },
+      "runicPoints": {
+        "budget": 37,
+        "cost": 36,
+        "unused": 1,
+        "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+      },
+      "access": "Fixed declared synthetic route checkpoint; prior paid ownership, no acquisition or guardian evidence.",
+      "skillPoints": 0,
+      "knownAbilities": [
+        "sweep",
+        "second-wind",
+        "brace",
+        "endure"
+      ],
+      "rites": []
+    }
+  }
+}

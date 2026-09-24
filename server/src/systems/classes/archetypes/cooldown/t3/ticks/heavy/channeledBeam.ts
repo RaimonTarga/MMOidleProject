@@ -1,3 +1,4 @@
+import { heatAllowsTarget } from '../../../../../../combat/ai/heatManagement';
 import { mitigateOnHitDamage } from '@mmo-idle/shared';
 import { playerOnHitDamage } from '../../../../../../combat/engine/onHitDamage';
 import { outgoingFinalDamage } from '../../../../../../combat/damage/finalDamage';
@@ -180,6 +181,7 @@ function findBeamTarget(world: World, player: PlayerEntity, excludeId?: string):
   const attackRange = player.performsAttack.attackRange;
 
   for (const entity of world.monsterEntitiesInNode(player.hasPosition.nodeId)) {
+    if (!heatAllowsTarget(world, player, entity)) continue;
     if (excludeId && entity.isMonster.id === excludeId) continue;
     if (isInvulnerableMonster(entity)) continue;
     const monsterPH = posHitboxFromEntity(entity);

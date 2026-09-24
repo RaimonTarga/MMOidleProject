@@ -1,0 +1,1128 @@
+{
+  "selectedCases": [
+    {
+      "case": "heat-slinger-light-a-H2-s101009",
+      "sourceCommit": "25289e490d4bfb53dd440ba436a67f596e5b91c4",
+      "policy": "H2",
+      "seed": 101009,
+      "build": {
+        "id": "heat-slinger-light-a-H2-s101009",
+        "classRoot": "reload-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "reload-root",
+          "reload-light",
+          "reload-range-mid",
+          "reload-light-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "volcanic-vest-t4",
+          "recovery": "volcanic-charm-t4",
+          "mobility": "desert-boots-t4",
+          "core": "core-catalyst",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "upgrade": 4,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "rules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-it-out",
+          "waitOutMode": "heat-managed"
+        }
+      ],
+      "snapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "range": 132,
+      "packageReadback": {
+        "equipment": {
+          "inventory": [],
+          "equipment": {
+            "weapon": "jungle-deathfang-rapier",
+            "armor": "volcanic-vest-t4",
+            "recovery": "volcanic-charm-t4",
+            "mobility": "desert-boots-t4",
+            "core": "core-catalyst",
+            "relic": "relic-equilibrium-shard"
+          },
+          "itemUpgrades": {
+            "jungle-deathfang-rapier": 4,
+            "volcanic-vest-t4": 4,
+            "volcanic-charm-t4": 4,
+            "desert-boots-t4": 4,
+            "core-catalyst": 0,
+            "relic-equilibrium-shard": 0
+          }
+        },
+        "mastery": {
+          "biomeLevel": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "cave": 18,
+            "mountain": 24,
+            "jungle": 18,
+            "desert": 18,
+            "volcanic": 12,
+            "tundra": 12,
+            "graveyard": 4,
+            "trench": 0
+          },
+          "globalMastery": 148
+        },
+        "runicPoints": {
+          "budget": 45,
+          "cost": 44,
+          "unused": 1,
+          "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+        },
+        "rites": []
+      },
+      "work": {
+        "kills": 673,
+        "firstKillMs": 2700,
+        "hpDamage": 1129294,
+        "absorbed": 7317,
+        "damageEvents": 4294,
+        "lastKillMs": 2398100,
+        "lastHpProgressMs": 2398100,
+        "longestKillGapMs": 30200,
+        "longestHpProgressGapMs": 29000
+      },
+      "heatManagement": {
+        "holdMs": 453600,
+        "allWaitMs": 453600,
+        "recoveryOverlapMs": 10300
+      }
+    },
+    {
+      "case": "heat-striker-balanced-b-H0-s101033",
+      "sourceCommit": "25289e490d4bfb53dd440ba436a67f596e5b91c4",
+      "policy": "H0",
+      "seed": 101033,
+      "build": {
+        "id": "heat-striker-balanced-b-H0-s101033",
+        "classRoot": "cadence-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "cadence-root",
+          "cadence-balanced",
+          "cadence-range-close",
+          "cadence-balanced-t3-b"
+        ],
+        "gearItemIds": {
+          "weapon": "volcanic-eruption-lash",
+          "armor": "volcanic-vest-t4",
+          "recovery": "volcanic-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-bruiser",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "upgrade": 4,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "rules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "snapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "range": 12,
+      "packageReadback": {
+        "equipment": {
+          "inventory": [],
+          "equipment": {
+            "weapon": "volcanic-eruption-lash",
+            "armor": "volcanic-vest-t4",
+            "recovery": "volcanic-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-bruiser",
+            "relic": "relic-equilibrium-shard"
+          },
+          "itemUpgrades": {
+            "volcanic-eruption-lash": 4,
+            "volcanic-vest-t4": 4,
+            "volcanic-charm-t4": 4,
+            "mountain-boots-t4": 4,
+            "core-bruiser": 0,
+            "relic-equilibrium-shard": 0
+          }
+        },
+        "mastery": {
+          "biomeLevel": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "cave": 18,
+            "mountain": 24,
+            "jungle": 18,
+            "desert": 18,
+            "volcanic": 12,
+            "tundra": 12,
+            "graveyard": 4,
+            "trench": 0
+          },
+          "globalMastery": 148
+        },
+        "runicPoints": {
+          "budget": 45,
+          "cost": 40,
+          "unused": 5,
+          "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+        },
+        "rites": []
+      },
+      "work": {
+        "kills": 207,
+        "firstKillMs": 3800,
+        "hpDamage": 396291,
+        "absorbed": 0,
+        "damageEvents": 670,
+        "lastKillMs": 500900,
+        "lastHpProgressMs": 500900,
+        "longestKillGapMs": 1899100,
+        "longestHpProgressGapMs": 1899100
+      },
+      "heatManagement": {
+        "holdMs": 0,
+        "allWaitMs": 0,
+        "recoveryOverlapMs": 0
+      }
+    },
+    {
+      "case": "heat-striker-balanced-b-H1-s101033",
+      "sourceCommit": "25289e490d4bfb53dd440ba436a67f596e5b91c4",
+      "policy": "H1",
+      "seed": 101033,
+      "build": {
+        "id": "heat-striker-balanced-b-H1-s101033",
+        "classRoot": "cadence-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "cadence-root",
+          "cadence-balanced",
+          "cadence-range-close",
+          "cadence-balanced-t3-b"
+        ],
+        "gearItemIds": {
+          "weapon": "volcanic-eruption-lash",
+          "armor": "volcanic-vest-t4",
+          "recovery": "volcanic-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-bruiser",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "upgrade": 4,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "rules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-it-out"
+        }
+      ],
+      "snapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "range": 12,
+      "packageReadback": {
+        "equipment": {
+          "inventory": [],
+          "equipment": {
+            "weapon": "volcanic-eruption-lash",
+            "armor": "volcanic-vest-t4",
+            "recovery": "volcanic-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-bruiser",
+            "relic": "relic-equilibrium-shard"
+          },
+          "itemUpgrades": {
+            "volcanic-eruption-lash": 4,
+            "volcanic-vest-t4": 4,
+            "volcanic-charm-t4": 4,
+            "mountain-boots-t4": 4,
+            "core-bruiser": 0,
+            "relic-equilibrium-shard": 0
+          }
+        },
+        "mastery": {
+          "biomeLevel": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "cave": 18,
+            "mountain": 24,
+            "jungle": 18,
+            "desert": 18,
+            "volcanic": 12,
+            "tundra": 12,
+            "graveyard": 4,
+            "trench": 0
+          },
+          "globalMastery": 148
+        },
+        "runicPoints": {
+          "budget": 45,
+          "cost": 41,
+          "unused": 4,
+          "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+        },
+        "rites": []
+      },
+      "work": {
+        "kills": 77,
+        "firstKillMs": 3800,
+        "hpDamage": 146605,
+        "absorbed": 1626,
+        "damageEvents": 359,
+        "lastKillMs": 388700,
+        "lastHpProgressMs": 388700,
+        "longestKillGapMs": 2011300,
+        "longestHpProgressGapMs": 2011300
+      },
+      "heatManagement": {
+        "holdMs": 0,
+        "allWaitMs": 205000,
+        "recoveryOverlapMs": 24400
+      }
+    },
+    {
+      "case": "heat-striker-balanced-b-H2-s101033",
+      "sourceCommit": "25289e490d4bfb53dd440ba436a67f596e5b91c4",
+      "policy": "H2",
+      "seed": 101033,
+      "build": {
+        "id": "heat-striker-balanced-b-H2-s101033",
+        "classRoot": "cadence-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "cadence-root",
+          "cadence-balanced",
+          "cadence-range-close",
+          "cadence-balanced-t3-b"
+        ],
+        "gearItemIds": {
+          "weapon": "volcanic-eruption-lash",
+          "armor": "volcanic-vest-t4",
+          "recovery": "volcanic-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-bruiser",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "upgrade": 4,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "rules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-it-out",
+          "waitOutMode": "heat-managed"
+        }
+      ],
+      "snapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "range": 12,
+      "packageReadback": {
+        "equipment": {
+          "inventory": [],
+          "equipment": {
+            "weapon": "volcanic-eruption-lash",
+            "armor": "volcanic-vest-t4",
+            "recovery": "volcanic-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-bruiser",
+            "relic": "relic-equilibrium-shard"
+          },
+          "itemUpgrades": {
+            "volcanic-eruption-lash": 4,
+            "volcanic-vest-t4": 4,
+            "volcanic-charm-t4": 4,
+            "mountain-boots-t4": 4,
+            "core-bruiser": 0,
+            "relic-equilibrium-shard": 0
+          }
+        },
+        "mastery": {
+          "biomeLevel": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "cave": 18,
+            "mountain": 24,
+            "jungle": 18,
+            "desert": 18,
+            "volcanic": 12,
+            "tundra": 12,
+            "graveyard": 4,
+            "trench": 0
+          },
+          "globalMastery": 148
+        },
+        "runicPoints": {
+          "budget": 45,
+          "cost": 41,
+          "unused": 4,
+          "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+        },
+        "rites": []
+      },
+      "work": {
+        "kills": 74,
+        "firstKillMs": 3800,
+        "hpDamage": 147162,
+        "absorbed": 0,
+        "damageEvents": 283,
+        "lastKillMs": 193900,
+        "lastHpProgressMs": 193900,
+        "longestKillGapMs": 2206100,
+        "longestHpProgressGapMs": 2206100
+      },
+      "heatManagement": {
+        "holdMs": 14600,
+        "allWaitMs": 14600,
+        "recoveryOverlapMs": 0
+      }
+    },
+    {
+      "case": "heat-slinger-light-a-H0-s101033",
+      "sourceCommit": "25289e490d4bfb53dd440ba436a67f596e5b91c4",
+      "policy": "H0",
+      "seed": 101033,
+      "build": {
+        "id": "heat-slinger-light-a-H0-s101033",
+        "classRoot": "reload-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "reload-root",
+          "reload-light",
+          "reload-range-mid",
+          "reload-light-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "volcanic-vest-t4",
+          "recovery": "volcanic-charm-t4",
+          "mobility": "desert-boots-t4",
+          "core": "core-catalyst",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "upgrade": 4,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "rules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        }
+      ],
+      "snapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "range": 132,
+      "packageReadback": {
+        "equipment": {
+          "inventory": [],
+          "equipment": {
+            "weapon": "jungle-deathfang-rapier",
+            "armor": "volcanic-vest-t4",
+            "recovery": "volcanic-charm-t4",
+            "mobility": "desert-boots-t4",
+            "core": "core-catalyst",
+            "relic": "relic-equilibrium-shard"
+          },
+          "itemUpgrades": {
+            "jungle-deathfang-rapier": 4,
+            "volcanic-vest-t4": 4,
+            "volcanic-charm-t4": 4,
+            "desert-boots-t4": 4,
+            "core-catalyst": 0,
+            "relic-equilibrium-shard": 0
+          }
+        },
+        "mastery": {
+          "biomeLevel": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "cave": 18,
+            "mountain": 24,
+            "jungle": 18,
+            "desert": 18,
+            "volcanic": 12,
+            "tundra": 12,
+            "graveyard": 4,
+            "trench": 0
+          },
+          "globalMastery": 148
+        },
+        "runicPoints": {
+          "budget": 45,
+          "cost": 43,
+          "unused": 2,
+          "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+        },
+        "rites": []
+      },
+      "work": {
+        "kills": 69,
+        "firstKillMs": 2600,
+        "hpDamage": 121938,
+        "absorbed": 813,
+        "damageEvents": 449,
+        "lastKillMs": 216200,
+        "lastHpProgressMs": 216200,
+        "longestKillGapMs": 2183800,
+        "longestHpProgressGapMs": 2183800
+      },
+      "heatManagement": {
+        "holdMs": 0,
+        "allWaitMs": 0,
+        "recoveryOverlapMs": 0
+      }
+    },
+    {
+      "case": "heat-slinger-light-a-H1-s101033",
+      "sourceCommit": "25289e490d4bfb53dd440ba436a67f596e5b91c4",
+      "policy": "H1",
+      "seed": 101033,
+      "build": {
+        "id": "heat-slinger-light-a-H1-s101033",
+        "classRoot": "reload-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "reload-root",
+          "reload-light",
+          "reload-range-mid",
+          "reload-light-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "volcanic-vest-t4",
+          "recovery": "volcanic-charm-t4",
+          "mobility": "desert-boots-t4",
+          "core": "core-catalyst",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "upgrade": 4,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "rules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-it-out"
+        }
+      ],
+      "snapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "range": 132,
+      "packageReadback": {
+        "equipment": {
+          "inventory": [],
+          "equipment": {
+            "weapon": "jungle-deathfang-rapier",
+            "armor": "volcanic-vest-t4",
+            "recovery": "volcanic-charm-t4",
+            "mobility": "desert-boots-t4",
+            "core": "core-catalyst",
+            "relic": "relic-equilibrium-shard"
+          },
+          "itemUpgrades": {
+            "jungle-deathfang-rapier": 4,
+            "volcanic-vest-t4": 4,
+            "volcanic-charm-t4": 4,
+            "desert-boots-t4": 4,
+            "core-catalyst": 0,
+            "relic-equilibrium-shard": 0
+          }
+        },
+        "mastery": {
+          "biomeLevel": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "cave": 18,
+            "mountain": 24,
+            "jungle": 18,
+            "desert": 18,
+            "volcanic": 12,
+            "tundra": 12,
+            "graveyard": 4,
+            "trench": 0
+          },
+          "globalMastery": 148
+        },
+        "runicPoints": {
+          "budget": 45,
+          "cost": 44,
+          "unused": 1,
+          "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+        },
+        "rites": []
+      },
+      "work": {
+        "kills": 139,
+        "firstKillMs": 2600,
+        "hpDamage": 240869,
+        "absorbed": 2439,
+        "damageEvents": 1019,
+        "lastKillMs": 814000,
+        "lastHpProgressMs": 814000,
+        "longestKillGapMs": 1586000,
+        "longestHpProgressGapMs": 1586000
+      },
+      "heatManagement": {
+        "holdMs": 0,
+        "allWaitMs": 385900,
+        "recoveryOverlapMs": 13500
+      }
+    },
+    {
+      "case": "heat-slinger-light-a-H2-s101033",
+      "sourceCommit": "25289e490d4bfb53dd440ba436a67f596e5b91c4",
+      "policy": "H2",
+      "seed": 101033,
+      "build": {
+        "id": "heat-slinger-light-a-H2-s101033",
+        "classRoot": "reload-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "reload-root",
+          "reload-light",
+          "reload-range-mid",
+          "reload-light-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "volcanic-vest-t4",
+          "recovery": "volcanic-charm-t4",
+          "mobility": "desert-boots-t4",
+          "core": "core-catalyst",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "upgrade": 4,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "rules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-it-out",
+          "waitOutMode": "heat-managed"
+        }
+      ],
+      "snapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "range": 132,
+      "packageReadback": {
+        "equipment": {
+          "inventory": [],
+          "equipment": {
+            "weapon": "jungle-deathfang-rapier",
+            "armor": "volcanic-vest-t4",
+            "recovery": "volcanic-charm-t4",
+            "mobility": "desert-boots-t4",
+            "core": "core-catalyst",
+            "relic": "relic-equilibrium-shard"
+          },
+          "itemUpgrades": {
+            "jungle-deathfang-rapier": 4,
+            "volcanic-vest-t4": 4,
+            "volcanic-charm-t4": 4,
+            "desert-boots-t4": 4,
+            "core-catalyst": 0,
+            "relic-equilibrium-shard": 0
+          }
+        },
+        "mastery": {
+          "biomeLevel": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "cave": 18,
+            "mountain": 24,
+            "jungle": 18,
+            "desert": 18,
+            "volcanic": 12,
+            "tundra": 12,
+            "graveyard": 4,
+            "trench": 0
+          },
+          "globalMastery": 148
+        },
+        "runicPoints": {
+          "budget": 45,
+          "cost": 44,
+          "unused": 1,
+          "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+        },
+        "rites": []
+      },
+      "work": {
+        "kills": 285,
+        "firstKillMs": 2600,
+        "hpDamage": 470991,
+        "absorbed": 813,
+        "damageEvents": 1771,
+        "lastKillMs": 1027000,
+        "lastHpProgressMs": 1027000,
+        "longestKillGapMs": 1373000,
+        "longestHpProgressGapMs": 1373000
+      },
+      "heatManagement": {
+        "holdMs": 192100,
+        "allWaitMs": 192100,
+        "recoveryOverlapMs": 1000
+      }
+    }
+  ],
+  "unchangedSharedSource": [
+    {
+      "path": "server/src/systems/combat/ai/blockedApproach.ts",
+      "baselineBlob": "f482f3e52a09cb1408cef962a62491989edc454a",
+      "candidateBlob": "f482f3e52a09cb1408cef962a62491989edc454a"
+    },
+    {
+      "path": "server/src/systems/world/movement.ts",
+      "baselineBlob": "287bd02cd2652656ec2d3f2ffecfde2833cfaf78",
+      "candidateBlob": "287bd02cd2652656ec2d3f2ffecfde2833cfaf78"
+    },
+    {
+      "path": "server/src/systems/world/pathMotion.ts",
+      "baselineBlob": "2e16ba1464b47a1ef851a04e002c6355ec491c73",
+      "candidateBlob": "2e16ba1464b47a1ef851a04e002c6355ec491c73"
+    },
+    {
+      "path": "server/src/systems/combat/ai/dynamicHazardAvoidance.ts",
+      "baselineBlob": "97fc4285c32c4384a297acfa1f31cc7b248fbf41",
+      "candidateBlob": "97fc4285c32c4384a297acfa1f31cc7b248fbf41"
+    },
+    {
+      "path": "shared/src/world/nodeFeatures.ts",
+      "baselineBlob": "a3aafbb784f9523cca740f751adb65731e01a8d0",
+      "candidateBlob": "a3aafbb784f9523cca740f751adb65731e01a8d0"
+    }
+  ],
+  "note": "All H observations ran on candidate, including H0/H1. Shared source equality is not a fresh historical baseline reproduction."
+}

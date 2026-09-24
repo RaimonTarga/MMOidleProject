@@ -1,0 +1,3238 @@
+[
+  {
+    "id": "heat-striker-balanced-b-H0-s101009",
+    "className": "striker",
+    "tier": 4,
+    "role": "farm",
+    "alternate": false,
+    "nodeId": "node-t4-volcanic-01",
+    "isDungeon": false,
+    "treatment": "authored-source",
+    "targetTypes": [],
+    "upgradeLevel": 4,
+    "stance": "offensive-stance",
+    "abilities": {
+      "techniques": [
+        "sweep",
+        "frenzy",
+        "expose-weakness"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ],
+    "build": {
+      "id": "heat-striker-balanced-b-H0-s101009",
+      "classRoot": "cadence-root",
+      "contentTier": 4,
+      "playerTier": 4,
+      "gearTier": 4,
+      "skillPath": [
+        "cadence-root",
+        "cadence-balanced",
+        "cadence-range-close",
+        "cadence-balanced-t3-b"
+      ],
+      "gearItemIds": {
+        "weapon": "volcanic-eruption-lash",
+        "armor": "volcanic-vest-t4",
+        "recovery": "volcanic-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-bruiser",
+        "relic": "relic-equilibrium-shard"
+      }
+    },
+    "identityId": "breadth-t4-striker-balanced-b",
+    "frame": "balanced",
+    "range": "close",
+    "pathName": "Wavecrest",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "Buildup and post-finisher echo require repeated regular attacks.",
+      "Role template swarm; 40/45 RP, 5 free. Defining offense and encounter support precede optional Expose.",
+      "Volcanic plating/hardening and active/kill Recovery; kills are required for the extra recovery window.",
+      "Base stance offensive-stance; one paid stance, no destinations or stance automation; no rites.",
+      "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+      "No generic low-HP Flee and no Wait It Out.",
+      "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+      "Native default Technique priority unless the exact AoE Rune overrides it.",
+      "Unused RP 5 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+    ],
+    "seed": 101009,
+    "block": "H",
+    "arm": "candidate",
+    "comparisonId": "heat-striker-balanced-b-s101009",
+    "snapshotId": "t4-established-gm148",
+    "progressionSnapshot": {
+      "id": "t4-established-gm148",
+      "tier": 4,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "gm": 148,
+      "rp": 45,
+      "plus": 4,
+      "priorBossClears": [
+        "forest:1",
+        "mountain:1",
+        "plains:2",
+        "swamp:2",
+        "desert:2",
+        "cave:3",
+        "mountain:3",
+        "jungle:3",
+        "desert:3"
+      ]
+    },
+    "referenceObservationId": "closing-striker-balanced-b-V-s101009",
+    "referenceSource": "056b5cd66c2f6aeccca840265a0cbce30a2a77f3",
+    "durationMs": 2400000,
+    "policy": "H0"
+  },
+  {
+    "id": "heat-striker-balanced-b-H1-s101009",
+    "className": "striker",
+    "tier": 4,
+    "role": "farm",
+    "alternate": false,
+    "nodeId": "node-t4-volcanic-01",
+    "isDungeon": false,
+    "treatment": "authored-source",
+    "targetTypes": [],
+    "upgradeLevel": 4,
+    "stance": "offensive-stance",
+    "abilities": {
+      "techniques": [
+        "sweep",
+        "frenzy",
+        "expose-weakness"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-it-out"
+      }
+    ],
+    "build": {
+      "id": "heat-striker-balanced-b-H1-s101009",
+      "classRoot": "cadence-root",
+      "contentTier": 4,
+      "playerTier": 4,
+      "gearTier": 4,
+      "skillPath": [
+        "cadence-root",
+        "cadence-balanced",
+        "cadence-range-close",
+        "cadence-balanced-t3-b"
+      ],
+      "gearItemIds": {
+        "weapon": "volcanic-eruption-lash",
+        "armor": "volcanic-vest-t4",
+        "recovery": "volcanic-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-bruiser",
+        "relic": "relic-equilibrium-shard"
+      }
+    },
+    "identityId": "breadth-t4-striker-balanced-b",
+    "frame": "balanced",
+    "range": "close",
+    "pathName": "Wavecrest",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "Buildup and post-finisher echo require repeated regular attacks.",
+      "Role template swarm; 40/45 RP, 5 free. Defining offense and encounter support precede optional Expose.",
+      "Volcanic plating/hardening and active/kill Recovery; kills are required for the extra recovery window.",
+      "Base stance offensive-stance; one paid stance, no destinations or stance automation; no rites.",
+      "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+      "No generic low-HP Flee and no Wait It Out.",
+      "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+      "Native default Technique priority unless the exact AoE Rune overrides it.",
+      "Unused RP 5 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+    ],
+    "seed": 101009,
+    "block": "H",
+    "arm": "candidate",
+    "comparisonId": "heat-striker-balanced-b-s101009",
+    "snapshotId": "t4-established-gm148",
+    "progressionSnapshot": {
+      "id": "t4-established-gm148",
+      "tier": 4,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "gm": 148,
+      "rp": 45,
+      "plus": 4,
+      "priorBossClears": [
+        "forest:1",
+        "mountain:1",
+        "plains:2",
+        "swamp:2",
+        "desert:2",
+        "cave:3",
+        "mountain:3",
+        "jungle:3",
+        "desert:3"
+      ]
+    },
+    "referenceObservationId": "closing-striker-balanced-b-V-s101009",
+    "referenceSource": "056b5cd66c2f6aeccca840265a0cbce30a2a77f3",
+    "durationMs": 2400000,
+    "policy": "H1"
+  },
+  {
+    "id": "heat-striker-balanced-b-H2-s101009",
+    "className": "striker",
+    "tier": 4,
+    "role": "farm",
+    "alternate": false,
+    "nodeId": "node-t4-volcanic-01",
+    "isDungeon": false,
+    "treatment": "authored-source",
+    "targetTypes": [],
+    "upgradeLevel": 4,
+    "stance": "offensive-stance",
+    "abilities": {
+      "techniques": [
+        "sweep",
+        "frenzy",
+        "expose-weakness"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-it-out",
+        "waitOutMode": "heat-managed"
+      }
+    ],
+    "build": {
+      "id": "heat-striker-balanced-b-H2-s101009",
+      "classRoot": "cadence-root",
+      "contentTier": 4,
+      "playerTier": 4,
+      "gearTier": 4,
+      "skillPath": [
+        "cadence-root",
+        "cadence-balanced",
+        "cadence-range-close",
+        "cadence-balanced-t3-b"
+      ],
+      "gearItemIds": {
+        "weapon": "volcanic-eruption-lash",
+        "armor": "volcanic-vest-t4",
+        "recovery": "volcanic-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-bruiser",
+        "relic": "relic-equilibrium-shard"
+      }
+    },
+    "identityId": "breadth-t4-striker-balanced-b",
+    "frame": "balanced",
+    "range": "close",
+    "pathName": "Wavecrest",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "Buildup and post-finisher echo require repeated regular attacks.",
+      "Role template swarm; 40/45 RP, 5 free. Defining offense and encounter support precede optional Expose.",
+      "Volcanic plating/hardening and active/kill Recovery; kills are required for the extra recovery window.",
+      "Base stance offensive-stance; one paid stance, no destinations or stance automation; no rites.",
+      "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+      "No generic low-HP Flee and no Wait It Out.",
+      "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+      "Native default Technique priority unless the exact AoE Rune overrides it.",
+      "Unused RP 5 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+    ],
+    "seed": 101009,
+    "block": "H",
+    "arm": "candidate",
+    "comparisonId": "heat-striker-balanced-b-s101009",
+    "snapshotId": "t4-established-gm148",
+    "progressionSnapshot": {
+      "id": "t4-established-gm148",
+      "tier": 4,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "gm": 148,
+      "rp": 45,
+      "plus": 4,
+      "priorBossClears": [
+        "forest:1",
+        "mountain:1",
+        "plains:2",
+        "swamp:2",
+        "desert:2",
+        "cave:3",
+        "mountain:3",
+        "jungle:3",
+        "desert:3"
+      ]
+    },
+    "referenceObservationId": "closing-striker-balanced-b-V-s101009",
+    "referenceSource": "056b5cd66c2f6aeccca840265a0cbce30a2a77f3",
+    "durationMs": 2400000,
+    "policy": "H2"
+  },
+  {
+    "id": "heat-apprentice-balanced-a-H0-s101009",
+    "className": "apprentice",
+    "tier": 4,
+    "role": "farm",
+    "alternate": false,
+    "nodeId": "node-t4-volcanic-01",
+    "isDungeon": false,
+    "treatment": "authored-source",
+    "targetTypes": [],
+    "upgradeLevel": 4,
+    "stance": "defensive-stance",
+    "abilities": {
+      "techniques": [
+        "contagion",
+        "frenzy"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      },
+      {
+        "conditionId": "target-max-stacks",
+        "actionId": "use-ability",
+        "targetAbilityId": "contagion"
+      }
+    ],
+    "build": {
+      "id": "heat-apprentice-balanced-a-H0-s101009",
+      "classRoot": "dot-root",
+      "contentTier": 4,
+      "playerTier": 4,
+      "gearTier": 4,
+      "skillPath": [
+        "dot-root",
+        "dot-balanced",
+        "dot-range-mid",
+        "dot-balanced-t3-a"
+      ],
+      "gearItemIds": {
+        "weapon": "graveyard-plague-axe",
+        "armor": "volcanic-vest-t4",
+        "recovery": "volcanic-charm-t4",
+        "mobility": "desert-boots-t4",
+        "core": "core-tempered",
+        "relic": "relic-equilibrium-shard"
+      }
+    },
+    "identityId": "breadth-t4-apprentice-balanced-a",
+    "frame": "balanced",
+    "range": "mid",
+    "pathName": "Pyromancer",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "Medium weapon, two-stack application and full-stack direct payoff; no Detonate.",
+      "Role template swarm; 40/45 RP, 5 free. Defining offense and encounter support precede optional Expose.",
+      "Volcanic plating/hardening and active/kill Recovery; kills are required for the extra recovery window.",
+      "Base stance defensive-stance; one paid stance, no destinations or stance automation; no rites.",
+      "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+      "No generic low-HP Flee and no Wait It Out.",
+      "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+      "Native default Technique priority unless the exact AoE Rune overrides it.",
+      "Unused RP 5 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+    ],
+    "seed": 101009,
+    "block": "H",
+    "arm": "candidate",
+    "comparisonId": "heat-apprentice-balanced-a-s101009",
+    "snapshotId": "t4-established-gm148",
+    "progressionSnapshot": {
+      "id": "t4-established-gm148",
+      "tier": 4,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "gm": 148,
+      "rp": 45,
+      "plus": 4,
+      "priorBossClears": [
+        "forest:1",
+        "mountain:1",
+        "plains:2",
+        "swamp:2",
+        "desert:2",
+        "cave:3",
+        "mountain:3",
+        "jungle:3",
+        "desert:3"
+      ]
+    },
+    "referenceObservationId": "closing-apprentice-balanced-a-V-s101009",
+    "referenceSource": "056b5cd66c2f6aeccca840265a0cbce30a2a77f3",
+    "durationMs": 2400000,
+    "policy": "H0"
+  },
+  {
+    "id": "heat-apprentice-balanced-a-H1-s101009",
+    "className": "apprentice",
+    "tier": 4,
+    "role": "farm",
+    "alternate": false,
+    "nodeId": "node-t4-volcanic-01",
+    "isDungeon": false,
+    "treatment": "authored-source",
+    "targetTypes": [],
+    "upgradeLevel": 4,
+    "stance": "defensive-stance",
+    "abilities": {
+      "techniques": [
+        "contagion",
+        "frenzy"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      },
+      {
+        "conditionId": "target-max-stacks",
+        "actionId": "use-ability",
+        "targetAbilityId": "contagion"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-it-out"
+      }
+    ],
+    "build": {
+      "id": "heat-apprentice-balanced-a-H1-s101009",
+      "classRoot": "dot-root",
+      "contentTier": 4,
+      "playerTier": 4,
+      "gearTier": 4,
+      "skillPath": [
+        "dot-root",
+        "dot-balanced",
+        "dot-range-mid",
+        "dot-balanced-t3-a"
+      ],
+      "gearItemIds": {
+        "weapon": "graveyard-plague-axe",
+        "armor": "volcanic-vest-t4",
+        "recovery": "volcanic-charm-t4",
+        "mobility": "desert-boots-t4",
+        "core": "core-tempered",
+        "relic": "relic-equilibrium-shard"
+      }
+    },
+    "identityId": "breadth-t4-apprentice-balanced-a",
+    "frame": "balanced",
+    "range": "mid",
+    "pathName": "Pyromancer",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "Medium weapon, two-stack application and full-stack direct payoff; no Detonate.",
+      "Role template swarm; 40/45 RP, 5 free. Defining offense and encounter support precede optional Expose.",
+      "Volcanic plating/hardening and active/kill Recovery; kills are required for the extra recovery window.",
+      "Base stance defensive-stance; one paid stance, no destinations or stance automation; no rites.",
+      "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+      "No generic low-HP Flee and no Wait It Out.",
+      "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+      "Native default Technique priority unless the exact AoE Rune overrides it.",
+      "Unused RP 5 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+    ],
+    "seed": 101009,
+    "block": "H",
+    "arm": "candidate",
+    "comparisonId": "heat-apprentice-balanced-a-s101009",
+    "snapshotId": "t4-established-gm148",
+    "progressionSnapshot": {
+      "id": "t4-established-gm148",
+      "tier": 4,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "gm": 148,
+      "rp": 45,
+      "plus": 4,
+      "priorBossClears": [
+        "forest:1",
+        "mountain:1",
+        "plains:2",
+        "swamp:2",
+        "desert:2",
+        "cave:3",
+        "mountain:3",
+        "jungle:3",
+        "desert:3"
+      ]
+    },
+    "referenceObservationId": "closing-apprentice-balanced-a-V-s101009",
+    "referenceSource": "056b5cd66c2f6aeccca840265a0cbce30a2a77f3",
+    "durationMs": 2400000,
+    "policy": "H1"
+  },
+  {
+    "id": "heat-apprentice-balanced-a-H2-s101009",
+    "className": "apprentice",
+    "tier": 4,
+    "role": "farm",
+    "alternate": false,
+    "nodeId": "node-t4-volcanic-01",
+    "isDungeon": false,
+    "treatment": "authored-source",
+    "targetTypes": [],
+    "upgradeLevel": 4,
+    "stance": "defensive-stance",
+    "abilities": {
+      "techniques": [
+        "contagion",
+        "frenzy"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      },
+      {
+        "conditionId": "target-max-stacks",
+        "actionId": "use-ability",
+        "targetAbilityId": "contagion"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-it-out",
+        "waitOutMode": "heat-managed"
+      }
+    ],
+    "build": {
+      "id": "heat-apprentice-balanced-a-H2-s101009",
+      "classRoot": "dot-root",
+      "contentTier": 4,
+      "playerTier": 4,
+      "gearTier": 4,
+      "skillPath": [
+        "dot-root",
+        "dot-balanced",
+        "dot-range-mid",
+        "dot-balanced-t3-a"
+      ],
+      "gearItemIds": {
+        "weapon": "graveyard-plague-axe",
+        "armor": "volcanic-vest-t4",
+        "recovery": "volcanic-charm-t4",
+        "mobility": "desert-boots-t4",
+        "core": "core-tempered",
+        "relic": "relic-equilibrium-shard"
+      }
+    },
+    "identityId": "breadth-t4-apprentice-balanced-a",
+    "frame": "balanced",
+    "range": "mid",
+    "pathName": "Pyromancer",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "Medium weapon, two-stack application and full-stack direct payoff; no Detonate.",
+      "Role template swarm; 40/45 RP, 5 free. Defining offense and encounter support precede optional Expose.",
+      "Volcanic plating/hardening and active/kill Recovery; kills are required for the extra recovery window.",
+      "Base stance defensive-stance; one paid stance, no destinations or stance automation; no rites.",
+      "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+      "No generic low-HP Flee and no Wait It Out.",
+      "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+      "Native default Technique priority unless the exact AoE Rune overrides it.",
+      "Unused RP 5 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+    ],
+    "seed": 101009,
+    "block": "H",
+    "arm": "candidate",
+    "comparisonId": "heat-apprentice-balanced-a-s101009",
+    "snapshotId": "t4-established-gm148",
+    "progressionSnapshot": {
+      "id": "t4-established-gm148",
+      "tier": 4,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "gm": 148,
+      "rp": 45,
+      "plus": 4,
+      "priorBossClears": [
+        "forest:1",
+        "mountain:1",
+        "plains:2",
+        "swamp:2",
+        "desert:2",
+        "cave:3",
+        "mountain:3",
+        "jungle:3",
+        "desert:3"
+      ]
+    },
+    "referenceObservationId": "closing-apprentice-balanced-a-V-s101009",
+    "referenceSource": "056b5cd66c2f6aeccca840265a0cbce30a2a77f3",
+    "durationMs": 2400000,
+    "policy": "H2"
+  },
+  {
+    "id": "heat-slinger-light-a-H0-s101009",
+    "className": "slinger",
+    "tier": 4,
+    "role": "farm",
+    "alternate": false,
+    "nodeId": "node-t4-volcanic-01",
+    "isDungeon": false,
+    "treatment": "authored-source",
+    "targetTypes": [],
+    "upgradeLevel": 4,
+    "stance": "offensive-stance",
+    "abilities": {
+      "techniques": [
+        "sweep",
+        "frenzy",
+        "expose-weakness"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ],
+    "build": {
+      "id": "heat-slinger-light-a-H0-s101009",
+      "classRoot": "reload-root",
+      "contentTier": 4,
+      "playerTier": 4,
+      "gearTier": 4,
+      "skillPath": [
+        "reload-root",
+        "reload-light",
+        "reload-range-mid",
+        "reload-light-t3-a"
+      ],
+      "gearItemIds": {
+        "weapon": "jungle-deathfang-rapier",
+        "armor": "volcanic-vest-t4",
+        "recovery": "volcanic-charm-t4",
+        "mobility": "desert-boots-t4",
+        "core": "core-catalyst",
+        "relic": "relic-equilibrium-shard"
+      }
+    },
+    "identityId": "breadth-t4-slinger-light-a",
+    "frame": "light",
+    "range": "mid",
+    "pathName": "Duelist",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "On-hit clip delivery with native empowered last round.",
+      "Role template swarm; 43/45 RP, 2 free. Defining offense and encounter support precede optional Expose.",
+      "Volcanic plating/hardening and active/kill Recovery; kills are required for the extra recovery window.",
+      "Base stance offensive-stance; one paid stance, no destinations or stance automation; no rites.",
+      "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+      "No generic low-HP Flee and no Wait It Out.",
+      "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+      "Native default Technique priority unless the exact AoE Rune overrides it.",
+      "Unused RP 2 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+    ],
+    "seed": 101009,
+    "block": "H",
+    "arm": "candidate",
+    "comparisonId": "heat-slinger-light-a-s101009",
+    "snapshotId": "t4-established-gm148",
+    "progressionSnapshot": {
+      "id": "t4-established-gm148",
+      "tier": 4,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "gm": 148,
+      "rp": 45,
+      "plus": 4,
+      "priorBossClears": [
+        "forest:1",
+        "mountain:1",
+        "plains:2",
+        "swamp:2",
+        "desert:2",
+        "cave:3",
+        "mountain:3",
+        "jungle:3",
+        "desert:3"
+      ]
+    },
+    "referenceObservationId": "closing-slinger-light-a-V-s101009",
+    "referenceSource": "056b5cd66c2f6aeccca840265a0cbce30a2a77f3",
+    "durationMs": 2400000,
+    "policy": "H0"
+  },
+  {
+    "id": "heat-slinger-light-a-H1-s101009",
+    "className": "slinger",
+    "tier": 4,
+    "role": "farm",
+    "alternate": false,
+    "nodeId": "node-t4-volcanic-01",
+    "isDungeon": false,
+    "treatment": "authored-source",
+    "targetTypes": [],
+    "upgradeLevel": 4,
+    "stance": "offensive-stance",
+    "abilities": {
+      "techniques": [
+        "sweep",
+        "frenzy",
+        "expose-weakness"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-it-out"
+      }
+    ],
+    "build": {
+      "id": "heat-slinger-light-a-H1-s101009",
+      "classRoot": "reload-root",
+      "contentTier": 4,
+      "playerTier": 4,
+      "gearTier": 4,
+      "skillPath": [
+        "reload-root",
+        "reload-light",
+        "reload-range-mid",
+        "reload-light-t3-a"
+      ],
+      "gearItemIds": {
+        "weapon": "jungle-deathfang-rapier",
+        "armor": "volcanic-vest-t4",
+        "recovery": "volcanic-charm-t4",
+        "mobility": "desert-boots-t4",
+        "core": "core-catalyst",
+        "relic": "relic-equilibrium-shard"
+      }
+    },
+    "identityId": "breadth-t4-slinger-light-a",
+    "frame": "light",
+    "range": "mid",
+    "pathName": "Duelist",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "On-hit clip delivery with native empowered last round.",
+      "Role template swarm; 43/45 RP, 2 free. Defining offense and encounter support precede optional Expose.",
+      "Volcanic plating/hardening and active/kill Recovery; kills are required for the extra recovery window.",
+      "Base stance offensive-stance; one paid stance, no destinations or stance automation; no rites.",
+      "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+      "No generic low-HP Flee and no Wait It Out.",
+      "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+      "Native default Technique priority unless the exact AoE Rune overrides it.",
+      "Unused RP 2 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+    ],
+    "seed": 101009,
+    "block": "H",
+    "arm": "candidate",
+    "comparisonId": "heat-slinger-light-a-s101009",
+    "snapshotId": "t4-established-gm148",
+    "progressionSnapshot": {
+      "id": "t4-established-gm148",
+      "tier": 4,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "gm": 148,
+      "rp": 45,
+      "plus": 4,
+      "priorBossClears": [
+        "forest:1",
+        "mountain:1",
+        "plains:2",
+        "swamp:2",
+        "desert:2",
+        "cave:3",
+        "mountain:3",
+        "jungle:3",
+        "desert:3"
+      ]
+    },
+    "referenceObservationId": "closing-slinger-light-a-V-s101009",
+    "referenceSource": "056b5cd66c2f6aeccca840265a0cbce30a2a77f3",
+    "durationMs": 2400000,
+    "policy": "H1"
+  },
+  {
+    "id": "heat-slinger-light-a-H2-s101009",
+    "className": "slinger",
+    "tier": 4,
+    "role": "farm",
+    "alternate": false,
+    "nodeId": "node-t4-volcanic-01",
+    "isDungeon": false,
+    "treatment": "authored-source",
+    "targetTypes": [],
+    "upgradeLevel": 4,
+    "stance": "offensive-stance",
+    "abilities": {
+      "techniques": [
+        "sweep",
+        "frenzy",
+        "expose-weakness"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-it-out",
+        "waitOutMode": "heat-managed"
+      }
+    ],
+    "build": {
+      "id": "heat-slinger-light-a-H2-s101009",
+      "classRoot": "reload-root",
+      "contentTier": 4,
+      "playerTier": 4,
+      "gearTier": 4,
+      "skillPath": [
+        "reload-root",
+        "reload-light",
+        "reload-range-mid",
+        "reload-light-t3-a"
+      ],
+      "gearItemIds": {
+        "weapon": "jungle-deathfang-rapier",
+        "armor": "volcanic-vest-t4",
+        "recovery": "volcanic-charm-t4",
+        "mobility": "desert-boots-t4",
+        "core": "core-catalyst",
+        "relic": "relic-equilibrium-shard"
+      }
+    },
+    "identityId": "breadth-t4-slinger-light-a",
+    "frame": "light",
+    "range": "mid",
+    "pathName": "Duelist",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "On-hit clip delivery with native empowered last round.",
+      "Role template swarm; 43/45 RP, 2 free. Defining offense and encounter support precede optional Expose.",
+      "Volcanic plating/hardening and active/kill Recovery; kills are required for the extra recovery window.",
+      "Base stance offensive-stance; one paid stance, no destinations or stance automation; no rites.",
+      "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+      "No generic low-HP Flee and no Wait It Out.",
+      "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+      "Native default Technique priority unless the exact AoE Rune overrides it.",
+      "Unused RP 2 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+    ],
+    "seed": 101009,
+    "block": "H",
+    "arm": "candidate",
+    "comparisonId": "heat-slinger-light-a-s101009",
+    "snapshotId": "t4-established-gm148",
+    "progressionSnapshot": {
+      "id": "t4-established-gm148",
+      "tier": 4,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "gm": 148,
+      "rp": 45,
+      "plus": 4,
+      "priorBossClears": [
+        "forest:1",
+        "mountain:1",
+        "plains:2",
+        "swamp:2",
+        "desert:2",
+        "cave:3",
+        "mountain:3",
+        "jungle:3",
+        "desert:3"
+      ]
+    },
+    "referenceObservationId": "closing-slinger-light-a-V-s101009",
+    "referenceSource": "056b5cd66c2f6aeccca840265a0cbce30a2a77f3",
+    "durationMs": 2400000,
+    "policy": "H2"
+  },
+  {
+    "id": "heat-striker-balanced-b-H0-s101033",
+    "className": "striker",
+    "tier": 4,
+    "role": "farm",
+    "alternate": false,
+    "nodeId": "node-t4-volcanic-01",
+    "isDungeon": false,
+    "treatment": "authored-source",
+    "targetTypes": [],
+    "upgradeLevel": 4,
+    "stance": "offensive-stance",
+    "abilities": {
+      "techniques": [
+        "sweep",
+        "frenzy",
+        "expose-weakness"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ],
+    "build": {
+      "id": "heat-striker-balanced-b-H0-s101033",
+      "classRoot": "cadence-root",
+      "contentTier": 4,
+      "playerTier": 4,
+      "gearTier": 4,
+      "skillPath": [
+        "cadence-root",
+        "cadence-balanced",
+        "cadence-range-close",
+        "cadence-balanced-t3-b"
+      ],
+      "gearItemIds": {
+        "weapon": "volcanic-eruption-lash",
+        "armor": "volcanic-vest-t4",
+        "recovery": "volcanic-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-bruiser",
+        "relic": "relic-equilibrium-shard"
+      }
+    },
+    "identityId": "breadth-t4-striker-balanced-b",
+    "frame": "balanced",
+    "range": "close",
+    "pathName": "Wavecrest",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "Buildup and post-finisher echo require repeated regular attacks.",
+      "Role template swarm; 40/45 RP, 5 free. Defining offense and encounter support precede optional Expose.",
+      "Volcanic plating/hardening and active/kill Recovery; kills are required for the extra recovery window.",
+      "Base stance offensive-stance; one paid stance, no destinations or stance automation; no rites.",
+      "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+      "No generic low-HP Flee and no Wait It Out.",
+      "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+      "Native default Technique priority unless the exact AoE Rune overrides it.",
+      "Unused RP 5 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+    ],
+    "seed": 101033,
+    "block": "H",
+    "arm": "candidate",
+    "comparisonId": "heat-striker-balanced-b-s101033",
+    "snapshotId": "t4-established-gm148",
+    "progressionSnapshot": {
+      "id": "t4-established-gm148",
+      "tier": 4,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "gm": 148,
+      "rp": 45,
+      "plus": 4,
+      "priorBossClears": [
+        "forest:1",
+        "mountain:1",
+        "plains:2",
+        "swamp:2",
+        "desert:2",
+        "cave:3",
+        "mountain:3",
+        "jungle:3",
+        "desert:3"
+      ]
+    },
+    "referenceObservationId": "closing-striker-balanced-b-V-s101033",
+    "referenceSource": "056b5cd66c2f6aeccca840265a0cbce30a2a77f3",
+    "durationMs": 2400000,
+    "policy": "H0"
+  },
+  {
+    "id": "heat-striker-balanced-b-H1-s101033",
+    "className": "striker",
+    "tier": 4,
+    "role": "farm",
+    "alternate": false,
+    "nodeId": "node-t4-volcanic-01",
+    "isDungeon": false,
+    "treatment": "authored-source",
+    "targetTypes": [],
+    "upgradeLevel": 4,
+    "stance": "offensive-stance",
+    "abilities": {
+      "techniques": [
+        "sweep",
+        "frenzy",
+        "expose-weakness"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-it-out"
+      }
+    ],
+    "build": {
+      "id": "heat-striker-balanced-b-H1-s101033",
+      "classRoot": "cadence-root",
+      "contentTier": 4,
+      "playerTier": 4,
+      "gearTier": 4,
+      "skillPath": [
+        "cadence-root",
+        "cadence-balanced",
+        "cadence-range-close",
+        "cadence-balanced-t3-b"
+      ],
+      "gearItemIds": {
+        "weapon": "volcanic-eruption-lash",
+        "armor": "volcanic-vest-t4",
+        "recovery": "volcanic-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-bruiser",
+        "relic": "relic-equilibrium-shard"
+      }
+    },
+    "identityId": "breadth-t4-striker-balanced-b",
+    "frame": "balanced",
+    "range": "close",
+    "pathName": "Wavecrest",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "Buildup and post-finisher echo require repeated regular attacks.",
+      "Role template swarm; 40/45 RP, 5 free. Defining offense and encounter support precede optional Expose.",
+      "Volcanic plating/hardening and active/kill Recovery; kills are required for the extra recovery window.",
+      "Base stance offensive-stance; one paid stance, no destinations or stance automation; no rites.",
+      "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+      "No generic low-HP Flee and no Wait It Out.",
+      "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+      "Native default Technique priority unless the exact AoE Rune overrides it.",
+      "Unused RP 5 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+    ],
+    "seed": 101033,
+    "block": "H",
+    "arm": "candidate",
+    "comparisonId": "heat-striker-balanced-b-s101033",
+    "snapshotId": "t4-established-gm148",
+    "progressionSnapshot": {
+      "id": "t4-established-gm148",
+      "tier": 4,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "gm": 148,
+      "rp": 45,
+      "plus": 4,
+      "priorBossClears": [
+        "forest:1",
+        "mountain:1",
+        "plains:2",
+        "swamp:2",
+        "desert:2",
+        "cave:3",
+        "mountain:3",
+        "jungle:3",
+        "desert:3"
+      ]
+    },
+    "referenceObservationId": "closing-striker-balanced-b-V-s101033",
+    "referenceSource": "056b5cd66c2f6aeccca840265a0cbce30a2a77f3",
+    "durationMs": 2400000,
+    "policy": "H1"
+  },
+  {
+    "id": "heat-striker-balanced-b-H2-s101033",
+    "className": "striker",
+    "tier": 4,
+    "role": "farm",
+    "alternate": false,
+    "nodeId": "node-t4-volcanic-01",
+    "isDungeon": false,
+    "treatment": "authored-source",
+    "targetTypes": [],
+    "upgradeLevel": 4,
+    "stance": "offensive-stance",
+    "abilities": {
+      "techniques": [
+        "sweep",
+        "frenzy",
+        "expose-weakness"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-it-out",
+        "waitOutMode": "heat-managed"
+      }
+    ],
+    "build": {
+      "id": "heat-striker-balanced-b-H2-s101033",
+      "classRoot": "cadence-root",
+      "contentTier": 4,
+      "playerTier": 4,
+      "gearTier": 4,
+      "skillPath": [
+        "cadence-root",
+        "cadence-balanced",
+        "cadence-range-close",
+        "cadence-balanced-t3-b"
+      ],
+      "gearItemIds": {
+        "weapon": "volcanic-eruption-lash",
+        "armor": "volcanic-vest-t4",
+        "recovery": "volcanic-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-bruiser",
+        "relic": "relic-equilibrium-shard"
+      }
+    },
+    "identityId": "breadth-t4-striker-balanced-b",
+    "frame": "balanced",
+    "range": "close",
+    "pathName": "Wavecrest",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "Buildup and post-finisher echo require repeated regular attacks.",
+      "Role template swarm; 40/45 RP, 5 free. Defining offense and encounter support precede optional Expose.",
+      "Volcanic plating/hardening and active/kill Recovery; kills are required for the extra recovery window.",
+      "Base stance offensive-stance; one paid stance, no destinations or stance automation; no rites.",
+      "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+      "No generic low-HP Flee and no Wait It Out.",
+      "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+      "Native default Technique priority unless the exact AoE Rune overrides it.",
+      "Unused RP 5 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+    ],
+    "seed": 101033,
+    "block": "H",
+    "arm": "candidate",
+    "comparisonId": "heat-striker-balanced-b-s101033",
+    "snapshotId": "t4-established-gm148",
+    "progressionSnapshot": {
+      "id": "t4-established-gm148",
+      "tier": 4,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "gm": 148,
+      "rp": 45,
+      "plus": 4,
+      "priorBossClears": [
+        "forest:1",
+        "mountain:1",
+        "plains:2",
+        "swamp:2",
+        "desert:2",
+        "cave:3",
+        "mountain:3",
+        "jungle:3",
+        "desert:3"
+      ]
+    },
+    "referenceObservationId": "closing-striker-balanced-b-V-s101033",
+    "referenceSource": "056b5cd66c2f6aeccca840265a0cbce30a2a77f3",
+    "durationMs": 2400000,
+    "policy": "H2"
+  },
+  {
+    "id": "heat-apprentice-balanced-a-H0-s101033",
+    "className": "apprentice",
+    "tier": 4,
+    "role": "farm",
+    "alternate": false,
+    "nodeId": "node-t4-volcanic-01",
+    "isDungeon": false,
+    "treatment": "authored-source",
+    "targetTypes": [],
+    "upgradeLevel": 4,
+    "stance": "defensive-stance",
+    "abilities": {
+      "techniques": [
+        "contagion",
+        "frenzy"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      },
+      {
+        "conditionId": "target-max-stacks",
+        "actionId": "use-ability",
+        "targetAbilityId": "contagion"
+      }
+    ],
+    "build": {
+      "id": "heat-apprentice-balanced-a-H0-s101033",
+      "classRoot": "dot-root",
+      "contentTier": 4,
+      "playerTier": 4,
+      "gearTier": 4,
+      "skillPath": [
+        "dot-root",
+        "dot-balanced",
+        "dot-range-mid",
+        "dot-balanced-t3-a"
+      ],
+      "gearItemIds": {
+        "weapon": "graveyard-plague-axe",
+        "armor": "volcanic-vest-t4",
+        "recovery": "volcanic-charm-t4",
+        "mobility": "desert-boots-t4",
+        "core": "core-tempered",
+        "relic": "relic-equilibrium-shard"
+      }
+    },
+    "identityId": "breadth-t4-apprentice-balanced-a",
+    "frame": "balanced",
+    "range": "mid",
+    "pathName": "Pyromancer",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "Medium weapon, two-stack application and full-stack direct payoff; no Detonate.",
+      "Role template swarm; 40/45 RP, 5 free. Defining offense and encounter support precede optional Expose.",
+      "Volcanic plating/hardening and active/kill Recovery; kills are required for the extra recovery window.",
+      "Base stance defensive-stance; one paid stance, no destinations or stance automation; no rites.",
+      "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+      "No generic low-HP Flee and no Wait It Out.",
+      "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+      "Native default Technique priority unless the exact AoE Rune overrides it.",
+      "Unused RP 5 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+    ],
+    "seed": 101033,
+    "block": "H",
+    "arm": "candidate",
+    "comparisonId": "heat-apprentice-balanced-a-s101033",
+    "snapshotId": "t4-established-gm148",
+    "progressionSnapshot": {
+      "id": "t4-established-gm148",
+      "tier": 4,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "gm": 148,
+      "rp": 45,
+      "plus": 4,
+      "priorBossClears": [
+        "forest:1",
+        "mountain:1",
+        "plains:2",
+        "swamp:2",
+        "desert:2",
+        "cave:3",
+        "mountain:3",
+        "jungle:3",
+        "desert:3"
+      ]
+    },
+    "referenceObservationId": "closing-apprentice-balanced-a-V-s101033",
+    "referenceSource": "056b5cd66c2f6aeccca840265a0cbce30a2a77f3",
+    "durationMs": 2400000,
+    "policy": "H0"
+  },
+  {
+    "id": "heat-apprentice-balanced-a-H1-s101033",
+    "className": "apprentice",
+    "tier": 4,
+    "role": "farm",
+    "alternate": false,
+    "nodeId": "node-t4-volcanic-01",
+    "isDungeon": false,
+    "treatment": "authored-source",
+    "targetTypes": [],
+    "upgradeLevel": 4,
+    "stance": "defensive-stance",
+    "abilities": {
+      "techniques": [
+        "contagion",
+        "frenzy"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      },
+      {
+        "conditionId": "target-max-stacks",
+        "actionId": "use-ability",
+        "targetAbilityId": "contagion"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-it-out"
+      }
+    ],
+    "build": {
+      "id": "heat-apprentice-balanced-a-H1-s101033",
+      "classRoot": "dot-root",
+      "contentTier": 4,
+      "playerTier": 4,
+      "gearTier": 4,
+      "skillPath": [
+        "dot-root",
+        "dot-balanced",
+        "dot-range-mid",
+        "dot-balanced-t3-a"
+      ],
+      "gearItemIds": {
+        "weapon": "graveyard-plague-axe",
+        "armor": "volcanic-vest-t4",
+        "recovery": "volcanic-charm-t4",
+        "mobility": "desert-boots-t4",
+        "core": "core-tempered",
+        "relic": "relic-equilibrium-shard"
+      }
+    },
+    "identityId": "breadth-t4-apprentice-balanced-a",
+    "frame": "balanced",
+    "range": "mid",
+    "pathName": "Pyromancer",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "Medium weapon, two-stack application and full-stack direct payoff; no Detonate.",
+      "Role template swarm; 40/45 RP, 5 free. Defining offense and encounter support precede optional Expose.",
+      "Volcanic plating/hardening and active/kill Recovery; kills are required for the extra recovery window.",
+      "Base stance defensive-stance; one paid stance, no destinations or stance automation; no rites.",
+      "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+      "No generic low-HP Flee and no Wait It Out.",
+      "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+      "Native default Technique priority unless the exact AoE Rune overrides it.",
+      "Unused RP 5 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+    ],
+    "seed": 101033,
+    "block": "H",
+    "arm": "candidate",
+    "comparisonId": "heat-apprentice-balanced-a-s101033",
+    "snapshotId": "t4-established-gm148",
+    "progressionSnapshot": {
+      "id": "t4-established-gm148",
+      "tier": 4,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "gm": 148,
+      "rp": 45,
+      "plus": 4,
+      "priorBossClears": [
+        "forest:1",
+        "mountain:1",
+        "plains:2",
+        "swamp:2",
+        "desert:2",
+        "cave:3",
+        "mountain:3",
+        "jungle:3",
+        "desert:3"
+      ]
+    },
+    "referenceObservationId": "closing-apprentice-balanced-a-V-s101033",
+    "referenceSource": "056b5cd66c2f6aeccca840265a0cbce30a2a77f3",
+    "durationMs": 2400000,
+    "policy": "H1"
+  },
+  {
+    "id": "heat-apprentice-balanced-a-H2-s101033",
+    "className": "apprentice",
+    "tier": 4,
+    "role": "farm",
+    "alternate": false,
+    "nodeId": "node-t4-volcanic-01",
+    "isDungeon": false,
+    "treatment": "authored-source",
+    "targetTypes": [],
+    "upgradeLevel": 4,
+    "stance": "defensive-stance",
+    "abilities": {
+      "techniques": [
+        "contagion",
+        "frenzy"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      },
+      {
+        "conditionId": "target-max-stacks",
+        "actionId": "use-ability",
+        "targetAbilityId": "contagion"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-it-out",
+        "waitOutMode": "heat-managed"
+      }
+    ],
+    "build": {
+      "id": "heat-apprentice-balanced-a-H2-s101033",
+      "classRoot": "dot-root",
+      "contentTier": 4,
+      "playerTier": 4,
+      "gearTier": 4,
+      "skillPath": [
+        "dot-root",
+        "dot-balanced",
+        "dot-range-mid",
+        "dot-balanced-t3-a"
+      ],
+      "gearItemIds": {
+        "weapon": "graveyard-plague-axe",
+        "armor": "volcanic-vest-t4",
+        "recovery": "volcanic-charm-t4",
+        "mobility": "desert-boots-t4",
+        "core": "core-tempered",
+        "relic": "relic-equilibrium-shard"
+      }
+    },
+    "identityId": "breadth-t4-apprentice-balanced-a",
+    "frame": "balanced",
+    "range": "mid",
+    "pathName": "Pyromancer",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "Medium weapon, two-stack application and full-stack direct payoff; no Detonate.",
+      "Role template swarm; 40/45 RP, 5 free. Defining offense and encounter support precede optional Expose.",
+      "Volcanic plating/hardening and active/kill Recovery; kills are required for the extra recovery window.",
+      "Base stance defensive-stance; one paid stance, no destinations or stance automation; no rites.",
+      "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+      "No generic low-HP Flee and no Wait It Out.",
+      "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+      "Native default Technique priority unless the exact AoE Rune overrides it.",
+      "Unused RP 5 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+    ],
+    "seed": 101033,
+    "block": "H",
+    "arm": "candidate",
+    "comparisonId": "heat-apprentice-balanced-a-s101033",
+    "snapshotId": "t4-established-gm148",
+    "progressionSnapshot": {
+      "id": "t4-established-gm148",
+      "tier": 4,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "gm": 148,
+      "rp": 45,
+      "plus": 4,
+      "priorBossClears": [
+        "forest:1",
+        "mountain:1",
+        "plains:2",
+        "swamp:2",
+        "desert:2",
+        "cave:3",
+        "mountain:3",
+        "jungle:3",
+        "desert:3"
+      ]
+    },
+    "referenceObservationId": "closing-apprentice-balanced-a-V-s101033",
+    "referenceSource": "056b5cd66c2f6aeccca840265a0cbce30a2a77f3",
+    "durationMs": 2400000,
+    "policy": "H2"
+  },
+  {
+    "id": "heat-slinger-light-a-H0-s101033",
+    "className": "slinger",
+    "tier": 4,
+    "role": "farm",
+    "alternate": false,
+    "nodeId": "node-t4-volcanic-01",
+    "isDungeon": false,
+    "treatment": "authored-source",
+    "targetTypes": [],
+    "upgradeLevel": 4,
+    "stance": "offensive-stance",
+    "abilities": {
+      "techniques": [
+        "sweep",
+        "frenzy",
+        "expose-weakness"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ],
+    "build": {
+      "id": "heat-slinger-light-a-H0-s101033",
+      "classRoot": "reload-root",
+      "contentTier": 4,
+      "playerTier": 4,
+      "gearTier": 4,
+      "skillPath": [
+        "reload-root",
+        "reload-light",
+        "reload-range-mid",
+        "reload-light-t3-a"
+      ],
+      "gearItemIds": {
+        "weapon": "jungle-deathfang-rapier",
+        "armor": "volcanic-vest-t4",
+        "recovery": "volcanic-charm-t4",
+        "mobility": "desert-boots-t4",
+        "core": "core-catalyst",
+        "relic": "relic-equilibrium-shard"
+      }
+    },
+    "identityId": "breadth-t4-slinger-light-a",
+    "frame": "light",
+    "range": "mid",
+    "pathName": "Duelist",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "On-hit clip delivery with native empowered last round.",
+      "Role template swarm; 43/45 RP, 2 free. Defining offense and encounter support precede optional Expose.",
+      "Volcanic plating/hardening and active/kill Recovery; kills are required for the extra recovery window.",
+      "Base stance offensive-stance; one paid stance, no destinations or stance automation; no rites.",
+      "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+      "No generic low-HP Flee and no Wait It Out.",
+      "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+      "Native default Technique priority unless the exact AoE Rune overrides it.",
+      "Unused RP 2 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+    ],
+    "seed": 101033,
+    "block": "H",
+    "arm": "candidate",
+    "comparisonId": "heat-slinger-light-a-s101033",
+    "snapshotId": "t4-established-gm148",
+    "progressionSnapshot": {
+      "id": "t4-established-gm148",
+      "tier": 4,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "gm": 148,
+      "rp": 45,
+      "plus": 4,
+      "priorBossClears": [
+        "forest:1",
+        "mountain:1",
+        "plains:2",
+        "swamp:2",
+        "desert:2",
+        "cave:3",
+        "mountain:3",
+        "jungle:3",
+        "desert:3"
+      ]
+    },
+    "referenceObservationId": "closing-slinger-light-a-V-s101033",
+    "referenceSource": "056b5cd66c2f6aeccca840265a0cbce30a2a77f3",
+    "durationMs": 2400000,
+    "policy": "H0"
+  },
+  {
+    "id": "heat-slinger-light-a-H1-s101033",
+    "className": "slinger",
+    "tier": 4,
+    "role": "farm",
+    "alternate": false,
+    "nodeId": "node-t4-volcanic-01",
+    "isDungeon": false,
+    "treatment": "authored-source",
+    "targetTypes": [],
+    "upgradeLevel": 4,
+    "stance": "offensive-stance",
+    "abilities": {
+      "techniques": [
+        "sweep",
+        "frenzy",
+        "expose-weakness"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-it-out"
+      }
+    ],
+    "build": {
+      "id": "heat-slinger-light-a-H1-s101033",
+      "classRoot": "reload-root",
+      "contentTier": 4,
+      "playerTier": 4,
+      "gearTier": 4,
+      "skillPath": [
+        "reload-root",
+        "reload-light",
+        "reload-range-mid",
+        "reload-light-t3-a"
+      ],
+      "gearItemIds": {
+        "weapon": "jungle-deathfang-rapier",
+        "armor": "volcanic-vest-t4",
+        "recovery": "volcanic-charm-t4",
+        "mobility": "desert-boots-t4",
+        "core": "core-catalyst",
+        "relic": "relic-equilibrium-shard"
+      }
+    },
+    "identityId": "breadth-t4-slinger-light-a",
+    "frame": "light",
+    "range": "mid",
+    "pathName": "Duelist",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "On-hit clip delivery with native empowered last round.",
+      "Role template swarm; 43/45 RP, 2 free. Defining offense and encounter support precede optional Expose.",
+      "Volcanic plating/hardening and active/kill Recovery; kills are required for the extra recovery window.",
+      "Base stance offensive-stance; one paid stance, no destinations or stance automation; no rites.",
+      "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+      "No generic low-HP Flee and no Wait It Out.",
+      "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+      "Native default Technique priority unless the exact AoE Rune overrides it.",
+      "Unused RP 2 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+    ],
+    "seed": 101033,
+    "block": "H",
+    "arm": "candidate",
+    "comparisonId": "heat-slinger-light-a-s101033",
+    "snapshotId": "t4-established-gm148",
+    "progressionSnapshot": {
+      "id": "t4-established-gm148",
+      "tier": 4,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "gm": 148,
+      "rp": 45,
+      "plus": 4,
+      "priorBossClears": [
+        "forest:1",
+        "mountain:1",
+        "plains:2",
+        "swamp:2",
+        "desert:2",
+        "cave:3",
+        "mountain:3",
+        "jungle:3",
+        "desert:3"
+      ]
+    },
+    "referenceObservationId": "closing-slinger-light-a-V-s101033",
+    "referenceSource": "056b5cd66c2f6aeccca840265a0cbce30a2a77f3",
+    "durationMs": 2400000,
+    "policy": "H1"
+  },
+  {
+    "id": "heat-slinger-light-a-H2-s101033",
+    "className": "slinger",
+    "tier": 4,
+    "role": "farm",
+    "alternate": false,
+    "nodeId": "node-t4-volcanic-01",
+    "isDungeon": false,
+    "treatment": "authored-source",
+    "targetTypes": [],
+    "upgradeLevel": 4,
+    "stance": "offensive-stance",
+    "abilities": {
+      "techniques": [
+        "sweep",
+        "frenzy",
+        "expose-weakness"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-it-out",
+        "waitOutMode": "heat-managed"
+      }
+    ],
+    "build": {
+      "id": "heat-slinger-light-a-H2-s101033",
+      "classRoot": "reload-root",
+      "contentTier": 4,
+      "playerTier": 4,
+      "gearTier": 4,
+      "skillPath": [
+        "reload-root",
+        "reload-light",
+        "reload-range-mid",
+        "reload-light-t3-a"
+      ],
+      "gearItemIds": {
+        "weapon": "jungle-deathfang-rapier",
+        "armor": "volcanic-vest-t4",
+        "recovery": "volcanic-charm-t4",
+        "mobility": "desert-boots-t4",
+        "core": "core-catalyst",
+        "relic": "relic-equilibrium-shard"
+      }
+    },
+    "identityId": "breadth-t4-slinger-light-a",
+    "frame": "light",
+    "range": "mid",
+    "pathName": "Duelist",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "On-hit clip delivery with native empowered last round.",
+      "Role template swarm; 43/45 RP, 2 free. Defining offense and encounter support precede optional Expose.",
+      "Volcanic plating/hardening and active/kill Recovery; kills are required for the extra recovery window.",
+      "Base stance offensive-stance; one paid stance, no destinations or stance automation; no rites.",
+      "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+      "No generic low-HP Flee and no Wait It Out.",
+      "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+      "Native default Technique priority unless the exact AoE Rune overrides it.",
+      "Unused RP 2 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+    ],
+    "seed": 101033,
+    "block": "H",
+    "arm": "candidate",
+    "comparisonId": "heat-slinger-light-a-s101033",
+    "snapshotId": "t4-established-gm148",
+    "progressionSnapshot": {
+      "id": "t4-established-gm148",
+      "tier": 4,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "gm": 148,
+      "rp": 45,
+      "plus": 4,
+      "priorBossClears": [
+        "forest:1",
+        "mountain:1",
+        "plains:2",
+        "swamp:2",
+        "desert:2",
+        "cave:3",
+        "mountain:3",
+        "jungle:3",
+        "desert:3"
+      ]
+    },
+    "referenceObservationId": "closing-slinger-light-a-V-s101033",
+    "referenceSource": "056b5cd66c2f6aeccca840265a0cbce30a2a77f3",
+    "durationMs": 2400000,
+    "policy": "H2"
+  },
+  {
+    "id": "heat-N-control-s101009",
+    "className": "conduit",
+    "tier": 4,
+    "role": "farm",
+    "alternate": false,
+    "nodeId": "node-t4-tundra-01",
+    "isDungeon": false,
+    "treatment": "authored-source",
+    "targetTypes": [],
+    "upgradeLevel": 4,
+    "stance": "defensive-stance",
+    "abilities": {
+      "techniques": [
+        "power-strike",
+        "frenzy",
+        "hamstring"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ],
+    "build": {
+      "id": "heat-N-control-s101009",
+      "classRoot": "summoner-root",
+      "contentTier": 4,
+      "playerTier": 4,
+      "gearTier": 4,
+      "skillPath": [
+        "summoner-root",
+        "summoner-balanced",
+        "summoner-range-mid",
+        "summoner-balanced-t3-c"
+      ],
+      "gearItemIds": {
+        "weapon": "graveyard-plague-axe",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "desert-boots-t4",
+        "core": "core-survivalist",
+        "relic": "relic-equilibrium-shard"
+      }
+    },
+    "identityId": "breadth-t4-conduit-balanced-c",
+    "frame": "balanced",
+    "range": "mid",
+    "pathName": "Ritualist",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "Ritual charges need living slots and attack opportunities; Frenzy reaches summons.",
+      "Role template controlled elite/pair; 43/45 RP, 2 free. Defining offense and encounter support precede optional Expose.",
+      "Mountain burst-cap/Guard armor and barrier charm retained; Recovery and actual danger response remain.",
+      "Base stance defensive-stance; one paid stance, no destinations or stance automation; no rites.",
+      "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+      "No generic low-HP Flee and no Wait It Out.",
+      "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+      "Native default Technique priority unless the exact AoE Rune overrides it.",
+      "Unused RP 2 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+    ],
+    "seed": 101009,
+    "block": "N",
+    "arm": "control",
+    "comparisonId": "heat-N-s101009",
+    "snapshotId": "t4-established-gm148",
+    "progressionSnapshot": {
+      "id": "t4-established-gm148",
+      "tier": 4,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "gm": 148,
+      "rp": 45,
+      "plus": 4,
+      "priorBossClears": [
+        "forest:1",
+        "mountain:1",
+        "plains:2",
+        "swamp:2",
+        "desert:2",
+        "cave:3",
+        "mountain:3",
+        "jungle:3",
+        "desert:3"
+      ]
+    },
+    "referenceObservationId": "closing-conduit-balanced-c-T-s101009",
+    "referenceSource": "056b5cd66c2f6aeccca840265a0cbce30a2a77f3",
+    "durationMs": 600000
+  },
+  {
+    "id": "heat-N-candidate-s101009",
+    "className": "conduit",
+    "tier": 4,
+    "role": "farm",
+    "alternate": false,
+    "nodeId": "node-t4-tundra-01",
+    "isDungeon": false,
+    "treatment": "authored-source",
+    "targetTypes": [],
+    "upgradeLevel": 4,
+    "stance": "defensive-stance",
+    "abilities": {
+      "techniques": [
+        "power-strike",
+        "frenzy",
+        "hamstring"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ],
+    "build": {
+      "id": "heat-N-candidate-s101009",
+      "classRoot": "summoner-root",
+      "contentTier": 4,
+      "playerTier": 4,
+      "gearTier": 4,
+      "skillPath": [
+        "summoner-root",
+        "summoner-balanced",
+        "summoner-range-mid",
+        "summoner-balanced-t3-c"
+      ],
+      "gearItemIds": {
+        "weapon": "graveyard-plague-axe",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "desert-boots-t4",
+        "core": "core-survivalist",
+        "relic": "relic-equilibrium-shard"
+      }
+    },
+    "identityId": "breadth-t4-conduit-balanced-c",
+    "frame": "balanced",
+    "range": "mid",
+    "pathName": "Ritualist",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "Ritual charges need living slots and attack opportunities; Frenzy reaches summons.",
+      "Role template controlled elite/pair; 43/45 RP, 2 free. Defining offense and encounter support precede optional Expose.",
+      "Mountain burst-cap/Guard armor and barrier charm retained; Recovery and actual danger response remain.",
+      "Base stance defensive-stance; one paid stance, no destinations or stance automation; no rites.",
+      "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+      "No generic low-HP Flee and no Wait It Out.",
+      "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+      "Native default Technique priority unless the exact AoE Rune overrides it.",
+      "Unused RP 2 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+    ],
+    "seed": 101009,
+    "block": "N",
+    "arm": "candidate",
+    "comparisonId": "heat-N-s101009",
+    "snapshotId": "t4-established-gm148",
+    "progressionSnapshot": {
+      "id": "t4-established-gm148",
+      "tier": 4,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "gm": 148,
+      "rp": 45,
+      "plus": 4,
+      "priorBossClears": [
+        "forest:1",
+        "mountain:1",
+        "plains:2",
+        "swamp:2",
+        "desert:2",
+        "cave:3",
+        "mountain:3",
+        "jungle:3",
+        "desert:3"
+      ]
+    },
+    "referenceObservationId": "closing-conduit-balanced-c-T-s101009",
+    "referenceSource": "056b5cd66c2f6aeccca840265a0cbce30a2a77f3",
+    "durationMs": 600000
+  },
+  {
+    "id": "heat-N-control-s101033",
+    "className": "conduit",
+    "tier": 4,
+    "role": "farm",
+    "alternate": false,
+    "nodeId": "node-t4-tundra-01",
+    "isDungeon": false,
+    "treatment": "authored-source",
+    "targetTypes": [],
+    "upgradeLevel": 4,
+    "stance": "defensive-stance",
+    "abilities": {
+      "techniques": [
+        "power-strike",
+        "frenzy",
+        "hamstring"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ],
+    "build": {
+      "id": "heat-N-control-s101033",
+      "classRoot": "summoner-root",
+      "contentTier": 4,
+      "playerTier": 4,
+      "gearTier": 4,
+      "skillPath": [
+        "summoner-root",
+        "summoner-balanced",
+        "summoner-range-mid",
+        "summoner-balanced-t3-c"
+      ],
+      "gearItemIds": {
+        "weapon": "graveyard-plague-axe",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "desert-boots-t4",
+        "core": "core-survivalist",
+        "relic": "relic-equilibrium-shard"
+      }
+    },
+    "identityId": "breadth-t4-conduit-balanced-c",
+    "frame": "balanced",
+    "range": "mid",
+    "pathName": "Ritualist",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "Ritual charges need living slots and attack opportunities; Frenzy reaches summons.",
+      "Role template controlled elite/pair; 43/45 RP, 2 free. Defining offense and encounter support precede optional Expose.",
+      "Mountain burst-cap/Guard armor and barrier charm retained; Recovery and actual danger response remain.",
+      "Base stance defensive-stance; one paid stance, no destinations or stance automation; no rites.",
+      "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+      "No generic low-HP Flee and no Wait It Out.",
+      "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+      "Native default Technique priority unless the exact AoE Rune overrides it.",
+      "Unused RP 2 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+    ],
+    "seed": 101033,
+    "block": "N",
+    "arm": "control",
+    "comparisonId": "heat-N-s101033",
+    "snapshotId": "t4-established-gm148",
+    "progressionSnapshot": {
+      "id": "t4-established-gm148",
+      "tier": 4,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "gm": 148,
+      "rp": 45,
+      "plus": 4,
+      "priorBossClears": [
+        "forest:1",
+        "mountain:1",
+        "plains:2",
+        "swamp:2",
+        "desert:2",
+        "cave:3",
+        "mountain:3",
+        "jungle:3",
+        "desert:3"
+      ]
+    },
+    "referenceObservationId": "closing-conduit-balanced-c-T-s101033",
+    "referenceSource": "056b5cd66c2f6aeccca840265a0cbce30a2a77f3",
+    "durationMs": 600000
+  },
+  {
+    "id": "heat-N-candidate-s101033",
+    "className": "conduit",
+    "tier": 4,
+    "role": "farm",
+    "alternate": false,
+    "nodeId": "node-t4-tundra-01",
+    "isDungeon": false,
+    "treatment": "authored-source",
+    "targetTypes": [],
+    "upgradeLevel": 4,
+    "stance": "defensive-stance",
+    "abilities": {
+      "techniques": [
+        "power-strike",
+        "frenzy",
+        "hamstring"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ],
+    "build": {
+      "id": "heat-N-candidate-s101033",
+      "classRoot": "summoner-root",
+      "contentTier": 4,
+      "playerTier": 4,
+      "gearTier": 4,
+      "skillPath": [
+        "summoner-root",
+        "summoner-balanced",
+        "summoner-range-mid",
+        "summoner-balanced-t3-c"
+      ],
+      "gearItemIds": {
+        "weapon": "graveyard-plague-axe",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "desert-boots-t4",
+        "core": "core-survivalist",
+        "relic": "relic-equilibrium-shard"
+      }
+    },
+    "identityId": "breadth-t4-conduit-balanced-c",
+    "frame": "balanced",
+    "range": "mid",
+    "pathName": "Ritualist",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "Ritual charges need living slots and attack opportunities; Frenzy reaches summons.",
+      "Role template controlled elite/pair; 43/45 RP, 2 free. Defining offense and encounter support precede optional Expose.",
+      "Mountain burst-cap/Guard armor and barrier charm retained; Recovery and actual danger response remain.",
+      "Base stance defensive-stance; one paid stance, no destinations or stance automation; no rites.",
+      "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+      "No generic low-HP Flee and no Wait It Out.",
+      "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+      "Native default Technique priority unless the exact AoE Rune overrides it.",
+      "Unused RP 2 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+    ],
+    "seed": 101033,
+    "block": "N",
+    "arm": "candidate",
+    "comparisonId": "heat-N-s101033",
+    "snapshotId": "t4-established-gm148",
+    "progressionSnapshot": {
+      "id": "t4-established-gm148",
+      "tier": 4,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "gm": 148,
+      "rp": 45,
+      "plus": 4,
+      "priorBossClears": [
+        "forest:1",
+        "mountain:1",
+        "plains:2",
+        "swamp:2",
+        "desert:2",
+        "cave:3",
+        "mountain:3",
+        "jungle:3",
+        "desert:3"
+      ]
+    },
+    "referenceObservationId": "closing-conduit-balanced-c-T-s101033",
+    "referenceSource": "056b5cd66c2f6aeccca840265a0cbce30a2a77f3",
+    "durationMs": 600000
+  },
+  {
+    "id": "heat-B-control-s101009",
+    "identityId": "t3-slinger-heavy",
+    "className": "slinger",
+    "frame": "heavy",
+    "pathName": "heavy",
+    "range": "mid",
+    "tier": 3,
+    "role": "boss",
+    "nodeId": "node-t3-volcanic-dungeon",
+    "isDungeon": true,
+    "alternate": false,
+    "targetTypes": [
+      "cinder-shell-magma-salamander"
+    ],
+    "treatment": "control",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+      "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+    ],
+    "seed": 101009,
+    "block": "B",
+    "arm": "control",
+    "comparisonId": "heat-B-s101009",
+    "snapshotId": "t3-tundra-arrival",
+    "progressionSnapshot": {
+      "id": "t3-tundra-arrival",
+      "tier": 3,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "mountain": 18,
+        "cave": 18,
+        "jungle": 12,
+        "desert": 12,
+        "volcanic": 6,
+        "tundra": 0
+      },
+      "gm": 108,
+      "rp": 37,
+      "plus": 4
+    },
+    "upgradeLevel": 4,
+    "stance": "defensive-stance",
+    "abilities": {
+      "techniques": [
+        "sweep"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "endure"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "target-casting",
+        "actionId": "use-ability",
+        "targetAbilityId": "brace"
+      }
+    ],
+    "boss": "cinder-shell-magma-salamander",
+    "build": {
+      "id": "heat-B-control-s101009",
+      "classRoot": "reload-root",
+      "contentTier": 3,
+      "playerTier": 3,
+      "gearTier": 3,
+      "skillPath": [
+        "reload-root",
+        "reload-heavy",
+        "reload-range-mid"
+      ],
+      "gearItemIds": {
+        "weapon": "jungle-venomthorn-rapier",
+        "armor": "mountain-vest-t3",
+        "recovery": "swamp-charm-t3",
+        "mobility": "desert-boots-t3",
+        "core": "core-tempered"
+      }
+    },
+    "durationMs": 300000,
+    "referenceObservationId": "op-t3-slinger-heavy-volcanic-boss-s101009",
+    "referenceSource": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6"
+  },
+  {
+    "id": "heat-B-candidate-s101009",
+    "identityId": "t3-slinger-heavy",
+    "className": "slinger",
+    "frame": "heavy",
+    "pathName": "heavy",
+    "range": "mid",
+    "tier": 3,
+    "role": "boss",
+    "nodeId": "node-t3-volcanic-dungeon",
+    "isDungeon": true,
+    "alternate": false,
+    "targetTypes": [
+      "cinder-shell-magma-salamander"
+    ],
+    "treatment": "control",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+      "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+    ],
+    "seed": 101009,
+    "block": "B",
+    "arm": "candidate",
+    "comparisonId": "heat-B-s101009",
+    "snapshotId": "t3-tundra-arrival",
+    "progressionSnapshot": {
+      "id": "t3-tundra-arrival",
+      "tier": 3,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "mountain": 18,
+        "cave": 18,
+        "jungle": 12,
+        "desert": 12,
+        "volcanic": 6,
+        "tundra": 0
+      },
+      "gm": 108,
+      "rp": 37,
+      "plus": 4
+    },
+    "upgradeLevel": 4,
+    "stance": "defensive-stance",
+    "abilities": {
+      "techniques": [
+        "sweep"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "endure"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "target-casting",
+        "actionId": "use-ability",
+        "targetAbilityId": "brace"
+      }
+    ],
+    "boss": "cinder-shell-magma-salamander",
+    "build": {
+      "id": "heat-B-candidate-s101009",
+      "classRoot": "reload-root",
+      "contentTier": 3,
+      "playerTier": 3,
+      "gearTier": 3,
+      "skillPath": [
+        "reload-root",
+        "reload-heavy",
+        "reload-range-mid"
+      ],
+      "gearItemIds": {
+        "weapon": "jungle-venomthorn-rapier",
+        "armor": "mountain-vest-t3",
+        "recovery": "swamp-charm-t3",
+        "mobility": "desert-boots-t3",
+        "core": "core-tempered"
+      }
+    },
+    "durationMs": 300000,
+    "referenceObservationId": "op-t3-slinger-heavy-volcanic-boss-s101009",
+    "referenceSource": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6"
+  },
+  {
+    "id": "heat-B-control-s101033",
+    "identityId": "t3-slinger-heavy",
+    "className": "slinger",
+    "frame": "heavy",
+    "pathName": "heavy",
+    "range": "mid",
+    "tier": 3,
+    "role": "boss",
+    "nodeId": "node-t3-volcanic-dungeon",
+    "isDungeon": true,
+    "alternate": false,
+    "targetTypes": [
+      "cinder-shell-magma-salamander"
+    ],
+    "treatment": "control",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+      "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+    ],
+    "seed": 101033,
+    "block": "B",
+    "arm": "control",
+    "comparisonId": "heat-B-s101033",
+    "snapshotId": "t3-tundra-arrival",
+    "progressionSnapshot": {
+      "id": "t3-tundra-arrival",
+      "tier": 3,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "mountain": 18,
+        "cave": 18,
+        "jungle": 12,
+        "desert": 12,
+        "volcanic": 6,
+        "tundra": 0
+      },
+      "gm": 108,
+      "rp": 37,
+      "plus": 4
+    },
+    "upgradeLevel": 4,
+    "stance": "defensive-stance",
+    "abilities": {
+      "techniques": [
+        "sweep"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "endure"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "target-casting",
+        "actionId": "use-ability",
+        "targetAbilityId": "brace"
+      }
+    ],
+    "boss": "cinder-shell-magma-salamander",
+    "build": {
+      "id": "heat-B-control-s101033",
+      "classRoot": "reload-root",
+      "contentTier": 3,
+      "playerTier": 3,
+      "gearTier": 3,
+      "skillPath": [
+        "reload-root",
+        "reload-heavy",
+        "reload-range-mid"
+      ],
+      "gearItemIds": {
+        "weapon": "jungle-venomthorn-rapier",
+        "armor": "mountain-vest-t3",
+        "recovery": "swamp-charm-t3",
+        "mobility": "desert-boots-t3",
+        "core": "core-tempered"
+      }
+    },
+    "durationMs": 300000,
+    "referenceObservationId": "op-t3-slinger-heavy-volcanic-boss-s101033",
+    "referenceSource": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6"
+  },
+  {
+    "id": "heat-B-candidate-s101033",
+    "identityId": "t3-slinger-heavy",
+    "className": "slinger",
+    "frame": "heavy",
+    "pathName": "heavy",
+    "range": "mid",
+    "tier": 3,
+    "role": "boss",
+    "nodeId": "node-t3-volcanic-dungeon",
+    "isDungeon": true,
+    "alternate": false,
+    "targetTypes": [
+      "cinder-shell-magma-salamander"
+    ],
+    "treatment": "control",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+      "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+    ],
+    "seed": 101033,
+    "block": "B",
+    "arm": "candidate",
+    "comparisonId": "heat-B-s101033",
+    "snapshotId": "t3-tundra-arrival",
+    "progressionSnapshot": {
+      "id": "t3-tundra-arrival",
+      "tier": 3,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "mountain": 18,
+        "cave": 18,
+        "jungle": 12,
+        "desert": 12,
+        "volcanic": 6,
+        "tundra": 0
+      },
+      "gm": 108,
+      "rp": 37,
+      "plus": 4
+    },
+    "upgradeLevel": 4,
+    "stance": "defensive-stance",
+    "abilities": {
+      "techniques": [
+        "sweep"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "endure"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "target-casting",
+        "actionId": "use-ability",
+        "targetAbilityId": "brace"
+      }
+    ],
+    "boss": "cinder-shell-magma-salamander",
+    "build": {
+      "id": "heat-B-candidate-s101033",
+      "classRoot": "reload-root",
+      "contentTier": 3,
+      "playerTier": 3,
+      "gearTier": 3,
+      "skillPath": [
+        "reload-root",
+        "reload-heavy",
+        "reload-range-mid"
+      ],
+      "gearItemIds": {
+        "weapon": "jungle-venomthorn-rapier",
+        "armor": "mountain-vest-t3",
+        "recovery": "swamp-charm-t3",
+        "mobility": "desert-boots-t3",
+        "core": "core-tempered"
+      }
+    },
+    "durationMs": 300000,
+    "referenceObservationId": "op-t3-slinger-heavy-volcanic-boss-s101033",
+    "referenceSource": "c14d62afa2267b57207e1ef8b65c3fd90144c0a6"
+  }
+]

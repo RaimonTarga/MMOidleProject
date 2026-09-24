@@ -1,3 +1,4 @@
+import { heatAllowsTarget } from '../../../../../combat/ai/heatManagement';
 import { mitigateOnHitDamage } from '@mmo-idle/shared';
 import { outgoingFinalDamage } from '../../../../../combat/damage/finalDamage';
 import { resolveLaserProfile } from '@mmo-idle/shared';
@@ -76,6 +77,7 @@ function findNearestTarget(world: World, player: PlayerEntity): MonsterEntity | 
   const attackRange = player.performsAttack.attackRange;
 
   for (const entity of world.monsterEntitiesInNode(player.hasPosition.nodeId)) {
+    if (!heatAllowsTarget(world, player, entity)) continue;
     const monsterPH = posHitboxFromEntity(entity);
     if (!inAttackRange(playerPH, monsterPH, attackRange)) continue;
     const gap = hitboxGap(playerPH, monsterPH);
