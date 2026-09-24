@@ -63,6 +63,19 @@ state.view.set('friend', { ...player, combatArchetype: 'reload', passives: { 're
 calls.length = 0;
 exports.dispatchCombatEvent(state, hit, scene);
 assert(!calls.includes('activateLaserBeam'), 'remote laser cannot activate own beam');
+// The remote guard must not disable the actual owner's continuous beam.
+scene.myId = 'friend';
+state.ownId = 'friend';
+calls.length = 0;
+exports.dispatchCombatEvent(state, { ...hit, effects: [] }, scene);
+assert(calls.includes('activateLaserBeam'), 'own laser retains its continuous controller');
+scene.myId = 'self';
+state.ownId = 'self';
+state.view.set('friend', { ...player, combatArchetype: 'reload', selectedRange: 'reload-range-far' } as never);
+calls.length = 0;
+exports.dispatchCombatEvent(state, { ...hit, effects: [], pelletIndex: 0 }, scene);
+assert(calls.includes('fxGunshot'), 'remote shotgun pellets use the actual shot renderer');
+
 state.view.set('friend', { ...player, summonsMinions: 1 } as never);
 calls.length = 0;
 exports.dispatchCombatEvent(state, hit, scene);
