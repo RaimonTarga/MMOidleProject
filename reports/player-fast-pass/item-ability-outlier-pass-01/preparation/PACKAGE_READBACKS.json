@@ -1,0 +1,4984 @@
+[
+  {
+    "order": 1,
+    "id": "outlier-desert-ritualist-control-s101009",
+    "module": "desert-ritualist",
+    "seed": 101009,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "summoner-root",
+      "summoner-balanced",
+      "summoner-range-mid",
+      "summoner-balanced-t3-c"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "graveyard-plague-axe",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "desert-boots-t4",
+        "core": "core-survivalist",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike",
+        "frenzy",
+        "hamstring"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 45,
+      "cost": 43,
+      "unused": 2,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 308,
+      "attackCooldown": 874,
+      "speed": 360,
+      "maxHp": 523,
+      "barrierMax": 212,
+      "recovery": 24
+    },
+    "candidate": null,
+    "resolvedPassives": {
+      "weapon.dead-swing-interval": 3,
+      "weapon.dead-swing-vuln-pct": 0.2,
+      "weapon.dead-swing-vuln-ms": 4000,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.kite-speed-pct": 0.4,
+      "core.recovery-mult": 0.3,
+      "core.maxhp-mult": 0.15,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 2,
+    "id": "outlier-desert-ritualist-candidate-s101009",
+    "module": "desert-ritualist",
+    "seed": 101009,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "summoner-root",
+      "summoner-balanced",
+      "summoner-range-mid",
+      "summoner-balanced-t3-c"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "graveyard-plague-axe",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "desert-boots-t4",
+        "core": "core-survivalist",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike",
+        "frenzy",
+        "hamstring"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 45,
+      "cost": 43,
+      "unused": 2,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 308,
+      "attackCooldown": 874,
+      "speed": 360,
+      "maxHp": 523,
+      "barrierMax": 212,
+      "recovery": 24
+    },
+    "candidate": "D",
+    "resolvedPassives": {
+      "weapon.dead-swing-interval": 3,
+      "weapon.dead-swing-vuln-pct": 0.2,
+      "weapon.dead-swing-vuln-ms": 4000,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.kite-speed-pct": 0.3,
+      "core.recovery-mult": 0.3,
+      "core.maxhp-mult": 0.15,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 3,
+    "id": "outlier-desert-ranger-control-s101009",
+    "module": "desert-ranger",
+    "seed": 101009,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "reload-root",
+      "reload-light",
+      "reload-range-mid",
+      "reload-light-t3-a"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "jungle-deathfang-rapier",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "desert-boots-t4",
+        "core": "core-catalyst",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "jungle-deathfang-rapier": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-catalyst": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "quick-strike",
+        "frenzy",
+        "hamstring"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 45,
+      "cost": 42,
+      "unused": 3,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 77,
+      "attackCooldown": 230,
+      "speed": 409,
+      "maxHp": 430,
+      "barrierMax": 174,
+      "recovery": 18.5
+    },
+    "candidate": null,
+    "resolvedPassives": {
+      "defense.recovery-on-kill-pct": 0.2,
+      "defense.recovery-on-kill-ms": 4000,
+      "defense.evade-mitigation": 0.2,
+      "reload.acquire-radius-mult": 2.5,
+      "reload.max-ammo": 6,
+      "reload.reload-time-ms": 1200,
+      "reload.exploding-clip": 1,
+      "reload.empowered-mult": 5,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.kite-speed-pct": 0.4,
+      "core.onhit-mult": 1.15,
+      "core.damage-dealt-pct": -0.15,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 4,
+    "id": "outlier-desert-ranger-candidate-s101009",
+    "module": "desert-ranger",
+    "seed": 101009,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "reload-root",
+      "reload-light",
+      "reload-range-mid",
+      "reload-light-t3-a"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "jungle-deathfang-rapier",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "desert-boots-t4",
+        "core": "core-catalyst",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "jungle-deathfang-rapier": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-catalyst": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "quick-strike",
+        "frenzy",
+        "hamstring"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 45,
+      "cost": 42,
+      "unused": 3,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 77,
+      "attackCooldown": 230,
+      "speed": 409,
+      "maxHp": 430,
+      "barrierMax": 174,
+      "recovery": 18.5
+    },
+    "candidate": "D",
+    "resolvedPassives": {
+      "defense.recovery-on-kill-pct": 0.2,
+      "defense.recovery-on-kill-ms": 4000,
+      "defense.evade-mitigation": 0.2,
+      "reload.acquire-radius-mult": 2.5,
+      "reload.max-ammo": 6,
+      "reload.reload-time-ms": 1200,
+      "reload.exploding-clip": 1,
+      "reload.empowered-mult": 5,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.kite-speed-pct": 0.3,
+      "core.onhit-mult": 1.15,
+      "core.damage-dealt-pct": -0.15,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 5,
+    "id": "outlier-swamp-t2-control-s101009",
+    "module": "swamp-t2",
+    "seed": 101009,
+    "fixture": "node-t2-desert-01",
+    "path": [
+      "cooldown-root",
+      "cooldown-light"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "quake-hammer",
+        "armor": "mountain-vest-t2",
+        "recovery": "swamp-charm-t2",
+        "mobility": "swamp-boots-t2",
+        "core": "core-tempered",
+        "relic": null
+      },
+      "itemUpgrades": {
+        "quake-hammer": 4,
+        "mountain-vest-t2": 4,
+        "swamp-charm-t2": 4,
+        "swamp-boots-t2": 4,
+        "core-tempered": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike"
+      ],
+      "guards": [
+        "second-wind",
+        "cleanse",
+        "brace"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "in-combat",
+        "actionId": "focus-lowest-hp"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 30,
+      "cost": 28,
+      "unused": 2,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 12,
+        "mountain": 12,
+        "cave": 12,
+        "jungle": 6,
+        "desert": 4
+      },
+      "globalMastery": 70
+    },
+    "stats": {
+      "attack": 100,
+      "attackCooldown": 1874,
+      "speed": 159,
+      "maxHp": 272,
+      "barrierMax": 0,
+      "recovery": 16
+    },
+    "candidate": null,
+    "resolvedPassives": {
+      "defense.recovery-active-pct": 0.1,
+      "cooldown.empowered-cd-ms": 5000,
+      "cooldown.empowered-mult": 1.5,
+      "weapon.empowered-mult-bonus": 0.32,
+      "technique.cast-speed-pct": 0.15,
+      "guard.potency-pct": 0.36000000000000004,
+      "mobility.slow-resistance": 0.56,
+      "core.damage-dealt-pct": 0.12,
+      "core.maxhp-mult": 0.12,
+      "defense.recovery-pulse-interval-ms": 8000,
+      "defense.recovery-pulse-duration-ms": 4000,
+      "defense.recovery-pulse-pct": 0.4
+    }
+  },
+  {
+    "order": 6,
+    "id": "outlier-swamp-t2-candidate-s101009",
+    "module": "swamp-t2",
+    "seed": 101009,
+    "fixture": "node-t2-desert-01",
+    "path": [
+      "cooldown-root",
+      "cooldown-light"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "quake-hammer",
+        "armor": "mountain-vest-t2",
+        "recovery": "swamp-charm-t2",
+        "mobility": "swamp-boots-t2",
+        "core": "core-tempered",
+        "relic": null
+      },
+      "itemUpgrades": {
+        "quake-hammer": 4,
+        "mountain-vest-t2": 4,
+        "swamp-charm-t2": 4,
+        "swamp-boots-t2": 4,
+        "core-tempered": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike"
+      ],
+      "guards": [
+        "second-wind",
+        "cleanse",
+        "brace"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "in-combat",
+        "actionId": "focus-lowest-hp"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 30,
+      "cost": 28,
+      "unused": 2,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 12,
+        "mountain": 12,
+        "cave": 12,
+        "jungle": 6,
+        "desert": 4
+      },
+      "globalMastery": 70
+    },
+    "stats": {
+      "attack": 100,
+      "attackCooldown": 1874,
+      "speed": 159,
+      "maxHp": 272,
+      "barrierMax": 0,
+      "recovery": 16
+    },
+    "candidate": "S",
+    "resolvedPassives": {
+      "defense.recovery-active-pct": 0.1,
+      "cooldown.empowered-cd-ms": 5000,
+      "cooldown.empowered-mult": 1.5,
+      "weapon.empowered-mult-bonus": 0.32,
+      "technique.cast-speed-pct": 0.15,
+      "guard.potency-pct": 0.36000000000000004,
+      "mobility.slow-resistance": 0.48000000000000004,
+      "core.damage-dealt-pct": 0.12,
+      "core.maxhp-mult": 0.12,
+      "defense.recovery-pulse-interval-ms": 8000,
+      "defense.recovery-pulse-duration-ms": 4000,
+      "defense.recovery-pulse-pct": 0.4
+    }
+  },
+  {
+    "order": 7,
+    "id": "outlier-swamp-t3-control-s101009",
+    "module": "swamp-t3",
+    "seed": 101009,
+    "fixture": "node-t3-swamp-03",
+    "path": [
+      "reload-root",
+      "reload-light",
+      "reload-range-mid"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "jungle-venomthorn-rapier",
+        "armor": "swamp-vest-t3",
+        "recovery": "swamp-charm-t3",
+        "mobility": "swamp-boots-t3",
+        "core": "core-tempered",
+        "relic": null
+      },
+      "itemUpgrades": {
+        "jungle-venomthorn-rapier": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "swamp-boots-t3": 3,
+        "core-tempered": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike"
+      ],
+      "guards": [
+        "second-wind",
+        "cleanse"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ],
+    "stance": "offensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 36,
+      "cost": 25,
+      "unused": 11,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "mountain": 18,
+        "cave": 18,
+        "jungle": 12,
+        "desert": 12,
+        "volcanic": 0,
+        "tundra": 0
+      },
+      "globalMastery": 102
+    },
+    "stats": {
+      "attack": 42,
+      "attackCooldown": 226,
+      "speed": 232,
+      "maxHp": 302,
+      "barrierMax": 0,
+      "recovery": 18
+    },
+    "candidate": null,
+    "resolvedPassives": {
+      "defense.recovery-on-kill-pct": 0.2,
+      "defense.recovery-on-kill-ms": 4000,
+      "defense.evade-mitigation": 0.2,
+      "reload.acquire-radius-mult": 2.5,
+      "reload.max-ammo": 5,
+      "reload.reload-time-ms": 1200,
+      "defense.dot-resistance": 0.49,
+      "defense.hit-to-dot-pct": 0.1,
+      "defense.debuff-resistance": 0.2,
+      "mobility.slow-resistance": 0.6799999999999999,
+      "core.damage-dealt-pct": 0.12,
+      "core.maxhp-mult": 0.12,
+      "defense.recovery-pulse-interval-ms": 8000,
+      "defense.recovery-pulse-duration-ms": 4000,
+      "defense.recovery-pulse-pct": 0.5
+    }
+  },
+  {
+    "order": 8,
+    "id": "outlier-swamp-t3-candidate-s101009",
+    "module": "swamp-t3",
+    "seed": 101009,
+    "fixture": "node-t3-swamp-03",
+    "path": [
+      "reload-root",
+      "reload-light",
+      "reload-range-mid"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "jungle-venomthorn-rapier",
+        "armor": "swamp-vest-t3",
+        "recovery": "swamp-charm-t3",
+        "mobility": "swamp-boots-t3",
+        "core": "core-tempered",
+        "relic": null
+      },
+      "itemUpgrades": {
+        "jungle-venomthorn-rapier": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "swamp-boots-t3": 3,
+        "core-tempered": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike"
+      ],
+      "guards": [
+        "second-wind",
+        "cleanse"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ],
+    "stance": "offensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 36,
+      "cost": 25,
+      "unused": 11,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "mountain": 18,
+        "cave": 18,
+        "jungle": 12,
+        "desert": 12,
+        "volcanic": 0,
+        "tundra": 0
+      },
+      "globalMastery": 102
+    },
+    "stats": {
+      "attack": 42,
+      "attackCooldown": 226,
+      "speed": 232,
+      "maxHp": 302,
+      "barrierMax": 0,
+      "recovery": 18
+    },
+    "candidate": "S",
+    "resolvedPassives": {
+      "defense.recovery-on-kill-pct": 0.2,
+      "defense.recovery-on-kill-ms": 4000,
+      "defense.evade-mitigation": 0.2,
+      "reload.acquire-radius-mult": 2.5,
+      "reload.max-ammo": 5,
+      "reload.reload-time-ms": 1200,
+      "defense.dot-resistance": 0.49,
+      "defense.hit-to-dot-pct": 0.1,
+      "defense.debuff-resistance": 0.2,
+      "mobility.slow-resistance": 0.56,
+      "core.damage-dealt-pct": 0.12,
+      "core.maxhp-mult": 0.12,
+      "defense.recovery-pulse-interval-ms": 8000,
+      "defense.recovery-pulse-duration-ms": 4000,
+      "defense.recovery-pulse-pct": 0.5
+    }
+  },
+  {
+    "order": 9,
+    "id": "outlier-arcanist-reverb-current-s101009",
+    "module": "arcanist-reverb",
+    "seed": 101009,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "cooldown-root",
+      "cooldown-balanced",
+      "cooldown-range-close",
+      "cooldown-balanced-t3-a"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "mountain-warmaul",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-arcanist",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "mountain-warmaul": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-arcanist": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike",
+        "frenzy",
+        "expose-weakness"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 45,
+      "cost": 43,
+      "unused": 2,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 198,
+      "attackCooldown": 1955,
+      "speed": 206,
+      "maxHp": 549,
+      "barrierMax": 222,
+      "recovery": 18.5
+    },
+    "candidate": null,
+    "resolvedPassives": {
+      "defense.recovery-active-pct": 0.30000000000000004,
+      "cooldown.empowered-cd-ms": 7000,
+      "cooldown.empowered-mult": 2,
+      "shared.damage-mult": 0.1,
+      "cooldown.reverb": 1,
+      "cooldown.reverb-bonus-per-attack": 0.05,
+      "weapon.empowered-mult-bonus": 0.54,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.approach-speed-pct": 1.45,
+      "technique.cooldown-reduction-pct": 0.2,
+      "technique.power-pct": 0.2,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 10,
+    "id": "outlier-arcanist-reverb-candidate-s101009",
+    "module": "arcanist-reverb",
+    "seed": 101009,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "cooldown-root",
+      "cooldown-balanced",
+      "cooldown-range-close",
+      "cooldown-balanced-t3-a"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "mountain-warmaul",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-arcanist",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "mountain-warmaul": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-arcanist": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike",
+        "frenzy",
+        "expose-weakness"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 45,
+      "cost": 43,
+      "unused": 2,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 198,
+      "attackCooldown": 1955,
+      "speed": 206,
+      "maxHp": 549,
+      "barrierMax": 222,
+      "recovery": 18.5
+    },
+    "candidate": "A",
+    "resolvedPassives": {
+      "defense.recovery-active-pct": 0.30000000000000004,
+      "cooldown.empowered-cd-ms": 7000,
+      "cooldown.empowered-mult": 2,
+      "shared.damage-mult": 0.1,
+      "cooldown.reverb": 1,
+      "cooldown.reverb-bonus-per-attack": 0.05,
+      "weapon.empowered-mult-bonus": 0.54,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.approach-speed-pct": 1.45,
+      "technique.cooldown-reduction-pct": 0.2,
+      "technique.power-pct": 0.3,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 11,
+    "id": "outlier-arcanist-reverb-tempered-s101009",
+    "module": "arcanist-reverb",
+    "seed": 101009,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "cooldown-root",
+      "cooldown-balanced",
+      "cooldown-range-close",
+      "cooldown-balanced-t3-a"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "mountain-warmaul",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-tempered",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "mountain-warmaul": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-tempered": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike",
+        "frenzy",
+        "expose-weakness"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 45,
+      "cost": 43,
+      "unused": 2,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 198,
+      "attackCooldown": 1955,
+      "speed": 206,
+      "maxHp": 615,
+      "barrierMax": 249,
+      "recovery": 18.5
+    },
+    "candidate": null,
+    "resolvedPassives": {
+      "defense.recovery-active-pct": 0.30000000000000004,
+      "cooldown.empowered-cd-ms": 7000,
+      "cooldown.empowered-mult": 2,
+      "shared.damage-mult": 0.1,
+      "cooldown.reverb": 1,
+      "cooldown.reverb-bonus-per-attack": 0.05,
+      "weapon.empowered-mult-bonus": 0.54,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.approach-speed-pct": 1.45,
+      "core.damage-dealt-pct": 0.12,
+      "core.maxhp-mult": 0.12,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 12,
+    "id": "outlier-arcanist-idolwright-current-s101009",
+    "module": "arcanist-idolwright",
+    "seed": 101009,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "summoner-root",
+      "summoner-heavy",
+      "summoner-range-mid",
+      "summoner-heavy-t3-c"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "graveyard-plague-axe",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-arcanist",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-arcanist": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike",
+        "frenzy"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 45,
+      "cost": 39,
+      "unused": 6,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 308,
+      "attackCooldown": 928,
+      "speed": 236,
+      "maxHp": 484,
+      "barrierMax": 196,
+      "recovery": 18.5
+    },
+    "candidate": null,
+    "resolvedPassives": {
+      "weapon.dead-swing-interval": 3,
+      "weapon.dead-swing-vuln-pct": 0.2,
+      "weapon.dead-swing-vuln-ms": 4000,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.approach-speed-pct": 1.45,
+      "technique.cooldown-reduction-pct": 0.2,
+      "technique.power-pct": 0.2,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 13,
+    "id": "outlier-arcanist-idolwright-candidate-s101009",
+    "module": "arcanist-idolwright",
+    "seed": 101009,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "summoner-root",
+      "summoner-heavy",
+      "summoner-range-mid",
+      "summoner-heavy-t3-c"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "graveyard-plague-axe",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-arcanist",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-arcanist": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike",
+        "frenzy"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 45,
+      "cost": 39,
+      "unused": 6,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 308,
+      "attackCooldown": 928,
+      "speed": 236,
+      "maxHp": 484,
+      "barrierMax": 196,
+      "recovery": 18.5
+    },
+    "candidate": "A",
+    "resolvedPassives": {
+      "weapon.dead-swing-interval": 3,
+      "weapon.dead-swing-vuln-pct": 0.2,
+      "weapon.dead-swing-vuln-ms": 4000,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.approach-speed-pct": 1.45,
+      "technique.cooldown-reduction-pct": 0.2,
+      "technique.power-pct": 0.3,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 14,
+    "id": "outlier-arcanist-idolwright-tempered-s101009",
+    "module": "arcanist-idolwright",
+    "seed": 101009,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "summoner-root",
+      "summoner-heavy",
+      "summoner-range-mid",
+      "summoner-heavy-t3-c"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "graveyard-plague-axe",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-tempered",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-tempered": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike",
+        "frenzy"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 45,
+      "cost": 39,
+      "unused": 6,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 308,
+      "attackCooldown": 928,
+      "speed": 236,
+      "maxHp": 542,
+      "barrierMax": 220,
+      "recovery": 18.5
+    },
+    "candidate": null,
+    "resolvedPassives": {
+      "weapon.dead-swing-interval": 3,
+      "weapon.dead-swing-vuln-pct": 0.2,
+      "weapon.dead-swing-vuln-ms": 4000,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.approach-speed-pct": 1.45,
+      "core.damage-dealt-pct": 0.12,
+      "core.maxhp-mult": 0.12,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 15,
+    "id": "outlier-ability-reverb-power-strike-s101009",
+    "module": "ability-reverb",
+    "seed": 101009,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "cooldown-root",
+      "cooldown-balanced",
+      "cooldown-range-close",
+      "cooldown-balanced-t3-a"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "mountain-warmaul",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-arcanist",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "mountain-warmaul": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-arcanist": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike",
+        "frenzy"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 45,
+      "cost": 36,
+      "unused": 9,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 198,
+      "attackCooldown": 1955,
+      "speed": 206,
+      "maxHp": 549,
+      "barrierMax": 222,
+      "recovery": 18.5
+    },
+    "candidate": null,
+    "resolvedPassives": {
+      "defense.recovery-active-pct": 0.30000000000000004,
+      "cooldown.empowered-cd-ms": 7000,
+      "cooldown.empowered-mult": 2,
+      "shared.damage-mult": 0.1,
+      "cooldown.reverb": 1,
+      "cooldown.reverb-bonus-per-attack": 0.05,
+      "weapon.empowered-mult-bonus": 0.54,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.approach-speed-pct": 1.45,
+      "technique.cooldown-reduction-pct": 0.2,
+      "technique.power-pct": 0.2,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 16,
+    "id": "outlier-ability-reverb-quick-strike-s101009",
+    "module": "ability-reverb",
+    "seed": 101009,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "cooldown-root",
+      "cooldown-balanced",
+      "cooldown-range-close",
+      "cooldown-balanced-t3-a"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "mountain-warmaul",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-arcanist",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "mountain-warmaul": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-arcanist": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "quick-strike",
+        "frenzy"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 45,
+      "cost": 35,
+      "unused": 10,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 198,
+      "attackCooldown": 1955,
+      "speed": 206,
+      "maxHp": 549,
+      "barrierMax": 222,
+      "recovery": 18.5
+    },
+    "candidate": null,
+    "resolvedPassives": {
+      "defense.recovery-active-pct": 0.30000000000000004,
+      "cooldown.empowered-cd-ms": 7000,
+      "cooldown.empowered-mult": 2,
+      "shared.damage-mult": 0.1,
+      "cooldown.reverb": 1,
+      "cooldown.reverb-bonus-per-attack": 0.05,
+      "weapon.empowered-mult-bonus": 0.54,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.approach-speed-pct": 1.45,
+      "technique.cooldown-reduction-pct": 0.2,
+      "technique.power-pct": 0.2,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 17,
+    "id": "outlier-ability-idolwright-power-strike-s101009",
+    "module": "ability-idolwright",
+    "seed": 101009,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "summoner-root",
+      "summoner-heavy",
+      "summoner-range-mid",
+      "summoner-heavy-t3-c"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "graveyard-plague-axe",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "desert-boots-t4",
+        "core": "core-survivalist",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike",
+        "frenzy"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 45,
+      "cost": 39,
+      "unused": 6,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 308,
+      "attackCooldown": 928,
+      "speed": 333,
+      "maxHp": 557,
+      "barrierMax": 226,
+      "recovery": 24
+    },
+    "candidate": null,
+    "resolvedPassives": {
+      "weapon.dead-swing-interval": 3,
+      "weapon.dead-swing-vuln-pct": 0.2,
+      "weapon.dead-swing-vuln-ms": 4000,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.kite-speed-pct": 0.4,
+      "core.recovery-mult": 0.3,
+      "core.maxhp-mult": 0.15,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 18,
+    "id": "outlier-ability-idolwright-quick-strike-s101009",
+    "module": "ability-idolwright",
+    "seed": 101009,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "summoner-root",
+      "summoner-heavy",
+      "summoner-range-mid",
+      "summoner-heavy-t3-c"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "graveyard-plague-axe",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "desert-boots-t4",
+        "core": "core-survivalist",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "quick-strike",
+        "frenzy"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 45,
+      "cost": 38,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 308,
+      "attackCooldown": 928,
+      "speed": 333,
+      "maxHp": 557,
+      "barrierMax": 226,
+      "recovery": 24
+    },
+    "candidate": null,
+    "resolvedPassives": {
+      "weapon.dead-swing-interval": 3,
+      "weapon.dead-swing-vuln-pct": 0.2,
+      "weapon.dead-swing-vuln-ms": 4000,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.kite-speed-pct": 0.4,
+      "core.recovery-mult": 0.3,
+      "core.maxhp-mult": 0.15,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 19,
+    "id": "outlier-rite-swift-repose-control-s101009",
+    "module": "rite-swift-repose",
+    "seed": 101009,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "cooldown-root",
+      "cooldown-balanced",
+      "cooldown-range-close",
+      "cooldown-balanced-t3-a"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "mountain-warmaul",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-arcanist",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "mountain-warmaul": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-arcanist": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike",
+        "frenzy"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 45,
+      "cost": 36,
+      "unused": 9,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 198,
+      "attackCooldown": 1955,
+      "speed": 206,
+      "maxHp": 549,
+      "barrierMax": 222,
+      "recovery": 18.5
+    },
+    "candidate": null,
+    "resolvedPassives": {
+      "defense.recovery-active-pct": 0.30000000000000004,
+      "cooldown.empowered-cd-ms": 7000,
+      "cooldown.empowered-mult": 2,
+      "shared.damage-mult": 0.1,
+      "cooldown.reverb": 1,
+      "cooldown.reverb-bonus-per-attack": 0.05,
+      "weapon.empowered-mult-bonus": 0.54,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.approach-speed-pct": 1.45,
+      "technique.cooldown-reduction-pct": 0.2,
+      "technique.power-pct": 0.2,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 20,
+    "id": "outlier-rite-swift-repose-rite-s101009",
+    "module": "rite-swift-repose",
+    "seed": 101009,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "cooldown-root",
+      "cooldown-balanced",
+      "cooldown-range-close",
+      "cooldown-balanced-t3-a"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "mountain-warmaul",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-arcanist",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "mountain-warmaul": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-arcanist": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike",
+        "frenzy"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [
+      "swift-repose"
+    ],
+    "RP": {
+      "budget": 45,
+      "cost": 38,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 198,
+      "attackCooldown": 1955,
+      "speed": 206,
+      "maxHp": 549,
+      "barrierMax": 222,
+      "recovery": 18.5
+    },
+    "candidate": null,
+    "resolvedPassives": {
+      "defense.recovery-active-pct": 0.30000000000000004,
+      "cooldown.empowered-cd-ms": 7000,
+      "cooldown.empowered-mult": 2,
+      "shared.damage-mult": 0.1,
+      "cooldown.reverb": 1,
+      "cooldown.reverb-bonus-per-attack": 0.05,
+      "weapon.empowered-mult-bonus": 0.54,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.approach-speed-pct": 1.45,
+      "technique.cooldown-reduction-pct": 0.2,
+      "technique.power-pct": 0.2,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 21,
+    "id": "outlier-rite-ability-reprieve-control-s101009",
+    "module": "rite-ability-reprieve",
+    "seed": 101009,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "cooldown-root",
+      "cooldown-balanced",
+      "cooldown-range-close",
+      "cooldown-balanced-t3-a"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "mountain-warmaul",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-arcanist",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "mountain-warmaul": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-arcanist": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike",
+        "frenzy"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 45,
+      "cost": 36,
+      "unused": 9,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 198,
+      "attackCooldown": 1955,
+      "speed": 206,
+      "maxHp": 549,
+      "barrierMax": 222,
+      "recovery": 18.5
+    },
+    "candidate": null,
+    "resolvedPassives": {
+      "defense.recovery-active-pct": 0.30000000000000004,
+      "cooldown.empowered-cd-ms": 7000,
+      "cooldown.empowered-mult": 2,
+      "shared.damage-mult": 0.1,
+      "cooldown.reverb": 1,
+      "cooldown.reverb-bonus-per-attack": 0.05,
+      "weapon.empowered-mult-bonus": 0.54,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.approach-speed-pct": 1.45,
+      "technique.cooldown-reduction-pct": 0.2,
+      "technique.power-pct": 0.2,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 22,
+    "id": "outlier-rite-ability-reprieve-rite-s101009",
+    "module": "rite-ability-reprieve",
+    "seed": 101009,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "cooldown-root",
+      "cooldown-balanced",
+      "cooldown-range-close",
+      "cooldown-balanced-t3-a"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "mountain-warmaul",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-arcanist",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "mountain-warmaul": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-arcanist": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike",
+        "frenzy"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [
+      "ability-reprieve"
+    ],
+    "RP": {
+      "budget": 45,
+      "cost": 41,
+      "unused": 4,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 198,
+      "attackCooldown": 1955,
+      "speed": 206,
+      "maxHp": 549,
+      "barrierMax": 222,
+      "recovery": 18.5
+    },
+    "candidate": null,
+    "resolvedPassives": {
+      "defense.recovery-active-pct": 0.30000000000000004,
+      "cooldown.empowered-cd-ms": 7000,
+      "cooldown.empowered-mult": 2,
+      "shared.damage-mult": 0.1,
+      "cooldown.reverb": 1,
+      "cooldown.reverb-bonus-per-attack": 0.05,
+      "weapon.empowered-mult-bonus": 0.54,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.approach-speed-pct": 1.45,
+      "technique.cooldown-reduction-pct": 0.2,
+      "technique.power-pct": 0.2,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 23,
+    "id": "outlier-desert-ritualist-control-s101033",
+    "module": "desert-ritualist",
+    "seed": 101033,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "summoner-root",
+      "summoner-balanced",
+      "summoner-range-mid",
+      "summoner-balanced-t3-c"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "graveyard-plague-axe",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "desert-boots-t4",
+        "core": "core-survivalist",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike",
+        "frenzy",
+        "hamstring"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 45,
+      "cost": 43,
+      "unused": 2,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 308,
+      "attackCooldown": 874,
+      "speed": 360,
+      "maxHp": 523,
+      "barrierMax": 212,
+      "recovery": 24
+    },
+    "candidate": null,
+    "resolvedPassives": {
+      "weapon.dead-swing-interval": 3,
+      "weapon.dead-swing-vuln-pct": 0.2,
+      "weapon.dead-swing-vuln-ms": 4000,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.kite-speed-pct": 0.4,
+      "core.recovery-mult": 0.3,
+      "core.maxhp-mult": 0.15,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 24,
+    "id": "outlier-desert-ritualist-candidate-s101033",
+    "module": "desert-ritualist",
+    "seed": 101033,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "summoner-root",
+      "summoner-balanced",
+      "summoner-range-mid",
+      "summoner-balanced-t3-c"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "graveyard-plague-axe",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "desert-boots-t4",
+        "core": "core-survivalist",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike",
+        "frenzy",
+        "hamstring"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 45,
+      "cost": 43,
+      "unused": 2,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 308,
+      "attackCooldown": 874,
+      "speed": 360,
+      "maxHp": 523,
+      "barrierMax": 212,
+      "recovery": 24
+    },
+    "candidate": "D",
+    "resolvedPassives": {
+      "weapon.dead-swing-interval": 3,
+      "weapon.dead-swing-vuln-pct": 0.2,
+      "weapon.dead-swing-vuln-ms": 4000,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.kite-speed-pct": 0.3,
+      "core.recovery-mult": 0.3,
+      "core.maxhp-mult": 0.15,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 25,
+    "id": "outlier-desert-ranger-control-s101033",
+    "module": "desert-ranger",
+    "seed": 101033,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "reload-root",
+      "reload-light",
+      "reload-range-mid",
+      "reload-light-t3-a"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "jungle-deathfang-rapier",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "desert-boots-t4",
+        "core": "core-catalyst",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "jungle-deathfang-rapier": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-catalyst": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "quick-strike",
+        "frenzy",
+        "hamstring"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 45,
+      "cost": 42,
+      "unused": 3,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 77,
+      "attackCooldown": 230,
+      "speed": 409,
+      "maxHp": 430,
+      "barrierMax": 174,
+      "recovery": 18.5
+    },
+    "candidate": null,
+    "resolvedPassives": {
+      "defense.recovery-on-kill-pct": 0.2,
+      "defense.recovery-on-kill-ms": 4000,
+      "defense.evade-mitigation": 0.2,
+      "reload.acquire-radius-mult": 2.5,
+      "reload.max-ammo": 6,
+      "reload.reload-time-ms": 1200,
+      "reload.exploding-clip": 1,
+      "reload.empowered-mult": 5,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.kite-speed-pct": 0.4,
+      "core.onhit-mult": 1.15,
+      "core.damage-dealt-pct": -0.15,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 26,
+    "id": "outlier-desert-ranger-candidate-s101033",
+    "module": "desert-ranger",
+    "seed": 101033,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "reload-root",
+      "reload-light",
+      "reload-range-mid",
+      "reload-light-t3-a"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "jungle-deathfang-rapier",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "desert-boots-t4",
+        "core": "core-catalyst",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "jungle-deathfang-rapier": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-catalyst": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "quick-strike",
+        "frenzy",
+        "hamstring"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 45,
+      "cost": 42,
+      "unused": 3,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 77,
+      "attackCooldown": 230,
+      "speed": 409,
+      "maxHp": 430,
+      "barrierMax": 174,
+      "recovery": 18.5
+    },
+    "candidate": "D",
+    "resolvedPassives": {
+      "defense.recovery-on-kill-pct": 0.2,
+      "defense.recovery-on-kill-ms": 4000,
+      "defense.evade-mitigation": 0.2,
+      "reload.acquire-radius-mult": 2.5,
+      "reload.max-ammo": 6,
+      "reload.reload-time-ms": 1200,
+      "reload.exploding-clip": 1,
+      "reload.empowered-mult": 5,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.kite-speed-pct": 0.3,
+      "core.onhit-mult": 1.15,
+      "core.damage-dealt-pct": -0.15,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 27,
+    "id": "outlier-swamp-t2-control-s101033",
+    "module": "swamp-t2",
+    "seed": 101033,
+    "fixture": "node-t2-desert-01",
+    "path": [
+      "cooldown-root",
+      "cooldown-light"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "quake-hammer",
+        "armor": "mountain-vest-t2",
+        "recovery": "swamp-charm-t2",
+        "mobility": "swamp-boots-t2",
+        "core": "core-tempered",
+        "relic": null
+      },
+      "itemUpgrades": {
+        "quake-hammer": 4,
+        "mountain-vest-t2": 4,
+        "swamp-charm-t2": 4,
+        "swamp-boots-t2": 4,
+        "core-tempered": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike"
+      ],
+      "guards": [
+        "second-wind",
+        "cleanse",
+        "brace"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "in-combat",
+        "actionId": "focus-lowest-hp"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 30,
+      "cost": 28,
+      "unused": 2,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 12,
+        "mountain": 12,
+        "cave": 12,
+        "jungle": 6,
+        "desert": 4
+      },
+      "globalMastery": 70
+    },
+    "stats": {
+      "attack": 100,
+      "attackCooldown": 1874,
+      "speed": 159,
+      "maxHp": 272,
+      "barrierMax": 0,
+      "recovery": 16
+    },
+    "candidate": null,
+    "resolvedPassives": {
+      "defense.recovery-active-pct": 0.1,
+      "cooldown.empowered-cd-ms": 5000,
+      "cooldown.empowered-mult": 1.5,
+      "weapon.empowered-mult-bonus": 0.32,
+      "technique.cast-speed-pct": 0.15,
+      "guard.potency-pct": 0.36000000000000004,
+      "mobility.slow-resistance": 0.56,
+      "core.damage-dealt-pct": 0.12,
+      "core.maxhp-mult": 0.12,
+      "defense.recovery-pulse-interval-ms": 8000,
+      "defense.recovery-pulse-duration-ms": 4000,
+      "defense.recovery-pulse-pct": 0.4
+    }
+  },
+  {
+    "order": 28,
+    "id": "outlier-swamp-t2-candidate-s101033",
+    "module": "swamp-t2",
+    "seed": 101033,
+    "fixture": "node-t2-desert-01",
+    "path": [
+      "cooldown-root",
+      "cooldown-light"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "quake-hammer",
+        "armor": "mountain-vest-t2",
+        "recovery": "swamp-charm-t2",
+        "mobility": "swamp-boots-t2",
+        "core": "core-tempered",
+        "relic": null
+      },
+      "itemUpgrades": {
+        "quake-hammer": 4,
+        "mountain-vest-t2": 4,
+        "swamp-charm-t2": 4,
+        "swamp-boots-t2": 4,
+        "core-tempered": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike"
+      ],
+      "guards": [
+        "second-wind",
+        "cleanse",
+        "brace"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "in-combat",
+        "actionId": "focus-lowest-hp"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 30,
+      "cost": 28,
+      "unused": 2,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 12,
+        "mountain": 12,
+        "cave": 12,
+        "jungle": 6,
+        "desert": 4
+      },
+      "globalMastery": 70
+    },
+    "stats": {
+      "attack": 100,
+      "attackCooldown": 1874,
+      "speed": 159,
+      "maxHp": 272,
+      "barrierMax": 0,
+      "recovery": 16
+    },
+    "candidate": "S",
+    "resolvedPassives": {
+      "defense.recovery-active-pct": 0.1,
+      "cooldown.empowered-cd-ms": 5000,
+      "cooldown.empowered-mult": 1.5,
+      "weapon.empowered-mult-bonus": 0.32,
+      "technique.cast-speed-pct": 0.15,
+      "guard.potency-pct": 0.36000000000000004,
+      "mobility.slow-resistance": 0.48000000000000004,
+      "core.damage-dealt-pct": 0.12,
+      "core.maxhp-mult": 0.12,
+      "defense.recovery-pulse-interval-ms": 8000,
+      "defense.recovery-pulse-duration-ms": 4000,
+      "defense.recovery-pulse-pct": 0.4
+    }
+  },
+  {
+    "order": 29,
+    "id": "outlier-swamp-t3-control-s101033",
+    "module": "swamp-t3",
+    "seed": 101033,
+    "fixture": "node-t3-swamp-03",
+    "path": [
+      "reload-root",
+      "reload-light",
+      "reload-range-mid"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "jungle-venomthorn-rapier",
+        "armor": "swamp-vest-t3",
+        "recovery": "swamp-charm-t3",
+        "mobility": "swamp-boots-t3",
+        "core": "core-tempered",
+        "relic": null
+      },
+      "itemUpgrades": {
+        "jungle-venomthorn-rapier": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "swamp-boots-t3": 3,
+        "core-tempered": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike"
+      ],
+      "guards": [
+        "second-wind",
+        "cleanse"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ],
+    "stance": "offensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 36,
+      "cost": 25,
+      "unused": 11,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "mountain": 18,
+        "cave": 18,
+        "jungle": 12,
+        "desert": 12,
+        "volcanic": 0,
+        "tundra": 0
+      },
+      "globalMastery": 102
+    },
+    "stats": {
+      "attack": 42,
+      "attackCooldown": 226,
+      "speed": 232,
+      "maxHp": 302,
+      "barrierMax": 0,
+      "recovery": 18
+    },
+    "candidate": null,
+    "resolvedPassives": {
+      "defense.recovery-on-kill-pct": 0.2,
+      "defense.recovery-on-kill-ms": 4000,
+      "defense.evade-mitigation": 0.2,
+      "reload.acquire-radius-mult": 2.5,
+      "reload.max-ammo": 5,
+      "reload.reload-time-ms": 1200,
+      "defense.dot-resistance": 0.49,
+      "defense.hit-to-dot-pct": 0.1,
+      "defense.debuff-resistance": 0.2,
+      "mobility.slow-resistance": 0.6799999999999999,
+      "core.damage-dealt-pct": 0.12,
+      "core.maxhp-mult": 0.12,
+      "defense.recovery-pulse-interval-ms": 8000,
+      "defense.recovery-pulse-duration-ms": 4000,
+      "defense.recovery-pulse-pct": 0.5
+    }
+  },
+  {
+    "order": 30,
+    "id": "outlier-swamp-t3-candidate-s101033",
+    "module": "swamp-t3",
+    "seed": 101033,
+    "fixture": "node-t3-swamp-03",
+    "path": [
+      "reload-root",
+      "reload-light",
+      "reload-range-mid"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "jungle-venomthorn-rapier",
+        "armor": "swamp-vest-t3",
+        "recovery": "swamp-charm-t3",
+        "mobility": "swamp-boots-t3",
+        "core": "core-tempered",
+        "relic": null
+      },
+      "itemUpgrades": {
+        "jungle-venomthorn-rapier": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "swamp-boots-t3": 3,
+        "core-tempered": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike"
+      ],
+      "guards": [
+        "second-wind",
+        "cleanse"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ],
+    "stance": "offensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 36,
+      "cost": 25,
+      "unused": 11,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "mountain": 18,
+        "cave": 18,
+        "jungle": 12,
+        "desert": 12,
+        "volcanic": 0,
+        "tundra": 0
+      },
+      "globalMastery": 102
+    },
+    "stats": {
+      "attack": 42,
+      "attackCooldown": 226,
+      "speed": 232,
+      "maxHp": 302,
+      "barrierMax": 0,
+      "recovery": 18
+    },
+    "candidate": "S",
+    "resolvedPassives": {
+      "defense.recovery-on-kill-pct": 0.2,
+      "defense.recovery-on-kill-ms": 4000,
+      "defense.evade-mitigation": 0.2,
+      "reload.acquire-radius-mult": 2.5,
+      "reload.max-ammo": 5,
+      "reload.reload-time-ms": 1200,
+      "defense.dot-resistance": 0.49,
+      "defense.hit-to-dot-pct": 0.1,
+      "defense.debuff-resistance": 0.2,
+      "mobility.slow-resistance": 0.56,
+      "core.damage-dealt-pct": 0.12,
+      "core.maxhp-mult": 0.12,
+      "defense.recovery-pulse-interval-ms": 8000,
+      "defense.recovery-pulse-duration-ms": 4000,
+      "defense.recovery-pulse-pct": 0.5
+    }
+  },
+  {
+    "order": 31,
+    "id": "outlier-arcanist-reverb-current-s101033",
+    "module": "arcanist-reverb",
+    "seed": 101033,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "cooldown-root",
+      "cooldown-balanced",
+      "cooldown-range-close",
+      "cooldown-balanced-t3-a"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "mountain-warmaul",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-arcanist",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "mountain-warmaul": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-arcanist": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike",
+        "frenzy",
+        "expose-weakness"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 45,
+      "cost": 43,
+      "unused": 2,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 198,
+      "attackCooldown": 1955,
+      "speed": 206,
+      "maxHp": 549,
+      "barrierMax": 222,
+      "recovery": 18.5
+    },
+    "candidate": null,
+    "resolvedPassives": {
+      "defense.recovery-active-pct": 0.30000000000000004,
+      "cooldown.empowered-cd-ms": 7000,
+      "cooldown.empowered-mult": 2,
+      "shared.damage-mult": 0.1,
+      "cooldown.reverb": 1,
+      "cooldown.reverb-bonus-per-attack": 0.05,
+      "weapon.empowered-mult-bonus": 0.54,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.approach-speed-pct": 1.45,
+      "technique.cooldown-reduction-pct": 0.2,
+      "technique.power-pct": 0.2,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 32,
+    "id": "outlier-arcanist-reverb-candidate-s101033",
+    "module": "arcanist-reverb",
+    "seed": 101033,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "cooldown-root",
+      "cooldown-balanced",
+      "cooldown-range-close",
+      "cooldown-balanced-t3-a"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "mountain-warmaul",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-arcanist",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "mountain-warmaul": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-arcanist": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike",
+        "frenzy",
+        "expose-weakness"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 45,
+      "cost": 43,
+      "unused": 2,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 198,
+      "attackCooldown": 1955,
+      "speed": 206,
+      "maxHp": 549,
+      "barrierMax": 222,
+      "recovery": 18.5
+    },
+    "candidate": "A",
+    "resolvedPassives": {
+      "defense.recovery-active-pct": 0.30000000000000004,
+      "cooldown.empowered-cd-ms": 7000,
+      "cooldown.empowered-mult": 2,
+      "shared.damage-mult": 0.1,
+      "cooldown.reverb": 1,
+      "cooldown.reverb-bonus-per-attack": 0.05,
+      "weapon.empowered-mult-bonus": 0.54,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.approach-speed-pct": 1.45,
+      "technique.cooldown-reduction-pct": 0.2,
+      "technique.power-pct": 0.3,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 33,
+    "id": "outlier-arcanist-reverb-tempered-s101033",
+    "module": "arcanist-reverb",
+    "seed": 101033,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "cooldown-root",
+      "cooldown-balanced",
+      "cooldown-range-close",
+      "cooldown-balanced-t3-a"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "mountain-warmaul",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-tempered",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "mountain-warmaul": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-tempered": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike",
+        "frenzy",
+        "expose-weakness"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 45,
+      "cost": 43,
+      "unused": 2,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 198,
+      "attackCooldown": 1955,
+      "speed": 206,
+      "maxHp": 615,
+      "barrierMax": 249,
+      "recovery": 18.5
+    },
+    "candidate": null,
+    "resolvedPassives": {
+      "defense.recovery-active-pct": 0.30000000000000004,
+      "cooldown.empowered-cd-ms": 7000,
+      "cooldown.empowered-mult": 2,
+      "shared.damage-mult": 0.1,
+      "cooldown.reverb": 1,
+      "cooldown.reverb-bonus-per-attack": 0.05,
+      "weapon.empowered-mult-bonus": 0.54,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.approach-speed-pct": 1.45,
+      "core.damage-dealt-pct": 0.12,
+      "core.maxhp-mult": 0.12,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 34,
+    "id": "outlier-arcanist-idolwright-current-s101033",
+    "module": "arcanist-idolwright",
+    "seed": 101033,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "summoner-root",
+      "summoner-heavy",
+      "summoner-range-mid",
+      "summoner-heavy-t3-c"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "graveyard-plague-axe",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-arcanist",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-arcanist": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike",
+        "frenzy"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 45,
+      "cost": 39,
+      "unused": 6,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 308,
+      "attackCooldown": 928,
+      "speed": 236,
+      "maxHp": 484,
+      "barrierMax": 196,
+      "recovery": 18.5
+    },
+    "candidate": null,
+    "resolvedPassives": {
+      "weapon.dead-swing-interval": 3,
+      "weapon.dead-swing-vuln-pct": 0.2,
+      "weapon.dead-swing-vuln-ms": 4000,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.approach-speed-pct": 1.45,
+      "technique.cooldown-reduction-pct": 0.2,
+      "technique.power-pct": 0.2,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 35,
+    "id": "outlier-arcanist-idolwright-candidate-s101033",
+    "module": "arcanist-idolwright",
+    "seed": 101033,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "summoner-root",
+      "summoner-heavy",
+      "summoner-range-mid",
+      "summoner-heavy-t3-c"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "graveyard-plague-axe",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-arcanist",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-arcanist": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike",
+        "frenzy"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 45,
+      "cost": 39,
+      "unused": 6,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 308,
+      "attackCooldown": 928,
+      "speed": 236,
+      "maxHp": 484,
+      "barrierMax": 196,
+      "recovery": 18.5
+    },
+    "candidate": "A",
+    "resolvedPassives": {
+      "weapon.dead-swing-interval": 3,
+      "weapon.dead-swing-vuln-pct": 0.2,
+      "weapon.dead-swing-vuln-ms": 4000,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.approach-speed-pct": 1.45,
+      "technique.cooldown-reduction-pct": 0.2,
+      "technique.power-pct": 0.3,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 36,
+    "id": "outlier-arcanist-idolwright-tempered-s101033",
+    "module": "arcanist-idolwright",
+    "seed": 101033,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "summoner-root",
+      "summoner-heavy",
+      "summoner-range-mid",
+      "summoner-heavy-t3-c"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "graveyard-plague-axe",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-tempered",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-tempered": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike",
+        "frenzy"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 45,
+      "cost": 39,
+      "unused": 6,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 308,
+      "attackCooldown": 928,
+      "speed": 236,
+      "maxHp": 542,
+      "barrierMax": 220,
+      "recovery": 18.5
+    },
+    "candidate": null,
+    "resolvedPassives": {
+      "weapon.dead-swing-interval": 3,
+      "weapon.dead-swing-vuln-pct": 0.2,
+      "weapon.dead-swing-vuln-ms": 4000,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.approach-speed-pct": 1.45,
+      "core.damage-dealt-pct": 0.12,
+      "core.maxhp-mult": 0.12,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 37,
+    "id": "outlier-ability-reverb-power-strike-s101033",
+    "module": "ability-reverb",
+    "seed": 101033,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "cooldown-root",
+      "cooldown-balanced",
+      "cooldown-range-close",
+      "cooldown-balanced-t3-a"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "mountain-warmaul",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-arcanist",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "mountain-warmaul": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-arcanist": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike",
+        "frenzy"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 45,
+      "cost": 36,
+      "unused": 9,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 198,
+      "attackCooldown": 1955,
+      "speed": 206,
+      "maxHp": 549,
+      "barrierMax": 222,
+      "recovery": 18.5
+    },
+    "candidate": null,
+    "resolvedPassives": {
+      "defense.recovery-active-pct": 0.30000000000000004,
+      "cooldown.empowered-cd-ms": 7000,
+      "cooldown.empowered-mult": 2,
+      "shared.damage-mult": 0.1,
+      "cooldown.reverb": 1,
+      "cooldown.reverb-bonus-per-attack": 0.05,
+      "weapon.empowered-mult-bonus": 0.54,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.approach-speed-pct": 1.45,
+      "technique.cooldown-reduction-pct": 0.2,
+      "technique.power-pct": 0.2,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 38,
+    "id": "outlier-ability-reverb-quick-strike-s101033",
+    "module": "ability-reverb",
+    "seed": 101033,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "cooldown-root",
+      "cooldown-balanced",
+      "cooldown-range-close",
+      "cooldown-balanced-t3-a"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "mountain-warmaul",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-arcanist",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "mountain-warmaul": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-arcanist": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "quick-strike",
+        "frenzy"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 45,
+      "cost": 35,
+      "unused": 10,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 198,
+      "attackCooldown": 1955,
+      "speed": 206,
+      "maxHp": 549,
+      "barrierMax": 222,
+      "recovery": 18.5
+    },
+    "candidate": null,
+    "resolvedPassives": {
+      "defense.recovery-active-pct": 0.30000000000000004,
+      "cooldown.empowered-cd-ms": 7000,
+      "cooldown.empowered-mult": 2,
+      "shared.damage-mult": 0.1,
+      "cooldown.reverb": 1,
+      "cooldown.reverb-bonus-per-attack": 0.05,
+      "weapon.empowered-mult-bonus": 0.54,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.approach-speed-pct": 1.45,
+      "technique.cooldown-reduction-pct": 0.2,
+      "technique.power-pct": 0.2,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 39,
+    "id": "outlier-ability-idolwright-power-strike-s101033",
+    "module": "ability-idolwright",
+    "seed": 101033,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "summoner-root",
+      "summoner-heavy",
+      "summoner-range-mid",
+      "summoner-heavy-t3-c"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "graveyard-plague-axe",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "desert-boots-t4",
+        "core": "core-survivalist",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike",
+        "frenzy"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 45,
+      "cost": 39,
+      "unused": 6,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 308,
+      "attackCooldown": 928,
+      "speed": 333,
+      "maxHp": 557,
+      "barrierMax": 226,
+      "recovery": 24
+    },
+    "candidate": null,
+    "resolvedPassives": {
+      "weapon.dead-swing-interval": 3,
+      "weapon.dead-swing-vuln-pct": 0.2,
+      "weapon.dead-swing-vuln-ms": 4000,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.kite-speed-pct": 0.4,
+      "core.recovery-mult": 0.3,
+      "core.maxhp-mult": 0.15,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 40,
+    "id": "outlier-ability-idolwright-quick-strike-s101033",
+    "module": "ability-idolwright",
+    "seed": 101033,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "summoner-root",
+      "summoner-heavy",
+      "summoner-range-mid",
+      "summoner-heavy-t3-c"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "graveyard-plague-axe",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "desert-boots-t4",
+        "core": "core-survivalist",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "quick-strike",
+        "frenzy"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 45,
+      "cost": 38,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 308,
+      "attackCooldown": 928,
+      "speed": 333,
+      "maxHp": 557,
+      "barrierMax": 226,
+      "recovery": 24
+    },
+    "candidate": null,
+    "resolvedPassives": {
+      "weapon.dead-swing-interval": 3,
+      "weapon.dead-swing-vuln-pct": 0.2,
+      "weapon.dead-swing-vuln-ms": 4000,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.kite-speed-pct": 0.4,
+      "core.recovery-mult": 0.3,
+      "core.maxhp-mult": 0.15,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 41,
+    "id": "outlier-rite-swift-repose-control-s101033",
+    "module": "rite-swift-repose",
+    "seed": 101033,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "cooldown-root",
+      "cooldown-balanced",
+      "cooldown-range-close",
+      "cooldown-balanced-t3-a"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "mountain-warmaul",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-arcanist",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "mountain-warmaul": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-arcanist": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike",
+        "frenzy"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 45,
+      "cost": 36,
+      "unused": 9,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 198,
+      "attackCooldown": 1955,
+      "speed": 206,
+      "maxHp": 549,
+      "barrierMax": 222,
+      "recovery": 18.5
+    },
+    "candidate": null,
+    "resolvedPassives": {
+      "defense.recovery-active-pct": 0.30000000000000004,
+      "cooldown.empowered-cd-ms": 7000,
+      "cooldown.empowered-mult": 2,
+      "shared.damage-mult": 0.1,
+      "cooldown.reverb": 1,
+      "cooldown.reverb-bonus-per-attack": 0.05,
+      "weapon.empowered-mult-bonus": 0.54,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.approach-speed-pct": 1.45,
+      "technique.cooldown-reduction-pct": 0.2,
+      "technique.power-pct": 0.2,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 42,
+    "id": "outlier-rite-swift-repose-rite-s101033",
+    "module": "rite-swift-repose",
+    "seed": 101033,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "cooldown-root",
+      "cooldown-balanced",
+      "cooldown-range-close",
+      "cooldown-balanced-t3-a"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "mountain-warmaul",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-arcanist",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "mountain-warmaul": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-arcanist": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike",
+        "frenzy"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [
+      "swift-repose"
+    ],
+    "RP": {
+      "budget": 45,
+      "cost": 38,
+      "unused": 7,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 198,
+      "attackCooldown": 1955,
+      "speed": 206,
+      "maxHp": 549,
+      "barrierMax": 222,
+      "recovery": 18.5
+    },
+    "candidate": null,
+    "resolvedPassives": {
+      "defense.recovery-active-pct": 0.30000000000000004,
+      "cooldown.empowered-cd-ms": 7000,
+      "cooldown.empowered-mult": 2,
+      "shared.damage-mult": 0.1,
+      "cooldown.reverb": 1,
+      "cooldown.reverb-bonus-per-attack": 0.05,
+      "weapon.empowered-mult-bonus": 0.54,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.approach-speed-pct": 1.45,
+      "technique.cooldown-reduction-pct": 0.2,
+      "technique.power-pct": 0.2,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 43,
+    "id": "outlier-rite-ability-reprieve-control-s101033",
+    "module": "rite-ability-reprieve",
+    "seed": 101033,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "cooldown-root",
+      "cooldown-balanced",
+      "cooldown-range-close",
+      "cooldown-balanced-t3-a"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "mountain-warmaul",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-arcanist",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "mountain-warmaul": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-arcanist": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike",
+        "frenzy"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [],
+    "RP": {
+      "budget": 45,
+      "cost": 36,
+      "unused": 9,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 198,
+      "attackCooldown": 1955,
+      "speed": 206,
+      "maxHp": 549,
+      "barrierMax": 222,
+      "recovery": 18.5
+    },
+    "candidate": null,
+    "resolvedPassives": {
+      "defense.recovery-active-pct": 0.30000000000000004,
+      "cooldown.empowered-cd-ms": 7000,
+      "cooldown.empowered-mult": 2,
+      "shared.damage-mult": 0.1,
+      "cooldown.reverb": 1,
+      "cooldown.reverb-bonus-per-attack": 0.05,
+      "weapon.empowered-mult-bonus": 0.54,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.approach-speed-pct": 1.45,
+      "technique.cooldown-reduction-pct": 0.2,
+      "technique.power-pct": 0.2,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  },
+  {
+    "order": 44,
+    "id": "outlier-rite-ability-reprieve-rite-s101033",
+    "module": "rite-ability-reprieve",
+    "seed": 101033,
+    "fixture": "node-t4-tundra-01",
+    "path": [
+      "cooldown-root",
+      "cooldown-balanced",
+      "cooldown-range-close",
+      "cooldown-balanced-t3-a"
+    ],
+    "gear": {
+      "inventory": [],
+      "equipment": {
+        "weapon": "mountain-warmaul",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-arcanist",
+        "relic": "relic-equilibrium-shard"
+      },
+      "itemUpgrades": {
+        "mountain-warmaul": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-arcanist": 0,
+        "relic-equilibrium-shard": 0
+      }
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike",
+        "frenzy"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "rules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ],
+    "stance": "defensive-stance",
+    "rites": [
+      "ability-reprieve"
+    ],
+    "RP": {
+      "budget": 45,
+      "cost": 41,
+      "unused": 4,
+      "reason": "Fixed practical package; headroom is deliberate, not an optimal-loadout claim."
+    },
+    "mastery": {
+      "biomeLevel": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "globalMastery": 148
+    },
+    "stats": {
+      "attack": 198,
+      "attackCooldown": 1955,
+      "speed": 206,
+      "maxHp": 549,
+      "barrierMax": 222,
+      "recovery": 18.5
+    },
+    "candidate": null,
+    "resolvedPassives": {
+      "defense.recovery-active-pct": 0.30000000000000004,
+      "cooldown.empowered-cd-ms": 7000,
+      "cooldown.empowered-mult": 2,
+      "shared.damage-mult": 0.1,
+      "cooldown.reverb": 1,
+      "cooldown.reverb-bonus-per-attack": 0.05,
+      "weapon.empowered-mult-bonus": 0.54,
+      "guard.potency-pct": 0.62,
+      "defense.max-hit-pct": 0.25,
+      "defense.max-hit-mult": 0.5,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.40499999999999997,
+      "mobility.approach-speed-pct": 1.45,
+      "technique.cooldown-reduction-pct": 0.2,
+      "technique.power-pct": 0.2,
+      "relic.mechanic-frequency": 0.1,
+      "relic.mechanic-potency": 0.1
+    }
+  }
+]

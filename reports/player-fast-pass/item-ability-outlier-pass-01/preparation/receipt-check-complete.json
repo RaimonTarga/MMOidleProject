@@ -1,0 +1,19 @@
+{
+  "planned": 44,
+  "primary": 44,
+  "alternative": 0,
+  "completed": 0,
+  "newCompleted": 0,
+  "dead": 0,
+  "failed": 0,
+  "omitted": 0,
+  "notRun": 0,
+  "qualified": 44,
+  "mode": "receipt-check",
+  "sourceCommit": "0d392fdddaec7ed31876699589f291c8c840a5e5",
+  "launchAt": "2026-09-24T09:02:59.212Z",
+  "wallElapsedMs": 474436,
+  "stopReason": null,
+  "combatObservations": 0,
+  "failure": null
+}

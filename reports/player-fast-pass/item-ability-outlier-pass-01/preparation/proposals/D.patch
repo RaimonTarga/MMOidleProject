@@ -1,0 +1,20 @@
+--- a/shared/src/data/recipes/desert.recipes.ts
++++ b/shared/src/data/recipes/desert.recipes.ts
+@@ -164,7 +164,7 @@
+     evolvesFrom: 'desert-boots-t2',
+     cost: { yellow: 90 }, stats: { speed: 96 }, tier: 3, // family-tag: desert kite mobility → Dominion
+     reconstructCost: { yellow: 315 }, reconstructCatalystCost: { dominion: 3 },
+-    mechanicEffects: { 'mobility.kite-speed-pct': 0.30 },
++    mechanicEffects: { 'mobility.kite-speed-pct': 0.25 },
+     icon: 'items/boots/mirage-striders.png',
+     description: 'By the time the storm reaches where you stood, you are already a rumor on the next dune.',
+     upgrades: [
+@@ -262,7 +262,7 @@
+     evolvesFrom: 'desert-boots-t3',
+     cost: { yellow: 198 }, stats: { speed: 134 }, tier: 4,
+     reconstructCost: { yellow: 693 }, reconstructCatalystCost: { dominion: 4 },
+-    mechanicEffects: { 'mobility.kite-speed-pct': 0.40 },
++    mechanicEffects: { 'mobility.kite-speed-pct': 0.30 },
+     icon: 'items/boots/simoom-striders.png',
+     description: 'Named for the desert wind that arrives only as the dust it already left behind.',
+     upgrades: [

@@ -1,0 +1,110 @@
+id	tier	predecessor	gate	plus	baseSpeed	upgradeSpeed	mechanics
+clearing-boots-t1	0		clearing:4	0	12	0	{}
+cave-boots-t1	1		cave:4	0	20	0	{"mobility.stealth-pct":0.25}
+cave-boots-t1	1		cave:4	3	20	3	{"mobility.stealth-pct":0.31}
+cave-boots-t1	1		cave:4	4	20	4	{"mobility.stealth-pct":0.33}
+cave-boots-t1	1		cave:4	5	20	5	{"mobility.stealth-pct":0.35}
+cave-boots-t2	2	cave-boots-t1	cave:10	0	36	0	{"mobility.stealth-pct":0.38}
+cave-boots-t2	2	cave-boots-t1	cave:10	3	36	6	{"mobility.stealth-pct":0.44}
+cave-boots-t2	2	cave-boots-t1	cave:10	4	36	8	{"mobility.stealth-pct":0.46}
+cave-boots-t2	2	cave-boots-t1	cave:10	5	36	10	{"mobility.stealth-pct":0.48}
+cave-boots-t3	3	cave-boots-t2	cave:16	0	65	0	{"mobility.stealth-pct":0.5}
+cave-boots-t3	3	cave-boots-t2	cave:16	3	65	11	{"mobility.stealth-pct":0.56}
+cave-boots-t3	3	cave-boots-t2	cave:16	4	65	14	{"mobility.stealth-pct":0.58}
+cave-boots-t3	3	cave-boots-t2	cave:16	5	65	18	{"mobility.stealth-pct":0.6}
+forest-boots-t1	1		forest:4	0	22	0	{"mobility.ooc-speed-pct":0.25}
+forest-boots-t1	1		forest:4	3	22	6	{"mobility.ooc-speed-pct":0.4}
+forest-boots-t1	1		forest:4	4	22	8	{"mobility.ooc-speed-pct":0.45}
+forest-boots-t1	1		forest:4	5	22	10	{"mobility.ooc-speed-pct":0.5}
+forest-boots-t2	2	forest-boots-t1	forest:10	0	40	0	{"mobility.ooc-speed-pct":0.55}
+forest-boots-t2	2	forest-boots-t1	forest:10	3	40	6	{"mobility.ooc-speed-pct":0.7000000000000001}
+forest-boots-t2	2	forest-boots-t1	forest:10	4	40	9	{"mobility.ooc-speed-pct":0.75}
+forest-boots-t2	2	forest-boots-t1	forest:10	5	40	11	{"mobility.ooc-speed-pct":0.8}
+jungle-boots-t2	2		jungle:4	0	22	0	{"mobility.aggro-pull-pct":0.5}
+jungle-boots-t2	2		jungle:4	3	22	21	{"mobility.aggro-pull-pct":0.5}
+jungle-boots-t2	2		jungle:4	4	22	30	{"mobility.aggro-pull-pct":0.5}
+jungle-boots-t2	2		jungle:4	5	22	39	{"mobility.aggro-pull-pct":0.5}
+jungle-boots-t3	3	jungle-boots-t2	jungle:10	0	44	0	{"mobility.aggro-pull-pct":0.65}
+jungle-boots-t3	3	jungle-boots-t2	jungle:10	3	44	24	{"mobility.aggro-pull-pct":0.65}
+jungle-boots-t3	3	jungle-boots-t2	jungle:10	4	44	34	{"mobility.aggro-pull-pct":0.65}
+jungle-boots-t3	3	jungle-boots-t2	jungle:10	5	44	44	{"mobility.aggro-pull-pct":0.65}
+jungle-boots-t4	4	jungle-boots-t3	jungle:16	0	66	0	{"mobility.aggro-pull-pct":0.8}
+jungle-boots-t4	4	jungle-boots-t3	jungle:16	3	66	30	{"mobility.aggro-pull-pct":0.8}
+jungle-boots-t4	4	jungle-boots-t3	jungle:16	4	66	42	{"mobility.aggro-pull-pct":0.8}
+jungle-boots-t4	4	jungle-boots-t3	jungle:16	5	66	54	{"mobility.aggro-pull-pct":0.8}
+mountain-boots-t1	1		mountain:4	0	16	0	{"mobility.approach-speed-pct":0.35}
+mountain-boots-t1	1		mountain:4	3	16	3	{"mobility.approach-speed-pct":0.5}
+mountain-boots-t1	1		mountain:4	4	16	4	{"mobility.approach-speed-pct":0.55}
+mountain-boots-t1	1		mountain:4	5	16	5	{"mobility.approach-speed-pct":0.6}
+mountain-boots-t2	2	mountain-boots-t1	mountain:10	0	29	0	{"mobility.approach-speed-pct":0.65}
+mountain-boots-t2	2	mountain-boots-t1	mountain:10	3	29	5	{"mobility.approach-speed-pct":0.8}
+mountain-boots-t2	2	mountain-boots-t1	mountain:10	4	29	6	{"mobility.approach-speed-pct":0.8500000000000001}
+mountain-boots-t2	2	mountain-boots-t1	mountain:10	5	29	8	{"mobility.approach-speed-pct":0.9}
+mountain-boots-t3	3	mountain-boots-t2	mountain:16	0	52	0	{"mobility.approach-speed-pct":0.95}
+mountain-boots-t3	3	mountain-boots-t2	mountain:16	3	52	9	{"mobility.approach-speed-pct":1.1}
+mountain-boots-t3	3	mountain-boots-t2	mountain:16	4	52	11	{"mobility.approach-speed-pct":1.15}
+mountain-boots-t3	3	mountain-boots-t2	mountain:16	5	52	14	{"mobility.approach-speed-pct":1.2}
+mountain-boots-t4	4	mountain-boots-t3	mountain:22	0	93	0	{"mobility.approach-speed-pct":1.25}
+mountain-boots-t4	4	mountain-boots-t3	mountain:22	3	93	15	{"mobility.approach-speed-pct":1.4}
+mountain-boots-t4	4	mountain-boots-t3	mountain:22	4	93	21	{"mobility.approach-speed-pct":1.45}
+mountain-boots-t4	4	mountain-boots-t3	mountain:22	5	93	26	{"mobility.approach-speed-pct":1.5}
+plains-boots-t1	1		plains:4	0	18	0	{"mobility.kill-speed-pct":0.25,"mobility.kill-speed-ms":3000}
+plains-boots-t1	1		plains:4	3	18	3	{"mobility.kill-speed-pct":0.33999999999999997,"mobility.kill-speed-ms":3000}
+plains-boots-t1	1		plains:4	4	18	4	{"mobility.kill-speed-pct":0.37,"mobility.kill-speed-ms":3000}
+plains-boots-t1	1		plains:4	5	18	5	{"mobility.kill-speed-pct":0.4,"mobility.kill-speed-ms":3000}
+plains-boots-t2	2	plains-boots-t1	plains:10	0	32	0	{"mobility.kill-speed-pct":0.45,"mobility.kill-speed-ms":3000}
+plains-boots-t2	2	plains-boots-t1	plains:10	3	32	6	{"mobility.kill-speed-pct":0.54,"mobility.kill-speed-ms":3000}
+plains-boots-t2	2	plains-boots-t1	plains:10	4	32	7	{"mobility.kill-speed-pct":0.5700000000000001,"mobility.kill-speed-ms":3000}
+plains-boots-t2	2	plains-boots-t1	plains:10	5	32	9	{"mobility.kill-speed-pct":0.6,"mobility.kill-speed-ms":3000}
+swamp-boots-t1	1		swamp:4	0	18	0	{"mobility.slow-resistance":0.25}
+swamp-boots-t1	1		swamp:4	3	18	3	{"mobility.slow-resistance":0.33999999999999997}
+swamp-boots-t1	1		swamp:4	4	18	4	{"mobility.slow-resistance":0.37}
+swamp-boots-t1	1		swamp:4	5	18	5	{"mobility.slow-resistance":0.4}
+swamp-boots-t2	2	swamp-boots-t1	swamp:10	0	32	0	{"mobility.slow-resistance":0.45}
+swamp-boots-t2	2	swamp-boots-t1	swamp:10	3	32	5	{"mobility.slow-resistance":0.53}
+swamp-boots-t2	2	swamp-boots-t1	swamp:10	4	32	7	{"mobility.slow-resistance":0.56}
+swamp-boots-t2	2	swamp-boots-t1	swamp:10	5	32	9	{"mobility.slow-resistance":0.5800000000000001}
+swamp-boots-t3	3	swamp-boots-t2	swamp:16	0	58	0	{"mobility.slow-resistance":0.62}
+swamp-boots-t3	3	swamp-boots-t2	swamp:16	3	58	9	{"mobility.slow-resistance":0.6799999999999999}
+swamp-boots-t3	3	swamp-boots-t2	swamp:16	4	58	13	{"mobility.slow-resistance":0.7}
+swamp-boots-t3	3	swamp-boots-t2	swamp:16	5	58	16	{"mobility.slow-resistance":0.72}
+tundra-boots-t3	3		tundra:4	0	30	0	{"mobility.ramp-speed-pct":0.6,"mobility.ramp-rate":0.3}
+tundra-boots-t3	3		tundra:4	3	30	36	{"mobility.ramp-speed-pct":0.6,"mobility.ramp-rate":0.3}
+tundra-boots-t3	3		tundra:4	4	30	52	{"mobility.ramp-speed-pct":0.6,"mobility.ramp-rate":0.3}
+tundra-boots-t3	3		tundra:4	5	30	68	{"mobility.ramp-speed-pct":0.6,"mobility.ramp-rate":0.3}
+tundra-boots-t4	4	tundra-boots-t3	tundra:10	0	42	0	{"mobility.ramp-speed-pct":0.75,"mobility.ramp-rate":0.35}
+tundra-boots-t4	4	tundra-boots-t3	tundra:10	3	42	42	{"mobility.ramp-speed-pct":0.75,"mobility.ramp-rate":0.35}
+tundra-boots-t4	4	tundra-boots-t3	tundra:10	4	42	60	{"mobility.ramp-speed-pct":0.75,"mobility.ramp-rate":0.35}
+tundra-boots-t4	4	tundra-boots-t3	tundra:10	5	42	78	{"mobility.ramp-speed-pct":0.75,"mobility.ramp-rate":0.35}
+desert-boots-t2	2		desert:4	0	58	0	{"mobility.kite-speed-pct":0.2}
+desert-boots-t2	2		desert:4	3	58	36	{"mobility.kite-speed-pct":0.2}
+desert-boots-t2	2		desert:4	4	58	52	{"mobility.kite-speed-pct":0.2}
+desert-boots-t2	2		desert:4	5	58	68	{"mobility.kite-speed-pct":0.2}
+desert-boots-t3	3	desert-boots-t2	desert:10	0	96	0	{"mobility.kite-speed-pct":0.3}
+desert-boots-t3	3	desert-boots-t2	desert:10	3	96	42	{"mobility.kite-speed-pct":0.3}
+desert-boots-t3	3	desert-boots-t2	desert:10	4	96	60	{"mobility.kite-speed-pct":0.3}
+desert-boots-t3	3	desert-boots-t2	desert:10	5	96	78	{"mobility.kite-speed-pct":0.3}
+desert-boots-t4	4	desert-boots-t3	desert:16	0	134	0	{"mobility.kite-speed-pct":0.4}
+desert-boots-t4	4	desert-boots-t3	desert:16	3	134	54	{"mobility.kite-speed-pct":0.4}
+desert-boots-t4	4	desert-boots-t3	desert:16	4	134	76	{"mobility.kite-speed-pct":0.4}
+desert-boots-t4	4	desert-boots-t3	desert:16	5	134	98	{"mobility.kite-speed-pct":0.4}
+volcanic-boots-t3	3		volcanic:4	0	36	0	{"mobility.passive-speed-pct":0.55,"mobility.suppress-ms":4000}
+volcanic-boots-t3	3		volcanic:4	3	36	36	{"mobility.passive-speed-pct":0.55,"mobility.suppress-ms":4000}
+volcanic-boots-t3	3		volcanic:4	4	36	52	{"mobility.passive-speed-pct":0.55,"mobility.suppress-ms":4000}
+volcanic-boots-t3	3		volcanic:4	5	36	68	{"mobility.passive-speed-pct":0.55,"mobility.suppress-ms":4000}
+volcanic-boots-t4	4	volcanic-boots-t3	volcanic:10	0	50	0	{"mobility.passive-speed-pct":0.7,"mobility.suppress-ms":3500}
+volcanic-boots-t4	4	volcanic-boots-t3	volcanic:10	3	50	42	{"mobility.passive-speed-pct":0.7,"mobility.suppress-ms":3500}
+volcanic-boots-t4	4	volcanic-boots-t3	volcanic:10	4	50	60	{"mobility.passive-speed-pct":0.7,"mobility.suppress-ms":3500}
+volcanic-boots-t4	4	volcanic-boots-t3	volcanic:10	5	50	78	{"mobility.passive-speed-pct":0.7,"mobility.suppress-ms":3500}
+graveyard-boots-t4	4		graveyard:4	0	30	0	{"mobility.kill-stack-speed-pct":0.12,"mobility.kill-stack-tenacity-pct":0.12,"mobility.kill-stack-ms":4000}
+graveyard-boots-t4	4		graveyard:4	3	30	36	{"mobility.kill-stack-speed-pct":0.12,"mobility.kill-stack-tenacity-pct":0.12,"mobility.kill-stack-ms":4000}
+graveyard-boots-t4	4		graveyard:4	4	30	52	{"mobility.kill-stack-speed-pct":0.12,"mobility.kill-stack-tenacity-pct":0.12,"mobility.kill-stack-ms":4000}
+graveyard-boots-t4	4		graveyard:4	5	30	68	{"mobility.kill-stack-speed-pct":0.12,"mobility.kill-stack-tenacity-pct":0.12,"mobility.kill-stack-ms":4000}
+trench-boots-t4-stalkers	4	cave-boots-t3	trench:4	0	52	0	{"mobility.stealth-pct":0.72}
+trench-boots-t4-stalkers	4	cave-boots-t3	trench:4	3	52	18	{"mobility.stealth-pct":0.72}
+trench-boots-t4-stalkers	4	cave-boots-t3	trench:4	4	52	24	{"mobility.stealth-pct":0.72}
+trench-boots-t4-stalkers	4	cave-boots-t3	trench:4	5	52	30	{"mobility.stealth-pct":0.72}
+trench-boots-t4-treaders	4		trench:4	0	48	0	{"mobility.tenacity-pct":0.55}
+trench-boots-t4-treaders	4		trench:4	3	48	15	{"mobility.tenacity-pct":0.55}
+trench-boots-t4-treaders	4		trench:4	4	48	20	{"mobility.tenacity-pct":0.55}
+trench-boots-t4-treaders	4		trench:4	5	48	25	{"mobility.tenacity-pct":0.55}

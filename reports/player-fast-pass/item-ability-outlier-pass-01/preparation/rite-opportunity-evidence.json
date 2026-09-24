@@ -1,0 +1,373 @@
+[
+  {
+    "source": "056b5cd66c2f6aeccca840265a0cbce30a2a77f3",
+    "seed": 101009,
+    "referencePackage": "closing-squire-balanced-a-T-s101009",
+    "windowMs": 600000,
+    "trueOocTransitions": 20,
+    "remainingCooldownOpportunities": [
+      {
+        "atMs": 25300,
+        "cooldowns": {
+          "ability.cd.frenzy": 100,
+          "ability.cd.expose-weakness": 4900,
+          "ability.cd.cleanse": 6200,
+          "ability.cd.power-strike": 5400
+        }
+      },
+      {
+        "atMs": 35400,
+        "cooldowns": {
+          "ability.cd.frenzy": 600,
+          "ability.cd.expose-weakness": 4400,
+          "ability.cd.cleanse": 6100,
+          "ability.cd.power-strike": 4900
+        }
+      },
+      {
+        "atMs": 56900,
+        "cooldowns": {
+          "ability.cd.frenzy": 4000,
+          "ability.cd.expose-weakness": 2100,
+          "ability.cd.cleanse": 4600,
+          "ability.cd.power-strike": 4000
+        }
+      },
+      {
+        "atMs": 83200,
+        "cooldowns": {
+          "ability.cd.frenzy": 1700,
+          "ability.cd.expose-weakness": 4900,
+          "ability.cd.cleanse": 8300,
+          "ability.cd.power-strike": 6500
+        }
+      },
+      {
+        "atMs": 130900,
+        "cooldowns": {
+          "ability.cd.cleanse": 600,
+          "ability.cd.power-strike": 5700
+        }
+      },
+      {
+        "atMs": 156600,
+        "cooldowns": {
+          "ability.cd.frenzy": 100,
+          "ability.cd.expose-weakness": 4900,
+          "ability.cd.cleanse": 4900
+        }
+      },
+      {
+        "atMs": 202200,
+        "cooldowns": {
+          "ability.cd.cleanse": 9300,
+          "ability.cd.power-strike": 5700
+        }
+      },
+      {
+        "atMs": 247800,
+        "cooldowns": {
+          "ability.cd.cleanse": 3700,
+          "ability.cd.power-strike": 5800
+        }
+      },
+      {
+        "atMs": 258000,
+        "cooldowns": {
+          "ability.cd.frenzy": 600,
+          "ability.cd.expose-weakness": 2200,
+          "ability.cd.cleanse": 3500,
+          "ability.cd.power-strike": 5200
+        }
+      },
+      {
+        "atMs": 268500,
+        "cooldowns": {
+          "ability.cd.frenzy": 600,
+          "ability.cd.expose-weakness": 2200,
+          "ability.cd.cleanse": 3000,
+          "ability.cd.power-strike": 4300
+        }
+      },
+      {
+        "atMs": 317900,
+        "cooldowns": {
+          "ability.cd.cleanse": 3600,
+          "ability.cd.power-strike": 5800
+        }
+      },
+      {
+        "atMs": 343300,
+        "cooldowns": {
+          "ability.cd.expose-weakness": 4800,
+          "ability.cd.cleanse": 8200
+        }
+      },
+      {
+        "atMs": 352800,
+        "cooldowns": {
+          "ability.cd.frenzy": 600,
+          "ability.cd.expose-weakness": 5100,
+          "ability.cd.cleanse": 8700,
+          "ability.cd.power-strike": 3400
+        }
+      },
+      {
+        "atMs": 382500,
+        "cooldowns": {
+          "ability.cd.expose-weakness": 4800,
+          "ability.cd.cleanse": 9000,
+          "ability.cd.power-strike": 5400
+        }
+      },
+      {
+        "atMs": 393700,
+        "cooldowns": {
+          "ability.cd.frenzy": 600,
+          "ability.cd.expose-weakness": 3200,
+          "ability.cd.cleanse": 7800,
+          "ability.cd.power-strike": 4900
+        }
+      },
+      {
+        "atMs": 420000,
+        "cooldowns": {
+          "ability.cd.expose-weakness": 5700,
+          "ability.cd.cleanse": 1500
+        }
+      },
+      {
+        "atMs": 469200,
+        "cooldowns": {
+          "ability.cd.cleanse": 2300,
+          "ability.cd.power-strike": 5700
+        }
+      },
+      {
+        "atMs": 498200,
+        "cooldowns": {
+          "ability.cd.frenzy": 4100,
+          "ability.cd.expose-weakness": 900,
+          "ability.cd.cleanse": 3300,
+          "ability.cd.power-strike": 5500
+        }
+      },
+      {
+        "atMs": 526600,
+        "cooldowns": {
+          "ability.cd.expose-weakness": 4800,
+          "ability.cd.cleanse": 4900,
+          "ability.cd.power-strike": 5900
+        }
+      },
+      {
+        "atMs": 571900,
+        "cooldowns": {
+          "ability.cd.cleanse": 9600,
+          "ability.cd.power-strike": 5700
+        }
+      }
+    ],
+    "rawFiles": [
+      {
+        "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\run-01\\closing-squire-balanced-a-T-s101009\\artifacts\\closing-squire-balanced-a-T-s101009-s101009\\sustain-transitions.jsonl",
+        "sha256": "1ae63cadccf07cf91d307524756028247ad005dd25f90bee42345078de3ebb8f"
+      },
+      {
+        "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\run-01\\closing-squire-balanced-a-T-s101009\\artifacts\\closing-squire-balanced-a-T-s101009-s101009\\guard-events.jsonl",
+        "sha256": "84deda7cdc412ca3cff0b2829aacd271a391d2053518f49f432a237e751cf2f3"
+      }
+    ]
+  },
+  {
+    "source": "056b5cd66c2f6aeccca840265a0cbce30a2a77f3",
+    "seed": 101033,
+    "referencePackage": "closing-squire-balanced-a-T-s101033",
+    "windowMs": 600000,
+    "trueOocTransitions": 21,
+    "remainingCooldownOpportunities": [
+      {
+        "atMs": 25900,
+        "cooldowns": {
+          "ability.cd.expose-weakness": 4800,
+          "ability.cd.cleanse": 6100,
+          "ability.cd.power-strike": 5400
+        }
+      },
+      {
+        "atMs": 48800,
+        "cooldowns": {
+          "ability.cd.frenzy": 4000,
+          "ability.cd.expose-weakness": 1100,
+          "ability.cd.cleanse": 3200,
+          "ability.cd.power-strike": 3100
+        }
+      },
+      {
+        "atMs": 77300,
+        "cooldowns": {
+          "ability.cd.frenzy": 100,
+          "ability.cd.expose-weakness": 4900,
+          "ability.cd.cleanse": 4700,
+          "ability.cd.power-strike": 5400
+        }
+      },
+      {
+        "atMs": 105900,
+        "cooldowns": {
+          "ability.cd.frenzy": 100,
+          "ability.cd.expose-weakness": 5100,
+          "ability.cd.cleanse": 6200
+        }
+      },
+      {
+        "atMs": 133300,
+        "cooldowns": {
+          "ability.cd.frenzy": 100,
+          "ability.cd.cleanse": 8800,
+          "ability.cd.power-strike": 5400
+        }
+      },
+      {
+        "atMs": 180900,
+        "cooldowns": {
+          "ability.cd.cleanse": 1200,
+          "ability.cd.power-strike": 5700
+        }
+      },
+      {
+        "atMs": 206600,
+        "cooldowns": {
+          "ability.cd.frenzy": 100,
+          "ability.cd.expose-weakness": 4900,
+          "ability.cd.cleanse": 5500
+        }
+      },
+      {
+        "atMs": 254300,
+        "cooldowns": {
+          "ability.cd.cleanse": 7800,
+          "ability.cd.power-strike": 5700
+        }
+      },
+      {
+        "atMs": 301900,
+        "cooldowns": {
+          "ability.cd.cleanse": 200,
+          "ability.cd.power-strike": 5700
+        }
+      },
+      {
+        "atMs": 310400,
+        "cooldowns": {
+          "ability.cd.frenzy": 600,
+          "ability.cd.expose-weakness": 2200,
+          "ability.cd.cleanse": 1700,
+          "ability.cd.power-strike": 6800
+        }
+      },
+      {
+        "atMs": 319400,
+        "cooldowns": {
+          "ability.cd.frenzy": 600,
+          "ability.cd.expose-weakness": 2800,
+          "ability.cd.cleanse": 2700,
+          "ability.cd.power-strike": 7400
+        }
+      },
+      {
+        "atMs": 346700,
+        "cooldowns": {
+          "ability.cd.frenzy": 4000,
+          "ability.cd.expose-weakness": 8800,
+          "ability.cd.cleanse": 5400,
+          "ability.cd.power-strike": 700
+        }
+      },
+      {
+        "atMs": 386700,
+        "cooldowns": {
+          "ability.cd.frenzy": 4000,
+          "ability.cd.cleanse": 5400,
+          "ability.cd.power-strike": 5400
+        }
+      },
+      {
+        "atMs": 410800,
+        "cooldowns": {
+          "ability.cd.frenzy": 3900,
+          "ability.cd.expose-weakness": 8700,
+          "ability.cd.cleanse": 1300,
+          "ability.cd.power-strike": 500
+        }
+      },
+      {
+        "atMs": 461800,
+        "cooldowns": {
+          "ability.cd.cleanse": 300,
+          "ability.cd.power-strike": 5700
+        }
+      },
+      {
+        "atMs": 481800,
+        "cooldowns": {
+          "ability.cd.frenzy": 4900,
+          "ability.cd.expose-weakness": 100,
+          "ability.cd.cleanse": 300
+        }
+      },
+      {
+        "atMs": 497300,
+        "cooldowns": {
+          "ability.cd.frenzy": 5400,
+          "ability.cd.expose-weakness": 4300,
+          "ability.cd.cleanse": 4800,
+          "ability.cd.power-strike": 5600
+        }
+      },
+      {
+        "atMs": 514200,
+        "cooldowns": {
+          "ability.cd.frenzy": 4500,
+          "ability.cd.expose-weakness": 6600,
+          "ability.cd.cleanse": 7900,
+          "ability.cd.power-strike": 7900
+        }
+      },
+      {
+        "atMs": 541500,
+        "cooldowns": {
+          "ability.cd.frenzy": 1200,
+          "ability.cd.cleanse": 600
+        }
+      },
+      {
+        "atMs": 570500,
+        "cooldowns": {
+          "ability.cd.frenzy": 4700,
+          "ability.cd.expose-weakness": 1500,
+          "ability.cd.cleanse": 1600,
+          "ability.cd.power-strike": 5800
+        }
+      },
+      {
+        "atMs": 597800,
+        "cooldowns": {
+          "ability.cd.frenzy": 1400,
+          "ability.cd.expose-weakness": 4800,
+          "ability.cd.cleanse": 4300
+        }
+      }
+    ],
+    "rawFiles": [
+      {
+        "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\run-01\\closing-squire-balanced-a-T-s101033\\artifacts\\closing-squire-balanced-a-T-s101033-s101033\\sustain-transitions.jsonl",
+        "sha256": "26be925b20cd003a1ed1232fe05ea7d60a2bf06696244fe8c712d09bf7640d13"
+      },
+      {
+        "path": "D:\\mmo-idle\\t4-overnight-closing-pass-01\\run-01\\closing-squire-balanced-a-T-s101033\\artifacts\\closing-squire-balanced-a-T-s101033-s101033\\guard-events.jsonl",
+        "sha256": "549fc47a5b494f04fe0373b3f65d53f358eb321652d39a4dd35bfe0fdf1336ca"
+      }
+    ]
+  }
+]

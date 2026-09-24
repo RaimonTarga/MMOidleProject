@@ -394,3 +394,5 @@ Generated balance packets (`reports/dps-*`, `ehp-*`, `mob-*`,
 - [Farming stance 01 preparation](../reports/player-fast-pass/farming-stance-01-preparation/README.md) — prepared, not launched; measured Conduit R2 adopted locally, six fixed packages across two stances and two ordinary fixtures, 24 observations, legal build receipts and frozen execution commands.
 
 - [Desert strategy 01 Luna packet](../reports/player-fast-pass/desert-strategy-01-preparation/README.md) — prepared and zero-tick qualified, main run unlaunched; 24 T4 targeting observations on the canonical formation Rune inheritance fix, source/readbacks and six-root evidence seed.
+
+- [Item and ability outlier pass 01](../reports/player-fast-pass/item-ability-outlier-pass-01/preparation/REVIEW.md) — preparation only: 44 bounded observations, exact candidate diffs, qualified loadouts and separate Blood Offering retirement proposal; no combat or adoption.
