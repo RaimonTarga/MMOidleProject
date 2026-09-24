@@ -1,0 +1,36 @@
+[
+  {
+    "path": "D:/mmo-idle/item-ability-outlier-pass-01/run-01/manifest.json",
+    "sha256": "c161dadb69a83d575e386f1353355f873e0210fe0a4c179f836d2a37f2b80f67"
+  },
+  {
+    "path": "D:/mmo-idle/item-ability-outlier-pass-01/run-01/resolved-builds.json",
+    "sha256": "7a4c59e333ad0d817f9f36351955fd4a5f5f98ed4816c54aef540b498f067b2a"
+  },
+  {
+    "path": "D:/iaop1pub/reports/player-fast-pass/item-ability-outlier-pass-01/run-01/REPORT.md",
+    "sha256": "e75c9ee5fc0420ca95eb3fbbcee822d8c3d0b122c7ffdfaab83467db7f6c5403"
+  },
+  {
+    "path": "D:/t4c1pub/reports/player-fast-pass/t4-overnight-closing-pass-01/run-01/manifest.json",
+    "sha256": "37e49db8ff95a1346cf3ad0390714366f8e5b47e86c1c9ef9050be0e1311616c"
+  },
+  {
+    "path": "D:/t4c1pub/reports/player-fast-pass/t4-overnight-closing-pass-01/run-01/resolved-builds.json",
+    "sha256": "cbae4350bce26e7573f2ab76754a5462a5d828d4ad518b01adcf03404a5876a8"
+  },
+  {
+    "path": "D:/mmo-idle/t4-overnight-closing-pass-01/run-01/closing-spirit-light-a-T-s101009/artifacts/closing-spirit-light-a-T-s101009-s101009/samples.jsonl",
+    "sha256": "093d31154a5b287770d2103e01b520c9c583d95dd307f917687ded93281e2722",
+    "samples": 600,
+    "kiteSamples": 328,
+    "notes": "First 600s retained historical samples; no new combat. Keep Distance action ID orbit."
+  },
+  {
+    "path": "D:/mmo-idle/t4-overnight-closing-pass-01/run-01/closing-spirit-light-a-T-s101033/artifacts/closing-spirit-light-a-T-s101033-s101033/samples.jsonl",
+    "sha256": "9eae9097c5157096f2d76cdffa7c1e6d5fbf23da39dc345f064a4b74561c00e1",
+    "samples": 600,
+    "kiteSamples": 257,
+    "notes": "First 600s retained historical samples; no new combat. Keep Distance action ID orbit."
+  }
+]
