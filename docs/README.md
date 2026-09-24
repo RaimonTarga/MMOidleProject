@@ -5,6 +5,8 @@ Last sorted: 2026-09-17.
 
 **If code and any doc disagree, the code wins — fix the doc.**
 
+Experimental defense branch (2026-09-25, not shipped): [bot report](../reports/defense-redesign-01/REPORT.md), [patch notes](../reports/defense-redesign-01/PATCH-NOTES.md), and [all armor values](../reports/defense-redesign-01/ARMOR-INVENTORY.md). The full candidate is held for further tuning.
+
 ## The four kinds of doc
 
 | Kind | Lives in | Job |

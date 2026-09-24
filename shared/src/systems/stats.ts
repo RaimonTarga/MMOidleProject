@@ -257,6 +257,8 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
   // payoff as `platingPct`/`maxHpPct` affinities plus their authored mechanic.
 
   // 3. Apply equipped item stat modifiers and mechanic effects
+  const classDr = p.mitigatesDamage.damageReduction;
+  let itemDr = 0;
   for (const slot of EQUIPMENT_SLOTS) {
     const defId = p.holdsInventory.equipment[slot];
     if (!defId) continue;
@@ -267,6 +269,7 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     // Unrestricted cores always apply. Eligibility is binary; see systems/cores.ts.
     if (slot === 'core' && !coreIsActive(def.coreEligibility, p.usesSkills.selectedRange)) continue;
     for (const [stat, value] of Object.entries(def.statModifiers)) {
+      if (stat === 'damageReduction') { itemDr += value; continue; }
       if (stat === 'evasion') {
         if (value > 0) evasionChance += value;
       } else {
@@ -279,6 +282,7 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     const plus = p.holdsInventory.itemUpgrades?.[defId] ?? 0;
     if (plus > 0) {
       for (const [stat, value] of Object.entries(upgradeStatBonusTotal(def, plus))) {
+        if (stat === 'damageReduction') { itemDr += value; continue; }
         if (stat === 'evasion') { if (value > 0) evasionChance += value; }
         else applyStatModToTarget(p, stat, value);
       }
@@ -286,6 +290,8 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
       if (Object.keys(meFx).length > 0) mergePassives(p.usesSkills.passives, meFx, pulseAcc);
     }
   }
+  p.mitigatesDamage.damageReduction = 1 - (1-classDr)*(1-Math.min(.9,Math.max(0,itemDr)));
+  p.usesSkills.passives['defense.item-dr-base'] = itemDr;
   finalizePulse(pulseAcc, p.usesSkills.passives);
 
   // 3d. Class affinity layer. Base + equipment have now established raw magnitude,
@@ -441,4 +447,3 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
 
   return { cannotAttack };
 }
-

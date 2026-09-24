@@ -1,6 +1,8 @@
 # Future Plans / Feature Backlog
 
 Parking lot for features that are decided-in-spirit but not yet scheduled.
+
+Defense redesign experiment, 2026-09-25: implemented on `codex/defense-redesign-01`; [results and remaining work](../reports/defense-redesign-01/REPORT.md). Core HP penalties are the recommended adoption subset. The wider armor/class/pipeline candidate remains on hold for ranged/caster survival tuning; not shipped.
 Each entry captures the feasibility verdict and the chosen direction so a future
 session doesn't re-derive it. When an entry gets scheduled, promote it to a full
 `docs/<feature>-plan.md` and mark the entry here as promoted.

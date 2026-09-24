@@ -56,7 +56,10 @@ export function applyHealToPlayer(
   // Overheal → ward: convert HP that would spill past max into a temporary pool.
   const overhealPct = player.usesSkills.passives['defense.overheal-ward-pct'] ?? 0;
   if (world && overhealPct > 0 && raw > maxHp) {
-    applyWard(world, player, Math.round((raw - maxHp) * overhealPct), OVERHEAL_WARD_MS);
+    const capPct=player.usesSkills.passives['defense.overheal-ward-cap-pct'];
+    const occupied=player.holdsWards?.wards.reduce((sum,w)=>sum+w.amount,0)??0;
+    const headroom=capPct===undefined?Infinity:Math.max(0,maxHp*capPct-occupied);
+    applyWard(world, player, Math.min(headroom,Math.round((raw - maxHp) * overhealPct)), OVERHEAL_WARD_MS);
   }
   if (world && player.hasHealth.hp > before) {
     markSliceDirty(world, player, 'hasHealth');

@@ -1,0 +1,194 @@
+{
+  "base": "ff98ba4513cb9fcb1e5752acfd56495268aff416",
+  "branch": "codex/defense-redesign-01",
+  "files": [
+    {
+      "path": "client/src/hud/statusHelp.ts",
+      "sha256": "e7f9e8c0604a8951cb186452251c3025a9d73991e4d3914121541f54657561f7"
+    },
+    {
+      "path": "client/src/ui/conceptIcons.ts",
+      "sha256": "fdbaa90aa381cfdd15877a4289a35a045cba0381169d3f32c0c1e2655f05751f"
+    },
+    {
+      "path": "server/src/systems/classes/archetypes/dot/dotPrototype.ts",
+      "sha256": "391c8cb5b81afe492b3d9d5cc844a0a83318d011759bbc14916084bc23bd42f4"
+    },
+    {
+      "path": "server/src/systems/combat/damage/aoeDamage.ts",
+      "sha256": "7ae4dc3e74166e83c7196e2f362db8eaf29aa96b52617279e1802a9291a6310f"
+    },
+    {
+      "path": "server/src/systems/combat/engine/combat.ts",
+      "sha256": "8aff764f83d13eaf8f0980cda2871b57a69a6ab58d274a47c4b188a0af0ea955"
+    },
+    {
+      "path": "server/src/systems/combatBootstrap.ts",
+      "sha256": "60d62b46384cc1ddd38d195549bb89ac88aa89757f302e9013e14897ca9b6481"
+    },
+    {
+      "path": "server/src/systems/defense/core/buffs.ts",
+      "sha256": "5d1c0d3be1e904304b221747eb1181f1e3d0c6297ad866094592e4f20799d00f"
+    },
+    {
+      "path": "server/src/systems/defense/index.ts",
+      "sha256": "a75d6a329f84197718545f55fefa3748df9757348453da3090d8af4e13588354"
+    },
+    {
+      "path": "server/src/systems/defense/mitigation/hardening.ts",
+      "sha256": "a91316fadfba5b65ef58f4a3ae42c77f81f6ee46280aafdb84f2c92b5ef006b1"
+    },
+    {
+      "path": "server/src/systems/defense/mitigation/hitToDot.ts",
+      "sha256": "89e477245dadd5cfa035341685fc7a5e2967ba40d0e506de9c27aba26f55e7d5"
+    },
+    {
+      "path": "server/src/systems/defense/mitigation/stationaryDr.ts",
+      "sha256": "5cc0a7d5f838c611eea76e9e372e7b3c218b85855cf6aee816b850a47ad4964a"
+    },
+    {
+      "path": "server/src/systems/defense/mitigation/sustainedFightDr.ts",
+      "sha256": "5a567378c8d536c2244bc3acf6fd421cf9f2146036391efe93cccebc98538284"
+    },
+    {
+      "path": "server/src/systems/defense/regen/damageAbsorb.ts",
+      "sha256": "5d4002061435567cd816ee0d9b4153f85bafdadcc991fbf4bab5d7a4961795fe"
+    },
+    {
+      "path": "server/src/systems/defense/regen/healing.ts",
+      "sha256": "c3b0f3f7368668bee4ad416b63068aa3f1fe8e1c930b18568c19839bc4e091c8"
+    },
+    {
+      "path": "server/src/systems/player/abilities/abilityEffects.ts",
+      "sha256": "4707b0da94800c1e8a7c539659b581fd6b20059220e87e7395d5927dc2d8516b"
+    },
+    {
+      "path": "server/src/systems/world/nodeFeatures.ts",
+      "sha256": "d6dd466b0948357f16251090a6060170bd950a371e6fea8b177489d90220de70"
+    },
+    {
+      "path": "server/test/coreRelicIntegration.test.ts",
+      "sha256": "e1b534c80d2cd509ea604ec21beebf84a6566e00dc4dc81cded130db2c87d00a"
+    },
+    {
+      "path": "server/test/cores.test.ts",
+      "sha256": "07cd636ca8989668160fae33b220795575789ea4bc58db9f1786859b3621ceee"
+    },
+    {
+      "path": "server/test/hudStatusTooltips.test.ts",
+      "sha256": "80c5f1b4d1422b0bc408bf8b0860d7e0523a5830ecfa32d66b79f5c2e87fba7e"
+    },
+    {
+      "path": "server/test/nodeFeatureRegenSuppression.test.ts",
+      "sha256": "daed6e346d31d21345a65c25a69952a9b423b3d5d06d8a63bfcaf24c53b6b529"
+    },
+    {
+      "path": "shared/src/components/combat/buffs.ts",
+      "sha256": "f6297b230c543383d7df1304e08c6e0c2be626b6741662a0f6745b2c07a9f400"
+    },
+    {
+      "path": "shared/src/data/mechanicLabels.ts",
+      "sha256": "00dac8b790b50cb3dfd931aef67b2bccf0ce0c6323ff3e22d86b7d5e04720b21"
+    },
+    {
+      "path": "shared/src/data/recipes/cave.recipes.ts",
+      "sha256": "c020c25400bc4baaefe2667b5cca5357b4c542814eeb76307bab0fbb95671414"
+    },
+    {
+      "path": "shared/src/data/recipes/desert.recipes.ts",
+      "sha256": "14a9c9997aa358dcd5c0ca6ce7536164e0d24970760c7f84e783108fee457e81"
+    },
+    {
+      "path": "shared/src/data/recipes/forest.recipes.ts",
+      "sha256": "7109fdef801203c4c4b5ff5b93edd640bbea57ed1d1d0a4560e4e2812eab25bb"
+    },
+    {
+      "path": "shared/src/data/recipes/graveyard.recipes.ts",
+      "sha256": "28e17766feeefb9348f412039a659fd2cabfe23552c042e520f5bdc2dd16ce19"
+    },
+    {
+      "path": "shared/src/data/recipes/jungle.recipes.ts",
+      "sha256": "6068d64a11fe538444d8e4b20a6da1f315486864e3cd1794e8d0494f1f11f3f0"
+    },
+    {
+      "path": "shared/src/data/recipes/mountain.recipes.ts",
+      "sha256": "34f2df26c5cd0e35ad490931c8eb2195ac974526cd053cc659fefd427d00758b"
+    },
+    {
+      "path": "shared/src/data/recipes/plains.recipes.ts",
+      "sha256": "0b3aa65de7e30892fe4fd1b0e0bce41dc101a705baccecd074f6a9d61a24fb70"
+    },
+    {
+      "path": "shared/src/data/recipes/swamp.recipes.ts",
+      "sha256": "b3ff5a8c9cd4ac8b784bc46ee7a8b0b46976211ab38d2085b90a7bef9ff00d51"
+    },
+    {
+      "path": "shared/src/data/recipes/trench.recipes.ts",
+      "sha256": "013b47d0d1256340a7b6263b02030968fae0907e3ba2b04ad72a1927e1920eda"
+    },
+    {
+      "path": "shared/src/data/recipes/tundra.recipes.ts",
+      "sha256": "36b2f8ddf5bcfaf4b682a34c0f489a0e7a88b397847cb536f2ebd8bf61a63a59"
+    },
+    {
+      "path": "shared/src/data/recipes/volcanic.recipes.ts",
+      "sha256": "6e2bc2fd86e1628638d5512b8cb3acdcf020718aa459b58158414a5a55e78b55"
+    },
+    {
+      "path": "shared/src/data/skillTree/rootsAndFrames.ts",
+      "sha256": "bfc64c61b21d7b1c407a42fbebfd40d3327d512bd473f54d158fab9883a0628f"
+    },
+    {
+      "path": "shared/src/passives.ts",
+      "sha256": "b05ce82eea3349ec8e551b407ad6cb2b1e0db7611af744af8fd6395d95e5cd29"
+    },
+    {
+      "path": "shared/src/stances.ts",
+      "sha256": "390199c4ec3e827c63fbb756f98e8b712c978aaebc2c4e33a10025613c2d60bd"
+    },
+    {
+      "path": "shared/src/systems/stats.ts",
+      "sha256": "2c2d696b50232327e87ae2aef84875a3e4c2b8395a2eb5fdfa985c5fe75e77d3"
+    },
+    {
+      "path": "server/bench/defenseStudy.ts",
+      "sha256": "815d0a384240ab5182f549f2e0c12d840fca7150fe579333a2b5d57b2758dfaf"
+    },
+    {
+      "path": "server/src/systems/defense/mitigation/engagementDr.ts",
+      "sha256": "fd1565605ee829f2c977416abb5a4e058210b76f68791de55784908f6638ecaa"
+    },
+    {
+      "path": "server/test/defenseRedesign.test.ts",
+      "sha256": "0c38c210a837ae8e0f67ce8c197feb1d37aaf71fae51a4f6823b8327759b3a01"
+    },
+    {
+      "path": "scripts/compactDefenseData.ts",
+      "sha256": "5604f069cdf9fc690dd34256706461980e462e90325ceaadda96fbd9eda615c4"
+    },
+    {
+      "path": "scripts/defenseCandidateAuthor.ts",
+      "sha256": "a9940666e7e5737c05f5d6972ea91b5c11563e14bf5dfc1e1fce82316de98a3f"
+    },
+    {
+      "path": "scripts/defenseCompare.mjs",
+      "sha256": "8ef296aa7e6ba81f626864ea34d12508e4b97986daf6c7642f9d327d53720ed2"
+    },
+    {
+      "path": "scripts/defenseFoundation.ts",
+      "sha256": "d485bbc452d1080def1e10c0ba2019eee648ff983f3295b044e95885121d0d36"
+    },
+    {
+      "path": "scripts/defenseRevise.ts",
+      "sha256": "7dbb0c41a1933e85d08d0494c2e3814be9f8eb355ceccfb6fc40182dc45ad5ea"
+    },
+    {
+      "path": "scripts/defenseFinalReport.mjs",
+      "sha256": "0a7f4c312c028ea2d1e3cf461841cc0ade8e5f52ec91c23aff3c7432a153a2a2"
+    },
+    {
+      "path": "scripts/defenseInventory.ts",
+      "sha256": "f681bb7dd50c95121ee6597c7f2b21942c0b6ecca8a75f0d42551887bf4d083c"
+    }
+  ]
+}

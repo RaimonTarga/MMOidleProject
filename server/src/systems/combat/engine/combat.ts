@@ -738,31 +738,12 @@ export function runMonsterAttack(
     resultMetadata.evadeBlocksDebuffs = evadeBlocksDebuffs(ctx);
   }
 
-  // Core second DR layer (system rework Step 9): a separate MULTIPLICATIVE damage-
-  // reduction layer stacked with base DR — final = base × (1 − DR) × (1 − drLayer2).
-  // So 50% base + 50% layer ⇒ 25% taken, not immunity. Read from the player's core
-  // passive (mirrors how shared.damage-mult is read in the pipeline); clamped to 0.9.
-  // Core/stance final mitigation is applied by onDamageTaken on every pipeline path.
-  ctx.damage = Math.max(
-    1,
-    Math.round(
-      Math.max(
-        0,
-        baseAttack -
-          platingAfterShred(target.mitigatesDamage.plating, target.tracksCombat),
-      ) *
-        (1 - target.mitigatesDamage.damageReduction),
-    ),
-  );
-
+  // Complete attacker scaling before paying flat plating once.
   const def = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId);
 
   // Wasteland death-empower is a normal outgoing-damage layer, not an empowered
   // strike: it scales every direct hit without changing cadence/charge metadata.
   const deathEmpowerMult = monsterDeathEmpowerMult(monster);
-  if (deathEmpowerMult > 1) {
-    ctx.damage = Math.max(1, Math.round(ctx.damage * deathEmpowerMult));
-  }
 
   // Tundra capstone: the apex feeds on the node's ambient chill the target is
   // carrying. Like the death-empower above this is a plain outgoing-damage layer,
@@ -777,14 +758,11 @@ export function runMonsterAttack(
       ? 1
       : ambientRampScalingMult(ambientScaling, target.tracksCombat);
   if (ambientFedMult > 1) {
-    ctx.damage = Math.max(1, Math.round(ctx.damage * ambientFedMult));
     ctx.metadata["ambientRampFed"] = true;
   }
 
   // T4 monster empowered attacks (cadence finisher / cooldown spike / opening
-  // strike). Multiply the already-mitigated damage BEFORE onHit/onDamageTaken so
-  // the player's damage-cap, shields, plating and DR all apply to the boosted hit —
-  // the same path a player empowered attack takes. Deterministic (counter + timer).
+  // strike). These multiply gross damage; defender reductions follow below.
   let empoweredMult = monsterEmpoweredMultiplier(monster, def, now);
 
   // Charged (cast-time) attack multiplier — folds into the same empowered spike
@@ -806,7 +784,6 @@ export function runMonsterAttack(
   }
 
   if (empoweredMult > 1) {
-    ctx.damage = Math.max(1, Math.round(ctx.damage * empoweredMult));
     ctx.metadata["empoweredAttack"] = true;
   }
 
@@ -820,6 +797,12 @@ export function runMonsterAttack(
       ambientFedMult *
       (empoweredMult > 1 ? empoweredMult : 1),
   );
+
+  // Flat plating is paid once against the completed attack, never amplified by
+  // a charged/empowered multiplier. Defender layers follow in the pipeline.
+  ctx.damage = Math.max(1, Math.round(Math.max(0,
+    Number(ctx.metadata["incomingGross"]) - platingAfterShred(target.mitigatesDamage.plating, target.tracksCombat),
+  ) * (1-target.mitigatesDamage.damageReduction)));
 
   if (rawDamage !== undefined) ctx.metadata["empoweredAttack"] = true;
   emitCombatEvent("onHit", ctx, world);

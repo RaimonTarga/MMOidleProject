@@ -8,12 +8,19 @@ import { activeRecoveryFraction, recoveryPerSecond } from '../regen/recovery';
 import { isPlayerInCombat } from '../../combat/ai/engagement';
 import { getHardeningBonus, getHardeningMaxDrBonus } from '../mitigation/hardening';
 import { getStationaryDrBonus } from '../mitigation/stationaryDr';
+import { getEngagementDrRemaining } from '../mitigation/engagementDr';
 import { getSustainedFightDrBonus } from '../mitigation/sustainedFightDr';
 import { getReactivePlatingBonus } from '../mitigation/reactivePlating';
 
 const NEUTRAL_OPTS = { category: 'neutral' as const, shape: 'square' as const };
 
 export const DEFENSE_BUFFS = [
+  defineBuff('defense-engagement-dr', ({player})=>{
+    if(!player)return null;
+    const remaining=getEngagementDrRemaining(player);
+    const pct=player.usesSkills.passives['defense.engagement-dr-pct']??0;
+    return remaining>0&&pct>0?{id:'defense-engagement-dr',label:'Dawn',stacks:1,durationPct:remaining/(player.usesSkills.passives['defense.engagement-dr-ms']??4000)*100,color:'#e8b85e',logDetail:`${Math.round(pct*100)}% opening protection`,values:[{label:'Damage reduction',value:`${Math.round(pct*100)}%`,good:true}]}:null;
+  }, NEUTRAL_OPTS),
   // NOTE deliberately no barrier tile. The barrier already has its own conduit
   // under the HP bar and a current/max readout beside health; a third copy in
   // the buff row was the same state said three times.

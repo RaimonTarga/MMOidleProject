@@ -65,20 +65,20 @@ export const swampRecipeEntries = [
   ['swamp-vest-t1', {
     id: 'swamp-vest-t1', name: 'Arcane Wrappings',
     recipeGroup: 'swamp', requiredBiomeLevel: 2, slot: 'armor',
-    cost: { purple: 22 }, stats: { maxHp: 30, plating: 4 },
-    mechanicEffects: { 'defense.dot-resistance': 0.20 },
+    cost: { purple: 22 }, stats: {"maxHp": 32, "damageReduction": 0.04},
+    mechanicEffects: {"defense.dot-resistance": 0.25},
     tier: 1,
     icon: 'items/armor/arcane-wrappings.png',
-    description: 'Marsh-cloth steeped in old wardings against rot and fume.',
+    description: "Resists damage over time and spreads part of incoming direct damage into debt.",
     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, same total (472).
     // +5 catalyst from swamp-vest-t2's own family-tag ("dot-resistance armor →
     // Fortified").
     upgrades: [
-      { stats: { maxHp: 4 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: { purple: 20 }, requiredBiomeLevel: 3 },
-      { stats: { maxHp: 4, plating: 1 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: { purple: 45 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 4 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: { purple: 70 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 4, plating: 1 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: { purple: 115 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 4 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: { purple: 150 }, catalystCost: { fortified: 1 }, requiredBiomeLevel: 4 },
+      {"cost": {"purple": 20}, "requiredBiomeLevel": 3, "stats": {"maxHp": 3}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"purple": 45}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"purple": 70}, "requiredBiomeLevel": 4, "stats": {"maxHp": 4}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"purple": 115}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"purple": 150}, "catalystCost": {"fortified": 1}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3}, "mechanicEffects": {"defense.dot-resistance": 0.02}}
     ],
   }],
 
@@ -155,20 +155,20 @@ export const swampRecipeEntries = [
     id: 'swamp-vest-t2', name: 'Bog Wrappings',
     recipeGroup: 'swamp', requiredBiomeLevel: 8, slot: 'armor',
     evolvesFrom: 'swamp-vest-t1',
-    cost: { purple: 54 }, stats: { maxHp: 54, plating: 7 }, // family-tag: dot-resistance armor → Fortified
+    cost: { purple: 54 }, stats: {"maxHp": 58, "damageReduction": 0.08}, // family-tag: dot-resistance armor → Fortified
     reconstructCost: { purple: 189 }, reconstructCatalystCost: { fortified: 2 },
     // hit-to-DoT is the T2+ specialisation of this lineage: deliberately held out
     // of the T1 baseline, kept here as the thing the tier upgrade actually buys.
-    mechanicEffects: { 'defense.dot-resistance': 0.34, 'defense.hit-to-dot-pct': 0.08 },
+    mechanicEffects: {"defense.dot-resistance": 0.3, "defense.hit-to-dot-pct": 0.15},
     tier: 2,
     icon: 'items/armor/bog-wrappings.png',
-    description: 'Cloth drawn from the deepest mire, where even the water has forgotten the sun.',
+    description: "Resists damage over time and spreads part of incoming direct damage into debt.",
     upgrades: [
-      { stats: { maxHp: 5, plating: 1 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: { purple: 45 }, requiredBiomeLevel: 9 },
-      { stats: { maxHp: 5 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: { purple: 113 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 6, plating: 1 }, mechanicEffects: { 'defense.dot-resistance': 0.01 }, cost: { purple: 180 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 5, plating: 1 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: { purple: 293 }, catalystCost: { fortified: 1 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 6, plating: 1 }, mechanicEffects: { 'defense.dot-resistance': 0.01 }, cost: { purple: 494 }, catalystCost: { fortified: 2 }, requiredBiomeLevel: 10 },
+      {"cost": {"purple": 45}, "requiredBiomeLevel": 9, "stats": {"maxHp": 6}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"purple": 113}, "requiredBiomeLevel": 10, "stats": {"maxHp": 6}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"purple": 180}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"purple": 293}, "catalystCost": {"fortified": 1}, "requiredBiomeLevel": 10, "stats": {"maxHp": 6}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"purple": 494}, "catalystCost": {"fortified": 2}, "requiredBiomeLevel": 10, "stats": {"maxHp": 6}, "mechanicEffects": {"defense.dot-resistance": 0.02}}
     ],
   }],
 
@@ -252,18 +252,18 @@ export const swampRecipeEntries = [
     // identity (it is what Desert's Eternal Duneplate borrows purple *for*). A Swamp
     // item borrowing purple from Swamp is not a hybrid, so there is nothing to splash.
     evolvesFrom: 'swamp-vest-t2',
-    cost: { purple: 140 }, stats: { maxHp: 97, plating: 13 }, // family-tag: dot-resistance armor → Fortified
+    cost: { purple: 140 }, stats: {"maxHp": 158, "damageReduction": 0.14}, // family-tag: dot-resistance armor → Fortified
     reconstructCost: { purple: 490 }, reconstructCatalystCost: { fortified: 3 },
-    mechanicEffects: { 'defense.dot-resistance': 0.46, 'defense.hit-to-dot-pct': 0.10, 'defense.debuff-resistance': 0.20 },
+    mechanicEffects: {"defense.dot-resistance": 0.35, "defense.hit-to-dot-pct": 0.2, "defense.debuff-resistance": 0.2},
     tier: 3,
     icon: 'items/armor/plaguebound-shroud.png',
-    description: 'It turns the blows you take into a slow ache it then refuses to feel.',
+    description: "Resists damage over time and spreads part of incoming direct damage into debt.",
     upgrades: [
-      { stats: { maxHp: 10, plating: 1 }, mechanicEffects: { 'defense.dot-resistance': 0.01 }, cost: { purple: 89 },  requiredBiomeLevel: 15 },
-      { stats: { maxHp: 10, plating: 1 }, mechanicEffects: { 'defense.dot-resistance': 0.01 }, cost: { purple: 222 }, requiredBiomeLevel: 16 },
-      { stats: { maxHp: 10, plating: 1 }, mechanicEffects: { 'defense.dot-resistance': 0.01 }, cost: { purple: 355 }, requiredBiomeLevel: 16 },
-      { stats: { maxHp: 9, plating: 2 }, mechanicEffects: { 'defense.dot-resistance': 0.01 }, cost: { purple: 577 }, catalystCost: { fortified: 2 }, requiredBiomeLevel: 16 },
-      { stats: { maxHp: 10, plating: 1 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: { purple: 975 }, catalystCost: { fortified: 3 }, requiredBiomeLevel: 16 },
+      {"cost": {"purple": 89}, "requiredBiomeLevel": 15, "stats": {"maxHp": 17}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"purple": 222}, "requiredBiomeLevel": 16, "stats": {"maxHp": 15}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"purple": 355}, "requiredBiomeLevel": 16, "stats": {"maxHp": 17}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"purple": 577}, "catalystCost": {"fortified": 2}, "requiredBiomeLevel": 16, "stats": {"maxHp": 15}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"purple": 975}, "catalystCost": {"fortified": 3}, "requiredBiomeLevel": 16, "stats": {"maxHp": 17}, "mechanicEffects": {"defense.dot-resistance": 0.02}}
     ],
   }],
 

@@ -29,18 +29,20 @@ export const jungleRecipeEntries = [
   ['jungle-vest-t2', {
     id: 'jungle-vest-t2', name: 'Verdant Weave',
     recipeGroup: 'jungle', requiredBiomeLevel: 2, slot: 'armor',
-    cost: { green: 48, yellow: 12 }, stats: { maxHp: 44, plating: 6, evasion: 0.15 }, // family-tag: evasion armor (anti-fast-hit) → Alacrity
+    cost: { green: 48, yellow: 12 }, stats: {"maxHp": 52, "evasion": 0.28, "damageReduction": 0.04}, // family-tag: evasion armor (anti-fast-hit) → Alacrity
     tier: 2,
     icon: 'items/armor/verdant-weave.png',
-    description: 'A living mesh of leaf and creeper, too quick and too giving to be struck square.',
+    description: "Evades soften direct hits and prevent eligible on-hit ailments. Jungle weave strengthens each evade.",
     upgrades: [
-      { stats: { maxHp: 12, plating: 2, evasion: 0.04 }, cost: { green: 31, yellow: 8 }, requiredBiomeLevel: 3 },
-      { stats: { maxHp: 12, plating: 2, evasion: 0.04 }, cost: { green: 78, yellow: 20 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 12, plating: 2, evasion: 0.04 }, cost: { green: 125, yellow: 31 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 12, plating: 2, evasion: 0.04 }, cost: { green: 203, yellow: 51 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 12, plating: 2, evasion: 0.04 }, cost: { green: 342, yellow: 86 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 4 },
+      {"cost": {"green": 31, "yellow": 8}, "requiredBiomeLevel": 3, "stats": {"maxHp": 5, "evasion": 0.016}},
+      {"cost": {"green": 78, "yellow": 20}, "requiredBiomeLevel": 4, "stats": {"maxHp": 5, "evasion": 0.016}},
+      {"cost": {"green": 125, "yellow": 31}, "requiredBiomeLevel": 4, "stats": {"maxHp": 6, "evasion": 0.016}},
+      {"cost": {"green": 203, "yellow": 51}, "catalystCost": {"alacrity": 1}, "requiredBiomeLevel": 4, "stats": {"maxHp": 5, "evasion": 0.016}},
+      {"cost": {"green": 342, "yellow": 86}, "catalystCost": {"alacrity": 2}, "requiredBiomeLevel": 4, "stats": {"maxHp": 5, "evasion": 0.016}}
     ],
-  }],
+
+mechanicEffects: {"defense.evade-mitigation": 0.2},
+}],
 
   // Charm: recovery flat; upgrades ramp ramp-regen MAX 0.21 -> 0.30 (start/ramptime flat).
   ['jungle-charm-t2', {
@@ -108,19 +110,21 @@ export const jungleRecipeEntries = [
     id: 'jungle-vest-t3', name: 'Wildgrowth Weave',
     recipeGroup: 'jungle', requiredBiomeLevel: 8, slot: 'armor',
     evolvesFrom: 'jungle-vest-t2',
-    cost: { green: 90, yellow: 30 }, stats: { maxHp: 80, plating: 13, evasion: 0.40 }, // family-tag: evasion armor → Alacrity
+    cost: { green: 90, yellow: 30 }, stats: {"maxHp": 143, "evasion": 0.32, "damageReduction": 0.07}, // family-tag: evasion armor → Alacrity
     reconstructCost: { green: 315, yellow: 105 }, reconstructCatalystCost: { alacrity: 3 },
     tier: 3,
     icon: 'items/armor/wildgrowth-weave.png',
-    description: 'A living mesh of leaf and vine, too quick and too giving to ever quite be struck square.',
+    description: "Evades soften direct hits and prevent eligible on-hit ailments. Jungle weave strengthens each evade.",
     upgrades: [
-      { stats: { maxHp: 18, plating: 3, evasion: 0.05 }, cost: { green: 59, yellow: 19 },  requiredBiomeLevel: 9 },
-      { stats: { maxHp: 18, plating: 3, evasion: 0.05 }, cost: { green: 146, yellow: 49 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 18, plating: 3, evasion: 0.05 }, cost: { green: 234, yellow: 78 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 18, plating: 3, evasion: 0.05 }, cost: { green: 380, yellow: 127 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 18, plating: 3, evasion: 0.05 }, cost: { green: 644, yellow: 214 }, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 10 },
+      {"cost": {"green": 59, "yellow": 19}, "requiredBiomeLevel": 9, "stats": {"maxHp": 15, "evasion": 0.016}},
+      {"cost": {"green": 146, "yellow": 49}, "requiredBiomeLevel": 10, "stats": {"maxHp": 14, "evasion": 0.016}},
+      {"cost": {"green": 234, "yellow": 78}, "requiredBiomeLevel": 10, "stats": {"maxHp": 15, "evasion": 0.016}},
+      {"cost": {"green": 380, "yellow": 127}, "catalystCost": {"alacrity": 2}, "requiredBiomeLevel": 10, "stats": {"maxHp": 14, "evasion": 0.016}},
+      {"cost": {"green": 644, "yellow": 214}, "catalystCost": {"alacrity": 3}, "requiredBiomeLevel": 10, "stats": {"maxHp": 15, "evasion": 0.016}}
     ],
-  }],
+
+mechanicEffects: {"defense.evade-mitigation": 0.25},
+}],
 
   // Charm: recovery flat; upgrades ramp ramp-regen MAX 0.23 -> 0.35.
   ['jungle-charm-t3', {
@@ -194,20 +198,20 @@ export const jungleRecipeEntries = [
     id: 'jungle-vest-t4', name: 'Primal Canopy',
     recipeGroup: 'jungle', requiredBiomeLevel: 14, slot: 'armor',
     evolvesFrom: 'jungle-vest-t3',
-    cost: { green: 220, yellow: 55 }, stats: { maxHp: 145, plating: 24, evasion: 0.55 }, // family-tag: evasion armor → Alacrity
+    cost: { green: 220, yellow: 55 }, stats: {"maxHp": 274, "evasion": 0.36, "damageReduction": 0.1}, // family-tag: evasion armor → Alacrity
     reconstructCost: { green: 770, yellow: 193 }, reconstructCatalystCost: { alacrity: 4 },
     // Bonus evade-mitigation: increases the fraction of damage avoided on an evade
     // (the reload-class mechanic). Stacks on GAME_CONFIG.EVADE_MITIGATION_BASE.
-    mechanicEffects: { 'defense.evade-mitigation': 0.2 },
+    mechanicEffects: {"defense.evade-mitigation": 0.3},
     tier: 4,
     icon: 'items/armor/primal-canopy.png',
-    description: 'The faster you move through the green, the less of you there is to strike.',
+    description: "Evades soften direct hits and prevent eligible on-hit ailments. Jungle weave strengthens each evade.",
     upgrades: [
-      { stats: { maxHp: 35, plating: 6, evasion: 0.03 }, cost: { green: 124, yellow: 31 }, requiredBiomeLevel: 15 },
-      { stats: { maxHp: 35, plating: 6, evasion: 0.03 }, cost: { green: 310, yellow: 77 }, requiredBiomeLevel: 16 },
-      { stats: { maxHp: 35, plating: 6, evasion: 0.03 }, cost: { green: 494, yellow: 124 }, requiredBiomeLevel: 16 },
-      { stats: { maxHp: 35, plating: 6, evasion: 0.03 }, cost: { green: 804, yellow: 201 }, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 16 },
-      { stats: { maxHp: 35, plating: 6, evasion: 0.03 }, cost: { green: 1360, yellow: 340 }, catalystCost: { alacrity: 4 }, requiredBiomeLevel: 16 },
+      {"cost": {"green": 124, "yellow": 31}, "requiredBiomeLevel": 15, "stats": {"maxHp": 27, "evasion": 0.016}},
+      {"cost": {"green": 310, "yellow": 77}, "requiredBiomeLevel": 16, "stats": {"maxHp": 27, "evasion": 0.016}},
+      {"cost": {"green": 494, "yellow": 124}, "requiredBiomeLevel": 16, "stats": {"maxHp": 27, "evasion": 0.016}},
+      {"cost": {"green": 804, "yellow": 201}, "catalystCost": {"alacrity": 3}, "requiredBiomeLevel": 16, "stats": {"maxHp": 27, "evasion": 0.016}},
+      {"cost": {"green": 1360, "yellow": 340}, "catalystCost": {"alacrity": 4}, "requiredBiomeLevel": 16, "stats": {"maxHp": 29, "evasion": 0.016}}
     ],
   }],
 

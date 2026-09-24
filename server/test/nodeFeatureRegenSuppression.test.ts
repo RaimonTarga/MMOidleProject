@@ -28,6 +28,7 @@ import {
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { runRecovery } from "../src/systems/defense/regen/recovery";
+import { applyWard } from '../src/systems/defense/barrier/wards';
 import {
   isPlayerInHazardousNodeFeature,
   updateNodeFeatures,
@@ -162,4 +163,14 @@ initCombatSystems();
   );
 }
 
+// Environmental damage spends the ward while the hazard still suppresses regen.
+{
+  const pool=centreOf(SWAMP_NODE,'rot_pool');const world=new World();
+  const player=world.attachPlayerEntity(makePlayerSlices('ward-hazard',SWAMP_NODE,pool.x,pool.y),'ward-hazard');
+  const hp=player.hasHealth.hp;applyWard(world,player,1000,10000);
+  for(let i=0;i<20;i++)updateNodeFeatures(world,100);
+  assert(player.hasHealth.hp===hp,'environmental damage should spend wards before HP');
+  assert((player.holdsWards?.wards[0]?.amount??0)<1000,'the ward must actually pay the hazard damage');
+  assert(isPlayerInHazardousNodeFeature(world,player),'shielding a hazard must not enable OOC Recovery');
+}
 console.log("nodeFeatureRegenSuppression: ok");

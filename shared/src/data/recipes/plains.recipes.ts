@@ -70,20 +70,22 @@ export const plainsRecipeEntries = [
   ['plains-vest-t1', {
     id: 'plains-vest-t1', name: "Survivor's Robe",
     recipeGroup: 'plains', requiredBiomeLevel: 2, slot: 'armor',
-    cost: { yellow: 20 }, stats: { maxHp: 24, plating: 7 }, tier: 1,
+    cost: { yellow: 20 }, stats: {"maxHp": 27, "plating": 2, "damageReduction": 0.04}, tier: 1,
     icon: 'items/armor/survivors-robe.png',
-    description: 'Field plate patched and repatched by those who lived to patch it.',
+    description: "Flat plating specializes in frequent small direct hits.",
     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, same total (470).
     // +5 catalyst inherited from plains-vest-t2's own family-tag ("plating
     // answers frequent light hits → Alacrity").
     upgrades: [
-      { stats: { maxHp: 3, plating: 1 }, cost: { yellow: 20 }, requiredBiomeLevel: 3 },
-      { stats: { maxHp: 3, plating: 1 }, cost: { yellow: 45 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 3, plating: 1 }, cost: { yellow: 70 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 3, plating: 1 }, cost: { yellow: 115 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 3, plating: 1 }, cost: { yellow: 150 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 4 },
+      {"cost": {"yellow": 20}, "requiredBiomeLevel": 3, "stats": {"maxHp": 3, "plating": 0}},
+      {"cost": {"yellow": 45}, "requiredBiomeLevel": 4, "stats": {"maxHp": 2, "plating": 0}},
+      {"cost": {"yellow": 70}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "plating": 1}},
+      {"cost": {"yellow": 115}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "plating": 0}},
+      {"cost": {"yellow": 150}, "catalystCost": {"alacrity": 1}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "plating": 0}}
     ],
-  }],
+
+mechanicEffects: {},
+}],
 
   // CHARM — kill-chain Recovery. A kill switches on 20→30% of the player's
   // Recovery RATE for 4s; further kills refresh that window rather than stacking
@@ -162,18 +164,20 @@ export const plainsRecipeEntries = [
     id: 'plains-vest-t2', name: 'Enduring Robe',
     recipeGroup: 'plains', requiredBiomeLevel: 8, slot: 'armor',
     evolvesFrom: 'plains-vest-t1',
-    cost: { yellow: 60 }, stats: { maxHp: 43, plating: 13 }, tier: 2, // family-tag: plating answers frequent light hits → Alacrity
+    cost: { yellow: 60 }, stats: {"maxHp": 50, "plating": 5, "damageReduction": 0.08}, tier: 2, // family-tag: plating answers frequent light hits → Alacrity
     reconstructCost: { yellow: 210 }, reconstructCatalystCost: { alacrity: 2 },
     icon: 'items/armor/enduring-robe.png',
-    description: 'Plate that has outlasted the wars it was made for, and the smith who made it.',
+    description: "Flat plating specializes in frequent small direct hits.",
     upgrades: [
-      { stats: { maxHp: 4, plating: 1 }, cost: { yellow: 36 }, requiredBiomeLevel: 9 },
-      { stats: { maxHp: 4, plating: 1 }, cost: { yellow: 90 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 5, plating: 1 }, cost: { yellow: 144 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 4, plating: 2 }, cost: { yellow: 234 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 5, plating: 1 }, cost: { yellow: 396 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 10 },
+      {"cost": {"yellow": 36}, "requiredBiomeLevel": 9, "stats": {"maxHp": 5, "plating": 1}},
+      {"cost": {"yellow": 90}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5, "plating": 0}},
+      {"cost": {"yellow": 144}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5, "plating": 1}},
+      {"cost": {"yellow": 234}, "catalystCost": {"alacrity": 1}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5, "plating": 0}},
+      {"cost": {"yellow": 396}, "catalystCost": {"alacrity": 2}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5, "plating": 1}}
     ],
-  }],
+
+mechanicEffects: {},
+}],
 
   // CHARM — kill-chain Recovery, deepened. Same shape as the Plains Stone.
   // T2 economy pass (2026-08-29): now an EVOLUTION of plains-charm-t1 at +5.

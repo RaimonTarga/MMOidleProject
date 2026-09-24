@@ -15,12 +15,8 @@ import type { Recipe } from './types';
 //
 // TWO REWORK CHANGES WORTH KNOWING:
 //
-// 1. The T1 damage-cap (`defense.max-hit-*`) was REMOVED, not deleted globally.
-//    T1 does not yet contain enough genuinely enormous hits for a max-hit clamp
-//    to be a natural foundational defence (philosophy §8.4). The concept is
-//    reserved for the later tiers where extreme spike damage is common, so the
-//    plate picks it up at T3 and keeps it at T4 — the lineage LEARNS to cap the
-//    biggest hits once the game actually throws them.
+// 1. The defense candidate removes soft-cap grants at all tiers. Health and
+//    Guard potency provide the lineage's heavy-hit defense instead.
 //    Guard cooldown reduction is deliberately still absent everywhere: potency
 //    first, CDR held back as the easy second lever if the armor reads too narrow.
 //
@@ -77,20 +73,20 @@ export const mountainRecipeEntries = [
   ['mountain-vest-t1', {
     id: 'mountain-vest-t1', name: 'Fallen Knight Plate',
     recipeGroup: 'mountain', requiredBiomeLevel: 2, slot: 'armor',
-    cost: { blue: 22 }, stats: { maxHp: 32, plating: 5 },
-    mechanicEffects: { 'guard.potency-pct': 0.15 },
+    cost: { blue: 22 }, stats: {"maxHp": 36, "plating": 1, "damageReduction": 0.04},
+    mechanicEffects: {"guard.potency-pct": 0.15},
     tier: 1,
     icon: 'items/armor/fallen-knight-plate.png',
-    description: 'Stripped from a knight who fell at the high pass and was never named.',
+    description: "A sturdy health reserve that strengthens timed Guards.",
     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, total ~497 (was 496).
     // +5 catalyst from mountain-vest-t2's own tag ("Guard-amplifying plate →
     // Heavy").
     upgrades: [
-      { stats: { maxHp: 4 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 25 }, requiredBiomeLevel: 3 },
-      { stats: { maxHp: 4, plating: 1 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 45 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 4 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 75 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 4, plating: 1 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 125 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 4 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 155 }, catalystCost: { heavy: 1 }, requiredBiomeLevel: 4 },
+      {"cost": {"blue": 25}, "requiredBiomeLevel": 3, "stats": {"maxHp": 4, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
+      {"cost": {"blue": 45}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
+      {"cost": {"blue": 75}, "requiredBiomeLevel": 4, "stats": {"maxHp": 4, "plating": 1}, "mechanicEffects": {"guard.potency-pct": 0.02}},
+      {"cost": {"blue": 125}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
+      {"cost": {"blue": 155}, "catalystCost": {"heavy": 1}, "requiredBiomeLevel": 4, "stats": {"maxHp": 4, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}}
     ],
   }],
 
@@ -166,18 +162,18 @@ export const mountainRecipeEntries = [
     id: 'mountain-vest-t2', name: 'Iron Crusader Plate',
     recipeGroup: 'mountain', requiredBiomeLevel: 8, slot: 'armor',
     evolvesFrom: 'mountain-vest-t1',
-    cost: { blue: 52 }, stats: { maxHp: 58, plating: 9 }, // family-tag: Guard-amplifying plate → Heavy
+    cost: { blue: 52 }, stats: {"maxHp": 66, "plating": 1, "damageReduction": 0.08}, // family-tag: Guard-amplifying plate → Heavy
     reconstructCost: { blue: 182 }, reconstructCatalystCost: { heavy: 2 },
-    mechanicEffects: { 'guard.potency-pct': 0.28 },
+    mechanicEffects: {"guard.potency-pct": 0.2},
     tier: 2,
     icon: 'items/armor/iron-crusader-plate.png',
-    description: 'Masterwork plate of the old crusades, dented in a hundred places, breached in none.',
+    description: "A sturdy health reserve that strengthens timed Guards.",
     upgrades: [
-      { stats: { maxHp: 6, plating: 1 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 42 }, requiredBiomeLevel: 9 },
-      { stats: { maxHp: 5, plating: 1 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 106 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 6, plating: 1 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 170 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 5, plating: 1 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 276 }, catalystCost: { heavy: 1 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 6, plating: 1 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 468 }, catalystCost: { heavy: 2 }, requiredBiomeLevel: 10 },
+      {"cost": {"blue": 42}, "requiredBiomeLevel": 9, "stats": {"maxHp": 7, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
+      {"cost": {"blue": 106}, "requiredBiomeLevel": 10, "stats": {"maxHp": 6, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
+      {"cost": {"blue": 170}, "requiredBiomeLevel": 10, "stats": {"maxHp": 7, "plating": 1}, "mechanicEffects": {"guard.potency-pct": 0.02}},
+      {"cost": {"blue": 276}, "catalystCost": {"heavy": 1}, "requiredBiomeLevel": 10, "stats": {"maxHp": 6, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
+      {"cost": {"blue": 468}, "catalystCost": {"heavy": 2}, "requiredBiomeLevel": 10, "stats": {"maxHp": 7, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}}
     ],
   }],
 
@@ -251,21 +247,18 @@ export const mountainRecipeEntries = [
     id: 'mountain-vest-t3', name: 'Summit Aegis',
     recipeGroup: 'mountain', requiredBiomeLevel: 14, slot: 'armor',
     evolvesFrom: 'mountain-vest-t2',
-    cost: { blue: 116, red: 29 }, stats: { maxHp: 104, plating: 16 }, // family-tag: Guard-amplifying plate → Heavy
+    cost: { blue: 116, red: 29 }, stats: {"maxHp": 180, "plating": 2, "damageReduction": 0.14}, // family-tag: Guard-amplifying plate → Heavy
     reconstructCost: { blue: 406, red: 102 }, reconstructCatalystCost: { heavy: 3 },
-    mechanicEffects: {
-      'guard.potency-pct': 0.41,
-      'defense.max-hit-pct': 0.25, 'defense.max-hit-mult': 0.5,
-    },
+    mechanicEffects: {"guard.potency-pct": 0.25},
     tier: 3,
     icon: 'items/armor/summit-aegis.png',
-    description: 'Forged for those who plan to be hit by something the size of a house and walk on.',
+    description: "A sturdy health reserve that strengthens timed Guards.",
     upgrades: [
-      { stats: { maxHp: 11, plating: 2 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 66, red: 17 },  requiredBiomeLevel: 15 },
-      { stats: { maxHp: 10, plating: 1 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 166, red: 42 }, requiredBiomeLevel: 16 },
-      { stats: { maxHp: 11, plating: 2 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 266, red: 67 }, requiredBiomeLevel: 16 },
-      { stats: { maxHp: 10, plating: 1 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 434, red: 108 }, catalystCost: { heavy: 2 }, requiredBiomeLevel: 16 },
-      { stats: { maxHp: 10, plating: 2 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 734, red: 183 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 16 },
+      {"cost": {"blue": 66, "red": 17}, "requiredBiomeLevel": 15, "stats": {"maxHp": 18, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
+      {"cost": {"blue": 166, "red": 42}, "requiredBiomeLevel": 16, "stats": {"maxHp": 18, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
+      {"cost": {"blue": 266, "red": 67}, "requiredBiomeLevel": 16, "stats": {"maxHp": 18, "plating": 1}, "mechanicEffects": {"guard.potency-pct": 0.02}},
+      {"cost": {"blue": 434, "red": 108}, "catalystCost": {"heavy": 2}, "requiredBiomeLevel": 16, "stats": {"maxHp": 18, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
+      {"cost": {"blue": 734, "red": 183}, "catalystCost": {"heavy": 3}, "requiredBiomeLevel": 16, "stats": {"maxHp": 18, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}}
     ],
   }],
 
@@ -359,24 +352,19 @@ export const mountainRecipeEntries = [
     id: 'mountain-vest-t4', name: "Titan's Keep",
     recipeGroup: 'mountain', requiredBiomeLevel: 20, slot: 'armor',
     evolvesFrom: 'mountain-vest-t3',
-    cost: { blue: 256, red: 64 }, stats: { maxHp: 187, plating: 29 }, // family-tag: capstone Guard plate → Heavy
+    cost: { blue: 256, red: 64 }, stats: {"maxHp": 346, "plating": 3, "damageReduction": 0.18}, // family-tag: capstone Guard plate → Heavy
     reconstructCost: { blue: 896, red: 224 }, reconstructCatalystCost: { heavy: 4 },
-    // † max-hit-refills-barrier: when the damage cap triggers, immediately refill
-    //   the barrier to full (shares the barrier-break rider cooldown).
-    mechanicEffects: {
-      'guard.potency-pct': 0.54,
-      'defense.max-hit-pct': 0.25, 'defense.max-hit-mult': 0.5,
-      'defense.max-hit-refills-barrier': 1,
-    },
+    // Timed Guard potency replaces the former cap-triggered barrier refill.
+    mechanicEffects: {"guard.potency-pct": 0.3},
     tier: 4,
     icon: 'items/armor/titans-keep.png',
-    description: 'The blow that should have ended you instead rings the walls — and the walls answer by standing back up.',
+    description: "A sturdy health reserve that strengthens timed Guards.",
     upgrades: [
-      { stats: { maxHp: 19, plating: 3 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 132, red: 33 },  requiredBiomeLevel: 21 },
-      { stats: { maxHp: 18, plating: 3 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 331, red: 83 }, requiredBiomeLevel: 22 },
-      { stats: { maxHp: 19, plating: 3 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 530, red: 132 }, requiredBiomeLevel: 22 },
-      { stats: { maxHp: 18, plating: 3 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 860, red: 215 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 22 },
-      { stats: { maxHp: 19, plating: 3 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 1456, red: 364 }, catalystCost: { heavy: 4 }, requiredBiomeLevel: 22 },
+      {"cost": {"blue": 132, "red": 33}, "requiredBiomeLevel": 21, "stats": {"maxHp": 35, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
+      {"cost": {"blue": 331, "red": 83}, "requiredBiomeLevel": 22, "stats": {"maxHp": 34, "plating": 1}, "mechanicEffects": {"guard.potency-pct": 0.02}},
+      {"cost": {"blue": 530, "red": 132}, "requiredBiomeLevel": 22, "stats": {"maxHp": 35, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
+      {"cost": {"blue": 860, "red": 215}, "catalystCost": {"heavy": 3}, "requiredBiomeLevel": 22, "stats": {"maxHp": 34, "plating": 1}, "mechanicEffects": {"guard.potency-pct": 0.02}},
+      {"cost": {"blue": 1456, "red": 364}, "catalystCost": {"heavy": 4}, "requiredBiomeLevel": 22, "stats": {"maxHp": 35, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}}
     ],
   }],
 
@@ -385,24 +373,20 @@ export const mountainRecipeEntries = [
     id: 'mountain-vest-t4-stormwall', name: 'Stormwall Plate',
     recipeGroup: 'mountain', requiredBiomeLevel: 20, slot: 'armor',
     evolvesFrom: 'mountain-vest-t3',
-    cost: { blue: 256, red: 64 }, stats: { maxHp: 187, plating: 22 }, // family-tag: capstone anti-spike plate → Heavy
+    cost: { blue: 256, red: 64 }, stats: {"maxHp": 346, "plating": 3, "damageReduction": 0.18}, // family-tag: capstone anti-spike plate → Heavy
     reconstructCost: { blue: 896, red: 224 }, reconstructCatalystCost: { heavy: 4 },
     // † barrier-break-hp-recovery-pct: when the barrier is emptied, recover 30% of
     //   its max value as HP (armor-side variant; rider cooldown applies).
-    mechanicEffects: {
-      'guard.potency-pct': 0.54,
-      'defense.max-hit-pct': 0.25, 'defense.max-hit-mult': 0.5,
-      'defense.barrier-break-hp-recovery-pct': 0.30,
-    },
+    mechanicEffects: {"guard.potency-pct": 0.2, "defense.barrier-pct": 0.1, "defense.barrier-break-hp-recovery-pct": 0.2},
     tier: 4,
     icon: 'items/armor/stormwall-plate.png',
-    description: 'Built to take the storm head-on and turn what it absorbs back into a second wind.',
+    description: "Strengthens timed Guards and grants a small barrier that heals you when broken.",
     upgrades: [
-      { stats: { maxHp: 19, plating: 2 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 132, red: 33 },  requiredBiomeLevel: 21 },
-      { stats: { maxHp: 18, plating: 2 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 331, red: 83 }, requiredBiomeLevel: 22 },
-      { stats: { maxHp: 19, plating: 2 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 530, red: 132 }, requiredBiomeLevel: 22 },
-      { stats: { maxHp: 18, plating: 2 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 860, red: 215 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 22 },
-      { stats: { maxHp: 19, plating: 3 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 1456, red: 364 }, catalystCost: { heavy: 4 }, requiredBiomeLevel: 22 },
+      {"cost": {"blue": 132, "red": 33}, "requiredBiomeLevel": 21, "stats": {"maxHp": 35, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
+      {"cost": {"blue": 331, "red": 83}, "requiredBiomeLevel": 22, "stats": {"maxHp": 34, "plating": 1}, "mechanicEffects": {"guard.potency-pct": 0.02}},
+      {"cost": {"blue": 530, "red": 132}, "requiredBiomeLevel": 22, "stats": {"maxHp": 35, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}},
+      {"cost": {"blue": 860, "red": 215}, "catalystCost": {"heavy": 3}, "requiredBiomeLevel": 22, "stats": {"maxHp": 34, "plating": 1}, "mechanicEffects": {"guard.potency-pct": 0.02}},
+      {"cost": {"blue": 1456, "red": 364}, "catalystCost": {"heavy": 4}, "requiredBiomeLevel": 22, "stats": {"maxHp": 35, "plating": 0}, "mechanicEffects": {"guard.potency-pct": 0.02}}
     ],
   }],
 
@@ -486,10 +470,7 @@ export const mountainRecipeEntries = [
     // HP, plating and the separate DR layer COMPOUND, so this must be judged as a
     // whole survivability package rather than three numbers. It clears slowly —
     // that is the cost, and it is paid in attack speed and movement, not in eHP.
-    mechanicEffects: {
-      'core.maxhp-mult': 0.30, 'core.plating-mult': 0.40, 'core.damage-taken-pct': -0.14,
-      'core.attack-speed-mult': -0.25, 'core.speed-mult': -0.10,
-    },
+    mechanicEffects: {"core.maxhp-mult": 0.2, "core.plating-mult": 0.1, "core.damage-taken-pct": -0.1, "core.attack-speed-mult": -0.25, "core.speed-mult": -0.1},
     icon: 'items/cores/juggernaut.png',
     description: 'The mountain does not dodge. It simply outlasts whatever is thrown at it, and so will you.',
   }],

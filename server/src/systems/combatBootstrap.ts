@@ -5,9 +5,6 @@ import { initDefenseSystems } from "./defense";
 import { initDebuffMechanics } from "./classes/shared/debuffs";
 import { initInvulnerabilityGuard } from "./combat/invulnerability";
 import { initDeadPlayerGuard } from "./world/playerIncapacitation";
-import {
-  registerSummonerDamageSponge,
-} from "./classes/archetypes/summoner";
 import { initMobilityBoots } from "./world/mobility/mobilityBoots";
 import { initRuneTauntSystem } from "./combat/ai/taunt";
 import { initDungeonCombatHooks } from "./world/dungeons/dungeon";
@@ -40,8 +37,8 @@ let initialized = false;
  *  - the player incoming amplifier must register BEFORE defense (so the cap and
  *    shields act on the amplified hit)
  *  - defense systems must register AFTER weapon effects (run later in the chain)
- *  - the summoner damage sponge must register AFTER defense (shields/absorb get
- *    first crack at incoming damage; whatever remains is siphoned to a slime)
+ *  - Guard registers before defense; the summoner sponge registers inside
+ *    defense, after shields and before debt and recuperation.
  */
 export function initCombatSystems(): void {
   if (initialized) return;
@@ -61,6 +58,7 @@ export function initCombatSystems(): void {
   // multiplier lands ahead of evasion / damage-cap / shields.
   initPlayerAmplifiers();
   initStanceCombatEffects();
+  initAbilitySystems(); // Guard mitigation protects shields and deferred damage.
   // Evasion + shield absorption onDamageTaken listeners (after weapon effects).
   initDefenseSystems();
   // Vulnerability/debuff multipliers applied on damage taken.
@@ -76,7 +74,6 @@ export function initCombatSystems(): void {
   // Definition-authored monster death triggers (and pack-alpha cleanup).
   initMonsterDeathEffects();
   // Abilities (Step 7): Technique rider applied on hit (consumes hasArmedAbility).
-  initAbilitySystems();
   // Attack-equivalents: landed basic attacks hasten Tempo-bearing Techniques
   // (Sweep II+). Registered on afterHit, so it runs after the rider above.
   initAttackTempoSystem();
@@ -84,8 +81,6 @@ export function initCombatSystems(): void {
   initRiteListeners();
   // Cores: Duelist same-target Focus (onHit) + Bruiser mobility refund (onKill).
   initCoreCombatEffects();
-  // Summoner mountain-path cover + damage sponge (after defense systems).
-  registerSummonerDamageSponge();
   // Mobility boots: on-kill / on-acquire / on-hit speed & tenacity hooks.
   // Order-independent — these listeners only apply status effects, never touch ctx.damage.
   initMobilityBoots();

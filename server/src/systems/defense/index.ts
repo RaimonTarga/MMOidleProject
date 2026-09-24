@@ -22,28 +22,34 @@ import {
 import { COMBAT_ELAPSED_KEY } from "./core/pools";
 import { isPlayerInCombat } from "../combat/ai/engagement";
 import { isPlayerInHazardousNodeFeature } from "../world/nodeFeatures";
+import { registerEngagementDr, updateEngagementDr } from './mitigation/engagementDr';
+import { registerSummonerDamageSponge } from '../classes/archetypes/summoner';
 
 /**
  * Register all defense-layer combat pipeline listeners.
  * Call once at server startup after weapon/archetype effects so defense
  * listeners run last in onDamageTaken.
  *
- * Listener order within onDamageTaken (player as defender):
+ * Guard registers before this module. Listener order here (player as defender):
+ *   0. Dawnward        — opening-window mitigation
  *   1. Evasion         — reduces ctx.damage by the evade-mitigation fraction
  *   2. Damage cap      — clamps to defense.max-hit-pct of maxHp
  *   3. Wards           — temporary absorb pools spend first (use-it-or-lose-it)
  *   4. Barrier         — the permanent pool absorbs what the wards left
  *   5. Break heal      — reads the emptied-pool metadata both absorbs set
- *   6. Hit-to-DoT      — redirects defense.hit-to-dot-pct to debt pool
- *   7. Cheat death     — caps lethal damage to hp-1 (once per combat)
- *   8. Damage absorb   — converts defense.absorb-pct of hit into HoT pool
+ *   6. Summoner sponge — redirects surviving damage to a slime
+ *   7. Hit-to-DoT      — redirects defense.hit-to-dot-pct to debt pool
+ *   8. Cheat death     — legacy compatibility hook, no current armor grant
+ *   9. Damage absorb   — credits surviving HP damage into HoT pool
  */
 export function initDefenseSystems(): void {
+  registerEngagementDr();
   registerEvasion();
   registerDamageCap();
   registerWardAbsorb();      // before the barrier — wards are use-it-or-lose-it
   registerBarrierAbsorb();
   registerBarrierBreakHeal(); // after both absorbs — reads their emptied-pool metadata
+  registerSummonerDamageSponge();
   registerHitToDot();
   registerCheatDeath();
   registerDamageAbsorb();
@@ -65,6 +71,7 @@ export function updateDefensiveSystems(
   now: number,
 ): void {
   for (const player of world.livePlayers) {
+    updateEngagementDr(world, player, dt);
     const inCombat = isPlayerInCombat(player, now);
 
     // Deterministic dodge accumulator resets while out of combat (single balance

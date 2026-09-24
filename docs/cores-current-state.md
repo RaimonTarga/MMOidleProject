@@ -1,5 +1,7 @@
 # Cores — Current State
 
+Branch note (2026-09-25): the values below include the experimental defense candidate, not a production release. See [patch notes and status](../reports/defense-redesign-01/PATCH-NOTES.md).
+
 Living truth for the **Core** equipment slot. Design source is
 `design_docs/CORE_DESIGN_PHILOSOPHY.md` (the locked foundation) and
 `docs/core-rework-design-balance-handoff.md` (the 2026-08-29 capstone balance pass).
@@ -83,7 +85,7 @@ available before a range exists.
 |---|---|---|---|---|
 | Tempered | cave (12) | 500 red | 4 dominion | The benchmark: even attack + HP, no drawback |
 | Survivalist | jungle (6) | 500 green | 4 fortified | Recovery + HP |
-| Force | desert (6) | 500 yellow | 4 dominion | Damage bought with HP — the first real tradeoff |
+| Force | desert (6) | 500 yellow | 4 dominion | Damage amplification; forgoes another core's protection |
 
 **T3 melee** — close-range only; late-band premium rewards.
 
@@ -96,8 +98,8 @@ available before a range exists.
 
 | Core | Biome (level) | Essence | Catalyst | Shape |
 |---|---|---:|---:|---|
-| Sniper | desert (12) | 1,300 yellow | 6 dominion | Biggest raw damage, paid in HP and plating |
-| Scout | tundra (6) | 1,200 blue | 5 heavy | Damage + movement + mobility cooldown; less HP |
+| Sniper | desert (12) | 1,300 yellow | 6 dominion | Ranged damage amplification without HP/plating penalties |
+| Scout | tundra (6) | 1,200 blue | 5 heavy | Modest damage + movement + mobility cooldown |
 
 **T3 unrestricted specialists** — late-band premium rewards.
 
@@ -125,13 +127,13 @@ the family tag agree (Jungle also drops green).
 |---|---|
 | Tempered | +12% final damage, +12% max HP |
 | Survivalist | +30% Recovery, +15% max HP |
-| Force | +22% final damage, −12% max HP |
+| Force | +18% final damage |
 | Duelist | +18% final damage, +10% max HP; direct same-target hits gain +5% direct attack damage each, max 5 Focus |
-| Juggernaut | +30% max HP, +40% plating, 14% independent DR; −25% attack speed, −10% movement |
+| Juggernaut | +20% max HP, +10% plating, 10% independent DR; −25% attack speed, −10% movement |
 | Arcanist | 20% Technique cooldown reduction, +20% Technique power |
 | Controller | +35% debuff duration, +25% debuff potency |
-| Scout | +24% final damage, +25% movement, 25% mobility cooldown reduction; −20% max HP |
-| Sniper | +40% final damage; −30% max HP, −25% plating |
+| Scout | +12% final damage, +25% movement, 25% mobility cooldown reduction |
+| Sniper | +25% final damage |
 | Bruiser | +28% final damage, +20% max HP, +18% movement; kills refund 50% of a mobility cooldown |
 | Accelerant | +55% attack speed, −18% final damage |
 | Catalyst | +115% existing on-hit damage, −15% final damage; provides no on-hit damage itself |
@@ -269,7 +271,7 @@ Broad Core offense and its tradeoffs use `core.damage-dealt-pct`, applied once t
 final direct plus on-hit damage, and at resolution for owned DoTs, procs, beams,
 AoE and summon damage. Authored percentages are preserved. Catalyst's on-hit,
 Duelist's direct-hit Focus, technique bonuses, HP, plating, recovery and speed
-remain specialist axes. Juggernaut uses signed `core.damage-taken-pct: -0.14`.
+remain specialist axes. Juggernaut uses signed `core.damage-taken-pct: -0.10`.
 Legacy raw-attack/DR passive keys remain supported but are not authored by the
 current Core catalog.
 

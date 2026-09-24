@@ -1,0 +1,515 @@
+{
+  "schema": 1,
+  "receipts": {
+    "baseline-03": {
+      "path": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\mmo-defense-control\\reports\\defense-redesign-01\\baseline-03",
+      "completed": 218,
+      "expected": 218,
+      "rowsSha256": "408e1686ec17d09bdbc8769009c34904009c75d03235db02ec36216c56d966bd"
+    },
+    "core-02": {
+      "path": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\mmo-defense-control\\reports\\defense-redesign-01\\core-02",
+      "completed": 218,
+      "expected": 218,
+      "rowsSha256": "974089a6ec093ff2d6435a2ee081a8391185def28eca7af24f78b149b7912707"
+    },
+    "full-02": {
+      "path": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\mmo-defense-candidate\\reports\\defense-redesign-01\\full-02",
+      "completed": 218,
+      "expected": 218,
+      "rowsSha256": "730e58e966236d1ad7772958026d3ac853a7a5aa7df03f4a306a81acaebea75e"
+    },
+    "full-03": {
+      "path": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\mmo-defense-candidate\\reports\\defense-redesign-01\\full-03",
+      "completed": 218,
+      "expected": 218,
+      "rowsSha256": "ef143c64978891b4eb77dc75b34bf8b3fa30c73e046343f18a5008979dd0428b"
+    },
+    "full-04": {
+      "path": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\mmo-defense-candidate\\reports\\defense-redesign-01\\full-04",
+      "completed": 218,
+      "expected": 218,
+      "rowsSha256": "40e86c3ef59dbc590584b45c994572a29c612df9005356abbeb878ddb2d84a66"
+    },
+    "armor-followup": {
+      "path": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\mmo-defense-candidate\\reports\\defense-redesign-01\\armor-followup",
+      "completed": 42,
+      "expected": 42,
+      "rowsSha256": "37a29a2b880f9d44bf98a359ec4e43bdd8dd12a812799c2bf07245494d375ab1"
+    },
+    "followup-baseline": {
+      "path": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\mmo-defense-control\\reports\\defense-redesign-01\\followup-baseline",
+      "completed": 64,
+      "expected": 64,
+      "rowsSha256": "719009963c329136537e32b380c25ccbcaf8c8b6c77a3d5fc6f75725672ee138"
+    },
+    "followup-final": {
+      "path": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\mmo-defense-candidate\\reports\\defense-redesign-01\\followup-final",
+      "completed": 64,
+      "expected": 64,
+      "rowsSha256": "650a9a5377cb5bc1be8ac0d2793719d6e8ab6ced68dbe290db151c8e11f265c2"
+    },
+    "alternatives-baseline": {
+      "path": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\mmo-defense-control\\reports\\defense-redesign-01\\alternatives-baseline",
+      "completed": 36,
+      "expected": 36,
+      "rowsSha256": "d40971efd350011841ef8566bfca9bf94a4e3355cbd18e3dd73ad84e52090b32"
+    },
+    "alternatives-candidate": {
+      "path": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\mmo-defense-candidate\\reports\\defense-redesign-01\\alternatives-candidate",
+      "completed": 36,
+      "expected": 36,
+      "rowsSha256": "bc9d034ce9871d29e3e7fbdee4d7184308c62ea0001f2618931f2212384254c7"
+    }
+  },
+  "summary": {
+    "baseline": {
+      "n": 218,
+      "deaths": 81,
+      "bossWins": 0,
+      "kills": 2518,
+      "seconds": 27263.9,
+      "fullHpLethalHits": 4
+    },
+    "coreOnly": {
+      "n": 218,
+      "deaths": 81,
+      "bossWins": 0,
+      "kills": 2547,
+      "seconds": 27513.9,
+      "fullHpLethalHits": 0
+    },
+    "firstFull": {
+      "n": 218,
+      "deaths": 137,
+      "bossWins": 0,
+      "kills": 1300,
+      "seconds": 18597.1,
+      "fullHpLethalHits": 0
+    },
+    "revision2": {
+      "n": 218,
+      "deaths": 112,
+      "bossWins": 0,
+      "kills": 1629,
+      "seconds": 22494.1,
+      "fullHpLethalHits": 0
+    },
+    "revision3": {
+      "n": 218,
+      "deaths": 100,
+      "bossWins": 0,
+      "kills": 2167,
+      "seconds": 25627.3,
+      "fullHpLethalHits": 0
+    },
+    "finalComposite": {
+      "n": 218,
+      "deaths": 97,
+      "bossWins": 0,
+      "kills": 2219,
+      "seconds": 25977.2,
+      "fullHpLethalHits": 0
+    },
+    "coreAffectedBaseline": {
+      "n": 24,
+      "deaths": 24,
+      "bossWins": 0,
+      "kills": 29,
+      "seconds": 425.2,
+      "fullHpLethalHits": 4
+    },
+    "coreAffectedCandidate": {
+      "n": 24,
+      "deaths": 24,
+      "bossWins": 0,
+      "kills": 58,
+      "seconds": 675.2,
+      "fullHpLethalHits": 0
+    }
+  },
+  "mainGroups": {
+    "baseline": {
+      "3-slinger": {
+        "n": 58,
+        "deaths": 44,
+        "bossWins": 0,
+        "kills": 386,
+        "seconds": 3951.3,
+        "fullHpLethalHits": 4
+      },
+      "2-squire": {
+        "n": 26,
+        "deaths": 14,
+        "bossWins": 0,
+        "kills": 237,
+        "seconds": 2479.8,
+        "fullHpLethalHits": 0
+      },
+      "2-slinger": {
+        "n": 26,
+        "deaths": 0,
+        "bossWins": 0,
+        "kills": 398,
+        "seconds": 4680,
+        "fullHpLethalHits": 0
+      },
+      "3-squire": {
+        "n": 26,
+        "deaths": 5,
+        "bossWins": 0,
+        "kills": 441,
+        "seconds": 3845.7,
+        "fullHpLethalHits": 0
+      },
+      "4-squire": {
+        "n": 32,
+        "deaths": 1,
+        "bossWins": 0,
+        "kills": 268,
+        "seconds": 5628.5,
+        "fullHpLethalHits": 0
+      },
+      "4-slinger": {
+        "n": 26,
+        "deaths": 0,
+        "bossWins": 0,
+        "kills": 371,
+        "seconds": 4680,
+        "fullHpLethalHits": 0
+      },
+      "3-striker": {
+        "n": 6,
+        "deaths": 3,
+        "bossWins": 0,
+        "kills": 185,
+        "seconds": 794.9,
+        "fullHpLethalHits": 0
+      },
+      "3-apprentice": {
+        "n": 6,
+        "deaths": 4,
+        "bossWins": 0,
+        "kills": 86,
+        "seconds": 505.1,
+        "fullHpLethalHits": 0
+      },
+      "3-spirit": {
+        "n": 6,
+        "deaths": 4,
+        "bossWins": 0,
+        "kills": 141,
+        "seconds": 591.8,
+        "fullHpLethalHits": 0
+      },
+      "3-conduit": {
+        "n": 6,
+        "deaths": 6,
+        "bossWins": 0,
+        "kills": 5,
+        "seconds": 106.8,
+        "fullHpLethalHits": 0
+      }
+    },
+    "final": {
+      "3-slinger": {
+        "n": 58,
+        "deaths": 48,
+        "bossWins": 0,
+        "kills": 303,
+        "seconds": 3583.6,
+        "fullHpLethalHits": 0
+      },
+      "2-squire": {
+        "n": 26,
+        "deaths": 14,
+        "bossWins": 0,
+        "kills": 217,
+        "seconds": 2433.5,
+        "fullHpLethalHits": 0
+      },
+      "2-slinger": {
+        "n": 26,
+        "deaths": 0,
+        "bossWins": 0,
+        "kills": 402,
+        "seconds": 4680,
+        "fullHpLethalHits": 0
+      },
+      "3-squire": {
+        "n": 26,
+        "deaths": 9,
+        "bossWins": 0,
+        "kills": 455,
+        "seconds": 3964.8,
+        "fullHpLethalHits": 0
+      },
+      "4-squire": {
+        "n": 32,
+        "deaths": 3,
+        "bossWins": 0,
+        "kills": 218,
+        "seconds": 5443.3,
+        "fullHpLethalHits": 0
+      },
+      "4-slinger": {
+        "n": 26,
+        "deaths": 1,
+        "bossWins": 0,
+        "kills": 369,
+        "seconds": 4626.2,
+        "fullHpLethalHits": 0
+      },
+      "3-striker": {
+        "n": 6,
+        "deaths": 4,
+        "bossWins": 0,
+        "kills": 161,
+        "seconds": 705.5,
+        "fullHpLethalHits": 0
+      },
+      "3-apprentice": {
+        "n": 6,
+        "deaths": 6,
+        "bossWins": 0,
+        "kills": 18,
+        "seconds": 102.4,
+        "fullHpLethalHits": 0
+      },
+      "3-spirit": {
+        "n": 6,
+        "deaths": 6,
+        "bossWins": 0,
+        "kills": 70,
+        "seconds": 347.5,
+        "fullHpLethalHits": 0
+      },
+      "3-conduit": {
+        "n": 6,
+        "deaths": 6,
+        "bossWins": 0,
+        "kills": 6,
+        "seconds": 90.4,
+        "fullHpLethalHits": 0
+      }
+    }
+  },
+  "followup": {
+    "baseline": {
+      "follow-t1-squire": {
+        "n": 20,
+        "deaths": 4,
+        "bossWins": 0,
+        "kills": 332,
+        "seconds": 3037.8,
+        "fullHpLethalHits": 0
+      },
+      "follow-t1-slinger": {
+        "n": 20,
+        "deaths": 6,
+        "bossWins": 0,
+        "kills": 259,
+        "seconds": 2622.3,
+        "fullHpLethalHits": 0
+      },
+      "4-squire": {
+        "n": 6,
+        "deaths": 0,
+        "bossWins": 0,
+        "kills": 37,
+        "seconds": 1080,
+        "fullHpLethalHits": 0
+      },
+      "4-slinger": {
+        "n": 6,
+        "deaths": 0,
+        "bossWins": 0,
+        "kills": 64,
+        "seconds": 1080,
+        "fullHpLethalHits": 0
+      },
+      "heat-managed-boss": {
+        "n": 12,
+        "deaths": 12,
+        "bossWins": 0,
+        "kills": 0,
+        "seconds": 276.2,
+        "fullHpLethalHits": 0
+      }
+    },
+    "final": {
+      "follow-t1-squire": {
+        "n": 20,
+        "deaths": 2,
+        "bossWins": 0,
+        "kills": 334,
+        "seconds": 3263.3,
+        "fullHpLethalHits": 0
+      },
+      "follow-t1-slinger": {
+        "n": 20,
+        "deaths": 7,
+        "bossWins": 0,
+        "kills": 239,
+        "seconds": 2483.8,
+        "fullHpLethalHits": 0
+      },
+      "4-squire": {
+        "n": 6,
+        "deaths": 0,
+        "bossWins": 0,
+        "kills": 37,
+        "seconds": 1080,
+        "fullHpLethalHits": 0
+      },
+      "4-slinger": {
+        "n": 6,
+        "deaths": 0,
+        "bossWins": 0,
+        "kills": 67,
+        "seconds": 1080,
+        "fullHpLethalHits": 0
+      },
+      "heat-managed-boss": {
+        "n": 12,
+        "deaths": 10,
+        "bossWins": 2,
+        "kills": 2,
+        "seconds": 495.4,
+        "fullHpLethalHits": 0
+      }
+    }
+  },
+  "alternatives": {
+    "baseline": {
+      "3-striker": {
+        "n": 6,
+        "deaths": 6,
+        "bossWins": 0,
+        "kills": 58,
+        "seconds": 259.8,
+        "fullHpLethalHits": 0
+      },
+      "3-apprentice": {
+        "n": 6,
+        "deaths": 6,
+        "bossWins": 0,
+        "kills": 18,
+        "seconds": 85.1,
+        "fullHpLethalHits": 0
+      },
+      "3-spirit": {
+        "n": 6,
+        "deaths": 6,
+        "bossWins": 0,
+        "kills": 44,
+        "seconds": 223.5,
+        "fullHpLethalHits": 0
+      },
+      "3-conduit": {
+        "n": 6,
+        "deaths": 6,
+        "bossWins": 0,
+        "kills": 0,
+        "seconds": 79.4,
+        "fullHpLethalHits": 0
+      },
+      "heat-managed-boss": {
+        "n": 12,
+        "deaths": 12,
+        "bossWins": 0,
+        "kills": 0,
+        "seconds": 374.4,
+        "fullHpLethalHits": 0
+      }
+    },
+    "final": {
+      "3-striker": {
+        "n": 6,
+        "deaths": 3,
+        "bossWins": 0,
+        "kills": 181,
+        "seconds": 823,
+        "fullHpLethalHits": 0
+      },
+      "3-apprentice": {
+        "n": 6,
+        "deaths": 6,
+        "bossWins": 0,
+        "kills": 18,
+        "seconds": 100.2,
+        "fullHpLethalHits": 0
+      },
+      "3-spirit": {
+        "n": 6,
+        "deaths": 6,
+        "bossWins": 0,
+        "kills": 65,
+        "seconds": 339.5,
+        "fullHpLethalHits": 0
+      },
+      "3-conduit": {
+        "n": 6,
+        "deaths": 6,
+        "bossWins": 0,
+        "kills": 9,
+        "seconds": 89.3,
+        "fullHpLethalHits": 0
+      },
+      "heat-managed-boss": {
+        "n": 12,
+        "deaths": 8,
+        "bossWins": 4,
+        "kills": 4,
+        "seconds": 643.8,
+        "fullHpLethalHits": 2
+      }
+    }
+  },
+  "bossWins": [
+    {
+      "id": "3-squire-balanced-cave-vest-t3-node-t3-volcanic-dungeon-reference-p3-default-heat-managed",
+      "seed": 101009,
+      "elapsedMs": 60200,
+      "hpEnd": 42.64800000000264,
+      "maxHp": 493
+    },
+    {
+      "id": "3-squire-balanced-cave-vest-t3-node-t3-volcanic-dungeon-reference-p3-default-heat-managed",
+      "seed": 101033,
+      "elapsedMs": 60200,
+      "hpEnd": 42.64800000000264,
+      "maxHp": 493
+    },
+    {
+      "id": "3-squire-balanced-cave-vest-t3-node-t3-volcanic-dungeon-reference-p5-default-heat-managed",
+      "seed": 101009,
+      "elapsedMs": 52500,
+      "hpEnd": 391.6549999999993,
+      "maxHp": 543
+    },
+    {
+      "id": "3-squire-balanced-cave-vest-t3-node-t3-volcanic-dungeon-reference-p5-default-heat-managed",
+      "seed": 101033,
+      "elapsedMs": 52500,
+      "hpEnd": 391.6549999999993,
+      "maxHp": 543
+    },
+    {
+      "id": "3-striker-balanced-cave-vest-t3-node-t3-volcanic-dungeon-reference-p5-default-heat-managed",
+      "seed": 101009,
+      "elapsedMs": 42700,
+      "hpEnd": 129.98400000000146,
+      "maxHp": 526
+    },
+    {
+      "id": "3-striker-balanced-cave-vest-t3-node-t3-volcanic-dungeon-reference-p5-default-heat-managed",
+      "seed": 101033,
+      "elapsedMs": 42700,
+      "hpEnd": 129.98400000000146,
+      "maxHp": 526
+    }
+  ],
+  "compositeNote": "176 rows reused from full-04; 42 affected Desert/Volcano rows replaced by armor-followup. This is not a single fresh 218-row run.",
+  "evidenceLimits": "Synthetic mature mastery and ownership; 180-second first-death cap; two fixed seeds; no production or economy inference. Counts of fullHpLethalHits mean resolved direct hits at least max HP, not necessarily an actual death from full current HP."
+}

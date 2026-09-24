@@ -63,20 +63,22 @@ export const caveRecipeEntries = [
   ['cave-vest-t1', {
     id: 'cave-vest-t1', name: 'Bestial Hide',
     recipeGroup: 'cave', requiredBiomeLevel: 2, slot: 'armor',
-    cost: { red: 22 }, stats: { maxHp: 28, plating: 4, damageReduction: 0.06 }, tier: 1,
+    cost: { red: 22 }, stats: {"maxHp": 30, "damageReduction": 0.1}, tier: 1,
     icon: 'items/armor/bestial-hide.png',
-    description: 'The hide of something large and unlucky, cured to a stubborn toughness.',
+    description: "Dependable protection against direct damage and damage over time.",
     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, same total (622).
     // +5 catalyst from cave-vest-t2's own tag ("premium %DR generalist wall →
     // Swarming").
     upgrades: [
-      { stats: { maxHp: 3, damageReduction: 0.01 }, cost: { red: 30 }, requiredBiomeLevel: 3 },
-      { stats: { maxHp: 3, plating: 1, damageReduction: 0.01 }, cost: { red: 60 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 3, damageReduction: 0.01 }, cost: { red: 95 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 3, plating: 1, damageReduction: 0.01 }, cost: { red: 155 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 2, damageReduction: 0.01 }, cost: { red: 195 }, catalystCost: { swarming: 1 }, requiredBiomeLevel: 4 },
+      {"cost": {"red": 30}, "requiredBiomeLevel": 3, "stats": {"maxHp": 3, "damageReduction": 0.008}},
+      {"cost": {"red": 60}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "damageReduction": 0.008}},
+      {"cost": {"red": 95}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "damageReduction": 0.008}},
+      {"cost": {"red": 155}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "damageReduction": 0.008}},
+      {"cost": {"red": 195}, "catalystCost": {"swarming": 1}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "damageReduction": 0.008}}
     ],
-  }],
+
+mechanicEffects: {},
+}],
 
   // CHARM — Absorb. Converts a fraction of damage taken into a pool that drains
   // back as healing. It scales from DAMAGE PROCESSED, not from max HP, Recovery
@@ -141,18 +143,20 @@ export const caveRecipeEntries = [
     id: 'cave-vest-t2', name: 'Dire Bestial Hide',
     recipeGroup: 'cave', requiredBiomeLevel: 8, slot: 'armor',
     evolvesFrom: 'cave-vest-t1',
-    cost: { red: 54 }, stats: { maxHp: 50, plating: 7, damageReduction: 0.13 }, tier: 2, // family-tag: premium %DR generalist wall → Swarming
+    cost: { red: 54 }, stats: {"maxHp": 55, "damageReduction": 0.18}, tier: 2, // family-tag: premium %DR generalist wall → Swarming
     reconstructCost: { red: 189 }, reconstructCatalystCost: { swarming: 2 },
     icon: 'items/armor/dire-bestial-hide.png',
-    description: 'From a beast the deep-cavern folk name only in low voices.',
+    description: "Dependable protection against direct damage and damage over time.",
     upgrades: [
-      { stats: { maxHp: 5, plating: 1, damageReduction: 0.01 }, cost: { red: 46 }, requiredBiomeLevel: 9 },
-      { stats: { maxHp: 5, plating: 1, damageReduction: 0.01 }, cost: { red: 116 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 5, plating: 1, damageReduction: 0.01 }, cost: { red: 185 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 5, plating: 1, damageReduction: 0.01 }, cost: { red: 300 }, catalystCost: { swarming: 1 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 6 }, cost: { red: 508 }, catalystCost: { swarming: 2 }, requiredBiomeLevel: 10 },
+      {"cost": {"red": 46}, "requiredBiomeLevel": 9, "stats": {"maxHp": 6, "damageReduction": 0.008}},
+      {"cost": {"red": 116}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5, "damageReduction": 0.008}},
+      {"cost": {"red": 185}, "requiredBiomeLevel": 10, "stats": {"maxHp": 6, "damageReduction": 0.008}},
+      {"cost": {"red": 300}, "catalystCost": {"swarming": 1}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5, "damageReduction": 0.008}},
+      {"cost": {"red": 508}, "catalystCost": {"swarming": 2}, "requiredBiomeLevel": 10, "stats": {"maxHp": 6, "damageReduction": 0.008}}
     ],
-  }],
+
+mechanicEffects: {},
+}],
 
   // CHARM — Absorb, deepened. T2 economy pass (2026-08-29): now an EVOLUTION of
   // cave-charm-t1 at +5.
@@ -219,19 +223,21 @@ export const caveRecipeEntries = [
     id: 'cave-vest-t3', name: 'Deepscale Hide',
     recipeGroup: 'cave', requiredBiomeLevel: 14, slot: 'armor',
     evolvesFrom: 'cave-vest-t2',
-    cost: { red: 116, yellow: 29 }, stats: { maxHp: 91, plating: 13, damageReduction: 0.19 }, // family-tag: premium %DR wall → Swarming
+    cost: { red: 116, yellow: 29 }, stats: {"maxHp": 150, "damageReduction": 0.26}, // family-tag: premium %DR wall → Swarming
     reconstructCost: { red: 406, yellow: 102 }, reconstructCatalystCost: { swarming: 3 },
     tier: 3,
     icon: 'items/armor/deepscale-hide.png',
-    description: 'Layered scale over thick hide — nothing fancy, just the most of everything that stops a blow.',
+    description: "Dependable protection against direct damage and damage over time.",
     upgrades: [
-      { stats: { maxHp: 9, plating: 1, damageReduction: 0.01 }, cost: { red: 73, yellow: 18 },  requiredBiomeLevel: 15 },
-      { stats: { maxHp: 9, plating: 1, damageReduction: 0.01 }, cost: { red: 182, yellow: 45 }, requiredBiomeLevel: 16 },
-      { stats: { maxHp: 9, plating: 1, damageReduction: 0.01 }, cost: { red: 291, yellow: 73 }, requiredBiomeLevel: 16 },
-      { stats: { maxHp: 9, plating: 2, damageReduction: 0.01 }, cost: { red: 473, yellow: 118 }, catalystCost: { swarming: 2 }, requiredBiomeLevel: 16 },
-      { stats: { maxHp: 9, plating: 1 }, cost: { red: 800, yellow: 200 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 16 },
+      {"cost": {"red": 73, "yellow": 18}, "requiredBiomeLevel": 15, "stats": {"maxHp": 15, "damageReduction": 0.008}},
+      {"cost": {"red": 182, "yellow": 45}, "requiredBiomeLevel": 16, "stats": {"maxHp": 15, "damageReduction": 0.008}},
+      {"cost": {"red": 291, "yellow": 73}, "requiredBiomeLevel": 16, "stats": {"maxHp": 15, "damageReduction": 0.008}},
+      {"cost": {"red": 473, "yellow": 118}, "catalystCost": {"swarming": 2}, "requiredBiomeLevel": 16, "stats": {"maxHp": 15, "damageReduction": 0.008}},
+      {"cost": {"red": 800, "yellow": 200}, "catalystCost": {"swarming": 3}, "requiredBiomeLevel": 16, "stats": {"maxHp": 15, "damageReduction": 0.008}}
     ],
-  }],
+
+mechanicEffects: {},
+}],
 
   // CHARM — Absorb, T3. The old always-on Recovery trickle came off with the
   // pulse identity that moved to Swamp: Cave's charm is the Absorb hook, and

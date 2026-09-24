@@ -1,4 +1,4 @@
-import { outgoingFinalDamage, incomingFinalDamage } from './finalDamage';
+import { outgoingFinalDamage } from './finalDamage';
 import { pushDamageEvent } from './damageEvent';
 import { platingAfterShred, type DamageElement, type Vec2 } from "@mmo-idle/shared";
 import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
@@ -20,6 +20,7 @@ import { recordWorldLogEvent } from "../../../world/worldLog";
 import { isInvulnerableMonster, isInvulnerablePlayer } from "../invulnerability";
 import { applyMonsterDamageTakenDebuffs } from "../../classes/shared/debuffs";
 import { emitPlayerMonsterOnKill } from "./killHooks";
+import { makeCombatContext, emitCombatEvent } from '../engine/combatPipeline';
 
 /**
  * Authoritative target selection shared by direct AoE and class-specific riders.
@@ -172,7 +173,13 @@ export function applyMonsterAoe(
       platingMult: 1,
       damageReduction: player.mitigatesDamage.damageReduction,
     });
-    const effectiveDmg = incomingFinalDamage(world, player, mitigation.hpDamage);
+    const ctx=makeCombatContext(attacker,'monster',player,'player');
+    ctx.metadata['incomingGross']=baseDamage;
+    ctx.metadata['abilityName']=abilityName;
+    emitCombatEvent('onAttack',ctx,world);
+    ctx.damage=mitigation.hpDamage;
+    emitCombatEvent('onDamageTaken',ctx,world);
+    const effectiveDmg = Math.max(0,Math.round(ctx.damage));
     mitigation.hpDamage = effectiveDmg;
 
     recordPlayerDamaged(

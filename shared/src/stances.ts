@@ -225,18 +225,17 @@ const stances: StanceDef[] = [
   {
     id: "defensive-stance",
     name: "Defensive Stance",
-    blurb: "+20% Plating and 10% less damage taken. -15% Damage.",
+      blurb: "10% less damage taken. -15% Damage.",
     runeCost: 1,
-    modifiers: { platingPct: 0.2, damageTakenPct: -0.1, damageDealtPct: -0.15 },
+      modifiers: { damageTakenPct: -0.1, damageDealtPct: -0.15 },
     icon: "defensive-stance",
   },
   {
     id: "tanking-stance",
     name: "Tanking Stance",
-    blurb: "+40% Plating and 25% less damage taken. -40% Damage and -20% Attack Speed.",
+      blurb: "25% less damage taken. -40% Damage and -20% Attack Speed.",
     runeCost: 3,
     modifiers: {
-      platingPct: 0.4,
       damageTakenPct: -0.25,
       damageDealtPct: -0.4,
       attackSpeedPct: -0.2,

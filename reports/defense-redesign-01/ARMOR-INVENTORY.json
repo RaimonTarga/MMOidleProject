@@ -1,0 +1,630 @@
+[
+  {
+    "id": "clearing-vest-t1",
+    "name": "Bark Wrap",
+    "tier": 0,
+    "base": {
+      "maxHp": 20,
+      "plating": 4
+    },
+    "baseEffects": {},
+    "plus5": {
+      "maxHp": 20,
+      "plating": 4
+    },
+    "plus5Effects": {}
+  },
+  {
+    "id": "cave-vest-t1",
+    "name": "Bestial Hide",
+    "tier": 1,
+    "base": {
+      "maxHp": 30,
+      "damageReduction": 0.1
+    },
+    "baseEffects": {},
+    "plus5": {
+      "maxHp": 45,
+      "damageReduction": 0.14000000000000004
+    },
+    "plus5Effects": {}
+  },
+  {
+    "id": "cave-vest-t2",
+    "name": "Dire Bestial Hide",
+    "tier": 2,
+    "base": {
+      "maxHp": 55,
+      "damageReduction": 0.18
+    },
+    "baseEffects": {},
+    "plus5": {
+      "maxHp": 83,
+      "damageReduction": 0.22000000000000003
+    },
+    "plus5Effects": {}
+  },
+  {
+    "id": "cave-vest-t3",
+    "name": "Deepscale Hide",
+    "tier": 3,
+    "base": {
+      "maxHp": 150,
+      "damageReduction": 0.26
+    },
+    "baseEffects": {},
+    "plus5": {
+      "maxHp": 225,
+      "damageReduction": 0.30000000000000004
+    },
+    "plus5Effects": {}
+  },
+  {
+    "id": "forest-vest-t1",
+    "name": "Shaded Bindings",
+    "tier": 1,
+    "base": {
+      "maxHp": 29,
+      "evasion": 0.28,
+      "damageReduction": 0.02
+    },
+    "baseEffects": {
+      "defense.evade-mitigation": 0.1
+    },
+    "plus5": {
+      "maxHp": 44,
+      "evasion": 0.3600000000000001,
+      "damageReduction": 0.02
+    },
+    "plus5Effects": {
+      "defense.evade-mitigation": 0.1
+    }
+  },
+  {
+    "id": "forest-vest-t2",
+    "name": "Phantom Bindings",
+    "tier": 2,
+    "base": {
+      "maxHp": 52,
+      "evasion": 0.34,
+      "damageReduction": 0.04
+    },
+    "baseEffects": {
+      "defense.evade-mitigation": 0.1
+    },
+    "plus5": {
+      "maxHp": 78,
+      "evasion": 0.4200000000000001,
+      "damageReduction": 0.04
+    },
+    "plus5Effects": {
+      "defense.evade-mitigation": 0.1
+    }
+  },
+  {
+    "id": "jungle-vest-t2",
+    "name": "Verdant Weave",
+    "tier": 2,
+    "base": {
+      "maxHp": 52,
+      "evasion": 0.28,
+      "damageReduction": 0.04
+    },
+    "baseEffects": {
+      "defense.evade-mitigation": 0.2
+    },
+    "plus5": {
+      "maxHp": 78,
+      "evasion": 0.3600000000000001,
+      "damageReduction": 0.04
+    },
+    "plus5Effects": {
+      "defense.evade-mitigation": 0.2
+    }
+  },
+  {
+    "id": "jungle-vest-t3",
+    "name": "Wildgrowth Weave",
+    "tier": 3,
+    "base": {
+      "maxHp": 143,
+      "evasion": 0.32,
+      "damageReduction": 0.07
+    },
+    "baseEffects": {
+      "defense.evade-mitigation": 0.25
+    },
+    "plus5": {
+      "maxHp": 216,
+      "evasion": 0.4000000000000001,
+      "damageReduction": 0.07
+    },
+    "plus5Effects": {
+      "defense.evade-mitigation": 0.25
+    }
+  },
+  {
+    "id": "jungle-vest-t4",
+    "name": "Primal Canopy",
+    "tier": 4,
+    "base": {
+      "maxHp": 274,
+      "evasion": 0.36,
+      "damageReduction": 0.1
+    },
+    "baseEffects": {
+      "defense.evade-mitigation": 0.3
+    },
+    "plus5": {
+      "maxHp": 411,
+      "evasion": 0.44000000000000006,
+      "damageReduction": 0.1
+    },
+    "plus5Effects": {
+      "defense.evade-mitigation": 0.3
+    }
+  },
+  {
+    "id": "mountain-vest-t1",
+    "name": "Fallen Knight Plate",
+    "tier": 1,
+    "base": {
+      "maxHp": 36,
+      "plating": 1,
+      "damageReduction": 0.04
+    },
+    "baseEffects": {
+      "guard.potency-pct": 0.15
+    },
+    "plus5": {
+      "maxHp": 54,
+      "plating": 2,
+      "damageReduction": 0.04
+    },
+    "plus5Effects": {
+      "guard.potency-pct": 0.24999999999999994
+    }
+  },
+  {
+    "id": "mountain-vest-t2",
+    "name": "Iron Crusader Plate",
+    "tier": 2,
+    "base": {
+      "maxHp": 66,
+      "plating": 1,
+      "damageReduction": 0.08
+    },
+    "baseEffects": {
+      "guard.potency-pct": 0.2
+    },
+    "plus5": {
+      "maxHp": 99,
+      "plating": 2,
+      "damageReduction": 0.08
+    },
+    "plus5Effects": {
+      "guard.potency-pct": 0.30000000000000004
+    }
+  },
+  {
+    "id": "mountain-vest-t3",
+    "name": "Summit Aegis",
+    "tier": 3,
+    "base": {
+      "maxHp": 180,
+      "plating": 2,
+      "damageReduction": 0.14
+    },
+    "baseEffects": {
+      "guard.potency-pct": 0.25
+    },
+    "plus5": {
+      "maxHp": 270,
+      "plating": 3,
+      "damageReduction": 0.14
+    },
+    "plus5Effects": {
+      "guard.potency-pct": 0.3500000000000001
+    }
+  },
+  {
+    "id": "mountain-vest-t4",
+    "name": "Titan's Keep",
+    "tier": 4,
+    "base": {
+      "maxHp": 346,
+      "plating": 3,
+      "damageReduction": 0.18
+    },
+    "baseEffects": {
+      "guard.potency-pct": 0.3
+    },
+    "plus5": {
+      "maxHp": 519,
+      "plating": 5,
+      "damageReduction": 0.18
+    },
+    "plus5Effects": {
+      "guard.potency-pct": 0.4000000000000001
+    }
+  },
+  {
+    "id": "mountain-vest-t4-stormwall",
+    "name": "Stormwall Plate",
+    "tier": 4,
+    "base": {
+      "maxHp": 346,
+      "plating": 3,
+      "damageReduction": 0.18
+    },
+    "baseEffects": {
+      "guard.potency-pct": 0.2,
+      "defense.barrier-pct": 0.1,
+      "defense.barrier-break-hp-recovery-pct": 0.2
+    },
+    "plus5": {
+      "maxHp": 519,
+      "plating": 5,
+      "damageReduction": 0.18
+    },
+    "plus5Effects": {
+      "guard.potency-pct": 0.30000000000000004,
+      "defense.barrier-pct": 0.1,
+      "defense.barrier-break-hp-recovery-pct": 0.2
+    }
+  },
+  {
+    "id": "plains-vest-t1",
+    "name": "Survivor's Robe",
+    "tier": 1,
+    "base": {
+      "maxHp": 27,
+      "plating": 2,
+      "damageReduction": 0.04
+    },
+    "baseEffects": {},
+    "plus5": {
+      "maxHp": 41,
+      "plating": 3,
+      "damageReduction": 0.04
+    },
+    "plus5Effects": {}
+  },
+  {
+    "id": "plains-vest-t2",
+    "name": "Enduring Robe",
+    "tier": 2,
+    "base": {
+      "maxHp": 50,
+      "plating": 5,
+      "damageReduction": 0.08
+    },
+    "baseEffects": {},
+    "plus5": {
+      "maxHp": 75,
+      "plating": 8,
+      "damageReduction": 0.08
+    },
+    "plus5Effects": {}
+  },
+  {
+    "id": "swamp-vest-t1",
+    "name": "Arcane Wrappings",
+    "tier": 1,
+    "base": {
+      "maxHp": 32,
+      "damageReduction": 0.04
+    },
+    "baseEffects": {
+      "defense.dot-resistance": 0.25
+    },
+    "plus5": {
+      "maxHp": 48,
+      "damageReduction": 0.04
+    },
+    "plus5Effects": {
+      "defense.dot-resistance": 0.3500000000000001
+    }
+  },
+  {
+    "id": "swamp-vest-t2",
+    "name": "Bog Wrappings",
+    "tier": 2,
+    "base": {
+      "maxHp": 58,
+      "damageReduction": 0.08
+    },
+    "baseEffects": {
+      "defense.dot-resistance": 0.3,
+      "defense.hit-to-dot-pct": 0.15
+    },
+    "plus5": {
+      "maxHp": 87,
+      "damageReduction": 0.08
+    },
+    "plus5Effects": {
+      "defense.dot-resistance": 0.4000000000000001,
+      "defense.hit-to-dot-pct": 0.15
+    }
+  },
+  {
+    "id": "swamp-vest-t3",
+    "name": "Plaguebound Shroud",
+    "tier": 3,
+    "base": {
+      "maxHp": 158,
+      "damageReduction": 0.14
+    },
+    "baseEffects": {
+      "defense.dot-resistance": 0.35,
+      "defense.hit-to-dot-pct": 0.2,
+      "defense.debuff-resistance": 0.2
+    },
+    "plus5": {
+      "maxHp": 239,
+      "damageReduction": 0.14
+    },
+    "plus5Effects": {
+      "defense.dot-resistance": 0.45000000000000007,
+      "defense.hit-to-dot-pct": 0.2,
+      "defense.debuff-resistance": 0.2
+    }
+  },
+  {
+    "id": "tundra-vest-t3",
+    "name": "Glacial Bulwark",
+    "tier": 3,
+    "base": {
+      "maxHp": 180,
+      "plating": 2,
+      "damageReduction": 0.14
+    },
+    "baseEffects": {
+      "defense.stationary-dr-pct": 0.15,
+      "defense.stationary-dr-ramptime-ms": 3000
+    },
+    "plus5": {
+      "maxHp": 270,
+      "plating": 3,
+      "damageReduction": 0.14
+    },
+    "plus5Effects": {
+      "defense.stationary-dr-pct": 0.15,
+      "defense.stationary-dr-ramptime-ms": 3000
+    }
+  },
+  {
+    "id": "tundra-vest-t4",
+    "name": "Permafrost Sovereign",
+    "tier": 4,
+    "base": {
+      "maxHp": 346,
+      "plating": 3,
+      "damageReduction": 0.18
+    },
+    "baseEffects": {
+      "defense.stationary-dr-pct": 0.2,
+      "defense.stationary-dr-ramptime-ms": 3000
+    },
+    "plus5": {
+      "maxHp": 519,
+      "plating": 5,
+      "damageReduction": 0.18
+    },
+    "plus5Effects": {
+      "defense.stationary-dr-pct": 0.2,
+      "defense.stationary-dr-ramptime-ms": 3000
+    }
+  },
+  {
+    "id": "desert-vest-t2",
+    "name": "Duneplate of the Last Stand",
+    "tier": 2,
+    "base": {
+      "maxHp": 55,
+      "damageReduction": 0.08
+    },
+    "baseEffects": {
+      "defense.engagement-dr-pct": 0.3,
+      "defense.engagement-dr-ms": 6000
+    },
+    "plus5": {
+      "maxHp": 83,
+      "damageReduction": 0.08
+    },
+    "plus5Effects": {
+      "defense.engagement-dr-pct": 0.35000000000000003,
+      "defense.engagement-dr-ms": 6000
+    }
+  },
+  {
+    "id": "desert-vest-t3",
+    "name": "Eternal Duneplate",
+    "tier": 3,
+    "base": {
+      "maxHp": 150,
+      "damageReduction": 0.14
+    },
+    "baseEffects": {
+      "defense.engagement-dr-pct": 0.35,
+      "defense.engagement-dr-ms": 6000
+    },
+    "plus5": {
+      "maxHp": 225,
+      "damageReduction": 0.14
+    },
+    "plus5Effects": {
+      "defense.engagement-dr-pct": 0.4,
+      "defense.engagement-dr-ms": 6000
+    }
+  },
+  {
+    "id": "desert-vest-t4",
+    "name": "Deathless Duneplate",
+    "tier": 4,
+    "base": {
+      "maxHp": 288,
+      "damageReduction": 0.18
+    },
+    "baseEffects": {
+      "defense.engagement-dr-pct": 0.4,
+      "defense.engagement-dr-ms": 6000
+    },
+    "plus5": {
+      "maxHp": 433,
+      "damageReduction": 0.18
+    },
+    "plus5Effects": {
+      "defense.engagement-dr-pct": 0.45000000000000007,
+      "defense.engagement-dr-ms": 6000
+    }
+  },
+  {
+    "id": "volcanic-vest-t3",
+    "name": "Emberforge Plate",
+    "tier": 3,
+    "base": {
+      "maxHp": 150,
+      "plating": 8,
+      "damageReduction": 0.14
+    },
+    "baseEffects": {
+      "defense.hardening-max": 8,
+      "defense.hardening-per-sec": 1.3333333333333333,
+      "defense.hardening-reset-pct": 0.25
+    },
+    "plus5": {
+      "maxHp": 225,
+      "plating": 12,
+      "damageReduction": 0.14
+    },
+    "plus5Effects": {
+      "defense.hardening-max": 8,
+      "defense.hardening-per-sec": 1.3333333333333333,
+      "defense.hardening-reset-pct": 0.25
+    }
+  },
+  {
+    "id": "volcanic-vest-t4",
+    "name": "Pyroclasm Mantle",
+    "tier": 4,
+    "base": {
+      "maxHp": 288,
+      "plating": 12,
+      "damageReduction": 0.18
+    },
+    "baseEffects": {
+      "defense.hardening-max": 12,
+      "defense.hardening-per-sec": 2,
+      "defense.hardening-reset-pct": 0.25
+    },
+    "plus5": {
+      "maxHp": 433,
+      "plating": 18,
+      "damageReduction": 0.18
+    },
+    "plus5Effects": {
+      "defense.hardening-max": 12,
+      "defense.hardening-per-sec": 2,
+      "defense.hardening-reset-pct": 0.25
+    }
+  },
+  {
+    "id": "volcanic-vest-t4-lavatempered",
+    "name": "Lava-Tempered Hide",
+    "tier": 4,
+    "base": {
+      "maxHp": 288,
+      "plating": 12,
+      "damageReduction": 0.18
+    },
+    "baseEffects": {
+      "defense.hardening-max": 6,
+      "defense.hardening-per-sec": 1,
+      "defense.hardening-reset-pct": 0.25,
+      "defense.overheal-ward-pct": 0.5,
+      "defense.overheal-ward-cap-pct": 0.15
+    },
+    "plus5": {
+      "maxHp": 433,
+      "plating": 18,
+      "damageReduction": 0.18
+    },
+    "plus5Effects": {
+      "defense.hardening-max": 6,
+      "defense.hardening-per-sec": 1,
+      "defense.hardening-reset-pct": 0.25,
+      "defense.overheal-ward-pct": 0.5,
+      "defense.overheal-ward-cap-pct": 0.15
+    }
+  },
+  {
+    "id": "graveyard-vest-t4",
+    "name": "Plaguebound Mantle",
+    "tier": 4,
+    "base": {
+      "maxHp": 302,
+      "damageReduction": 0.18
+    },
+    "baseEffects": {
+      "defense.dot-resistance": 0.4,
+      "defense.hit-to-dot-pct": 0.15,
+      "defense.debuff-resistance": 0.2
+    },
+    "plus5": {
+      "maxHp": 452,
+      "damageReduction": 0.18
+    },
+    "plus5Effects": {
+      "defense.dot-resistance": 0.5000000000000001,
+      "defense.hit-to-dot-pct": 0.15,
+      "defense.debuff-resistance": 0.2
+    }
+  },
+  {
+    "id": "graveyard-vest-t4-debtward",
+    "name": "Grave Ward",
+    "tier": 4,
+    "base": {
+      "maxHp": 302,
+      "damageReduction": 0.18
+    },
+    "baseEffects": {
+      "defense.dot-resistance": 0.25,
+      "defense.hit-to-dot-pct": 0.3,
+      "defense.debuff-resistance": 0.2
+    },
+    "plus5": {
+      "maxHp": 452,
+      "damageReduction": 0.18
+    },
+    "plus5Effects": {
+      "defense.dot-resistance": 0.3500000000000001,
+      "defense.hit-to-dot-pct": 0.3,
+      "defense.debuff-resistance": 0.2
+    }
+  },
+  {
+    "id": "trench-vest-t4",
+    "name": "Deep Sea Carapace",
+    "tier": 4,
+    "base": {
+      "maxHp": 288,
+      "damageReduction": 0.3
+    },
+    "baseEffects": {
+      "defense.sustained-fight-dr-bonus": 0.01,
+      "defense.sustained-fight-dr-max": 0.05,
+      "defense.sustained-fight-ramptime-ms": 10000
+    },
+    "plus5": {
+      "maxHp": 433,
+      "damageReduction": 0.34
+    },
+    "plus5Effects": {
+      "defense.sustained-fight-dr-bonus": 0.01,
+      "defense.sustained-fight-dr-max": 0.05,
+      "defense.sustained-fight-ramptime-ms": 10000
+    }
+  }
+]

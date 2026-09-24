@@ -44,21 +44,19 @@ export const trenchRecipeEntries = [
     recipeGroup: 'trench', requiredBiomeLevel: 2, slot: 'armor',
     evolvesFrom: 'cave-vest-t3',
     // Premium-DR tank profile (Cave inheritor): low HP, high DR.
-    cost: { green: 220 }, stats: { maxHp: 90, plating: 24, damageReduction: 0.22 }, // family-tag: flat-DR wall armor → Swarming
+    cost: { green: 220 }, stats: {"maxHp": 288, "damageReduction": 0.3}, // family-tag: flat-DR wall armor → Swarming
     reconstructCost: { green: 770 }, reconstructCatalystCost: { swarming: 4 },
     // † sustained-fight-dr-bonus: +1% DR per ~2s of sustained combat, cap +5% at 10s.
-    mechanicEffects: {
-      'defense.sustained-fight-dr-bonus': 0.01, 'defense.sustained-fight-dr-max': 0.05, 'defense.sustained-fight-ramptime-ms': 10000,
-    },
+    mechanicEffects: {"defense.sustained-fight-dr-bonus": 0.01, "defense.sustained-fight-dr-max": 0.05, "defense.sustained-fight-ramptime-ms": 10000},
     tier: 4,
     icon: 'items/armor/deep-sea-carapace.png',
-    description: 'Pressure-forged over an age in the dark; the longer the fight, the more of the deep\'s weight it turns against your foe.',
+    description: "Dependable protection against direct damage and damage over time.",
     upgrades: [
-      { stats: { maxHp: 22, plating: 6, damageReduction: 0.02 }, cost: { green: 185 }, requiredBiomeLevel: 3 },
-      { stats: { maxHp: 22, plating: 6, damageReduction: 0.02 }, cost: { green: 462 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 22, plating: 6, damageReduction: 0.02 }, cost: { green: 739 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 22, plating: 6, damageReduction: 0.02 }, cost: { green: 1200 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 22, plating: 6, damageReduction: 0.02 }, cost: { green: 2030 }, catalystCost: { swarming: 4 }, requiredBiomeLevel: 4 },
+      {"cost": {"green": 185}, "requiredBiomeLevel": 3, "stats": {"maxHp": 29, "damageReduction": 0.008}},
+      {"cost": {"green": 462}, "requiredBiomeLevel": 4, "stats": {"maxHp": 29, "damageReduction": 0.008}},
+      {"cost": {"green": 739}, "requiredBiomeLevel": 4, "stats": {"maxHp": 29, "damageReduction": 0.008}},
+      {"cost": {"green": 1200}, "catalystCost": {"swarming": 3}, "requiredBiomeLevel": 4, "stats": {"maxHp": 29, "damageReduction": 0.008}},
+      {"cost": {"green": 2030}, "catalystCost": {"swarming": 4}, "requiredBiomeLevel": 4, "stats": {"maxHp": 29, "damageReduction": 0.008}}
     ],
   }],
 

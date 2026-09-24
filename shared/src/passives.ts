@@ -71,10 +71,13 @@ export const DEFENSE_KEYS = [
   'defense.hardening-per-sec',
   'defense.hardening-max',
   'defense.hardening-reset-pct',
-  // While stationary, ramp damage-reduction up to this fraction (0.15 = +15% DR)
-  // over stationary-dr-ramptime-ms. Moving erodes the ramp at the same rate
-  // (symmetric decay), so brief steps barely dent it. ("Become the glacier.")
+  // Stationary active-combat DR applied multiplicatively to remaining damage.
+  // Movement gets 250 ms grace, then a full ramp decays in one second.
   'defense.stationary-dr-pct',
+  'defense.engagement-dr-pct',
+  'defense.engagement-dr-ms',
+  'defense.item-dr-base',
+  'defense.overheal-ward-cap-pct',
   'defense.stationary-dr-ramptime-ms',
   // ── T4 defensive mechanics ───────────────────────────────────────────────
   // Sustained-fight DR: while in combat, gain `bonus` DR every step, capping at

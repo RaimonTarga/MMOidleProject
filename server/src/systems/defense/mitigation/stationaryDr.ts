@@ -2,6 +2,8 @@ import { getResource, setResource } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { markSliceDirty } from '../../../ecs/dirtyHelpers';
+import { isPlayerActivelyInCombat } from '../../combat/ai/engagement';
+import { isHardControlled } from '../../combat/status/playerHardControl';
 
 // Mirrors the damage-reduction clamp applied in shared stats.ts so the ramp can
 // never push total DR past the cap (in-place additions bypass that clamp).
@@ -39,18 +41,10 @@ export function resetStationaryDr(player: PlayerEntity): void {
 }
 
 /**
- * Per-tick ramp with symmetric decay. While the player is stationary (no
- * `isMoving` marker), the ramp accumulator advances toward
- * `defense.stationary-dr-ramptime-ms`; while moving, it erodes at the same rate.
- * The DR bonus is `defense.stationary-dr-pct × (ramp / ramptime)`.
- *
- * Because erosion is symmetric and continuous, a brief reposition only costs its
- * own duration's worth of ramp (≈ a fraction of one "stage"), while sustained
- * movement bleeds the whole bonus over one full ramptime. No hard stage cliffs.
- *
- * The bonus is tracked as a resource and applied in place (like hardening's
- * plating ramp), so the networked stat — and therefore the stat sheet — updates
- * as it ramps. Independent of combat: standing still anywhere "becomes the glacier".
+ * Build while stationary in active combat. Movement (including displacement)
+ * gets 250 ms grace, then sheds a full ramp in one second; leaving combat also
+ * sheds the ramp. Hard control pauses accumulation. The ramp multiplies damage
+ * remaining after base DR and updates the networked mitigation stat in place.
  */
 export function runStationaryDr(world: World, player: PlayerEntity, dt: number): void {
   const maxBonus = player.usesSkills.passives['defense.stationary-dr-pct'] ?? 0;
@@ -61,11 +55,17 @@ export function runStationaryDr(world: World, player: PlayerEntity, dt: number):
   const cs = player.tracksCombat;
   const prevRamp = getResource(cs, RAMP_KEY);
 
-  // Symmetric: standing accumulates ramp-time toward `ramptime`; moving erodes it
-  // at the same rate, so a short step costs only its duration, not the whole bonus.
-  const newRamp = player.isMoving !== undefined
-    ? Math.max(prevRamp - dt, 0)
-    : Math.min(prevRamp + dt, ramptime);
+  // Actual position changes also catch movement caused by knockback or pulls.
+  const active = isPlayerActivelyInCombat(world, player);
+  const x=player.hasPosition.current.x,y=player.hasPosition.current.y;
+  const displaced=getResource(cs,'stationaryPositionKnown')>0 && (x!==getResource(cs,'stationaryLastX')||y!==getResource(cs,'stationaryLastY'));
+  setResource(cs,'stationaryPositionKnown',1);setResource(cs,'stationaryLastX',x);setResource(cs,'stationaryLastY',y);
+  const moving=player.isMoving!==undefined||displaced;
+  const movementMs=moving?getResource(cs,'stationaryMovementMs')+dt:0;
+  setResource(cs,'stationaryMovementMs',movementMs);
+  const newRamp = !active || (moving && movementMs>250)
+    ? Math.max(prevRamp - dt * ramptime / 1000, 0)
+    : moving || isHardControlled(cs) ? prevRamp : Math.min(prevRamp + dt, ramptime);
   if (newRamp !== prevRamp) setResource(cs, RAMP_KEY, newRamp);
 
   // Converge the in-place DR bonus onto the ramped target (clamped under DR_CAP).
@@ -73,7 +73,7 @@ export function runStationaryDr(world: World, player: PlayerEntity, dt: number):
   // The base DR (without our bonus) — needed to clamp the total to DR_CAP.
   const baseDr = player.mitigatesDamage.damageReduction - applied;
   const headroom = Math.max(0, DR_CAP - baseDr);
-  const targetBonus = Math.min(maxBonus * (newRamp / ramptime), headroom);
+  const targetBonus = Math.min((1-baseDr)*maxBonus * (newRamp / ramptime), headroom);
 
   const delta = targetBonus - applied;
   if (Math.abs(delta) > 1e-6) {
