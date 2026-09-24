@@ -1,0 +1,109 @@
+{
+  "files": [
+    {
+      "path": "BRIEF.md",
+      "bytes": 21326,
+      "sha256": "591f11dce262bc3a883cdef8ddda8a5d50fe4e9f2bbb6b801f5e369f29638791"
+    },
+    {
+      "path": "CLASS_CLOSEOUT.md",
+      "bytes": 3491,
+      "sha256": "60644456d34e203e0bd618f5af8d545a67e676bc4d5d2e635fe782a195c08ce7"
+    },
+    {
+      "path": "LUNA_RUN.md",
+      "bytes": 6331,
+      "sha256": "a7e40810a16eba7ef2c5c54d5a0c5f4af09dbdc983b6698afb0214685971dba5"
+    },
+    {
+      "path": "ORDERED_CASES.tsv",
+      "bytes": 2383,
+      "sha256": "39fcf562f2b20070913a603268d21fd73f381a73eddb67215e262addda9a6190"
+    },
+    {
+      "path": "PREPARATION.md",
+      "bytes": 3017,
+      "sha256": "5fd7a83962634a7b04b68bee4804caadbcf1c4ed5c8e316ccb2e861eb2b8e1b2"
+    },
+    {
+      "path": "baseline-support.diff",
+      "bytes": 309032,
+      "sha256": "4f4e476d6aa91cc9405a24634e6fd03608ae9405a5e09ae22f1aff800614bc9b"
+    },
+    {
+      "path": "candidate-identity.json",
+      "bytes": 192718,
+      "sha256": "cde2496e2cb858a299ace5738506e70b9d12c0238df578367bb3fb68ca04b9df"
+    },
+    {
+      "path": "candidate.diff",
+      "bytes": 35113,
+      "sha256": "1b54982f86a583c675121303967fba9bdb0df27d3d6d378162a6e17a6a200d46"
+    },
+    {
+      "path": "construction-audit.json",
+      "bytes": 1703,
+      "sha256": "61f6baff40a5fd3b9105f4642ac6540651b01cf70f0813469b0d75fa04fb629d"
+    },
+    {
+      "path": "control-identity.json",
+      "bytes": 192486,
+      "sha256": "781204e6bb4ab2e9bf9ba02ea6f925c697e80c06152fbbaf6f90b1d469e76233"
+    },
+    {
+      "path": "identity.json",
+      "bytes": 392122,
+      "sha256": "8d811cbf295fea683f4d506f44dc5f026c5763204dc559001a8e7154f4f72672"
+    },
+    {
+      "path": "manifest.json",
+      "bytes": 100720,
+      "sha256": "3487b42cdad9cae37213e3b679ab141336cd529f9943b0704cedc1a5e93efb00"
+    },
+    {
+      "path": "qualification-complete.json",
+      "bytes": 394,
+      "sha256": "a0afe5a3463bdf15eecd2233fd30d60f193b989c7a5772221866a810a788800d"
+    },
+    {
+      "path": "qualification-raw-inventory.json",
+      "bytes": 32019,
+      "sha256": "e09f0cbf8a65670de65ddd5ec9c549c1670333ad89a4b0dc6660c22efeb1dcf8"
+    },
+    {
+      "path": "qualified.json",
+      "bytes": 293,
+      "sha256": "ee7e630bbb47d59d709c1d541894bd6120bd4c52361e34e42468b223f7e80dbd"
+    },
+    {
+      "path": "receipt-check-complete.json",
+      "bytes": 400,
+      "sha256": "79b8141e71c7045d06ed372d25b816c6b38ef412133d230145b4799648dee1ba"
+    },
+    {
+      "path": "receipt-check-raw-inventory.json",
+      "bytes": 32019,
+      "sha256": "c586a0a730fe9d0a492f5705d0ec7b2cd47e541c9fb9e7a8ed04d5210281ec5e"
+    },
+    {
+      "path": "receipt-checked.json",
+      "bytes": 293,
+      "sha256": "e6b91f518508a2d02572374fd0dc8c5b3cd98935bbe349647bc26fe22f5ea3d2"
+    },
+    {
+      "path": "resolved-builds.json",
+      "bytes": 1130782,
+      "sha256": "8df4b0e15a49b48a73755952a17b5d251498c9c41ecb12cacd3636946252d754"
+    },
+    {
+      "path": "seal.json",
+      "bytes": 369,
+      "sha256": "0a51fc71f49329c5b3f3d618bc3b75741d24f2d691da826508f885dddfb45213"
+    },
+    {
+      "path": "validation.json",
+      "bytes": 2181,
+      "sha256": "367c4ddc971f4ed8c1a7e61bbbdd684a1d309ae74954f85c222f0f322c319449"
+    }
+  ]
+}

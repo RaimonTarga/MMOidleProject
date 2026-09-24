@@ -1,0 +1,652 @@
+[
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-striker-balanced-b-H0-s101009\\artifacts\\complete.json",
+    "bytes": 37,
+    "sha256": "9c7eba0876bf7fedc32f932738fd71014cd794be387e281111813f5d1cc06cc6"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-striker-balanced-b-H0-s101009\\artifacts\\index.json",
+    "bytes": 42067,
+    "sha256": "7e46055ef42e4888d4b6eedb94f920851bc08ad516ac474a985e6085891ac1c5"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-striker-balanced-b-H0-s101009\\artifacts\\manifest.json",
+    "bytes": 4376,
+    "sha256": "57a0fa18f53a53491e566f2a0e8eef08fe721486de3de5817582789c8ecf9cac"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-striker-balanced-b-H0-s101009\\process.json",
+    "bytes": 761,
+    "sha256": "b485f6169906418f2234b7d6bf8ff38d114837fb40557b72d75c21f2f83040bb"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-striker-balanced-b-H0-s101009\\process.log",
+    "bytes": 51,
+    "sha256": "ce8270c4e43b4444273374ba8f7076fabc194caa59f2cd36477c55f1798f99c1"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-striker-balanced-b-H1-s101009\\artifacts\\complete.json",
+    "bytes": 37,
+    "sha256": "9c7eba0876bf7fedc32f932738fd71014cd794be387e281111813f5d1cc06cc6"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-striker-balanced-b-H1-s101009\\artifacts\\index.json",
+    "bytes": 42259,
+    "sha256": "725818a4a11a6dc58017a725e84735b596ebfc155f3a652d0e4c72496c3970d3"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-striker-balanced-b-H1-s101009\\artifacts\\manifest.json",
+    "bytes": 4468,
+    "sha256": "90852975c79ef102f938aaad792913658cf26929f7c3529aa7c772ae52c684df"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-striker-balanced-b-H1-s101009\\process.json",
+    "bytes": 761,
+    "sha256": "5bbd5b422b3c4abff338288ac7011a0c566c7b4575fe505466de1c4956e8e10d"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-striker-balanced-b-H1-s101009\\process.log",
+    "bytes": 51,
+    "sha256": "0f808b67b4c9f5671cf44433936396498ebad76a7c36a2813f4f0c589b3ae4bc"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-striker-balanced-b-H2-s101009\\artifacts\\complete.json",
+    "bytes": 37,
+    "sha256": "9c7eba0876bf7fedc32f932738fd71014cd794be387e281111813f5d1cc06cc6"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-striker-balanced-b-H2-s101009\\artifacts\\index.json",
+    "bytes": 42343,
+    "sha256": "b12079a3af6b1200774bc06d35958288a220cfead3865047c10dc2d2ee3f1aa5"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-striker-balanced-b-H2-s101009\\artifacts\\manifest.json",
+    "bytes": 4509,
+    "sha256": "6a2b8edf4fde225f0bfee2d74c17b5ac00709f7c076d1d24fc4b9ffedd4ab28c"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-striker-balanced-b-H2-s101009\\process.json",
+    "bytes": 761,
+    "sha256": "b40540e9f22d50d389d87761827092f30284add90873211ef297b1c008b65649"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-striker-balanced-b-H2-s101009\\process.log",
+    "bytes": 51,
+    "sha256": "e75f4c9a514203fb1e7a348c1f1ebd6564c1d116c3b936b503c44928e272fe1a"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-apprentice-balanced-a-H0-s101009\\artifacts\\complete.json",
+    "bytes": 37,
+    "sha256": "9c7eba0876bf7fedc32f932738fd71014cd794be387e281111813f5d1cc06cc6"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-apprentice-balanced-a-H0-s101009\\artifacts\\index.json",
+    "bytes": 42292,
+    "sha256": "4ad6d40d042088fdf88e7d4b06a2d6205f0c29801debc98c824e331edc3bae9e"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-apprentice-balanced-a-H0-s101009\\artifacts\\manifest.json",
+    "bytes": 4595,
+    "sha256": "1e68c13c49bb1f6b635f4f8e1e7c10c68e132edbe676c93844007797b684c275"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-apprentice-balanced-a-H0-s101009\\process.json",
+    "bytes": 767,
+    "sha256": "979a4b78fea4dcb6c335164fae77f70162ab24823c48b8e477bad0e44606319f"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-apprentice-balanced-a-H0-s101009\\process.log",
+    "bytes": 54,
+    "sha256": "2e285f9500023ff1c1989d180e1cc63aa69e5998e5b0503c2561ee75d9a56280"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-apprentice-balanced-a-H1-s101009\\artifacts\\complete.json",
+    "bytes": 37,
+    "sha256": "9c7eba0876bf7fedc32f932738fd71014cd794be387e281111813f5d1cc06cc6"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-apprentice-balanced-a-H1-s101009\\artifacts\\index.json",
+    "bytes": 42484,
+    "sha256": "e3ba9337ef4a9587e1a08aa671c12a82bab60f84fd3d5ec3d7d9f8fcbacd56aa"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-apprentice-balanced-a-H1-s101009\\artifacts\\manifest.json",
+    "bytes": 4687,
+    "sha256": "7a2fcf835dddae91ebd6eaa12d623748a7f8ff5508415cdd80bbc88eaed6987e"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-apprentice-balanced-a-H1-s101009\\process.json",
+    "bytes": 767,
+    "sha256": "e400277eab4a2ca8816b313731cd9e7f670e71cfd32b42f85ad7a442e1fdbfd7"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-apprentice-balanced-a-H1-s101009\\process.log",
+    "bytes": 54,
+    "sha256": "606f11914adeebfd95697bf8fb40288d2f1679260a117c7df041c23374db7f78"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-apprentice-balanced-a-H2-s101009\\artifacts\\complete.json",
+    "bytes": 37,
+    "sha256": "9c7eba0876bf7fedc32f932738fd71014cd794be387e281111813f5d1cc06cc6"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-apprentice-balanced-a-H2-s101009\\artifacts\\index.json",
+    "bytes": 42568,
+    "sha256": "4f6068d90ff293e09f2cebb2d97f7649b467c8991707144a6077d1455545fe55"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-apprentice-balanced-a-H2-s101009\\artifacts\\manifest.json",
+    "bytes": 4728,
+    "sha256": "055cfa39968fe2627fd1bfb22a456c5f0ca1d50bd24f8d370ee53528b3d46e76"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-apprentice-balanced-a-H2-s101009\\process.json",
+    "bytes": 767,
+    "sha256": "6a82be7c1a891875b6c488d3824351bc61da0500b8bf3e1ee7ba50525f0a7b02"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-apprentice-balanced-a-H2-s101009\\process.log",
+    "bytes": 54,
+    "sha256": "18aa53b52fb608e1c2c270d8effe5f497eccdb99f0ded5212c3c66f30c4711dc"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-slinger-light-a-H0-s101009\\artifacts\\complete.json",
+    "bytes": 37,
+    "sha256": "9c7eba0876bf7fedc32f932738fd71014cd794be387e281111813f5d1cc06cc6"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-slinger-light-a-H0-s101009\\artifacts\\index.json",
+    "bytes": 42100,
+    "sha256": "1cc668d3a0dbb4509619df90938a467f9f7ef2c807f28896c0f8184270225135"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-slinger-light-a-H0-s101009\\artifacts\\manifest.json",
+    "bytes": 4417,
+    "sha256": "d6a88039741843f5c6f0323d92956c5a24763f3a169edce3c4c2d90f006378a4"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-slinger-light-a-H0-s101009\\process.json",
+    "bytes": 755,
+    "sha256": "a1790df67d1066f915b20f60b7486c6513c47d5419790b60b9c9a14152b23369"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-slinger-light-a-H0-s101009\\process.log",
+    "bytes": 48,
+    "sha256": "fb97c9736c4a1ff2fc80a7db1b863665a55edaa21853ab3949ead3755e547aca"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-slinger-light-a-H1-s101009\\artifacts\\complete.json",
+    "bytes": 37,
+    "sha256": "9c7eba0876bf7fedc32f932738fd71014cd794be387e281111813f5d1cc06cc6"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-slinger-light-a-H1-s101009\\artifacts\\index.json",
+    "bytes": 42293,
+    "sha256": "3f3d79e1db6fd2e579ca87619eadcf9a986afb92873de9ff79c15562a4837b7c"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-slinger-light-a-H1-s101009\\artifacts\\manifest.json",
+    "bytes": 4509,
+    "sha256": "1de2d909fce3f155d89f1ba18bd38b7ee7047a923a70cdd5468cbc2df46359ab"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-slinger-light-a-H1-s101009\\process.json",
+    "bytes": 755,
+    "sha256": "b37465b9a1a06b9ee4b6b14eb55baa19973e576f9c5563078715b2b8c27cf493"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-slinger-light-a-H1-s101009\\process.log",
+    "bytes": 48,
+    "sha256": "c59d81dcd9dfd94814acdb5a48cb4e50a0fa5e1247432f4bd884a8994251c9cd"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-slinger-light-a-H2-s101009\\artifacts\\complete.json",
+    "bytes": 37,
+    "sha256": "9c7eba0876bf7fedc32f932738fd71014cd794be387e281111813f5d1cc06cc6"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-slinger-light-a-H2-s101009\\artifacts\\index.json",
+    "bytes": 42377,
+    "sha256": "9f8f5949cb398b6cde22afa88565f8e41b7af7e951b83c1c47899c847611478c"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-slinger-light-a-H2-s101009\\artifacts\\manifest.json",
+    "bytes": 4550,
+    "sha256": "fb4f52a45f3a71968c1f532dc3f35ecc3a4807ffd2e3246b70b78160cee8aa7f"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-slinger-light-a-H2-s101009\\process.json",
+    "bytes": 755,
+    "sha256": "643de79d57693d1c405e991912abd538fe276a7e225d297c6401de001509d38b"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-slinger-light-a-H2-s101009\\process.log",
+    "bytes": 48,
+    "sha256": "13990826bf9f07de0012fa2de550aa2b66d45fbc2c0c8e6f82b8c353aff73f65"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-striker-balanced-b-H0-s101033\\artifacts\\complete.json",
+    "bytes": 37,
+    "sha256": "9c7eba0876bf7fedc32f932738fd71014cd794be387e281111813f5d1cc06cc6"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-striker-balanced-b-H0-s101033\\artifacts\\index.json",
+    "bytes": 43374,
+    "sha256": "5b81c09f67c80414c5543154fd48ede0b848d27dd8052f36f3e692729bfad898"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-striker-balanced-b-H0-s101033\\artifacts\\manifest.json",
+    "bytes": 4376,
+    "sha256": "b8672433df2ec788b2798605579029ff2782b31b50644a69d6416122fbe244a9"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-striker-balanced-b-H0-s101033\\process.json",
+    "bytes": 761,
+    "sha256": "d00a443fe4fca808816eb03009d8b720ddb55c3d92b78e0b43eec6f3293e5268"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-striker-balanced-b-H0-s101033\\process.log",
+    "bytes": 51,
+    "sha256": "93ff0c2ccd12e6c132d4c6bc8adbc65c1a4b25d06efd2532d9e0d7c59da29390"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-striker-balanced-b-H1-s101033\\artifacts\\complete.json",
+    "bytes": 37,
+    "sha256": "9c7eba0876bf7fedc32f932738fd71014cd794be387e281111813f5d1cc06cc6"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-striker-balanced-b-H1-s101033\\artifacts\\index.json",
+    "bytes": 43566,
+    "sha256": "55864e910817065ced4b64fb4ea0ac3c14b7265222df0abaa6e10dcd36d1a56f"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-striker-balanced-b-H1-s101033\\artifacts\\manifest.json",
+    "bytes": 4468,
+    "sha256": "90ccf4a427dd29a717b6b844b7278414b55ed5f88114131c3798ae156c3e8fd8"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-striker-balanced-b-H1-s101033\\process.json",
+    "bytes": 761,
+    "sha256": "75497f8799a6c058b45f226d8e05af50515a135f9fc455a5ea13a725ded88ca6"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-striker-balanced-b-H1-s101033\\process.log",
+    "bytes": 51,
+    "sha256": "2a19f8e259e7a9892a2dda545c999db61bf73a970c1a0421162b3d7fc66c5be4"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-striker-balanced-b-H2-s101033\\artifacts\\complete.json",
+    "bytes": 37,
+    "sha256": "9c7eba0876bf7fedc32f932738fd71014cd794be387e281111813f5d1cc06cc6"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-striker-balanced-b-H2-s101033\\artifacts\\index.json",
+    "bytes": 43650,
+    "sha256": "e93f4d410ad7531044ea59556435a3227e45c845795854f8774e46ce3cffa009"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-striker-balanced-b-H2-s101033\\artifacts\\manifest.json",
+    "bytes": 4509,
+    "sha256": "5221cad7a799652fd3da5a933067f0de4bad874d4b6cd5b0ebd91dbc82ead356"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-striker-balanced-b-H2-s101033\\process.json",
+    "bytes": 761,
+    "sha256": "5cbac62aac35f2ddcc129937205e724e7f3641be8a08e6983d012664ad7b2cf0"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-striker-balanced-b-H2-s101033\\process.log",
+    "bytes": 51,
+    "sha256": "fe8bda9c4c488860b6e6b0f545274fb0c74234ffd14fd94626e498bffe6d33a8"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-apprentice-balanced-a-H0-s101033\\artifacts\\complete.json",
+    "bytes": 37,
+    "sha256": "9c7eba0876bf7fedc32f932738fd71014cd794be387e281111813f5d1cc06cc6"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-apprentice-balanced-a-H0-s101033\\artifacts\\index.json",
+    "bytes": 43599,
+    "sha256": "8ec8e3d54a7a13eb4056801730016140d8c68accfe5f79e1843548596175cda6"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-apprentice-balanced-a-H0-s101033\\artifacts\\manifest.json",
+    "bytes": 4595,
+    "sha256": "2f095ea773f25f01e0c3742c40ee30e9b7a0100304aa47ad3f315b065693ff0a"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-apprentice-balanced-a-H0-s101033\\process.json",
+    "bytes": 767,
+    "sha256": "cb2c7080f7e4c951b25307870f2736fb5abacfe9eaf190b59d00a5c3a978bd1a"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-apprentice-balanced-a-H0-s101033\\process.log",
+    "bytes": 54,
+    "sha256": "fce1b25b0cb2248cbc8a2c14082e455a34225d3855ac8d373b6f0f4009393f59"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-apprentice-balanced-a-H1-s101033\\artifacts\\complete.json",
+    "bytes": 37,
+    "sha256": "9c7eba0876bf7fedc32f932738fd71014cd794be387e281111813f5d1cc06cc6"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-apprentice-balanced-a-H1-s101033\\artifacts\\index.json",
+    "bytes": 43791,
+    "sha256": "1ea4d2f1814e62a3316b348bae530168023dd08fea79337ef3e63e0c0bdf7159"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-apprentice-balanced-a-H1-s101033\\artifacts\\manifest.json",
+    "bytes": 4687,
+    "sha256": "1e07ca02fee8383c0f6ab7c6c1c44ef68e25a097d1c415bc074fea4e091a5b5c"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-apprentice-balanced-a-H1-s101033\\process.json",
+    "bytes": 767,
+    "sha256": "f70d7308caeba6fe29b37aace3dd339dada0d093fa7fc377df677c0aab7643cd"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-apprentice-balanced-a-H1-s101033\\process.log",
+    "bytes": 54,
+    "sha256": "0bfb07b7bd007ba8148a4245b036fa4de71223a6ace7c537fec780eddeaa832d"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-apprentice-balanced-a-H2-s101033\\artifacts\\complete.json",
+    "bytes": 37,
+    "sha256": "9c7eba0876bf7fedc32f932738fd71014cd794be387e281111813f5d1cc06cc6"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-apprentice-balanced-a-H2-s101033\\artifacts\\index.json",
+    "bytes": 43875,
+    "sha256": "3ec89e9a02c2ddb36850db9d518a40fd034afa106735b55148b463114d69071c"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-apprentice-balanced-a-H2-s101033\\artifacts\\manifest.json",
+    "bytes": 4728,
+    "sha256": "c9cc1806e4b20cdc2c716bb1eaf442489d6b748082f2b5c13f80e5b2eb5b167b"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-apprentice-balanced-a-H2-s101033\\process.json",
+    "bytes": 767,
+    "sha256": "667cb05b41df1994e977365419883c635bd77c69283b2bcf1a80816bdf0c16ed"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-apprentice-balanced-a-H2-s101033\\process.log",
+    "bytes": 54,
+    "sha256": "1d18faa605d14e959f1cc2bd386301e6cd2927afce2e304c316be4d1d88b368f"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-slinger-light-a-H0-s101033\\artifacts\\complete.json",
+    "bytes": 37,
+    "sha256": "9c7eba0876bf7fedc32f932738fd71014cd794be387e281111813f5d1cc06cc6"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-slinger-light-a-H0-s101033\\artifacts\\index.json",
+    "bytes": 43407,
+    "sha256": "c986e54c478c21e6f99051b283bbc652d1cdf51892871f0a048116157c5f3203"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-slinger-light-a-H0-s101033\\artifacts\\manifest.json",
+    "bytes": 4417,
+    "sha256": "ac666c8afb981121f1853d3362899b402f849d07858806814e8aeb89c9b2f3a9"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-slinger-light-a-H0-s101033\\process.json",
+    "bytes": 755,
+    "sha256": "8341f3cf2c384dd36b9287239efac55669c35cf09750f0bfcfa9b27c5731a6cf"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-slinger-light-a-H0-s101033\\process.log",
+    "bytes": 48,
+    "sha256": "d6576f080246c0ee6d4d772a405258dd73788bf48e35e805e785373a628d6bd4"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-slinger-light-a-H1-s101033\\artifacts\\complete.json",
+    "bytes": 37,
+    "sha256": "9c7eba0876bf7fedc32f932738fd71014cd794be387e281111813f5d1cc06cc6"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-slinger-light-a-H1-s101033\\artifacts\\index.json",
+    "bytes": 43600,
+    "sha256": "a39de6be9c615e1f914626dad01863ed9ce2d5592db74d1192d7b7ab30b780d1"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-slinger-light-a-H1-s101033\\artifacts\\manifest.json",
+    "bytes": 4509,
+    "sha256": "890a0a526017eaa9732206afa37d1eccac845b9aa3a61b71af3a2826adafb09a"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-slinger-light-a-H1-s101033\\process.json",
+    "bytes": 754,
+    "sha256": "97b0dcc08994dca3438db716fb927b3426b5f1537ae58033f31425314408cf4c"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-slinger-light-a-H1-s101033\\process.log",
+    "bytes": 48,
+    "sha256": "8fe7c4ee3c3e9e46a3c16a15880cab23b333bcf3b2abc454c052b0900eb46f9f"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-slinger-light-a-H2-s101033\\artifacts\\complete.json",
+    "bytes": 37,
+    "sha256": "9c7eba0876bf7fedc32f932738fd71014cd794be387e281111813f5d1cc06cc6"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-slinger-light-a-H2-s101033\\artifacts\\index.json",
+    "bytes": 43684,
+    "sha256": "72988947ce95a5ee471e16ea32c553743a922e76618c99c73a1f5b428bdc96b7"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-slinger-light-a-H2-s101033\\artifacts\\manifest.json",
+    "bytes": 4550,
+    "sha256": "a6f672962ace70a3b468a7bb009941bea4c59b146a3ea05e350a4af4c43d0d09"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-slinger-light-a-H2-s101033\\process.json",
+    "bytes": 755,
+    "sha256": "c5b53280e473277c9eeee3252f8473204a985fd0bb91a58a0aded1a5522fdb45"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-slinger-light-a-H2-s101033\\process.log",
+    "bytes": 48,
+    "sha256": "9f305472d31d4cd347757f7bcf5cfc22ff587d8c8f1bfa3e20f82a58fdfbdfec"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-N-control-s101009\\artifacts\\complete.json",
+    "bytes": 37,
+    "sha256": "9c7eba0876bf7fedc32f932738fd71014cd794be387e281111813f5d1cc06cc6"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-N-control-s101009\\artifacts\\index.json",
+    "bytes": 40290,
+    "sha256": "725d36ddf6e19ee4a0ec60bb67e73fafe6b9edb1a4c57f6a26191fadc0023873"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-N-control-s101009\\artifacts\\manifest.json",
+    "bytes": 4444,
+    "sha256": "559ad6450b6f02e02d23ff579b4707ef3f1e4fcdc2ec2696942ec7961add6cf1"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-N-control-s101009\\process.json",
+    "bytes": 734,
+    "sha256": "861a429aae5e96bd31b34405eea02a2b07b82b3646f01c53251e003994e3b2c8"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-N-control-s101009\\process.log",
+    "bytes": 39,
+    "sha256": "d6f0d3d558e746792c5a640c4dd0cc4b813a32fffa85c317e41cdba96f80723d"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-N-candidate-s101009\\artifacts\\complete.json",
+    "bytes": 37,
+    "sha256": "9c7eba0876bf7fedc32f932738fd71014cd794be387e281111813f5d1cc06cc6"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-N-candidate-s101009\\artifacts\\index.json",
+    "bytes": 40297,
+    "sha256": "026580469ec5c4bf3bb34052a828b2facb7b8f3390e69eecd0af054e2ed267f0"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-N-candidate-s101009\\artifacts\\manifest.json",
+    "bytes": 4452,
+    "sha256": "669a8d7936986106f7c777ea816ea5effb5491febc7471cf35c7f63fb02c5ea0"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-N-candidate-s101009\\process.json",
+    "bytes": 741,
+    "sha256": "5c90741b34a317c0a185a776b6529f549d7ebefdac41122018aa34fb87c98a0e"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-N-candidate-s101009\\process.log",
+    "bytes": 41,
+    "sha256": "40bfe155eecaaf65f0b34530ba6a225668b30ad23ae6eeec2e5f7a0c0eb68e53"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-N-control-s101033\\artifacts\\complete.json",
+    "bytes": 37,
+    "sha256": "9c7eba0876bf7fedc32f932738fd71014cd794be387e281111813f5d1cc06cc6"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-N-control-s101033\\artifacts\\index.json",
+    "bytes": 40271,
+    "sha256": "21176abb8e578743eb6d6aae9a70eb71b3d9c243033bbdd34955cd830058a8cc"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-N-control-s101033\\artifacts\\manifest.json",
+    "bytes": 4444,
+    "sha256": "edf01320258023b3202a3f2ee2b27136dce67513839e073eff798e161afe2b22"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-N-control-s101033\\process.json",
+    "bytes": 733,
+    "sha256": "dc0be99fa7af63509387e285c6c81b023d3be27f3634b60dba5569e655a15f88"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-N-control-s101033\\process.log",
+    "bytes": 39,
+    "sha256": "fcd6c36e5891e16eee78d48f73c997b763570a13f1de57b15784a4c0e06968c5"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-N-candidate-s101033\\artifacts\\complete.json",
+    "bytes": 37,
+    "sha256": "9c7eba0876bf7fedc32f932738fd71014cd794be387e281111813f5d1cc06cc6"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-N-candidate-s101033\\artifacts\\index.json",
+    "bytes": 40278,
+    "sha256": "ba274d519dc6ef711e69b1043e396636bc6c1af5a7cd522b9b779695054e075b"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-N-candidate-s101033\\artifacts\\manifest.json",
+    "bytes": 4452,
+    "sha256": "e0fe396b706c3b195c7493e4f61cff77c3c624779f51b073a7dd40b550762f86"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-N-candidate-s101033\\process.json",
+    "bytes": 741,
+    "sha256": "58db9f452379d0b8ba321e05c973b98cbf9d7b397bed71b43cb0fbcf251f61c4"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-N-candidate-s101033\\process.log",
+    "bytes": 41,
+    "sha256": "2096a99bc040ed3f499632ccbcf17789d2cab46383a2826db78e87aecdb22e18"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-B-control-s101009\\artifacts\\complete.json",
+    "bytes": 153,
+    "sha256": "82e21397dbe0e512b9332afd3047910c01f2d6274199255f6b9411eeff4c4e98"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-B-control-s101009\\artifacts\\index.json",
+    "bytes": 26694,
+    "sha256": "9eee4bda3e372e2553ca6f93f3ff01256cebb7d2d8a6c83773329fa6346b75a7"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-B-control-s101009\\artifacts\\manifest.json",
+    "bytes": 3529,
+    "sha256": "b40f3a4574f0586ab679ee6f1d246d78eca54c862c3c9d37e7b2d60706aec662"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-B-control-s101009\\process.json",
+    "bytes": 735,
+    "sha256": "c73555d59313796ac9783e433663865ee0a4ced932ef7601f306301033758cf3"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-B-control-s101009\\process.log",
+    "bytes": 127,
+    "sha256": "3ccd811becb0889ac42285540b7da8e8479f3caa2c6804d136d67905192df322"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-B-candidate-s101009\\artifacts\\complete.json",
+    "bytes": 155,
+    "sha256": "03633c9f04fdcf13460763852cab347fc8c2f6fe23ee8cebdefdfbaffe239e8b"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-B-candidate-s101009\\artifacts\\index.json",
+    "bytes": 26698,
+    "sha256": "e1f94577f13379980ce78e3183ed5a80a18a586b8b119f8e5e1e44c2166211b1"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-B-candidate-s101009\\artifacts\\manifest.json",
+    "bytes": 3537,
+    "sha256": "8d43ea183df519f1eea81cc84264115efc7616f6e469bdb0dd11b701d2a5d4ec"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-B-candidate-s101009\\process.json",
+    "bytes": 742,
+    "sha256": "273726ed93f3769855f3928f2f7e6e76bb61fe7f2930fed8651743f850c0973e"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-B-candidate-s101009\\process.log",
+    "bytes": 131,
+    "sha256": "aeaaf3e038e6106814f093cd6bc3d36bf927dc41df7f678c79567f55c2bf3736"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-B-control-s101033\\artifacts\\complete.json",
+    "bytes": 153,
+    "sha256": "98e8caf6212d8413d22316c3446dea3da5c171ba238bbff057f8a261129ecdbf"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-B-control-s101033\\artifacts\\index.json",
+    "bytes": 26694,
+    "sha256": "2f41dc27b6770479074633d599f2c8ff3b6d75192663bd5c4019a4d3391769df"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-B-control-s101033\\artifacts\\manifest.json",
+    "bytes": 3529,
+    "sha256": "84344a39e30a7a4c7ca01d485d42840637cd944787ae1b1b4f99baae50a14f7c"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-B-control-s101033\\process.json",
+    "bytes": 735,
+    "sha256": "3c0c867792ba1821aeaf3dba9f2c4064872c0deaa7b8b57374b90f441d49f797"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-B-control-s101033\\process.log",
+    "bytes": 127,
+    "sha256": "9f2fe6e3de4efc43ede8e42f694435bdec56e4b51eaaf04ec80ce8264365bc2b"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-B-candidate-s101033\\artifacts\\complete.json",
+    "bytes": 155,
+    "sha256": "faa107a5f8f83b9e646ed469a62bcf8ce834814f0a2221dc056e9711e42aa15c"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-B-candidate-s101033\\artifacts\\index.json",
+    "bytes": 26698,
+    "sha256": "6dcbb8008928f376179aa7956d31cc21dc1da459065e16ddffa2b51f9f2d6194"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-B-candidate-s101033\\artifacts\\manifest.json",
+    "bytes": 3537,
+    "sha256": "e1c69976e78099753cea1d94c0e0c8c4dd01516a3b832d1d9707437ec22f4270"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-B-candidate-s101033\\process.json",
+    "bytes": 742,
+    "sha256": "62fa3d6d03bc147a927605c38215838b2405af184bb5437aab00b5c11d265a89"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\receipt-check\\qualification-heat-B-candidate-s101033\\process.log",
+    "bytes": 131,
+    "sha256": "50c070252f9cbd21e6f5ca5aa739a8e1e9007183b4979006bbf47850c0a6b912"
+  }
+]

@@ -1,0 +1,65 @@
+{
+  "experimentId": "volcano-heat-management-01",
+  "candidate": "25289e490d4bfb53dd440ba436a67f596e5b91c4",
+  "baseline": "268148d269b87311eaa1ae4b053baeb6571c747a",
+  "checks": {
+    "typecheck": {
+      "command": "pnpm typecheck",
+      "status": "passed"
+    },
+    "build": {
+      "command": "pnpm build",
+      "status": "passed",
+      "notes": "Existing Vite chunk-size warnings. Generated shadows artifact restored before sealing."
+    },
+    "focusedTests": [
+      {
+        "command": "pnpm --filter @mmo-idle/server exec tsx --conditions=development test/heatManagement.test.ts",
+        "status": "passed"
+      },
+      {
+        "command": "pnpm --filter @mmo-idle/server exec tsx --conditions=development test/runeWaitItOut.test.ts",
+        "status": "passed"
+      },
+      {
+        "command": "pnpm --filter @mmo-idle/server exec tsx --conditions=development test/runeMaintenance.test.ts",
+        "status": "passed"
+      },
+      {
+        "command": "pnpm --filter @mmo-idle/server exec tsx --conditions=development test/summonerRuneTargeting.test.ts",
+        "status": "passed"
+      },
+      {
+        "command": "pnpm --filter @mmo-idle/server exec tsx --conditions=development test/runeTargetingPreference.test.ts",
+        "status": "passed"
+      }
+    ],
+    "persistence": "Actual Rune socket handler, production saveCharacter/loadCharacter serializers and World attach; in-memory database adapter, no live PostgreSQL integration claim.",
+    "fullSuite": "Not run; focused implementation checks only.",
+    "browserLivePlay": "Not performed; UI typechecked and built.",
+    "constructionAudit": "construction-audit.json"
+  },
+  "combatCounts": {
+    "planned": 26,
+    "completed": 0,
+    "dead": 0,
+    "failed": 0,
+    "notRun": 26
+  },
+  "qualification": {
+    "completed": 26,
+    "combatObservations": 0
+  },
+  "receiptReplay": {
+    "completed": 26,
+    "combatObservations": 0,
+    "byteIdentical": true,
+    "receiptsSha256": "8df4b0e15a49b48a73755952a17b5d251498c9c41ecb12cacd3636946252d754"
+  },
+  "rawInventory": {
+    "files": 260,
+    "bytes": 2354948,
+    "hashMismatches": 0
+  },
+  "status": "prepared-qualified-replayed-unrun"
+}

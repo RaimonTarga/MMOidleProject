@@ -1,0 +1,46 @@
+{
+  "qualified": 26,
+  "actualEquippedRulesMatch": true,
+  "initialHeatAbsent": true,
+  "fullHpAndBarrier": true,
+  "ordinaryUpgrades": 4,
+  "supportUpgrades": 0,
+  "unchangedHeatCombatFiles": [
+    "server/src/systems/world/nodeFeatures.ts",
+    "shared/src/world/nodeFeatures.ts",
+    "shared/src/systems/playerAmplifiers.ts",
+    "shared/src/systems/statusPolicy.ts",
+    "server/src/systems/combat/ai/engagement.ts"
+  ],
+  "unchangedCommittedBlobs": true,
+  "checkoutLineEndingOnlyDifferences": [
+    "server/src/systems/world/nodeFeatures.ts",
+    "shared/src/world/nodeFeatures.ts",
+    "shared/src/systems/playerAmplifiers.ts",
+    "shared/src/systems/statusPolicy.ts",
+    "server/src/systems/combat/ai/engagement.ts"
+  ],
+  "identicalObservationSupportFiles": [
+    ".gitattributes",
+    "scripts/volcano-heat-management.mjs",
+    "server/bench/balance/encounterCounterplaySpec.ts",
+    "server/bench/balance/farmingSustainSpec.ts",
+    "server/bench/balance/heatObservation.ts",
+    "server/bench/balance/overnightProgressionSpec.ts",
+    "server/bench/balance/playerFastPassSpec.ts",
+    "server/bench/balance/progressionSnapshot.ts",
+    "server/bench/balance/t2SpiritBossEvidence.ts",
+    "server/bench/balance/ttkSurveySpec.ts",
+    "server/bench/balance/volcanoHeatCases.json",
+    "server/bench/balance/volcanoHeatReferences.json",
+    "server/bench/balance/volcanoHeatSpec.ts",
+    "server/scripts/bossScreen.ts",
+    "server/scripts/ttkSurvey.ts",
+    "server/src/systems/player/progression/rewards.ts",
+    "server/src/world/World.ts"
+  ],
+  "combatObservations": 0,
+  "allUnrelatedSourceFilesVerified": true,
+  "unchangedExactByteFiles": 17,
+  "unchangedLineEndingOnlyFiles": 1650
+}
