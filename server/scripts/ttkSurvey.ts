@@ -257,11 +257,11 @@ function run(cell:SurveyCell,seed:number) {
         stream('conduit-snapshots.jsonl',conduit?.snapshots.splice(0)??[]);
         stream('sustain-transitions.jsonl',sustain?.transitions.splice(0)??[]);
         const measuredMs=elapsed+100;
-        if((t4?[300000,600000,1200000,1800000,2400000]:encounter?[300000,600000]:progression?PROGRESSION_ENDPOINTS:tundraClassFrame?TUNDRA_CLASS_FRAME_ENDPOINTS:desert?DESERT_ENDPOINTS:ENDURANCE_ENDPOINTS).includes(measuredMs) && !bot.isDead && bot.hasHealth.hp>0) {
+        if((subsystem?[300000,600000]:t4?[300000,600000,1200000,1800000,2400000]:encounter?[300000,600000]:progression?PROGRESSION_ENDPOINTS:tundraClassFrame?TUNDRA_CLASS_FRAME_ENDPOINTS:desert?DESERT_ENDPOINTS:ENDURANCE_ENDPOINTS).includes(measuredMs) && !bot.isDead && bot.hasHealth.hp>0) {
           endpoints.push({atMs:measuredMs,work:progress!.snapshot(measuredMs),owner:{hp:v.hp,maxHp:v.maxHp,barrier:v.barrier,minHpFraction:minHp},sustain:sustain?.finish()});
           writeFileSync(join(dir,'endpoints.json'),JSON.stringify(endpoints,null,2));
         }
-        if(realNow()-heartbeatAt>=5000 || (t4?[300000,600000,1200000,1800000,2400000]:encounter?[300000,600000]:progression?PROGRESSION_ENDPOINTS:tundraClassFrame?TUNDRA_CLASS_FRAME_ENDPOINTS:desert?DESERT_ENDPOINTS:ENDURANCE_ENDPOINTS).includes(measuredMs)) {
+        if(realNow()-heartbeatAt>=5000 || (subsystem?[300000,600000]:t4?[300000,600000,1200000,1800000,2400000]:encounter?[300000,600000]:progression?PROGRESSION_ENDPOINTS:tundraClassFrame?TUNDRA_CLASS_FRAME_ENDPOINTS:desert?DESERT_ENDPOINTS:ENDURANCE_ENDPOINTS).includes(measuredMs)) {
           const disk=statfsSync(out),rss=process.memoryUsage().rss;
           writeFileSync(join(out,'heartbeat.json'),JSON.stringify({at:new Date(realNow()).toISOString(),elapsedMs:measuredMs,rss,cell:cell.id}));
           heartbeatAt=realNow();
@@ -279,7 +279,7 @@ function run(cell:SurveyCell,seed:number) {
       ...(sustain ? {sustain:sustain.finish()} : {}),
       ...(sessions ? {sessions:sessions.finish()} : {}),
       ...(t4?{heatManagement:{holdMs:heatHoldMs,allWaitMs,recoveryOverlapMs,transitions:heatTransitions}}:{}),
-      ...(endurance ? {endpoints,intervals:endpointIntervals(endpoints,t4?[600000,1200000,1800000,2400000]:encounter?[300000,600000]:progression?PROGRESSION_ENDPOINTS:tundraClassFrame?TUNDRA_CLASS_FRAME_ENDPOINTS:desert?DESERT_ENDPOINTS:ENDURANCE_ENDPOINTS),work:progress!.snapshot(elapsed),terminalTargets:roster(),streamedHistories:true,timing:'Legacy event times label tick starts; endpoint states follow completed 100ms steps; no post-death endpoints.'} : {}),
+      ...(endurance ? {endpoints,intervals:endpointIntervals(endpoints,subsystem?[300000,600000]:t4?[600000,1200000,1800000,2400000]:encounter?[300000,600000]:progression?PROGRESSION_ENDPOINTS:tundraClassFrame?TUNDRA_CLASS_FRAME_ENDPOINTS:desert?DESERT_ENDPOINTS:ENDURANCE_ENDPOINTS),work:progress!.snapshot(elapsed),terminalTargets:roster(),streamedHistories:true,timing:'Legacy event times label tick starts; endpoint states follow completed 100ms steps; no post-death endpoints.'} : {}),
       ...(breadth ? {terminalOwner:{hp:bot.hasHealth.hp,maxHp:bot.hasHealth.maxHp,barrier:composePlayerView(bot)!.barrier},playerDeathEvidence:endurance?deathEvents:log.filter((x:any)=>x.event?.kind==='player-death')} : {}),minHpFraction:minHp,attackBeats,minionAttackBeats,wallElapsedMs:realNow()-wallStart,maxTickWallMs,totalAttackBeats:attackBeats+minionAttackBeats,initialRosterHash:ready.initialRosterHash,...metrics.result()};
     if(!endurance) writeFileSync(join(dir,'events.jsonl'),log.map(e=>JSON.stringify(e)).join('\n')+'\n');
     if(!endurance) writeFileSync(join(dir,'samples.jsonl'),samples.map(e=>JSON.stringify(e)).join('\n')+'\n');
