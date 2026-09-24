@@ -1,0 +1,837 @@
+[
+  {
+    "cell": "stance-01-breadth-t3-striker-balanced-node-t3-volcanic-03-defensive",
+    "seed": 101003,
+    "outcome": "player-died",
+    "elapsedMs": 186300,
+    "windowMs": 300000,
+    "terminalOwner": {
+      "hp": 0,
+      "maxHp": 430,
+      "barrier": 0
+    },
+    "playerDeathEvidence": [
+      {
+        "atMs": 186300,
+        "event": {
+          "kind": "player-death",
+          "nodeId": "node-t3-volcanic-03",
+          "player": {
+            "id": "bench-bot-0",
+            "name": "stance-01-breadth-t3-striker-balanced-node-t3-volcanic-03-defensive",
+            "actorType": "player"
+          },
+          "cause": {
+            "kind": "ranged",
+            "killer": {
+              "monsterEntityId": "node-t3-volcanic-03_monster-15",
+              "monsterTypeId": "ash-slinger",
+              "monsterName": "Ash Salamander",
+              "isBoss": false,
+              "nodeId": "node-t3-volcanic-03"
+            },
+            "damage": 55
+          },
+          "id": 1771,
+          "tick": 1864,
+          "serverTime": 1800000186300
+        }
+      }
+    ],
+    "minHpFraction": 0,
+    "attackBeats": 209,
+    "minionAttackBeats": 0,
+    "wallElapsedMs": 3744,
+    "maxTickWallMs": 100,
+    "totalAttackBeats": 209,
+    "initialRosterHash": "a747e276f40b20e3d57ca51b3688d58542d5858ecf8320bb95a0c671df119187",
+    "targets": [
+      {
+        "id": "node-t3-volcanic-03_monster-33",
+        "type": "ember-scuttler",
+        "name": "Ember Scuttler",
+        "maxHp": 650,
+        "firstDamageMs": 77100,
+        "lastDamageMs": 93100,
+        "killedAtMs": 93100,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 3000,
+        "damageEvents": 7,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 16000,
+        "clean": true
+      },
+      {
+        "id": "node-t3-volcanic-03_monster-32",
+        "type": "ash-slinger",
+        "name": "Ash Salamander",
+        "maxHp": 1330,
+        "firstDamageMs": 93700,
+        "lastDamageMs": 98100,
+        "killedAtMs": 98100,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 600,
+        "damageEvents": 9,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 4400,
+        "clean": true
+      },
+      {
+        "id": "node-t3-volcanic-03_monster-31",
+        "type": "ember-scuttler",
+        "name": "Ember Scuttler",
+        "maxHp": 650,
+        "firstDamageMs": 74300,
+        "lastDamageMs": 76600,
+        "killedAtMs": 76600,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 600,
+        "damageEvents": 5,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 2300,
+        "clean": true
+      },
+      {
+        "id": "node-t3-volcanic-03_monster-30",
+        "type": "ember-scuttler",
+        "name": "Ember Scuttler",
+        "maxHp": 650,
+        "firstDamageMs": 77100,
+        "lastDamageMs": 79100,
+        "killedAtMs": 79100,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 500,
+        "damageEvents": 5,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 2000,
+        "clean": true
+      },
+      {
+        "id": "node-t3-volcanic-03_monster-29",
+        "type": "ember-scuttler",
+        "name": "Ember Scuttler",
+        "maxHp": 650,
+        "firstDamageMs": 77100,
+        "lastDamageMs": 81300,
+        "killedAtMs": 81300,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 2500,
+        "damageEvents": 5,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 4200,
+        "clean": true
+      },
+      {
+        "id": "node-t3-volcanic-03_monster-28",
+        "type": "magma-brute",
+        "name": "Magma Tortoise",
+        "maxHp": 3000,
+        "firstDamageMs": 77100,
+        "lastDamageMs": 92500,
+        "killedAtMs": 92500,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 3000,
+        "damageEvents": 22,
+        "castsStarted": 1,
+        "castsFired": 1,
+        "ttkMs": 15400,
+        "clean": true
+      },
+      {
+        "id": "node-t3-volcanic-03_monster-27",
+        "type": "ember-scuttler",
+        "name": "Ember Scuttler",
+        "maxHp": 650,
+        "firstDamageMs": 57500,
+        "lastDamageMs": 62400,
+        "killedAtMs": 62400,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 3100,
+        "damageEvents": 5,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 4900,
+        "clean": true
+      },
+      {
+        "id": "node-t3-volcanic-03_monster-26",
+        "type": "ember-scuttler",
+        "name": "Ember Scuttler",
+        "maxHp": 650,
+        "firstDamageMs": 57500,
+        "lastDamageMs": 68000,
+        "killedAtMs": 68000,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 3100,
+        "damageEvents": 6,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 10500,
+        "clean": true
+      },
+      {
+        "id": "node-t3-volcanic-03_monster-25",
+        "type": "ember-scuttler",
+        "name": "Ember Scuttler",
+        "maxHp": 650,
+        "firstDamageMs": 57000,
+        "lastDamageMs": 58500,
+        "killedAtMs": 58500,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 500,
+        "damageEvents": 4,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 1500,
+        "clean": true
+      },
+      {
+        "id": "node-t3-volcanic-03_monster-24",
+        "type": "ember-scuttler",
+        "name": "Ember Scuttler",
+        "maxHp": 650,
+        "firstDamageMs": 57500,
+        "lastDamageMs": 60600,
+        "killedAtMs": 60600,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 1500,
+        "damageEvents": 5,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 3100,
+        "clean": true
+      },
+      {
+        "id": "node-t3-volcanic-03_monster-23",
+        "type": "cinder-hound",
+        "name": "Cinder Hound",
+        "maxHp": 1440,
+        "firstDamageMs": 57500,
+        "lastDamageMs": 67000,
+        "killedAtMs": 67000,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 3100,
+        "damageEvents": 10,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 9500,
+        "clean": true
+      },
+      {
+        "id": "node-t3-volcanic-03_monster-18",
+        "type": "ash-slinger",
+        "name": "Ash Salamander",
+        "maxHp": 1330,
+        "firstDamageMs": 47600,
+        "lastDamageMs": 52200,
+        "killedAtMs": 52200,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 600,
+        "damageEvents": 9,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 4600,
+        "clean": true
+      },
+      {
+        "id": "node-t3-volcanic-03_monster-16",
+        "type": "ember-scuttler",
+        "name": "Ember Scuttler",
+        "maxHp": 650,
+        "firstDamageMs": 172600,
+        "lastDamageMs": 174100,
+        "killedAtMs": 174100,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 500,
+        "damageEvents": 4,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 1500,
+        "clean": true
+      },
+      {
+        "id": "node-t3-volcanic-03_monster-15",
+        "type": "ash-slinger",
+        "name": "Ash Salamander",
+        "maxHp": 1330,
+        "firstDamageMs": 186200,
+        "lastDamageMs": 186200,
+        "killedAtMs": null,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 0,
+        "damageEvents": 1,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": null,
+        "clean": false
+      },
+      {
+        "id": "node-t3-volcanic-03_monster-14",
+        "type": "ember-scuttler",
+        "name": "Ember Scuttler",
+        "maxHp": 650,
+        "firstDamageMs": 175100,
+        "lastDamageMs": 184100,
+        "killedAtMs": 184100,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 3500,
+        "damageEvents": 4,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 9000,
+        "clean": true
+      },
+      {
+        "id": "node-t3-volcanic-03_monster-13",
+        "type": "ember-scuttler",
+        "name": "Ember Scuttler",
+        "maxHp": 650,
+        "firstDamageMs": 175100,
+        "lastDamageMs": 184100,
+        "killedAtMs": 184100,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 3500,
+        "damageEvents": 4,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 9000,
+        "clean": true
+      },
+      {
+        "id": "node-t3-volcanic-03_monster-12",
+        "type": "ember-scuttler",
+        "name": "Ember Scuttler",
+        "maxHp": 650,
+        "firstDamageMs": 175100,
+        "lastDamageMs": 184100,
+        "killedAtMs": 184100,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 3500,
+        "damageEvents": 4,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 9000,
+        "clean": true
+      },
+      {
+        "id": "node-t3-volcanic-03_monster-11",
+        "type": "magma-brute",
+        "name": "Magma Tortoise",
+        "maxHp": 3000,
+        "firstDamageMs": 174600,
+        "lastDamageMs": 185600,
+        "killedAtMs": 185600,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 600,
+        "damageEvents": 21,
+        "castsStarted": 1,
+        "castsFired": 1,
+        "ttkMs": 11000,
+        "clean": true
+      },
+      {
+        "id": "node-t3-volcanic-03_monster-6",
+        "type": "ash-slinger",
+        "name": "Ash Salamander",
+        "maxHp": 1330,
+        "firstDamageMs": 162600,
+        "lastDamageMs": 166800,
+        "killedAtMs": 166800,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 600,
+        "damageEvents": 9,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 4200,
+        "clean": true
+      },
+      {
+        "id": "node-t3-volcanic-03_monster-5",
+        "type": "ash-slinger",
+        "name": "Ash Salamander",
+        "maxHp": 1330,
+        "firstDamageMs": 111400,
+        "lastDamageMs": 115600,
+        "killedAtMs": 115600,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 600,
+        "damageEvents": 9,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 4200,
+        "clean": true
+      },
+      {
+        "id": "node-t3-volcanic-03_monster-4",
+        "type": "ember-scuttler",
+        "name": "Ember Scuttler",
+        "maxHp": 650,
+        "firstDamageMs": 5000,
+        "lastDamageMs": 14000,
+        "killedAtMs": 14000,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 3000,
+        "damageEvents": 6,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 9000,
+        "clean": true
+      },
+      {
+        "id": "node-t3-volcanic-03_monster-3",
+        "type": "ember-scuttler",
+        "name": "Ember Scuttler",
+        "maxHp": 650,
+        "firstDamageMs": 5000,
+        "lastDamageMs": 12500,
+        "killedAtMs": 12500,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 3000,
+        "damageEvents": 6,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 7500,
+        "clean": true
+      },
+      {
+        "id": "node-t3-volcanic-03_monster-2",
+        "type": "ember-scuttler",
+        "name": "Ember Scuttler",
+        "maxHp": 650,
+        "firstDamageMs": 5000,
+        "lastDamageMs": 10300,
+        "killedAtMs": 10300,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 2900,
+        "damageEvents": 6,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 5300,
+        "clean": true
+      },
+      {
+        "id": "node-t3-volcanic-03_monster-1",
+        "type": "cinder-hound",
+        "name": "Cinder Hound",
+        "maxHp": 1440,
+        "firstDamageMs": 2500,
+        "lastDamageMs": 7900,
+        "killedAtMs": 7900,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 600,
+        "damageEvents": 11,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 5400,
+        "clean": true
+      },
+      {
+        "id": "node-t3-volcanic-03_monster-46",
+        "type": "ash-slinger",
+        "name": "Ash Salamander",
+        "maxHp": 1330,
+        "firstDamageMs": 22900,
+        "lastDamageMs": 34000,
+        "killedAtMs": 34000,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 6100,
+        "damageEvents": 9,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 11100,
+        "clean": true
+      },
+      {
+        "id": "node-t3-volcanic-03_monster-45",
+        "type": "ember-scuttler",
+        "name": "Ember Scuttler",
+        "maxHp": 650,
+        "firstDamageMs": 20800,
+        "lastDamageMs": 29000,
+        "killedAtMs": 29000,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 3100,
+        "damageEvents": 6,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 8200,
+        "clean": true
+      },
+      {
+        "id": "node-t3-volcanic-03_monster-44",
+        "type": "ember-scuttler",
+        "name": "Ember Scuttler",
+        "maxHp": 650,
+        "firstDamageMs": 20800,
+        "lastDamageMs": 27200,
+        "killedAtMs": 27200,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 3100,
+        "damageEvents": 5,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 6400,
+        "clean": true
+      },
+      {
+        "id": "node-t3-volcanic-03_monster-43",
+        "type": "cinder-hound",
+        "name": "Cinder Hound",
+        "maxHp": 1440,
+        "firstDamageMs": 21400,
+        "lastDamageMs": 25400,
+        "killedAtMs": 25400,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 500,
+        "damageEvents": 9,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 4000,
+        "clean": true
+      },
+      {
+        "id": "node-t3-volcanic-03_monster-49",
+        "type": "ash-slinger",
+        "name": "Ash Salamander",
+        "maxHp": 1330,
+        "firstDamageMs": 121100,
+        "lastDamageMs": 124600,
+        "killedAtMs": 124600,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 500,
+        "damageEvents": 8,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 3500,
+        "clean": true
+      },
+      {
+        "id": "node-t3-volcanic-03_monster-66",
+        "type": "ash-slinger",
+        "name": "Ash Salamander",
+        "maxHp": 1330,
+        "firstDamageMs": 146900,
+        "lastDamageMs": 151500,
+        "killedAtMs": 151500,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 600,
+        "damageEvents": 9,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 4600,
+        "clean": true
+      },
+      {
+        "id": "node-t3-volcanic-03_monster-65",
+        "type": "ember-scuttler",
+        "name": "Ember Scuttler",
+        "maxHp": 650,
+        "firstDamageMs": 133500,
+        "lastDamageMs": 145100,
+        "killedAtMs": 145100,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 3400,
+        "damageEvents": 6,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 11600,
+        "clean": true
+      },
+      {
+        "id": "node-t3-volcanic-03_monster-64",
+        "type": "ember-scuttler",
+        "name": "Ember Scuttler",
+        "maxHp": 650,
+        "firstDamageMs": 133500,
+        "lastDamageMs": 146300,
+        "killedAtMs": 146300,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 3400,
+        "damageEvents": 6,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 12800,
+        "clean": true
+      },
+      {
+        "id": "node-t3-volcanic-03_monster-63",
+        "type": "ember-scuttler",
+        "name": "Ember Scuttler",
+        "maxHp": 650,
+        "firstDamageMs": 131000,
+        "lastDamageMs": 132500,
+        "killedAtMs": 132500,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 500,
+        "damageEvents": 4,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": 1500,
+        "clean": true
+      },
+      {
+        "id": "node-t3-volcanic-03_monster-62",
+        "type": "magma-brute",
+        "name": "Magma Tortoise",
+        "maxHp": 3000,
+        "firstDamageMs": 133000,
+        "lastDamageMs": 144000,
+        "killedAtMs": 144000,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 600,
+        "damageEvents": 21,
+        "castsStarted": 1,
+        "castsFired": 1,
+        "ttkMs": 11000,
+        "clean": true
+      }
+    ],
+    "episodes": [
+      {
+        "startMs": 1600,
+        "endMs": 14000,
+        "durationMs": 12400,
+        "members": [
+          "node-t3-volcanic-03_monster-4",
+          "node-t3-volcanic-03_monster-3",
+          "node-t3-volcanic-03_monster-2",
+          "node-t3-volcanic-03_monster-1"
+        ],
+        "initialMembers": [
+          "node-t3-volcanic-03_monster-4",
+          "node-t3-volcanic-03_monster-3",
+          "node-t3-volcanic-03_monster-2",
+          "node-t3-volcanic-03_monster-1"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 19200,
+        "endMs": 34000,
+        "durationMs": 14800,
+        "members": [
+          "node-t3-volcanic-03_monster-43",
+          "node-t3-volcanic-03_monster-44",
+          "node-t3-volcanic-03_monster-45",
+          "node-t3-volcanic-03_monster-46"
+        ],
+        "initialMembers": [
+          "node-t3-volcanic-03_monster-43",
+          "node-t3-volcanic-03_monster-44",
+          "node-t3-volcanic-03_monster-45",
+          "node-t3-volcanic-03_monster-46"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 44900,
+        "endMs": 52200,
+        "durationMs": 7300,
+        "members": [
+          "node-t3-volcanic-03_monster-18"
+        ],
+        "initialMembers": [
+          "node-t3-volcanic-03_monster-18"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 56400,
+        "endMs": 68000,
+        "durationMs": 11600,
+        "members": [
+          "node-t3-volcanic-03_monster-27",
+          "node-t3-volcanic-03_monster-26",
+          "node-t3-volcanic-03_monster-25",
+          "node-t3-volcanic-03_monster-24",
+          "node-t3-volcanic-03_monster-23"
+        ],
+        "initialMembers": [
+          "node-t3-volcanic-03_monster-27",
+          "node-t3-volcanic-03_monster-26",
+          "node-t3-volcanic-03_monster-25",
+          "node-t3-volcanic-03_monster-24",
+          "node-t3-volcanic-03_monster-23"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 73800,
+        "endMs": 98100,
+        "durationMs": 24300,
+        "members": [
+          "node-t3-volcanic-03_monster-33",
+          "node-t3-volcanic-03_monster-32",
+          "node-t3-volcanic-03_monster-31",
+          "node-t3-volcanic-03_monster-30",
+          "node-t3-volcanic-03_monster-29",
+          "node-t3-volcanic-03_monster-28"
+        ],
+        "initialMembers": [
+          "node-t3-volcanic-03_monster-33",
+          "node-t3-volcanic-03_monster-32",
+          "node-t3-volcanic-03_monster-31",
+          "node-t3-volcanic-03_monster-30",
+          "node-t3-volcanic-03_monster-29",
+          "node-t3-volcanic-03_monster-28"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 110700,
+        "endMs": 115600,
+        "durationMs": 4900,
+        "members": [
+          "node-t3-volcanic-03_monster-5"
+        ],
+        "initialMembers": [
+          "node-t3-volcanic-03_monster-5"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 120400,
+        "endMs": 124600,
+        "durationMs": 4200,
+        "members": [
+          "node-t3-volcanic-03_monster-49"
+        ],
+        "initialMembers": [
+          "node-t3-volcanic-03_monster-49"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 130400,
+        "endMs": 151500,
+        "durationMs": 21100,
+        "members": [
+          "node-t3-volcanic-03_monster-64",
+          "node-t3-volcanic-03_monster-63",
+          "node-t3-volcanic-03_monster-62",
+          "node-t3-volcanic-03_monster-66",
+          "node-t3-volcanic-03_monster-65"
+        ],
+        "initialMembers": [
+          "node-t3-volcanic-03_monster-64",
+          "node-t3-volcanic-03_monster-63",
+          "node-t3-volcanic-03_monster-62",
+          "node-t3-volcanic-03_monster-66",
+          "node-t3-volcanic-03_monster-65"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 161900,
+        "endMs": 166800,
+        "durationMs": 4900,
+        "members": [
+          "node-t3-volcanic-03_monster-6"
+        ],
+        "initialMembers": [
+          "node-t3-volcanic-03_monster-6"
+        ],
+        "lateJoiners": 0,
+        "outcome": "cleared"
+      },
+      {
+        "startMs": 172000,
+        "endMs": 186300,
+        "durationMs": 14300,
+        "members": [
+          "node-t3-volcanic-03_monster-16",
+          "node-t3-volcanic-03_monster-15",
+          "node-t3-volcanic-03_monster-14",
+          "node-t3-volcanic-03_monster-13",
+          "node-t3-volcanic-03_monster-12",
+          "node-t3-volcanic-03_monster-11"
+        ],
+        "initialMembers": [
+          "node-t3-volcanic-03_monster-16",
+          "node-t3-volcanic-03_monster-15",
+          "node-t3-volcanic-03_monster-14",
+          "node-t3-volcanic-03_monster-13",
+          "node-t3-volcanic-03_monster-12",
+          "node-t3-volcanic-03_monster-11"
+        ],
+        "lateJoiners": 0,
+        "outcome": "player-died"
+      }
+    ],
+    "recovery": [
+      {
+        "afterClearMs": 14000,
+        "recoveredAtMs": null,
+        "interruptedByNextPull": true
+      },
+      {
+        "afterClearMs": 34000,
+        "recoveredAtMs": 41000,
+        "interruptedByNextPull": false
+      },
+      {
+        "afterClearMs": 52200,
+        "recoveredAtMs": null,
+        "interruptedByNextPull": true
+      },
+      {
+        "afterClearMs": 68000,
+        "recoveredAtMs": null,
+        "interruptedByNextPull": true
+      },
+      {
+        "afterClearMs": 98100,
+        "recoveredAtMs": 105700,
+        "interruptedByNextPull": false
+      },
+      {
+        "afterClearMs": 115600,
+        "recoveredAtMs": null,
+        "interruptedByNextPull": true
+      },
+      {
+        "afterClearMs": 124600,
+        "recoveredAtMs": null,
+        "interruptedByNextPull": true
+      },
+      {
+        "afterClearMs": 151500,
+        "recoveredAtMs": 158900,
+        "interruptedByNextPull": false
+      },
+      {
+        "afterClearMs": 166800,
+        "recoveredAtMs": null,
+        "interruptedByNextPull": true
+      }
+    ],
+    "incomingDamage": 3809.9,
+    "largestHit": 98,
+    "maxDamageIn1s": 165,
+    "counts": {
+      "damaged": 34,
+      "killed": 33,
+      "censored": 1,
+      "hpRegain": 0
+    },
+    "cleanTtkMs": {
+      "n": 33,
+      "p10": 2060,
+      "median": 5400,
+      "p90": 11500
+    }
+  }
+]

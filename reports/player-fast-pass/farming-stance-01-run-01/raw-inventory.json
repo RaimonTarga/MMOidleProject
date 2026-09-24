@@ -1,0 +1,290 @@
+[
+  {
+    "observationId": "stance-01-breadth-t3-striker-balanced-node-t3-volcanic-03-offensive",
+    "path": "stance-01-breadth-t3-striker-balanced-node-t3-volcanic-03-offensive/stance-01-breadth-t3-striker-balanced-node-t3-volcanic-03-offensive-s101003/events.jsonl",
+    "bytes": 453226,
+    "sha256": "9190d13636d67de0e0db95eca4e6d188641a3859347a5cd0e296946304106508"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-striker-balanced-node-t3-volcanic-03-offensive",
+    "path": "stance-01-breadth-t3-striker-balanced-node-t3-volcanic-03-offensive/stance-01-breadth-t3-striker-balanced-node-t3-volcanic-03-offensive-s101003/samples.jsonl",
+    "bytes": 902953,
+    "sha256": "2b96257a591954923c609ead10ce3e9eaad6f927e4e225cbcdbc1e094edaab33"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-striker-balanced-node-t3-volcanic-03-defensive",
+    "path": "stance-01-breadth-t3-striker-balanced-node-t3-volcanic-03-defensive/stance-01-breadth-t3-striker-balanced-node-t3-volcanic-03-defensive-s101003/events.jsonl",
+    "bytes": 814927,
+    "sha256": "251aeabaa18628bbd74b41ced8797a19dc354bd6fbd592f782e0a9028f17f40a"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-striker-balanced-node-t3-volcanic-03-defensive",
+    "path": "stance-01-breadth-t3-striker-balanced-node-t3-volcanic-03-defensive/stance-01-breadth-t3-striker-balanced-node-t3-volcanic-03-defensive-s101003/samples.jsonl",
+    "bytes": 1647333,
+    "sha256": "bf4da75a25a3483d8c077c8c54791c51bcc613f583d436de36e4080d6ef19d49"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-striker-balanced-node-t3-tundra-03-offensive",
+    "path": "stance-01-breadth-t3-striker-balanced-node-t3-tundra-03-offensive/stance-01-breadth-t3-striker-balanced-node-t3-tundra-03-offensive-s101003/events.jsonl",
+    "bytes": 1040989,
+    "sha256": "e3d191f45692df5f2a53fb881dc4a1ff7b04eec2e4fff823fe440def0232a115"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-striker-balanced-node-t3-tundra-03-offensive",
+    "path": "stance-01-breadth-t3-striker-balanced-node-t3-tundra-03-offensive/stance-01-breadth-t3-striker-balanced-node-t3-tundra-03-offensive-s101003/samples.jsonl",
+    "bytes": 962808,
+    "sha256": "6a433c16c725bb32d8104cffcb72f8b7f8d7f1ec59bae88589daa5ccd9b3155d"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-striker-balanced-node-t3-tundra-03-defensive",
+    "path": "stance-01-breadth-t3-striker-balanced-node-t3-tundra-03-defensive/stance-01-breadth-t3-striker-balanced-node-t3-tundra-03-defensive-s101003/events.jsonl",
+    "bytes": 966032,
+    "sha256": "47e3aab628f11a7197bcafc68e708b78b8701f36fd5981ea7a1ce15ddbfd472a"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-striker-balanced-node-t3-tundra-03-defensive",
+    "path": "stance-01-breadth-t3-striker-balanced-node-t3-tundra-03-defensive/stance-01-breadth-t3-striker-balanced-node-t3-tundra-03-defensive-s101003/samples.jsonl",
+    "bytes": 954387,
+    "sha256": "6e485952f078b9ed074a1829e459b55f0d1b4145295740c71b4c61d9cffe0f29"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-squire-balanced-node-t3-volcanic-03-offensive",
+    "path": "stance-01-breadth-t3-squire-balanced-node-t3-volcanic-03-offensive/stance-01-breadth-t3-squire-balanced-node-t3-volcanic-03-offensive-s101003/events.jsonl",
+    "bytes": 118063,
+    "sha256": "e6ef5490174c19534213c521168f0404db6735a30ef2e3dafb9ca4676dac1e54"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-squire-balanced-node-t3-volcanic-03-offensive",
+    "path": "stance-01-breadth-t3-squire-balanced-node-t3-volcanic-03-offensive/stance-01-breadth-t3-squire-balanced-node-t3-volcanic-03-offensive-s101003/samples.jsonl",
+    "bytes": 259570,
+    "sha256": "2337ca0808e632a4bdcd6835f2bfde97c056fac1fac49ccd6df273b6435c30a8"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-squire-balanced-node-t3-volcanic-03-defensive",
+    "path": "stance-01-breadth-t3-squire-balanced-node-t3-volcanic-03-defensive/stance-01-breadth-t3-squire-balanced-node-t3-volcanic-03-defensive-s101003/events.jsonl",
+    "bytes": 983695,
+    "sha256": "7fb838d15e4b9a464305942a7054f684b3a6faea24a8a9ecd861688c37d3d720"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-squire-balanced-node-t3-volcanic-03-defensive",
+    "path": "stance-01-breadth-t3-squire-balanced-node-t3-volcanic-03-defensive/stance-01-breadth-t3-squire-balanced-node-t3-volcanic-03-defensive-s101003/samples.jsonl",
+    "bytes": 2633688,
+    "sha256": "7fe78bfa8d4929b5b725607a52c5c14de77fbc5c87929d50789d6ef142f00ec8"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-squire-balanced-node-t3-tundra-03-offensive",
+    "path": "stance-01-breadth-t3-squire-balanced-node-t3-tundra-03-offensive/stance-01-breadth-t3-squire-balanced-node-t3-tundra-03-offensive-s101003/events.jsonl",
+    "bytes": 806466,
+    "sha256": "797f1f2c98461b65ad451f6f2830400a3a84d5f8f8514a9101351a39a26d4dc1"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-squire-balanced-node-t3-tundra-03-offensive",
+    "path": "stance-01-breadth-t3-squire-balanced-node-t3-tundra-03-offensive/stance-01-breadth-t3-squire-balanced-node-t3-tundra-03-offensive-s101003/samples.jsonl",
+    "bytes": 968222,
+    "sha256": "1fc1fe8c874397728c43955dfd37395b1f888690d7a2dd44dd8734ae6fddb21e"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-squire-balanced-node-t3-tundra-03-defensive",
+    "path": "stance-01-breadth-t3-squire-balanced-node-t3-tundra-03-defensive/stance-01-breadth-t3-squire-balanced-node-t3-tundra-03-defensive-s101003/events.jsonl",
+    "bytes": 886202,
+    "sha256": "d30b7cf4ff89a47e40066d0d72bba07dff3ebb7ef4b0b2eb89b3b58ccbbce663"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-squire-balanced-node-t3-tundra-03-defensive",
+    "path": "stance-01-breadth-t3-squire-balanced-node-t3-tundra-03-defensive/stance-01-breadth-t3-squire-balanced-node-t3-tundra-03-defensive-s101003/samples.jsonl",
+    "bytes": 956308,
+    "sha256": "cf05ed1e26786fcae86f9fb72039f3aa47e2b169f4ff454bc98b0016d3d9d090"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-offensive",
+    "path": "stance-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-offensive/stance-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-offensive-s101003/events.jsonl",
+    "bytes": 336048,
+    "sha256": "5123c8e0d3d32eb71b57d44d3e978cbcd64d8306c42984a6f8203c6551a9dfa6"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-offensive",
+    "path": "stance-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-offensive/stance-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-offensive-s101003/samples.jsonl",
+    "bytes": 1039494,
+    "sha256": "13a0f82a014a9b8206059cdd7440d5a398af339b7a3bd31c7c9c9d0143ffd122"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-defensive",
+    "path": "stance-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-defensive/stance-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-defensive-s101003/events.jsonl",
+    "bytes": 979699,
+    "sha256": "e92c06df2feca79c7db792f4f929d918a89c3027a3f5d8e750120e619a7191a0"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-defensive",
+    "path": "stance-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-defensive/stance-01-breadth-t3-apprentice-balanced-node-t3-volcanic-03-defensive-s101003/samples.jsonl",
+    "bytes": 2693586,
+    "sha256": "ec093bcd46a4def0d983ea948acc27a8e40a887a8c9207ef34c0f9c78b6431df"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-offensive",
+    "path": "stance-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-offensive/stance-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-offensive-s101003/events.jsonl",
+    "bytes": 927010,
+    "sha256": "930235040ff3d58ca14c1fc19024ffdddf44e80b773ba5b26c451a48912786fa"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-offensive",
+    "path": "stance-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-offensive/stance-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-offensive-s101003/samples.jsonl",
+    "bytes": 982376,
+    "sha256": "f0f6eed99332d254a6a61f6fc3c89b536664aecbde2822096e2981f312173a93"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-defensive",
+    "path": "stance-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-defensive/stance-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-defensive-s101003/events.jsonl",
+    "bytes": 903674,
+    "sha256": "45c6c01c2e61c0d36785208992a0b81e0e24bb132a7a03e4b49b03e1d8cee477"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-defensive",
+    "path": "stance-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-defensive/stance-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-defensive-s101003/samples.jsonl",
+    "bytes": 995762,
+    "sha256": "aea42915ade8232c83df75023026aef899b62c3438431fd6274a94c5bcae7a6d"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-conduit-balanced-node-t3-volcanic-03-offensive",
+    "path": "stance-01-breadth-t3-conduit-balanced-node-t3-volcanic-03-offensive/stance-01-breadth-t3-conduit-balanced-node-t3-volcanic-03-offensive-s101003/events.jsonl",
+    "bytes": 520219,
+    "sha256": "787760e25535c21da2efcd02cff33c682629a81a73d6ba7eb3b21a8db5cf665c"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-conduit-balanced-node-t3-volcanic-03-offensive",
+    "path": "stance-01-breadth-t3-conduit-balanced-node-t3-volcanic-03-offensive/stance-01-breadth-t3-conduit-balanced-node-t3-volcanic-03-offensive-s101003/samples.jsonl",
+    "bytes": 1151382,
+    "sha256": "e2d51c21773e553a7d70e8802659e50236fb3f4554bb084a47b6b5c30f9a92f5"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-conduit-balanced-node-t3-volcanic-03-defensive",
+    "path": "stance-01-breadth-t3-conduit-balanced-node-t3-volcanic-03-defensive/stance-01-breadth-t3-conduit-balanced-node-t3-volcanic-03-defensive-s101003/events.jsonl",
+    "bytes": 619478,
+    "sha256": "b263950896d505556573d9a8561576c595c427a60d0a60fd0961c6211c75bda5"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-conduit-balanced-node-t3-volcanic-03-defensive",
+    "path": "stance-01-breadth-t3-conduit-balanced-node-t3-volcanic-03-defensive/stance-01-breadth-t3-conduit-balanced-node-t3-volcanic-03-defensive-s101003/samples.jsonl",
+    "bytes": 1238419,
+    "sha256": "9dce557b115f0725cc81247a5c42c1d8a06248e56f87cb7437618bc7f66e3697"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-offensive",
+    "path": "stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-offensive/stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-offensive-s101003/events.jsonl",
+    "bytes": 1458175,
+    "sha256": "98209d14d2ac729ae4a77e6daaa42cb3726db300a67ef664c2fb718c35eff9c6"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-offensive",
+    "path": "stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-offensive/stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-offensive-s101003/samples.jsonl",
+    "bytes": 1391262,
+    "sha256": "e3c7b827785cae17964769b9b7196478eeef17b9640edf1edb4f6e1ba763bfdd"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-defensive",
+    "path": "stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-defensive/stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-defensive-s101003/events.jsonl",
+    "bytes": 2997013,
+    "sha256": "dbd58c645c382c4219551cc64e3be7718d081f0aad4baad20abef54c6f2edb33"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-defensive",
+    "path": "stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-defensive/stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-defensive-s101003/samples.jsonl",
+    "bytes": 1410885,
+    "sha256": "add3bae9bccca31d6f14181de6b8d8325ba0e990d933b0d34da53ddb03b1669f"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-offensive",
+    "path": "stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-offensive/stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-offensive-s101003/events.jsonl",
+    "bytes": 225334,
+    "sha256": "79cde14f3785a43e6a9815298e12cbf267fc96cf4f99a707b39933f0aa89372e"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-offensive",
+    "path": "stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-offensive/stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-offensive-s101003/samples.jsonl",
+    "bytes": 640301,
+    "sha256": "0cd6d7a24ba6d7a588ca883d94459fea01706a6e37eb994aad2ded4bb951f9a5"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-defensive",
+    "path": "stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-defensive/stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-defensive-s101003/events.jsonl",
+    "bytes": 840429,
+    "sha256": "82eba46cba2d076b44b37b4d70a7dd965d123a3a14ecf07f44cf6ea34d9fd962"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-defensive",
+    "path": "stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-defensive/stance-01-breadth-t3-conduit-heavy-node-t3-volcanic-03-defensive-s101003/samples.jsonl",
+    "bytes": 1704723,
+    "sha256": "9ac1a22b2aec8eacb2b1a55626c1fae71d18378d36792a79038df47dc0a3ce7e"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-conduit-heavy-node-t3-tundra-03-offensive",
+    "path": "stance-01-breadth-t3-conduit-heavy-node-t3-tundra-03-offensive/stance-01-breadth-t3-conduit-heavy-node-t3-tundra-03-offensive-s101003/events.jsonl",
+    "bytes": 908933,
+    "sha256": "463eb97e37bf456dbfd6752a1244b692f4dc9495be4e3b999167158d4f39f623"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-conduit-heavy-node-t3-tundra-03-offensive",
+    "path": "stance-01-breadth-t3-conduit-heavy-node-t3-tundra-03-offensive/stance-01-breadth-t3-conduit-heavy-node-t3-tundra-03-offensive-s101003/samples.jsonl",
+    "bytes": 1164829,
+    "sha256": "10bb1569a36798b1be670c6fa3babeb0e72650ad4debb04fdeb087514e6ad5bf"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-conduit-heavy-node-t3-tundra-03-defensive",
+    "path": "stance-01-breadth-t3-conduit-heavy-node-t3-tundra-03-defensive/stance-01-breadth-t3-conduit-heavy-node-t3-tundra-03-defensive-s101003/events.jsonl",
+    "bytes": 1141743,
+    "sha256": "62e3326b456570b4dd08790058bc47912ba15bb52f36dc126155407bc4fa5052"
+  },
+  {
+    "observationId": "stance-01-breadth-t3-conduit-heavy-node-t3-tundra-03-defensive",
+    "path": "stance-01-breadth-t3-conduit-heavy-node-t3-tundra-03-defensive/stance-01-breadth-t3-conduit-heavy-node-t3-tundra-03-defensive-s101003/samples.jsonl",
+    "bytes": 1176689,
+    "sha256": "c39687bef43d1eac556df72780892cdf9e7c78ea58d388cb5e641472fb136b39"
+  },
+  {
+    "observationId": "stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive",
+    "path": "stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive/stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive-s101003/events.jsonl",
+    "bytes": 258017,
+    "sha256": "6e18c5a5d8269704a26b8301d250293c139be852b65c5ac63991bdc23084a4df"
+  },
+  {
+    "observationId": "stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive",
+    "path": "stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive/stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-offensive-s101003/samples.jsonl",
+    "bytes": 592760,
+    "sha256": "854270c1899560c1668daee744d5c0a060137fbdc1bc3589d37b5f2e06772ca6"
+  },
+  {
+    "observationId": "stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-defensive",
+    "path": "stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-defensive/stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-defensive-s101003/events.jsonl",
+    "bytes": 1026841,
+    "sha256": "545084acde9a9c2b793e45f33bb81e45a75f224118f88824c7eb8e01e820d965"
+  },
+  {
+    "observationId": "stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-defensive",
+    "path": "stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-defensive/stance-01-breadth-t4-conduit-heavy-a-node-t4-graveyard-03-defensive-s101003/samples.jsonl",
+    "bytes": 2448228,
+    "sha256": "e3c3eb1f930f64ff3e04e9bb08a32e176e74d37dedf4398d711119e528012a4b"
+  },
+  {
+    "observationId": "stance-01-breadth-t4-conduit-heavy-a-node-t4-desert-03-offensive",
+    "path": "stance-01-breadth-t4-conduit-heavy-a-node-t4-desert-03-offensive/stance-01-breadth-t4-conduit-heavy-a-node-t4-desert-03-offensive-s101003/events.jsonl",
+    "bytes": 1018393,
+    "sha256": "b2e5c407d6d786de7c1d534f894c504b0bcd5e6411a7c16b0f00cace341a14f1"
+  },
+  {
+    "observationId": "stance-01-breadth-t4-conduit-heavy-a-node-t4-desert-03-offensive",
+    "path": "stance-01-breadth-t4-conduit-heavy-a-node-t4-desert-03-offensive/stance-01-breadth-t4-conduit-heavy-a-node-t4-desert-03-offensive-s101003/samples.jsonl",
+    "bytes": 1301512,
+    "sha256": "affad6cba26554b807dc7035f1169f874a49b716ccbddbd0d1de8ab949819c0d"
+  },
+  {
+    "observationId": "stance-01-breadth-t4-conduit-heavy-a-node-t4-desert-03-defensive",
+    "path": "stance-01-breadth-t4-conduit-heavy-a-node-t4-desert-03-defensive/stance-01-breadth-t4-conduit-heavy-a-node-t4-desert-03-defensive-s101003/events.jsonl",
+    "bytes": 534857,
+    "sha256": "844e6dfbd189fe0e5f4f7c58f509551e89e9d916d8183f634312d6703cee6635"
+  },
+  {
+    "observationId": "stance-01-breadth-t4-conduit-heavy-a-node-t4-desert-03-defensive",
+    "path": "stance-01-breadth-t4-conduit-heavy-a-node-t4-desert-03-defensive/stance-01-breadth-t4-conduit-heavy-a-node-t4-desert-03-defensive-s101003/samples.jsonl",
+    "bytes": 686208,
+    "sha256": "7b2a2fa367cfbf03599a63a1be6409870235a32800d3f934028606548e4737c3"
+  }
+]

@@ -1,0 +1,185 @@
+[
+  {
+    "cell": "stance-01-breadth-t4-conduit-heavy-a-node-t4-desert-03-defensive",
+    "seed": 101003,
+    "outcome": "player-died",
+    "elapsedMs": 156800,
+    "windowMs": 300000,
+    "terminalOwner": {
+      "hp": 0,
+      "maxHp": 585,
+      "barrier": 0
+    },
+    "playerDeathEvidence": [
+      {
+        "atMs": 156800,
+        "event": {
+          "kind": "player-death",
+          "nodeId": "node-t4-desert-03",
+          "player": {
+            "id": "bench-bot-0",
+            "name": "stance-01-breadth-t4-conduit-heavy-a-node-t4-desert-03-defensive",
+            "actorType": "player"
+          },
+          "cause": {
+            "kind": "ranged",
+            "killer": {
+              "monsterEntityId": "node-t4-desert-03_monster-6",
+              "monsterTypeId": "sandspitter-cobra",
+              "monsterName": "Sunshield Scarab",
+              "isBoss": false,
+              "nodeId": "node-t4-desert-03"
+            },
+            "damage": 130
+          },
+          "id": 919,
+          "tick": 1569,
+          "serverTime": 1800000156800
+        }
+      }
+    ],
+    "minHpFraction": 0,
+    "attackBeats": 0,
+    "minionAttackBeats": 252,
+    "wallElapsedMs": 2254,
+    "maxTickWallMs": 50,
+    "totalAttackBeats": 252,
+    "initialRosterHash": "ecf63512afcd06ab6115fea9d0eb183b7da2d44fe164feb1da11f6fcd5dc46c8",
+    "targets": [
+      {
+        "id": "node-t4-desert-03_monster-13",
+        "type": "sand-viper",
+        "name": "Sand Viper",
+        "maxHp": 4835,
+        "firstDamageMs": 65900,
+        "lastDamageMs": 104200,
+        "killedAtMs": 104200,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 4300,
+        "damageEvents": 58,
+        "castsStarted": 5,
+        "castsFired": 5,
+        "ttkMs": 38300,
+        "clean": true
+      },
+      {
+        "id": "node-t4-desert-03_monster-6",
+        "type": "sandspitter-cobra",
+        "name": "Sunshield Scarab",
+        "maxHp": 683,
+        "firstDamageMs": 139700,
+        "lastDamageMs": 154900,
+        "killedAtMs": null,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 8500,
+        "damageEvents": 15,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": null,
+        "clean": false
+      },
+      {
+        "id": "node-t4-desert-03_monster-5",
+        "type": "sand-viper",
+        "name": "Sand Viper",
+        "maxHp": 4835,
+        "firstDamageMs": 78500,
+        "lastDamageMs": 108600,
+        "killedAtMs": 108600,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 3600,
+        "damageEvents": 54,
+        "castsStarted": 4,
+        "castsFired": 4,
+        "ttkMs": 30100,
+        "clean": true
+      },
+      {
+        "id": "node-t4-desert-03_monster-2",
+        "type": "sandspitter-cobra",
+        "name": "Sunshield Scarab",
+        "maxHp": 683,
+        "firstDamageMs": 2700,
+        "lastDamageMs": 2800,
+        "killedAtMs": null,
+        "hpRegainObserved": true,
+        "maxDamageGapMs": 100,
+        "damageEvents": 2,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": null,
+        "clean": false
+      },
+      {
+        "id": "node-t4-desert-03_monster-1",
+        "type": "dune-basilisk",
+        "name": "Dune Basilisk",
+        "maxHp": 10807,
+        "firstDamageMs": 2700,
+        "lastDamageMs": 63200,
+        "killedAtMs": 63200,
+        "hpRegainObserved": false,
+        "maxDamageGapMs": 3900,
+        "damageEvents": 129,
+        "castsStarted": 6,
+        "castsFired": 6,
+        "ttkMs": 60500,
+        "clean": true
+      },
+      {
+        "id": "node-t4-desert-03_monster-17",
+        "type": "dune-tyrant",
+        "name": "Dune Tyrant",
+        "maxHp": 8342,
+        "firstDamageMs": 140900,
+        "lastDamageMs": 155500,
+        "killedAtMs": null,
+        "hpRegainObserved": true,
+        "maxDamageGapMs": 11000,
+        "damageEvents": 12,
+        "castsStarted": 0,
+        "castsFired": 0,
+        "ttkMs": null,
+        "clean": false
+      }
+    ],
+    "episodes": [
+      {
+        "startMs": 2100,
+        "endMs": 156800,
+        "durationMs": 154700,
+        "members": [
+          "node-t4-desert-03_monster-2",
+          "node-t4-desert-03_monster-1",
+          "node-t4-desert-03_monster-13",
+          "node-t4-desert-03_monster-14",
+          "node-t4-desert-03_monster-6",
+          "node-t4-desert-03_monster-5",
+          "node-t4-desert-03_monster-17"
+        ],
+        "initialMembers": [
+          "node-t4-desert-03_monster-2",
+          "node-t4-desert-03_monster-1"
+        ],
+        "lateJoiners": 5,
+        "outcome": "player-died"
+      }
+    ],
+    "recovery": [],
+    "incomingDamage": 1537.8,
+    "largestHit": 130,
+    "maxDamageIn1s": 260,
+    "counts": {
+      "damaged": 6,
+      "killed": 3,
+      "censored": 3,
+      "hpRegain": 2
+    },
+    "cleanTtkMs": {
+      "n": 3,
+      "p10": 31740,
+      "median": 38300,
+      "p90": 56060
+    }
+  }
+]

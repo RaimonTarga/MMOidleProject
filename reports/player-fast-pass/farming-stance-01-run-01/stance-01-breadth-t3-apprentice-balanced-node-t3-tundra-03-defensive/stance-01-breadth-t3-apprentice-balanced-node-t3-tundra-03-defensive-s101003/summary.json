@@ -1,0 +1,394 @@
+{
+  "cell": "stance-01-breadth-t3-apprentice-balanced-node-t3-tundra-03-defensive",
+  "seed": 101003,
+  "outcome": "window-ended",
+  "elapsedMs": 300000,
+  "windowMs": 300000,
+  "terminalOwner": {
+    "hp": 393,
+    "maxHp": 393,
+    "barrier": 134
+  },
+  "playerDeathEvidence": [],
+  "minHpFraction": 0.18249363867684554,
+  "attackBeats": 569,
+  "minionAttackBeats": 0,
+  "wallElapsedMs": 3065,
+  "maxTickWallMs": 49,
+  "totalAttackBeats": 569,
+  "initialRosterHash": "ceda903b2b78f638e6d57a8f5171b4d2b7cad59b75262e147ef0699acd1d79f4",
+  "targets": [
+    {
+      "id": "node-t3-tundra-03_monster-12",
+      "type": "frost-lurker",
+      "name": "Frost Lurker",
+      "maxHp": 1093,
+      "firstDamageMs": 151300,
+      "lastDamageMs": 158800,
+      "killedAtMs": 158800,
+      "hpRegainObserved": false,
+      "maxDamageGapMs": 1500,
+      "damageEvents": 12,
+      "castsStarted": 1,
+      "castsFired": 1,
+      "ttkMs": 7500,
+      "clean": true
+    },
+    {
+      "id": "node-t3-tundra-03_monster-11",
+      "type": "glacier-bear",
+      "name": "Glacier Bear",
+      "maxHp": 4313,
+      "firstDamageMs": 233300,
+      "lastDamageMs": 263300,
+      "killedAtMs": 263300,
+      "hpRegainObserved": false,
+      "maxDamageGapMs": 1500,
+      "damageEvents": 51,
+      "castsStarted": 0,
+      "castsFired": 0,
+      "ttkMs": 30000,
+      "clean": true
+    },
+    {
+      "id": "node-t3-tundra-03_monster-10",
+      "type": "frost-lurker",
+      "name": "Frost Lurker",
+      "maxHp": 1093,
+      "firstDamageMs": 164800,
+      "lastDamageMs": 172000,
+      "killedAtMs": 172000,
+      "hpRegainObserved": false,
+      "maxDamageGapMs": 1500,
+      "damageEvents": 12,
+      "castsStarted": 1,
+      "castsFired": 1,
+      "ttkMs": 7200,
+      "clean": true
+    },
+    {
+      "id": "node-t3-tundra-03_monster-9",
+      "type": "rime-caster",
+      "name": "Rime Caster",
+      "maxHp": 1012,
+      "firstDamageMs": 218700,
+      "lastDamageMs": 225300,
+      "killedAtMs": 225300,
+      "hpRegainObserved": false,
+      "maxDamageGapMs": 1500,
+      "damageEvents": 11,
+      "castsStarted": 0,
+      "castsFired": 0,
+      "ttkMs": 6600,
+      "clean": true
+    },
+    {
+      "id": "node-t3-tundra-03_monster-8",
+      "type": "rime-caster",
+      "name": "Rime Caster",
+      "maxHp": 1012,
+      "firstDamageMs": 136100,
+      "lastDamageMs": 142700,
+      "killedAtMs": 142700,
+      "hpRegainObserved": false,
+      "maxDamageGapMs": 1500,
+      "damageEvents": 11,
+      "castsStarted": 0,
+      "castsFired": 0,
+      "ttkMs": 6600,
+      "clean": true
+    },
+    {
+      "id": "node-t3-tundra-03_monster-7",
+      "type": "frost-lurker",
+      "name": "Frost Lurker",
+      "maxHp": 1093,
+      "firstDamageMs": 285700,
+      "lastDamageMs": 293200,
+      "killedAtMs": 293200,
+      "hpRegainObserved": false,
+      "maxDamageGapMs": 1500,
+      "damageEvents": 12,
+      "castsStarted": 1,
+      "castsFired": 1,
+      "ttkMs": 7500,
+      "clean": true
+    },
+    {
+      "id": "node-t3-tundra-03_monster-6",
+      "type": "frost-lurker",
+      "name": "Frost Lurker",
+      "maxHp": 1093,
+      "firstDamageMs": 295200,
+      "lastDamageMs": 299700,
+      "killedAtMs": null,
+      "hpRegainObserved": false,
+      "maxDamageGapMs": 1400,
+      "damageEvents": 7,
+      "castsStarted": 1,
+      "castsFired": 1,
+      "ttkMs": null,
+      "clean": false
+    },
+    {
+      "id": "node-t3-tundra-03_monster-2",
+      "type": "glacier-bear",
+      "name": "Glacier Bear",
+      "maxHp": 4313,
+      "firstDamageMs": 43600,
+      "lastDamageMs": 75700,
+      "killedAtMs": 75700,
+      "hpRegainObserved": false,
+      "maxDamageGapMs": 1500,
+      "damageEvents": 51,
+      "castsStarted": 0,
+      "castsFired": 0,
+      "ttkMs": 32100,
+      "clean": true
+    },
+    {
+      "id": "node-t3-tundra-03_monster-1",
+      "type": "glacier-bear",
+      "name": "Glacier Bear",
+      "maxHp": 4313,
+      "firstDamageMs": 3500,
+      "lastDamageMs": 35000,
+      "killedAtMs": 35000,
+      "hpRegainObserved": false,
+      "maxDamageGapMs": 1500,
+      "damageEvents": 51,
+      "castsStarted": 0,
+      "castsFired": 0,
+      "ttkMs": 31500,
+      "clean": true
+    },
+    {
+      "id": "node-t3-tundra-03_monster-15",
+      "type": "glacier-bear",
+      "name": "Glacier Bear",
+      "maxHp": 4313,
+      "firstDamageMs": 90000,
+      "lastDamageMs": 122100,
+      "killedAtMs": 122100,
+      "hpRegainObserved": false,
+      "maxDamageGapMs": 1500,
+      "damageEvents": 51,
+      "castsStarted": 0,
+      "castsFired": 0,
+      "ttkMs": 32100,
+      "clean": true
+    },
+    {
+      "id": "node-t3-tundra-03_monster-18",
+      "type": "frost-lurker",
+      "name": "Frost Lurker",
+      "maxHp": 1093,
+      "firstDamageMs": 274600,
+      "lastDamageMs": 282100,
+      "killedAtMs": 282100,
+      "hpRegainObserved": false,
+      "maxDamageGapMs": 1500,
+      "damageEvents": 12,
+      "castsStarted": 1,
+      "castsFired": 1,
+      "ttkMs": 7500,
+      "clean": true
+    },
+    {
+      "id": "node-t3-tundra-03_monster-19",
+      "type": "glacier-bear",
+      "name": "Glacier Bear",
+      "maxHp": 4313,
+      "firstDamageMs": 179300,
+      "lastDamageMs": 209300,
+      "killedAtMs": 209300,
+      "hpRegainObserved": false,
+      "maxDamageGapMs": 1500,
+      "damageEvents": 50,
+      "castsStarted": 0,
+      "castsFired": 0,
+      "ttkMs": 30000,
+      "clean": true
+    }
+  ],
+  "episodes": [
+    {
+      "startMs": 3200,
+      "endMs": 35000,
+      "durationMs": 31800,
+      "members": [
+        "node-t3-tundra-03_monster-1"
+      ],
+      "initialMembers": [
+        "node-t3-tundra-03_monster-1"
+      ],
+      "lateJoiners": 0,
+      "outcome": "cleared"
+    },
+    {
+      "startMs": 43300,
+      "endMs": 75700,
+      "durationMs": 32400,
+      "members": [
+        "node-t3-tundra-03_monster-2"
+      ],
+      "initialMembers": [
+        "node-t3-tundra-03_monster-2"
+      ],
+      "lateJoiners": 0,
+      "outcome": "cleared"
+    },
+    {
+      "startMs": 89700,
+      "endMs": 122100,
+      "durationMs": 32400,
+      "members": [
+        "node-t3-tundra-03_monster-15"
+      ],
+      "initialMembers": [
+        "node-t3-tundra-03_monster-15"
+      ],
+      "lateJoiners": 0,
+      "outcome": "cleared"
+    },
+    {
+      "startMs": 135600,
+      "endMs": 142700,
+      "durationMs": 7100,
+      "members": [
+        "node-t3-tundra-03_monster-8"
+      ],
+      "initialMembers": [
+        "node-t3-tundra-03_monster-8"
+      ],
+      "lateJoiners": 0,
+      "outcome": "cleared"
+    },
+    {
+      "startMs": 151100,
+      "endMs": 158800,
+      "durationMs": 7700,
+      "members": [
+        "node-t3-tundra-03_monster-12"
+      ],
+      "initialMembers": [
+        "node-t3-tundra-03_monster-12"
+      ],
+      "lateJoiners": 0,
+      "outcome": "cleared"
+    },
+    {
+      "startMs": 164500,
+      "endMs": 172000,
+      "durationMs": 7500,
+      "members": [
+        "node-t3-tundra-03_monster-10"
+      ],
+      "initialMembers": [
+        "node-t3-tundra-03_monster-10"
+      ],
+      "lateJoiners": 0,
+      "outcome": "cleared"
+    },
+    {
+      "startMs": 177600,
+      "endMs": 209300,
+      "durationMs": 31700,
+      "members": [
+        "node-t3-tundra-03_monster-19"
+      ],
+      "initialMembers": [
+        "node-t3-tundra-03_monster-19"
+      ],
+      "lateJoiners": 0,
+      "outcome": "cleared"
+    },
+    {
+      "startMs": 218000,
+      "endMs": 225300,
+      "durationMs": 7300,
+      "members": [
+        "node-t3-tundra-03_monster-9"
+      ],
+      "initialMembers": [
+        "node-t3-tundra-03_monster-9"
+      ],
+      "lateJoiners": 0,
+      "outcome": "cleared"
+    },
+    {
+      "startMs": 231500,
+      "endMs": 300000,
+      "durationMs": 68500,
+      "members": [
+        "node-t3-tundra-03_monster-11",
+        "node-t3-tundra-03_monster-13",
+        "node-t3-tundra-03_monster-18",
+        "node-t3-tundra-03_monster-7",
+        "node-t3-tundra-03_monster-6"
+      ],
+      "initialMembers": [
+        "node-t3-tundra-03_monster-11"
+      ],
+      "lateJoiners": 4,
+      "outcome": "window-ended"
+    }
+  ],
+  "recovery": [
+    {
+      "afterClearMs": 35000,
+      "recoveredAtMs": 42400,
+      "interruptedByNextPull": false
+    },
+    {
+      "afterClearMs": 75700,
+      "recoveredAtMs": 83600,
+      "interruptedByNextPull": false
+    },
+    {
+      "afterClearMs": 122100,
+      "recoveredAtMs": 130000,
+      "interruptedByNextPull": false
+    },
+    {
+      "afterClearMs": 142700,
+      "recoveredAtMs": 149400,
+      "interruptedByNextPull": false
+    },
+    {
+      "afterClearMs": 158800,
+      "recoveredAtMs": 158800,
+      "interruptedByNextPull": false
+    },
+    {
+      "afterClearMs": 172000,
+      "recoveredAtMs": 172000,
+      "interruptedByNextPull": false
+    },
+    {
+      "afterClearMs": 209300,
+      "recoveredAtMs": 217100,
+      "interruptedByNextPull": false
+    },
+    {
+      "afterClearMs": 225300,
+      "recoveredAtMs": null,
+      "interruptedByNextPull": true
+    }
+  ],
+  "incomingDamage": 3779.795,
+  "largestHit": 143.1,
+  "maxDamageIn1s": 148.1,
+  "counts": {
+    "damaged": 12,
+    "killed": 11,
+    "censored": 1,
+    "hpRegain": 0
+  },
+  "cleanTtkMs": {
+    "n": 11,
+    "p10": 6600,
+    "median": 7500,
+    "p90": 32100
+  }
+}

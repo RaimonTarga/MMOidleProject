@@ -318,6 +318,17 @@ const DEBUFF_BUFF_DIR_ICON_ALIASES: Record<string, string> = {
   'debuff-frozen': 'dot-frozen',
 };
 
+/**
+ * Monster DoTs keep their authored identity in the runtime status id, while
+ * their HUD art follows the elemental visual vocabulary. Volcanic burns share
+ * the existing fire/Conflagration tile rather than needing one PNG per mob.
+ */
+const MONSTER_DOT_ICON_ALIASES: Record<string, string> = {
+  'monster-dot:ember-burn': 'dot-conflag',
+  'monster-dot:ashspitter-burn': 'dot-conflag',
+  'monster-dot:caldera-burn': 'dot-conflag',
+};
+
 export function statusIconSource(id: string): AssetIconSource | null {
   if (BUFF_IDS.has(id)) {
     const abilityIconId = BUFF_ABILITY_ICON_ALIASES[id];
@@ -339,6 +350,8 @@ export function statusIconSource(id: string): AssetIconSource | null {
   if (TARGET_DEBUFF_ICON_IDS.has(id)) {
     return source('statuses/debuffs', id);
   }
+  const monsterDotIconId = MONSTER_DOT_ICON_ALIASES[id];
+  if (monsterDotIconId) return statusIconSource(monsterDotIconId);
   if (id === 'second-wind') return source('abilities', id);
   return null;
 }

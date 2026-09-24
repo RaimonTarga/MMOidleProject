@@ -191,6 +191,13 @@ function assertLegible(content: Parameters<typeof readableStrings>[0], what: str
   for (const id of ["cooldown-patience", "sunlight"]) {
     assert(statusIconSource(id) !== null, `${id} needs a player status icon resolver`);
   }
+  for (const id of [
+    "monster-dot:ember-burn",
+    "monster-dot:ashspitter-burn",
+    "monster-dot:caldera-burn",
+  ]) {
+    assert(statusIconSource(id) !== null, `${id} needs a shared fire DoT icon resolver`);
+  }
   const missingPlayerIcons = BUFF_IDS.filter((id) => statusIconSource(id) === null);
   assert(
     missingPlayerIcons.length === 0,

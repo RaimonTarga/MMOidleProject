@@ -1,0 +1,69 @@
+{
+  "cell": "stance-01-breadth-t3-conduit-balanced-node-t3-tundra-03-defensive",
+  "seed": 101003,
+  "outcome": "window-ended",
+  "elapsedMs": 300000,
+  "windowMs": 300000,
+  "terminalOwner": {
+    "hp": 371,
+    "maxHp": 371,
+    "barrier": 126
+  },
+  "playerDeathEvidence": [],
+  "minHpFraction": 0.9407008086253369,
+  "attackBeats": 0,
+  "minionAttackBeats": 2151,
+  "wallElapsedMs": 3392,
+  "maxTickWallMs": 63,
+  "totalAttackBeats": 2151,
+  "initialRosterHash": "ceda903b2b78f638e6d57a8f5171b4d2b7cad59b75262e147ef0699acd1d79f4",
+  "targets": [
+    {
+      "id": "node-t3-tundra-03_monster-1",
+      "type": "glacier-bear",
+      "name": "Glacier Bear",
+      "maxHp": 4313,
+      "firstDamageMs": 3100,
+      "lastDamageMs": 299800,
+      "killedAtMs": null,
+      "hpRegainObserved": false,
+      "maxDamageGapMs": 300,
+      "damageEvents": 2151,
+      "castsStarted": 0,
+      "castsFired": 0,
+      "ttkMs": null,
+      "clean": false
+    }
+  ],
+  "episodes": [
+    {
+      "startMs": 3100,
+      "endMs": 300000,
+      "durationMs": 296900,
+      "members": [
+        "node-t3-tundra-03_monster-1"
+      ],
+      "initialMembers": [
+        "node-t3-tundra-03_monster-1"
+      ],
+      "lateJoiners": 0,
+      "outcome": "window-ended"
+    }
+  ],
+  "recovery": [],
+  "incomingDamage": 0,
+  "largestHit": 0,
+  "maxDamageIn1s": 0,
+  "counts": {
+    "damaged": 1,
+    "killed": 0,
+    "censored": 1,
+    "hpRegain": 0
+  },
+  "cleanTtkMs": {
+    "n": 0,
+    "p10": null,
+    "median": null,
+    "p90": null
+  }
+}

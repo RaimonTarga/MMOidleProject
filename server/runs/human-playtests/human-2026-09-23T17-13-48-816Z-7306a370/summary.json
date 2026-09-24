@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 1,
+  "run": {
+    "type": "HUMAN_PLAYTEST",
+    "runId": "human-2026-09-23T17-13-48-816Z-7306a370",
+    "startedAt": 1790183628816,
+    "endedAt": 1790183805996,
+    "durationMs": 177180,
+    "completion": "interrupted",
+    "interrupted": true,
+    "reason": "socket disconnected",
+    "artifactPath": "/app/server/runs/human-playtests/human-2026-09-23T17-13-48-816Z-7306a370",
+    "canonical": true,
+    "taints": [],
+    "rewardMultiplier": {
+      "start": 1,
+      "end": 1,
+      "changes": [
+        {
+          "atMs": 0,
+          "multiplier": 1
+        }
+      ]
+    }
+  },
+  "progression": {
+    "finalPlayerTier": 1,
+    "finalGlobalMastery": 0,
+    "biomeLevels": {
+      "clearing": 3
+    }
+  },
+  "combat": {
+    "totalKills": 14,
+    "killsByMonster": {
+      "Tiny Wisp": 14
+    },
+    "totalDamageTaken": 71,
+    "playerDamageDealt": 465,
+    "totalHealed": 135,
+    "deaths": 0,
+    "abilityActivations": {}
+  },
+  "positioning": {
+    "samples": 281,
+    "movementFraction": 0.6370106761565836,
+    "stationaryCombatFraction": 0.3416370106761566,
+    "nearBoundaryFraction": 0.099644128113879,
+    "boss": {
+      "movementFraction": null,
+      "nearBoundaryFraction": null,
+      "range": {
+        "samples": 0,
+        "mean": null,
+        "min": null,
+        "max": null,
+        "p50": null,
+        "p90": null
+      }
+    }
+  },
+  "bosses": [],
+  "build": {
+    "equipment": {
+      "weapon": "primordial-club",
+      "armor": "clearing-vest-t1",
+      "recovery": "clearing-charm-t1",
+      "mobility": null,
+      "core": null,
+      "relic": null
+    },
+    "itemUpgrades": {},
+    "classRoot": "summoner-root",
+    "frame": null,
+    "range": null,
+    "techniques": [],
+    "guards": [],
+    "runes": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "chase-enemy"
+      },
+      {
+        "conditionId": "while-traveling",
+        "actionId": "fight-back"
+      }
+    ],
+    "stats": {
+      "attack": 25,
+      "attackRange": 162,
+      "attackCooldown": 1282,
+      "maxHp": 130,
+      "plating": 6,
+      "damageReduction": 0
+    }
+  },
+  "comparisonNotes": {
+    "sharedVocabulary": "WorldLogEvent (damage, ability-activation, hazards, telegraph-dodge, technique-adapter)",
+    "positionSamplingMs": {
+      "outsideCombat": 1000,
+      "combat": 500,
+      "bossCombat": 200
+    },
+    "unavailable": [
+      "psychological intent",
+      "authoritative boundary collision",
+      "per-frame input replay"
+    ]
+  }
+}
