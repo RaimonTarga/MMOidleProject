@@ -1,0 +1,68 @@
+{
+  "startingDevelop": {
+    "commit": "2930d58fdd008329027e93be8564669bed461452",
+    "tree": "e552634994299644d1b81d306c1c6302a41c342d"
+  },
+  "control": {
+    "commit": "48951bebb60400fc5a6a420f46fe96bb5cb2f546",
+    "tree": "8625e38c2d1f222596e61b2b6ccfebf22a06367c"
+  },
+  "candidate": {
+    "commit": "fa72a310be573d167474f36b393edb38e747398d",
+    "tree": "209a6c855155d127e6018d78843937daec488dd7"
+  },
+  "commonPreparationFiles": [
+    "reports/player-fast-pass/subsystem-patch-candidate-01/preparation/BRIEF.md",
+    "reports/player-fast-pass/subsystem-patch-candidate-01/preparation/historical-references.json",
+    "reports/player-fast-pass/subsystem-patch-candidate-01/preparation/reference-inventory.json",
+    "scripts/subsystem-patch.mjs",
+    "server/bench/balance/subsystemPatchCases.json",
+    "server/bench/balance/subsystemPatchSpec.ts",
+    "server/scripts/ttkSurvey.ts"
+  ],
+  "candidateFiles": [
+    "docs/rites-current-state.md",
+    "server/src/db/playerRepo.ts",
+    "server/src/systems/player/rites/riteOoc.ts",
+    "server/test/equippedEvolutionAbilityTags.test.ts",
+    "server/test/rites.test.ts",
+    "shared/src/data/recipes/desert.recipes.ts",
+    "shared/src/data/recipes/mountain.recipes.ts",
+    "shared/src/data/recipes/swamp.recipes.ts",
+    "shared/src/riteRecipes.ts",
+    "shared/src/rites.ts"
+  ],
+  "candidateCommits": [
+    "d8b1096a39264d9f9f1f793b62251c74207daf7c",
+    "b29d8d1ab60a012c92701998cf00f97f6115c30c",
+    "fa72a310be573d167474f36b393edb38e747398d"
+  ],
+  "productionBaselineUnchangedByHarness": true,
+  "candidateDiffFormat": "git diff --binary --unified=0; exact source changes without blank context-line whitespace",
+  "preparationFiles": [
+    "reports/player-fast-pass/subsystem-patch-candidate-01/preparation/BRIEF.md",
+    "reports/player-fast-pass/subsystem-patch-candidate-01/preparation/LUNA_RUN.md",
+    "reports/player-fast-pass/subsystem-patch-candidate-01/preparation/ORDERED_CASES.tsv",
+    "reports/player-fast-pass/subsystem-patch-candidate-01/preparation/PATCH_DECISION.md",
+    "reports/player-fast-pass/subsystem-patch-candidate-01/preparation/REPORT.md",
+    "reports/player-fast-pass/subsystem-patch-candidate-01/preparation/candidate-identity.json",
+    "reports/player-fast-pass/subsystem-patch-candidate-01/preparation/candidate.diff",
+    "reports/player-fast-pass/subsystem-patch-candidate-01/preparation/compatibility-tests.json",
+    "reports/player-fast-pass/subsystem-patch-candidate-01/preparation/control-identity.json",
+    "reports/player-fast-pass/subsystem-patch-candidate-01/preparation/historical-references.json",
+    "reports/player-fast-pass/subsystem-patch-candidate-01/preparation/identity.json",
+    "reports/player-fast-pass/subsystem-patch-candidate-01/preparation/manifest.json",
+    "reports/player-fast-pass/subsystem-patch-candidate-01/preparation/qualification-complete.json",
+    "reports/player-fast-pass/subsystem-patch-candidate-01/preparation/qualified.json",
+    "reports/player-fast-pass/subsystem-patch-candidate-01/preparation/receipt-check-complete.json",
+    "reports/player-fast-pass/subsystem-patch-candidate-01/preparation/receipt-checked.json",
+    "reports/player-fast-pass/subsystem-patch-candidate-01/preparation/reference-inventory.json",
+    "reports/player-fast-pass/subsystem-patch-candidate-01/preparation/resolved-builds.json",
+    "reports/player-fast-pass/subsystem-patch-candidate-01/preparation/results-summary.json",
+    "reports/player-fast-pass/subsystem-patch-candidate-01/preparation/seal.json",
+    "reports/player-fast-pass/subsystem-patch-candidate-01/preparation/source-receipt.json",
+    "reports/player-fast-pass/subsystem-patch-candidate-01/preparation/summarize-run.mjs",
+    "reports/player-fast-pass/subsystem-patch-candidate-01/preparation/validate-preparation.mjs",
+    "reports/player-fast-pass/subsystem-patch-candidate-01/preparation/validation.json"
+  ]
+}

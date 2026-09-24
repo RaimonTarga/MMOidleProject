@@ -1,0 +1,1822 @@
+[
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-control-s101009\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-control-s101009\\artifacts\\heartbeat.json",
+    "bytes": 119,
+    "sha256": "619d49cd85cccdeebc6a6570712833ffd9336128d1b48aa37e1a373dc6e589c4"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-control-s101009\\artifacts\\index.json",
+    "bytes": 157191,
+    "sha256": "a7956f7ac139bb878c5df90e73ef6ca7fa05ca0963a0a3867ff5d71eb93f6121"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-control-s101009\\artifacts\\manifest.json",
+    "bytes": 4625,
+    "sha256": "255b96f9068548e8d97cc640e1112b2aa1cdb747d33c0c5878bffebf4313e625"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-control-s101009\\artifacts\\subsystem-arcanist-reverb-control-s101009-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-control-s101009\\artifacts\\subsystem-arcanist-reverb-control-s101009-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-control-s101009\\artifacts\\subsystem-arcanist-reverb-control-s101009-s101009\\endpoints.json",
+    "bytes": 4683,
+    "sha256": "4a6fd86ccd2c4024f7d6a7e849e7e3926894fea004b41f485930198b4b4e0ba0"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-control-s101009\\artifacts\\subsystem-arcanist-reverb-control-s101009-s101009\\events.jsonl",
+    "bytes": 1240195,
+    "sha256": "19bac93c4c830ded1e4c47900394d0ba029a432916d46c3bb5bf292af2d179ed"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-control-s101009\\artifacts\\subsystem-arcanist-reverb-control-s101009-s101009\\guard-events.jsonl",
+    "bytes": 11381902,
+    "sha256": "69db66e58b9ab41801c2765dedeef7e0e2910d537152a405f101d32629135744"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-control-s101009\\artifacts\\subsystem-arcanist-reverb-control-s101009-s101009\\ready.json",
+    "bytes": 32168,
+    "sha256": "4322e4715b3156760d8b6a0569a4ef4bfbf42b9405d91afc9f36a1d00e5cab3a"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-control-s101009\\artifacts\\subsystem-arcanist-reverb-control-s101009-s101009\\samples.jsonl",
+    "bytes": 3778747,
+    "sha256": "91247c8a3f536e34c2b4a0b0ba30b8fce450126d75b2368b7e0abd7a2ccaa4bc"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-control-s101009\\artifacts\\subsystem-arcanist-reverb-control-s101009-s101009\\summary.json",
+    "bytes": 146525,
+    "sha256": "17015f09f9a5c2f10c58cd1786385797c7dc90e0e39e00b413034588be8bcb76"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-control-s101009\\artifacts\\subsystem-arcanist-reverb-control-s101009-s101009\\sustain-transitions.jsonl",
+    "bytes": 101985,
+    "sha256": "7e5931c7e17cd39b3ba583965f0e2eb9a0373d1bcc1ca7e08934813dfc4bda17"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-control-s101009\\process.json",
+    "bytes": 742,
+    "sha256": "c6f25801617c8de018052f7056080b6bfdea802f20d1bccf0f691858af3cc5b6"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-control-s101009\\process.log",
+    "bytes": 58,
+    "sha256": "196bdf6b00fe9ef3d9be7c91c1d26fd3ec074ca6d3311ee4d216c484799a3f4a"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-candidate-s101009\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-candidate-s101009\\artifacts\\heartbeat.json",
+    "bytes": 121,
+    "sha256": "0d32007afeac3eeb9844fb81ab6f83055676ff1fe05506a1d95fb15433cf79fc"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-candidate-s101009\\artifacts\\index.json",
+    "bytes": 171632,
+    "sha256": "7918a291a0d0e08e244c24e002b9b99d6955b46a8f6776dff67b791b303d642c"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-candidate-s101009\\artifacts\\manifest.json",
+    "bytes": 4633,
+    "sha256": "6b2dad24039e53801dd544b080c283866fba3173ff83ba9cef3bd0c1d4361ce1"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-candidate-s101009\\artifacts\\subsystem-arcanist-reverb-candidate-s101009-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-candidate-s101009\\artifacts\\subsystem-arcanist-reverb-candidate-s101009-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-candidate-s101009\\artifacts\\subsystem-arcanist-reverb-candidate-s101009-s101009\\endpoints.json",
+    "bytes": 4715,
+    "sha256": "c17a12007a42cef53ae3762e968a0b60c6d5174d78a1b60932dd3202668f181d"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-candidate-s101009\\artifacts\\subsystem-arcanist-reverb-candidate-s101009-s101009\\events.jsonl",
+    "bytes": 1287771,
+    "sha256": "d5bb09ab84bdc9c18fd0543b5ceed21d83524fb40bc5587b19fae03d2e904d0d"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-candidate-s101009\\artifacts\\subsystem-arcanist-reverb-candidate-s101009-s101009\\guard-events.jsonl",
+    "bytes": 11499160,
+    "sha256": "b1aaccce5f233741acb9235af150468445f3fdf0eead422394341ab321ebb4e0"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-candidate-s101009\\artifacts\\subsystem-arcanist-reverb-candidate-s101009-s101009\\ready.json",
+    "bytes": 32176,
+    "sha256": "b625c224a1be2d6c9eb9e6657c039af8d7b4131631a03139efd38b34a00a64c9"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-candidate-s101009\\artifacts\\subsystem-arcanist-reverb-candidate-s101009-s101009\\samples.jsonl",
+    "bytes": 3787535,
+    "sha256": "794948db24e8bc4e69cf6d0db71e48b52f2c9c5751303fe03e0ae4b68eca488e"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-candidate-s101009\\artifacts\\subsystem-arcanist-reverb-candidate-s101009-s101009\\summary.json",
+    "bytes": 159968,
+    "sha256": "0ffdbe43a02979503629e7a108e5344df31ca2bdfb21d19ad66373ba051bde5f"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-candidate-s101009\\artifacts\\subsystem-arcanist-reverb-candidate-s101009-s101009\\sustain-transitions.jsonl",
+    "bytes": 111233,
+    "sha256": "3dd388d38e92b4de0150e30ea9c67b797e19bac1dca1d9e8e6a7da1432fadac2"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-candidate-s101009\\process.json",
+    "bytes": 750,
+    "sha256": "4a7b6f9e3895f5b296fde0152629daa79316eabb27b93962b381cdf70b193efa"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-candidate-s101009\\process.log",
+    "bytes": 60,
+    "sha256": "49df5de3628c8ff40e91c66453fabcd9aaca534dbb5b628aa8a2834fc4b6cbbd"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-control-s101033\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-control-s101033\\artifacts\\heartbeat.json",
+    "bytes": 119,
+    "sha256": "2699a3ded6f9ed4174c2e9e403f87313238f37372ac5b33a200e5f7724989fb9"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-control-s101033\\artifacts\\index.json",
+    "bytes": 156254,
+    "sha256": "b144aea596e99412f25d9ce559c5176b77513609f9fe0b5ef02aca9ed02e4bd0"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-control-s101033\\artifacts\\manifest.json",
+    "bytes": 4625,
+    "sha256": "0a9be7d8967e2af5e4b7ddd26b14d2bdd3e39de6a151fe9798d5ebef43e1942c"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-control-s101033\\artifacts\\subsystem-arcanist-reverb-control-s101033-s101033\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-control-s101033\\artifacts\\subsystem-arcanist-reverb-control-s101033-s101033\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-control-s101033\\artifacts\\subsystem-arcanist-reverb-control-s101033-s101033\\endpoints.json",
+    "bytes": 4929,
+    "sha256": "d19f5f91905b843c17c91ac2a0220dc14b4a9831feea22340d09f02ad497b1f5"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-control-s101033\\artifacts\\subsystem-arcanist-reverb-control-s101033-s101033\\events.jsonl",
+    "bytes": 1297077,
+    "sha256": "6a951e465887c5fa9b368952b9a7c8a45727072bab6b3eb19dd956ec921de345"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-control-s101033\\artifacts\\subsystem-arcanist-reverb-control-s101033-s101033\\guard-events.jsonl",
+    "bytes": 11420030,
+    "sha256": "d1e377533c600f43f3de5101525b4e663a6c6df1174b0f46a4740c0cd2386a7d"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-control-s101033\\artifacts\\subsystem-arcanist-reverb-control-s101033-s101033\\ready.json",
+    "bytes": 32149,
+    "sha256": "d2b2421436d33c2be9929d09a7f48d306a48f8f01b65e619ef3f2ce3e3ee5552"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-control-s101033\\artifacts\\subsystem-arcanist-reverb-control-s101033-s101033\\samples.jsonl",
+    "bytes": 3814663,
+    "sha256": "1ac300ca988d7fd7f690be0a56826eeb96532cd355e64ad2b9a8ddbbb7bda31c"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-control-s101033\\artifacts\\subsystem-arcanist-reverb-control-s101033-s101033\\summary.json",
+    "bytes": 145654,
+    "sha256": "f76f2f81d06f775a0297f16572171d8b662401a31d5d2f0d5b02e783db8fb10c"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-control-s101033\\artifacts\\subsystem-arcanist-reverb-control-s101033-s101033\\sustain-transitions.jsonl",
+    "bytes": 98192,
+    "sha256": "5190f143db51b1b6577afff1b4a4ebd693ccad30f7b48da408e17bb2415da469"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-control-s101033\\process.json",
+    "bytes": 742,
+    "sha256": "33f6b6bec6a4f304418d51801330e445dfceabb31c0d5d5c90dbab53bb9c2cd1"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-control-s101033\\process.log",
+    "bytes": 58,
+    "sha256": "8c187ebb05d01fccfc2e83b43c523660e119f49790d121967605943470bbcc83"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-candidate-s101033\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-candidate-s101033\\artifacts\\heartbeat.json",
+    "bytes": 121,
+    "sha256": "aa194d7ffc225a638789bfb7b912c64ebcce9a347721f8edecb73e10ead1e3c8"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-candidate-s101033\\artifacts\\index.json",
+    "bytes": 142517,
+    "sha256": "d44533971feadf2476ef5b83dc933f9f6732b76a661676b3422c09fc90fd340e"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-candidate-s101033\\artifacts\\manifest.json",
+    "bytes": 4633,
+    "sha256": "92bdb56f1e190c67c0493f343b404fd640b6f1d7902025c33533af50b7eba35c"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-candidate-s101033\\artifacts\\subsystem-arcanist-reverb-candidate-s101033-s101033\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-candidate-s101033\\artifacts\\subsystem-arcanist-reverb-candidate-s101033-s101033\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-candidate-s101033\\artifacts\\subsystem-arcanist-reverb-candidate-s101033-s101033\\endpoints.json",
+    "bytes": 4688,
+    "sha256": "05710210c8f5d9974ca2b4a702e932600996113d458860ee70d3f7c14c337184"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-candidate-s101033\\artifacts\\subsystem-arcanist-reverb-candidate-s101033-s101033\\events.jsonl",
+    "bytes": 1236301,
+    "sha256": "a3ce2b0c0a7f7adc4bcdb90adc6eaa0983bbc381a6afc6de8d1eed16a03d20ea"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-candidate-s101033\\artifacts\\subsystem-arcanist-reverb-candidate-s101033-s101033\\guard-events.jsonl",
+    "bytes": 11482438,
+    "sha256": "1b18766b5314e4fa7f6bdb76d28b36e89202e0f63b3096ac66b90806a9279a40"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-candidate-s101033\\artifacts\\subsystem-arcanist-reverb-candidate-s101033-s101033\\ready.json",
+    "bytes": 32157,
+    "sha256": "7ce05ae91dc556b277d189ad2fd37f2159058a2e019f9f9c310e0416640b183a"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-candidate-s101033\\artifacts\\subsystem-arcanist-reverb-candidate-s101033-s101033\\samples.jsonl",
+    "bytes": 3795784,
+    "sha256": "c35147c11abdd4d6d16848700a5588bab2d115a4820102a7bc8e6ff5c511492a"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-candidate-s101033\\artifacts\\subsystem-arcanist-reverb-candidate-s101033-s101033\\summary.json",
+    "bytes": 132839,
+    "sha256": "26ef77663ded99dd08889f7ae1f71c9e8aac8a7b2036f0867748cae9d2648c1c"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-candidate-s101033\\artifacts\\subsystem-arcanist-reverb-candidate-s101033-s101033\\sustain-transitions.jsonl",
+    "bytes": 100940,
+    "sha256": "043cc0cea80d5f4a567299e01bb11ee0d19a9603b3d9a400947886bdae103573"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-candidate-s101033\\process.json",
+    "bytes": 749,
+    "sha256": "b069fe5260a19d6415e622ff2cc845a42f9a2a53ecdc90e94c49bdefbd9a8acb"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-reverb-candidate-s101033\\process.log",
+    "bytes": 60,
+    "sha256": "a6c97e494c80736202706314c44d97b9b104f9832fb9634642eeee4778f69e87"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-control-s101009\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-control-s101009\\artifacts\\heartbeat.json",
+    "bytes": 123,
+    "sha256": "dc8204e25b85bce20170ade2833ca9bf82ac89d8a2040db03ecf8745d3c1569b"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-control-s101009\\artifacts\\index.json",
+    "bytes": 268463,
+    "sha256": "d976d4cf7753c163184cdda55714b8dcbca4c37afe0c90e9520834b5aca533e8"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-control-s101009\\artifacts\\manifest.json",
+    "bytes": 4796,
+    "sha256": "975733099c2c54fb9ac3d4a7837ca19bc1133ccc7e1e5e05de8ea0e84c5a3d23"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-control-s101009\\artifacts\\subsystem-arcanist-idolwright-control-s101009-s101009\\conduit-events.jsonl",
+    "bytes": 99588,
+    "sha256": "068bc50d34de482a281b7bb85f5459423e11766ca58fe5c2d4ea6435964baf63"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-control-s101009\\artifacts\\subsystem-arcanist-idolwright-control-s101009-s101009\\conduit-snapshots.jsonl",
+    "bytes": 193006,
+    "sha256": "4dc7c04d6aeb69fff3b18a4f7600007adeac4cdf04c4485245da8fc55e47eabe"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-control-s101009\\artifacts\\subsystem-arcanist-idolwright-control-s101009-s101009\\conduit.json",
+    "bytes": 30653,
+    "sha256": "a4e40de8d95c8d5de07ef2c4e8ebe7e906b14a9b6ffab7e23868e4ae94129ba6"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-control-s101009\\artifacts\\subsystem-arcanist-idolwright-control-s101009-s101009\\endpoints.json",
+    "bytes": 5216,
+    "sha256": "2fd6063370d51d025c32aec006e8579bc0b485fa1b7dbe8cad23c2857fad4686"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-control-s101009\\artifacts\\subsystem-arcanist-idolwright-control-s101009-s101009\\events.jsonl",
+    "bytes": 1057349,
+    "sha256": "63b0e9726773e8cb915fea6fedf9176d1683ee65121105f9b34198bf96ed00e1"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-control-s101009\\artifacts\\subsystem-arcanist-idolwright-control-s101009-s101009\\guard-events.jsonl",
+    "bytes": 11406047,
+    "sha256": "17f1192f2e31f4428b741d6454e4fb72314e1c9e7491e120004c05c949cc18a3"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-control-s101009\\artifacts\\subsystem-arcanist-idolwright-control-s101009-s101009\\ready.json",
+    "bytes": 34745,
+    "sha256": "b44977fde07de7adc077d40ce20a00d166b09a7ff8f1e1f61a916a07fcf5560f"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-control-s101009\\artifacts\\subsystem-arcanist-idolwright-control-s101009-s101009\\samples.jsonl",
+    "bytes": 3959540,
+    "sha256": "0412fa6acee9e92d2a09ac8c80c8785aadefe8be227393266ee864755006c116"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-control-s101009\\artifacts\\subsystem-arcanist-idolwright-control-s101009-s101009\\summary.json",
+    "bytes": 250465,
+    "sha256": "dd578d4bb996a71490579abe60fd2a519f67619b95b5e5d26aac8f18fa1a125e"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-control-s101009\\artifacts\\subsystem-arcanist-idolwright-control-s101009-s101009\\sustain-transitions.jsonl",
+    "bytes": 172308,
+    "sha256": "e2b590003bd589555acfb00af1f119905c39fa199c6bf0ca42f0ec8ede7d00b1"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-control-s101009\\process.json",
+    "bytes": 750,
+    "sha256": "18aae3a73114ef4b0c2f94930a32d4475ff04f2564293c3f413429f084f79fa8"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-control-s101009\\process.log",
+    "bytes": 62,
+    "sha256": "7b2495d8a2d02fa33f542c9a46766881c125f38f004341e72cd694100149899d"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-candidate-s101009\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-candidate-s101009\\artifacts\\heartbeat.json",
+    "bytes": 125,
+    "sha256": "d403cb1bfae19b038b426480b70f3e7ce40520c5e75c182f84acc0db85aae19b"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-candidate-s101009\\artifacts\\index.json",
+    "bytes": 239123,
+    "sha256": "ae2879b026f4bd6ddd9fa284229d3efe77c1cc78c0c818b54c4dec76be20c38a"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-candidate-s101009\\artifacts\\manifest.json",
+    "bytes": 4804,
+    "sha256": "1e033b405047277c90d28b0bfe953754c5b9ffcfa3ac50e829885cb58a6af12e"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-candidate-s101009\\artifacts\\subsystem-arcanist-idolwright-candidate-s101009-s101009\\conduit-events.jsonl",
+    "bytes": 102501,
+    "sha256": "c0fbd857e12e7d8fa97d7a20d42aa4291c175be9759994ba1086c9701a0288f5"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-candidate-s101009\\artifacts\\subsystem-arcanist-idolwright-candidate-s101009-s101009\\conduit-snapshots.jsonl",
+    "bytes": 195053,
+    "sha256": "7b3a955b3ef21e256b6d7036c3721e7e21cb20877b6cf4f4cbc53141350efaa2"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-candidate-s101009\\artifacts\\subsystem-arcanist-idolwright-candidate-s101009-s101009\\conduit.json",
+    "bytes": 29118,
+    "sha256": "ed943867e4bb8b071a1233c6fbc5b02ff77883c924618977c397250bb3f34b13"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-candidate-s101009\\artifacts\\subsystem-arcanist-idolwright-candidate-s101009-s101009\\endpoints.json",
+    "bytes": 5311,
+    "sha256": "c8c2862b8f9f20156afbcd51371762e3b6514bf0301fc875e07329dce41dd31c"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-candidate-s101009\\artifacts\\subsystem-arcanist-idolwright-candidate-s101009-s101009\\events.jsonl",
+    "bytes": 1075362,
+    "sha256": "202e2801c7e0b867e30e878bed5a8c2a95a8b76d9bfe6db1a9c7994b6d6ec996"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-candidate-s101009\\artifacts\\subsystem-arcanist-idolwright-candidate-s101009-s101009\\guard-events.jsonl",
+    "bytes": 11385757,
+    "sha256": "cc5dffa774adbf5fc4f82666e419022cc36c528a93f97313aac704830f99c00f"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-candidate-s101009\\artifacts\\subsystem-arcanist-idolwright-candidate-s101009-s101009\\ready.json",
+    "bytes": 34753,
+    "sha256": "dbaeeacf7d5a6c1be172d1c72a976c45c668c835cb9fc4a49c557a8c97fe922c"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-candidate-s101009\\artifacts\\subsystem-arcanist-idolwright-candidate-s101009-s101009\\samples.jsonl",
+    "bytes": 3948068,
+    "sha256": "eb987f8b817835fded816b4eb031aaf9edfb619922c20bd963019c2bec6a6636"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-candidate-s101009\\artifacts\\subsystem-arcanist-idolwright-candidate-s101009-s101009\\summary.json",
+    "bytes": 223073,
+    "sha256": "9ca2e07256ccfb060eabbf9dd950a6cdd70bb33779345eade7fedfca79e5d698"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-candidate-s101009\\artifacts\\subsystem-arcanist-idolwright-candidate-s101009-s101009\\sustain-transitions.jsonl",
+    "bytes": 154680,
+    "sha256": "f81e6bab1de25de0d08bcc4d9cd822eb58ae2103f4de3d7325e3dd3aed0fd587"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-candidate-s101009\\process.json",
+    "bytes": 758,
+    "sha256": "b515ee5039b836af5339984d7ffc97214fd8829449133ea0f7058b21bf99d614"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-candidate-s101009\\process.log",
+    "bytes": 64,
+    "sha256": "beccb3424dab787a0ec45bfd5bfcfc8d969293fc823064e89a544e6ab48b4fe2"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-control-s101033\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-control-s101033\\artifacts\\heartbeat.json",
+    "bytes": 123,
+    "sha256": "4a8748370f80034960bae19693f29f47d89348efb45a02e8a068684e1c61ef8f"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-control-s101033\\artifacts\\index.json",
+    "bytes": 273730,
+    "sha256": "720ec6778b4d9f677cb3a49c8565777f341c22c94f11315b276595729c0228b5"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-control-s101033\\artifacts\\manifest.json",
+    "bytes": 4796,
+    "sha256": "0e78aca19eefd63f339b7a25d59fdc8aac9e38a772cc6ae3d1556bfdb78de830"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-control-s101033\\artifacts\\subsystem-arcanist-idolwright-control-s101033-s101033\\conduit-events.jsonl",
+    "bytes": 98686,
+    "sha256": "fa8a2b0766f6468205db1a35e32de038945caed8e707ba886064d6d9e374166c"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-control-s101033\\artifacts\\subsystem-arcanist-idolwright-control-s101033-s101033\\conduit-snapshots.jsonl",
+    "bytes": 192384,
+    "sha256": "a454de98f7f8ed3681d90a4e967bacf3b8b409fdabe801358d56ec35bb9ddc14"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-control-s101033\\artifacts\\subsystem-arcanist-idolwright-control-s101033-s101033\\conduit.json",
+    "bytes": 30752,
+    "sha256": "b729977eafe77973342d187320bba0f674c0452d959743bb828b43db8551ab0d"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-control-s101033\\artifacts\\subsystem-arcanist-idolwright-control-s101033-s101033\\endpoints.json",
+    "bytes": 5106,
+    "sha256": "bd38b10ddc574a323fbaafce371b4fb9301378a9e4f7e4d1f390278407cad14b"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-control-s101033\\artifacts\\subsystem-arcanist-idolwright-control-s101033-s101033\\events.jsonl",
+    "bytes": 1053257,
+    "sha256": "4e3de175ac8765fff26fb0e84cf9d7ac67d56fddde6349940a1973a75b6d862f"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-control-s101033\\artifacts\\subsystem-arcanist-idolwright-control-s101033-s101033\\guard-events.jsonl",
+    "bytes": 11403360,
+    "sha256": "7f82e1caeb8c54df3ac4d2fd2d1c0bef2c6cc4637a7890e2962204c9ab98574e"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-control-s101033\\artifacts\\subsystem-arcanist-idolwright-control-s101033-s101033\\ready.json",
+    "bytes": 34726,
+    "sha256": "0a379796bbd8407047da77ddb7afe3677f98da228ba6f3a2755c6190eff56694"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-control-s101033\\artifacts\\subsystem-arcanist-idolwright-control-s101033-s101033\\samples.jsonl",
+    "bytes": 3945852,
+    "sha256": "77054ed1d8fc7557912b15f1612090c94ba312541e1d77ad7ad7d5ab07cc81a5"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-control-s101033\\artifacts\\subsystem-arcanist-idolwright-control-s101033-s101033\\summary.json",
+    "bytes": 255432,
+    "sha256": "b7ee2cebb2e29d9f1b2920cdcd68109cd7828f1b191ba4bf7661bdc9cd995cbe"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-control-s101033\\artifacts\\subsystem-arcanist-idolwright-control-s101033-s101033\\sustain-transitions.jsonl",
+    "bytes": 171355,
+    "sha256": "4f9d9e255d915a3cf5cc19b3ea6edc8cec6621a1cb333c9e69fedde2c31aa554"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-control-s101033\\process.json",
+    "bytes": 750,
+    "sha256": "2d0147ef0b0a36e67c5a73117b7a6b9d4465e46a4a75f687893452fc9155175d"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-control-s101033\\process.log",
+    "bytes": 62,
+    "sha256": "336ec3eaa3dd85db726135f4a2a698dc023710016513c74d03cc71810a51f371"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-candidate-s101033\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-candidate-s101033\\artifacts\\heartbeat.json",
+    "bytes": 125,
+    "sha256": "148e99c9650ae3f9f20a6ac83d3e125da49799df838bd5d19efd2d1e2301e8b5"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-candidate-s101033\\artifacts\\index.json",
+    "bytes": 257829,
+    "sha256": "bb63ff0ffa79cbcd01bbde18daf5b733a8dfeed25dad3af12091e3eafc5dc11f"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-candidate-s101033\\artifacts\\manifest.json",
+    "bytes": 4804,
+    "sha256": "0e651c04e0f6361596e82f0dbfda5ba3b73c8d89398bf866a7ab7c19938e464f"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-candidate-s101033\\artifacts\\subsystem-arcanist-idolwright-candidate-s101033-s101033\\conduit-events.jsonl",
+    "bytes": 94135,
+    "sha256": "23b2bb46208207fd56343aedf81cf064b8da6f2fbd8ce32943267bf6e7dd951c"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-candidate-s101033\\artifacts\\subsystem-arcanist-idolwright-candidate-s101033-s101033\\conduit-snapshots.jsonl",
+    "bytes": 192548,
+    "sha256": "3f0cc687d854ccf22683a859aaa1d62bdf5dc9759b2922930a63e6d3dd98ade6"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-candidate-s101033\\artifacts\\subsystem-arcanist-idolwright-candidate-s101033-s101033\\conduit.json",
+    "bytes": 29873,
+    "sha256": "207fa165d79579dee63a97fbb4d618cfc240a4d566913d7e88c97a977c929413"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-candidate-s101033\\artifacts\\subsystem-arcanist-idolwright-candidate-s101033-s101033\\endpoints.json",
+    "bytes": 5315,
+    "sha256": "5cc39201a6b8acf777a56df9bb727d981e3261959a761454b85f8d3f8a2491ad"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-candidate-s101033\\artifacts\\subsystem-arcanist-idolwright-candidate-s101033-s101033\\events.jsonl",
+    "bytes": 1016174,
+    "sha256": "80b2f4dff621c1e8bf826898246bdd0e068fdeede949eb4666449186203d29b8"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-candidate-s101033\\artifacts\\subsystem-arcanist-idolwright-candidate-s101033-s101033\\guard-events.jsonl",
+    "bytes": 11322880,
+    "sha256": "ddd27ca1fb81912f93da5dac258901c98455b138131e95286f417e9070b2100b"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-candidate-s101033\\artifacts\\subsystem-arcanist-idolwright-candidate-s101033-s101033\\ready.json",
+    "bytes": 34734,
+    "sha256": "6fd99d93253f4061693109689494484c2f745b58e8efb699dc7899842750eaa6"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-candidate-s101033\\artifacts\\subsystem-arcanist-idolwright-candidate-s101033-s101033\\samples.jsonl",
+    "bytes": 3939180,
+    "sha256": "a52003ef14e6a6a6d27165a7bd643ed26c38c4b132a559e370dd6e7a2ee7693a"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-candidate-s101033\\artifacts\\subsystem-arcanist-idolwright-candidate-s101033-s101033\\summary.json",
+    "bytes": 240467,
+    "sha256": "274e0b96c867fcdb5e337df7af421cf5e63cbb9f14b6eef1b9affba1d3fe3ce5"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-candidate-s101033\\artifacts\\subsystem-arcanist-idolwright-candidate-s101033-s101033\\sustain-transitions.jsonl",
+    "bytes": 148163,
+    "sha256": "f4fa84ebd351277b8bcf35fce1f5d9983976020e251a25d797de2275246ec07d"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-candidate-s101033\\process.json",
+    "bytes": 758,
+    "sha256": "a501d3e07d86a8e042ed5703f9ef20eb4e746b92805707ba38649cfd8a7d081f"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-arcanist-idolwright-candidate-s101033\\process.log",
+    "bytes": 64,
+    "sha256": "caaefb8e1f8e0c3bd4f57ffd474215c4d5dd0a10c527bd0964740afb0165ac6c"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-control-s101009\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-control-s101009\\artifacts\\heartbeat.json",
+    "bytes": 117,
+    "sha256": "1e083cca241cd824df7ae3d38b320766b6d2490ed47653bcd2e8c4add3687503"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-control-s101009\\artifacts\\index.json",
+    "bytes": 233303,
+    "sha256": "4976441d80b72414a696ed2577dc594e0d6a0af5eeb84071b4fcc5c180c9ccd8"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-control-s101009\\artifacts\\manifest.json",
+    "bytes": 4646,
+    "sha256": "d27123fd218d0d33825c0fada5e1eeefdc99a6b87689a183ae41ca105e43adf6"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-control-s101009\\artifacts\\subsystem-desert-ranger-control-s101009-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-control-s101009\\artifacts\\subsystem-desert-ranger-control-s101009-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-control-s101009\\artifacts\\subsystem-desert-ranger-control-s101009-s101009\\endpoints.json",
+    "bytes": 5099,
+    "sha256": "f179bb5d13ea09d76d6269e097c1e22c12198bf621be2c5a3dec9b71d5470350"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-control-s101009\\artifacts\\subsystem-desert-ranger-control-s101009-s101009\\events.jsonl",
+    "bytes": 1772261,
+    "sha256": "28a97c23a6ebb293cd7364d86f5c9743a879e616db6e26ee61f625b9e1912355"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-control-s101009\\artifacts\\subsystem-desert-ranger-control-s101009-s101009\\guard-events.jsonl",
+    "bytes": 11347379,
+    "sha256": "8b95cdd24e42339400f56ad37834a2249a096501c3f1c69bfcf7e37f650c8a85"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-control-s101009\\artifacts\\subsystem-desert-ranger-control-s101009-s101009\\ready.json",
+    "bytes": 32694,
+    "sha256": "5cd3776dbd7942c0d8fa2b13e7dfa319994bdcee66a041115648b0a6018b305d"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-control-s101009\\artifacts\\subsystem-desert-ranger-control-s101009-s101009\\samples.jsonl",
+    "bytes": 3487603,
+    "sha256": "26d03f9ff6901a04068848b3a1b177f0329bbe5c4cc9ee65e39a8d6406ad3ba3"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-control-s101009\\artifacts\\subsystem-desert-ranger-control-s101009-s101009\\summary.json",
+    "bytes": 217449,
+    "sha256": "6764c87dac33de25bf4ffc88f0e773d07869f79c15b9f66759efd3ab699b413d"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-control-s101009\\artifacts\\subsystem-desert-ranger-control-s101009-s101009\\sustain-transitions.jsonl",
+    "bytes": 120391,
+    "sha256": "3c78056593ec433b1888b2f6488535714582793866eecb5db1681887ffd7c7bd"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-control-s101009\\process.json",
+    "bytes": 738,
+    "sha256": "007b42c3490cf37a8c4fcd01002bc439e4bb8ff404a9d68e0a3cd54fceec545b"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-control-s101009\\process.log",
+    "bytes": 56,
+    "sha256": "36c406d1b2896e0ad94dae49633174afab8be41277d74e42ac6fda99bf3b2948"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-candidate-s101009\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-candidate-s101009\\artifacts\\heartbeat.json",
+    "bytes": 119,
+    "sha256": "d71c8547bc2e5c4ffc73e7ea7dec937ce604a7ae6a335e7b11b540c2a364ba64"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-candidate-s101009\\artifacts\\index.json",
+    "bytes": 239451,
+    "sha256": "57c66509580aa9e484591f8aac29ba1a63012f66a43b631585f2021e8a1b5ef6"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-candidate-s101009\\artifacts\\manifest.json",
+    "bytes": 4654,
+    "sha256": "2515651181a8e4fad0cd958f458501a26bae55cfdff7bf689bfb3cb3b408259f"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-candidate-s101009\\artifacts\\subsystem-desert-ranger-candidate-s101009-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-candidate-s101009\\artifacts\\subsystem-desert-ranger-candidate-s101009-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-candidate-s101009\\artifacts\\subsystem-desert-ranger-candidate-s101009-s101009\\endpoints.json",
+    "bytes": 4998,
+    "sha256": "0c6ca2701359424c699bc95294c81218cf7ce8eae1c48bb175e76bc8444f5a14"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-candidate-s101009\\artifacts\\subsystem-desert-ranger-candidate-s101009-s101009\\events.jsonl",
+    "bytes": 1798021,
+    "sha256": "94e221c7fbb8235f1e2722146b9a511dee6abb28be4f2ffc426f578f258574ee"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-candidate-s101009\\artifacts\\subsystem-desert-ranger-candidate-s101009-s101009\\guard-events.jsonl",
+    "bytes": 11385693,
+    "sha256": "f62ec5e40368693a8b0ad2cbda54b243a07698f0ba6e75a06c49e46b7d37fdc6"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-candidate-s101009\\artifacts\\subsystem-desert-ranger-candidate-s101009-s101009\\ready.json",
+    "bytes": 32702,
+    "sha256": "c4ba0bcafdebd4bc74873cc32536246f830dea8c1c95eaef8bca65c5eae8883c"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-candidate-s101009\\artifacts\\subsystem-desert-ranger-candidate-s101009-s101009\\samples.jsonl",
+    "bytes": 3523817,
+    "sha256": "3bfc63ec64bdd2bc4f9aeb32d8c330fba829f2196fff80616b9d9c0973baaf28"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-candidate-s101009\\artifacts\\subsystem-desert-ranger-candidate-s101009-s101009\\summary.json",
+    "bytes": 223199,
+    "sha256": "7e9c00a1be7e787e37fe27415c72e1091840316996dd9962c09582c2a0363e5c"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-candidate-s101009\\artifacts\\subsystem-desert-ranger-candidate-s101009-s101009\\sustain-transitions.jsonl",
+    "bytes": 124554,
+    "sha256": "9321145f673c49936f295dc3fbd029ed748e575e9d0254f29aec0b755e0ab90f"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-candidate-s101009\\process.json",
+    "bytes": 746,
+    "sha256": "ff3b24f35a580e12371f89a2cbf92c118f41a8df7fcc39345f0b289b34c64176"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-candidate-s101009\\process.log",
+    "bytes": 58,
+    "sha256": "d123745e08bd9d453ea1aa95cbf49b31f0a3185b7a33fe408769ff3f9ba8a4ec"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-control-s101033\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-control-s101033\\artifacts\\heartbeat.json",
+    "bytes": 117,
+    "sha256": "ce2bf42610922131cc73f084ef3a5e3ea592bf8c59c9311099f8ee1b8d498029"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-control-s101033\\artifacts\\index.json",
+    "bytes": 246511,
+    "sha256": "d1b44cd2dee8682681fbff90d75bef4bd587aab04d0451c7713220ecbf60a93e"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-control-s101033\\artifacts\\manifest.json",
+    "bytes": 4646,
+    "sha256": "fa4d8f4f30be74e23c1699de33ca667b9ce92cdd357a8bb5a4addc0a07df9db8"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-control-s101033\\artifacts\\subsystem-desert-ranger-control-s101033-s101033\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-control-s101033\\artifacts\\subsystem-desert-ranger-control-s101033-s101033\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-control-s101033\\artifacts\\subsystem-desert-ranger-control-s101033-s101033\\endpoints.json",
+    "bytes": 4992,
+    "sha256": "1412bb57cbccdcc2468b3b1353b928c4d892768ffbeb0957de588540e0f5264d"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-control-s101033\\artifacts\\subsystem-desert-ranger-control-s101033-s101033\\events.jsonl",
+    "bytes": 1822517,
+    "sha256": "b5c8c807552f07406bbc6f7bc52d830f69ffc5d905be0787415ad6c065944bdc"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-control-s101033\\artifacts\\subsystem-desert-ranger-control-s101033-s101033\\guard-events.jsonl",
+    "bytes": 11432575,
+    "sha256": "85e3420f1878e408eca4d60455c952cd24b663527db74dc011fd9de2ec6b5b82"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-control-s101033\\artifacts\\subsystem-desert-ranger-control-s101033-s101033\\ready.json",
+    "bytes": 32675,
+    "sha256": "f46ef7aee0f5171ac18309da6d117bfe23ca3b8b4f114616084917331ff78e3e"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-control-s101033\\artifacts\\subsystem-desert-ranger-control-s101033-s101033\\samples.jsonl",
+    "bytes": 3542704,
+    "sha256": "727d953a2c905117c510564ac940e80ea4ed3478625cdd97775f2bbf6a8df936"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-control-s101033\\artifacts\\subsystem-desert-ranger-control-s101033-s101033\\summary.json",
+    "bytes": 229803,
+    "sha256": "ff1f8c01be77c239dbee8c22a6e12875d5d9ed989808d9f8a69a3fb0bf315bdf"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-control-s101033\\artifacts\\subsystem-desert-ranger-control-s101033-s101033\\sustain-transitions.jsonl",
+    "bytes": 133569,
+    "sha256": "a52f03e2e2783d7a4c2eb8fc408ac96894e7d080ce6cbc87ed996c1175f6e1af"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-control-s101033\\process.json",
+    "bytes": 738,
+    "sha256": "4850c3114d7c7b6a3d35376d360e5e46169fec1fbfed9b211ef600f22586eabb"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-control-s101033\\process.log",
+    "bytes": 56,
+    "sha256": "6b0f6afed6d7d5692a8188661faef35bd33c2ff0e8de40b8184014e2fb606354"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-candidate-s101033\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-candidate-s101033\\artifacts\\heartbeat.json",
+    "bytes": 119,
+    "sha256": "369844b3bf2462e235210e12cc35e8862a00531670d822485f0d3c27822d4a4c"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-candidate-s101033\\artifacts\\index.json",
+    "bytes": 284484,
+    "sha256": "bd320bcb73aa7ceaa34c938b9109d248711cdc12f34b65a0d74a44e661bf175b"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-candidate-s101033\\artifacts\\manifest.json",
+    "bytes": 4654,
+    "sha256": "69ce8d57f8e025392dc8750cd07042882f03876a562edd99d37ee5dbdc13a07b"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-candidate-s101033\\artifacts\\subsystem-desert-ranger-candidate-s101033-s101033\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-candidate-s101033\\artifacts\\subsystem-desert-ranger-candidate-s101033-s101033\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-candidate-s101033\\artifacts\\subsystem-desert-ranger-candidate-s101033-s101033\\endpoints.json",
+    "bytes": 5207,
+    "sha256": "044573e74c6ed1b6a1df213082d2f53b3838d71c69a258fc73891211191dca7b"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-candidate-s101033\\artifacts\\subsystem-desert-ranger-candidate-s101033-s101033\\events.jsonl",
+    "bytes": 1801744,
+    "sha256": "9cc16573a13fe6f0797c77320067644fc13830b9bd42b644dd84289a9d8377bd"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-candidate-s101033\\artifacts\\subsystem-desert-ranger-candidate-s101033-s101033\\guard-events.jsonl",
+    "bytes": 11382331,
+    "sha256": "03e53ede3e1c1e8549632069794dcde4929fe1c7622f8070264be38e16e38be3"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-candidate-s101033\\artifacts\\subsystem-desert-ranger-candidate-s101033-s101033\\ready.json",
+    "bytes": 32683,
+    "sha256": "c56ef79d5b3b5ade926d0bf3f50a910eba3ab5b7fcd38468dc16e0188f61960d"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-candidate-s101033\\artifacts\\subsystem-desert-ranger-candidate-s101033-s101033\\samples.jsonl",
+    "bytes": 3520685,
+    "sha256": "a6be3168b1523d4ab1bdb6a9c0e8b874e76b50b561d0c0389ea4b73e78403c93"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-candidate-s101033\\artifacts\\subsystem-desert-ranger-candidate-s101033-s101033\\summary.json",
+    "bytes": 265208,
+    "sha256": "91cea4c9de8f987ec424abe3b56c87c550282ba34558408057b54902dcc539d0"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-candidate-s101033\\artifacts\\subsystem-desert-ranger-candidate-s101033-s101033\\sustain-transitions.jsonl",
+    "bytes": 148745,
+    "sha256": "4200c150d36119632137a662650adf1afab0056406062a7abca481d406aa8963"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-candidate-s101033\\process.json",
+    "bytes": 746,
+    "sha256": "da8c2b69ee11a73a582026a343e17e8a67da7941cf6b6db63e1bcdebd14ff283"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-ranger-candidate-s101033\\process.log",
+    "bytes": 58,
+    "sha256": "be1d32d3f40393ef1dd39d8f92e91b30adb1567f5ecc65a3db6bca5b17c1a7a0"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-control-s101009\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-control-s101009\\artifacts\\heartbeat.json",
+    "bytes": 116,
+    "sha256": "5dfeb63c1d2e344c55dd4aae2863af18aae3853157137b4590a64047a3d3c7e2"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-control-s101009\\artifacts\\index.json",
+    "bytes": 131859,
+    "sha256": "90cc866f377f7e5d6ef09acedc165eb47ad4a8a8b7e9b2aadf3433cd23ba2b4b"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-control-s101009\\artifacts\\manifest.json",
+    "bytes": 4557,
+    "sha256": "27f96bb76a8e8980064d373d712b98cc0b065a231eff05c1c5607ff078f4dfa4"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-control-s101009\\artifacts\\subsystem-desert-flash-control-s101009-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-control-s101009\\artifacts\\subsystem-desert-flash-control-s101009-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-control-s101009\\artifacts\\subsystem-desert-flash-control-s101009-s101009\\endpoints.json",
+    "bytes": 5052,
+    "sha256": "5892fa354a1a68add606e737c2035752090a0b93dca81924b2dad3f963413182"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-control-s101009\\artifacts\\subsystem-desert-flash-control-s101009-s101009\\events.jsonl",
+    "bytes": 2945862,
+    "sha256": "ac2364d8c39a1cec8c1110954296da0275c1f2045bc22b8121edd28f35833efa"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-control-s101009\\artifacts\\subsystem-desert-flash-control-s101009-s101009\\guard-events.jsonl",
+    "bytes": 13742702,
+    "sha256": "78f460bf5d8fa2be92ac7cfbf516948c8182163ea8fedb0b6d5b021d3423342c"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-control-s101009\\artifacts\\subsystem-desert-flash-control-s101009-s101009\\ready.json",
+    "bytes": 32631,
+    "sha256": "072a9711c7475cf569ccf7cc56e904d17a7a04a9b5c8da0993dca71ae2354d04"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-control-s101009\\artifacts\\subsystem-desert-flash-control-s101009-s101009\\samples.jsonl",
+    "bytes": 3829997,
+    "sha256": "b2dbc0332b020c424a38c1b3d48ce94c69d11eb9dfa8e3f945f4fbd415bbb736"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-control-s101009\\artifacts\\subsystem-desert-flash-control-s101009-s101009\\summary.json",
+    "bytes": 122915,
+    "sha256": "1c2c21ef10cf924afd4887182599b6aa40860d2c54795c789ef9a3b81b0e8fb2"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-control-s101009\\artifacts\\subsystem-desert-flash-control-s101009-s101009\\sustain-transitions.jsonl",
+    "bytes": 197860,
+    "sha256": "02acbe5c75820f92ad191e9602fcc81811c689b5ebf647f870b4ee0a6d2b17d7"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-control-s101009\\process.json",
+    "bytes": 736,
+    "sha256": "fe35b9fb8f1e90651e607800e615d3d7043dfda4471f37fef8ae211fe9a6c76a"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-control-s101009\\process.log",
+    "bytes": 55,
+    "sha256": "297418f2afc16429f946b1aafca1ba8fdffd6fa0f2777cf72298ea7b065b4ee3"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-candidate-s101009\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-candidate-s101009\\artifacts\\heartbeat.json",
+    "bytes": 118,
+    "sha256": "8be0995bbabd6e7a1e46984ce700a76a5f15550eefaac094700304876597df56"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-candidate-s101009\\artifacts\\index.json",
+    "bytes": 178824,
+    "sha256": "59adc154e4c23fea2da3b2270457fd5523ada883c8685f0692856d60c75b46c3"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-candidate-s101009\\artifacts\\manifest.json",
+    "bytes": 4565,
+    "sha256": "5e6513a3ac8ae71dda1d34806635861c002eab3d117923918ad2f1837f02c291"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-candidate-s101009\\artifacts\\subsystem-desert-flash-candidate-s101009-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-candidate-s101009\\artifacts\\subsystem-desert-flash-candidate-s101009-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-candidate-s101009\\artifacts\\subsystem-desert-flash-candidate-s101009-s101009\\endpoints.json",
+    "bytes": 5094,
+    "sha256": "f81bb67330a7d91ef529a738525ff74ec8d15ee7d6b29b952fd36a747b90c42a"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-candidate-s101009\\artifacts\\subsystem-desert-flash-candidate-s101009-s101009\\events.jsonl",
+    "bytes": 2863778,
+    "sha256": "4ff245e1abb396ac50b93c5242410d864197db349b3da571989e490fc5afae6a"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-candidate-s101009\\artifacts\\subsystem-desert-flash-candidate-s101009-s101009\\guard-events.jsonl",
+    "bytes": 13713839,
+    "sha256": "220876f69606530fdf94e53e2039acefa1714a9546e8b618c82a405520427027"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-candidate-s101009\\artifacts\\subsystem-desert-flash-candidate-s101009-s101009\\ready.json",
+    "bytes": 32639,
+    "sha256": "d3ace5f51df9189a83fa6cc4e5e280465434ebe29a162dd3bbb7082c4e12f68f"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-candidate-s101009\\artifacts\\subsystem-desert-flash-candidate-s101009-s101009\\samples.jsonl",
+    "bytes": 3825389,
+    "sha256": "dce6fbed1ee34ccad529d9555e260a5df569728fcb3fae6a757ac1d7366d04db"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-candidate-s101009\\artifacts\\subsystem-desert-flash-candidate-s101009-s101009\\summary.json",
+    "bytes": 166746,
+    "sha256": "018bcc57b96c53430f23acd8d7b595698a9c3185c844a7805b1d7234d4d00676"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-candidate-s101009\\artifacts\\subsystem-desert-flash-candidate-s101009-s101009\\sustain-transitions.jsonl",
+    "bytes": 169945,
+    "sha256": "ad5386b85be223155794413ff5050ca26a7d772c5193424888a78bf893244de3"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-candidate-s101009\\process.json",
+    "bytes": 744,
+    "sha256": "93d2172b2b850ff778c198e1765e8e5e3de9611a7bba2ca19ef2b08d6f61313d"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-candidate-s101009\\process.log",
+    "bytes": 57,
+    "sha256": "de2e613262027eddf89d7686eb9cd400946f734991090f45ed5bcf789f709528"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-control-s101033\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-control-s101033\\artifacts\\heartbeat.json",
+    "bytes": 116,
+    "sha256": "e3c46e0aadbe976e5f1120692dc98142286041a43b442e771b2e419aa669ef75"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-control-s101033\\artifacts\\index.json",
+    "bytes": 186327,
+    "sha256": "593075cc77160531f0fb0c13265da6775209c25a274a0359eb834d3333c6685f"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-control-s101033\\artifacts\\manifest.json",
+    "bytes": 4557,
+    "sha256": "507d384c8b049e73f3c33e2e23bba86d5bd9137ec156e05923219822d258d2cf"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-control-s101033\\artifacts\\subsystem-desert-flash-control-s101033-s101033\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-control-s101033\\artifacts\\subsystem-desert-flash-control-s101033-s101033\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-control-s101033\\artifacts\\subsystem-desert-flash-control-s101033-s101033\\endpoints.json",
+    "bytes": 5016,
+    "sha256": "9538583d21d9b70cab755a9c13f3e2def62a693ff6a45bba32d09d8a6ca865db"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-control-s101033\\artifacts\\subsystem-desert-flash-control-s101033-s101033\\events.jsonl",
+    "bytes": 2974070,
+    "sha256": "c1bb4957c8c01674d80fe0342a064aa1e1d1debd259093d99fc413cb28376f20"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-control-s101033\\artifacts\\subsystem-desert-flash-control-s101033-s101033\\guard-events.jsonl",
+    "bytes": 14029660,
+    "sha256": "4371181dd024d5accada753ae478cd335a5796c0eb2d3dfbf475bb1b33b88625"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-control-s101033\\artifacts\\subsystem-desert-flash-control-s101033-s101033\\ready.json",
+    "bytes": 32612,
+    "sha256": "5c9546b3f078921435933c6a7032f729449b7057c74b0909a7f03d9a2bb5f9ba"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-control-s101033\\artifacts\\subsystem-desert-flash-control-s101033-s101033\\samples.jsonl",
+    "bytes": 3840845,
+    "sha256": "c89c9b9332bae45e7c9dbff88e7394ddb3c7b22caf4e0089430c48507ed6b9b3"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-control-s101033\\artifacts\\subsystem-desert-flash-control-s101033-s101033\\summary.json",
+    "bytes": 173753,
+    "sha256": "9ba800b1bd37194a8c8d87684f6ab2bfe8255e1e57c3b3b5227736e00faf62b0"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-control-s101033\\artifacts\\subsystem-desert-flash-control-s101033-s101033\\sustain-transitions.jsonl",
+    "bytes": 174690,
+    "sha256": "23e31c7fd3ced7e712e906dd1188abc8ad0239a8ae4e5f637ece9dbfeffd1878"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-control-s101033\\process.json",
+    "bytes": 735,
+    "sha256": "b162b2975ac1d15107719df3948f11aa9b18bfb24d06b43398a7333d77c0b525"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-control-s101033\\process.log",
+    "bytes": 55,
+    "sha256": "f76310824460004db835b49ee21c896628553ca8ea1910f7dfb833db5ca85fdb"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-candidate-s101033\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-candidate-s101033\\artifacts\\heartbeat.json",
+    "bytes": 118,
+    "sha256": "1ea29fa55a70317bdcb09a514ed23771284ad1fd20440e999b07e8455eeca69c"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-candidate-s101033\\artifacts\\index.json",
+    "bytes": 184991,
+    "sha256": "007ec773c98d7b0439c659896a2c3e3eca011978c571b6c5d25dd6b94cfd2a35"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-candidate-s101033\\artifacts\\manifest.json",
+    "bytes": 4565,
+    "sha256": "a1b6971ccb1bc90f991bc9901ee51b9a42982a14e816ff8a6c0a3d75b91b4671"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-candidate-s101033\\artifacts\\subsystem-desert-flash-candidate-s101033-s101033\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-candidate-s101033\\artifacts\\subsystem-desert-flash-candidate-s101033-s101033\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-candidate-s101033\\artifacts\\subsystem-desert-flash-candidate-s101033-s101033\\endpoints.json",
+    "bytes": 5098,
+    "sha256": "92dbef1da9c434e781131509eda94a3802b1089f9110356851481a1ee07f673b"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-candidate-s101033\\artifacts\\subsystem-desert-flash-candidate-s101033-s101033\\events.jsonl",
+    "bytes": 2862502,
+    "sha256": "9662486c481bf75864ac330ba6a8430c1653f7f282a34102c474fb446bbc432c"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-candidate-s101033\\artifacts\\subsystem-desert-flash-candidate-s101033-s101033\\guard-events.jsonl",
+    "bytes": 13792798,
+    "sha256": "24cbe3bf1b8b848b730605be103258291a7bc3248254bd49fd3db6ab34f611c3"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-candidate-s101033\\artifacts\\subsystem-desert-flash-candidate-s101033-s101033\\ready.json",
+    "bytes": 32620,
+    "sha256": "b1cd6f03b0775596f8234788f231834f6a030aacee28120f023bd91c720e5fbf"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-candidate-s101033\\artifacts\\subsystem-desert-flash-candidate-s101033-s101033\\samples.jsonl",
+    "bytes": 3808080,
+    "sha256": "99d32fe26f37983a9261b8b80dadb6f36c6a0c459204981decd83cb5f7f0c30a"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-candidate-s101033\\artifacts\\subsystem-desert-flash-candidate-s101033-s101033\\summary.json",
+    "bytes": 172485,
+    "sha256": "94fdd1c47ee0865f442fc8ebd3598288a28344409b929a88b5af7d45fc90e8d2"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-candidate-s101033\\artifacts\\subsystem-desert-flash-candidate-s101033-s101033\\sustain-transitions.jsonl",
+    "bytes": 174026,
+    "sha256": "fb9772dc20de5954ce19733c1543bc1ebb7196b80ebcbf6fa15c6f9c30ccb94d"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-candidate-s101033\\process.json",
+    "bytes": 744,
+    "sha256": "a4bd5cfe9eec16fa18663d2870ac4d77b3d57684389400a800aee5c74914b9f0"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-desert-flash-candidate-s101033\\process.log",
+    "bytes": 57,
+    "sha256": "d5883103bdaa6a1f330d48502bd98938f16ec59fba2f6838b5ebf2ef76fd07cb"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-control-s101009\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-control-s101009\\artifacts\\heartbeat.json",
+    "bytes": 112,
+    "sha256": "27c2529b77403225ffeb13e208872e3f2cf64a3f6f275370a3dc6bccdc8facc8"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-control-s101009\\artifacts\\index.json",
+    "bytes": 166889,
+    "sha256": "b2625af5a312739b3cc48e0bf84bcf352815ca5bdb8e86e1d0d81ed2540f3463"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-control-s101009\\artifacts\\manifest.json",
+    "bytes": 3315,
+    "sha256": "4a145fb978b7dc154334b843c5a1d70dc7538629a06d66e57eaaa95aae578455"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-control-s101009\\artifacts\\subsystem-swamp-t2-control-s101009-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-control-s101009\\artifacts\\subsystem-swamp-t2-control-s101009-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-control-s101009\\artifacts\\subsystem-swamp-t2-control-s101009-s101009\\endpoints.json",
+    "bytes": 4642,
+    "sha256": "69adc57563d71a079596f665e161d8af57bdcf6b737558d392f3822a32a2445a"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-control-s101009\\artifacts\\subsystem-swamp-t2-control-s101009-s101009\\events.jsonl",
+    "bytes": 1137122,
+    "sha256": "479a80083f50b9a8d7ef32b21c1641f5dd1ad6a17c30c31216d36d03ed959e0b"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-control-s101009\\artifacts\\subsystem-swamp-t2-control-s101009-s101009\\guard-events.jsonl",
+    "bytes": 7378766,
+    "sha256": "e567fddd90776402eafe4cf65857a22241ecf6842e94274ab5108c87030d0390"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-control-s101009\\artifacts\\subsystem-swamp-t2-control-s101009-s101009\\ready.json",
+    "bytes": 26076,
+    "sha256": "2f82faa417dd3a20112c712c06588e3bf2a0c2e9223d65d792470195e616c4bc"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-control-s101009\\artifacts\\subsystem-swamp-t2-control-s101009-s101009\\samples.jsonl",
+    "bytes": 3393249,
+    "sha256": "d8d989648bd123cbf14af405a194cf0501d75df55f1caa1b57d60a63eea41876"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-control-s101009\\artifacts\\subsystem-swamp-t2-control-s101009-s101009\\summary.json",
+    "bytes": 155579,
+    "sha256": "b4228c648835f67f560694922c422bc30a8c0ea6c6a1a9411c2ee16a9afb73d4"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-control-s101009\\artifacts\\subsystem-swamp-t2-control-s101009-s101009\\sustain-transitions.jsonl",
+    "bytes": 84478,
+    "sha256": "3e9a89b94e706b70f66e513fe819ffd7ee57a06f0366c6f5b4f6b51317b82809"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-control-s101009\\process.json",
+    "bytes": 728,
+    "sha256": "85a63629a5d999732c73084e86669b84c22329d438637520b01486383e7d01e0"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-control-s101009\\process.log",
+    "bytes": 51,
+    "sha256": "984210be837ce050fbdcb69cdb949f84f5dff783c675aca262d4fb4c5d716ecc"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-candidate-s101009\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-candidate-s101009\\artifacts\\heartbeat.json",
+    "bytes": 114,
+    "sha256": "98770480f51daf18dfe3c6e3158e039ae56eb90a0b4d32e9418fcba58c9f1c8b"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-candidate-s101009\\artifacts\\index.json",
+    "bytes": 168629,
+    "sha256": "c3fec53bf7f3c2bc7e15aee68b0c203946fa4ea65e83a914dc622ee2735c90de"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-candidate-s101009\\artifacts\\manifest.json",
+    "bytes": 3323,
+    "sha256": "e9755784ce9b4c39a22e00781ef00f2ff610d051db4fa679680beda06cd3e0f3"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-candidate-s101009\\artifacts\\subsystem-swamp-t2-candidate-s101009-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-candidate-s101009\\artifacts\\subsystem-swamp-t2-candidate-s101009-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-candidate-s101009\\artifacts\\subsystem-swamp-t2-candidate-s101009-s101009\\endpoints.json",
+    "bytes": 4787,
+    "sha256": "a4fb30d73a593cf64fd4537338cd6f6d39ea815f61a3af5c8c8e59effbc97927"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-candidate-s101009\\artifacts\\subsystem-swamp-t2-candidate-s101009-s101009\\events.jsonl",
+    "bytes": 1202194,
+    "sha256": "ec0dbbc3e4fa29a610a3b1b21fd872316abf1fcfa2d4f73ae240dd3339f73917"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-candidate-s101009\\artifacts\\subsystem-swamp-t2-candidate-s101009-s101009\\guard-events.jsonl",
+    "bytes": 7661179,
+    "sha256": "626c088749a2d2316aa409f7c245c86a37389253b1220ff719f88dbe21d1b9e9"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-candidate-s101009\\artifacts\\subsystem-swamp-t2-candidate-s101009-s101009\\ready.json",
+    "bytes": 26099,
+    "sha256": "edd7e4fd5669c10ae9ba5f6b6a5e9c63582c0eee4fbe30a6cd3a2ca1ac2cf42e"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-candidate-s101009\\artifacts\\subsystem-swamp-t2-candidate-s101009-s101009\\samples.jsonl",
+    "bytes": 3415998,
+    "sha256": "24cc268320cb382780731f076017ff7fcfe34614678fbfff21c3fc198af46357"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-candidate-s101009\\artifacts\\subsystem-swamp-t2-candidate-s101009-s101009\\summary.json",
+    "bytes": 157191,
+    "sha256": "1ebf559bdca364b592a9b796b03d02348a31504c2c652519dd58900d2ba8ff88"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-candidate-s101009\\artifacts\\subsystem-swamp-t2-candidate-s101009-s101009\\sustain-transitions.jsonl",
+    "bytes": 86799,
+    "sha256": "1620daca97a27b52f4d4f3a4a4c3482f060ab6dcb3945239fbf93a88e71321b1"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-candidate-s101009\\process.json",
+    "bytes": 736,
+    "sha256": "2313ec73e33f2d6ede637548b81cd81c2d46ea4fa3bc65920bb78a35e3e6fb8d"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-candidate-s101009\\process.log",
+    "bytes": 53,
+    "sha256": "566b35de432eeba8802042a906fb4d1dc1930e3119383d199f866bb1248f119f"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-control-s101033\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-control-s101033\\artifacts\\heartbeat.json",
+    "bytes": 112,
+    "sha256": "e4cbe6dc2d9ee0c434516d448b8c8b8bebe8883b043461c34191b9688a078119"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-control-s101033\\artifacts\\index.json",
+    "bytes": 164852,
+    "sha256": "0f4241701856ed448b8c1e2cef608b792c298b97ec56d6af9d5f0244c7b75880"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-control-s101033\\artifacts\\manifest.json",
+    "bytes": 3315,
+    "sha256": "a86bdb28424b5502a66db16ccef20baf444664f89f49c38bfd6e6843fbcdd321"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-control-s101033\\artifacts\\subsystem-swamp-t2-control-s101033-s101033\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-control-s101033\\artifacts\\subsystem-swamp-t2-control-s101033-s101033\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-control-s101033\\artifacts\\subsystem-swamp-t2-control-s101033-s101033\\endpoints.json",
+    "bytes": 4969,
+    "sha256": "94751e92a635f05d5c0496cef53e29d6171e198c80a213ef121e3241619b8f04"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-control-s101033\\artifacts\\subsystem-swamp-t2-control-s101033-s101033\\events.jsonl",
+    "bytes": 1141672,
+    "sha256": "4cb22ae8651e24c405d328ea4b024718fc27cb09520fe8515ef334693ffa37fc"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-control-s101033\\artifacts\\subsystem-swamp-t2-control-s101033-s101033\\guard-events.jsonl",
+    "bytes": 7388754,
+    "sha256": "1a2b817c017207329da5716af0cb6d90dc011dbf364e94cf4c5c76a3877ac338"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-control-s101033\\artifacts\\subsystem-swamp-t2-control-s101033-s101033\\ready.json",
+    "bytes": 26080,
+    "sha256": "616eaa9000a4b133ac04cbaefda7c72de046bb9873714a0b41360a7ef8a41aef"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-control-s101033\\artifacts\\subsystem-swamp-t2-control-s101033-s101033\\samples.jsonl",
+    "bytes": 3395785,
+    "sha256": "1052eeb3c371e4d9c3255d55e7681ed3e239ac92a2031ec654e52af879d3b15c"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-control-s101033\\artifacts\\subsystem-swamp-t2-control-s101033-s101033\\summary.json",
+    "bytes": 153672,
+    "sha256": "2e1b536917d10b8b63372d84bf2955d7a0d8e9c392af525dda6cce404ce5e836"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-control-s101033\\artifacts\\subsystem-swamp-t2-control-s101033-s101033\\sustain-transitions.jsonl",
+    "bytes": 85645,
+    "sha256": "2b8acd4e1ebab1fce9ea32795a70dfd4debd26c115e415719a894f5c46dbeafd"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-control-s101033\\process.json",
+    "bytes": 727,
+    "sha256": "dfdcdf0c7b3f3dbdcf80bd21f84c600a4dfb8f99e0122efe5a7b3c6b7bf42b7b"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-control-s101033\\process.log",
+    "bytes": 51,
+    "sha256": "0ce77f3c6362eb665a1a7253ed8fb70a7ab4c24bc878651f3f18f0d12db7d98f"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-candidate-s101033\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-candidate-s101033\\artifacts\\heartbeat.json",
+    "bytes": 114,
+    "sha256": "5581f7d2062e0696957cafa6566d8fce45e21b5d3159bdbb82dc2da9e756ec8a"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-candidate-s101033\\artifacts\\index.json",
+    "bytes": 164851,
+    "sha256": "555104d22f7f0bcc5a876c10dcd99a493b8712037198513408dbe49f5e85f6dd"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-candidate-s101033\\artifacts\\manifest.json",
+    "bytes": 3323,
+    "sha256": "3e9066becbe0bed80a0af160c11e492e88f65d1a3ffc93410b33eedb456aecd1"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-candidate-s101033\\artifacts\\subsystem-swamp-t2-candidate-s101033-s101033\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-candidate-s101033\\artifacts\\subsystem-swamp-t2-candidate-s101033-s101033\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-candidate-s101033\\artifacts\\subsystem-swamp-t2-candidate-s101033-s101033\\endpoints.json",
+    "bytes": 4969,
+    "sha256": "94751e92a635f05d5c0496cef53e29d6171e198c80a213ef121e3241619b8f04"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-candidate-s101033\\artifacts\\subsystem-swamp-t2-candidate-s101033-s101033\\events.jsonl",
+    "bytes": 1148514,
+    "sha256": "fb3454bf4aefc7ccd6800bf7f44897786da2f10c11622d0940e38846feea1c40"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-candidate-s101033\\artifacts\\subsystem-swamp-t2-candidate-s101033-s101033\\guard-events.jsonl",
+    "bytes": 7388870,
+    "sha256": "c6d57b648707b53b1cf7df82c4a2d2d0cd6ab6e80661706aa1cd056e3b55ef5f"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-candidate-s101033\\artifacts\\subsystem-swamp-t2-candidate-s101033-s101033\\ready.json",
+    "bytes": 26103,
+    "sha256": "a79a135870aa42f24bbed3d212a8a405de26427da034b4f60558616805848ac8"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-candidate-s101033\\artifacts\\subsystem-swamp-t2-candidate-s101033-s101033\\samples.jsonl",
+    "bytes": 3395947,
+    "sha256": "d68d5ec2e14cfd4d6e19cc7f9665702025913266e5f8a99696b6533c91207561"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-candidate-s101033\\artifacts\\subsystem-swamp-t2-candidate-s101033-s101033\\summary.json",
+    "bytes": 153671,
+    "sha256": "992da00ef361871a9898e49b10e4d2ad0781e60215395bbf545703e173ab0fae"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-candidate-s101033\\artifacts\\subsystem-swamp-t2-candidate-s101033-s101033\\sustain-transitions.jsonl",
+    "bytes": 85645,
+    "sha256": "2b8acd4e1ebab1fce9ea32795a70dfd4debd26c115e415719a894f5c46dbeafd"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-candidate-s101033\\process.json",
+    "bytes": 736,
+    "sha256": "10f8480b77fb49509c112fa2e012d3856ca21616b9aff32744abb338e638e445"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t2-candidate-s101033\\process.log",
+    "bytes": 53,
+    "sha256": "ab3ed46a974a07f661145c41e98a94cb5875896e7ac7a6e7d75797d2727a7279"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-control-s101009\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-control-s101009\\artifacts\\heartbeat.json",
+    "bytes": 112,
+    "sha256": "95e922bd16ae3bff114eb88778c7eff35f7c97b05c72687eeaaea7dc09dfc0af"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-control-s101009\\artifacts\\index.json",
+    "bytes": 291995,
+    "sha256": "eceb4c90a4bd0c79a5a9e8d7d85b80dbd7abf7d1fc28659c85f1f75f07c2cd35"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-control-s101009\\artifacts\\manifest.json",
+    "bytes": 3448,
+    "sha256": "36cf705203e11f38e89f81185f5c16f7eed7088b9d717d806015bcdc1cfa19fc"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-control-s101009\\artifacts\\subsystem-swamp-t3-control-s101009-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-control-s101009\\artifacts\\subsystem-swamp-t3-control-s101009-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-control-s101009\\artifacts\\subsystem-swamp-t3-control-s101009-s101009\\endpoints.json",
+    "bytes": 5084,
+    "sha256": "ec2cde80f407915e9494a549930bdeb64211d0360652ffd79b6027981b4034b0"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-control-s101009\\artifacts\\subsystem-swamp-t3-control-s101009-s101009\\events.jsonl",
+    "bytes": 1136607,
+    "sha256": "6e681157701a63427c787636c6f099a2678df556d1f8c1b0aa53fca330d411c3"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-control-s101009\\artifacts\\subsystem-swamp-t3-control-s101009-s101009\\guard-events.jsonl",
+    "bytes": 7372087,
+    "sha256": "f8510ea64e000a692a8efffed88b25e9dbca6818aa05214c3b3b5520f3efad18"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-control-s101009\\artifacts\\subsystem-swamp-t3-control-s101009-s101009\\ready.json",
+    "bytes": 29040,
+    "sha256": "1f398e37d08d9db56e3b26143974cfbf4b5c9d9e6894868df5734265af05c18f"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-control-s101009\\artifacts\\subsystem-swamp-t3-control-s101009-s101009\\samples.jsonl",
+    "bytes": 4111586,
+    "sha256": "ceff23c5009c5930d3eda3547dec168a0934b75e5c2b601bf31c8ef7498309d4"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-control-s101009\\artifacts\\subsystem-swamp-t3-control-s101009-s101009\\summary.json",
+    "bytes": 272101,
+    "sha256": "278d02eef85330ae1b644111480e66cdcd36dc868f55d68bbb056dd3ee384694"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-control-s101009\\artifacts\\subsystem-swamp-t3-control-s101009-s101009\\sustain-transitions.jsonl",
+    "bytes": 247113,
+    "sha256": "d930a4105735e7623c6169850e284972c296c35e3c2ead5d394dbda9fd2ed80f"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-control-s101009\\process.json",
+    "bytes": 728,
+    "sha256": "cb2976ea25343fc3cfed6f4c580e078ed7a22d47506d9bc2412fb2033215110f"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-control-s101009\\process.log",
+    "bytes": 51,
+    "sha256": "26db8fd1c2d055551a43b32cc400f30a70aea2296c8dc40f63a09396bcd31a80"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-candidate-s101009\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-candidate-s101009\\artifacts\\heartbeat.json",
+    "bytes": 114,
+    "sha256": "85f8f312f0accc90ee7779719b165632069b302579222fcb3e307cb84ea15ed2"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-candidate-s101009\\artifacts\\index.json",
+    "bytes": 360716,
+    "sha256": "6e63441fdb9d3eea29bbd6bb1607d18949300d9857f778e82c9bebde99d9f6a2"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-candidate-s101009\\artifacts\\manifest.json",
+    "bytes": 3456,
+    "sha256": "d3088e1d8b50f5b967d526e73de6500ea9a4346344b9dd7c5b7e96a894acb52e"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-candidate-s101009\\artifacts\\subsystem-swamp-t3-candidate-s101009-s101009\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-candidate-s101009\\artifacts\\subsystem-swamp-t3-candidate-s101009-s101009\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-candidate-s101009\\artifacts\\subsystem-swamp-t3-candidate-s101009-s101009\\endpoints.json",
+    "bytes": 5085,
+    "sha256": "08288205f2e9d6769b9a2e37da70ff781a3ee875d830249e16eb234cd5bc1210"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-candidate-s101009\\artifacts\\subsystem-swamp-t3-candidate-s101009-s101009\\events.jsonl",
+    "bytes": 1385529,
+    "sha256": "05194b343f226c40e8c196b8d77d59c2f72ce188287740ce73b734193be269e5"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-candidate-s101009\\artifacts\\subsystem-swamp-t3-candidate-s101009-s101009\\guard-events.jsonl",
+    "bytes": 8415152,
+    "sha256": "4d6c7ba213903527edd503480983ea467d06554a699c41cc484df06a44bb4bfa"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-candidate-s101009\\artifacts\\subsystem-swamp-t3-candidate-s101009-s101009\\ready.json",
+    "bytes": 29034,
+    "sha256": "63bc34ee02344a1021be37328e1ec728fb6bc58e5ab052670f9cc53289c65cc6"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-candidate-s101009\\artifacts\\subsystem-swamp-t3-candidate-s101009-s101009\\samples.jsonl",
+    "bytes": 4169878,
+    "sha256": "e438e6b2d00096554349779c3222512598df59c8bf134c0e0ea8698336cabbd8"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-candidate-s101009\\artifacts\\subsystem-swamp-t3-candidate-s101009-s101009\\summary.json",
+    "bytes": 336078,
+    "sha256": "64b33ad2bf83fad9064fd0bc57b143283eb37717ab01f3f3d24613a9a83b1f1b"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-candidate-s101009\\artifacts\\subsystem-swamp-t3-candidate-s101009-s101009\\sustain-transitions.jsonl",
+    "bytes": 296991,
+    "sha256": "4968ad51ca3e21613fc9d64c179aae6ba969c1c1af8b30de2dab34b3ced6a826"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-candidate-s101009\\process.json",
+    "bytes": 736,
+    "sha256": "04e03f006fcd3b1a6c147eccfd85911508ad4013da3417beddaa744be847a2f4"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-candidate-s101009\\process.log",
+    "bytes": 53,
+    "sha256": "d791086a9138ab46e358c0d4871952a2da73170a9e96d3570f47d901db520fee"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-control-s101033\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-control-s101033\\artifacts\\heartbeat.json",
+    "bytes": 112,
+    "sha256": "287a893d143f5810505229273151dc54e22c4f2e593cab2dd7a27ff90eb7a1e2"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-control-s101033\\artifacts\\index.json",
+    "bytes": 285192,
+    "sha256": "3e89c5fb69551814812d3cf7dad7543f27b56d5f73bf139452ee0d3a04c6ab53"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-control-s101033\\artifacts\\manifest.json",
+    "bytes": 3448,
+    "sha256": "efc72f3b8ff84de60f7a1340d5a4d4692c22489124fc2d56c8f0f6b38c069ad4"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-control-s101033\\artifacts\\subsystem-swamp-t3-control-s101033-s101033\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-control-s101033\\artifacts\\subsystem-swamp-t3-control-s101033-s101033\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-control-s101033\\artifacts\\subsystem-swamp-t3-control-s101033-s101033\\endpoints.json",
+    "bytes": 5075,
+    "sha256": "efa9f5c7c1621b49d5469cf0be9664abc35e7b7481334e6104052401f7edd5b3"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-control-s101033\\artifacts\\subsystem-swamp-t3-control-s101033-s101033\\events.jsonl",
+    "bytes": 1104913,
+    "sha256": "eef77d8b46bb52279589cc700a88a458748d207ad3b1a106af81594c0a30f8f8"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-control-s101033\\artifacts\\subsystem-swamp-t3-control-s101033-s101033\\guard-events.jsonl",
+    "bytes": 7598447,
+    "sha256": "fc00bb0aed62b51465c7bec81d04b887b0f118f1c7c4352cb8a7b2ecacdf09f0"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-control-s101033\\artifacts\\subsystem-swamp-t3-control-s101033-s101033\\ready.json",
+    "bytes": 29063,
+    "sha256": "567a2aba347ec4449e512c318f15de931ea8867b715c15d840818ca3a5fb4904"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-control-s101033\\artifacts\\subsystem-swamp-t3-control-s101033-s101033\\samples.jsonl",
+    "bytes": 4146209,
+    "sha256": "c76c5a2693b2101c2ad898003ed7d7cf5ef0f5c7e4d915335e8fb223ab39c96d"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-control-s101033\\artifacts\\subsystem-swamp-t3-control-s101033-s101033\\summary.json",
+    "bytes": 265814,
+    "sha256": "e0442b0e3ef47e99c837440466cfe20787b39177041bd903d0bce42934767980"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-control-s101033\\artifacts\\subsystem-swamp-t3-control-s101033-s101033\\sustain-transitions.jsonl",
+    "bytes": 276158,
+    "sha256": "5b9ec02497c459aa6a073515213b404496a3ede401c899324a9523319e8dc6aa"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-control-s101033\\process.json",
+    "bytes": 728,
+    "sha256": "a3a9581d07ecff91734bb366ac26303f5f8d4c85bd343fbb3f3e786949314ecc"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-control-s101033\\process.log",
+    "bytes": 51,
+    "sha256": "ad9381996f7ef5a53cb556570849f5e836c371cac140c22eaad1117f9750a477"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-candidate-s101033\\artifacts\\complete.json",
+    "bytes": 33,
+    "sha256": "9068d32ec10585e06e0f9ca44c1b38518dcc85ae260aa8acd88f5c556b8829be"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-candidate-s101033\\artifacts\\heartbeat.json",
+    "bytes": 114,
+    "sha256": "c4d0dcbfc5424aaeee2377c89421d985b1281760fe17237dd0e07ffefdadc1f6"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-candidate-s101033\\artifacts\\index.json",
+    "bytes": 265384,
+    "sha256": "d14205730f51236f017f1bff09f41a2bddd642ccc83c930b9a538a41281a02f1"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-candidate-s101033\\artifacts\\manifest.json",
+    "bytes": 3456,
+    "sha256": "bd829256b745bb51c2da42d8a790b21b4fd1347577e99b7b5b0f7a606ba50b49"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-candidate-s101033\\artifacts\\subsystem-swamp-t3-candidate-s101033-s101033\\conduit-events.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-candidate-s101033\\artifacts\\subsystem-swamp-t3-candidate-s101033-s101033\\conduit-snapshots.jsonl",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-candidate-s101033\\artifacts\\subsystem-swamp-t3-candidate-s101033-s101033\\endpoints.json",
+    "bytes": 5092,
+    "sha256": "13a5e338d4b36745b2fe0eacbe687d4fdb4e9a9119e75ffa4bae417c3cf3c0eb"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-candidate-s101033\\artifacts\\subsystem-swamp-t3-candidate-s101033-s101033\\events.jsonl",
+    "bytes": 1063285,
+    "sha256": "26f0466a9ca684e2fe73b7ff410e951482228730af6765636e2b438cabff0d2e"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-candidate-s101033\\artifacts\\subsystem-swamp-t3-candidate-s101033-s101033\\guard-events.jsonl",
+    "bytes": 7476829,
+    "sha256": "070fac1be8b3e7fff5faf31f6c7a87f96ced5f2683b26d8946b07a86b845fcbd"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-candidate-s101033\\artifacts\\subsystem-swamp-t3-candidate-s101033-s101033\\ready.json",
+    "bytes": 29057,
+    "sha256": "d51ec8a99722146b927e7c965b2f7167513134fbb87244b8cfb0da73b18aa8da"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-candidate-s101033\\artifacts\\subsystem-swamp-t3-candidate-s101033-s101033\\samples.jsonl",
+    "bytes": 4138431,
+    "sha256": "d6c9ac8eca03f52c79638cb31c35e5ace753cb919c3b0a2cb4cc930d6dd9ed76"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-candidate-s101033\\artifacts\\subsystem-swamp-t3-candidate-s101033-s101033\\summary.json",
+    "bytes": 247328,
+    "sha256": "576fd166cce44c246f7aaf74c754cd86ebad92f285066ec15f69d9c19e75a077"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-candidate-s101033\\artifacts\\subsystem-swamp-t3-candidate-s101033-s101033\\sustain-transitions.jsonl",
+    "bytes": 272185,
+    "sha256": "bbe97a18944552d2b8617a1f3909a83745a1d8ad40c27e443e220d69a44a8553"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-candidate-s101033\\process.json",
+    "bytes": 736,
+    "sha256": "4b59b3f88f12a031a2a99a4ea236d12ca10c221be6cbd07a9821f22b6bd56a01"
+  },
+  {
+    "path": "D:\\mmo-idle\\subsystem-patch-candidate-01\\run-01\\subsystem-swamp-t3-candidate-s101033\\process.log",
+    "bytes": 53,
+    "sha256": "be5eb9a6e8675c6a482bd6981a512475ce927e76cf8da2b9b220dc2fab935b45"
+  }
+]

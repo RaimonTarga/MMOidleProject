@@ -1,0 +1,11 @@
+# Subsystem patch candidate 01 — final dispositions
+
+These are bounded synthetic-regression recommendations. They do not authorize a merge, deployment, live rollout, or an additional combat run.
+
+1. **Desert boot curve — revise.** The 20%/25%/30% curve preserved completion and increased aggregate work (`143 → 155` kills), but the closing Flash package had a material seed-`101009` survival-margin loss: sampled minimum HP `270.69 → 195.97`, recorded HP damage `1,201.88 → 2,669.88`, and kite/away samples `328 → 291`. Seed `101033` was milder and moved in the opposite damage/kiting direction, so this is not a universal failure; the 30% T4 endpoint is not robust enough to adopt unchanged. No revision was implemented or retested in this sealed run.
+
+2. **Swamp slow-resistance curve — adopt.** The candidate preserves slow-resistance identity and the declared completed-item curve (`40%/50%/60%` at T1/T2/T3 +5). The tested T2/T3 values intentionally increased sampled slow/root exposure (`182 → 194` slow samples; `30 → 39` roots) while all eight rows completed without death and total HP damage stayed effectively flat. Per-seed survival was mixed, including a T3 seed with lower minimum HP, so adoption remains bounded by the synthetic evidence and requires normal designer/live validation. The lineage still ends at T3; no T4 successor was introduced.
+
+3. **Arcanist Core 30% Technique Power — adopt.** Delivered player-source AoE HP damage increased in all four matched pairs (`262,120 → 282,611`, `+7.8%` aggregate), with mixed but slightly positive completed work (`99 → 101` kills), no channel/summon-delivery anomaly, and no aggregate owner-survival regression. AoE is not exclusive Technique attribution, so this is a targeted specialization recommendation rather than a universal throughput claim. Technique cooldown reduction remains 20%.
+
+4. **Blood Offering retirement — ready for designer review.** Focused migration/loadout tests passed: legacy IDs remain load-safe, new acquisition/equip is rejected, equipped legacy copies are normalized and excluded from RP cost, kill healing is absent, and no refund or replacement Rite is introduced. This is compatibility evidence, not a combat-balance result.

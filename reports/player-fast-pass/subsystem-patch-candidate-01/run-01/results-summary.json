@@ -1,0 +1,3032 @@
+{
+  "experimentId": "subsystem-patch-candidate-01",
+  "counts": {
+    "planned": 24,
+    "primary": 24,
+    "alternative": 0,
+    "completed": 24,
+    "newCompleted": 24,
+    "dead": 0,
+    "failed": 0,
+    "omitted": 0,
+    "notRun": 0,
+    "qualified": 0
+  },
+  "limits": [
+    "Sample-based minimum HP and mobility exposure are not continuous-time measurements.",
+    "Slow/root classification uses recorded status ID names; inspect statusIds and raw samples for unrecognized effects.",
+    "Player-source AoE HP damage is delivered damage, not exclusive Technique attribution.",
+    "Player-source HP damage gaps include recovery, travel and non-damaging attacks; they are not exact lost-attack opportunity.",
+    "Instant Technique activations and cast fires are separate counters; do not sum them as unique deliveries.",
+    "Owner damage taken counts recorded HP damage, excluding absorption. No economy or live-play inference."
+  ],
+  "rows": [
+    {
+      "observationId": "subsystem-arcanist-reverb-control-s101009",
+      "block": "A",
+      "seed": 101009,
+      "arm": "control",
+      "outcome": "window-ended",
+      "endpoints": [
+        {
+          "atMs": 300000,
+          "observed": true,
+          "work": {
+            "kills": 10,
+            "firstKillMs": 22700,
+            "hpDamage": 55048,
+            "absorbed": 2152,
+            "damageEvents": 129,
+            "lastKillMs": 266900,
+            "lastHpProgressMs": 297100,
+            "longestKillGapMs": 46900,
+            "longestHpProgressGapMs": 9600
+          },
+          "owner": {
+            "hp": 549,
+            "maxHp": 549,
+            "barrier": 138.74999999999997,
+            "minHpFraction": 0.7050035519125682
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 393.14084999999994,
+            "sampledOwnerMinHpFraction": 0.7161035519125682,
+            "ownerHpDamageTaken": 2534.4000000000005,
+            "techniques": {
+              "power-strike": {
+                "castStarts": 33,
+                "castFires": 27,
+                "castAborts": 6,
+                "activations": 33
+              },
+              "frenzy": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 33
+              },
+              "expose-weakness": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 29
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 24321,
+            "samples": 300,
+            "kiteSamples": 0,
+            "selectedTargetSamples": 290,
+            "awayMotionSamples": 11,
+            "slowSamples": 292,
+            "rootSamples": 0,
+            "sampledMeanMotionMagnitudeWhileSlow": 491.5281894161773,
+            "statusIds": [
+              "ability-frenzy",
+              "cooldown-reverb",
+              "debuff-tundra-chill",
+              "defense-recovery"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 9600,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        },
+        {
+          "atMs": 600000,
+          "observed": true,
+          "work": {
+            "kills": 20,
+            "firstKillMs": 22700,
+            "hpDamage": 108979,
+            "absorbed": 4842,
+            "damageEvents": 258,
+            "lastKillMs": 569600,
+            "lastHpProgressMs": 598700,
+            "longestKillGapMs": 50300,
+            "longestHpProgressGapMs": 11000
+          },
+          "owner": {
+            "hp": 549,
+            "maxHp": 549,
+            "barrier": 57,
+            "minHpFraction": 0.7050035519125682
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 387.04695,
+            "sampledOwnerMinHpFraction": 0.7050035519125682,
+            "ownerHpDamageTaken": 5677.050000000001,
+            "techniques": {
+              "power-strike": {
+                "castStarts": 65,
+                "castFires": 54,
+                "castAborts": 10,
+                "activations": 65
+              },
+              "frenzy": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 67
+              },
+              "expose-weakness": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 58
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 47617,
+            "samples": 600,
+            "kiteSamples": 0,
+            "selectedTargetSamples": 575,
+            "awayMotionSamples": 19,
+            "slowSamples": 586,
+            "rootSamples": 0,
+            "sampledMeanMotionMagnitudeWhileSlow": 425.58215919464,
+            "statusIds": [
+              "ability-frenzy",
+              "cooldown-reverb",
+              "debuff-tundra-chill",
+              "defense-recovery"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 11000,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        }
+      ]
+    },
+    {
+      "observationId": "subsystem-arcanist-reverb-candidate-s101009",
+      "block": "A",
+      "seed": 101009,
+      "arm": "candidate",
+      "outcome": "window-ended",
+      "endpoints": [
+        {
+          "atMs": 300000,
+          "observed": true,
+          "work": {
+            "kills": 11,
+            "firstKillMs": 22700,
+            "hpDamage": 58297,
+            "absorbed": 2690,
+            "damageEvents": 131,
+            "lastKillMs": 259300,
+            "lastHpProgressMs": 296700,
+            "longestKillGapMs": 43900,
+            "longestHpProgressGapMs": 8200
+          },
+          "owner": {
+            "hp": 549,
+            "maxHp": 549,
+            "barrier": 188.70000000000007,
+            "minHpFraction": 0.7050035519125682
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 393.14084999999994,
+            "sampledOwnerMinHpFraction": 0.7161035519125682,
+            "ownerHpDamageTaken": 3210.9000000000005,
+            "techniques": {
+              "power-strike": {
+                "castStarts": 32,
+                "castFires": 28,
+                "castAborts": 4,
+                "activations": 32
+              },
+              "frenzy": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 36
+              },
+              "expose-weakness": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 30
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 26750,
+            "samples": 300,
+            "kiteSamples": 0,
+            "selectedTargetSamples": 290,
+            "awayMotionSamples": 9,
+            "slowSamples": 291,
+            "rootSamples": 0,
+            "sampledMeanMotionMagnitudeWhileSlow": 291.4676239873543,
+            "statusIds": [
+              "ability-frenzy",
+              "cooldown-reverb",
+              "debuff-tundra-chill",
+              "defense-recovery"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 8200,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        },
+        {
+          "atMs": 600000,
+          "observed": true,
+          "work": {
+            "kills": 25,
+            "firstKillMs": 22700,
+            "hpDamage": 119276,
+            "absorbed": 4842,
+            "damageEvents": 264,
+            "lastKillMs": 562600,
+            "lastHpProgressMs": 599600,
+            "longestKillGapMs": 46200,
+            "longestHpProgressGapMs": 8200
+          },
+          "owner": {
+            "hp": 527.5134,
+            "maxHp": 549,
+            "barrier": 0,
+            "minHpFraction": 0.7050035519125682
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 393.14084999999994,
+            "sampledOwnerMinHpFraction": 0.7161035519125682,
+            "ownerHpDamageTaken": 5784.450000000003,
+            "techniques": {
+              "power-strike": {
+                "castStarts": 65,
+                "castFires": 56,
+                "castAborts": 9,
+                "activations": 65
+              },
+              "frenzy": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 71
+              },
+              "expose-weakness": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 59
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 53968,
+            "samples": 600,
+            "kiteSamples": 0,
+            "selectedTargetSamples": 584,
+            "awayMotionSamples": 15,
+            "slowSamples": 591,
+            "rootSamples": 0,
+            "sampledMeanMotionMagnitudeWhileSlow": 303.6445518189344,
+            "statusIds": [
+              "ability-frenzy",
+              "cooldown-reverb",
+              "debuff-tundra-chill",
+              "defense-recovery"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 8200,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        }
+      ]
+    },
+    {
+      "observationId": "subsystem-arcanist-reverb-control-s101033",
+      "block": "A",
+      "seed": 101033,
+      "arm": "control",
+      "outcome": "window-ended",
+      "endpoints": [
+        {
+          "atMs": 300000,
+          "observed": true,
+          "work": {
+            "kills": 9,
+            "firstKillMs": 23300,
+            "hpDamage": 54058,
+            "absorbed": 3228,
+            "damageEvents": 132,
+            "lastKillMs": 299600,
+            "lastHpProgressMs": 299600,
+            "longestKillGapMs": 49300,
+            "longestHpProgressGapMs": 9800
+          },
+          "owner": {
+            "hp": 549,
+            "maxHp": 549,
+            "barrier": 57,
+            "minHpFraction": 0.7050035519125682
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 387.04695,
+            "sampledOwnerMinHpFraction": 0.7050035519125682,
+            "ownerHpDamageTaken": 3468.4500000000016,
+            "techniques": {
+              "power-strike": {
+                "castStarts": 35,
+                "castFires": 27,
+                "castAborts": 8,
+                "activations": 35
+              },
+              "frenzy": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 33
+              },
+              "expose-weakness": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 28
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 23804,
+            "samples": 300,
+            "kiteSamples": 0,
+            "selectedTargetSamples": 282,
+            "awayMotionSamples": 6,
+            "slowSamples": 296,
+            "rootSamples": 0,
+            "sampledMeanMotionMagnitudeWhileSlow": 427.8356546298684,
+            "statusIds": [
+              "ability-frenzy",
+              "cooldown-reverb",
+              "debuff-tundra-chill",
+              "defense-recovery"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 9800,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        },
+        {
+          "atMs": 600000,
+          "observed": true,
+          "work": {
+            "kills": 23,
+            "firstKillMs": 23300,
+            "hpDamage": 110343,
+            "absorbed": 5918,
+            "damageEvents": 259,
+            "lastKillMs": 594900,
+            "lastHpProgressMs": 594900,
+            "longestKillGapMs": 49300,
+            "longestHpProgressGapMs": 10100
+          },
+          "owner": {
+            "hp": 549,
+            "maxHp": 549,
+            "barrier": 127.64999999999996,
+            "minHpFraction": 0.7050035519125682
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 387.04695,
+            "sampledOwnerMinHpFraction": 0.7050035519125682,
+            "ownerHpDamageTaken": 6393.000000000003,
+            "techniques": {
+              "power-strike": {
+                "castStarts": 65,
+                "castFires": 53,
+                "castAborts": 12,
+                "activations": 65
+              },
+              "frenzy": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 68
+              },
+              "expose-weakness": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 57
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 47982,
+            "samples": 600,
+            "kiteSamples": 0,
+            "selectedTargetSamples": 573,
+            "awayMotionSamples": 14,
+            "slowSamples": 588,
+            "rootSamples": 0,
+            "sampledMeanMotionMagnitudeWhileSlow": 408.65221278020994,
+            "statusIds": [
+              "ability-frenzy",
+              "cooldown-reverb",
+              "debuff-tundra-chill",
+              "defense-recovery"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 10100,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        }
+      ]
+    },
+    {
+      "observationId": "subsystem-arcanist-reverb-candidate-s101033",
+      "block": "A",
+      "seed": 101033,
+      "arm": "candidate",
+      "outcome": "window-ended",
+      "endpoints": [
+        {
+          "atMs": 300000,
+          "observed": true,
+          "work": {
+            "kills": 10,
+            "firstKillMs": 23300,
+            "hpDamage": 58576,
+            "absorbed": 3228,
+            "damageEvents": 134,
+            "lastKillMs": 262800,
+            "lastHpProgressMs": 298200,
+            "longestKillGapMs": 43200,
+            "longestHpProgressGapMs": 6500
+          },
+          "owner": {
+            "hp": 549,
+            "maxHp": 549,
+            "barrier": 57,
+            "minHpFraction": 0.7050035519125682
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 387.04695,
+            "sampledOwnerMinHpFraction": 0.7050035519125682,
+            "ownerHpDamageTaken": 2921.1000000000004,
+            "techniques": {
+              "power-strike": {
+                "castStarts": 31,
+                "castFires": 27,
+                "castAborts": 4,
+                "activations": 31
+              },
+              "frenzy": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 37
+              },
+              "expose-weakness": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 30
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 25927,
+            "samples": 300,
+            "kiteSamples": 0,
+            "selectedTargetSamples": 290,
+            "awayMotionSamples": 8,
+            "slowSamples": 291,
+            "rootSamples": 0,
+            "sampledMeanMotionMagnitudeWhileSlow": 287.72006129675106,
+            "statusIds": [
+              "ability-frenzy",
+              "cooldown-reverb",
+              "debuff-tundra-chill",
+              "defense-recovery"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 6500,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        },
+        {
+          "atMs": 600000,
+          "observed": true,
+          "work": {
+            "kills": 19,
+            "firstKillMs": 23300,
+            "hpDamage": 114604,
+            "absorbed": 4842,
+            "damageEvents": 264,
+            "lastKillMs": 575600,
+            "lastHpProgressMs": 598300,
+            "longestKillGapMs": 46300,
+            "longestHpProgressGapMs": 7100
+          },
+          "owner": {
+            "hp": 549,
+            "maxHp": 549,
+            "barrier": 57,
+            "minHpFraction": 0.7050035519125682
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 387.04695,
+            "sampledOwnerMinHpFraction": 0.7050035519125682,
+            "ownerHpDamageTaken": 5007.750000000002,
+            "techniques": {
+              "power-strike": {
+                "castStarts": 65,
+                "castFires": 54,
+                "castAborts": 11,
+                "activations": 65
+              },
+              "frenzy": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 71
+              },
+              "expose-weakness": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 58
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 50639,
+            "samples": 600,
+            "kiteSamples": 0,
+            "selectedTargetSamples": 583,
+            "awayMotionSamples": 22,
+            "slowSamples": 591,
+            "rootSamples": 0,
+            "sampledMeanMotionMagnitudeWhileSlow": 288.39397082576465,
+            "statusIds": [
+              "ability-frenzy",
+              "cooldown-reverb",
+              "debuff-tundra-chill",
+              "defense-recovery"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 7100,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        }
+      ]
+    },
+    {
+      "observationId": "subsystem-arcanist-idolwright-control-s101009",
+      "block": "A",
+      "seed": 101009,
+      "arm": "control",
+      "outcome": "window-ended",
+      "endpoints": [
+        {
+          "atMs": 300000,
+          "observed": true,
+          "work": {
+            "kills": 14,
+            "firstKillMs": 12600,
+            "hpDamage": 72801,
+            "absorbed": 2664,
+            "damageEvents": 202,
+            "lastKillMs": 287300,
+            "lastHpProgressMs": 292600,
+            "longestKillGapMs": 36900,
+            "longestHpProgressGapMs": 12300
+          },
+          "owner": {
+            "hp": 430.12600000000015,
+            "maxHp": 484,
+            "barrier": 196,
+            "minHpFraction": 0.5501400826446281
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 268.954,
+            "sampledOwnerMinHpFraction": 0.5556900826446282,
+            "ownerHpDamageTaken": 76,
+            "techniques": {
+              "power-strike": {
+                "castStarts": 30,
+                "castFires": 29,
+                "castAborts": 1,
+                "activations": 30
+              },
+              "frenzy": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 33
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 40909,
+            "samples": 300,
+            "kiteSamples": 0,
+            "selectedTargetSamples": 293,
+            "awayMotionSamples": 25,
+            "slowSamples": 281,
+            "rootSamples": 0,
+            "sampledMeanMotionMagnitudeWhileSlow": 275.27108183457744,
+            "statusIds": [
+              "ability-frenzy",
+              "ability-second-wind",
+              "debuff-tundra-chill",
+              "defense-recovery",
+              "summoner-colossus"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 16100,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        },
+        {
+          "atMs": 600000,
+          "observed": true,
+          "work": {
+            "kills": 28,
+            "firstKillMs": 12600,
+            "hpDamage": 146378,
+            "absorbed": 4547,
+            "damageEvents": 405,
+            "lastKillMs": 577000,
+            "lastHpProgressMs": 598500,
+            "longestKillGapMs": 36900,
+            "longestHpProgressGapMs": 13700
+          },
+          "owner": {
+            "hp": 484,
+            "maxHp": 484,
+            "barrier": 196,
+            "minHpFraction": 0.5501400826446281
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 268.954,
+            "sampledOwnerMinHpFraction": 0.5556900826446282,
+            "ownerHpDamageTaken": 76,
+            "techniques": {
+              "power-strike": {
+                "castStarts": 63,
+                "castFires": 56,
+                "castAborts": 6,
+                "activations": 63
+              },
+              "frenzy": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 67
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 80558,
+            "samples": 600,
+            "kiteSamples": 0,
+            "selectedTargetSamples": 591,
+            "awayMotionSamples": 50,
+            "slowSamples": 559,
+            "rootSamples": 0,
+            "sampledMeanMotionMagnitudeWhileSlow": 335.5866718140255,
+            "statusIds": [
+              "ability-frenzy",
+              "ability-second-wind",
+              "debuff-tundra-chill",
+              "defense-recovery",
+              "summoner-colossus"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 21700,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        }
+      ]
+    },
+    {
+      "observationId": "subsystem-arcanist-idolwright-candidate-s101009",
+      "block": "A",
+      "seed": 101009,
+      "arm": "candidate",
+      "outcome": "window-ended",
+      "endpoints": [
+        {
+          "atMs": 300000,
+          "observed": true,
+          "work": {
+            "kills": 13,
+            "firstKillMs": 12600,
+            "hpDamage": 75887,
+            "absorbed": 2421,
+            "damageEvents": 209,
+            "lastKillMs": 273100,
+            "lastHpProgressMs": 298900,
+            "longestKillGapMs": 35300,
+            "longestHpProgressGapMs": 10000
+          },
+          "owner": {
+            "hp": 484,
+            "maxHp": 484,
+            "barrier": 196,
+            "minHpFraction": 0.5501400826446281
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 266.2678,
+            "sampledOwnerMinHpFraction": 0.5501400826446281,
+            "ownerHpDamageTaken": 0,
+            "techniques": {
+              "power-strike": {
+                "castStarts": 32,
+                "castFires": 28,
+                "castAborts": 3,
+                "activations": 32
+              },
+              "frenzy": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 35
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 42721,
+            "samples": 300,
+            "kiteSamples": 0,
+            "selectedTargetSamples": 298,
+            "awayMotionSamples": 25,
+            "slowSamples": 282,
+            "rootSamples": 0,
+            "sampledMeanMotionMagnitudeWhileSlow": 374.46900470921054,
+            "statusIds": [
+              "ability-frenzy",
+              "ability-second-wind",
+              "debuff-tundra-chill",
+              "defense-recovery",
+              "summoner-colossus"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 16100,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        },
+        {
+          "atMs": 600000,
+          "observed": true,
+          "work": {
+            "kills": 27,
+            "firstKillMs": 12600,
+            "hpDamage": 156803,
+            "absorbed": 4009,
+            "damageEvents": 425,
+            "lastKillMs": 584700,
+            "lastHpProgressMs": 596300,
+            "longestKillGapMs": 36600,
+            "longestHpProgressGapMs": 10900
+          },
+          "owner": {
+            "hp": 484,
+            "maxHp": 484,
+            "barrier": 196,
+            "minHpFraction": 0.5501400826446281
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 266.2678,
+            "sampledOwnerMinHpFraction": 0.5501400826446281,
+            "ownerHpDamageTaken": 152,
+            "techniques": {
+              "power-strike": {
+                "castStarts": 63,
+                "castFires": 57,
+                "castAborts": 6,
+                "activations": 63
+              },
+              "frenzy": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 66
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 88220,
+            "samples": 600,
+            "kiteSamples": 0,
+            "selectedTargetSamples": 591,
+            "awayMotionSamples": 45,
+            "slowSamples": 569,
+            "rootSamples": 0,
+            "sampledMeanMotionMagnitudeWhileSlow": 387.72650324061055,
+            "statusIds": [
+              "ability-frenzy",
+              "ability-second-wind",
+              "debuff-tundra-chill",
+              "defense-recovery",
+              "summoner-colossus"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 18800,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        }
+      ]
+    },
+    {
+      "observationId": "subsystem-arcanist-idolwright-control-s101033",
+      "block": "A",
+      "seed": 101033,
+      "arm": "control",
+      "outcome": "window-ended",
+      "endpoints": [
+        {
+          "atMs": 300000,
+          "observed": true,
+          "work": {
+            "kills": 14,
+            "firstKillMs": 13400,
+            "hpDamage": 75079,
+            "absorbed": 2690,
+            "damageEvents": 206,
+            "lastKillMs": 288700,
+            "lastHpProgressMs": 299000,
+            "longestKillGapMs": 44000,
+            "longestHpProgressGapMs": 11900
+          },
+          "owner": {
+            "hp": 439.0800000000005,
+            "maxHp": 484,
+            "barrier": 196,
+            "minHpFraction": 0.5501400826446281
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 275.22180000000003,
+            "sampledOwnerMinHpFraction": 0.5686400826446282,
+            "ownerHpDamageTaken": 76,
+            "techniques": {
+              "power-strike": {
+                "castStarts": 34,
+                "castFires": 29,
+                "castAborts": 5,
+                "activations": 34
+              },
+              "frenzy": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 34
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 41933,
+            "samples": 300,
+            "kiteSamples": 0,
+            "selectedTargetSamples": 297,
+            "awayMotionSamples": 23,
+            "slowSamples": 282,
+            "rootSamples": 0,
+            "sampledMeanMotionMagnitudeWhileSlow": 370.17562205710936,
+            "statusIds": [
+              "ability-frenzy",
+              "ability-second-wind",
+              "debuff-tundra-chill",
+              "defense-recovery",
+              "summoner-colossus"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 15500,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        },
+        {
+          "atMs": 600000,
+          "observed": true,
+          "work": {
+            "kills": 28,
+            "firstKillMs": 13400,
+            "hpDamage": 152208,
+            "absorbed": 5623,
+            "damageEvents": 409,
+            "lastKillMs": 562400,
+            "lastHpProgressMs": 597000,
+            "longestKillGapMs": 44000,
+            "longestHpProgressGapMs": 11900
+          },
+          "owner": {
+            "hp": 484,
+            "maxHp": 484,
+            "barrier": 196,
+            "minHpFraction": 0.5501400826446281
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 268.954,
+            "sampledOwnerMinHpFraction": 0.5556900826446282,
+            "ownerHpDamageTaken": 152,
+            "techniques": {
+              "power-strike": {
+                "castStarts": 69,
+                "castFires": 59,
+                "castAborts": 10,
+                "activations": 69
+              },
+              "frenzy": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 66
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 85963,
+            "samples": 600,
+            "kiteSamples": 0,
+            "selectedTargetSamples": 587,
+            "awayMotionSamples": 60,
+            "slowSamples": 567,
+            "rootSamples": 0,
+            "sampledMeanMotionMagnitudeWhileSlow": 352.95547987151554,
+            "statusIds": [
+              "ability-frenzy",
+              "ability-second-wind",
+              "debuff-tundra-chill",
+              "defense-recovery",
+              "summoner-colossus"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 15500,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        }
+      ]
+    },
+    {
+      "observationId": "subsystem-arcanist-idolwright-candidate-s101033",
+      "block": "A",
+      "seed": 101033,
+      "arm": "candidate",
+      "outcome": "window-ended",
+      "endpoints": [
+        {
+          "atMs": 300000,
+          "observed": true,
+          "work": {
+            "kills": 13,
+            "firstKillMs": 13400,
+            "hpDamage": 77265,
+            "absorbed": 1883,
+            "damageEvents": 196,
+            "lastKillMs": 298500,
+            "lastHpProgressMs": 298500,
+            "longestKillGapMs": 43000,
+            "longestHpProgressGapMs": 11900
+          },
+          "owner": {
+            "hp": 484,
+            "maxHp": 484,
+            "barrier": 196,
+            "minHpFraction": 0.5501400826446281
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 266.2678,
+            "sampledOwnerMinHpFraction": 0.5501400826446281,
+            "ownerHpDamageTaken": 3.099999999999909,
+            "techniques": {
+              "power-strike": {
+                "castStarts": 31,
+                "castFires": 30,
+                "castAborts": 1,
+                "activations": 31
+              },
+              "frenzy": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 33
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 46300,
+            "samples": 300,
+            "kiteSamples": 0,
+            "selectedTargetSamples": 294,
+            "awayMotionSamples": 17,
+            "slowSamples": 290,
+            "rootSamples": 0,
+            "sampledMeanMotionMagnitudeWhileSlow": 388.15803554145504,
+            "statusIds": [
+              "ability-frenzy",
+              "ability-second-wind",
+              "debuff-tundra-chill",
+              "defense-recovery",
+              "summoner-colossus"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 15500,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        },
+        {
+          "atMs": 600000,
+          "observed": true,
+          "work": {
+            "kills": 30,
+            "firstKillMs": 13400,
+            "hpDamage": 153892,
+            "absorbed": 3766,
+            "damageEvents": 393,
+            "lastKillMs": 580900,
+            "lastHpProgressMs": 597900,
+            "longestKillGapMs": 43000,
+            "longestHpProgressGapMs": 11900
+          },
+          "owner": {
+            "hp": 484,
+            "maxHp": 484,
+            "barrier": 196,
+            "minHpFraction": 0.5501400826446281
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 266.2678,
+            "sampledOwnerMinHpFraction": 0.5501400826446281,
+            "ownerHpDamageTaken": 155.0999999999999,
+            "techniques": {
+              "power-strike": {
+                "castStarts": 60,
+                "castFires": 57,
+                "castAborts": 2,
+                "activations": 60
+              },
+              "frenzy": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 66
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 89784,
+            "samples": 600,
+            "kiteSamples": 0,
+            "selectedTargetSamples": 587,
+            "awayMotionSamples": 43,
+            "slowSamples": 562,
+            "rootSamples": 0,
+            "sampledMeanMotionMagnitudeWhileSlow": 447.9840677207662,
+            "statusIds": [
+              "ability-frenzy",
+              "ability-second-wind",
+              "debuff-tundra-chill",
+              "defense-recovery",
+              "summoner-colossus"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 17500,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        }
+      ]
+    },
+    {
+      "observationId": "subsystem-desert-ranger-control-s101009",
+      "block": "B",
+      "seed": 101009,
+      "arm": "control",
+      "outcome": "window-ended",
+      "endpoints": [
+        {
+          "atMs": 300000,
+          "observed": true,
+          "work": {
+            "kills": 24,
+            "firstKillMs": 9400,
+            "hpDamage": 111387,
+            "absorbed": 2152,
+            "damageEvents": 658,
+            "lastKillMs": 296200,
+            "lastHpProgressMs": 299600,
+            "longestKillGapMs": 25000,
+            "longestHpProgressGapMs": 7500
+          },
+          "owner": {
+            "hp": 430,
+            "maxHp": 430,
+            "barrier": 163.1999999999999,
+            "minHpFraction": 0.7069767441860465
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 304,
+            "sampledOwnerMinHpFraction": 0.7069767441860465,
+            "ownerHpDamageTaken": 317.1,
+            "techniques": {
+              "quick-strike": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 103
+              },
+              "frenzy": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 28
+              },
+              "hamstring": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 51
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 0,
+            "samples": 300,
+            "kiteSamples": 2,
+            "selectedTargetSamples": 288,
+            "awayMotionSamples": 2,
+            "slowSamples": 289,
+            "rootSamples": 0,
+            "sampledMeanMotionMagnitudeWhileSlow": 606.5645963231274,
+            "statusIds": [
+              "ability-frenzy",
+              "debuff-tundra-chill",
+              "defense-recovery",
+              "mob-kite"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 7500,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        },
+        {
+          "atMs": 600000,
+          "observed": true,
+          "work": {
+            "kills": 47,
+            "firstKillMs": 9400,
+            "hpDamage": 216195,
+            "absorbed": 4035,
+            "damageEvents": 1282,
+            "lastKillMs": 590100,
+            "lastHpProgressMs": 599900,
+            "longestKillGapMs": 26600,
+            "longestHpProgressGapMs": 9300
+          },
+          "owner": {
+            "hp": 304,
+            "maxHp": 430,
+            "barrier": 0,
+            "minHpFraction": 0.7069767441860465
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 304,
+            "sampledOwnerMinHpFraction": 0.7069767441860465,
+            "ownerHpDamageTaken": 947.1,
+            "techniques": {
+              "quick-strike": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 200
+              },
+              "frenzy": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 57
+              },
+              "hamstring": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 99
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 0,
+            "samples": 600,
+            "kiteSamples": 6,
+            "selectedTargetSamples": 569,
+            "awayMotionSamples": 6,
+            "slowSamples": 571,
+            "rootSamples": 0,
+            "sampledMeanMotionMagnitudeWhileSlow": 661.8073338719641,
+            "statusIds": [
+              "ability-frenzy",
+              "debuff-tundra-chill",
+              "defense-recovery",
+              "mob-kite"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 9300,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        }
+      ]
+    },
+    {
+      "observationId": "subsystem-desert-ranger-candidate-s101009",
+      "block": "B",
+      "seed": 101009,
+      "arm": "candidate",
+      "outcome": "window-ended",
+      "endpoints": [
+        {
+          "atMs": 300000,
+          "observed": true,
+          "work": {
+            "kills": 23,
+            "firstKillMs": 9400,
+            "hpDamage": 108013,
+            "absorbed": 1614,
+            "damageEvents": 645,
+            "lastKillMs": 298700,
+            "lastHpProgressMs": 298700,
+            "longestKillGapMs": 24700,
+            "longestHpProgressGapMs": 7200
+          },
+          "owner": {
+            "hp": 430,
+            "maxHp": 430,
+            "barrier": 174,
+            "minHpFraction": 0.7069767441860465
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 304,
+            "sampledOwnerMinHpFraction": 0.7069767441860465,
+            "ownerHpDamageTaken": 569.1,
+            "techniques": {
+              "quick-strike": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 100
+              },
+              "frenzy": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 29
+              },
+              "hamstring": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 50
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 0,
+            "samples": 300,
+            "kiteSamples": 8,
+            "selectedTargetSamples": 277,
+            "awayMotionSamples": 8,
+            "slowSamples": 295,
+            "rootSamples": 0,
+            "sampledMeanMotionMagnitudeWhileSlow": 461.6499499723996,
+            "statusIds": [
+              "ability-frenzy",
+              "debuff-tundra-chill",
+              "defense-recovery",
+              "mob-kite"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 7200,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        },
+        {
+          "atMs": 600000,
+          "observed": true,
+          "work": {
+            "kills": 49,
+            "firstKillMs": 9400,
+            "hpDamage": 219073,
+            "absorbed": 4035,
+            "damageEvents": 1288,
+            "lastKillMs": 598600,
+            "lastHpProgressMs": 598600,
+            "longestKillGapMs": 24700,
+            "longestHpProgressGapMs": 7200
+          },
+          "owner": {
+            "hp": 315.882,
+            "maxHp": 430,
+            "barrier": 0,
+            "minHpFraction": 0.7069767441860465
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 304,
+            "sampledOwnerMinHpFraction": 0.7069767441860465,
+            "ownerHpDamageTaken": 1025.25,
+            "techniques": {
+              "quick-strike": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 198
+              },
+              "frenzy": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 58
+              },
+              "hamstring": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 97
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 0,
+            "samples": 600,
+            "kiteSamples": 9,
+            "selectedTargetSamples": 563,
+            "awayMotionSamples": 9,
+            "slowSamples": 575,
+            "rootSamples": 0,
+            "sampledMeanMotionMagnitudeWhileSlow": 553.7358637334933,
+            "statusIds": [
+              "ability-frenzy",
+              "debuff-tundra-chill",
+              "defense-recovery",
+              "mob-kite"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 7200,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        }
+      ]
+    },
+    {
+      "observationId": "subsystem-desert-ranger-control-s101033",
+      "block": "B",
+      "seed": 101033,
+      "arm": "control",
+      "outcome": "window-ended",
+      "endpoints": [
+        {
+          "atMs": 300000,
+          "observed": true,
+          "work": {
+            "kills": 25,
+            "firstKillMs": 9600,
+            "hpDamage": 114125,
+            "absorbed": 3228,
+            "damageEvents": 663,
+            "lastKillMs": 281100,
+            "lastHpProgressMs": 299700,
+            "longestKillGapMs": 21100,
+            "longestHpProgressGapMs": 7000
+          },
+          "owner": {
+            "hp": 430,
+            "maxHp": 430,
+            "barrier": 174,
+            "minHpFraction": 0.7069767441860465
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 304,
+            "sampledOwnerMinHpFraction": 0.7069767441860465,
+            "ownerHpDamageTaken": 378,
+            "techniques": {
+              "quick-strike": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 103
+              },
+              "frenzy": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 29
+              },
+              "hamstring": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 49
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 0,
+            "samples": 300,
+            "kiteSamples": 4,
+            "selectedTargetSamples": 285,
+            "awayMotionSamples": 4,
+            "slowSamples": 288,
+            "rootSamples": 0,
+            "sampledMeanMotionMagnitudeWhileSlow": 461.4241215646074,
+            "statusIds": [
+              "ability-frenzy",
+              "debuff-tundra-chill",
+              "defense-recovery",
+              "mob-kite"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 7000,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        },
+        {
+          "atMs": 600000,
+          "observed": true,
+          "work": {
+            "kills": 51,
+            "firstKillMs": 9600,
+            "hpDamage": 220829,
+            "absorbed": 3766,
+            "damageEvents": 1298,
+            "lastKillMs": 599700,
+            "lastHpProgressMs": 599700,
+            "longestKillGapMs": 25000,
+            "longestHpProgressGapMs": 7200
+          },
+          "owner": {
+            "hp": 430,
+            "maxHp": 430,
+            "barrier": 174,
+            "minHpFraction": 0.7069767441860465
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 304,
+            "sampledOwnerMinHpFraction": 0.7069767441860465,
+            "ownerHpDamageTaken": 1134,
+            "techniques": {
+              "quick-strike": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 202
+              },
+              "frenzy": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 58
+              },
+              "hamstring": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 99
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 0,
+            "samples": 600,
+            "kiteSamples": 9,
+            "selectedTargetSamples": 558,
+            "awayMotionSamples": 9,
+            "slowSamples": 580,
+            "rootSamples": 0,
+            "sampledMeanMotionMagnitudeWhileSlow": 445.83968818634617,
+            "statusIds": [
+              "ability-frenzy",
+              "debuff-tundra-chill",
+              "defense-recovery",
+              "mob-kite"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 7200,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        }
+      ]
+    },
+    {
+      "observationId": "subsystem-desert-ranger-candidate-s101033",
+      "block": "B",
+      "seed": 101033,
+      "arm": "candidate",
+      "outcome": "window-ended",
+      "endpoints": [
+        {
+          "atMs": 300000,
+          "observed": true,
+          "work": {
+            "kills": 27,
+            "firstKillMs": 9600,
+            "hpDamage": 109472,
+            "absorbed": 2690,
+            "damageEvents": 630,
+            "lastKillMs": 279600,
+            "lastHpProgressMs": 298900,
+            "longestKillGapMs": 20800,
+            "longestHpProgressGapMs": 7200
+          },
+          "owner": {
+            "hp": 430,
+            "maxHp": 430,
+            "barrier": 174,
+            "minHpFraction": 0.7069767441860465
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 304,
+            "sampledOwnerMinHpFraction": 0.7069767441860465,
+            "ownerHpDamageTaken": 734.25,
+            "techniques": {
+              "quick-strike": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 100
+              },
+              "frenzy": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 28
+              },
+              "hamstring": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 49
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 0,
+            "samples": 300,
+            "kiteSamples": 1,
+            "selectedTargetSamples": 275,
+            "awayMotionSamples": 1,
+            "slowSamples": 288,
+            "rootSamples": 0,
+            "sampledMeanMotionMagnitudeWhileSlow": 457.6193508975421,
+            "statusIds": [
+              "ability-frenzy",
+              "debuff-tundra-chill",
+              "defense-recovery",
+              "mob-kite"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 7200,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        },
+        {
+          "atMs": 600000,
+          "observed": true,
+          "work": {
+            "kills": 55,
+            "firstKillMs": 9600,
+            "hpDamage": 213278,
+            "absorbed": 3497,
+            "damageEvents": 1241,
+            "lastKillMs": 599200,
+            "lastHpProgressMs": 599200,
+            "longestKillGapMs": 23800,
+            "longestHpProgressGapMs": 8300
+          },
+          "owner": {
+            "hp": 316.72800000000007,
+            "maxHp": 430,
+            "barrier": 0,
+            "minHpFraction": 0.7069767441860465
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 304,
+            "sampledOwnerMinHpFraction": 0.7069767441860465,
+            "ownerHpDamageTaken": 1516.2,
+            "techniques": {
+              "quick-strike": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 197
+              },
+              "frenzy": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 57
+              },
+              "hamstring": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 96
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 0,
+            "samples": 600,
+            "kiteSamples": 5,
+            "selectedTargetSamples": 551,
+            "awayMotionSamples": 5,
+            "slowSamples": 573,
+            "rootSamples": 0,
+            "sampledMeanMotionMagnitudeWhileSlow": 537.723097001049,
+            "statusIds": [
+              "ability-frenzy",
+              "debuff-tundra-chill",
+              "defense-recovery",
+              "mob-kite"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 8300,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        }
+      ]
+    },
+    {
+      "observationId": "subsystem-desert-flash-control-s101009",
+      "block": "B",
+      "seed": 101009,
+      "arm": "control",
+      "outcome": "window-ended",
+      "endpoints": [
+        {
+          "atMs": 300000,
+          "observed": true,
+          "work": {
+            "kills": 9,
+            "firstKillMs": 19900,
+            "hpDamage": 50495,
+            "absorbed": 3562,
+            "damageEvents": 646,
+            "lastKillMs": 285500,
+            "lastHpProgressMs": 299200,
+            "longestKillGapMs": 54200,
+            "longestHpProgressGapMs": 3400
+          },
+          "owner": {
+            "hp": 391.125,
+            "maxHp": 461,
+            "barrier": 0,
+            "minHpFraction": 0.5233188720173536
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 270.68989999999997,
+            "sampledOwnerMinHpFraction": 0.5871798264642082,
+            "ownerHpDamageTaken": 858.5,
+            "techniques": {
+              "quick-strike": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 117
+              },
+              "frenzy": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 30
+              },
+              "hamstring": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 54
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 0,
+            "samples": 300,
+            "kiteSamples": 182,
+            "selectedTargetSamples": 298,
+            "awayMotionSamples": 182,
+            "slowSamples": 299,
+            "rootSamples": 0,
+            "sampledMeanMotionMagnitudeWhileSlow": 145.17179141582346,
+            "statusIds": [
+              "ability-frenzy",
+              "ability-second-wind",
+              "debuff-tundra-chill",
+              "defense-recovery",
+              "flurry",
+              "mob-kite"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 3400,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        },
+        {
+          "atMs": 600000,
+          "observed": true,
+          "work": {
+            "kills": 19,
+            "firstKillMs": 19900,
+            "hpDamage": 101614,
+            "absorbed": 4035,
+            "damageEvents": 1266,
+            "lastKillMs": 585500,
+            "lastHpProgressMs": 599500,
+            "longestKillGapMs": 54200,
+            "longestHpProgressGapMs": 8100
+          },
+          "owner": {
+            "hp": 440,
+            "maxHp": 461,
+            "barrier": 0,
+            "minHpFraction": 0.5233188720173536
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 270.68989999999997,
+            "sampledOwnerMinHpFraction": 0.5871798264642082,
+            "ownerHpDamageTaken": 1201.875,
+            "techniques": {
+              "quick-strike": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 228
+              },
+              "frenzy": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 59
+              },
+              "hamstring": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 105
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 0,
+            "samples": 600,
+            "kiteSamples": 328,
+            "selectedTargetSamples": 584,
+            "awayMotionSamples": 328,
+            "slowSamples": 599,
+            "rootSamples": 0,
+            "sampledMeanMotionMagnitudeWhileSlow": 159.44559647618064,
+            "statusIds": [
+              "ability-frenzy",
+              "ability-second-wind",
+              "debuff-tundra-chill",
+              "defense-recovery",
+              "flurry",
+              "mob-kite"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 8100,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        }
+      ]
+    },
+    {
+      "observationId": "subsystem-desert-flash-candidate-s101009",
+      "block": "B",
+      "seed": 101009,
+      "arm": "candidate",
+      "outcome": "window-ended",
+      "endpoints": [
+        {
+          "atMs": 300000,
+          "observed": true,
+          "work": {
+            "kills": 11,
+            "firstKillMs": 20200,
+            "hpDamage": 52478,
+            "absorbed": 2959,
+            "damageEvents": 594,
+            "lastKillMs": 255300,
+            "lastHpProgressMs": 299700,
+            "longestKillGapMs": 53000,
+            "longestHpProgressGapMs": 8500
+          },
+          "owner": {
+            "hp": 415.125,
+            "maxHp": 461,
+            "barrier": 124,
+            "minHpFraction": 0.4945770065075922
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 257.84975000000003,
+            "sampledOwnerMinHpFraction": 0.5593270065075923,
+            "ownerHpDamageTaken": 1390.625,
+            "techniques": {
+              "quick-strike": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 107
+              },
+              "frenzy": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 28
+              },
+              "hamstring": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 51
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 0,
+            "samples": 300,
+            "kiteSamples": 135,
+            "selectedTargetSamples": 279,
+            "awayMotionSamples": 135,
+            "slowSamples": 299,
+            "rootSamples": 0,
+            "sampledMeanMotionMagnitudeWhileSlow": 138.72464028432458,
+            "statusIds": [
+              "ability-frenzy",
+              "ability-second-wind",
+              "debuff-tundra-chill",
+              "defense-recovery",
+              "flurry",
+              "mob-kite"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 8500,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        },
+        {
+          "atMs": 600000,
+          "observed": true,
+          "work": {
+            "kills": 24,
+            "firstKillMs": 20200,
+            "hpDamage": 108125,
+            "absorbed": 4035,
+            "damageEvents": 1214,
+            "lastKillMs": 579500,
+            "lastHpProgressMs": 599700,
+            "longestKillGapMs": 53000,
+            "longestHpProgressGapMs": 8500
+          },
+          "owner": {
+            "hp": 461,
+            "maxHp": 461,
+            "barrier": 250.625,
+            "minHpFraction": 0.4121475054229935
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 195.96995,
+            "sampledOwnerMinHpFraction": 0.4250975054229935,
+            "ownerHpDamageTaken": 2669.875,
+            "techniques": {
+              "quick-strike": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 211
+              },
+              "frenzy": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 58
+              },
+              "hamstring": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 102
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 0,
+            "samples": 600,
+            "kiteSamples": 291,
+            "selectedTargetSamples": 546,
+            "awayMotionSamples": 291,
+            "slowSamples": 599,
+            "rootSamples": 0,
+            "sampledMeanMotionMagnitudeWhileSlow": 147.52413605177955,
+            "statusIds": [
+              "ability-frenzy",
+              "ability-guard",
+              "ability-second-wind",
+              "debuff-tundra-chill",
+              "defense-recovery",
+              "flurry",
+              "mob-kite"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 8500,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        }
+      ]
+    },
+    {
+      "observationId": "subsystem-desert-flash-control-s101033",
+      "block": "B",
+      "seed": 101033,
+      "arm": "control",
+      "outcome": "window-ended",
+      "endpoints": [
+        {
+          "atMs": 300000,
+          "observed": true,
+          "work": {
+            "kills": 12,
+            "firstKillMs": 20100,
+            "hpDamage": 54642,
+            "absorbed": 2690,
+            "damageEvents": 582,
+            "lastKillMs": 294000,
+            "lastHpProgressMs": 294000,
+            "longestKillGapMs": 47600,
+            "longestHpProgressGapMs": 6500
+          },
+          "owner": {
+            "hp": 461,
+            "maxHp": 461,
+            "barrier": 186.875,
+            "minHpFraction": 0.44739696312364424
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 245.81970000000007,
+            "sampledOwnerMinHpFraction": 0.5332314533622561,
+            "ownerHpDamageTaken": 1436.75,
+            "techniques": {
+              "quick-strike": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 105
+              },
+              "frenzy": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 29
+              },
+              "hamstring": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 50
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 0,
+            "samples": 300,
+            "kiteSamples": 113,
+            "selectedTargetSamples": 277,
+            "awayMotionSamples": 113,
+            "slowSamples": 299,
+            "rootSamples": 0,
+            "sampledMeanMotionMagnitudeWhileSlow": 166.4865710334904,
+            "statusIds": [
+              "ability-frenzy",
+              "ability-guard",
+              "ability-second-wind",
+              "debuff-tundra-chill",
+              "defense-recovery",
+              "flurry",
+              "mob-kite"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 6500,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        },
+        {
+          "atMs": 600000,
+          "observed": true,
+          "work": {
+            "kills": 26,
+            "firstKillMs": 20100,
+            "hpDamage": 116027,
+            "absorbed": 5380,
+            "damageEvents": 1263,
+            "lastKillMs": 586600,
+            "lastHpProgressMs": 599700,
+            "longestKillGapMs": 47600,
+            "longestHpProgressGapMs": 8300
+          },
+          "owner": {
+            "hp": 461,
+            "maxHp": 461,
+            "barrier": 325,
+            "minHpFraction": 0.44739696312364424
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 242.5,
+            "sampledOwnerMinHpFraction": 0.5260303687635575,
+            "ownerHpDamageTaken": 3248.125,
+            "techniques": {
+              "quick-strike": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 214
+              },
+              "frenzy": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 58
+              },
+              "hamstring": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 101
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 0,
+            "samples": 600,
+            "kiteSamples": 257,
+            "selectedTargetSamples": 561,
+            "awayMotionSamples": 257,
+            "slowSamples": 594,
+            "rootSamples": 0,
+            "sampledMeanMotionMagnitudeWhileSlow": 174.77934395648336,
+            "statusIds": [
+              "ability-frenzy",
+              "ability-guard",
+              "ability-second-wind",
+              "debuff-tundra-chill",
+              "defense-recovery",
+              "flurry",
+              "mob-kite"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 8300,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        }
+      ]
+    },
+    {
+      "observationId": "subsystem-desert-flash-candidate-s101033",
+      "block": "B",
+      "seed": 101033,
+      "arm": "candidate",
+      "outcome": "window-ended",
+      "endpoints": [
+        {
+          "atMs": 300000,
+          "observed": true,
+          "work": {
+            "kills": 11,
+            "firstKillMs": 20200,
+            "hpDamage": 52375,
+            "absorbed": 2421,
+            "damageEvents": 587,
+            "lastKillMs": 288600,
+            "lastHpProgressMs": 299800,
+            "longestKillGapMs": 54500,
+            "longestHpProgressGapMs": 6200
+          },
+          "owner": {
+            "hp": 461,
+            "maxHp": 461,
+            "barrier": 146,
+            "minHpFraction": 0.4907809110629067
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 232.21995,
+            "sampledOwnerMinHpFraction": 0.5037309110629068,
+            "ownerHpDamageTaken": 1000.375,
+            "techniques": {
+              "quick-strike": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 110
+              },
+              "frenzy": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 29
+              },
+              "hamstring": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 51
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 0,
+            "samples": 300,
+            "kiteSamples": 143,
+            "selectedTargetSamples": 280,
+            "awayMotionSamples": 143,
+            "slowSamples": 299,
+            "rootSamples": 0,
+            "sampledMeanMotionMagnitudeWhileSlow": 172.79752390031098,
+            "statusIds": [
+              "ability-frenzy",
+              "ability-second-wind",
+              "debuff-tundra-chill",
+              "defense-recovery",
+              "flurry",
+              "mob-kite"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 6200,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        },
+        {
+          "atMs": 600000,
+          "observed": true,
+          "work": {
+            "kills": 27,
+            "firstKillMs": 20200,
+            "hpDamage": 112700,
+            "absorbed": 5111,
+            "damageEvents": 1219,
+            "lastKillMs": 584900,
+            "lastHpProgressMs": 599600,
+            "longestKillGapMs": 54500,
+            "longestHpProgressGapMs": 9000
+          },
+          "owner": {
+            "hp": 313.625,
+            "maxHp": 461,
+            "barrier": 0,
+            "minHpFraction": 0.44739696312364424
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 232.21995,
+            "sampledOwnerMinHpFraction": 0.5037309110629068,
+            "ownerHpDamageTaken": 2553.375,
+            "techniques": {
+              "quick-strike": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 217
+              },
+              "frenzy": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 58
+              },
+              "hamstring": {
+                "castStarts": 0,
+                "castFires": 0,
+                "castAborts": 0,
+                "activations": 102
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 0,
+            "samples": 600,
+            "kiteSamples": 286,
+            "selectedTargetSamples": 556,
+            "awayMotionSamples": 286,
+            "slowSamples": 598,
+            "rootSamples": 0,
+            "sampledMeanMotionMagnitudeWhileSlow": 171.82580957992693,
+            "statusIds": [
+              "ability-frenzy",
+              "ability-guard",
+              "ability-second-wind",
+              "debuff-tundra-chill",
+              "defense-recovery",
+              "flurry",
+              "mob-kite"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 9000,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        }
+      ]
+    },
+    {
+      "observationId": "subsystem-swamp-t2-control-s101009",
+      "block": "C",
+      "seed": 101009,
+      "arm": "control",
+      "outcome": "window-ended",
+      "endpoints": [
+        {
+          "atMs": 300000,
+          "observed": true,
+          "work": {
+            "kills": 18,
+            "firstKillMs": 12100,
+            "hpDamage": 17594,
+            "absorbed": 0,
+            "damageEvents": 113,
+            "lastKillMs": 284600,
+            "lastHpProgressMs": 284600,
+            "longestKillGapMs": 20800,
+            "longestHpProgressGapMs": 15400
+          },
+          "owner": {
+            "hp": 272,
+            "maxHp": 272,
+            "barrier": 0,
+            "minHpFraction": 0.4963352941176466
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 135.00319999999988,
+            "sampledOwnerMinHpFraction": 0.4963352941176466,
+            "ownerHpDamageTaken": 3972,
+            "techniques": {
+              "power-strike": {
+                "castStarts": 26,
+                "castFires": 19,
+                "castAborts": 7,
+                "activations": 26
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 5972,
+            "samples": 300,
+            "kiteSamples": 0,
+            "selectedTargetSamples": 264,
+            "awayMotionSamples": 0,
+            "slowSamples": 61,
+            "rootSamples": 1,
+            "sampledMeanMotionMagnitudeWhileSlow": 15.926597737453367,
+            "statusIds": [
+              "ability-second-wind",
+              "debuff-root",
+              "debuff-slow",
+              "defense-recovery"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 15400,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        },
+        {
+          "atMs": 600000,
+          "observed": true,
+          "work": {
+            "kills": 36,
+            "firstKillMs": 12100,
+            "hpDamage": 34675,
+            "absorbed": 0,
+            "damageEvents": 226,
+            "lastKillMs": 595700,
+            "lastHpProgressMs": 595700,
+            "longestKillGapMs": 24900,
+            "longestHpProgressGapMs": 18400
+          },
+          "owner": {
+            "hp": 272,
+            "maxHp": 272,
+            "barrier": 0,
+            "minHpFraction": 0.4963352941176466
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 135.00319999999988,
+            "sampledOwnerMinHpFraction": 0.4963352941176466,
+            "ownerHpDamageTaken": 7463,
+            "techniques": {
+              "power-strike": {
+                "castStarts": 53,
+                "castFires": 37,
+                "castAborts": 16,
+                "activations": 53
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 11617,
+            "samples": 600,
+            "kiteSamples": 0,
+            "selectedTargetSamples": 539,
+            "awayMotionSamples": 0,
+            "slowSamples": 96,
+            "rootSamples": 4,
+            "sampledMeanMotionMagnitudeWhileSlow": 15.926597737453367,
+            "statusIds": [
+              "ability-second-wind",
+              "debuff-root",
+              "debuff-slow",
+              "defense-recovery"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 18400,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        }
+      ]
+    },
+    {
+      "observationId": "subsystem-swamp-t2-candidate-s101009",
+      "block": "C",
+      "seed": 101009,
+      "arm": "candidate",
+      "outcome": "window-ended",
+      "endpoints": [
+        {
+          "atMs": 300000,
+          "observed": true,
+          "work": {
+            "kills": 18,
+            "firstKillMs": 12100,
+            "hpDamage": 17775,
+            "absorbed": 0,
+            "damageEvents": 114,
+            "lastKillMs": 285500,
+            "lastHpProgressMs": 285500,
+            "longestKillGapMs": 20800,
+            "longestHpProgressGapMs": 14500
+          },
+          "owner": {
+            "hp": 272,
+            "maxHp": 272,
+            "barrier": 0,
+            "minHpFraction": 0.4628411764705877
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 125.89279999999985,
+            "sampledOwnerMinHpFraction": 0.4628411764705877,
+            "ownerHpDamageTaken": 3976,
+            "techniques": {
+              "power-strike": {
+                "castStarts": 26,
+                "castFires": 19,
+                "castAborts": 7,
+                "activations": 26
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 5972,
+            "samples": 300,
+            "kiteSamples": 0,
+            "selectedTargetSamples": 266,
+            "awayMotionSamples": 0,
+            "slowSamples": 61,
+            "rootSamples": 1,
+            "sampledMeanMotionMagnitudeWhileSlow": 17.186898006898694,
+            "statusIds": [
+              "ability-guard",
+              "ability-second-wind",
+              "debuff-root",
+              "debuff-slow",
+              "defense-recovery"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 14500,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        },
+        {
+          "atMs": 600000,
+          "observed": true,
+          "work": {
+            "kills": 37,
+            "firstKillMs": 12100,
+            "hpDamage": 35715,
+            "absorbed": 0,
+            "damageEvents": 232,
+            "lastKillMs": 593400,
+            "lastHpProgressMs": 599100,
+            "longestKillGapMs": 21800,
+            "longestHpProgressGapMs": 17600
+          },
+          "owner": {
+            "hp": 272,
+            "maxHp": 272,
+            "barrier": 0,
+            "minHpFraction": 0.4628411764705877
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 125.89279999999985,
+            "sampledOwnerMinHpFraction": 0.4628411764705877,
+            "ownerHpDamageTaken": 7883,
+            "techniques": {
+              "power-strike": {
+                "castStarts": 56,
+                "castFires": 38,
+                "castAborts": 18,
+                "activations": 56
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 11924,
+            "samples": 600,
+            "kiteSamples": 0,
+            "selectedTargetSamples": 545,
+            "awayMotionSamples": 0,
+            "slowSamples": 99,
+            "rootSamples": 5,
+            "sampledMeanMotionMagnitudeWhileSlow": 434.10177375529435,
+            "statusIds": [
+              "ability-guard",
+              "ability-second-wind",
+              "debuff-root",
+              "debuff-slow",
+              "defense-recovery"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 17600,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        }
+      ]
+    },
+    {
+      "observationId": "subsystem-swamp-t2-control-s101033",
+      "block": "C",
+      "seed": 101033,
+      "arm": "control",
+      "outcome": "window-ended",
+      "endpoints": [
+        {
+          "atMs": 300000,
+          "observed": true,
+          "work": {
+            "kills": 18,
+            "firstKillMs": 7600,
+            "hpDamage": 17326,
+            "absorbed": 0,
+            "damageEvents": 115,
+            "lastKillMs": 289700,
+            "lastHpProgressMs": 295900,
+            "longestKillGapMs": 22600,
+            "longestHpProgressGapMs": 14000
+          },
+          "owner": {
+            "hp": 182.99200000000025,
+            "maxHp": 272,
+            "barrier": 0,
+            "minHpFraction": 0.5011294117647059
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 155.8640000000001,
+            "sampledOwnerMinHpFraction": 0.5730294117647062,
+            "ownerHpDamageTaken": 3600,
+            "techniques": {
+              "power-strike": {
+                "castStarts": 29,
+                "castFires": 18,
+                "castAborts": 10,
+                "activations": 29
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 5619,
+            "samples": 300,
+            "kiteSamples": 0,
+            "selectedTargetSamples": 270,
+            "awayMotionSamples": 0,
+            "slowSamples": 34,
+            "rootSamples": 2,
+            "sampledMeanMotionMagnitudeWhileSlow": null,
+            "statusIds": [
+              "ability-second-wind",
+              "debuff-root",
+              "debuff-slow",
+              "defense-recovery"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 14000,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        },
+        {
+          "atMs": 600000,
+          "observed": true,
+          "work": {
+            "kills": 37,
+            "firstKillMs": 7600,
+            "hpDamage": 35892,
+            "absorbed": 0,
+            "damageEvents": 237,
+            "lastKillMs": 590300,
+            "lastHpProgressMs": 599900,
+            "longestKillGapMs": 22600,
+            "longestHpProgressGapMs": 15500
+          },
+          "owner": {
+            "hp": 272,
+            "maxHp": 272,
+            "barrier": 0,
+            "minHpFraction": 0.4884411764705874
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 143.70719999999983,
+            "sampledOwnerMinHpFraction": 0.5283352941176465,
+            "ownerHpDamageTaken": 7197,
+            "techniques": {
+              "power-strike": {
+                "castStarts": 57,
+                "castFires": 38,
+                "castAborts": 19,
+                "activations": 57
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 11881,
+            "samples": 600,
+            "kiteSamples": 0,
+            "selectedTargetSamples": 548,
+            "awayMotionSamples": 0,
+            "slowSamples": 72,
+            "rootSamples": 5,
+            "sampledMeanMotionMagnitudeWhileSlow": null,
+            "statusIds": [
+              "ability-guard",
+              "ability-second-wind",
+              "debuff-root",
+              "debuff-slow",
+              "defense-recovery"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 15500,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        }
+      ]
+    },
+    {
+      "observationId": "subsystem-swamp-t2-candidate-s101033",
+      "block": "C",
+      "seed": 101033,
+      "arm": "candidate",
+      "outcome": "window-ended",
+      "endpoints": [
+        {
+          "atMs": 300000,
+          "observed": true,
+          "work": {
+            "kills": 18,
+            "firstKillMs": 7600,
+            "hpDamage": 17326,
+            "absorbed": 0,
+            "damageEvents": 115,
+            "lastKillMs": 289700,
+            "lastHpProgressMs": 295900,
+            "longestKillGapMs": 22600,
+            "longestHpProgressGapMs": 14000
+          },
+          "owner": {
+            "hp": 182.99200000000025,
+            "maxHp": 272,
+            "barrier": 0,
+            "minHpFraction": 0.5011294117647059
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 155.8640000000001,
+            "sampledOwnerMinHpFraction": 0.5730294117647062,
+            "ownerHpDamageTaken": 3600,
+            "techniques": {
+              "power-strike": {
+                "castStarts": 29,
+                "castFires": 18,
+                "castAborts": 10,
+                "activations": 29
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 5619,
+            "samples": 300,
+            "kiteSamples": 0,
+            "selectedTargetSamples": 270,
+            "awayMotionSamples": 0,
+            "slowSamples": 34,
+            "rootSamples": 2,
+            "sampledMeanMotionMagnitudeWhileSlow": null,
+            "statusIds": [
+              "ability-second-wind",
+              "debuff-root",
+              "debuff-slow",
+              "defense-recovery"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 14000,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        },
+        {
+          "atMs": 600000,
+          "observed": true,
+          "work": {
+            "kills": 37,
+            "firstKillMs": 7600,
+            "hpDamage": 35892,
+            "absorbed": 0,
+            "damageEvents": 237,
+            "lastKillMs": 590300,
+            "lastHpProgressMs": 599900,
+            "longestKillGapMs": 22600,
+            "longestHpProgressGapMs": 15500
+          },
+          "owner": {
+            "hp": 272,
+            "maxHp": 272,
+            "barrier": 0,
+            "minHpFraction": 0.4884411764705874
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 143.70719999999983,
+            "sampledOwnerMinHpFraction": 0.5283352941176465,
+            "ownerHpDamageTaken": 7197,
+            "techniques": {
+              "power-strike": {
+                "castStarts": 57,
+                "castFires": 38,
+                "castAborts": 19,
+                "activations": 57
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 11881,
+            "samples": 600,
+            "kiteSamples": 0,
+            "selectedTargetSamples": 548,
+            "awayMotionSamples": 0,
+            "slowSamples": 72,
+            "rootSamples": 5,
+            "sampledMeanMotionMagnitudeWhileSlow": null,
+            "statusIds": [
+              "ability-guard",
+              "ability-second-wind",
+              "debuff-root",
+              "debuff-slow",
+              "defense-recovery"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 15500,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        }
+      ]
+    },
+    {
+      "observationId": "subsystem-swamp-t3-control-s101009",
+      "block": "C",
+      "seed": 101009,
+      "arm": "control",
+      "outcome": "window-ended",
+      "endpoints": [
+        {
+          "atMs": 300000,
+          "observed": true,
+          "work": {
+            "kills": 21,
+            "firstKillMs": 19100,
+            "hpDamage": 31014,
+            "absorbed": 0,
+            "damageEvents": 318,
+            "lastKillMs": 292400,
+            "lastHpProgressMs": 298600,
+            "longestKillGapMs": 31500,
+            "longestHpProgressGapMs": 13700
+          },
+          "owner": {
+            "hp": 302,
+            "maxHp": 302,
+            "barrier": 0,
+            "minHpFraction": 0.826361059602649
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 250.32208000000003,
+            "sampledOwnerMinHpFraction": 0.8288810596026491,
+            "ownerHpDamageTaken": 728.6999999999998,
+            "techniques": {
+              "power-strike": {
+                "castStarts": 24,
+                "castFires": 23,
+                "castAborts": 1,
+                "activations": 24
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 4883,
+            "samples": 300,
+            "kiteSamples": 0,
+            "selectedTargetSamples": 288,
+            "awayMotionSamples": 111,
+            "slowSamples": 2,
+            "rootSamples": 3,
+            "sampledMeanMotionMagnitudeWhileSlow": 22.854400000000048,
+            "statusIds": [
+              "debuff-antiheal",
+              "debuff-dot",
+              "debuff-root",
+              "debuff-slow",
+              "defense-debt",
+              "defense-recovery"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 13700,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        },
+        {
+          "atMs": 600000,
+          "observed": true,
+          "work": {
+            "kills": 44,
+            "firstKillMs": 19100,
+            "hpDamage": 61161,
+            "absorbed": 0,
+            "damageEvents": 623,
+            "lastKillMs": 597000,
+            "lastHpProgressMs": 597000,
+            "longestKillGapMs": 31500,
+            "longestHpProgressGapMs": 13700
+          },
+          "owner": {
+            "hp": 302,
+            "maxHp": 302,
+            "barrier": 0,
+            "minHpFraction": 0.7870833112582789
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 243.3967600000002,
+            "sampledOwnerMinHpFraction": 0.8059495364238417,
+            "ownerHpDamageTaken": 1578.3999999999999,
+            "techniques": {
+              "power-strike": {
+                "castStarts": 49,
+                "castFires": 47,
+                "castAborts": 2,
+                "activations": 49
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 9977,
+            "samples": 600,
+            "kiteSamples": 0,
+            "selectedTargetSamples": 569,
+            "awayMotionSamples": 206,
+            "slowSamples": 4,
+            "rootSamples": 8,
+            "sampledMeanMotionMagnitudeWhileSlow": 22.854400000000048,
+            "statusIds": [
+              "debuff-antiheal",
+              "debuff-dot",
+              "debuff-root",
+              "debuff-slow",
+              "debuff-swamp-rot",
+              "defense-debt",
+              "defense-recovery"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 13700,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        }
+      ]
+    },
+    {
+      "observationId": "subsystem-swamp-t3-candidate-s101009",
+      "block": "C",
+      "seed": 101009,
+      "arm": "candidate",
+      "outcome": "window-ended",
+      "endpoints": [
+        {
+          "atMs": 300000,
+          "observed": true,
+          "work": {
+            "kills": 27,
+            "firstKillMs": 19100,
+            "hpDamage": 31548,
+            "absorbed": 0,
+            "damageEvents": 322,
+            "lastKillMs": 277800,
+            "lastHpProgressMs": 298300,
+            "longestKillGapMs": 22200,
+            "longestHpProgressGapMs": 7800
+          },
+          "owner": {
+            "hp": 284,
+            "maxHp": 302,
+            "barrier": 0,
+            "minHpFraction": 0.826361059602649
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 250.32208000000003,
+            "sampledOwnerMinHpFraction": 0.8288810596026491,
+            "ownerHpDamageTaken": 889.7999999999998,
+            "techniques": {
+              "power-strike": {
+                "castStarts": 26,
+                "castFires": 23,
+                "castAborts": 2,
+                "activations": 26
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 4898,
+            "samples": 300,
+            "kiteSamples": 0,
+            "selectedTargetSamples": 281,
+            "awayMotionSamples": 98,
+            "slowSamples": 4,
+            "rootSamples": 4,
+            "sampledMeanMotionMagnitudeWhileSlow": 24.524799999999953,
+            "statusIds": [
+              "debuff-antiheal",
+              "debuff-dot",
+              "debuff-root",
+              "debuff-slow",
+              "debuff-swamp-rot",
+              "defense-debt",
+              "defense-recovery"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 7800,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        },
+        {
+          "atMs": 600000,
+          "observed": true,
+          "work": {
+            "kills": 54,
+            "firstKillMs": 19100,
+            "hpDamage": 60303,
+            "absorbed": 0,
+            "damageEvents": 617,
+            "lastKillMs": 587500,
+            "lastHpProgressMs": 599900,
+            "longestKillGapMs": 25500,
+            "longestHpProgressGapMs": 14100
+          },
+          "owner": {
+            "hp": 302,
+            "maxHp": 302,
+            "barrier": 0,
+            "minHpFraction": 0.6996867549668873
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 211.30539999999996,
+            "sampledOwnerMinHpFraction": 0.6996867549668873,
+            "ownerHpDamageTaken": 2372.3000000000006,
+            "techniques": {
+              "power-strike": {
+                "castStarts": 52,
+                "castFires": 46,
+                "castAborts": 6,
+                "activations": 52
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 9791,
+            "samples": 600,
+            "kiteSamples": 0,
+            "selectedTargetSamples": 562,
+            "awayMotionSamples": 176,
+            "slowSamples": 14,
+            "rootSamples": 18,
+            "sampledMeanMotionMagnitudeWhileSlow": 106.89447387039115,
+            "statusIds": [
+              "debuff-antiheal",
+              "debuff-dot",
+              "debuff-root",
+              "debuff-slow",
+              "debuff-swamp-rot",
+              "defense-debt",
+              "defense-recovery"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 14100,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        }
+      ]
+    },
+    {
+      "observationId": "subsystem-swamp-t3-control-s101033",
+      "block": "C",
+      "seed": 101033,
+      "arm": "control",
+      "outcome": "window-ended",
+      "endpoints": [
+        {
+          "atMs": 300000,
+          "observed": true,
+          "work": {
+            "kills": 23,
+            "firstKillMs": 3900,
+            "hpDamage": 28700,
+            "absorbed": 0,
+            "damageEvents": 289,
+            "lastKillMs": 279200,
+            "lastHpProgressMs": 297500,
+            "longestKillGapMs": 27500,
+            "longestHpProgressGapMs": 11300
+          },
+          "owner": {
+            "hp": 302,
+            "maxHp": 302,
+            "barrier": 0,
+            "minHpFraction": 0.8373324503311258
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 259.7,
+            "sampledOwnerMinHpFraction": 0.859933774834437,
+            "ownerHpDamageTaken": 736.5,
+            "techniques": {
+              "power-strike": {
+                "castStarts": 24,
+                "castFires": 24,
+                "castAborts": 0,
+                "activations": 24
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 5109,
+            "samples": 300,
+            "kiteSamples": 0,
+            "selectedTargetSamples": 285,
+            "awayMotionSamples": 95,
+            "slowSamples": 7,
+            "rootSamples": 7,
+            "sampledMeanMotionMagnitudeWhileSlow": 108.61416225197269,
+            "statusIds": [
+              "debuff-antiheal",
+              "debuff-dot",
+              "debuff-root",
+              "debuff-slow",
+              "debuff-swamp-rot",
+              "defense-debt",
+              "defense-recovery"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 11300,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        },
+        {
+          "atMs": 600000,
+          "observed": true,
+          "work": {
+            "kills": 43,
+            "firstKillMs": 3900,
+            "hpDamage": 55998,
+            "absorbed": 0,
+            "damageEvents": 571,
+            "lastKillMs": 583300,
+            "lastHpProgressMs": 595200,
+            "longestKillGapMs": 28300,
+            "longestHpProgressGapMs": 14200
+          },
+          "owner": {
+            "hp": 302,
+            "maxHp": 302,
+            "barrier": 0,
+            "minHpFraction": 0.7851589403973509
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 247.98999999999992,
+            "sampledOwnerMinHpFraction": 0.8211589403973507,
+            "ownerHpDamageTaken": 1524.3,
+            "techniques": {
+              "power-strike": {
+                "castStarts": 48,
+                "castFires": 46,
+                "castAborts": 2,
+                "activations": 48
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 9791,
+            "samples": 600,
+            "kiteSamples": 0,
+            "selectedTargetSamples": 577,
+            "awayMotionSamples": 194,
+            "slowSamples": 10,
+            "rootSamples": 13,
+            "sampledMeanMotionMagnitudeWhileSlow": 95.58408928766593,
+            "statusIds": [
+              "debuff-antiheal",
+              "debuff-dot",
+              "debuff-root",
+              "debuff-slow",
+              "debuff-swamp-rot",
+              "defense-debt",
+              "defense-recovery"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 14200,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        }
+      ]
+    },
+    {
+      "observationId": "subsystem-swamp-t3-candidate-s101033",
+      "block": "C",
+      "seed": 101033,
+      "arm": "candidate",
+      "outcome": "window-ended",
+      "endpoints": [
+        {
+          "atMs": 300000,
+          "observed": true,
+          "work": {
+            "kills": 23,
+            "firstKillMs": 3900,
+            "hpDamage": 28700,
+            "absorbed": 0,
+            "damageEvents": 289,
+            "lastKillMs": 279200,
+            "lastHpProgressMs": 297500,
+            "longestKillGapMs": 27500,
+            "longestHpProgressGapMs": 11300
+          },
+          "owner": {
+            "hp": 302,
+            "maxHp": 302,
+            "barrier": 0,
+            "minHpFraction": 0.8373324503311258
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 259.7,
+            "sampledOwnerMinHpFraction": 0.859933774834437,
+            "ownerHpDamageTaken": 736.5,
+            "techniques": {
+              "power-strike": {
+                "castStarts": 24,
+                "castFires": 24,
+                "castAborts": 0,
+                "activations": 24
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 5109,
+            "samples": 300,
+            "kiteSamples": 0,
+            "selectedTargetSamples": 285,
+            "awayMotionSamples": 95,
+            "slowSamples": 7,
+            "rootSamples": 7,
+            "sampledMeanMotionMagnitudeWhileSlow": 108.7997622519727,
+            "statusIds": [
+              "debuff-antiheal",
+              "debuff-dot",
+              "debuff-root",
+              "debuff-slow",
+              "debuff-swamp-rot",
+              "defense-debt",
+              "defense-recovery"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 11300,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        },
+        {
+          "atMs": 600000,
+          "observed": true,
+          "work": {
+            "kills": 41,
+            "firstKillMs": 3900,
+            "hpDamage": 55661,
+            "absorbed": 0,
+            "damageEvents": 563,
+            "lastKillMs": 596400,
+            "lastHpProgressMs": 596400,
+            "longestKillGapMs": 34600,
+            "longestHpProgressGapMs": 17300
+          },
+          "owner": {
+            "hp": 302,
+            "maxHp": 302,
+            "barrier": 0,
+            "minHpFraction": 0.8373324503311258
+          },
+          "metrics": {
+            "sampledOwnerMinHp": 259.7,
+            "sampledOwnerMinHpFraction": 0.859933774834437,
+            "ownerHpDamageTaken": 1366.2,
+            "techniques": {
+              "power-strike": {
+                "castStarts": 47,
+                "castFires": 46,
+                "castAborts": 1,
+                "activations": 47
+              }
+            },
+            "deliveredPlayerSourceAoeHpDamage": 9781,
+            "samples": 600,
+            "kiteSamples": 0,
+            "selectedTargetSamples": 577,
+            "awayMotionSamples": 201,
+            "slowSamples": 9,
+            "rootSamples": 11,
+            "sampledMeanMotionMagnitudeWhileSlow": 104.39776737696837,
+            "statusIds": [
+              "debuff-antiheal",
+              "debuff-dot",
+              "debuff-root",
+              "debuff-slow",
+              "debuff-swamp-rot",
+              "defense-debt",
+              "defense-recovery"
+            ],
+            "maximumPlayerSourceHpDamageGapMs": 17300,
+            "deliveryAnomalyAssessment": "Requires event/sample review; counters do not classify channel or summon-delivery correctness."
+          }
+        }
+      ]
+    }
+  ]
+}
