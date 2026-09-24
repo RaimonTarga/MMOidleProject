@@ -118,6 +118,7 @@ function makeAutoPlayer(
 
 
 import strict from 'node:assert/strict';
+import { heatObservation, heatTransition } from '../bench/balance/heatObservation';
 import { heatManagementState, heatAllowsTarget } from '../src/systems/combat/ai/heatManagement';
 import { selectAutoCombatAction } from '../src/systems/combat/ai/targetPriority';
 import { setAggroTarget } from '../src/systems/combat/ai/targeting';
@@ -182,6 +183,13 @@ for(const nodeId of ['node-t4-tundra-01','node-t3-volcanic-dungeon']){
  setAttackTarget(world,minion,threat.isMonster.id);setAggroTarget(world,threat,{id:minion.isMinion.id,kind:'minion'},1000);
  effect.stacks=25;player.hasHealth.hp=50;player.tracksProgression.runesEquipped.push({conditionId:'always',actionId:'wait-for-regen'});
  updateRuneDerivedConfig(world,1000);strict.equal(heatManagementState(player),'requested');strict(!getFlag(player.tracksCombat,RUNE_WAIT_FOR_REGEN_FLAG));strict(heatAllowsTarget(world,player,threat));strict(!heatAllowsTarget(world,player,fresh));
+ updateAutoTargets(world,1000);
+ const receipt=heatObservation(world,player,1000);
+ strict.equal(receipt.decision?.waitHold,false);
+ strict(receipt.decision?.engagementTargetIds.includes(threat.entityId));
+ strict.equal(receipt.endOfTick.ownerThreats,0);
+ strict.equal(receipt.endOfTick.summonThreats,1);
+ strict.notEqual(receipt.actionSelection?.action,'wait-it-out');
  minion.performsAttack.lastAttackAt=100000;driveMinion(world,minion,player,1000);strict.equal(minion.controlsMinion.currentTargetId,threat.isMonster.id);
 }
 {
@@ -203,6 +211,56 @@ for(const nodeId of ['node-t4-tundra-01','node-t3-volcanic-dungeon']){
  player.usesSkills.combatArchetype='cooldown';syncArchetypeSlices(world,player);
  world.ecs.addComponent(player,'isChanneling',{targetId:'removed-target',remainingMs:5000,nextTickMs:100,pct:0} as any);
  updateChanneledBeam(world,100,1200);strict.equal(player.isChanneling,undefined,'beam must not acquire fresh target');strict.equal(fresh.hasHealth.hp,hp);
+}
+// Phase receipts must preserve a hold decision when a threat arrives later.
+{
+ const {world,player,effect}=scenario();world.suppressRepopulation=true;effect.stacks=25;
+ const threat=world.createMonster(node,'plains-slime',{x:440,y:400})!;
+ updateRuneDerivedConfig(world,1000);updateAutoTargets(world,1000);
+ const before=heatObservation(world,player,1000);
+ strict.equal(before.decision?.phase,'rune-derivation');
+ strict.equal(before.decision?.waitHold,true);
+ strict.deepEqual(before.decision?.engagementTargetIds,[]);
+ strict.equal(before.actionSelection?.action,'wait-it-out');
+ setAggroTarget(world,threat,{id:player.isPlayer.id,kind:'player'},1000);
+ const after=heatObservation(world,player,1000);
+ strict.equal(after.endOfTick.ownerThreats,1);
+ strict.equal(after.endOfTick.combatPhase,'ACTIVE');
+ strict.deepEqual(after.decision,before.decision,'later threats must not rewrite the decision');
+ strict.deepEqual(after.actionSelection,before.actionSelection);
+ strict.equal(heatTransition(1000,100,after).atMs,1000,'event and transition clocks agree');
+ strict.equal(heatTransition(1000,100,after).tickEndMs,1100);
+ world.tick(100,1100);
+ const response=heatObservation(world,player,1100);
+ strict.equal(response.decision?.tick,world.tickCounter);
+ strict.equal(response.decision?.serverTime,1100);
+ strict.equal(response.decision?.state,'requested');
+ strict.equal(response.decision?.waitHold,false);
+ strict(response.decision?.engagementTargetIds.includes(threat.entityId));
+ strict.equal(response.actionSelection?.action,'attack');
+ strict.equal(response.actionSelection?.targetId,threat.entityId);
+ strict.equal(after.decision?.waitHold,true,'old receipt remains immutable across ticks');
+ effect.stacks=10;updateRuneDerivedConfig(world,1200);updateAutoTargets(world,1200);
+ strict.equal(heatObservation(world,player,1200).decision?.state,'resumed');
+ player.usesAutocombat.auto=false;updateRuneDerivedConfig(world,1300);
+ strict.equal(heatObservation(world,player,1300).decision,null);
+ strict.equal(heatObservation(world,player,1300).actionSelection,null);
+}
+// Natural two-tick wiring: monster AI runs after the owner's hold selection.
+{
+ const {world,player,effect}=scenario();world.suppressRepopulation=true;effect.stacks=25;
+ const threat=world.createMonster(node,'plains-slime',{x:440,y:400})!;
+ world.tick(100,1000);
+ const arrival=heatObservation(world,player,1000);
+ strict.equal(arrival.decision?.waitHold,true);
+ strict.deepEqual(arrival.decision?.engagementTargetIds,[]);
+ strict.equal(arrival.actionSelection?.action,'wait-it-out');
+ strict.equal(arrival.endOfTick.ownerThreats,1);
+ world.tick(100,1100);
+ const response=heatObservation(world,player,1100);
+ strict.equal(response.decision?.waitHold,false);
+ strict.equal(response.actionSelection?.action,'attack');
+ strict.equal(response.actionSelection?.targetId,threat.entityId);
 }
 console.log('heatManagement: ok (bounded synthetic checks; no experiment lives)');
 

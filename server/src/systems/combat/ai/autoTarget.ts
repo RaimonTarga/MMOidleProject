@@ -1,3 +1,4 @@
+import { recordHeatAction } from "./heatManagement";
 import type { World } from "../../../world/World";
 import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
 import {
@@ -616,9 +617,11 @@ export function updateAutoTargets(world: World, now: number) {
     // preference and the original navigation path.
     if (!player.usesAutocombat.auto && !player.fightsWhileTraveling) continue;
     if (player.hasManualMoveIntent) continue;
+    recordHeatAction(world, player, now, "delegated");
 
     // Active escape remains higher priority than voluntary recovery/maintenance.
     if (player.isFleeing) {
+      recordHeatAction(world, player, now, "flee");
       stepFlee(world, player, now);
       continue;
     }
@@ -628,6 +631,7 @@ export function updateAutoTargets(world: World, now: number) {
     // yield so they cannot undo the dodge before the attack resolves.
     if (getFlag(player.tracksCombat, RUNE_EVADE_TELEGRAPH_FLAG)) {
       setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
+      recordHeatAction(world, player, now, "telegraph-escape");
       steerOutOfTelegraphs(world, player);
       continue;
     }
@@ -639,6 +643,7 @@ export function updateAutoTargets(world: World, now: number) {
       getFlag(player.tracksCombat, RUNE_AVOID_NODE_HAZARDS_FLAG) &&
       steerOutOfPersistentHazards(world, player, now)
     ) {
+      recordHeatAction(world, player, now, "hazard-escape");
       setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
       continue;
     }
@@ -648,6 +653,7 @@ export function updateAutoTargets(world: World, now: number) {
       player.hasAttackTarget === undefined &&
       player.hasHealth.hp < player.hasHealth.maxHp
     ) {
+      recordHeatAction(world, player, now, "recover");
       setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
       stopEntity(world, player);
       continue;
@@ -657,6 +663,7 @@ export function updateAutoTargets(world: World, now: number) {
       getFlag(player.tracksCombat, RUNE_WAIT_IT_OUT_FLAG) &&
       player.hasAttackTarget === undefined
     ) {
+      recordHeatAction(world, player, now, "wait-it-out");
       setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
       stopEntity(world, player);
       continue;
@@ -668,6 +675,7 @@ export function updateAutoTargets(world: World, now: number) {
       player.usesCooldown !== undefined &&
       player.hasEmpoweredAttack === undefined
     ) {
+      recordHeatAction(world, player, now, "wait-for-execution");
       setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
       stopEntity(world, player);
       continue;
@@ -679,6 +687,7 @@ export function updateAutoTargets(world: World, now: number) {
       player.usesReload !== undefined &&
       player.usesReload.reloadingMs > 0
     ) {
+      recordHeatAction(world, player, now, "reload");
       setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
       stopEntity(world, player);
       continue;
@@ -711,6 +720,7 @@ export function updateAutoTargets(world: World, now: number) {
       now,
       resolvingTravelInterruption ? { aggressorsOnly: true } : undefined,
     );
+    recordHeatAction(world, player, now, action.kind, action.kind === "attack" ? action.target.entityId : null);
     if (action.kind === "flee") {
       beginFlee(world, player);
       stepFlee(world, player, now);
@@ -730,6 +740,7 @@ export function updateAutoTargets(world: World, now: number) {
       // by updateAutoTraverse when the explore rune is equipped.
       setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
       const mob = nearestEngageableMonster(world, player, now);
+      recordHeatAction(world, player, now, mob ? "approach" : "idle", mob?.entityId ?? null);
       if (mob) {
         steerTowardTarget(world, player, mob, now);
       } else {

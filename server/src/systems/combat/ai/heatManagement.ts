@@ -68,3 +68,43 @@ export function heatAllowsTarget(world: World, player: PlayerEntity, monster: Mo
   return requests.get(player)!.targets.has(monster.isMonster.id)
     || heatEngagementTargets(world, player).has(monster.isMonster.id);
 }
+
+/** Passive receipts: each phase owns its snapshot; later threats never rewrite it. */
+export interface HeatDecisionReceipt {
+  tick: number;
+  serverTime: number;
+  phase: 'rune-derivation';
+  state: HeatManagementState;
+  heat: number;
+  engagementTargetIds: string[];
+  waitHold: boolean;
+  recoveryHold: boolean;
+}
+export interface HeatActionReceipt {
+  tick: number;
+  serverTime: number;
+  phase: 'auto-target';
+  action: string;
+  targetId: string | null;
+  engagementTargetIds: string[];
+}
+const decisions = new WeakMap<PlayerEntity, HeatDecisionReceipt>();
+const actions = new WeakMap<PlayerEntity, HeatActionReceipt>();
+export function recordHeatDecision(world: World, player: PlayerEntity, now: number, waitHold: boolean, recoveryHold: boolean): void {
+  actions.delete(player);
+  if (!enabled(player)) { decisions.delete(player); return; }
+  decisions.set(player, {
+    tick: world.tickCounter, serverTime: now, phase: 'rune-derivation',
+    state: heatManagementState(player),
+    heat: player.tracksCombat.statusEffects.find(e => e.id === 'volcanic-heat')?.stacks ?? 0,
+    engagementTargetIds: [...heatEngagementTargets(world, player)], waitHold, recoveryHold,
+  });
+}
+export function recordHeatAction(world: World, player: PlayerEntity, now: number, action: string, targetId: string | null = null): void {
+  if (!decisions.has(player)) return;
+  actions.set(player, { tick: world.tickCounter, serverTime: now, phase: 'auto-target',
+    action, targetId, engagementTargetIds: [...heatEngagementTargets(world, player)] });
+}
+export function heatDecisionReceipts(player: PlayerEntity) {
+  return { decision: decisions.get(player) ?? null, actionSelection: actions.get(player) ?? null };
+}

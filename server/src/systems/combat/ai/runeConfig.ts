@@ -1,4 +1,4 @@
-import { updateHeatManagement, heatManagementState, heatEngagementTargets } from "./heatManagement";
+import { updateHeatManagement, heatManagementState, heatEngagementTargets, recordHeatDecision } from "./heatManagement";
 import {
   deriveAutoConfigFromRunes,
   getFlag,
@@ -274,6 +274,7 @@ export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
       },
     );
     setFlag(player.tracksCombat, RUNE_EVADE_TELEGRAPH_FLAG, stepBackOwnsMovement);
+    recordHeatDecision(world, player, now, getFlag(player.tracksCombat, RUNE_WAIT_IT_OUT_FLAG), getFlag(player.tracksCombat, RUNE_WAIT_FOR_REGEN_FLAG));
     abilityDecisions.set(player, d.abilityTargets);
     setFlag(player.tracksCombat, RUNE_SWITCH_STANCE_FLAG, d.switchStance);
     setString(player.tracksCombat, RUNE_STANCE_TARGET_KEY, d.stanceTargetId ?? "");

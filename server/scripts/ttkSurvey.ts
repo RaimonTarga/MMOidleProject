@@ -1,4 +1,4 @@
-import { heatObservation } from '../bench/balance/heatObservation';
+import { heatObservation, heatTransition } from '../bench/balance/heatObservation';
 import { T4_BLOCKS, T4_ID, assertT4Definitions } from '../bench/balance/volcanoHeatSpec';
 import { ENCOUNTER_BLOCKS, ENCOUNTER_ID, assertEncounterDefinitions } from '../bench/balance/encounterCounterplaySpec';
 import { PROGRESSION_BLOCKS, PROGRESSION_ENDPOINTS } from '../bench/balance/overnightProgressionSpec';
@@ -231,7 +231,7 @@ function run(cell:SurveyCell,seed:number) {
         } else if(packageFit || breadth) log.push({atMs:elapsed,event:e});
       }
       const heatState=t4?heatObservation(world,bot,now):null;
-      if(heatState){if(heatState.waitHold)allWaitMs+=100;if(heatState.waitHold&&heatState.recoveryHold)recoveryOverlapMs+=100;if(heatState.state==='waiting')heatHoldMs+=100;const key=JSON.stringify([heatState.state,heatState.phase,heatState.blockedBy,heatState.waitHold,heatState.recoveryHold]);if(key!==priorHeatState){heatTransitions.push({atMs:elapsed+100,...heatState});priorHeatState=key;}}
+      if(heatState){if(heatState.waitHold)allWaitMs+=100;if(heatState.waitHold&&heatState.recoveryHold)recoveryOverlapMs+=100;if(heatState.state==='waiting')heatHoldMs+=100;const key=JSON.stringify([heatState.state,heatState.phase,heatState.blockedBy,heatState.waitHold,heatState.recoveryHold]);if(key!==priorHeatState){heatTransitions.push(heatTransition(elapsed,100,heatState));priorHeatState=key;}}
       const v=composePlayerView(bot)!;minHp=Math.min(minHp,v.hp/v.maxHp);
       if(v.lastAttackAt!==lastAttack) {attackBeats++;lastAttack=v.lastAttackAt;}
       for(const minion of world.minionEntities) {
