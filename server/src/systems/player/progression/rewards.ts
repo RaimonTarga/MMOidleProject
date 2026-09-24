@@ -113,7 +113,7 @@ function applyBiomeXP(
   // growing, so a legacy save can sit ABOVE its cap — it keeps that level and the Global
   // Mastery it confers (globalMastery() sums raw biomeLevel and has no ceiling), it just
   // banks no further XP here. Nothing below writes a lower level.
-  if (prevLevel >= levelCap) {
+  if (world.fixedBiomeMasteryPlayers.has(entity.isPlayer.id) || prevLevel >= levelCap) {
     return { xpGain: 0, prevLevel, newLevel: prevLevel, unlockedRecipeIds: [] };
   }
 
