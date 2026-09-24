@@ -46,6 +46,7 @@ export function applyDelta(
   scene: GameScene,
   options: { stateSync?: boolean } = {},
 ): void {
+  state.serverClock.observe(snapshot.serverTime);
   if (snapshot.full) {
     state.ambientStackFlash.clear();
     clearOwnMovePath(state);

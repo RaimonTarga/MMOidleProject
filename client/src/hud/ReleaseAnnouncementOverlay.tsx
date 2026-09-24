@@ -3,6 +3,8 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { clearReleaseAnnouncement, releaseAnnouncementAtom } from './atoms';
 import './releaseAnnouncement.css';
+import { ChangelogPanel } from './ChangelogPanel';
+import { useIsMobile } from './useIsMobile';
 
 function formatReleaseDate(ms: number): string {
   return new Intl.DateTimeFormat(undefined, {
@@ -12,7 +14,8 @@ function formatReleaseDate(ms: number): string {
 
 export function ReleaseAnnouncementOverlay() {
   const announcement = useAtomValue(releaseAnnouncementAtom);
-  if (!announcement) return null;
+  const isMobile = useIsMobile();
+  if (!announcement) return isMobile ? <ChangelogPanel mobile /> : null;
 
   return (
     <div

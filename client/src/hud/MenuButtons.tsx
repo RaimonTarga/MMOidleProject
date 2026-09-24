@@ -140,6 +140,8 @@ function RightNavButton({
   );
 }
 
+import { ChangelogPanel } from './ChangelogPanel';
+
 export function RightSidebar() {
   const isMobile = useIsMobile();
   const [treeOpen, setTreeOpen] = useAtom(skillTreeOpenAtom);
@@ -313,6 +315,7 @@ export function RightSidebar() {
       </nav>
 
       {visibility.materials && <MaterialsPanel />}
+      <ChangelogPanel />
 
       {treeOpen && <SkillTreePanel onClose={() => setTreeOpen(false)} />}
       {buildOpen && <BuildPanel onClose={() => setBuildOpen(false)} />}

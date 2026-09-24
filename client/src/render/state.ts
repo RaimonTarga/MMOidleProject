@@ -1,5 +1,6 @@
 import type Phaser from "phaser";
 import { CombatPlaybackClock } from './combatPlaybackClock';
+import { ServerClock } from './serverClock';
 import type { DetonateWindupState } from '../fx/detonateWindup';
 import type { AllyAoeFootprintState } from '../fx/allyAoeFootprint';
 import type { CombatPlaybackItem } from './combatPlayback';
@@ -35,6 +36,7 @@ export interface DamageNumberHint {
 }
 
 export interface RenderState {
+  serverClock: ServerClock;
   combatPlayback: CombatPlaybackClock<CombatPlaybackItem>;
   ambientStackFlash: Map<NetworkId, AmbientStackFlash>;
   ids: Set<NetworkId>;
@@ -238,6 +240,7 @@ export interface RenderState {
 
 export function createRenderState(): RenderState {
   return {
+    serverClock: new ServerClock(),
     combatPlayback: new CombatPlaybackClock(),
     ids: new Set(),
     kind: new Map(),

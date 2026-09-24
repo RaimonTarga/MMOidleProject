@@ -1,6 +1,7 @@
 import type { RenderState } from './state';
 import type { GameScene } from '../scenes/GameScene';
 import { DEPTH } from './depth';
+import { attackCooldownFraction } from './serverClock';
 
 export function ensureCdBar(
   state: RenderState,
@@ -13,6 +14,7 @@ export function ensureCdBar(
 
 export function drawCooldownBars(state: RenderState): void {
   const now = Date.now();
+  const serverNow = state.serverClock.now();
 
   for (const id of state.ids) {
     const sprite = state.sprite.get(id);
@@ -37,7 +39,7 @@ export function drawCooldownBars(state: RenderState): void {
     if (cast) {
       // Wind-up DEPLETES: starts full and drains to empty; the shot fires when it
       // empties. Reads as an incoming-danger countdown rather than a second cooldown.
-      pct = Math.max(0, 1 - (now - cast.startedAt) / Math.max(1, cast.castMs));
+      pct = Math.min(1, Math.max(0, 1 - (now - cast.startedAt) / Math.max(1, cast.castMs)));
       show = true;
     } else if (reload) {
       const remainingMs = Math.max(
@@ -52,7 +54,7 @@ export function drawCooldownBars(state: RenderState): void {
     } else {
       show = snap.attackTargetId !== null;
       pct = show
-        ? Math.min(1, (now - snap.lastAttackAt) / Math.max(1, snap.attackCooldown))
+        ? attackCooldownFraction(serverNow, snap.lastAttackAt, snap.attackCooldown)
         : 0;
     }
 

@@ -2,6 +2,11 @@
 
 2026-09-24 · New playtest
 
+## Playtest fixes
+
+- Fixed attack cooldown bars stretching backwards or appearing stuck when the player's computer clock differs from the server clock.
+- Added a What's new panel at the bottom right so the changelog can be reopened at any time.
+
 ## The overview
 
 This playtest brings a broad rebuild of progression, character builds, equipment,
