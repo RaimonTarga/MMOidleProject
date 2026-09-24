@@ -1485,8 +1485,8 @@
 
 @media (max-width: 1100px) {
   .game-dialog__panel.map-dialog {
-    width: 100%;
-    max-width: 100vw;
+    width: calc((100vw - var(--dialog-left) - var(--dialog-right)) / var(--ui-font-scale, 1));
+    max-width: none;
   }
 
   .world-map-toolbar {

@@ -705,6 +705,9 @@
     flex-direction: column;
     gap: 0;
   }
+  .inv-backpack-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(64px, 100%), 1fr));
+  }
 
   .inv-mobile-tabs {
     display: flex;

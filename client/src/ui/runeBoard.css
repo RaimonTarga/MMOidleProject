@@ -292,5 +292,13 @@
 }
 
 
+/* A pinned budget and editor can exceed the entire landscape viewport. On
+   touch, keep the complete workspace in one scroll flow, including Save. */
+@media (max-width: 1100px) {
+  .build-dialog__body:has(.rune-workspace) { display: block; overflow-y: auto; }
+  .rune-workspace { overflow: visible; }
+  .rune-workspace__scroll { flex: none; overflow: visible; }
+}
+
 .rune-choice-grid .rune-ability-choice { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
 .rune-choice-grid .rune-ability-choice small { white-space: normal; line-height: 1.4; }

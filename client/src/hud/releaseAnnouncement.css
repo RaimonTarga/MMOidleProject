@@ -208,6 +208,13 @@
   color: var(--hud-primary-strong);
 }
 
+/* On short phones the heading and footer can consume the whole card at large
+   UI scales. Scroll the complete card so the notes and dismissal stay reachable. */
+@media (max-width: 1100px) and (max-height: 480px) {
+  .release-card { overflow-y: auto; }
+  .release-card__markdown { flex: none; overflow-y: visible; }
+}
+
 @media (max-width: 700px) {
   .release-overlay {
     padding: 12px;

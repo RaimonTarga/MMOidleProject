@@ -762,6 +762,13 @@ html[data-spectator="true"] #game-wrapper > div {
   .auth-live-label { right: 12px; bottom: 12px; max-width: calc(100vw - 24px); }
 }
 
+/* Centering a tall login card in a short landscape viewport makes its top
+   unreachable even when the gate scrolls. Start the content at the top. */
+@media (max-width: 1100px) and (max-height: 600px) {
+  .auth-gate { place-items: start center; }
+  .auth-gate--landing .auth-login-panel { margin-block: 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .auth-gate__conduit--active,
   .auth-loading__sigil,

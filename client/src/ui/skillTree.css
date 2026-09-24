@@ -850,6 +850,46 @@
 .skill-choice-art > .skill-emblem { margin-top: 18px; flex-shrink: 0; }
 .skill-node__name { display: flex; align-items: center; justify-content: center; gap: 8px; }
 .skill-node__name > span:last-child { min-width: 0; overflow-wrap: anywhere; }
+
+/* The tree and its explanation share one phone scroller. A pinned detail
+   panel can otherwise shrink the choices to zero, particularly in landscape. */
+@media (max-width: 1100px) {
+  .skill-tree-workspace { overflow-y: auto; display: block; }
+  .skill-tree-body { overflow: visible; }
+  .skill-desc { max-height: none; height: auto; }
+  .skill-desc__body { overflow: visible; flex: none; }
+  .skill-tree-views { flex-shrink: 0; flex-wrap: wrap; }
+  .skill-tier-nodes,
+  .skill-class-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(130px, 100%), 1fr));
+    align-items: stretch;
+  }
+  .skill-tree-views { padding: 8px; gap: 6px; }
+  .skill-tree-views button { flex: 1 1 90px; min-width: 0; font-size: 11px; min-height: 44px; }
+  .skill-comparison { padding: 12px; }
+  .skill-comparison th, .skill-comparison td { padding: 6px; }
+  .skill-comparison thead .skill-choice-art,
+  .skill-comparison thead .skill-character-preview { display: none; }
+  .skill-node--selected, .skill-node--available:hover { transform: none; }
+  .skill-node,
+  .skill-node--compact {
+    width: 100%;
+    height: auto;
+    min-height: 76px;
+    border-radius: 6px;
+    padding: 16px 10px 12px;
+    gap: 8px;
+    overflow: visible;
+  }
+  .skill-node__name,
+  .skill-node--compact .skill-node__name {
+    max-width: none;
+    width: 100%;
+    font-size: 11px;
+  }
+}
 .skill-node__name > .skill-emblem { flex-shrink: 0; }
 .skill-build-choice summary > .skill-emblem { vertical-align: middle; margin-right: 8px; }
 .skill-comparison thead th .skill-choice-art { display: flex; margin: 0 auto 10px; }

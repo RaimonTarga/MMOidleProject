@@ -2504,6 +2504,21 @@
    the negative margin that lets it bleed to the dialog edges must match the
    smaller mobile padding. */
 @media (max-width: 1100px) {
+  /* Filters can fill a phone by themselves. Let the whole page scroll, with
+     only the recipe roster capped so its detail/actions remain reachable. */
+  .crafting-dialog__content--make { display: block; overflow-y: auto; }
+  .crafting-dialog__content { padding: 12px 12px 18px; }
+  .craft-body--make .browser-pane__body { flex: none; overflow: visible; }
+  .craft-body--make .browser-pane__list { max-height: 36dvh; }
+  .craft-body--make .browser-pane__detail { overflow: visible; }
+  .make-browser .craft-filter-row {
+    width: 100%;
+    min-width: 0;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+  .make-browser .craft-filter-row > * { flex-shrink: 0; }
+
   .craft-body--make {
     margin: -12px -12px -18px;
   }
@@ -2545,6 +2560,18 @@
     min-height: var(--hud-hit-target-compact);
     touch-action: manipulation;
   }
+
+  .craft-upgrade__req { flex: 0 0 auto; }
+  .craft-recipe__name,
+  .craft-upgrade__diff-label { white-space: normal; overflow-wrap: anywhere; }
+  .make-row { height: auto; min-height: var(--hud-hit-target); }
+
+  .mastery-dialog__content { display: block; overflow-y: auto; }
+  .mastery-dialog .craft-body { overflow: visible; padding-right: 0; }
+  .mastery-summary { flex-wrap: wrap; gap: 8px; }
+  .mastery-biome-grid { grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr)); }
+  .craft-biome-section__header { flex-wrap: wrap; }
+  .craft-unlock-row__name { min-width: 0; white-space: normal; overflow-wrap: anywhere; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -13,6 +13,30 @@ pnpm ui:shot --url=... --viewport=1366x768,1440x900 --font-scale=1.25
 Screenshots land in `.uishot/` (gitignored). Exits non-zero when the audit finds
 a defect, so it can gate a change.
 
+## Mobile menu regression audit
+
+With the Vite client running, use:
+
+```bash
+node tools/uishot/mobile-audit.mjs --url=http://localhost:3000
+node tools/uishot/mobile-audit.mjs --url=http://localhost:3000 --webkit
+```
+
+Install the browsers with `pnpm exec playwright install chromium webkit` if needed.
+This mounts the actual React menus with synthetic browser-local inventory,
+recipes, progression, and roster data. It never connects a game socket or
+changes a saved character. The matrix covers 320px and 390px phones, landscape,
+tablet, and desktop at the minimum, default, and maximum UI font scales. It
+checks clipped content and dialog bounds, opens secondary views and sheets,
+and checks touch swipes and final crafting/upgrade action reachability in
+Chromium. Both engines save JSON measurements and screenshots under
+`.uishot/mobile-audit-<engine>/`.
+
+These are layout and interaction fixtures, not evidence of live gameplay or
+testing on a physical iPhone/Android device. The map's intentional pan/zoom crop,
+atlas sprite crops, item-name ellipses, and horizontally scrolling filter/tab
+strips are excluded from clipping failures.
+
 | Flag | Meaning |
 |---|---|
 | `--url=` | A running app. Needs `pnpm dev:client` (and the server, for real state). |

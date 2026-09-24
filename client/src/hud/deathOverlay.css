@@ -5,6 +5,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow-y: auto;
+  padding: max(64px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
   background: rgba(8, 6, 4, 0.88);
   pointer-events: all;
   font-family: system-ui, sans-serif;
@@ -13,7 +15,10 @@
 .death-card {
   position: relative;
   width: min(560px, calc(100vw - 32px));
-  margin-top: 48px;
+  /* Auto margins center when there is room and collapse when the card must
+     scroll, keeping both the title and Continue reachable on short phones. */
+  margin-block: auto;
+  flex-shrink: 0;
   padding: 24px 28px 20px;
   border-top: 2px solid var(--bevel-light);
   border-left: 2px solid var(--bevel-light);

@@ -381,6 +381,7 @@ function MobileHUDContent() {
           {tabs.map(t => (
             <button
               key={t.key}
+              aria-label={t.label}
               type="button"
               className={`mhud-tab${view === t.key ? ' mhud-tab--active' : ''}${t.badge ? ' mhud-tab--badge' : ''}`}
               data-ui-unlock-system={t.unlockSystems?.join(' ') || undefined}

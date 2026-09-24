@@ -15,6 +15,9 @@
 - Fixed lingering movement on graves and respawned characters. Full resyncs now restore confirmed player positions, including within the same area.
 - Fixed attack cooldown bars stretching backwards or appearing stuck when the player's computer clock differs from the server clock.
 - Added a What's new panel at the bottom right so the changelog can be reopened at any time.
+- Fixed phone scrolling in crafting, upgrading, mastery, Rune editing, and skill menus so details and action buttons remain reachable.
+- Improved mobile layouts, tab swiping, and text wrapping across menus, including small screens, landscape orientation, and larger UI scales.
+- Kept dialogs and account screens within the visible phone viewport, with room for device safe areas.
 
 ## The overview
 

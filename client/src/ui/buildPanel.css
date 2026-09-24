@@ -616,7 +616,7 @@
 .stance-sanctum__altar p,
 .rite-circle__header p { margin: 4px 0 0; color: #8f82b9; font-size: 11px; line-height: 1.45; }
 .rite-circle__budget--over { color: #ff8f9b; }
-.rite-glyph-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
+.rite-glyph-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr)); gap: 10px; }
 .rite-glyph {
   display: grid;
   grid-template-columns: 58px 1fr auto;
@@ -635,7 +635,7 @@
 .rite-glyph--bound { border-color: #d0a8ff; box-shadow: inset 0 0 24px rgba(170, 105, 255, .16); }
 .rite-glyph__ring { grid-area: ring; width: 52px; height: 52px; display: grid; place-items: center; border: 2px double #8262b0; border-radius: 50%; background: rgba(7, 5, 20, .88); }
 .rite-glyph--bound .rite-glyph__ring { border-color: #e0c15c; box-shadow: 0 0 14px rgba(224,193,92,.25); }
-.rite-glyph__copy { grid-area: copy; display: flex; flex-direction: column; gap: 4px; }
+.rite-glyph__copy { grid-area: copy; display: flex; flex-direction: column; gap: 4px; min-width: 0; overflow-wrap: anywhere; }
 .rite-glyph__copy strong { color: #f1e7ff; font-size: 13px; }
 .rite-glyph__copy small { line-height: 1.4; }
 .rite-glyph__cost { grid-area: cost; color: #ffe084; font-size: 11px; font-weight: 700; }
@@ -650,3 +650,10 @@
 .stance-destination-token small { display: block; color: #e0c15c; margin-top: 2px; }
 
 .ability-timing-override { margin:8px 0; padding:8px 10px; border-left:2px solid var(--hud-primary-strong); color:var(--hud-text); font-size:12px; line-height:1.5; overflow-wrap:anywhere; }
+
+@media (max-width: 620px) {
+  .rite-glyph {
+    grid-template-columns: 52px minmax(0, 1fr);
+    grid-template-areas: "ring copy" "cost seal";
+  }
+}

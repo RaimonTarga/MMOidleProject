@@ -401,6 +401,11 @@
 .bestiary-detail__mech-text b { color: var(--hud-text); }
 
 @media (max-width: 720px) {
+  .bestiary-detail__hero { flex-direction: column; align-items: flex-start; }
+  .bestiary-detail__hero-text { width: 100%; overflow-wrap: anywhere; }
+  .bestiary-detail__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .bestiary-detail__ability-header { flex-wrap: wrap; }
+  .bestiary-detail__pane { min-width: 0; overflow-wrap: anywhere; }
   .bestiary-detail__body { flex-direction: column; }
   .bestiary-detail__list {
     width: auto;

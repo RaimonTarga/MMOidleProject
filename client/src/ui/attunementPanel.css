@@ -96,6 +96,9 @@
 .attunement-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 @media (max-width: 720px) {
   .stance-collection { grid-template-columns: minmax(0, 1fr); }
+  .stance-entry__heading { flex-wrap: wrap; }
+  .stance-entry__copy { flex: 1 1 100px; overflow-wrap: anywhere; }
+  .stance-entry__effects .detail-line__value { flex-shrink: 1; min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
   .ability-entry__top { position: relative; flex-wrap: wrap; gap: 8px; }
   .attunement-panel .ability-entry__select { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 8px 12px; flex-basis: 100%; }
   .ability-entry__copy { display: contents; }

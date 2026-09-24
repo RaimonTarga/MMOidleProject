@@ -238,6 +238,12 @@
   .settings-body {
     padding: 12px 12px 18px;
   }
+  .settings-table { table-layout: fixed; }
+  .settings-action-label { white-space: normal; overflow-wrap: anywhere; }
+  .settings-slider-row,
+  .settings-field-row { flex-wrap: wrap; }
+  .settings-slider-row input { min-width: 0; }
+  .settings-field-row select { min-width: 0; max-width: 100%; }
 }
 
 .settings-gameplay {

@@ -1,4 +1,6 @@
 .charsel-prompt__body {
+  min-height: 0;
+  overflow-y: auto;
   padding: 14px 18px 16px;
 }
 
@@ -12,6 +14,7 @@
 
 .charsel-prompt__actions {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
   gap: 8px;
   margin-top: 16px;
