@@ -1,5 +1,5 @@
 import {
-  GAME_CONFIG,
+  GAME_CONFIG, RITE_DATABASE, RITE_RECIPE_DATABASE, riteLoadoutCost, migrateSavedRiteIds,
   STARTER_RUNE_IDS,
   applyStatusEffect,
   emptyEquipment,
@@ -8,6 +8,7 @@ import {
   initUsesEnergy,
   validRiteIds,
 } from "@mmo-idle/shared";
+import { craftRiteRecipe, setRiteLoadout } from "../src/systems/player/economy/riteCrafting";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { abilityCooldownKey } from "../src/systems/player/abilities/abilityCooldowns";
 import { applyCombatEndRites, combatExitDelay, initRiteListeners } from "../src/systems/player/rites/riteOoc";
@@ -77,8 +78,24 @@ player.hasHealth.hp = player.hasHealth.maxHp * 0.5;
 const beforeOffering = player.hasHealth.hp;
 const kill = makeCombatContext(player, "player", victim, "monster");
 emitCombatEvent("onKill", kill, world);
-assert(player.hasHealth.hp === beforeOffering + player.hasHealth.maxHp * 0.05, "Blood Offering should heal through credited onKill events");
+assert(player.hasHealth.hp === beforeOffering, "Retired saved ID must never grant kill healing");
 
+assert(!RITE_DATABASE.has("blood-offering"), "retired rite absent from discovery");
+assert(!RITE_RECIPE_DATABASE.has("rite-recipe-blood-offering"), "retired recipe absent");
+assert(!craftRiteRecipe(world, player, "rite-recipe-blood-offering").success, "stale acquisition blocked");
+player.tracksProgression.knownRites.push("blood-offering");
+assert(!setRiteLoadout(world, player, ["blood-offering"]).success, "stale equip blocked even when known");
+assert(riteLoadoutCost(["blood-offering"]) === 0, "no retired RP charge");
+const saved=["hunters-instinct","blood-offering","swift-repose"];
+const known=migrateSavedRiteIds(saved,true), equipped=migrateSavedRiteIds(saved);
+assert(JSON.stringify(known) === JSON.stringify(["blood-offering","swift-repose"]), "retain historical acquisition");
+assert(JSON.stringify(equipped) === JSON.stringify(["swift-repose"]), "retired effect removed on load");
+assert(JSON.stringify(migrateSavedRiteIds(known,true)) === JSON.stringify(known), "known migration idempotent");
+assert(JSON.stringify(migrateSavedRiteIds(equipped)) === JSON.stringify(equipped), "equipped migration idempotent");
+const oldSave=makePlayerSlices();oldSave.tracksProgression.knownRites=known;oldSave.tracksProgression.equippedRites=equipped;
+const loaded=world.attachPlayerEntity(oldSave,"legacy-rite-owner");
+assert(loaded.tracksProgression.knownRites.includes("blood-offering"), "legacy acquisition loads without loss");
+assert(combatExitDelay(loaded,5000)===2500,"other owned Rite remains effective");
 const budget = runeBudgetForGlobalMastery(0);
 assert(runicPointLoadoutCost({ abilities: { techniques: [], guards: ["brace", "second-wind"] }, stances: [], rules: [], rites: ["mechanic-renewal", "ability-reprieve"] }) > budget, "expensive rites should compete in the shared RP pool");
 assert(JSON.stringify(validRiteIds(["purification", "retired"])) === JSON.stringify(["purification"]), "unknown rites should be filtered");

@@ -6,8 +6,6 @@ import {
 import type { PlayerEntity } from "../../../ecs/entity";
 import type { World } from "../../../world/World";
 import { markSliceDirty } from "../../../ecs/dirtyHelpers";
-import { registerCombatListener } from "../../combat/engine/combatPipeline";
-import { applyHealToPlayer } from "../../defense/regen/healing";
 import {
   abilityCooldownKey,
   publishAbilityCooldown,
@@ -15,7 +13,6 @@ import {
 
 const MECHANIC_RENEWAL_FRACTION = 0.3;
 const ABILITY_REPRIEVE_FRACTION = 0.3;
-const BLOOD_OFFERING_MAX_HP_FRACTION = 0.05;
 
 function hasRite(player: PlayerEntity, riteId: string): boolean {
   return player.tracksProgression.equippedRites?.includes(riteId) ?? false;
@@ -122,14 +119,5 @@ export function applyCombatEndRites(world: World, player: PlayerEntity): void {
   if (hasRite(player, "ability-reprieve")) reprieveAbilities(world, player);
 }
 
-export function initRiteListeners(): void {
-  registerCombatListener("onKill", (ctx, world) => {
-    if (ctx.attackerType !== "player" || !hasRite(ctx.attacker, "blood-offering")) return;
-    applyHealToPlayer(
-      ctx.attacker,
-      ctx.attacker.tracksCombat,
-      ctx.attacker.hasHealth.maxHp * BLOOD_OFFERING_MAX_HP_FRACTION,
-      world,
-    );
-  });
-}
+/** Compatibility bootstrap hook: retired kill-healing has no listener. */
+export function initRiteListeners(): void {}

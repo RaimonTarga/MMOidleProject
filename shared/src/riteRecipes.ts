@@ -29,7 +29,7 @@ export interface RiteRecipe {
 //  · RP is loadout OPPORTUNITY cost; essence is ACQUISITION cost. They are different
 //    currencies answering different questions, so rite essence is NOT required to be
 //    monotonic in RP. (Lingering Battle at 2 RP / 170 essence is not an inversion to fix.)
-//  · All six rites still total 20 RP against a 19-RP budget at max T3 Global Mastery, by
+//  · The five active rites total 17 RP against a 19-RP budget at max T3 Global Mastery, by
 //    design: limited RP forces a build choice, and rites compete with rune rules for the
 //    same pool. See docs/rites-current-state.md.
 const recipes: RiteRecipe[] = [
@@ -45,7 +45,6 @@ const recipes: RiteRecipe[] = [
   // Volcanic is the swarm biome (native Swarming). Kill-credit recovery is a chain-farming
   // mechanic, so it wants the biome that supplies the chain. Volcanic starts at T3, so its
   // whole T3 band is levels 1-6.
-  { id: "rite-recipe-blood-offering", name: "Blood Offering", description: "Recover health from credited kills.", riteId: "blood-offering", tier: 3, recipeGroup: "volcanic", requiredBiomeLevel: 5, cost: { red: 130, green: 40 }, catalystCost: { swarming: 2 } },
   // Tundra starts at T3 (band 1-6) and BANS Alacrity; its native family is Heavy.
   { id: "rite-recipe-mechanic-renewal", name: "Mechanic Renewal", description: "Prepare your class mechanic when combat ends.", riteId: "mechanic-renewal", tier: 3, recipeGroup: "tundra", requiredBiomeLevel: 5, cost: { blue: 160, yellow: 60 }, catalystCost: { heavy: 3 } },
   // Desert starts at T2, so its T3 cap is level 12.
