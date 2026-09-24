@@ -1,6 +1,6 @@
 # Rites — current state
 
-- **Code audit:** 2026-08-09
+- **Code audit:** 2026-09-24 (retirement proposal branch)
 - **Authoring contract:** `docs/rites-authoring-guide.md`
 - **Archived design handoff:** `docs/archive/rites-rework-design-handoff.md`
 - **Historical implementation plan:** `docs/archive/rites-plan.md`
@@ -40,7 +40,6 @@ Lingering Battle adds 50% to the base exit delay. Swift Repose removes 50%. Equi
 | Purification | 3 | On combat end, removes all qualifying carried harmful stacked and instanced effects |
 | Mechanic Renewal | 5 | On combat end, advances class-specific next-fight readiness by roughly 30% |
 | Ability Reprieve | 5 | On combat end, reduces every equipped ability's remaining cooldown by 30% |
-| Blood Offering | 3 | On credited kill, heals 5% maximum HP through `applyHealToPlayer` |
 
 Purification preserves harmful statuses still owned by an active `node-feature:` or `ground-zone:` source; those sources remove or refresh their own effect. It removes carried anti-heal, slow, control/debuff, and player DoT instances through the shared harmful-effect classifier.
 
@@ -53,7 +52,7 @@ Mechanic Renewal mappings:
 - Summoner: advance an active reconstruction by 30% of its duration.
 - DoT: deliberately no effect in v1 because its meaningful preparation state is enemy-owned.
 
-Blood Offering uses the existing player-credit `onKill` pipeline, so direct attacks, abilities, player DoTs, summons, and supported player-owned indirect damage share attribution.
+Blood Offering has no active kill listener, including for stale saved equipped IDs.
 
 ## Persistence and migration
 
@@ -64,7 +63,7 @@ Rites remain `knownRites: string[]` and `equippedRites: string[]` in progression
 | Quickened Breath | Swift Repose |
 | Cleansing Breath | Purification |
 | Lingering Momentum | Lingering Battle |
-| Hunter's Instinct | Blood Offering |
+| Hunter's Instinct | Retired Blood Offering acquisition history only |
 
 No SQL migration is required. `PlayerView.riteSlots` remains temporarily as a compatibility field for older clients, but it does not constrain server behavior.
 
@@ -73,7 +72,7 @@ No SQL migration is required. `PlayerView.riteSlots` remains temporarily as a co
 - Rites is its own rail entry, opening the shared arrangement dialog (Abilities / Stances / Rites / Runes) on the Rites tab: a ritual-circle card grid where cards bind/unbind directly and become dormant when shared RP is insufficient.
 - The panel states there are no slots and displays total shared RP.
 - The Rune meter includes Rite and stance-destination costs.
-- Crafting contains all six Rite recipes in the T3 mastery band.
+- Crafting contains the five active Rite recipes in the T3 mastery band.
 
 ## Progression
 
@@ -85,7 +84,6 @@ effect answers that biome's pressure:
 | Swift Repose | cave (15) | Sparse elite fights leave long gaps worth recovering in |
 | Purification | swamp (15) | The poison biome is where carryover is the problem |
 | Lingering Battle | mountain (15) | Ponderous by identity; a rite about staying engaged |
-| Blood Offering | volcanic (5) | Kill-credit recovery wants the biome that supplies the chain |
 | Mechanic Renewal | tundra (5) | Unchanged |
 | Ability Reprieve | desert (11) | Unchanged |
 
@@ -100,7 +98,7 @@ New Rites currently reuse the closest existing Rite glyphs until dedicated conce
 
 ## Coverage
 
-`server/test/rites.test.ts` covers opposed boundary timing, full harmful cleanup with source-owned hazard preservation, Energy renewal, ability cooldown reduction, exact-once combat-end dispatch, shared-RP competition, and stale-ID filtering. Existing combat kill-hook coverage exercises the common player-credit pipeline used by Blood Offering.
+`server/test/rites.test.ts` covers opposed boundary timing, full harmful cleanup with source-owned hazard preservation, Energy renewal, ability cooldown reduction, exact-once combat-end dispatch, shared-RP competition, and stale-ID filtering. Retirement checks cover stale acquisition/equip rejection, no kill healing or RP charge, preserved acquisition history and idempotent migration.
 
 Known balance follow-ups: tune percentages/RP/gates; provide explicit combat-end and heal feedback; decide a future DoT-class interpretation if a portable player-side state is introduced.
 
