@@ -14,9 +14,7 @@
  * the stance needs no listener of its own and the resistance axis stays open to
  * gear that wants it later.
  *
- * NOTE: none of these stances is placed. No recipe teaches them, so `knownStances`
- * can never contain one and every listener below is inert until a recipe is added.
- * See `docs/stances-future-design-notes.md`.
+ * These stances are taught by the authored T3/T4 recipes.
  */
 import {
   POWERING_UP_MAX_CHARGE_MS,
@@ -29,6 +27,8 @@ import {
   TIME_TO_STRIKE_NORMAL_PENALTY,
   applyStatusEffect,
   getCounter,
+  getFlag,
+  setFlag,
   getStatusEffect,
   removeStatusEffect,
   setCounter,
@@ -45,6 +45,28 @@ export const POWERING_UP_ID = "powering-up-stance";
 
 /** Reaper's on-kill momentum. Outlives the stance, so it is a status, not a modifier. */
 export const REAPER_MOMENTUM_EFFECT = "stance-reaper-momentum";
+const REAPER_ARMED = "stance.reaper.armed";
+
+export function clearReaperMomentum(cs: TracksCombat): void {
+  if (getFlag(cs, REAPER_ARMED)) setFlag(cs, REAPER_ARMED, false);
+  if (getStatusEffect(cs, REAPER_MOMENTUM_EFFECT)) removeStatusEffect(cs, REAPER_MOMENTUM_EFFECT);
+}
+
+/** Both manual and Rune switching use this earn/leave/spend transition. */
+export function switchReaperMomentum(player: PlayerEntity, desired: string | null): void {
+  const cs = player.tracksCombat;
+  if (!(player.tracksProgression.attunedStances ?? []).includes(REAPER_ID) || desired === REAPER_ID) {
+    clearReaperMomentum(cs);
+    return;
+  }
+  if (player.tracksProgression.activeStance !== REAPER_ID || !getFlag(cs, REAPER_ARMED)) return;
+  setFlag(cs, REAPER_ARMED, false);
+  applyStatusEffect(cs, {
+    id: REAPER_MOMENTUM_EFFECT, maxStacks: 1, refreshable: true,
+    remainingMs: REAPER_MOMENTUM_MS, sourceId: player.isPlayer.id,
+    data: { attackPct: REAPER_MOMENTUM_ATTACK_PCT, attackSpeedPct: REAPER_MOMENTUM_ATTACK_SPEED_PCT, totalMs: REAPER_MOMENTUM_MS },
+  });
+}
 /** Powering Up's spent-charge burst window. */
 export const POWER_RELEASE_EFFECT = "stance-power-release";
 /** Powering Up's accumulating charge, in milliseconds. */
@@ -152,34 +174,19 @@ export function initNewStanceBehaviors(): void {
     );
   });
 
-  // Reaper arms the momentum. Only kills landed WHILE the stance is active count, so
-  // the window refreshes on a killing spree held in Reaper but decays normally once
-  // the player has reverted — momentum you keep spending has to be re-earned.
+  // Store one charge; no damage or haste exists until the player leaves.
   registerCombatListener("onKill", (ctx) => {
     if (ctx.attackerType !== "player") return;
     const player = ctx.attacker;
     if (player.tracksProgression.activeStance !== REAPER_ID) return;
-    // maxStacks 1 + refreshable: the duration resets, the magnitude never climbs.
-    // (`applyStatusEffect` keeps an EXISTING effect's cap, so this stays 1 either way.)
-    applyStatusEffect(player.tracksCombat, {
-      id: REAPER_MOMENTUM_EFFECT,
-      maxStacks: 1,
-      instanced: false,
-      refreshable: true,
-      remainingMs: REAPER_MOMENTUM_MS,
-      sourceId: player.isPlayer.id,
-      data: {
-        attackPct: REAPER_MOMENTUM_ATTACK_PCT,
-        attackSpeedPct: REAPER_MOMENTUM_ATTACK_SPEED_PCT,
-        totalMs: REAPER_MOMENTUM_MS,
-      },
-    });
+    if (!(player.tracksProgression.attunedStances ?? []).includes(REAPER_ID)) return;
+    setFlag(player.tracksCombat, REAPER_ARMED, true);
   });
 }
 
 /** Clears every stance-owned window. Used when a character's build is reset. */
 export function clearStanceWindows(cs: TracksCombat): void {
-  removeStatusEffect(cs, REAPER_MOMENTUM_EFFECT);
+  clearReaperMomentum(cs);
   removeStatusEffect(cs, POWER_RELEASE_EFFECT);
   clearPoweringUpCharge(cs);
 }
@@ -197,6 +204,11 @@ export const STANCE_BUFFS = [
     "stance-reaper",
     ({ playerCs }) => {
       if (!playerCs) return null;
+      if (getFlag(playerCs, REAPER_ARMED)) return {
+        id: "stance-reaper", label: "Momentum ready", stacks: 1, durationPct: -1,
+        color: "#d4506a", logDetail: "Leave Reaper to activate 10s of momentum",
+        values: [{ label: "Momentum", value: "Leave Reaper to activate", good: true }],
+      };
       const fx = getStatusEffect(playerCs, REAPER_MOMENTUM_EFFECT);
       if (!fx || fx.remainingMs <= 0) return null;
       const atk = fx.data["attackPct"] ?? 0;

@@ -1,3 +1,5 @@
+import { setStanceLoadout } from "../src/systems/player/economy/stanceCrafting";
+import { resetPlayerClass } from "../src/admin/gameActions";
 import { outgoingFinalDamage } from '../src/systems/combat/damage/finalDamage';
 /**
  * The four postures added 2026-09-02: Time to Strike, Reaper, Warding, Powering Up.
@@ -24,6 +26,9 @@ import {
   WARDING_POTENCY_RESIST,
   emptyEquipment,
   getStatusEffect,
+  NO_STANCE_ID,
+  ITEM_DATABASE,
+  upgradeStatBonusTotal,
   runeRuleCost,
   stanceDef,
 } from "@mmo-idle/shared";
@@ -35,6 +40,7 @@ import { updateRuneDerivedConfig } from "../src/systems/combat/ai/runeConfig";
 import {
   STANCE_SWITCH_COOLDOWN_MS,
   initStanceCombatEffects,
+  requestManualStance,
   updateStanceSwitch,
 } from "../src/systems/player/stances/stanceSwitch";
 import {
@@ -170,8 +176,8 @@ empowered.metadata["empoweredAttack"] = true;
 emitCombatEvent("onHit", empowered, world);
 assert(empowered.damage === 100, "Time to Strike must NOT weaken the empowered hit it exists to enable");
 assert(
-  (stanceDef("time-to-strike-stance")?.modifiers?.attackSpeedPct ?? 0) < 0,
-  "Time to Strike's attack-speed penalty is load-bearing — without it, fast empowered builds get a free upgrade",
+  (stanceDef("time-to-strike-stance")?.modifiers?.attackSpeedPct ?? 0) === 0,
+  "Time to Strike must not slow attack cadence",
 );
 
 // ── Reaper ────────────────────────────────────────────────────────────────────
@@ -185,37 +191,70 @@ assert(
 );
 const kill = makeCombatContext(player, "player", target, "monster");
 emitCombatEvent("onKill", kill, world);
-const momentum = getStatusEffect(player.tracksCombat, REAPER_MOMENTUM_EFFECT);
-assert(!!momentum, "a kill in Reaper must arm the momentum window");
-assert(momentum!.remainingMs === REAPER_MOMENTUM_MS, "momentum should start at its full duration");
-
-// The identity of the stance: the buff outlives the posture that granted it.
-wear(null);
-const carried = makeCombatContext(player, "player", target, "monster");
-carried.damage = 100;
-emitCombatEvent("onHit", carried, world);
-assert(
-  outgoingFinalDamage(world, player.isPlayer.id, carried.damage) === Math.round(100 * (1 + REAPER_MOMENTUM_ATTACK_PCT)),
-  "Reaper momentum must keep paying out after leaving the stance",
-);
-assert(
-  stanceAttackSpeedBonus(player.tracksCombat) > 0,
-  "Reaper momentum must contribute attack speed at the cadence gate",
-);
-// ...but a kill made OUTSIDE Reaper must not refresh it, or the window never ends.
-momentum!.remainingMs = 500;
-emitCombatEvent("onKill", makeCombatContext(player, "player", target, "monster"), world);
-assert(
-  getStatusEffect(player.tracksCombat, REAPER_MOMENTUM_EFFECT)!.remainingMs === 500,
-  "a kill outside Reaper must NOT refresh momentum — it would make the window permanent",
-);
-// Refreshes the duration; never stacks the magnitude.
+assert(!getStatusEffect(player.tracksCombat, REAPER_MOMENTUM_EFFECT), "earning cannot activate momentum in Reaper");
+assert(stanceAttackSpeedBonus(player.tracksCombat) === 0, "no haste while harvesting");
+assert(outgoingFinalDamage(world, player.isPlayer.id, 100) === 85, "only the earning penalty applies");
+emitCombatEvent("onKill", kill, world); // multiple kills bank only one charge
+advance(STANCE_SWITCH_COOLDOWN_MS);
+player.usesAutocombat.auto = false;
+assert(requestManualStance(world, player, NO_STANCE_ID).success, "manual leave succeeds");
+const momentum = getStatusEffect(player.tracksCombat, REAPER_MOMENTUM_EFFECT)!;
+assert(momentum.remainingMs === 10000 && momentum.stacks === 1, "leaving starts one full 10-second window");
+assert(outgoingFinalDamage(world, player.isPlayer.id, 100) === 135, "momentum pays outside Reaper");
+assert(stanceAttackSpeedBonus(player.tracksCombat) === .25, "momentum supplies haste");
+assert(!requestManualStance(world, player, "reaper-stance").success, "anti-thrash blocks immediate re-entry");
+momentum.remainingMs = 500;
+emitCombatEvent("onKill", kill, world);
+assert(getStatusEffect(player.tracksCombat, REAPER_MOMENTUM_EFFECT)!.remainingMs === 500, "outside kills do not refresh");
+advance(STANCE_SWITCH_COOLDOWN_MS);
+assert(requestManualStance(world, player, "reaper-stance").success, "re-enter");
+assert(!getStatusEffect(player.tracksCombat, REAPER_MOMENTUM_EFFECT), "re-entry discards active momentum");
+advance(STANCE_SWITCH_COOLDOWN_MS);
+assert(requestManualStance(world, player, NO_STANCE_ID).success, "leave without another kill");
+assert(stanceAttackSpeedBonus(player.tracksCombat) === 0, "old momentum cannot be recycled");
+advance(STANCE_SWITCH_COOLDOWN_MS);
+requestManualStance(world, player, "reaper-stance");
+emitCombatEvent("onKill", kill, world);
+requestManualStance(world, player, null); // return selection to automation
+player.usesAutocombat.auto = true;
+player.tracksProgression.runesEquipped = [{ conditionId: "always", actionId: "switch-stance", targetStanceId: NO_STANCE_ID }];
+advance(STANCE_SWITCH_COOLDOWN_MS);
+updateRuneDerivedConfig(world, now);
+updateStanceSwitch(world, 0, now);
+assert(player.tracksProgression.activeStance === null, "Rune leaves Reaper");
+assert(getStatusEffect(player.tracksCombat, REAPER_MOMENTUM_EFFECT)!.remainingMs === REAPER_MOMENTUM_MS, "Rune release matches manual release");
+advance(REAPER_MOMENTUM_MS);
+assert(stanceAttackSpeedBonus(player.tracksCombat) === 0, "window expires");
 wear("reaper-stance");
-emitCombatEvent("onKill", makeCombatContext(player, "player", target, "monster"), world);
-const refreshed = getStatusEffect(player.tracksCombat, REAPER_MOMENTUM_EFFECT)!;
-assert(refreshed.remainingMs === REAPER_MOMENTUM_MS, "a kill in Reaper must refresh the duration");
-assert(refreshed.stacks === 1, "Reaper momentum must never stack its magnitude");
-player.tracksCombat.statusEffects = [];
+emitCombatEvent("onKill", kill, world);
+assert(setStanceLoadout(world, player, "default", null, []).success, "unattune Reaper");
+assert(stanceAttackSpeedBonus(player.tracksCombat) === 0, "unattuning does not cash out");
+player.tracksProgression.attunedStances = [...NEW_STANCES];
+wear("reaper-stance");
+advance(STANCE_SWITCH_COOLDOWN_MS);
+requestManualStance(world, player, NO_STANCE_ID);
+assert(!getStatusEffect(player.tracksCombat, REAPER_MOMENTUM_EFFECT), "unattuning cleared the stored charge");
+wear("reaper-stance");
+emitCombatEvent("onKill", kill, world);
+resetPlayerClass(world, player, { requireAltar: false });
+advance(STANCE_SWITCH_COOLDOWN_MS);
+requestManualStance(world, player, NO_STANCE_ID);
+assert(!getStatusEffect(player.tracksCombat, REAPER_MOMENTUM_EFFECT), "build reset clears stored charge");
+player.tracksProgression.runesEquipped = [];
+
+// Earthsunder owns the largest raw hit at every matching upgrade level.
+const earth = ITEM_DATABASE.get('mountain-earthsunder-maul')!;
+assert(earth.attacksPerSecond === .4, "Earthsunder retains slow cadence");
+for (let plus = 0; plus <= 5; plus++) {
+  const attack = earth.statModifiers.attack + (upgradeStatBonusTotal(earth, plus).attack ?? 0);
+  for (const item of ITEM_DATABASE.values()) {
+    if (item.slot !== 'weapon' || item.id === earth.id) continue;
+    const other = item.statModifiers.attack + (upgradeStatBonusTotal(item, plus).attack ?? 0);
+    assert(attack > other, earth.id + ' should lead raw hit budget at +' + plus + ': ' + item.id);
+  }
+}
+
+requestManualStance(world, player, null);
 
 // ── Warding ───────────────────────────────────────────────────────────────────
 
@@ -332,4 +371,13 @@ assert(
   "a minimum release exists so tapping in and out of the stance is worthless",
 );
 
+// Death clears both earned and released state through the real lifecycle.
+wear("reaper-stance");
+emitCombatEvent("onKill", makeCombatContext(player, "player", target, "monster"), world);
+world.killPlayer(player.isPlayer.id, { kind: "stance", stanceName: "test", damage: player.hasHealth.hp });
+world.respawnPlayer(player.isPlayer.id);
+advance(STANCE_SWITCH_COOLDOWN_MS);
+requestManualStance(world, player, NO_STANCE_ID);
+assert(!getStatusEffect(player.tracksCombat, REAPER_MOMENTUM_EFFECT), "death cannot leave an earned charge to release");
+assert(stanceAttackSpeedBonus(player.tracksCombat) === 0, "death clears stance haste");
 console.log("stancesUnplaced.test.ts: ok");

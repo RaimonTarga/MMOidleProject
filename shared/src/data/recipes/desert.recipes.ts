@@ -79,16 +79,16 @@ export const desertRecipeEntries = [
   ['desert-boots-t2', {
     id: 'desert-boots-t2', name: 'Sand Sprint',
     recipeGroup: 'desert', requiredBiomeLevel: 4, slot: 'mobility',
-    cost: { yellow: 58 }, stats: { speed: 58 }, tier: 2, // family-tag: desert kite mobility → Dominion
+    cost: { yellow: 58 }, stats: { speed: 52 }, tier: 2, // family-tag: desert kite mobility → Dominion
     mechanicEffects: { 'mobility.kite-speed-pct': 0.20 },
     icon: 'items/boots/sand-sprint.png',
     description: 'Wide and light, made to outpace a storm across open dune.',
     upgrades: [
-      { stats: { speed: 8 },  cost: { yellow: 15 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 12 }, cost: { yellow: 37 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 16 }, cost: { yellow: 60 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 16 }, cost: { yellow: 97 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 16 }, cost: { yellow: 165 }, catalystCost: { dominion: 1 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 7 },  cost: { yellow: 15 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 11 }, cost: { yellow: 37 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 14 }, cost: { yellow: 60 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 14 }, cost: { yellow: 97 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 15 }, cost: { yellow: 165 }, catalystCost: { dominion: 1 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -162,17 +162,17 @@ export const desertRecipeEntries = [
     id: 'desert-boots-t3', name: 'Mirage Striders',
     recipeGroup: 'desert', requiredBiomeLevel: 10, slot: 'mobility',
     evolvesFrom: 'desert-boots-t2',
-    cost: { yellow: 90 }, stats: { speed: 96 }, tier: 3, // family-tag: desert kite mobility → Dominion
+    cost: { yellow: 90 }, stats: { speed: 86 }, tier: 3, // family-tag: desert kite mobility → Dominion
     reconstructCost: { yellow: 315 }, reconstructCatalystCost: { dominion: 3 },
     mechanicEffects: { 'mobility.kite-speed-pct': 0.30 },
     icon: 'items/boots/mirage-striders.png',
     description: 'By the time the storm reaches where you stood, you are already a rumor on the next dune.',
     upgrades: [
-      { stats: { speed: 10 }, cost: { yellow: 31 },  requiredBiomeLevel: 10 },
-      { stats: { speed: 14 }, cost: { yellow: 77 },  requiredBiomeLevel: 10 },
-      { stats: { speed: 18 }, cost: { yellow: 124 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 18 }, cost: { yellow: 201 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 18 }, cost: { yellow: 341 }, catalystCost: { dominion: 2 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 9 }, cost: { yellow: 31 },  requiredBiomeLevel: 10 },
+      { stats: { speed: 13 }, cost: { yellow: 77 },  requiredBiomeLevel: 10 },
+      { stats: { speed: 16 }, cost: { yellow: 124 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 16 }, cost: { yellow: 201 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 17 }, cost: { yellow: 341 }, catalystCost: { dominion: 2 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -260,17 +260,17 @@ export const desertRecipeEntries = [
     id: 'desert-boots-t4', name: 'Simoom Striders',
     recipeGroup: 'desert', requiredBiomeLevel: 16, slot: 'mobility',
     evolvesFrom: 'desert-boots-t3',
-    cost: { yellow: 198 }, stats: { speed: 134 }, tier: 4,
+    cost: { yellow: 198 }, stats: { speed: 121 }, tier: 4,
     reconstructCost: { yellow: 693 }, reconstructCatalystCost: { dominion: 4 },
     mechanicEffects: { 'mobility.kite-speed-pct': 0.40 },
     icon: 'items/boots/simoom-striders.png',
     description: 'Named for the desert wind that arrives only as the dust it already left behind.',
     upgrades: [
-      { stats: { speed: 14 }, cost: { yellow: 61 },  requiredBiomeLevel: 16 },
-      { stats: { speed: 18 }, cost: { yellow: 153 }, requiredBiomeLevel: 16 },
-      { stats: { speed: 22 }, cost: { yellow: 245 }, requiredBiomeLevel: 16 },
-      { stats: { speed: 22 }, cost: { yellow: 398 }, requiredBiomeLevel: 16 },
-      { stats: { speed: 22 }, cost: { yellow: 673 }, catalystCost: { dominion: 3 }, requiredBiomeLevel: 16 },
+      { stats: { speed: 13 }, cost: { yellow: 61 },  requiredBiomeLevel: 16 },
+      { stats: { speed: 16 }, cost: { yellow: 153 }, requiredBiomeLevel: 16 },
+      { stats: { speed: 20 }, cost: { yellow: 245 }, requiredBiomeLevel: 16 },
+      { stats: { speed: 20 }, cost: { yellow: 398 }, requiredBiomeLevel: 16 },
+      { stats: { speed: 19 }, cost: { yellow: 673 }, catalystCost: { dominion: 3 }, requiredBiomeLevel: 16 },
     ],
   }],
 

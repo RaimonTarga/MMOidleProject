@@ -33,7 +33,7 @@ Fixed Rune conditions remain preferable for now. Parameterized thresholds such a
 > **Implemented 2026-09-02 as `time-to-strike-stance`; placed in Mountain T4 on
 > 2026-09-04.** `+1.0` to the
 > empowered multiplier via the shared `shared.empowered-mult-add` passive, `-40%` on every
-> non-empowered hit, `-35%` Attack Speed. `Empowered Ready` is now a legal Switch Stance
+> non-empowered hit, no Attack Speed penalty (2026-09-24 cleanup). `Empowered Ready` is now a legal Switch Stance
 > situation, so `Empowered Ready -> Time to Strike` is buildable.
 
 A posture for builds centered around large empowered attacks.
@@ -42,9 +42,9 @@ Core identity:
 
 * substantially increase empowered-strike damage;
 * reduce ordinary/non-empowered attack damage;
-* reduce Attack Speed.
+* preserve cadence so correctly timed empowered attacks are not delayed.
 
-The Attack Speed penalty is important. The Stance should disproportionately reward slower, heavier empowered-hit builds such as Squire-style heavy subpaths rather than becoming a generic upgrade for fast Striker/Energy builds that generate empowered attacks frequently.
+The ordinary-hit penalty is the retained opportunity cost. The additive +1.0 bonus remains for this pass; replacing it with a final percentage requires a separately chosen magnitude.
 
 Potential Rune interaction:
 
@@ -60,19 +60,18 @@ The posture should remain unattractive as a permanent default and reward deliber
 ## Placed Tier 4 Stance: Reaper
 
 > **Implemented 2026-09-02 as `reaper-stance`; placed in Volcanic T4 on 2026-09-04.**
-> `-15%` Attack; a kill landed
-> while the stance is active arms a 6s window of `+35%` damage and `+25%` Attack Speed that
-> outlives the stance. Kills made *outside* Reaper do not refresh it — otherwise the window
-> never ends.
+> `-15%` Damage while earning; a kill stores one charge. Leaving Reaper starts
+> 10s of `+35%` damage and `+25%` Attack Speed. Re-entry discards the active buff;
+> another kill is required to re-arm. Outside kills do not refresh it.
 
 A kill-conversion / momentum Stance intended as an alternative to Execute.
 
 Core identity:
 
 * Reaper itself should carry a modest drawback or reduced neutral output;
-* killing an enemy while Reaper is active grants a substantial short-lived offensive buff;
+* killing an enemy while Reaper is active stores a charge; leaving activates its buff;
 * the kill buff should persist after leaving Reaper;
-* subsequent qualifying kills should preferably refresh the duration rather than stack its magnitude.
+* additional earning kills retain one charge without stacking; re-entry requires a fresh kill.
 
 Likely payoff:
 

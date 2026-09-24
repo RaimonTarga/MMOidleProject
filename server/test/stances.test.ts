@@ -158,13 +158,20 @@ emitCombatEvent("onHit", followup, world);
 assert(followup.damage === 100, "Predator opener should be consumed after one hit");
 
 player.tracksProgression.activeStance = "execute-stance";
-target.hasHealth.hp = target.hasHealth.maxHp * 0.2;
+assert(playerFinalDamageMultipliers(player).dealt === 1, "Execute has no blanket penalty");
+target.hasHealth.hp = target.hasHealth.maxHp * 0.26;
+const crossing = makeCombatContext(player, "player", target, "monster");
+crossing.damage = 100;
+emitCombatEvent("onHit", crossing, world);
+assert(crossing.damage === 100, "a hit crossing 25% cannot gain Execute retroactively");
+target.hasHealth.hp = target.hasHealth.maxHp * 0.25;
 const execution = makeCombatContext(player, "player", target, "monster");
 execution.damage = 100;
 emitCombatEvent("onHit", execution, world);
 assert(execution.damage === 175, "Execute should amplify hits against wounded targets");
 
 player.tracksProgression.activeStance = "brawler-stance";
+assert(playerFinalDamageMultipliers(player).dealt === 1, "Brawler is offensively neutral");
 for (let i = 0; i < 3; i++) {
   const aggressor = i === 0 ? target : world.createMonster("node-5-5", "plains-slime", { x: 470 + i * 20, y: 400 });
   if (!aggressor) throw new Error("setup: aggressor missing");
@@ -235,8 +242,8 @@ assert(
   "Perfection's gate must be the published threshold",
 );
 assert(
-  (perfection!.modifiers?.platingPct ?? 0) < 0,
-  "Perfection's Plating drawback must live in the UNGATED half",
+  perfection!.modifiers?.damageTakenPct === 0.1,
+  "Perfection's damage-taken drawback must live in the UNGATED half",
 );
 assert(
   (activeStanceModifiers("perfection-stance", 1)?.damageDealtPct ?? 0) > 0
@@ -254,14 +261,14 @@ updateRuneDerivedConfig(world, now);
 updateStanceSwitch(world, STANCE_SWITCH_COOLDOWN_MS, now);
 assert(player.tracksProgression.activeStance === "perfection-stance", "setup: Perfection should be active");
 
-const perfectAttack = Math.round(GAME_CONFIG.PLAYER_ATTACK * 1.12);
-const perfectSpeed = Math.round(GAME_CONFIG.PLAYER_SPEED * 1.12);
-const perfectPlating = Math.round(GAME_CONFIG.PLAYER_PLATING * 0.8);
+const perfectAttack = Math.round(GAME_CONFIG.PLAYER_ATTACK * 1.2);
+const perfectSpeed = Math.round(GAME_CONFIG.PLAYER_SPEED * 1.15);
+const perfectPlating = GAME_CONFIG.PLAYER_PLATING;
 const gatedCooldown = player.performsAttack.attackCooldown;
-assert(player.dealsDamage.attack === GAME_CONFIG.PLAYER_ATTACK && playerFinalDamageMultipliers(player).dealt === 1.12, "Perfection should grant Attack at full HP");
+assert(player.dealsDamage.attack === GAME_CONFIG.PLAYER_ATTACK && playerFinalDamageMultipliers(player).dealt === 1.2, "Perfection should grant Attack at full HP");
 assert(player.hasPosition.speed === perfectSpeed, "Perfection should grant Move Speed at full HP");
 assert(gatedCooldown < GAME_CONFIG.PLAYER_ATTACK_COOLDOWN, "Perfection should grant Attack Speed at full HP");
-assert(player.mitigatesDamage.plating === perfectPlating, "Perfection's Plating drawback should apply at full HP");
+assert(player.mitigatesDamage.plating === perfectPlating && playerFinalDamageMultipliers(player).taken === 1.1, "Perfection's Plating drawback should apply at full HP");
 
 // One tick below the line: the payoff goes, the price stays. That asymmetry is the
 // reason to leave the posture rather than ride it down.
@@ -275,7 +282,7 @@ assert(
   "Perfection's Attack Speed must switch off below the gate",
 );
 assert(
-  player.mitigatesDamage.plating === perfectPlating,
+  player.mitigatesDamage.plating === perfectPlating && playerFinalDamageMultipliers(player).taken === 1.1,
   "Perfection's Plating drawback must persist below the gate",
 );
 assert(
@@ -295,7 +302,7 @@ assert(
 // flag, so it has to rearm in both directions rather than latching once.
 player.hasHealth.hp = player.hasHealth.maxHp * 0.95;
 updateStanceSwitch(world, 100, now);
-assert(player.dealsDamage.attack === GAME_CONFIG.PLAYER_ATTACK && playerFinalDamageMultipliers(player).dealt === 1.12, "Perfection must reactivate on the way back up");
+assert(player.dealsDamage.attack === GAME_CONFIG.PLAYER_ATTACK && playerFinalDamageMultipliers(player).dealt === 1.2, "Perfection must reactivate on the way back up");
 assert(player.performsAttack.attackCooldown === gatedCooldown, "Perfection's cadence must reactivate too");
 
 // Leave the gate closed so the Berserker section below starts from a settled flag.

@@ -19,6 +19,7 @@ import {
 import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { applyMonsterDotToPlayer } from './monsterDot';
+import { resistedPlayerDebuffMagnitude } from './debuffGuard';
 
 /**
  * Add `stacks` of corrosion, firing the threshold poison for every rung crossed.
@@ -41,7 +42,8 @@ export function applyPlatingShredStacks(
 
   const deepen = monster.scriptsBoss?.shredOverride;
   const maxStacks = platingShred.maxStacks + (deepen?.maxStacksAdd ?? 0);
-  const perStack = platingShred.platingPerStack + (deepen?.platingPerStackAdd ?? 0);
+  const perStack = resistedPlayerDebuffMagnitude(target, 'platingPerStack',
+    platingShred.platingPerStack + (deepen?.platingPerStackAdd ?? 0));
 
   // `applyStatusEffect` keeps an EXISTING effect's cap and data, so a deepening that
   // lands mid-corrosion has to be written onto the live stack before the increment.

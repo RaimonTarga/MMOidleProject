@@ -20,7 +20,7 @@ export function getAntiHealMult(cs: TracksCombat): number {
 }
 
 export function getDebuffResistanceMult(player: PlayerEntity): number {
-  const resist = Math.min(0.9, player.usesSkills.passives['defense.debuff-resistance'] ?? 0);
+  const resist = Math.max(0, Math.min(0.9, player.usesSkills.passives['defense.debuff-resistance'] ?? 0));
   return 1 - resist;
 }
 

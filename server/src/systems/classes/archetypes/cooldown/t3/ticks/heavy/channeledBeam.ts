@@ -1,3 +1,4 @@
+import { prepareWeaponDeadSwing, commitWeaponDeadSwing } from '../../../../../../combat/engine/weaponDeadSwing';
 import { heatAllowsTarget } from '../../../../../../combat/ai/heatManagement';
 import { mitigateOnHitDamage } from '@mmo-idle/shared';
 import { playerOnHitDamage } from '../../../../../../combat/engine/onHitDamage';
@@ -91,6 +92,8 @@ function applyBeamTick(world: World, player: PlayerEntity, target: MonsterEntity
 
   const ctx = makeCombatContext(player, 'player', target, 'monster');
   ctx.metadata['channelBeam'] = true;
+  const deadSwing = prepareWeaponDeadSwing(ctx);
+  commitWeaponDeadSwing(ctx, deadSwing);
 
   emitCombatEvent('onAttack', ctx, world);
 
@@ -109,6 +112,8 @@ function applyBeamTick(world: World, player: PlayerEntity, target: MonsterEntity
   ctx.damage = outgoingFinalDamage(world, player.isPlayer.id, ctx.damage);
 
   emitCombatEvent('onDamageTaken', ctx, world);
+  // Match ordinary attacks: debuffs can land, but the dead tick deals no direct/on-hit damage.
+  if (ctx.metadata.chaoticMiss) ctx.damage = 0;
 
   const mitigation = buildPlatingDrBreakdown({
     grossDamage: Math.round(gross),
@@ -145,6 +150,10 @@ function applyBeamTick(world: World, player: PlayerEntity, target: MonsterEntity
     effects: [CHANNEL_BEAM_EFFECT, ...procEffects],
   });
 
+  if (ctx.metadata.chaoticMiss) world.pushEvent(player.hasPosition.nodeId, {
+    kind: 'player-miss', playerId: player.isPlayer.id, targetId: target.isMonster.id,
+    targetPos: { ...target.hasPosition.current },
+  });
   emitCombatEvent('afterHit', ctx, world);
 
   if (target.hasHealth.hp <= 0) {

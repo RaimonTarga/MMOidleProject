@@ -62,15 +62,15 @@ First-pass magnitudes are balance seeds in `shared/src/stances.ts`; the structur
 | Defensive | 1 | +20% Plating, -10% damage taken, -15% Damage | — |
 | Tanking | 3 | +40% Plating, -25% damage taken, -40% Damage, -20% Attack Speed | — |
 | Enraged | 3 | +30% Damage and +15% Attack Speed **only at <=25% HP**; no defensive penalty | HP gate, see below |
-| Perfection | 2 | -20% Plating always; +12% Damage / Attack Speed / Move Speed **only at >=90% HP** | HP gate, see below |
+| Perfection | 2 | +10% damage taken always; +20% Damage / +15% Attack Speed / +15% Move Speed **only at >=90% HP** | HP gate, see below |
 | Fleeting | 2 | +35% Move Speed, +15pp Evasion, -35% Damage, -20% Attack Speed | — |
 | Berserker | 4 | +35% Damage, +20% Attack Speed, +15% damage taken | 2% max HP self-damage per second while in combat; can kill |
 | Recuperating | 4 | -50% Damage, -30% Attack Speed | 80% of Recovery stays active in combat |
 | Predator | 3 | +15% Move Speed, -10% Damage | 50% reduced detection; +75% armed opening hit |
-| Brawler | 3 | -10% Damage | 8/16/24/31/40% damage reduction at 1/2/3/4/5+ aggressors |
-| Execute | 3 | -20% Damage | +75% damage to targets at or below 25% HP |
-| Time to Strike | 3 | -35% Attack Speed | +100% empowered-attack damage; ordinary hits -40% |
-| Reaper | 3 | -15% Damage | a kill while active arms 6s of +35% damage / +25% Attack Speed that outlives the stance |
+| Brawler | 3 | No offensive penalty | 8/16/24/31/40% damage reduction at 1/2/3/4/5+ aggressors |
+| Execute | 3 | No unconditional modifier | +75% damage to targets at or below 25% HP |
+| Time to Strike | 3 | No Attack Speed penalty | +1.0 to empowered multiplier; ordinary hits -40% |
+| Reaper | 3 | -15% Damage | a kill stores one charge; leaving starts 10s of +35% damage / +25% Attack Speed; re-entry discards the buff |
 | Warding | 3 | -50% Damage, -25% Attack Speed | incoming harmful statuses -50% duration; incoming DoTs -40% per-stack damage |
 | Powering Up | 4 | -50% Damage, -30% Attack Speed | charges up to 8s in combat; leaving spends it for +50% damage / +30% Attack Speed for as long as it charged |
 
@@ -99,7 +99,7 @@ either stance, but cannot bypass its payoff gate.
 IS a maintained state. Enraged uses an inclusive upper bound: `+30% Damage / +15% Attack
 Speed` apply only at or below `ENRAGED_HP_THRESHOLD` (0.25), with no unconditional downside.
 Perfection uses an inclusive lower bound: its bonuses apply at or above
-`PERFECTION_HP_THRESHOLD` (0.9), while its `-20% Plating` remains unconditional.
+`PERFECTION_HP_THRESHOLD` (0.9), while its `+10% damage taken` remains unconditional.
 
 These are deliberate exceptions to "Runes own conditions": a Rune decides when the player
 *enters* a posture, but cannot make a payoff work outside its intrinsic window. Enraged remains
@@ -133,14 +133,17 @@ unreachable until its intentional Tier-4 placement.
 - **Time to Strike** rides `shared.empowered-mult-add`, the universal empowered bonus every
   archetype's empowered attack already reads, so the stance never touches cadence, cooldown,
   energy or reload code. Only the ordinary-hit penalty is a listener, and it keys off the
-  `empoweredDamage` metadata the archetype multipliers set — they register first
+  `empoweredAttack` metadata the archetype multipliers set — they register first
   (`initAllMechanics` precedes `initStanceCombatEffects`), so the flag is truthful by then.
-  The Attack Speed penalty is load-bearing, not flavour: it is the whole reason this is not
-  a free upgrade for builds that empower every few seconds.
-- **Reaper** stores its momentum as a status effect rather than a stance modifier, which is
-  precisely what lets it outlive the posture. Only kills landed while Reaper is ACTIVE arm
-  or refresh it; a kill made after reverting does not, or the window would never close.
-  `maxStacks: 1` + `refreshable` means the duration resets and the magnitude never climbs.
+  The ordinary-hit penalty supplies the timing cost; no Attack Speed penalty remains.
+  The bonus is still additive +1.0, not a final +100% multiplier.
+- **Reaper** stores a single pending charge in `TracksCombat` after a kill while active.
+  It supplies no offensive bonus until the shared manual/Rune switch releases it as a
+  10-second status. Re-entry discards the active status and requires another kill.
+  Extra earning kills do not stack; outside kills do not refresh. Stance loadout edits
+  and loss of attunement discard both pending and active momentum. Death, respawn and
+  build reset clear it through `resetTracksCombat`. Ordinary combat end does not reset
+  the released timer: it keeps counting down between targets.
 - **Warding** has no listener at all. It is two passives —
   `shared.status-duration-resist` and `shared.status-potency-resist` — read by
   `server/src/systems/combat/status/harmfulStatus.ts`, the ONE writer for how hard an
@@ -251,7 +254,7 @@ gates, exact essence/catalyst costs, and the introductory versus specialized
 economy bands.
 
 `server/test/stancesUnplaced.test.ts` covers all four implemented postures end to end —
-Time to Strike's empowered/ordinary split, Reaper's arm-refresh-persist rules including
+Time to Strike's empowered/ordinary split, Reaper's earn-leave-spend rules including
 that a kill outside the stance must NOT refresh, Warding's duration and potency reductions
 through the shared seam and at the live monster-DoT site, and Powering Up's in-combat-only
 charge, its cap, its release window and the discard on combat ending — plus the invariant

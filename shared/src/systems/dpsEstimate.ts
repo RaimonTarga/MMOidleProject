@@ -228,6 +228,8 @@ export function estimatePlayerDps(input: DpsEstimateInput): DpsEstimate {
         const firingTicks = Math.ceil(laser.heatMax / laser.heatPerTick);
         const coolingTicks = Math.ceil(laser.heatMax / laser.coolPerTick);
         const tickRate = firingTicks / ((firingTicks + coolingTicks) * 0.1);
+        const deadInterval = Math.round(input.passives['weapon.dead-swing-interval'] ?? 0);
+        const liveTickFraction = deadInterval > 0 ? 1 - 1 / deadInterval : 1;
         const direct = attackDamage(input, input.attack * laser.damagePerTickPct);
         const weaponDot = input.weaponId
           ? weaponDotProfileForWeapon(input.weaponId)
@@ -236,10 +238,10 @@ export function estimatePlayerDps(input: DpsEstimateInput): DpsEstimate {
           label: 'Laser direct (including cooling)',
           dps: (weaponDot
             ? Math.max(1, Math.round(direct * (1 - weaponDot.convPct)))
-            : direct) * tickRate,
+            : direct) * tickRate * liveTickFraction,
         });
         if (input.onHitDamage > 0) {
-          parts.push({ label: 'Flat on-hit', dps: onHitContribution(input, input.onHitDamage, input.attack * laser.damagePerTickPct) * tickRate });
+          parts.push({ label: 'Flat on-hit', dps: onHitContribution(input, input.onHitDamage, input.attack * laser.damagePerTickPct) * tickRate * liveTickFraction });
         }
         if (weaponDot) {
           parts.push({

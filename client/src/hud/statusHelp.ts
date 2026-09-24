@@ -151,7 +151,7 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'mob-rush': b('Rush', 'Tundra boots: speed that ramps the longer you keep moving without stopping.'),
   'mob-volcanic': b('Volcanic stride', 'Volcanic boots: passive movement speed, active whenever it is not suppressed by a hit.'),
   'mob-suppress': { title: 'Stride suppressed', kind: 'debuff', help: 'A direct hit has switched off your Volcanic boots’ speed bonus. It returns once you go untouched again.' },
-  'stance-reaper': b('Momentum', 'Reaper Stance: a kill has left you attacking harder and faster. It keeps running after you leave the stance — that carry-over is the whole point, so spend it on the next enemy.'),
+  'stance-reaper': b('Momentum', 'Reaper Stance: a kill stores momentum. Leave Reaper to activate +35% Damage and +25% Attack Speed for 10 seconds. Re-entering ends the buff; another kill is needed to re-arm it. Stance loadout edits discard momentum.'),
   'stance-charge': b('Charge', 'Powering Up: charge banked so far. It only builds while you are fighting, and it is lost if the fight ends. Leaving the stance spends it for a burst lasting as long as you charged.'),
   'stance-release': b('Unleashed', 'Powering Up: the charge you banked, spent. Extra damage and attack speed for as long as you spent charging it.'),
 };

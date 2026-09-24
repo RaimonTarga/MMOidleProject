@@ -1,6 +1,7 @@
 import {
   isCooldownActive, setCooldown,
   removeStatusEffectStacks, getStatusEffect,
+  isHarmfulPlayerStatusEffect, isCleanseable, cleanseableStacks,
 } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
@@ -9,7 +10,8 @@ import { applyHealToPlayer } from '../regen/healing';
 /**
  * Per-tick debuff cleanse. Every `defense.cleanse-interval-ms`, removes
  * `defense.cleanse-stacks` stacks from every non-DoT, non-instanced status
- * effect on the player (antiheal, slows, etc.).
+ * harmful, cleanseable effect on the player (antiheal, soft slows, etc.).
+ * Friendly buffs and cleanse-immune encounter/control effects are preserved.
  *
  * Heal-on-cleanse: when the pulse fires, heal `cleanse-per-stack-heal-pct` of max
  * HP per stack actually removed; if there was nothing to cleanse, heal a flat
@@ -28,15 +30,18 @@ export function runDebuffCleanse(world: World, player: PlayerEntity): void {
 
   const toReduce = [...new Set(
     cs.statusEffects
-      .filter(e => !e.data['isDot'] && !e.instanced)
+      .filter(e => !e.data['isDot'] && !e.instanced
+        && isHarmfulPlayerStatusEffect(e.id, e.data)
+        && isCleanseable(e.id, e.data))
       .map(e => e.id),
   )];
   let removed = 0;
   for (const id of toReduce) {
     const effect = getStatusEffect(cs, id);
     if (!effect) continue;
-    removed += Math.min(effect.stacks, cleanseStacks);
-    removeStatusEffectStacks(cs, id, cleanseStacks);
+    const allowed = cleanseableStacks(id, effect.data, cleanseStacks);
+    removed += Math.min(effect.stacks, allowed);
+    removeStatusEffectStacks(cs, id, allowed);
   }
   setCooldown(cs, 'cleanse', cleanseIntervalMs);
 

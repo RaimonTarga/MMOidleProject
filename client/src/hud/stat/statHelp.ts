@@ -57,7 +57,7 @@ export const STAT_HELP: Record<string, string> = {
     'Reduces damage-over-time specifically, stacking on top of the half-value DR that already applies to DoT. Capped at 90%.',
   'defense.hit-to-dot-pct':
     'Defers part of each incoming hit into a “damage debt” that ticks onto you over time instead of all at once (drains 25% of the pool per second). Softens burst — it doesn’t remove the damage.',
-  'defense.debuff-resistance': 'Shortens and weakens non-DoT debuffs such as slows and roots.',
+  'defense.debuff-resistance': 'Weakens monster-applied soft slows, attack slows, antiheal, vulnerability and plating corrosion. Does not shorten durations or weaken roots, DoTs or environmental effects.',
   'defense.cleanse-stacks': 'Periodically strips debuff stacks off you on a timer.',
   'defense.max-hit-pct':
     'The portion of a hit above this share of max HP is multiplied by the excess multiplier. This softens large hits; it is not a hard limit on the damage you can take.',

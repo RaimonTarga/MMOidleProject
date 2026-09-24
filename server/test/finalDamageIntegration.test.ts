@@ -123,7 +123,7 @@ for (const mode of ['direct', 'aoe', 'dot'] as const) {
   eq(removed.after.stats.dps, normal.stats.dps, 'unequip returns to rebuilt baseline');
   for (const hpFraction of [1, 0.5]) {
     const p = previewEquipmentStats({ ...input, activeStance: 'perfection-stance', hpFraction });
-    eq(p.stats.damageDealtMult, hpFraction === 1 ? 1.12 : 1, 'HP gate identical on both comparison sides');
+    eq(p.stats.damageDealtMult, hpFraction === 1 ? 1.2 : 1, 'HP gate identical on both comparison sides');
   }
   for (const archetype of ['cadence', 'cooldown', 'reload', 'dot', 'energy', 'summoner']) {
     const { player: p } = fixture(archetype as any);

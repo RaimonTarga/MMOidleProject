@@ -3,6 +3,7 @@ import { mitigateOnHitDamage } from '@mmo-idle/shared';
 import { outgoingFinalDamage } from '../damage/finalDamage';
 import { coordinateRally } from '../ai/packs';
 import { playerOnHitDamage } from './onHitDamage';
+import { prepareWeaponDeadSwing, commitWeaponDeadSwing } from './weaponDeadSwing';
 import { pushDamageEvent } from '../damage/damageEvent';
 import type { World } from "../../../world/World";
 import {
@@ -83,7 +84,6 @@ import {
   ambientRampAttackSlowPct,
   ambientRampScalingMult,
   ambientRampStatus,
-  CHAOTIC_HIT_COUNTER_KEY,
 } from "@mmo-idle/shared";
 import { applyMonsterAoe } from "../damage/aoeDamage";
 import {
@@ -102,7 +102,7 @@ import {
   lungeSpecFor,
   performAmbushLunge,
 } from "../ai/ambushLunge";
-import { canApplyPlayerDebuff } from "../status/debuffGuard";
+import { canApplyPlayerDebuff, applyResistedPlayerDebuff, resistedPlayerDebuffMagnitude } from "../status/debuffGuard";
 import { evadeBlocksDebuffs } from "../../defense/mitigation/evasion";
 import { isMonsterStunned, applyStun } from "../status/stun";
 import { applyMonsterDotToPlayer } from '../status/monsterDot';
@@ -336,23 +336,7 @@ export function runPlayerAttack(
   // a cancelled attack (empty clip / mid-reload) never advances the cycle.
   // Dead-swing cadence is data-driven from the equipped weapon's
   // `weapon.dead-swing-interval` mechanic (authored on the recipe).
-  const deadSwingInterval = player.usesSkills.passives["weapon.dead-swing-interval"] ?? 0;
-  const chaoticMissEvery = deadSwingInterval > 0 ? Math.round(deadSwingInterval) : 0;
-  const chaoticProgressKey = 'weapon.chaotic-logical-hit';
-  const previousChaoticProgress = ctx.formation && player.controlsSummons
-    ? (player.controlsSummons.procProgress[chaoticProgressKey] ?? 0)
-    : 0;
-  const nextChaoticProgress = previousChaoticProgress + (ctx.formation?.procWeight ?? 1);
-  const chaoticLogicalHits = Math.floor(nextChaoticProgress + 1e-9);
-  if (
-    chaoticMissEvery &&
-    chaoticLogicalHits > 0 &&
-    (getCounter(player.tracksCombat, CHAOTIC_HIT_COUNTER_KEY) + chaoticLogicalHits) %
-      chaoticMissEvery ===
-      0
-  ) {
-    ctx.metadata.chaoticMiss = true;
-  }
+  const deadSwing = prepareWeaponDeadSwing(ctx);
   if (opts.resultMetadata) {
     opts.resultMetadata.chaoticMiss = ctx.metadata.chaoticMiss === true;
   }
@@ -360,14 +344,7 @@ export function runPlayerAttack(
   emitCombatEvent("beforeAttack", ctx, world);
   if (ctx.cancelled) return "cancelled";
 
-  if (chaoticMissEvery) {
-    if (ctx.formation && player.controlsSummons) {
-      player.controlsSummons.procProgress[chaoticProgressKey] = nextChaoticProgress - chaoticLogicalHits;
-    }
-    if (chaoticLogicalHits > 0) {
-      addCounter(player.tracksCombat, CHAOTIC_HIT_COUNTER_KEY, chaoticLogicalHits);
-    }
-  }
+  commitWeaponDeadSwing(ctx, deadSwing);
 
   emitCombatEvent("onAttack", ctx, world);
 
@@ -981,7 +958,7 @@ export function runMonsterAttack(
     const rootMs = Math.round(
       cadenceRootMs * harmfulStatusDurationMult(target),
     );
-    applyStatusEffect(target.tracksCombat, {
+    applyResistedPlayerDebuff(target, {
       id: "slow",
       maxStacks: 1,
       remainingMs: rootMs,
@@ -997,7 +974,7 @@ export function runMonsterAttack(
     const slowMs = Math.round(
       slow.durationMs * harmfulStatusDurationMult(target),
     );
-    applyStatusEffect(target.tracksCombat, {
+    applyResistedPlayerDebuff(target, {
       id: "slow",
       maxStacks: 1,
       remainingMs: slowMs,
@@ -1018,7 +995,7 @@ export function runMonsterAttack(
     const durMs = Math.round(
       antiheal.durationMs * harmfulStatusDurationMult(target),
     );
-    applyStatusEffect(target.tracksCombat, {
+    applyResistedPlayerDebuff(target, {
       id: "antiheal",
       maxStacks: antiheal.maxStacks,
       remainingMs: durMs,
@@ -1037,7 +1014,7 @@ export function runMonsterAttack(
     const durMs = Math.round(
       vulnerability.durationMs * harmfulStatusDurationMult(target),
     );
-    applyStatusEffect(target.tracksCombat, {
+    applyResistedPlayerDebuff(target, {
       id: SUNDERED_EFFECT_ID,
       maxStacks: vulnerability.maxStacks,
       remainingMs: durMs,
@@ -1069,7 +1046,7 @@ export function runMonsterAttack(
     const effectiveRamp = capOverride
       ? { ...rampDebuff, moveSlowMaxPct: capOverride.moveSlowMaxPct, atkSlowMaxPct: capOverride.atkSlowMaxPct }
       : rampDebuff;
-    applyStatusEffect(target.tracksCombat, {
+    applyResistedPlayerDebuff(target, {
       id: FROST_RAMP_EFFECT_ID,
       maxStacks: frostRampMaxStacks(effectiveRamp),
       remainingMs: durMs,
@@ -1232,6 +1209,7 @@ function applyStrongestPlayerRider(
   value: number,
   harsher: (existing: number, incoming: number) => number,
 ): void {
+  value = resistedPlayerDebuffMagnitude(target, key, value);
   const effect = applyStatusEffect(target.tracksCombat, {
     id,
     maxStacks: 1,
@@ -1756,7 +1734,7 @@ function applyChargedAttackRiders(
     const rootMs = Math.round(
       charged.rootMs * harmfulStatusDurationMult(target),
     );
-    applyStatusEffect(target.tracksCombat, {
+    applyResistedPlayerDebuff(target, {
       id: "slow",
       maxStacks: 1,
       remainingMs: rootMs,
@@ -1780,7 +1758,7 @@ function applyChargedAttackRiders(
     const slowMs = Math.round(
       slow.durationMs * harmfulStatusDurationMult(target),
     );
-    applyStatusEffect(target.tracksCombat, {
+    applyResistedPlayerDebuff(target, {
       id: "slow",
       maxStacks: 1,
       remainingMs: slowMs,
@@ -1799,7 +1777,7 @@ function applyChargedAttackRiders(
     const durMs = Math.round(
       wither.durationMs * harmfulStatusDurationMult(target),
     );
-    applyStatusEffect(target.tracksCombat, {
+    applyResistedPlayerDebuff(target, {
       id: "antiheal",
       maxStacks: 1,
       remainingMs: durMs,
@@ -1940,7 +1918,7 @@ function applyChargedAttackMark(
   if (!mark || !canApplyPlayerDebuff(target)) return;
   const markMs = Math.round(mark.durationMs * harmfulStatusDurationMult(target));
   const fresh = !getStatusEffect(target.tracksCombat, SUN_MARK_EFFECT_ID);
-  applyStatusEffect(target.tracksCombat, {
+  applyResistedPlayerDebuff(target, {
     id: SUN_MARK_EFFECT_ID,
     maxStacks: 1,
     remainingMs: markMs,

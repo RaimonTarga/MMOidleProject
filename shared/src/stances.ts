@@ -171,7 +171,7 @@ export const TIME_TO_STRIKE_EMPOWERED_ADD = 1;
 export const TIME_TO_STRIKE_NORMAL_PENALTY = 0.4;
 
 /** Reaper: how long the on-kill momentum window lasts. Refreshed, never stacked. */
-export const REAPER_MOMENTUM_MS = 6000;
+export const REAPER_MOMENTUM_MS = 10000;
 /** Reaper: momentum damage bonus (0.35 → +35% on every hit while it holds). */
 export const REAPER_MOMENTUM_ATTACK_PCT = 0.35;
 /** Reaper: momentum attack-speed bonus, applied at the attack-cadence gate. */
@@ -257,18 +257,18 @@ const stances: StanceDef[] = [
   {
     id: "perfection-stance",
     name: "Perfection Stance",
-    // The -20% Plating is the price of holding it and is paid
+    // The +10% damage taken is the price of holding it and is paid
     // at every HP; the bonuses are the reward for not being hit. Dropping below the
     // threshold is therefore meant to be actively bad, so leaving is a real decision
     // rather than a formality. See {@link StanceHpGate}.
-    blurb: `+12% Damage, Attack Speed, and Movement Speed while at or above ${pct(
+    blurb: `+20% Damage, +15% Attack Speed and Movement Speed while at or above ${pct(
       PERFECTION_HP_THRESHOLD,
-    )} HP. -20% Plating at all times.`,
+    )} HP. Take 10% more damage at all times.`,
     runeCost: 2,
-    modifiers: { platingPct: -0.2 },
+    modifiers: { damageTakenPct: 0.1 },
     gatedModifiers: {
       minHpPct: PERFECTION_HP_THRESHOLD,
-      modifiers: { damageDealtPct: 0.12, attackSpeedPct: 0.12, moveSpeedPct: 0.12 },
+      modifiers: { damageDealtPct: 0.20, attackSpeedPct: 0.15, moveSpeedPct: 0.15 },
     },
     behaviors: [
       {
@@ -281,9 +281,9 @@ const stances: StanceDef[] = [
       },
       {
         key: "perfection-gate-drawback",
-        label: "Plating penalty",
+        label: "Damage taken penalty",
         value: "always active",
-        help: `The -20% Plating is paid whenever the stance is active, including below ${pct(
+        help: `The +10% damage taken is paid whenever the stance is active, including below ${pct(
           PERFECTION_HP_THRESHOLD,
         )} HP where the bonuses are off. Once you drop, Perfection is strictly worse than no stance at all — leave it.`,
         good: false,
@@ -364,9 +364,8 @@ const stances: StanceDef[] = [
     id: "brawler-stance",
     name: "Brawler Stance",
     blurb:
-      "-10% Damage. Gain damage reduction for each enemy actively engaging you, from 8% against one attacker up to 40% against five or more.",
+      "Gain damage reduction for each enemy actively engaging you, from 8% against one attacker up to 40% against five or more.",
     runeCost: 3,
-    modifiers: { damageDealtPct: -0.1 },
     behaviors: [
       {
         key: "brawler-crowd",
@@ -385,9 +384,8 @@ const stances: StanceDef[] = [
   {
     id: "execute-stance",
     name: "Execute Stance",
-    blurb: "-20% Damage. Deal 75% more damage to targets at or below 25% HP.",
+    blurb: "Deal 75% more damage to targets at or below 25% HP.",
     runeCost: 3,
-    modifiers: { damageDealtPct: -0.2 },
     behaviors: [
       {
         key: "execute-finisher",
@@ -408,15 +406,11 @@ const stances: StanceDef[] = [
   {
     id: "time-to-strike-stance",
     name: "Time to Strike",
-    // The Attack Speed penalty is load-bearing, not flavour: it is what keeps this
-    // from being a free upgrade for fast empowered-generating builds. A spec that
-    // fires an empowered hit every few seconds pays the penalty on every filler
-    // swing in between; a slow, heavy spec pays it once per big beat.
-    blurb: `+${pct(TIME_TO_STRIKE_EMPOWERED_ADD)} empowered-attack damage. Ordinary hits deal ${pct(
+    // Timing and the ordinary-hit penalty supply the opportunity cost.
+    blurb: `+${TIME_TO_STRIKE_EMPOWERED_ADD.toFixed(1)} to the empowered-attack multiplier. Ordinary hits deal ${pct(
       TIME_TO_STRIKE_NORMAL_PENALTY,
-    )} less damage and you attack ${pct(0.35)} slower.`,
+    )} less damage.`,
     runeCost: 3,
-    modifiers: { attackSpeedPct: -0.35 },
     // Rides the pre-existing universal empowered bonus, so every archetype's
     // empowered attack (cadence finisher, cooldown burst, energy discharge,
     // reload shot) gains the same amount without the stance knowing about any of them.
@@ -425,14 +419,14 @@ const stances: StanceDef[] = [
       {
         key: "time-to-strike-empowered",
         label: "Empowered damage",
-        value: `+${pct(TIME_TO_STRIKE_EMPOWERED_ADD)}`,
+        value: `+${TIME_TO_STRIKE_EMPOWERED_ADD.toFixed(1)} multiplier`,
         help: "Added to your empowered-attack multiplier, whatever your class's empowered attack is — a finisher, a cooldown burst, a full-energy discharge or a loaded shot.",
       },
       {
         key: "time-to-strike-normal",
         label: "Ordinary hits",
         value: `-${pct(TIME_TO_STRIKE_NORMAL_PENALTY)} damage`,
-        help: "Every hit that is NOT empowered is reduced by this much, on top of the attack-speed penalty. The posture is only worth holding around an empowered attack.",
+        help: "Every hit that is NOT empowered is reduced by this much. The posture is only worth holding around an empowered attack.",
         good: false,
       },
     ],
@@ -444,9 +438,9 @@ const stances: StanceDef[] = [
     // The alternative to Execute at the same Rune condition: Execute optimises
     // finishing THIS target (and so, bosses); Reaper converts the kill into
     // momentum against the NEXT one (and so, dense farming).
-    blurb: `-15% Damage. Killing an enemy grants +${pct(REAPER_MOMENTUM_ATTACK_PCT)} Damage and +${pct(
+    blurb: `-15% Damage. Killing an enemy stores momentum. Leave Reaper to gain +${pct(REAPER_MOMENTUM_ATTACK_PCT)} Damage and +${pct(
       REAPER_MOMENTUM_ATTACK_SPEED_PCT,
-    )} Attack Speed for ${(REAPER_MOMENTUM_MS / 1000).toFixed(0)}s, and the momentum keeps running after you leave the stance.`,
+    )} Attack Speed for ${(REAPER_MOMENTUM_MS / 1000).toFixed(0)}s. Re-entering ends the buff; earn another kill to re-arm it.`,
     runeCost: 3,
     modifiers: { damageDealtPct: -0.15 },
     behaviors: [
@@ -455,7 +449,7 @@ const stances: StanceDef[] = [
         label: "Kill momentum",
         value: `+${pct(REAPER_MOMENTUM_ATTACK_PCT)} Damage, +${pct(REAPER_MOMENTUM_ATTACK_SPEED_PCT)} Attack Speed`,
         detail: `${(REAPER_MOMENTUM_MS / 1000).toFixed(0)}s`,
-        help: "Armed by any kill you land while Reaper is active. It PERSISTS after you leave the stance, so the intended loop is: enter Reaper for the finish, kill, revert to your default posture, and spend the momentum on the next enemy. Further kills refresh the window only while Reaper is active again — the duration resets, it never stacks higher.",
+        help: "A kill in Reaper stores one momentum charge with no offensive benefit yet. Leaving starts the full 10-second buff. Extra kills while holding the charge do not stack it; kills outside Reaper do not refresh it. Re-entering ends the active buff and requires another kill. Stance loadout edits discard momentum.",
       },
     ],
     icon: "reaper-stance",

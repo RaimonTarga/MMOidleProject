@@ -30,6 +30,9 @@ import { registerCombatListener } from "../../combat/engine/combatPipeline";
 import { playerCombatPhase } from "../../combat/ai/engagement";
 import {
   POWERING_UP_ID,
+  REAPER_ID,
+  clearReaperMomentum,
+  switchReaperMomentum,
   initNewStanceBehaviors,
   releasePoweringUpCharge,
   tickPoweringUpCharge,
@@ -95,6 +98,7 @@ export function requestManualStance(
 export function updateStanceSwitch(world: World, dt: number, now: number): void {
   for (const player of world.livePlayers) {
     const prog = player.tracksProgression;
+    if (!(prog.attunedStances ?? []).includes(REAPER_ID)) clearReaperMomentum(player.tracksCombat);
     const automationOwnsStance =
       player.usesAutocombat.auto || player.fightsWhileTraveling !== undefined;
     if (
@@ -195,6 +199,7 @@ function applyStanceSwitch(
   // before `activeStance` moves, because the release reads the stance we are
   // leaving, not the one we are entering.
   if (prog.activeStance === POWERING_UP_ID) releasePoweringUpCharge(player);
+  switchReaperMomentum(player, desired);
   prog.activeStance = desired;
   recalculatePlayerStanceStats(world, player);
   setCooldown(player.tracksCombat, STANCE_SWITCH_CD_KEY, STANCE_SWITCH_COOLDOWN_MS);

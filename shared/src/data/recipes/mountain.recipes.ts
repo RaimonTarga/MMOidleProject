@@ -311,23 +311,23 @@ export const mountainRecipeEntries = [
   // +5 (T4_PROGRESSION_ECONOMY_PROPOSAL_2026-08-30.md §4). Costs are 2.00× the
   // finalized T3 predecessor's lifetime total on the shipped accelerating curve;
   // catalysts move to the weapon/armor 0/0/0/0/3/4 schedule (was a flat 4-at-the-door).
-  // Two weapon branches off the same budget: Earthsunder spends everything on the
-  // raw number at the slowest cadence in the game; Warmaul keeps the T-line
-  // cadence and buys empowered amplification with the difference.
+  // Earthsunder owns the largest raw hit: 240 -> 540 Attack, 20% above Tyrant
+  // at matching upgrades, with its slower 0.40 cadence retained. Warmaul keeps
+  // the T-line cadence and its empowered-attack specialization.
   ['mountain-earthsunder-maul', {
     id: 'mountain-earthsunder-maul', name: 'Earthsunder Maul',
     recipeGroup: 'mountain', requiredBiomeLevel: 19, slot: 'weapon',
     evolvesFrom: 'mountain-avalanche-maul',
-    cost: { blue: 256 }, stats: { attack: 152 }, attacksPerSecond: 0.40, tier: 4, // family-tag: capstone heavy maul → Heavy
+    cost: { blue: 256 }, stats: { attack: 240 }, attacksPerSecond: 0.40, tier: 4, // family-tag: capstone heavy maul → Heavy
     reconstructCost: { blue: 896 }, reconstructCatalystCost: { heavy: 4 },
     icon: 'items/weapons/earthsunder-maul.png',
     description: 'It does not strike the earth so much as remind it of an old grievance.',
     upgrades: [
-      { stats: { attack: 15 }, cost: { blue: 185 },  requiredBiomeLevel: 20 },
-      { stats: { attack: 15 }, cost: { blue: 463 },  requiredBiomeLevel: 21 },
-      { stats: { attack: 15 }, cost: { blue: 741 },  requiredBiomeLevel: 22 },
-      { stats: { attack: 15 }, cost: { blue: 1204 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 22 },
-      { stats: { attack: 16 }, cost: { blue: 2039 }, catalystCost: { heavy: 4 }, requiredBiomeLevel: 22 },
+      { stats: { attack: 60 }, cost: { blue: 185 },  requiredBiomeLevel: 20 },
+      { stats: { attack: 60 }, cost: { blue: 463 },  requiredBiomeLevel: 21 },
+      { stats: { attack: 60 }, cost: { blue: 741 },  requiredBiomeLevel: 22 },
+      { stats: { attack: 60 }, cost: { blue: 1204 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 22 },
+      { stats: { attack: 60 }, cost: { blue: 2039 }, catalystCost: { heavy: 4 }, requiredBiomeLevel: 22 },
     ],
   }],
 

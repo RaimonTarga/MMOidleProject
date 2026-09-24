@@ -1,3 +1,4 @@
+import { prepareWeaponDeadSwing, commitWeaponDeadSwing } from '../../../../../combat/engine/weaponDeadSwing';
 import { heatAllowsTarget } from '../../../../../combat/ai/heatManagement';
 import { mitigateOnHitDamage } from '@mmo-idle/shared';
 import { outgoingFinalDamage } from '../../../../../combat/damage/finalDamage';
@@ -95,6 +96,8 @@ function applyLaserTick(world: World, player: PlayerEntity, target: MonsterEntit
 
   const ctx = makeCombatContext(player, 'player', target, 'monster');
   ctx.metadata['reloadLaser'] = true;
+  const deadSwing = prepareWeaponDeadSwing(ctx);
+  commitWeaponDeadSwing(ctx, deadSwing);
 
   emitCombatEvent('onAttack', ctx, world);
 
@@ -125,6 +128,8 @@ function applyLaserTick(world: World, player: PlayerEntity, target: MonsterEntit
   const isExecution = isEmpowered && player.usesCooldown !== undefined;
 
   emitCombatEvent('onDamageTaken', ctx, world);
+  // Match ordinary attacks: debuffs can land, but the dead tick deals no direct/on-hit damage.
+  if (ctx.metadata.chaoticMiss) ctx.damage = 0;
 
   const mitigation = buildPlatingDrBreakdown({
     grossDamage: Math.round(rawLaserDamage),
@@ -170,6 +175,10 @@ function applyLaserTick(world: World, player: PlayerEntity, target: MonsterEntit
     effects: clientEffects && clientEffects.length > 0 ? clientEffects : undefined,
   });
 
+  if (ctx.metadata.chaoticMiss) world.pushEvent(player.hasPosition.nodeId, {
+    kind: 'player-miss', playerId: player.isPlayer.id, targetId: target.isMonster.id,
+    targetPos: { ...target.hasPosition.current },
+  });
   emitCombatEvent('afterHit', ctx, world);
 
   if (target.hasHealth.hp <= 0) {

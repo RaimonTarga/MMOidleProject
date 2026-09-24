@@ -114,6 +114,7 @@ export const graveyardRecipeEntries = [
     cost: { purple: 150 }, stats: { recovery: 16 }, // family-tag: recovery-pulse charm (Swamp inheritance) → Fortified
     reconstructCost: { purple: 525 }, reconstructCatalystCost: { fortified: 4 },
     // Combined: slower burst, compensated by a baseline in-combat trickle.
+    // +5: 12% active + 12% for 4s/8s = 18% mean access (2.88% HP/s at 16 Recovery).
     mechanicEffects: {
       'defense.recovery-pulse-pct': 0.04, 'defense.recovery-pulse-interval-ms': 8000,
       'defense.recovery-active-pct': 0.04,
@@ -123,10 +124,10 @@ export const graveyardRecipeEntries = [
     description: 'A tide that never fully goes out — it gives back in a steady seep between the larger swells.',
     upgrades: [
       { mechanicEffects: { 'defense.recovery-pulse-pct': 0.01, 'defense.recovery-active-pct': 0.01 }, cost: { purple: 73 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.01, 'defense.recovery-active-pct': 0.01 }, cost: { purple: 183 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02, 'defense.recovery-active-pct': 0.02 }, cost: { purple: 183 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.recovery-pulse-pct': 0.01, 'defense.recovery-active-pct': 0.01 }, cost: { purple: 292 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.01, 'defense.recovery-active-pct': 0.01 }, cost: { purple: 475 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.01, 'defense.recovery-active-pct': 0.01 }, cost: { purple: 803 }, catalystCost: { fortified: 3 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02, 'defense.recovery-active-pct': 0.02 }, cost: { purple: 475 }, requiredBiomeLevel: 4 },
+      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02, 'defense.recovery-active-pct': 0.02 }, cost: { purple: 803 }, catalystCost: { fortified: 3 }, requiredBiomeLevel: 4 },
     ],
   }],
 
