@@ -13,12 +13,12 @@ Conduit is the in-game name for the summoner class. Its root skill id is
 `summoner-root`, and choosing it sets `usesSkills.combatArchetype` to
 `summoner`.
 
-It is gated by feature flags:
+Availability updated for v0.5 (2026-09-24): Conduit is enabled in all environments.
 
 - Client: `client/src/featureFlags.ts` exposes `CONDUIT_ENABLED`.
 - Server: `server/src/env.ts` exposes `CONDUIT_ENABLED`.
-- Dev enables it. Production hides it unless `VITE_ENABLE_CONDUIT=true`, and the
-  server rejects new `summoner-root` unlocks unless `CONDUIT_ENABLED=true`.
+- Both constants are `true`; production no longer needs environment overrides.
+  This does not enable development tools or authentication bypasses.
 
 ## 2. Skill Tree
 

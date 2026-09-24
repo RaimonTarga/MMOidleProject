@@ -5,9 +5,6 @@
 export const IS_DEV =
   process.env.DEV_TOOLS === 'true' || process.env.NODE_ENV !== 'production';
 
-// The Conduit (summoner) class is feature-incomplete and hidden from players in
-// production playtests. It stays available in dev; `CONDUIT_ENABLED=true`
-// force-enables it in production once it is ready, without a code change. The
-// client mirrors this flag in `client/src/featureFlags.ts`.
-export const CONDUIT_ENABLED =
-  process.env.CONDUIT_ENABLED === 'true' || IS_DEV;
+// Conduit is part of the public playtest roster in every environment.
+// Keep this aligned with client/src/featureFlags.ts; dev tooling stays separate.
+export const CONDUIT_ENABLED = true;

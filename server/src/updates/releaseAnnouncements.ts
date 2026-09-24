@@ -1,7 +1,6 @@
 import { readFileSync } from 'fs';
 import path from 'path';
 import type { ReleaseAnnouncementPayload } from '@mmo-idle/shared';
-import { gameVersion } from '../analytics/version';
 
 interface ReleaseManifest {
   releases?: ReleaseManifestEntry[];
@@ -23,10 +22,16 @@ export function currentReleaseAnnouncement(): ReleaseAnnouncementPayload | null 
 }
 
 function loadCurrentReleaseAnnouncement(): ReleaseAnnouncementPayload | null {
-  const currentVersion = normalizeVersion(gameVersion());
-  if (!currentVersion) return null;
-
   const root = repoRoot();
+  // Telemetry may identify a Railway build by SHA. Announcements are versioned
+  // with the shipped package, so a deployment SHA must not hide its patch notes.
+  let currentVersion: string | null;
+  try {
+    currentVersion = normalizeVersion(JSON.parse(readFileSync(path.join(root, 'package.json'), 'utf8')).version);
+  } catch {
+    return null;
+  }
+  if (!currentVersion) return null;
   for (const manifestPath of manifestCandidates(root)) {
     try {
       const manifest = JSON.parse(readFileSync(manifestPath, 'utf8')) as ReleaseManifest;

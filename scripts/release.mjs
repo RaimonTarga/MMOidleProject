@@ -14,6 +14,7 @@ const RELEASE_PATHS = [
   'admin/package.json',
   'server/package.json',
   'shared/package.json',
+  'bot/package.json',
   'pnpm-lock.yaml',
   'updates/releases.json',
 ];
@@ -61,6 +62,10 @@ function prepareRelease(version, flags) {
     return;
   }
 
+  const existingManifest = JSON.parse(readFileSync(path.join(ROOT, 'updates/releases.json'), 'utf8'));
+  if (existingManifest.releases.some((release) => normalizeVersion(release.version) === version)) {
+    fail(`updates/releases.json already contains ${version}; edit the prepared release instead.`);
+  }
   updatePackageVersions(version);
   updateReleaseManifest({ version, title, releasedAt, markdownPath });
   const changelogDir = path.join(ROOT, 'updates', `v${version}`);
@@ -74,24 +79,49 @@ function prepareRelease(version, flags) {
 function cutRelease(version, flags) {
   requireBranch(DEVELOPMENT_BRANCH);
   const releaseBranch = `${RELEASE_BRANCH_PREFIX}${version}`;
+  run('git', ['fetch', 'origin'], { stdio: 'inherit' });
   ensureReleaseBranchAvailable(releaseBranch);
   ensureNoUnrelatedChanges(version);
+  validatePreparedRelease(version);
+  ensureProductionCanFastForward();
 
   if (!flags.has('--skip-checks')) {
-    const pnpm = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm';
-    run(pnpm, ['typecheck'], { stdio: 'inherit' });
+    if (process.platform === 'win32') {
+      run(process.env.ComSpec || 'cmd.exe', ['/d', '/s', '/c', 'pnpm typecheck'], { stdio: 'inherit' });
+    } else {
+      run('pnpm', ['typecheck'], { stdio: 'inherit' });
+    }
   }
 
   commitReleaseChanges(version);
 
   ensureProductionCanFastForward();
+  // Publish all refs together. A rejection must leave production and snapshots
+  // untouched, and a failed push must not strand a local release branch.
+  run('git', ['push', '--atomic', 'origin',
+    `HEAD:refs/heads/${DEVELOPMENT_BRANCH}`,
+    `HEAD:refs/heads/${releaseBranch}`,
+    `HEAD:refs/heads/${PRODUCTION_BRANCH}`,
+  ], { stdio: 'inherit' });
   run('git', ['branch', releaseBranch, 'HEAD']);
   run('git', ['branch', '-f', PRODUCTION_BRANCH, 'HEAD']);
-  run('git', ['push', 'origin', DEVELOPMENT_BRANCH], { stdio: 'inherit' });
-  run('git', ['push', 'origin', releaseBranch], { stdio: 'inherit' });
-  run('git', ['push', 'origin', PRODUCTION_BRANCH], { stdio: 'inherit' });
 
   console.log(`[release] cut ${releaseBranch} and advanced ${PRODUCTION_BRANCH}`);
+}
+
+function validatePreparedRelease(version) {
+  for (const file of RELEASE_PATHS.filter((entry) => entry.endsWith('package.json'))) {
+    if (JSON.parse(readFileSync(path.join(ROOT, file), 'utf8')).version !== version) {
+      fail(`${file} does not match release ${version}. Run prepare first.`);
+    }
+  }
+  const manifest = JSON.parse(readFileSync(path.join(ROOT, 'updates/releases.json'), 'utf8'));
+  const release = manifest.releases.find((entry) => entry.version === version);
+  if (!release || release.markdownPath !== `v${version}/changelog.md`) {
+    fail(`Release ${version} is missing its manifest entry.`);
+  }
+  const notes = readFileSync(path.join(ROOT, 'updates', release.markdownPath), 'utf8');
+  if (!notes.trim() || /\bTODO\b/.test(notes)) fail('Finish the release notes before cutting.');
 }
 
 function buildChangelog(version, releasedAt) {

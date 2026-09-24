@@ -1,4 +1,4 @@
-# Mirrors what Railway does (Nixpacks): install all deps, build every workspace,
+# Railway Dockerfile build: install all deps, build the application workspaces,
 # then run the server (which serves the built client and connects to Postgres).
 FROM node:22-bookworm-slim
 
@@ -15,9 +15,10 @@ COPY shared/package.json ./shared/
 COPY client/package.json ./client/
 COPY admin/package.json ./admin/
 COPY server/package.json ./server/
+COPY bot/package.json ./bot/
 RUN pnpm install --frozen-lockfile
 
-# Copy the rest of the source and build shared → client → server.
+# Copy the rest of the source and build shared → client → admin → server.
 COPY . .
 # Expose the server ops/telemetry map in the production client build. Vite reads
 # VITE_-prefixed env vars at build time; without this SHOW_OPS_MAP is false in prod.
