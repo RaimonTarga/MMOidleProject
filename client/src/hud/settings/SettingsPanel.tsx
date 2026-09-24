@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
+import { ChangelogPanel } from '../ChangelogPanel';
 import { gamepadStatusAtom } from '../atoms';
 import { DialogHeader, DialogTab, DialogTabs, GameDialog } from '../primitives';
 import {
@@ -53,7 +54,7 @@ import { linkDiscord } from '../../net/session';
 import '../hud.css';
 import './settings.css';
 
-type SettingsTab = 'controls' | 'gameplay' | 'audio';
+type SettingsTab = 'controls' | 'gameplay' | 'audio' | 'updates';
 
 interface Props {
   onClose: () => void;
@@ -304,10 +305,15 @@ export function SettingsPanel({ onClose, onSwitchCharacter }: Props) {
         <DialogTab selected={tab === 'audio'} controls="settings-panel-audio" onSelect={() => setTab('audio')}>
           Audio
         </DialogTab>
+        <DialogTab selected={tab === 'updates'} controls="settings-panel-updates" onSelect={() => setTab('updates')}>
+          Updates
+        </DialogTab>
       </DialogTabs>
 
       <div id={`settings-panel-${tab}`} className="settings-body" role="tabpanel">
-        {tab === 'controls' ? (
+        {tab === 'updates' ? (
+          <ChangelogPanel onOpen={onClose} />
+        ) : tab === 'controls' ? (
           <>
             <div
               className={`settings-status${padStatus ? ' settings-status--connected' : ''}`}

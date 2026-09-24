@@ -28,7 +28,7 @@ Ordinary client position corrections are collision-clamped. If terrain separates
 - Active held directional controls take priority over a click. Hold-still/summon commands retain their existing behavior.
 - Focus loss clears held keyboard input; full resync invalidates local click prediction and rebases retained player sprites. Remote-player presentation follows observed positions; own-player autonomous paths use the bounded server preview.
 
-## Player synchronization review (2026-09-24, not deployed)
+## Player synchronization review (2026-09-24)
 
 Reviewed node delta encoding/membership, transition baseline resets, private state
 syncs, visibility/reconnect handlers, retained entity views, local movement
@@ -130,4 +130,5 @@ Remote smoothness follow-up: `playerSync.test.ts` verifies constant rendered
 velocity for 5 Hz walking with 0-40 ms arrival jitter at 30/60/144 FPS, widely
 different server clock origins, retained corner samples, no extrapolation, and
 history reset on node changes, large jumps, interruption, and explicit resync.
-Live two-client visual acceptance remains pending; this work is not deployed.
+These changes are included in the v0.5 movement and multiplayer visuals patch.
+Live two-client visual acceptance remains pending.

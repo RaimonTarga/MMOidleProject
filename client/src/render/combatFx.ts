@@ -1482,7 +1482,20 @@ export function dispatchCombatEvent(
     const from = state.sprite.get(ev.playerId) ?? presentation?.from;
     const to = presentation?.to ?? state.sprite.get(ev.targetId);
     if (shouldRunClientFx() && player && from && to && (player.summonsMinions ?? 0) === 0) {
+      const usesLocalController = (player.combatArchetype === 'reload' && (player.passives['reload.laser'] ?? 0) > 0)
+        || ev.effects?.some(effect => effect === FLASH_CLIENT_EFFECT || effect === CHANNEL_BEAM_CLIENT_EFFECT);
+      if (!usesLocalController) {
+        runFxForAttackStyle(state, ev, scene, presentation);
+        const gainMult = listenerGain(scene, from.x, from.y);
+        if (gainMult > 0) playSfx(ev.empowered || ev.execution ? 'empowered'
+          : attackSfxFor(player.combatArchetype ?? null, player.attackStyle), { gainMult });
+        if (ev.evadedPartial) spawnGrazeLabel(state, scene, ev.targetId);
+        return;
+      }
       spawnAttackEffect(scene, player.attackStyle, { x: from.x, y: from.y }, { x: to.x, y: to.y }, {
+        empowered: ev.empowered,
+        execution: ev.execution,
+        tint: resolveAttackTint(player, player.combatArchetype === 'dot' ? getDotPath(player) : null, transientElement(ev.effects)) ?? undefined,
         archetype: player.combatArchetype ?? undefined,
         selectedRange: player.selectedRange,
         dotPath: player.combatArchetype === 'dot' ? getDotPath(player) : undefined,

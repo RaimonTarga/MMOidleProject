@@ -2,6 +2,12 @@
 
 2026-09-24 · New playtest
 
+## Playtest patch — movement and multiplayer visuals
+
+- Other players move smoothly between network updates, with corrected positions when entering a node or returning to the game.
+- Restored other players' melee attack lunges and ability-specific attack effects.
+- On mobile, the changelog is now under **Settings → Updates**, instead of floating over the game. The desktop panel remains available.
+
 ## Playtest fixes
 
 - Fixed attack cooldown bars stretching backwards or appearing stuck when the player's computer clock differs from the server clock.

@@ -23,13 +23,6 @@
   font: inherit;
 }
 .changelog-panel button:focus-visible { outline: 2px solid var(--hud-primary); outline-offset: 2px; }
-.changelog-panel--mobile {
-  position: fixed;
-  right: calc(12px + env(safe-area-inset-right, 0px));
-  bottom: calc(var(--mhud-bottom-h, 86px) + env(safe-area-inset-bottom, 0px) + 134px);
-  max-width: 180px;
-  z-index: 34;
-}
 .release-overlay {
   position: fixed;
   inset: 0;

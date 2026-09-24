@@ -10,7 +10,7 @@ const release = (JSON.parse(manifestText).releases as {
 }[]).find(entry => entry.version === version);
 const notes = import.meta.glob('../../../updates/v*/changelog.md', { query: '?raw', import: 'default' });
 
-export function ChangelogPanel({ mobile = false }: { mobile?: boolean }) {
+export function ChangelogPanel({ onOpen }: { onOpen?: () => void }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   if (!release) return null;
@@ -20,6 +20,7 @@ export function ChangelogPanel({ mobile = false }: { mobile?: boolean }) {
     setError(false);
     try {
       const markdown = await notes[`../../../updates/${current.markdownPath}`]() as string;
+      onOpen?.();
       showReleaseAnnouncement({ ...current, markdown });
     } catch {
       setError(true);
@@ -28,7 +29,7 @@ export function ChangelogPanel({ mobile = false }: { mobile?: boolean }) {
     }
   }
   return (
-    <aside className={`changelog-panel${mobile ? ' changelog-panel--mobile' : ''}`} aria-label="Game updates">
+    <aside className="changelog-panel" aria-label="Game updates">
       <strong>What's new · v{version}</strong>
       <span>{current.title}</span>
       <button type="button" onClick={open} disabled={loading}>
