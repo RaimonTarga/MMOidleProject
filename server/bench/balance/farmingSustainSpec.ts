@@ -70,8 +70,8 @@ export function sustainGates(cell: FarmingSustainCell, bot: PlayerEntity) {
     return { id, recipeId: recipe.id, group: recipe.recipeGroup, requiredMastery: recipe.requiredBiomeLevel,
       actualMastery: recipe.recipeGroup ? p.biomeLevel[recipe.recipeGroup] : null };
   });
-  return { evolutionChain: chain, acquisition: 'Synthetic mature equipment; chain gates checked, no acquisition/cost claim',
-    upgrade: { plus: bot.holdsInventory.itemUpgrades[item.id], requiredMastery: requiredBiomeLevelForUpgrade(item, 5) },
+  return { evolutionChain: chain, acquisition: cell.progressionSnapshot ? 'Fixed route checkpoint; paid costs in progression receipt' : 'Synthetic mature equipment; chain gates checked, no acquisition/cost claim',
+    upgrade: { plus: bot.holdsInventory.itemUpgrades[item.id], requiredMastery: requiredBiomeLevelForUpgrade(item, cell.progressionSnapshot ? bot.holdsInventory.itemUpgrades[item.id] : 5) },
     stanceGates, reserved: runicPointBreakdown({ abilities: p.attunedAbilities, rules: p.runesEquipped,
       stances: p.attunedStances ?? [], rites: p.equippedRites }),
     recoveryPassives: Object.fromEntries(Object.entries(bot.usesSkills.passives).filter(([k]) => k.includes('recovery'))) };

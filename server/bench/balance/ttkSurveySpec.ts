@@ -1,3 +1,4 @@
+import { applyProgressionSnapshot, snapshotReceipts, type ProgressionSnapshot } from './progressionSnapshot';
 import assert from 'node:assert/strict';
 import { requiredBiomeLevelForUpgrade, upgradeCeilingFromGlobalMastery, globalMastery, ITEM_DATABASE, RECIPE_DATABASE, NODE_BIOMES, RUNE_RECIPE_DATABASE,
   isRuneRecipeUnlocked, composePlayerView } from '@mmo-idle/shared';
@@ -20,7 +21,7 @@ export const SURVEY_CLASSES = [
   { name: 'spirit', prefix: 'energy', melee: false, weapons: ['chaotic-axe','ruinous-axe','cave-cataclysm-axe'] },
 ] as const;
 export const SURVEY_SEEDS = [173, 947, 2027] as const;
-export interface SurveyCell { id: string; className: string; tier: number; role: string; nodeId: string; alternate: boolean; build: BuildSpec; technique?: 'sweep' | 'slam';
+export interface SurveyCell { rites?: string[]; progressionSnapshot?: ProgressionSnapshot; id: string; className: string; tier: number; role: string; nodeId: string; alternate: boolean; build: BuildSpec; technique?: 'sweep' | 'slam';
   /**
    * Stance to attune. OMITTED inherits the preparation default (Offensive from
    * tier 2). Explicit `null` is a different statement -- it means the package
@@ -161,6 +162,7 @@ export function prepareSurveyBot(world: World, cell: SurveyCell, pos: {x:number;
   // package a declaration can be computed from before the fight.
   const declared = resolveSurveyPackage(cell);
   const bot = materializeBot(world, cell.build, {nodeId:cell.nodeId,biomeGroup:NODE_BIOMES[cell.nodeId].biomeGroup,contentTier:cell.tier,isDungeon:cell.isDungeon ?? false}, pos, BENCH_BOT_ID, declared.upgradeLevel);
+  if(cell.progressionSnapshot) { snapshotReceipts.set(bot,applyProgressionSnapshot(bot,cell)); world.fixedBiomeMasteryPlayers.add(bot.isPlayer.id); }
   const p = bot.tracksProgression;
   for(const id of Object.values(cell.build.gearItemIds)) {
     const recipe=RECIPE_DATABASE.get(id!)!;
@@ -173,7 +175,7 @@ export function prepareSurveyBot(world: World, cell: SurveyCell, pos: {x:number;
     assert(plus===0||(p.biomeLevel[recipe.recipeGroup]??0)>=requiredBiomeLevelForUpgrade(ITEM_DATABASE.get(id!)!,plus), `Biome upgrade gate ${id}`);
   }
   p.skillPoints = 0; // Factory grants unlock scaffolding; none survives into measurement.
-  p.equippedRites = [];
+  p.equippedRites = [...(cell.rites ?? [])];
   p.attunedAbilities = { techniques: [], guards: [] };
   const stance = declared.stance;
   p.attunedStances = [...(stance ? [stance] : []), ...(cell.additionalStances ?? [])];

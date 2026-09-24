@@ -1,0 +1,13 @@
+import {writeFileSync,mkdirSync,readFileSync,readdirSync} from 'node:fs';
+import {join,resolve} from 'node:path';
+import {ITEM_DATABASE,RECIPE_DATABASE,ABILITY_DATABASE,ABILITY_RECIPE_DATABASE,RITE_DATABASE,RITE_RECIPE_DATABASE,STANCE_DATABASE,STANCE_RECIPE_DATABASE,CONDITION_DATABASE,ACTION_DATABASE,RUNE_RECIPE_DATABASE,STARTER_RUNE_IDS,itemMechanicEffectsAt,upgradeStatBonusTotal,upgradeApsBonusTotal,getMaxUpgrade,TECHNIQUE_POWER_FIELDS} from '@mmo-idle/shared';
+const out=resolve(process.argv[2]);mkdirSync(out,{recursive:true});
+const root=resolve(__dirname,'../..');
+function files(dir:string):string[]{return readdirSync(dir,{withFileTypes:true}).flatMap(e=>e.isDirectory()?files(join(dir,e.name)):e.name.endsWith('.ts')?[join(dir,e.name)]:[]);}
+const consumers=files(join(root,'server/src')).map(path=>({path:path.slice(root.length+1).replaceAll('\\','/'),text:readFileSync(path,'utf8')}));
+const values=(m:Map<any,any>)=>[...m.values()];
+const items=values(ITEM_DATABASE).filter(i=>i.tier<=4).map(i=>({id:i.id,tier:i.tier,slot:i.slot,definition:i,recipe:RECIPE_DATABASE.get(i.id)??null,readbacks:([0,3,4,5].filter(n=>n<=getMaxUpgrade(i))).map(plus=>({plus,authoredStats:i.statModifiers,upgradeStats:upgradeStatBonusTotal(i,plus),mechanics:itemMechanicEffectsAt(i,plus),aps:(i.attacksPerSecond??0)+upgradeApsBonusTotal(i,plus)})),consumers:Object.fromEntries(Object.keys(i.mechanicEffects??{}).map(k=>[k,consumers.filter(f=>f.text.includes(k)).map(f=>f.path)]))}));
+const inventory={scope:'Authored contributions, not composed player values. +3/+4/+5 are definition readbacks, legal only at their recorded recipe/mastery/GM gates. Core/relic +0 only.',items,abilities:values(ABILITY_DATABASE),abilityRecipes:values(ABILITY_RECIPE_DATABASE),techniquePowerFields:TECHNIQUE_POWER_FIELDS,rites:values(RITE_DATABASE).filter(r=>r.id!=='blood-offering'),riteRecipes:values(RITE_RECIPE_DATABASE).filter(r=>r.riteId!=='blood-offering'),stances:values(STANCE_DATABASE),stanceRecipes:values(STANCE_RECIPE_DATABASE),conditions:values(CONDITION_DATABASE),actions:values(ACTION_DATABASE),runeRecipes:values(RUNE_RECIPE_DATABASE),starterRuneIds:STARTER_RUNE_IDS};
+writeFileSync(join(out,'inventory.json'),JSON.stringify(inventory,null,2)+'\n');
+writeFileSync(join(out,'mobility.tsv'),'id\ttier\tpredecessor\tgate\tplus\tbaseSpeed\tupgradeSpeed\tmechanics\n'+items.filter(i=>i.slot==='mobility').flatMap(i=>i.readbacks.map(r=>[i.id,i.tier,i.recipe?.evolvesFrom??'',`${i.recipe?.recipeGroup}:${i.recipe?.requiredBiomeLevel}`,r.plus,(i.definition.statModifiers??{}).speed??0,r.upgradeStats.speed??0,JSON.stringify(r.mechanics)].join('\t'))).join('\n')+'\n');
+console.log(`${items.length} T1-T4 definitions exported; no world or combat instantiated.`);
