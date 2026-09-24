@@ -123,3 +123,5 @@ export * from './data/abilityTags';
 export * from './data/abilityModifierInfo';
 export * from './systems/abilityModifiers';
 export * from './protocol/gameplayTelemetry';
+
+export * from './config/economy';

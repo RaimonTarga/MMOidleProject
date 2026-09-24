@@ -84,6 +84,18 @@ const FARM_NODE = "node-t1-forest-01";
 const BIOME_GROUP = "forest";
 const FAMILY = "alacrity";
 
+// Authored zero reward encounter adds stay zero even under a debug multiplier.
+for (const multiplier of [1, 25]) {
+  const zeroWorld = new World(); zeroWorld.rewardMultiplier = multiplier;
+  const zeroId = `zero-add-${multiplier}`;
+  const zeroPlayer = zeroWorld.attachPlayerEntity(makePlayer(zeroId), zeroId);
+  const add = zeroWorld.createMonster(FARM_NODE, 'void-horror', {x:800,y:800})!;
+  const reward = grantMonsterRewards(zeroWorld, zeroId, add)!;
+  assert(reward.essenceGained === 0 && reward.biomeXpGained === 0, 'explicit zero must bypass the positive reward floor');
+  assert(Object.values(zeroPlayer.tracksProgression.catalysts).every(v=>v===0), 'zero-weight adds must mint no catalyst');
+  assert(Object.values(zeroPlayer.tracksProgression.catalystProgress).every(v=>v===0), 'zero-weight adds must accumulate no progress');
+}
+
 interface Payout {
   essence: number;
   biomeXp: number;

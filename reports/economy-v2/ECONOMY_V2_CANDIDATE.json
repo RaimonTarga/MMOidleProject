@@ -1,0 +1,4564 @@
+{
+  "nodes": [
+    {
+      "id": "node-t1-mountain-01",
+      "biome": "mountain",
+      "tier": 1,
+      "family": "heavy",
+      "hp": 206.66666666666666,
+      "drWork": 206.66666666666666,
+      "h100": 206.66666666666666,
+      "E": 13.666666666666666,
+      "X": 94.66666666666666,
+      "C": 3.333333333333333,
+      "colours": {
+        "blue": 13.666666666666666
+      },
+      "population": 24,
+      "pool": {
+        "cliff-hopper": 2,
+        "ridge-archer": 1
+      }
+    },
+    {
+      "id": "node-t1-mountain-02",
+      "biome": "mountain",
+      "tier": 1,
+      "family": "swarming",
+      "hp": 206.66666666666666,
+      "drWork": 206.66666666666666,
+      "h100": 206.66666666666666,
+      "E": 13.333333333333332,
+      "X": 91.33333333333333,
+      "C": 3.333333333333333,
+      "colours": {
+        "blue": 13.333333333333332
+      },
+      "population": 26,
+      "pool": {
+        "cliff-hopper": 2,
+        "ridge-archer": 1
+      }
+    },
+    {
+      "id": "node-t1-mountain-03",
+      "biome": "mountain",
+      "tier": 1,
+      "family": "dominion",
+      "hp": 217.33333333333331,
+      "drWork": 222.9059829059829,
+      "h100": 221.7687074829932,
+      "E": 14.666666666666666,
+      "X": 99.33333333333333,
+      "C": 3.833333333333333,
+      "colours": {
+        "blue": 14.666666666666666
+      },
+      "population": 23,
+      "pool": {
+        "cliff-hopper": 2,
+        "ridge-archer": 1
+      }
+    },
+    {
+      "id": "node-t1-mountain-04",
+      "biome": "mountain",
+      "tier": 1,
+      "family": "fortified",
+      "hp": 206.66666666666666,
+      "drWork": 217.5438596491228,
+      "h100": 217.5438596491228,
+      "E": 14.333333333333332,
+      "X": 96.66666666666666,
+      "C": 3.333333333333333,
+      "colours": {
+        "blue": 14.333333333333332
+      },
+      "population": 24,
+      "pool": {
+        "cliff-hopper": 2,
+        "ridge-archer": 1
+      }
+    },
+    {
+      "id": "node-t1-mountain-05",
+      "biome": "mountain",
+      "tier": 1,
+      "family": "heavy",
+      "hp": 206.66666666666666,
+      "drWork": 206.66666666666666,
+      "h100": 206.66666666666666,
+      "E": 13.666666666666666,
+      "X": 94.66666666666666,
+      "C": 3.333333333333333,
+      "colours": {
+        "blue": 13.666666666666666
+      },
+      "population": 24,
+      "pool": {
+        "cliff-hopper": 2,
+        "ridge-archer": 1
+      }
+    },
+    {
+      "id": "node-t1-cave-01",
+      "biome": "cave",
+      "tier": 1,
+      "family": "alacrity",
+      "hp": 237.5,
+      "drWork": 257.3099415204679,
+      "h100": 260.130289266077,
+      "E": 24.0,
+      "X": 169.0,
+      "C": 6.25,
+      "colours": {
+        "red": 24.0
+      },
+      "population": 16,
+      "pool": {
+        "cave-lurker": 1,
+        "cave-brute": 1
+      }
+    },
+    {
+      "id": "node-t1-cave-02",
+      "biome": "cave",
+      "tier": 1,
+      "family": "heavy",
+      "hp": 237.5,
+      "drWork": 257.3099415204679,
+      "h100": 260.130289266077,
+      "E": 24.0,
+      "X": 167.0,
+      "C": 6.0,
+      "colours": {
+        "red": 24.0
+      },
+      "population": 16,
+      "pool": {
+        "cave-lurker": 1,
+        "cave-brute": 1
+      }
+    },
+    {
+      "id": "node-t1-cave-03",
+      "biome": "cave",
+      "tier": 1,
+      "family": "swarming",
+      "hp": 237.5,
+      "drWork": 257.3099415204679,
+      "h100": 260.130289266077,
+      "E": 23.0,
+      "X": 162.0,
+      "C": 5.75,
+      "colours": {
+        "red": 23.0
+      },
+      "population": 17,
+      "pool": {
+        "cave-lurker": 1,
+        "cave-brute": 1
+      }
+    },
+    {
+      "id": "node-t1-cave-04",
+      "biome": "cave",
+      "tier": 1,
+      "family": "dominion",
+      "hp": 249.5,
+      "drWork": 277.2529614634878,
+      "h100": 279.4102948525737,
+      "E": 25.5,
+      "X": 176.0,
+      "C": 6.25,
+      "colours": {
+        "red": 25.5
+      },
+      "population": 15,
+      "pool": {
+        "cave-lurker": 1,
+        "cave-brute": 1
+      }
+    },
+    {
+      "id": "node-t1-cave-05",
+      "biome": "cave",
+      "tier": 1,
+      "family": "fortified",
+      "hp": 237.5,
+      "drWork": 270.8525700215451,
+      "h100": 273.4633179114343,
+      "E": 24.5,
+      "X": 169.0,
+      "C": 6.25,
+      "colours": {
+        "red": 24.5
+      },
+      "population": 16,
+      "pool": {
+        "cave-lurker": 1,
+        "cave-brute": 1
+      }
+    },
+    {
+      "id": "node-t1-cave-06",
+      "biome": "cave",
+      "tier": 1,
+      "family": "dominion",
+      "hp": 249.5,
+      "drWork": 277.2529614634878,
+      "h100": 279.4102948525737,
+      "E": 25.5,
+      "X": 176.0,
+      "C": 6.25,
+      "colours": {
+        "red": 25.5
+      },
+      "population": 15,
+      "pool": {
+        "cave-lurker": 1,
+        "cave-brute": 1
+      }
+    },
+    {
+      "id": "node-t1-forest-01",
+      "biome": "forest",
+      "tier": 1,
+      "family": "alacrity",
+      "hp": 107.5,
+      "drWork": 107.5,
+      "h100": 107.5,
+      "E": 5.5,
+      "X": 35.5,
+      "C": 1.375,
+      "colours": {
+        "green": 5.5
+      },
+      "population": 36,
+      "pool": {
+        "forest-slime": 1,
+        "wolf": 1,
+        "young-wolf": 2
+      }
+    },
+    {
+      "id": "node-t1-forest-02",
+      "biome": "forest",
+      "tier": 1,
+      "family": "swarming",
+      "hp": 107.5,
+      "drWork": 107.5,
+      "h100": 107.5,
+      "E": 5.5,
+      "X": 33.5,
+      "C": 1.375,
+      "colours": {
+        "green": 5.5
+      },
+      "population": 39,
+      "pool": {
+        "forest-slime": 1,
+        "wolf": 1,
+        "young-wolf": 2
+      }
+    },
+    {
+      "id": "node-t1-forest-03",
+      "biome": "forest",
+      "tier": 1,
+      "family": "dominion",
+      "hp": 113.25,
+      "drWork": 116.15384615384616,
+      "h100": 115.5612244897959,
+      "E": 6.0,
+      "X": 37.0,
+      "C": 1.375,
+      "colours": {
+        "green": 6.0
+      },
+      "population": 34,
+      "pool": {
+        "forest-slime": 1,
+        "wolf": 1,
+        "young-wolf": 2
+      }
+    },
+    {
+      "id": "node-t1-forest-04",
+      "biome": "forest",
+      "tier": 1,
+      "family": "fortified",
+      "hp": 107.5,
+      "drWork": 113.15789473684211,
+      "h100": 113.15789473684211,
+      "E": 5.5,
+      "X": 36.0,
+      "C": 1.375,
+      "colours": {
+        "green": 5.5
+      },
+      "population": 36,
+      "pool": {
+        "forest-slime": 1,
+        "wolf": 1,
+        "young-wolf": 2
+      }
+    },
+    {
+      "id": "node-t1-forest-05",
+      "biome": "forest",
+      "tier": 1,
+      "family": "alacrity",
+      "hp": 107.5,
+      "drWork": 107.5,
+      "h100": 107.5,
+      "E": 5.5,
+      "X": 35.5,
+      "C": 1.375,
+      "colours": {
+        "green": 5.5
+      },
+      "population": 36,
+      "pool": {
+        "forest-slime": 1,
+        "wolf": 1,
+        "young-wolf": 2
+      }
+    },
+    {
+      "id": "node-t1-plains-01",
+      "biome": "plains",
+      "tier": 1,
+      "family": "alacrity",
+      "hp": 75.0,
+      "drWork": 75.0,
+      "h100": 75.0,
+      "E": 5.0,
+      "X": 30.0,
+      "C": 1.25,
+      "colours": {
+        "yellow": 5.0
+      },
+      "population": 48,
+      "pool": {
+        "plains-slime": 1,
+        "boar": 1
+      }
+    },
+    {
+      "id": "node-t1-plains-02",
+      "biome": "plains",
+      "tier": 1,
+      "family": "heavy",
+      "hp": 75.0,
+      "drWork": 75.0,
+      "h100": 75.0,
+      "E": 5.0,
+      "X": 29.0,
+      "C": 1.25,
+      "colours": {
+        "yellow": 5.0
+      },
+      "population": 48,
+      "pool": {
+        "plains-slime": 1,
+        "boar": 1
+      }
+    },
+    {
+      "id": "node-t1-plains-03",
+      "biome": "plains",
+      "tier": 1,
+      "family": "swarming",
+      "hp": 75.0,
+      "drWork": 75.0,
+      "h100": 75.0,
+      "E": 5.0,
+      "X": 28.0,
+      "C": 1.25,
+      "colours": {
+        "yellow": 5.0
+      },
+      "population": 52,
+      "pool": {
+        "plains-slime": 1,
+        "boar": 1
+      }
+    },
+    {
+      "id": "node-t1-plains-04",
+      "biome": "plains",
+      "tier": 1,
+      "family": "dominion",
+      "hp": 79.0,
+      "drWork": 81.02564102564102,
+      "h100": 80.61224489795919,
+      "E": 5.5,
+      "X": 31.0,
+      "C": 1.25,
+      "colours": {
+        "yellow": 5.5
+      },
+      "population": 46,
+      "pool": {
+        "plains-slime": 1,
+        "boar": 1
+      }
+    },
+    {
+      "id": "node-t1-plains-05",
+      "biome": "plains",
+      "tier": 1,
+      "family": "fortified",
+      "hp": 75.0,
+      "drWork": 78.94736842105263,
+      "h100": 78.94736842105263,
+      "E": 5.0,
+      "X": 30.0,
+      "C": 1.25,
+      "colours": {
+        "yellow": 5.0
+      },
+      "population": 48,
+      "pool": {
+        "plains-slime": 1,
+        "boar": 1
+      }
+    },
+    {
+      "id": "node-t1-swamp-01",
+      "biome": "swamp",
+      "tier": 1,
+      "family": "alacrity",
+      "hp": 130.0,
+      "drWork": 130.0,
+      "h100": 131.22448979591837,
+      "E": 12.0,
+      "X": 81.0,
+      "C": 2.75,
+      "colours": {
+        "purple": 12.0
+      },
+      "population": 20,
+      "pool": {
+        "bog-slime": 1,
+        "mud-toad": 1
+      }
+    },
+    {
+      "id": "node-t1-swamp-02",
+      "biome": "swamp",
+      "tier": 1,
+      "family": "heavy",
+      "hp": 130.0,
+      "drWork": 130.0,
+      "h100": 131.22448979591837,
+      "E": 11.0,
+      "X": 80.0,
+      "C": 2.75,
+      "colours": {
+        "purple": 11.0
+      },
+      "population": 20,
+      "pool": {
+        "bog-slime": 1,
+        "mud-toad": 1
+      }
+    },
+    {
+      "id": "node-t1-swamp-03",
+      "biome": "swamp",
+      "tier": 1,
+      "family": "swarming",
+      "hp": 130.0,
+      "drWork": 130.0,
+      "h100": 131.22448979591837,
+      "E": 11.0,
+      "X": 77.0,
+      "C": 2.75,
+      "colours": {
+        "purple": 11.0
+      },
+      "population": 22,
+      "pool": {
+        "bog-slime": 1,
+        "mud-toad": 1
+      }
+    },
+    {
+      "id": "node-t1-swamp-04",
+      "biome": "swamp",
+      "tier": 1,
+      "family": "dominion",
+      "hp": 136.5,
+      "drWork": 140.0,
+      "h100": 140.625,
+      "E": 12.0,
+      "X": 85.0,
+      "C": 3.25,
+      "colours": {
+        "purple": 12.0
+      },
+      "population": 19,
+      "pool": {
+        "bog-slime": 1,
+        "mud-toad": 1
+      }
+    },
+    {
+      "id": "node-t1-swamp-05",
+      "biome": "swamp",
+      "tier": 1,
+      "family": "fortified",
+      "hp": 130.0,
+      "drWork": 136.84210526315792,
+      "h100": 138.20033955857386,
+      "E": 12.0,
+      "X": 82.0,
+      "C": 2.75,
+      "colours": {
+        "purple": 12.0
+      },
+      "population": 20,
+      "pool": {
+        "bog-slime": 1,
+        "mud-toad": 1
+      }
+    },
+    {
+      "id": "node-t1-swamp-06",
+      "biome": "swamp",
+      "tier": 1,
+      "family": "fortified",
+      "hp": 130.0,
+      "drWork": 136.84210526315792,
+      "h100": 138.20033955857386,
+      "E": 12.0,
+      "X": 82.0,
+      "C": 2.75,
+      "colours": {
+        "purple": 12.0
+      },
+      "population": 20,
+      "pool": {
+        "bog-slime": 1,
+        "mud-toad": 1
+      }
+    },
+    {
+      "id": "node-t2-forest-01",
+      "biome": "forest",
+      "tier": 2,
+      "family": "alacrity",
+      "hp": 547.5,
+      "drWork": 547.5,
+      "h100": 547.5,
+      "E": 52.49999999999999,
+      "X": 313.3333333333333,
+      "C": 6.5,
+      "colours": {
+        "green": 52.49999999999999
+      },
+      "population": 36,
+      "pool": {
+        "ancient-wolf": 1,
+        "dire-whelp": 3,
+        "ironwood-golem": 1,
+        "canopy-sprite": 1
+      }
+    },
+    {
+      "id": "node-t2-forest-02",
+      "biome": "forest",
+      "tier": 2,
+      "family": "swarming",
+      "hp": 547.5,
+      "drWork": 547.5,
+      "h100": 547.5,
+      "E": 48.666666666666664,
+      "X": 288.0,
+      "C": 6.0,
+      "colours": {
+        "green": 48.666666666666664
+      },
+      "population": 40,
+      "pool": {
+        "ancient-wolf": 1,
+        "dire-whelp": 3,
+        "ironwood-golem": 1,
+        "canopy-sprite": 1
+      }
+    },
+    {
+      "id": "node-t2-forest-03",
+      "biome": "forest",
+      "tier": 2,
+      "family": "dominion",
+      "hp": 602.6666666666666,
+      "drWork": 634.3859649122808,
+      "h100": 634.3859649122805,
+      "E": 57.66666666666666,
+      "X": 341.3333333333333,
+      "C": 7.499999999999999,
+      "colours": {
+        "green": 57.66666666666666
+      },
+      "population": 33,
+      "pool": {
+        "ancient-wolf": 1,
+        "dire-whelp": 3,
+        "ironwood-golem": 1,
+        "canopy-sprite": 1
+      }
+    },
+    {
+      "id": "node-t2-forest-04",
+      "biome": "forest",
+      "tier": 2,
+      "family": "fortified",
+      "hp": 547.5,
+      "drWork": 608.3333333333333,
+      "h100": 608.3333333333333,
+      "E": 54.0,
+      "X": 322.66666666666663,
+      "C": 6.5,
+      "colours": {
+        "green": 54.0
+      },
+      "population": 36,
+      "pool": {
+        "ancient-wolf": 1,
+        "dire-whelp": 3,
+        "ironwood-golem": 1,
+        "canopy-sprite": 1
+      }
+    },
+    {
+      "id": "node-t2-forest-05",
+      "biome": "forest",
+      "tier": 2,
+      "family": "alacrity",
+      "hp": 547.5,
+      "drWork": 547.5,
+      "h100": 547.5,
+      "E": 52.49999999999999,
+      "X": 313.3333333333333,
+      "C": 6.5,
+      "colours": {
+        "green": 52.49999999999999
+      },
+      "population": 36,
+      "pool": {
+        "ancient-wolf": 1,
+        "dire-whelp": 3,
+        "ironwood-golem": 1,
+        "canopy-sprite": 1
+      }
+    },
+    {
+      "id": "node-t2-plains-01",
+      "biome": "plains",
+      "tier": 2,
+      "family": "alacrity",
+      "hp": 232.49999999999997,
+      "drWork": 236.8421052631579,
+      "h100": 236.8421052631579,
+      "E": 42.5,
+      "X": 246.66666666666666,
+      "C": 5.333333333333333,
+      "colours": {
+        "yellow": 42.5
+      },
+      "population": 48,
+      "pool": {
+        "stampede-bull": 1,
+        "prairie-wolf": 1,
+        "prairie-yearling": 3,
+        "savanna-hawk": 1
+      }
+    },
+    {
+      "id": "node-t2-plains-02",
+      "biome": "plains",
+      "tier": 2,
+      "family": "heavy",
+      "hp": 232.49999999999997,
+      "drWork": 236.8421052631579,
+      "h100": 236.8421052631579,
+      "E": 41.666666666666664,
+      "X": 238.66666666666666,
+      "C": 5.166666666666666,
+      "colours": {
+        "yellow": 41.666666666666664
+      },
+      "population": 48,
+      "pool": {
+        "stampede-bull": 1,
+        "prairie-wolf": 1,
+        "prairie-yearling": 3,
+        "savanna-hawk": 1
+      }
+    },
+    {
+      "id": "node-t2-plains-03",
+      "biome": "plains",
+      "tier": 2,
+      "family": "swarming",
+      "hp": 232.49999999999997,
+      "drWork": 236.8421052631579,
+      "h100": 236.8421052631579,
+      "E": 39.166666666666664,
+      "X": 226.66666666666666,
+      "C": 4.833333333333333,
+      "colours": {
+        "yellow": 39.166666666666664
+      },
+      "population": 54,
+      "pool": {
+        "stampede-bull": 1,
+        "prairie-wolf": 1,
+        "prairie-yearling": 3,
+        "savanna-hawk": 1
+      }
+    },
+    {
+      "id": "node-t2-plains-04",
+      "biome": "plains",
+      "tier": 2,
+      "family": "dominion",
+      "hp": 255.83333333333331,
+      "drWork": 274.33056325023085,
+      "h100": 274.6101364522417,
+      "E": 46.49999999999999,
+      "X": 269.3333333333333,
+      "C": 5.833333333333333,
+      "colours": {
+        "yellow": 46.49999999999999
+      },
+      "population": 44,
+      "pool": {
+        "stampede-bull": 1,
+        "prairie-wolf": 1,
+        "prairie-yearling": 3,
+        "savanna-hawk": 1
+      }
+    },
+    {
+      "id": "node-t2-plains-05",
+      "biome": "plains",
+      "tier": 2,
+      "family": "fortified",
+      "hp": 232.49999999999997,
+      "drWork": 263.1578947368421,
+      "h100": 262.5968992248062,
+      "E": 43.5,
+      "X": 250.66666666666663,
+      "C": 5.333333333333333,
+      "colours": {
+        "yellow": 43.5
+      },
+      "population": 48,
+      "pool": {
+        "stampede-bull": 1,
+        "prairie-wolf": 1,
+        "prairie-yearling": 3,
+        "savanna-hawk": 1
+      }
+    },
+    {
+      "id": "node-t2-mountain-01",
+      "biome": "mountain",
+      "tier": 2,
+      "family": "heavy",
+      "hp": 793.6666666666667,
+      "drWork": 793.6666666666667,
+      "h100": 793.6666666666667,
+      "E": 112.33333333333333,
+      "X": 640.0,
+      "C": 13.999999999999998,
+      "colours": {
+        "blue": 112.33333333333333
+      },
+      "population": 24,
+      "pool": {
+        "granite-titan": 1,
+        "stone-eagle": 1,
+        "peak-archer": 1
+      }
+    },
+    {
+      "id": "node-t2-mountain-02",
+      "biome": "mountain",
+      "tier": 2,
+      "family": "swarming",
+      "hp": 793.6666666666667,
+      "drWork": 793.6666666666667,
+      "h100": 793.6666666666667,
+      "E": 105.99999999999999,
+      "X": 608.0,
+      "C": 13.0,
+      "colours": {
+        "blue": 105.99999999999999
+      },
+      "population": 27,
+      "pool": {
+        "granite-titan": 1,
+        "stone-eagle": 1,
+        "peak-archer": 1
+      }
+    },
+    {
+      "id": "node-t2-mountain-03",
+      "biome": "mountain",
+      "tier": 2,
+      "family": "dominion",
+      "hp": 873.3333333333333,
+      "drWork": 919.2982456140351,
+      "h100": 919.2982456140351,
+      "E": 124.66666666666666,
+      "X": 714.6666666666666,
+      "C": 15.666666666666664,
+      "colours": {
+        "blue": 124.66666666666666
+      },
+      "population": 22,
+      "pool": {
+        "granite-titan": 1,
+        "stone-eagle": 1,
+        "peak-archer": 1
+      }
+    },
+    {
+      "id": "node-t2-mountain-04",
+      "biome": "mountain",
+      "tier": 2,
+      "family": "fortified",
+      "hp": 793.6666666666667,
+      "drWork": 881.8518518518517,
+      "h100": 881.8518518518517,
+      "E": 117.66666666666666,
+      "X": 672.0,
+      "C": 15.0,
+      "colours": {
+        "blue": 117.66666666666666
+      },
+      "population": 24,
+      "pool": {
+        "granite-titan": 1,
+        "stone-eagle": 1,
+        "peak-archer": 1
+      }
+    },
+    {
+      "id": "node-t2-mountain-05",
+      "biome": "mountain",
+      "tier": 2,
+      "family": "heavy",
+      "hp": 793.6666666666667,
+      "drWork": 793.6666666666667,
+      "h100": 793.6666666666667,
+      "E": 112.33333333333333,
+      "X": 640.0,
+      "C": 13.999999999999998,
+      "colours": {
+        "blue": 112.33333333333333
+      },
+      "population": 24,
+      "pool": {
+        "granite-titan": 1,
+        "stone-eagle": 1,
+        "peak-archer": 1
+      }
+    },
+    {
+      "id": "node-t2-cave-01",
+      "biome": "cave",
+      "tier": 2,
+      "family": "alacrity",
+      "hp": 783.0,
+      "drWork": 989.816933638444,
+      "h100": 997.262386003151,
+      "E": 164.0,
+      "X": 970.6666666666665,
+      "C": 20.666666666666664,
+      "colours": {
+        "red": 164.0
+      },
+      "population": 16,
+      "pool": {
+        "giant-spider": 1,
+        "cave-troll": 1,
+        "cave-gargoyle": 1
+      }
+    },
+    {
+      "id": "node-t2-cave-02",
+      "biome": "cave",
+      "tier": 2,
+      "family": "heavy",
+      "hp": 783.0,
+      "drWork": 989.816933638444,
+      "h100": 997.262386003151,
+      "E": 161.66666666666666,
+      "X": 952.0,
+      "C": 19.999999999999996,
+      "colours": {
+        "red": 161.66666666666666
+      },
+      "population": 16,
+      "pool": {
+        "giant-spider": 1,
+        "cave-troll": 1,
+        "cave-gargoyle": 1
+      }
+    },
+    {
+      "id": "node-t2-cave-03",
+      "biome": "cave",
+      "tier": 2,
+      "family": "swarming",
+      "hp": 783.0,
+      "drWork": 989.816933638444,
+      "h100": 997.262386003151,
+      "E": 152.33333333333331,
+      "X": 898.6666666666666,
+      "C": 18.666666666666664,
+      "colours": {
+        "red": 152.33333333333331
+      },
+      "population": 18,
+      "pool": {
+        "giant-spider": 1,
+        "cave-troll": 1,
+        "cave-gargoyle": 1
+      }
+    },
+    {
+      "id": "node-t2-cave-04",
+      "biome": "cave",
+      "tier": 2,
+      "family": "dominion",
+      "hp": 861.3333333333333,
+      "drWork": 1146.0977959773575,
+      "h100": 1160.2165209530067,
+      "E": 179.33333333333331,
+      "X": 1056.0,
+      "C": 22.666666666666664,
+      "colours": {
+        "red": 179.33333333333331
+      },
+      "population": 15,
+      "pool": {
+        "giant-spider": 1,
+        "cave-troll": 1,
+        "cave-gargoyle": 1
+      }
+    },
+    {
+      "id": "node-t2-cave-05",
+      "biome": "cave",
+      "tier": 2,
+      "family": "fortified",
+      "hp": 783.0,
+      "drWork": 1099.7965929316042,
+      "h100": 1103.3073470351997,
+      "E": 169.0,
+      "X": 994.6666666666665,
+      "C": 21.0,
+      "colours": {
+        "red": 169.0
+      },
+      "population": 16,
+      "pool": {
+        "giant-spider": 1,
+        "cave-troll": 1,
+        "cave-gargoyle": 1
+      }
+    },
+    {
+      "id": "node-t2-cave-06",
+      "biome": "cave",
+      "tier": 2,
+      "family": "dominion",
+      "hp": 861.3333333333333,
+      "drWork": 1146.0977959773575,
+      "h100": 1160.2165209530067,
+      "E": 179.33333333333331,
+      "X": 1056.0,
+      "C": 22.666666666666664,
+      "colours": {
+        "red": 179.33333333333331
+      },
+      "population": 15,
+      "pool": {
+        "giant-spider": 1,
+        "cave-troll": 1,
+        "cave-gargoyle": 1
+      }
+    },
+    {
+      "id": "node-t2-swamp-01",
+      "biome": "swamp",
+      "tier": 2,
+      "family": "alacrity",
+      "hp": 391.66666666666663,
+      "drWork": 391.66666666666663,
+      "h100": 406.13475177304963,
+      "E": 105.66666666666666,
+      "X": 602.6666666666666,
+      "C": 12.999999999999998,
+      "colours": {
+        "purple": 105.66666666666666
+      },
+      "population": 20,
+      "pool": {
+        "swamp-hydra": 1,
+        "bog-witch": 1,
+        "mire-stalker": 1
+      }
+    },
+    {
+      "id": "node-t2-swamp-02",
+      "biome": "swamp",
+      "tier": 2,
+      "family": "heavy",
+      "hp": 391.66666666666663,
+      "drWork": 391.66666666666663,
+      "h100": 406.13475177304963,
+      "E": 103.66666666666666,
+      "X": 589.3333333333333,
+      "C": 12.999999999999998,
+      "colours": {
+        "purple": 103.66666666666666
+      },
+      "population": 20,
+      "pool": {
+        "swamp-hydra": 1,
+        "bog-witch": 1,
+        "mire-stalker": 1
+      }
+    },
+    {
+      "id": "node-t2-swamp-03",
+      "biome": "swamp",
+      "tier": 2,
+      "family": "swarming",
+      "hp": 391.66666666666663,
+      "drWork": 391.66666666666663,
+      "h100": 406.13475177304963,
+      "E": 98.0,
+      "X": 557.3333333333333,
+      "C": 12.0,
+      "colours": {
+        "purple": 98.0
+      },
+      "population": 22,
+      "pool": {
+        "swamp-hydra": 1,
+        "bog-witch": 1,
+        "mire-stalker": 1
+      }
+    },
+    {
+      "id": "node-t2-swamp-04",
+      "biome": "swamp",
+      "tier": 2,
+      "family": "dominion",
+      "hp": 431.0,
+      "drWork": 453.6842105263158,
+      "h100": 474.5614035087719,
+      "E": 115.33333333333331,
+      "X": 656.0,
+      "C": 14.333333333333332,
+      "colours": {
+        "purple": 115.33333333333331
+      },
+      "population": 18,
+      "pool": {
+        "swamp-hydra": 1,
+        "bog-witch": 1,
+        "mire-stalker": 1
+      }
+    },
+    {
+      "id": "node-t2-swamp-05",
+      "biome": "swamp",
+      "tier": 2,
+      "family": "fortified",
+      "hp": 391.66666666666663,
+      "drWork": 435.18518518518516,
+      "h100": 453.17460317460313,
+      "E": 108.33333333333333,
+      "X": 618.6666666666666,
+      "C": 13.666666666666666,
+      "colours": {
+        "purple": 108.33333333333333
+      },
+      "population": 20,
+      "pool": {
+        "swamp-hydra": 1,
+        "bog-witch": 1,
+        "mire-stalker": 1
+      }
+    },
+    {
+      "id": "node-t2-swamp-06",
+      "biome": "swamp",
+      "tier": 2,
+      "family": "fortified",
+      "hp": 391.66666666666663,
+      "drWork": 435.18518518518516,
+      "h100": 453.17460317460313,
+      "E": 108.33333333333333,
+      "X": 618.6666666666666,
+      "C": 13.666666666666666,
+      "colours": {
+        "purple": 108.33333333333333
+      },
+      "population": 20,
+      "pool": {
+        "swamp-hydra": 1,
+        "bog-witch": 1,
+        "mire-stalker": 1
+      }
+    },
+    {
+      "id": "node-t2-jungle-01",
+      "biome": "jungle",
+      "tier": 2,
+      "family": "alacrity",
+      "hp": 652.5,
+      "drWork": 652.5,
+      "h100": 652.5,
+      "E": 64.0,
+      "X": 348.0,
+      "C": 8.25,
+      "colours": {
+        "green": 64.0
+      },
+      "population": 40,
+      "pool": {
+        "jungle-snake": 2,
+        "jungle-ape": 1,
+        "jungle-blowdarter": 1
+      }
+    },
+    {
+      "id": "node-t2-jungle-02",
+      "biome": "jungle",
+      "tier": 2,
+      "family": "swarming",
+      "hp": 652.5,
+      "drWork": 652.5,
+      "h100": 652.5,
+      "E": 59.0,
+      "X": 324.0,
+      "C": 7.25,
+      "colours": {
+        "green": 59.0
+      },
+      "population": 45,
+      "pool": {
+        "jungle-snake": 2,
+        "jungle-ape": 1,
+        "jungle-blowdarter": 1
+      }
+    },
+    {
+      "id": "node-t2-jungle-03",
+      "biome": "jungle",
+      "tier": 2,
+      "family": "dominion",
+      "hp": 717.75,
+      "drWork": 755.5263157894738,
+      "h100": 755.5263157894738,
+      "E": 69.5,
+      "X": 382.0,
+      "C": 8.5,
+      "colours": {
+        "green": 69.5
+      },
+      "population": 37,
+      "pool": {
+        "jungle-snake": 2,
+        "jungle-ape": 1,
+        "jungle-blowdarter": 1
+      }
+    },
+    {
+      "id": "node-t2-jungle-04",
+      "biome": "jungle",
+      "tier": 2,
+      "family": "fortified",
+      "hp": 652.5,
+      "drWork": 725.0,
+      "h100": 725.0,
+      "E": 65.25,
+      "X": 358.0,
+      "C": 8.25,
+      "colours": {
+        "green": 65.25
+      },
+      "population": 40,
+      "pool": {
+        "jungle-snake": 2,
+        "jungle-ape": 1,
+        "jungle-blowdarter": 1
+      }
+    },
+    {
+      "id": "node-t2-jungle-05",
+      "biome": "jungle",
+      "tier": 2,
+      "family": "alacrity",
+      "hp": 652.5,
+      "drWork": 652.5,
+      "h100": 652.5,
+      "E": 64.0,
+      "X": 348.0,
+      "C": 8.25,
+      "colours": {
+        "green": 64.0
+      },
+      "population": 40,
+      "pool": {
+        "jungle-snake": 2,
+        "jungle-ape": 1,
+        "jungle-blowdarter": 1
+      }
+    },
+    {
+      "id": "node-t2-desert-01",
+      "biome": "desert",
+      "tier": 2,
+      "family": "heavy",
+      "hp": 877.5,
+      "drWork": 967.3945012787724,
+      "h100": 967.3945012787724,
+      "E": 66.75,
+      "X": 366.0,
+      "C": 8.75,
+      "colours": {
+        "yellow": 66.75
+      },
+      "population": 16,
+      "pool": {
+        "sand-scorpion": 1,
+        "dust-djinn": 2,
+        "stone-basilisk": 1
+      }
+    },
+    {
+      "id": "node-t2-desert-02",
+      "biome": "desert",
+      "tier": 2,
+      "family": "swarming",
+      "hp": 877.5,
+      "drWork": 967.3945012787724,
+      "h100": 967.3945012787724,
+      "E": 63.0,
+      "X": 348.0,
+      "C": 7.75,
+      "colours": {
+        "yellow": 63.0
+      },
+      "population": 18,
+      "pool": {
+        "sand-scorpion": 1,
+        "dust-djinn": 2,
+        "stone-basilisk": 1
+      }
+    },
+    {
+      "id": "node-t2-desert-03",
+      "biome": "desert",
+      "tier": 2,
+      "family": "dominion",
+      "hp": 965.5,
+      "drWork": 1120.4388208372595,
+      "h100": 1120.9789160000896,
+      "E": 74.5,
+      "X": 406.0,
+      "C": 9.5,
+      "colours": {
+        "yellow": 74.5
+      },
+      "population": 15,
+      "pool": {
+        "sand-scorpion": 1,
+        "dust-djinn": 2,
+        "stone-basilisk": 1
+      }
+    },
+    {
+      "id": "node-t2-desert-04",
+      "biome": "desert",
+      "tier": 2,
+      "family": "fortified",
+      "hp": 877.5,
+      "drWork": 1074.882779198636,
+      "h100": 1070.9930631617378,
+      "E": 69.75,
+      "X": 382.0,
+      "C": 8.75,
+      "colours": {
+        "yellow": 69.75
+      },
+      "population": 16,
+      "pool": {
+        "sand-scorpion": 1,
+        "dust-djinn": 2,
+        "stone-basilisk": 1
+      }
+    },
+    {
+      "id": "node-t2-desert-05",
+      "biome": "desert",
+      "tier": 2,
+      "family": "dominion",
+      "hp": 965.5,
+      "drWork": 1120.4388208372595,
+      "h100": 1120.9789160000896,
+      "E": 74.5,
+      "X": 406.0,
+      "C": 9.5,
+      "colours": {
+        "yellow": 74.5
+      },
+      "population": 15,
+      "pool": {
+        "sand-scorpion": 1,
+        "dust-djinn": 2,
+        "stone-basilisk": 1
+      }
+    },
+    {
+      "id": "node-t3-tundra-01",
+      "biome": "tundra",
+      "tier": 3,
+      "family": "heavy",
+      "hp": 1859.9999999999998,
+      "drWork": 2124.1808036550196,
+      "h100": 2124.18080365502,
+      "E": 830.3333333333333,
+      "X": 3740.0,
+      "C": 77.5,
+      "colours": {
+        "blue": 830.3333333333333
+      },
+      "population": 16,
+      "pool": {
+        "frost-lurker": 1,
+        "glacier-bear": 1,
+        "rime-caster": 1
+      }
+    },
+    {
+      "id": "node-t3-tundra-02",
+      "biome": "tundra",
+      "tier": 3,
+      "family": "swarming",
+      "hp": 1859.9999999999998,
+      "drWork": 2124.1808036550196,
+      "h100": 2124.18080365502,
+      "E": 763.6666666666665,
+      "X": 3440.0,
+      "C": 71.5,
+      "colours": {
+        "blue": 763.6666666666665
+      },
+      "population": 19,
+      "pool": {
+        "frost-lurker": 1,
+        "glacier-bear": 1,
+        "rime-caster": 1
+      }
+    },
+    {
+      "id": "node-t3-tundra-03",
+      "biome": "tundra",
+      "tier": 3,
+      "family": "dominion",
+      "hp": 2139.333333333333,
+      "drWork": 2641.283143608725,
+      "h100": 2632.9019017245455,
+      "E": 963.6666666666666,
+      "X": 4344.0,
+      "C": 91.0,
+      "colours": {
+        "blue": 963.6666666666666
+      },
+      "population": 14,
+      "pool": {
+        "frost-lurker": 1,
+        "glacier-bear": 1,
+        "rime-caster": 1
+      }
+    },
+    {
+      "id": "node-t3-tundra-04",
+      "biome": "tundra",
+      "tier": 3,
+      "family": "fortified",
+      "hp": 1859.9999999999998,
+      "drWork": 2499.036239594141,
+      "h100": 2499.652554447075,
+      "E": 882.3333333333333,
+      "X": 3972.0,
+      "C": 83.0,
+      "colours": {
+        "blue": 882.3333333333333
+      },
+      "population": 16,
+      "pool": {
+        "frost-lurker": 1,
+        "glacier-bear": 1,
+        "rime-caster": 1
+      }
+    },
+    {
+      "id": "node-t3-tundra-05",
+      "biome": "tundra",
+      "tier": 3,
+      "family": "heavy",
+      "hp": 1859.9999999999998,
+      "drWork": 2124.1808036550196,
+      "h100": 2124.18080365502,
+      "E": 830.3333333333333,
+      "X": 3740.0,
+      "C": 77.5,
+      "colours": {
+        "blue": 830.3333333333333
+      },
+      "population": 16,
+      "pool": {
+        "frost-lurker": 1,
+        "glacier-bear": 1,
+        "rime-caster": 1
+      }
+    },
+    {
+      "id": "node-t3-mountain-01",
+      "biome": "mountain",
+      "tier": 3,
+      "family": "heavy",
+      "hp": 1989.9999999999998,
+      "drWork": 1989.9999999999998,
+      "h100": 1989.9999999999998,
+      "E": 1087.0,
+      "X": 4840.0,
+      "C": 102.0,
+      "colours": {
+        "blue": 1087.0
+      },
+      "population": 24,
+      "pool": {
+        "mountain-colossus": 1,
+        "avalanche-ram": 1,
+        "crag-mortar": 1
+      }
+    },
+    {
+      "id": "node-t3-mountain-02",
+      "biome": "mountain",
+      "tier": 3,
+      "family": "swarming",
+      "hp": 1989.9999999999998,
+      "drWork": 1989.9999999999998,
+      "h100": 1989.9999999999998,
+      "E": 999.9999999999999,
+      "X": 4448.0,
+      "C": 93.5,
+      "colours": {
+        "blue": 999.9999999999999
+      },
+      "population": 28,
+      "pool": {
+        "mountain-colossus": 1,
+        "avalanche-ram": 1,
+        "crag-mortar": 1
+      }
+    },
+    {
+      "id": "node-t3-mountain-03",
+      "biome": "mountain",
+      "tier": 3,
+      "family": "dominion",
+      "hp": 2288.6666666666665,
+      "drWork": 2474.234234234234,
+      "h100": 2460.931899641577,
+      "E": 1262.0,
+      "X": 5616.0,
+      "C": 118.5,
+      "colours": {
+        "blue": 1262.0
+      },
+      "population": 21,
+      "pool": {
+        "mountain-colossus": 1,
+        "avalanche-ram": 1,
+        "crag-mortar": 1
+      }
+    },
+    {
+      "id": "node-t3-mountain-04",
+      "biome": "mountain",
+      "tier": 3,
+      "family": "fortified",
+      "hp": 1989.9999999999998,
+      "drWork": 2341.176470588235,
+      "h100": 2341.176470588235,
+      "E": 1155.0,
+      "X": 5140.0,
+      "C": 108.0,
+      "colours": {
+        "blue": 1155.0
+      },
+      "population": 24,
+      "pool": {
+        "mountain-colossus": 1,
+        "avalanche-ram": 1,
+        "crag-mortar": 1
+      }
+    },
+    {
+      "id": "node-t3-mountain-05",
+      "biome": "mountain",
+      "tier": 3,
+      "family": "heavy",
+      "hp": 1989.9999999999998,
+      "drWork": 1989.9999999999998,
+      "h100": 1989.9999999999998,
+      "E": 1087.0,
+      "X": 4840.0,
+      "C": 102.0,
+      "colours": {
+        "blue": 1087.0
+      },
+      "population": 24,
+      "pool": {
+        "mountain-colossus": 1,
+        "avalanche-ram": 1,
+        "crag-mortar": 1
+      }
+    },
+    {
+      "id": "node-t3-cave-01",
+      "biome": "cave",
+      "tier": 3,
+      "family": "alacrity",
+      "hp": 2011.6666666666665,
+      "drWork": 2654.1285278413425,
+      "h100": 2687.5513022631626,
+      "E": 1214.3333333333333,
+      "X": 5472.0,
+      "C": 113.5,
+      "colours": {
+        "red": 1214.3333333333333
+      },
+      "population": 16,
+      "pool": {
+        "deep-spider": 1,
+        "cavern-troll": 1,
+        "crystal-gargoyle": 1
+      }
+    },
+    {
+      "id": "node-t3-cave-02",
+      "biome": "cave",
+      "tier": 3,
+      "family": "heavy",
+      "hp": 2011.6666666666665,
+      "drWork": 2654.1285278413425,
+      "h100": 2687.5513022631626,
+      "E": 1182.6666666666665,
+      "X": 5332.0,
+      "C": 111.0,
+      "colours": {
+        "red": 1182.6666666666665
+      },
+      "population": 16,
+      "pool": {
+        "deep-spider": 1,
+        "cavern-troll": 1,
+        "crystal-gargoyle": 1
+      }
+    },
+    {
+      "id": "node-t3-cave-03",
+      "biome": "cave",
+      "tier": 3,
+      "family": "swarming",
+      "hp": 2011.6666666666665,
+      "drWork": 2654.1285278413425,
+      "h100": 2687.5513022631626,
+      "E": 1087.6666666666665,
+      "X": 4904.0,
+      "C": 102.0,
+      "colours": {
+        "red": 1087.6666666666665
+      },
+      "population": 19,
+      "pool": {
+        "deep-spider": 1,
+        "cavern-troll": 1,
+        "crystal-gargoyle": 1
+      }
+    },
+    {
+      "id": "node-t3-cave-04",
+      "biome": "cave",
+      "tier": 3,
+      "family": "dominion",
+      "hp": 2313.6666666666665,
+      "drWork": 3300.048332084945,
+      "h100": 3370.389903087672,
+      "E": 1372.6666666666665,
+      "X": 6188.0,
+      "C": 129.0,
+      "colours": {
+        "red": 1372.6666666666665
+      },
+      "population": 14,
+      "pool": {
+        "deep-spider": 1,
+        "cavern-troll": 1,
+        "crystal-gargoyle": 1
+      }
+    },
+    {
+      "id": "node-t3-cave-05",
+      "biome": "cave",
+      "tier": 3,
+      "family": "fortified",
+      "hp": 2011.6666666666665,
+      "drWork": 3122.5041504015794,
+      "h100": 3221.8419527741557,
+      "E": 1256.3333333333333,
+      "X": 5664.0,
+      "C": 117.5,
+      "colours": {
+        "red": 1256.3333333333333
+      },
+      "population": 16,
+      "pool": {
+        "deep-spider": 1,
+        "cavern-troll": 1,
+        "crystal-gargoyle": 1
+      }
+    },
+    {
+      "id": "node-t3-cave-06",
+      "biome": "cave",
+      "tier": 3,
+      "family": "dominion",
+      "hp": 2313.6666666666665,
+      "drWork": 3300.048332084945,
+      "h100": 3370.389903087672,
+      "E": 1372.6666666666665,
+      "X": 6188.0,
+      "C": 129.0,
+      "colours": {
+        "red": 1372.6666666666665
+      },
+      "population": 14,
+      "pool": {
+        "deep-spider": 1,
+        "cavern-troll": 1,
+        "crystal-gargoyle": 1
+      }
+    },
+    {
+      "id": "node-t3-jungle-01",
+      "biome": "jungle",
+      "tier": 3,
+      "family": "alacrity",
+      "hp": 1866.6666666666663,
+      "drWork": 1866.6666666666663,
+      "h100": 1866.6666666666663,
+      "E": 533.6666666666666,
+      "X": 2416.0,
+      "C": 50.0,
+      "colours": {
+        "green": 533.6666666666666
+      },
+      "population": 40,
+      "pool": {
+        "jungle-stalker": 1,
+        "silverback": 1,
+        "canopy-harrier": 1
+      }
+    },
+    {
+      "id": "node-t3-jungle-02",
+      "biome": "jungle",
+      "tier": 3,
+      "family": "swarming",
+      "hp": 1866.6666666666663,
+      "drWork": 1866.6666666666663,
+      "h100": 1866.6666666666663,
+      "E": 477.99999999999994,
+      "X": 2164.0,
+      "C": 45.0,
+      "colours": {
+        "green": 477.99999999999994
+      },
+      "population": 46,
+      "pool": {
+        "jungle-stalker": 1,
+        "silverback": 1,
+        "canopy-harrier": 1
+      }
+    },
+    {
+      "id": "node-t3-jungle-03",
+      "biome": "jungle",
+      "tier": 3,
+      "family": "dominion",
+      "hp": 2147.0,
+      "drWork": 2321.081081081081,
+      "h100": 2308.6021505376343,
+      "E": 603.3333333333333,
+      "X": 2732.0,
+      "C": 57.0,
+      "colours": {
+        "green": 603.3333333333333
+      },
+      "population": 35,
+      "pool": {
+        "jungle-stalker": 1,
+        "silverback": 1,
+        "canopy-harrier": 1
+      }
+    },
+    {
+      "id": "node-t3-jungle-04",
+      "biome": "jungle",
+      "tier": 3,
+      "family": "fortified",
+      "hp": 1866.6666666666663,
+      "drWork": 2196.078431372549,
+      "h100": 2196.078431372549,
+      "E": 552.0,
+      "X": 2500.0,
+      "C": 52.0,
+      "colours": {
+        "green": 552.0
+      },
+      "population": 40,
+      "pool": {
+        "jungle-stalker": 1,
+        "silverback": 1,
+        "canopy-harrier": 1
+      }
+    },
+    {
+      "id": "node-t3-jungle-05",
+      "biome": "jungle",
+      "tier": 3,
+      "family": "alacrity",
+      "hp": 1866.6666666666663,
+      "drWork": 1866.6666666666663,
+      "h100": 1866.6666666666663,
+      "E": 533.6666666666666,
+      "X": 2416.0,
+      "C": 50.0,
+      "colours": {
+        "green": 533.6666666666666
+      },
+      "population": 40,
+      "pool": {
+        "jungle-stalker": 1,
+        "silverback": 1,
+        "canopy-harrier": 1
+      }
+    },
+    {
+      "id": "node-t3-desert-01",
+      "biome": "desert",
+      "tier": 3,
+      "family": "heavy",
+      "hp": 2280.0,
+      "drWork": 2546.719948849105,
+      "h100": 2546.719948849105,
+      "E": 757.0,
+      "X": 3426.0,
+      "C": 71.25,
+      "colours": {
+        "yellow": 757.0
+      },
+      "population": 16,
+      "pool": {
+        "dune-stalker": 1,
+        "sandweaver": 2,
+        "desert-basilisk": 1
+      }
+    },
+    {
+      "id": "node-t3-desert-02",
+      "biome": "desert",
+      "tier": 3,
+      "family": "swarming",
+      "hp": 2280.0,
+      "drWork": 2546.719948849105,
+      "h100": 2546.719948849105,
+      "E": 696.5,
+      "X": 3153.0,
+      "C": 64.875,
+      "colours": {
+        "yellow": 696.5
+      },
+      "population": 19,
+      "pool": {
+        "dune-stalker": 1,
+        "sandweaver": 2,
+        "desert-basilisk": 1
+      }
+    },
+    {
+      "id": "node-t3-desert-03",
+      "biome": "desert",
+      "tier": 3,
+      "family": "dominion",
+      "hp": 2622.5,
+      "drWork": 3166.7685076380726,
+      "h100": 3159.6420307608546,
+      "E": 879.0,
+      "X": 3981.0,
+      "C": 82.5,
+      "colours": {
+        "yellow": 879.0
+      },
+      "population": 14,
+      "pool": {
+        "dune-stalker": 1,
+        "sandweaver": 2,
+        "desert-basilisk": 1
+      }
+    },
+    {
+      "id": "node-t3-desert-04",
+      "biome": "desert",
+      "tier": 3,
+      "family": "fortified",
+      "hp": 2280.0,
+      "drWork": 2996.1411162930644,
+      "h100": 3004.326923076923,
+      "E": 804.5,
+      "X": 3639.0,
+      "C": 75.75,
+      "colours": {
+        "yellow": 804.5
+      },
+      "population": 16,
+      "pool": {
+        "dune-stalker": 1,
+        "sandweaver": 2,
+        "desert-basilisk": 1
+      }
+    },
+    {
+      "id": "node-t3-desert-05",
+      "biome": "desert",
+      "tier": 3,
+      "family": "dominion",
+      "hp": 2622.5,
+      "drWork": 3166.7685076380726,
+      "h100": 3159.6420307608546,
+      "E": 879.0,
+      "X": 3981.0,
+      "C": 82.5,
+      "colours": {
+        "yellow": 879.0
+      },
+      "population": 14,
+      "pool": {
+        "dune-stalker": 1,
+        "sandweaver": 2,
+        "desert-basilisk": 1
+      }
+    },
+    {
+      "id": "node-t3-volcanic-01",
+      "biome": "volcanic",
+      "tier": 3,
+      "family": "alacrity",
+      "hp": 1025.0,
+      "drWork": 1025.0,
+      "h100": 1052.4953538116276,
+      "E": 518.3333333333333,
+      "X": 2344.0,
+      "C": 48.75,
+      "colours": {
+        "red": 518.3333333333333
+      },
+      "population": 36,
+      "pool": {
+        "ember-scuttler": 8.0,
+        "cinder-hound": 1,
+        "ash-slinger": 2.0,
+        "magma-brute": 1
+      }
+    },
+    {
+      "id": "node-t3-volcanic-02",
+      "biome": "volcanic",
+      "tier": 3,
+      "family": "heavy",
+      "hp": 1025.0,
+      "drWork": 1025.0,
+      "h100": 1052.4953538116276,
+      "E": 504.83333333333326,
+      "X": 2280.0,
+      "C": 47.25,
+      "colours": {
+        "red": 504.83333333333326
+      },
+      "population": 36,
+      "pool": {
+        "ember-scuttler": 8.0,
+        "cinder-hound": 1,
+        "ash-slinger": 2.0,
+        "magma-brute": 1
+      }
+    },
+    {
+      "id": "node-t3-volcanic-03",
+      "biome": "volcanic",
+      "tier": 3,
+      "family": "swarming",
+      "hp": 1025.0,
+      "drWork": 1025.0,
+      "h100": 1052.4953538116276,
+      "E": 464.16666666666663,
+      "X": 2100.0,
+      "C": 43.875,
+      "colours": {
+        "red": 464.16666666666663
+      },
+      "population": 42,
+      "pool": {
+        "ember-scuttler": 8.0,
+        "cinder-hound": 1,
+        "ash-slinger": 2.0,
+        "magma-brute": 1
+      }
+    },
+    {
+      "id": "node-t3-volcanic-04",
+      "biome": "volcanic",
+      "tier": 3,
+      "family": "dominion",
+      "hp": 1178.3333333333333,
+      "drWork": 1273.8738738738737,
+      "h100": 1307.327256077256,
+      "E": 585.9166666666666,
+      "X": 2647.0,
+      "C": 55.5,
+      "colours": {
+        "red": 585.9166666666666
+      },
+      "population": 32,
+      "pool": {
+        "ember-scuttler": 8.0,
+        "cinder-hound": 1,
+        "ash-slinger": 2.0,
+        "magma-brute": 1
+      }
+    },
+    {
+      "id": "node-t3-volcanic-05",
+      "biome": "volcanic",
+      "tier": 3,
+      "family": "fortified",
+      "hp": 1025.0,
+      "drWork": 1205.8823529411766,
+      "h100": 1253.7639265281541,
+      "E": 536.25,
+      "X": 2425.0,
+      "C": 50.5,
+      "colours": {
+        "red": 536.25
+      },
+      "population": 36,
+      "pool": {
+        "ember-scuttler": 8.0,
+        "cinder-hound": 1,
+        "ash-slinger": 2.0,
+        "magma-brute": 1
+      }
+    },
+    {
+      "id": "node-t3-volcanic-06",
+      "biome": "volcanic",
+      "tier": 3,
+      "family": "swarming",
+      "hp": 1025.0,
+      "drWork": 1025.0,
+      "h100": 1052.4953538116276,
+      "E": 464.16666666666663,
+      "X": 2100.0,
+      "C": 43.875,
+      "colours": {
+        "red": 464.16666666666663
+      },
+      "population": 42,
+      "pool": {
+        "ember-scuttler": 8.0,
+        "cinder-hound": 1,
+        "ash-slinger": 2.0,
+        "magma-brute": 1
+      }
+    },
+    {
+      "id": "node-t3-swamp-01",
+      "biome": "swamp",
+      "tier": 3,
+      "family": "alacrity",
+      "hp": 1106.6666666666665,
+      "drWork": 1106.6666666666665,
+      "h100": 1138.8888888888887,
+      "E": 962.9999999999999,
+      "X": 4344.0,
+      "C": 90.5,
+      "colours": {
+        "purple": 962.9999999999999
+      },
+      "population": 20,
+      "pool": {
+        "plague-hydra": 1,
+        "mire-hex-spitter": 1,
+        "bog-lurker": 1
+      }
+    },
+    {
+      "id": "node-t3-swamp-02",
+      "biome": "swamp",
+      "tier": 3,
+      "family": "heavy",
+      "hp": 1106.6666666666665,
+      "drWork": 1106.6666666666665,
+      "h100": 1138.8888888888887,
+      "E": 937.6666666666665,
+      "X": 4232.0,
+      "C": 88.0,
+      "colours": {
+        "purple": 937.6666666666665
+      },
+      "population": 20,
+      "pool": {
+        "plague-hydra": 1,
+        "mire-hex-spitter": 1,
+        "bog-lurker": 1
+      }
+    },
+    {
+      "id": "node-t3-swamp-03",
+      "biome": "swamp",
+      "tier": 3,
+      "family": "swarming",
+      "hp": 1106.6666666666665,
+      "drWork": 1106.6666666666665,
+      "h100": 1138.8888888888887,
+      "E": 862.3333333333333,
+      "X": 3892.0,
+      "C": 81.0,
+      "colours": {
+        "purple": 862.3333333333333
+      },
+      "population": 23,
+      "pool": {
+        "plague-hydra": 1,
+        "mire-hex-spitter": 1,
+        "bog-lurker": 1
+      }
+    },
+    {
+      "id": "node-t3-swamp-04",
+      "biome": "swamp",
+      "tier": 3,
+      "family": "dominion",
+      "hp": 1273.0,
+      "drWork": 1376.2162162162163,
+      "h100": 1423.1508634734441,
+      "E": 1088.6666666666665,
+      "X": 4916.0,
+      "C": 102.5,
+      "colours": {
+        "purple": 1088.6666666666665
+      },
+      "population": 18,
+      "pool": {
+        "plague-hydra": 1,
+        "mire-hex-spitter": 1,
+        "bog-lurker": 1
+      }
+    },
+    {
+      "id": "node-t3-swamp-05",
+      "biome": "swamp",
+      "tier": 3,
+      "family": "fortified",
+      "hp": 1106.6666666666665,
+      "drWork": 1301.9607843137255,
+      "h100": 1346.889373033164,
+      "E": 996.3333333333333,
+      "X": 4500.0,
+      "C": 93.5,
+      "colours": {
+        "purple": 996.3333333333333
+      },
+      "population": 20,
+      "pool": {
+        "plague-hydra": 1,
+        "mire-hex-spitter": 1,
+        "bog-lurker": 1
+      }
+    },
+    {
+      "id": "node-t3-swamp-06",
+      "biome": "swamp",
+      "tier": 3,
+      "family": "fortified",
+      "hp": 1106.6666666666665,
+      "drWork": 1301.9607843137255,
+      "h100": 1346.889373033164,
+      "E": 996.3333333333333,
+      "X": 4500.0,
+      "C": 93.5,
+      "colours": {
+        "purple": 996.3333333333333
+      },
+      "population": 20,
+      "pool": {
+        "plague-hydra": 1,
+        "mire-hex-spitter": 1,
+        "bog-lurker": 1
+      }
+    },
+    {
+      "id": "node-t4-mountain-01",
+      "biome": "mountain",
+      "tier": 4,
+      "family": "heavy",
+      "hp": 5925.0,
+      "drWork": 6030.319148936171,
+      "h100": 6363.607594936709,
+      "E": 5888.25,
+      "X": 22102.5,
+      "C": 245.5,
+      "colours": {
+        "blue": 5888.25
+      },
+      "population": 24,
+      "pool": {
+        "granite-mammoth": 1,
+        "avalanche-tyrant": 1,
+        "cliffside-roc": 1,
+        "cragback-rhino": 1
+      }
+    },
+    {
+      "id": "node-t4-mountain-02",
+      "biome": "mountain",
+      "tier": 4,
+      "family": "swarming",
+      "hp": 5925.0,
+      "drWork": 6030.319148936171,
+      "h100": 6363.607594936709,
+      "E": 5279.0,
+      "X": 19807.5,
+      "C": 220.0,
+      "colours": {
+        "blue": 5279.0
+      },
+      "population": 29,
+      "pool": {
+        "granite-mammoth": 1,
+        "avalanche-tyrant": 1,
+        "cliffside-roc": 1,
+        "cragback-rhino": 1
+      }
+    },
+    {
+      "id": "node-t4-mountain-03",
+      "biome": "mountain",
+      "tier": 4,
+      "family": "dominion",
+      "hp": 7110.0,
+      "drWork": 8040.425531914894,
+      "h100": 8569.565217391304,
+      "E": 7106.5,
+      "X": 26670.0,
+      "C": 296.0,
+      "colours": {
+        "blue": 7106.5
+      },
+      "population": 20,
+      "pool": {
+        "granite-mammoth": 1,
+        "avalanche-tyrant": 1,
+        "cliffside-roc": 1,
+        "cragback-rhino": 1
+      }
+    },
+    {
+      "id": "node-t4-mountain-04",
+      "biome": "mountain",
+      "tier": 4,
+      "family": "fortified",
+      "hp": 5925.0,
+      "drWork": 7537.898936170213,
+      "h100": 8140.360169491525,
+      "E": 6345.0,
+      "X": 23827.5,
+      "C": 264.5,
+      "colours": {
+        "blue": 6345.0
+      },
+      "population": 24,
+      "pool": {
+        "granite-mammoth": 1,
+        "avalanche-tyrant": 1,
+        "cliffside-roc": 1,
+        "cragback-rhino": 1
+      }
+    },
+    {
+      "id": "node-t4-mountain-05",
+      "biome": "mountain",
+      "tier": 4,
+      "family": "heavy",
+      "hp": 5925.0,
+      "drWork": 6030.319148936171,
+      "h100": 6363.607594936709,
+      "E": 5888.25,
+      "X": 22102.5,
+      "C": 245.5,
+      "colours": {
+        "blue": 5888.25
+      },
+      "population": 24,
+      "pool": {
+        "granite-mammoth": 1,
+        "avalanche-tyrant": 1,
+        "cliffside-roc": 1,
+        "cragback-rhino": 1
+      }
+    },
+    {
+      "id": "node-t4-tundra-01",
+      "biome": "tundra",
+      "tier": 4,
+      "family": "heavy",
+      "hp": 4410.0,
+      "drWork": 4908.897876643074,
+      "h100": 5580.683590928787,
+      "E": 8101.5,
+      "X": 30367.5,
+      "C": 338.0,
+      "colours": {
+        "blue": 8101.5
+      },
+      "population": 16,
+      "pool": {
+        "rime-tusk-mastodon": 1,
+        "glacial-direbear": 1,
+        "hoarfrost-yeti": 1,
+        "permafrost-behemoth": 1
+      }
+    },
+    {
+      "id": "node-t4-tundra-02",
+      "biome": "tundra",
+      "tier": 4,
+      "family": "swarming",
+      "hp": 4410.0,
+      "drWork": 4908.897876643074,
+      "h100": 5580.683590928787,
+      "E": 7263.25,
+      "X": 27217.5,
+      "C": 302.0,
+      "colours": {
+        "blue": 7263.25
+      },
+      "population": 19,
+      "pool": {
+        "rime-tusk-mastodon": 1,
+        "glacial-direbear": 1,
+        "hoarfrost-yeti": 1,
+        "permafrost-behemoth": 1
+      }
+    },
+    {
+      "id": "node-t4-tundra-03",
+      "biome": "tundra",
+      "tier": 4,
+      "family": "dominion",
+      "hp": 5292.0,
+      "drWork": 6545.198637027504,
+      "h100": 7667.155439941585,
+      "E": 9777.5,
+      "X": 36645.0,
+      "C": 407.5,
+      "colours": {
+        "blue": 9777.5
+      },
+      "population": 14,
+      "pool": {
+        "rime-tusk-mastodon": 1,
+        "glacial-direbear": 1,
+        "hoarfrost-yeti": 1,
+        "permafrost-behemoth": 1
+      }
+    },
+    {
+      "id": "node-t4-tundra-04",
+      "biome": "tundra",
+      "tier": 4,
+      "family": "fortified",
+      "hp": 4410.0,
+      "drWork": 6136.122345803842,
+      "h100": 7380.614501970001,
+      "E": 8730.0,
+      "X": 32722.5,
+      "C": 364.5,
+      "colours": {
+        "blue": 8730.0
+      },
+      "population": 16,
+      "pool": {
+        "rime-tusk-mastodon": 1,
+        "glacial-direbear": 1,
+        "hoarfrost-yeti": 1,
+        "permafrost-behemoth": 1
+      }
+    },
+    {
+      "id": "node-t4-tundra-05",
+      "biome": "tundra",
+      "tier": 4,
+      "family": "heavy",
+      "hp": 4410.0,
+      "drWork": 4908.897876643074,
+      "h100": 5580.683590928787,
+      "E": 8101.5,
+      "X": 30367.5,
+      "C": 338.0,
+      "colours": {
+        "blue": 8101.5
+      },
+      "population": 16,
+      "pool": {
+        "rime-tusk-mastodon": 1,
+        "glacial-direbear": 1,
+        "hoarfrost-yeti": 1,
+        "permafrost-behemoth": 1
+      }
+    },
+    {
+      "id": "node-t4-jungle-01",
+      "biome": "jungle",
+      "tier": 4,
+      "family": "alacrity",
+      "hp": 6725.0,
+      "drWork": 6725.0,
+      "h100": 6725.0,
+      "E": 4507.25,
+      "X": 16905.0,
+      "C": 188.0,
+      "colours": {
+        "green": 4507.25
+      },
+      "population": 40,
+      "pool": {
+        "hunting-panther": 1,
+        "apex-silverback": 1,
+        "thornback-lizard": 1,
+        "emerald-constrictor": 1
+      }
+    },
+    {
+      "id": "node-t4-jungle-02",
+      "biome": "jungle",
+      "tier": 4,
+      "family": "swarming",
+      "hp": 6725.0,
+      "drWork": 6725.0,
+      "h100": 6725.0,
+      "E": 3906.25,
+      "X": 14647.5,
+      "C": 163.0,
+      "colours": {
+        "green": 3906.25
+      },
+      "population": 48,
+      "pool": {
+        "hunting-panther": 1,
+        "apex-silverback": 1,
+        "thornback-lizard": 1,
+        "emerald-constrictor": 1
+      }
+    },
+    {
+      "id": "node-t4-jungle-03",
+      "biome": "jungle",
+      "tier": 4,
+      "family": "dominion",
+      "hp": 8070.0,
+      "drWork": 8966.666666666666,
+      "h100": 8966.666666666668,
+      "E": 5258.5,
+      "X": 19717.5,
+      "C": 219.0,
+      "colours": {
+        "green": 5258.5
+      },
+      "population": 34,
+      "pool": {
+        "hunting-panther": 1,
+        "apex-silverback": 1,
+        "thornback-lizard": 1,
+        "emerald-constrictor": 1
+      }
+    },
+    {
+      "id": "node-t4-jungle-04",
+      "biome": "jungle",
+      "tier": 4,
+      "family": "fortified",
+      "hp": 6725.0,
+      "drWork": 8406.25,
+      "h100": 8406.25,
+      "E": 4695.0,
+      "X": 17610.0,
+      "C": 196.0,
+      "colours": {
+        "green": 4695.0
+      },
+      "population": 40,
+      "pool": {
+        "hunting-panther": 1,
+        "apex-silverback": 1,
+        "thornback-lizard": 1,
+        "emerald-constrictor": 1
+      }
+    },
+    {
+      "id": "node-t4-jungle-05",
+      "biome": "jungle",
+      "tier": 4,
+      "family": "alacrity",
+      "hp": 6725.0,
+      "drWork": 6725.0,
+      "h100": 6725.0,
+      "E": 4507.25,
+      "X": 16905.0,
+      "C": 188.0,
+      "colours": {
+        "green": 4507.25
+      },
+      "population": 40,
+      "pool": {
+        "hunting-panther": 1,
+        "apex-silverback": 1,
+        "thornback-lizard": 1,
+        "emerald-constrictor": 1
+      }
+    },
+    {
+      "id": "node-t4-desert-01",
+      "biome": "desert",
+      "tier": 4,
+      "family": "heavy",
+      "hp": 3615.6666666666665,
+      "drWork": 4019.1604314122005,
+      "h100": 4326.879208600436,
+      "E": 4630.5,
+      "X": 17400.0,
+      "C": 192.66666666666666,
+      "colours": {
+        "yellow": 4630.5
+      },
+      "population": 16,
+      "pool": {
+        "sand-viper": 1,
+        "sandspitter-cobra": 3,
+        "dune-basilisk": 1,
+        "dune-tyrant": 1
+      }
+    },
+    {
+      "id": "node-t4-desert-02",
+      "biome": "desert",
+      "tier": 4,
+      "family": "swarming",
+      "hp": 3615.6666666666665,
+      "drWork": 4019.1604314122005,
+      "h100": 4326.879208600436,
+      "E": 4151.5,
+      "X": 15600.0,
+      "C": 172.66666666666666,
+      "colours": {
+        "yellow": 4151.5
+      },
+      "population": 19,
+      "pool": {
+        "sand-viper": 1,
+        "sandspitter-cobra": 3,
+        "dune-basilisk": 1,
+        "dune-tyrant": 1
+      }
+    },
+    {
+      "id": "node-t4-desert-03",
+      "biome": "desert",
+      "tier": 4,
+      "family": "dominion",
+      "hp": 4338.833333333333,
+      "drWork": 5358.908362356289,
+      "h100": 5852.88026616269,
+      "E": 5589.0,
+      "X": 21000.0,
+      "C": 232.66666666666663,
+      "colours": {
+        "yellow": 5589.0
+      },
+      "population": 14,
+      "pool": {
+        "sand-viper": 1,
+        "sandspitter-cobra": 3,
+        "dune-basilisk": 1,
+        "dune-tyrant": 1
+      }
+    },
+    {
+      "id": "node-t4-desert-04",
+      "biome": "desert",
+      "tier": 4,
+      "family": "fortified",
+      "hp": 3615.6666666666665,
+      "drWork": 5023.950539265251,
+      "h100": 5562.6807845981575,
+      "E": 4990.0,
+      "X": 18760.0,
+      "C": 208.66666666666666,
+      "colours": {
+        "yellow": 4990.0
+      },
+      "population": 16,
+      "pool": {
+        "sand-viper": 1,
+        "sandspitter-cobra": 3,
+        "dune-basilisk": 1,
+        "dune-tyrant": 1
+      }
+    },
+    {
+      "id": "node-t4-desert-05",
+      "biome": "desert",
+      "tier": 4,
+      "family": "dominion",
+      "hp": 4338.833333333333,
+      "drWork": 5358.908362356289,
+      "h100": 5852.88026616269,
+      "E": 5589.0,
+      "X": 21000.0,
+      "C": 232.66666666666663,
+      "colours": {
+        "yellow": 5589.0
+      },
+      "population": 14,
+      "pool": {
+        "sand-viper": 1,
+        "sandspitter-cobra": 3,
+        "dune-basilisk": 1,
+        "dune-tyrant": 1
+      }
+    },
+    {
+      "id": "node-t4-volcanic-01",
+      "biome": "volcanic",
+      "tier": 4,
+      "family": "alacrity",
+      "hp": 1467.5625,
+      "drWork": 1490.7327127659573,
+      "h100": 1560.596555198166,
+      "E": 3677.25,
+      "X": 13736.25,
+      "C": 152.625,
+      "colours": {
+        "red": 3677.25
+      },
+      "population": 36,
+      "pool": {
+        "ember-skink": 10.5,
+        "infernal-direhound": 1,
+        "ashspitter-salamander": 2.5,
+        "obsidian-tortoise": 1,
+        "magma-salamander": 1
+      }
+    },
+    {
+      "id": "node-t4-volcanic-02",
+      "biome": "volcanic",
+      "tier": 4,
+      "family": "heavy",
+      "hp": 1467.5625,
+      "drWork": 1490.7327127659573,
+      "h100": 1560.596555198166,
+      "E": 3554.75,
+      "X": 13283.4375,
+      "C": 148.5625,
+      "colours": {
+        "red": 3554.75
+      },
+      "population": 36,
+      "pool": {
+        "ember-skink": 10.5,
+        "infernal-direhound": 1,
+        "ashspitter-salamander": 2.5,
+        "obsidian-tortoise": 1,
+        "magma-salamander": 1
+      }
+    },
+    {
+      "id": "node-t4-volcanic-03",
+      "biome": "volcanic",
+      "tier": 4,
+      "family": "swarming",
+      "hp": 1467.5625,
+      "drWork": 1490.7327127659573,
+      "h100": 1560.596555198166,
+      "E": 3187.0,
+      "X": 11899.6875,
+      "C": 133.0625,
+      "colours": {
+        "red": 3187.0
+      },
+      "population": 43,
+      "pool": {
+        "ember-skink": 10.5,
+        "infernal-direhound": 1,
+        "ashspitter-salamander": 2.5,
+        "obsidian-tortoise": 1,
+        "magma-salamander": 1
+      }
+    },
+    {
+      "id": "node-t4-volcanic-04",
+      "biome": "volcanic",
+      "tier": 4,
+      "family": "dominion",
+      "hp": 1761.125,
+      "drWork": 1987.7009456264777,
+      "h100": 2094.200613092129,
+      "E": 4290.0,
+      "X": 16025.625,
+      "C": 179.0625,
+      "colours": {
+        "red": 4290.0
+      },
+      "population": 31,
+      "pool": {
+        "ember-skink": 10.5,
+        "infernal-direhound": 1,
+        "ashspitter-salamander": 2.5,
+        "obsidian-tortoise": 1,
+        "magma-salamander": 1
+      }
+    },
+    {
+      "id": "node-t4-volcanic-05",
+      "biome": "volcanic",
+      "tier": 4,
+      "family": "fortified",
+      "hp": 1467.5625,
+      "drWork": 1863.415890957447,
+      "h100": 1983.2567380313094,
+      "E": 3830.625,
+      "X": 14311.875,
+      "C": 160.0,
+      "colours": {
+        "red": 3830.625
+      },
+      "population": 36,
+      "pool": {
+        "ember-skink": 10.5,
+        "infernal-direhound": 1,
+        "ashspitter-salamander": 2.5,
+        "obsidian-tortoise": 1,
+        "magma-salamander": 1
+      }
+    },
+    {
+      "id": "node-t4-volcanic-06",
+      "biome": "volcanic",
+      "tier": 4,
+      "family": "swarming",
+      "hp": 1467.5625,
+      "drWork": 1490.7327127659573,
+      "h100": 1560.596555198166,
+      "E": 3187.0,
+      "X": 11899.6875,
+      "C": 133.0625,
+      "colours": {
+        "red": 3187.0
+      },
+      "population": 43,
+      "pool": {
+        "ember-skink": 10.5,
+        "infernal-direhound": 1,
+        "ashspitter-salamander": 2.5,
+        "obsidian-tortoise": 1,
+        "magma-salamander": 1
+      }
+    },
+    {
+      "id": "node-t4-graveyard-01",
+      "biome": "graveyard",
+      "tier": 4,
+      "family": "alacrity",
+      "hp": 1855.8235294117649,
+      "drWork": 1855.8235294117649,
+      "h100": 1855.8235294117649,
+      "E": 2158.2647058823527,
+      "X": 8078.823529411765,
+      "C": 89.76470588235294,
+      "colours": {
+        "purple": 2158.2647058823527
+      },
+      "population": 28,
+      "pool": {
+        "bone-crawler": 3.25,
+        "plague-hound": 1.25,
+        "carrion-vulture": 1.25,
+        "plague-rat": 1.75,
+        "gravewright": 1
+      }
+    },
+    {
+      "id": "node-t4-graveyard-02",
+      "biome": "graveyard",
+      "tier": 4,
+      "family": "heavy",
+      "hp": 1855.8235294117649,
+      "drWork": 1855.8235294117649,
+      "h100": 1855.8235294117649,
+      "E": 2086.2352941176473,
+      "X": 7810.588235294118,
+      "C": 87.11764705882354,
+      "colours": {
+        "purple": 2086.2352941176473
+      },
+      "population": 28,
+      "pool": {
+        "bone-crawler": 3.25,
+        "plague-hound": 1.25,
+        "carrion-vulture": 1.25,
+        "plague-rat": 1.75,
+        "gravewright": 1
+      }
+    },
+    {
+      "id": "node-t4-graveyard-03",
+      "biome": "graveyard",
+      "tier": 4,
+      "family": "swarming",
+      "hp": 1855.8235294117649,
+      "drWork": 1855.8235294117649,
+      "h100": 1855.8235294117649,
+      "E": 1870.6176470588234,
+      "X": 7000.588235294118,
+      "C": 78.0,
+      "colours": {
+        "purple": 1870.6176470588234
+      },
+      "population": 34,
+      "pool": {
+        "bone-crawler": 3.25,
+        "plague-hound": 1.25,
+        "carrion-vulture": 1.25,
+        "plague-rat": 1.75,
+        "gravewright": 1
+      }
+    },
+    {
+      "id": "node-t4-graveyard-04",
+      "biome": "graveyard",
+      "tier": 4,
+      "family": "dominion",
+      "hp": 2226.8823529411766,
+      "drWork": 2474.313725490196,
+      "h100": 2474.3137254901962,
+      "E": 2517.9411764705883,
+      "X": 9425.29411764706,
+      "C": 105.0,
+      "colours": {
+        "purple": 2517.9411764705883
+      },
+      "population": 24,
+      "pool": {
+        "bone-crawler": 3.25,
+        "plague-hound": 1.25,
+        "carrion-vulture": 1.25,
+        "plague-rat": 1.75,
+        "gravewright": 1
+      }
+    },
+    {
+      "id": "node-t4-graveyard-05",
+      "biome": "graveyard",
+      "tier": 4,
+      "family": "fortified",
+      "hp": 1855.8235294117649,
+      "drWork": 2319.779411764706,
+      "h100": 2319.779411764706,
+      "E": 2248.235294117647,
+      "X": 8418.529411764706,
+      "C": 94.52941176470588,
+      "colours": {
+        "purple": 2248.235294117647
+      },
+      "population": 28,
+      "pool": {
+        "bone-crawler": 3.25,
+        "plague-hound": 1.25,
+        "carrion-vulture": 1.25,
+        "plague-rat": 1.75,
+        "gravewright": 1
+      }
+    },
+    {
+      "id": "node-t4-graveyard-06",
+      "biome": "graveyard",
+      "tier": 4,
+      "family": "swarming",
+      "hp": 1855.8235294117649,
+      "drWork": 1855.8235294117649,
+      "h100": 1855.8235294117649,
+      "E": 1870.6176470588234,
+      "X": 7000.588235294118,
+      "C": 78.0,
+      "colours": {
+        "purple": 1870.6176470588234
+      },
+      "population": 34,
+      "pool": {
+        "bone-crawler": 3.25,
+        "plague-hound": 1.25,
+        "carrion-vulture": 1.25,
+        "plague-rat": 1.75,
+        "gravewright": 1
+      }
+    },
+    {
+      "id": "node-t4-trench-01",
+      "biome": "trench",
+      "tier": 4,
+      "family": "alacrity",
+      "hp": 17080.0,
+      "drWork": 20959.06432748538,
+      "h100": 26228.727957541516,
+      "E": 16704.0,
+      "X": 62640.0,
+      "C": 696.0,
+      "colours": {
+        "green": 16704.0
+      },
+      "population": 10,
+      "pool": {
+        "abyssal-serpent": 1,
+        "hadal-stalker": 1,
+        "elder-leviathan": 1
+      }
+    },
+    {
+      "id": "node-t4-trench-02",
+      "biome": "trench",
+      "tier": 4,
+      "family": "heavy",
+      "hp": 17080.0,
+      "drWork": 20959.06432748538,
+      "h100": 26228.727957541516,
+      "E": 16147.333333333332,
+      "X": 60560.0,
+      "C": 673.3333333333333,
+      "colours": {
+        "green": 16147.333333333332
+      },
+      "population": 10,
+      "pool": {
+        "abyssal-serpent": 1,
+        "hadal-stalker": 1,
+        "elder-leviathan": 1
+      }
+    },
+    {
+      "id": "node-t4-trench-03",
+      "biome": "trench",
+      "tier": 4,
+      "family": "swarming",
+      "hp": 17080.0,
+      "drWork": 20959.06432748538,
+      "h100": 26228.727957541516,
+      "E": 14476.666666666666,
+      "X": 54280.0,
+      "C": 602.6666666666666,
+      "colours": {
+        "green": 14476.666666666666
+      },
+      "population": 12,
+      "pool": {
+        "abyssal-serpent": 1,
+        "hadal-stalker": 1,
+        "elder-leviathan": 1
+      }
+    },
+    {
+      "id": "node-t4-trench-04",
+      "biome": "trench",
+      "tier": 4,
+      "family": "dominion",
+      "hp": 20496.0,
+      "drWork": 27945.419103313838,
+      "h100": 36674.00379506641,
+      "E": 19488.0,
+      "X": 73080.0,
+      "C": 812.0,
+      "colours": {
+        "green": 19488.0
+      },
+      "population": 9,
+      "pool": {
+        "abyssal-serpent": 1,
+        "hadal-stalker": 1,
+        "elder-leviathan": 1
+      }
+    },
+    {
+      "id": "node-t4-trench-05",
+      "biome": "trench",
+      "tier": 4,
+      "family": "fortified",
+      "hp": 17080.0,
+      "drWork": 26198.83040935672,
+      "h100": 36435.89743589744,
+      "E": 17400.0,
+      "X": 65250.0,
+      "C": 725.3333333333333,
+      "colours": {
+        "green": 17400.0
+      },
+      "population": 10,
+      "pool": {
+        "abyssal-serpent": 1,
+        "hadal-stalker": 1,
+        "elder-leviathan": 1
+      }
+    },
+    {
+      "id": "node-t4-trench-06",
+      "biome": "trench",
+      "tier": 4,
+      "family": "dominion",
+      "hp": 20496.0,
+      "drWork": 27945.419103313838,
+      "h100": 36674.00379506641,
+      "E": 19488.0,
+      "X": 73080.0,
+      "C": 812.0,
+      "colours": {
+        "green": 19488.0
+      },
+      "population": 9,
+      "pool": {
+        "abyssal-serpent": 1,
+        "hadal-stalker": 1,
+        "elder-leviathan": 1
+      }
+    }
+  ],
+  "checks": [
+    {
+      "tier": 2,
+      "comparison": "same-biome E",
+      "work": "hp",
+      "ratio": 1.7373737373737372,
+      "current": "node-t2-forest-02",
+      "old": "node-t1-forest-02",
+      "target": 1.25
+    },
+    {
+      "tier": 2,
+      "comparison": "same-biome X",
+      "work": "hp",
+      "ratio": 1.6826177674765725,
+      "current": "node-t2-cave-03",
+      "old": "node-t1-cave-03",
+      "target": 1.25
+    },
+    {
+      "tier": 2,
+      "comparison": "E blue",
+      "work": "hp",
+      "ratio": 2.137659572389947,
+      "current": "node-t2-mountain-04",
+      "old": "node-t1-mountain-04",
+      "target": 1.25
+    },
+    {
+      "tier": 2,
+      "comparison": "E red",
+      "work": "hp",
+      "ratio": 2.092292855839654,
+      "current": "node-t2-cave-05",
+      "old": "node-t1-cave-05",
+      "target": 1.25
+    },
+    {
+      "tier": 2,
+      "comparison": "E green",
+      "work": "hp",
+      "ratio": 1.8875000000000002,
+      "current": "node-t2-jungle-04",
+      "old": "node-t1-forest-03",
+      "target": 1.25
+    },
+    {
+      "tier": 2,
+      "comparison": "E yellow",
+      "work": "hp",
+      "ratio": 2.6873900293255137,
+      "current": "node-t2-plains-05",
+      "old": "node-t1-plains-04",
+      "target": 1.25
+    },
+    {
+      "tier": 2,
+      "comparison": "E purple",
+      "work": "hp",
+      "ratio": 2.99645390070922,
+      "current": "node-t2-swamp-05",
+      "old": "node-t1-swamp-01",
+      "target": 1.25
+    },
+    {
+      "tier": 2,
+      "comparison": "C alacrity",
+      "work": "hp",
+      "ratio": 1.2612765957446808,
+      "current": "node-t2-swamp-01",
+      "old": "node-t1-cave-01",
+      "target": 1.1
+    },
+    {
+      "tier": 2,
+      "comparison": "C heavy",
+      "work": "hp",
+      "ratio": 1.3138297872340425,
+      "current": "node-t2-swamp-02",
+      "old": "node-t1-cave-02",
+      "target": 1.1
+    },
+    {
+      "tier": 2,
+      "comparison": "C swarming",
+      "work": "hp",
+      "ratio": 1.265494912118409,
+      "current": "node-t2-swamp-03",
+      "old": "node-t1-cave-03",
+      "target": 1.1
+    },
+    {
+      "tier": 2,
+      "comparison": "C dominion",
+      "work": "hp",
+      "ratio": 1.3275792730085072,
+      "current": "node-t2-swamp-04",
+      "old": "node-t1-cave-04",
+      "target": 1.1
+    },
+    {
+      "tier": 2,
+      "comparison": "C fortified",
+      "work": "hp",
+      "ratio": 1.325957446808511,
+      "current": "node-t2-swamp-05",
+      "old": "node-t1-cave-05",
+      "target": 1.1
+    },
+    {
+      "tier": 2,
+      "comparison": "same-biome E",
+      "work": "drWork",
+      "ratio": 1.6987959271827542,
+      "current": "node-t2-cave-05",
+      "old": "node-t1-cave-05",
+      "target": 1.25
+    },
+    {
+      "tier": 2,
+      "comparison": "same-biome X",
+      "work": "drWork",
+      "ratio": 1.442066557267683,
+      "current": "node-t2-cave-03",
+      "old": "node-t1-cave-03",
+      "target": 1.25
+    },
+    {
+      "tier": 2,
+      "comparison": "E blue",
+      "work": "drWork",
+      "ratio": 2.140318169246371,
+      "current": "node-t2-mountain-01",
+      "old": "node-t1-mountain-01",
+      "target": 1.25
+    },
+    {
+      "tier": 2,
+      "comparison": "E red",
+      "work": "drWork",
+      "ratio": 1.7763735299280328,
+      "current": "node-t2-cave-01",
+      "old": "node-t1-cave-01",
+      "target": 1.25
+    },
+    {
+      "tier": 2,
+      "comparison": "E green",
+      "work": "drWork",
+      "ratio": 1.898811278121623,
+      "current": "node-t2-jungle-01",
+      "old": "node-t1-forest-03",
+      "target": 1.25
+    },
+    {
+      "tier": 2,
+      "comparison": "E yellow",
+      "work": "drWork",
+      "ratio": 2.6435638435638436,
+      "current": "node-t2-plains-01",
+      "old": "node-t1-plains-04",
+      "target": 1.25
+    },
+    {
+      "tier": 2,
+      "comparison": "E purple",
+      "work": "drWork",
+      "ratio": 2.9226950354609924,
+      "current": "node-t2-swamp-01",
+      "old": "node-t1-swamp-01",
+      "target": 1.25
+    },
+    {
+      "tier": 2,
+      "comparison": "C alacrity",
+      "work": "drWork",
+      "ratio": 1.3664800298618889,
+      "current": "node-t2-swamp-01",
+      "old": "node-t1-cave-01",
+      "target": 1.1
+    },
+    {
+      "tier": 2,
+      "comparison": "C heavy",
+      "work": "drWork",
+      "ratio": 1.4234166977728009,
+      "current": "node-t2-swamp-02",
+      "old": "node-t1-cave-02",
+      "target": 1.1
+    },
+    {
+      "tier": 2,
+      "comparison": "C swarming",
+      "work": "drWork",
+      "ratio": 1.3710501971858418,
+      "current": "node-t2-swamp-03",
+      "old": "node-t1-cave-03",
+      "target": 1.1
+    },
+    {
+      "tier": 2,
+      "comparison": "C dominion",
+      "work": "drWork",
+      "ratio": 1.3609375929561542,
+      "current": "node-t2-swamp-04",
+      "old": "node-t1-swamp-04",
+      "target": 1.1
+    },
+    {
+      "tier": 2,
+      "comparison": "C fortified",
+      "work": "drWork",
+      "ratio": 1.3609477220486828,
+      "current": "node-t2-swamp-05",
+      "old": "node-t1-cave-05",
+      "target": 1.1
+    },
+    {
+      "tier": 2,
+      "comparison": "same-biome E",
+      "work": "h100",
+      "ratio": 1.6936520760291305,
+      "current": "node-t2-cave-04",
+      "old": "node-t1-cave-04",
+      "target": 1.25
+    },
+    {
+      "tier": 2,
+      "comparison": "same-biome X",
+      "work": "h100",
+      "ratio": 1.4449559533408383,
+      "current": "node-t2-cave-04",
+      "old": "node-t1-cave-04",
+      "target": 1.25
+    },
+    {
+      "tier": 2,
+      "comparison": "E blue",
+      "work": "h100",
+      "ratio": 2.140126028648258,
+      "current": "node-t2-mountain-01",
+      "old": "node-t1-mountain-03",
+      "target": 1.25
+    },
+    {
+      "tier": 2,
+      "comparison": "E red",
+      "work": "h100",
+      "ratio": 1.7824366000362812,
+      "current": "node-t2-cave-01",
+      "old": "node-t1-cave-01",
+      "target": 1.25
+    },
+    {
+      "tier": 2,
+      "comparison": "E green",
+      "work": "h100",
+      "ratio": 1.8891234654781452,
+      "current": "node-t2-jungle-01",
+      "old": "node-t1-forest-03",
+      "target": 1.25
+    },
+    {
+      "tier": 2,
+      "comparison": "E yellow",
+      "work": "h100",
+      "ratio": 2.6300762729334157,
+      "current": "node-t2-plains-01",
+      "old": "node-t1-plains-04",
+      "target": 1.25
+    },
+    {
+      "tier": 2,
+      "comparison": "E purple",
+      "work": "h100",
+      "ratio": 2.8451259836860614,
+      "current": "node-t2-swamp-01",
+      "old": "node-t1-swamp-01",
+      "target": 1.25
+    },
+    {
+      "tier": 2,
+      "comparison": "C alacrity",
+      "work": "h100",
+      "ratio": 1.33224502289278,
+      "current": "node-t2-swamp-01",
+      "old": "node-t1-cave-01",
+      "target": 1.1
+    },
+    {
+      "tier": 2,
+      "comparison": "C heavy",
+      "work": "h100",
+      "ratio": 1.3877552321799793,
+      "current": "node-t2-swamp-02",
+      "old": "node-t1-cave-02",
+      "target": 1.1
+    },
+    {
+      "tier": 2,
+      "comparison": "C swarming",
+      "work": "h100",
+      "ratio": 1.3367006918656659,
+      "current": "node-t2-swamp-03",
+      "old": "node-t1-cave-03",
+      "target": 1.1
+    },
+    {
+      "tier": 2,
+      "comparison": "C dominion",
+      "work": "h100",
+      "ratio": 1.3068747333996873,
+      "current": "node-t2-swamp-04",
+      "old": "node-t1-swamp-04",
+      "target": 1.1
+    },
+    {
+      "tier": 2,
+      "comparison": "C fortified",
+      "work": "h100",
+      "ratio": 1.3195203739222132,
+      "current": "node-t2-swamp-05",
+      "old": "node-t1-cave-05",
+      "target": 1.1
+    },
+    {
+      "tier": 3,
+      "comparison": "same-biome E",
+      "work": "hp",
+      "ratio": 2.779115625662846,
+      "current": "node-t3-cave-03",
+      "old": "node-t2-cave-03",
+      "target": 1.25
+    },
+    {
+      "tier": 3,
+      "comparison": "same-biome X",
+      "work": "hp",
+      "ratio": 2.1240149572597042,
+      "current": "node-t3-cave-03",
+      "old": "node-t2-cave-03",
+      "target": 1.25
+    },
+    {
+      "tier": 3,
+      "comparison": "E blue",
+      "work": "hp",
+      "ratio": 3.914836220763877,
+      "current": "node-t3-mountain-04",
+      "old": "node-t2-mountain-04",
+      "target": 1.25
+    },
+    {
+      "tier": 3,
+      "comparison": "E red",
+      "work": "hp",
+      "ratio": 2.8935028899467117,
+      "current": "node-t3-cave-05",
+      "old": "node-t2-cave-05",
+      "target": 1.25
+    },
+    {
+      "tier": 3,
+      "comparison": "E green",
+      "work": "hp",
+      "ratio": 2.9571428571428573,
+      "current": "node-t3-jungle-04",
+      "old": "node-t2-jungle-04",
+      "target": 1.25
+    },
+    {
+      "tier": 3,
+      "comparison": "E yellow",
+      "work": "hp",
+      "ratio": 1.8859271022383541,
+      "current": "node-t3-desert-04",
+      "old": "node-t2-plains-05",
+      "target": 1.25
+    },
+    {
+      "tier": 3,
+      "comparison": "E purple",
+      "work": "hp",
+      "ratio": 3.254935125115848,
+      "current": "node-t3-swamp-05",
+      "old": "node-t2-swamp-05",
+      "target": 1.25
+    },
+    {
+      "tier": 3,
+      "comparison": "C alacrity",
+      "work": "hp",
+      "ratio": 2.4637974976830406,
+      "current": "node-t3-swamp-01",
+      "old": "node-t2-swamp-01",
+      "target": 1.1
+    },
+    {
+      "tier": 3,
+      "comparison": "C heavy",
+      "work": "hp",
+      "ratio": 2.3957367933271554,
+      "current": "node-t3-swamp-02",
+      "old": "node-t2-swamp-02",
+      "target": 1.1
+    },
+    {
+      "tier": 3,
+      "comparison": "C swarming",
+      "work": "hp",
+      "ratio": 2.3889307228915664,
+      "current": "node-t3-swamp-03",
+      "old": "node-t2-swamp-03",
+      "target": 1.1
+    },
+    {
+      "tier": 3,
+      "comparison": "C dominion",
+      "work": "hp",
+      "ratio": 2.421171376897642,
+      "current": "node-t3-swamp-04",
+      "old": "node-t2-swamp-04",
+      "target": 1.1
+    },
+    {
+      "tier": 3,
+      "comparison": "C fortified",
+      "work": "hp",
+      "ratio": 2.421301057890097,
+      "current": "node-t3-swamp-05",
+      "old": "node-t2-swamp-05",
+      "target": 1.1
+    },
+    {
+      "tier": 3,
+      "comparison": "same-biome E",
+      "work": "drWork",
+      "ratio": 2.6183489428791313,
+      "current": "node-t3-cave-05",
+      "old": "node-t2-cave-05",
+      "target": 1.25
+    },
+    {
+      "tier": 3,
+      "comparison": "same-biome X",
+      "work": "drWork",
+      "ratio": 2.005649438320634,
+      "current": "node-t3-cave-05",
+      "old": "node-t2-cave-05",
+      "target": 1.25
+    },
+    {
+      "tier": 3,
+      "comparison": "E blue",
+      "work": "drWork",
+      "ratio": 3.8592770976544455,
+      "current": "node-t3-mountain-01",
+      "old": "node-t2-mountain-01",
+      "target": 1.25
+    },
+    {
+      "tier": 3,
+      "comparison": "E red",
+      "work": "drWork",
+      "ratio": 3.0520827519488005,
+      "current": "node-t3-volcanic-01",
+      "old": "node-t2-cave-01",
+      "target": 1.25
+    },
+    {
+      "tier": 3,
+      "comparison": "E green",
+      "work": "drWork",
+      "ratio": 2.914767020089286,
+      "current": "node-t3-jungle-01",
+      "old": "node-t2-jungle-01",
+      "target": 1.25
+    },
+    {
+      "tier": 3,
+      "comparison": "E yellow",
+      "work": "drWork",
+      "ratio": 1.6564741848822508,
+      "current": "node-t3-desert-01",
+      "old": "node-t2-plains-01",
+      "target": 1.25
+    },
+    {
+      "tier": 3,
+      "comparison": "E purple",
+      "work": "drWork",
+      "ratio": 3.225433278856752,
+      "current": "node-t3-swamp-01",
+      "old": "node-t2-swamp-01",
+      "target": 1.25
+    },
+    {
+      "tier": 3,
+      "comparison": "C alacrity",
+      "work": "drWork",
+      "ratio": 2.4637974976830406,
+      "current": "node-t3-swamp-01",
+      "old": "node-t2-swamp-01",
+      "target": 1.1
+    },
+    {
+      "tier": 3,
+      "comparison": "C heavy",
+      "work": "drWork",
+      "ratio": 2.3957367933271554,
+      "current": "node-t3-swamp-02",
+      "old": "node-t2-swamp-02",
+      "target": 1.1
+    },
+    {
+      "tier": 3,
+      "comparison": "C swarming",
+      "work": "drWork",
+      "ratio": 2.3889307228915664,
+      "current": "node-t3-swamp-03",
+      "old": "node-t2-swamp-03",
+      "target": 1.1
+    },
+    {
+      "tier": 3,
+      "comparison": "C dominion",
+      "work": "drWork",
+      "ratio": 2.3574563406634934,
+      "current": "node-t3-swamp-04",
+      "old": "node-t2-swamp-04",
+      "target": 1.1
+    },
+    {
+      "tier": 3,
+      "comparison": "C fortified",
+      "work": "drWork",
+      "ratio": 2.2867843324517585,
+      "current": "node-t3-swamp-05",
+      "old": "node-t2-swamp-05",
+      "target": 1.1
+    },
+    {
+      "tier": 3,
+      "comparison": "same-biome E",
+      "work": "h100",
+      "ratio": 2.545718953454604,
+      "current": "node-t3-cave-05",
+      "old": "node-t2-cave-05",
+      "target": 1.25
+    },
+    {
+      "tier": 3,
+      "comparison": "same-biome X",
+      "work": "h100",
+      "ratio": 1.9500150287471114,
+      "current": "node-t3-cave-05",
+      "old": "node-t2-cave-05",
+      "target": 1.25
+    },
+    {
+      "tier": 3,
+      "comparison": "E blue",
+      "work": "h100",
+      "ratio": 3.8592770976544455,
+      "current": "node-t3-mountain-01",
+      "old": "node-t2-mountain-01",
+      "target": 1.25
+    },
+    {
+      "tier": 3,
+      "comparison": "E red",
+      "work": "h100",
+      "ratio": 2.994708409927507,
+      "current": "node-t3-volcanic-01",
+      "old": "node-t2-cave-01",
+      "target": 1.25
+    },
+    {
+      "tier": 3,
+      "comparison": "E green",
+      "work": "h100",
+      "ratio": 2.914767020089286,
+      "current": "node-t3-jungle-01",
+      "old": "node-t2-jungle-01",
+      "target": 1.25
+    },
+    {
+      "tier": 3,
+      "comparison": "E yellow",
+      "work": "h100",
+      "ratio": 1.6564741848822508,
+      "current": "node-t3-desert-01",
+      "old": "node-t2-plains-01",
+      "target": 1.25
+    },
+    {
+      "tier": 3,
+      "comparison": "E purple",
+      "work": "h100",
+      "ratio": 3.2499529678698367,
+      "current": "node-t3-swamp-01",
+      "old": "node-t2-swamp-01",
+      "target": 1.25
+    },
+    {
+      "tier": 3,
+      "comparison": "C alacrity",
+      "work": "h100",
+      "ratio": 2.482527244421381,
+      "current": "node-t3-swamp-01",
+      "old": "node-t2-swamp-01",
+      "target": 1.1
+    },
+    {
+      "tier": 3,
+      "comparison": "C heavy",
+      "work": "h100",
+      "ratio": 2.4139491437467573,
+      "current": "node-t3-swamp-02",
+      "old": "node-t2-swamp-02",
+      "target": 1.1
+    },
+    {
+      "tier": 3,
+      "comparison": "C swarming",
+      "work": "h100",
+      "ratio": 2.4070913336792943,
+      "current": "node-t3-swamp-03",
+      "old": "node-t2-swamp-03",
+      "target": 1.1
+    },
+    {
+      "tier": 3,
+      "comparison": "C dominion",
+      "work": "h100",
+      "ratio": 2.3846142652721793,
+      "current": "node-t3-swamp-04",
+      "old": "node-t2-swamp-04",
+      "target": 1.1
+    },
+    {
+      "tier": 3,
+      "comparison": "C fortified",
+      "work": "h100",
+      "ratio": 2.3018798203733803,
+      "current": "node-t3-swamp-05",
+      "old": "node-t2-swamp-05",
+      "target": 1.1
+    },
+    {
+      "tier": 4,
+      "comparison": "same-biome E",
+      "work": "hp",
+      "ratio": 1.7730312236286923,
+      "current": "node-t4-mountain-02",
+      "old": "node-t3-mountain-02",
+      "target": 1.25
+    },
+    {
+      "tier": 4,
+      "comparison": "same-biome X",
+      "work": "hp",
+      "ratio": 1.495648734177215,
+      "current": "node-t4-mountain-02",
+      "old": "node-t3-mountain-02",
+      "target": 1.25
+    },
+    {
+      "tier": 4,
+      "comparison": "E blue",
+      "work": "hp",
+      "ratio": 3.410725329092676,
+      "current": "node-t4-tundra-04",
+      "old": "node-t3-mountain-04",
+      "target": 1.25
+    },
+    {
+      "tier": 4,
+      "comparison": "E red",
+      "work": "hp",
+      "ratio": 4.1794984624218,
+      "current": "node-t4-volcanic-05",
+      "old": "node-t3-cave-05",
+      "target": 1.25
+    },
+    {
+      "tier": 4,
+      "comparison": "E green",
+      "work": "hp",
+      "ratio": 3.444998812069375,
+      "current": "node-t4-trench-05",
+      "old": "node-t3-jungle-04",
+      "target": 1.25
+    },
+    {
+      "tier": 4,
+      "comparison": "E yellow",
+      "work": "hp",
+      "ratio": 3.9112984758969938,
+      "current": "node-t4-desert-04",
+      "old": "node-t3-desert-04",
+      "target": 1.25
+    },
+    {
+      "tier": 4,
+      "comparison": "E purple",
+      "work": "hp",
+      "ratio": 1.345603949931644,
+      "current": "node-t4-graveyard-05",
+      "old": "node-t3-swamp-05",
+      "target": 1.25
+    },
+    {
+      "tier": 4,
+      "comparison": "C alacrity",
+      "work": "hp",
+      "ratio": 1.2717370409507063,
+      "current": "node-t4-volcanic-01",
+      "old": "node-t3-swamp-01",
+      "target": 1.1
+    },
+    {
+      "tier": 4,
+      "comparison": "C heavy",
+      "work": "hp",
+      "ratio": 1.2730537778448854,
+      "current": "node-t4-volcanic-02",
+      "old": "node-t3-swamp-02",
+      "target": 1.1
+    },
+    {
+      "tier": 4,
+      "comparison": "C swarming",
+      "work": "hp",
+      "ratio": 1.2387705811703464,
+      "current": "node-t4-volcanic-03",
+      "old": "node-t3-swamp-03",
+      "target": 1.1
+    },
+    {
+      "tier": 4,
+      "comparison": "C dominion",
+      "work": "hp",
+      "ratio": 1.262754717830378,
+      "current": "node-t4-volcanic-04",
+      "old": "node-t3-swamp-04",
+      "target": 1.1
+    },
+    {
+      "tier": 4,
+      "comparison": "C fortified",
+      "work": "hp",
+      "ratio": 1.29041259968142,
+      "current": "node-t4-volcanic-05",
+      "old": "node-t3-swamp-05",
+      "target": 1.1
+    },
+    {
+      "tier": 4,
+      "comparison": "same-biome E",
+      "work": "drWork",
+      "ratio": 1.706213926788931,
+      "current": "node-t4-mountain-04",
+      "old": "node-t3-mountain-04",
+      "target": 1.25
+    },
+    {
+      "tier": 4,
+      "comparison": "same-biome X",
+      "work": "drWork",
+      "ratio": 1.4397901547329022,
+      "current": "node-t4-mountain-04",
+      "old": "node-t3-mountain-04",
+      "target": 1.25
+    },
+    {
+      "tier": 4,
+      "comparison": "E blue",
+      "work": "drWork",
+      "ratio": 3.0213773656308267,
+      "current": "node-t4-tundra-01",
+      "old": "node-t3-mountain-01",
+      "target": 1.25
+    },
+    {
+      "tier": 4,
+      "comparison": "E red",
+      "work": "drWork",
+      "ratio": 4.877958505130216,
+      "current": "node-t4-volcanic-01",
+      "old": "node-t3-volcanic-01",
+      "target": 1.25
+    },
+    {
+      "tier": 4,
+      "comparison": "E green",
+      "work": "drWork",
+      "ratio": 2.7876951905059335,
+      "current": "node-t4-trench-01",
+      "old": "node-t3-jungle-01",
+      "target": 1.25
+    },
+    {
+      "tier": 4,
+      "comparison": "E yellow",
+      "work": "drWork",
+      "ratio": 3.87594724353,
+      "current": "node-t4-desert-01",
+      "old": "node-t3-desert-01",
+      "target": 1.25
+    },
+    {
+      "tier": 4,
+      "comparison": "E purple",
+      "work": "drWork",
+      "ratio": 1.3364680286954878,
+      "current": "node-t4-graveyard-01",
+      "old": "node-t3-swamp-01",
+      "target": 1.25
+    },
+    {
+      "tier": 4,
+      "comparison": "C alacrity",
+      "work": "drWork",
+      "ratio": 1.251970641804273,
+      "current": "node-t4-volcanic-01",
+      "old": "node-t3-swamp-01",
+      "target": 1.1
+    },
+    {
+      "tier": 4,
+      "comparison": "C heavy",
+      "work": "drWork",
+      "ratio": 1.2532669128740066,
+      "current": "node-t4-volcanic-02",
+      "old": "node-t3-swamp-02",
+      "target": 1.1
+    },
+    {
+      "tier": 4,
+      "comparison": "C swarming",
+      "work": "drWork",
+      "ratio": 1.2195165742728455,
+      "current": "node-t4-volcanic-03",
+      "old": "node-t3-swamp-03",
+      "target": 1.1
+    },
+    {
+      "tier": 4,
+      "comparison": "C dominion",
+      "work": "drWork",
+      "ratio": 1.2095293321267875,
+      "current": "node-t4-volcanic-04",
+      "old": "node-t3-swamp-04",
+      "target": 1.1
+    },
+    {
+      "tier": 4,
+      "comparison": "C fortified",
+      "work": "drWork",
+      "ratio": 1.1956291100280645,
+      "current": "node-t4-volcanic-05",
+      "old": "node-t3-swamp-05",
+      "target": 1.1
+    },
+    {
+      "tier": 4,
+      "comparison": "same-biome E",
+      "work": "h100",
+      "ratio": 1.5799384641262677,
+      "current": "node-t4-mountain-04",
+      "old": "node-t3-mountain-04",
+      "target": 1.25
+    },
+    {
+      "tier": 4,
+      "comparison": "same-biome X",
+      "work": "h100",
+      "ratio": 1.3332324921376795,
+      "current": "node-t4-mountain-04",
+      "old": "node-t3-mountain-04",
+      "target": 1.25
+    },
+    {
+      "tier": 4,
+      "comparison": "E blue",
+      "work": "h100",
+      "ratio": 2.6576731493595025,
+      "current": "node-t4-tundra-01",
+      "old": "node-t3-mountain-01",
+      "target": 1.25
+    },
+    {
+      "tier": 4,
+      "comparison": "E red",
+      "work": "h100",
+      "ratio": 4.78457714499173,
+      "current": "node-t4-volcanic-01",
+      "old": "node-t3-volcanic-01",
+      "target": 1.25
+    },
+    {
+      "tier": 4,
+      "comparison": "E green",
+      "work": "h100",
+      "ratio": 2.344315471974997,
+      "current": "node-t4-jungle-01",
+      "old": "node-t3-jungle-01",
+      "target": 1.25
+    },
+    {
+      "tier": 4,
+      "comparison": "E yellow",
+      "work": "h100",
+      "ratio": 3.6002978230760023,
+      "current": "node-t4-desert-01",
+      "old": "node-t3-desert-01",
+      "target": 1.25
+    },
+    {
+      "tier": 4,
+      "comparison": "E purple",
+      "work": "h100",
+      "ratio": 1.3753812544305972,
+      "current": "node-t4-graveyard-01",
+      "old": "node-t3-swamp-01",
+      "target": 1.25
+    },
+    {
+      "tier": 4,
+      "comparison": "C alacrity",
+      "work": "h100",
+      "ratio": 1.2307442339205215,
+      "current": "node-t4-volcanic-01",
+      "old": "node-t3-swamp-01",
+      "target": 1.1
+    },
+    {
+      "tier": 4,
+      "comparison": "C heavy",
+      "work": "h100",
+      "ratio": 1.232018527495308,
+      "current": "node-t4-volcanic-02",
+      "old": "node-t3-swamp-02",
+      "target": 1.1
+    },
+    {
+      "tier": 4,
+      "comparison": "C swarming",
+      "work": "h100",
+      "ratio": 1.1988404055495876,
+      "current": "node-t4-volcanic-03",
+      "old": "node-t3-swamp-03",
+      "target": 1.1
+    },
+    {
+      "tier": 4,
+      "comparison": "C dominion",
+      "work": "h100",
+      "ratio": 1.1871714299729286,
+      "current": "node-t4-volcanic-04",
+      "old": "node-t3-swamp-04",
+      "target": 1.1
+    },
+    {
+      "tier": 4,
+      "comparison": "C fortified",
+      "work": "h100",
+      "ratio": 1.1621477873193973,
+      "current": "node-t4-volcanic-05",
+      "old": "node-t3-swamp-05",
+      "target": 1.1
+    }
+  ],
+  "failures": [],
+  "demand": [
+    {
+      "route": "striker-t1",
+      "tier": 0,
+      "E": {
+        "green": 14
+      },
+      "C": {},
+      "base": 14,
+      "upgrades": 0,
+      "tail": 0,
+      "systems": 0
+    },
+    {
+      "route": "striker-t1",
+      "tier": 1,
+      "E": {
+        "yellow": 650,
+        "green": 320,
+        "purple": 283,
+        "blue": 447,
+        "red": 571
+      },
+      "C": {
+        "swarming": 1,
+        "alacrity": 1,
+        "heavy": 1
+      },
+      "base": 136,
+      "upgrades": 1910,
+      "tail": 1170,
+      "systems": 225
+    },
+    {
+      "route": "squire-t1",
+      "tier": 0,
+      "E": {
+        "green": 14
+      },
+      "C": {},
+      "base": 14,
+      "upgrades": 0,
+      "tail": 0,
+      "systems": 0
+    },
+    {
+      "route": "squire-t1",
+      "tier": 1,
+      "E": {
+        "yellow": 650,
+        "green": 320,
+        "purple": 283,
+        "blue": 447,
+        "red": 571
+      },
+      "C": {
+        "swarming": 1,
+        "alacrity": 1,
+        "heavy": 1
+      },
+      "base": 136,
+      "upgrades": 1910,
+      "tail": 1170,
+      "systems": 225
+    },
+    {
+      "route": "slinger-t1",
+      "tier": 0,
+      "E": {
+        "green": 14
+      },
+      "C": {},
+      "base": 14,
+      "upgrades": 0,
+      "tail": 0,
+      "systems": 0
+    },
+    {
+      "route": "slinger-t1",
+      "tier": 1,
+      "E": {
+        "yellow": 270,
+        "green": 740,
+        "purple": 705,
+        "blue": 492,
+        "red": 120
+      },
+      "C": {
+        "fortified": 1,
+        "alacrity": 1,
+        "heavy": 1
+      },
+      "base": 152,
+      "upgrades": 1905,
+      "tail": 1155,
+      "systems": 270
+    },
+    {
+      "route": "spirit-t1",
+      "tier": 0,
+      "E": {
+        "green": 14
+      },
+      "C": {},
+      "base": 14,
+      "upgrades": 0,
+      "tail": 0,
+      "systems": 0
+    },
+    {
+      "route": "spirit-t1",
+      "tier": 1,
+      "E": {
+        "yellow": 650,
+        "green": 320,
+        "purple": 283,
+        "blue": 492,
+        "red": 571
+      },
+      "C": {
+        "swarming": 1,
+        "alacrity": 1,
+        "heavy": 1
+      },
+      "base": 136,
+      "upgrades": 1910,
+      "tail": 1170,
+      "systems": 270
+    },
+    {
+      "route": "apprentice-t1",
+      "tier": 0,
+      "E": {
+        "green": 14
+      },
+      "C": {},
+      "base": 14,
+      "upgrades": 0,
+      "tail": 0,
+      "systems": 0
+    },
+    {
+      "route": "apprentice-t1",
+      "tier": 1,
+      "E": {
+        "yellow": 650,
+        "green": 320,
+        "purple": 705,
+        "blue": 492,
+        "red": 571
+      },
+      "C": {
+        "swarming": 1,
+        "alacrity": 1,
+        "heavy": 1,
+        "fortified": 1
+      },
+      "base": 158,
+      "upgrades": 2310,
+      "tail": 1435,
+      "systems": 270
+    },
+    {
+      "route": "conduit-t1",
+      "tier": 0,
+      "E": {
+        "green": 14
+      },
+      "C": {},
+      "base": 14,
+      "upgrades": 0,
+      "tail": 0,
+      "systems": 0
+    },
+    {
+      "route": "conduit-t1",
+      "tier": 1,
+      "E": {
+        "yellow": 650,
+        "green": 320,
+        "purple": 283,
+        "blue": 492,
+        "red": 571
+      },
+      "C": {
+        "swarming": 1,
+        "alacrity": 1,
+        "heavy": 1
+      },
+      "base": 136,
+      "upgrades": 1910,
+      "tail": 1170,
+      "systems": 270
+    },
+    {
+      "route": "striker-t2-progression",
+      "tier": 2,
+      "E": {
+        "yellow": 15270,
+        "green": 9000,
+        "blue": 312,
+        "red": 18048
+      },
+      "C": {
+        "alacrity": 22,
+        "fortified": 10,
+        "dominion": 16,
+        "swarming": 16
+      },
+      "base": 12816,
+      "upgrades": 29094,
+      "tail": 17456,
+      "systems": 720
+    },
+    {
+      "route": "squire-t2-progression",
+      "tier": 2,
+      "E": {
+        "yellow": 15690,
+        "purple": 2964,
+        "blue": 14796,
+        "red": 3360,
+        "green": 3000
+      },
+      "C": {
+        "alacrity": 16,
+        "fortified": 12,
+        "heavy": 16,
+        "dominion": 16
+      },
+      "base": 13098,
+      "upgrades": 25992,
+      "tail": 15595,
+      "systems": 720
+    },
+    {
+      "route": "apprentice-t2-progression",
+      "tier": 2,
+      "E": {
+        "yellow": 15270,
+        "purple": 15186,
+        "blue": 1092,
+        "red": 3360,
+        "green": 3540
+      },
+      "C": {
+        "alacrity": 16,
+        "fortified": 26,
+        "heavy": 4,
+        "dominion": 16
+      },
+      "base": 13518,
+      "upgrades": 23670,
+      "tail": 14202,
+      "systems": 1260
+    },
+    {
+      "route": "slinger-t2-progression",
+      "tier": 2,
+      "E": {
+        "yellow": 19986,
+        "green": 20166,
+        "purple": 312,
+        "red": 4260
+      },
+      "C": {
+        "alacrity": 38,
+        "fortified": 10,
+        "dominion": 18,
+        "swarming": 4
+      },
+      "base": 14880,
+      "upgrades": 29124,
+      "tail": 17474,
+      "systems": 720
+    },
+    {
+      "route": "spirit-t2-progression",
+      "tier": 2,
+      "E": {
+        "yellow": 15522,
+        "green": 10338,
+        "blue": 3438,
+        "red": 18048
+      },
+      "C": {
+        "alacrity": 26,
+        "fortified": 10,
+        "heavy": 6,
+        "dominion": 16,
+        "swarming": 16
+      },
+      "base": 14976,
+      "upgrades": 31650,
+      "tail": 18990,
+      "systems": 720
+    },
+    {
+      "route": "conduit-t2-progression",
+      "tier": 2,
+      "E": {
+        "yellow": 17862,
+        "green": 3360,
+        "blue": 1092,
+        "red": 18048
+      },
+      "C": {
+        "alacrity": 16,
+        "fortified": 10,
+        "heavy": 4,
+        "dominion": 18,
+        "swarming": 16
+      },
+      "base": 13944,
+      "upgrades": 25698,
+      "tail": 15418,
+      "systems": 720
+    }
+  ],
+  "anchors": [
+    [
+      "mountain",
+      1,
+      "heavy-hammer",
+      252.64084507042253,
+      167,
+      447,
+      0.6610174216027874,
+      1.7693101045296167,
+      62.639821029082775
+    ],
+    [
+      "cave",
+      1,
+      "chaotic-axe",
+      248.5207100591716,
+      171,
+      451,
+      0.6880714285714286,
+      1.8147380952380954,
+      62.08425720620843
+    ],
+    [
+      "forest",
+      1,
+      "flash-rapier",
+      271.1267605633803,
+      170,
+      450,
+      0.627012987012987,
+      1.6597402597402597,
+      62.22222222222222
+    ],
+    [
+      "plains",
+      1,
+      "iron-broadsword",
+      291.6666666666667,
+      80,
+      215,
+      0.27428571428571424,
+      0.7371428571428571,
+      62.7906976744186
+    ],
+    [
+      "swamp",
+      1,
+      "ashbrand-blade",
+      259.25925925925924,
+      157,
+      422,
+      0.6055714285714286,
+      1.627714285714286,
+      62.796208530805686
+    ],
+    [
+      "forest",
+      2,
+      "gale-needle",
+      5361.702127659574,
+      2616,
+      6000,
+      0.48790476190476195,
+      1.119047619047619,
+      56.4
+    ],
+    [
+      "plains",
+      2,
+      "knight-steelsword",
+      5513.513513513513,
+      1890,
+      4320,
+      0.34279411764705886,
+      0.7835294117647059,
+      56.25
+    ],
+    [
+      "mountain",
+      2,
+      "quake-hammer",
+      5616.666666666666,
+      3120,
+      7332,
+      0.5554896142433235,
+      1.3054005934718103,
+      57.4468085106383
+    ],
+    [
+      "cave",
+      2,
+      "ruinous-axe",
+      5406.593406593407,
+      3010,
+      6984,
+      0.5567276422764227,
+      1.2917560975609754,
+      56.901489117983964
+    ],
+    [
+      "swamp",
+      2,
+      "swamp-mirebrand",
+      5610.619469026548,
+      3120,
+      7332,
+      0.5560883280757098,
+      1.306807570977918,
+      57.4468085106383
+    ],
+    [
+      "jungle",
+      2,
+      "jungle-stinger-rapier",
+      5885.057471264367,
+      2706,
+      6270,
+      0.45980859375000005,
+      1.06541015625,
+      56.8421052631579
+    ],
+    [
+      "desert",
+      2,
+      "desert-sunsteel-cross",
+      5836.065573770492,
+      3300,
+      7620,
+      0.5654494382022471,
+      1.3056741573033708,
+      56.69291338582677
+    ],
+    [
+      "tundra",
+      3,
+      "tundra-permafrost-maul",
+      37298.39572192513,
+      21088,
+      49000,
+      0.5653862476343408,
+      1.31372942593336,
+      56.96326530612245
+    ],
+    [
+      "mountain",
+      3,
+      "mountain-avalanche-maul",
+      37730.57851239669,
+      20944,
+      48880,
+      0.5550935295921496,
+      1.2955009418670873,
+      57.15220949263502
+    ],
+    [
+      "cave",
+      3,
+      "cave-cataclysm-axe",
+      37282.163742690056,
+      20064,
+      46560,
+      0.5381661895611937,
+      1.2488545547233443,
+      56.90721649484536
+    ],
+    [
+      "jungle",
+      3,
+      "jungle-venomthorn-rapier",
+      37109.27152317881,
+      18160,
+      41800,
+      0.4893655750869992,
+      1.126403140894084,
+      56.55502392344498
+    ],
+    [
+      "desert",
+      3,
+      "desert-solar-cross",
+      37120.840630472856,
+      21712,
+      50800,
+      0.5849005472730704,
+      1.3685034912247593,
+      57.25984251968504
+    ],
+    [
+      "volcanic",
+      3,
+      "volcanic-cinderlash",
+      37150.170648464155,
+      22000,
+      50800,
+      0.5921910886541113,
+      1.367423059255857,
+      56.69291338582677
+    ],
+    [
+      "swamp",
+      3,
+      "swamp-blightbrand",
+      37243.093922651926,
+      20944,
+      48880,
+      0.5623592938733127,
+      1.3124580922711766,
+      57.15220949263502
+    ],
+    [
+      "mountain",
+      4,
+      "mountain-earthsunder-maul",
+      287719.03630810993,
+      168704,
+      391040,
+      0.5863498021011714,
+      1.3591036763422446,
+      56.85761047463175
+    ],
+    [
+      "tundra",
+      4,
+      "tundra-glacial-tyrant-maul",
+      288124.4751790566,
+      169904,
+      392000,
+      0.5896895773759318,
+      1.360523085574002,
+      56.65714285714286
+    ],
+    [
+      "jungle",
+      4,
+      "jungle-deathfang-rapier",
+      287952.08518189884,
+      146432,
+      334400,
+      0.5085290488780422,
+      1.1613043183512983,
+      56.21052631578947
+    ],
+    [
+      "desert",
+      4,
+      "desert-zenith-cross",
+      287410.3448275862,
+      174800,
+      406400,
+      0.6081896603438554,
+      1.414006166840634,
+      56.988188976377955
+    ],
+    [
+      "volcanic",
+      4,
+      "volcanic-eruption-lash",
+      289120.3931203931,
+      177344,
+      406400,
+      0.6133915289958529,
+      1.4056428037256103,
+      56.36220472440945
+    ],
+    [
+      "graveyard",
+      4,
+      "graveyard-plague-axe",
+      288522.9357798165,
+      161952,
+      372480,
+      0.561314127635219,
+      1.2909892206429459,
+      56.52061855670103
+    ],
+    [
+      "trench",
+      4,
+      "trench-abyssal-axe",
+      288000.0,
+      161952,
+      372480,
+      0.5623333333333334,
+      1.2933333333333332,
+      56.52061855670103
+    ]
+  ]
+}

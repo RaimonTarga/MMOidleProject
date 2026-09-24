@@ -1,3 +1,4 @@
+import { priceRecipeForEconomy } from './config/economy';
 import type { EssenceType } from "./items";
 import type { CombatArchetype } from "./types/combat";
 import {
@@ -286,7 +287,7 @@ const recipes: RuneRecipe[] = [
 ];
 
 export const RUNE_RECIPE_DATABASE = new Map<string, RuneRecipe>(
-  recipes.map((recipe) => [recipe.id, recipe]),
+  recipes.map((recipe) => [recipe.id, priceRecipeForEconomy(recipe)]),
 );
 
 export function runeIdsFromCraftedRecipes(craftedRecipeIds: readonly string[]): string[] {

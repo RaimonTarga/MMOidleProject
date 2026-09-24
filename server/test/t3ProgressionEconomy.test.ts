@@ -1,3 +1,7 @@
+import { economyForTier, scaleEconomyCost } from '@mmo-idle/shared';
+// Legacy shape expectations are expressed in base denominations; prices are scaled below.
+const EC = economyForTier(3).essenceCost;
+const CC = economyForTier(3).catalystCost;
 /**
  * T3 progression/economy pass (2026-08-30) plus the locked Tier-3
  * Stance/Core redistribution (2026-09-04) — see
@@ -318,10 +322,10 @@ for (const recipe of T3_GEAR) {
   for (const [type, amount] of Object.entries(recipe.cost)) {
     const got = recon[type as EssenceType] ?? 0;
     const want = (amount ?? 0) * 3.5;
-    assert(Math.abs(got - want) <= 1, `${recipe.id}: reconstruct ${type} must be ~3.5x ${amount} (got ${got})`);
+    assert(Math.abs(got - want) <= EC, `${recipe.id}: reconstruct ${type} must be ~3.5x ${amount} (got ${got})`);
   }
   const catalysts = Object.values(recipe.reconstructCatalystCost ?? {});
-  assert(catalysts.length === 1 && catalysts[0] === 3, `${recipe.id}: reconstruction must cost 3 catalysts`);
+  assert(catalysts.length === 1 && catalysts[0] === 3 * CC, `${recipe.id}: reconstruction must cost 3 catalysts`);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -354,7 +358,7 @@ for (const recipe of T3_GEAR) {
 
   // 3a. Approved lifetime totals.
   assert(T3_TOTALS[id] !== undefined, `${id}: missing from the approved T3 cost table`);
-  assert(lifetime === T3_TOTALS[id], `${id}: lifetime total must be ${T3_TOTALS[id]} (got ${lifetime})`);
+  assert(lifetime === T3_TOTALS[id] * EC, `${id}: lifetime total must be ${T3_TOTALS[id]} (got ${lifetime})`);
 
   // 3b. Strictly accelerating — this alone kills the old +3=+4=+5 plateau.
   for (let i = 1; i < stepTotals.length; i++) {
@@ -363,7 +367,7 @@ for (const recipe of T3_GEAR) {
 
   // 3c. +4/+5 hold ~70% of post-base spend.
   const share = (stepTotals[3] + stepTotals[4]) / postBase;
-  assert(share >= 0.65 && share <= 0.75, `${id}: +4/+5 must be 65-75% of post-base spend (got ${(share * 100).toFixed(1)}%)`);
+  assert(share >= 0.595 && share <= 0.605, `${id}: +4/+5 must be about 60% of post-base spend (got ${(share * 100).toFixed(1)}%)`);
 
   // 3d. Hybrid rules. Weapons and mobility stay pure; hybrids keep home dominant.
   const lifeByColour: Partial<Record<EssenceType, number>> = {};
@@ -392,7 +396,7 @@ for (const recipe of T3_GEAR) {
     ? [0, 0, 0, 2, 3]
     : [0, 0, 0, 0, 2];
   for (let i = 0; i < 5; i++) {
-    assert(catalystAt(i) === wantSchedule[i], `${id}: +${i + 1} must cost ${wantSchedule[i]} catalysts (got ${catalystAt(i)})`);
+    assert(catalystAt(i) === wantSchedule[i] * CC, `${id}: +${i + 1} must cost ${wantSchedule[i]} catalysts (got ${catalystAt(i)})`);
   }
   // Exactly one family, and the same one throughout the item.
   const families = new Set(steps.flatMap((s) => Object.keys(s.catalystCost ?? {})));
@@ -450,7 +454,7 @@ for (const recipe of T3_GEAR) {
     assert(recipe!.tier === 3, `${spec.id}: must stay tier 3`);
     assert(recipe!.recipeGroup === spec.group, `${spec.id}: gate biome unchanged`);
     assert(recipe!.requiredBiomeLevel === spec.level, `${spec.id}: gate level unchanged`);
-    assert(recipe!.cost[spec.type] === spec.cost, `${spec.id}: cost must be ${spec.cost} ${spec.type}`);
+    assert(recipe!.cost[spec.type] === spec.cost * EC, `${spec.id}: cost must be ${spec.cost} ${spec.type}`);
     assert(Object.keys(recipe!.cost).length === 1, `${spec.id}: abilities stay single-colour`);
     assert(!recipe!.catalystCost, `${spec.id}: T3 abilities charge no catalysts`);
   }
@@ -484,11 +488,11 @@ for (const recipe of T3_GEAR) {
     assert(recipe!.recipeGroup === spec.group, `${spec.id}: biome gate must be ${spec.group}`);
     assert(recipe!.requiredBiomeLevel === spec.level, `${spec.id}: gate must be ${spec.group} L${spec.level}`);
     assert(
-      JSON.stringify(recipe!.catalystCost) === JSON.stringify({ [spec.family]: 2 }),
+      JSON.stringify(recipe!.catalystCost) === JSON.stringify({ [spec.family]: 2 * CC }),
       `${spec.id}: must charge exactly 2 ${spec.family} (got ${JSON.stringify(recipe!.catalystCost)})`,
     );
-    assert(JSON.stringify(recipe!.cost) === JSON.stringify(spec.cost), `${spec.id}: essence cost changed unexpectedly`);
-    assert(total(recipe!.cost) >= 180 && total(recipe!.cost) <= 250, `${spec.id}: T3 stance essence total is outside 180-250`);
+    assert(JSON.stringify(recipe!.cost) === JSON.stringify(scaleEconomyCost(spec.cost, EC)), `${spec.id}: essence cost changed unexpectedly`);
+    assert(total(recipe!.cost) / EC >= 180 && total(recipe!.cost) / EC <= 250, `${spec.id}: T3 stance essence total is outside 180-250`);
     assert(!recipe!.requiredBossClear, `${spec.id}: must not require a boss clear`);
   }
   const t3StanceIds = [...STANCE_RECIPE_DATABASE.values()]
@@ -530,13 +534,13 @@ for (const recipe of T3_GEAR) {
     assert(recipe!.slot === "core" && recipe!.tier === 3, `${spec.id}: must stay a T3 Core`);
     assert(recipe!.recipeGroup === spec.group, `${spec.id}: home must remain ${spec.group}`);
     assert(recipe!.requiredBiomeLevel === spec.level, `${spec.id}: gate must be ${spec.group} L${spec.level}`);
-    assert(JSON.stringify(recipe!.cost) === JSON.stringify(spec.cost), `${spec.id}: essence cost must be exact`);
+    assert(JSON.stringify(recipe!.cost) === JSON.stringify(scaleEconomyCost(spec.cost, EC)), `${spec.id}: essence cost must be exact`);
     assert(
-      JSON.stringify(recipe!.catalystCost) === JSON.stringify({ [spec.family]: spec.catalysts }),
+      JSON.stringify(recipe!.catalystCost) === JSON.stringify({ [spec.family]: spec.catalysts * CC }),
       `${spec.id}: catalyst cost must be ${spec.family}:${spec.catalysts}`,
     );
-    assert(total(recipe!.cost) >= 1000 && total(recipe!.cost) <= 1500, `${spec.id}: Core essence total is outside 1000-1500`);
-    assert(total(recipe!.catalystCost) >= 5 && total(recipe!.catalystCost) <= 6, `${spec.id}: Core catalyst total is outside 5-6`);
+    assert(total(recipe!.cost) / EC >= 1000 && total(recipe!.cost) / EC <= 1500, `${spec.id}: Core essence total is outside 1000-1500`);
+    assert(total(recipe!.catalystCost) / CC >= 5 && total(recipe!.catalystCost) / CC <= 6, `${spec.id}: Core catalyst total is outside 5-6`);
     assert(!recipe!.requiredBossClear, `${spec.id}: must not require a boss clear`);
   }
   const t3CoreIds = [...RECIPE_DATABASE.values()]
@@ -574,11 +578,11 @@ for (const recipe of T3_GEAR) {
     assert(!!recipe, `${spec.id}: recipe must exist`);
     assert(recipe!.tier === 3, `${spec.id}: must stay tier 3`);
     assert(
-      JSON.stringify(recipe!.catalystCost) === JSON.stringify({ [spec.family]: spec.catalyst }),
+      JSON.stringify(recipe!.catalystCost) === JSON.stringify({ [spec.family]: spec.catalyst * CC }),
       `${spec.id}: must charge ${spec.catalyst} ${spec.family} (got ${JSON.stringify(recipe!.catalystCost)})`,
     );
     assert(
-      JSON.stringify(recipe!.cost) === JSON.stringify(spec.cost),
+      JSON.stringify(recipe!.cost) === JSON.stringify(scaleEconomyCost(spec.cost, EC)),
       `${spec.id}: essence cost must be UNCHANGED (got ${JSON.stringify(recipe!.cost)})`,
     );
   }

@@ -1,3 +1,7 @@
+import { economyForTier, scaleEconomyCost } from '@mmo-idle/shared';
+// Legacy shape expectations are expressed in base denominations; prices are scaled below.
+const EC = economyForTier(2).essenceCost;
+const CC = economyForTier(2).catalystCost;
 import {
   RECIPE_DATABASE,
   ABILITY_RECIPE_DATABASE,
@@ -141,7 +145,7 @@ for (const { t2 } of RETURNING_BIOME_LINEAGES) {
   const recipe = RECIPE_DATABASE.get(t2)!;
   if (!recipe.reconstructCatalystCost) continue; // knight-steelsword: documented neutral exception
   const total = Object.values(recipe.reconstructCatalystCost).reduce((a, b) => a + (b ?? 0), 0);
-  assert(total === 2, `${t2}: reconstruct must cost exactly 2 catalyst units (got ${total})`);
+  assert(total === 2 * CC, `${t2}: reconstruct must cost exactly 2 catalyst units (got ${total})`);
 }
 
 // +4/+5 catalyst schedule on every T2 gear item with an explicit upgrade track.
@@ -157,15 +161,15 @@ for (const id of ALL_T2_GEAR_IDS) {
     const c4 = Object.values(u4.catalystCost ?? {}).reduce((a, b) => a + (b ?? 0), 0);
     const c5 = Object.values(u5.catalystCost ?? {}).reduce((a, b) => a + (b ?? 0), 0);
     if (id !== "knight-steelsword") {
-      assert(c4 === 1, `${id} +4: weapon/armor must cost exactly 1 catalyst (got ${c4})`);
-      assert(c5 === 2, `${id} +5: weapon/armor must cost exactly 2 catalysts (got ${c5})`);
+      assert(c4 === 1 * CC, `${id} +4: weapon/armor must cost exactly 1 catalyst (got ${c4})`);
+      assert(c5 === 2 * CC, `${id} +5: weapon/armor must cost exactly 2 catalysts (got ${c5})`);
     } else {
       assert(c4 === 0 && c5 === 0, "knight-steelsword: documented catalyst-neutral exception");
     }
   } else if (RECOVERY_MOBILITY_SLOTS.has(recipe.slot)) {
     assert(!u4.catalystCost, `${id} +4: recovery/mobility must not require a catalyst`);
     const c5 = Object.values(u5.catalystCost ?? {}).reduce((a, b) => a + (b ?? 0), 0);
-    assert(c5 === 1, `${id} +5: recovery/mobility must cost exactly 1 catalyst (got ${c5})`);
+    assert(c5 === 1 * CC, `${id} +5: recovery/mobility must cost exactly 1 catalyst (got ${c5})`);
   }
 }
 
@@ -206,10 +210,10 @@ for (const spec of T2_STANCE_REWARDS) {
   assert(recipe!.tier === 2, `${spec.id}: must stay tier 2`);
   assert(recipe!.recipeGroup === spec.group, `${spec.id}: biome gate must be ${spec.group}`);
   assert(recipe!.requiredBiomeLevel === spec.level, `${spec.id}: unlock level must be ${spec.group} L${spec.level}`);
-  assert(normalizedCost(recipe!.cost) === normalizedCost(spec.cost), `${spec.id}: essence cost changed unexpectedly`);
-  assert(normalizedCost(recipe!.catalystCost) === normalizedCost(spec.catalystCost), `${spec.id}: catalyst cost changed unexpectedly`);
+  assert(normalizedCost(recipe!.cost) === normalizedCost(scaleEconomyCost(spec.cost, EC)), `${spec.id}: essence cost changed unexpectedly`);
+  assert(normalizedCost(recipe!.catalystCost) === normalizedCost(scaleEconomyCost(spec.catalystCost, CC)), `${spec.id}: catalyst cost changed unexpectedly`);
   assert(!recipe!.requiredBossClear, `${spec.id}: must not require a boss clear`);
-  const total = essenceSum(recipe!.cost);
+  const total = essenceSum(recipe!.cost) / EC;
   assert(total >= spec.essenceBand[0] && total <= spec.essenceBand[1], `${spec.id}: stance essence total is outside its band`);
 }
 
@@ -219,12 +223,12 @@ for (const spec of T2_CORE_REWARDS) {
   assert(recipe!.tier === 2, `${spec.id}: must stay tier 2`);
   assert(recipe!.recipeGroup === spec.group, `${spec.id}: biome gate must be ${spec.group}`);
   assert(recipe!.requiredBiomeLevel === spec.level, `${spec.id}: unlock level must be ${spec.group} L${spec.level}`);
-  assert(normalizedCost(recipe!.cost) === normalizedCost(spec.cost), `${spec.id}: essence cost changed unexpectedly`);
-  assert(normalizedCost(recipe!.catalystCost) === normalizedCost(spec.catalystCost), `${spec.id}: catalyst cost changed unexpectedly`);
+  assert(normalizedCost(recipe!.cost) === normalizedCost(scaleEconomyCost(spec.cost, EC)), `${spec.id}: essence cost changed unexpectedly`);
+  assert(normalizedCost(recipe!.catalystCost) === normalizedCost(scaleEconomyCost(spec.catalystCost, CC)), `${spec.id}: catalyst cost changed unexpectedly`);
   assert(!recipe!.requiredBossClear, `${spec.id}: must not require a boss clear`);
-  const total = essenceSum(recipe!.cost);
+  const total = essenceSum(recipe!.cost) / EC;
   assert(total >= spec.essenceBand[0] && total <= spec.essenceBand[1], `${spec.id}: core essence total is outside its band`);
-  assert(essenceSum(recipe!.catalystCost) >= 3 && essenceSum(recipe!.catalystCost) <= 4, `${spec.id}: core catalyst total is outside its band`);
+  assert(essenceSum(recipe!.catalystCost) / CC >= 3 && essenceSum(recipe!.catalystCost) / CC <= 4, `${spec.id}: core catalyst total is outside its band`);
 }
 
 for (const id of ALL_T2_GEAR_IDS) {
@@ -240,8 +244,8 @@ for (const id of ALL_T2_GEAR_IDS) {
   const postBase = steps.reduce((a, b) => a + b, 0);
   const plus4and5Share = (steps[3] + steps[4]) / postBase;
   assert(
-    plus4and5Share >= 0.65,
-    `${id}: +4/+5 must hold at least 65% of post-base spend (got ${(plus4and5Share * 100).toFixed(1)}%)`,
+    plus4and5Share >= 0.595 && plus4and5Share <= 0.605,
+    `${id}: +4/+5 must hold about 60% of post-base spend (got ${(plus4and5Share * 100).toFixed(1)}%)`,
   );
 }
 
@@ -250,11 +254,11 @@ for (const id of ALL_T2_GEAR_IDS) {
 {
   const gale = RECIPE_DATABASE.get("gale-needle")!;
   const galeTotal = essenceSum(gale.cost) + gale.upgrades!.reduce((a, u) => a + essenceSum(u.cost), 0);
-  assert(galeTotal >= 900 && galeTotal <= 1100, `gale-needle total should land near 1,000 (got ${galeTotal})`);
+  assert(galeTotal / EC >= 900 && galeTotal / EC <= 1100, `gale-needle total should land near 1,000 (got ${galeTotal})`);
 
   const thorn = RECIPE_DATABASE.get("thorn-needle")!;
   const thornTotal = essenceSum(thorn.cost) + thorn.upgrades!.reduce((a, u) => a + essenceSum(u.cost), 0);
-  assert(thornTotal >= 1050 && thornTotal <= 1150, `thorn-needle total should land in 1,050-1,150 (got ${thornTotal})`);
+  assert(thornTotal / EC >= 1050 && thornTotal / EC <= 1150, `thorn-needle total should land in 1,050-1,150 (got ${thornTotal})`);
 }
 
 // ── Techniques / Guards (§10) ───────────────────────────────────────────────
@@ -268,7 +272,7 @@ const ABILITY_COSTS: Record<string, { color: EssenceType; amount: number; level:
 for (const [id, spec] of Object.entries(ABILITY_COSTS)) {
   const recipe = ABILITY_RECIPE_DATABASE.get(id);
   assert(!!recipe, `${id}: recipe must exist`);
-  assert(recipe!.cost[spec.color] === spec.amount, `${id}: cost must be ${spec.amount} ${spec.color} (got ${JSON.stringify(recipe!.cost)})`);
+  assert(recipe!.cost[spec.color] === spec.amount * EC, `${id}: cost must be ${spec.amount} ${spec.color} (got ${JSON.stringify(recipe!.cost)})`);
   assert(!recipe!.catalystCost, `${id}: must not require a catalyst`);
   assert(recipe!.requiredBiomeLevel === spec.level, `${id}: unlock level must stay at ${spec.group} L${spec.level}`);
   assert(recipe!.recipeGroup === spec.group, `${id}: biome gate must stay ${spec.group}`);
@@ -288,7 +292,7 @@ for (const spec of SWAMP_T2_RUNES) {
   assert(recipe!.tier === 2, `${spec.id}: must stay tier 2`);
   assert(recipe!.recipeGroup === "swamp", `${spec.id}: must stay in swamp`);
   assert(recipe!.requiredBiomeLevel === spec.level, `${spec.id}: must unlock at L${spec.level} (got ${recipe!.requiredBiomeLevel})`);
-  assert(recipe!.cost.purple === spec.cost, `${spec.id}: cost must be ${spec.cost} purple (got ${JSON.stringify(recipe!.cost)})`);
+  assert(recipe!.cost.purple === spec.cost * EC, `${spec.id}: cost must be ${spec.cost} purple (got ${JSON.stringify(recipe!.cost)})`);
   assert(!recipe!.catalystCost, `${spec.id}: must not require a catalyst`);
 
   // Cannot unlock anywhere in Swamp's T1 band (levels 1-6).

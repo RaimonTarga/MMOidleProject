@@ -142,10 +142,12 @@ Notes:
 ## 5. Numbers discipline
 
 - The live XP model uses local six-level segments with explicit T1–T4 budgets
-  (1,750 / 5,000 / 7,000 / 9,000 XP) and a 1.20× continuation factor beyond
+  (economy v2 candidate: 1,750 / 32,000 / 168,000 / 1,080,000 XP) and a 1.20× continuation factor beyond
   T4. The real decision for T5–T8 is **wall-clock targets per tier** (what is
   T6 — days? a week?). Set those targets explicitly before tuning T5 mob XP;
-  the segment budget is the intended tuning point.
+  tune segment budgets alongside independent reward scales. See
+  [economy philosophy](economy-philosophy.md); the continuation factor is not
+  an approved T5-T8 pacing schedule.
 - The treadmill rule holds: ~1.9–2× stats/tier, eHP/H ≈ constant, TTK ≈ constant.
   "Bigger numbers, same feel" is *correct* — texture variety (packs, layered
   defenses, compositions) is what changes, per §2.

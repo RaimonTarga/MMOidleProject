@@ -87,9 +87,9 @@ function testPeekSceneBoundsEdge(): void {
 
 const localTables = [
   [210, 455, 735, 1_050, 1_383, 1_750],
-  [600, 1_300, 2_100, 3_000, 3_950, 5_000],
-  [840, 1_820, 2_940, 4_200, 5_530, 7_000],
-  [1_080, 2_340, 3_780, 5_400, 7_110, 9_000],
+  [3_840, 8_320, 13_440, 19_200, 25_280, 32_000],
+  [20_160, 43_680, 70_560, 100_800, 132_720, 168_000],
+  [129_600, 280_800, 453_600, 648_000, 853_200, 1_080_000],
 ] as const;
 
 assert(BIOME_LEVELS_PER_TIER === 6, 'biome segments remain six levels');
@@ -100,7 +100,7 @@ assert(
 
 for (let tier = 1; tier <= 4; tier++) {
   assert(
-    biomeXpSegmentBudget(tier) === [0, 1_750, 5_000, 7_000, 9_000][tier],
+    biomeXpSegmentBudget(tier) === [0, 1_750, 32_000, 168_000, 1_080_000][tier],
     `T${tier} segment budget is explicit`,
   );
   const offset = (tier - 1) * BIOME_LEVELS_PER_TIER;
@@ -115,16 +115,16 @@ for (let tier = 1; tier <= 4; tier++) {
 
 assert(biomeXpForLevel(0) === 0, 'level zero costs zero XP');
 assert(biomeXpForLevel(6) === 1_750, 'T1 reference segment ends at 1,750 XP');
-assert(biomeXpForLevel(12) === 6_750, 'T2 reference segment ends at 6,750 cumulative XP');
-assert(biomeXpForLevel(18) === 13_750, 'T3 reference segment ends at 13,750 cumulative XP');
-assert(biomeXpForLevel(24) === 22_750, 'T4 reference segment ends at 22,750 cumulative XP');
+assert(biomeXpForLevel(12) === 33_750, 'T2 reference segment ends at 33,750 cumulative XP');
+assert(biomeXpForLevel(18) === 201_750, 'T3 reference segment ends at 201,750 cumulative XP');
+assert(biomeXpForLevel(24) === 1_281_750, 'T4 reference segment ends at 1,281,750 cumulative XP');
 
 assert(biomeLevelOffset('plains') === 0, 'T1 biome keeps zero offset');
 assert(biomeLevelOffset('jungle') === 6, 'T2-start biome keeps its six-level offset');
 assert(biomeXpForBiomeLevel('plains', 6) === 1_750, 'T1 biome reaches its local budget');
-assert(biomeXpForBiomeLevel('jungle', 1) === 600, 'T2-start biome begins on the T2 local curve');
-assert(biomeXpForBiomeLevel('jungle', 6) === 5_000, 'T2-start biome reaches the T2 local budget');
-assert(biomeXpForBiomeLevel('jungle', 7) === 5_840, 'T2-start biome advances into the T3 curve');
+assert(biomeXpForBiomeLevel('jungle', 1) === 3_840, 'T2-start biome begins on the T2 local curve');
+assert(biomeXpForBiomeLevel('jungle', 6) === 32_000, 'T2-start biome reaches the T2 local budget');
+assert(biomeXpForBiomeLevel('jungle', 7) === 52_160, 'T2-start biome advances into the T3 curve');
 assert(
   JSON.stringify(CLEARING_MASTERY_XP_THRESHOLDS) === JSON.stringify([0, 43, 172, 430, 860]),
   'clearing keeps its explicit tutorial threshold table',

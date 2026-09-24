@@ -1,4 +1,5 @@
 import type { Recipe } from './types';
+import { priceRecipeForEconomy } from '../../config/economy';
 import { clearingRecipeEntries } from './clearing.recipes';
 import { caveRecipeEntries } from './cave.recipes';
 import { desertRecipeEntries } from './desert.recipes';
@@ -28,5 +29,7 @@ const recipeEntries: [string, Recipe][] = [
   // ...trenchRecipeEntries,
 ];
 
-export const RECIPE_DATABASE: Map<string, Recipe> = new Map<string, Recipe>(recipeEntries);
+export const RECIPE_DATABASE: Map<string, Recipe> = new Map<string, Recipe>(
+  recipeEntries.map(([id, recipe]) => [id, priceRecipeForEconomy(recipe)]),
+);
 export type { Recipe } from './types';

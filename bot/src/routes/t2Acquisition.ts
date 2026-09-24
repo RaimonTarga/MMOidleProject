@@ -1,47 +1,24 @@
 import {
-  EVOLUTION_REQUIRED_PLUS,
+  ITEM_DATABASE,
   RECIPE_DATABASE,
+  getMaxUpgrade,
+  globalMastery,
+  globalMasteryRequiredForUpgrade,
+  requiredBiomeLevelForUpgrade,
+  requiredPlusFor,
+  upgradeCostFor,
+  upgradeCatalystCostFor,
   type EquipmentSlot,
   type TierEntryProfile,
 } from "@mmo-idle/shared";
 import type { RouteStep } from "../route/types";
 import { soleCatalystFamily, t2, t2FarmFor, type T2BiomeGroup } from "./t2Common";
 
-/**
- * How a Tier-2 item is actually obtained.
- *
- * ── The constraint that shapes the whole tier ──────────────────────────────
- *
- * 20 of the 32 Tier-2 recipes are EVOLUTIONS (`evolvesFrom`) of one specific
- * Tier-1 item, and `craftRecipe` refuses them outright ("This item must be
- * evolved or reconstructed"). Only the eight Jungle/Desert pieces and the three
- * Cores are plain crafts. An evolution offers two paths:
- *
- *   EVOLVE       consume a BAG copy of the predecessor at +5, pay the cheap
- *                `cost`. Roughly a third of the reconstruct price.
- *   RECONSTRUCT  pay `reconstructCost` instead, no predecessor needed -- and
- *                only where that cost is authored at all.
- *
- * Two consequences the route has to handle, and both were live traps:
- *
- * 1. `checkEvolve` tests `inventory.includes(predecessor)`, and an EQUIPPED item
- *    is not in the inventory array. A character wearing its fully-upgraded
- *    Tier-1 weapon cannot evolve that weapon until it takes it off. Without the
- *    unequip the route silently pays reconstruction -- three times the price,
- *    for no reason a reader of the run could ever see.
- *
- * 2. `EVOLUTION_REQUIRED_PLUS` is 5. The canonical Tier-1 routes take only SOME
- *    of their gear to +5 (Striker's flash-rapier ends at +4, its iron-broadsword
- *    at +1), so most lineages are not evolvable at Tier-2 entry no matter what
- *    the route does. That is recorded as a progression finding, not routed
- *    around: see docs/t2-bot-testing-infrastructure.md.
- *
- * Because the path depends on what the class's own Tier-1 template happens to
- * hold, it is resolved HERE, at route-build time, from that template -- not
- * guessed at runtime and not restated per class.
+/** Plan from the declared entry inventory. An eligible owned predecessor may be
+ * upgraded to the production evolution gate when that strictly dominates reconstruction.
+ * Equipped predecessors are accepted by the live server; existing unequip steps remain valid.
  */
-
-export type AcquisitionPath = "craft" | "evolve" | "evolve-after-unequip" | "reconstruct" | "unreachable";
+export type AcquisitionPath = "craft" | "evolve" | "evolve-after-unequip" | "upgrade-then-evolve" | "reconstruct" | "unreachable";
 
 export interface AcquisitionPlan {
   recipeId: string;
@@ -49,6 +26,8 @@ export interface AcquisitionPlan {
   predecessorId?: string;
   /** Slot to empty first, when the predecessor is worn. */
   unequipSlot?: EquipmentSlot;
+  /** Only present when an owned, already mastery-eligible predecessor needs a top-up. */
+  topUpToPlus?: number;
   /** Why this path and not a cheaper one. Copied into the adoption report. */
   reason: string;
 }
@@ -66,13 +45,14 @@ export function planAcquisition(
     return { recipeId, path: "craft", reason: "plain recipe, no predecessor lineage" };
   }
 
+  const requiredPlus = requiredPlusFor(recipe);
   const plus = profile.itemUpgrades[predecessorId] ?? 0;
   const inBag = profile.inventory.includes(predecessorId);
   const wornSlot = (Object.entries(profile.equipment) as [EquipmentSlot, string | null][]).find(
     ([, id]) => id === predecessorId,
   )?.[0];
 
-  if (plus >= EVOLUTION_REQUIRED_PLUS && inBag) {
+  if (plus >= requiredPlus && inBag) {
     return {
       recipeId,
       path: "evolve",
@@ -80,13 +60,41 @@ export function planAcquisition(
       reason: `${predecessorId} is +${plus} in the bag`,
     };
   }
-  if (plus >= EVOLUTION_REQUIRED_PLUS && wornSlot) {
+  if (plus >= requiredPlus && wornSlot) {
     return {
       recipeId,
       path: "evolve-after-unequip",
       predecessorId,
       unequipSlot: wornSlot,
-      reason: `${predecessorId} is +${plus} but worn in the ${wornSlot} slot; evolution consumes a bag copy`,
+      reason: `${predecessorId} is +${plus} worn in the ${wornSlot} slot; the route explicitly unequips before evolution`,
+    };
+  }
+  const predecessor = ITEM_DATABASE.get(predecessorId);
+  if ((inBag || wornSlot) && predecessor && plus < requiredPlus && requiredPlus <= getMaxUpgrade(predecessor)) {
+    const topUpEssence: Record<string, number> = { ...recipe.cost };
+    const topUpCatalysts: Record<string, number> = Object.fromEntries(Object.entries(recipe.catalystCost ?? {}).map(([key, value]) => [key, value ?? 0]));
+    let eligible = true;
+    for (let target = plus + 1; target <= requiredPlus; target++) {
+      const cost = upgradeCostFor(predecessor, target);
+      if (!cost || (profile.biomeLevels[predecessor.biomeGroup!] ?? 0) < requiredBiomeLevelForUpgrade(predecessor, target) ||
+          globalMastery(profile.biomeLevels) < globalMasteryRequiredForUpgrade(predecessor.tier, target)) {
+        eligible = false;
+        break;
+      }
+      for (const [key, amount] of Object.entries(cost)) topUpEssence[key] = (topUpEssence[key] ?? 0) + amount;
+      for (const [key, amount] of Object.entries(upgradeCatalystCostFor(predecessor, target) ?? {})) topUpCatalysts[key] = (topUpCatalysts[key] ?? 0) + (amount ?? 0);
+    }
+    // Compare each colour/family separately: currencies are not interchangeable.
+    const dominates = (a: Record<string, number>, b: Partial<Record<string, number>>) =>
+      Object.entries(a).every(([key, amount]) => amount <= (b[key] ?? 0));
+    const cheaper = !recipe.reconstructCost || (
+      dominates(topUpEssence, recipe.reconstructCost) && dominates(topUpCatalysts, recipe.reconstructCatalystCost ?? {}) &&
+      (Object.entries(recipe.reconstructCost).some(([key, amount]) => (topUpEssence[key] ?? 0) < amount) ||
+       Object.entries(recipe.reconstructCatalystCost ?? {}).some(([key, amount]) => (topUpCatalysts[key] ?? 0) < (amount ?? 0)))
+    );
+    if (eligible && cheaper) return {
+      recipeId, path: 'upgrade-then-evolve', predecessorId, topUpToPlus: requiredPlus,
+      reason: `owned ${predecessorId} +${plus} is mastery-eligible; top up to +${requiredPlus} and evolve for no more of any currency than reconstruction`,
     };
   }
   if (recipe.reconstructCost) {
@@ -96,7 +104,7 @@ export function planAcquisition(
       path: "reconstruct",
       predecessorId,
       reason:
-        `${predecessorId} is ${held}, below the +${EVOLUTION_REQUIRED_PLUS} evolution gate; ` +
+        `${predecessorId} is ${held}, below the +${requiredPlus} evolution gate; ` +
         "paying the reconstruction cost instead",
     };
   }
@@ -105,7 +113,7 @@ export function planAcquisition(
     path: "unreachable",
     predecessorId,
     reason:
-      `needs ${predecessorId} at +${EVOLUTION_REQUIRED_PLUS} and the lineage authors no ` +
+      `needs ${predecessorId} at +${requiredPlus} and the lineage authors no ` +
       "reconstruction cost, so this item cannot be obtained from this template at all",
   };
 }
@@ -151,6 +159,13 @@ export function obtainSteps(group: T2BiomeGroup, plan: AcquisitionPlan): RouteSt
           farmAt: at,
           label: `evolve ${plan.predecessorId} into ${plan.recipeId}`,
         },
+      ];
+    case "upgrade-then-evolve":
+      return [
+        gate,
+        { type: 'upgrade', definitionId: plan.predecessorId!, toPlus: plan.topUpToPlus!, farmAt: at,
+          label: `top up owned ${plan.predecessorId} to +${plan.topUpToPlus} before evolution` },
+        { type: 'evolveItem', recipeId: plan.recipeId, mode: 'evolve', farmAt: at, label: plan.reason },
       ];
     case "evolve-after-unequip":
       return [

@@ -1,5 +1,6 @@
 import { nodeExitsForNodeId } from "../collision/nodeAdjacency";
 import { NODE_BIOMES } from "../world/nodeBiomes";
+import { ECONOMY_BY_TIER, economyForTier } from './economy';
 import type { AutocombatConfig } from "../components/core/networkedSlices";
 
 // ─── Game balance constants ───────────────────────────────────────────────────
@@ -142,7 +143,7 @@ export const GAME_CONFIG = {
   /** Incremental XP shares for the six levels in one tier segment. */
   BIOME_XP_LOCAL_STEP_SHARES: [12, 14, 16, 18, 19, 21] as const,
   /** Total XP for one six-level segment, indexed by tier; index 0 is unused. */
-  BIOME_XP_SEGMENT_BUDGET_BY_TIER: [0, 1_750, 5_000, 7_000, 9_000] as const,
+  BIOME_XP_SEGMENT_BUDGET_BY_TIER: ECONOMY_BY_TIER.map(tier => tier.xpBudget),
   /** Growth applied to segments beyond the explicitly tuned T4 budget. */
   BIOME_XP_FUTURE_TIER_BUDGET_GROWTH: 1.2,
   /**
@@ -150,17 +151,13 @@ export const GAME_CONFIG = {
    * progression rate is real data, so canonical runs do not need the debug
    * reward multiplier to reach it. Index = biomeTier.
    */
-  BIOME_XP_REWARD_MULT_BY_TIER: [
-    1.0, 2.0, 1.25, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
-  ] as unknown as readonly number[],
+  BIOME_XP_REWARD_MULT_BY_TIER: Array.from({ length: 11 }, (_, tier) => economyForTier(tier).xpReward),
   /**
    * Per-tier multiplier on essence granted to the player. T1's validated 2x
-   * progression rate is real data; later tiers retain their dampening.
+   * progression rate is retained; later tiers use increasing denominations.
    * Index = biomeTier.
    */
-  BIOME_ESSENCE_TIER_MULT: [
-    1.0, 2.0, 0.85, 0.70, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55,
-  ] as unknown as readonly number[],
+  BIOME_ESSENCE_TIER_MULT: Array.from({ length: 11 }, (_, tier) => economyForTier(tier).essenceReward),
   // ── Biome catalysts ─────────────────────────────────────────────────────────
   /**
    * Accumulated kill-weight (Σ monster `catalystWeight`) required to mint one
@@ -172,7 +169,9 @@ export const GAME_CONFIG = {
    * retaining the universal 100-point mint threshold, keeping the player-facing
    * meter consistent without changing its intended catalyst pace.
    */
-  CATALYST_PROGRESS_REWARD_MULT_BY_TIER: { 1: 0.5 } as Readonly<Record<number, number>>,
+  CATALYST_PROGRESS_REWARD_MULT_BY_TIER: Object.fromEntries(
+    Array.from({ length: 11 }, (_, tier) => [tier, economyForTier(tier).catalystProgress]),
+  ) as Readonly<Record<number, number>>,
 } as const;
 
 /** Universal kill-weight required to mint one catalyst. */

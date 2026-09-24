@@ -1,3 +1,4 @@
+import { priceRecipeForEconomy } from './config/economy';
 import type { EssenceType } from "./items";
 import { RITE_DATABASE } from "./rites";
 
@@ -52,7 +53,7 @@ const recipes: RiteRecipe[] = [
   { id: "rite-recipe-ability-reprieve", name: "Ability Reprieve", description: "Reduce equipped ability cooldowns when combat ends.", riteId: "ability-reprieve", tier: 3, recipeGroup: "desert", requiredBiomeLevel: 11, cost: { red: 160, purple: 60 }, catalystCost: { dominion: 3 } },
 ];
 
-export const RITE_RECIPE_DATABASE = new Map<string, RiteRecipe>(recipes.map((r) => [r.id, r]));
+export const RITE_RECIPE_DATABASE = new Map<string, RiteRecipe>(recipes.map((r) => [r.id, priceRecipeForEconomy(r)]));
 export interface RiteRecipeGateInput { biomeLevel: Record<string, number>; bossesCleared: readonly string[]; }
 export function isRiteRecipeUnlocked(recipe: RiteRecipe, input: RiteRecipeGateInput): boolean {
   if (recipe.recipeGroup && recipe.requiredBiomeLevel !== undefined && (input.biomeLevel[recipe.recipeGroup] ?? 0) < recipe.requiredBiomeLevel) return false;

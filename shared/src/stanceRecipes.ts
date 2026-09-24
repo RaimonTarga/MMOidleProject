@@ -1,3 +1,4 @@
+import { priceRecipeForEconomy } from './config/economy';
 import type { EssenceType } from "./items";
 import { STANCE_DATABASE } from "./stances";
 
@@ -62,7 +63,7 @@ const recipes: StanceRecipe[] = [
   { id: "stance-recipe-powering-up", name: "Powering Up", description: "Charge through a weak posture, then leave to release stored offense.", stanceId: "powering-up-stance", tier: 4, recipeGroup: "trench", requiredBiomeLevel: 2, cost: { green: 550 }, catalystCost: { dominion: 4 } },
 ];
 
-export const STANCE_RECIPE_DATABASE = new Map<string, StanceRecipe>(recipes.map((r) => [r.id, r]));
+export const STANCE_RECIPE_DATABASE = new Map<string, StanceRecipe>(recipes.map((r) => [r.id, priceRecipeForEconomy(r)]));
 export interface StanceRecipeGateInput { biomeLevel: Record<string, number>; bossesCleared: readonly string[]; }
 export function isStanceRecipeUnlocked(recipe: StanceRecipe, input: StanceRecipeGateInput): boolean {
   if (recipe.recipeGroup && recipe.requiredBiomeLevel !== undefined && (input.biomeLevel[recipe.recipeGroup] ?? 0) < recipe.requiredBiomeLevel) return false;

@@ -1,78 +1,41 @@
-# Idle MMO — Economy Philosophy (XP · Essence Rewards · Crafting Cost)
+# Idle MMO — Economy Philosophy
 
-**Purpose:** the reasoning behind the three coupled knobs — XP curve, essence
-drops, crafting cost. Paste into a balance session to re-establish intent.
-Terse on purpose.
+Updated 2026-09-24 for the economy v2 candidate. Numerical implementation and evidence: [economy current state](../docs/economy-current-state.md). Dynamic pacing acceptance is pending; fresh characters only, no save conversion.
 
----
+## A new tier is an economic opportunity
 
-## 0. The core tension (read first)
+Successfully farming current content should earn more than obsolete content. For an earned advanced character, target at least 25% more essence/hour from the best relevant same-colour source, at least 25% more uncapped mastery XP/hour in a shared biome, and around 10% more same-family catalyst/hour where comparable. Static reward/work ratios select the candidate; actual hourly rates decide adoption.
 
-- **Biome level unlocks the *chance* for power; essence *pays* for it.** These two must stay in tension, never both trivially solved.
-- Concretely: you should reach a tier's level cap **before** you can afford to max its gear. Capping the biome is the easy part; affording full +3 is the grind that outlives the cap.
-- The problem this fixes: essence was over-plentiful (full +3 reachable before cap) while XP felt slow. Goal is to flip both — capping easier, maxing costlier.
+Higher tiers can still take longer: their purchases and mastery requirements rise faster than their rewards. Keep essence rewards, essence costs, XP rewards, XP budgets, catalyst progress and catalyst costs as independent curves. Preserve the measured T1 anchor. Keep old content available as a slower fallback, without adding a player/content-tier penalty.
 
----
+## Mastery and purchasing
 
-## 1. XP curve
+Mastery unlocks power; currency pays for it. The current per-zone mastery targets are approximately 5/15/30/60 minutes at T1/T2/T3/T4. Later tiers should support longer idle sessions; T5-T8 durations are not yet authored. Travel, deaths, bosses, gear choices and additional systems add time beyond mastery.
 
-- The live model is tier-segment-local: `biomeXpForLevel(n)` is the cumulative
-  reference threshold for a T1-starting biome, while
-  `biomeXpForBiomeLevel(group, n)` subtracts the group's start-tier offset.
-- Every tier segment has six levels. Their incremental shares are
-  **12% / 14% / 16% / 18% / 19% / 21%**. The final two levels are slower, but
-  they do not consume an extreme share of the segment.
-- Segment budgets are explicit designer values: **T1 1,750 · T2 5,000 · T3
-  7,000 · T4 9,000 XP**. Segments beyond T4 currently grow by **1.20× per tier**
-  until they receive explicit tuning.
-- **Caps: T1→L6, T2→L12, T3→L18, T4→L24** for a biome that starts in T1;
-  biomes debuting later keep their existing start-tier offsets and final-tier
-  caps. Clearing remains fixed at level 4 and is excluded from Global Mastery.
-- Clearing is a tutorial exception rather than a normal T1 segment: its explicit
-  thresholds are **0 / 43 / 172 / 430 / 860 XP**, aligned to approximately
-  **1 / 4 / 10 / 20 Tiny Wisp kills** using the unchanged 43-XP reward. The
-  10-kill First Blood quest lands at Clearing level 3, leaving a short tail to
-  the level-4 cap.
-- The per-tier XP reward multipliers remain unchanged. Tune required XP through
-  the segment budget and local-share tables, not by editing per-mob rewards.
-- Initial pacing targets are **T1 ~5 minutes**, **T2 ~10–12**, **T3 ~13–16**,
-  and **T4 ~16–20 minutes** of pure mastery per biome. Bosses, gear farming,
-  crafting, travel, deaths, and build experimentation add completion time.
+A primary item through +3 should be affordable during its zone's mastery progression. +4/+5 form an optional premium: target a total +5 funding time around 25-50% beyond mastery for that item, not for an entire loadout. Essence and catalyst affordability do not override upgrade gates. The existing global-mastery requirement means +5 unlocks only after mastering the tier's biomes.
 
----
+The old design language describing +3 as the max and a mandatory post-cap grind is superseded. +3 is the evolution-ready baseline; +5 is premium. Cheap utility items may finish earlier, while optional systems and multiple item lines compete for income.
 
-## 2. Essence rewards (supply side)
+## XP is a separate clock
 
-- **One rule: `essence = round(0.16 × biomeXp)` for every mob, every biome.**
-- Consequence: since the level cap is an XP threshold and the ratio is constant, **every biome yields roughly the same essence by cap** (~195 at T1). No biome is a farming trap or a goldmine; pick a biome for its *fight*, not its payout.
-- **Drops are always pure — one color per biome, never mixed.** All cross-biome pressure belongs on the *cost* side. Pure supply keeps "need blue → go to the cap biome" legible and protects the conversion valve.
-- **Color follows the mechanic-family, not the individual biome.** When a biome retires, its color is re-housed in whichever successor inherits its mechanic. This keeps the palette at 5 forever:
-  - green = evasion (Forest → Jungle → …)
-  - blue = damage-cap (Mountain → Tundra → …)
-  - red = %DR (Cave → Volcanic → …)
-  - yellow = plating / utility (Plains → Desert → …)
-  - purple = DoT (Swamp → …)
+Every tier segment has six levels with incremental shares 12/14/16/18/19/21 percent. The candidate segment budgets are 1,750 / 32,000 / 168,000 / 1,080,000 XP and reward multipliers 2 / 8 / 12 / 30. Both can change together to make current content valuable while extending progression.
 
----
+`biomeXpForLevel` is the reference cumulative threshold; `biomeXpForBiomeLevel` accounts for the biome's start-tier offset. Existing caps, retired-biome rules, Clearing tutorial thresholds and global-mastery gates remain. The 1.20 future-budget fallback is a placeholder, not an approved T5-T8 schedule.
 
-## 3. Crafting cost (demand side)
+## Essence and catalyst identity
 
-- **Base craft cost stays accessible; upgrade cost is the real gate.** A new item should be affordable shortly after its level unlocks; maxing it should not.
-- **Upgrade-cost multipliers by slot:** weapon ×3 · armor ×3 · charm ×1.5 · boots ×1. Cost hierarchy: **weapon / armor > charm > boots**.
-  - *Charm ×1.5 (not ×3):* its upgrades buy small % mechanic bumps, not raw stats — a ×3 would overprice the value delivered.
-  - *Boots ×1:* premium *utility* slot, cheapest by design — cheap to enter, cheap to max, low ceiling.
-  - *Armor may run above weapon* where its mitigation is generic (e.g. flat %DR works vs every damage shape). Flexibility earns a premium.
-- **Target at the level cap:** full set craftable + roughly +1 across the board (boss-ready). Full +3 requires grinding past the cap.
-- **Upgrade curves must be smooth** — step-to-step ratio ≈ 1.8-2.2×. No lumpy ramps (a cheap middle step wedged between two expensive ones).
-- **Base cost scales ~2.2-2.4× per slot per tier.** Watch boots specifically — easy to forget to scale; keep boots ≈ 0.8× the weapon's base at every tier.
+Preserve authored monster reward differences, biome colour identity, boss rewards and node premiums. Do not enforce a universal essence-to-XP ratio: live authored rewards and independent tier scales determine income. Farming routes must consider actual colour and catalyst family, not total currency alone. Desert pays yellow; Trench pays green.
 
----
+Catalysts remain separate family currencies minted at 100 progress, with the node modifier determining family. They are not interchangeable. Preserve their routing role; do not copy the essence multiplier onto catalyst progress.
 
-## 4. Hybrid (cross-biome) costs
+## Prices and the upgrade premium
 
-- **T1-T2 are pure. Hybrid begins at T3, on armor & charms only — weapons and boots stay pure** (weapons don't drift mechanic; boots are utility). Cross-pollination is a later-game feature, not an early one.
-- The splash color = **the color of the mechanic the piece borrows.** Read the cost, see the cross — the recipe documents its own identity.
-- **Split 75% home / 25% splash — on base AND upgrades, not base-only.** Base-only splash is ~2% of an item's lifetime cost (a rounding error, no opportunity cost). Splitting the upgrades pushes the splash to ~24% of total and keeps the second biome relevant the entire time you improve the piece.
-- Ratio guidance: keep splash ≤ ~33% for a single cross (the home color must stay dominant). A capstone borrowing two mechanics can scale toward e.g. 60/20/20.
-- Emergent benefit: the cross-tax scales with upgrade investment — a player who stops at +1 barely feels it; a completionist at +3 feels it most. The friction lands exactly on the people chasing the ceiling.
-- Authoring tip: make upgrade values divisible by 4 so the 75/25 split stays clean integers.
+Centralize denomination scaling instead of individually rewriting hundreds of recipes. Preserve within-tier relative price identity and per-colour full-track totals. Apply the same priced databases to equipment, evolution, reconstruction, cores, relics, abilities, runes, stances and Rites so the UI and server agree.
+
+The T2+ candidate distributes five-step upgrade essence 6/14/20/27/33 percent. The final two steps use 60% of upgrades, typically about 55-58% of base plus all upgrades. Catalyst step placement and all item benefits remain authored. T1 retains its existing track. Cross-colour costs retain each colour's lifetime total; they still require appropriate farming routes.
+
+A genuinely owned and mastery-eligible predecessor should not be reconstructed when topping it up and evolving is cheaper in every required currency. Preserve reconstruction for absent or unavailable predecessors; route inefficiency must not masquerade as expensive economy design.
+
+## Acceptance boundary
+
+Measure independent fresh progression lives after a short current-versus-old opportunity check. Track mastery, intended +3, optional +5, family scarcity and time spent constrained by essence, catalysts or mastery. Full same-node party rewards and large displayed denominations are explicit considerations. Do not infer live pacing from static efficiency or accelerated combat evidence.

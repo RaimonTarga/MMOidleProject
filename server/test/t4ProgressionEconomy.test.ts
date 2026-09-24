@@ -1,3 +1,7 @@
+import { economyForTier, scaleEconomyCost } from '@mmo-idle/shared';
+// Legacy shape expectations are expressed in base denominations; prices are scaled below.
+const EC = economyForTier(4).essenceCost;
+const CC = economyForTier(4).catalystCost;
 /**
  * T3 → T4 progression/economy pass (2026-08-30 / 2026-09-04) — see the
  * historical T4 brief and the current-state docs.
@@ -142,7 +146,7 @@ for (const child of withLineage) {
   const parent = RECIPE_DATABASE.get(child.evolvesFrom!)!;
   const childTotal = lifetimeTotal(child);
   const parentTotal = lifetimeTotal(parent);
-  const ratio = childTotal / parentTotal;
+  const ratio = (childTotal / economyForTier(child.tier).essenceCost) / (parentTotal / economyForTier(parent.tier).essenceCost);
   assert(
     ratio >= 1.8 && ratio <= 2.2,
     `${child.id}: lifetime ratio vs ${parent.id} must be in [1.8, 2.2], got ${ratio.toFixed(3)} (${childTotal}/${parentTotal})`,
@@ -169,7 +173,7 @@ for (const r of t4Gear) {
   const postBase = stepTotals.reduce((a, b) => a + b, 0);
   const plus45 = stepTotals[3] + stepTotals[4];
   const share = plus45 / postBase;
-  assert(share >= 0.65 && share <= 0.75, `${r.id}: +4/+5 share of post-base spend must be in [0.65, 0.75], got ${(share * 100).toFixed(1)}%`);
+  assert(share >= 0.595 && share <= 0.605, `${r.id}: +4/+5 share of post-base spend must be in [0.595, 0.605], got ${(share * 100).toFixed(1)}%`);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -187,10 +191,10 @@ for (const r of t4Gear) {
   const expected = isWeaponArmor ? [0, 0, 0, 3, 4] : [0, 0, 0, 0, 3];
   steps.forEach((s, i) => {
     const got = catTotal(s.catalystCost);
-    assert(got === expected[i], `${r.id}: +${i + 1} catalyst must be ${expected[i]} (${isWeaponArmor ? "weapon/armor" : "recovery/mobility"} schedule), got ${got}`);
+    assert(got === expected[i] * CC, `${r.id}: +${i + 1} catalyst must be ${expected[i]} (${isWeaponArmor ? "weapon/armor" : "recovery/mobility"} schedule), got ${got}`);
   });
   if (r.reconstructCost) {
-    assert(catTotal(r.reconstructCatalystCost) === 4, `${r.id}: reconstruction must charge exactly 4 catalysts`);
+    assert(catTotal(r.reconstructCatalystCost) === 4 * CC, `${r.id}: reconstruction must charge exactly 4 catalysts`);
   } else {
     assert(!r.reconstructCatalystCost, `${r.id}: no reconstructCost implies no reconstructCatalystCost`);
   }
@@ -202,7 +206,7 @@ for (const child of withLineage) {
   for (const [color, amount] of Object.entries(child.cost)) {
     const expected = Math.round((amount ?? 0) * 3.5);
     const got = (child.reconstructCost as Record<string, number>)[color] ?? 0;
-    assert(Math.abs(got - expected) <= 1, `${child.id}: reconstruct ${color} should be ~3.5x base (${expected}), got ${got}`);
+    assert(Math.abs(got - expected) <= EC, `${child.id}: reconstruct ${color} should be ~3.5x base (${expected}), got ${got}`);
   }
 }
 for (const noLineage of withoutLineage) {
@@ -320,7 +324,7 @@ for (const [id, spec] of Object.entries(EXPECTED_ABILITIES)) {
   assert(recipe!.recipeGroup === spec.group, `${id}: biome must be ${spec.group}`);
   assert(recipe!.requiredBiomeLevel === spec.level, `${id}: gate must be L${spec.level}`);
   assert(
-    JSON.stringify(recipe!.cost) === JSON.stringify({ [spec.color]: spec.amount }),
+    JSON.stringify(recipe!.cost) === JSON.stringify({ [spec.color]: spec.amount * EC }),
     `${id}: cost must be exactly ${spec.color} ${spec.amount}, got ${JSON.stringify(recipe!.cost)}`,
   );
   assert(!("catalystCost" in recipe!) || !recipe!.catalystCost, `${id}: must have no catalyst cost`);
@@ -353,13 +357,13 @@ for (const [id, spec] of Object.entries(EXPECTED_ABILITIES)) {
     assert(stance!.tier === 4, `${spec.id}: must be a T4 Stance`);
     assert(stance!.recipeGroup === spec.group, `${spec.id}: biome gate must be ${spec.group}`);
     assert(stance!.requiredBiomeLevel === spec.level, `${spec.id}: gate must be ${spec.group} L${spec.level}`);
-    assert(JSON.stringify(stance!.cost) === JSON.stringify(spec.cost), `${spec.id}: essence cost must be exact`);
+    assert(JSON.stringify(stance!.cost) === JSON.stringify(scaleEconomyCost(spec.cost, EC)), `${spec.id}: essence cost must be exact`);
     assert(
-      JSON.stringify(stance!.catalystCost) === JSON.stringify({ [spec.family]: spec.catalysts }),
+      JSON.stringify(stance!.catalystCost) === JSON.stringify({ [spec.family]: spec.catalysts * CC }),
       `${spec.id}: catalyst cost must be ${spec.family}:${spec.catalysts}`,
     );
-    assert(essenceTotal(stance!.cost) >= 400 && essenceTotal(stance!.cost) <= 600, `${spec.id}: T4 stance essence must be in 400-600`);
-    assert(catTotal(stance!.catalystCost) >= 3 && catTotal(stance!.catalystCost) <= 4, `${spec.id}: T4 stance catalysts must be in 3-4`);
+    assert(essenceTotal(stance!.cost) / EC >= 400 && essenceTotal(stance!.cost) / EC <= 600, `${spec.id}: T4 stance essence must be in 400-600`);
+    assert(catTotal(stance!.catalystCost) / CC >= 3 && catTotal(stance!.catalystCost) / CC <= 4, `${spec.id}: T4 stance catalysts must be in 3-4`);
     assert(!stance!.requiredBossClear, `${spec.id}: must not require a boss clear`);
   }
   const t4StanceIds = [...STANCE_RECIPE_DATABASE.values()]
@@ -436,10 +440,10 @@ for (const [id, spec] of Object.entries(RELIC_SNAPSHOT)) {
   const r = RECIPE_DATABASE.get(id);
   assert(!!r, `${id}: relic must exist`);
   assert(r!.recipeGroup === spec.group && r!.requiredBiomeLevel === spec.level, `${id}: gate must be unchanged (${spec.group} L${spec.level})`);
-  assert(JSON.stringify(r!.cost) === JSON.stringify(spec.cost), `${id}: normalized essence cost must be exact`);
-  assert(JSON.stringify(r!.catalystCost) === JSON.stringify(spec.catalyst), `${id}: normalized catalyst cost must be exact`);
-  assert(essenceTotal(r!.cost) >= 2500 && essenceTotal(r!.cost) <= 3500, `${id}: relic essence must be in 2500-3500`);
-  assert(catTotal(r!.catalystCost) >= 8 && catTotal(r!.catalystCost) <= 10, `${id}: relic catalysts must be in 8-10`);
+  assert(JSON.stringify(r!.cost) === JSON.stringify(scaleEconomyCost(spec.cost, EC)), `${id}: normalized essence cost must be exact`);
+  assert(JSON.stringify(r!.catalystCost) === JSON.stringify(scaleEconomyCost(spec.catalyst, CC)), `${id}: normalized catalyst cost must be exact`);
+  assert(essenceTotal(r!.cost) / EC >= 2500 && essenceTotal(r!.cost) / EC <= 3500, `${id}: relic essence must be in 2500-3500`);
+  assert(catTotal(r!.catalystCost) / CC >= 8 && catTotal(r!.catalystCost) / CC <= 10, `${id}: relic catalysts must be in 8-10`);
   assert(!r!.evolvesFrom && !r!.reconstructCost, `${id}: relics must not gain lineage/reconstruction`);
 }
 
@@ -451,7 +455,7 @@ for (const [id, spec] of Object.entries(RELIC_SNAPSHOT)) {
   const rune = RUNE_RECIPE_DATABASE.get("rune-recipe-focus-elites");
   assert(!!rune, "rune-recipe-focus-elites must exist");
   assert(rune!.tier === 4 && rune!.recipeGroup === "graveyard" && rune!.requiredBiomeLevel === 4, "rune-recipe-focus-elites gate must be unchanged");
-  assert(JSON.stringify(rune!.cost) === JSON.stringify({ purple: 320, blue: 140 }), "rune-recipe-focus-elites cost must be unchanged");
+  assert(JSON.stringify(rune!.cost) === JSON.stringify(scaleEconomyCost({ purple: 320, blue: 140 }, EC)), "rune-recipe-focus-elites cost must be unchanged");
   assert(RUNE_RECIPE_DATABASE.size >= 1, "rune database must still contain the T4 rune");
 }
 
@@ -487,13 +491,13 @@ for (const [id, spec] of Object.entries(RELIC_SNAPSHOT)) {
     assert(core!.slot === "core" && core!.tier === 4, `${spec.id}: must be a T4 Core`);
     assert(core!.recipeGroup === spec.group, `${spec.id}: home must be ${spec.group}`);
     assert(core!.requiredBiomeLevel === spec.level, `${spec.id}: gate must be ${spec.group} L${spec.level}`);
-    assert(JSON.stringify(core!.cost) === JSON.stringify(spec.cost), `${spec.id}: essence cost must be exact`);
+    assert(JSON.stringify(core!.cost) === JSON.stringify(scaleEconomyCost(spec.cost, EC)), `${spec.id}: essence cost must be exact`);
     assert(
-      JSON.stringify(core!.catalystCost) === JSON.stringify({ [spec.family]: spec.catalysts }),
+      JSON.stringify(core!.catalystCost) === JSON.stringify({ [spec.family]: spec.catalysts * CC }),
       `${spec.id}: catalyst cost must be ${spec.family}:${spec.catalysts}`,
     );
-    assert(essenceTotal(core!.cost) >= 2000 && essenceTotal(core!.cost) <= 2500, `${spec.id}: T4 Core essence must be in 2000-2500`);
-    assert(catTotal(core!.catalystCost) >= 7 && catTotal(core!.catalystCost) <= 8, `${spec.id}: T4 Core catalysts must be in 7-8`);
+    assert(essenceTotal(core!.cost) / EC >= 2000 && essenceTotal(core!.cost) / EC <= 2500, `${spec.id}: T4 Core essence must be in 2000-2500`);
+    assert(catTotal(core!.catalystCost) / CC >= 7 && catTotal(core!.catalystCost) / CC <= 8, `${spec.id}: T4 Core catalysts must be in 7-8`);
     assert(!core!.requiredBossClear, `${spec.id}: must not require a boss clear`);
   }
   const t4CoreIds = cores.filter((core) => core.tier === 4).map((core) => core.id).sort();

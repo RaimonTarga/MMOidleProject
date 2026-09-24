@@ -1,0 +1,1155 @@
+{
+  "baseline": "ff98ba4513cb9fcb1e5752acfd56495268aff416",
+  "fullSuite": {
+    "command": "pnpm test",
+    "exitCode": 1,
+    "passed": 274,
+    "total": 277,
+    "files": [
+      {
+        "file": "server/test/abilities.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/abilityAffliction.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/abilityBramble.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/abilityCast.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/abilityCharge.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/abilityConduitTechniqueAdapter.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/abilityControl.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/abilityEquipmentFeedback.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/abilityGuardsAndReach.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/abilityMultiSlot.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/abilityRanks.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/abilitySecondWind.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/abilitySlam.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/abilitySweepAdapters.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/abilityTechniqueRune.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/abilityTelegraphEvents.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/abilityTempo.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/abilityTimingPresentation.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/adminPlayerSummaries.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/alphaWindow.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/ambientRamp.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/ambientStackFlash.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/approachGoalStandable.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/attunementRuntime.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/autoCollisionRecovery.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/autoIntent.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/autoMovementSmoothness.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/balanceInstruments.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/barrier.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/behemothVenom.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/biomeEcology.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/biomeEcologyPolish.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/bogLurkerDeathroll.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/boss1Matrix.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/boss2Concealment.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/bossConcealmentPhase4.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/bossCorpsesPhase6.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/bossDeclaration.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/bossEncounterRework.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/bossGeometryPhase1.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/bossReferenceMatrix.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/bossRework.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/bossStatusPayoffPhase3.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/bossTerminal.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/bossTrenchPhase7.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/bossVolcanoPhase5.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/botBuildPreflight.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/cadenceClassSelection.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/cameraMotion.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/catalystRekey.test.ts",
+        "passed": false
+      },
+      {
+        "file": "server/test/caveBruteOpener.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/caveEngageSequence.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/caveGroundSlam.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/characterIsolation.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/classAffinity.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/clearingMastery.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/clientMovementState.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/combatPlayback.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/combatText.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/combatTextCoverage.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/combatTextResync.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/concurrencySampler.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/conduitPlayerBodies.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/coreAuthoring.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/coreCombat.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/coreMechanics.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/coreRangeGate.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/coreRelicIntegration.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/cores.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/corpseRaise.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/day2Packet.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/day2SessionLifecycle.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/deathAttribution.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/deathCancelsOrders.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/debugKillNodeMonsters.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/describeText.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/desertPairs.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/desertStrategyPacket.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/desertTracks.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/dungeons.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/durability12Spec.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/durability15.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/durability16.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/durability17.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/durability18.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/durability19.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/durability2.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/durability20.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/durability22.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/durability23.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/durability24.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/durability25.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/durability26.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/durability27.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/durability28.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/durability29.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/durability3.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/durability30.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/durability32Matrix.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/durability33Matrix.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/durability34Matrix.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/durability35Matrix.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/durability36Matrix.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/durability37Matrix.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/durability4.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/durability5.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/durability6.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/durability7.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/durability8.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/durability9.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/durabilityTrial.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/eliteTargeting.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/equippedEvolutionAbilityTags.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/evasion.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/evolutionPreview.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/farmLoop.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/farmingStance.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/farmingSustain.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/fastBossRetry.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/finalDamageIntegration.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/forestT2BossSwipe.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/forestT2CastedAbilities.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/formationPlatingCompensation.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/gameplayPersistence.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/gameplayTelemetry.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/guardCoveragePacket.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/guardCoverageRecorder.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/guestAuth.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/hazardPullApproach.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/heatManagement.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/hudStatusTooltips.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/humanPlaytestRecorder.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/instrumentParity.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/itemSourceOutliers.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/jungleBushDetection.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/jungleBushes.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/jungleCastedAbilities.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/keepDistanceRing.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/lavaAndIceLakes.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/linkDecision.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/manualCombatControls.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/manualPlayerMovement.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/mobAdoptionIntegration.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/mobilityBoots.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/monsterDeathEffects.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/monsterDotBuffIcons.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/monsterEmpoweredBeat.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/monsterMobileCast.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/monsterReworkPrimitives.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/monsterSpawnTerrain.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/monsterStunAnimation.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/monsterStyleCoverage.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/mountainCornerTextures.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/mountainT2ChargedDefenses.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/navWaypointWedge.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/navigationGate.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/neighborDestination.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/night4.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/night5.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/nodeFeatureRegenSuppression.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/nodeModifiers.wiring.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/onHitMitigation.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/overnightEndurance.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/packCoordination.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/personalPlaytestPolish.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/plainsHawkDiveBomb.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/playerBreadth.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/playerCombatLog.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/playerKillLunge.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/progressionCheckpoint.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/questMonsterIds.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/rangedCombatant.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/recovery.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/regionalRespawn.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/relicMechanicEffectCoverage.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/relics.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/resetProgress.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/rewardMultiplier.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/rites.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/runeClassMaintenance.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/runeDynamicHazardAvoidance.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/runeMaintenance.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/runeRecipeDeprecation.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/runeTargetingPreference.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/runeTelegraphEvasion.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/runeWaitItOut.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/sanctuaryAltar.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/secondaryDamageConsistency.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/sessionTokens.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/skillBuildSummary.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/skillPreview.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/skillTreeMechanicCopy.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/socketAuth.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/spectatorManager.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/spectatorSnapshot.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/stances.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/stancesUnplaced.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/summonerOverhaul.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/summonerRuneTargeting.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/summonerSpecializations.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/summonerSprites.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/t1MountainPressureAdoption.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/t2ProgressionEconomy.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/t3ProgressionEconomy.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/t4ProgressionEconomy.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/targetPriority.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/tier2SkillPropagation.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/tierEntryBootstrap.test.ts",
+        "passed": false
+      },
+      {
+        "file": "server/test/tierSeals.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/tombstones.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/travelDiscovery.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/travelFightBack.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/trenchMonsterAbilities.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/tundraChill.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/tundraClassFramePacket.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/tundraDeepFreeze.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/wastelandTrenchDungeons.test.ts",
+        "passed": true
+      },
+      {
+        "file": "server/test/wave1AbilityReadability.test.ts",
+        "passed": true
+      },
+      {
+        "file": "shared/src/attunement.test.ts",
+        "passed": true
+      },
+      {
+        "file": "shared/src/collision/collision.test.ts",
+        "passed": true
+      },
+      {
+        "file": "shared/src/collision/pathDiagnostics.test.ts",
+        "passed": true
+      },
+      {
+        "file": "shared/src/collision/pathEndpoint.test.ts",
+        "passed": true
+      },
+      {
+        "file": "shared/src/collision/playerMotion.test.ts",
+        "passed": true
+      },
+      {
+        "file": "shared/src/collision/playerMotionProperties.test.ts",
+        "passed": true
+      },
+      {
+        "file": "shared/src/config/economy.test.ts",
+        "passed": true
+      },
+      {
+        "file": "shared/src/config/gameConfig.test.ts",
+        "passed": false
+      },
+      {
+        "file": "shared/src/data/mechanicLabels.test.ts",
+        "passed": true
+      },
+      {
+        "file": "shared/src/data/recipeGates.test.ts",
+        "passed": true
+      },
+      {
+        "file": "shared/src/protocol/characters.test.ts",
+        "passed": true
+      },
+      {
+        "file": "shared/src/protocol/guestNames.test.ts",
+        "passed": true
+      },
+      {
+        "file": "shared/src/protocol/tier1Snapshot.test.ts",
+        "passed": true
+      },
+      {
+        "file": "shared/src/runeConflicts.test.ts",
+        "passed": true
+      },
+      {
+        "file": "shared/src/runeEditing.test.ts",
+        "passed": true
+      },
+      {
+        "file": "shared/src/systems/balanceLab.test.ts",
+        "passed": true
+      },
+      {
+        "file": "shared/src/systems/bestiaryMechanics.test.ts",
+        "passed": true
+      },
+      {
+        "file": "shared/src/systems/bestiaryZone.test.ts",
+        "passed": true
+      },
+      {
+        "file": "shared/src/systems/dotClassProfile.test.ts",
+        "passed": true
+      },
+      {
+        "file": "shared/src/systems/dpsEstimate.test.ts",
+        "passed": true
+      },
+      {
+        "file": "shared/src/systems/itemUpgrades.test.ts",
+        "passed": true
+      },
+      {
+        "file": "shared/src/systems/mechanicEffectScaling.test.ts",
+        "passed": true
+      },
+      {
+        "file": "shared/src/systems/relicEquipment.test.ts",
+        "passed": true
+      },
+      {
+        "file": "shared/src/systems/relics.test.ts",
+        "passed": true
+      },
+      {
+        "file": "shared/src/systems/spatialHitbox.test.ts",
+        "passed": true
+      },
+      {
+        "file": "shared/src/systems/summonerProfile.test.ts",
+        "passed": true
+      },
+      {
+        "file": "shared/src/systems/systemVisibility.test.ts",
+        "passed": true
+      },
+      {
+        "file": "shared/src/world/map/validation.test.ts",
+        "passed": true
+      },
+      {
+        "file": "shared/src/world/nodeModifiers.test.ts",
+        "passed": true
+      },
+      {
+        "file": "bot/src/concurrency/areaLeaseManager.test.ts",
+        "passed": true
+      },
+      {
+        "file": "bot/src/concurrency/cohortEvidenceMonitor.test.ts",
+        "passed": true
+      },
+      {
+        "file": "bot/src/concurrency/routeLeaseSession.test.ts",
+        "passed": true
+      },
+      {
+        "file": "bot/src/concurrency/transitPlanner.test.ts",
+        "passed": true
+      },
+      {
+        "file": "bot/src/harness.test.ts",
+        "passed": true
+      },
+      {
+        "file": "bot/src/loadout/loadout.test.ts",
+        "passed": true
+      },
+      {
+        "file": "bot/src/policy/choices.test.ts",
+        "passed": true
+      },
+      {
+        "file": "bot/src/route/readiness.semantic.test.ts",
+        "passed": true
+      },
+      {
+        "file": "bot/src/routes/campaignBehavior.test.ts",
+        "passed": true
+      },
+      {
+        "file": "bot/src/routes/campaignBoss.test.ts",
+        "passed": true
+      },
+      {
+        "file": "bot/src/routes/campaignReadiness.test.ts",
+        "passed": true
+      },
+      {
+        "file": "bot/src/routes/campaignT2Boss.test.ts",
+        "passed": true
+      },
+      {
+        "file": "bot/src/routes/campaignT4ValidationExit.test.ts",
+        "passed": true
+      },
+      {
+        "file": "bot/src/routes/namedCheckpoints.test.ts",
+        "passed": true
+      },
+      {
+        "file": "bot/src/routes/t1CanonicalFrameHandoffRoutes.test.ts",
+        "passed": true
+      },
+      {
+        "file": "bot/src/routes/t1EconomyCompatibility.test.ts",
+        "passed": true
+      },
+      {
+        "file": "bot/src/routes/t1Routes.semantic.test.ts",
+        "passed": true
+      },
+      {
+        "file": "bot/src/routes/t2Acquisition.test.ts",
+        "passed": true
+      },
+      {
+        "file": "bot/src/routes/t2CanonicalValidationRoutes.test.ts",
+        "passed": true
+      },
+      {
+        "file": "bot/src/routes/t2DayExperimentRoutes.test.ts",
+        "passed": true
+      },
+      {
+        "file": "bot/src/routes/t2Night2Routes.test.ts",
+        "passed": true
+      },
+      {
+        "file": "bot/src/routes/t2Routes.semantic.test.ts",
+        "passed": true
+      },
+      {
+        "file": "bot/src/telemetry/bossTimeline.test.ts",
+        "passed": true
+      },
+      {
+        "file": "bot/src/telemetry/economyInstrumentation.test.ts",
+        "passed": true
+      },
+      {
+        "file": "bot/src/telemetry/experience.test.ts",
+        "passed": true
+      },
+      {
+        "file": "bot/src/telemetry/productiveActivity.test.ts",
+        "passed": true
+      },
+      {
+        "file": "bot/src/telemetry/requiredTelemetry.test.ts",
+        "passed": true
+      },
+      {
+        "file": "bot/src/telemetry/t1Snapshots.test.ts",
+        "passed": true
+      },
+      {
+        "file": "bot/src/tierEntry/profiles.test.ts",
+        "passed": true
+      },
+      {
+        "file": "bot/src/tierEntry/validate.test.ts",
+        "passed": true
+      }
+    ]
+  },
+  "focusedReruns": [
+    {
+      "file": "server/test/catalystRekey.test.ts",
+      "exitCode": 0,
+      "reason": "Updated obsolete denomination/XP fixture; observed successful focused tool execution"
+    },
+    {
+      "file": "server/test/tierEntryBootstrap.test.ts",
+      "exitCode": 0,
+      "reason": "Updated obsolete denomination/XP fixture; observed successful focused tool execution"
+    },
+    {
+      "file": "shared/src/config/gameConfig.test.ts",
+      "exitCode": 0,
+      "reason": "Updated obsolete denomination/XP fixture; observed successful focused tool execution"
+    }
+  ],
+  "typecheck": {
+    "command": "pnpm typecheck",
+    "exitCode": 0
+  },
+  "build": {
+    "command": "pnpm build",
+    "exitCode": 0,
+    "advisories": [
+      "Vite chunk size"
+    ]
+  },
+  "staticAudit": {
+    "comparisons": 108,
+    "exceptions": 0,
+    "normalNodes": 140,
+    "publicPricesMatchProjection": true,
+    "nonEconomySourceUnchanged": true
+  },
+  "evidenceBoundary": "Correctness and static structural evidence only; no dynamic economy campaign, browser playtest or deployment."
+}

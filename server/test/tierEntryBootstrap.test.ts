@@ -3,6 +3,7 @@ import {
   type T1CharacterSnapshot,
   CLEARING_NODE_ID,
   GAME_CONFIG,
+  RECIPE_DATABASE,
   SKILL_TREE,
   STANCE_RECIPE_DATABASE,
   emptyEquipment,
@@ -160,6 +161,9 @@ assert(!player.isDead, "entry cannot inherit a corpse");
 player.tracksProgression.unlockedRecipes.push("plains-vest-t2");
 player.holdsInventory.inventory = ["plains-vest-t1"];
 player.holdsInventory.itemUpgrades["plains-vest-t1"] = 5;
+// The entry wallet assertion above remains exact; this purchase fixture then
+// funds the current public price plus a known remainder.
+player.tracksProgression.essences.yellow = RECIPE_DATABASE.get("plains-vest-t2")!.cost.yellow! + 63;
 const evolution = evolveItem(world, player, "plains-vest-t2", "evolve");
 assert(evolution.success, evolution.reason ?? "legal evolution should succeed");
 assert(!player.holdsInventory.inventory.includes("plains-vest-t1"), "evolution consumes the predecessor");
@@ -178,7 +182,7 @@ player.holdsInventory.inventory = [];
 
 // Reconstruction is a distinct path: it does not require an owned predecessor.
 player.tracksProgression.unlockedRecipes.push("knight-steelsword");
-player.tracksProgression.essences.yellow = 180;
+player.tracksProgression.essences.yellow = RECIPE_DATABASE.get("knight-steelsword")!.reconstructCost!.yellow!;
 const reconstruction = evolveItem(world, player, "knight-steelsword", "reconstruct");
 assert(reconstruction.success, reconstruction.reason ?? "supported reconstruction should succeed");
 assert(player.holdsInventory.inventory.includes("knight-steelsword"), "reconstruction grants the child item");
@@ -189,7 +193,7 @@ assert(player.tracksProgression.essences.yellow === 0, "reconstruction deducts i
 const stanceRecipe = STANCE_RECIPE_DATABASE.get("stance-recipe-offensive")!;
 player.tracksProgression.biomeLevel.plains = 7;
 player.tracksProgression.essences.yellow = stanceRecipe.cost.yellow ?? 0;
-player.tracksProgression.catalysts.alacrity = 1;
+player.tracksProgression.catalysts.alacrity = stanceRecipe.catalystCost?.alacrity ?? 0;
 const stance = craftStanceRecipe(world, player, stanceRecipe.id);
 assert(stance.success, stance.reason ?? "stance craft should succeed");
 assert(player.tracksProgression.knownStances.includes("offensive-stance"), "stance craft learns the stance");

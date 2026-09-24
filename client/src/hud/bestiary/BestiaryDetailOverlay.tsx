@@ -121,7 +121,7 @@ function StatGrid({ entry }: { entry: BestiaryEntry }) {
         />
       </div>
       <div className="bestiary-detail__rewards">
-        Rewards: <b>{r.essence}</b> {essenceLabel(r.essenceType as EssenceType)} essence
+        Base rewards (before tier and node bonuses): <b>{r.essence}</b> {essenceLabel(r.essenceType as EssenceType)} essence
         {r.biomeXp ? <> · <b>{r.biomeXp}</b> biome XP</> : null}
         {` · level ${r.level}`}
       </div>

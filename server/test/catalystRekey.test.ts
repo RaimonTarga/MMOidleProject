@@ -1,5 +1,6 @@
 import {
   GAME_CONFIG,
+  economyForTier,
   catalystProgressPerUnit,
   catalystProgressRewardMult,
   NODE_MODIFIERS,
@@ -140,14 +141,15 @@ assert(dbp.bossesCleared.length > 0, "dungeon boss clear still recorded");
 // from green 240 / alacrity 5 to green 210 / alacrity 2 (see
 // docs/briefs/T2_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-29.md §7).
 const gale = RECIPE_DATABASE.get("gale-needle")!;
-assert(gale.reconstructCatalystCost?.["alacrity"] === 2, "gale-needle reconstruct costs alacrity");
-const fullGreen: Record<EssenceType, number> = { red: 0, blue: 0, green: 210, yellow: 0, purple: 0 };
+const galeCatalysts = 2 * economyForTier(2).catalystCost;
+assert(gale.reconstructCatalystCost?.["alacrity"] === galeCatalysts, "gale-needle reconstruct costs alacrity");
+const fullGreen: Record<EssenceType, number> = { red: 0, blue: 0, green: 210 * economyForTier(2).essenceCost, yellow: 0, purple: 0 };
 const blocked = checkReconstruct({ recipe: gale, essences: fullGreen, catalysts: {} });
 assert(!blocked.ok, "reconstruct blocked without the family catalyst");
 const allowed = checkReconstruct({
   recipe: gale,
   essences: fullGreen,
-  catalysts: { alacrity: 2 },
+  catalysts: { alacrity: galeCatalysts },
 });
 assert(allowed.ok, "reconstruct allowed once the family catalyst is held");
 

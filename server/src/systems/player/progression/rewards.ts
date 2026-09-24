@@ -200,7 +200,8 @@ function applyKillRewardsToPlayer(
   // late content without farming it. 1x in production and by default, which makes
   // every line below identical to the shipped formula.
   const debugMult = world.rewardMultiplier;
-  const scaledEssence = Math.max(
+  // Explicit zero is an authoring contract for encounter adds, not a tiny payout.
+  const scaledEssence = rewards.essence <= 0 ? 0 : Math.max(
     1,
     Math.round(rewards.essence * essenceMult * rewardMult * debugMult),
   );
@@ -230,7 +231,7 @@ function applyKillRewardsToPlayer(
     world,
     recipient,
     nodeId,
-    Math.max(1, Math.round((rewards.biomeXp ?? 1) * rewardMult * debugMult)),
+    rewards.biomeXp === 0 ? 0 : Math.max(1, Math.round((rewards.biomeXp ?? 1) * rewardMult * debugMult)),
   );
   const questResult = registerKillForQuests(recipient, monster.isMonster.monsterTypeId);
   if (monster.isMonster.isBoss && !monster.isEncounterAdd) {

@@ -2,6 +2,7 @@ import type { EquipmentSlot, EssenceType, ItemDefinition } from '../items';
 import { BIOME_PRIMARY_ESSENCE, ESSENCE_LABELS } from '../items';
 import { BIOME_LEVELS_PER_TIER, maxGlobalMasteryAtTier } from '../config/gameConfig';
 import { t1ExperimentUpgradeCost } from './t1EconomyExperiment';
+import { economyForTier } from '../config/economy';
 
 /**
  * Highest upgrade level for items without explicit upgrade definitions. Raised
@@ -175,7 +176,7 @@ export function upgradeCostFor(
   if (!item.biomeGroup) return null;
   const type = BIOME_PRIMARY_ESSENCE[item.biomeGroup];
   if (!type) return null;
-  return { [type]: COST_PER_LEVEL * item.tier * targetPlus };
+  return { [type]: Math.round(COST_PER_LEVEL * item.tier * targetPlus * economyForTier(item.tier).essenceCost) };
 }
 
 /** Biome-catalyst cost for going from (targetPlus-1) → targetPlus. Null = none. */

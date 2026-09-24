@@ -1,3 +1,4 @@
+import { priceRecipeForEconomy } from './config/economy';
 /**
  * Ability recipes — parallel to `RuneRecipe`.
  *
@@ -370,7 +371,7 @@ const recipes: AbilityRecipe[] = [
 ];
 
 export const ABILITY_RECIPE_DATABASE = new Map<string, AbilityRecipe>(
-  recipes.map((r) => [r.id, r]),
+  recipes.map((r) => [r.id, priceRecipeForEconomy(r)]),
 );
 
 /** Progression inputs that gate whether an ability recipe is unlocked yet. */
