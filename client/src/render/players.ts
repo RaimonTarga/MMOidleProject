@@ -34,6 +34,7 @@ import { flashShiftTint, spawnFlashAttackAfterimage } from "./movementEffects";
 import { auraTint } from "../fx/aura";
 import { ambientStackFlashTint } from './ambientStackFlash';
 import { shouldRunClientFx } from '../fx/guard';
+import { resetPlayerNodePosition } from './playerNodePosition';
 
 function playerTint(state: RenderState, player: PlayerView): number | null {
   const base = flashShiftTint(player) ?? auraTint(player);
@@ -200,6 +201,9 @@ export function upsertPlayer(
   }
 
   const prev = state.view.get(player.id) as PlayerView | undefined;
+  // A full destination snapshot can retain both party members' render IDs.
+  // Rebase every changed player, not just the local camera/input owner.
+  resetPlayerNodePosition(state, prev?.nodeId, player);
   const wasDead = prev?.isDead ?? false;
   const prevAttackAt = prev?.lastAttackAt ?? 0;
 
