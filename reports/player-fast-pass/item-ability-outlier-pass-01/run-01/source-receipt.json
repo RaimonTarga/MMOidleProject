@@ -1,0 +1,38 @@
+{
+  "receiptType": "source",
+  "experimentId": "item-ability-outlier-pass-01",
+  "source": {
+    "path": "D:/mmo-idle/item-ability-outlier-pass-01/source",
+    "commit": "0d392fdddaec7ed31876699589f291c8c840a5e5",
+    "treeSha256": "5e75853f8c701178096c1d7dfb91bde01c2e1800034e5342e9e5a324104b23b1",
+    "identitySha256": "31ae8f82cc04dacc9959c2e3c1df142b50214eb21871a2f028e6dac1fe1f752c"
+  },
+  "gameplayBaselineCommit": "1980a6b06d6b483c0310ee86d9e2d464dedba8df",
+  "packet": "D:/mmo-idle/item-ability-outlier-pass-01/packet",
+  "qualification": "D:/mmo-idle/item-ability-outlier-pass-01/qualification",
+  "receiptReplay": "D:/mmo-idle/item-ability-outlier-pass-01/receipt-check",
+  "hitboxes": {
+    "path": "D:/mmo-idle/item-ability-outlier-pass-01/hitboxes.json",
+    "sha256": "08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83"
+  },
+  "preRunVerification": {
+    "mode": "verify",
+    "exitCode": 0,
+    "message": "44 cases, source, runtime and hitboxes verified.",
+    "sourcePath": "D:/mmo-idle/item-ability-outlier-pass-01/source",
+    "packetPath": "D:/mmo-idle/item-ability-outlier-pass-01/packet"
+  },
+  "run": {
+    "path": "D:/mmo-idle/item-ability-outlier-pass-01/run-01",
+    "launchAt": "2026-09-24T09:23:46.889Z",
+    "oneShot": true,
+    "retryCount": 0,
+    "candidateAndControlSourceAliases": true,
+    "candidateImplementation": "Child-local item overlay recorded in applied receipts; no alternate source checkout."
+  },
+  "preparation": {
+    "qualificationCombatTicks": 0,
+    "receiptReplayCombatTicks": 0,
+    "qualificationPath": "D:/iaop1pub/reports/player-fast-pass/item-ability-outlier-pass-01/preparation"
+  }
+}

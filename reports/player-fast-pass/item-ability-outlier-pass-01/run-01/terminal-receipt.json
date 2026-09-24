@@ -1,0 +1,47 @@
+{
+  "receiptType": "terminal",
+  "experimentId": "item-ability-outlier-pass-01",
+  "runId": "run-01",
+  "mode": "run",
+  "sourceCommit": "0d392fdddaec7ed31876699589f291c8c840a5e5",
+  "launchAt": "2026-09-24T09:23:46.889Z",
+  "wallElapsedMs": 1054371,
+  "stopReason": null,
+  "failure": null,
+  "counts": {
+    "planned": 44,
+    "primary": 44,
+    "alternative": 0,
+    "completed": 44,
+    "newCompleted": 44,
+    "dead": 0,
+    "failed": 0,
+    "omitted": 0,
+    "notRun": 0,
+    "qualified": 0,
+    "retries": 0
+  },
+  "childReconciliation": {
+    "caseDirectories": 44,
+    "statusesComplete": 44,
+    "outcomesWindowEnded": 44,
+    "missingComplete": 0,
+    "failedFiles": 0,
+    "playerDeathEvidenceRows": 0,
+    "bossRows": 0,
+    "rawInventoryEntries": 674
+  },
+  "terminalFiles": {
+    "complete.json": {"sha256":"b36597c5f40ea23b5b1c401167e0ba730c98fee9ce5af9c396e11bc22cd3b261","path":"D:/mmo-idle/item-ability-outlier-pass-01/run-01/complete.json"},
+    "identity.json": {"sha256":"31ae8f82cc04dacc9959c2e3c1df142b50214eb21871a2f028e6dac1fe1f752c","path":"D:/mmo-idle/item-ability-outlier-pass-01/run-01/identity.json"},
+    "manifest.json": {"sha256":"c161dadb69a83d575e386f1353355f873e0210fe0a4c179f836d2a37f2b80f67","path":"D:/mmo-idle/item-ability-outlier-pass-01/run-01/manifest.json"},
+    "raw-inventory.json": {"sha256":"04cf11105da60bc13a53e8e993ed37d92c9ad947dd92200c650506570e330bdd","entries":674,"path":"D:/mmo-idle/item-ability-outlier-pass-01/run-01/raw-inventory.json"},
+    "resolved-builds.json": {"sha256":"7a4c59e333ad0d817f9f36351955fd4a5f5f98ed4816c54aef540b498f067b2a","path":"D:/mmo-idle/item-ability-outlier-pass-01/run-01/resolved-builds.json"},
+    "results-summary.json": {"sha256":"7fb70753dc25499c4968fbc3d44e2b522cf8ee3678d9df0c34e3f429f9092bdb","path":"D:/mmo-idle/item-ability-outlier-pass-01/run-01/results-summary.json"}
+  },
+  "rawJsonl": {
+    "published": false,
+    "externalRoot": "D:/mmo-idle/item-ability-outlier-pass-01/run-01",
+    "inventoryIsArchive": false
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "receiptType": "applied-overlays",
+  "experimentId": "item-ability-outlier-pass-01",
+  "sourceCommit": "0d392fdddaec7ed31876699589f291c8c840a5",
+  "baseDefinitionsIdentity": "238ea3766359f2d423d8823a0a624d0d21848ba03312ad03c4bc1705aa60a75c",
+  "readyReceipts": 44,
+  "treatedCandidateRows": 12,
+  "untreatedControlOrComparatorRows": 32,
+  "candidateOverlayRows": {
+    "D": 4,
+    "S": 4,
+    "A": 4
+  },
+  "overlays": [
+    {
+      "candidateId": "D",
+      "current": "Desert T2/T3/T4 kite .20/.30/.40",
+      "candidate": "Desert T2/T3/T4 kite .20/.25/.30",
+      "consumer": "mobility.kite-speed-pct via bootSpeedMultiplier",
+      "treatedDefinitionIdentity": ["bd1d0ca025f5260acf674875144bb408769bf80691a0eafd83ba7995a85b1ca4"],
+      "readbackEquipment": ["desert-boots-t4"],
+      "candidateObservationPrefixes": ["outlier-desert-ritualist-candidate", "outlier-desert-ranger-candidate"]
+    },
+    {
+      "candidateId": "S",
+      "current": "T1 unchanged; T2 .45 with .03/.03/.02/.03/.02 deltas; T3 .62 with .02 deltas",
+      "candidate": "At +5 T1/T2/T3 .40/.50/.60; T2 deltas .02 each",
+      "consumer": "mobility.slow-resistance via slowResistedMult",
+      "treatedDefinitionIdentity": ["7b5b04d0d8f4d1524b72b92e97f2d32e3b3cad4aee166d90c0d770a8d37fad3a", "a674f0166f7de098e470b1e18d3076e9cb6215f504c29f14b1872f44386487aa"],
+      "readbackEquipment": ["swamp-charm-t2", "swamp-charm-t3"],
+      "candidateObservationPrefixes": ["outlier-swamp-t2-candidate", "outlier-swamp-t3-candidate"]
+    },
+    {
+      "candidateId": "A",
+      "current": "Technique power .20; cooldown reduction .20",
+      "candidate": "Technique power .30; cooldown reduction .20",
+      "consumer": "core-arcanist resolveAbilityEffect and modifiedAbilityCooldownMs",
+      "treatedDefinitionIdentity": ["2d9c3cac25676a94fef306ba29066fd8762d14af9fd1df034fd60b466635d4f5"],
+      "readbackEquipment": ["core-arcanist"],
+      "candidateObservationPrefixes": ["outlier-arcanist-reverb-candidate", "outlier-arcanist-idolwright-candidate"]
+    }
+  ],
+  "controlAndComparatorRule": "Controls and Tempered rows received no candidate overlay; all overlays were restored per child receipt before the next ordered row."
+}
