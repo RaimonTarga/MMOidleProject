@@ -312,6 +312,7 @@ handoffs: both systems have complete machinery and thin, placeholder content.
 | Doc | Job |
 |---|---|
 | [release-flow.md](release-flow.md) | Branch model and Railway deployment configuration. |
+| [next-playtest-release-readiness.md](next-playtest-release-readiness.md) | v0.5 release decisions, validation, Railway status and [patch notes](../updates/v0.5/changelog.md). |
 | [map-variety-regions-atlas.md](map-variety-regions-atlas.md) | Human-readable view of the runtime map. Canonical coordinates live in `shared/src/world/map/`. |
 | [ui-redesign-baseline/](ui-redesign-baseline/) | Pre-redesign HUD screenshots + capture matrix. |
 

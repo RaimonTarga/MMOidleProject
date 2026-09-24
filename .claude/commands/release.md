@@ -1,32 +1,37 @@
 # /release
 
-Cut an MMO Idle release.
+Cut an MMO Idle release. Usage: `/release major | minor`.
 
-## Usage
+1. Read CLAUDE.md and docs/release-flow.md. Inspect status and preserve unrelated work.
+   If bots depend on this checkout, prepare in a separate clone with its own dependencies
+   and build outputs. Do not switch, stash, reset, stop or rebuild their workspace.
+2. Establish current remote master/develop refs and the intended candidate. Derive the
+   next X.Y version from package.json and the user's major/minor choice. Record release
+   scope, Conduit availability, save policy and any explicitly accepted provisional work.
+3. Audit scripts/release.mjs and deployment configuration. Probe the actual public service;
+   inspect deployment metadata/logs if accessible. Record unavailable access and distinguish
+   a Git publication from a verified deployment. Follow explicit authorization to attempt
+   a playtest despite an outage or unfinished economy experiments.
+4. On develop in the isolated release clone, run `pnpm release:prepare X.Y` (or first use
+   `--dry-run`). It writes all six package versions, the manifest and versioned notes.
+   Re-running a prepared version is rejected; edit its notes directly.
+5. Read the generated history, current source and updates/develop notes. Write player-facing
+   highlights and detailed system sections, with operational findings in a separate record.
+   After absorbing branch notes, delete those notes and commit their deletions separately
+   from release metadata so the cut's unrelated-change check remains meaningful.
+6. Run `pnpm typecheck`, `pnpm test`, `pnpm build` and `git diff --check` on the candidate.
+   For publisher changes also run `node --test scripts/release.test.mjs`. Record exact
+   failures and omitted checks. Add migration/restore and live smoke validation appropriate
+   to the user's save policy and available environment; do not fabricate passed gates.
+7. Present the concrete notes and unresolved findings. Ask for publication confirmation
+   only if the user has not already authorized this release; do not ask again for a scope
+   already approved in the current session.
+8. Run `pnpm release:cut X.Y`: it fetches refs, validates metadata and ancestry, runs
+   typecheck, commits release metadata and atomically pushes develop/master/release-vX.Y.
+   Use --skip-checks only if this exact candidate was already typechecked and recorded.
+9. Verify matching remote SHAs and check the public service after deployment time. If it
+   remains unavailable, report that and the limits of diagnostic access. Never imply that
+   a successful push proves Railway deployed the release.
 
-`/release major | minor`
-
-## Instructions
-
-1. Determine the next version number from `package.json`: increment the major segment and reset minor to `0` for a major release, or increment the minor segment for a minor release.
-2. Validate that `X.Y` is a major.minor release version.
-3. Verify the current branch is `develop`; release commands must not run from any other branch.
-4. Run `pnpm release:prepare X.Y`.
-5. Read `updates/vX.Y/changelog.md` and every file under `updates/develop/**/*`.
-6. Edit `updates/vX.Y/changelog.md` into player-facing patch notes using both the generated commit list and the `updates/develop` notes.
-7. After folding the `updates/develop` information into `updates/vX.Y/changelog.md`, delete the no-longer-needed branch note files/directories under `updates/develop/`.
-8. Run `pnpm typecheck`.
-9. Present the patch notes and ask for confirmation before publishing.
-10. Run `pnpm release:cut X.Y` only after confirmation. This commits release metadata on `develop`, creates `release-vX.Y`, fast-forwards `master` to the release commit, and pushes `develop`, `master`, and the snapshot branch.
-
-## Branch Model
-
-- `develop` is in-flight work for the next release.
-- `master` is the latest production version and is what Railway deploys.
-- `release-vX.Y` is the immutable release snapshot created during the release cut.
-
-Use `scripts/release.mjs` for branch creation and `master` advancement. Do not
-manually duplicate the release script logic.
-
-Do not leave folded `updates/develop` branch notes behind after creating the
-version changelog.
+Use scripts/release.mjs for publication; do not duplicate its branch/push logic by hand.
+Release snapshots are immutable. Keep ongoing experiment results out until adopted.
