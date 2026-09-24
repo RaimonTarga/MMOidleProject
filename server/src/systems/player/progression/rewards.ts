@@ -205,6 +205,11 @@ function applyKillRewardsToPlayer(
     Math.round(rewards.essence * essenceMult * rewardMult * debugMult),
   );
   rewardPlayer(recipient, { ...rewards, essence: scaledEssence });
+  world.pushEvent(nodeId, {
+    kind: 'essence-drop', playerId: recipient.isPlayer.id,
+    targetId: monster.isMonster.id, pos: { ...monster.hasPosition.current },
+    amount: scaledEssence, essenceType: rewards.essenceType,
+  });
   // Catalyst progress is keyed by the NODE'S modifier (not its biome): every kill in
   // an Alacrity node grants Alacrity Catalyst regardless of biome. The weight
   // defaults to the monster's base essence reward (a tuned per-mob toughness

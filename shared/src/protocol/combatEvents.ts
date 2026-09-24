@@ -22,6 +22,8 @@ export interface CombatEventTiming {
 export type CombatEvent = CombatEventTiming & CombatEventPayload;
 
 type CombatEventPayload =
+  // Exact credited payout per recipient (including party shares); cosmetic only.
+  | { kind: 'essence-drop'; playerId: string; targetId: string; pos: Vec2; amount: number; essenceType: EssenceType }
   // One cosmetic beat per authoritative ambient stack gain, never for cooling.
   | { kind: 'ambient-stack-gain'; playerId: string; effectId: 'volcanic-heat' | 'tundra-chill' }
   // Damage-only presentation for paths without an attack/tick animation event.

@@ -1,3 +1,4 @@
+import { spawnEssenceMotes } from '../fx/essenceMotes';
 import {
   ABILITY_BINDING_STRIKE_FX,
   ABILITY_EXPOSE_WEAKNESS_FX,
@@ -858,6 +859,12 @@ export function dispatchCombatEvent(
   presentation?: PlayerAttackPresentation,
 ): void {
   if (ev.kind === 'damage') return; // Amount-only events render in deltaApplier.
+  if (ev.kind === 'essence-drop') {
+    if (ev.playerId === scene.myId || (scene.spectatorMode && ev.playerId === scene.spectatorTargetId)) {
+      spawnEssenceMotes(scene, ev.playerId, nodeToScene(ev.pos.x, ev.pos.y), ev.amount, ev.essenceType);
+    }
+    return;
+  }
   if (ev.kind === 'ambient-stack-gain') {
     const player = state.view.get(ev.playerId) as PlayerView | undefined;
     if (shouldRunClientFx() && state.kind.get(ev.playerId) === 'player' && player && !player.isDead) {

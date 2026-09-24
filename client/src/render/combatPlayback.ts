@@ -9,6 +9,7 @@ import { fxBossDeath, fxMobDeath } from '../fx/monsterDeath';
 import { playSfx } from '../audio/audioEngine';
 
 export type CombatPlaybackItem =
+  | { kind: 'reward'; event: Extract<CombatEvent, { kind: 'essence-drop' }> }
   | { kind: 'attack'; event: CombatEvent; presentation: PlayerAttackPresentation; text: CombatTextBatch }
   | { kind: 'death'; play: () => void };
 
@@ -30,6 +31,10 @@ function isBufferedPlayer(player: PlayerView, event: CombatEvent): boolean {
 
 /** True means handled, including a cosmetic drop when the queue is full. */
 export function queuePlayerAttack(state: RenderState, event: CombatEvent): boolean {
+  if (event.kind === 'essence-drop' && Number.isFinite(event.at)) {
+    state.combatPlayback.enqueue(event.at!, { kind: 'reward', event });
+    return true;
+  }
   if (event.kind !== 'player-hit' && event.kind !== 'player-kill') return false;
   if (!Number.isFinite(event.at)) return false;
   if (event.kind === 'player-kill' && state.combatPlayback.latestTime(item =>
@@ -82,6 +87,7 @@ export function stepCombatPlayback(state: RenderState, scene: GameScene): void {
     spawnDamageNumber(scene, pos, offset, amount, color, style));
   for (const item of ready) {
     if (item.kind === 'death') item.play();
+    else if (item.kind === 'reward') dispatchCombatEvent(state, item.event, scene);
     else dispatchCombatEvent(state, item.event, scene, item.presentation);
   }
 }
