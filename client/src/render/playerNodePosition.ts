@@ -7,8 +7,9 @@ export function resetPlayerNodePosition(
   state: Pick<RenderState, 'interpolation' | 'transform' | 'sprite'>,
   previousNodeId: string | undefined,
   player: Pick<PlayerView, 'id' | 'nodeId' | 'pos' | 'target'>,
+  resetPosition = false,
 ): void {
-  if (previousNodeId === undefined || previousNodeId === player.nodeId) return;
+  if (!resetPosition && (previousNodeId === undefined || previousNodeId === player.nodeId)) return;
   const interp = state.interpolation.get(player.id);
   if (interp) {
     interp.base = { ...player.pos };

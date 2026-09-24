@@ -26,7 +26,47 @@ Ordinary client position corrections are collision-clamped. If terrain separates
 - User movement bypasses optional hazard avoidance, preserving its committed ownership. Root/channel/death remain authoritative cancellation conditions.
 - Legacy clients/bots that send only position/options remain accepted. New click acknowledgements are optional. This is not an input-sequence acknowledgement/replay architecture.
 - Active held directional controls take priority over a click. Hold-still/summon commands retain their existing behavior.
-- Focus loss clears held keyboard input; full resync invalidates local click prediction. Remote-player movement presentation retains its existing stepping; own-player autonomous paths use the bounded server preview.
+- Focus loss clears held keyboard input; full resync invalidates local click prediction and rebases retained player sprites. Remote-player presentation follows observed positions; own-player autonomous paths use the bounded server preview.
+
+## Player synchronization review (2026-09-24, not deployed)
+
+Reviewed node delta encoding/membership, transition baseline resets, private state
+syncs, visibility/reconnect handlers, retained entity views, local movement
+ownership, remote interpolation, death/respawn, and reposition/knockback effects.
+
+Corrections prepared locally:
+
+- A retained player's node change resets its interpolation base, target, and
+  lunge offset, including remote party members sharing a destination snapshot.
+- Remote players ease toward the latest authoritative position, rather than
+  stepping indefinitely toward a movement intent at the reported speed. This
+  converges after a stop/root/speed change and stops predicting during packet
+  silence. Easing is frame-rate independent; errors above 240 px snap.
+- Returning from a hidden tab restores the last observed position, not a possibly
+  distant movement target. Explicit state syncs rebase same-node player sprites;
+  ordinary full membership refreshes still preserve smoothing.
+- Dead-player updates refresh authoritative position and clear target/speed.
+  Death/respawn transitions also reset interpolation and old attack offsets.
+
+The server's destination membership reset and private resync baseline isolation
+already provide the required full state. No protocol, simulation, or tick-rate
+changes were made. Reposition events are not uniformly teleport destinations:
+Charge also uses one for a projected visual endpoint, so blindly snapping to
+every event's `to` would introduce a separate synchronization error.
+
+Validation: `playerNodePosition.test.ts` covers all four crossings and both party
+update orders. `playerSync.test.ts` covers 5 Hz turns/stops, zero-speed remote
+correction through the actual frame renderer, packet silence, frame-rate
+independence, large displacement, tab return, and same-node resync. Workspace
+typecheck and production client build pass. Full gameplay suite was started but
+stopped before completion; it is not a pass claim for this patch.
+
+Remaining acceptance: two clients under latency/jitter, short reposition skills,
+death/respawn, and reconnect/tab-return during party travel. Remote easing adds
+presentation lag behind the most recently received position; assess that feel
+before deployment. Local input still has no sequence-based replay and retains
+its existing correction thresholds; this review does not claim all sync issues
+are eliminated.
 
 ## Code map
 

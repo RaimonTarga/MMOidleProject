@@ -36,8 +36,10 @@ export function snapRenderStateOnTabVisible(state: RenderState, scene: GameScene
     const meta = state.spriteMeta.get(id);
     if (!transform || !interp || !sprite) continue;
 
-    interp.base.x = transform.target.x;
-    interp.base.y = transform.target.y;
+    // A target is movement intent and can be far beyond the observed position.
+    // The requested state:sync will replace this last-known authoritative base.
+    interp.base.x = transform.pos.x;
+    interp.base.y = transform.pos.y;
     scene.tweens.killTweensOf(interp.lungeOffset);
     interp.lungeOffset.x = 0;
     interp.lungeOffset.y = 0;

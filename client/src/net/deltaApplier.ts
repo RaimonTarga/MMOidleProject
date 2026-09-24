@@ -98,7 +98,7 @@ export function applyDelta(
       }
     }
 
-    upsertEntityView(state, delta.netId, entity, scene);
+    upsertEntityView(state, delta.netId, entity, scene, options.stateSync === true);
   }
 
   // Observe authoritative state immediately; schedule only confirmed attack cosmetics.
@@ -302,12 +302,13 @@ function upsertEntityView(
   id: string,
   entity: NetworkedEntity,
   scene: GameScene,
+  resetPosition: boolean,
 ): void {
   const kind = state.kind.get(id);
   if (kind === "player") {
     const player = composePlayerView(entity);
     if (!player) return;
-    upsertPlayer(state, player, scene);
+    upsertPlayer(state, player, scene, resetPosition);
     upsertThoughtBubble(state, player, scene);
     return;
   }

@@ -128,6 +128,7 @@ export function upsertPlayer(
   state: RenderState,
   player: PlayerView,
   scene: GameScene,
+  resetPosition = false,
 ): void {
   const isOwn = player.id === scene.myId;
   const isNew = !state.sprite.has(player.id);
@@ -146,8 +147,8 @@ export function upsertPlayer(
 
     state.transform.set(player.id, {
       pos: { ...player.pos },
-      target: { ...player.target },
-      speed: player.speed,
+      target: { ...(player.isDead ? player.pos : player.target) },
+      speed: player.isDead ? 0 : player.speed * moveSpeedMult(player),
     });
     state.interpolation.set(player.id, {
       base: { ...player.pos },
@@ -203,11 +204,17 @@ export function upsertPlayer(
   const prev = state.view.get(player.id) as PlayerView | undefined;
   // A full destination snapshot can retain both party members' render IDs.
   // Rebase every changed player, not just the local camera/input owner.
-  resetPlayerNodePosition(state, prev?.nodeId, player);
   const wasDead = prev?.isDead ?? false;
+  resetPlayerNodePosition(state, prev?.nodeId, player, resetPosition || wasDead !== player.isDead);
   const prevAttackAt = prev?.lastAttackAt ?? 0;
 
   if (player.isDead) {
+    const transform = state.transform.get(player.id);
+    if (transform) {
+      transform.pos = { ...player.pos };
+      transform.target = { ...player.pos };
+      transform.speed = 0;
+    }
     state.ambientStackFlash.delete(player.id);
     if (isOwn) {
       clearOwnMovePath(state);

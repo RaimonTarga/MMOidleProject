@@ -12,6 +12,7 @@ import { getOwnBlockShapes, getOwnMovePad } from '../input/obstacleResolve';
 import { predictManualMove, predictClickMove } from '../input/movement';
 import { correctPlayerPosition } from './movementCorrection';
 import { predictAutoPath } from './autoPathPrediction';
+import { stepRemotePlayerPosition } from './remotePlayerPosition';
 
 function spriteDrawY(baseY: number, visualOffsetY?: number): number {
   return baseY + (visualOffsetY ?? 0);
@@ -51,7 +52,9 @@ export function stepInterpolation(scene: GameScene, dt: number): void {
     const dx = transform.target.x - interp.base.x;
     const dy = transform.target.y - interp.base.y;
     const distSq = dx * dx + dy * dy;
-    if (predicted) {
+    if (!own && state.kind.get(id) === 'player') {
+      Object.assign(interp.base, stepRemotePlayerPosition(interp.base, transform.pos, dt));
+    } else if (predicted) {
       interp.base.x = predicted.x;
       interp.base.y = predicted.y;
       if (state.ownClickActive) transform.target = state.ownPathWaypoints[0] ?? state.ownPathGoal ?? predicted;
