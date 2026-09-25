@@ -1,5 +1,6 @@
 import {
   DEFAULT_AUTOCOMBAT_CONFIG,
+  DEFAULT_RUNE_LOADOUT,
   GAME_CONFIG,
   STARTER_RUNE_IDS,
   RESOLVED_NODE_FEATURES,
@@ -646,6 +647,40 @@ for (const trap of D32_TRAPS) {
   setAggroTarget(world, target, { id: player.isPlayer.id, kind: 'player' });
   const retaliation = selectFar(world, player, now + 6_100);
   assert(retaliation.kind === 'attack' && retaliation.target === target, 'an aggroed enemy in a hazard is still fought');
+}
+
+// Player report 2026-09-26: with the default loadout (Find Enemies + Recover
+// First) and the only enemy across damaging ground, the player paced at the
+// edge forever: step in, lose a few HP, Recover First turned back, regen to
+// full, step in again. Recover First now ignores terrain damage while there is
+// somewhere to go, so the player crosses once and reaches the enemy.
+{
+  const nodeId = 'node-t2-swamp-01';
+  const now0 = 1_000_000;
+  const world = new World();
+  for (const m of [...world.monsterEntitiesInNode(nodeId)]) world.removeMonsterEntity(m.entityId);
+  const feature = RESOLVED_NODE_FEATURES[nodeId]?.find(f =>
+    f.damage?.targets.includes('player') && !f.blocksMovement?.includes('player') && f.shape.kind === 'circle');
+  assert(feature?.shape.kind === 'circle', `${nodeId}: requires a walkable circular damage feature`);
+  const { x, y, radius } = feature.shape;
+  const slices = playerSlices('degen-cross', { x: x - radius - 60, y }, DEFAULT_RUNE_LOADOUT.map(rule => ({ ...rule })));
+  slices.hasPosition.nodeId = nodeId;
+  const player = world.attachPlayerEntity(slices, slices.isPlayer.id);
+  Object.assign(player.usesAutocombat, DEFAULT_AUTOCOMBAT_CONFIG, { auto: true });
+  player.hasHealth.maxHp = 1_000;
+  player.hasHealth.hp = 1_000;
+  player.hasHealth.recovery = 10;
+  const enemy = world.createMonster(nodeId, 'plains-slime', { x: x + radius + 250, y });
+  assert(!!enemy, 'far-side enemy should spawn');
+  let crossed = false;
+  let enteredHazard = false;
+  for (let i = 0; i < 600 && !crossed; i++) {
+    world.tick(100, now0 + i * 100);
+    enteredHazard ||= isPlayerInHazardousNodeFeature(world, player);
+    crossed = player.hasPosition.current.x > x + radius;
+  }
+  assert(enteredHazard, 'the route to the only enemy must cross the damaging pool');
+  assert(crossed, `Recover First must not turn the player back at the pool (x=${player.hasPosition.current.x.toFixed(0)})`);
 }
 
 console.log('runeDynamicHazardAvoidance.test.ts: ok');

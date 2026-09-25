@@ -16,6 +16,7 @@ import {
 import { isFleeing } from "../combat/ai/flee";
 import { getAutoTargetId } from "../combat/ai/targetPriority";
 import { DYNAMIC_HAZARD_ESCAPE_ACTIVE_FLAG } from "../combat/ai/dynamicHazardAvoidance";
+import { recoveryYieldsToHazard } from "../combat/ai/autoTarget";
 import {
   RUNE_FOCUS_ELITES_FLAG,
   RUNE_FOLLOW_LEADER_FLAG,
@@ -230,7 +231,12 @@ function maintenanceIntent(player: PlayerEntity): HasAutoIntent | null {
   if (
     getFlag(player.tracksCombat, RUNE_WAIT_FOR_REGEN_FLAG) &&
     player.hasAttackTarget === undefined &&
-    player.hasHealth.hp < player.hasHealth.maxHp
+    player.hasHealth.hp < player.hasHealth.maxHp &&
+    // Standing aside in damaging terrain: show what the player is actually
+    // doing (usually crossing toward an enemy), unless Recover First is the one
+    // walking them out.
+    (!recoveryYieldsToHazard(player) ||
+      getFlag(player.tracksCombat, DYNAMIC_HAZARD_ESCAPE_ACTIVE_FLAG))
   ) {
     return {
       kind: "idle",

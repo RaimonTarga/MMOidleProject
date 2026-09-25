@@ -49,6 +49,7 @@ import { steerOutOfTelegraphs } from "./telegraphEvasion";
 import {
   HAZARD_TARGET_CLEARANCE,
   playerHazardContainingPoint,
+  playerInDamagingPersistentHazard,
   steerOutOfPersistentHazards,
 } from "./dynamicHazardAvoidance";
 import { isPlayerInCombat } from "./engagement";
@@ -125,6 +126,13 @@ const HAZARD_PULL_RANGE_CLEARANCE = 200;
 // every tick flips direction at the arrival boundary and can oscillate forever.
 const hazardSkirts = new WeakMap<PlayerEntity, { targetId: string; key: string; destination: Vec2 }>();
 const hazardPulls = new WeakMap<PlayerEntity, { targetId: string; key: string; destination: Vec2; hazard: NodeFeatureShape }>();
+
+// Players whose Recover First is standing aside this tick because they are in
+// damaging terrain (see updateAutoTargets). Read by the behavior display.
+const recoveryYieldingToHazard = new WeakSet<PlayerEntity>();
+export function recoveryYieldsToHazard(player: PlayerEntity): boolean {
+  return recoveryYieldingToHazard.has(player);
+}
 
 // ─── Keep-distance standoff ring ──────────────────────────────────────────────
 //
@@ -623,17 +631,33 @@ export function updateAutoTargets(world: World, now: number) {
       continue;
     }
 
-    if (
+    // Recover First ignores damage taken from terrain. Recovery is suppressed in
+    // damaging ground, so resting there never finishes; and turning back the
+    // moment the hazard nicks HP made a player crossing it toward the only enemy
+    // pace in and out forever. Inside damaging terrain it stands aside for
+    // whatever auto-combat wants (usually the crossing); only if that would
+    // leave the player standing in it does Recover First walk them out. Once on
+    // safe ground it holds as usual. Status-only slows don't block Recovery, so
+    // they don't count.
+    const wantsRecovery =
       getFlag(player.tracksCombat, RUNE_WAIT_FOR_REGEN_FLAG) &&
       player.hasAttackTarget === undefined &&
-      player.hasHealth.hp < player.hasHealth.maxHp
-    ) {
+      player.hasHealth.hp < player.hasHealth.maxHp;
+    const recoveryYields = wantsRecovery && playerInDamagingPersistentHazard(world, player, now);
+    if (recoveryYields) recoveryYieldingToHazard.add(player);
+    else recoveryYieldingToHazard.delete(player);
+    const escapeToRecover = () => {
+      if (!recoveryYields || !steerOutOfPersistentHazards(world, player, now, { damagingOnly: true })) {
+        return false;
+      }
+      recordHeatAction(world, player, now, "recover");
+      return true;
+    };
+
+    if (wantsRecovery && !recoveryYields) {
       recordHeatAction(world, player, now, "recover");
       setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
-      // Damaging terrain suppresses Recovery, so resting inside it never reaches
-      // full HP. Recover First steps out onto safe ground before it holds, even
-      // without Avoid Hazards equipped. Status-only slows don't block Recovery,
-      // so it rests in those.
+      // Finishes an escape leg that started inside, out to the safe envelope.
       if (!steerOutOfPersistentHazards(world, player, now, { damagingOnly: true })) {
         stopEntity(world, player);
       }
@@ -713,7 +737,7 @@ export function updateAutoTargets(world: World, now: number) {
         // Fight Back answers the encounter that interrupted travel; it is not
         // permission to turn a retained route into ordinary node farming.
         setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
-        stopEntity(world, player);
+        if (!escapeToRecover()) stopEntity(world, player);
         continue;
       }
       // idle — nothing within acquire range. Head for the nearest clearable mob
@@ -725,7 +749,7 @@ export function updateAutoTargets(world: World, now: number) {
       recordHeatAction(world, player, now, mob ? "approach" : "idle", mob?.entityId ?? null);
       if (mob) {
         steerTowardTarget(world, player, mob, now);
-      } else {
+      } else if (!escapeToRecover()) {
         stopEntity(world, player);
       }
     }

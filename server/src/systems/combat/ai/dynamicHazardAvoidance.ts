@@ -217,6 +217,16 @@ function storedDestination(player: PlayerEntity): Vec2 | null {
   return x !== 0 || y !== 0 ? { x, y } : null;
 }
 
+/** Whether the player stands in a persistent hazard that deals damage right now. */
+export function playerInDamagingPersistentHazard(
+  world: World,
+  player: PlayerEntity,
+  now: number,
+): boolean {
+  return persistentHazards(world, player, now, { damagingOnly: true })
+    .some((hazard) => hazard.contains(player.hasPosition.current, 0));
+}
+
 /** Find the shortest nearby standable point outside the complete active hazard union. */
 export function findPersistentHazardEscapeDestination(
   world: World,

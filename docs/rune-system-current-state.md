@@ -282,9 +282,14 @@ speed.
 `wait-for-regen` stops autonomous movement as soon as active targets and aggro are
 gone, including during the post-combat regen cooldown. Once regeneration is
 allowed, it keeps the player stopped until HP is full. Damaging terrain suppresses
-Recovery, so if the player is standing in a damaging hazard (static feature or
-damaging pool) Recover First first walks out of it, with or without Avoid
-Hazards, then holds. Status-only slows such as Jungle bushes do not trigger this.
+Recovery, so Recover First ignores terrain damage: while the player stands in a
+damaging hazard (static feature or damaging pool) it stands aside for whatever
+auto-combat wants, typically crossing toward the next enemy, and only walks the
+player out (with or without Avoid Hazards) if they would otherwise stand in it.
+It holds once they are on safe ground. Before this, a player crossing damaging
+ground toward the only enemy paced at the edge forever: in, a few HP lost, turn
+back, regen to full, in again. Status-only slows such as Jungle bushes do not
+count as damaging.
 
 `wait-for-execution` stops cooldown classes until their execution is armed
 (`hasEmpoweredAttack`), then normal targeting/search resumes. Its condition chooses
