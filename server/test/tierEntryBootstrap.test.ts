@@ -226,7 +226,9 @@ const earnedProfile = tierEntryProfileFromT1Snapshot({ schemaVersion: 1,
 } as T1CharacterSnapshot, CLEARING_NODE_ID, 1);
 const earnedResult = applyTierEntryProfile(world, player, earnedProfile);
 assert(earnedResult.success, earnedResult.reason ?? "actual V1d state imports");
-assert(player.hasHealth.maxHp === 164, "actual prepared defensive stats reconstruct without a frame");
+// Rebuilt from the V1d gear under the current armor data (164 before the 2026-09-25 defense rebudget).
+const EARNED_MAX_HP = 166;
+assert(player.hasHealth.maxHp === EARNED_MAX_HP, "actual prepared defensive stats reconstruct without a frame");
 assert(JSON.stringify(player.holdsInventory.equipment) === JSON.stringify(earnedProfile.equipment), "earned equipment survives import");
 assert(JSON.stringify(player.tracksProgression.runesEquipped) === JSON.stringify(earnedProfile.runesEquipped), "earned ordered rules survive import");
 assert(JSON.stringify(player.tracksProgression.essences) === JSON.stringify(earnedProfile.wallet.essences), "earned wallet survives import");
@@ -235,7 +237,7 @@ assert(earnedResult.spawnView && validateSpawn(earnedProfile, earnedResult.spawn
 // Later mutation must not change the evidence attached to the reset response.
 player.hasHealth.hp -= 0.0406;
 player.hasStatus.activeBuffs.push({ id: "entry-race", name: "Entry race", remainingMs: 1000 } as any);
-assert(earnedResult.spawnView.hp === 164 && earnedResult.spawnView.activeBuffs.length === 0, "spawn evidence is deeply detached from later combat");
+assert(earnedResult.spawnView.hp === EARNED_MAX_HP && earnedResult.spawnView.activeBuffs.length === 0, "spawn evidence is deeply detached from later combat");
 const invalidView = structuredClone(earnedResult.spawnView);
 invalidView.hp -= 0.0406;
 invalidView.activeBuffs.push({ id: "invalid-entry" } as any);
