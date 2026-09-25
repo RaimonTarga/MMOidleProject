@@ -25,7 +25,7 @@ import type {
   Vec2,
 } from "@mmo-idle/shared";
 import { grantMonsterRewards } from "../../player/progression/rewards";
-import { makeCombatContext, emitCombatEvent, type FormationAttackContribution } from "./combatPipeline";
+import { makeCombatContext, emitCombatEvent, recordBaseDefenseMeasurement, type FormationAttackContribution } from "./combatPipeline";
 import { formationTempoWeight } from "../../classes/archetypes/summoner/profile";
 import {
   monsterEmpoweredMultiplier,
@@ -738,22 +738,11 @@ export function runMonsterAttack(
     resultMetadata.evadeBlocksDebuffs = evadeBlocksDebuffs(ctx);
   }
 
-  // Core second DR layer (system rework Step 9): a separate MULTIPLICATIVE damage-
-  // reduction layer stacked with base DR — final = base × (1 − DR) × (1 − drLayer2).
-  // So 50% base + 50% layer ⇒ 25% taken, not immunity. Read from the player's core
-  // passive (mirrors how shared.damage-mult is read in the pipeline); clamped to 0.9.
-  // Core/stance final mitigation is applied by onDamageTaken on every pipeline path.
-  ctx.damage = Math.max(
-    1,
-    Math.round(
-      Math.max(
-        0,
-        baseAttack -
-          platingAfterShred(target.mitigatesDamage.plating, target.tracksCombat),
-      ) *
-        (1 - target.mitigatesDamage.damageReduction),
-    ),
-  );
+  // Plating and base DR land first; attacker multipliers below scale the
+  // already-mitigated hit (so a charged hit also multiplies plating's value).
+  const prePlating = Math.max(0, baseAttack - platingAfterShred(target.mitigatesDamage.plating, target.tracksCombat));
+  const preDr = prePlating * (1 - target.mitigatesDamage.damageReduction);
+  ctx.damage = Math.max(1, Math.round(preDr));
 
   const def = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId);
 
@@ -783,8 +772,7 @@ export function runMonsterAttack(
 
   // T4 monster empowered attacks (cadence finisher / cooldown spike / opening
   // strike). Multiply the already-mitigated damage BEFORE onHit/onDamageTaken so
-  // the player's damage-cap, shields, plating and DR all apply to the boosted hit —
-  // the same path a player empowered attack takes. Deterministic (counter + timer).
+  // the player's damage-cap, shields and Guard apply to the boosted hit.
   let empoweredMult = monsterEmpoweredMultiplier(monster, def, now);
 
   // Charged (cast-time) attack multiplier — folds into the same empowered spike
@@ -820,6 +808,8 @@ export function runMonsterAttack(
       ambientFedMult *
       (empoweredMult > 1 ? empoweredMult : 1),
   );
+
+  recordBaseDefenseMeasurement(ctx, world, baseAttack, prePlating, preDr);
 
   if (rawDamage !== undefined) ctx.metadata["empoweredAttack"] = true;
   emitCombatEvent("onHit", ctx, world);
@@ -2006,8 +1996,8 @@ function applyMonsterAttackSplash(
 /**
  * Resolve a completed COMMITTED ground slam at its planted point.
  *
- * Deliberately NOT `applyMonsterAoe`: that path applies only plating + flat DR,
- * bypassing the combat pipeline. A slam authored to trip the player damage-cap
+ * Deliberately NOT `applyMonsterAoe`: that path is secondary splash (no charge
+ * multiplier, no redirection to summons). A slam authored to trip the player damage-cap
  * has to go through `runMonsterAttack` per victim — that is where `chargeMult`
  * folds into the empowered-spike path so the cap, Brace and shields all apply,
  * exactly as they do for a single-target charged hit. Minions take the same raw

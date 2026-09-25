@@ -75,6 +75,9 @@ export const DEFENSE_KEYS = [
   // over stationary-dr-ramptime-ms. Moving erodes the ramp at the same rate
   // (symmetric decay), so brief steps barely dent it. ("Become the glacier.")
   'defense.stationary-dr-pct',
+  // Diagnostic record of summed item DR before the class/item multiplicative
+  // grouping in stats.ts; sustained-fight ramps read it to respect the grouping.
+  'defense.item-dr-base',
   'defense.stationary-dr-ramptime-ms',
   // ── T4 defensive mechanics ───────────────────────────────────────────────
   // Sustained-fight DR: while in combat, gain `bonus` DR every step, capping at

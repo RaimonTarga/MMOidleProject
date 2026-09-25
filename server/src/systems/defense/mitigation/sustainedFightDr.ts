@@ -53,7 +53,8 @@ export function runSustainedFightDr(world: World, player: PlayerEntity): void {
 
   const applied = getResource(cs, APPLIED_KEY);
   const baseDr = player.mitigatesDamage.damageReduction - applied;
-  const target = Math.min(targetUncapped, Math.max(0, DR_CAP - baseDr));
+  const itemDr=player.usesSkills.passives['defense.item-dr-base']??0;
+  const target = Math.min(targetUncapped*(1-baseDr)/Math.max(.1,1-itemDr), Math.max(0, DR_CAP - baseDr));
 
   const delta = target - applied;
   if (Math.abs(delta) > 1e-6) {

@@ -283,8 +283,8 @@ export function updateDotArchetype(world: World, dt: number): void {
       0.9,
       entity.usesSkills.passives["defense.dot-resistance"] ?? 0,
     );
-    // DR applies at half value vs DoT; dot-resistance is the dedicated counter.
-    const drForDot = entity.mitigatesDamage.damageReduction * 0.5;
+    // General DR applies fully to DoT; dedicated resistance adds specialization.
+    const drForDot = entity.mitigatesDamage.damageReduction;
     const damage = Math.max(
       1,
       Math.round(base * (1 - drForDot) * (1 - dotResist)),

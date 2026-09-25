@@ -192,6 +192,7 @@ export function initAbilitySystems(): void {
   // the global "simultaneous Guard mitigation" rule the roster depends on.
   registerCombatListener("onDamageTaken", (ctx) => {
     if (ctx.defenderType !== "player") return;
+    if (ctx.metadata["isDot"]) return;
     let survives = 1;
     for (const effectId of ABILITY_GUARD_EFFECT_IDS) {
       const buff = getStatusEffect(ctx.defender.tracksCombat, effectId);

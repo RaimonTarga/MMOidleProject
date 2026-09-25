@@ -35,7 +35,7 @@ export function registerDamageAbsorb(): void {
     }
     if (absorbPct <= 0) return;
 
-    addResource(player.tracksCombat, ABSORB_POOL_KEY, ctx.damage * absorbPct);
+    addResource(player.tracksCombat, ABSORB_POOL_KEY, Math.min(ctx.damage, player.hasHealth.hp) * absorbPct);
   });
 }
 

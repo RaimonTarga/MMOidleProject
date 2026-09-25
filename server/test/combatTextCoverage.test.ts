@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {
   ABILITY_DATABASE, MONSTER_DATABASE, RESOLVED_NODE_FEATURES,
-  applyStatusEffect, emptyEquipment, setResource, setFlag,
+  applyStatusEffect, emptyEquipment, setCooldown, setFlag,
   BERSERKER_SELF_DAMAGE_INTERVAL_MS, initUsesEnergy,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
@@ -12,8 +12,7 @@ import { applyPlayerAoe, applyMonsterAoe } from '../src/systems/combat/damage/ao
 import { runPlayerAttack, runMonsterAttack, runMonsterAttackOnMinion } from '../src/systems/combat/engine/combat';
 import { resolveDetonate } from '../src/systems/player/abilities/abilityAffliction';
 import { applyBrambleGuard } from '../src/systems/player/abilities/abilityBramble';
-import { runDebtDrain } from '../src/systems/defense/mitigation/hitToDot';
-import { DEBT_POOL_KEY } from '../src/systems/defense/core/pools';
+import { queueDebt, runDebtDrain } from '../src/systems/defense/mitigation/hitToDot';
 import { redirectDamageToMinion } from '../src/systems/classes/archetypes/summoner/damageSponge';
 import { updateSummonerArchetype } from '../src/systems/classes/archetypes/summoner/summonerPrototype';
 import { tickSummonerSpecializations } from '../src/systems/classes/archetypes/summoner/specs';
@@ -133,7 +132,8 @@ function probe(world: World, victims: Victim[], action: () => void, counts = vic
 // Debt is a semantically distinct DoT, without inventing an element.
 {
   const { world, player } = setup();
-  setResource(player.tracksCombat, DEBT_POOL_KEY, 100);
+  queueDebt(player.tracksCombat, 40);
+  setCooldown(player.tracksCombat, 'debtTick', 0);
   const { entries } = probe(world, [player], () => { runDebtDrain(world, player); });
   assert(entries[0].hint.isDot);
   const shown: string[] = [];

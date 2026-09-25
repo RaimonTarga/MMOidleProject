@@ -1,5 +1,7 @@
 import { incomingFinalDamage, playerFinalDamageMultipliers } from '../combat/damage/finalDamage';
 import { pushDamageEvent } from '../combat/damage/damageEvent';
+import { drainWards } from '../defense/barrier/wards';
+import { drainBarrier, stampBarrierDamage } from '../defense/barrier/barrier';
 import {
   applyStatusEffect,
   computeScaledDotDamage,
@@ -709,12 +711,16 @@ function tickEntityNodeFeatureDamage(
         );
 
         damage = incomingFinalDamage(world, player, damage);
+        stampBarrierDamage(world, player);
+        const ward=drainWards(player,damage);
+        const barrier=drainBarrier(world,player,ward.damage);
+        damage=barrier.damage;
         recordPlayerDamaged(
           world,
           player,
           ENV_FEATURE_ACTOR,
           damage,
-          0,
+          ward.absorbed+barrier.absorbed,
           'dot',
           buildSimpleBreakdown(base, damage),
         );

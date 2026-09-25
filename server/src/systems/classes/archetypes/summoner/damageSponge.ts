@@ -2,8 +2,9 @@ import { pushDamageEvent } from '../../../combat/damage/damageEvent';
 /**
  * Summoner damage sponge: a fraction of incoming damage to the player is
  * redirected to a random living minion. Implemented as an `onDamageTaken`
- * listener — runs after shield/absorb listeners (registration order is
- * controlled in `server/src/index.ts`).
+ * listener registered inside `initDefenseSystems`: after evasion, the damage
+ * cap and wards/barrier, before the owner's hit-to-DoT debt, cheat death and
+ * damage-absorb recuperation. Guard (registered earlier) has already applied.
  *
  * Damage routed to the minion never re-enters the combat pipeline; we apply
  * it as a raw HP subtraction and kill the slime if it drops to ≤0. The
@@ -48,6 +49,9 @@ export function registerSummonerDamageSponge(): void {
   registerCombatListener('onDamageTaken', (ctx, world) => {
     if (ctx.defenderType !== 'player') return;
     if (ctx.damage <= 0) return;
+    // Splash already hits nearby summons directly; redirecting the owner's share
+    // too would land one AoE on the same body twice.
+    if (ctx.metadata['secondarySplash']) return;
     const player = ctx.defender;
     if (!player.summonsMinions) return;
 

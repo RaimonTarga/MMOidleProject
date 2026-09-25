@@ -103,7 +103,7 @@ for (const mode of ['direct', 'aoe', 'dot'] as const) {
     attachComponent(world, player, 'hasDot', {});
     updateDotArchetype(world, 100);
   }
-  eq(hp - player.hasHealth.hp, mode === 'dot' ? 45 : 30, `${mode}: 100 × .5 normal DR × .8 Core × .75 stance`);
+  eq(hp - player.hasHealth.hp, 30, `${mode}: 100 × .5 DR (full on DoT) × .8 Core × .75 stance`);
   mirrorHpForecast(world);
   eq(composePlayerView(player)!.finalDamageTakenMult, 0.6, 'sheet includes independent taken layers');
 }
