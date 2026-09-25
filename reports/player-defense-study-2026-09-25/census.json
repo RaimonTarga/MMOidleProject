@@ -1,0 +1,2887 @@
+{
+  "scope": "Static data only; no unlock, affordability, spawn weighting, combat, or live-player inference.",
+  "totals": [
+    {
+      "tier": 0,
+      "armors": 1,
+      "plating": 1,
+      "dr": 0,
+      "evasion": 0,
+      "debt": 0
+    },
+    {
+      "tier": 1,
+      "armors": 5,
+      "plating": 5,
+      "dr": 1,
+      "evasion": 1,
+      "debt": 0
+    },
+    {
+      "tier": 2,
+      "armors": 7,
+      "plating": 7,
+      "dr": 1,
+      "evasion": 2,
+      "debt": 1
+    },
+    {
+      "tier": 3,
+      "armors": 7,
+      "plating": 7,
+      "dr": 1,
+      "evasion": 1,
+      "debt": 1
+    },
+    {
+      "tier": 4,
+      "armors": 10,
+      "plating": 10,
+      "dr": 1,
+      "evasion": 1,
+      "debt": 2
+    }
+  ],
+  "armors": [
+    {
+      "id": "clearing-vest-t1",
+      "name": "Bark Wrap",
+      "tier": 0,
+      "biome": "clearing",
+      "maxPlus": 0,
+      "base": {
+        "maxHp": 20,
+        "plating": 4
+      },
+      "upgraded": {
+        "maxHp": 20,
+        "plating": 4
+      }
+    },
+    {
+      "id": "cave-vest-t1",
+      "name": "Bestial Hide",
+      "tier": 1,
+      "biome": "cave",
+      "maxPlus": 5,
+      "base": {
+        "maxHp": 28,
+        "plating": 4,
+        "damageReduction": 0.06
+      },
+      "upgraded": {
+        "maxHp": 42,
+        "plating": 6,
+        "damageReduction": 0.11
+      }
+    },
+    {
+      "id": "cave-vest-t2",
+      "name": "Dire Bestial Hide",
+      "tier": 2,
+      "biome": "cave",
+      "maxPlus": 5,
+      "base": {
+        "maxHp": 50,
+        "plating": 7,
+        "damageReduction": 0.13
+      },
+      "upgraded": {
+        "maxHp": 76,
+        "plating": 11,
+        "damageReduction": 0.17
+      }
+    },
+    {
+      "id": "cave-vest-t3",
+      "name": "Deepscale Hide",
+      "tier": 3,
+      "biome": "cave",
+      "maxPlus": 5,
+      "base": {
+        "maxHp": 91,
+        "plating": 13,
+        "damageReduction": 0.19
+      },
+      "upgraded": {
+        "maxHp": 136,
+        "plating": 19,
+        "damageReduction": 0.23
+      }
+    },
+    {
+      "id": "forest-vest-t1",
+      "name": "Shaded Bindings",
+      "tier": 1,
+      "biome": "forest",
+      "maxPlus": 5,
+      "base": {
+        "maxHp": 28,
+        "plating": 3,
+        "evasion": 0.16
+      },
+      "upgraded": {
+        "maxHp": 43,
+        "plating": 5,
+        "evasion": 0.22
+      }
+    },
+    {
+      "id": "forest-vest-t2",
+      "name": "Phantom Bindings",
+      "tier": 2,
+      "biome": "forest",
+      "maxPlus": 5,
+      "base": {
+        "maxHp": 50,
+        "plating": 5,
+        "evasion": 0.24
+      },
+      "upgraded": {
+        "maxHp": 75,
+        "plating": 7,
+        "evasion": 0.3
+      }
+    },
+    {
+      "id": "jungle-vest-t2",
+      "name": "Verdant Weave",
+      "tier": 2,
+      "biome": "jungle",
+      "maxPlus": 5,
+      "base": {
+        "maxHp": 44,
+        "plating": 6,
+        "evasion": 0.15
+      },
+      "upgraded": {
+        "maxHp": 104,
+        "plating": 16,
+        "evasion": 0.35
+      }
+    },
+    {
+      "id": "jungle-vest-t3",
+      "name": "Wildgrowth Weave",
+      "tier": 3,
+      "biome": "jungle",
+      "maxPlus": 5,
+      "base": {
+        "maxHp": 80,
+        "plating": 13,
+        "evasion": 0.4
+      },
+      "upgraded": {
+        "maxHp": 170,
+        "plating": 28,
+        "evasion": 0.65
+      }
+    },
+    {
+      "id": "jungle-vest-t4",
+      "name": "Primal Canopy",
+      "tier": 4,
+      "biome": "jungle",
+      "maxPlus": 5,
+      "base": {
+        "maxHp": 145,
+        "plating": 24,
+        "evasion": 0.55
+      },
+      "upgraded": {
+        "maxHp": 320,
+        "plating": 54,
+        "evasion": 0.7000000000000001
+      },
+      "mechanics": {
+        "defense.evade-mitigation": 0.2
+      }
+    },
+    {
+      "id": "mountain-vest-t1",
+      "name": "Fallen Knight Plate",
+      "tier": 1,
+      "biome": "mountain",
+      "maxPlus": 5,
+      "base": {
+        "maxHp": 32,
+        "plating": 5
+      },
+      "upgraded": {
+        "maxHp": 52,
+        "plating": 7
+      },
+      "mechanics": {
+        "guard.potency-pct": 0.15
+      }
+    },
+    {
+      "id": "mountain-vest-t2",
+      "name": "Iron Crusader Plate",
+      "tier": 2,
+      "biome": "mountain",
+      "maxPlus": 5,
+      "base": {
+        "maxHp": 58,
+        "plating": 9
+      },
+      "upgraded": {
+        "maxHp": 86,
+        "plating": 14
+      },
+      "mechanics": {
+        "guard.potency-pct": 0.28
+      }
+    },
+    {
+      "id": "mountain-vest-t3",
+      "name": "Summit Aegis",
+      "tier": 3,
+      "biome": "mountain",
+      "maxPlus": 5,
+      "base": {
+        "maxHp": 104,
+        "plating": 16
+      },
+      "upgraded": {
+        "maxHp": 156,
+        "plating": 24
+      },
+      "mechanics": {
+        "guard.potency-pct": 0.41,
+        "defense.max-hit-pct": 0.25,
+        "defense.max-hit-mult": 0.5
+      }
+    },
+    {
+      "id": "mountain-vest-t4",
+      "name": "Titan's Keep",
+      "tier": 4,
+      "biome": "mountain",
+      "maxPlus": 5,
+      "base": {
+        "maxHp": 187,
+        "plating": 29
+      },
+      "upgraded": {
+        "maxHp": 280,
+        "plating": 44
+      },
+      "mechanics": {
+        "guard.potency-pct": 0.54,
+        "defense.max-hit-pct": 0.25,
+        "defense.max-hit-mult": 0.5,
+        "defense.max-hit-refills-barrier": 1
+      }
+    },
+    {
+      "id": "mountain-vest-t4-stormwall",
+      "name": "Stormwall Plate",
+      "tier": 4,
+      "biome": "mountain",
+      "maxPlus": 5,
+      "base": {
+        "maxHp": 187,
+        "plating": 22
+      },
+      "upgraded": {
+        "maxHp": 280,
+        "plating": 33
+      },
+      "mechanics": {
+        "guard.potency-pct": 0.54,
+        "defense.max-hit-pct": 0.25,
+        "defense.max-hit-mult": 0.5,
+        "defense.barrier-break-hp-recovery-pct": 0.3
+      }
+    },
+    {
+      "id": "plains-vest-t1",
+      "name": "Survivor's Robe",
+      "tier": 1,
+      "biome": "plains",
+      "maxPlus": 5,
+      "base": {
+        "maxHp": 24,
+        "plating": 7
+      },
+      "upgraded": {
+        "maxHp": 39,
+        "plating": 12
+      }
+    },
+    {
+      "id": "plains-vest-t2",
+      "name": "Enduring Robe",
+      "tier": 2,
+      "biome": "plains",
+      "maxPlus": 5,
+      "base": {
+        "maxHp": 43,
+        "plating": 13
+      },
+      "upgraded": {
+        "maxHp": 65,
+        "plating": 19
+      }
+    },
+    {
+      "id": "swamp-vest-t1",
+      "name": "Arcane Wrappings",
+      "tier": 1,
+      "biome": "swamp",
+      "maxPlus": 5,
+      "base": {
+        "maxHp": 30,
+        "plating": 4
+      },
+      "upgraded": {
+        "maxHp": 50,
+        "plating": 6
+      },
+      "mechanics": {
+        "defense.dot-resistance": 0.2
+      }
+    },
+    {
+      "id": "swamp-vest-t2",
+      "name": "Bog Wrappings",
+      "tier": 2,
+      "biome": "swamp",
+      "maxPlus": 5,
+      "base": {
+        "maxHp": 54,
+        "plating": 7
+      },
+      "upgraded": {
+        "maxHp": 81,
+        "plating": 11
+      },
+      "mechanics": {
+        "defense.dot-resistance": 0.34,
+        "defense.hit-to-dot-pct": 0.08
+      }
+    },
+    {
+      "id": "swamp-vest-t3",
+      "name": "Plaguebound Shroud",
+      "tier": 3,
+      "biome": "swamp",
+      "maxPlus": 5,
+      "base": {
+        "maxHp": 97,
+        "plating": 13
+      },
+      "upgraded": {
+        "maxHp": 146,
+        "plating": 19
+      },
+      "mechanics": {
+        "defense.dot-resistance": 0.46,
+        "defense.hit-to-dot-pct": 0.1,
+        "defense.debuff-resistance": 0.2
+      }
+    },
+    {
+      "id": "tundra-vest-t3",
+      "name": "Glacial Bulwark",
+      "tier": 3,
+      "biome": "tundra",
+      "maxPlus": 5,
+      "base": {
+        "maxHp": 100,
+        "plating": 15
+      },
+      "upgraded": {
+        "maxHp": 210,
+        "plating": 35
+      },
+      "mechanics": {
+        "defense.stationary-dr-pct": 0.15,
+        "defense.stationary-dr-ramptime-ms": 6000,
+        "defense.max-hit-pct": 0.25,
+        "defense.max-hit-mult": 0.5
+      }
+    },
+    {
+      "id": "tundra-vest-t4",
+      "name": "Permafrost Sovereign",
+      "tier": 4,
+      "biome": "tundra",
+      "maxPlus": 5,
+      "base": {
+        "maxHp": 180,
+        "plating": 28
+      },
+      "upgraded": {
+        "maxHp": 390,
+        "plating": 63
+      },
+      "mechanics": {
+        "defense.stationary-dr-pct": 0.2,
+        "defense.stationary-dr-ramptime-ms": 5000,
+        "defense.max-hit-pct": 0.25,
+        "defense.max-hit-mult": 0.5
+      }
+    },
+    {
+      "id": "desert-vest-t2",
+      "name": "Duneplate of the Last Stand",
+      "tier": 2,
+      "biome": "desert",
+      "maxPlus": 5,
+      "base": {
+        "maxHp": 44,
+        "plating": 10
+      },
+      "upgraded": {
+        "maxHp": 104,
+        "plating": 25
+      },
+      "mechanics": {
+        "defense.cheat-death": 1,
+        "defense.cleanse-stacks": 1,
+        "defense.cleanse-interval-ms": 8000
+      }
+    },
+    {
+      "id": "desert-vest-t3",
+      "name": "Eternal Duneplate",
+      "tier": 3,
+      "biome": "desert",
+      "maxPlus": 5,
+      "base": {
+        "maxHp": 90,
+        "plating": 20
+      },
+      "upgraded": {
+        "maxHp": 190,
+        "plating": 45
+      },
+      "mechanics": {
+        "defense.cheat-death": 1,
+        "defense.cleanse-stacks": 1,
+        "defense.cleanse-interval-ms": 8000,
+        "defense.debuff-resistance": 0.2
+      }
+    },
+    {
+      "id": "desert-vest-t4",
+      "name": "Deathless Duneplate",
+      "tier": 4,
+      "biome": "desert",
+      "maxPlus": 5,
+      "base": {
+        "maxHp": 165,
+        "plating": 38
+      },
+      "upgraded": {
+        "maxHp": 365,
+        "plating": 83
+      },
+      "mechanics": {
+        "defense.cheat-death": 1,
+        "defense.cleanse-stacks": 2,
+        "defense.cleanse-interval-ms": 8000,
+        "defense.debuff-resistance": 0.3,
+        "defense.post-cheat-death-heal-pct": 0.3,
+        "defense.post-cheat-death-heal-ms": 4000
+      }
+    },
+    {
+      "id": "volcanic-vest-t3",
+      "name": "Emberforge Plate",
+      "tier": 3,
+      "biome": "volcanic",
+      "maxPlus": 5,
+      "base": {
+        "maxHp": 90,
+        "plating": 20
+      },
+      "upgraded": {
+        "maxHp": 190,
+        "plating": 45
+      },
+      "mechanics": {
+        "defense.hardening-per-sec": 3,
+        "defense.hardening-max": 24,
+        "defense.hardening-reset-pct": 0.25
+      }
+    },
+    {
+      "id": "volcanic-vest-t4",
+      "name": "Pyroclasm Mantle",
+      "tier": 4,
+      "biome": "volcanic",
+      "maxPlus": 5,
+      "base": {
+        "maxHp": 165,
+        "plating": 38
+      },
+      "upgraded": {
+        "maxHp": 365,
+        "plating": 88
+      },
+      "mechanics": {
+        "defense.hardening-per-sec": 4,
+        "defense.hardening-max": 32,
+        "defense.hardening-reset-pct": 0.25,
+        "defense.hardening-max-dr-bonus": 0.06,
+        "defense.hardening-max-dr-ms": 3000
+      }
+    },
+    {
+      "id": "volcanic-vest-t4-lavatempered",
+      "name": "Lava-Tempered Hide",
+      "tier": 4,
+      "biome": "volcanic",
+      "maxPlus": 5,
+      "base": {
+        "maxHp": 150,
+        "plating": 28
+      },
+      "upgraded": {
+        "maxHp": 330,
+        "plating": 63
+      },
+      "mechanics": {
+        "defense.hardening-per-sec": 3,
+        "defense.hardening-max": 24,
+        "defense.hardening-reset-pct": 0.25,
+        "defense.overheal-ward-pct": 0.5
+      }
+    },
+    {
+      "id": "graveyard-vest-t4",
+      "name": "Plaguebound Mantle",
+      "tier": 4,
+      "biome": "graveyard",
+      "maxPlus": 5,
+      "base": {
+        "maxHp": 150,
+        "plating": 16
+      },
+      "upgraded": {
+        "maxHp": 330,
+        "plating": 46
+      },
+      "mechanics": {
+        "defense.dot-resistance": 0.35,
+        "defense.hit-to-dot-pct": 0.08,
+        "defense.debuff-resistance": 0.25,
+        "defense.hit-plating-per-stack": 1,
+        "defense.hit-plating-max-stacks": 5,
+        "defense.hit-plating-duration-ms": 4000
+      }
+    },
+    {
+      "id": "graveyard-vest-t4-debtward",
+      "name": "Grave Ward",
+      "tier": 4,
+      "biome": "graveyard",
+      "maxPlus": 5,
+      "base": {
+        "maxHp": 150,
+        "plating": 20
+      },
+      "upgraded": {
+        "maxHp": 330,
+        "plating": 40
+      },
+      "mechanics": {
+        "defense.dot-resistance": 0.4,
+        "defense.hit-to-dot-pct": 0.08,
+        "defense.debt-cheat-death": 1
+      }
+    },
+    {
+      "id": "trench-vest-t4",
+      "name": "Deep Sea Carapace",
+      "tier": 4,
+      "biome": "trench",
+      "maxPlus": 5,
+      "base": {
+        "maxHp": 90,
+        "plating": 24,
+        "damageReduction": 0.22
+      },
+      "upgraded": {
+        "maxHp": 200,
+        "plating": 54,
+        "damageReduction": 0.32
+      },
+      "mechanics": {
+        "defense.sustained-fight-dr-bonus": 0.01,
+        "defense.sustained-fight-dr-max": 0.05,
+        "defense.sustained-fight-ramptime-ms": 10000
+      }
+    }
+  ],
+  "roots": [
+    {
+      "id": "cadence-root",
+      "name": "Striker",
+      "stats": {
+        "attackPct": 0.08,
+        "maxHpPct": 0.18,
+        "platingPct": 0.15,
+        "attackSpeedPct": 0.06,
+        "moveSpeedPct": 0.04,
+        "damageReduction": 0.02
+      },
+      "mechanics": {
+        "defense.recovery-pulse-pct": 0.2,
+        "defense.recovery-pulse-interval-ms": 6000,
+        "defense.recovery-pulse-duration-ms": 4000,
+        "defense.max-hit-pct": 0.25,
+        "defense.max-hit-mult": 0.5
+      }
+    },
+    {
+      "id": "cooldown-root",
+      "name": "Squire",
+      "stats": {
+        "attackPct": 0.18,
+        "maxHpPct": 0.3,
+        "platingPct": 0.3,
+        "attackSpeedPct": -0.15,
+        "moveSpeedPct": -0.1,
+        "damageReduction": 0.04
+      },
+      "mechanics": {
+        "defense.recovery-active-pct": 0.1
+      }
+    },
+    {
+      "id": "reload-root",
+      "name": "Slinger",
+      "stats": {
+        "attackPct": 0.2,
+        "maxHpPct": 0.07,
+        "attackSpeedPct": 0.1,
+        "moveSpeedPct": 0.1,
+        "attackRange": 120,
+        "evasion": 0.3
+      },
+      "mechanics": {
+        "defense.recovery-on-kill-pct": 0.2,
+        "defense.recovery-on-kill-ms": 4000,
+        "defense.evade-mitigation": 0.2,
+        "reload.acquire-radius-mult": 2.5
+      }
+    },
+    {
+      "id": "energy-root",
+      "name": "Spirit",
+      "stats": {
+        "attackPct": 0.15,
+        "maxHpPct": 0.03,
+        "attackSpeedPct": 0.12,
+        "moveSpeedPct": 0.12,
+        "attackRange": 130
+      },
+      "mechanics": {
+        "defense.barrier-pct": 0.3
+      }
+    },
+    {
+      "id": "dot-root",
+      "name": "Apprentice",
+      "stats": {
+        "attackPct": 0.1,
+        "maxHpPct": 0.12,
+        "platingPct": 0.08,
+        "attackSpeedPct": 0.02,
+        "moveSpeedPct": 0.03,
+        "attackRange": 60
+      },
+      "mechanics": {
+        "defense.dot-resistance": 0.18,
+        "defense.hit-to-dot-pct": 0.1
+      }
+    },
+    {
+      "id": "summoner-root",
+      "name": "Conduit",
+      "stats": {
+        "attackPct": 0.08,
+        "maxHpPct": 0.08,
+        "attackSpeedPct": 0.04,
+        "moveSpeedPct": 0.05,
+        "attackRange": 150
+      },
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-range-close",
+      "name": "In-Fighter",
+      "stats": {
+        "attackPct": 0.04,
+        "maxHpPct": 0.12,
+        "platingPct": 0.1,
+        "attackSpeedPct": 0.06
+      },
+      "mechanics": {
+        "shared.damage-mult": 0.1,
+        "defense.recovery-pulse-pct": 0.1
+      }
+    },
+    {
+      "id": "cadence-range-mid",
+      "name": "Lancer",
+      "stats": {
+        "attackRange": 60,
+        "attackPct": 0.06,
+        "maxHpPct": 0.08,
+        "platingPct": 0.06,
+        "attackSpeedPct": 0.04,
+        "moveSpeedPct": 0.02
+      }
+    },
+    {
+      "id": "cadence-range-far",
+      "name": "Phantom-Blade",
+      "stats": {
+        "attackRange": 120,
+        "attackPct": 0.03,
+        "maxHpPct": 0.03,
+        "attackSpeedPct": 0.02,
+        "moveSpeedPct": 0.08
+      }
+    },
+    {
+      "id": "cooldown-range-close",
+      "name": "Vanguard",
+      "stats": {
+        "attackRange": -40,
+        "attackPct": 0.04,
+        "maxHpPct": 0.1,
+        "platingPct": 0.12,
+        "attackSpeedPct": 0.05
+      },
+      "mechanics": {
+        "shared.damage-mult": 0.1,
+        "defense.recovery-active-pct": 0.2
+      }
+    },
+    {
+      "id": "cooldown-range-mid",
+      "name": "Phalanx",
+      "stats": {
+        "attackRange": 60,
+        "attackPct": 0.06,
+        "maxHpPct": 0.08,
+        "platingPct": 0.08,
+        "attackSpeedPct": 0.03
+      }
+    },
+    {
+      "id": "cooldown-range-far",
+      "name": "Sentinel",
+      "stats": {
+        "attackRange": 120,
+        "attackPct": 0.03,
+        "maxHpPct": 0.03,
+        "platingPct": 0.03,
+        "attackSpeedPct": 0.02,
+        "moveSpeedPct": 0.06
+      }
+    },
+    {
+      "id": "dot-range-close",
+      "name": "Hexblade",
+      "stats": {
+        "attackRange": -80,
+        "attackPct": 0.04,
+        "maxHpPct": 0.15,
+        "platingPct": 0.08,
+        "attackSpeedPct": 0.06
+      },
+      "mechanics": {
+        "shared.damage-mult": 0.1,
+        "defense.absorb-pct": 0.12
+      }
+    },
+    {
+      "id": "dot-range-mid",
+      "name": "Warlock",
+      "stats": {
+        "attackPct": 0.06,
+        "maxHpPct": 0.08,
+        "platingPct": 0.06,
+        "attackSpeedPct": 0.04,
+        "moveSpeedPct": 0.02
+      }
+    },
+    {
+      "id": "dot-range-far",
+      "name": "Harbinger",
+      "stats": {
+        "attackRange": 100,
+        "attackPct": 0.03,
+        "maxHpPct": 0.03,
+        "attackSpeedPct": 0.02,
+        "moveSpeedPct": 0.1
+      }
+    },
+    {
+      "id": "reload-range-close",
+      "name": "Breacher",
+      "stats": {
+        "attackRange": -120,
+        "evasion": 0.1,
+        "attackPct": 0.04,
+        "maxHpPct": 0.18,
+        "platingPct": 0.05,
+        "attackSpeedPct": 0.06,
+        "moveSpeedPct": 0.02
+      },
+      "mechanics": {
+        "shared.damage-mult": 0.1,
+        "defense.evade-mitigation": 0.1
+      }
+    },
+    {
+      "id": "reload-range-mid",
+      "name": "Enforcer",
+      "stats": {
+        "attackPct": 0.06,
+        "maxHpPct": 0.08,
+        "platingPct": 0.03,
+        "attackSpeedPct": 0.04,
+        "moveSpeedPct": 0.04
+      }
+    },
+    {
+      "id": "reload-range-far",
+      "name": "Deadeye",
+      "stats": {
+        "attackRange": 80,
+        "attackPct": 0.03,
+        "maxHpPct": 0.03,
+        "attackSpeedPct": 0.02,
+        "moveSpeedPct": 0.12
+      }
+    },
+    {
+      "id": "energy-range-close",
+      "name": "Haunt",
+      "stats": {
+        "attackRange": -140,
+        "attackPct": 0.04,
+        "maxHpPct": 0.2,
+        "platingPct": 0.04,
+        "attackSpeedPct": 0.06,
+        "moveSpeedPct": 0.02
+      },
+      "mechanics": {
+        "shared.damage-mult": 0.1,
+        "defense.barrier-pct": 0.1
+      }
+    },
+    {
+      "id": "energy-range-mid",
+      "name": "Shade",
+      "stats": {
+        "attackPct": 0.06,
+        "maxHpPct": 0.08,
+        "platingPct": 0.03,
+        "attackSpeedPct": 0.04,
+        "moveSpeedPct": 0.04
+      }
+    },
+    {
+      "id": "energy-range-far",
+      "name": "Wisp",
+      "stats": {
+        "attackRange": 80,
+        "attackPct": 0.03,
+        "maxHpPct": 0.03,
+        "attackSpeedPct": 0.02,
+        "moveSpeedPct": 0.12
+      }
+    },
+    {
+      "id": "summoner-range-close",
+      "name": "Vigil",
+      "stats": {
+        "maxHpPct": 0.06,
+        "platingPct": 0.04
+      },
+      "mechanics": {}
+    },
+    {
+      "id": "summoner-range-mid",
+      "name": "Procession",
+      "stats": {
+        "maxHpPct": 0.1,
+        "platingPct": 0.06,
+        "moveSpeedPct": 0.02
+      }
+    },
+    {
+      "id": "summoner-range-far",
+      "name": "Harrier",
+      "stats": {
+        "maxHpPct": 0.18,
+        "platingPct": 0.12,
+        "moveSpeedPct": 0.1,
+        "damageReduction": 0.02
+      }
+    },
+    {
+      "id": "cadence-light-t4-a",
+      "name": "[T4] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-light-t4-b",
+      "name": "[T4] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-light-t4-c",
+      "name": "[T4] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-light-t5-a",
+      "name": "[T5] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-light-t5-b",
+      "name": "[T5] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-light-t5-c",
+      "name": "[T5] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-light-t6-a",
+      "name": "[T6] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-light-t6-b",
+      "name": "[T6] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-light-t6-c",
+      "name": "[T6] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-light-t7-a",
+      "name": "[T7] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-light-t7-b",
+      "name": "[T7] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-light-t7-c",
+      "name": "[T7] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-balanced-t4-a",
+      "name": "[T4] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-balanced-t4-b",
+      "name": "[T4] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-balanced-t4-c",
+      "name": "[T4] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-balanced-t5-a",
+      "name": "[T5] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-balanced-t5-b",
+      "name": "[T5] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-balanced-t5-c",
+      "name": "[T5] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-balanced-t6-a",
+      "name": "[T6] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-balanced-t6-b",
+      "name": "[T6] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-balanced-t6-c",
+      "name": "[T6] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-balanced-t7-a",
+      "name": "[T7] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-balanced-t7-b",
+      "name": "[T7] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-balanced-t7-c",
+      "name": "[T7] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-heavy-t4-a",
+      "name": "[T4] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-heavy-t4-b",
+      "name": "[T4] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-heavy-t4-c",
+      "name": "[T4] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-heavy-t5-a",
+      "name": "[T5] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-heavy-t5-b",
+      "name": "[T5] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-heavy-t5-c",
+      "name": "[T5] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-heavy-t6-a",
+      "name": "[T6] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-heavy-t6-b",
+      "name": "[T6] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-heavy-t6-c",
+      "name": "[T6] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-heavy-t7-a",
+      "name": "[T7] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-heavy-t7-b",
+      "name": "[T7] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cadence-heavy-t7-c",
+      "name": "[T7] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-light-t4-a",
+      "name": "[T4] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-light-t4-b",
+      "name": "[T4] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-light-t4-c",
+      "name": "[T4] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-light-t5-a",
+      "name": "[T5] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-light-t5-b",
+      "name": "[T5] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-light-t5-c",
+      "name": "[T5] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-light-t6-a",
+      "name": "[T6] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-light-t6-b",
+      "name": "[T6] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-light-t6-c",
+      "name": "[T6] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-light-t7-a",
+      "name": "[T7] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-light-t7-b",
+      "name": "[T7] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-light-t7-c",
+      "name": "[T7] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-balanced-t4-a",
+      "name": "[T4] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-balanced-t4-b",
+      "name": "[T4] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-balanced-t4-c",
+      "name": "[T4] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-balanced-t5-a",
+      "name": "[T5] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-balanced-t5-b",
+      "name": "[T5] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-balanced-t5-c",
+      "name": "[T5] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-balanced-t6-a",
+      "name": "[T6] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-balanced-t6-b",
+      "name": "[T6] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-balanced-t6-c",
+      "name": "[T6] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-balanced-t7-a",
+      "name": "[T7] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-balanced-t7-b",
+      "name": "[T7] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-balanced-t7-c",
+      "name": "[T7] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-heavy-t4-a",
+      "name": "[T4] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-heavy-t4-b",
+      "name": "[T4] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-heavy-t4-c",
+      "name": "[T4] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-heavy-t5-a",
+      "name": "[T5] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-heavy-t5-b",
+      "name": "[T5] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-heavy-t5-c",
+      "name": "[T5] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-heavy-t6-a",
+      "name": "[T6] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-heavy-t6-b",
+      "name": "[T6] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-heavy-t6-c",
+      "name": "[T6] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-heavy-t7-a",
+      "name": "[T7] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-heavy-t7-b",
+      "name": "[T7] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "cooldown-heavy-t7-c",
+      "name": "[T7] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-light-t4-a",
+      "name": "[T4] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-light-t4-b",
+      "name": "[T4] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-light-t4-c",
+      "name": "[T4] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-light-t5-a",
+      "name": "[T5] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-light-t5-b",
+      "name": "[T5] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-light-t5-c",
+      "name": "[T5] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-light-t6-a",
+      "name": "[T6] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-light-t6-b",
+      "name": "[T6] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-light-t6-c",
+      "name": "[T6] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-light-t7-a",
+      "name": "[T7] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-light-t7-b",
+      "name": "[T7] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-light-t7-c",
+      "name": "[T7] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-balanced-t4-a",
+      "name": "[T4] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-balanced-t4-b",
+      "name": "[T4] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-balanced-t4-c",
+      "name": "[T4] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-balanced-t5-a",
+      "name": "[T5] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-balanced-t5-b",
+      "name": "[T5] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-balanced-t5-c",
+      "name": "[T5] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-balanced-t6-a",
+      "name": "[T6] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-balanced-t6-b",
+      "name": "[T6] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-balanced-t6-c",
+      "name": "[T6] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-balanced-t7-a",
+      "name": "[T7] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-balanced-t7-b",
+      "name": "[T7] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-balanced-t7-c",
+      "name": "[T7] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-heavy-t4-a",
+      "name": "[T4] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-heavy-t4-b",
+      "name": "[T4] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-heavy-t4-c",
+      "name": "[T4] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-heavy-t5-a",
+      "name": "[T5] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-heavy-t5-b",
+      "name": "[T5] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-heavy-t5-c",
+      "name": "[T5] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-heavy-t6-a",
+      "name": "[T6] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-heavy-t6-b",
+      "name": "[T6] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-heavy-t6-c",
+      "name": "[T6] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-heavy-t7-a",
+      "name": "[T7] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-heavy-t7-b",
+      "name": "[T7] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "reload-heavy-t7-c",
+      "name": "[T7] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-light-t4-a",
+      "name": "[T4] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-light-t4-b",
+      "name": "[T4] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-light-t4-c",
+      "name": "[T4] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-light-t5-a",
+      "name": "[T5] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-light-t5-b",
+      "name": "[T5] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-light-t5-c",
+      "name": "[T5] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-light-t6-a",
+      "name": "[T6] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-light-t6-b",
+      "name": "[T6] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-light-t6-c",
+      "name": "[T6] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-light-t7-a",
+      "name": "[T7] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-light-t7-b",
+      "name": "[T7] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-light-t7-c",
+      "name": "[T7] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-balanced-t4-a",
+      "name": "[T4] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-balanced-t4-b",
+      "name": "[T4] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-balanced-t4-c",
+      "name": "[T4] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-balanced-t5-a",
+      "name": "[T5] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-balanced-t5-b",
+      "name": "[T5] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-balanced-t5-c",
+      "name": "[T5] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-balanced-t6-a",
+      "name": "[T6] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-balanced-t6-b",
+      "name": "[T6] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-balanced-t6-c",
+      "name": "[T6] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-balanced-t7-a",
+      "name": "[T7] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-balanced-t7-b",
+      "name": "[T7] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-balanced-t7-c",
+      "name": "[T7] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-heavy-t4-a",
+      "name": "[T4] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-heavy-t4-b",
+      "name": "[T4] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-heavy-t4-c",
+      "name": "[T4] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-heavy-t5-a",
+      "name": "[T5] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-heavy-t5-b",
+      "name": "[T5] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-heavy-t5-c",
+      "name": "[T5] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-heavy-t6-a",
+      "name": "[T6] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-heavy-t6-b",
+      "name": "[T6] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-heavy-t6-c",
+      "name": "[T6] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-heavy-t7-a",
+      "name": "[T7] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-heavy-t7-b",
+      "name": "[T7] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "energy-heavy-t7-c",
+      "name": "[T7] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-light-t4-a",
+      "name": "[T4] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-light-t4-b",
+      "name": "[T4] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-light-t4-c",
+      "name": "[T4] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-light-t5-a",
+      "name": "[T5] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-light-t5-b",
+      "name": "[T5] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-light-t5-c",
+      "name": "[T5] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-light-t6-a",
+      "name": "[T6] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-light-t6-b",
+      "name": "[T6] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-light-t6-c",
+      "name": "[T6] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-light-t7-a",
+      "name": "[T7] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-light-t7-b",
+      "name": "[T7] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-light-t7-c",
+      "name": "[T7] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-balanced-t4-a",
+      "name": "[T4] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-balanced-t4-b",
+      "name": "[T4] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-balanced-t4-c",
+      "name": "[T4] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-balanced-t5-a",
+      "name": "[T5] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-balanced-t5-b",
+      "name": "[T5] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-balanced-t5-c",
+      "name": "[T5] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-balanced-t6-a",
+      "name": "[T6] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-balanced-t6-b",
+      "name": "[T6] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-balanced-t6-c",
+      "name": "[T6] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-balanced-t7-a",
+      "name": "[T7] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-balanced-t7-b",
+      "name": "[T7] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-balanced-t7-c",
+      "name": "[T7] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-heavy-t4-a",
+      "name": "[T4] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-heavy-t4-b",
+      "name": "[T4] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-heavy-t4-c",
+      "name": "[T4] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-heavy-t5-a",
+      "name": "[T5] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-heavy-t5-b",
+      "name": "[T5] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-heavy-t5-c",
+      "name": "[T5] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-heavy-t6-a",
+      "name": "[T6] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-heavy-t6-b",
+      "name": "[T6] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-heavy-t6-c",
+      "name": "[T6] Option C",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-heavy-t7-a",
+      "name": "[T7] Option A",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-heavy-t7-b",
+      "name": "[T7] Option B",
+      "stats": {},
+      "mechanics": {}
+    },
+    {
+      "id": "dot-heavy-t7-c",
+      "name": "[T7] Option C",
+      "stats": {},
+      "mechanics": {}
+    }
+  ],
+  "monsters": [
+    {
+      "id": "tiny-slime",
+      "name": "Tiny Wisp",
+      "biome": "clearing",
+      "attack": 3,
+      "attackCooldown": 3000
+    },
+    {
+      "id": "test-target-reset",
+      "name": "Reset",
+      "biome": "testroom",
+      "attack": 0,
+      "attackCooldown": 999999
+    },
+    {
+      "id": "test-target-gain-point",
+      "name": "Gain Point",
+      "biome": "testroom",
+      "attack": 0,
+      "attackCooldown": 999999
+    },
+    {
+      "id": "training-dummy-t0",
+      "name": "Training Dummy T0",
+      "biome": "testroom",
+      "attack": 0,
+      "attackCooldown": 999999
+    },
+    {
+      "id": "training-dummy-t1",
+      "name": "Training Dummy T1",
+      "biome": "testroom",
+      "attack": 0,
+      "attackCooldown": 999999
+    },
+    {
+      "id": "training-dummy-t2",
+      "name": "Training Dummy T2",
+      "biome": "testroom",
+      "attack": 0,
+      "attackCooldown": 999999
+    },
+    {
+      "id": "training-dummy-t3",
+      "name": "Training Dummy T3",
+      "biome": "testroom",
+      "attack": 0,
+      "attackCooldown": 999999
+    },
+    {
+      "id": "training-dummy-t4",
+      "name": "Training Dummy T4",
+      "biome": "testroom",
+      "attack": 0,
+      "attackCooldown": 999999
+    },
+    {
+      "id": "cave-lurker",
+      "name": "Cave Lurker",
+      "biome": "cave",
+      "attack": 31,
+      "attackCooldown": 1400
+    },
+    {
+      "id": "cave-brute",
+      "name": "Cave Brute",
+      "biome": "cave",
+      "attack": 80,
+      "attackCooldown": 2800
+    },
+    {
+      "id": "giant-spider",
+      "name": "Giant Spider",
+      "biome": "cave",
+      "attack": 35,
+      "attackCooldown": 1800
+    },
+    {
+      "id": "cave-troll",
+      "name": "Cave Troll",
+      "biome": "cave",
+      "attack": 86,
+      "attackCooldown": 3600
+    },
+    {
+      "id": "cave-gargoyle",
+      "name": "Cave Gargoyle",
+      "biome": "cave",
+      "attack": 58,
+      "attackCooldown": 3200
+    },
+    {
+      "id": "deep-spider",
+      "name": "Deep Spider",
+      "biome": "cave",
+      "attack": 60,
+      "attackCooldown": 1500
+    },
+    {
+      "id": "cavern-troll",
+      "name": "Cavern Troll",
+      "biome": "cave",
+      "attack": 124,
+      "attackCooldown": 3600
+    },
+    {
+      "id": "crystal-gargoyle",
+      "name": "Crystal Gargoyle",
+      "biome": "cave",
+      "attack": 70,
+      "attackCooldown": 3200
+    },
+    {
+      "id": "forest-slime",
+      "name": "Moss Rat",
+      "biome": "forest",
+      "attack": 17,
+      "attackCooldown": 1400
+    },
+    {
+      "id": "wolf",
+      "name": "Wolf",
+      "biome": "forest",
+      "attack": 20,
+      "attackCooldown": 1100
+    },
+    {
+      "id": "young-wolf",
+      "name": "Young Wolf",
+      "biome": "forest",
+      "attack": 14,
+      "attackCooldown": 1150
+    },
+    {
+      "id": "ancient-wolf",
+      "name": "Dire Wolf",
+      "biome": "forest",
+      "attack": 22,
+      "attackCooldown": 1100
+    },
+    {
+      "id": "dire-whelp",
+      "name": "Dire Whelp",
+      "biome": "forest",
+      "attack": 14,
+      "attackCooldown": 1150
+    },
+    {
+      "id": "ironwood-golem",
+      "name": "Ironclaw Badger",
+      "biome": "forest",
+      "attack": 25,
+      "attackCooldown": 900
+    },
+    {
+      "id": "canopy-sprite",
+      "name": "Thorn Spitter",
+      "biome": "forest",
+      "attack": 31,
+      "attackCooldown": 2400
+    },
+    {
+      "id": "plains-slime",
+      "name": "Field Hare",
+      "biome": "plains",
+      "attack": 12,
+      "attackCooldown": 2000
+    },
+    {
+      "id": "boar",
+      "name": "Boar",
+      "biome": "plains",
+      "attack": 18,
+      "attackCooldown": 1900
+    },
+    {
+      "id": "prairie-yearling",
+      "name": "Prairie Yearling",
+      "biome": "plains",
+      "attack": 11,
+      "attackCooldown": 1250
+    },
+    {
+      "id": "prairie-wolf",
+      "name": "Prairie Wolf",
+      "biome": "plains",
+      "attack": 19,
+      "attackCooldown": 1200
+    },
+    {
+      "id": "stampede-bull",
+      "name": "Stampede Bull",
+      "biome": "plains",
+      "attack": 24,
+      "attackCooldown": 1700
+    },
+    {
+      "id": "savanna-hawk",
+      "name": "Savanna Hawk",
+      "biome": "plains",
+      "attack": 29,
+      "attackCooldown": 2400
+    },
+    {
+      "id": "bog-slime",
+      "name": "Mire Ooze",
+      "biome": "swamp",
+      "attack": 10,
+      "attackCooldown": 2000
+    },
+    {
+      "id": "mud-toad",
+      "name": "Mud Toad",
+      "biome": "swamp",
+      "attack": 13,
+      "attackCooldown": 2200
+    },
+    {
+      "id": "swamp-hydra",
+      "name": "Moss-Shell Snapper",
+      "biome": "swamp",
+      "attack": 24,
+      "attackCooldown": 2200
+    },
+    {
+      "id": "bog-witch",
+      "name": "Bog Witch",
+      "biome": "swamp",
+      "attack": 41,
+      "attackCooldown": 2200
+    },
+    {
+      "id": "mire-stalker",
+      "name": "Mire Stalker",
+      "biome": "swamp",
+      "attack": 46,
+      "attackCooldown": 2600
+    },
+    {
+      "id": "plague-hydra",
+      "name": "Plague-Shell Snapper",
+      "biome": "swamp",
+      "attack": 37,
+      "attackCooldown": 2200
+    },
+    {
+      "id": "mire-hex-spitter",
+      "name": "Mire Hexer",
+      "biome": "swamp",
+      "attack": 42,
+      "attackCooldown": 2200
+    },
+    {
+      "id": "bog-lurker",
+      "name": "Bog Lurker",
+      "biome": "swamp",
+      "attack": 43,
+      "attackCooldown": 2600
+    },
+    {
+      "id": "cliff-hopper",
+      "name": "Cliff Hopper",
+      "biome": "mountain",
+      "attack": 40,
+      "attackCooldown": 3000
+    },
+    {
+      "id": "ridge-archer",
+      "name": "Ridge Ambusher",
+      "biome": "mountain",
+      "attack": 40,
+      "attackCooldown": 3100
+    },
+    {
+      "id": "granite-titan",
+      "name": "Granite Titan",
+      "biome": "mountain",
+      "attack": 54,
+      "attackCooldown": 3800
+    },
+    {
+      "id": "stone-eagle",
+      "name": "Stone Eagle",
+      "biome": "mountain",
+      "attack": 60,
+      "attackCooldown": 2800
+    },
+    {
+      "id": "peak-archer",
+      "name": "Boulder Thrower",
+      "biome": "mountain",
+      "attack": 72,
+      "attackCooldown": 3500
+    },
+    {
+      "id": "mountain-colossus",
+      "name": "Mountain Colossus",
+      "biome": "mountain",
+      "attack": 130,
+      "attackCooldown": 3800
+    },
+    {
+      "id": "avalanche-ram",
+      "name": "Avalanche Ram",
+      "biome": "mountain",
+      "attack": 87,
+      "attackCooldown": 2600
+    },
+    {
+      "id": "crag-mortar",
+      "name": "Crag Mortar",
+      "biome": "mountain",
+      "attack": 109,
+      "attackCooldown": 3600
+    },
+    {
+      "id": "granite-mammoth",
+      "name": "Granite Mammoth",
+      "biome": "mountain",
+      "attack": 147,
+      "attackCooldown": 3600
+    },
+    {
+      "id": "avalanche-tyrant",
+      "name": "Avalanche Tyrant",
+      "biome": "mountain",
+      "attack": 116,
+      "attackCooldown": 2500
+    },
+    {
+      "id": "cliffside-roc",
+      "name": "Cliffside Roc",
+      "biome": "mountain",
+      "attack": 143,
+      "attackCooldown": 3500
+    },
+    {
+      "id": "cragback-rhino",
+      "name": "Cragback Rhino",
+      "biome": "mountain",
+      "attack": 90,
+      "attackCooldown": 3800
+    },
+    {
+      "id": "jungle-snake",
+      "name": "Jungle Snake",
+      "biome": "jungle",
+      "attack": 20,
+      "attackCooldown": 1100
+    },
+    {
+      "id": "jungle-ape",
+      "name": "Jungle Ape",
+      "biome": "jungle",
+      "attack": 33,
+      "attackCooldown": 1700
+    },
+    {
+      "id": "jungle-blowdarter",
+      "name": "Vine Chameleon",
+      "biome": "jungle",
+      "attack": 20,
+      "attackCooldown": 1900
+    },
+    {
+      "id": "jungle-stalker",
+      "name": "Jungle Stalker",
+      "biome": "jungle",
+      "attack": 55,
+      "attackCooldown": 1000
+    },
+    {
+      "id": "silverback",
+      "name": "Silverback",
+      "biome": "jungle",
+      "attack": 83,
+      "attackCooldown": 1800
+    },
+    {
+      "id": "canopy-harrier",
+      "name": "Canopy Chameleon",
+      "biome": "jungle",
+      "attack": 45,
+      "attackCooldown": 1400
+    },
+    {
+      "id": "hunting-panther",
+      "name": "Hunting Panther",
+      "biome": "jungle",
+      "attack": 52,
+      "attackCooldown": 1200
+    },
+    {
+      "id": "apex-silverback",
+      "name": "Apex Silverback",
+      "biome": "jungle",
+      "attack": 77,
+      "attackCooldown": 1800
+    },
+    {
+      "id": "thornback-lizard",
+      "name": "Thornback Chameleon",
+      "biome": "jungle",
+      "attack": 52,
+      "attackCooldown": 1500
+    },
+    {
+      "id": "emerald-constrictor",
+      "name": "Emerald Constrictor",
+      "biome": "jungle",
+      "attack": 66,
+      "attackCooldown": 1600
+    },
+    {
+      "id": "sand-scorpion",
+      "name": "Sand Scorpion",
+      "biome": "desert",
+      "attack": 65,
+      "attackCooldown": 2400
+    },
+    {
+      "id": "stone-basilisk",
+      "name": "Stone Basilisk",
+      "biome": "desert",
+      "attack": 55,
+      "attackCooldown": 2800
+    },
+    {
+      "id": "dust-djinn",
+      "name": "Sun Scarab",
+      "biome": "desert",
+      "attack": 48,
+      "attackCooldown": 1900
+    },
+    {
+      "id": "dune-stalker",
+      "name": "Dune Stalker",
+      "biome": "desert",
+      "attack": 67,
+      "attackCooldown": 2400
+    },
+    {
+      "id": "desert-basilisk",
+      "name": "Desert Basilisk",
+      "biome": "desert",
+      "attack": 80,
+      "attackCooldown": 2800
+    },
+    {
+      "id": "sandweaver",
+      "name": "Gilded Scarab",
+      "biome": "desert",
+      "attack": 96,
+      "attackCooldown": 1900
+    },
+    {
+      "id": "sand-viper",
+      "name": "Sand Viper",
+      "biome": "desert",
+      "attack": 78,
+      "attackCooldown": 2400
+    },
+    {
+      "id": "dune-basilisk",
+      "name": "Dune Basilisk",
+      "biome": "desert",
+      "attack": 90,
+      "attackCooldown": 3000
+    },
+    {
+      "id": "sandspitter-cobra",
+      "name": "Sunshield Scarab",
+      "biome": "desert",
+      "attack": 150,
+      "attackCooldown": 1900
+    },
+    {
+      "id": "dune-tyrant",
+      "name": "Dune Tyrant",
+      "biome": "desert",
+      "attack": 140,
+      "attackCooldown": 3500
+    },
+    {
+      "id": "ember-scuttler",
+      "name": "Ember Scuttler",
+      "biome": "volcanic",
+      "attack": 45,
+      "attackCooldown": 1600
+    },
+    {
+      "id": "cinder-hound",
+      "name": "Cinder Hound",
+      "biome": "volcanic",
+      "attack": 80,
+      "attackCooldown": 1300
+    },
+    {
+      "id": "magma-brute",
+      "name": "Magma Tortoise",
+      "biome": "volcanic",
+      "attack": 116,
+      "attackCooldown": 3000
+    },
+    {
+      "id": "ash-slinger",
+      "name": "Ash Salamander",
+      "biome": "volcanic",
+      "attack": 84,
+      "attackCooldown": 2000
+    },
+    {
+      "id": "ember-skink",
+      "name": "Ember Skink",
+      "biome": "volcanic",
+      "attack": 75,
+      "attackCooldown": 1300
+    },
+    {
+      "id": "infernal-direhound",
+      "name": "Infernal Direhound",
+      "biome": "volcanic",
+      "attack": 110,
+      "attackCooldown": 1400
+    },
+    {
+      "id": "obsidian-tortoise",
+      "name": "Obsidian Tortoise",
+      "biome": "volcanic",
+      "attack": 100,
+      "attackCooldown": 3000
+    },
+    {
+      "id": "ashspitter-salamander",
+      "name": "Ashspitter Salamander",
+      "biome": "volcanic",
+      "attack": 110,
+      "attackCooldown": 1900
+    },
+    {
+      "id": "magma-salamander",
+      "name": "Magma Salamander",
+      "biome": "volcanic",
+      "attack": 150,
+      "attackCooldown": 2600
+    },
+    {
+      "id": "frost-lurker",
+      "name": "Frost Lurker",
+      "biome": "tundra",
+      "attack": 160,
+      "attackCooldown": 2600
+    },
+    {
+      "id": "glacier-bear",
+      "name": "Glacier Bear",
+      "biome": "tundra",
+      "attack": 148,
+      "attackCooldown": 3200
+    },
+    {
+      "id": "rime-caster",
+      "name": "Rime Caster",
+      "biome": "tundra",
+      "attack": 170,
+      "attackCooldown": 2800
+    },
+    {
+      "id": "rime-tusk-mastodon",
+      "name": "Rime-Tusk Mastodon",
+      "biome": "tundra",
+      "attack": 230,
+      "attackCooldown": 3500
+    },
+    {
+      "id": "glacial-direbear",
+      "name": "Glacial Dire-Bear",
+      "biome": "tundra",
+      "attack": 220,
+      "attackCooldown": 3200
+    },
+    {
+      "id": "hoarfrost-yeti",
+      "name": "Hoarfrost Yeti",
+      "biome": "tundra",
+      "attack": 190,
+      "attackCooldown": 2900
+    },
+    {
+      "id": "permafrost-behemoth",
+      "name": "Permafrost Behemoth",
+      "biome": "tundra",
+      "attack": 220,
+      "attackCooldown": 4000
+    },
+    {
+      "id": "bone-crawler",
+      "name": "Bone Crawler",
+      "biome": "graveyard",
+      "attack": 85,
+      "attackCooldown": 1200
+    },
+    {
+      "id": "plague-hound",
+      "name": "Plague Hound",
+      "biome": "graveyard",
+      "attack": 105,
+      "attackCooldown": 1500
+    },
+    {
+      "id": "carrion-vulture",
+      "name": "Carrion Vulture",
+      "biome": "graveyard",
+      "attack": 95,
+      "attackCooldown": 1700
+    },
+    {
+      "id": "charnel-brute",
+      "name": "Charnel Brute",
+      "biome": "graveyard",
+      "attack": 90,
+      "attackCooldown": 3200
+    },
+    {
+      "id": "gravewright",
+      "name": "Gravewright",
+      "biome": "graveyard",
+      "attack": 90,
+      "attackCooldown": 1900
+    },
+    {
+      "id": "plague-rat",
+      "name": "Bone Rat",
+      "biome": "graveyard",
+      "attack": 65,
+      "attackCooldown": 950
+    },
+    {
+      "id": "abyssal-serpent",
+      "name": "Abyssal Serpent",
+      "biome": "trench",
+      "attack": 190,
+      "attackCooldown": 2800
+    },
+    {
+      "id": "hadal-stalker",
+      "name": "Hadal Stalker",
+      "biome": "trench",
+      "attack": 175,
+      "attackCooldown": 3400
+    },
+    {
+      "id": "elder-leviathan",
+      "name": "Elder Leviathan",
+      "biome": "trench",
+      "attack": 210,
+      "attackCooldown": 3600
+    },
+    {
+      "id": "tusked-razorback",
+      "name": "Tusked Razorback",
+      "biome": "plains",
+      "attack": 34,
+      "attackCooldown": 2000
+    },
+    {
+      "id": "gnarled-greatbear",
+      "name": "Gnarled Greatbear",
+      "biome": "forest",
+      "attack": 24,
+      "attackCooldown": 1900
+    },
+    {
+      "id": "crag-behemoth",
+      "name": "Crag Behemoth",
+      "biome": "mountain",
+      "attack": 56,
+      "attackCooldown": 3500
+    },
+    {
+      "id": "grave-toadeater",
+      "name": "Grave Toadeater",
+      "biome": "swamp",
+      "attack": 13,
+      "attackCooldown": 2600
+    },
+    {
+      "id": "obsidian-broodmother",
+      "name": "Obsidian Broodmother",
+      "biome": "cave",
+      "attack": 40,
+      "attackCooldown": 2800
+    },
+    {
+      "id": "gorging-razortusk",
+      "name": "Gorging Razortusk",
+      "biome": "plains",
+      "attack": 96,
+      "attackCooldown": 2200
+    },
+    {
+      "id": "apex-timberclaw",
+      "name": "Apex Timberclaw",
+      "biome": "forest",
+      "attack": 44,
+      "attackCooldown": 1500
+    },
+    {
+      "id": "stoneplate-juggernaut",
+      "name": "Stoneplate Juggernaut",
+      "biome": "mountain",
+      "attack": 128,
+      "attackCooldown": 4200
+    },
+    {
+      "id": "mire-gorged-behemoth",
+      "name": "Mire-Gorged Behemoth",
+      "biome": "swamp",
+      "attack": 38,
+      "attackCooldown": 2800
+    },
+    {
+      "id": "chitinous-dreadbore",
+      "name": "Chitinous Dreadbore",
+      "biome": "cave",
+      "attack": 85,
+      "attackCooldown": 3600
+    },
+    {
+      "id": "dune-stalker-emperor",
+      "name": "Dune-Stalker Emperor",
+      "biome": "desert",
+      "attack": 85,
+      "attackCooldown": 2600
+    },
+    {
+      "id": "jungle-dread-gorger",
+      "name": "Jungle Dread-Gorger",
+      "biome": "jungle",
+      "attack": 85,
+      "attackCooldown": 2400
+    },
+    {
+      "id": "crag-gorged-horn-behemoth",
+      "name": "Crag-Gorged Horn-Behemoth",
+      "biome": "mountain",
+      "attack": 204,
+      "attackCooldown": 4200
+    },
+    {
+      "id": "deep-core-burrow-gorger",
+      "name": "Deep-Core Burrow-Gorger",
+      "biome": "cave",
+      "attack": 196,
+      "attackCooldown": 4500
+    },
+    {
+      "id": "rot-spore-croc-behemoth",
+      "name": "Rot-Spore Croc-Behemoth",
+      "biome": "swamp",
+      "attack": 52,
+      "attackCooldown": 3400
+    },
+    {
+      "id": "dune-carapace-monarch",
+      "name": "Dune-Carapace Monarch",
+      "biome": "desert",
+      "attack": 196,
+      "attackCooldown": 3000
+    },
+    {
+      "id": "apex-bramble-slasher",
+      "name": "Apex Bramble-Slasher",
+      "biome": "jungle",
+      "attack": 104,
+      "attackCooldown": 1500
+    },
+    {
+      "id": "cinder-shell-magma-salamander",
+      "name": "Cinder-Shell Magma-Salamander",
+      "biome": "volcanic",
+      "attack": 179,
+      "attackCooldown": 3000
+    },
+    {
+      "id": "frost-plated-rime-mammoth",
+      "name": "Frost-Plated Rime-Mammoth",
+      "biome": "tundra",
+      "attack": 204,
+      "attackCooldown": 4200
+    },
+    {
+      "id": "iron-crest-titan",
+      "name": "Iron-Crest Titan",
+      "biome": "mountain",
+      "attack": 228,
+      "attackCooldown": 4200
+    },
+    {
+      "id": "dune-throne-sovereign",
+      "name": "Dune-Throne Sovereign",
+      "biome": "desert",
+      "attack": 185,
+      "attackCooldown": 2800
+    },
+    {
+      "id": "verdant-crown-predator",
+      "name": "Verdant-Crown Predator",
+      "biome": "jungle",
+      "attack": 117,
+      "attackCooldown": 1400
+    },
+    {
+      "id": "glacial-patriarch",
+      "name": "Glacial Patriarch",
+      "biome": "tundra",
+      "attack": 189,
+      "attackCooldown": 4500
+    },
+    {
+      "id": "caldera-sovereign",
+      "name": "Caldera Sovereign",
+      "biome": "volcanic",
+      "attack": 130,
+      "attackCooldown": 2600
+    },
+    {
+      "id": "charnel-crown-sovereign",
+      "name": "Charnel-Crown Sovereign",
+      "biome": "graveyard",
+      "attack": 115,
+      "attackCooldown": 2300
+    },
+    {
+      "id": "elder-trench-serpent",
+      "name": "Elder Trench Serpent",
+      "biome": "trench",
+      "attack": 143,
+      "attackCooldown": 3200
+    },
+    {
+      "id": "elder-trench-serpent-warden",
+      "name": "Elder Trench Serpent Warden",
+      "biome": "trench",
+      "attack": 137,
+      "attackCooldown": 3400
+    },
+    {
+      "id": "void-overlord",
+      "name": "Void Overlord",
+      "biome": "trench",
+      "attack": 150,
+      "attackCooldown": 3200
+    },
+    {
+      "id": "void-horror",
+      "name": "Void Horror",
+      "biome": "trench",
+      "attack": 68,
+      "attackCooldown": 1100
+    },
+    {
+      "id": "void-hulk",
+      "name": "Void Hulk",
+      "biome": "trench",
+      "attack": 124,
+      "attackCooldown": 3500
+    }
+  ],
+  "capStack": {
+    "defense.max-hit-pct": 0.5,
+    "defense.max-hit-mult": 0.25
+  }
+}

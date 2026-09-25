@@ -1,0 +1,3932 @@
+{
+  "scope": "Static authored definitions and max upgrades, not acquisition validation or measured combat. Ranged examples omit weapon/charm/relic/specialization, Heat, guards, other buffs and actual damage execution; not a death reproduction.",
+  "armors": [
+    {
+      "id": "clearing-vest-t1",
+      "name": "Bark Wrap",
+      "tier": 0,
+      "slot": "armor",
+      "biome": "clearing",
+      "requiredBiomeLevel": 2,
+      "baseStats": {
+        "maxHp": 20,
+        "plating": 4
+      },
+      "maxStats": {
+        "maxHp": 20,
+        "plating": 4
+      },
+      "baseMechanics": {},
+      "maxMechanics": {},
+      "maxPlus": 0
+    },
+    {
+      "id": "cave-vest-t1",
+      "name": "Bestial Hide",
+      "tier": 1,
+      "slot": "armor",
+      "biome": "cave",
+      "requiredBiomeLevel": 2,
+      "baseStats": {
+        "maxHp": 28,
+        "plating": 4,
+        "damageReduction": 0.06
+      },
+      "maxStats": {
+        "maxHp": 42,
+        "plating": 6,
+        "damageReduction": 0.11
+      },
+      "baseMechanics": {},
+      "maxMechanics": {},
+      "maxPlus": 5
+    },
+    {
+      "id": "cave-vest-t2",
+      "name": "Dire Bestial Hide",
+      "tier": 2,
+      "slot": "armor",
+      "biome": "cave",
+      "evolvesFrom": "cave-vest-t1",
+      "requiredBiomeLevel": 8,
+      "baseStats": {
+        "maxHp": 50,
+        "plating": 7,
+        "damageReduction": 0.13
+      },
+      "maxStats": {
+        "maxHp": 76,
+        "plating": 11,
+        "damageReduction": 0.17
+      },
+      "baseMechanics": {},
+      "maxMechanics": {},
+      "maxPlus": 5
+    },
+    {
+      "id": "cave-vest-t3",
+      "name": "Deepscale Hide",
+      "tier": 3,
+      "slot": "armor",
+      "biome": "cave",
+      "evolvesFrom": "cave-vest-t2",
+      "requiredBiomeLevel": 14,
+      "baseStats": {
+        "maxHp": 91,
+        "plating": 13,
+        "damageReduction": 0.19
+      },
+      "maxStats": {
+        "maxHp": 136,
+        "plating": 19,
+        "damageReduction": 0.23
+      },
+      "baseMechanics": {},
+      "maxMechanics": {},
+      "maxPlus": 5
+    },
+    {
+      "id": "forest-vest-t1",
+      "name": "Shaded Bindings",
+      "tier": 1,
+      "slot": "armor",
+      "biome": "forest",
+      "requiredBiomeLevel": 2,
+      "baseStats": {
+        "maxHp": 28,
+        "plating": 3,
+        "evasion": 0.16
+      },
+      "maxStats": {
+        "maxHp": 43,
+        "plating": 5,
+        "evasion": 0.22
+      },
+      "baseMechanics": {},
+      "maxMechanics": {},
+      "maxPlus": 5
+    },
+    {
+      "id": "forest-vest-t2",
+      "name": "Phantom Bindings",
+      "tier": 2,
+      "slot": "armor",
+      "biome": "forest",
+      "evolvesFrom": "forest-vest-t1",
+      "requiredBiomeLevel": 8,
+      "baseStats": {
+        "maxHp": 50,
+        "plating": 5,
+        "evasion": 0.24
+      },
+      "maxStats": {
+        "maxHp": 75,
+        "plating": 7,
+        "evasion": 0.3
+      },
+      "baseMechanics": {},
+      "maxMechanics": {},
+      "maxPlus": 5
+    },
+    {
+      "id": "jungle-vest-t2",
+      "name": "Verdant Weave",
+      "tier": 2,
+      "slot": "armor",
+      "biome": "jungle",
+      "requiredBiomeLevel": 2,
+      "baseStats": {
+        "maxHp": 44,
+        "plating": 6,
+        "evasion": 0.15
+      },
+      "maxStats": {
+        "maxHp": 104,
+        "plating": 16,
+        "evasion": 0.35
+      },
+      "baseMechanics": {},
+      "maxMechanics": {},
+      "maxPlus": 5
+    },
+    {
+      "id": "jungle-vest-t3",
+      "name": "Wildgrowth Weave",
+      "tier": 3,
+      "slot": "armor",
+      "biome": "jungle",
+      "evolvesFrom": "jungle-vest-t2",
+      "requiredBiomeLevel": 8,
+      "baseStats": {
+        "maxHp": 80,
+        "plating": 13,
+        "evasion": 0.4
+      },
+      "maxStats": {
+        "maxHp": 170,
+        "plating": 28,
+        "evasion": 0.65
+      },
+      "baseMechanics": {},
+      "maxMechanics": {},
+      "maxPlus": 5
+    },
+    {
+      "id": "jungle-vest-t4",
+      "name": "Primal Canopy",
+      "tier": 4,
+      "slot": "armor",
+      "biome": "jungle",
+      "evolvesFrom": "jungle-vest-t3",
+      "requiredBiomeLevel": 14,
+      "baseStats": {
+        "maxHp": 145,
+        "plating": 24,
+        "evasion": 0.55
+      },
+      "maxStats": {
+        "maxHp": 320,
+        "plating": 54,
+        "evasion": 0.7000000000000001
+      },
+      "baseMechanics": {
+        "defense.evade-mitigation": 0.2
+      },
+      "maxMechanics": {
+        "defense.evade-mitigation": 0.2
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "mountain-vest-t1",
+      "name": "Fallen Knight Plate",
+      "tier": 1,
+      "slot": "armor",
+      "biome": "mountain",
+      "requiredBiomeLevel": 2,
+      "baseStats": {
+        "maxHp": 32,
+        "plating": 5
+      },
+      "maxStats": {
+        "maxHp": 52,
+        "plating": 7
+      },
+      "baseMechanics": {
+        "guard.potency-pct": 0.15
+      },
+      "maxMechanics": {
+        "guard.potency-pct": 0.25
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "mountain-vest-t2",
+      "name": "Iron Crusader Plate",
+      "tier": 2,
+      "slot": "armor",
+      "biome": "mountain",
+      "evolvesFrom": "mountain-vest-t1",
+      "requiredBiomeLevel": 8,
+      "baseStats": {
+        "maxHp": 58,
+        "plating": 9
+      },
+      "maxStats": {
+        "maxHp": 86,
+        "plating": 14
+      },
+      "baseMechanics": {
+        "guard.potency-pct": 0.28
+      },
+      "maxMechanics": {
+        "guard.potency-pct": 0.38
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "mountain-vest-t3",
+      "name": "Summit Aegis",
+      "tier": 3,
+      "slot": "armor",
+      "biome": "mountain",
+      "evolvesFrom": "mountain-vest-t2",
+      "requiredBiomeLevel": 14,
+      "baseStats": {
+        "maxHp": 104,
+        "plating": 16
+      },
+      "maxStats": {
+        "maxHp": 156,
+        "plating": 24
+      },
+      "baseMechanics": {
+        "guard.potency-pct": 0.41,
+        "defense.max-hit-pct": 0.25,
+        "defense.max-hit-mult": 0.5
+      },
+      "maxMechanics": {
+        "guard.potency-pct": 0.51,
+        "defense.max-hit-pct": 0.25,
+        "defense.max-hit-mult": 0.5
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "mountain-vest-t4",
+      "name": "Titan's Keep",
+      "tier": 4,
+      "slot": "armor",
+      "biome": "mountain",
+      "evolvesFrom": "mountain-vest-t3",
+      "requiredBiomeLevel": 20,
+      "baseStats": {
+        "maxHp": 187,
+        "plating": 29
+      },
+      "maxStats": {
+        "maxHp": 280,
+        "plating": 44
+      },
+      "baseMechanics": {
+        "guard.potency-pct": 0.54,
+        "defense.max-hit-pct": 0.25,
+        "defense.max-hit-mult": 0.5,
+        "defense.max-hit-refills-barrier": 1
+      },
+      "maxMechanics": {
+        "guard.potency-pct": 0.64,
+        "defense.max-hit-pct": 0.25,
+        "defense.max-hit-mult": 0.5,
+        "defense.max-hit-refills-barrier": 1
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "mountain-vest-t4-stormwall",
+      "name": "Stormwall Plate",
+      "tier": 4,
+      "slot": "armor",
+      "biome": "mountain",
+      "evolvesFrom": "mountain-vest-t3",
+      "requiredBiomeLevel": 20,
+      "baseStats": {
+        "maxHp": 187,
+        "plating": 22
+      },
+      "maxStats": {
+        "maxHp": 280,
+        "plating": 33
+      },
+      "baseMechanics": {
+        "guard.potency-pct": 0.54,
+        "defense.max-hit-pct": 0.25,
+        "defense.max-hit-mult": 0.5,
+        "defense.barrier-break-hp-recovery-pct": 0.3
+      },
+      "maxMechanics": {
+        "guard.potency-pct": 0.64,
+        "defense.max-hit-pct": 0.25,
+        "defense.max-hit-mult": 0.5,
+        "defense.barrier-break-hp-recovery-pct": 0.3
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "plains-vest-t1",
+      "name": "Survivor's Robe",
+      "tier": 1,
+      "slot": "armor",
+      "biome": "plains",
+      "requiredBiomeLevel": 2,
+      "baseStats": {
+        "maxHp": 24,
+        "plating": 7
+      },
+      "maxStats": {
+        "maxHp": 39,
+        "plating": 12
+      },
+      "baseMechanics": {},
+      "maxMechanics": {},
+      "maxPlus": 5
+    },
+    {
+      "id": "plains-vest-t2",
+      "name": "Enduring Robe",
+      "tier": 2,
+      "slot": "armor",
+      "biome": "plains",
+      "evolvesFrom": "plains-vest-t1",
+      "requiredBiomeLevel": 8,
+      "baseStats": {
+        "maxHp": 43,
+        "plating": 13
+      },
+      "maxStats": {
+        "maxHp": 65,
+        "plating": 19
+      },
+      "baseMechanics": {},
+      "maxMechanics": {},
+      "maxPlus": 5
+    },
+    {
+      "id": "swamp-vest-t1",
+      "name": "Arcane Wrappings",
+      "tier": 1,
+      "slot": "armor",
+      "biome": "swamp",
+      "requiredBiomeLevel": 2,
+      "baseStats": {
+        "maxHp": 30,
+        "plating": 4
+      },
+      "maxStats": {
+        "maxHp": 50,
+        "plating": 6
+      },
+      "baseMechanics": {
+        "defense.dot-resistance": 0.2
+      },
+      "maxMechanics": {
+        "defense.dot-resistance": 0.30000000000000004
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "swamp-vest-t2",
+      "name": "Bog Wrappings",
+      "tier": 2,
+      "slot": "armor",
+      "biome": "swamp",
+      "evolvesFrom": "swamp-vest-t1",
+      "requiredBiomeLevel": 8,
+      "baseStats": {
+        "maxHp": 54,
+        "plating": 7
+      },
+      "maxStats": {
+        "maxHp": 81,
+        "plating": 11
+      },
+      "baseMechanics": {
+        "defense.dot-resistance": 0.34,
+        "defense.hit-to-dot-pct": 0.08
+      },
+      "maxMechanics": {
+        "defense.dot-resistance": 0.42000000000000004,
+        "defense.hit-to-dot-pct": 0.08
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "swamp-vest-t3",
+      "name": "Plaguebound Shroud",
+      "tier": 3,
+      "slot": "armor",
+      "biome": "swamp",
+      "evolvesFrom": "swamp-vest-t2",
+      "requiredBiomeLevel": 14,
+      "baseStats": {
+        "maxHp": 97,
+        "plating": 13
+      },
+      "maxStats": {
+        "maxHp": 146,
+        "plating": 19
+      },
+      "baseMechanics": {
+        "defense.dot-resistance": 0.46,
+        "defense.hit-to-dot-pct": 0.1,
+        "defense.debuff-resistance": 0.2
+      },
+      "maxMechanics": {
+        "defense.dot-resistance": 0.52,
+        "defense.hit-to-dot-pct": 0.1,
+        "defense.debuff-resistance": 0.2
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "tundra-vest-t3",
+      "name": "Glacial Bulwark",
+      "tier": 3,
+      "slot": "armor",
+      "biome": "tundra",
+      "requiredBiomeLevel": 2,
+      "baseStats": {
+        "maxHp": 100,
+        "plating": 15
+      },
+      "maxStats": {
+        "maxHp": 210,
+        "plating": 35
+      },
+      "baseMechanics": {
+        "defense.stationary-dr-pct": 0.15,
+        "defense.stationary-dr-ramptime-ms": 6000,
+        "defense.max-hit-pct": 0.25,
+        "defense.max-hit-mult": 0.5
+      },
+      "maxMechanics": {
+        "defense.stationary-dr-pct": 0.15,
+        "defense.stationary-dr-ramptime-ms": 6000,
+        "defense.max-hit-pct": 0.25,
+        "defense.max-hit-mult": 0.5
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "tundra-vest-t4",
+      "name": "Permafrost Sovereign",
+      "tier": 4,
+      "slot": "armor",
+      "biome": "tundra",
+      "evolvesFrom": "tundra-vest-t3",
+      "requiredBiomeLevel": 8,
+      "baseStats": {
+        "maxHp": 180,
+        "plating": 28
+      },
+      "maxStats": {
+        "maxHp": 390,
+        "plating": 63
+      },
+      "baseMechanics": {
+        "defense.stationary-dr-pct": 0.2,
+        "defense.stationary-dr-ramptime-ms": 5000,
+        "defense.max-hit-pct": 0.25,
+        "defense.max-hit-mult": 0.5
+      },
+      "maxMechanics": {
+        "defense.stationary-dr-pct": 0.2,
+        "defense.stationary-dr-ramptime-ms": 5000,
+        "defense.max-hit-pct": 0.25,
+        "defense.max-hit-mult": 0.5
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "desert-vest-t2",
+      "name": "Duneplate of the Last Stand",
+      "tier": 2,
+      "slot": "armor",
+      "biome": "desert",
+      "requiredBiomeLevel": 2,
+      "baseStats": {
+        "maxHp": 44,
+        "plating": 10
+      },
+      "maxStats": {
+        "maxHp": 104,
+        "plating": 25
+      },
+      "baseMechanics": {
+        "defense.cheat-death": 1,
+        "defense.cleanse-stacks": 1,
+        "defense.cleanse-interval-ms": 8000
+      },
+      "maxMechanics": {
+        "defense.cheat-death": 1,
+        "defense.cleanse-stacks": 1,
+        "defense.cleanse-interval-ms": 8000
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "desert-vest-t3",
+      "name": "Eternal Duneplate",
+      "tier": 3,
+      "slot": "armor",
+      "biome": "desert",
+      "evolvesFrom": "desert-vest-t2",
+      "requiredBiomeLevel": 8,
+      "baseStats": {
+        "maxHp": 90,
+        "plating": 20
+      },
+      "maxStats": {
+        "maxHp": 190,
+        "plating": 45
+      },
+      "baseMechanics": {
+        "defense.cheat-death": 1,
+        "defense.cleanse-stacks": 1,
+        "defense.cleanse-interval-ms": 8000,
+        "defense.debuff-resistance": 0.2
+      },
+      "maxMechanics": {
+        "defense.cheat-death": 1,
+        "defense.cleanse-stacks": 1,
+        "defense.cleanse-interval-ms": 8000,
+        "defense.debuff-resistance": 0.2
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "desert-vest-t4",
+      "name": "Deathless Duneplate",
+      "tier": 4,
+      "slot": "armor",
+      "biome": "desert",
+      "evolvesFrom": "desert-vest-t3",
+      "requiredBiomeLevel": 14,
+      "baseStats": {
+        "maxHp": 165,
+        "plating": 38
+      },
+      "maxStats": {
+        "maxHp": 365,
+        "plating": 83
+      },
+      "baseMechanics": {
+        "defense.cheat-death": 1,
+        "defense.cleanse-stacks": 2,
+        "defense.cleanse-interval-ms": 8000,
+        "defense.debuff-resistance": 0.3,
+        "defense.post-cheat-death-heal-pct": 0.3,
+        "defense.post-cheat-death-heal-ms": 4000
+      },
+      "maxMechanics": {
+        "defense.cheat-death": 1,
+        "defense.cleanse-stacks": 2,
+        "defense.cleanse-interval-ms": 8000,
+        "defense.debuff-resistance": 0.3,
+        "defense.post-cheat-death-heal-pct": 0.3,
+        "defense.post-cheat-death-heal-ms": 4000
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "volcanic-vest-t3",
+      "name": "Emberforge Plate",
+      "tier": 3,
+      "slot": "armor",
+      "biome": "volcanic",
+      "evolvesFrom": "plains-vest-t2",
+      "requiredBiomeLevel": 2,
+      "baseStats": {
+        "maxHp": 90,
+        "plating": 20
+      },
+      "maxStats": {
+        "maxHp": 190,
+        "plating": 45
+      },
+      "baseMechanics": {
+        "defense.hardening-per-sec": 3,
+        "defense.hardening-max": 24,
+        "defense.hardening-reset-pct": 0.25
+      },
+      "maxMechanics": {
+        "defense.hardening-per-sec": 3,
+        "defense.hardening-max": 24,
+        "defense.hardening-reset-pct": 0.25
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "volcanic-vest-t4",
+      "name": "Pyroclasm Mantle",
+      "tier": 4,
+      "slot": "armor",
+      "biome": "volcanic",
+      "evolvesFrom": "volcanic-vest-t3",
+      "requiredBiomeLevel": 8,
+      "baseStats": {
+        "maxHp": 165,
+        "plating": 38
+      },
+      "maxStats": {
+        "maxHp": 365,
+        "plating": 88
+      },
+      "baseMechanics": {
+        "defense.hardening-per-sec": 4,
+        "defense.hardening-max": 32,
+        "defense.hardening-reset-pct": 0.25,
+        "defense.hardening-max-dr-bonus": 0.06,
+        "defense.hardening-max-dr-ms": 3000
+      },
+      "maxMechanics": {
+        "defense.hardening-per-sec": 4,
+        "defense.hardening-max": 32,
+        "defense.hardening-reset-pct": 0.25,
+        "defense.hardening-max-dr-bonus": 0.06,
+        "defense.hardening-max-dr-ms": 3000
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "volcanic-vest-t4-lavatempered",
+      "name": "Lava-Tempered Hide",
+      "tier": 4,
+      "slot": "armor",
+      "biome": "volcanic",
+      "evolvesFrom": "volcanic-vest-t3",
+      "requiredBiomeLevel": 8,
+      "baseStats": {
+        "maxHp": 150,
+        "plating": 28
+      },
+      "maxStats": {
+        "maxHp": 330,
+        "plating": 63
+      },
+      "baseMechanics": {
+        "defense.hardening-per-sec": 3,
+        "defense.hardening-max": 24,
+        "defense.hardening-reset-pct": 0.25,
+        "defense.overheal-ward-pct": 0.5
+      },
+      "maxMechanics": {
+        "defense.hardening-per-sec": 3,
+        "defense.hardening-max": 24,
+        "defense.hardening-reset-pct": 0.25,
+        "defense.overheal-ward-pct": 0.5
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "graveyard-vest-t4",
+      "name": "Plaguebound Mantle",
+      "tier": 4,
+      "slot": "armor",
+      "biome": "graveyard",
+      "evolvesFrom": "swamp-vest-t3",
+      "requiredBiomeLevel": 2,
+      "baseStats": {
+        "maxHp": 150,
+        "plating": 16
+      },
+      "maxStats": {
+        "maxHp": 330,
+        "plating": 46
+      },
+      "baseMechanics": {
+        "defense.dot-resistance": 0.35,
+        "defense.hit-to-dot-pct": 0.08,
+        "defense.debuff-resistance": 0.25,
+        "defense.hit-plating-per-stack": 1,
+        "defense.hit-plating-max-stacks": 5,
+        "defense.hit-plating-duration-ms": 4000
+      },
+      "maxMechanics": {
+        "defense.dot-resistance": 0.35,
+        "defense.hit-to-dot-pct": 0.08,
+        "defense.debuff-resistance": 0.25,
+        "defense.hit-plating-per-stack": 1,
+        "defense.hit-plating-max-stacks": 5,
+        "defense.hit-plating-duration-ms": 4000
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "graveyard-vest-t4-debtward",
+      "name": "Grave Ward",
+      "tier": 4,
+      "slot": "armor",
+      "biome": "graveyard",
+      "evolvesFrom": "swamp-vest-t3",
+      "requiredBiomeLevel": 2,
+      "baseStats": {
+        "maxHp": 150,
+        "plating": 20
+      },
+      "maxStats": {
+        "maxHp": 330,
+        "plating": 40
+      },
+      "baseMechanics": {
+        "defense.dot-resistance": 0.4,
+        "defense.hit-to-dot-pct": 0.08,
+        "defense.debt-cheat-death": 1
+      },
+      "maxMechanics": {
+        "defense.dot-resistance": 0.4,
+        "defense.hit-to-dot-pct": 0.08,
+        "defense.debt-cheat-death": 1
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "trench-vest-t4",
+      "name": "Deep Sea Carapace",
+      "tier": 4,
+      "slot": "armor",
+      "biome": "trench",
+      "evolvesFrom": "cave-vest-t3",
+      "requiredBiomeLevel": 2,
+      "baseStats": {
+        "maxHp": 90,
+        "plating": 24,
+        "damageReduction": 0.22
+      },
+      "maxStats": {
+        "maxHp": 200,
+        "plating": 54,
+        "damageReduction": 0.32
+      },
+      "baseMechanics": {
+        "defense.sustained-fight-dr-bonus": 0.01,
+        "defense.sustained-fight-dr-max": 0.05,
+        "defense.sustained-fight-ramptime-ms": 10000
+      },
+      "maxMechanics": {
+        "defense.sustained-fight-dr-bonus": 0.01,
+        "defense.sustained-fight-dr-max": 0.05,
+        "defense.sustained-fight-ramptime-ms": 10000
+      },
+      "maxPlus": 5
+    }
+  ],
+  "cores": [
+    {
+      "id": "core-tempered",
+      "name": "Tempered Core",
+      "tier": 2,
+      "slot": "core",
+      "coreEligibility": "unrestricted",
+      "biome": "cave",
+      "requiredBiomeLevel": 12,
+      "baseStats": {},
+      "maxStats": {},
+      "baseMechanics": {
+        "core.damage-dealt-pct": 0.12,
+        "core.maxhp-mult": 0.12
+      },
+      "maxMechanics": {
+        "core.damage-dealt-pct": 0.12,
+        "core.maxhp-mult": 0.12
+      },
+      "maxPlus": 0
+    },
+    {
+      "id": "core-duelist",
+      "name": "Duelist Core",
+      "tier": 3,
+      "slot": "core",
+      "coreEligibility": "melee",
+      "biome": "cave",
+      "requiredBiomeLevel": 18,
+      "baseStats": {},
+      "maxStats": {},
+      "baseMechanics": {
+        "core.damage-dealt-pct": 0.18,
+        "core.maxhp-mult": 0.1,
+        "core.focus-damage-per-hit-mult": 0.05,
+        "core.focus-max-stacks": 5
+      },
+      "maxMechanics": {
+        "core.damage-dealt-pct": 0.18,
+        "core.maxhp-mult": 0.1,
+        "core.focus-damage-per-hit-mult": 0.05,
+        "core.focus-max-stacks": 5
+      },
+      "maxPlus": 0
+    },
+    {
+      "id": "core-survivalist",
+      "name": "Survivalist Core",
+      "tier": 2,
+      "slot": "core",
+      "coreEligibility": "unrestricted",
+      "biome": "jungle",
+      "requiredBiomeLevel": 6,
+      "baseStats": {},
+      "maxStats": {},
+      "baseMechanics": {
+        "core.recovery-mult": 0.3,
+        "core.maxhp-mult": 0.15
+      },
+      "maxMechanics": {
+        "core.recovery-mult": 0.3,
+        "core.maxhp-mult": 0.15
+      },
+      "maxPlus": 0
+    },
+    {
+      "id": "core-bruiser",
+      "name": "Bruiser Core",
+      "tier": 3,
+      "slot": "core",
+      "coreEligibility": "melee",
+      "biome": "jungle",
+      "requiredBiomeLevel": 11,
+      "baseStats": {},
+      "maxStats": {},
+      "baseMechanics": {
+        "core.damage-dealt-pct": 0.28,
+        "core.maxhp-mult": 0.2,
+        "core.speed-mult": 0.18,
+        "core.mobility-refund-on-kill-pct": 0.5
+      },
+      "maxMechanics": {
+        "core.damage-dealt-pct": 0.28,
+        "core.maxhp-mult": 0.2,
+        "core.speed-mult": 0.18,
+        "core.mobility-refund-on-kill-pct": 0.5
+      },
+      "maxPlus": 0
+    },
+    {
+      "id": "core-accelerant",
+      "name": "Accelerant Core",
+      "tier": 3,
+      "slot": "core",
+      "coreEligibility": "unrestricted",
+      "biome": "jungle",
+      "requiredBiomeLevel": 12,
+      "baseStats": {},
+      "maxStats": {},
+      "baseMechanics": {
+        "core.attack-speed-mult": 0.55,
+        "core.damage-dealt-pct": -0.18
+      },
+      "maxMechanics": {
+        "core.attack-speed-mult": 0.55,
+        "core.damage-dealt-pct": -0.18
+      },
+      "maxPlus": 0
+    },
+    {
+      "id": "core-juggernaut",
+      "name": "Juggernaut Core",
+      "tier": 4,
+      "slot": "core",
+      "coreEligibility": "melee",
+      "biome": "mountain",
+      "requiredBiomeLevel": 22,
+      "baseStats": {},
+      "maxStats": {},
+      "baseMechanics": {
+        "core.maxhp-mult": 0.3,
+        "core.plating-mult": 0.4,
+        "core.damage-taken-pct": -0.14,
+        "core.attack-speed-mult": -0.25,
+        "core.speed-mult": -0.1
+      },
+      "maxMechanics": {
+        "core.maxhp-mult": 0.3,
+        "core.plating-mult": 0.4,
+        "core.damage-taken-pct": -0.14,
+        "core.attack-speed-mult": -0.25,
+        "core.speed-mult": -0.1
+      },
+      "maxPlus": 0
+    },
+    {
+      "id": "core-arcanist",
+      "name": "Arcanist Core",
+      "tier": 3,
+      "slot": "core",
+      "coreEligibility": "unrestricted",
+      "biome": "mountain",
+      "requiredBiomeLevel": 18,
+      "baseStats": {},
+      "maxStats": {},
+      "baseMechanics": {
+        "technique.cooldown-reduction-pct": 0.2,
+        "technique.power-pct": 0.2
+      },
+      "maxMechanics": {
+        "technique.cooldown-reduction-pct": 0.2,
+        "technique.power-pct": 0.2
+      },
+      "maxPlus": 0
+    },
+    {
+      "id": "core-scout",
+      "name": "Scout Core",
+      "tier": 3,
+      "slot": "core",
+      "coreEligibility": "ranged",
+      "biome": "tundra",
+      "requiredBiomeLevel": 6,
+      "baseStats": {},
+      "maxStats": {},
+      "baseMechanics": {
+        "core.damage-dealt-pct": 0.24,
+        "core.speed-mult": 0.25,
+        "core.mobility-cooldown-reduction-pct": 0.25,
+        "core.maxhp-mult": -0.2
+      },
+      "maxMechanics": {
+        "core.damage-dealt-pct": 0.24,
+        "core.speed-mult": 0.25,
+        "core.mobility-cooldown-reduction-pct": 0.25,
+        "core.maxhp-mult": -0.2
+      },
+      "maxPlus": 0
+    },
+    {
+      "id": "core-force",
+      "name": "Force Core",
+      "tier": 2,
+      "slot": "core",
+      "coreEligibility": "unrestricted",
+      "biome": "desert",
+      "requiredBiomeLevel": 6,
+      "baseStats": {},
+      "maxStats": {},
+      "baseMechanics": {
+        "core.damage-dealt-pct": 0.22,
+        "core.maxhp-mult": -0.12
+      },
+      "maxMechanics": {
+        "core.damage-dealt-pct": 0.22,
+        "core.maxhp-mult": -0.12
+      },
+      "maxPlus": 0
+    },
+    {
+      "id": "core-sniper",
+      "name": "Sniper Core",
+      "tier": 3,
+      "slot": "core",
+      "coreEligibility": "ranged",
+      "biome": "desert",
+      "requiredBiomeLevel": 12,
+      "baseStats": {},
+      "maxStats": {},
+      "baseMechanics": {
+        "core.damage-dealt-pct": 0.4,
+        "core.maxhp-mult": -0.3,
+        "core.plating-mult": -0.25
+      },
+      "maxMechanics": {
+        "core.damage-dealt-pct": 0.4,
+        "core.maxhp-mult": -0.3,
+        "core.plating-mult": -0.25
+      },
+      "maxPlus": 0
+    },
+    {
+      "id": "core-catalyst",
+      "name": "Catalyst Core",
+      "tier": 4,
+      "slot": "core",
+      "coreEligibility": "unrestricted",
+      "biome": "volcanic",
+      "requiredBiomeLevel": 10,
+      "baseStats": {},
+      "maxStats": {},
+      "baseMechanics": {
+        "core.onhit-mult": 1.15,
+        "core.damage-dealt-pct": -0.15
+      },
+      "maxMechanics": {
+        "core.onhit-mult": 1.15,
+        "core.damage-dealt-pct": -0.15
+      },
+      "maxPlus": 0
+    },
+    {
+      "id": "core-controller",
+      "name": "Controller Core",
+      "tier": 4,
+      "slot": "core",
+      "coreEligibility": "unrestricted",
+      "biome": "graveyard",
+      "requiredBiomeLevel": 4,
+      "baseStats": {},
+      "maxStats": {},
+      "baseMechanics": {
+        "core.debuff-duration-mult": 0.35,
+        "core.debuff-potency-mult": 0.25
+      },
+      "maxMechanics": {
+        "core.debuff-duration-mult": 0.35,
+        "core.debuff-potency-mult": 0.25
+      },
+      "maxPlus": 0
+    }
+  ],
+  "rangedExamples": [
+    {
+      "plus": 0,
+      "core": null,
+      "maxHp": 205,
+      "plating": 15,
+      "damageReduction": 0,
+      "dodgeRate": 0.6227272727272727,
+      "evadeMitigation": 0.7,
+      "ordinary179UnEvaded": 164,
+      "eruption650UnEvaded": 635
+    },
+    {
+      "plus": 0,
+      "core": "core-force",
+      "maxHp": 180,
+      "plating": 15,
+      "damageReduction": 0,
+      "dodgeRate": 0.6227272727272727,
+      "evadeMitigation": 0.7,
+      "ordinary179UnEvaded": 164,
+      "eruption650UnEvaded": 635
+    },
+    {
+      "plus": 0,
+      "core": "core-scout",
+      "maxHp": 164,
+      "plating": 15,
+      "damageReduction": 0,
+      "dodgeRate": 0.6227272727272727,
+      "evadeMitigation": 0.7,
+      "ordinary179UnEvaded": 164,
+      "eruption650UnEvaded": 635
+    },
+    {
+      "plus": 0,
+      "core": "core-sniper",
+      "maxHp": 144,
+      "plating": 11,
+      "damageReduction": 0,
+      "dodgeRate": 0.6227272727272727,
+      "evadeMitigation": 0.7,
+      "ordinary179UnEvaded": 168,
+      "eruption650UnEvaded": 639
+    },
+    {
+      "plus": 0,
+      "core": "core-tempered",
+      "maxHp": 230,
+      "plating": 15,
+      "damageReduction": 0,
+      "dodgeRate": 0.6227272727272727,
+      "evadeMitigation": 0.7,
+      "ordinary179UnEvaded": 164,
+      "eruption650UnEvaded": 635
+    },
+    {
+      "plus": 3,
+      "core": null,
+      "maxHp": 267,
+      "plating": 24,
+      "damageReduction": 0,
+      "dodgeRate": 0.6597826086956522,
+      "evadeMitigation": 0.7,
+      "ordinary179UnEvaded": 155,
+      "eruption650UnEvaded": 626
+    },
+    {
+      "plus": 3,
+      "core": "core-force",
+      "maxHp": 235,
+      "plating": 24,
+      "damageReduction": 0,
+      "dodgeRate": 0.6597826086956522,
+      "evadeMitigation": 0.7,
+      "ordinary179UnEvaded": 155,
+      "eruption650UnEvaded": 626
+    },
+    {
+      "plus": 3,
+      "core": "core-scout",
+      "maxHp": 214,
+      "plating": 24,
+      "damageReduction": 0,
+      "dodgeRate": 0.6597826086956522,
+      "evadeMitigation": 0.7,
+      "ordinary179UnEvaded": 155,
+      "eruption650UnEvaded": 626
+    },
+    {
+      "plus": 3,
+      "core": "core-sniper",
+      "maxHp": 187,
+      "plating": 18,
+      "damageReduction": 0,
+      "dodgeRate": 0.6597826086956522,
+      "evadeMitigation": 0.7,
+      "ordinary179UnEvaded": 161,
+      "eruption650UnEvaded": 632
+    },
+    {
+      "plus": 3,
+      "core": "core-tempered",
+      "maxHp": 299,
+      "plating": 24,
+      "damageReduction": 0,
+      "dodgeRate": 0.6597826086956522,
+      "evadeMitigation": 0.7,
+      "ordinary179UnEvaded": 155,
+      "eruption650UnEvaded": 626
+    },
+    {
+      "plus": 5,
+      "core": null,
+      "maxHp": 308,
+      "plating": 30,
+      "damageReduction": 0,
+      "dodgeRate": 0.6784313725490196,
+      "evadeMitigation": 0.7,
+      "ordinary179UnEvaded": 149,
+      "eruption650UnEvaded": 620
+    },
+    {
+      "plus": 5,
+      "core": "core-force",
+      "maxHp": 271,
+      "plating": 30,
+      "damageReduction": 0,
+      "dodgeRate": 0.6784313725490196,
+      "evadeMitigation": 0.7,
+      "ordinary179UnEvaded": 149,
+      "eruption650UnEvaded": 620
+    },
+    {
+      "plus": 5,
+      "core": "core-scout",
+      "maxHp": 246,
+      "plating": 30,
+      "damageReduction": 0,
+      "dodgeRate": 0.6784313725490196,
+      "evadeMitigation": 0.7,
+      "ordinary179UnEvaded": 149,
+      "eruption650UnEvaded": 620
+    },
+    {
+      "plus": 5,
+      "core": "core-sniper",
+      "maxHp": 216,
+      "plating": 23,
+      "damageReduction": 0,
+      "dodgeRate": 0.6784313725490196,
+      "evadeMitigation": 0.7,
+      "ordinary179UnEvaded": 156,
+      "eruption650UnEvaded": 627
+    },
+    {
+      "plus": 5,
+      "core": "core-tempered",
+      "maxHp": 345,
+      "plating": 30,
+      "damageReduction": 0,
+      "dodgeRate": 0.6784313725490196,
+      "evadeMitigation": 0.7,
+      "ordinary179UnEvaded": 149,
+      "eruption650UnEvaded": 620
+    }
+  ],
+  "supportingItems": [
+    {
+      "id": "cave-charm-t1",
+      "name": "Pulse Stone",
+      "tier": 1,
+      "slot": "recovery",
+      "biome": "cave",
+      "requiredBiomeLevel": 3,
+      "baseStats": {
+        "recovery": 2
+      },
+      "maxStats": {
+        "recovery": 3
+      },
+      "baseMechanics": {
+        "defense.absorb-pct": 0.08
+      },
+      "maxMechanics": {
+        "defense.absorb-pct": 0.12
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "cave-charm-t2",
+      "name": "Resonant Gem",
+      "tier": 2,
+      "slot": "recovery",
+      "biome": "cave",
+      "evolvesFrom": "cave-charm-t1",
+      "requiredBiomeLevel": 9,
+      "baseStats": {
+        "recovery": 4
+      },
+      "maxStats": {
+        "recovery": 6
+      },
+      "baseMechanics": {
+        "defense.absorb-pct": 0.14
+      },
+      "maxMechanics": {
+        "defense.absorb-pct": 0.19
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "cave-charm-t3",
+      "name": "Echo Geode",
+      "tier": 3,
+      "slot": "recovery",
+      "biome": "cave",
+      "evolvesFrom": "cave-charm-t2",
+      "requiredBiomeLevel": 15,
+      "baseStats": {
+        "recovery": 7
+      },
+      "maxStats": {
+        "recovery": 10
+      },
+      "baseMechanics": {
+        "defense.absorb-pct": 0.2
+      },
+      "maxMechanics": {
+        "defense.absorb-pct": 0.24000000000000002
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "forest-charm-t1",
+      "name": "Heartroot Amulet",
+      "tier": 1,
+      "slot": "recovery",
+      "biome": "forest",
+      "requiredBiomeLevel": 3,
+      "baseStats": {
+        "recovery": 3
+      },
+      "maxStats": {
+        "recovery": 5
+      },
+      "baseMechanics": {
+        "defense.recovery-skill-potency": 0.1
+      },
+      "maxMechanics": {
+        "defense.recovery-skill-potency": 0.15000000000000002
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "forest-charm-t2",
+      "name": "Ancient Heartroot Amulet",
+      "tier": 2,
+      "slot": "recovery",
+      "biome": "forest",
+      "evolvesFrom": "forest-charm-t1",
+      "requiredBiomeLevel": 9,
+      "baseStats": {
+        "recovery": 5
+      },
+      "maxStats": {
+        "recovery": 8
+      },
+      "baseMechanics": {
+        "defense.recovery-skill-potency": 0.18
+      },
+      "maxMechanics": {
+        "defense.recovery-skill-potency": 0.22999999999999998
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "jungle-charm-t2",
+      "name": "Canopy Heart",
+      "tier": 2,
+      "slot": "recovery",
+      "biome": "jungle",
+      "requiredBiomeLevel": 3,
+      "baseStats": {
+        "recovery": 6
+      },
+      "maxStats": {
+        "recovery": 6
+      },
+      "baseMechanics": {
+        "defense.recovery-ramp-start-pct": 0.04,
+        "defense.recovery-ramp-max-pct": 0.1,
+        "defense.recovery-ramp-ramptime-ms": 10000
+      },
+      "maxMechanics": {
+        "defense.recovery-ramp-start-pct": 0.04,
+        "defense.recovery-ramp-max-pct": 0.2,
+        "defense.recovery-ramp-ramptime-ms": 10000
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "jungle-charm-t3",
+      "name": "Worldvine Heart",
+      "tier": 3,
+      "slot": "recovery",
+      "biome": "jungle",
+      "evolvesFrom": "jungle-charm-t2",
+      "requiredBiomeLevel": 9,
+      "baseStats": {
+        "recovery": 11
+      },
+      "maxStats": {
+        "recovery": 11
+      },
+      "baseMechanics": {
+        "defense.recovery-ramp-start-pct": 0.05,
+        "defense.recovery-ramp-max-pct": 0.14,
+        "defense.recovery-ramp-ramptime-ms": 10000
+      },
+      "maxMechanics": {
+        "defense.recovery-ramp-start-pct": 0.05,
+        "defense.recovery-ramp-max-pct": 0.24000000000000002,
+        "defense.recovery-ramp-ramptime-ms": 10000
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "jungle-charm-t4",
+      "name": "Ancient Canopy",
+      "tier": 4,
+      "slot": "recovery",
+      "biome": "jungle",
+      "evolvesFrom": "jungle-charm-t3",
+      "requiredBiomeLevel": 15,
+      "baseStats": {
+        "recovery": 16
+      },
+      "maxStats": {
+        "recovery": 16
+      },
+      "baseMechanics": {
+        "defense.recovery-ramp-start-pct": 0.04,
+        "defense.recovery-ramp-max-pct": 0.14,
+        "defense.recovery-ramp-ramptime-ms": 9000
+      },
+      "maxMechanics": {
+        "defense.recovery-ramp-start-pct": 0.04,
+        "defense.recovery-ramp-max-pct": 0.24000000000000002,
+        "defense.recovery-ramp-ramptime-ms": 9000
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "jungle-charm-t4-overgrowth",
+      "name": "Overgrowth Pulse",
+      "tier": 4,
+      "slot": "recovery",
+      "biome": "jungle",
+      "evolvesFrom": "jungle-charm-t3",
+      "requiredBiomeLevel": 15,
+      "baseStats": {
+        "recovery": 16
+      },
+      "maxStats": {
+        "recovery": 16
+      },
+      "baseMechanics": {
+        "defense.recovery-ramp-start-pct": 0.04,
+        "defense.recovery-ramp-max-pct": 0.12,
+        "defense.recovery-ramp-ramptime-ms": 9000,
+        "defense.overheal-ward-pct": 0.25
+      },
+      "maxMechanics": {
+        "defense.recovery-ramp-start-pct": 0.04,
+        "defense.recovery-ramp-max-pct": 0.22,
+        "defense.recovery-ramp-ramptime-ms": 9000,
+        "defense.overheal-ward-pct": 0.25
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "core-survivalist",
+      "name": "Survivalist Core",
+      "tier": 2,
+      "slot": "core",
+      "coreEligibility": "unrestricted",
+      "biome": "jungle",
+      "requiredBiomeLevel": 6,
+      "baseStats": {},
+      "maxStats": {},
+      "baseMechanics": {
+        "core.recovery-mult": 0.3,
+        "core.maxhp-mult": 0.15
+      },
+      "maxMechanics": {
+        "core.recovery-mult": 0.3,
+        "core.maxhp-mult": 0.15
+      },
+      "maxPlus": 0
+    },
+    {
+      "id": "mountain-charm-t1",
+      "name": "Granite Barrier",
+      "tier": 1,
+      "slot": "recovery",
+      "biome": "mountain",
+      "requiredBiomeLevel": 3,
+      "baseStats": {
+        "recovery": 1
+      },
+      "maxStats": {
+        "recovery": 2
+      },
+      "baseMechanics": {
+        "defense.barrier-pct": 0.12
+      },
+      "maxMechanics": {
+        "defense.barrier-pct": 0.18
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "mountain-charm-t2",
+      "name": "Iron Bulwark",
+      "tier": 2,
+      "slot": "recovery",
+      "biome": "mountain",
+      "evolvesFrom": "mountain-charm-t1",
+      "requiredBiomeLevel": 9,
+      "baseStats": {
+        "recovery": 2
+      },
+      "maxStats": {
+        "recovery": 3
+      },
+      "baseMechanics": {
+        "defense.barrier-pct": 0.2
+      },
+      "maxMechanics": {
+        "defense.barrier-pct": 0.26
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "mountain-charm-t3",
+      "name": "Bastion Heart",
+      "tier": 3,
+      "slot": "recovery",
+      "biome": "mountain",
+      "evolvesFrom": "mountain-charm-t2",
+      "requiredBiomeLevel": 15,
+      "baseStats": {
+        "recovery": 3
+      },
+      "maxStats": {
+        "recovery": 5
+      },
+      "baseMechanics": {
+        "defense.barrier-pct": 0.28
+      },
+      "maxMechanics": {
+        "defense.barrier-pct": 0.34
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "mountain-charm-t4",
+      "name": "Fortress Heart",
+      "tier": 4,
+      "slot": "recovery",
+      "biome": "mountain",
+      "evolvesFrom": "mountain-charm-t3",
+      "requiredBiomeLevel": 21,
+      "baseStats": {
+        "recovery": 6
+      },
+      "maxStats": {
+        "recovery": 9
+      },
+      "baseMechanics": {
+        "defense.barrier-pct": 0.36
+      },
+      "maxMechanics": {
+        "defense.barrier-pct": 0.42
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "mountain-charm-t4-shieldmend",
+      "name": "Shieldmend Ward",
+      "tier": 4,
+      "slot": "recovery",
+      "biome": "mountain",
+      "evolvesFrom": "mountain-charm-t3",
+      "requiredBiomeLevel": 21,
+      "baseStats": {
+        "recovery": 6
+      },
+      "maxStats": {
+        "recovery": 9
+      },
+      "baseMechanics": {
+        "defense.barrier-pct": 0.32,
+        "defense.barrier-break-heal-pct": 0.25
+      },
+      "maxMechanics": {
+        "defense.barrier-pct": 0.37,
+        "defense.barrier-break-heal-pct": 0.25
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "core-juggernaut",
+      "name": "Juggernaut Core",
+      "tier": 4,
+      "slot": "core",
+      "coreEligibility": "melee",
+      "biome": "mountain",
+      "requiredBiomeLevel": 22,
+      "baseStats": {},
+      "maxStats": {},
+      "baseMechanics": {
+        "core.maxhp-mult": 0.3,
+        "core.plating-mult": 0.4,
+        "core.damage-taken-pct": -0.14,
+        "core.attack-speed-mult": -0.25,
+        "core.speed-mult": -0.1
+      },
+      "maxMechanics": {
+        "core.maxhp-mult": 0.3,
+        "core.plating-mult": 0.4,
+        "core.damage-taken-pct": -0.14,
+        "core.attack-speed-mult": -0.25,
+        "core.speed-mult": -0.1
+      },
+      "maxPlus": 0
+    },
+    {
+      "id": "plains-charm-t1",
+      "name": "Plains Stone",
+      "tier": 1,
+      "slot": "recovery",
+      "biome": "plains",
+      "requiredBiomeLevel": 3,
+      "baseStats": {
+        "recovery": 1
+      },
+      "maxStats": {
+        "recovery": 2
+      },
+      "baseMechanics": {
+        "defense.recovery-on-kill-pct": 0.2,
+        "defense.recovery-on-kill-ms": 4000
+      },
+      "maxMechanics": {
+        "defense.recovery-on-kill-pct": 0.30000000000000004,
+        "defense.recovery-on-kill-ms": 4000
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "plains-charm-t2",
+      "name": "Stalwart Heart",
+      "tier": 2,
+      "slot": "recovery",
+      "biome": "plains",
+      "evolvesFrom": "plains-charm-t1",
+      "requiredBiomeLevel": 9,
+      "baseStats": {
+        "recovery": 2
+      },
+      "maxStats": {
+        "recovery": 3
+      },
+      "baseMechanics": {
+        "defense.recovery-on-kill-pct": 0.32,
+        "defense.recovery-on-kill-ms": 4000
+      },
+      "maxMechanics": {
+        "defense.recovery-on-kill-pct": 0.42000000000000004,
+        "defense.recovery-on-kill-ms": 4000
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "swamp-charm-t1",
+      "name": "Murk Eye",
+      "tier": 1,
+      "slot": "recovery",
+      "biome": "swamp",
+      "requiredBiomeLevel": 3,
+      "baseStats": {
+        "recovery": 2
+      },
+      "maxStats": {
+        "recovery": 3
+      },
+      "baseMechanics": {
+        "defense.recovery-pulse-pct": 0.2,
+        "defense.recovery-pulse-interval-ms": 8000,
+        "defense.recovery-pulse-duration-ms": 4000
+      },
+      "maxMechanics": {
+        "defense.recovery-pulse-pct": 0.30000000000000004,
+        "defense.recovery-pulse-interval-ms": 8000,
+        "defense.recovery-pulse-duration-ms": 4000
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "swamp-boots-t1",
+      "name": "Marsh Treads",
+      "tier": 1,
+      "slot": "mobility",
+      "biome": "swamp",
+      "requiredBiomeLevel": 4,
+      "baseStats": {
+        "speed": 18
+      },
+      "maxStats": {
+        "speed": 23
+      },
+      "baseMechanics": {
+        "mobility.slow-resistance": 0.25
+      },
+      "maxMechanics": {
+        "mobility.slow-resistance": 0.4
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "swamp-charm-t2",
+      "name": "Bog Eye",
+      "tier": 2,
+      "slot": "recovery",
+      "biome": "swamp",
+      "evolvesFrom": "swamp-charm-t1",
+      "requiredBiomeLevel": 9,
+      "baseStats": {
+        "recovery": 4
+      },
+      "maxStats": {
+        "recovery": 6
+      },
+      "baseMechanics": {
+        "defense.recovery-pulse-pct": 0.32,
+        "defense.recovery-pulse-interval-ms": 8000,
+        "defense.recovery-pulse-duration-ms": 4000
+      },
+      "maxMechanics": {
+        "defense.recovery-pulse-pct": 0.42000000000000004,
+        "defense.recovery-pulse-interval-ms": 8000,
+        "defense.recovery-pulse-duration-ms": 4000
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "swamp-boots-t2",
+      "name": "Wetland Wraps",
+      "tier": 2,
+      "slot": "mobility",
+      "biome": "swamp",
+      "evolvesFrom": "swamp-boots-t1",
+      "requiredBiomeLevel": 10,
+      "baseStats": {
+        "speed": 32
+      },
+      "maxStats": {
+        "speed": 41
+      },
+      "baseMechanics": {
+        "mobility.slow-resistance": 0.45
+      },
+      "maxMechanics": {
+        "mobility.slow-resistance": 0.5800000000000001
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "swamp-charm-t3",
+      "name": "Sorrow Eye",
+      "tier": 3,
+      "slot": "recovery",
+      "biome": "swamp",
+      "evolvesFrom": "swamp-charm-t2",
+      "requiredBiomeLevel": 15,
+      "baseStats": {
+        "recovery": 7
+      },
+      "maxStats": {
+        "recovery": 10
+      },
+      "baseMechanics": {
+        "defense.recovery-pulse-pct": 0.44,
+        "defense.recovery-pulse-interval-ms": 8000,
+        "defense.recovery-pulse-duration-ms": 4000
+      },
+      "maxMechanics": {
+        "defense.recovery-pulse-pct": 0.54,
+        "defense.recovery-pulse-interval-ms": 8000,
+        "defense.recovery-pulse-duration-ms": 4000
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "swamp-boots-t3",
+      "name": "Mire Striders",
+      "tier": 3,
+      "slot": "mobility",
+      "biome": "swamp",
+      "evolvesFrom": "swamp-boots-t2",
+      "requiredBiomeLevel": 16,
+      "baseStats": {
+        "speed": 58
+      },
+      "maxStats": {
+        "speed": 74
+      },
+      "baseMechanics": {
+        "mobility.slow-resistance": 0.62
+      },
+      "maxMechanics": {
+        "mobility.slow-resistance": 0.72
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "tundra-permafrost-maul",
+      "name": "Permafrost Maul",
+      "tier": 3,
+      "slot": "weapon",
+      "biome": "tundra",
+      "requiredBiomeLevel": 1,
+      "baseStats": {
+        "attack": 120
+      },
+      "maxStats": {
+        "attack": 270
+      },
+      "baseMechanics": {
+        "weapon.brittle-plating": 2,
+        "weapon.brittle-dr": 0.01,
+        "weapon.brittle-stacks": 8
+      },
+      "maxMechanics": {
+        "weapon.brittle-plating": 2,
+        "weapon.brittle-dr": 0.01,
+        "weapon.brittle-stacks": 8
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "tundra-charm-t3",
+      "name": "Frostward Charm",
+      "tier": 3,
+      "slot": "recovery",
+      "biome": "tundra",
+      "requiredBiomeLevel": 3,
+      "baseStats": {
+        "recovery": 11
+      },
+      "maxStats": {
+        "recovery": 11
+      },
+      "baseMechanics": {
+        "defense.barrier-pct": 0.12,
+        "defense.absorb-pct": 0.08
+      },
+      "maxMechanics": {
+        "defense.barrier-pct": 0.22,
+        "defense.absorb-pct": 0.18
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "tundra-glacial-tyrant-maul",
+      "name": "Glacial Tyrant Maul",
+      "tier": 4,
+      "slot": "weapon",
+      "biome": "tundra",
+      "evolvesFrom": "tundra-permafrost-maul",
+      "requiredBiomeLevel": 7,
+      "baseStats": {
+        "attack": 200
+      },
+      "maxStats": {
+        "attack": 450
+      },
+      "baseMechanics": {
+        "weapon.brittle-plating": 3,
+        "weapon.brittle-dr": 0.015,
+        "weapon.brittle-stacks": 8,
+        "weapon.brittle-shatter-threshold": 8,
+        "weapon.brittle-shatter-dr-strip-ms": 2000
+      },
+      "maxMechanics": {
+        "weapon.brittle-plating": 3,
+        "weapon.brittle-dr": 0.015,
+        "weapon.brittle-stacks": 8,
+        "weapon.brittle-shatter-threshold": 8,
+        "weapon.brittle-shatter-dr-strip-ms": 2000
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "tundra-charm-t4",
+      "name": "Glacial Ward",
+      "tier": 4,
+      "slot": "recovery",
+      "biome": "tundra",
+      "evolvesFrom": "tundra-charm-t3",
+      "requiredBiomeLevel": 9,
+      "baseStats": {
+        "recovery": 16
+      },
+      "maxStats": {
+        "recovery": 16
+      },
+      "baseMechanics": {
+        "defense.barrier-pct": 0.17,
+        "defense.absorb-pct": 0.12
+      },
+      "maxMechanics": {
+        "defense.barrier-pct": 0.32,
+        "defense.absorb-pct": 0.27
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "tundra-charm-t4-deepfreeze",
+      "name": "Deepfreeze Ward",
+      "tier": 4,
+      "slot": "recovery",
+      "biome": "tundra",
+      "evolvesFrom": "tundra-charm-t3",
+      "requiredBiomeLevel": 9,
+      "baseStats": {
+        "recovery": 16
+      },
+      "maxStats": {
+        "recovery": 16
+      },
+      "baseMechanics": {
+        "defense.barrier-pct": 0.14,
+        "defense.absorb-ramp-start-pct": 0.04,
+        "defense.absorb-ramp-max-pct": 0.18,
+        "defense.absorb-ramptime-ms": 12000
+      },
+      "maxMechanics": {
+        "defense.barrier-pct": 0.29000000000000004,
+        "defense.absorb-ramp-start-pct": 0.04,
+        "defense.absorb-ramp-max-pct": 0.32999999999999996,
+        "defense.absorb-ramptime-ms": 12000
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "core-sniper",
+      "name": "Sniper Core",
+      "tier": 3,
+      "slot": "core",
+      "coreEligibility": "ranged",
+      "biome": "desert",
+      "requiredBiomeLevel": 12,
+      "baseStats": {},
+      "maxStats": {},
+      "baseMechanics": {
+        "core.damage-dealt-pct": 0.4,
+        "core.maxhp-mult": -0.3,
+        "core.plating-mult": -0.25
+      },
+      "maxMechanics": {
+        "core.damage-dealt-pct": 0.4,
+        "core.maxhp-mult": -0.3,
+        "core.plating-mult": -0.25
+      },
+      "maxPlus": 0
+    },
+    {
+      "id": "volcanic-charm-t3",
+      "name": "Magmaheart Stone",
+      "tier": 3,
+      "slot": "recovery",
+      "biome": "volcanic",
+      "evolvesFrom": "plains-charm-t2",
+      "requiredBiomeLevel": 3,
+      "baseStats": {
+        "recovery": 11
+      },
+      "maxStats": {
+        "recovery": 11
+      },
+      "baseMechanics": {
+        "defense.recovery-active-pct": 0.06,
+        "defense.recovery-on-kill-pct": 0.04
+      },
+      "maxMechanics": {
+        "defense.recovery-active-pct": 0.16,
+        "defense.recovery-on-kill-pct": 0.14
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "volcanic-charm-t4",
+      "name": "Inferno Heart",
+      "tier": 4,
+      "slot": "recovery",
+      "biome": "volcanic",
+      "evolvesFrom": "volcanic-charm-t3",
+      "requiredBiomeLevel": 9,
+      "baseStats": {
+        "recovery": 16
+      },
+      "maxStats": {
+        "recovery": 16
+      },
+      "baseMechanics": {
+        "defense.recovery-active-pct": 0.06,
+        "defense.recovery-on-kill-pct": 0.04
+      },
+      "maxMechanics": {
+        "defense.recovery-active-pct": 0.16,
+        "defense.recovery-on-kill-pct": 0.14
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "graveyard-charm-t4",
+      "name": "Necrotic Pulse",
+      "tier": 4,
+      "slot": "recovery",
+      "biome": "graveyard",
+      "evolvesFrom": "swamp-charm-t3",
+      "requiredBiomeLevel": 3,
+      "baseStats": {
+        "recovery": 16
+      },
+      "maxStats": {
+        "recovery": 16
+      },
+      "baseMechanics": {
+        "defense.recovery-pulse-pct": 0.11,
+        "defense.recovery-pulse-interval-ms": 6000
+      },
+      "maxMechanics": {
+        "defense.recovery-pulse-pct": 0.26,
+        "defense.recovery-pulse-interval-ms": 6000
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "graveyard-charm-t4-gravetide",
+      "name": "Grave-Tide Pulse",
+      "tier": 4,
+      "slot": "recovery",
+      "biome": "graveyard",
+      "evolvesFrom": "swamp-charm-t3",
+      "requiredBiomeLevel": 3,
+      "baseStats": {
+        "recovery": 16
+      },
+      "maxStats": {
+        "recovery": 16
+      },
+      "baseMechanics": {
+        "defense.recovery-pulse-pct": 0.04,
+        "defense.recovery-pulse-interval-ms": 8000,
+        "defense.recovery-active-pct": 0.04
+      },
+      "maxMechanics": {
+        "defense.recovery-pulse-pct": 0.12,
+        "defense.recovery-pulse-interval-ms": 8000,
+        "defense.recovery-active-pct": 0.12
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "graveyard-boots-t4",
+      "name": "Gravewalker Boots",
+      "tier": 4,
+      "slot": "mobility",
+      "biome": "graveyard",
+      "requiredBiomeLevel": 4,
+      "baseStats": {
+        "speed": 30
+      },
+      "maxStats": {
+        "speed": 98
+      },
+      "baseMechanics": {
+        "mobility.kill-stack-speed-pct": 0.12,
+        "mobility.kill-stack-tenacity-pct": 0.12,
+        "mobility.kill-stack-ms": 4000
+      },
+      "maxMechanics": {
+        "mobility.kill-stack-speed-pct": 0.12,
+        "mobility.kill-stack-tenacity-pct": 0.12,
+        "mobility.kill-stack-ms": 4000
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "trench-charm-t4",
+      "name": "Pressure Vessel",
+      "tier": 4,
+      "slot": "recovery",
+      "biome": "trench",
+      "requiredBiomeLevel": 3,
+      "baseStats": {
+        "recovery": 16
+      },
+      "maxStats": {
+        "recovery": 16
+      },
+      "baseMechanics": {
+        "defense.absorb-pct": 0.16,
+        "defense.recovery-pulse-pct": 0.1,
+        "defense.recovery-pulse-interval-ms": 8000
+      },
+      "maxMechanics": {
+        "defense.absorb-pct": 0.31,
+        "defense.recovery-pulse-pct": 0.2,
+        "defense.recovery-pulse-interval-ms": 8000
+      },
+      "maxPlus": 5
+    },
+    {
+      "id": "trench-boots-t4-treaders",
+      "name": "Abyssal Treaders",
+      "tier": 4,
+      "slot": "mobility",
+      "biome": "trench",
+      "requiredBiomeLevel": 4,
+      "baseStats": {
+        "speed": 48
+      },
+      "maxStats": {
+        "speed": 73
+      },
+      "baseMechanics": {
+        "mobility.tenacity-pct": 0.55
+      },
+      "maxMechanics": {
+        "mobility.tenacity-pct": 0.55
+      },
+      "maxPlus": 5
+    }
+  ],
+  "nodes": [
+    {
+      "id": "cadence-root",
+      "name": "Striker",
+      "tier": 0,
+      "classId": "cadence-root",
+      "frame": null,
+      "defensiveStats": {
+        "maxHpPct": 0.18,
+        "platingPct": 0.15,
+        "damageReduction": 0.02
+      },
+      "mechanics": {
+        "defense.recovery-pulse-pct": 0.2,
+        "defense.recovery-pulse-interval-ms": 6000,
+        "defense.recovery-pulse-duration-ms": 4000,
+        "defense.max-hit-pct": 0.25,
+        "defense.max-hit-mult": 0.5
+      },
+      "description": "Class mechanic — a five-hit finisher cycle, plus a Recovery pulse that activates 20% of your Recovery every 6s for 4s. Hits above 25% of max HP apply only half of their excess damage. A balanced bruiser — your recovery rate surges on a fixed cycle, sustaining you through prolonged engagements."
+    },
+    {
+      "id": "cooldown-root",
+      "name": "Squire",
+      "tier": 0,
+      "classId": "cooldown-root",
+      "frame": null,
+      "defensiveStats": {
+        "maxHpPct": 0.3,
+        "platingPct": 0.3,
+        "damageReduction": 0.04
+      },
+      "mechanics": {
+        "defense.recovery-active-pct": 0.1
+      },
+      "description": "Class mechanic — prepare a timed execution on the 7s reference cycle at ×2; 10% of your Recovery stays active while you fight. The heaviest chassis in the game — enormous bulk and armor, bought with the slowest hands and feet."
+    },
+    {
+      "id": "reload-root",
+      "name": "Slinger",
+      "tier": 0,
+      "classId": "reload-root",
+      "frame": null,
+      "defensiveStats": {
+        "maxHpPct": 0.07,
+        "evasion": 0.3
+      },
+      "mechanics": {
+        "defense.recovery-on-kill-pct": 0.2,
+        "defense.recovery-on-kill-ms": 4000,
+        "defense.evade-mitigation": 0.2,
+        "reload.acquire-radius-mult": 2.5
+      },
+      "description": "Class mechanics — unleash a rapid clip, then reload. Weapon Attack damage retains 65% effectiveness at this extreme cadence. Flat on-hit damage stays at full strength, while weapon damage converted into damage over time retains 85% effectiveness. Kills activate 20% of your Recovery for 4s, evades gain 20% extra damage mitigation, and target acquisition radius is ×2.5."
+    },
+    {
+      "id": "energy-root",
+      "name": "Spirit",
+      "tier": 0,
+      "classId": "energy-root",
+      "frame": null,
+      "defensiveStats": {
+        "maxHpPct": 0.03
+      },
+      "mechanics": {
+        "defense.barrier-pct": 0.3
+      },
+      "description": "Class mechanic — channel each blow into a building surge of power. The lightest, fastest, highest-output chassis — almost no natural bulk, so a barrier worth 30% of your max HP takes the hits that do reach you. It recharges between fights, not during them."
+    },
+    {
+      "id": "dot-root",
+      "name": "Apprentice",
+      "tier": 0,
+      "classId": "dot-root",
+      "frame": null,
+      "defensiveStats": {
+        "maxHpPct": 0.12,
+        "platingPct": 0.08
+      },
+      "mechanics": {
+        "defense.dot-resistance": 0.18,
+        "defense.hit-to-dot-pct": 0.1
+      },
+      "description": "Class mechanics — your strikes leave lingering wounds; stack the pain until nothing survives. The middle chassis — no extreme in any direction — and a toxin-hardened body with 18% DoT resistance that converts 10% of incoming direct hits into delayed damage you can outlast."
+    },
+    {
+      "id": "summoner-root",
+      "name": "Conduit",
+      "tier": 0,
+      "classId": "summoner-root",
+      "frame": null,
+      "defensiveStats": {
+        "maxHpPct": 0.08
+      },
+      "mechanics": {},
+      "description": "Class mechanic — maximum formation: 4 persistent summons before relic expansion. They fight in your place: your weapon sets their damage and cadence, while every body divides one shared formation offense and secondary-effect budget. Fallen slots rebuild one at a time from a 3.5s base (2.5s floor), costing 30% of the summon's max HP without taking you below 20% of your max HP."
+    },
+    {
+      "id": "summoner-light",
+      "name": "Splinter",
+      "tier": 1,
+      "classId": "summoner-root",
+      "frame": "light",
+      "defensiveStats": {
+        "maxHpPct": 0.04
+      },
+      "mechanics": {},
+      "description": "Formation mechanic — maximum summons before relic expansion: 6 (+2 from Conduit's 4). Six small, fast bodies share one formation budget: ×1.05 formation offense, 66% total summon-HP budget, ×1.18 movement, ×0.72 body size, and ×1.20 on-hit/secondary weapon effects. Reconstruction starts at 2.0s with a 1.5s floor; each loss costs little offense and reconstruction HP, while plating and area damage punish the swarm."
+    },
+    {
+      "id": "summoner-balanced",
+      "name": "Consort",
+      "tier": 1,
+      "classId": "summoner-root",
+      "frame": "balanced",
+      "defensiveStats": {
+        "maxHpPct": 0.08,
+        "platingPct": 0.06
+      },
+      "mechanics": {},
+      "description": "Formation mechanic — maximum summons before relic expansion: 5 (+1 from Conduit's 4). Five medium bodies form the reference ensemble: ×1.00 formation offense, 100% total summon-HP budget, baseline movement and size, and 2.5s reconstruction with a 1.5s floor. Damage, durability, and reconstruction pressure stay moderate."
+    },
+    {
+      "id": "summoner-heavy",
+      "name": "Effigy",
+      "tier": 1,
+      "classId": "summoner-root",
+      "frame": "heavy",
+      "defensiveStats": {
+        "maxHpPct": 0.16,
+        "platingPct": 0.12,
+        "damageReduction": 0.01
+      },
+      "mechanics": {},
+      "description": "Formation mechanic — maximum summons before relic expansion: 2 (−2 from Conduit's 4). Two large bodies concentrate the budget: ×0.98 formation offense, 140% total summon-HP budget, ×0.78 movement, ×1.75 body size, and 3.92s reconstruction with a 2.5s floor. Each loss removes major offense and is expensive to reconstruct."
+    },
+    {
+      "id": "cadence-light",
+      "name": "Flurry",
+      "tier": 1,
+      "classId": "cadence-root",
+      "frame": "light",
+      "defensiveStats": {
+        "maxHpPct": 0.04
+      },
+      "mechanics": {
+        "cadence.empowered-threshold": 4,
+        "cadence.empowered-mult": 1.5
+      },
+      "description": "Cadence change — a 4-hit finisher cycle at ×1.5 empowered damage. Swift and agile, this frame trades bulk for a blistering attack pace: frequency over raw power."
+    },
+    {
+      "id": "cadence-balanced",
+      "name": "Skirmisher",
+      "tier": 1,
+      "classId": "cadence-root",
+      "frame": "balanced",
+      "defensiveStats": {
+        "maxHpPct": 0.1,
+        "platingPct": 0.1
+      },
+      "mechanics": {
+        "cadence.empowered-threshold": 5,
+        "cadence.empowered-mult": 2
+      },
+      "description": "Cadence change — a 5-hit finisher cycle at ×2 empowered damage. A measured approach with modest gains across the board and no commitment to either extreme."
+    },
+    {
+      "id": "cadence-heavy",
+      "name": "Breaker",
+      "tier": 1,
+      "classId": "cadence-root",
+      "frame": "heavy",
+      "defensiveStats": {
+        "maxHpPct": 0.18,
+        "platingPct": 0.2,
+        "damageReduction": 0.02
+      },
+      "mechanics": {
+        "cadence.empowered-threshold": 6,
+        "cadence.empowered-mult": 4
+      },
+      "description": "Cadence change — a 6-hit finisher cycle at ×4 empowered damage. Endurance over speed: significant bulk and armor, paid for in attack pace and footwork; patience is rewarded with one enormous blow."
+    },
+    {
+      "id": "cooldown-light",
+      "name": "Warrior",
+      "tier": 1,
+      "classId": "cooldown-root",
+      "frame": "light",
+      "defensiveStats": {
+        "maxHpPct": 0.05,
+        "platingPct": 0.05
+      },
+      "mechanics": {
+        "cooldown.empowered-cd-ms": 5000,
+        "cooldown.empowered-mult": 1.5
+      },
+      "description": "Execution change — 5s recharge at ×1.5 damage. The aggressive tank keeps its armored core but trades patience for a fast, hungry tempo."
+    },
+    {
+      "id": "cooldown-balanced",
+      "name": "Knight",
+      "tier": 1,
+      "classId": "cooldown-root",
+      "frame": "balanced",
+      "defensiveStats": {
+        "maxHpPct": 0.12,
+        "platingPct": 0.15,
+        "damageReduction": 0.02
+      },
+      "mechanics": {
+        "cooldown.empowered-cd-ms": 7000,
+        "cooldown.empowered-mult": 2
+      },
+      "description": "Execution change — 7s recharge at ×2 damage. A sturdy foundation: substantial HP and armor amplify the class's defensive identity without tipping into immobility."
+    },
+    {
+      "id": "cooldown-heavy",
+      "name": "Bulwark",
+      "tier": 1,
+      "classId": "cooldown-root",
+      "frame": "heavy",
+      "defensiveStats": {
+        "maxHpPct": 0.22,
+        "platingPct": 0.25,
+        "damageReduction": 0.03
+      },
+      "mechanics": {
+        "cooldown.empowered-cd-ms": 8000,
+        "cooldown.empowered-mult": 3.5
+      },
+      "description": "Execution change — 8s recharge at ×3.5 damage. Fortress of patience: maximum bulk makes you a wall, and every blow lands like one — but you move like a boulder and swing even slower."
+    },
+    {
+      "id": "dot-light",
+      "name": "Venom vessel",
+      "tier": 1,
+      "classId": "dot-root",
+      "frame": "light",
+      "defensiveStats": {
+        "maxHpPct": 0.04
+      },
+      "mechanics": {
+        "dot.max-stacks": 8,
+        "dot.conversion-pct": 0.3,
+        "dot.tick-interval-ms": 1000,
+        "dot.duration-ms": 5000,
+        "dot.mechanic-mult": 1.25
+      },
+      "description": "DoT change — up to 8 poison stacks; each hit converts 30% of your attack into poison. Ticks every 1s for 5s at ×1.25 DoT output. Apply wounds quickly and stay mobile."
+    },
+    {
+      "id": "dot-balanced",
+      "name": "Ember mage",
+      "tier": 1,
+      "classId": "dot-root",
+      "frame": "balanced",
+      "defensiveStats": {
+        "maxHpPct": 0.1,
+        "platingPct": 0.1
+      },
+      "mechanics": {
+        "dot.max-stacks": 6,
+        "dot.conversion-pct": 0.5,
+        "dot.tick-interval-ms": 1500,
+        "dot.duration-ms": 5500,
+        "dot.mechanic-mult": 1.2
+      },
+      "description": "DoT change — up to 6 burn stacks; each hit converts 50% of your attack into burn. Ticks every 1.5s for 5.5s at ×1.20 DoT output. A deliberate fighter who rewards measured pressure."
+    },
+    {
+      "id": "dot-heavy",
+      "name": "Rime-Bound",
+      "tier": 1,
+      "classId": "dot-root",
+      "frame": "heavy",
+      "defensiveStats": {
+        "maxHpPct": 0.18,
+        "platingPct": 0.2,
+        "damageReduction": 0.03
+      },
+      "mechanics": {
+        "dot.max-stacks": 3,
+        "dot.conversion-pct": 0.7,
+        "dot.tick-interval-ms": 2000,
+        "dot.duration-ms": 6500,
+        "dot.mechanic-mult": 1.15
+      },
+      "description": "DoT change — up to 3 frost stacks; each hit converts 70% of your attack into frost. Ticks every 2s for 6.5s at ×1.15 DoT output. A slow war of attrition built around deep, lingering wounds."
+    },
+    {
+      "id": "reload-light",
+      "name": "Scout",
+      "tier": 1,
+      "classId": "reload-root",
+      "frame": "light",
+      "defensiveStats": {
+        "maxHpPct": 0.04,
+        "evasion": 0.07
+      },
+      "mechanics": {
+        "reload.max-ammo": 5,
+        "reload.reload-time-ms": 1200
+      },
+      "description": "Reload change — 5-round clip and 1.2s reload. All-in on mobility with extra dodge: maximum uptime and a minimum profile to hit."
+    },
+    {
+      "id": "reload-balanced",
+      "name": "Marksman",
+      "tier": 1,
+      "classId": "reload-root",
+      "frame": "balanced",
+      "defensiveStats": {
+        "maxHpPct": 0.08,
+        "evasion": 0.04
+      },
+      "mechanics": {
+        "reload.max-ammo": 10,
+        "reload.reload-time-ms": 2000
+      },
+      "description": "Reload change — 10-round clip and 2.0s reload. A steady burst fighter with modest avoidance: tempo and staying power in balance."
+    },
+    {
+      "id": "reload-heavy",
+      "name": "Artillerist",
+      "tier": 1,
+      "classId": "reload-root",
+      "frame": "heavy",
+      "defensiveStats": {
+        "maxHpPct": 0.14,
+        "platingPct": 0.12
+      },
+      "mechanics": {
+        "reload.max-ammo": 20,
+        "reload.reload-time-ms": 3000
+      },
+      "description": "Reload change — 20-round clip and 3.0s reload. Slower but harder to put down: sustained bursting and real armor for the first time on this chassis, with longer planned downtime."
+    },
+    {
+      "id": "energy-light",
+      "name": "Spark",
+      "tier": 1,
+      "classId": "energy-root",
+      "frame": "light",
+      "defensiveStats": {
+        "maxHpPct": 0.03
+      },
+      "mechanics": {
+        "energy.per-hit": 20,
+        "energy.empowered-mult": 1.5
+      },
+      "description": "Energy change — gain 20 energy per hit and discharge at ×1.5 damage. Pure momentum: blazing speed and rapid attacks thrive on frequent discharges and their AoE splash."
+    },
+    {
+      "id": "energy-balanced",
+      "name": "Wraith",
+      "tier": 1,
+      "classId": "energy-root",
+      "frame": "balanced",
+      "defensiveStats": {
+        "maxHpPct": 0.07,
+        "platingPct": 0.06
+      },
+      "mechanics": {
+        "energy.per-hit": 14,
+        "energy.empowered-mult": 2
+      },
+      "description": "Energy change — gain 14 energy per hit and discharge at ×2 damage. Fast and capable, with extra punch and light armor without sacrificing mobility."
+    },
+    {
+      "id": "energy-heavy",
+      "name": "Phantasm",
+      "tier": 1,
+      "classId": "energy-root",
+      "frame": "heavy",
+      "defensiveStats": {
+        "maxHpPct": 0.14,
+        "platingPct": 0.12,
+        "damageReduction": 0.02
+      },
+      "mechanics": {
+        "energy.per-hit": 10,
+        "energy.empowered-mult": 6
+      },
+      "description": "Energy change — gain 10 energy per hit and discharge at ×6 damage. Measured power: heavier armor and damage reduction traded against attack pace; it builds slowly and hits very hard."
+    },
+    {
+      "id": "cadence-range-close",
+      "name": "In-Fighter",
+      "tier": 2,
+      "classId": "cadence-root",
+      "frame": null,
+      "defensiveStats": {
+        "maxHpPct": 0.12,
+        "platingPct": 0.1
+      },
+      "mechanics": {
+        "shared.damage-mult": 0.1,
+        "defense.recovery-pulse-pct": 0.1
+      },
+      "description": "Fight at point-blank range. No reach at all, repaid with real bulk, armor, harder attacks and tighter healing pulses."
+    },
+    {
+      "id": "cadence-range-mid",
+      "name": "Lancer",
+      "tier": 2,
+      "classId": "cadence-root",
+      "frame": null,
+      "defensiveStats": {
+        "maxHpPct": 0.08,
+        "platingPct": 0.06
+      },
+      "mechanics": {},
+      "description": "Increase your reach to the standard fighting distance. Solid all-around growth with no commitment to either extreme."
+    },
+    {
+      "id": "cadence-range-far",
+      "name": "Phantom-Blade",
+      "tier": 2,
+      "classId": "cadence-root",
+      "frame": null,
+      "defensiveStats": {
+        "maxHpPct": 0.03
+      },
+      "mechanics": {},
+      "description": "Strike from a substantial distance. Minimal stat growth, but the reach and footspeed let you land hits before the enemy ever closes — distance as armor."
+    },
+    {
+      "id": "cooldown-range-close",
+      "name": "Vanguard",
+      "tier": 2,
+      "classId": "cooldown-root",
+      "frame": null,
+      "defensiveStats": {
+        "maxHpPct": 0.1,
+        "platingPct": 0.12
+      },
+      "mechanics": {
+        "shared.damage-mult": 0.1,
+        "defense.recovery-active-pct": 0.2
+      },
+      "description": "Fight at point-blank range. Reduced reach, repaid with heavier armor and harder attacks — and your in-combat regen surges to a constant 30% of your enormous out-of-combat rate."
+    },
+    {
+      "id": "cooldown-range-mid",
+      "name": "Phalanx",
+      "tier": 2,
+      "classId": "cooldown-root",
+      "frame": null,
+      "defensiveStats": {
+        "maxHpPct": 0.08,
+        "platingPct": 0.08
+      },
+      "mechanics": {},
+      "description": "The standard fighting distance. Solid all-around growth with no commitment to either extreme."
+    },
+    {
+      "id": "cooldown-range-far",
+      "name": "Sentinel",
+      "tier": 2,
+      "classId": "cooldown-root",
+      "frame": null,
+      "defensiveStats": {
+        "maxHpPct": 0.03,
+        "platingPct": 0.03
+      },
+      "mechanics": {},
+      "description": "Strike from a substantial distance. Minimal stat growth, but the reach and footspeed let a slow tank punish from afar — distance as armor."
+    },
+    {
+      "id": "dot-range-close",
+      "name": "Hexblade",
+      "tier": 2,
+      "classId": "dot-root",
+      "frame": null,
+      "defensiveStats": {
+        "maxHpPct": 0.15,
+        "platingPct": 0.08
+      },
+      "mechanics": {
+        "shared.damage-mult": 0.1,
+        "defense.absorb-pct": 0.12
+      },
+      "description": "Fight at point-blank range. Reduced reach, repaid with a much deeper HP pool and harder attacks — and your absorption pool deepens by 12%, turning you into a close-quarters drain-tank."
+    },
+    {
+      "id": "dot-range-mid",
+      "name": "Warlock",
+      "tier": 2,
+      "classId": "dot-root",
+      "frame": null,
+      "defensiveStats": {
+        "maxHpPct": 0.08,
+        "platingPct": 0.06
+      },
+      "mechanics": {},
+      "description": "The standard fighting distance. Solid all-around growth with no commitment to either extreme."
+    },
+    {
+      "id": "dot-range-far",
+      "name": "Harbinger",
+      "tier": 2,
+      "classId": "dot-root",
+      "frame": null,
+      "defensiveStats": {
+        "maxHpPct": 0.03
+      },
+      "mechanics": {},
+      "description": "Strike from a substantial distance. Minimal stat growth, but the reach and footspeed let you apply stacks and retreat — distance as armor."
+    },
+    {
+      "id": "reload-range-close",
+      "name": "Breacher",
+      "tier": 2,
+      "classId": "reload-root",
+      "frame": null,
+      "defensiveStats": {
+        "evasion": 0.1,
+        "maxHpPct": 0.18,
+        "platingPct": 0.05
+      },
+      "mechanics": {
+        "shared.damage-mult": 0.1,
+        "defense.evade-mitigation": 0.1
+      },
+      "description": "Fight at point-blank range. Reduced reach, repaid with a much larger HP pool and harder attacks — and your evasion sharpens: more dodges, and each one cuts deeper."
+    },
+    {
+      "id": "reload-range-mid",
+      "name": "Enforcer",
+      "tier": 2,
+      "classId": "reload-root",
+      "frame": null,
+      "defensiveStats": {
+        "maxHpPct": 0.08,
+        "platingPct": 0.03
+      },
+      "mechanics": {},
+      "description": "The standard fighting distance. Solid all-around growth with no commitment to either extreme."
+    },
+    {
+      "id": "reload-range-far",
+      "name": "Deadeye",
+      "tier": 2,
+      "classId": "reload-root",
+      "frame": null,
+      "defensiveStats": {
+        "maxHpPct": 0.03
+      },
+      "mechanics": {},
+      "description": "Strike from a substantial distance. Minimal stat growth, but the reach and footspeed maximize your kiting buffer — distance as armor."
+    },
+    {
+      "id": "energy-range-close",
+      "name": "Haunt",
+      "tier": 2,
+      "classId": "energy-root",
+      "frame": null,
+      "defensiveStats": {
+        "maxHpPct": 0.2,
+        "platingPct": 0.04
+      },
+      "mechanics": {
+        "shared.damage-mult": 0.1,
+        "defense.barrier-pct": 0.1
+      },
+      "description": "Fight at point-blank range. Reduced reach, repaid with by far the deepest HP compensation in the tree — and your barrier swells to 40% of max HP, a deeper buffer to open each melee engagement with."
+    },
+    {
+      "id": "energy-range-mid",
+      "name": "Shade",
+      "tier": 2,
+      "classId": "energy-root",
+      "frame": null,
+      "defensiveStats": {
+        "maxHpPct": 0.08,
+        "platingPct": 0.03
+      },
+      "mechanics": {},
+      "description": "The standard fighting distance. Solid all-around growth with no commitment to either extreme."
+    },
+    {
+      "id": "energy-range-far",
+      "name": "Wisp",
+      "tier": 2,
+      "classId": "energy-root",
+      "frame": null,
+      "defensiveStats": {
+        "maxHpPct": 0.03
+      },
+      "mechanics": {},
+      "description": "Strike from a substantial distance. Minimal stat growth, but the reach and footspeed buy the untouched seconds your barrier needs to recharge — distance as armor."
+    },
+    {
+      "id": "summoner-range-close",
+      "name": "Vigil",
+      "tier": 2,
+      "classId": "summoner-root",
+      "frame": null,
+      "defensiveStats": {
+        "maxHpPct": 0.06,
+        "platingPct": 0.04
+      },
+      "mechanics": {},
+      "description": "Your summons keep watch at your shoulder. Melee bodies attack at 18px, gain ×1.25 summon HP and ×1.50 size, redirect 55% of incoming damage, and leave 25% of the defensive budget on the Conduit. Reconstructions keep the base interval, so this is the most protective but most expensive formation."
+    },
+    {
+      "id": "summoner-range-mid",
+      "name": "Procession",
+      "tier": 2,
+      "classId": "summoner-root",
+      "frame": null,
+      "defensiveStats": {
+        "maxHpPct": 0.1,
+        "platingPct": 0.06
+      },
+      "mechanics": {},
+      "description": "Your summons move with you in ordered formation. Reach bodies attack at 96px from a 72px preferred distance, use ×1.25 size, redirect 30% of incoming damage, and split defense evenly (50% to the Conduit, 50% to the formation). Reconstruction keeps the base interval."
+    },
+    {
+      "id": "summoner-range-far",
+      "name": "Harrier",
+      "tier": 2,
+      "classId": "summoner-root",
+      "frame": null,
+      "defensiveStats": {
+        "maxHpPct": 0.18,
+        "platingPct": 0.12,
+        "damageReduction": 0.02
+      },
+      "mechanics": {},
+      "description": "Your summons are cast out ahead. Ranged bodies attack at 190px from a 165px preferred distance, have ×0.70 summon HP and ×1.12 movement, redirect only 8% of incoming damage, and leave 75% of the defensive budget on the Conduit. Their reconstruction interval is ×0.85 of base."
+    },
+    {
+      "id": "cadence-light-t3-b",
+      "name": "Scrapper",
+      "tier": 3,
+      "classId": "cadence-root",
+      "frame": "light",
+      "defensiveStats": {},
+      "mechanics": {
+        "cadence.debuff-vuln-pct": 25,
+        "cadence.debuff-vuln-ms": 5000,
+        "cadence.debuff-plating-shred": 5,
+        "cadence.debuff-shred-cap": 20
+      },
+      "description": "Your finisher curses the target: +25% damage taken for 5 seconds, and permanently reduces their flat plating by 5 (capped at 20 total per target). The triggering finisher benefits from the vulnerability."
+    },
+    {
+      "id": "cooldown-light-t3-c",
+      "name": "Sunderer",
+      "tier": 3,
+      "classId": "cooldown-root",
+      "frame": "light",
+      "defensiveStats": {},
+      "mechanics": {
+        "cooldown.rupture": 1,
+        "cooldown.rupture-dr-pierce": 0.1,
+        "cooldown.rupture-window-ms": 2000,
+        "cooldown.rupture-window-plating-mult": 0.5
+      },
+      "description": "Your execution bypasses 100% of the target's plating. For 2 seconds afterward, your regular attacks bypass 50% of plating and ignore 10% of the target's damage reduction."
+    },
+    {
+      "id": "reload-light-t3-c",
+      "name": "Sniper",
+      "tier": 3,
+      "classId": "reload-root",
+      "frame": "light",
+      "defensiveStats": {},
+      "mechanics": {
+        "reload.snipe": 1,
+        "reload.max-ammo": -2,
+        "reload.snipe-cadence-ms": 2000,
+        "reload.snipe-as-to-dmg": 0.5,
+        "reload.snipe-fullhp-mult": 2,
+        "reload.snipe-fullhp-threshold": 0.95,
+        "shared.applies-through-evade": 1
+      },
+      "description": "Loads only 3 heavy shells and fires at a hard-set 0.5 APS, ignoring weapon attack speed entirely. Your bonus attack-speed stat is converted into per-shot damage instead, and shots deal 2× damage against targets at or above 95% health. Fast 1.2s reload."
+    },
+    {
+      "id": "energy-light-t3-a",
+      "name": "Stormdancer",
+      "tier": 3,
+      "classId": "energy-root",
+      "frame": "light",
+      "defensiveStats": {
+        "evasion": 0.25
+      },
+      "mechanics": {
+        "energy.flash": 1,
+        "energy.flash-energy-per-hit": 5,
+        "energy.flash-max-damage-shift-pct": 0.45,
+        "energy.flash-max-speed-bonus-pct": 0.45,
+        "energy.flash-max-evasion-bonus-pct": 0.45,
+        "energy.flash-shift-decay-ms": 2000
+      },
+      "description": "Your lightning condenses into daggers. Blue Shift at low energy hits harder; Red Shift at high energy hits lighter but attacks faster, moves faster, and evades more. Energy builds slowly while you Flash the same fight and decays back to Blue Shift over 2 seconds when you disengage."
+    },
+    {
+      "id": "dot-heavy-t3-b",
+      "name": "Winter Warden",
+      "tier": 3,
+      "classId": "dot-root",
+      "frame": "heavy",
+      "defensiveStats": {},
+      "mechanics": {
+        "dot.freezing-cold": 1,
+        "dot.chill-max-stacks": 9,
+        "dot.chill-move-slow-per-stack": 0.05,
+        "dot.chill-attack-slow-per-stack": 0.05,
+        "dot.chill-duration-ms": 6000,
+        "dot.freeze-duration-ms": 2000,
+        "dot.freeze-damage-taken-pct": 0.35,
+        "dot.freeze-move-slow-pct": 0.8,
+        "dot.freeze-attack-slow-pct": 2
+      },
+      "description": "Each hit also applies a Chill stack (up to 9), each reducing the target's movement and attack speed by 5%. At 9 Chill stacks the target is Frozen for 2 seconds — a severe slow (not full CC) that also makes it take 35% bonus damage from all sources — then the chill resets."
+    }
+  ],
+  "specializations": [
+    {
+      "id": "cadence-light-t3-a",
+      "name": "Shockblade",
+      "classId": "cadence-root",
+      "frame": "light",
+      "stats": {},
+      "mechanics": {
+        "cadence.aftershock": 1,
+        "cadence.aftershock-onhit-per-tier": 10,
+        "cadence.aftershock-attacks": 3
+      },
+      "description": "After your finisher, your next 3 regular attacks fire their on-hit damage twice. Gain extra scaling on-hit damage."
+    },
+    {
+      "id": "cadence-light-t3-b",
+      "name": "Scrapper",
+      "classId": "cadence-root",
+      "frame": "light",
+      "stats": {},
+      "mechanics": {
+        "cadence.debuff-vuln-pct": 25,
+        "cadence.debuff-vuln-ms": 5000,
+        "cadence.debuff-plating-shred": 5,
+        "cadence.debuff-shred-cap": 20
+      },
+      "description": "Your finisher curses the target: +25% damage taken for 5 seconds, and permanently reduces their flat plating by 5 (capped at 20 total per target). The triggering finisher benefits from the vulnerability."
+    },
+    {
+      "id": "cadence-light-t3-c",
+      "name": "Swiftblade",
+      "classId": "cadence-root",
+      "frame": "light",
+      "stats": {},
+      "mechanics": {
+        "cadence.trigger-count": 2,
+        "cadence.extra-trigger-damage-mult": 0.7
+      },
+      "description": "Your finisher strikes twice. The second hit deals 70% of the finalized first-hit damage. Neither hit counts toward the next combo."
+    },
+    {
+      "id": "cadence-balanced-t3-a",
+      "name": "Maestro",
+      "classId": "cadence-root",
+      "frame": "balanced",
+      "stats": {},
+      "mechanics": {
+        "cadence.metronome": 1,
+        "cadence.metronome-flat": 12
+      },
+      "description": "Each regular attack in the buildup adds flat attack damage to every subsequent attack in that cycle, including the finisher. Stacks reset after each finisher."
+    },
+    {
+      "id": "cadence-balanced-t3-b",
+      "name": "Wavecrest",
+      "classId": "cadence-root",
+      "frame": "balanced",
+      "stats": {},
+      "mechanics": {
+        "cadence.momentum-buildup": 0.15,
+        "cadence.momentum-echo": 3,
+        "cadence.momentum-echo-bonus": 0.5
+      },
+      "description": "Each attack building toward the finisher amplifies it by 15%. After a finisher, your next 3 attacks deal 50% bonus damage."
+    },
+    {
+      "id": "cadence-balanced-t3-c",
+      "name": "Justicar",
+      "classId": "cadence-root",
+      "frame": "balanced",
+      "stats": {},
+      "mechanics": {
+        "cadence.detonation": 1,
+        "cadence.verdict-bank-pct": 0.3
+      },
+      "description": "Each finisher banks 30% of its damage into a Verdict — a stored pool of execution power that persists across targets. When a target's remaining health is at or below your Verdict, your finisher executes it instantly and spends the pool."
+    },
+    {
+      "id": "cadence-heavy-t3-a",
+      "name": "Berserker",
+      "classId": "cadence-root",
+      "frame": "heavy",
+      "stats": {},
+      "mechanics": {
+        "cadence.rampage": 1,
+        "cadence.rampage-max-stacks": 10,
+        "cadence.rampage-threshold-floor": 2,
+        "cadence.rampage-aps-per-stack-ms": 60,
+        "cadence.rampage-atk-pen-per-stack": 0.04,
+        "cadence.rampage-mult-per-stack": 0.05,
+        "cadence.rampage-decay-interval-ms": 8000
+      },
+      "description": "Each finisher grants a Rampage stack (up to 10): −1 combo threshold (floor 2), faster attacks, weaker regular hits, and a stronger finisher multiplier. At 10 stacks the next finisher overloads and resets Rampage to 0. Stacks decay slowly out of combat."
+    },
+    {
+      "id": "cadence-heavy-t3-b",
+      "name": "Hemomancer",
+      "classId": "cadence-root",
+      "frame": "heavy",
+      "stats": {},
+      "mechanics": {
+        "cadence.hemorrhage": 1,
+        "cadence.hemorrhage-mult": 1.5,
+        "cadence.hemorrhage-ticks": 4,
+        "cadence.hemorrhage-tick-ms": 1000
+      },
+      "description": "Your finisher deals no direct damage — instead it converts into a bleeding wound (non-stacking) dealing 150% of the finisher damage over 4 seconds. Re-triggering refreshes the wound."
+    },
+    {
+      "id": "cadence-heavy-t3-c",
+      "name": "Juggernaut",
+      "classId": "cadence-root",
+      "frame": "heavy",
+      "stats": {},
+      "mechanics": {
+        "cadence.crescendo": 1,
+        "cadence.crescendo-ramp-seconds": 15,
+        "cadence.crescendo-ramp-mult": 0.45,
+        "cadence.crescendo-tail-per-sec": 0.01
+      },
+      "description": "Time in active combat ramps a Crescendo bonus that multiplies your finisher. The first several seconds give most of the bonus; it keeps climbing forever at a diminished rate. Resets instantly when you leave combat. Does not affect regular attacks."
+    },
+    {
+      "id": "cooldown-light-t3-a",
+      "name": "Assassin",
+      "classId": "cooldown-root",
+      "frame": "light",
+      "stats": {},
+      "mechanics": {
+        "cooldown.overdrive": 1,
+        "cooldown.overdrive-duration-ms": 2500,
+        "cooldown.overdrive-attack-speed-pct": 0.6
+      },
+      "description": "Your execution deals its normal damage and triggers a 2.5s burst of increased attack speed (~half-uptime at the 5s cooldown). The timer keeps ticking through the burst."
+    },
+    {
+      "id": "cooldown-light-t3-b",
+      "name": "Transcendant",
+      "classId": "cooldown-root",
+      "frame": "light",
+      "stats": {},
+      "mechanics": {
+        "cooldown.eternal-cycle": 1,
+        "cooldown.eternal-cycle-flat": 8,
+        "cooldown.eternal-charge-duration-ms": 10000
+      },
+      "description": "Each attack banks a stack, and every attack deals bonus flat damage per banked stack — so your hits ramp the longer you go (stacks fall off after 10s idle). The execution adds the full stacked bonus on top, then clears the stacks."
+    },
+    {
+      "id": "cooldown-light-t3-c",
+      "name": "Sunderer",
+      "classId": "cooldown-root",
+      "frame": "light",
+      "stats": {},
+      "mechanics": {
+        "cooldown.rupture": 1,
+        "cooldown.rupture-dr-pierce": 0.1,
+        "cooldown.rupture-window-ms": 2000,
+        "cooldown.rupture-window-plating-mult": 0.5
+      },
+      "description": "Your execution bypasses 100% of the target's plating. For 2 seconds afterward, your regular attacks bypass 50% of plating and ignore 10% of the target's damage reduction."
+    },
+    {
+      "id": "cooldown-balanced-t3-a",
+      "name": "Reverb",
+      "classId": "cooldown-root",
+      "frame": "balanced",
+      "stats": {},
+      "mechanics": {
+        "cooldown.reverb": 1,
+        "cooldown.reverb-bonus-per-attack": 0.05
+      },
+      "description": "The attacks you land during one cooldown window charge your NEXT execution: each attack adds bonus damage to the following execution (the current one fires normally). The charge resets each execution."
+    },
+    {
+      "id": "cooldown-balanced-t3-b",
+      "name": "Dynamo",
+      "classId": "cooldown-root",
+      "frame": "balanced",
+      "stats": {},
+      "mechanics": {
+        "cooldown.battery": 1,
+        "cooldown.battery-stack-interval-ms": 1000,
+        "cooldown.battery-damage-per-stack": 8
+      },
+      "description": "Every second your execution cooldown ticks down, you gain a stack of accumulated power. Each stack adds 8 flat damage to regular attacks and your execution; the execution then spends all stacks."
+    },
+    {
+      "id": "cooldown-balanced-t3-c",
+      "name": "Stalwart",
+      "classId": "cooldown-root",
+      "frame": "balanced",
+      "stats": {},
+      "mechanics": {
+        "cooldown.patience-paid": 1,
+        "cooldown.patience-ramp-ms": 7000,
+        "cooldown.patience-attack-max": 0.5,
+        "cooldown.patience-execution-max": 0.75
+      },
+      "description": "The longer your execution cooldown runs uninterrupted, the more damage you deal, ramping over 7 seconds to +50% regular-attack damage and +75% execution damage. Triggering early yields a proportionally smaller payoff."
+    },
+    {
+      "id": "cooldown-heavy-t3-a",
+      "name": "Avenger",
+      "classId": "cooldown-root",
+      "frame": "heavy",
+      "stats": {},
+      "mechanics": {
+        "cooldown.vengeance": 1,
+        "cooldown.vengeance-mult": 1.5,
+        "cooldown.vengeance-floor": 30
+      },
+      "description": "Your execution deals bonus damage equal to a portion of all damage you have taken since your last execution (with a minimum floor so it never feels dead). The heavy frame's fixed 8s window makes the payoff predictable."
+    },
+    {
+      "id": "cooldown-heavy-t3-b",
+      "name": "Destroyer",
+      "classId": "cooldown-root",
+      "frame": "heavy",
+      "stats": {},
+      "mechanics": {
+        "cooldown.singular-extraction": 1,
+        "cooldown.empowered-cd-ms": -4000,
+        "cooldown.empowered-mult": 0.5,
+        "cooldown.singular-no-target-ms": 4000
+      },
+      "description": "Normal attacks deal no damage. Your execution fires on a greatly shortened cooldown (4s) and hits for far more (4× instead of 3.5×). On-hit gear and charm triggers still fire on regular attacks. Out of combat, your execution stays primed — the first strike on a new target is an execution."
+    },
+    {
+      "id": "cooldown-heavy-t3-c",
+      "name": "Devout Priest",
+      "classId": "cooldown-root",
+      "frame": "heavy",
+      "stats": {},
+      "mechanics": {
+        "cooldown.channeled-beam": 1,
+        "cooldown.channeled-beam-mult": 1,
+        "cooldown.beam-duration-ms": 3000,
+        "cooldown.beam-tick-ms": 500
+      },
+      "description": "Your execution becomes a 3-second holy channel: you stand still and fire a continuous beam at your target, and every beam tick applies your on-hit effects (gear, charms, on-hit damage) — built for high on-hit over attack speed. If the target dies mid-channel, you briefly reacquire before the beam ends."
+    },
+    {
+      "id": "reload-light-t3-a",
+      "name": "Duelist",
+      "classId": "reload-root",
+      "frame": "light",
+      "stats": {},
+      "mechanics": {
+        "reload.exploding-clip": 1,
+        "reload.empowered-mult": 5,
+        "reload.max-ammo": 1
+      },
+      "description": "The last bullet of every clip fires as an empowered shot (5.0×) with a splash — and like all empowered attacks, it scales with empowered-damage gear and passives."
+    },
+    {
+      "id": "reload-light-t3-b",
+      "name": "Desperado",
+      "classId": "reload-root",
+      "frame": "light",
+      "stats": {},
+      "mechanics": {
+        "reload.momentum": 1,
+        "reload.momentum-aps-per-stack": 0.06,
+        "reload.momentum-max-stacks": 5,
+        "reload.momentum-reload-reduction": 0.1,
+        "reload.momentum-decay-interval-ms": 4000,
+        "reload.momentum-reload-reduction-floor": 0.3
+      },
+      "description": "Each reload completion grants a Momentum stack (up to 5): +6% attack speed and −10% reload time per stack (reaching ~1s reload at max). Stacks persist through combat and decay slowly out of combat. Rewards continuous, uninterrupted fighting."
+    },
+    {
+      "id": "reload-light-t3-c",
+      "name": "Sniper",
+      "classId": "reload-root",
+      "frame": "light",
+      "stats": {
+        "attackRange": 100
+      },
+      "mechanics": {
+        "reload.snipe": 1,
+        "reload.max-ammo": -2,
+        "reload.snipe-cadence-ms": 2000,
+        "reload.snipe-as-to-dmg": 0.5,
+        "reload.snipe-fullhp-mult": 2,
+        "reload.snipe-fullhp-threshold": 0.95,
+        "shared.applies-through-evade": 1
+      },
+      "description": "Loads only 3 heavy shells and fires at a hard-set 0.5 APS, ignoring weapon attack speed entirely. Your bonus attack-speed stat is converted into per-shot damage instead, and shots deal 2× damage against targets at or above 95% health. Fast 1.2s reload."
+    },
+    {
+      "id": "reload-balanced-t3-a",
+      "name": "Bounty hunter",
+      "classId": "reload-root",
+      "frame": "balanced",
+      "stats": {},
+      "mechanics": {
+        "reload.death-mark": 1,
+        "reload.death-mark-detonate-mult": 0.5,
+        "reload.death-mark-max": 10
+      },
+      "description": "Each attack applies a Death Mark stack to the target (up to 10). Reloading detonates all stacks on the current target for attack × stacks × 0.50 bonus damage."
+    },
+    {
+      "id": "reload-balanced-t3-b",
+      "name": "Blunderbuss",
+      "classId": "reload-root",
+      "frame": "balanced",
+      "stats": {
+        "attackRange": -100
+      },
+      "mechanics": {
+        "reload.blunderbuss": 1,
+        "reload.blunderbuss-damage-mult": -0.6,
+        "reload.blunderbuss-spread-rad": 0.65,
+        "reload.blunderbuss-knockback-distance-per-pellet": 7,
+        "reload.blunderbuss-knockback-ms-per-pellet": 14,
+        "reload.blunderbuss-self-knockback-dist": 110
+      },
+      "description": "Fires all 10 rounds at once as a point-blank volley, then reloads (2s). Close range mandatory — the reach penalty is preserved. Each pellet deals 40% of normal attack damage; the burst shoves enemies back."
+    },
+    {
+      "id": "reload-balanced-t3-c",
+      "name": "Dualslinger",
+      "classId": "reload-root",
+      "frame": "balanced",
+      "stats": {},
+      "mechanics": {
+        "reload.alternating-cadence": 1,
+        "reload.alternating-onhit-per-tier": 30,
+        "reload.alternating-attack-mult": 2,
+        "reload.alternating-onhit-mult": 2
+      },
+      "description": "Even shots deal 2× attack damage with no on-hit damage; odd shots deal 2× on-hit damage with no attack damage. On-hit TRIGGERS (DoT, procs) still fire on every shot. Also grants scaling on-hit damage. Rewards a genuinely balanced attack/on-hit gear split."
+    },
+    {
+      "id": "reload-heavy-t3-a",
+      "name": "Melter",
+      "classId": "reload-root",
+      "frame": "heavy",
+      "stats": {},
+      "mechanics": {
+        "reload.laser": 1,
+        "reload.laser-damage-per-tick-pct": 0.16,
+        "reload.laser-heat-per-tick": 2,
+        "reload.laser-cool-per-tick": 2.5
+      },
+      "description": "Replaces your magazine with a continuous laser. It fires continuously while a target is in range, building Heat from 0% to 100%. At 100% Heat it overheats and cannot fire again until fully cooled."
+    },
+    {
+      "id": "reload-heavy-t3-b",
+      "name": "Warmonger",
+      "classId": "reload-root",
+      "frame": "heavy",
+      "stats": {},
+      "mechanics": {
+        "reload.hair-trigger": 1,
+        "reload.hair-trigger-pct-per-shot": 0.05,
+        "reload.hair-trigger-max-stacks": 15,
+        "reload.max-ammo": 20
+      },
+      "description": "Attack speed ramps up with every shot fired through the high-capacity clip, resetting on reload."
+    },
+    {
+      "id": "reload-heavy-t3-c",
+      "name": "Cannoneer",
+      "classId": "reload-root",
+      "frame": "heavy",
+      "stats": {},
+      "mechanics": {
+        "reload.cannon": 1,
+        "reload.cannon-damage-per-shot": 0.45,
+        "reload.cannon-charge-fraction": 0.5
+      },
+      "description": "Every shot banks damage into your Cannon. When you reload, the cannon charges for half the reload, then fires the entire stored pool at your target as one massive burst — then the pool resets. Reward: empty big clips, then unload the cannon."
+    },
+    {
+      "id": "energy-light-t3-a",
+      "name": "Stormdancer",
+      "classId": "energy-root",
+      "frame": "light",
+      "stats": {
+        "evasion": 0.25
+      },
+      "mechanics": {
+        "energy.flash": 1,
+        "energy.flash-energy-per-hit": 5,
+        "energy.flash-max-damage-shift-pct": 0.45,
+        "energy.flash-max-speed-bonus-pct": 0.45,
+        "energy.flash-max-evasion-bonus-pct": 0.45,
+        "energy.flash-shift-decay-ms": 2000
+      },
+      "description": "Your lightning condenses into daggers. Blue Shift at low energy hits harder; Red Shift at high energy hits lighter but attacks faster, moves faster, and evades more. Energy builds slowly while you Flash the same fight and decays back to Blue Shift over 2 seconds when you disengage."
+    },
+    {
+      "id": "energy-light-t3-b",
+      "name": "Surge",
+      "classId": "energy-root",
+      "frame": "light",
+      "stats": {},
+      "mechanics": {
+        "energy.overdrive": 1,
+        "energy.overdrive-attack-damage-pct": 0.4,
+        "energy.overdrive-decay-per-sec": 18
+      },
+      "description": "Discharge deals no damage — instead it triggers Overdrive: a significant attack-damage bonus (favouring high base-ATK weapons, not APS). Energy then decays from full to empty; when it empties, Overdrive ends and you rebuild."
+    },
+    {
+      "id": "energy-light-t3-c",
+      "name": "Channeler",
+      "classId": "energy-root",
+      "frame": "light",
+      "stats": {},
+      "mechanics": {
+        "energy.upkeep": 1,
+        "energy.upkeep-stack-interval-ms": 1000,
+        "energy.upkeep-decay-base": 12,
+        "energy.upkeep-decay-ramp-per-sec": 1.5,
+        "energy.upkeep-band-1-end": 10,
+        "energy.upkeep-band-2-end": 20,
+        "energy.upkeep-band-3-end": 50,
+        "energy.upkeep-band-1-onhit-per-tier": 2,
+        "energy.upkeep-band-2-onhit-per-tier": 1,
+        "energy.upkeep-band-3-onhit-per-tier": 0.5,
+        "energy.upkeep-overflow-onhit-per-tier": 0.25
+      },
+      "description": "Discharge is suppressed. While energy stays above the threshold you build unlimited Flow stacks, each adding flat on-hit damage (not attack damage), scaling per tier with diminishing returns as stacks pile up. But energy decay ramps the longer you sustain — eventually it outpaces you and resets. Ramps through 3 channel stages (10 / 20 / 21+). No attack-speed bonus."
+    },
+    {
+      "id": "energy-balanced-t3-a",
+      "name": "Equinox",
+      "classId": "energy-root",
+      "frame": "balanced",
+      "stats": {},
+      "mechanics": {
+        "energy.binary-cycle": 1,
+        "energy.binary-charge-onhit-bonus": 0.3,
+        "energy.binary-charge-onhit-per-tier": 6,
+        "energy.binary-discharge-attack-bonus": 0.3,
+        "energy.binary-charge-gain-mult": 0.6,
+        "energy.binary-discharge-gain-mult": 1.5,
+        "energy.binary-charge-speed-factor": 1.25,
+        "energy.binary-discharge-speed-factor": 0.75,
+        "energy.binary-charge-discharge-mult": 0.8,
+        "energy.binary-discharge-discharge-mult": 1.3
+      },
+      "description": "Each discharge flips you between two states. Charge State: slow energy gain, +on-hit damage (flat, scaling per tier), slower attacks, ending in a weak discharge. Discharge State: fast energy gain, +attack damage, faster attacks, ending in a strong discharge. Always in one phase working toward the next."
+    },
+    {
+      "id": "energy-balanced-t3-b",
+      "name": "Stormbringer",
+      "classId": "energy-root",
+      "frame": "balanced",
+      "stats": {},
+      "mechanics": {
+        "energy.awakened-lightning": 1,
+        "energy.awakened-strike-count": 4,
+        "energy.awakened-damage-mult": 1.5
+      },
+      "description": "Discharge becomes a storm of 4 uniform empowered strikes (1.5× each) — the discharge itself is the first, then your next 3 regular attacks. Each is a real empowered attack, so on-hit and empowered-triggered gear all apply."
+    },
+    {
+      "id": "energy-balanced-t3-c",
+      "name": "Aetherist",
+      "classId": "energy-root",
+      "frame": "balanced",
+      "stats": {},
+      "mechanics": {
+        "energy.charge-state": 1,
+        "energy.charge-state-min-mult": 0.5,
+        "energy.charge-state-max-mult": 2
+      },
+      "description": "Your attack damage oscillates with your current energy: 0.5× at empty, 1× at half (neutral), up to 2× at full. A continuous wave — strongest just before discharge, weakest right after. Neutral on average, all about timing."
+    },
+    {
+      "id": "energy-heavy-t3-a",
+      "name": "Voidwalker",
+      "classId": "energy-root",
+      "frame": "heavy",
+      "stats": {},
+      "mechanics": {
+        "energy.singularity-execute": 1,
+        "energy.max-bonus": 100,
+        "energy.per-hit": 10,
+        "energy.singularity-gain-accel-scale": 0.5
+      },
+      "description": "Doubles your max energy (200), and +100 more for each tier beyond this one (300 next tier, 400 after, …). You gain 20 energy per hit on the live heavy path, and generation accelerates the fuller the pool. If a basic hit would kill via the discharge's projected damage, it triggers an immediate early discharge, spending the stored energy."
+    },
+    {
+      "id": "energy-heavy-t3-b",
+      "name": "Invoker",
+      "classId": "energy-root",
+      "frame": "heavy",
+      "stats": {},
+      "mechanics": {
+        "energy.critical-mass": 1,
+        "energy.critical-mass-max-stacks": 3,
+        "energy.critical-mass-discharge-per-stack": 0.2,
+        "energy.critical-mass-gain-per-stack": 0.2,
+        "energy.critical-mass-reset-ms": 5000
+      },
+      "description": "Each consecutive discharge (no long gap between them) adds a stack, up to 3: more discharge damage AND faster energy gain. Stacks reset after 5 seconds without dealing damage. Rewards uninterrupted farming."
+    },
+    {
+      "id": "energy-heavy-t3-c",
+      "name": "Tempest",
+      "classId": "energy-root",
+      "frame": "heavy",
+      "stats": {},
+      "mechanics": {
+        "energy.endless-storm": 1,
+        "energy.endless-storm-total-mult": 6,
+        "energy.endless-storm-tick-ms": 1000,
+        "energy.endless-storm-duration-ms": 4500,
+        "energy.endless-storm-extend-ms": 1000,
+        "energy.endless-storm-max-ms": 7500
+      },
+      "description": "Discharge deals normal damage and brands the target with a Storm instead of a burst — a damage-over-time debuff worth 6× your attack over its base 4.5s, extended +1s by each normal attack (up to 7.5s, adding more total damage). Near-permanent uptime even with a slow weapon; discharges refresh it."
+    },
+    {
+      "id": "dot-light-t3-a",
+      "name": "Venomslinger",
+      "classId": "dot-root",
+      "frame": "light",
+      "stats": {},
+      "mechanics": {
+        "dot.poison-explosion": 1,
+        "dot.poison-explosion-max-stacks": 10,
+        "dot.poison-explosion-burst-ticks": 10
+      },
+      "description": "Your poison can stack up to 10 (overriding the 8-stack cap). Reaching 10 stacks instantly detonates them all for 10 full ticks of damage in a single burst, then clears all stacks."
+    },
+    {
+      "id": "dot-light-t3-b",
+      "name": "Cultist",
+      "classId": "dot-root",
+      "frame": "light",
+      "stats": {},
+      "mechanics": {
+        "dot.eternal-doom": 1,
+        "dot.tick-interval-ms": 500,
+        "dot.eternal-doom-full-stacks": 8,
+        "dot.eternal-doom-diminish-rate": 0.5,
+        "dot.eternal-doom-max-stacks": 40
+      },
+      "description": "Your doom has no stack limit. The first 8 stacks deal full damage per tick. Each additional stack beyond 8 adds damage at 50% effectiveness, naturally plateauing around 30–40 stacks. The light frame's 1s tick interval gains 500ms (1.5s live total), preserving the same total damage while extending the cadence. Rewards long, sustained fights."
+    },
+    {
+      "id": "dot-light-t3-c",
+      "name": "Zealot",
+      "classId": "dot-root",
+      "frame": "light",
+      "stats": {},
+      "mechanics": {
+        "dot.frenzy": 1,
+        "dot.frenzy-duration-ms": 6000,
+        "dot.frenzy-attack-speed-pct": 0.25,
+        "dot.frenzy-onhit-per-tier": 10
+      },
+      "description": "Hitting a target at max poison stacks grants Frenzy for 6s (refreshed on each such hit): a flat attack-speed bonus plus on-hit damage that scales per tier. Fast attacks keep stacks maxed and the buff up — a self-sustaining loop."
+    },
+    {
+      "id": "dot-balanced-t3-a",
+      "name": "Pyromancer",
+      "classId": "dot-root",
+      "frame": "balanced",
+      "stats": {},
+      "mechanics": {
+        "dot.fan-the-flames": 1,
+        "dot.fan-the-flames-stacks-per-hit": 2,
+        "dot.fan-the-flames-stack-damage-mult": 0.5,
+        "dot.fan-the-flames-max-stack-bonus-mult": 1.25
+      },
+      "description": "Each hit applies 2 burn stacks instead of 1, but each stack deals 50% of normal tick damage. Hitting a target already at max stacks deals bonus direct damage equal to 1.25× the max-stack DoT damage."
+    },
+    {
+      "id": "dot-balanced-t3-b",
+      "name": "Firebrand",
+      "classId": "dot-root",
+      "frame": "balanced",
+      "stats": {},
+      "mechanics": {
+        "dot.ignition": 1,
+        "dot.ignition-stack-damage-mult": 0.6
+      },
+      "description": "Your first attack on a fresh (or fully un-burned) target sears in all 6 fire stacks at once, at 60% tick value each. Once a target is fully branded, your attacks against it bypass the fire conversion entirely and land as full 100% direct hits while the burn keeps ticking (and refreshes its duration)."
+    },
+    {
+      "id": "dot-balanced-t3-c",
+      "name": "Cinder Lord",
+      "classId": "dot-root",
+      "frame": "balanced",
+      "stats": {},
+      "mechanics": {
+        "dot.conflagration": 1,
+        "dot.conflagration-ticks": 10,
+        "dot.conflagration-tick-ms": 250,
+        "dot.conflagration-damage-factor": 1
+      },
+      "description": "When a target reaches max burn stacks, all stacks are consumed and replaced with Conflagration: a single raging blaze that delivers the same total damage as the full burn in a rapid-fire flurry of ticks. Cannot stack further while Conflagration burns."
+    },
+    {
+      "id": "dot-heavy-t3-a",
+      "name": "Icebreaker",
+      "classId": "dot-root",
+      "frame": "heavy",
+      "stats": {},
+      "mechanics": {
+        "dot.rimeshatter": 1,
+        "dot.rimeshatter-dr-reduction": 0.05,
+        "dot.rimeshatter-duration-ms": 2000
+      },
+      "description": "Below max frost stacks, attacks convert at the normal 70%. At max stacks (3), your direct attacks deal full damage (0% conversion) while the frost keeps ticking — and the target takes a 5% damage-reduction debuff, so the full-power hits land even harder."
+    },
+    {
+      "id": "dot-heavy-t3-b",
+      "name": "Winter Warden",
+      "classId": "dot-root",
+      "frame": "heavy",
+      "stats": {},
+      "mechanics": {
+        "dot.freezing-cold": 1,
+        "dot.chill-max-stacks": 9,
+        "dot.chill-move-slow-per-stack": 0.05,
+        "dot.chill-attack-slow-per-stack": 0.05,
+        "dot.chill-duration-ms": 6000,
+        "dot.freeze-duration-ms": 2000,
+        "dot.freeze-damage-taken-pct": 0.35,
+        "dot.freeze-move-slow-pct": 0.8,
+        "dot.freeze-attack-slow-pct": 2
+      },
+      "description": "Each hit also applies a Chill stack (up to 9), each reducing the target's movement and attack speed by 5%. At 9 Chill stacks the target is Frozen for 2 seconds — a severe slow (not full CC) that also makes it take 35% bonus damage from all sources — then the chill resets."
+    },
+    {
+      "id": "dot-heavy-t3-c",
+      "name": "Wind Spirit",
+      "classId": "dot-root",
+      "frame": "heavy",
+      "stats": {},
+      "mechanics": {
+        "dot.wind-spirit": 1,
+        "dot.conversion-pct": 0.3,
+        "dot.frostbite-dot-taken-pct": 0.02,
+        "dot.frostbite-max-stacks": 10,
+        "dot.frostbite-duration-ms": 4000,
+        "dot.mechanic-mult": -0.1
+      },
+      "description": "Your frost conversion becomes total: 100% of attack damage is converted into DoT, with a 1.05× frost multiplier on the live path. Hitting a target already at max frost stacks applies Frostbite, increasing DoT damage taken by 2% per stack, up to 10 stacks for 4 seconds."
+    },
+    {
+      "id": "summoner-light-t3-a",
+      "name": "Inquisitor",
+      "classId": "summoner-root",
+      "frame": "light",
+      "stats": {},
+      "mechanics": {},
+      "description": "Each unique living summon can mark the focused enemy once. Every mark makes your formation deal 3.5% more damage to that target for 5 seconds, so a complete formation sustains the strongest accusation and rewards deterministic focus fire."
+    },
+    {
+      "id": "summoner-light-t3-b",
+      "name": "Kilnmaster",
+      "classId": "summoner-root",
+      "frame": "light",
+      "stats": {},
+      "mechanics": {},
+      "description": "Fire the formation in one larger batch: 8 smaller summons instead of 6. They still divide one direct-offense budget, while the whole formation carries ×1.30 on-hit and secondary weapon effects and a ×0.80 reconstruction interval (1.6s before the 1.5s floor). Coverage rises, as does vulnerability to plating and area damage."
+    },
+    {
+      "id": "summoner-light-t3-c",
+      "name": "Iconoclast",
+      "classId": "summoner-root",
+      "frame": "light",
+      "stats": {},
+      "mechanics": {},
+      "description": "You break your own works. Natural summon deaths explode for ×0.45 weapon-scaled damage; every 8 seconds one living slot is marked to shatter for a ×1.35 weapon-scaled blast in a 78px radius, then enters the shared reconstruction queue."
+    },
+    {
+      "id": "summoner-balanced-t3-a",
+      "name": "Marshal",
+      "classId": "summoner-root",
+      "frame": "balanced",
+      "stats": {},
+      "mechanics": {},
+      "description": "You drill the formation. Each summon gains one ×1.45 opening strike against a new target, and every 4 complete formation attack cycles deliver a deterministic coordinated strike at ×1.65 of the living formation offense."
+    },
+    {
+      "id": "summoner-balanced-t3-b",
+      "name": "Chorister",
+      "classId": "summoner-root",
+      "frame": "balanced",
+      "stats": {},
+      "mechanics": {},
+      "description": "Each unique living slot establishes one withering voice on a target. Every voice deals 4.5% of your Attack as DoT each second; the chorus lasts 6 seconds and any living summon can refresh it, making sustained full-formation focus its strongest state."
+    },
+    {
+      "id": "summoner-balanced-t3-c",
+      "name": "Ritualist",
+      "classId": "summoner-root",
+      "frame": "balanced",
+      "stats": {},
+      "mechanics": {},
+      "description": "Every 10 seconds you call the rite, and each currently living summon receives 2 charges; each charge empowers one attack by ×1.60. Missing slots receive no charges until the next ritual."
+    },
+    {
+      "id": "summoner-heavy-t3-a",
+      "name": "Covenanter",
+      "classId": "summoner-root",
+      "frame": "heavy",
+      "stats": {},
+      "mechanics": {},
+      "description": "You bind your pair under separate terms: the offense twin carries 75% of formation offense and 30% of formation defense, while the defense twin carries 25% of offense and 70% of defense. A survivor gains only a bounded fallback."
+    },
+    {
+      "id": "summoner-heavy-t3-b",
+      "name": "Champion",
+      "classId": "summoner-root",
+      "frame": "heavy",
+      "stats": {},
+      "mechanics": {},
+      "description": "You stop conducting and take the field yourself, fighting beside one bonded summon. Your weapon carries 45% of the offense budget and the bonded summon 55%; alternating attacks build a deterministic linked strike after 8 fixed contributions."
+    },
+    {
+      "id": "summoner-heavy-t3-c",
+      "name": "Idolwright",
+      "classId": "summoner-root",
+      "frame": "heavy",
+      "stats": {},
+      "mechanics": {},
+      "description": "Condense the Effigy formation into one enormous summon: ×1.50 body size, concentrated offense, a single durable body, and ×1.35 reconstruction time."
+    }
+  ],
+  "frameTotals": [
+    {
+      "root": "Conduit",
+      "frame": "Splinter",
+      "frameId": "summoner-light",
+      "rootPlusFrame": {
+        "maxHpPct": 0.12
+      }
+    },
+    {
+      "root": "Conduit",
+      "frame": "Consort",
+      "frameId": "summoner-balanced",
+      "rootPlusFrame": {
+        "maxHpPct": 0.16,
+        "platingPct": 0.06
+      }
+    },
+    {
+      "root": "Conduit",
+      "frame": "Effigy",
+      "frameId": "summoner-heavy",
+      "rootPlusFrame": {
+        "maxHpPct": 0.24,
+        "platingPct": 0.12,
+        "damageReduction": 0.01
+      }
+    },
+    {
+      "root": "Striker",
+      "frame": "Flurry",
+      "frameId": "cadence-light",
+      "rootPlusFrame": {
+        "maxHpPct": 0.22,
+        "platingPct": 0.15,
+        "damageReduction": 0.02
+      }
+    },
+    {
+      "root": "Striker",
+      "frame": "Skirmisher",
+      "frameId": "cadence-balanced",
+      "rootPlusFrame": {
+        "maxHpPct": 0.28,
+        "platingPct": 0.25,
+        "damageReduction": 0.02
+      }
+    },
+    {
+      "root": "Striker",
+      "frame": "Breaker",
+      "frameId": "cadence-heavy",
+      "rootPlusFrame": {
+        "maxHpPct": 0.36,
+        "platingPct": 0.35,
+        "damageReduction": 0.04
+      }
+    },
+    {
+      "root": "Squire",
+      "frame": "Warrior",
+      "frameId": "cooldown-light",
+      "rootPlusFrame": {
+        "maxHpPct": 0.35,
+        "platingPct": 0.35,
+        "damageReduction": 0.04
+      }
+    },
+    {
+      "root": "Squire",
+      "frame": "Knight",
+      "frameId": "cooldown-balanced",
+      "rootPlusFrame": {
+        "maxHpPct": 0.42,
+        "platingPct": 0.44999999999999996,
+        "damageReduction": 0.06
+      }
+    },
+    {
+      "root": "Squire",
+      "frame": "Bulwark",
+      "frameId": "cooldown-heavy",
+      "rootPlusFrame": {
+        "maxHpPct": 0.52,
+        "platingPct": 0.55,
+        "damageReduction": 0.07
+      }
+    },
+    {
+      "root": "Apprentice",
+      "frame": "Venom vessel",
+      "frameId": "dot-light",
+      "rootPlusFrame": {
+        "maxHpPct": 0.16,
+        "platingPct": 0.08
+      }
+    },
+    {
+      "root": "Apprentice",
+      "frame": "Ember mage",
+      "frameId": "dot-balanced",
+      "rootPlusFrame": {
+        "maxHpPct": 0.22,
+        "platingPct": 0.18
+      }
+    },
+    {
+      "root": "Apprentice",
+      "frame": "Rime-Bound",
+      "frameId": "dot-heavy",
+      "rootPlusFrame": {
+        "maxHpPct": 0.3,
+        "platingPct": 0.28,
+        "damageReduction": 0.03
+      }
+    },
+    {
+      "root": "Slinger",
+      "frame": "Scout",
+      "frameId": "reload-light",
+      "rootPlusFrame": {
+        "maxHpPct": 0.11000000000000001,
+        "evasion": 0.37
+      }
+    },
+    {
+      "root": "Slinger",
+      "frame": "Marksman",
+      "frameId": "reload-balanced",
+      "rootPlusFrame": {
+        "maxHpPct": 0.15000000000000002,
+        "evasion": 0.33999999999999997
+      }
+    },
+    {
+      "root": "Slinger",
+      "frame": "Artillerist",
+      "frameId": "reload-heavy",
+      "rootPlusFrame": {
+        "maxHpPct": 0.21000000000000002,
+        "evasion": 0.3,
+        "platingPct": 0.12
+      }
+    },
+    {
+      "root": "Spirit",
+      "frame": "Spark",
+      "frameId": "energy-light",
+      "rootPlusFrame": {
+        "maxHpPct": 0.06
+      }
+    },
+    {
+      "root": "Spirit",
+      "frame": "Wraith",
+      "frameId": "energy-balanced",
+      "rootPlusFrame": {
+        "maxHpPct": 0.1,
+        "platingPct": 0.06
+      }
+    },
+    {
+      "root": "Spirit",
+      "frame": "Phantasm",
+      "frameId": "energy-heavy",
+      "rootPlusFrame": {
+        "maxHpPct": 0.17,
+        "platingPct": 0.12,
+        "damageReduction": 0.02
+      }
+    }
+  ],
+  "examples": [
+    {
+      "armor": "tundra-vest-t4",
+      "basic": {
+        "stats": {
+          "attack": 20,
+          "onHitDamage": 0,
+          "maxHp": 794,
+          "recovery": 10,
+          "plating": 109,
+          "damageReduction": 0.07,
+          "damageDealtMult": 1,
+          "damageTakenMult": 1,
+          "dodgeRate": 0,
+          "evadeMitigation": 0,
+          "attacksPerSecond": 0.26001040041601664,
+          "dps": 9.5,
+          "speed": 94,
+          "attackRange": 12
+        },
+        "rawOnHitDamage": 0,
+        "attackCooldownMs": 3846,
+        "passives": {
+          "defense.recovery-active-pct": 0.30000000000000004,
+          "cooldown.empowered-cd-ms": 8000,
+          "cooldown.empowered-mult": 3.5,
+          "shared.damage-mult": 0.1,
+          "defense.stationary-dr-pct": 0.2,
+          "defense.stationary-dr-ramptime-ms": 5000,
+          "defense.max-hit-pct": 0.25,
+          "defense.max-hit-mult": 0.5
+        },
+        "cannotAttack": false
+      },
+      "bunker": {
+        "stats": {
+          "attack": 20,
+          "onHitDamage": 0,
+          "maxHp": 1032,
+          "recovery": 10,
+          "plating": 214,
+          "damageReduction": 0.07,
+          "damageDealtMult": 0.6,
+          "damageTakenMult": 0.645,
+          "dodgeRate": 0,
+          "evadeMitigation": 0,
+          "attacksPerSecond": 0.14501160092807425,
+          "dps": 3.9,
+          "speed": 85,
+          "attackRange": 12
+        },
+        "rawOnHitDamage": 0,
+        "attackCooldownMs": 6896,
+        "passives": {
+          "defense.recovery-active-pct": 0.30000000000000004,
+          "cooldown.empowered-cd-ms": 8000,
+          "cooldown.empowered-mult": 3.5,
+          "shared.damage-mult": 0.1,
+          "defense.stationary-dr-pct": 0.2,
+          "defense.stationary-dr-ramptime-ms": 5000,
+          "defense.max-hit-pct": 0.25,
+          "defense.max-hit-mult": 0.5,
+          "core.maxhp-mult": 0.3,
+          "core.plating-mult": 0.4,
+          "core.damage-taken-pct": -0.14,
+          "core.attack-speed-mult": -0.25,
+          "core.speed-mult": -0.1
+        },
+        "cannotAttack": false
+      }
+    },
+    {
+      "armor": "volcanic-vest-t4",
+      "basic": {
+        "stats": {
+          "attack": 20,
+          "onHitDamage": 0,
+          "maxHp": 753,
+          "recovery": 10,
+          "plating": 150,
+          "damageReduction": 0.07,
+          "damageDealtMult": 1,
+          "damageTakenMult": 1,
+          "dodgeRate": 0,
+          "evadeMitigation": 0,
+          "attacksPerSecond": 0.26001040041601664,
+          "dps": 9.5,
+          "speed": 94,
+          "attackRange": 12
+        },
+        "rawOnHitDamage": 0,
+        "attackCooldownMs": 3846,
+        "passives": {
+          "defense.recovery-active-pct": 0.30000000000000004,
+          "cooldown.empowered-cd-ms": 8000,
+          "cooldown.empowered-mult": 3.5,
+          "shared.damage-mult": 0.1,
+          "defense.hardening-per-sec": 4,
+          "defense.hardening-max": 32,
+          "defense.hardening-reset-pct": 0.25,
+          "defense.hardening-max-dr-bonus": 0.06,
+          "defense.hardening-max-dr-ms": 3000
+        },
+        "cannotAttack": false
+      },
+      "bunker": {
+        "stats": {
+          "attack": 20,
+          "onHitDamage": 0,
+          "maxHp": 979,
+          "recovery": 10,
+          "plating": 294,
+          "damageReduction": 0.07,
+          "damageDealtMult": 0.6,
+          "damageTakenMult": 0.645,
+          "dodgeRate": 0,
+          "evadeMitigation": 0,
+          "attacksPerSecond": 0.14501160092807425,
+          "dps": 3.9,
+          "speed": 85,
+          "attackRange": 12
+        },
+        "rawOnHitDamage": 0,
+        "attackCooldownMs": 6896,
+        "passives": {
+          "defense.recovery-active-pct": 0.30000000000000004,
+          "cooldown.empowered-cd-ms": 8000,
+          "cooldown.empowered-mult": 3.5,
+          "shared.damage-mult": 0.1,
+          "defense.hardening-per-sec": 4,
+          "defense.hardening-max": 32,
+          "defense.hardening-reset-pct": 0.25,
+          "defense.hardening-max-dr-bonus": 0.06,
+          "defense.hardening-max-dr-ms": 3000,
+          "core.maxhp-mult": 0.3,
+          "core.plating-mult": 0.4,
+          "core.damage-taken-pct": -0.14,
+          "core.attack-speed-mult": -0.25,
+          "core.speed-mult": -0.1
+        },
+        "cannotAttack": false
+      }
+    },
+    {
+      "armor": "trench-vest-t4",
+      "basic": {
+        "stats": {
+          "attack": 20,
+          "onHitDamage": 0,
+          "maxHp": 486,
+          "recovery": 10,
+          "plating": 94,
+          "damageReduction": 0.39,
+          "damageDealtMult": 1,
+          "damageTakenMult": 1,
+          "dodgeRate": 0,
+          "evadeMitigation": 0,
+          "attacksPerSecond": 0.26001040041601664,
+          "dps": 9.5,
+          "speed": 94,
+          "attackRange": 12
+        },
+        "rawOnHitDamage": 0,
+        "attackCooldownMs": 3846,
+        "passives": {
+          "defense.recovery-active-pct": 0.30000000000000004,
+          "cooldown.empowered-cd-ms": 8000,
+          "cooldown.empowered-mult": 3.5,
+          "shared.damage-mult": 0.1,
+          "defense.sustained-fight-dr-bonus": 0.01,
+          "defense.sustained-fight-dr-max": 0.05,
+          "defense.sustained-fight-ramptime-ms": 10000
+        },
+        "cannotAttack": false
+      },
+      "bunker": {
+        "stats": {
+          "attack": 20,
+          "onHitDamage": 0,
+          "maxHp": 632,
+          "recovery": 10,
+          "plating": 185,
+          "damageReduction": 0.39,
+          "damageDealtMult": 0.6,
+          "damageTakenMult": 0.645,
+          "dodgeRate": 0,
+          "evadeMitigation": 0,
+          "attacksPerSecond": 0.14501160092807425,
+          "dps": 3.9,
+          "speed": 85,
+          "attackRange": 12
+        },
+        "rawOnHitDamage": 0,
+        "attackCooldownMs": 6896,
+        "passives": {
+          "defense.recovery-active-pct": 0.30000000000000004,
+          "cooldown.empowered-cd-ms": 8000,
+          "cooldown.empowered-mult": 3.5,
+          "shared.damage-mult": 0.1,
+          "defense.sustained-fight-dr-bonus": 0.01,
+          "defense.sustained-fight-dr-max": 0.05,
+          "defense.sustained-fight-ramptime-ms": 10000,
+          "core.maxhp-mult": 0.3,
+          "core.plating-mult": 0.4,
+          "core.damage-taken-pct": -0.14,
+          "core.attack-speed-mult": -0.25,
+          "core.speed-mult": -0.1
+        },
+        "cannotAttack": false
+      }
+    }
+  ]
+}

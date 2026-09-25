@@ -9,6 +9,12 @@ Status: current as of 2026-08-08.
 
 ---
 
+## Player defense redesign — proposal (2026-09-25)
+
+**Proposed, not approved or implemented.** The [deep defense proposal](../reports/player-defense-study-2026-09-25/REDESIGN-PROPOSAL.md) reviews all 30 armors, all 12 cores, class bonuses, mitigation ordering and biome threat profiles. Preserve recognizable armor families and give them useful cross-biome applications; narrow plating, bring Jungle evade strength forward, make Desert an opening-protection candidate, and constrain Tundra/Volcano stacking. Remove negative-HP ranged core costs in the candidate and establish ordinary forced-contact survival before tuning monster damage. Numerical seeds need staged validation; no gameplay changes or new bot campaign were performed. See the linked inventory and initial study for source and historical-evidence boundaries.
+
+---
+
 ## 1. Composite (paper-doll) character sprites
 
 **PROMOTED (2026-07-10):** absorbed into `docs/archive/pixellab-pipeline-plan.md`
