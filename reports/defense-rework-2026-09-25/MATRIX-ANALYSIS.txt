@@ -1,0 +1,337 @@
+## Totals
+candidate  {"farmN":576,"farmDeaths":89,"farmKills":8845,"bossN":312,"bossWins":171,"bossDeaths":129,"bigHits":6}
+original   {"farmN":576,"farmDeaths":87,"farmKills":9239,"bossN":312,"bossWins":159,"bossDeaths":143,"bigHits":14}
+pipeline   {"farmN":576,"farmDeaths":94,"farmKills":9203,"bossN":312,"bossWins":140,"bossDeaths":162,"bigHits":14}
+
+## original -> pipeline
+t1                                 {"farmN":108,"deathsA":11,"deathsB":15,"saved":2,"lost":6,"killsA":2179,"killsB":2154,"bossN":60,"winsA":16,"winsB":13}
+t2                                 {"farmN":156,"deathsA":15,"deathsB":16,"saved":2,"lost":3,"killsA":2878,"killsB":2866,"bossN":84,"winsA":34,"winsB":26}
+t3                                 {"farmN":156,"deathsA":37,"deathsB":40,"saved":3,"lost":6,"killsA":1746,"killsB":1724,"bossN":84,"winsA":36,"winsB":28}
+t4                                 {"farmN":156,"deathsA":24,"deathsB":23,"saved":5,"lost":4,"killsA":2436,"killsB":2459,"bossN":84,"winsA":73,"winsB":73}
+
+## original -> pipeline
+apprentice                         {"farmN":96,"deathsA":18,"deathsB":20,"saved":4,"lost":6,"killsA":1609,"killsB":1572,"bossN":52,"winsA":22,"winsB":22}
+conduit                            {"farmN":96,"deathsA":16,"deathsB":18,"saved":1,"lost":3,"killsA":1082,"killsB":1097,"bossN":52,"winsA":15,"winsB":14}
+slinger                            {"farmN":96,"deathsA":9,"deathsB":10,"saved":1,"lost":2,"killsA":1647,"killsB":1652,"bossN":52,"winsA":39,"winsB":33}
+spirit                             {"farmN":96,"deathsA":8,"deathsB":10,"saved":2,"lost":4,"killsA":1841,"killsB":1833,"bossN":52,"winsA":34,"winsB":32}
+squire                             {"farmN":96,"deathsA":16,"deathsB":15,"saved":2,"lost":1,"killsA":1395,"killsB":1392,"bossN":52,"winsA":28,"winsB":20}
+striker                            {"farmN":96,"deathsA":20,"deathsB":21,"saved":2,"lost":3,"killsA":1665,"killsB":1657,"bossN":52,"winsA":21,"winsB":19}
+
+## original -> pipeline
+t1 apprentice                      {"farmN":18,"deathsA":5,"deathsB":7,"saved":0,"lost":2,"killsA":285,"killsB":271,"bossN":10,"winsA":2,"winsB":2}
+t1 conduit                         {"farmN":18,"deathsA":3,"deathsB":3,"saved":1,"lost":1,"killsA":350,"killsB":363,"bossN":10,"winsA":3,"winsB":2}
+t1 slinger                         {"farmN":18,"deathsA":2,"deathsB":1,"saved":1,"lost":0,"killsA":325,"killsB":328,"bossN":10,"winsA":5,"winsB":5}
+t1 spirit                          {"farmN":18,"deathsA":1,"deathsB":2,"saved":0,"lost":1,"killsA":410,"killsB":404,"bossN":10,"winsA":2,"winsB":2}
+t1 squire                          {"farmN":18,"deathsA":0,"deathsB":1,"saved":0,"lost":1,"killsA":422,"killsB":411,"bossN":10,"winsA":4,"winsB":2}
+t1 striker                         {"farmN":18,"deathsA":0,"deathsB":1,"saved":0,"lost":1,"killsA":387,"killsB":377,"bossN":10,"winsA":0,"winsB":0}
+t2 apprentice                      {"farmN":26,"deathsA":3,"deathsB":4,"saved":1,"lost":2,"killsA":506,"killsB":498,"bossN":14,"winsA":2,"winsB":2}
+t2 conduit                         {"farmN":26,"deathsA":1,"deathsB":1,"saved":0,"lost":0,"killsA":336,"killsB":337,"bossN":14,"winsA":2,"winsB":2}
+t2 slinger                         {"farmN":26,"deathsA":1,"deathsB":1,"saved":0,"lost":0,"killsA":555,"killsB":556,"bossN":14,"winsA":12,"winsB":10}
+t2 spirit                          {"farmN":26,"deathsA":0,"deathsB":1,"saved":0,"lost":1,"killsA":590,"killsB":584,"bossN":14,"winsA":12,"winsB":10}
+t2 squire                          {"farmN":26,"deathsA":4,"deathsB":4,"saved":0,"lost":0,"killsA":422,"killsB":419,"bossN":14,"winsA":2,"winsB":0}
+t2 striker                         {"farmN":26,"deathsA":6,"deathsB":5,"saved":1,"lost":0,"killsA":469,"killsB":472,"bossN":14,"winsA":4,"winsB":2}
+t3 apprentice                      {"farmN":26,"deathsA":7,"deathsB":8,"saved":1,"lost":2,"killsA":282,"killsB":266,"bossN":14,"winsA":4,"winsB":4}
+t3 conduit                         {"farmN":26,"deathsA":10,"deathsB":11,"saved":0,"lost":1,"killsA":141,"killsB":139,"bossN":14,"winsA":2,"winsB":2}
+t3 slinger                         {"farmN":26,"deathsA":4,"deathsB":6,"saved":0,"lost":2,"killsA":309,"killsB":300,"bossN":14,"winsA":10,"winsB":6}
+t3 spirit                          {"farmN":26,"deathsA":3,"deathsB":1,"saved":2,"lost":0,"killsA":399,"killsB":421,"bossN":14,"winsA":6,"winsB":6}
+t3 squire                          {"farmN":26,"deathsA":5,"deathsB":5,"saved":0,"lost":0,"killsA":270,"killsB":264,"bossN":14,"winsA":10,"winsB":6}
+t3 striker                         {"farmN":26,"deathsA":8,"deathsB":9,"saved":0,"lost":1,"killsA":345,"killsB":334,"bossN":14,"winsA":4,"winsB":4}
+t4 apprentice                      {"farmN":26,"deathsA":3,"deathsB":1,"saved":2,"lost":0,"killsA":536,"killsB":537,"bossN":14,"winsA":14,"winsB":14}
+t4 conduit                         {"farmN":26,"deathsA":2,"deathsB":3,"saved":0,"lost":1,"killsA":255,"killsB":258,"bossN":14,"winsA":8,"winsB":8}
+t4 slinger                         {"farmN":26,"deathsA":2,"deathsB":2,"saved":0,"lost":0,"killsA":458,"killsB":468,"bossN":14,"winsA":12,"winsB":12}
+t4 spirit                          {"farmN":26,"deathsA":4,"deathsB":6,"saved":0,"lost":2,"killsA":442,"killsB":424,"bossN":14,"winsA":14,"winsB":14}
+t4 squire                          {"farmN":26,"deathsA":7,"deathsB":5,"saved":2,"lost":0,"killsA":281,"killsB":298,"bossN":14,"winsA":12,"winsB":12}
+t4 striker                         {"farmN":26,"deathsA":6,"deathsB":6,"saved":1,"lost":1,"killsA":464,"killsB":474,"bossN":14,"winsA":13,"winsB":13}
+
+## original -> pipeline
+boss t1 forest-vest-t1             {"farmN":0,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":0,"killsB":0,"bossN":30,"winsA":9,"winsB":9}
+boss t1 mountain-vest-t1           {"farmN":0,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":0,"killsB":0,"bossN":30,"winsA":7,"winsB":4}
+boss t2 jungle-vest-t2             {"farmN":0,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":0,"killsB":0,"bossN":42,"winsA":26,"winsB":22}
+boss t2 mountain-vest-t2           {"farmN":0,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":0,"killsB":0,"bossN":42,"winsA":8,"winsB":4}
+boss t3 jungle-vest-t3             {"farmN":0,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":0,"killsB":0,"bossN":42,"winsA":20,"winsB":16}
+boss t3 mountain-vest-t3           {"farmN":0,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":0,"killsB":0,"bossN":42,"winsA":16,"winsB":12}
+boss t4 jungle-vest-t4             {"farmN":0,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":0,"killsB":0,"bossN":42,"winsA":40,"winsB":40}
+boss t4 mountain-vest-t4           {"farmN":0,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":0,"killsB":0,"bossN":42,"winsA":33,"winsB":33}
+home t1 cave-vest-t1               {"farmN":12,"deathsA":0,"deathsB":1,"saved":0,"lost":1,"killsA":135,"killsB":133,"bossN":0,"winsA":0,"winsB":0}
+home t1 forest-vest-t1             {"farmN":12,"deathsA":5,"deathsB":6,"saved":0,"lost":1,"killsA":212,"killsB":211,"bossN":0,"winsA":0,"winsB":0}
+home t1 mountain-vest-t1           {"farmN":12,"deathsA":1,"deathsB":5,"saved":0,"lost":4,"killsA":162,"killsB":115,"bossN":0,"winsA":0,"winsB":0}
+home t1 plains-vest-t1             {"farmN":12,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":465,"killsB":462,"bossN":0,"winsA":0,"winsB":0}
+home t1 swamp-vest-t1              {"farmN":12,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":220,"killsB":220,"bossN":0,"winsA":0,"winsB":0}
+home t2 cave-vest-t2               {"farmN":12,"deathsA":1,"deathsB":2,"saved":1,"lost":2,"killsA":123,"killsB":121,"bossN":0,"winsA":0,"winsB":0}
+home t2 desert-vest-t2             {"farmN":12,"deathsA":5,"deathsB":5,"saved":0,"lost":0,"killsA":71,"killsB":68,"bossN":0,"winsA":0,"winsB":0}
+home t2 forest-vest-t2             {"farmN":12,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":235,"killsB":239,"bossN":0,"winsA":0,"winsB":0}
+home t2 jungle-vest-t2             {"farmN":12,"deathsA":0,"deathsB":1,"saved":0,"lost":1,"killsA":138,"killsB":134,"bossN":0,"winsA":0,"winsB":0}
+home t2 mountain-vest-t2           {"farmN":12,"deathsA":1,"deathsB":1,"saved":0,"lost":0,"killsA":134,"killsB":132,"bossN":0,"winsA":0,"winsB":0}
+home t2 plains-vest-t2             {"farmN":12,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":584,"killsB":584,"bossN":0,"winsA":0,"winsB":0}
+home t2 swamp-vest-t2              {"farmN":12,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":216,"killsB":214,"bossN":0,"winsA":0,"winsB":0}
+home t3 cave-vest-t3               {"farmN":12,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":131,"killsB":128,"bossN":0,"winsA":0,"winsB":0}
+home t3 desert-vest-t3             {"farmN":12,"deathsA":4,"deathsB":4,"saved":0,"lost":0,"killsA":65,"killsB":63,"bossN":0,"winsA":0,"winsB":0}
+home t3 jungle-vest-t3             {"farmN":12,"deathsA":5,"deathsB":6,"saved":2,"lost":3,"killsA":105,"killsB":111,"bossN":0,"winsA":0,"winsB":0}
+home t3 mountain-vest-t3           {"farmN":12,"deathsA":1,"deathsB":0,"saved":1,"lost":0,"killsA":89,"killsB":88,"bossN":0,"winsA":0,"winsB":0}
+home t3 swamp-vest-t3              {"farmN":12,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":171,"killsB":170,"bossN":0,"winsA":0,"winsB":0}
+home t3 tundra-vest-t3             {"farmN":12,"deathsA":1,"deathsB":1,"saved":0,"lost":0,"killsA":116,"killsB":116,"bossN":0,"winsA":0,"winsB":0}
+home t3 volcanic-vest-t3           {"farmN":12,"deathsA":2,"deathsB":3,"saved":0,"lost":1,"killsA":370,"killsB":362,"bossN":0,"winsA":0,"winsB":0}
+home t4 desert-vest-t4             {"farmN":12,"deathsA":1,"deathsB":2,"saved":0,"lost":1,"killsA":117,"killsB":107,"bossN":0,"winsA":0,"winsB":0}
+home t4 graveyard-vest-t4          {"farmN":12,"deathsA":5,"deathsB":5,"saved":0,"lost":0,"killsA":315,"killsB":314,"bossN":0,"winsA":0,"winsB":0}
+home t4 jungle-vest-t4             {"farmN":12,"deathsA":3,"deathsB":3,"saved":1,"lost":1,"killsA":107,"killsB":116,"bossN":0,"winsA":0,"winsB":0}
+home t4 mountain-vest-t4           {"farmN":12,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":104,"killsB":117,"bossN":0,"winsA":0,"winsB":0}
+home t4 trench-vest-t4             {"farmN":12,"deathsA":3,"deathsB":4,"saved":0,"lost":1,"killsA":33,"killsB":29,"bossN":0,"winsA":0,"winsB":0}
+home t4 tundra-vest-t4             {"farmN":12,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":123,"killsB":123,"bossN":0,"winsA":0,"winsB":0}
+home t4 volcanic-vest-t4           {"farmN":12,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":501,"killsB":512,"bossN":0,"winsA":0,"winsB":0}
+ref t1 forest-vest-t1              {"farmN":24,"deathsA":3,"deathsB":2,"saved":1,"lost":0,"killsA":456,"killsB":473,"bossN":0,"winsA":0,"winsB":0}
+ref t1 mountain-vest-t1            {"farmN":24,"deathsA":2,"deathsB":1,"saved":1,"lost":0,"killsA":529,"killsB":540,"bossN":0,"winsA":0,"winsB":0}
+ref t2 jungle-vest-t2              {"farmN":36,"deathsA":3,"deathsB":2,"saved":1,"lost":0,"killsA":790,"killsB":788,"bossN":0,"winsA":0,"winsB":0}
+ref t2 mountain-vest-t2            {"farmN":36,"deathsA":5,"deathsB":5,"saved":0,"lost":0,"killsA":587,"killsB":586,"bossN":0,"winsA":0,"winsB":0}
+ref t3 jungle-vest-t3              {"farmN":36,"deathsA":8,"deathsB":9,"saved":0,"lost":1,"killsA":413,"killsB":410,"bossN":0,"winsA":0,"winsB":0}
+ref t3 mountain-vest-t3            {"farmN":36,"deathsA":16,"deathsB":17,"saved":0,"lost":1,"killsA":286,"killsB":276,"bossN":0,"winsA":0,"winsB":0}
+ref t4 jungle-vest-t4              {"farmN":36,"deathsA":1,"deathsB":0,"saved":1,"lost":0,"killsA":722,"killsB":710,"bossN":0,"winsA":0,"winsB":0}
+ref t4 mountain-vest-t4            {"farmN":36,"deathsA":11,"deathsB":9,"saved":3,"lost":1,"killsA":414,"killsB":431,"bossN":0,"winsA":0,"winsB":0}
+
+## original -> pipeline
+melee+conduit t1                   {"farmN":54,"deathsA":3,"deathsB":5,"saved":1,"lost":3,"killsA":1159,"killsB":1151,"bossN":30,"winsA":7,"winsB":4}
+melee+conduit t2                   {"farmN":78,"deathsA":11,"deathsB":10,"saved":1,"lost":0,"killsA":1227,"killsB":1228,"bossN":42,"winsA":8,"winsB":4}
+melee+conduit t3                   {"farmN":78,"deathsA":23,"deathsB":25,"saved":0,"lost":2,"killsA":756,"killsB":737,"bossN":42,"winsA":16,"winsB":12}
+melee+conduit t4                   {"farmN":78,"deathsA":15,"deathsB":14,"saved":3,"lost":2,"killsA":1000,"killsB":1030,"bossN":42,"winsA":33,"winsB":33}
+ranged/caster t1                   {"farmN":54,"deathsA":8,"deathsB":10,"saved":1,"lost":3,"killsA":1020,"killsB":1003,"bossN":30,"winsA":9,"winsB":9}
+ranged/caster t2                   {"farmN":78,"deathsA":4,"deathsB":6,"saved":1,"lost":3,"killsA":1651,"killsB":1638,"bossN":42,"winsA":26,"winsB":22}
+ranged/caster t3                   {"farmN":78,"deathsA":14,"deathsB":15,"saved":3,"lost":4,"killsA":990,"killsB":987,"bossN":42,"winsA":20,"winsB":16}
+ranged/caster t4                   {"farmN":78,"deathsA":9,"deathsB":9,"saved":2,"lost":2,"killsA":1436,"killsB":1429,"bossN":42,"winsA":40,"winsB":40}
+
+## pipeline -> candidate
+t1                                 {"farmN":108,"deathsA":15,"deathsB":14,"saved":6,"lost":5,"killsA":2154,"killsB":2112,"bossN":60,"winsA":13,"winsB":22}
+t2                                 {"farmN":156,"deathsA":16,"deathsB":24,"saved":3,"lost":11,"killsA":2866,"killsB":2724,"bossN":84,"winsA":26,"winsB":26}
+t3                                 {"farmN":156,"deathsA":40,"deathsB":35,"saved":17,"lost":12,"killsA":1724,"killsB":1665,"bossN":84,"winsA":28,"winsB":52}
+t4                                 {"farmN":156,"deathsA":23,"deathsB":16,"saved":17,"lost":10,"killsA":2459,"killsB":2344,"bossN":84,"winsA":73,"winsB":71}
+
+## pipeline -> candidate
+apprentice                         {"farmN":96,"deathsA":20,"deathsB":25,"saved":8,"lost":13,"killsA":1572,"killsB":1418,"bossN":52,"winsA":22,"winsB":20}
+conduit                            {"farmN":96,"deathsA":18,"deathsB":15,"saved":6,"lost":3,"killsA":1097,"killsB":1094,"bossN":52,"winsA":14,"winsB":14}
+slinger                            {"farmN":96,"deathsA":10,"deathsB":12,"saved":2,"lost":4,"killsA":1652,"killsB":1605,"bossN":52,"winsA":33,"winsB":36}
+spirit                             {"farmN":96,"deathsA":10,"deathsB":16,"saved":7,"lost":13,"killsA":1833,"killsB":1600,"bossN":52,"winsA":32,"winsB":26}
+squire                             {"farmN":96,"deathsA":15,"deathsB":10,"saved":8,"lost":3,"killsA":1392,"killsB":1383,"bossN":52,"winsA":20,"winsB":38}
+striker                            {"farmN":96,"deathsA":21,"deathsB":11,"saved":12,"lost":2,"killsA":1657,"killsB":1745,"bossN":52,"winsA":19,"winsB":37}
+
+## pipeline -> candidate
+t1 apprentice                      {"farmN":18,"deathsA":7,"deathsB":4,"saved":3,"lost":0,"killsA":271,"killsB":315,"bossN":10,"winsA":2,"winsB":2}
+t1 conduit                         {"farmN":18,"deathsA":3,"deathsB":3,"saved":1,"lost":1,"killsA":363,"killsB":332,"bossN":10,"winsA":2,"winsB":2}
+t1 slinger                         {"farmN":18,"deathsA":1,"deathsB":3,"saved":0,"lost":2,"killsA":328,"killsB":308,"bossN":10,"winsA":5,"winsB":4}
+t1 spirit                          {"farmN":18,"deathsA":2,"deathsB":3,"saved":1,"lost":2,"killsA":404,"killsB":380,"bossN":10,"winsA":2,"winsB":2}
+t1 squire                          {"farmN":18,"deathsA":1,"deathsB":0,"saved":1,"lost":0,"killsA":411,"killsB":410,"bossN":10,"winsA":2,"winsB":6}
+t1 striker                         {"farmN":18,"deathsA":1,"deathsB":1,"saved":0,"lost":0,"killsA":377,"killsB":367,"bossN":10,"winsA":0,"winsB":6}
+t2 apprentice                      {"farmN":26,"deathsA":4,"deathsB":8,"saved":2,"lost":6,"killsA":498,"killsB":429,"bossN":14,"winsA":2,"winsB":0}
+t2 conduit                         {"farmN":26,"deathsA":1,"deathsB":2,"saved":0,"lost":1,"killsA":337,"killsB":337,"bossN":14,"winsA":2,"winsB":4}
+t2 slinger                         {"farmN":26,"deathsA":1,"deathsB":3,"saved":0,"lost":2,"killsA":556,"killsB":554,"bossN":14,"winsA":10,"winsB":6}
+t2 spirit                          {"farmN":26,"deathsA":1,"deathsB":1,"saved":1,"lost":1,"killsA":584,"killsB":565,"bossN":14,"winsA":10,"winsB":4}
+t2 squire                          {"farmN":26,"deathsA":4,"deathsB":4,"saved":0,"lost":0,"killsA":419,"killsB":402,"bossN":14,"winsA":0,"winsB":6}
+t2 striker                         {"farmN":26,"deathsA":5,"deathsB":6,"saved":0,"lost":1,"killsA":472,"killsB":437,"bossN":14,"winsA":2,"winsB":6}
+t3 apprentice                      {"farmN":26,"deathsA":8,"deathsB":10,"saved":2,"lost":4,"killsA":266,"killsB":205,"bossN":14,"winsA":4,"winsB":4}
+t3 conduit                         {"farmN":26,"deathsA":11,"deathsB":8,"saved":3,"lost":0,"killsA":139,"killsB":147,"bossN":14,"winsA":2,"winsB":0}
+t3 slinger                         {"farmN":26,"deathsA":6,"deathsB":5,"saved":1,"lost":0,"killsA":300,"killsB":284,"bossN":14,"winsA":6,"winsB":12}
+t3 spirit                          {"farmN":26,"deathsA":1,"deathsB":5,"saved":1,"lost":5,"killsA":421,"killsB":341,"bossN":14,"winsA":6,"winsB":8}
+t3 squire                          {"farmN":26,"deathsA":5,"deathsB":3,"saved":4,"lost":2,"killsA":264,"killsB":279,"bossN":14,"winsA":6,"winsB":14}
+t3 striker                         {"farmN":26,"deathsA":9,"deathsB":4,"saved":6,"lost":1,"killsA":334,"killsB":409,"bossN":14,"winsA":4,"winsB":14}
+t4 apprentice                      {"farmN":26,"deathsA":1,"deathsB":3,"saved":1,"lost":3,"killsA":537,"killsB":469,"bossN":14,"winsA":14,"winsB":14}
+t4 conduit                         {"farmN":26,"deathsA":3,"deathsB":2,"saved":2,"lost":1,"killsA":258,"killsB":278,"bossN":14,"winsA":8,"winsB":8}
+t4 slinger                         {"farmN":26,"deathsA":2,"deathsB":1,"saved":1,"lost":0,"killsA":468,"killsB":459,"bossN":14,"winsA":12,"winsB":14}
+t4 spirit                          {"farmN":26,"deathsA":6,"deathsB":7,"saved":4,"lost":5,"killsA":424,"killsB":314,"bossN":14,"winsA":14,"winsB":12}
+t4 squire                          {"farmN":26,"deathsA":5,"deathsB":3,"saved":3,"lost":1,"killsA":298,"killsB":292,"bossN":14,"winsA":12,"winsB":12}
+t4 striker                         {"farmN":26,"deathsA":6,"deathsB":0,"saved":6,"lost":0,"killsA":474,"killsB":532,"bossN":14,"winsA":13,"winsB":11}
+
+## pipeline -> candidate
+boss t1 forest-vest-t1             {"farmN":0,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":0,"killsB":0,"bossN":30,"winsA":9,"winsB":8}
+boss t1 mountain-vest-t1           {"farmN":0,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":0,"killsB":0,"bossN":30,"winsA":4,"winsB":14}
+boss t2 jungle-vest-t2             {"farmN":0,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":0,"killsB":0,"bossN":42,"winsA":22,"winsB":10}
+boss t2 mountain-vest-t2           {"farmN":0,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":0,"killsB":0,"bossN":42,"winsA":4,"winsB":16}
+boss t3 jungle-vest-t3             {"farmN":0,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":0,"killsB":0,"bossN":42,"winsA":16,"winsB":24}
+boss t3 mountain-vest-t3           {"farmN":0,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":0,"killsB":0,"bossN":42,"winsA":12,"winsB":28}
+boss t4 jungle-vest-t4             {"farmN":0,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":0,"killsB":0,"bossN":42,"winsA":40,"winsB":40}
+boss t4 mountain-vest-t4           {"farmN":0,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":0,"killsB":0,"bossN":42,"winsA":33,"winsB":31}
+home t1 cave-vest-t1               {"farmN":12,"deathsA":1,"deathsB":0,"saved":1,"lost":0,"killsA":133,"killsB":138,"bossN":0,"winsA":0,"winsB":0}
+home t1 forest-vest-t1             {"farmN":12,"deathsA":6,"deathsB":6,"saved":2,"lost":2,"killsA":211,"killsB":217,"bossN":0,"winsA":0,"winsB":0}
+home t1 mountain-vest-t1           {"farmN":12,"deathsA":5,"deathsB":3,"saved":3,"lost":1,"killsA":115,"killsB":152,"bossN":0,"winsA":0,"winsB":0}
+home t1 plains-vest-t1             {"farmN":12,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":462,"killsB":414,"bossN":0,"winsA":0,"winsB":0}
+home t1 swamp-vest-t1              {"farmN":12,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":220,"killsB":219,"bossN":0,"winsA":0,"winsB":0}
+home t2 cave-vest-t2               {"farmN":12,"deathsA":2,"deathsB":0,"saved":2,"lost":0,"killsA":121,"killsB":139,"bossN":0,"winsA":0,"winsB":0}
+home t2 desert-vest-t2             {"farmN":12,"deathsA":5,"deathsB":8,"saved":0,"lost":3,"killsA":68,"killsB":50,"bossN":0,"winsA":0,"winsB":0}
+home t2 forest-vest-t2             {"farmN":12,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":239,"killsB":222,"bossN":0,"winsA":0,"winsB":0}
+home t2 jungle-vest-t2             {"farmN":12,"deathsA":1,"deathsB":3,"saved":1,"lost":3,"killsA":134,"killsB":120,"bossN":0,"winsA":0,"winsB":0}
+home t2 mountain-vest-t2           {"farmN":12,"deathsA":1,"deathsB":1,"saved":0,"lost":0,"killsA":132,"killsB":140,"bossN":0,"winsA":0,"winsB":0}
+home t2 plains-vest-t2             {"farmN":12,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":584,"killsB":543,"bossN":0,"winsA":0,"winsB":0}
+home t2 swamp-vest-t2              {"farmN":12,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":214,"killsB":216,"bossN":0,"winsA":0,"winsB":0}
+home t3 cave-vest-t3               {"farmN":12,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":128,"killsB":129,"bossN":0,"winsA":0,"winsB":0}
+home t3 desert-vest-t3             {"farmN":12,"deathsA":4,"deathsB":6,"saved":0,"lost":2,"killsA":63,"killsB":56,"bossN":0,"winsA":0,"winsB":0}
+home t3 jungle-vest-t3             {"farmN":12,"deathsA":6,"deathsB":5,"saved":2,"lost":1,"killsA":111,"killsB":96,"bossN":0,"winsA":0,"winsB":0}
+home t3 mountain-vest-t3           {"farmN":12,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":88,"killsB":101,"bossN":0,"winsA":0,"winsB":0}
+home t3 swamp-vest-t3              {"farmN":12,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":170,"killsB":171,"bossN":0,"winsA":0,"winsB":0}
+home t3 tundra-vest-t3             {"farmN":12,"deathsA":1,"deathsB":2,"saved":1,"lost":2,"killsA":116,"killsB":103,"bossN":0,"winsA":0,"winsB":0}
+home t3 volcanic-vest-t3           {"farmN":12,"deathsA":3,"deathsB":8,"saved":0,"lost":5,"killsA":362,"killsB":230,"bossN":0,"winsA":0,"winsB":0}
+home t4 desert-vest-t4             {"farmN":12,"deathsA":2,"deathsB":0,"saved":2,"lost":0,"killsA":107,"killsB":123,"bossN":0,"winsA":0,"winsB":0}
+home t4 graveyard-vest-t4          {"farmN":12,"deathsA":5,"deathsB":3,"saved":4,"lost":2,"killsA":314,"killsB":336,"bossN":0,"winsA":0,"winsB":0}
+home t4 jungle-vest-t4             {"farmN":12,"deathsA":3,"deathsB":3,"saved":1,"lost":1,"killsA":116,"killsB":99,"bossN":0,"winsA":0,"winsB":0}
+home t4 mountain-vest-t4           {"farmN":12,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":117,"killsB":109,"bossN":0,"winsA":0,"winsB":0}
+home t4 trench-vest-t4             {"farmN":12,"deathsA":4,"deathsB":0,"saved":4,"lost":0,"killsA":29,"killsB":35,"bossN":0,"winsA":0,"winsB":0}
+home t4 tundra-vest-t4             {"farmN":12,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":123,"killsB":122,"bossN":0,"winsA":0,"winsB":0}
+home t4 volcanic-vest-t4           {"farmN":12,"deathsA":0,"deathsB":2,"saved":0,"lost":2,"killsA":512,"killsB":416,"bossN":0,"winsA":0,"winsB":0}
+ref t1 forest-vest-t1              {"farmN":24,"deathsA":2,"deathsB":3,"saved":0,"lost":1,"killsA":473,"killsB":453,"bossN":0,"winsA":0,"winsB":0}
+ref t1 mountain-vest-t1            {"farmN":24,"deathsA":1,"deathsB":2,"saved":0,"lost":1,"killsA":540,"killsB":519,"bossN":0,"winsA":0,"winsB":0}
+ref t2 jungle-vest-t2              {"farmN":36,"deathsA":2,"deathsB":7,"saved":0,"lost":5,"killsA":788,"killsB":728,"bossN":0,"winsA":0,"winsB":0}
+ref t2 mountain-vest-t2            {"farmN":36,"deathsA":5,"deathsB":5,"saved":0,"lost":0,"killsA":586,"killsB":566,"bossN":0,"winsA":0,"winsB":0}
+ref t3 jungle-vest-t3              {"farmN":36,"deathsA":9,"deathsB":8,"saved":3,"lost":2,"killsA":410,"killsB":375,"bossN":0,"winsA":0,"winsB":0}
+ref t3 mountain-vest-t3            {"farmN":36,"deathsA":17,"deathsB":6,"saved":11,"lost":0,"killsA":276,"killsB":404,"bossN":0,"winsA":0,"winsB":0}
+ref t4 jungle-vest-t4              {"farmN":36,"deathsA":0,"deathsB":4,"saved":0,"lost":4,"killsA":710,"killsB":602,"bossN":0,"winsA":0,"winsB":0}
+ref t4 mountain-vest-t4            {"farmN":36,"deathsA":9,"deathsB":4,"saved":6,"lost":1,"killsA":431,"killsB":502,"bossN":0,"winsA":0,"winsB":0}
+
+## pipeline -> candidate
+melee+conduit t1                   {"farmN":54,"deathsA":5,"deathsB":4,"saved":2,"lost":1,"killsA":1151,"killsB":1109,"bossN":30,"winsA":4,"winsB":14}
+melee+conduit t2                   {"farmN":78,"deathsA":10,"deathsB":12,"saved":0,"lost":2,"killsA":1228,"killsB":1176,"bossN":42,"winsA":4,"winsB":16}
+melee+conduit t3                   {"farmN":78,"deathsA":25,"deathsB":15,"saved":13,"lost":3,"killsA":737,"killsB":835,"bossN":42,"winsA":12,"winsB":28}
+melee+conduit t4                   {"farmN":78,"deathsA":14,"deathsB":5,"saved":11,"lost":2,"killsA":1030,"killsB":1102,"bossN":42,"winsA":33,"winsB":31}
+ranged/caster t1                   {"farmN":54,"deathsA":10,"deathsB":10,"saved":4,"lost":4,"killsA":1003,"killsB":1003,"bossN":30,"winsA":9,"winsB":8}
+ranged/caster t2                   {"farmN":78,"deathsA":6,"deathsB":12,"saved":3,"lost":9,"killsA":1638,"killsB":1548,"bossN":42,"winsA":22,"winsB":10}
+ranged/caster t3                   {"farmN":78,"deathsA":15,"deathsB":20,"saved":4,"lost":9,"killsA":987,"killsB":830,"bossN":42,"winsA":16,"winsB":24}
+ranged/caster t4                   {"farmN":78,"deathsA":9,"deathsB":11,"saved":6,"lost":8,"killsA":1429,"killsB":1242,"bossN":42,"winsA":40,"winsB":40}
+
+## original -> candidate
+t1                                 {"farmN":108,"deathsA":11,"deathsB":14,"saved":2,"lost":5,"killsA":2179,"killsB":2112,"bossN":60,"winsA":16,"winsB":22}
+t2                                 {"farmN":156,"deathsA":15,"deathsB":24,"saved":1,"lost":10,"killsA":2878,"killsB":2724,"bossN":84,"winsA":34,"winsB":26}
+t3                                 {"farmN":156,"deathsA":37,"deathsB":35,"saved":16,"lost":14,"killsA":1746,"killsB":1665,"bossN":84,"winsA":36,"winsB":52}
+t4                                 {"farmN":156,"deathsA":24,"deathsB":16,"saved":18,"lost":10,"killsA":2436,"killsB":2344,"bossN":84,"winsA":73,"winsB":71}
+
+## original -> candidate
+apprentice                         {"farmN":96,"deathsA":18,"deathsB":25,"saved":6,"lost":13,"killsA":1609,"killsB":1418,"bossN":52,"winsA":22,"winsB":20}
+conduit                            {"farmN":96,"deathsA":16,"deathsB":15,"saved":3,"lost":2,"killsA":1082,"killsB":1094,"bossN":52,"winsA":15,"winsB":14}
+slinger                            {"farmN":96,"deathsA":9,"deathsB":12,"saved":3,"lost":6,"killsA":1647,"killsB":1605,"bossN":52,"winsA":39,"winsB":36}
+spirit                             {"farmN":96,"deathsA":8,"deathsB":16,"saved":4,"lost":12,"killsA":1841,"killsB":1600,"bossN":52,"winsA":34,"winsB":26}
+squire                             {"farmN":96,"deathsA":16,"deathsB":10,"saved":9,"lost":3,"killsA":1395,"killsB":1383,"bossN":52,"winsA":28,"winsB":38}
+striker                            {"farmN":96,"deathsA":20,"deathsB":11,"saved":12,"lost":3,"killsA":1665,"killsB":1745,"bossN":52,"winsA":21,"winsB":37}
+
+## original -> candidate
+t1 apprentice                      {"farmN":18,"deathsA":5,"deathsB":4,"saved":1,"lost":0,"killsA":285,"killsB":315,"bossN":10,"winsA":2,"winsB":2}
+t1 conduit                         {"farmN":18,"deathsA":3,"deathsB":3,"saved":0,"lost":0,"killsA":350,"killsB":332,"bossN":10,"winsA":3,"winsB":2}
+t1 slinger                         {"farmN":18,"deathsA":2,"deathsB":3,"saved":1,"lost":2,"killsA":325,"killsB":308,"bossN":10,"winsA":5,"winsB":4}
+t1 spirit                          {"farmN":18,"deathsA":1,"deathsB":3,"saved":0,"lost":2,"killsA":410,"killsB":380,"bossN":10,"winsA":2,"winsB":2}
+t1 squire                          {"farmN":18,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":422,"killsB":410,"bossN":10,"winsA":4,"winsB":6}
+t1 striker                         {"farmN":18,"deathsA":0,"deathsB":1,"saved":0,"lost":1,"killsA":387,"killsB":367,"bossN":10,"winsA":0,"winsB":6}
+t2 apprentice                      {"farmN":26,"deathsA":3,"deathsB":8,"saved":0,"lost":5,"killsA":506,"killsB":429,"bossN":14,"winsA":2,"winsB":0}
+t2 conduit                         {"farmN":26,"deathsA":1,"deathsB":2,"saved":0,"lost":1,"killsA":336,"killsB":337,"bossN":14,"winsA":2,"winsB":4}
+t2 slinger                         {"farmN":26,"deathsA":1,"deathsB":3,"saved":0,"lost":2,"killsA":555,"killsB":554,"bossN":14,"winsA":12,"winsB":6}
+t2 spirit                          {"farmN":26,"deathsA":0,"deathsB":1,"saved":0,"lost":1,"killsA":590,"killsB":565,"bossN":14,"winsA":12,"winsB":4}
+t2 squire                          {"farmN":26,"deathsA":4,"deathsB":4,"saved":0,"lost":0,"killsA":422,"killsB":402,"bossN":14,"winsA":2,"winsB":6}
+t2 striker                         {"farmN":26,"deathsA":6,"deathsB":6,"saved":1,"lost":1,"killsA":469,"killsB":437,"bossN":14,"winsA":4,"winsB":6}
+t3 apprentice                      {"farmN":26,"deathsA":7,"deathsB":10,"saved":2,"lost":5,"killsA":282,"killsB":205,"bossN":14,"winsA":4,"winsB":4}
+t3 conduit                         {"farmN":26,"deathsA":10,"deathsB":8,"saved":2,"lost":0,"killsA":141,"killsB":147,"bossN":14,"winsA":2,"winsB":0}
+t3 slinger                         {"farmN":26,"deathsA":4,"deathsB":5,"saved":1,"lost":2,"killsA":309,"killsB":284,"bossN":14,"winsA":10,"winsB":12}
+t3 spirit                          {"farmN":26,"deathsA":3,"deathsB":5,"saved":2,"lost":4,"killsA":399,"killsB":341,"bossN":14,"winsA":6,"winsB":8}
+t3 squire                          {"farmN":26,"deathsA":5,"deathsB":3,"saved":4,"lost":2,"killsA":270,"killsB":279,"bossN":14,"winsA":10,"winsB":14}
+t3 striker                         {"farmN":26,"deathsA":8,"deathsB":4,"saved":5,"lost":1,"killsA":345,"killsB":409,"bossN":14,"winsA":4,"winsB":14}
+t4 apprentice                      {"farmN":26,"deathsA":3,"deathsB":3,"saved":3,"lost":3,"killsA":536,"killsB":469,"bossN":14,"winsA":14,"winsB":14}
+t4 conduit                         {"farmN":26,"deathsA":2,"deathsB":2,"saved":1,"lost":1,"killsA":255,"killsB":278,"bossN":14,"winsA":8,"winsB":8}
+t4 slinger                         {"farmN":26,"deathsA":2,"deathsB":1,"saved":1,"lost":0,"killsA":458,"killsB":459,"bossN":14,"winsA":12,"winsB":14}
+t4 spirit                          {"farmN":26,"deathsA":4,"deathsB":7,"saved":2,"lost":5,"killsA":442,"killsB":314,"bossN":14,"winsA":14,"winsB":12}
+t4 squire                          {"farmN":26,"deathsA":7,"deathsB":3,"saved":5,"lost":1,"killsA":281,"killsB":292,"bossN":14,"winsA":12,"winsB":12}
+t4 striker                         {"farmN":26,"deathsA":6,"deathsB":0,"saved":6,"lost":0,"killsA":464,"killsB":532,"bossN":14,"winsA":13,"winsB":11}
+
+## original -> candidate
+boss t1 forest-vest-t1             {"farmN":0,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":0,"killsB":0,"bossN":30,"winsA":9,"winsB":8}
+boss t1 mountain-vest-t1           {"farmN":0,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":0,"killsB":0,"bossN":30,"winsA":7,"winsB":14}
+boss t2 jungle-vest-t2             {"farmN":0,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":0,"killsB":0,"bossN":42,"winsA":26,"winsB":10}
+boss t2 mountain-vest-t2           {"farmN":0,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":0,"killsB":0,"bossN":42,"winsA":8,"winsB":16}
+boss t3 jungle-vest-t3             {"farmN":0,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":0,"killsB":0,"bossN":42,"winsA":20,"winsB":24}
+boss t3 mountain-vest-t3           {"farmN":0,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":0,"killsB":0,"bossN":42,"winsA":16,"winsB":28}
+boss t4 jungle-vest-t4             {"farmN":0,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":0,"killsB":0,"bossN":42,"winsA":40,"winsB":40}
+boss t4 mountain-vest-t4           {"farmN":0,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":0,"killsB":0,"bossN":42,"winsA":33,"winsB":31}
+home t1 cave-vest-t1               {"farmN":12,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":135,"killsB":138,"bossN":0,"winsA":0,"winsB":0}
+home t1 forest-vest-t1             {"farmN":12,"deathsA":5,"deathsB":6,"saved":1,"lost":2,"killsA":212,"killsB":217,"bossN":0,"winsA":0,"winsB":0}
+home t1 mountain-vest-t1           {"farmN":12,"deathsA":1,"deathsB":3,"saved":0,"lost":2,"killsA":162,"killsB":152,"bossN":0,"winsA":0,"winsB":0}
+home t1 plains-vest-t1             {"farmN":12,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":465,"killsB":414,"bossN":0,"winsA":0,"winsB":0}
+home t1 swamp-vest-t1              {"farmN":12,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":220,"killsB":219,"bossN":0,"winsA":0,"winsB":0}
+home t2 cave-vest-t2               {"farmN":12,"deathsA":1,"deathsB":0,"saved":1,"lost":0,"killsA":123,"killsB":139,"bossN":0,"winsA":0,"winsB":0}
+home t2 desert-vest-t2             {"farmN":12,"deathsA":5,"deathsB":8,"saved":0,"lost":3,"killsA":71,"killsB":50,"bossN":0,"winsA":0,"winsB":0}
+home t2 forest-vest-t2             {"farmN":12,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":235,"killsB":222,"bossN":0,"winsA":0,"winsB":0}
+home t2 jungle-vest-t2             {"farmN":12,"deathsA":0,"deathsB":3,"saved":0,"lost":3,"killsA":138,"killsB":120,"bossN":0,"winsA":0,"winsB":0}
+home t2 mountain-vest-t2           {"farmN":12,"deathsA":1,"deathsB":1,"saved":0,"lost":0,"killsA":134,"killsB":140,"bossN":0,"winsA":0,"winsB":0}
+home t2 plains-vest-t2             {"farmN":12,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":584,"killsB":543,"bossN":0,"winsA":0,"winsB":0}
+home t2 swamp-vest-t2              {"farmN":12,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":216,"killsB":216,"bossN":0,"winsA":0,"winsB":0}
+home t3 cave-vest-t3               {"farmN":12,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":131,"killsB":129,"bossN":0,"winsA":0,"winsB":0}
+home t3 desert-vest-t3             {"farmN":12,"deathsA":4,"deathsB":6,"saved":0,"lost":2,"killsA":65,"killsB":56,"bossN":0,"winsA":0,"winsB":0}
+home t3 jungle-vest-t3             {"farmN":12,"deathsA":5,"deathsB":5,"saved":2,"lost":2,"killsA":105,"killsB":96,"bossN":0,"winsA":0,"winsB":0}
+home t3 mountain-vest-t3           {"farmN":12,"deathsA":1,"deathsB":0,"saved":1,"lost":0,"killsA":89,"killsB":101,"bossN":0,"winsA":0,"winsB":0}
+home t3 swamp-vest-t3              {"farmN":12,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":171,"killsB":171,"bossN":0,"winsA":0,"winsB":0}
+home t3 tundra-vest-t3             {"farmN":12,"deathsA":1,"deathsB":2,"saved":1,"lost":2,"killsA":116,"killsB":103,"bossN":0,"winsA":0,"winsB":0}
+home t3 volcanic-vest-t3           {"farmN":12,"deathsA":2,"deathsB":8,"saved":0,"lost":6,"killsA":370,"killsB":230,"bossN":0,"winsA":0,"winsB":0}
+home t4 desert-vest-t4             {"farmN":12,"deathsA":1,"deathsB":0,"saved":1,"lost":0,"killsA":117,"killsB":123,"bossN":0,"winsA":0,"winsB":0}
+home t4 graveyard-vest-t4          {"farmN":12,"deathsA":5,"deathsB":3,"saved":4,"lost":2,"killsA":315,"killsB":336,"bossN":0,"winsA":0,"winsB":0}
+home t4 jungle-vest-t4             {"farmN":12,"deathsA":3,"deathsB":3,"saved":1,"lost":1,"killsA":107,"killsB":99,"bossN":0,"winsA":0,"winsB":0}
+home t4 mountain-vest-t4           {"farmN":12,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":104,"killsB":109,"bossN":0,"winsA":0,"winsB":0}
+home t4 trench-vest-t4             {"farmN":12,"deathsA":3,"deathsB":0,"saved":3,"lost":0,"killsA":33,"killsB":35,"bossN":0,"winsA":0,"winsB":0}
+home t4 tundra-vest-t4             {"farmN":12,"deathsA":0,"deathsB":0,"saved":0,"lost":0,"killsA":123,"killsB":122,"bossN":0,"winsA":0,"winsB":0}
+home t4 volcanic-vest-t4           {"farmN":12,"deathsA":0,"deathsB":2,"saved":0,"lost":2,"killsA":501,"killsB":416,"bossN":0,"winsA":0,"winsB":0}
+ref t1 forest-vest-t1              {"farmN":24,"deathsA":3,"deathsB":3,"saved":1,"lost":1,"killsA":456,"killsB":453,"bossN":0,"winsA":0,"winsB":0}
+ref t1 mountain-vest-t1            {"farmN":24,"deathsA":2,"deathsB":2,"saved":0,"lost":0,"killsA":529,"killsB":519,"bossN":0,"winsA":0,"winsB":0}
+ref t2 jungle-vest-t2              {"farmN":36,"deathsA":3,"deathsB":7,"saved":0,"lost":4,"killsA":790,"killsB":728,"bossN":0,"winsA":0,"winsB":0}
+ref t2 mountain-vest-t2            {"farmN":36,"deathsA":5,"deathsB":5,"saved":0,"lost":0,"killsA":587,"killsB":566,"bossN":0,"winsA":0,"winsB":0}
+ref t3 jungle-vest-t3              {"farmN":36,"deathsA":8,"deathsB":8,"saved":2,"lost":2,"killsA":413,"killsB":375,"bossN":0,"winsA":0,"winsB":0}
+ref t3 mountain-vest-t3            {"farmN":36,"deathsA":16,"deathsB":6,"saved":10,"lost":0,"killsA":286,"killsB":404,"bossN":0,"winsA":0,"winsB":0}
+ref t4 jungle-vest-t4              {"farmN":36,"deathsA":1,"deathsB":4,"saved":1,"lost":4,"killsA":722,"killsB":602,"bossN":0,"winsA":0,"winsB":0}
+ref t4 mountain-vest-t4            {"farmN":36,"deathsA":11,"deathsB":4,"saved":8,"lost":1,"killsA":414,"killsB":502,"bossN":0,"winsA":0,"winsB":0}
+
+## original -> candidate
+melee+conduit t1                   {"farmN":54,"deathsA":3,"deathsB":4,"saved":0,"lost":1,"killsA":1159,"killsB":1109,"bossN":30,"winsA":7,"winsB":14}
+melee+conduit t2                   {"farmN":78,"deathsA":11,"deathsB":12,"saved":1,"lost":2,"killsA":1227,"killsB":1176,"bossN":42,"winsA":8,"winsB":16}
+melee+conduit t3                   {"farmN":78,"deathsA":23,"deathsB":15,"saved":11,"lost":3,"killsA":756,"killsB":835,"bossN":42,"winsA":16,"winsB":28}
+melee+conduit t4                   {"farmN":78,"deathsA":15,"deathsB":5,"saved":12,"lost":2,"killsA":1000,"killsB":1102,"bossN":42,"winsA":33,"winsB":31}
+ranged/caster t1                   {"farmN":54,"deathsA":8,"deathsB":10,"saved":2,"lost":4,"killsA":1020,"killsB":1003,"bossN":30,"winsA":9,"winsB":8}
+ranged/caster t2                   {"farmN":78,"deathsA":4,"deathsB":12,"saved":0,"lost":8,"killsA":1651,"killsB":1548,"bossN":42,"winsA":26,"winsB":10}
+ranged/caster t3                   {"farmN":78,"deathsA":14,"deathsB":20,"saved":5,"lost":11,"killsA":990,"killsB":830,"bossN":42,"winsA":20,"winsB":24}
+ranged/caster t4                   {"farmN":78,"deathsA":9,"deathsB":11,"saved":6,"lost":8,"killsA":1436,"killsB":1242,"bossN":42,"winsA":40,"winsB":40}
+
+## candidate killing blows (top 15)
+  12 gnarled-greatbear
+  12 mire-gorged-behemoth
+  10 dust-djinn
+  10 gorging-razortusk
+  10 apex-timberclaw
+  10 dune-stalker-emperor:Execution
+   8 obsidian-broodmother
+   8 jungle-dread-gorger
+   8 ash-slinger
+   8 dune-carapace-monarch:Execution
+   7 plains-slime
+   6 tusked-razorback
+   6 grave-toadeater
+   5 young-wolf
+   5 sand-scorpion
+
+## original killing blows (top 15)
+  12 gnarled-greatbear
+  10 gorging-razortusk
+  10 grave-toadeater
+   9 dust-djinn
+   8 obsidian-broodmother
+   8 tusked-razorback
+   8 chitinous-dreadbore:Eruption
+   8 jungle-dread-gorger
+   8 ash-slinger
+   8 apex-timberclaw
+   7 sandweaver
+   6 cinder-shell-magma-salamander
+   6 crag-gorged-horn-behemoth:Cragbreaker
+   6 cinder-shell-magma-salamander:Final Eruption
+   6 glacier-bear
+
+## pipeline killing blows (top 15)
+  12 gnarled-greatbear
+  10 obsidian-broodmother
+  10 gorging-razortusk
+  10 grave-toadeater
+   8 tusked-razorback
+   8 dust-djinn
+   8 jungle-dread-gorger
+   8 crag-gorged-horn-behemoth:Cragbreaker
+   8 ash-slinger
+   8 apex-timberclaw
+   8 dune-stalker-emperor:Execution
+   6 chitinous-dreadbore:Eruption
+   6 silverback
+   6 cinder-shell-magma-salamander
+   6 cinder-shell-magma-salamander:Final Eruption

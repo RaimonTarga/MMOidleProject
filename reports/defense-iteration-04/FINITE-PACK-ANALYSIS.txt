@@ -1,0 +1,141 @@
+fixture identity: 1224/1224 matched
+
+## Arm/variant totals
+candidate-baseline             {"n":360,"deaths":58,"cleared":301,"meanMinHp":0.534,"meanClearS":28.2}
+candidate-desert-dr            {"n":144,"deaths":21,"cleared":123,"meanMinHp":0.574,"meanClearS":30.2}
+candidate-grave-no-plating     {"n":72,"deaths":3,"cleared":69,"meanMinHp":0.722,"meanClearS":19.8}
+candidate-jungle-frequency     {"n":144,"deaths":31,"cleared":111,"meanMinHp":0.475,"meanClearS":31.2}
+candidate-jungle-strength      {"n":144,"deaths":33,"cleared":110,"meanMinHp":0.439,"meanClearS":30.2}
+original-baseline              {"n":360,"deaths":47,"cleared":310,"meanMinHp":0.617,"meanClearS":28.4}
+pipeline-baseline              {"n":360,"deaths":46,"cleared":311,"meanMinHp":0.604,"meanClearS":28.5}
+
+## by tier: original-baseline -> pipeline-baseline
+3                            {"n":144,"aDeaths":44,"bDeaths":43,"saved":1,"lost":0,"dMinHp":-0.002}
+4                            {"n":216,"aDeaths":3,"bDeaths":3,"saved":0,"lost":0,"dMinHp":-0.02}
+
+## by class: original-baseline -> pipeline-baseline
+apprentice                   {"n":60,"aDeaths":5,"bDeaths":5,"saved":0,"lost":0,"dMinHp":-0.02}
+conduit                      {"n":60,"aDeaths":23,"bDeaths":22,"saved":1,"lost":0,"dMinHp":-0.009}
+slinger                      {"n":60,"aDeaths":0,"bDeaths":0,"saved":0,"lost":0,"dMinHp":-0.013}
+spirit                       {"n":60,"aDeaths":0,"bDeaths":0,"saved":0,"lost":0,"dMinHp":-0.015}
+squire                       {"n":60,"aDeaths":11,"bDeaths":11,"saved":0,"lost":0,"dMinHp":-0.01}
+striker                      {"n":60,"aDeaths":8,"bDeaths":8,"saved":0,"lost":0,"dMinHp":-0.009}
+
+## by profile: original-baseline -> pipeline-baseline
+3 ambushers/jungle           {"n":24,"aDeaths":12,"bDeaths":12,"saved":0,"lost":0,"dMinHp":-0.011}
+3 desert-basilisk/desert     {"n":24,"aDeaths":8,"bDeaths":8,"saved":0,"lost":0,"dMinHp":0.03}
+3 dune-stalker/desert        {"n":24,"aDeaths":4,"bDeaths":4,"saved":0,"lost":0,"dMinHp":-0.025}
+3 mixed-rally/jungle         {"n":24,"aDeaths":12,"bDeaths":12,"saved":0,"lost":0,"dMinHp":-0.002}
+3 volcano-anchor/desert      {"n":24,"aDeaths":3,"bDeaths":2,"saved":1,"lost":0,"dMinHp":-0.002}
+3 volcano-anchor/jungle      {"n":24,"aDeaths":5,"bDeaths":5,"saved":0,"lost":0,"dMinHp":-0.002}
+4 ambushers/jungle           {"n":24,"aDeaths":0,"bDeaths":0,"saved":0,"lost":0,"dMinHp":-0.008}
+4 dune-basilisk/desert       {"n":24,"aDeaths":0,"bDeaths":0,"saved":0,"lost":0,"dMinHp":0}
+4 gravewright/graveyard      {"n":24,"aDeaths":3,"bDeaths":3,"saved":0,"lost":0,"dMinHp":0.001}
+4 mixed-rally/jungle         {"n":24,"aDeaths":0,"bDeaths":0,"saved":0,"lost":0,"dMinHp":-0.001}
+4 plague-support/graveyard   {"n":24,"aDeaths":0,"bDeaths":0,"saved":0,"lost":0,"dMinHp":0.001}
+4 rat-pressure/graveyard     {"n":24,"aDeaths":0,"bDeaths":0,"saved":0,"lost":0,"dMinHp":0}
+4 sand-viper/desert          {"n":24,"aDeaths":0,"bDeaths":0,"saved":0,"lost":0,"dMinHp":0}
+4 volcano-anchor/desert      {"n":24,"aDeaths":0,"bDeaths":0,"saved":0,"lost":0,"dMinHp":-0.104}
+4 volcano-anchor/jungle      {"n":24,"aDeaths":0,"bDeaths":0,"saved":0,"lost":0,"dMinHp":-0.069}
+
+## by tier: pipeline-baseline -> candidate-baseline
+3                            {"n":144,"aDeaths":43,"bDeaths":56,"saved":4,"lost":17,"dMinHp":-0.057}
+4                            {"n":216,"aDeaths":3,"bDeaths":2,"saved":3,"lost":2,"dMinHp":-0.077}
+
+## by class: pipeline-baseline -> candidate-baseline
+apprentice                   {"n":60,"aDeaths":5,"bDeaths":10,"saved":0,"lost":5,"dMinHp":-0.073}
+conduit                      {"n":60,"aDeaths":22,"bDeaths":24,"saved":0,"lost":2,"dMinHp":0.008}
+slinger                      {"n":60,"aDeaths":0,"bDeaths":4,"saved":0,"lost":4,"dMinHp":-0.041}
+spirit                       {"n":60,"aDeaths":0,"bDeaths":7,"saved":0,"lost":7,"dMinHp":-0.095}
+squire                       {"n":60,"aDeaths":11,"bDeaths":8,"saved":3,"lost":0,"dMinHp":-0.135}
+striker                      {"n":60,"aDeaths":8,"bDeaths":5,"saved":4,"lost":1,"dMinHp":-0.082}
+
+## by profile: pipeline-baseline -> candidate-baseline
+3 ambushers/jungle           {"n":24,"aDeaths":12,"bDeaths":12,"saved":0,"lost":0,"dMinHp":-0.003}
+3 desert-basilisk/desert     {"n":24,"aDeaths":8,"bDeaths":8,"saved":0,"lost":0,"dMinHp":0.033}
+3 dune-stalker/desert        {"n":24,"aDeaths":4,"bDeaths":4,"saved":0,"lost":0,"dMinHp":0.073}
+3 mixed-rally/jungle         {"n":24,"aDeaths":12,"bDeaths":8,"saved":4,"lost":0,"dMinHp":-0.045}
+3 volcano-anchor/desert      {"n":24,"aDeaths":2,"bDeaths":15,"saved":0,"lost":13,"dMinHp":-0.278}
+3 volcano-anchor/jungle      {"n":24,"aDeaths":5,"bDeaths":9,"saved":0,"lost":4,"dMinHp":-0.125}
+4 ambushers/jungle           {"n":24,"aDeaths":0,"bDeaths":0,"saved":0,"lost":0,"dMinHp":-0.199}
+4 dune-basilisk/desert       {"n":24,"aDeaths":0,"bDeaths":0,"saved":0,"lost":0,"dMinHp":-0.042}
+4 gravewright/graveyard      {"n":24,"aDeaths":3,"bDeaths":0,"saved":3,"lost":0,"dMinHp":0.064}
+4 mixed-rally/jungle         {"n":24,"aDeaths":0,"bDeaths":2,"saved":0,"lost":2,"dMinHp":-0.229}
+4 plague-support/graveyard   {"n":24,"aDeaths":0,"bDeaths":0,"saved":0,"lost":0,"dMinHp":0.027}
+4 rat-pressure/graveyard     {"n":24,"aDeaths":0,"bDeaths":0,"saved":0,"lost":0,"dMinHp":-0.094}
+4 sand-viper/desert          {"n":24,"aDeaths":0,"bDeaths":0,"saved":0,"lost":0,"dMinHp":-0.008}
+4 volcano-anchor/desert      {"n":24,"aDeaths":0,"bDeaths":0,"saved":0,"lost":0,"dMinHp":-0.112}
+4 volcano-anchor/jungle      {"n":24,"aDeaths":0,"bDeaths":0,"saved":0,"lost":0,"dMinHp":-0.104}
+
+## by tier: original-baseline -> candidate-baseline
+3                            {"n":144,"aDeaths":44,"bDeaths":56,"saved":4,"lost":16,"dMinHp":-0.059}
+4                            {"n":216,"aDeaths":3,"bDeaths":2,"saved":3,"lost":2,"dMinHp":-0.097}
+
+## by class: original-baseline -> candidate-baseline
+apprentice                   {"n":60,"aDeaths":5,"bDeaths":10,"saved":0,"lost":5,"dMinHp":-0.093}
+conduit                      {"n":60,"aDeaths":23,"bDeaths":24,"saved":0,"lost":1,"dMinHp":-0.001}
+slinger                      {"n":60,"aDeaths":0,"bDeaths":4,"saved":0,"lost":4,"dMinHp":-0.054}
+spirit                       {"n":60,"aDeaths":0,"bDeaths":7,"saved":0,"lost":7,"dMinHp":-0.11}
+squire                       {"n":60,"aDeaths":11,"bDeaths":8,"saved":3,"lost":0,"dMinHp":-0.146}
+striker                      {"n":60,"aDeaths":8,"bDeaths":5,"saved":4,"lost":1,"dMinHp":-0.09}
+
+## by profile: original-baseline -> candidate-baseline
+3 ambushers/jungle           {"n":24,"aDeaths":12,"bDeaths":12,"saved":0,"lost":0,"dMinHp":-0.013}
+3 desert-basilisk/desert     {"n":24,"aDeaths":8,"bDeaths":8,"saved":0,"lost":0,"dMinHp":0.063}
+3 dune-stalker/desert        {"n":24,"aDeaths":4,"bDeaths":4,"saved":0,"lost":0,"dMinHp":0.048}
+3 mixed-rally/jungle         {"n":24,"aDeaths":12,"bDeaths":8,"saved":4,"lost":0,"dMinHp":-0.047}
+3 volcano-anchor/desert      {"n":24,"aDeaths":3,"bDeaths":15,"saved":0,"lost":12,"dMinHp":-0.28}
+3 volcano-anchor/jungle      {"n":24,"aDeaths":5,"bDeaths":9,"saved":0,"lost":4,"dMinHp":-0.126}
+4 ambushers/jungle           {"n":24,"aDeaths":0,"bDeaths":0,"saved":0,"lost":0,"dMinHp":-0.207}
+4 dune-basilisk/desert       {"n":24,"aDeaths":0,"bDeaths":0,"saved":0,"lost":0,"dMinHp":-0.042}
+4 gravewright/graveyard      {"n":24,"aDeaths":3,"bDeaths":0,"saved":3,"lost":0,"dMinHp":0.065}
+4 mixed-rally/jungle         {"n":24,"aDeaths":0,"bDeaths":2,"saved":0,"lost":2,"dMinHp":-0.23}
+4 plague-support/graveyard   {"n":24,"aDeaths":0,"bDeaths":0,"saved":0,"lost":0,"dMinHp":0.029}
+4 rat-pressure/graveyard     {"n":24,"aDeaths":0,"bDeaths":0,"saved":0,"lost":0,"dMinHp":-0.094}
+4 sand-viper/desert          {"n":24,"aDeaths":0,"bDeaths":0,"saved":0,"lost":0,"dMinHp":-0.008}
+4 volcano-anchor/desert      {"n":24,"aDeaths":0,"bDeaths":0,"saved":0,"lost":0,"dMinHp":-0.217}
+4 volcano-anchor/jungle      {"n":24,"aDeaths":0,"bDeaths":0,"saved":0,"lost":0,"dMinHp":-0.173}
+
+## variant by tier: candidate-baseline -> candidate-desert-dr
+3                            {"n":72,"aDeaths":27,"bDeaths":21,"saved":6,"lost":0,"dMinHp":0.036}
+4                            {"n":72,"aDeaths":0,"bDeaths":0,"saved":0,"lost":0,"dMinHp":0.037}
+
+## variant by profile: candidate-baseline -> candidate-desert-dr
+3 desert-basilisk/desert     {"n":24,"aDeaths":8,"bDeaths":4,"saved":4,"lost":0,"dMinHp":0.038}
+3 dune-stalker/desert        {"n":24,"aDeaths":4,"bDeaths":4,"saved":0,"lost":0,"dMinHp":0.041}
+3 volcano-anchor/desert      {"n":24,"aDeaths":15,"bDeaths":13,"saved":2,"lost":0,"dMinHp":0.029}
+4 dune-basilisk/desert       {"n":24,"aDeaths":0,"bDeaths":0,"saved":0,"lost":0,"dMinHp":0.041}
+4 sand-viper/desert          {"n":24,"aDeaths":0,"bDeaths":0,"saved":0,"lost":0,"dMinHp":0.031}
+4 volcano-anchor/desert      {"n":24,"aDeaths":0,"bDeaths":0,"saved":0,"lost":0,"dMinHp":0.04}
+
+## variant by tier: candidate-baseline -> candidate-jungle-frequency
+3                            {"n":72,"aDeaths":29,"bDeaths":29,"saved":0,"lost":0,"dMinHp":0.051}
+4                            {"n":72,"aDeaths":2,"bDeaths":2,"saved":0,"lost":0,"dMinHp":0.05}
+
+## variant by profile: candidate-baseline -> candidate-jungle-frequency
+3 ambushers/jungle           {"n":24,"aDeaths":12,"bDeaths":12,"saved":0,"lost":0,"dMinHp":0.024}
+3 mixed-rally/jungle         {"n":24,"aDeaths":8,"bDeaths":8,"saved":0,"lost":0,"dMinHp":0.06}
+3 volcano-anchor/jungle      {"n":24,"aDeaths":9,"bDeaths":9,"saved":0,"lost":0,"dMinHp":0.07}
+4 ambushers/jungle           {"n":24,"aDeaths":0,"bDeaths":0,"saved":0,"lost":0,"dMinHp":0.033}
+4 mixed-rally/jungle         {"n":24,"aDeaths":2,"bDeaths":2,"saved":0,"lost":0,"dMinHp":0.057}
+4 volcano-anchor/jungle      {"n":24,"aDeaths":0,"bDeaths":0,"saved":0,"lost":0,"dMinHp":0.059}
+
+## variant by tier: candidate-baseline -> candidate-jungle-strength
+3                            {"n":72,"aDeaths":29,"bDeaths":31,"saved":0,"lost":2,"dMinHp":0.015}
+4                            {"n":72,"aDeaths":2,"bDeaths":2,"saved":0,"lost":0,"dMinHp":0.013}
+
+## variant by profile: candidate-baseline -> candidate-jungle-strength
+3 ambushers/jungle           {"n":24,"aDeaths":12,"bDeaths":12,"saved":0,"lost":0,"dMinHp":0.019}
+3 mixed-rally/jungle         {"n":24,"aDeaths":8,"bDeaths":8,"saved":0,"lost":0,"dMinHp":0.02}
+3 volcano-anchor/jungle      {"n":24,"aDeaths":9,"bDeaths":11,"saved":0,"lost":2,"dMinHp":0.005}
+4 ambushers/jungle           {"n":24,"aDeaths":0,"bDeaths":0,"saved":0,"lost":0,"dMinHp":0.009}
+4 mixed-rally/jungle         {"n":24,"aDeaths":2,"bDeaths":2,"saved":0,"lost":0,"dMinHp":0.022}
+4 volcano-anchor/jungle      {"n":24,"aDeaths":0,"bDeaths":0,"saved":0,"lost":0,"dMinHp":0.009}
+
+## variant by tier: candidate-baseline -> candidate-grave-no-plating
+4                            {"n":72,"aDeaths":0,"bDeaths":3,"saved":0,"lost":3,"dMinHp":-0.026}
+
+## variant by profile: candidate-baseline -> candidate-grave-no-plating
+4 gravewright/graveyard      {"n":24,"aDeaths":0,"bDeaths":3,"saved":0,"lost":3,"dMinHp":-0.064}
+4 plague-support/graveyard   {"n":24,"aDeaths":0,"bDeaths":0,"saved":0,"lost":0,"dMinHp":-0.005}
+4 rat-pressure/graveyard     {"n":24,"aDeaths":0,"bDeaths":0,"saved":0,"lost":0,"dMinHp":-0.009}
