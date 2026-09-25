@@ -1,0 +1,622 @@
+{
+  "initial": {
+    "baseline": {
+      "rows": 128,
+      "deaths": 57,
+      "kills": 2109
+    },
+    "candidate": {
+      "rows": 128,
+      "deaths": 48,
+      "kills": 2259
+    },
+    "families": {
+      "desert-vest-t3": {
+        "baseline": {
+          "rows": 24,
+          "deaths": 18,
+          "kills": 203
+        },
+        "candidate": {
+          "rows": 24,
+          "deaths": 16,
+          "kills": 247
+        }
+      },
+      "jungle-vest-t3": {
+        "baseline": {
+          "rows": 24,
+          "deaths": 16,
+          "kills": 257
+        },
+        "candidate": {
+          "rows": 24,
+          "deaths": 14,
+          "kills": 272
+        }
+      },
+      "cave-vest-t3": {
+        "baseline": {
+          "rows": 24,
+          "deaths": 12,
+          "kills": 290
+        },
+        "candidate": {
+          "rows": 24,
+          "deaths": 12,
+          "kills": 290
+        }
+      },
+      "graveyard-vest-t4": {
+        "baseline": {
+          "rows": 24,
+          "deaths": 7,
+          "kills": 747
+        },
+        "candidate": {
+          "rows": 24,
+          "deaths": 4,
+          "kills": 828
+        }
+      },
+      "trench-vest-t4": {
+        "baseline": {
+          "rows": 24,
+          "deaths": 2,
+          "kills": 443
+        },
+        "candidate": {
+          "rows": 24,
+          "deaths": 2,
+          "kills": 443
+        }
+      },
+      "jungle-vest-t4": {
+        "baseline": {
+          "rows": 8,
+          "deaths": 2,
+          "kills": 169
+        },
+        "candidate": {
+          "rows": 8,
+          "deaths": 0,
+          "kills": 179
+        }
+      }
+    },
+    "environments": {
+      "other": {
+        "baseline": {
+          "rows": 64,
+          "deaths": 18,
+          "kills": 662
+        },
+        "candidate": {
+          "rows": 64,
+          "deaths": 12,
+          "kills": 760
+        }
+      },
+      "volcano": {
+        "baseline": {
+          "rows": 64,
+          "deaths": 39,
+          "kills": 1447
+        },
+        "candidate": {
+          "rows": 64,
+          "deaths": 36,
+          "kills": 1499
+        }
+      }
+    },
+    "reversals": [
+      {
+        "id": "3-squire-balanced-desert-vest-t3-node-t3-desert-03-reference-p3-default",
+        "seed": 101009,
+        "before": "bot_died",
+        "after": "timeout",
+        "beforeKills": 7,
+        "afterKills": 8
+      },
+      {
+        "id": "4-squire-balanced-graveyard-vest-t4-node-t4-graveyard-03-reference-p3-default",
+        "seed": 101009,
+        "before": "bot_died",
+        "after": "timeout",
+        "beforeKills": 4,
+        "afterKills": 27
+      },
+      {
+        "id": "4-squire-balanced-graveyard-vest-t4-node-t4-graveyard-03-reference-p3-default",
+        "seed": 101033,
+        "before": "bot_died",
+        "after": "timeout",
+        "beforeKills": 5,
+        "afterKills": 28
+      },
+      {
+        "id": "4-squire-balanced-graveyard-vest-t4-node-t4-volcanic-03-reference-p3-default",
+        "seed": 101009,
+        "before": "bot_died",
+        "after": "timeout",
+        "beforeKills": 20,
+        "afterKills": 32
+      },
+      {
+        "id": "3-striker-balanced-desert-vest-t3-node-t3-volcanic-03-reference-p3-default",
+        "seed": 101009,
+        "before": "timeout",
+        "after": "bot_died",
+        "beforeKills": 38,
+        "afterKills": 19
+      },
+      {
+        "id": "3-striker-balanced-desert-vest-t3-node-t3-volcanic-03-reference-p3-default",
+        "seed": 101033,
+        "before": "bot_died",
+        "after": "timeout",
+        "beforeKills": 11,
+        "afterKills": 38
+      },
+      {
+        "id": "3-striker-balanced-jungle-vest-t3-node-t3-volcanic-03-reference-p3-default",
+        "seed": 101009,
+        "before": "timeout",
+        "after": "bot_died",
+        "beforeKills": 39,
+        "afterKills": 16
+      },
+      {
+        "id": "4-slinger-balanced-graveyard-vest-t4-node-t4-volcanic-03-reference-p3-default",
+        "seed": 101033,
+        "before": "timeout",
+        "after": "bot_died",
+        "beforeKills": 36,
+        "afterKills": 15
+      },
+      {
+        "id": "4-apprentice-balanced-graveyard-vest-t4-node-t4-volcanic-03-reference-p3-default",
+        "seed": 101033,
+        "before": "bot_died",
+        "after": "timeout",
+        "beforeKills": 35,
+        "afterKills": 44
+      },
+      {
+        "id": "3-spirit-balanced-desert-vest-t3-node-t3-volcanic-03-reference-p3-default",
+        "seed": 101033,
+        "before": "bot_died",
+        "after": "timeout",
+        "beforeKills": 4,
+        "afterKills": 39
+      },
+      {
+        "id": "3-spirit-balanced-jungle-vest-t3-node-t3-jungle-03-reference-p3-default",
+        "seed": 101033,
+        "before": "bot_died",
+        "after": "timeout",
+        "beforeKills": 2,
+        "afterKills": 10
+      },
+      {
+        "id": "3-spirit-balanced-jungle-vest-t3-node-t3-volcanic-03-reference-p3-default",
+        "seed": 101009,
+        "before": "bot_died",
+        "after": "timeout",
+        "beforeKills": 18,
+        "afterKills": 35
+      },
+      {
+        "id": "3-conduit-balanced-jungle-vest-t3-node-t3-jungle-03-reference-p3-default",
+        "seed": 101009,
+        "before": "bot_died",
+        "after": "timeout",
+        "beforeKills": 3,
+        "afterKills": 7
+      },
+      {
+        "id": "4-squire-balanced-jungle-vest-t4-node-t4-volcanic-03-reference-p3-default",
+        "seed": 101033,
+        "before": "bot_died",
+        "after": "timeout",
+        "beforeKills": 27,
+        "afterKills": 32
+      },
+      {
+        "id": "4-slinger-balanced-jungle-vest-t4-node-t4-jungle-03-reference-p3-default",
+        "seed": 101033,
+        "before": "bot_died",
+        "after": "timeout",
+        "beforeKills": 5,
+        "afterKills": 9
+      }
+    ]
+  },
+  "fresh": {
+    "baseline": {
+      "rows": 160,
+      "deaths": 73,
+      "kills": 2667
+    },
+    "candidate": {
+      "rows": 160,
+      "deaths": 70,
+      "kills": 2851
+    },
+    "families": {
+      "desert-vest-t3": {
+        "baseline": {
+          "rows": 48,
+          "deaths": 30,
+          "kills": 375
+        },
+        "candidate": {
+          "rows": 48,
+          "deaths": 32,
+          "kills": 403
+        }
+      },
+      "jungle-vest-t3": {
+        "baseline": {
+          "rows": 48,
+          "deaths": 24,
+          "kills": 565
+        },
+        "candidate": {
+          "rows": 48,
+          "deaths": 25,
+          "kills": 548
+        }
+      },
+      "graveyard-vest-t4": {
+        "baseline": {
+          "rows": 48,
+          "deaths": 16,
+          "kills": 1421
+        },
+        "candidate": {
+          "rows": 48,
+          "deaths": 10,
+          "kills": 1573
+        }
+      },
+      "jungle-vest-t4": {
+        "baseline": {
+          "rows": 16,
+          "deaths": 3,
+          "kills": 306
+        },
+        "candidate": {
+          "rows": 16,
+          "deaths": 3,
+          "kills": 327
+        }
+      }
+    },
+    "environments": {
+      "other": {
+        "baseline": {
+          "rows": 80,
+          "deaths": 23,
+          "kills": 1100
+        },
+        "candidate": {
+          "rows": 80,
+          "deaths": 22,
+          "kills": 1163
+        }
+      },
+      "volcano": {
+        "baseline": {
+          "rows": 80,
+          "deaths": 50,
+          "kills": 1567
+        },
+        "candidate": {
+          "rows": 80,
+          "deaths": 48,
+          "kills": 1688
+        }
+      }
+    },
+    "reversals": [
+      {
+        "id": "3-squire-balanced-desert-vest-t3-node-t3-desert-03-reference-p3-default",
+        "seed": 101063,
+        "before": "timeout",
+        "after": "bot_died",
+        "beforeKills": 8,
+        "afterKills": 6
+      },
+      {
+        "id": "3-squire-balanced-desert-vest-t3-node-t3-volcanic-03-reference-p3-default",
+        "seed": 101051,
+        "before": "timeout",
+        "after": "bot_died",
+        "beforeKills": 31,
+        "afterKills": 30
+      },
+      {
+        "id": "3-squire-balanced-jungle-vest-t3-node-t3-volcanic-03-reference-p3-default",
+        "seed": 101051,
+        "before": "bot_died",
+        "after": "timeout",
+        "beforeKills": 30,
+        "afterKills": 31
+      },
+      {
+        "id": "4-squire-balanced-graveyard-vest-t4-node-t4-graveyard-03-reference-p3-default",
+        "seed": 101063,
+        "before": "bot_died",
+        "after": "timeout",
+        "beforeKills": 5,
+        "afterKills": 25
+      },
+      {
+        "id": "4-squire-balanced-graveyard-vest-t4-node-t4-graveyard-03-reference-p3-default",
+        "seed": 101081,
+        "before": "bot_died",
+        "after": "timeout",
+        "beforeKills": 4,
+        "afterKills": 35
+      },
+      {
+        "id": "4-squire-balanced-graveyard-vest-t4-node-t4-graveyard-03-reference-p3-default",
+        "seed": 101093,
+        "before": "bot_died",
+        "after": "timeout",
+        "beforeKills": 6,
+        "afterKills": 27
+      },
+      {
+        "id": "4-squire-balanced-graveyard-vest-t4-node-t4-volcanic-03-reference-p3-default",
+        "seed": 101063,
+        "before": "bot_died",
+        "after": "timeout",
+        "beforeKills": 9,
+        "afterKills": 36
+      },
+      {
+        "id": "3-striker-balanced-desert-vest-t3-node-t3-volcanic-03-reference-p3-default",
+        "seed": 101051,
+        "before": "bot_died",
+        "after": "timeout",
+        "beforeKills": 27,
+        "afterKills": 42
+      },
+      {
+        "id": "3-striker-balanced-desert-vest-t3-node-t3-volcanic-03-reference-p3-default",
+        "seed": 101063,
+        "before": "timeout",
+        "after": "bot_died",
+        "beforeKills": 31,
+        "afterKills": 15
+      },
+      {
+        "id": "3-striker-balanced-desert-vest-t3-node-t3-volcanic-03-reference-p3-default",
+        "seed": 101081,
+        "before": "timeout",
+        "after": "bot_died",
+        "beforeKills": 32,
+        "afterKills": 8
+      },
+      {
+        "id": "3-striker-balanced-desert-vest-t3-node-t3-volcanic-03-reference-p3-default",
+        "seed": 101093,
+        "before": "bot_died",
+        "after": "timeout",
+        "beforeKills": 12,
+        "afterKills": 35
+      },
+      {
+        "id": "3-striker-balanced-jungle-vest-t3-node-t3-volcanic-03-reference-p3-default",
+        "seed": 101051,
+        "before": "timeout",
+        "after": "bot_died",
+        "beforeKills": 41,
+        "afterKills": 21
+      },
+      {
+        "id": "3-striker-balanced-jungle-vest-t3-node-t3-volcanic-03-reference-p3-default",
+        "seed": 101063,
+        "before": "bot_died",
+        "after": "timeout",
+        "beforeKills": 25,
+        "afterKills": 31
+      },
+      {
+        "id": "3-striker-balanced-jungle-vest-t3-node-t3-volcanic-03-reference-p3-default",
+        "seed": 101081,
+        "before": "timeout",
+        "after": "bot_died",
+        "beforeKills": 37,
+        "afterKills": 32
+      },
+      {
+        "id": "3-striker-balanced-jungle-vest-t3-node-t3-volcanic-03-reference-p3-default",
+        "seed": 101093,
+        "before": "bot_died",
+        "after": "timeout",
+        "beforeKills": 8,
+        "afterKills": 31
+      },
+      {
+        "id": "4-striker-balanced-graveyard-vest-t4-node-t4-graveyard-03-reference-p3-default",
+        "seed": 101063,
+        "before": "bot_died",
+        "after": "timeout",
+        "beforeKills": 38,
+        "afterKills": 40
+      },
+      {
+        "id": "4-striker-balanced-graveyard-vest-t4-node-t4-volcanic-03-reference-p3-default",
+        "seed": 101081,
+        "before": "timeout",
+        "after": "bot_died",
+        "beforeKills": 48,
+        "afterKills": 24
+      },
+      {
+        "id": "3-slinger-balanced-jungle-vest-t3-node-t3-jungle-03-reference-p3-default",
+        "seed": 101093,
+        "before": "timeout",
+        "after": "bot_died",
+        "beforeKills": 10,
+        "afterKills": 2
+      },
+      {
+        "id": "3-slinger-balanced-jungle-vest-t3-node-t3-volcanic-03-reference-p3-default",
+        "seed": 101093,
+        "before": "timeout",
+        "after": "bot_died",
+        "beforeKills": 24,
+        "afterKills": 9
+      },
+      {
+        "id": "4-slinger-balanced-graveyard-vest-t4-node-t4-graveyard-03-reference-p3-default",
+        "seed": 101081,
+        "before": "bot_died",
+        "after": "timeout",
+        "beforeKills": 30,
+        "afterKills": 32
+      },
+      {
+        "id": "4-slinger-balanced-graveyard-vest-t4-node-t4-volcanic-03-reference-p3-default",
+        "seed": 101063,
+        "before": "bot_died",
+        "after": "timeout",
+        "beforeKills": 16,
+        "afterKills": 42
+      },
+      {
+        "id": "3-apprentice-balanced-desert-vest-t3-node-t3-desert-03-reference-p3-default",
+        "seed": 101051,
+        "before": "timeout",
+        "after": "bot_died",
+        "beforeKills": 6,
+        "afterKills": 4
+      },
+      {
+        "id": "3-apprentice-balanced-desert-vest-t3-node-t3-desert-03-reference-p3-default",
+        "seed": 101063,
+        "before": "timeout",
+        "after": "bot_died",
+        "beforeKills": 6,
+        "afterKills": 4
+      },
+      {
+        "id": "3-apprentice-balanced-desert-vest-t3-node-t3-desert-03-reference-p3-default",
+        "seed": 101081,
+        "before": "bot_died",
+        "after": "timeout",
+        "beforeKills": 5,
+        "afterKills": 7
+      },
+      {
+        "id": "4-apprentice-balanced-graveyard-vest-t4-node-t4-volcanic-03-reference-p3-default",
+        "seed": 101081,
+        "before": "bot_died",
+        "after": "timeout",
+        "beforeKills": 34,
+        "afterKills": 36
+      },
+      {
+        "id": "3-spirit-balanced-desert-vest-t3-node-t3-volcanic-03-reference-p3-default",
+        "seed": 101093,
+        "before": "bot_died",
+        "after": "timeout",
+        "beforeKills": 5,
+        "afterKills": 27
+      },
+      {
+        "id": "3-spirit-balanced-jungle-vest-t3-node-t3-jungle-03-reference-p3-default",
+        "seed": 101063,
+        "before": "bot_died",
+        "after": "timeout",
+        "beforeKills": 7,
+        "afterKills": 10
+      },
+      {
+        "id": "3-spirit-balanced-jungle-vest-t3-node-t3-jungle-03-reference-p3-default",
+        "seed": 101081,
+        "before": "timeout",
+        "after": "bot_died",
+        "beforeKills": 10,
+        "afterKills": 8
+      },
+      {
+        "id": "4-spirit-balanced-graveyard-vest-t4-node-t4-volcanic-03-reference-p3-default",
+        "seed": 101051,
+        "before": "timeout",
+        "after": "bot_died",
+        "beforeKills": 35,
+        "afterKills": 24
+      },
+      {
+        "id": "3-conduit-balanced-jungle-vest-t3-node-t3-jungle-03-reference-p3-default",
+        "seed": 101063,
+        "before": "timeout",
+        "after": "bot_died",
+        "beforeKills": 7,
+        "afterKills": 2
+      },
+      {
+        "id": "3-conduit-balanced-jungle-vest-t3-node-t3-jungle-03-reference-p3-default",
+        "seed": 101093,
+        "before": "bot_died",
+        "after": "timeout",
+        "beforeKills": 5,
+        "afterKills": 6
+      },
+      {
+        "id": "4-conduit-balanced-graveyard-vest-t4-node-t4-graveyard-03-reference-p3-default",
+        "seed": 101081,
+        "before": "timeout",
+        "after": "bot_died",
+        "beforeKills": 20,
+        "afterKills": 22
+      },
+      {
+        "id": "4-conduit-balanced-graveyard-vest-t4-node-t4-graveyard-03-reference-p3-default",
+        "seed": 101093,
+        "before": "bot_died",
+        "after": "timeout",
+        "beforeKills": 19,
+        "afterKills": 19
+      },
+      {
+        "id": "4-squire-balanced-jungle-vest-t4-node-t4-volcanic-03-reference-p3-default",
+        "seed": 101051,
+        "before": "timeout",
+        "after": "bot_died",
+        "beforeKills": 33,
+        "afterKills": 32
+      },
+      {
+        "id": "4-squire-balanced-jungle-vest-t4-node-t4-volcanic-03-reference-p3-default",
+        "seed": 101063,
+        "before": "bot_died",
+        "after": "timeout",
+        "beforeKills": 33,
+        "afterKills": 38
+      },
+      {
+        "id": "4-squire-balanced-jungle-vest-t4-node-t4-volcanic-03-reference-p3-default",
+        "seed": 101093,
+        "before": "bot_died",
+        "after": "timeout",
+        "beforeKills": 9,
+        "afterKills": 26
+      },
+      {
+        "id": "4-slinger-balanced-jungle-vest-t4-node-t4-jungle-03-reference-p3-default",
+        "seed": 101081,
+        "before": "timeout",
+        "after": "bot_died",
+        "beforeKills": 8,
+        "afterKills": 7
+      }
+    ]
+  }
+}

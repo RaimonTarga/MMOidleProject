@@ -46,12 +46,12 @@ export const graveyardRecipeEntries = [
     evolvesFrom: 'swamp-vest-t3',
     cost: { purple: 220 }, stats: {"maxHp": 302, "damageReduction": 0.18}, // family-tag: dot-resistance armor (Swamp inheritance) → Fortified
     reconstructCost: { purple: 770 }, reconstructCatalystCost: { fortified: 4 },
-    // Reactive plating: each hit taken grants +2 plating for 4s, stacking (refreshes
-    // duration) up to 15 stacks (+30 plating at full).
-    mechanicEffects: {"defense.dot-resistance": 0.4, "defense.hit-to-dot-pct": 0.15, "defense.debuff-resistance": 0.2},
+    // Direct hits build a short anti-swarm layer; no unconditional plating.
+    // Each hit grants +2 plating for 4s, up to 5 stacks (+10).
+    mechanicEffects: {"defense.dot-resistance": 0.4, "defense.hit-to-dot-pct": 0.15, "defense.debuff-resistance": 0.2, "defense.hit-plating-per-stack": 2, "defense.hit-plating-max-stacks": 5, "defense.hit-plating-duration-ms": 4000},
     tier: 4,
     icon: 'items/armor/plaguebound-mantle.png',
-    description: "Resists damage over time and spreads part of incoming direct damage into debt.",
+    description: "Resists damage over time and defers some direct damage. Direct hits grant 2 plating for 4 seconds, stacking up to 10 plating.",
     upgrades: [
       {"cost": {"purple": 180}, "requiredBiomeLevel": 3, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
       {"cost": {"purple": 450}, "requiredBiomeLevel": 4, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
@@ -67,8 +67,8 @@ export const graveyardRecipeEntries = [
     evolvesFrom: 'swamp-vest-t3',
     cost: { purple: 220 }, stats: {"maxHp": 302, "damageReduction": 0.18}, // family-tag: dot-resistance armor (Swamp inheritance) → Fortified
     reconstructCost: { purple: 770 }, reconstructCatalystCost: { fortified: 4 },
-    // † debt-cheat-death: once per combat, if accumulated damage debt would
-    //   exceed current HP, the debt clears completely. (new key, no shield needed)
+    // Debt specialist: larger deferral trades away the Mantle anti-swarm layer.
+    // Debt is repaid normally; this armor grants no automatic forgiveness.
     mechanicEffects: {"defense.dot-resistance": 0.25, "defense.hit-to-dot-pct": 0.3, "defense.debuff-resistance": 0.2},
     tier: 4,
     icon: 'items/armor/grave-ward.png',
