@@ -21,6 +21,7 @@ export const DURABILITY16_CELLS: Durability16Cell[] = DURABILITY13_SWARM
 export function assertDurability16Definitions(): void {
   const tortoise = MONSTER_DATABASE.get('magma-brute')!;
   const salamander = MONSTER_DATABASE.get('ash-slinger')!;
+  // REBASED 2026-09-25: ash-slinger 84 -> 70 (Volcano area nerf) is authored source.
   // REBASED 2026-09-18: magma-brute 2000/145 -> 3000/116 and ash-slinger 105 -> 84
   // are authored source now, so every overlay below writes the live value and is
   // inert. The historical experiment stays reproducible at its own frozen revision.
@@ -28,7 +29,7 @@ export function assertDurability16Definitions(): void {
   assert.equal(tortoise.stats.attack, 116);
   assert.equal(tortoise.stats.plating, 4);
   assert.equal(salamander.stats.hp, 1330);
-  assert.equal(salamander.stats.attack, 84);
+  assert.equal(salamander.stats.attack, 70);
   assert.equal(salamander.stats.plating, 2);
 }
 
@@ -40,7 +41,7 @@ export function installDurability16Treatment(cell: Durability16Cell) {
   if (cell.treatment === 'tortoise80' || cell.treatment === 'both80')
     MONSTER_DATABASE.get('magma-brute')!.stats.attack = 116;
   if (cell.treatment === 'salamander80' || cell.treatment === 'both80')
-    MONSTER_DATABASE.get('ash-slinger')!.stats.attack = 84;
+    MONSTER_DATABASE.get('ash-slinger')!.stats.attack = 70;
   return {
     changes: saved.map(({type, stats}) => ({type, before: stats.hp,
       after: MONSTER_DATABASE.get(type)!.stats.hp, beforeAttack: stats.attack,

@@ -8,7 +8,7 @@ for(const cell of DURABILITY19_CELLS){
  const expected=new Map<string,any>(JSON.parse(snapshot));
  if(cell.treatment==='candidate'){
   if(cell.tier===2){Object.assign(expected.get('ancient-wolf').stats,{hp:1575,attack:22});Object.assign(expected.get('ironwood-golem').stats,{hp:945,attack:25});}
-  else {Object.assign(expected.get('magma-brute').stats,{hp:3000,attack:116});expected.get('ash-slinger').stats.attack=84;}
+  else {Object.assign(expected.get('magma-brute').stats,{hp:3000,attack:116});expected.get('ash-slinger').stats.attack=70;}
  }
  const overlay=installDurability19Treatment(cell);
  try{assert.deepEqual([...MONSTER_DATABASE],[...expected]);}finally{overlay.restore();}

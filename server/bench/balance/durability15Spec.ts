@@ -19,6 +19,7 @@ export const DURABILITY15_CELLS: Durability15Cell[] = DURABILITY13_SWARM
   })));
 
 export function assertDurability15Definitions(): void {
+  // REBASED 2026-09-25: ash-slinger 84 -> 70 (Volcano area nerf) is authored source.
   // REBASED 2026-09-18: magma-brute 2000/145 -> 3000/116 and ash-slinger 105 -> 84
   // are now authored source, so every overlay below writes the value already live
   // and is inert. The historical experiment stays reproducible at its own revision.
@@ -28,7 +29,7 @@ export function assertDurability15Definitions(): void {
   assert.equal(tortoise.stats.attack, 116);
   assert.equal(tortoise.stats.plating, 4);
   assert.equal(salamander.stats.hp, 1330);
-  assert.equal(salamander.stats.attack, 84);
+  assert.equal(salamander.stats.attack, 70);
   assert.equal(salamander.stats.plating, 2);
 }
 
@@ -41,7 +42,7 @@ export function installDurability15Treatment(cell: Durability15Cell) {
   if (durable) MONSTER_DATABASE.get('magma-brute')!.stats.hp = 3000;
   if (pressure) {
     MONSTER_DATABASE.get('magma-brute')!.stats.attack = 116;
-    MONSTER_DATABASE.get('ash-slinger')!.stats.attack = 84;
+    MONSTER_DATABASE.get('ash-slinger')!.stats.attack = 70;
   }
   return {
     changes: saved.map(({type, stats}) => ({type, before: stats.hp,

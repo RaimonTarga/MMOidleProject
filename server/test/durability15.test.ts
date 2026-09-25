@@ -12,7 +12,7 @@ for (const cell of DURABILITY15_CELLS) {
   if (cell.treatment.startsWith('anchor150')) expected.get('magma-brute').stats.hp = 3000;
   if (cell.treatment.endsWith('pressure80')) {
     expected.get('magma-brute').stats.attack = 116;
-    expected.get('ash-slinger').stats.attack = 84;
+    expected.get('ash-slinger').stats.attack = 70;
   }
   const overlay = installDurability15Treatment(cell);
   try { assert.deepEqual([...MONSTER_DATABASE], [...expected], 'only the declared stats may change'); }
