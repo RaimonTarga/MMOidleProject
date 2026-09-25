@@ -5,12 +5,13 @@
 // Boss: guardians removed, boss awakened, win = dungeon cooldown state.
 // Usage: tsx --conditions=development bench/defenseMatrix05.ts <outDir>
 //   env MATRIX_ARM (label), MATRIX_SHARD "i/n", MATRIX_HITBOXES, MATRIX_PREFLIGHT=1
+//   screening only: MATRIX_VARIANT (p50|p100|p50s), MATRIX_SEEDS "a,b", MATRIX_CLASS
 import assert from 'node:assert/strict';
 import { mkdirSync, writeFileSync, appendFileSync, existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { DUNGEON_DEFS, NODE_BIOMES, ITEM_DATABASE } from '@mmo-idle/shared';
+import { DUNGEON_DEFS, NODE_BIOMES, ITEM_DATABASE, SKILL_TREE } from '@mmo-idle/shared';
 import { BREADTH_CELLS } from './balance/playerBreadthSpec';
 import { prepareSurveyBot, SURVEY_CELLS, type SurveyCell } from './balance/ttkSurveySpec';
 import { createFarmWorld } from './balance/worldFactory';
@@ -21,10 +22,37 @@ import { registerCombatListener, unregisterCombatListener, type CombatEventHandl
 
 const CLASSES = ['squire', 'striker', 'slinger', 'apprentice', 'spirit', 'conduit'] as const;
 const MELEE = new Set(['squire', 'striker', 'conduit']);
-const SEEDS = [515003, 515037];
+const SEEDS = process.env.MATRIX_SEEDS ? process.env.MATRIX_SEEDS.split(',').map(Number) : [515003, 515037];
 const CAP_MS = 180_000;
 const FARM_PLUS = 3;
 const BOSS_PLUS = 5;
+
+// Screening variants for the rebudget pass, applied in memory to this process.
+// Original (pre-rebudget) Jungle/Desert plating: [base, per upgrade] by tier.
+const ORIGINAL_PLATING: Record<string, [number, number]> = {
+  'jungle-vest-t2': [6, 2], 'jungle-vest-t3': [13, 3], 'jungle-vest-t4': [24, 6],
+  'desert-vest-t2': [10, 3], 'desert-vest-t3': [20, 5], 'desert-vest-t4': [38, 9],
+};
+const VARIANT = process.env.MATRIX_VARIANT ?? 'none';
+assert(['none', 'p50', 'p100', 'p50s'].includes(VARIANT), `unknown variant ${VARIANT}`);
+const variantOverrides: unknown[] = [];
+if (VARIANT !== 'none') {
+  const share = VARIANT === 'p100' ? 1 : 0.5;
+  for (const [id, [base, step]] of Object.entries(ORIGINAL_PLATING)) {
+    const item = ITEM_DATABASE.get(id);
+    assert(item?.upgrades, `armor ${id} with upgrades`);
+    assert(!item.statModifiers.plating, `${id} already has plating; variant assumes the rebudget`);
+    item.statModifiers.plating = Math.round(base * share);
+    for (const u of item.upgrades) u.stats = { ...u.stats, plating: Math.round(step * share) };
+    variantOverrides.push({ id, statModifiers: item.statModifiers, upgrades: item.upgrades.map(u => u.stats) });
+  }
+  if (VARIANT === 'p50s') {
+    const striker = SKILL_TREE.get('cadence-root');
+    assert(striker?.statEffects?.maxHpPct === 0.25, 'Striker trim assumes the rebudget root');
+    striker.statEffects.maxHpPct = 0.18;
+    variantOverrides.push({ id: 'cadence-root', statEffects: striker.statEffects });
+  }
+}
 
 /** Class reference build per tier: T1 survey solo cell, T2-T4 balanced breadth cell. */
 function baseCell(tier: number, cls: string, boss: boolean): SurveyCell {
@@ -86,7 +114,8 @@ async function main() {
     assert(ITEM_DATABASE.has(c.build.gearItemIds.armor!), `unknown armor ${c.build.gearItemIds.armor}`);
   }
   const [shard, shards] = (process.env.MATRIX_SHARD ?? '0/1').split('/').map(Number);
-  const selected = cells.filter((_, i) => i % shards === shard);
+  const onlyClass = process.env.MATRIX_CLASS;
+  const selected = cells.filter((c, i) => i % shards === shard && (!onlyClass || c.className === onlyClass));
   if (process.env.MATRIX_PREFLIGHT === '1') {
     const kinds: Record<string, number> = {};
     for (const c of cells) { const k = c.id.split('-t')[0] + '-t' + c.tier; kinds[k] = (kinds[k] ?? 0) + 1; }
@@ -98,7 +127,7 @@ async function main() {
   assert(!existsSync(out), `Refusing to overwrite ${out}`);
   mkdirSync(out, { recursive: true });
   writeFileSync(resolve(out, 'manifest.json'), JSON.stringify({
-    schema: 1, arm: process.env.MATRIX_ARM ?? 'unlabelled', shard: `${shard}/${shards}`,
+    schema: 2, arm: process.env.MATRIX_ARM ?? 'unlabelled', shard: `${shard}/${shards}`, variant: VARIANT, variantOverrides, onlyClass: onlyClass ?? null,
     source: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
     diff: execFileSync('git', ['diff'], { encoding: 'utf8', maxBuffer: 20e6 }),
     runnerSha256: createHash('sha256').update(readFileSync(__filename)).digest('hex'),
