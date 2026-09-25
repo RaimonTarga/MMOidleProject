@@ -1,0 +1,996 @@
+{
+  "receipt": {
+    "spec": {
+      "path": "energy-heavy-t3-b",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "mountain-earthsunder-maul"
+    },
+    "cell": {
+      "id": "breadth-t4-spirit-heavy-b-farm",
+      "className": "spirit",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-graveyard-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 0,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "breadth-t4-spirit-heavy-b-farm",
+        "classRoot": "energy-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "energy-root",
+          "energy-heavy",
+          "energy-range-mid",
+          "energy-heavy-t3-b"
+        ],
+        "gearItemIds": {
+          "weapon": "mountain-earthsunder-maul",
+          "armor": "jungle-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        }
+      },
+      "identityId": "breadth-t4-spirit-heavy-b",
+      "frame": "heavy",
+      "range": "mid",
+      "pathName": "Invoker",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Each consecutive discharge (no long gap between them) adds a stack, up to 3: more discharge damage AND faster energy gain. Stacks reset after 5 seconds without dealing damage. Rewards uninterrupted farming.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Relic relic-colossus-heart: concentrated potency; accepts frequency/reconstruction penalty.",
+        "sweep has first offensive priority; multiple delivery opportunities support Sweep.",
+        "Offensive stance is always active; no stance switching.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ]
+    },
+    "view": {
+      "id": "bench-bot-0",
+      "name": "breadth-t4-spirit-heavy-b-farm",
+      "pos": {
+        "x": 2400,
+        "y": 2400
+      },
+      "target": {
+        "x": 2400,
+        "y": 2400
+      },
+      "hp": 343,
+      "maxHp": 343,
+      "attack": 334,
+      "onHitDamage": 0,
+      "plating": 30,
+      "damageReduction": 0.02,
+      "dodgeRate": 0.5318181818181819,
+      "evadeMitigation": 0.7,
+      "evadeCharge": 0,
+      "barrier": 226,
+      "barrierMax": 226,
+      "barrierRecharging": false,
+      "wards": [],
+      "incomingDot": 0,
+      "pendingHeal": 0,
+      "attackCadenceMult": 1,
+      "finalDamageDealtMult": 1.288,
+      "finalDamageTakenMult": 1.1,
+      "onHitDamageBonus": 0,
+      "attackRange": 142,
+      "attackCooldown": 2155,
+      "lastAttackAt": 0,
+      "attackTargetId": null,
+      "auto": true,
+      "autoTraverse": false,
+      "autoIntent": null,
+      "emote": null,
+      "partyLeaderId": null,
+      "partyMembers": [],
+      "nodeId": "node-t4-graveyard-03",
+      "essences": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {},
+      "level": 0,
+      "skillPoints": 0,
+      "unlockedSkills": [
+        "energy-root",
+        "energy-heavy",
+        "energy-range-mid",
+        "energy-heavy-t3-b"
+      ],
+      "passives": {
+        "defense.barrier-pct": 0.6599999999999999,
+        "energy.per-hit": 10,
+        "energy.empowered-mult": 6,
+        "energy.critical-mass": 1,
+        "energy.critical-mass-max-stacks": 3,
+        "energy.critical-mass-discharge-per-stack": 0.2,
+        "energy.critical-mass-gain-per-stack": 0.2,
+        "energy.critical-mass-reset-ms": 5000,
+        "defense.evade-mitigation": 0.2,
+        "mobility.approach-speed-pct": 1.25,
+        "core.damage-dealt-pct": 0.12,
+        "core.maxhp-mult": 0.12,
+        "relic.mechanic-frequency": -0.3,
+        "relic.mechanic-potency": 0.4
+      },
+      "cadenceSpeedStacks": 0,
+      "selectedClass": "energy-root",
+      "selectedSubVariant": "heavy",
+      "selectedRange": "energy-range-mid",
+      "currentSkillTier": 4,
+      "recovery": 16,
+      "speed": 230,
+      "attackStyle": "slash",
+      "inventory": [],
+      "equipment": {
+        "weapon": "mountain-earthsunder-maul",
+        "armor": "jungle-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-tempered",
+        "relic": "relic-colossus-heart"
+      },
+      "itemUpgrades": {
+        "mountain-earthsunder-maul": 0,
+        "jungle-vest-t4": 0,
+        "mountain-charm-t4": 0,
+        "mountain-boots-t4": 0,
+        "core-tempered": 0,
+        "relic-colossus-heart": 0
+      },
+      "biomeXP": {},
+      "biomeLevel": {
+        "cave": 18,
+        "forest": 12,
+        "mountain": 24,
+        "plains": 12,
+        "swamp": 18,
+        "desert": 18,
+        "jungle": 18,
+        "tundra": 12,
+        "volcanic": 12,
+        "graveyard": 6,
+        "trench": 6
+      },
+      "globalMastery": 156,
+      "unlockedRecipes": [],
+      "combatArchetype": "energy",
+      "cadenceCount": 0,
+      "cadenceThreshold": 0,
+      "cadenceEmpoweredArmed": false,
+      "ammoCount": 0,
+      "ammoMax": 0,
+      "reloadRemainingMs": 0,
+      "reloadDurationMs": 0,
+      "heatPct": 0,
+      "laserOverheated": false,
+      "executionReady": false,
+      "executionCooldownPct": 0,
+      "energyCount": 0,
+      "energyMax": 140,
+      "flashShiftPct": 0,
+      "flashDamageShiftPct": 45,
+      "flashSpeedBonusPct": 0,
+      "flashEvasionBonusPct": 0,
+      "empoweredReady": false,
+      "targetDotStacks": 0,
+      "targetDotTickPct": 0,
+      "targetChillStacks": 0,
+      "isChanneling": false,
+      "channelingPct": 0,
+      "cannonChargePct": 0,
+      "aura": null,
+      "activeBuffs": [],
+      "questProgress": {},
+      "playerTier": 4,
+      "bossesCleared": [],
+      "clearedNodes": [],
+      "visitedNodes": [],
+      "runesOwned": [
+        "always",
+        "in-combat",
+        "when-idle",
+        "hp-below-25",
+        "hp-above-90",
+        "target-hp-below-25",
+        "has-debuff",
+        "in-party",
+        "n-aggro-3",
+        "inside-telegraph",
+        "target-casting",
+        "stance-charged",
+        "before-empowered",
+        "target-elite",
+        "target-max-stacks",
+        "while-traveling",
+        "auto-path-enemy",
+        "chase-enemy",
+        "wait-for-regen",
+        "flee",
+        "fight-back",
+        "lead-the-way",
+        "follow-and-assist",
+        "taunt-current-target",
+        "focus-closest",
+        "use-ability",
+        "switch-stance",
+        "wait-it-out",
+        "tactical-reload",
+        "wait-for-execution",
+        "wait-for-summons",
+        "avoid-enemies",
+        "avoid-hazards",
+        "step-back",
+        "orbit"
+      ],
+      "runeRecipesCrafted": [],
+      "runesEquipped": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "knownAbilities": [
+        "disengage",
+        "imbue-lightning",
+        "snipe",
+        "stunning-strike",
+        "binding-strike",
+        "detonate",
+        "frenzy",
+        "quick-strike",
+        "charge",
+        "contagion",
+        "hamstring",
+        "slam",
+        "expose-weakness",
+        "power-strike",
+        "sweep",
+        "recuperate",
+        "break-free",
+        "bramble-guard",
+        "endure",
+        "brace",
+        "cleanse",
+        "second-wind"
+      ],
+      "attunedAbilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "knownStances": [
+        "berserker-stance",
+        "brawler-stance",
+        "defensive-stance",
+        "enraged-stance",
+        "execute-stance",
+        "fleeting-stance",
+        "offensive-stance",
+        "perfection-stance",
+        "powering-up-stance",
+        "predator-stance",
+        "reaper-stance",
+        "recuperating-stance",
+        "tanking-stance",
+        "time-to-strike-stance",
+        "warding-stance"
+      ],
+      "attunedStances": [
+        "offensive-stance"
+      ],
+      "equippedStances": {
+        "default": "offensive-stance"
+      },
+      "activeStance": "offensive-stance",
+      "manualStanceOverride": null,
+      "queuedAbilityIds": [],
+      "knownRites": [
+        "ability-reprieve",
+        "blood-offering",
+        "lingering-battle",
+        "mechanic-renewal",
+        "purification",
+        "swift-repose"
+      ],
+      "equippedRites": [],
+      "riteSlots": 6,
+      "hitboxRects": [
+        {
+          "offsetX": 1.5,
+          "offsetY": 8,
+          "halfW": 11.5,
+          "halfH": 19
+        },
+        {
+          "offsetX": 2,
+          "offsetY": -19,
+          "halfW": 6,
+          "halfH": 8
+        },
+        {
+          "offsetX": -11,
+          "offsetY": 12,
+          "halfW": 1,
+          "halfH": 15
+        },
+        {
+          "offsetX": 13.5,
+          "offsetY": 11,
+          "halfW": 0.5,
+          "halfH": 15
+        },
+        {
+          "offsetX": -13.5,
+          "offsetY": 21,
+          "halfW": 1.5,
+          "halfH": 4
+        },
+        {
+          "offsetX": -5,
+          "offsetY": -16,
+          "halfW": 1,
+          "halfH": 5
+        }
+      ],
+      "summonsMinions": 0,
+      "summonActiveCount": 0,
+      "summonRespawnMaxMs": 0,
+      "summonSlots": [],
+      "isDead": false,
+      "graveFrame": null
+    },
+    "passives": {
+      "defense.barrier-pct": 0.6599999999999999,
+      "energy.per-hit": 10,
+      "energy.empowered-mult": 6,
+      "energy.critical-mass": 1,
+      "energy.critical-mass-max-stacks": 3,
+      "energy.critical-mass-discharge-per-stack": 0.2,
+      "energy.critical-mass-gain-per-stack": 0.2,
+      "energy.critical-mass-reset-ms": 5000,
+      "defense.evade-mitigation": 0.2,
+      "mobility.approach-speed-pct": 1.25,
+      "core.damage-dealt-pct": 0.12,
+      "core.maxhp-mult": 0.12,
+      "relic.mechanic-frequency": -0.3,
+      "relic.mechanic-potency": 0.4
+    },
+    "stats": {
+      "attack": 334,
+      "onHit": 0,
+      "cd": 2155,
+      "hp": 343
+    },
+    "target": {
+      "plating": 0,
+      "damageReduction": 0,
+      "evasion": 0
+    }
+  },
+  "result": {
+    "index": 40,
+    "spec": {
+      "path": "energy-heavy-t3-b",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "mountain-earthsunder-maul"
+    },
+    "outcome": "window-ended",
+    "elapsedMs": 120000,
+    "damage": 45484,
+    "dps": 379.03333333333336,
+    "kills": 0,
+    "incoming": 0,
+    "minCd": 2155,
+    "maxRampage": 0,
+    "maxCritical": 3,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 2838,
+        "absorbed": 0,
+        "damageEvents": 6,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 9300,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 2200
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 8084,
+        "absorbed": 0,
+        "damageEvents": 17,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 29300,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 2200
+      },
+      {
+        "atMs": 60000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 19354,
+        "absorbed": 0,
+        "damageEvents": 33,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 58500,
+        "longestKillGapMs": 60000,
+        "longestHpProgressGapMs": 2200
+      },
+      {
+        "atMs": 120000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 45484,
+        "absorbed": 0,
+        "damageEvents": 66,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 118500,
+        "longestKillGapMs": 120000,
+        "longestHpProgressGapMs": 2200
+      }
+    ],
+    "sources": {
+      "[]": 29928,
+      "[\"empowered\"]": 15556
+    },
+    "terminalHp": 343,
+    "wallMs": 1174.2598999999973
+  },
+  "rawColumns": [
+    "timeMs",
+    "hpDamage",
+    "rampage",
+    "criticalMass",
+    "cooldownMs"
+  ],
+  "raw": [
+    [
+      100,
+      430,
+      null,
+      0,
+      2155
+    ],
+    [
+      1700,
+      516,
+      null,
+      0,
+      2155
+    ],
+    [
+      3300,
+      516,
+      null,
+      0,
+      2155
+    ],
+    [
+      4900,
+      516,
+      null,
+      0,
+      2155
+    ],
+    [
+      7100,
+      430,
+      null,
+      0,
+      2155
+    ],
+    [
+      9300,
+      430,
+      null,
+      0,
+      2155
+    ],
+    [
+      10900,
+      430,
+      null,
+      0,
+      2155
+    ],
+    [
+      12500,
+      516,
+      null,
+      0,
+      2155
+    ],
+    [
+      14100,
+      516,
+      null,
+      0,
+      2155
+    ],
+    [
+      16300,
+      516,
+      null,
+      0,
+      2155
+    ],
+    [
+      18500,
+      430,
+      null,
+      0,
+      2155
+    ],
+    [
+      20100,
+      430,
+      null,
+      0,
+      2155
+    ],
+    [
+      21700,
+      430,
+      null,
+      0,
+      2155
+    ],
+    [
+      23300,
+      430,
+      null,
+      0,
+      2155
+    ],
+    [
+      24900,
+      516,
+      null,
+      0,
+      2155
+    ],
+    [
+      27100,
+      516,
+      null,
+      0,
+      2155
+    ],
+    [
+      29300,
+      516,
+      null,
+      0,
+      2155
+    ],
+    [
+      30900,
+      430,
+      null,
+      0,
+      2155
+    ],
+    [
+      32500,
+      430,
+      null,
+      0,
+      2155
+    ],
+    [
+      34100,
+      430,
+      null,
+      0,
+      2155
+    ],
+    [
+      36300,
+      4132,
+      null,
+      1,
+      2155
+    ],
+    [
+      38500,
+      516,
+      null,
+      1,
+      2155
+    ],
+    [
+      40100,
+      516,
+      null,
+      1,
+      2155
+    ],
+    [
+      41700,
+      516,
+      null,
+      1,
+      2155
+    ],
+    [
+      43300,
+      516,
+      null,
+      1,
+      2155
+    ],
+    [
+      44900,
+      430,
+      null,
+      1,
+      2155
+    ],
+    [
+      47100,
+      430,
+      null,
+      1,
+      2155
+    ],
+    [
+      49300,
+      516,
+      null,
+      1,
+      2155
+    ],
+    [
+      50900,
+      516,
+      null,
+      1,
+      2155
+    ],
+    [
+      52500,
+      516,
+      null,
+      1,
+      2155
+    ],
+    [
+      54100,
+      516,
+      null,
+      1,
+      2155
+    ],
+    [
+      56300,
+      430,
+      null,
+      1,
+      2155
+    ],
+    [
+      58500,
+      430,
+      null,
+      1,
+      2155
+    ],
+    [
+      60100,
+      430,
+      null,
+      1,
+      2155
+    ],
+    [
+      61700,
+      516,
+      null,
+      1,
+      2155
+    ],
+    [
+      63300,
+      516,
+      null,
+      1,
+      2155
+    ],
+    [
+      64900,
+      516,
+      null,
+      1,
+      2155
+    ],
+    [
+      67100,
+      430,
+      null,
+      1,
+      2155
+    ],
+    [
+      69300,
+      430,
+      null,
+      1,
+      2155
+    ],
+    [
+      70900,
+      4822,
+      null,
+      2,
+      2155
+    ],
+    [
+      72500,
+      516,
+      null,
+      2,
+      2155
+    ],
+    [
+      74100,
+      516,
+      null,
+      2,
+      2155
+    ],
+    [
+      76300,
+      516,
+      null,
+      2,
+      2155
+    ],
+    [
+      78500,
+      430,
+      null,
+      2,
+      2155
+    ],
+    [
+      80100,
+      430,
+      null,
+      2,
+      2155
+    ],
+    [
+      81700,
+      430,
+      null,
+      2,
+      2155
+    ],
+    [
+      83300,
+      430,
+      null,
+      2,
+      2155
+    ],
+    [
+      84900,
+      516,
+      null,
+      2,
+      2155
+    ],
+    [
+      87100,
+      516,
+      null,
+      2,
+      2155
+    ],
+    [
+      89300,
+      516,
+      null,
+      2,
+      2155
+    ],
+    [
+      90900,
+      430,
+      null,
+      2,
+      2155
+    ],
+    [
+      92500,
+      430,
+      null,
+      2,
+      2155
+    ],
+    [
+      94100,
+      430,
+      null,
+      2,
+      2155
+    ],
+    [
+      96300,
+      430,
+      null,
+      2,
+      2155
+    ],
+    [
+      98500,
+      6602,
+      null,
+      3,
+      2155
+    ],
+    [
+      100100,
+      516,
+      null,
+      3,
+      2155
+    ],
+    [
+      101700,
+      516,
+      null,
+      3,
+      2155
+    ],
+    [
+      103300,
+      516,
+      null,
+      3,
+      2155
+    ],
+    [
+      104900,
+      430,
+      null,
+      3,
+      2155
+    ],
+    [
+      107100,
+      430,
+      null,
+      3,
+      2155
+    ],
+    [
+      109300,
+      516,
+      null,
+      3,
+      2155
+    ],
+    [
+      110900,
+      516,
+      null,
+      3,
+      2155
+    ],
+    [
+      112500,
+      516,
+      null,
+      3,
+      2155
+    ],
+    [
+      114100,
+      516,
+      null,
+      3,
+      2155
+    ],
+    [
+      116300,
+      430,
+      null,
+      3,
+      2155
+    ],
+    [
+      118500,
+      430,
+      null,
+      3,
+      2155
+    ]
+  ]
+}

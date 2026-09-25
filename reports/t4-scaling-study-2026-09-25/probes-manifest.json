@@ -1,0 +1,643 @@
+{
+  "mode": "probes",
+  "synthetic": true,
+  "economyEligible": false,
+  "dtMs": 100,
+  "note": "Mature mastery at both +0 and +5; +0 is a lower-upgrade sensitivity, NOT earned T4 entry. Probe pins actors and disables incoming damage; production combat tick and full prepared package. No rites.",
+  "specs": [
+    {
+      "path": "cadence-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    {
+      "path": "cadence-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    {
+      "path": "cadence-heavy-t3-b",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    {
+      "path": "cadence-heavy-t3-b",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    {
+      "path": "cadence-heavy-t3-c",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    {
+      "path": "cadence-heavy-t3-c",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    {
+      "path": "cadence-balanced-t3-b",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    {
+      "path": "cadence-balanced-t3-b",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    {
+      "path": "energy-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    {
+      "path": "energy-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    {
+      "path": "energy-heavy-t3-b",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    {
+      "path": "energy-heavy-t3-b",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    {
+      "path": "energy-heavy-t3-c",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    {
+      "path": "energy-heavy-t3-c",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    {
+      "path": "energy-balanced-t3-b",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    {
+      "path": "energy-balanced-t3-b",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    {
+      "path": "reload-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    {
+      "path": "reload-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    {
+      "path": "reload-heavy-t3-b",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    {
+      "path": "reload-heavy-t3-b",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    {
+      "path": "cooldown-heavy-t3-c",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    {
+      "path": "cooldown-heavy-t3-c",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    {
+      "path": "cooldown-heavy-t3-b",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    {
+      "path": "cooldown-heavy-t3-b",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    {
+      "path": "dot-balanced-t3-a",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    {
+      "path": "dot-balanced-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    {
+      "path": "dot-balanced-t3-b",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    {
+      "path": "dot-balanced-t3-b",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    {
+      "path": "dot-light-t3-b",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    {
+      "path": "dot-light-t3-b",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    {
+      "path": "cadence-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "trench-abyssal-axe"
+    },
+    {
+      "path": "cadence-heavy-t3-a",
+      "arm": "speed30",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "trench-abyssal-axe"
+    },
+    {
+      "path": "energy-heavy-t3-b",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "trench-abyssal-axe"
+    },
+    {
+      "path": "energy-heavy-t3-b",
+      "arm": "gain10",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "trench-abyssal-axe"
+    },
+    {
+      "path": "cadence-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "jungle-deathfang-rapier"
+    },
+    {
+      "path": "cadence-heavy-t3-a",
+      "arm": "speed30",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "jungle-deathfang-rapier"
+    },
+    {
+      "path": "energy-heavy-t3-b",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "jungle-deathfang-rapier"
+    },
+    {
+      "path": "energy-heavy-t3-b",
+      "arm": "gain10",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "jungle-deathfang-rapier"
+    },
+    {
+      "path": "cadence-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "mountain-earthsunder-maul"
+    },
+    {
+      "path": "cadence-heavy-t3-a",
+      "arm": "speed30",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "mountain-earthsunder-maul"
+    },
+    {
+      "path": "energy-heavy-t3-b",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "mountain-earthsunder-maul"
+    },
+    {
+      "path": "energy-heavy-t3-b",
+      "arm": "gain10",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "mountain-earthsunder-maul"
+    },
+    {
+      "path": "cadence-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "trench-abyssal-axe"
+    },
+    {
+      "path": "cadence-heavy-t3-a",
+      "arm": "speed30",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "trench-abyssal-axe"
+    },
+    {
+      "path": "energy-heavy-t3-b",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "trench-abyssal-axe"
+    },
+    {
+      "path": "energy-heavy-t3-b",
+      "arm": "gain10",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "trench-abyssal-axe"
+    },
+    {
+      "path": "cadence-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "jungle-deathfang-rapier"
+    },
+    {
+      "path": "cadence-heavy-t3-a",
+      "arm": "speed30",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "jungle-deathfang-rapier"
+    },
+    {
+      "path": "energy-heavy-t3-b",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "jungle-deathfang-rapier"
+    },
+    {
+      "path": "energy-heavy-t3-b",
+      "arm": "gain10",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "jungle-deathfang-rapier"
+    },
+    {
+      "path": "cadence-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "mountain-earthsunder-maul"
+    },
+    {
+      "path": "cadence-heavy-t3-a",
+      "arm": "speed30",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "mountain-earthsunder-maul"
+    },
+    {
+      "path": "energy-heavy-t3-b",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "mountain-earthsunder-maul"
+    },
+    {
+      "path": "energy-heavy-t3-b",
+      "arm": "gain10",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "mountain-earthsunder-maul"
+    },
+    {
+      "path": "reload-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "core": "core-catalyst"
+    },
+    {
+      "path": "reload-heavy-t3-a",
+      "arm": "laserFlat25",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "core": "core-catalyst"
+    },
+    {
+      "path": "cooldown-heavy-t3-c",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "core": "core-catalyst"
+    },
+    {
+      "path": "reload-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "core": "core-tempered"
+    },
+    {
+      "path": "reload-heavy-t3-a",
+      "arm": "laserFlat25",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "core": "core-tempered"
+    },
+    {
+      "path": "cooldown-heavy-t3-c",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "core": "core-tempered"
+    },
+    {
+      "path": "reload-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "jungle-deathfang-rapier"
+    },
+    {
+      "path": "reload-heavy-t3-a",
+      "arm": "laserFlat25",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "jungle-deathfang-rapier"
+    },
+    {
+      "path": "cooldown-heavy-t3-c",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "jungle-deathfang-rapier"
+    },
+    {
+      "path": "reload-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "tundra-glacial-rimebrand"
+    },
+    {
+      "path": "reload-heavy-t3-a",
+      "arm": "laserFlat25",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "tundra-glacial-rimebrand"
+    },
+    {
+      "path": "cooldown-heavy-t3-c",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "tundra-glacial-rimebrand"
+    },
+    {
+      "path": "reload-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "mountain-earthsunder-maul"
+    },
+    {
+      "path": "reload-heavy-t3-a",
+      "arm": "laserFlat25",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "mountain-earthsunder-maul"
+    },
+    {
+      "path": "cooldown-heavy-t3-c",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "mountain-earthsunder-maul"
+    },
+    {
+      "path": "cadence-heavy-t3-c",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 600000
+    },
+    {
+      "path": "cadence-heavy-t3-c",
+      "arm": "cap100",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 600000
+    },
+    {
+      "path": "energy-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "armor": true
+    },
+    {
+      "path": "energy-heavy-t3-b",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "armor": true
+    },
+    {
+      "path": "energy-heavy-t3-c",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "armor": true
+    }
+  ]
+}

@@ -1,0 +1,227 @@
+{
+  "mode": "followup",
+  "synthetic": true,
+  "economyEligible": false,
+  "dtMs": 100,
+  "note": "Mature mastery at both +0 and +5; +0 is a lower-upgrade sensitivity, NOT earned T4 entry. Probe pins actors and disables incoming damage; production combat tick and full prepared package. No rites.",
+  "specs": [
+    {
+      "path": "cadence-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    {
+      "path": "cadence-heavy-t3-a",
+      "arm": "speed30",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    {
+      "path": "energy-heavy-t3-b",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    {
+      "path": "energy-heavy-t3-b",
+      "arm": "gain10",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    {
+      "path": "reload-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "core": "core-catalyst"
+    },
+    {
+      "path": "reload-heavy-t3-a",
+      "arm": "laserFlat75",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "core": "core-catalyst"
+    },
+    {
+      "path": "reload-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "core": "core-tempered"
+    },
+    {
+      "path": "reload-heavy-t3-a",
+      "arm": "laserFlat75",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "core": "core-tempered"
+    },
+    {
+      "path": "cadence-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "graveyard-plague-axe"
+    },
+    {
+      "path": "cadence-heavy-t3-a",
+      "arm": "speed30",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "graveyard-plague-axe"
+    },
+    {
+      "path": "cadence-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "graveyard-plague-axe"
+    },
+    {
+      "path": "cadence-heavy-t3-a",
+      "arm": "speed30",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "graveyard-plague-axe"
+    },
+    {
+      "path": "cadence-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "graveyard-plague-axe",
+      "relic": "relic-hastebound-dial"
+    },
+    {
+      "path": "cadence-heavy-t3-a",
+      "arm": "speed30",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "graveyard-plague-axe",
+      "relic": "relic-hastebound-dial"
+    },
+    {
+      "path": "energy-heavy-t3-b",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "relic": "relic-hastebound-dial"
+    },
+    {
+      "path": "energy-heavy-t3-b",
+      "arm": "gain10",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "relic": "relic-hastebound-dial"
+    },
+    {
+      "path": "cadence-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "graveyard-plague-axe",
+      "relic": "relic-equilibrium-shard"
+    },
+    {
+      "path": "cadence-heavy-t3-a",
+      "arm": "speed30",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "graveyard-plague-axe",
+      "relic": "relic-equilibrium-shard"
+    },
+    {
+      "path": "energy-heavy-t3-b",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "relic": "relic-equilibrium-shard"
+    },
+    {
+      "path": "energy-heavy-t3-b",
+      "arm": "gain10",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "relic": "relic-equilibrium-shard"
+    },
+    {
+      "path": "cadence-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "graveyard-plague-axe",
+      "relic": "relic-glacial-bell"
+    },
+    {
+      "path": "cadence-heavy-t3-a",
+      "arm": "speed30",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "graveyard-plague-axe",
+      "relic": "relic-glacial-bell"
+    },
+    {
+      "path": "energy-heavy-t3-b",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "relic": "relic-glacial-bell"
+    },
+    {
+      "path": "energy-heavy-t3-b",
+      "arm": "gain10",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "relic": "relic-glacial-bell"
+    }
+  ]
+}

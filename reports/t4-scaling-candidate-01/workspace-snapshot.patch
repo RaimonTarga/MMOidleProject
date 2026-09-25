@@ -1,0 +1,934 @@
+diff --git a/.claude/commands/release.md b/.claude/commands/release.md
+index 84a1d2b0..68ec66e7 100644
+--- a/.claude/commands/release.md
++++ b/.claude/commands/release.md
+@@ -8,14 +8,34 @@ Cut an MMO Idle release.
+ 
+ ## Instructions
+ 
++### Preparation before choosing a release version
++
++For requests to prepare a playtest, start with an unpublished draft and readiness
++record. Do not run `release:prepare` in write mode until the version and candidate
++scope are settled: it changes package metadata and the in-game release manifest.
++Use `updates/next-playtest-draft.md` and
++`docs/next-playtest-release-readiness.md` for the current preparation.
++
++- Read `CLAUDE.md`, inspect status, and preserve concurrent work and active bots.
++- Verify production/development remote refs and ancestry. Compare current source
++  against the last production release, not just accumulated branch notes.
++- Audit this command and `scripts/release.mjs` against current package layout.
++- Check the actual Railway public endpoint and, when accessible, service logs,
++  source branch, environment, and deployed revision. Record inaccessible checks.
++- Inspect new migrations and agree save/reset policy before any deployment.
++- Draft short highlights plus detailed system sections; keep ops evidence separate.
++- Keep economy results provisional until reviewed and adopted into the candidate.
++
++### Final release
++
+ 1. Determine the next version number from `package.json`: increment the major segment and reset minor to `0` for a major release, or increment the minor segment for a minor release.
+ 2. Validate that `X.Y` is a major.minor release version.
+ 3. Verify the current branch is `develop`; release commands must not run from any other branch.
+ 4. Run `pnpm release:prepare X.Y`.
+ 5. Read `updates/vX.Y/changelog.md` and every file under `updates/develop/**/*`.
+ 6. Edit `updates/vX.Y/changelog.md` into player-facing patch notes using both the generated commit list and the `updates/develop` notes.
+-7. After folding the `updates/develop` information into `updates/vX.Y/changelog.md`, delete the no-longer-needed branch note files/directories under `updates/develop/`.
+-8. Run `pnpm typecheck`.
++7. After folding the `updates/develop` information into `updates/vX.Y/changelog.md`, delete only the absorbed branch notes. Commit those reviewed deletions separately before `release:cut`: the script's unrelated-change check currently rejects them. Preserve unabsorbed notes and concurrent changes.
++8. Qualify the final candidate with `pnpm typecheck`, `pnpm test`, and a production build in an isolated checkout. Record migration rehearsal, backups/restore readiness, production flags, and real login/gameplay/persistence smoke checks. Do not treat old report counts or `/healthz` alone as release qualification. Resolve the current script limitations recorded in the readiness document before publication.
+ 9. Present the patch notes and ask for confirmation before publishing.
+ 10. Run `pnpm release:cut X.Y` only after confirmation. This commits release metadata on `develop`, creates `release-vX.Y`, fast-forwards `master` to the release commit, and pushes `develop`, `master`, and the snapshot branch.
+ 
+diff --git a/client/index.html b/client/index.html
+index 2c02dfe2..e6a84604 100644
+--- a/client/index.html
++++ b/client/index.html
+@@ -2,7 +2,7 @@
+ <html lang="en">
+   <head>
+     <meta charset="UTF-8" />
+-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
++    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+     <title>MMO Idle</title>
+     <style>
+       * { margin: 0; padding: 0; box-sizing: border-box; }
+@@ -37,6 +37,7 @@
+       body {
+         background: #050510;
+         height: 100vh;
++        height: 100dvh;
+         overflow: hidden;
+         display: flex;
+       }
+@@ -47,6 +48,7 @@
+         flex-direction: row;
+         width: 100%;
+         height: 100vh;
++        height: 100dvh;
+         overflow: hidden;
+       }
+ 
+diff --git a/client/src/auth/authGate.css b/client/src/auth/authGate.css
+index a04796f7..a26f7a90 100644
+--- a/client/src/auth/authGate.css
++++ b/client/src/auth/authGate.css
+@@ -762,6 +762,13 @@ html[data-spectator="true"] #game-wrapper > div {
+   .auth-live-label { right: 12px; bottom: 12px; max-width: calc(100vw - 24px); }
+ }
+ 
++/* Centering a tall login card in a short landscape viewport makes its top
++   unreachable even when the gate scrolls. Start the content at the top. */
++@media (max-width: 1100px) and (max-height: 600px) {
++  .auth-gate { place-items: start center; }
++  .auth-gate--landing .auth-login-panel { margin-block: 0; }
++}
++
+ @media (prefers-reduced-motion: reduce) {
+   .auth-gate__conduit--active,
+   .auth-loading__sigil,
+diff --git a/client/src/hud/MobileHUD.tsx b/client/src/hud/MobileHUD.tsx
+index 650cc39d..2dfa35cf 100644
+--- a/client/src/hud/MobileHUD.tsx
++++ b/client/src/hud/MobileHUD.tsx
+@@ -381,6 +381,7 @@ function MobileHUDContent() {
+           {tabs.map(t => (
+             <button
+               key={t.key}
++              aria-label={t.label}
+               type="button"
+               className={`mhud-tab${view === t.key ? ' mhud-tab--active' : ''}${t.badge ? ' mhud-tab--badge' : ''}`}
+               data-ui-unlock-system={t.unlockSystems?.join(' ') || undefined}
+diff --git a/client/src/hud/bestiary/bestiary.css b/client/src/hud/bestiary/bestiary.css
+index aadec0e5..453a0291 100644
+--- a/client/src/hud/bestiary/bestiary.css
++++ b/client/src/hud/bestiary/bestiary.css
+@@ -401,6 +401,11 @@
+ .bestiary-detail__mech-text b { color: var(--hud-text); }
+ 
+ @media (max-width: 720px) {
++  .bestiary-detail__hero { flex-direction: column; align-items: flex-start; }
++  .bestiary-detail__hero-text { width: 100%; overflow-wrap: anywhere; }
++  .bestiary-detail__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
++  .bestiary-detail__ability-header { flex-wrap: wrap; }
++  .bestiary-detail__pane { min-width: 0; overflow-wrap: anywhere; }
+   .bestiary-detail__body { flex-direction: column; }
+   .bestiary-detail__list {
+     width: auto;
+diff --git a/client/src/hud/characterSelectPrompt.css b/client/src/hud/characterSelectPrompt.css
+index 08f0bc72..ea0c79b6 100644
+--- a/client/src/hud/characterSelectPrompt.css
++++ b/client/src/hud/characterSelectPrompt.css
+@@ -1,4 +1,6 @@
+ .charsel-prompt__body {
++  min-height: 0;
++  overflow-y: auto;
+   padding: 14px 18px 16px;
+ }
+ 
+@@ -12,6 +14,7 @@
+ 
+ .charsel-prompt__actions {
+   display: flex;
++  flex-wrap: wrap;
+   justify-content: flex-end;
+   gap: 8px;
+   margin-top: 16px;
+diff --git a/client/src/hud/deathOverlay.css b/client/src/hud/deathOverlay.css
+index 4a436e69..c444479a 100644
+--- a/client/src/hud/deathOverlay.css
++++ b/client/src/hud/deathOverlay.css
+@@ -5,6 +5,8 @@
+   display: flex;
+   align-items: center;
+   justify-content: center;
++  overflow-y: auto;
++  padding: max(64px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+   background: rgba(8, 6, 4, 0.88);
+   pointer-events: all;
+   font-family: system-ui, sans-serif;
+@@ -13,7 +15,10 @@
+ .death-card {
+   position: relative;
+   width: min(560px, calc(100vw - 32px));
+-  margin-top: 48px;
++  /* Auto margins center when there is room and collapse when the card must
++     scroll, keeping both the title and Continue reachable on short phones. */
++  margin-block: auto;
++  flex-shrink: 0;
+   padding: 24px 28px 20px;
+   border-top: 2px solid var(--bevel-light);
+   border-left: 2px solid var(--bevel-light);
+diff --git a/client/src/hud/primitives/dialogs.css b/client/src/hud/primitives/dialogs.css
+index 983d4c33..95de3d0d 100644
+--- a/client/src/hud/primitives/dialogs.css
++++ b/client/src/hud/primitives/dialogs.css
+@@ -17,6 +17,8 @@
+   flex-direction: column;
+   width: 100%;
+   max-height: min(90vh, calc((100vh - 32px) / var(--ui-font-scale, 1)));
++  max-height: min(90dvh, calc((100dvh - 32px) / var(--ui-font-scale, 1)));
++  min-width: 0;
+   overflow: hidden;
+   background:
+     linear-gradient(180deg, rgba(255, 244, 210, 0.018), transparent 64px),
+@@ -214,18 +216,23 @@
+ 
+ @media (max-width: 1100px) {
+   .game-dialog__backdrop {
+-    padding: 6px;
++    --dialog-top: max(6px, env(safe-area-inset-top, 0px));
++    --dialog-right: max(6px, env(safe-area-inset-right, 0px));
++    --dialog-bottom: max(6px, env(safe-area-inset-bottom, 0px));
++    --dialog-left: max(6px, env(safe-area-inset-left, 0px));
++    padding: var(--dialog-top) var(--dialog-right) var(--dialog-bottom) var(--dialog-left);
+   }
+ 
+   .game-dialog__panel,
+   .game-dialog__panel--compact,
+   .game-dialog__panel--standard,
+   .game-dialog__panel--wide {
+-    /* Same zoom compensation as the sheet: without it a non-default UI font
+-       scale renders a full-width dialog wider than the viewport. */
+-    width: calc(100% / var(--ui-font-scale, 1));
++    /* Percentage widths already inherit zoom compensation from their containing
++       block. Use viewport units to avoid dividing the available width twice. */
++    width: calc((100vw - var(--dialog-left) - var(--dialog-right)) / var(--ui-font-scale, 1));
+     max-width: none;
+     max-height: min(94vh, calc((100vh - 12px) / var(--ui-font-scale, 1)));
++    max-height: calc((100dvh - var(--dialog-top) - var(--dialog-bottom)) / var(--ui-font-scale, 1));
+   }
+ 
+   /* Touch footprints. Geometry grows to the hit-target token without changing
+@@ -244,15 +251,21 @@
+   }
+ 
+   .dialog-tab {
+-    flex: 1 1 0;
+-    min-width: 0;
++    flex: 1 0 auto;
++    min-width: min-content;
+     min-height: var(--hud-hit-target);
+     padding-right: 4px;
+     padding-left: 4px;
+     touch-action: manipulation;
+     -webkit-tap-highlight-color: transparent;
++    white-space: normal;
++    line-height: 1.3;
+   }
+ 
++  .dialog-header__close { flex-shrink: 0; }
++  .dialog-header__title { overflow-wrap: anywhere; }
++  .dialog-tabs { overflow-x: auto; }
++
+   /* Touch has no hover; the selected underline stays the only tab affordance. */
+   .dialog-tab:hover {
+     color: var(--hud-text-muted);
+@@ -281,9 +294,10 @@
+ .game-dialog__panel--sheet {
+   /* `zoom` multiplies the rendered box, so the authored width is pre-divided to
+      keep a full-bleed sheet exactly viewport-wide at every UI font scale. */
+-  width: calc(100% / var(--ui-font-scale, 1));
++  width: calc(100vw / var(--ui-font-scale, 1));
+   max-width: none;
+   max-height: min(85vh, calc((100vh - 24px) / var(--ui-font-scale, 1)));
++  max-height: min(85dvh, calc((100dvh - max(24px, env(safe-area-inset-top, 0px))) / var(--ui-font-scale, 1)));
+   padding-right: env(safe-area-inset-right, 0px);
+   padding-bottom: env(safe-area-inset-bottom, 0px);
+   padding-left: env(safe-area-inset-left, 0px);
+@@ -303,6 +317,7 @@
+ @media (max-width: 1100px) and (max-height: 480px) {
+   .game-dialog__panel--sheet {
+     max-height: min(94vh, calc((100vh - 8px) / var(--ui-font-scale, 1)));
++    max-height: calc((100dvh - max(8px, env(safe-area-inset-top, 0px))) / var(--ui-font-scale, 1));
+   }
+ }
+ 
+diff --git a/client/src/hud/releaseAnnouncement.css b/client/src/hud/releaseAnnouncement.css
+index 447954c4..37a619c5 100644
+--- a/client/src/hud/releaseAnnouncement.css
++++ b/client/src/hud/releaseAnnouncement.css
+@@ -15,6 +15,7 @@
+   position: relative;
+   width: min(760px, calc(100vw - 32px));
+   max-height: min(820px, calc(100vh - 48px));
++  max-height: min(820px, calc(100dvh - 48px));
+   display: flex;
+   flex-direction: column;
+   border-top: 2px solid var(--bevel-light);
+@@ -189,6 +190,7 @@
+   .release-card {
+     width: calc(100vw - 24px);
+     max-height: calc(100vh - 24px);
++    max-height: calc(100dvh - 24px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+   }
+ 
+   .release-card__header,
+diff --git a/client/src/hud/settings/settings.css b/client/src/hud/settings/settings.css
+index 521dace9..e9114cd6 100644
+--- a/client/src/hud/settings/settings.css
++++ b/client/src/hud/settings/settings.css
+@@ -238,6 +238,12 @@
+   .settings-body {
+     padding: 12px 12px 18px;
+   }
++  .settings-table { table-layout: fixed; }
++  .settings-action-label { white-space: normal; overflow-wrap: anywhere; }
++  .settings-slider-row,
++  .settings-field-row { flex-wrap: wrap; }
++  .settings-slider-row input { min-width: 0; }
++  .settings-field-row select { min-width: 0; max-width: 100%; }
+ }
+ 
+ .settings-gameplay {
+diff --git a/client/src/net/deltaApplier.ts b/client/src/net/deltaApplier.ts
+index ea30c30c..1ac5ff29 100644
+--- a/client/src/net/deltaApplier.ts
++++ b/client/src/net/deltaApplier.ts
+@@ -20,6 +20,7 @@ import { upsertMinion } from "../render/minions";
+ import { destroyEntity } from "../render/destroy";
+ import { getOwnView } from "../render/state";
+ import { dispatchCombatEvent } from "../render/combatFx";
++import { clearEssenceMotes } from '../fx/essenceMotes';
+ import { beginCombatPlayback, queuePlayerAttack, queueCombatDeath } from '../render/combatPlayback';
+ import { prepareCombatText, renderCombatText } from '../render/combatText';
+ import { spawnDamageNumber } from '../fx/particles';
+@@ -46,6 +47,7 @@ export function applyDelta(
+   scene: GameScene,
+   options: { stateSync?: boolean } = {},
+ ): void {
++  if (options.stateSync || snapshot.nodeId !== state.ownNodeId) clearEssenceMotes(scene);
+   if (snapshot.full) {
+     state.ambientStackFlash.clear();
+     clearOwnMovePath(state);
+diff --git a/client/src/render/combatFx.ts b/client/src/render/combatFx.ts
+index 01ba1c9e..dedee0eb 100644
+--- a/client/src/render/combatFx.ts
++++ b/client/src/render/combatFx.ts
+@@ -1,3 +1,4 @@
++import { spawnEssenceMotes } from '../fx/essenceMotes';
+ import {
+   ABILITY_BINDING_STRIKE_FX,
+   ABILITY_EXPOSE_WEAKNESS_FX,
+@@ -858,6 +859,12 @@ export function dispatchCombatEvent(
+   presentation?: PlayerAttackPresentation,
+ ): void {
+   if (ev.kind === 'damage') return; // Amount-only events render in deltaApplier.
++  if (ev.kind === 'essence-drop') {
++    if (ev.playerId === scene.myId || (scene.spectatorMode && ev.playerId === scene.spectatorTargetId)) {
++      spawnEssenceMotes(scene, ev.playerId, nodeToScene(ev.pos.x, ev.pos.y), ev.amount, ev.essenceType);
++    }
++    return;
++  }
+   if (ev.kind === 'ambient-stack-gain') {
+     const player = state.view.get(ev.playerId) as PlayerView | undefined;
+     if (shouldRunClientFx() && state.kind.get(ev.playerId) === 'player' && player && !player.isDead) {
+diff --git a/client/src/render/combatPlayback.ts b/client/src/render/combatPlayback.ts
+index 5da99deb..2dc04dcf 100644
+--- a/client/src/render/combatPlayback.ts
++++ b/client/src/render/combatPlayback.ts
+@@ -9,6 +9,7 @@ import { fxBossDeath, fxMobDeath } from '../fx/monsterDeath';
+ import { playSfx } from '../audio/audioEngine';
+ 
+ export type CombatPlaybackItem =
++  | { kind: 'reward'; event: Extract<CombatEvent, { kind: 'essence-drop' }> }
+   | { kind: 'attack'; event: CombatEvent; presentation: PlayerAttackPresentation; text: CombatTextBatch }
+   | { kind: 'death'; play: () => void };
+ 
+@@ -30,6 +31,10 @@ function isBufferedPlayer(player: PlayerView, event: CombatEvent): boolean {
+ 
+ /** True means handled, including a cosmetic drop when the queue is full. */
+ export function queuePlayerAttack(state: RenderState, event: CombatEvent): boolean {
++  if (event.kind === 'essence-drop' && Number.isFinite(event.at)) {
++    state.combatPlayback.enqueue(event.at!, { kind: 'reward', event });
++    return true;
++  }
+   if (event.kind !== 'player-hit' && event.kind !== 'player-kill') return false;
+   if (!Number.isFinite(event.at)) return false;
+   if (event.kind === 'player-kill' && state.combatPlayback.latestTime(item =>
+@@ -82,6 +87,7 @@ export function stepCombatPlayback(state: RenderState, scene: GameScene): void {
+     spawnDamageNumber(scene, pos, offset, amount, color, style));
+   for (const item of ready) {
+     if (item.kind === 'death') item.play();
++    else if (item.kind === 'reward') dispatchCombatEvent(state, item.event, scene);
+     else dispatchCombatEvent(state, item.event, scene, item.presentation);
+   }
+ }
+diff --git a/client/src/scenes/game/sceneSetup.ts b/client/src/scenes/game/sceneSetup.ts
+index 968aec9a..11d4f853 100644
+--- a/client/src/scenes/game/sceneSetup.ts
++++ b/client/src/scenes/game/sceneSetup.ts
+@@ -89,6 +89,7 @@ import {
+ } from "../../sprites";
+ import { stepInterpolation, getOwnBase } from "../../render/interpolation";
+ import { stepCombatPlayback } from '../../render/combatPlayback';
++import { updateEssenceMotes } from '../../fx/essenceMotes';
+ import { updateAmbientStackFlashes } from '../../render/players';
+ import { CORPSE_REMAINS_ART } from "../../render/corpseRemains";
+ import { drawShadows } from "../../render/shadows";
+@@ -670,6 +671,7 @@ export function updateGameScene(scene: GameScene, delta: number): void {
+   // slide; the slide is purely a camera pan, so client and server never diverge.
+   stepInterpolation(scene, dt);
+   stepCombatPlayback(scene.state, scene);
++  updateEssenceMotes(scene, delta);
+   updateAmbientStackFlashes(scene.state);
+   drawShadows(scene.state);
+   drawLabels(scene.state);
+diff --git a/client/src/ui/attunementPanel.css b/client/src/ui/attunementPanel.css
+index 49e6ef07..d2be3475 100644
+--- a/client/src/ui/attunementPanel.css
++++ b/client/src/ui/attunementPanel.css
+@@ -96,6 +96,9 @@
+ .attunement-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+ @media (max-width: 720px) {
+   .stance-collection { grid-template-columns: minmax(0, 1fr); }
++  .stance-entry__heading { flex-wrap: wrap; }
++  .stance-entry__copy { flex: 1 1 100px; overflow-wrap: anywhere; }
++  .stance-entry__effects .detail-line__value { flex-shrink: 1; min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+   .ability-entry__top { position: relative; flex-wrap: wrap; gap: 8px; }
+   .attunement-panel .ability-entry__select { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 8px 12px; flex-basis: 100%; }
+   .ability-entry__copy { display: contents; }
+diff --git a/client/src/ui/buildPanel.css b/client/src/ui/buildPanel.css
+index 900adb63..b6f39143 100644
+--- a/client/src/ui/buildPanel.css
++++ b/client/src/ui/buildPanel.css
+@@ -616,7 +616,7 @@
+ .stance-sanctum__altar p,
+ .rite-circle__header p { margin: 4px 0 0; color: #8f82b9; font-size: 11px; line-height: 1.45; }
+ .rite-circle__budget--over { color: #ff8f9b; }
+-.rite-glyph-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
++.rite-glyph-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr)); gap: 10px; }
+ .rite-glyph {
+   display: grid;
+   grid-template-columns: 58px 1fr auto;
+@@ -635,7 +635,7 @@
+ .rite-glyph--bound { border-color: #d0a8ff; box-shadow: inset 0 0 24px rgba(170, 105, 255, .16); }
+ .rite-glyph__ring { grid-area: ring; width: 52px; height: 52px; display: grid; place-items: center; border: 2px double #8262b0; border-radius: 50%; background: rgba(7, 5, 20, .88); }
+ .rite-glyph--bound .rite-glyph__ring { border-color: #e0c15c; box-shadow: 0 0 14px rgba(224,193,92,.25); }
+-.rite-glyph__copy { grid-area: copy; display: flex; flex-direction: column; gap: 4px; }
++.rite-glyph__copy { grid-area: copy; display: flex; flex-direction: column; gap: 4px; min-width: 0; overflow-wrap: anywhere; }
+ .rite-glyph__copy strong { color: #f1e7ff; font-size: 13px; }
+ .rite-glyph__copy small { line-height: 1.4; }
+ .rite-glyph__cost { grid-area: cost; color: #ffe084; font-size: 11px; font-weight: 700; }
+@@ -650,3 +650,10 @@
+ .stance-destination-token small { display: block; color: #e0c15c; margin-top: 2px; }
+ 
+ .ability-timing-override { margin:8px 0; padding:8px 10px; border-left:2px solid var(--hud-primary-strong); color:var(--hud-text); font-size:12px; line-height:1.5; overflow-wrap:anywhere; }
++
++@media (max-width: 620px) {
++  .rite-glyph {
++    grid-template-columns: 52px minmax(0, 1fr);
++    grid-template-areas: "ring copy" "cost seal";
++  }
++}
+diff --git a/client/src/ui/crafting.css b/client/src/ui/crafting.css
+index 01a5ff14..a4ca1749 100644
+--- a/client/src/ui/crafting.css
++++ b/client/src/ui/crafting.css
+@@ -2504,6 +2504,21 @@
+    the negative margin that lets it bleed to the dialog edges must match the
+    smaller mobile padding. */
+ @media (max-width: 1100px) {
++  /* Filters can fill a phone by themselves. Let the whole page scroll, with
++     only the recipe roster capped so its detail/actions remain reachable. */
++  .crafting-dialog__content--make { display: block; overflow-y: auto; }
++  .crafting-dialog__content { padding: 12px 12px 18px; }
++  .craft-body--make .browser-pane__body { flex: none; overflow: visible; }
++  .craft-body--make .browser-pane__list { max-height: 36dvh; }
++  .craft-body--make .browser-pane__detail { overflow: visible; }
++  .make-browser .craft-filter-row {
++    width: 100%;
++    min-width: 0;
++    flex-wrap: nowrap;
++    overflow-x: auto;
++  }
++  .make-browser .craft-filter-row > * { flex-shrink: 0; }
++
+   .craft-body--make {
+     margin: -12px -12px -18px;
+   }
+@@ -2545,6 +2560,18 @@
+     min-height: var(--hud-hit-target-compact);
+     touch-action: manipulation;
+   }
++
++  .craft-upgrade__req { flex: 0 0 auto; }
++  .craft-recipe__name,
++  .craft-upgrade__diff-label { white-space: normal; overflow-wrap: anywhere; }
++  .make-row { height: auto; min-height: var(--hud-hit-target); }
++
++  .mastery-dialog__content { display: block; overflow-y: auto; }
++  .mastery-dialog .craft-body { overflow: visible; padding-right: 0; }
++  .mastery-summary { flex-wrap: wrap; gap: 8px; }
++  .mastery-biome-grid { grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr)); }
++  .craft-biome-section__header { flex-wrap: wrap; }
++  .craft-unlock-row__name { min-width: 0; white-space: normal; overflow-wrap: anywhere; }
+ }
+ 
+ @media (prefers-reduced-motion: reduce) {
+diff --git a/client/src/ui/inventory.css b/client/src/ui/inventory.css
+index ac2f7c8a..267e1cfc 100644
+--- a/client/src/ui/inventory.css
++++ b/client/src/ui/inventory.css
+@@ -705,6 +705,9 @@
+     flex-direction: column;
+     gap: 0;
+   }
++  .inv-backpack-grid {
++    grid-template-columns: repeat(auto-fit, minmax(min(64px, 100%), 1fr));
++  }
+ 
+   .inv-mobile-tabs {
+     display: flex;
+diff --git a/client/src/ui/map.css b/client/src/ui/map.css
+index 0875d3b9..84a22b5b 100644
+--- a/client/src/ui/map.css
++++ b/client/src/ui/map.css
+@@ -1485,8 +1485,8 @@
+ 
+ @media (max-width: 1100px) {
+   .game-dialog__panel.map-dialog {
+-    width: 100%;
+-    max-width: 100vw;
++    width: calc((100vw - var(--dialog-left) - var(--dialog-right)) / var(--ui-font-scale, 1));
++    max-width: none;
+   }
+ 
+   .world-map-toolbar {
+diff --git a/client/src/ui/runeBoard.css b/client/src/ui/runeBoard.css
+index 854225d7..4c5c6d78 100644
+--- a/client/src/ui/runeBoard.css
++++ b/client/src/ui/runeBoard.css
+@@ -292,5 +292,13 @@
+ }
+ 
+ 
++/* A pinned budget and editor can exceed the entire landscape viewport. On
++   touch, keep the complete workspace in one scroll flow, including Save. */
++@media (max-width: 1100px) {
++  .build-dialog__body:has(.rune-workspace) { display: block; overflow-y: auto; }
++  .rune-workspace { overflow: visible; }
++  .rune-workspace__scroll { flex: none; overflow: visible; }
++}
++
+ .rune-choice-grid .rune-ability-choice { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+ .rune-choice-grid .rune-ability-choice small { white-space: normal; line-height: 1.4; }
+diff --git a/client/src/ui/skillTree.css b/client/src/ui/skillTree.css
+index e0b8e26e..f6f1b8da 100644
+--- a/client/src/ui/skillTree.css
++++ b/client/src/ui/skillTree.css
+@@ -850,6 +850,46 @@
+ .skill-choice-art > .skill-emblem { margin-top: 18px; flex-shrink: 0; }
+ .skill-node__name { display: flex; align-items: center; justify-content: center; gap: 8px; }
+ .skill-node__name > span:last-child { min-width: 0; overflow-wrap: anywhere; }
++
++/* The tree and its explanation share one phone scroller. A pinned detail
++   panel can otherwise shrink the choices to zero, particularly in landscape. */
++@media (max-width: 1100px) {
++  .skill-tree-workspace { overflow-y: auto; display: block; }
++  .skill-tree-body { overflow: visible; }
++  .skill-desc { max-height: none; height: auto; }
++  .skill-desc__body { overflow: visible; flex: none; }
++  .skill-tree-views { flex-shrink: 0; flex-wrap: wrap; }
++  .skill-tier-nodes,
++  .skill-class-grid {
++    width: 100%;
++    display: grid;
++    grid-template-columns: repeat(auto-fit, minmax(min(130px, 100%), 1fr));
++    align-items: stretch;
++  }
++  .skill-tree-views { padding: 8px; gap: 6px; }
++  .skill-tree-views button { flex: 1 1 90px; min-width: 0; font-size: 11px; min-height: 44px; }
++  .skill-comparison { padding: 12px; }
++  .skill-comparison th, .skill-comparison td { padding: 6px; }
++  .skill-comparison thead .skill-choice-art,
++  .skill-comparison thead .skill-character-preview { display: none; }
++  .skill-node--selected, .skill-node--available:hover { transform: none; }
++  .skill-node,
++  .skill-node--compact {
++    width: 100%;
++    height: auto;
++    min-height: 76px;
++    border-radius: 6px;
++    padding: 16px 10px 12px;
++    gap: 8px;
++    overflow: visible;
++  }
++  .skill-node__name,
++  .skill-node--compact .skill-node__name {
++    max-width: none;
++    width: 100%;
++    font-size: 11px;
++  }
++}
+ .skill-node__name > .skill-emblem { flex-shrink: 0; }
+ .skill-build-choice summary > .skill-emblem { vertical-align: middle; margin-right: 8px; }
+ .skill-comparison thead th .skill-choice-art { display: flex; margin: 0 auto 10px; }
+diff --git a/design_docs/economy-philosophy.md b/design_docs/economy-philosophy.md
+index 518e8fbc..5d725dfd 100644
+--- a/design_docs/economy-philosophy.md
++++ b/design_docs/economy-philosophy.md
+@@ -9,8 +9,15 @@ Terse on purpose.
+ ## 0. The core tension (read first)
+ 
+ - **Biome level unlocks the *chance* for power; essence *pays* for it.** These two must stay in tension, never both trivially solved.
+-- Concretely: you should reach a tier's level cap **before** you can afford to max its gear. Capping the biome is the easy part; affording full +3 is the grind that outlives the cap.
+-- The problem this fixes: essence was over-plentiful (full +3 reachable before cap) while XP felt slow. Goal is to flip both — capping easier, maxing costlier.
++- Updated user goal (2026-09-25): by a biome's current-tier mastery cap, the
++  player should have earned roughly enough essence for a full **+3 gear set**.
++  Farming through **+5** should take roughly **50% additional time**. These
++  are affordability goals; Global Mastery, catalyst families and cross-color
++  costs can separately gate purchases.
++- The older goal of +3 requiring a grind after mastery is superseded. Concrete
++  joint tuning candidates are in the [reward proposal](../reports/reward-mastery-study-2026-09-25/PROPOSAL.md);
++  their working definition includes acquisition/evolution plus upgrades for
++  one weapon, armor, recovery and mobility item. No candidate is applied yet.
+ 
+ ---
+ 
+@@ -35,9 +42,12 @@ Terse on purpose.
+   the level-4 cap.
+ - The per-tier XP reward multipliers remain unchanged. Tune required XP through
+   the segment budget and local-share tables, not by editing per-mob rewards.
+-- Initial pacing targets are **T1 ~5 minutes**, **T2 ~10–12**, **T3 ~13–16**,
+-  and **T4 ~16–20 minutes** of pure mastery per biome. Bosses, gear farming,
+-  crafting, travel, deaths, and build experimentation add completion time.
++- Updated user pacing targets (2026-09-25) are **T1 ~5 minutes**, **T2 ~15**,
++  **T3 ~30**, and **T4 ~60 minutes** per biome tier segment. These supersede
++  the initial 5 / 10–12 / 13–16 / 16–20-minute targets. The current budgets
++  above have not yet been recalibrated. The [reward study](../reports/reward-mastery-study-2026-09-25/README.md)
++  uses active time in the biome as its working clock and records the remaining
++  measurement assumptions and telemetry limitations.
+ 
+ ---
+ 
+@@ -62,8 +72,11 @@ Terse on purpose.
+   - *Charm ×1.5 (not ×3):* its upgrades buy small % mechanic bumps, not raw stats — a ×3 would overprice the value delivered.
+   - *Boots ×1:* premium *utility* slot, cheapest by design — cheap to enter, cheap to max, low ceiling.
+   - *Armor may run above weapon* where its mitigation is generic (e.g. flat %DR works vs every damage shape). Flexibility earns a premium.
+-- **Target at the level cap:** full set craftable + roughly +1 across the board (boss-ready). Full +3 requires grinding past the cap.
+-- **Upgrade curves must be smooth** — step-to-step ratio ≈ 1.8-2.2×. No lumpy ramps (a cheap middle step wedged between two expensive ones).
++- **Target at the level cap:** enough earned essence for a full +3 set;
++  full +5 funding at roughly 1.5× that farming time, under the revised user goal.
++- The old 1.8–2.2× step-price growth is under review: current escalating costs
++  imply a much longer +3→+5 tail. The linked proposal compares redistributing
++  lifetime cost against reducing the tail and currency supply.
+ - **Base cost scales ~2.2-2.4× per slot per tier.** Watch boots specifically — easy to forget to scale; keep boots ≈ 0.8× the weapon's base at every tier.
+ 
+ ---
+diff --git a/docs/README.md b/docs/README.md
+index 455c15f1..88029085 100644
+--- a/docs/README.md
++++ b/docs/README.md
+@@ -26,6 +26,9 @@ top-level doc.
+ 
+ | Doc | Why |
+ |---|---|
++| [Player defense redesign proposal](../reports/player-defense-study-2026-09-25/REDESIGN-PROPOSAL.md) | All 30 armors, 12 cores, class defenses and damage ordering; preserves biome identities and adds ranged contact-survival criteria. Source audit and prototype values only; no gameplay changes or new combat campaign. |
++| [Playtest 3 reward and mastery study](../reports/reward-mastery-study-2026-09-25/README.md) | 140-node audit and [joint XP/essence proposal](../reports/reward-mastery-study-2026-09-25/PROPOSAL.md): concrete ranges, 117 gear schedules, +3-at-mastery/+5-at-1.5× targets, and telemetry follow-through. Isolated candidate tested in 184 bot simulations; [iteration 04: T4 build-by-biome diagnosis and corrections](../reports/reward-mastery-study-2026-09-25/iteration-04/RESULTS.md); [iteration 03: T4 fast-end 50-minute screen](../reports/reward-mastery-study-2026-09-25/iteration-03/RESULTS.md); [iteration 02 results: original T1 XP, calibrated T2, surviving setups](../reports/reward-mastery-study-2026-09-25/iteration-02/RESULTS.md); [results and rejection of the full package](../reports/reward-mastery-study-2026-09-25/RESULTS.md). |
++| [Economy baseline campaign 01 preparation](../reports/economy-baseline-campaign-01-preparation/README.md) | Proposed 1,332 rate cells and 32 tier lives; source/input audit, eight incompatible historical T2 handoffs, missing canonical later-tier inputs and launch gates. Not sealed or launched. |
+ | [T3 Tundra class/frame 01 preparation](../reports/player-fast-pass/t3-tundra-class-frame-01-preparation/README.md) | Sealed 52-observation ordinary-Tundra class/frame screen, 52/52 zero-tick qualified; Squire Slam discarded by user correction, main combat unlaunched. |
+ | [Guard coverage 01 handoff](../reports/player-fast-pass/guard-coverage-01-preparation/LUNA_RUN.md) | Integrated measured session correction; 32 fresh Endure comparison cells, zero-tick qualified, execution pending. |
+ | [Player package-fit r1 packet](briefs/player-package-fit-operator-packet.md) | Prepared revised AoE/reactive-Brace packages, 36-row ceiling, machine-readable Luna report contract and scoped commit/push requirement; main run not launched. |
+@@ -36,6 +39,7 @@ top-level doc.
+ | [Farming sustain 01 preparation](../reports/player-fast-pass/farming-sustain-01-preparation/README.md) | Sealed 20-case charm/native Recuperating screen, zero-tick receipts, fixed-source handoff and focused Conduit trace review; main combat unrun. |
+ | [Player breadth 01 operator packet](briefs/player-breadth-01-operator-packet.md) | Prepared 204-observation class/frame/path screen with isolated Conduit reconstruction-r1, legal catalogue, null-safe telemetry and exact execution contract; main packet not launched. |
+ | [Gameplay telemetry](gameplay-telemetry-current-state.md) | Railway storage/configuration, gameplay-only field boundary, encounter/decision semantics, admin access, retention and reliability limits. |
++| [Telemetry MCP setup](telemetry-mcp-setup.md) | Deployed read-only MCP service, restricted PostgreSQL login, production verification receipt, and Railway/Codex connection instructions. |
+ | [Boss5 report](briefs/bot-balance-boss5-report.md) | Execution record for the 120-fight Boss5 breadth screen at `e1a6f321`: 14/18 Block B bosses verified cleanly, **4 preserved as identity failures** (`t1-plains` real wandering fauna; `t3-swamp`/`t3-volcanic`/`t4-volcanic` a boss hazard object mislabeled as add damage — two different causes, neither a summoned creature). Block C: 85 strictly dominates 104 on every root that differs (4 flips, 0 reversals). No fight pooled across bosses, tiers, or arms. |
+ | [Boss5 operator packet](briefs/bot-balance-boss5-operator-packet.md) | **Executed 2026-09-19; see the report above.** Roster BREADTH plus one bounded Cave refinement: every in-scope active solo boss with no usable current evidence (N = **18** — T1 five, T3 seven, T4 six), one block per boss, six tier-legal reference packages, one predeclared seed, installing **nothing**; plus `chitinous-dreadbore` attack **104 vs 85** on the Boss4 Brace references, where **both** arms are treated because 104 is a candidate and authored source is still 139. **6 x 18 + 12 = 120 fights.** |
+ | [Boss4 addendum](briefs/bot-balance-boss4-addendum.md) | **Decisions and five corrections** on the Boss4 screen, from existing evidence only. Behemoth venom **9 -> 6 is ADOPTED into source** and its block retired so it cannot be applied twice; Dreadbore 104 is a **fallback, not an adoption**. Corrects the Cave apprentice 50% crossing, **withdraws** the Eruption-multiplier inference (`grossDamage` is the base attack on both paths), the shred-only explanation of `hpDamage` variance, the 18-vs-**24** Cave observation total, and restates the Conduit accounting gap as unknown. |
+@@ -312,6 +316,7 @@ handoffs: both systems have complete machinery and thin, placeholder content.
+ | Doc | Job |
+ |---|---|
+ | [release-flow.md](release-flow.md) | Branch model and Railway deployment configuration. |
++| [next-playtest-release-readiness.md](next-playtest-release-readiness.md) | Unpublished playtest preparation: candidate baseline, Railway outage, migration risks, workflow audit, validation gates, and [patch-note draft](../updates/next-playtest-draft.md). |
+ | [map-variety-regions-atlas.md](map-variety-regions-atlas.md) | Human-readable view of the runtime map. Canonical coordinates live in `shared/src/world/map/`. |
+ | [ui-redesign-baseline/](ui-redesign-baseline/) | Pre-redesign HUD screenshots + capture matrix. |
+ 
+diff --git a/docs/biome-ecology-current-state.md b/docs/biome-ecology-current-state.md
+index 2e96c137..0df098e9 100644
+--- a/docs/biome-ecology-current-state.md
++++ b/docs/biome-ecology-current-state.md
+@@ -448,9 +448,9 @@ a stale ramp to clear when the destination does not author the same effect, and
+ 
+ **Volcano is a GREED ramp, not a burn.** Stacks are uncapped (`maxStacks: 0`).
+ Combat starts at one stack and adds one every 3000 ms, accelerated 3x in boss vents.
+-The first ten stacks give +3% damage dealt / +4.5% damage taken each: +30% / +45% at ten.
++The first ten stacks give +3% damage dealt / +3.5% damage taken each: +30% / +35% at ten.
+ Above ten, effective damage stacks are `10 + 5 * ln(1 + (stacks - 10) / 5)`;
+-multiply by 0.03 / 0.045 for the respective bonuses. Every stack still matters,
++multiply by 0.03 / 0.035 for the respective bonuses. Every stack still matters,
+ but marginal gains decrease continuously. Combat and HUD share the same formula;
+ the Heat tile shows actual stacks and bonuses to one decimal, with no maximum-fill ring.
+ Out of combat the next stack takes `1500 / max(1, stacks / 10)` ms to cool
+diff --git a/docs/future-plans.md b/docs/future-plans.md
+index 34c66ee5..3aed9ecd 100644
+--- a/docs/future-plans.md
++++ b/docs/future-plans.md
+@@ -9,6 +9,12 @@ Status: current as of 2026-08-08.
+ 
+ ---
+ 
++## Player defense redesign — proposal (2026-09-25)
++
++**Proposed, not approved or implemented.** The [deep defense proposal](../reports/player-defense-study-2026-09-25/REDESIGN-PROPOSAL.md) reviews all 30 armors, all 12 cores, class bonuses, mitigation ordering and biome threat profiles. Preserve recognizable armor families and give them useful cross-biome applications; narrow plating, bring Jungle evade strength forward, make Desert an opening-protection candidate, and constrain Tundra/Volcano stacking. Remove negative-HP ranged core costs in the candidate and establish ordinary forced-contact survival before tuning monster damage. Numerical seeds need staged validation; no gameplay changes or new bot campaign were performed. See the linked inventory and initial study for source and historical-evidence boundaries.
++
++---
++
+ ## 1. Composite (paper-doll) character sprites
+ 
+ **PROMOTED (2026-07-10):** absorbed into `docs/archive/pixellab-pipeline-plan.md`
+diff --git a/docs/release-flow.md b/docs/release-flow.md
+index e9f7a8cb..4378537b 100644
+--- a/docs/release-flow.md
++++ b/docs/release-flow.md
+@@ -22,8 +22,19 @@ also requires:
+ | `CLIENT_URL` | Public player origin, without a trailing fragment |
+ 
+ The redirect URI must be registered exactly in the Discord developer portal. Never
+-set `AUTH_DEV_BYPASS` in production. Discord player login does not secure `/admin`;
+-keep the dashboard and admin namespace behind trusted access until admin auth lands.
++set `AUTH_DEV_BYPASS` or enable `DEV_TOOLS` in production. Discord player login does
++not secure `/admin`; its Socket.IO namespace has separate token authentication.
++Set `ADMIN_TOKEN` to a secret of at least 32 characters. Production admin access
++fails closed when it is absent or too short; do not bake the token into assets.
++
++Conduit availability must agree on both sides: server `CONDUIT_ENABLED=true`
++and client build-time `VITE_ENABLE_CONDUIT=true`. Both default off in production.
++The current Dockerfile does not expose a Conduit build argument; runtime variables
++alone do not change a built client. Verify intended availability before release.
++
++For the current unpublished draft, outage evidence, migration risks, workflow
++limitations and remaining gates, see [next playtest readiness](next-playtest-release-readiness.md)
++and the [patch-note draft](../updates/next-playtest-draft.md).
+ 
+ Release versions use `X.Y` major.minor semantics. Patch fixes are rolled into the
+ next minor release rather than cut as separate three-segment releases.
+@@ -32,9 +43,15 @@ next minor release rather than cut as separate three-segment releases.
+ 
+ 1. Merge the intended changes into `develop`.
+ 2. Check out `develop` and make sure it is up to date.
+-3. Run `pnpm release:prepare X.Y`.
++3. Settle version, candidate scope, and save/reset policy; run `pnpm release:prepare X.Y`.
+ 4. Edit `updates/vX.Y/changelog.md` into player-friendly patch notes.
+-5. Run `pnpm release:cut X.Y`.
++5. Qualify the final candidate with typecheck, full tests, production build,
++   migration rehearsal, backups/restore readiness and live smoke checks. Use an
++   isolated checkout when experiments are running; leave their processes and data alone.
++6. Review the concrete notes and readiness results and obtain publishing confirmation.
++7. Run `pnpm release:cut X.Y` only after approval and current script limitations
++   have been resolved or qualified. Verify all three remote refs afterward and
++   check Railway's deployed revision and real application behavior.
+ 
+ `release:cut` only runs from `develop`. It runs typecheck, commits release
+ metadata if needed, creates `release-vX.Y`, fast-forwards `master` to the same
+diff --git a/server/bench/balance/ttkSurveySpec.ts b/server/bench/balance/ttkSurveySpec.ts
+index a7f86864..50da3329 100644
+--- a/server/bench/balance/ttkSurveySpec.ts
++++ b/server/bench/balance/ttkSurveySpec.ts
+@@ -184,7 +184,7 @@ export function prepareSurveyBot(world: World, cell: SurveyCell, pos: {x:number;
+   p.activeStance = stance;
+   const c = SURVEY_CLASSES.find(c=>c.name===cell.className)!;
+   const rules = declared.runeRules;
+-  for (const r of RUNE_RECIPE_DATABASE.values()) if (r.runeId && rules.some(rule=>rule.actionId===r.runeId)) {
++  for (const r of RUNE_RECIPE_DATABASE.values()) if (!r.deprecated && r.runeId && !p.runesOwned.includes(r.runeId) && rules.some(rule=>rule.actionId===r.runeId)) {
+     assert(isRuneRecipeUnlocked(r,p), `Unreachable rune ${r.id}`);
+     if(!p.runesOwned.includes(r.runeId)) p.runesOwned.push(r.runeId);
+   }
+diff --git a/server/src/systems/player/progression/rewards.ts b/server/src/systems/player/progression/rewards.ts
+index 20fe74bf..bc087c18 100644
+--- a/server/src/systems/player/progression/rewards.ts
++++ b/server/src/systems/player/progression/rewards.ts
+@@ -205,6 +205,11 @@ function applyKillRewardsToPlayer(
+     Math.round(rewards.essence * essenceMult * rewardMult * debugMult),
+   );
+   rewardPlayer(recipient, { ...rewards, essence: scaledEssence });
++  world.pushEvent(nodeId, {
++    kind: 'essence-drop', playerId: recipient.isPlayer.id,
++    targetId: monster.isMonster.id, pos: { ...monster.hasPosition.current },
++    amount: scaledEssence, essenceType: rewards.essenceType,
++  });
+   // Catalyst progress is keyed by the NODE'S modifier (not its biome): every kill in
+   // an Alacrity node grants Alacrity Catalyst regardless of biome. The weight
+   // defaults to the monster's base essence reward (a tuned per-mob toughness
+diff --git a/server/test/ambientRamp.test.ts b/server/test/ambientRamp.test.ts
+index 4e4626fe..7dcddd70 100644
+--- a/server/test/ambientRamp.test.ts
++++ b/server/test/ambientRamp.test.ts
+@@ -229,7 +229,7 @@ initCombatSystems();
+   assert(tile!.stacks === BREAKPOINT, 'the tile reports live stacks');
+   assert(tile!.durationPct === -1, 'uncapped Heat must not display a full-stack ceiling');
+   assert(tile!.values?.some(v => v.label === 'Damage dealt' && v.value === '+30%') === true, 'tile reports actual dealt bonus');
+-  assert(tile!.values?.some(v => v.label === 'Damage taken' && v.value === '+45%') === true, 'tile reports actual taken bonus');
++  assert(tile!.values?.some(v => v.label === 'Damage taken' && v.value === '+35%') === true, 'tile reports actual taken bonus');
+   assert(tile!.speedMult === 1, 'volcano payload carries no move slow');
+ 
+   // Disengaging sheds the ramp one stack at a time, and clears it.
+@@ -284,7 +284,7 @@ initCombatSystems();
+     lastIncrement = increment;
+   }
+   assert(playerOutgoingDamageMult(player.tracksCombat) > 1.5, 'Heat exceeds the former outgoing cap');
+-  assert(playerIncomingDamageMult(player.tracksCombat) > 2, 'Heat exceeds the former incoming cap');
++  assert(playerIncomingDamageMult(player.tracksCombat) > 1 + TAKEN_PER_STACK * BREAKPOINT, 'incoming Heat continues beyond the softcap');
+   syncPlayerBuffs(world, Date.now());
+   const tile = player.hasStatus.activeBuffs.find(b => b.id === 'debuff-volcanic-heat')!;
+   assert(tile.values?.some(v => v.label === 'Damage dealt' && v.value === '+74.2%') === true, 'high-stack HUD reflects logarithmic damage');
+diff --git a/server/test/rewardMultiplier.test.ts b/server/test/rewardMultiplier.test.ts
+index 7318b773..e3a4172f 100644
+--- a/server/test/rewardMultiplier.test.ts
++++ b/server/test/rewardMultiplier.test.ts
+@@ -24,6 +24,7 @@ import {
+ import type { PersistedPlayerSlices } from "../src/db/playerRepo";
+ import { grantMonsterRewards } from "../src/systems/player/progression/rewards";
+ import { World } from "../src/world/World";
++import { attachComponent } from '../src/ecs/markerHelpers';
+ import { displayedCatalystProgress } from "../../client/src/hud/catalystProgress";
+ 
+ function assert(condition: boolean, message: string): void {
+@@ -237,4 +238,33 @@ assert(clampRewardMultiplier("25") === 25, "numeric strings off the wire are acc
+ assert(clampRewardMultiplier(2.5) === 2.5, "fractional multipliers survive");
+ assert(clampRewardMultiplier(1.23456) === 1.23, "multipliers round to 2 decimals");
+ 
++// Reward presentation must use the credited amount, including party shares,
++// and must never manufacture a drop for a non-rewarding raised monster.
++{
++  const world = new World();
++  world.rewardMultiplier = 7;
++  const players = ['mote-killer', 'mote-party', 'mote-away'].map(id =>
++    world.attachPlayerEntity(makePlayer(id), id));
++  for (const player of players) {
++    attachComponent(world, player, 'inParty', { leaderId: 'mote-killer', members: [] });
++    player.hasPosition.nodeId = FARM_NODE;
++  }
++  players[2].hasPosition.nodeId = 'node-clearing';
++  const wolf = world.createMonster(FARM_NODE, 'wolf', { x: 800, y: 900 })!;
++  world.clearNodeEvents(FARM_NODE);
++  grantMonsterRewards(world, 'mote-killer', wolf);
++  const drops = world.takeNodeEvents(FARM_NODE).filter(ev => ev.kind === 'essence-drop');
++  assert(drops.length === 2, 'one mote event per eligible reward recipient');
++  for (const drop of drops) {
++    const recipient = players.find(player => player.isPlayer.id === drop.playerId)!;
++    assert(drop.amount === recipient.tracksProgression.essences[drop.essenceType], 'motes use actual wallet credit');
++    assert(drop.targetId === wolf.isMonster.id && drop.pos.x === 800 && drop.pos.y === 900, 'drop retains death location');
++  }
++  wolf.hasPosition.current.x = 1200;
++  assert(drops[0].pos.x === 800, 'event position is copied, not live entity state');
++  attachComponent(world, wolf, 'isRaised', { raiserId: 'test-raiser' });
++  assert(grantMonsterRewards(world, 'mote-killer', wolf) === null, 'raised monster has no reward');
++  assert(world.takeNodeEvents(FARM_NODE).length === 0, 'raised monster emits no reward cosmetics');
++}
++
+ console.log("rewardMultiplier.test: ok");
+diff --git a/shared/src/data/monsters/volcano.monsters.ts b/shared/src/data/monsters/volcano.monsters.ts
+index d04255cc..8ebb70e6 100644
+--- a/shared/src/data/monsters/volcano.monsters.ts
++++ b/shared/src/data/monsters/volcano.monsters.ts
+@@ -178,7 +178,7 @@ export const volcanoMonsterEntries = [
+     id: 'ash-slinger', name: 'Ash Salamander', color: 0xff4422,
+     // Salamander line T3: STATIONARY ranged pressure that fires from the background
+     // while the swarm closes. Does not kite. No personal ramp.
+-    stats: { hp: 1330, attack: 84, plating: 2, damageReduction: 0, speed: 44, attackRange: 180, attackCooldown: 2000, pullRange: 230 },
++    stats: { hp: 1330, attack: 70, plating: 2, damageReduction: 0, speed: 44, attackRange: 180, attackCooldown: 2000, pullRange: 230 },
+     behavior: 'ranged', attackStyle: 'fire-spit', biome: 'volcanic',
+     rewards: { essence: 27, essenceType: 'red', level: 2, biomeXp: 165 },
+     // Fires from the background and does NOT kite (locked).
+@@ -196,8 +196,9 @@ export const volcanoMonsterEntries = [
+     id: 'ember-skink', name: 'Ember Skink', color: 0xff6622,
+     // Evolved swarm filler: the T3 Scuttler plus a light Burn on hit. No ramp.
+     // Apply the same approximate fodder correction to T4 (1350 -> 720 HP,
+-    // 90 -> 75 attack). T4 combat validation remains pending; authored Burn is unchanged.
+-    stats: { hp: 720, attack: 75, plating: 2, damageReduction: 0, speed: 70, attackRange: 12, attackCooldown: 1300, pullRange: 230 },
++    // 90 -> 75 attack). Volcano area study: attack 75 -> 60 and Burn 13 -> 8
++    // reduce coordinated filler pressure while preserving pack size and cadence.
++    stats: { hp: 720, attack: 60, plating: 2, damageReduction: 0, speed: 70, attackRange: 12, attackCooldown: 1300, pullRange: 230 },
+     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
+     rewards: { essence: 47, essenceType: 'red', level: 3, biomeXp: 280 },
+     // Loose cohesion/separation so the high-density biome READS as a swarm.
+@@ -206,7 +207,7 @@ export const volcanoMonsterEntries = [
+     // ability-free apart from its light Burn: the fodder must stay visually quiet.
+     pack: { role: 'follower' },
+     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1000, idleMaxMs: 3500 },
+-    dotEffect: { debuffId: 'ember-burn', label: 'Ember Burn', damagePerStack: 13, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2000 },
++    dotEffect: { debuffId: 'ember-burn', label: 'Ember Burn', damagePerStack: 8, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2000 },
+   }],
+ 
+   ['infernal-direhound', {
+@@ -268,7 +269,7 @@ export const volcanoMonsterEntries = [
+     id: 'ashspitter-salamander', name: 'Ashspitter Salamander', color: 0xff4422,
+     // Evolved ranged Burn pressure: stationary (not a kiter), stronger and more
+     // persistent Burn than the Ash Salamander. Ignoring it lets the fire stack.
+-    stats: { hp: 1550, attack: 110, plating: 2, damageReduction: 0, speed: 46, attackRange: 190, attackCooldown: 1900, pullRange: 250 },
++    stats: { hp: 1550, attack: 95, plating: 2, damageReduction: 0, speed: 46, attackRange: 190, attackCooldown: 1900, pullRange: 250 },
+     behavior: 'ranged', attackStyle: 'fire-spit', biome: 'volcanic',
+     rewards: { essence: 52, essenceType: 'red', level: 3, biomeXp: 310 },
+     // Fires from the background and does NOT kite (locked).
+@@ -276,7 +277,7 @@ export const volcanoMonsterEntries = [
+     // THE T4 PACK GUNNER. Same role as the Ash Salamander a tier below.
+     pack: { role: 'follower' },
+     ai: { wanderRadius: 230, leashRange: 630, idleMinMs: 1200, idleMaxMs: 4000 },
+-    dotEffect: { debuffId: 'ashspitter-burn', label: 'Ash Burn', damagePerStack: 16, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2500 },
++    dotEffect: { debuffId: 'ashspitter-burn', label: 'Ash Burn', damagePerStack: 12, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2500 },
+   }],
+ 
+   ['magma-salamander', {
+diff --git a/shared/src/protocol/combatEvents.ts b/shared/src/protocol/combatEvents.ts
+index e4289128..676d7583 100644
+--- a/shared/src/protocol/combatEvents.ts
++++ b/shared/src/protocol/combatEvents.ts
+@@ -22,6 +22,8 @@ export interface CombatEventTiming {
+ export type CombatEvent = CombatEventTiming & CombatEventPayload;
+ 
+ type CombatEventPayload =
++  // Exact credited payout per recipient (including party shares); cosmetic only.
++  | { kind: 'essence-drop'; playerId: string; targetId: string; pos: Vec2; amount: number; essenceType: EssenceType }
+   // One cosmetic beat per authoritative ambient stack gain, never for cooling.
+   | { kind: 'ambient-stack-gain'; playerId: string; effectId: 'volcanic-heat' | 'tundra-chill' }
+   // Damage-only presentation for paths without an attack/tick animation event.
+diff --git a/shared/src/world/nodeFeatures.ts b/shared/src/world/nodeFeatures.ts
+index a3aafbb7..74b21131 100644
+--- a/shared/src/world/nodeFeatures.ts
++++ b/shared/src/world/nodeFeatures.ts
+@@ -504,7 +504,7 @@ function volcanicHeat(id: string): NodeFeatureSpec {
+       coolingScaleStacks: 10,
+       coolingRateMult: 2,
+       payload: {
+-        outgoingDamagePct: 0.03, incomingDamagePct: 0.045,
++        outgoingDamagePct: 0.03, incomingDamagePct: 0.035,
+         damageSoftcapStacks: 10, damageSoftcapScale: 5,
+       },
+     },
+diff --git a/tools/uishot/README.md b/tools/uishot/README.md
+index f4ecbd48..2872ee48 100644
+--- a/tools/uishot/README.md
++++ b/tools/uishot/README.md
+@@ -13,6 +13,30 @@ pnpm ui:shot --url=... --viewport=1366x768,1440x900 --font-scale=1.25
+ Screenshots land in `.uishot/` (gitignored). Exits non-zero when the audit finds
+ a defect, so it can gate a change.
+ 
++## Mobile menu regression audit
++
++With the Vite client running, use:
++
++```bash
++node tools/uishot/mobile-audit.mjs --url=http://localhost:3000
++node tools/uishot/mobile-audit.mjs --url=http://localhost:3000 --webkit
++```
++
++Install the browsers with `pnpm exec playwright install chromium webkit` if needed.
++This mounts the actual React menus with synthetic browser-local inventory,
++recipes, progression, and roster data. It never connects a game socket or
++changes a saved character. The matrix covers 320px and 390px phones, landscape,
++tablet, and desktop at the minimum, default, and maximum UI font scales. It
++checks clipped content and dialog bounds, opens secondary views and sheets,
++and checks touch swipes and final crafting/upgrade action reachability in
++Chromium. Both engines save JSON measurements and screenshots under
++`.uishot/mobile-audit-<engine>/`.
++
++These are layout and interaction fixtures, not evidence of live gameplay or
++testing on a physical iPhone/Android device. The map's intentional pan/zoom crop,
++atlas sprite crops, item-name ellipses, and horizontally scrolling filter/tab
++strips are excluded from clipping failures.
++
+ | Flag | Meaning |
+ |---|---|
+ | `--url=` | A running app. Needs `pnpm dev:client` (and the server, for real state). |

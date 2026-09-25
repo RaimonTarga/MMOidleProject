@@ -1,0 +1,1200 @@
+[
+  {
+    "index": 0,
+    "spec": {
+      "path": "cadence-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "boss",
+      "durationMs": 300000,
+      "weapon": "graveyard-plague-axe"
+    },
+    "outcome": "boss-killed",
+    "elapsedMs": 43100,
+    "damage": 23428,
+    "dps": 543.5730858468677,
+    "kills": 1,
+    "incoming": 0,
+    "minCd": 651,
+    "maxRampage": 4,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 2246,
+        "absorbed": 0,
+        "damageEvents": 6,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 4000,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 6000
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 12707,
+        "absorbed": 0,
+        "damageEvents": 17,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 26600,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 7500
+      }
+    ],
+    "sources": {
+      "[]": 7925,
+      "[\"empowered\"]": 15503
+    },
+    "terminalHp": 618,
+    "bossId": "node-t4-mountain-dungeon_monster-5",
+    "bossType": "iron-crest-titan",
+    "bossKilled": true,
+    "wallMs": 952.6601999999984
+  },
+  {
+    "index": 1,
+    "spec": {
+      "path": "cadence-heavy-t3-a",
+      "arm": "speed30",
+      "plus": 5,
+      "seed": 173,
+      "mode": "boss",
+      "durationMs": 300000,
+      "weapon": "graveyard-plague-axe"
+    },
+    "outcome": "boss-killed",
+    "elapsedMs": 43800,
+    "damage": 22824,
+    "dps": 521.095890410959,
+    "kills": 1,
+    "incoming": 0,
+    "minCd": 771,
+    "maxRampage": 4,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 2246,
+        "absorbed": 0,
+        "damageEvents": 6,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 4000,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 6000
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 12707,
+        "absorbed": 0,
+        "damageEvents": 17,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 26600,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 7500
+      }
+    ],
+    "sources": {
+      "[]": 8010,
+      "[\"empowered\"]": 14814
+    },
+    "terminalHp": 618,
+    "bossId": "node-t4-mountain-dungeon_monster-5",
+    "bossType": "iron-crest-titan",
+    "bossKilled": true,
+    "wallMs": 794.3138999999974
+  },
+  {
+    "index": 2,
+    "spec": {
+      "path": "energy-heavy-t3-b",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "boss",
+      "durationMs": 300000
+    },
+    "outcome": "boss-killed",
+    "elapsedMs": 55200,
+    "damage": 21067,
+    "dps": 381.6485507246377,
+    "kills": 1,
+    "incoming": 0,
+    "minCd": 438,
+    "maxRampage": 0,
+    "maxCritical": 3,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 2268,
+        "absorbed": 0,
+        "damageEvents": 14,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 7900,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 2100
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 9637,
+        "absorbed": 0,
+        "damageEvents": 42,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 30000,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 2700
+      }
+    ],
+    "sources": {
+      "[]": 11968,
+      "[\"empowered\"]": 9099
+    },
+    "terminalHp": 588,
+    "bossId": "node-t4-mountain-dungeon_monster-5",
+    "bossType": "iron-crest-titan",
+    "bossKilled": true,
+    "wallMs": 808.0599000000002
+  },
+  {
+    "index": 3,
+    "spec": {
+      "path": "energy-heavy-t3-b",
+      "arm": "gain10",
+      "plus": 5,
+      "seed": 173,
+      "mode": "boss",
+      "durationMs": 300000
+    },
+    "outcome": "boss-killed",
+    "elapsedMs": 54700,
+    "damage": 19625,
+    "dps": 358.7751371115173,
+    "kills": 1,
+    "incoming": 0,
+    "minCd": 438,
+    "maxRampage": 0,
+    "maxCritical": 3,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 2268,
+        "absorbed": 0,
+        "damageEvents": 14,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 7900,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 2100
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 9637,
+        "absorbed": 0,
+        "damageEvents": 42,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 30000,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 2700
+      }
+    ],
+    "sources": {
+      "[]": 11940,
+      "[\"empowered\"]": 7685
+    },
+    "terminalHp": 588,
+    "bossId": "node-t4-mountain-dungeon_monster-5",
+    "bossType": "iron-crest-titan",
+    "bossKilled": true,
+    "wallMs": 747.4242000000013
+  },
+  {
+    "index": 4,
+    "spec": {
+      "path": "reload-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "boss",
+      "durationMs": 300000
+    },
+    "outcome": "boss-killed",
+    "elapsedMs": 27200,
+    "damage": 19590,
+    "dps": 720.2205882352941,
+    "kills": 1,
+    "incoming": 0,
+    "minCd": 260,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 7040,
+        "absorbed": 0,
+        "damageEvents": 55,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 6300,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 3700
+      }
+    ],
+    "sources": {
+      "[\"laser\"]": 19590
+    },
+    "terminalHp": 542,
+    "bossId": "node-t4-mountain-dungeon_monster-5",
+    "bossType": "iron-crest-titan",
+    "bossKilled": true,
+    "wallMs": 305.9660999999978
+  },
+  {
+    "index": 5,
+    "spec": {
+      "path": "reload-heavy-t3-a",
+      "arm": "laserFlat75",
+      "plus": 5,
+      "seed": 173,
+      "mode": "boss",
+      "durationMs": 300000
+    },
+    "outcome": "boss-killed",
+    "elapsedMs": 36500,
+    "damage": 19566,
+    "dps": 536.054794520548,
+    "kills": 1,
+    "incoming": 0,
+    "minCd": 260,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 5310,
+        "absorbed": 0,
+        "damageEvents": 55,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 6300,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 3700
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 16368,
+        "absorbed": 0,
+        "damageEvents": 176,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 30000,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 4500
+      }
+    ],
+    "sources": {
+      "[\"laser\"]": 19566
+    },
+    "terminalHp": 542,
+    "bossId": "node-t4-mountain-dungeon_monster-5",
+    "bossType": "iron-crest-titan",
+    "bossKilled": true,
+    "wallMs": 444.72940000000017
+  },
+  {
+    "index": 6,
+    "spec": {
+      "path": "cooldown-heavy-t3-c",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "boss",
+      "durationMs": 300000
+    },
+    "outcome": "boss-killed",
+    "elapsedMs": 95600,
+    "damage": 19644,
+    "dps": 205.48117154811717,
+    "kills": 1,
+    "incoming": 405.29999999999995,
+    "minCd": 732,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 1596,
+        "absorbed": 0,
+        "damageEvents": 7,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 4900,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 5100
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 5477,
+        "absorbed": 0,
+        "damageEvents": 27,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 24700,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 7300
+      },
+      {
+        "atMs": 60000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 11750,
+        "absorbed": 0,
+        "damageEvents": 59,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 60000,
+        "longestKillGapMs": 60000,
+        "longestHpProgressGapMs": 7800
+      }
+    ],
+    "sources": {
+      "[]": 7182,
+      "[\"empowered\",\"execution\"]": 1156,
+      "[\"beam\"]": 11306
+    },
+    "terminalHp": 616,
+    "bossId": "node-t4-mountain-dungeon_monster-5",
+    "bossType": "iron-crest-titan",
+    "bossKilled": true,
+    "wallMs": 967.8106999999982
+  },
+  {
+    "index": 7,
+    "spec": {
+      "path": "energy-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "boss",
+      "durationMs": 300000
+    },
+    "outcome": "boss-killed",
+    "elapsedMs": 47000,
+    "damage": 19577,
+    "dps": 416.531914893617,
+    "kills": 1,
+    "incoming": 0,
+    "minCd": 438,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 2268,
+        "absorbed": 0,
+        "damageEvents": 14,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 7900,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 2100
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 11622,
+        "absorbed": 0,
+        "damageEvents": 42,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 29900,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 2700
+      }
+    ],
+    "sources": {
+      "[]": 9674,
+      "[\"empowered\"]": 9903
+    },
+    "terminalHp": 588,
+    "bossId": "node-t4-mountain-dungeon_monster-5",
+    "bossType": "iron-crest-titan",
+    "bossKilled": true,
+    "wallMs": 597.2698999999993
+  },
+  {
+    "index": 8,
+    "spec": {
+      "path": "cadence-heavy-t3-c",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "boss",
+      "durationMs": 300000
+    },
+    "outcome": "boss-killed",
+    "elapsedMs": 149300,
+    "damage": 20598,
+    "dps": 137.96383121232418,
+    "kills": 1,
+    "incoming": 255,
+    "minCd": 1782,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 723,
+        "absorbed": 0,
+        "damageEvents": 3,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 4000,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 6000
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 1950,
+        "absorbed": 0,
+        "damageEvents": 8,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 26100,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 7600
+      },
+      {
+        "atMs": 60000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 7845,
+        "absorbed": 0,
+        "damageEvents": 18,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 57500,
+        "longestKillGapMs": 60000,
+        "longestHpProgressGapMs": 7600
+      },
+      {
+        "atMs": 120000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 16865,
+        "absorbed": 0,
+        "damageEvents": 38,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 119600,
+        "longestKillGapMs": 120000,
+        "longestHpProgressGapMs": 7600
+      }
+    ],
+    "sources": {
+      "[]": 10014,
+      "[\"empowered\"]": 10584
+    },
+    "terminalHp": 618,
+    "bossId": "node-t4-mountain-dungeon_monster-5",
+    "bossType": "iron-crest-titan",
+    "bossKilled": true,
+    "wallMs": 1217.0838000000003
+  },
+  {
+    "index": 9,
+    "spec": {
+      "path": "cadence-heavy-t3-c",
+      "arm": "cap100",
+      "plus": 5,
+      "seed": 173,
+      "mode": "boss",
+      "durationMs": 300000
+    },
+    "outcome": "boss-killed",
+    "elapsedMs": 149300,
+    "damage": 20598,
+    "dps": 137.96383121232418,
+    "kills": 1,
+    "incoming": 255,
+    "minCd": 1782,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 723,
+        "absorbed": 0,
+        "damageEvents": 3,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 4000,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 6000
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 1950,
+        "absorbed": 0,
+        "damageEvents": 8,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 26100,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 7600
+      },
+      {
+        "atMs": 60000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 7845,
+        "absorbed": 0,
+        "damageEvents": 18,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 57500,
+        "longestKillGapMs": 60000,
+        "longestHpProgressGapMs": 7600
+      },
+      {
+        "atMs": 120000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 16865,
+        "absorbed": 0,
+        "damageEvents": 38,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 119600,
+        "longestKillGapMs": 120000,
+        "longestHpProgressGapMs": 7600
+      }
+    ],
+    "sources": {
+      "[]": 10014,
+      "[\"empowered\"]": 10584
+    },
+    "terminalHp": 618,
+    "bossId": "node-t4-mountain-dungeon_monster-5",
+    "bossType": "iron-crest-titan",
+    "bossKilled": true,
+    "wallMs": 1313.4724999999999
+  },
+  {
+    "index": 10,
+    "spec": {
+      "path": "cadence-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 947,
+      "mode": "boss",
+      "durationMs": 300000,
+      "weapon": "graveyard-plague-axe"
+    },
+    "outcome": "boss-killed",
+    "elapsedMs": 43100,
+    "damage": 23428,
+    "dps": 543.5730858468677,
+    "kills": 1,
+    "incoming": 0,
+    "minCd": 651,
+    "maxRampage": 4,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 2246,
+        "absorbed": 0,
+        "damageEvents": 6,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 4000,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 6000
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 12707,
+        "absorbed": 0,
+        "damageEvents": 17,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 26600,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 7500
+      }
+    ],
+    "sources": {
+      "[]": 7925,
+      "[\"empowered\"]": 15503
+    },
+    "terminalHp": 618,
+    "bossId": "node-t4-mountain-dungeon_monster-5",
+    "bossType": "iron-crest-titan",
+    "bossKilled": true,
+    "wallMs": 376.53210000000036
+  },
+  {
+    "index": 11,
+    "spec": {
+      "path": "cadence-heavy-t3-a",
+      "arm": "speed30",
+      "plus": 5,
+      "seed": 947,
+      "mode": "boss",
+      "durationMs": 300000,
+      "weapon": "graveyard-plague-axe"
+    },
+    "outcome": "boss-killed",
+    "elapsedMs": 43800,
+    "damage": 22824,
+    "dps": 521.095890410959,
+    "kills": 1,
+    "incoming": 0,
+    "minCd": 771,
+    "maxRampage": 4,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 2246,
+        "absorbed": 0,
+        "damageEvents": 6,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 4000,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 6000
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 12707,
+        "absorbed": 0,
+        "damageEvents": 17,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 26600,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 7500
+      }
+    ],
+    "sources": {
+      "[]": 8010,
+      "[\"empowered\"]": 14814
+    },
+    "terminalHp": 618,
+    "bossId": "node-t4-mountain-dungeon_monster-5",
+    "bossType": "iron-crest-titan",
+    "bossKilled": true,
+    "wallMs": 420.7957999999999
+  },
+  {
+    "index": 12,
+    "spec": {
+      "path": "energy-heavy-t3-b",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 947,
+      "mode": "boss",
+      "durationMs": 300000
+    },
+    "outcome": "boss-killed",
+    "elapsedMs": 55200,
+    "damage": 21067,
+    "dps": 381.6485507246377,
+    "kills": 1,
+    "incoming": 0,
+    "minCd": 438,
+    "maxRampage": 0,
+    "maxCritical": 3,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 2268,
+        "absorbed": 0,
+        "damageEvents": 14,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 7900,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 2100
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 9637,
+        "absorbed": 0,
+        "damageEvents": 42,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 30000,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 2700
+      }
+    ],
+    "sources": {
+      "[]": 11968,
+      "[\"empowered\"]": 9099
+    },
+    "terminalHp": 588,
+    "bossId": "node-t4-mountain-dungeon_monster-5",
+    "bossType": "iron-crest-titan",
+    "bossKilled": true,
+    "wallMs": 469.0519000000022
+  },
+  {
+    "index": 13,
+    "spec": {
+      "path": "energy-heavy-t3-b",
+      "arm": "gain10",
+      "plus": 5,
+      "seed": 947,
+      "mode": "boss",
+      "durationMs": 300000
+    },
+    "outcome": "boss-killed",
+    "elapsedMs": 54700,
+    "damage": 19625,
+    "dps": 358.7751371115173,
+    "kills": 1,
+    "incoming": 0,
+    "minCd": 438,
+    "maxRampage": 0,
+    "maxCritical": 3,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 2268,
+        "absorbed": 0,
+        "damageEvents": 14,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 7900,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 2100
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 9637,
+        "absorbed": 0,
+        "damageEvents": 42,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 30000,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 2700
+      }
+    ],
+    "sources": {
+      "[]": 11940,
+      "[\"empowered\"]": 7685
+    },
+    "terminalHp": 588,
+    "bossId": "node-t4-mountain-dungeon_monster-5",
+    "bossType": "iron-crest-titan",
+    "bossKilled": true,
+    "wallMs": 459.35899999999674
+  },
+  {
+    "index": 14,
+    "spec": {
+      "path": "reload-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 947,
+      "mode": "boss",
+      "durationMs": 300000
+    },
+    "outcome": "boss-killed",
+    "elapsedMs": 27200,
+    "damage": 19590,
+    "dps": 720.2205882352941,
+    "kills": 1,
+    "incoming": 0,
+    "minCd": 260,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 7040,
+        "absorbed": 0,
+        "damageEvents": 55,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 6300,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 3700
+      }
+    ],
+    "sources": {
+      "[\"laser\"]": 19590
+    },
+    "terminalHp": 542,
+    "bossId": "node-t4-mountain-dungeon_monster-5",
+    "bossType": "iron-crest-titan",
+    "bossKilled": true,
+    "wallMs": 316.2436000000016
+  },
+  {
+    "index": 15,
+    "spec": {
+      "path": "reload-heavy-t3-a",
+      "arm": "laserFlat75",
+      "plus": 5,
+      "seed": 947,
+      "mode": "boss",
+      "durationMs": 300000
+    },
+    "outcome": "boss-killed",
+    "elapsedMs": 36500,
+    "damage": 19566,
+    "dps": 536.054794520548,
+    "kills": 1,
+    "incoming": 0,
+    "minCd": 260,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 5310,
+        "absorbed": 0,
+        "damageEvents": 55,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 6300,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 3700
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 16368,
+        "absorbed": 0,
+        "damageEvents": 176,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 30000,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 4500
+      }
+    ],
+    "sources": {
+      "[\"laser\"]": 19566
+    },
+    "terminalHp": 542,
+    "bossId": "node-t4-mountain-dungeon_monster-5",
+    "bossType": "iron-crest-titan",
+    "bossKilled": true,
+    "wallMs": 306.4328000000023
+  },
+  {
+    "index": 16,
+    "spec": {
+      "path": "cooldown-heavy-t3-c",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 947,
+      "mode": "boss",
+      "durationMs": 300000
+    },
+    "outcome": "boss-killed",
+    "elapsedMs": 95600,
+    "damage": 19644,
+    "dps": 205.48117154811717,
+    "kills": 1,
+    "incoming": 405.29999999999995,
+    "minCd": 732,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 1596,
+        "absorbed": 0,
+        "damageEvents": 7,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 4900,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 5100
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 5477,
+        "absorbed": 0,
+        "damageEvents": 27,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 24700,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 7300
+      },
+      {
+        "atMs": 60000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 11750,
+        "absorbed": 0,
+        "damageEvents": 59,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 60000,
+        "longestKillGapMs": 60000,
+        "longestHpProgressGapMs": 7800
+      }
+    ],
+    "sources": {
+      "[]": 7182,
+      "[\"empowered\",\"execution\"]": 1156,
+      "[\"beam\"]": 11306
+    },
+    "terminalHp": 616,
+    "bossId": "node-t4-mountain-dungeon_monster-5",
+    "bossType": "iron-crest-titan",
+    "bossKilled": true,
+    "wallMs": 938.5550999999978
+  },
+  {
+    "index": 17,
+    "spec": {
+      "path": "energy-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 947,
+      "mode": "boss",
+      "durationMs": 300000
+    },
+    "outcome": "boss-killed",
+    "elapsedMs": 47000,
+    "damage": 19577,
+    "dps": 416.531914893617,
+    "kills": 1,
+    "incoming": 0,
+    "minCd": 438,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 2268,
+        "absorbed": 0,
+        "damageEvents": 14,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 7900,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 2100
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 11622,
+        "absorbed": 0,
+        "damageEvents": 42,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 29900,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 2700
+      }
+    ],
+    "sources": {
+      "[]": 9674,
+      "[\"empowered\"]": 9903
+    },
+    "terminalHp": 588,
+    "bossId": "node-t4-mountain-dungeon_monster-5",
+    "bossType": "iron-crest-titan",
+    "bossKilled": true,
+    "wallMs": 468.6924999999974
+  },
+  {
+    "index": 18,
+    "spec": {
+      "path": "cadence-heavy-t3-c",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 947,
+      "mode": "boss",
+      "durationMs": 300000
+    },
+    "outcome": "boss-killed",
+    "elapsedMs": 149300,
+    "damage": 20598,
+    "dps": 137.96383121232418,
+    "kills": 1,
+    "incoming": 255,
+    "minCd": 1782,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 723,
+        "absorbed": 0,
+        "damageEvents": 3,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 4000,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 6000
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 1950,
+        "absorbed": 0,
+        "damageEvents": 8,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 26100,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 7600
+      },
+      {
+        "atMs": 60000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 7845,
+        "absorbed": 0,
+        "damageEvents": 18,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 57500,
+        "longestKillGapMs": 60000,
+        "longestHpProgressGapMs": 7600
+      },
+      {
+        "atMs": 120000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 16865,
+        "absorbed": 0,
+        "damageEvents": 38,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 119600,
+        "longestKillGapMs": 120000,
+        "longestHpProgressGapMs": 7600
+      }
+    ],
+    "sources": {
+      "[]": 10014,
+      "[\"empowered\"]": 10584
+    },
+    "terminalHp": 618,
+    "bossId": "node-t4-mountain-dungeon_monster-5",
+    "bossType": "iron-crest-titan",
+    "bossKilled": true,
+    "wallMs": 1202.6157999999996
+  },
+  {
+    "index": 19,
+    "spec": {
+      "path": "cadence-heavy-t3-c",
+      "arm": "cap100",
+      "plus": 5,
+      "seed": 947,
+      "mode": "boss",
+      "durationMs": 300000
+    },
+    "outcome": "boss-killed",
+    "elapsedMs": 149300,
+    "damage": 20598,
+    "dps": 137.96383121232418,
+    "kills": 1,
+    "incoming": 255,
+    "minCd": 1782,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 723,
+        "absorbed": 0,
+        "damageEvents": 3,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 4000,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 6000
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 1950,
+        "absorbed": 0,
+        "damageEvents": 8,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 26100,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 7600
+      },
+      {
+        "atMs": 60000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 7845,
+        "absorbed": 0,
+        "damageEvents": 18,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 57500,
+        "longestKillGapMs": 60000,
+        "longestHpProgressGapMs": 7600
+      },
+      {
+        "atMs": 120000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 16865,
+        "absorbed": 0,
+        "damageEvents": 38,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 119600,
+        "longestKillGapMs": 120000,
+        "longestHpProgressGapMs": 7600
+      }
+    ],
+    "sources": {
+      "[]": 10014,
+      "[\"empowered\"]": 10584
+    },
+    "terminalHp": 618,
+    "bossId": "node-t4-mountain-dungeon_monster-5",
+    "bossType": "iron-crest-titan",
+    "bossKilled": true,
+    "wallMs": 1418.3799
+  }
+]

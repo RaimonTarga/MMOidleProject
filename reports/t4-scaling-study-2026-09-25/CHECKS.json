@@ -1,0 +1,10 @@
+{
+  "benchTypecheck": "passed: pnpm --filter @mmo-idle/server exec tsc --noEmit -p tsconfig.bench.json",
+  "evidenceReconciliation": "passed: 185 observations, 8 direct attacks, 23 matching repeated controls",
+  "diffCheck": "passed",
+  "activeStudyProcesses": 0,
+  "productionGameplayEdits": false,
+  "fullSuiteRun": false,
+  "browserRun": false,
+  "deployment": false
+}

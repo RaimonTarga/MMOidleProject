@@ -1,0 +1,1417 @@
+{
+  "receipt": {
+    "spec": {
+      "path": "cadence-light-t3-c",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "graveyard-plague-axe",
+      "relic": "relic-glacial-bell"
+    },
+    "cell": {
+      "id": "breadth-t4-striker-light-c-farm",
+      "className": "striker",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-graveyard-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 5,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "breadth-t4-striker-light-c-farm",
+        "classRoot": "cadence-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "cadence-root",
+          "cadence-light",
+          "cadence-range-close",
+          "cadence-light-t3-c"
+        ],
+        "gearItemIds": {
+          "weapon": "graveyard-plague-axe",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-bruiser",
+          "relic": "relic-glacial-bell"
+        }
+      },
+      "identityId": "breadth-t4-striker-light-c",
+      "frame": "light",
+      "range": "close",
+      "pathName": "Swiftblade",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Your finisher strikes twice. The second hit deals 70% of the finalized first-hit damage. Neither hit counts toward the next combo.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Relic relic-equilibrium-shard: modest frequency and potency without signed penalty.",
+        "sweep has first offensive priority; multiple delivery opportunities support Sweep.",
+        "Offensive stance is always active; no stance switching.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ]
+    },
+    "view": {
+      "id": "bench-bot-0",
+      "name": "breadth-t4-striker-light-c-farm",
+      "pos": {
+        "x": 2400,
+        "y": 2400
+      },
+      "target": {
+        "x": 2400,
+        "y": 2400
+      },
+      "hp": 611,
+      "maxHp": 611,
+      "attack": 372,
+      "onHitDamage": 0,
+      "plating": 58,
+      "damageReduction": 0.02,
+      "dodgeRate": 0,
+      "evadeMitigation": 0,
+      "evadeCharge": 0,
+      "barrier": 257,
+      "barrierMax": 257,
+      "barrierRecharging": false,
+      "wards": [],
+      "incomingDot": 0,
+      "pendingHeal": 0,
+      "attackCadenceMult": 1,
+      "finalDamageDealtMult": 1.472,
+      "finalDamageTakenMult": 1.1,
+      "onHitDamageBonus": 0,
+      "attackRange": 12,
+      "attackCooldown": 678,
+      "lastAttackAt": 0,
+      "attackTargetId": null,
+      "auto": true,
+      "autoTraverse": false,
+      "autoIntent": null,
+      "emote": null,
+      "partyLeaderId": null,
+      "partyMembers": [],
+      "nodeId": "node-t4-graveyard-03",
+      "essences": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {},
+      "level": 0,
+      "skillPoints": 0,
+      "unlockedSkills": [
+        "cadence-root",
+        "cadence-light",
+        "cadence-range-close",
+        "cadence-light-t3-c"
+      ],
+      "passives": {
+        "defense.max-hit-pct": 0.5,
+        "defense.max-hit-mult": 0.25,
+        "cadence.empowered-threshold": 4,
+        "cadence.empowered-mult": 1.5,
+        "shared.damage-mult": 0.1,
+        "cadence.trigger-count": 2,
+        "cadence.extra-trigger-damage-mult": 0.7,
+        "weapon.dead-swing-interval": 3,
+        "weapon.dead-swing-vuln-pct": 0.2,
+        "weapon.dead-swing-vuln-ms": 4000,
+        "guard.potency-pct": 0.64,
+        "defense.max-hit-refills-barrier": 1,
+        "defense.barrier-pct": 0.42,
+        "mobility.approach-speed-pct": 1.5,
+        "core.damage-dealt-pct": 0.28,
+        "core.maxhp-mult": 0.2,
+        "core.speed-mult": 0.18,
+        "core.mobility-refund-on-kill-pct": 0.5,
+        "relic.mechanic-frequency": -0.2,
+        "relic.mechanic-potency": 0.25,
+        "relic.mechanic-buff-effect": 0.25,
+        "defense.recovery-pulse-interval-ms": 6000,
+        "defense.recovery-pulse-duration-ms": 4000,
+        "defense.recovery-pulse-pct": 0.30000000000000004
+      },
+      "cadenceSpeedStacks": 0,
+      "selectedClass": "cadence-root",
+      "selectedSubVariant": "light",
+      "selectedRange": "cadence-range-close",
+      "currentSkillTier": 4,
+      "recovery": 19,
+      "speed": 321,
+      "attackStyle": "slash",
+      "inventory": [],
+      "equipment": {
+        "weapon": "graveyard-plague-axe",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-bruiser",
+        "relic": "relic-glacial-bell"
+      },
+      "itemUpgrades": {
+        "graveyard-plague-axe": 5,
+        "mountain-vest-t4": 5,
+        "mountain-charm-t4": 5,
+        "mountain-boots-t4": 5,
+        "core-bruiser": 0,
+        "relic-glacial-bell": 0
+      },
+      "biomeXP": {},
+      "biomeLevel": {
+        "cave": 18,
+        "forest": 12,
+        "mountain": 24,
+        "plains": 12,
+        "swamp": 18,
+        "desert": 18,
+        "jungle": 18,
+        "tundra": 12,
+        "volcanic": 12,
+        "graveyard": 6,
+        "trench": 6
+      },
+      "globalMastery": 156,
+      "unlockedRecipes": [],
+      "combatArchetype": "cadence",
+      "cadenceCount": 0,
+      "cadenceThreshold": 5,
+      "cadenceEmpoweredArmed": false,
+      "ammoCount": 0,
+      "ammoMax": 0,
+      "reloadRemainingMs": 0,
+      "reloadDurationMs": 0,
+      "heatPct": 0,
+      "laserOverheated": false,
+      "executionReady": false,
+      "executionCooldownPct": 0,
+      "energyCount": 0,
+      "energyMax": 100,
+      "flashShiftPct": 0,
+      "flashDamageShiftPct": 0,
+      "flashSpeedBonusPct": 0,
+      "flashEvasionBonusPct": 0,
+      "empoweredReady": false,
+      "targetDotStacks": 0,
+      "targetDotTickPct": 0,
+      "targetChillStacks": 0,
+      "isChanneling": false,
+      "channelingPct": 0,
+      "cannonChargePct": 0,
+      "aura": null,
+      "activeBuffs": [],
+      "questProgress": {},
+      "playerTier": 4,
+      "bossesCleared": [],
+      "clearedNodes": [],
+      "visitedNodes": [],
+      "runesOwned": [
+        "always",
+        "in-combat",
+        "when-idle",
+        "hp-below-25",
+        "hp-above-90",
+        "target-hp-below-25",
+        "has-debuff",
+        "in-party",
+        "n-aggro-3",
+        "inside-telegraph",
+        "target-casting",
+        "stance-charged",
+        "before-empowered",
+        "target-elite",
+        "target-max-stacks",
+        "while-traveling",
+        "auto-path-enemy",
+        "chase-enemy",
+        "wait-for-regen",
+        "flee",
+        "fight-back",
+        "lead-the-way",
+        "follow-and-assist",
+        "taunt-current-target",
+        "focus-closest",
+        "use-ability",
+        "switch-stance",
+        "wait-it-out",
+        "tactical-reload",
+        "wait-for-execution",
+        "wait-for-summons",
+        "avoid-enemies",
+        "avoid-hazards",
+        "step-back"
+      ],
+      "runeRecipesCrafted": [],
+      "runesEquipped": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "knownAbilities": [
+        "disengage",
+        "imbue-lightning",
+        "snipe",
+        "stunning-strike",
+        "binding-strike",
+        "detonate",
+        "frenzy",
+        "quick-strike",
+        "charge",
+        "contagion",
+        "hamstring",
+        "slam",
+        "expose-weakness",
+        "power-strike",
+        "sweep",
+        "recuperate",
+        "break-free",
+        "bramble-guard",
+        "endure",
+        "brace",
+        "cleanse",
+        "second-wind"
+      ],
+      "attunedAbilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "knownStances": [
+        "berserker-stance",
+        "brawler-stance",
+        "defensive-stance",
+        "enraged-stance",
+        "execute-stance",
+        "fleeting-stance",
+        "offensive-stance",
+        "perfection-stance",
+        "powering-up-stance",
+        "predator-stance",
+        "reaper-stance",
+        "recuperating-stance",
+        "tanking-stance",
+        "time-to-strike-stance",
+        "warding-stance"
+      ],
+      "attunedStances": [
+        "offensive-stance"
+      ],
+      "equippedStances": {
+        "default": "offensive-stance"
+      },
+      "activeStance": "offensive-stance",
+      "manualStanceOverride": null,
+      "queuedAbilityIds": [],
+      "knownRites": [
+        "ability-reprieve",
+        "blood-offering",
+        "lingering-battle",
+        "mechanic-renewal",
+        "purification",
+        "swift-repose"
+      ],
+      "equippedRites": [],
+      "riteSlots": 6,
+      "hitboxRects": [
+        {
+          "offsetX": 2,
+          "offsetY": -3,
+          "halfW": 9,
+          "halfH": 21
+        },
+        {
+          "offsetX": -11,
+          "offsetY": 5,
+          "halfW": 4,
+          "halfH": 11
+        },
+        {
+          "offsetX": 13,
+          "offsetY": 3.5,
+          "halfW": 2,
+          "halfH": 9.5
+        },
+        {
+          "offsetX": -7,
+          "offsetY": 23.5,
+          "halfW": 3,
+          "halfH": 5.5
+        },
+        {
+          "offsetX": -17,
+          "offsetY": 11.5,
+          "halfW": 2,
+          "halfH": 6.5
+        },
+        {
+          "offsetX": 1.5,
+          "offsetY": -26.5,
+          "halfW": 4.5,
+          "halfH": 2.5
+        }
+      ],
+      "summonsMinions": 0,
+      "summonActiveCount": 0,
+      "summonRespawnMaxMs": 0,
+      "summonSlots": [],
+      "isDead": false,
+      "graveFrame": null
+    },
+    "passives": {
+      "defense.max-hit-pct": 0.5,
+      "defense.max-hit-mult": 0.25,
+      "cadence.empowered-threshold": 4,
+      "cadence.empowered-mult": 1.5,
+      "shared.damage-mult": 0.1,
+      "cadence.trigger-count": 2,
+      "cadence.extra-trigger-damage-mult": 0.7,
+      "weapon.dead-swing-interval": 3,
+      "weapon.dead-swing-vuln-pct": 0.2,
+      "weapon.dead-swing-vuln-ms": 4000,
+      "guard.potency-pct": 0.64,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.42,
+      "mobility.approach-speed-pct": 1.5,
+      "core.damage-dealt-pct": 0.28,
+      "core.maxhp-mult": 0.2,
+      "core.speed-mult": 0.18,
+      "core.mobility-refund-on-kill-pct": 0.5,
+      "relic.mechanic-frequency": -0.2,
+      "relic.mechanic-potency": 0.25,
+      "relic.mechanic-buff-effect": 0.25,
+      "defense.recovery-pulse-interval-ms": 6000,
+      "defense.recovery-pulse-duration-ms": 4000,
+      "defense.recovery-pulse-pct": 0.30000000000000004
+    },
+    "stats": {
+      "attack": 372,
+      "onHit": 0,
+      "cd": 678,
+      "hp": 611
+    },
+    "target": {
+      "plating": 0,
+      "damageReduction": 0,
+      "evasion": 0
+    }
+  },
+  "result": {
+    "index": 14,
+    "spec": {
+      "path": "cadence-light-t3-c",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "graveyard-plague-axe",
+      "relic": "relic-glacial-bell"
+    },
+    "outcome": "window-ended",
+    "elapsedMs": 120000,
+    "damage": 139602,
+    "dps": 1163.35,
+    "kills": 0,
+    "incoming": 0,
+    "minCd": 678,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 12860,
+        "absorbed": 0,
+        "damageEvents": 19,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 9800,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 1400
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 36718,
+        "absorbed": 0,
+        "damageEvents": 55,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 29800,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 1400
+      },
+      {
+        "atMs": 60000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 69360,
+        "absorbed": 0,
+        "damageEvents": 108,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 58800,
+        "longestKillGapMs": 60000,
+        "longestHpProgressGapMs": 1400
+      },
+      {
+        "atMs": 120000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 139602,
+        "absorbed": 0,
+        "damageEvents": 217,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 118800,
+        "longestKillGapMs": 120000,
+        "longestHpProgressGapMs": 1400
+      }
+    ],
+    "sources": {
+      "[]": 73074,
+      "[\"empowered\"]": 39140,
+      "[\"swiftblade\"]": 27388
+    },
+    "terminalHp": 611,
+    "bossKilled": false,
+    "wallMs": 700.1661999999997
+  },
+  "rawColumns": [
+    "timeMs",
+    "hpDamage",
+    "rampage",
+    "criticalMass",
+    "cooldownMs"
+  ],
+  "raw": [
+    [
+      100,
+      602,
+      0,
+      null,
+      678
+    ],
+    [
+      700,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      1900,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      2500,
+      2390,
+      0,
+      null,
+      678
+    ],
+    [
+      3700,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      4300,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      5600,
+      2390,
+      0,
+      null,
+      678
+    ],
+    [
+      6300,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      7700,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      8400,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      9800,
+      1992,
+      0,
+      null,
+      678
+    ],
+    [
+      10400,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      11600,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      12200,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      13400,
+      2390,
+      0,
+      null,
+      678
+    ],
+    [
+      14000,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      15300,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      16000,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      17400,
+      1992,
+      0,
+      null,
+      678
+    ],
+    [
+      18100,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      19500,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      20100,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      21300,
+      1992,
+      0,
+      null,
+      678
+    ],
+    [
+      21900,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      23100,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      23700,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      24900,
+      2390,
+      0,
+      null,
+      678
+    ],
+    [
+      25600,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      27000,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      27700,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      29100,
+      2390,
+      0,
+      null,
+      678
+    ],
+    [
+      29800,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      31000,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      31600,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      32800,
+      1992,
+      0,
+      null,
+      678
+    ],
+    [
+      33400,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      34600,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      35300,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      36700,
+      1992,
+      0,
+      null,
+      678
+    ],
+    [
+      37400,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      38800,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      39500,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      40700,
+      2390,
+      0,
+      null,
+      678
+    ],
+    [
+      41300,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      42500,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      43100,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      44300,
+      1992,
+      0,
+      null,
+      678
+    ],
+    [
+      44900,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      46300,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      47000,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      48400,
+      1992,
+      0,
+      null,
+      678
+    ],
+    [
+      49100,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      50400,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      51000,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      52200,
+      2390,
+      0,
+      null,
+      678
+    ],
+    [
+      52800,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      54000,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      54600,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      56000,
+      1992,
+      0,
+      null,
+      678
+    ],
+    [
+      56700,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      58100,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      58800,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      60100,
+      1992,
+      0,
+      null,
+      678
+    ],
+    [
+      60700,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      61900,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      62500,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      63700,
+      2390,
+      0,
+      null,
+      678
+    ],
+    [
+      64300,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      65600,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      66300,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      67700,
+      1992,
+      0,
+      null,
+      678
+    ],
+    [
+      68400,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      69800,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      70400,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      71600,
+      1992,
+      0,
+      null,
+      678
+    ],
+    [
+      72200,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      73400,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      74000,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      75300,
+      2390,
+      0,
+      null,
+      678
+    ],
+    [
+      76000,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      77400,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      78100,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      79500,
+      1992,
+      0,
+      null,
+      678
+    ],
+    [
+      80100,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      81300,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      81900,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      83100,
+      1992,
+      0,
+      null,
+      678
+    ],
+    [
+      83700,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      84900,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      85600,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      87000,
+      1992,
+      0,
+      null,
+      678
+    ],
+    [
+      87700,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      89100,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      89800,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      91000,
+      2390,
+      0,
+      null,
+      678
+    ],
+    [
+      91600,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      92800,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      93400,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      94600,
+      1992,
+      0,
+      null,
+      678
+    ],
+    [
+      95300,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      96700,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      97400,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      98800,
+      1992,
+      0,
+      null,
+      678
+    ],
+    [
+      99500,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      100700,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      101300,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      102500,
+      2390,
+      0,
+      null,
+      678
+    ],
+    [
+      103100,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      104300,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      104900,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      106300,
+      1992,
+      0,
+      null,
+      678
+    ],
+    [
+      107000,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      108400,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      109100,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      110400,
+      1992,
+      0,
+      null,
+      678
+    ],
+    [
+      111000,
+      722,
+      0,
+      null,
+      678
+    ],
+    [
+      112200,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      112800,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      114000,
+      2390,
+      0,
+      null,
+      678
+    ],
+    [
+      114600,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      116000,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      116700,
+      866,
+      0,
+      null,
+      678
+    ],
+    [
+      118100,
+      1992,
+      0,
+      null,
+      678
+    ],
+    [
+      118800,
+      722,
+      0,
+      null,
+      678
+    ]
+  ]
+}

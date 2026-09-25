@@ -1,0 +1,80 @@
+[
+  {
+    "index": 0,
+    "spec": {
+      "path": "cadence-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 10000
+    },
+    "outcome": "window-ended",
+    "elapsedMs": 10000,
+    "damage": 2404,
+    "dps": 240.4,
+    "kills": 0,
+    "incoming": 0,
+    "minCd": 1623,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 2404,
+        "absorbed": 0,
+        "damageEvents": 7,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 9100,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 1700
+      }
+    ],
+    "sources": {
+      "[]": 2404
+    },
+    "terminalHp": 674,
+    "wallMs": 271.4885999999997
+  },
+  {
+    "index": 1,
+    "spec": {
+      "path": "cadence-heavy-t3-a",
+      "arm": "speed30",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 10000
+    },
+    "outcome": "window-ended",
+    "elapsedMs": 10000,
+    "damage": 2404,
+    "dps": 240.4,
+    "kills": 0,
+    "incoming": 0,
+    "minCd": 1623,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 2404,
+        "absorbed": 0,
+        "damageEvents": 7,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 9100,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 1700
+      }
+    ],
+    "sources": {
+      "[]": 2404
+    },
+    "terminalHp": 674,
+    "wallMs": 120.15260000000035
+  }
+]

@@ -1,0 +1,2424 @@
+{
+  "receipt": {
+    "spec": {
+      "path": "energy-heavy-t3-b",
+      "arm": "gain10",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "jungle-deathfang-rapier"
+    },
+    "cell": {
+      "id": "breadth-t4-spirit-heavy-b-farm",
+      "className": "spirit",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-graveyard-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 0,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "breadth-t4-spirit-heavy-b-farm",
+        "classRoot": "energy-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "energy-root",
+          "energy-heavy",
+          "energy-range-mid",
+          "energy-heavy-t3-b"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "jungle-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-colossus-heart"
+        }
+      },
+      "identityId": "breadth-t4-spirit-heavy-b",
+      "frame": "heavy",
+      "range": "mid",
+      "pathName": "Invoker",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Each consecutive discharge (no long gap between them) adds a stack, up to 3: more discharge damage AND faster energy gain. Stacks reset after 5 seconds without dealing damage. Rewards uninterrupted farming.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Relic relic-colossus-heart: concentrated potency; accepts frequency/reconstruction penalty.",
+        "sweep has first offensive priority; multiple delivery opportunities support Sweep.",
+        "Offensive stance is always active; no stance switching.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ]
+    },
+    "view": {
+      "id": "bench-bot-0",
+      "name": "breadth-t4-spirit-heavy-b-farm",
+      "pos": {
+        "x": 2400,
+        "y": 2400
+      },
+      "target": {
+        "x": 2400,
+        "y": 2400
+      },
+      "hp": 343,
+      "maxHp": 343,
+      "attack": 64,
+      "onHitDamage": 30,
+      "plating": 30,
+      "damageReduction": 0.02,
+      "dodgeRate": 0.5318181818181819,
+      "evadeMitigation": 0.7,
+      "evadeCharge": 0,
+      "barrier": 226,
+      "barrierMax": 226,
+      "barrierRecharging": false,
+      "wards": [],
+      "incomingDot": 0,
+      "pendingHeal": 0,
+      "attackCadenceMult": 1,
+      "finalDamageDealtMult": 1.288,
+      "finalDamageTakenMult": 1.1,
+      "onHitDamageBonus": 0,
+      "attackRange": 142,
+      "attackCooldown": 492,
+      "lastAttackAt": 0,
+      "attackTargetId": null,
+      "auto": true,
+      "autoTraverse": false,
+      "autoIntent": null,
+      "emote": null,
+      "partyLeaderId": null,
+      "partyMembers": [],
+      "nodeId": "node-t4-graveyard-03",
+      "essences": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {},
+      "level": 0,
+      "skillPoints": 0,
+      "unlockedSkills": [
+        "energy-root",
+        "energy-heavy",
+        "energy-range-mid",
+        "energy-heavy-t3-b"
+      ],
+      "passives": {
+        "defense.barrier-pct": 0.6599999999999999,
+        "energy.per-hit": 10,
+        "energy.empowered-mult": 6,
+        "energy.critical-mass": 1,
+        "energy.critical-mass-max-stacks": 3,
+        "energy.critical-mass-discharge-per-stack": 0.2,
+        "energy.critical-mass-gain-per-stack": 0.1,
+        "energy.critical-mass-reset-ms": 5000,
+        "defense.evade-mitigation": 0.2,
+        "mobility.approach-speed-pct": 1.25,
+        "core.damage-dealt-pct": 0.12,
+        "core.maxhp-mult": 0.12,
+        "relic.mechanic-frequency": -0.3,
+        "relic.mechanic-potency": 0.4
+      },
+      "cadenceSpeedStacks": 0,
+      "selectedClass": "energy-root",
+      "selectedSubVariant": "heavy",
+      "selectedRange": "energy-range-mid",
+      "currentSkillTier": 4,
+      "recovery": 16,
+      "speed": 230,
+      "attackStyle": "slash",
+      "inventory": [],
+      "equipment": {
+        "weapon": "jungle-deathfang-rapier",
+        "armor": "jungle-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-tempered",
+        "relic": "relic-colossus-heart"
+      },
+      "itemUpgrades": {
+        "jungle-deathfang-rapier": 0,
+        "jungle-vest-t4": 0,
+        "mountain-charm-t4": 0,
+        "mountain-boots-t4": 0,
+        "core-tempered": 0,
+        "relic-colossus-heart": 0
+      },
+      "biomeXP": {},
+      "biomeLevel": {
+        "cave": 18,
+        "forest": 12,
+        "mountain": 24,
+        "plains": 12,
+        "swamp": 18,
+        "desert": 18,
+        "jungle": 18,
+        "tundra": 12,
+        "volcanic": 12,
+        "graveyard": 6,
+        "trench": 6
+      },
+      "globalMastery": 156,
+      "unlockedRecipes": [],
+      "combatArchetype": "energy",
+      "cadenceCount": 0,
+      "cadenceThreshold": 0,
+      "cadenceEmpoweredArmed": false,
+      "ammoCount": 0,
+      "ammoMax": 0,
+      "reloadRemainingMs": 0,
+      "reloadDurationMs": 0,
+      "heatPct": 0,
+      "laserOverheated": false,
+      "executionReady": false,
+      "executionCooldownPct": 0,
+      "energyCount": 0,
+      "energyMax": 140,
+      "flashShiftPct": 0,
+      "flashDamageShiftPct": 45,
+      "flashSpeedBonusPct": 0,
+      "flashEvasionBonusPct": 0,
+      "empoweredReady": false,
+      "targetDotStacks": 0,
+      "targetDotTickPct": 0,
+      "targetChillStacks": 0,
+      "isChanneling": false,
+      "channelingPct": 0,
+      "cannonChargePct": 0,
+      "aura": null,
+      "activeBuffs": [],
+      "questProgress": {},
+      "playerTier": 4,
+      "bossesCleared": [],
+      "clearedNodes": [],
+      "visitedNodes": [],
+      "runesOwned": [
+        "always",
+        "in-combat",
+        "when-idle",
+        "hp-below-25",
+        "hp-above-90",
+        "target-hp-below-25",
+        "has-debuff",
+        "in-party",
+        "n-aggro-3",
+        "inside-telegraph",
+        "target-casting",
+        "stance-charged",
+        "before-empowered",
+        "target-elite",
+        "target-max-stacks",
+        "while-traveling",
+        "auto-path-enemy",
+        "chase-enemy",
+        "wait-for-regen",
+        "flee",
+        "fight-back",
+        "lead-the-way",
+        "follow-and-assist",
+        "taunt-current-target",
+        "focus-closest",
+        "use-ability",
+        "switch-stance",
+        "wait-it-out",
+        "tactical-reload",
+        "wait-for-execution",
+        "wait-for-summons",
+        "avoid-enemies",
+        "avoid-hazards",
+        "step-back",
+        "orbit"
+      ],
+      "runeRecipesCrafted": [],
+      "runesEquipped": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "knownAbilities": [
+        "disengage",
+        "imbue-lightning",
+        "snipe",
+        "stunning-strike",
+        "binding-strike",
+        "detonate",
+        "frenzy",
+        "quick-strike",
+        "charge",
+        "contagion",
+        "hamstring",
+        "slam",
+        "expose-weakness",
+        "power-strike",
+        "sweep",
+        "recuperate",
+        "break-free",
+        "bramble-guard",
+        "endure",
+        "brace",
+        "cleanse",
+        "second-wind"
+      ],
+      "attunedAbilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "knownStances": [
+        "berserker-stance",
+        "brawler-stance",
+        "defensive-stance",
+        "enraged-stance",
+        "execute-stance",
+        "fleeting-stance",
+        "offensive-stance",
+        "perfection-stance",
+        "powering-up-stance",
+        "predator-stance",
+        "reaper-stance",
+        "recuperating-stance",
+        "tanking-stance",
+        "time-to-strike-stance",
+        "warding-stance"
+      ],
+      "attunedStances": [
+        "offensive-stance"
+      ],
+      "equippedStances": {
+        "default": "offensive-stance"
+      },
+      "activeStance": "offensive-stance",
+      "manualStanceOverride": null,
+      "queuedAbilityIds": [],
+      "knownRites": [
+        "ability-reprieve",
+        "blood-offering",
+        "lingering-battle",
+        "mechanic-renewal",
+        "purification",
+        "swift-repose"
+      ],
+      "equippedRites": [],
+      "riteSlots": 6,
+      "hitboxRects": [
+        {
+          "offsetX": 1.5,
+          "offsetY": 8,
+          "halfW": 11.5,
+          "halfH": 19
+        },
+        {
+          "offsetX": 2,
+          "offsetY": -19,
+          "halfW": 6,
+          "halfH": 8
+        },
+        {
+          "offsetX": -11,
+          "offsetY": 12,
+          "halfW": 1,
+          "halfH": 15
+        },
+        {
+          "offsetX": 13.5,
+          "offsetY": 11,
+          "halfW": 0.5,
+          "halfH": 15
+        },
+        {
+          "offsetX": -13.5,
+          "offsetY": 21,
+          "halfW": 1.5,
+          "halfH": 4
+        },
+        {
+          "offsetX": -5,
+          "offsetY": -16,
+          "halfW": 1,
+          "halfH": 5
+        }
+      ],
+      "summonsMinions": 0,
+      "summonActiveCount": 0,
+      "summonRespawnMaxMs": 0,
+      "summonSlots": [],
+      "isDead": false,
+      "graveFrame": null
+    },
+    "passives": {
+      "defense.barrier-pct": 0.6599999999999999,
+      "energy.per-hit": 10,
+      "energy.empowered-mult": 6,
+      "energy.critical-mass": 1,
+      "energy.critical-mass-max-stacks": 3,
+      "energy.critical-mass-discharge-per-stack": 0.2,
+      "energy.critical-mass-gain-per-stack": 0.1,
+      "energy.critical-mass-reset-ms": 5000,
+      "defense.evade-mitigation": 0.2,
+      "mobility.approach-speed-pct": 1.25,
+      "core.damage-dealt-pct": 0.12,
+      "core.maxhp-mult": 0.12,
+      "relic.mechanic-frequency": -0.3,
+      "relic.mechanic-potency": 0.4
+    },
+    "stats": {
+      "attack": 64,
+      "onHit": 30,
+      "cd": 492,
+      "hp": 343
+    },
+    "target": {
+      "plating": 0,
+      "damageReduction": 0,
+      "evasion": 0
+    }
+  },
+  "result": {
+    "index": 37,
+    "spec": {
+      "path": "energy-heavy-t3-b",
+      "arm": "gain10",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "jungle-deathfang-rapier"
+    },
+    "outcome": "window-ended",
+    "elapsedMs": 120000,
+    "damage": 50940,
+    "dps": 424.5,
+    "kills": 0,
+    "incoming": 0,
+    "minCd": 492,
+    "maxRampage": 0,
+    "maxCritical": 3,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 3806,
+        "absorbed": 0,
+        "damageEvents": 23,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 9900,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 500
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 11956,
+        "absorbed": 0,
+        "damageEvents": 68,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 29900,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 500
+      },
+      {
+        "atMs": 60000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 24685,
+        "absorbed": 0,
+        "damageEvents": 135,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 59700,
+        "longestKillGapMs": 60000,
+        "longestHpProgressGapMs": 500
+      },
+      {
+        "atMs": 120000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 50940,
+        "absorbed": 0,
+        "damageEvents": 270,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 119700,
+        "longestKillGapMs": 120000,
+        "longestHpProgressGapMs": 500
+      }
+    ],
+    "sources": {
+      "[]": 33471,
+      "[\"empowered\"]": 17469
+    },
+    "terminalHp": 343,
+    "wallMs": 1027.5982999999978
+  },
+  "rawColumns": [
+    "timeMs",
+    "hpDamage",
+    "rampage",
+    "criticalMass",
+    "cooldownMs"
+  ],
+  "raw": [
+    [
+      100,
+      121,
+      null,
+      0,
+      492
+    ],
+    [
+      500,
+      145,
+      null,
+      0,
+      492
+    ],
+    [
+      900,
+      145,
+      null,
+      0,
+      492
+    ],
+    [
+      1300,
+      145,
+      null,
+      0,
+      492
+    ],
+    [
+      1700,
+      145,
+      null,
+      0,
+      492
+    ],
+    [
+      2100,
+      145,
+      null,
+      0,
+      492
+    ],
+    [
+      2500,
+      145,
+      null,
+      0,
+      492
+    ],
+    [
+      2900,
+      145,
+      null,
+      0,
+      492
+    ],
+    [
+      3300,
+      145,
+      null,
+      0,
+      492
+    ],
+    [
+      3700,
+      145,
+      null,
+      0,
+      492
+    ],
+    [
+      4100,
+      145,
+      null,
+      0,
+      492
+    ],
+    [
+      4500,
+      145,
+      null,
+      0,
+      492
+    ],
+    [
+      4900,
+      145,
+      null,
+      0,
+      492
+    ],
+    [
+      5400,
+      145,
+      null,
+      0,
+      492
+    ],
+    [
+      5900,
+      121,
+      null,
+      0,
+      492
+    ],
+    [
+      6400,
+      121,
+      null,
+      0,
+      492
+    ],
+    [
+      6900,
+      121,
+      null,
+      0,
+      492
+    ],
+    [
+      7400,
+      121,
+      null,
+      0,
+      492
+    ],
+    [
+      7900,
+      121,
+      null,
+      0,
+      492
+    ],
+    [
+      8400,
+      121,
+      null,
+      0,
+      492
+    ],
+    [
+      8900,
+      832,
+      null,
+      1,
+      492
+    ],
+    [
+      9400,
+      121,
+      null,
+      1,
+      492
+    ],
+    [
+      9900,
+      121,
+      null,
+      1,
+      492
+    ],
+    [
+      10300,
+      121,
+      null,
+      1,
+      492
+    ],
+    [
+      10700,
+      121,
+      null,
+      1,
+      492
+    ],
+    [
+      11100,
+      121,
+      null,
+      1,
+      492
+    ],
+    [
+      11500,
+      121,
+      null,
+      1,
+      492
+    ],
+    [
+      11900,
+      121,
+      null,
+      1,
+      492
+    ],
+    [
+      12300,
+      121,
+      null,
+      1,
+      492
+    ],
+    [
+      12700,
+      145,
+      null,
+      1,
+      492
+    ],
+    [
+      13100,
+      145,
+      null,
+      1,
+      492
+    ],
+    [
+      13500,
+      145,
+      null,
+      1,
+      492
+    ],
+    [
+      13900,
+      145,
+      null,
+      1,
+      492
+    ],
+    [
+      14300,
+      145,
+      null,
+      1,
+      492
+    ],
+    [
+      14700,
+      145,
+      null,
+      1,
+      492
+    ],
+    [
+      15200,
+      145,
+      null,
+      1,
+      492
+    ],
+    [
+      15700,
+      145,
+      null,
+      1,
+      492
+    ],
+    [
+      16200,
+      145,
+      null,
+      1,
+      492
+    ],
+    [
+      16700,
+      145,
+      null,
+      1,
+      492
+    ],
+    [
+      17200,
+      1159,
+      null,
+      2,
+      492
+    ],
+    [
+      17700,
+      121,
+      null,
+      2,
+      492
+    ],
+    [
+      18200,
+      121,
+      null,
+      2,
+      492
+    ],
+    [
+      18700,
+      121,
+      null,
+      2,
+      492
+    ],
+    [
+      19200,
+      121,
+      null,
+      2,
+      492
+    ],
+    [
+      19700,
+      121,
+      null,
+      2,
+      492
+    ],
+    [
+      20100,
+      121,
+      null,
+      2,
+      492
+    ],
+    [
+      20500,
+      121,
+      null,
+      2,
+      492
+    ],
+    [
+      20900,
+      121,
+      null,
+      2,
+      492
+    ],
+    [
+      21300,
+      121,
+      null,
+      2,
+      492
+    ],
+    [
+      21700,
+      121,
+      null,
+      2,
+      492
+    ],
+    [
+      22100,
+      121,
+      null,
+      2,
+      492
+    ],
+    [
+      22500,
+      121,
+      null,
+      2,
+      492
+    ],
+    [
+      22900,
+      121,
+      null,
+      2,
+      492
+    ],
+    [
+      23300,
+      121,
+      null,
+      2,
+      492
+    ],
+    [
+      23700,
+      121,
+      null,
+      2,
+      492
+    ],
+    [
+      24100,
+      121,
+      null,
+      2,
+      492
+    ],
+    [
+      24500,
+      145,
+      null,
+      2,
+      492
+    ],
+    [
+      24900,
+      145,
+      null,
+      2,
+      492
+    ],
+    [
+      25400,
+      1308,
+      null,
+      3,
+      492
+    ],
+    [
+      25900,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      26400,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      26900,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      27400,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      27900,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      28400,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      28900,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      29400,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      29900,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      30300,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      30700,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      31100,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      31500,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      31900,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      32300,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      32700,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      33100,
+      1090,
+      null,
+      3,
+      492
+    ],
+    [
+      33500,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      33900,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      34300,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      34700,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      35200,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      35700,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      36200,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      36700,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      37200,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      37700,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      38200,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      38700,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      39200,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      39700,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      40100,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      40500,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      40900,
+      1308,
+      null,
+      3,
+      492
+    ],
+    [
+      41300,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      41700,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      42100,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      42500,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      42900,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      43300,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      43700,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      44100,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      44500,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      44900,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      45400,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      45900,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      46400,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      46900,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      47400,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      47900,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      48400,
+      1090,
+      null,
+      3,
+      492
+    ],
+    [
+      48900,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      49400,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      49900,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      50300,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      50700,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      51100,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      51500,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      51900,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      52300,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      52700,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      53100,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      53500,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      53900,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      54300,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      54700,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      55200,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      55700,
+      1090,
+      null,
+      3,
+      492
+    ],
+    [
+      56200,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      56700,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      57200,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      57700,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      58200,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      58700,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      59200,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      59700,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      60100,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      60500,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      60900,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      61300,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      61700,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      62100,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      62500,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      62900,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      63300,
+      1308,
+      null,
+      3,
+      492
+    ],
+    [
+      63700,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      64100,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      64500,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      64900,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      65400,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      65900,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      66400,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      66900,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      67400,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      67900,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      68400,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      68900,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      69400,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      69900,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      70300,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      70700,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      71100,
+      1090,
+      null,
+      3,
+      492
+    ],
+    [
+      71500,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      71900,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      72300,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      72700,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      73100,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      73500,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      73900,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      74300,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      74700,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      75200,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      75700,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      76200,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      76700,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      77200,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      77700,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      78200,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      78700,
+      1090,
+      null,
+      3,
+      492
+    ],
+    [
+      79200,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      79700,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      80100,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      80500,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      80900,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      81300,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      81700,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      82100,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      82500,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      82900,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      83300,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      83700,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      84100,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      84500,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      84900,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      85400,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      85900,
+      1308,
+      null,
+      3,
+      492
+    ],
+    [
+      86400,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      86900,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      87400,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      87900,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      88400,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      88900,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      89400,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      89900,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      90300,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      90700,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      91100,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      91500,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      91900,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      92300,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      92700,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      93100,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      93500,
+      1090,
+      null,
+      3,
+      492
+    ],
+    [
+      93900,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      94300,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      94700,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      95200,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      95700,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      96200,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      96700,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      97200,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      97700,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      98200,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      98700,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      99200,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      99700,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      100100,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      100500,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      100900,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      101300,
+      1308,
+      null,
+      3,
+      492
+    ],
+    [
+      101700,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      102100,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      102500,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      102900,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      103300,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      103700,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      104100,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      104500,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      104900,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      105400,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      105900,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      106400,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      106900,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      107400,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      107900,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      108400,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      108900,
+      1308,
+      null,
+      3,
+      492
+    ],
+    [
+      109400,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      109900,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      110300,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      110700,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      111100,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      111500,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      111900,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      112300,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      112700,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      113100,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      113500,
+      145,
+      null,
+      3,
+      492
+    ],
+    [
+      113900,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      114300,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      114700,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      115200,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      115700,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      116200,
+      1090,
+      null,
+      3,
+      492
+    ],
+    [
+      116700,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      117200,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      117700,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      118200,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      118700,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      119200,
+      121,
+      null,
+      3,
+      492
+    ],
+    [
+      119700,
+      121,
+      null,
+      3,
+      492
+    ]
+  ]
+}

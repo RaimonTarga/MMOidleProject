@@ -1,0 +1,1009 @@
+{
+  "receipt": {
+    "spec": {
+      "path": "cadence-heavy-t3-c",
+      "arm": "cap100",
+      "plus": 5,
+      "seed": 947,
+      "mode": "boss",
+      "durationMs": 300000
+    },
+    "cell": {
+      "id": "breadth-t4-striker-heavy-c-boss",
+      "className": "striker",
+      "tier": 4,
+      "role": "boss",
+      "alternate": false,
+      "nodeId": "node-t4-mountain-dungeon",
+      "isDungeon": true,
+      "treatment": "authored-source",
+      "targetTypes": [
+        "iron-crest-titan"
+      ],
+      "upgradeLevel": 5,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "frenzy",
+          "expose-weakness",
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "target-casting",
+          "actionId": "use-ability",
+          "targetAbilityId": "brace"
+        }
+      ],
+      "build": {
+        "id": "breadth-t4-striker-heavy-c-boss",
+        "classRoot": "cadence-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "cadence-root",
+          "cadence-heavy",
+          "cadence-range-close",
+          "cadence-heavy-t3-c"
+        ],
+        "gearItemIds": {
+          "weapon": "mountain-warmaul",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-duelist",
+          "relic": "relic-colossus-heart"
+        }
+      },
+      "identityId": "breadth-t4-striker-heavy-c",
+      "frame": "heavy",
+      "range": "close",
+      "pathName": "Juggernaut",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Time in active combat ramps a Crescendo bonus that multiplies your finisher. The first several seconds give most of the bonus; it keeps climbing forever at a diminished rate. Resets instantly when you leave combat. Does not affect regular attacks.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Relic relic-colossus-heart: concentrated potency; accepts frequency/reconstruction penalty.",
+        "Defensive stance is always active to complement, not guarantee, Brace coverage through cooldown/travel gaps. No stance switching.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ]
+    },
+    "view": {
+      "id": "bench-bot-0",
+      "name": "breadth-t4-striker-heavy-c-boss",
+      "pos": {
+        "x": 2400,
+        "y": 2800
+      },
+      "target": {
+        "x": 2400,
+        "y": 2800
+      },
+      "hp": 618,
+      "maxHp": 618,
+      "attack": 190,
+      "onHitDamage": 0,
+      "plating": 80,
+      "damageReduction": 0.04,
+      "dodgeRate": 0,
+      "evadeMitigation": 0,
+      "evadeCharge": 0,
+      "barrier": 260,
+      "barrierMax": 260,
+      "barrierRecharging": false,
+      "wards": [],
+      "incomingDot": 0,
+      "pendingHeal": 0,
+      "attackCadenceMult": 1,
+      "finalDamageDealtMult": 1.003,
+      "finalDamageTakenMult": 0.9,
+      "onHitDamageBonus": 0,
+      "attackRange": 12,
+      "attackCooldown": 1782,
+      "lastAttackAt": 0,
+      "attackTargetId": null,
+      "auto": true,
+      "autoTraverse": false,
+      "autoIntent": null,
+      "emote": null,
+      "partyLeaderId": null,
+      "partyMembers": [],
+      "nodeId": "node-t4-mountain-dungeon",
+      "essences": {
+        "red": 0,
+        "blue": 341,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {},
+      "level": 0,
+      "skillPoints": 0,
+      "unlockedSkills": [
+        "cadence-root",
+        "cadence-heavy",
+        "cadence-range-close",
+        "cadence-heavy-t3-c"
+      ],
+      "passives": {
+        "defense.max-hit-pct": 0.5,
+        "defense.max-hit-mult": 0.25,
+        "cadence.empowered-threshold": 6,
+        "cadence.empowered-mult": 4,
+        "shared.damage-mult": 0.1,
+        "cadence.crescendo": 1,
+        "cadence.crescendo-ramp-seconds": 15,
+        "cadence.crescendo-ramp-mult": 0.45,
+        "cadence.crescendo-tail-per-sec": 0.01,
+        "weapon.empowered-mult-bonus": 0.5499999999999999,
+        "guard.potency-pct": 0.64,
+        "defense.max-hit-refills-barrier": 1,
+        "defense.barrier-pct": 0.42,
+        "mobility.approach-speed-pct": 1.5,
+        "core.damage-dealt-pct": 0.18,
+        "core.maxhp-mult": 0.1,
+        "core.focus-damage-per-hit-mult": 0.05,
+        "core.focus-max-stacks": 5,
+        "relic.mechanic-frequency": -0.3,
+        "relic.mechanic-potency": 0.4,
+        "defense.recovery-pulse-interval-ms": 6000,
+        "defense.recovery-pulse-duration-ms": 4000,
+        "defense.recovery-pulse-pct": 0.30000000000000004
+      },
+      "cadenceSpeedStacks": 0,
+      "selectedClass": "cadence-root",
+      "selectedSubVariant": "heavy",
+      "selectedRange": "cadence-range-close",
+      "currentSkillTier": 4,
+      "recovery": 19,
+      "speed": 225,
+      "attackStyle": "slash",
+      "inventory": [],
+      "equipment": {
+        "weapon": "mountain-warmaul",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-duelist",
+        "relic": "relic-colossus-heart"
+      },
+      "itemUpgrades": {
+        "mountain-warmaul": 5,
+        "mountain-vest-t4": 5,
+        "mountain-charm-t4": 5,
+        "mountain-boots-t4": 5,
+        "core-duelist": 0,
+        "relic-colossus-heart": 0
+      },
+      "biomeXP": {},
+      "biomeLevel": {
+        "cave": 18,
+        "forest": 12,
+        "mountain": 24,
+        "plains": 12,
+        "swamp": 18,
+        "desert": 18,
+        "jungle": 18,
+        "tundra": 12,
+        "volcanic": 12,
+        "graveyard": 6,
+        "trench": 6
+      },
+      "globalMastery": 156,
+      "unlockedRecipes": [
+        "chaotic-axe",
+        "cave-vest-t1",
+        "cave-charm-t1",
+        "cave-boots-t1",
+        "ruinous-axe",
+        "cave-vest-t2",
+        "cave-charm-t2",
+        "cave-boots-t2",
+        "cave-cataclysm-axe",
+        "cave-vest-t3",
+        "cave-charm-t3",
+        "cave-boots-t3",
+        "core-tempered",
+        "core-duelist",
+        "flash-rapier",
+        "forest-vest-t1",
+        "forest-charm-t1",
+        "forest-boots-t1",
+        "gale-needle",
+        "thorn-needle",
+        "forest-vest-t2",
+        "forest-charm-t2",
+        "forest-boots-t2",
+        "jungle-stinger-rapier",
+        "jungle-vest-t2",
+        "jungle-charm-t2",
+        "jungle-boots-t2",
+        "jungle-venomthorn-rapier",
+        "jungle-vest-t3",
+        "jungle-charm-t3",
+        "jungle-boots-t3",
+        "jungle-deathfang-rapier",
+        "jungle-vest-t4",
+        "jungle-charm-t4",
+        "jungle-charm-t4-overgrowth",
+        "jungle-boots-t4",
+        "core-survivalist",
+        "core-bruiser",
+        "core-accelerant",
+        "relic-verdant-flywheel",
+        "heavy-hammer",
+        "mountain-vest-t1",
+        "mountain-charm-t1",
+        "mountain-boots-t1",
+        "quake-hammer",
+        "mountain-vest-t2",
+        "mountain-charm-t2",
+        "mountain-boots-t2",
+        "mountain-avalanche-maul",
+        "mountain-vest-t3",
+        "mountain-charm-t3",
+        "mountain-boots-t3",
+        "mountain-earthsunder-maul",
+        "mountain-warmaul",
+        "mountain-vest-t4",
+        "mountain-vest-t4-stormwall",
+        "mountain-charm-t4",
+        "mountain-charm-t4-shieldmend",
+        "mountain-boots-t4",
+        "core-juggernaut",
+        "core-arcanist",
+        "relic-colossus-heart",
+        "relic-equilibrium-shard",
+        "iron-broadsword",
+        "plains-vest-t1",
+        "plains-charm-t1",
+        "plains-boots-t1",
+        "knight-steelsword",
+        "plains-vest-t2",
+        "plains-charm-t2",
+        "plains-boots-t2",
+        "ashbrand-blade",
+        "swamp-vest-t1",
+        "swamp-charm-t1",
+        "swamp-boots-t1",
+        "swamp-mirebrand",
+        "swamp-vest-t2",
+        "swamp-charm-t2",
+        "swamp-boots-t2",
+        "swamp-blightbrand",
+        "swamp-vest-t3",
+        "swamp-charm-t3",
+        "swamp-boots-t3",
+        "tundra-permafrost-maul",
+        "tundra-rimebrand",
+        "tundra-vest-t3",
+        "tundra-charm-t3",
+        "tundra-boots-t3",
+        "tundra-glacial-tyrant-maul",
+        "tundra-glacial-rimebrand",
+        "tundra-vest-t4",
+        "tundra-charm-t4",
+        "tundra-charm-t4-deepfreeze",
+        "tundra-boots-t4",
+        "core-scout",
+        "relic-glacial-bell",
+        "desert-sunsteel-cross",
+        "desert-vest-t2",
+        "desert-charm-t2",
+        "desert-boots-t2",
+        "desert-solar-cross",
+        "desert-vest-t3",
+        "desert-charm-t3",
+        "desert-boots-t3",
+        "desert-zenith-cross",
+        "desert-vest-t4",
+        "desert-charm-t4",
+        "desert-boots-t4",
+        "core-force",
+        "core-sniper",
+        "relic-withering-lens",
+        "volcanic-cinderlash",
+        "volcanic-vest-t3",
+        "volcanic-charm-t3",
+        "volcanic-boots-t3",
+        "volcanic-eruption-lash",
+        "volcanic-blightbrand",
+        "volcanic-vest-t4",
+        "volcanic-vest-t4-lavatempered",
+        "volcanic-charm-t4",
+        "volcanic-boots-t4",
+        "core-catalyst",
+        "relic-hastebound-dial",
+        "graveyard-plague-axe",
+        "graveyard-vest-t4",
+        "graveyard-vest-t4-debtward",
+        "graveyard-charm-t4",
+        "graveyard-charm-t4-gravetide",
+        "graveyard-boots-t4",
+        "core-controller",
+        "relic-haunted-prism",
+        "trench-abyssal-axe",
+        "trench-vest-t4",
+        "trench-charm-t4",
+        "trench-boots-t4-stalkers",
+        "trench-boots-t4-treaders",
+        "relic-virulent-hourglass"
+      ],
+      "combatArchetype": "cadence",
+      "cadenceCount": 0,
+      "cadenceThreshold": 9,
+      "cadenceEmpoweredArmed": false,
+      "ammoCount": 0,
+      "ammoMax": 0,
+      "reloadRemainingMs": 0,
+      "reloadDurationMs": 0,
+      "heatPct": 0,
+      "laserOverheated": false,
+      "executionReady": false,
+      "executionCooldownPct": 0,
+      "energyCount": 0,
+      "energyMax": 100,
+      "flashShiftPct": 0,
+      "flashDamageShiftPct": 0,
+      "flashSpeedBonusPct": 0,
+      "flashEvasionBonusPct": 0,
+      "empoweredReady": false,
+      "targetDotStacks": 0,
+      "targetDotTickPct": 0,
+      "targetChillStacks": 0,
+      "isChanneling": false,
+      "channelingPct": 0,
+      "cannonChargePct": 0,
+      "aura": null,
+      "activeBuffs": [],
+      "questProgress": {
+        "tier-4": 1
+      },
+      "playerTier": 4,
+      "bossesCleared": [
+        "mountain:4"
+      ],
+      "clearedNodes": [],
+      "visitedNodes": [],
+      "runesOwned": [
+        "always",
+        "in-combat",
+        "when-idle",
+        "hp-below-25",
+        "hp-above-90",
+        "target-hp-below-25",
+        "has-debuff",
+        "in-party",
+        "n-aggro-3",
+        "inside-telegraph",
+        "target-casting",
+        "stance-charged",
+        "before-empowered",
+        "target-elite",
+        "target-max-stacks",
+        "while-traveling",
+        "auto-path-enemy",
+        "chase-enemy",
+        "wait-for-regen",
+        "flee",
+        "fight-back",
+        "lead-the-way",
+        "follow-and-assist",
+        "taunt-current-target",
+        "focus-closest",
+        "use-ability",
+        "switch-stance",
+        "wait-it-out",
+        "tactical-reload",
+        "wait-for-execution",
+        "wait-for-summons",
+        "avoid-enemies",
+        "avoid-hazards",
+        "step-back"
+      ],
+      "runeRecipesCrafted": [],
+      "runesEquipped": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "target-casting",
+          "actionId": "use-ability",
+          "targetAbilityId": "brace"
+        }
+      ],
+      "knownAbilities": [
+        "disengage",
+        "imbue-lightning",
+        "snipe",
+        "stunning-strike",
+        "binding-strike",
+        "detonate",
+        "frenzy",
+        "quick-strike",
+        "charge",
+        "contagion",
+        "hamstring",
+        "slam",
+        "expose-weakness",
+        "power-strike",
+        "sweep",
+        "recuperate",
+        "break-free",
+        "bramble-guard",
+        "endure",
+        "brace",
+        "cleanse",
+        "second-wind"
+      ],
+      "attunedAbilities": {
+        "techniques": [
+          "frenzy",
+          "expose-weakness",
+          "sweep"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "knownStances": [
+        "berserker-stance",
+        "brawler-stance",
+        "defensive-stance",
+        "enraged-stance",
+        "execute-stance",
+        "fleeting-stance",
+        "offensive-stance",
+        "perfection-stance",
+        "powering-up-stance",
+        "predator-stance",
+        "reaper-stance",
+        "recuperating-stance",
+        "tanking-stance",
+        "time-to-strike-stance",
+        "warding-stance"
+      ],
+      "attunedStances": [
+        "defensive-stance"
+      ],
+      "equippedStances": {
+        "default": "defensive-stance"
+      },
+      "activeStance": "defensive-stance",
+      "manualStanceOverride": null,
+      "queuedAbilityIds": [],
+      "knownRites": [
+        "ability-reprieve",
+        "blood-offering",
+        "lingering-battle",
+        "mechanic-renewal",
+        "purification",
+        "swift-repose"
+      ],
+      "equippedRites": [],
+      "riteSlots": 6,
+      "hitboxRects": [
+        {
+          "offsetX": 1,
+          "offsetY": 0.5,
+          "halfW": 13,
+          "halfH": 12.5
+        },
+        {
+          "offsetX": 2,
+          "offsetY": -18.5,
+          "halfW": 6,
+          "halfH": 6.5
+        },
+        {
+          "offsetX": 7,
+          "offsetY": 18.5,
+          "halfW": 4,
+          "halfH": 5.5
+        },
+        {
+          "offsetX": -7.5,
+          "offsetY": 19,
+          "halfW": 3.5,
+          "halfH": 6
+        },
+        {
+          "offsetX": -14,
+          "offsetY": 8.5,
+          "halfW": 2,
+          "halfH": 8.5
+        },
+        {
+          "offsetX": 15.5,
+          "offsetY": 5,
+          "halfW": 1.5,
+          "halfH": 7
+        }
+      ],
+      "summonsMinions": 0,
+      "summonActiveCount": 0,
+      "summonRespawnMaxMs": 0,
+      "summonSlots": [],
+      "isDead": false,
+      "graveFrame": null
+    },
+    "bossType": "iron-crest-titan",
+    "bossId": "node-t4-mountain-dungeon_monster-5",
+    "passives": {
+      "defense.max-hit-pct": 0.5,
+      "defense.max-hit-mult": 0.25,
+      "cadence.empowered-threshold": 6,
+      "cadence.empowered-mult": 4,
+      "shared.damage-mult": 0.1,
+      "cadence.crescendo": 1,
+      "cadence.crescendo-ramp-seconds": 15,
+      "cadence.crescendo-ramp-mult": 0.45,
+      "cadence.crescendo-tail-per-sec": 0.01,
+      "weapon.empowered-mult-bonus": 0.5499999999999999,
+      "guard.potency-pct": 0.64,
+      "defense.max-hit-refills-barrier": 1,
+      "defense.barrier-pct": 0.42,
+      "mobility.approach-speed-pct": 1.5,
+      "core.damage-dealt-pct": 0.18,
+      "core.maxhp-mult": 0.1,
+      "core.focus-damage-per-hit-mult": 0.05,
+      "core.focus-max-stacks": 5,
+      "relic.mechanic-frequency": -0.3,
+      "relic.mechanic-potency": 0.4,
+      "defense.recovery-pulse-interval-ms": 6000,
+      "defense.recovery-pulse-duration-ms": 4000,
+      "defense.recovery-pulse-pct": 0.30000000000000004
+    },
+    "stats": {
+      "attack": 190,
+      "onHit": 0,
+      "cd": 1782,
+      "hp": 618
+    }
+  },
+  "result": {
+    "index": 19,
+    "spec": {
+      "path": "cadence-heavy-t3-c",
+      "arm": "cap100",
+      "plus": 5,
+      "seed": 947,
+      "mode": "boss",
+      "durationMs": 300000
+    },
+    "outcome": "boss-killed",
+    "elapsedMs": 149300,
+    "damage": 20598,
+    "dps": 137.96383121232418,
+    "kills": 1,
+    "incoming": 255,
+    "minCd": 1782,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 723,
+        "absorbed": 0,
+        "damageEvents": 3,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 4000,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 6000
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 1950,
+        "absorbed": 0,
+        "damageEvents": 8,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 26100,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 7600
+      },
+      {
+        "atMs": 60000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 7845,
+        "absorbed": 0,
+        "damageEvents": 18,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 57500,
+        "longestKillGapMs": 60000,
+        "longestHpProgressGapMs": 7600
+      },
+      {
+        "atMs": 120000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 16865,
+        "absorbed": 0,
+        "damageEvents": 38,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 119600,
+        "longestKillGapMs": 120000,
+        "longestHpProgressGapMs": 7600
+      }
+    ],
+    "sources": {
+      "[]": 10014,
+      "[\"empowered\"]": 10584
+    },
+    "terminalHp": 618,
+    "bossId": "node-t4-mountain-dungeon_monster-5",
+    "bossType": "iron-crest-titan",
+    "bossKilled": true,
+    "wallMs": 1418.3799
+  },
+  "rawColumns": [
+    "timeMs",
+    "hpDamage",
+    "rampage",
+    "criticalMass",
+    "cooldownMs"
+  ],
+  "raw": [
+    [
+      1200,
+      230,
+      0,
+      null,
+      1782
+    ],
+    [
+      2600,
+      241,
+      0,
+      null,
+      1782
+    ],
+    [
+      4000,
+      252,
+      0,
+      null,
+      1782
+    ],
+    [
+      11600,
+      219,
+      0,
+      null,
+      1782
+    ],
+    [
+      13000,
+      275,
+      0,
+      null,
+      1782
+    ],
+    [
+      19600,
+      229,
+      0,
+      null,
+      1782
+    ],
+    [
+      21000,
+      229,
+      0,
+      null,
+      1782
+    ],
+    [
+      26100,
+      275,
+      0,
+      null,
+      1782
+    ],
+    [
+      31100,
+      1889,
+      0,
+      null,
+      1782
+    ],
+    [
+      34200,
+      229,
+      0,
+      null,
+      1782
+    ],
+    [
+      36000,
+      229,
+      0,
+      null,
+      1782
+    ],
+    [
+      37800,
+      275,
+      0,
+      null,
+      1782
+    ],
+    [
+      39600,
+      275,
+      0,
+      null,
+      1782
+    ],
+    [
+      41000,
+      275,
+      0,
+      null,
+      1782
+    ],
+    [
+      47200,
+      229,
+      0,
+      null,
+      1782
+    ],
+    [
+      49000,
+      275,
+      0,
+      null,
+      1782
+    ],
+    [
+      55700,
+      229,
+      0,
+      null,
+      1782
+    ],
+    [
+      57500,
+      1990,
+      0,
+      null,
+      1782
+    ],
+    [
+      61100,
+      275,
+      0,
+      null,
+      1782
+    ],
+    [
+      62500,
+      275,
+      0,
+      null,
+      1782
+    ],
+    [
+      66900,
+      229,
+      0,
+      null,
+      1782
+    ],
+    [
+      71100,
+      229,
+      0,
+      null,
+      1782
+    ],
+    [
+      72500,
+      275,
+      0,
+      null,
+      1782
+    ],
+    [
+      75100,
+      275,
+      0,
+      null,
+      1782
+    ],
+    [
+      76900,
+      275,
+      0,
+      null,
+      1782
+    ],
+    [
+      78700,
+      229,
+      0,
+      null,
+      1782
+    ],
+    [
+      80100,
+      2171,
+      0,
+      null,
+      1782
+    ],
+    [
+      81500,
+      229,
+      0,
+      null,
+      1782
+    ],
+    [
+      88900,
+      229,
+      0,
+      null,
+      1782
+    ],
+    [
+      90300,
+      275,
+      0,
+      null,
+      1782
+    ],
+    [
+      95600,
+      229,
+      0,
+      null,
+      1782
+    ],
+    [
+      97400,
+      229,
+      0,
+      null,
+      1782
+    ],
+    [
+      103200,
+      275,
+      0,
+      null,
+      1782
+    ],
+    [
+      108000,
+      275,
+      0,
+      null,
+      1782
+    ],
+    [
+      112400,
+      229,
+      0,
+      null,
+      1782
+    ],
+    [
+      116000,
+      2267,
+      0,
+      null,
+      1782
+    ],
+    [
+      117800,
+      275,
+      0,
+      null,
+      1782
+    ],
+    [
+      119600,
+      275,
+      0,
+      null,
+      1782
+    ],
+    [
+      121000,
+      229,
+      0,
+      null,
+      1782
+    ],
+    [
+      122400,
+      229,
+      0,
+      null,
+      1782
+    ],
+    [
+      128300,
+      275,
+      0,
+      null,
+      1782
+    ],
+    [
+      135900,
+      229,
+      0,
+      null,
+      1782
+    ],
+    [
+      140000,
+      229,
+      0,
+      null,
+      1782
+    ],
+    [
+      146000,
+      275,
+      0,
+      null,
+      1782
+    ],
+    [
+      149300,
+      2267,
+      0,
+      null,
+      1782
+    ]
+  ]
+}
