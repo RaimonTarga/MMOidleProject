@@ -36,7 +36,7 @@ import {
   resolveDetonate,
 } from "../src/systems/player/abilities/abilityAffliction";
 import { updateAbilityCasts } from "../src/systems/player/abilities/abilityCasting";
-import { updateAbilityFiring } from "../src/systems/player/abilities/abilityFiring";
+import { fireWithReferenceWiring } from "./fixtures/abilityWiring";
 import { STUN_EFFECT } from "../src/systems/combat/status/stun";
 import { setAttackTarget } from "../src/systems/combat/ai/targeting";
 import { applyImbueWindow } from "../src/systems/player/abilities/abilityImbue";
@@ -416,7 +416,7 @@ function beginContagion(
   setAttackTarget(world, player, primary.isMonster.id);
   player.usesAutocombat.auto = true;
   world.takeNodeEvents(NODE);
-  updateAbilityFiring(world, 2_000_000);
+  fireWithReferenceWiring(world, 2_000_000);
 }
 
 {
@@ -715,7 +715,7 @@ console.log("affliction: Detonate ships element + crit styling to the client");
 
   setAttackTarget(world, player, target.isMonster.id);
   player.usesAutocombat.auto = true;
-  updateAbilityFiring(world, 2_000_000);
+  fireWithReferenceWiring(world, 2_000_000);
 
   const start = world
     .takeNodeEvents(NODE)

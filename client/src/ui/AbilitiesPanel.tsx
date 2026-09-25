@@ -1,7 +1,7 @@
 import { useId, useState } from "react";
 import { LoadoutFeedback } from "./LoadoutFeedback";
 import { useAtomValue } from "jotai";
-import { ABILITY_DATABASE, abilityBlurbAt, abilityDisplayName, attunedAbilityIds, attunedForFamily, runicPointLoadoutCost, runeBudgetForGlobalMastery } from "@mmo-idle/shared";
+import { ABILITY_DATABASE, CONDITION_DATABASE, abilityBlurbAt, abilityDisplayName, attunedAbilityIds, attunedForFamily, referenceAbilityRule, runeRuleCost, runicPointLoadoutCost, runeBudgetForGlobalMastery } from "@mmo-idle/shared";
 import { hudBus } from "../hudBus";
 import { attunedAbilitiesAtom, knownAbilitiesAtom, playerTierAtom, runesEquippedAtom, equippedRitesAtom, attunedStancesAtom, globalMasteryAtom, passivesAtom, attackAtom, maxHpAtom, attackRangeAtom, combatArchetypeAtom } from "../hud/atoms";
 import { abilityTiming } from "./describe/abilityTiming";
@@ -51,6 +51,12 @@ export function AbilitiesPanelContent() {
         const described = describeAbility(ability, context);
         const name = abilityDisplayName(ability, tier);
         const blocked = !isAttuned && nextSpent > budget;
+        // One-click wiring that reproduces the timing abilities had before they
+        // lost their built-in triggers. Only attuned abilities can be named by a rule.
+        const defaultRule = isAttuned && timing.overrides.length === 0 ? referenceAbilityRule(id) : undefined;
+        const defaultRuleCost = defaultRule ? runeRuleCost(defaultRule) : 0;
+        const defaultRuleSpent = defaultRule ? runicPointLoadoutCost({ rules: [...rules, defaultRule], rites, stances, abilities }) : 0;
+        const defaultRuleName = defaultRule ? CONDITION_DATABASE.get(defaultRule.conditionId)?.name ?? defaultRule.conditionId : "";
         return <article key={id} className={`ability-entry${isAttuned ? " is-attuned" : ""}${selected ? " is-selected" : ""}`}>
           <div className="ability-entry__top">
             <button type="button" className="ability-entry__select" aria-expanded={selected} aria-controls={`${panelId}-${id}`} aria-label={`${selected ? "Hide" : "Show"} ${name} details`} onClick={() => setSelectedId(selected ? null : id)}>
@@ -66,20 +72,27 @@ export function AbilitiesPanelContent() {
               <button type="button" className="attunement-button" aria-pressed={isAttuned} disabled={blocked} aria-label={`${isAttuned ? "Unattune" : "Attune"} ${ability.name}`} title={`${nextSpent} / ${budget} RP after this change${isAttuned && timing.overrides.length ? ". Also removes this ability's Rune rules." : ""}`} onClick={() => hudBus.requestSetAbilityLoadout(next)}>{isAttuned ? "Unattune" : "Attune"}</button>
             </div>
           </div>
-          <div className="ability-entry__behavior"><span>Default</span> {timing.defaultBehavior}
-            {!!timing.overrides.length && <span className="attunement-rune-seal">Rune override</span>}
+          <div className="ability-entry__behavior"><span>Timing</span>{" "}
+            {timing.overrides.length > 0
+              ? <>Fired by {timing.overrides.map((rule, i) => <span key={i} className="attunement-rune-seal">{CONDITION_DATABASE.get(rule.conditionId)?.name ?? rule.conditionId} → Use Ability</span>)}</>
+              : defaultRule
+                ? <>No Rune fires it.{" "}
+                  <button type="button" className="attunement-button attunement-button--quiet ability-entry__default-rule" disabled={defaultRuleSpent > budget}
+                    title={defaultRuleSpent > budget ? `Needs ${defaultRuleSpent - budget} more available RP` : `Adds "${defaultRuleName} → Use Ability" to your Runes · ${defaultRuleSpent} / ${budget} RP after this change`}
+                    onClick={() => hudBus.requestSetRuneLoadout([...rules, defaultRule])}>
+                    Use default timing: {defaultRuleName} (+{defaultRuleCost} RP)
+                  </button></>
+                : timing.overrideText}
           </div>
           {blocked && <p className="ability-entry__shortfall">Needs {nextSpent - budget} more available RP</p>}
           {selected && <div className="ability-entry__details" id={`${panelId}-${id}`}>
             <div className="ability-entry__detail-heading"><strong>{described.rankLabel}</strong><span>Tier {tier} · current bonuses included</span></div>
             <AbilityDetails description={described} />
             <p className="ability-entry__shape">{described.shape}</p>
-            {timing.overrideText && <p className="ability-entry__override">{timing.overrideText}</p>}
             <div className="ability-entry__footer">
               <span>After {isAttuned ? "unattuning" : "attuning"}: <b>{nextSpent} / {budget} RP</b>{isAttuned && timing.overrides.length > 0 && " · removes this ability’s Rune rules"}</span>
-              {isAttuned && list.indexOf(id) > 0 && <button type="button" className="attunement-button attunement-button--quiet" onClick={() => { const ordered = [...list]; const i = ordered.indexOf(id); [ordered[i - 1], ordered[i]] = [ordered[i], ordered[i - 1]]; hudBus.requestSetAbilityLoadout({ ...abilities, [key]: ordered }); }}>↑ Earlier default priority</button>}
             </div>
-            {isAttuned && <p className="attunement-note">Rune priority comes first; default behavior follows attunement order.</p>}
+            {isAttuned && <p className="attunement-note">Fires automatically only through Use Ability rules, in Rune priority order.</p>}
           </div>}
         </article>;
       })}

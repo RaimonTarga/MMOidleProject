@@ -11,7 +11,7 @@ import { describeAbility, type AbilityContext } from './abilityText';
 import { passiveLines } from './passiveText';
 import { stanceModifierLines, statEffectLines } from './statEffectText';
 
-export { describeAbility, abilitySummary, triggerSentence } from './abilityText';
+export { describeAbility, abilitySummary } from './abilityText';
 export type { AbilityContext, AbilityClassSpecific, AbilityDescription, AbilityLine } from './abilityText';
 export { passiveLines, passiveSummary, passiveNamespaceLabel, formatPassiveValue } from './passiveText';
 export type { PassiveLine } from './passiveText';
@@ -175,7 +175,6 @@ export function abilityLines(
       help: described.rankLabel,
     },
     { key: "ability:tags", label: "Tags", value: described.tags.map(tag => tag.label).join(" · "), help: described.tags.map(tag => `${tag.label}: ${tag.help}`).join(" ") },
-    { key: "ability:default-trigger", label: "Default behavior", value: described.trigger },
     ...described.lines.map((line) => ({
       key: `ability:${line.key}`,
       label: line.label,

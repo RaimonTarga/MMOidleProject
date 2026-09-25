@@ -39,6 +39,12 @@ export type RuneConditionId =
   | "target-hp-below-25"
   | "has-debuff"
   | "in-party"
+  // Active while the player is stunned, locked down, frozen or rooted. The
+  // natural wiring for Break Free, which acts through hard control.
+  | "controlled"
+  // Active while a MELEE enemy targeting you is close enough to hit you. The
+  // natural wiring for Disengage, and for peeling an attacker with control.
+  | "enemy-contact"
   // Active only while the player is standing inside a visible, unresolved
   // hostile ground telegraph. Being safely outside the damage region does not
   // satisfy this condition.
@@ -303,6 +309,28 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
       id: "has-debuff",
       name: "When Debuffed",
       blurb: "Works while you are carrying a harmful debuff or damage-over-time effect.",
+      cost: 1,
+      tier: 1,
+      kind: "state",
+    },
+  ],
+  [
+    "controlled",
+    {
+      id: "controlled",
+      name: "When Controlled",
+      blurb: "Works while you are stunned, locked down, frozen or rooted.",
+      cost: 1,
+      tier: 1,
+      kind: "state",
+    },
+  ],
+  [
+    "enemy-contact",
+    {
+      id: "enemy-contact",
+      name: "Enemy in Contact",
+      blurb: "Works while a melee enemy targeting you is close enough to hit you.",
       cost: 1,
       tier: 1,
       kind: "state",
@@ -703,7 +731,7 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       allowedConditionIds: CONTROL_CONDITIONS,
     },
   ],
-  ["use-ability", { id: "use-ability", name: "Use Ability", blurb: "Override an attuned ability's default timing.", cost: 1, tier: 1, channel: "ABILITY" }],
+  ["use-ability", { id: "use-ability", name: "Use Ability", blurb: "Use an attuned ability whenever this situation holds and it is off cooldown.", cost: 1, tier: 1, channel: "ABILITY" }],
   [
     "switch-stance",
     {
@@ -1267,11 +1295,22 @@ export interface RuneContext {
    * measured it — they fall back to `inCombat`.
    */
   activelyEngaged?: boolean;
+  /**
+   * A living owned summon in the player's node is fighting (targeting a live
+   * monster, or targeted by one). Satisfies `In Combat` on `use-ability` rules
+   * ONLY, so formation Techniques fire while the owner stays out of direct
+   * combat; movement and recovery rules keep the owner's own combat state.
+   */
+  summonsInCombat?: boolean;
   inParty: boolean;
   aggroCount: number;
   combatArchetype?: CombatArchetype;
   /** Player currently has a harmful debuff or DoT. */
   debuffed?: boolean;
+  /** Player is hard-controlled (stun, lockdown, frozen) or rooted. */
+  controlled?: boolean;
+  /** A melee enemy aggroed onto the player is within its own reach of them. */
+  enemyInContact?: boolean;
   /** An enemy attacking this player is currently winding up a cast-time attack. */
   enemyCharging?: boolean;
   /** Player is currently inside a visible, unresolved hostile ground telegraph. */
@@ -1389,6 +1428,10 @@ function isConditionActive(conditionId: string, ctx: RuneContext): boolean {
       return ctx.targetHpPct !== undefined && ctx.targetHpPct <= 0.25;
     case "has-debuff":
       return ctx.debuffed ?? false;
+    case "controlled":
+      return ctx.controlled ?? false;
+    case "enemy-contact":
+      return ctx.enemyInContact ?? false;
     case "in-party":
       return ctx.inParty;
     case "inside-telegraph":
@@ -1487,7 +1530,8 @@ export function deriveAutoConfigFromRunes(
       continue;
     }
     if (action.id === "use-ability") {
-      if (raw.targetAbilityId && ABILITY_DATABASE.has(raw.targetAbilityId) && isConditionActive(condition.id, ctx) && !derived.abilityTargets.includes(raw.targetAbilityId)) { derived.abilityTargets.push(raw.targetAbilityId); derived.abilityRules.push(raw); }
+      const abilityCtx = ctx.summonsInCombat && !ctx.inCombat ? { ...ctx, inCombat: true } : ctx;
+      if (raw.targetAbilityId && ABILITY_DATABASE.has(raw.targetAbilityId) && isConditionActive(condition.id, abilityCtx) && !derived.abilityTargets.includes(raw.targetAbilityId)) { derived.abilityTargets.push(raw.targetAbilityId); derived.abilityRules.push(raw); }
       continue;
     }
     if (!isConditionActive(condition.id, ctx)) continue;

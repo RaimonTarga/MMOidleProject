@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {
   DUNGEON_DEFS, MONSTER_DATABASE, NODE_BIOMES,
-  runicPointLoadoutCost,
+  runicPointLoadoutCost, withReferenceAbilityWiring,
 } from '@mmo-idle/shared';
 import { REFERENCE_GUARDS, referencePackageCells } from './boss1Spec';
 import { BOSS3_GUARD_IN, BOSS3_GUARD_OUT } from './boss3Spec';
@@ -405,7 +405,7 @@ export function assertBoss4Definitions(): void {
       // RP is identical by construction here, and asserted rather than assumed: a
       // block whose arms cost different RP would be a second change.
       const rp = (cell: Night5Cell) => runicPointLoadoutCost({
-        rules: cell.runeRules as never,
+        rules: withReferenceAbilityWiring(cell.runeRules as never, cell.abilities!),
         abilities: cell.abilities!,
         stances: cell.stance ? [cell.stance] : [],
         rites: [],

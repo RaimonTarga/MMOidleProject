@@ -1,5 +1,5 @@
 import { MONSTER_DATABASE, NODE_BIOMES, ABILITY_DATABASE, biomeLevelCap, listBiomeGroupsAtTier,
-  globalMastery, runeBudgetForGlobalMastery, runicPointBreakdown } from '@mmo-idle/shared';
+  globalMastery, runeBudgetForGlobalMastery, runicPointBreakdown, referenceAbilityRule } from '@mmo-idle/shared';
 import {
   DURABILITY34_BLOCKS,
   DURABILITY34_GUARD_ARMS,
@@ -105,10 +105,10 @@ assertDurability34Definitions();
     assert(sub.total <= budget, `${label}: the substitution must be legal (${sub.total})`);
     assert(sub.total < ref.total, `${label}: substituting Brace is cheaper, not an added cost`);
   }
-  // Neither guard reacts to a cast; both are hp-below instants. The packet's
-  // framing depends on that staying true.
-  assert(ABILITY_DATABASE.get('brace')!.trigger?.kind === 'hp-below', 'Brace is an hp-below guard, not a cast response');
-  assert(ABILITY_DATABASE.get('second-wind')!.trigger?.kind === 'hp-below', 'Second Wind is an hp-below guard');
+  // Neither guard reacts to a cast by default; both fire in combat off cooldown.
+  // The packet's framing depends on that staying true.
+  assert(referenceAbilityRule('brace')?.conditionId === 'in-combat', 'Brace is not a cast response by default');
+  assert(referenceAbilityRule('second-wind')?.conditionId === 'in-combat', 'Second Wind is not a cast response by default');
 }
 
 // ── Overlay: HP only, restored on every path; Block M overlays nothing.

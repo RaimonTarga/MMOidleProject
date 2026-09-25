@@ -18,7 +18,6 @@ import {
   TECHNIQUE_POWER_FIELDS,
   type AbilityDef,
   type AbilityEffectSpec,
-  type AbilityTrigger,
   type CombatArchetype,
 } from '@mmo-idle/shared';
 
@@ -87,7 +86,6 @@ export interface AbilityDescription {
   /** Current authored rank, without implying a final progression ceiling. */
   rankLabel: string;
   /** When it fires, in a sentence. */
-  trigger: string;
   /** How the server runs it, in a sentence. */
   shape: string;
   tags: { id: AbilityTag; label: string; help: string }[];
@@ -225,25 +223,6 @@ function fireTimeLayerFor(
 }
 
 // ── Sentences ─────────────────────────────────────────────────────────────────
-
-export function triggerSentence(trigger: AbilityTrigger): string {
-  switch (trigger.kind) {
-    case 'in-combat':
-      return 'Fires whenever you are in combat and off cooldown.';
-    case 'hp-below':
-      return `Fires when your health drops to ${pct(trigger.hpPct)} or below.`;
-    case 'n-aggro':
-      return `Fires when ${trigger.count} or more enemies are attacking you.`;
-    case 'has-debuff':
-      return 'Fires while you are carrying a debuff or damage-over-time effect.';
-    case 'has-hard-control':
-      return 'Fires while you are stunned or otherwise held — it works through hard control.';
-    case 'target-beyond-reach':
-      return `Fires when a reachable target is at least ${Math.round(trigger.minGapPx)}px away, so the gap is worth closing.`;
-    case 'enemy-within':
-      return `Fires when an enemy closes to within ${Math.round(trigger.maxGapPx)}px.`;
-  }
-}
 
 const SHAPE_SENTENCES: Record<AbilityDef['shape'], string> = {
   armed: 'Arms your next qualifying attack — the payload lands when that attack hits.',
@@ -430,7 +409,6 @@ export function describeAbility(
           : info.unit === 'ms' ? seconds(source.effects[info.key]) : pct(source.effects[info.key]) }))),
     rank: abilityRankNumeral(rankNumber),
     rankLabel: `Rank ${abilityRankNumeral(rankNumber)}`,
-    trigger: triggerSentence(ability.trigger),
     shape: SHAPE_SENTENCES[ability.shape],
     tags: abilityTags(ability).map(id => ({ id, ...ABILITY_TAG_INFO[id] })),
     lines,

@@ -3,7 +3,7 @@ import { createServer } from "node:http";
 import { Server } from "socket.io";
 import { CLEARING_NODE_ID, GAME_CONFIG, emptyEquipment, emptyAttunedAbilities, emptyEquippedStances,
   STANCE_RECIPE_DATABASE, RITE_RECIPE_DATABASE, TEST_ROOM_NODE_ID,
-  type ClientToServerEvents, type ServerToClientEvents } from "@mmo-idle/shared";
+  withReferenceAbilityWiring, type ClientToServerEvents, type ServerToClientEvents } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { World } from "../src/world/World";
 import { registerPlayerHandlers, type PlayerHandlerDeps } from "../src/net/playerHandlers";
@@ -146,7 +146,9 @@ async function main() {
     await applyBuild(empty, control);
     const abilities: DesiredBuild = { ...empty, abilities: { techniques: ["sweep", "expose-weakness"], guards: ["second-wind"] } };
     await applyBuild(abilities, control);
-    assert.equal(buildKey(observedBuild(obs.requireSelf())), buildKey(abilities));
+    // applyBuild wires each attuned ability's reference Rune rule.
+    assert.equal(buildKey(observedBuild(obs.requireSelf())),
+      buildKey({ ...abilities, runeRules: withReferenceAbilityWiring(abilities.runeRules, abilities.abilities) }));
     const reversed = { ...abilities, abilities: { guards: abilities.abilities.guards, techniques: [...abilities.abilities.techniques].reverse() } };
     await applyBuild(reversed, control);
     const count = sends; await applyBuild(reversed, control); assert.equal(sends, count, "idempotent build sends nothing");
@@ -166,7 +168,7 @@ async function main() {
       await wait(() => !!otherObs.self);
       const independentResults = await Promise.all([intents.setAbilityLoadout(reversed.abilities), new Intents(other).setAbilityLoadout(empty.abilities)]);
       assert(independentResults.every(r => r.success));
-      await wait(() => buildKey(observedBuild(obs.requireSelf())) === buildKey(reversed));
+      await wait(() => buildKey(observedBuild(obs.requireSelf())) === buildKey({ ...reversed, runeRules: withReferenceAbilityWiring(reversed.runeRules, reversed.abilities) }));
       assert.deepEqual(otherObs.requireSelf().attunedAbilities, empty.abilities, "independent sockets do not share builds");
       world.detachPlayerEntity(other.id);
       const absent = new Intents(other);

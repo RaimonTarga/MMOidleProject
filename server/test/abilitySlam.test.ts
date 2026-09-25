@@ -40,7 +40,7 @@ import { STUN_EFFECT } from "../src/systems/combat/status/stun";
 import { updateAbilityCasts } from "../src/systems/player/abilities/abilityCasting";
 import { abilityCooldownKey } from "../src/systems/player/abilities/abilityCooldowns";
 import { resolveCastPayload } from "../src/systems/player/abilities/abilityEffects";
-import { updateAbilityFiring } from "../src/systems/player/abilities/abilityFiring";
+import { fireWithReferenceWiring } from "./fixtures/abilityWiring";
 import { World } from "../src/world/World";
 import type { PlayerEntity } from "../src/ecs/entity";
 
@@ -153,7 +153,7 @@ initCombatSystems();
 
   assert(SLAM.tier === 2 && SLAM.slot === "technique" && SLAM.shape === "cast",
     "Slam is a T2 cast-shaped Technique");
-  assert(SLAM.attunementCost === 6, "Slam reserves 6 RP");
+  assert(SLAM.attunementCost === 4, "Slam reserves 4 RP (net of its In Combat wiring)");
   assert(abilityRankNumber(SLAM, 2) === 1, "a T2 player holds Slam I");
   assert(abilityRankNumber(SLAM, 3) === 2, "a T3 player holds Slam II");
   assert(abilityRankNumber(SLAM, 4) === 3, "a T4 player holds Slam III");
@@ -269,7 +269,7 @@ initCombatSystems();
   const { world, player } = spawn("slam-cast");
   const target = monsterAt(world, 430);
   setAttackTarget(world, player, target.isMonster.id);
-  updateAbilityFiring(world, 1_000);
+  fireWithReferenceWiring(world, 1_000);
   assert(
     player.isCastingAbility?.abilityId === "slam",
     "Slam should begin a wind-up rather than arming the next attack",
@@ -299,7 +299,7 @@ initCombatSystems();
   fast.player.usesSkills.passives["shared.attack-speed-pct"] = 1.5;
   const fastTarget = monsterAt(fast.world, 430);
   setAttackTarget(fast.world, fast.player, fastTarget.isMonster.id);
-  updateAbilityFiring(fast.world, 1_000);
+  fireWithReferenceWiring(fast.world, 1_000);
   assert(
     fast.player.isCastingAbility?.castMs === 1600,
     "attack speed must not shorten Slam's wind-up — that is the whole reason it favours heavy builds",
@@ -309,7 +309,7 @@ initCombatSystems();
   quick.player.usesSkills.passives["technique.cast-speed-pct"] = 0.25;
   const quickTarget = monsterAt(quick.world, 430);
   setAttackTarget(quick.world, quick.player, quickTarget.isMonster.id);
-  updateAbilityFiring(quick.world, 1_000);
+  fireWithReferenceWiring(quick.world, 1_000);
   assert(
     (quick.player.isCastingAbility?.castMs ?? 1600) < 1600,
     "technique.cast-speed-pct should shorten Slam's wind-up through the existing seam",
@@ -321,7 +321,7 @@ initCombatSystems();
   const { world, player } = spawn("slam-interrupt");
   const target = monsterAt(world, 430);
   setAttackTarget(world, player, target.isMonster.id);
-  updateAbilityFiring(world, 1_000);
+  fireWithReferenceWiring(world, 1_000);
   assert(!!player.isCastingAbility, "Slam should begin a wind-up");
 
   const before = target.hasHealth.hp;
@@ -373,7 +373,7 @@ initCombatSystems();
     assert(abilityCastMs(POWER_STRIKE, tier) === 1600, "Power Strike's wind-up is unchanged");
   }
   assert(
-    POWER_STRIKE.attunementCost === 6 && POWER_STRIKE.tier === 1,
+    POWER_STRIKE.attunementCost === 4 && POWER_STRIKE.tier === 1,
     "Power Strike's cost and home tier are unchanged",
   );
   // Both are ordinary attunable Techniques: neither consumes or disables the other.
@@ -393,7 +393,7 @@ initCombatSystems();
   };
   const target = monsterAt(world, 430);
   setAttackTarget(world, player, target.isMonster.id);
-  updateAbilityFiring(world, 1_000);
+  fireWithReferenceWiring(world, 1_000);
   assert(
     player.isCastingAbility?.abilityId === "slam",
     "loadout order decides which of the two casts claims the channel",
@@ -426,7 +426,7 @@ function castEnds(world: World) {
   const { world, player } = spawn("slam-footprint");
   const target = monsterAt(world, 430);
   setAttackTarget(world, player, target.isMonster.id);
-  updateAbilityFiring(world, 1_000);
+  fireWithReferenceWiring(world, 1_000);
 
   const starts = castStarts(world);
   assert(starts.length === 1, `one wind-up should announce itself, got ${starts.length}`);
@@ -481,7 +481,7 @@ function castEnds(world: World) {
   const { world, player } = spawn("slam-footprint-interrupt");
   const target = monsterAt(world, 430);
   setAttackTarget(world, player, target.isMonster.id);
-  updateAbilityFiring(world, 1_000);
+  fireWithReferenceWiring(world, 1_000);
   assert(castStarts(world).length === 1, "the wind-up should have announced itself");
 
   applyStatusEffect(player.tracksCombat, {
@@ -505,7 +505,7 @@ function castEnds(world: World) {
   const { world, player } = spawn("slam-footprint-target-lost");
   const target = monsterAt(world, 430);
   setAttackTarget(world, player, target.isMonster.id);
-  updateAbilityFiring(world, 1_000);
+  fireWithReferenceWiring(world, 1_000);
   assert(castStarts(world).length === 1, "the wind-up should have announced itself");
 
   world.removeMonsterEntity(target.isMonster.id);
@@ -523,7 +523,7 @@ function castEnds(world: World) {
   const { world, player } = spawn("slam-footprint-death");
   const target = monsterAt(world, 430);
   setAttackTarget(world, player, target.isMonster.id);
-  updateAbilityFiring(world, 1_000);
+  fireWithReferenceWiring(world, 1_000);
   assert(castStarts(world).length === 1, "the wind-up should have announced itself");
 
   world.killPlayer(player.isPlayer.id, {
@@ -556,7 +556,7 @@ function castEnds(world: World) {
   const { world, player } = spawn("power-strike-footprint", { abilities: ["power-strike"] });
   const target = monsterAt(world, 430);
   setAttackTarget(world, player, target.isMonster.id);
-  updateAbilityFiring(world, 1_000);
+  fireWithReferenceWiring(world, 1_000);
   assert(
     player.isCastingAbility?.abilityId === "power-strike",
     "the Power Strike fixture should be casting Power Strike",

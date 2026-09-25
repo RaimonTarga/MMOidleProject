@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {
   DUNGEON_DEFS, MONSTER_DATABASE, NODE_BIOMES,
-  runicPointLoadoutCost, runeBudgetForGlobalMastery,
+  runicPointLoadoutCost, runeBudgetForGlobalMastery, withReferenceAbilityWiring,
 } from '@mmo-idle/shared';
 import { NIGHT5_BLOCKS, type Night5Cell } from './night5Spec';
 import { SURVEY_CLASSES } from './ttkSurveySpec';
@@ -293,7 +293,7 @@ export function assertBoss1Definitions(): void {
     assert.equal(c.runeRules?.length, 5, `${c.id}: reference carries five behaviour rules`);
     assert.equal(c.upgradeLevel, 5, `${c.id}: upgrade level drift`);
     const cost = runicPointLoadoutCost({
-      rules: (c.runeRules ?? []) as never, abilities: c.abilities!,
+      rules: withReferenceAbilityWiring((c.runeRules ?? []) as never, c.abilities!), abilities: c.abilities!,
       stances: c.stance ? [c.stance] : [], rites: [],
     });
     assert(cost <= runeBudgetForGlobalMastery(72),

@@ -16,7 +16,9 @@
  * Snipe gains a ranged TOOL; their basic attacks stay melee.
  */
 import {
+  DISENGAGE_MAX_GAP_PX,
   abilityRangeBonus,
+  abilityRankAt,
   distanceSq,
   posHitboxFromEntity,
   reachGap,
@@ -73,10 +75,11 @@ export function abilityEngagementRange(
 ): number {
   const bonus = abilityRangeBonus(ability, player.tracksProgression.playerTier);
   const range = player.performsAttack.attackRange + bonus;
-  // A defensive reposition must be able to select the threat that satisfied
-  // its spacing trigger, even outside a short-range character's basic reach.
-  return ability.shape === "reposition" && ability.trigger.kind === "enemy-within"
-    ? Math.max(range, ability.trigger.maxGapPx)
+  // A backward reposition must be able to select the threat that opened its
+  // proximity gate, even outside a short-range character's basic reach.
+  const effect = abilityRankAt(ability, player.tracksProgression.playerTier).effect;
+  return effect.kind === "reposition" && !effect.toward
+    ? Math.max(range, DISENGAGE_MAX_GAP_PX)
     : range;
 }
 
@@ -122,20 +125,4 @@ export function abilityTarget(
 /** Edge-to-edge gap in px between the player and a monster. */
 export function gapToTarget(player: PlayerEntity, target: MonsterEntity): number {
   return reachGap(posHitboxFromEntity(player), posHitboxFromEntity(target));
-}
-
-/**
- * The nearest live monster to the player in their node, ignoring reach — used by
- * spacing triggers (Disengage), which care about "something is on top of me"
- * rather than "something I can hit".
- */
-export function nearestMonsterGap(world: World, player: PlayerEntity): number | null {
-  let best: number | null = null;
-  const playerPH = posHitboxFromEntity(player);
-  for (const monster of world.monsterEntitiesInNode(player.hasPosition.nodeId)) {
-    if (monster.hasHealth.hp <= 0) continue;
-    const gap = reachGap(playerPH, posHitboxFromEntity(monster));
-    if (best === null || gap < best) best = gap;
-  }
-  return best;
 }

@@ -1,6 +1,6 @@
 import {
   ABILITY_DATABASE, STANCE_DATABASE, RITE_DATABASE, attunedAbilityIds,
-  runicPointBreakdown, runeBudgetForGlobalMastery, sanitizeRuneLoadout,
+  runicPointBreakdown, runeBudgetForGlobalMastery, sanitizeRuneLoadout, withReferenceAbilityWiring,
   type AttunedAbilities, type EquippedRule, type PlayerView,
 } from "@mmo-idle/shared";
 
@@ -33,8 +33,10 @@ export function buildKey(build: DesiredBuild): string {
     build.stances.attuned, build.stances.default, build.rites]);
 }
 
+/** Priced as equipped: `applyBuild` adds reference wiring for unwired abilities. */
 export function buildRP(build: DesiredBuild) {
-  return runicPointBreakdown({ abilities: build.abilities, rules: build.runeRules,
+  return runicPointBreakdown({ abilities: build.abilities,
+    rules: withReferenceAbilityWiring(build.runeRules, build.abilities),
     stances: build.stances.attuned, rites: build.rites });
 }
 

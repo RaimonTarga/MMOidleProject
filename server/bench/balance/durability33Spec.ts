@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {ABILITY_DATABASE,MONSTER_DATABASE,biomeLevelCap,globalMastery,listBiomeGroupsAtTier,runeBudgetForGlobalMastery} from '@mmo-idle/shared';
+import {ABILITY_DATABASE,MONSTER_DATABASE,biomeLevelCap,globalMastery,listBiomeGroupsAtTier,runeBudgetForGlobalMastery,referenceAbilityRule,runeRuleCost} from '@mmo-idle/shared';
 import {DURABILITY32_BLOCKS,RIDGE_ARCHER_POWER_SHOT_CANDIDATE,RIDGE_ARCHER_POWER_SHOT_CONTROL} from './durability32Spec';
 import {SURVEY_CLASSES} from './ttkSurveySpec';
 import type {Night5Cell} from './night5Spec';
@@ -116,7 +116,8 @@ export function assertDurability33Definitions(): void {
  for(const g of listBiomeGroupsAtTier(1)) levels[g]=biomeLevelCap(1,g);
  const budget=runeBudgetForGlobalMastery(globalMastery(levels));
  assert.equal(budget,22,'T1 Runic Point budget drift');
- const cost=(ids:string[])=>ids.reduce((n,id)=>n+(ABILITY_DATABASE.get(id)?.attunementCost??0),0);
+ // Ability price plus its reference wiring, which the bench bot equips.
+ const cost=(ids:string[])=>ids.reduce((n,id)=>n+(ABILITY_DATABASE.get(id)?.attunementCost??0)+runeRuleCost(referenceAbilityRule(id)!),0);
  assert.equal(cost(['sweep','second-wind']),12,'T1 default ability cost drift');
  assert(cost(['sweep','second-wind','brace'])>budget-6,'Brace must still be unaffordable beside Second Wind at T1');
 }

@@ -4,6 +4,7 @@ import {
   ABILITY_DATABASE, abilityRankAt, isCleanseable, isHarmfulPlayerStatusEffect,
   resolveMonsterDotDebuff, PLATING_SHRED_EFFECT_ID,
   runicPointLoadoutCost,
+  referenceAbilityRule, withReferenceAbilityWiring,
 } from '@mmo-idle/shared';
 import { REFERENCE_GUARDS, referencePackageCells } from './boss1Spec';
 import type { Night5Cell } from './night5Spec';
@@ -26,7 +27,7 @@ import type { Night5Cell } from './night5Spec';
  * mitigation. It is deliberately not:
  *
  *   - a causal estimate of any particular debuff's contribution to damage;
- *   - an optimised Cleanse-timing study (the authored default trigger is used, and
+ *   - an optimised Cleanse-timing study (the reference `When Debuffed` wiring is used, and
  *     no ability-specific Rune rule is added);
  *   - evidence that Cleanse should be universal, or that Brace should not be;
  *   - a search over builds. There are exactly two arms and nothing is retried.
@@ -231,8 +232,8 @@ export function assertBoss3Definitions(): void {
     `${BOSS3_GUARD_IN} (${inn.attunementCost} RP) must not cost more than ${BOSS3_GUARD_OUT} (${out.attunementCost} RP) — this screen never enlarges the budget`);
   const rank = abilityRankAt(inn, BOSS3_TIER);
   assert.equal(rank.effect.kind, 'cleanse', `${BOSS3_GUARD_IN} at tier ${BOSS3_TIER} must resolve a cleanse effect`);
-  assert.equal(inn.trigger.kind, 'has-debuff',
-    `${BOSS3_GUARD_IN} must use its authored default trigger; this screen adds no ability-specific Rune rule`);
+  assert.equal(referenceAbilityRule(inn.id)?.conditionId, 'has-debuff',
+    `${BOSS3_GUARD_IN} must use its reference wiring; this screen adds no other ability-specific Rune rule`);
   // The reference baseline must still BE the baseline.
   assert.deepEqual([...REFERENCE_GUARDS], ['second-wind', BOSS3_GUARD_OUT],
     'the reference Guard list has moved; the baseline arm no longer reproduces Boss2');
@@ -311,7 +312,7 @@ export function assertBoss3Definitions(): void {
       }
       // RP is computed mechanically per root; the substitution must never enlarge it.
       const rp = (cell: Night5Cell) => runicPointLoadoutCost({
-        rules: cell.runeRules as never,
+        rules: withReferenceAbilityWiring(cell.runeRules as never, cell.abilities!),
         abilities: cell.abilities!,
         stances: cell.stance ? [cell.stance] : [],
         rites: [],

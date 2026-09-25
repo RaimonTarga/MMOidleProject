@@ -1,4 +1,3 @@
-import { triggerSentence } from "./describe/abilityText";
 import { ABILITY_DATABASE } from "@mmo-idle/shared";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useAtomValue } from "jotai";
@@ -257,7 +256,7 @@ export function BuildRunesTab() {
               {response && draft.actionId !== "use-ability" && draft.actionId !== "switch-stance" && <p className="rune-detail">{response.detail}</p>}
             </section>
             {draft.actionId === "wait-it-out" && <section aria-label="Wait mode"><button type="button" aria-pressed={draft.waitOutMode !== "heat-managed"} onClick={() => setDraft({ ...draft, waitOutMode: "all" })}>All eligible statuses</button><button type="button" disabled={draft.conditionId !== "always"} aria-pressed={draft.waitOutMode === "heat-managed"} onClick={() => setDraft({ ...draft, waitOutMode: "heat-managed" })}>Manage Heat</button><p>Always only. Ordinary Volcano: 25 Heat to request a break; resume at 10. Current fights finish first.</p></section>}
-            {draft.actionId === "use-ability" && <section ref={destinationSection} tabIndex={-1} aria-label="Choose attuned ability" className="rune-editor__destinations"><h3>Choose attuned ability</h3><div className="rune-choice-grid">{[...abilities.techniques, ...abilities.guards].map(id => <button className="rune-ability-choice" type="button" key={id} aria-pressed={draft.targetAbilityId === id} onClick={() => setDraft({ ...draft, targetAbilityId: id })}>{ABILITY_DATABASE.get(id)?.name}<small>Default: {triggerSentence(ABILITY_DATABASE.get(id)!.trigger)}</small></button>)}</div><p>Attunement is already paid. This rule costs only its logic.</p></section>}
+            {draft.actionId === "use-ability" && <section ref={destinationSection} tabIndex={-1} aria-label="Choose attuned ability" className="rune-editor__destinations"><h3>Choose attuned ability</h3><div className="rune-choice-grid">{[...abilities.techniques, ...abilities.guards].map(id => <button className="rune-ability-choice" type="button" key={id} aria-pressed={draft.targetAbilityId === id} onClick={() => setDraft({ ...draft, targetAbilityId: id })}>{ABILITY_DATABASE.get(id)?.name}</button>)}</div><p>Attunement is already paid. This rule costs only its logic.</p></section>}
             {draft.actionId === "switch-stance" && (
               <section
                 ref={destinationSection}

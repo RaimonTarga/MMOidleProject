@@ -16,12 +16,11 @@ import {
   stanceIconSource,
 } from "./conceptIcons";
 
-import { triggerSentence } from "./describe/abilityText";
 
 export function runeResponse(rule: EquippedRule, abilities: AttunedAbilities) {
   if (rule.actionId === "use-ability") {
     const ability = abilityDef(rule.targetAbilityId);
-    return { name: ability?.name ?? "Choose ability", icon: ability ? conceptAbilityIconSource(ability.id) : runeActionIconSource(rule.actionId), missing: !ability || ![...abilities.techniques, ...abilities.guards].includes(ability.id), detail: ability ? `Default: ${triggerSentence(ability.trigger)} Rune timing replaces this trigger.` : "Choose an attuned ability. Learn and attune tools before targeting them." };
+    return { name: ability?.name ?? "Choose ability", icon: ability ? conceptAbilityIconSource(ability.id) : runeActionIconSource(rule.actionId), missing: !ability || ![...abilities.techniques, ...abilities.guards].includes(ability.id), detail: ability ? `Fires ${ability.name} while this situation holds, whenever it is off cooldown.` : "Choose an attuned ability. Learn and attune tools before targeting them." };
   }
   if (rule.actionId === "switch-stance") {
     const stance = stanceDef(rule.targetStanceId);

@@ -5,7 +5,6 @@ import {
   type EquippedRule,
 } from "@mmo-idle/shared";
 import { abilityTiming } from "../../client/src/ui/describe/abilityTiming";
-import { triggerSentence } from "../../client/src/ui/describe/abilityText";
 function assert(value: unknown, message: string): asserts value {
   if (!value) throw new Error(message);
 }
@@ -21,13 +20,10 @@ const rules: EquippedRule[] = [
 for (const ability of ABILITY_DATABASE.values()) {
   const timing = abilityTiming(ability, equipped, []);
   assert(
-    timing.defaultBehavior === triggerSentence(ability.trigger),
-    `${ability.id}: authored trigger lost`,
+    timing.overrides.length === 0 && timing.overrideText.startsWith("No Rune timing"),
+    `${ability.id}: an unwired ability must read as manual-only, never as having a default`,
   );
-  assert(
-    timing.defaultBehavior.length > 0 && !timing.overrideText,
-    `${ability.id}: missing default or invented override`,
-  );
+  assert(!("defaultBehavior" in timing), `${ability.id}: default behavior text must not return`);
 }
 const charge = abilityDef("charge")!;
 assert(
@@ -35,8 +31,8 @@ assert(
   "All configured timing conditions must remain discoverable",
 );
 assert(
-  !abilityTiming(abilityDef("sweep")!, equipped, rules).overrideText,
-  "Second technique rules must not label the first as overridden",
+  abilityTiming(abilityDef("sweep")!, equipped, rules).overrides.length === 0,
+  "Second technique rules must not label the first as wired",
 );
 assert(
   abilityTiming(charge, { ...equipped, techniques: ["charge", "sweep"] }, rules)
@@ -48,7 +44,7 @@ assert(
     abilityDef("second-wind")!,
     equipped,
     rules,
-  ).overrideText.includes("waits when no rule matches"),
-  "Do not imply that default timing resumes when a Rune condition is false",
+  ).overrideText.includes("Waits when no rule matches"),
+  "Say plainly that nothing fires when no Rune condition is true",
 );
 console.log("abilityTimingPresentation: ok");

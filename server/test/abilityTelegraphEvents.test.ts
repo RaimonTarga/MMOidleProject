@@ -7,7 +7,7 @@ import { GAME_CONFIG, STARTER_RUNE_IDS, emptyEquipment } from "@mmo-idle/shared"
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { setAttackTarget } from "../src/systems/combat/ai/targeting";
-import { updateAbilityFiring } from "../src/systems/player/abilities/abilityFiring";
+import { fireWithReferenceWiring } from "./fixtures/abilityWiring";
 import { World } from "../src/world/World";
 
 function assert(condition: boolean, message: string): void {
@@ -23,8 +23,8 @@ function makePlayerSlices(): PersistedPlayerSlices {
       speed: GAME_CONFIG.PLAYER_SPEED,
     },
     hasHealth: {
-      // Below Brace's hp-below 0.5 trigger so the Guard fires this tick.
-      hp: Math.round(GAME_CONFIG.PLAYER_MAX_HP * 0.4),
+      // Below Brace's HP Below 25% wiring so the Guard fires this tick.
+      hp: Math.round(GAME_CONFIG.PLAYER_MAX_HP * 0.2),
       maxHp: GAME_CONFIG.PLAYER_MAX_HP,
       recovery: GAME_CONFIG.PLAYER_RECOVERY,
     },
@@ -78,11 +78,11 @@ const target = world.createMonster("node-5-5", "plains-slime", { x: 430, y: 400 
 if (!target) throw new Error("failed to create target");
 
 setAttackTarget(world, player, target.isMonster.id);
-updateAbilityFiring(world, Date.now());
+fireWithReferenceWiring(world, Date.now());
 
 assert(
   player.hasArmedAbility?.abilityId === "sweep",
-  "in-combat trigger should arm Sweep",
+  "In Combat wiring should arm Sweep",
 );
 
 const events = world.takeNodeEvents("node-5-5");
@@ -111,7 +111,7 @@ assert(
 );
 
 // While the charge is still armed (and cooldowns run), no duplicate telegraphs.
-updateAbilityFiring(world, Date.now());
+fireWithReferenceWiring(world, Date.now());
 const repeat = world.takeNodeEvents("node-5-5");
 assert(
   repeat.every(

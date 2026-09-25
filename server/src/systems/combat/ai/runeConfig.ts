@@ -7,13 +7,15 @@ import {
   AMBIENT_RAMP_KEY,
   MONSTER_DATABASE,
   RUNE_NODE_ACQUIRE_RADIUS,
+  posHitboxFromEntity,
+  reachGap,
   setFlag,
   setString,
   type RuneContext,
   type RuneTraceRule,
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
-import type { PlayerEntity } from "../../../ecs/entity";
+import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
 import { playerDotAtMaxStacks } from "../damage/dotInventory";
 import { markSliceDirty } from "../../../ecs/dirtyHelpers";
 import { isMonsterThreatening } from "./guardableThreats";
@@ -23,6 +25,7 @@ import {
   updateTelegraphEvasionLifecycle,
 } from "./telegraphEvasion";
 import { POWERING_UP_ID, poweringUpFullyCharged } from "../../player/stances/stanceBehaviors";
+import { isHardControlled } from "../status/playerHardControl";
 
 /** Server-only runtime flags read by the auto-combat systems. */
 export const RUNE_FLEE_FLAG = "rune.flee";
@@ -86,9 +89,11 @@ function aggroStats(
   world: World,
   player: PlayerEntity,
   now: number,
-): { count: number; charging: boolean } {
+): { count: number; charging: boolean; contact: boolean } {
   let count = 0;
   let charging = false;
+  let contact = false;
+  const playerBox = posHitboxFromEntity(player);
   for (const monster of world.aggroedMonsters) {
     if (
       monster.hasAggroTarget.targetKind === "player" &&
@@ -96,9 +101,56 @@ function aggroStats(
     ) {
       count++;
       if (!charging && isMonsterThreatening(world, monster, now)) charging = true;
+      if (!contact) contact = inMeleeContact(player, playerBox, monster);
     }
   }
-  return { count, charging };
+  return { count, charging, contact };
+}
+
+/**
+ * Melee monsters reach at most 72px and ranged ones at least 180px, so anything
+ * reaching further than this is a shooter, not something "in contact".
+ */
+const MELEE_CONTACT_MAX_REACH = 100;
+/** Slack over the monster's own reach, so contact reads a step before the swing. */
+const MELEE_CONTACT_SLACK_PX = 10;
+
+/** A live melee enemy in the player's node is within its own reach of them. */
+function inMeleeContact(
+  player: PlayerEntity,
+  playerBox: ReturnType<typeof posHitboxFromEntity>,
+  monster: MonsterEntity,
+): boolean {
+  const reach = monster.performsAttack?.attackRange;
+  if (reach === undefined || reach > MELEE_CONTACT_MAX_REACH) return false;
+  if (monster.hasHealth.hp <= 0 || monster.hasPosition.nodeId !== player.hasPosition.nodeId) return false;
+  return reachGap(playerBox, posHitboxFromEntity(monster)) <= reach + MELEE_CONTACT_SLACK_PX;
+}
+
+/**
+ * A living owned summon in the owner's node targets a live monster there, or is
+ * targeted by one. Summon aggro never counts toward the owner's `aggroCount`:
+ * summons taking hits is not pressure on the player's body.
+ */
+function summonsInCombat(world: World, player: PlayerEntity): boolean {
+  const ids = player.summonsMinions?.minionIds;
+  if (!ids?.length) return false;
+  const nodeId = player.hasPosition.nodeId;
+  const living = new Set<string>();
+  for (const id of ids) {
+    const minion = world.getMinionEntity(id);
+    if (!minion || minion.isMinion.ownerPlayerId !== player.isPlayer.id
+      || minion.hasHealth.hp <= 0 || minion.hasPosition.nodeId !== nodeId) continue;
+    living.add(id);
+    const targetId = minion.hasAttackTarget?.targetId;
+    const target = targetId ? world.getMonsterEntity(targetId) : undefined;
+    if (target && target.hasHealth.hp > 0 && target.hasPosition.nodeId === nodeId) return true;
+  }
+  for (const monster of world.aggroedMonsters) {
+    if (monster.hasAggroTarget.targetKind === "minion" && living.has(monster.hasAggroTarget.targetId)
+      && monster.hasHealth.hp > 0 && monster.hasPosition.nodeId === nodeId) return true;
+  }
+  return false;
 }
 
 /** Whether the player's current attack target is an elite (or a boss). */
@@ -121,7 +173,7 @@ function isEliteTarget(world: World, targetId: string | undefined): boolean {
 export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
   for (const player of world.playerEntities) updateHeatManagement(world, player);
   for (const player of world.livePlayers) {
-    const { count: currentAggroCount, charging: enemyCharging } = aggroStats(
+    const { count: currentAggroCount, charging: enemyCharging, contact: enemyInContact } = aggroStats(
       world,
       player,
       now,
@@ -139,12 +191,15 @@ export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
         (heatManagementState(player) === "requested" && heatEngagementTargets(world, player).size > 0),
       activelyEngaged: isPlayerActivelyInCombat(world, player) ||
         (heatManagementState(player) === "requested" && heatEngagementTargets(world, player).size > 0),
+      summonsInCombat: summonsInCombat(world, player),
       inParty: player.inParty !== undefined,
       aggroCount: currentAggroCount,
       combatArchetype: player.usesSkills.combatArchetype,
       debuffed: player.tracksCombat.statusEffects.some(
         (e) => e.stacks > 0 && isHarmfulPlayerStatusEffect(e.id, e.data),
       ),
+      controlled: isHardControlled(player.tracksCombat) || player.isRooted !== undefined,
+      enemyInContact,
       enemyCharging,
       insideDangerousTelegraph: dangerousTelegraphs.length > 0,
       // The shared empowered-attack flag is armed → the next attack is empowered.

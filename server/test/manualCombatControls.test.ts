@@ -25,10 +25,8 @@ import {
   holdsPositionWhileCasting,
   updateAbilityCasts,
 } from "../src/systems/player/abilities/abilityCasting";
-import {
-  requestManualAbilityUse,
-  updateAbilityFiring,
-} from "../src/systems/player/abilities/abilityFiring";
+import { requestManualAbilityUse } from "../src/systems/player/abilities/abilityFiring";
+import { fireAbilities, wireReferenceAbilities } from "./fixtures/abilityWiring";
 import {
   STANCE_SWITCH_COOLDOWN_MS,
   requestManualStance,
@@ -217,18 +215,19 @@ initCombatSystems();
   const world = new World();
   const player = world.attachPlayerEntity(makePlayerSlices("ability-auto-ownership"), "ability-auto-ownership");
   player.tracksProgression.attunedAbilities = { techniques: ["frenzy"], guards: [] };
+  wireReferenceAbilities(player);
   const target = world.createMonster("node-5-5", "plains-slime", { x: 430, y: 400 });
   if (!target) throw new Error("auto ownership target setup failed");
   setAttackTarget(world, player, target.isMonster.id);
 
-  updateAbilityFiring(world, 900);
+  fireAbilities(world, 900);
   assert(
     getCooldown(player.tracksCombat, abilityCooldownKey("frenzy")) === 0,
     "Auto-off must suppress automatic ability activation",
   );
 
   player.fightsWhileTraveling = { startedAtMs: 901 };
-  updateAbilityFiring(world, 901);
+  fireAbilities(world, 901);
   assert(
     getCooldown(player.tracksCombat, abilityCooldownKey("frenzy")) > 0,
     "Fight Back must grant automatic ability authority while travel combat is active",
@@ -255,9 +254,9 @@ initCombatSystems();
 
   assert(requestManualAbilityUse(world, player, "frenzy", 1_003).state === "queued", "ability should be queueable again");
   updateCombatState(world, cooldown);
-  updateAbilityFiring(world, 1_003 + cooldown);
+  fireAbilities(world, 1_003 + cooldown);
   assert(!player.queuesAbilities, "successful queued activation must consume the queue entry");
-  updateAbilityFiring(world, 1_004 + cooldown);
+  fireAbilities(world, 1_004 + cooldown);
   assert(!player.queuesAbilities, "activation must not automatically re-queue the ability");
 
   assert(!requestManualAbilityUse(world, player, "not-real", 1_002).success, "unknown ability must be rejected");
@@ -277,7 +276,7 @@ initCombatSystems();
   const waiting = requestManualAbilityUse(world, player, "hamstring", 2_000);
   assert(waiting.success && waiting.state === "queued", "targetless manual ability should wait rather than acquire a fallback");
   setAttackTarget(world, player, target.isMonster.id);
-  updateAbilityFiring(world, 2_001);
+  fireAbilities(world, 2_001);
   assert(player.hasArmedAbility?.abilityId === "hamstring", "manual Technique should use the normal armed channel");
   assert(!player.queuesAbilities, "queued target-dependent ability should clear after activation");
   const blocked = requestManualAbilityUse(world, player, "power-strike", 2_002);

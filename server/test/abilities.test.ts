@@ -1,10 +1,9 @@
 /**
- * Complements abilitySecondWind.test.ts (Guard heal-over-time + rune-suppression
- * of the built-in trigger) and abilityTechniqueRune.test.ts (Technique armed via
- * a rune override + on-hit consumption). This file covers what neither does:
- * a Guard ability firing on its BUILT-IN trigger (no rune override equipped) and
- * the cooldown lifecycle across a full period — blocked while active, then
- * re-firable once it clears.
+ * Complements abilitySecondWind.test.ts (Guard heal-over-time) and
+ * abilityTechniqueRune.test.ts (Technique armed via a rune + on-hit consumption).
+ * This file covers: a Guard with NO rule never auto-fires, a Guard firing on an
+ * HP Below 25% -> Use Ability rule, and the cooldown lifecycle
+ * across a full period — blocked while active, then re-firable once it clears.
  */
 import {
   ABILITY_GUARD_EFFECT_ID,
@@ -16,7 +15,7 @@ import {
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { updateCombatState } from "../src/systems/combat/engine/combatState";
-import { updateAbilityFiring } from "../src/systems/player/abilities/abilityFiring";
+import { fireAbilities } from "./fixtures/abilityWiring";
 import { abilityCooldownKey } from "../src/systems/player/abilities/abilityCooldowns";
 import { World } from "../src/world/World";
 import { takeWorldLogEvents } from "../src/world/worldLog";
@@ -54,7 +53,6 @@ function makePlayerSlices(): PersistedPlayerSlices {
       clearedNodes: [],
       runesOwned: [...STARTER_RUNE_IDS],
       runeRecipesCrafted: [],
-      // No fire-guard rune equipped: Brace must fire on its own built-in trigger.
       runesEquipped: [],
       knownAbilities: ["brace"],
       attunedAbilities: { techniques: [], guards: ["brace"] },
@@ -88,18 +86,28 @@ const GUARD_CD_KEY = abilityCooldownKey("brace");
 // Rank I (a T0/T1 character sits at Brace I): 35% DR on a 10s cooldown.
 const BRACE_COOLDOWN_MS = 10000;
 
-// Full HP: Brace's `hp-below 0.5` trigger should not fire.
-updateAbilityFiring(world, Date.now());
+// No rule: abilities have no built-in trigger, so Brace never auto-fires.
+player.hasHealth.hp = player.hasHealth.maxHp * 0.2;
+fireAbilities(world, Date.now());
 assert(
   getStatusEffect(player.tracksCombat, ABILITY_GUARD_EFFECT_ID) === undefined,
-  "Brace should not fire on its built-in trigger above the hp-below threshold",
+  "an unwired Brace must not auto-fire",
 );
 
-// Drop below 50% HP: the built-in trigger (no rune override equipped) should fire.
+// Wired, but above 25% HP: the rule's condition is false.
+player.tracksProgression.runesEquipped = [{ conditionId: "hp-below-25", actionId: "use-ability", targetAbilityId: "brace" }];
 player.hasHealth.hp = player.hasHealth.maxHp * 0.4;
-updateAbilityFiring(world, Date.now());
+fireAbilities(world, Date.now());
+assert(
+  getStatusEffect(player.tracksCombat, ABILITY_GUARD_EFFECT_ID) === undefined,
+  "Brace should not fire above its rule's HP threshold",
+);
+
+// At or below 25% HP: the rule fires Brace.
+player.hasHealth.hp = player.hasHealth.maxHp * 0.2;
+fireAbilities(world, Date.now());
 const firstBuff = getStatusEffect(player.tracksCombat, ABILITY_GUARD_EFFECT_ID);
-assert(!!firstBuff, "Brace should fire on its built-in hp-below trigger with no rune override");
+assert(!!firstBuff, "Brace should fire on its HP Below 25% rule");
 assert(firstBuff.data.drPct === 0.35, "Brace I should apply its 35% damage-reduction magnitude");
 assert(
   takeWorldLogEvents(world, player.isPlayer.id).some(
@@ -116,7 +124,7 @@ assert(
 // must not happen (the cooldown should not reset to a fresh value).
 updateCombatState(world, 100);
 const cooldownAfterOneTick = getCooldown(player.tracksCombat, GUARD_CD_KEY);
-updateAbilityFiring(world, Date.now());
+fireAbilities(world, Date.now());
 assert(
   getCooldown(player.tracksCombat, GUARD_CD_KEY) === cooldownAfterOneTick,
   "Brace should not re-fire (and reset its cooldown) while its own cooldown is still active",
@@ -129,7 +137,7 @@ assert(
   getCooldown(player.tracksCombat, GUARD_CD_KEY) === 0,
   "Brace's cooldown should fully decay after its cooldown duration elapses",
 );
-updateAbilityFiring(world, Date.now());
+fireAbilities(world, Date.now());
 assert(
   getCooldown(player.tracksCombat, GUARD_CD_KEY) === BRACE_COOLDOWN_MS,
   "Brace should be able to fire again once its cooldown has fully elapsed",

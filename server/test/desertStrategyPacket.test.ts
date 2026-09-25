@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { DESERT_BASES, DESERT_CELLS, DESERT_IDS } from '../bench/balance/desertStrategySpec';
-import { runicPointLoadoutCost } from '@mmo-idle/shared';
+import { runicPointLoadoutCost, withReferenceAbilityWiring } from '@mmo-idle/shared';
 import { bondResult } from '../bench/balance/desertStrategyRecorder';
 import { endpointIntervals } from '../bench/balance/enduranceProgress';
 
@@ -20,7 +20,7 @@ for (let i = 0; i < DESERT_CELLS.length; i += 2) {
   assert.deepEqual(a.abilities!.guards, ['second-wind', 'brace', 'cleanse']);
   assert.equal(a.stance, 'offensive-stance'); assert.equal(a.upgradeLevel, 5);
   assert.equal(a.nodeId, 'node-t4-desert-03'); assert.equal(b.nodeId, a.nodeId);
-  const cost = (c: typeof a) => runicPointLoadoutCost({ rules: c.runeRules!, abilities: c.abilities!, stances: [c.stance!], rites: [] });
+  const cost = (c: typeof a) => runicPointLoadoutCost({ rules: withReferenceAbilityWiring(c.runeRules!, c.abilities!), abilities: c.abilities!, stances: [c.stance!], rites: [] });
   assert.equal(cost(a), ['apprentice', 'spirit'].includes(a.className) ? 43 : 40);
   assert.equal(cost(b) - cost(a), 3);
 }

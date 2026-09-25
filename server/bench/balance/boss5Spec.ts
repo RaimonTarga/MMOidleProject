@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {
   DUNGEON_DEFS, MONSTER_DATABASE, NODE_BIOMES, RECIPE_DATABASE, ITEM_DATABASE,
-  runicPointLoadoutCost, runeBudgetForGlobalMastery,
+  runicPointLoadoutCost, runeBudgetForGlobalMastery, withReferenceAbilityWiring,
 } from '@mmo-idle/shared';
 import { SURVEY_CLASSES, resolveSurveyPackage } from './ttkSurveySpec';
 import { REFERENCE_GUARDS, referencePackageCells } from './boss1Spec';
@@ -597,7 +597,7 @@ export function assertBoss5Definitions(): void {
       // prepared bot actually reaches is tier-dependent, so the affordable ceiling is
       // asserted at the LOWEST mastery the tier ladder grants rather than a constant.
       const cost = runicPointLoadoutCost({
-        rules: r.runeRules as never, abilities: r.abilities,
+        rules: withReferenceAbilityWiring(r.runeRules as never, r.abilities), abilities: r.abilities,
         stances: r.stance ? [r.stance] : [], rites: [],
       });
       assert(cost <= budget(TIER_MASTERY[block.tier]!),

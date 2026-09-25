@@ -47,7 +47,7 @@ const context = {
 
 for (const ability of ABILITY_DATABASE.values()) {
   const described = describeAbility(ability, context);
-  assert(described.trigger.length > 0, `${ability.id}: no trigger sentence`);
+  assert(!("trigger" in described), `${ability.id}: default trigger text must not return`);
   assert(described.shape.length > 0, `${ability.id}: no shape sentence`);
   assert(described.lines.length > 0, `${ability.id}: no effect lines`);
 

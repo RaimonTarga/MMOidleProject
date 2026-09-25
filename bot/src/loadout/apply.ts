@@ -1,4 +1,4 @@
-import { runeBudgetForGlobalMastery } from "@mmo-idle/shared";
+import { runeBudgetForGlobalMastery, withReferenceAbilityWiring } from "@mmo-idle/shared";
 import type { Observation } from "../state/observation";
 import type { Intents, CraftOutcome } from "../net/intents";
 import { BuildError, buildKey, buildRP, observedBuild, validateBuild, type DesiredBuild } from "./loadout";
@@ -17,6 +17,9 @@ export interface BuildControl {
 export async function applyBuild(desired: DesiredBuild, control: BuildControl): Promise<void> {
   const { obs, intents } = control;
   const requested = structuredClone(desired);
+  // Abilities have no built-in trigger. Any attuned ability a route does not wire
+  // itself gets its reference Rune rule, preserving the retired default timing.
+  requested.runeRules = withReferenceAbilityWiring(requested.runeRules, requested.abilities);
   const diagnostics = () => ({ requested, observed: obs.self ? observedBuild(obs.self) : null,
     observedRP: obs.self ? buildRP(observedBuild(obs.self)) : null,
     budget: obs.self ? runeBudgetForGlobalMastery(obs.self.globalMastery) : null });

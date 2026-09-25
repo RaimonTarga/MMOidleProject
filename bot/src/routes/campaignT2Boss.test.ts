@@ -22,7 +22,9 @@ for (const route of CAMPAIGN_NIGHT2_SQUIRE_ROUTES) {
 
 for (const [i, route] of CAMPAIGN_NIGHT2_ROUTES.entries()) {
   const final = route.steps.filter(s => s.type === "configureBuild").at(-1)!;
-  assert.equal(buildRP(final.build).total, [24, 26, 25][i]);
+  // The reactive route wires Brace itself (Inside Telegraph), so it no longer
+  // pays for Brace's retired default timing: 26 -> 24 RP.
+  assert.equal(buildRP(final.build).total, [24, 24, 25][i]);
   assert.equal(route.steps.filter(s => s.type === "attemptBoss").length, 1);
   assert(route.steps.filter(s => s.type === "attemptBoss").every(s => s.maxAttempts === 1));
   assert.deepEqual(route.steps.at(-2)?.requires, route.completion);

@@ -86,8 +86,8 @@ engagementRange = player.attackRange + rank.rangeBonus
 ```
 
 - **Charge** carries `rangeBonus: 300` (its rush distance): it engages a target up to 300px
-  beyond normal reach, closes, and lands the empowered blow. Its `target-beyond-reach`
-  trigger stops it firing at something already in contact. It is no longer an instant
+  beyond normal reach, closes, and lands the empowered blow. Its gap gate
+  (`CHARGE_MIN_GAP_PX`, 70px) stops it auto-firing at something already in contact. It is no longer an instant
   reposition — it is a `charge`: a 400ms wind-up, then a real 4× rush that the target can
   move during and that hard control can break. `isChargingAbility.speedMult` is a temporary
   movement layer in `playerSpeedMults`, never a mutation of the player's position speed, so
@@ -119,18 +119,33 @@ before combat resolves.
 - **Situational Guards hold their cooldown**: Break Free will not fire with nothing holding
   the player, Cleanse will not fire with nothing to strip, a Recovery Guard will not fire at
   full HP, and a reposition with nowhere to go declines rather than dashing into space.
-- **Rune overrides name abilities** with `use-ability` / `targetAbilityId`. Custom targets use Rune priority; defaults use attunement order.
+- **Abilities have no built-in trigger.** An ability auto-fires only while a `use-ability`
+  Rune rule naming it (`targetAbilityId`) is active; active targets arbitrate in Rune order.
+  With no rule it is manual-only (hotbar).
 
-### Triggers
-`in-combat` · `hp-below` · `n-aggro` · `has-debuff` · **`has-hard-control`** (Break Free —
-the one trigger that must work while the player cannot act) · **`target-beyond-reach`**
-(Charge) · **`enemy-within`** (Disengage).
+### Wiring and pricing
+Each `attunementCost` is priced **net of its reference wiring** (`shared/src/abilityWiring.ts`,
+`referenceAbilityRule`): ability + that rule reserves exactly what the ability alone cost when it
+had a built-in trigger. The Abilities panel lists the rules that fire each ability; an attuned,
+unwired ability offers a "Use default timing" button that equips this rule. `abilityWiring.test.ts` pins the arithmetic.
 
-For Conduit, the default `in-combat` trigger also recognizes a living, owned summon
-in the same node targeting a living monster, or being targeted by one. Sweep can
-therefore arm its formation adapter while the owner stays out of direct combat.
-Summon aggro does not contribute to the owner's `n-aggro` Guard trigger; custom
-Rune conditions retain their own requirements.
+| Reference wiring | RP | Abilities |
+| --- | --- | --- |
+| In Combat → Use Ability | 2 | every Technique except Charge and Disengage; Second Wind, Brace, Endure, Recuperate (fire off cooldown — a default, not their old 50–70% thresholds) |
+| When Debuffed → Use Ability | 2 | Cleanse |
+| Surrounded → Use Ability | 3 | Bramble Guard |
+| When Controlled → Use Ability | 2 | Break Free |
+| Enemy in Contact → Use Ability | 2 | Disengage |
+| Always → Use Ability | 1 | Charge (its gap gate makes it charge the next enemy once one is in charge range) |
+
+**Execution gates** (not triggers — they apply to automatic firing whatever rule fires it):
+Charge needs a target at least `CHARGE_MIN_GAP_PX` (70px) beyond contact; Break Free needs hard
+control (`abilityActsWhileControlled` lets it execute while stunned); Cleanse needs a cleanseable
+debuff; a Recovery Guard needs missing HP. Disengage has no gate — `Enemy in Contact` decides when.
+
+Benches (`resolveSurveyPackage`, `canonicalLoadout`) and the bot (`applyBuild`) append reference
+wiring for any attuned ability a package does not wire itself (`withReferenceAbilityWiring`), after
+the explicit rules — the arbitration order the retired defaults had.
 
 ### Summoner ability ownership
 
@@ -161,10 +176,10 @@ other Summoner paths; self-buffs and Guards remain owner-cast on every path.
   formation-weighted. The smaller burst on large formations is accepted; there
   is no fractional-charge adapter or extra per-summon charge pool.
 - **Second Wind, Recuperate, Brace, Endure, Cleanse, Break Free, Bramble Guard:**
-  summoner-owned defenses, triggered by the owner's health, debuffs, hard control,
-  or incoming aggro. They do not heal, cleanse, or shield each summon.
-- **Disengage:** moves the summoner away from a threat within its authored 90px
-  trigger distance; target selection covers that distance even for a short-range
+  summoner-owned defenses, fired by Rune conditions on the owner's health, debuffs,
+  hard control, or incoming aggro. They do not heal, cleanse, or shield each summon.
+- **Disengage:** moves the summoner away from a threat (fired by `Enemy in Contact`
+  by default); target selection covers that distance even for a short-range
   owner.
 - **Charge:** the summoner winds up one command, then eligible living summons
   rush toward the selected target while the owner stays in place. Each physical
@@ -224,7 +239,7 @@ clear a root a boss script installed. Stun goes through the existing `applyStun`
 immunity keeps chain-locking off the table.
 
 **Player-side hard control** is one list: `combat/status/playerHardControl.ts`. It defines what
-breaks a cast, what satisfies Break Free's trigger, and what Break Free removes. Cleanse
+breaks a cast, what satisfies Break Free's gate, and what Break Free removes. Cleanse
 deliberately does **not** answer it.
 
 ---
@@ -525,9 +540,13 @@ resolved hit), skips DoT ticks, and is unmitigated.
 
 ## Rune timing and client
 
-The Rune board targets named attuned abilities. Rules cost only their logic; ability reservation is paid once. Any custom rule suppresses that ability's default timing, including while its condition is false. Ordinary Techniques retain a shared offensive opportunity; instant Techniques remain non-blocking. Guards retain their one-activation decision window.
+The Rune board targets named attuned abilities. Rules cost only their logic; ability reservation is paid once. An ability with no active rule does not auto-fire. Ordinary Techniques retain a shared offensive opportunity; instant Techniques remain non-blocking. Guards retain their one-activation decision window.
 
-The ability panel shows learned tools, RP prices, authored defaults and custom overrides, with attune/unattune and default-priority controls. The combat hotbar renders every attuned ability in a fixed-size tile with its rank, configurable number-key binding, cooldown/cast state, and click activation. `ability:use` carries only the requested ability id; `requestManualAbilityUse` validates the id and attunement, then enters the same cooldown, Technique/Guard arbitration, cast, targeting and effect path used by automatic/Rune firing. Manual enemy-facing abilities require the player's current combat target and never use automatic firing's nearest-target fallback. If a valid manual request is temporarily blocked (including by cooldown, missing target, control, channel ownership, or authored trigger conditions), the server keeps that ability in a networked one-shot queue and the hotbar shows a lit border. Pressing the queued ability again cancels it. Its first legal activation consumes the entry, so the resulting cooldown does not re-queue it; death clears the queue and loadout edits prune newly unattuned entries. Rejected combat-control messages render in the global toast layer rather than changing the hotbar stack's geometry. Default/Rune ability activation runs only while Auto Combat is enabled or while Fight Back temporarily owns travel combat; manual hotbar requests and their queued intents remain available in either state and do not cancel an already-started cast/charge/armed Technique. `R` is a rebindable Slinger-only manual reload: the client ignores it for every other archetype, and the server revalidates that ownership before a partial magazine enters the existing reload timer and lifecycle hooks. Full magazines, active reloads and Laser heat are harmless no-ops. Server loadout edits validate the complete RP budget and return an acknowledgement; unattuning removes dependent rules.
+The ability panel shows learned tools, RP prices and each ability's Rune timing (or that it is manual-only), with attune/unattune controls. The combat hotbar renders every attuned ability in a fixed-size tile with its rank, configurable number-key binding, cooldown/cast state, and click activation. `ability:use` carries only the requested ability id; `requestManualAbilityUse` validates the id and attunement, then enters the same cooldown, Technique/Guard arbitration, cast, targeting and effect path used by automatic/Rune firing. Manual enemy-facing abilities require the player's current combat target and never use automatic firing's nearest-target fallback. If a valid manual request is temporarily blocked (including by cooldown, missing target, control, channel ownership, or execution-gate conditions), the server keeps that ability in a networked one-shot queue and the hotbar shows a lit border. Pressing the queued ability again cancels it. Its first legal activation consumes the entry, so the resulting cooldown does not re-queue it; death clears the queue and loadout edits prune newly unattuned entries. Rejected combat-control messages render in the global toast layer rather than changing the hotbar stack's geometry. Rune ability activation runs only while Auto Combat is enabled or while Fight Back temporarily owns travel combat; manual hotbar requests and their queued intents remain available in either state and do not cancel an already-started cast/charge/armed Technique. `R` is a rebindable Slinger-only manual reload: the client ignores it for every other archetype, and the server revalidates that ownership before a partial magazine enters the existing reload timer and lifecycle hooks. Full magazines, active reloads and Laser heat are harmless no-ops. Server loadout edits validate the complete RP budget and return an acknowledgement; unattuning removes dependent rules.
+
+**Hotbar tile states** (`client/src/hud/AbilityBar.tsx`, styles in `statusFeedback.css`). Each tile has one primary state, in priority order: *casting* (accent glow, filling sweep), *armed* (fast gold pulse plus an `ARMED` tag until the consuming hit lands — driven by `player-technique-armed` via `armedAbilityIdAtom`, never set for self-facing instants), *active* (a border ring in the slot accent that drains with the boon's remaining `durationPct`), *cooling* (desaturated, dark sweep, whole seconds), *ready*. The cooldown sweep is NOT suppressed while a Guard boon is active: the ring and the sweep are two clocks drawn together. A cooling → ready transition plays a one-shot glint. An armed Technique is never dimmed as "no target".
+
+**Buff-bar feedback** (`BuffBar.tsx` + `buffTransitions.ts`), loudness tiered quietest first: tiles pop in and fade out; a boon gaining stacks gets a gentle glow; the high-impact stacking debuffs (`SURGE_DEBUFF_IDS`: Heat, Chill, Rot, Frost, Sundered, Corroded plating) surge hot on every gained stack and their resting glow deepens with the count; a cleansed debuff shatters (white flash, burst ring, shards); `CRITICAL_BUFF_IDS` (Marked, Stunned, Frozen) sort to the front at a larger size with a permanent bright halo. Cleanse vs expiry comes from the server: `player-cleansed` is emitted by the Cleanse guard, Break Free and the passive cleanse pulse only when a stack actually came off, and the client attributes it to debuff tiles that shrank or vanished within 700 ms of it (`server/test/cleanseEvent.test.ts`).
 
 **Hotbar tile states** (`client/src/hud/AbilityBar.tsx`, styles in `statusFeedback.css`). Each tile has one primary state, in priority order: *casting* (accent glow, filling sweep), *armed* (fast gold pulse plus an `ARMED` tag until the consuming hit lands — driven by `player-technique-armed` via `armedAbilityIdAtom`, never set for self-facing instants), *active* (a border ring in the slot accent that drains with the boon's remaining `durationPct`), *cooling* (desaturated, dark sweep, whole seconds), *ready*. The cooldown sweep is NOT suppressed while a Guard boon is active: the ring and the sweep are two clocks drawn together. A cooling → ready transition plays a one-shot glint. An armed Technique is never dimmed as "no target".
 
@@ -732,12 +751,9 @@ authored rank itself.
   markedly Tempo-poorer than a 1 s-swing melee build — a tuning call for the eHP pass.
 - **T5+ ranks are not authored.** Every ability clamps at its last rank; the design rule is
   one bespoke authored upgrade per tier, never a resumption of percentage growth.
-- **Disengage's trigger needs a balance call.** `enemy-within: 90px` is an ABSOLUTE gap, so for a
-  melee build (attack range 12px) it is true whenever they are fighting at all — the ability would
-  fire every 8s and push them out of their own reach. Ranged builds read it correctly. The two
-  obvious fixes are making the threshold relative to the player's own reach (the way
-  `target-beyond-reach` already is) or gating it on incoming pressure; both are design calls, so the
-  authored seed was left as written.
+- **Disengage on melee builds.** Its default `Enemy in Contact` rule is true whenever a melee enemy
+  is on you, which for a melee build is the whole fight — it will push them out of their own reach
+  every 8s. That is now a visible wiring choice rather than a hidden trigger.
 - All numbers are first-pass seeds.
 
 ## Ability tags and equipment modifiers (2026-09-13)

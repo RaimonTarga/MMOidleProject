@@ -1,9 +1,10 @@
 /**
  * Ability auto-fire — the per-tick driver for equipped abilities.
  *
- * Each ability fires on its built-in trigger with ZERO runes equipped; a
- * `use-ability` Rune overrides the named ability's default timing. Custom rules
- * arbitrate in Rune order; remaining defaults follow attunement order.
+ * Abilities have no built-in trigger: one auto-fires only while a `use-ability`
+ * Rune rule naming it is active. Active rules arbitrate in Rune order. A few
+ * abilities additionally decline to fire when they would do nothing (see
+ * `autoFireGateOpen`) — those are execution gates, not triggers.
  *
  * Execution shapes:
  * - `armed`   — arms the next attack (`hasArmedAbility`); the rider lands in
@@ -20,7 +21,9 @@ import {
   ABILITY_CONTROL_RESIST_EFFECT_ID,
   ABILITY_DATABASE,
   ABILITY_FRENZY_EFFECT_ID,
+  CHARGE_MIN_GAP_PX,
   GAME_CONFIG,
+  abilityActsWhileControlled,
   abilityRankAt,
   applyStatusEffect,
   getCooldown,
@@ -35,7 +38,6 @@ import {
   resolveAbilityEffectWithPassives,
   setCooldown,
   type AbilityDef,
-  type AbilityTrigger,
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
 import type { PlayerEntity } from "../../../ecs/entity";
@@ -50,7 +52,7 @@ import { repositionPlayer } from "../../combat/damage/knockback";
 import { abilityCooldownKey, guardCooldownMs, startTechniqueCooldown } from "./abilityCooldowns";
 import { beginAbilityCast } from "./abilityCasting";
 import { applyBrambleGuard } from "./abilityBramble";
-import { abilityTarget, gapToTarget, nearestMonsterGap } from "./abilityTargeting";
+import { abilityTarget, gapToTarget } from "./abilityTargeting";
 import { armTechnique } from "./abilityArming";
 import { usesSummonTechniques } from "../../classes/archetypes/summoner/profile";
 import { formationChargeHasGap } from "./formationCharge";
@@ -70,9 +72,6 @@ const GUARD_WINDOW_KEY = "ability.guard.window";
 const GUARD_WINDOW_MS = 100; // one logic tick at 10 Hz
 
 interface FireContext {
-  inCombat: boolean;
-  hpPct: number;
-  aggroCount: number;
   hasHarmfulDebuff: boolean;
   hardControlled: boolean;
 }
@@ -99,24 +98,24 @@ export function updateAbilityFiring(world: World, now: number): void {
   for (const player of world.livePlayers) {
     updateQueuedAbilityUses(world, player, now);
 
-    // The Auto Combat toggle owns default/Rune ability activation. Fight Back is
+    // The Auto Combat toggle owns Rune ability activation. Fight Back is
     // the deliberate exception: while it temporarily owns travel combat, the
     // player behaves exactly as though Auto Combat were enabled. Manual hotbar
     // requests do not enter this driver and remain available in either state.
     if (!player.usesAutocombat.auto && !player.fightsWhileTraveling) continue;
     const equipped = player.tracksProgression.attunedAbilities;
     if (!equipped) continue;
-    const priority = getAbilityRuneTargets(player);
-    const ordered = (ids: string[]) => [...priority.filter(id => ids.includes(id)), ...ids.filter(id => !priority.includes(id))];
-    const techniques = ordered(equipped.techniques ?? []);
-    const guards = ordered(equipped.guards ?? []);
+    // Only abilities whose Rune rule is active this tick, in Rune order.
+    const active = getAbilityRuneTargets(player);
+    const techniques = active.filter(id => equipped.techniques?.includes(id));
+    const guards = active.filter(id => equipped.guards?.includes(id));
     if (techniques.length === 0 && guards.length === 0) continue;
 
-    const fctx = buildFireContext(world, player);
+    const fctx = buildFireContext(player);
 
     // Techniques share ONE offensive execution channel: at most one may be
-    // armed/casting at a time. Walk in loadout order — index 0 is the player's
-    // declared priority — and stop at the first one that CLAIMS the channel, so
+    // armed/casting at a time. Walk in Rune order — the player's declared
+    // priority — and stop at the first one that CLAIMS the channel, so
     // arbitration is deterministic when several rune conditions go valid at once.
     //
     // An `instant` Technique (Frenzy) is self-facing and claims nothing, so it
@@ -195,8 +194,8 @@ function attemptManualAbilityUse(
     return { success: false, reason: "Ability is not attuned.", retryable: false };
   }
 
-  const fctx = buildFireContext(world, player);
-  if (fctx.hardControlled && ability.trigger.kind !== "has-hard-control") {
+  const fctx = buildFireContext(player);
+  if (fctx.hardControlled && !abilityActsWhileControlled(ability)) {
     return { success: false, reason: "Cannot use that ability while controlled.", retryable: true };
   }
 
@@ -268,106 +267,36 @@ function removeQueuedAbility(
   }
 }
 
-function buildFireContext(world: World, player: PlayerEntity): FireContext {
-  // Formation Techniques are delivered by summons, so their active combat must
-  // satisfy the default trigger even when the owner has no direct attack target.
-  // Keep defensive aggro counts owner-only: summons taking hits is not pressure
-  // on the player's body for Bramble Guard.
-  const livingSummonIds = new Set<string>();
-  let summonsInCombat = false;
-  for (const id of player.summonsMinions?.minionIds ?? []) {
-    const minion = world.getMinionEntity(id);
-    if (!minion || minion.isMinion.ownerPlayerId !== player.isPlayer.id
-      || minion.hasHealth.hp <= 0
-      || minion.hasPosition.nodeId !== player.hasPosition.nodeId) continue;
-    livingSummonIds.add(id);
-    const targetId = minion.hasAttackTarget?.targetId;
-    const target = targetId ? world.getMonsterEntity(targetId) : undefined;
-    if (target && target.hasHealth.hp > 0
-      && target.hasPosition.nodeId === player.hasPosition.nodeId) summonsInCombat = true;
-  }
-  let aggroCount = 0;
-  for (const monster of world.aggroedMonsters) {
-    if (monster.hasAggroTarget.targetKind === "minion"
-      && livingSummonIds.has(monster.hasAggroTarget.targetId)
-      && monster.hasHealth.hp > 0
-      && monster.hasPosition.nodeId === player.hasPosition.nodeId) summonsInCombat = true;
-    if (
-      monster.hasAggroTarget.targetKind === "player" &&
-      monster.hasAggroTarget.targetId === player.isPlayer.id
-    ) {
-      aggroCount++;
-    }
-  }
-  const attackTargetId = player.hasAttackTarget?.targetId;
-  const inCombat =
-    (attackTargetId !== undefined && world.hasMonster(attackTargetId)) ||
-    aggroCount > 0 || summonsInCombat;
-  const hasHarmfulDebuff = player.tracksCombat.statusEffects.some(
-    (e) => e.stacks > 0 && isHarmfulPlayerStatusEffect(e.id, e.data),
-  );
+function buildFireContext(player: PlayerEntity): FireContext {
   return {
-    inCombat,
-    hpPct: player.hasHealth.hp / Math.max(1, player.hasHealth.maxHp),
-    aggroCount,
-    hasHarmfulDebuff,
+    hasHarmfulDebuff: player.tracksCombat.statusEffects.some(
+      (e) => e.stacks > 0 && isHarmfulPlayerStatusEffect(e.id, e.data),
+    ),
     hardControlled: isHardControlled(player.tracksCombat),
   };
 }
 
 /**
- * Evaluate a built-in trigger. `world`/`player`/`ability` are needed by the
- * spatial triggers, which ask about the ability's OWN reach rather than the
- * player's — that is what lets a gap-closer notice a gap it can actually close.
+ * Execution gates for AUTOMATIC firing. These are not triggers — a Rune rule
+ * decides WHEN — they only stop an ability spending its cooldown where it can
+ * do nothing. They ask about the ability's OWN reach rather than the player's.
  */
-function triggerActive(
-  trigger: AbilityTrigger,
-  fctx: FireContext,
+function autoFireGateOpen(
   world: World,
   player: PlayerEntity,
   ability: AbilityDef,
 ): boolean {
-  switch (trigger.kind) {
-    case "in-combat":
-      return fctx.inCombat;
-    case "hp-below":
-      return fctx.hpPct <= trigger.hpPct;
-    case "n-aggro":
-      return fctx.aggroCount >= trigger.count;
-    case "has-debuff":
-      return fctx.hasHarmfulDebuff;
-    case "has-hard-control":
-      return fctx.hardControlled;
-    case "target-beyond-reach": {
-      // There must be something inside the ABILITY's reach that is meaningfully
-      // outside the player's own. Firing a gap-closer at a target already in
-      // contact burns the cooldown for nothing, which is exactly what made
-      // Charge feel pointless.
-      const target = abilityTarget(world, player, ability);
-      if (!target) return false;
-      if (ability.shape === 'charge' && usesSummonTechniques(player)) {
-        return formationChargeHasGap(world, player, target, ability, trigger.minGapPx);
-      }
-      return gapToTarget(player, target) >= trigger.minGapPx;
+  if (ability.shape === "charge") {
+    // A gap-closer needs a gap: something inside the ABILITY's reach that is
+    // meaningfully outside the player's own.
+    const target = abilityTarget(world, player, ability);
+    if (!target) return false;
+    if (usesSummonTechniques(player)) {
+      return formationChargeHasGap(world, player, target, ability, CHARGE_MIN_GAP_PX);
     }
-    case "enemy-within": {
-      const gap = nearestMonsterGap(world, player);
-      return gap !== null && gap <= trigger.maxGapPx;
-    }
+    return gapToTarget(player, target) >= CHARGE_MIN_GAP_PX;
   }
-}
-
-/** Custom rules replace the authored default only for their named ability. */
-function shouldFire(
-  world: World,
-  player: PlayerEntity,
-  ability: AbilityDef,
-  fctx: FireContext,
-): boolean {
-  if (player.tracksProgression.runesEquipped.some(rule => rule.actionId === "use-ability" && rule.targetAbilityId === ability.id)) {
-    return getAbilityRuneTargets(player).includes(ability.id);
-  }
-  return triggerActive(ability.trigger, fctx, world, player, ability);
+  return true;
 }
 
 /** Returns true when the slot CLAIMED the shared offensive channel. */
@@ -395,7 +324,7 @@ function maybeFireTechnique(
   // is still waiting for a hit to consume it.
   if (ability.shape === "instant") {
     if (getCooldown(player.tracksCombat, cdKey) > 0) return DECLINED_TECHNIQUE;
-    if (!options.manual && !shouldFire(world, player, ability, fctx)) return DECLINED_TECHNIQUE;
+    if (!options.manual && !autoFireGateOpen(world, player, ability)) return DECLINED_TECHNIQUE;
     applyInstantTechnique(world, player, ability);
     recordAbilityActivation(world, player, abilityId, 'technique');
     startTechniqueCooldown(world, player, ability);
@@ -427,7 +356,7 @@ function maybeFireTechnique(
     player.isChargingAbility
   ) return CLAIMED_TECHNIQUE;
   if (getCooldown(player.tracksCombat, cdKey) > 0) return DECLINED_TECHNIQUE;
-  if (!options.manual && !shouldFire(world, player, ability, fctx)) return DECLINED_TECHNIQUE;
+  if (!options.manual && !autoFireGateOpen(world, player, ability)) return DECLINED_TECHNIQUE;
 
   // A cast pays its cooldown on RESOLVE, not on begin (see abilityCasting.ts),
   // so nothing is charged here.
@@ -572,9 +501,9 @@ function maybeFireGuard(
   if (getCooldown(player.tracksCombat, cdKey) > 0) return false;
   // One activation per decision window — ongoing buffs still overlap freely.
   if (getCooldown(player.tracksCombat, GUARD_WINDOW_KEY) > 0) return false;
-  if (fctx.hardControlled && ability.trigger.kind !== "has-hard-control") return false;
+  if (fctx.hardControlled && !abilityActsWhileControlled(ability)) return false;
   if (!guardEffectCanFire(player, ability, fctx)) return false;
-  if (!manual && !shouldFire(world, player, ability, fctx)) return false;
+  if (!manual && !autoFireGateOpen(world, player, ability)) return false;
 
   // Charm Guard-ability amplifiers. Only present while an amplifying charm is
   // equipped; they merge into passives via the equipment loop in stats.ts.

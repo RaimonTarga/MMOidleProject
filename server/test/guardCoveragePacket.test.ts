@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { GUARD_COVERAGE_CELLS } from '../bench/balance/guardCoverageSpec';
 import { DAY2_B } from '../bench/balance/day2Spec';
-import { runicPointLoadoutCost } from '@mmo-idle/shared';
+import { runicPointLoadoutCost, withReferenceAbilityWiring } from '@mmo-idle/shared';
 
 for (const c of GUARD_COVERAGE_CELLS) {
   const original = DAY2_B.find(x => x.id === c.referenceCaseId)!;
@@ -15,7 +15,7 @@ for (const c of GUARD_COVERAGE_CELLS) {
   assert.equal(c.range, 'close');
   assert.equal(c.upgradeLevel, 5);
   assert.equal(c.sourceObservationId, null);
-  const cost = (abilities: typeof expected) => runicPointLoadoutCost({ abilities, rules: c.runeRules!, stances: [c.stance!], rites: [] });
+  const cost = (abilities: typeof expected) => runicPointLoadoutCost({ abilities, rules: withReferenceAbilityWiring(c.runeRules!, abilities), stances: [c.stance!], rites: [] });
   assert.equal(cost(expected) - cost(original.abilities!), c.arm.endsWith('-endure') ? 6 : 0);
 }
 assert.equal(GUARD_COVERAGE_CELLS.filter(c => c.className === 'conduit').length, 16);

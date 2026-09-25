@@ -4,7 +4,7 @@ Runic Points reserve the active build: attuned abilities, attuned stances, Rune 
 
 ## State and authority
 
-`TracksProgression.attunedAbilities` contains ordered `techniques` and `guards` lists. These are semantic combat families, not capacity slots. Keeping their ordering preserves each family's default arbitration. `AbilityFamily` names that distinction; ability definitions retain `slot` as their family field to avoid unrelated changes to effect/scaling consumers.
+`TracksProgression.attunedAbilities` contains ordered `techniques` and `guards` lists. These are semantic combat families, not capacity slots. `AbilityFamily` names that distinction; ability definitions retain `slot` as their family field to avoid unrelated changes to effect/scaling consumers.
 
 `attunedStances` reserves learned postures. `equippedStances.default` selects an attuned posture or null. `activeStance` remains authoritative runtime state. Neutral needs no reservation.
 
@@ -22,9 +22,9 @@ These are balance seeds. No mechanic assumes the five-mastery step, and pricing 
 
 ## Execution
 
-A `use-ability` rule carries `targetAbilityId`. Any custom rule for an ability suppresses its authored default trigger even when no condition matches. Without custom rules the ability uses its existing default behavior at no extra logic cost.
+A `use-ability` rule carries `targetAbilityId`. Abilities have no built-in trigger: an ability auto-fires only while one of its rules is active, and is manual-only without one. Ability prices are net of their reference wiring (see [abilities](abilities-current-state.md#wiring-and-pricing)).
 
-Active custom targets are considered in Rune order, then remaining abilities in attunement order. Ordinary Techniques share one armed/cast/charge opportunity. Instant self-facing Techniques remain non-blocking and can activate even after an ordinary Technique claims that opportunity. Guards resolve at most one activation per 100 ms decision window; ongoing effects overlap. Cooldowns, interruption, ability targeting, ranks and damage mechanics are unchanged.
+Active targets are considered in Rune order. Ordinary Techniques share one armed/cast/charge opportunity. Instant self-facing Techniques remain non-blocking and can activate even after an ordinary Technique claims that opportunity. Guards resolve at most one activation per 100 ms decision window; ongoing effects overlap. Cooldowns, interruption, ability targeting, ranks and damage mechanics are unchanged.
 
 Guard effect and Recovery identities follow the authored ability, never its current list position. The existing effect IDs and Recovery storage keys are retained for their existing abilities.
 
@@ -42,7 +42,7 @@ Legacy bot/profile artifacts must be updated to the current contract before a ne
 
 The Rune board retains its priority tracks and condition/action editor, with named ability targets and Rune overrides. Attunement is managed in the dedicated Abilities and Stances tabs; the redundant inline sections and illustrative preview controls have been removed. The dialog no longer offers an expand-width toggle.
 
-Abilities use one compact learned collection without family headings, with attuned abilities sorted first and marked by green borders. Selecting an ability expands its current tier/rank numbers through the existing ability description formatter, including current bonuses and focus/hover explanations. Authored default behavior remains visible on collapsed entries. Selection and attunement have distinct visual states. Stances use equally sized crest cards with attuned choices sorted first, separate default and active indicators, and themed controls. The Abilities, Stances, Rites and Runes tabs share a colored, segmented RP bar and numerical legend for abilities, stances, logic, Rites and available capacity; this is presentation only, using the unchanged shared calculation.
+Abilities use one compact learned collection without family headings, with attuned abilities sorted first and marked by green borders. Selecting an ability expands its current tier/rank numbers through the existing ability description formatter, including current bonuses and focus/hover explanations. Collapsed entries show the ability's Rune timing, or that it is manual-only. Selection and attunement have distinct visual states. Stances use equally sized crest cards with attuned choices sorted first, separate default and active indicators, and themed controls. The Abilities, Stances, Rites and Runes tabs share a colored, segmented RP bar and numerical legend for abilities, stances, logic, Rites and available capacity; this is presentation only, using the unchanged shared calculation.
 
 Regression coverage includes shared pricing, migration/round trips, orphan handling, invalid targets, independent same-condition rules, unlimited family lengths within RP, default suppression, instant Technique behavior, Rune priority, server rejection, incremental repair, and client/server cost projection. Existing combat and progression suites continue to cover effects and acquisition.
 

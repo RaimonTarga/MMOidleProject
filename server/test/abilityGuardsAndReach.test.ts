@@ -32,7 +32,7 @@ import {
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { setAttackTarget } from "../src/systems/combat/ai/targeting";
-import { updateAbilityFiring } from "../src/systems/player/abilities/abilityFiring";
+import { fireWithReferenceWiring } from "./fixtures/abilityWiring";
 import {
   beginAbilityCast,
   holdsPositionWhileCasting,
@@ -140,7 +140,7 @@ initCombatSystems();
   paintDebuff(player.tracksCombat, "swamp-rot", 5);
   paintDebuff(player.tracksCombat, "antiheal", 2);
 
-  updateAbilityFiring(world, Date.now());
+  fireWithReferenceWiring(world, Date.now());
 
   const rot = getStatusEffect(player.tracksCombat, "swamp-rot");
   assert(!!rot && rot.stacks === 2, `deepest affliction should lose 3 stacks, got ${rot?.stacks}`);
@@ -170,7 +170,7 @@ initCombatSystems();
     "cleanse-idle",
   );
   player.usesAutocombat.auto = true;
-  updateAbilityFiring(world, Date.now());
+  fireWithReferenceWiring(world, Date.now());
   assert(
     !player.tracksCombat.cooldowns["ability.cd.cleanse"],
     "Cleanse must not fire with no eligible affliction",
@@ -191,7 +191,7 @@ initCombatSystems();
   syncPlayerControlLockout(world, player);
   assert(player.isRooted !== undefined, "the stun should have locked the player down");
 
-  updateAbilityFiring(world, Date.now());
+  fireWithReferenceWiring(world, Date.now());
 
   assert(
     !hasStatusEffect(player.tracksCombat, STUN_EFFECT),
@@ -226,7 +226,7 @@ initCombatSystems();
     "breakfree-idle",
   );
   player.usesAutocombat.auto = true;
-  updateAbilityFiring(world, Date.now());
+  fireWithReferenceWiring(world, Date.now());
   assert(
     player.tracksCombat.cooldowns["ability.cd.break-free"] === undefined,
     "Break Free must not fire when the player is not controlled",
@@ -247,7 +247,7 @@ initCombatSystems();
   setAttackTarget(world, player, target.isMonster.id);
 
   const baseCd = player.performsAttack.attackCooldown;
-  updateAbilityFiring(world, Date.now());
+  fireWithReferenceWiring(world, Date.now());
 
   const buff = getStatusEffect(player.tracksCombat, ABILITY_FRENZY_EFFECT_ID);
   assert(!!buff, "Frenzy should apply its attack-speed window");
@@ -311,12 +311,15 @@ initCombatSystems();
     "recovery-player",
   );
   player.usesAutocombat.auto = true;
-  player.hasHealth.hp = player.hasHealth.maxHp * 0.5;
+  player.hasHealth.hp = player.hasHealth.maxHp * 0.2;
+  // No fight here, so wire both Guards to Always rather than the In Combat default.
+  player.tracksProgression.runesEquipped = ["second-wind", "recuperate"].map(targetAbilityId =>
+    ({ conditionId: "always", actionId: "use-ability", targetAbilityId }));
 
   // One activation per decision window, so drive two windows.
-  updateAbilityFiring(world, Date.now());
+  fireWithReferenceWiring(world, Date.now());
   player.tracksCombat.cooldowns["ability.guard.window"] = 0;
-  updateAbilityFiring(world, Date.now());
+  fireWithReferenceWiring(world, Date.now());
 
   assert(
     !!getStatusEffect(player.tracksCombat, recoveryEffectIdForAbility("second-wind")),

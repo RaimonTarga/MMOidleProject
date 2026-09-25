@@ -10,7 +10,7 @@ import { refillBarrier } from '../../src/systems/defense/barrier/barrier';
 import { setAbilityLoadout } from '../../src/systems/player/economy/abilityCrafting';
 import type { World } from '../../src/world/World';
 import type { BuildSpec } from './types';
-import type { AttunedAbilities, EquippedRule } from '@mmo-idle/shared';
+import { withReferenceAbilityWiring, type AttunedAbilities, type EquippedRule } from '@mmo-idle/shared';
 
 export const SURVEY_CLASSES = [
   { name: 'striker', prefix: 'cadence', melee: true, weapons: ['flash-rapier','gale-needle','volcanic-cinderlash'] },
@@ -128,7 +128,7 @@ export function resolveSurveyPackage(cell: SurveyCell): ResolvedSurveyPackage {
   const stance = cell.tier >= 2 ? (cell.stance !== undefined ? cell.stance : 'offensive-stance') : null;
   // An EMPTY rule array is a real package (the legacy bench bot equips none) and is
   // honoured; only an omitted field falls through to the five-rule policy.
-  const runeRules = cell.runeRules ?? [
+  const authoredRules = cell.runeRules ?? [
     ...(cell.focusElites ? [{conditionId:'in-combat',actionId:'focus-elites'}] : []),
     { conditionId:'always', actionId:'auto-path-enemy' },
     { conditionId:'inside-telegraph', actionId:'step-back' },
@@ -140,6 +140,10 @@ export function resolveSurveyPackage(cell: SurveyCell): ResolvedSurveyPackage {
     techniques: [...(cell.tier >= 3 ? ['frenzy'] : []), cell.technique ?? 'sweep'],
     guards: cell.guards ?? (cell.tier === 1 ? ['second-wind'] : ['second-wind','cleanse']),
   };
+  // Abilities no longer carry built-in triggers. Every attuned ability the cell
+  // does not wire itself gets its reference Rune rule, so the bench keeps
+  // measuring the retired default timing at the same RP total.
+  const runeRules = withReferenceAbilityWiring(authoredRules, abilities);
   return {
     stance, abilities, runeRules, upgradeLevel: cell.upgradeLevel ?? 5,
     sources: {

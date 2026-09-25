@@ -492,8 +492,9 @@ w('{ conditionId: "always",         actionId: "wait-for-regen" }   // 1 RP');
 w("```");
 w();
 w("Step Back must precede Chase because both claim MOVEMENT. Avoid Hazards is a separate");
-w("PATHING channel. Second Wind and Cleanse use built-in triggers, so neither carries");
-w('`use-ability` targeting Brace. The Brace-tank A/B omits Step Back and equips that rule only with Brace.');
+w("PATHING channel. Abilities have no built-in trigger: `applyBuild` appends each attuned");
+w("ability's reference `use-ability` rule unless the route wires it. The Brace-tank A/B omits");
+w("Step Back and wires Brace to `target-casting` instead.");
 w();
 
 // ── Write ────────────────────────────────────────────────────────────────────

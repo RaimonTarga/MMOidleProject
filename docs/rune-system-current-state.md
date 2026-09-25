@@ -59,6 +59,8 @@ Conditions:
 - `when-idle` (shown as "Out of Combat")
 - `hp-below-25`
 - `in-party` (shown as "In A Party")
+- `controlled` (shown as "When Controlled") — stunned, locked down, frozen or rooted. Break Free's default wiring.
+- `enemy-contact` (shown as "Enemy in Contact") — a melee enemy (reach ≤ 100px) targeting you is within its reach + 10px. Disengage's default wiring.
 - `n-aggro-3` (shown as "Surrounded")
 - `target-casting` (shown as "Enemy Charging")
 - `target-max-stacks` (shown as "Fully Afflicted") — Technique channel only. Active while a
@@ -122,7 +124,7 @@ ruleCost = condition.cost + action.cost
 
 The shared RP budget covers attuned abilities, attuned stances, Rune rules and Rites. `runicPointLoadoutCost` is authoritative for all four. Capacity is seeded at `16 + floor(Global Mastery / 5)`; both constants and authored prices are easy to tune. See [Runic attunement](runic-attunement-current-state.md) for migration, over-budget preservation and editing rules.
 
-`use-ability` carries an attuned `targetAbilityId`; custom timing replaces only that ability's authored default. Active targets retain Rune priority, with combat arbitration deciding which can execute. Stance switching targets attuned postures and pays only logic, never the stance reservation again.
+`use-ability` carries an attuned `targetAbilityId`; it is the only way an ability auto-fires (abilities have no built-in trigger). Active targets retain Rune priority, with combat arbitration deciding which can execute. Stance switching targets attuned postures and pays only logic, never the stance reservation again.
 
 ## Rune Forge
 

@@ -23,7 +23,7 @@ import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { emitCombatEvent, makeCombatContext } from "../src/systems/combat/engine/combatPipeline";
 import { updateCombatState } from "../src/systems/combat/engine/combatState";
-import { updateAbilityFiring } from "../src/systems/player/abilities/abilityFiring";
+import { fireWithReferenceWiring } from "./fixtures/abilityWiring";
 import {
   BRAMBLE_EFFECT_ID,
   runBramblePlating,
@@ -111,7 +111,7 @@ const monsters = [0, 1, 2].map((i) => {
 
 const platingBefore = player.mitigatesDamage.plating;
 
-updateAbilityFiring(world, Date.now());
+fireWithReferenceWiring(world, Date.now());
 const effect = getStatusEffect(player.tracksCombat, BRAMBLE_EFFECT_ID);
 assert(!!effect, "Bramble Guard should apply its state when the n-aggro trigger fires");
 

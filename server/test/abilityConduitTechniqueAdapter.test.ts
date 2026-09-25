@@ -10,6 +10,7 @@ import {
   applyStatusEffect,
   getCooldown,
   getStatusEffect,
+  referenceAbilityRule,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
@@ -17,7 +18,7 @@ import { setAggroTarget, setAttackTarget } from '../src/systems/combat/ai/target
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { runFormationAttack } from '../src/systems/classes/archetypes/summoner/formationAttack';
 import { updateSummonerArchetype } from '../src/systems/classes/archetypes/summoner/summonerPrototype';
-import { updateAbilityFiring } from '../src/systems/player/abilities/abilityFiring';
+import { fireWithReferenceWiring, wireReferenceAbilities } from './fixtures/abilityWiring';
 import { updateAbilityCasts, updateAbilityCharges, cancelAbilityCast } from '../src/systems/player/abilities/abilityCasting';
 import { runPlayerAttack } from '../src/systems/combat/engine/combat';
 import { updateMovement } from '../src/systems/world/movement';
@@ -108,6 +109,7 @@ function setup(
   const world = new World();
   const player = world.attachPlayerEntity(slices(id, abilityId, tier, frame), id);
   player.usesAutocombat.auto = true;
+  wireReferenceAbilities(player);
   syncArchetypeSlices(world, player);
   player.dealsDamage.attack = 100;
   updateSummonerArchetype(world, 0, 1_000);
@@ -126,7 +128,7 @@ function armAgainst(world: World, playerId: string, targetId: string, now: numbe
   const minion = world.getMinionEntity(player.summonsMinions!.minionIds[0]!)!;
   assert(player.hasAttackTarget === undefined, 'owner must not need a direct attack target');
   setAttackTarget(world, minion, targetId);
-  updateAbilityFiring(world, now);
+  fireWithReferenceWiring(world, now);
   setAttackTarget(world, minion, null);
   assert(player.hasArmedAbility === undefined, 'Conduit should not retain the one-hit armed marker');
   assert(!!player.hasFormationTechnique, 'Conduit should arm a formation Technique state');
@@ -144,7 +146,7 @@ for (const state of ['idle', 'dead-minion', 'dead-target', 'other-node', 'foreig
   if (state === 'dead-target') target.hasHealth.hp = 0;
   if (state === 'other-node') target.hasPosition.nodeId = 'node-5-6';
   if (state === 'foreign-owner') minion.isMinion.ownerPlayerId = 'another-player';
-  updateAbilityFiring(world, 1_100);
+  fireWithReferenceWiring(world, 1_100);
   assert(!player.hasFormationTechnique && !player.hasArmedAbility, `${state} must not arm Sweep`);
 }
 
@@ -156,7 +158,7 @@ for (const state of ['idle', 'dead-minion', 'dead-target', 'other-node', 'foreig
     const target = createMonster(world, 650 + i * 20);
     setAggroTarget(world, target, { id: minions[0]!.entityId, kind: 'minion' }, 1_000);
   }
-  updateAbilityFiring(world, 1_100);
+  fireWithReferenceWiring(world, 1_100);
   assert(!!player.hasFormationTechnique, 'minion aggro must arm Sweep without an owner target');
   assert(!world.takeNodeEvents('node-5-5').some(event => event.kind === 'player-guard'),
     'minion aggro must not trigger an owner-pressure Guard');
@@ -170,7 +172,10 @@ for (const state of ['idle', 'dead-minion', 'dead-target', 'other-node', 'foreig
     minion.hasPosition.current = { x: 630, y: 400 };
     minion.performsAttack.lastAttackAt = -10_000;
   }
+  // The rune fold runs before summons acquire targets, so the Use Ability rule
+  // sees summon combat on the following tick.
   world.tick(100, 2_000);
+  world.tick(100, 2_100);
   assert(player.hasAttackTarget === undefined, 'ordinary Conduit must not attack directly');
   assert(!!player.hasFormationTechnique, 'real tick must arm Sweep from summon combat');
   assert(target.hasHealth.hp < target.hasHealth.maxHp, 'summons must actually be fighting');
@@ -367,16 +372,23 @@ for (const champion of [false, true]) for (const ability of ABILITY_DATABASE.val
   }
   setAttackTarget(world, minions[0]!, target.entityId);
   if (champion) setAttackTarget(world, player, target.entityId);
-  if (ability.trigger.kind === 'hp-below') player.hasHealth.hp = 200;
-  if (ability.trigger.kind === 'n-aggro') {
-    for (let i = 0; i < ability.trigger.count; i++) {
+  // Satisfy the ability's reference Rune condition (and Break Free's control gate).
+  const wiring = referenceAbilityRule(ability.id)!.conditionId;
+  // Guards need something to answer: missing HP for the Recovery Guards.
+  if (ability.slot === 'guard') player.hasHealth.hp = player.hasHealth.maxHp * 0.2;
+  if (wiring === 'enemy-contact') {
+    // The Disengage target sits at 480, within a melee enemy's reach of the owner.
+    setAggroTarget(world, target, { id: player.isPlayer.id, kind: 'player' }, 1_000);
+  }
+  if (wiring === 'n-aggro-3') {
+    for (let i = 0; i < 3; i++) {
       setAggroTarget(world, createMonster(world, 450 + i * 10),
         { id: player.isPlayer.id, kind: 'player' }, 1_000);
     }
   }
-  if (ability.trigger.kind === 'has-debuff' || ability.trigger.kind === 'has-hard-control') {
+  if (wiring === 'has-debuff' || ability.id === 'break-free') {
     applyStatusEffect(player.tracksCombat, {
-      id: ability.trigger.kind === 'has-hard-control' ? 'stunned' : 'slow',
+      id: ability.id === 'break-free' ? 'stunned' : 'slow',
       remainingMs: 5_000, maxStacks: 1, refreshable: true,
       sourceId: target.entityId, data: {},
     });
@@ -390,14 +402,14 @@ for (const champion of [false, true]) for (const ability of ABILITY_DATABASE.val
   }
   // Auto OFF must not activate any default, even with valid prerequisites.
   player.usesAutocombat.auto = false;
-  updateAbilityFiring(world, 1_100);
+  fireWithReferenceWiring(world, 1_100);
   assert(!takeWorldLogEvents(world, player.isPlayer.id).some(e => e.kind === 'ability-activation'),
     `${ability.id} must respect Auto OFF`);
   player.usesAutocombat.auto = true;
-  updateAbilityFiring(world, 1_200);
+  fireWithReferenceWiring(world, 1_200);
   assert(takeWorldLogEvents(world, player.isPlayer.id).some(e =>
     e.kind === 'ability-activation' && e.abilityId === ability.id),
-  `${ability.id} must activate on its default trigger for Summoner`);
+  `${ability.id} must activate on its reference wiring for Summoner`);
   if (player.isCastingAbility) {
     if (ability.shape === 'cast' && !champion) {
       assert(player.isCastingAbility.casterMinionId === minions[0]!.entityId,
@@ -458,11 +470,11 @@ for (const champion of [false, true]) for (const ability of ABILITY_DATABASE.val
   const target = createMonster(world, 650);
   minion.hasPosition.current = { x: 630, y: 400 };
   setAttackTarget(world, minion, target.entityId);
-  updateAbilityFiring(world, 1_100);
+  fireWithReferenceWiring(world, 1_100);
   assert(!player.isCastingAbility, 'Champion must wait for its own casting reach');
   player.hasPosition.current = { x: 630, y: 400 };
   setAttackTarget(world, player, target.entityId);
-  updateAbilityFiring(world, 1_200);
+  fireWithReferenceWiring(world, 1_200);
   assert(!!player.isCastingAbility && !player.isCastingAbility.casterMinionId,
     'Champion must cast from its own body once in reach');
 }
@@ -474,7 +486,7 @@ for (const champion of [false, true]) for (const ability of ABILITY_DATABASE.val
   const target = createMonster(world, 650);
   const ownerStart = { ...player.hasPosition.current };
   for (const m of minions) m.hasPosition.current = { x: 420, y: 400 };
-  updateAbilityFiring(world, 1_000);
+  fireWithReferenceWiring(world, 1_000);
   assert(!!player.isCastingAbility, 'Charge must begin its command wind-up');
   updateAbilityCasts(world, player.isCastingAbility!.endsAt);
   assert(player.hasFormationCharge?.pendingEntityIds.length === 4, 'all four summons must join Charge');
@@ -497,7 +509,7 @@ for (const interruption of ['expiry', 'owner-death', 'target-death', 'rooted-sum
   const { world, player, minions } = setup(`charge-cancel-${interruption}`, 'charge', 2);
   const target = createMonster(world, 650);
   for (const m of minions) m.hasPosition.current = { x: 420, y: 400 };
-  updateAbilityFiring(world, 1_000);
+  fireWithReferenceWiring(world, 1_000);
   updateAbilityCasts(world, player.isCastingAbility!.endsAt);
   const before = target.hasHealth.hp;
   if (interruption === 'owner-death') {
@@ -527,7 +539,7 @@ for (const loss of ['dead-caster', 'missing-caster', 'range', 'node', 'stun', 'd
     minion.performsAttack.lastAttackAt = -10_000;
     setAttackTarget(world, minion, target.entityId);
   }
-  updateAbilityFiring(world, 1_000);
+  fireWithReferenceWiring(world, 1_000);
   const castEnd = player.isCastingAbility!.endsAt;
   updateSummonerArchetype(world, 0, 1_100);
   assert(minions[0]!.performsAttack.lastAttackAt === 1_100, 'caster must hold its attack timer');
@@ -576,7 +588,7 @@ for (const loss of ['dead-caster', 'missing-caster', 'range', 'node', 'stun', 'd
     minion.performsAttack.lastAttackAt = 1_000;
   }
   updateSummonerArchetype(world, 0, 1_000);
-  updateAbilityFiring(world, 1_000);
+  fireWithReferenceWiring(world, 1_000);
   assert(!!getStatusEffect(player.tracksCombat, ABILITY_FRENZY_EFFECT_ID), 'Frenzy must activate');
   const baseCooldown = minions[0]!.performsAttack.attackCooldown;
   const hastedAttackAt = 1_000 + Math.ceil(baseCooldown * attackCadenceMult(player.tracksCombat));

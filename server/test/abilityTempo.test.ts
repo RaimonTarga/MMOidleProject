@@ -37,7 +37,7 @@ import { runMonsterAttack, runPlayerAttack } from "../src/systems/combat/engine/
 import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { abilityCooldownKey } from "../src/systems/player/abilities/abilityCooldowns";
 import { resolveCastPayload } from "../src/systems/player/abilities/abilityEffects";
-import { updateAbilityFiring } from "../src/systems/player/abilities/abilityFiring";
+import { fireWithReferenceWiring } from "./fixtures/abilityWiring";
 import { World } from "../src/world/World";
 import type { PlayerEntity } from "../src/ecs/entity";
 import type { CombatEvent } from "@mmo-idle/shared";
@@ -152,7 +152,7 @@ function cooldownSamples(
 /** Arm Sweep through the real firing driver, so the cooldown starts the real way. */
 function armSweep(world: World, player: PlayerEntity, targetId: string, now = 1_000): void {
   setAttackTarget(world, player, targetId);
-  updateAbilityFiring(world, now);
+  fireWithReferenceWiring(world, now);
 }
 
 function attack(world: World, player: PlayerEntity, target: ReturnType<typeof durableMonster>, now: number): string {

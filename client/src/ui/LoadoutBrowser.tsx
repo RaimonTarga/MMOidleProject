@@ -138,7 +138,7 @@ export function LoadoutBrowser({
                   {equippedBehavior?.(slot.currentId!)}
                   <DetailLines
                     className="loadout-detail__lines"
-                    lines={loadoutLinesFor(slot.currentId!, abilityContext).filter(line => !equippedBehavior || line.key !== 'ability:default-trigger')}
+                    lines={loadoutLinesFor(slot.currentId!, abilityContext)}
                   />
                   <button
                     type="button"

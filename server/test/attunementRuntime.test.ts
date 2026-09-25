@@ -7,7 +7,7 @@ import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { setAbilityLoadout } from "../src/systems/player/economy/abilityCrafting";
 import { setStanceLoadout } from "../src/systems/player/economy/stanceCrafting";
 import { updateRuneDerivedConfig } from "../src/systems/combat/ai/runeConfig";
-import { updateAbilityFiring } from "../src/systems/player/abilities/abilityFiring";
+import { fireWithReferenceWiring } from "./fixtures/abilityWiring";
 import { setAttackTarget } from "../src/systems/combat/ai/targeting";
 function assert(value: unknown, message: string): asserts value { if (!value) throw new Error(message); }
 function makePlayerSlices(): PersistedPlayerSlices {
@@ -93,8 +93,8 @@ assert(enemy, "monster fixture");
 setAttackTarget(world, player, enemy.isMonster.id);
 player.tracksProgression.runesEquipped = [{ conditionId: "before-empowered", actionId: "use-ability", targetAbilityId: "sweep" }];
 updateRuneDerivedConfig(world, 1000);
-updateAbilityFiring(world, 1000);
-assert(player.isCastingAbility?.abilityId === "power-strike", "custom override must suppress Sweep default while later default Technique runs");
+fireWithReferenceWiring(world, 1000);
+assert(player.isCastingAbility?.abilityId === "power-strike", "an ability with its own rule must not also get reference wiring, while a later wired Technique runs");
 assert(getStatusEffect(player.tracksCombat, "ability-frenzy"), "instant Technique must fire behind a claimed offensive opportunity");
 world.ecs.removeComponent(player, "isCastingAbility");
 player.tracksProgression.runesEquipped = [
@@ -102,8 +102,10 @@ player.tracksProgression.runesEquipped = [
  { conditionId: "in-combat", actionId: "use-ability", targetAbilityId: "sweep" },
 ];
 updateRuneDerivedConfig(world, 1100);
-updateAbilityFiring(world, 1100);
-assert(player.isCastingAbility?.abilityId === "power-strike", "Rune order must precede default attunement order");
+fireWithReferenceWiring(world, 1100);
+assert(player.isCastingAbility?.abilityId === "power-strike", "Rune order decides arbitration, not attunement order");
+// Drop the reference wiring the helper added; keep only the two explicit rules.
+player.tracksProgression.runesEquipped = player.tracksProgression.runesEquipped.slice(0, 2);
 assert(setAbilityLoadout(world, player, { ...many, techniques: ["sweep"] }).success, "unattune failed");
 assert(player.tracksProgression.runesEquipped.length === 1 && player.tracksProgression.runesEquipped[0].targetAbilityId === "sweep", "unattuning must clear only dependent rules");
 player.tracksProgression.biomeLevel = {};

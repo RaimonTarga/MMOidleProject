@@ -29,7 +29,7 @@ import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { updateCombatState } from "../src/systems/combat/engine/combatState";
 import { runMonsterAttack, runPlayerAttack } from "../src/systems/combat/engine/combat";
 import { setAttackTarget } from "../src/systems/combat/ai/targeting";
-import { updateAbilityFiring } from "../src/systems/player/abilities/abilityFiring";
+import { fireWithReferenceWiring } from "./fixtures/abilityWiring";
 import {
   applyMonsterRoot,
   applyMonsterSlow,
@@ -116,7 +116,7 @@ initCombatSystems();
   const def = MONSTER_DATABASE.get(target.isMonster.monsterTypeId)!;
   const baseSpeed = def.stats.speed;
 
-  updateAbilityFiring(world, Date.now());
+  fireWithReferenceWiring(world, Date.now());
   assert(
     player.hasArmedAbility?.abilityId === "hamstring",
     "Hamstring should arm the next attack",
@@ -179,7 +179,7 @@ initCombatSystems();
   if (!target) throw new Error("failed to create target");
   setAttackTarget(world, player, target.isMonster.id);
 
-  updateAbilityFiring(world, Date.now());
+  fireWithReferenceWiring(world, Date.now());
   runPlayerAttack(world, player, target, 1_000, {
     attackOrigin: player.hasPosition.current,
     aggroSource: { id: player.isPlayer.id, kind: "player" },

@@ -24,7 +24,7 @@ import {
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { setAttackTarget } from "../src/systems/combat/ai/targeting";
-import { updateAbilityFiring } from "../src/systems/player/abilities/abilityFiring";
+import { fireWithReferenceWiring } from "./fixtures/abilityWiring";
 import { abilityCooldownKey } from "../src/systems/player/abilities/abilityCooldowns";
 import { updateCombatState } from "../src/systems/combat/engine/combatState";
 import { World } from "../src/world/World";
@@ -42,8 +42,8 @@ function makePlayerSlices(): PersistedPlayerSlices {
       speed: GAME_CONFIG.PLAYER_SPEED,
     },
     hasHealth: {
-      // Below Brace's hp-below 0.5 trigger so both Guards want to fire.
-      hp: Math.round(GAME_CONFIG.PLAYER_MAX_HP * 0.4),
+      // Below the Guards' HP Below 25% wiring so both want to fire.
+      hp: Math.round(GAME_CONFIG.PLAYER_MAX_HP * 0.2),
       maxHp: GAME_CONFIG.PLAYER_MAX_HP,
       recovery: GAME_CONFIG.PLAYER_RECOVERY,
     },
@@ -131,8 +131,8 @@ if (!target) throw new Error("failed to create target");
 setAttackTarget(world, player, target.isMonster.id);
 
 // Both Guards must WANT to fire, or "the second didn't fire" proves nothing about
-// the activation window. Brace and Endure both trigger on hp-below (the fixture
-// is already at 40%), and both grant a per-slot DR buff, so the two slots are
+// the activation window. Brace and Endure are both wired to HP Below 25% (the fixture
+// is already at 20%), and both grant a per-slot DR buff, so the two slots are
 // directly comparable. A debuff is painted on as well so the harmful-status path
 // stays exercised.
 applyStatusEffect(player.tracksCombat, {
@@ -144,7 +144,7 @@ applyStatusEffect(player.tracksCombat, {
   data: { totalMs: 60_000 },
 });
 
-updateAbilityFiring(world, Date.now());
+fireWithReferenceWiring(world, Date.now());
 assert(
   player.hasArmedAbility?.abilityId === "sweep",
   "the FIRST Technique in loadout order should win arbitration",
@@ -155,7 +155,7 @@ assert(
 );
 
 // Still armed: the second Technique must not also arm on top of it.
-updateAbilityFiring(world, Date.now());
+fireWithReferenceWiring(world, Date.now());
 assert(
   player.hasArmedAbility?.abilityId === "sweep",
   "a second Technique must never stack on top of an already-armed one",
@@ -163,7 +163,7 @@ assert(
 
 // Consume the charge; Sweep is now cooling, so the second Technique gets its turn.
 world.ecs.removeComponent(player, "hasArmedAbility");
-updateAbilityFiring(world, Date.now());
+fireWithReferenceWiring(world, Date.now());
 assert(
   player.hasArmedAbility?.abilityId === "expose-weakness",
   "once the first Technique is cooling, the second should arm",
@@ -180,7 +180,7 @@ assert(
 
 // Next window: the second Guard is free to activate, and both layer.
 updateCombatState(world, 100);
-updateAbilityFiring(world, Date.now());
+fireWithReferenceWiring(world, Date.now());
 const guard1After = getStatusEffect(player.tracksCombat, guardEffectIdForAbility("endure"));
 assert(
   !!guard1After,

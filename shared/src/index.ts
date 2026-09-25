@@ -11,6 +11,7 @@ export * from './runicPoints';
 export * from './data/runeTuning';
 export * from './runeRecipes';
 export * from './abilities';
+export * from './abilityWiring';
 export * from './abilityRecipes';
 export * from './stances';
 export * from './stanceRecipes';

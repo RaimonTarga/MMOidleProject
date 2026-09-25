@@ -78,37 +78,40 @@ export type AbilityShape =
   | "reposition"
   | "instant";
 
-/**
- * Built-in auto-fire trigger (the default heuristic). Abilities fire on this with
- * zero runes equipped. A `use-ability` rule overrides the named ability's timing;
- * its default trigger is suppressed while any custom rule targets it.
+/*
+ * TIMING IS WIRED, NOT BUILT IN. An ability has no trigger of its own: it fires
+ * automatically only while a `use-ability` Rune rule naming it is active (or when
+ * the player presses it). Each `attunementCost` is priced net of that rule — see
+ * `referenceAbilityRule` in `abilityWiring.ts` — so an ability plus the wiring
+ * that reproduces its old default costs what the ability alone used to.
+ *
+ * What remains here are EXECUTION GATES, not triggers: whatever rule fires them,
+ * a few abilities decline to spend their cooldown on nothing (Cleanse with no
+ * debuff, Break Free with no hard control on you, Charge with no gap to close).
  */
-export type AbilityTrigger =
-  /** Technique: arm whenever in combat with a live target (and off cooldown). */
-  | { kind: "in-combat" }
-  /** Guard: fire when HP fraction is at/below `hpPct` (0..1) and off cooldown. */
-  | { kind: "hp-below"; hpPct: number }
-  /** Guard: fire when `count`+ enemies are aggroed onto the player (off cooldown). */
-  | { kind: "n-aggro"; count: number }
-  /** Guard: fire when the player carries a harmful debuff/DoT (and off cooldown). */
-  | { kind: "has-debuff" }
-  /**
-   * Guard: fire while the player is HARD-CONTROLLED (stun / lockdown). Break
-   * Free's whole point, and the reason ability execution has an explicit
-   * exception to the "you cannot act while stunned" rule.
-   */
-  | { kind: "has-hard-control" }
-  /**
-   * Technique: fire when the engageable target sits at least `minGapPx` beyond
-   * the player's normal reach — the gap-closer's "there is actually a gap to
-   * close" test. Without it Charge burns its cooldown while already adjacent.
-   */
-  | { kind: "target-beyond-reach"; minGapPx: number }
-  /**
-   * Technique: fire when an enemy is within `maxGapPx` of the player — the
-   * disengage/spacing test.
-   */
-  | { kind: "enemy-within"; maxGapPx: number };
+
+/**
+ * Charge declines to auto-fire unless its target sits at least this far
+ * (edge-to-edge px) beyond contact. Firing a gap-closer while already adjacent
+ * burns the cooldown for nothing.
+ */
+export const CHARGE_MIN_GAP_PX = 70;
+
+/**
+ * A backward reposition (Disengage) may select a threat within this gap even
+ * outside a short-range character's own reach, so it can pick the enemy it is
+ * escaping. WHEN it fires is the `Enemy in Contact` condition's job.
+ */
+export const DISENGAGE_MAX_GAP_PX = 90;
+
+/**
+ * True for the one ability that may execute WHILE the player is hard-controlled
+ * — Break Free's whole point, and the explicit exception to "you cannot act
+ * while stunned".
+ */
+export function abilityActsWhileControlled(ability: AbilityDef): boolean {
+  return ability.ranks[0].effect.kind === "break-free";
+}
 
 /**
  * What an ability does when it fires.
@@ -232,7 +235,10 @@ export interface AbilityRank {
 export interface AbilityDef {
   id: string;
   name: string;
-  /** Fixed RP reservation, independent of rank and tier. */
+  /**
+   * Fixed RP reservation, independent of rank and tier. Priced net of the Rune
+   * rule that wires it (see `referenceAbilityRule`).
+   */
   attunementCost: number;
   slot: AbilityFamily;
   /** How the server executes it. */
@@ -246,8 +252,6 @@ export interface AbilityDef {
    * predecessor, so unlike gear lineages there is no consume/reconstruct here.
    */
   lineageId?: string;
-  /** Built-in auto-fire heuristic (runes can override by ability ID). */
-  trigger: AbilityTrigger;
   /**
    * Authored ranks, `ranks[0]` = home tier. Never empty. Ranks past the last
    * authored one clamp: an ability simply stops deepening until T5+ is designed.
@@ -537,7 +541,7 @@ const abilities: AbilityDef[] = [
   // decision space before adding a single new verb.
   {
     id: "sweep",
-    attunementCost: 6,
+    attunementCost: 4,
     name: "Sweep",
     slot: "technique",
     shape: "armed",
@@ -545,7 +549,6 @@ const abilities: AbilityDef[] = [
     blurb: "Arms your next attack to cleave nearby enemies.",
     tier: 1,
     lineageId: "sweep",
-    trigger: { kind: "in-combat" },
     icon: "sweep",
     // Splash has an intuitive ceiling: 100% means a secondary target receives a
     // full-strength copy of the payload. Once T3 reaches it there is nowhere
@@ -583,14 +586,13 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "second-wind",
-    attunementCost: 6,
+    attunementCost: 4,
     name: "Second Wind",
     slot: "guard",
     shape: "instant",
     tags: ["recovery"],
     blurb: "Catch your breath, sharply raising your recovery rate for a few seconds.",
     tier: 1,
-    trigger: { kind: "hp-below", hpPct: 0.6 },
     icon: "second-wind",
     // The STRONG/SHORT half of the Recovery pair (Recuperate is weak/long).
     // At base Recovery 10, rank I restores ~20% of max HP over the window and
@@ -604,14 +606,13 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "cleanse",
-    attunementCost: 3,
+    attunementCost: 1,
     name: "Cleanse",
     slot: "guard",
     shape: "instant",
     tags: ["cleanse"],
     blurb: "Purge the worst of what is eating you — stacks first, then a second affliction.",
     tier: 1,
-    trigger: { kind: "has-debuff" },
     icon: "cleanse",
     // DISCRETE progression: stacks, then breadth, then stacks again. Never run
     // these counts through a percentage multiplier and round. Cleanse carries no
@@ -625,14 +626,13 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "brace",
-    attunementCost: 5,
+    attunementCost: 3,
     name: "Brace",
     slot: "guard",
     shape: "instant",
     tags: ["mitigation"],
     blurb: "Brace for impact — heavy mitigation and footing, for a moment.",
     tier: 1,
-    trigger: { kind: "hp-below", hpPct: 0.5 },
     icon: "brace",
     // The BURST mitigation Guard: high DR, short window. DR approaches a safe
     // ceiling and then stops — later ranks buy duration and knockback footing
@@ -658,14 +658,13 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "power-strike",
-    attunementCost: 6,
+    attunementCost: 4,
     name: "Power Strike",
     slot: "technique",
     shape: "cast",
     tags: [],
     blurb: "Wind up a devastating blow. You stop attacking while it charges — and hard control breaks it.",
     tier: 1,
-    trigger: { kind: "in-combat" },
     icon: "power-strike",
     // THE REFERENCE ALL-DAMAGE CAST. Every other cast Technique spends part of
     // its budget on range or control and must therefore deal less than this at
@@ -680,14 +679,13 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "expose-weakness",
-    attunementCost: 7,
+    attunementCost: 5,
     name: "Expose Weakness",
     slot: "technique",
     shape: "armed",
     tags: [],
     blurb: "Arms your next attack to expose the target, increasing all damage it takes.",
     tier: 1,
-    trigger: { kind: "in-combat" },
     icon: "expose-weakness",
     // Vulnerability is capped EARLY and deliberately: a multiplicative
     // damage-taken effect scales with the whole build and with every other
@@ -703,14 +701,13 @@ const abilities: AbilityDef[] = [
   // ── T2: positioning, soft control, sustained mitigation ────────────────────
   {
     id: "hamstring",
-    attunementCost: 4,
+    attunementCost: 2,
     name: "Hamstring",
     slot: "technique",
     shape: "armed",
     tags: ["control"],
     blurb: "Arms your next attack to cripple the target's stride.",
     tier: 2,
-    trigger: { kind: "in-combat" },
     icon: "hamstring",
     // Rung one of the control ladder: movement slowed, actions untouched. The
     // control eats most of the power budget, which is why the damage rider sits
@@ -723,16 +720,13 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "bramble-guard",
-    attunementCost: 5,
+    attunementCost: 2,
     name: "Bramble Guard",
     slot: "guard",
     shape: "instant",
     tags: ["mitigation"],
     blurb: "Harden your skin with thorns — gain armor and injure attackers who strike you.",
     tier: 2,
-    // Jungle is the high-density biome: the answer to being hit OFTEN is to make
-    // each of those hits cost the attacker something.
-    trigger: { kind: "n-aggro", count: 3 },
     icon: "bramble-guard",
     ranks: [
       { effect: { kind: "bramble", platingBonus: 6, reflectFlat: 6, durationMs: 5000 }, cooldownMs: 12000 },
@@ -742,17 +736,13 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "charge",
-    attunementCost: 4,
+    attunementCost: 3,
     name: "Charge",
     slot: "technique",
     shape: "charge",
     tags: ["mobility"],
     blurb: "Wind up, then surge across the gap and land the next blow with the weight of the rush.",
     tier: 2,
-    // The gap-closer only fires when there is a gap. Paired with `rangeBonus`,
-    // this is what makes Charge a real tool: it engages a target it could not
-    // otherwise reach, closes the distance, and lands the empowered blow.
-    trigger: { kind: "target-beyond-reach", minGapPx: 70 },
     icon: "charge",
     // Distance never scales — the movement itself is part of the budget, and a
     // longer dash is not a "deeper" ability. Ranks buy the strike rider, then
@@ -786,14 +776,13 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "endure",
-    attunementCost: 6,
+    attunementCost: 4,
     name: "Endure",
     slot: "guard",
     shape: "instant",
     tags: ["mitigation"],
     blurb: "Set your jaw and take it — modest mitigation, held for a long while.",
     tier: 2,
-    trigger: { kind: "hp-below", hpPct: 0.7 },
     icon: "endure",
     // The deliberate counterpart to Brace: lower mitigation, much longer window.
     // The two must stay recognisably different, so Endure's ranks buy duration,
@@ -807,7 +796,7 @@ const abilities: AbilityDef[] = [
 
   {
     id: "contagion",
-    attunementCost: 7,
+    attunementCost: 5,
     name: "Contagion",
     slot: "technique",
     shape: "cast",
@@ -816,7 +805,6 @@ const abilities: AbilityDef[] = [
       "Cast the target's afflictions outward — every burn, poison and frost you put on it takes hold in the enemies around it.",
     tier: 2,
     lineageId: "affliction",
-    trigger: { kind: "in-combat" },
     icon: "contagion",
     // NOT called "Spread": the rune catalog already ships an action displayed as
     // "Spread DoTs" (the Multidot targeting behavior), and two unrelated things
@@ -842,7 +830,7 @@ const abilities: AbilityDef[] = [
 
   {
     id: "slam",
-    attunementCost: 6,
+    attunementCost: 4,
     name: "Slam",
     slot: "technique",
     shape: "cast",
@@ -851,7 +839,6 @@ const abilities: AbilityDef[] = [
       "Wind up and drive the blow into the ground, striking everything around the impact. You stop attacking while it charges — and hard control breaks it.",
     tier: 2,
     lineageId: "slam",
-    trigger: { kind: "in-combat" },
     icon: "slam",
     // POWER STRIKE'S AoE COUNTERPART, NOT ITS REPLACEMENT. Both stay learnable,
     // attunable and useful at the same time; the RP budget is the only thing
@@ -886,14 +873,13 @@ const abilities: AbilityDef[] = [
   // ── T3: tempo, and hard movement/control counterplay ───────────────────────
   {
     id: "binding-strike",
-    attunementCost: 4,
+    attunementCost: 2,
     name: "Binding Strike",
     slot: "technique",
     shape: "armed",
     tags: ["control"],
     blurb: "Arms your next attack to pin the target where it stands.",
     tier: 3,
-    trigger: { kind: "in-combat" },
     icon: "binding-strike",
     // Rung two of the ladder. Root stops MOVEMENT only: a rooted monster still
     // swings at anything already in its reach. That is what keeps root
@@ -905,17 +891,13 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "break-free",
-    attunementCost: 3,
+    attunementCost: 1,
     name: "Break Free",
     slot: "guard",
     shape: "instant",
     tags: ["cleanse", "control"],
     blurb: "Tear yourself out of whatever is holding you — and shrug off the next attempt.",
     tier: 3,
-    // The one trigger that must fire WHILE the player is locked down. Ordinary
-    // ability execution is not blocked by stun, but this is the trigger that
-    // depends on it.
-    trigger: { kind: "has-hard-control" },
     icon: "break-free",
     // Deliberately situational. It should be extremely valuable in control-heavy
     // content without making that content mathematically impossible without it.
@@ -926,14 +908,13 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "frenzy",
-    attunementCost: 6,
+    attunementCost: 4,
     name: "Frenzy",
     slot: "technique",
     shape: "instant",
     tags: ["offensive-buff"],
     blurb: "Cut loose — your hands move faster for a few furious seconds.",
     tier: 3,
-    trigger: { kind: "in-combat" },
     icon: "frenzy",
     // ATTACK SPEED ONLY. No damage, no crit, no on-hit, no movement. Attack speed
     // already interacts with every class engine — basic attacks, on-hit procs,
@@ -945,14 +926,13 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "quick-strike",
-    attunementCost: 5,
+    attunementCost: 3,
     name: "Quick Strike",
     slot: "technique",
     shape: "armed",
     tags: [],
     blurb: "A small, fast opening — nothing special, and always ready.",
     tier: 3,
-    trigger: { kind: "in-combat" },
     icon: "quick-strike",
     // The "spam skill" archetype, deliberately much weaker per activation than a
     // normal Technique. Its value is FREQUENCY, which is what makes it the build
@@ -964,7 +944,7 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "detonate",
-    attunementCost: 6,
+    attunementCost: 4,
     name: "Detonate",
     slot: "technique",
     shape: "cast",
@@ -973,7 +953,6 @@ const abilities: AbilityDef[] = [
       "Rip every affliction off the target at once, dealing all the damage they had left to give — and then some.",
     tier: 3,
     lineageId: "affliction",
-    trigger: { kind: "in-combat" },
     icon: "detonate",
     // The long cooldown is the whole design. Detonate converts patience into a
     // burst, so it must not be available for every ramp — otherwise a DoT build
@@ -994,14 +973,13 @@ const abilities: AbilityDef[] = [
   // T5+ must give each of them a bespoke upgrade, not resume percentage growth.
   {
     id: "disengage",
-    attunementCost: 3,
+    attunementCost: 1,
     name: "Disengage",
     slot: "technique",
     shape: "reposition",
     tags: ["mobility"],
     blurb: "Break contact and buy yourself the room to keep fighting.",
     tier: 4,
-    trigger: { kind: "enemy-within", maxGapPx: 90 },
     icon: "disengage",
     // A Technique because its tactical purpose is to preserve offensive
     // spacing/range — not because every Technique must deal damage. The
@@ -1012,14 +990,13 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "recuperate",
-    attunementCost: 6,
+    attunementCost: 4,
     name: "Recuperate",
     slot: "guard",
     shape: "instant",
     tags: ["recovery"],
     blurb: "Settle into a long, steady mend that outlasts the fight's worst stretch.",
     tier: 4,
-    trigger: { kind: "hp-below", hpPct: 0.7 },
     icon: "recuperate",
     // The WEAK/LONG half of the Recovery pair. Scales from Recovery and Recovery
     // Skill Potency; never from offense.
@@ -1029,14 +1006,13 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "snipe",
-    attunementCost: 5,
+    attunementCost: 3,
     name: "Snipe",
     slot: "technique",
     shape: "cast",
     tags: [],
     blurb: "Line up a deliberate shot from far outside your usual reach.",
     tier: 4,
-    trigger: { kind: "in-combat" },
     icon: "snipe",
     // Less damage than Power Strike IV on purpose: part of the budget is spent on
     // extraordinary range. `rangeBonus` extends the ABILITY only, so a melee
@@ -1052,14 +1028,13 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "stunning-strike",
-    attunementCost: 6,
+    attunementCost: 4,
     name: "Stunning Strike",
     slot: "technique",
     shape: "cast",
     tags: ["control"],
     blurb: "A committed blow that puts the target on the floor.",
     tier: 4,
-    trigger: { kind: "in-combat" },
     icon: "stunning-strike",
     // Rung three of the ladder — movement AND actions stopped. The strongest
     // early control, so it pays in cast commitment, a long cooldown, and less
@@ -1074,7 +1049,7 @@ const abilities: AbilityDef[] = [
   },
   {
     id: "imbue-lightning",
-    attunementCost: 6,
+    attunementCost: 4,
     name: "Imbue Lightning",
     slot: "technique",
     shape: "self-cast",
@@ -1083,7 +1058,6 @@ const abilities: AbilityDef[] = [
       "Call the storm into your hands. Your next few strikes land with it — however long they take to land.",
     tier: 4,
     lineageId: "imbue",
-    trigger: { kind: "in-combat" },
     icon: "imbue-lightning",
     // The first `self-cast`, and the first CHARGE-based window in the roster.
     //

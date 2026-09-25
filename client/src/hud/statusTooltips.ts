@@ -172,7 +172,6 @@ export function abilityTooltipContent(
   // so it is dropped rather than said twice.
   const rows: TooltipRow[] = abilityLines(ability, context)
     .filter((line) => line.key !== 'ability:rank'
-      && line.key !== 'ability:default-trigger'
       && !line.key.startsWith('ability:class-specific:'))
     .map((line) => ({
       key: line.key,
@@ -214,9 +213,9 @@ export function abilityTooltipContent(
       value: line.text,
     })),
     current,
-    // Trigger and shape are the two sentences a player needs to predict WHEN it
-    // goes off — abilities are automatic, so that is the only control they have.
-    footnote: `Default behavior: ${described.trigger} ${runtime.runeTiming ? `${runtime.runeTiming} ` : ''}${described.shape}`,
+    // Rune timing and shape are the two sentences a player needs to predict WHEN
+    // it goes off — an ability fires on its own only through a Rune rule.
+    footnote: `${runtime.runeTiming ? `${runtime.runeTiming} ` : ''}${described.shape}`,
   };
 }
 

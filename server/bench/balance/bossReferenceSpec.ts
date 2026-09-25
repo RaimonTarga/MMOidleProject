@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {
   DUNGEON_DEFS, MONSTER_DATABASE, NODE_BIOMES,
   runicPointLoadoutCost, runeBudgetForGlobalMastery,
-  type AttunedAbilities,
+  type AttunedAbilities, withReferenceAbilityWiring,
 } from '@mmo-idle/shared';
 import { enumerateBuildsForContentTier } from './progression';
 import { canonicalLoadout } from './botFactory';
@@ -167,7 +167,7 @@ export function installBossReferenceTreatment(): null { return null; }
 /** RP cost of a case, on the same budget the bot actually has. */
 export function bossReferenceRpCost(c: Night5Cell): number {
   return runicPointLoadoutCost({
-    rules: (c.runeRules ?? []) as never,
+    rules: withReferenceAbilityWiring((c.runeRules ?? []) as never, c.abilities!),
     abilities: c.abilities!,
     stances: c.stance ? [c.stance] : [],
     rites: [],

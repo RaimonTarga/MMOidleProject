@@ -16,7 +16,6 @@ function DetailRow({ line, explain }: { line: DetailLine; explain?: boolean }) {
   const { handlers, node } = useHoverTooltip(line.help);
   const classes = [
     'detail-line',
-    line.key === 'ability:default-trigger' ? 'detail-line--behavior' : '',
     line.key.startsWith('ability:class-specific:') ? 'detail-line--class-specific' : '',
     line.help ? 'detail-line--help' : '',
     line.good === false ? 'detail-line--down' : '',

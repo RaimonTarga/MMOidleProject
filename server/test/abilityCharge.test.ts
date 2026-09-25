@@ -22,7 +22,7 @@ import {
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { setAttackTarget } from "../src/systems/combat/ai/targeting";
-import { updateAbilityFiring } from "../src/systems/player/abilities/abilityFiring";
+import { fireWithReferenceWiring, wireReferenceAbilities } from "./fixtures/abilityWiring";
 import { updateAbilityCasts, updateAbilityCharges } from "../src/systems/player/abilities/abilityCasting";
 import { abilityCooldownKey } from "../src/systems/player/abilities/abilityCooldowns";
 import { updateMovement } from "../src/systems/world/movement";
@@ -105,7 +105,7 @@ setAttackTarget(world, player, target.isMonster.id);
 
 const distBefore = distanceSq(player.hasPosition.current, target.hasPosition.current);
 const t0 = 1_000_000;
-updateAbilityFiring(world, t0);
+fireWithReferenceWiring(world, t0);
 
 assert(
   player.isCastingAbility?.abilityId === "charge",
@@ -158,6 +158,7 @@ const wiredPlayer = wiredWorld.attachPlayerEntity(
   "charge-wired-player",
 );
 wiredPlayer.usesAutocombat.auto = true;
+wireReferenceAbilities(wiredPlayer);
 const wiredTarget = wiredWorld.createMonster("node-5-5", "plains-slime", { x: 360, y: 400 });
 if (!wiredTarget) throw new Error("failed to create wired Charge target");
 setAttackTarget(wiredWorld, wiredPlayer, wiredTarget.isMonster.id);
@@ -186,7 +187,7 @@ const bystander = world2.createMonster("node-5-5", "plains-slime", { x: 1400, y:
 if (!bystander) throw new Error("failed to create bystander");
 
 const posBefore = { ...player2.hasPosition.current };
-updateAbilityFiring(world2, Date.now());
+fireWithReferenceWiring(world2, Date.now());
 
 assert(
   player2.hasPosition.current.x === posBefore.x &&
@@ -213,7 +214,7 @@ const adjacent = world3.createMonster("node-5-5", "plains-slime", { x: 215, y: 4
 if (!adjacent) throw new Error("failed to create adjacent monster");
 setAttackTarget(world3, player3, adjacent.isMonster.id);
 
-updateAbilityFiring(world3, Date.now());
+fireWithReferenceWiring(world3, Date.now());
 assert(
   getCooldown(player3.tracksCombat, abilityCooldownKey("charge")) === 0,
   "Charge must not fire at a target that is already in contact",
