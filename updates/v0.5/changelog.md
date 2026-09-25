@@ -2,6 +2,14 @@
 
 2026-09-24 · New playtest · Updated 2026-09-25
 
+## Playtest patch 3 — Conduit
+
+- **Stronger formations:** summons deal 20% more damage. A full formation now matches the
+  top damage of the other classes. Each summon you lose still takes its share away.
+- **Summons share your armor:** every summon now gets your full plating and damage
+  reduction, and keeps it updated as your gear changes. Before, summons had no armor of
+  their own, so swarms of weak enemies shredded them.
+
 ## Playtest patch 2 — defenses, pacing and abilities
 
 Thanks for all the feedback from the first days of the playtest. This patch rebalances
