@@ -326,6 +326,13 @@ panel. Nothing else. A visitor with no credential boots **no Phaser game and no
 socket** (`isLandingOnlySession` in `client/src/net/session.ts`), so the pane
 never appears.
 
+**2026-09-25: spectating is also switched off in production end to end**, so it
+can cost no bandwidth at all. The server refuses the `spectate` socket handshake
+unless it runs with dev tooling (`server/src/auth/socketAuth.ts`), and the client
+ignores `?watch=` links outside dev-tools builds (`watchTargetFromUrl`). Dev and
+the `DEV_TOOLS=true` Docker stack keep both for the bot dashboard. Re-enabling
+the pane means undoing both gates as well as the `isLandingOnlySession` guard.
+
 ### Why it was parked
 
 The pane rendered **black**. The frame, border, `LIVE — <name>` label, reveal

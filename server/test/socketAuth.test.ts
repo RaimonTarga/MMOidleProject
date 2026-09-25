@@ -8,11 +8,13 @@ function assert(condition: boolean, message: string): void {
 async function main(): Promise<void> {
   const originalNodeEnv = process.env.NODE_ENV;
   const originalDevBypass = process.env.AUTH_DEV_BYPASS;
+  const originalDevTools = process.env.DEV_TOOLS;
   const unusedDb = {} as DB;
 
   try {
     process.env.NODE_ENV = 'development';
     delete process.env.AUTH_DEV_BYPASS;
+    delete process.env.DEV_TOOLS;
 
     const refusedLegacy = await authenticateSocketHandshake(unusedDb, {
       accountId: 'legacy-account',
@@ -41,13 +43,24 @@ async function main(): Promise<void> {
     assert(refusedDev === null, 'dev bypass should be refused in production');
     assert(refusedProductionLegacy === null, 'legacy identity should be refused in production');
 
-    const spectator = await authenticateSocketHandshake(unusedDb, { spectate: true });
-    assert(spectator?.kind === 'spectator', 'anonymous spectator auth should work in production');
+    const refusedSpectator = await authenticateSocketHandshake(unusedDb, { spectate: true });
+    assert(refusedSpectator === null, 'anonymous spectating should be refused in production');
+
+    process.env.DEV_TOOLS = 'true';
+    const devToolsSpectator = await authenticateSocketHandshake(unusedDb, { spectate: true });
+    assert(devToolsSpectator?.kind === 'spectator', 'DEV_TOOLS builds keep spectating for the bot dashboard');
+
+    process.env.NODE_ENV = 'development';
+    delete process.env.DEV_TOOLS;
+    const devSpectator = await authenticateSocketHandshake(unusedDb, { spectate: true });
+    assert(devSpectator?.kind === 'spectator', 'anonymous spectating should work in development');
   } finally {
     if (originalNodeEnv === undefined) delete process.env.NODE_ENV;
     else process.env.NODE_ENV = originalNodeEnv;
     if (originalDevBypass === undefined) delete process.env.AUTH_DEV_BYPASS;
     else process.env.AUTH_DEV_BYPASS = originalDevBypass;
+    if (originalDevTools === undefined) delete process.env.DEV_TOOLS;
+    else process.env.DEV_TOOLS = originalDevTools;
   }
 }
 

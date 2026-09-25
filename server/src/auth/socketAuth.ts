@@ -42,7 +42,12 @@ export async function authenticateSocketHandshake(
     };
   }
 
-  if (auth.spectate === true) return { kind: 'spectator' };
+  // Anonymous spectating is scrapped for production: the landing page no
+  // longer opens a socket, and refusing the handshake here guarantees no
+  // spectator snapshots are ever built or sent. Dev keeps it for the bot
+  // dashboard's `?watch=` link (DEV_TOOLS mirrors IS_DEV in ../env.ts).
+  const spectatingAllowed = !isProduction || process.env.DEV_TOOLS === 'true';
+  if (auth.spectate === true && spectatingAllowed) return { kind: 'spectator' };
 
   return null;
 }

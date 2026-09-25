@@ -7,7 +7,6 @@ import type { EquippedRule } from "../runeDatabase";
 import type { BossFelledMarker } from "./bossFelled";
 import type { DeltaSnapshot } from "./delta";
 import type { PlayerDeathPayload } from "./death";
-import type { NodeTelemetrySnapshot } from "./nodeTelemetry";
 import type { WorldLogEvent } from "./worldLogEvents";
 import type { Vec2 } from "../systems/spatial";
 import type { AccountCharactersPayload } from "./characters";
@@ -154,8 +153,6 @@ export interface ServerToClientEvents {
   "overlord:felled": () => void;
   /** Authoritative combat/progression log records for the combat log panel. */
   "world:events": (events: WorldLogEvent[]) => void;
-  /** Per-node server telemetry snapshot (CPU, memory proxies, leak heuristics). */
-  "world:telemetry": (snapshot: NodeTelemetrySnapshot) => void;
   /** Active dungeon boss respawn cooldowns for the world map. */
   "world:bossFelled": (markers: BossFelledMarker[]) => void;
   /** Sent before a cold-start thaw of a frozen node (loading overlay on client). */

@@ -32,6 +32,10 @@ export class GameScene extends Phaser.Scene {
   spectatorSnapshotNodeId: string | null = null;
   /** True once the deferred spectator asset pass has landed (see sceneSetup). */
   spectatorAssetsReady = false;
+  /** Spectator presentation batch (effects, emotes, tombs) has landed. */
+  spectatorPresentationLoaded = false;
+  /** Node whose surrounding zone art was last streamed (nodeArtStreaming.ts). */
+  artAreaNodeId = '';
 
   /**
    * Dev-only footage capture (`?cinematic=<clipId>`). Null in every normal

@@ -1,3 +1,4 @@
+import { DEV_TOOLS_ENABLED } from '../devTools';
 import { SERVER_URL } from './serverUrl';
 
 const SESSION_STORAGE_KEY = 'mmo_session_token';
@@ -63,9 +64,12 @@ export function hasPlayerCredential(): boolean {
  *
  * Returns null unless the value looks like a socket id, so a junk query string
  * cannot strand a signed-in player in a spectator session.
+ *
+ * Dev tooling only: spectating is scrapped in production (the server refuses
+ * the handshake), so there a watch link is just the landing page.
  */
 export function watchTargetFromUrl(): string | null {
-  if (typeof window === 'undefined') return null;
+  if (!DEV_TOOLS_ENABLED || typeof window === 'undefined') return null;
   try {
     const raw = new URLSearchParams(window.location.search).get('watch');
     if (!raw) return null;

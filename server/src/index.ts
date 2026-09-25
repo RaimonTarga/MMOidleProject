@@ -7,6 +7,7 @@ import { telemetryIdentity, markTelemetryTest } from './db/telemetryIdentity';
 import { createServer } from "http";
 import { Server, type Socket } from "socket.io";
 import cors from "cors";
+import compression from "compression";
 import path from "path";
 
 import { World, type PersistedBossRespawn } from "./world/World";
@@ -61,6 +62,7 @@ import {
 } from "./db/playerRepo";
 import { currentReleaseAnnouncement } from "./updates/releaseAnnouncements";
 import { recordBroadcast } from "./net/profiler";
+import { serveBuiltApp } from "./net/staticAssets";
 import { timeSync } from "./telemetry/nodeTelemetry";
 import { TELEMETRY_WINDOW_MS } from "./telemetry/constants";
 import { initCombatSystems } from "./systems/combatBootstrap";
@@ -140,11 +142,13 @@ app.get("/healthz", (_req, res) => {
 if (process.env.NODE_ENV === "production") {
   const clientDist = path.resolve(__dirname, "../../client/dist");
   const adminDist = path.resolve(__dirname, "../../admin/dist");
-  app.use("/admin", express.static(adminDist));
+  // gzip JS/CSS/JSON/HTML (images and audio are skipped by the default filter).
+  app.use(compression());
+  app.use("/admin", serveBuiltApp(adminDist));
   app.get(["/admin", "/admin/*"], (_req, res) => {
     res.sendFile(path.join(adminDist, "index.html"));
   });
-  app.use(express.static(clientDist));
+  app.use(serveBuiltApp(clientDist));
 }
 
 const httpServer = createServer(app);
@@ -323,8 +327,9 @@ async function boot(): Promise<void> {
     sessionsBySocket,
     inactiveSockets,
   );
+  // Ops telemetry (~58 KB per 2 s window) goes to the admin namespace only.
+  // Broadcasting it to every player socket was ~2.5 GB/day per open tab.
   onTelemetry((telemetry) => {
-    io.emit("world:telemetry", telemetry);
     adminControls.emitTelemetry(telemetry);
   });
 
@@ -836,8 +841,6 @@ async function boot(): Promise<void> {
         socket.emit("state:sync", syncSnap);
         if (emitResult) socket.emit("character:selectResult", { success: true });
         emitBossFelledState();
-        world.syncTelemetryOccupancy();
-        socket.emit("world:telemetry", world.telemetry.flush(world.tickCounter));
         adminControls.emitPlayerSummaries();
         return true;
       } catch (err) {

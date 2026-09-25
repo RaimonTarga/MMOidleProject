@@ -289,9 +289,8 @@ export function cycleGroundBakeoff(
 
 /**
  * Queue Wang ground sheets, optionally restricted to a set of biome groups
- * (the spectator boot loads only the clearing's; a later unfiltered call
- * streams the rest — already-loaded sheets are skipped so re-invocation is
- * cheap and idempotent).
+ * (zone art streams around the viewer — see scenes/game/nodeArtStreaming.ts;
+ * already-loaded sheets are skipped so re-invocation is cheap and idempotent).
  */
 export function preloadWangGround(
   scene: Phaser.Scene,
@@ -309,10 +308,11 @@ export function preloadWangGround(
     for (const sheet of Object.values(cfg.sheets)) queue(sheet);
     if (cfg.functional) queue(cfg.functional);
   }
-  // Bakeoff variants are a dev comparison tool; a filtered (spectator boot)
-  // pass skips them and the deferred unfiltered pass picks them up.
-  if (biomes) return;
-  for (const entries of Object.values(GROUND_BAKEOFF)) {
+  // Bake-off sheets are only switchable with [ / ] in dev builds
+  // (input/keyboard.ts), so production never downloads them.
+  if (!import.meta.env.DEV) return;
+  for (const [biomeGroup, entries] of Object.entries(GROUND_BAKEOFF)) {
+    if (biomes && !biomes.has(biomeGroup)) continue;
     for (const v of entries ?? []) queue(v);
   }
 }

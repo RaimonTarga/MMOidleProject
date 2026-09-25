@@ -221,8 +221,8 @@ Important formula conventions:
   `server/src/admin/actions.ts` and `gameActions.ts`.
 - Admin tabs cover logs, analytics, world log, ops map, players, characters, debug.
 - Structured logs use `server/src/log.ts` and persist/query via `server/src/logdb/`.
-- Telemetry is published through `server/src/broker/` using Redis and consumed by
-  clients/admin as `world:telemetry` / `admin:telemetry`.
+- Telemetry is published through `server/src/broker/` using Redis and forwarded only to the admin
+  namespace as `admin:telemetry` (never to player sockets; it is ~58 KB per 2 s).
 - The `/admin` Socket.IO namespace uses a separate `ADMIN_TOKEN`; production fails
   closed when it is missing/short. Static dashboard assets contain no secrets.
 - Gameplay telemetry uses dedicated gameplay tables in logdb, random character IDs,
@@ -238,7 +238,7 @@ Player server-to-client highlights:
   `character:selectResult`
 - `crafting:result`, `inventory:upgradeResult`
 - `player:died`, `player:ascended`, `overlord:felled`
-- `world:events`, `world:telemetry`, `world:bossFelled`
+- `world:events`, `world:bossFelled`
 - `session:kicked`
 
 Player client-to-server highlights:

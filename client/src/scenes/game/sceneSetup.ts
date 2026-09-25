@@ -1,9 +1,10 @@
 import {
+  CLEARING_NODE_ID,
   EFFECT_DEFS,
   EMOTE_SPRITESHEETS,
   GAME_CONFIG,
   NODE_BIOMES,
-  TREE_CELL_PX,
+  type AccountCharactersPayload,
   directionBetweenNodes,
   peekSceneBounds,
   nodeToSceneCoords,
@@ -50,38 +51,14 @@ import { hydrateSpectatorSnapshot } from "../../net/spectatorSnapshot";
 import { watchTargetFromUrl } from "../../net/session";
 import {
   ATLAS_KEY,
-  BIOME_DECOR,
-  BIOME_TEXTURES,
-  CAVE_ROCK_FILES,
-  CAVE_ROCK_KEYS,
-  DESERT_ROCK_FILES,
-  DESERT_ROCK_KEYS,
-  DUNGEON_ALTAR_ART,
   HAZARD_POOL_ART,
   TOMB_ART,
   FEATURE_SCATTER,
-  JUNGLE_TREE_FILES,
-  JUNGLE_TREE_KEYS,
-  PLAINS_TREE_FILES,
-  PLAINS_TREE_KEYS,
-  SWAMP_TREE_FILES,
-  SWAMP_TREE_KEYS,
-  TRENCH_ROCK_FILES,
-  TRENCH_ROCK_KEYS,
-  TUNDRA_TREE_FILES,
-  TUNDRA_TREE_KEYS,
-  VOLCANIC_ROCK_FILES,
-  VOLCANIC_ROCK_KEYS,
-  WASTELAND_TREE_FILES,
-  WASTELAND_TREE_KEYS,
-  NODE_DECOR,
   emoteAnimKey,
   emoteTextureKey,
   initVoidOverlordSheet,
   THOUGHT_BUBBLE_FILE,
   THOUGHT_BUBBLE_KEY,
-  TREES_FILE,
-  TREES_KEY,
   VOID_OVERLORD_FILE,
   VOID_OVERLORD_TEXTURE_KEY,
   VOID_TOMB_FILE,
@@ -121,8 +98,8 @@ import {
   type SfxId,
 } from "../../audio/manifest";
 import { initParticleTextures, initEffectFrames } from "../../fx/particles";
-import { initProceduralGroundTextures, PLAINS_GROUND_TEXTURE_KEY } from "../../render/proceduralGround";
-import { preloadWangGround } from "../../render/wangGround";
+import { initProceduralGroundTextures } from "../../render/proceduralGround";
+import { queueNodeArt, runLoadBatch, streamNodeArea } from "./nodeArtStreaming";
 import { updateLaserBeam } from "../../fx/laser";
 import { updateHolyBeam } from "../../fx/holyBeam";
 import { updateCannonCharge } from "../../fx/cannonFx";
@@ -260,81 +237,6 @@ function instantReskinNode(scene: GameScene, nodeId: string): void {
 }
 
 /**
- * Queue biome ground textures, Wang sheets, and biome decor, optionally
- * restricted to a set of biome groups. Already-loaded textures are skipped, so
- * the spectator's deferred unfiltered pass only fetches what its slim boot
- * pass left out.
- */
-function queueBiomeAssets(
-  scene: GameScene,
-  biomes: ReadonlySet<string> | null,
-  includeDecor = true,
-): void {
-  const biomeTextureKeysSeen = new Set<string>();
-  for (const [biomeGroup, key] of Object.entries(BIOME_TEXTURES)) {
-    if (key === PLAINS_GROUND_TEXTURE_KEY) continue;
-    if (biomes && !biomes.has(biomeGroup)) continue;
-    if (biomeTextureKeysSeen.has(key) || scene.textures.exists(key)) continue;
-    biomeTextureKeysSeen.add(key);
-    scene.load.image(key, `/assets/${key}.png`);
-  }
-  preloadWangGround(scene, biomes);
-  for (const [biomeGroup, altar] of Object.entries(DUNGEON_ALTAR_ART)) {
-    if (biomes && !biomes.has(biomeGroup)) continue;
-    if (scene.textures.exists(altar.key)) continue;
-    scene.load.image(altar.key, altar.file);
-  }
-  if (includeDecor) queueBiomeDecorAssets(scene, biomes);
-}
-
-/** Decorative props have no gameplay collision; stream them after player boot. */
-function queueBiomeDecorAssets(scene: GameScene, biomes: ReadonlySet<string> | null): void {
-  const biomeDecorKeysSeen = new Set<string>();
-  for (const [biomeGroup, specs] of Object.entries(BIOME_DECOR)) {
-    if (!specs) continue;
-    if (biomes && !biomes.has(biomeGroup)) continue;
-    for (const s of specs) {
-      if (biomeDecorKeysSeen.has(s.key) || scene.textures.exists(s.key)) continue;
-      biomeDecorKeysSeen.add(s.key);
-      scene.load.image(s.key, s.file);
-    }
-  }
-}
-
-function queueTreeAssets(scene: GameScene): void {
-  scene.load.spritesheet(TREES_KEY, TREES_FILE, {
-    frameWidth: TREE_CELL_PX,
-    frameHeight: TREE_CELL_PX,
-  });
-  JUNGLE_TREE_KEYS.forEach((key, i) => {
-    const file = JUNGLE_TREE_FILES[i];
-    if (file) scene.load.image(key, file);
-  });
-  PLAINS_TREE_KEYS.forEach((key, i) => {
-    const file = PLAINS_TREE_FILES[i];
-    if (file) scene.load.image(key, file);
-  });
-  SWAMP_TREE_KEYS.forEach((key, i) => {
-    const file = SWAMP_TREE_FILES[i];
-    if (file) scene.load.image(key, file);
-  });
-  const imageSets: readonly [readonly string[], readonly string[]][] = [
-    [TUNDRA_TREE_KEYS, TUNDRA_TREE_FILES],
-    [WASTELAND_TREE_KEYS, WASTELAND_TREE_FILES],
-    [CAVE_ROCK_KEYS, CAVE_ROCK_FILES],
-    [DESERT_ROCK_KEYS, DESERT_ROCK_FILES],
-    [VOLCANIC_ROCK_KEYS, VOLCANIC_ROCK_FILES],
-    [TRENCH_ROCK_KEYS, TRENCH_ROCK_FILES],
-  ];
-  for (const [keys, files] of imageSets) {
-    keys.forEach((key, i) => {
-      const file = files[i];
-      if (file) scene.load.image(key, file);
-    });
-  }
-}
-
-/**
  * Everything a spectator needs before the pane can paint at all: the sprite
  * atlas and the shadow definitions `createGameScene` reads synchronously.
  * Nothing else belongs here — `create()` does not run until the boot queue
@@ -378,22 +280,10 @@ function queuePresentationAssets(scene: GameScene): void {
       });
     }
   }
+  // Per-node set pieces (NODE_DECOR) stream with the zone art in
+  // nodeArtStreaming.ts. Feature scatter props (jungle ambush bushes) stay here:
+  // they dress authored NODE_FEATURES, which are not gated on that path.
   const decorKeysSeen = new Set<string>();
-  for (const specs of Object.values(NODE_DECOR)) {
-    for (const s of specs) {
-      if (!decorKeysSeen.has(s.key)) {
-        decorKeysSeen.add(s.key);
-        scene.load.image(s.key, s.file);
-      }
-      if (s.openKey && s.openFile && !decorKeysSeen.has(s.openKey)) {
-        decorKeysSeen.add(s.openKey);
-        scene.load.image(s.openKey, s.openFile);
-      }
-    }
-  }
-  // Feature scatter props (jungle ambush bushes) load with the decor above
-  // rather than per-biome: they dress authored NODE_FEATURES, which are not
-  // gated on the biome-streaming path.
   for (const spec of FEATURE_SCATTER) {
     for (const variant of spec.variants) {
       if (decorKeysSeen.has(variant.key)) continue;
@@ -428,9 +318,13 @@ export function preloadGameAssets(scene: GameScene): void {
   queuePresentationAssets(scene);
   scene.load.image(VOID_OVERLORD_TEXTURE_KEY, VOID_OVERLORD_FILE);
   scene.load.image(VOID_TOMB_TEXTURE_KEY, VOID_TOMB_FILE);
-  queueTreeAssets(scene);
-  // Ground, functional hazards, altar and obstacle art remain boot essentials.
-  queueBiomeAssets(scene, null, false);
+  // Zone art (ground, hazards, altars, trees, decor) is NOT loaded here: the
+  // player's node is unknown until a character is picked, and loading all 13
+  // biomes cost every visitor ~90 MB. It streams around the player instead —
+  // see nodeArtStreaming.ts and syncNodeArtArea.
+  // Dev footage capture teleports across the whole map mid-shot, so it keeps
+  // the old everything-up-front behaviour.
+  if (scene.cinematic) queueNodeArt(scene, new Set(Object.keys(NODE_BIOMES)));
   // Audio: only entries with a real file are registered (manifest files are
   // undefined until assets land, so the engine synthesizes fallbacks meanwhile).
   for (const id of Object.keys(SFX_MANIFEST) as SfxId[]) {
@@ -443,13 +337,6 @@ export function preloadGameAssets(scene: GameScene): void {
   }
 }
 
-/**
- * Stream everything the slim spectator boot skipped, now that the pane is
- * already live. Un-arrived art degrades gracefully behind the render layer's
- * textures.exists guards (a retarget to an unloaded biome shows the flat
- * biome fill), and the completion hook re-skins the current node so late
- * textures replace their fallbacks.
- */
 /**
  * Wire up art that arrived after `create()` ran, and re-skin the current node so
  * late textures replace their fallbacks. All of it is idempotent and skips
@@ -465,41 +352,81 @@ function adoptDeferredSpectatorAssets(scene: GameScene): void {
 }
 
 /**
- * Stream everything the slim spectator boot skipped, in TWO passes.
+ * Re-skin the current node so late textures replace their fallbacks. A map
+ * slide may already have painted its destination before the download landed,
+ * so wait for it to settle. Scene timers are cancelled on shutdown.
+ */
+function reskinWhenSettled(scene: GameScene): void {
+  if (scene.transitioning) {
+    scene.time.delayedCall(100, () => reskinWhenSettled(scene));
+    return;
+  }
+  const nodeId = scene.state.ownNodeId || scene.lastDrawnNodeId;
+  if (nodeId) instantReskinNode(scene, nodeId);
+}
+
+/**
+ * Keep zone art streamed around the viewer's current node (players and
+ * spectators alike). Cheap to call every frame: it only acts on a node change.
  *
- * Pass one carries only what the node on screen right now needs to stop looking
- * unfinished: presentation art, trees, and the CURRENT biome's ground. Pass two
- * fetches the other ten biomes so a later retarget has them.
- *
- * The split exists because of the landing handoff. One combined pass means the
- * "spectator looks finished" gate is really "every biome in the game has
- * downloaded" — tens of megabytes — so a first-time visitor would sit on the
- * prerecorded loop forever and never see the live world. Splitting lets the
- * handoff happen as soon as THIS node is genuinely done, which is the question
- * the gate is actually asking. A retarget into a biome pass two has not reached
- * yet still degrades gracefully to the flat biome fill, exactly as before.
+ * Spectators wait for their presentation batch first, and the landing handoff
+ * gate (`spectatorAssetsReady`) opens once what is on screen has its art — not
+ * the whole two-hop area — so a first-time visitor is not held on the
+ * prerecorded loop while off-screen biomes download.
+ */
+function syncNodeArtArea(scene: GameScene): void {
+  const nodeId = scene.state.ownNodeId;
+  if (!nodeId || nodeId === scene.artAreaNodeId) return;
+  if (scene.spectatorMode && !scene.spectatorPresentationLoaded) return;
+  scene.artAreaNodeId = nodeId;
+  streamNodeArea(
+    scene,
+    nodeId,
+    () => scene.artAreaNodeId === nodeId,
+    (phase, loaded) => {
+      // Phase two is off screen; it is painted normally when walked into.
+      if (phase !== "visible") return;
+      if (scene.spectatorMode) scene.spectatorAssetsReady = true;
+      if (loaded) reskinWhenSettled(scene);
+    },
+  );
+}
+
+/**
+ * Warm the cache from the lobby: stream the area around the character the
+ * player most likely picks (most recently played; new characters start in the
+ * Clearing) so entering the world rarely shows the flat biome fill.
+ */
+function prefetchLobbyNodeArt(scene: GameScene, payload: AccountCharactersPayload): void {
+  if (scene.spectatorMode || scene.state.ownNodeId) return;
+  let nodeId: string = CLEARING_NODE_ID;
+  let lastPlayedAt = -Infinity;
+  for (const c of payload.characters) {
+    if (c.lastPlayedAt > lastPlayedAt) {
+      lastPlayedAt = c.lastPlayedAt;
+      nodeId = c.nodeId;
+    }
+  }
+  streamNodeArea(scene, nodeId, () => !scene.state.ownNodeId, () => {});
+}
+
+/**
+ * Stream the presentation art the slim spectator boot skipped, now that the
+ * pane is already live; zone art then streams around the watched node via
+ * syncNodeArtArea. Un-arrived art degrades gracefully behind the render
+ * layer's textures.exists guards (flat biome fill until the re-skin).
  */
 function startDeferredSpectatorAssets(scene: GameScene): void {
   queuePresentationAssets(scene);
   scene.load.image(VOID_OVERLORD_TEXTURE_KEY, VOID_OVERLORD_FILE);
   scene.load.image(VOID_TOMB_TEXTURE_KEY, VOID_TOMB_FILE);
-  queueTreeAssets(scene);
-  const firstNodeId = scene.state.ownNodeId || scene.lastDrawnNodeId;
-  const firstBiome = NODE_BIOMES[firstNodeId]?.biomeGroup;
-  queueBiomeAssets(scene, firstBiome ? new Set([firstBiome]) : null);
-
-  scene.load.once("complete", () => {
+  runLoadBatch(scene, () => {
     adoptDeferredSpectatorAssets(scene);
-    // Gate for the landing handoff: the node on screen now has its real ground
-    // and its effect/emote art, so revealing it will not pop underneath anyone.
-    scene.spectatorAssetsReady = true;
-
-    // Pass two: the remaining biomes, for retargets.
-    queueBiomeAssets(scene, null);
-    scene.load.once("complete", () => adoptDeferredSpectatorAssets(scene));
-    scene.load.start();
+    scene.spectatorPresentationLoaded = true;
+    // Nothing to watch yet (idle world): there is no node art to wait for.
+    if (!scene.state.ownNodeId) scene.spectatorAssetsReady = true;
+    syncNodeArtArea(scene);
   });
-  scene.load.start();
 }
 
 export function createGameScene(scene: GameScene): void {
@@ -611,24 +538,6 @@ export function createGameScene(scene: GameScene): void {
     detachSocket();
   });
   if (scene.spectatorMode) startDeferredSpectatorAssets(scene);
-  else {
-    queueBiomeDecorAssets(scene, null);
-    scene.load.once('complete', () => {
-      const adoptDecor = () => {
-        // A transition may already have painted its destination before the
-        // download finishes. Repaint after it settles so props are not missing
-        // until the next node change. Scene timers are cancelled on shutdown.
-        if (scene.transitioning) {
-          scene.time.delayedCall(100, adoptDecor);
-          return;
-        }
-        const nodeId = scene.state.ownNodeId || scene.lastDrawnNodeId;
-        if (nodeId) instantReskinNode(scene, nodeId);
-      };
-      adoptDecor();
-    });
-    scene.load.start();
-  }
 
   const applyPeekBoundsOnResize = (): void => {
     const nodeId = scene.state.ownNodeId || scene.lastDrawnNodeId;
@@ -644,6 +553,7 @@ export function createGameScene(scene: GameScene): void {
 
 export function updateGameScene(scene: GameScene, delta: number): void {
   const dt = Math.min(delta, 100) / 1000;
+  syncNodeArtArea(scene);
 
   if (scene.transitioning) {
     tickMapSlide(scene, dt);
@@ -818,7 +728,10 @@ function connectSocket(scene: GameScene): () => void {
       scene.cameraScrollReady = false;
       scene.cameras.main.stopFollow();
     },
-    onCharacterList: handleCharacterList,
+    onCharacterList: (payload) => {
+      handleCharacterList(payload);
+      prefetchLobbyNodeArt(scene, payload);
+    },
     onCharacterCreateResult: handleCreateResult,
     onCharacterDeleteResult: handleDeleteResult,
     onCharacterSelectResult: handleSelectResult,
