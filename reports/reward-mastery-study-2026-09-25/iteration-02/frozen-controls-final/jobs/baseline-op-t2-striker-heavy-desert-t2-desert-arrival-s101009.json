@@ -1,0 +1,104 @@
+{
+  "id": "baseline-op-t2-striker-heavy-desert-t2-desert-arrival-s101009",
+  "arm": "baseline",
+  "mode": "historical-loadout",
+  "nodeId": "node-t2-desert-01",
+  "classRoot": "cadence-root",
+  "seed": 101009,
+  "cell": {
+    "id": "op-t2-striker-heavy-desert-t2-desert-arrival-s101009",
+    "identityId": "t2-striker-heavy",
+    "className": "striker",
+    "frame": "heavy",
+    "pathName": "heavy",
+    "range": null,
+    "tier": 2,
+    "role": "farm",
+    "nodeId": "node-t2-desert-01",
+    "isDungeon": false,
+    "alternate": false,
+    "targetTypes": [],
+    "treatment": "control",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+      "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+    ],
+    "seed": 101009,
+    "block": "B",
+    "arm": "primary",
+    "comparisonId": "op-t2-striker-heavy-desert-t2-desert-arrival-s101009",
+    "snapshotId": "t2-desert-arrival",
+    "progressionSnapshot": {
+      "id": "t2-desert-arrival",
+      "tier": 2,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 12,
+        "mountain": 12,
+        "cave": 12,
+        "jungle": 6,
+        "desert": 0
+      },
+      "gm": 66,
+      "rp": 29,
+      "plus": 4
+    },
+    "upgradeLevel": 4,
+    "stance": "defensive-stance",
+    "abilities": {
+      "techniques": [
+        "power-strike"
+      ],
+      "guards": [
+        "second-wind",
+        "cleanse",
+        "brace"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ],
+    "build": {
+      "id": "op-t2-striker-heavy-desert-t2-desert-arrival-s101009",
+      "classRoot": "cadence-root",
+      "contentTier": 2,
+      "playerTier": 2,
+      "gearTier": 2,
+      "skillPath": [
+        "cadence-root",
+        "cadence-heavy"
+      ],
+      "gearItemIds": {
+        "weapon": "ruinous-axe",
+        "armor": "mountain-vest-t2",
+        "recovery": "swamp-charm-t2",
+        "mobility": "mountain-boots-t2",
+        "core": "core-tempered"
+      }
+    }
+  },
+  "gearIds": [
+    "desert-sunsteel-cross",
+    "desert-vest-t2",
+    "desert-charm-t2",
+    "desert-boots-t2"
+  ],
+  "maxMs": 1800000,
+  "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+  "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\frozen-controls-final\\baseline-op-t2-striker-heavy-desert-t2-desert-arrival-s101009.json",
+  "controlReplaces": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\confirmation\\baseline-op-t2-striker-heavy-desert-t2-desert-arrival-s101009.json"
+}

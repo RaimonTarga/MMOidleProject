@@ -1,0 +1,66 @@
+{
+  "done": 10,
+  "total": 10,
+  "results": [
+    {
+      "id": "candidate-closing-striker-balanced-c-V-s101009",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-striker-heavy-c-V-s101009",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-striker-heavy-c-V-s101033",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-striker-balanced-c-V-s101033",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-conduit-balanced-a-T-s101033",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-conduit-balanced-a-T-s101009",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-apprentice-light-c-V-s101009",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-squire-heavy-b-D-s101033",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-squire-heavy-b-D-s101009",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-apprentice-light-c-V-s101033",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    }
+  ]
+}

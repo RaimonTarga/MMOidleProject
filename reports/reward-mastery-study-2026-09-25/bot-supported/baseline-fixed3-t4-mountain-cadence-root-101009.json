@@ -1,0 +1,1024 @@
+{
+  "job": {
+    "id": "baseline-fixed3-t4-mountain-cadence-root-101009",
+    "arm": "baseline",
+    "mode": "fixed3",
+    "nodeId": "node-t4-mountain-01",
+    "classRoot": "cadence-root",
+    "seed": 101009,
+    "gearIds": [
+      "mountain-warmaul",
+      "mountain-vest-t4-stormwall",
+      "mountain-charm-t4-shieldmend",
+      "mountain-boots-t4"
+    ],
+    "maxMs": 7200000,
+    "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+    "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-supported\\baseline-fixed3-t4-mountain-cadence-root-101009.json"
+  },
+  "hitboxes": 406,
+  "build": {
+    "id": "cadence-root+cadence-balanced+cadence-range-close+cadence-balanced-t3-a",
+    "classRoot": "cadence-root",
+    "skillPath": [
+      "cadence-root",
+      "cadence-balanced",
+      "cadence-range-close",
+      "cadence-balanced-t3-a"
+    ],
+    "contentTier": 4,
+    "playerTier": 4,
+    "gearTier": 4,
+    "gearItemIds": {
+      "weapon": "mountain-warmaul",
+      "armor": "mountain-vest-t4-stormwall",
+      "recovery": "mountain-charm-t4-shieldmend",
+      "mobility": "mountain-boots-t4"
+    }
+  },
+  "initial": {
+    "elapsedMs": 0,
+    "level": 18,
+    "xp": 13750,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {},
+    "catalystProgress": {},
+    "upgrades": {
+      "mountain-warmaul": 3,
+      "mountain-vest-t4-stormwall": 3,
+      "mountain-charm-t4-shieldmend": 3,
+      "mountain-boots-t4": 3
+    },
+    "hp": 480,
+    "build": {
+      "id": "cadence-root+cadence-balanced+cadence-range-close+cadence-balanced-t3-a",
+      "classRoot": "cadence-root",
+      "skillPath": [
+        "cadence-root",
+        "cadence-balanced",
+        "cadence-range-close",
+        "cadence-balanced-t3-a"
+      ],
+      "contentTier": 4,
+      "playerTier": 4,
+      "gearTier": 4,
+      "gearItemIds": {
+        "weapon": "mountain-warmaul",
+        "armor": "mountain-vest-t4-stormwall",
+        "recovery": "mountain-charm-t4-shieldmend",
+        "mobility": "mountain-boots-t4"
+      }
+    },
+    "loadout": {
+      "abilities": {
+        "techniques": [
+          "disengage",
+          "imbue-lightning"
+        ],
+        "guards": [
+          "recuperate",
+          "break-free",
+          "bramble-guard"
+        ]
+      },
+      "stances": [
+        "offensive-stance"
+      ],
+      "rites": [
+        "blood-offering",
+        "purification",
+        "ability-reprieve",
+        "mechanic-renewal",
+        "swift-repose"
+      ],
+      "runes": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "chase-enemy"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "hp-below-25",
+          "actionId": "flee"
+        },
+        {
+          "conditionId": "while-traveling",
+          "actionId": "fight-back"
+        }
+      ]
+    },
+    "stats": {
+      "hp": 480,
+      "attack": 170
+    },
+    "biomeLevels": {
+      "cave": 18,
+      "forest": 12,
+      "mountain": 18,
+      "plains": 12,
+      "swamp": 18,
+      "desert": 18,
+      "jungle": 18,
+      "tundra": 12,
+      "volcanic": 12,
+      "graveyard": 6,
+      "trench": 6
+    }
+  },
+  "entry": 18,
+  "cap": 24,
+  "budget": 9000,
+  "costs": {
+    "3": {
+      "red": 400,
+      "blue": 4082,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "5": {
+      "red": 1116,
+      "blue": 11416,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    }
+  },
+  "mastery": {
+    "elapsedMs": 358800,
+    "level": 24,
+    "xp": 23312,
+    "gross": {
+      "red": 0,
+      "blue": 873,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 873,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {
+      "heavy": 15
+    },
+    "catalystProgress": {
+      "heavy": 92
+    },
+    "upgrades": {
+      "mountain-warmaul": 3,
+      "mountain-vest-t4-stormwall": 3,
+      "mountain-charm-t4-shieldmend": 3,
+      "mountain-boots-t4": 3
+    },
+    "hp": 407.3920000000002
+  },
+  "death": {
+    "elapsedMs": 1068500,
+    "level": 24,
+    "xp": 23312,
+    "gross": {
+      "red": 0,
+      "blue": 2193,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 2193,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {
+      "heavy": 39
+    },
+    "catalystProgress": {
+      "heavy": 91
+    },
+    "upgrades": {
+      "mountain-warmaul": 3,
+      "mountain-vest-t4-stormwall": 3,
+      "mountain-charm-t4-shieldmend": 3,
+      "mountain-boots-t4": 3
+    },
+    "hp": 0
+  },
+  "fundingTimes": {
+    "3": null,
+    "5": null
+  },
+  "actualAll3Ms": null,
+  "actualAll5Ms": null,
+  "acquisitionDebt": {
+    "red": 0,
+    "blue": 0,
+    "green": 0,
+    "yellow": 0,
+    "purple": 0
+  },
+  "final": {
+    "elapsedMs": 1068500,
+    "level": 24,
+    "xp": 23312,
+    "gross": {
+      "red": 0,
+      "blue": 2193,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 2193,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {
+      "heavy": 39
+    },
+    "catalystProgress": {
+      "heavy": 91
+    },
+    "upgrades": {
+      "mountain-warmaul": 3,
+      "mountain-vest-t4-stormwall": 3,
+      "mountain-charm-t4-shieldmend": 3,
+      "mountain-boots-t4": 3
+    },
+    "hp": 0
+  },
+  "snapshots": [
+    {
+      "elapsedMs": 34000,
+      "level": 19,
+      "xp": 15038,
+      "gross": {
+        "red": 0,
+        "blue": 118,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 118,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 2
+      },
+      "catalystProgress": {
+        "heavy": 15
+      },
+      "upgrades": {
+        "mountain-warmaul": 3,
+        "mountain-vest-t4-stormwall": 3,
+        "mountain-charm-t4-shieldmend": 3,
+        "mountain-boots-t4": 3
+      },
+      "hp": 412.14400000000023
+    },
+    {
+      "elapsedMs": 60000,
+      "level": 19,
+      "xp": 15038,
+      "gross": {
+        "red": 0,
+        "blue": 118,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 118,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 2
+      },
+      "catalystProgress": {
+        "heavy": 15
+      },
+      "upgrades": {
+        "mountain-warmaul": 3,
+        "mountain-vest-t4-stormwall": 3,
+        "mountain-charm-t4-shieldmend": 3,
+        "mountain-boots-t4": 3
+      },
+      "hp": 334.9679999999999
+    },
+    {
+      "elapsedMs": 115700,
+      "level": 20,
+      "xp": 16175,
+      "gross": {
+        "red": 0,
+        "blue": 222,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 222,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 4
+      },
+      "catalystProgress": {
+        "heavy": 4
+      },
+      "upgrades": {
+        "mountain-warmaul": 3,
+        "mountain-vest-t4-stormwall": 3,
+        "mountain-charm-t4-shieldmend": 3,
+        "mountain-boots-t4": 3
+      },
+      "hp": 457.80800000000033
+    },
+    {
+      "elapsedMs": 120000,
+      "level": 20,
+      "xp": 16175,
+      "gross": {
+        "red": 0,
+        "blue": 222,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 222,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 4
+      },
+      "catalystProgress": {
+        "heavy": 4
+      },
+      "upgrades": {
+        "mountain-warmaul": 3,
+        "mountain-vest-t4-stormwall": 3,
+        "mountain-charm-t4-shieldmend": 3,
+        "mountain-boots-t4": 3
+      },
+      "hp": 480
+    },
+    {
+      "elapsedMs": 156600,
+      "level": 21,
+      "xp": 17649,
+      "gross": {
+        "red": 0,
+        "blue": 356,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 356,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 6
+      },
+      "catalystProgress": {
+        "heavy": 49
+      },
+      "upgrades": {
+        "mountain-warmaul": 3,
+        "mountain-vest-t4-stormwall": 3,
+        "mountain-charm-t4-shieldmend": 3,
+        "mountain-boots-t4": 3
+      },
+      "hp": 462.9920000000003
+    },
+    {
+      "elapsedMs": 180000,
+      "level": 21,
+      "xp": 17649,
+      "gross": {
+        "red": 0,
+        "blue": 356,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 356,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 6
+      },
+      "catalystProgress": {
+        "heavy": 49
+      },
+      "upgrades": {
+        "mountain-warmaul": 3,
+        "mountain-vest-t4-stormwall": 3,
+        "mountain-charm-t4-shieldmend": 3,
+        "mountain-boots-t4": 3
+      },
+      "hp": 272.1440000000002
+    },
+    {
+      "elapsedMs": 240000,
+      "level": 21,
+      "xp": 18786,
+      "gross": {
+        "red": 0,
+        "blue": 460,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 460,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 8
+      },
+      "catalystProgress": {
+        "heavy": 38
+      },
+      "upgrades": {
+        "mountain-warmaul": 3,
+        "mountain-vest-t4-stormwall": 3,
+        "mountain-charm-t4-shieldmend": 3,
+        "mountain-boots-t4": 3
+      },
+      "hp": 480
+    },
+    {
+      "elapsedMs": 276300,
+      "level": 22,
+      "xp": 20074,
+      "gross": {
+        "red": 0,
+        "blue": 578,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 578,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 10
+      },
+      "catalystProgress": {
+        "heavy": 53
+      },
+      "upgrades": {
+        "mountain-warmaul": 3,
+        "mountain-vest-t4-stormwall": 3,
+        "mountain-charm-t4-shieldmend": 3,
+        "mountain-boots-t4": 3
+      },
+      "hp": 480
+    },
+    {
+      "elapsedMs": 299300,
+      "level": 23,
+      "xp": 21026,
+      "gross": {
+        "red": 0,
+        "blue": 664,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 664,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 12
+      },
+      "catalystProgress": {
+        "heavy": 11
+      },
+      "upgrades": {
+        "mountain-warmaul": 3,
+        "mountain-vest-t4-stormwall": 3,
+        "mountain-charm-t4-shieldmend": 3,
+        "mountain-boots-t4": 3
+      },
+      "hp": 427.2880000000002
+    },
+    {
+      "elapsedMs": 300000,
+      "level": 23,
+      "xp": 21026,
+      "gross": {
+        "red": 0,
+        "blue": 664,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 664,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 12
+      },
+      "catalystProgress": {
+        "heavy": 11
+      },
+      "upgrades": {
+        "mountain-warmaul": 3,
+        "mountain-vest-t4-stormwall": 3,
+        "mountain-charm-t4-shieldmend": 3,
+        "mountain-boots-t4": 3
+      },
+      "hp": 470.9200000000002
+    },
+    {
+      "elapsedMs": 358800,
+      "level": 24,
+      "xp": 23312,
+      "gross": {
+        "red": 0,
+        "blue": 873,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 873,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 15
+      },
+      "catalystProgress": {
+        "heavy": 92
+      },
+      "upgrades": {
+        "mountain-warmaul": 3,
+        "mountain-vest-t4-stormwall": 3,
+        "mountain-charm-t4-shieldmend": 3,
+        "mountain-boots-t4": 3
+      },
+      "hp": 407.3920000000002
+    },
+    {
+      "elapsedMs": 360000,
+      "level": 24,
+      "xp": 23312,
+      "gross": {
+        "red": 0,
+        "blue": 873,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 873,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 15
+      },
+      "catalystProgress": {
+        "heavy": 92
+      },
+      "upgrades": {
+        "mountain-warmaul": 3,
+        "mountain-vest-t4-stormwall": 3,
+        "mountain-charm-t4-shieldmend": 3,
+        "mountain-boots-t4": 3
+      },
+      "hp": 443.68000000000046
+    },
+    {
+      "elapsedMs": 420000,
+      "level": 24,
+      "xp": 23312,
+      "gross": {
+        "red": 0,
+        "blue": 921,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 921,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 16
+      },
+      "catalystProgress": {
+        "heavy": 79
+      },
+      "upgrades": {
+        "mountain-warmaul": 3,
+        "mountain-vest-t4-stormwall": 3,
+        "mountain-charm-t4-shieldmend": 3,
+        "mountain-boots-t4": 3
+      },
+      "hp": 278.640000000001
+    },
+    {
+      "elapsedMs": 480000,
+      "level": 24,
+      "xp": 23312,
+      "gross": {
+        "red": 0,
+        "blue": 982,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 982,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 17
+      },
+      "catalystProgress": {
+        "heavy": 89
+      },
+      "upgrades": {
+        "mountain-warmaul": 3,
+        "mountain-vest-t4-stormwall": 3,
+        "mountain-charm-t4-shieldmend": 3,
+        "mountain-boots-t4": 3
+      },
+      "hp": 303.6800000000004
+    },
+    {
+      "elapsedMs": 540000,
+      "level": 24,
+      "xp": 23312,
+      "gross": {
+        "red": 0,
+        "blue": 1043,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 1043,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 18
+      },
+      "catalystProgress": {
+        "heavy": 99
+      },
+      "upgrades": {
+        "mountain-warmaul": 3,
+        "mountain-vest-t4-stormwall": 3,
+        "mountain-charm-t4-shieldmend": 3,
+        "mountain-boots-t4": 3
+      },
+      "hp": 349.2399999999995
+    },
+    {
+      "elapsedMs": 600000,
+      "level": 24,
+      "xp": 23312,
+      "gross": {
+        "red": 0,
+        "blue": 1104,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 1104,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 20
+      },
+      "catalystProgress": {
+        "heavy": 9
+      },
+      "upgrades": {
+        "mountain-warmaul": 3,
+        "mountain-vest-t4-stormwall": 3,
+        "mountain-charm-t4-shieldmend": 3,
+        "mountain-boots-t4": 3
+      },
+      "hp": 349.85599999999954
+    },
+    {
+      "elapsedMs": 660000,
+      "level": 24,
+      "xp": 23312,
+      "gross": {
+        "red": 0,
+        "blue": 1165,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 1165,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 21
+      },
+      "catalystProgress": {
+        "heavy": 19
+      },
+      "upgrades": {
+        "mountain-warmaul": 3,
+        "mountain-vest-t4-stormwall": 3,
+        "mountain-charm-t4-shieldmend": 3,
+        "mountain-boots-t4": 3
+      },
+      "hp": 419.98400000000026
+    },
+    {
+      "elapsedMs": 720000,
+      "level": 24,
+      "xp": 23312,
+      "gross": {
+        "red": 0,
+        "blue": 1299,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 1299,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 23
+      },
+      "catalystProgress": {
+        "heavy": 64
+      },
+      "upgrades": {
+        "mountain-warmaul": 3,
+        "mountain-vest-t4-stormwall": 3,
+        "mountain-charm-t4-shieldmend": 3,
+        "mountain-boots-t4": 3
+      },
+      "hp": 373.7120000000001
+    },
+    {
+      "elapsedMs": 780000,
+      "level": 24,
+      "xp": 23312,
+      "gross": {
+        "red": 0,
+        "blue": 1626,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 1626,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 29
+      },
+      "catalystProgress": {
+        "heavy": 60
+      },
+      "upgrades": {
+        "mountain-warmaul": 3,
+        "mountain-vest-t4-stormwall": 3,
+        "mountain-charm-t4-shieldmend": 3,
+        "mountain-boots-t4": 3
+      },
+      "hp": 480
+    },
+    {
+      "elapsedMs": 840000,
+      "level": 24,
+      "xp": 23312,
+      "gross": {
+        "red": 0,
+        "blue": 1744,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 1744,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 31
+      },
+      "catalystProgress": {
+        "heavy": 75
+      },
+      "upgrades": {
+        "mountain-warmaul": 3,
+        "mountain-vest-t4-stormwall": 3,
+        "mountain-charm-t4-shieldmend": 3,
+        "mountain-boots-t4": 3
+      },
+      "hp": 421.40800000000075
+    },
+    {
+      "elapsedMs": 900000,
+      "level": 24,
+      "xp": 23312,
+      "gross": {
+        "red": 0,
+        "blue": 1953,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 1953,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 35
+      },
+      "catalystProgress": {
+        "heavy": 56
+      },
+      "upgrades": {
+        "mountain-warmaul": 3,
+        "mountain-vest-t4-stormwall": 3,
+        "mountain-charm-t4-shieldmend": 3,
+        "mountain-boots-t4": 3
+      },
+      "hp": 329.78399999999993
+    },
+    {
+      "elapsedMs": 960000,
+      "level": 24,
+      "xp": 23312,
+      "gross": {
+        "red": 0,
+        "blue": 2014,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 2014,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 36
+      },
+      "catalystProgress": {
+        "heavy": 66
+      },
+      "upgrades": {
+        "mountain-warmaul": 3,
+        "mountain-vest-t4-stormwall": 3,
+        "mountain-charm-t4-shieldmend": 3,
+        "mountain-boots-t4": 3
+      },
+      "hp": 395.7680000000003
+    },
+    {
+      "elapsedMs": 1020000,
+      "level": 24,
+      "xp": 23312,
+      "gross": {
+        "red": 0,
+        "blue": 2075,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 2075,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 37
+      },
+      "catalystProgress": {
+        "heavy": 76
+      },
+      "upgrades": {
+        "mountain-warmaul": 3,
+        "mountain-vest-t4-stormwall": 3,
+        "mountain-charm-t4-shieldmend": 3,
+        "mountain-boots-t4": 3
+      },
+      "hp": 480
+    }
+  ],
+  "purchases": [],
+  "blockers": {},
+  "wallSeconds": 36.6398473,
+  "limitations": [
+    "Synthetic late-tier fixture: other biomes mastered, generated class and granted benchmark abilities",
+    "Native current-tier base gear granted on credit in buy mode; acquisition is repaid from earnings, not a real prior-tier journey",
+    "Fixed3 mode grants +3 gear and measures income, not purchase progression",
+    "No cross-biome routing or instant revivals; first death stops the run",
+    "Seeded random and 100ms simulation clock; elapsed time is simulation time"
+  ]
+}

@@ -1,0 +1,2244 @@
+diff --git a/design_docs/economy-philosophy.md b/design_docs/economy-philosophy.md
+index 518e8fbc..3618f942 100644
+--- a/design_docs/economy-philosophy.md
++++ b/design_docs/economy-philosophy.md
+@@ -9,8 +9,15 @@ Terse on purpose.
+ ## 0. The core tension (read first)
+ 
+ - **Biome level unlocks the *chance* for power; essence *pays* for it.** These two must stay in tension, never both trivially solved.
+-- Concretely: you should reach a tier's level cap **before** you can afford to max its gear. Capping the biome is the easy part; affording full +3 is the grind that outlives the cap.
+-- The problem this fixes: essence was over-plentiful (full +3 reachable before cap) while XP felt slow. Goal is to flip both — capping easier, maxing costlier.
++- Updated user goal (2026-09-25): by a biome's current-tier mastery cap, the
++  player should have earned roughly enough essence for a full **+3 gear set**.
++  Farming through **+5** should take roughly **50% additional time**. These
++  are affordability goals; Global Mastery, catalyst families and cross-color
++  costs can separately gate purchases.
++- The older goal of +3 requiring a grind after mastery is superseded. Concrete
++  joint tuning candidate is recorded in the [experiment](../reports/reward-mastery-study-2026-09-25/EXPERIMENT.md);
++  their working definition includes acquisition/evolution plus upgrades for
++  one weapon, armor, recovery and mobility item. This checkout applies candidate 01 for testing only.
+ 
+ ---
+ 
+@@ -22,8 +29,8 @@ Terse on purpose.
+ - Every tier segment has six levels. Their incremental shares are
+   **12% / 14% / 16% / 18% / 19% / 21%**. The final two levels are slower, but
+   they do not consume an extreme share of the segment.
+-- Segment budgets are explicit designer values: **T1 1,750 · T2 5,000 · T3
+-  7,000 · T4 9,000 XP**. Segments beyond T4 currently grow by **1.20× per tier**
++- Experimental segment budgets: **T1 1,750 · T2 3,750 · T3
++  42,000 · T4 108,000 XP**. Segments beyond T4 currently grow by **1.20× per tier**
+   until they receive explicit tuning.
+ - **Caps: T1→L6, T2→L12, T3→L18, T4→L24** for a biome that starts in T1;
+   biomes debuting later keep their existing start-tier offsets and final-tier
+@@ -35,9 +42,12 @@ Terse on purpose.
+   the level-4 cap.
+ - The per-tier XP reward multipliers remain unchanged. Tune required XP through
+   the segment budget and local-share tables, not by editing per-mob rewards.
+-- Initial pacing targets are **T1 ~5 minutes**, **T2 ~10–12**, **T3 ~13–16**,
+-  and **T4 ~16–20 minutes** of pure mastery per biome. Bosses, gear farming,
+-  crafting, travel, deaths, and build experimentation add completion time.
++- Updated user pacing targets (2026-09-25) are **T1 ~5 minutes**, **T2 ~15**,
++  **T3 ~30**, and **T4 ~60 minutes** per biome tier segment. These supersede
++  the initial 5 / 10–12 / 13–16 / 16–20-minute targets. The candidate budgets
++  above are under test. The [experiment](../reports/reward-mastery-study-2026-09-25/EXPERIMENT.md)
++  uses active time in the biome as its working clock and records the remaining
++  measurement assumptions and telemetry limitations.
+ 
+ ---
+ 
+@@ -62,8 +72,11 @@ Terse on purpose.
+   - *Charm ×1.5 (not ×3):* its upgrades buy small % mechanic bumps, not raw stats — a ×3 would overprice the value delivered.
+   - *Boots ×1:* premium *utility* slot, cheapest by design — cheap to enter, cheap to max, low ceiling.
+   - *Armor may run above weapon* where its mitigation is generic (e.g. flat %DR works vs every damage shape). Flexibility earns a premium.
+-- **Target at the level cap:** full set craftable + roughly +1 across the board (boss-ready). Full +3 requires grinding past the cap.
+-- **Upgrade curves must be smooth** — step-to-step ratio ≈ 1.8-2.2×. No lumpy ramps (a cheap middle step wedged between two expensive ones).
++- **Target at the level cap:** enough earned essence for a full +3 set;
++  full +5 funding at roughly 1.5× that farming time, under the revised user goal.
++- The old 1.8–2.2× step-price growth is under review: current escalating costs
++  imply a much longer +3→+5 tail. The linked proposal compares redistributing
++  lifetime cost against reducing the tail and currency supply.
+ - **Base cost scales ~2.2-2.4× per slot per tier.** Watch boots specifically — easy to forget to scale; keep boots ≈ 0.8× the weapon's base at every tier.
+ 
+ ---
+diff --git a/docs/README.md b/docs/README.md
+index 455c15f1..4acb0ae7 100644
+--- a/docs/README.md
++++ b/docs/README.md
+@@ -26,6 +26,7 @@ top-level doc.
+ 
+ | Doc | Why |
+ |---|---|
++| [Reward mastery candidate 01](../reports/reward-mastery-study-2026-09-25/EXPERIMENT.md) | Applied XP/essence/upgrade experiment; branch scope, validation and links to bot results. Not deployed. |
+ | [T3 Tundra class/frame 01 preparation](../reports/player-fast-pass/t3-tundra-class-frame-01-preparation/README.md) | Sealed 52-observation ordinary-Tundra class/frame screen, 52/52 zero-tick qualified; Squire Slam discarded by user correction, main combat unlaunched. |
+ | [Guard coverage 01 handoff](../reports/player-fast-pass/guard-coverage-01-preparation/LUNA_RUN.md) | Integrated measured session correction; 32 fresh Endure comparison cells, zero-tick qualified, execution pending. |
+ | [Player package-fit r1 packet](briefs/player-package-fit-operator-packet.md) | Prepared revised AoE/reactive-Brace packages, 36-row ceiling, machine-readable Luna report contract and scoped commit/push requirement; main run not launched. |
+diff --git a/server/src/systems/player/economy/itemUpgrade.ts b/server/src/systems/player/economy/itemUpgrade.ts
+index e88c9a7d..0ca2c833 100644
+--- a/server/src/systems/player/economy/itemUpgrade.ts
++++ b/server/src/systems/player/economy/itemUpgrade.ts
+@@ -52,18 +52,19 @@ export function upgradeItem(
+       catalysts: entity.tracksProgression.catalysts,
+       globalMastery: globalMastery(entity.tracksProgression.biomeLevel),
+       t1Plus5EssenceCostMultiplier:
+-        world.t1EconomyConfigForPlayer(entity.isPlayer.id).t1Plus5EssenceCostMultiplier,
++        world.t1EconomyConfigByPlayerId.get(entity.isPlayer.id)?.t1Plus5EssenceCostMultiplier,
+     });
+     if (!check.ok) return fail(check.reason ?? 'Cannot upgrade.');
+   } else if (current >= getMaxUpgrade(def)) {
+     return fail('Already at maximum upgrade.');
+   }
+ 
++  // Authored schedules include the live T1 discount; only explicit experiment arms override them.
+   const targetPlus = current + 1;
+   const cost = upgradeCostFor(
+     def,
+     targetPlus,
+-    world.t1EconomyConfigForPlayer(entity.isPlayer.id).t1Plus5EssenceCostMultiplier,
++    world.t1EconomyConfigByPlayerId.get(entity.isPlayer.id)?.t1Plus5EssenceCostMultiplier,
+   );
+   if (!cost && !isTestRoom) return fail('This item cannot be upgraded.');
+ 
+diff --git a/server/test/rewardMultiplier.test.ts b/server/test/rewardMultiplier.test.ts
+index 7318b773..fb322d9e 100644
+--- a/server/test/rewardMultiplier.test.ts
++++ b/server/test/rewardMultiplier.test.ts
+@@ -211,8 +211,9 @@ assert(
+ // differently: a tier-gated player hits their cap and the extra XP is discarded,
+ // so 10x XP does NOT mean 10x biome levels.
+ 
+-const cappedBase = farm("p-cap-base", 1, KILLS, 1);
+-const cappedBoost = farm("p-cap-boost", MULT, KILLS, 1);
++const capKills = GAME_CONFIG.BIOME_XP_SEGMENT_BUDGET_BY_TIER[1];
++const cappedBase = farm("p-cap-base", 1, capKills, 1);
++const cappedBoost = farm("p-cap-boost", MULT, capKills, 1);
+ assert(
+   cappedBoost.biomeXp < cappedBase.biomeXp * MULT,
+   "a tier-gated player must stop earning biome XP at the cap even at high multipliers",
+diff --git a/shared/src/config/gameConfig.test.ts b/shared/src/config/gameConfig.test.ts
+index 62d670d6..5bef5169 100644
+--- a/shared/src/config/gameConfig.test.ts
++++ b/shared/src/config/gameConfig.test.ts
+@@ -86,10 +86,10 @@ function testPeekSceneBoundsEdge(): void {
+ }
+ 
+ const localTables = [
+-  [210, 455, 735, 1_050, 1_383, 1_750],
+-  [600, 1_300, 2_100, 3_000, 3_950, 5_000],
+-  [840, 1_820, 2_940, 4_200, 5_530, 7_000],
+-  [1_080, 2_340, 3_780, 5_400, 7_110, 9_000],
++  [210, 455, 735, 1050, 1383, 1750],
++  [450, 975, 1575, 2250, 2963, 3750],
++  [5040, 10920, 17640, 25200, 33180, 42000],
++  [12960, 28080, 45360, 64800, 85320, 108000],
+ ] as const;
+ 
+ assert(BIOME_LEVELS_PER_TIER === 6, 'biome segments remain six levels');
+@@ -100,7 +100,7 @@ assert(
+ 
+ for (let tier = 1; tier <= 4; tier++) {
+   assert(
+-    biomeXpSegmentBudget(tier) === [0, 1_750, 5_000, 7_000, 9_000][tier],
++    biomeXpSegmentBudget(tier) === [0, 1750, 3750, 42000, 108000][tier],
+     `T${tier} segment budget is explicit`,
+   );
+   const offset = (tier - 1) * BIOME_LEVELS_PER_TIER;
+@@ -114,17 +114,17 @@ for (let tier = 1; tier <= 4; tier++) {
+ }
+ 
+ assert(biomeXpForLevel(0) === 0, 'level zero costs zero XP');
+-assert(biomeXpForLevel(6) === 1_750, 'T1 reference segment ends at 1,750 XP');
+-assert(biomeXpForLevel(12) === 6_750, 'T2 reference segment ends at 6,750 cumulative XP');
+-assert(biomeXpForLevel(18) === 13_750, 'T3 reference segment ends at 13,750 cumulative XP');
+-assert(biomeXpForLevel(24) === 22_750, 'T4 reference segment ends at 22,750 cumulative XP');
++assert(biomeXpForLevel(6) === 1750, 'T1 candidate segment ends at 1,750 XP');
++assert(biomeXpForLevel(12) === 5500, 'T2 candidate cumulative threshold');
++assert(biomeXpForLevel(18) === 47500, 'T3 candidate cumulative threshold');
++assert(biomeXpForLevel(24) === 155500, 'T4 candidate cumulative threshold');
+ 
+ assert(biomeLevelOffset('plains') === 0, 'T1 biome keeps zero offset');
+ assert(biomeLevelOffset('jungle') === 6, 'T2-start biome keeps its six-level offset');
+-assert(biomeXpForBiomeLevel('plains', 6) === 1_750, 'T1 biome reaches its local budget');
+-assert(biomeXpForBiomeLevel('jungle', 1) === 600, 'T2-start biome begins on the T2 local curve');
+-assert(biomeXpForBiomeLevel('jungle', 6) === 5_000, 'T2-start biome reaches the T2 local budget');
+-assert(biomeXpForBiomeLevel('jungle', 7) === 5_840, 'T2-start biome advances into the T3 curve');
++assert(biomeXpForBiomeLevel('plains', 6) === 1750, 'T1 biome reaches its local budget');
++assert(biomeXpForBiomeLevel('jungle', 1) === 450, 'T2-start biome begins on the T2 local curve');
++assert(biomeXpForBiomeLevel('jungle', 6) === 3750, 'T2-start biome reaches the T2 local budget');
++assert(biomeXpForBiomeLevel('jungle', 7) === 8790, 'T2-start biome advances into the T3 curve');
+ assert(
+   JSON.stringify(CLEARING_MASTERY_XP_THRESHOLDS) === JSON.stringify([0, 43, 172, 430, 860]),
+   'clearing keeps its explicit tutorial threshold table',
+@@ -136,7 +136,7 @@ assert(clearingMasteryXpForLevel(3) === 430, 'clearing level 3 aligns with First
+ assert(clearingMasteryXpForLevel(4) === 860, 'clearing level 4 arrives after twenty Tiny Wisps');
+ assert(clearingMasteryXpForLevel(5) === 860, 'clearing thresholds stop at the four-level cap');
+ assert(biomeXpForBiomeLevel('clearing', 4) === 860, 'clearing does not inherit the normal T1 curve');
+-assert(biomeXpForLevel(4) === 1_050, 'normal T1 curve remains independent at level 4');
++assert(biomeXpForLevel(4) === 1050, 'normal T1 curve remains independent at level 4');
+ assert(
+   MONSTER_DATABASE.get('tiny-slime')?.rewards.biomeXp === 43,
+   'Clearing threshold table stays aligned with the unchanged Tiny Wisp reward',
+diff --git a/shared/src/config/gameConfig.ts b/shared/src/config/gameConfig.ts
+index 327f958f..fc1d5f39 100644
+--- a/shared/src/config/gameConfig.ts
++++ b/shared/src/config/gameConfig.ts
+@@ -142,7 +142,7 @@ export const GAME_CONFIG = {
+   /** Incremental XP shares for the six levels in one tier segment. */
+   BIOME_XP_LOCAL_STEP_SHARES: [12, 14, 16, 18, 19, 21] as const,
+   /** Total XP for one six-level segment, indexed by tier; index 0 is unused. */
+-  BIOME_XP_SEGMENT_BUDGET_BY_TIER: [0, 1_750, 5_000, 7_000, 9_000] as const,
++  BIOME_XP_SEGMENT_BUDGET_BY_TIER: [0, 1_750, 3_750, 42_000, 108_000] as const,
+   /** Growth applied to segments beyond the explicitly tuned T4 budget. */
+   BIOME_XP_FUTURE_TIER_BUDGET_GROWTH: 1.2,
+   /**
+@@ -159,7 +159,7 @@ export const GAME_CONFIG = {
+    * Index = biomeTier.
+    */
+   BIOME_ESSENCE_TIER_MULT: [
+-    1.0, 2.0, 0.85, 0.70, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55,
++    1.0, 1.8, 0.765, 0.63, 0.495, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55,
+   ] as unknown as readonly number[],
+   // ── Biome catalysts ─────────────────────────────────────────────────────────
+   /**
+@@ -172,7 +172,7 @@ export const GAME_CONFIG = {
+    * retaining the universal 100-point mint threshold, keeping the player-facing
+    * meter consistent without changing its intended catalyst pace.
+    */
+-  CATALYST_PROGRESS_REWARD_MULT_BY_TIER: { 1: 0.5 } as Readonly<Record<number, number>>,
++  CATALYST_PROGRESS_REWARD_MULT_BY_TIER: { 1: 0.5, 2: 4 / 3, 3: 1 / 6, 4: 1 / 12 } as Readonly<Record<number, number>>,
+ } as const;
+ 
+ /** Universal kill-weight required to mint one catalyst. */
+diff --git a/shared/src/data/recipes/cave.recipes.ts b/shared/src/data/recipes/cave.recipes.ts
+index 94da4923..9867877f 100644
+--- a/shared/src/data/recipes/cave.recipes.ts
++++ b/shared/src/data/recipes/cave.recipes.ts
+@@ -49,11 +49,11 @@ export const caveRecipeEntries = [
+     // +5 catalyst from its own T2 successor's tag ("chaotic-axe (counted
+     // disruption) → Swarming").
+     upgrades: [
+-      { stats: { attack: 1 }, cost: { red: 25 }, requiredBiomeLevel: 2 },
+-      { stats: { attack: 2 }, cost: { red: 45 }, requiredBiomeLevel: 3 },
+-      { stats: { attack: 2 }, cost: { red: 75 }, requiredBiomeLevel: 4 },
+-      { stats: { attack: 3 }, cost: { red: 125 }, requiredBiomeLevel: 4 },
+-      { stats: { attack: 2 }, cost: { red: 155 }, catalystCost: { swarming: 1 }, requiredBiomeLevel: 4 },
++      { stats: { attack: 1 }, cost: {"red":85}, requiredBiomeLevel: 2 },
++      { stats: { attack: 2 }, cost: {"red":85}, requiredBiomeLevel: 3 },
++      { stats: { attack: 2 }, cost: {"red":85}, requiredBiomeLevel: 4 },
++      { stats: { attack: 3 }, cost: {"red":70}, requiredBiomeLevel: 4 },
++      { stats: { attack: 2 }, cost: {"red":70}, catalystCost: { swarming: 1 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -70,11 +70,11 @@ export const caveRecipeEntries = [
+     // +5 catalyst from cave-vest-t2's own tag ("premium %DR generalist wall →
+     // Swarming").
+     upgrades: [
+-      { stats: { maxHp: 3, damageReduction: 0.01 }, cost: { red: 30 }, requiredBiomeLevel: 3 },
+-      { stats: { maxHp: 3, plating: 1, damageReduction: 0.01 }, cost: { red: 60 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 3, damageReduction: 0.01 }, cost: { red: 95 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 3, plating: 1, damageReduction: 0.01 }, cost: { red: 155 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 2, damageReduction: 0.01 }, cost: { red: 195 }, catalystCost: { swarming: 1 }, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 3, damageReduction: 0.01 }, cost: {"red":108}, requiredBiomeLevel: 3 },
++      { stats: { maxHp: 3, plating: 1, damageReduction: 0.01 }, cost: {"red":107}, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 3, damageReduction: 0.01 }, cost: {"red":108}, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 3, plating: 1, damageReduction: 0.01 }, cost: {"red":86}, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 2, damageReduction: 0.01 }, cost: {"red":86}, catalystCost: { swarming: 1 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -91,11 +91,11 @@ export const caveRecipeEntries = [
+     description: 'A cave-crystal that beats, slow and steady, like a sleeping heart.',
+     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, total ~253 (was 255).
+     upgrades: [
+-      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 10 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 25 }, requiredBiomeLevel: 4 },
+-      { stats: { recovery: 1 }, cost: { red: 40 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 60 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 75 }, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: {"red":41}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: {"red":42}, requiredBiomeLevel: 4 },
++      { stats: { recovery: 1 }, cost: {"red":41}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: {"red":36}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: {"red":35}, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -108,11 +108,11 @@ export const caveRecipeEntries = [
+     description: 'Stretched membrane that falls on stone without a whisper.',
+     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, total ~178 (was 176).
+     upgrades: [
+-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 10 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 15 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 25 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 40 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 55 }, requiredBiomeLevel: 4 },
++      { stats: { speed: 1 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: {"red":27}, requiredBiomeLevel: 4 },
++      { stats: { speed: 1 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: {"red":27}, requiredBiomeLevel: 4 },
++      { stats: { speed: 1 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: {"red":27}, requiredBiomeLevel: 4 },
++      { stats: { speed: 1 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: {"red":25}, requiredBiomeLevel: 4 },
++      { stats: { speed: 1 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: {"red":24}, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -128,11 +128,11 @@ export const caveRecipeEntries = [
+     icon: 'items/weapons/ruinous-axe.png',
+     description: 'Bigger, meaner, and somehow better balanced — chaos with the faintest thread of discipline.',
+     upgrades: [
+-      { stats: { attack: 4 }, cost: { red: 44 }, requiredBiomeLevel: 8 },
+-      { stats: { attack: 4 }, cost: { red: 110 }, requiredBiomeLevel: 9 },
+-      { stats: { attack: 5 }, cost: { red: 177 }, requiredBiomeLevel: 10 },
+-      { stats: { attack: 4 }, cost: { red: 287 }, catalystCost: { swarming: 1 }, requiredBiomeLevel: 10 },
+-      { stats: { attack: 5 }, cost: { red: 486 }, catalystCost: { swarming: 2 }, requiredBiomeLevel: 10 },
++      { stats: { attack: 4 }, cost: {"red":239}, requiredBiomeLevel: 8 },
++      { stats: { attack: 4 }, cost: {"red":238}, requiredBiomeLevel: 9 },
++      { stats: { attack: 5 }, cost: {"red":239}, requiredBiomeLevel: 10 },
++      { stats: { attack: 4 }, cost: {"red":194}, catalystCost: { swarming: 1 }, requiredBiomeLevel: 10 },
++      { stats: { attack: 5 }, cost: {"red":194}, catalystCost: { swarming: 2 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -146,11 +146,11 @@ export const caveRecipeEntries = [
+     icon: 'items/armor/dire-bestial-hide.png',
+     description: 'From a beast the deep-cavern folk name only in low voices.',
+     upgrades: [
+-      { stats: { maxHp: 5, plating: 1, damageReduction: 0.01 }, cost: { red: 46 }, requiredBiomeLevel: 9 },
+-      { stats: { maxHp: 5, plating: 1, damageReduction: 0.01 }, cost: { red: 116 }, requiredBiomeLevel: 10 },
+-      { stats: { maxHp: 5, plating: 1, damageReduction: 0.01 }, cost: { red: 185 }, requiredBiomeLevel: 10 },
+-      { stats: { maxHp: 5, plating: 1, damageReduction: 0.01 }, cost: { red: 300 }, catalystCost: { swarming: 1 }, requiredBiomeLevel: 10 },
+-      { stats: { maxHp: 6 }, cost: { red: 508 }, catalystCost: { swarming: 2 }, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 5, plating: 1, damageReduction: 0.01 }, cost: {"red":251}, requiredBiomeLevel: 9 },
++      { stats: { maxHp: 5, plating: 1, damageReduction: 0.01 }, cost: {"red":250}, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 5, plating: 1, damageReduction: 0.01 }, cost: {"red":251}, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 5, plating: 1, damageReduction: 0.01 }, cost: {"red":202}, catalystCost: { swarming: 1 }, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 6 }, cost: {"red":201}, catalystCost: { swarming: 2 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -167,11 +167,11 @@ export const caveRecipeEntries = [
+     icon: 'items/charms/resonant-gem.png',
+     description: 'A gem that rings on its own in the dark, answering a song no one else hears.',
+     upgrades: [
+-      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 18 }, requiredBiomeLevel: 10 },
+-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 46 }, requiredBiomeLevel: 10 },
+-      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 73 }, requiredBiomeLevel: 10 },
+-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 119 }, requiredBiomeLevel: 10 },
+-      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 203 }, catalystCost: { swarming: 1 }, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: {"red":97}, requiredBiomeLevel: 10 },
++      { stats: { recovery: 1 }, mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: {"red":97}, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: {"red":97}, requiredBiomeLevel: 10 },
++      { stats: { recovery: 1 }, mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: {"red":84}, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: {"red":84}, catalystCost: { swarming: 1 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -186,11 +186,11 @@ export const caveRecipeEntries = [
+     icon: 'items/boots/cavern-sprints.png',
+     description: 'Worn smooth on tunnel floors no map has ever charted.',
+     upgrades: [
+-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 12 }, requiredBiomeLevel: 10 },
+-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 30 }, requiredBiomeLevel: 10 },
+-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 48 }, requiredBiomeLevel: 10 },
+-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 78 }, requiredBiomeLevel: 10 },
+-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 132 }, catalystCost: { swarming: 1 }, requiredBiomeLevel: 10 },
++      { stats: { speed: 2 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: {"red":63}, requiredBiomeLevel: 10 },
++      { stats: { speed: 2 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: {"red":63}, requiredBiomeLevel: 10 },
++      { stats: { speed: 2 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: {"red":63}, requiredBiomeLevel: 10 },
++      { stats: { speed: 2 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: {"red":56}, requiredBiomeLevel: 10 },
++      { stats: { speed: 2 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: {"red":55}, catalystCost: { swarming: 1 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -207,11 +207,11 @@ export const caveRecipeEntries = [
+     icon: 'items/weapons/cataclysm-axe.png',
+     description: 'Chaos given an edge — and, at last, a little rhythm. Every fifth swing still finds only air.',
+     upgrades: [
+-      { stats: { attack: 8 }, cost: { red: 88 },  requiredBiomeLevel: 14 },
+-      { stats: { attack: 8 }, cost: { red: 221 }, requiredBiomeLevel: 15 },
+-      { stats: { attack: 8 }, cost: { red: 353 }, requiredBiomeLevel: 16 },
+-      { stats: { attack: 7 }, cost: { red: 574 }, catalystCost: { swarming: 2 }, requiredBiomeLevel: 16 },
+-      { stats: { attack: 8 }, cost: { red: 972 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 16 },
++      { stats: { attack: 8 }, cost: {"red":477},  requiredBiomeLevel: 14 },
++      { stats: { attack: 8 }, cost: {"red":478}, requiredBiomeLevel: 15 },
++      { stats: { attack: 8 }, cost: {"red":477}, requiredBiomeLevel: 16 },
++      { stats: { attack: 7 }, cost: {"red":388}, catalystCost: { swarming: 2 }, requiredBiomeLevel: 16 },
++      { stats: { attack: 8 }, cost: {"red":388}, catalystCost: { swarming: 3 }, requiredBiomeLevel: 16 },
+     ],
+   }],
+ 
+@@ -225,11 +225,11 @@ export const caveRecipeEntries = [
+     icon: 'items/armor/deepscale-hide.png',
+     description: 'Layered scale over thick hide — nothing fancy, just the most of everything that stops a blow.',
+     upgrades: [
+-      { stats: { maxHp: 9, plating: 1, damageReduction: 0.01 }, cost: { red: 73, yellow: 18 },  requiredBiomeLevel: 15 },
+-      { stats: { maxHp: 9, plating: 1, damageReduction: 0.01 }, cost: { red: 182, yellow: 45 }, requiredBiomeLevel: 16 },
+-      { stats: { maxHp: 9, plating: 1, damageReduction: 0.01 }, cost: { red: 291, yellow: 73 }, requiredBiomeLevel: 16 },
+-      { stats: { maxHp: 9, plating: 2, damageReduction: 0.01 }, cost: { red: 473, yellow: 118 }, catalystCost: { swarming: 2 }, requiredBiomeLevel: 16 },
+-      { stats: { maxHp: 9, plating: 1 }, cost: { red: 800, yellow: 200 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 16 },
++      { stats: { maxHp: 9, plating: 1, damageReduction: 0.01 }, cost: {"red":391,"yellow":98},  requiredBiomeLevel: 15 },
++      { stats: { maxHp: 9, plating: 1, damageReduction: 0.01 }, cost: {"red":392,"yellow":97}, requiredBiomeLevel: 16 },
++      { stats: { maxHp: 9, plating: 1, damageReduction: 0.01 }, cost: {"red":391,"yellow":98}, requiredBiomeLevel: 16 },
++      { stats: { maxHp: 9, plating: 2, damageReduction: 0.01 }, cost: {"red":323,"yellow":81}, catalystCost: { swarming: 2 }, requiredBiomeLevel: 16 },
++      { stats: { maxHp: 9, plating: 1 }, cost: {"red":322,"yellow":80}, catalystCost: { swarming: 3 }, requiredBiomeLevel: 16 },
+     ],
+   }],
+ 
+@@ -248,11 +248,11 @@ export const caveRecipeEntries = [
+     icon: 'items/charms/echo-geode.png',
+     description: 'It pulses on its own clock, and hums a low, steady mending between the beats.',
+     upgrades: [
+-      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 28, green: 7 },  requiredBiomeLevel: 16 },
+-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 70, green: 18 }, requiredBiomeLevel: 16 },
+-      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 113, green: 28 }, requiredBiomeLevel: 16 },
+-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: { red: 183, green: 46 }, requiredBiomeLevel: 16 },
+-      { stats: { recovery: 1 }, cost: { red: 310, green: 78 }, catalystCost: { swarming: 2 }, requiredBiomeLevel: 16 },
++      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: {"red":145,"green":37},  requiredBiomeLevel: 16 },
++      { stats: { recovery: 1 }, mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: {"red":146,"green":36}, requiredBiomeLevel: 16 },
++      { mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: {"red":145,"green":37}, requiredBiomeLevel: 16 },
++      { stats: { recovery: 1 }, mechanicEffects: { 'defense.absorb-pct': 0.01 }, cost: {"red":134,"green":34}, requiredBiomeLevel: 16 },
++      { stats: { recovery: 1 }, cost: {"red":134,"green":33}, catalystCost: { swarming: 2 }, requiredBiomeLevel: 16 },
+     ],
+   }],
+ 
+@@ -266,11 +266,11 @@ export const caveRecipeEntries = [
+     icon: 'items/boots/echostep-treads.png',
+     description: 'They give back no sound at all — not even the echo the deep stone expects.',
+     upgrades: [
+-      { stats: { speed: 4 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 23 },  requiredBiomeLevel: 16 },
+-      { stats: { speed: 3 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 57 },  requiredBiomeLevel: 16 },
+-      { stats: { speed: 4 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 91 }, requiredBiomeLevel: 16 },
+-      { stats: { speed: 3 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 147 }, requiredBiomeLevel: 16 },
+-      { stats: { speed: 4 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: { red: 248 }, catalystCost: { swarming: 2 }, requiredBiomeLevel: 16 },
++      { stats: { speed: 4 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: {"red":115},  requiredBiomeLevel: 16 },
++      { stats: { speed: 3 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: {"red":114},  requiredBiomeLevel: 16 },
++      { stats: { speed: 4 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: {"red":115}, requiredBiomeLevel: 16 },
++      { stats: { speed: 3 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: {"red":111}, requiredBiomeLevel: 16 },
++      { stats: { speed: 4 }, mechanicEffects: { 'mobility.stealth-pct': 0.02 }, cost: {"red":111}, catalystCost: { swarming: 2 }, requiredBiomeLevel: 16 },
+     ],
+   }],
+ 
+diff --git a/shared/src/data/recipes/desert.recipes.ts b/shared/src/data/recipes/desert.recipes.ts
+index 50b812c4..dbb3d655 100644
+--- a/shared/src/data/recipes/desert.recipes.ts
++++ b/shared/src/data/recipes/desert.recipes.ts
+@@ -33,11 +33,11 @@ export const desertRecipeEntries = [
+     element: 'fire',   // cosmetic attack tint only
+     description: 'Sun-forged and ward-etched: the opening blow breaks, and for a few breaths after it the light does not let go.',
+     upgrades: [
+-      { stats: { attack: 9 }, cost: { yellow: 48 }, requiredBiomeLevel: 2 },
+-      { stats: { attack: 9 }, cost: { yellow: 120 }, requiredBiomeLevel: 3 },
+-      { stats: { attack: 9 }, cost: { yellow: 192 }, requiredBiomeLevel: 4 },
+-      { stats: { attack: 9 }, cost: { yellow: 312 }, catalystCost: { dominion: 1 }, requiredBiomeLevel: 4 },
+-      { stats: { attack: 9 }, cost: { yellow: 528 }, catalystCost: { dominion: 2 }, requiredBiomeLevel: 4 },
++      { stats: { attack: 9 }, cost: {"yellow":259}, requiredBiomeLevel: 2 },
++      { stats: { attack: 9 }, cost: {"yellow":259}, requiredBiomeLevel: 3 },
++      { stats: { attack: 9 }, cost: {"yellow":259}, requiredBiomeLevel: 4 },
++      { stats: { attack: 9 }, cost: {"yellow":212}, catalystCost: { dominion: 1 }, requiredBiomeLevel: 4 },
++      { stats: { attack: 9 }, cost: {"yellow":211}, catalystCost: { dominion: 2 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -50,11 +50,11 @@ export const desertRecipeEntries = [
+     icon: 'items/armor/duneplate-last-stand.png',
+     description: 'Plate of the standfast dead, who are said to have refused to fall even once.',
+     upgrades: [
+-      { stats: { maxHp: 12, plating: 3 }, cost: { yellow: 29, purple: 19 }, requiredBiomeLevel: 3 },
+-      { stats: { maxHp: 12, plating: 3 }, cost: { yellow: 72, purple: 48 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 12, plating: 3 }, cost: { yellow: 115, purple: 77 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 12, plating: 3 }, cost: { yellow: 187, purple: 125 }, catalystCost: { dominion: 1 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 12, plating: 3 }, cost: { yellow: 317, purple: 211 }, catalystCost: { dominion: 2 }, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 12, plating: 3 }, cost: {"yellow":156,"purple":104}, requiredBiomeLevel: 3 },
++      { stats: { maxHp: 12, plating: 3 }, cost: {"yellow":156,"purple":104}, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 12, plating: 3 }, cost: {"yellow":156,"purple":104}, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 12, plating: 3 }, cost: {"yellow":126,"purple":84}, catalystCost: { dominion: 1 }, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 12, plating: 3 }, cost: {"yellow":126,"purple":84}, catalystCost: { dominion: 2 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -68,11 +68,11 @@ export const desertRecipeEntries = [
+     icon: 'items/charms/mirage-talisman.png',
+     description: 'A shard of cooled glass that shows you water which is not there, and mends what is.',
+     upgrades: [
+-      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 15, purple: 8 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 39, purple: 19 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 62, purple: 31 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 101, purple: 50 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 171, purple: 84 }, catalystCost: { dominion: 1 }, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: {"yellow":81,"purple":40}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: {"yellow":80,"purple":40}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: {"yellow":81,"purple":40}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: {"yellow":73,"purple":36}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: {"yellow":73,"purple":36}, catalystCost: { dominion: 1 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -84,11 +84,11 @@ export const desertRecipeEntries = [
+     icon: 'items/boots/sand-sprint.png',
+     description: 'Wide and light, made to outpace a storm across open dune.',
+     upgrades: [
+-      { stats: { speed: 7 },  cost: { yellow: 15 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 11 }, cost: { yellow: 37 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 14 }, cost: { yellow: 60 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 14 }, cost: { yellow: 97 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 15 }, cost: { yellow: 165 }, catalystCost: { dominion: 1 }, requiredBiomeLevel: 4 },
++      { stats: { speed: 7 },  cost: {"yellow":77}, requiredBiomeLevel: 4 },
++      { stats: { speed: 11 }, cost: {"yellow":76}, requiredBiomeLevel: 4 },
++      { stats: { speed: 14 }, cost: {"yellow":77}, requiredBiomeLevel: 4 },
++      { stats: { speed: 14 }, cost: {"yellow":72}, requiredBiomeLevel: 4 },
++      { stats: { speed: 15 }, cost: {"yellow":72}, catalystCost: { dominion: 1 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -111,11 +111,11 @@ export const desertRecipeEntries = [
+     element: 'fire',   // cosmetic attack tint only
+     description: 'It spends its fury on the opening blow, then burns on a while in the wound it made.',
+     upgrades: [
+-      { stats: { attack: 12 }, cost: { yellow: 97 },  requiredBiomeLevel: 8 },
+-      { stats: { attack: 12 }, cost: { yellow: 242 }, requiredBiomeLevel: 9 },
+-      { stats: { attack: 12 }, cost: { yellow: 388 }, requiredBiomeLevel: 10 },
+-      { stats: { attack: 12 }, cost: { yellow: 630 }, catalystCost: { dominion: 2 }, requiredBiomeLevel: 10 },
+-      { stats: { attack: 12 }, cost: { yellow: 1067 }, catalystCost: { dominion: 3 }, requiredBiomeLevel: 10 },
++      { stats: { attack: 12 }, cost: {"yellow":526},  requiredBiomeLevel: 8 },
++      { stats: { attack: 12 }, cost: {"yellow":525}, requiredBiomeLevel: 9 },
++      { stats: { attack: 12 }, cost: {"yellow":526}, requiredBiomeLevel: 10 },
++      { stats: { attack: 12 }, cost: {"yellow":424}, catalystCost: { dominion: 2 }, requiredBiomeLevel: 10 },
++      { stats: { attack: 12 }, cost: {"yellow":423}, catalystCost: { dominion: 3 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -130,11 +130,11 @@ export const desertRecipeEntries = [
+     icon: 'items/armor/eternal-duneplate.png',
+     description: 'Worn by the standfast dead, who shed curses like sand and refused, once, to die.',
+     upgrades: [
+-      { stats: { maxHp: 20, plating: 5 }, cost: { yellow: 76, purple: 19 },  requiredBiomeLevel: 9 },
+-      { stats: { maxHp: 20, plating: 5 }, cost: { yellow: 190, purple: 47 }, requiredBiomeLevel: 10 },
+-      { stats: { maxHp: 20, plating: 5 }, cost: { yellow: 303, purple: 76 }, requiredBiomeLevel: 10 },
+-      { stats: { maxHp: 20, plating: 5 }, cost: { yellow: 493, purple: 123 }, catalystCost: { dominion: 2 }, requiredBiomeLevel: 10 },
+-      { stats: { maxHp: 20, plating: 5 }, cost: { yellow: 834, purple: 209 }, catalystCost: { dominion: 3 }, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 20, plating: 5 }, cost: {"yellow":408,"purple":102},  requiredBiomeLevel: 9 },
++      { stats: { maxHp: 20, plating: 5 }, cost: {"yellow":408,"purple":102}, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 20, plating: 5 }, cost: {"yellow":408,"purple":102}, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 20, plating: 5 }, cost: {"yellow":336,"purple":84}, catalystCost: { dominion: 2 }, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 20, plating: 5 }, cost: {"yellow":336,"purple":84}, catalystCost: { dominion: 3 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -150,11 +150,11 @@ export const desertRecipeEntries = [
+     icon: 'items/charms/oasis-heart.png',
+     description: 'A patient spring that helps you find the strength to purge curses and break your bonds again sooner.',
+     upgrades: [
+-      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 38, purple: 9 },  requiredBiomeLevel: 10 },
+-      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 95, purple: 24 }, requiredBiomeLevel: 10 },
+-      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 152, purple: 38 }, requiredBiomeLevel: 10 },
+-      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 246, purple: 62 }, requiredBiomeLevel: 10 },
+-      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 417, purple: 104 }, catalystCost: { dominion: 2 }, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: {"yellow":200,"purple":50},  requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: {"yellow":199,"purple":50}, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: {"yellow":200,"purple":50}, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: {"yellow":175,"purple":44}, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: {"yellow":174,"purple":43}, catalystCost: { dominion: 2 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -168,11 +168,11 @@ export const desertRecipeEntries = [
+     icon: 'items/boots/mirage-striders.png',
+     description: 'By the time the storm reaches where you stood, you are already a rumor on the next dune.',
+     upgrades: [
+-      { stats: { speed: 9 }, cost: { yellow: 31 },  requiredBiomeLevel: 10 },
+-      { stats: { speed: 13 }, cost: { yellow: 77 },  requiredBiomeLevel: 10 },
+-      { stats: { speed: 16 }, cost: { yellow: 124 }, requiredBiomeLevel: 10 },
+-      { stats: { speed: 16 }, cost: { yellow: 201 }, requiredBiomeLevel: 10 },
+-      { stats: { speed: 17 }, cost: { yellow: 341 }, catalystCost: { dominion: 2 }, requiredBiomeLevel: 10 },
++      { stats: { speed: 9 }, cost: {"yellow":162},  requiredBiomeLevel: 10 },
++      { stats: { speed: 13 }, cost: {"yellow":162},  requiredBiomeLevel: 10 },
++      { stats: { speed: 16 }, cost: {"yellow":162}, requiredBiomeLevel: 10 },
++      { stats: { speed: 16 }, cost: {"yellow":144}, requiredBiomeLevel: 10 },
++      { stats: { speed: 17 }, cost: {"yellow":144}, catalystCost: { dominion: 2 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -201,11 +201,11 @@ export const desertRecipeEntries = [
+     element: 'fire',   // cosmetic attack tint only
+     description: 'At the sun\'s height the opening cut lets in the whole day, and it takes its time going out.',
+     upgrades: [
+-      { stats: { attack: 20 }, cost: { yellow: 193 }, requiredBiomeLevel: 14 },
+-      { stats: { attack: 20 }, cost: { yellow: 483 }, requiredBiomeLevel: 15 },
+-      { stats: { attack: 20 }, cost: { yellow: 772 }, requiredBiomeLevel: 16 },
+-      { stats: { attack: 20 }, cost: { yellow: 1255 }, catalystCost: { dominion: 3 }, requiredBiomeLevel: 16 },
+-      { stats: { attack: 20 }, cost: { yellow: 2122 }, catalystCost: { dominion: 4 }, requiredBiomeLevel: 16 },
++      { stats: { attack: 20 }, cost: {"yellow":1044}, requiredBiomeLevel: 14 },
++      { stats: { attack: 20 }, cost: {"yellow":1044}, requiredBiomeLevel: 15 },
++      { stats: { attack: 20 }, cost: {"yellow":1044}, requiredBiomeLevel: 16 },
++      { stats: { attack: 20 }, cost: {"yellow":847}, catalystCost: { dominion: 3 }, requiredBiomeLevel: 16 },
++      { stats: { attack: 20 }, cost: {"yellow":846}, catalystCost: { dominion: 4 }, requiredBiomeLevel: 16 },
+     ],
+   }],
+ 
+@@ -225,11 +225,11 @@ export const desertRecipeEntries = [
+     icon: 'items/armor/deathless-duneplate.png',
+     description: 'The standfast dead refused to fall — and the wounds closed as the refusal held.',
+     upgrades: [
+-      { stats: { maxHp: 40, plating: 9 }, cost: { yellow: 153, purple: 38 }, requiredBiomeLevel: 15 },
+-      { stats: { maxHp: 40, plating: 9 }, cost: { yellow: 382, purple: 95 }, requiredBiomeLevel: 16 },
+-      { stats: { maxHp: 40, plating: 9 }, cost: { yellow: 610, purple: 152 }, requiredBiomeLevel: 16 },
+-      { stats: { maxHp: 40, plating: 9 }, cost: { yellow: 991, purple: 248 }, catalystCost: { dominion: 3 }, requiredBiomeLevel: 16 },
+-      { stats: { maxHp: 40, plating: 9 }, cost: { yellow: 1677, purple: 419 }, catalystCost: { dominion: 4 }, requiredBiomeLevel: 16 },
++      { stats: { maxHp: 40, plating: 9 }, cost: {"yellow":823,"purple":205}, requiredBiomeLevel: 15 },
++      { stats: { maxHp: 40, plating: 9 }, cost: {"yellow":823,"purple":206}, requiredBiomeLevel: 16 },
++      { stats: { maxHp: 40, plating: 9 }, cost: {"yellow":823,"purple":205}, requiredBiomeLevel: 16 },
++      { stats: { maxHp: 40, plating: 9 }, cost: {"yellow":672,"purple":168}, catalystCost: { dominion: 3 }, requiredBiomeLevel: 16 },
++      { stats: { maxHp: 40, plating: 9 }, cost: {"yellow":672,"purple":168}, catalystCost: { dominion: 4 }, requiredBiomeLevel: 16 },
+     ],
+   }],
+ 
+@@ -247,11 +247,11 @@ export const desertRecipeEntries = [
+     icon: 'items/charms/last-oasis.png',
+     description: 'The last spring never runs dry; each purge and broken bond brings the next within reach.',
+     upgrades: [
+-      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: { yellow: 76, purple: 19 }, requiredBiomeLevel: 16 },
+-      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: { yellow: 190, purple: 47 }, requiredBiomeLevel: 16 },
+-      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: { yellow: 303, purple: 76 }, requiredBiomeLevel: 16 },
+-      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: { yellow: 493, purple: 123 }, requiredBiomeLevel: 16 },
+-      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: { yellow: 834, purple: 209 }, catalystCost: { dominion: 3 }, requiredBiomeLevel: 16 },
++      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: {"yellow":399,"purple":100}, requiredBiomeLevel: 16 },
++      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: {"yellow":399,"purple":99}, requiredBiomeLevel: 16 },
++      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: {"yellow":399,"purple":100}, requiredBiomeLevel: 16 },
++      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: {"yellow":350,"purple":88}, requiredBiomeLevel: 16 },
++      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: {"yellow":349,"purple":87}, catalystCost: { dominion: 3 }, requiredBiomeLevel: 16 },
+     ],
+   }],
+ 
+@@ -266,11 +266,11 @@ export const desertRecipeEntries = [
+     icon: 'items/boots/simoom-striders.png',
+     description: 'Named for the desert wind that arrives only as the dust it already left behind.',
+     upgrades: [
+-      { stats: { speed: 13 }, cost: { yellow: 61 },  requiredBiomeLevel: 16 },
+-      { stats: { speed: 16 }, cost: { yellow: 153 }, requiredBiomeLevel: 16 },
+-      { stats: { speed: 20 }, cost: { yellow: 245 }, requiredBiomeLevel: 16 },
+-      { stats: { speed: 20 }, cost: { yellow: 398 }, requiredBiomeLevel: 16 },
+-      { stats: { speed: 19 }, cost: { yellow: 673 }, catalystCost: { dominion: 3 }, requiredBiomeLevel: 16 },
++      { stats: { speed: 13 }, cost: {"yellow":318},  requiredBiomeLevel: 16 },
++      { stats: { speed: 16 }, cost: {"yellow":318}, requiredBiomeLevel: 16 },
++      { stats: { speed: 20 }, cost: {"yellow":318}, requiredBiomeLevel: 16 },
++      { stats: { speed: 20 }, cost: {"yellow":288}, requiredBiomeLevel: 16 },
++      { stats: { speed: 19 }, cost: {"yellow":288}, catalystCost: { dominion: 3 }, requiredBiomeLevel: 16 },
+     ],
+   }],
+ 
+diff --git a/shared/src/data/recipes/forest.recipes.ts b/shared/src/data/recipes/forest.recipes.ts
+index da5a0200..eb783c66 100644
+--- a/shared/src/data/recipes/forest.recipes.ts
++++ b/shared/src/data/recipes/forest.recipes.ts
+@@ -53,11 +53,11 @@ export const forestRecipeEntries = [
+     // no attacksPerSecond/attack stat changes. +5 catalyst from its own T2
+     // evolutions (gale-needle/thorn-needle), both tagged alacrity.
+     upgrades: [
+-      { attacksPerSecond: 0.02, cost: { green: 25 }, requiredBiomeLevel: 2 },
+-      { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: { green: 50 }, requiredBiomeLevel: 3 },
+-      { attacksPerSecond: 0.02, cost: { green: 75 }, requiredBiomeLevel: 4 },
+-      { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: { green: 125 }, requiredBiomeLevel: 5 },
+-      { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: { green: 155 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 6 }, // +5 = evolution-ready (T2 econ pass 2026-08-29: raised from +3)
++      { attacksPerSecond: 0.02, cost: {"green":87}, requiredBiomeLevel: 2 },
++      { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: {"green":86}, requiredBiomeLevel: 3 },
++      { attacksPerSecond: 0.02, cost: {"green":87}, requiredBiomeLevel: 4 },
++      { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: {"green":70}, requiredBiomeLevel: 5 },
++      { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: {"green":70}, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 6 }, // +5 = evolution-ready (T2 econ pass 2026-08-29: raised from +3)
+     ],
+   }],
+ 
+@@ -74,11 +74,11 @@ export const forestRecipeEntries = [
+     // +5 catalyst from forest-vest-t2's own family-tag ("evasion armor answers
+     // frequent light hits → Alacrity").
+     upgrades: [
+-      { stats: { maxHp: 3, evasion: 0.01 }, cost: { green: 20 }, requiredBiomeLevel: 3 },
+-      { stats: { maxHp: 3, plating: 1, evasion: 0.01 }, cost: { green: 45 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 3, evasion: 0.01 }, cost: { green: 70 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 3, plating: 1, evasion: 0.01 }, cost: { green: 115 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 3, evasion: 0.02 }, cost: { green: 150 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 3, evasion: 0.01 }, cost: {"green":80}, requiredBiomeLevel: 3 },
++      { stats: { maxHp: 3, plating: 1, evasion: 0.01 }, cost: {"green":80}, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 3, evasion: 0.01 }, cost: {"green":80}, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 3, plating: 1, evasion: 0.01 }, cost: {"green":65}, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 3, evasion: 0.02 }, cost: {"green":65}, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -99,11 +99,11 @@ export const forestRecipeEntries = [
+     description: 'Heartroot drawn from the oldest tree in the grove, still faintly warm.',
+     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, same total (240).
+     upgrades: [
+-      { mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 10 }, requiredBiomeLevel: 4 },
+-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 20 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 35 }, requiredBiomeLevel: 4 },
+-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 60 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 75 }, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: {"green":39}, requiredBiomeLevel: 4 },
++      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: {"green":40}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: {"green":39}, requiredBiomeLevel: 4 },
++      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: {"green":34}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: {"green":33}, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -118,11 +118,11 @@ export const forestRecipeEntries = [
+     description: 'Strips of supple hide that move when you move, and never before.',
+     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, same total (160).
+     upgrades: [
+-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 10 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 15 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 25 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 40 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 45 }, requiredBiomeLevel: 4 },
++      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: {"green":27}, requiredBiomeLevel: 4 },
++      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: {"green":26}, requiredBiomeLevel: 4 },
++      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: {"green":27}, requiredBiomeLevel: 4 },
++      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: {"green":23}, requiredBiomeLevel: 4 },
++      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: {"green":22}, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -144,11 +144,11 @@ export const forestRecipeEntries = [
+     icon: 'items/weapons/gale-needle.png',
+     description: 'A fencing blade machined to an impossible point, humming faintly when drawn.',
+     upgrades: [
+-      { attacksPerSecond: 0.02, cost: { green: 38 }, requiredBiomeLevel: 8 },
+-      { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: { green: 94 }, requiredBiomeLevel: 9 },
+-      { attacksPerSecond: 0.02, cost: { green: 150 }, requiredBiomeLevel: 10 },
+-      { stats: { attack: 2 }, attacksPerSecond: 0.02, cost: { green: 244 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 11 },
+-      { stats: { attack: 2 }, attacksPerSecond: 0.02, cost: { green: 414 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 12 },
++      { attacksPerSecond: 0.02, cost: {"green":202}, requiredBiomeLevel: 8 },
++      { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: {"green":203}, requiredBiomeLevel: 9 },
++      { attacksPerSecond: 0.02, cost: {"green":202}, requiredBiomeLevel: 10 },
++      { stats: { attack: 2 }, attacksPerSecond: 0.02, cost: {"green":167}, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 11 },
++      { stats: { attack: 2 }, attacksPerSecond: 0.02, cost: {"green":166}, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 12 },
+     ],
+   }],
+ 
+@@ -166,11 +166,11 @@ export const forestRecipeEntries = [
+     element: 'bleed',   // cosmetic attack tint only
+     description: 'The same blade, barbed — it bites and lets the wound do the rest.',
+     upgrades: [
+-      { stats: { onHitDamage: 1 }, cost: { green: 31, purple: 11 }, requiredBiomeLevel: 8 },
+-      { stats: { attack: 1 }, cost: { green: 78, purple: 26 }, requiredBiomeLevel: 9 },
+-      { stats: { onHitDamage: 1 }, cost: { green: 124, purple: 42 }, requiredBiomeLevel: 10 },
+-      { stats: { attack: 1 }, cost: { green: 202, purple: 68 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 11 },
+-      { stats: { attack: 1, onHitDamage: 1 }, cost: { green: 344, purple: 114 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 12 },
++      { stats: { onHitDamage: 1 }, cost: {"green":168,"purple":56}, requiredBiomeLevel: 8 },
++      { stats: { attack: 1 }, cost: {"green":168,"purple":57}, requiredBiomeLevel: 9 },
++      { stats: { onHitDamage: 1 }, cost: {"green":168,"purple":56}, requiredBiomeLevel: 10 },
++      { stats: { attack: 1 }, cost: {"green":138,"purple":46}, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 11 },
++      { stats: { attack: 1, onHitDamage: 1 }, cost: {"green":137,"purple":46}, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 12 },
+     ],
+   }],
+ 
+@@ -186,11 +186,11 @@ export const forestRecipeEntries = [
+     icon: 'items/armor/phantom-bindings.png',
+     description: 'They say the weaver vanished the day it was finished. The cloth remembers the trick.',
+     upgrades: [
+-      { stats: { maxHp: 5, evasion: 0.01 }, cost: { green: 29, yellow: 7 }, requiredBiomeLevel: 9 },
+-      { stats: { maxHp: 5, plating: 1, evasion: 0.01 }, cost: { green: 72, yellow: 18 }, requiredBiomeLevel: 10 },
+-      { stats: { maxHp: 5, evasion: 0.01 }, cost: { green: 115, yellow: 29 }, requiredBiomeLevel: 10 },
+-      { stats: { maxHp: 5, plating: 1, evasion: 0.01 }, cost: { green: 187, yellow: 47 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 10 },
+-      { stats: { maxHp: 5, evasion: 0.02 }, cost: { green: 317, yellow: 79 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 5, evasion: 0.01 }, cost: {"green":155,"yellow":39}, requiredBiomeLevel: 9 },
++      { stats: { maxHp: 5, plating: 1, evasion: 0.01 }, cost: {"green":154,"yellow":38}, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 5, evasion: 0.01 }, cost: {"green":155,"yellow":39}, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 5, plating: 1, evasion: 0.01 }, cost: {"green":128,"yellow":32}, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 5, evasion: 0.02 }, cost: {"green":128,"yellow":32}, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -207,11 +207,11 @@ export const forestRecipeEntries = [
+     icon: 'items/charms/ancient-heartroot-amulet.png',
+     description: 'A relic of a grove that burned an age ago, its life somehow undimmed.',
+     upgrades: [
+-      { mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 18 }, requiredBiomeLevel: 10 },
+-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 45 }, requiredBiomeLevel: 10 },
+-      { mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 72 }, requiredBiomeLevel: 10 },
+-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 117 }, requiredBiomeLevel: 10 },
+-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 198 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: {"green":94}, requiredBiomeLevel: 10 },
++      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: {"green":95}, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: {"green":94}, requiredBiomeLevel: 10 },
++      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: {"green":84}, requiredBiomeLevel: 10 },
++      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: {"green":83}, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -226,11 +226,11 @@ export const forestRecipeEntries = [
+     icon: 'items/boots/windstep-wraps.png',
+     description: 'Light enough that the wind mistakes the wearer for one of its own.',
+     upgrades: [
+-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 12 }, requiredBiomeLevel: 10 },
+-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 30 }, requiredBiomeLevel: 10 },
+-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 48 }, requiredBiomeLevel: 10 },
+-      { stats: { speed: 3 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 78 }, requiredBiomeLevel: 10 },
+-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 132 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 10 },
++      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: {"green":62}, requiredBiomeLevel: 10 },
++      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: {"green":63}, requiredBiomeLevel: 10 },
++      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: {"green":62}, requiredBiomeLevel: 10 },
++      { stats: { speed: 3 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: {"green":57}, requiredBiomeLevel: 10 },
++      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: {"green":56}, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+diff --git a/shared/src/data/recipes/graveyard.recipes.ts b/shared/src/data/recipes/graveyard.recipes.ts
+index 3fd8801e..59ef6ecc 100644
+--- a/shared/src/data/recipes/graveyard.recipes.ts
++++ b/shared/src/data/recipes/graveyard.recipes.ts
+@@ -32,11 +32,11 @@ export const graveyardRecipeEntries = [
+     element: 'poison',   // cosmetic attack tint only
+     description: 'Every third stroke lands flat and harmless — and leaves the rot to make the next one count double.',
+     upgrades: [
+-      { stats: { attack: 30 }, cost: { purple: 175 }, requiredBiomeLevel: 2 },
+-      { stats: { attack: 30 }, cost: { purple: 439 }, requiredBiomeLevel: 3 },
+-      { stats: { attack: 30 }, cost: { purple: 702 }, requiredBiomeLevel: 4 },
+-      { stats: { attack: 30 }, cost: { purple: 1140 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 4 },
+-      { stats: { attack: 30 }, cost: { purple: 1930 }, catalystCost: { swarming: 4 }, requiredBiomeLevel: 4 },
++      { stats: { attack: 30 }, cost: {"purple":945}, requiredBiomeLevel: 2 },
++      { stats: { attack: 30 }, cost: {"purple":944}, requiredBiomeLevel: 3 },
++      { stats: { attack: 30 }, cost: {"purple":945}, requiredBiomeLevel: 4 },
++      { stats: { attack: 30 }, cost: {"purple":776}, catalystCost: { swarming: 3 }, requiredBiomeLevel: 4 },
++      { stats: { attack: 30 }, cost: {"purple":776}, catalystCost: { swarming: 4 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -56,11 +56,11 @@ export const graveyardRecipeEntries = [
+     icon: 'items/armor/plaguebound-mantle.png',
+     description: 'The denser the swarm, the thicker the crust of clinging filth — and the harder you are to bite.',
+     upgrades: [
+-      { stats: { maxHp: 36, plating: 6 }, cost: { purple: 180 }, requiredBiomeLevel: 3 },
+-      { stats: { maxHp: 36, plating: 6 }, cost: { purple: 450 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 36, plating: 6 }, cost: { purple: 719 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 36, plating: 6 }, cost: { purple: 1169 }, catalystCost: { fortified: 3 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 36, plating: 6 }, cost: { purple: 1978 }, catalystCost: { fortified: 4 }, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 36, plating: 6 }, cost: {"purple":975}, requiredBiomeLevel: 3 },
++      { stats: { maxHp: 36, plating: 6 }, cost: {"purple":974}, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 36, plating: 6 }, cost: {"purple":975}, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 36, plating: 6 }, cost: {"purple":786}, catalystCost: { fortified: 3 }, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 36, plating: 6 }, cost: {"purple":786}, catalystCost: { fortified: 4 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -80,11 +80,11 @@ export const graveyardRecipeEntries = [
+     icon: 'items/armor/grave-ward.png',
+     description: 'It lets the debt of a hundred small wounds come due all at once — and then forgives it, once.',
+     upgrades: [
+-      { stats: { maxHp: 36, plating: 4 }, cost: { purple: 180 }, requiredBiomeLevel: 3 },
+-      { stats: { maxHp: 36, plating: 4 }, cost: { purple: 450 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 36, plating: 4 }, cost: { purple: 719 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 36, plating: 4 }, cost: { purple: 1169 }, catalystCost: { fortified: 3 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 36, plating: 4 }, cost: { purple: 1978 }, catalystCost: { fortified: 4 }, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 36, plating: 4 }, cost: {"purple":975}, requiredBiomeLevel: 3 },
++      { stats: { maxHp: 36, plating: 4 }, cost: {"purple":974}, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 36, plating: 4 }, cost: {"purple":975}, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 36, plating: 4 }, cost: {"purple":786}, catalystCost: { fortified: 3 }, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 36, plating: 4 }, cost: {"purple":786}, catalystCost: { fortified: 4 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -99,11 +99,11 @@ export const graveyardRecipeEntries = [
+     icon: 'items/charms/necrotic-pulse.png',
+     description: 'A slow, certain throb of returning life, timed like a tired heart that refuses to stop.',
+     upgrades: [
+-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.03 }, cost: { purple: 73 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.03 }, cost: { purple: 183 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.03 }, cost: { purple: 292 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.03 }, cost: { purple: 475 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.03 }, cost: { purple: 803 }, catalystCost: { fortified: 3 }, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.03 }, cost: {"purple":389}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.03 }, cost: {"purple":389}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.03 }, cost: {"purple":389}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.03 }, cost: {"purple":330}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.03 }, cost: {"purple":329}, catalystCost: { fortified: 3 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -123,11 +123,11 @@ export const graveyardRecipeEntries = [
+     icon: 'items/charms/grave-tide-pulse.png',
+     description: 'A tide that never fully goes out — it gives back in a steady seep between the larger swells.',
+     upgrades: [
+-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.01, 'defense.recovery-active-pct': 0.01 }, cost: { purple: 73 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02, 'defense.recovery-active-pct': 0.02 }, cost: { purple: 183 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.01, 'defense.recovery-active-pct': 0.01 }, cost: { purple: 292 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02, 'defense.recovery-active-pct': 0.02 }, cost: { purple: 475 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02, 'defense.recovery-active-pct': 0.02 }, cost: { purple: 803 }, catalystCost: { fortified: 3 }, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.01, 'defense.recovery-active-pct': 0.01 }, cost: {"purple":389}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02, 'defense.recovery-active-pct': 0.02 }, cost: {"purple":389}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.01, 'defense.recovery-active-pct': 0.01 }, cost: {"purple":389}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02, 'defense.recovery-active-pct': 0.02 }, cost: {"purple":330}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02, 'defense.recovery-active-pct': 0.02 }, cost: {"purple":329}, catalystCost: { fortified: 3 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -147,11 +147,11 @@ export const graveyardRecipeEntries = [
+     icon: 'items/boots/gravewalker-boots.png',
+     description: 'Each fallen foe lends a little of its lingering haste — and the more that fall, the harder it becomes to hold you down.',
+     upgrades: [
+-      { stats: { speed: 8 },  cost: { purple: 50 },  requiredBiomeLevel: 4 },
+-      { stats: { speed: 12 }, cost: { purple: 125 },  requiredBiomeLevel: 4 },
+-      { stats: { speed: 16 }, cost: { purple: 200 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 16 }, cost: { purple: 326 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 16 }, cost: { purple: 551 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 4 },
++      { stats: { speed: 8 },  cost: {"purple":269},  requiredBiomeLevel: 4 },
++      { stats: { speed: 12 }, cost: {"purple":270},  requiredBiomeLevel: 4 },
++      { stats: { speed: 16 }, cost: {"purple":269}, requiredBiomeLevel: 4 },
++      { stats: { speed: 16 }, cost: {"purple":222}, requiredBiomeLevel: 4 },
++      { stats: { speed: 16 }, cost: {"purple":222}, catalystCost: { swarming: 3 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+diff --git a/shared/src/data/recipes/jungle.recipes.ts b/shared/src/data/recipes/jungle.recipes.ts
+index 2d440754..ddd33871 100644
+--- a/shared/src/data/recipes/jungle.recipes.ts
++++ b/shared/src/data/recipes/jungle.recipes.ts
+@@ -18,11 +18,11 @@ export const jungleRecipeEntries = [
+     element: 'poison',   // cosmetic attack tint only
+     description: 'A thin blade kept slick with something the jungle distilled and never named.',
+     upgrades: [
+-      { stats: { attack: 4, onHitDamage: 3 }, cost: { green: 40 }, requiredBiomeLevel: 2 },
+-      { stats: { attack: 4, onHitDamage: 3 }, cost: { green: 99 }, requiredBiomeLevel: 3 },
+-      { stats: { attack: 4, onHitDamage: 3 }, cost: { green: 158 }, requiredBiomeLevel: 4 },
+-      { stats: { attack: 4, onHitDamage: 3 }, cost: { green: 257 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 4 },
+-      { stats: { attack: 4, onHitDamage: 3 }, cost: { green: 436 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 4 },
++      { stats: { attack: 4, onHitDamage: 3 }, cost: {"green":214}, requiredBiomeLevel: 2 },
++      { stats: { attack: 4, onHitDamage: 3 }, cost: {"green":214}, requiredBiomeLevel: 3 },
++      { stats: { attack: 4, onHitDamage: 3 }, cost: {"green":214}, requiredBiomeLevel: 4 },
++      { stats: { attack: 4, onHitDamage: 3 }, cost: {"green":174}, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 4 },
++      { stats: { attack: 4, onHitDamage: 3 }, cost: {"green":174}, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -34,11 +34,11 @@ export const jungleRecipeEntries = [
+     icon: 'items/armor/verdant-weave.png',
+     description: 'A living mesh of leaf and creeper, too quick and too giving to be struck square.',
+     upgrades: [
+-      { stats: { maxHp: 12, plating: 2, evasion: 0.04 }, cost: { green: 31, yellow: 8 }, requiredBiomeLevel: 3 },
+-      { stats: { maxHp: 12, plating: 2, evasion: 0.04 }, cost: { green: 78, yellow: 20 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 12, plating: 2, evasion: 0.04 }, cost: { green: 125, yellow: 31 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 12, plating: 2, evasion: 0.04 }, cost: { green: 203, yellow: 51 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 12, plating: 2, evasion: 0.04 }, cost: { green: 342, yellow: 86 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 12, plating: 2, evasion: 0.04 }, cost: {"green":168,"yellow":42}, requiredBiomeLevel: 3 },
++      { stats: { maxHp: 12, plating: 2, evasion: 0.04 }, cost: {"green":167,"yellow":43}, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 12, plating: 2, evasion: 0.04 }, cost: {"green":168,"yellow":42}, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 12, plating: 2, evasion: 0.04 }, cost: {"green":138,"yellow":35}, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 12, plating: 2, evasion: 0.04 }, cost: {"green":138,"yellow":34}, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -56,11 +56,11 @@ export const jungleRecipeEntries = [
+     icon: 'items/charms/canopy-heart.png',
+     description: 'A knot of ancient vine that wakes, slowly, to the rhythm of a long fight.',
+     upgrades: [
+-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 18 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 46 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 73 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 119 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 203 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: {"green":97}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: {"green":97}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: {"green":97}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: {"green":84}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: {"green":84}, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -72,11 +72,11 @@ export const jungleRecipeEntries = [
+     icon: 'items/boots/vine-wraps.png',
+     description: 'Springy growth lashed to the feet, always eager to be running.',
+     upgrades: [
+-      { stats: { speed: 5 }, cost: { green: 12 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 7 }, cost: { green: 30 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 9 }, cost: { green: 48 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 9 }, cost: { green: 78 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 9 }, cost: { green: 132 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 4 },
++      { stats: { speed: 5 }, cost: {"green":63}, requiredBiomeLevel: 4 },
++      { stats: { speed: 7 }, cost: {"green":64}, requiredBiomeLevel: 4 },
++      { stats: { speed: 9 }, cost: {"green":63}, requiredBiomeLevel: 4 },
++      { stats: { speed: 9 }, cost: {"green":55}, requiredBiomeLevel: 4 },
++      { stats: { speed: 9 }, cost: {"green":55}, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -96,11 +96,11 @@ export const jungleRecipeEntries = [
+     element: 'poison',   // cosmetic attack tint only
+     description: 'Thin and quick, and slick with a thorn-sap that bites a little more with every touch.',
+     upgrades: [
+-      { stats: { attack: 4, onHitDamage: 4 }, cost: { green: 79 },  requiredBiomeLevel: 8 },
+-      { stats: { attack: 4, onHitDamage: 4 }, cost: { green: 197 }, requiredBiomeLevel: 9 },
+-      { stats: { attack: 4, onHitDamage: 4 }, cost: { green: 315 }, requiredBiomeLevel: 10 },
+-      { stats: { attack: 4, onHitDamage: 4 }, cost: { green: 512 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 10 },
+-      { stats: { attack: 4, onHitDamage: 4 }, cost: { green: 867 }, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 10 },
++      { stats: { attack: 4, onHitDamage: 4 }, cost: {"green":424},  requiredBiomeLevel: 8 },
++      { stats: { attack: 4, onHitDamage: 4 }, cost: {"green":425}, requiredBiomeLevel: 9 },
++      { stats: { attack: 4, onHitDamage: 4 }, cost: {"green":424}, requiredBiomeLevel: 10 },
++      { stats: { attack: 4, onHitDamage: 4 }, cost: {"green":349}, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 10 },
++      { stats: { attack: 4, onHitDamage: 4 }, cost: {"green":348}, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -114,11 +114,11 @@ export const jungleRecipeEntries = [
+     icon: 'items/armor/wildgrowth-weave.png',
+     description: 'A living mesh of leaf and vine, too quick and too giving to ever quite be struck square.',
+     upgrades: [
+-      { stats: { maxHp: 18, plating: 3, evasion: 0.05 }, cost: { green: 59, yellow: 19 },  requiredBiomeLevel: 9 },
+-      { stats: { maxHp: 18, plating: 3, evasion: 0.05 }, cost: { green: 146, yellow: 49 }, requiredBiomeLevel: 10 },
+-      { stats: { maxHp: 18, plating: 3, evasion: 0.05 }, cost: { green: 234, yellow: 78 }, requiredBiomeLevel: 10 },
+-      { stats: { maxHp: 18, plating: 3, evasion: 0.05 }, cost: { green: 380, yellow: 127 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 10 },
+-      { stats: { maxHp: 18, plating: 3, evasion: 0.05 }, cost: { green: 644, yellow: 214 }, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 18, plating: 3, evasion: 0.05 }, cost: {"green":315,"yellow":105},  requiredBiomeLevel: 9 },
++      { stats: { maxHp: 18, plating: 3, evasion: 0.05 }, cost: {"green":315,"yellow":105}, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 18, plating: 3, evasion: 0.05 }, cost: {"green":315,"yellow":105}, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 18, plating: 3, evasion: 0.05 }, cost: {"green":259,"yellow":86}, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 18, plating: 3, evasion: 0.05 }, cost: {"green":259,"yellow":86}, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -141,11 +141,11 @@ export const jungleRecipeEntries = [
+     icon: 'items/charms/worldvine-heart.png',
+     description: 'It wakes slowly to a long fight, and by the end is pouring life back faster than it leaves.',
+     upgrades: [
+-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 36 },  requiredBiomeLevel: 10 },
+-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 91 }, requiredBiomeLevel: 10 },
+-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 145 }, requiredBiomeLevel: 10 },
+-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 236 }, requiredBiomeLevel: 10 },
+-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 400 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: {"green":191},  requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: {"green":190}, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: {"green":191}, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: {"green":168}, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: {"green":168}, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -159,11 +159,11 @@ export const jungleRecipeEntries = [
+     icon: 'items/boots/canopy-striders.png',
+     description: 'They crash through the green loud enough to turn every hungry thing your way.',
+     upgrades: [
+-      { stats: { speed: 6 },  cost: { green: 23 }, requiredBiomeLevel: 10 },
+-      { stats: { speed: 8 },  cost: { green: 57 }, requiredBiomeLevel: 10 },
+-      { stats: { speed: 10 }, cost: { green: 91 }, requiredBiomeLevel: 10 },
+-      { stats: { speed: 10 }, cost: { green: 148 }, requiredBiomeLevel: 10 },
+-      { stats: { speed: 10 }, cost: { green: 251 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 10 },
++      { stats: { speed: 6 },  cost: {"green":117}, requiredBiomeLevel: 10 },
++      { stats: { speed: 8 },  cost: {"green":116}, requiredBiomeLevel: 10 },
++      { stats: { speed: 10 }, cost: {"green":117}, requiredBiomeLevel: 10 },
++      { stats: { speed: 10 }, cost: {"green":110}, requiredBiomeLevel: 10 },
++      { stats: { speed: 10 }, cost: {"green":110}, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -182,11 +182,11 @@ export const jungleRecipeEntries = [
+     element: 'poison',   // cosmetic attack tint only
+     description: 'Quick past seeing, and slick with something the deep jungle spent a long time perfecting.',
+     upgrades: [
+-      { stats: { attack: 10, onHitDamage: 8 }, cost: { green: 157 }, requiredBiomeLevel: 14 },
+-      { stats: { attack: 10, onHitDamage: 8 }, cost: { green: 392 }, requiredBiomeLevel: 15 },
+-      { stats: { attack: 10, onHitDamage: 8 }, cost: { green: 627 }, requiredBiomeLevel: 16 },
+-      { stats: { attack: 10, onHitDamage: 8 }, cost: { green: 1018 }, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 16 },
+-      { stats: { attack: 10, onHitDamage: 8 }, cost: { green: 1722 }, catalystCost: { alacrity: 4 }, requiredBiomeLevel: 16 },
++      { stats: { attack: 10, onHitDamage: 8 }, cost: {"green":841}, requiredBiomeLevel: 14 },
++      { stats: { attack: 10, onHitDamage: 8 }, cost: {"green":841}, requiredBiomeLevel: 15 },
++      { stats: { attack: 10, onHitDamage: 8 }, cost: {"green":841}, requiredBiomeLevel: 16 },
++      { stats: { attack: 10, onHitDamage: 8 }, cost: {"green":697}, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 16 },
++      { stats: { attack: 10, onHitDamage: 8 }, cost: {"green":696}, catalystCost: { alacrity: 4 }, requiredBiomeLevel: 16 },
+     ],
+   }],
+ 
+@@ -203,11 +203,11 @@ export const jungleRecipeEntries = [
+     icon: 'items/armor/primal-canopy.png',
+     description: 'The faster you move through the green, the less of you there is to strike.',
+     upgrades: [
+-      { stats: { maxHp: 35, plating: 6, evasion: 0.03 }, cost: { green: 124, yellow: 31 }, requiredBiomeLevel: 15 },
+-      { stats: { maxHp: 35, plating: 6, evasion: 0.03 }, cost: { green: 310, yellow: 77 }, requiredBiomeLevel: 16 },
+-      { stats: { maxHp: 35, plating: 6, evasion: 0.03 }, cost: { green: 494, yellow: 124 }, requiredBiomeLevel: 16 },
+-      { stats: { maxHp: 35, plating: 6, evasion: 0.03 }, cost: { green: 804, yellow: 201 }, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 16 },
+-      { stats: { maxHp: 35, plating: 6, evasion: 0.03 }, cost: { green: 1360, yellow: 340 }, catalystCost: { alacrity: 4 }, requiredBiomeLevel: 16 },
++      { stats: { maxHp: 35, plating: 6, evasion: 0.03 }, cost: {"green":663,"yellow":166}, requiredBiomeLevel: 15 },
++      { stats: { maxHp: 35, plating: 6, evasion: 0.03 }, cost: {"green":662,"yellow":165}, requiredBiomeLevel: 16 },
++      { stats: { maxHp: 35, plating: 6, evasion: 0.03 }, cost: {"green":663,"yellow":166}, requiredBiomeLevel: 16 },
++      { stats: { maxHp: 35, plating: 6, evasion: 0.03 }, cost: {"green":552,"yellow":138}, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 16 },
++      { stats: { maxHp: 35, plating: 6, evasion: 0.03 }, cost: {"green":552,"yellow":138}, catalystCost: { alacrity: 4 }, requiredBiomeLevel: 16 },
+     ],
+   }],
+ 
+@@ -224,11 +224,11 @@ export const jungleRecipeEntries = [
+     icon: 'items/charms/ancient-canopy.png',
+     description: 'Older than the trees around it, and by a long fight\'s end it is pouring life back faster than any blade can take it.',
+     upgrades: [
+-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 73 }, requiredBiomeLevel: 16 },
+-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 182 }, requiredBiomeLevel: 16 },
+-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 291 }, requiredBiomeLevel: 16 },
+-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 472 }, requiredBiomeLevel: 16 },
+-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 798 }, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 16 },
++      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: {"green":381}, requiredBiomeLevel: 16 },
++      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: {"green":382}, requiredBiomeLevel: 16 },
++      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: {"green":381}, requiredBiomeLevel: 16 },
++      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: {"green":336}, requiredBiomeLevel: 16 },
++      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: {"green":336}, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 16 },
+     ],
+   }],
+ 
+@@ -247,11 +247,11 @@ export const jungleRecipeEntries = [
+     icon: 'items/charms/overgrowth-pulse.png',
+     description: 'It grows past the wound and keeps growing, hardening the surplus into a living shell.',
+     upgrades: [
+-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 73 }, requiredBiomeLevel: 16 },
+-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 182 }, requiredBiomeLevel: 16 },
+-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 291 }, requiredBiomeLevel: 16 },
+-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 472 }, requiredBiomeLevel: 16 },
+-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 798 }, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 16 },
++      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: {"green":381}, requiredBiomeLevel: 16 },
++      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: {"green":382}, requiredBiomeLevel: 16 },
++      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: {"green":381}, requiredBiomeLevel: 16 },
++      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: {"green":336}, requiredBiomeLevel: 16 },
++      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: {"green":336}, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 16 },
+     ],
+   }],
+ 
+@@ -266,11 +266,11 @@ export const jungleRecipeEntries = [
+     icon: 'items/boots/warpath-treads.png',
+     description: 'They tear through the green loud enough to wake the whole canopy — and bring all of it to you at once.',
+     upgrades: [
+-      { stats: { speed: 8 },  cost: { green: 45 },  requiredBiomeLevel: 16 },
+-      { stats: { speed: 10 }, cost: { green: 112 }, requiredBiomeLevel: 16 },
+-      { stats: { speed: 12 }, cost: { green: 180 }, requiredBiomeLevel: 16 },
+-      { stats: { speed: 12 }, cost: { green: 292 }, requiredBiomeLevel: 16 },
+-      { stats: { speed: 12 }, cost: { green: 493 }, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 16 },
++      { stats: { speed: 8 },  cost: {"green":227},  requiredBiomeLevel: 16 },
++      { stats: { speed: 10 }, cost: {"green":228}, requiredBiomeLevel: 16 },
++      { stats: { speed: 12 }, cost: {"green":227}, requiredBiomeLevel: 16 },
++      { stats: { speed: 12 }, cost: {"green":220}, requiredBiomeLevel: 16 },
++      { stats: { speed: 12 }, cost: {"green":220}, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 16 },
+     ],
+   }],
+ 
+diff --git a/shared/src/data/recipes/mountain.recipes.ts b/shared/src/data/recipes/mountain.recipes.ts
+index ca2c31c2..40b90285 100644
+--- a/shared/src/data/recipes/mountain.recipes.ts
++++ b/shared/src/data/recipes/mountain.recipes.ts
+@@ -66,11 +66,11 @@ export const mountainRecipeEntries = [
+     // +5 catalyst from its own T2 hammer successor's tag ("slow heavy hammer →
+     // Heavy").
+     upgrades: [
+-      { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 25 }, requiredBiomeLevel: 2 },
+-      { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 45 }, requiredBiomeLevel: 3 },
+-      { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 75 }, requiredBiomeLevel: 4 },
+-      { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 125 }, requiredBiomeLevel: 4 },
+-      { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 155 }, catalystCost: { heavy: 1 }, requiredBiomeLevel: 4 },
++      { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: {"blue":85}, requiredBiomeLevel: 2 },
++      { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: {"blue":86}, requiredBiomeLevel: 3 },
++      { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: {"blue":85}, requiredBiomeLevel: 4 },
++      { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: {"blue":70}, requiredBiomeLevel: 4 },
++      { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: {"blue":69}, catalystCost: { heavy: 1 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -86,11 +86,11 @@ export const mountainRecipeEntries = [
+     // +5 catalyst from mountain-vest-t2's own tag ("Guard-amplifying plate →
+     // Heavy").
+     upgrades: [
+-      { stats: { maxHp: 4 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 25 }, requiredBiomeLevel: 3 },
+-      { stats: { maxHp: 4, plating: 1 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 45 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 4 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 75 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 4, plating: 1 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 125 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 4 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 155 }, catalystCost: { heavy: 1 }, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 4 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: {"blue":85}, requiredBiomeLevel: 3 },
++      { stats: { maxHp: 4, plating: 1 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: {"blue":86}, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 4 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: {"blue":85}, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 4, plating: 1 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: {"blue":70}, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 4 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: {"blue":69}, catalystCost: { heavy: 1 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -107,11 +107,11 @@ export const mountainRecipeEntries = [
+     description: 'A palm of carved granite, cold and patient as the peak it came from.',
+     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, total ~253 (was 255).
+     upgrades: [
+-      { mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 10 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 25 }, requiredBiomeLevel: 4 },
+-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 40 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 60 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 75 }, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: {"blue":41}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: {"blue":42}, requiredBiomeLevel: 4 },
++      { stats: { recovery: 1 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: {"blue":41}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: {"blue":36}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: {"blue":35}, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -127,11 +127,11 @@ export const mountainRecipeEntries = [
+     description: 'Heavy soles that bite into scree and loose rock alike.',
+     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, total ~178 (was 176).
+     upgrades: [
+-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 10 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 15 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 25 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 40 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 55 }, requiredBiomeLevel: 4 },
++      { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: {"blue":27}, requiredBiomeLevel: 4 },
++      { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: {"blue":27}, requiredBiomeLevel: 4 },
++      { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: {"blue":27}, requiredBiomeLevel: 4 },
++      { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: {"blue":25}, requiredBiomeLevel: 4 },
++      { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: {"blue":24}, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -153,11 +153,11 @@ export const mountainRecipeEntries = [
+     },
+     description: 'When it lands, the ground remembers it longer than the foe does.',
+     upgrades: [
+-      { stats: { attack: 4 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 47 }, requiredBiomeLevel: 8 },
+-      { stats: { attack: 5 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 117 }, requiredBiomeLevel: 9 },
+-      { stats: { attack: 4 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 187 }, requiredBiomeLevel: 10 },
+-      { stats: { attack: 5 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 304 }, catalystCost: { heavy: 1 }, requiredBiomeLevel: 10 },
+-      { stats: { attack: 5 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 515 }, catalystCost: { heavy: 2 }, requiredBiomeLevel: 10 },
++      { stats: { attack: 4 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: {"blue":254}, requiredBiomeLevel: 8 },
++      { stats: { attack: 5 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: {"blue":255}, requiredBiomeLevel: 9 },
++      { stats: { attack: 4 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: {"blue":254}, requiredBiomeLevel: 10 },
++      { stats: { attack: 5 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: {"blue":204}, catalystCost: { heavy: 1 }, requiredBiomeLevel: 10 },
++      { stats: { attack: 5 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: {"blue":203}, catalystCost: { heavy: 2 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -173,11 +173,11 @@ export const mountainRecipeEntries = [
+     icon: 'items/armor/iron-crusader-plate.png',
+     description: 'Masterwork plate of the old crusades, dented in a hundred places, breached in none.',
+     upgrades: [
+-      { stats: { maxHp: 6, plating: 1 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 42 }, requiredBiomeLevel: 9 },
+-      { stats: { maxHp: 5, plating: 1 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 106 }, requiredBiomeLevel: 10 },
+-      { stats: { maxHp: 6, plating: 1 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 170 }, requiredBiomeLevel: 10 },
+-      { stats: { maxHp: 5, plating: 1 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 276 }, catalystCost: { heavy: 1 }, requiredBiomeLevel: 10 },
+-      { stats: { maxHp: 6, plating: 1 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 468 }, catalystCost: { heavy: 2 }, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 6, plating: 1 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: {"blue":230}, requiredBiomeLevel: 9 },
++      { stats: { maxHp: 5, plating: 1 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: {"blue":231}, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 6, plating: 1 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: {"blue":230}, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 5, plating: 1 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: {"blue":186}, catalystCost: { heavy: 1 }, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 6, plating: 1 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: {"blue":185}, catalystCost: { heavy: 2 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -193,11 +193,11 @@ export const mountainRecipeEntries = [
+     icon: 'items/charms/iron-bulwark.png',
+     description: 'A ward-stone the mountainfolk pass down, hand to weathered hand.',
+     upgrades: [
+-      { mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 17 }, requiredBiomeLevel: 10 },
+-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 43 }, requiredBiomeLevel: 10 },
+-      { mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 68 }, requiredBiomeLevel: 10 },
+-      { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 111 }, requiredBiomeLevel: 10 },
+-      { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 187 }, catalystCost: { heavy: 1 }, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: {"blue":90}, requiredBiomeLevel: 10 },
++      { stats: { recovery: 1 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: {"blue":90}, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: {"blue":90}, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: {"blue":78}, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: {"blue":78}, catalystCost: { heavy: 1 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -212,11 +212,11 @@ export const mountainRecipeEntries = [
+     icon: 'items/boots/mountain-stride.png',
+     description: 'Forged for those who treat a sheer slope as a road.',
+     upgrades: [
+-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 11 }, requiredBiomeLevel: 10 },
+-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 29 }, requiredBiomeLevel: 10 },
+-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 46 }, requiredBiomeLevel: 10 },
+-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 75 }, requiredBiomeLevel: 10 },
+-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 126 }, catalystCost: { heavy: 1 }, requiredBiomeLevel: 10 },
++      { stats: { speed: 2 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: {"blue":59}, requiredBiomeLevel: 10 },
++      { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: {"blue":59}, requiredBiomeLevel: 10 },
++      { stats: { speed: 2 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: {"blue":59}, requiredBiomeLevel: 10 },
++      { stats: { speed: 1 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: {"blue":55}, requiredBiomeLevel: 10 },
++      { stats: { speed: 2 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: {"blue":55}, catalystCost: { heavy: 1 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -236,11 +236,11 @@ export const mountainRecipeEntries = [
+     mechanicEffects: { 'weapon.empowered-mult-bonus': 0.37 },
+     description: 'It does not so much strike as arrive, the way a slope arrives on a village.',
+     upgrades: [
+-      { stats: { attack: 8 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 93 },  requiredBiomeLevel: 14 },
+-      { stats: { attack: 9 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 233 }, requiredBiomeLevel: 15 },
+-      { stats: { attack: 8 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 372 }, requiredBiomeLevel: 16 },
+-      { stats: { attack: 9 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 605 }, catalystCost: { heavy: 2 }, requiredBiomeLevel: 16 },
+-      { stats: { attack: 8 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 1025 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 16 },
++      { stats: { attack: 8 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: {"blue":504},  requiredBiomeLevel: 14 },
++      { stats: { attack: 9 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: {"blue":505}, requiredBiomeLevel: 15 },
++      { stats: { attack: 8 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: {"blue":504}, requiredBiomeLevel: 16 },
++      { stats: { attack: 9 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: {"blue":408}, catalystCost: { heavy: 2 }, requiredBiomeLevel: 16 },
++      { stats: { attack: 8 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: {"blue":407}, catalystCost: { heavy: 3 }, requiredBiomeLevel: 16 },
+     ],
+   }],
+ 
+@@ -261,11 +261,11 @@ export const mountainRecipeEntries = [
+     icon: 'items/armor/summit-aegis.png',
+     description: 'Forged for those who plan to be hit by something the size of a house and walk on.',
+     upgrades: [
+-      { stats: { maxHp: 11, plating: 2 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 66, red: 17 },  requiredBiomeLevel: 15 },
+-      { stats: { maxHp: 10, plating: 1 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 166, red: 42 }, requiredBiomeLevel: 16 },
+-      { stats: { maxHp: 11, plating: 2 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 266, red: 67 }, requiredBiomeLevel: 16 },
+-      { stats: { maxHp: 10, plating: 1 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 434, red: 108 }, catalystCost: { heavy: 2 }, requiredBiomeLevel: 16 },
+-      { stats: { maxHp: 10, plating: 2 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 734, red: 183 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 16 },
++      { stats: { maxHp: 11, plating: 2 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: {"blue":357,"red":89},  requiredBiomeLevel: 15 },
++      { stats: { maxHp: 10, plating: 1 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: {"blue":358,"red":90}, requiredBiomeLevel: 16 },
++      { stats: { maxHp: 11, plating: 2 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: {"blue":357,"red":89}, requiredBiomeLevel: 16 },
++      { stats: { maxHp: 10, plating: 1 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: {"blue":297,"red":75}, catalystCost: { heavy: 2 }, requiredBiomeLevel: 16 },
++      { stats: { maxHp: 10, plating: 2 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: {"blue":297,"red":74}, catalystCost: { heavy: 3 }, requiredBiomeLevel: 16 },
+     ],
+   }],
+ 
+@@ -280,11 +280,11 @@ export const mountainRecipeEntries = [
+     icon: 'items/charms/bastion-heart.png',
+     description: 'A core of mountain-heart stone that raises a wall of itself, over and over.',
+     upgrades: [
+-      { mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 26, red: 6 },  requiredBiomeLevel: 16 },
+-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 65, red: 16 }, requiredBiomeLevel: 16 },
+-      { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 104, red: 26 }, requiredBiomeLevel: 16 },
+-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 169, red: 42 }, requiredBiomeLevel: 16 },
+-      { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 286, red: 71 }, catalystCost: { heavy: 2 }, requiredBiomeLevel: 16 },
++      { mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: {"blue":133,"red":33},  requiredBiomeLevel: 16 },
++      { stats: { recovery: 1 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: {"blue":134,"red":33}, requiredBiomeLevel: 16 },
++      { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: {"blue":133,"red":33}, requiredBiomeLevel: 16 },
++      { stats: { recovery: 1 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: {"blue":125,"red":31}, requiredBiomeLevel: 16 },
++      { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: {"blue":125,"red":31}, catalystCost: { heavy: 2 }, requiredBiomeLevel: 16 },
+     ],
+   }],
+ 
+@@ -298,11 +298,11 @@ export const mountainRecipeEntries = [
+     icon: 'items/boots/peak-stride.png',
+     description: 'Not even the mountain can keep you from your prey.',
+     upgrades: [
+-      { stats: { speed: 3 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 22 }, requiredBiomeLevel: 16 },
+-      { stats: { speed: 3 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 56 }, requiredBiomeLevel: 16 },
+-      { stats: { speed: 3 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 89 }, requiredBiomeLevel: 16 },
+-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 145 }, requiredBiomeLevel: 16 },
+-      { stats: { speed: 3 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 246 }, catalystCost: { heavy: 2 }, requiredBiomeLevel: 16 },
++      { stats: { speed: 3 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: {"blue":113}, requiredBiomeLevel: 16 },
++      { stats: { speed: 3 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: {"blue":113}, requiredBiomeLevel: 16 },
++      { stats: { speed: 3 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: {"blue":113}, requiredBiomeLevel: 16 },
++      { stats: { speed: 2 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: {"blue":110}, requiredBiomeLevel: 16 },
++      { stats: { speed: 3 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: {"blue":109}, catalystCost: { heavy: 2 }, requiredBiomeLevel: 16 },
+     ],
+   }],
+ 
+@@ -323,11 +323,11 @@ export const mountainRecipeEntries = [
+     icon: 'items/weapons/earthsunder-maul.png',
+     description: 'It does not strike the earth so much as remind it of an old grievance.',
+     upgrades: [
+-      { stats: { attack: 60 }, cost: { blue: 185 },  requiredBiomeLevel: 20 },
+-      { stats: { attack: 60 }, cost: { blue: 463 },  requiredBiomeLevel: 21 },
+-      { stats: { attack: 60 }, cost: { blue: 741 },  requiredBiomeLevel: 22 },
+-      { stats: { attack: 60 }, cost: { blue: 1204 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 22 },
+-      { stats: { attack: 60 }, cost: { blue: 2039 }, catalystCost: { heavy: 4 }, requiredBiomeLevel: 22 },
++      { stats: { attack: 60 }, cost: {"blue":1001},  requiredBiomeLevel: 20 },
++      { stats: { attack: 60 }, cost: {"blue":1001},  requiredBiomeLevel: 21 },
++      { stats: { attack: 60 }, cost: {"blue":1001},  requiredBiomeLevel: 22 },
++      { stats: { attack: 60 }, cost: {"blue":815}, catalystCost: { heavy: 3 }, requiredBiomeLevel: 22 },
++      { stats: { attack: 60 }, cost: {"blue":814}, catalystCost: { heavy: 4 }, requiredBiomeLevel: 22 },
+     ],
+   }],
+ 
+@@ -347,11 +347,11 @@ export const mountainRecipeEntries = [
+     icon: 'items/weapons/warmaul.png',
+     description: 'Lighter in the haft, quicker to the shoulder — it rewards the soldier who already knows when to swing.',
+     upgrades: [
+-      { stats: { attack: 10 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 186 },  requiredBiomeLevel: 20 },
+-      { stats: { attack: 10 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 465 },  requiredBiomeLevel: 21 },
+-      { stats: { attack: 10 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 744 }, requiredBiomeLevel: 22 },
+-      { stats: { attack: 9 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 1208 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 22 },
+-      { stats: { attack: 10 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 2045 }, catalystCost: { heavy: 4 }, requiredBiomeLevel: 22 },
++      { stats: { attack: 10 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: {"blue":1006},  requiredBiomeLevel: 20 },
++      { stats: { attack: 10 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: {"blue":1007},  requiredBiomeLevel: 21 },
++      { stats: { attack: 10 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: {"blue":1006}, requiredBiomeLevel: 22 },
++      { stats: { attack: 9 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: {"blue":815}, catalystCost: { heavy: 3 }, requiredBiomeLevel: 22 },
++      { stats: { attack: 10 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: {"blue":814}, catalystCost: { heavy: 4 }, requiredBiomeLevel: 22 },
+     ],
+   }],
+ 
+@@ -372,11 +372,11 @@ export const mountainRecipeEntries = [
+     icon: 'items/armor/titans-keep.png',
+     description: 'The blow that should have ended you instead rings the walls — and the walls answer by standing back up.',
+     upgrades: [
+-      { stats: { maxHp: 19, plating: 3 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 132, red: 33 },  requiredBiomeLevel: 21 },
+-      { stats: { maxHp: 18, plating: 3 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 331, red: 83 }, requiredBiomeLevel: 22 },
+-      { stats: { maxHp: 19, plating: 3 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 530, red: 132 }, requiredBiomeLevel: 22 },
+-      { stats: { maxHp: 18, plating: 3 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 860, red: 215 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 22 },
+-      { stats: { maxHp: 19, plating: 3 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 1456, red: 364 }, catalystCost: { heavy: 4 }, requiredBiomeLevel: 22 },
++      { stats: { maxHp: 19, plating: 3 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: {"blue":707,"red":177},  requiredBiomeLevel: 21 },
++      { stats: { maxHp: 18, plating: 3 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: {"blue":707,"red":176}, requiredBiomeLevel: 22 },
++      { stats: { maxHp: 19, plating: 3 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: {"blue":707,"red":177}, requiredBiomeLevel: 22 },
++      { stats: { maxHp: 18, plating: 3 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: {"blue":594,"red":149}, catalystCost: { heavy: 3 }, requiredBiomeLevel: 22 },
++      { stats: { maxHp: 19, plating: 3 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: {"blue":594,"red":148}, catalystCost: { heavy: 4 }, requiredBiomeLevel: 22 },
+     ],
+   }],
+ 
+@@ -398,11 +398,11 @@ export const mountainRecipeEntries = [
+     icon: 'items/armor/stormwall-plate.png',
+     description: 'Built to take the storm head-on and turn what it absorbs back into a second wind.',
+     upgrades: [
+-      { stats: { maxHp: 19, plating: 2 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 132, red: 33 },  requiredBiomeLevel: 21 },
+-      { stats: { maxHp: 18, plating: 2 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 331, red: 83 }, requiredBiomeLevel: 22 },
+-      { stats: { maxHp: 19, plating: 2 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 530, red: 132 }, requiredBiomeLevel: 22 },
+-      { stats: { maxHp: 18, plating: 2 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 860, red: 215 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 22 },
+-      { stats: { maxHp: 19, plating: 3 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: { blue: 1456, red: 364 }, catalystCost: { heavy: 4 }, requiredBiomeLevel: 22 },
++      { stats: { maxHp: 19, plating: 2 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: {"blue":707,"red":177},  requiredBiomeLevel: 21 },
++      { stats: { maxHp: 18, plating: 2 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: {"blue":707,"red":176}, requiredBiomeLevel: 22 },
++      { stats: { maxHp: 19, plating: 2 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: {"blue":707,"red":177}, requiredBiomeLevel: 22 },
++      { stats: { maxHp: 18, plating: 2 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: {"blue":594,"red":149}, catalystCost: { heavy: 3 }, requiredBiomeLevel: 22 },
++      { stats: { maxHp: 19, plating: 3 }, mechanicEffects: { 'guard.potency-pct': 0.02 }, cost: {"blue":594,"red":148}, catalystCost: { heavy: 4 }, requiredBiomeLevel: 22 },
+     ],
+   }],
+ 
+@@ -417,11 +417,11 @@ export const mountainRecipeEntries = [
+     icon: 'items/charms/fortress-heart.png',
+     description: 'A keep in miniature: it throws up a wall, lets it fall, and throws up another, tireless as siegework.',
+     upgrades: [
+-      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 57, red: 8 }, requiredBiomeLevel: 22 },
+-      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 143, red: 19 }, requiredBiomeLevel: 22 },
+-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 229, red: 31 }, requiredBiomeLevel: 22 },
+-      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 371, red: 51 }, requiredBiomeLevel: 22 },
+-      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 627, red: 86 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 22 },
++      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: {"blue":293,"red":40}, requiredBiomeLevel: 22 },
++      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: {"blue":292,"red":40}, requiredBiomeLevel: 22 },
++      { stats: { recovery: 1 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: {"blue":293,"red":40}, requiredBiomeLevel: 22 },
++      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: {"blue":275,"red":38}, requiredBiomeLevel: 22 },
++      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: {"blue":274,"red":37}, catalystCost: { heavy: 3 }, requiredBiomeLevel: 22 },
+     ],
+   }],
+ 
+@@ -442,11 +442,11 @@ export const mountainRecipeEntries = [
+     icon: 'items/charms/shieldmend-ward.png',
+     description: 'When the ward shatters, it gives back a little of the blow it ate.',
+     upgrades: [
+-      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 57, red: 8 }, requiredBiomeLevel: 22 },
+-      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 143, red: 19 }, requiredBiomeLevel: 22 },
+-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 229, red: 31 }, requiredBiomeLevel: 22 },
+-      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 371, red: 51 }, requiredBiomeLevel: 22 },
+-      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 627, red: 86 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 22 },
++      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: {"blue":293,"red":40}, requiredBiomeLevel: 22 },
++      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: {"blue":292,"red":40}, requiredBiomeLevel: 22 },
++      { stats: { recovery: 1 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: {"blue":293,"red":40}, requiredBiomeLevel: 22 },
++      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: {"blue":275,"red":38}, requiredBiomeLevel: 22 },
++      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: {"blue":274,"red":37}, catalystCost: { heavy: 3 }, requiredBiomeLevel: 22 },
+     ],
+   }],
+ 
+@@ -460,11 +460,11 @@ export const mountainRecipeEntries = [
+     icon: 'items/boots/vanguard-stride.png',
+     description: 'While a foe stands at distance, they close the gap as if the mountain itself leaned them forward.',
+     upgrades: [
+-      { stats: { speed: 5 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 44 },  requiredBiomeLevel: 22 },
+-      { stats: { speed: 5 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 110 },  requiredBiomeLevel: 22 },
+-      { stats: { speed: 5 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 175 }, requiredBiomeLevel: 22 },
+-      { stats: { speed: 6 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 285 }, requiredBiomeLevel: 22 },
+-      { stats: { speed: 5 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: { blue: 482 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 22 },
++      { stats: { speed: 5 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: {"blue":219},  requiredBiomeLevel: 22 },
++      { stats: { speed: 5 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: {"blue":219},  requiredBiomeLevel: 22 },
++      { stats: { speed: 5 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: {"blue":219}, requiredBiomeLevel: 22 },
++      { stats: { speed: 6 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: {"blue":220}, requiredBiomeLevel: 22 },
++      { stats: { speed: 5 }, mechanicEffects: { 'mobility.approach-speed-pct': 0.05 }, cost: {"blue":219}, catalystCost: { heavy: 3 }, requiredBiomeLevel: 22 },
+     ],
+   }],
+ 
+diff --git a/shared/src/data/recipes/plains.recipes.ts b/shared/src/data/recipes/plains.recipes.ts
+index 7f1a7a4d..3efb794f 100644
+--- a/shared/src/data/recipes/plains.recipes.ts
++++ b/shared/src/data/recipes/plains.recipes.ts
+@@ -57,11 +57,11 @@ export const plainsRecipeEntries = [
+     // own T2 successor (knight-steelsword), an intentional "flexible payment"
+     // identity noted on plains-boots-t2's family-tag comment.
+     upgrades: [
+-      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 10 }, requiredBiomeLevel: 2 },
+-      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 25 }, requiredBiomeLevel: 3 },
+-      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 35 }, requiredBiomeLevel: 4 },
+-      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 60 }, requiredBiomeLevel: 4 },
+-      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 75 }, requiredBiomeLevel: 4 },
++      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: {"yellow":41}, requiredBiomeLevel: 2 },
++      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: {"yellow":41}, requiredBiomeLevel: 3 },
++      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: {"yellow":41}, requiredBiomeLevel: 4 },
++      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: {"yellow":34}, requiredBiomeLevel: 4 },
++      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: {"yellow":33}, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -77,11 +77,11 @@ export const plainsRecipeEntries = [
+     // +5 catalyst inherited from plains-vest-t2's own family-tag ("plating
+     // answers frequent light hits → Alacrity").
+     upgrades: [
+-      { stats: { maxHp: 3, plating: 1 }, cost: { yellow: 20 }, requiredBiomeLevel: 3 },
+-      { stats: { maxHp: 3, plating: 1 }, cost: { yellow: 45 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 3, plating: 1 }, cost: { yellow: 70 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 3, plating: 1 }, cost: { yellow: 115 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 3, plating: 1 }, cost: { yellow: 150 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 3, plating: 1 }, cost: {"yellow":80}, requiredBiomeLevel: 3 },
++      { stats: { maxHp: 3, plating: 1 }, cost: {"yellow":80}, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 3, plating: 1 }, cost: {"yellow":80}, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 3, plating: 1 }, cost: {"yellow":65}, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 3, plating: 1 }, cost: {"yellow":65}, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -100,11 +100,11 @@ export const plainsRecipeEntries = [
+     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, same total (190).
+     // No catalyst — charms stay clean at T1.
+     upgrades: [
+-      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 10 }, requiredBiomeLevel: 4 },
+-      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 20 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 30 }, requiredBiomeLevel: 4 },
+-      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 45 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 55 }, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: {"yellow":32}, requiredBiomeLevel: 4 },
++      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: {"yellow":33}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: {"yellow":32}, requiredBiomeLevel: 4 },
++      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: {"yellow":27}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: {"yellow":26}, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -119,11 +119,11 @@ export const plainsRecipeEntries = [
+     description: 'Open sandals built for crossing flat ground at a dead run.',
+     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, same total (160).
+     upgrades: [
+-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 10 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 15 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 25 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 40 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 45 }, requiredBiomeLevel: 4 },
++      { stats: { speed: 1 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: {"yellow":27}, requiredBiomeLevel: 4 },
++      { stats: { speed: 1 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: {"yellow":26}, requiredBiomeLevel: 4 },
++      { stats: { speed: 1 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: {"yellow":27}, requiredBiomeLevel: 4 },
++      { stats: { speed: 1 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: {"yellow":23}, requiredBiomeLevel: 4 },
++      { stats: { speed: 1 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: {"yellow":22}, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -149,11 +149,11 @@ export const plainsRecipeEntries = [
+     mechanicEffects: { 'technique.cooldown-reduction-pct': 0.12 },
+     description: 'A knight sidearm kept keen by habit and pride — plain, proven, never flashy.',
+     upgrades: [
+-      { stats: { attack: 2 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 27 }, requiredBiomeLevel: 8 },
+-      { stats: { attack: 2 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 68 }, requiredBiomeLevel: 9 },
+-      { stats: { attack: 2 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 108 }, requiredBiomeLevel: 10 },
+-      { stats: { attack: 2 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 176 }, requiredBiomeLevel: 10 },
+-      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 296 }, requiredBiomeLevel: 10 },
++      { stats: { attack: 2 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: {"yellow":145}, requiredBiomeLevel: 8 },
++      { stats: { attack: 2 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: {"yellow":145}, requiredBiomeLevel: 9 },
++      { stats: { attack: 2 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: {"yellow":145}, requiredBiomeLevel: 10 },
++      { stats: { attack: 2 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: {"yellow":120}, requiredBiomeLevel: 10 },
++      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: {"yellow":120}, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -167,11 +167,11 @@ export const plainsRecipeEntries = [
+     icon: 'items/armor/enduring-robe.png',
+     description: 'Plate that has outlasted the wars it was made for, and the smith who made it.',
+     upgrades: [
+-      { stats: { maxHp: 4, plating: 1 }, cost: { yellow: 36 }, requiredBiomeLevel: 9 },
+-      { stats: { maxHp: 4, plating: 1 }, cost: { yellow: 90 }, requiredBiomeLevel: 10 },
+-      { stats: { maxHp: 5, plating: 1 }, cost: { yellow: 144 }, requiredBiomeLevel: 10 },
+-      { stats: { maxHp: 4, plating: 2 }, cost: { yellow: 234 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 10 },
+-      { stats: { maxHp: 5, plating: 1 }, cost: { yellow: 396 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 4, plating: 1 }, cost: {"yellow":193}, requiredBiomeLevel: 9 },
++      { stats: { maxHp: 4, plating: 1 }, cost: {"yellow":194}, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 5, plating: 1 }, cost: {"yellow":193}, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 4, plating: 2 }, cost: {"yellow":160}, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 5, plating: 1 }, cost: {"yellow":160}, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -188,11 +188,11 @@ export const plainsRecipeEntries = [
+     icon: 'items/charms/stalwart-heart.png',
+     description: 'A greater plains-stone, its warmth swelling with every foe laid low.',
+     upgrades: [
+-      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 18 }, requiredBiomeLevel: 10 },
+-      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 45 }, requiredBiomeLevel: 10 },
+-      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 72 }, requiredBiomeLevel: 10 },
+-      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 117 }, requiredBiomeLevel: 10 },
+-      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: { yellow: 198 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: {"yellow":94}, requiredBiomeLevel: 10 },
++      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: {"yellow":95}, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: {"yellow":94}, requiredBiomeLevel: 10 },
++      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: {"yellow":84}, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.recovery-on-kill-pct': 0.02 }, cost: {"yellow":83}, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -207,11 +207,11 @@ export const plainsRecipeEntries = [
+     icon: 'items/boots/gale-boots.png',
+     description: 'Wind-cured leather that seems to lean into every stride.',
+     upgrades: [
+-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 12 }, requiredBiomeLevel: 10 },
+-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 30 }, requiredBiomeLevel: 10 },
+-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 48 }, requiredBiomeLevel: 10 },
+-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 78 }, requiredBiomeLevel: 10 },
+-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: { yellow: 132 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 10 },
++      { stats: { speed: 2 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: {"yellow":62}, requiredBiomeLevel: 10 },
++      { stats: { speed: 2 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: {"yellow":63}, requiredBiomeLevel: 10 },
++      { stats: { speed: 2 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: {"yellow":62}, requiredBiomeLevel: 10 },
++      { stats: { speed: 1 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: {"yellow":57}, requiredBiomeLevel: 10 },
++      { stats: { speed: 2 }, mechanicEffects: { 'mobility.kill-speed-pct': 0.03 }, cost: {"yellow":56}, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+diff --git a/shared/src/data/recipes/swamp.recipes.ts b/shared/src/data/recipes/swamp.recipes.ts
+index f4349967..d5f08d71 100644
+--- a/shared/src/data/recipes/swamp.recipes.ts
++++ b/shared/src/data/recipes/swamp.recipes.ts
+@@ -52,11 +52,11 @@ export const swampRecipeEntries = [
+     // +5 catalyst from ashbrand-blade's own T2 successor tag ("poison
+     // DoT-conversion weapon → Fortified").
+     upgrades: [
+-      { stats: { attack: 1 }, cost: { purple: 20 }, requiredBiomeLevel: 2 },
+-      { stats: { attack: 1 }, cost: { purple: 45 }, requiredBiomeLevel: 3 },
+-      { stats: { attack: 1 }, cost: { purple: 70 }, requiredBiomeLevel: 4 },
+-      { stats: { attack: 1 }, cost: { purple: 115 }, requiredBiomeLevel: 4 },
+-      { stats: { attack: 1 }, cost: { purple: 150 }, catalystCost: { fortified: 1 }, requiredBiomeLevel: 4 },
++      { stats: { attack: 1 }, cost: {"purple":80}, requiredBiomeLevel: 2 },
++      { stats: { attack: 1 }, cost: {"purple":79}, requiredBiomeLevel: 3 },
++      { stats: { attack: 1 }, cost: {"purple":80}, requiredBiomeLevel: 4 },
++      { stats: { attack: 1 }, cost: {"purple":66}, requiredBiomeLevel: 4 },
++      { stats: { attack: 1 }, cost: {"purple":65}, catalystCost: { fortified: 1 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -74,11 +74,11 @@ export const swampRecipeEntries = [
+     // +5 catalyst from swamp-vest-t2's own family-tag ("dot-resistance armor →
+     // Fortified").
+     upgrades: [
+-      { stats: { maxHp: 4 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: { purple: 20 }, requiredBiomeLevel: 3 },
+-      { stats: { maxHp: 4, plating: 1 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: { purple: 45 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 4 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: { purple: 70 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 4, plating: 1 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: { purple: 115 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 4 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: { purple: 150 }, catalystCost: { fortified: 1 }, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 4 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: {"purple":80}, requiredBiomeLevel: 3 },
++      { stats: { maxHp: 4, plating: 1 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: {"purple":79}, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 4 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: {"purple":80}, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 4, plating: 1 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: {"purple":66}, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 4 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: {"purple":65}, catalystCost: { fortified: 1 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -99,11 +99,11 @@ export const swampRecipeEntries = [
+     description: 'A preserved golem eye, still weeping faint green light.',
+     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, total ~253 (was 255).
+     upgrades: [
+-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 10 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 25 }, requiredBiomeLevel: 4 },
+-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 40 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 60 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 75 }, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: {"purple":41}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: {"purple":42}, requiredBiomeLevel: 4 },
++      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: {"purple":41}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: {"purple":36}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: {"purple":35}, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -119,11 +119,11 @@ export const swampRecipeEntries = [
+     description: 'Broad soles that ride the surface of soft, sucking ground.',
+     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, total ~178 (was 176).
+     upgrades: [
+-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: { purple: 10 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: { purple: 15 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: { purple: 25 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: { purple: 40 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: { purple: 55 }, requiredBiomeLevel: 4 },
++      { stats: { speed: 1 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: {"purple":27}, requiredBiomeLevel: 4 },
++      { stats: { speed: 1 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: {"purple":27}, requiredBiomeLevel: 4 },
++      { stats: { speed: 1 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: {"purple":27}, requiredBiomeLevel: 4 },
++      { stats: { speed: 1 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: {"purple":25}, requiredBiomeLevel: 4 },
++      { stats: { speed: 1 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: {"purple":24}, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -140,11 +140,11 @@ export const swampRecipeEntries = [
+     icon: 'items/weapons/venom-knife.png',
+     description: 'The venom runs deeper now; what it touches keeps rotting.',
+     upgrades: [
+-      { stats: { attack: 2 }, cost: { purple: 47 }, requiredBiomeLevel: 8 },
+-      { stats: { attack: 2 }, cost: { purple: 117 }, requiredBiomeLevel: 9 },
+-      { stats: { attack: 2 }, cost: { purple: 187 }, requiredBiomeLevel: 10 },
+-      { stats: { attack: 2 }, cost: { purple: 304 }, catalystCost: { fortified: 1 }, requiredBiomeLevel: 10 },
+-      { stats: { attack: 1 }, cost: { purple: 515 }, catalystCost: { fortified: 2 }, requiredBiomeLevel: 10 },
++      { stats: { attack: 2 }, cost: {"purple":254}, requiredBiomeLevel: 8 },
++      { stats: { attack: 2 }, cost: {"purple":255}, requiredBiomeLevel: 9 },
++      { stats: { attack: 2 }, cost: {"purple":254}, requiredBiomeLevel: 10 },
++      { stats: { attack: 2 }, cost: {"purple":204}, catalystCost: { fortified: 1 }, requiredBiomeLevel: 10 },
++      { stats: { attack: 1 }, cost: {"purple":203}, catalystCost: { fortified: 2 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -164,11 +164,11 @@ export const swampRecipeEntries = [
+     icon: 'items/armor/bog-wrappings.png',
+     description: 'Cloth drawn from the deepest mire, where even the water has forgotten the sun.',
+     upgrades: [
+-      { stats: { maxHp: 5, plating: 1 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: { purple: 45 }, requiredBiomeLevel: 9 },
+-      { stats: { maxHp: 5 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: { purple: 113 }, requiredBiomeLevel: 10 },
+-      { stats: { maxHp: 6, plating: 1 }, mechanicEffects: { 'defense.dot-resistance': 0.01 }, cost: { purple: 180 }, requiredBiomeLevel: 10 },
+-      { stats: { maxHp: 5, plating: 1 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: { purple: 293 }, catalystCost: { fortified: 1 }, requiredBiomeLevel: 10 },
+-      { stats: { maxHp: 6, plating: 1 }, mechanicEffects: { 'defense.dot-resistance': 0.01 }, cost: { purple: 494 }, catalystCost: { fortified: 2 }, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 5, plating: 1 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: {"purple":244}, requiredBiomeLevel: 9 },
++      { stats: { maxHp: 5 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: {"purple":244}, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 6, plating: 1 }, mechanicEffects: { 'defense.dot-resistance': 0.01 }, cost: {"purple":244}, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 5, plating: 1 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: {"purple":197}, catalystCost: { fortified: 1 }, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 6, plating: 1 }, mechanicEffects: { 'defense.dot-resistance': 0.01 }, cost: {"purple":196}, catalystCost: { fortified: 2 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -191,11 +191,11 @@ export const swampRecipeEntries = [
+     icon: 'items/charms/bog-eye.png',
+     description: 'A bog-touched eye that drinks deep and gives quietly back.',
+     upgrades: [
+-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 18 }, requiredBiomeLevel: 10 },
+-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 45 }, requiredBiomeLevel: 10 },
+-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 72 }, requiredBiomeLevel: 10 },
+-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 117 }, requiredBiomeLevel: 10 },
+-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 198 }, catalystCost: { fortified: 1 }, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: {"purple":95}, requiredBiomeLevel: 10 },
++      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: {"purple":95}, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: {"purple":95}, requiredBiomeLevel: 10 },
++      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: {"purple":83}, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: {"purple":82}, catalystCost: { fortified: 1 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -210,11 +210,11 @@ export const swampRecipeEntries = [
+     icon: 'items/boots/wetland-wraps.png',
+     description: 'Enchanted bindings that find footing where there should be none.',
+     upgrades: [
+-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: { purple: 12 }, requiredBiomeLevel: 10 },
+-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: { purple: 30 }, requiredBiomeLevel: 10 },
+-      { stats: { speed: 1 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: { purple: 48 }, requiredBiomeLevel: 10 },
+-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: { purple: 78 }, requiredBiomeLevel: 10 },
+-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: { purple: 132 }, catalystCost: { fortified: 1 }, requiredBiomeLevel: 10 },
++      { stats: { speed: 2 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: {"purple":62}, requiredBiomeLevel: 10 },
++      { stats: { speed: 2 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: {"purple":61}, requiredBiomeLevel: 10 },
++      { stats: { speed: 1 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: {"purple":62}, requiredBiomeLevel: 10 },
++      { stats: { speed: 2 }, mechanicEffects: { 'mobility.slow-resistance': 0.03 }, cost: {"purple":58}, requiredBiomeLevel: 10 },
++      { stats: { speed: 2 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: {"purple":57}, catalystCost: { fortified: 1 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -234,11 +234,11 @@ export const swampRecipeEntries = [
+     icon: 'items/weapons/plague-fang.png',
+     description: 'The rot it carries does more work than the edge ever could.',
+     upgrades: [
+-      { stats: { attack: 3 }, cost: { purple: 93 },  requiredBiomeLevel: 14 },
+-      { stats: { attack: 3 }, cost: { purple: 233 }, requiredBiomeLevel: 15 },
+-      { stats: { attack: 3 }, cost: { purple: 372 }, requiredBiomeLevel: 16 },
+-      { stats: { attack: 3 }, cost: { purple: 605 }, catalystCost: { fortified: 2 }, requiredBiomeLevel: 16 },
+-      { stats: { attack: 4 }, cost: { purple: 1025 }, catalystCost: { fortified: 3 }, requiredBiomeLevel: 16 },
++      { stats: { attack: 3 }, cost: {"purple":504},  requiredBiomeLevel: 14 },
++      { stats: { attack: 3 }, cost: {"purple":505}, requiredBiomeLevel: 15 },
++      { stats: { attack: 3 }, cost: {"purple":504}, requiredBiomeLevel: 16 },
++      { stats: { attack: 3 }, cost: {"purple":408}, catalystCost: { fortified: 2 }, requiredBiomeLevel: 16 },
++      { stats: { attack: 4 }, cost: {"purple":407}, catalystCost: { fortified: 3 }, requiredBiomeLevel: 16 },
+     ],
+   }],
+ 
+@@ -259,11 +259,11 @@ export const swampRecipeEntries = [
+     icon: 'items/armor/plaguebound-shroud.png',
+     description: 'It turns the blows you take into a slow ache it then refuses to feel.',
+     upgrades: [
+-      { stats: { maxHp: 10, plating: 1 }, mechanicEffects: { 'defense.dot-resistance': 0.01 }, cost: { purple: 89 },  requiredBiomeLevel: 15 },
+-      { stats: { maxHp: 10, plating: 1 }, mechanicEffects: { 'defense.dot-resistance': 0.01 }, cost: { purple: 222 }, requiredBiomeLevel: 16 },
+-      { stats: { maxHp: 10, plating: 1 }, mechanicEffects: { 'defense.dot-resistance': 0.01 }, cost: { purple: 355 }, requiredBiomeLevel: 16 },
+-      { stats: { maxHp: 9, plating: 2 }, mechanicEffects: { 'defense.dot-resistance': 0.01 }, cost: { purple: 577 }, catalystCost: { fortified: 2 }, requiredBiomeLevel: 16 },
+-      { stats: { maxHp: 10, plating: 1 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: { purple: 975 }, catalystCost: { fortified: 3 }, requiredBiomeLevel: 16 },
++      { stats: { maxHp: 10, plating: 1 }, mechanicEffects: { 'defense.dot-resistance': 0.01 }, cost: {"purple":477},  requiredBiomeLevel: 15 },
++      { stats: { maxHp: 10, plating: 1 }, mechanicEffects: { 'defense.dot-resistance': 0.01 }, cost: {"purple":478}, requiredBiomeLevel: 16 },
++      { stats: { maxHp: 10, plating: 1 }, mechanicEffects: { 'defense.dot-resistance': 0.01 }, cost: {"purple":477}, requiredBiomeLevel: 16 },
++      { stats: { maxHp: 9, plating: 2 }, mechanicEffects: { 'defense.dot-resistance': 0.01 }, cost: {"purple":393}, catalystCost: { fortified: 2 }, requiredBiomeLevel: 16 },
++      { stats: { maxHp: 10, plating: 1 }, mechanicEffects: { 'defense.dot-resistance': 0.02 }, cost: {"purple":393}, catalystCost: { fortified: 3 }, requiredBiomeLevel: 16 },
+     ],
+   }],
+ 
+@@ -286,11 +286,11 @@ export const swampRecipeEntries = [
+     icon: 'items/charms/sorrow-eye.png',
+     description: 'It weeps for every wound, and gives the tears back as strength.',
+     upgrades: [
+-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 36 },  requiredBiomeLevel: 16 },
+-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 89 }, requiredBiomeLevel: 16 },
+-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 142 }, requiredBiomeLevel: 16 },
+-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 231 }, requiredBiomeLevel: 16 },
+-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 390 }, catalystCost: { fortified: 2 }, requiredBiomeLevel: 16 },
++      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: {"purple":186},  requiredBiomeLevel: 16 },
++      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: {"purple":187}, requiredBiomeLevel: 16 },
++      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: {"purple":186}, requiredBiomeLevel: 16 },
++      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: {"purple":165}, requiredBiomeLevel: 16 },
++      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: {"purple":164}, catalystCost: { fortified: 2 }, requiredBiomeLevel: 16 },
+     ],
+   }],
+ 
+@@ -304,11 +304,11 @@ export const swampRecipeEntries = [
+     icon: 'items/boots/mire-striders.png',
+     description: 'Nothing the bog grips holds them; they walk free of any mire that tries to keep them.',
+     upgrades: [
+-      { stats: { speed: 3 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: { purple: 24 },  requiredBiomeLevel: 16 },
+-      { stats: { speed: 3 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: { purple: 59 },  requiredBiomeLevel: 16 },
+-      { stats: { speed: 3 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: { purple: 94 }, requiredBiomeLevel: 16 },
+-      { stats: { speed: 4 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: { purple: 153 }, requiredBiomeLevel: 16 },
+-      { stats: { speed: 3 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: { purple: 258 }, catalystCost: { fortified: 2 }, requiredBiomeLevel: 16 },
++      { stats: { speed: 3 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: {"purple":120},  requiredBiomeLevel: 16 },
++      { stats: { speed: 3 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: {"purple":119},  requiredBiomeLevel: 16 },
++      { stats: { speed: 3 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: {"purple":120}, requiredBiomeLevel: 16 },
++      { stats: { speed: 4 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: {"purple":115}, requiredBiomeLevel: 16 },
++      { stats: { speed: 3 }, mechanicEffects: { 'mobility.slow-resistance': 0.02 }, cost: {"purple":114}, catalystCost: { fortified: 2 }, requiredBiomeLevel: 16 },
+     ],
+   }],
+ 
+diff --git a/shared/src/data/recipes/trench.recipes.ts b/shared/src/data/recipes/trench.recipes.ts
+index 717b5944..1a0882d6 100644
+--- a/shared/src/data/recipes/trench.recipes.ts
++++ b/shared/src/data/recipes/trench.recipes.ts
+@@ -31,11 +31,11 @@ export const trenchRecipeEntries = [
+     icon: 'items/weapons/abyssal-axe.png',
+     description: 'Patient through the long fight, merciless at the end of it: when the abyss-thing finally weakens, it disappears.',
+     upgrades: [
+-      { stats: { attack: 24 }, cost: { green: 175 }, requiredBiomeLevel: 2 },
+-      { stats: { attack: 24 }, cost: { green: 439 }, requiredBiomeLevel: 3 },
+-      { stats: { attack: 24 }, cost: { green: 702 }, requiredBiomeLevel: 4 },
+-      { stats: { attack: 24 }, cost: { green: 1140 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 4 },
+-      { stats: { attack: 24 }, cost: { green: 1930 }, catalystCost: { swarming: 4 }, requiredBiomeLevel: 4 },
++      { stats: { attack: 24 }, cost: {"green":945}, requiredBiomeLevel: 2 },
++      { stats: { attack: 24 }, cost: {"green":944}, requiredBiomeLevel: 3 },
++      { stats: { attack: 24 }, cost: {"green":945}, requiredBiomeLevel: 4 },
++      { stats: { attack: 24 }, cost: {"green":776}, catalystCost: { swarming: 3 }, requiredBiomeLevel: 4 },
++      { stats: { attack: 24 }, cost: {"green":776}, catalystCost: { swarming: 4 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -54,11 +54,11 @@ export const trenchRecipeEntries = [
+     icon: 'items/armor/deep-sea-carapace.png',
+     description: 'Pressure-forged over an age in the dark; the longer the fight, the more of the deep\'s weight it turns against your foe.',
+     upgrades: [
+-      { stats: { maxHp: 22, plating: 6, damageReduction: 0.02 }, cost: { green: 185 }, requiredBiomeLevel: 3 },
+-      { stats: { maxHp: 22, plating: 6, damageReduction: 0.02 }, cost: { green: 462 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 22, plating: 6, damageReduction: 0.02 }, cost: { green: 739 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 22, plating: 6, damageReduction: 0.02 }, cost: { green: 1200 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 22, plating: 6, damageReduction: 0.02 }, cost: { green: 2030 }, catalystCost: { swarming: 4 }, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 22, plating: 6, damageReduction: 0.02 }, cost: {"green":1001}, requiredBiomeLevel: 3 },
++      { stats: { maxHp: 22, plating: 6, damageReduction: 0.02 }, cost: {"green":1002}, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 22, plating: 6, damageReduction: 0.02 }, cost: {"green":1001}, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 22, plating: 6, damageReduction: 0.02 }, cost: {"green":806}, catalystCost: { swarming: 3 }, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 22, plating: 6, damageReduction: 0.02 }, cost: {"green":806}, catalystCost: { swarming: 4 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -78,11 +78,11 @@ export const trenchRecipeEntries = [
+     icon: 'items/charms/pressure-vessel.png',
+     description: 'Built to hold against a crushing deep — it softens the one enormous blow and breathes life back on a slow count.',
+     upgrades: [
+-      { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.recovery-pulse-pct': 0.02 }, cost: { green: 73 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.recovery-pulse-pct': 0.02 }, cost: { green: 183 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.recovery-pulse-pct': 0.02 }, cost: { green: 292 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.recovery-pulse-pct': 0.02 }, cost: { green: 475 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.recovery-pulse-pct': 0.02 }, cost: { green: 803 }, catalystCost: { dominion: 3 }, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.recovery-pulse-pct': 0.02 }, cost: {"green":389}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.recovery-pulse-pct': 0.02 }, cost: {"green":389}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.recovery-pulse-pct': 0.02 }, cost: {"green":389}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.recovery-pulse-pct': 0.02 }, cost: {"green":330}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.recovery-pulse-pct': 0.02 }, cost: {"green":329}, catalystCost: { dominion: 3 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -97,11 +97,11 @@ export const trenchRecipeEntries = [
+     icon: 'items/boots/abyssal-stalkers.png',
+     description: 'They take you past the great blind hunters unseen — and lend the first strike, when it comes, a killing edge.',
+     upgrades: [
+-      { stats: { speed: 6 }, cost: { green: 50 },  requiredBiomeLevel: 4 },
+-      { stats: { speed: 6 }, cost: { green: 125 },  requiredBiomeLevel: 4 },
+-      { stats: { speed: 6 }, cost: { green: 200 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 6 }, cost: { green: 326 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 6 }, cost: { green: 551 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 4 },
++      { stats: { speed: 6 }, cost: {"green":269},  requiredBiomeLevel: 4 },
++      { stats: { speed: 6 }, cost: {"green":270},  requiredBiomeLevel: 4 },
++      { stats: { speed: 6 }, cost: {"green":269}, requiredBiomeLevel: 4 },
++      { stats: { speed: 6 }, cost: {"green":222}, requiredBiomeLevel: 4 },
++      { stats: { speed: 6 }, cost: {"green":222}, catalystCost: { swarming: 3 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -118,11 +118,11 @@ export const trenchRecipeEntries = [
+     icon: 'items/boots/abyssal-treaders.png',
+     description: 'Ballasted for the deep — slows and snares and stuns wash over them and recede twice as fast.',
+     upgrades: [
+-      { stats: { speed: 5 }, cost: { green: 50 },  requiredBiomeLevel: 4 },
+-      { stats: { speed: 5 }, cost: { green: 125 },  requiredBiomeLevel: 4 },
+-      { stats: { speed: 5 }, cost: { green: 200 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 5 }, cost: { green: 326 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 5 }, cost: { green: 551 }, catalystCost: { dominion: 3 }, requiredBiomeLevel: 4 },
++      { stats: { speed: 5 }, cost: {"green":269},  requiredBiomeLevel: 4 },
++      { stats: { speed: 5 }, cost: {"green":270},  requiredBiomeLevel: 4 },
++      { stats: { speed: 5 }, cost: {"green":269}, requiredBiomeLevel: 4 },
++      { stats: { speed: 5 }, cost: {"green":222}, requiredBiomeLevel: 4 },
++      { stats: { speed: 5 }, cost: {"green":222}, catalystCost: { dominion: 3 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+diff --git a/shared/src/data/recipes/tundra.recipes.ts b/shared/src/data/recipes/tundra.recipes.ts
+index cf57f9db..fe9c4d16 100644
+--- a/shared/src/data/recipes/tundra.recipes.ts
++++ b/shared/src/data/recipes/tundra.recipes.ts
+@@ -25,11 +25,11 @@ export const tundraRecipeEntries = [
+     element: 'frost',   // cosmetic attack tint only
+     description: 'Each blow leaves a deep frost-crack; armor that takes enough of them simply gives.',
+     upgrades: [
+-      { stats: { attack: 30 }, cost: { blue: 93 },  requiredBiomeLevel: 2 },
+-      { stats: { attack: 30 }, cost: { blue: 233 }, requiredBiomeLevel: 3 },
+-      { stats: { attack: 30 }, cost: { blue: 372 }, requiredBiomeLevel: 4 },
+-      { stats: { attack: 30 }, cost: { blue: 605 }, catalystCost: { heavy: 2 }, requiredBiomeLevel: 4 },
+-      { stats: { attack: 30 }, cost: { blue: 1023 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 4 },
++      { stats: { attack: 30 }, cost: {"blue":503},  requiredBiomeLevel: 2 },
++      { stats: { attack: 30 }, cost: {"blue":503}, requiredBiomeLevel: 3 },
++      { stats: { attack: 30 }, cost: {"blue":503}, requiredBiomeLevel: 4 },
++      { stats: { attack: 30 }, cost: {"blue":409}, catalystCost: { heavy: 2 }, requiredBiomeLevel: 4 },
++      { stats: { attack: 30 }, cost: {"blue":408}, catalystCost: { heavy: 3 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -44,11 +44,11 @@ export const tundraRecipeEntries = [
+     icon: 'items/weapons/rimebrand.png',
+     description: 'The first true frost-brand — slow and heavy, planting a cold in the wound that goes on biting after the blade is gone.',
+     upgrades: [
+-      { stats: { attack: 24 }, cost: { blue: 93 }, requiredBiomeLevel: 3 },
+-      { stats: { attack: 24 }, cost: { blue: 232 }, requiredBiomeLevel: 4 },
+-      { stats: { attack: 24 }, cost: { blue: 372 }, requiredBiomeLevel: 4 },
+-      { stats: { attack: 24 }, cost: { blue: 604 }, catalystCost: { fortified: 2 }, requiredBiomeLevel: 4 },
+-      { stats: { attack: 24 }, cost: { blue: 1023 }, catalystCost: { fortified: 3 }, requiredBiomeLevel: 4 },
++      { stats: { attack: 24 }, cost: {"blue":503}, requiredBiomeLevel: 3 },
++      { stats: { attack: 24 }, cost: {"blue":503}, requiredBiomeLevel: 4 },
++      { stats: { attack: 24 }, cost: {"blue":503}, requiredBiomeLevel: 4 },
++      { stats: { attack: 24 }, cost: {"blue":408}, catalystCost: { fortified: 2 }, requiredBiomeLevel: 4 },
++      { stats: { attack: 24 }, cost: {"blue":407}, catalystCost: { fortified: 3 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -64,11 +64,11 @@ export const tundraRecipeEntries = [
+     icon: 'items/armor/glacial-bulwark.png',
+     description: 'Stand still and the ice creeps over the plate, until you are part of the glacier itself.',
+     upgrades: [
+-      { stats: { maxHp: 22, plating: 4 }, cost: { blue: 66, red: 17 },  requiredBiomeLevel: 3 },
+-      { stats: { maxHp: 22, plating: 4 }, cost: { blue: 166, red: 42 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 22, plating: 4 }, cost: { blue: 266, red: 66 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 22, plating: 4 }, cost: { blue: 432, red: 108 }, catalystCost: { heavy: 2 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 22, plating: 4 }, cost: { blue: 730, red: 182 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 22, plating: 4 }, cost: {"blue":358,"red":89},  requiredBiomeLevel: 3 },
++      { stats: { maxHp: 22, plating: 4 }, cost: {"blue":357,"red":90}, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 22, plating: 4 }, cost: {"blue":358,"red":89}, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 22, plating: 4 }, cost: {"blue":294,"red":74}, catalystCost: { heavy: 2 }, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 22, plating: 4 }, cost: {"blue":293,"red":73}, catalystCost: { heavy: 3 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -85,11 +85,11 @@ export const tundraRecipeEntries = [
+     icon: 'items/charms/frostward-charm.png',
+     description: 'A rime-cold ward that throws up a sheet of ice, and drinks the blows that get through.',
+     upgrades: [
+-      { mechanicEffects: { 'defense.barrier-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 28, purple: 10 },  requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.barrier-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 71, purple: 24 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.barrier-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 114, purple: 38 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.barrier-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 185, purple: 62 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.barrier-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: { blue: 314, purple: 104 }, catalystCost: { heavy: 2 }, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.barrier-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: {"blue":150,"purple":50},  requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.barrier-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: {"blue":150,"purple":50}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.barrier-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: {"blue":150,"purple":50}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.barrier-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: {"blue":131,"purple":44}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.barrier-pct': 0.02, 'defense.absorb-pct': 0.02 }, cost: {"blue":131,"purple":44}, catalystCost: { heavy: 2 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -101,11 +101,11 @@ export const tundraRecipeEntries = [
+     icon: 'items/boots/glacier-striders.png',
+     description: 'They gather momentum across the ice and are loath to give it back.',
+     upgrades: [
+-      { stats: { speed: 8 },  cost: { blue: 24 },  requiredBiomeLevel: 4 },
+-      { stats: { speed: 12 }, cost: { blue: 59 },  requiredBiomeLevel: 4 },
+-      { stats: { speed: 16 }, cost: { blue: 94 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 16 }, cost: { blue: 153 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 16 }, cost: { blue: 260 }, catalystCost: { heavy: 2 }, requiredBiomeLevel: 4 },
++      { stats: { speed: 8 },  cost: {"blue":122},  requiredBiomeLevel: 4 },
++      { stats: { speed: 12 }, cost: {"blue":123},  requiredBiomeLevel: 4 },
++      { stats: { speed: 16 }, cost: {"blue":122}, requiredBiomeLevel: 4 },
++      { stats: { speed: 16 }, cost: {"blue":112}, requiredBiomeLevel: 4 },
++      { stats: { speed: 16 }, cost: {"blue":111}, catalystCost: { heavy: 2 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -132,11 +132,11 @@ export const tundraRecipeEntries = [
+     element: 'frost',   // cosmetic attack tint only
+     description: 'Every blow leaves a deeper frost-crack; the eighth simply ends the argument about whether armor holds.',
+     upgrades: [
+-      { stats: { attack: 50 }, cost: { blue: 185 },  requiredBiomeLevel: 8 },
+-      { stats: { attack: 50 }, cost: { blue: 463 },  requiredBiomeLevel: 9 },
+-      { stats: { attack: 50 }, cost: { blue: 740 }, requiredBiomeLevel: 10 },
+-      { stats: { attack: 50 }, cost: { blue: 1203 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 10 },
+-      { stats: { attack: 50 }, cost: { blue: 2036 }, catalystCost: { heavy: 4 }, requiredBiomeLevel: 10 },
++      { stats: { attack: 50 }, cost: {"blue":998},  requiredBiomeLevel: 8 },
++      { stats: { attack: 50 }, cost: {"blue":998},  requiredBiomeLevel: 9 },
++      { stats: { attack: 50 }, cost: {"blue":998}, requiredBiomeLevel: 10 },
++      { stats: { attack: 50 }, cost: {"blue":817}, catalystCost: { heavy: 3 }, requiredBiomeLevel: 10 },
++      { stats: { attack: 50 }, cost: {"blue":816}, catalystCost: { heavy: 4 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -153,11 +153,11 @@ export const tundraRecipeEntries = [
+     icon: 'items/weapons/glacial-rimebrand.png',
+     description: 'It does not cut so much as plant a cold that goes on spreading after the blade is gone.',
+     upgrades: [
+-      { stats: { attack: 35 }, cost: { blue: 185 },  requiredBiomeLevel: 8 },
+-      { stats: { attack: 35 }, cost: { blue: 463 },  requiredBiomeLevel: 9 },
+-      { stats: { attack: 35 }, cost: { blue: 741 }, requiredBiomeLevel: 10 },
+-      { stats: { attack: 35 }, cost: { blue: 1204 }, catalystCost: { fortified: 3 }, requiredBiomeLevel: 10 },
+-      { stats: { attack: 35 }, cost: { blue: 2037 }, catalystCost: { fortified: 4 }, requiredBiomeLevel: 10 },
++      { stats: { attack: 35 }, cost: {"blue":1000},  requiredBiomeLevel: 8 },
++      { stats: { attack: 35 }, cost: {"blue":1001},  requiredBiomeLevel: 9 },
++      { stats: { attack: 35 }, cost: {"blue":1000}, requiredBiomeLevel: 10 },
++      { stats: { attack: 35 }, cost: {"blue":815}, catalystCost: { fortified: 3 }, requiredBiomeLevel: 10 },
++      { stats: { attack: 35 }, cost: {"blue":814}, catalystCost: { fortified: 4 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -175,11 +175,11 @@ export const tundraRecipeEntries = [
+     icon: 'items/armor/permafrost-sovereign.png',
+     description: 'Hold your ground and the glacier claims you for its own — and nothing moves a glacier.',
+     upgrades: [
+-      { stats: { maxHp: 42, plating: 7 }, cost: { blue: 130, red: 33 },  requiredBiomeLevel: 9 },
+-      { stats: { maxHp: 42, plating: 7 }, cost: { blue: 326, red: 82 }, requiredBiomeLevel: 10 },
+-      { stats: { maxHp: 42, plating: 7 }, cost: { blue: 522, red: 131 }, requiredBiomeLevel: 10 },
+-      { stats: { maxHp: 42, plating: 7 }, cost: { blue: 849, red: 212 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 10 },
+-      { stats: { maxHp: 42, plating: 7 }, cost: { blue: 1436, red: 359 }, catalystCost: { heavy: 4 }, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 42, plating: 7 }, cost: {"blue":697,"red":174},  requiredBiomeLevel: 9 },
++      { stats: { maxHp: 42, plating: 7 }, cost: {"blue":696,"red":175}, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 42, plating: 7 }, cost: {"blue":697,"red":174}, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 42, plating: 7 }, cost: {"blue":587,"red":147}, catalystCost: { heavy: 3 }, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 42, plating: 7 }, cost: {"blue":586,"red":147}, catalystCost: { heavy: 4 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -197,11 +197,11 @@ export const tundraRecipeEntries = [
+     icon: 'items/charms/glacial-ward.png',
+     description: 'A sheet of ice thrown up against the blow, and a slow cold that drinks whatever slips past it.',
+     upgrades: [
+-      { mechanicEffects: { 'defense.barrier-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: { blue: 65, purple: 9 }, requiredBiomeLevel: 10 },
+-      { mechanicEffects: { 'defense.barrier-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: { blue: 163, purple: 22 }, requiredBiomeLevel: 10 },
+-      { mechanicEffects: { 'defense.barrier-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: { blue: 260, purple: 36 }, requiredBiomeLevel: 10 },
+-      { mechanicEffects: { 'defense.barrier-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: { blue: 423, purple: 58 }, requiredBiomeLevel: 10 },
+-      { mechanicEffects: { 'defense.barrier-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: { blue: 716, purple: 98 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.barrier-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: {"blue":337,"purple":46}, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.barrier-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: {"blue":337,"purple":47}, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.barrier-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: {"blue":337,"purple":46}, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.barrier-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: {"blue":308,"purple":42}, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.barrier-pct': 0.03, 'defense.absorb-pct': 0.03 }, cost: {"blue":308,"purple":42}, catalystCost: { heavy: 3 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -221,11 +221,11 @@ export const tundraRecipeEntries = [
+     icon: 'items/charms/deepfreeze-ward.png',
+     description: 'The longer the cold has to settle in, the more of the blow it swallows whole.',
+     upgrades: [
+-      { mechanicEffects: { 'defense.barrier-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 65, purple: 9 }, requiredBiomeLevel: 10 },
+-      { mechanicEffects: { 'defense.barrier-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 163, purple: 22 }, requiredBiomeLevel: 10 },
+-      { mechanicEffects: { 'defense.barrier-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 260, purple: 36 }, requiredBiomeLevel: 10 },
+-      { mechanicEffects: { 'defense.barrier-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 423, purple: 58 }, requiredBiomeLevel: 10 },
+-      { mechanicEffects: { 'defense.barrier-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: { blue: 716, purple: 98 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.barrier-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: {"blue":337,"purple":46}, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.barrier-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: {"blue":337,"purple":47}, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.barrier-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: {"blue":337,"purple":46}, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.barrier-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: {"blue":308,"purple":42}, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.barrier-pct': 0.03, 'defense.absorb-ramp-max-pct': 0.03 }, cost: {"blue":308,"purple":42}, catalystCost: { heavy: 3 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -240,11 +240,11 @@ export const tundraRecipeEntries = [
+     icon: 'items/boots/avalanche-striders.png',
+     description: 'Slow to start and impossible to stop — by the far end of the ice you are a thing that simply happens to whatever is in the way.',
+     upgrades: [
+-      { stats: { speed: 10 }, cost: { blue: 47 },  requiredBiomeLevel: 10 },
+-      { stats: { speed: 14 }, cost: { blue: 116 }, requiredBiomeLevel: 10 },
+-      { stats: { speed: 18 }, cost: { blue: 186 }, requiredBiomeLevel: 10 },
+-      { stats: { speed: 18 }, cost: { blue: 303 }, requiredBiomeLevel: 10 },
+-      { stats: { speed: 18 }, cost: { blue: 512 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 10 },
++      { stats: { speed: 10 }, cost: {"blue":239},  requiredBiomeLevel: 10 },
++      { stats: { speed: 14 }, cost: {"blue":239}, requiredBiomeLevel: 10 },
++      { stats: { speed: 18 }, cost: {"blue":239}, requiredBiomeLevel: 10 },
++      { stats: { speed: 18 }, cost: {"blue":224}, requiredBiomeLevel: 10 },
++      { stats: { speed: 18 }, cost: {"blue":223}, catalystCost: { heavy: 3 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+diff --git a/shared/src/data/recipes/volcanic.recipes.ts b/shared/src/data/recipes/volcanic.recipes.ts
+index 7d423c43..45f37de6 100644
+--- a/shared/src/data/recipes/volcanic.recipes.ts
++++ b/shared/src/data/recipes/volcanic.recipes.ts
+@@ -32,11 +32,11 @@ export const volcanicRecipeEntries = [
+     element: 'fire',   // cosmetic attack tint only
+     description: 'A whip of braided ember that strikes faster the longer it burns.',
+     upgrades: [
+-      { stats: { attack: 6 }, cost: { red: 96 },  requiredBiomeLevel: 2 },
+-      { stats: { attack: 6 }, cost: { red: 240 }, requiredBiomeLevel: 3 },
+-      { stats: { attack: 6 }, cost: { red: 384 }, requiredBiomeLevel: 4 },
+-      { stats: { attack: 6 }, cost: { red: 624 }, catalystCost: { swarming: 2 }, requiredBiomeLevel: 4 },
+-      { stats: { attack: 6 }, cost: { red: 1056 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 4 },
++      { stats: { attack: 6 }, cost: {"red":518},  requiredBiomeLevel: 2 },
++      { stats: { attack: 6 }, cost: {"red":517}, requiredBiomeLevel: 3 },
++      { stats: { attack: 6 }, cost: {"red":518}, requiredBiomeLevel: 4 },
++      { stats: { attack: 6 }, cost: {"red":424}, catalystCost: { swarming: 2 }, requiredBiomeLevel: 4 },
++      { stats: { attack: 6 }, cost: {"red":423}, catalystCost: { swarming: 3 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -53,11 +53,11 @@ export const volcanicRecipeEntries = [
+     icon: 'items/armor/emberforge-plate.png',
+     description: 'Plate quenched in a lava flow; it thickens against a steady fire and cracks only to a true blow.',
+     upgrades: [
+-      { stats: { maxHp: 20, plating: 5 }, cost: { red: 58, yellow: 20 },  requiredBiomeLevel: 3 },
+-      { stats: { maxHp: 20, plating: 5 }, cost: { red: 146, yellow: 50 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 20, plating: 5 }, cost: { red: 234, yellow: 80 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 20, plating: 5 }, cost: { red: 380, yellow: 130 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 4 },
+-      { stats: { maxHp: 20, plating: 5 }, cost: { red: 646, yellow: 218 }, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 20, plating: 5 }, cost: {"red":312,"yellow":107},  requiredBiomeLevel: 3 },
++      { stats: { maxHp: 20, plating: 5 }, cost: {"red":312,"yellow":108}, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 20, plating: 5 }, cost: {"red":312,"yellow":107}, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 20, plating: 5 }, cost: {"red":264,"yellow":88}, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 4 },
++      { stats: { maxHp: 20, plating: 5 }, cost: {"red":264,"yellow":88}, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -75,11 +75,11 @@ export const volcanicRecipeEntries = [
+     icon: 'items/charms/magmaheart-stone.png',
+     description: 'A still-molten heart that mends you mid-fight, and flares with every kill.',
+     upgrades: [
+-      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 30, yellow: 10 },  requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 75, yellow: 25 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 120, yellow: 40 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 195, yellow: 65 }, requiredBiomeLevel: 4 },
+-      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 330, yellow: 110 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: {"red":158,"yellow":53},  requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: {"red":159,"yellow":52}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: {"red":158,"yellow":53}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: {"red":138,"yellow":46}, requiredBiomeLevel: 4 },
++      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: {"red":137,"yellow":46}, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -94,11 +94,11 @@ export const volcanicRecipeEntries = [
+     icon: 'items/boots/magma-walkers.png',
+     description: 'Quick as a thrown spark — until a solid blow knocks the wind from them.',
+     upgrades: [
+-      { stats: { speed: 8 },  cost: { red: 24 },  requiredBiomeLevel: 4 },
+-      { stats: { speed: 12 }, cost: { red: 61 },  requiredBiomeLevel: 4 },
+-      { stats: { speed: 16 }, cost: { red: 97 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 16 }, cost: { red: 158 }, requiredBiomeLevel: 4 },
+-      { stats: { speed: 16 }, cost: { red: 266 }, catalystCost: { swarming: 2 }, requiredBiomeLevel: 4 },
++      { stats: { speed: 8 },  cost: {"red":126},  requiredBiomeLevel: 4 },
++      { stats: { speed: 12 }, cost: {"red":127},  requiredBiomeLevel: 4 },
++      { stats: { speed: 16 }, cost: {"red":126}, requiredBiomeLevel: 4 },
++      { stats: { speed: 16 }, cost: {"red":114}, requiredBiomeLevel: 4 },
++      { stats: { speed: 16 }, cost: {"red":113}, catalystCost: { swarming: 2 }, requiredBiomeLevel: 4 },
+     ],
+   }],
+ 
+@@ -122,11 +122,11 @@ export const volcanicRecipeEntries = [
+     element: 'fire',   // cosmetic attack tint only
+     description: 'A braided whip of ember that strikes faster the longer it is allowed to burn.',
+     upgrades: [
+-      { stats: { attack: 11 }, cost: { red: 191 }, requiredBiomeLevel: 8 },
+-      { stats: { attack: 11 }, cost: { red: 477 }, requiredBiomeLevel: 9 },
+-      { stats: { attack: 11 }, cost: { red: 764 }, requiredBiomeLevel: 10 },
+-      { stats: { attack: 11 }, cost: { red: 1241 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 10 },
+-      { stats: { attack: 11 }, cost: { red: 2099 }, catalystCost: { swarming: 4 }, requiredBiomeLevel: 10 },
++      { stats: { attack: 11 }, cost: {"red":1026}, requiredBiomeLevel: 8 },
++      { stats: { attack: 11 }, cost: {"red":1027}, requiredBiomeLevel: 9 },
++      { stats: { attack: 11 }, cost: {"red":1026}, requiredBiomeLevel: 10 },
++      { stats: { attack: 11 }, cost: {"red":847}, catalystCost: { swarming: 3 }, requiredBiomeLevel: 10 },
++      { stats: { attack: 11 }, cost: {"red":846}, catalystCost: { swarming: 4 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -146,11 +146,11 @@ export const volcanicRecipeEntries = [
+     icon: 'items/weapons/cinderbrand.png',
+     description: 'It leaves a fire under the skin that does the rest of the work while you move on.',
+     upgrades: [
+-      { stats: { attack: 20 }, cost: { red: 192 }, requiredBiomeLevel: 8 },
+-      { stats: { attack: 20 }, cost: { red: 479 }, requiredBiomeLevel: 9 },
+-      { stats: { attack: 20 }, cost: { red: 766 }, requiredBiomeLevel: 10 },
+-      { stats: { attack: 20 }, cost: { red: 1245 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 10 },
+-      { stats: { attack: 20 }, cost: { red: 2108 }, catalystCost: { swarming: 4 }, requiredBiomeLevel: 10 },
++      { stats: { attack: 20 }, cost: {"red":1032}, requiredBiomeLevel: 8 },
++      { stats: { attack: 20 }, cost: {"red":1033}, requiredBiomeLevel: 9 },
++      { stats: { attack: 20 }, cost: {"red":1032}, requiredBiomeLevel: 10 },
++      { stats: { attack: 20 }, cost: {"red":847}, catalystCost: { swarming: 3 }, requiredBiomeLevel: 10 },
++      { stats: { attack: 20 }, cost: {"red":846}, catalystCost: { swarming: 4 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -169,11 +169,11 @@ export const volcanicRecipeEntries = [
+     icon: 'items/armor/pyroclasm-mantle.png',
+     description: 'It thickens against a steady fire until, at its hardest, it shrugs off even a true blow — once.',
+     upgrades: [
+-      { stats: { maxHp: 40, plating: 10 }, cost: { red: 126, yellow: 32 }, requiredBiomeLevel: 9 },
+-      { stats: { maxHp: 40, plating: 10 }, cost: { red: 316, yellow: 79 }, requiredBiomeLevel: 10 },
+-      { stats: { maxHp: 40, plating: 10 }, cost: { red: 506, yellow: 126 }, requiredBiomeLevel: 10 },
+-      { stats: { maxHp: 40, plating: 10 }, cost: { red: 822, yellow: 205 }, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 10 },
+-      { stats: { maxHp: 40, plating: 10 }, cost: { red: 1390, yellow: 347 }, catalystCost: { alacrity: 4 }, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 40, plating: 10 }, cost: {"red":678,"yellow":169}, requiredBiomeLevel: 9 },
++      { stats: { maxHp: 40, plating: 10 }, cost: {"red":677,"yellow":170}, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 40, plating: 10 }, cost: {"red":678,"yellow":169}, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 40, plating: 10 }, cost: {"red":564,"yellow":141}, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 40, plating: 10 }, cost: {"red":563,"yellow":140}, catalystCost: { alacrity: 4 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -193,11 +193,11 @@ export const volcanicRecipeEntries = [
+     icon: 'items/armor/lava-tempered-hide.png',
+     description: 'Quenched in a living flow, it banks the overflow of your own healing into a crust of fresh stone.',
+     upgrades: [
+-      { stats: { maxHp: 36, plating: 7 }, cost: { red: 126, yellow: 32 }, requiredBiomeLevel: 9 },
+-      { stats: { maxHp: 36, plating: 7 }, cost: { red: 316, yellow: 79 }, requiredBiomeLevel: 10 },
+-      { stats: { maxHp: 36, plating: 7 }, cost: { red: 506, yellow: 126 }, requiredBiomeLevel: 10 },
+-      { stats: { maxHp: 36, plating: 7 }, cost: { red: 822, yellow: 205 }, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 10 },
+-      { stats: { maxHp: 36, plating: 7 }, cost: { red: 1390, yellow: 347 }, catalystCost: { alacrity: 4 }, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 36, plating: 7 }, cost: {"red":678,"yellow":169}, requiredBiomeLevel: 9 },
++      { stats: { maxHp: 36, plating: 7 }, cost: {"red":677,"yellow":170}, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 36, plating: 7 }, cost: {"red":678,"yellow":169}, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 36, plating: 7 }, cost: {"red":564,"yellow":141}, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 10 },
++      { stats: { maxHp: 36, plating: 7 }, cost: {"red":563,"yellow":140}, catalystCost: { alacrity: 4 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -212,11 +212,11 @@ export const volcanicRecipeEntries = [
+     icon: 'items/charms/inferno-heart.png',
+     description: 'A heart that never fully cools — it mends you mid-swing and flares brighter with every fallen foe.',
+     upgrades: [
+-      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 62, yellow: 16 }, requiredBiomeLevel: 10 },
+-      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 156, yellow: 39 }, requiredBiomeLevel: 10 },
+-      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 250, yellow: 62 }, requiredBiomeLevel: 10 },
+-      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 406, yellow: 101 }, requiredBiomeLevel: 10 },
+-      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 686, yellow: 172 }, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: {"red":324,"yellow":81}, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: {"red":325,"yellow":81}, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: {"red":324,"yellow":81}, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: {"red":294,"yellow":74}, requiredBiomeLevel: 10 },
++      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: {"red":293,"yellow":73}, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 
+@@ -231,11 +231,11 @@ export const volcanicRecipeEntries = [
+     icon: 'items/boots/pyroclast-treads.png',
+     description: 'Swift as a thrown ember — until a solid blow stalls them, and the heat must build again.',
+     upgrades: [
+-      { stats: { speed: 10 }, cost: { red: 48 },  requiredBiomeLevel: 10 },
+-      { stats: { speed: 14 }, cost: { red: 120 }, requiredBiomeLevel: 10 },
+-      { stats: { speed: 18 }, cost: { red: 192 }, requiredBiomeLevel: 10 },
+-      { stats: { speed: 18 }, cost: { red: 311 }, requiredBiomeLevel: 10 },
+-      { stats: { speed: 18 }, cost: { red: 526 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 10 },
++      { stats: { speed: 10 }, cost: {"red":248},  requiredBiomeLevel: 10 },
++      { stats: { speed: 14 }, cost: {"red":248}, requiredBiomeLevel: 10 },
++      { stats: { speed: 18 }, cost: {"red":248}, requiredBiomeLevel: 10 },
++      { stats: { speed: 18 }, cost: {"red":227}, requiredBiomeLevel: 10 },
++      { stats: { speed: 18 }, cost: {"red":226}, catalystCost: { swarming: 3 }, requiredBiomeLevel: 10 },
+     ],
+   }],
+ 

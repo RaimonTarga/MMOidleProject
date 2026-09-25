@@ -1,0 +1,38 @@
+[
+  {
+    "id": "candidate-closing-striker-balanced-c-V-s101051",
+    "seed": 101051,
+    "node": "node-t4-volcanic-01",
+    "setup": "breadth-t4-striker-balanced-c",
+    "budget": 600000,
+    "masteryMinutes": null,
+    "deathMinutes": null,
+    "observedMinutes": 81.14833333333333,
+    "runtimeCensored": true,
+    "wallSeconds": 900.0090347,
+    "essenceAtCap": null,
+    "cost3": 8576,
+    "cost5": 12864,
+    "fund3Minutes": null,
+    "fund5Minutes": null,
+    "path": "holdout600k/candidate-closing-striker-balanced-c-V-s101051.json"
+  },
+  {
+    "id": "candidate-closing-striker-balanced-c-V-s101063",
+    "seed": 101063,
+    "node": "node-t4-volcanic-01",
+    "setup": "breadth-t4-striker-balanced-c",
+    "budget": 600000,
+    "masteryMinutes": 57.405,
+    "deathMinutes": null,
+    "observedMinutes": 57.405,
+    "runtimeCensored": false,
+    "wallSeconds": 507.3135288,
+    "essenceAtCap": 49781,
+    "cost3": 8576,
+    "cost5": 12864,
+    "fund3Minutes": null,
+    "fund5Minutes": null,
+    "path": "holdout600k/candidate-closing-striker-balanced-c-V-s101063.json"
+  }
+]

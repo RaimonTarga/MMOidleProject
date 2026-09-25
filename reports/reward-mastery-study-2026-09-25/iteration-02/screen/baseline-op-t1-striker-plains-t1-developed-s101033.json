@@ -1,0 +1,1000 @@
+{
+  "historicalReadback": {
+    "mastery": {
+      "plains": 4,
+      "forest": 4,
+      "swamp": 4,
+      "mountain": 5,
+      "cave": 5
+    },
+    "upgrades": {
+      "chaotic-axe": 3,
+      "plains-vest-t1": 3,
+      "swamp-charm-t1": 3,
+      "mountain-boots-t1": 3
+    },
+    "equipment": {
+      "weapon": "chaotic-axe",
+      "armor": "plains-vest-t1",
+      "recovery": "swamp-charm-t1",
+      "mobility": "mountain-boots-t1",
+      "core": null,
+      "relic": null
+    },
+    "abilities": {
+      "techniques": [
+        "sweep"
+      ],
+      "guards": [
+        "second-wind"
+      ]
+    },
+    "runes": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ]
+  },
+  "rp": 16,
+  "rpBudget": 19,
+  "job": {
+    "id": "baseline-op-t1-striker-plains-t1-developed-s101033",
+    "arm": "baseline",
+    "mode": "historical-loadout",
+    "nodeId": "node-t1-plains-03",
+    "classRoot": "cadence-root",
+    "seed": 101033,
+    "cell": {
+      "id": "op-t1-striker-plains-t1-developed-s101033",
+      "identityId": "t1-striker",
+      "className": "striker",
+      "frame": "balanced",
+      "pathName": "root",
+      "range": null,
+      "tier": 1,
+      "role": "farm",
+      "nodeId": "node-t1-plains-03",
+      "isDungeon": false,
+      "alternate": false,
+      "targetTypes": [],
+      "treatment": "control",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+        "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+      ],
+      "seed": 101033,
+      "block": "A",
+      "arm": "primary",
+      "comparisonId": "op-t1-striker-plains-t1-developed-s101009",
+      "snapshotId": "t1-developed",
+      "progressionSnapshot": {
+        "id": "t1-developed",
+        "tier": 1,
+        "mastery": {
+          "plains": 4,
+          "forest": 4,
+          "swamp": 4,
+          "mountain": 5,
+          "cave": 5
+        },
+        "gm": 22,
+        "rp": 20,
+        "plus": 3
+      },
+      "upgradeLevel": 3,
+      "stance": null,
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "op-t1-striker-plains-t1-developed-s101009",
+        "classRoot": "cadence-root",
+        "contentTier": 1,
+        "playerTier": 1,
+        "gearTier": 1,
+        "skillPath": [
+          "cadence-root"
+        ],
+        "gearItemIds": {
+          "weapon": "chaotic-axe",
+          "armor": "plains-vest-t1",
+          "recovery": "swamp-charm-t1",
+          "mobility": "mountain-boots-t1"
+        }
+      }
+    },
+    "gearIds": [
+      "iron-broadsword",
+      "plains-vest-t1",
+      "plains-charm-t1",
+      "plains-boots-t1"
+    ],
+    "maxMs": 900000,
+    "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+    "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\baseline-op-t1-striker-plains-t1-developed-s101033.json"
+  },
+  "hitboxes": 406,
+  "build": {
+    "id": "op-t1-striker-plains-t1-developed-s101009",
+    "classRoot": "cadence-root",
+    "contentTier": 1,
+    "playerTier": 1,
+    "gearTier": 1,
+    "skillPath": [
+      "cadence-root"
+    ],
+    "gearItemIds": {
+      "weapon": "chaotic-axe",
+      "armor": "plains-vest-t1",
+      "recovery": "swamp-charm-t1",
+      "mobility": "mountain-boots-t1"
+    }
+  },
+  "initial": {
+    "elapsedMs": 0,
+    "level": 0,
+    "xp": 0,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {},
+    "catalystProgress": {},
+    "upgrades": {
+      "chaotic-axe": 3,
+      "plains-vest-t1": 3,
+      "swamp-charm-t1": 3,
+      "mountain-boots-t1": 3
+    },
+    "hp": 157,
+    "build": {
+      "id": "op-t1-striker-plains-t1-developed-s101009",
+      "classRoot": "cadence-root",
+      "contentTier": 1,
+      "playerTier": 1,
+      "gearTier": 1,
+      "skillPath": [
+        "cadence-root"
+      ],
+      "gearItemIds": {
+        "weapon": "chaotic-axe",
+        "armor": "plains-vest-t1",
+        "recovery": "swamp-charm-t1",
+        "mobility": "mountain-boots-t1"
+      }
+    },
+    "loadout": {
+      "abilities": {
+        "techniques": [
+          "sweep"
+        ],
+        "guards": [
+          "second-wind"
+        ]
+      },
+      "stances": [],
+      "rites": [],
+      "runes": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ]
+    },
+    "stats": {
+      "hp": 157,
+      "attack": 45
+    },
+    "biomeLevels": {
+      "plains": 0,
+      "forest": 4,
+      "swamp": 4,
+      "mountain": 5,
+      "cave": 5
+    }
+  },
+  "entry": 0,
+  "cap": 6,
+  "budget": 1750,
+  "costs": {
+    "3": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 365,
+      "purple": 0
+    },
+    "5": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 885,
+      "purple": 0
+    }
+  },
+  "mastery": {
+    "elapsedMs": 262600,
+    "level": 6,
+    "xp": 1764,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 318,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 318,
+      "purple": 0
+    },
+    "catalysts": {},
+    "catalystProgress": {
+      "swarming": 79.5
+    },
+    "upgrades": {
+      "chaotic-axe": 3,
+      "plains-vest-t1": 3,
+      "swamp-charm-t1": 3,
+      "mountain-boots-t1": 3
+    },
+    "hp": 157
+  },
+  "death": null,
+  "fundingTimes": {
+    "3": 302700,
+    "5": 756400
+  },
+  "actualAll3Ms": null,
+  "actualAll5Ms": null,
+  "acquisitionDebt": {
+    "red": 0,
+    "blue": 0,
+    "green": 0,
+    "yellow": 0,
+    "purple": 0
+  },
+  "final": {
+    "elapsedMs": 900000,
+    "level": 6,
+    "xp": 1764,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 1088,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 1088,
+      "purple": 0
+    },
+    "catalysts": {
+      "swarming": 2
+    },
+    "catalystProgress": {
+      "swarming": 72
+    },
+    "upgrades": {
+      "chaotic-axe": 3,
+      "plains-vest-t1": 3,
+      "swamp-charm-t1": 3,
+      "mountain-boots-t1": 3
+    },
+    "hp": 157
+  },
+  "snapshots": [
+    {
+      "elapsedMs": 29300,
+      "level": 1,
+      "xp": 212,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 40,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 40,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "swarming": 10
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "plains-vest-t1": 3,
+        "swamp-charm-t1": 3,
+        "mountain-boots-t1": 3
+      },
+      "hp": 157
+    },
+    {
+      "elapsedMs": 60000,
+      "level": 1,
+      "xp": 380,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 70,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 70,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "swarming": 17.5
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "plains-vest-t1": 3,
+        "swamp-charm-t1": 3,
+        "mountain-boots-t1": 3
+      },
+      "hp": 157
+    },
+    {
+      "elapsedMs": 69500,
+      "level": 2,
+      "xp": 456,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 84,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 84,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "swarming": 21
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "plains-vest-t1": 3,
+        "swamp-charm-t1": 3,
+        "mountain-boots-t1": 3
+      },
+      "hp": 153.20491000000015
+    },
+    {
+      "elapsedMs": 107700,
+      "level": 3,
+      "xp": 752,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 136,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 136,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "swarming": 34
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "plains-vest-t1": 3,
+        "swamp-charm-t1": 3,
+        "mountain-boots-t1": 3
+      },
+      "hp": 157
+    },
+    {
+      "elapsedMs": 120000,
+      "level": 3,
+      "xp": 812,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 148,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 148,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "swarming": 37
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "plains-vest-t1": 3,
+        "swamp-charm-t1": 3,
+        "mountain-boots-t1": 3
+      },
+      "hp": 157
+    },
+    {
+      "elapsedMs": 154200,
+      "level": 4,
+      "xp": 1068,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 192,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 192,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "swarming": 48
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "plains-vest-t1": 3,
+        "swamp-charm-t1": 3,
+        "mountain-boots-t1": 3
+      },
+      "hp": 157
+    },
+    {
+      "elapsedMs": 180000,
+      "level": 4,
+      "xp": 1236,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 222,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 222,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "swarming": 55.5
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "plains-vest-t1": 3,
+        "swamp-charm-t1": 3,
+        "mountain-boots-t1": 3
+      },
+      "hp": 156.34724000000006
+    },
+    {
+      "elapsedMs": 207800,
+      "level": 5,
+      "xp": 1388,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 250,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 250,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "swarming": 62.5
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "plains-vest-t1": 3,
+        "swamp-charm-t1": 3,
+        "mountain-boots-t1": 3
+      },
+      "hp": 157
+    },
+    {
+      "elapsedMs": 240000,
+      "level": 5,
+      "xp": 1596,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 288,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 288,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "swarming": 72
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "plains-vest-t1": 3,
+        "swamp-charm-t1": 3,
+        "mountain-boots-t1": 3
+      },
+      "hp": 157
+    },
+    {
+      "elapsedMs": 262600,
+      "level": 6,
+      "xp": 1764,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 318,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 318,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "swarming": 79.5
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "plains-vest-t1": 3,
+        "swamp-charm-t1": 3,
+        "mountain-boots-t1": 3
+      },
+      "hp": 157
+    },
+    {
+      "elapsedMs": 300000,
+      "level": 6,
+      "xp": 1764,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 356,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 356,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "swarming": 89
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "plains-vest-t1": 3,
+        "swamp-charm-t1": 3,
+        "mountain-boots-t1": 3
+      },
+      "hp": 157
+    },
+    {
+      "elapsedMs": 360000,
+      "level": 6,
+      "xp": 1764,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 440,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 440,
+        "purple": 0
+      },
+      "catalysts": {
+        "swarming": 1
+      },
+      "catalystProgress": {
+        "swarming": 10
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "plains-vest-t1": 3,
+        "swamp-charm-t1": 3,
+        "mountain-boots-t1": 3
+      },
+      "hp": 157
+    },
+    {
+      "elapsedMs": 420000,
+      "level": 6,
+      "xp": 1764,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 512,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 512,
+        "purple": 0
+      },
+      "catalysts": {
+        "swarming": 1
+      },
+      "catalystProgress": {
+        "swarming": 28
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "plains-vest-t1": 3,
+        "swamp-charm-t1": 3,
+        "mountain-boots-t1": 3
+      },
+      "hp": 157
+    },
+    {
+      "elapsedMs": 480000,
+      "level": 6,
+      "xp": 1764,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 582,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 582,
+        "purple": 0
+      },
+      "catalysts": {
+        "swarming": 1
+      },
+      "catalystProgress": {
+        "swarming": 45.5
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "plains-vest-t1": 3,
+        "swamp-charm-t1": 3,
+        "mountain-boots-t1": 3
+      },
+      "hp": 156.83681
+    },
+    {
+      "elapsedMs": 540000,
+      "level": 6,
+      "xp": 1764,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 660,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 660,
+        "purple": 0
+      },
+      "catalysts": {
+        "swarming": 1
+      },
+      "catalystProgress": {
+        "swarming": 65
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "plains-vest-t1": 3,
+        "swamp-charm-t1": 3,
+        "mountain-boots-t1": 3
+      },
+      "hp": 157
+    },
+    {
+      "elapsedMs": 600000,
+      "level": 6,
+      "xp": 1764,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 732,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 732,
+        "purple": 0
+      },
+      "catalysts": {
+        "swarming": 1
+      },
+      "catalystProgress": {
+        "swarming": 83
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "plains-vest-t1": 3,
+        "swamp-charm-t1": 3,
+        "mountain-boots-t1": 3
+      },
+      "hp": 157
+    },
+    {
+      "elapsedMs": 660000,
+      "level": 6,
+      "xp": 1764,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 792,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 792,
+        "purple": 0
+      },
+      "catalysts": {
+        "swarming": 1
+      },
+      "catalystProgress": {
+        "swarming": 98
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "plains-vest-t1": 3,
+        "swamp-charm-t1": 3,
+        "mountain-boots-t1": 3
+      },
+      "hp": 154.67362000000003
+    },
+    {
+      "elapsedMs": 720000,
+      "level": 6,
+      "xp": 1764,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 838,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 838,
+        "purple": 0
+      },
+      "catalysts": {
+        "swarming": 2
+      },
+      "catalystProgress": {
+        "swarming": 9.5
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "plains-vest-t1": 3,
+        "swamp-charm-t1": 3,
+        "mountain-boots-t1": 3
+      },
+      "hp": 157
+    },
+    {
+      "elapsedMs": 780000,
+      "level": 6,
+      "xp": 1764,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 918,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 918,
+        "purple": 0
+      },
+      "catalysts": {
+        "swarming": 2
+      },
+      "catalystProgress": {
+        "swarming": 29.5
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "plains-vest-t1": 3,
+        "swamp-charm-t1": 3,
+        "mountain-boots-t1": 3
+      },
+      "hp": 153
+    },
+    {
+      "elapsedMs": 840000,
+      "level": 6,
+      "xp": 1764,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 1012,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 1012,
+        "purple": 0
+      },
+      "catalysts": {
+        "swarming": 2
+      },
+      "catalystProgress": {
+        "swarming": 53
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "plains-vest-t1": 3,
+        "swamp-charm-t1": 3,
+        "mountain-boots-t1": 3
+      },
+      "hp": 149.83681
+    },
+    {
+      "elapsedMs": 900000,
+      "level": 6,
+      "xp": 1764,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 1088,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 1088,
+        "purple": 0
+      },
+      "catalysts": {
+        "swarming": 2
+      },
+      "catalystProgress": {
+        "swarming": 72
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "plains-vest-t1": 3,
+        "swamp-charm-t1": 3,
+        "mountain-boots-t1": 3
+      },
+      "hp": 157
+    }
+  ],
+  "purchases": [],
+  "blockers": {},
+  "wallSeconds": 19.5966626,
+  "limitations": [
+    "Historical surviving loadout validated through prepareSurveyBot, then target biome reset to segment entry; mastery freeze removed",
+    "Mature gear and owned abilities retained: a conditional throughput screen, not an earned arrival journey",
+    "Native reference set costs are funding benchmarks, not the equipped mixed-biome set or actual purchases",
+    "No cross-biome routing or revivals; first death stops each run"
+  ]
+}

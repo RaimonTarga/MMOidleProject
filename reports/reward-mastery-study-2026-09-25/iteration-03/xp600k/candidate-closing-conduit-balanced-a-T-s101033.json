@@ -1,0 +1,5336 @@
+{
+  "runtimeCensored": false,
+  "historicalReadback": {
+    "mastery": {
+      "plains": 12,
+      "forest": 12,
+      "swamp": 18,
+      "cave": 18,
+      "mountain": 24,
+      "jungle": 18,
+      "desert": 18,
+      "volcanic": 12,
+      "tundra": 12,
+      "graveyard": 4,
+      "trench": 0
+    },
+    "upgrades": {
+      "graveyard-plague-axe": 4,
+      "mountain-vest-t4": 4,
+      "mountain-charm-t4": 4,
+      "desert-boots-t4": 4,
+      "core-survivalist": 0,
+      "relic-equilibrium-shard": 0
+    },
+    "equipment": {
+      "weapon": "graveyard-plague-axe",
+      "armor": "mountain-vest-t4",
+      "recovery": "mountain-charm-t4",
+      "mobility": "desert-boots-t4",
+      "core": "core-survivalist",
+      "relic": "relic-equilibrium-shard"
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike",
+        "frenzy",
+        "hamstring"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "runes": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ]
+  },
+  "rp": 43,
+  "rpBudget": 44,
+  "job": {
+    "id": "candidate-closing-conduit-balanced-a-T-s101033",
+    "arm": "candidate",
+    "mode": "historical-loadout",
+    "nodeId": "node-t4-tundra-01",
+    "classRoot": "summoner-root",
+    "cell": {
+      "id": "closing-conduit-balanced-a-T-s101033",
+      "className": "conduit",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-tundra-01",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike",
+          "frenzy",
+          "hamstring"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        }
+      ],
+      "build": {
+        "id": "closing-conduit-balanced-a-T-s101009",
+        "classRoot": "summoner-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "summoner-root",
+          "summoner-balanced",
+          "summoner-range-mid",
+          "summoner-balanced-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "graveyard-plague-axe",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "desert-boots-t4",
+          "core": "core-survivalist",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "identityId": "breadth-t4-conduit-balanced-a",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Marshal",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Formation Attack supports openings and coordinated strikes; Recovery supports payments.",
+        "Role template controlled elite/pair; 43/45 RP, 2 free. Defining offense and encounter support precede optional Expose.",
+        "Mountain burst-cap/Guard armor and barrier charm retained; Recovery and actual danger response remain.",
+        "Base stance defensive-stance; one paid stance, no destinations or stance automation; no rites.",
+        "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+        "No generic low-HP Flee and no Wait It Out.",
+        "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+        "Native default Technique priority unless the exact AoE Rune overrides it.",
+        "Unused RP 2 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+      ],
+      "seed": 101033,
+      "block": "T",
+      "arm": "control",
+      "comparisonId": "closing-conduit-balanced-a-T-s101009",
+      "snapshotId": "t4-established-gm148",
+      "progressionSnapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "referenceObservationId": "t4-conduit-balanced-a-F2-s101009",
+      "referenceSource": "t4-specialization-screen-01@3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+      "durationMs": 1200000
+    },
+    "seed": 101033,
+    "gearIds": [
+      "tundra-glacial-rimebrand",
+      "tundra-vest-t4",
+      "tundra-charm-t4-deepfreeze",
+      "tundra-boots-t4"
+    ],
+    "maxMs": 21600000,
+    "stopAtMastery": true,
+    "wallLimitMs": 900000,
+    "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+    "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-03\\xp600k\\candidate-closing-conduit-balanced-a-T-s101033.json"
+  },
+  "hitboxes": 406,
+  "build": {
+    "id": "closing-conduit-balanced-a-T-s101009",
+    "classRoot": "summoner-root",
+    "contentTier": 4,
+    "playerTier": 4,
+    "gearTier": 4,
+    "skillPath": [
+      "summoner-root",
+      "summoner-balanced",
+      "summoner-range-mid",
+      "summoner-balanced-t3-a"
+    ],
+    "gearItemIds": {
+      "weapon": "graveyard-plague-axe",
+      "armor": "mountain-vest-t4",
+      "recovery": "mountain-charm-t4",
+      "mobility": "desert-boots-t4",
+      "core": "core-survivalist",
+      "relic": "relic-equilibrium-shard"
+    }
+  },
+  "initial": {
+    "elapsedMs": 0,
+    "level": 6,
+    "xp": 42000,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {},
+    "catalystProgress": {},
+    "upgrades": {
+      "graveyard-plague-axe": 4,
+      "mountain-vest-t4": 4,
+      "mountain-charm-t4": 4,
+      "desert-boots-t4": 4,
+      "core-survivalist": 0,
+      "relic-equilibrium-shard": 0
+    },
+    "hp": 523,
+    "build": {
+      "id": "closing-conduit-balanced-a-T-s101009",
+      "classRoot": "summoner-root",
+      "contentTier": 4,
+      "playerTier": 4,
+      "gearTier": 4,
+      "skillPath": [
+        "summoner-root",
+        "summoner-balanced",
+        "summoner-range-mid",
+        "summoner-balanced-t3-a"
+      ],
+      "gearItemIds": {
+        "weapon": "graveyard-plague-axe",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "desert-boots-t4",
+        "core": "core-survivalist",
+        "relic": "relic-equilibrium-shard"
+      }
+    },
+    "loadout": {
+      "abilities": {
+        "techniques": [
+          "power-strike",
+          "frenzy",
+          "hamstring"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "stances": [
+        "defensive-stance"
+      ],
+      "rites": [],
+      "runes": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        }
+      ]
+    },
+    "stats": {
+      "hp": 523,
+      "attack": 308
+    },
+    "biomeLevels": {
+      "plains": 12,
+      "forest": 12,
+      "swamp": 18,
+      "cave": 18,
+      "mountain": 24,
+      "jungle": 18,
+      "desert": 18,
+      "volcanic": 12,
+      "tundra": 6,
+      "graveyard": 4,
+      "trench": 0
+    }
+  },
+  "entry": 6,
+  "cap": 12,
+  "budget": 600000,
+  "costs": {
+    "3": {
+      "red": 587,
+      "blue": 7729,
+      "green": 0,
+      "yellow": 0,
+      "purple": 169
+    },
+    "5": {
+      "red": 881,
+      "blue": 11594,
+      "green": 0,
+      "yellow": 0,
+      "purple": 253
+    }
+  },
+  "mastery": {
+    "elapsedMs": 8327000,
+    "level": 12,
+    "xp": 642139,
+    "gross": {
+      "red": 0,
+      "blue": 49506,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 49506,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {
+      "heavy": 15
+    },
+    "catalystProgress": {
+      "heavy": 2.8500000000000245
+    },
+    "upgrades": {
+      "graveyard-plague-axe": 4,
+      "mountain-vest-t4": 4,
+      "mountain-charm-t4": 4,
+      "desert-boots-t4": 4,
+      "core-survivalist": 0,
+      "relic-equilibrium-shard": 0
+    },
+    "hp": 523
+  },
+  "death": null,
+  "fundingTimes": {
+    "3": null,
+    "5": null
+  },
+  "actualAll3Ms": null,
+  "actualAll5Ms": null,
+  "acquisitionDebt": {
+    "red": 0,
+    "blue": 0,
+    "green": 0,
+    "yellow": 0,
+    "purple": 0
+  },
+  "final": {
+    "elapsedMs": 8327000,
+    "level": 12,
+    "xp": 642139,
+    "gross": {
+      "red": 0,
+      "blue": 49506,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 49506,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {
+      "heavy": 15
+    },
+    "catalystProgress": {
+      "heavy": 2.8500000000000245
+    },
+    "upgrades": {
+      "graveyard-plague-axe": 4,
+      "mountain-vest-t4": 4,
+      "mountain-charm-t4": 4,
+      "desert-boots-t4": 4,
+      "core-survivalist": 0,
+      "relic-equilibrium-shard": 0
+    },
+    "hp": 523
+  },
+  "snapshots": [
+    {
+      "elapsedMs": 60000,
+      "level": 6,
+      "xp": 46942,
+      "gross": {
+        "red": 0,
+        "blue": 407,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 407,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "heavy": 12.36
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 120000,
+      "level": 6,
+      "xp": 51328,
+      "gross": {
+        "red": 0,
+        "blue": 768,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 768,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "heavy": 23.340000000000003
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 180000,
+      "level": 6,
+      "xp": 55040,
+      "gross": {
+        "red": 0,
+        "blue": 1075,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 1075,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "heavy": 32.64
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 240000,
+      "level": 6,
+      "xp": 58938,
+      "gross": {
+        "red": 0,
+        "blue": 1396,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 1396,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "heavy": 42.39
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 300000,
+      "level": 6,
+      "xp": 63845,
+      "gross": {
+        "red": 0,
+        "blue": 1802,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 1802,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "heavy": 54.69
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 360000,
+      "level": 6,
+      "xp": 67986,
+      "gross": {
+        "red": 0,
+        "blue": 2145,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 2145,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "heavy": 65.07
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 420000,
+      "level": 6,
+      "xp": 71420,
+      "gross": {
+        "red": 0,
+        "blue": 2429,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 2429,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "heavy": 73.67999999999999
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 480000,
+      "level": 6,
+      "xp": 76572,
+      "gross": {
+        "red": 0,
+        "blue": 2853,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 2853,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "heavy": 86.58
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 540000,
+      "level": 6,
+      "xp": 80958,
+      "gross": {
+        "red": 0,
+        "blue": 3214,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 3214,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "heavy": 97.56
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 600000,
+      "level": 6,
+      "xp": 84578,
+      "gross": {
+        "red": 0,
+        "blue": 3512,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 3512,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 1
+      },
+      "catalystProgress": {
+        "heavy": 6.6200000000000045
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 498.5312
+    },
+    {
+      "elapsedMs": 660000,
+      "level": 6,
+      "xp": 90564,
+      "gross": {
+        "red": 0,
+        "blue": 4005,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 4005,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 1
+      },
+      "catalystProgress": {
+        "heavy": 21.590000000000003
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 720000,
+      "level": 6,
+      "xp": 95042,
+      "gross": {
+        "red": 0,
+        "blue": 4375,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 4375,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 1
+      },
+      "catalystProgress": {
+        "heavy": 32.81
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 780000,
+      "level": 6,
+      "xp": 98325,
+      "gross": {
+        "red": 0,
+        "blue": 4646,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 4646,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 1
+      },
+      "catalystProgress": {
+        "heavy": 41.03
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 840000,
+      "level": 6,
+      "xp": 104184,
+      "gross": {
+        "red": 0,
+        "blue": 5129,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 5129,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 1
+      },
+      "catalystProgress": {
+        "heavy": 55.7
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 900000,
+      "level": 6,
+      "xp": 107710,
+      "gross": {
+        "red": 0,
+        "blue": 5422,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 5422,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 1
+      },
+      "catalystProgress": {
+        "heavy": 64.55
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 960000,
+      "level": 6,
+      "xp": 112096,
+      "gross": {
+        "red": 0,
+        "blue": 5783,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 5783,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 1
+      },
+      "catalystProgress": {
+        "heavy": 75.53
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 989300,
+      "level": 7,
+      "xp": 114950,
+      "gross": {
+        "red": 0,
+        "blue": 6018,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 6018,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 1
+      },
+      "catalystProgress": {
+        "heavy": 82.67
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 1020000,
+      "level": 7,
+      "xp": 117038,
+      "gross": {
+        "red": 0,
+        "blue": 6190,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 6190,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 1
+      },
+      "catalystProgress": {
+        "heavy": 87.89
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 1080000,
+      "level": 7,
+      "xp": 120936,
+      "gross": {
+        "red": 0,
+        "blue": 6511,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 6511,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 1
+      },
+      "catalystProgress": {
+        "heavy": 97.64
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 1140000,
+      "level": 7,
+      "xp": 126366,
+      "gross": {
+        "red": 0,
+        "blue": 6958,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 6958,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 2
+      },
+      "catalystProgress": {
+        "heavy": 11.23
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 1200000,
+      "level": 7,
+      "xp": 129708,
+      "gross": {
+        "red": 0,
+        "blue": 7233,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 7233,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 2
+      },
+      "catalystProgress": {
+        "heavy": 19.6
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 1260000,
+      "level": 7,
+      "xp": 134372,
+      "gross": {
+        "red": 0,
+        "blue": 7617,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 7617,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 2
+      },
+      "catalystProgress": {
+        "heavy": 31.270000000000003
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 1320000,
+      "level": 7,
+      "xp": 138758,
+      "gross": {
+        "red": 0,
+        "blue": 7978,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 7978,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 2
+      },
+      "catalystProgress": {
+        "heavy": 42.25000000000001
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 1380000,
+      "level": 7,
+      "xp": 143573,
+      "gross": {
+        "red": 0,
+        "blue": 8375,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 8375,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 2
+      },
+      "catalystProgress": {
+        "heavy": 54.31000000000001
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 1440000,
+      "level": 7,
+      "xp": 148666,
+      "gross": {
+        "red": 0,
+        "blue": 8795,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 8795,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 2
+      },
+      "catalystProgress": {
+        "heavy": 67.06000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 1500000,
+      "level": 7,
+      "xp": 152715,
+      "gross": {
+        "red": 0,
+        "blue": 9129,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 9129,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 2
+      },
+      "catalystProgress": {
+        "heavy": 77.20000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 1560000,
+      "level": 7,
+      "xp": 157193,
+      "gross": {
+        "red": 0,
+        "blue": 9499,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 9499,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 2
+      },
+      "catalystProgress": {
+        "heavy": 88.42000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 503.552
+    },
+    {
+      "elapsedMs": 1620000,
+      "level": 7,
+      "xp": 161857,
+      "gross": {
+        "red": 0,
+        "blue": 9883,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 9883,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 3
+      },
+      "catalystProgress": {
+        "heavy": 0.09000000000001762
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 1680000,
+      "level": 7,
+      "xp": 166521,
+      "gross": {
+        "red": 0,
+        "blue": 10267,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 10267,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 3
+      },
+      "catalystProgress": {
+        "heavy": 11.760000000000018
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 1740000,
+      "level": 7,
+      "xp": 169526,
+      "gross": {
+        "red": 0,
+        "blue": 10515,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 10515,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 3
+      },
+      "catalystProgress": {
+        "heavy": 19.290000000000013
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 1800000,
+      "level": 7,
+      "xp": 175385,
+      "gross": {
+        "red": 0,
+        "blue": 10998,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 10998,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 3
+      },
+      "catalystProgress": {
+        "heavy": 33.960000000000015
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 1860000,
+      "level": 7,
+      "xp": 179097,
+      "gross": {
+        "red": 0,
+        "blue": 11305,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 11305,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 3
+      },
+      "catalystProgress": {
+        "heavy": 43.26000000000001
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 1920000,
+      "level": 7,
+      "xp": 183146,
+      "gross": {
+        "red": 0,
+        "blue": 11639,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 11639,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 3
+      },
+      "catalystProgress": {
+        "heavy": 53.40000000000001
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 1980000,
+      "level": 7,
+      "xp": 187473,
+      "gross": {
+        "red": 0,
+        "blue": 11996,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 11996,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 3
+      },
+      "catalystProgress": {
+        "heavy": 64.23
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 2040000,
+      "level": 7,
+      "xp": 191800,
+      "gross": {
+        "red": 0,
+        "blue": 12353,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 12353,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 3
+      },
+      "catalystProgress": {
+        "heavy": 75.06
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 2100000,
+      "level": 7,
+      "xp": 195849,
+      "gross": {
+        "red": 0,
+        "blue": 12687,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 12687,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 3
+      },
+      "catalystProgress": {
+        "heavy": 85.2
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 2129900,
+      "level": 8,
+      "xp": 198366,
+      "gross": {
+        "red": 0,
+        "blue": 12895,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 12895,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 3
+      },
+      "catalystProgress": {
+        "heavy": 91.5
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 2160000,
+      "level": 8,
+      "xp": 200176,
+      "gross": {
+        "red": 0,
+        "blue": 13044,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 13044,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 3
+      },
+      "catalystProgress": {
+        "heavy": 96.03
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 2220000,
+      "level": 8,
+      "xp": 204562,
+      "gross": {
+        "red": 0,
+        "blue": 13405,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 13405,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 4
+      },
+      "catalystProgress": {
+        "heavy": 7.010000000000003
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 2280000,
+      "level": 8,
+      "xp": 209099,
+      "gross": {
+        "red": 0,
+        "blue": 13779,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 13779,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 4
+      },
+      "catalystProgress": {
+        "heavy": 18.380000000000003
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 2340000,
+      "level": 8,
+      "xp": 212104,
+      "gross": {
+        "red": 0,
+        "blue": 14027,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 14027,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 4
+      },
+      "catalystProgress": {
+        "heavy": 25.910000000000004
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 2400000,
+      "level": 8,
+      "xp": 217197,
+      "gross": {
+        "red": 0,
+        "blue": 14447,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 14447,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 4
+      },
+      "catalystProgress": {
+        "heavy": 38.660000000000004
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 511.08320000000003
+    },
+    {
+      "elapsedMs": 2460000,
+      "level": 8,
+      "xp": 222012,
+      "gross": {
+        "red": 0,
+        "blue": 14844,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 14844,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 4
+      },
+      "catalystProgress": {
+        "heavy": 50.720000000000006
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 2520000,
+      "level": 8,
+      "xp": 226490,
+      "gross": {
+        "red": 0,
+        "blue": 15214,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 15214,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 4
+      },
+      "catalystProgress": {
+        "heavy": 61.940000000000005
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 2580000,
+      "level": 8,
+      "xp": 230480,
+      "gross": {
+        "red": 0,
+        "blue": 15544,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 15544,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 4
+      },
+      "catalystProgress": {
+        "heavy": 71.93
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 2640000,
+      "level": 8,
+      "xp": 234192,
+      "gross": {
+        "red": 0,
+        "blue": 15851,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 15851,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 4
+      },
+      "catalystProgress": {
+        "heavy": 81.23
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 508.57280000000003
+    },
+    {
+      "elapsedMs": 2700000,
+      "level": 8,
+      "xp": 238670,
+      "gross": {
+        "red": 0,
+        "blue": 16221,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 16221,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 4
+      },
+      "catalystProgress": {
+        "heavy": 92.45
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 2760000,
+      "level": 8,
+      "xp": 243148,
+      "gross": {
+        "red": 0,
+        "blue": 16591,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 16591,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 5
+      },
+      "catalystProgress": {
+        "heavy": 3.6700000000000053
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 2820000,
+      "level": 8,
+      "xp": 246490,
+      "gross": {
+        "red": 0,
+        "blue": 16866,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 16866,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 5
+      },
+      "catalystProgress": {
+        "heavy": 12.040000000000004
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 2880000,
+      "level": 8,
+      "xp": 250968,
+      "gross": {
+        "red": 0,
+        "blue": 17236,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 17236,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 5
+      },
+      "catalystProgress": {
+        "heavy": 23.260000000000005
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 2940000,
+      "level": 8,
+      "xp": 255446,
+      "gross": {
+        "red": 0,
+        "blue": 17606,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 17606,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 5
+      },
+      "catalystProgress": {
+        "heavy": 34.480000000000004
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 3000000,
+      "level": 8,
+      "xp": 260110,
+      "gross": {
+        "red": 0,
+        "blue": 17990,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 17990,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 5
+      },
+      "catalystProgress": {
+        "heavy": 46.150000000000006
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 3060000,
+      "level": 8,
+      "xp": 264159,
+      "gross": {
+        "red": 0,
+        "blue": 18324,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 18324,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 5
+      },
+      "catalystProgress": {
+        "heavy": 56.290000000000006
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 3120000,
+      "level": 8,
+      "xp": 268267,
+      "gross": {
+        "red": 0,
+        "blue": 18662,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 18662,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 5
+      },
+      "catalystProgress": {
+        "heavy": 66.58000000000001
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 3180000,
+      "level": 8,
+      "xp": 272804,
+      "gross": {
+        "red": 0,
+        "blue": 19036,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 19036,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 5
+      },
+      "catalystProgress": {
+        "heavy": 77.95000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 3240000,
+      "level": 8,
+      "xp": 276575,
+      "gross": {
+        "red": 0,
+        "blue": 19347,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 19347,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 5
+      },
+      "catalystProgress": {
+        "heavy": 87.40000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 3300000,
+      "level": 8,
+      "xp": 282283,
+      "gross": {
+        "red": 0,
+        "blue": 19817,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 19817,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 6
+      },
+      "catalystProgress": {
+        "heavy": 1.680000000000021
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 3360000,
+      "level": 8,
+      "xp": 285995,
+      "gross": {
+        "red": 0,
+        "blue": 20124,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 20124,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 6
+      },
+      "catalystProgress": {
+        "heavy": 10.98000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 3420000,
+      "level": 8,
+      "xp": 289429,
+      "gross": {
+        "red": 0,
+        "blue": 20408,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 20408,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 6
+      },
+      "catalystProgress": {
+        "heavy": 19.590000000000018
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 3479200,
+      "level": 9,
+      "xp": 294951,
+      "gross": {
+        "red": 0,
+        "blue": 20864,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 20864,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 6
+      },
+      "catalystProgress": {
+        "heavy": 33.420000000000016
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 3480000,
+      "level": 9,
+      "xp": 294951,
+      "gross": {
+        "red": 0,
+        "blue": 20864,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 20864,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 6
+      },
+      "catalystProgress": {
+        "heavy": 33.420000000000016
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 3540000,
+      "level": 9,
+      "xp": 298663,
+      "gross": {
+        "red": 0,
+        "blue": 21171,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 21171,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 6
+      },
+      "catalystProgress": {
+        "heavy": 42.72000000000001
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 3600000,
+      "level": 9,
+      "xp": 302771,
+      "gross": {
+        "red": 0,
+        "blue": 21509,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 21509,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 6
+      },
+      "catalystProgress": {
+        "heavy": 53.01000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 3660000,
+      "level": 9,
+      "xp": 306391,
+      "gross": {
+        "red": 0,
+        "blue": 21807,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 21807,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 6
+      },
+      "catalystProgress": {
+        "heavy": 62.07000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 3720000,
+      "level": 9,
+      "xp": 311298,
+      "gross": {
+        "red": 0,
+        "blue": 22213,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 22213,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 6
+      },
+      "catalystProgress": {
+        "heavy": 74.37000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 3780000,
+      "level": 9,
+      "xp": 314918,
+      "gross": {
+        "red": 0,
+        "blue": 22511,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 22511,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 6
+      },
+      "catalystProgress": {
+        "heavy": 83.43000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 3840000,
+      "level": 9,
+      "xp": 320499,
+      "gross": {
+        "red": 0,
+        "blue": 22971,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 22971,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 6
+      },
+      "catalystProgress": {
+        "heavy": 97.41000000000003
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 3900000,
+      "level": 9,
+      "xp": 324826,
+      "gross": {
+        "red": 0,
+        "blue": 23328,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 23328,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 7
+      },
+      "catalystProgress": {
+        "heavy": 8.240000000000025
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 3960000,
+      "level": 9,
+      "xp": 329212,
+      "gross": {
+        "red": 0,
+        "blue": 23689,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 23689,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 7
+      },
+      "catalystProgress": {
+        "heavy": 19.220000000000027
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 4020000,
+      "level": 9,
+      "xp": 333876,
+      "gross": {
+        "red": 0,
+        "blue": 24073,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 24073,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 7
+      },
+      "catalystProgress": {
+        "heavy": 30.89000000000003
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 4080000,
+      "level": 9,
+      "xp": 337588,
+      "gross": {
+        "red": 0,
+        "blue": 24380,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 24380,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 7
+      },
+      "catalystProgress": {
+        "heavy": 40.190000000000026
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 4140000,
+      "level": 9,
+      "xp": 342681,
+      "gross": {
+        "red": 0,
+        "blue": 24800,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 24800,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 7
+      },
+      "catalystProgress": {
+        "heavy": 52.940000000000026
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 4200000,
+      "level": 9,
+      "xp": 346730,
+      "gross": {
+        "red": 0,
+        "blue": 25134,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 25134,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 7
+      },
+      "catalystProgress": {
+        "heavy": 63.08000000000003
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 4260000,
+      "level": 9,
+      "xp": 351394,
+      "gross": {
+        "red": 0,
+        "blue": 25518,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 25518,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 7
+      },
+      "catalystProgress": {
+        "heavy": 74.75000000000003
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 4320000,
+      "level": 9,
+      "xp": 355443,
+      "gross": {
+        "red": 0,
+        "blue": 25852,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 25852,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 7
+      },
+      "catalystProgress": {
+        "heavy": 84.89000000000003
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 4380000,
+      "level": 9,
+      "xp": 360107,
+      "gross": {
+        "red": 0,
+        "blue": 26236,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 26236,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 7
+      },
+      "catalystProgress": {
+        "heavy": 96.56000000000003
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 4440000,
+      "level": 9,
+      "xp": 364585,
+      "gross": {
+        "red": 0,
+        "blue": 26606,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 26606,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 8
+      },
+      "catalystProgress": {
+        "heavy": 7.780000000000032
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 4500000,
+      "level": 9,
+      "xp": 368483,
+      "gross": {
+        "red": 0,
+        "blue": 26927,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 26927,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 8
+      },
+      "catalystProgress": {
+        "heavy": 17.530000000000033
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 4560000,
+      "level": 9,
+      "xp": 372624,
+      "gross": {
+        "red": 0,
+        "blue": 27270,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 27270,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 8
+      },
+      "catalystProgress": {
+        "heavy": 27.910000000000032
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 4620000,
+      "level": 9,
+      "xp": 376487,
+      "gross": {
+        "red": 0,
+        "blue": 27590,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 27590,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 8
+      },
+      "catalystProgress": {
+        "heavy": 37.60000000000003
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 4680000,
+      "level": 9,
+      "xp": 381302,
+      "gross": {
+        "red": 0,
+        "blue": 27987,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 27987,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 8
+      },
+      "catalystProgress": {
+        "heavy": 49.66000000000003
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 4740000,
+      "level": 9,
+      "xp": 384585,
+      "gross": {
+        "red": 0,
+        "blue": 28258,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 28258,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 8
+      },
+      "catalystProgress": {
+        "heavy": 57.88000000000003
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 4800000,
+      "level": 9,
+      "xp": 390293,
+      "gross": {
+        "red": 0,
+        "blue": 28728,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 28728,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 8
+      },
+      "catalystProgress": {
+        "heavy": 72.16000000000003
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 4860000,
+      "level": 9,
+      "xp": 395235,
+      "gross": {
+        "red": 0,
+        "blue": 29135,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 29135,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 8
+      },
+      "catalystProgress": {
+        "heavy": 84.52000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 4920000,
+      "level": 9,
+      "xp": 399899,
+      "gross": {
+        "red": 0,
+        "blue": 29519,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 29519,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 8
+      },
+      "catalystProgress": {
+        "heavy": 96.19000000000003
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 4940200,
+      "level": 10,
+      "xp": 402138,
+      "gross": {
+        "red": 0,
+        "blue": 29704,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 29704,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 9
+      },
+      "catalystProgress": {
+        "heavy": 1.8000000000000256
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 4980000,
+      "level": 10,
+      "xp": 403948,
+      "gross": {
+        "red": 0,
+        "blue": 29853,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 29853,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 9
+      },
+      "catalystProgress": {
+        "heavy": 6.330000000000025
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 503.552
+    },
+    {
+      "elapsedMs": 5040000,
+      "level": 10,
+      "xp": 409192,
+      "gross": {
+        "red": 0,
+        "blue": 30286,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 30286,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 9
+      },
+      "catalystProgress": {
+        "heavy": 19.470000000000024
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 5100000,
+      "level": 10,
+      "xp": 412753,
+      "gross": {
+        "red": 0,
+        "blue": 30580,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 30580,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 9
+      },
+      "catalystProgress": {
+        "heavy": 28.380000000000024
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 5160000,
+      "level": 10,
+      "xp": 416894,
+      "gross": {
+        "red": 0,
+        "blue": 30923,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 30923,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 9
+      },
+      "catalystProgress": {
+        "heavy": 38.76000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 5220000,
+      "level": 10,
+      "xp": 420328,
+      "gross": {
+        "red": 0,
+        "blue": 31207,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 31207,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 9
+      },
+      "catalystProgress": {
+        "heavy": 47.37000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 5280000,
+      "level": 10,
+      "xp": 424992,
+      "gross": {
+        "red": 0,
+        "blue": 31591,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 31591,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 9
+      },
+      "catalystProgress": {
+        "heavy": 59.04000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 5340000,
+      "level": 10,
+      "xp": 429899,
+      "gross": {
+        "red": 0,
+        "blue": 31997,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 31997,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 9
+      },
+      "catalystProgress": {
+        "heavy": 71.34000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 5400000,
+      "level": 10,
+      "xp": 434563,
+      "gross": {
+        "red": 0,
+        "blue": 32381,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 32381,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 9
+      },
+      "catalystProgress": {
+        "heavy": 83.01000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 5460000,
+      "level": 10,
+      "xp": 437938,
+      "gross": {
+        "red": 0,
+        "blue": 32661,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 32661,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 9
+      },
+      "catalystProgress": {
+        "heavy": 91.47000000000001
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 5520000,
+      "level": 10,
+      "xp": 442265,
+      "gross": {
+        "red": 0,
+        "blue": 33018,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 33018,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 10
+      },
+      "catalystProgress": {
+        "heavy": 2.3000000000000114
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 5580000,
+      "level": 10,
+      "xp": 446592,
+      "gross": {
+        "red": 0,
+        "blue": 33375,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 33375,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 10
+      },
+      "catalystProgress": {
+        "heavy": 13.13000000000001
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 5640000,
+      "level": 10,
+      "xp": 450700,
+      "gross": {
+        "red": 0,
+        "blue": 33713,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 33713,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 10
+      },
+      "catalystProgress": {
+        "heavy": 23.42000000000001
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 5700000,
+      "level": 10,
+      "xp": 454992,
+      "gross": {
+        "red": 0,
+        "blue": 34069,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 34069,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 10
+      },
+      "catalystProgress": {
+        "heavy": 34.190000000000005
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 5760000,
+      "level": 10,
+      "xp": 459656,
+      "gross": {
+        "red": 0,
+        "blue": 34453,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 34453,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 10
+      },
+      "catalystProgress": {
+        "heavy": 45.86000000000001
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 5820000,
+      "level": 10,
+      "xp": 464193,
+      "gross": {
+        "red": 0,
+        "blue": 34827,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 34827,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 10
+      },
+      "catalystProgress": {
+        "heavy": 57.23000000000001
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 5880000,
+      "level": 10,
+      "xp": 468242,
+      "gross": {
+        "red": 0,
+        "blue": 35161,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 35161,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 10
+      },
+      "catalystProgress": {
+        "heavy": 67.37000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 5940000,
+      "level": 10,
+      "xp": 472291,
+      "gross": {
+        "red": 0,
+        "blue": 35495,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 35495,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 10
+      },
+      "catalystProgress": {
+        "heavy": 77.51000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 6000000,
+      "level": 10,
+      "xp": 477233,
+      "gross": {
+        "red": 0,
+        "blue": 35902,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 35902,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 10
+      },
+      "catalystProgress": {
+        "heavy": 89.87000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 6060000,
+      "level": 10,
+      "xp": 481282,
+      "gross": {
+        "red": 0,
+        "blue": 36236,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 36236,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 11
+      },
+      "catalystProgress": {
+        "heavy": 0.010000000000019327
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 6120000,
+      "level": 10,
+      "xp": 485668,
+      "gross": {
+        "red": 0,
+        "blue": 36597,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 36597,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 11
+      },
+      "catalystProgress": {
+        "heavy": 10.99000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 6180000,
+      "level": 10,
+      "xp": 489380,
+      "gross": {
+        "red": 0,
+        "blue": 36904,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 36904,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 11
+      },
+      "catalystProgress": {
+        "heavy": 20.29000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 6240000,
+      "level": 10,
+      "xp": 493278,
+      "gross": {
+        "red": 0,
+        "blue": 37225,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 37225,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 11
+      },
+      "catalystProgress": {
+        "heavy": 30.04000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 6300000,
+      "level": 10,
+      "xp": 498986,
+      "gross": {
+        "red": 0,
+        "blue": 37695,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 37695,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 11
+      },
+      "catalystProgress": {
+        "heavy": 44.32000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 6360000,
+      "level": 10,
+      "xp": 503186,
+      "gross": {
+        "red": 0,
+        "blue": 38042,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 38042,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 11
+      },
+      "catalystProgress": {
+        "heavy": 54.85000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 6420000,
+      "level": 10,
+      "xp": 506620,
+      "gross": {
+        "red": 0,
+        "blue": 38326,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 38326,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 11
+      },
+      "catalystProgress": {
+        "heavy": 63.46000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 6480000,
+      "level": 10,
+      "xp": 510669,
+      "gross": {
+        "red": 0,
+        "blue": 38660,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 38660,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 11
+      },
+      "catalystProgress": {
+        "heavy": 73.60000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 6540000,
+      "level": 10,
+      "xp": 515913,
+      "gross": {
+        "red": 0,
+        "blue": 39093,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 39093,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 11
+      },
+      "catalystProgress": {
+        "heavy": 86.74000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 6550000,
+      "level": 11,
+      "xp": 516342,
+      "gross": {
+        "red": 0,
+        "blue": 39129,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 39129,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 11
+      },
+      "catalystProgress": {
+        "heavy": 87.82000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 6600000,
+      "level": 11,
+      "xp": 518918,
+      "gross": {
+        "red": 0,
+        "blue": 39341,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 39341,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 11
+      },
+      "catalystProgress": {
+        "heavy": 94.27000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 493.5104
+    },
+    {
+      "elapsedMs": 6660000,
+      "level": 11,
+      "xp": 524011,
+      "gross": {
+        "red": 0,
+        "blue": 39761,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 39761,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 12
+      },
+      "catalystProgress": {
+        "heavy": 7.0200000000000236
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 6720000,
+      "level": 11,
+      "xp": 528397,
+      "gross": {
+        "red": 0,
+        "blue": 40122,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 40122,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 12
+      },
+      "catalystProgress": {
+        "heavy": 18.00000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 6780000,
+      "level": 11,
+      "xp": 532597,
+      "gross": {
+        "red": 0,
+        "blue": 40469,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 40469,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 12
+      },
+      "catalystProgress": {
+        "heavy": 28.530000000000022
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 503.552
+    },
+    {
+      "elapsedMs": 6840000,
+      "level": 11,
+      "xp": 535265,
+      "gross": {
+        "red": 0,
+        "blue": 40690,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 40690,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 12
+      },
+      "catalystProgress": {
+        "heavy": 35.22000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 6900000,
+      "level": 11,
+      "xp": 540358,
+      "gross": {
+        "red": 0,
+        "blue": 41110,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 41110,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 12
+      },
+      "catalystProgress": {
+        "heavy": 47.97000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 6960000,
+      "level": 11,
+      "xp": 543792,
+      "gross": {
+        "red": 0,
+        "blue": 41394,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 41394,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 12
+      },
+      "catalystProgress": {
+        "heavy": 56.58000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 7020000,
+      "level": 11,
+      "xp": 548456,
+      "gross": {
+        "red": 0,
+        "blue": 41778,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 41778,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 12
+      },
+      "catalystProgress": {
+        "heavy": 68.25000000000001
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 7080000,
+      "level": 11,
+      "xp": 552934,
+      "gross": {
+        "red": 0,
+        "blue": 42148,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 42148,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 12
+      },
+      "catalystProgress": {
+        "heavy": 79.47000000000001
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 7140000,
+      "level": 11,
+      "xp": 557598,
+      "gross": {
+        "red": 0,
+        "blue": 42532,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 42532,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 12
+      },
+      "catalystProgress": {
+        "heavy": 91.14000000000001
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 7200000,
+      "level": 11,
+      "xp": 561647,
+      "gross": {
+        "red": 0,
+        "blue": 42866,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 42866,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 13
+      },
+      "catalystProgress": {
+        "heavy": 1.2800000000000153
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 7260000,
+      "level": 11,
+      "xp": 565418,
+      "gross": {
+        "red": 0,
+        "blue": 43177,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 43177,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 13
+      },
+      "catalystProgress": {
+        "heavy": 10.730000000000016
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 7320000,
+      "level": 11,
+      "xp": 569467,
+      "gross": {
+        "red": 0,
+        "blue": 43511,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 43511,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 13
+      },
+      "catalystProgress": {
+        "heavy": 20.87000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 7380000,
+      "level": 11,
+      "xp": 573271,
+      "gross": {
+        "red": 0,
+        "blue": 43827,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 43827,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 13
+      },
+      "catalystProgress": {
+        "heavy": 30.41000000000001
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 7440000,
+      "level": 11,
+      "xp": 577935,
+      "gross": {
+        "red": 0,
+        "blue": 44211,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 44211,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 13
+      },
+      "catalystProgress": {
+        "heavy": 42.08000000000001
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 7500000,
+      "level": 11,
+      "xp": 581706,
+      "gross": {
+        "red": 0,
+        "blue": 44522,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 44522,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 13
+      },
+      "catalystProgress": {
+        "heavy": 51.530000000000015
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 7560000,
+      "level": 11,
+      "xp": 587077,
+      "gross": {
+        "red": 0,
+        "blue": 44965,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 44965,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 13
+      },
+      "catalystProgress": {
+        "heavy": 64.97000000000001
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 7620000,
+      "level": 11,
+      "xp": 590360,
+      "gross": {
+        "red": 0,
+        "blue": 45236,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 45236,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 13
+      },
+      "catalystProgress": {
+        "heavy": 73.19000000000001
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 7680000,
+      "level": 11,
+      "xp": 594468,
+      "gross": {
+        "red": 0,
+        "blue": 45574,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 45574,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 13
+      },
+      "catalystProgress": {
+        "heavy": 83.48000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 7740000,
+      "level": 11,
+      "xp": 598517,
+      "gross": {
+        "red": 0,
+        "blue": 45908,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 45908,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 13
+      },
+      "catalystProgress": {
+        "heavy": 93.62000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 506.0624
+    },
+    {
+      "elapsedMs": 7800000,
+      "level": 11,
+      "xp": 603610,
+      "gross": {
+        "red": 0,
+        "blue": 46328,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 46328,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 14
+      },
+      "catalystProgress": {
+        "heavy": 6.3700000000000205
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 7860000,
+      "level": 11,
+      "xp": 607751,
+      "gross": {
+        "red": 0,
+        "blue": 46671,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 46671,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 14
+      },
+      "catalystProgress": {
+        "heavy": 16.75000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 7920000,
+      "level": 11,
+      "xp": 611649,
+      "gross": {
+        "red": 0,
+        "blue": 46992,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 46992,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 14
+      },
+      "catalystProgress": {
+        "heavy": 26.50000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 498.5312
+    },
+    {
+      "elapsedMs": 7980000,
+      "level": 11,
+      "xp": 617079,
+      "gross": {
+        "red": 0,
+        "blue": 47439,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 47439,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 14
+      },
+      "catalystProgress": {
+        "heavy": 40.090000000000025
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 8040000,
+      "level": 11,
+      "xp": 620850,
+      "gross": {
+        "red": 0,
+        "blue": 47750,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 47750,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 14
+      },
+      "catalystProgress": {
+        "heavy": 49.54000000000003
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 8100000,
+      "level": 11,
+      "xp": 625943,
+      "gross": {
+        "red": 0,
+        "blue": 48170,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 48170,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 14
+      },
+      "catalystProgress": {
+        "heavy": 62.29000000000003
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 8160000,
+      "level": 11,
+      "xp": 630329,
+      "gross": {
+        "red": 0,
+        "blue": 48531,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 48531,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 14
+      },
+      "catalystProgress": {
+        "heavy": 73.27000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 8220000,
+      "level": 11,
+      "xp": 633949,
+      "gross": {
+        "red": 0,
+        "blue": 48829,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 48829,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 14
+      },
+      "catalystProgress": {
+        "heavy": 82.33000000000003
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 491
+    },
+    {
+      "elapsedMs": 8280000,
+      "level": 11,
+      "xp": 638705,
+      "gross": {
+        "red": 0,
+        "blue": 49222,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 49222,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 14
+      },
+      "catalystProgress": {
+        "heavy": 94.24000000000002
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    },
+    {
+      "elapsedMs": 8327000,
+      "level": 12,
+      "xp": 642139,
+      "gross": {
+        "red": 0,
+        "blue": 49506,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 49506,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 15
+      },
+      "catalystProgress": {
+        "heavy": 2.8500000000000245
+      },
+      "upgrades": {
+        "graveyard-plague-axe": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "desert-boots-t4": 4,
+        "core-survivalist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 523
+    }
+  ],
+  "purchases": [],
+  "blockers": {},
+  "wallSeconds": 120.8552519,
+  "limitations": [
+    "Historical surviving loadout validated through prepareSurveyBot, then target biome reset to segment entry; mastery freeze removed",
+    "Mature gear and owned abilities retained: a conditional throughput screen, not an earned arrival journey",
+    "Native reference set costs are funding benchmarks, not the equipped mixed-biome set or actual purchases",
+    "No cross-biome routing or revivals; first death stops each run"
+  ]
+}

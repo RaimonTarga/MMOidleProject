@@ -1,0 +1,52 @@
+[
+  {
+    "ProcessId": 52256,
+    "ParentProcessId": 8180,
+    "CommandLine": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\node_modules\\tsx\\dist\\cli.mjs\" --conditions=development \"C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\run-bot-survivors.ts\" \"C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\jobs\\baseline-op-t2-squire-balanced-jungle-t2-jungle-arrival-s101009.json\""
+  },
+  {
+    "ProcessId": 26220,
+    "ParentProcessId": 8180,
+    "CommandLine": "\"C:\\Program Files\\nodejs\\node.exe\" C:\\Users\\osaif\\Documents\\Claude\\Projects\\mmo-reward-candidate\\server\\node_modules\\tsx\\dist\\cli.mjs --conditions=development C:\\Users\\osaif\\Documents\\Claude\\Projects\\mmo-reward-candidate\\reports\\reward-mastery-study-2026-09-25\\run-bot-survivors.ts \"C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\jobs\\candidate-op-t2-squire-balanced-jungle-t2-jungle-arrival-s101009.json\""
+  },
+  {
+    "ProcessId": 59528,
+    "ParentProcessId": 52256,
+    "CommandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require \"C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\node_modules\\.pnpm\\tsx@4.22.3\\node_modules\\tsx\\dist\\preflight.cjs\" --import file:///C:/Users/osaif/Documents/Claude/Projects/MMO%20idle/node_modules/.pnpm/tsx@4.22.3/node_modules/tsx/dist/loader.mjs --conditions=development \"C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\run-bot-survivors.ts\" \"C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\jobs\\baseline-op-t2-squire-balanced-jungle-t2-jungle-arrival-s101009.json\""
+  },
+  {
+    "ProcessId": 46584,
+    "ParentProcessId": 26220,
+    "CommandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\osaif\\Documents\\Claude\\Projects\\mmo-reward-candidate\\node_modules\\.pnpm\\tsx@4.22.3\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/osaif/Documents/Claude/Projects/mmo-reward-candidate/node_modules/.pnpm/tsx@4.22.3/node_modules/tsx/dist/loader.mjs --conditions=development C:\\Users\\osaif\\Documents\\Claude\\Projects\\mmo-reward-candidate\\reports\\reward-mastery-study-2026-09-25\\run-bot-survivors.ts \"C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\jobs\\candidate-op-t2-squire-balanced-jungle-t2-jungle-arrival-s101009.json\""
+  },
+  {
+    "ProcessId": 62236,
+    "ParentProcessId": 8180,
+    "CommandLine": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\node_modules\\tsx\\dist\\cli.mjs\" --conditions=development \"C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\run-bot-survivors.ts\" \"C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\jobs\\baseline-op-t2-squire-balanced-jungle-t2-jungle-arrival-s101033.json\""
+  },
+  {
+    "ProcessId": 59160,
+    "ParentProcessId": 8180,
+    "CommandLine": "\"C:\\Program Files\\nodejs\\node.exe\" C:\\Users\\osaif\\Documents\\Claude\\Projects\\mmo-reward-candidate\\server\\node_modules\\tsx\\dist\\cli.mjs --conditions=development C:\\Users\\osaif\\Documents\\Claude\\Projects\\mmo-reward-candidate\\reports\\reward-mastery-study-2026-09-25\\run-bot-survivors.ts \"C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\jobs\\candidate-op-t2-squire-balanced-jungle-t2-jungle-arrival-s101033.json\""
+  },
+  {
+    "ProcessId": 54828,
+    "ParentProcessId": 62236,
+    "CommandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require \"C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\node_modules\\.pnpm\\tsx@4.22.3\\node_modules\\tsx\\dist\\preflight.cjs\" --import file:///C:/Users/osaif/Documents/Claude/Projects/MMO%20idle/node_modules/.pnpm/tsx@4.22.3/node_modules/tsx/dist/loader.mjs --conditions=development \"C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\run-bot-survivors.ts\" \"C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\jobs\\baseline-op-t2-squire-balanced-jungle-t2-jungle-arrival-s101033.json\""
+  },
+  {
+    "ProcessId": 62220,
+    "ParentProcessId": 59160,
+    "CommandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require C:\\Users\\osaif\\Documents\\Claude\\Projects\\mmo-reward-candidate\\node_modules\\.pnpm\\tsx@4.22.3\\node_modules\\tsx\\dist\\preflight.cjs --import file:///C:/Users/osaif/Documents/Claude/Projects/mmo-reward-candidate/node_modules/.pnpm/tsx@4.22.3/node_modules/tsx/dist/loader.mjs --conditions=development C:\\Users\\osaif\\Documents\\Claude\\Projects\\mmo-reward-candidate\\reports\\reward-mastery-study-2026-09-25\\run-bot-survivors.ts \"C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\jobs\\candidate-op-t2-squire-balanced-jungle-t2-jungle-arrival-s101033.json\""
+  },
+  {
+    "ProcessId": 18704,
+    "ParentProcessId": 37716,
+    "CommandLine": "\"C:\\Program Files\\nodejs\\node.exe\" server/node_modules/tsx/dist/cli.mjs --conditions=development reports/reward-mastery-study-2026-09-25/run-bot-diagnostic.ts reports/reward-mastery-study-2026-09-25/iteration-02/diagnostic-long-job.json"
+  },
+  {
+    "ProcessId": 57940,
+    "ParentProcessId": 18704,
+    "CommandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --require \"C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\node_modules\\.pnpm\\tsx@4.22.3\\node_modules\\tsx\\dist\\preflight.cjs\" --import file:///C:/Users/osaif/Documents/Claude/Projects/MMO%20idle/node_modules/.pnpm/tsx@4.22.3/node_modules/tsx/dist/loader.mjs --conditions=development reports/reward-mastery-study-2026-09-25/run-bot-diagnostic.ts reports/reward-mastery-study-2026-09-25/iteration-02/diagnostic-long-job.json"
+  }
+]

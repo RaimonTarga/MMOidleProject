@@ -1,0 +1,2785 @@
+{
+  "runtimeCensored": true,
+  "historicalReadback": {
+    "mastery": {
+      "plains": 12,
+      "forest": 12,
+      "swamp": 18,
+      "cave": 18,
+      "mountain": 24,
+      "jungle": 18,
+      "desert": 18,
+      "volcanic": 12,
+      "tundra": 12,
+      "graveyard": 4,
+      "trench": 0
+    },
+    "upgrades": {
+      "mountain-warmaul": 4,
+      "volcanic-vest-t4": 4,
+      "volcanic-charm-t4": 4,
+      "mountain-boots-t4": 4,
+      "core-bruiser": 0,
+      "relic-equilibrium-shard": 0
+    },
+    "equipment": {
+      "weapon": "mountain-warmaul",
+      "armor": "volcanic-vest-t4",
+      "recovery": "volcanic-charm-t4",
+      "mobility": "mountain-boots-t4",
+      "core": "core-bruiser",
+      "relic": "relic-equilibrium-shard"
+    },
+    "abilities": {
+      "techniques": [
+        "sweep",
+        "frenzy",
+        "expose-weakness"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse"
+      ]
+    },
+    "runes": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ]
+  },
+  "rp": 40,
+  "rpBudget": 44,
+  "job": {
+    "id": "candidate-closing-striker-heavy-c-V-s101033",
+    "arm": "candidate",
+    "mode": "historical-loadout",
+    "nodeId": "node-t4-volcanic-01",
+    "classRoot": "cadence-root",
+    "seed": 101033,
+    "cell": {
+      "id": "closing-striker-heavy-c-V-s101033",
+      "className": "striker",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-volcanic-01",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 4,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "closing-striker-heavy-c-V-s101009",
+        "classRoot": "cadence-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "cadence-root",
+          "cadence-heavy",
+          "cadence-range-close",
+          "cadence-heavy-t3-c"
+        ],
+        "gearItemIds": {
+          "weapon": "mountain-warmaul",
+          "armor": "volcanic-vest-t4",
+          "recovery": "volcanic-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-bruiser",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "identityId": "breadth-t4-striker-heavy-c",
+      "frame": "heavy",
+      "range": "close",
+      "pathName": "Juggernaut",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Crescendo amplifies finishers during maintained engagement.",
+        "Role template swarm; 40/45 RP, 5 free. Defining offense and encounter support precede optional Expose.",
+        "Volcanic plating/hardening and active/kill Recovery; kills are required for the extra recovery window.",
+        "Base stance offensive-stance; one paid stance, no destinations or stance automation; no rites.",
+        "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+        "No generic low-HP Flee and no Wait It Out.",
+        "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+        "Native default Technique priority unless the exact AoE Rune overrides it.",
+        "Unused RP 5 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+      ],
+      "seed": 101033,
+      "block": "V",
+      "arm": "control",
+      "comparisonId": "closing-striker-heavy-c-V-s101009",
+      "snapshotId": "t4-established-gm148",
+      "progressionSnapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "referenceObservationId": "t4-striker-heavy-c-F1-s101009",
+      "referenceSource": "t4-specialization-screen-01@3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+      "durationMs": 1200000
+    },
+    "gearIds": [
+      "volcanic-blightbrand",
+      "volcanic-vest-t4-lavatempered",
+      "volcanic-charm-t4",
+      "volcanic-boots-t4"
+    ],
+    "maxMs": 5400000,
+    "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+    "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\candidate-closing-striker-heavy-c-V-s101033.json"
+  },
+  "hitboxes": 406,
+  "build": {
+    "id": "closing-striker-heavy-c-V-s101009",
+    "classRoot": "cadence-root",
+    "contentTier": 4,
+    "playerTier": 4,
+    "gearTier": 4,
+    "skillPath": [
+      "cadence-root",
+      "cadence-heavy",
+      "cadence-range-close",
+      "cadence-heavy-t3-c"
+    ],
+    "gearItemIds": {
+      "weapon": "mountain-warmaul",
+      "armor": "volcanic-vest-t4",
+      "recovery": "volcanic-charm-t4",
+      "mobility": "mountain-boots-t4",
+      "core": "core-bruiser",
+      "relic": "relic-equilibrium-shard"
+    }
+  },
+  "initial": {
+    "elapsedMs": 0,
+    "level": 6,
+    "xp": 42000,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {},
+    "catalystProgress": {},
+    "upgrades": {
+      "mountain-warmaul": 4,
+      "volcanic-vest-t4": 4,
+      "volcanic-charm-t4": 4,
+      "mountain-boots-t4": 4,
+      "core-bruiser": 0,
+      "relic-equilibrium-shard": 0
+    },
+    "hp": 755,
+    "build": {
+      "id": "closing-striker-heavy-c-V-s101009",
+      "classRoot": "cadence-root",
+      "contentTier": 4,
+      "playerTier": 4,
+      "gearTier": 4,
+      "skillPath": [
+        "cadence-root",
+        "cadence-heavy",
+        "cadence-range-close",
+        "cadence-heavy-t3-c"
+      ],
+      "gearItemIds": {
+        "weapon": "mountain-warmaul",
+        "armor": "volcanic-vest-t4",
+        "recovery": "volcanic-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-bruiser",
+        "relic": "relic-equilibrium-shard"
+      }
+    },
+    "loadout": {
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "stances": [
+        "offensive-stance"
+      ],
+      "rites": [],
+      "runes": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ]
+    },
+    "stats": {
+      "hp": 755,
+      "attack": 178
+    },
+    "biomeLevels": {
+      "plains": 12,
+      "forest": 12,
+      "swamp": 18,
+      "cave": 18,
+      "mountain": 24,
+      "jungle": 18,
+      "desert": 18,
+      "volcanic": 6,
+      "tundra": 12,
+      "graveyard": 4,
+      "trench": 0
+    }
+  },
+  "entry": 6,
+  "cap": 12,
+  "budget": 108000,
+  "costs": {
+    "3": {
+      "red": 7720,
+      "blue": 0,
+      "green": 0,
+      "yellow": 856,
+      "purple": 0
+    },
+    "5": {
+      "red": 11580,
+      "blue": 0,
+      "green": 0,
+      "yellow": 1284,
+      "purple": 0
+    }
+  },
+  "mastery": {
+    "elapsedMs": 922400,
+    "level": 12,
+    "xp": 150096,
+    "gross": {
+      "red": 8966,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 8966,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {
+      "alacrity": 15
+    },
+    "catalystProgress": {
+      "alacrity": 1.333333333333485
+    },
+    "upgrades": {
+      "mountain-warmaul": 4,
+      "volcanic-vest-t4": 4,
+      "volcanic-charm-t4": 4,
+      "mountain-boots-t4": 4,
+      "core-bruiser": 0,
+      "relic-equilibrium-shard": 0
+    },
+    "hp": 755
+  },
+  "death": null,
+  "fundingTimes": {
+    "3": null,
+    "5": null
+  },
+  "actualAll3Ms": null,
+  "actualAll5Ms": null,
+  "acquisitionDebt": {
+    "red": 0,
+    "blue": 0,
+    "green": 0,
+    "yellow": 0,
+    "purple": 0
+  },
+  "final": {
+    "elapsedMs": 3790200,
+    "level": 12,
+    "xp": 150096,
+    "gross": {
+      "red": 34829,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 34829,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {
+      "alacrity": 58
+    },
+    "catalystProgress": {
+      "alacrity": 33.0000000000005
+    },
+    "upgrades": {
+      "mountain-warmaul": 4,
+      "volcanic-vest-t4": 4,
+      "volcanic-charm-t4": 4,
+      "mountain-boots-t4": 4,
+      "core-bruiser": 0,
+      "relic-equilibrium-shard": 0
+    },
+    "hp": 671.8113999999993
+  },
+  "snapshots": [
+    {
+      "elapsedMs": 60000,
+      "level": 6,
+      "xp": 48180,
+      "gross": {
+        "red": 513,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 513,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "alacrity": 85.83333333333333
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 755
+    },
+    {
+      "elapsedMs": 120000,
+      "level": 6,
+      "xp": 53676,
+      "gross": {
+        "red": 969,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 969,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 1
+      },
+      "catalystProgress": {
+        "alacrity": 62.166666666666664
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 755
+    },
+    {
+      "elapsedMs": 132400,
+      "level": 7,
+      "xp": 55176,
+      "gross": {
+        "red": 1093,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 1093,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 1
+      },
+      "catalystProgress": {
+        "alacrity": 83
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 705.63
+    },
+    {
+      "elapsedMs": 180000,
+      "level": 7,
+      "xp": 60588,
+      "gross": {
+        "red": 1541,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 1541,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 2
+      },
+      "catalystProgress": {
+        "alacrity": 58.16666666666667
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 733.9856
+    },
+    {
+      "elapsedMs": 240000,
+      "level": 7,
+      "xp": 67896,
+      "gross": {
+        "red": 2147,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 2147,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 3
+      },
+      "catalystProgress": {
+        "alacrity": 59.66666666666667
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 740.4604
+    },
+    {
+      "elapsedMs": 250400,
+      "level": 8,
+      "xp": 70284,
+      "gross": {
+        "red": 2345,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 2345,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 3
+      },
+      "catalystProgress": {
+        "alacrity": 92.83333333333336
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 687.0759999999996
+    },
+    {
+      "elapsedMs": 300000,
+      "level": 8,
+      "xp": 76188,
+      "gross": {
+        "red": 2835,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 2835,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 4
+      },
+      "catalystProgress": {
+        "alacrity": 74.83333333333336
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 755
+    },
+    {
+      "elapsedMs": 360000,
+      "level": 8,
+      "xp": 84108,
+      "gross": {
+        "red": 3493,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 3493,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 5
+      },
+      "catalystProgress": {
+        "alacrity": 84.83333333333337
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 755
+    },
+    {
+      "elapsedMs": 382200,
+      "level": 9,
+      "xp": 87468,
+      "gross": {
+        "red": 3771,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 3771,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 6
+      },
+      "catalystProgress": {
+        "alacrity": 31.500000000000043
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 593.3253999999988
+    },
+    {
+      "elapsedMs": 420000,
+      "level": 9,
+      "xp": 91908,
+      "gross": {
+        "red": 4140,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 4140,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 6
+      },
+      "catalystProgress": {
+        "alacrity": 93.16666666666671
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 619.0735999999989
+    },
+    {
+      "elapsedMs": 480000,
+      "level": 9,
+      "xp": 98148,
+      "gross": {
+        "red": 4657,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 4657,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 7
+      },
+      "catalystProgress": {
+        "alacrity": 79.83333333333339
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 706.4387999999997
+    },
+    {
+      "elapsedMs": 540000,
+      "level": 9,
+      "xp": 105624,
+      "gross": {
+        "red": 5277,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 5277,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 8
+      },
+      "catalystProgress": {
+        "alacrity": 83.66666666666673
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 697.7047999999995
+    },
+    {
+      "elapsedMs": 557300,
+      "level": 10,
+      "xp": 107664,
+      "gross": {
+        "red": 5446,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 5446,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 9
+      },
+      "catalystProgress": {
+        "alacrity": 12.000000000000071
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 650.9789999999996
+    },
+    {
+      "elapsedMs": 600000,
+      "level": 10,
+      "xp": 113136,
+      "gross": {
+        "red": 5900,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 5900,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 9
+      },
+      "catalystProgress": {
+        "alacrity": 88.00000000000006
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 755
+    },
+    {
+      "elapsedMs": 660000,
+      "level": 10,
+      "xp": 118752,
+      "gross": {
+        "red": 6365,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 6365,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 10
+      },
+      "catalystProgress": {
+        "alacrity": 66.00000000000007
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 644.1129999999997
+    },
+    {
+      "elapsedMs": 720000,
+      "level": 10,
+      "xp": 125268,
+      "gross": {
+        "red": 6906,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 6906,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 11
+      },
+      "catalystProgress": {
+        "alacrity": 56.50000000000009
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 755
+    },
+    {
+      "elapsedMs": 737000,
+      "level": 11,
+      "xp": 127320,
+      "gross": {
+        "red": 7077,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 7077,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 11
+      },
+      "catalystProgress": {
+        "alacrity": 85.00000000000011
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 755
+    },
+    {
+      "elapsedMs": 780000,
+      "level": 11,
+      "xp": 132408,
+      "gross": {
+        "red": 7499,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 7499,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 12
+      },
+      "catalystProgress": {
+        "alacrity": 55.66666666666678
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 755
+    },
+    {
+      "elapsedMs": 840000,
+      "level": 11,
+      "xp": 139236,
+      "gross": {
+        "red": 8066,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 8066,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 13
+      },
+      "catalystProgress": {
+        "alacrity": 50.50000000000013
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 755
+    },
+    {
+      "elapsedMs": 900000,
+      "level": 11,
+      "xp": 148044,
+      "gross": {
+        "red": 8796,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 8796,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 14
+      },
+      "catalystProgress": {
+        "alacrity": 72.83333333333347
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 733.9341999999998
+    },
+    {
+      "elapsedMs": 922400,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 8966,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 8966,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 15
+      },
+      "catalystProgress": {
+        "alacrity": 1.333333333333485
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 755
+    },
+    {
+      "elapsedMs": 960000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 9288,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 9288,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 15
+      },
+      "catalystProgress": {
+        "alacrity": 55.33333333333348
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 659.9947999999997
+    },
+    {
+      "elapsedMs": 1020000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 9991,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 9991,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 16
+      },
+      "catalystProgress": {
+        "alacrity": 73.00000000000016
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 755
+    },
+    {
+      "elapsedMs": 1080000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 10665,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 10665,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 17
+      },
+      "catalystProgress": {
+        "alacrity": 85.8333333333335
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 755
+    },
+    {
+      "elapsedMs": 1140000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 11143,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 11143,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 18
+      },
+      "catalystProgress": {
+        "alacrity": 65.8333333333335
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 635.7551999999994
+    },
+    {
+      "elapsedMs": 1200000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 11707,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 11707,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 19
+      },
+      "catalystProgress": {
+        "alacrity": 60.3333333333335
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 755
+    },
+    {
+      "elapsedMs": 1260000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 12280,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 12280,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 20
+      },
+      "catalystProgress": {
+        "alacrity": 56.33333333333352
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 755
+    },
+    {
+      "elapsedMs": 1320000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 12821,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 12821,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 21
+      },
+      "catalystProgress": {
+        "alacrity": 46.833333333333535
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 506.3163999999995
+    },
+    {
+      "elapsedMs": 1380000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 13369,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 13369,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 22
+      },
+      "catalystProgress": {
+        "alacrity": 38.666666666666885
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 476.8343999999995
+    },
+    {
+      "elapsedMs": 1440000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 13818,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 13818,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 23
+      },
+      "catalystProgress": {
+        "alacrity": 14.000000000000242
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 742.8232
+    },
+    {
+      "elapsedMs": 1500000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 14467,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 14467,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 24
+      },
+      "catalystProgress": {
+        "alacrity": 22.666666666666906
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 553.5287999999995
+    },
+    {
+      "elapsedMs": 1560000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 14907,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 14907,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 24
+      },
+      "catalystProgress": {
+        "alacrity": 96.33333333333357
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 755
+    },
+    {
+      "elapsedMs": 1620000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 15485,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 15485,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 25
+      },
+      "catalystProgress": {
+        "alacrity": 93.1666666666669
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 273.2443999999997
+    },
+    {
+      "elapsedMs": 1680000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 15978,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 15978,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 26
+      },
+      "catalystProgress": {
+        "alacrity": 75.66666666666691
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 672.2515999999995
+    },
+    {
+      "elapsedMs": 1740000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 16466,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 16466,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 27
+      },
+      "catalystProgress": {
+        "alacrity": 57.33333333333358
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 654.3831999999998
+    },
+    {
+      "elapsedMs": 1800000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 17018,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 17018,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 28
+      },
+      "catalystProgress": {
+        "alacrity": 49.83333333333358
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 690.7727999999998
+    },
+    {
+      "elapsedMs": 1860000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 17536,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 17536,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 29
+      },
+      "catalystProgress": {
+        "alacrity": 36.66666666666692
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 694.6372
+    },
+    {
+      "elapsedMs": 1920000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 18187,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 18187,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 30
+      },
+      "catalystProgress": {
+        "alacrity": 45.66666666666691
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 755
+    },
+    {
+      "elapsedMs": 1980000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 18556,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 18556,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 31
+      },
+      "catalystProgress": {
+        "alacrity": 7.500000000000265
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 685.4892
+    },
+    {
+      "elapsedMs": 2040000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 18960,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 18960,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 31
+      },
+      "catalystProgress": {
+        "alacrity": 75.16666666666693
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 741.6372
+    },
+    {
+      "elapsedMs": 2100000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 19585,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 19585,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 32
+      },
+      "catalystProgress": {
+        "alacrity": 79.66666666666696
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 726.7171999999994
+    },
+    {
+      "elapsedMs": 2160000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 20177,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 20177,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 33
+      },
+      "catalystProgress": {
+        "alacrity": 79.00000000000028
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 713.5189999999999
+    },
+    {
+      "elapsedMs": 2220000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 20797,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 20797,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 34
+      },
+      "catalystProgress": {
+        "alacrity": 82.83333333333363
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 626.8179999999996
+    },
+    {
+      "elapsedMs": 2280000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 21390,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 21390,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 35
+      },
+      "catalystProgress": {
+        "alacrity": 82.16666666666696
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 704.2351999999995
+    },
+    {
+      "elapsedMs": 2340000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 21942,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 21942,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 36
+      },
+      "catalystProgress": {
+        "alacrity": 74.66666666666696
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 718.6227999999999
+    },
+    {
+      "elapsedMs": 2400000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 22500,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 22500,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 37
+      },
+      "catalystProgress": {
+        "alacrity": 68.16666666666696
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 555.0243999999992
+    },
+    {
+      "elapsedMs": 2460000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 23134,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 23134,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 38
+      },
+      "catalystProgress": {
+        "alacrity": 74.33333333333366
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 755
+    },
+    {
+      "elapsedMs": 2520000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 23713,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 23713,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 39
+      },
+      "catalystProgress": {
+        "alacrity": 71.33333333333367
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 755
+    },
+    {
+      "elapsedMs": 2580000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 24288,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 24288,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 40
+      },
+      "catalystProgress": {
+        "alacrity": 67.666666666667
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 755
+    },
+    {
+      "elapsedMs": 2640000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 24922,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 24922,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 41
+      },
+      "catalystProgress": {
+        "alacrity": 73.83333333333368
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 734.9856
+    },
+    {
+      "elapsedMs": 2700000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 25389,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 25389,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 42
+      },
+      "catalystProgress": {
+        "alacrity": 52.000000000000355
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 684.4323999999991
+    },
+    {
+      "elapsedMs": 2760000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 26038,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 26038,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 43
+      },
+      "catalystProgress": {
+        "alacrity": 60.666666666667034
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 749.9535999999994
+    },
+    {
+      "elapsedMs": 2820000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 26572,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 26572,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 44
+      },
+      "catalystProgress": {
+        "alacrity": 50.16666666666704
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 755
+    },
+    {
+      "elapsedMs": 2880000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 27036,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 27036,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 45
+      },
+      "catalystProgress": {
+        "alacrity": 27.83333333333372
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 673.5488
+    },
+    {
+      "elapsedMs": 2940000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 27629,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 27629,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 46
+      },
+      "catalystProgress": {
+        "alacrity": 27.166666666667062
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 589.7027999999995
+    },
+    {
+      "elapsedMs": 3000000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 28119,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 28119,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 47
+      },
+      "catalystProgress": {
+        "alacrity": 9.33333333333375
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 755
+    },
+    {
+      "elapsedMs": 3060000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 28555,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 28555,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 47
+      },
+      "catalystProgress": {
+        "alacrity": 82.33333333333375
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 755
+    },
+    {
+      "elapsedMs": 3120000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 29177,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 29177,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 48
+      },
+      "catalystProgress": {
+        "alacrity": 86.50000000000043
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 745.2672
+    },
+    {
+      "elapsedMs": 3180000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 29619,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 29619,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 49
+      },
+      "catalystProgress": {
+        "alacrity": 60.500000000000426
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 755
+    },
+    {
+      "elapsedMs": 3240000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 30250,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 30250,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 50
+      },
+      "catalystProgress": {
+        "alacrity": 66.1666666666671
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 755
+    },
+    {
+      "elapsedMs": 3300000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 30785,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 30785,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 51
+      },
+      "catalystProgress": {
+        "alacrity": 55.83333333333375
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 755
+    },
+    {
+      "elapsedMs": 3360000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 31212,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 31212,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 52
+      },
+      "catalystProgress": {
+        "alacrity": 27.333333333333755
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 599.7266
+    },
+    {
+      "elapsedMs": 3420000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 31805,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 31805,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 53
+      },
+      "catalystProgress": {
+        "alacrity": 26.666666666667115
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 755
+    },
+    {
+      "elapsedMs": 3480000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 32282,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 32282,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 54
+      },
+      "catalystProgress": {
+        "alacrity": 6.666666666667135
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 644.2455999999997
+    },
+    {
+      "elapsedMs": 3540000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 32792,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 32792,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 54
+      },
+      "catalystProgress": {
+        "alacrity": 92.00000000000045
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 755
+    },
+    {
+      "elapsedMs": 3600000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 33334,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 33334,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 55
+      },
+      "catalystProgress": {
+        "alacrity": 82.66666666666713
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 755
+    },
+    {
+      "elapsedMs": 3660000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 33706,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 33706,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 56
+      },
+      "catalystProgress": {
+        "alacrity": 44.833333333333805
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 755
+    },
+    {
+      "elapsedMs": 3720000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 34341,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 34341,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 57
+      },
+      "catalystProgress": {
+        "alacrity": 51.16666666666714
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 755
+    },
+    {
+      "elapsedMs": 3780000,
+      "level": 12,
+      "xp": 150096,
+      "gross": {
+        "red": 34685,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 34685,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 58
+      },
+      "catalystProgress": {
+        "alacrity": 8.833333333333835
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "volcanic-vest-t4": 4,
+        "volcanic-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-bruiser": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 675.3298000000001
+    }
+  ],
+  "purchases": [],
+  "blockers": {},
+  "wallSeconds": 180.00144160000002,
+  "limitations": [
+    "Historical surviving loadout validated through prepareSurveyBot, then target biome reset to segment entry; mastery freeze removed",
+    "Mature gear and owned abilities retained: a conditional throughput screen, not an earned arrival journey",
+    "Native reference set costs are funding benchmarks, not the equipped mixed-biome set or actual purchases",
+    "No cross-biome routing or revivals; first death stops each run"
+  ]
+}

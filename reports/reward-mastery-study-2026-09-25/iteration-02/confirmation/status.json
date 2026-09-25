@@ -1,0 +1,66 @@
+{
+  "done": 12,
+  "total": 12,
+  "results": [
+    {
+      "id": "baseline-op-t2-striker-heavy-desert-t2-desert-arrival-s101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-op-t2-striker-heavy-desert-t2-desert-arrival-s101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-op-t2-striker-heavy-desert-t2-desert-arrival-s101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-op-t2-striker-heavy-desert-t2-desert-arrival-s101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-op-t2-squire-heavy-desert-t2-desert-arrival-s101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-op-t2-squire-heavy-desert-t2-desert-arrival-s101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-op-t2-squire-heavy-desert-t2-desert-arrival-s101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-op-t2-squire-heavy-desert-t2-desert-arrival-s101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-closing-squire-heavy-b-D-s101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-closing-squire-heavy-b-D-s101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-squire-heavy-b-D-s101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-squire-heavy-b-D-s101033",
+      "code": 0,
+      "outputExists": true
+    }
+  ]
+}

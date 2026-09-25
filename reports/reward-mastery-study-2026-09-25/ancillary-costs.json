@@ -1,0 +1,687 @@
+{
+  "note": "Catalogue, not a mandatory shopping list. Abilities/stances/rites/runes are excluded from primary four-slot gear budgets.",
+  "recipes": [
+    {
+      "id": "ability-recipe-sweep",
+      "kind": "ability",
+      "tier": 1,
+      "biome": "plains",
+      "cost": {
+        "yellow": 25
+      },
+      "total": 25
+    },
+    {
+      "id": "ability-recipe-second-wind",
+      "kind": "ability",
+      "tier": 1,
+      "biome": "forest",
+      "cost": {
+        "green": 25
+      },
+      "total": 25
+    },
+    {
+      "id": "ability-recipe-cleanse",
+      "kind": "ability",
+      "tier": 1,
+      "biome": "swamp",
+      "cost": {
+        "purple": 30
+      },
+      "total": 30
+    },
+    {
+      "id": "ability-recipe-brace",
+      "kind": "ability",
+      "tier": 1,
+      "biome": "mountain",
+      "cost": {
+        "blue": 45
+      },
+      "total": 45
+    },
+    {
+      "id": "ability-recipe-power-strike",
+      "kind": "ability",
+      "tier": 1,
+      "biome": "mountain",
+      "cost": {
+        "blue": 190
+      },
+      "total": 190
+    },
+    {
+      "id": "ability-recipe-expose-weakness",
+      "kind": "ability",
+      "tier": 1,
+      "biome": "cave",
+      "cost": {
+        "red": 85
+      },
+      "total": 85
+    },
+    {
+      "id": "ability-recipe-hamstring",
+      "kind": "ability",
+      "tier": 2,
+      "biome": "jungle",
+      "cost": {
+        "green": 70
+      },
+      "total": 70
+    },
+    {
+      "id": "ability-recipe-bramble-guard",
+      "kind": "ability",
+      "tier": 2,
+      "biome": "jungle",
+      "cost": {
+        "green": 90
+      },
+      "total": 90
+    },
+    {
+      "id": "ability-recipe-charge",
+      "kind": "ability",
+      "tier": 2,
+      "biome": "desert",
+      "cost": {
+        "yellow": 70
+      },
+      "total": 70
+    },
+    {
+      "id": "ability-recipe-endure",
+      "kind": "ability",
+      "tier": 2,
+      "biome": "desert",
+      "cost": {
+        "yellow": 90
+      },
+      "total": 90
+    },
+    {
+      "id": "ability-recipe-contagion",
+      "kind": "ability",
+      "tier": 2,
+      "biome": "swamp",
+      "cost": {
+        "purple": 90
+      },
+      "total": 90
+    },
+    {
+      "id": "ability-recipe-slam",
+      "kind": "ability",
+      "tier": 2,
+      "biome": "mountain",
+      "cost": {
+        "blue": 90
+      },
+      "total": 90
+    },
+    {
+      "id": "ability-recipe-binding-strike",
+      "kind": "ability",
+      "tier": 3,
+      "biome": "tundra",
+      "cost": {
+        "blue": 150
+      },
+      "total": 150
+    },
+    {
+      "id": "ability-recipe-break-free",
+      "kind": "ability",
+      "tier": 3,
+      "biome": "tundra",
+      "cost": {
+        "blue": 190
+      },
+      "total": 190
+    },
+    {
+      "id": "ability-recipe-frenzy",
+      "kind": "ability",
+      "tier": 3,
+      "biome": "volcanic",
+      "cost": {
+        "red": 175
+      },
+      "total": 175
+    },
+    {
+      "id": "ability-recipe-quick-strike",
+      "kind": "ability",
+      "tier": 3,
+      "biome": "volcanic",
+      "cost": {
+        "red": 210
+      },
+      "total": 210
+    },
+    {
+      "id": "ability-recipe-detonate",
+      "kind": "ability",
+      "tier": 3,
+      "biome": "swamp",
+      "cost": {
+        "purple": 210
+      },
+      "total": 210
+    },
+    {
+      "id": "ability-recipe-disengage",
+      "kind": "ability",
+      "tier": 4,
+      "biome": "trench",
+      "cost": {
+        "green": 300
+      },
+      "total": 300
+    },
+    {
+      "id": "ability-recipe-recuperate",
+      "kind": "ability",
+      "tier": 4,
+      "biome": "trench",
+      "cost": {
+        "green": 380
+      },
+      "total": 380
+    },
+    {
+      "id": "ability-recipe-snipe",
+      "kind": "ability",
+      "tier": 4,
+      "biome": "graveyard",
+      "cost": {
+        "purple": 320
+      },
+      "total": 320
+    },
+    {
+      "id": "ability-recipe-stunning-strike",
+      "kind": "ability",
+      "tier": 4,
+      "biome": "graveyard",
+      "cost": {
+        "purple": 420
+      },
+      "total": 420
+    },
+    {
+      "id": "ability-recipe-imbue-lightning",
+      "kind": "ability",
+      "tier": 4,
+      "biome": "jungle",
+      "cost": {
+        "green": 320
+      },
+      "total": 320
+    },
+    {
+      "id": "stance-recipe-offensive",
+      "kind": "stance",
+      "tier": 2,
+      "biome": "plains",
+      "cost": {
+        "yellow": 60
+      },
+      "total": 60
+    },
+    {
+      "id": "stance-recipe-defensive",
+      "kind": "stance",
+      "tier": 2,
+      "biome": "plains",
+      "cost": {
+        "yellow": 60
+      },
+      "total": 60
+    },
+    {
+      "id": "stance-recipe-fleeting",
+      "kind": "stance",
+      "tier": 2,
+      "biome": "swamp",
+      "cost": {
+        "purple": 110
+      },
+      "total": 110
+    },
+    {
+      "id": "stance-recipe-tanking",
+      "kind": "stance",
+      "tier": 3,
+      "biome": "mountain",
+      "cost": {
+        "blue": 220
+      },
+      "total": 220
+    },
+    {
+      "id": "stance-recipe-enraged",
+      "kind": "stance",
+      "tier": 3,
+      "biome": "cave",
+      "cost": {
+        "red": 230
+      },
+      "total": 230
+    },
+    {
+      "id": "stance-recipe-berserker",
+      "kind": "stance",
+      "tier": 3,
+      "biome": "cave",
+      "cost": {
+        "red": 230
+      },
+      "total": 230
+    },
+    {
+      "id": "stance-recipe-warding",
+      "kind": "stance",
+      "tier": 3,
+      "biome": "swamp",
+      "cost": {
+        "purple": 220
+      },
+      "total": 220
+    },
+    {
+      "id": "stance-recipe-predator",
+      "kind": "stance",
+      "tier": 3,
+      "biome": "tundra",
+      "cost": {
+        "blue": 210
+      },
+      "total": 210
+    },
+    {
+      "id": "stance-recipe-execute",
+      "kind": "stance",
+      "tier": 3,
+      "biome": "desert",
+      "cost": {
+        "yellow": 230
+      },
+      "total": 230
+    },
+    {
+      "id": "stance-recipe-perfection",
+      "kind": "stance",
+      "tier": 4,
+      "biome": "jungle",
+      "cost": {
+        "green": 450
+      },
+      "total": 450
+    },
+    {
+      "id": "stance-recipe-time-to-strike",
+      "kind": "stance",
+      "tier": 4,
+      "biome": "mountain",
+      "cost": {
+        "blue": 450
+      },
+      "total": 450
+    },
+    {
+      "id": "stance-recipe-brawler",
+      "kind": "stance",
+      "tier": 4,
+      "biome": "jungle",
+      "cost": {
+        "green": 500
+      },
+      "total": 500
+    },
+    {
+      "id": "stance-recipe-reaper",
+      "kind": "stance",
+      "tier": 4,
+      "biome": "volcanic",
+      "cost": {
+        "red": 500
+      },
+      "total": 500
+    },
+    {
+      "id": "stance-recipe-recuperating",
+      "kind": "stance",
+      "tier": 4,
+      "biome": "graveyard",
+      "cost": {
+        "purple": 450
+      },
+      "total": 450
+    },
+    {
+      "id": "stance-recipe-powering-up",
+      "kind": "stance",
+      "tier": 4,
+      "biome": "trench",
+      "cost": {
+        "green": 550
+      },
+      "total": 550
+    },
+    {
+      "id": "rite-recipe-swift-repose",
+      "kind": "rite",
+      "tier": 3,
+      "biome": "cave",
+      "cost": {
+        "red": 120
+      },
+      "total": 120
+    },
+    {
+      "id": "rite-recipe-purification",
+      "kind": "rite",
+      "tier": 3,
+      "biome": "swamp",
+      "cost": {
+        "purple": 120,
+        "green": 40
+      },
+      "total": 160
+    },
+    {
+      "id": "rite-recipe-lingering-battle",
+      "kind": "rite",
+      "tier": 3,
+      "biome": "mountain",
+      "cost": {
+        "blue": 130,
+        "yellow": 40
+      },
+      "total": 170
+    },
+    {
+      "id": "rite-recipe-blood-offering",
+      "kind": "rite",
+      "tier": 3,
+      "biome": "volcanic",
+      "cost": {
+        "red": 130,
+        "green": 40
+      },
+      "total": 170
+    },
+    {
+      "id": "rite-recipe-mechanic-renewal",
+      "kind": "rite",
+      "tier": 3,
+      "biome": "tundra",
+      "cost": {
+        "blue": 160,
+        "yellow": 60
+      },
+      "total": 220
+    },
+    {
+      "id": "rite-recipe-ability-reprieve",
+      "kind": "rite",
+      "tier": 3,
+      "biome": "desert",
+      "cost": {
+        "red": 160,
+        "purple": 60
+      },
+      "total": 220
+    },
+    {
+      "id": "rune-recipe-focus-highest-hp",
+      "kind": "rune",
+      "tier": 1,
+      "biome": "forest",
+      "cost": {
+        "green": 220
+      },
+      "total": 220
+    },
+    {
+      "id": "rune-recipe-avoid-hazards",
+      "kind": "rune",
+      "tier": 1,
+      "biome": "swamp",
+      "cost": {
+        "purple": 25
+      },
+      "total": 25
+    },
+    {
+      "id": "rune-recipe-careful-pulling",
+      "kind": "rune",
+      "tier": 1,
+      "biome": "cave",
+      "cost": {
+        "red": 115
+      },
+      "total": 115
+    },
+    {
+      "id": "rune-recipe-step-back",
+      "kind": "rune",
+      "tier": 1,
+      "biome": "cave",
+      "cost": {
+        "red": 35
+      },
+      "total": 35
+    },
+    {
+      "id": "rune-recipe-keep-distance",
+      "kind": "rune",
+      "tier": 1,
+      "biome": "mountain",
+      "cost": {
+        "blue": 45
+      },
+      "total": 45
+    },
+    {
+      "id": "rune-recipe-surrounded",
+      "kind": "rune",
+      "tier": 2,
+      "biome": "swamp",
+      "cost": {
+        "purple": 70
+      },
+      "total": 70
+    },
+    {
+      "id": "rune-recipe-focus-lowest-hp",
+      "kind": "rune",
+      "tier": 2,
+      "biome": "swamp",
+      "cost": {
+        "purple": 90
+      },
+      "total": 90
+    },
+    {
+      "id": "rune-recipe-let-dots-finish",
+      "kind": "rune",
+      "tier": 2,
+      "biome": "swamp",
+      "cost": {
+        "purple": 90
+      },
+      "total": 90
+    },
+    {
+      "id": "rune-recipe-spread-dots",
+      "kind": "rune",
+      "tier": 2,
+      "biome": "swamp",
+      "cost": {
+        "purple": 120
+      },
+      "total": 120
+    },
+    {
+      "id": "rune-recipe-focus-elites",
+      "kind": "rune",
+      "tier": 4,
+      "biome": "graveyard",
+      "cost": {
+        "purple": 320,
+        "blue": 140
+      },
+      "total": 460
+    }
+  ],
+  "summary": [
+    {
+      "tier": 1,
+      "byKind": [
+        {
+          "kind": "ability",
+          "count": 6,
+          "cost": {
+            "min": 25,
+            "median": 37.5,
+            "max": 190
+          }
+        },
+        {
+          "kind": "stance",
+          "count": 0,
+          "cost": null
+        },
+        {
+          "kind": "rite",
+          "count": 0,
+          "cost": null
+        },
+        {
+          "kind": "rune",
+          "count": 5,
+          "cost": {
+            "min": 25,
+            "median": 45,
+            "max": 220
+          }
+        }
+      ]
+    },
+    {
+      "tier": 2,
+      "byKind": [
+        {
+          "kind": "ability",
+          "count": 6,
+          "cost": {
+            "min": 70,
+            "median": 90,
+            "max": 90
+          }
+        },
+        {
+          "kind": "stance",
+          "count": 3,
+          "cost": {
+            "min": 60,
+            "median": 60,
+            "max": 110
+          }
+        },
+        {
+          "kind": "rite",
+          "count": 0,
+          "cost": null
+        },
+        {
+          "kind": "rune",
+          "count": 4,
+          "cost": {
+            "min": 70,
+            "median": 90,
+            "max": 120
+          }
+        }
+      ]
+    },
+    {
+      "tier": 3,
+      "byKind": [
+        {
+          "kind": "ability",
+          "count": 5,
+          "cost": {
+            "min": 150,
+            "median": 190,
+            "max": 210
+          }
+        },
+        {
+          "kind": "stance",
+          "count": 6,
+          "cost": {
+            "min": 210,
+            "median": 225,
+            "max": 230
+          }
+        },
+        {
+          "kind": "rite",
+          "count": 6,
+          "cost": {
+            "min": 120,
+            "median": 170,
+            "max": 220
+          }
+        },
+        {
+          "kind": "rune",
+          "count": 0,
+          "cost": null
+        }
+      ]
+    },
+    {
+      "tier": 4,
+      "byKind": [
+        {
+          "kind": "ability",
+          "count": 5,
+          "cost": {
+            "min": 300,
+            "median": 320,
+            "max": 420
+          }
+        },
+        {
+          "kind": "stance",
+          "count": 6,
+          "cost": {
+            "min": 450,
+            "median": 475,
+            "max": 550
+          }
+        },
+        {
+          "kind": "rite",
+          "count": 0,
+          "cost": null
+        },
+        {
+          "kind": "rune",
+          "count": 1,
+          "cost": {
+            "min": 460,
+            "median": 460,
+            "max": 460
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,326 @@
+{
+  "done": 64,
+  "total": 64,
+  "results": [
+    {
+      "id": "baseline-fixed3-t1-plains-dot-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-fixed3-t1-plains-cadence-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-fixed3-t1-plains-dot-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-fixed3-t1-plains-cadence-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-fixed3-t1-cave-cadence-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-fixed3-t1-cave-cadence-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-fixed3-t1-cave-dot-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-fixed3-t1-cave-dot-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-fixed3-t2-forest-cadence-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-fixed3-t2-forest-dot-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-fixed3-t2-forest-cadence-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-fixed3-t2-forest-dot-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-fixed3-t2-desert-cadence-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-fixed3-t2-desert-cadence-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-fixed3-t2-desert-dot-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-fixed3-t2-desert-dot-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-fixed3-t3-swamp-dot-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-fixed3-t3-swamp-dot-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-fixed3-t3-swamp-cadence-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-fixed3-t3-volcanic-cadence-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-fixed3-t3-swamp-cadence-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-fixed3-t3-volcanic-cadence-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-fixed3-t3-volcanic-dot-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-fixed3-t3-volcanic-dot-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-fixed3-t4-mountain-cadence-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-fixed3-t4-mountain-cadence-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-fixed3-t4-mountain-dot-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-fixed3-t4-mountain-dot-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-fixed3-t4-trench-dot-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-fixed3-t4-trench-dot-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-buy-t1-plains-cadence-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-buy-t1-plains-cadence-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-buy-t1-plains-dot-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-fixed3-t4-trench-cadence-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-buy-t1-plains-dot-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-buy-t1-cave-cadence-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-fixed3-t4-trench-cadence-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-buy-t1-cave-dot-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-buy-t1-cave-cadence-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-buy-t1-cave-dot-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-buy-t2-forest-cadence-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-buy-t2-forest-dot-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-buy-t2-forest-cadence-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-buy-t2-desert-cadence-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-buy-t2-forest-dot-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-buy-t2-desert-dot-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-buy-t2-desert-cadence-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-buy-t2-desert-dot-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-buy-t3-swamp-cadence-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-buy-t3-swamp-dot-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-buy-t3-swamp-cadence-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-buy-t3-volcanic-cadence-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-buy-t3-swamp-dot-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-buy-t3-volcanic-cadence-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-buy-t3-volcanic-dot-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-buy-t3-volcanic-dot-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-buy-t4-mountain-cadence-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-buy-t4-mountain-dot-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-buy-t4-mountain-cadence-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-buy-t4-trench-cadence-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-buy-t4-mountain-dot-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-buy-t4-trench-dot-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-buy-t4-trench-cadence-root-101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-buy-t4-trench-dot-root-101009",
+      "code": 0,
+      "outputExists": true
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "candidate-fixed3-t1-plains-dot-root-101009",
+  "arm": "candidate",
+  "mode": "fixed3",
+  "nodeId": "node-t1-plains-01",
+  "classRoot": "dot-root",
+  "seed": 101009,
+  "gearIds": [
+    "iron-broadsword",
+    "plains-vest-t1",
+    "plains-charm-t1",
+    "plains-boots-t1"
+  ],
+  "maxMs": 600000,
+  "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+  "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-supported\\candidate-fixed3-t1-plains-dot-root-101009.json"
+}

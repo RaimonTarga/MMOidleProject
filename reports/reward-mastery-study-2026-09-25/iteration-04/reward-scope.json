@@ -1,0 +1,306 @@
+[
+  {
+    "node": "node-t4-mountain-01",
+    "biome": "mountain",
+    "factor": 1,
+    "xpPerExpectedBodyBefore": 736.75,
+    "xpPerExpectedBodyAfter": 736.75,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-mountain-02",
+    "biome": "mountain",
+    "factor": 1,
+    "xpPerExpectedBodyBefore": 660.25,
+    "xpPerExpectedBodyAfter": 660.25,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-mountain-03",
+    "biome": "mountain",
+    "factor": 1,
+    "xpPerExpectedBodyBefore": 889,
+    "xpPerExpectedBodyAfter": 889,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-mountain-04",
+    "biome": "mountain",
+    "factor": 1,
+    "xpPerExpectedBodyBefore": 794.25,
+    "xpPerExpectedBodyAfter": 794.25,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-mountain-05",
+    "biome": "mountain",
+    "factor": 1,
+    "xpPerExpectedBodyBefore": 736.75,
+    "xpPerExpectedBodyAfter": 736.75,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-tundra-01",
+    "biome": "tundra",
+    "factor": 1.7,
+    "xpPerExpectedBodyBefore": 1012.25,
+    "xpPerExpectedBodyAfter": 1720.825,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-tundra-02",
+    "biome": "tundra",
+    "factor": 1.7,
+    "xpPerExpectedBodyBefore": 907.25,
+    "xpPerExpectedBodyAfter": 1542.325,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-tundra-03",
+    "biome": "tundra",
+    "factor": 1.7,
+    "xpPerExpectedBodyBefore": 1221.5,
+    "xpPerExpectedBodyAfter": 2076.5499999999997,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-tundra-04",
+    "biome": "tundra",
+    "factor": 1.7,
+    "xpPerExpectedBodyBefore": 1090.75,
+    "xpPerExpectedBodyAfter": 1854.2749999999999,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-tundra-05",
+    "biome": "tundra",
+    "factor": 1.7,
+    "xpPerExpectedBodyBefore": 1012.25,
+    "xpPerExpectedBodyAfter": 1720.825,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-jungle-01",
+    "biome": "jungle",
+    "factor": 1,
+    "xpPerExpectedBodyBefore": 563.5,
+    "xpPerExpectedBodyAfter": 563.5,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-jungle-02",
+    "biome": "jungle",
+    "factor": 1,
+    "xpPerExpectedBodyBefore": 488.25,
+    "xpPerExpectedBodyAfter": 488.25,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-jungle-03",
+    "biome": "jungle",
+    "factor": 1,
+    "xpPerExpectedBodyBefore": 657.25,
+    "xpPerExpectedBodyAfter": 657.25,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-jungle-04",
+    "biome": "jungle",
+    "factor": 1,
+    "xpPerExpectedBodyBefore": 587,
+    "xpPerExpectedBodyAfter": 587,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-jungle-05",
+    "biome": "jungle",
+    "factor": 1,
+    "xpPerExpectedBodyBefore": 563.5,
+    "xpPerExpectedBodyAfter": 563.5,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-desert-01",
+    "biome": "desert",
+    "factor": 2.3,
+    "xpPerExpectedBodyBefore": 580,
+    "xpPerExpectedBodyAfter": 1334,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-desert-02",
+    "biome": "desert",
+    "factor": 2.3,
+    "xpPerExpectedBodyBefore": 520,
+    "xpPerExpectedBodyAfter": 1196,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-desert-03",
+    "biome": "desert",
+    "factor": 2.3,
+    "xpPerExpectedBodyBefore": 700.0000000000001,
+    "xpPerExpectedBodyAfter": 1610.0000000000002,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-desert-04",
+    "biome": "desert",
+    "factor": 2.3,
+    "xpPerExpectedBodyBefore": 625.3333333333334,
+    "xpPerExpectedBodyAfter": 1438.2666666666667,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-desert-05",
+    "biome": "desert",
+    "factor": 2.3,
+    "xpPerExpectedBodyBefore": 700.0000000000001,
+    "xpPerExpectedBodyAfter": 1610.0000000000002,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-volcanic-01",
+    "biome": "volcanic",
+    "factor": 1,
+    "xpPerExpectedBodyBefore": 457.87499999999994,
+    "xpPerExpectedBodyAfter": 457.87499999999994,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-volcanic-02",
+    "biome": "volcanic",
+    "factor": 1,
+    "xpPerExpectedBodyBefore": 442.78124999999994,
+    "xpPerExpectedBodyAfter": 442.78124999999994,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-volcanic-03",
+    "biome": "volcanic",
+    "factor": 1,
+    "xpPerExpectedBodyBefore": 396.65624999999994,
+    "xpPerExpectedBodyAfter": 396.65624999999994,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-volcanic-04",
+    "biome": "volcanic",
+    "factor": 1,
+    "xpPerExpectedBodyBefore": 534.1874999999999,
+    "xpPerExpectedBodyAfter": 534.1874999999999,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-volcanic-05",
+    "biome": "volcanic",
+    "factor": 1,
+    "xpPerExpectedBodyBefore": 477.06249999999994,
+    "xpPerExpectedBodyAfter": 477.06249999999994,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-volcanic-06",
+    "biome": "volcanic",
+    "factor": 1,
+    "xpPerExpectedBodyBefore": 396.65624999999994,
+    "xpPerExpectedBodyAfter": 396.65624999999994,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-graveyard-01",
+    "biome": "graveyard",
+    "factor": 1,
+    "xpPerExpectedBodyBefore": 269.29411764705884,
+    "xpPerExpectedBodyAfter": 269.29411764705884,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-graveyard-02",
+    "biome": "graveyard",
+    "factor": 1,
+    "xpPerExpectedBodyBefore": 260.3529411764706,
+    "xpPerExpectedBodyAfter": 260.3529411764706,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-graveyard-03",
+    "biome": "graveyard",
+    "factor": 1,
+    "xpPerExpectedBodyBefore": 233.35294117647055,
+    "xpPerExpectedBodyAfter": 233.35294117647055,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-graveyard-04",
+    "biome": "graveyard",
+    "factor": 1,
+    "xpPerExpectedBodyBefore": 314.1764705882353,
+    "xpPerExpectedBodyAfter": 314.1764705882353,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-graveyard-05",
+    "biome": "graveyard",
+    "factor": 1,
+    "xpPerExpectedBodyBefore": 280.61764705882354,
+    "xpPerExpectedBodyAfter": 280.61764705882354,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-graveyard-06",
+    "biome": "graveyard",
+    "factor": 1,
+    "xpPerExpectedBodyBefore": 233.35294117647055,
+    "xpPerExpectedBodyAfter": 233.35294117647055,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-trench-01",
+    "biome": "trench",
+    "factor": 1,
+    "xpPerExpectedBodyBefore": 2088,
+    "xpPerExpectedBodyAfter": 2088,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-trench-02",
+    "biome": "trench",
+    "factor": 1,
+    "xpPerExpectedBodyBefore": 2018.6666666666665,
+    "xpPerExpectedBodyAfter": 2018.6666666666665,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-trench-03",
+    "biome": "trench",
+    "factor": 1,
+    "xpPerExpectedBodyBefore": 1809.3333333333333,
+    "xpPerExpectedBodyAfter": 1809.3333333333333,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-trench-04",
+    "biome": "trench",
+    "factor": 1,
+    "xpPerExpectedBodyBefore": 2436,
+    "xpPerExpectedBodyAfter": 2436,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-trench-05",
+    "biome": "trench",
+    "factor": 1,
+    "xpPerExpectedBodyBefore": 2175,
+    "xpPerExpectedBodyAfter": 2175,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  },
+  {
+    "node": "node-t4-trench-06",
+    "biome": "trench",
+    "factor": 1,
+    "xpPerExpectedBodyBefore": 2436,
+    "xpPerExpectedBodyAfter": 2436,
+    "note": "Spawn mix expectation, not measured kill mix or pacing"
+  }
+]

@@ -1,0 +1,11 @@
+# T4 build-by-biome diagnosis
+
+18 fresh runs: the exact balanced Striker, balanced Conduit and heavy Squire historical packages crossed with Volcanic 01, Tundra 01 and Desert 03, two seeds each (101009,101033). Same 600k T4 XP, original gear and runes; reset only tested segment as previously. No global progression equivalence is asserted across the different historical packages. All builds share each node, separating node effects from package effects, not individual skill effects.
+
+30 simulated minute window, first death, three-minute no-XP plateau, or three wall minutes; hard ceiling 3.5 wall minutes. Plateau is a diagnostic endpoint, not a mastery completion or survival success. XP/min and 600k/throughput projections are separate from measured mastery. Per-node monster snapshots and tick-end intent are descriptive; not pre-action decision evidence. Four workers, isolated candidate, source hashes before and after. No historical outputs are overwritten. No economy or combat changes in this first screen.
+
+## Correction screen
+After all 18 diagnostic rows completed without source drift: keep 600k budget, apply T4-only mastery XP factors Tundra 1.7 / Desert 2.3. These calibrate the fastest observed same-build rates toward 50–55 minutes; other biomes/tiers and essence/catalysts are unchanged. 12 unchanged-package runs across those two biomes plus eight separately labeled policy arms: Squire swaps Defensive to Offensive stance; Conduit removes Recover First. No class/gear stats are modified. These arms test survivable behavior tradeoffs, not an excuse to discard original slow builds. Maximum 180 simulated minutes, four wall minutes, same plateau/first-death rule. User clarified slow viable target around 90 minutes. All failures remain evidence. Factors apply all nodes/bosses within the specified T4 biomes; this screen does not validate that wider adoption.
+
+## Final small adjustment
+After correction receipt completed 20/20 without source drift, raise only the two XP factors to Tundra 1.8 / Desert 2.4. Ten fresh mastery runs: four original Striker fast-end checks, four Offensive Squire checks across both nodes, two no-Recover-First Conduit Desert checks. Same seeds and limits, separate output. These are tuning confirmations, not independent holdout population estimates. Original defensive builds are not retested or claimed to meet 90.

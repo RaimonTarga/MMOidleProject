@@ -1,0 +1,18 @@
+{
+  "done": 2,
+  "total": 2,
+  "results": [
+    {
+      "id": "candidate-stall-trace",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-stall-avoidance-off",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    }
+  ]
+}

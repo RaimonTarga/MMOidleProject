@@ -1,0 +1,4 @@
+{
+  "ProcessId": 47316,
+  "CommandLine": "\"C:\\Program Files\\nodejs\\node.exe\" --prof --logfile=../reports/reward-mastery-study-2026-09-25/iteration-02/v8-profile.log --import tsx --conditions=development ../reports/reward-mastery-study-2026-09-25/run-bot-diagnostic.ts ../reports/reward-mastery-study-2026-09-25/iteration-02/diagnostic-profile-job.json"
+}

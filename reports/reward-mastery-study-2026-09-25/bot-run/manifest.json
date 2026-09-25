@@ -1,0 +1,1098 @@
+{
+  "createdAt": "2026-09-24T22:41:15.958Z",
+  "baseline": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle",
+  "candidate": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\mmo-reward-candidate",
+  "workers": 4,
+  "dtMs": 100,
+  "rewardMultiplier": 1,
+  "jobs": [
+    {
+      "id": "baseline-fixed3-t1-plains-cadence-root-101009",
+      "arm": "baseline",
+      "mode": "fixed3",
+      "nodeId": "node-t1-plains-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "gearIds": [
+        "iron-broadsword",
+        "plains-vest-t1",
+        "plains-charm-t1",
+        "plains-boots-t1"
+      ],
+      "maxMs": 600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-fixed3-t1-plains-cadence-root-101009.json"
+    },
+    {
+      "id": "candidate-fixed3-t1-plains-cadence-root-101009",
+      "arm": "candidate",
+      "mode": "fixed3",
+      "nodeId": "node-t1-plains-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "gearIds": [
+        "iron-broadsword",
+        "plains-vest-t1",
+        "plains-charm-t1",
+        "plains-boots-t1"
+      ],
+      "maxMs": 600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-fixed3-t1-plains-cadence-root-101009.json"
+    },
+    {
+      "id": "baseline-fixed3-t1-plains-dot-root-101009",
+      "arm": "baseline",
+      "mode": "fixed3",
+      "nodeId": "node-t1-plains-01",
+      "classRoot": "dot-root",
+      "seed": 101009,
+      "gearIds": [
+        "iron-broadsword",
+        "plains-vest-t1",
+        "plains-charm-t1",
+        "plains-boots-t1"
+      ],
+      "maxMs": 600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-fixed3-t1-plains-dot-root-101009.json"
+    },
+    {
+      "id": "candidate-fixed3-t1-plains-dot-root-101009",
+      "arm": "candidate",
+      "mode": "fixed3",
+      "nodeId": "node-t1-plains-01",
+      "classRoot": "dot-root",
+      "seed": 101009,
+      "gearIds": [
+        "iron-broadsword",
+        "plains-vest-t1",
+        "plains-charm-t1",
+        "plains-boots-t1"
+      ],
+      "maxMs": 600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-fixed3-t1-plains-dot-root-101009.json"
+    },
+    {
+      "id": "baseline-fixed3-t1-cave-cadence-root-101009",
+      "arm": "baseline",
+      "mode": "fixed3",
+      "nodeId": "node-t1-cave-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "gearIds": [
+        "chaotic-axe",
+        "cave-vest-t1",
+        "cave-charm-t1",
+        "cave-boots-t1"
+      ],
+      "maxMs": 600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-fixed3-t1-cave-cadence-root-101009.json"
+    },
+    {
+      "id": "candidate-fixed3-t1-cave-cadence-root-101009",
+      "arm": "candidate",
+      "mode": "fixed3",
+      "nodeId": "node-t1-cave-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "gearIds": [
+        "chaotic-axe",
+        "cave-vest-t1",
+        "cave-charm-t1",
+        "cave-boots-t1"
+      ],
+      "maxMs": 600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-fixed3-t1-cave-cadence-root-101009.json"
+    },
+    {
+      "id": "baseline-fixed3-t1-cave-dot-root-101009",
+      "arm": "baseline",
+      "mode": "fixed3",
+      "nodeId": "node-t1-cave-01",
+      "classRoot": "dot-root",
+      "seed": 101009,
+      "gearIds": [
+        "chaotic-axe",
+        "cave-vest-t1",
+        "cave-charm-t1",
+        "cave-boots-t1"
+      ],
+      "maxMs": 600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-fixed3-t1-cave-dot-root-101009.json"
+    },
+    {
+      "id": "candidate-fixed3-t1-cave-dot-root-101009",
+      "arm": "candidate",
+      "mode": "fixed3",
+      "nodeId": "node-t1-cave-01",
+      "classRoot": "dot-root",
+      "seed": 101009,
+      "gearIds": [
+        "chaotic-axe",
+        "cave-vest-t1",
+        "cave-charm-t1",
+        "cave-boots-t1"
+      ],
+      "maxMs": 600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-fixed3-t1-cave-dot-root-101009.json"
+    },
+    {
+      "id": "baseline-fixed3-t2-forest-cadence-root-101009",
+      "arm": "baseline",
+      "mode": "fixed3",
+      "nodeId": "node-t2-forest-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "gearIds": [
+        "gale-needle",
+        "forest-vest-t2",
+        "forest-charm-t2",
+        "forest-boots-t2"
+      ],
+      "maxMs": 1800000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-fixed3-t2-forest-cadence-root-101009.json"
+    },
+    {
+      "id": "candidate-fixed3-t2-forest-cadence-root-101009",
+      "arm": "candidate",
+      "mode": "fixed3",
+      "nodeId": "node-t2-forest-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "gearIds": [
+        "gale-needle",
+        "forest-vest-t2",
+        "forest-charm-t2",
+        "forest-boots-t2"
+      ],
+      "maxMs": 1800000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-fixed3-t2-forest-cadence-root-101009.json"
+    },
+    {
+      "id": "baseline-fixed3-t2-forest-dot-root-101009",
+      "arm": "baseline",
+      "mode": "fixed3",
+      "nodeId": "node-t2-forest-01",
+      "classRoot": "dot-root",
+      "seed": 101009,
+      "gearIds": [
+        "gale-needle",
+        "forest-vest-t2",
+        "forest-charm-t2",
+        "forest-boots-t2"
+      ],
+      "maxMs": 1800000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-fixed3-t2-forest-dot-root-101009.json"
+    },
+    {
+      "id": "candidate-fixed3-t2-forest-dot-root-101009",
+      "arm": "candidate",
+      "mode": "fixed3",
+      "nodeId": "node-t2-forest-01",
+      "classRoot": "dot-root",
+      "seed": 101009,
+      "gearIds": [
+        "gale-needle",
+        "forest-vest-t2",
+        "forest-charm-t2",
+        "forest-boots-t2"
+      ],
+      "maxMs": 1800000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-fixed3-t2-forest-dot-root-101009.json"
+    },
+    {
+      "id": "baseline-fixed3-t2-desert-cadence-root-101009",
+      "arm": "baseline",
+      "mode": "fixed3",
+      "nodeId": "node-t2-desert-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "gearIds": [
+        "desert-sunsteel-cross",
+        "desert-vest-t2",
+        "desert-charm-t2",
+        "desert-boots-t2"
+      ],
+      "maxMs": 1800000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-fixed3-t2-desert-cadence-root-101009.json"
+    },
+    {
+      "id": "candidate-fixed3-t2-desert-cadence-root-101009",
+      "arm": "candidate",
+      "mode": "fixed3",
+      "nodeId": "node-t2-desert-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "gearIds": [
+        "desert-sunsteel-cross",
+        "desert-vest-t2",
+        "desert-charm-t2",
+        "desert-boots-t2"
+      ],
+      "maxMs": 1800000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-fixed3-t2-desert-cadence-root-101009.json"
+    },
+    {
+      "id": "baseline-fixed3-t2-desert-dot-root-101009",
+      "arm": "baseline",
+      "mode": "fixed3",
+      "nodeId": "node-t2-desert-01",
+      "classRoot": "dot-root",
+      "seed": 101009,
+      "gearIds": [
+        "desert-sunsteel-cross",
+        "desert-vest-t2",
+        "desert-charm-t2",
+        "desert-boots-t2"
+      ],
+      "maxMs": 1800000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-fixed3-t2-desert-dot-root-101009.json"
+    },
+    {
+      "id": "candidate-fixed3-t2-desert-dot-root-101009",
+      "arm": "candidate",
+      "mode": "fixed3",
+      "nodeId": "node-t2-desert-01",
+      "classRoot": "dot-root",
+      "seed": 101009,
+      "gearIds": [
+        "desert-sunsteel-cross",
+        "desert-vest-t2",
+        "desert-charm-t2",
+        "desert-boots-t2"
+      ],
+      "maxMs": 1800000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-fixed3-t2-desert-dot-root-101009.json"
+    },
+    {
+      "id": "baseline-fixed3-t3-swamp-cadence-root-101009",
+      "arm": "baseline",
+      "mode": "fixed3",
+      "nodeId": "node-t3-swamp-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "gearIds": [
+        "swamp-blightbrand",
+        "swamp-vest-t3",
+        "swamp-charm-t3",
+        "swamp-boots-t3"
+      ],
+      "maxMs": 3600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-fixed3-t3-swamp-cadence-root-101009.json"
+    },
+    {
+      "id": "candidate-fixed3-t3-swamp-cadence-root-101009",
+      "arm": "candidate",
+      "mode": "fixed3",
+      "nodeId": "node-t3-swamp-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "gearIds": [
+        "swamp-blightbrand",
+        "swamp-vest-t3",
+        "swamp-charm-t3",
+        "swamp-boots-t3"
+      ],
+      "maxMs": 3600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-fixed3-t3-swamp-cadence-root-101009.json"
+    },
+    {
+      "id": "baseline-fixed3-t3-swamp-dot-root-101009",
+      "arm": "baseline",
+      "mode": "fixed3",
+      "nodeId": "node-t3-swamp-01",
+      "classRoot": "dot-root",
+      "seed": 101009,
+      "gearIds": [
+        "swamp-blightbrand",
+        "swamp-vest-t3",
+        "swamp-charm-t3",
+        "swamp-boots-t3"
+      ],
+      "maxMs": 3600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-fixed3-t3-swamp-dot-root-101009.json"
+    },
+    {
+      "id": "candidate-fixed3-t3-swamp-dot-root-101009",
+      "arm": "candidate",
+      "mode": "fixed3",
+      "nodeId": "node-t3-swamp-01",
+      "classRoot": "dot-root",
+      "seed": 101009,
+      "gearIds": [
+        "swamp-blightbrand",
+        "swamp-vest-t3",
+        "swamp-charm-t3",
+        "swamp-boots-t3"
+      ],
+      "maxMs": 3600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-fixed3-t3-swamp-dot-root-101009.json"
+    },
+    {
+      "id": "baseline-fixed3-t3-volcanic-cadence-root-101009",
+      "arm": "baseline",
+      "mode": "fixed3",
+      "nodeId": "node-t3-volcanic-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "gearIds": [
+        "volcanic-cinderlash",
+        "volcanic-vest-t3",
+        "volcanic-charm-t3",
+        "volcanic-boots-t3"
+      ],
+      "maxMs": 3600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-fixed3-t3-volcanic-cadence-root-101009.json"
+    },
+    {
+      "id": "candidate-fixed3-t3-volcanic-cadence-root-101009",
+      "arm": "candidate",
+      "mode": "fixed3",
+      "nodeId": "node-t3-volcanic-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "gearIds": [
+        "volcanic-cinderlash",
+        "volcanic-vest-t3",
+        "volcanic-charm-t3",
+        "volcanic-boots-t3"
+      ],
+      "maxMs": 3600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-fixed3-t3-volcanic-cadence-root-101009.json"
+    },
+    {
+      "id": "baseline-fixed3-t3-volcanic-dot-root-101009",
+      "arm": "baseline",
+      "mode": "fixed3",
+      "nodeId": "node-t3-volcanic-01",
+      "classRoot": "dot-root",
+      "seed": 101009,
+      "gearIds": [
+        "volcanic-cinderlash",
+        "volcanic-vest-t3",
+        "volcanic-charm-t3",
+        "volcanic-boots-t3"
+      ],
+      "maxMs": 3600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-fixed3-t3-volcanic-dot-root-101009.json"
+    },
+    {
+      "id": "candidate-fixed3-t3-volcanic-dot-root-101009",
+      "arm": "candidate",
+      "mode": "fixed3",
+      "nodeId": "node-t3-volcanic-01",
+      "classRoot": "dot-root",
+      "seed": 101009,
+      "gearIds": [
+        "volcanic-cinderlash",
+        "volcanic-vest-t3",
+        "volcanic-charm-t3",
+        "volcanic-boots-t3"
+      ],
+      "maxMs": 3600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-fixed3-t3-volcanic-dot-root-101009.json"
+    },
+    {
+      "id": "baseline-fixed3-t4-mountain-cadence-root-101009",
+      "arm": "baseline",
+      "mode": "fixed3",
+      "nodeId": "node-t4-mountain-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "gearIds": [
+        "mountain-warmaul",
+        "mountain-vest-t4-stormwall",
+        "mountain-charm-t4-shieldmend",
+        "mountain-boots-t4"
+      ],
+      "maxMs": 7200000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-fixed3-t4-mountain-cadence-root-101009.json"
+    },
+    {
+      "id": "candidate-fixed3-t4-mountain-cadence-root-101009",
+      "arm": "candidate",
+      "mode": "fixed3",
+      "nodeId": "node-t4-mountain-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "gearIds": [
+        "mountain-warmaul",
+        "mountain-vest-t4-stormwall",
+        "mountain-charm-t4-shieldmend",
+        "mountain-boots-t4"
+      ],
+      "maxMs": 7200000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-fixed3-t4-mountain-cadence-root-101009.json"
+    },
+    {
+      "id": "baseline-fixed3-t4-mountain-dot-root-101009",
+      "arm": "baseline",
+      "mode": "fixed3",
+      "nodeId": "node-t4-mountain-01",
+      "classRoot": "dot-root",
+      "seed": 101009,
+      "gearIds": [
+        "mountain-warmaul",
+        "mountain-vest-t4-stormwall",
+        "mountain-charm-t4-shieldmend",
+        "mountain-boots-t4"
+      ],
+      "maxMs": 7200000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-fixed3-t4-mountain-dot-root-101009.json"
+    },
+    {
+      "id": "candidate-fixed3-t4-mountain-dot-root-101009",
+      "arm": "candidate",
+      "mode": "fixed3",
+      "nodeId": "node-t4-mountain-01",
+      "classRoot": "dot-root",
+      "seed": 101009,
+      "gearIds": [
+        "mountain-warmaul",
+        "mountain-vest-t4-stormwall",
+        "mountain-charm-t4-shieldmend",
+        "mountain-boots-t4"
+      ],
+      "maxMs": 7200000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-fixed3-t4-mountain-dot-root-101009.json"
+    },
+    {
+      "id": "baseline-fixed3-t4-trench-cadence-root-101009",
+      "arm": "baseline",
+      "mode": "fixed3",
+      "nodeId": "node-t4-trench-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "gearIds": [
+        "trench-abyssal-axe",
+        "trench-vest-t4",
+        "trench-charm-t4",
+        "trench-boots-t4-stalkers"
+      ],
+      "maxMs": 7200000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-fixed3-t4-trench-cadence-root-101009.json"
+    },
+    {
+      "id": "candidate-fixed3-t4-trench-cadence-root-101009",
+      "arm": "candidate",
+      "mode": "fixed3",
+      "nodeId": "node-t4-trench-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "gearIds": [
+        "trench-abyssal-axe",
+        "trench-vest-t4",
+        "trench-charm-t4",
+        "trench-boots-t4-stalkers"
+      ],
+      "maxMs": 7200000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-fixed3-t4-trench-cadence-root-101009.json"
+    },
+    {
+      "id": "baseline-fixed3-t4-trench-dot-root-101009",
+      "arm": "baseline",
+      "mode": "fixed3",
+      "nodeId": "node-t4-trench-01",
+      "classRoot": "dot-root",
+      "seed": 101009,
+      "gearIds": [
+        "trench-abyssal-axe",
+        "trench-vest-t4",
+        "trench-charm-t4",
+        "trench-boots-t4-stalkers"
+      ],
+      "maxMs": 7200000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-fixed3-t4-trench-dot-root-101009.json"
+    },
+    {
+      "id": "candidate-fixed3-t4-trench-dot-root-101009",
+      "arm": "candidate",
+      "mode": "fixed3",
+      "nodeId": "node-t4-trench-01",
+      "classRoot": "dot-root",
+      "seed": 101009,
+      "gearIds": [
+        "trench-abyssal-axe",
+        "trench-vest-t4",
+        "trench-charm-t4",
+        "trench-boots-t4-stalkers"
+      ],
+      "maxMs": 7200000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-fixed3-t4-trench-dot-root-101009.json"
+    },
+    {
+      "id": "baseline-buy-t1-plains-cadence-root-101009",
+      "arm": "baseline",
+      "mode": "buy",
+      "nodeId": "node-t1-plains-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "gearIds": [
+        "iron-broadsword",
+        "plains-vest-t1",
+        "plains-charm-t1",
+        "plains-boots-t1"
+      ],
+      "maxMs": 600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-buy-t1-plains-cadence-root-101009.json"
+    },
+    {
+      "id": "candidate-buy-t1-plains-cadence-root-101009",
+      "arm": "candidate",
+      "mode": "buy",
+      "nodeId": "node-t1-plains-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "gearIds": [
+        "iron-broadsword",
+        "plains-vest-t1",
+        "plains-charm-t1",
+        "plains-boots-t1"
+      ],
+      "maxMs": 600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-buy-t1-plains-cadence-root-101009.json"
+    },
+    {
+      "id": "baseline-buy-t1-plains-dot-root-101009",
+      "arm": "baseline",
+      "mode": "buy",
+      "nodeId": "node-t1-plains-01",
+      "classRoot": "dot-root",
+      "seed": 101009,
+      "gearIds": [
+        "iron-broadsword",
+        "plains-vest-t1",
+        "plains-charm-t1",
+        "plains-boots-t1"
+      ],
+      "maxMs": 600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-buy-t1-plains-dot-root-101009.json"
+    },
+    {
+      "id": "candidate-buy-t1-plains-dot-root-101009",
+      "arm": "candidate",
+      "mode": "buy",
+      "nodeId": "node-t1-plains-01",
+      "classRoot": "dot-root",
+      "seed": 101009,
+      "gearIds": [
+        "iron-broadsword",
+        "plains-vest-t1",
+        "plains-charm-t1",
+        "plains-boots-t1"
+      ],
+      "maxMs": 600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-buy-t1-plains-dot-root-101009.json"
+    },
+    {
+      "id": "baseline-buy-t1-cave-cadence-root-101009",
+      "arm": "baseline",
+      "mode": "buy",
+      "nodeId": "node-t1-cave-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "gearIds": [
+        "chaotic-axe",
+        "cave-vest-t1",
+        "cave-charm-t1",
+        "cave-boots-t1"
+      ],
+      "maxMs": 600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-buy-t1-cave-cadence-root-101009.json"
+    },
+    {
+      "id": "candidate-buy-t1-cave-cadence-root-101009",
+      "arm": "candidate",
+      "mode": "buy",
+      "nodeId": "node-t1-cave-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "gearIds": [
+        "chaotic-axe",
+        "cave-vest-t1",
+        "cave-charm-t1",
+        "cave-boots-t1"
+      ],
+      "maxMs": 600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-buy-t1-cave-cadence-root-101009.json"
+    },
+    {
+      "id": "baseline-buy-t1-cave-dot-root-101009",
+      "arm": "baseline",
+      "mode": "buy",
+      "nodeId": "node-t1-cave-01",
+      "classRoot": "dot-root",
+      "seed": 101009,
+      "gearIds": [
+        "chaotic-axe",
+        "cave-vest-t1",
+        "cave-charm-t1",
+        "cave-boots-t1"
+      ],
+      "maxMs": 600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-buy-t1-cave-dot-root-101009.json"
+    },
+    {
+      "id": "candidate-buy-t1-cave-dot-root-101009",
+      "arm": "candidate",
+      "mode": "buy",
+      "nodeId": "node-t1-cave-01",
+      "classRoot": "dot-root",
+      "seed": 101009,
+      "gearIds": [
+        "chaotic-axe",
+        "cave-vest-t1",
+        "cave-charm-t1",
+        "cave-boots-t1"
+      ],
+      "maxMs": 600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-buy-t1-cave-dot-root-101009.json"
+    },
+    {
+      "id": "baseline-buy-t2-forest-cadence-root-101009",
+      "arm": "baseline",
+      "mode": "buy",
+      "nodeId": "node-t2-forest-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "gearIds": [
+        "gale-needle",
+        "forest-vest-t2",
+        "forest-charm-t2",
+        "forest-boots-t2"
+      ],
+      "maxMs": 1800000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-buy-t2-forest-cadence-root-101009.json"
+    },
+    {
+      "id": "candidate-buy-t2-forest-cadence-root-101009",
+      "arm": "candidate",
+      "mode": "buy",
+      "nodeId": "node-t2-forest-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "gearIds": [
+        "gale-needle",
+        "forest-vest-t2",
+        "forest-charm-t2",
+        "forest-boots-t2"
+      ],
+      "maxMs": 1800000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-buy-t2-forest-cadence-root-101009.json"
+    },
+    {
+      "id": "baseline-buy-t2-forest-dot-root-101009",
+      "arm": "baseline",
+      "mode": "buy",
+      "nodeId": "node-t2-forest-01",
+      "classRoot": "dot-root",
+      "seed": 101009,
+      "gearIds": [
+        "gale-needle",
+        "forest-vest-t2",
+        "forest-charm-t2",
+        "forest-boots-t2"
+      ],
+      "maxMs": 1800000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-buy-t2-forest-dot-root-101009.json"
+    },
+    {
+      "id": "candidate-buy-t2-forest-dot-root-101009",
+      "arm": "candidate",
+      "mode": "buy",
+      "nodeId": "node-t2-forest-01",
+      "classRoot": "dot-root",
+      "seed": 101009,
+      "gearIds": [
+        "gale-needle",
+        "forest-vest-t2",
+        "forest-charm-t2",
+        "forest-boots-t2"
+      ],
+      "maxMs": 1800000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-buy-t2-forest-dot-root-101009.json"
+    },
+    {
+      "id": "baseline-buy-t2-desert-cadence-root-101009",
+      "arm": "baseline",
+      "mode": "buy",
+      "nodeId": "node-t2-desert-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "gearIds": [
+        "desert-sunsteel-cross",
+        "desert-vest-t2",
+        "desert-charm-t2",
+        "desert-boots-t2"
+      ],
+      "maxMs": 1800000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-buy-t2-desert-cadence-root-101009.json"
+    },
+    {
+      "id": "candidate-buy-t2-desert-cadence-root-101009",
+      "arm": "candidate",
+      "mode": "buy",
+      "nodeId": "node-t2-desert-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "gearIds": [
+        "desert-sunsteel-cross",
+        "desert-vest-t2",
+        "desert-charm-t2",
+        "desert-boots-t2"
+      ],
+      "maxMs": 1800000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-buy-t2-desert-cadence-root-101009.json"
+    },
+    {
+      "id": "baseline-buy-t2-desert-dot-root-101009",
+      "arm": "baseline",
+      "mode": "buy",
+      "nodeId": "node-t2-desert-01",
+      "classRoot": "dot-root",
+      "seed": 101009,
+      "gearIds": [
+        "desert-sunsteel-cross",
+        "desert-vest-t2",
+        "desert-charm-t2",
+        "desert-boots-t2"
+      ],
+      "maxMs": 1800000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-buy-t2-desert-dot-root-101009.json"
+    },
+    {
+      "id": "candidate-buy-t2-desert-dot-root-101009",
+      "arm": "candidate",
+      "mode": "buy",
+      "nodeId": "node-t2-desert-01",
+      "classRoot": "dot-root",
+      "seed": 101009,
+      "gearIds": [
+        "desert-sunsteel-cross",
+        "desert-vest-t2",
+        "desert-charm-t2",
+        "desert-boots-t2"
+      ],
+      "maxMs": 1800000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-buy-t2-desert-dot-root-101009.json"
+    },
+    {
+      "id": "baseline-buy-t3-swamp-cadence-root-101009",
+      "arm": "baseline",
+      "mode": "buy",
+      "nodeId": "node-t3-swamp-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "gearIds": [
+        "swamp-blightbrand",
+        "swamp-vest-t3",
+        "swamp-charm-t3",
+        "swamp-boots-t3"
+      ],
+      "maxMs": 3600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-buy-t3-swamp-cadence-root-101009.json"
+    },
+    {
+      "id": "candidate-buy-t3-swamp-cadence-root-101009",
+      "arm": "candidate",
+      "mode": "buy",
+      "nodeId": "node-t3-swamp-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "gearIds": [
+        "swamp-blightbrand",
+        "swamp-vest-t3",
+        "swamp-charm-t3",
+        "swamp-boots-t3"
+      ],
+      "maxMs": 3600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-buy-t3-swamp-cadence-root-101009.json"
+    },
+    {
+      "id": "baseline-buy-t3-swamp-dot-root-101009",
+      "arm": "baseline",
+      "mode": "buy",
+      "nodeId": "node-t3-swamp-01",
+      "classRoot": "dot-root",
+      "seed": 101009,
+      "gearIds": [
+        "swamp-blightbrand",
+        "swamp-vest-t3",
+        "swamp-charm-t3",
+        "swamp-boots-t3"
+      ],
+      "maxMs": 3600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-buy-t3-swamp-dot-root-101009.json"
+    },
+    {
+      "id": "candidate-buy-t3-swamp-dot-root-101009",
+      "arm": "candidate",
+      "mode": "buy",
+      "nodeId": "node-t3-swamp-01",
+      "classRoot": "dot-root",
+      "seed": 101009,
+      "gearIds": [
+        "swamp-blightbrand",
+        "swamp-vest-t3",
+        "swamp-charm-t3",
+        "swamp-boots-t3"
+      ],
+      "maxMs": 3600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-buy-t3-swamp-dot-root-101009.json"
+    },
+    {
+      "id": "baseline-buy-t3-volcanic-cadence-root-101009",
+      "arm": "baseline",
+      "mode": "buy",
+      "nodeId": "node-t3-volcanic-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "gearIds": [
+        "volcanic-cinderlash",
+        "volcanic-vest-t3",
+        "volcanic-charm-t3",
+        "volcanic-boots-t3"
+      ],
+      "maxMs": 3600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-buy-t3-volcanic-cadence-root-101009.json"
+    },
+    {
+      "id": "candidate-buy-t3-volcanic-cadence-root-101009",
+      "arm": "candidate",
+      "mode": "buy",
+      "nodeId": "node-t3-volcanic-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "gearIds": [
+        "volcanic-cinderlash",
+        "volcanic-vest-t3",
+        "volcanic-charm-t3",
+        "volcanic-boots-t3"
+      ],
+      "maxMs": 3600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-buy-t3-volcanic-cadence-root-101009.json"
+    },
+    {
+      "id": "baseline-buy-t3-volcanic-dot-root-101009",
+      "arm": "baseline",
+      "mode": "buy",
+      "nodeId": "node-t3-volcanic-01",
+      "classRoot": "dot-root",
+      "seed": 101009,
+      "gearIds": [
+        "volcanic-cinderlash",
+        "volcanic-vest-t3",
+        "volcanic-charm-t3",
+        "volcanic-boots-t3"
+      ],
+      "maxMs": 3600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-buy-t3-volcanic-dot-root-101009.json"
+    },
+    {
+      "id": "candidate-buy-t3-volcanic-dot-root-101009",
+      "arm": "candidate",
+      "mode": "buy",
+      "nodeId": "node-t3-volcanic-01",
+      "classRoot": "dot-root",
+      "seed": 101009,
+      "gearIds": [
+        "volcanic-cinderlash",
+        "volcanic-vest-t3",
+        "volcanic-charm-t3",
+        "volcanic-boots-t3"
+      ],
+      "maxMs": 3600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-buy-t3-volcanic-dot-root-101009.json"
+    },
+    {
+      "id": "baseline-buy-t4-mountain-cadence-root-101009",
+      "arm": "baseline",
+      "mode": "buy",
+      "nodeId": "node-t4-mountain-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "gearIds": [
+        "mountain-warmaul",
+        "mountain-vest-t4-stormwall",
+        "mountain-charm-t4-shieldmend",
+        "mountain-boots-t4"
+      ],
+      "maxMs": 7200000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-buy-t4-mountain-cadence-root-101009.json"
+    },
+    {
+      "id": "candidate-buy-t4-mountain-cadence-root-101009",
+      "arm": "candidate",
+      "mode": "buy",
+      "nodeId": "node-t4-mountain-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "gearIds": [
+        "mountain-warmaul",
+        "mountain-vest-t4-stormwall",
+        "mountain-charm-t4-shieldmend",
+        "mountain-boots-t4"
+      ],
+      "maxMs": 7200000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-buy-t4-mountain-cadence-root-101009.json"
+    },
+    {
+      "id": "baseline-buy-t4-mountain-dot-root-101009",
+      "arm": "baseline",
+      "mode": "buy",
+      "nodeId": "node-t4-mountain-01",
+      "classRoot": "dot-root",
+      "seed": 101009,
+      "gearIds": [
+        "mountain-warmaul",
+        "mountain-vest-t4-stormwall",
+        "mountain-charm-t4-shieldmend",
+        "mountain-boots-t4"
+      ],
+      "maxMs": 7200000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-buy-t4-mountain-dot-root-101009.json"
+    },
+    {
+      "id": "candidate-buy-t4-mountain-dot-root-101009",
+      "arm": "candidate",
+      "mode": "buy",
+      "nodeId": "node-t4-mountain-01",
+      "classRoot": "dot-root",
+      "seed": 101009,
+      "gearIds": [
+        "mountain-warmaul",
+        "mountain-vest-t4-stormwall",
+        "mountain-charm-t4-shieldmend",
+        "mountain-boots-t4"
+      ],
+      "maxMs": 7200000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-buy-t4-mountain-dot-root-101009.json"
+    },
+    {
+      "id": "baseline-buy-t4-trench-cadence-root-101009",
+      "arm": "baseline",
+      "mode": "buy",
+      "nodeId": "node-t4-trench-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "gearIds": [
+        "trench-abyssal-axe",
+        "trench-vest-t4",
+        "trench-charm-t4",
+        "trench-boots-t4-stalkers"
+      ],
+      "maxMs": 7200000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-buy-t4-trench-cadence-root-101009.json"
+    },
+    {
+      "id": "candidate-buy-t4-trench-cadence-root-101009",
+      "arm": "candidate",
+      "mode": "buy",
+      "nodeId": "node-t4-trench-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "gearIds": [
+        "trench-abyssal-axe",
+        "trench-vest-t4",
+        "trench-charm-t4",
+        "trench-boots-t4-stalkers"
+      ],
+      "maxMs": 7200000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-buy-t4-trench-cadence-root-101009.json"
+    },
+    {
+      "id": "baseline-buy-t4-trench-dot-root-101009",
+      "arm": "baseline",
+      "mode": "buy",
+      "nodeId": "node-t4-trench-01",
+      "classRoot": "dot-root",
+      "seed": 101009,
+      "gearIds": [
+        "trench-abyssal-axe",
+        "trench-vest-t4",
+        "trench-charm-t4",
+        "trench-boots-t4-stalkers"
+      ],
+      "maxMs": 7200000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-buy-t4-trench-dot-root-101009.json"
+    },
+    {
+      "id": "candidate-buy-t4-trench-dot-root-101009",
+      "arm": "candidate",
+      "mode": "buy",
+      "nodeId": "node-t4-trench-01",
+      "classRoot": "dot-root",
+      "seed": 101009,
+      "gearIds": [
+        "trench-abyssal-axe",
+        "trench-vest-t4",
+        "trench-charm-t4",
+        "trench-boots-t4-stalkers"
+      ],
+      "maxMs": 7200000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-buy-t4-trench-dot-root-101009.json"
+    }
+  ]
+}

@@ -1,0 +1,136 @@
+diff --git a/server/src/systems/player/progression/rewards.ts b/server/src/systems/player/progression/rewards.ts
+index 20fe74bf..edabd1d0 100644
+--- a/server/src/systems/player/progression/rewards.ts
++++ b/server/src/systems/player/progression/rewards.ts
+@@ -118,7 +118,8 @@ function applyBiomeXP(
+   }
+ 
+   const xpMult = GAME_CONFIG.BIOME_XP_REWARD_MULT_BY_TIER[biomeTier] ?? 1;
+-  const scaledXpGain = Math.round(xpGain * xpMult);
++  const biomeMult = GAME_CONFIG.BIOME_XP_BIOME_TIER_MULT[biomeTier]?.[biomeGroup] ?? 1;
++  const scaledXpGain = Math.round(xpGain * xpMult * biomeMult);
+ 
+   const prevUnlocked = [...entity.tracksProgression.unlockedRecipes];
+   const newXP = (entity.tracksProgression.biomeXP[biomeGroup] ?? 0) + scaledXpGain;
+diff --git a/server/test/rewardMultiplier.test.ts b/server/test/rewardMultiplier.test.ts
+index 7318b773..8032d79b 100644
+--- a/server/test/rewardMultiplier.test.ts
++++ b/server/test/rewardMultiplier.test.ts
+@@ -238,3 +238,32 @@ assert(clampRewardMultiplier(2.5) === 2.5, "fractional multipliers survive");
+ assert(clampRewardMultiplier(1.23456) === 1.23, "multipliers round to 2 decimals");
+ 
+ console.log("rewardMultiplier.test: ok");
++
++// Biome correction is mastery-only; other currencies and earlier tiers stay independent.
++{
++  const factors = GAME_CONFIG.BIOME_XP_BIOME_TIER_MULT as Record<number, Record<string, number>>;
++  const sample = (node: string, type: string) => {
++    const world = new World();
++    const player = world.attachPlayerEntity(makePlayer('biome-factor'), 'biome-factor');
++    const monster = world.createMonster(node, type, {x:800,y:800})!;
++    grantMonsterRewards(world, 'biome-factor', monster);
++    const p = player.tracksProgression;
++    return {xp:Object.values(p.biomeXP).reduce((a,b)=>a+b,0), essence:JSON.stringify(p.essences), catalysts:JSON.stringify([p.catalysts,p.catalystProgress])};
++  };
++  for (const [node,type,factor] of [
++    ['node-t4-desert-03','sand-viper',2.4],
++    ['node-t4-tundra-01','hoarfrost-yeti',1.8],
++    ['node-t3-desert-01','dune-stalker',1],
++    ['node-t4-volcanic-01','ember-skink',1],
++  ] as const) {
++    const saved = factors[4];
++    try {
++      factors[4] = {}; const base = sample(node,type);
++      factors[4] = saved; const adjusted = sample(node,type);
++      assert(base.xp > 0 && Math.abs(adjusted.xp-base.xp*factor)<=1, node+' mastery factor');
++      assert(adjusted.essence===base.essence, node+' essence unchanged');
++      assert(adjusted.catalysts===base.catalysts, node+' catalysts unchanged');
++    } finally { factors[4] = saved; }
++  }
++  console.log('biome XP factor isolation: ok');
++}
+diff --git a/shared/src/config/gameConfig.test.ts b/shared/src/config/gameConfig.test.ts
+index 62d670d6..9e045d7a 100644
+--- a/shared/src/config/gameConfig.test.ts
++++ b/shared/src/config/gameConfig.test.ts
+@@ -86,10 +86,10 @@ function testPeekSceneBoundsEdge(): void {
+ }
+ 
+ const localTables = [
+-  [210, 455, 735, 1_050, 1_383, 1_750],
+-  [600, 1_300, 2_100, 3_000, 3_950, 5_000],
+-  [840, 1_820, 2_940, 4_200, 5_530, 7_000],
+-  [1_080, 2_340, 3_780, 5_400, 7_110, 9_000],
++  [210, 455, 735, 1050, 1383, 1750],
++  [450, 975, 1575, 2250, 2963, 3750],
++  [5040, 10920, 17640, 25200, 33180, 42000],
++  [72000, 156000, 252000, 360000, 474000, 600000],
+ ] as const;
+ 
+ assert(BIOME_LEVELS_PER_TIER === 6, 'biome segments remain six levels');
+@@ -100,7 +100,7 @@ assert(
+ 
+ for (let tier = 1; tier <= 4; tier++) {
+   assert(
+-    biomeXpSegmentBudget(tier) === [0, 1_750, 5_000, 7_000, 9_000][tier],
++    biomeXpSegmentBudget(tier) === [0, 1750, 3750, 42000, 600000][tier],
+     `T${tier} segment budget is explicit`,
+   );
+   const offset = (tier - 1) * BIOME_LEVELS_PER_TIER;
+@@ -114,17 +114,17 @@ for (let tier = 1; tier <= 4; tier++) {
+ }
+ 
+ assert(biomeXpForLevel(0) === 0, 'level zero costs zero XP');
+-assert(biomeXpForLevel(6) === 1_750, 'T1 reference segment ends at 1,750 XP');
+-assert(biomeXpForLevel(12) === 6_750, 'T2 reference segment ends at 6,750 cumulative XP');
+-assert(biomeXpForLevel(18) === 13_750, 'T3 reference segment ends at 13,750 cumulative XP');
+-assert(biomeXpForLevel(24) === 22_750, 'T4 reference segment ends at 22,750 cumulative XP');
++assert(biomeXpForLevel(6) === 1750, 'T1 candidate segment ends at 1,750 XP');
++assert(biomeXpForLevel(12) === 5500, 'T2 candidate cumulative threshold');
++assert(biomeXpForLevel(18) === 47500, 'T3 candidate cumulative threshold');
++assert(biomeXpForLevel(24) === 647500, 'T4 candidate cumulative threshold');
+ 
+ assert(biomeLevelOffset('plains') === 0, 'T1 biome keeps zero offset');
+ assert(biomeLevelOffset('jungle') === 6, 'T2-start biome keeps its six-level offset');
+-assert(biomeXpForBiomeLevel('plains', 6) === 1_750, 'T1 biome reaches its local budget');
+-assert(biomeXpForBiomeLevel('jungle', 1) === 600, 'T2-start biome begins on the T2 local curve');
+-assert(biomeXpForBiomeLevel('jungle', 6) === 5_000, 'T2-start biome reaches the T2 local budget');
+-assert(biomeXpForBiomeLevel('jungle', 7) === 5_840, 'T2-start biome advances into the T3 curve');
++assert(biomeXpForBiomeLevel('plains', 6) === 1750, 'T1 biome reaches its local budget');
++assert(biomeXpForBiomeLevel('jungle', 1) === 450, 'T2-start biome begins on the T2 local curve');
++assert(biomeXpForBiomeLevel('jungle', 6) === 3750, 'T2-start biome reaches the T2 local budget');
++assert(biomeXpForBiomeLevel('jungle', 7) === 8790, 'T2-start biome advances into the T3 curve');
+ assert(
+   JSON.stringify(CLEARING_MASTERY_XP_THRESHOLDS) === JSON.stringify([0, 43, 172, 430, 860]),
+   'clearing keeps its explicit tutorial threshold table',
+@@ -136,7 +136,7 @@ assert(clearingMasteryXpForLevel(3) === 430, 'clearing level 3 aligns with First
+ assert(clearingMasteryXpForLevel(4) === 860, 'clearing level 4 arrives after twenty Tiny Wisps');
+ assert(clearingMasteryXpForLevel(5) === 860, 'clearing thresholds stop at the four-level cap');
+ assert(biomeXpForBiomeLevel('clearing', 4) === 860, 'clearing does not inherit the normal T1 curve');
+-assert(biomeXpForLevel(4) === 1_050, 'normal T1 curve remains independent at level 4');
++assert(biomeXpForLevel(4) === 1050, 'normal T1 curve remains independent at level 4');
+ assert(
+   MONSTER_DATABASE.get('tiny-slime')?.rewards.biomeXp === 43,
+   'Clearing threshold table stays aligned with the unchanged Tiny Wisp reward',
+diff --git a/shared/src/config/gameConfig.ts b/shared/src/config/gameConfig.ts
+index 327f958f..b1128099 100644
+--- a/shared/src/config/gameConfig.ts
++++ b/shared/src/config/gameConfig.ts
+@@ -142,7 +142,7 @@ export const GAME_CONFIG = {
+   /** Incremental XP shares for the six levels in one tier segment. */
+   BIOME_XP_LOCAL_STEP_SHARES: [12, 14, 16, 18, 19, 21] as const,
+   /** Total XP for one six-level segment, indexed by tier; index 0 is unused. */
+-  BIOME_XP_SEGMENT_BUDGET_BY_TIER: [0, 1_750, 5_000, 7_000, 9_000] as const,
++  BIOME_XP_SEGMENT_BUDGET_BY_TIER: [0, 1_750, 3_750, 42_000, 600_000] as const,
+   /** Growth applied to segments beyond the explicitly tuned T4 budget. */
+   BIOME_XP_FUTURE_TIER_BUDGET_GROWTH: 1.2,
+   /**
+@@ -153,6 +153,8 @@ export const GAME_CONFIG = {
+   BIOME_XP_REWARD_MULT_BY_TIER: [
+     1.0, 2.0, 1.25, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+   ] as unknown as readonly number[],
++  /** Experimental mastery-only biome correction; independent of essence/catalysts. */
++  BIOME_XP_BIOME_TIER_MULT: { 4: { tundra: 1.8, desert: 2.4 } } as Readonly<Record<number, Readonly<Record<string, number>>>>,
+   /**
+    * Per-tier multiplier on essence granted to the player. T1's validated 2x
+    * progression rate is real data; later tiers retain their dampening.

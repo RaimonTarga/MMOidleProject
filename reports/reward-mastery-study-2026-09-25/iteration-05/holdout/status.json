@@ -1,0 +1,150 @@
+{
+  "done": 24,
+  "total": 24,
+  "results": [
+    {
+      "id": "candidate-closing-striker-balanced-c-V-s101063-at-node-t4-desert-01",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-striker-balanced-c-V-s101051-at-node-t4-tundra-03",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-striker-balanced-c-V-s101051-at-node-t4-desert-01",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-striker-balanced-c-V-s101063-at-node-t4-tundra-03",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-squire-heavy-b-D-s101051-at-node-t4-desert-01",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-squire-heavy-b-D-s101063-at-node-t4-desert-01",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-squire-heavy-b-D-s101051-at-node-t4-tundra-03",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-squire-heavy-b-D-s101063-at-node-t4-tundra-03",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-conduit-balanced-a-T-s101051-at-node-t4-tundra-03",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-conduit-balanced-a-T-s101063-at-node-t4-tundra-03",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-conduit-balanced-a-T-s101051-at-node-t4-desert-01",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-conduit-balanced-a-T-s101063-at-node-t4-desert-01",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-slinger-balanced-a-T-s101051-at-node-t4-tundra-03",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-slinger-balanced-a-T-s101063-at-node-t4-tundra-03",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-slinger-heavy-a-D-s101051-at-node-t4-desert-01",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-slinger-heavy-a-D-s101063-at-node-t4-desert-01",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-spirit-light-a-T-s101063-at-node-t4-desert-01",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-striker-balanced-c-V-s101051-at-node-t4-volcanic-03",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-spirit-light-a-T-s101051-at-node-t4-tundra-03",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-striker-balanced-c-V-s101063-at-node-t4-volcanic-03",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-spirit-light-a-T-s101063-at-node-t4-tundra-03",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-spirit-light-a-T-s101051-at-node-t4-desert-01",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-slinger-light-c-V-s101063-at-node-t4-volcanic-03",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-slinger-light-c-V-s101051-at-node-t4-volcanic-03",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    }
+  ]
+}

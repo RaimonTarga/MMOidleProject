@@ -1,0 +1,126 @@
+{
+  "changes": [
+    {
+      "id": "baseline-op-t2-striker-heavy-desert-t2-desert-arrival-s101009",
+      "afterMs": 1800000,
+      "beforeMs": 2700000
+    },
+    {
+      "id": "candidate-op-t2-striker-heavy-desert-t2-desert-arrival-s101009",
+      "afterMs": 1800000,
+      "beforeMs": 2700000
+    },
+    {
+      "id": "baseline-op-t2-striker-heavy-desert-t2-desert-arrival-s101033",
+      "afterMs": 1800000,
+      "beforeMs": 2700000
+    },
+    {
+      "id": "candidate-op-t2-striker-heavy-desert-t2-desert-arrival-s101033",
+      "afterMs": 1800000,
+      "beforeMs": 2700000
+    },
+    {
+      "id": "baseline-op-t3-squire-balanced-swamp-t3-developed-s101009",
+      "afterMs": 3600000,
+      "beforeMs": 5400000
+    },
+    {
+      "id": "candidate-op-t3-squire-balanced-swamp-t3-developed-s101009",
+      "afterMs": 3600000,
+      "beforeMs": 5400000
+    },
+    {
+      "id": "baseline-op-t3-squire-balanced-swamp-t3-developed-s101033",
+      "afterMs": 3600000,
+      "beforeMs": 5400000
+    },
+    {
+      "id": "candidate-op-t3-squire-balanced-swamp-t3-developed-s101033",
+      "afterMs": 3600000,
+      "beforeMs": 5400000
+    },
+    {
+      "id": "baseline-op-t3-squire-heavy-tundra-t3-tundra-arrival-s101009",
+      "afterMs": 3600000,
+      "beforeMs": 5400000
+    },
+    {
+      "id": "candidate-op-t3-squire-heavy-tundra-t3-tundra-arrival-s101009",
+      "afterMs": 3600000,
+      "beforeMs": 5400000
+    },
+    {
+      "id": "baseline-op-t3-squire-heavy-tundra-t3-tundra-arrival-s101033",
+      "afterMs": 3600000,
+      "beforeMs": 5400000
+    },
+    {
+      "id": "candidate-op-t3-squire-heavy-tundra-t3-tundra-arrival-s101033",
+      "afterMs": 3600000,
+      "beforeMs": 5400000
+    },
+    {
+      "id": "baseline-closing-conduit-balanced-a-T-s101009",
+      "afterMs": 5400000,
+      "beforeMs": 9000000
+    },
+    {
+      "id": "candidate-closing-conduit-balanced-a-T-s101009",
+      "afterMs": 5400000,
+      "beforeMs": 9000000
+    },
+    {
+      "id": "baseline-closing-conduit-balanced-a-T-s101033",
+      "afterMs": 5400000,
+      "beforeMs": 9000000
+    },
+    {
+      "id": "candidate-closing-conduit-balanced-a-T-s101033",
+      "afterMs": 5400000,
+      "beforeMs": 9000000
+    },
+    {
+      "id": "baseline-closing-striker-heavy-a-D-s101009",
+      "afterMs": 5400000,
+      "beforeMs": 9000000
+    },
+    {
+      "id": "candidate-closing-striker-heavy-a-D-s101009",
+      "afterMs": 5400000,
+      "beforeMs": 9000000
+    },
+    {
+      "id": "baseline-closing-striker-heavy-a-D-s101033",
+      "afterMs": 5400000,
+      "beforeMs": 9000000
+    },
+    {
+      "id": "candidate-closing-striker-heavy-a-D-s101033",
+      "afterMs": 5400000,
+      "beforeMs": 9000000
+    },
+    {
+      "id": "baseline-closing-striker-heavy-c-V-s101009",
+      "afterMs": 5400000,
+      "beforeMs": 9000000
+    },
+    {
+      "id": "candidate-closing-striker-heavy-c-V-s101009",
+      "afterMs": 5400000,
+      "beforeMs": 9000000
+    },
+    {
+      "id": "baseline-closing-striker-heavy-c-V-s101033",
+      "afterMs": 5400000,
+      "beforeMs": 9000000
+    },
+    {
+      "id": "candidate-closing-striker-heavy-c-V-s101033",
+      "afterMs": 5400000,
+      "beforeMs": 9000000
+    }
+  ],
+  "at": "2026-09-25T09:18:39.2174127+02:00",
+  "reason": "Prospective horizon amendment before these jobs start: 2x target for T2/T3 and 1.5x target for T4. Current Jungle jobs unchanged. Runtime profiling showed expensive navigation ticks; preserve censoring at these declared horizons."
+}

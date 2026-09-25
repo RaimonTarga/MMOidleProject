@@ -1,0 +1,166 @@
+{
+  "done": 32,
+  "total": 32,
+  "results": [
+    {
+      "id": "candidate-op-t1-striker-plains-t1-developed-s101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-op-t1-striker-plains-t1-developed-s101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-op-t1-striker-plains-t1-developed-s101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-op-t1-striker-plains-t1-developed-s101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-op-t2-squire-balanced-jungle-t2-jungle-arrival-s101009",
+      "code": 4294967295,
+      "outputExists": false
+    },
+    {
+      "id": "candidate-op-t2-squire-balanced-jungle-t2-jungle-arrival-s101009",
+      "code": 4294967295,
+      "outputExists": false
+    },
+    {
+      "id": "baseline-op-t2-squire-balanced-jungle-t2-jungle-arrival-s101033",
+      "code": 4294967295,
+      "outputExists": false
+    },
+    {
+      "id": "candidate-op-t2-squire-balanced-jungle-t2-jungle-arrival-s101033",
+      "code": 4294967295,
+      "outputExists": false
+    },
+    {
+      "id": "baseline-op-t2-striker-heavy-desert-t2-desert-arrival-s101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-op-t2-striker-heavy-desert-t2-desert-arrival-s101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-op-t2-striker-heavy-desert-t2-desert-arrival-s101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-op-t2-striker-heavy-desert-t2-desert-arrival-s101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-op-t3-squire-balanced-swamp-t3-developed-s101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-op-t3-squire-balanced-swamp-t3-developed-s101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-op-t3-squire-balanced-swamp-t3-developed-s101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-op-t3-squire-balanced-swamp-t3-developed-s101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-op-t3-squire-heavy-tundra-t3-tundra-arrival-s101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-op-t3-squire-heavy-tundra-t3-tundra-arrival-s101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-op-t3-squire-heavy-tundra-t3-tundra-arrival-s101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-op-t3-squire-heavy-tundra-t3-tundra-arrival-s101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-closing-conduit-balanced-a-T-s101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-conduit-balanced-a-T-s101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-closing-striker-heavy-a-D-s101009",
+      "code": 1,
+      "outputExists": false
+    },
+    {
+      "id": "baseline-closing-conduit-balanced-a-T-s101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-conduit-balanced-a-T-s101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-striker-heavy-a-D-s101009",
+      "code": 1,
+      "outputExists": false
+    },
+    {
+      "id": "baseline-closing-striker-heavy-a-D-s101033",
+      "code": 1,
+      "outputExists": false
+    },
+    {
+      "id": "candidate-closing-striker-heavy-a-D-s101033",
+      "code": 1,
+      "outputExists": false
+    },
+    {
+      "id": "baseline-closing-striker-heavy-c-V-s101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-closing-striker-heavy-c-V-s101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-striker-heavy-c-V-s101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-striker-heavy-c-V-s101033",
+      "code": 0,
+      "outputExists": true
+    }
+  ]
+}

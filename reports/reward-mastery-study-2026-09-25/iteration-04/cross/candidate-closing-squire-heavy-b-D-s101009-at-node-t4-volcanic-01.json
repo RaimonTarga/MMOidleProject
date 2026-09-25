@@ -1,0 +1,4070 @@
+{
+  "diagnostics": [
+    {
+      "tickEndMs": 10000,
+      "xp": 42372,
+      "pos": {
+        "x": 3915.9303013332774,
+        "y": 2342.1181446349087
+      },
+      "hp": 585,
+      "intent": {
+        "kind": "attack",
+        "targetMonsterTypeId": "ember-skink",
+        "reason": "Nearest eligible target",
+        "source": "",
+        "matchedRunes": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ]
+      },
+      "heat": [
+        {
+          "id": "volcanic-heat",
+          "stacks": 0,
+          "maxStacks": 0,
+          "remainingMs": -1,
+          "refreshable": false,
+          "instanced": false,
+          "sourceId": "node-feature:volcanic-heat",
+          "data": {
+            "isAmbientRamp": 1,
+            "maxStacks": 0,
+            "rampMs": 3000,
+            "rampAccum": 0,
+            "totalMs": 0,
+            "damageSoftcapStacks": 10,
+            "damageSoftcapScale": 5,
+            "coolingScaleStacks": 10,
+            "coolingRateMult": 2,
+            "damageTakenPct": 0.045,
+            "damageDealtPct": 0.03,
+            "coolingAccum": 0
+          }
+        }
+      ],
+      "monsters": [
+        {
+          "id": "node-t4-volcanic-01_monster-35",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 897.6818926975066,
+            "y": 84.11462871573335
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-34",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 897.6818926975066,
+            "y": 229.88537128426668
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-33",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1036.3181073024934,
+            "y": 274.93100802059905
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-32",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1122,
+            "y": 157
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-31",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 959.5010773146817,
+            "y": 210.10230042060124
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-30",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 4116,
+            "y": 4159
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-29",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 4760,
+            "y": 2201.9939785762854
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-28",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 55.999999999999964,
+            "y": 328.25386608210715
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-27",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 56.00000000000002,
+            "y": 473.74613391789285
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-26",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 182,
+            "y": 401
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-25",
+          "type": "magma-salamander",
+          "hp": 5808,
+          "pos": {
+            "x": 187.72873633598482,
+            "y": 423.60292217486034
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-24",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 2563,
+            "y": 745.2538660821072
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-23",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 2563,
+            "y": 890.7461339178928
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-22",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 2689,
+            "y": 818
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-21",
+          "type": "magma-salamander",
+          "hp": 5808,
+          "pos": {
+            "x": 2516.027807268914,
+            "y": 884.1688999502288
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-20",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 3302,
+            "y": 384
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-36",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1036.3181073024934,
+            "y": 48
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-18",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 3151,
+            "y": 3924
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-17",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 3047,
+            "y": 4028
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-16",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 3151,
+            "y": 4132
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-15",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 3255,
+            "y": 4028
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-14",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 3206.9915186935496,
+            "y": 4015.4503109540374
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-13",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 4515.979996458778,
+            "y": 2138.618794111626
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-12",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 4525.590928792672,
+            "y": 2318.273855964925
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-11",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 4031,
+            "y": 754
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-10",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 572,
+            "y": 4155
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-9",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 468,
+            "y": 4259
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-8",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 572,
+            "y": 4363
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-7",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 676,
+            "y": 4259
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-6",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 650.1209634594302,
+            "y": 4199.328815856121
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-5",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 882,
+            "y": 2377
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-4",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 783.2176593948324,
+            "y": 2474.416989257223
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-3",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 890.6894463472906,
+            "y": 2561.3455390638987
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-2",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 986,
+            "y": 2481
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-1",
+          "type": "infernal-direhound",
+          "hp": 1750,
+          "pos": {
+            "x": 860.5875245533919,
+            "y": 2492.5655528360226
+          }
+        }
+      ],
+      "runtimeKeys": [
+        "hasMovePath"
+      ]
+    },
+    {
+      "tickEndMs": 20000,
+      "xp": 43380,
+      "pos": {
+        "x": 4296.874715729991,
+        "y": 1800.8747157299917
+      },
+      "hp": 585,
+      "intent": {
+        "kind": "attack",
+        "targetMonsterTypeId": "ember-skink",
+        "reason": "Lowest-health eligible target",
+        "source": "Focus Lowest HP",
+        "activeRune": {
+          "conditionId": "in-combat",
+          "actionId": "focus-lowest-hp"
+        },
+        "matchedRunes": [
+          {
+            "conditionId": "in-combat",
+            "actionId": "focus-lowest-hp"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ]
+      },
+      "heat": [
+        {
+          "id": "volcanic-heat",
+          "stacks": 11,
+          "maxStacks": 0,
+          "remainingMs": -1,
+          "refreshable": false,
+          "instanced": false,
+          "sourceId": "node-feature:volcanic-heat",
+          "data": {
+            "isAmbientRamp": 1,
+            "maxStacks": 0,
+            "rampMs": 3000,
+            "rampAccum": 1000,
+            "totalMs": 0,
+            "damageSoftcapStacks": 10,
+            "damageSoftcapScale": 5,
+            "coolingScaleStacks": 10,
+            "coolingRateMult": 2,
+            "damageTakenPct": 0.045,
+            "damageDealtPct": 0.03
+          }
+        }
+      ],
+      "monsters": [
+        {
+          "id": "node-t4-volcanic-01_monster-38",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1847,
+            "y": 1361
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-37",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 1784.3578530950595,
+            "y": 1409.3038722929532
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-35",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 897.6818926975066,
+            "y": 84.11462871573335
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-34",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 897.6818926975066,
+            "y": 229.88537128426668
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-33",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1036.3181073024934,
+            "y": 274.93100802059905
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-32",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1122,
+            "y": 157
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-31",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 976.6222252066411,
+            "y": 199.85212809777997
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-30",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 4116,
+            "y": 4159
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-39",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1743,
+            "y": 1465
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-28",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 55.999999999999964,
+            "y": 328.25386608210715
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-27",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 56.00000000000002,
+            "y": 473.74613391789285
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-26",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 182,
+            "y": 401
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-25",
+          "type": "magma-salamander",
+          "hp": 5808,
+          "pos": {
+            "x": 154.71153810168764,
+            "y": 483.3656292614838
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-24",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 2563,
+            "y": 745.2538660821072
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-23",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 2563,
+            "y": 890.7461339178928
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-22",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 2689,
+            "y": 818
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-21",
+          "type": "magma-salamander",
+          "hp": 5808,
+          "pos": {
+            "x": 2583.7462490081843,
+            "y": 764.7536117815669
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-20",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 3302,
+            "y": 384
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-36",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1036.3181073024934,
+            "y": 48
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-18",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 3151,
+            "y": 3924
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-17",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 3047,
+            "y": 4028
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-16",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 3151,
+            "y": 4132
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-15",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 3255,
+            "y": 4028
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-14",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 3209.6222484605087,
+            "y": 4025.945265414797
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-40",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1639,
+            "y": 1361
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-41",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 1743,
+            "y": 1257
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-11",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 4031,
+            "y": 754
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-10",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 572,
+            "y": 4155
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-9",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 468,
+            "y": 4259
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-8",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 572,
+            "y": 4363
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-7",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 676,
+            "y": 4259
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-6",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 590.8990713287353,
+            "y": 4312.010005764098
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-5",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 898.4653976438701,
+            "y": 2373.663732560295
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-4",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 831.4938635237141,
+            "y": 2459.9405216319174
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-3",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 912.7773664417953,
+            "y": 2549.2144308746697
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-2",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 986,
+            "y": 2481
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-1",
+          "type": "infernal-direhound",
+          "hp": 1750,
+          "pos": {
+            "x": 888.2897619214501,
+            "y": 2492.4771816447815
+          }
+        }
+      ],
+      "runtimeKeys": [
+        "hasMovePath"
+      ]
+    },
+    {
+      "tickEndMs": 30000,
+      "xp": 43752,
+      "pos": {
+        "x": 3586.3228705503243,
+        "y": 816
+      },
+      "hp": 585,
+      "intent": {
+        "kind": "attack",
+        "targetMonsterTypeId": "ember-skink",
+        "reason": "Lowest-health eligible target",
+        "source": "Focus Lowest HP",
+        "activeRune": {
+          "conditionId": "in-combat",
+          "actionId": "focus-lowest-hp"
+        },
+        "matchedRunes": [
+          {
+            "conditionId": "in-combat",
+            "actionId": "focus-lowest-hp"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ]
+      },
+      "heat": [
+        {
+          "id": "volcanic-heat",
+          "stacks": 11,
+          "maxStacks": 0,
+          "remainingMs": -1,
+          "refreshable": false,
+          "instanced": false,
+          "sourceId": "node-feature:volcanic-heat",
+          "data": {
+            "isAmbientRamp": 1,
+            "maxStacks": 0,
+            "rampMs": 3000,
+            "rampAccum": 1000,
+            "totalMs": 0,
+            "damageSoftcapStacks": 10,
+            "damageSoftcapScale": 5,
+            "coolingScaleStacks": 10,
+            "coolingRateMult": 2,
+            "damageTakenPct": 0.045,
+            "damageDealtPct": 0.03
+          }
+        }
+      ],
+      "monsters": [
+        {
+          "id": "node-t4-volcanic-01_monster-37",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 1738.940012137521,
+            "y": 1413.3756928631483
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-35",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 897.6818926975066,
+            "y": 84.11462871573335
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-34",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 897.6818926975066,
+            "y": 229.88537128426668
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-33",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1036.3181073024934,
+            "y": 274.93100802059905
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-32",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1122,
+            "y": 157
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-31",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 980.6372749663888,
+            "y": 163.0805681932763
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-30",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 4116,
+            "y": 4159
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-39",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1743,
+            "y": 1465
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-28",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 55.999999999999964,
+            "y": 328.25386608210715
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-27",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 56.00000000000002,
+            "y": 473.74613391789285
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-26",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 182,
+            "y": 401
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-25",
+          "type": "magma-salamander",
+          "hp": 5808,
+          "pos": {
+            "x": 41.18967750484932,
+            "y": 416.00995268829496
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-24",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 2563,
+            "y": 745.2538660821072
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-23",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 2563,
+            "y": 890.7461339178928
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-22",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 2689,
+            "y": 818
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-21",
+          "type": "magma-salamander",
+          "hp": 5808,
+          "pos": {
+            "x": 2643.2326497228178,
+            "y": 894.3094751379534
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-20",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 3302,
+            "y": 384
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-36",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1036.3181073024934,
+            "y": 48
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-18",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 3151,
+            "y": 3924
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-17",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 3047,
+            "y": 4028
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-16",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 3151,
+            "y": 4132
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-15",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 3255,
+            "y": 4028
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-14",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 3140.472246207558,
+            "y": 4055.236008954131
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-40",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1639,
+            "y": 1361
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-41",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 1743,
+            "y": 1257
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-38",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1847,
+            "y": 1361
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-10",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 572,
+            "y": 4155
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-9",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 468,
+            "y": 4259
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-8",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 572,
+            "y": 4363
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-7",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 676,
+            "y": 4259
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-6",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 545.3324024096132,
+            "y": 4256.263448169787
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-5",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 799.9116337385436,
+            "y": 2424.9171685796096
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-4",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 726.9004252118974,
+            "y": 2493.466132273864
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-3",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 798.6549119039109,
+            "y": 2565.900953544549
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-2",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 864.1661971942159,
+            "y": 2491.556631269049
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-1",
+          "type": "infernal-direhound",
+          "hp": 1750,
+          "pos": {
+            "x": 699.0263940280789,
+            "y": 2398.0760481691273
+          }
+        }
+      ],
+      "runtimeKeys": [
+        "hasMovePath"
+      ]
+    },
+    {
+      "tickEndMs": 40000,
+      "xp": 44124,
+      "pos": {
+        "x": 3324.760392813146,
+        "y": 426.85749573132586
+      },
+      "hp": 530.584250000001,
+      "intent": {
+        "kind": "idle",
+        "reason": "Waiting to recover to full health",
+        "source": "Convalescent",
+        "activeRune": {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        "matchedRunes": [
+          {
+            "conditionId": "in-combat",
+            "actionId": "focus-lowest-hp"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ]
+      },
+      "heat": [
+        {
+          "id": "volcanic-heat",
+          "stacks": 11,
+          "maxStacks": 0,
+          "remainingMs": -1,
+          "refreshable": false,
+          "instanced": false,
+          "sourceId": "node-feature:volcanic-heat",
+          "data": {
+            "isAmbientRamp": 1,
+            "maxStacks": 0,
+            "rampMs": 3000,
+            "rampAccum": 1000,
+            "totalMs": 0,
+            "damageSoftcapStacks": 10,
+            "damageSoftcapScale": 5,
+            "coolingScaleStacks": 10,
+            "coolingRateMult": 2,
+            "damageTakenPct": 0.045,
+            "damageDealtPct": 0.03
+          }
+        }
+      ],
+      "monsters": [
+        {
+          "id": "node-t4-volcanic-01_monster-35",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 897.6818926975066,
+            "y": 84.11462871573335
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-34",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 897.6818926975066,
+            "y": 229.88537128426668
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-33",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1036.3181073024934,
+            "y": 274.93100802059905
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-32",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1122,
+            "y": 157
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-31",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 914.0341876655481,
+            "y": 142.8768863011938
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-30",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 4116,
+            "y": 4159
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-39",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1743,
+            "y": 1465
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-28",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 55.999999999999964,
+            "y": 328.25386608210715
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-27",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 56.00000000000002,
+            "y": 473.74613391789285
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-26",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 182,
+            "y": 401
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-25",
+          "type": "magma-salamander",
+          "hp": 5808,
+          "pos": {
+            "x": 71.81517173793135,
+            "y": 407.90430632421885
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-24",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 2563,
+            "y": 745.2538660821072
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-23",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 2563,
+            "y": 890.7461339178928
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-22",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 2689,
+            "y": 818
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-21",
+          "type": "magma-salamander",
+          "hp": 5808,
+          "pos": {
+            "x": 2620.589671037762,
+            "y": 846.6106614429067
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-37",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 1715.3206001712185,
+            "y": 1375.1596078996306
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-36",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1036.3181073024934,
+            "y": 48
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-18",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 3151,
+            "y": 3924
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-17",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 3047,
+            "y": 4028
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-16",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 3151,
+            "y": 4132
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-15",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 3255,
+            "y": 4028
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-14",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 3097.8311904135157,
+            "y": 4080.366008519166
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-40",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1639,
+            "y": 1361
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-41",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 1743,
+            "y": 1257
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-38",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1847,
+            "y": 1361
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-10",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 572,
+            "y": 4155
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-9",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 468,
+            "y": 4259
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-8",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 572,
+            "y": 4363
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-7",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 676,
+            "y": 4259
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-6",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 570.4182704307568,
+            "y": 4240.44347481668
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-5",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 930.8908138334733,
+            "y": 2453.3123595721804
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-4",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 857.8066527738564,
+            "y": 2522.3359539179037
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-3",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 929.7966624269172,
+            "y": 2593.4678130312564
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-2",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 994.9326082096626,
+            "y": 2521.3568297842476
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-1",
+          "type": "infernal-direhound",
+          "hp": 1750,
+          "pos": {
+            "x": 967.7197341409048,
+            "y": 2513.726014560386
+          }
+        }
+      ],
+      "runtimeKeys": []
+    },
+    {
+      "tickEndMs": 50000,
+      "xp": 44796,
+      "pos": {
+        "x": 2706.8685776452485,
+        "y": 759.5473010846105
+      },
+      "hp": 394.3427500000007,
+      "intent": {
+        "kind": "attack",
+        "targetMonsterTypeId": "ember-skink",
+        "reason": "Lowest-health eligible target",
+        "source": "Focus Lowest HP",
+        "activeRune": {
+          "conditionId": "in-combat",
+          "actionId": "focus-lowest-hp"
+        },
+        "matchedRunes": [
+          {
+            "conditionId": "in-combat",
+            "actionId": "focus-lowest-hp"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          }
+        ]
+      },
+      "target": {
+        "targetId": "node-t4-volcanic-01_monster-21"
+      },
+      "heat": [
+        {
+          "id": "volcanic-heat",
+          "stacks": 11,
+          "maxStacks": 0,
+          "remainingMs": -1,
+          "refreshable": false,
+          "instanced": false,
+          "sourceId": "node-feature:volcanic-heat",
+          "data": {
+            "isAmbientRamp": 1,
+            "maxStacks": 0,
+            "rampMs": 3000,
+            "rampAccum": 1000,
+            "totalMs": 0,
+            "damageSoftcapStacks": 10,
+            "damageSoftcapScale": 5,
+            "coolingScaleStacks": 10,
+            "coolingRateMult": 2,
+            "damageTakenPct": 0.045,
+            "damageDealtPct": 0.03
+          }
+        }
+      ],
+      "monsters": [
+        {
+          "id": "node-t4-volcanic-01_monster-44",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1435,
+            "y": 4155
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-43",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1539,
+            "y": 4051
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-42",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 1442.0559760996837,
+            "y": 4033.143538948585
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-35",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 897.6818926975066,
+            "y": 84.11462871573335
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-34",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 897.6818926975066,
+            "y": 229.88537128426668
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-33",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1036.3181073024934,
+            "y": 274.93100802059905
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-32",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1122,
+            "y": 157
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-31",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 976.7660252233121,
+            "y": 76.67902714678887
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-30",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 4116,
+            "y": 4159
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-39",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1743,
+            "y": 1465
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-28",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 55.999999999999964,
+            "y": 328.25386608210715
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-27",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 56.00000000000002,
+            "y": 473.74613391789285
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-26",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 182,
+            "y": 401
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-25",
+          "type": "magma-salamander",
+          "hp": 5808,
+          "pos": {
+            "x": 149.9758589125293,
+            "y": 358.62279883515566
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-45",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1331,
+            "y": 4051
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-23",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 2682.669371488483,
+            "y": 802.5473010846105
+          },
+          "aggro": {
+            "targetId": "bench-bot-0",
+            "targetKind": "player",
+            "lastAggroAt": 1800000043700,
+            "sinceMs": 1800000043700
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-46",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 1435,
+            "y": 3947
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-21",
+          "type": "magma-salamander",
+          "hp": 4565,
+          "pos": {
+            "x": 2684.9189860500524,
+            "y": 812.111820960068
+          },
+          "aggro": {
+            "targetId": "bench-bot-0",
+            "targetKind": "player",
+            "lastAggroAt": 1800000043700,
+            "sinceMs": 1800000043700
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-37",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 1776.4483000393573,
+            "y": 1347.2446601326994
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-36",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1036.3181073024934,
+            "y": 48
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-18",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 3151,
+            "y": 3924
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-17",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 3047,
+            "y": 4028
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-16",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 3151,
+            "y": 4132
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-15",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 3255,
+            "y": 4028
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-14",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 3081.6260262775304,
+            "y": 4037.7426269624934
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-40",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1639,
+            "y": 1361
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-41",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 1743,
+            "y": 1257
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-38",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1847,
+            "y": 1361
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-10",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 572,
+            "y": 4155
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-9",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 468,
+            "y": 4259
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-8",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 572,
+            "y": 4363
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-7",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 676,
+            "y": 4259
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-6",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 636.5139928657495,
+            "y": 4292.085241987956
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-5",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 885.3460493457997,
+            "y": 2497.9861739492917
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-4",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 820.2904067728996,
+            "y": 2564.2851125034513
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-3",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 891.462198928842,
+            "y": 2635.0807253756084
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-2",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 958.5448797061675,
+            "y": 2563.679929908827
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-1",
+          "type": "infernal-direhound",
+          "hp": 1750,
+          "pos": {
+            "x": 841.168244534964,
+            "y": 2684.5637472182257
+          }
+        }
+      ],
+      "runtimeKeys": []
+    },
+    {
+      "tickEndMs": 60000,
+      "xp": 44796,
+      "pos": {
+        "x": 2706.8685776452485,
+        "y": 759.5473010846105
+      },
+      "hp": 266.04775000000154,
+      "intent": {
+        "kind": "attack",
+        "targetMonsterTypeId": "ember-skink",
+        "reason": "Lowest-health eligible target",
+        "source": "Focus Lowest HP",
+        "activeRune": {
+          "conditionId": "in-combat",
+          "actionId": "focus-lowest-hp"
+        },
+        "matchedRunes": [
+          {
+            "conditionId": "in-combat",
+            "actionId": "focus-lowest-hp"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          }
+        ]
+      },
+      "target": {
+        "targetId": "node-t4-volcanic-01_monster-21"
+      },
+      "heat": [
+        {
+          "id": "volcanic-heat",
+          "stacks": 11,
+          "maxStacks": 0,
+          "remainingMs": -1,
+          "refreshable": false,
+          "instanced": false,
+          "sourceId": "node-feature:volcanic-heat",
+          "data": {
+            "isAmbientRamp": 1,
+            "maxStacks": 0,
+            "rampMs": 3000,
+            "rampAccum": 1000,
+            "totalMs": 0,
+            "damageSoftcapStacks": 10,
+            "damageSoftcapScale": 5,
+            "coolingScaleStacks": 10,
+            "coolingRateMult": 2,
+            "damageTakenPct": 0.045,
+            "damageDealtPct": 0.03
+          }
+        }
+      ],
+      "monsters": [
+        {
+          "id": "node-t4-volcanic-01_monster-44",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1435,
+            "y": 4155
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-43",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1539,
+            "y": 4051
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-42",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 1453.0998833875462,
+            "y": 4077.0305625295505
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-35",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 897.6818926975066,
+            "y": 84.11462871573335
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-34",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 902.3213833962111,
+            "y": 222.8828627297104
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-33",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1036.3181073024934,
+            "y": 274.93100802059905
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-32",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1122,
+            "y": 157
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-31",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 1007.3418729979985,
+            "y": 101.42990553277538
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-30",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 4116,
+            "y": 4159
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-39",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1743,
+            "y": 1465
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-28",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 55.999999999999964,
+            "y": 328.25386608210715
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-27",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 56.00000000000002,
+            "y": 473.74613391789285
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-26",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 182,
+            "y": 401
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-25",
+          "type": "magma-salamander",
+          "hp": 5808,
+          "pos": {
+            "x": 165.93341040028204,
+            "y": 382.8854893396259
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-45",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1331,
+            "y": 4051
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-23",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 2682.669371488483,
+            "y": 802.5473010846105
+          },
+          "aggro": {
+            "targetId": "bench-bot-0",
+            "targetKind": "player",
+            "lastAggroAt": 1800000043700,
+            "sinceMs": 1800000043700
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-46",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 1435,
+            "y": 3947
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-21",
+          "type": "magma-salamander",
+          "hp": 1894,
+          "pos": {
+            "x": 2684.9189860500524,
+            "y": 812.111820960068
+          },
+          "aggro": {
+            "targetId": "bench-bot-0",
+            "targetKind": "player",
+            "lastAggroAt": 1800000043700,
+            "sinceMs": 1800000043700
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-37",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 1699.8388163109842,
+            "y": 1439.608002443776
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-36",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1036.3181073024934,
+            "y": 48
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-18",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 3151,
+            "y": 3924
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-17",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 3047,
+            "y": 4028
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-16",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 3151,
+            "y": 4132
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-15",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 3255,
+            "y": 4028
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-14",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 3047.6588055216407,
+            "y": 4008.304980924732
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-40",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1639,
+            "y": 1361
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-41",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 1743,
+            "y": 1257
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-38",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1847,
+            "y": 1361
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-10",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 572,
+            "y": 4155
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-9",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 468,
+            "y": 4259
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-8",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 572,
+            "y": 4363
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-7",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 676,
+            "y": 4259
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-6",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 637.4212139347018,
+            "y": 4303.301220435643
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-5",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 887.1371463801556,
+            "y": 2489.779349264097
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-4",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 821.403636775512,
+            "y": 2555.9592060085834
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-3",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 892.5007279706768,
+            "y": 2626.7451715590187
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-2",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 959.7654543326547,
+            "y": 2555.369081722199
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-1",
+          "type": "infernal-direhound",
+          "hp": 1750,
+          "pos": {
+            "x": 902.5540116634205,
+            "y": 2419.045924989481
+          }
+        }
+      ],
+      "runtimeKeys": []
+    },
+    {
+      "tickEndMs": 70000,
+      "xp": 46500,
+      "pos": {
+        "x": 2706.8685776452485,
+        "y": 759.5473010846105
+      },
+      "hp": 364.752750000002,
+      "intent": {
+        "kind": "idle",
+        "reason": "Waiting to recover to full health",
+        "source": "Convalescent",
+        "activeRune": {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        "matchedRunes": [
+          {
+            "conditionId": "in-combat",
+            "actionId": "focus-lowest-hp"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ]
+      },
+      "heat": [
+        {
+          "id": "volcanic-heat",
+          "stacks": 11,
+          "maxStacks": 0,
+          "remainingMs": -1,
+          "refreshable": false,
+          "instanced": false,
+          "sourceId": "node-feature:volcanic-heat",
+          "data": {
+            "isAmbientRamp": 1,
+            "maxStacks": 0,
+            "rampMs": 3000,
+            "rampAccum": 1000,
+            "totalMs": 0,
+            "damageSoftcapStacks": 10,
+            "damageSoftcapScale": 5,
+            "coolingScaleStacks": 10,
+            "coolingRateMult": 2,
+            "damageTakenPct": 0.045,
+            "damageDealtPct": 0.03
+          }
+        }
+      ],
+      "monsters": [
+        {
+          "id": "node-t4-volcanic-01_monster-42",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 1487.352977478874,
+            "y": 4126.2923686796585
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-35",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 897.6818926975066,
+            "y": 84.11462871573335
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-34",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 902.3213833962111,
+            "y": 222.8828627297104
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-33",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1036.3181073024934,
+            "y": 274.93100802059905
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-32",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1122,
+            "y": 157
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-31",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 969.1979587569487,
+            "y": 146.60513443155799
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-30",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 4116,
+            "y": 4159
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-39",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1743,
+            "y": 1465
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-28",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 55.999999999999964,
+            "y": 328.25386608210715
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-27",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 56.00000000000002,
+            "y": 473.74613391789285
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-26",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 182,
+            "y": 401
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-25",
+          "type": "magma-salamander",
+          "hp": 5808,
+          "pos": {
+            "x": 180.74303503115888,
+            "y": 340.5193540628212
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-45",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1331,
+            "y": 4051
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-43",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1539,
+            "y": 4051
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-46",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 1435,
+            "y": 3947
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-44",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1435,
+            "y": 4155
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-37",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 1761.9710135497648,
+            "y": 1394.4656712425437
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-36",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1036.3181073024934,
+            "y": 48
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-18",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 3151,
+            "y": 3924
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-17",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 3047,
+            "y": 4028
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-16",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 3151,
+            "y": 4132
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-15",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 3255,
+            "y": 4028
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-14",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 3154.327545256954,
+            "y": 4036.7644251090073
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-40",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1639,
+            "y": 1361
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-41",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 1743,
+            "y": 1257
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-38",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1847,
+            "y": 1361
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-10",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 572,
+            "y": 4155
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-9",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 468,
+            "y": 4259
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-8",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 572,
+            "y": 4363
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-7",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 676,
+            "y": 4259
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-6",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 599.9041362874566,
+            "y": 4209.743169553797
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-5",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 855.6907487117127,
+            "y": 2329.1191812045545
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-4",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 790.3245930007323,
+            "y": 2402.9885990570597
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-3",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 861.0882395966565,
+            "y": 2474.0318459915925
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-2",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 929.45429865792,
+            "y": 2402.237148486199
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-1",
+          "type": "infernal-direhound",
+          "hp": 1750,
+          "pos": {
+            "x": 914.7968900975454,
+            "y": 2388.192536612508
+          }
+        }
+      ],
+      "runtimeKeys": []
+    },
+    {
+      "tickEndMs": 80000,
+      "xp": 46836,
+      "pos": {
+        "x": 1874.630291883285,
+        "y": 1352.9704555811186
+      },
+      "hp": 585,
+      "intent": {
+        "kind": "attack",
+        "targetMonsterTypeId": "ember-skink",
+        "reason": "Lowest-health eligible target",
+        "source": "Focus Lowest HP",
+        "activeRune": {
+          "conditionId": "in-combat",
+          "actionId": "focus-lowest-hp"
+        },
+        "matchedRunes": [
+          {
+            "conditionId": "in-combat",
+            "actionId": "focus-lowest-hp"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          }
+        ]
+      },
+      "target": {
+        "targetId": "node-t4-volcanic-01_monster-37"
+      },
+      "heat": [
+        {
+          "id": "volcanic-heat",
+          "stacks": 11,
+          "maxStacks": 0,
+          "remainingMs": -1,
+          "refreshable": false,
+          "instanced": false,
+          "sourceId": "node-feature:volcanic-heat",
+          "data": {
+            "isAmbientRamp": 1,
+            "maxStacks": 0,
+            "rampMs": 3000,
+            "rampAccum": 1000,
+            "totalMs": 0,
+            "damageSoftcapStacks": 10,
+            "damageSoftcapScale": 5,
+            "coolingScaleStacks": 10,
+            "coolingRateMult": 2,
+            "damageTakenPct": 0.045,
+            "damageDealtPct": 0.03
+          }
+        }
+      ],
+      "monsters": [
+        {
+          "id": "node-t4-volcanic-01_monster-35",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 897.6818926975066,
+            "y": 84.11462871573335
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-34",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 902.3213833962111,
+            "y": 222.8828627297104
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-33",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1036.3181073024934,
+            "y": 274.93100802059905
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-32",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1122,
+            "y": 157
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-31",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 1061.882067976597,
+            "y": 95.99865363946638
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-30",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 4116,
+            "y": 4159
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-39",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1844.5080988089007,
+            "y": 1379.0844623602666
+          },
+          "aggro": {
+            "targetId": "bench-bot-0",
+            "targetKind": "player",
+            "lastAggroAt": 1800000077700,
+            "sinceMs": 1800000077700
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-28",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 55.999999999999964,
+            "y": 328.25386608210715
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-27",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 56.00000000000002,
+            "y": 473.74613391789285
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-26",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 182,
+            "y": 401
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-25",
+          "type": "magma-salamander",
+          "hp": 5808,
+          "pos": {
+            "x": 130.85794310776254,
+            "y": 364.7075992202179
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-45",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1331,
+            "y": 4051
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-43",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1539,
+            "y": 4051
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-46",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 1435,
+            "y": 3947
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-44",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1435,
+            "y": 4155
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-37",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 1836.0890457955325,
+            "y": 1337.9677462686614
+          },
+          "aggro": {
+            "targetId": "bench-bot-0",
+            "targetKind": "player",
+            "lastAggroAt": 1800000077700,
+            "sinceMs": 1800000077700
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-36",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1036.3181073024934,
+            "y": 48
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-18",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 3151,
+            "y": 3924
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-17",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 3047,
+            "y": 4028
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-16",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 3151,
+            "y": 4132
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-15",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 3255,
+            "y": 4028
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-14",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 3089.5760119362267,
+            "y": 4062.2869432569914
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-40",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1845.0301197222873,
+            "y": 1332.2429611755297
+          },
+          "aggro": {
+            "targetId": "bench-bot-0",
+            "targetKind": "player",
+            "lastAggroAt": 1800000077700,
+            "sinceMs": 1800000077700
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-41",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 1759.4364373375024,
+            "y": 1255.553097221527
+          },
+          "aggro": {
+            "targetId": "bench-bot-0",
+            "targetKind": "player",
+            "lastAggroAt": 1800000077700,
+            "sinceMs": 1800000077700
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-42",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 1449.3158559309886,
+            "y": 3965.1199846172817
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-10",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 572,
+            "y": 4155
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-9",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 468,
+            "y": 4259
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-8",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 572,
+            "y": 4363
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-7",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 676,
+            "y": 4259
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-6",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 583.2089036382683,
+            "y": 4223.44824915187
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-5",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 829.9250941366322,
+            "y": 2412.639518455191
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-4",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 760.9337441290253,
+            "y": 2485.693565631941
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-3",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 835.9227005779446,
+            "y": 2550.0995096967413
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-2",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 901.5825059622688,
+            "y": 2485.06741256383
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-1",
+          "type": "infernal-direhound",
+          "hp": 1750,
+          "pos": {
+            "x": 752.2537933610845,
+            "y": 2586.3989905988456
+          }
+        }
+      ],
+      "runtimeKeys": []
+    },
+    {
+      "tickEndMs": 90000,
+      "xp": 47172,
+      "pos": {
+        "x": 1874.630291883285,
+        "y": 1352.9704555811186
+      },
+      "hp": 101.2375000000001,
+      "intent": {
+        "kind": "attack",
+        "targetMonsterTypeId": "ember-skink",
+        "reason": "Lowest-health eligible target",
+        "source": "Focus Lowest HP",
+        "activeRune": {
+          "conditionId": "in-combat",
+          "actionId": "focus-lowest-hp"
+        },
+        "matchedRunes": [
+          {
+            "conditionId": "in-combat",
+            "actionId": "focus-lowest-hp"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          }
+        ]
+      },
+      "target": {
+        "targetId": "node-t4-volcanic-01_monster-37"
+      },
+      "heat": [
+        {
+          "id": "volcanic-heat",
+          "stacks": 11,
+          "maxStacks": 0,
+          "remainingMs": -1,
+          "refreshable": false,
+          "instanced": false,
+          "sourceId": "node-feature:volcanic-heat",
+          "data": {
+            "isAmbientRamp": 1,
+            "maxStacks": 0,
+            "rampMs": 3000,
+            "rampAccum": 1000,
+            "totalMs": 0,
+            "damageSoftcapStacks": 10,
+            "damageSoftcapScale": 5,
+            "coolingScaleStacks": 10,
+            "coolingRateMult": 2,
+            "damageTakenPct": 0.045,
+            "damageDealtPct": 0.03
+          }
+        }
+      ],
+      "monsters": [
+        {
+          "id": "node-t4-volcanic-01_monster-48",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 1486,
+            "y": 2423
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-35",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 897.6818926975066,
+            "y": 84.11462871573335
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-34",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 902.3213833962111,
+            "y": 222.8828627297104
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-33",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1036.3181073024934,
+            "y": 274.93100802059905
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-32",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1113.622890508572,
+            "y": 156.38029315912559
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-31",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 907.2430890461003,
+            "y": 148.16211015197985
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-30",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 4116,
+            "y": 4159
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-47",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 2759.5101027536098,
+            "y": 1244.2435158259486
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-28",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 55.999999999999964,
+            "y": 328.25386608210715
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-27",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 56.00000000000002,
+            "y": 473.74613391789285
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-26",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 182,
+            "y": 401
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-25",
+          "type": "magma-salamander",
+          "hp": 5808,
+          "pos": {
+            "x": 43.04538706210377,
+            "y": 427.9915039727543
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-45",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1331,
+            "y": 4051
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-43",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1539,
+            "y": 4051
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-46",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 1435,
+            "y": 3947
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-44",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1435,
+            "y": 4155
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-37",
+          "type": "obsidian-tortoise",
+          "hp": 2047,
+          "pos": {
+            "x": 1836.0890457955325,
+            "y": 1337.9677462686614
+          },
+          "aggro": {
+            "targetId": "bench-bot-0",
+            "targetKind": "player",
+            "lastAggroAt": 1800000077700,
+            "sinceMs": 1800000077700
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-36",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1036.3181073024934,
+            "y": 48
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-18",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 3151,
+            "y": 3924
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-17",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 3047,
+            "y": 4028
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-16",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 3151,
+            "y": 4132
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-15",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 3255,
+            "y": 4028
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-14",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 3155.232460057809,
+            "y": 4039.191687898837
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-40",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 1845.0301197222873,
+            "y": 1332.2429611755297
+          },
+          "aggro": {
+            "targetId": "bench-bot-0",
+            "targetKind": "player",
+            "lastAggroAt": 1800000077700,
+            "sinceMs": 1800000077700
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-41",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 1759.4364373375024,
+            "y": 1255.553097221527
+          },
+          "aggro": {
+            "targetId": "bench-bot-0",
+            "targetKind": "player",
+            "lastAggroAt": 1800000077700,
+            "sinceMs": 1800000077700
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-42",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 1434.3672183237506,
+            "y": 4020.7464013065432
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-10",
+          "type": "ashspitter-salamander",
+          "hp": 1550,
+          "pos": {
+            "x": 572,
+            "y": 4155
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-9",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 468,
+            "y": 4259
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-8",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 572,
+            "y": 4363
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-7",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 676,
+            "y": 4259
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-6",
+          "type": "obsidian-tortoise",
+          "hp": 4488,
+          "pos": {
+            "x": 617.7742718854189,
+            "y": 4292.0301368332275
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-5",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 837.0745675851499,
+            "y": 2444.9441307730904
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-4",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 768.8043705601399,
+            "y": 2517.969362146838
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-3",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 839.2161272544573,
+            "y": 2583.033145632606
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-2",
+          "type": "ember-skink",
+          "hp": 720,
+          "pos": {
+            "x": 908.546163146869,
+            "y": 2517.3985614910675
+          }
+        },
+        {
+          "id": "node-t4-volcanic-01_monster-1",
+          "type": "infernal-direhound",
+          "hp": 1750,
+          "pos": {
+            "x": 828.8885593245956,
+            "y": 2444.1503540703957
+          }
+        }
+      ],
+      "runtimeKeys": []
+    }
+  ],
+  "killTypes": {
+    "Ashspitter Salamander": 3,
+    "Ember Skink": 8,
+    "Magma Salamander": 1
+  },
+  "intentMs": {
+    "Nearest eligible target": 18900,
+    "Lowest-health eligible target": 61500,
+    "No worthy target nearby": 1400,
+    "Waiting to recover to full health": 9000,
+    "none": 100
+  },
+  "activeMs": 46400,
+  "movingMs": 36300,
+  "plateau": false,
+  "lastXpAt": 82200,
+  "runtimeCensored": false,
+  "historicalReadback": {
+    "mastery": {
+      "plains": 12,
+      "forest": 12,
+      "swamp": 18,
+      "cave": 18,
+      "mountain": 24,
+      "jungle": 18,
+      "desert": 18,
+      "volcanic": 12,
+      "tundra": 12,
+      "graveyard": 4,
+      "trench": 0
+    },
+    "upgrades": {
+      "mountain-warmaul": 4,
+      "mountain-vest-t4": 4,
+      "mountain-charm-t4": 4,
+      "mountain-boots-t4": 4,
+      "core-arcanist": 0,
+      "relic-equilibrium-shard": 0
+    },
+    "equipment": {
+      "weapon": "mountain-warmaul",
+      "armor": "mountain-vest-t4",
+      "recovery": "mountain-charm-t4",
+      "mobility": "mountain-boots-t4",
+      "core": "core-arcanist",
+      "relic": "relic-equilibrium-shard"
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike",
+        "frenzy"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "runes": [
+      {
+        "conditionId": "in-combat",
+        "actionId": "focus-lowest-hp"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ]
+  },
+  "rp": 39,
+  "rpBudget": 44,
+  "job": {
+    "id": "candidate-closing-squire-heavy-b-D-s101009-at-node-t4-volcanic-01",
+    "arm": "candidate",
+    "mode": "historical-loadout",
+    "nodeId": "node-t4-volcanic-01",
+    "classRoot": "cooldown-root",
+    "cell": {
+      "id": "closing-squire-heavy-b-D-s101009-at-node-t4-volcanic-01",
+      "className": "squire",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-volcanic-01",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 4,
+      "stance": "defensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike",
+          "frenzy"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "in-combat",
+          "actionId": "focus-lowest-hp"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "closing-squire-heavy-b-D-s101009",
+        "classRoot": "cooldown-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "cooldown-root",
+          "cooldown-heavy",
+          "cooldown-range-close",
+          "cooldown-heavy-t3-b"
+        ],
+        "gearItemIds": {
+          "weapon": "mountain-warmaul",
+          "armor": "mountain-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-arcanist",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "identityId": "breadth-t4-squire-heavy-b",
+      "frame": "heavy",
+      "range": "close",
+      "pathName": "Destroyer",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Normal-hit damage is suppressed; empowered execution and useful Technique payloads matter.",
+        "Role template controlled elite/pair; 39/45 RP, 6 free. Defining offense and encounter support precede optional Expose.",
+        "Mountain burst-cap/Guard armor and barrier charm retain elite burst support.",
+        "Base stance defensive-stance; one paid stance, no destinations or stance automation; no rites.",
+        "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+        "Paid opening Focus Lowest HP plus Cleanse and Break Free; no dealer-ID knowledge or guaranteed kill order.",
+        "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+        "Native default Technique priority unless the exact AoE Rune overrides it.",
+        "Unused RP 6 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+      ],
+      "seed": 101009,
+      "block": "D",
+      "arm": "control",
+      "comparisonId": "closing-squire-heavy-b-D-s101009",
+      "snapshotId": "t4-established-gm148",
+      "progressionSnapshot": {
+        "id": "t4-established-gm148",
+        "tier": 4,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "cave": 18,
+          "mountain": 24,
+          "jungle": 18,
+          "desert": 18,
+          "volcanic": 12,
+          "tundra": 12,
+          "graveyard": 4,
+          "trench": 0
+        },
+        "gm": 148,
+        "rp": 45,
+        "plus": 4,
+        "priorBossClears": [
+          "forest:1",
+          "mountain:1",
+          "plains:2",
+          "swamp:2",
+          "desert:2",
+          "cave:3",
+          "mountain:3",
+          "jungle:3",
+          "desert:3"
+        ]
+      },
+      "referenceObservationId": "t4-squire-heavy-b-F2-s101009",
+      "referenceSource": "t4-specialization-screen-01@3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+      "durationMs": 1200000
+    },
+    "seed": 101009,
+    "gearIds": [
+      "volcanic-blightbrand",
+      "volcanic-vest-t4-lavatempered",
+      "volcanic-charm-t4",
+      "volcanic-boots-t4"
+    ],
+    "maxMs": 1800000,
+    "stopAtMastery": false,
+    "wallLimitMs": 180000,
+    "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+    "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-04\\cross\\candidate-closing-squire-heavy-b-D-s101009-at-node-t4-volcanic-01.json"
+  },
+  "hitboxes": 406,
+  "build": {
+    "id": "closing-squire-heavy-b-D-s101009",
+    "classRoot": "cooldown-root",
+    "contentTier": 4,
+    "playerTier": 4,
+    "gearTier": 4,
+    "skillPath": [
+      "cooldown-root",
+      "cooldown-heavy",
+      "cooldown-range-close",
+      "cooldown-heavy-t3-b"
+    ],
+    "gearItemIds": {
+      "weapon": "mountain-warmaul",
+      "armor": "mountain-vest-t4",
+      "recovery": "mountain-charm-t4",
+      "mobility": "mountain-boots-t4",
+      "core": "core-arcanist",
+      "relic": "relic-equilibrium-shard"
+    }
+  },
+  "initial": {
+    "elapsedMs": 0,
+    "level": 6,
+    "xp": 42000,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {},
+    "catalystProgress": {},
+    "upgrades": {
+      "mountain-warmaul": 4,
+      "mountain-vest-t4": 4,
+      "mountain-charm-t4": 4,
+      "mountain-boots-t4": 4,
+      "core-arcanist": 0,
+      "relic-equilibrium-shard": 0
+    },
+    "hp": 585,
+    "build": {
+      "id": "closing-squire-heavy-b-D-s101009",
+      "classRoot": "cooldown-root",
+      "contentTier": 4,
+      "playerTier": 4,
+      "gearTier": 4,
+      "skillPath": [
+        "cooldown-root",
+        "cooldown-heavy",
+        "cooldown-range-close",
+        "cooldown-heavy-t3-b"
+      ],
+      "gearItemIds": {
+        "weapon": "mountain-warmaul",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "mountain-boots-t4",
+        "core": "core-arcanist",
+        "relic": "relic-equilibrium-shard"
+      }
+    },
+    "loadout": {
+      "abilities": {
+        "techniques": [
+          "power-strike",
+          "frenzy"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse",
+          "break-free"
+        ]
+      },
+      "stances": [
+        "defensive-stance"
+      ],
+      "rites": [],
+      "runes": [
+        {
+          "conditionId": "in-combat",
+          "actionId": "focus-lowest-hp"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ]
+    },
+    "stats": {
+      "hp": 585,
+      "attack": 201
+    },
+    "biomeLevels": {
+      "plains": 12,
+      "forest": 12,
+      "swamp": 18,
+      "cave": 18,
+      "mountain": 24,
+      "jungle": 18,
+      "desert": 18,
+      "volcanic": 6,
+      "tundra": 12,
+      "graveyard": 4,
+      "trench": 0
+    }
+  },
+  "entry": 6,
+  "cap": 12,
+  "budget": 600000,
+  "costs": {
+    "3": {
+      "red": 7720,
+      "blue": 0,
+      "green": 0,
+      "yellow": 856,
+      "purple": 0
+    },
+    "5": {
+      "red": 11580,
+      "blue": 0,
+      "green": 0,
+      "yellow": 1284,
+      "purple": 0
+    }
+  },
+  "mastery": null,
+  "death": {
+    "elapsedMs": 90900,
+    "level": 6,
+    "xp": 47172,
+    "gross": {
+      "red": 430,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 430,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {},
+    "catalystProgress": {
+      "alacrity": 12.93
+    },
+    "upgrades": {
+      "mountain-warmaul": 4,
+      "mountain-vest-t4": 4,
+      "mountain-charm-t4": 4,
+      "mountain-boots-t4": 4,
+      "core-arcanist": 0,
+      "relic-equilibrium-shard": 0
+    },
+    "hp": 0
+  },
+  "fundingTimes": {
+    "3": null,
+    "5": null
+  },
+  "actualAll3Ms": null,
+  "actualAll5Ms": null,
+  "acquisitionDebt": {
+    "red": 0,
+    "blue": 0,
+    "green": 0,
+    "yellow": 0,
+    "purple": 0
+  },
+  "final": {
+    "elapsedMs": 90900,
+    "level": 6,
+    "xp": 47172,
+    "gross": {
+      "red": 430,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 430,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {},
+    "catalystProgress": {
+      "alacrity": 12.93
+    },
+    "upgrades": {
+      "mountain-warmaul": 4,
+      "mountain-vest-t4": 4,
+      "mountain-charm-t4": 4,
+      "mountain-boots-t4": 4,
+      "core-arcanist": 0,
+      "relic-equilibrium-shard": 0
+    },
+    "hp": 0
+  },
+  "snapshots": [
+    {
+      "elapsedMs": 60000,
+      "level": 6,
+      "xp": 44796,
+      "gross": {
+        "red": 233,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 233,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "alacrity": 6.989999999999999
+      },
+      "upgrades": {
+        "mountain-warmaul": 4,
+        "mountain-vest-t4": 4,
+        "mountain-charm-t4": 4,
+        "mountain-boots-t4": 4,
+        "core-arcanist": 0,
+        "relic-equilibrium-shard": 0
+      },
+      "hp": 266.04775000000154
+    }
+  ],
+  "purchases": [],
+  "blockers": {},
+  "wallSeconds": 4.0820215,
+  "limitations": [
+    "Historical surviving loadout validated through prepareSurveyBot, then target biome reset to segment entry; mastery freeze removed",
+    "Mature gear and owned abilities retained: a conditional throughput screen, not an earned arrival journey",
+    "Native reference set costs are funding benchmarks, not the equipped mixed-biome set or actual purchases",
+    "No cross-biome routing or revivals; first death stops each run"
+  ]
+}

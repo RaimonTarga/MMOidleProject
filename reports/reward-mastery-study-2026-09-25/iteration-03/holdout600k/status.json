@@ -1,0 +1,18 @@
+{
+  "done": 2,
+  "total": 2,
+  "results": [
+    {
+      "id": "candidate-closing-striker-balanced-c-V-s101063",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-closing-striker-balanced-c-V-s101051",
+      "code": 0,
+      "timedOut": false,
+      "outputExists": true
+    }
+  ]
+}

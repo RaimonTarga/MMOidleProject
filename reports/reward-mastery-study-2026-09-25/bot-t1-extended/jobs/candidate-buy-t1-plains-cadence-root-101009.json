@@ -1,0 +1,17 @@
+{
+  "id": "candidate-buy-t1-plains-cadence-root-101009",
+  "arm": "candidate",
+  "mode": "buy",
+  "nodeId": "node-t1-plains-01",
+  "classRoot": "cadence-root",
+  "seed": 101009,
+  "gearIds": [
+    "iron-broadsword",
+    "plains-vest-t1",
+    "plains-charm-t1",
+    "plains-boots-t1"
+  ],
+  "maxMs": 1800000,
+  "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+  "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-t1-extended\\candidate-buy-t1-plains-cadence-root-101009.json"
+}

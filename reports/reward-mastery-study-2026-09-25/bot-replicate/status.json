@@ -1,0 +1,126 @@
+{
+  "done": 24,
+  "total": 24,
+  "results": [
+    {
+      "id": "baseline-fixed3-t1-plains-dot-root-101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-fixed3-t1-plains-cadence-root-101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-fixed3-t1-plains-dot-root-101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-fixed3-t1-plains-cadence-root-101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-fixed3-t3-swamp-cadence-root-101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-fixed3-t3-swamp-cadence-root-101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-fixed3-t3-swamp-dot-root-101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-fixed3-t3-swamp-dot-root-101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-fixed3-t4-trench-dot-root-101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-fixed3-t4-trench-dot-root-101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-buy-t1-plains-cadence-root-101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-buy-t1-plains-cadence-root-101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-buy-t1-plains-dot-root-101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-buy-t1-plains-dot-root-101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-buy-t3-swamp-cadence-root-101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-fixed3-t4-trench-cadence-root-101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-fixed3-t4-trench-cadence-root-101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-buy-t3-swamp-cadence-root-101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-buy-t3-swamp-dot-root-101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-buy-t3-swamp-dot-root-101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-buy-t4-trench-cadence-root-101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-buy-t4-trench-dot-root-101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-buy-t4-trench-cadence-root-101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "candidate-buy-t4-trench-dot-root-101033",
+      "code": 0,
+      "outputExists": true
+    }
+  ]
+}

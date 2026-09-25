@@ -1,0 +1,58 @@
+{
+  "note": "Static options only, not applied. Native Plains reference; values include base acquisition and all four items. Preserve original 1750 XP.",
+  "current": {
+    "cost3": 365,
+    "cost5": 885,
+    "observedMasteryMinutes": [
+      4.043,
+      4.377
+    ],
+    "fund5Minutes": [
+      11.678,
+      12.607
+    ],
+    "fund3Minutes": [
+      4.83,
+      5.045
+    ]
+  },
+  "candidate01": {
+    "cost3": 590,
+    "cost5": 885,
+    "essenceAtCap": [
+      286,
+      289
+    ],
+    "fund5Minutes": [
+      13.057,
+      13.66
+    ],
+    "fund3Minutes": [
+      8.95,
+      8.797
+    ]
+  },
+  "followUp": {
+    "withCandidateIncome": {
+      "suggestedCost3Range": [
+        285,
+        330
+      ],
+      "suggestedCost5Range": [
+        430,
+        495
+      ]
+    },
+    "withBaselineIncome": {
+      "suggestedCost3Range": [
+        300,
+        365
+      ],
+      "suggestedCost5Range": [
+        450,
+        550
+      ]
+    },
+    "caveat": "Two seeds, one biome/setup. Affordability only; global mastery and catalysts can still block actual +5."
+  }
+}

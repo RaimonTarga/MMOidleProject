@@ -1,0 +1,8 @@
+{
+  "screenToConfirmationBaseline": [
+    "shared/src/data/monsters/volcano.monsters.ts",
+    "shared/src/world/nodeFeatures.ts"
+  ],
+  "confirmationToFinalBaseline": [],
+  "frozenReferenceException": "nodeFeatures.ts uses original isolated candidate source; main hazard source had already drifted at screen identity capture"
+}

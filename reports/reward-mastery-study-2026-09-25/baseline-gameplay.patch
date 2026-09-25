@@ -1,0 +1,29 @@
+diff --git a/server/src/systems/player/progression/rewards.ts b/server/src/systems/player/progression/rewards.ts
+index 20fe74bf..bc087c18 100644
+--- a/server/src/systems/player/progression/rewards.ts
++++ b/server/src/systems/player/progression/rewards.ts
+@@ -205,6 +205,11 @@ function applyKillRewardsToPlayer(
+     Math.round(rewards.essence * essenceMult * rewardMult * debugMult),
+   );
+   rewardPlayer(recipient, { ...rewards, essence: scaledEssence });
++  world.pushEvent(nodeId, {
++    kind: 'essence-drop', playerId: recipient.isPlayer.id,
++    targetId: monster.isMonster.id, pos: { ...monster.hasPosition.current },
++    amount: scaledEssence, essenceType: rewards.essenceType,
++  });
+   // Catalyst progress is keyed by the NODE'S modifier (not its biome): every kill in
+   // an Alacrity node grants Alacrity Catalyst regardless of biome. The weight
+   // defaults to the monster's base essence reward (a tuned per-mob toughness
+diff --git a/shared/src/protocol/combatEvents.ts b/shared/src/protocol/combatEvents.ts
+index e4289128..676d7583 100644
+--- a/shared/src/protocol/combatEvents.ts
++++ b/shared/src/protocol/combatEvents.ts
+@@ -22,6 +22,8 @@ export interface CombatEventTiming {
+ export type CombatEvent = CombatEventTiming & CombatEventPayload;
+ 
+ type CombatEventPayload =
++  // Exact credited payout per recipient (including party shares); cosmetic only.
++  | { kind: 'essence-drop'; playerId: string; targetId: string; pos: Vec2; amount: number; essenceType: EssenceType }
+   // One cosmetic beat per authoritative ambient stack gain, never for cooling.
+   | { kind: 'ambient-stack-gain'; playerId: string; effectId: 'volcanic-heat' | 'tundra-chill' }
+   // Damage-only presentation for paths without an attack/tick animation event.

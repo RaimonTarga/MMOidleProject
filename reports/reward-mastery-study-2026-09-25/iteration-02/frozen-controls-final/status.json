@@ -1,0 +1,86 @@
+{
+  "done": 16,
+  "total": 16,
+  "results": [
+    {
+      "id": "baseline-op-t2-striker-heavy-desert-t2-desert-arrival-s101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-op-t2-striker-heavy-desert-t2-desert-arrival-s101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-op-t1-striker-plains-t1-developed-s101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-op-t1-striker-plains-t1-developed-s101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-op-t3-squire-heavy-tundra-t3-tundra-arrival-s101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-op-t3-squire-heavy-tundra-t3-tundra-arrival-s101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-op-t3-squire-balanced-swamp-t3-developed-s101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-op-t3-squire-balanced-swamp-t3-developed-s101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-closing-conduit-balanced-a-T-s101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-closing-conduit-balanced-a-T-s101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-op-t2-squire-heavy-desert-t2-desert-arrival-s101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-op-t2-squire-heavy-desert-t2-desert-arrival-s101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-closing-squire-heavy-b-D-s101033",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-closing-squire-heavy-b-D-s101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-closing-striker-heavy-c-V-s101009",
+      "code": 0,
+      "outputExists": true
+    },
+    {
+      "id": "baseline-closing-striker-heavy-c-V-s101033",
+      "code": 0,
+      "outputExists": true
+    }
+  ]
+}

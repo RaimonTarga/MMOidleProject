@@ -1,0 +1,145 @@
+{
+  "id": "candidate-closing-spirit-light-a-T-s101051-at-node-t4-tundra-03",
+  "arm": "candidate",
+  "mode": "historical-loadout",
+  "nodeId": "node-t4-tundra-03",
+  "classRoot": "energy-root",
+  "cell": {
+    "id": "closing-spirit-light-a-T-s101051-at-node-t4-tundra-03",
+    "className": "spirit",
+    "tier": 4,
+    "role": "farm",
+    "alternate": false,
+    "nodeId": "node-t4-tundra-03",
+    "isDungeon": false,
+    "treatment": "authored-source",
+    "targetTypes": [],
+    "upgradeLevel": 4,
+    "stance": "defensive-stance",
+    "abilities": {
+      "techniques": [
+        "quick-strike",
+        "frenzy",
+        "hamstring"
+      ],
+      "guards": [
+        "second-wind",
+        "brace",
+        "cleanse",
+        "break-free"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "orbit"
+      }
+    ],
+    "build": {
+      "id": "closing-spirit-light-a-T-s101009",
+      "classRoot": "energy-root",
+      "contentTier": 4,
+      "playerTier": 4,
+      "gearTier": 4,
+      "skillPath": [
+        "energy-root",
+        "energy-light",
+        "energy-range-mid",
+        "energy-light-t3-a"
+      ],
+      "gearItemIds": {
+        "weapon": "volcanic-eruption-lash",
+        "armor": "mountain-vest-t4",
+        "recovery": "mountain-charm-t4",
+        "mobility": "desert-boots-t4",
+        "core": "core-tempered",
+        "relic": "relic-equilibrium-shard"
+      }
+    },
+    "identityId": "breadth-t4-spirit-light-a",
+    "frame": "light",
+    "range": "mid",
+    "pathName": "Stormdancer",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "Fast actual hits express Flash shifts; no discharge-payload assumption.",
+      "Role template controlled elite/pair; 42/45 RP, 3 free. Defining offense and encounter support precede optional Expose.",
+      "Mountain burst-cap/Guard armor and barrier charm retained; Recovery and actual danger response remain.",
+      "Base stance defensive-stance; one paid stance, no destinations or stance automation; no rites.",
+      "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+      "No generic low-HP Flee and no Wait It Out.",
+      "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+      "Native default Technique priority unless the exact AoE Rune overrides it.",
+      "Unused RP 3 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+    ],
+    "seed": 101051,
+    "block": "T",
+    "arm": "control",
+    "comparisonId": "closing-spirit-light-a-T-s101009",
+    "snapshotId": "t4-established-gm148",
+    "progressionSnapshot": {
+      "id": "t4-established-gm148",
+      "tier": 4,
+      "mastery": {
+        "plains": 12,
+        "forest": 12,
+        "swamp": 18,
+        "cave": 18,
+        "mountain": 24,
+        "jungle": 18,
+        "desert": 18,
+        "volcanic": 12,
+        "tundra": 12,
+        "graveyard": 4,
+        "trench": 0
+      },
+      "gm": 148,
+      "rp": 45,
+      "plus": 4,
+      "priorBossClears": [
+        "forest:1",
+        "mountain:1",
+        "plains:2",
+        "swamp:2",
+        "desert:2",
+        "cave:3",
+        "mountain:3",
+        "jungle:3",
+        "desert:3"
+      ]
+    },
+    "referenceObservationId": "t4-spirit-light-a-F2-s101009",
+    "referenceSource": "t4-specialization-screen-01@3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+    "durationMs": 1200000
+  },
+  "seed": 101051,
+  "policy": null,
+  "gearIds": [
+    "tundra-glacial-rimebrand",
+    "tundra-vest-t4",
+    "tundra-charm-t4-deepfreeze",
+    "tundra-boots-t4"
+  ],
+  "maxMs": 7200000,
+  "stopAtMastery": true,
+  "wallLimitMs": 180000,
+  "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+  "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-05\\holdout\\candidate-closing-spirit-light-a-T-s101051-at-node-t4-tundra-03.json"
+}

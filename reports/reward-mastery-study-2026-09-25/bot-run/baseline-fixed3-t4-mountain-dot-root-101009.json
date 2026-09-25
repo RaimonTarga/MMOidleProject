@@ -1,0 +1,301 @@
+{
+  "job": {
+    "id": "baseline-fixed3-t4-mountain-dot-root-101009",
+    "arm": "baseline",
+    "mode": "fixed3",
+    "nodeId": "node-t4-mountain-01",
+    "classRoot": "dot-root",
+    "seed": 101009,
+    "gearIds": [
+      "mountain-warmaul",
+      "mountain-vest-t4-stormwall",
+      "mountain-charm-t4-shieldmend",
+      "mountain-boots-t4"
+    ],
+    "maxMs": 7200000,
+    "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+    "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-fixed3-t4-mountain-dot-root-101009.json"
+  },
+  "hitboxes": 406,
+  "build": {
+    "id": "dot-root+dot-balanced+dot-range-mid+dot-balanced-t3-a",
+    "classRoot": "dot-root",
+    "skillPath": [
+      "dot-root",
+      "dot-balanced",
+      "dot-range-mid",
+      "dot-balanced-t3-a"
+    ],
+    "contentTier": 4,
+    "playerTier": 4,
+    "gearTier": 4,
+    "gearItemIds": {
+      "weapon": "mountain-warmaul",
+      "armor": "mountain-vest-t4-stormwall",
+      "recovery": "mountain-charm-t4-shieldmend",
+      "mobility": "mountain-boots-t4"
+    }
+  },
+  "initial": {
+    "elapsedMs": 0,
+    "level": 18,
+    "xp": 13750,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {},
+    "catalystProgress": {},
+    "upgrades": {
+      "mountain-warmaul": 3,
+      "mountain-vest-t4-stormwall": 3,
+      "mountain-charm-t4-shieldmend": 3,
+      "mountain-boots-t4": 3
+    },
+    "hp": 446,
+    "build": {
+      "id": "dot-root+dot-balanced+dot-range-mid+dot-balanced-t3-a",
+      "classRoot": "dot-root",
+      "skillPath": [
+        "dot-root",
+        "dot-balanced",
+        "dot-range-mid",
+        "dot-balanced-t3-a"
+      ],
+      "contentTier": 4,
+      "playerTier": 4,
+      "gearTier": 4,
+      "gearItemIds": {
+        "weapon": "mountain-warmaul",
+        "armor": "mountain-vest-t4-stormwall",
+        "recovery": "mountain-charm-t4-shieldmend",
+        "mobility": "mountain-boots-t4"
+      }
+    },
+    "loadout": {
+      "abilities": {
+        "techniques": [
+          "disengage",
+          "imbue-lightning",
+          "snipe"
+        ],
+        "guards": [
+          "recuperate",
+          "break-free",
+          "bramble-guard"
+        ]
+      },
+      "stances": [
+        "offensive-stance"
+      ],
+      "rites": [
+        "blood-offering",
+        "purification",
+        "ability-reprieve",
+        "mechanic-renewal",
+        "swift-repose"
+      ],
+      "runes": []
+    },
+    "stats": {
+      "hp": 446,
+      "attack": 176
+    },
+    "biomeLevels": {
+      "cave": 18,
+      "forest": 12,
+      "mountain": 18,
+      "plains": 12,
+      "swamp": 18,
+      "desert": 18,
+      "jungle": 18,
+      "tundra": 12,
+      "volcanic": 12,
+      "graveyard": 6,
+      "trench": 6
+    }
+  },
+  "entry": 18,
+  "cap": 24,
+  "budget": 9000,
+  "costs": {
+    "3": {
+      "red": 400,
+      "blue": 4082,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "5": {
+      "red": 1116,
+      "blue": 11416,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    }
+  },
+  "mastery": null,
+  "death": {
+    "elapsedMs": 77200,
+    "level": 19,
+    "xp": 15038,
+    "gross": {
+      "red": 0,
+      "blue": 118,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 118,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {
+      "heavy": 2
+    },
+    "catalystProgress": {
+      "heavy": 15
+    },
+    "upgrades": {
+      "mountain-warmaul": 3,
+      "mountain-vest-t4-stormwall": 3,
+      "mountain-charm-t4-shieldmend": 3,
+      "mountain-boots-t4": 3
+    },
+    "hp": 0
+  },
+  "fundingTimes": {
+    "3": null,
+    "5": null
+  },
+  "actualAll3Ms": null,
+  "actualAll5Ms": null,
+  "acquisitionDebt": {
+    "red": 0,
+    "blue": 0,
+    "green": 0,
+    "yellow": 0,
+    "purple": 0
+  },
+  "final": {
+    "elapsedMs": 77200,
+    "level": 19,
+    "xp": 15038,
+    "gross": {
+      "red": 0,
+      "blue": 118,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 118,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {
+      "heavy": 2
+    },
+    "catalystProgress": {
+      "heavy": 15
+    },
+    "upgrades": {
+      "mountain-warmaul": 3,
+      "mountain-vest-t4-stormwall": 3,
+      "mountain-charm-t4-shieldmend": 3,
+      "mountain-boots-t4": 3
+    },
+    "hp": 0
+  },
+  "snapshots": [
+    {
+      "elapsedMs": 38000,
+      "level": 19,
+      "xp": 15038,
+      "gross": {
+        "red": 0,
+        "blue": 118,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 118,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 2
+      },
+      "catalystProgress": {
+        "heavy": 15
+      },
+      "upgrades": {
+        "mountain-warmaul": 3,
+        "mountain-vest-t4-stormwall": 3,
+        "mountain-charm-t4-shieldmend": 3,
+        "mountain-boots-t4": 3
+      },
+      "hp": 446
+    },
+    {
+      "elapsedMs": 60000,
+      "level": 19,
+      "xp": 15038,
+      "gross": {
+        "red": 0,
+        "blue": 118,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 118,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "heavy": 2
+      },
+      "catalystProgress": {
+        "heavy": 15
+      },
+      "upgrades": {
+        "mountain-warmaul": 3,
+        "mountain-vest-t4-stormwall": 3,
+        "mountain-charm-t4-shieldmend": 3,
+        "mountain-boots-t4": 3
+      },
+      "hp": 165.84400000000045
+    }
+  ],
+  "purchases": [],
+  "blockers": {},
+  "wallSeconds": 1.7524421999999995,
+  "limitations": [
+    "Synthetic late-tier fixture: other biomes mastered, generated class and granted benchmark abilities",
+    "Native current-tier base gear granted on credit in buy mode; acquisition is repaid from earnings, not a real prior-tier journey",
+    "Fixed3 mode grants +3 gear and measures income, not purchase progression",
+    "No cross-biome routing or instant revivals; first death stops the run",
+    "Seeded random and 100ms simulation clock; elapsed time is simulation time"
+  ]
+}

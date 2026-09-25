@@ -1,0 +1,3775 @@
+{
+  "createdAt": "2026-09-25T07:06:19.242Z",
+  "baseline": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle",
+  "candidate": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\mmo-reward-candidate",
+  "jobs": [
+    {
+      "id": "baseline-op-t1-striker-plains-t1-developed-s101009",
+      "arm": "baseline",
+      "mode": "historical-loadout",
+      "nodeId": "node-t1-plains-03",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "cell": {
+        "id": "op-t1-striker-plains-t1-developed-s101009",
+        "identityId": "t1-striker",
+        "className": "striker",
+        "frame": "balanced",
+        "pathName": "root",
+        "range": null,
+        "tier": 1,
+        "role": "farm",
+        "nodeId": "node-t1-plains-03",
+        "isDungeon": false,
+        "alternate": false,
+        "targetTypes": [],
+        "treatment": "control",
+        "playerTreatment": "untreated",
+        "controlCaseId": null,
+        "preparationNotes": [
+          "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+          "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+        ],
+        "seed": 101009,
+        "block": "A",
+        "arm": "primary",
+        "comparisonId": "op-t1-striker-plains-t1-developed-s101009",
+        "snapshotId": "t1-developed",
+        "progressionSnapshot": {
+          "id": "t1-developed",
+          "tier": 1,
+          "mastery": {
+            "plains": 4,
+            "forest": 4,
+            "swamp": 4,
+            "mountain": 5,
+            "cave": 5
+          },
+          "gm": 22,
+          "rp": 20,
+          "plus": 3
+        },
+        "upgradeLevel": 3,
+        "stance": null,
+        "abilities": {
+          "techniques": [
+            "sweep"
+          ],
+          "guards": [
+            "second-wind"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "op-t1-striker-plains-t1-developed-s101009",
+          "classRoot": "cadence-root",
+          "contentTier": 1,
+          "playerTier": 1,
+          "gearTier": 1,
+          "skillPath": [
+            "cadence-root"
+          ],
+          "gearItemIds": {
+            "weapon": "chaotic-axe",
+            "armor": "plains-vest-t1",
+            "recovery": "swamp-charm-t1",
+            "mobility": "mountain-boots-t1"
+          }
+        }
+      },
+      "gearIds": [
+        "iron-broadsword",
+        "plains-vest-t1",
+        "plains-charm-t1",
+        "plains-boots-t1"
+      ],
+      "maxMs": 900000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\baseline-op-t1-striker-plains-t1-developed-s101009.json"
+    },
+    {
+      "id": "candidate-op-t1-striker-plains-t1-developed-s101009",
+      "arm": "candidate",
+      "mode": "historical-loadout",
+      "nodeId": "node-t1-plains-03",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "cell": {
+        "id": "op-t1-striker-plains-t1-developed-s101009",
+        "identityId": "t1-striker",
+        "className": "striker",
+        "frame": "balanced",
+        "pathName": "root",
+        "range": null,
+        "tier": 1,
+        "role": "farm",
+        "nodeId": "node-t1-plains-03",
+        "isDungeon": false,
+        "alternate": false,
+        "targetTypes": [],
+        "treatment": "control",
+        "playerTreatment": "untreated",
+        "controlCaseId": null,
+        "preparationNotes": [
+          "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+          "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+        ],
+        "seed": 101009,
+        "block": "A",
+        "arm": "primary",
+        "comparisonId": "op-t1-striker-plains-t1-developed-s101009",
+        "snapshotId": "t1-developed",
+        "progressionSnapshot": {
+          "id": "t1-developed",
+          "tier": 1,
+          "mastery": {
+            "plains": 4,
+            "forest": 4,
+            "swamp": 4,
+            "mountain": 5,
+            "cave": 5
+          },
+          "gm": 22,
+          "rp": 20,
+          "plus": 3
+        },
+        "upgradeLevel": 3,
+        "stance": null,
+        "abilities": {
+          "techniques": [
+            "sweep"
+          ],
+          "guards": [
+            "second-wind"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "op-t1-striker-plains-t1-developed-s101009",
+          "classRoot": "cadence-root",
+          "contentTier": 1,
+          "playerTier": 1,
+          "gearTier": 1,
+          "skillPath": [
+            "cadence-root"
+          ],
+          "gearItemIds": {
+            "weapon": "chaotic-axe",
+            "armor": "plains-vest-t1",
+            "recovery": "swamp-charm-t1",
+            "mobility": "mountain-boots-t1"
+          }
+        }
+      },
+      "gearIds": [
+        "iron-broadsword",
+        "plains-vest-t1",
+        "plains-charm-t1",
+        "plains-boots-t1"
+      ],
+      "maxMs": 900000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\candidate-op-t1-striker-plains-t1-developed-s101009.json"
+    },
+    {
+      "id": "baseline-op-t1-striker-plains-t1-developed-s101033",
+      "arm": "baseline",
+      "mode": "historical-loadout",
+      "nodeId": "node-t1-plains-03",
+      "classRoot": "cadence-root",
+      "seed": 101033,
+      "cell": {
+        "id": "op-t1-striker-plains-t1-developed-s101033",
+        "identityId": "t1-striker",
+        "className": "striker",
+        "frame": "balanced",
+        "pathName": "root",
+        "range": null,
+        "tier": 1,
+        "role": "farm",
+        "nodeId": "node-t1-plains-03",
+        "isDungeon": false,
+        "alternate": false,
+        "targetTypes": [],
+        "treatment": "control",
+        "playerTreatment": "untreated",
+        "controlCaseId": null,
+        "preparationNotes": [
+          "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+          "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+        ],
+        "seed": 101033,
+        "block": "A",
+        "arm": "primary",
+        "comparisonId": "op-t1-striker-plains-t1-developed-s101009",
+        "snapshotId": "t1-developed",
+        "progressionSnapshot": {
+          "id": "t1-developed",
+          "tier": 1,
+          "mastery": {
+            "plains": 4,
+            "forest": 4,
+            "swamp": 4,
+            "mountain": 5,
+            "cave": 5
+          },
+          "gm": 22,
+          "rp": 20,
+          "plus": 3
+        },
+        "upgradeLevel": 3,
+        "stance": null,
+        "abilities": {
+          "techniques": [
+            "sweep"
+          ],
+          "guards": [
+            "second-wind"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "op-t1-striker-plains-t1-developed-s101009",
+          "classRoot": "cadence-root",
+          "contentTier": 1,
+          "playerTier": 1,
+          "gearTier": 1,
+          "skillPath": [
+            "cadence-root"
+          ],
+          "gearItemIds": {
+            "weapon": "chaotic-axe",
+            "armor": "plains-vest-t1",
+            "recovery": "swamp-charm-t1",
+            "mobility": "mountain-boots-t1"
+          }
+        }
+      },
+      "gearIds": [
+        "iron-broadsword",
+        "plains-vest-t1",
+        "plains-charm-t1",
+        "plains-boots-t1"
+      ],
+      "maxMs": 900000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\baseline-op-t1-striker-plains-t1-developed-s101033.json"
+    },
+    {
+      "id": "candidate-op-t1-striker-plains-t1-developed-s101033",
+      "arm": "candidate",
+      "mode": "historical-loadout",
+      "nodeId": "node-t1-plains-03",
+      "classRoot": "cadence-root",
+      "seed": 101033,
+      "cell": {
+        "id": "op-t1-striker-plains-t1-developed-s101033",
+        "identityId": "t1-striker",
+        "className": "striker",
+        "frame": "balanced",
+        "pathName": "root",
+        "range": null,
+        "tier": 1,
+        "role": "farm",
+        "nodeId": "node-t1-plains-03",
+        "isDungeon": false,
+        "alternate": false,
+        "targetTypes": [],
+        "treatment": "control",
+        "playerTreatment": "untreated",
+        "controlCaseId": null,
+        "preparationNotes": [
+          "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+          "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+        ],
+        "seed": 101033,
+        "block": "A",
+        "arm": "primary",
+        "comparisonId": "op-t1-striker-plains-t1-developed-s101009",
+        "snapshotId": "t1-developed",
+        "progressionSnapshot": {
+          "id": "t1-developed",
+          "tier": 1,
+          "mastery": {
+            "plains": 4,
+            "forest": 4,
+            "swamp": 4,
+            "mountain": 5,
+            "cave": 5
+          },
+          "gm": 22,
+          "rp": 20,
+          "plus": 3
+        },
+        "upgradeLevel": 3,
+        "stance": null,
+        "abilities": {
+          "techniques": [
+            "sweep"
+          ],
+          "guards": [
+            "second-wind"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "op-t1-striker-plains-t1-developed-s101009",
+          "classRoot": "cadence-root",
+          "contentTier": 1,
+          "playerTier": 1,
+          "gearTier": 1,
+          "skillPath": [
+            "cadence-root"
+          ],
+          "gearItemIds": {
+            "weapon": "chaotic-axe",
+            "armor": "plains-vest-t1",
+            "recovery": "swamp-charm-t1",
+            "mobility": "mountain-boots-t1"
+          }
+        }
+      },
+      "gearIds": [
+        "iron-broadsword",
+        "plains-vest-t1",
+        "plains-charm-t1",
+        "plains-boots-t1"
+      ],
+      "maxMs": 900000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\candidate-op-t1-striker-plains-t1-developed-s101033.json"
+    },
+    {
+      "id": "baseline-op-t2-squire-balanced-jungle-t2-jungle-arrival-s101009",
+      "arm": "baseline",
+      "mode": "historical-loadout",
+      "nodeId": "node-t2-jungle-01",
+      "classRoot": "cooldown-root",
+      "seed": 101009,
+      "cell": {
+        "id": "op-t2-squire-balanced-jungle-t2-jungle-arrival-s101009",
+        "identityId": "t2-squire-balanced",
+        "className": "squire",
+        "frame": "balanced",
+        "pathName": "balanced",
+        "range": null,
+        "tier": 2,
+        "role": "farm",
+        "nodeId": "node-t2-jungle-01",
+        "isDungeon": false,
+        "alternate": false,
+        "targetTypes": [],
+        "treatment": "control",
+        "playerTreatment": "untreated",
+        "controlCaseId": null,
+        "preparationNotes": [
+          "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+          "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+        ],
+        "seed": 101009,
+        "block": "B",
+        "arm": "primary",
+        "comparisonId": "op-t2-squire-balanced-jungle-t2-jungle-arrival-s101009",
+        "snapshotId": "t2-jungle-arrival",
+        "progressionSnapshot": {
+          "id": "t2-jungle-arrival",
+          "tier": 2,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 12,
+            "mountain": 12,
+            "cave": 12,
+            "jungle": 0,
+            "desert": 0
+          },
+          "gm": 60,
+          "rp": 28,
+          "plus": 3
+        },
+        "upgradeLevel": 3,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "slam"
+          ],
+          "guards": [
+            "second-wind",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "op-t2-squire-balanced-jungle-t2-jungle-arrival-s101009",
+          "classRoot": "cooldown-root",
+          "contentTier": 2,
+          "playerTier": 2,
+          "gearTier": 2,
+          "skillPath": [
+            "cooldown-root",
+            "cooldown-balanced"
+          ],
+          "gearItemIds": {
+            "weapon": "quake-hammer",
+            "armor": "swamp-vest-t2",
+            "recovery": "swamp-charm-t2",
+            "mobility": "mountain-boots-t2",
+            "core": "core-tempered"
+          }
+        }
+      },
+      "gearIds": [
+        "jungle-stinger-rapier",
+        "jungle-vest-t2",
+        "jungle-charm-t2",
+        "jungle-boots-t2"
+      ],
+      "maxMs": 2700000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\baseline-op-t2-squire-balanced-jungle-t2-jungle-arrival-s101009.json"
+    },
+    {
+      "id": "candidate-op-t2-squire-balanced-jungle-t2-jungle-arrival-s101009",
+      "arm": "candidate",
+      "mode": "historical-loadout",
+      "nodeId": "node-t2-jungle-01",
+      "classRoot": "cooldown-root",
+      "seed": 101009,
+      "cell": {
+        "id": "op-t2-squire-balanced-jungle-t2-jungle-arrival-s101009",
+        "identityId": "t2-squire-balanced",
+        "className": "squire",
+        "frame": "balanced",
+        "pathName": "balanced",
+        "range": null,
+        "tier": 2,
+        "role": "farm",
+        "nodeId": "node-t2-jungle-01",
+        "isDungeon": false,
+        "alternate": false,
+        "targetTypes": [],
+        "treatment": "control",
+        "playerTreatment": "untreated",
+        "controlCaseId": null,
+        "preparationNotes": [
+          "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+          "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+        ],
+        "seed": 101009,
+        "block": "B",
+        "arm": "primary",
+        "comparisonId": "op-t2-squire-balanced-jungle-t2-jungle-arrival-s101009",
+        "snapshotId": "t2-jungle-arrival",
+        "progressionSnapshot": {
+          "id": "t2-jungle-arrival",
+          "tier": 2,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 12,
+            "mountain": 12,
+            "cave": 12,
+            "jungle": 0,
+            "desert": 0
+          },
+          "gm": 60,
+          "rp": 28,
+          "plus": 3
+        },
+        "upgradeLevel": 3,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "slam"
+          ],
+          "guards": [
+            "second-wind",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "op-t2-squire-balanced-jungle-t2-jungle-arrival-s101009",
+          "classRoot": "cooldown-root",
+          "contentTier": 2,
+          "playerTier": 2,
+          "gearTier": 2,
+          "skillPath": [
+            "cooldown-root",
+            "cooldown-balanced"
+          ],
+          "gearItemIds": {
+            "weapon": "quake-hammer",
+            "armor": "swamp-vest-t2",
+            "recovery": "swamp-charm-t2",
+            "mobility": "mountain-boots-t2",
+            "core": "core-tempered"
+          }
+        }
+      },
+      "gearIds": [
+        "jungle-stinger-rapier",
+        "jungle-vest-t2",
+        "jungle-charm-t2",
+        "jungle-boots-t2"
+      ],
+      "maxMs": 2700000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\candidate-op-t2-squire-balanced-jungle-t2-jungle-arrival-s101009.json"
+    },
+    {
+      "id": "baseline-op-t2-squire-balanced-jungle-t2-jungle-arrival-s101033",
+      "arm": "baseline",
+      "mode": "historical-loadout",
+      "nodeId": "node-t2-jungle-01",
+      "classRoot": "cooldown-root",
+      "seed": 101033,
+      "cell": {
+        "id": "op-t2-squire-balanced-jungle-t2-jungle-arrival-s101033",
+        "identityId": "t2-squire-balanced",
+        "className": "squire",
+        "frame": "balanced",
+        "pathName": "balanced",
+        "range": null,
+        "tier": 2,
+        "role": "farm",
+        "nodeId": "node-t2-jungle-01",
+        "isDungeon": false,
+        "alternate": false,
+        "targetTypes": [],
+        "treatment": "control",
+        "playerTreatment": "untreated",
+        "controlCaseId": null,
+        "preparationNotes": [
+          "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+          "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+        ],
+        "seed": 101033,
+        "block": "B",
+        "arm": "primary",
+        "comparisonId": "op-t2-squire-balanced-jungle-t2-jungle-arrival-s101009",
+        "snapshotId": "t2-jungle-arrival",
+        "progressionSnapshot": {
+          "id": "t2-jungle-arrival",
+          "tier": 2,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 12,
+            "mountain": 12,
+            "cave": 12,
+            "jungle": 0,
+            "desert": 0
+          },
+          "gm": 60,
+          "rp": 28,
+          "plus": 3
+        },
+        "upgradeLevel": 3,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "slam"
+          ],
+          "guards": [
+            "second-wind",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "op-t2-squire-balanced-jungle-t2-jungle-arrival-s101009",
+          "classRoot": "cooldown-root",
+          "contentTier": 2,
+          "playerTier": 2,
+          "gearTier": 2,
+          "skillPath": [
+            "cooldown-root",
+            "cooldown-balanced"
+          ],
+          "gearItemIds": {
+            "weapon": "quake-hammer",
+            "armor": "swamp-vest-t2",
+            "recovery": "swamp-charm-t2",
+            "mobility": "mountain-boots-t2",
+            "core": "core-tempered"
+          }
+        }
+      },
+      "gearIds": [
+        "jungle-stinger-rapier",
+        "jungle-vest-t2",
+        "jungle-charm-t2",
+        "jungle-boots-t2"
+      ],
+      "maxMs": 2700000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\baseline-op-t2-squire-balanced-jungle-t2-jungle-arrival-s101033.json"
+    },
+    {
+      "id": "candidate-op-t2-squire-balanced-jungle-t2-jungle-arrival-s101033",
+      "arm": "candidate",
+      "mode": "historical-loadout",
+      "nodeId": "node-t2-jungle-01",
+      "classRoot": "cooldown-root",
+      "seed": 101033,
+      "cell": {
+        "id": "op-t2-squire-balanced-jungle-t2-jungle-arrival-s101033",
+        "identityId": "t2-squire-balanced",
+        "className": "squire",
+        "frame": "balanced",
+        "pathName": "balanced",
+        "range": null,
+        "tier": 2,
+        "role": "farm",
+        "nodeId": "node-t2-jungle-01",
+        "isDungeon": false,
+        "alternate": false,
+        "targetTypes": [],
+        "treatment": "control",
+        "playerTreatment": "untreated",
+        "controlCaseId": null,
+        "preparationNotes": [
+          "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+          "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+        ],
+        "seed": 101033,
+        "block": "B",
+        "arm": "primary",
+        "comparisonId": "op-t2-squire-balanced-jungle-t2-jungle-arrival-s101009",
+        "snapshotId": "t2-jungle-arrival",
+        "progressionSnapshot": {
+          "id": "t2-jungle-arrival",
+          "tier": 2,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 12,
+            "mountain": 12,
+            "cave": 12,
+            "jungle": 0,
+            "desert": 0
+          },
+          "gm": 60,
+          "rp": 28,
+          "plus": 3
+        },
+        "upgradeLevel": 3,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "slam"
+          ],
+          "guards": [
+            "second-wind",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "op-t2-squire-balanced-jungle-t2-jungle-arrival-s101009",
+          "classRoot": "cooldown-root",
+          "contentTier": 2,
+          "playerTier": 2,
+          "gearTier": 2,
+          "skillPath": [
+            "cooldown-root",
+            "cooldown-balanced"
+          ],
+          "gearItemIds": {
+            "weapon": "quake-hammer",
+            "armor": "swamp-vest-t2",
+            "recovery": "swamp-charm-t2",
+            "mobility": "mountain-boots-t2",
+            "core": "core-tempered"
+          }
+        }
+      },
+      "gearIds": [
+        "jungle-stinger-rapier",
+        "jungle-vest-t2",
+        "jungle-charm-t2",
+        "jungle-boots-t2"
+      ],
+      "maxMs": 2700000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\candidate-op-t2-squire-balanced-jungle-t2-jungle-arrival-s101033.json"
+    },
+    {
+      "id": "baseline-op-t2-striker-heavy-desert-t2-desert-arrival-s101009",
+      "arm": "baseline",
+      "mode": "historical-loadout",
+      "nodeId": "node-t2-desert-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "cell": {
+        "id": "op-t2-striker-heavy-desert-t2-desert-arrival-s101009",
+        "identityId": "t2-striker-heavy",
+        "className": "striker",
+        "frame": "heavy",
+        "pathName": "heavy",
+        "range": null,
+        "tier": 2,
+        "role": "farm",
+        "nodeId": "node-t2-desert-01",
+        "isDungeon": false,
+        "alternate": false,
+        "targetTypes": [],
+        "treatment": "control",
+        "playerTreatment": "untreated",
+        "controlCaseId": null,
+        "preparationNotes": [
+          "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+          "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+        ],
+        "seed": 101009,
+        "block": "B",
+        "arm": "primary",
+        "comparisonId": "op-t2-striker-heavy-desert-t2-desert-arrival-s101009",
+        "snapshotId": "t2-desert-arrival",
+        "progressionSnapshot": {
+          "id": "t2-desert-arrival",
+          "tier": 2,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 12,
+            "mountain": 12,
+            "cave": 12,
+            "jungle": 6,
+            "desert": 0
+          },
+          "gm": 66,
+          "rp": 29,
+          "plus": 4
+        },
+        "upgradeLevel": 4,
+        "stance": "defensive-stance",
+        "abilities": {
+          "techniques": [
+            "power-strike"
+          ],
+          "guards": [
+            "second-wind",
+            "cleanse",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "op-t2-striker-heavy-desert-t2-desert-arrival-s101009",
+          "classRoot": "cadence-root",
+          "contentTier": 2,
+          "playerTier": 2,
+          "gearTier": 2,
+          "skillPath": [
+            "cadence-root",
+            "cadence-heavy"
+          ],
+          "gearItemIds": {
+            "weapon": "ruinous-axe",
+            "armor": "mountain-vest-t2",
+            "recovery": "swamp-charm-t2",
+            "mobility": "mountain-boots-t2",
+            "core": "core-tempered"
+          }
+        }
+      },
+      "gearIds": [
+        "desert-sunsteel-cross",
+        "desert-vest-t2",
+        "desert-charm-t2",
+        "desert-boots-t2"
+      ],
+      "maxMs": 1800000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\baseline-op-t2-striker-heavy-desert-t2-desert-arrival-s101009.json"
+    },
+    {
+      "id": "candidate-op-t2-striker-heavy-desert-t2-desert-arrival-s101009",
+      "arm": "candidate",
+      "mode": "historical-loadout",
+      "nodeId": "node-t2-desert-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "cell": {
+        "id": "op-t2-striker-heavy-desert-t2-desert-arrival-s101009",
+        "identityId": "t2-striker-heavy",
+        "className": "striker",
+        "frame": "heavy",
+        "pathName": "heavy",
+        "range": null,
+        "tier": 2,
+        "role": "farm",
+        "nodeId": "node-t2-desert-01",
+        "isDungeon": false,
+        "alternate": false,
+        "targetTypes": [],
+        "treatment": "control",
+        "playerTreatment": "untreated",
+        "controlCaseId": null,
+        "preparationNotes": [
+          "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+          "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+        ],
+        "seed": 101009,
+        "block": "B",
+        "arm": "primary",
+        "comparisonId": "op-t2-striker-heavy-desert-t2-desert-arrival-s101009",
+        "snapshotId": "t2-desert-arrival",
+        "progressionSnapshot": {
+          "id": "t2-desert-arrival",
+          "tier": 2,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 12,
+            "mountain": 12,
+            "cave": 12,
+            "jungle": 6,
+            "desert": 0
+          },
+          "gm": 66,
+          "rp": 29,
+          "plus": 4
+        },
+        "upgradeLevel": 4,
+        "stance": "defensive-stance",
+        "abilities": {
+          "techniques": [
+            "power-strike"
+          ],
+          "guards": [
+            "second-wind",
+            "cleanse",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "op-t2-striker-heavy-desert-t2-desert-arrival-s101009",
+          "classRoot": "cadence-root",
+          "contentTier": 2,
+          "playerTier": 2,
+          "gearTier": 2,
+          "skillPath": [
+            "cadence-root",
+            "cadence-heavy"
+          ],
+          "gearItemIds": {
+            "weapon": "ruinous-axe",
+            "armor": "mountain-vest-t2",
+            "recovery": "swamp-charm-t2",
+            "mobility": "mountain-boots-t2",
+            "core": "core-tempered"
+          }
+        }
+      },
+      "gearIds": [
+        "desert-sunsteel-cross",
+        "desert-vest-t2",
+        "desert-charm-t2",
+        "desert-boots-t2"
+      ],
+      "maxMs": 1800000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\candidate-op-t2-striker-heavy-desert-t2-desert-arrival-s101009.json"
+    },
+    {
+      "id": "baseline-op-t2-striker-heavy-desert-t2-desert-arrival-s101033",
+      "arm": "baseline",
+      "mode": "historical-loadout",
+      "nodeId": "node-t2-desert-01",
+      "classRoot": "cadence-root",
+      "seed": 101033,
+      "cell": {
+        "id": "op-t2-striker-heavy-desert-t2-desert-arrival-s101033",
+        "identityId": "t2-striker-heavy",
+        "className": "striker",
+        "frame": "heavy",
+        "pathName": "heavy",
+        "range": null,
+        "tier": 2,
+        "role": "farm",
+        "nodeId": "node-t2-desert-01",
+        "isDungeon": false,
+        "alternate": false,
+        "targetTypes": [],
+        "treatment": "control",
+        "playerTreatment": "untreated",
+        "controlCaseId": null,
+        "preparationNotes": [
+          "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+          "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+        ],
+        "seed": 101033,
+        "block": "B",
+        "arm": "primary",
+        "comparisonId": "op-t2-striker-heavy-desert-t2-desert-arrival-s101009",
+        "snapshotId": "t2-desert-arrival",
+        "progressionSnapshot": {
+          "id": "t2-desert-arrival",
+          "tier": 2,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 12,
+            "mountain": 12,
+            "cave": 12,
+            "jungle": 6,
+            "desert": 0
+          },
+          "gm": 66,
+          "rp": 29,
+          "plus": 4
+        },
+        "upgradeLevel": 4,
+        "stance": "defensive-stance",
+        "abilities": {
+          "techniques": [
+            "power-strike"
+          ],
+          "guards": [
+            "second-wind",
+            "cleanse",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "op-t2-striker-heavy-desert-t2-desert-arrival-s101009",
+          "classRoot": "cadence-root",
+          "contentTier": 2,
+          "playerTier": 2,
+          "gearTier": 2,
+          "skillPath": [
+            "cadence-root",
+            "cadence-heavy"
+          ],
+          "gearItemIds": {
+            "weapon": "ruinous-axe",
+            "armor": "mountain-vest-t2",
+            "recovery": "swamp-charm-t2",
+            "mobility": "mountain-boots-t2",
+            "core": "core-tempered"
+          }
+        }
+      },
+      "gearIds": [
+        "desert-sunsteel-cross",
+        "desert-vest-t2",
+        "desert-charm-t2",
+        "desert-boots-t2"
+      ],
+      "maxMs": 1800000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\baseline-op-t2-striker-heavy-desert-t2-desert-arrival-s101033.json"
+    },
+    {
+      "id": "candidate-op-t2-striker-heavy-desert-t2-desert-arrival-s101033",
+      "arm": "candidate",
+      "mode": "historical-loadout",
+      "nodeId": "node-t2-desert-01",
+      "classRoot": "cadence-root",
+      "seed": 101033,
+      "cell": {
+        "id": "op-t2-striker-heavy-desert-t2-desert-arrival-s101033",
+        "identityId": "t2-striker-heavy",
+        "className": "striker",
+        "frame": "heavy",
+        "pathName": "heavy",
+        "range": null,
+        "tier": 2,
+        "role": "farm",
+        "nodeId": "node-t2-desert-01",
+        "isDungeon": false,
+        "alternate": false,
+        "targetTypes": [],
+        "treatment": "control",
+        "playerTreatment": "untreated",
+        "controlCaseId": null,
+        "preparationNotes": [
+          "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+          "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+        ],
+        "seed": 101033,
+        "block": "B",
+        "arm": "primary",
+        "comparisonId": "op-t2-striker-heavy-desert-t2-desert-arrival-s101009",
+        "snapshotId": "t2-desert-arrival",
+        "progressionSnapshot": {
+          "id": "t2-desert-arrival",
+          "tier": 2,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 12,
+            "mountain": 12,
+            "cave": 12,
+            "jungle": 6,
+            "desert": 0
+          },
+          "gm": 66,
+          "rp": 29,
+          "plus": 4
+        },
+        "upgradeLevel": 4,
+        "stance": "defensive-stance",
+        "abilities": {
+          "techniques": [
+            "power-strike"
+          ],
+          "guards": [
+            "second-wind",
+            "cleanse",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "op-t2-striker-heavy-desert-t2-desert-arrival-s101009",
+          "classRoot": "cadence-root",
+          "contentTier": 2,
+          "playerTier": 2,
+          "gearTier": 2,
+          "skillPath": [
+            "cadence-root",
+            "cadence-heavy"
+          ],
+          "gearItemIds": {
+            "weapon": "ruinous-axe",
+            "armor": "mountain-vest-t2",
+            "recovery": "swamp-charm-t2",
+            "mobility": "mountain-boots-t2",
+            "core": "core-tempered"
+          }
+        }
+      },
+      "gearIds": [
+        "desert-sunsteel-cross",
+        "desert-vest-t2",
+        "desert-charm-t2",
+        "desert-boots-t2"
+      ],
+      "maxMs": 1800000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\candidate-op-t2-striker-heavy-desert-t2-desert-arrival-s101033.json"
+    },
+    {
+      "id": "baseline-op-t3-squire-balanced-swamp-t3-developed-s101009",
+      "arm": "baseline",
+      "mode": "historical-loadout",
+      "nodeId": "node-t3-swamp-03",
+      "classRoot": "cooldown-root",
+      "seed": 101009,
+      "cell": {
+        "id": "op-t3-squire-balanced-swamp-t3-developed-s101009",
+        "identityId": "t3-squire-balanced",
+        "className": "squire",
+        "frame": "balanced",
+        "pathName": "balanced",
+        "range": "close",
+        "tier": 3,
+        "role": "farm",
+        "nodeId": "node-t3-swamp-03",
+        "isDungeon": false,
+        "alternate": false,
+        "targetTypes": [],
+        "treatment": "control",
+        "playerTreatment": "untreated",
+        "controlCaseId": null,
+        "preparationNotes": [
+          "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+          "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+        ],
+        "seed": 101009,
+        "block": "C",
+        "arm": "primary",
+        "comparisonId": "op-t3-squire-balanced-swamp-t3-developed-s101009",
+        "snapshotId": "t3-developed",
+        "progressionSnapshot": {
+          "id": "t3-developed",
+          "tier": 3,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "mountain": 18,
+            "cave": 18,
+            "jungle": 12,
+            "desert": 12,
+            "volcanic": 0,
+            "tundra": 0
+          },
+          "gm": 102,
+          "rp": 36,
+          "plus": 3
+        },
+        "upgradeLevel": 3,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "power-strike"
+          ],
+          "guards": [
+            "second-wind",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "op-t3-squire-balanced-swamp-t3-developed-s101009",
+          "classRoot": "cooldown-root",
+          "contentTier": 3,
+          "playerTier": 3,
+          "gearTier": 3,
+          "skillPath": [
+            "cooldown-root",
+            "cooldown-balanced",
+            "cooldown-range-close"
+          ],
+          "gearItemIds": {
+            "weapon": "mountain-avalanche-maul",
+            "armor": "swamp-vest-t3",
+            "recovery": "swamp-charm-t3",
+            "mobility": "mountain-boots-t3",
+            "core": "core-tempered"
+          }
+        }
+      },
+      "gearIds": [
+        "swamp-blightbrand",
+        "swamp-vest-t3",
+        "swamp-charm-t3",
+        "swamp-boots-t3"
+      ],
+      "maxMs": 3600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\baseline-op-t3-squire-balanced-swamp-t3-developed-s101009.json"
+    },
+    {
+      "id": "candidate-op-t3-squire-balanced-swamp-t3-developed-s101009",
+      "arm": "candidate",
+      "mode": "historical-loadout",
+      "nodeId": "node-t3-swamp-03",
+      "classRoot": "cooldown-root",
+      "seed": 101009,
+      "cell": {
+        "id": "op-t3-squire-balanced-swamp-t3-developed-s101009",
+        "identityId": "t3-squire-balanced",
+        "className": "squire",
+        "frame": "balanced",
+        "pathName": "balanced",
+        "range": "close",
+        "tier": 3,
+        "role": "farm",
+        "nodeId": "node-t3-swamp-03",
+        "isDungeon": false,
+        "alternate": false,
+        "targetTypes": [],
+        "treatment": "control",
+        "playerTreatment": "untreated",
+        "controlCaseId": null,
+        "preparationNotes": [
+          "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+          "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+        ],
+        "seed": 101009,
+        "block": "C",
+        "arm": "primary",
+        "comparisonId": "op-t3-squire-balanced-swamp-t3-developed-s101009",
+        "snapshotId": "t3-developed",
+        "progressionSnapshot": {
+          "id": "t3-developed",
+          "tier": 3,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "mountain": 18,
+            "cave": 18,
+            "jungle": 12,
+            "desert": 12,
+            "volcanic": 0,
+            "tundra": 0
+          },
+          "gm": 102,
+          "rp": 36,
+          "plus": 3
+        },
+        "upgradeLevel": 3,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "power-strike"
+          ],
+          "guards": [
+            "second-wind",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "op-t3-squire-balanced-swamp-t3-developed-s101009",
+          "classRoot": "cooldown-root",
+          "contentTier": 3,
+          "playerTier": 3,
+          "gearTier": 3,
+          "skillPath": [
+            "cooldown-root",
+            "cooldown-balanced",
+            "cooldown-range-close"
+          ],
+          "gearItemIds": {
+            "weapon": "mountain-avalanche-maul",
+            "armor": "swamp-vest-t3",
+            "recovery": "swamp-charm-t3",
+            "mobility": "mountain-boots-t3",
+            "core": "core-tempered"
+          }
+        }
+      },
+      "gearIds": [
+        "swamp-blightbrand",
+        "swamp-vest-t3",
+        "swamp-charm-t3",
+        "swamp-boots-t3"
+      ],
+      "maxMs": 3600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\candidate-op-t3-squire-balanced-swamp-t3-developed-s101009.json"
+    },
+    {
+      "id": "baseline-op-t3-squire-balanced-swamp-t3-developed-s101033",
+      "arm": "baseline",
+      "mode": "historical-loadout",
+      "nodeId": "node-t3-swamp-03",
+      "classRoot": "cooldown-root",
+      "seed": 101033,
+      "cell": {
+        "id": "op-t3-squire-balanced-swamp-t3-developed-s101033",
+        "identityId": "t3-squire-balanced",
+        "className": "squire",
+        "frame": "balanced",
+        "pathName": "balanced",
+        "range": "close",
+        "tier": 3,
+        "role": "farm",
+        "nodeId": "node-t3-swamp-03",
+        "isDungeon": false,
+        "alternate": false,
+        "targetTypes": [],
+        "treatment": "control",
+        "playerTreatment": "untreated",
+        "controlCaseId": null,
+        "preparationNotes": [
+          "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+          "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+        ],
+        "seed": 101033,
+        "block": "C",
+        "arm": "primary",
+        "comparisonId": "op-t3-squire-balanced-swamp-t3-developed-s101009",
+        "snapshotId": "t3-developed",
+        "progressionSnapshot": {
+          "id": "t3-developed",
+          "tier": 3,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "mountain": 18,
+            "cave": 18,
+            "jungle": 12,
+            "desert": 12,
+            "volcanic": 0,
+            "tundra": 0
+          },
+          "gm": 102,
+          "rp": 36,
+          "plus": 3
+        },
+        "upgradeLevel": 3,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "power-strike"
+          ],
+          "guards": [
+            "second-wind",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "op-t3-squire-balanced-swamp-t3-developed-s101009",
+          "classRoot": "cooldown-root",
+          "contentTier": 3,
+          "playerTier": 3,
+          "gearTier": 3,
+          "skillPath": [
+            "cooldown-root",
+            "cooldown-balanced",
+            "cooldown-range-close"
+          ],
+          "gearItemIds": {
+            "weapon": "mountain-avalanche-maul",
+            "armor": "swamp-vest-t3",
+            "recovery": "swamp-charm-t3",
+            "mobility": "mountain-boots-t3",
+            "core": "core-tempered"
+          }
+        }
+      },
+      "gearIds": [
+        "swamp-blightbrand",
+        "swamp-vest-t3",
+        "swamp-charm-t3",
+        "swamp-boots-t3"
+      ],
+      "maxMs": 3600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\baseline-op-t3-squire-balanced-swamp-t3-developed-s101033.json"
+    },
+    {
+      "id": "candidate-op-t3-squire-balanced-swamp-t3-developed-s101033",
+      "arm": "candidate",
+      "mode": "historical-loadout",
+      "nodeId": "node-t3-swamp-03",
+      "classRoot": "cooldown-root",
+      "seed": 101033,
+      "cell": {
+        "id": "op-t3-squire-balanced-swamp-t3-developed-s101033",
+        "identityId": "t3-squire-balanced",
+        "className": "squire",
+        "frame": "balanced",
+        "pathName": "balanced",
+        "range": "close",
+        "tier": 3,
+        "role": "farm",
+        "nodeId": "node-t3-swamp-03",
+        "isDungeon": false,
+        "alternate": false,
+        "targetTypes": [],
+        "treatment": "control",
+        "playerTreatment": "untreated",
+        "controlCaseId": null,
+        "preparationNotes": [
+          "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+          "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+        ],
+        "seed": 101033,
+        "block": "C",
+        "arm": "primary",
+        "comparisonId": "op-t3-squire-balanced-swamp-t3-developed-s101009",
+        "snapshotId": "t3-developed",
+        "progressionSnapshot": {
+          "id": "t3-developed",
+          "tier": 3,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "mountain": 18,
+            "cave": 18,
+            "jungle": 12,
+            "desert": 12,
+            "volcanic": 0,
+            "tundra": 0
+          },
+          "gm": 102,
+          "rp": 36,
+          "plus": 3
+        },
+        "upgradeLevel": 3,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "power-strike"
+          ],
+          "guards": [
+            "second-wind",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "op-t3-squire-balanced-swamp-t3-developed-s101009",
+          "classRoot": "cooldown-root",
+          "contentTier": 3,
+          "playerTier": 3,
+          "gearTier": 3,
+          "skillPath": [
+            "cooldown-root",
+            "cooldown-balanced",
+            "cooldown-range-close"
+          ],
+          "gearItemIds": {
+            "weapon": "mountain-avalanche-maul",
+            "armor": "swamp-vest-t3",
+            "recovery": "swamp-charm-t3",
+            "mobility": "mountain-boots-t3",
+            "core": "core-tempered"
+          }
+        }
+      },
+      "gearIds": [
+        "swamp-blightbrand",
+        "swamp-vest-t3",
+        "swamp-charm-t3",
+        "swamp-boots-t3"
+      ],
+      "maxMs": 3600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\candidate-op-t3-squire-balanced-swamp-t3-developed-s101033.json"
+    },
+    {
+      "id": "baseline-op-t3-squire-heavy-tundra-t3-tundra-arrival-s101009",
+      "arm": "baseline",
+      "mode": "historical-loadout",
+      "nodeId": "node-t3-tundra-01",
+      "classRoot": "cooldown-root",
+      "seed": 101009,
+      "cell": {
+        "id": "op-t3-squire-heavy-tundra-t3-tundra-arrival-s101009",
+        "identityId": "t3-squire-heavy",
+        "className": "squire",
+        "frame": "heavy",
+        "pathName": "heavy",
+        "range": "close",
+        "tier": 3,
+        "role": "farm",
+        "nodeId": "node-t3-tundra-01",
+        "isDungeon": false,
+        "alternate": false,
+        "targetTypes": [],
+        "treatment": "control",
+        "playerTreatment": "untreated",
+        "controlCaseId": null,
+        "preparationNotes": [
+          "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+          "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+        ],
+        "seed": 101009,
+        "block": "C",
+        "arm": "primary",
+        "comparisonId": "op-t3-squire-heavy-tundra-t3-tundra-arrival-s101009",
+        "snapshotId": "t3-tundra-arrival",
+        "progressionSnapshot": {
+          "id": "t3-tundra-arrival",
+          "tier": 3,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "mountain": 18,
+            "cave": 18,
+            "jungle": 12,
+            "desert": 12,
+            "volcanic": 6,
+            "tundra": 0
+          },
+          "gm": 108,
+          "rp": 37,
+          "plus": 4
+        },
+        "upgradeLevel": 4,
+        "stance": "defensive-stance",
+        "abilities": {
+          "techniques": [
+            "power-strike",
+            "hamstring"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "op-t3-squire-heavy-tundra-t3-tundra-arrival-s101009",
+          "classRoot": "cooldown-root",
+          "contentTier": 3,
+          "playerTier": 3,
+          "gearTier": 3,
+          "skillPath": [
+            "cooldown-root",
+            "cooldown-heavy",
+            "cooldown-range-close"
+          ],
+          "gearItemIds": {
+            "weapon": "mountain-avalanche-maul",
+            "armor": "mountain-vest-t3",
+            "recovery": "swamp-charm-t3",
+            "mobility": "mountain-boots-t3",
+            "core": "core-tempered"
+          }
+        }
+      },
+      "gearIds": [
+        "tundra-rimebrand",
+        "tundra-vest-t3",
+        "tundra-charm-t3",
+        "tundra-boots-t3"
+      ],
+      "maxMs": 3600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\baseline-op-t3-squire-heavy-tundra-t3-tundra-arrival-s101009.json"
+    },
+    {
+      "id": "candidate-op-t3-squire-heavy-tundra-t3-tundra-arrival-s101009",
+      "arm": "candidate",
+      "mode": "historical-loadout",
+      "nodeId": "node-t3-tundra-01",
+      "classRoot": "cooldown-root",
+      "seed": 101009,
+      "cell": {
+        "id": "op-t3-squire-heavy-tundra-t3-tundra-arrival-s101009",
+        "identityId": "t3-squire-heavy",
+        "className": "squire",
+        "frame": "heavy",
+        "pathName": "heavy",
+        "range": "close",
+        "tier": 3,
+        "role": "farm",
+        "nodeId": "node-t3-tundra-01",
+        "isDungeon": false,
+        "alternate": false,
+        "targetTypes": [],
+        "treatment": "control",
+        "playerTreatment": "untreated",
+        "controlCaseId": null,
+        "preparationNotes": [
+          "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+          "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+        ],
+        "seed": 101009,
+        "block": "C",
+        "arm": "primary",
+        "comparisonId": "op-t3-squire-heavy-tundra-t3-tundra-arrival-s101009",
+        "snapshotId": "t3-tundra-arrival",
+        "progressionSnapshot": {
+          "id": "t3-tundra-arrival",
+          "tier": 3,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "mountain": 18,
+            "cave": 18,
+            "jungle": 12,
+            "desert": 12,
+            "volcanic": 6,
+            "tundra": 0
+          },
+          "gm": 108,
+          "rp": 37,
+          "plus": 4
+        },
+        "upgradeLevel": 4,
+        "stance": "defensive-stance",
+        "abilities": {
+          "techniques": [
+            "power-strike",
+            "hamstring"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "op-t3-squire-heavy-tundra-t3-tundra-arrival-s101009",
+          "classRoot": "cooldown-root",
+          "contentTier": 3,
+          "playerTier": 3,
+          "gearTier": 3,
+          "skillPath": [
+            "cooldown-root",
+            "cooldown-heavy",
+            "cooldown-range-close"
+          ],
+          "gearItemIds": {
+            "weapon": "mountain-avalanche-maul",
+            "armor": "mountain-vest-t3",
+            "recovery": "swamp-charm-t3",
+            "mobility": "mountain-boots-t3",
+            "core": "core-tempered"
+          }
+        }
+      },
+      "gearIds": [
+        "tundra-rimebrand",
+        "tundra-vest-t3",
+        "tundra-charm-t3",
+        "tundra-boots-t3"
+      ],
+      "maxMs": 3600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\candidate-op-t3-squire-heavy-tundra-t3-tundra-arrival-s101009.json"
+    },
+    {
+      "id": "baseline-op-t3-squire-heavy-tundra-t3-tundra-arrival-s101033",
+      "arm": "baseline",
+      "mode": "historical-loadout",
+      "nodeId": "node-t3-tundra-01",
+      "classRoot": "cooldown-root",
+      "seed": 101033,
+      "cell": {
+        "id": "op-t3-squire-heavy-tundra-t3-tundra-arrival-s101033",
+        "identityId": "t3-squire-heavy",
+        "className": "squire",
+        "frame": "heavy",
+        "pathName": "heavy",
+        "range": "close",
+        "tier": 3,
+        "role": "farm",
+        "nodeId": "node-t3-tundra-01",
+        "isDungeon": false,
+        "alternate": false,
+        "targetTypes": [],
+        "treatment": "control",
+        "playerTreatment": "untreated",
+        "controlCaseId": null,
+        "preparationNotes": [
+          "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+          "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+        ],
+        "seed": 101033,
+        "block": "C",
+        "arm": "primary",
+        "comparisonId": "op-t3-squire-heavy-tundra-t3-tundra-arrival-s101009",
+        "snapshotId": "t3-tundra-arrival",
+        "progressionSnapshot": {
+          "id": "t3-tundra-arrival",
+          "tier": 3,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "mountain": 18,
+            "cave": 18,
+            "jungle": 12,
+            "desert": 12,
+            "volcanic": 6,
+            "tundra": 0
+          },
+          "gm": 108,
+          "rp": 37,
+          "plus": 4
+        },
+        "upgradeLevel": 4,
+        "stance": "defensive-stance",
+        "abilities": {
+          "techniques": [
+            "power-strike",
+            "hamstring"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "op-t3-squire-heavy-tundra-t3-tundra-arrival-s101009",
+          "classRoot": "cooldown-root",
+          "contentTier": 3,
+          "playerTier": 3,
+          "gearTier": 3,
+          "skillPath": [
+            "cooldown-root",
+            "cooldown-heavy",
+            "cooldown-range-close"
+          ],
+          "gearItemIds": {
+            "weapon": "mountain-avalanche-maul",
+            "armor": "mountain-vest-t3",
+            "recovery": "swamp-charm-t3",
+            "mobility": "mountain-boots-t3",
+            "core": "core-tempered"
+          }
+        }
+      },
+      "gearIds": [
+        "tundra-rimebrand",
+        "tundra-vest-t3",
+        "tundra-charm-t3",
+        "tundra-boots-t3"
+      ],
+      "maxMs": 3600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\baseline-op-t3-squire-heavy-tundra-t3-tundra-arrival-s101033.json"
+    },
+    {
+      "id": "candidate-op-t3-squire-heavy-tundra-t3-tundra-arrival-s101033",
+      "arm": "candidate",
+      "mode": "historical-loadout",
+      "nodeId": "node-t3-tundra-01",
+      "classRoot": "cooldown-root",
+      "seed": 101033,
+      "cell": {
+        "id": "op-t3-squire-heavy-tundra-t3-tundra-arrival-s101033",
+        "identityId": "t3-squire-heavy",
+        "className": "squire",
+        "frame": "heavy",
+        "pathName": "heavy",
+        "range": "close",
+        "tier": 3,
+        "role": "farm",
+        "nodeId": "node-t3-tundra-01",
+        "isDungeon": false,
+        "alternate": false,
+        "targetTypes": [],
+        "treatment": "control",
+        "playerTreatment": "untreated",
+        "controlCaseId": null,
+        "preparationNotes": [
+          "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+          "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+        ],
+        "seed": 101033,
+        "block": "C",
+        "arm": "primary",
+        "comparisonId": "op-t3-squire-heavy-tundra-t3-tundra-arrival-s101009",
+        "snapshotId": "t3-tundra-arrival",
+        "progressionSnapshot": {
+          "id": "t3-tundra-arrival",
+          "tier": 3,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "mountain": 18,
+            "cave": 18,
+            "jungle": 12,
+            "desert": 12,
+            "volcanic": 6,
+            "tundra": 0
+          },
+          "gm": 108,
+          "rp": 37,
+          "plus": 4
+        },
+        "upgradeLevel": 4,
+        "stance": "defensive-stance",
+        "abilities": {
+          "techniques": [
+            "power-strike",
+            "hamstring"
+          ],
+          "guards": [
+            "second-wind",
+            "brace"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "op-t3-squire-heavy-tundra-t3-tundra-arrival-s101009",
+          "classRoot": "cooldown-root",
+          "contentTier": 3,
+          "playerTier": 3,
+          "gearTier": 3,
+          "skillPath": [
+            "cooldown-root",
+            "cooldown-heavy",
+            "cooldown-range-close"
+          ],
+          "gearItemIds": {
+            "weapon": "mountain-avalanche-maul",
+            "armor": "mountain-vest-t3",
+            "recovery": "swamp-charm-t3",
+            "mobility": "mountain-boots-t3",
+            "core": "core-tempered"
+          }
+        }
+      },
+      "gearIds": [
+        "tundra-rimebrand",
+        "tundra-vest-t3",
+        "tundra-charm-t3",
+        "tundra-boots-t3"
+      ],
+      "maxMs": 3600000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\candidate-op-t3-squire-heavy-tundra-t3-tundra-arrival-s101033.json"
+    },
+    {
+      "id": "baseline-closing-conduit-balanced-a-T-s101009",
+      "arm": "baseline",
+      "mode": "historical-loadout",
+      "nodeId": "node-t4-tundra-01",
+      "classRoot": "summoner-root",
+      "seed": 101009,
+      "cell": {
+        "id": "closing-conduit-balanced-a-T-s101009",
+        "className": "conduit",
+        "tier": 4,
+        "role": "farm",
+        "alternate": false,
+        "nodeId": "node-t4-tundra-01",
+        "isDungeon": false,
+        "treatment": "authored-source",
+        "targetTypes": [],
+        "upgradeLevel": 4,
+        "stance": "defensive-stance",
+        "abilities": {
+          "techniques": [
+            "power-strike",
+            "frenzy",
+            "hamstring"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse",
+            "break-free"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          }
+        ],
+        "build": {
+          "id": "closing-conduit-balanced-a-T-s101009",
+          "classRoot": "summoner-root",
+          "contentTier": 4,
+          "playerTier": 4,
+          "gearTier": 4,
+          "skillPath": [
+            "summoner-root",
+            "summoner-balanced",
+            "summoner-range-mid",
+            "summoner-balanced-t3-a"
+          ],
+          "gearItemIds": {
+            "weapon": "graveyard-plague-axe",
+            "armor": "mountain-vest-t4",
+            "recovery": "mountain-charm-t4",
+            "mobility": "desert-boots-t4",
+            "core": "core-survivalist",
+            "relic": "relic-equilibrium-shard"
+          }
+        },
+        "identityId": "breadth-t4-conduit-balanced-a",
+        "frame": "balanced",
+        "range": "mid",
+        "pathName": "Marshal",
+        "playerTreatment": "untreated",
+        "controlCaseId": null,
+        "preparationNotes": [
+          "Formation Attack supports openings and coordinated strikes; Recovery supports payments.",
+          "Role template controlled elite/pair; 43/45 RP, 2 free. Defining offense and encounter support precede optional Expose.",
+          "Mountain burst-cap/Guard armor and barrier charm retained; Recovery and actual danger response remain.",
+          "Base stance defensive-stance; one paid stance, no destinations or stance automation; no rites.",
+          "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+          "No generic low-HP Flee and no Wait It Out.",
+          "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+          "Native default Technique priority unless the exact AoE Rune overrides it.",
+          "Unused RP 2 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+        ],
+        "seed": 101009,
+        "block": "T",
+        "arm": "control",
+        "comparisonId": "closing-conduit-balanced-a-T-s101009",
+        "snapshotId": "t4-established-gm148",
+        "progressionSnapshot": {
+          "id": "t4-established-gm148",
+          "tier": 4,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "cave": 18,
+            "mountain": 24,
+            "jungle": 18,
+            "desert": 18,
+            "volcanic": 12,
+            "tundra": 12,
+            "graveyard": 4,
+            "trench": 0
+          },
+          "gm": 148,
+          "rp": 45,
+          "plus": 4,
+          "priorBossClears": [
+            "forest:1",
+            "mountain:1",
+            "plains:2",
+            "swamp:2",
+            "desert:2",
+            "cave:3",
+            "mountain:3",
+            "jungle:3",
+            "desert:3"
+          ]
+        },
+        "referenceObservationId": "t4-conduit-balanced-a-F2-s101009",
+        "referenceSource": "t4-specialization-screen-01@3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+        "durationMs": 1200000
+      },
+      "gearIds": [
+        "tundra-glacial-rimebrand",
+        "tundra-vest-t4",
+        "tundra-charm-t4-deepfreeze",
+        "tundra-boots-t4"
+      ],
+      "maxMs": 5400000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\baseline-closing-conduit-balanced-a-T-s101009.json"
+    },
+    {
+      "id": "candidate-closing-conduit-balanced-a-T-s101009",
+      "arm": "candidate",
+      "mode": "historical-loadout",
+      "nodeId": "node-t4-tundra-01",
+      "classRoot": "summoner-root",
+      "seed": 101009,
+      "cell": {
+        "id": "closing-conduit-balanced-a-T-s101009",
+        "className": "conduit",
+        "tier": 4,
+        "role": "farm",
+        "alternate": false,
+        "nodeId": "node-t4-tundra-01",
+        "isDungeon": false,
+        "treatment": "authored-source",
+        "targetTypes": [],
+        "upgradeLevel": 4,
+        "stance": "defensive-stance",
+        "abilities": {
+          "techniques": [
+            "power-strike",
+            "frenzy",
+            "hamstring"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse",
+            "break-free"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          }
+        ],
+        "build": {
+          "id": "closing-conduit-balanced-a-T-s101009",
+          "classRoot": "summoner-root",
+          "contentTier": 4,
+          "playerTier": 4,
+          "gearTier": 4,
+          "skillPath": [
+            "summoner-root",
+            "summoner-balanced",
+            "summoner-range-mid",
+            "summoner-balanced-t3-a"
+          ],
+          "gearItemIds": {
+            "weapon": "graveyard-plague-axe",
+            "armor": "mountain-vest-t4",
+            "recovery": "mountain-charm-t4",
+            "mobility": "desert-boots-t4",
+            "core": "core-survivalist",
+            "relic": "relic-equilibrium-shard"
+          }
+        },
+        "identityId": "breadth-t4-conduit-balanced-a",
+        "frame": "balanced",
+        "range": "mid",
+        "pathName": "Marshal",
+        "playerTreatment": "untreated",
+        "controlCaseId": null,
+        "preparationNotes": [
+          "Formation Attack supports openings and coordinated strikes; Recovery supports payments.",
+          "Role template controlled elite/pair; 43/45 RP, 2 free. Defining offense and encounter support precede optional Expose.",
+          "Mountain burst-cap/Guard armor and barrier charm retained; Recovery and actual danger response remain.",
+          "Base stance defensive-stance; one paid stance, no destinations or stance automation; no rites.",
+          "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+          "No generic low-HP Flee and no Wait It Out.",
+          "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+          "Native default Technique priority unless the exact AoE Rune overrides it.",
+          "Unused RP 2 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+        ],
+        "seed": 101009,
+        "block": "T",
+        "arm": "control",
+        "comparisonId": "closing-conduit-balanced-a-T-s101009",
+        "snapshotId": "t4-established-gm148",
+        "progressionSnapshot": {
+          "id": "t4-established-gm148",
+          "tier": 4,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "cave": 18,
+            "mountain": 24,
+            "jungle": 18,
+            "desert": 18,
+            "volcanic": 12,
+            "tundra": 12,
+            "graveyard": 4,
+            "trench": 0
+          },
+          "gm": 148,
+          "rp": 45,
+          "plus": 4,
+          "priorBossClears": [
+            "forest:1",
+            "mountain:1",
+            "plains:2",
+            "swamp:2",
+            "desert:2",
+            "cave:3",
+            "mountain:3",
+            "jungle:3",
+            "desert:3"
+          ]
+        },
+        "referenceObservationId": "t4-conduit-balanced-a-F2-s101009",
+        "referenceSource": "t4-specialization-screen-01@3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+        "durationMs": 1200000
+      },
+      "gearIds": [
+        "tundra-glacial-rimebrand",
+        "tundra-vest-t4",
+        "tundra-charm-t4-deepfreeze",
+        "tundra-boots-t4"
+      ],
+      "maxMs": 5400000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\candidate-closing-conduit-balanced-a-T-s101009.json"
+    },
+    {
+      "id": "baseline-closing-conduit-balanced-a-T-s101033",
+      "arm": "baseline",
+      "mode": "historical-loadout",
+      "nodeId": "node-t4-tundra-01",
+      "classRoot": "summoner-root",
+      "seed": 101033,
+      "cell": {
+        "id": "closing-conduit-balanced-a-T-s101033",
+        "className": "conduit",
+        "tier": 4,
+        "role": "farm",
+        "alternate": false,
+        "nodeId": "node-t4-tundra-01",
+        "isDungeon": false,
+        "treatment": "authored-source",
+        "targetTypes": [],
+        "upgradeLevel": 4,
+        "stance": "defensive-stance",
+        "abilities": {
+          "techniques": [
+            "power-strike",
+            "frenzy",
+            "hamstring"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse",
+            "break-free"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          }
+        ],
+        "build": {
+          "id": "closing-conduit-balanced-a-T-s101009",
+          "classRoot": "summoner-root",
+          "contentTier": 4,
+          "playerTier": 4,
+          "gearTier": 4,
+          "skillPath": [
+            "summoner-root",
+            "summoner-balanced",
+            "summoner-range-mid",
+            "summoner-balanced-t3-a"
+          ],
+          "gearItemIds": {
+            "weapon": "graveyard-plague-axe",
+            "armor": "mountain-vest-t4",
+            "recovery": "mountain-charm-t4",
+            "mobility": "desert-boots-t4",
+            "core": "core-survivalist",
+            "relic": "relic-equilibrium-shard"
+          }
+        },
+        "identityId": "breadth-t4-conduit-balanced-a",
+        "frame": "balanced",
+        "range": "mid",
+        "pathName": "Marshal",
+        "playerTreatment": "untreated",
+        "controlCaseId": null,
+        "preparationNotes": [
+          "Formation Attack supports openings and coordinated strikes; Recovery supports payments.",
+          "Role template controlled elite/pair; 43/45 RP, 2 free. Defining offense and encounter support precede optional Expose.",
+          "Mountain burst-cap/Guard armor and barrier charm retained; Recovery and actual danger response remain.",
+          "Base stance defensive-stance; one paid stance, no destinations or stance automation; no rites.",
+          "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+          "No generic low-HP Flee and no Wait It Out.",
+          "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+          "Native default Technique priority unless the exact AoE Rune overrides it.",
+          "Unused RP 2 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+        ],
+        "seed": 101033,
+        "block": "T",
+        "arm": "control",
+        "comparisonId": "closing-conduit-balanced-a-T-s101009",
+        "snapshotId": "t4-established-gm148",
+        "progressionSnapshot": {
+          "id": "t4-established-gm148",
+          "tier": 4,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "cave": 18,
+            "mountain": 24,
+            "jungle": 18,
+            "desert": 18,
+            "volcanic": 12,
+            "tundra": 12,
+            "graveyard": 4,
+            "trench": 0
+          },
+          "gm": 148,
+          "rp": 45,
+          "plus": 4,
+          "priorBossClears": [
+            "forest:1",
+            "mountain:1",
+            "plains:2",
+            "swamp:2",
+            "desert:2",
+            "cave:3",
+            "mountain:3",
+            "jungle:3",
+            "desert:3"
+          ]
+        },
+        "referenceObservationId": "t4-conduit-balanced-a-F2-s101009",
+        "referenceSource": "t4-specialization-screen-01@3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+        "durationMs": 1200000
+      },
+      "gearIds": [
+        "tundra-glacial-rimebrand",
+        "tundra-vest-t4",
+        "tundra-charm-t4-deepfreeze",
+        "tundra-boots-t4"
+      ],
+      "maxMs": 5400000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\baseline-closing-conduit-balanced-a-T-s101033.json"
+    },
+    {
+      "id": "candidate-closing-conduit-balanced-a-T-s101033",
+      "arm": "candidate",
+      "mode": "historical-loadout",
+      "nodeId": "node-t4-tundra-01",
+      "classRoot": "summoner-root",
+      "seed": 101033,
+      "cell": {
+        "id": "closing-conduit-balanced-a-T-s101033",
+        "className": "conduit",
+        "tier": 4,
+        "role": "farm",
+        "alternate": false,
+        "nodeId": "node-t4-tundra-01",
+        "isDungeon": false,
+        "treatment": "authored-source",
+        "targetTypes": [],
+        "upgradeLevel": 4,
+        "stance": "defensive-stance",
+        "abilities": {
+          "techniques": [
+            "power-strike",
+            "frenzy",
+            "hamstring"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse",
+            "break-free"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          },
+          {
+            "conditionId": "in-combat",
+            "actionId": "orbit"
+          }
+        ],
+        "build": {
+          "id": "closing-conduit-balanced-a-T-s101009",
+          "classRoot": "summoner-root",
+          "contentTier": 4,
+          "playerTier": 4,
+          "gearTier": 4,
+          "skillPath": [
+            "summoner-root",
+            "summoner-balanced",
+            "summoner-range-mid",
+            "summoner-balanced-t3-a"
+          ],
+          "gearItemIds": {
+            "weapon": "graveyard-plague-axe",
+            "armor": "mountain-vest-t4",
+            "recovery": "mountain-charm-t4",
+            "mobility": "desert-boots-t4",
+            "core": "core-survivalist",
+            "relic": "relic-equilibrium-shard"
+          }
+        },
+        "identityId": "breadth-t4-conduit-balanced-a",
+        "frame": "balanced",
+        "range": "mid",
+        "pathName": "Marshal",
+        "playerTreatment": "untreated",
+        "controlCaseId": null,
+        "preparationNotes": [
+          "Formation Attack supports openings and coordinated strikes; Recovery supports payments.",
+          "Role template controlled elite/pair; 43/45 RP, 2 free. Defining offense and encounter support precede optional Expose.",
+          "Mountain burst-cap/Guard armor and barrier charm retained; Recovery and actual danger response remain.",
+          "Base stance defensive-stance; one paid stance, no destinations or stance automation; no rites.",
+          "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+          "No generic low-HP Flee and no Wait It Out.",
+          "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+          "Native default Technique priority unless the exact AoE Rune overrides it.",
+          "Unused RP 2 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+        ],
+        "seed": 101033,
+        "block": "T",
+        "arm": "control",
+        "comparisonId": "closing-conduit-balanced-a-T-s101009",
+        "snapshotId": "t4-established-gm148",
+        "progressionSnapshot": {
+          "id": "t4-established-gm148",
+          "tier": 4,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "cave": 18,
+            "mountain": 24,
+            "jungle": 18,
+            "desert": 18,
+            "volcanic": 12,
+            "tundra": 12,
+            "graveyard": 4,
+            "trench": 0
+          },
+          "gm": 148,
+          "rp": 45,
+          "plus": 4,
+          "priorBossClears": [
+            "forest:1",
+            "mountain:1",
+            "plains:2",
+            "swamp:2",
+            "desert:2",
+            "cave:3",
+            "mountain:3",
+            "jungle:3",
+            "desert:3"
+          ]
+        },
+        "referenceObservationId": "t4-conduit-balanced-a-F2-s101009",
+        "referenceSource": "t4-specialization-screen-01@3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+        "durationMs": 1200000
+      },
+      "gearIds": [
+        "tundra-glacial-rimebrand",
+        "tundra-vest-t4",
+        "tundra-charm-t4-deepfreeze",
+        "tundra-boots-t4"
+      ],
+      "maxMs": 5400000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\candidate-closing-conduit-balanced-a-T-s101033.json"
+    },
+    {
+      "id": "baseline-closing-striker-heavy-a-D-s101009",
+      "arm": "baseline",
+      "mode": "historical-loadout",
+      "nodeId": "node-t4-desert-03",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "cell": {
+        "id": "closing-striker-heavy-a-D-s101009",
+        "className": "striker",
+        "tier": 4,
+        "role": "farm",
+        "alternate": false,
+        "nodeId": "node-t4-desert-03",
+        "isDungeon": false,
+        "treatment": "authored-source",
+        "targetTypes": [],
+        "upgradeLevel": 4,
+        "stance": "defensive-stance",
+        "abilities": {
+          "techniques": [
+            "quick-strike",
+            "frenzy",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse",
+            "break-free"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "in-combat",
+            "actionId": "focus-lowest-hp"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "closing-striker-heavy-a-D-s101009",
+          "classRoot": "cadence-root",
+          "contentTier": 4,
+          "playerTier": 4,
+          "gearTier": 4,
+          "skillPath": [
+            "cadence-root",
+            "cadence-heavy",
+            "cadence-range-close",
+            "cadence-heavy-t3-a"
+          ],
+          "gearItemIds": {
+            "weapon": "mountain-warmaul",
+            "armor": "mountain-vest-t4",
+            "recovery": "mountain-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-duelist",
+            "relic": "relic-equilibrium-shard"
+          }
+        },
+        "identityId": "breadth-t4-striker-heavy-a",
+        "frame": "heavy",
+        "range": "close",
+        "pathName": "Berserker",
+        "playerTreatment": "untreated",
+        "controlCaseId": null,
+        "preparationNotes": [
+          "Empowered payload with 0.55 APS rather than 0.4; Frenzy supports Rampage construction.",
+          "Role template controlled elite/pair; 45/45 RP, 0 free. Defining offense and encounter support precede optional Expose.",
+          "Mountain burst-cap/Guard armor and barrier charm retain elite burst support.",
+          "Base stance defensive-stance; one paid stance, no destinations or stance automation; no rites.",
+          "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+          "Paid opening Focus Lowest HP plus Cleanse and Break Free; no dealer-ID knowledge or guaranteed kill order.",
+          "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+          "Native default Technique priority unless the exact AoE Rune overrides it.",
+          "Unused RP 0 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+        ],
+        "seed": 101009,
+        "block": "D",
+        "arm": "control",
+        "comparisonId": "closing-striker-heavy-a-D-s101009",
+        "snapshotId": "t4-established-gm148",
+        "progressionSnapshot": {
+          "id": "t4-established-gm148",
+          "tier": 4,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "cave": 18,
+            "mountain": 24,
+            "jungle": 18,
+            "desert": 18,
+            "volcanic": 12,
+            "tundra": 12,
+            "graveyard": 4,
+            "trench": 0
+          },
+          "gm": 148,
+          "rp": 45,
+          "plus": 4,
+          "priorBossClears": [
+            "forest:1",
+            "mountain:1",
+            "plains:2",
+            "swamp:2",
+            "desert:2",
+            "cave:3",
+            "mountain:3",
+            "jungle:3",
+            "desert:3"
+          ]
+        },
+        "referenceObservationId": "t4-striker-heavy-a-F2-s101009",
+        "referenceSource": "t4-specialization-screen-01@3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+        "durationMs": 1200000
+      },
+      "gearIds": [
+        "desert-zenith-cross",
+        "desert-vest-t4",
+        "desert-charm-t4",
+        "desert-boots-t4"
+      ],
+      "maxMs": 5400000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\baseline-closing-striker-heavy-a-D-s101009.json"
+    },
+    {
+      "id": "candidate-closing-striker-heavy-a-D-s101009",
+      "arm": "candidate",
+      "mode": "historical-loadout",
+      "nodeId": "node-t4-desert-03",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "cell": {
+        "id": "closing-striker-heavy-a-D-s101009",
+        "className": "striker",
+        "tier": 4,
+        "role": "farm",
+        "alternate": false,
+        "nodeId": "node-t4-desert-03",
+        "isDungeon": false,
+        "treatment": "authored-source",
+        "targetTypes": [],
+        "upgradeLevel": 4,
+        "stance": "defensive-stance",
+        "abilities": {
+          "techniques": [
+            "quick-strike",
+            "frenzy",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse",
+            "break-free"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "in-combat",
+            "actionId": "focus-lowest-hp"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "closing-striker-heavy-a-D-s101009",
+          "classRoot": "cadence-root",
+          "contentTier": 4,
+          "playerTier": 4,
+          "gearTier": 4,
+          "skillPath": [
+            "cadence-root",
+            "cadence-heavy",
+            "cadence-range-close",
+            "cadence-heavy-t3-a"
+          ],
+          "gearItemIds": {
+            "weapon": "mountain-warmaul",
+            "armor": "mountain-vest-t4",
+            "recovery": "mountain-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-duelist",
+            "relic": "relic-equilibrium-shard"
+          }
+        },
+        "identityId": "breadth-t4-striker-heavy-a",
+        "frame": "heavy",
+        "range": "close",
+        "pathName": "Berserker",
+        "playerTreatment": "untreated",
+        "controlCaseId": null,
+        "preparationNotes": [
+          "Empowered payload with 0.55 APS rather than 0.4; Frenzy supports Rampage construction.",
+          "Role template controlled elite/pair; 45/45 RP, 0 free. Defining offense and encounter support precede optional Expose.",
+          "Mountain burst-cap/Guard armor and barrier charm retain elite burst support.",
+          "Base stance defensive-stance; one paid stance, no destinations or stance automation; no rites.",
+          "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+          "Paid opening Focus Lowest HP plus Cleanse and Break Free; no dealer-ID knowledge or guaranteed kill order.",
+          "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+          "Native default Technique priority unless the exact AoE Rune overrides it.",
+          "Unused RP 0 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+        ],
+        "seed": 101009,
+        "block": "D",
+        "arm": "control",
+        "comparisonId": "closing-striker-heavy-a-D-s101009",
+        "snapshotId": "t4-established-gm148",
+        "progressionSnapshot": {
+          "id": "t4-established-gm148",
+          "tier": 4,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "cave": 18,
+            "mountain": 24,
+            "jungle": 18,
+            "desert": 18,
+            "volcanic": 12,
+            "tundra": 12,
+            "graveyard": 4,
+            "trench": 0
+          },
+          "gm": 148,
+          "rp": 45,
+          "plus": 4,
+          "priorBossClears": [
+            "forest:1",
+            "mountain:1",
+            "plains:2",
+            "swamp:2",
+            "desert:2",
+            "cave:3",
+            "mountain:3",
+            "jungle:3",
+            "desert:3"
+          ]
+        },
+        "referenceObservationId": "t4-striker-heavy-a-F2-s101009",
+        "referenceSource": "t4-specialization-screen-01@3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+        "durationMs": 1200000
+      },
+      "gearIds": [
+        "desert-zenith-cross",
+        "desert-vest-t4",
+        "desert-charm-t4",
+        "desert-boots-t4"
+      ],
+      "maxMs": 5400000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\candidate-closing-striker-heavy-a-D-s101009.json"
+    },
+    {
+      "id": "baseline-closing-striker-heavy-a-D-s101033",
+      "arm": "baseline",
+      "mode": "historical-loadout",
+      "nodeId": "node-t4-desert-03",
+      "classRoot": "cadence-root",
+      "seed": 101033,
+      "cell": {
+        "id": "closing-striker-heavy-a-D-s101033",
+        "className": "striker",
+        "tier": 4,
+        "role": "farm",
+        "alternate": false,
+        "nodeId": "node-t4-desert-03",
+        "isDungeon": false,
+        "treatment": "authored-source",
+        "targetTypes": [],
+        "upgradeLevel": 4,
+        "stance": "defensive-stance",
+        "abilities": {
+          "techniques": [
+            "quick-strike",
+            "frenzy",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse",
+            "break-free"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "in-combat",
+            "actionId": "focus-lowest-hp"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "closing-striker-heavy-a-D-s101009",
+          "classRoot": "cadence-root",
+          "contentTier": 4,
+          "playerTier": 4,
+          "gearTier": 4,
+          "skillPath": [
+            "cadence-root",
+            "cadence-heavy",
+            "cadence-range-close",
+            "cadence-heavy-t3-a"
+          ],
+          "gearItemIds": {
+            "weapon": "mountain-warmaul",
+            "armor": "mountain-vest-t4",
+            "recovery": "mountain-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-duelist",
+            "relic": "relic-equilibrium-shard"
+          }
+        },
+        "identityId": "breadth-t4-striker-heavy-a",
+        "frame": "heavy",
+        "range": "close",
+        "pathName": "Berserker",
+        "playerTreatment": "untreated",
+        "controlCaseId": null,
+        "preparationNotes": [
+          "Empowered payload with 0.55 APS rather than 0.4; Frenzy supports Rampage construction.",
+          "Role template controlled elite/pair; 45/45 RP, 0 free. Defining offense and encounter support precede optional Expose.",
+          "Mountain burst-cap/Guard armor and barrier charm retain elite burst support.",
+          "Base stance defensive-stance; one paid stance, no destinations or stance automation; no rites.",
+          "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+          "Paid opening Focus Lowest HP plus Cleanse and Break Free; no dealer-ID knowledge or guaranteed kill order.",
+          "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+          "Native default Technique priority unless the exact AoE Rune overrides it.",
+          "Unused RP 0 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+        ],
+        "seed": 101033,
+        "block": "D",
+        "arm": "control",
+        "comparisonId": "closing-striker-heavy-a-D-s101009",
+        "snapshotId": "t4-established-gm148",
+        "progressionSnapshot": {
+          "id": "t4-established-gm148",
+          "tier": 4,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "cave": 18,
+            "mountain": 24,
+            "jungle": 18,
+            "desert": 18,
+            "volcanic": 12,
+            "tundra": 12,
+            "graveyard": 4,
+            "trench": 0
+          },
+          "gm": 148,
+          "rp": 45,
+          "plus": 4,
+          "priorBossClears": [
+            "forest:1",
+            "mountain:1",
+            "plains:2",
+            "swamp:2",
+            "desert:2",
+            "cave:3",
+            "mountain:3",
+            "jungle:3",
+            "desert:3"
+          ]
+        },
+        "referenceObservationId": "t4-striker-heavy-a-F2-s101009",
+        "referenceSource": "t4-specialization-screen-01@3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+        "durationMs": 1200000
+      },
+      "gearIds": [
+        "desert-zenith-cross",
+        "desert-vest-t4",
+        "desert-charm-t4",
+        "desert-boots-t4"
+      ],
+      "maxMs": 5400000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\baseline-closing-striker-heavy-a-D-s101033.json"
+    },
+    {
+      "id": "candidate-closing-striker-heavy-a-D-s101033",
+      "arm": "candidate",
+      "mode": "historical-loadout",
+      "nodeId": "node-t4-desert-03",
+      "classRoot": "cadence-root",
+      "seed": 101033,
+      "cell": {
+        "id": "closing-striker-heavy-a-D-s101033",
+        "className": "striker",
+        "tier": 4,
+        "role": "farm",
+        "alternate": false,
+        "nodeId": "node-t4-desert-03",
+        "isDungeon": false,
+        "treatment": "authored-source",
+        "targetTypes": [],
+        "upgradeLevel": 4,
+        "stance": "defensive-stance",
+        "abilities": {
+          "techniques": [
+            "quick-strike",
+            "frenzy",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse",
+            "break-free"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "in-combat",
+            "actionId": "focus-lowest-hp"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "closing-striker-heavy-a-D-s101009",
+          "classRoot": "cadence-root",
+          "contentTier": 4,
+          "playerTier": 4,
+          "gearTier": 4,
+          "skillPath": [
+            "cadence-root",
+            "cadence-heavy",
+            "cadence-range-close",
+            "cadence-heavy-t3-a"
+          ],
+          "gearItemIds": {
+            "weapon": "mountain-warmaul",
+            "armor": "mountain-vest-t4",
+            "recovery": "mountain-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-duelist",
+            "relic": "relic-equilibrium-shard"
+          }
+        },
+        "identityId": "breadth-t4-striker-heavy-a",
+        "frame": "heavy",
+        "range": "close",
+        "pathName": "Berserker",
+        "playerTreatment": "untreated",
+        "controlCaseId": null,
+        "preparationNotes": [
+          "Empowered payload with 0.55 APS rather than 0.4; Frenzy supports Rampage construction.",
+          "Role template controlled elite/pair; 45/45 RP, 0 free. Defining offense and encounter support precede optional Expose.",
+          "Mountain burst-cap/Guard armor and barrier charm retain elite burst support.",
+          "Base stance defensive-stance; one paid stance, no destinations or stance automation; no rites.",
+          "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+          "Paid opening Focus Lowest HP plus Cleanse and Break Free; no dealer-ID knowledge or guaranteed kill order.",
+          "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+          "Native default Technique priority unless the exact AoE Rune overrides it.",
+          "Unused RP 0 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+        ],
+        "seed": 101033,
+        "block": "D",
+        "arm": "control",
+        "comparisonId": "closing-striker-heavy-a-D-s101009",
+        "snapshotId": "t4-established-gm148",
+        "progressionSnapshot": {
+          "id": "t4-established-gm148",
+          "tier": 4,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "cave": 18,
+            "mountain": 24,
+            "jungle": 18,
+            "desert": 18,
+            "volcanic": 12,
+            "tundra": 12,
+            "graveyard": 4,
+            "trench": 0
+          },
+          "gm": 148,
+          "rp": 45,
+          "plus": 4,
+          "priorBossClears": [
+            "forest:1",
+            "mountain:1",
+            "plains:2",
+            "swamp:2",
+            "desert:2",
+            "cave:3",
+            "mountain:3",
+            "jungle:3",
+            "desert:3"
+          ]
+        },
+        "referenceObservationId": "t4-striker-heavy-a-F2-s101009",
+        "referenceSource": "t4-specialization-screen-01@3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+        "durationMs": 1200000
+      },
+      "gearIds": [
+        "desert-zenith-cross",
+        "desert-vest-t4",
+        "desert-charm-t4",
+        "desert-boots-t4"
+      ],
+      "maxMs": 5400000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\candidate-closing-striker-heavy-a-D-s101033.json"
+    },
+    {
+      "id": "baseline-closing-striker-heavy-c-V-s101009",
+      "arm": "baseline",
+      "mode": "historical-loadout",
+      "nodeId": "node-t4-volcanic-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "cell": {
+        "id": "closing-striker-heavy-c-V-s101009",
+        "className": "striker",
+        "tier": 4,
+        "role": "farm",
+        "alternate": false,
+        "nodeId": "node-t4-volcanic-01",
+        "isDungeon": false,
+        "treatment": "authored-source",
+        "targetTypes": [],
+        "upgradeLevel": 4,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "sweep",
+            "frenzy",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "closing-striker-heavy-c-V-s101009",
+          "classRoot": "cadence-root",
+          "contentTier": 4,
+          "playerTier": 4,
+          "gearTier": 4,
+          "skillPath": [
+            "cadence-root",
+            "cadence-heavy",
+            "cadence-range-close",
+            "cadence-heavy-t3-c"
+          ],
+          "gearItemIds": {
+            "weapon": "mountain-warmaul",
+            "armor": "volcanic-vest-t4",
+            "recovery": "volcanic-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-bruiser",
+            "relic": "relic-equilibrium-shard"
+          }
+        },
+        "identityId": "breadth-t4-striker-heavy-c",
+        "frame": "heavy",
+        "range": "close",
+        "pathName": "Juggernaut",
+        "playerTreatment": "untreated",
+        "controlCaseId": null,
+        "preparationNotes": [
+          "Crescendo amplifies finishers during maintained engagement.",
+          "Role template swarm; 40/45 RP, 5 free. Defining offense and encounter support precede optional Expose.",
+          "Volcanic plating/hardening and active/kill Recovery; kills are required for the extra recovery window.",
+          "Base stance offensive-stance; one paid stance, no destinations or stance automation; no rites.",
+          "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+          "No generic low-HP Flee and no Wait It Out.",
+          "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+          "Native default Technique priority unless the exact AoE Rune overrides it.",
+          "Unused RP 5 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+        ],
+        "seed": 101009,
+        "block": "V",
+        "arm": "control",
+        "comparisonId": "closing-striker-heavy-c-V-s101009",
+        "snapshotId": "t4-established-gm148",
+        "progressionSnapshot": {
+          "id": "t4-established-gm148",
+          "tier": 4,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "cave": 18,
+            "mountain": 24,
+            "jungle": 18,
+            "desert": 18,
+            "volcanic": 12,
+            "tundra": 12,
+            "graveyard": 4,
+            "trench": 0
+          },
+          "gm": 148,
+          "rp": 45,
+          "plus": 4,
+          "priorBossClears": [
+            "forest:1",
+            "mountain:1",
+            "plains:2",
+            "swamp:2",
+            "desert:2",
+            "cave:3",
+            "mountain:3",
+            "jungle:3",
+            "desert:3"
+          ]
+        },
+        "referenceObservationId": "t4-striker-heavy-c-F1-s101009",
+        "referenceSource": "t4-specialization-screen-01@3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+        "durationMs": 1200000
+      },
+      "gearIds": [
+        "volcanic-blightbrand",
+        "volcanic-vest-t4-lavatempered",
+        "volcanic-charm-t4",
+        "volcanic-boots-t4"
+      ],
+      "maxMs": 5400000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\baseline-closing-striker-heavy-c-V-s101009.json"
+    },
+    {
+      "id": "candidate-closing-striker-heavy-c-V-s101009",
+      "arm": "candidate",
+      "mode": "historical-loadout",
+      "nodeId": "node-t4-volcanic-01",
+      "classRoot": "cadence-root",
+      "seed": 101009,
+      "cell": {
+        "id": "closing-striker-heavy-c-V-s101009",
+        "className": "striker",
+        "tier": 4,
+        "role": "farm",
+        "alternate": false,
+        "nodeId": "node-t4-volcanic-01",
+        "isDungeon": false,
+        "treatment": "authored-source",
+        "targetTypes": [],
+        "upgradeLevel": 4,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "sweep",
+            "frenzy",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "closing-striker-heavy-c-V-s101009",
+          "classRoot": "cadence-root",
+          "contentTier": 4,
+          "playerTier": 4,
+          "gearTier": 4,
+          "skillPath": [
+            "cadence-root",
+            "cadence-heavy",
+            "cadence-range-close",
+            "cadence-heavy-t3-c"
+          ],
+          "gearItemIds": {
+            "weapon": "mountain-warmaul",
+            "armor": "volcanic-vest-t4",
+            "recovery": "volcanic-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-bruiser",
+            "relic": "relic-equilibrium-shard"
+          }
+        },
+        "identityId": "breadth-t4-striker-heavy-c",
+        "frame": "heavy",
+        "range": "close",
+        "pathName": "Juggernaut",
+        "playerTreatment": "untreated",
+        "controlCaseId": null,
+        "preparationNotes": [
+          "Crescendo amplifies finishers during maintained engagement.",
+          "Role template swarm; 40/45 RP, 5 free. Defining offense and encounter support precede optional Expose.",
+          "Volcanic plating/hardening and active/kill Recovery; kills are required for the extra recovery window.",
+          "Base stance offensive-stance; one paid stance, no destinations or stance automation; no rites.",
+          "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+          "No generic low-HP Flee and no Wait It Out.",
+          "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+          "Native default Technique priority unless the exact AoE Rune overrides it.",
+          "Unused RP 5 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+        ],
+        "seed": 101009,
+        "block": "V",
+        "arm": "control",
+        "comparisonId": "closing-striker-heavy-c-V-s101009",
+        "snapshotId": "t4-established-gm148",
+        "progressionSnapshot": {
+          "id": "t4-established-gm148",
+          "tier": 4,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "cave": 18,
+            "mountain": 24,
+            "jungle": 18,
+            "desert": 18,
+            "volcanic": 12,
+            "tundra": 12,
+            "graveyard": 4,
+            "trench": 0
+          },
+          "gm": 148,
+          "rp": 45,
+          "plus": 4,
+          "priorBossClears": [
+            "forest:1",
+            "mountain:1",
+            "plains:2",
+            "swamp:2",
+            "desert:2",
+            "cave:3",
+            "mountain:3",
+            "jungle:3",
+            "desert:3"
+          ]
+        },
+        "referenceObservationId": "t4-striker-heavy-c-F1-s101009",
+        "referenceSource": "t4-specialization-screen-01@3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+        "durationMs": 1200000
+      },
+      "gearIds": [
+        "volcanic-blightbrand",
+        "volcanic-vest-t4-lavatempered",
+        "volcanic-charm-t4",
+        "volcanic-boots-t4"
+      ],
+      "maxMs": 5400000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\candidate-closing-striker-heavy-c-V-s101009.json"
+    },
+    {
+      "id": "baseline-closing-striker-heavy-c-V-s101033",
+      "arm": "baseline",
+      "mode": "historical-loadout",
+      "nodeId": "node-t4-volcanic-01",
+      "classRoot": "cadence-root",
+      "seed": 101033,
+      "cell": {
+        "id": "closing-striker-heavy-c-V-s101033",
+        "className": "striker",
+        "tier": 4,
+        "role": "farm",
+        "alternate": false,
+        "nodeId": "node-t4-volcanic-01",
+        "isDungeon": false,
+        "treatment": "authored-source",
+        "targetTypes": [],
+        "upgradeLevel": 4,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "sweep",
+            "frenzy",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "closing-striker-heavy-c-V-s101009",
+          "classRoot": "cadence-root",
+          "contentTier": 4,
+          "playerTier": 4,
+          "gearTier": 4,
+          "skillPath": [
+            "cadence-root",
+            "cadence-heavy",
+            "cadence-range-close",
+            "cadence-heavy-t3-c"
+          ],
+          "gearItemIds": {
+            "weapon": "mountain-warmaul",
+            "armor": "volcanic-vest-t4",
+            "recovery": "volcanic-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-bruiser",
+            "relic": "relic-equilibrium-shard"
+          }
+        },
+        "identityId": "breadth-t4-striker-heavy-c",
+        "frame": "heavy",
+        "range": "close",
+        "pathName": "Juggernaut",
+        "playerTreatment": "untreated",
+        "controlCaseId": null,
+        "preparationNotes": [
+          "Crescendo amplifies finishers during maintained engagement.",
+          "Role template swarm; 40/45 RP, 5 free. Defining offense and encounter support precede optional Expose.",
+          "Volcanic plating/hardening and active/kill Recovery; kills are required for the extra recovery window.",
+          "Base stance offensive-stance; one paid stance, no destinations or stance automation; no rites.",
+          "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+          "No generic low-HP Flee and no Wait It Out.",
+          "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+          "Native default Technique priority unless the exact AoE Rune overrides it.",
+          "Unused RP 5 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+        ],
+        "seed": 101033,
+        "block": "V",
+        "arm": "control",
+        "comparisonId": "closing-striker-heavy-c-V-s101009",
+        "snapshotId": "t4-established-gm148",
+        "progressionSnapshot": {
+          "id": "t4-established-gm148",
+          "tier": 4,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "cave": 18,
+            "mountain": 24,
+            "jungle": 18,
+            "desert": 18,
+            "volcanic": 12,
+            "tundra": 12,
+            "graveyard": 4,
+            "trench": 0
+          },
+          "gm": 148,
+          "rp": 45,
+          "plus": 4,
+          "priorBossClears": [
+            "forest:1",
+            "mountain:1",
+            "plains:2",
+            "swamp:2",
+            "desert:2",
+            "cave:3",
+            "mountain:3",
+            "jungle:3",
+            "desert:3"
+          ]
+        },
+        "referenceObservationId": "t4-striker-heavy-c-F1-s101009",
+        "referenceSource": "t4-specialization-screen-01@3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+        "durationMs": 1200000
+      },
+      "gearIds": [
+        "volcanic-blightbrand",
+        "volcanic-vest-t4-lavatempered",
+        "volcanic-charm-t4",
+        "volcanic-boots-t4"
+      ],
+      "maxMs": 5400000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\baseline-closing-striker-heavy-c-V-s101033.json"
+    },
+    {
+      "id": "candidate-closing-striker-heavy-c-V-s101033",
+      "arm": "candidate",
+      "mode": "historical-loadout",
+      "nodeId": "node-t4-volcanic-01",
+      "classRoot": "cadence-root",
+      "seed": 101033,
+      "cell": {
+        "id": "closing-striker-heavy-c-V-s101033",
+        "className": "striker",
+        "tier": 4,
+        "role": "farm",
+        "alternate": false,
+        "nodeId": "node-t4-volcanic-01",
+        "isDungeon": false,
+        "treatment": "authored-source",
+        "targetTypes": [],
+        "upgradeLevel": 4,
+        "stance": "offensive-stance",
+        "abilities": {
+          "techniques": [
+            "sweep",
+            "frenzy",
+            "expose-weakness"
+          ],
+          "guards": [
+            "second-wind",
+            "brace",
+            "cleanse"
+          ]
+        },
+        "runeRules": [
+          {
+            "conditionId": "always",
+            "actionId": "auto-path-enemy"
+          },
+          {
+            "conditionId": "inside-telegraph",
+            "actionId": "step-back"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "avoid-hazards"
+          },
+          {
+            "conditionId": "always",
+            "actionId": "wait-for-regen"
+          }
+        ],
+        "build": {
+          "id": "closing-striker-heavy-c-V-s101009",
+          "classRoot": "cadence-root",
+          "contentTier": 4,
+          "playerTier": 4,
+          "gearTier": 4,
+          "skillPath": [
+            "cadence-root",
+            "cadence-heavy",
+            "cadence-range-close",
+            "cadence-heavy-t3-c"
+          ],
+          "gearItemIds": {
+            "weapon": "mountain-warmaul",
+            "armor": "volcanic-vest-t4",
+            "recovery": "volcanic-charm-t4",
+            "mobility": "mountain-boots-t4",
+            "core": "core-bruiser",
+            "relic": "relic-equilibrium-shard"
+          }
+        },
+        "identityId": "breadth-t4-striker-heavy-c",
+        "frame": "heavy",
+        "range": "close",
+        "pathName": "Juggernaut",
+        "playerTreatment": "untreated",
+        "controlCaseId": null,
+        "preparationNotes": [
+          "Crescendo amplifies finishers during maintained engagement.",
+          "Role template swarm; 40/45 RP, 5 free. Defining offense and encounter support precede optional Expose.",
+          "Volcanic plating/hardening and active/kill Recovery; kills are required for the extra recovery window.",
+          "Base stance offensive-stance; one paid stance, no destinations or stance automation; no rites.",
+          "Inherited Find Enemies, telegraph escape, Avoid Hazards and Recover First; mid range Orbit uses Desert kiting boots.",
+          "No generic low-HP Flee and no Wait It Out.",
+          "One continuous life; 5/10/20 minute endpoints, first owner death stops.",
+          "Native default Technique priority unless the exact AoE Rune overrides it.",
+          "Unused RP 5 is below the next optional Expose cost or avoids redundant channel/mobility/cast tools; no budget filler or precharge."
+        ],
+        "seed": 101033,
+        "block": "V",
+        "arm": "control",
+        "comparisonId": "closing-striker-heavy-c-V-s101009",
+        "snapshotId": "t4-established-gm148",
+        "progressionSnapshot": {
+          "id": "t4-established-gm148",
+          "tier": 4,
+          "mastery": {
+            "plains": 12,
+            "forest": 12,
+            "swamp": 18,
+            "cave": 18,
+            "mountain": 24,
+            "jungle": 18,
+            "desert": 18,
+            "volcanic": 12,
+            "tundra": 12,
+            "graveyard": 4,
+            "trench": 0
+          },
+          "gm": 148,
+          "rp": 45,
+          "plus": 4,
+          "priorBossClears": [
+            "forest:1",
+            "mountain:1",
+            "plains:2",
+            "swamp:2",
+            "desert:2",
+            "cave:3",
+            "mountain:3",
+            "jungle:3",
+            "desert:3"
+          ]
+        },
+        "referenceObservationId": "t4-striker-heavy-c-F1-s101009",
+        "referenceSource": "t4-specialization-screen-01@3b9067c4990fbbbd4c3a889414b0b33bf2c4d27e",
+        "durationMs": 1200000
+      },
+      "gearIds": [
+        "volcanic-blightbrand",
+        "volcanic-vest-t4-lavatempered",
+        "volcanic-charm-t4",
+        "volcanic-boots-t4"
+      ],
+      "maxMs": 5400000,
+      "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+      "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\candidate-closing-striker-heavy-c-V-s101033.json"
+    }
+  ]
+}

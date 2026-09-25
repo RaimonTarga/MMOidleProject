@@ -1,0 +1,218 @@
+[
+  {
+    "id": "candidate-closing-conduit-balanced-a-T-s101009-at-node-t4-desert-03-policy",
+    "node": "node-t4-desert-03",
+    "seed": 101009,
+    "build": "summoner-root",
+    "minutes": 89.015,
+    "xpm": 6777.363365724877,
+    "projected600k": 88.53000313283728,
+    "masteryMinutes": 89.015,
+    "death": false,
+    "plateau": false,
+    "censored": false,
+    "kills": 355,
+    "intentMs": {
+      "Nearest eligible target": 5332000,
+      "No worthy target nearby": 8900
+    },
+    "lastXpAt": 89.015,
+    "file": "candidate-closing-conduit-balanced-a-T-s101009-at-node-t4-desert-03-policy.json"
+  },
+  {
+    "id": "candidate-closing-conduit-balanced-a-T-s101033-at-node-t4-desert-03-policy",
+    "node": "node-t4-desert-03",
+    "seed": 101033,
+    "build": "summoner-root",
+    "minutes": 91.95833333333333,
+    "xpm": 6541.07113729044,
+    "projected600k": 91.7280958128431,
+    "masteryMinutes": 91.95833333333333,
+    "death": false,
+    "plateau": false,
+    "censored": false,
+    "kills": 352,
+    "intentMs": {
+      "Nearest eligible target": 5508400,
+      "No worthy target nearby": 9100
+    },
+    "lastXpAt": 91.95833333333333,
+    "file": "candidate-closing-conduit-balanced-a-T-s101033-at-node-t4-desert-03-policy.json"
+  },
+  {
+    "id": "candidate-closing-squire-heavy-b-D-s101009-at-node-t4-desert-03-policy",
+    "node": "node-t4-desert-03",
+    "seed": 101009,
+    "build": "cooldown-root",
+    "minutes": 91.46833333333333,
+    "xpm": 6559.997084601228,
+    "projected600k": 91.46345528238494,
+    "masteryMinutes": 91.46833333333333,
+    "death": false,
+    "plateau": false,
+    "censored": false,
+    "kills": 368,
+    "intentMs": {
+      "Nearest eligible target": 662100,
+      "Lowest-health eligible target": 4729100,
+      "No worthy target nearby": 44500,
+      "Waiting to recover to full health": 52400
+    },
+    "lastXpAt": 91.46833333333333,
+    "file": "candidate-closing-squire-heavy-b-D-s101009-at-node-t4-desert-03-policy.json"
+  },
+  {
+    "id": "candidate-closing-squire-heavy-b-D-s101009-at-node-t4-tundra-01-policy",
+    "node": "node-t4-tundra-01",
+    "seed": 101009,
+    "build": "cooldown-root",
+    "minutes": 93.07833333333333,
+    "xpm": 6473.730012355185,
+    "projected600k": 92.68227109485466,
+    "masteryMinutes": 93.07833333333333,
+    "death": false,
+    "plateau": false,
+    "censored": false,
+    "kills": 337,
+    "intentMs": {
+      "Nearest eligible target": 1319500,
+      "Lowest-health eligible target": 3542600,
+      "No worthy target nearby": 49600,
+      "Waiting to recover to full health": 393700,
+      "Stepping out of an incoming attack": 279300
+    },
+    "lastXpAt": 93.07833333333333,
+    "file": "candidate-closing-squire-heavy-b-D-s101009-at-node-t4-tundra-01-policy.json"
+  },
+  {
+    "id": "candidate-closing-squire-heavy-b-D-s101033-at-node-t4-desert-03-policy",
+    "node": "node-t4-desert-03",
+    "seed": 101033,
+    "build": "cooldown-root",
+    "minutes": 92.77333333333333,
+    "xpm": 6476.009629203794,
+    "projected600k": 92.64964605584878,
+    "masteryMinutes": 92.77333333333333,
+    "death": false,
+    "plateau": false,
+    "censored": false,
+    "kills": 357,
+    "intentMs": {
+      "Nearest eligible target": 633800,
+      "Lowest-health eligible target": 4813600,
+      "No worthy target nearby": 43600,
+      "Waiting to recover to full health": 75400
+    },
+    "lastXpAt": 92.77333333333333,
+    "file": "candidate-closing-squire-heavy-b-D-s101033-at-node-t4-desert-03-policy.json"
+  },
+  {
+    "id": "candidate-closing-squire-heavy-b-D-s101033-at-node-t4-tundra-01-policy",
+    "node": "node-t4-tundra-01",
+    "seed": 101033,
+    "build": "cooldown-root",
+    "minutes": 93.34833333333333,
+    "xpm": 6441.164812797943,
+    "projected600k": 93.15085352386274,
+    "masteryMinutes": 93.34833333333333,
+    "death": false,
+    "plateau": false,
+    "censored": false,
+    "kills": 329,
+    "intentMs": {
+      "Nearest eligible target": 1296100,
+      "Lowest-health eligible target": 3583200,
+      "No worthy target nearby": 48800,
+      "Waiting to recover to full health": 383600,
+      "Stepping out of an incoming attack": 289200
+    },
+    "lastXpAt": 93.34833333333333,
+    "file": "candidate-closing-squire-heavy-b-D-s101033-at-node-t4-tundra-01-policy.json"
+  },
+  {
+    "id": "candidate-closing-striker-balanced-c-V-s101009-at-node-t4-desert-03",
+    "node": "node-t4-desert-03",
+    "seed": 101009,
+    "build": "cadence-root",
+    "minutes": 48.86833333333333,
+    "xpm": 12281.920807612292,
+    "projected600k": 48.85229349696849,
+    "masteryMinutes": 48.86833333333333,
+    "death": false,
+    "plateau": false,
+    "censored": false,
+    "kills": 358,
+    "intentMs": {
+      "Nearest eligible target": 2838600,
+      "No worthy target nearby": 42200,
+      "Waiting to recover to full health": 51300
+    },
+    "lastXpAt": 48.86833333333333,
+    "file": "candidate-closing-striker-balanced-c-V-s101009-at-node-t4-desert-03.json"
+  },
+  {
+    "id": "candidate-closing-striker-balanced-c-V-s101009-at-node-t4-tundra-01",
+    "node": "node-t4-tundra-01",
+    "seed": 101009,
+    "build": "cadence-root",
+    "minutes": 49.47666666666667,
+    "xpm": 12149.504817085495,
+    "projected600k": 49.38472876328568,
+    "masteryMinutes": 49.47666666666667,
+    "death": false,
+    "plateau": false,
+    "censored": false,
+    "kills": 317,
+    "intentMs": {
+      "Nearest eligible target": 2649800,
+      "No worthy target nearby": 47900,
+      "Stepping out of an incoming attack": 106100,
+      "Waiting to recover to full health": 164800
+    },
+    "lastXpAt": 49.47666666666667,
+    "file": "candidate-closing-striker-balanced-c-V-s101009-at-node-t4-tundra-01.json"
+  },
+  {
+    "id": "candidate-closing-striker-balanced-c-V-s101033-at-node-t4-desert-03",
+    "node": "node-t4-desert-03",
+    "seed": 101033,
+    "build": "cadence-root",
+    "minutes": 50.556666666666665,
+    "xpm": 11901.674688468385,
+    "projected600k": 50.413073429182546,
+    "masteryMinutes": 50.556666666666665,
+    "death": false,
+    "plateau": false,
+    "censored": false,
+    "kills": 359,
+    "intentMs": {
+      "Nearest eligible target": 2931600,
+      "No worthy target nearby": 44600,
+      "Waiting to recover to full health": 57200
+    },
+    "lastXpAt": 50.556666666666665,
+    "file": "candidate-closing-striker-balanced-c-V-s101033-at-node-t4-desert-03.json"
+  },
+  {
+    "id": "candidate-closing-striker-balanced-c-V-s101033-at-node-t4-tundra-01",
+    "node": "node-t4-tundra-01",
+    "seed": 101033,
+    "build": "cadence-root",
+    "minutes": 50.43833333333333,
+    "xpm": 11914.568945577108,
+    "projected600k": 50.35851508692056,
+    "masteryMinutes": 50.43833333333333,
+    "death": false,
+    "plateau": false,
+    "censored": false,
+    "kills": 327,
+    "intentMs": {
+      "Nearest eligible target": 2691300,
+      "No worthy target nearby": 50800,
+      "Waiting to recover to full health": 190300,
+      "Stepping out of an incoming attack": 93900
+    },
+    "lastXpAt": 50.43833333333333,
+    "file": "candidate-closing-striker-balanced-c-V-s101033-at-node-t4-tundra-01.json"
+  }
+]

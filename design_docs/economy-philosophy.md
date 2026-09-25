@@ -9,8 +9,15 @@ Terse on purpose.
 ## 0. The core tension (read first)
 
 - **Biome level unlocks the *chance* for power; essence *pays* for it.** These two must stay in tension, never both trivially solved.
-- Concretely: you should reach a tier's level cap **before** you can afford to max its gear. Capping the biome is the easy part; affording full +3 is the grind that outlives the cap.
-- The problem this fixes: essence was over-plentiful (full +3 reachable before cap) while XP felt slow. Goal is to flip both — capping easier, maxing costlier.
+- Updated user goal (2026-09-25): by a biome's current-tier mastery cap, the
+  player should have earned roughly enough essence for a full **+3 gear set**.
+  Farming through **+5** should take roughly **50% additional time**. These
+  are affordability goals; Global Mastery, catalyst families and cross-color
+  costs can separately gate purchases.
+- The older goal of +3 requiring a grind after mastery is superseded. Concrete
+  joint tuning candidates are in the [reward proposal](../reports/reward-mastery-study-2026-09-25/PROPOSAL.md);
+  their working definition includes acquisition/evolution plus upgrades for
+  one weapon, armor, recovery and mobility item. No candidate is applied yet.
 
 ---
 
@@ -35,9 +42,12 @@ Terse on purpose.
   the level-4 cap.
 - The per-tier XP reward multipliers remain unchanged. Tune required XP through
   the segment budget and local-share tables, not by editing per-mob rewards.
-- Initial pacing targets are **T1 ~5 minutes**, **T2 ~10–12**, **T3 ~13–16**,
-  and **T4 ~16–20 minutes** of pure mastery per biome. Bosses, gear farming,
-  crafting, travel, deaths, and build experimentation add completion time.
+- Updated user pacing targets (2026-09-25) are **T1 ~5 minutes**, **T2 ~15**,
+  **T3 ~30**, and **T4 ~60 minutes** per biome tier segment. These supersede
+  the initial 5 / 10–12 / 13–16 / 16–20-minute targets. The current budgets
+  above have not yet been recalibrated. The [reward study](../reports/reward-mastery-study-2026-09-25/README.md)
+  uses active time in the biome as its working clock and records the remaining
+  measurement assumptions and telemetry limitations.
 
 ---
 
@@ -62,8 +72,11 @@ Terse on purpose.
   - *Charm ×1.5 (not ×3):* its upgrades buy small % mechanic bumps, not raw stats — a ×3 would overprice the value delivered.
   - *Boots ×1:* premium *utility* slot, cheapest by design — cheap to enter, cheap to max, low ceiling.
   - *Armor may run above weapon* where its mitigation is generic (e.g. flat %DR works vs every damage shape). Flexibility earns a premium.
-- **Target at the level cap:** full set craftable + roughly +1 across the board (boss-ready). Full +3 requires grinding past the cap.
-- **Upgrade curves must be smooth** — step-to-step ratio ≈ 1.8-2.2×. No lumpy ramps (a cheap middle step wedged between two expensive ones).
+- **Target at the level cap:** enough earned essence for a full +3 set;
+  full +5 funding at roughly 1.5× that farming time, under the revised user goal.
+- The old 1.8–2.2× step-price growth is under review: current escalating costs
+  imply a much longer +3→+5 tail. The linked proposal compares redistributing
+  lifetime cost against reducing the tail and currency supply.
 - **Base cost scales ~2.2-2.4× per slot per tier.** Watch boots specifically — easy to forget to scale; keep boots ≈ 0.8× the weapon's base at every tier.
 
 ---

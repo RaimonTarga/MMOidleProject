@@ -1,0 +1,17 @@
+{
+  "id": "candidate-fixed3-t3-swamp-cadence-root-101033",
+  "arm": "candidate",
+  "mode": "fixed3",
+  "nodeId": "node-t3-swamp-01",
+  "classRoot": "cadence-root",
+  "seed": 101033,
+  "gearIds": [
+    "swamp-blightbrand",
+    "swamp-vest-t3",
+    "swamp-charm-t3",
+    "swamp-boots-t3"
+  ],
+  "maxMs": 3600000,
+  "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+  "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-replicate\\candidate-fixed3-t3-swamp-cadence-root-101033.json"
+}

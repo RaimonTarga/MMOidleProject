@@ -1,0 +1,17 @@
+{
+  "id": "candidate-buy-t2-desert-cadence-root-101009",
+  "arm": "candidate",
+  "mode": "buy",
+  "nodeId": "node-t2-desert-01",
+  "classRoot": "cadence-root",
+  "seed": 101009,
+  "gearIds": [
+    "desert-sunsteel-cross",
+    "desert-vest-t2",
+    "desert-charm-t2",
+    "desert-boots-t2"
+  ],
+  "maxMs": 1800000,
+  "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+  "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-buy-t2-desert-cadence-root-101009.json"
+}

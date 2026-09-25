@@ -1,0 +1,18 @@
+{
+  "tundra": {
+    "fastXpPerMinute": 6756.633333333333,
+    "slowXpPerMinute": 2830.366666666667,
+    "fastToSlowRatio": 2.387193649821578,
+    "maxFactorKeepingFastAtLeast50": 1.7760324421926106,
+    "minFactorKeepingSlowAtMost90": 2.355407426599616,
+    "scalarCanFitBoth": false
+  },
+  "desert": {
+    "fastXpPerMinute": 5039.066666666667,
+    "slowXpPerMinute": 2077.6,
+    "fastToSlowRatio": 2.425426774483378,
+    "maxFactorKeepingFastAtLeast50": 2.381393379726404,
+    "minFactorKeepingSlowAtMost90": 3.2088307020921576,
+    "scalarCanFitBoth": false
+  }
+}

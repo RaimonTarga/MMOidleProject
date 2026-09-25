@@ -1,0 +1,1030 @@
+{
+  "job": {
+    "id": "baseline-fixed3-t3-swamp-cadence-root-101009",
+    "arm": "baseline",
+    "mode": "fixed3",
+    "nodeId": "node-t3-swamp-01",
+    "classRoot": "cadence-root",
+    "seed": 101009,
+    "gearIds": [
+      "swamp-blightbrand",
+      "swamp-vest-t3",
+      "swamp-charm-t3",
+      "swamp-boots-t3"
+    ],
+    "maxMs": 3600000,
+    "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+    "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-fixed3-t3-swamp-cadence-root-101009.json"
+  },
+  "hitboxes": 406,
+  "build": {
+    "id": "cadence-root+cadence-balanced+cadence-range-close",
+    "classRoot": "cadence-root",
+    "skillPath": [
+      "cadence-root",
+      "cadence-balanced",
+      "cadence-range-close"
+    ],
+    "contentTier": 3,
+    "playerTier": 3,
+    "gearTier": 3,
+    "gearItemIds": {
+      "weapon": "swamp-blightbrand",
+      "armor": "swamp-vest-t3",
+      "recovery": "swamp-charm-t3",
+      "mobility": "swamp-boots-t3"
+    }
+  },
+  "initial": {
+    "elapsedMs": 0,
+    "level": 12,
+    "xp": 6750,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {},
+    "catalystProgress": {},
+    "upgrades": {
+      "swamp-blightbrand": 3,
+      "swamp-vest-t3": 3,
+      "swamp-charm-t3": 3,
+      "swamp-boots-t3": 3
+    },
+    "hp": 318,
+    "build": {
+      "id": "cadence-root+cadence-balanced+cadence-range-close",
+      "classRoot": "cadence-root",
+      "skillPath": [
+        "cadence-root",
+        "cadence-balanced",
+        "cadence-range-close"
+      ],
+      "contentTier": 3,
+      "playerTier": 3,
+      "gearTier": 3,
+      "gearItemIds": {
+        "weapon": "swamp-blightbrand",
+        "armor": "swamp-vest-t3",
+        "recovery": "swamp-charm-t3",
+        "mobility": "swamp-boots-t3"
+      }
+    },
+    "loadout": {
+      "abilities": {
+        "techniques": [
+          "binding-strike",
+          "detonate"
+        ],
+        "guards": [
+          "break-free",
+          "bramble-guard"
+        ]
+      },
+      "stances": [
+        "offensive-stance"
+      ],
+      "rites": [
+        "blood-offering",
+        "purification",
+        "ability-reprieve",
+        "mechanic-renewal",
+        "swift-repose"
+      ],
+      "runes": []
+    },
+    "stats": {
+      "hp": 318,
+      "attack": 67
+    },
+    "biomeLevels": {
+      "cave": 18,
+      "forest": 12,
+      "mountain": 18,
+      "plains": 12,
+      "swamp": 12,
+      "desert": 12,
+      "jungle": 12,
+      "tundra": 6,
+      "volcanic": 6
+    }
+  },
+  "entry": 12,
+  "cap": 18,
+  "budget": 7000,
+  "costs": {
+    "3": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 2264
+    },
+    "5": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 6478
+    }
+  },
+  "mastery": {
+    "elapsedMs": 281300,
+    "level": 18,
+    "xp": 13969,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 838
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 838
+    },
+    "catalysts": {
+      "alacrity": 12
+    },
+    "catalystProgress": {
+      "alacrity": 3
+    },
+    "upgrades": {
+      "swamp-blightbrand": 3,
+      "swamp-vest-t3": 3,
+      "swamp-charm-t3": 3,
+      "swamp-boots-t3": 3
+    },
+    "hp": 318
+  },
+  "death": {
+    "elapsedMs": 1122600,
+    "level": 18,
+    "xp": 13969,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 3452
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 3452
+    },
+    "catalysts": {
+      "alacrity": 49
+    },
+    "catalystProgress": {
+      "alacrity": 56
+    },
+    "upgrades": {
+      "swamp-blightbrand": 3,
+      "swamp-vest-t3": 3,
+      "swamp-charm-t3": 3,
+      "swamp-boots-t3": 3
+    },
+    "hp": 0
+  },
+  "fundingTimes": {
+    "3": 702300,
+    "5": null
+  },
+  "actualAll3Ms": null,
+  "actualAll5Ms": null,
+  "acquisitionDebt": {
+    "red": 0,
+    "blue": 0,
+    "green": 0,
+    "yellow": 0,
+    "purple": 0
+  },
+  "final": {
+    "elapsedMs": 1122600,
+    "level": 18,
+    "xp": 13969,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 3452
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 3452
+    },
+    "catalysts": {
+      "alacrity": 49
+    },
+    "catalystProgress": {
+      "alacrity": 56
+    },
+    "upgrades": {
+      "swamp-blightbrand": 3,
+      "swamp-vest-t3": 3,
+      "swamp-charm-t3": 3,
+      "swamp-boots-t3": 3
+    },
+    "hp": 0
+  },
+  "snapshots": [
+    {
+      "elapsedMs": 37500,
+      "level": 13,
+      "xp": 7680,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 108
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 108
+      },
+      "catalysts": {
+        "alacrity": 1
+      },
+      "catalystProgress": {
+        "alacrity": 55
+      },
+      "upgrades": {
+        "swamp-blightbrand": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "swamp-boots-t3": 3
+      },
+      "hp": 266.0824000000003
+    },
+    {
+      "elapsedMs": 60000,
+      "level": 13,
+      "xp": 8162,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 164
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 164
+      },
+      "catalysts": {
+        "alacrity": 2
+      },
+      "catalystProgress": {
+        "alacrity": 35
+      },
+      "upgrades": {
+        "swamp-blightbrand": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "swamp-boots-t3": 3
+      },
+      "hp": 312.0066624000001
+    },
+    {
+      "elapsedMs": 68700,
+      "level": 14,
+      "xp": 8644,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 220
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 220
+      },
+      "catalysts": {
+        "alacrity": 3
+      },
+      "catalystProgress": {
+        "alacrity": 15
+      },
+      "upgrades": {
+        "swamp-blightbrand": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "swamp-boots-t3": 3
+      },
+      "hp": 318
+    },
+    {
+      "elapsedMs": 120000,
+      "level": 14,
+      "xp": 9333,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 300
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 300
+      },
+      "catalysts": {
+        "alacrity": 4
+      },
+      "catalystProgress": {
+        "alacrity": 30
+      },
+      "upgrades": {
+        "swamp-blightbrand": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "swamp-boots-t3": 3
+      },
+      "hp": 242.13714560000068
+    },
+    {
+      "elapsedMs": 126000,
+      "level": 15,
+      "xp": 9781,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 352
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 352
+      },
+      "catalysts": {
+        "alacrity": 5
+      },
+      "catalystProgress": {
+        "alacrity": 5
+      },
+      "upgrades": {
+        "swamp-blightbrand": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "swamp-boots-t3": 3
+      },
+      "hp": 148.48776960000052
+    },
+    {
+      "elapsedMs": 152200,
+      "level": 16,
+      "xp": 11057,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 500
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 500
+      },
+      "catalysts": {
+        "alacrity": 7
+      },
+      "catalystProgress": {
+        "alacrity": 17
+      },
+      "upgrades": {
+        "swamp-blightbrand": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "swamp-boots-t3": 3
+      },
+      "hp": 55.494075200000815
+    },
+    {
+      "elapsedMs": 180000,
+      "level": 16,
+      "xp": 11298,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 528
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 528
+      },
+      "catalysts": {
+        "alacrity": 7
+      },
+      "catalystProgress": {
+        "alacrity": 57
+      },
+      "upgrades": {
+        "swamp-blightbrand": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "swamp-boots-t3": 3
+      },
+      "hp": 310.7478000000001
+    },
+    {
+      "elapsedMs": 217500,
+      "level": 17,
+      "xp": 12591,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 678
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 678
+      },
+      "catalysts": {
+        "alacrity": 9
+      },
+      "catalystProgress": {
+        "alacrity": 73
+      },
+      "upgrades": {
+        "swamp-blightbrand": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "swamp-boots-t3": 3
+      },
+      "hp": 229.29472000000024
+    },
+    {
+      "elapsedMs": 240000,
+      "level": 17,
+      "xp": 13039,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 730
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 730
+      },
+      "catalysts": {
+        "alacrity": 10
+      },
+      "catalystProgress": {
+        "alacrity": 48
+      },
+      "upgrades": {
+        "swamp-blightbrand": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "swamp-boots-t3": 3
+      },
+      "hp": 61.1278399999999
+    },
+    {
+      "elapsedMs": 281300,
+      "level": 18,
+      "xp": 13969,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 838
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 838
+      },
+      "catalysts": {
+        "alacrity": 12
+      },
+      "catalystProgress": {
+        "alacrity": 3
+      },
+      "upgrades": {
+        "swamp-blightbrand": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "swamp-boots-t3": 3
+      },
+      "hp": 318
+    },
+    {
+      "elapsedMs": 300000,
+      "level": 18,
+      "xp": 13969,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 866
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 866
+      },
+      "catalysts": {
+        "alacrity": 12
+      },
+      "catalystProgress": {
+        "alacrity": 43
+      },
+      "upgrades": {
+        "swamp-blightbrand": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "swamp-boots-t3": 3
+      },
+      "hp": 300
+    },
+    {
+      "elapsedMs": 360000,
+      "level": 18,
+      "xp": 13969,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 1084
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 1084
+      },
+      "catalysts": {
+        "alacrity": 15
+      },
+      "catalystProgress": {
+        "alacrity": 56
+      },
+      "upgrades": {
+        "swamp-blightbrand": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "swamp-boots-t3": 3
+      },
+      "hp": 308.94956
+    },
+    {
+      "elapsedMs": 420000,
+      "level": 18,
+      "xp": 13969,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 1188
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 1188
+      },
+      "catalysts": {
+        "alacrity": 17
+      },
+      "catalystProgress": {
+        "alacrity": 6
+      },
+      "upgrades": {
+        "swamp-blightbrand": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "swamp-boots-t3": 3
+      },
+      "hp": 193.62404000000058
+    },
+    {
+      "elapsedMs": 480000,
+      "level": 18,
+      "xp": 13969,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 1480
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 1480
+      },
+      "catalysts": {
+        "alacrity": 21
+      },
+      "catalystProgress": {
+        "alacrity": 25
+      },
+      "upgrades": {
+        "swamp-blightbrand": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "swamp-boots-t3": 3
+      },
+      "hp": 300
+    },
+    {
+      "elapsedMs": 540000,
+      "level": 18,
+      "xp": 13969,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 1662
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 1662
+      },
+      "catalysts": {
+        "alacrity": 23
+      },
+      "catalystProgress": {
+        "alacrity": 86
+      },
+      "upgrades": {
+        "swamp-blightbrand": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "swamp-boots-t3": 3
+      },
+      "hp": 318
+    },
+    {
+      "elapsedMs": 600000,
+      "level": 18,
+      "xp": 13969,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 1840
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 1840
+      },
+      "catalysts": {
+        "alacrity": 26
+      },
+      "catalystProgress": {
+        "alacrity": 42
+      },
+      "upgrades": {
+        "swamp-blightbrand": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "swamp-boots-t3": 3
+      },
+      "hp": 286.14836000000264
+    },
+    {
+      "elapsedMs": 660000,
+      "level": 18,
+      "xp": 13969,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 2098
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 2098
+      },
+      "catalysts": {
+        "alacrity": 30
+      },
+      "catalystProgress": {
+        "alacrity": 12
+      },
+      "upgrades": {
+        "swamp-blightbrand": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "swamp-boots-t3": 3
+      },
+      "hp": 300
+    },
+    {
+      "elapsedMs": 720000,
+      "level": 18,
+      "xp": 13969,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 2312
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 2312
+      },
+      "catalysts": {
+        "alacrity": 33
+      },
+      "catalystProgress": {
+        "alacrity": 18
+      },
+      "upgrades": {
+        "swamp-blightbrand": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "swamp-boots-t3": 3
+      },
+      "hp": 285.4
+    },
+    {
+      "elapsedMs": 780000,
+      "level": 18,
+      "xp": 13969,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 2530
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 2530
+      },
+      "catalysts": {
+        "alacrity": 36
+      },
+      "catalystProgress": {
+        "alacrity": 31
+      },
+      "upgrades": {
+        "swamp-blightbrand": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "swamp-boots-t3": 3
+      },
+      "hp": 295.4
+    },
+    {
+      "elapsedMs": 840000,
+      "level": 18,
+      "xp": 13969,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 2680
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 2680
+      },
+      "catalysts": {
+        "alacrity": 38
+      },
+      "catalystProgress": {
+        "alacrity": 47
+      },
+      "upgrades": {
+        "swamp-blightbrand": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "swamp-boots-t3": 3
+      },
+      "hp": 318
+    },
+    {
+      "elapsedMs": 900000,
+      "level": 18,
+      "xp": 13969,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 2844
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 2844
+      },
+      "catalysts": {
+        "alacrity": 40
+      },
+      "catalystProgress": {
+        "alacrity": 82
+      },
+      "upgrades": {
+        "swamp-blightbrand": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "swamp-boots-t3": 3
+      },
+      "hp": 286
+    },
+    {
+      "elapsedMs": 960000,
+      "level": 18,
+      "xp": 13969,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 3016
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 3016
+      },
+      "catalysts": {
+        "alacrity": 43
+      },
+      "catalystProgress": {
+        "alacrity": 29
+      },
+      "upgrades": {
+        "swamp-blightbrand": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "swamp-boots-t3": 3
+      },
+      "hp": 138.86662399999983
+    },
+    {
+      "elapsedMs": 1020000,
+      "level": 18,
+      "xp": 13969,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 3200
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 3200
+      },
+      "catalysts": {
+        "alacrity": 45
+      },
+      "catalystProgress": {
+        "alacrity": 94
+      },
+      "upgrades": {
+        "swamp-blightbrand": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "swamp-boots-t3": 3
+      },
+      "hp": 318
+    },
+    {
+      "elapsedMs": 1080000,
+      "level": 18,
+      "xp": 13969,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 3332
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 3332
+      },
+      "catalysts": {
+        "alacrity": 47
+      },
+      "catalystProgress": {
+        "alacrity": 84
+      },
+      "upgrades": {
+        "swamp-blightbrand": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "swamp-boots-t3": 3
+      },
+      "hp": 263.29748000000023
+    }
+  ],
+  "purchases": [],
+  "blockers": {},
+  "wallSeconds": 14.4723762,
+  "limitations": [
+    "Synthetic late-tier fixture: other biomes mastered, generated class and granted benchmark abilities",
+    "Native current-tier base gear granted on credit in buy mode; acquisition is repaid from earnings, not a real prior-tier journey",
+    "Fixed3 mode grants +3 gear and measures income, not purchase progression",
+    "No cross-biome routing or instant revivals; first death stops the run",
+    "Seeded random and 100ms simulation clock; elapsed time is simulation time"
+  ]
+}

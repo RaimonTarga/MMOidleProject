@@ -1,0 +1,3878 @@
+{
+  "job": {
+    "id": "candidate-fixed3-t4-trench-cadence-root-101009",
+    "arm": "candidate",
+    "mode": "fixed3",
+    "nodeId": "node-t4-trench-01",
+    "classRoot": "cadence-root",
+    "seed": 101009,
+    "gearIds": [
+      "trench-abyssal-axe",
+      "trench-vest-t4",
+      "trench-charm-t4",
+      "trench-boots-t4-stalkers"
+    ],
+    "maxMs": 7200000,
+    "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+    "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-fixed3-t4-trench-cadence-root-101009.json"
+  },
+  "hitboxes": 406,
+  "build": {
+    "id": "cadence-root+cadence-balanced+cadence-range-close+cadence-balanced-t3-a",
+    "classRoot": "cadence-root",
+    "skillPath": [
+      "cadence-root",
+      "cadence-balanced",
+      "cadence-range-close",
+      "cadence-balanced-t3-a"
+    ],
+    "contentTier": 4,
+    "playerTier": 4,
+    "gearTier": 4,
+    "gearItemIds": {
+      "weapon": "trench-abyssal-axe",
+      "armor": "trench-vest-t4",
+      "recovery": "trench-charm-t4",
+      "mobility": "trench-boots-t4-stalkers"
+    }
+  },
+  "initial": {
+    "elapsedMs": 0,
+    "level": 0,
+    "xp": 0,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {},
+    "catalystProgress": {},
+    "upgrades": {
+      "trench-abyssal-axe": 3,
+      "trench-vest-t4": 3,
+      "trench-charm-t4": 3,
+      "trench-boots-t4-stalkers": 3
+    },
+    "hp": 358,
+    "build": {
+      "id": "cadence-root+cadence-balanced+cadence-range-close+cadence-balanced-t3-a",
+      "classRoot": "cadence-root",
+      "skillPath": [
+        "cadence-root",
+        "cadence-balanced",
+        "cadence-range-close",
+        "cadence-balanced-t3-a"
+      ],
+      "contentTier": 4,
+      "playerTier": 4,
+      "gearTier": 4,
+      "gearItemIds": {
+        "weapon": "trench-abyssal-axe",
+        "armor": "trench-vest-t4",
+        "recovery": "trench-charm-t4",
+        "mobility": "trench-boots-t4-stalkers"
+      }
+    },
+    "loadout": {
+      "abilities": {
+        "techniques": [
+          "disengage",
+          "imbue-lightning",
+          "snipe"
+        ],
+        "guards": [
+          "recuperate",
+          "break-free",
+          "bramble-guard"
+        ]
+      },
+      "stances": [
+        "offensive-stance"
+      ],
+      "rites": [
+        "blood-offering",
+        "purification",
+        "ability-reprieve",
+        "mechanic-renewal",
+        "swift-repose"
+      ],
+      "runes": []
+    },
+    "stats": {
+      "hp": 358,
+      "attack": 246
+    },
+    "biomeLevels": {
+      "cave": 18,
+      "forest": 12,
+      "mountain": 24,
+      "plains": 12,
+      "swamp": 18,
+      "desert": 18,
+      "jungle": 18,
+      "tundra": 12,
+      "volcanic": 12,
+      "graveyard": 6,
+      "trench": 0
+    }
+  },
+  "entry": 0,
+  "cap": 6,
+  "budget": 108000,
+  "costs": {
+    "3": {
+      "red": 0,
+      "blue": 0,
+      "green": 8533,
+      "yellow": 0,
+      "purple": 0
+    },
+    "5": {
+      "red": 0,
+      "blue": 0,
+      "green": 12800,
+      "yellow": 0,
+      "purple": 0
+    }
+  },
+  "mastery": {
+    "elapsedMs": 3087800,
+    "level": 6,
+    "xp": 109080,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 9007,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 9007,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {
+      "alacrity": 15
+    },
+    "catalystProgress": {
+      "alacrity": 15
+    },
+    "upgrades": {
+      "trench-abyssal-axe": 3,
+      "trench-vest-t4": 3,
+      "trench-charm-t4": 3,
+      "trench-boots-t4-stalkers": 3
+    },
+    "hp": 287.8418814272419
+  },
+  "death": {
+    "elapsedMs": 6479800,
+    "level": 6,
+    "xp": 109080,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 18451,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 18451,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {
+      "alacrity": 31
+    },
+    "catalystProgress": {
+      "alacrity": 5
+    },
+    "upgrades": {
+      "trench-abyssal-axe": 3,
+      "trench-vest-t4": 3,
+      "trench-charm-t4": 3,
+      "trench-boots-t4-stalkers": 3
+    },
+    "hp": 0
+  },
+  "fundingTimes": {
+    "3": 2962800,
+    "5": 4479100
+  },
+  "actualAll3Ms": null,
+  "actualAll5Ms": null,
+  "acquisitionDebt": {
+    "red": 0,
+    "blue": 0,
+    "green": 0,
+    "yellow": 0,
+    "purple": 0
+  },
+  "final": {
+    "elapsedMs": 6479800,
+    "level": 6,
+    "xp": 109080,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 18451,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 18451,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {
+      "alacrity": 31
+    },
+    "catalystProgress": {
+      "alacrity": 5
+    },
+    "upgrades": {
+      "trench-abyssal-axe": 3,
+      "trench-vest-t4": 3,
+      "trench-charm-t4": 3,
+      "trench-boots-t4-stalkers": 3
+    },
+    "hp": 0
+  },
+  "snapshots": [
+    {
+      "elapsedMs": 60000,
+      "level": 0,
+      "xp": 1512,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 125,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 125,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "alacrity": 21
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 283.7509156906922
+    },
+    {
+      "elapsedMs": 120000,
+      "level": 0,
+      "xp": 4392,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 363,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 363,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "alacrity": 61
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 180000,
+      "level": 0,
+      "xp": 5904,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 488,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 488,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "alacrity": 82
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 240000,
+      "level": 0,
+      "xp": 7416,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 613,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 613,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 1
+      },
+      "catalystProgress": {
+        "alacrity": 3
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 300000,
+      "level": 0,
+      "xp": 9288,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 767,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 767,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 1
+      },
+      "catalystProgress": {
+        "alacrity": 29
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 319.33730385794087
+    },
+    {
+      "elapsedMs": 360000,
+      "level": 0,
+      "xp": 12168,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 1005,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 1005,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 1
+      },
+      "catalystProgress": {
+        "alacrity": 69
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 344.8869022433347
+    },
+    {
+      "elapsedMs": 388900,
+      "level": 1,
+      "xp": 13680,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 1130,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 1130,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 1
+      },
+      "catalystProgress": {
+        "alacrity": 90
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 254.75388540275418
+    },
+    {
+      "elapsedMs": 420000,
+      "level": 1,
+      "xp": 13680,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 1130,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 1130,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 1
+      },
+      "catalystProgress": {
+        "alacrity": 90
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 238.357663602121
+    },
+    {
+      "elapsedMs": 480000,
+      "level": 1,
+      "xp": 15192,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 1255,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 1255,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 2
+      },
+      "catalystProgress": {
+        "alacrity": 11
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 264.03940496385155
+    },
+    {
+      "elapsedMs": 540000,
+      "level": 1,
+      "xp": 18072,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 1493,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 1493,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 2
+      },
+      "catalystProgress": {
+        "alacrity": 51
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 315.27653448220815
+    },
+    {
+      "elapsedMs": 600000,
+      "level": 1,
+      "xp": 19944,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 1647,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 1647,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 2
+      },
+      "catalystProgress": {
+        "alacrity": 77
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 355.28378517977785
+    },
+    {
+      "elapsedMs": 660000,
+      "level": 1,
+      "xp": 21456,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 1772,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 1772,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 2
+      },
+      "catalystProgress": {
+        "alacrity": 98
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 303.67886094419583
+    },
+    {
+      "elapsedMs": 720000,
+      "level": 1,
+      "xp": 22968,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 1897,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 1897,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 3
+      },
+      "catalystProgress": {
+        "alacrity": 19
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 780000,
+      "level": 1,
+      "xp": 25848,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 2135,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 2135,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 3
+      },
+      "catalystProgress": {
+        "alacrity": 59
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 840000,
+      "level": 1,
+      "xp": 27360,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 2260,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 2260,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 3
+      },
+      "catalystProgress": {
+        "alacrity": 80
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 858500,
+      "level": 2,
+      "xp": 28872,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 2385,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 2385,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 4
+      },
+      "catalystProgress": {
+        "alacrity": 1
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 254.75444741414253
+    },
+    {
+      "elapsedMs": 900000,
+      "level": 2,
+      "xp": 28872,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 2385,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 2385,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 4
+      },
+      "catalystProgress": {
+        "alacrity": 1
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 960000,
+      "level": 2,
+      "xp": 31752,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 2623,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 2623,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 4
+      },
+      "catalystProgress": {
+        "alacrity": 41
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 1020000,
+      "level": 2,
+      "xp": 33264,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 2748,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 2748,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 4
+      },
+      "catalystProgress": {
+        "alacrity": 62
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 1080000,
+      "level": 2,
+      "xp": 36144,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 2986,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 2986,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 5
+      },
+      "catalystProgress": {
+        "alacrity": 2
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 293.83057441011147
+    },
+    {
+      "elapsedMs": 1140000,
+      "level": 2,
+      "xp": 39024,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 3224,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 3224,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 5
+      },
+      "catalystProgress": {
+        "alacrity": 42
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 312.0132576840975
+    },
+    {
+      "elapsedMs": 1200000,
+      "level": 2,
+      "xp": 41904,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 3462,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 3462,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 5
+      },
+      "catalystProgress": {
+        "alacrity": 82
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 205.78700874338838
+    },
+    {
+      "elapsedMs": 1260000,
+      "level": 2,
+      "xp": 44784,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 3700,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 3700,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 6
+      },
+      "catalystProgress": {
+        "alacrity": 22
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 350.53759642220416
+    },
+    {
+      "elapsedMs": 1299600,
+      "level": 3,
+      "xp": 46296,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 3825,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 3825,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 6
+      },
+      "catalystProgress": {
+        "alacrity": 43
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 1320000,
+      "level": 3,
+      "xp": 46296,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 3825,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 3825,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 6
+      },
+      "catalystProgress": {
+        "alacrity": 43
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 246.22561729714855
+    },
+    {
+      "elapsedMs": 1380000,
+      "level": 3,
+      "xp": 48168,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 3979,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 3979,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 6
+      },
+      "catalystProgress": {
+        "alacrity": 69
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 240.59455472166366
+    },
+    {
+      "elapsedMs": 1440000,
+      "level": 3,
+      "xp": 51048,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 4217,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 4217,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 7
+      },
+      "catalystProgress": {
+        "alacrity": 9
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 335.56947392203796
+    },
+    {
+      "elapsedMs": 1500000,
+      "level": 3,
+      "xp": 52560,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 4342,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 4342,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 7
+      },
+      "catalystProgress": {
+        "alacrity": 30
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 1560000,
+      "level": 3,
+      "xp": 55440,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 4580,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 4580,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 7
+      },
+      "catalystProgress": {
+        "alacrity": 70
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 1620000,
+      "level": 3,
+      "xp": 55440,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 4580,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 4580,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 7
+      },
+      "catalystProgress": {
+        "alacrity": 70
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 1680000,
+      "level": 3,
+      "xp": 58464,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 4830,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 4830,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 8
+      },
+      "catalystProgress": {
+        "alacrity": 12
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 1740000,
+      "level": 3,
+      "xp": 59976,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 4955,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 4955,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 8
+      },
+      "catalystProgress": {
+        "alacrity": 33
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 259.16196592444567
+    },
+    {
+      "elapsedMs": 1800000,
+      "level": 3,
+      "xp": 61488,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 5080,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 5080,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 8
+      },
+      "catalystProgress": {
+        "alacrity": 54
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 309.65832839786464
+    },
+    {
+      "elapsedMs": 1856500,
+      "level": 4,
+      "xp": 64872,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 5359,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 5359,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 9
+      },
+      "catalystProgress": {
+        "alacrity": 1
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 1860000,
+      "level": 4,
+      "xp": 64872,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 5359,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 5359,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 9
+      },
+      "catalystProgress": {
+        "alacrity": 1
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 1920000,
+      "level": 4,
+      "xp": 66384,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 5484,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 5484,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 9
+      },
+      "catalystProgress": {
+        "alacrity": 22
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 226.7200171683146
+    },
+    {
+      "elapsedMs": 1980000,
+      "level": 4,
+      "xp": 68256,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 5638,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 5638,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 9
+      },
+      "catalystProgress": {
+        "alacrity": 48
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 289.01765853864737
+    },
+    {
+      "elapsedMs": 2040000,
+      "level": 4,
+      "xp": 71136,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 5876,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 5876,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 9
+      },
+      "catalystProgress": {
+        "alacrity": 88
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 2100000,
+      "level": 4,
+      "xp": 74016,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 6114,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 6114,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 10
+      },
+      "catalystProgress": {
+        "alacrity": 28
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 2160000,
+      "level": 4,
+      "xp": 75888,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 6268,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 6268,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 10
+      },
+      "catalystProgress": {
+        "alacrity": 54
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 282.3577896944241
+    },
+    {
+      "elapsedMs": 2220000,
+      "level": 4,
+      "xp": 75888,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 6268,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 6268,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 10
+      },
+      "catalystProgress": {
+        "alacrity": 54
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 354.5819976651783
+    },
+    {
+      "elapsedMs": 2280000,
+      "level": 4,
+      "xp": 80280,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 6631,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 6631,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 11
+      },
+      "catalystProgress": {
+        "alacrity": 15
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 2340000,
+      "level": 4,
+      "xp": 82152,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 6785,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 6785,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 11
+      },
+      "catalystProgress": {
+        "alacrity": 41
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 293.03479606588724
+    },
+    {
+      "elapsedMs": 2400000,
+      "level": 4,
+      "xp": 84024,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 6939,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 6939,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 11
+      },
+      "catalystProgress": {
+        "alacrity": 67
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 2437400,
+      "level": 5,
+      "xp": 85536,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 7064,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 7064,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 11
+      },
+      "catalystProgress": {
+        "alacrity": 88
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 269.12797983380557
+    },
+    {
+      "elapsedMs": 2460000,
+      "level": 5,
+      "xp": 85536,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 7064,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 7064,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 11
+      },
+      "catalystProgress": {
+        "alacrity": 88
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 254.43154660009654
+    },
+    {
+      "elapsedMs": 2520000,
+      "level": 5,
+      "xp": 88416,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 7302,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 7302,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 12
+      },
+      "catalystProgress": {
+        "alacrity": 28
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 2580000,
+      "level": 5,
+      "xp": 89928,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 7427,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 7427,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 12
+      },
+      "catalystProgress": {
+        "alacrity": 49
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 2640000,
+      "level": 5,
+      "xp": 91440,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 7552,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 7552,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 12
+      },
+      "catalystProgress": {
+        "alacrity": 70
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 256.5072999640572
+    },
+    {
+      "elapsedMs": 2700000,
+      "level": 5,
+      "xp": 93312,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 7706,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 7706,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 12
+      },
+      "catalystProgress": {
+        "alacrity": 96
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 326.588457060843
+    },
+    {
+      "elapsedMs": 2760000,
+      "level": 5,
+      "xp": 95184,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 7860,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 7860,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 13
+      },
+      "catalystProgress": {
+        "alacrity": 22
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 289.81389272238795
+    },
+    {
+      "elapsedMs": 2820000,
+      "level": 5,
+      "xp": 96696,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 7985,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 7985,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 13
+      },
+      "catalystProgress": {
+        "alacrity": 43
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 2880000,
+      "level": 5,
+      "xp": 99576,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 8223,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 8223,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 13
+      },
+      "catalystProgress": {
+        "alacrity": 83
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 2940000,
+      "level": 5,
+      "xp": 102456,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 8461,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 8461,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 14
+      },
+      "catalystProgress": {
+        "alacrity": 23
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 307.9379984711753
+    },
+    {
+      "elapsedMs": 3000000,
+      "level": 5,
+      "xp": 104328,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 8615,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 8615,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 14
+      },
+      "catalystProgress": {
+        "alacrity": 49
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 3060000,
+      "level": 5,
+      "xp": 107208,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 8853,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 8853,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 14
+      },
+      "catalystProgress": {
+        "alacrity": 89
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 219.96499946862633
+    },
+    {
+      "elapsedMs": 3087800,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 9007,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 9007,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 15
+      },
+      "catalystProgress": {
+        "alacrity": 15
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 287.8418814272419
+    },
+    {
+      "elapsedMs": 3120000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 9007,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 9007,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 15
+      },
+      "catalystProgress": {
+        "alacrity": 15
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 290.5660412477092
+    },
+    {
+      "elapsedMs": 3180000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 9245,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 9245,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 15
+      },
+      "catalystProgress": {
+        "alacrity": 55
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 3240000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 9370,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 9370,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 15
+      },
+      "catalystProgress": {
+        "alacrity": 76
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 296.07820720228017
+    },
+    {
+      "elapsedMs": 3300000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 9524,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 9524,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 16
+      },
+      "catalystProgress": {
+        "alacrity": 2
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 312.0361203629159
+    },
+    {
+      "elapsedMs": 3360000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 9678,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 9678,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 16
+      },
+      "catalystProgress": {
+        "alacrity": 28
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 248.42743839433447
+    },
+    {
+      "elapsedMs": 3420000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 9803,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 9803,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 16
+      },
+      "catalystProgress": {
+        "alacrity": 49
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 300.61576557992834
+    },
+    {
+      "elapsedMs": 3480000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 10082,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 10082,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 16
+      },
+      "catalystProgress": {
+        "alacrity": 96
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 276.31462523031917
+    },
+    {
+      "elapsedMs": 3540000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 10207,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 10207,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 17
+      },
+      "catalystProgress": {
+        "alacrity": 17
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 3600000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 10332,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 10332,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 17
+      },
+      "catalystProgress": {
+        "alacrity": 38
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 326.94508543416515
+    },
+    {
+      "elapsedMs": 3660000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 10457,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 10457,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 17
+      },
+      "catalystProgress": {
+        "alacrity": 59
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 265.5739472009634
+    },
+    {
+      "elapsedMs": 3720000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 10582,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 10582,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 17
+      },
+      "catalystProgress": {
+        "alacrity": 80
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 254.39167797736636
+    },
+    {
+      "elapsedMs": 3780000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 10736,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 10736,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 18
+      },
+      "catalystProgress": {
+        "alacrity": 6
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 299.58780835906236
+    },
+    {
+      "elapsedMs": 3840000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 10890,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 10890,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 18
+      },
+      "catalystProgress": {
+        "alacrity": 32
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 271.14536728601206
+    },
+    {
+      "elapsedMs": 3900000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 11140,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 11140,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 18
+      },
+      "catalystProgress": {
+        "alacrity": 74
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 3960000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 11140,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 11140,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 18
+      },
+      "catalystProgress": {
+        "alacrity": 74
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 264.1384312005298
+    },
+    {
+      "elapsedMs": 4020000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 11378,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 11378,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 19
+      },
+      "catalystProgress": {
+        "alacrity": 14
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 332.48960649198614
+    },
+    {
+      "elapsedMs": 4080000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 11616,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 11616,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 19
+      },
+      "catalystProgress": {
+        "alacrity": 54
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 273.66388763167856
+    },
+    {
+      "elapsedMs": 4140000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 11770,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 11770,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 19
+      },
+      "catalystProgress": {
+        "alacrity": 80
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 4200000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 12008,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 12008,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 20
+      },
+      "catalystProgress": {
+        "alacrity": 20
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 311.39204906318525
+    },
+    {
+      "elapsedMs": 4260000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 12162,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 12162,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 20
+      },
+      "catalystProgress": {
+        "alacrity": 46
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 206.08621341771567
+    },
+    {
+      "elapsedMs": 4320000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 12470,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 12470,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 20
+      },
+      "catalystProgress": {
+        "alacrity": 98
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 349.9252513652102
+    },
+    {
+      "elapsedMs": 4380000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 12624,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 12624,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 21
+      },
+      "catalystProgress": {
+        "alacrity": 24
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 286.14229353985024
+    },
+    {
+      "elapsedMs": 4440000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 12778,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 12778,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 21
+      },
+      "catalystProgress": {
+        "alacrity": 50
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 4500000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 12903,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 12903,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 21
+      },
+      "catalystProgress": {
+        "alacrity": 71
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 282.3036933597227
+    },
+    {
+      "elapsedMs": 4560000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 13057,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 13057,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 21
+      },
+      "catalystProgress": {
+        "alacrity": 97
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 340.8224374390319
+    },
+    {
+      "elapsedMs": 4620000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 13182,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 13182,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 22
+      },
+      "catalystProgress": {
+        "alacrity": 18
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 4680000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 13307,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 13307,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 22
+      },
+      "catalystProgress": {
+        "alacrity": 39
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 349.5811222675944
+    },
+    {
+      "elapsedMs": 4740000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 13461,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 13461,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 22
+      },
+      "catalystProgress": {
+        "alacrity": 65
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 286.1951738562936
+    },
+    {
+      "elapsedMs": 4800000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 13615,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 13615,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 22
+      },
+      "catalystProgress": {
+        "alacrity": 91
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 330.02565231907477
+    },
+    {
+      "elapsedMs": 4860000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 13769,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 13769,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 23
+      },
+      "catalystProgress": {
+        "alacrity": 17
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 247.4458307742054
+    },
+    {
+      "elapsedMs": 4920000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 13894,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 13894,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 23
+      },
+      "catalystProgress": {
+        "alacrity": 38
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 289.3394340810135
+    },
+    {
+      "elapsedMs": 4980000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 14048,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 14048,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 23
+      },
+      "catalystProgress": {
+        "alacrity": 64
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 5040000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 14286,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 14286,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 24
+      },
+      "catalystProgress": {
+        "alacrity": 4
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 185.69830173760727
+    },
+    {
+      "elapsedMs": 5100000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 14524,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 14524,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 24
+      },
+      "catalystProgress": {
+        "alacrity": 44
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 306.5437724549135
+    },
+    {
+      "elapsedMs": 5160000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 14678,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 14678,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 24
+      },
+      "catalystProgress": {
+        "alacrity": 70
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 301.69204415939214
+    },
+    {
+      "elapsedMs": 5220000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 14832,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 14832,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 24
+      },
+      "catalystProgress": {
+        "alacrity": 96
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 200.42610553711734
+    },
+    {
+      "elapsedMs": 5280000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 15082,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 15082,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 25
+      },
+      "catalystProgress": {
+        "alacrity": 38
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 237.07473709429684
+    },
+    {
+      "elapsedMs": 5340000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 15082,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 15082,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 25
+      },
+      "catalystProgress": {
+        "alacrity": 38
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 5400000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 15474,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 15474,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 26
+      },
+      "catalystProgress": {
+        "alacrity": 4
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 5460000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 15628,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 15628,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 26
+      },
+      "catalystProgress": {
+        "alacrity": 30
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 316.39340621605174
+    },
+    {
+      "elapsedMs": 5520000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 15866,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 15866,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 26
+      },
+      "catalystProgress": {
+        "alacrity": 70
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 5580000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 15991,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 15991,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 26
+      },
+      "catalystProgress": {
+        "alacrity": 91
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 258.3447796593429
+    },
+    {
+      "elapsedMs": 5640000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 15991,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 15991,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 26
+      },
+      "catalystProgress": {
+        "alacrity": 91
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 5700000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 16354,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 16354,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 27
+      },
+      "catalystProgress": {
+        "alacrity": 52
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 5760000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 16508,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 16508,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 27
+      },
+      "catalystProgress": {
+        "alacrity": 78
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 5820000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 16662,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 16662,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 28
+      },
+      "catalystProgress": {
+        "alacrity": 4
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 340.14387680490637
+    },
+    {
+      "elapsedMs": 5880000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 16816,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 16816,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 28
+      },
+      "catalystProgress": {
+        "alacrity": 30
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 319.72246076019024
+    },
+    {
+      "elapsedMs": 5940000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 16941,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 16941,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 28
+      },
+      "catalystProgress": {
+        "alacrity": 51
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 305.6199407112788
+    },
+    {
+      "elapsedMs": 6000000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 17179,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 17179,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 28
+      },
+      "catalystProgress": {
+        "alacrity": 91
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 272.2108785968919
+    },
+    {
+      "elapsedMs": 6060000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 17304,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 17304,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 29
+      },
+      "catalystProgress": {
+        "alacrity": 12
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 292.3199106664489
+    },
+    {
+      "elapsedMs": 6120000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 17429,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 17429,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 29
+      },
+      "catalystProgress": {
+        "alacrity": 33
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 249.01811887708888
+    },
+    {
+      "elapsedMs": 6180000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 17583,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 17583,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 29
+      },
+      "catalystProgress": {
+        "alacrity": 59
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 263.8979431329059
+    },
+    {
+      "elapsedMs": 6240000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 17821,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 17821,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 29
+      },
+      "catalystProgress": {
+        "alacrity": 99
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 6300000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 18059,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 18059,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 30
+      },
+      "catalystProgress": {
+        "alacrity": 39
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 323.1131181435441
+    },
+    {
+      "elapsedMs": 6360000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 18297,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 18297,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 30
+      },
+      "catalystProgress": {
+        "alacrity": 79
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 358
+    },
+    {
+      "elapsedMs": 6420000,
+      "level": 6,
+      "xp": 109080,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 18451,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 18451,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 31
+      },
+      "catalystProgress": {
+        "alacrity": 5
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 278.9671669543659
+    }
+  ],
+  "purchases": [],
+  "blockers": {},
+  "wallSeconds": 44.40085499999999,
+  "limitations": [
+    "Synthetic late-tier fixture: other biomes mastered, generated class and granted benchmark abilities",
+    "Native current-tier base gear granted on credit in buy mode; acquisition is repaid from earnings, not a real prior-tier journey",
+    "Fixed3 mode grants +3 gear and measures income, not purchase progression",
+    "No cross-biome routing or instant revivals; first death stops the run",
+    "Seeded random and 100ms simulation clock; elapsed time is simulation time"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "candidate-buy-t1-plains-dot-root-101033",
+  "arm": "candidate",
+  "mode": "buy",
+  "nodeId": "node-t1-plains-01",
+  "classRoot": "dot-root",
+  "seed": 101033,
+  "gearIds": [
+    "iron-broadsword",
+    "plains-vest-t1",
+    "plains-charm-t1",
+    "plains-boots-t1"
+  ],
+  "maxMs": 600000,
+  "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+  "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-replicate\\candidate-buy-t1-plains-dot-root-101033.json"
+}

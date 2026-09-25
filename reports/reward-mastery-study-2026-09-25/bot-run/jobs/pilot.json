@@ -1,0 +1,16 @@
+{
+  "gearIds": [
+    "swamp-blightbrand",
+    "swamp-vest-t3",
+    "swamp-charm-t3",
+    "swamp-boots-t3"
+  ],
+  "mode": "fixed3",
+  "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+  "seed": 101009,
+  "nodeId": "node-t3-swamp-01",
+  "classRoot": "cadence-root",
+  "id": "pilot",
+  "maxMs": 60000,
+  "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\pilot.json"
+}

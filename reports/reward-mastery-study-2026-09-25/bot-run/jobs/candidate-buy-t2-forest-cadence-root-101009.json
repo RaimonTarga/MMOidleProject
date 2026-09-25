@@ -1,0 +1,17 @@
+{
+  "id": "candidate-buy-t2-forest-cadence-root-101009",
+  "arm": "candidate",
+  "mode": "buy",
+  "nodeId": "node-t2-forest-01",
+  "classRoot": "cadence-root",
+  "seed": 101009,
+  "gearIds": [
+    "gale-needle",
+    "forest-vest-t2",
+    "forest-charm-t2",
+    "forest-boots-t2"
+  ],
+  "maxMs": 1800000,
+  "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+  "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-buy-t2-forest-cadence-root-101009.json"
+}

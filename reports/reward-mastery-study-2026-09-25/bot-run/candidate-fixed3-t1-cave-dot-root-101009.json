@@ -1,0 +1,210 @@
+{
+  "job": {
+    "id": "candidate-fixed3-t1-cave-dot-root-101009",
+    "arm": "candidate",
+    "mode": "fixed3",
+    "nodeId": "node-t1-cave-01",
+    "classRoot": "dot-root",
+    "seed": 101009,
+    "gearIds": [
+      "chaotic-axe",
+      "cave-vest-t1",
+      "cave-charm-t1",
+      "cave-boots-t1"
+    ],
+    "maxMs": 600000,
+    "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+    "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\candidate-fixed3-t1-cave-dot-root-101009.json"
+  },
+  "hitboxes": 406,
+  "build": {
+    "id": "dot-root",
+    "classRoot": "dot-root",
+    "skillPath": [
+      "dot-root"
+    ],
+    "contentTier": 1,
+    "playerTier": 1,
+    "gearTier": 1,
+    "gearItemIds": {
+      "weapon": "chaotic-axe",
+      "armor": "cave-vest-t1",
+      "recovery": "cave-charm-t1",
+      "mobility": "cave-boots-t1"
+    }
+  },
+  "initial": {
+    "elapsedMs": 0,
+    "level": 0,
+    "xp": 0,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {},
+    "catalystProgress": {},
+    "upgrades": {
+      "chaotic-axe": 3,
+      "cave-vest-t1": 3,
+      "cave-charm-t1": 3,
+      "cave-boots-t1": 3
+    },
+    "hp": 153,
+    "build": {
+      "id": "dot-root",
+      "classRoot": "dot-root",
+      "skillPath": [
+        "dot-root"
+      ],
+      "contentTier": 1,
+      "playerTier": 1,
+      "gearTier": 1,
+      "gearItemIds": {
+        "weapon": "chaotic-axe",
+        "armor": "cave-vest-t1",
+        "recovery": "cave-charm-t1",
+        "mobility": "cave-boots-t1"
+      }
+    },
+    "loadout": {
+      "abilities": {
+        "techniques": [
+          "expose-weakness",
+          "power-strike"
+        ],
+        "guards": [
+          "brace",
+          "cleanse"
+        ]
+      },
+      "stances": [],
+      "rites": [],
+      "runes": []
+    },
+    "stats": {
+      "hp": 153,
+      "attack": 46
+    },
+    "biomeLevels": {
+      "cave": 0,
+      "forest": 6,
+      "mountain": 6,
+      "plains": 6,
+      "swamp": 6
+    }
+  },
+  "entry": 0,
+  "cap": 6,
+  "budget": 6000,
+  "costs": {
+    "3": {
+      "red": 933,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "5": {
+      "red": 1399,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    }
+  },
+  "mastery": null,
+  "death": {
+    "elapsedMs": 20700,
+    "level": 0,
+    "xp": 296,
+    "gross": {
+      "red": 38,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 38,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {},
+    "catalystProgress": {
+      "alacrity": 11
+    },
+    "upgrades": {
+      "chaotic-axe": 3,
+      "cave-vest-t1": 3,
+      "cave-charm-t1": 3,
+      "cave-boots-t1": 3
+    },
+    "hp": 0
+  },
+  "fundingTimes": {
+    "3": null,
+    "5": null
+  },
+  "actualAll3Ms": null,
+  "actualAll5Ms": null,
+  "acquisitionDebt": {
+    "red": 0,
+    "blue": 0,
+    "green": 0,
+    "yellow": 0,
+    "purple": 0
+  },
+  "final": {
+    "elapsedMs": 20700,
+    "level": 0,
+    "xp": 296,
+    "gross": {
+      "red": 38,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 38,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {},
+    "catalystProgress": {
+      "alacrity": 11
+    },
+    "upgrades": {
+      "chaotic-axe": 3,
+      "cave-vest-t1": 3,
+      "cave-charm-t1": 3,
+      "cave-boots-t1": 3
+    },
+    "hp": 0
+  },
+  "snapshots": [],
+  "purchases": [],
+  "blockers": {},
+  "wallSeconds": 0.7618941999999997,
+  "limitations": [
+    "Synthetic late-tier fixture: other biomes mastered, generated class and granted benchmark abilities",
+    "Native current-tier base gear granted on credit in buy mode; acquisition is repaid from earnings, not a real prior-tier journey",
+    "Fixed3 mode grants +3 gear and measures income, not purchase progression",
+    "No cross-biome routing or instant revivals; first death stops the run",
+    "Seeded random and 100ms simulation clock; elapsed time is simulation time"
+  ]
+}

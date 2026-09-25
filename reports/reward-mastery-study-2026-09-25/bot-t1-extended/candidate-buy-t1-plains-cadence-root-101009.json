@@ -1,0 +1,1626 @@
+{
+  "job": {
+    "id": "candidate-buy-t1-plains-cadence-root-101009",
+    "arm": "candidate",
+    "mode": "buy",
+    "nodeId": "node-t1-plains-01",
+    "classRoot": "cadence-root",
+    "seed": 101009,
+    "gearIds": [
+      "iron-broadsword",
+      "plains-vest-t1",
+      "plains-charm-t1",
+      "plains-boots-t1"
+    ],
+    "maxMs": 1800000,
+    "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+    "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-t1-extended\\candidate-buy-t1-plains-cadence-root-101009.json"
+  },
+  "hitboxes": 406,
+  "build": {
+    "id": "cadence-root",
+    "classRoot": "cadence-root",
+    "skillPath": [
+      "cadence-root"
+    ],
+    "contentTier": 1,
+    "playerTier": 1,
+    "gearTier": 1,
+    "gearItemIds": {
+      "weapon": "iron-broadsword",
+      "armor": "plains-vest-t1",
+      "recovery": "plains-charm-t1",
+      "mobility": "plains-boots-t1"
+    }
+  },
+  "initial": {
+    "elapsedMs": 0,
+    "level": 0,
+    "xp": 0,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {},
+    "catalystProgress": {},
+    "upgrades": {
+      "iron-broadsword": 0,
+      "plains-vest-t1": 0,
+      "plains-charm-t1": 0,
+      "plains-boots-t1": 0
+    },
+    "hp": 146,
+    "build": {
+      "id": "cadence-root",
+      "classRoot": "cadence-root",
+      "skillPath": [
+        "cadence-root"
+      ],
+      "contentTier": 1,
+      "playerTier": 1,
+      "gearTier": 1,
+      "gearItemIds": {
+        "weapon": "iron-broadsword",
+        "armor": "plains-vest-t1",
+        "recovery": "plains-charm-t1",
+        "mobility": "plains-boots-t1"
+      }
+    },
+    "loadout": {
+      "abilities": {
+        "techniques": [
+          "expose-weakness"
+        ],
+        "guards": [
+          "brace",
+          "cleanse"
+        ]
+      },
+      "stances": [],
+      "rites": [],
+      "runes": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "chase-enemy"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "hp-below-25",
+          "actionId": "flee"
+        },
+        {
+          "conditionId": "while-traveling",
+          "actionId": "fight-back"
+        }
+      ]
+    },
+    "stats": {
+      "hp": 146,
+      "attack": 27
+    },
+    "biomeLevels": {
+      "cave": 6,
+      "forest": 6,
+      "mountain": 6,
+      "plains": 0,
+      "swamp": 6
+    }
+  },
+  "entry": 0,
+  "cap": 6,
+  "budget": 6000,
+  "costs": {
+    "3": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 633,
+      "purple": 0
+    },
+    "5": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 950,
+      "purple": 0
+    }
+  },
+  "mastery": {
+    "elapsedMs": 809500,
+    "level": 6,
+    "xp": 6002,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 994,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 202,
+      "purple": 0
+    },
+    "catalysts": {
+      "alacrity": 2
+    },
+    "catalystProgress": {
+      "alacrity": 48.5
+    },
+    "upgrades": {
+      "iron-broadsword": 4,
+      "plains-vest-t1": 4,
+      "plains-charm-t1": 4,
+      "plains-boots-t1": 4
+    },
+    "hp": 160
+  },
+  "death": null,
+  "fundingTimes": {
+    "3": 543600,
+    "5": 769500
+  },
+  "actualAll3Ms": 544000,
+  "actualAll5Ms": 856000,
+  "acquisitionDebt": {
+    "red": 0,
+    "blue": 0,
+    "green": 0,
+    "yellow": 0,
+    "purple": 0
+  },
+  "final": {
+    "elapsedMs": 1800000,
+    "level": 6,
+    "xp": 6002,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 2254,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 1202,
+      "purple": 0
+    },
+    "catalysts": {
+      "alacrity": 4
+    },
+    "catalystProgress": {
+      "alacrity": 63.5
+    },
+    "upgrades": {
+      "iron-broadsword": 5,
+      "plains-vest-t1": 5,
+      "plains-charm-t1": 5,
+      "plains-boots-t1": 5
+    },
+    "hp": 164
+  },
+  "snapshots": [
+    {
+      "elapsedMs": 60000,
+      "level": 0,
+      "xp": 464,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 78,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 28,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "alacrity": 19.5
+      },
+      "upgrades": {
+        "iron-broadsword": 0,
+        "plains-vest-t1": 0,
+        "plains-charm-t1": 0,
+        "plains-boots-t1": 0
+      },
+      "hp": 127.8116000000002
+    },
+    {
+      "elapsedMs": 104100,
+      "level": 1,
+      "xp": 736,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 122,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 72,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "alacrity": 30.5
+      },
+      "upgrades": {
+        "iron-broadsword": 0,
+        "plains-vest-t1": 0,
+        "plains-charm-t1": 0,
+        "plains-boots-t1": 0
+      },
+      "hp": 135.13920000000007
+    },
+    {
+      "elapsedMs": 120000,
+      "level": 1,
+      "xp": 796,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 132,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 82,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "alacrity": 33
+      },
+      "upgrades": {
+        "iron-broadsword": 0,
+        "plains-vest-t1": 0,
+        "plains-charm-t1": 0,
+        "plains-boots-t1": 0
+      },
+      "hp": 146
+    },
+    {
+      "elapsedMs": 180000,
+      "level": 1,
+      "xp": 1184,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 198,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 148,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "alacrity": 49.5
+      },
+      "upgrades": {
+        "iron-broadsword": 0,
+        "plains-vest-t1": 0,
+        "plains-charm-t1": 0,
+        "plains-boots-t1": 0
+      },
+      "hp": 114.76240000000028
+    },
+    {
+      "elapsedMs": 227300,
+      "level": 2,
+      "xp": 1560,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 260,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 210,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "alacrity": 65
+      },
+      "upgrades": {
+        "iron-broadsword": 0,
+        "plains-vest-t1": 0,
+        "plains-charm-t1": 0,
+        "plains-boots-t1": 0
+      },
+      "hp": 134.85240000000047
+    },
+    {
+      "elapsedMs": 240000,
+      "level": 2,
+      "xp": 1636,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 272,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 178,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "alacrity": 68
+      },
+      "upgrades": {
+        "iron-broadsword": 1,
+        "plains-vest-t1": 0,
+        "plains-charm-t1": 0,
+        "plains-boots-t1": 0
+      },
+      "hp": 146
+    },
+    {
+      "elapsedMs": 300000,
+      "level": 2,
+      "xp": 2000,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 330,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 236,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "alacrity": 82.5
+      },
+      "upgrades": {
+        "iron-broadsword": 1,
+        "plains-vest-t1": 0,
+        "plains-charm-t1": 0,
+        "plains-boots-t1": 0
+      },
+      "hp": 133.91440000000028
+    },
+    {
+      "elapsedMs": 360000,
+      "level": 2,
+      "xp": 2464,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 408,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 314,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 1
+      },
+      "catalystProgress": {
+        "alacrity": 2
+      },
+      "upgrades": {
+        "iron-broadsword": 1,
+        "plains-vest-t1": 0,
+        "plains-charm-t1": 0,
+        "plains-boots-t1": 0
+      },
+      "hp": 138.3212
+    },
+    {
+      "elapsedMs": 365800,
+      "level": 3,
+      "xp": 2540,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 420,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 326,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 1
+      },
+      "catalystProgress": {
+        "alacrity": 5
+      },
+      "upgrades": {
+        "iron-broadsword": 1,
+        "plains-vest-t1": 0,
+        "plains-charm-t1": 0,
+        "plains-boots-t1": 0
+      },
+      "hp": 118.03000000000011
+    },
+    {
+      "elapsedMs": 420000,
+      "level": 3,
+      "xp": 2840,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 470,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 289,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 1
+      },
+      "catalystProgress": {
+        "alacrity": 17.5
+      },
+      "upgrades": {
+        "iron-broadsword": 1,
+        "plains-vest-t1": 1,
+        "plains-charm-t1": 0,
+        "plains-boots-t1": 0
+      },
+      "hp": 148.29000000000002
+    },
+    {
+      "elapsedMs": 480000,
+      "level": 3,
+      "xp": 3320,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 550,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 369,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 1
+      },
+      "catalystProgress": {
+        "alacrity": 37.5
+      },
+      "upgrades": {
+        "iron-broadsword": 1,
+        "plains-vest-t1": 1,
+        "plains-charm-t1": 0,
+        "plains-boots-t1": 0
+      },
+      "hp": 150
+    },
+    {
+      "elapsedMs": 514300,
+      "level": 4,
+      "xp": 3614,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 598,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 417,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 1
+      },
+      "catalystProgress": {
+        "alacrity": 49.5
+      },
+      "upgrades": {
+        "iron-broadsword": 1,
+        "plains-vest-t1": 1,
+        "plains-charm-t1": 0,
+        "plains-boots-t1": 0
+      },
+      "hp": 150
+    },
+    {
+      "elapsedMs": 540000,
+      "level": 4,
+      "xp": 3778,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 626,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 27,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 1
+      },
+      "catalystProgress": {
+        "alacrity": 56.5
+      },
+      "upgrades": {
+        "iron-broadsword": 3,
+        "plains-vest-t1": 3,
+        "plains-charm-t1": 2,
+        "plains-boots-t1": 3
+      },
+      "hp": 153.79442
+    },
+    {
+      "elapsedMs": 600000,
+      "level": 4,
+      "xp": 4246,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 702,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 16,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 1
+      },
+      "catalystProgress": {
+        "alacrity": 75.5
+      },
+      "upgrades": {
+        "iron-broadsword": 3,
+        "plains-vest-t1": 3,
+        "plains-charm-t1": 4,
+        "plains-boots-t1": 4
+      },
+      "hp": 133.0576000000001
+    },
+    {
+      "elapsedMs": 654600,
+      "level": 5,
+      "xp": 4758,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 786,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 64,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 1
+      },
+      "catalystProgress": {
+        "alacrity": 96.5
+      },
+      "upgrades": {
+        "iron-broadsword": 4,
+        "plains-vest-t1": 3,
+        "plains-charm-t1": 4,
+        "plains-boots-t1": 4
+      },
+      "hp": 157
+    },
+    {
+      "elapsedMs": 660000,
+      "level": 5,
+      "xp": 4796,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 792,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 1
+      },
+      "catalystProgress": {
+        "alacrity": 98
+      },
+      "upgrades": {
+        "iron-broadsword": 4,
+        "plains-vest-t1": 4,
+        "plains-charm-t1": 4,
+        "plains-boots-t1": 4
+      },
+      "hp": 157
+    },
+    {
+      "elapsedMs": 720000,
+      "level": 5,
+      "xp": 5288,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 876,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 84,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 2
+      },
+      "catalystProgress": {
+        "alacrity": 19
+      },
+      "upgrades": {
+        "iron-broadsword": 4,
+        "plains-vest-t1": 4,
+        "plains-charm-t1": 4,
+        "plains-boots-t1": 4
+      },
+      "hp": 159.76480000000004
+    },
+    {
+      "elapsedMs": 780000,
+      "level": 5,
+      "xp": 5790,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 960,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 168,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 2
+      },
+      "catalystProgress": {
+        "alacrity": 40
+      },
+      "upgrades": {
+        "iron-broadsword": 4,
+        "plains-vest-t1": 4,
+        "plains-charm-t1": 4,
+        "plains-boots-t1": 4
+      },
+      "hp": 160
+    },
+    {
+      "elapsedMs": 809500,
+      "level": 6,
+      "xp": 6002,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 994,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 202,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 2
+      },
+      "catalystProgress": {
+        "alacrity": 48.5
+      },
+      "upgrades": {
+        "iron-broadsword": 4,
+        "plains-vest-t1": 4,
+        "plains-charm-t1": 4,
+        "plains-boots-t1": 4
+      },
+      "hp": 160
+    },
+    {
+      "elapsedMs": 840000,
+      "level": 6,
+      "xp": 6002,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 1026,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 19,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 1
+      },
+      "catalystProgress": {
+        "alacrity": 56.5
+      },
+      "upgrades": {
+        "iron-broadsword": 5,
+        "plains-vest-t1": 5,
+        "plains-charm-t1": 4,
+        "plains-boots-t1": 5
+      },
+      "hp": 164
+    },
+    {
+      "elapsedMs": 900000,
+      "level": 6,
+      "xp": 6002,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 1102,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 50,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 1
+      },
+      "catalystProgress": {
+        "alacrity": 75.5
+      },
+      "upgrades": {
+        "iron-broadsword": 5,
+        "plains-vest-t1": 5,
+        "plains-charm-t1": 5,
+        "plains-boots-t1": 5
+      },
+      "hp": 162.18079999999998
+    },
+    {
+      "elapsedMs": 960000,
+      "level": 6,
+      "xp": 6002,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 1154,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 102,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 1
+      },
+      "catalystProgress": {
+        "alacrity": 88.5
+      },
+      "upgrades": {
+        "iron-broadsword": 5,
+        "plains-vest-t1": 5,
+        "plains-charm-t1": 5,
+        "plains-boots-t1": 5
+      },
+      "hp": 164
+    },
+    {
+      "elapsedMs": 1020000,
+      "level": 6,
+      "xp": 6002,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 1214,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 162,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 2
+      },
+      "catalystProgress": {
+        "alacrity": 3.5
+      },
+      "upgrades": {
+        "iron-broadsword": 5,
+        "plains-vest-t1": 5,
+        "plains-charm-t1": 5,
+        "plains-boots-t1": 5
+      },
+      "hp": 164
+    },
+    {
+      "elapsedMs": 1080000,
+      "level": 6,
+      "xp": 6002,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 1300,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 248,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 2
+      },
+      "catalystProgress": {
+        "alacrity": 25
+      },
+      "upgrades": {
+        "iron-broadsword": 5,
+        "plains-vest-t1": 5,
+        "plains-charm-t1": 5,
+        "plains-boots-t1": 5
+      },
+      "hp": 164
+    },
+    {
+      "elapsedMs": 1140000,
+      "level": 6,
+      "xp": 6002,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 1350,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 298,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 2
+      },
+      "catalystProgress": {
+        "alacrity": 37.5
+      },
+      "upgrades": {
+        "iron-broadsword": 5,
+        "plains-vest-t1": 5,
+        "plains-charm-t1": 5,
+        "plains-boots-t1": 5
+      },
+      "hp": 164
+    },
+    {
+      "elapsedMs": 1200000,
+      "level": 6,
+      "xp": 6002,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 1430,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 378,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 2
+      },
+      "catalystProgress": {
+        "alacrity": 57.5
+      },
+      "upgrades": {
+        "iron-broadsword": 5,
+        "plains-vest-t1": 5,
+        "plains-charm-t1": 5,
+        "plains-boots-t1": 5
+      },
+      "hp": 164
+    },
+    {
+      "elapsedMs": 1260000,
+      "level": 6,
+      "xp": 6002,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 1516,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 464,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 2
+      },
+      "catalystProgress": {
+        "alacrity": 79
+      },
+      "upgrades": {
+        "iron-broadsword": 5,
+        "plains-vest-t1": 5,
+        "plains-charm-t1": 5,
+        "plains-boots-t1": 5
+      },
+      "hp": 164
+    },
+    {
+      "elapsedMs": 1320000,
+      "level": 6,
+      "xp": 6002,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 1606,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 554,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 3
+      },
+      "catalystProgress": {
+        "alacrity": 1.5
+      },
+      "upgrades": {
+        "iron-broadsword": 5,
+        "plains-vest-t1": 5,
+        "plains-charm-t1": 5,
+        "plains-boots-t1": 5
+      },
+      "hp": 164
+    },
+    {
+      "elapsedMs": 1380000,
+      "level": 6,
+      "xp": 6002,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 1696,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 644,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 3
+      },
+      "catalystProgress": {
+        "alacrity": 24
+      },
+      "upgrades": {
+        "iron-broadsword": 5,
+        "plains-vest-t1": 5,
+        "plains-charm-t1": 5,
+        "plains-boots-t1": 5
+      },
+      "hp": 163.984
+    },
+    {
+      "elapsedMs": 1440000,
+      "level": 6,
+      "xp": 6002,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 1776,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 724,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 3
+      },
+      "catalystProgress": {
+        "alacrity": 44
+      },
+      "upgrades": {
+        "iron-broadsword": 5,
+        "plains-vest-t1": 5,
+        "plains-charm-t1": 5,
+        "plains-boots-t1": 5
+      },
+      "hp": 164
+    },
+    {
+      "elapsedMs": 1500000,
+      "level": 6,
+      "xp": 6002,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 1856,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 804,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 3
+      },
+      "catalystProgress": {
+        "alacrity": 64
+      },
+      "upgrades": {
+        "iron-broadsword": 5,
+        "plains-vest-t1": 5,
+        "plains-charm-t1": 5,
+        "plains-boots-t1": 5
+      },
+      "hp": 164
+    },
+    {
+      "elapsedMs": 1560000,
+      "level": 6,
+      "xp": 6002,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 1930,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 878,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 3
+      },
+      "catalystProgress": {
+        "alacrity": 82.5
+      },
+      "upgrades": {
+        "iron-broadsword": 5,
+        "plains-vest-t1": 5,
+        "plains-charm-t1": 5,
+        "plains-boots-t1": 5
+      },
+      "hp": 164
+    },
+    {
+      "elapsedMs": 1620000,
+      "level": 6,
+      "xp": 6002,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 2012,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 960,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 4
+      },
+      "catalystProgress": {
+        "alacrity": 3
+      },
+      "upgrades": {
+        "iron-broadsword": 5,
+        "plains-vest-t1": 5,
+        "plains-charm-t1": 5,
+        "plains-boots-t1": 5
+      },
+      "hp": 164
+    },
+    {
+      "elapsedMs": 1680000,
+      "level": 6,
+      "xp": 6002,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 2102,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 1050,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 4
+      },
+      "catalystProgress": {
+        "alacrity": 25.5
+      },
+      "upgrades": {
+        "iron-broadsword": 5,
+        "plains-vest-t1": 5,
+        "plains-charm-t1": 5,
+        "plains-boots-t1": 5
+      },
+      "hp": 164
+    },
+    {
+      "elapsedMs": 1740000,
+      "level": 6,
+      "xp": 6002,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 2170,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 1118,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 4
+      },
+      "catalystProgress": {
+        "alacrity": 42.5
+      },
+      "upgrades": {
+        "iron-broadsword": 5,
+        "plains-vest-t1": 5,
+        "plains-charm-t1": 5,
+        "plains-boots-t1": 5
+      },
+      "hp": 164
+    },
+    {
+      "elapsedMs": 1800000,
+      "level": 6,
+      "xp": 6002,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 2254,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 1202,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 4
+      },
+      "catalystProgress": {
+        "alacrity": 63.5
+      },
+      "upgrades": {
+        "iron-broadsword": 5,
+        "plains-vest-t1": 5,
+        "plains-charm-t1": 5,
+        "plains-boots-t1": 5
+      },
+      "hp": 164
+    }
+  ],
+  "purchases": [
+    {
+      "elapsedMs": 228000,
+      "itemId": "iron-broadsword",
+      "plus": 1,
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 166,
+        "purple": 0
+      }
+    },
+    {
+      "elapsedMs": 366000,
+      "itemId": "plains-vest-t1",
+      "plus": 1,
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 239,
+        "purple": 0
+      }
+    },
+    {
+      "elapsedMs": 515000,
+      "itemId": "plains-charm-t1",
+      "plus": 1,
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 383,
+        "purple": 0
+      }
+    },
+    {
+      "elapsedMs": 515000,
+      "itemId": "plains-boots-t1",
+      "plus": 1,
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 354,
+        "purple": 0
+      }
+    },
+    {
+      "elapsedMs": 516000,
+      "itemId": "iron-broadsword",
+      "plus": 2,
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 309,
+        "purple": 0
+      }
+    },
+    {
+      "elapsedMs": 516000,
+      "itemId": "plains-vest-t1",
+      "plus": 2,
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 223,
+        "purple": 0
+      }
+    },
+    {
+      "elapsedMs": 516000,
+      "itemId": "plains-charm-t1",
+      "plus": 2,
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 188,
+        "purple": 0
+      }
+    },
+    {
+      "elapsedMs": 516000,
+      "itemId": "plains-boots-t1",
+      "plus": 2,
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 159,
+        "purple": 0
+      }
+    },
+    {
+      "elapsedMs": 517000,
+      "itemId": "iron-broadsword",
+      "plus": 3,
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 119,
+        "purple": 0
+      }
+    },
+    {
+      "elapsedMs": 517000,
+      "itemId": "plains-vest-t1",
+      "plus": 3,
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 32,
+        "purple": 0
+      }
+    },
+    {
+      "elapsedMs": 517000,
+      "itemId": "plains-boots-t1",
+      "plus": 3,
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 3,
+        "purple": 0
+      }
+    },
+    {
+      "elapsedMs": 544000,
+      "itemId": "plains-charm-t1",
+      "plus": 3,
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 3,
+        "purple": 0
+      }
+    },
+    {
+      "elapsedMs": 559000,
+      "itemId": "plains-boots-t1",
+      "plus": 4,
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 1,
+        "purple": 0
+      }
+    },
+    {
+      "elapsedMs": 578000,
+      "itemId": "plains-charm-t1",
+      "plus": 4,
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      }
+    },
+    {
+      "elapsedMs": 614000,
+      "itemId": "iron-broadsword",
+      "plus": 4,
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 4,
+        "purple": 0
+      }
+    },
+    {
+      "elapsedMs": 660000,
+      "itemId": "plains-vest-t1",
+      "plus": 4,
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      }
+    },
+    {
+      "elapsedMs": 810000,
+      "itemId": "iron-broadsword",
+      "plus": 5,
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 142,
+        "purple": 0
+      }
+    },
+    {
+      "elapsedMs": 810000,
+      "itemId": "plains-vest-t1",
+      "plus": 5,
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 22,
+        "purple": 0
+      }
+    },
+    {
+      "elapsedMs": 824000,
+      "itemId": "plains-boots-t1",
+      "plus": 5,
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 5,
+        "purple": 0
+      }
+    },
+    {
+      "elapsedMs": 856000,
+      "itemId": "plains-charm-t1",
+      "plus": 5,
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 4,
+        "purple": 0
+      }
+    }
+  ],
+  "blockers": {
+    "Requires plains level 2.": 187,
+    "Requires plains level 3.": 325,
+    "Requires plains level 4.": 948,
+    "Not enough Might essence (need 34).": 27,
+    "Not enough Might essence (need 36).": 69,
+    "Not enough Might essence (need 70).": 115,
+    "Not enough Might essence (need 29).": 33,
+    "Not enough Might essence (need 24).": 14,
+    "Requires Global Mastery 30.": 596,
+    "Not enough Might essence (need 45).": 46,
+    "Not enough Might essence (need 35).": 14
+  },
+  "wallSeconds": 45.6511329,
+  "limitations": [
+    "Synthetic late-tier fixture: other biomes mastered, generated class and granted benchmark abilities",
+    "Native current-tier base gear granted on credit in buy mode; acquisition is repaid from earnings, not a real prior-tier journey",
+    "Fixed3 mode grants +3 gear and measures income, not purchase progression",
+    "No cross-biome routing or instant revivals; first death stops the run",
+    "Seeded random and 100ms simulation clock; elapsed time is simulation time"
+  ]
+}

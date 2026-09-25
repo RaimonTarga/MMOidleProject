@@ -1,0 +1,313 @@
+{
+  "job": {
+    "id": "candidate-fixed3-t4-trench-dot-root-101033",
+    "arm": "candidate",
+    "mode": "fixed3",
+    "nodeId": "node-t4-trench-01",
+    "classRoot": "dot-root",
+    "seed": 101033,
+    "gearIds": [
+      "trench-abyssal-axe",
+      "trench-vest-t4",
+      "trench-charm-t4",
+      "trench-boots-t4-stalkers"
+    ],
+    "maxMs": 7200000,
+    "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+    "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-replicate\\candidate-fixed3-t4-trench-dot-root-101033.json"
+  },
+  "hitboxes": 406,
+  "build": {
+    "id": "dot-root+dot-balanced+dot-range-mid+dot-balanced-t3-a",
+    "classRoot": "dot-root",
+    "skillPath": [
+      "dot-root",
+      "dot-balanced",
+      "dot-range-mid",
+      "dot-balanced-t3-a"
+    ],
+    "contentTier": 4,
+    "playerTier": 4,
+    "gearTier": 4,
+    "gearItemIds": {
+      "weapon": "trench-abyssal-axe",
+      "armor": "trench-vest-t4",
+      "recovery": "trench-charm-t4",
+      "mobility": "trench-boots-t4-stalkers"
+    }
+  },
+  "initial": {
+    "elapsedMs": 0,
+    "level": 0,
+    "xp": 0,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {},
+    "catalystProgress": {},
+    "upgrades": {
+      "trench-abyssal-axe": 3,
+      "trench-vest-t4": 3,
+      "trench-charm-t4": 3,
+      "trench-boots-t4-stalkers": 3
+    },
+    "hp": 333,
+    "build": {
+      "id": "dot-root+dot-balanced+dot-range-mid+dot-balanced-t3-a",
+      "classRoot": "dot-root",
+      "skillPath": [
+        "dot-root",
+        "dot-balanced",
+        "dot-range-mid",
+        "dot-balanced-t3-a"
+      ],
+      "contentTier": 4,
+      "playerTier": 4,
+      "gearTier": 4,
+      "gearItemIds": {
+        "weapon": "trench-abyssal-axe",
+        "armor": "trench-vest-t4",
+        "recovery": "trench-charm-t4",
+        "mobility": "trench-boots-t4-stalkers"
+      }
+    },
+    "loadout": {
+      "abilities": {
+        "techniques": [
+          "disengage",
+          "imbue-lightning"
+        ],
+        "guards": [
+          "recuperate",
+          "break-free",
+          "bramble-guard"
+        ]
+      },
+      "stances": [
+        "offensive-stance"
+      ],
+      "rites": [
+        "blood-offering",
+        "purification",
+        "ability-reprieve",
+        "mechanic-renewal",
+        "swift-repose"
+      ],
+      "runes": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "chase-enemy"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "hp-below-25",
+          "actionId": "flee"
+        },
+        {
+          "conditionId": "while-traveling",
+          "actionId": "fight-back"
+        }
+      ]
+    },
+    "stats": {
+      "hp": 333,
+      "attack": 255
+    },
+    "biomeLevels": {
+      "cave": 18,
+      "forest": 12,
+      "mountain": 24,
+      "plains": 12,
+      "swamp": 18,
+      "desert": 18,
+      "jungle": 18,
+      "tundra": 12,
+      "volcanic": 12,
+      "graveyard": 6,
+      "trench": 0
+    }
+  },
+  "entry": 0,
+  "cap": 6,
+  "budget": 108000,
+  "costs": {
+    "3": {
+      "red": 0,
+      "blue": 0,
+      "green": 8533,
+      "yellow": 0,
+      "purple": 0
+    },
+    "5": {
+      "red": 0,
+      "blue": 0,
+      "green": 12800,
+      "yellow": 0,
+      "purple": 0
+    }
+  },
+  "mastery": null,
+  "death": {
+    "elapsedMs": 146500,
+    "level": 0,
+    "xp": 3024,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 250,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 250,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {},
+    "catalystProgress": {
+      "alacrity": 42
+    },
+    "upgrades": {
+      "trench-abyssal-axe": 3,
+      "trench-vest-t4": 3,
+      "trench-charm-t4": 3,
+      "trench-boots-t4-stalkers": 3
+    },
+    "hp": 0
+  },
+  "fundingTimes": {
+    "3": null,
+    "5": null
+  },
+  "actualAll3Ms": null,
+  "actualAll5Ms": null,
+  "acquisitionDebt": {
+    "red": 0,
+    "blue": 0,
+    "green": 0,
+    "yellow": 0,
+    "purple": 0
+  },
+  "final": {
+    "elapsedMs": 146500,
+    "level": 0,
+    "xp": 3024,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 250,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 250,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {},
+    "catalystProgress": {
+      "alacrity": 42
+    },
+    "upgrades": {
+      "trench-abyssal-axe": 3,
+      "trench-vest-t4": 3,
+      "trench-charm-t4": 3,
+      "trench-boots-t4-stalkers": 3
+    },
+    "hp": 0
+  },
+  "snapshots": [
+    {
+      "elapsedMs": 60000,
+      "level": 0,
+      "xp": 1512,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 125,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 125,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "alacrity": 21
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 299.84448434369295
+    },
+    {
+      "elapsedMs": 120000,
+      "level": 0,
+      "xp": 3024,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 250,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 250,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "alacrity": 42
+      },
+      "upgrades": {
+        "trench-abyssal-axe": 3,
+        "trench-vest-t4": 3,
+        "trench-charm-t4": 3,
+        "trench-boots-t4-stalkers": 3
+      },
+      "hp": 222.948430903979
+    }
+  ],
+  "purchases": [],
+  "blockers": {},
+  "wallSeconds": 2.3942121000000007,
+  "limitations": [
+    "Synthetic late-tier fixture: other biomes mastered, generated class and granted benchmark abilities",
+    "Native current-tier base gear granted on credit in buy mode; acquisition is repaid from earnings, not a real prior-tier journey",
+    "Fixed3 mode grants +3 gear and measures income, not purchase progression",
+    "No cross-biome routing or instant revivals; first death stops the run",
+    "Seeded random and 100ms simulation clock; elapsed time is simulation time"
+  ]
+}

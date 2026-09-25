@@ -1,0 +1,17 @@
+{
+  "id": "baseline-buy-t3-volcanic-cadence-root-101009",
+  "arm": "baseline",
+  "mode": "buy",
+  "nodeId": "node-t3-volcanic-01",
+  "classRoot": "cadence-root",
+  "seed": 101009,
+  "gearIds": [
+    "volcanic-cinderlash",
+    "volcanic-vest-t3",
+    "volcanic-charm-t3",
+    "volcanic-boots-t3"
+  ],
+  "maxMs": 3600000,
+  "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+  "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-buy-t3-volcanic-cadence-root-101009.json"
+}

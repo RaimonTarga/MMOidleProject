@@ -1,0 +1,7 @@
+{
+  "checkedAt": "2026-09-24T22:17:13.384Z",
+  "payoutCases": 458,
+  "nodes": 140,
+  "passed": true,
+  "method": "Direct calls to authoritative grantMonsterRewards, not combat or pacing simulation."
+}

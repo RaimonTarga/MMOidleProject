@@ -1,0 +1,97 @@
+{
+  "id": "candidate-op-t1-striker-plains-t1-developed-s101033",
+  "arm": "candidate",
+  "mode": "historical-loadout",
+  "nodeId": "node-t1-plains-03",
+  "classRoot": "cadence-root",
+  "seed": 101033,
+  "cell": {
+    "id": "op-t1-striker-plains-t1-developed-s101033",
+    "identityId": "t1-striker",
+    "className": "striker",
+    "frame": "balanced",
+    "pathName": "root",
+    "range": null,
+    "tier": 1,
+    "role": "farm",
+    "nodeId": "node-t1-plains-03",
+    "isDungeon": false,
+    "alternate": false,
+    "targetTypes": [],
+    "treatment": "control",
+    "playerTreatment": "untreated",
+    "controlCaseId": null,
+    "preparationNotes": [
+      "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+      "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+    ],
+    "seed": 101033,
+    "block": "A",
+    "arm": "primary",
+    "comparisonId": "op-t1-striker-plains-t1-developed-s101009",
+    "snapshotId": "t1-developed",
+    "progressionSnapshot": {
+      "id": "t1-developed",
+      "tier": 1,
+      "mastery": {
+        "plains": 4,
+        "forest": 4,
+        "swamp": 4,
+        "mountain": 5,
+        "cave": 5
+      },
+      "gm": 22,
+      "rp": 20,
+      "plus": 3
+    },
+    "upgradeLevel": 3,
+    "stance": null,
+    "abilities": {
+      "techniques": [
+        "sweep"
+      ],
+      "guards": [
+        "second-wind"
+      ]
+    },
+    "runeRules": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ],
+    "build": {
+      "id": "op-t1-striker-plains-t1-developed-s101009",
+      "classRoot": "cadence-root",
+      "contentTier": 1,
+      "playerTier": 1,
+      "gearTier": 1,
+      "skillPath": [
+        "cadence-root"
+      ],
+      "gearItemIds": {
+        "weapon": "chaotic-axe",
+        "armor": "plains-vest-t1",
+        "recovery": "swamp-charm-t1",
+        "mobility": "mountain-boots-t1"
+      }
+    }
+  },
+  "gearIds": [
+    "iron-broadsword",
+    "plains-vest-t1",
+    "plains-charm-t1",
+    "plains-boots-t1"
+  ],
+  "maxMs": 900000,
+  "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+  "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\candidate-op-t1-striker-plains-t1-developed-s101033.json"
+}

@@ -1,0 +1,4591 @@
+{
+  "note": "Iteration 04 final: same XP budgets/recipes/catalysts, XP-only T4 biome corrections. Entire package experimental.",
+  "xp": [
+    1750,
+    3750,
+    42000,
+    600000
+  ],
+  "dropRelativeMultiplier": 0.9,
+  "catalystScalars": {
+    "1": 0.5,
+    "2": 1.3333333333333333,
+    "3": 0.16666666666666666,
+    "4": 0.015
+  },
+  "recipes": [
+    {
+      "id": "chaotic-axe",
+      "base": {
+        "red": 26
+      },
+      "steps": [
+        {
+          "red": 85
+        },
+        {
+          "red": 85
+        },
+        {
+          "red": 85
+        },
+        {
+          "red": 70
+        },
+        {
+          "red": 70
+        }
+      ],
+      "cost3": {
+        "red": 281
+      },
+      "cost5": {
+        "red": 421
+      },
+      "reconstruct3": {
+        "red": 281
+      },
+      "reconstruct5": {
+        "red": 421
+      }
+    },
+    {
+      "id": "cave-vest-t1",
+      "base": {
+        "red": 22
+      },
+      "steps": [
+        {
+          "red": 108
+        },
+        {
+          "red": 107
+        },
+        {
+          "red": 108
+        },
+        {
+          "red": 86
+        },
+        {
+          "red": 86
+        }
+      ],
+      "cost3": {
+        "red": 345
+      },
+      "cost5": {
+        "red": 517
+      },
+      "reconstruct3": {
+        "red": 345
+      },
+      "reconstruct5": {
+        "red": 517
+      }
+    },
+    {
+      "id": "cave-charm-t1",
+      "base": {
+        "red": 18
+      },
+      "steps": [
+        {
+          "red": 41
+        },
+        {
+          "red": 42
+        },
+        {
+          "red": 41
+        },
+        {
+          "red": 36
+        },
+        {
+          "red": 35
+        }
+      ],
+      "cost3": {
+        "red": 142
+      },
+      "cost5": {
+        "red": 213
+      },
+      "reconstruct3": {
+        "red": 142
+      },
+      "reconstruct5": {
+        "red": 213
+      }
+    },
+    {
+      "id": "cave-boots-t1",
+      "base": {
+        "red": 18
+      },
+      "steps": [
+        {
+          "red": 27
+        },
+        {
+          "red": 27
+        },
+        {
+          "red": 27
+        },
+        {
+          "red": 25
+        },
+        {
+          "red": 24
+        }
+      ],
+      "cost3": {
+        "red": 99
+      },
+      "cost5": {
+        "red": 148
+      },
+      "reconstruct3": {
+        "red": 99
+      },
+      "reconstruct5": {
+        "red": 148
+      }
+    },
+    {
+      "id": "ruinous-axe",
+      "base": {
+        "red": 60
+      },
+      "steps": [
+        {
+          "red": 239
+        },
+        {
+          "red": 238
+        },
+        {
+          "red": 239
+        },
+        {
+          "red": 194
+        },
+        {
+          "red": 194
+        }
+      ],
+      "cost3": {
+        "red": 776
+      },
+      "cost5": {
+        "red": 1164
+      },
+      "reconstruct3": {
+        "red": 926
+      },
+      "reconstruct5": {
+        "red": 1314
+      }
+    },
+    {
+      "id": "cave-vest-t2",
+      "base": {
+        "red": 54
+      },
+      "steps": [
+        {
+          "red": 251
+        },
+        {
+          "red": 250
+        },
+        {
+          "red": 251
+        },
+        {
+          "red": 202
+        },
+        {
+          "red": 201
+        }
+      ],
+      "cost3": {
+        "red": 806
+      },
+      "cost5": {
+        "red": 1209
+      },
+      "reconstruct3": {
+        "red": 941
+      },
+      "reconstruct5": {
+        "red": 1344
+      }
+    },
+    {
+      "id": "cave-charm-t2",
+      "base": {
+        "red": 44
+      },
+      "steps": [
+        {
+          "red": 97
+        },
+        {
+          "red": 97
+        },
+        {
+          "red": 97
+        },
+        {
+          "red": 84
+        },
+        {
+          "red": 84
+        }
+      ],
+      "cost3": {
+        "red": 335
+      },
+      "cost5": {
+        "red": 503
+      },
+      "reconstruct3": {
+        "red": 445
+      },
+      "reconstruct5": {
+        "red": 613
+      }
+    },
+    {
+      "id": "cave-boots-t2",
+      "base": {
+        "red": 33
+      },
+      "steps": [
+        {
+          "red": 63
+        },
+        {
+          "red": 63
+        },
+        {
+          "red": 63
+        },
+        {
+          "red": 56
+        },
+        {
+          "red": 55
+        }
+      ],
+      "cost3": {
+        "red": 222
+      },
+      "cost5": {
+        "red": 333
+      },
+      "reconstruct3": {
+        "red": 305
+      },
+      "reconstruct5": {
+        "red": 416
+      }
+    },
+    {
+      "id": "cave-cataclysm-axe",
+      "base": {
+        "red": 120
+      },
+      "steps": [
+        {
+          "red": 477
+        },
+        {
+          "red": 478
+        },
+        {
+          "red": 477
+        },
+        {
+          "red": 388
+        },
+        {
+          "red": 388
+        }
+      ],
+      "cost3": {
+        "red": 1552
+      },
+      "cost5": {
+        "red": 2328
+      },
+      "reconstruct3": {
+        "red": 1852
+      },
+      "reconstruct5": {
+        "red": 2628
+      }
+    },
+    {
+      "id": "cave-vest-t3",
+      "base": {
+        "red": 116,
+        "yellow": 29
+      },
+      "steps": [
+        {
+          "red": 391,
+          "yellow": 98
+        },
+        {
+          "red": 392,
+          "yellow": 97
+        },
+        {
+          "red": 391,
+          "yellow": 98
+        },
+        {
+          "red": 323,
+          "yellow": 81
+        },
+        {
+          "red": 322,
+          "yellow": 80
+        }
+      ],
+      "cost3": {
+        "red": 1290,
+        "yellow": 322
+      },
+      "cost5": {
+        "red": 1935,
+        "yellow": 483
+      },
+      "reconstruct3": {
+        "red": 1580,
+        "yellow": 395
+      },
+      "reconstruct5": {
+        "red": 2225,
+        "yellow": 556
+      }
+    },
+    {
+      "id": "cave-charm-t3",
+      "base": {
+        "red": 100,
+        "green": 25
+      },
+      "steps": [
+        {
+          "red": 145,
+          "green": 37
+        },
+        {
+          "red": 146,
+          "green": 36
+        },
+        {
+          "red": 145,
+          "green": 37
+        },
+        {
+          "red": 134,
+          "green": 34
+        },
+        {
+          "red": 134,
+          "green": 33
+        }
+      ],
+      "cost3": {
+        "red": 536,
+        "green": 135
+      },
+      "cost5": {
+        "red": 804,
+        "green": 202
+      },
+      "reconstruct3": {
+        "red": 786,
+        "green": 198
+      },
+      "reconstruct5": {
+        "red": 1054,
+        "green": 265
+      }
+    },
+    {
+      "id": "cave-boots-t3",
+      "base": {
+        "red": 100
+      },
+      "steps": [
+        {
+          "red": 115
+        },
+        {
+          "red": 114
+        },
+        {
+          "red": 115
+        },
+        {
+          "red": 111
+        },
+        {
+          "red": 111
+        }
+      ],
+      "cost3": {
+        "red": 444
+      },
+      "cost5": {
+        "red": 666
+      },
+      "reconstruct3": {
+        "red": 694
+      },
+      "reconstruct5": {
+        "red": 916
+      }
+    },
+    {
+      "id": "flash-rapier",
+      "base": {
+        "green": 20
+      },
+      "steps": [
+        {
+          "green": 87
+        },
+        {
+          "green": 86
+        },
+        {
+          "green": 87
+        },
+        {
+          "green": 70
+        },
+        {
+          "green": 70
+        }
+      ],
+      "cost3": {
+        "green": 280
+      },
+      "cost5": {
+        "green": 420
+      },
+      "reconstruct3": {
+        "green": 280
+      },
+      "reconstruct5": {
+        "green": 420
+      }
+    },
+    {
+      "id": "forest-vest-t1",
+      "base": {
+        "green": 20
+      },
+      "steps": [
+        {
+          "green": 80
+        },
+        {
+          "green": 80
+        },
+        {
+          "green": 80
+        },
+        {
+          "green": 65
+        },
+        {
+          "green": 65
+        }
+      ],
+      "cost3": {
+        "green": 260
+      },
+      "cost5": {
+        "green": 390
+      },
+      "reconstruct3": {
+        "green": 260
+      },
+      "reconstruct5": {
+        "green": 390
+      }
+    },
+    {
+      "id": "forest-charm-t1",
+      "base": {
+        "green": 15
+      },
+      "steps": [
+        {
+          "green": 39
+        },
+        {
+          "green": 40
+        },
+        {
+          "green": 39
+        },
+        {
+          "green": 34
+        },
+        {
+          "green": 33
+        }
+      ],
+      "cost3": {
+        "green": 133
+      },
+      "cost5": {
+        "green": 200
+      },
+      "reconstruct3": {
+        "green": 133
+      },
+      "reconstruct5": {
+        "green": 200
+      }
+    },
+    {
+      "id": "forest-boots-t1",
+      "base": {
+        "green": 10
+      },
+      "steps": [
+        {
+          "green": 27
+        },
+        {
+          "green": 26
+        },
+        {
+          "green": 27
+        },
+        {
+          "green": 23
+        },
+        {
+          "green": 22
+        }
+      ],
+      "cost3": {
+        "green": 90
+      },
+      "cost5": {
+        "green": 135
+      },
+      "reconstruct3": {
+        "green": 90
+      },
+      "reconstruct5": {
+        "green": 135
+      }
+    },
+    {
+      "id": "gale-needle",
+      "base": {
+        "green": 60
+      },
+      "steps": [
+        {
+          "green": 202
+        },
+        {
+          "green": 203
+        },
+        {
+          "green": 202
+        },
+        {
+          "green": 167
+        },
+        {
+          "green": 166
+        }
+      ],
+      "cost3": {
+        "green": 667
+      },
+      "cost5": {
+        "green": 1000
+      },
+      "reconstruct3": {
+        "green": 817
+      },
+      "reconstruct5": {
+        "green": 1150
+      }
+    },
+    {
+      "id": "thorn-needle",
+      "base": {
+        "green": 45,
+        "purple": 15
+      },
+      "steps": [
+        {
+          "green": 168,
+          "purple": 56
+        },
+        {
+          "green": 168,
+          "purple": 57
+        },
+        {
+          "green": 168,
+          "purple": 56
+        },
+        {
+          "green": 138,
+          "purple": 46
+        },
+        {
+          "green": 137,
+          "purple": 46
+        }
+      ],
+      "cost3": {
+        "green": 549,
+        "purple": 184
+      },
+      "cost5": {
+        "green": 824,
+        "purple": 276
+      },
+      "reconstruct3": {
+        "green": 661,
+        "purple": 222
+      },
+      "reconstruct5": {
+        "green": 936,
+        "purple": 314
+      }
+    },
+    {
+      "id": "forest-vest-t2",
+      "base": {
+        "green": 48,
+        "yellow": 12
+      },
+      "steps": [
+        {
+          "green": 155,
+          "yellow": 39
+        },
+        {
+          "green": 154,
+          "yellow": 38
+        },
+        {
+          "green": 155,
+          "yellow": 39
+        },
+        {
+          "green": 128,
+          "yellow": 32
+        },
+        {
+          "green": 128,
+          "yellow": 32
+        }
+      ],
+      "cost3": {
+        "green": 512,
+        "yellow": 128
+      },
+      "cost5": {
+        "green": 768,
+        "yellow": 192
+      },
+      "reconstruct3": {
+        "green": 632,
+        "yellow": 158
+      },
+      "reconstruct5": {
+        "green": 888,
+        "yellow": 222
+      }
+    },
+    {
+      "id": "forest-charm-t2",
+      "base": {
+        "green": 50
+      },
+      "steps": [
+        {
+          "green": 94
+        },
+        {
+          "green": 95
+        },
+        {
+          "green": 94
+        },
+        {
+          "green": 84
+        },
+        {
+          "green": 83
+        }
+      ],
+      "cost3": {
+        "green": 333
+      },
+      "cost5": {
+        "green": 500
+      },
+      "reconstruct3": {
+        "green": 458
+      },
+      "reconstruct5": {
+        "green": 625
+      }
+    },
+    {
+      "id": "forest-boots-t2",
+      "base": {
+        "green": 40
+      },
+      "steps": [
+        {
+          "green": 62
+        },
+        {
+          "green": 63
+        },
+        {
+          "green": 62
+        },
+        {
+          "green": 57
+        },
+        {
+          "green": 56
+        }
+      ],
+      "cost3": {
+        "green": 227
+      },
+      "cost5": {
+        "green": 340
+      },
+      "reconstruct3": {
+        "green": 327
+      },
+      "reconstruct5": {
+        "green": 440
+      }
+    },
+    {
+      "id": "jungle-stinger-rapier",
+      "base": {
+        "green": 55
+      },
+      "steps": [
+        {
+          "green": 214
+        },
+        {
+          "green": 214
+        },
+        {
+          "green": 214
+        },
+        {
+          "green": 174
+        },
+        {
+          "green": 174
+        }
+      ],
+      "cost3": {
+        "green": 697
+      },
+      "cost5": {
+        "green": 1045
+      },
+      "reconstruct3": {
+        "green": 697
+      },
+      "reconstruct5": {
+        "green": 1045
+      }
+    },
+    {
+      "id": "jungle-vest-t2",
+      "base": {
+        "green": 48,
+        "yellow": 12
+      },
+      "steps": [
+        {
+          "green": 168,
+          "yellow": 42
+        },
+        {
+          "green": 167,
+          "yellow": 43
+        },
+        {
+          "green": 168,
+          "yellow": 42
+        },
+        {
+          "green": 138,
+          "yellow": 35
+        },
+        {
+          "green": 138,
+          "yellow": 34
+        }
+      ],
+      "cost3": {
+        "green": 551,
+        "yellow": 139
+      },
+      "cost5": {
+        "green": 827,
+        "yellow": 208
+      },
+      "reconstruct3": {
+        "green": 551,
+        "yellow": 139
+      },
+      "reconstruct5": {
+        "green": 827,
+        "yellow": 208
+      }
+    },
+    {
+      "id": "jungle-charm-t2",
+      "base": {
+        "green": 45
+      },
+      "steps": [
+        {
+          "green": 97
+        },
+        {
+          "green": 97
+        },
+        {
+          "green": 97
+        },
+        {
+          "green": 84
+        },
+        {
+          "green": 84
+        }
+      ],
+      "cost3": {
+        "green": 336
+      },
+      "cost5": {
+        "green": 504
+      },
+      "reconstruct3": {
+        "green": 336
+      },
+      "reconstruct5": {
+        "green": 504
+      }
+    },
+    {
+      "id": "jungle-boots-t2",
+      "base": {
+        "green": 30
+      },
+      "steps": [
+        {
+          "green": 63
+        },
+        {
+          "green": 64
+        },
+        {
+          "green": 63
+        },
+        {
+          "green": 55
+        },
+        {
+          "green": 55
+        }
+      ],
+      "cost3": {
+        "green": 220
+      },
+      "cost5": {
+        "green": 330
+      },
+      "reconstruct3": {
+        "green": 220
+      },
+      "reconstruct5": {
+        "green": 330
+      }
+    },
+    {
+      "id": "jungle-venomthorn-rapier",
+      "base": {
+        "green": 120
+      },
+      "steps": [
+        {
+          "green": 424
+        },
+        {
+          "green": 425
+        },
+        {
+          "green": 424
+        },
+        {
+          "green": 349
+        },
+        {
+          "green": 348
+        }
+      ],
+      "cost3": {
+        "green": 1393
+      },
+      "cost5": {
+        "green": 2090
+      },
+      "reconstruct3": {
+        "green": 1693
+      },
+      "reconstruct5": {
+        "green": 2390
+      }
+    },
+    {
+      "id": "jungle-vest-t3",
+      "base": {
+        "green": 90,
+        "yellow": 30
+      },
+      "steps": [
+        {
+          "green": 315,
+          "yellow": 105
+        },
+        {
+          "green": 315,
+          "yellow": 105
+        },
+        {
+          "green": 315,
+          "yellow": 105
+        },
+        {
+          "green": 259,
+          "yellow": 86
+        },
+        {
+          "green": 259,
+          "yellow": 86
+        }
+      ],
+      "cost3": {
+        "green": 1035,
+        "yellow": 345
+      },
+      "cost5": {
+        "green": 1553,
+        "yellow": 517
+      },
+      "reconstruct3": {
+        "green": 1260,
+        "yellow": 420
+      },
+      "reconstruct5": {
+        "green": 1778,
+        "yellow": 592
+      }
+    },
+    {
+      "id": "jungle-charm-t3",
+      "base": {
+        "green": 100
+      },
+      "steps": [
+        {
+          "green": 191
+        },
+        {
+          "green": 190
+        },
+        {
+          "green": 191
+        },
+        {
+          "green": 168
+        },
+        {
+          "green": 168
+        }
+      ],
+      "cost3": {
+        "green": 672
+      },
+      "cost5": {
+        "green": 1008
+      },
+      "reconstruct3": {
+        "green": 922
+      },
+      "reconstruct5": {
+        "green": 1258
+      }
+    },
+    {
+      "id": "jungle-boots-t3",
+      "base": {
+        "green": 90
+      },
+      "steps": [
+        {
+          "green": 117
+        },
+        {
+          "green": 116
+        },
+        {
+          "green": 117
+        },
+        {
+          "green": 110
+        },
+        {
+          "green": 110
+        }
+      ],
+      "cost3": {
+        "green": 440
+      },
+      "cost5": {
+        "green": 660
+      },
+      "reconstruct3": {
+        "green": 665
+      },
+      "reconstruct5": {
+        "green": 885
+      }
+    },
+    {
+      "id": "jungle-deathfang-rapier",
+      "base": {
+        "green": 264
+      },
+      "steps": [
+        {
+          "green": 841
+        },
+        {
+          "green": 841
+        },
+        {
+          "green": 841
+        },
+        {
+          "green": 697
+        },
+        {
+          "green": 696
+        }
+      ],
+      "cost3": {
+        "green": 2787
+      },
+      "cost5": {
+        "green": 4180
+      },
+      "reconstruct3": {
+        "green": 3447
+      },
+      "reconstruct5": {
+        "green": 4840
+      }
+    },
+    {
+      "id": "jungle-vest-t4",
+      "base": {
+        "green": 220,
+        "yellow": 55
+      },
+      "steps": [
+        {
+          "green": 663,
+          "yellow": 166
+        },
+        {
+          "green": 662,
+          "yellow": 165
+        },
+        {
+          "green": 663,
+          "yellow": 166
+        },
+        {
+          "green": 552,
+          "yellow": 138
+        },
+        {
+          "green": 552,
+          "yellow": 138
+        }
+      ],
+      "cost3": {
+        "green": 2208,
+        "yellow": 552
+      },
+      "cost5": {
+        "green": 3312,
+        "yellow": 828
+      },
+      "reconstruct3": {
+        "green": 2758,
+        "yellow": 690
+      },
+      "reconstruct5": {
+        "green": 3862,
+        "yellow": 966
+      }
+    },
+    {
+      "id": "jungle-charm-t4",
+      "base": {
+        "green": 200
+      },
+      "steps": [
+        {
+          "green": 381
+        },
+        {
+          "green": 382
+        },
+        {
+          "green": 381
+        },
+        {
+          "green": 336
+        },
+        {
+          "green": 336
+        }
+      ],
+      "cost3": {
+        "green": 1344
+      },
+      "cost5": {
+        "green": 2016
+      },
+      "reconstruct3": {
+        "green": 1844
+      },
+      "reconstruct5": {
+        "green": 2516
+      }
+    },
+    {
+      "id": "jungle-charm-t4-overgrowth",
+      "base": {
+        "green": 200
+      },
+      "steps": [
+        {
+          "green": 381
+        },
+        {
+          "green": 382
+        },
+        {
+          "green": 381
+        },
+        {
+          "green": 336
+        },
+        {
+          "green": 336
+        }
+      ],
+      "cost3": {
+        "green": 1344
+      },
+      "cost5": {
+        "green": 2016
+      },
+      "reconstruct3": {
+        "green": 1844
+      },
+      "reconstruct5": {
+        "green": 2516
+      }
+    },
+    {
+      "id": "jungle-boots-t4",
+      "base": {
+        "green": 198
+      },
+      "steps": [
+        {
+          "green": 227
+        },
+        {
+          "green": 228
+        },
+        {
+          "green": 227
+        },
+        {
+          "green": 220
+        },
+        {
+          "green": 220
+        }
+      ],
+      "cost3": {
+        "green": 880
+      },
+      "cost5": {
+        "green": 1320
+      },
+      "reconstruct3": {
+        "green": 1375
+      },
+      "reconstruct5": {
+        "green": 1815
+      }
+    },
+    {
+      "id": "heavy-hammer",
+      "base": {
+        "blue": 22
+      },
+      "steps": [
+        {
+          "blue": 85
+        },
+        {
+          "blue": 86
+        },
+        {
+          "blue": 85
+        },
+        {
+          "blue": 70
+        },
+        {
+          "blue": 69
+        }
+      ],
+      "cost3": {
+        "blue": 278
+      },
+      "cost5": {
+        "blue": 417
+      },
+      "reconstruct3": {
+        "blue": 278
+      },
+      "reconstruct5": {
+        "blue": 417
+      }
+    },
+    {
+      "id": "mountain-vest-t1",
+      "base": {
+        "blue": 22
+      },
+      "steps": [
+        {
+          "blue": 85
+        },
+        {
+          "blue": 86
+        },
+        {
+          "blue": 85
+        },
+        {
+          "blue": 70
+        },
+        {
+          "blue": 69
+        }
+      ],
+      "cost3": {
+        "blue": 278
+      },
+      "cost5": {
+        "blue": 417
+      },
+      "reconstruct3": {
+        "blue": 278
+      },
+      "reconstruct5": {
+        "blue": 417
+      }
+    },
+    {
+      "id": "mountain-charm-t1",
+      "base": {
+        "blue": 18
+      },
+      "steps": [
+        {
+          "blue": 41
+        },
+        {
+          "blue": 42
+        },
+        {
+          "blue": 41
+        },
+        {
+          "blue": 36
+        },
+        {
+          "blue": 35
+        }
+      ],
+      "cost3": {
+        "blue": 142
+      },
+      "cost5": {
+        "blue": 213
+      },
+      "reconstruct3": {
+        "blue": 142
+      },
+      "reconstruct5": {
+        "blue": 213
+      }
+    },
+    {
+      "id": "mountain-boots-t1",
+      "base": {
+        "blue": 18
+      },
+      "steps": [
+        {
+          "blue": 27
+        },
+        {
+          "blue": 27
+        },
+        {
+          "blue": 27
+        },
+        {
+          "blue": 25
+        },
+        {
+          "blue": 24
+        }
+      ],
+      "cost3": {
+        "blue": 99
+      },
+      "cost5": {
+        "blue": 148
+      },
+      "reconstruct3": {
+        "blue": 99
+      },
+      "reconstruct5": {
+        "blue": 148
+      }
+    },
+    {
+      "id": "quake-hammer",
+      "base": {
+        "blue": 52
+      },
+      "steps": [
+        {
+          "blue": 254
+        },
+        {
+          "blue": 255
+        },
+        {
+          "blue": 254
+        },
+        {
+          "blue": 204
+        },
+        {
+          "blue": 203
+        }
+      ],
+      "cost3": {
+        "blue": 815
+      },
+      "cost5": {
+        "blue": 1222
+      },
+      "reconstruct3": {
+        "blue": 945
+      },
+      "reconstruct5": {
+        "blue": 1352
+      }
+    },
+    {
+      "id": "mountain-vest-t2",
+      "base": {
+        "blue": 52
+      },
+      "steps": [
+        {
+          "blue": 230
+        },
+        {
+          "blue": 231
+        },
+        {
+          "blue": 230
+        },
+        {
+          "blue": 186
+        },
+        {
+          "blue": 185
+        }
+      ],
+      "cost3": {
+        "blue": 743
+      },
+      "cost5": {
+        "blue": 1114
+      },
+      "reconstruct3": {
+        "blue": 873
+      },
+      "reconstruct5": {
+        "blue": 1244
+      }
+    },
+    {
+      "id": "mountain-charm-t2",
+      "base": {
+        "blue": 42
+      },
+      "steps": [
+        {
+          "blue": 90
+        },
+        {
+          "blue": 90
+        },
+        {
+          "blue": 90
+        },
+        {
+          "blue": 78
+        },
+        {
+          "blue": 78
+        }
+      ],
+      "cost3": {
+        "blue": 312
+      },
+      "cost5": {
+        "blue": 468
+      },
+      "reconstruct3": {
+        "blue": 417
+      },
+      "reconstruct5": {
+        "blue": 573
+      }
+    },
+    {
+      "id": "mountain-boots-t2",
+      "base": {
+        "blue": 42
+      },
+      "steps": [
+        {
+          "blue": 59
+        },
+        {
+          "blue": 59
+        },
+        {
+          "blue": 59
+        },
+        {
+          "blue": 55
+        },
+        {
+          "blue": 55
+        }
+      ],
+      "cost3": {
+        "blue": 219
+      },
+      "cost5": {
+        "blue": 329
+      },
+      "reconstruct3": {
+        "blue": 324
+      },
+      "reconstruct5": {
+        "blue": 434
+      }
+    },
+    {
+      "id": "mountain-avalanche-maul",
+      "base": {
+        "blue": 116
+      },
+      "steps": [
+        {
+          "blue": 504
+        },
+        {
+          "blue": 505
+        },
+        {
+          "blue": 504
+        },
+        {
+          "blue": 408
+        },
+        {
+          "blue": 407
+        }
+      ],
+      "cost3": {
+        "blue": 1629
+      },
+      "cost5": {
+        "blue": 2444
+      },
+      "reconstruct3": {
+        "blue": 1919
+      },
+      "reconstruct5": {
+        "blue": 2734
+      }
+    },
+    {
+      "id": "mountain-vest-t3",
+      "base": {
+        "blue": 116,
+        "red": 29
+      },
+      "steps": [
+        {
+          "blue": 357,
+          "red": 89
+        },
+        {
+          "blue": 358,
+          "red": 90
+        },
+        {
+          "blue": 357,
+          "red": 89
+        },
+        {
+          "blue": 297,
+          "red": 75
+        },
+        {
+          "blue": 297,
+          "red": 74
+        }
+      ],
+      "cost3": {
+        "blue": 1188,
+        "red": 297
+      },
+      "cost5": {
+        "blue": 1782,
+        "red": 446
+      },
+      "reconstruct3": {
+        "blue": 1478,
+        "red": 370
+      },
+      "reconstruct5": {
+        "blue": 2072,
+        "red": 519
+      }
+    },
+    {
+      "id": "mountain-charm-t3",
+      "base": {
+        "blue": 100,
+        "red": 25
+      },
+      "steps": [
+        {
+          "blue": 133,
+          "red": 33
+        },
+        {
+          "blue": 134,
+          "red": 33
+        },
+        {
+          "blue": 133,
+          "red": 33
+        },
+        {
+          "blue": 125,
+          "red": 31
+        },
+        {
+          "blue": 125,
+          "red": 31
+        }
+      ],
+      "cost3": {
+        "blue": 500,
+        "red": 124
+      },
+      "cost5": {
+        "blue": 750,
+        "red": 186
+      },
+      "reconstruct3": {
+        "blue": 750,
+        "red": 187
+      },
+      "reconstruct5": {
+        "blue": 1000,
+        "red": 249
+      }
+    },
+    {
+      "id": "mountain-boots-t3",
+      "base": {
+        "blue": 100
+      },
+      "steps": [
+        {
+          "blue": 113
+        },
+        {
+          "blue": 113
+        },
+        {
+          "blue": 113
+        },
+        {
+          "blue": 110
+        },
+        {
+          "blue": 109
+        }
+      ],
+      "cost3": {
+        "blue": 439
+      },
+      "cost5": {
+        "blue": 658
+      },
+      "reconstruct3": {
+        "blue": 689
+      },
+      "reconstruct5": {
+        "blue": 908
+      }
+    },
+    {
+      "id": "mountain-earthsunder-maul",
+      "base": {
+        "blue": 256
+      },
+      "steps": [
+        {
+          "blue": 1001
+        },
+        {
+          "blue": 1001
+        },
+        {
+          "blue": 1001
+        },
+        {
+          "blue": 815
+        },
+        {
+          "blue": 814
+        }
+      ],
+      "cost3": {
+        "blue": 3259
+      },
+      "cost5": {
+        "blue": 4888
+      },
+      "reconstruct3": {
+        "blue": 3899
+      },
+      "reconstruct5": {
+        "blue": 5528
+      }
+    },
+    {
+      "id": "mountain-warmaul",
+      "base": {
+        "blue": 240
+      },
+      "steps": [
+        {
+          "blue": 1006
+        },
+        {
+          "blue": 1007
+        },
+        {
+          "blue": 1006
+        },
+        {
+          "blue": 815
+        },
+        {
+          "blue": 814
+        }
+      ],
+      "cost3": {
+        "blue": 3259
+      },
+      "cost5": {
+        "blue": 4888
+      },
+      "reconstruct3": {
+        "blue": 3859
+      },
+      "reconstruct5": {
+        "blue": 5488
+      }
+    },
+    {
+      "id": "mountain-vest-t4",
+      "base": {
+        "blue": 256,
+        "red": 64
+      },
+      "steps": [
+        {
+          "blue": 707,
+          "red": 177
+        },
+        {
+          "blue": 707,
+          "red": 176
+        },
+        {
+          "blue": 707,
+          "red": 177
+        },
+        {
+          "blue": 594,
+          "red": 149
+        },
+        {
+          "blue": 594,
+          "red": 148
+        }
+      ],
+      "cost3": {
+        "blue": 2377,
+        "red": 594
+      },
+      "cost5": {
+        "blue": 3565,
+        "red": 891
+      },
+      "reconstruct3": {
+        "blue": 3017,
+        "red": 754
+      },
+      "reconstruct5": {
+        "blue": 4205,
+        "red": 1051
+      }
+    },
+    {
+      "id": "mountain-vest-t4-stormwall",
+      "base": {
+        "blue": 256,
+        "red": 64
+      },
+      "steps": [
+        {
+          "blue": 707,
+          "red": 177
+        },
+        {
+          "blue": 707,
+          "red": 176
+        },
+        {
+          "blue": 707,
+          "red": 177
+        },
+        {
+          "blue": 594,
+          "red": 149
+        },
+        {
+          "blue": 594,
+          "red": 148
+        }
+      ],
+      "cost3": {
+        "blue": 2377,
+        "red": 594
+      },
+      "cost5": {
+        "blue": 3565,
+        "red": 891
+      },
+      "reconstruct3": {
+        "blue": 3017,
+        "red": 754
+      },
+      "reconstruct5": {
+        "blue": 4205,
+        "red": 1051
+      }
+    },
+    {
+      "id": "mountain-charm-t4",
+      "base": {
+        "blue": 220,
+        "red": 30
+      },
+      "steps": [
+        {
+          "blue": 293,
+          "red": 40
+        },
+        {
+          "blue": 292,
+          "red": 40
+        },
+        {
+          "blue": 293,
+          "red": 40
+        },
+        {
+          "blue": 275,
+          "red": 38
+        },
+        {
+          "blue": 274,
+          "red": 37
+        }
+      ],
+      "cost3": {
+        "blue": 1098,
+        "red": 150
+      },
+      "cost5": {
+        "blue": 1647,
+        "red": 225
+      },
+      "reconstruct3": {
+        "blue": 1648,
+        "red": 225
+      },
+      "reconstruct5": {
+        "blue": 2197,
+        "red": 300
+      }
+    },
+    {
+      "id": "mountain-charm-t4-shieldmend",
+      "base": {
+        "blue": 220,
+        "red": 30
+      },
+      "steps": [
+        {
+          "blue": 293,
+          "red": 40
+        },
+        {
+          "blue": 292,
+          "red": 40
+        },
+        {
+          "blue": 293,
+          "red": 40
+        },
+        {
+          "blue": 275,
+          "red": 38
+        },
+        {
+          "blue": 274,
+          "red": 37
+        }
+      ],
+      "cost3": {
+        "blue": 1098,
+        "red": 150
+      },
+      "cost5": {
+        "blue": 1647,
+        "red": 225
+      },
+      "reconstruct3": {
+        "blue": 1648,
+        "red": 225
+      },
+      "reconstruct5": {
+        "blue": 2197,
+        "red": 300
+      }
+    },
+    {
+      "id": "mountain-boots-t4",
+      "base": {
+        "blue": 220
+      },
+      "steps": [
+        {
+          "blue": 219
+        },
+        {
+          "blue": 219
+        },
+        {
+          "blue": 219
+        },
+        {
+          "blue": 220
+        },
+        {
+          "blue": 219
+        }
+      ],
+      "cost3": {
+        "blue": 877
+      },
+      "cost5": {
+        "blue": 1316
+      },
+      "reconstruct3": {
+        "blue": 1427
+      },
+      "reconstruct5": {
+        "blue": 1866
+      }
+    },
+    {
+      "id": "iron-broadsword",
+      "base": {
+        "yellow": 10
+      },
+      "steps": [
+        {
+          "yellow": 41
+        },
+        {
+          "yellow": 41
+        },
+        {
+          "yellow": 41
+        },
+        {
+          "yellow": 34
+        },
+        {
+          "yellow": 33
+        }
+      ],
+      "cost3": {
+        "yellow": 133
+      },
+      "cost5": {
+        "yellow": 200
+      },
+      "reconstruct3": {
+        "yellow": 133
+      },
+      "reconstruct5": {
+        "yellow": 200
+      }
+    },
+    {
+      "id": "plains-vest-t1",
+      "base": {
+        "yellow": 20
+      },
+      "steps": [
+        {
+          "yellow": 80
+        },
+        {
+          "yellow": 80
+        },
+        {
+          "yellow": 80
+        },
+        {
+          "yellow": 65
+        },
+        {
+          "yellow": 65
+        }
+      ],
+      "cost3": {
+        "yellow": 260
+      },
+      "cost5": {
+        "yellow": 390
+      },
+      "reconstruct3": {
+        "yellow": 260
+      },
+      "reconstruct5": {
+        "yellow": 390
+      }
+    },
+    {
+      "id": "plains-charm-t1",
+      "base": {
+        "yellow": 10
+      },
+      "steps": [
+        {
+          "yellow": 32
+        },
+        {
+          "yellow": 33
+        },
+        {
+          "yellow": 32
+        },
+        {
+          "yellow": 27
+        },
+        {
+          "yellow": 26
+        }
+      ],
+      "cost3": {
+        "yellow": 107
+      },
+      "cost5": {
+        "yellow": 160
+      },
+      "reconstruct3": {
+        "yellow": 107
+      },
+      "reconstruct5": {
+        "yellow": 160
+      }
+    },
+    {
+      "id": "plains-boots-t1",
+      "base": {
+        "yellow": 10
+      },
+      "steps": [
+        {
+          "yellow": 27
+        },
+        {
+          "yellow": 26
+        },
+        {
+          "yellow": 27
+        },
+        {
+          "yellow": 23
+        },
+        {
+          "yellow": 22
+        }
+      ],
+      "cost3": {
+        "yellow": 90
+      },
+      "cost5": {
+        "yellow": 135
+      },
+      "reconstruct3": {
+        "yellow": 90
+      },
+      "reconstruct5": {
+        "yellow": 135
+      }
+    },
+    {
+      "id": "knight-steelsword",
+      "base": {
+        "yellow": 45
+      },
+      "steps": [
+        {
+          "yellow": 145
+        },
+        {
+          "yellow": 145
+        },
+        {
+          "yellow": 145
+        },
+        {
+          "yellow": 120
+        },
+        {
+          "yellow": 120
+        }
+      ],
+      "cost3": {
+        "yellow": 480
+      },
+      "cost5": {
+        "yellow": 720
+      },
+      "reconstruct3": {
+        "yellow": 615
+      },
+      "reconstruct5": {
+        "yellow": 855
+      }
+    },
+    {
+      "id": "plains-vest-t2",
+      "base": {
+        "yellow": 60
+      },
+      "steps": [
+        {
+          "yellow": 193
+        },
+        {
+          "yellow": 194
+        },
+        {
+          "yellow": 193
+        },
+        {
+          "yellow": 160
+        },
+        {
+          "yellow": 160
+        }
+      ],
+      "cost3": {
+        "yellow": 640
+      },
+      "cost5": {
+        "yellow": 960
+      },
+      "reconstruct3": {
+        "yellow": 790
+      },
+      "reconstruct5": {
+        "yellow": 1110
+      }
+    },
+    {
+      "id": "plains-charm-t2",
+      "base": {
+        "yellow": 50
+      },
+      "steps": [
+        {
+          "yellow": 94
+        },
+        {
+          "yellow": 95
+        },
+        {
+          "yellow": 94
+        },
+        {
+          "yellow": 84
+        },
+        {
+          "yellow": 83
+        }
+      ],
+      "cost3": {
+        "yellow": 333
+      },
+      "cost5": {
+        "yellow": 500
+      },
+      "reconstruct3": {
+        "yellow": 458
+      },
+      "reconstruct5": {
+        "yellow": 625
+      }
+    },
+    {
+      "id": "plains-boots-t2",
+      "base": {
+        "yellow": 40
+      },
+      "steps": [
+        {
+          "yellow": 62
+        },
+        {
+          "yellow": 63
+        },
+        {
+          "yellow": 62
+        },
+        {
+          "yellow": 57
+        },
+        {
+          "yellow": 56
+        }
+      ],
+      "cost3": {
+        "yellow": 227
+      },
+      "cost5": {
+        "yellow": 340
+      },
+      "reconstruct3": {
+        "yellow": 327
+      },
+      "reconstruct5": {
+        "yellow": 440
+      }
+    },
+    {
+      "id": "ashbrand-blade",
+      "base": {
+        "purple": 22
+      },
+      "steps": [
+        {
+          "purple": 80
+        },
+        {
+          "purple": 79
+        },
+        {
+          "purple": 80
+        },
+        {
+          "purple": 66
+        },
+        {
+          "purple": 65
+        }
+      ],
+      "cost3": {
+        "purple": 261
+      },
+      "cost5": {
+        "purple": 392
+      },
+      "reconstruct3": {
+        "purple": 261
+      },
+      "reconstruct5": {
+        "purple": 392
+      }
+    },
+    {
+      "id": "swamp-vest-t1",
+      "base": {
+        "purple": 22
+      },
+      "steps": [
+        {
+          "purple": 80
+        },
+        {
+          "purple": 79
+        },
+        {
+          "purple": 80
+        },
+        {
+          "purple": 66
+        },
+        {
+          "purple": 65
+        }
+      ],
+      "cost3": {
+        "purple": 261
+      },
+      "cost5": {
+        "purple": 392
+      },
+      "reconstruct3": {
+        "purple": 261
+      },
+      "reconstruct5": {
+        "purple": 392
+      }
+    },
+    {
+      "id": "swamp-charm-t1",
+      "base": {
+        "purple": 18
+      },
+      "steps": [
+        {
+          "purple": 41
+        },
+        {
+          "purple": 42
+        },
+        {
+          "purple": 41
+        },
+        {
+          "purple": 36
+        },
+        {
+          "purple": 35
+        }
+      ],
+      "cost3": {
+        "purple": 142
+      },
+      "cost5": {
+        "purple": 213
+      },
+      "reconstruct3": {
+        "purple": 142
+      },
+      "reconstruct5": {
+        "purple": 213
+      }
+    },
+    {
+      "id": "swamp-boots-t1",
+      "base": {
+        "purple": 18
+      },
+      "steps": [
+        {
+          "purple": 27
+        },
+        {
+          "purple": 27
+        },
+        {
+          "purple": 27
+        },
+        {
+          "purple": 25
+        },
+        {
+          "purple": 24
+        }
+      ],
+      "cost3": {
+        "purple": 99
+      },
+      "cost5": {
+        "purple": 148
+      },
+      "reconstruct3": {
+        "purple": 99
+      },
+      "reconstruct5": {
+        "purple": 148
+      }
+    },
+    {
+      "id": "swamp-mirebrand",
+      "base": {
+        "purple": 52
+      },
+      "steps": [
+        {
+          "purple": 254
+        },
+        {
+          "purple": 255
+        },
+        {
+          "purple": 254
+        },
+        {
+          "purple": 204
+        },
+        {
+          "purple": 203
+        }
+      ],
+      "cost3": {
+        "purple": 815
+      },
+      "cost5": {
+        "purple": 1222
+      },
+      "reconstruct3": {
+        "purple": 945
+      },
+      "reconstruct5": {
+        "purple": 1352
+      }
+    },
+    {
+      "id": "swamp-vest-t2",
+      "base": {
+        "purple": 54
+      },
+      "steps": [
+        {
+          "purple": 244
+        },
+        {
+          "purple": 244
+        },
+        {
+          "purple": 244
+        },
+        {
+          "purple": 197
+        },
+        {
+          "purple": 196
+        }
+      ],
+      "cost3": {
+        "purple": 786
+      },
+      "cost5": {
+        "purple": 1179
+      },
+      "reconstruct3": {
+        "purple": 921
+      },
+      "reconstruct5": {
+        "purple": 1314
+      }
+    },
+    {
+      "id": "swamp-charm-t2",
+      "base": {
+        "purple": 44
+      },
+      "steps": [
+        {
+          "purple": 95
+        },
+        {
+          "purple": 95
+        },
+        {
+          "purple": 95
+        },
+        {
+          "purple": 83
+        },
+        {
+          "purple": 82
+        }
+      ],
+      "cost3": {
+        "purple": 329
+      },
+      "cost5": {
+        "purple": 494
+      },
+      "reconstruct3": {
+        "purple": 439
+      },
+      "reconstruct5": {
+        "purple": 604
+      }
+    },
+    {
+      "id": "swamp-boots-t2",
+      "base": {
+        "purple": 44
+      },
+      "steps": [
+        {
+          "purple": 62
+        },
+        {
+          "purple": 61
+        },
+        {
+          "purple": 62
+        },
+        {
+          "purple": 58
+        },
+        {
+          "purple": 57
+        }
+      ],
+      "cost3": {
+        "purple": 229
+      },
+      "cost5": {
+        "purple": 344
+      },
+      "reconstruct3": {
+        "purple": 339
+      },
+      "reconstruct5": {
+        "purple": 454
+      }
+    },
+    {
+      "id": "swamp-blightbrand",
+      "base": {
+        "purple": 116
+      },
+      "steps": [
+        {
+          "purple": 504
+        },
+        {
+          "purple": 505
+        },
+        {
+          "purple": 504
+        },
+        {
+          "purple": 408
+        },
+        {
+          "purple": 407
+        }
+      ],
+      "cost3": {
+        "purple": 1629
+      },
+      "cost5": {
+        "purple": 2444
+      },
+      "reconstruct3": {
+        "purple": 1919
+      },
+      "reconstruct5": {
+        "purple": 2734
+      }
+    },
+    {
+      "id": "swamp-vest-t3",
+      "base": {
+        "purple": 140
+      },
+      "steps": [
+        {
+          "purple": 477
+        },
+        {
+          "purple": 478
+        },
+        {
+          "purple": 477
+        },
+        {
+          "purple": 393
+        },
+        {
+          "purple": 393
+        }
+      ],
+      "cost3": {
+        "purple": 1572
+      },
+      "cost5": {
+        "purple": 2358
+      },
+      "reconstruct3": {
+        "purple": 1922
+      },
+      "reconstruct5": {
+        "purple": 2708
+      }
+    },
+    {
+      "id": "swamp-charm-t3",
+      "base": {
+        "purple": 100
+      },
+      "steps": [
+        {
+          "purple": 186
+        },
+        {
+          "purple": 187
+        },
+        {
+          "purple": 186
+        },
+        {
+          "purple": 165
+        },
+        {
+          "purple": 164
+        }
+      ],
+      "cost3": {
+        "purple": 659
+      },
+      "cost5": {
+        "purple": 988
+      },
+      "reconstruct3": {
+        "purple": 909
+      },
+      "reconstruct5": {
+        "purple": 1238
+      }
+    },
+    {
+      "id": "swamp-boots-t3",
+      "base": {
+        "purple": 100
+      },
+      "steps": [
+        {
+          "purple": 120
+        },
+        {
+          "purple": 119
+        },
+        {
+          "purple": 120
+        },
+        {
+          "purple": 115
+        },
+        {
+          "purple": 114
+        }
+      ],
+      "cost3": {
+        "purple": 459
+      },
+      "cost5": {
+        "purple": 688
+      },
+      "reconstruct3": {
+        "purple": 709
+      },
+      "reconstruct5": {
+        "purple": 938
+      }
+    },
+    {
+      "id": "tundra-permafrost-maul",
+      "base": {
+        "blue": 124
+      },
+      "steps": [
+        {
+          "blue": 503
+        },
+        {
+          "blue": 503
+        },
+        {
+          "blue": 503
+        },
+        {
+          "blue": 409
+        },
+        {
+          "blue": 408
+        }
+      ],
+      "cost3": {
+        "blue": 1633
+      },
+      "cost5": {
+        "blue": 2450
+      },
+      "reconstruct3": {
+        "blue": 1633
+      },
+      "reconstruct5": {
+        "blue": 2450
+      }
+    },
+    {
+      "id": "tundra-rimebrand",
+      "base": {
+        "blue": 120
+      },
+      "steps": [
+        {
+          "blue": 503
+        },
+        {
+          "blue": 503
+        },
+        {
+          "blue": 503
+        },
+        {
+          "blue": 408
+        },
+        {
+          "blue": 407
+        }
+      ],
+      "cost3": {
+        "blue": 1629
+      },
+      "cost5": {
+        "blue": 2444
+      },
+      "reconstruct3": {
+        "blue": 1629
+      },
+      "reconstruct5": {
+        "blue": 2444
+      }
+    },
+    {
+      "id": "tundra-vest-t3",
+      "base": {
+        "blue": 100,
+        "red": 25
+      },
+      "steps": [
+        {
+          "blue": 358,
+          "red": 89
+        },
+        {
+          "blue": 357,
+          "red": 90
+        },
+        {
+          "blue": 358,
+          "red": 89
+        },
+        {
+          "blue": 294,
+          "red": 74
+        },
+        {
+          "blue": 293,
+          "red": 73
+        }
+      ],
+      "cost3": {
+        "blue": 1173,
+        "red": 293
+      },
+      "cost5": {
+        "blue": 1760,
+        "red": 440
+      },
+      "reconstruct3": {
+        "blue": 1173,
+        "red": 293
+      },
+      "reconstruct5": {
+        "blue": 1760,
+        "red": 440
+      }
+    },
+    {
+      "id": "tundra-charm-t3",
+      "base": {
+        "blue": 75,
+        "purple": 25
+      },
+      "steps": [
+        {
+          "blue": 150,
+          "purple": 50
+        },
+        {
+          "blue": 150,
+          "purple": 50
+        },
+        {
+          "blue": 150,
+          "purple": 50
+        },
+        {
+          "blue": 131,
+          "purple": 44
+        },
+        {
+          "blue": 131,
+          "purple": 44
+        }
+      ],
+      "cost3": {
+        "blue": 525,
+        "purple": 175
+      },
+      "cost5": {
+        "blue": 787,
+        "purple": 263
+      },
+      "reconstruct3": {
+        "blue": 525,
+        "purple": 175
+      },
+      "reconstruct5": {
+        "blue": 787,
+        "purple": 263
+      }
+    },
+    {
+      "id": "tundra-boots-t3",
+      "base": {
+        "blue": 80
+      },
+      "steps": [
+        {
+          "blue": 122
+        },
+        {
+          "blue": 123
+        },
+        {
+          "blue": 122
+        },
+        {
+          "blue": 112
+        },
+        {
+          "blue": 111
+        }
+      ],
+      "cost3": {
+        "blue": 447
+      },
+      "cost5": {
+        "blue": 670
+      },
+      "reconstruct3": {
+        "blue": 447
+      },
+      "reconstruct5": {
+        "blue": 670
+      }
+    },
+    {
+      "id": "tundra-glacial-tyrant-maul",
+      "base": {
+        "blue": 273
+      },
+      "steps": [
+        {
+          "blue": 998
+        },
+        {
+          "blue": 998
+        },
+        {
+          "blue": 998
+        },
+        {
+          "blue": 817
+        },
+        {
+          "blue": 816
+        }
+      ],
+      "cost3": {
+        "blue": 3267
+      },
+      "cost5": {
+        "blue": 4900
+      },
+      "reconstruct3": {
+        "blue": 3950
+      },
+      "reconstruct5": {
+        "blue": 5583
+      }
+    },
+    {
+      "id": "tundra-glacial-rimebrand",
+      "base": {
+        "blue": 258
+      },
+      "steps": [
+        {
+          "blue": 1000
+        },
+        {
+          "blue": 1001
+        },
+        {
+          "blue": 1000
+        },
+        {
+          "blue": 815
+        },
+        {
+          "blue": 814
+        }
+      ],
+      "cost3": {
+        "blue": 3259
+      },
+      "cost5": {
+        "blue": 4888
+      },
+      "reconstruct3": {
+        "blue": 3904
+      },
+      "reconstruct5": {
+        "blue": 5533
+      }
+    },
+    {
+      "id": "tundra-vest-t4",
+      "base": {
+        "blue": 256,
+        "red": 64
+      },
+      "steps": [
+        {
+          "blue": 697,
+          "red": 174
+        },
+        {
+          "blue": 696,
+          "red": 175
+        },
+        {
+          "blue": 697,
+          "red": 174
+        },
+        {
+          "blue": 587,
+          "red": 147
+        },
+        {
+          "blue": 586,
+          "red": 147
+        }
+      ],
+      "cost3": {
+        "blue": 2346,
+        "red": 587
+      },
+      "cost5": {
+        "blue": 3519,
+        "red": 881
+      },
+      "reconstruct3": {
+        "blue": 2986,
+        "red": 747
+      },
+      "reconstruct5": {
+        "blue": 4159,
+        "red": 1041
+      }
+    },
+    {
+      "id": "tundra-charm-t4",
+      "base": {
+        "blue": 220,
+        "purple": 30
+      },
+      "steps": [
+        {
+          "blue": 337,
+          "purple": 46
+        },
+        {
+          "blue": 337,
+          "purple": 47
+        },
+        {
+          "blue": 337,
+          "purple": 46
+        },
+        {
+          "blue": 308,
+          "purple": 42
+        },
+        {
+          "blue": 308,
+          "purple": 42
+        }
+      ],
+      "cost3": {
+        "blue": 1231,
+        "purple": 169
+      },
+      "cost5": {
+        "blue": 1847,
+        "purple": 253
+      },
+      "reconstruct3": {
+        "blue": 1781,
+        "purple": 244
+      },
+      "reconstruct5": {
+        "blue": 2397,
+        "purple": 328
+      }
+    },
+    {
+      "id": "tundra-charm-t4-deepfreeze",
+      "base": {
+        "blue": 220,
+        "purple": 30
+      },
+      "steps": [
+        {
+          "blue": 337,
+          "purple": 46
+        },
+        {
+          "blue": 337,
+          "purple": 47
+        },
+        {
+          "blue": 337,
+          "purple": 46
+        },
+        {
+          "blue": 308,
+          "purple": 42
+        },
+        {
+          "blue": 308,
+          "purple": 42
+        }
+      ],
+      "cost3": {
+        "blue": 1231,
+        "purple": 169
+      },
+      "cost5": {
+        "blue": 1847,
+        "purple": 253
+      },
+      "reconstruct3": {
+        "blue": 1781,
+        "purple": 244
+      },
+      "reconstruct5": {
+        "blue": 2397,
+        "purple": 328
+      }
+    },
+    {
+      "id": "tundra-boots-t4",
+      "base": {
+        "blue": 176
+      },
+      "steps": [
+        {
+          "blue": 239
+        },
+        {
+          "blue": 239
+        },
+        {
+          "blue": 239
+        },
+        {
+          "blue": 224
+        },
+        {
+          "blue": 223
+        }
+      ],
+      "cost3": {
+        "blue": 893
+      },
+      "cost5": {
+        "blue": 1340
+      },
+      "reconstruct3": {
+        "blue": 1333
+      },
+      "reconstruct5": {
+        "blue": 1780
+      }
+    },
+    {
+      "id": "desert-sunsteel-cross",
+      "base": {
+        "yellow": 70
+      },
+      "steps": [
+        {
+          "yellow": 259
+        },
+        {
+          "yellow": 259
+        },
+        {
+          "yellow": 259
+        },
+        {
+          "yellow": 212
+        },
+        {
+          "yellow": 211
+        }
+      ],
+      "cost3": {
+        "yellow": 847
+      },
+      "cost5": {
+        "yellow": 1270
+      },
+      "reconstruct3": {
+        "yellow": 847
+      },
+      "reconstruct5": {
+        "yellow": 1270
+      }
+    },
+    {
+      "id": "desert-vest-t2",
+      "base": {
+        "yellow": 35,
+        "purple": 25
+      },
+      "steps": [
+        {
+          "yellow": 156,
+          "purple": 104
+        },
+        {
+          "yellow": 156,
+          "purple": 104
+        },
+        {
+          "yellow": 156,
+          "purple": 104
+        },
+        {
+          "yellow": 126,
+          "purple": 84
+        },
+        {
+          "yellow": 126,
+          "purple": 84
+        }
+      ],
+      "cost3": {
+        "yellow": 503,
+        "purple": 337
+      },
+      "cost5": {
+        "yellow": 755,
+        "purple": 505
+      },
+      "reconstruct3": {
+        "yellow": 503,
+        "purple": 337
+      },
+      "reconstruct5": {
+        "yellow": 755,
+        "purple": 505
+      }
+    },
+    {
+      "id": "desert-charm-t2",
+      "base": {
+        "yellow": 50,
+        "purple": 25
+      },
+      "steps": [
+        {
+          "yellow": 81,
+          "purple": 40
+        },
+        {
+          "yellow": 80,
+          "purple": 40
+        },
+        {
+          "yellow": 81,
+          "purple": 40
+        },
+        {
+          "yellow": 73,
+          "purple": 36
+        },
+        {
+          "yellow": 73,
+          "purple": 36
+        }
+      ],
+      "cost3": {
+        "yellow": 292,
+        "purple": 145
+      },
+      "cost5": {
+        "yellow": 438,
+        "purple": 217
+      },
+      "reconstruct3": {
+        "yellow": 292,
+        "purple": 145
+      },
+      "reconstruct5": {
+        "yellow": 438,
+        "purple": 217
+      }
+    },
+    {
+      "id": "desert-boots-t2",
+      "base": {
+        "yellow": 58
+      },
+      "steps": [
+        {
+          "yellow": 77
+        },
+        {
+          "yellow": 76
+        },
+        {
+          "yellow": 77
+        },
+        {
+          "yellow": 72
+        },
+        {
+          "yellow": 72
+        }
+      ],
+      "cost3": {
+        "yellow": 288
+      },
+      "cost5": {
+        "yellow": 432
+      },
+      "reconstruct3": {
+        "yellow": 288
+      },
+      "reconstruct5": {
+        "yellow": 432
+      }
+    },
+    {
+      "id": "desert-solar-cross",
+      "base": {
+        "yellow": 116
+      },
+      "steps": [
+        {
+          "yellow": 526
+        },
+        {
+          "yellow": 525
+        },
+        {
+          "yellow": 526
+        },
+        {
+          "yellow": 424
+        },
+        {
+          "yellow": 423
+        }
+      ],
+      "cost3": {
+        "yellow": 1693
+      },
+      "cost5": {
+        "yellow": 2540
+      },
+      "reconstruct3": {
+        "yellow": 1983
+      },
+      "reconstruct5": {
+        "yellow": 2830
+      }
+    },
+    {
+      "id": "desert-vest-t3",
+      "base": {
+        "yellow": 120,
+        "purple": 30
+      },
+      "steps": [
+        {
+          "yellow": 408,
+          "purple": 102
+        },
+        {
+          "yellow": 408,
+          "purple": 102
+        },
+        {
+          "yellow": 408,
+          "purple": 102
+        },
+        {
+          "yellow": 336,
+          "purple": 84
+        },
+        {
+          "yellow": 336,
+          "purple": 84
+        }
+      ],
+      "cost3": {
+        "yellow": 1344,
+        "purple": 336
+      },
+      "cost5": {
+        "yellow": 2016,
+        "purple": 504
+      },
+      "reconstruct3": {
+        "yellow": 1644,
+        "purple": 411
+      },
+      "reconstruct5": {
+        "yellow": 2316,
+        "purple": 579
+      }
+    },
+    {
+      "id": "desert-charm-t3",
+      "base": {
+        "yellow": 100,
+        "purple": 25
+      },
+      "steps": [
+        {
+          "yellow": 200,
+          "purple": 50
+        },
+        {
+          "yellow": 199,
+          "purple": 50
+        },
+        {
+          "yellow": 200,
+          "purple": 50
+        },
+        {
+          "yellow": 175,
+          "purple": 44
+        },
+        {
+          "yellow": 174,
+          "purple": 43
+        }
+      ],
+      "cost3": {
+        "yellow": 699,
+        "purple": 175
+      },
+      "cost5": {
+        "yellow": 1048,
+        "purple": 262
+      },
+      "reconstruct3": {
+        "yellow": 949,
+        "purple": 238
+      },
+      "reconstruct5": {
+        "yellow": 1298,
+        "purple": 325
+      }
+    },
+    {
+      "id": "desert-boots-t3",
+      "base": {
+        "yellow": 90
+      },
+      "steps": [
+        {
+          "yellow": 162
+        },
+        {
+          "yellow": 162
+        },
+        {
+          "yellow": 162
+        },
+        {
+          "yellow": 144
+        },
+        {
+          "yellow": 144
+        }
+      ],
+      "cost3": {
+        "yellow": 576
+      },
+      "cost5": {
+        "yellow": 864
+      },
+      "reconstruct3": {
+        "yellow": 801
+      },
+      "reconstruct5": {
+        "yellow": 1089
+      }
+    },
+    {
+      "id": "desert-zenith-cross",
+      "base": {
+        "yellow": 255
+      },
+      "steps": [
+        {
+          "yellow": 1044
+        },
+        {
+          "yellow": 1044
+        },
+        {
+          "yellow": 1044
+        },
+        {
+          "yellow": 847
+        },
+        {
+          "yellow": 846
+        }
+      ],
+      "cost3": {
+        "yellow": 3387
+      },
+      "cost5": {
+        "yellow": 5080
+      },
+      "reconstruct3": {
+        "yellow": 4025
+      },
+      "reconstruct5": {
+        "yellow": 5718
+      }
+    },
+    {
+      "id": "desert-vest-t4",
+      "base": {
+        "yellow": 220,
+        "purple": 55
+      },
+      "steps": [
+        {
+          "yellow": 823,
+          "purple": 205
+        },
+        {
+          "yellow": 823,
+          "purple": 206
+        },
+        {
+          "yellow": 823,
+          "purple": 205
+        },
+        {
+          "yellow": 672,
+          "purple": 168
+        },
+        {
+          "yellow": 672,
+          "purple": 168
+        }
+      ],
+      "cost3": {
+        "yellow": 2689,
+        "purple": 671
+      },
+      "cost5": {
+        "yellow": 4033,
+        "purple": 1007
+      },
+      "reconstruct3": {
+        "yellow": 3239,
+        "purple": 809
+      },
+      "reconstruct5": {
+        "yellow": 4583,
+        "purple": 1145
+      }
+    },
+    {
+      "id": "desert-charm-t4",
+      "base": {
+        "yellow": 200,
+        "purple": 50
+      },
+      "steps": [
+        {
+          "yellow": 399,
+          "purple": 100
+        },
+        {
+          "yellow": 399,
+          "purple": 99
+        },
+        {
+          "yellow": 399,
+          "purple": 100
+        },
+        {
+          "yellow": 350,
+          "purple": 88
+        },
+        {
+          "yellow": 349,
+          "purple": 87
+        }
+      ],
+      "cost3": {
+        "yellow": 1397,
+        "purple": 349
+      },
+      "cost5": {
+        "yellow": 2096,
+        "purple": 524
+      },
+      "reconstruct3": {
+        "yellow": 1897,
+        "purple": 474
+      },
+      "reconstruct5": {
+        "yellow": 2596,
+        "purple": 649
+      }
+    },
+    {
+      "id": "desert-boots-t4",
+      "base": {
+        "yellow": 198
+      },
+      "steps": [
+        {
+          "yellow": 318
+        },
+        {
+          "yellow": 318
+        },
+        {
+          "yellow": 318
+        },
+        {
+          "yellow": 288
+        },
+        {
+          "yellow": 288
+        }
+      ],
+      "cost3": {
+        "yellow": 1152
+      },
+      "cost5": {
+        "yellow": 1728
+      },
+      "reconstruct3": {
+        "yellow": 1647
+      },
+      "reconstruct5": {
+        "yellow": 2223
+      }
+    },
+    {
+      "id": "volcanic-cinderlash",
+      "base": {
+        "red": 140
+      },
+      "steps": [
+        {
+          "red": 518
+        },
+        {
+          "red": 517
+        },
+        {
+          "red": 518
+        },
+        {
+          "red": 424
+        },
+        {
+          "red": 423
+        }
+      ],
+      "cost3": {
+        "red": 1693
+      },
+      "cost5": {
+        "red": 2540
+      },
+      "reconstruct3": {
+        "red": 1693
+      },
+      "reconstruct5": {
+        "red": 2540
+      }
+    },
+    {
+      "id": "volcanic-vest-t3",
+      "base": {
+        "red": 120,
+        "yellow": 30
+      },
+      "steps": [
+        {
+          "red": 312,
+          "yellow": 107
+        },
+        {
+          "red": 312,
+          "yellow": 108
+        },
+        {
+          "red": 312,
+          "yellow": 107
+        },
+        {
+          "red": 264,
+          "yellow": 88
+        },
+        {
+          "red": 264,
+          "yellow": 88
+        }
+      ],
+      "cost3": {
+        "red": 1056,
+        "yellow": 352
+      },
+      "cost5": {
+        "red": 1584,
+        "yellow": 528
+      },
+      "reconstruct3": {
+        "red": 1356,
+        "yellow": 427
+      },
+      "reconstruct5": {
+        "red": 1884,
+        "yellow": 603
+      }
+    },
+    {
+      "id": "volcanic-charm-t3",
+      "base": {
+        "red": 75,
+        "yellow": 25
+      },
+      "steps": [
+        {
+          "red": 158,
+          "yellow": 53
+        },
+        {
+          "red": 159,
+          "yellow": 52
+        },
+        {
+          "red": 158,
+          "yellow": 53
+        },
+        {
+          "red": 138,
+          "yellow": 46
+        },
+        {
+          "red": 137,
+          "yellow": 46
+        }
+      ],
+      "cost3": {
+        "red": 550,
+        "yellow": 183
+      },
+      "cost5": {
+        "red": 825,
+        "yellow": 275
+      },
+      "reconstruct3": {
+        "red": 738,
+        "yellow": 246
+      },
+      "reconstruct5": {
+        "red": 1013,
+        "yellow": 338
+      }
+    },
+    {
+      "id": "volcanic-boots-t3",
+      "base": {
+        "red": 74
+      },
+      "steps": [
+        {
+          "red": 126
+        },
+        {
+          "red": 127
+        },
+        {
+          "red": 126
+        },
+        {
+          "red": 114
+        },
+        {
+          "red": 113
+        }
+      ],
+      "cost3": {
+        "red": 453
+      },
+      "cost5": {
+        "red": 680
+      },
+      "reconstruct3": {
+        "red": 453
+      },
+      "reconstruct5": {
+        "red": 680
+      }
+    },
+    {
+      "id": "volcanic-eruption-lash",
+      "base": {
+        "red": 308
+      },
+      "steps": [
+        {
+          "red": 1026
+        },
+        {
+          "red": 1027
+        },
+        {
+          "red": 1026
+        },
+        {
+          "red": 847
+        },
+        {
+          "red": 846
+        }
+      ],
+      "cost3": {
+        "red": 3387
+      },
+      "cost5": {
+        "red": 5080
+      },
+      "reconstruct3": {
+        "red": 4157
+      },
+      "reconstruct5": {
+        "red": 5850
+      }
+    },
+    {
+      "id": "volcanic-blightbrand",
+      "base": {
+        "red": 290
+      },
+      "steps": [
+        {
+          "red": 1032
+        },
+        {
+          "red": 1033
+        },
+        {
+          "red": 1032
+        },
+        {
+          "red": 847
+        },
+        {
+          "red": 846
+        }
+      ],
+      "cost3": {
+        "red": 3387
+      },
+      "cost5": {
+        "red": 5080
+      },
+      "reconstruct3": {
+        "red": 4112
+      },
+      "reconstruct5": {
+        "red": 5805
+      }
+    },
+    {
+      "id": "volcanic-vest-t4",
+      "base": {
+        "red": 220,
+        "yellow": 55
+      },
+      "steps": [
+        {
+          "red": 678,
+          "yellow": 169
+        },
+        {
+          "red": 677,
+          "yellow": 170
+        },
+        {
+          "red": 678,
+          "yellow": 169
+        },
+        {
+          "red": 564,
+          "yellow": 141
+        },
+        {
+          "red": 563,
+          "yellow": 140
+        }
+      ],
+      "cost3": {
+        "red": 2253,
+        "yellow": 563
+      },
+      "cost5": {
+        "red": 3380,
+        "yellow": 844
+      },
+      "reconstruct3": {
+        "red": 2803,
+        "yellow": 701
+      },
+      "reconstruct5": {
+        "red": 3930,
+        "yellow": 982
+      }
+    },
+    {
+      "id": "volcanic-vest-t4-lavatempered",
+      "base": {
+        "red": 220,
+        "yellow": 55
+      },
+      "steps": [
+        {
+          "red": 678,
+          "yellow": 169
+        },
+        {
+          "red": 677,
+          "yellow": 170
+        },
+        {
+          "red": 678,
+          "yellow": 169
+        },
+        {
+          "red": 564,
+          "yellow": 141
+        },
+        {
+          "red": 563,
+          "yellow": 140
+        }
+      ],
+      "cost3": {
+        "red": 2253,
+        "yellow": 563
+      },
+      "cost5": {
+        "red": 3380,
+        "yellow": 844
+      },
+      "reconstruct3": {
+        "red": 2803,
+        "yellow": 701
+      },
+      "reconstruct5": {
+        "red": 3930,
+        "yellow": 982
+      }
+    },
+    {
+      "id": "volcanic-charm-t4",
+      "base": {
+        "red": 200,
+        "yellow": 50
+      },
+      "steps": [
+        {
+          "red": 324,
+          "yellow": 81
+        },
+        {
+          "red": 325,
+          "yellow": 81
+        },
+        {
+          "red": 324,
+          "yellow": 81
+        },
+        {
+          "red": 294,
+          "yellow": 74
+        },
+        {
+          "red": 293,
+          "yellow": 73
+        }
+      ],
+      "cost3": {
+        "red": 1173,
+        "yellow": 293
+      },
+      "cost5": {
+        "red": 1760,
+        "yellow": 440
+      },
+      "reconstruct3": {
+        "red": 1673,
+        "yellow": 418
+      },
+      "reconstruct5": {
+        "red": 2260,
+        "yellow": 565
+      }
+    },
+    {
+      "id": "volcanic-boots-t4",
+      "base": {
+        "red": 163
+      },
+      "steps": [
+        {
+          "red": 248
+        },
+        {
+          "red": 248
+        },
+        {
+          "red": 248
+        },
+        {
+          "red": 227
+        },
+        {
+          "red": 226
+        }
+      ],
+      "cost3": {
+        "red": 907
+      },
+      "cost5": {
+        "red": 1360
+      },
+      "reconstruct3": {
+        "red": 1315
+      },
+      "reconstruct5": {
+        "red": 1768
+      }
+    },
+    {
+      "id": "graveyard-plague-axe",
+      "base": {
+        "purple": 270
+      },
+      "steps": [
+        {
+          "purple": 945
+        },
+        {
+          "purple": 944
+        },
+        {
+          "purple": 945
+        },
+        {
+          "purple": 776
+        },
+        {
+          "purple": 776
+        }
+      ],
+      "cost3": {
+        "purple": 3104
+      },
+      "cost5": {
+        "purple": 4656
+      },
+      "reconstruct3": {
+        "purple": 3779
+      },
+      "reconstruct5": {
+        "purple": 5331
+      }
+    },
+    {
+      "id": "graveyard-vest-t4",
+      "base": {
+        "purple": 220
+      },
+      "steps": [
+        {
+          "purple": 975
+        },
+        {
+          "purple": 974
+        },
+        {
+          "purple": 975
+        },
+        {
+          "purple": 786
+        },
+        {
+          "purple": 786
+        }
+      ],
+      "cost3": {
+        "purple": 3144
+      },
+      "cost5": {
+        "purple": 4716
+      },
+      "reconstruct3": {
+        "purple": 3694
+      },
+      "reconstruct5": {
+        "purple": 5266
+      }
+    },
+    {
+      "id": "graveyard-vest-t4-debtward",
+      "base": {
+        "purple": 220
+      },
+      "steps": [
+        {
+          "purple": 975
+        },
+        {
+          "purple": 974
+        },
+        {
+          "purple": 975
+        },
+        {
+          "purple": 786
+        },
+        {
+          "purple": 786
+        }
+      ],
+      "cost3": {
+        "purple": 3144
+      },
+      "cost5": {
+        "purple": 4716
+      },
+      "reconstruct3": {
+        "purple": 3694
+      },
+      "reconstruct5": {
+        "purple": 5266
+      }
+    },
+    {
+      "id": "graveyard-charm-t4",
+      "base": {
+        "purple": 150
+      },
+      "steps": [
+        {
+          "purple": 389
+        },
+        {
+          "purple": 389
+        },
+        {
+          "purple": 389
+        },
+        {
+          "purple": 330
+        },
+        {
+          "purple": 329
+        }
+      ],
+      "cost3": {
+        "purple": 1317
+      },
+      "cost5": {
+        "purple": 1976
+      },
+      "reconstruct3": {
+        "purple": 1692
+      },
+      "reconstruct5": {
+        "purple": 2351
+      }
+    },
+    {
+      "id": "graveyard-charm-t4-gravetide",
+      "base": {
+        "purple": 150
+      },
+      "steps": [
+        {
+          "purple": 389
+        },
+        {
+          "purple": 389
+        },
+        {
+          "purple": 389
+        },
+        {
+          "purple": 330
+        },
+        {
+          "purple": 329
+        }
+      ],
+      "cost3": {
+        "purple": 1317
+      },
+      "cost5": {
+        "purple": 1976
+      },
+      "reconstruct3": {
+        "purple": 1692
+      },
+      "reconstruct5": {
+        "purple": 2351
+      }
+    },
+    {
+      "id": "graveyard-boots-t4",
+      "base": {
+        "purple": 80
+      },
+      "steps": [
+        {
+          "purple": 269
+        },
+        {
+          "purple": 270
+        },
+        {
+          "purple": 269
+        },
+        {
+          "purple": 222
+        },
+        {
+          "purple": 222
+        }
+      ],
+      "cost3": {
+        "purple": 888
+      },
+      "cost5": {
+        "purple": 1332
+      },
+      "reconstruct3": {
+        "purple": 888
+      },
+      "reconstruct5": {
+        "purple": 1332
+      }
+    },
+    {
+      "id": "trench-abyssal-axe",
+      "base": {
+        "green": 270
+      },
+      "steps": [
+        {
+          "green": 945
+        },
+        {
+          "green": 944
+        },
+        {
+          "green": 945
+        },
+        {
+          "green": 776
+        },
+        {
+          "green": 776
+        }
+      ],
+      "cost3": {
+        "green": 3104
+      },
+      "cost5": {
+        "green": 4656
+      },
+      "reconstruct3": {
+        "green": 3779
+      },
+      "reconstruct5": {
+        "green": 5331
+      }
+    },
+    {
+      "id": "trench-vest-t4",
+      "base": {
+        "green": 220
+      },
+      "steps": [
+        {
+          "green": 1001
+        },
+        {
+          "green": 1002
+        },
+        {
+          "green": 1001
+        },
+        {
+          "green": 806
+        },
+        {
+          "green": 806
+        }
+      ],
+      "cost3": {
+        "green": 3224
+      },
+      "cost5": {
+        "green": 4836
+      },
+      "reconstruct3": {
+        "green": 3774
+      },
+      "reconstruct5": {
+        "green": 5386
+      }
+    },
+    {
+      "id": "trench-charm-t4",
+      "base": {
+        "green": 150
+      },
+      "steps": [
+        {
+          "green": 389
+        },
+        {
+          "green": 389
+        },
+        {
+          "green": 389
+        },
+        {
+          "green": 330
+        },
+        {
+          "green": 329
+        }
+      ],
+      "cost3": {
+        "green": 1317
+      },
+      "cost5": {
+        "green": 1976
+      },
+      "reconstruct3": {
+        "green": 1317
+      },
+      "reconstruct5": {
+        "green": 1976
+      }
+    },
+    {
+      "id": "trench-boots-t4-stalkers",
+      "base": {
+        "green": 80
+      },
+      "steps": [
+        {
+          "green": 269
+        },
+        {
+          "green": 270
+        },
+        {
+          "green": 269
+        },
+        {
+          "green": 222
+        },
+        {
+          "green": 222
+        }
+      ],
+      "cost3": {
+        "green": 888
+      },
+      "cost5": {
+        "green": 1332
+      },
+      "reconstruct3": {
+        "green": 1088
+      },
+      "reconstruct5": {
+        "green": 1532
+      }
+    },
+    {
+      "id": "trench-boots-t4-treaders",
+      "base": {
+        "green": 80
+      },
+      "steps": [
+        {
+          "green": 269
+        },
+        {
+          "green": 270
+        },
+        {
+          "green": 269
+        },
+        {
+          "green": 222
+        },
+        {
+          "green": 222
+        }
+      ],
+      "cost3": {
+        "green": 888
+      },
+      "cost5": {
+        "green": 1332
+      },
+      "reconstruct3": {
+        "green": 888
+      },
+      "reconstruct5": {
+        "green": 1332
+      }
+    }
+  ],
+  "t1Corrections": [
+    {
+      "id": "chaotic-axe",
+      "oldAuthoredLifetime": {
+        "red": 451
+      },
+      "liveBaselineLifetime": {
+        "red": 421
+      }
+    },
+    {
+      "id": "cave-vest-t1",
+      "oldAuthoredLifetime": {
+        "red": 557
+      },
+      "liveBaselineLifetime": {
+        "red": 517
+      }
+    },
+    {
+      "id": "cave-charm-t1",
+      "oldAuthoredLifetime": {
+        "red": 228
+      },
+      "liveBaselineLifetime": {
+        "red": 213
+      }
+    },
+    {
+      "id": "cave-boots-t1",
+      "oldAuthoredLifetime": {
+        "red": 163
+      },
+      "liveBaselineLifetime": {
+        "red": 148
+      }
+    },
+    {
+      "id": "flash-rapier",
+      "oldAuthoredLifetime": {
+        "green": 450
+      },
+      "liveBaselineLifetime": {
+        "green": 420
+      }
+    },
+    {
+      "id": "forest-vest-t1",
+      "oldAuthoredLifetime": {
+        "green": 420
+      },
+      "liveBaselineLifetime": {
+        "green": 390
+      }
+    },
+    {
+      "id": "forest-charm-t1",
+      "oldAuthoredLifetime": {
+        "green": 215
+      },
+      "liveBaselineLifetime": {
+        "green": 200
+      }
+    },
+    {
+      "id": "forest-boots-t1",
+      "oldAuthoredLifetime": {
+        "green": 145
+      },
+      "liveBaselineLifetime": {
+        "green": 135
+      }
+    },
+    {
+      "id": "heavy-hammer",
+      "oldAuthoredLifetime": {
+        "blue": 447
+      },
+      "liveBaselineLifetime": {
+        "blue": 417
+      }
+    },
+    {
+      "id": "mountain-vest-t1",
+      "oldAuthoredLifetime": {
+        "blue": 447
+      },
+      "liveBaselineLifetime": {
+        "blue": 417
+      }
+    },
+    {
+      "id": "mountain-charm-t1",
+      "oldAuthoredLifetime": {
+        "blue": 228
+      },
+      "liveBaselineLifetime": {
+        "blue": 213
+      }
+    },
+    {
+      "id": "mountain-boots-t1",
+      "oldAuthoredLifetime": {
+        "blue": 163
+      },
+      "liveBaselineLifetime": {
+        "blue": 148
+      }
+    },
+    {
+      "id": "iron-broadsword",
+      "oldAuthoredLifetime": {
+        "yellow": 215
+      },
+      "liveBaselineLifetime": {
+        "yellow": 200
+      }
+    },
+    {
+      "id": "plains-vest-t1",
+      "oldAuthoredLifetime": {
+        "yellow": 420
+      },
+      "liveBaselineLifetime": {
+        "yellow": 390
+      }
+    },
+    {
+      "id": "plains-charm-t1",
+      "oldAuthoredLifetime": {
+        "yellow": 170
+      },
+      "liveBaselineLifetime": {
+        "yellow": 160
+      }
+    },
+    {
+      "id": "plains-boots-t1",
+      "oldAuthoredLifetime": {
+        "yellow": 145
+      },
+      "liveBaselineLifetime": {
+        "yellow": 135
+      }
+    },
+    {
+      "id": "ashbrand-blade",
+      "oldAuthoredLifetime": {
+        "purple": 422
+      },
+      "liveBaselineLifetime": {
+        "purple": 392
+      }
+    },
+    {
+      "id": "swamp-vest-t1",
+      "oldAuthoredLifetime": {
+        "purple": 422
+      },
+      "liveBaselineLifetime": {
+        "purple": 392
+      }
+    },
+    {
+      "id": "swamp-charm-t1",
+      "oldAuthoredLifetime": {
+        "purple": 228
+      },
+      "liveBaselineLifetime": {
+        "purple": 213
+      }
+    },
+    {
+      "id": "swamp-boots-t1",
+      "oldAuthoredLifetime": {
+        "purple": 163
+      },
+      "liveBaselineLifetime": {
+        "purple": 148
+      }
+    }
+  ],
+  "biomeXpFactors": {
+    "4": {
+      "tundra": 1.8,
+      "desert": 2.4
+    }
+  }
+}

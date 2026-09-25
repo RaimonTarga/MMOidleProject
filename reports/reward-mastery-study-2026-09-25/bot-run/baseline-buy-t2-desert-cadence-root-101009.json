@@ -1,0 +1,214 @@
+{
+  "job": {
+    "id": "baseline-buy-t2-desert-cadence-root-101009",
+    "arm": "baseline",
+    "mode": "buy",
+    "nodeId": "node-t2-desert-01",
+    "classRoot": "cadence-root",
+    "seed": 101009,
+    "gearIds": [
+      "desert-sunsteel-cross",
+      "desert-vest-t2",
+      "desert-charm-t2",
+      "desert-boots-t2"
+    ],
+    "maxMs": 1800000,
+    "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+    "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-buy-t2-desert-cadence-root-101009.json"
+  },
+  "hitboxes": 406,
+  "build": {
+    "id": "cadence-root+cadence-balanced",
+    "classRoot": "cadence-root",
+    "skillPath": [
+      "cadence-root",
+      "cadence-balanced"
+    ],
+    "contentTier": 2,
+    "playerTier": 2,
+    "gearTier": 2,
+    "gearItemIds": {
+      "weapon": "desert-sunsteel-cross",
+      "armor": "desert-vest-t2",
+      "recovery": "desert-charm-t2",
+      "mobility": "desert-boots-t2"
+    }
+  },
+  "initial": {
+    "elapsedMs": 0,
+    "level": 0,
+    "xp": 0,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {},
+    "catalystProgress": {},
+    "upgrades": {
+      "desert-sunsteel-cross": 0,
+      "desert-vest-t2": 0,
+      "desert-charm-t2": 0,
+      "desert-boots-t2": 0
+    },
+    "hp": 184,
+    "build": {
+      "id": "cadence-root+cadence-balanced",
+      "classRoot": "cadence-root",
+      "skillPath": [
+        "cadence-root",
+        "cadence-balanced"
+      ],
+      "contentTier": 2,
+      "playerTier": 2,
+      "gearTier": 2,
+      "gearItemIds": {
+        "weapon": "desert-sunsteel-cross",
+        "armor": "desert-vest-t2",
+        "recovery": "desert-charm-t2",
+        "mobility": "desert-boots-t2"
+      }
+    },
+    "loadout": {
+      "abilities": {
+        "techniques": [
+          "charge",
+          "contagion",
+          "hamstring"
+        ],
+        "guards": [
+          "bramble-guard",
+          "endure",
+          "cleanse"
+        ]
+      },
+      "stances": [
+        "offensive-stance"
+      ],
+      "rites": [],
+      "runes": []
+    },
+    "stats": {
+      "hp": 184,
+      "attack": 45
+    },
+    "biomeLevels": {
+      "cave": 12,
+      "forest": 12,
+      "mountain": 12,
+      "plains": 12,
+      "swamp": 12,
+      "desert": 0,
+      "jungle": 6
+    }
+  },
+  "entry": 0,
+  "cap": 6,
+  "budget": 5000,
+  "costs": {
+    "3": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 1017,
+      "purple": 252
+    },
+    "5": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 2895,
+      "purple": 722
+    }
+  },
+  "mastery": null,
+  "death": {
+    "elapsedMs": 10100,
+    "level": 0,
+    "xp": 0,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {},
+    "catalystProgress": {},
+    "upgrades": {
+      "desert-sunsteel-cross": 0,
+      "desert-vest-t2": 0,
+      "desert-charm-t2": 0,
+      "desert-boots-t2": 0
+    },
+    "hp": 0
+  },
+  "fundingTimes": {
+    "3": null,
+    "5": null
+  },
+  "actualAll3Ms": null,
+  "actualAll5Ms": null,
+  "acquisitionDebt": {
+    "red": 0,
+    "blue": 0,
+    "green": 0,
+    "yellow": 213,
+    "purple": 50
+  },
+  "final": {
+    "elapsedMs": 10100,
+    "level": 0,
+    "xp": 0,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {},
+    "catalystProgress": {},
+    "upgrades": {
+      "desert-sunsteel-cross": 0,
+      "desert-vest-t2": 0,
+      "desert-charm-t2": 0,
+      "desert-boots-t2": 0
+    },
+    "hp": 0
+  },
+  "snapshots": [],
+  "purchases": [],
+  "blockers": {},
+  "wallSeconds": 0.42961650000000007,
+  "limitations": [
+    "Synthetic late-tier fixture: other biomes mastered, generated class and granted benchmark abilities",
+    "Native current-tier base gear granted on credit in buy mode; acquisition is repaid from earnings, not a real prior-tier journey",
+    "Fixed3 mode grants +3 gear and measures income, not purchase progression",
+    "No cross-biome routing or instant revivals; first death stops the run",
+    "Seeded random and 100ms simulation clock; elapsed time is simulation time"
+  ]
+}

@@ -1,0 +1,327 @@
+{
+  "job": {
+    "id": "baseline-buy-t3-swamp-cadence-root-101009",
+    "arm": "baseline",
+    "mode": "buy",
+    "nodeId": "node-t3-swamp-01",
+    "classRoot": "cadence-root",
+    "seed": 101009,
+    "gearIds": [
+      "swamp-blightbrand",
+      "swamp-vest-t3",
+      "swamp-charm-t3",
+      "swamp-boots-t3"
+    ],
+    "maxMs": 3600000,
+    "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+    "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-buy-t3-swamp-cadence-root-101009.json"
+  },
+  "hitboxes": 406,
+  "build": {
+    "id": "cadence-root+cadence-balanced+cadence-range-close",
+    "classRoot": "cadence-root",
+    "skillPath": [
+      "cadence-root",
+      "cadence-balanced",
+      "cadence-range-close"
+    ],
+    "contentTier": 3,
+    "playerTier": 3,
+    "gearTier": 3,
+    "gearItemIds": {
+      "weapon": "swamp-blightbrand",
+      "armor": "swamp-vest-t3",
+      "recovery": "swamp-charm-t3",
+      "mobility": "swamp-boots-t3"
+    }
+  },
+  "initial": {
+    "elapsedMs": 0,
+    "level": 12,
+    "xp": 6750,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {},
+    "catalystProgress": {},
+    "upgrades": {
+      "swamp-blightbrand": 0,
+      "swamp-vest-t3": 0,
+      "swamp-charm-t3": 0,
+      "swamp-boots-t3": 0
+    },
+    "hp": 276,
+    "build": {
+      "id": "cadence-root+cadence-balanced+cadence-range-close",
+      "classRoot": "cadence-root",
+      "skillPath": [
+        "cadence-root",
+        "cadence-balanced",
+        "cadence-range-close"
+      ],
+      "contentTier": 3,
+      "playerTier": 3,
+      "gearTier": 3,
+      "gearItemIds": {
+        "weapon": "swamp-blightbrand",
+        "armor": "swamp-vest-t3",
+        "recovery": "swamp-charm-t3",
+        "mobility": "swamp-boots-t3"
+      }
+    },
+    "loadout": {
+      "abilities": {
+        "techniques": [
+          "binding-strike",
+          "detonate"
+        ],
+        "guards": [
+          "break-free",
+          "bramble-guard"
+        ]
+      },
+      "stances": [
+        "offensive-stance"
+      ],
+      "rites": [
+        "blood-offering",
+        "purification",
+        "ability-reprieve",
+        "mechanic-renewal",
+        "swift-repose"
+      ],
+      "runes": []
+    },
+    "stats": {
+      "hp": 276,
+      "attack": 56
+    },
+    "biomeLevels": {
+      "cave": 18,
+      "forest": 12,
+      "mountain": 18,
+      "plains": 12,
+      "swamp": 12,
+      "desert": 12,
+      "jungle": 12,
+      "tundra": 6,
+      "volcanic": 6
+    }
+  },
+  "entry": 12,
+  "cap": 18,
+  "budget": 7000,
+  "costs": {
+    "3": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 2264
+    },
+    "5": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 6478
+    }
+  },
+  "mastery": null,
+  "death": {
+    "elapsedMs": 111100,
+    "level": 14,
+    "xp": 9282,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 294
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {
+      "alacrity": 4
+    },
+    "catalystProgress": {
+      "alacrity": 21
+    },
+    "upgrades": {
+      "swamp-blightbrand": 0,
+      "swamp-vest-t3": 0,
+      "swamp-charm-t3": 0,
+      "swamp-boots-t3": 0
+    },
+    "hp": 0
+  },
+  "fundingTimes": {
+    "3": null,
+    "5": null
+  },
+  "actualAll3Ms": null,
+  "actualAll5Ms": null,
+  "acquisitionDebt": {
+    "red": 0,
+    "blue": 0,
+    "green": 0,
+    "yellow": 0,
+    "purple": 162
+  },
+  "final": {
+    "elapsedMs": 111100,
+    "level": 14,
+    "xp": 9282,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 294
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {
+      "alacrity": 4
+    },
+    "catalystProgress": {
+      "alacrity": 21
+    },
+    "upgrades": {
+      "swamp-blightbrand": 0,
+      "swamp-vest-t3": 0,
+      "swamp-charm-t3": 0,
+      "swamp-boots-t3": 0
+    },
+    "hp": 0
+  },
+  "snapshots": [
+    {
+      "elapsedMs": 43600,
+      "level": 13,
+      "xp": 7680,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 108
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 52
+      },
+      "catalysts": {
+        "alacrity": 1
+      },
+      "catalystProgress": {
+        "alacrity": 55
+      },
+      "upgrades": {
+        "swamp-blightbrand": 0,
+        "swamp-vest-t3": 0,
+        "swamp-charm-t3": 0,
+        "swamp-boots-t3": 0
+      },
+      "hp": 51.571160000000575
+    },
+    {
+      "elapsedMs": 60000,
+      "level": 13,
+      "xp": 7921,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 136
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 1
+      },
+      "catalystProgress": {
+        "alacrity": 95
+      },
+      "upgrades": {
+        "swamp-blightbrand": 0,
+        "swamp-vest-t3": 0,
+        "swamp-charm-t3": 0,
+        "swamp-boots-t3": 0
+      },
+      "hp": 114.96400320000075
+    },
+    {
+      "elapsedMs": 76000,
+      "level": 14,
+      "xp": 8644,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 220
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 28
+      },
+      "catalysts": {
+        "alacrity": 3
+      },
+      "catalystProgress": {
+        "alacrity": 15
+      },
+      "upgrades": {
+        "swamp-blightbrand": 0,
+        "swamp-vest-t3": 0,
+        "swamp-charm-t3": 0,
+        "swamp-boots-t3": 0
+      },
+      "hp": 229.9702704000011
+    }
+  ],
+  "purchases": [],
+  "blockers": {},
+  "wallSeconds": 1.7420618000000003,
+  "limitations": [
+    "Synthetic late-tier fixture: other biomes mastered, generated class and granted benchmark abilities",
+    "Native current-tier base gear granted on credit in buy mode; acquisition is repaid from earnings, not a real prior-tier journey",
+    "Fixed3 mode grants +3 gear and measures income, not purchase progression",
+    "No cross-biome routing or instant revivals; first death stops the run",
+    "Seeded random and 100ms simulation clock; elapsed time is simulation time"
+  ]
+}

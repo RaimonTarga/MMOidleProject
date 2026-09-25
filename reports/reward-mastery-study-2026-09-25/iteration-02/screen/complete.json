@@ -1,0 +1,47 @@
+{
+  "completedAt": "2026-09-25T07:29:00.578Z",
+  "done": 32,
+  "total": 32,
+  "failures": [
+    {
+      "id": "baseline-op-t2-squire-balanced-jungle-t2-jungle-arrival-s101009",
+      "code": 4294967295,
+      "outputExists": false
+    },
+    {
+      "id": "candidate-op-t2-squire-balanced-jungle-t2-jungle-arrival-s101009",
+      "code": 4294967295,
+      "outputExists": false
+    },
+    {
+      "id": "baseline-op-t2-squire-balanced-jungle-t2-jungle-arrival-s101033",
+      "code": 4294967295,
+      "outputExists": false
+    },
+    {
+      "id": "candidate-op-t2-squire-balanced-jungle-t2-jungle-arrival-s101033",
+      "code": 4294967295,
+      "outputExists": false
+    },
+    {
+      "id": "baseline-closing-striker-heavy-a-D-s101009",
+      "code": 1,
+      "outputExists": false
+    },
+    {
+      "id": "candidate-closing-striker-heavy-a-D-s101009",
+      "code": 1,
+      "outputExists": false
+    },
+    {
+      "id": "baseline-closing-striker-heavy-a-D-s101033",
+      "code": 1,
+      "outputExists": false
+    },
+    {
+      "id": "candidate-closing-striker-heavy-a-D-s101033",
+      "code": 1,
+      "outputExists": false
+    }
+  ]
+}

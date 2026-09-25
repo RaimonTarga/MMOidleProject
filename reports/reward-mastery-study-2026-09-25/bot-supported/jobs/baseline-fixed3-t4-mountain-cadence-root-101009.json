@@ -1,0 +1,17 @@
+{
+  "id": "baseline-fixed3-t4-mountain-cadence-root-101009",
+  "arm": "baseline",
+  "mode": "fixed3",
+  "nodeId": "node-t4-mountain-01",
+  "classRoot": "cadence-root",
+  "seed": 101009,
+  "gearIds": [
+    "mountain-warmaul",
+    "mountain-vest-t4-stormwall",
+    "mountain-charm-t4-shieldmend",
+    "mountain-boots-t4"
+  ],
+  "maxMs": 7200000,
+  "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+  "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-supported\\baseline-fixed3-t4-mountain-cadence-root-101009.json"
+}

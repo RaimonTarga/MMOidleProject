@@ -1,0 +1,82 @@
+[
+  {
+    "id": "candidate-closing-conduit-balanced-a-T-s101009-at-node-t4-desert-03-policy",
+    "minutes": 89.015,
+    "essence": 20651,
+    "cost3": 9645,
+    "fund3": null,
+    "death": false
+  },
+  {
+    "id": "candidate-closing-conduit-balanced-a-T-s101033-at-node-t4-desert-03-policy",
+    "minutes": 91.95833333333333,
+    "essence": 20591,
+    "cost3": 9645,
+    "fund3": null,
+    "death": false
+  },
+  {
+    "id": "candidate-closing-squire-heavy-b-D-s101009-at-node-t4-desert-03-policy",
+    "minutes": 91.46833333333333,
+    "essence": 20532,
+    "cost3": 9645,
+    "fund3": null,
+    "death": false
+  },
+  {
+    "id": "candidate-closing-squire-heavy-b-D-s101009-at-node-t4-tundra-01-policy",
+    "minutes": 93.07833333333333,
+    "essence": 27620,
+    "cost3": 8485,
+    "fund3": null,
+    "death": false
+  },
+  {
+    "id": "candidate-closing-squire-heavy-b-D-s101033-at-node-t4-desert-03-policy",
+    "minutes": 92.77333333333333,
+    "essence": 20561,
+    "cost3": 9645,
+    "fund3": null,
+    "death": false
+  },
+  {
+    "id": "candidate-closing-squire-heavy-b-D-s101033-at-node-t4-tundra-01-policy",
+    "minutes": 93.34833333333333,
+    "essence": 27552,
+    "cost3": 8485,
+    "fund3": null,
+    "death": false
+  },
+  {
+    "id": "candidate-closing-striker-balanced-c-V-s101009-at-node-t4-desert-03",
+    "minutes": 48.86833333333333,
+    "essence": 20542,
+    "cost3": 9645,
+    "fund3": null,
+    "death": false
+  },
+  {
+    "id": "candidate-closing-striker-balanced-c-V-s101009-at-node-t4-tundra-01",
+    "minutes": 49.47666666666667,
+    "essence": 27535,
+    "cost3": 8485,
+    "fund3": null,
+    "death": false
+  },
+  {
+    "id": "candidate-closing-striker-balanced-c-V-s101033-at-node-t4-desert-03",
+    "minutes": 50.556666666666665,
+    "essence": 20593,
+    "cost3": 9645,
+    "fund3": null,
+    "death": false
+  },
+  {
+    "id": "candidate-closing-striker-balanced-c-V-s101033-at-node-t4-tundra-01",
+    "minutes": 50.43833333333333,
+    "essence": 27540,
+    "cost3": 8485,
+    "fund3": null,
+    "death": false
+  }
+]

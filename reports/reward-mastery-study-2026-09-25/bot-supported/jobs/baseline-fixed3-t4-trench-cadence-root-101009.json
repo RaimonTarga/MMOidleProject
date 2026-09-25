@@ -1,0 +1,17 @@
+{
+  "id": "baseline-fixed3-t4-trench-cadence-root-101009",
+  "arm": "baseline",
+  "mode": "fixed3",
+  "nodeId": "node-t4-trench-01",
+  "classRoot": "cadence-root",
+  "seed": 101009,
+  "gearIds": [
+    "trench-abyssal-axe",
+    "trench-vest-t4",
+    "trench-charm-t4",
+    "trench-boots-t4-stalkers"
+  ],
+  "maxMs": 7200000,
+  "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+  "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-supported\\baseline-fixed3-t4-trench-cadence-root-101009.json"
+}

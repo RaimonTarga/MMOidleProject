@@ -1,0 +1,18 @@
+C:\Users\osaif\Documents\Claude\Projects\mmo-reward-candidate\reports\reward-mastery-study-2026-09-25\run-bot-survivors.ts:48
+  if(rp>rpBudget)throw Error(`Preserved loadout exceeds entry budget: ${rp}/${rpBudget}`);
+                       ^
+
+
+Error: Preserved loadout exceeds entry budget: 45/44
+    at result (C:\Users\osaif\Documents\Claude\Projects\mmo-reward-candidate\reports\reward-mastery-study-2026-09-25\run-bot-survivors.ts:48:24)
+    at Object.<anonymous> (C:\Users\osaif\Documents\Claude\Projects\mmo-reward-candidate\reports\reward-mastery-study-2026-09-25\run-bot-survivors.ts:98:67)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object.transformer (C:\Users\osaif\Documents\Claude\Projects\mmo-reward-candidate\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\register-BOkp8V6j.cjs:9:3176)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+    at Function._load (node:internal/modules/cjs/loader:1282:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at cjsLoader (node:internal/modules/esm/translators:266:5)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:200:7)
+
+Node.js v22.16.0

@@ -1,0 +1,1373 @@
+{
+  "job": {
+    "id": "candidate-fixed3-t1-cave-cadence-root-101009",
+    "arm": "candidate",
+    "mode": "fixed3",
+    "nodeId": "node-t1-cave-01",
+    "classRoot": "cadence-root",
+    "seed": 101009,
+    "gearIds": [
+      "chaotic-axe",
+      "cave-vest-t1",
+      "cave-charm-t1",
+      "cave-boots-t1"
+    ],
+    "maxMs": 1800000,
+    "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+    "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-t1-final\\candidate-fixed3-t1-cave-cadence-root-101009.json"
+  },
+  "hitboxes": 406,
+  "build": {
+    "id": "cadence-root",
+    "classRoot": "cadence-root",
+    "skillPath": [
+      "cadence-root"
+    ],
+    "contentTier": 1,
+    "playerTier": 1,
+    "gearTier": 1,
+    "gearItemIds": {
+      "weapon": "chaotic-axe",
+      "armor": "cave-vest-t1",
+      "recovery": "cave-charm-t1",
+      "mobility": "cave-boots-t1"
+    }
+  },
+  "initial": {
+    "elapsedMs": 0,
+    "level": 0,
+    "xp": 0,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {},
+    "catalystProgress": {},
+    "upgrades": {
+      "chaotic-axe": 3,
+      "cave-vest-t1": 3,
+      "cave-charm-t1": 3,
+      "cave-boots-t1": 3
+    },
+    "hp": 162,
+    "build": {
+      "id": "cadence-root",
+      "classRoot": "cadence-root",
+      "skillPath": [
+        "cadence-root"
+      ],
+      "contentTier": 1,
+      "playerTier": 1,
+      "gearTier": 1,
+      "gearItemIds": {
+        "weapon": "chaotic-axe",
+        "armor": "cave-vest-t1",
+        "recovery": "cave-charm-t1",
+        "mobility": "cave-boots-t1"
+      }
+    },
+    "loadout": {
+      "abilities": {
+        "techniques": [
+          "expose-weakness"
+        ],
+        "guards": [
+          "brace",
+          "cleanse"
+        ]
+      },
+      "stances": [],
+      "rites": [],
+      "runes": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "chase-enemy"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "hp-below-25",
+          "actionId": "flee"
+        },
+        {
+          "conditionId": "while-traveling",
+          "actionId": "fight-back"
+        }
+      ]
+    },
+    "stats": {
+      "hp": 162,
+      "attack": 45
+    },
+    "biomeLevels": {
+      "cave": 0,
+      "forest": 6,
+      "mountain": 6,
+      "plains": 6,
+      "swamp": 6
+    }
+  },
+  "entry": 0,
+  "cap": 6,
+  "budget": 6000,
+  "costs": {
+    "3": {
+      "red": 867,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "5": {
+      "red": 1299,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    }
+  },
+  "mastery": {
+    "elapsedMs": 610200,
+    "level": 6,
+    "xp": 6042,
+    "gross": {
+      "red": 786,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 786,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {
+      "alacrity": 2
+    },
+    "catalystProgress": {
+      "alacrity": 23.5
+    },
+    "upgrades": {
+      "chaotic-axe": 3,
+      "cave-vest-t1": 3,
+      "cave-charm-t1": 3,
+      "cave-boots-t1": 3
+    },
+    "hp": 100.57419427640512
+  },
+  "death": null,
+  "fundingTimes": {
+    "3": 680000,
+    "5": 1062700
+  },
+  "actualAll3Ms": null,
+  "actualAll5Ms": null,
+  "acquisitionDebt": {
+    "red": 0,
+    "blue": 0,
+    "green": 0,
+    "yellow": 0,
+    "purple": 0
+  },
+  "final": {
+    "elapsedMs": 1800000,
+    "level": 6,
+    "xp": 6042,
+    "gross": {
+      "red": 2238,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 2238,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {
+      "alacrity": 6
+    },
+    "catalystProgress": {
+      "alacrity": 36
+    },
+    "upgrades": {
+      "chaotic-axe": 3,
+      "cave-vest-t1": 3,
+      "cave-charm-t1": 3,
+      "cave-boots-t1": 3
+    },
+    "hp": 162
+  },
+  "snapshots": [
+    {
+      "elapsedMs": 60000,
+      "level": 0,
+      "xp": 676,
+      "gross": {
+        "red": 88,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 88,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "alacrity": 25
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 151.01214223772334
+    },
+    {
+      "elapsedMs": 72300,
+      "level": 1,
+      "xp": 824,
+      "gross": {
+        "red": 107,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 107,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "alacrity": 30.5
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 100.57419427640512
+    },
+    {
+      "elapsedMs": 120000,
+      "level": 1,
+      "xp": 1162,
+      "gross": {
+        "red": 151,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 151,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "alacrity": 43
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 162
+    },
+    {
+      "elapsedMs": 161300,
+      "level": 2,
+      "xp": 1648,
+      "gross": {
+        "red": 214,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 214,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "alacrity": 61
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 100.57419427640512
+    },
+    {
+      "elapsedMs": 180000,
+      "level": 2,
+      "xp": 1796,
+      "gross": {
+        "red": 233,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 233,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "alacrity": 66.5
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 125.01919614800018
+    },
+    {
+      "elapsedMs": 240000,
+      "level": 2,
+      "xp": 2240,
+      "gross": {
+        "red": 290,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 290,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "alacrity": 83
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 147.5784033083467
+    },
+    {
+      "elapsedMs": 261300,
+      "level": 3,
+      "xp": 2536,
+      "gross": {
+        "red": 328,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 328,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "alacrity": 94
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 100.57419427640512
+    },
+    {
+      "elapsedMs": 300000,
+      "level": 3,
+      "xp": 2874,
+      "gross": {
+        "red": 372,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 372,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 1
+      },
+      "catalystProgress": {
+        "alacrity": 6.5
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 110.96382182278556
+    },
+    {
+      "elapsedMs": 360000,
+      "level": 3,
+      "xp": 3402,
+      "gross": {
+        "red": 441,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 441,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 1
+      },
+      "catalystProgress": {
+        "alacrity": 26
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 133.95410620036637
+    },
+    {
+      "elapsedMs": 379100,
+      "level": 4,
+      "xp": 3698,
+      "gross": {
+        "red": 479,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 479,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 1
+      },
+      "catalystProgress": {
+        "alacrity": 37
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 100.57419427640512
+    },
+    {
+      "elapsedMs": 420000,
+      "level": 4,
+      "xp": 4036,
+      "gross": {
+        "red": 523,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 523,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 1
+      },
+      "catalystProgress": {
+        "alacrity": 49.5
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 154.9882225097168
+    },
+    {
+      "elapsedMs": 480000,
+      "level": 4,
+      "xp": 4564,
+      "gross": {
+        "red": 592,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 592,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 1
+      },
+      "catalystProgress": {
+        "alacrity": 69
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 82.522798177149
+    },
+    {
+      "elapsedMs": 483700,
+      "level": 5,
+      "xp": 4754,
+      "gross": {
+        "red": 617,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 617,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 1
+      },
+      "catalystProgress": {
+        "alacrity": 76
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 61.82269904684979
+    },
+    {
+      "elapsedMs": 540000,
+      "level": 5,
+      "xp": 5324,
+      "gross": {
+        "red": 692,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 692,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 1
+      },
+      "catalystProgress": {
+        "alacrity": 97
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 66.82151702850653
+    },
+    {
+      "elapsedMs": 600000,
+      "level": 5,
+      "xp": 5894,
+      "gross": {
+        "red": 767,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 767,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 2
+      },
+      "catalystProgress": {
+        "alacrity": 18
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 162
+    },
+    {
+      "elapsedMs": 610200,
+      "level": 6,
+      "xp": 6042,
+      "gross": {
+        "red": 786,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 786,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 2
+      },
+      "catalystProgress": {
+        "alacrity": 23.5
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 100.57419427640512
+    },
+    {
+      "elapsedMs": 660000,
+      "level": 6,
+      "xp": 6042,
+      "gross": {
+        "red": 830,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 830,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 2
+      },
+      "catalystProgress": {
+        "alacrity": 36
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 162
+    },
+    {
+      "elapsedMs": 720000,
+      "level": 6,
+      "xp": 6042,
+      "gross": {
+        "red": 930,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 930,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 2
+      },
+      "catalystProgress": {
+        "alacrity": 64
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 84.05691933406489
+    },
+    {
+      "elapsedMs": 780000,
+      "level": 6,
+      "xp": 6042,
+      "gross": {
+        "red": 974,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 974,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 2
+      },
+      "catalystProgress": {
+        "alacrity": 76.5
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 100.21206518130663
+    },
+    {
+      "elapsedMs": 840000,
+      "level": 6,
+      "xp": 6042,
+      "gross": {
+        "red": 1056,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 1056,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 3
+      },
+      "catalystProgress": {
+        "alacrity": 0
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 162
+    },
+    {
+      "elapsedMs": 900000,
+      "level": 6,
+      "xp": 6042,
+      "gross": {
+        "red": 1113,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 1113,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 3
+      },
+      "catalystProgress": {
+        "alacrity": 16.5
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 162
+    },
+    {
+      "elapsedMs": 960000,
+      "level": 6,
+      "xp": 6042,
+      "gross": {
+        "red": 1195,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 1195,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 3
+      },
+      "catalystProgress": {
+        "alacrity": 40
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 106.11734644711221
+    },
+    {
+      "elapsedMs": 1020000,
+      "level": 6,
+      "xp": 6042,
+      "gross": {
+        "red": 1252,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 1252,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 3
+      },
+      "catalystProgress": {
+        "alacrity": 56.5
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 162
+    },
+    {
+      "elapsedMs": 1080000,
+      "level": 6,
+      "xp": 6042,
+      "gross": {
+        "red": 1334,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 1334,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 3
+      },
+      "catalystProgress": {
+        "alacrity": 80
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 72.60216551336917
+    },
+    {
+      "elapsedMs": 1140000,
+      "level": 6,
+      "xp": 6042,
+      "gross": {
+        "red": 1403,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 1403,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 3
+      },
+      "catalystProgress": {
+        "alacrity": 99.5
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 72.0893492444812
+    },
+    {
+      "elapsedMs": 1200000,
+      "level": 6,
+      "xp": 6042,
+      "gross": {
+        "red": 1472,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 1472,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 4
+      },
+      "catalystProgress": {
+        "alacrity": 19
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 120.48642285508386
+    },
+    {
+      "elapsedMs": 1260000,
+      "level": 6,
+      "xp": 6042,
+      "gross": {
+        "red": 1560,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 1560,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 4
+      },
+      "catalystProgress": {
+        "alacrity": 44
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 162
+    },
+    {
+      "elapsedMs": 1320000,
+      "level": 6,
+      "xp": 6042,
+      "gross": {
+        "red": 1648,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 1648,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 4
+      },
+      "catalystProgress": {
+        "alacrity": 69
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 107.52581406939643
+    },
+    {
+      "elapsedMs": 1380000,
+      "level": 6,
+      "xp": 6042,
+      "gross": {
+        "red": 1711,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 1711,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 4
+      },
+      "catalystProgress": {
+        "alacrity": 87
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 87.66562585018418
+    },
+    {
+      "elapsedMs": 1440000,
+      "level": 6,
+      "xp": 6042,
+      "gross": {
+        "red": 1780,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 1780,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 5
+      },
+      "catalystProgress": {
+        "alacrity": 6.5
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 142.4712
+    },
+    {
+      "elapsedMs": 1500000,
+      "level": 6,
+      "xp": 6042,
+      "gross": {
+        "red": 1868,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 1868,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 5
+      },
+      "catalystProgress": {
+        "alacrity": 31.5
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 152.85298718945313
+    },
+    {
+      "elapsedMs": 1560000,
+      "level": 6,
+      "xp": 6042,
+      "gross": {
+        "red": 1931,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 1931,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 5
+      },
+      "catalystProgress": {
+        "alacrity": 49.5
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 67.36072910279387
+    },
+    {
+      "elapsedMs": 1620000,
+      "level": 6,
+      "xp": 6042,
+      "gross": {
+        "red": 2000,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 2000,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 5
+      },
+      "catalystProgress": {
+        "alacrity": 69
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 84.85943870896162
+    },
+    {
+      "elapsedMs": 1680000,
+      "level": 6,
+      "xp": 6042,
+      "gross": {
+        "red": 2100,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 2100,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 5
+      },
+      "catalystProgress": {
+        "alacrity": 97
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 65.7339374395861
+    },
+    {
+      "elapsedMs": 1740000,
+      "level": 6,
+      "xp": 6042,
+      "gross": {
+        "red": 2175,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 2175,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 6
+      },
+      "catalystProgress": {
+        "alacrity": 18
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 144.5836446469815
+    },
+    {
+      "elapsedMs": 1800000,
+      "level": 6,
+      "xp": 6042,
+      "gross": {
+        "red": 2238,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 2238,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 6
+      },
+      "catalystProgress": {
+        "alacrity": 36
+      },
+      "upgrades": {
+        "chaotic-axe": 3,
+        "cave-vest-t1": 3,
+        "cave-charm-t1": 3,
+        "cave-boots-t1": 3
+      },
+      "hp": 162
+    }
+  ],
+  "purchases": [],
+  "blockers": {},
+  "wallSeconds": 21.0736813,
+  "limitations": [
+    "Synthetic late-tier fixture: other biomes mastered, generated class and granted benchmark abilities",
+    "Native current-tier base gear granted on credit in buy mode; acquisition is repaid from earnings, not a real prior-tier journey",
+    "Fixed3 mode grants +3 gear and measures income, not purchase progression",
+    "No cross-biome routing or instant revivals; first death stops the run",
+    "Seeded random and 100ms simulation clock; elapsed time is simulation time"
+  ]
+}

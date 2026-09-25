@@ -1,0 +1,205 @@
+{
+  "observations": 184,
+  "summaries": [
+    {
+      "batch": "bot-run",
+      "arm": "baseline",
+      "mode": "fixed3",
+      "runs": 16,
+      "mastered": 4,
+      "deaths": 14,
+      "all3Bought": 0,
+      "all5Bought": 0
+    },
+    {
+      "batch": "bot-run",
+      "arm": "baseline",
+      "mode": "buy",
+      "runs": 16,
+      "mastered": 2,
+      "deaths": 14,
+      "all3Bought": 2,
+      "all5Bought": 0
+    },
+    {
+      "batch": "bot-run",
+      "arm": "candidate",
+      "mode": "fixed3",
+      "runs": 16,
+      "mastered": 1,
+      "deaths": 14,
+      "all3Bought": 0,
+      "all5Bought": 0
+    },
+    {
+      "batch": "bot-run",
+      "arm": "candidate",
+      "mode": "buy",
+      "runs": 16,
+      "mastered": 0,
+      "deaths": 14,
+      "all3Bought": 1,
+      "all5Bought": 0
+    },
+    {
+      "batch": "bot-supported",
+      "arm": "baseline",
+      "mode": "fixed3",
+      "runs": 16,
+      "mastered": 5,
+      "deaths": 13,
+      "all3Bought": 0,
+      "all5Bought": 0
+    },
+    {
+      "batch": "bot-supported",
+      "arm": "baseline",
+      "mode": "buy",
+      "runs": 16,
+      "mastered": 3,
+      "deaths": 13,
+      "all3Bought": 3,
+      "all5Bought": 0
+    },
+    {
+      "batch": "bot-supported",
+      "arm": "candidate",
+      "mode": "fixed3",
+      "runs": 16,
+      "mastered": 1,
+      "deaths": 13,
+      "all3Bought": 0,
+      "all5Bought": 0
+    },
+    {
+      "batch": "bot-supported",
+      "arm": "candidate",
+      "mode": "buy",
+      "runs": 16,
+      "mastered": 0,
+      "deaths": 13,
+      "all3Bought": 1,
+      "all5Bought": 0
+    },
+    {
+      "batch": "bot-replicate",
+      "arm": "baseline",
+      "mode": "fixed3",
+      "runs": 6,
+      "mastered": 3,
+      "deaths": 3,
+      "all3Bought": 0,
+      "all5Bought": 0
+    },
+    {
+      "batch": "bot-replicate",
+      "arm": "baseline",
+      "mode": "buy",
+      "runs": 6,
+      "mastered": 2,
+      "deaths": 4,
+      "all3Bought": 2,
+      "all5Bought": 0
+    },
+    {
+      "batch": "bot-replicate",
+      "arm": "candidate",
+      "mode": "fixed3",
+      "runs": 6,
+      "mastered": 1,
+      "deaths": 3,
+      "all3Bought": 0,
+      "all5Bought": 0
+    },
+    {
+      "batch": "bot-replicate",
+      "arm": "candidate",
+      "mode": "buy",
+      "runs": 6,
+      "mastered": 0,
+      "deaths": 4,
+      "all3Bought": 1,
+      "all5Bought": 0
+    },
+    {
+      "batch": "bot-t1-extended",
+      "arm": "baseline",
+      "mode": "fixed3",
+      "runs": 4,
+      "mastered": 3,
+      "deaths": 1,
+      "all3Bought": 0,
+      "all5Bought": 0
+    },
+    {
+      "batch": "bot-t1-extended",
+      "arm": "baseline",
+      "mode": "buy",
+      "runs": 4,
+      "mastered": 3,
+      "deaths": 2,
+      "all3Bought": 3,
+      "all5Bought": 2
+    },
+    {
+      "batch": "bot-t1-extended",
+      "arm": "candidate",
+      "mode": "fixed3",
+      "runs": 4,
+      "mastered": 3,
+      "deaths": 1,
+      "all3Bought": 0,
+      "all5Bought": 0
+    },
+    {
+      "batch": "bot-t1-extended",
+      "arm": "candidate",
+      "mode": "buy",
+      "runs": 4,
+      "mastered": 3,
+      "deaths": 1,
+      "all3Bought": 3,
+      "all5Bought": 2
+    },
+    {
+      "batch": "bot-t1-final",
+      "arm": "baseline",
+      "mode": "fixed3",
+      "runs": 4,
+      "mastered": 3,
+      "deaths": 1,
+      "all3Bought": 0,
+      "all5Bought": 0
+    },
+    {
+      "batch": "bot-t1-final",
+      "arm": "baseline",
+      "mode": "buy",
+      "runs": 4,
+      "mastered": 3,
+      "deaths": 2,
+      "all3Bought": 3,
+      "all5Bought": 2
+    },
+    {
+      "batch": "bot-t1-final",
+      "arm": "candidate",
+      "mode": "fixed3",
+      "runs": 4,
+      "mastered": 3,
+      "deaths": 1,
+      "all3Bought": 0,
+      "all5Bought": 0
+    },
+    {
+      "batch": "bot-t1-final",
+      "arm": "candidate",
+      "mode": "buy",
+      "runs": 4,
+      "mastered": 3,
+      "deaths": 2,
+      "all3Bought": 3,
+      "all5Bought": 2
+    }
+  ]
+}

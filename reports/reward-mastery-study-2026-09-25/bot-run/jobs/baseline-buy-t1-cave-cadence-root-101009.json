@@ -1,0 +1,17 @@
+{
+  "id": "baseline-buy-t1-cave-cadence-root-101009",
+  "arm": "baseline",
+  "mode": "buy",
+  "nodeId": "node-t1-cave-01",
+  "classRoot": "cadence-root",
+  "seed": 101009,
+  "gearIds": [
+    "chaotic-axe",
+    "cave-vest-t1",
+    "cave-charm-t1",
+    "cave-boots-t1"
+  ],
+  "maxMs": 600000,
+  "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+  "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-run\\baseline-buy-t1-cave-cadence-root-101009.json"
+}

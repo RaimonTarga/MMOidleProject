@@ -1,0 +1,86 @@
+[
+  {
+    "id": "candidate-closing-apprentice-light-c-V-s101009",
+    "finalXp": 187512,
+    "lastXpObservedMinutes": 28,
+    "finalMinutes": 234.965,
+    "completionFraction": 0.24252
+  },
+  {
+    "id": "candidate-closing-apprentice-light-c-V-s101033",
+    "finalXp": 186936,
+    "lastXpObservedMinutes": 26,
+    "finalMinutes": 258.48,
+    "completionFraction": 0.24156
+  },
+  {
+    "id": "candidate-closing-conduit-balanced-a-T-s101009",
+    "finalXp": 643434,
+    "lastXpObservedMinutes": 139.055,
+    "finalMinutes": 139.055,
+    "completionFraction": 1.00239
+  },
+  {
+    "id": "candidate-closing-conduit-balanced-a-T-s101033",
+    "finalXp": 642139,
+    "lastXpObservedMinutes": 138.78333333333333,
+    "finalMinutes": 138.78333333333333,
+    "completionFraction": 1.0002316666666666
+  },
+  {
+    "id": "candidate-closing-squire-heavy-b-D-s101009",
+    "finalXp": 646112,
+    "lastXpObservedMinutes": 275.5183333333333,
+    "finalMinutes": 275.5183333333333,
+    "completionFraction": 1.0006033333333333
+  },
+  {
+    "id": "candidate-closing-squire-heavy-b-D-s101033",
+    "finalXp": 646896,
+    "lastXpObservedMinutes": 269.95666666666665,
+    "finalMinutes": 269.95666666666665,
+    "completionFraction": 1.00191
+  },
+  {
+    "id": "candidate-closing-striker-balanced-c-V-s101009",
+    "finalXp": 642132,
+    "lastXpObservedMinutes": 55.88166666666667,
+    "finalMinutes": 55.88166666666667,
+    "completionFraction": 1.00022
+  },
+  {
+    "id": "candidate-closing-striker-balanced-c-V-s101033",
+    "finalXp": 269412,
+    "lastXpObservedMinutes": 24,
+    "finalMinutes": 164.005,
+    "completionFraction": 0.37902
+  },
+  {
+    "id": "candidate-closing-striker-heavy-c-V-s101009",
+    "finalXp": 461856,
+    "lastXpObservedMinutes": 67,
+    "finalMinutes": 162.89833333333334,
+    "completionFraction": 0.69976
+  },
+  {
+    "id": "candidate-closing-striker-heavy-c-V-s101033",
+    "finalXp": 477180,
+    "lastXpObservedMinutes": 66,
+    "finalMinutes": 152.35666666666665,
+    "completionFraction": 0.7253
+  },
+  {
+    "id": "candidate-closing-striker-balanced-c-V-s101051",
+    "finalXp": 128232,
+    "lastXpObservedMinutes": 9,
+    "finalMinutes": 81.14833333333333,
+    "completionFraction": 0.14372
+  },
+  {
+    "id": "candidate-closing-striker-balanced-c-V-s101063",
+    "finalXp": 642456,
+    "lastXpObservedMinutes": 57.405,
+    "finalMinutes": 57.405,
+    "completionFraction": 1.00076
+  }
+]

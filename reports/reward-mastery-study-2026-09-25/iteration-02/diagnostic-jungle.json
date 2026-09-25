@@ -1,0 +1,382 @@
+{
+  "historicalReadback": {
+    "mastery": {
+      "plains": 12,
+      "forest": 12,
+      "swamp": 12,
+      "mountain": 12,
+      "cave": 12,
+      "jungle": 0,
+      "desert": 0
+    },
+    "upgrades": {
+      "quake-hammer": 3,
+      "swamp-vest-t2": 3,
+      "swamp-charm-t2": 3,
+      "mountain-boots-t2": 3,
+      "core-tempered": 0
+    },
+    "equipment": {
+      "weapon": "quake-hammer",
+      "armor": "swamp-vest-t2",
+      "recovery": "swamp-charm-t2",
+      "mobility": "mountain-boots-t2",
+      "core": "core-tempered",
+      "relic": null
+    },
+    "abilities": {
+      "techniques": [
+        "slam"
+      ],
+      "guards": [
+        "second-wind",
+        "cleanse"
+      ]
+    },
+    "runes": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ]
+  },
+  "rp": 22,
+  "rpBudget": 28,
+  "job": {
+    "id": "diagnostic-jungle-60s",
+    "arm": "baseline",
+    "mode": "historical-loadout",
+    "nodeId": "node-t2-jungle-01",
+    "classRoot": "cooldown-root",
+    "seed": 101009,
+    "cell": {
+      "id": "op-t2-squire-balanced-jungle-t2-jungle-arrival-s101009",
+      "identityId": "t2-squire-balanced",
+      "className": "squire",
+      "frame": "balanced",
+      "pathName": "balanced",
+      "range": null,
+      "tier": 2,
+      "role": "farm",
+      "nodeId": "node-t2-jungle-01",
+      "isDungeon": false,
+      "alternate": false,
+      "targetTypes": [],
+      "treatment": "control",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+        "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+      ],
+      "seed": 101009,
+      "block": "B",
+      "arm": "primary",
+      "comparisonId": "op-t2-squire-balanced-jungle-t2-jungle-arrival-s101009",
+      "snapshotId": "t2-jungle-arrival",
+      "progressionSnapshot": {
+        "id": "t2-jungle-arrival",
+        "tier": 2,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 12,
+          "mountain": 12,
+          "cave": 12,
+          "jungle": 0,
+          "desert": 0
+        },
+        "gm": 60,
+        "rp": 28,
+        "plus": 3
+      },
+      "upgradeLevel": 3,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "slam"
+        ],
+        "guards": [
+          "second-wind",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "op-t2-squire-balanced-jungle-t2-jungle-arrival-s101009",
+        "classRoot": "cooldown-root",
+        "contentTier": 2,
+        "playerTier": 2,
+        "gearTier": 2,
+        "skillPath": [
+          "cooldown-root",
+          "cooldown-balanced"
+        ],
+        "gearItemIds": {
+          "weapon": "quake-hammer",
+          "armor": "swamp-vest-t2",
+          "recovery": "swamp-charm-t2",
+          "mobility": "mountain-boots-t2",
+          "core": "core-tempered"
+        }
+      }
+    },
+    "gearIds": [
+      "jungle-stinger-rapier",
+      "jungle-vest-t2",
+      "jungle-charm-t2",
+      "jungle-boots-t2"
+    ],
+    "maxMs": 60000,
+    "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+    "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\diagnostic-jungle.json"
+  },
+  "hitboxes": 406,
+  "build": {
+    "id": "op-t2-squire-balanced-jungle-t2-jungle-arrival-s101009",
+    "classRoot": "cooldown-root",
+    "contentTier": 2,
+    "playerTier": 2,
+    "gearTier": 2,
+    "skillPath": [
+      "cooldown-root",
+      "cooldown-balanced"
+    ],
+    "gearItemIds": {
+      "weapon": "quake-hammer",
+      "armor": "swamp-vest-t2",
+      "recovery": "swamp-charm-t2",
+      "mobility": "mountain-boots-t2",
+      "core": "core-tempered"
+    }
+  },
+  "initial": {
+    "elapsedMs": 0,
+    "level": 0,
+    "xp": 0,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {},
+    "catalystProgress": {},
+    "upgrades": {
+      "quake-hammer": 3,
+      "swamp-vest-t2": 3,
+      "swamp-charm-t2": 3,
+      "mountain-boots-t2": 3,
+      "core-tempered": 0
+    },
+    "hp": 270,
+    "build": {
+      "id": "op-t2-squire-balanced-jungle-t2-jungle-arrival-s101009",
+      "classRoot": "cooldown-root",
+      "contentTier": 2,
+      "playerTier": 2,
+      "gearTier": 2,
+      "skillPath": [
+        "cooldown-root",
+        "cooldown-balanced"
+      ],
+      "gearItemIds": {
+        "weapon": "quake-hammer",
+        "armor": "swamp-vest-t2",
+        "recovery": "swamp-charm-t2",
+        "mobility": "mountain-boots-t2",
+        "core": "core-tempered"
+      }
+    },
+    "loadout": {
+      "abilities": {
+        "techniques": [
+          "slam"
+        ],
+        "guards": [
+          "second-wind",
+          "cleanse"
+        ]
+      },
+      "stances": [
+        "offensive-stance"
+      ],
+      "rites": [],
+      "runes": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ]
+    },
+    "stats": {
+      "hp": 270,
+      "attack": 95
+    },
+    "biomeLevels": {
+      "plains": 12,
+      "forest": 12,
+      "swamp": 12,
+      "mountain": 12,
+      "cave": 12,
+      "jungle": 0,
+      "desert": 0
+    }
+  },
+  "entry": 0,
+  "cap": 6,
+  "budget": 5000,
+  "costs": {
+    "3": {
+      "red": 0,
+      "blue": 0,
+      "green": 936,
+      "yellow": 71,
+      "purple": 0
+    },
+    "5": {
+      "red": 0,
+      "blue": 0,
+      "green": 2706,
+      "yellow": 208,
+      "purple": 0
+    }
+  },
+  "mastery": null,
+  "death": null,
+  "fundingTimes": {
+    "3": null,
+    "5": null
+  },
+  "actualAll3Ms": null,
+  "actualAll5Ms": null,
+  "acquisitionDebt": {
+    "red": 0,
+    "blue": 0,
+    "green": 0,
+    "yellow": 0,
+    "purple": 0
+  },
+  "final": {
+    "elapsedMs": 60000,
+    "level": 0,
+    "xp": 272,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 35,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 35,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {},
+    "catalystProgress": {
+      "alacrity": 41
+    },
+    "upgrades": {
+      "quake-hammer": 3,
+      "swamp-vest-t2": 3,
+      "swamp-charm-t2": 3,
+      "mountain-boots-t2": 3,
+      "core-tempered": 0
+    },
+    "hp": 266.15200000000004
+  },
+  "snapshots": [
+    {
+      "elapsedMs": 60000,
+      "level": 0,
+      "xp": 272,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 35,
+        "yellow": 0,
+        "purple": 0
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 35,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "alacrity": 41
+      },
+      "upgrades": {
+        "quake-hammer": 3,
+        "swamp-vest-t2": 3,
+        "swamp-charm-t2": 3,
+        "mountain-boots-t2": 3,
+        "core-tempered": 0
+      },
+      "hp": 266.15200000000004
+    }
+  ],
+  "purchases": [],
+  "blockers": {},
+  "wallSeconds": 2.828467700000001,
+  "limitations": [
+    "Historical surviving loadout validated through prepareSurveyBot, then target biome reset to segment entry; mastery freeze removed",
+    "Mature gear and owned abilities retained: a conditional throughput screen, not an earned arrival journey",
+    "Native reference set costs are funding benchmarks, not the equipped mixed-biome set or actual purchases",
+    "No cross-biome routing or revivals; first death stops each run"
+  ]
+}

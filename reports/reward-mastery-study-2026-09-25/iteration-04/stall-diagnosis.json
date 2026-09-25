@@ -1,0 +1,29 @@
+{
+  "id": "candidate-closing-striker-balanced-c-V-s101033-at-node-t4-volcanic-01",
+  "startMinutes": 23.061666666666667,
+  "endMinutes": 26.061666666666667,
+  "hp": [
+    714,
+    714
+  ],
+  "x": [
+    1332.7908660719847,
+    1503.9646354741867
+  ],
+  "y": [
+    2258.0221308018236,
+    2320
+  ],
+  "reasons": [
+    "Moving out of a hazard",
+    "Nearest eligible target"
+  ],
+  "targets": [
+    null,
+    "ashspitter-salamander",
+    "ember-skink"
+  ],
+  "liveMonsters": 36,
+  "heat": [],
+  "scope": "Tick-end observations identify approach/avoidance oscillation, not exact pre-action cause. No navigation fix applied."
+}

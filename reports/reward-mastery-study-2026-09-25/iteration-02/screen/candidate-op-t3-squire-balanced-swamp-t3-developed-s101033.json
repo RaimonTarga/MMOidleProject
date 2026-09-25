@@ -1,0 +1,2571 @@
+{
+  "runtimeCensored": false,
+  "historicalReadback": {
+    "mastery": {
+      "plains": 12,
+      "forest": 12,
+      "swamp": 18,
+      "mountain": 18,
+      "cave": 18,
+      "jungle": 12,
+      "desert": 12,
+      "volcanic": 0,
+      "tundra": 0
+    },
+    "upgrades": {
+      "mountain-avalanche-maul": 3,
+      "swamp-vest-t3": 3,
+      "swamp-charm-t3": 3,
+      "mountain-boots-t3": 3,
+      "core-tempered": 0
+    },
+    "equipment": {
+      "weapon": "mountain-avalanche-maul",
+      "armor": "swamp-vest-t3",
+      "recovery": "swamp-charm-t3",
+      "mobility": "mountain-boots-t3",
+      "core": "core-tempered",
+      "relic": null
+    },
+    "abilities": {
+      "techniques": [
+        "power-strike"
+      ],
+      "guards": [
+        "second-wind",
+        "cleanse"
+      ]
+    },
+    "runes": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      }
+    ]
+  },
+  "rp": 22,
+  "rpBudget": 35,
+  "job": {
+    "id": "candidate-op-t3-squire-balanced-swamp-t3-developed-s101033",
+    "arm": "candidate",
+    "mode": "historical-loadout",
+    "nodeId": "node-t3-swamp-03",
+    "classRoot": "cooldown-root",
+    "seed": 101033,
+    "cell": {
+      "id": "op-t3-squire-balanced-swamp-t3-developed-s101033",
+      "identityId": "t3-squire-balanced",
+      "className": "squire",
+      "frame": "balanced",
+      "pathName": "balanced",
+      "range": "close",
+      "tier": 3,
+      "role": "farm",
+      "nodeId": "node-t3-swamp-03",
+      "isDungeon": false,
+      "alternate": false,
+      "targetTypes": [],
+      "treatment": "control",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Fixed synthetic route snapshot; prior costs declared; native triggers unless an explicit rule overrides.",
+        "Omitted guards/movement remain explicit in the package, no outcome-driven rescue."
+      ],
+      "seed": 101033,
+      "block": "C",
+      "arm": "primary",
+      "comparisonId": "op-t3-squire-balanced-swamp-t3-developed-s101009",
+      "snapshotId": "t3-developed",
+      "progressionSnapshot": {
+        "id": "t3-developed",
+        "tier": 3,
+        "mastery": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 18,
+          "mountain": 18,
+          "cave": 18,
+          "jungle": 12,
+          "desert": 12,
+          "volcanic": 0,
+          "tundra": 0
+        },
+        "gm": 102,
+        "rp": 36,
+        "plus": 3
+      },
+      "upgradeLevel": 3,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "op-t3-squire-balanced-swamp-t3-developed-s101009",
+        "classRoot": "cooldown-root",
+        "contentTier": 3,
+        "playerTier": 3,
+        "gearTier": 3,
+        "skillPath": [
+          "cooldown-root",
+          "cooldown-balanced",
+          "cooldown-range-close"
+        ],
+        "gearItemIds": {
+          "weapon": "mountain-avalanche-maul",
+          "armor": "swamp-vest-t3",
+          "recovery": "swamp-charm-t3",
+          "mobility": "mountain-boots-t3",
+          "core": "core-tempered"
+        }
+      }
+    },
+    "gearIds": [
+      "swamp-blightbrand",
+      "swamp-vest-t3",
+      "swamp-charm-t3",
+      "swamp-boots-t3"
+    ],
+    "maxMs": 3600000,
+    "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+    "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\iteration-02\\screen\\candidate-op-t3-squire-balanced-swamp-t3-developed-s101033.json"
+  },
+  "hitboxes": 406,
+  "build": {
+    "id": "op-t3-squire-balanced-swamp-t3-developed-s101009",
+    "classRoot": "cooldown-root",
+    "contentTier": 3,
+    "playerTier": 3,
+    "gearTier": 3,
+    "skillPath": [
+      "cooldown-root",
+      "cooldown-balanced",
+      "cooldown-range-close"
+    ],
+    "gearItemIds": {
+      "weapon": "mountain-avalanche-maul",
+      "armor": "swamp-vest-t3",
+      "recovery": "swamp-charm-t3",
+      "mobility": "mountain-boots-t3",
+      "core": "core-tempered"
+    }
+  },
+  "initial": {
+    "elapsedMs": 0,
+    "level": 12,
+    "xp": 19750,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {},
+    "catalystProgress": {},
+    "upgrades": {
+      "mountain-avalanche-maul": 3,
+      "swamp-vest-t3": 3,
+      "swamp-charm-t3": 3,
+      "mountain-boots-t3": 3,
+      "core-tempered": 0
+    },
+    "hp": 386,
+    "build": {
+      "id": "op-t3-squire-balanced-swamp-t3-developed-s101009",
+      "classRoot": "cooldown-root",
+      "contentTier": 3,
+      "playerTier": 3,
+      "gearTier": 3,
+      "skillPath": [
+        "cooldown-root",
+        "cooldown-balanced",
+        "cooldown-range-close"
+      ],
+      "gearItemIds": {
+        "weapon": "mountain-avalanche-maul",
+        "armor": "swamp-vest-t3",
+        "recovery": "swamp-charm-t3",
+        "mobility": "mountain-boots-t3",
+        "core": "core-tempered"
+      }
+    },
+    "loadout": {
+      "abilities": {
+        "techniques": [
+          "power-strike"
+        ],
+        "guards": [
+          "second-wind",
+          "cleanse"
+        ]
+      },
+      "stances": [
+        "offensive-stance"
+      ],
+      "rites": [],
+      "runes": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ]
+    },
+    "stats": {
+      "hp": 386,
+      "attack": 161
+    },
+    "biomeLevels": {
+      "plains": 12,
+      "forest": 12,
+      "swamp": 12,
+      "mountain": 18,
+      "cave": 18,
+      "jungle": 12,
+      "desert": 12,
+      "volcanic": 0,
+      "tundra": 0
+    }
+  },
+  "entry": 12,
+  "cap": 18,
+  "budget": 42000,
+  "costs": {
+    "3": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 4319
+    },
+    "5": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 6478
+    }
+  },
+  "mastery": {
+    "elapsedMs": 1424300,
+    "level": 18,
+    "xp": 61886,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 4420
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 4420
+    },
+    "catalysts": {
+      "swarming": 11
+    },
+    "catalystProgress": {
+      "swarming": 69.49999999999999
+    },
+    "upgrades": {
+      "mountain-avalanche-maul": 3,
+      "swamp-vest-t3": 3,
+      "swamp-charm-t3": 3,
+      "mountain-boots-t3": 3,
+      "core-tempered": 0
+    },
+    "hp": 386
+  },
+  "death": null,
+  "fundingTimes": {
+    "3": 1384000,
+    "5": 2122000
+  },
+  "actualAll3Ms": null,
+  "actualAll5Ms": null,
+  "acquisitionDebt": {
+    "red": 0,
+    "blue": 0,
+    "green": 0,
+    "yellow": 0,
+    "purple": 0
+  },
+  "final": {
+    "elapsedMs": 3600000,
+    "level": 18,
+    "xp": 61886,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 10575
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 10575
+    },
+    "catalysts": {
+      "swarming": 27
+    },
+    "catalystProgress": {
+      "swarming": 99.16666666666657
+    },
+    "upgrades": {
+      "mountain-avalanche-maul": 3,
+      "swamp-vest-t3": 3,
+      "swamp-charm-t3": 3,
+      "mountain-boots-t3": 3,
+      "core-tempered": 0
+    },
+    "hp": 386
+  },
+  "snapshots": [
+    {
+      "elapsedMs": 60000,
+      "level": 12,
+      "xp": 21912,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 227
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 227
+      },
+      "catalysts": {},
+      "catalystProgress": {
+        "swarming": 59.99999999999999
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 120000,
+      "level": 12,
+      "xp": 23364,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 380
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 380
+      },
+      "catalysts": {
+        "swarming": 1
+      },
+      "catalystProgress": {
+        "swarming": 0.3333333333333428
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 152500,
+      "level": 13,
+      "xp": 25047,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 556
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 556
+      },
+      "catalysts": {
+        "swarming": 1
+      },
+      "catalystProgress": {
+        "swarming": 47
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 357.3688
+    },
+    {
+      "elapsedMs": 180000,
+      "level": 13,
+      "xp": 26020,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 658
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 658
+      },
+      "catalysts": {
+        "swarming": 1
+      },
+      "catalystProgress": {
+        "swarming": 74
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 240000,
+      "level": 13,
+      "xp": 27040,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 765
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 765
+      },
+      "catalysts": {
+        "swarming": 2
+      },
+      "catalystProgress": {
+        "swarming": 2.333333333333343
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 300000,
+      "level": 13,
+      "xp": 28723,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 941
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 941
+      },
+      "catalysts": {
+        "swarming": 2
+      },
+      "catalystProgress": {
+        "swarming": 49
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 360000,
+      "level": 13,
+      "xp": 30453,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 1122
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 1122
+      },
+      "catalysts": {
+        "swarming": 2
+      },
+      "catalystProgress": {
+        "swarming": 97
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 367800,
+      "level": 14,
+      "xp": 30855,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 1164
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 1164
+      },
+      "catalysts": {
+        "swarming": 3
+      },
+      "catalystProgress": {
+        "swarming": 8.166666666666671
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 420000,
+      "level": 14,
+      "xp": 32399,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 1326
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 1326
+      },
+      "catalysts": {
+        "swarming": 3
+      },
+      "catalystProgress": {
+        "swarming": 51
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 480000,
+      "level": 14,
+      "xp": 34484,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 1544
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 1544
+      },
+      "catalysts": {
+        "swarming": 4
+      },
+      "catalystProgress": {
+        "swarming": 8.833333333333329
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 540000,
+      "level": 14,
+      "xp": 36430,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 1748
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 1748
+      },
+      "catalysts": {
+        "swarming": 4
+      },
+      "catalystProgress": {
+        "swarming": 62.83333333333333
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 570800,
+      "level": 15,
+      "xp": 37480,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 1859
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 1859
+      },
+      "catalysts": {
+        "swarming": 4
+      },
+      "catalystProgress": {
+        "swarming": 92
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 600000,
+      "level": 15,
+      "xp": 38237,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 1938
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 1938
+      },
+      "catalysts": {
+        "swarming": 5
+      },
+      "catalystProgress": {
+        "swarming": 12.999999999999995
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 660000,
+      "level": 15,
+      "xp": 40014,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 2124
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 2124
+      },
+      "catalysts": {
+        "swarming": 5
+      },
+      "catalystProgress": {
+        "swarming": 62.33333333333332
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 720000,
+      "level": 15,
+      "xp": 41635,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 2295
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 2295
+      },
+      "catalysts": {
+        "swarming": 6
+      },
+      "catalystProgress": {
+        "swarming": 7.333333333333329
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 780000,
+      "level": 15,
+      "xp": 43581,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 2499
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 2499
+      },
+      "catalysts": {
+        "swarming": 6
+      },
+      "catalystProgress": {
+        "swarming": 61.33333333333332
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 379.9844
+    },
+    {
+      "elapsedMs": 827600,
+      "level": 16,
+      "xp": 44956,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 2643
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 2643
+      },
+      "catalysts": {
+        "swarming": 6
+      },
+      "catalystProgress": {
+        "swarming": 99.49999999999999
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 840000,
+      "level": 16,
+      "xp": 45388,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 2689
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 2689
+      },
+      "catalysts": {
+        "swarming": 7
+      },
+      "catalystProgress": {
+        "swarming": 11.499999999999986
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 900000,
+      "level": 16,
+      "xp": 46840,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 2842
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 2842
+      },
+      "catalysts": {
+        "swarming": 7
+      },
+      "catalystProgress": {
+        "swarming": 51.833333333333314
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 960000,
+      "level": 16,
+      "xp": 48354,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 3000
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 3000
+      },
+      "catalysts": {
+        "swarming": 7
+      },
+      "catalystProgress": {
+        "swarming": 93.83333333333331
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 382.0844
+    },
+    {
+      "elapsedMs": 1020000,
+      "level": 16,
+      "xp": 49776,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 3149
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 3149
+      },
+      "catalysts": {
+        "swarming": 8
+      },
+      "catalystProgress": {
+        "swarming": 33.333333333333314
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 1080000,
+      "level": 16,
+      "xp": 51861,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 3367
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 3367
+      },
+      "catalysts": {
+        "swarming": 8
+      },
+      "catalystProgress": {
+        "swarming": 91.16666666666664
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 1112400,
+      "level": 17,
+      "xp": 53097,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 3497
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 3497
+      },
+      "catalysts": {
+        "swarming": 9
+      },
+      "catalystProgress": {
+        "swarming": 25.49999999999998
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 1140000,
+      "level": 17,
+      "xp": 53668,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 3557
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 3557
+      },
+      "catalysts": {
+        "swarming": 9
+      },
+      "catalystProgress": {
+        "swarming": 41.333333333333314
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 1200000,
+      "level": 17,
+      "xp": 55691,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 3770
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 3770
+      },
+      "catalysts": {
+        "swarming": 9
+      },
+      "catalystProgress": {
+        "swarming": 97.49999999999999
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 1260000,
+      "level": 17,
+      "xp": 57637,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 3974
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 3974
+      },
+      "catalysts": {
+        "swarming": 10
+      },
+      "catalystProgress": {
+        "swarming": 51.499999999999986
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 1320000,
+      "level": 17,
+      "xp": 59228,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 4141
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 4141
+      },
+      "catalysts": {
+        "swarming": 10
+      },
+      "catalystProgress": {
+        "swarming": 95.66666666666666
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 1380000,
+      "level": 17,
+      "xp": 60680,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 4294
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 4294
+      },
+      "catalysts": {
+        "swarming": 11
+      },
+      "catalystProgress": {
+        "swarming": 35.99999999999999
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 1424300,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 4420
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 4420
+      },
+      "catalysts": {
+        "swarming": 11
+      },
+      "catalystProgress": {
+        "swarming": 69.49999999999999
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 1440000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 4420
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 4420
+      },
+      "catalysts": {
+        "swarming": 11
+      },
+      "catalystProgress": {
+        "swarming": 69.49999999999999
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 1500000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 4587
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 4587
+      },
+      "catalysts": {
+        "swarming": 12
+      },
+      "catalystProgress": {
+        "swarming": 13.666666666666652
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 1560000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 4778
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 4778
+      },
+      "catalysts": {
+        "swarming": 12
+      },
+      "catalystProgress": {
+        "swarming": 64.33333333333331
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 1620000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 4917
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 4917
+      },
+      "catalysts": {
+        "swarming": 13
+      },
+      "catalystProgress": {
+        "swarming": 1.166666666666643
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 1680000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 5130
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 5130
+      },
+      "catalysts": {
+        "swarming": 13
+      },
+      "catalystProgress": {
+        "swarming": 57.33333333333331
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 1740000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 5352
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 5352
+      },
+      "catalysts": {
+        "swarming": 14
+      },
+      "catalystProgress": {
+        "swarming": 15.999999999999961
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 1800000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 5523
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 5523
+      },
+      "catalysts": {
+        "swarming": 14
+      },
+      "catalystProgress": {
+        "swarming": 60.99999999999996
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 1860000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 5686
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 5686
+      },
+      "catalysts": {
+        "swarming": 15
+      },
+      "catalystProgress": {
+        "swarming": 4.3333333333333
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 1920000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 5839
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 5839
+      },
+      "catalysts": {
+        "swarming": 15
+      },
+      "catalystProgress": {
+        "swarming": 44.66666666666663
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 1980000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 6024
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 6024
+      },
+      "catalysts": {
+        "swarming": 15
+      },
+      "catalystProgress": {
+        "swarming": 93.49999999999996
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 2040000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 6187
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 6187
+      },
+      "catalysts": {
+        "swarming": 16
+      },
+      "catalystProgress": {
+        "swarming": 36.833333333333286
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 2100000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 6400
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 6400
+      },
+      "catalysts": {
+        "swarming": 16
+      },
+      "catalystProgress": {
+        "swarming": 93.33333333333327
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 2160000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 6636
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 6636
+      },
+      "catalysts": {
+        "swarming": 17
+      },
+      "catalystProgress": {
+        "swarming": 55.83333333333326
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 2220000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 6812
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 6812
+      },
+      "catalysts": {
+        "swarming": 18
+      },
+      "catalystProgress": {
+        "swarming": 2.4999999999999147
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 2280000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 7020
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 7020
+      },
+      "catalysts": {
+        "swarming": 18
+      },
+      "catalystProgress": {
+        "swarming": 57.33333333333324
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 2340000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 7127
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 7127
+      },
+      "catalysts": {
+        "swarming": 18
+      },
+      "catalystProgress": {
+        "swarming": 85.66666666666659
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 2400000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 7289
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 7289
+      },
+      "catalysts": {
+        "swarming": 19
+      },
+      "catalystProgress": {
+        "swarming": 28.499999999999922
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 2460000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 7580
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 7580
+      },
+      "catalysts": {
+        "swarming": 20
+      },
+      "catalystProgress": {
+        "swarming": 5.4999999999999005
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 2520000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 7705
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 7705
+      },
+      "catalysts": {
+        "swarming": 20
+      },
+      "catalystProgress": {
+        "swarming": 38.4999999999999
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 2580000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 7872
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 7872
+      },
+      "catalysts": {
+        "swarming": 20
+      },
+      "catalystProgress": {
+        "swarming": 82.66666666666656
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 2640000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 7974
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 7974
+      },
+      "catalysts": {
+        "swarming": 21
+      },
+      "catalystProgress": {
+        "swarming": 9.666666666666558
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 2700000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 8113
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 8113
+      },
+      "catalysts": {
+        "swarming": 21
+      },
+      "catalystProgress": {
+        "swarming": 46.499999999999886
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 2760000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 8331
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 8331
+      },
+      "catalysts": {
+        "swarming": 22
+      },
+      "catalystProgress": {
+        "swarming": 4.333333333333215
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 2820000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 8517
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 8517
+      },
+      "catalysts": {
+        "swarming": 22
+      },
+      "catalystProgress": {
+        "swarming": 53.66666666666654
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 2880000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 8665
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 8665
+      },
+      "catalysts": {
+        "swarming": 22
+      },
+      "catalystProgress": {
+        "swarming": 92.66666666666654
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 2940000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 8837
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 8837
+      },
+      "catalysts": {
+        "swarming": 23
+      },
+      "catalystProgress": {
+        "swarming": 38.16666666666654
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 3000000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 8995
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 8995
+      },
+      "catalysts": {
+        "swarming": 23
+      },
+      "catalystProgress": {
+        "swarming": 80.16666666666654
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 3060000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 9102
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 9102
+      },
+      "catalysts": {
+        "swarming": 24
+      },
+      "catalystProgress": {
+        "swarming": 8.499999999999886
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 3120000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 9297
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 9297
+      },
+      "catalysts": {
+        "swarming": 24
+      },
+      "catalystProgress": {
+        "swarming": 60.333333333333215
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 3180000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 9418
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 9418
+      },
+      "catalysts": {
+        "swarming": 24
+      },
+      "catalystProgress": {
+        "swarming": 92.49999999999989
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 3240000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 9548
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 9548
+      },
+      "catalysts": {
+        "swarming": 25
+      },
+      "catalystProgress": {
+        "swarming": 26.833333333333222
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 3300000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 9743
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 9743
+      },
+      "catalysts": {
+        "swarming": 25
+      },
+      "catalystProgress": {
+        "swarming": 78.33333333333321
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 3360000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 9887
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 9887
+      },
+      "catalysts": {
+        "swarming": 26
+      },
+      "catalystProgress": {
+        "swarming": 16.499999999999886
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 3420000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 10012
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 10012
+      },
+      "catalysts": {
+        "swarming": 26
+      },
+      "catalystProgress": {
+        "swarming": 49.499999999999886
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    },
+    {
+      "elapsedMs": 3480000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 10175
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 10175
+      },
+      "catalysts": {
+        "swarming": 26
+      },
+      "catalystProgress": {
+        "swarming": 92.83333333333323
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 384.16880000000003
+    },
+    {
+      "elapsedMs": 3540000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 10338
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 10338
+      },
+      "catalysts": {
+        "swarming": 27
+      },
+      "catalystProgress": {
+        "swarming": 36.166666666666565
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 366.53760000000005
+    },
+    {
+      "elapsedMs": 3600000,
+      "level": 18,
+      "xp": 61886,
+      "gross": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 10575
+      },
+      "wallet": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 10575
+      },
+      "catalysts": {
+        "swarming": 27
+      },
+      "catalystProgress": {
+        "swarming": 99.16666666666657
+      },
+      "upgrades": {
+        "mountain-avalanche-maul": 3,
+        "swamp-vest-t3": 3,
+        "swamp-charm-t3": 3,
+        "mountain-boots-t3": 3,
+        "core-tempered": 0
+      },
+      "hp": 386
+    }
+  ],
+  "purchases": [],
+  "blockers": {},
+  "wallSeconds": 85.2294228,
+  "limitations": [
+    "Historical surviving loadout validated through prepareSurveyBot, then target biome reset to segment entry; mastery freeze removed",
+    "Mature gear and owned abilities retained: a conditional throughput screen, not an earned arrival journey",
+    "Native reference set costs are funding benchmarks, not the equipped mixed-biome set or actual purchases",
+    "No cross-biome routing or revivals; first death stops each run"
+  ]
+}

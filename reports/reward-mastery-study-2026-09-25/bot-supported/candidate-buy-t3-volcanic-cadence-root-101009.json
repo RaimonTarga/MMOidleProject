@@ -1,0 +1,246 @@
+{
+  "job": {
+    "id": "candidate-buy-t3-volcanic-cadence-root-101009",
+    "arm": "candidate",
+    "mode": "buy",
+    "nodeId": "node-t3-volcanic-01",
+    "classRoot": "cadence-root",
+    "seed": 101009,
+    "gearIds": [
+      "volcanic-cinderlash",
+      "volcanic-vest-t3",
+      "volcanic-charm-t3",
+      "volcanic-boots-t3"
+    ],
+    "maxMs": 3600000,
+    "hitboxPath": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\server\\dist\\hitbox\\baked-hitboxes.json",
+    "output": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle\\reports\\reward-mastery-study-2026-09-25\\bot-supported\\candidate-buy-t3-volcanic-cadence-root-101009.json"
+  },
+  "hitboxes": 406,
+  "build": {
+    "id": "cadence-root+cadence-balanced+cadence-range-close",
+    "classRoot": "cadence-root",
+    "skillPath": [
+      "cadence-root",
+      "cadence-balanced",
+      "cadence-range-close"
+    ],
+    "contentTier": 3,
+    "playerTier": 3,
+    "gearTier": 3,
+    "gearItemIds": {
+      "weapon": "volcanic-cinderlash",
+      "armor": "volcanic-vest-t3",
+      "recovery": "volcanic-charm-t3",
+      "mobility": "volcanic-boots-t3"
+    }
+  },
+  "initial": {
+    "elapsedMs": 0,
+    "level": 0,
+    "xp": 0,
+    "gross": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {},
+    "catalystProgress": {},
+    "upgrades": {
+      "volcanic-cinderlash": 0,
+      "volcanic-vest-t3": 0,
+      "volcanic-charm-t3": 0,
+      "volcanic-boots-t3": 0
+    },
+    "hp": 266,
+    "build": {
+      "id": "cadence-root+cadence-balanced+cadence-range-close",
+      "classRoot": "cadence-root",
+      "skillPath": [
+        "cadence-root",
+        "cadence-balanced",
+        "cadence-range-close"
+      ],
+      "contentTier": 3,
+      "playerTier": 3,
+      "gearTier": 3,
+      "gearItemIds": {
+        "weapon": "volcanic-cinderlash",
+        "armor": "volcanic-vest-t3",
+        "recovery": "volcanic-charm-t3",
+        "mobility": "volcanic-boots-t3"
+      }
+    },
+    "loadout": {
+      "abilities": {
+        "techniques": [
+          "binding-strike"
+        ],
+        "guards": [
+          "break-free",
+          "bramble-guard"
+        ]
+      },
+      "stances": [
+        "offensive-stance"
+      ],
+      "rites": [
+        "blood-offering",
+        "purification",
+        "ability-reprieve",
+        "mechanic-renewal",
+        "swift-repose"
+      ],
+      "runes": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "chase-enemy"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        },
+        {
+          "conditionId": "hp-below-25",
+          "actionId": "flee"
+        },
+        {
+          "conditionId": "while-traveling",
+          "actionId": "fight-back"
+        }
+      ]
+    },
+    "stats": {
+      "hp": 266,
+      "attack": 58
+    },
+    "biomeLevels": {
+      "cave": 18,
+      "forest": 12,
+      "mountain": 18,
+      "plains": 12,
+      "swamp": 18,
+      "desert": 12,
+      "jungle": 12,
+      "tundra": 6,
+      "volcanic": 0
+    }
+  },
+  "entry": 0,
+  "cap": 6,
+  "budget": 42000,
+  "costs": {
+    "3": {
+      "red": 3752,
+      "blue": 0,
+      "green": 0,
+      "yellow": 535,
+      "purple": 0
+    },
+    "5": {
+      "red": 5629,
+      "blue": 0,
+      "green": 0,
+      "yellow": 803,
+      "purple": 0
+    }
+  },
+  "mastery": null,
+  "death": {
+    "elapsedMs": 14400,
+    "level": 0,
+    "xp": 346,
+    "gross": {
+      "red": 36,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {},
+    "catalystProgress": {
+      "alacrity": 9.666666666666666
+    },
+    "upgrades": {
+      "volcanic-cinderlash": 0,
+      "volcanic-vest-t3": 0,
+      "volcanic-charm-t3": 0,
+      "volcanic-boots-t3": 0
+    },
+    "hp": 0
+  },
+  "fundingTimes": {
+    "3": null,
+    "5": null
+  },
+  "actualAll3Ms": null,
+  "actualAll5Ms": null,
+  "acquisitionDebt": {
+    "red": 373,
+    "blue": 0,
+    "green": 0,
+    "yellow": 55,
+    "purple": 0
+  },
+  "final": {
+    "elapsedMs": 14400,
+    "level": 0,
+    "xp": 346,
+    "gross": {
+      "red": 36,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "wallet": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "catalysts": {},
+    "catalystProgress": {
+      "alacrity": 9.666666666666666
+    },
+    "upgrades": {
+      "volcanic-cinderlash": 0,
+      "volcanic-vest-t3": 0,
+      "volcanic-charm-t3": 0,
+      "volcanic-boots-t3": 0
+    },
+    "hp": 0
+  },
+  "snapshots": [],
+  "purchases": [],
+  "blockers": {},
+  "wallSeconds": 0.6820226999999995,
+  "limitations": [
+    "Synthetic late-tier fixture: other biomes mastered, generated class and granted benchmark abilities",
+    "Native current-tier base gear granted on credit in buy mode; acquisition is repaid from earnings, not a real prior-tier journey",
+    "Fixed3 mode grants +3 gear and measures income, not purchase progression",
+    "No cross-biome routing or instant revivals; first death stops the run",
+    "Seeded random and 100ms simulation clock; elapsed time is simulation time"
+  ]
+}

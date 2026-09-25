@@ -1,0 +1,1118 @@
+Statistical profiling result from reports/reward-mastery-study-2026-09-25/iteration-02/isolate-00000222A82A1000-47316-v8-profile.log, (3189 ticks, 21 unaccounted, 0 excluded).
+
+ [Shared libraries]:
+   ticks  total  nonlib   name
+    555   17.4%          C:\Program Files\nodejs\node.exe
+    439   13.8%          C:\WINDOWS\SYSTEM32\ntdll.dll
+      1    0.0%          C:\WINDOWS\System32\KERNELBASE.dll
+
+ [JavaScript]:
+   ticks  total  nonlib   name
+    463   14.5%   21.1%  JS: *isPaddedSegmentClear C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:1893
+    243    7.6%   11.1%  JS: *moverOverlapsBlockShapes C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\spatial.ts:2:13269
+    209    6.6%    9.5%  JS: *findPathOnGrid C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:3705
+    154    4.8%    7.0%  Builtin: KeyedLoadIC_Megamorphic
+    122    3.8%    5.6%  JS: *clampSegmentBeforeShapes C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\spatial.ts:2:12694
+    109    3.4%    5.0%  Builtin: LoadIC
+    106    3.3%    4.8%  JS: *resolveMoveAgainstBlocks C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\spatial.ts:2:13554
+     65    2.0%    3.0%  Builtin: FindOrderedHashSetEntry
+     62    1.9%    2.8%  JS: *segmentEntryT C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\spatial.ts:2:8652
+     42    1.3%    1.9%  Builtin: MathHypot
+     39    1.2%    1.8%  Builtin: CallFunction_ReceiverIsAny
+     26    0.8%    1.2%  JS: *growTerritories C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\world\map\authoring.ts:2:2736
+     21    0.7%    1.0%  Builtin: ArrayIteratorPrototypeNext
+     19    0.6%    0.9%  JS: *bestTargetInReach C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\collision\CollisionIndex.ts:2:1666
+     15    0.5%    0.7%  Builtin: SetPrototypeAdd
+     15    0.5%    0.7%  Builtin: LoadIC_Megamorphic
+     14    0.4%    0.6%  Builtin: FindOrderedHashMapEntry
+     14    0.4%    0.6%  Builtin: Call_ReceiverIsNullOrUndefined
+     14    0.4%    0.6%  Builtin: BaselineOutOfLinePrologue
+     13    0.4%    0.6%  JS: *blockShapes C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\collision\CollisionIndex.ts:2:1225
+     13    0.4%    0.6%  JS: *applyAndTickMonsterNodeFeatures C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\nodeFeatures.ts:2:13761
+     12    0.4%    0.5%  Builtin: LoadICTrampoline
+     11    0.3%    0.5%  Builtin: CallFunction_ReceiverIsNullOrUndefined
+      9    0.3%    0.4%  JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      9    0.3%    0.4%  JS: *reindex C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\miniplex@2.0.0\node_modules\miniplex\dist\miniplex.cjs.dev.js:501:28
+      9    0.3%    0.4%  Builtin: StringAdd_CheckNone
+      9    0.3%    0.4%  Builtin: CallFunction_ReceiverIsNotNullOrUndefined
+      7    0.2%    0.3%  JS: *updateMovement C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:12471
+      7    0.2%    0.3%  JS: *livePlayersInNode C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\playerLifecycle.ts:2:4495
+      7    0.2%    0.3%  JS: *isCellWalkable C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\navGrid.ts:2:1067
+      7    0.2%    0.3%  JS: *depenetrateIfWedged C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:6700
+      6    0.2%    0.3%  Builtin: NumberToString
+      5    0.2%    0.2%  JS: *syncPlayerBuffs C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\buffs\buffSync.ts:2:13613
+      5    0.2%    0.2%  JS: *<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\index-D9F1FXzN.cjs:13:1447
+      5    0.2%    0.2%  Builtin: KeyedStoreIC_Megamorphic
+      5    0.2%    0.2%  Builtin: Call_ReceiverIsAny
+      4    0.1%    0.2%  JS: *publishHardControl C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\status\monsterControl.ts:2:4072
+      4    0.1%    0.2%  JS: *isMonsterStunned C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\status\stun.ts:2:2042
+      4    0.1%    0.2%  JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\index.ts:2:392
+      4    0.1%    0.2%  JS: *distanceSq C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\spatial.ts:2:2274
+      4    0.1%    0.2%  JS: *candidatesInPullRange C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\monsterTargeting.ts:2:1806
+      4    0.1%    0.2%  JS: *<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\spatial.ts:2:4592
+      4    0.1%    0.2%  Builtin: StringEqual
+      4    0.1%    0.2%  Builtin: KeyedLoadICTrampoline_Megamorphic
+      4    0.1%    0.2%  Builtin: CreateShallowObjectLiteral
+      4    0.1%    0.2%  Builtin: Call_ReceiverIsNotNullOrUndefined
+      4    0.1%    0.2%  Builtin: ArrayTimSort
+      3    0.1%    0.1%  JS: *updateMonsters C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\ai.ts:2:5951
+      3    0.1%    0.1%  JS: *updateCombatState C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\engine\combatState.ts:2:1506
+      3    0.1%    0.1%  JS: *updateCombat C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\engine\combat.ts:2:51751
+      3    0.1%    0.1%  JS: *syncBossSpawnedAddTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\ai.ts:2:5291
+      3    0.1%    0.1%  JS: *suppressedFeatureIdsForEntity C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:3508
+      3    0.1%    0.1%  JS: *resolveMoveAgainstBlocks C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\spatial.ts:2:1871
+      3    0.1%    0.1%  JS: *pointInNodeFeatureShape C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\spatial.ts:2:1518
+      3    0.1%    0.1%  JS: *next C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\@miniplex+bucket@2.0.0\node_modules\@miniplex\bucket\dist\miniplex-bucket.cjs.dev.js:197:28
+      3    0.1%    0.1%  JS: *monsterEntitiesInNode C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\monsterLifecycle.ts:2:1564
+      3    0.1%    0.1%  JS: *<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\world\map\authoring.ts:2:2906
+      3    0.1%    0.1%  Builtin: ToBooleanForBaselineJump
+      3    0.1%    0.1%  Builtin: SetPrototypeDelete
+      3    0.1%    0.1%  Builtin: SetConstructor
+      3    0.1%    0.1%  Builtin: LoadICTrampoline_Megamorphic
+      3    0.1%    0.1%  Builtin: JSBuiltinsConstructStub
+      3    0.1%    0.1%  Builtin: GetPropertyWithReceiver
+      3    0.1%    0.1%  Builtin: GetProperty
+      3    0.1%    0.1%  Builtin: CompileLazy
+      3    0.1%    0.1%  Builtin: Call_ReceiverIsNullOrUndefined_Baseline_Compact
+      3    0.1%    0.1%  Builtin: BaselineLeaveFrame
+      3    0.1%    0.1%  Builtin: ArrayPrototypeFind
+      2    0.1%    0.1%  JS: ^resolveIntent C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\autoIntent.ts:2:1669
+      2    0.1%    0.1%  JS: ^moverOverlapsBlockShapes C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\spatial.ts:2:13269
+      2    0.1%    0.1%  JS: ^deriveAutoConfigFromRunes C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\runeDatabase.ts:2:24332
+      2    0.1%    0.1%  JS: *withinReach C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\query.ts:2:1078
+      2    0.1%    0.1%  JS: *value C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\@miniplex+bucket@2.0.0\node_modules\@miniplex\bucket\dist\miniplex-bucket.cjs.dev.js:189:26
+      2    0.1%    0.1%  JS: *pointFromMotion C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\spatial.ts:2:2931
+      2    0.1%    0.1%  JS: *passesGates C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:6091
+      2    0.1%    0.1%  JS: *moverOverlapsBlockShapes C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\spatial.ts:2:1271
+      2    0.1%    0.1%  JS: *minionEntitiesInNode C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\minionLifecycle.ts:2:1162
+      2    0.1%    0.1%  JS: *lineLengths node:internal/source_map/source_map_cache:255:21
+      2    0.1%    0.1%  JS: *isCellBlocked C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\navGrid.ts:2:2504
+      2    0.1%    0.1%  JS: *getFlag C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\components\combat\tracksCombat.ts:2:2520
+      2    0.1%    0.1%  JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\components\combat\statusEffects.ts:2:574
+      2    0.1%    0.1%  JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\monsterLifecycle.ts:2:587
+      2    0.1%    0.1%  JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\classes\archetypes\cooldown\t3\core\constants.ts:2:509
+      2    0.1%    0.1%  JS: *canReach C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\collision\CollisionIndex.ts:2:1488
+      2    0.1%    0.1%  Builtin: StoreIC
+      2    0.1%    0.1%  Builtin: Multiply_Baseline
+      2    0.1%    0.1%  Builtin: KeyedStoreIC
+      2    0.1%    0.1%  Builtin: KeyedLoadIC_PolymorphicName
+      2    0.1%    0.1%  Builtin: IterableToListWithSymbolLookup
+      2    0.1%    0.1%  Builtin: FastNewClosure
+      2    0.1%    0.1%  Builtin: DefineNamedOwnIC
+      2    0.1%    0.1%  Builtin: Call_ReceiverIsNotNullOrUndefined_Baseline_Compact
+      2    0.1%    0.1%  Builtin: ArrayMap
+      2    0.1%    0.1%  Builtin: Add_Baseline
+      1    0.0%    0.0%  RegExp: \/[*/]#\s+sourceURL=(?<sourceURL>[^\s]+)
+      1    0.0%    0.0%  JS: ~updatePartyFollow C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\partyFollow.ts:2:1397
+      1    0.0%    0.0%  JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\drizzle-orm@0.45.2_@types+pg@8.20.0_pg@8.21.0\node_modules\drizzle-orm\pg-core\subquery.cjs:1:1
+      1    0.0%    0.0%  JS: ^updateReloadMomentum C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\classes\archetypes\reload\t3\ticks\momentum.ts:2:1050
+      1    0.0%    0.0%  JS: ^updatePermafrost C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\classes\archetypes\dot\t3\ticks\permafrost.ts:2:1775
+      1    0.0%    0.0%  JS: ^updateHemorrhages C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\classes\archetypes\cadence\t3\ticks\hemorrhage.ts:2:1625
+      1    0.0%    0.0%  JS: ^updateCombat C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\engine\combat.ts:2:51751
+      1    0.0%    0.0%  JS: ^updateAutoIntent C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\autoIntent.ts:2:1340
+      1    0.0%    0.0%  JS: ^syncPlayerBuffs C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\buffs\buffSync.ts:2:13613
+      1    0.0%    0.0%  JS: ^steerTowardTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:16146
+      1    0.0%    0.0%  JS: ^steerOutOfPersistentHazards C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\dynamicHazardAvoidance.ts:2:7037
+      1    0.0%    0.0%  JS: ^stat node:internal/modules/cjs/loader:249:14
+      1    0.0%    0.0%  JS: ^removeComponent C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\miniplex@2.0.0\node_modules\miniplex\dist\miniplex.cjs.dev.js:379:36
+      1    0.0%    0.0%  JS: ^playerDetectionMult C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\mobility\mobilityBoots.ts:2:3763
+      1    0.0%    0.0%  JS: ^parseSource node:internal/deps/cjs-module-lexer/lexer:85:22
+      1    0.0%    0.0%  JS: ^monsterAttackCooldown C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\engine\monsterMechanics.ts:2:2897
+      1    0.0%    0.0%  JS: ^mirrorHpForecast C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\defense\core\hpForecast.ts:2:2274
+      1    0.0%    0.0%  JS: ^hasPassive C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\classes\archetypes\cooldown\t3\core\helpers.ts:2:842
+      1    0.0%    0.0%  JS: ^guardEffectCanFire C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\player\abilities\abilityFiring.ts:2:17863
+      1    0.0%    0.0%  JS: ^getOptions node:internal/fs/utils:320:20
+      1    0.0%    0.0%  JS: ^getMonsterEntity C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:12976
+      1    0.0%    0.0%  JS: ^get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\mechanicEffectScaling.ts:2:574
+      1    0.0%    0.0%  JS: ^get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\runeDatabase.ts:2:574
+      1    0.0%    0.0%  JS: ^get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\index.ts:2:392
+      1    0.0%    0.0%  JS: ^get C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\playerIncapacitation.ts:2:587
+      1    0.0%    0.0%  JS: ^get C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\deathCause.ts:2:587
+      1    0.0%    0.0%  JS: ^get C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\player\party\partySystem.ts:2:587
+      1    0.0%    0.0%  JS: ^get C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\defense\mitigation\cheatDeath.ts:2:587
+      1    0.0%    0.0%  JS: ^get C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\defense\barrier\wards.ts:2:587
+      1    0.0%    0.0%  JS: ^buildFireContext C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\player\abilities\abilityFiring.ts:2:6647
+      1    0.0%    0.0%  JS: ^allocateNormalCellsByBiome C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\world\map\authoring.ts:2:2276
+      1    0.0%    0.0%  JS: ^REAPER_ID C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\player\stances\stanceBehaviors.ts:2:911
+      1    0.0%    0.0%  JS: ^DOT_T3_BUFFS.category C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\classes\archetypes\dot\t3\core\buffs.ts:2:5136
+      1    0.0%    0.0%  JS: ^<anonymous> node:internal/modules/cjs/loader:1318:35
+      1    0.0%    0.0%  JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\classes\archetypes\energy\t3\core\buffs.ts:2:11920
+      1    0.0%    0.0%  JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      1    0.0%    0.0%  JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\index-D9F1FXzN.cjs:13:825
+      1    0.0%    0.0%  JS: ^#ensureSearchParamsUpdated node:internal/url:880:29
+      1    0.0%    0.0%  JS: *updateSwarm C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\swarm.ts:2:1105
+      1    0.0%    0.0%  JS: *updateAmbientRamp C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\nodeFeatures.ts:2:7134
+      1    0.0%    0.0%  JS: *updateAllyEmpower C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\allyEmpower.ts:2:1120
+      1    0.0%    0.0%  JS: *tickStatusEffectDurations C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\components\combat\tracksCombat.ts:2:3416
+      1    0.0%    0.0%  JS: *tickAllMechanics C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\classes\registry.ts:2:1895
+      1    0.0%    0.0%  JS: *territoryIsConnected C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\world\map\authoring.ts:2:4548
+      1    0.0%    0.0%  JS: *syncEnemyBarrierState C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\engine\enemyBarrierState.ts:2:1391
+      1    0.0%    0.0%  JS: *resolve node:path:190:10
+      1    0.0%    0.0%  JS: *recruitSwarms C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\packs.ts:2:2815
+      1    0.0%    0.0%  JS: *publishInstinct C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\bossPatterns.ts:2:5197
+      1    0.0%    0.0%  JS: *processMoverStep C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:9430
+      1    0.0%    0.0%  JS: *pointInNodeFeatureShape C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\spatial.ts:2:6098
+      1    0.0%    0.0%  JS: *playerDetectionMult C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\mobility\mobilityBoots.ts:2:3763
+      1    0.0%    0.0%  JS: *packFollowDestination C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\packs.ts:2:955
+      1    0.0%    0.0%  JS: *neighboringKeys C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\world\map\authoring.ts:2:1153
+      1    0.0%    0.0%  JS: *markSliceDirty C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\ecs\dirtyHelpers.ts:2:870
+      1    0.0%    0.0%  JS: *markSliceDirty C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\ecs\dirtyHelpers.ts:2:1076
+      1    0.0%    0.0%  JS: *isWithinRange C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\spatial.ts:2:1228
+      1    0.0%    0.0%  JS: *isPathSeparator node:path:64:25
+      1    0.0%    0.0%  JS: *isMonsterKnockedBack C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\damage\knockback.ts:2:4056
+      1    0.0%    0.0%  JS: *isMonsterFrozen C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\classes\archetypes\dot\t3\core\selectors.ts:2:2610
+      1    0.0%    0.0%  JS: *isFeatureDamageActive C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\nodeFeatures.ts:2:10945
+      1    0.0%    0.0%  JS: *isDraggingPrey C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\damage\lairDrag.ts:2:854
+      1    0.0%    0.0%  JS: *isDraggingPrey C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\damage\lairDrag.ts:2:1608
+      1    0.0%    0.0%  JS: *hitboxGap C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\spatial.ts:2:3808
+      1    0.0%    0.0%  JS: *getString C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\components\combat\tracksCombat.ts:2:2690
+      1    0.0%    0.0%  JS: *getResource C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\components\combat\tracksCombat.ts:2:942
+      1    0.0%    0.0%  JS: *getMonsterEntity C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\monsterLifecycle.ts:2:888
+      1    0.0%    0.0%  JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\spatial.ts:2:574
+      1    0.0%    0.0%  JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\monsterDebuffs.ts:2:574
+      1    0.0%    0.0%  JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\stances.ts:2:574
+      1    0.0%    0.0%  JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\query.ts:2:574
+      1    0.0%    0.0%  JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\index.ts:2:392
+      1    0.0%    0.0%  JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\playerLifecycle.ts:2:587
+      1    0.0%    0.0%  JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:587
+      1    0.0%    0.0%  JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:587
+      1    0.0%    0.0%  JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\defense\mitigation\hardening.ts:2:587
+      1    0.0%    0.0%  JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\ecs\markerHelpers.ts:2:587
+      1    0.0%    0.0%  JS: *compareId C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\packs.ts:2:1375
+      1    0.0%    0.0%  JS: *cellToWorld C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\navGrid.ts:2:910
+      1    0.0%    0.0%  JS: *attachMotionToward C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:4484
+      1    0.0%    0.0%  JS: *attachComponent C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\ecs\markerHelpers.ts:2:1240
+      1    0.0%    0.0%  JS: *advanceMovePath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:5822
+      1    0.0%    0.0%  JS: *<anonymous> node:internal/validators:161:40
+      1    0.0%    0.0%  JS: *<anonymous> node:internal/modules/cjs/loader:822:37
+      1    0.0%    0.0%  JS: *<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\world\map\authoring.ts:2:3331
+      1    0.0%    0.0%  JS: *<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\world\map\authoring.ts:2:2971
+      1    0.0%    0.0%  JS: *<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:4210
+      1    0.0%    0.0%  JS: *<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\register-BOkp8V6j.cjs:8:494
+      1    0.0%    0.0%  Builtin: Subtract_Baseline
+      1    0.0%    0.0%  Builtin: StringPrototypeStartsWith
+      1    0.0%    0.0%  Builtin: StringPrototypeCharAt
+      1    0.0%    0.0%  Builtin: StoreICBaseline
+      1    0.0%    0.0%  Builtin: SortCompareUserFn
+      1    0.0%    0.0%  Builtin: RegExpPrototypeTest
+      1    0.0%    0.0%  Builtin: RegExpPrototypeExecSlow
+      1    0.0%    0.0%  Builtin: RecordWriteSaveFP
+      1    0.0%    0.0%  Builtin: ObjectKeys
+      1    0.0%    0.0%  Builtin: NonNumberToNumeric
+      1    0.0%    0.0%  Builtin: Modulus_Baseline
+      1    0.0%    0.0%  Builtin: MathCeil
+      1    0.0%    0.0%  Builtin: MapPrototypeSet
+      1    0.0%    0.0%  Builtin: MapPrototypeDelete
+      1    0.0%    0.0%  Builtin: MapIteratorToList
+      1    0.0%    0.0%  Builtin: MapIteratorPrototypeNext
+      1    0.0%    0.0%  Builtin: LoadIC_NoFeedback
+      1    0.0%    0.0%  Builtin: LoadICBaseline
+      1    0.0%    0.0%  Builtin: KeyedLoadIC
+      1    0.0%    0.0%  Builtin: JSToWasmWrapper
+      1    0.0%    0.0%  Builtin: JSConstructStubGeneric
+      1    0.0%    0.0%  Builtin: IterableToList
+      1    0.0%    0.0%  Builtin: InterpreterEntryTrampoline
+      1    0.0%    0.0%  Builtin: GeneratorPrototypeNext
+      1    0.0%    0.0%  Builtin: FastNewStrictArguments
+      1    0.0%    0.0%  Builtin: FastNewObject
+      1    0.0%    0.0%  Builtin: ExtractFastJSArray
+      1    0.0%    0.0%  Builtin: DefineKeyedOwnIC
+      1    0.0%    0.0%  Builtin: CreateEmptyLiteralObject
+      1    0.0%    0.0%  Builtin: CopyDataProperties
+      1    0.0%    0.0%  Builtin: Construct
+      1    0.0%    0.0%  Builtin: CloneObjectIC
+      1    0.0%    0.0%  Builtin: CanUseSameAccessor_FastObjectElements_0
+      1    0.0%    0.0%  Builtin: CEntry_Return1_ArgvOnStack_NoBuiltinExit
+      1    0.0%    0.0%  Builtin: CEntry_Return1_ArgvOnStack_BuiltinExit
+      1    0.0%    0.0%  Builtin: ArrayIncludesSmiOrObject
+
+ [C++]:
+   ticks  total  nonlib   name
+
+ [Summary]:
+   ticks  total  nonlib   name
+   2173   68.1%   99.0%  JavaScript
+      0    0.0%    0.0%  C++
+    211    6.6%    9.6%  GC
+    995   31.2%          Shared libraries
+     21    0.7%          Unaccounted
+
+ [C++ entry points]:
+   ticks    cpp   total   name
+
+ [Bottom up (heavy) profile]:
+  Note: percentage shows a share of a particular caller in the total
+  amount of its parent calls.
+  Callers occupying less than 1.0% are not shown.
+
+   ticks parent  name
+    555   17.4%  C:\Program Files\nodejs\node.exe
+    280   50.5%    C:\Program Files\nodejs\node.exe
+     39   13.9%      JS: *applyAndTickMonsterNodeFeatures C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\nodeFeatures.ts:2:13761
+     30   76.9%        JS: *updateNodeFeatures C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\nodeFeatures.ts:2:5687
+     30  100.0%          JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+     30  100.0%            JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      9   23.1%        JS: ^updateNodeFeatures C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\nodeFeatures.ts:2:5687
+      9  100.0%          JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      9  100.0%            JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+     32   11.4%      JS: ^get exports node:internal/modules/package_json_reader:80:20
+     32  100.0%        Builtin: CEntry_Return1_ArgvOnStack_NoBuiltinExit
+     32  100.0%          JS: ^deserializePackageJSON node:internal/modules/package_json_reader:42:32
+     32  100.0%            JS: ^getNearestParentPackageJSON node:internal/modules/package_json_reader:133:37
+     16    5.7%      JS: *compareId C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\packs.ts:2:1375
+     16  100.0%        Builtin: ArrayPrototypeSort
+     16  100.0%          JS: *recruitSwarms C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\packs.ts:2:2815
+     15   93.8%            JS: *updatePacks C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\packs.ts:2:4825
+      1    6.3%            JS: ^updatePacks C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\packs.ts:2:4825
+     15    5.4%      JS: *<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\index-D9F1FXzN.cjs:13:1447
+     15  100.0%        Builtin: ArrayPrototypeFind
+     13   86.7%          JS: ^get C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\index-D9F1FXzN.cjs:13:1379
+     13  100.0%            JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\index-D9F1FXzN.cjs:14:2235
+      2   13.3%          JS: ~get C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\index-D9F1FXzN.cjs:13:1379
+      2  100.0%            JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\index-D9F1FXzN.cjs:14:2235
+      8    2.9%      JS: *next C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\@miniplex+bucket@2.0.0\node_modules\@miniplex\bucket\dist\miniplex-bucket.cjs.dev.js:197:28
+      2   25.0%        JS: ^updateFlurryBuff C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\damage\weaponEffects.ts:2:9516
+      2  100.0%          JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      2  100.0%            JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      2   25.0%        JS: *monsterEntitiesInNode C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\monsterLifecycle.ts:2:1564
+      2  100.0%          Builtin: GeneratorPrototypeNext
+      2  100.0%            JS: *targetableMonstersForPlayer C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\engine\combat.ts:2:49182
+      2   25.0%        JS: *livePlayersInNode C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\playerLifecycle.ts:2:4495
+      2  100.0%          Builtin: GeneratorPrototypeNext
+      2  100.0%            JS: *candidatesInPullRange C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\monsterTargeting.ts:2:1806
+      1   12.5%        JS: ^updateNodeFeatures C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\nodeFeatures.ts:2:5687
+      1  100.0%          JS: ^tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1  100.0%            JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      1   12.5%        JS: ^publishConcealment C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\bossPatterns.ts:2:13811
+      1  100.0%          JS: ^updateBossPatterns C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\bossPatterns.ts:2:11896
+      1  100.0%            JS: ^tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      6    2.1%      Builtin: ArrayFrom
+      4   66.7%        JS: ^reachablePullPoint C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:9368
+      4  100.0%          JS: ^steerTowardTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:16146
+      4  100.0%            JS: *updateAutoTargets C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:12060
+      1   16.7%        JS: ~validateBiomeShape C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\world\map\validation.ts:2:9592
+      1  100.0%          JS: ~validateWorldMap C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\world\map\validation.ts:2:11523
+      1  100.0%            JS: ~assertValidWorldMap C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\world\map\validation.ts:2:11931
+      1   16.7%        JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\register-BOkp8V6j.cjs:9:1778
+      1  100.0%          JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\register-BOkp8V6j.cjs:10:480
+      1  100.0%            JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\register-BOkp8V6j.cjs:10:810
+      4    1.4%      JS: ^sameIntent C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\autoIntent.ts:2:9581
+      4  100.0%        JS: ^applyIntent C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\autoIntent.ts:2:9284
+      4  100.0%          JS: ^updateAutoIntent C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\autoIntent.ts:2:1340
+      4  100.0%            JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      3    1.1%      JS: *findPathOnGrid C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:3705
+      3  100.0%        JS: ^findPathForMover C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:7168
+      3  100.0%          JS: ^monsterHasPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:6987
+      3  100.0%            JS: ^pickPathReachableTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:8742
+      3    1.1%      JS: *applyFeatureEffectsToEntity C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\nodeFeatures.ts:2:15177
+      3  100.0%        JS: *updateNodeFeatures C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\nodeFeatures.ts:2:5687
+      3  100.0%          JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      3  100.0%            JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      3    1.1%      Builtin: StringPrototypeSplit
+      1   33.3%        JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\register-BOkp8V6j.cjs:10:81
+      1  100.0%          JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\register-BOkp8V6j.cjs:10:810
+      1  100.0%            JS: ^defaultResolveImpl node:internal/modules/cjs/loader:1043:30
+      1   33.3%        JS: *<anonymous> file:///C:/Users/osaif/Documents/Claude/Projects/MMO%20idle/node_modules/.pnpm/tsx@4.22.3/node_modules/tsx/dist/index-XurvG3JN.mjs:13:1181
+      1  100.0%          Builtin: ArrayMap
+      1  100.0%            JS: ~vr file:///C:/Users/osaif/Documents/Claude/Projects/MMO%20idle/node_modules/.pnpm/tsx@4.22.3/node_modules/tsx/dist/index-XurvG3JN.mjs:13:1067
+      1   33.3%        JS: *<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\index-D9F1FXzN.cjs:13:1232
+      1  100.0%          Builtin: ArrayMap
+      1  100.0%            JS: ~kr C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\index-D9F1FXzN.cjs:13:1118
+      3    1.1%      Builtin: SetPrototypeAdd
+      3  100.0%        JS: *findPathOnGrid C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:3705
+      2   66.7%          JS: ^findPathForMover C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:7168
+      2  100.0%            JS: ^monsterHasPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:6987
+      1   33.3%          JS: ^planPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:4969
+      1  100.0%            JS: ^requestNavMotion C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:7184
+     61   11.0%    JS: ^wrapSafe node:internal/modules/cjs/loader:1620:18
+     61  100.0%      JS: ^<anonymous> node:internal/modules/cjs/loader:1680:37
+     59   96.7%        JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\register-BOkp8V6j.cjs:9:2477
+     59  100.0%          JS: ^<anonymous> node:internal/modules/cjs/loader:1450:33
+     59  100.0%            JS: ^<anonymous> node:internal/modules/cjs/loader:1188:24
+      2    3.3%        JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\register-BOkp8V6j.cjs:9:2477
+      2  100.0%          JS: ^<anonymous> node:internal/modules/cjs/loader:1450:33
+      2  100.0%            JS: ^<anonymous> node:internal/modules/cjs/loader:1188:24
+     19    3.4%    JS: *growTerritories C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\world\map\authoring.ts:2:2736
+     19  100.0%      JS: *growTerritories C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\world\map\authoring.ts:2:2736
+     19  100.0%        JS: *growTerritories C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\world\map\authoring.ts:2:2736
+     19  100.0%          JS: *growTerritories C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\world\map\authoring.ts:2:2736
+     19  100.0%            JS: *growTerritories C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\world\map\authoring.ts:2:2736
+     12    2.2%    JS: ^compileForInternalLoader node:internal/bootstrap/realm:384:27
+      8   66.7%      JS: ^requireBuiltin node:internal/bootstrap/realm:421:24
+      1   12.5%        JS: ~lazyLoadComparison node:assert:69:28
+      1  100.0%          JS: ~deepStrictEqual node:assert:264:50
+      1  100.0%            JS: ~prepareSurveyBot C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\bench\balance\ttkSurveySpec.ts:2:4935
+      1   12.5%        JS: ~<anonymous> node:perf_hooks:1:1
+      1  100.0%          JS: ^compileForInternalLoader node:internal/bootstrap/realm:384:27
+      1  100.0%            JS: ^compileForPublicLoader node:internal/bootstrap/realm:332:25
+      1   12.5%        JS: ~<anonymous> node:internal/streams/operators:1:1
+      1  100.0%          JS: ^compileForInternalLoader node:internal/bootstrap/realm:384:27
+      1  100.0%            JS: ^requireBuiltin node:internal/bootstrap/realm:421:24
+      1   12.5%        JS: ~<anonymous> node:internal/perf/performance:1:1
+      1  100.0%          JS: ^compileForInternalLoader node:internal/bootstrap/realm:384:27
+      1  100.0%            JS: ^requireBuiltin node:internal/bootstrap/realm:421:24
+      1   12.5%        JS: ~<anonymous> node:internal/perf/observe:1:1
+      1  100.0%          JS: ^compileForInternalLoader node:internal/bootstrap/realm:384:27
+      1  100.0%            JS: ^requireBuiltin node:internal/bootstrap/realm:421:24
+      1   12.5%        JS: ~<anonymous> node:internal/fs/promises:1:1
+      1  100.0%          JS: ^compileForInternalLoader node:internal/bootstrap/realm:384:27
+      1  100.0%            JS: ^requireBuiltin node:internal/bootstrap/realm:421:24
+      1   12.5%        JS: ~<anonymous> node:internal/crypto/hkdf:1:1
+      1  100.0%          JS: ^compileForInternalLoader node:internal/bootstrap/realm:384:27
+      1  100.0%            JS: ^requireBuiltin node:internal/bootstrap/realm:421:24
+      1   12.5%        JS: ~<anonymous> node:crypto:1:1
+      1  100.0%          JS: ^compileForInternalLoader node:internal/bootstrap/realm:384:27
+      1  100.0%            JS: ~builtinStrategy node:internal/modules/esm/translators:351:52
+      3   25.0%      JS: ~builtinStrategy node:internal/modules/esm/translators:351:52
+      3  100.0%        JS: ~#translate node:internal/modules/esm/loader:526:13
+      3  100.0%          JS: ~loadAndTranslate node:internal/modules/esm/loader:579:25
+      3  100.0%            Builtin: AsyncFunctionAwaitResolveClosure
+      1    8.3%      JS: ^compileForPublicLoader node:internal/bootstrap/realm:332:25
+      1  100.0%        JS: ^loadBuiltinModule node:internal/modules/helpers:101:27
+      1  100.0%          JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\esbuild@0.28.0\node_modules\esbuild\lib\main.js:1:1
+      1  100.0%            JS: ~cjsLoader node:internal/modules/esm/translators:264:38
+
+    463   14.5%  JS: *isPaddedSegmentClear C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:1893
+    455   98.3%    JS: *findPathOnGrid C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:3705
+    435   95.6%      JS: ^findPathForMover C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:7168
+    405   93.1%        JS: ^monsterHasPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:6987
+    405  100.0%          JS: ^pickPathReachableTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:8742
+    405  100.0%            JS: ^selectAutoCombatAction C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:2739
+     30    6.9%        JS: ^reachablePullPoint C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:9368
+     30  100.0%          JS: ^steerTowardTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:16146
+     29   96.7%            JS: *updateAutoTargets C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:12060
+      1    3.3%            JS: ^updateAutoTargets C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:12060
+     20    4.4%      JS: ^planPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:4969
+     20  100.0%        JS: ^requestNavMotion C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:7184
+     20  100.0%          JS: ^setEntityMotion C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:2318
+      8   40.0%            JS: *updateMonsters C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\ai.ts:2:5951
+      7   35.0%            JS: ^setMonsterTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\ai.ts:2:5021
+      5   25.0%            JS: ^steerTowardTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:16146
+      6    1.3%    JS: ^findPathForMover C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:7168
+      6  100.0%      JS: ^monsterHasPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:6987
+      6  100.0%        JS: ^pickPathReachableTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:8742
+      6  100.0%          JS: ^selectAutoCombatAction C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:2739
+      4   66.7%            JS: ^updateAutoTargets C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:12060
+      2   33.3%            JS: *updateAutoTargets C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:12060
+
+    439   13.8%  C:\WINDOWS\SYSTEM32\ntdll.dll
+    149   33.9%    C:\Program Files\nodejs\node.exe
+     33   22.1%      JS: ~runCallSync C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\esbuild@0.28.0\node_modules\esbuild\lib\main.js:2424:21
+     33  100.0%        JS: ~transformSync C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\esbuild@0.28.0\node_modules\esbuild\lib\main.js:2446:18
+     33  100.0%          JS: ~transformSync C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\esbuild@0.28.0\node_modules\esbuild\lib\main.js:2190:21
+     33  100.0%            JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\index-D9F1FXzN.cjs:14:2790
+     28   18.8%      JS: ~makeSyncRequest node:internal/modules/esm/hooks:598:18
+     28  100.0%        JS: ~register node:internal/modules/esm/loader:887:11
+     28  100.0%          JS: ~register node:internal/modules/esm/loader:656:11
+     28  100.0%            JS: ~register node:internal/modules/esm/loader:1032:18
+     24   16.1%      JS: ~waitForWorker node:internal/modules/esm/hooks:519:16
+     24  100.0%        JS: ~makeSyncRequest node:internal/modules/esm/hooks:598:18
+     24  100.0%          JS: ~register node:internal/modules/esm/loader:887:11
+     24  100.0%            JS: ~register node:internal/modules/esm/loader:656:11
+     11    7.4%      JS: *findPathOnGrid C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:3705
+     11  100.0%        JS: ^findPathForMover C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:7168
+     10   90.9%          JS: ^monsterHasPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:6987
+     10  100.0%            JS: ^pickPathReachableTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:8742
+      1    9.1%          JS: ^reachablePullPoint C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:9368
+      1  100.0%            JS: ^steerTowardTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:16146
+      7    4.7%      JS: *realpathSync node:fs:2711:22
+      7  100.0%        JS: ^toRealPath node:internal/modules/helpers:60:20
+      7  100.0%          JS: ^<anonymous> node:internal/modules/cjs/loader:701:28
+      7  100.0%            JS: ^<anonymous> node:internal/modules/cjs/loader:1318:35
+      3    2.0%      JS: *isPaddedSegmentClear C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:1893
+      3  100.0%        JS: *findPathOnGrid C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:3705
+      3  100.0%          JS: ^findPathForMover C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:7168
+      3  100.0%            JS: ^monsterHasPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:6987
+      2    1.3%      JS: *stat node:internal/modules/cjs/loader:249:14
+      2  100.0%        JS: ^<anonymous> node:internal/modules/cjs/loader:701:28
+      2  100.0%          JS: ^<anonymous> node:internal/modules/cjs/loader:1318:35
+      2  100.0%            JS: ^T._resolveFilename file:///C:/Users/osaif/Documents/Claude/Projects/MMO%20idle/node_modules/.pnpm/tsx@4.22.3/node_modules/tsx/dist/register-D_B8UL5H.mjs:2:14802
+      2    1.3%      Builtin: SetPrototypeAdd
+      2  100.0%        JS: *findPathOnGrid C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:3705
+      2  100.0%          JS: ^findPathForMover C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:7168
+      2  100.0%            JS: ^monsterHasPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:6987
+    140   31.9%    JS: ^readFileSync node:fs:435:22
+    118   84.3%      JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\index-D9F1FXzN.cjs:13:825
+    118  100.0%        JS: ^get C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\index-D9F1FXzN.cjs:13:1379
+    118  100.0%          JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\index-D9F1FXzN.cjs:14:2235
+    118  100.0%            JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\register-BOkp8V6j.cjs:9:2477
+     11    7.9%      JS: ^sourceMapFromFile node:internal/source_map/source_map_cache:280:27
+     11  100.0%        JS: ^dataFromUrl node:internal/source_map/source_map_cache:235:21
+     11  100.0%          JS: ^maybeCacheSourceMap node:internal/source_map/source_map_cache:151:29
+     11  100.0%            JS: ^wrapSafe node:internal/modules/cjs/loader:1620:18
+      7    5.0%      JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\register-BOkp8V6j.cjs:9:2477
+      7  100.0%        JS: ^<anonymous> node:internal/modules/cjs/loader:1450:33
+      7  100.0%          JS: ^<anonymous> node:internal/modules/cjs/loader:1188:24
+      7  100.0%            JS: ^traceSync node:diagnostics_channel:320:12
+      4    2.9%      JS: ^dataFromUrl node:internal/source_map/source_map_cache:235:21
+      4  100.0%        JS: ^maybeCacheSourceMap node:internal/source_map/source_map_cache:151:29
+      4  100.0%          JS: ^wrapSafe node:internal/modules/cjs/loader:1620:18
+      4  100.0%            JS: ^<anonymous> node:internal/modules/cjs/loader:1680:37
+     36    8.2%    JS: ^getNearestParentPackageJSON node:internal/modules/package_json_reader:133:37
+     36  100.0%      JS: ^trySelf node:internal/modules/cjs/loader:605:17
+     36  100.0%        JS: ^<anonymous> node:internal/modules/cjs/loader:1318:35
+     36  100.0%          JS: ^T._resolveFilename file:///C:/Users/osaif/Documents/Claude/Projects/MMO%20idle/node_modules/.pnpm/tsx@4.22.3/node_modules/tsx/dist/register-D_B8UL5H.mjs:2:14802
+     36  100.0%            JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\register-BOkp8V6j.cjs:10:1014
+     21    4.8%    JS: ^wrapSafe node:internal/modules/cjs/loader:1620:18
+     21  100.0%      JS: ^<anonymous> node:internal/modules/cjs/loader:1680:37
+     21  100.0%        JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\register-BOkp8V6j.cjs:9:2477
+     21  100.0%          JS: ^<anonymous> node:internal/modules/cjs/loader:1450:33
+     21  100.0%            JS: ^<anonymous> node:internal/modules/cjs/loader:1188:24
+     13    3.0%    JS: ^stat node:internal/modules/cjs/loader:249:14
+      7   53.8%      JS: ^tryFile node:internal/modules/cjs/loader:538:17
+      7  100.0%        JS: ^tryExtensions node:internal/modules/cjs/loader:553:23
+      7  100.0%          JS: ^<anonymous> node:internal/modules/cjs/loader:701:28
+      7  100.0%            JS: ^<anonymous> node:internal/modules/cjs/loader:1318:35
+      5   38.5%      JS: ^<anonymous> node:internal/modules/cjs/loader:701:28
+      5  100.0%        JS: ^<anonymous> node:internal/modules/cjs/loader:1318:35
+      5  100.0%          JS: ^T._resolveFilename file:///C:/Users/osaif/Documents/Claude/Projects/MMO%20idle/node_modules/.pnpm/tsx@4.22.3/node_modules/tsx/dist/register-D_B8UL5H.mjs:2:14802
+      4   80.0%            JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\register-BOkp8V6j.cjs:10:1014
+      1   20.0%            JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\register-BOkp8V6j.cjs:10:1014
+      1    7.7%      JS: ^tryExtensions node:internal/modules/cjs/loader:553:23
+      1  100.0%        JS: ^<anonymous> node:internal/modules/cjs/loader:701:28
+      1  100.0%          JS: ^<anonymous> node:internal/modules/cjs/loader:1318:35
+      1  100.0%            JS: ^T._resolveFilename file:///C:/Users/osaif/Documents/Claude/Projects/MMO%20idle/node_modules/.pnpm/tsx@4.22.3/node_modules/tsx/dist/register-D_B8UL5H.mjs:2:14802
+      6    1.4%    JS: ^realpathSync node:fs:2711:22
+      6  100.0%      JS: ^toRealPath node:internal/modules/helpers:60:20
+      6  100.0%        JS: ^<anonymous> node:internal/modules/cjs/loader:701:28
+      6  100.0%          JS: ^<anonymous> node:internal/modules/cjs/loader:1318:35
+      6  100.0%            JS: ^T._resolveFilename file:///C:/Users/osaif/Documents/Claude/Projects/MMO%20idle/node_modules/.pnpm/tsx@4.22.3/node_modules/tsx/dist/register-D_B8UL5H.mjs:2:14802
+
+    243    7.6%  JS: *moverOverlapsBlockShapes C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\spatial.ts:2:13269
+    120   49.4%    JS: *isPaddedSegmentClear C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:1893
+    120  100.0%      JS: *findPathOnGrid C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:3705
+    117   97.5%        JS: ^findPathForMover C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:7168
+    109   93.2%          JS: ^monsterHasPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:6987
+    109  100.0%            JS: ^pickPathReachableTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:8742
+      8    6.8%          JS: ^reachablePullPoint C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:9368
+      8  100.0%            JS: ^steerTowardTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:16146
+      3    2.5%        JS: ^planPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:4969
+      3  100.0%          JS: ^requestNavMotion C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:7184
+      3  100.0%            JS: ^setEntityMotion C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:2318
+    110   45.3%    JS: *resolveMoveAgainstBlocks C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\spatial.ts:2:13554
+    109   99.1%      JS: *isPaddedSegmentClear C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:1893
+    107   98.2%        JS: *findPathOnGrid C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:3705
+    102   95.3%          JS: ^findPathForMover C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:7168
+     96   94.1%            JS: ^monsterHasPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:6987
+      6    5.9%            JS: ^reachablePullPoint C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:9368
+      5    4.7%          JS: ^planPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:4969
+      5  100.0%            JS: ^requestNavMotion C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:7184
+      2    1.8%        JS: *isPathPaddedClear C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:6886
+      2  100.0%          JS: *findPathOnGrid C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:3705
+      2  100.0%            JS: ^findPathForMover C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:7168
+      5    2.1%    JS: *resolveObstaclesForNode C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\nodeFeatures.ts:2:2306
+      5  100.0%      JS: *processMoverStep C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:9430
+      5  100.0%        JS: *updateMovement C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:12471
+      5  100.0%          JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      5  100.0%            JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      4    1.6%    JS: *findPathOnGrid C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:3705
+      4  100.0%      JS: ^findPathForMover C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:7168
+      4  100.0%        JS: ^monsterHasPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:6987
+      4  100.0%          JS: ^pickPathReachableTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:8742
+      4  100.0%            JS: ^selectAutoCombatAction C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:2739
+      4    1.6%    JS: *depenetrateIfWedged C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:6700
+      3   75.0%      JS: *updateMovement C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:12471
+      3  100.0%        JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      3  100.0%          JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      3  100.0%            JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      1   25.0%      JS: ^updateMovement C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:12471
+      1  100.0%        JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1  100.0%          JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      1  100.0%            JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+
+    209    6.6%  JS: *findPathOnGrid C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:3705
+    200   95.7%    JS: ^findPathForMover C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:7168
+    192   96.0%      JS: ^monsterHasPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:6987
+    192  100.0%        JS: ^pickPathReachableTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:8742
+    192  100.0%          JS: ^selectAutoCombatAction C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:2739
+    181   94.3%            JS: ^updateAutoTargets C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:12060
+     11    5.7%            JS: *updateAutoTargets C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:12060
+      8    4.0%      JS: ^reachablePullPoint C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:9368
+      8  100.0%        JS: ^steerTowardTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:16146
+      5   62.5%          JS: *updateAutoTargets C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:12060
+      5  100.0%            JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      3   37.5%          JS: ^updateAutoTargets C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:12060
+      3  100.0%            JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      9    4.3%    JS: ^planPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:4969
+      8   88.9%      JS: ^requestNavMotion C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:7184
+      8  100.0%        JS: ^setEntityMotion C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:2318
+      5   62.5%          JS: *updateMonsters C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\ai.ts:2:5951
+      5  100.0%            JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      2   25.0%          JS: ^setMonsterTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\ai.ts:2:5021
+      2  100.0%            JS: ^updateMonsters C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\ai.ts:2:5951
+      1   12.5%          JS: ^steerTowardTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:16146
+      1  100.0%            JS: ^updateAutoTargets C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:12060
+      1   11.1%      JS: *setEntityMotion C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:2318
+      1  100.0%        JS: *updateMonsters C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\ai.ts:2:5951
+      1  100.0%          JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1  100.0%            JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+
+    154    4.8%  Builtin: KeyedLoadIC_Megamorphic
+     39   25.3%    JS: *isPaddedSegmentClear C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:1893
+     38   97.4%      JS: *findPathOnGrid C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:3705
+     36   94.7%        JS: ^findPathForMover C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:7168
+     35   97.2%          JS: ^monsterHasPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:6987
+     35  100.0%            JS: ^pickPathReachableTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:8742
+      1    2.8%          JS: ^reachablePullPoint C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:9368
+      1  100.0%            JS: ^steerTowardTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:16146
+      2    5.3%        JS: ^planPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:4969
+      2  100.0%          JS: ^requestNavMotion C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:7184
+      2  100.0%            JS: ^setEntityMotion C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:2318
+      1    2.6%      JS: ^isPathPaddedClear C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:6886
+      1  100.0%        JS: *findPathOnGrid C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:3705
+      1  100.0%          JS: ^planPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:4969
+      1  100.0%            JS: ^requestNavMotion C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:7184
+     20   13.0%    JS: *findPathOnGrid C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:3705
+     20  100.0%      JS: ^findPathForMover C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:7168
+     18   90.0%        JS: ^monsterHasPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:6987
+     18  100.0%          JS: ^pickPathReachableTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:8742
+     18  100.0%            JS: ^selectAutoCombatAction C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:2739
+      2   10.0%        JS: ^reachablePullPoint C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:9368
+      2  100.0%          JS: ^steerTowardTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:16146
+      2  100.0%            JS: *updateAutoTargets C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:12060
+     17   11.0%    JS: ^findPathForMover C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:7168
+     16   94.1%      JS: ^monsterHasPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:6987
+     16  100.0%        JS: ^pickPathReachableTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:8742
+     16  100.0%          JS: ^selectAutoCombatAction C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:2739
+     12   75.0%            JS: ^updateAutoTargets C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:12060
+      4   25.0%            JS: *updateAutoTargets C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:12060
+      1    5.9%      JS: ^reachablePullPoint C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:9368
+      1  100.0%        JS: ^steerTowardTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:16146
+      1  100.0%          JS: *updateAutoTargets C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:12060
+      1  100.0%            JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+     17   11.0%    JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\index.ts:2:392
+      2   11.8%      JS: ^updateRuneDerivedConfig C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\runeConfig.ts:2:5080
+      2  100.0%        JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      2  100.0%          JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      2  100.0%            JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      2   11.8%      JS: *updateAllyEmpower C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\allyEmpower.ts:2:1120
+      2  100.0%        JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      2  100.0%          JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      2  100.0%            JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      2   11.8%      JS: *bestTargetInReach C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\collision\CollisionIndex.ts:2:1666
+      2  100.0%        JS: ^updateCombat C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\engine\combat.ts:2:51751
+      2  100.0%          JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      2  100.0%            JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      1    5.9%      JS: ~syncPlayerControlLockout C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\status\playerControlLockout.ts:2:1691
+      1  100.0%        JS: ~updatePlayerControlLockouts C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\status\playerControlLockout.ts:2:2554
+      1  100.0%          JS: ^updateCombatState C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\engine\combatState.ts:2:1506
+      1  100.0%            JS: ~tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1    5.9%      JS: ^requestNavMotion C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:7184
+      1  100.0%        JS: ^setEntityMotion C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:2318
+      1  100.0%          JS: ^setMonsterTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\ai.ts:2:5021
+      1  100.0%            JS: *updateMonsters C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\ai.ts:2:5951
+      1    5.9%      JS: ^isRangedAutoPlayer C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:17277
+      1  100.0%        JS: ^selectAutoCombatAction C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:2739
+      1  100.0%          JS: *updateAutoTargets C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:12060
+      1  100.0%            JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1    5.9%      JS: ^getAutoTargetId C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:1609
+      1  100.0%        JS: ^resolveIntent C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\autoIntent.ts:2:1669
+      1  100.0%          JS: ^updateAutoIntent C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\autoIntent.ts:2:1340
+      1  100.0%            JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1    5.9%      JS: ^DEBUFF_BUFFS.category C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\buffs\buffSync.ts:2:12467
+      1  100.0%        JS: *syncPlayerBuffs C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\buffs\buffSync.ts:2:13613
+      1  100.0%          JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1  100.0%            JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      1    5.9%      JS: *updateMonsters C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\ai.ts:2:5951
+      1  100.0%        JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1  100.0%          JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      1  100.0%            JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      1    5.9%      JS: *suppressedFeatureIdsForEntity C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:3508
+      1  100.0%        JS: *depenetrateIfWedged C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:6700
+      1  100.0%          JS: *updateMovement C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:12471
+      1  100.0%            JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1    5.9%      JS: *passesGates C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:6091
+      1  100.0%        JS: *<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:3694
+      1  100.0%          Builtin: ArrayFilter
+      1  100.0%            JS: ^selectAutoCombatAction C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:2739
+      1    5.9%      JS: *isMonsterFrozen C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\classes\archetypes\dot\t3\core\selectors.ts:2:2610
+      1  100.0%        JS: *updateMonsters C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\ai.ts:2:5951
+      1  100.0%          JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1  100.0%            JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      1    5.9%      JS: *depenetrateIfWedged C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:6700
+      1  100.0%        JS: ^updateMovement C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:12471
+      1  100.0%          JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1  100.0%            JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      1    5.9%      JS: *applyAndTickMonsterNodeFeatures C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\nodeFeatures.ts:2:13761
+      1  100.0%        JS: *updateNodeFeatures C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\nodeFeatures.ts:2:5687
+      1  100.0%          JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1  100.0%            JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      5    3.2%    JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\spatial.ts:2:574
+      5  100.0%      JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\index.ts:2:392
+      1   20.0%        JS: ^footprintObstructed C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\dynamicHazardAvoidance.ts:2:1925
+      1  100.0%          JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\dynamicHazardAvoidance.ts:2:3045
+      1  100.0%            JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\dynamicHazardAvoidance.ts:2:7229
+      1   20.0%        JS: *processMoverStep C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:9430
+      1  100.0%          JS: ^updateMovement C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:12471
+      1  100.0%            JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1   20.0%        JS: *depenetrateIfWedged C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:6700
+      1  100.0%          JS: *updateMovement C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:12471
+      1  100.0%            JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1   20.0%        JS: *bestTargetInReach C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\collision\CollisionIndex.ts:2:1666
+      1  100.0%          JS: ^updateCombat C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\engine\combat.ts:2:51751
+      1  100.0%            JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1   20.0%        JS: *applyAndTickMonsterNodeFeatures C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\nodeFeatures.ts:2:13761
+      1  100.0%          JS: ^updateNodeFeatures C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\nodeFeatures.ts:2:5687
+      1  100.0%            JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      2    1.3%    JS: ^removeComponent C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\miniplex@2.0.0\node_modules\miniplex\dist\miniplex.cjs.dev.js:379:36
+      2  100.0%      JS: *stopMonster C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\ai.ts:2:5164
+      2  100.0%        JS: *updateMonsters C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\ai.ts:2:5951
+      2  100.0%          JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      2  100.0%            JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      2    1.3%    JS: ^planPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:4969
+      2  100.0%      JS: ^requestNavMotion C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:7184
+      2  100.0%        JS: ^setEntityMotion C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:2318
+      1   50.0%          JS: ^setMonsterTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\ai.ts:2:5021
+      1  100.0%            JS: ^updateMonsters C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\ai.ts:2:5951
+      1   50.0%          JS: *updateMonsters C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\ai.ts:2:5951
+      1  100.0%            JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      2    1.3%    JS: ^get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\stances.ts:2:574
+      2  100.0%      JS: ^resolveFinalDamageMultipliers C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\finalDamage.ts:2:1307
+      2  100.0%        JS: ^playerFinalDamageMultipliers C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\damage\finalDamage.ts:2:1097
+      2  100.0%          JS: ^incomingFinalDamage C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\damage\finalDamage.ts:2:1907
+      2  100.0%            JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\damage\playerAmplifiers.ts:2:1178
+      2    1.3%    JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      2  100.0%      JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      2  100.0%        JS: ^<anonymous> node:internal/modules/cjs/loader:1680:37
+      2  100.0%          JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\register-BOkp8V6j.cjs:9:2477
+      2  100.0%            JS: ^<anonymous> node:internal/modules/cjs/loader:1450:33
+      2    1.3%    JS: *updateMovement C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:12471
+      2  100.0%      JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      2  100.0%        JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      2  100.0%          JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      2  100.0%            JS: ^<anonymous> node:internal/modules/cjs/loader:1680:37
+      2    1.3%    JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      2  100.0%      JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      2  100.0%        JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      2  100.0%          JS: ^<anonymous> node:internal/modules/cjs/loader:1680:37
+      2  100.0%            JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\register-BOkp8V6j.cjs:9:2477
+      2    1.3%    JS: *suppressedFeatureIdsForEntity C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:3508
+      1   50.0%      JS: *processMoverStep C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:9430
+      1  100.0%        JS: *updateMovement C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:12471
+      1  100.0%          JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1  100.0%            JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      1   50.0%      JS: *depenetrateIfWedged C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:6700
+      1  100.0%        JS: *updateMovement C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:12471
+      1  100.0%          JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1  100.0%            JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      2    1.3%    JS: *setAttackTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targeting.ts:2:2143
+      2  100.0%      JS: *updateMonsters C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\ai.ts:2:5951
+      2  100.0%        JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      2  100.0%          JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      2  100.0%            JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      2    1.3%    JS: *recruitSwarms C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\packs.ts:2:2815
+      1   50.0%      JS: ^updatePacks C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\packs.ts:2:4825
+      1  100.0%        JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1  100.0%          JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      1  100.0%            JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      1   50.0%      JS: *updatePacks C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\packs.ts:2:4825
+      1  100.0%        JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1  100.0%          JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      1  100.0%            JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      2    1.3%    JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\components\index.ts:2:392
+      2  100.0%      JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\index.ts:2:392
+      1   50.0%        JS: ^maybeFireTechnique C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\player\abilities\abilityFiring.ts:2:9351
+      1  100.0%          JS: ^updateAbilityFiring C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\player\abilities\abilityFiring.ts:2:2185
+      1  100.0%            JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1   50.0%        JS: *updateCombatState C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\engine\combatState.ts:2:1506
+      1  100.0%          JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1  100.0%            JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      2    1.3%    JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\components\combat\tracksCombat.ts:2:574
+      2  100.0%      JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\components\index.ts:2:392
+      2  100.0%        JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\index.ts:2:392
+      1   50.0%          JS: ^updateRuneDerivedConfig C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\runeConfig.ts:2:5080
+      1  100.0%            JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1   50.0%          JS: *updateDefensiveSystems C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\defense\index.ts:2:3727
+      1  100.0%            JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      2    1.3%    JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\index.ts:2:392
+      2  100.0%      JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\index.ts:2:392
+      1   50.0%        JS: *processMoverStep C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:9430
+      1  100.0%          JS: *updateMovement C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:12471
+      1  100.0%            JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1   50.0%        JS: *navigationPadForEntity C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:3087
+      1  100.0%          JS: ^monsterHasPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:6987
+      1  100.0%            JS: ^pickPathReachableTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:8742
+      2    1.3%    JS: *candidatesInPullRange C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\monsterTargeting.ts:2:1806
+      2  100.0%      JS: *selectMonsterAggroCandidate C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\monsterTargeting.ts:2:1337
+      2  100.0%        JS: *updateMonsters C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\ai.ts:2:5951
+      2  100.0%          JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      2  100.0%            JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+
+    122    3.8%  JS: *clampSegmentBeforeShapes C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\spatial.ts:2:12694
+    118   96.7%    JS: *resolveMoveAgainstBlocks C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\spatial.ts:2:13554
+    118  100.0%      JS: *isPaddedSegmentClear C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:1893
+    117   99.2%        JS: *findPathOnGrid C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:3705
+    113   96.6%          JS: ^findPathForMover C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:7168
+    102   90.3%            JS: ^monsterHasPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:6987
+     11    9.7%            JS: ^reachablePullPoint C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:9368
+      4    3.4%          JS: ^planPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:4969
+      4  100.0%            JS: ^requestNavMotion C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:7184
+      2    1.6%    JS: *resolveObstaclesForNode C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\nodeFeatures.ts:2:2306
+      2  100.0%      JS: *processMoverStep C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:9430
+      1   50.0%        JS: ^updateMovement C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:12471
+      1  100.0%          JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1  100.0%            JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      1   50.0%        JS: *updateMovement C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:12471
+      1  100.0%          JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1  100.0%            JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      2    1.6%    JS: *isPaddedSegmentClear C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:1893
+      2  100.0%      JS: *findPathOnGrid C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:3705
+      2  100.0%        JS: ^findPathForMover C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:7168
+      2  100.0%          JS: ^monsterHasPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:6987
+      2  100.0%            JS: ^pickPathReachableTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:8742
+
+    109    3.4%  Builtin: LoadIC
+     16   14.7%    JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+     16  100.0%      JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+     16  100.0%        JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+     16  100.0%          JS: ^<anonymous> node:internal/modules/cjs/loader:1680:37
+     16  100.0%            JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\register-BOkp8V6j.cjs:9:2477
+      7    6.4%    JS: *ensureTrainingDummies C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\testRoom.ts:2:1921
+      7  100.0%      JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      7  100.0%        JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      7  100.0%          JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      7  100.0%            JS: ^<anonymous> node:internal/modules/cjs/loader:1680:37
+      5    4.6%    JS: *updateMovement C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:12471
+      5  100.0%      JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      5  100.0%        JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      5  100.0%          JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      5  100.0%            JS: ^<anonymous> node:internal/modules/cjs/loader:1680:37
+      5    4.6%    JS: *MONSTER_DATABASE C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\monsterDatabase.ts:2:810
+      5  100.0%      JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\monsterDatabase.ts:2:496
+      5  100.0%        JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\index.ts:2:392
+      2   40.0%          JS: *suppressedFeatureIdsForEntity C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:3508
+      2  100.0%            JS: *depenetrateIfWedged C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:6700
+      2   40.0%          JS: *recruitSwarms C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\packs.ts:2:2815
+      2  100.0%            JS: *updatePacks C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\packs.ts:2:4825
+      1   20.0%          JS: *updateShellUp C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\shellUp.ts:2:2141
+      1  100.0%            JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      4    3.7%    JS: ^updateMonsters C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\ai.ts:2:5951
+      4  100.0%      JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      4  100.0%        JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      4  100.0%          JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      4  100.0%            JS: ^<anonymous> node:internal/modules/cjs/loader:1680:37
+      3    2.8%    JS: *updateMonsters C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\ai.ts:2:5951
+      3  100.0%      JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      3  100.0%        JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      3  100.0%          JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      3  100.0%            JS: ^<anonymous> node:internal/modules/cjs/loader:1680:37
+      3    2.8%    JS: *monsterEntitiesInNode C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\monsterLifecycle.ts:2:1564
+      3  100.0%      Builtin: GeneratorPrototypeNext
+      2   66.7%        JS: ^selectAutoCombatAction C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:2739
+      2  100.0%          JS: ^updateAutoTargets C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:12060
+      2  100.0%            JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1   33.3%        JS: *corpseLifetimeMs C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\corpses.ts:2:1365
+      1  100.0%          JS: ^updateCorpses C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\corpses.ts:2:4610
+      1  100.0%            JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      3    2.8%    JS: *isMonsterStunned C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\status\stun.ts:2:2042
+      3  100.0%      JS: *updateMonsters C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\ai.ts:2:5951
+      3  100.0%        JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      3  100.0%          JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      3  100.0%            JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      2    1.8%    JS: ^updateTestRoomInteract C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\testRoomInteract.ts:2:1365
+      2  100.0%      JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      2  100.0%        JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      2  100.0%          JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      2  100.0%            JS: ^<anonymous> node:internal/modules/cjs/loader:1680:37
+      2    1.8%    JS: ^updateMonsterSlows C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\status\monsterControl.ts:2:2421
+      2  100.0%      JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      2  100.0%        JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      2  100.0%          JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      2  100.0%            JS: ^<anonymous> node:internal/modules/cjs/loader:1680:37
+      2    1.8%    JS: ^updateDefensiveSystems C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\defense\index.ts:2:3727
+      2  100.0%      JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      2  100.0%        JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      2  100.0%          JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      2  100.0%            JS: ^<anonymous> node:internal/modules/cjs/loader:1680:37
+      2    1.8%    JS: ^steerTowardTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:16146
+      1   50.0%      JS: ^updateAutoTargets C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:12060
+      1  100.0%        JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1  100.0%          JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      1  100.0%            JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      1   50.0%      JS: *updateAutoTargets C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:12060
+      1  100.0%        JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1  100.0%          JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      1  100.0%            JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      2    1.8%    JS: ^selectAutoCombatAction C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:2739
+      1   50.0%      JS: ^updateAutoTargets C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:12060
+      1  100.0%        JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1  100.0%          JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      1  100.0%            JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      1   50.0%      JS: *updateAutoTargets C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:12060
+      1  100.0%        JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1  100.0%          JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      1  100.0%            JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      2    1.8%    JS: ^remove C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\@miniplex+bucket@2.0.0\node_modules\@miniplex\bucket\dist\miniplex-bucket.cjs.dev.js:267:27
+      1   50.0%      JS: *removeComponent C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\miniplex@2.0.0\node_modules\miniplex\dist\miniplex.cjs.dev.js:379:36
+      1  100.0%        JS: *stopMonster C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\ai.ts:2:5164
+      1  100.0%          JS: *updateMonsters C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\ai.ts:2:5951
+      1  100.0%            JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1   50.0%      JS: *reindex C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\miniplex@2.0.0\node_modules\miniplex\dist\miniplex.cjs.dev.js:501:28
+      1  100.0%        JS: ^removeComponent C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\miniplex@2.0.0\node_modules\miniplex\dist\miniplex.cjs.dev.js:379:36
+      1  100.0%          JS: *stopEntity C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:2745
+      1  100.0%            JS: *processMoverStep C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:9430
+      2    1.8%    JS: *updateNodeFeatures C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\nodeFeatures.ts:2:5687
+      2  100.0%      JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      2  100.0%        JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      2  100.0%          JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      2  100.0%            JS: ^<anonymous> node:internal/modules/cjs/loader:1680:37
+      2    1.8%    JS: *updateAllyEmpower C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\allyEmpower.ts:2:1120
+      2  100.0%      JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      2  100.0%        JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      2  100.0%          JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      2  100.0%            JS: ^<anonymous> node:internal/modules/cjs/loader:1680:37
+      2    1.8%    JS: *corpseLifetimeMs C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\corpses.ts:2:1365
+      2  100.0%      JS: ^updateCorpses C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\corpses.ts:2:4610
+      2  100.0%        JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      2  100.0%          JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      2  100.0%            JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      2    1.8%    JS: *applyAndTickMonsterNodeFeatures C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\nodeFeatures.ts:2:13761
+      1   50.0%      JS: ^updateNodeFeatures C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\nodeFeatures.ts:2:5687
+      1  100.0%        JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1  100.0%          JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      1  100.0%            JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      1   50.0%      JS: *updateNodeFeatures C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\nodeFeatures.ts:2:5687
+      1  100.0%        JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1  100.0%          JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      1  100.0%            JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+
+    106    3.3%  JS: *resolveMoveAgainstBlocks C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\spatial.ts:2:13554
+    100   94.3%    JS: *isPaddedSegmentClear C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:1893
+    100  100.0%      JS: *findPathOnGrid C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:3705
+     96   96.0%        JS: ^findPathForMover C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:7168
+     91   94.8%          JS: ^monsterHasPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:6987
+     91  100.0%            JS: ^pickPathReachableTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:8742
+      5    5.2%          JS: ^reachablePullPoint C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:9368
+      5  100.0%            JS: ^steerTowardTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:16146
+      4    4.0%        JS: ^planPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:4969
+      4  100.0%          JS: ^requestNavMotion C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:7184
+      4  100.0%            JS: ^setEntityMotion C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:2318
+      6    5.7%    JS: *findPathOnGrid C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:3705
+      5   83.3%      JS: ^findPathForMover C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:7168
+      5  100.0%        JS: ^monsterHasPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:6987
+      5  100.0%          JS: ^pickPathReachableTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:8742
+      5  100.0%            JS: ^selectAutoCombatAction C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:2739
+      1   16.7%      JS: ^planPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:4969
+      1  100.0%        JS: ^requestNavMotion C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:7184
+      1  100.0%          JS: ^setEntityMotion C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:2318
+      1  100.0%            JS: *updateMonsters C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\ai.ts:2:5951
+
+     65    2.0%  Builtin: FindOrderedHashSetEntry
+     50   76.9%    JS: ^findPathForMover C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:7168
+     49   98.0%      JS: ^monsterHasPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:6987
+     49  100.0%        JS: ^pickPathReachableTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:8742
+     49  100.0%          JS: ^selectAutoCombatAction C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:2739
+     48   98.0%            JS: ^updateAutoTargets C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:12060
+      1    2.0%            JS: *updateAutoTargets C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:12060
+      1    2.0%      JS: ^reachablePullPoint C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:9368
+      1  100.0%        JS: ^steerTowardTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:16146
+      1  100.0%          JS: *updateAutoTargets C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:12060
+      1  100.0%            JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+     10   15.4%    JS: *growTerritories C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\world\map\authoring.ts:2:2736
+     10  100.0%      JS: *growTerritories C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\world\map\authoring.ts:2:2736
+     10  100.0%        JS: *growTerritories C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\world\map\authoring.ts:2:2736
+     10  100.0%          JS: *growTerritories C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\world\map\authoring.ts:2:2736
+     10  100.0%            JS: *growTerritories C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\world\map\authoring.ts:2:2736
+      2    3.1%    JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      2  100.0%      JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      2  100.0%        JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      2  100.0%          JS: ^<anonymous> node:internal/modules/cjs/loader:1680:37
+      2  100.0%            JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\register-BOkp8V6j.cjs:9:2477
+      1    1.5%    JS: ^planPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:4969
+      1  100.0%      JS: ^requestNavMotion C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:7184
+      1  100.0%        JS: ^setEntityMotion C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:2318
+      1  100.0%          JS: ^steerTowardTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:16146
+      1  100.0%            JS: ^updateAutoTargets C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:12060
+      1    1.5%    JS: *findPathOnGrid C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:3705
+      1  100.0%      JS: ^findPathForMover C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:7168
+      1  100.0%        JS: ^monsterHasPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:6987
+      1  100.0%          JS: ^pickPathReachableTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:8742
+      1  100.0%            JS: ^selectAutoCombatAction C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:2739
+      1    1.5%    Builtin: SetPrototypeHas
+      1  100.0%      JS: ^canBeRequiredWithoutScheme node:internal/bootstrap/realm:298:36
+      1  100.0%        JS: ^normalizeRequirableId node:internal/bootstrap/realm:302:31
+      1  100.0%          JS: ^<anonymous> node:internal/modules/cjs/loader:1318:35
+      1  100.0%            JS: ^T._resolveFilename file:///C:/Users/osaif/Documents/Claude/Projects/MMO%20idle/node_modules/.pnpm/tsx@4.22.3/node_modules/tsx/dist/register-D_B8UL5H.mjs:2:14802
+
+     62    1.9%  JS: *segmentEntryT C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\spatial.ts:2:8652
+     58   93.5%    JS: *clampSegmentBeforeShapes C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\spatial.ts:2:12694
+     58  100.0%      JS: *resolveMoveAgainstBlocks C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\spatial.ts:2:13554
+     58  100.0%        JS: *isPaddedSegmentClear C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:1893
+     58  100.0%          JS: *findPathOnGrid C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:3705
+     55   94.8%            JS: ^findPathForMover C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:7168
+      3    5.2%            JS: ^planPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:4969
+      4    6.5%    JS: *resolveMoveAgainstBlocks C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\spatial.ts:2:13554
+      4  100.0%      JS: *isPaddedSegmentClear C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:1893
+      4  100.0%        JS: *findPathOnGrid C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:3705
+      4  100.0%          JS: ^findPathForMover C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:7168
+      4  100.0%            JS: ^monsterHasPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:6987
+
+     42    1.3%  Builtin: MathHypot
+     21   50.0%    JS: *bestTargetInReach C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\collision\CollisionIndex.ts:2:1666
+     17   81.0%      JS: *updateCombat C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\engine\combat.ts:2:51751
+     17  100.0%        JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+     17  100.0%          JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+     17  100.0%            JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      3   14.3%      JS: ^updateCombat C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\engine\combat.ts:2:51751
+      3  100.0%        JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      3  100.0%          JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      3  100.0%            JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      1    4.8%      JS: ^abilityTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\player\abilities\abilityTargeting.ts:2:3459
+      1  100.0%        JS: ^beginAbilityCast C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\player\abilities\abilityCasting.ts:2:1769
+      1  100.0%          JS: ^maybeFireTechnique C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\player\abilities\abilityFiring.ts:2:9351
+      1  100.0%            JS: ^updateAbilityFiring C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\player\abilities\abilityFiring.ts:2:2185
+     12   28.6%    JS: *isPaddedSegmentClear C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:1893
+     12  100.0%      JS: *findPathOnGrid C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:3705
+     11   91.7%        JS: ^findPathForMover C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:7168
+     10   90.9%          JS: ^monsterHasPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:6987
+     10  100.0%            JS: ^pickPathReachableTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:8742
+      1    9.1%          JS: ^reachablePullPoint C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:9368
+      1  100.0%            JS: ^steerTowardTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:16146
+      1    8.3%        JS: ^planPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:4969
+      1  100.0%          JS: ^requestNavMotion C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:7184
+      1  100.0%            JS: ^setEntityMotion C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:2318
+      2    4.8%    JS: *hitboxGap C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\spatial.ts:2:3808
+      1   50.0%      JS: ^steerTowardTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:16146
+      1  100.0%        JS: ^updateAutoTargets C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:12060
+      1  100.0%          JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1  100.0%            JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      1   50.0%      JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\spatial.ts:2:4592
+      1  100.0%        JS: ^approachPoint C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\spatial.ts:2:4211
+      1  100.0%          JS: ^attackPathGoal C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:8402
+      1  100.0%            JS: ^monsterHasPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:6987
+      2    4.8%    JS: *approachPoint C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\spatial.ts:2:4211
+      2  100.0%      JS: ^attackPathGoal C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:8402
+      2  100.0%        JS: ^monsterHasPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:6987
+      2  100.0%          JS: ^pickPathReachableTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:8742
+      2  100.0%            JS: ^selectAutoCombatAction C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:2739
+      2    4.8%    JS: *<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\spatial.ts:2:4592
+      2  100.0%      JS: ^approachPoint C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\spatial.ts:2:4211
+      2  100.0%        JS: ^attackPathGoal C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:8402
+      2  100.0%          JS: ^monsterHasPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:6987
+      2  100.0%            JS: ^pickPathReachableTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:8742
+      1    2.4%    JS: ^updateCombat C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\engine\combat.ts:2:51751
+      1  100.0%      JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1  100.0%        JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      1  100.0%          JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      1  100.0%            JS: ^<anonymous> node:internal/modules/cjs/loader:1680:37
+      1    2.4%    JS: *withinReach C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\query.ts:2:1078
+      1  100.0%      JS: ^pathEndsInAttackRange C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:8038
+      1  100.0%        JS: ^monsterHasPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:6987
+      1  100.0%          JS: ^pickPathReachableTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:8742
+      1  100.0%            JS: ^selectAutoCombatAction C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:2739
+      1    2.4%    JS: *canReach C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\collision\CollisionIndex.ts:2:1488
+      1  100.0%      JS: ^monsterHasPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:6987
+      1  100.0%        JS: ^pickPathReachableTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:8742
+      1  100.0%          JS: ^selectAutoCombatAction C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:2739
+      1  100.0%            JS: ^updateAutoTargets C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:12060
+
+     39    1.2%  Builtin: CallFunction_ReceiverIsAny
+      9   23.1%    JS: *isPaddedSegmentClear C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:1893
+      9  100.0%      JS: *findPathOnGrid C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:3705
+      7   77.8%        JS: ^findPathForMover C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:7168
+      7  100.0%          JS: ^monsterHasPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:6987
+      7  100.0%            JS: ^pickPathReachableTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:8742
+      2   22.2%        JS: ^planPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:4969
+      2  100.0%          JS: ^requestNavMotion C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:7184
+      2  100.0%            JS: ^setEntityMotion C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:2318
+      7   17.9%    JS: *findPathOnGrid C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:3705
+      7  100.0%      JS: ^findPathForMover C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\pathfind.ts:2:7168
+      7  100.0%        JS: ^monsterHasPath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:6987
+      7  100.0%          JS: ^pickPathReachableTarget C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:8742
+      7  100.0%            JS: ^selectAutoCombatAction C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:2739
+      5   12.8%    JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\index.ts:2:392
+      2   40.0%      JS: *applyAndTickMonsterNodeFeatures C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\nodeFeatures.ts:2:13761
+      2  100.0%        JS: *updateNodeFeatures C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\nodeFeatures.ts:2:5687
+      2  100.0%          JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      2  100.0%            JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      1   20.0%      JS: *updateMonsters C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\ai.ts:2:5951
+      1  100.0%        JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1  100.0%          JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      1  100.0%            JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      1   20.0%      JS: *suppressedFeatureIdsForEntity C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:3508
+      1  100.0%        JS: *processMoverStep C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:9430
+      1  100.0%          JS: *updateMovement C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:12471
+      1  100.0%            JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1   20.0%      JS: *blockShapes C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\collision\CollisionIndex.ts:2:1225
+      1  100.0%        JS: *resolveObstaclesForNode C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\nodeFeatures.ts:2:2306
+      1  100.0%          JS: *processMoverStep C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:9430
+      1  100.0%            JS: *updateMovement C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:12471
+      3    7.7%    JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\spatial.ts:2:574
+      3  100.0%      JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\index.ts:2:392
+      2   66.7%        JS: *applyAndTickMonsterNodeFeatures C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\nodeFeatures.ts:2:13761
+      2  100.0%          JS: *updateNodeFeatures C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\nodeFeatures.ts:2:5687
+      2  100.0%            JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1   33.3%        JS: *passesGates C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:6091
+      1  100.0%          JS: *<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\targetPriority.ts:2:3694
+      1  100.0%            Builtin: ArrayFilter
+      2    5.1%    JS: *updateStanceSwitch C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\player\stances\stanceSwitch.ts:2:3077
+      2  100.0%      JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      2  100.0%        JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      2  100.0%          JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      2  100.0%            JS: ^<anonymous> node:internal/modules/cjs/loader:1680:37
+      1    2.6%    JS: ^mirrorHpForecast C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\defense\core\hpForecast.ts:2:2274
+      1  100.0%      JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1  100.0%        JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      1  100.0%          JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      1  100.0%            JS: ^<anonymous> node:internal/modules/cjs/loader:1680:37
+      1    2.6%    JS: ^get C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\status\playerHardControl.ts:2:587
+      1  100.0%      JS: ^syncPlayerControlLockout C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\status\playerControlLockout.ts:2:1691
+      1  100.0%        JS: *updateCombatState C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\engine\combatState.ts:2:1506
+      1  100.0%          JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1  100.0%            JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      1    2.6%    JS: *updateAutoTargets C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\autoTarget.ts:2:12060
+      1  100.0%      JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1  100.0%        JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      1  100.0%          JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      1  100.0%            JS: ^<anonymous> node:internal/modules/cjs/loader:1680:37
+      1    2.6%    JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1  100.0%      JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      1  100.0%        JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:1
+      1  100.0%          JS: ^<anonymous> node:internal/modules/cjs/loader:1680:37
+      1  100.0%            JS: ~<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\node_modules\.pnpm\tsx@4.22.3\node_modules\tsx\dist\register-BOkp8V6j.cjs:9:2477
+      1    2.6%    JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\systems\monsterDebuffs.ts:2:574
+      1  100.0%      JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\index.ts:2:392
+      1  100.0%        JS: ^DEBUFF_BUFFS.category C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\buffs\buffSync.ts:2:10584
+      1  100.0%          JS: *syncPlayerBuffs C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\buffs\buffSync.ts:2:13613
+      1  100.0%            JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1    2.6%    JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\components\combat\tracksCombat.ts:2:574
+      1  100.0%      JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\components\index.ts:2:392
+      1  100.0%        JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\index.ts:2:392
+      1  100.0%          JS: ^getUndamagedMs C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\defense\barrier\barrier.ts:2:2021
+      1  100.0%            JS: ^runBarrierRecharge C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\defense\barrier\barrier.ts:2:3812
+      1    2.6%    JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\components\combat\statusEffects.ts:2:574
+      1  100.0%      JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\components\index.ts:2:392
+      1  100.0%        JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\index.ts:2:392
+      1  100.0%          JS: *<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\nodeFeatures.ts:2:15322
+      1  100.0%            JS: *applyFeatureEffectsToEntity C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\nodeFeatures.ts:2:15177
+      1    2.6%    JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\query.ts:2:574
+      1  100.0%      JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\index.ts:2:392
+      1  100.0%        JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\index.ts:2:392
+      1  100.0%          JS: ^canReach C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\collision\CollisionIndex.ts:2:1488
+      1  100.0%            JS: ^updateCombat C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\engine\combat.ts:2:51751
+      1    2.6%    JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\collision\index.ts:2:392
+      1  100.0%      JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\shared\src\index.ts:2:392
+      1  100.0%        JS: *processMoverStep C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:9430
+      1  100.0%          JS: *updateMovement C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:12471
+      1  100.0%            JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1    2.6%    JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\defense\core\pools.ts:2:587
+      1  100.0%      JS: ^runDebtDrain C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\defense\mitigation\hitToDot.ts:2:2831
+      1  100.0%        JS: ^updateDefensiveSystems C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\defense\index.ts:2:3727
+      1  100.0%          JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1  100.0%            JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      1    2.6%    JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\ai\runeConfig.ts:2:587
+      1  100.0%      JS: ^attackExplanation C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\autoIntent.ts:2:7110
+      1  100.0%        JS: ^attackIntent C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\autoIntent.ts:2:4132
+      1  100.0%          JS: ^resolveIntent C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\autoIntent.ts:2:1669
+      1  100.0%            JS: ^updateAutoIntent C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\autoIntent.ts:2:1340
+      1    2.6%    JS: *get C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\classes\archetypes\cooldown\t3\core\constants.ts:2:509
+      1  100.0%      JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\classes\archetypes\cooldown\t3\core\buffs.ts:2:1938
+      1  100.0%        JS: *syncPlayerBuffs C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\combat\buffs\buffSync.ts:2:13613
+      1  100.0%          JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+      1  100.0%            JS: ^<anonymous> C:\Users\osaif\Documents\Claude\Projects\MMO idle\reports\reward-mastery-study-2026-09-25\run-bot-diagnostic.ts:1:136
+      1    2.6%    JS: *attachMotionToward C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:4484
+      1  100.0%      JS: *advanceMovePath C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\pathMotion.ts:2:5822
+      1  100.0%        JS: *processMoverStep C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:9430
+      1  100.0%          JS: ^updateMovement C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\systems\world\movement.ts:2:12471
+      1  100.0%            JS: *tick C:\Users\osaif\Documents\Claude\Projects\MMO idle\server\src\world\World.ts:2:9746
+
