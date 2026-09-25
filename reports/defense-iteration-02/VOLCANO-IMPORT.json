@@ -1,0 +1,19 @@
+{
+  "sourceWorkspace": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\MMO idle",
+  "sourceStatus": "uncommitted other-agent six-value candidate",
+  "files": [
+    {
+      "path": "shared/src/data/monsters/volcano.monsters.ts",
+      "sha256": "0765e7160cdfe990011825bef8bdfa9fd73ac03b11d7946bee008b156ef891ed"
+    },
+    {
+      "path": "shared/src/world/nodeFeatures.ts",
+      "sha256": "4d5973c144468b19eaecd71786b57b13210a450ed52e02d0aeb371b69c1eb1f0"
+    },
+    {
+      "path": "server/test/ambientRamp.test.ts",
+      "sha256": "f0d7fb32057dbd93b4d44ca1cbcae92af5f896f5ca7d7b885bd297f8ac0ab3dc"
+    }
+  ],
+  "sourceHead": "ff98ba4513cb9fcb1e5752acfd56495268aff416"
+}
