@@ -192,12 +192,35 @@ a short standalone session, or bundle it with #4.
 
 ---
 
+## Session protocol (concurrent sessions)
+
+Wave 1 runs concurrently: Defense, XP pacing, T4 balance, and the Volcanic stall.
+Conduit and Economy start after Defense and XP merge.
+
+- **Isolation:** one branch `feat/<workstream>` off current `origin/develop`, in its own
+  worktree `../mmo-<workstream>`. Never work in the main checkout. Port Codex work from
+  its `codex/*` branch; all are pushed to origin as WIP snapshots.
+- **Decisions first:** ask the user the blocking questions in your section before
+  implementing.
+- **Numbers:** build mechanisms, correctness fixes, and harnesses. Expose tunables as
+  named constants with recommended values. The user signs off on final numbers.
+- **Evidence budget:** declare a bounded bench screen with a stop rule before running it.
+  Run at most 2 bench workers at a time, since other sessions share the machine. Raw
+  output goes in `D:/mmo-idle/<workstream>-<date>/`; commit only compact results (files
+  under 1 MB).
+- **Stat pins:** after changing any authored stat, grep `server/test` and
+  `server/bench/balance/*Spec.ts` for tests that pin the old value.
+- **Merging:**
+  1. Rebase on the latest `origin/develop`.
+  2. Run `pnpm typecheck` and the full `pnpm test`. Check the pass count, not the exit
+     code.
+  3. Fast-forward push to develop, but only when the user approves the merge.
+- **Close-out:** update only your own row and section here, plus the system's
+  current-state doc. Add player-facing notes in `updates/develop/<workstream>.md`.
+
 ## Housekeeping
 
-- **Unpushed branch work:** `codex/defense-redesign-01` (6 commits) and `codex/economy-v2`
-  (1 commit) exist only on this machine. The XP-only, reward-candidate, and T4 worktrees
-  have only uncommitted changes. Commit and push each one to its own branch at the start of
-  its session.
+- **Codex branches:** `codex/defense-redesign-01`, `codex/economy-v2`, `codex/reward-xp-only-validation`, `codex/t4-scaling-candidate-01` are pushed to origin with WIP snapshot commits (2026-09-25).
 - **Superseded:**
   - `codex/reward-mastery-candidate-01` holds candidate 01's rejected full package, with
     recipe edits.
