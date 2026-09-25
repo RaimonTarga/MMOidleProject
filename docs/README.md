@@ -1,5 +1,7 @@
 # Documentation Index
 
+Non-Volcano core follow-up (2026-09-25, unshipped): [results and roster review](../reports/core-strength-01/REPORT.md), [patch notes and new core concepts](../reports/core-strength-01/PATCH-NOTES.md).
+
 Map of every living doc, what it is for, and where history goes.
 Last sorted: 2026-09-17.
 

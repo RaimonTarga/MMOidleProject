@@ -283,7 +283,7 @@ export const desertRecipeEntries = [
     lineageId: 'core-force',
     cost: { yellow: 500 }, catalystCost: { dominion: 4 }, // family-tag: raw offence → Dominion
     stats: {}, tier: 2,
-    mechanicEffects: {"core.damage-dealt-pct": 0.18},
+    mechanicEffects: {"core.damage-dealt-pct": 0.22},
     icon: 'items/cores/force.png',
     description: "A focused damage amplifier; choosing it forgoes another core’s protection.",
   }],
@@ -298,7 +298,7 @@ export const desertRecipeEntries = [
     cost: { yellow: 1300 }, catalystCost: { dominion: 6 }, // family-tag: ranged alpha-strike → Dominion
     stats: {}, tier: 3,
     // Deliberately no mobility bonus — the Scout core is the one that buys spacing.
-    mechanicEffects: {"core.damage-dealt-pct": 0.25},
+    mechanicEffects: {"core.damage-dealt-pct": 0.3},
     icon: 'items/cores/sniper.png',
     description: "Amplifies ranged damage without reducing your health.",
   }],

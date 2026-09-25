@@ -257,7 +257,7 @@ export const tundraRecipeEntries = [
     stats: {}, tier: 3,
     // The cooldown clause is INERT without an ability tagged `mobility` (today:
     // Charge); the damage and movement halves are always on.
-    mechanicEffects: {"core.damage-dealt-pct": 0.12, "core.speed-mult": 0.25, "core.mobility-cooldown-reduction-pct": 0.25},
+    mechanicEffects: {"core.damage-dealt-pct": 0.18, "core.speed-mult": 0.25, "core.mobility-cooldown-reduction-pct": 0.25},
     icon: 'items/cores/scout.png',
     description: "Amplifies movement and mobility abilities, with a modest damage bonus.",
   }],

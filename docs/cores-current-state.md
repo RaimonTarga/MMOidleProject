@@ -1,6 +1,6 @@
 # Cores — Current State
 
-Branch note (2026-09-25): the values below include the experimental defense candidate, not a production release. See [patch notes and status](../reports/defense-redesign-01/PATCH-NOTES.md).
+Branch note (2026-09-25): the values below include the experimental defense candidate and its non-Volcano core follow-up, not a production release. See [current core patch notes](../reports/core-strength-01/PATCH-NOTES.md) and [defense candidate status](../reports/defense-redesign-01/PATCH-NOTES.md).
 
 Living truth for the **Core** equipment slot. Design source is
 `design_docs/CORE_DESIGN_PHILOSOPHY.md` (the locked foundation) and
@@ -114,7 +114,7 @@ available before a range exists.
 |---|---|---:|---:|---|
 | Juggernaut | mountain (22) | 2,200 blue | 7 heavy | HP + plating + DR layer; slower attacks and movement |
 | Controller | graveyard (4) | 2,100 purple | 7 fortified | Debuff duration + potency |
-| Catalyst | volcanic (10) | 2,300 red | 8 swarming | On-hit potency for attack damage |
+| Catalyst | volcanic (10) | 2,300 red | 8 swarming | Amplifies existing on-hit damage |
 
 Accelerant moved off Forest on 2026-08-22: Forest has no nodes past T2, so its
 level-15 gate cost a T3 character roughly 1,000 extra kills of outgrown content.
@@ -127,16 +127,16 @@ the family tag agree (Jungle also drops green).
 |---|---|
 | Tempered | +12% final damage, +12% max HP |
 | Survivalist | +30% Recovery, +15% max HP |
-| Force | +18% final damage |
+| Force | +22% final damage |
 | Duelist | +18% final damage, +10% max HP; direct same-target hits gain +5% direct attack damage each, max 5 Focus |
 | Juggernaut | +20% max HP, +10% plating, 10% independent DR; −25% attack speed, −10% movement |
 | Arcanist | 20% Technique cooldown reduction, +20% Technique power |
 | Controller | +35% debuff duration, +25% debuff potency |
-| Scout | +12% final damage, +25% movement, 25% mobility cooldown reduction |
-| Sniper | +25% final damage |
+| Scout | +18% final damage, +25% movement, 25% mobility cooldown reduction |
+| Sniper | +30% final damage |
 | Bruiser | +28% final damage, +20% max HP, +18% movement; kills refund 50% of a mobility cooldown |
 | Accelerant | +55% attack speed, −18% final damage |
-| Catalyst | +115% existing on-hit damage, −15% final damage; provides no on-hit damage itself |
+| Catalyst | +115% existing on-hit damage; provides no on-hit damage itself |
 
 ## Passive keys and their consumers
 

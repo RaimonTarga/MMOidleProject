@@ -237,9 +237,8 @@ export const volcanicRecipeEntries = [
   // See the CORES header in plains.recipes.ts. Volcanic owns THE STRIKE ITSELF —
   // burn weapons and heat, so it is where the on-hit amplifier comes from.
 
-  // T4 premium unrestricted — Catalyst: scales the flat on-hit term, which lands
-  // AFTER plating and DR. That unmitigated placement is what makes it a real axis
-  // rather than a second attack multiplier, and it is why it shines against armour.
+  // T4 premium unrestricted — Catalyst scales existing on-hit damage. Runtime
+  // mitigation is shared with the attack; this is not an armor-bypass effect.
   // L10 and 2,300 red / 8 Swarming make it Volcanic's late capstone.
   ['core-catalyst', {
     id: 'core-catalyst', name: 'Catalyst Core',
@@ -247,12 +246,11 @@ export const volcanicRecipeEntries = [
     lineageId: 'core-catalyst',
     cost: { red: 2300 }, catalystCost: { swarming: 8 }, // family-tag: on-hit proc amplifier → Swarming
     stats: {}, tier: 4,
-    // Trading attack (mitigated) for on-hit (unmitigated) is the actual shape here:
-    // better against heavily armoured targets, worse against soft ones. Worth little
-    // to a build carrying no on-hit damage — the specialisation is the cost.
-    mechanicEffects: { 'core.onhit-mult': 1.15, 'core.damage-dealt-pct': -0.15 },
+    // The specialization is the opportunity cost: no on-hit damage is granted
+    // to builds without it, and the core supplies no generic damage or defense.
+    mechanicEffects: { 'core.onhit-mult': 1.15 },
     icon: 'items/cores/catalyst.png',
-    description: 'Amplifies on-hit damage you already have; it grants none by itself. Armour is no comfort against something already inside it.',
+    description: 'Amplifies on-hit damage you already have; it grants none by itself.',
   }],
 
   // Frequency-forward Relic (many small mechanic events) in the biome whose native

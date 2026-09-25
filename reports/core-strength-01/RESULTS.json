@@ -1,0 +1,437 @@
+{
+  "baseline": {
+    "n": 224,
+    "deaths": 66,
+    "wins": 64,
+    "kills": 1315,
+    "seconds": 29857.7
+  },
+  "candidate": {
+    "n": 64,
+    "deaths": 24,
+    "wins": 18,
+    "kills": 212,
+    "seconds": 7540.8
+  },
+  "roster": {
+    "core-tempered": {
+      "n": 40,
+      "deaths": 9,
+      "wins": 10,
+      "kills": 277,
+      "seconds": 5688.1
+    },
+    "core-force": {
+      "n": 24,
+      "deaths": 10,
+      "wins": 8,
+      "kills": 95,
+      "seconds": 2752.5
+    },
+    "core-survivalist": {
+      "n": 24,
+      "deaths": 9,
+      "wins": 8,
+      "kills": 89,
+      "seconds": 3059.9
+    },
+    "core-arcanist": {
+      "n": 24,
+      "deaths": 11,
+      "wins": 8,
+      "kills": 74,
+      "seconds": 2751.3
+    },
+    "core-accelerant": {
+      "n": 32,
+      "deaths": 10,
+      "wins": 8,
+      "kills": 245,
+      "seconds": 4212.9
+    },
+    "core-bruiser": {
+      "n": 16,
+      "deaths": 0,
+      "wins": 8,
+      "kills": 81,
+      "seconds": 2619.6
+    },
+    "core-duelist": {
+      "n": 8,
+      "deaths": 0,
+      "wins": 4,
+      "kills": 57,
+      "seconds": 1154.6
+    },
+    "core-scout": {
+      "n": 16,
+      "deaths": 7,
+      "wins": 4,
+      "kills": 53,
+      "seconds": 1821.8
+    },
+    "core-sniper": {
+      "n": 16,
+      "deaths": 7,
+      "wins": 4,
+      "kills": 54,
+      "seconds": 1726.1
+    },
+    "core-juggernaut": {
+      "n": 8,
+      "deaths": 0,
+      "wins": 2,
+      "kills": 15,
+      "seconds": 1436
+    },
+    "core-controller": {
+      "n": 8,
+      "deaths": 1,
+      "wins": 0,
+      "kills": 125,
+      "seconds": 1286
+    },
+    "core-catalyst": {
+      "n": 8,
+      "deaths": 2,
+      "wins": 0,
+      "kills": 150,
+      "seconds": 1348.9
+    }
+  },
+  "changes": {
+    "core-force": {
+      "before": {
+        "n": 24,
+        "deaths": 10,
+        "wins": 8,
+        "kills": 95,
+        "seconds": 2752.5
+      },
+      "after": {
+        "n": 24,
+        "deaths": 10,
+        "wins": 8,
+        "kills": 94,
+        "seconds": 2718.4
+      },
+      "matchedWins": [
+        {
+          "id": "3-squire-balanced-cave-vest-t3-node-t3-cave-dungeon-core-force-p3-default",
+          "seed": 101009,
+          "beforeMs": 132300,
+          "afterMs": 123800
+        },
+        {
+          "id": "3-squire-balanced-cave-vest-t3-node-t3-cave-dungeon-core-force-p3-default",
+          "seed": 101033,
+          "beforeMs": 132300,
+          "afterMs": 123800
+        },
+        {
+          "id": "3-striker-balanced-cave-vest-t3-node-t3-cave-dungeon-core-force-p3-default",
+          "seed": 101009,
+          "beforeMs": 131100,
+          "afterMs": 126200
+        },
+        {
+          "id": "3-striker-balanced-cave-vest-t3-node-t3-cave-dungeon-core-force-p3-default",
+          "seed": 101033,
+          "beforeMs": 131100,
+          "afterMs": 126200
+        },
+        {
+          "id": "3-slinger-balanced-jungle-vest-t3-node-t3-cave-dungeon-core-force-p3-default",
+          "seed": 101009,
+          "beforeMs": 126400,
+          "afterMs": 122600
+        },
+        {
+          "id": "3-slinger-balanced-jungle-vest-t3-node-t3-cave-dungeon-core-force-p3-default",
+          "seed": 101033,
+          "beforeMs": 126400,
+          "afterMs": 122600
+        },
+        {
+          "id": "3-spirit-balanced-jungle-vest-t3-node-t3-cave-dungeon-core-force-p3-default",
+          "seed": 101009,
+          "beforeMs": 115600,
+          "afterMs": 110500
+        },
+        {
+          "id": "3-spirit-balanced-jungle-vest-t3-node-t3-cave-dungeon-core-force-p3-default",
+          "seed": 101033,
+          "beforeMs": 115600,
+          "afterMs": 110500
+        }
+      ]
+    },
+    "core-scout": {
+      "before": {
+        "n": 16,
+        "deaths": 7,
+        "wins": 4,
+        "kills": 53,
+        "seconds": 1821.8
+      },
+      "after": {
+        "n": 16,
+        "deaths": 7,
+        "wins": 4,
+        "kills": 46,
+        "seconds": 1683.9
+      },
+      "matchedWins": [
+        {
+          "id": "3-slinger-balanced-jungle-vest-t3-node-t3-cave-dungeon-core-scout-p3-default",
+          "seed": 101009,
+          "beforeMs": 134100,
+          "afterMs": 126400
+        },
+        {
+          "id": "3-slinger-balanced-jungle-vest-t3-node-t3-cave-dungeon-core-scout-p3-default",
+          "seed": 101033,
+          "beforeMs": 134100,
+          "afterMs": 126400
+        },
+        {
+          "id": "3-spirit-balanced-jungle-vest-t3-node-t3-cave-dungeon-core-scout-p3-default",
+          "seed": 101009,
+          "beforeMs": 121900,
+          "afterMs": 115600
+        },
+        {
+          "id": "3-spirit-balanced-jungle-vest-t3-node-t3-cave-dungeon-core-scout-p3-default",
+          "seed": 101033,
+          "beforeMs": 121900,
+          "afterMs": 115600
+        }
+      ]
+    },
+    "core-sniper": {
+      "before": {
+        "n": 16,
+        "deaths": 7,
+        "wins": 4,
+        "kills": 54,
+        "seconds": 1726.1
+      },
+      "after": {
+        "n": 16,
+        "deaths": 7,
+        "wins": 4,
+        "kills": 57,
+        "seconds": 1702.5
+      },
+      "matchedWins": [
+        {
+          "id": "3-slinger-balanced-jungle-vest-t3-node-t3-cave-dungeon-core-sniper-p3-default",
+          "seed": 101009,
+          "beforeMs": 121700,
+          "afterMs": 113800
+        },
+        {
+          "id": "3-slinger-balanced-jungle-vest-t3-node-t3-cave-dungeon-core-sniper-p3-default",
+          "seed": 101033,
+          "beforeMs": 121700,
+          "afterMs": 113800
+        },
+        {
+          "id": "3-spirit-balanced-jungle-vest-t3-node-t3-cave-dungeon-core-sniper-p3-default",
+          "seed": 101009,
+          "beforeMs": 108900,
+          "afterMs": 104900
+        },
+        {
+          "id": "3-spirit-balanced-jungle-vest-t3-node-t3-cave-dungeon-core-sniper-p3-default",
+          "seed": 101033,
+          "beforeMs": 108900,
+          "afterMs": 104900
+        }
+      ]
+    },
+    "core-juggernaut": {
+      "before": {
+        "n": 8,
+        "deaths": 0,
+        "wins": 2,
+        "kills": 15,
+        "seconds": 1436
+      },
+      "after": {
+        "n": 8,
+        "deaths": 0,
+        "wins": 2,
+        "kills": 15,
+        "seconds": 1436
+      },
+      "matchedWins": [
+        {
+          "id": "4-squire-heavy-mountain-vest-t4-node-t4-mountain-dungeon-core-juggernaut-p3-tanking-stance",
+          "seed": 101009,
+          "beforeMs": 178000,
+          "afterMs": 178000
+        },
+        {
+          "id": "4-squire-heavy-mountain-vest-t4-node-t4-mountain-dungeon-core-juggernaut-p3-tanking-stance",
+          "seed": 101033,
+          "beforeMs": 178000,
+          "afterMs": 178000
+        }
+      ]
+    }
+  },
+  "followups": {
+    "scout": {
+      "before": {
+        "n": 16,
+        "deaths": 8,
+        "wins": 0,
+        "kills": 136,
+        "seconds": 1912.1
+      },
+      "after": {
+        "n": 16,
+        "deaths": 7,
+        "wins": 0,
+        "kills": 155,
+        "seconds": 2129.8
+      }
+    },
+    "specialists": {
+      "core-controller": {
+        "before": {
+          "n": 8,
+          "deaths": 1,
+          "wins": 0,
+          "kills": 125,
+          "seconds": 1286
+        },
+        "after": {
+          "n": 8,
+          "deaths": 1,
+          "wins": 0,
+          "kills": 120,
+          "seconds": 1286
+        }
+      },
+      "core-catalyst": {
+        "before": {
+          "n": 8,
+          "deaths": 2,
+          "wins": 0,
+          "kills": 150,
+          "seconds": 1348.9
+        },
+        "after": {
+          "n": 8,
+          "deaths": 0,
+          "wins": 0,
+          "kills": 178,
+          "seconds": 1440
+        }
+      }
+    },
+    "frostController": {
+      "before": {
+        "n": 4,
+        "deaths": 1,
+        "wins": 0,
+        "kills": 50,
+        "seconds": 575.1
+      },
+      "after": {
+        "n": 4,
+        "deaths": 1,
+        "wins": 0,
+        "kills": 51,
+        "seconds": 577.3
+      }
+    }
+  },
+  "finalComposite": {
+    "n": 224,
+    "deaths": 64,
+    "wins": 64,
+    "kills": 1338,
+    "seconds": 29753.2,
+    "reusedBaselineRows": 160,
+    "retestedRows": 64
+  },
+  "frostRoster": {
+    "core-tempered": {
+      "n": 4,
+      "deaths": 0,
+      "wins": 0,
+      "kills": 71,
+      "seconds": 720
+    },
+    "core-controller": {
+      "n": 4,
+      "deaths": 1,
+      "wins": 0,
+      "kills": 50,
+      "seconds": 575.1
+    },
+    "core-arcanist": {
+      "n": 4,
+      "deaths": 0,
+      "wins": 0,
+      "kills": 76,
+      "seconds": 720
+    }
+  },
+  "juggernautBaselineLowestHp": 0.7287906249999903,
+  "receipts": {
+    "baseline-01": {
+      "completed": 224,
+      "expected": 224,
+      "path": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\mmo-defense-candidate\\reports\\core-strength-01\\baseline-01",
+      "sha256": "379abefa4eab03281ca559663c284013999e2ec5793e6e71ed73c11d9aef9379",
+      "manifestSha256": "07856a832291adf906e38863d22740fdeb8b25223131d38ce4ed9a6cfd1ed357"
+    },
+    "candidate-01": {
+      "completed": 64,
+      "expected": 64,
+      "path": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\mmo-defense-candidate\\reports\\core-strength-01\\candidate-01",
+      "sha256": "85a6ea829425a09c3d72861a31068a497de0adef66b9d0d77f7e39de15bb7937",
+      "manifestSha256": "f15d4932e3f145401cae7a7035436b7768d8a983bd1c6fc18b9242e5a03e899c"
+    },
+    "scout-expanded-baseline": {
+      "completed": 16,
+      "expected": 16,
+      "path": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\mmo-defense-candidate\\reports\\core-strength-01\\scout-expanded-baseline",
+      "sha256": "dc395cad6db30dfe6dfa7583e598e6b54d1f3e6a36d58646c90c133fc67e5d94",
+      "manifestSha256": "7c19b70a2c78d86ba3e9232db01a231a0c5faf88357aca1a98c97875e95ca1a8"
+    },
+    "scout-expanded-candidate": {
+      "completed": 16,
+      "expected": 16,
+      "path": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\mmo-defense-candidate\\reports\\core-strength-01\\scout-expanded-candidate",
+      "sha256": "71378010463cd8a7048aacd7768047fc38e5f7534f2acfbb9ce1c1cea3e0b79b",
+      "manifestSha256": "20da6cf61e870aeb6baff0b52403b6bcc40fbac02381f0a2dc7fcf762db626bd"
+    },
+    "frost-specialist": {
+      "completed": 12,
+      "expected": 12,
+      "path": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\mmo-defense-candidate\\reports\\core-strength-01\\frost-specialist",
+      "sha256": "3d97fb903bf79095f1c568cd1b7f16fef81ee1617597a4b9dae898dfa1ff4c03",
+      "manifestSha256": "059a767483e7aee8f115496bfbbed41f8323950057d27b84acfd823b131e0bf5"
+    },
+    "specialist-candidate": {
+      "completed": 16,
+      "expected": 16,
+      "path": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\mmo-defense-candidate\\reports\\core-strength-01\\specialist-candidate",
+      "sha256": "9e56bd397bdf537fb4c67991a0e67c228e7b82fd1e2280071629e841f09bee4a",
+      "manifestSha256": "53713cf4634b8392798e429a7e0c135ee5e0f0aedc0e957ec64d7fce713a7620"
+    },
+    "frost-controller-candidate": {
+      "completed": 4,
+      "expected": 4,
+      "path": "C:\\Users\\osaif\\Documents\\Claude\\Projects\\mmo-defense-candidate\\reports\\core-strength-01\\frost-controller-candidate",
+      "sha256": "b5ab488ec65ba33307bfe49c0bfd59d0e560a4f7e20203b0451e4ffe0e30317f",
+      "manifestSha256": "ec47cd762e202f62aad2e188d48b60b53a937a8a84735f76cd76aa75c9b19159"
+    }
+  },
+  "pairedDefinitionsAndHitboxesVerified": true
+}

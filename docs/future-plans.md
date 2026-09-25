@@ -1,5 +1,7 @@
 # Future Plans / Feature Backlog
 
+Core strength follow-up (2026-09-25): [non-Volcano experiment](../reports/core-strength-01/REPORT.md) retains four candidate core changes. Proposed Warden (existing Guards) and Affliction (existing outgoing DoT) cores remain design ideas, not implemented items. See [concept constraints](../reports/core-strength-01/PATCH-NOTES.md).
+
 Parking lot for features that are decided-in-spirit but not yet scheduled.
 
 Defense redesign experiment, 2026-09-25: implemented on `codex/defense-redesign-01`; [results and remaining work](../reports/defense-redesign-01/REPORT.md). Core HP penalties are the recommended adoption subset. The wider armor/class/pipeline candidate remains on hold for ranged/caster survival tuning; not shipped.
