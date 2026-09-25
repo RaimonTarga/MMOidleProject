@@ -70,6 +70,7 @@ export function upsertMinion(
   state: RenderState,
   minion: MinionView,
   scene: GameScene,
+  castStarting = false,
 ): void {
   const isNew = !state.sprite.has(minion.id);
   const scale = minionScale(minion);
@@ -150,7 +151,11 @@ export function upsertMinion(
 
   const meta = state.spriteMeta.get(minion.id);
   if (meta) meta.monsterIsRanged = isRangedSummonStyle(minion.attackStyle);
-  if (minion.lastAttackAt > prevAttackAt && minion.attackTargetId) {
+  // The chosen caster's wind-up advances lastAttackAt every tick to hold its
+  // attack timer (summoner ai.ts), though no attack occurs — same as monster hard
+  // control. Keep the snapshot current without replaying a swing per packet.
+  const casting = castStarting || state.castState.has(minion.id);
+  if (!casting && minion.lastAttackAt > prevAttackAt && minion.attackTargetId) {
     const vmSprite = state.sprite.get(minion.id);
     const targetInterp = state.interpolation.get(minion.attackTargetId);
     const targetSprite = state.sprite.get(minion.attackTargetId);

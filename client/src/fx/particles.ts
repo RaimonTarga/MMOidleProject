@@ -30,6 +30,16 @@ export function initParticleTextures(scene: GameScene): void {
   sparkG.fillRect(0, 0, 12, 3);
   sparkG.generateTexture('ptx-spark', 12, 3);
   sparkG.destroy();
+
+  // Soft-edged puff: stacked low-alpha discs build a radial falloff, so a
+  // tinted cluster reads as haze rather than a pile of hard dots.
+  const mistG = scene.make.graphics({ x: 0, y: 0 }, false);
+  for (let r = 16; r >= 2; r -= 2) {
+    mistG.fillStyle(0xffffff, 0.12);
+    mistG.fillCircle(16, 16, r);
+  }
+  mistG.generateTexture('ptx-mist', 32, 32);
+  mistG.destroy();
 }
 
 export function initEffectFrames(scene: GameScene): void {

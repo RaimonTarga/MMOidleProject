@@ -25,6 +25,7 @@ import { beginCombatPlayback, queuePlayerAttack, queueCombatDeath } from '../ren
 import { prepareCombatText, renderCombatText } from '../render/combatText';
 import { spawnDamageNumber } from '../fx/particles';
 import { fxBossDeath, fxMobDeath } from "../fx/monsterDeath";
+import { fxSummonDisperse, fxSummonForm } from "../fx/summonMist";
 import { playSfx } from "../audio/audioEngine";
 import { notePlayerStatusCues } from "../audio/statusCues";
 import { notifyDeltaAppliedDuringTabResync, shouldRunClientFx } from "../fx/guard";
@@ -62,6 +63,12 @@ export function applyDelta(
   const liveIds = new Set<string>();
   const pendingRemoves: string[] = [];
   state.dungeonGuardianIds = new Set(snapshot.dungeon?.guardianMonsterIds ?? []);
+  // Summons whose cast starts in THIS snapshot. Deltas apply before events, so
+  // the cast bar isn't up yet when the first held-timer stamp arrives.
+  const castStarting = new Set<string>();
+  for (const ev of snapshot.events) {
+    if (ev.kind === "player-cast-start" && ev.casterMinionId) castStarting.add(ev.casterMinionId);
+  }
 
   for (const delta of snapshot.deltas) {
     if (delta.kind === "remove") {
@@ -101,7 +108,14 @@ export function applyDelta(
       }
     }
 
-    upsertEntityView(state, delta.netId, entity, scene, options.stateSync === true);
+    upsertEntityView(state, delta.netId, entity, scene, options.stateSync === true, castStarting);
+
+    // A summon added by a patch delta was just summoned (or walked in with its
+    // Conduit); full syncs and node changes just show what is already there.
+    if (delta.kind === "add" && delta.entityKind === "minion" && !snapshot.full && !options.stateSync) {
+      const sprite = state.sprite.get(delta.netId);
+      if (sprite) fxSummonForm(scene, sprite);
+    }
   }
 
   // Observe authoritative state immediately; schedule only confirmed attack cosmetics.
@@ -151,6 +165,12 @@ export function applyDelta(
           fxMobDeath(scene, sprite);
         }
       }
+    }
+    // Same inference for summons: a patch-delta remove is a death (or its
+    // Conduit leaving), and either way the body comes apart into mist.
+    if (entity?.isMinion && shouldRunClientFx()) {
+      const sprite = state.sprite.get(netId);
+      if (sprite) fxSummonDisperse(scene, sprite);
     }
     destroyEntity(state, netId, scene);
   }
@@ -320,6 +340,7 @@ function upsertEntityView(
   entity: NetworkedEntity,
   scene: GameScene,
   resetPosition: boolean,
+  castStarting: ReadonlySet<string>,
 ): void {
   const kind = state.kind.get(id);
   if (kind === "player") {
@@ -338,7 +359,7 @@ function upsertEntityView(
   if (kind === "minion") {
     const minion = composeMinionView(entity);
     if (!minion) return;
-    upsertMinion(state, minion, scene);
+    upsertMinion(state, minion, scene, castStarting.has(id));
   }
 }
 
