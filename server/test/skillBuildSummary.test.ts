@@ -9,7 +9,7 @@ assert.ok(Math.abs(close.statEffects.maxHpPct! - .30) < 1e-9);
 assert.ok(Math.abs(close.mechanicEffects['defense.recovery-pulse-pct']! - .30) < 1e-9);
 assert.equal(close.mechanicEffects['defense.recovery-pulse-interval-ms'], 6000);
 assert.equal(close.mechanicEffects['defense.recovery-pulse-duration-ms'], 4000);
-assert.equal(close.mechanicEffects['defense.max-hit-mult'], .5);
+assert.equal(close.mechanicEffects['defense.max-hit-mult'], undefined, 'Striker no longer carries a damage soft cap');
 assert.deepEqual(skillBuildSummary(['cadence-range-close', 'cadence-root', 'cadence-root', 'missing']), close);
 assert.deepEqual(skillBuildSummary([]), { nodes: [], statEffects: {}, mechanicEffects: {} });
 assert.equal(formatPassiveValue('cadence.debuff-vuln-pct', 25, { signed: true }), '+25%');

@@ -104,7 +104,9 @@ export const BOSSREF_A_RULES = [
  */
 export const BOSSREF_B_GEAR = {
   weapon: 'gale-needle', armor: 'forest-vest-t2', recovery: 'forest-charm-t2',
-  mobility: 'forest-boots-t2', core: 'core-tempered',
+  // Force since the 2026-09-25 defense rebudget removed its HP penalty; the legacy
+  // scorer now prefers it over Tempered.
+  mobility: 'forest-boots-t2', core: 'core-force',
 } as const;
 export const BOSSREF_B_STANCE = 'offensive-stance';
 /** Empty is meaningful: the legacy bot equips no behaviour rules at all. */

@@ -89,8 +89,8 @@ const SPIRIT = ["energy-root", "energy-light", "energy-range-close"];
     "attack affinity should sum to +32% and apply once",
   );
   assert(
-    squire.mitigatesDamage.plating === Math.round(naked.mitigatesDamage.plating * 1.67),
-    "plating affinity should sum to +67% and apply once",
+    squire.mitigatesDamage.plating === Math.round(naked.mitigatesDamage.plating * 1.2),
+    "plating affinity should sum to +20% and apply once",
   );
   assert(
     squire.hasPosition.speed === Math.round(naked.hasPosition.speed * 0.78),
@@ -138,8 +138,9 @@ const SPIRIT = ["energy-root", "energy-light", "energy-range-close"];
     "Squire on Far must remain bulkier than Spirit on Close",
   );
   assert(
-    squireFar.mitigatesDamage.plating > spiritClose.mitigatesDamage.plating,
-    "Squire must remain the more armored chassis regardless of range",
+    squireFar.mitigatesDamage.plating >= spiritClose.mitigatesDamage.plating &&
+      squireFar.mitigatesDamage.damageReduction > spiritClose.mitigatesDamage.damageReduction,
+    "Squire must remain the more armored chassis regardless of range (class DR is its armor layer)",
   );
   assert(
     spiritClose.hasPosition.speed > squireFar.hasPosition.speed &&
@@ -154,8 +155,8 @@ const SPIRIT = ["energy-root", "energy-light", "energy-range-close"];
 {
   const closeOnly = build(["cooldown-root", "cooldown-range-close"]);
   const rootOnly = build(["cooldown-root"]);
-  // Squire root +30% plating, Vanguard +12% — and nothing else.
-  const expected = Math.round(GAME_CONFIG.PLAYER_PLATING * (1 + 0.3 + 0.12));
+  // Squire root +10% plating; the close-range node carries none (it grants DR).
+  const expected = Math.round(GAME_CONFIG.PLAYER_PLATING * (1 + 0.1));
   assert(
     closeOnly.mitigatesDamage.plating === expected,
     `close-range plating should come only from the node tables (${expected}), got ${closeOnly.mitigatesDamage.plating}`,

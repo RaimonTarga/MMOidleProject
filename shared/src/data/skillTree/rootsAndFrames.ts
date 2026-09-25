@@ -98,7 +98,7 @@ export const rootsAndFramesEntries = [
     classId: 'cadence-root', subVariantId: null,
     parent: null, children: [],
     description: 'Class mechanic — a five-hit finisher cycle, plus a Recovery pulse that activates 20% of your Recovery every 6s for 4s. A balanced bruiser — your recovery rate surges on a fixed cycle, sustaining you through prolonged engagements.',
-    cost: 1, statEffects: {"attackPct": 0.08, "maxHpPct": 0.25, "platingPct": 0.05, "attackSpeedPct": 0.06, "moveSpeedPct": 0.04, "damageReduction": 0.18},
+    cost: 1, statEffects: {"attackPct": 0.08, "maxHpPct": 0.18, "platingPct": 0.05, "attackSpeedPct": 0.06, "moveSpeedPct": 0.04, "damageReduction": 0.18},
     // Recovery pulse: every 6s, run at +20% Recovery for 4s. At the naked baseline
     // (Recovery 10) that is 10% × 0.20 × 4s ≈ 8% max HP per cycle — the same
     // throughput as the flat 8% burst this replaces, but it now scales with

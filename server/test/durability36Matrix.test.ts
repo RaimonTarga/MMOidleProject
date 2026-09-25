@@ -75,7 +75,7 @@ assertDurability36Definitions();
   assert('guard.potency-pct' in eff(plate), 'the local armor carries guard potency');
   assert(!('defense.damage-cap' in eff(plate)), 'the plate is NOT a damage-cap item');
   const mods = (i: typeof swamp) => (i as unknown as { statModifiers?: Record<string, number> }).statModifiers ?? {};
-  assert(mods(plate).maxHp > mods(swamp).maxHp && mods(plate).plating > mods(swamp).plating,
+  assert(mods(plate).maxHp > mods(swamp).maxHp && (mods(plate).plating ?? 0) > (mods(swamp).plating ?? 0),
     'the plate also moves HP and plating, so this is the whole item');
 
   // Acquisition boundary: this is a post-acquisition farming adaptation.

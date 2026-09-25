@@ -68,10 +68,12 @@ function equip(world: World, player: ReturnType<typeof fixture>['player'], id: s
   assert(equipItem(world, player, id), 'equip '+id);
 }
 
-// Actual armor -> stat rebuild -> defense update; buffs and immune effects survive.
+// Automatic cleanse -> defense update; buffs and immune effects survive. No armor
+// grants the cleanse since the defense rebudget, so drive the passives directly.
 {
   const {world,player}=fixture(null);
-  equip(world,player,'desert-vest-t4');
+  player.usesSkills.passives['defense.cleanse-stacks']=2;
+  player.usesSkills.passives['defense.cleanse-interval-ms']=8000;
   for(const [id,data] of [
     ['sunlight',{attackPct:.25}], ['mob-forest-haste',{speedPct:.4}],
     ['volcanic-heat',{isAmbientRamp:1,damageTakenPct:.03}],
@@ -102,7 +104,7 @@ function equip(world: World, player: ReturnType<typeof fixture>['player'], id: s
   });
   try {
     const {world,player}=fixture(null);
-    equip(world,player,'desert-vest-t4');
+    player.usesSkills.passives['defense.debuff-resistance']=0.3;
     if (player.evadesHits) player.evadesHits.dodgeRate=0;
     player.hasHealth.hp=player.hasHealth.maxHp=100000;
     const monster=world.createMonster('node-clearing',id,{x:410,y:400})!;

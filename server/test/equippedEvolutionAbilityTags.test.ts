@@ -256,7 +256,7 @@ for (const tier of [2, 3, 4]) {
   const effects = itemMechanicEffectsAt(item, 5);
   assert.deepEqual(equipmentAbilityTags(effects), ['cleanse']);
   assert(!Object.keys(effects).some(k => k.startsWith('defense.cleanse-')), 'charm no longer owns an automatic cleanse or heal');
-  assert.equal(ITEM_DATABASE.get(`desert-vest-t${tier}`)!.mechanicEffects?.['defense.cleanse-interval-ms'], 8000, 'armor keeps its independent cleanse');
+  assert(!Object.keys(ITEM_DATABASE.get(`desert-vest-t${tier}`)!.mechanicEffects ?? {}).some(k => k.startsWith('defense.cleanse-')), 'Desert armor trades its automatic cleanse for opening protection');
   for (const id of ['cleanse', 'break-free']) {
     const p = player();
     p.holdsInventory.inventory.push(item.id);

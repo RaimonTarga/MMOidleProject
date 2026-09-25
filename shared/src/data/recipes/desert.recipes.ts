@@ -4,6 +4,15 @@ import type { Recipe } from './types';
 // Cleanse-ability charm. Upgrades shorten Cleanse-tagged ability cooldowns.
 // No automatic charm cleanse or fallback heal; armor keeps its own cleanse.
 
+// Specialist plating kept on the T2-T4 Desert armors after the defense rebudget:
+// half the pre-rebudget values (screened 2026-09-25; see
+// reports/defense-rework-2026-09-25).
+const DESERT_PLATING = {
+  t2: { base: 5, perUpgrade: 2 },
+  t3: { base: 10, perUpgrade: 3 },
+  t4: { base: 19, perUpgrade: 5 },
+} as const;
+
 export const desertRecipeEntries = [
   // ── T2 ──
   // T2 economy pass (2026-08-29): Desert debuts at T2, so there is deliberately
@@ -44,17 +53,17 @@ export const desertRecipeEntries = [
   ['desert-vest-t2', {
     id: 'desert-vest-t2', name: 'Duneplate of the Last Stand',
     recipeGroup: 'desert', requiredBiomeLevel: 2, slot: 'armor',
-    cost: { yellow: 35, purple: 25 }, stats: {"maxHp": 55, "damageReduction": 0.08}, // family-tag: last-stand (cheat-death) armor → Dominion
+    cost: { yellow: 35, purple: 25 }, stats: {"maxHp": 55, "damageReduction": 0.08, plating: DESERT_PLATING.t2.base}, // family-tag: last-stand (cheat-death) armor → Dominion
     mechanicEffects: {"defense.engagement-dr-pct": 0.3, "defense.engagement-dr-ms": 6000},
     tier: 2,
     icon: 'items/armor/duneplate-last-stand.png',
     description: "Gain strong damage reduction for 6 seconds from the first attack in a hostile engagement. Rearms after 6 seconds without engagement or incoming attacks.",
     upgrades: [
-      {"cost": {"yellow": 29, "purple": 19}, "requiredBiomeLevel": 3, "stats": {"maxHp": 6}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
-      {"cost": {"yellow": 72, "purple": 48}, "requiredBiomeLevel": 4, "stats": {"maxHp": 5}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
-      {"cost": {"yellow": 115, "purple": 77}, "requiredBiomeLevel": 4, "stats": {"maxHp": 6}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
-      {"cost": {"yellow": 187, "purple": 125}, "catalystCost": {"dominion": 1}, "requiredBiomeLevel": 4, "stats": {"maxHp": 5}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
-      {"cost": {"yellow": 317, "purple": 211}, "catalystCost": {"dominion": 2}, "requiredBiomeLevel": 4, "stats": {"maxHp": 6}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}}
+      {"cost": {"yellow": 29, "purple": 19}, "requiredBiomeLevel": 3, "stats": {"maxHp": 6, plating: DESERT_PLATING.t2.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
+      {"cost": {"yellow": 72, "purple": 48}, "requiredBiomeLevel": 4, "stats": {"maxHp": 5, plating: DESERT_PLATING.t2.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
+      {"cost": {"yellow": 115, "purple": 77}, "requiredBiomeLevel": 4, "stats": {"maxHp": 6, plating: DESERT_PLATING.t2.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
+      {"cost": {"yellow": 187, "purple": 125}, "catalystCost": {"dominion": 1}, "requiredBiomeLevel": 4, "stats": {"maxHp": 5, plating: DESERT_PLATING.t2.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
+      {"cost": {"yellow": 317, "purple": 211}, "catalystCost": {"dominion": 2}, "requiredBiomeLevel": 4, "stats": {"maxHp": 6, plating: DESERT_PLATING.t2.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}}
     ],
   }],
 
@@ -123,18 +132,18 @@ export const desertRecipeEntries = [
     id: 'desert-vest-t3', name: 'Eternal Duneplate',
     recipeGroup: 'desert', requiredBiomeLevel: 8, slot: 'armor',
     evolvesFrom: 'desert-vest-t2',
-    cost: { yellow: 120, purple: 30 }, stats: {"maxHp": 150, "damageReduction": 0.14}, // family-tag: last-stand armor → Dominion
+    cost: { yellow: 120, purple: 30 }, stats: {"maxHp": 150, "damageReduction": 0.14, plating: DESERT_PLATING.t3.base}, // family-tag: last-stand armor → Dominion
     reconstructCost: { yellow: 420, purple: 105 }, reconstructCatalystCost: { dominion: 3 },
     mechanicEffects: {"defense.engagement-dr-pct": 0.35, "defense.engagement-dr-ms": 6000},
     tier: 3,
     icon: 'items/armor/eternal-duneplate.png',
     description: "Gain strong damage reduction for 6 seconds from the first attack in a hostile engagement. Rearms after 6 seconds without engagement or incoming attacks.",
     upgrades: [
-      {"cost": {"yellow": 76, "purple": 19}, "requiredBiomeLevel": 9, "stats": {"maxHp": 15}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
-      {"cost": {"yellow": 190, "purple": 47}, "requiredBiomeLevel": 10, "stats": {"maxHp": 15}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
-      {"cost": {"yellow": 303, "purple": 76}, "requiredBiomeLevel": 10, "stats": {"maxHp": 15}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
-      {"cost": {"yellow": 493, "purple": 123}, "catalystCost": {"dominion": 2}, "requiredBiomeLevel": 10, "stats": {"maxHp": 15}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
-      {"cost": {"yellow": 834, "purple": 209}, "catalystCost": {"dominion": 3}, "requiredBiomeLevel": 10, "stats": {"maxHp": 15}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}}
+      {"cost": {"yellow": 76, "purple": 19}, "requiredBiomeLevel": 9, "stats": {"maxHp": 15, plating: DESERT_PLATING.t3.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
+      {"cost": {"yellow": 190, "purple": 47}, "requiredBiomeLevel": 10, "stats": {"maxHp": 15, plating: DESERT_PLATING.t3.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
+      {"cost": {"yellow": 303, "purple": 76}, "requiredBiomeLevel": 10, "stats": {"maxHp": 15, plating: DESERT_PLATING.t3.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
+      {"cost": {"yellow": 493, "purple": 123}, "catalystCost": {"dominion": 2}, "requiredBiomeLevel": 10, "stats": {"maxHp": 15, plating: DESERT_PLATING.t3.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
+      {"cost": {"yellow": 834, "purple": 209}, "catalystCost": {"dominion": 3}, "requiredBiomeLevel": 10, "stats": {"maxHp": 15, plating: DESERT_PLATING.t3.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}}
     ],
   }],
 
@@ -213,7 +222,7 @@ export const desertRecipeEntries = [
     id: 'desert-vest-t4', name: 'Deathless Duneplate',
     recipeGroup: 'desert', requiredBiomeLevel: 14, slot: 'armor',
     evolvesFrom: 'desert-vest-t3',
-    cost: { yellow: 220, purple: 55 }, stats: {"maxHp": 288, "damageReduction": 0.18},
+    cost: { yellow: 220, purple: 55 }, stats: {"maxHp": 288, "damageReduction": 0.18, plating: DESERT_PLATING.t4.base},
     reconstructCost: { yellow: 770, purple: 193 }, reconstructCatalystCost: { dominion: 4 },
     // Dawnward protects the opening of an engagement; no cheat-death rider.
     mechanicEffects: {"defense.engagement-dr-pct": 0.4, "defense.engagement-dr-ms": 6000},
@@ -221,11 +230,11 @@ export const desertRecipeEntries = [
     icon: 'items/armor/deathless-duneplate.png',
     description: "Gain strong damage reduction for 6 seconds from the first attack in a hostile engagement. Rearms after 6 seconds without engagement or incoming attacks.",
     upgrades: [
-      {"cost": {"yellow": 153, "purple": 38}, "requiredBiomeLevel": 15, "stats": {"maxHp": 29}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
-      {"cost": {"yellow": 382, "purple": 95}, "requiredBiomeLevel": 16, "stats": {"maxHp": 29}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
-      {"cost": {"yellow": 610, "purple": 152}, "requiredBiomeLevel": 16, "stats": {"maxHp": 29}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
-      {"cost": {"yellow": 991, "purple": 248}, "catalystCost": {"dominion": 3}, "requiredBiomeLevel": 16, "stats": {"maxHp": 29}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
-      {"cost": {"yellow": 1677, "purple": 419}, "catalystCost": {"dominion": 4}, "requiredBiomeLevel": 16, "stats": {"maxHp": 29}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}}
+      {"cost": {"yellow": 153, "purple": 38}, "requiredBiomeLevel": 15, "stats": {"maxHp": 29, plating: DESERT_PLATING.t4.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
+      {"cost": {"yellow": 382, "purple": 95}, "requiredBiomeLevel": 16, "stats": {"maxHp": 29, plating: DESERT_PLATING.t4.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
+      {"cost": {"yellow": 610, "purple": 152}, "requiredBiomeLevel": 16, "stats": {"maxHp": 29, plating: DESERT_PLATING.t4.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
+      {"cost": {"yellow": 991, "purple": 248}, "catalystCost": {"dominion": 3}, "requiredBiomeLevel": 16, "stats": {"maxHp": 29, plating: DESERT_PLATING.t4.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
+      {"cost": {"yellow": 1677, "purple": 419}, "catalystCost": {"dominion": 4}, "requiredBiomeLevel": 16, "stats": {"maxHp": 29, plating: DESERT_PLATING.t4.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}}
     ],
   }],
 
