@@ -35,7 +35,9 @@ python tools/economy-v2-audit.py reports/economy-v2/baseline.json reports/econom
 
 The live validation compares every public recipe database and helper-derived upgrade cost with the independent candidate projection, and verifies T1 normal-node payouts remain unchanged. It exports literal payable prices; authoring-file prices alone are no longer payable T2+ prices.
 
-## Campaign 02 rebase requirements — deferred
+## Campaign 02 rebase requirements — preparation now available
+
+The subsequent user-requested review and redesign is in [campaign 02 preparation](../economy-baseline-campaign-02-preparation/README.md): 560 targeted rate windows, 32 proposed pacing lives and separate optional premium continuations, on committed candidate `aa9f7d6c327833dd033777b4c9840a9966eac38f`. It is unsealed and not launched; see its explicit remaining qualification gates. The notes below record the requirements at implementation delivery.
 
 The user explicitly deferred the experiment. No campaign 02 is sealed, qualified or launched by this change. The existing campaign 01 preparation and frozen artifacts are untouched. Do not run its old source identities, literal wallets or checkpoints against this candidate.
 

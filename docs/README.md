@@ -26,6 +26,7 @@ top-level doc.
 
 | Doc | Why |
 |---|---|
+| [Economy baseline campaign 02 preparation](../reports/economy-baseline-campaign-02-preparation/README.md) | V2 source review; targeted 560-window opportunity screen, 32 proposed pacing lives and optional premium continuations; unsealed, not launched. |
 | [Economy current state](economy-current-state.md) | T1-preserving T2-T4 economy v2 candidate, independent reward/cost/XP curves, upgrade premium, static validation and fresh-character-only boundary. |
 | [T3 Tundra class/frame 01 preparation](../reports/player-fast-pass/t3-tundra-class-frame-01-preparation/README.md) | Sealed 52-observation ordinary-Tundra class/frame screen, 52/52 zero-tick qualified; Squire Slam discarded by user correction, main combat unlaunched. |
 | [Guard coverage 01 handoff](../reports/player-fast-pass/guard-coverage-01-preparation/LUNA_RUN.md) | Integrated measured session correction; 32 fresh Endure comparison cells, zero-tick qualified, execution pending. |

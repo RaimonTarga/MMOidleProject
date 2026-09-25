@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 2,
+  "id": "economy-baseline-campaign-02",
+  "source": {
+    "revision": "aa9f7d6c327833dd033777b4c9840a9966eac38f",
+    "tree": "1161598d93b70b816ed7a22e676fb5d9ddf03f5c",
+    "branch": "codex/economy-v2"
+  },
+  "supersedesPlan": "economy-baseline-campaign-01; preserve original artifacts",
+  "state": "prepared-unsealed-not-launchable",
+  "scope": "review-and-preparation-only",
+  "launched": false,
+  "rates": {
+    "entryCells": 468,
+    "matureCells": 92,
+    "matchedPairs": 68,
+    "maturePairs": 12,
+    "simulatedMinutesPerCell": 20,
+    "workerHours": 186.66666666666666
+  },
+  "pacing": {
+    "lives": 32,
+    "freezeAfter": "stage1-review",
+    "targetsMinutes": [
+      5,
+      15,
+      30,
+      60
+    ],
+    "tierDurationTargets": null
+  },
+  "comparisons": {
+    "orientation": "current/lower",
+    "essenceAndUncappedXpMinimum": 1.25,
+    "catalystMinimum": 1.1,
+    "inversion": "ratio<1",
+    "nearParity": "ratio>=1 and ratio<1.10",
+    "zeroDenominator": "positive/zero=unbounded;zero/zero=uninformative;missing=unavailable"
+  },
+  "confirmations": {
+    "durationSimulatedMs": 3600000,
+    "replicasPerPair": 2,
+    "triggers": [
+      "any-inversion",
+      "any-below-v2-target",
+      "all-uncapped-same-biome-inversions"
+    ],
+    "nearMarginSampleMaximumPairs": 8,
+    "selection": "pass-margin ascending then pair-id",
+    "noAutomaticLaunch": true
+  },
+  "schedule": {
+    "stage1Workers": 2,
+    "stage2Workers": 4,
+    "stage2NeedsResourceQualification": true,
+    "policy": "R first; then one active P life per tier; shared global limit; no five-way launch"
+  },
+  "inputPolicy": "new earned candidate-revision lineage only; no historical save conversion or synthetic grants",
+  "upgradePolicy": "retain T1; T2+ core +3 affordability and legal adoption; optional primary +5 sidecar",
+  "launchGates": [
+    "earned-inputs",
+    "fixed-profile-reward-ledger-adapter",
+    "restore-eligibility",
+    "actual-input-route-and-budget-compilation",
+    "T3-T4-full-route-and-terminal-definition",
+    "resource-and-clock-qualification",
+    "stage1-review-before-pacing-seal"
+  ]
+}

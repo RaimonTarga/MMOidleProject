@@ -1,0 +1,25 @@
+{
+  "source": "aa9f7d6c327833dd033777b4c9840a9966eac38f",
+  "exportMatchesDeliveredApartFromSourceLabel": true,
+  "staticComparisons": 108,
+  "staticFailures": 0,
+  "files": [
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\preparation\\economy-baseline-campaign-02\\baseline.json",
+      "sha256": "6420c5556a2b967ce872e4e07b64dc6abf686364fb1a0b915765676ab9a92780"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\preparation\\economy-baseline-campaign-02\\live.json",
+      "sha256": "a1edcbfb56afbfdf298781088e6e0efc790906af76672aa385626fa9f1ef2b2b"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\preparation\\economy-baseline-campaign-02\\authorities.json",
+      "sha256": "512ee6f18e9278fb9a3b3ea374432d0372ed592c0f94dbab32947b98c8b21819"
+    },
+    {
+      "path": "C:\\Users\\osaif\\AppData\\Local\\mmo-idle\\preparation\\economy-baseline-campaign-02\\ECONOMY_V2_STATIC_VALIDATION.json",
+      "sha256": "ab7651000b3976984f45fc1a573d58e11b754617e85243f4f6ef706135e28071"
+    }
+  ],
+  "note": "Reproduced locally; no dynamic economy measurements"
+}

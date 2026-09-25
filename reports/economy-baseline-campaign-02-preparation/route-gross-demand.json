@@ -1,0 +1,686 @@
+{
+  "status": "static-planned-demand-not-earned-input-budget",
+  "source": "aa9f7d6c327833dd033777b4c9840a9966eac38f",
+  "includesConditionalAndOpportunisticPurchases": true,
+  "demand": [
+    {
+      "route": "striker-t1",
+      "tier": 0,
+      "E": {
+        "green": 14
+      },
+      "C": {},
+      "base": 14,
+      "upgrades": 0,
+      "tail": 0,
+      "systems": 0
+    },
+    {
+      "route": "striker-t1",
+      "tier": 1,
+      "E": {
+        "yellow": 650,
+        "green": 320,
+        "purple": 283,
+        "blue": 447,
+        "red": 571
+      },
+      "C": {
+        "swarming": 1,
+        "alacrity": 1,
+        "heavy": 1
+      },
+      "base": 136,
+      "upgrades": 1910,
+      "tail": 1170,
+      "systems": 225
+    },
+    {
+      "route": "squire-t1",
+      "tier": 0,
+      "E": {
+        "green": 14
+      },
+      "C": {},
+      "base": 14,
+      "upgrades": 0,
+      "tail": 0,
+      "systems": 0
+    },
+    {
+      "route": "squire-t1",
+      "tier": 1,
+      "E": {
+        "yellow": 650,
+        "green": 320,
+        "purple": 283,
+        "blue": 447,
+        "red": 571
+      },
+      "C": {
+        "swarming": 1,
+        "alacrity": 1,
+        "heavy": 1
+      },
+      "base": 136,
+      "upgrades": 1910,
+      "tail": 1170,
+      "systems": 225
+    },
+    {
+      "route": "slinger-t1",
+      "tier": 0,
+      "E": {
+        "green": 14
+      },
+      "C": {},
+      "base": 14,
+      "upgrades": 0,
+      "tail": 0,
+      "systems": 0
+    },
+    {
+      "route": "slinger-t1",
+      "tier": 1,
+      "E": {
+        "yellow": 270,
+        "green": 740,
+        "purple": 705,
+        "blue": 492,
+        "red": 120
+      },
+      "C": {
+        "fortified": 1,
+        "alacrity": 1,
+        "heavy": 1
+      },
+      "base": 152,
+      "upgrades": 1905,
+      "tail": 1155,
+      "systems": 270
+    },
+    {
+      "route": "spirit-t1",
+      "tier": 0,
+      "E": {
+        "green": 14
+      },
+      "C": {},
+      "base": 14,
+      "upgrades": 0,
+      "tail": 0,
+      "systems": 0
+    },
+    {
+      "route": "spirit-t1",
+      "tier": 1,
+      "E": {
+        "yellow": 650,
+        "green": 320,
+        "purple": 283,
+        "blue": 492,
+        "red": 571
+      },
+      "C": {
+        "swarming": 1,
+        "alacrity": 1,
+        "heavy": 1
+      },
+      "base": 136,
+      "upgrades": 1910,
+      "tail": 1170,
+      "systems": 270
+    },
+    {
+      "route": "apprentice-t1",
+      "tier": 0,
+      "E": {
+        "green": 14
+      },
+      "C": {},
+      "base": 14,
+      "upgrades": 0,
+      "tail": 0,
+      "systems": 0
+    },
+    {
+      "route": "apprentice-t1",
+      "tier": 1,
+      "E": {
+        "yellow": 650,
+        "green": 320,
+        "purple": 705,
+        "blue": 492,
+        "red": 571
+      },
+      "C": {
+        "swarming": 1,
+        "alacrity": 1,
+        "heavy": 1,
+        "fortified": 1
+      },
+      "base": 158,
+      "upgrades": 2310,
+      "tail": 1435,
+      "systems": 270
+    },
+    {
+      "route": "conduit-t1",
+      "tier": 0,
+      "E": {
+        "green": 14
+      },
+      "C": {},
+      "base": 14,
+      "upgrades": 0,
+      "tail": 0,
+      "systems": 0
+    },
+    {
+      "route": "conduit-t1",
+      "tier": 1,
+      "E": {
+        "yellow": 650,
+        "green": 320,
+        "purple": 283,
+        "blue": 492,
+        "red": 571
+      },
+      "C": {
+        "swarming": 1,
+        "alacrity": 1,
+        "heavy": 1
+      },
+      "base": 136,
+      "upgrades": 1910,
+      "tail": 1170,
+      "systems": 270
+    },
+    {
+      "route": "striker-t2-progression",
+      "tier": 2,
+      "E": {
+        "yellow": 14520,
+        "green": 9000,
+        "blue": 312,
+        "red": 18048
+      },
+      "C": {
+        "alacrity": 18,
+        "fortified": 10,
+        "dominion": 16,
+        "swarming": 16
+      },
+      "base": 12066,
+      "upgrades": 29094,
+      "tail": 17456,
+      "systems": 720
+    },
+    {
+      "route": "striker-t2-progression",
+      "tier": 1,
+      "E": {
+        "yellow": 30
+      },
+      "C": {},
+      "base": 0,
+      "upgrades": 30,
+      "tail": 0,
+      "systems": 0
+    },
+    {
+      "route": "squire-t2-progression",
+      "tier": 2,
+      "E": {
+        "yellow": 14940,
+        "purple": 2964,
+        "blue": 14796,
+        "red": 3360,
+        "green": 3000
+      },
+      "C": {
+        "alacrity": 12,
+        "fortified": 12,
+        "heavy": 16,
+        "dominion": 16
+      },
+      "base": 12348,
+      "upgrades": 25992,
+      "tail": 15595,
+      "systems": 720
+    },
+    {
+      "route": "squire-t2-progression",
+      "tier": 1,
+      "E": {
+        "yellow": 30
+      },
+      "C": {},
+      "base": 0,
+      "upgrades": 30,
+      "tail": 0,
+      "systems": 0
+    },
+    {
+      "route": "apprentice-t2-progression",
+      "tier": 2,
+      "E": {
+        "yellow": 14520,
+        "purple": 15186,
+        "blue": 1092,
+        "red": 3360,
+        "green": 3540
+      },
+      "C": {
+        "alacrity": 12,
+        "fortified": 26,
+        "heavy": 4,
+        "dominion": 16
+      },
+      "base": 12768,
+      "upgrades": 23670,
+      "tail": 14202,
+      "systems": 1260
+    },
+    {
+      "route": "apprentice-t2-progression",
+      "tier": 1,
+      "E": {
+        "yellow": 30
+      },
+      "C": {},
+      "base": 0,
+      "upgrades": 30,
+      "tail": 0,
+      "systems": 0
+    },
+    {
+      "route": "slinger-t2-progression",
+      "tier": 2,
+      "E": {
+        "yellow": 18336,
+        "green": 20166,
+        "purple": 312,
+        "red": 4260
+      },
+      "C": {
+        "alacrity": 30,
+        "fortified": 10,
+        "dominion": 18,
+        "swarming": 4
+      },
+      "base": 13230,
+      "upgrades": 29124,
+      "tail": 17474,
+      "systems": 720
+    },
+    {
+      "route": "slinger-t2-progression",
+      "tier": 1,
+      "E": {
+        "yellow": 145
+      },
+      "C": {},
+      "base": 0,
+      "upgrades": 145,
+      "tail": 0,
+      "systems": 0
+    },
+    {
+      "route": "spirit-t2-progression",
+      "tier": 2,
+      "E": {
+        "yellow": 14772,
+        "green": 10338,
+        "blue": 3438,
+        "red": 18048
+      },
+      "C": {
+        "alacrity": 22,
+        "fortified": 10,
+        "heavy": 6,
+        "dominion": 16,
+        "swarming": 16
+      },
+      "base": 14226,
+      "upgrades": 31650,
+      "tail": 18990,
+      "systems": 720
+    },
+    {
+      "route": "spirit-t2-progression",
+      "tier": 1,
+      "E": {
+        "yellow": 30
+      },
+      "C": {},
+      "base": 0,
+      "upgrades": 30,
+      "tail": 0,
+      "systems": 0
+    },
+    {
+      "route": "conduit-t2-progression",
+      "tier": 2,
+      "E": {
+        "yellow": 17112,
+        "green": 3360,
+        "blue": 1092,
+        "red": 18048
+      },
+      "C": {
+        "alacrity": 12,
+        "fortified": 10,
+        "heavy": 4,
+        "dominion": 18,
+        "swarming": 16
+      },
+      "base": 13194,
+      "upgrades": 25698,
+      "tail": 15418,
+      "systems": 720
+    },
+    {
+      "route": "conduit-t2-progression",
+      "tier": 1,
+      "E": {
+        "yellow": 30
+      },
+      "C": {},
+      "base": 0,
+      "upgrades": 30,
+      "tail": 0,
+      "systems": 0
+    }
+  ],
+  "primaryItemAnchors": [
+    [
+      "mountain",
+      1,
+      "heavy-hammer",
+      252.64084507042253,
+      167,
+      447,
+      0.6610174216027874,
+      1.7693101045296167,
+      62.639821029082775
+    ],
+    [
+      "cave",
+      1,
+      "chaotic-axe",
+      248.5207100591716,
+      171,
+      451,
+      0.6880714285714286,
+      1.8147380952380954,
+      62.08425720620843
+    ],
+    [
+      "forest",
+      1,
+      "flash-rapier",
+      271.1267605633803,
+      170,
+      450,
+      0.627012987012987,
+      1.6597402597402597,
+      62.22222222222222
+    ],
+    [
+      "plains",
+      1,
+      "iron-broadsword",
+      291.6666666666667,
+      80,
+      215,
+      0.27428571428571424,
+      0.7371428571428571,
+      62.7906976744186
+    ],
+    [
+      "swamp",
+      1,
+      "ashbrand-blade",
+      259.25925925925924,
+      157,
+      422,
+      0.6055714285714286,
+      1.627714285714286,
+      62.796208530805686
+    ],
+    [
+      "forest",
+      2,
+      "gale-needle",
+      5361.702127659574,
+      2616,
+      6000,
+      0.48790476190476195,
+      1.119047619047619,
+      56.4
+    ],
+    [
+      "plains",
+      2,
+      "knight-steelsword",
+      5513.513513513513,
+      1890,
+      4320,
+      0.34279411764705886,
+      0.7835294117647059,
+      56.25
+    ],
+    [
+      "mountain",
+      2,
+      "quake-hammer",
+      5616.666666666666,
+      3120,
+      7332,
+      0.5554896142433235,
+      1.3054005934718103,
+      57.4468085106383
+    ],
+    [
+      "cave",
+      2,
+      "ruinous-axe",
+      5406.593406593407,
+      3010,
+      6984,
+      0.5567276422764227,
+      1.2917560975609754,
+      56.901489117983964
+    ],
+    [
+      "swamp",
+      2,
+      "swamp-mirebrand",
+      5610.619469026548,
+      3120,
+      7332,
+      0.5560883280757098,
+      1.306807570977918,
+      57.4468085106383
+    ],
+    [
+      "jungle",
+      2,
+      "jungle-stinger-rapier",
+      5885.057471264367,
+      2706,
+      6270,
+      0.45980859375000005,
+      1.06541015625,
+      56.8421052631579
+    ],
+    [
+      "desert",
+      2,
+      "desert-sunsteel-cross",
+      5836.065573770492,
+      3300,
+      7620,
+      0.5654494382022471,
+      1.3056741573033708,
+      56.69291338582677
+    ],
+    [
+      "tundra",
+      3,
+      "tundra-permafrost-maul",
+      37298.39572192513,
+      21088,
+      49000,
+      0.5653862476343408,
+      1.31372942593336,
+      56.96326530612245
+    ],
+    [
+      "mountain",
+      3,
+      "mountain-avalanche-maul",
+      37730.57851239669,
+      20944,
+      48880,
+      0.5550935295921496,
+      1.2955009418670873,
+      57.15220949263502
+    ],
+    [
+      "cave",
+      3,
+      "cave-cataclysm-axe",
+      37282.163742690056,
+      20064,
+      46560,
+      0.5381661895611937,
+      1.2488545547233443,
+      56.90721649484536
+    ],
+    [
+      "jungle",
+      3,
+      "jungle-venomthorn-rapier",
+      37109.27152317881,
+      18160,
+      41800,
+      0.4893655750869992,
+      1.126403140894084,
+      56.55502392344498
+    ],
+    [
+      "desert",
+      3,
+      "desert-solar-cross",
+      37120.840630472856,
+      21712,
+      50800,
+      0.5849005472730704,
+      1.3685034912247593,
+      57.25984251968504
+    ],
+    [
+      "volcanic",
+      3,
+      "volcanic-cinderlash",
+      37150.170648464155,
+      22000,
+      50800,
+      0.5921910886541113,
+      1.367423059255857,
+      56.69291338582677
+    ],
+    [
+      "swamp",
+      3,
+      "swamp-blightbrand",
+      37243.093922651926,
+      20944,
+      48880,
+      0.5623592938733127,
+      1.3124580922711766,
+      57.15220949263502
+    ],
+    [
+      "mountain",
+      4,
+      "mountain-earthsunder-maul",
+      287719.03630810993,
+      168704,
+      391040,
+      0.5863498021011714,
+      1.3591036763422446,
+      56.85761047463175
+    ],
+    [
+      "tundra",
+      4,
+      "tundra-glacial-tyrant-maul",
+      288124.4751790566,
+      169904,
+      392000,
+      0.5896895773759318,
+      1.360523085574002,
+      56.65714285714286
+    ],
+    [
+      "jungle",
+      4,
+      "jungle-deathfang-rapier",
+      287952.08518189884,
+      146432,
+      334400,
+      0.5085290488780422,
+      1.1613043183512983,
+      56.21052631578947
+    ],
+    [
+      "desert",
+      4,
+      "desert-zenith-cross",
+      287410.3448275862,
+      174800,
+      406400,
+      0.6081896603438554,
+      1.414006166840634,
+      56.988188976377955
+    ],
+    [
+      "volcanic",
+      4,
+      "volcanic-eruption-lash",
+      289120.3931203931,
+      177344,
+      406400,
+      0.6133915289958529,
+      1.4056428037256103,
+      56.36220472440945
+    ],
+    [
+      "graveyard",
+      4,
+      "graveyard-plague-axe",
+      288522.9357798165,
+      161952,
+      372480,
+      0.561314127635219,
+      1.2909892206429459,
+      56.52061855670103
+    ],
+    [
+      "trench",
+      4,
+      "trench-abyssal-axe",
+      288000.0,
+      161952,
+      372480,
+      0.5623333333333334,
+      1.2933333333333332,
+      56.52061855670103
+    ]
+  ],
+  "exactInputReconciliationRequired": true,
+  "laterTierFullBudgets": null
+}

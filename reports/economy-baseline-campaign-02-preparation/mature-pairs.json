@@ -1,0 +1,62 @@
+[
+  {
+    "playerTier": 2,
+    "currentNode": "node-t2-cave-01",
+    "lowerNode": "node-t1-cave-01"
+  },
+  {
+    "playerTier": 2,
+    "currentNode": "node-t2-cave-03",
+    "lowerNode": "node-t1-cave-03"
+  },
+  {
+    "playerTier": 2,
+    "currentNode": "node-t2-mountain-01",
+    "lowerNode": "node-t1-mountain-01"
+  },
+  {
+    "playerTier": 2,
+    "currentNode": "node-t2-swamp-01",
+    "lowerNode": "node-t1-cave-01"
+  },
+  {
+    "playerTier": 3,
+    "currentNode": "node-t3-cave-05",
+    "lowerNode": "node-t2-cave-05"
+  },
+  {
+    "playerTier": 3,
+    "currentNode": "node-t3-desert-01",
+    "lowerNode": "node-t2-plains-01"
+  },
+  {
+    "playerTier": 3,
+    "currentNode": "node-t3-mountain-01",
+    "lowerNode": "node-t2-mountain-01"
+  },
+  {
+    "playerTier": 3,
+    "currentNode": "node-t3-swamp-05",
+    "lowerNode": "node-t2-swamp-05"
+  },
+  {
+    "playerTier": 4,
+    "currentNode": "node-t4-graveyard-01",
+    "lowerNode": "node-t3-swamp-01"
+  },
+  {
+    "playerTier": 4,
+    "currentNode": "node-t4-mountain-01",
+    "lowerNode": "node-t3-mountain-01"
+  },
+  {
+    "playerTier": 4,
+    "currentNode": "node-t4-mountain-04",
+    "lowerNode": "node-t3-mountain-04"
+  },
+  {
+    "playerTier": 4,
+    "currentNode": "node-t4-volcanic-05",
+    "lowerNode": "node-t3-swamp-05"
+  }
+]

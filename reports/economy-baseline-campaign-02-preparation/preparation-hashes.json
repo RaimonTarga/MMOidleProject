@@ -1,0 +1,53 @@
+{
+  "scope": "preparation-only-not-execution-seal",
+  "files": [
+    {
+      "file": "campaign.json",
+      "sha256": "a71085d69a99449d578ec8de9bed0f662a3f9458b70f85e7501edd34fe1578e1"
+    },
+    {
+      "file": "evidence-receipt.json",
+      "sha256": "e887eb1d8e6f781c5dd96e762e5fb029ea2ed119ff81cf7144976fc0a03618a4"
+    },
+    {
+      "file": "matched-pairs.json",
+      "sha256": "27187ebcf86d6d7f7ad3048b60eed882410951617a52caeb6227b7ea1df1949b"
+    },
+    {
+      "file": "mature-pairs.json",
+      "sha256": "a81e2cb8c7c95be7dca826eee91dbbe6bde22239b1663a8e69cf201dcd343498"
+    },
+    {
+      "file": "mature-rate-matrix.json",
+      "sha256": "88af9acb0ab01539f44c308cc819c17997322389da0a243b8b39d1cec31a4ec4"
+    },
+    {
+      "file": "node-inventory.json",
+      "sha256": "cc9c0585f15a8ef52ff74907bb2c86b87a8de793a248e92a517e5b5f2710de9c"
+    },
+    {
+      "file": "pacing-matrix.json",
+      "sha256": "12fe8eab22ab7e9dbe755f86a361eff68757594c14a45f27114fab8095bf8be5"
+    },
+    {
+      "file": "premium-matrix.json",
+      "sha256": "865275884666799fcd2db6f99df5bd02133013ea0b3901ac58aa86b1d66e9195"
+    },
+    {
+      "file": "public-prices-and-gates.json",
+      "sha256": "874c73154967e2e10ae00fdbedf17b995fa2a00ab3c9899a5e101f63aa7478ce"
+    },
+    {
+      "file": "rate-matrix.json",
+      "sha256": "14381ab63c3692f42182d8a5784341faf260a210668ef8fb7369612a49608fc3"
+    },
+    {
+      "file": "route-gross-demand.json",
+      "sha256": "f10debdcab224768709b30b358fc1a961384e39891f0373d4096eab7dee79e8f"
+    },
+    {
+      "file": "source-authorities.json",
+      "sha256": "3c6e721eb7c95bb4733f106a9dad86cf752da142146e8551f72d8f84732fae83"
+    }
+  ]
+}

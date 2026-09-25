@@ -1,0 +1,676 @@
+[
+  {
+    "id": "pair-001",
+    "playerTier": 2,
+    "currentNode": "node-t2-cave-01",
+    "lowerNode": "node-t1-cave-01",
+    "reasons": [
+      "static:E red:drWork",
+      "static:E red:h100"
+    ]
+  },
+  {
+    "id": "pair-002",
+    "playerTier": 2,
+    "currentNode": "node-t2-cave-03",
+    "lowerNode": "node-t1-cave-03",
+    "reasons": [
+      "static:same-biome X:drWork",
+      "static:same-biome X:hp"
+    ]
+  },
+  {
+    "id": "pair-003",
+    "playerTier": 2,
+    "currentNode": "node-t2-cave-04",
+    "lowerNode": "node-t1-cave-04",
+    "reasons": [
+      "native-chain:cave:T1-T2",
+      "static:same-biome E:h100",
+      "static:same-biome X:h100"
+    ]
+  },
+  {
+    "id": "pair-004",
+    "playerTier": 2,
+    "currentNode": "node-t2-cave-05",
+    "lowerNode": "node-t1-cave-05",
+    "reasons": [
+      "static:E red:hp",
+      "static:same-biome E:drWork"
+    ]
+  },
+  {
+    "id": "pair-005",
+    "playerTier": 2,
+    "currentNode": "node-t2-forest-01",
+    "lowerNode": "node-t1-forest-01",
+    "reasons": [
+      "native-chain:forest:T1-T2"
+    ]
+  },
+  {
+    "id": "pair-006",
+    "playerTier": 2,
+    "currentNode": "node-t2-forest-02",
+    "lowerNode": "node-t1-forest-02",
+    "reasons": [
+      "static:same-biome E:hp"
+    ]
+  },
+  {
+    "id": "pair-007",
+    "playerTier": 2,
+    "currentNode": "node-t2-jungle-01",
+    "lowerNode": "node-t1-forest-03",
+    "reasons": [
+      "static:E green:drWork",
+      "static:E green:h100"
+    ]
+  },
+  {
+    "id": "pair-008",
+    "playerTier": 2,
+    "currentNode": "node-t2-jungle-04",
+    "lowerNode": "node-t1-forest-03",
+    "reasons": [
+      "static:E green:hp"
+    ]
+  },
+  {
+    "id": "pair-009",
+    "playerTier": 2,
+    "currentNode": "node-t2-mountain-01",
+    "lowerNode": "node-t1-mountain-01",
+    "reasons": [
+      "native-chain:mountain:T1-T2",
+      "static:E blue:drWork"
+    ]
+  },
+  {
+    "id": "pair-010",
+    "playerTier": 2,
+    "currentNode": "node-t2-mountain-01",
+    "lowerNode": "node-t1-mountain-03",
+    "reasons": [
+      "static:E blue:h100"
+    ]
+  },
+  {
+    "id": "pair-011",
+    "playerTier": 2,
+    "currentNode": "node-t2-mountain-04",
+    "lowerNode": "node-t1-mountain-04",
+    "reasons": [
+      "static:E blue:hp"
+    ]
+  },
+  {
+    "id": "pair-012",
+    "playerTier": 2,
+    "currentNode": "node-t2-plains-01",
+    "lowerNode": "node-t1-plains-01",
+    "reasons": [
+      "native-chain:plains:T1-T2"
+    ]
+  },
+  {
+    "id": "pair-013",
+    "playerTier": 2,
+    "currentNode": "node-t2-plains-01",
+    "lowerNode": "node-t1-plains-04",
+    "reasons": [
+      "static:E yellow:drWork",
+      "static:E yellow:h100"
+    ]
+  },
+  {
+    "id": "pair-014",
+    "playerTier": 2,
+    "currentNode": "node-t2-plains-05",
+    "lowerNode": "node-t1-plains-04",
+    "reasons": [
+      "static:E yellow:hp"
+    ]
+  },
+  {
+    "id": "pair-015",
+    "playerTier": 2,
+    "currentNode": "node-t2-swamp-01",
+    "lowerNode": "node-t1-cave-01",
+    "reasons": [
+      "static:C alacrity:drWork",
+      "static:C alacrity:h100",
+      "static:C alacrity:hp"
+    ]
+  },
+  {
+    "id": "pair-016",
+    "playerTier": 2,
+    "currentNode": "node-t2-swamp-01",
+    "lowerNode": "node-t1-swamp-01",
+    "reasons": [
+      "static:E purple:drWork",
+      "static:E purple:h100"
+    ]
+  },
+  {
+    "id": "pair-017",
+    "playerTier": 2,
+    "currentNode": "node-t2-swamp-02",
+    "lowerNode": "node-t1-cave-02",
+    "reasons": [
+      "static:C heavy:drWork",
+      "static:C heavy:h100",
+      "static:C heavy:hp"
+    ]
+  },
+  {
+    "id": "pair-018",
+    "playerTier": 2,
+    "currentNode": "node-t2-swamp-03",
+    "lowerNode": "node-t1-cave-03",
+    "reasons": [
+      "static:C swarming:drWork",
+      "static:C swarming:h100",
+      "static:C swarming:hp"
+    ]
+  },
+  {
+    "id": "pair-019",
+    "playerTier": 2,
+    "currentNode": "node-t2-swamp-04",
+    "lowerNode": "node-t1-cave-04",
+    "reasons": [
+      "static:C dominion:hp"
+    ]
+  },
+  {
+    "id": "pair-020",
+    "playerTier": 2,
+    "currentNode": "node-t2-swamp-04",
+    "lowerNode": "node-t1-swamp-04",
+    "reasons": [
+      "static:C dominion:drWork",
+      "static:C dominion:h100"
+    ]
+  },
+  {
+    "id": "pair-021",
+    "playerTier": 2,
+    "currentNode": "node-t2-swamp-05",
+    "lowerNode": "node-t1-cave-05",
+    "reasons": [
+      "static:C fortified:drWork",
+      "static:C fortified:h100",
+      "static:C fortified:hp"
+    ]
+  },
+  {
+    "id": "pair-022",
+    "playerTier": 2,
+    "currentNode": "node-t2-swamp-05",
+    "lowerNode": "node-t1-swamp-01",
+    "reasons": [
+      "static:E purple:hp"
+    ]
+  },
+  {
+    "id": "pair-023",
+    "playerTier": 2,
+    "currentNode": "node-t2-swamp-05",
+    "lowerNode": "node-t1-swamp-05",
+    "reasons": [
+      "native-chain:swamp:T1-T2"
+    ]
+  },
+  {
+    "id": "pair-024",
+    "playerTier": 3,
+    "currentNode": "node-t3-cave-03",
+    "lowerNode": "node-t2-cave-03",
+    "reasons": [
+      "static:same-biome E:hp",
+      "static:same-biome X:hp"
+    ]
+  },
+  {
+    "id": "pair-025",
+    "playerTier": 3,
+    "currentNode": "node-t3-cave-04",
+    "lowerNode": "node-t1-cave-04",
+    "reasons": [
+      "native-chain:cave:T1-T3"
+    ]
+  },
+  {
+    "id": "pair-026",
+    "playerTier": 3,
+    "currentNode": "node-t3-cave-04",
+    "lowerNode": "node-t2-cave-04",
+    "reasons": [
+      "native-chain:cave:T2-T3"
+    ]
+  },
+  {
+    "id": "pair-027",
+    "playerTier": 3,
+    "currentNode": "node-t3-cave-05",
+    "lowerNode": "node-t2-cave-05",
+    "reasons": [
+      "static:E red:hp",
+      "static:same-biome E:drWork",
+      "static:same-biome E:h100",
+      "static:same-biome X:drWork",
+      "static:same-biome X:h100"
+    ]
+  },
+  {
+    "id": "pair-028",
+    "playerTier": 3,
+    "currentNode": "node-t3-desert-01",
+    "lowerNode": "node-t2-plains-01",
+    "reasons": [
+      "static:E yellow:drWork",
+      "static:E yellow:h100"
+    ]
+  },
+  {
+    "id": "pair-029",
+    "playerTier": 3,
+    "currentNode": "node-t3-desert-03",
+    "lowerNode": "node-t2-desert-03",
+    "reasons": [
+      "native-chain:desert:T2-T3"
+    ]
+  },
+  {
+    "id": "pair-030",
+    "playerTier": 3,
+    "currentNode": "node-t3-desert-04",
+    "lowerNode": "node-t2-plains-05",
+    "reasons": [
+      "static:E yellow:hp"
+    ]
+  },
+  {
+    "id": "pair-031",
+    "playerTier": 3,
+    "currentNode": "node-t3-jungle-01",
+    "lowerNode": "node-t2-jungle-01",
+    "reasons": [
+      "native-chain:jungle:T2-T3",
+      "static:E green:drWork",
+      "static:E green:h100"
+    ]
+  },
+  {
+    "id": "pair-032",
+    "playerTier": 3,
+    "currentNode": "node-t3-jungle-04",
+    "lowerNode": "node-t2-jungle-04",
+    "reasons": [
+      "static:E green:hp"
+    ]
+  },
+  {
+    "id": "pair-033",
+    "playerTier": 3,
+    "currentNode": "node-t3-mountain-01",
+    "lowerNode": "node-t1-mountain-01",
+    "reasons": [
+      "native-chain:mountain:T1-T3"
+    ]
+  },
+  {
+    "id": "pair-034",
+    "playerTier": 3,
+    "currentNode": "node-t3-mountain-01",
+    "lowerNode": "node-t2-mountain-01",
+    "reasons": [
+      "native-chain:mountain:T2-T3",
+      "static:E blue:drWork",
+      "static:E blue:h100"
+    ]
+  },
+  {
+    "id": "pair-035",
+    "playerTier": 3,
+    "currentNode": "node-t3-mountain-04",
+    "lowerNode": "node-t2-mountain-04",
+    "reasons": [
+      "static:E blue:hp"
+    ]
+  },
+  {
+    "id": "pair-036",
+    "playerTier": 3,
+    "currentNode": "node-t3-swamp-01",
+    "lowerNode": "node-t2-swamp-01",
+    "reasons": [
+      "static:C alacrity:drWork",
+      "static:C alacrity:h100",
+      "static:C alacrity:hp",
+      "static:E purple:drWork",
+      "static:E purple:h100"
+    ]
+  },
+  {
+    "id": "pair-037",
+    "playerTier": 3,
+    "currentNode": "node-t3-swamp-02",
+    "lowerNode": "node-t2-swamp-02",
+    "reasons": [
+      "static:C heavy:drWork",
+      "static:C heavy:h100",
+      "static:C heavy:hp"
+    ]
+  },
+  {
+    "id": "pair-038",
+    "playerTier": 3,
+    "currentNode": "node-t3-swamp-03",
+    "lowerNode": "node-t2-swamp-03",
+    "reasons": [
+      "static:C swarming:drWork",
+      "static:C swarming:h100",
+      "static:C swarming:hp"
+    ]
+  },
+  {
+    "id": "pair-039",
+    "playerTier": 3,
+    "currentNode": "node-t3-swamp-04",
+    "lowerNode": "node-t2-swamp-04",
+    "reasons": [
+      "static:C dominion:drWork",
+      "static:C dominion:h100",
+      "static:C dominion:hp"
+    ]
+  },
+  {
+    "id": "pair-040",
+    "playerTier": 3,
+    "currentNode": "node-t3-swamp-05",
+    "lowerNode": "node-t1-swamp-05",
+    "reasons": [
+      "native-chain:swamp:T1-T3"
+    ]
+  },
+  {
+    "id": "pair-041",
+    "playerTier": 3,
+    "currentNode": "node-t3-swamp-05",
+    "lowerNode": "node-t2-swamp-05",
+    "reasons": [
+      "native-chain:swamp:T2-T3",
+      "static:C fortified:drWork",
+      "static:C fortified:h100",
+      "static:C fortified:hp",
+      "static:E purple:hp"
+    ]
+  },
+  {
+    "id": "pair-042",
+    "playerTier": 3,
+    "currentNode": "node-t3-volcanic-01",
+    "lowerNode": "node-t2-cave-01",
+    "reasons": [
+      "static:E red:drWork",
+      "static:E red:h100"
+    ]
+  },
+  {
+    "id": "pair-043",
+    "playerTier": 4,
+    "currentNode": "node-t4-desert-01",
+    "lowerNode": "node-t3-desert-01",
+    "reasons": [
+      "static:E yellow:drWork",
+      "static:E yellow:h100"
+    ]
+  },
+  {
+    "id": "pair-044",
+    "playerTier": 4,
+    "currentNode": "node-t4-desert-03",
+    "lowerNode": "node-t2-desert-03",
+    "reasons": [
+      "native-chain:desert:T2-T4"
+    ]
+  },
+  {
+    "id": "pair-045",
+    "playerTier": 4,
+    "currentNode": "node-t4-desert-03",
+    "lowerNode": "node-t3-desert-03",
+    "reasons": [
+      "native-chain:desert:T3-T4"
+    ]
+  },
+  {
+    "id": "pair-046",
+    "playerTier": 4,
+    "currentNode": "node-t4-desert-04",
+    "lowerNode": "node-t3-desert-04",
+    "reasons": [
+      "static:E yellow:hp"
+    ]
+  },
+  {
+    "id": "pair-047",
+    "playerTier": 4,
+    "currentNode": "node-t4-graveyard-01",
+    "lowerNode": "node-t3-swamp-01",
+    "reasons": [
+      "static:E purple:drWork",
+      "static:E purple:h100"
+    ]
+  },
+  {
+    "id": "pair-048",
+    "playerTier": 4,
+    "currentNode": "node-t4-graveyard-05",
+    "lowerNode": "node-t3-swamp-05",
+    "reasons": [
+      "static:E purple:hp"
+    ]
+  },
+  {
+    "id": "pair-049",
+    "playerTier": 4,
+    "currentNode": "node-t4-jungle-01",
+    "lowerNode": "node-t2-jungle-01",
+    "reasons": [
+      "native-chain:jungle:T2-T4"
+    ]
+  },
+  {
+    "id": "pair-050",
+    "playerTier": 4,
+    "currentNode": "node-t4-jungle-01",
+    "lowerNode": "node-t3-jungle-01",
+    "reasons": [
+      "native-chain:jungle:T3-T4",
+      "static:E green:h100"
+    ]
+  },
+  {
+    "id": "pair-051",
+    "playerTier": 4,
+    "currentNode": "node-t4-mountain-01",
+    "lowerNode": "node-t1-mountain-01",
+    "reasons": [
+      "native-chain:mountain:T1-T4"
+    ]
+  },
+  {
+    "id": "pair-052",
+    "playerTier": 4,
+    "currentNode": "node-t4-mountain-01",
+    "lowerNode": "node-t2-mountain-01",
+    "reasons": [
+      "native-chain:mountain:T2-T4"
+    ]
+  },
+  {
+    "id": "pair-053",
+    "playerTier": 4,
+    "currentNode": "node-t4-mountain-01",
+    "lowerNode": "node-t3-mountain-01",
+    "reasons": [
+      "native-chain:mountain:T3-T4"
+    ]
+  },
+  {
+    "id": "pair-054",
+    "playerTier": 4,
+    "currentNode": "node-t4-mountain-02",
+    "lowerNode": "node-t3-mountain-02",
+    "reasons": [
+      "static:same-biome E:hp",
+      "static:same-biome X:hp"
+    ]
+  },
+  {
+    "id": "pair-055",
+    "playerTier": 4,
+    "currentNode": "node-t4-mountain-04",
+    "lowerNode": "node-t3-mountain-04",
+    "reasons": [
+      "static:same-biome E:drWork",
+      "static:same-biome E:h100",
+      "static:same-biome X:drWork",
+      "static:same-biome X:h100"
+    ]
+  },
+  {
+    "id": "pair-056",
+    "playerTier": 4,
+    "currentNode": "node-t4-trench-01",
+    "lowerNode": "node-t3-jungle-01",
+    "reasons": [
+      "static:E green:drWork"
+    ]
+  },
+  {
+    "id": "pair-057",
+    "playerTier": 4,
+    "currentNode": "node-t4-trench-05",
+    "lowerNode": "node-t3-jungle-04",
+    "reasons": [
+      "static:E green:hp"
+    ]
+  },
+  {
+    "id": "pair-058",
+    "playerTier": 4,
+    "currentNode": "node-t4-tundra-01",
+    "lowerNode": "node-t3-mountain-01",
+    "reasons": [
+      "static:E blue:drWork",
+      "static:E blue:h100"
+    ]
+  },
+  {
+    "id": "pair-059",
+    "playerTier": 4,
+    "currentNode": "node-t4-tundra-01",
+    "lowerNode": "node-t3-tundra-01",
+    "reasons": [
+      "native-chain:tundra:T3-T4"
+    ]
+  },
+  {
+    "id": "pair-060",
+    "playerTier": 4,
+    "currentNode": "node-t4-tundra-04",
+    "lowerNode": "node-t3-mountain-04",
+    "reasons": [
+      "static:E blue:hp"
+    ]
+  },
+  {
+    "id": "pair-061",
+    "playerTier": 4,
+    "currentNode": "node-t4-volcanic-01",
+    "lowerNode": "node-t3-swamp-01",
+    "reasons": [
+      "static:C alacrity:drWork",
+      "static:C alacrity:h100",
+      "static:C alacrity:hp"
+    ]
+  },
+  {
+    "id": "pair-062",
+    "playerTier": 4,
+    "currentNode": "node-t4-volcanic-01",
+    "lowerNode": "node-t3-volcanic-01",
+    "reasons": [
+      "static:E red:drWork",
+      "static:E red:h100"
+    ]
+  },
+  {
+    "id": "pair-063",
+    "playerTier": 4,
+    "currentNode": "node-t4-volcanic-02",
+    "lowerNode": "node-t3-swamp-02",
+    "reasons": [
+      "static:C heavy:drWork",
+      "static:C heavy:h100",
+      "static:C heavy:hp"
+    ]
+  },
+  {
+    "id": "pair-064",
+    "playerTier": 4,
+    "currentNode": "node-t4-volcanic-03",
+    "lowerNode": "node-t3-swamp-03",
+    "reasons": [
+      "static:C swarming:drWork",
+      "static:C swarming:h100",
+      "static:C swarming:hp"
+    ]
+  },
+  {
+    "id": "pair-065",
+    "playerTier": 4,
+    "currentNode": "node-t4-volcanic-03",
+    "lowerNode": "node-t3-volcanic-03",
+    "reasons": [
+      "native-chain:volcanic:T3-T4"
+    ]
+  },
+  {
+    "id": "pair-066",
+    "playerTier": 4,
+    "currentNode": "node-t4-volcanic-04",
+    "lowerNode": "node-t3-swamp-04",
+    "reasons": [
+      "static:C dominion:drWork",
+      "static:C dominion:h100",
+      "static:C dominion:hp"
+    ]
+  },
+  {
+    "id": "pair-067",
+    "playerTier": 4,
+    "currentNode": "node-t4-volcanic-05",
+    "lowerNode": "node-t3-cave-05",
+    "reasons": [
+      "static:E red:hp"
+    ]
+  },
+  {
+    "id": "pair-068",
+    "playerTier": 4,
+    "currentNode": "node-t4-volcanic-05",
+    "lowerNode": "node-t3-swamp-05",
+    "reasons": [
+      "static:C fortified:drWork",
+      "static:C fortified:h100",
+      "static:C fortified:hp"
+    ]
+  }
+]
