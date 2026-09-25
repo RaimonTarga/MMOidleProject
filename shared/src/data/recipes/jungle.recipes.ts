@@ -13,6 +13,9 @@ const JUNGLE_PLATING = {
   t3: { base: 7, perUpgrade: 2 },
   t4: { base: 12, perUpgrade: 3 },
 } as const;
+// T2 weave per-upgrade HP stays at its pre-rebudget +12: the rebudget's ~+5 left
+// +5 wearers 31 HP short and cost T2 Spirit three near-miss boss fights.
+const JUNGLE_T2_UPGRADE_HP = 12;
 
 export const jungleRecipeEntries = [
   // ── T2 ──
@@ -43,11 +46,11 @@ export const jungleRecipeEntries = [
     icon: 'items/armor/verdant-weave.png',
     description: "Evades soften direct hits and prevent eligible on-hit ailments. Jungle weave strengthens each evade.",
     upgrades: [
-      {"cost": {"green": 31, "yellow": 8}, "requiredBiomeLevel": 3, "stats": {"maxHp": 5, "evasion": 0.016, plating: JUNGLE_PLATING.t2.perUpgrade}},
-      {"cost": {"green": 78, "yellow": 20}, "requiredBiomeLevel": 4, "stats": {"maxHp": 5, "evasion": 0.016, plating: JUNGLE_PLATING.t2.perUpgrade}},
-      {"cost": {"green": 125, "yellow": 31}, "requiredBiomeLevel": 4, "stats": {"maxHp": 6, "evasion": 0.016, plating: JUNGLE_PLATING.t2.perUpgrade}},
-      {"cost": {"green": 203, "yellow": 51}, "catalystCost": {"alacrity": 1}, "requiredBiomeLevel": 4, "stats": {"maxHp": 5, "evasion": 0.016, plating: JUNGLE_PLATING.t2.perUpgrade}},
-      {"cost": {"green": 342, "yellow": 86}, "catalystCost": {"alacrity": 2}, "requiredBiomeLevel": 4, "stats": {"maxHp": 5, "evasion": 0.016, plating: JUNGLE_PLATING.t2.perUpgrade}}
+      {"cost": {"green": 31, "yellow": 8}, "requiredBiomeLevel": 3, "stats": {"maxHp": JUNGLE_T2_UPGRADE_HP, "evasion": 0.016, plating: JUNGLE_PLATING.t2.perUpgrade}},
+      {"cost": {"green": 78, "yellow": 20}, "requiredBiomeLevel": 4, "stats": {"maxHp": JUNGLE_T2_UPGRADE_HP, "evasion": 0.016, plating: JUNGLE_PLATING.t2.perUpgrade}},
+      {"cost": {"green": 125, "yellow": 31}, "requiredBiomeLevel": 4, "stats": {"maxHp": JUNGLE_T2_UPGRADE_HP, "evasion": 0.016, plating: JUNGLE_PLATING.t2.perUpgrade}},
+      {"cost": {"green": 203, "yellow": 51}, "catalystCost": {"alacrity": 1}, "requiredBiomeLevel": 4, "stats": {"maxHp": JUNGLE_T2_UPGRADE_HP, "evasion": 0.016, plating: JUNGLE_PLATING.t2.perUpgrade}},
+      {"cost": {"green": 342, "yellow": 86}, "catalystCost": {"alacrity": 2}, "requiredBiomeLevel": 4, "stats": {"maxHp": JUNGLE_T2_UPGRADE_HP, "evasion": 0.016, plating: JUNGLE_PLATING.t2.perUpgrade}}
     ],
 
 mechanicEffects: {"defense.evade-mitigation": 0.2},

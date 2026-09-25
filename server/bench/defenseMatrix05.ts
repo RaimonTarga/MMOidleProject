@@ -5,7 +5,7 @@
 // Boss: guardians removed, boss awakened, win = dungeon cooldown state.
 // Usage: tsx --conditions=development bench/defenseMatrix05.ts <outDir>
 //   env MATRIX_ARM (label), MATRIX_SHARD "i/n", MATRIX_HITBOXES, MATRIX_PREFLIGHT=1
-//   screening only: MATRIX_VARIANT (p50|p100|p50s), MATRIX_SEEDS "a,b", MATRIX_CLASS
+//   screening only: MATRIX_VARIANT (p50|p100|p50s), MATRIX_SEEDS "a,b", MATRIX_CLASS, MATRIX_TIER
 import assert from 'node:assert/strict';
 import { mkdirSync, writeFileSync, appendFileSync, existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -115,7 +115,8 @@ async function main() {
   }
   const [shard, shards] = (process.env.MATRIX_SHARD ?? '0/1').split('/').map(Number);
   const onlyClass = process.env.MATRIX_CLASS;
-  const selected = cells.filter((c, i) => i % shards === shard && (!onlyClass || c.className === onlyClass));
+  const onlyTier = process.env.MATRIX_TIER ? Number(process.env.MATRIX_TIER) : null;
+  const selected = cells.filter((c, i) => i % shards === shard && (!onlyClass || c.className === onlyClass) && (onlyTier === null || c.tier === onlyTier));
   if (process.env.MATRIX_PREFLIGHT === '1') {
     const kinds: Record<string, number> = {};
     for (const c of cells) { const k = c.id.split('-t')[0] + '-t' + c.tier; kinds[k] = (kinds[k] ?? 0) + 1; }
@@ -127,7 +128,7 @@ async function main() {
   assert(!existsSync(out), `Refusing to overwrite ${out}`);
   mkdirSync(out, { recursive: true });
   writeFileSync(resolve(out, 'manifest.json'), JSON.stringify({
-    schema: 2, arm: process.env.MATRIX_ARM ?? 'unlabelled', shard: `${shard}/${shards}`, variant: VARIANT, variantOverrides, onlyClass: onlyClass ?? null,
+    schema: 2, arm: process.env.MATRIX_ARM ?? 'unlabelled', shard: `${shard}/${shards}`, variant: VARIANT, variantOverrides, onlyClass: onlyClass ?? null, onlyTier,
     source: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
     diff: execFileSync('git', ['diff'], { encoding: 'utf8', maxBuffer: 20e6 }),
     runnerSha256: createHash('sha256').update(readFileSync(__filename)).digest('hex'),
