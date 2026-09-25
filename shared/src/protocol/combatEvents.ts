@@ -173,6 +173,13 @@ type CombatEventPayload =
   // node-wide overhead callout used by player abilities; reload timing itself
   // remains authoritative state and is rendered separately on the overhead bar.
   | { kind: 'player-reload-start'; playerId: string; reloadMs: number }
+  // Something actively STRIPPED harmful stacks off the player: the Cleanse
+  // guard, Break Free, or the passive cleanse pulse. Emitted only when at least
+  // one stack actually came off. It exists so the HUD can tell a cleanse from an
+  // ordinary expiry — both look identical in the buff list, one tick apart. The
+  // client attributes it to whichever debuff tiles shrank or vanished alongside
+  // it, so no status-effect → tile mapping has to be duplicated client-side.
+  | { kind: 'player-cleansed'; playerId: string }
   // A Technique armed the player's next attack (`hasArmedAbility` attached). Drives
   // the armed telegraph over the player: a skill-name callout plus the cooldown bar
   // tinted red until the charge is consumed (the consuming `player-hit` carries an

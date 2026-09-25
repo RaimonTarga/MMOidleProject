@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAtomValue } from "jotai";
 import {
   ABILITY_FRENZY_EFFECT_ID,
@@ -14,6 +14,7 @@ import {
   stanceDef,
   type AbilityDef,
   type AbilityFamily,
+  type PlayerBuff,
 } from "@mmo-idle/shared";
 import {
   abilityCastAtom,
@@ -22,6 +23,7 @@ import {
   abilityCooldownStartedAtAtom,
   activeBuffsAtom,
   activeStanceAtom,
+  armedAbilityIdAtom,
   attackTargetIdAtom,
   attunedAbilitiesAtom,
   attunedStancesAtom,
@@ -44,6 +46,7 @@ import {
   type AbilityRuntime,
 } from "./statusTooltips";
 import "./hud.css";
+import "./statusFeedback.css";
 import { abilityTiming } from "../ui/describe/abilityTiming";
 import { stanceIconSource } from "../ui/conceptIcons";
 import { hudBus } from "../hudBus";
@@ -81,11 +84,60 @@ interface SlotStatus {
   justFired: boolean;
   /** Guard boon is currently active (its buff is up), or a cast is winding up. */
   active: boolean;
+  /**
+   * 0–100 of the active effect's duration still left, drawn as the draining
+   * border ring. Absent when nothing is active or the effect has no clock (the
+   * ring then stays full while it lasts).
+   */
+  activePct?: number;
+  /** Charged onto the next attack and waiting for it to land. */
+  armed: boolean;
   /** Wind-up left, in ms — present only while this slot is mid-cast. */
   castRemainingMs?: number;
 }
 
-type DesktopAbilityState = "cooling" | "active" | "triggered" | "ready";
+/**
+ * The tile's ONE primary state, in priority order. Cooldown is deliberately not
+ * exclusive with the others: an active Guard's cooldown is already running, so
+ * the sweep draws under the duration ring rather than being hidden by it.
+ */
+type DesktopAbilityState = "casting" | "armed" | "active" | "cooling" | "ready";
+
+function primaryState(status: SlotStatus, cooling: boolean): DesktopAbilityState {
+  if (status.castRemainingMs !== undefined) return "casting";
+  if (status.armed) return "armed";
+  if (status.active) return "active";
+  return cooling ? "cooling" : "ready";
+}
+
+/**
+ * Counts cooling → ready transitions, so the tile can play a one-shot "ready"
+ * glint keyed by the count. Zero until the first real transition — a tile that
+ * mounts ready has nothing to announce.
+ */
+function useReadyFlash(cooling: boolean): number {
+  const prev = useRef(cooling);
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    if (prev.current && !cooling) setCount((n) => n + 1);
+    prev.current = cooling;
+  }, [cooling]);
+  return count;
+}
+
+/** The draining border ring for an active effect's remaining duration. */
+function DurationRing({ pct, className }: { pct: number | undefined; className: string }) {
+  const remaining = Math.max(0, Math.min(100, pct ?? 100));
+  return (
+    <span
+      className={className}
+      style={{
+        background: `conic-gradient(from 0deg, var(--slot-accent) ${remaining}%, rgba(255,255,255,0.1) ${remaining}%)`,
+      }}
+      aria-hidden="true"
+    />
+  );
+}
 
 /**
  * The cooldown sweep, from the server's own numbers where it has given us any.
@@ -107,28 +159,29 @@ function computeStatus(
   cooldownMs: number,
   now: number,
   active: boolean,
+  activePct: number | undefined,
+  armed: boolean,
   sample: AbilityCooldownSample | undefined,
 ): SlotStatus {
   let remainingFrac = 0;
   let cooldownLeftMs = 0;
-  // An active Guard boon owns the tile, and its sweep stays suppressed so the
-  // two states can never read as one — unchanged from before.
-  if (!active) {
-    if (sample) {
-      cooldownLeftMs = Math.max(0, sample.remainingMs - (now - sample.observedAt));
-      remainingFrac = sample.totalMs > 0
-        ? Math.min(1, cooldownLeftMs / sample.totalMs)
-        : 0;
-    } else if (cooldownStartedAt > 0 && cooldownMs > 0) {
-      const elapsed = now - cooldownStartedAt;
-      if (elapsed < cooldownMs) {
-        remainingFrac = 1 - elapsed / cooldownMs;
-        cooldownLeftMs = cooldownMs - elapsed;
-      }
+  // The cooldown sweep runs even while a Guard boon is active: the active state
+  // is told by the duration RING on the tile's border, so the two clocks read as
+  // two different things instead of one hiding the other.
+  if (sample) {
+    cooldownLeftMs = Math.max(0, sample.remainingMs - (now - sample.observedAt));
+    remainingFrac = sample.totalMs > 0
+      ? Math.min(1, cooldownLeftMs / sample.totalMs)
+      : 0;
+  } else if (cooldownStartedAt > 0 && cooldownMs > 0) {
+    const elapsed = now - cooldownStartedAt;
+    if (elapsed < cooldownMs) {
+      remainingFrac = 1 - elapsed / cooldownMs;
+      cooldownLeftMs = cooldownMs - elapsed;
     }
   }
   const justFired = firedAt > 0 && now - firedAt < PULSE_MS;
-  return { remainingFrac, cooldownLeftMs, justFired, active };
+  return { remainingFrac, cooldownLeftMs, justFired, active, activePct, armed };
 }
 
 /**
@@ -145,6 +198,7 @@ function castStatus(startedAt: number, castMs: number, now: number): SlotStatus 
     cooldownLeftMs: 0,
     justFired: false,
     active: true,
+    armed: false,
     castRemainingMs: Math.max(0, castMs - elapsed),
   };
 }
@@ -179,16 +233,18 @@ function AbilityIcon({
   const rank = abilityRankNumeral(abilityRankNumber(ability, useAtomValue(playerTierAtom)));
   const remainingPct = Math.max(0, Math.min(100, status.remainingFrac * 100));
   const cooling = remainingPct > 0;
-  const glowClass = status.justFired
-    ? " ability-icon--fired"
-    : status.active
-      ? " ability-icon--active"
-      : "";
+  const onCooldown = status.castRemainingMs === undefined && status.cooldownLeftMs > 0;
+  const readyFlash = useReadyFlash(onCooldown);
+  const state = primaryState(status, cooling);
+  const glowClass = [
+    status.justFired ? " ability-icon--fired" : "",
+    ` ability-icon--${state}`,
+  ].join("");
 
   return (
     <button
       type="button"
-      aria-label={`${abilityAccessibleLabel(ability, context, runtime)}. Hotkey ${keyHint}${queued ? ". Queued; press again to cancel" : ""}`}
+      aria-label={`${abilityAccessibleLabel(ability, context, runtime)}${status.armed ? ". Armed" : ""}. Hotkey ${keyHint}${queued ? ". Queued; press again to cancel" : ""}`}
       onClick={() => hudBus.requestUseAbility(ability.id)}
       {...handlers}
       className={`mobile-combat-ability${queued ? " mobile-combat-ability--queued" : ""}${unavailable ? " mobile-combat-ability--unavailable" : ""}`}
@@ -198,9 +254,13 @@ function AbilityIcon({
         flexDirection: "column",
         alignItems: "center",
         gap: 4,
+        ["--slot-accent" as string]: meta.accent,
       }}
     >
       <div style={{ position: "relative", width: ICON_SIZE, height: ICON_SIZE, flexShrink: 0 }}>
+        {status.active && status.castRemainingMs === undefined && (
+          <DurationRing pct={status.activePct} className="ability-duration-ring ability-duration-ring--mobile" />
+        )}
         <div
           className={`ability-icon${glowClass}`}
           style={{
@@ -217,7 +277,9 @@ function AbilityIcon({
             justifyContent: "center",
             fontSize: 22,
             lineHeight: 1,
-            filter: cooling ? "saturate(0.7) brightness(0.85)" : undefined,
+            // An armed or active tile must stay lit even though its cooldown is
+            // already running; only a plain cooldown reads as dimmed.
+            filter: state === "cooling" ? "saturate(0.4) brightness(0.7)" : undefined,
           }}
         >
           <GameIcon
@@ -240,6 +302,11 @@ function AbilityIcon({
               }}
             />
           )}
+          {onCooldown && !status.armed && (
+            <span className="ability-cooldown-time">{Math.ceil(status.cooldownLeftMs / 1000)}</span>
+          )}
+          {status.armed && <span className="ability-armed-tag">ARMED</span>}
+          {readyFlash > 0 && <span key={readyFlash} className="ability-ready-flash" aria-hidden="true" />}
         </div>
 
         {/* Slot badge remains readable over either artwork or the fallback glyph. */}
@@ -298,17 +365,13 @@ function DesktopAbilityFamily({
   const remainingPct = Math.max(0, Math.min(100, status.remainingFrac * 100));
   const remainingSeconds = Math.ceil(status.cooldownLeftMs / 1000);
   const cooling = remainingPct > 0;
-  const state: DesktopAbilityState = status.justFired
-    ? "triggered"
-    : status.active
-      ? "active"
-      : cooling
-        ? "cooling"
-        : "ready";
+  const onCooldown = status.castRemainingMs === undefined && status.cooldownLeftMs > 0;
+  const readyFlash = useReadyFlash(onCooldown);
+  const state = primaryState(status, cooling);
 
-  // The tile's visual state is a four-way including the just-fired flash, which
-  // is a render cue rather than something the ability is DOING; the tooltip
-  // collapses it back to the three states a player can act on.
+  // The just-fired flash is a render cue layered over the primary state, not
+  // something the ability is DOING; the tooltip reads only the states a player
+  // can act on.
   const runtime: AbilityRuntime = {
     state: status.castRemainingMs !== undefined
       ? "casting"
@@ -332,14 +395,18 @@ function DesktopAbilityFamily({
   return (
     <button
       type="button"
-      className={`combat-ability-slot combat-ability-slot--${ability.slot} combat-ability-slot--${state}${queued ? " combat-ability-slot--queued" : ""}${unavailable ? " combat-ability-slot--unavailable" : ""}`}
+      className={`combat-ability-slot combat-ability-slot--${ability.slot} combat-ability-slot--${state}${status.justFired ? " combat-ability-slot--fired" : ""}${queued ? " combat-ability-slot--queued" : ""}${unavailable ? " combat-ability-slot--unavailable" : ""}`}
       data-ability-icon={ability.icon ?? ability.id}
       data-ability-state={state}
       role="listitem"
-      aria-label={`${label}${keyHint ? `. Hotkey ${keyHint}` : ""}${queued ? ". Queued; press again to cancel" : ""}`}
+      aria-label={`${label}${status.armed ? ". Armed" : ""}${keyHint ? `. Hotkey ${keyHint}` : ""}${queued ? ". Queued; press again to cancel" : ""}`}
       onClick={() => hudBus.requestUseAbility(ability.id)}
+      style={{ ["--slot-accent" as string]: meta.accent }}
       {...handlers}
     >
+      {state === "active" && (
+        <DurationRing pct={status.activePct} className="ability-duration-ring" />
+      )}
       <div className="combat-ability-slot__icon">
         <GameIcon
           source={icon}
@@ -356,7 +423,11 @@ function DesktopAbilityFamily({
             }}
           />
         )}
-        {cooling && <span className="combat-ability-slot__cooldown-time">{remainingSeconds}</span>}
+        {onCooldown && !status.armed && (
+          <span className="combat-ability-slot__cooldown-time">{remainingSeconds}</span>
+        )}
+        {status.armed && <span className="ability-armed-tag">ARMED</span>}
+        {readyFlash > 0 && <span key={readyFlash} className="ability-ready-flash" aria-hidden="true" />}
         {keyHint && (
           <span className="combat-ability-slot__key-hint" aria-hidden="true">
             {keyHint}
@@ -463,6 +534,7 @@ export function AbilityBar() {
   const cooldownSamples = useAtomValue(abilityCooldownSampleAtom);
   const buffs = useAtomValue(activeBuffsAtom);
   const cast = useAtomValue(abilityCastAtom);
+  const armedAbilityId = useAtomValue(armedAbilityIdAtom);
   const playerTier = useAtomValue(playerTierAtom);
   const queuedAbilityIds = useAtomValue(queuedAbilityIdsAtom);
   const targetId = useAtomValue(attackTargetIdAtom);
@@ -476,7 +548,7 @@ export function AbilityBar() {
   // Guard buffs are per-slot ids, so the tile for guard slot N lights up only
   // when THAT slot's buff is up. A Recovery guard has no DR buff of its own, so
   // it keys off its own per-slot Recovery effect id.
-  const activeBuffIds = new Set<string>(buffs.map((b) => b.id));
+  const buffById = new Map<string, PlayerBuff>(buffs.map((b) => [b.id, b]));
 
   // Ordered so every Technique sits left of every Guard.
   const equippedDefs = SLOT_ORDER.flatMap((slot) =>
@@ -503,13 +575,17 @@ export function AbilityBar() {
       if (cast?.abilityId === ability.id) {
         return { ability, status: castStatus(cast.startedAt, cast.castMs, now) };
       }
-      const active =
+      const activeBuff =
         slot === "guard"
-          ? activeBuffIds.has(guardEffectIdForAbility(ability.id) ?? "") ||
-            activeBuffIds.has(recoveryEffectIdForAbility(ability.id) ?? "") ||
-            (ability.id === "bramble-guard" && activeBuffIds.has("ability-bramble"))
-          : activeBuffIds.has(ABILITY_FRENZY_EFFECT_ID) &&
-            ability.shape === "instant";
+          ? buffById.get(guardEffectIdForAbility(ability.id) ?? "") ??
+            buffById.get(recoveryEffectIdForAbility(ability.id) ?? "") ??
+            (ability.id === "bramble-guard" ? buffById.get("ability-bramble") : undefined)
+          : ability.shape === "instant"
+            ? buffById.get(ABILITY_FRENZY_EFFECT_ID)
+            : undefined;
+      const activePct = activeBuff && activeBuff.durationPct >= 0
+        ? activeBuff.durationPct
+        : undefined;
       return {
         ability,
         status: computeStatus(
@@ -517,7 +593,9 @@ export function AbilityBar() {
           firedAt[ability.id] ?? 0,
           abilityCooldownMs(ability, playerTier),
           now,
-          active,
+          activeBuff !== undefined,
+          activePct,
+          armedAbilityId === ability.id,
           cooldownSamples[ability.id],
         ),
       };
@@ -549,7 +627,7 @@ export function AbilityBar() {
             status={status}
             keyHint={keyHints[index] ?? "—"}
             queued={queuedAbilityIds.includes(ability.id)}
-            unavailable={ability.slot === "technique" && ability.shape !== "instant" && ability.shape !== "self-cast" && !targetId}
+            unavailable={!status.armed && ability.slot === "technique" && ability.shape !== "instant" && ability.shape !== "self-cast" && !targetId}
           />
         ))}
       </div>}
@@ -573,7 +651,7 @@ export function AbilityBar() {
               status={status}
               keyHint={keyHints[index] ?? "—"}
               queued={queuedAbilityIds.includes(ability.id)}
-              unavailable={ability.slot === "technique" && ability.shape !== "instant" && ability.shape !== "self-cast" && !targetId}
+              unavailable={!status.armed && ability.slot === "technique" && ability.shape !== "instant" && ability.shape !== "self-cast" && !targetId}
             />
           ))}
         </div>}

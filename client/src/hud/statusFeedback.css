@@ -1,0 +1,346 @@
+/*
+ * Status feedback: the transition layer over the buff bar and ability tiles.
+ *
+ * Loudness is deliberately tiered, quietest first:
+ *   1. appear / expire        — a soft pop in, a short fade out
+ *   2. boon stack gained      — a gentle glow in the tile's own tone
+ *   3. debuff stack gained    — a hot surge plus a badge pop (Heat, Chill, Rot…)
+ *   4. cleanse                — white flash, burst ring, shards
+ *   5. critical debuff        — permanent bright halo while it is on you
+ * Keep new effects inside this ladder rather than louder than the tier above.
+ */
+
+/* ── Buff tiles: appear / expire ──────────────────────────────────────── */
+
+/* `backwards`, not `both`: a transform left on the tile after the pop would
+   make it a containing block for everything inside it. */
+.buff-tile {
+  animation: buff-enter 340ms cubic-bezier(0.2, 1.4, 0.4, 1) backwards;
+}
+
+.buff-tile--critical {
+  animation: buff-enter-critical 460ms cubic-bezier(0.2, 1.2, 0.3, 1) backwards;
+}
+
+.buff-tile--fade {
+  animation: buff-exit 300ms ease-in forwards;
+}
+
+@keyframes buff-enter {
+  0%   { opacity: 0; transform: scale(0.6); filter: brightness(1.7); }
+  60%  { opacity: 1; transform: scale(1.06); filter: brightness(1.25); }
+  100% { opacity: 1; transform: scale(1); filter: none; }
+}
+
+@keyframes buff-enter-critical {
+  0%   { opacity: 0; transform: scale(1.9); filter: brightness(3); }
+  55%  { opacity: 1; transform: scale(0.94); filter: brightness(1.6); }
+  100% { opacity: 1; transform: scale(1); filter: none; }
+}
+
+@keyframes buff-exit {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(0.82); }
+}
+
+/* ── Buff tiles: stack gained ─────────────────────────────────────────── */
+
+.buff-surge {
+  position: absolute;
+  inset: -5px;
+  z-index: 2;
+  border-radius: 10px;
+  pointer-events: none;
+}
+
+/* A high-impact debuff climbing: bright core, hot tone bloom. */
+.buff-surge--harm {
+  border: 2px solid rgba(255, 255, 255, 0.95);
+  box-shadow:
+    0 0 14px 5px var(--buff-tone),
+    0 0 26px 8px var(--buff-tone),
+    inset 0 0 14px var(--buff-tone);
+  animation: buff-surge-harm 720ms ease-out forwards;
+}
+
+/* One of your own buffs growing: same idea, a notch quieter. */
+.buff-surge--boon {
+  box-shadow: 0 0 10px 2px var(--buff-tone), inset 0 0 8px var(--buff-tone);
+  animation: buff-surge-boon 520ms ease-out forwards;
+}
+
+@keyframes buff-surge-harm {
+  0%   { opacity: 0; transform: scale(0.9); }
+  18%  { opacity: 1; transform: scale(1.08); }
+  100% { opacity: 0; transform: scale(1.3); }
+}
+
+@keyframes buff-surge-boon {
+  0%   { opacity: 0; transform: scale(0.95); }
+  25%  { opacity: 0.75; transform: scale(1.04); }
+  100% { opacity: 0; transform: scale(1.14); }
+}
+
+.buff-stack-badge--harm {
+  animation: buff-badge-pop-harm 480ms cubic-bezier(0.2, 1.5, 0.4, 1);
+}
+
+.buff-stack-badge--boon {
+  animation: buff-badge-pop-boon 380ms ease-out;
+}
+
+@keyframes buff-badge-pop-harm {
+  0%   { transform: scale(1.75); color: #ffe07a; border-color: #fff; box-shadow: 0 0 10px var(--buff-tone); }
+  100% { transform: scale(1); }
+}
+
+@keyframes buff-badge-pop-boon {
+  0%   { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+
+/* The resting glow of a surge debuff deepens with its count (`--buff-heat` is
+   0..1), so a tall stack reads as dangerous between gains too. drop-shadow
+   rather than box-shadow so it follows the diamond clip. */
+.buff-tile--heated .buff-tile__frame {
+  filter:
+    drop-shadow(0 0 calc(2px + var(--buff-heat) * 7px) var(--buff-tone))
+    brightness(calc(1 + var(--buff-heat) * 0.18));
+}
+
+/* ── Buff tiles: cleanse ──────────────────────────────────────────────── */
+
+.buff-cleanse-burst {
+  position: absolute;
+  inset: -4px;
+  z-index: 4;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  pointer-events: none;
+  box-shadow: 0 0 14px #fff, 0 0 26px #bfe8ff, inset 0 0 12px #e8f7ff;
+  animation: buff-cleanse-burst 560ms ease-out forwards;
+}
+
+.buff-cleanse-burst--final {
+  animation: buff-cleanse-burst-final 680ms ease-out forwards;
+}
+
+@keyframes buff-cleanse-burst {
+  0%   { opacity: 1; transform: scale(0.55); }
+  100% { opacity: 0; transform: scale(1.8); }
+}
+
+@keyframes buff-cleanse-burst-final {
+  0%   { opacity: 1; transform: scale(0.5); border-width: 5px; }
+  100% { opacity: 0; transform: scale(2.4); border-width: 1px; }
+}
+
+/* The cleansed tile itself: flashes white-hot, swells, then collapses. */
+.buff-tile--shatter {
+  animation: buff-shatter 700ms ease-out forwards;
+}
+
+@keyframes buff-shatter {
+  0%   { opacity: 1; transform: scale(1); filter: brightness(3.2) saturate(0.2); }
+  16%  { opacity: 1; transform: scale(1.22); filter: brightness(2.6) saturate(0.3); }
+  50%  { opacity: 1; transform: scale(1.05); filter: brightness(1.8) saturate(0.4); }
+  100% { opacity: 0; transform: scale(0.4); filter: brightness(1.2); }
+}
+
+.buff-shard {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 5;
+  width: 5px;
+  height: 11px;
+  margin: -5px 0 0 -2px;
+  background: #fff;
+  box-shadow: 0 0 6px #cfefff;
+  pointer-events: none;
+  transform: rotate(var(--shard-angle)) translateY(0);
+  animation: buff-shard 620ms cubic-bezier(0.15, 0.7, 0.3, 1) forwards;
+}
+
+@keyframes buff-shard {
+  0%   { opacity: 1; transform: rotate(var(--shard-angle)) translateY(-6px) scale(1); }
+  100% { opacity: 0; transform: rotate(var(--shard-angle)) translateY(-46px) scale(0.35); }
+}
+
+/* ── Buff tiles: critical debuffs ─────────────────────────────────────── */
+
+.buff-critical-halo {
+  position: absolute;
+  inset: -7px;
+  z-index: 0;
+  border: 2px solid #fff;
+  border-radius: 12px;
+  pointer-events: none;
+  background: color-mix(in srgb, var(--buff-tone) 40%, transparent);
+  box-shadow:
+    0 0 10px 3px var(--buff-tone),
+    0 0 24px 8px var(--buff-tone),
+    inset 0 0 10px var(--buff-tone);
+  animation: buff-critical-halo 0.8s ease-in-out infinite alternate;
+}
+
+.buff-critical-label {
+  padding: 2px 5px;
+  border-radius: 3px;
+  background: rgba(8, 6, 4, 0.82);
+  box-shadow: 0 0 6px var(--buff-tone);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.buff-tile--critical .buff-tile__frame {
+  animation: buff-critical-throb 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes buff-critical-halo {
+  from { opacity: 0.6; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1.07); }
+}
+
+@keyframes buff-critical-throb {
+  from { filter: brightness(1.05) drop-shadow(0 0 3px #fff); }
+  to   { filter: brightness(1.4) drop-shadow(0 0 8px #fff); }
+}
+
+/* ── Ability tiles ────────────────────────────────────────────────────── */
+
+/* Active effect: a ring on the tile's border, drained by remaining duration.
+   Masked to a frame so the conic fill reads as a border, not a pie. */
+.ability-duration-ring {
+  position: absolute;
+  top: -5px;
+  left: calc(50% - 29px);
+  width: 58px;
+  height: 58px;
+  box-sizing: border-box;
+  padding: 3px;
+  border-radius: 4px;
+  pointer-events: none;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+}
+
+.ability-duration-ring--mobile {
+  top: -5px;
+  left: -5px;
+  width: calc(100% + 10px);
+  height: calc(100% + 10px);
+  border-radius: 9px;
+}
+
+/* Armed: the charge is on the next attack. Fast gold pulse plus a tag, both
+   cleared by the hit that consumes it. */
+.ability-armed-tag {
+  position: absolute;
+  left: 50%;
+  bottom: 2px;
+  z-index: 5;
+  padding: 1px 3px;
+  transform: translateX(-50%);
+  color: #2a1a00;
+  background: #ffd257;
+  border: 1px solid #fff2c2;
+  box-shadow: 0 0 6px rgba(255, 210, 87, 0.9);
+  font: bold 8px/9px monospace;
+  letter-spacing: 0.08em;
+  pointer-events: none;
+  animation: ability-armed-tag 0.7s ease-in-out infinite alternate;
+}
+
+@keyframes ability-armed-tag {
+  from { filter: brightness(0.95); }
+  to   { filter: brightness(1.25); }
+}
+
+@keyframes ability-armed-pulse {
+  from {
+    border-color: #c99a2e;
+    box-shadow: 0 0 4px rgba(255, 200, 70, 0.45), inset 0 0 0 1px #ffd257;
+  }
+  to {
+    border-color: #fff2c2;
+    box-shadow: 0 0 16px rgba(255, 214, 90, 1), inset 0 0 10px rgba(255, 214, 90, 0.65);
+  }
+}
+
+@keyframes ability-active-breathe {
+  from { box-shadow: 0 0 6px var(--slot-accent), inset 0 0 0 1px var(--slot-accent); }
+  to   { box-shadow: 0 0 14px var(--slot-accent), inset 0 0 0 1px var(--slot-accent); }
+}
+
+/* Cooldown just finished: one bright glint so "ready" is noticed. */
+.ability-ready-flash {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  border-radius: inherit;
+  pointer-events: none;
+  animation: ability-ready-flash 520ms ease-out forwards;
+}
+
+@keyframes ability-ready-flash {
+  0%   { background: rgba(255, 255, 255, 0.55); box-shadow: inset 0 0 0 2px #fff; }
+  100% { background: rgba(255, 255, 255, 0); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0); }
+}
+
+/* Mobile tile cooldown seconds (desktop has its own centred counter). */
+.ability-cooldown-time {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font: bold 16px monospace;
+  text-shadow: 1px 1px 2px #000, 0 0 4px #000;
+  pointer-events: none;
+}
+
+/* Mobile tile states (the icon's base look is inline). */
+.ability-icon--armed {
+  animation: ability-armed-pulse 0.7s ease-in-out infinite alternate;
+}
+
+.ability-icon--casting {
+  animation: ability-active-breathe 0.5s ease-in-out infinite alternate;
+}
+
+/* Desktop tile states, overriding the dock's bevelled border. */
+.combat-ability-slot--armed .combat-ability-slot__icon {
+  animation: ability-armed-pulse 0.7s ease-in-out infinite alternate;
+}
+
+.combat-ability-slot--active .combat-ability-slot__icon,
+.combat-ability-slot--casting .combat-ability-slot__icon {
+  border-color: var(--slot-accent);
+  animation: ability-active-breathe 1.1s ease-in-out infinite alternate;
+}
+
+.combat-ability-slot--casting .combat-ability-slot__icon {
+  animation-duration: 0.5s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .buff-tile,
+  .buff-tile--critical,
+  .buff-tile--critical .buff-tile__frame,
+  .buff-critical-halo,
+  .buff-shard,
+  .ability-armed-tag {
+    animation: none;
+  }
+  .buff-tile--fade,
+  .buff-tile--shatter {
+    animation: buff-exit 300ms ease-in forwards;
+  }
+}

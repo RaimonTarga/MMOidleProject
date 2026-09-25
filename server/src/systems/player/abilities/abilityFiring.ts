@@ -604,6 +604,12 @@ function maybeFireGuard(
     playerId: player.isPlayer.id,
     ability: abilityId,
   });
+  if (removedEffects && removedEffects.length > 0) {
+    world.pushEvent(player.hasPosition.nodeId, {
+      kind: "player-cleansed",
+      playerId: player.isPlayer.id,
+    });
+  }
   recordAbilityActivation(world, player, abilityId, 'guard', removedEffects);
   return true;
 }
@@ -701,7 +707,13 @@ function applyBreakFree(
 ): void {
   const cs = player.tracksCombat;
   const worst = worstHardControl(cs);
-  if (worst) removeStatusEffect(cs, worst);
+  if (worst) {
+    removeStatusEffect(cs, worst);
+    world.pushEvent(player.hasPosition.nodeId, {
+      kind: "player-cleansed",
+      playerId: player.isPlayer.id,
+    });
+  }
   syncPlayerControlLockout(world, player);
 
   if (controlResistPct !== undefined && controlResistMs !== undefined) {

@@ -325,6 +325,30 @@ export function notifyAbilityCastEnded(): void {
   getDefaultStore().set(abilityCastAtom, null);
 }
 
+/**
+ * The ability id currently ARMED onto the local player's next attack, or null.
+ * Set by `player-technique-armed`, cleared by the consuming hit. Cosmetic only:
+ * mirrors the in-world red armed telegraph so the HUD tile can say the same
+ * thing the bar over the player does.
+ */
+export const armedAbilityIdAtom = atom<string | null>(null);
+
+export function notifyAbilityArmed(abilityId: string | null): void {
+  getDefaultStore().set(armedAbilityIdAtom, abilityId);
+}
+
+/**
+ * Client receipt time of the last `player-cleansed` event for the local player.
+ * The buff bar reads it to tell a cleanse from an ordinary expiry: debuff tiles
+ * that shrink or vanish within a short window of this stamp get the loud
+ * shatter treatment instead of the quiet fade.
+ */
+export const lastCleanseAtAtom = atom<number>(0);
+
+export function notifyCleansed(): void {
+  getDefaultStore().set(lastCleanseAtAtom, Date.now());
+}
+
 export interface ZonePlayer {
   id: string;
   name: string;
@@ -880,6 +904,8 @@ function resetPlayerAtoms(): void {
   store.set(abilityCooldownStartedAtAtom, {});
   store.set(stanceCooldownStartedAtAtom, 0);
   store.set(abilityCastAtom, null);
+  store.set(armedAbilityIdAtom, null);
+  store.set(lastCleanseAtAtom, 0);
   setIfShallowObjectEqual(passivesAtom, {});
   setIfShallowObjectEqual(equipmentAtom, { ...DEFAULT_EQUIPMENT });
   setIfShallowObjectEqual(itemUpgradesAtom, {});

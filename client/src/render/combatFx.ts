@@ -179,6 +179,8 @@ import {
   notifyAbilityCooldownSample,
   notifyAbilityCooldownStarted,
   notifyAbilityFired,
+  notifyAbilityArmed,
+  notifyCleansed,
   notifyStanceCooldownStarted,
 } from "../hud/atoms";
 import type { GameScene } from "../scenes/GameScene";
@@ -1237,6 +1239,11 @@ export function dispatchCombatEvent(
     return;
   }
 
+  if (ev.kind === 'player-cleansed') {
+    if (ev.playerId === scene.myId) notifyCleansed();
+    return;
+  }
+
   if (ev.kind === 'player-reload-start') {
     if (shouldRunClientFx() && state.sprite.has(ev.playerId)) {
       spawnSkillCallout(
@@ -1260,6 +1267,9 @@ export function dispatchCombatEvent(
     });
     if (ev.playerId === scene.myId) {
       notifyAbilityCooldownStarted(ev.ability);
+      // A self-facing instant opens a window rather than charging an attack, so
+      // there is nothing waiting to land and the tile must not read "armed".
+      if (abilityDef(ev.ability)?.shape !== "instant") notifyAbilityArmed(ev.ability);
     }
     if (shouldRunClientFx()) {
       const sprite = state.sprite.get(ev.playerId);
@@ -1470,6 +1480,7 @@ export function dispatchCombatEvent(
     // slot-kind guess would pulse the wrong one.
     if (ev.playerId === scene.myId) {
       notifyAbilityFired(state.techniqueArmed.get(ev.playerId)!.abilityId);
+      notifyAbilityArmed(null);
     }
     state.techniqueArmed.delete(ev.playerId);
   }

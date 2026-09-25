@@ -44,6 +44,12 @@ export function runDebuffCleanse(world: World, player: PlayerEntity): void {
     removeStatusEffectStacks(cs, id, allowed);
   }
   setCooldown(cs, 'cleanse', cleanseIntervalMs);
+  if (removed > 0) {
+    world.pushEvent(player.hasPosition.nodeId, {
+      kind: 'player-cleansed',
+      playerId: player.isPlayer.id,
+    });
+  }
 
   // Heal-on-cleanse: per removed stack, or a flat heal when there was nothing to cleanse.
   const perStackPct = player.usesSkills.passives['defense.cleanse-per-stack-heal-pct'] ?? 0;
