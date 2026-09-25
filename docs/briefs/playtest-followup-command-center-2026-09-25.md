@@ -61,8 +61,24 @@ sits at full HP inside a ~171×62 px area, alternating between the "approach" an
 avoidance" intents, and earns no XP for minutes. The hazard-approach timeout is
 target-specific, so target switching may reset it. Diagnostic evidence:
 `reports/reward-mastery-study-2026-09-25/iteration-04/stall-diagnosis.json` and
-`iteration-05/stall-probe/`. This is an auto-combat AI fix, not balance. **Suggested:**
-a short standalone session, or bundle it with #4.
+`iteration-05/stall-probe/`. This is an auto-combat AI fix, not balance.
+
+**Fixed on branch `fix/volcano-approach-stall`** (worktree `../mmo-volcano-stall`),
+pending merge approval.
+- **Cause:** the Striker had no attack target. It was approaching an Ember Skink that
+  stood inside the (1316, 3033) lava pool. At some rim positions the Skink failed the
+  safe-pull check (`no-safe-contact-or-pull`). Selection then flipped to a far mob for
+  one tick, about every 1.3 s. That one tick hit `steerTowardTarget`'s
+  `!hasApproachAttempt → clearApproachAttempt` branch, which reset the Skink's 15 s
+  hazard-approach budget. The Skink was never deferred, so the player kept walking the
+  rim and into the hazard envelope, where the escape pushed it back out.
+- **Fix:** hazard-approach budgets are now kept per target in `blockedApproach.ts`. A
+  budget lapses only after 30 s untouched (the deferral window). No balance numbers
+  changed.
+- **Repro (develop at `7094727e`, same job file, damage-to-monsters progress signal):**
+  the seed stalls from 348.6 s to 830.6 s (482 s), then again from 1151 s until the
+  30-minute cutoff. With the fix, no gap reaches 60 s in 30 minutes. Guarded by
+  `server/test/hazardApproachTargetFlicker.test.ts` (mutation-checked).
 
 ## 2. Defense rework
 

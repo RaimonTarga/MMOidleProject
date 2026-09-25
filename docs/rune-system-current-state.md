@@ -229,6 +229,15 @@ features. Step Back owns first while its imminent attack is pending; immediately
 after that response ends, Avoid Hazards may acquire if the player is still in
 harmful terrain. It does not treat pending attack telegraphs as persistent terrain.
 
+With Avoid Hazards on, approaching or pulling a target that sits in a hazard has a
+per-target budget (`server/src/systems/combat/ai/blockedApproach.ts`). If that approach
+makes no contact and deals no damage for 15 s, the target is deferred from selection
+for 30 s. Each target keeps its own clock. A brief switch to another target does not
+restart it; only contact, damage, leaving the target alone for longer than the 30 s
+deferral window, or turning avoidance off does. Before this, a one-tick selection
+flicker reset the clock, and a Volcanic player circled a lava pool's rim for minutes
+(`server/test/hazardApproachTargetFlicker.test.ts`).
+
 `rune.keepDistance`, `rune.waitForRegen`, `rune.waitForExecution`, and
 `rune.tacticalReload` are read by `server/src/systems/combat/ai/autoTarget.ts`.
 

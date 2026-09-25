@@ -813,8 +813,8 @@ export function steerTowardTarget(
 
   if (avoidHazards) {
     const canAttack = world.collision.canReach(player, target, attackRange);
-    if (canAttack || !hasApproachAttempt(player, target)) clearApproachAttempt(player);
-    else if (hazardApproachExpired(player, target, now)) {
+    if (canAttack) clearApproachAttempt(player, target);
+    else if (hasApproachAttempt(player, target) && hazardApproachExpired(player, target, now)) {
       hazardPulls.delete(player);
       hazardSkirts.delete(player);
       stopEntity(world, player);
@@ -844,7 +844,7 @@ export function steerTowardTarget(
         targetIsAggroed ? target.performsAttack.attackRange + HAZARD_PULL_RANGE_CLEARANCE : HAZARD_PULL_EDGE_BUFFER)
       : null;
     if (targetHazard && pullPoint && !playerHazard) {
-      if (world.collision.canReach(player, target, attackRange)) clearApproachAttempt(player);
+      if (world.collision.canReach(player, target, attackRange)) clearApproachAttempt(player, target);
       if (!world.collision.canReach(player, target, attackRange) && hazardApproachExpired(player, target, now)) {
         hazardPulls.delete(player); hazardSkirts.delete(player); stopEntity(world, player); return;
       }
@@ -902,7 +902,8 @@ export function steerTowardTarget(
   hazardPulls.delete(player);
 
   // Normal chase between hazard pulls is still the same unsuccessful approach.
-  // Only contact, damage, a new target or disabling avoidance resets its budget.
+  // Only contact, damage, leaving the target alone past the lapse window, or
+  // disabling avoidance resets its budget; a brief switch to another target does not.
   if (!avoidHazards) clearApproachAttempt(player);
 
   // The mob can hit us at or below its own reach (same edge-to-edge gap combat
