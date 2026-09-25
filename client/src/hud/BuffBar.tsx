@@ -1,10 +1,10 @@
-import { useMemo } from "react";
+import { Fragment, useMemo, useRef } from "react";
 import { useAtomValue } from "jotai";
 import type { BuffCategory, PlayerBuff, BuffShape } from "@mmo-idle/shared";
 import { activeBuffsAtom, lastCleanseAtAtom } from "./atoms";
 import { GameIcon } from "../ui/GameIcon";
 import { statusIconSource } from "../ui/conceptIcons";
-import { TooltipCard, useHoverTooltip } from "./primitives";
+import { TooltipCard, useStatusStrip, type StripTileProps } from "./primitives";
 import { buffTooltipContent } from "./statusTooltips";
 import { useIsMobile } from "./useIsMobile";
 import {
@@ -57,28 +57,31 @@ function displayTone(buff: PlayerBuff): string {
     : buff.color;
 }
 
+type EndReason = "ended" | "cleansed";
+
 interface BuffIconProps {
   buff: PlayerBuff;
   interactive: boolean;
+  /** Hover/focus handlers from the strip; the strip owns the tooltip. */
+  stripProps?: StripTileProps | Record<string, never>;
   /** Present for a tile that has already left the list and is animating out. */
   ghost?: BuffGhost;
   onGhostDone?: () => void;
+  /**
+   * The buff has ended but the bar is frozen for inspection, so the tile keeps
+   * its slot (and stays hoverable) in a spent state. `burst` replays the cleanse
+   * shatter on it when it was stripped rather than expiring.
+   */
+  ended?: { reason: EndReason; burst?: number };
   fx?: BuffTileFx;
 }
 
-function BuffIcon({ buff, interactive, ghost, onGhostDone, fx }: BuffIconProps) {
-  // Hover explains the tile. The content is rebuilt each render because the
-  // CURRENT block is the whole point of it — a stale stack count would be worse
-  // than no tooltip at all.
-  //
+function BuffIcon({ buff, interactive, stripProps, ghost, onGhostDone, ended, fx }: BuffIconProps) {
   // Only on a pointer device. There is no hover on touch, so taking pointer
   // events there would buy nothing and cost a tap into the world wherever a buff
-  // happens to be sitting. A mobile inspection gesture can reuse
-  // `buffTooltipContent` unchanged when one is designed.
+  // happens to be sitting. The tooltip itself belongs to the bar (see
+  // `useStatusStrip`), so it survives this tile changing, moving or ending.
   const live = interactive && !ghost;
-  const { handlers, node } = useHoverTooltip(
-    live ? <TooltipCard content={buffTooltipContent(buff)} /> : undefined,
-  );
   const critical = CRITICAL_BUFF_IDS.has(buff.id);
   const size = critical ? CRITICAL_ICON_SIZE : ICON_SIZE;
   const shapeStyle = SHAPE_STYLE[buff.shape];
@@ -114,7 +117,9 @@ function BuffIcon({ buff, interactive, ghost, onGhostDone, fx }: BuffIconProps) 
     critical ? "buff-tile--critical" : "",
     heat > 0 ? "buff-tile--heated" : "",
     ghost ? `buff-tile--${ghost.kind}` : "",
+    ended ? `buff-tile--ended buff-tile--ended-${ended.reason}` : "",
   ].filter(Boolean).join(" ");
+  const shattering = ghost?.kind === "shatter" || ended?.burst !== undefined;
 
   return (
     <div
@@ -137,12 +142,12 @@ function BuffIcon({ buff, interactive, ghost, onGhostDone, fx }: BuffIconProps) 
       aria-label={
         ghost
           ? undefined
-          : `${buff.label}${critical ? ", critical" : ""}${showStacks ? `, ${buff.stacks} stacks` : ""}`
+          : `${buff.label}${critical ? ", critical" : ""}${showStacks ? `, ${buff.stacks} stacks` : ""}${ended ? `, ${ended.reason}` : ""}`
       }
       onAnimationEnd={(e) => {
         if (ghost && e.target === e.currentTarget) onGhostDone?.();
       }}
-      {...(ghost ? {} : handlers)}
+      {...(ghost ? {} : stripProps)}
     >
       {/* Icon with optional clock-sweep overlay */}
       <div
@@ -206,8 +211,8 @@ function BuffIcon({ buff, interactive, ghost, onGhostDone, fx }: BuffIconProps) 
         {fx !== undefined && fx.burstN > 0 && (
           <span key={`burst-${fx.burstN}`} className="buff-cleanse-burst" aria-hidden="true" />
         )}
-        {ghost?.kind === "shatter" && (
-          <>
+        {shattering && (
+          <Fragment key={ended?.burst ?? "ghost"}>
             <span className="buff-cleanse-burst buff-cleanse-burst--final" aria-hidden="true" />
             {SHARD_ANGLES.map((deg) => (
               <span
@@ -217,7 +222,7 @@ function BuffIcon({ buff, interactive, ghost, onGhostDone, fx }: BuffIconProps) 
                 aria-hidden="true"
               />
             ))}
-          </>
+          </Fragment>
         )}
 
         {/* Stack count badge: outside clipped shapes so diamond icons do not crop it. */}
@@ -269,7 +274,6 @@ function BuffIcon({ buff, interactive, ghost, onGhostDone, fx }: BuffIconProps) 
       >
         {buff.label}
       </span>
-      {ghost ? null : node}
     </div>
   );
 }
@@ -281,20 +285,69 @@ export function BuffBar() {
   const ordered = useMemo(() => orderBuffs(buffs), [buffs]);
   const { ghosts, fx, dropGhost } = useBuffTransitions(ordered, lastCleanseAt);
 
-  if (ordered.length === 0 && ghosts.length === 0) return null;
+  // Why each recently-gone buff left, remembered past its exit animation: a tile
+  // held open for inspection has to say "Cleansed" long after the shatter itself
+  // has finished playing.
+  const endReasons = useRef(new Map<string, EndReason>());
+  for (const ghost of ghosts) {
+    endReasons.current.set(ghost.key, ghost.kind === "shatter" ? "cleansed" : "ended");
+  }
 
-  // Ghosts hold the slot they left from until their exit finishes, so the row
-  // closes the gap after the fade instead of jumping under it.
-  const tiles: { key: string; buff: PlayerBuff; ghost?: BuffGhost }[] = ordered.map((buff) => ({
-    key: buffKey(buff),
-    buff,
-  }));
-  for (const ghost of [...ghosts].sort((a, b) => a.index - b.index)) {
-    tiles.splice(Math.min(ghost.index, tiles.length), 0, {
-      key: `ghost:${ghost.key}@${ghost.at}`,
-      buff: ghost.buff,
-      ghost,
-    });
+  const strip = useStatusStrip({
+    items: ordered,
+    keyOf: buffKey,
+    enabled: !isMobile,
+    renderTip: ({ key, item, ended }) => {
+      // Rebuilt every render: the CURRENT block is the reason the player
+      // hovered, and a stale stack count would be worse than no card at all.
+      const content = buffTooltipContent(item);
+      if (ended) {
+        content.ended = endReasons.current.get(key) === "cleansed"
+          ? { label: "Cleansed", note: "stripped off you", tone: "cleansed" }
+          : { label: "Ended", note: "no longer on you" };
+      }
+      return <TooltipCard content={content} />;
+    },
+  });
+
+  if (!strip.frozen) {
+    // Thawed: a reason is only needed while its ghost or held tile is showing.
+    const ghostKeys = new Set(ghosts.map((g) => g.key));
+    for (const key of [...endReasons.current.keys()]) {
+      if (!ghostKeys.has(key)) endReasons.current.delete(key);
+    }
+  }
+
+  if (strip.entries.length === 0 && ghosts.length === 0) return null;
+
+  const tiles: {
+    key: string;
+    buff: PlayerBuff;
+    ghost?: BuffGhost;
+    ended?: { reason: EndReason; burst?: number };
+  }[] = strip.entries.map(({ key, item, ended }) => {
+    if (!ended) return { key, buff: item };
+    // A shatter still playing for this key replays on the held tile, keyed by its
+    // start so an expiry upgraded to a cleanse restarts it.
+    const shatter = ghosts.find((g) => g.key === key && g.kind === "shatter");
+    return {
+      key,
+      buff: item,
+      ended: { reason: endReasons.current.get(key) ?? "ended", burst: shatter?.at },
+    };
+  });
+  // While frozen every departed buff already holds its slot as an ended tile,
+  // so its exit ghost would only draw it a second time.
+  if (!strip.frozen) {
+    // Ghosts hold the slot they left from until their exit finishes, so the row
+    // closes the gap after the fade instead of jumping under it.
+    for (const ghost of [...ghosts].sort((a, b) => a.index - b.index)) {
+      tiles.splice(Math.min(ghost.index, tiles.length), 0, {
+        key: `ghost:${ghost.key}@${ghost.at}`,
+        buff: ghost.buff,
+        ghost,
+      });
+    }
   }
 
   return (
@@ -312,16 +365,19 @@ export function BuffBar() {
         zIndex: 10,
       }}
     >
-      {tiles.map(({ key, buff, ghost }) => (
+      {tiles.map(({ key, buff, ghost, ended }) => (
         <BuffIcon
           key={key}
           buff={buff}
           interactive={!isMobile}
+          stripProps={ghost ? undefined : strip.tileProps(key)}
           ghost={ghost}
           onGhostDone={ghost ? () => dropGhost(ghost.key, ghost.at) : undefined}
-          fx={ghost ? undefined : fx.get(key)}
+          ended={ended}
+          fx={ghost || ended ? undefined : fx.get(key)}
         />
       ))}
+      {strip.node}
     </div>
   );
 }

@@ -49,6 +49,12 @@ export interface TooltipCardContent {
   current?: TooltipRow[];
   /** Trailing note, e.g. a caveat or a source. */
   footnote?: string;
+  /**
+   * Set when the card describes something that is no longer live, e.g. a buff
+   * that ended while its card was open: a banner names what happened, and the
+   * CURRENT block is shown as the last known state instead of a live one.
+   */
+  ended?: { label: string; note: string; tone?: 'cleansed' };
 }
 
 function Rows({ rows, live }: { rows: readonly TooltipRow[]; live: boolean }) {
@@ -71,9 +77,15 @@ function Rows({ rows, live }: { rows: readonly TooltipRow[]; live: boolean }) {
 }
 
 export function TooltipCard({ content }: { content: TooltipCardContent }): ReactNode {
-  const { title, kicker, body, rows, rowsTitle, classSpecific, current, footnote } = content;
+  const { title, kicker, body, rows, rowsTitle, classSpecific, current, footnote, ended } = content;
   return (
-    <div className="tip-card">
+    <div className={`tip-card${ended ? ' tip-card--ended' : ''}`}>
+      {ended && (
+        <div className={`tip-card__ended${ended.tone ? ` tip-card__ended--${ended.tone}` : ''}`}>
+          <span className="tip-card__ended-label">{ended.label}</span>
+          <span className="tip-card__ended-note">{ended.note}</span>
+        </div>
+      )}
       <div className="tip-card__title">{title}</div>
       {kicker && <div className="tip-card__kicker">{kicker}</div>}
       {content.tags && <AbilityTags tags={content.tags} />}
@@ -92,8 +104,8 @@ export function TooltipCard({ content }: { content: TooltipCardContent }): React
       )}
       {current && current.length > 0 && (
         <div className="tip-card__section tip-card__section--live">
-          <div className="tip-card__heading tip-card__heading--live">Current</div>
-          <Rows rows={current} live />
+          <div className="tip-card__heading tip-card__heading--live">{ended ? 'Last known' : 'Current'}</div>
+          <Rows rows={current} live={!ended} />
         </div>
       )}
       {!!content.equipment?.length && <div className="tip-card__section tip-card__section--equipment">

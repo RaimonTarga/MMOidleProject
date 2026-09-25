@@ -330,6 +330,39 @@
   animation-duration: 0.5s;
 }
 
+/* ── Held tiles: ended while the bar is frozen for inspection ─────────── */
+
+/* The tile keeps its slot (and its hover) in a spent state until the pointer
+   leaves the bar; see useStatusStrip. Same animation property as the enter/exit
+   rules above, so it takes over from whichever was running. */
+.buff-tile--ended {
+  animation: buff-ended 320ms ease-out forwards;
+}
+
+.buff-tile--ended-cleansed {
+  animation: buff-ended-cleansed 700ms ease-out forwards;
+}
+
+.buff-tile--ended .buff-tile__frame,
+.buff-tile--ended .buff-critical-halo {
+  animation: none;
+}
+
+.buff-tile--ended .buff-critical-halo {
+  opacity: 0.25;
+}
+
+@keyframes buff-ended {
+  from { opacity: 1; filter: none; }
+  to   { opacity: 0.4; filter: grayscale(0.85); }
+}
+
+@keyframes buff-ended-cleansed {
+  0%   { opacity: 1; filter: brightness(3.2) saturate(0.2); }
+  20%  { opacity: 1; filter: brightness(2.4) saturate(0.3); }
+  100% { opacity: 0.4; filter: grayscale(0.85); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .buff-tile,
   .buff-tile--critical,
@@ -342,5 +375,9 @@
   .buff-tile--fade,
   .buff-tile--shatter {
     animation: buff-exit 300ms ease-in forwards;
+  }
+  .buff-tile--ended,
+  .buff-tile--ended-cleansed {
+    animation: buff-ended 320ms ease-out forwards;
   }
 }

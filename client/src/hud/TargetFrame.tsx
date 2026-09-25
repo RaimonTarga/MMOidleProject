@@ -14,8 +14,7 @@ const DOT_ELEMENT_COLOR: Record<string, string> = {
   frost:  '#6fd0ff',
   doom:   '#9d4dff',
 };
-import { useHoverTooltip } from './stat/tooltip';
-import { TooltipCard } from './primitives';
+import { TooltipCard, useStatusStrip, type StripTileProps } from './primitives';
 import { bossEffectTooltipContent, targetStatusTooltipContent } from './statusTooltips';
 import './targetFrame.css';
 
@@ -43,7 +42,27 @@ const DOT_ELEMENT_ICON: Record<string, string> = {
   doom: 'debuff-antiheal',
 };
 
-function StatusTile({ id, iconId, label, color, stacks, remainingMs, totalMs, values, bossEffect = false }: Omit<TileData, 'key'> & { bossEffect?: boolean }) {
+/** The card for one tile, live or held after it ended. */
+function tileTooltipContent(t: TileData, ended: boolean, targetName: string) {
+  const content = t.key.startsWith('b-')
+    ? bossEffectTooltipContent(t.id, t.label, t.stacks)
+    : targetStatusTooltipContent(
+      { id: t.id, stacks: t.stacks, remainingMs: t.remainingMs, totalMs: t.totalMs, values: t.values },
+      t.label,
+    );
+  if (ended) content.ended = { label: 'Ended', note: `no longer on ${targetName}` };
+  return content;
+}
+
+function StatusTile({
+  id, iconId, label, color, stacks, remainingMs, totalMs, bossEffect = false, ended = false, stripProps,
+}: Omit<TileData, 'key' | 'values'> & {
+  bossEffect?: boolean;
+  /** Ended while the strip is frozen for inspection: held in a spent state. */
+  ended?: boolean;
+  /** Hover/focus handlers from the strip, which owns the tooltip. */
+  stripProps: StripTileProps | Record<string, never>;
+}) {
   const permanent = remainingMs < 0;
   const durationPct = !permanent && totalMs > 0
     ? Math.max(0, Math.min(100, (remainingMs / totalMs) * 100))
@@ -55,22 +74,15 @@ function StatusTile({ id, iconId, label, color, stacks, remainingMs, totalMs, va
     : remainingMs > 0 ? '<1s' : '';
 
   const isWeaponReservoir = weaponDotProfileForEffect(id) !== undefined;
-  // Target tiles get the same explanation grammar the buff bar does. Where the
-  // server has no resolved magnitude for an effect, the card still carries its
-  // name, its authored explanation and the stacks/clock the tile already knew.
-  const content = bossEffect
-    ? bossEffectTooltipContent(id, label, stacks)
-    : targetStatusTooltipContent({ id, stacks, remainingMs, totalMs, values }, label);
-  const { handlers, node } = useHoverTooltip(<TooltipCard content={content} />);
   const icon = bossEffect ? bossEffectIconSource(id) : targetStatusIconSource(iconId ?? id);
 
   return (
     <div
-      className="tf-tile-wrap"
+      className={`tf-tile-wrap${ended ? ' tf-tile-wrap--ended' : ''}`}
       tabIndex={0}
       role="img"
-      aria-label={`${label}${stacks > 1 ? `, ${stacks} stacks` : ''}`}
-      {...handlers}
+      aria-label={`${label}${stacks > 1 ? `, ${stacks} stacks` : ''}${ended ? ', ended' : ''}`}
+      {...stripProps}
     >
       <div
         className={`tf-tile${icon ? ' tf-tile--art' : ''}`}
@@ -97,57 +109,22 @@ function StatusTile({ id, iconId, label, color, stacks, remainingMs, totalMs, va
         )}
       </div>
       <span className="tf-tile__label" style={{ color }}>{label}</span>
-      {node}
     </div>
   );
 }
 
-export function TargetFrame() {
-  const live = useAtomValue(targetFrameAtom);
-  const boss = useAtomValue(zoneBossAtom);
-  const combatArchetype = useAtomValue(combatArchetypeAtom);
-  const passives = useAtomValue(passivesAtom);
-  const subVariant = useAtomValue(selectedSubVariantAtom);
-  const [shown, setShown] = useState<TargetFrameData | null>(null);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    if (live) {
-      if (timer.current) { clearTimeout(timer.current); timer.current = null; }
-      setShown(live);
-    } else {
-      timer.current = setTimeout(() => setShown(null), LINGER_MS);
-    }
-    return () => { if (timer.current) { clearTimeout(timer.current); timer.current = null; } };
-  }, [live]);
-
-  // Hide while an ultimate boss bar owns the top of the screen.
-  if (boss || !shown) return null;
-
-  const hpPct = shown.maxHp > 0 ? Math.max(0, Math.min(100, (shown.hp / shown.maxHp) * 100)) : 0;
-  const hpColor = hpPct > 50 ? '#44ee44' : hpPct > 25 ? '#eeaa22' : '#ee3322';
-  const stale = !live; // lingering after death/clear
-
-  // Active absorb only: amount 0 is a broken barrier reforming, and the Reforming
-  // tile already owns that clock — the bar must never show absorb that isn't there.
-  const shieldAmount = Math.max(0, shown.enemyBarrier?.amount ?? 0);
-  // Sized against max HP so the band answers "how much of this enemy's health
-  // pool is shielded", the same question the HP fill answers. A tiny shell still
-  // gets a visible sliver rather than rounding away to nothing.
-  const shieldPct = shieldAmount > 0 && shown.maxHp > 0
-    ? Math.max(4, Math.min(100, (shieldAmount / shown.maxHp) * 100))
-    : 0;
-  // The shell starts where health ends — it is the layer damage chews through
-  // first — and slides back inside the bar when it would run off the end, so a
-  // shielded enemy at full HP still shows its shell instead of nothing.
-  const shieldLeft = Math.max(0, Math.min(hpPct, 100 - shieldPct));
-
+function buildTiles(
+  shown: TargetFrameData,
+  combatArchetype: string | null,
+  passives: Record<string, number>,
+  subVariant: string | null,
+): TileData[] {
   // Local player's DoT element drives the base 'dot' tile color.
   const dotColor = combatArchetype === 'dot'
     ? DOT_ELEMENT_COLOR[dotElementForPlayer(passives, subVariant)]
     : undefined;
 
-  const tiles: TileData[] = [
+  return [
     ...shown.statuses.map((s) => {
       const meta = statusMeta(s.id);
       return {
@@ -195,6 +172,61 @@ export function TargetFrame() {
         }]
       : []),
   ];
+}
+
+export function TargetFrame() {
+  const live = useAtomValue(targetFrameAtom);
+  const boss = useAtomValue(zoneBossAtom);
+  const combatArchetype = useAtomValue(combatArchetypeAtom);
+  const passives = useAtomValue(passivesAtom);
+  const subVariant = useAtomValue(selectedSubVariantAtom);
+  const [shown, setShown] = useState<TargetFrameData | null>(null);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const tiles = shown ? buildTiles(shown, combatArchetype, passives, subVariant) : [];
+  // The strip owns hover inspection so a card survives its status ending or its
+  // neighbours reflowing. A new target is a new strip.
+  const strip = useStatusStrip({
+    items: tiles,
+    keyOf: (t) => t.key,
+    enabled: true,
+    resetKey: shown?.id,
+    renderTip: ({ item, ended }) => (
+      <TooltipCard content={tileTooltipContent(item, ended, shown?.name ?? 'the target')} />
+    ),
+  });
+
+  useEffect(() => {
+    if (live) {
+      if (timer.current) { clearTimeout(timer.current); timer.current = null; }
+      setShown(live);
+    } else if (!strip.frozen) {
+      // A card being read keeps the frame up; the linger starts once it closes.
+      timer.current = setTimeout(() => setShown(null), LINGER_MS);
+    }
+    return () => { if (timer.current) { clearTimeout(timer.current); timer.current = null; } };
+  }, [live, strip.frozen]);
+
+  // Hide while an ultimate boss bar owns the top of the screen.
+  if (boss || !shown) return null;
+
+  const hpPct = shown.maxHp > 0 ? Math.max(0, Math.min(100, (shown.hp / shown.maxHp) * 100)) : 0;
+  const hpColor = hpPct > 50 ? '#44ee44' : hpPct > 25 ? '#eeaa22' : '#ee3322';
+  const stale = !live; // lingering after death/clear
+
+  // Active absorb only: amount 0 is a broken barrier reforming, and the Reforming
+  // tile already owns that clock — the bar must never show absorb that isn't there.
+  const shieldAmount = Math.max(0, shown.enemyBarrier?.amount ?? 0);
+  // Sized against max HP so the band answers "how much of this enemy's health
+  // pool is shielded", the same question the HP fill answers. A tiny shell still
+  // gets a visible sliver rather than rounding away to nothing.
+  const shieldPct = shieldAmount > 0 && shown.maxHp > 0
+    ? Math.max(4, Math.min(100, (shieldAmount / shown.maxHp) * 100))
+    : 0;
+  // The shell starts where health ends — it is the layer damage chews through
+  // first — and slides back inside the bar when it would run off the end, so a
+  // shielded enemy at full HP still shows its shell instead of nothing.
+  const shieldLeft = Math.max(0, Math.min(hpPct, 100 - shieldPct));
 
   return (
     <div className={`target-frame${stale ? ' target-frame--stale' : ''}${shown.isBoss ? ' target-frame--boss' : ''}`}>
@@ -225,11 +257,11 @@ export function TargetFrame() {
         <span>PLT <b>{shown.plating}</b></span>
       </div>
 
-      {tiles.length > 0 && (
+      {strip.entries.length > 0 && (
         <div className="target-frame__tiles">
-          {tiles.map((t) => (
+          {strip.entries.map(({ key, item: t, ended }) => (
             <StatusTile
-              key={t.key}
+              key={key}
               label={t.label}
               id={t.id}
               iconId={t.iconId}
@@ -237,12 +269,14 @@ export function TargetFrame() {
               stacks={t.stacks}
               remainingMs={t.remainingMs}
               totalMs={t.totalMs}
-              values={t.values}
               bossEffect={t.key.startsWith('b-')}
+              ended={ended}
+              stripProps={strip.tileProps(key)}
             />
           ))}
         </div>
       )}
+      {strip.node}
     </div>
   );
 }

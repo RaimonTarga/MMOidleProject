@@ -30,5 +30,7 @@ export type { GlyphTileProps } from "./GlyphTile";
 export { useChangeFlash } from "./useChangeFlash";
 export type { ChangeFlash } from "./useChangeFlash";
 export { HelpTooltip, useHoverTooltip } from "./HelpTooltip";
+export { useStatusStrip } from "./useStatusStrip";
+export type { StripEntry, StripTileProps } from "./useStatusStrip";
 export { TooltipCard } from "./TooltipCard";
 export type { TooltipCardContent, TooltipRow } from "./TooltipCard";

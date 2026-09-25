@@ -138,3 +138,35 @@
 .hud-tooltip:has(.tip-card) {
   max-width: 320px;
 }
+
+/* A card kept open for something that has already ended (see useStatusStrip). */
+.tip-card__ended {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 3px 6px;
+  border-left: 2px solid #9aa0a8;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.tip-card__ended--cleansed {
+  border-left-color: #cfefff;
+  background: rgba(191, 232, 255, 0.12);
+}
+
+.tip-card__ended-label {
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #d8dde3;
+}
+
+.tip-card__ended-note {
+  font-size: 10px;
+  color: #a9adb3;
+}
+
+.tip-card--ended .tip-card__section--live {
+  opacity: 0.6;
+}

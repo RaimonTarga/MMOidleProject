@@ -242,3 +242,11 @@
   .tf-tile__stacks { font-size: 9px; }
   .tf-tile__label { font-size: 7px; }
 }
+
+/* Ended while the strip is frozen for inspection (useStatusStrip): the tile keeps
+   its slot, and its card stays open, until the pointer leaves the frame. */
+.tf-tile-wrap--ended {
+  opacity: 0.4;
+  filter: grayscale(0.85);
+  transition: opacity 240ms ease-out, filter 240ms ease-out;
+}
