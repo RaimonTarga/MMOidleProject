@@ -31,6 +31,10 @@ validation counts do not represent this candidate. Draft notes are superseded by
 
 ## Railway evidence and limits
 
+> **Update 2026-09-25:** the live playtest deployment is `https://mmo-idle.up.railway.app`
+> (healthy, `/healthz` returns `ok`). `the-project.up.railway.app` below is the older
+> project; it still returned 502 on 2026-09-25 and is not production.
+
 Before this release, both public probes returned HTTP 502, "Application failed to respond":
 
 - `https://the-project.up.railway.app/` — request `S_a7BXIBR06jv5LrWVMv1w`.
