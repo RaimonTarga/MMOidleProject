@@ -86,7 +86,9 @@ pending merge approval.
   one-hit kills), the Striker probe has 5 gaps of 15-25 s in 30 minutes, 96 s in total
   (about 5%). All five are mostly spent targeting a mob in a hazard, and two end with the
   original lava Skink deferred again: the 15 s budget re-spent after each 30 s deferral.
-  Shortening them means changing those tunables, which is your call.
+  **Owner call (2026-09-25):** not a tuning job. It is a separate Avoid Hazards
+  behavior problem: the player approaches a mob inside a lava pit, reaches the rim, and
+  escapes back out. It will be fixed elsewhere; this fix is closed.
 
 ## 2. Defense rework
 
