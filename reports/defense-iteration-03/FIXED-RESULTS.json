@@ -1,0 +1,137 @@
+{
+  "desert-dr": {
+    "baseline": {
+      "rows": 72,
+      "deaths": 70,
+      "meanSurvivalSeconds": 19.6875,
+      "meanHpFraction": 0.010166941015088965
+    },
+    "candidate": {
+      "rows": 72,
+      "deaths": 69,
+      "meanSurvivalSeconds": 21.73611111111111,
+      "meanHpFraction": 0.021780462696973774
+    },
+    "earlierDeaths": [],
+    "byProfile": {
+      "small": {
+        "baseline": {
+          "rows": 36,
+          "deaths": 35,
+          "meanSurvivalSeconds": 20.65277777777778,
+          "meanHpFraction": 0.010427057613168488
+        },
+        "candidate": {
+          "rows": 36,
+          "deaths": 34,
+          "meanSurvivalSeconds": 22.694444444444443,
+          "meanHpFraction": 0.026795390414524126
+        }
+      },
+      "large": {
+        "baseline": {
+          "rows": 36,
+          "deaths": 35,
+          "meanSurvivalSeconds": 18.72222222222222,
+          "meanHpFraction": 0.009906824417009442
+        },
+        "candidate": {
+          "rows": 36,
+          "deaths": 35,
+          "meanSurvivalSeconds": 20.77777777777778,
+          "meanHpFraction": 0.01676553497942343
+        }
+      }
+    }
+  },
+  "jungle-frequency": {
+    "baseline": {
+      "rows": 72,
+      "deaths": 64,
+      "meanSurvivalSeconds": 23.694444444444443,
+      "meanHpFraction": 0.06404964277973588
+    },
+    "candidate": {
+      "rows": 72,
+      "deaths": 61,
+      "meanSurvivalSeconds": 26.84722222222222,
+      "meanHpFraction": 0.09366905617387505
+    },
+    "earlierDeaths": [],
+    "byProfile": {
+      "small": {
+        "baseline": {
+          "rows": 36,
+          "deaths": 32,
+          "meanSurvivalSeconds": 25.194444444444443,
+          "meanHpFraction": 0.06752542789495719
+        },
+        "candidate": {
+          "rows": 36,
+          "deaths": 30,
+          "meanSurvivalSeconds": 28.25,
+          "meanHpFraction": 0.0993542032665049
+        }
+      },
+      "large": {
+        "baseline": {
+          "rows": 36,
+          "deaths": 32,
+          "meanSurvivalSeconds": 22.194444444444443,
+          "meanHpFraction": 0.06057385766451457
+        },
+        "candidate": {
+          "rows": 36,
+          "deaths": 31,
+          "meanSurvivalSeconds": 25.444444444444443,
+          "meanHpFraction": 0.08798390908124522
+        }
+      }
+    }
+  },
+  "jungle-strength": {
+    "baseline": {
+      "rows": 72,
+      "deaths": 64,
+      "meanSurvivalSeconds": 23.694444444444443,
+      "meanHpFraction": 0.06404964277973588
+    },
+    "candidate": {
+      "rows": 72,
+      "deaths": 64,
+      "meanSurvivalSeconds": 24.520833333333332,
+      "meanHpFraction": 0.07115768027482638
+    },
+    "earlierDeaths": [],
+    "byProfile": {
+      "small": {
+        "baseline": {
+          "rows": 36,
+          "deaths": 32,
+          "meanSurvivalSeconds": 25.194444444444443,
+          "meanHpFraction": 0.06752542789495719
+        },
+        "candidate": {
+          "rows": 36,
+          "deaths": 32,
+          "meanSurvivalSeconds": 26.15277777777778,
+          "meanHpFraction": 0.0744128232097804
+        }
+      },
+      "large": {
+        "baseline": {
+          "rows": 36,
+          "deaths": 32,
+          "meanSurvivalSeconds": 22.194444444444443,
+          "meanHpFraction": 0.06057385766451457
+        },
+        "candidate": {
+          "rows": 36,
+          "deaths": 32,
+          "meanSurvivalSeconds": 22.88888888888889,
+          "meanHpFraction": 0.06790253733987238
+        }
+      }
+    }
+  }
+}

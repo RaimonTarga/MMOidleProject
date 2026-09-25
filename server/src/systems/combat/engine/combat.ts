@@ -25,7 +25,7 @@ import type {
   Vec2,
 } from "@mmo-idle/shared";
 import { grantMonsterRewards } from "../../player/progression/rewards";
-import { makeCombatContext, emitCombatEvent, type FormationAttackContribution } from "./combatPipeline";
+import { makeCombatContext, emitCombatEvent, recordBaseDefenseMeasurement, type FormationAttackContribution } from "./combatPipeline";
 import { formationTempoWeight } from "../../classes/archetypes/summoner/profile";
 import {
   monsterEmpoweredMultiplier,
@@ -800,9 +800,10 @@ export function runMonsterAttack(
 
   // Flat plating is paid once against the completed attack, never amplified by
   // a charged/empowered multiplier. Defender layers follow in the pipeline.
-  ctx.damage = Math.max(1, Math.round(Math.max(0,
-    Number(ctx.metadata["incomingGross"]) - platingAfterShred(target.mitigatesDamage.plating, target.tracksCombat),
-  ) * (1-target.mitigatesDamage.damageReduction)));
+  const postPlating = Math.max(0, Number(ctx.metadata["incomingGross"]) - platingAfterShred(target.mitigatesDamage.plating, target.tracksCombat));
+  const postDr = postPlating * (1-target.mitigatesDamage.damageReduction);
+  ctx.damage = Math.max(1, Math.round(postDr));
+  recordBaseDefenseMeasurement(ctx, world, Number(ctx.metadata["incomingGross"]), postPlating, postDr);
 
   if (rawDamage !== undefined) ctx.metadata["empoweredAttack"] = true;
   emitCombatEvent("onHit", ctx, world);

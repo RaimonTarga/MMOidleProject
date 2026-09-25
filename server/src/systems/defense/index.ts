@@ -1,3 +1,4 @@
+import { withCombatRegistrationLabel } from '../combat/engine/combatPipeline';
 import { getResource, setResource } from "@mmo-idle/shared";
 import type { World } from "../../world/World";
 import { registerEvasion, resetEvadeAccumulator } from "./mitigation/evasion";
@@ -43,20 +44,20 @@ import { registerSummonerDamageSponge } from '../classes/archetypes/summoner';
  *   9. Damage absorb   — credits surviving HP damage into HoT pool
  */
 export function initDefenseSystems(): void {
-  registerEngagementDr();
-  registerEvasion();
-  registerDamageCap();
-  registerWardAbsorb();      // before the barrier — wards are use-it-or-lose-it
-  registerBarrierAbsorb();
-  registerBarrierBreakHeal(); // after both absorbs — reads their emptied-pool metadata
-  registerSummonerDamageSponge();
-  registerHitToDot();
-  registerCheatDeath();
-  registerDamageAbsorb();
-  registerRecoveryOnKill();
-  registerHardening();
-  registerReactivePlating();
-  registerBrambleReflect();
+  withCombatRegistrationLabel('registerEngagementDr', registerEngagementDr);
+  withCombatRegistrationLabel('registerEvasion', registerEvasion);
+  withCombatRegistrationLabel('registerDamageCap', registerDamageCap);
+  withCombatRegistrationLabel('registerWardAbsorb', registerWardAbsorb);      // before the barrier — wards are use-it-or-lose-it
+  withCombatRegistrationLabel('registerBarrierAbsorb', registerBarrierAbsorb);
+  withCombatRegistrationLabel('registerBarrierBreakHeal', registerBarrierBreakHeal); // after both absorbs — reads their emptied-pool metadata
+  withCombatRegistrationLabel('registerSummonerDamageSponge', registerSummonerDamageSponge);
+  withCombatRegistrationLabel('registerHitToDot', registerHitToDot);
+  withCombatRegistrationLabel('registerCheatDeath', registerCheatDeath);
+  withCombatRegistrationLabel('registerDamageAbsorb', registerDamageAbsorb);
+  withCombatRegistrationLabel('registerRecoveryOnKill', registerRecoveryOnKill);
+  withCombatRegistrationLabel('registerHardening', registerHardening);
+  withCombatRegistrationLabel('registerReactivePlating', registerReactivePlating);
+  withCombatRegistrationLabel('registerBrambleReflect', registerBrambleReflect);
 }
 
 /**

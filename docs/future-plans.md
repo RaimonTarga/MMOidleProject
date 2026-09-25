@@ -5,6 +5,8 @@ Core strength follow-up (2026-09-25): [non-Volcano experiment](../reports/core-s
 Parking lot for features that are decided-in-spirit but not yet scheduled.
 
 Defense redesign experiment, 2026-09-25: implemented on `codex/defense-redesign-01`; [results and remaining work](../reports/defense-redesign-01/REPORT.md). Core HP penalties are the recommended adoption subset. The wider armor/class/pipeline candidate remains on hold for ranged/caster survival tuning; not shipped.
+
+Defense iteration 03: [results](../reports/defense-iteration-03/REPORT.md) hold the new Desert/Jungle coefficients and retain opt-in measurement tools. Next use identical finite packs with fixed starting position, HP/shields/cooldowns and native Rune behavior; a traced extra evade improved HP but changed later encounter timing and reversed a roaming result. Full original-versus-candidate qualification and human play remain outstanding.
 Each entry captures the feasibility verdict and the chosen direction so a future
 session doesn't re-derive it. When an entry gets scheduled, promote it to a full
 `docs/<feature>-plan.md` and mark the entry here as promoted.

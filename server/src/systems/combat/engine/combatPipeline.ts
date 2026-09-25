@@ -121,6 +121,31 @@ export function pushClientEffect(ctx: CombatContext, id: string): void {
 // ── Registry (module-level singleton, server-only) ────────────────────────────
 
 const _listeners = new Map<CombatEventName, CombatEventHandler[]>();
+const diagnosticLabels = new WeakMap<CombatEventHandler, string>();
+let registrationLabel = 'other';
+/** Diagnostic attribution only; registration and execution order are unchanged. */
+export function withCombatRegistrationLabel(label: string, register: () => void): void {
+  const previous = registrationLabel;
+  registrationLabel = label;
+  try { register(); } finally { registrationLabel = previous; }
+}
+export interface CombatMeasurement {
+  event: CombatEventName; layer: string; before: number; after: number;
+  gross: number | null; playerId: string; evaded: boolean;
+}
+const observers = new WeakMap<World, (measurement: CombatMeasurement) => void>();
+/** Opt-in, per-World diagnostics. No observer is installed by the live server. */
+export function setCombatMeasurementObserver(world: World, observer?: (measurement: CombatMeasurement) => void): void {
+  if (observer) observers.set(world, observer); else observers.delete(world);
+}
+/** Values come from the authoritative primary-hit calculation, before callbacks. */
+export function recordBaseDefenseMeasurement(ctx: CombatContext, world: World, gross: number, postPlating: number, postDr: number): void {
+  const observer=observers.get(world);
+  if(!observer || ctx.defenderType!=='player')return;
+  for(const [layer,before,after] of [['plating',gross,postPlating],['baseDR',postPlating,postDr],['rounding/minimum-hit',postDr,ctx.damage]] as const){
+    observer({event:'onDamageTaken',layer,before,after,gross,playerId:ctx.defender.isPlayer.id,evaded:ctx.metadata.evaded===true});
+  }
+}
 
 /**
  * Subscribe a handler to a combat event.
@@ -130,6 +155,7 @@ export function registerCombatListener(
   event: CombatEventName,
   handler: CombatEventHandler,
 ): void {
+  diagnosticLabels.set(handler, registrationLabel);
   const existing = _listeners.get(event);
   if (existing) {
     existing.push(handler);
@@ -162,8 +188,16 @@ export function emitCombatEvent(
 ): void {
   const handlers = _listeners.get(event);
   if (!handlers) return;
+  const observer = ctx.defenderType === 'player' && (event === 'onHit' || event === 'onDamageTaken')
+    ? observers.get(world) : undefined;
   for (const handler of handlers) {
+    const before = observer ? ctx.damage : 0;
     handler(ctx, world);
+    if (observer && ctx.defenderType === 'player' && (event === 'onHit' || event === 'onDamageTaken')) {
+      observer({event, layer: diagnosticLabels.get(handler) ?? 'other', before, after: ctx.damage,
+        gross: typeof ctx.metadata.incomingGross === 'number' ? ctx.metadata.incomingGross : null,
+        playerId: ctx.defender.isPlayer.id, evaded: ctx.metadata.evaded === true});
+    }
   }
 }
 

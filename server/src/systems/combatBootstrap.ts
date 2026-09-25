@@ -1,3 +1,4 @@
+import { withCombatRegistrationLabel } from './combat/engine/combatPipeline';
 import { initAllMechanics } from "./classes/registry";
 import { initDotInventory } from "./combat/damage/dotInventory";
 import { initWeaponEffects } from "./combat/damage/weaponEffects";
@@ -56,9 +57,9 @@ export function initCombatSystems(): void {
   initWeaponEffects();
   // Player damage amplifiers (P3): must register BEFORE defense so the incoming
   // multiplier lands ahead of evasion / damage-cap / shields.
-  initPlayerAmplifiers();
-  initStanceCombatEffects();
-  initAbilitySystems(); // Guard mitigation protects shields and deferred damage.
+  withCombatRegistrationLabel('initPlayerAmplifiers', initPlayerAmplifiers);
+  withCombatRegistrationLabel('initStanceCombatEffects', initStanceCombatEffects);
+  withCombatRegistrationLabel('initAbilitySystems', initAbilitySystems); // Guard mitigation protects shields and deferred damage.
   // Evasion + shield absorption onDamageTaken listeners (after weapon effects).
   initDefenseSystems();
   // Vulnerability/debuff multipliers applied on damage taken.

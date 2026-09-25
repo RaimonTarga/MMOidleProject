@@ -9,6 +9,8 @@ Last sorted: 2026-09-17.
 
 Experimental defense branch (2026-09-25, not shipped): [bot report](../reports/defense-redesign-01/REPORT.md), [patch notes](../reports/defense-redesign-01/PATCH-NOTES.md), and [all armor values](../reports/defense-redesign-01/ARMOR-INVENTORY.md). The full candidate is held for further tuning.
 
+Latest defense iteration: [measurement and armor comparison results](../reports/defense-iteration-03/REPORT.md), [iteration patch notes](../reports/defense-iteration-03/PATCH-NOTES.md), and [consolidated original-to-candidate changes](../reports/defense-iteration-02/CONSOLIDATED-PATCH-NOTES.md). Iteration 03 retains diagnostics only; new Desert/Jungle coefficients are held.
+
 ## The four kinds of doc
 
 | Kind | Lives in | Job |
