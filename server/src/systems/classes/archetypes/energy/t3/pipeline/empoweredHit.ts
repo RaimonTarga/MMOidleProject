@@ -1,7 +1,9 @@
+import { markSliceDirty } from '../../../../../../ecs/dirtyHelpers';
+import { outgoingFinalDamage } from '../../../../../combat/damage/finalDamage';
 import { registerCombatListener } from '../../../../../combat/engine/combatPipeline';
-import { isEmpoweredAttack } from '../../../../../combat/engine/empoweredAttacks';
+import { isEmpoweredAttack, setEmpoweredAttack } from '../../../../../combat/engine/empoweredAttacks';
 import {
-  applyStatusEffect, removeStatusEffect, getTotalStacks,
+  applyStatusEffect, removeStatusEffect, getTotalStacks, type PassiveMap,
 } from '@mmo-idle/shared';
 import { applyPlayerDebuff } from '../../../../shared/applyPlayerDebuff';
 import { hasPassive } from '../core/helpers';
@@ -29,17 +31,33 @@ import {
  *   - Capacitor Shunt        — discharge amplified by accumulated reservoir
  */
 export function registerEmpoweredHit(): void {
-  registerCombatListener('onHit', (ctx, _world) => {
+  registerCombatListener('onHit', (ctx, world) => {
     if (ctx.attackerType !== 'player') return;
 
     const entity = ctx.attacker;
     if (!entity?.usesEnergy) return;
-    if (!isEmpoweredAttack(entity)) return;
 
     const player = entity;
     const state  = entity.tracksCombat;
     const passives = player.usesSkills.passives;
     const energy = entity.usesEnergy;
+
+    // Singularity Execute: discharge early when the stored energy would kill. Decided
+    // here (not beforeAttack) so the projection uses the same already-mitigated base
+    // hit as the discharge below. Still an estimate: later dodge, shields and hit caps
+    // can prevent the kill.
+    if (hasPassive(player, 'energy.singularity-execute') && !isEmpoweredAttack(entity)
+      && ctx.defenderType === 'monster' && energy.energy > 0 && !ctx.metadata.chaoticMiss) {
+      const projected = singularityDischarge(ctx.damage, passives, energy.energy);
+      if (ctx.defender.hasHealth.hp <= outgoingFinalDamage(world, player.isPlayer.id, projected)) {
+        energy.dischargeEnergy = energy.energy;
+        energy.energy = 0;
+        markSliceDirty(world, player, 'usesEnergy');
+        setEmpoweredAttack(world, player);
+        ctx.metadata['suppressEmpoweredMult'] = true;
+      }
+    }
+    if (!isEmpoweredAttack(entity)) return;
 
     if (hasPassive(player, 'energy.polarity-decay')) {
       ctx.damage = Math.max(1, Math.floor(player.dealsDamage.attack * PD_DISCHARGE_MULT));
@@ -139,15 +157,20 @@ export function registerEmpoweredHit(): void {
     }
 
     // Singularity Execute: discharge scales linearly with the energy stored when it
-    // was armed (captured in afterHit / the beforeAttack execute). Base mult suppressed.
+    // was armed (captured in afterHit / the execute above). Base mult suppressed; the
+    // payload multiplies the mitigated base hit, so plating/DR apply as on any hit.
     if (hasPassive(player, 'energy.singularity-execute')) {
-      const empMult = passives['energy.empowered-mult'] ?? 6.0;
-      const scale   = Math.max(0, energy.dischargeEnergy) / 100;
-      ctx.damage    = Math.max(1, Math.floor(player.dealsDamage.attack * empMult * scale));
+      ctx.damage = singularityDischarge(ctx.damage, passives, energy.dischargeEnergy);
       // Void-themed discharge FX (client fxVoidDischarge).
       const existing = ctx.metadata['clientEffects'];
       ctx.metadata['clientEffects'] = Array.isArray(existing) ? [...existing, 'void-discharge'] : ['void-discharge'];
       return;
     }
   });
+}
+
+/** Voidwalker discharge from the mitigated base hit and the stored energy (0-100). */
+function singularityDischarge(mitigatedHit: number, passives: PassiveMap, storedEnergy: number): number {
+  const empMult = passives['energy.empowered-mult'] ?? 6.0;
+  return Math.max(1, Math.floor(mitigatedHit * empMult * Math.max(0, storedEnergy) / 100));
 }

@@ -17,9 +17,10 @@ import { updateEnergyState } from './ticks/energyState';
  *     base energy gain in `energyPrototype`
  *
  * Registration order:
- *   1. beforeAttack  — suppression + Singularity Execute trigger + Flash teleport
- *   2. onHit         — empowered discharge handlers (Polarity Decay, Cascading
- *                      Induction, Superconducting Mass, Capacitor Shunt)
+ *   1. beforeAttack  — suppression + Flash teleport
+ *   2. onHit         — Singularity Execute trigger, then empowered discharge
+ *                      handlers (Polarity Decay, Cascading Induction,
+ *                      Superconducting Mass, Capacitor Shunt, Singularity)
  *   3. onHit         — non-empowered passive bonuses (MV, PD stack consume,
  *                      AC charge mult, HE window, CI tagging, SM charge build)
  *   4. afterHit      — custom energy gain (MV, AC charge→discharge,
