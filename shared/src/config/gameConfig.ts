@@ -142,7 +142,7 @@ export const GAME_CONFIG = {
   /** Incremental XP shares for the six levels in one tier segment. */
   BIOME_XP_LOCAL_STEP_SHARES: [12, 14, 16, 18, 19, 21] as const,
   /** Total XP for one six-level segment, indexed by tier; index 0 is unused. */
-  BIOME_XP_SEGMENT_BUDGET_BY_TIER: [0, 1_750, 5_000, 7_000, 9_000] as const,
+  BIOME_XP_SEGMENT_BUDGET_BY_TIER: [0, 1_750, 3_750, 42_000, 600_000] as const,
   /** Growth applied to segments beyond the explicitly tuned T4 budget. */
   BIOME_XP_FUTURE_TIER_BUDGET_GROWTH: 1.2,
   /**
@@ -153,6 +153,8 @@ export const GAME_CONFIG = {
   BIOME_XP_REWARD_MULT_BY_TIER: [
     1.0, 2.0, 1.25, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
   ] as unknown as readonly number[],
+  /** Experimental mastery-only biome correction; independent of essence/catalysts. */
+  BIOME_XP_BIOME_TIER_MULT: { 4: { tundra: 1.8, desert: 2.4 } } as Readonly<Record<number, Readonly<Record<string, number>>>>,
   /**
    * Per-tier multiplier on essence granted to the player. T1's validated 2x
    * progression rate is real data; later tiers retain their dampening.

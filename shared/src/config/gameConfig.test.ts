@@ -86,10 +86,10 @@ function testPeekSceneBoundsEdge(): void {
 }
 
 const localTables = [
-  [210, 455, 735, 1_050, 1_383, 1_750],
-  [600, 1_300, 2_100, 3_000, 3_950, 5_000],
-  [840, 1_820, 2_940, 4_200, 5_530, 7_000],
-  [1_080, 2_340, 3_780, 5_400, 7_110, 9_000],
+  [210, 455, 735, 1050, 1383, 1750],
+  [450, 975, 1575, 2250, 2963, 3750],
+  [5040, 10920, 17640, 25200, 33180, 42000],
+  [72000, 156000, 252000, 360000, 474000, 600000],
 ] as const;
 
 assert(BIOME_LEVELS_PER_TIER === 6, 'biome segments remain six levels');
@@ -100,7 +100,7 @@ assert(
 
 for (let tier = 1; tier <= 4; tier++) {
   assert(
-    biomeXpSegmentBudget(tier) === [0, 1_750, 5_000, 7_000, 9_000][tier],
+    biomeXpSegmentBudget(tier) === [0, 1750, 3750, 42000, 600000][tier],
     `T${tier} segment budget is explicit`,
   );
   const offset = (tier - 1) * BIOME_LEVELS_PER_TIER;
@@ -114,17 +114,17 @@ for (let tier = 1; tier <= 4; tier++) {
 }
 
 assert(biomeXpForLevel(0) === 0, 'level zero costs zero XP');
-assert(biomeXpForLevel(6) === 1_750, 'T1 reference segment ends at 1,750 XP');
-assert(biomeXpForLevel(12) === 6_750, 'T2 reference segment ends at 6,750 cumulative XP');
-assert(biomeXpForLevel(18) === 13_750, 'T3 reference segment ends at 13,750 cumulative XP');
-assert(biomeXpForLevel(24) === 22_750, 'T4 reference segment ends at 22,750 cumulative XP');
+assert(biomeXpForLevel(6) === 1750, 'T1 candidate segment ends at 1,750 XP');
+assert(biomeXpForLevel(12) === 5500, 'T2 candidate cumulative threshold');
+assert(biomeXpForLevel(18) === 47500, 'T3 candidate cumulative threshold');
+assert(biomeXpForLevel(24) === 647500, 'T4 candidate cumulative threshold');
 
 assert(biomeLevelOffset('plains') === 0, 'T1 biome keeps zero offset');
 assert(biomeLevelOffset('jungle') === 6, 'T2-start biome keeps its six-level offset');
-assert(biomeXpForBiomeLevel('plains', 6) === 1_750, 'T1 biome reaches its local budget');
-assert(biomeXpForBiomeLevel('jungle', 1) === 600, 'T2-start biome begins on the T2 local curve');
-assert(biomeXpForBiomeLevel('jungle', 6) === 5_000, 'T2-start biome reaches the T2 local budget');
-assert(biomeXpForBiomeLevel('jungle', 7) === 5_840, 'T2-start biome advances into the T3 curve');
+assert(biomeXpForBiomeLevel('plains', 6) === 1750, 'T1 biome reaches its local budget');
+assert(biomeXpForBiomeLevel('jungle', 1) === 450, 'T2-start biome begins on the T2 local curve');
+assert(biomeXpForBiomeLevel('jungle', 6) === 3750, 'T2-start biome reaches the T2 local budget');
+assert(biomeXpForBiomeLevel('jungle', 7) === 8790, 'T2-start biome advances into the T3 curve');
 assert(
   JSON.stringify(CLEARING_MASTERY_XP_THRESHOLDS) === JSON.stringify([0, 43, 172, 430, 860]),
   'clearing keeps its explicit tutorial threshold table',
@@ -136,7 +136,7 @@ assert(clearingMasteryXpForLevel(3) === 430, 'clearing level 3 aligns with First
 assert(clearingMasteryXpForLevel(4) === 860, 'clearing level 4 arrives after twenty Tiny Wisps');
 assert(clearingMasteryXpForLevel(5) === 860, 'clearing thresholds stop at the four-level cap');
 assert(biomeXpForBiomeLevel('clearing', 4) === 860, 'clearing does not inherit the normal T1 curve');
-assert(biomeXpForLevel(4) === 1_050, 'normal T1 curve remains independent at level 4');
+assert(biomeXpForLevel(4) === 1050, 'normal T1 curve remains independent at level 4');
 assert(
   MONSTER_DATABASE.get('tiny-slime')?.rewards.biomeXp === 43,
   'Clearing threshold table stays aligned with the unchanged Tiny Wisp reward',
