@@ -77,7 +77,11 @@ The knee only binds in uninterrupted ideal-access fights. Titan and farm never p
 Crescendo past +100%: the Titan fight runs 149–233 s but is unchanged, so the in-combat
 timer must reset during it. The study's `cap100` arm showed the same null.
 
-## Open for the user
+## Decisions (user, 2026-09-25)
+
+The user signed off on 30 ms, knee 1.0, and scale 0.1. The Voidwalker +0 Titan loss is accepted as a sensitivity case, and `energy.empowered-mult` is untouched. Melter and Invoker stay held.
+
+## Open for the user (resolved above)
 
 - **Sign off numbers:** 30 ms, knee 1.0, scale 0.1.
 - **Voidwalker at +0 no longer kills the Titan.** The fix is a correctness fix, and +0

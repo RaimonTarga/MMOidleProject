@@ -17,7 +17,7 @@ before merging.
 | 3 | Conduit buff | Maintenance runes + Rebuild Formation shipped (`ca90ec3f`); hp50 candidate **not applied** | `reports/conduit-study-2026-09-25/` (bench runner on develop) | early-only vs all tiers; how the extra HP carries through frame unlocks |
 | 4 | XP / mastery pacing | **First pass shipped to develop**; recalibrate after #2, #3, #6 | `feat/xp-pacing` (merged) | none (decided 2026-09-25, see section 4) |
 | 5 | Essence / upgrade economy | T2-T4 rescale committed locally (unpushed); campaign 02 prep uncommitted | branch `codex/economy-v2`, worktree `../mmo-economy-v2` | run after #4 is stable |
-| 6 | T4 class balance | Voidwalker fix + Berserker + Juggernaut (log knee) implemented and screened; Melter/Invoker held | branch `feat/t4-balance`, worktree `../mmo-t4-balance`; [screen](../../reports/t4-balance-2026-09-25/SCREEN.md) | user sign-off on numbers + merge approval |
+| 6 | T4 class balance | **Shipped to develop**: Voidwalker fix + Berserker 30 + Juggernaut log knee (numbers signed off); Melter/Invoker held | [screen](../../reports/t4-balance-2026-09-25/SCREEN.md) | none (Melter/Invoker revivable later) |
 
 ## Recommended order
 
@@ -126,7 +126,8 @@ pending merge approval.
     one-helper port from `codex/t4-scaling-candidate-01` if revived.
   - **Screen:** 37-spec paired screen against develop, with sentinels bit-identical. Results are in
     [SCREEN.md](../../reports/t4-balance-2026-09-25/SCREEN.md). Voidwalker at +0 no longer kills
-    the Titan.
+    the Titan. The user accepted this, since +0 is a sensitivity case.
+  - **Sign-off:** the user signed off on 30 / 1.0 / 0.1 and approved the merge.
   - **Port fixes:** the Codex snapshot had dropped an import that Flash teleport still used, so the
     candidate would have thrown at runtime. It also carried CRLF whole-file churn in 6 files
     (normalized to LF).
