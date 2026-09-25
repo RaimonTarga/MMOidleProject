@@ -738,20 +738,12 @@ export function runMonsterAttack(
     resultMetadata.evadeBlocksDebuffs = evadeBlocksDebuffs(ctx);
   }
 
-  // Plating and base DR land first; attacker multipliers below scale the
-  // already-mitigated hit (so a charged hit also multiplies plating's value).
-  const prePlating = Math.max(0, baseAttack - platingAfterShred(target.mitigatesDamage.plating, target.tracksCombat));
-  const preDr = prePlating * (1 - target.mitigatesDamage.damageReduction);
-  ctx.damage = Math.max(1, Math.round(preDr));
-
+  // Complete attacker scaling before paying flat plating once.
   const def = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId);
 
   // Wasteland death-empower is a normal outgoing-damage layer, not an empowered
   // strike: it scales every direct hit without changing cadence/charge metadata.
   const deathEmpowerMult = monsterDeathEmpowerMult(monster);
-  if (deathEmpowerMult > 1) {
-    ctx.damage = Math.max(1, Math.round(ctx.damage * deathEmpowerMult));
-  }
 
   // Tundra capstone: the apex feeds on the node's ambient chill the target is
   // carrying. Like the death-empower above this is a plain outgoing-damage layer,
@@ -766,13 +758,11 @@ export function runMonsterAttack(
       ? 1
       : ambientRampScalingMult(ambientScaling, target.tracksCombat);
   if (ambientFedMult > 1) {
-    ctx.damage = Math.max(1, Math.round(ctx.damage * ambientFedMult));
     ctx.metadata["ambientRampFed"] = true;
   }
 
   // T4 monster empowered attacks (cadence finisher / cooldown spike / opening
-  // strike). Multiply the already-mitigated damage BEFORE onHit/onDamageTaken so
-  // the player's damage-cap, shields and Guard apply to the boosted hit.
+  // strike). These multiply gross damage; defender reductions follow below.
   let empoweredMult = monsterEmpoweredMultiplier(monster, def, now);
 
   // Charged (cast-time) attack multiplier — folds into the same empowered spike
@@ -794,7 +784,6 @@ export function runMonsterAttack(
   }
 
   if (empoweredMult > 1) {
-    ctx.damage = Math.max(1, Math.round(ctx.damage * empoweredMult));
     ctx.metadata["empoweredAttack"] = true;
   }
 
@@ -809,7 +798,12 @@ export function runMonsterAttack(
       (empoweredMult > 1 ? empoweredMult : 1),
   );
 
-  recordBaseDefenseMeasurement(ctx, world, baseAttack, prePlating, preDr);
+  // Flat plating is paid once against the completed attack, never amplified by
+  // a charged/empowered multiplier. Defender layers follow in the pipeline.
+  const postPlating = Math.max(0, Number(ctx.metadata["incomingGross"]) - platingAfterShred(target.mitigatesDamage.plating, target.tracksCombat));
+  const postDr = postPlating * (1-target.mitigatesDamage.damageReduction);
+  ctx.damage = Math.max(1, Math.round(postDr));
+  recordBaseDefenseMeasurement(ctx, world, Number(ctx.metadata["incomingGross"]), postPlating, postDr);
 
   if (rawDamage !== undefined) ctx.metadata["empoweredAttack"] = true;
   emitCombatEvent("onHit", ctx, world);

@@ -5,6 +5,7 @@ import { BREADTH_CELLS } from '../bench/balance/playerBreadthSpec';
 import { prepareSurveyBot } from '../bench/balance/ttkSurveySpec';
 import { makeCombatContext, emitCombatEvent } from '../src/systems/combat/engine/combatPipeline';
 import { applyWard } from '../src/systems/defense/barrier/wards';
+import { runMonsterAttack } from '../src/systems/combat/engine/combat';
 import { runDebtDrain } from '../src/systems/defense/mitigation/hitToDot';
 import { DEBT_POOL_KEY } from '../src/systems/defense/core/pools';
 import { applyMonsterAoe } from '../src/systems/combat/damage/aoeDamage';
@@ -32,6 +33,14 @@ function fixture(identityId = 'breadth-t3-slinger-light') {
     return ctx;
   };
   return { world, bot, monster, hit };
+}
+
+// Charged hits: plating is paid once against the completed gross hit.
+{
+  const { world, bot, monster } = fixture();
+  bot.mitigatesDamage.plating = 15; monster.dealsDamage.attack = 20;
+  runMonsterAttack(world, monster, bot, 1000, 4);
+  assert.equal(bot.hasHealth.hp, 935, 'charge scales gross 20 to 80 before subtracting 15 plating');
 }
 
 // Guard runs before wards: it protects shield capacity.
