@@ -2,7 +2,7 @@
  * Wiring smoke test for the `When Controlled` and `Enemy in Contact` rune
  * conditions, and for the abilities that default to them (Break Free, Disengage).
  */
-import { getCooldown, referenceAbilityRule } from "@mmo-idle/shared";
+import { LAIR_DRAG_ROOT_EFFECT_ID, applyStatusEffect, getCooldown, getStatusEffect, referenceAbilityRule } from "@mmo-idle/shared";
 import { setAggroTarget } from "../src/systems/combat/ai/targeting";
 import { getAbilityRuneTargets, updateRuneDerivedConfig } from "../src/systems/combat/ai/runeConfig";
 import { applyStun } from "../src/systems/combat/status/stun";
@@ -37,6 +37,28 @@ assert(referenceAbilityRule("disengage")?.conditionId === "enemy-contact", "Dise
   fireAbilities(world, 1_100);
   assert(getCooldown(player.tracksCombat, abilityCooldownKey("break-free")) > 0, "Break Free must fire through its When Controlled rule");
   assert(!isHardControlled(player.tracksCombat), "Break Free must remove the stun");
+}
+
+// ── A root (the lair drag's speed-0 status) is control too, and Break Free breaks it
+{
+  const world = new World();
+  const slices = gameplayPlayerSlices("rooted-player");
+  slices.tracksProgression.playerTier = 3;
+  slices.tracksProgression.knownAbilities = ["break-free"];
+  slices.tracksProgression.attunedAbilities = { techniques: [], guards: ["break-free"] };
+  const player = world.attachPlayerEntity(slices, "rooted-player");
+  player.usesAutocombat.auto = true;
+  wireReferenceAbilities(player);
+  applyStatusEffect(player.tracksCombat, {
+    id: LAIR_DRAG_ROOT_EFFECT_ID, maxStacks: 1, remainingMs: 3_000, refreshable: true,
+    sourceId: "test-lurker", data: { speedMult: 0, totalMs: 3_000 },
+  });
+  assert(!isHardControlled(player.tracksCombat), "a root is not hard control");
+  updateRuneDerivedConfig(world, 1_000);
+  assert(getAbilityRuneTargets(player).includes("break-free"), "When Controlled must see a status-owned root");
+  fireAbilities(world, 1_100);
+  assert(getCooldown(player.tracksCombat, abilityCooldownKey("break-free")) > 0, "Break Free must fire on a root");
+  assert(!getStatusEffect(player.tracksCombat, LAIR_DRAG_ROOT_EFFECT_ID), "Break Free must remove the root");
 }
 
 // ── Enemy in Contact -> Disengage ────────────────────────────────────────────

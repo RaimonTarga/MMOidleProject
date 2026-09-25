@@ -25,7 +25,7 @@ import {
   updateTelegraphEvasionLifecycle,
 } from "./telegraphEvasion";
 import { POWERING_UP_ID, poweringUpFullyCharged } from "../../player/stances/stanceBehaviors";
-import { isHardControlled } from "../status/playerHardControl";
+import { isPlayerControlled } from "../status/playerHardControl";
 
 /** Server-only runtime flags read by the auto-combat systems. */
 export const RUNE_FLEE_FLAG = "rune.flee";
@@ -198,7 +198,7 @@ export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
       debuffed: player.tracksCombat.statusEffects.some(
         (e) => e.stacks > 0 && isHarmfulPlayerStatusEffect(e.id, e.data),
       ),
-      controlled: isHardControlled(player.tracksCombat) || player.isRooted !== undefined,
+      controlled: isPlayerControlled(player),
       enemyInContact,
       enemyCharging,
       insideDangerousTelegraph: dangerousTelegraphs.length > 0,

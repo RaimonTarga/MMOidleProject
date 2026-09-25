@@ -43,7 +43,9 @@ import type { World } from "../../../world/World";
 import type { PlayerEntity } from "../../../ecs/entity";
 import { getAbilityRuneTargets } from "../../combat/ai/runeConfig";
 import {
+  activePlayerRoots,
   isHardControlled,
+  isPlayerControlled,
   worstHardControl,
 } from "../../combat/status/playerHardControl";
 import { syncPlayerControlLockout } from "../../combat/status/playerControlLockout";
@@ -74,6 +76,8 @@ const GUARD_WINDOW_MS = 100; // one logic tick at 10 Hz
 interface FireContext {
   hasHarmfulDebuff: boolean;
   hardControlled: boolean;
+  /** Hard-controlled or rooted: something for Break Free to break. */
+  controlled: boolean;
 }
 
 interface TechniqueAttempt {
@@ -273,6 +277,7 @@ function buildFireContext(player: PlayerEntity): FireContext {
       (e) => e.stacks > 0 && isHarmfulPlayerStatusEffect(e.id, e.data),
     ),
     hardControlled: isHardControlled(player.tracksCombat),
+    controlled: isPlayerControlled(player),
   };
 }
 
@@ -620,8 +625,11 @@ function applyCleanse(player: PlayerEntity, stacks: number, debuffs: number): Re
 }
 
 /**
- * Break Free: remove the hard control holding the player, then optionally leave
- * a control-resistance window behind.
+ * Break Free: remove the worst hard control AND every root holding the player,
+ * then optionally leave a control-resistance window behind. Roots go in the same
+ * activation because a player stunned mid-drag should come out of both.
+ * Removing the lair-drag root also ends the drag (`updateLairDrags` releases a
+ * haul whose root is gone).
  *
  * Removing the effect is not enough on its own — `stun` owns `isRooted` and
  * `cannotAttack` through the control-lockout reconciler, so we re-sync
@@ -636,8 +644,9 @@ function applyBreakFree(
 ): void {
   const cs = player.tracksCombat;
   const worst = worstHardControl(cs);
-  if (worst) {
-    removeStatusEffect(cs, worst);
+  const removed = [...(worst ? [worst] : []), ...activePlayerRoots(cs)];
+  for (const id of removed) removeStatusEffect(cs, id);
+  if (removed.length > 0) {
     world.pushEvent(player.hasPosition.nodeId, {
       kind: "player-cleansed",
       playerId: player.isPlayer.id,
@@ -671,7 +680,7 @@ function guardEffectCanFire(
   }
   // Break Free is the one ability whose whole value is situational. Firing it
   // with nothing to break would waste a 14 s cooldown on nothing.
-  if (effect.kind === "break-free") return fctx.hardControlled;
+  if (effect.kind === "break-free") return fctx.controlled;
   if (effect.kind === "cleanse") return fctx.hasHarmfulDebuff;
   return true;
 }

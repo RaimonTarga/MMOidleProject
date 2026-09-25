@@ -140,7 +140,7 @@ unwired ability offers a "Use default timing" button that equips this rule. `abi
 
 **Execution gates** (not triggers — they apply to automatic firing whatever rule fires it):
 Charge needs a target at least `CHARGE_MIN_GAP_PX` (70px) beyond contact; Break Free needs hard
-control (`abilityActsWhileControlled` lets it execute while stunned); Cleanse needs a cleanseable
+control or a root (`abilityActsWhileControlled` lets it execute while stunned); Cleanse needs a cleanseable
 debuff; a Recovery Guard needs missing HP. Disengage has no gate — `Enemy in Contact` decides when.
 
 Benches (`resolveSurveyPackage`, `canonicalLoadout`) and the bot (`applyBuild`) append reference
@@ -240,7 +240,10 @@ immunity keeps chain-locking off the table.
 
 **Player-side hard control** is one list: `combat/status/playerHardControl.ts`. It defines what
 breaks a cast, what satisfies Break Free's gate, and what Break Free removes. Cleanse
-deliberately does **not** answer it.
+deliberately does **not** answer it. The same file lists status-owned **roots**
+(`PLAYER_ROOT_EFFECTS`, today the lair drag's speed-0 root); `isPlayerControlled` (hard control,
+`isRooted`, or a root effect) is what `When Controlled` means. One Break Free activation removes the
+worst hard control **and** every root, and removing the lair-drag root ends the drag.
 
 ---
 
@@ -339,7 +342,7 @@ Teaches the whole decision space before adding a new verb: distribute damage / a
 | **Frenzy** | Technique / **instant** | Volcanic (3) | Attack speed, and nothing else |
 | **Quick Strike** | Technique / armed | Volcanic (5) | The spam-technique archetype |
 | **Detonate** | Technique / **cast** | Swamp (17) | Cash afflictions in now, with a cut |
-| **Break Free** | Guard / instant | Tundra (5) | Hard-CC counter, fires while held |
+| **Break Free** | Guard / instant | Tundra (5) | Hard-CC and root counter, fires while held |
 
 ### T4 — advanced range, escape, hard CC, long sustain
 Only rank I is authored: these debut at the end of the supplied biome map.

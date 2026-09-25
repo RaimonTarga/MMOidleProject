@@ -2,12 +2,13 @@
  * What counts as HARD CONTROL on a player — the one list.
  *
  * Hard control is the class of effect that takes actions away rather than
- * degrading them: it breaks a cast wind-up, it satisfies Break Free's trigger,
- * and it is what Break Free removes. Cleanse deliberately does NOT answer it —
+ * degrading them: it breaks a cast wind-up, it satisfies Break Free's gate,
+ * and it is what Break Free removes. Break Free also removes ROOTS (below),
+ * which stop movement but leave actions free. Cleanse deliberately does NOT answer it —
  * ordinary debuffs and DoT stacks are Cleanse's job, and collapsing the two
  * would make Cleanse a universal answer and Break Free pointless.
  */
-import { CAVE_LOCKDOWN_EFFECT_ID, getStatusEffect, hasStatusEffect } from '@mmo-idle/shared';
+import { CAVE_LOCKDOWN_EFFECT_ID, LAIR_DRAG_ROOT_EFFECT_ID, getStatusEffect, hasStatusEffect } from '@mmo-idle/shared';
 import type { TracksCombat } from '@mmo-idle/shared';
 import { FROZEN_EFFECT } from '../../classes/archetypes/dot/t3/core/constants';
 import { STUN_EFFECT } from './stun';
@@ -24,6 +25,28 @@ export const PLAYER_HARD_CONTROL_EFFECTS: readonly string[] = [
 
 export function isHardControlled(cs: TracksCombat): boolean {
   return PLAYER_HARD_CONTROL_EFFECTS.some((id) => hasStatusEffect(cs, id));
+}
+
+/**
+ * Status-owned ROOTS on a player: movement stopped, actions free. The lair drag's
+ * root is a speed-0 status rather than the `isRooted` marker, which is why this
+ * list exists — a check on the marker alone misses it.
+ */
+export const PLAYER_ROOT_EFFECTS: readonly string[] = [LAIR_DRAG_ROOT_EFFECT_ID];
+
+/** Root effects currently holding the player. */
+export function activePlayerRoots(cs: TracksCombat): string[] {
+  return PLAYER_ROOT_EFFECTS.filter((id) => (getStatusEffect(cs, id)?.remainingMs ?? 0) > 0);
+}
+
+/**
+ * Hard-controlled or rooted — what `When Controlled` means and what Break Free
+ * answers. `isRooted` covers roots owned by other mechanics (and by hard control).
+ */
+export function isPlayerControlled(player: { tracksCombat: TracksCombat; isRooted?: object }): boolean {
+  return isHardControlled(player.tracksCombat)
+    || player.isRooted !== undefined
+    || activePlayerRoots(player.tracksCombat).length > 0;
 }
 
 /** The most severe hard control currently on the player, or null. */
