@@ -124,3 +124,70 @@ many small hitters plus one heavy one.
    **Desert:** +6 DR is loss-free but does not fix cross-biome Volcano.
 
 Human play has not been done. No production telemetry was used.
+
+## Iteration 2: (a1) shipped, rebudget pass qualified
+
+Compact numbers for every arm are in [QUALIFICATION-SUMMARY.json](QUALIFICATION-SUMMARY.json).
+
+### (a1): (a) without the charged-plating order, on develop since `ad47fb83`
+
+(a1) is (a) with three changes:
+
+- The charged-hit plating order moves out to (a2).
+- Monster splash no longer redirects to summons (the user's call).
+- **Fixed a bug in the Codex port:** debt forgiveness left the queued installments behind, so
+  forgiven debt came back later. Under the old code the regression test gets 60 damage back.
+  `queueDebt`/`clearDebt` now own the four payment buckets.
+
+Result: farm deaths 86 vs original 87, boss wins 158 vs 159, no class net loss above 1. The
+original arm's rows were reused after a 24/24 byte-identical re-run on the newer develop.
+Full suite 286/286.
+
+### Rebudget pass: (a2) + (b) + P50 plating + Striker trim + T2 Jungle upgrade HP
+
+**Selection screen** (1850 runs, fresh seed 626011, selection only):
+
+| Arm | Farm deaths / 288 | Boss wins / 156 | Ranged boss wins |
+|---|---:|---:|---:|
+| Original | 38 | 78 | 47 |
+| Tip | 37 | 85 | 41 |
+| P50 (half the original Jungle/Desert plating) | 31 | 91 | 47 |
+| P100 (full original plating) | 25 | 92 | 48 |
+
+P100 pushed ranged farm survival from 0.889 to 0.944, which is a ranged buff on top of the
+rebudget's added HP/DR. **The user picked P50 and the Striker HP trim** (root +25% → +18%).
+
+**Qualification** on the matrix seeds, with the gates as the user amended them:
+
+- The (b2) pass failed only T2 Spirit bosses (−6).
+- The cause: the rebudget cut T2 Jungle's per-upgrade HP from +12 to about +5, leaving +5
+  wearers with 220 HP against 251 originally.
+- **The user approved restoring it** (`JUNGLE_T2_UPGRADE_HP = 12`). The re-check ran all 120
+  T2 cells.
+
+| Arm | Farm deaths / 576 | Boss wins / 312 | Farm survival edge, melee − ranged | Boss-win edge, melee − ranged |
+|---|---:|---:|---:|---:|
+| Original | 87 | 159 | −0.059 | −31 |
+| (a1) | 86 | 158 | −0.049 | −32 |
+| (b3) final | 79 | 185 | −0.010 | −19 |
+
+All gates pass:
+
+- Farm deaths are not above (a1)'s, and boss wins are not below.
+- No class×tier has a net paired loss above 4.
+- Melee's edge over ranged grew on both measures.
+
+Against the original:
+
+- Squire and Striker each gain about 6 farm survivals and 10 boss wins.
+- Slinger and Apprentice are level or better.
+- Spirit is 6 farm runs behind, spread across tiers, with bosses +2.
+
+**Finite-pack replay** on (b3), same packs: 32/360 deaths, against 47 (original) and 58 (the
+unrevised candidate). Mean minimum HP is 0.625 against 0.617.
+
+**Known residual:** the T3 Volcano anchor pack in Desert armor dies 8 times, against 3
+originally and 15 for the candidate. That is Apprentice 3, Slinger 1, and Conduit 4 (Conduit
+fails this pack in every arm). It's a cross-biome case, left for playtesting.
+
+**Not done:** human play.

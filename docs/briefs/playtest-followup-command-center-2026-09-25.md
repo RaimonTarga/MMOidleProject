@@ -13,7 +13,7 @@ before merging.
 | # | Workstream | State | Where the work lives | Blocking decision |
 |---|---|---|---|---|
 | 1 | Volcano nerf | **Shipped to develop** | `da67d907` | none (verification only) |
-| 2 | Defense rework | **(a1) pipeline fixes shipped**; charged-plating order + rebudget iterating | develop (a1); branch `feat/defense-rework`, worktree `../mmo-defense-rework` | rebudget numbers (after screen) |
+| 2 | Defense rework | **Shipped to develop**: (a1) pipeline fixes, then (a2) charged-plating order + (b) rebudget | develop; history on branch `feat/defense-rework` | human-play check |
 | 3 | Conduit buff | Maintenance runes + Rebuild Formation shipped (`ca90ec3f`); hp50 candidate **not applied** | `reports/conduit-study-2026-09-25/` (bench runner on develop) | early-only vs all tiers; how the extra HP carries through frame unlocks |
 | 4 | XP / mastery pacing | **First pass shipped to develop**; recalibrate after #2, #3, #6 | `feat/xp-pacing` (merged) | none (decided 2026-09-25, see section 4) |
 | 5 | Essence / upgrade economy | T2-T4 rescale committed locally (unpushed); campaign 02 prep uncommitted | branch `codex/economy-v2`, worktree `../mmo-economy-v2` | run after #4 is stable |
@@ -92,25 +92,29 @@ pending merge approval.
 
 ## 2. Defense rework
 
-- **Code:** branch `feat/defense-rework` (worktree `../mmo-defense-rework`). The Codex
-  package (`codex/defense-redesign-01`) is split into three parts:
-  - **(a1) pipeline fixes, on develop.** Qualified against original on the 888-run matrix:
-    farm deaths 87 → 86, boss wins 159 → 158, no class net loss above 1. Full suite
-    283/283.
-  - **(a2) charged-hit plating order, not shipped.** It completes the gross charged hit
-    before plating. On the original armor it cost 19/312 boss wins, all to named charged
-    boss attacks, so it waits for the rebudget.
-  - **(b) armor/core/class rebudget, not shipped.** It moves survival from ranged/casters
-    to melee. Now screening Jungle/Desert plating at 50% and 100% of the original values,
-    plus a Striker HP trim.
-- **Results:**
-  - [defense-rework-2026-09-25/REPORT.md](../../reports/defense-rework-2026-09-25/REPORT.md)
-    (on `feat/defense-rework`)
-  - [defense-iteration-04/REPORT.md](../../reports/defense-iteration-04/REPORT.md)
-    (finite-pack replay)
-- **Bug found in the Codex port, fixed in (a1):** debt forgiveness left the queued
-  installments behind, so forgiven debt came back later.
-- **Human-play check:** not done.
+- **Shipped to develop in two merges.** The Codex package (`codex/defense-redesign-01`) was
+  split:
+  - **(a1) pipeline fixes, merged first.** Qualified against original on the 888-run matrix:
+    farm deaths 87 → 86, boss wins 159 → 158.
+  - **(a2) charged-hit plating order + (b) armor/core/class rebudget, merged second.** Tuned
+    in this session:
+    - Jungle/Desert T2–T4 keep half their original plating: the `JUNGLE_PLATING` and
+      `DESERT_PLATING` constants.
+    - Striker root HP is back to +18%.
+    - T2 Jungle upgrade HP is back to +12: `JUNGLE_T2_UPGRADE_HP`.
+
+    Final matrix against original: farm deaths 87 → 79, boss wins 159 → 185. No class×tier
+    loses more than 4, and melee's edge over ranged grew. The finite-pack replay drops from
+    47 to 32 deaths.
+- **Results:** [defense-rework-2026-09-25/REPORT.md](../../reports/defense-rework-2026-09-25/REPORT.md),
+  [QUALIFICATION-SUMMARY.json](../../reports/defense-rework-2026-09-25/QUALIFICATION-SUMMARY.json),
+  [defense-iteration-04/REPORT.md](../../reports/defense-iteration-04/REPORT.md).
+- **Residuals:**
+  - Spirit farms 6 runs worse than original, spread across tiers.
+  - T3 Volcano with Desert armor: Apprentice dies there cross-biome.
+  - Nothing grants automatic cleanse or armor cheat-death any more. Those mechanisms are now
+    unreachable code and can be cleaned up later.
+  - Human play has not been done.
 
 ### For the Conduit session: what (a1) changed for summons
 
@@ -135,12 +139,13 @@ For post-shield damage D, redirection share p and owner debt conversion d:
 - **Monster splash onto the owner is NOT redirected** (the user decided this). Splash now
   runs evasion, shields and debt, but skips the sponge, because nearby summons already
   take their own splash.
-- **Charged hits are unchanged in (a1).** If (a2) lands with the rebudget, big charged
-  hits on the owner get larger post-shield D, and the summon's share grows with it.
+- **Charged hits** (since the second merge) pay plating after the multiplier, so big charged
+  hits on the owner have a larger post-shield D, and the summon's share grows with it.
 - `redirectDamageToMinion` is unchanged: raw HP subtraction, minimum 1.
 
-Re-measure hp50 on develop as it now stands. If (a2)+(b) land, re-measure again:
-Conduit's reference armor is Mountain, which (b) moves from plating to HP + DR.
+Re-measure hp50 on develop as it now stands. Both merges are in, and Conduit's reference armor
+(Mountain) moved from plating to HP + DR. Conduit dies on the T3 Volcano anchor pack in every
+defense arm (finite-pack replay), so this is not a defense regression.
 
 ## 3. Conduit buff
 

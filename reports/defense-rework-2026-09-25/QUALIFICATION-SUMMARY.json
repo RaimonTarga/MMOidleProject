@@ -1,0 +1,224 @@
+{
+ "original": {
+  "farmRuns": 576,
+  "farmDeaths": 87,
+  "farmKills": 9239,
+  "bossRuns": 312,
+  "bossWins": 159,
+  "meleeFarmSurvival": 0.819,
+  "rangedFarmSurvival": 0.878,
+  "meleeBossWins": 64,
+  "rangedBossWins": 95,
+  "byClass": {
+   "squire": {
+    "farmDeaths": 16,
+    "bossWins": 28
+   },
+   "striker": {
+    "farmDeaths": 20,
+    "bossWins": 21
+   },
+   "slinger": {
+    "farmDeaths": 9,
+    "bossWins": 39
+   },
+   "apprentice": {
+    "farmDeaths": 18,
+    "bossWins": 22
+   },
+   "spirit": {
+    "farmDeaths": 8,
+    "bossWins": 34
+   },
+   "conduit": {
+    "farmDeaths": 16,
+    "bossWins": 15
+   }
+  }
+ },
+ "pipeline_a": {
+  "farmRuns": 576,
+  "farmDeaths": 94,
+  "farmKills": 9203,
+  "bossRuns": 312,
+  "bossWins": 140,
+  "meleeFarmSurvival": 0.813,
+  "rangedFarmSurvival": 0.861,
+  "meleeBossWins": 53,
+  "rangedBossWins": 87,
+  "byClass": {
+   "squire": {
+    "farmDeaths": 15,
+    "bossWins": 20
+   },
+   "striker": {
+    "farmDeaths": 21,
+    "bossWins": 19
+   },
+   "slinger": {
+    "farmDeaths": 10,
+    "bossWins": 33
+   },
+   "apprentice": {
+    "farmDeaths": 20,
+    "bossWins": 22
+   },
+   "spirit": {
+    "farmDeaths": 10,
+    "bossWins": 32
+   },
+   "conduit": {
+    "farmDeaths": 18,
+    "bossWins": 14
+   }
+  }
+ },
+ "a1": {
+  "farmRuns": 576,
+  "farmDeaths": 86,
+  "farmKills": 9223,
+  "bossRuns": 312,
+  "bossWins": 158,
+  "meleeFarmSurvival": 0.826,
+  "rangedFarmSurvival": 0.875,
+  "meleeBossWins": 63,
+  "rangedBossWins": 95,
+  "byClass": {
+   "squire": {
+    "farmDeaths": 15,
+    "bossWins": 28
+   },
+   "striker": {
+    "farmDeaths": 19,
+    "bossWins": 21
+   },
+   "slinger": {
+    "farmDeaths": 10,
+    "bossWins": 39
+   },
+   "apprentice": {
+    "farmDeaths": 19,
+    "bossWins": 22
+   },
+   "spirit": {
+    "farmDeaths": 7,
+    "bossWins": 34
+   },
+   "conduit": {
+    "farmDeaths": 16,
+    "bossWins": 14
+   }
+  }
+ },
+ "candidate_ab": {
+  "farmRuns": 576,
+  "farmDeaths": 89,
+  "farmKills": 8845,
+  "bossRuns": 312,
+  "bossWins": 171,
+  "meleeFarmSurvival": 0.875,
+  "rangedFarmSurvival": 0.816,
+  "meleeBossWins": 89,
+  "rangedBossWins": 82,
+  "byClass": {
+   "squire": {
+    "farmDeaths": 10,
+    "bossWins": 38
+   },
+   "striker": {
+    "farmDeaths": 11,
+    "bossWins": 37
+   },
+   "slinger": {
+    "farmDeaths": 12,
+    "bossWins": 36
+   },
+   "apprentice": {
+    "farmDeaths": 25,
+    "bossWins": 20
+   },
+   "spirit": {
+    "farmDeaths": 16,
+    "bossWins": 26
+   },
+   "conduit": {
+    "farmDeaths": 15,
+    "bossWins": 14
+   }
+  }
+ },
+ "b2": {
+  "farmRuns": 576,
+  "farmDeaths": 84,
+  "farmKills": 8997,
+  "bossRuns": 312,
+  "bossWins": 178,
+  "meleeFarmSurvival": 0.851,
+  "rangedFarmSurvival": 0.858,
+  "meleeBossWins": 83,
+  "rangedBossWins": 95,
+  "byClass": {
+   "squire": {
+    "farmDeaths": 11,
+    "bossWins": 38
+   },
+   "striker": {
+    "farmDeaths": 14,
+    "bossWins": 31
+   },
+   "slinger": {
+    "farmDeaths": 8,
+    "bossWins": 39
+   },
+   "apprentice": {
+    "farmDeaths": 19,
+    "bossWins": 26
+   },
+   "spirit": {
+    "farmDeaths": 14,
+    "bossWins": 30
+   },
+   "conduit": {
+    "farmDeaths": 18,
+    "bossWins": 14
+   }
+  }
+ },
+ "b3": {
+  "farmRuns": 576,
+  "farmDeaths": 79,
+  "farmKills": 9039,
+  "bossRuns": 312,
+  "bossWins": 185,
+  "meleeFarmSurvival": 0.858,
+  "rangedFarmSurvival": 0.868,
+  "meleeBossWins": 83,
+  "rangedBossWins": 102,
+  "byClass": {
+   "squire": {
+    "farmDeaths": 10,
+    "bossWins": 38
+   },
+   "striker": {
+    "farmDeaths": 14,
+    "bossWins": 31
+   },
+   "slinger": {
+    "farmDeaths": 8,
+    "bossWins": 40
+   },
+   "apprentice": {
+    "farmDeaths": 16,
+    "bossWins": 26
+   },
+   "spirit": {
+    "farmDeaths": 14,
+    "bossWins": 36
+   },
+   "conduit": {
+    "farmDeaths": 17,
+    "bossWins": 14
+   }
+  }
+ }
+}

@@ -272,11 +272,12 @@ Player-side monster DoTs now use the linear formula:
 
 ```text
 base = computeLinearDotDamage(effect)
-damage = round(base * (1 - player.damageReduction * 0.5) * (1 - dotResist))
+damage = round(base * (1 - player.damageReduction) * (1 - dotResist))
 ```
 
-Player DoTs bypass plating. Normal damage reduction applies at half value, then
-`defense.dot-resistance` applies. Shields absorb DoT damage unless
+Player DoTs bypass plating. General damage reduction applies in full (since the
+2026-09-25 defense pipeline fixes; it used to count half), then
+`defense.dot-resistance` applies. Guards do not reduce DoT ticks. Shields absorb DoT damage unless
 `data.bypassShield = 1`.
 
 If lethal, cheat death gets a chance. Otherwise `world.killPlayer()` receives a
