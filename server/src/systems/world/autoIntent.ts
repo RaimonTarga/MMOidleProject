@@ -234,7 +234,9 @@ function maintenanceIntent(player: PlayerEntity): HasAutoIntent | null {
   ) {
     return {
       kind: "idle",
-      reason: "Waiting to recover to full health",
+      reason: getFlag(player.tracksCombat, DYNAMIC_HAZARD_ESCAPE_ACTIVE_FLAG)
+        ? "Leaving the hazard to recover"
+        : "Waiting to recover to full health",
       source: ruleLabel(player, "wait-for-regen"),
       activeRune: runeTrace(player, "wait-for-regen"),
     };

@@ -2,6 +2,7 @@ import {
   getCounter,
   getFlag,
   getString,
+  hazardAvoidanceShapesForMover,
   moverOverlapsBlockShapes,
   setCounter,
   setFlag,
@@ -33,13 +34,45 @@ const ESCAPE_SAMPLE_ANGLES = 64;
 // considers walkable rather than one pixel inside the blocker it just left.
 const ESCAPE_CLEARANCE = 28;
 const NODE_MARGIN = 40;
+/** Envelope around a hazard inside which a target counts as sheltered by it. */
+export const HAZARD_TARGET_CLEARANCE = 64;
+
+/** The hazard shape (static feature or persistent pool) the player-side nav avoids at `pos`. */
+export function playerHazardContainingPoint(
+  world: World,
+  nodeId: string,
+  pos: Vec2,
+  now: number,
+  clearance = 0,
+): NodeFeatureShape | null {
+  for (const shape of hazardAvoidanceShapesForMover(nodeId, 'player')) {
+    if (moverOverlapsBlockShapes(pos, [shape], { x: clearance, y: clearance })) return shape;
+  }
+  for (const zone of activeAvoidablePersistentGroundZones(world, nodeId, now)) {
+    const shape: NodeFeatureShape = {
+      kind: 'circle',
+      x: zone.pos.x,
+      y: zone.pos.y,
+      radius: zone.radius,
+    };
+    if (moverOverlapsBlockShapes(pos, [shape], { x: clearance, y: clearance })) return shape;
+  }
+  return null;
+}
 
 interface EscapeHazard {
   id: string;
   sourceId: string;
   pos: Vec2;
   radius: number;
+  /** Deals damage right now (and so suppresses Recovery), not just slows. */
+  damaging: boolean;
   contains: (pos: Vec2, clearance: number) => boolean;
+}
+
+export interface PersistentHazardEscapeOptions {
+  /** Only escape hazards that deal damage; status-only slows are tolerated. */
+  damagingOnly?: boolean;
 }
 
 /**
@@ -59,7 +92,17 @@ function footprintObstructed(pos: Vec2, shape: NodeFeatureShape, pad: Vec2, clea
   });
 }
 
-function persistentHazards(world: World, player: PlayerEntity, now: number): EscapeHazard[] {
+function persistentHazards(
+  world: World,
+  player: PlayerEntity,
+  now: number,
+  options: PersistentHazardEscapeOptions = {},
+): EscapeHazard[] {
+  const all = allPersistentHazards(world, player, now);
+  return options.damagingOnly ? all.filter(hazard => hazard.damaging) : all;
+}
+
+function allPersistentHazards(world: World, player: PlayerEntity, now: number): EscapeHazard[] {
   const nodeId = player.hasPosition.nodeId;
   // The planner pads every hazard shape by this before blocking cells, so escape
   // admission, continuation and safe-exit all measure against the same envelope.
@@ -73,6 +116,7 @@ function persistentHazards(world: World, player: PlayerEntity, now: number): Esc
       return {
         ...zone,
         radius: zone.radius + Math.max(pad.x, pad.y),
+        damaging: zone.damagePerTick > 0,
         contains: (pos: Vec2, clearance: number) => footprintObstructed(pos, shape, pad, clearance),
       };
     }),
@@ -87,6 +131,7 @@ function persistentHazards(world: World, player: PlayerEntity, now: number): Esc
         sourceId: feature.damage?.effectId ?? feature.statusWhileInside?.effectId ?? feature.id,
         pos: { x: shape.x, y: shape.y },
         radius: (shape.kind === 'circle' ? shape.radius : Math.hypot(shape.halfW, shape.halfH)) + band + extent,
+        damaging: damageActive,
         contains: (pos: Vec2, clearance: number) =>
           // Either the damage actually reaches the player, or the planner already
           // refuses to route out of here. Both are escape-worthy; only the second
@@ -177,8 +222,9 @@ export function findPersistentHazardEscapeDestination(
   world: World,
   player: PlayerEntity,
   now: number,
+  options: PersistentHazardEscapeOptions = {},
 ): Vec2 | null {
-  const hazards = persistentHazards(world, player, now);
+  const hazards = persistentHazards(world, player, now, options);
   const threats = hazards.filter((hazard) => hazard.contains(player.hasPosition.current, 0));
   if (threats.length === 0) return null;
 
@@ -234,8 +280,9 @@ export function steerOutOfPersistentHazards(
   world: World,
   player: PlayerEntity,
   now: number,
+  options: PersistentHazardEscapeOptions = {},
 ): boolean {
-  const hazards = persistentHazards(world, player, now);
+  const hazards = persistentHazards(world, player, now, options);
   const active = getFlag(player.tracksCombat, DYNAMIC_HAZARD_ESCAPE_ACTIVE_FLAG);
   const threats = hazards.filter((hazard) =>
     active
@@ -282,7 +329,7 @@ export function steerOutOfPersistentHazards(
     !safeFromAllPersistentHazards(destination, hazards) ||
     !standable(world, player, destination)
   ) {
-    destination = findPersistentHazardEscapeDestination(world, player, now);
+    destination = findPersistentHazardEscapeDestination(world, player, now, options);
     if (destination) {
       setCounter(player.tracksCombat, ESCAPE_X_KEY, destination.x);
       setCounter(player.tracksCombat, ESCAPE_Y_KEY, destination.y);

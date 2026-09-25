@@ -241,6 +241,16 @@ target passed the check within the last second (`PATH_LOSS_GRACE_MS` in
 `targetPriority.ts`). A target that stays unreachable is dropped after that
 (`server/test/hazardApproachTargetFlicker.test.ts`).
 
+Avoid Hazards also never *starts* a fight with an enemy sheltered in a hazard:
+selection and the idle roam skip un-aggroed monsters within 64 px
+(`HAZARD_TARGET_CLEARANCE`) of an avoided hazard shape, which ended a
+chase-to-edge / escape / re-acquire loop. A monster seen inside stays skipped for
+5 s after leaving (`hazardSheltersTarget` in `blockedApproach.ts`) so edge-dippers
+cannot flip acquisition. Monsters already aggroed on the player are exempt and are
+answered through the pull/skirt logic above. In practice this pre-empts the
+path-loss grace for un-aggroed hazard targets; the grace still covers other
+path failures.
+
 `rune.keepDistance`, `rune.waitForRegen`, `rune.waitForExecution`, and
 `rune.tacticalReload` are read by `server/src/systems/combat/ai/autoTarget.ts`.
 
@@ -269,7 +279,10 @@ speed.
 
 `wait-for-regen` stops autonomous movement as soon as active targets and aggro are
 gone, including during the post-combat regen cooldown. Once regeneration is
-allowed, it keeps the player stopped until HP is full.
+allowed, it keeps the player stopped until HP is full. Damaging terrain suppresses
+Recovery, so if the player is standing in a damaging hazard (static feature or
+damaging pool) Recover First first walks out of it, with or without Avoid
+Hazards, then holds. Status-only slows such as Jungle bushes do not trigger this.
 
 `wait-for-execution` stops cooldown classes until their execution is armed
 (`hasEmpoweredAttack`), then normal targeting/search resumes. Its condition chooses

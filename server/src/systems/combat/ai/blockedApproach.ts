@@ -47,3 +47,29 @@ export function hazardApproachExpired(player: PlayerEntity, target: MonsterEntit
   entries.delete(target.entityId);
   return true;
 }
+
+// A target seen inside a hazard stays sheltered for a short while after it steps
+// out, so an enemy wandering along a hazard edge cannot flip acquisition on and
+// off every few ticks (walk toward it, it dips in, turn back, it dips out...).
+const HAZARD_SHELTER_MS = 5000;
+const sheltered = new WeakMap<PlayerEntity, Map<string, number>>();
+
+export function hazardSheltersTarget(
+  player: PlayerEntity,
+  target: MonsterEntity,
+  insideHazard: boolean,
+  now: number,
+): boolean {
+  let entries = sheltered.get(player);
+  if (insideHazard) {
+    if (!entries) sheltered.set(player, entries = new Map());
+    entries.set(target.entityId, now + HAZARD_SHELTER_MS);
+    return true;
+  }
+  if (!entries) return false;
+  const until = entries.get(target.entityId);
+  if (until === undefined) return false;
+  if (until > now) return true;
+  entries.delete(target.entityId);
+  return false;
+}

@@ -18,7 +18,8 @@ import {
 } from '../src/systems/combat/ai/dynamicHazardAvoidance';
 import { updateAutoTargets } from '../src/systems/combat/ai/autoTarget';
 import { beginFlee, stepFlee } from '../src/systems/combat/ai/flee';
-import { setAttackTarget } from '../src/systems/combat/ai/targeting';
+import { setAggroTarget, setAttackTarget } from '../src/systems/combat/ai/targeting';
+import { nearestEngageableMonster, selectAutoCombatAction } from '../src/systems/combat/ai/targetPriority';
 import {
   RUNE_EVADE_TELEGRAPH_FLAG,
   updateRuneDerivedConfig,
@@ -301,6 +302,8 @@ for (const [name, movementRule] of [['chase', CHASE], ['orbit', ORBIT]] as const
 }
 
 // Static terrain must release Recover First only after an authoritative safe exit.
+// Damage terrain suppresses Recovery, so Recover First walks out on its own even
+// without Avoid Hazards — resting in place would wait forever while burning.
 for (const nodeId of ['node-t2-swamp-01', 'node-t3-volcanic-01']) {
   for (const avoid of [true, false]) {
     const now = Date.now();
@@ -318,10 +321,12 @@ for (const nodeId of ['node-t2-swamp-01', 'node-t3-volcanic-01']) {
     assert(isPlayerInHazardousNodeFeature(world, player), `${nodeId}: starts inside damage terrain`);
     updateRuneDerivedConfig(world, now);
     updateAutoTargets(world, now);
-    assert(!!player.isMoving === avoid, `${nodeId}: only Avoid Hazards overrides recovery`);
-    if (!avoid) continue;
+    assert(!!player.isMoving, `${nodeId}: Recover First must step out of damage terrain (avoid=${avoid})`);
     updateAutoIntent(world);
-    assert(player.hasAutoIntent?.activeRune?.actionId === 'avoid-hazards', `${nodeId}: behavior display must show hazard escape over recovery`);
+    assert(
+      player.hasAutoIntent?.activeRune?.actionId === (avoid ? 'avoid-hazards' : 'wait-for-regen'),
+      `${nodeId}: behavior display must show the rule that owns the escape (avoid=${avoid})`,
+    );
     for (let i = 0; i < 300; i++) {
       const tickNow = now + i * 100;
       updateNodeFeatures(world, 100);
@@ -583,6 +588,64 @@ for (const trap of D32_TRAPS) {
     findPathForMover(JUNGLE, 'player', pad, near, { x: 2400, y: 2400 }, new Set(), true) !== null,
     'planning must already work there, so there is nothing to escape',
   );
+}
+
+// Recover First only walks out of DAMAGING terrain. A status-only slow bush does
+// not suppress Recovery, so without Avoid Hazards the player rests where it is.
+{
+  const now = Date.now();
+  const world = new World();
+  const bush = jungleBush('jungle_bush_3');
+  const player = junglePlayer(world, 'jungle-rest', { x: bush.shape.x, y: bush.shape.y },
+    [{ conditionId: 'always', actionId: 'wait-for-regen' }]);
+  player.hasHealth.hp = player.hasHealth.maxHp / 2;
+  updateRuneDerivedConfig(world, now);
+  updateAutoTargets(world, now);
+  assert(!player.isMoving, 'Recover First must not leave a status-only bush');
+  assert(!getFlag(player.tracksCombat, DYNAMIC_HAZARD_ESCAPE_ACTIVE_FLAG), 'no escape ownership for a slow bush');
+}
+
+// Avoid Hazards never STARTS a fight with an enemy sheltered in a hazard: the
+// chase reaches the edge, the escape turns back, and the selector re-picks it.
+{
+  const now = Date.now();
+  const selectFar = (world: World, player: ReturnType<typeof attach>, at: number) =>
+    selectAutoCombatAction(world, player, { ...player.usesAutocombat, acquireRadius: 2_000 }, at);
+  const setup = (name: string, rules: typeof AVOID[]) => {
+    const world = new World();
+    const player = world.attachPlayerEntity(playerSlices(name, { x: 1_000, y: 400 }, rules), name);
+    Object.assign(player.usesAutocombat, DEFAULT_AUTOCOMBAT_CONFIG, { auto: true });
+    pool(world, now); // centred at (450, 400), radius 100
+    const target = world.createMonster(NODE, 'plains-slime', { x: 450, y: 400 });
+    assert(!!target, `${name}: target should spawn`);
+    assert(target.hasAggroTarget === undefined, `${name}: target must start un-aggroed`);
+    updateRuneDerivedConfig(world, now);
+    return { world, player, target };
+  };
+
+  // Without the rune nothing changes: the pooled enemy is a legal target.
+  {
+    const { world, player, target } = setup('shelter-no-avoid', [CHASE]);
+    const action = selectFar(world, player, now);
+    assert(action.kind === 'attack' && action.target === target, 'without Avoid Hazards the pooled enemy is acquired');
+  }
+
+  // With the rune it is skipped by both the selector and the idle roam.
+  const { world, player, target } = setup('shelter-avoid', [CHASE, AVOID]);
+  assert(selectFar(world, player, now).kind === 'idle', 'Avoid Hazards must not acquire an enemy inside a hazard');
+  assert(nearestEngageableMonster(world, player, now) === null, 'idle roam must not head for an enemy inside a hazard');
+
+  // Stepping out does not immediately re-qualify it (edge dipping would loop)...
+  target.hasPosition.current = { x: 750, y: 400 };
+  assert(nearestEngageableMonster(world, player, now + 1_000) === null, 'a just-emerged enemy stays sheltered briefly');
+  // ...but after the shelter window it is fair game again.
+  assert(nearestEngageableMonster(world, player, now + 6_000) === target, 'an enemy that stays out is acquired again');
+
+  // An enemy already attacking the player is always answered, pool or not.
+  target.hasPosition.current = { x: 450, y: 400 };
+  setAggroTarget(world, target, { id: player.isPlayer.id, kind: 'player' });
+  const retaliation = selectFar(world, player, now + 6_100);
+  assert(retaliation.kind === 'attack' && retaliation.target === target, 'an aggroed enemy in a hazard is still fought');
 }
 
 console.log('runeDynamicHazardAvoidance.test.ts: ok');

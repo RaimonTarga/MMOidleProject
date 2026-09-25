@@ -8,7 +8,6 @@ import {
   getCounter,
   getFlag,
   hitboxGap,
-  hazardAvoidanceShapesForMover,
   MELEE_CONTACT_MARGIN,
   moverOverlapsBlockShapes,
   posHitboxFromEntity,
@@ -47,8 +46,11 @@ import {
   RUNE_WAIT_FOR_SUMMONS_FLAG,
 } from "./runeConfig";
 import { steerOutOfTelegraphs } from "./telegraphEvasion";
-import { steerOutOfPersistentHazards } from "./dynamicHazardAvoidance";
-import { activeAvoidablePersistentGroundZones } from "../../world/groundZones";
+import {
+  HAZARD_TARGET_CLEARANCE,
+  playerHazardContainingPoint,
+  steerOutOfPersistentHazards,
+} from "./dynamicHazardAvoidance";
 import { isPlayerInCombat } from "./engagement";
 import { clearApproachAttempt, hasApproachAttempt, hazardApproachExpired } from "./blockedApproach";
 import { holdsPositionWhileCasting } from "../../player/abilities/abilityCasting";
@@ -116,7 +118,6 @@ const CAREFUL_PULLING_SIDE_STEP = RUNE_CAREFUL_PULLING_SIDE_STEP;
 const HAZARD_PULL_EDGE_BUFFER = 72;
 const HAZARD_PULL_ARRIVE_SQ = 42 * 42;
 const HAZARD_SKIRT_ANGLE = 0.65;
-const HAZARD_TARGET_CLEARANCE = 64;
 // Leave room for both hitboxes, the target-clearance envelope and arrival
 // tolerance beyond the enemy's range. A 72px rim alone lets casters stay inside.
 const HAZARD_PULL_RANGE_CLEARANCE = 200;
@@ -481,33 +482,6 @@ function clampToNode(world: World, nodeId: string, pos: Vec2): Vec2 {
   };
 }
 
-/**
- * Combat-grace predicate used only for kite-vs-idle steering. Rune recovery
- * arbitration uses active targets/aggro instead, so it can claim movement while
- * this post-combat cooldown is still running.
- */
-function playerHazardContainingPoint(
-  world: World,
-  nodeId: string,
-  pos: Vec2,
-  now: number,
-  clearance = 0,
-): NodeFeatureShape | null {
-  for (const shape of hazardAvoidanceShapesForMover(nodeId, 'player')) {
-    if (moverOverlapsBlockShapes(pos, [shape], { x: clearance, y: clearance })) return shape;
-  }
-  for (const zone of activeAvoidablePersistentGroundZones(world, nodeId, now)) {
-    const shape: NodeFeatureShape = {
-      kind: "circle",
-      x: zone.pos.x,
-      y: zone.pos.y,
-      radius: zone.radius,
-    };
-    if (moverOverlapsBlockShapes(pos, [shape], { x: clearance, y: clearance })) return shape;
-  }
-  return null;
-}
-
 function hazardPullPoint(
   hazard: NodeFeatureShape,
   playerPos: Vec2,
@@ -656,7 +630,13 @@ export function updateAutoTargets(world: World, now: number) {
     ) {
       recordHeatAction(world, player, now, "recover");
       setFlag(player.tracksCombat, AUTO_FIRING_FLAG, false);
-      stopEntity(world, player);
+      // Damaging terrain suppresses Recovery, so resting inside it never reaches
+      // full HP. Recover First steps out onto safe ground before it holds, even
+      // without Avoid Hazards equipped. Status-only slows don't block Recovery,
+      // so it rests in those.
+      if (!steerOutOfPersistentHazards(world, player, now, { damagingOnly: true })) {
+        stopEntity(world, player);
+      }
       continue;
     }
 

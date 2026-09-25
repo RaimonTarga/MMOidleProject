@@ -33,11 +33,13 @@ import {
   RUNE_LET_DOTS_FINISH_FLAG,
   RUNE_SPREAD_DOTS_FLAG,
   RUNE_FOCUS_ELITES_FLAG,
+  RUNE_AVOID_NODE_HAZARDS_FLAG,
 } from "./runeConfig";
 import { MONSTER_DATABASE } from "@mmo-idle/shared";
 import { effectivePartyLeaderId } from "../../player/party/partySystem";
 import { playerDetectionMult } from '../../world/mobility/mobilityBoots';
-import { approachDeferred } from './blockedApproach';
+import { approachDeferred, hazardSheltersTarget } from './blockedApproach';
+import { HAZARD_TARGET_CLEARANCE, playerHazardContainingPoint } from './dynamicHazardAvoidance';
 
 export type AutoCombatAction =
   | { kind: "attack"; target: MonsterEntity }
@@ -368,6 +370,10 @@ function passesGates(
     ) {
       return false;
     }
+    if (shelteredByHazard(world, player, monster, ctx.now)) {
+      setString(player.tracksCombat, 'autoApproachBlocked', 'target-in-hazard');
+      return false;
+    }
   }
 
   // Rooted players can only select targets they can already attack.
@@ -382,6 +388,30 @@ function passesGates(
   // A straight-line LOS gate here blocked every nearby target once trees shipped,
   // leaving auto-combat permanently idle while the player pathed toward blocked mobs.
   return true;
+}
+
+/**
+ * Avoid Hazards never STARTS a fight with an enemy standing in a hazard: chasing
+ * it walks the player to the edge, the escape steers them back out, and the
+ * selector picks it again. Enemies already attacking the player are exempt --
+ * callers only ask this for un-aggroed monsters, and `steerTowardTarget` lures
+ * an aggroed one out of the hazard instead.
+ */
+function shelteredByHazard(
+  world: World,
+  player: PlayerEntity,
+  monster: MonsterEntity,
+  now: number,
+): boolean {
+  if (!getFlag(player.tracksCombat, RUNE_AVOID_NODE_HAZARDS_FLAG)) return false;
+  const inside = playerHazardContainingPoint(
+    world,
+    player.hasPosition.nodeId,
+    monster.hasPosition.current,
+    now,
+    HAZARD_TARGET_CLEARANCE,
+  ) !== null;
+  return hazardSheltersTarget(player, monster, inside, now);
 }
 
 function monsterHasPath(
@@ -625,6 +655,7 @@ export function nearestEngageableMonster(
     if (monster.hasAwareness?.state === "returning") continue;
     if (isPastLeashAnchor(monster)) continue;
     if (approachDeferred(player, monster, now)) continue;
+    if (!isAggroedOnPlayer(monster, player) && shelteredByHazard(world, player, monster, now)) continue;
 
     candidates.push({
       monster,

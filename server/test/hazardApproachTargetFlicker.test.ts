@@ -35,9 +35,13 @@ try {
   assert(!approachDeferred(bot,decoy,20000),'reachable decoy is never deferred');
 } finally {teardownArena(world);}
 {
-  // Source of the flicker: the committed target's safe-path check fails for a
-  // tick at a rim position. Selection must hold it through a brief failure and
-  // only drop it once the failure outlasts the grace window.
+  // Source of the flicker: the committed target's safe-path check failed for a
+  // tick at a rim position. Since Avoid Hazards stopped acquiring un-aggroed
+  // enemies sheltered in a hazard, every failing position on this rim sits
+  // inside the shelter envelope, so the committed target is dropped at once
+  // (and stays sheltered) instead of riding PATH_LOSS_GRACE_MS. The grace
+  // window still covers non-hazard path failures; a probe of this node found
+  // no rim position outside the envelope that fails the check.
   const world=createFarmWorld();
   const cell=DURABILITY12_SWARM.find(c=>c.tier===3&&c.nodeId.endsWith('03')&&c.className==='spirit')!;
   setupArena(world,{nodeId:cell.nodeId,biomeGroup:'volcanic',contentTier:3,isDungeon:false});
@@ -54,8 +58,8 @@ try {
     // Deep lava: no safe contact or pull. Move its home too so only the path check changes.
     target.hasPosition.current={x:885.68,y:2140.11};
     target.controlsMonster.spawn={...target.hasPosition.current};
-    assert.equal(pick(1100),target,'one failed path check does not drop the committed target');
-    assert.notEqual(pick(2200),target,'a target that stays unreachable is dropped after the grace window');
+    assert.notEqual(pick(1100),target,'Avoid Hazards drops an un-aggroed committed target that moves into lava');
+    assert.notEqual(pick(2200),target,'and does not flip back to it while it stays there');
   } finally {teardownArena(world);}
 }
 console.log('hazardApproachTargetFlicker: ok');
