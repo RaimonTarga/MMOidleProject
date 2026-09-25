@@ -141,7 +141,12 @@ export const GAME_CONFIG = {
 
   /** Incremental XP shares for the six levels in one tier segment. */
   BIOME_XP_LOCAL_STEP_SHARES: [12, 14, 16, 18, 19, 21] as const,
-  /** Total XP for one six-level segment, indexed by tier; index 0 is unused. */
+  /**
+   * Total XP for one six-level segment, indexed by tier; index 0 is unused.
+   * First-pass pacing (2026-09-25) against 5 / 15 / 30 / 60 min per biome segment,
+   * T4 fast builds ~50 min. Recalibrate after defense, Conduit and T4 class work
+   * change throughput. Evidence: reports/reward-mastery-study-2026-09-25/iteration-0{2..5}.
+   */
   BIOME_XP_SEGMENT_BUDGET_BY_TIER: [0, 1_750, 3_750, 42_000, 600_000] as const,
   /** Growth applied to segments beyond the explicitly tuned T4 budget. */
   BIOME_XP_FUTURE_TIER_BUDGET_GROWTH: 1.2,
@@ -153,8 +158,16 @@ export const GAME_CONFIG = {
   BIOME_XP_REWARD_MULT_BY_TIER: [
     1.0, 2.0, 1.25, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
   ] as unknown as readonly number[],
-  /** Experimental mastery-only biome correction; independent of essence/catalysts. */
-  BIOME_XP_BIOME_TIER_MULT: { 4: { tundra: 1.8, desert: 2.4 } } as Readonly<Record<number, Readonly<Record<string, number>>>>,
+  /**
+   * Per-biome multiplier on biomeXp, stacked on BIOME_XP_REWARD_MULT_BY_TIER.
+   * Keyed by biomeTier, then biomeGroup; a missing entry is 1. Mastery XP only:
+   * essence and catalyst payouts ignore it. It evens out biome throughput, so a
+   * biome's T4 segment takes about the same time as the others. Volcanic has no
+   * entry because the approach stall blocks calibration.
+   */
+  BIOME_XP_MULT_BY_TIER_AND_BIOME: {
+    4: { tundra: 1.8, desert: 2.4 },
+  } as Readonly<Record<number, Readonly<Record<string, number>>>>,
   /**
    * Per-tier multiplier on essence granted to the player. T1's validated 2x
    * progression rate is real data; later tiers retain their dampening.
@@ -206,6 +219,13 @@ export function clampRewardMultiplier(value: unknown): number {
   if (!Number.isFinite(n)) return DEBUG_REWARD_MULT_DEFAULT;
   const clamped = Math.min(DEBUG_REWARD_MULT_MAX, Math.max(DEBUG_REWARD_MULT_MIN, n));
   return Math.round(clamped * 100) / 100;
+}
+
+/** Combined multiplier on monster biomeXp earned in a `biomeGroup` node of `biomeTier`. */
+export function biomeXpRewardMult(biomeTier: number, biomeGroup: string): number {
+  const tierMult = GAME_CONFIG.BIOME_XP_REWARD_MULT_BY_TIER[biomeTier] ?? 1;
+  const biomeMult = GAME_CONFIG.BIOME_XP_MULT_BY_TIER_AND_BIOME[biomeTier]?.[biomeGroup] ?? 1;
+  return tierMult * biomeMult;
 }
 
 /** Total XP budget for one six-level segment at `tier`. */

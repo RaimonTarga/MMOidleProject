@@ -1,4 +1,4 @@
-import { NODE_BIOMES, NODE_MODIFIERS, modifierRewardMult, MONSTER_DATABASE, RECIPE_DATABASE, biomeLevelCap, biomeXpForBiomeLevel, bossClearKey, BIOME_DATABASE, ULTIMATE_CLEAR_VOID_OVERLORD, GAME_CONFIG, catalystProgressPerUnit, catalystProgressRewardMult } from '@mmo-idle/shared';
+import { NODE_BIOMES, NODE_MODIFIERS, modifierRewardMult, MONSTER_DATABASE, RECIPE_DATABASE, biomeLevelCap, biomeXpForBiomeLevel, biomeXpRewardMult, bossClearKey, BIOME_DATABASE, ULTIMATE_CLEAR_VOID_OVERLORD, GAME_CONFIG, catalystProgressPerUnit, catalystProgressRewardMult } from '@mmo-idle/shared';
 import type { EssenceType } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
@@ -117,9 +117,7 @@ function applyBiomeXP(
     return { xpGain: 0, prevLevel, newLevel: prevLevel, unlockedRecipeIds: [] };
   }
 
-  const xpMult = GAME_CONFIG.BIOME_XP_REWARD_MULT_BY_TIER[biomeTier] ?? 1;
-  const biomeMult = GAME_CONFIG.BIOME_XP_BIOME_TIER_MULT[biomeTier]?.[biomeGroup] ?? 1;
-  const scaledXpGain = Math.round(xpGain * xpMult * biomeMult);
+  const scaledXpGain = Math.round(xpGain * biomeXpRewardMult(biomeTier, biomeGroup));
 
   const prevUnlocked = [...entity.tracksProgression.unlockedRecipes];
   const newXP = (entity.tracksProgression.biomeXP[biomeGroup] ?? 0) + scaledXpGain;

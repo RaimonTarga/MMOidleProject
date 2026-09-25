@@ -267,33 +267,42 @@ assert(clampRewardMultiplier(1.23456) === 1.23, "multipliers round to 2 decimals
   assert(world.takeNodeEvents(FARM_NODE).length === 0, 'raised monster emits no reward cosmetics');
 }
 
-console.log("rewardMultiplier.test: ok");
-
-// Biome correction is mastery-only; other currencies and earlier tiers stay independent.
+// Per-biome XP multipliers are mastery-only: essence and catalysts ignore them,
+// and biomes/tiers without an entry are untouched.
 {
-  const factors = GAME_CONFIG.BIOME_XP_BIOME_TIER_MULT as Record<number, Record<string, number>>;
+  const factors = GAME_CONFIG.BIOME_XP_MULT_BY_TIER_AND_BIOME as Record<number, Record<string, number>>;
   const sample = (node: string, type: string) => {
     const world = new World();
-    const player = world.attachPlayerEntity(makePlayer('biome-factor'), 'biome-factor');
-    const monster = world.createMonster(node, type, {x:800,y:800})!;
-    grantMonsterRewards(world, 'biome-factor', monster);
+    const player = world.attachPlayerEntity(makePlayer("biome-factor"), "biome-factor");
+    const monster = world.createMonster(node, type, { x: 800, y: 800 })!;
+    grantMonsterRewards(world, "biome-factor", monster);
     const p = player.tracksProgression;
-    return {xp:Object.values(p.biomeXP).reduce((a,b)=>a+b,0), essence:JSON.stringify(p.essences), catalysts:JSON.stringify([p.catalysts,p.catalystProgress])};
+    return {
+      xp: Object.values(p.biomeXP).reduce((a, b) => a + b, 0),
+      essence: JSON.stringify(p.essences),
+      catalysts: JSON.stringify([p.catalysts, p.catalystProgress]),
+    };
   };
-  for (const [node,type,factor] of [
-    ['node-t4-desert-03','sand-viper',2.4],
-    ['node-t4-tundra-01','hoarfrost-yeti',1.8],
-    ['node-t3-desert-01','dune-stalker',1],
-    ['node-t4-volcanic-01','ember-skink',1],
-  ] as const) {
-    const saved = factors[4];
+  const cases = [
+    ["node-t4-desert-03", "sand-viper", factors[4]?.desert ?? 1],
+    ["node-t4-tundra-01", "hoarfrost-yeti", factors[4]?.tundra ?? 1],
+    ["node-t3-desert-01", "dune-stalker", 1],
+    ["node-t4-volcanic-01", "ember-skink", 1],
+  ] as const;
+  const saved = factors[4];
+  for (const [node, type, factor] of cases) {
     try {
-      factors[4] = {}; const base = sample(node,type);
-      factors[4] = saved; const adjusted = sample(node,type);
-      assert(base.xp > 0 && Math.abs(adjusted.xp-base.xp*factor)<=1, node+' mastery factor');
-      assert(adjusted.essence===base.essence, node+' essence unchanged');
-      assert(adjusted.catalysts===base.catalysts, node+' catalysts unchanged');
-    } finally { factors[4] = saved; }
+      factors[4] = {};
+      const base = sample(node, type);
+      factors[4] = saved;
+      const adjusted = sample(node, type);
+      assert(base.xp > 0 && Math.abs(adjusted.xp - base.xp * factor) <= 1, `${node}: biome XP factor ${factor}`);
+      assert(adjusted.essence === base.essence, `${node}: essence ignores the biome XP factor`);
+      assert(adjusted.catalysts === base.catalysts, `${node}: catalysts ignore the biome XP factor`);
+    } finally {
+      factors[4] = saved;
+    }
   }
-  console.log('biome XP factor isolation: ok');
 }
+
+console.log("rewardMultiplier.test: ok");

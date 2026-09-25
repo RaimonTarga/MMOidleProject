@@ -29,9 +29,10 @@ Terse on purpose.
 - Every tier segment has six levels. Their incremental shares are
   **12% / 14% / 16% / 18% / 19% / 21%**. The final two levels are slower, but
   they do not consume an extreme share of the segment.
-- Segment budgets are explicit designer values: **T1 1,750 · T2 5,000 · T3
-  7,000 · T4 9,000 XP**. Segments beyond T4 currently grow by **1.20× per tier**
-  until they receive explicit tuning.
+- Segment budgets are explicit designer values: **T1 1,750 · T2 3,750 · T3
+  42,000 · T4 600,000 XP** (first-pass pacing, 2026-09-25; previously
+  1,750 / 5,000 / 7,000 / 9,000). Segments beyond T4 grow by **1.20× per tier**
+  from 600,000 until they receive explicit tuning. The future tiers are not calibrated.
 - **Caps: T1→L6, T2→L12, T3→L18, T4→L24** for a biome that starts in T1;
   biomes debuting later keep their existing start-tier offsets and final-tier
   caps. Clearing remains fixed at level 4 and is excluded from Global Mastery.
@@ -42,10 +43,21 @@ Terse on purpose.
   the level-4 cap.
 - The per-tier XP reward multipliers remain unchanged. Tune required XP through
   the segment budget and local-share tables, not by editing per-mob rewards.
+- A per-biome mastery XP multiplier (`BIOME_XP_MULT_BY_TIER_AND_BIOME`) evens out
+  biomes whose kill throughput differs a lot within a tier. It currently holds
+  **T4 Tundra ×1.8 and Desert ×2.4**. It affects mastery XP only: essence and
+  catalyst payouts ignore it. Use it for biome-wide throughput gaps, not to speed up
+  one slow class or build.
 - Updated user pacing targets (2026-09-25) are **T1 ~5 minutes**, **T2 ~15**,
   **T3 ~30**, and **T4 ~60 minutes** per biome tier segment. These supersede
-  the initial 5 / 10–12 / 13–16 / 16–20-minute targets. The current budgets
-  above have not yet been recalibrated. The [reward study](../reports/reward-mastery-study-2026-09-25/README.md)
+  the initial 5 / 10–12 / 13–16 / 16–20-minute targets. At T4, fast builds should
+  take about 50 minutes and slow viable builds about 90. Slow defensive setups
+  (Defensive-stance Squire, Recover-First Conduit) may take longer; switching to
+  an offensive farming setup is an accepted answer for now.
+- The first-pass budgets were measured with bots on T2 Desert, T3 Swamp/Tundra
+  and T4 Tundra/Desert. T4 Volcanic is uncalibrated because of the approach
+  stall. Recalibrate after the defense, Conduit and T4 class passes change
+  throughput. The [reward study](../reports/reward-mastery-study-2026-09-25/README.md)
   uses active time in the biome as its working clock and records the remaining
   measurement assumptions and telemetry limitations.
 

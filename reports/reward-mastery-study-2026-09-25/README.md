@@ -1,6 +1,6 @@
 # Playtest 3 reward and mastery study — initial source analysis
 
-Latest follow-up: [iteration 04 — separate build, biome and recovery/stance effects](iteration-04/RESULTS.md). Earlier configurations and evidence below are retained.
+Latest follow-up: [iteration 05 — XP-only holdout on new nodes and seeds](iteration-05/RESULTS.md). Before that: [iteration 04 — separate build, biome and recovery/stance effects](iteration-04/RESULTS.md). Earlier configurations and evidence below are retained.
 
 Latest follow-up: [iteration 03 — T4 fast-end target around 50 minutes](iteration-03/RESULTS.md). Earlier results below are retained as historical evidence.
 

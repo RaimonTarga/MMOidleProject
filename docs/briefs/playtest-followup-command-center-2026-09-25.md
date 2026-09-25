@@ -15,7 +15,7 @@ before merging.
 | 1 | Volcano nerf | **Shipped to develop** | `da67d907` | none (verification only) |
 | 2 | Defense rework | Implemented, iterating (6 commits, unpushed) | branch `codex/defense-redesign-01`, worktree `../mmo-defense-candidate` | adopt the whole package or split it |
 | 3 | Conduit buff | Maintenance runes + Rebuild Formation shipped (`ca90ec3f`); hp50 candidate **not applied** | `reports/conduit-study-2026-09-25/` (bench runner on develop) | early-only vs all tiers; how the extra HP carries through frame unlocks |
-| 4 | XP / mastery pacing | XP-only candidate tested in 72 runs (iterations 04-05); **uncommitted** | worktree `../mmo-reward-xp-only` (branch `codex/reward-xp-only-validation`) | saved-XP migration policy; slow-build (defensive) target |
+| 4 | XP / mastery pacing | First pass ready on branch, **awaiting merge approval** | branch `feat/xp-pacing`, worktree `../mmo-xp-pacing` | none (decided 2026-09-25, see section 4) |
 | 5 | Essence / upgrade economy | T2-T4 rescale committed locally (unpushed); campaign 02 prep uncommitted | branch `codex/economy-v2`, worktree `../mmo-economy-v2` | run after #4 is stable |
 | 6 | T4 class balance | Candidate code written, **smoke-tested only**, uncommitted | worktree `../mmo-t4-scaling-candidate` (branch `codex/t4-scaling-candidate-01`) | which of the 5 proposals to take |
 
@@ -128,32 +128,33 @@ a short standalone session, or bundle it with #4.
 - **User targets:** T1 5 / T2 15 / T3 30 / T4 60 min per biome segment. For T4, "fast"
   builds should take about 50 min and slow viable builds about 90.
   (`design_docs/economy-philosophy.md`)
-- **Candidate** (`../mmo-reward-xp-only`, uncommitted):
+- **First pass** (branch `feat/xp-pacing`, ported from `codex/reward-xp-only-validation`):
   - `BIOME_XP_SEGMENT_BUDGET_BY_TIER` goes from `[1750, 5000, 7000, 9000]` to
     `[1750, 3750, 42000, 600000]`.
-  - New T4-only mastery XP factors: Tundra ×1.8, Desert ×2.4. Essence and catalysts are
-    untouched.
+  - `BIOME_XP_MULT_BY_TIER_AND_BIOME`: T4 Tundra ×1.8, Desert ×2.4. Mastery XP only;
+    essence and catalysts are untouched. Combined in `biomeXpRewardMult()`.
+- **Decisions (user, 2026-09-25):**
+  - No saved-XP migration. Playtest saves are disposable. Old T3/T4 saves keep their
+    stored levels but face the new thresholds.
+  - Slow defensive builds do not have to fit 90 min in this pass. "Swap to an offensive
+    farming setup" is acceptable until defense/Conduit change throughput.
+  - T2 going down (5000 -> 3750) is intended: 3,750 gave 15-16 min on T2 Desert-01
+    where 5,000 took 20-21 (iteration 02).
 - **Evidence:**
-  - Iteration 04: 48 runs. Striker takes 49-51 min, offensive Squire and no-Recover-First
-    Conduit take 89-93 min.
-  - Iteration 05 holdout: 24/24 complete (for example Conduit Tundra-03 at about 66 min,
-    Squire Desert-01 at 84-86 min). This batch is **not written up yet**:
-    `reports/reward-mastery-study-2026-09-25/iteration-05/holdout/summary.json`.
-- **Known gaps:**
-  - The original *defensive* builds (Squire Defensive stance, Conduit with Recover First)
-    still take 110-124 min.
-  - T2/T3 pacing is not validated with viable fixtures.
-  - Volcanic is not calibrated because of the stall.
-  - Future tiers inherit 600k.
-  - No saved-XP migration: raising thresholds leaves existing players above their level
-    threshold. The v0.5 decision said playtest saves are disposable. Confirm that still
-    holds.
+  - Iteration 04 (48 runs): Striker 49-51 min, Offensive Squire and no-Recover-First
+    Conduit 89-93 min.
+  - Iteration 05 holdout (24 runs, [RESULTS](../../reports/reward-mastery-study-2026-09-25/iteration-05/RESULTS.md)):
+    16 reach mastery. Striker 49-56, Conduit 66-87, Offensive Squire 84-97, Slinger
+    Melter 64-66, Slinger Bounty Hunter 98-108. Spirit Stormdancer never masters
+    (3 deaths, 1 censor at 120 min). All 4 Volcanic runs hit the approach stall.
+- **Known gaps (for the recalibration pass after #2, #3, #6):**
+  - Defensive builds (Defensive-stance Squire, Recover-First Conduit) take 110-124 min.
+    Slinger Bounty Hunter in Tundra takes 98-108.
+  - Spirit Stormdancer at T4 has a survival problem, not a pacing one.
+  - T2/T3 are measured on one node each at most. Volcanic has no factor (stall).
+  - Future tiers inherit 600k × 1.2. Economy supply over the longer T3/T4 segments is
+    unbalanced; that is #5's job.
 - **Rejected:** candidate 01's full package, which put T1 at 6000 XP (much too slow).
-- **Session goal:**
-  1. Write up iteration 05.
-  2. Commit the candidate on its branch.
-  3. Decide the migration policy and the slow-build target.
-  4. Land it on develop, optionally before #2, #3, and #6 (see order).
 
 ## 5. Essence / upgrade economy
 
