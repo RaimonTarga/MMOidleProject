@@ -15,7 +15,7 @@ before merging.
 | 1 | Volcano nerf | **Shipped to develop** | `da67d907` | none (verification only) |
 | 2 | Defense rework | Implemented, iterating (6 commits, unpushed) | branch `codex/defense-redesign-01`, worktree `../mmo-defense-candidate` | adopt the whole package or split it |
 | 3 | Conduit buff | Maintenance runes + Rebuild Formation shipped (`ca90ec3f`); hp50 candidate **not applied** | `reports/conduit-study-2026-09-25/` (bench runner on develop) | early-only vs all tiers; how the extra HP carries through frame unlocks |
-| 4 | XP / mastery pacing | First pass ready on branch, **awaiting merge approval** | branch `feat/xp-pacing`, worktree `../mmo-xp-pacing` | none (decided 2026-09-25, see section 4) |
+| 4 | XP / mastery pacing | **First pass shipped to develop**; recalibrate after #2, #3, #6 | `feat/xp-pacing` (merged) | none (decided 2026-09-25, see section 4) |
 | 5 | Essence / upgrade economy | T2-T4 rescale committed locally (unpushed); campaign 02 prep uncommitted | branch `codex/economy-v2`, worktree `../mmo-economy-v2` | run after #4 is stable |
 | 6 | T4 class balance | Candidate code written, **smoke-tested only**, uncommitted | worktree `../mmo-t4-scaling-candidate` (branch `codex/t4-scaling-candidate-01`) | which of the 5 proposals to take |
 
@@ -128,7 +128,7 @@ a short standalone session, or bundle it with #4.
 - **User targets:** T1 5 / T2 15 / T3 30 / T4 60 min per biome segment. For T4, "fast"
   builds should take about 50 min and slow viable builds about 90.
   (`design_docs/economy-philosophy.md`)
-- **First pass** (branch `feat/xp-pacing`, ported from `codex/reward-xp-only-validation`):
+- **First pass** (shipped to develop from `feat/xp-pacing`, ported from `codex/reward-xp-only-validation`):
   - `BIOME_XP_SEGMENT_BUDGET_BY_TIER` goes from `[1750, 5000, 7000, 9000]` to
     `[1750, 3750, 42000, 600000]`.
   - `BIOME_XP_MULT_BY_TIER_AND_BIOME`: T4 Tundra ×1.8, Desert ×2.4. Mastery XP only;
