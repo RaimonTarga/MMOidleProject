@@ -1,0 +1,103 @@
+diff --git a/docs/biome-ecology-current-state.md b/docs/biome-ecology-current-state.md
+index 2e96c137..0df098e9 100644
+--- a/docs/biome-ecology-current-state.md
++++ b/docs/biome-ecology-current-state.md
+@@ -448,9 +448,9 @@ a stale ramp to clear when the destination does not author the same effect, and
+ 
+ **Volcano is a GREED ramp, not a burn.** Stacks are uncapped (`maxStacks: 0`).
+ Combat starts at one stack and adds one every 3000 ms, accelerated 3x in boss vents.
+-The first ten stacks give +3% damage dealt / +4.5% damage taken each: +30% / +45% at ten.
++The first ten stacks give +3% damage dealt / +3.5% damage taken each: +30% / +35% at ten.
+ Above ten, effective damage stacks are `10 + 5 * ln(1 + (stacks - 10) / 5)`;
+-multiply by 0.03 / 0.045 for the respective bonuses. Every stack still matters,
++multiply by 0.03 / 0.035 for the respective bonuses. Every stack still matters,
+ but marginal gains decrease continuously. Combat and HUD share the same formula;
+ the Heat tile shows actual stacks and bonuses to one decimal, with no maximum-fill ring.
+ Out of combat the next stack takes `1500 / max(1, stacks / 10)` ms to cool
+diff --git a/server/test/ambientRamp.test.ts b/server/test/ambientRamp.test.ts
+index 4e4626fe..7dcddd70 100644
+--- a/server/test/ambientRamp.test.ts
++++ b/server/test/ambientRamp.test.ts
+@@ -229,7 +229,7 @@ initCombatSystems();
+   assert(tile!.stacks === BREAKPOINT, 'the tile reports live stacks');
+   assert(tile!.durationPct === -1, 'uncapped Heat must not display a full-stack ceiling');
+   assert(tile!.values?.some(v => v.label === 'Damage dealt' && v.value === '+30%') === true, 'tile reports actual dealt bonus');
+-  assert(tile!.values?.some(v => v.label === 'Damage taken' && v.value === '+45%') === true, 'tile reports actual taken bonus');
++  assert(tile!.values?.some(v => v.label === 'Damage taken' && v.value === '+35%') === true, 'tile reports actual taken bonus');
+   assert(tile!.speedMult === 1, 'volcano payload carries no move slow');
+ 
+   // Disengaging sheds the ramp one stack at a time, and clears it.
+@@ -284,7 +284,7 @@ initCombatSystems();
+     lastIncrement = increment;
+   }
+   assert(playerOutgoingDamageMult(player.tracksCombat) > 1.5, 'Heat exceeds the former outgoing cap');
+-  assert(playerIncomingDamageMult(player.tracksCombat) > 2, 'Heat exceeds the former incoming cap');
++  assert(playerIncomingDamageMult(player.tracksCombat) > 1 + TAKEN_PER_STACK * BREAKPOINT, 'incoming Heat continues beyond the softcap');
+   syncPlayerBuffs(world, Date.now());
+   const tile = player.hasStatus.activeBuffs.find(b => b.id === 'debuff-volcanic-heat')!;
+   assert(tile.values?.some(v => v.label === 'Damage dealt' && v.value === '+74.2%') === true, 'high-stack HUD reflects logarithmic damage');
+diff --git a/shared/src/data/monsters/volcano.monsters.ts b/shared/src/data/monsters/volcano.monsters.ts
+index d04255cc..8ebb70e6 100644
+--- a/shared/src/data/monsters/volcano.monsters.ts
++++ b/shared/src/data/monsters/volcano.monsters.ts
+@@ -178,7 +178,7 @@ export const volcanoMonsterEntries = [
+     id: 'ash-slinger', name: 'Ash Salamander', color: 0xff4422,
+     // Salamander line T3: STATIONARY ranged pressure that fires from the background
+     // while the swarm closes. Does not kite. No personal ramp.
+-    stats: { hp: 1330, attack: 84, plating: 2, damageReduction: 0, speed: 44, attackRange: 180, attackCooldown: 2000, pullRange: 230 },
++    stats: { hp: 1330, attack: 70, plating: 2, damageReduction: 0, speed: 44, attackRange: 180, attackCooldown: 2000, pullRange: 230 },
+     behavior: 'ranged', attackStyle: 'fire-spit', biome: 'volcanic',
+     rewards: { essence: 27, essenceType: 'red', level: 2, biomeXp: 165 },
+     // Fires from the background and does NOT kite (locked).
+@@ -196,8 +196,9 @@ export const volcanoMonsterEntries = [
+     id: 'ember-skink', name: 'Ember Skink', color: 0xff6622,
+     // Evolved swarm filler: the T3 Scuttler plus a light Burn on hit. No ramp.
+     // Apply the same approximate fodder correction to T4 (1350 -> 720 HP,
+-    // 90 -> 75 attack). T4 combat validation remains pending; authored Burn is unchanged.
+-    stats: { hp: 720, attack: 75, plating: 2, damageReduction: 0, speed: 70, attackRange: 12, attackCooldown: 1300, pullRange: 230 },
++    // 90 -> 75 attack). Volcano area study: attack 75 -> 60 and Burn 13 -> 8
++    // reduce coordinated filler pressure while preserving pack size and cadence.
++    stats: { hp: 720, attack: 60, plating: 2, damageReduction: 0, speed: 70, attackRange: 12, attackCooldown: 1300, pullRange: 230 },
+     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
+     rewards: { essence: 47, essenceType: 'red', level: 3, biomeXp: 280 },
+     // Loose cohesion/separation so the high-density biome READS as a swarm.
+@@ -206,7 +207,7 @@ export const volcanoMonsterEntries = [
+     // ability-free apart from its light Burn: the fodder must stay visually quiet.
+     pack: { role: 'follower' },
+     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1000, idleMaxMs: 3500 },
+-    dotEffect: { debuffId: 'ember-burn', label: 'Ember Burn', damagePerStack: 13, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2000 },
++    dotEffect: { debuffId: 'ember-burn', label: 'Ember Burn', damagePerStack: 8, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2000 },
+   }],
+ 
+   ['infernal-direhound', {
+@@ -268,7 +269,7 @@ export const volcanoMonsterEntries = [
+     id: 'ashspitter-salamander', name: 'Ashspitter Salamander', color: 0xff4422,
+     // Evolved ranged Burn pressure: stationary (not a kiter), stronger and more
+     // persistent Burn than the Ash Salamander. Ignoring it lets the fire stack.
+-    stats: { hp: 1550, attack: 110, plating: 2, damageReduction: 0, speed: 46, attackRange: 190, attackCooldown: 1900, pullRange: 250 },
++    stats: { hp: 1550, attack: 95, plating: 2, damageReduction: 0, speed: 46, attackRange: 190, attackCooldown: 1900, pullRange: 250 },
+     behavior: 'ranged', attackStyle: 'fire-spit', biome: 'volcanic',
+     rewards: { essence: 52, essenceType: 'red', level: 3, biomeXp: 310 },
+     // Fires from the background and does NOT kite (locked).
+@@ -276,7 +277,7 @@ export const volcanoMonsterEntries = [
+     // THE T4 PACK GUNNER. Same role as the Ash Salamander a tier below.
+     pack: { role: 'follower' },
+     ai: { wanderRadius: 230, leashRange: 630, idleMinMs: 1200, idleMaxMs: 4000 },
+-    dotEffect: { debuffId: 'ashspitter-burn', label: 'Ash Burn', damagePerStack: 16, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2500 },
++    dotEffect: { debuffId: 'ashspitter-burn', label: 'Ash Burn', damagePerStack: 12, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2500 },
+   }],
+ 
+   ['magma-salamander', {
+diff --git a/shared/src/world/nodeFeatures.ts b/shared/src/world/nodeFeatures.ts
+index a3aafbb7..74b21131 100644
+--- a/shared/src/world/nodeFeatures.ts
++++ b/shared/src/world/nodeFeatures.ts
+@@ -504,7 +504,7 @@ function volcanicHeat(id: string): NodeFeatureSpec {
+       coolingScaleStacks: 10,
+       coolingRateMult: 2,
+       payload: {
+-        outgoingDamagePct: 0.03, incomingDamagePct: 0.045,
++        outgoingDamagePct: 0.03, incomingDamagePct: 0.035,
+         damageSoftcapStacks: 10, damageSoftcapScale: 5,
+       },
+     },

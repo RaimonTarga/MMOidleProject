@@ -1,0 +1,1337 @@
+[
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\boss-t3-volcanic-striker-101009-baseline\\events.jsonl",
+    "bytes": 55362,
+    "sha256": "b441d4c30a12de9a883bed751562e2fb356ec880b673eac45bcee92f3fd3b799"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\boss-t3-volcanic-striker-101009-baseline\\ready.json",
+    "bytes": 15974,
+    "sha256": "26564f1486a15343fa4d90fb09042708c0f1348cbfac650d88c34f6e8345b0b7"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\boss-t3-volcanic-striker-101009-baseline\\result.json",
+    "bytes": 3580,
+    "sha256": "fbf5182a8d822109be2f86373d209afff2c44578ae54551d4d880504cc13b2d1"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\boss-t3-volcanic-striker-101009-baseline\\samples.jsonl",
+    "bytes": 5253,
+    "sha256": "430514353af696d534e87227134bc7486c882e3de582513e33af322e6fd73e14"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\boss-t3-volcanic-striker-101009-baseline.log",
+    "bytes": 101,
+    "sha256": "9d5a65e0114ce9a525663b2425231904d76ac3034974f6f1737bf39f7c31c527"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\boss-t3-volcanic-striker-101009-full\\events.jsonl",
+    "bytes": 64569,
+    "sha256": "cf812396dc7ca2df6c583bd226885d707814a5a0e47ebe566d4e8c9a6df885de"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\boss-t3-volcanic-striker-101009-full\\ready.json",
+    "bytes": 15952,
+    "sha256": "e59d652fdd0b0a0442bed5baf3fc3cdd07cbee4d7f1bffa654f8347863a938a2"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\boss-t3-volcanic-striker-101009-full\\result.json",
+    "bytes": 3572,
+    "sha256": "3a7d5426feef7989672f84b04e503577891ce69c66ee2cf79ffcc228af2cbfac"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\boss-t3-volcanic-striker-101009-full\\samples.jsonl",
+    "bytes": 6352,
+    "sha256": "813c26953714e2201abfb7fdf36cdea1f27f2161fd578360304f9bc2d999ed48"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\boss-t3-volcanic-striker-101009-full.log",
+    "bytes": 97,
+    "sha256": "ddf5a17f268b817dc92691cfc5f637931420db9601ca1b2e38799af58b05bc45"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\boss-t4-volcanic-striker-101009-baseline\\events.jsonl",
+    "bytes": 179890,
+    "sha256": "623f5ab5b76070bbacd915b356240e53f6dfd47bbd24070e8b2da4a15b695bd7"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\boss-t4-volcanic-striker-101009-baseline\\ready.json",
+    "bytes": 17009,
+    "sha256": "16588bdcfff6c8ea92d23b0b2070939dd13ac91f61483dfb0a5024feff18a7da"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\boss-t4-volcanic-striker-101009-baseline\\result.json",
+    "bytes": 1161,
+    "sha256": "72a0f15ae57a2411e1ccf173381121cd220069e7a80d172cc19b85003df39df4"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\boss-t4-volcanic-striker-101009-baseline\\samples.jsonl",
+    "bytes": 9697,
+    "sha256": "9db87349a6269db87ec7b94a3e306a9bee5ffae1c232e9fb2ab5adfbfe1197f3"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\boss-t4-volcanic-striker-101009-baseline.log",
+    "bytes": 101,
+    "sha256": "3a52a9ee536c76ef2c0576f9ef5247b638dba6db0a93500563bf7041fe521203"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\boss-t4-volcanic-striker-101009-full\\events.jsonl",
+    "bytes": 177641,
+    "sha256": "c450bdadd773357bdff79bc719fa8b26cd9586d6380bb51fcf9164d310f234cf"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\boss-t4-volcanic-striker-101009-full\\ready.json",
+    "bytes": 16987,
+    "sha256": "178365dabd48c6089ac39a5c37a2fee882cd76babba25457c7b378f04b95316c"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\boss-t4-volcanic-striker-101009-full\\result.json",
+    "bytes": 1153,
+    "sha256": "f6268f57a09c708196639ffb0920a2eea5b05ec1b0332952b9db312ac81e7b43"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\boss-t4-volcanic-striker-101009-full\\samples.jsonl",
+    "bytes": 9694,
+    "sha256": "fb30639bb42f0c0a6a934d4e2ee9f61787af07088af4abab2e93fb2728555cad"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\boss-t4-volcanic-striker-101009-full.log",
+    "bytes": 97,
+    "sha256": "a92ede2f52ae48027ce31a256bac959653b18643bccce65747b1656d54ab0c92"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\complete.json",
+    "bytes": 55,
+    "sha256": "7bf8746e30ca6437c4095ed5882146ac7b53f2a13f6d3f908cc6e8409dce6cfa"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\executed-driver.mjs",
+    "bytes": 3441,
+    "sha256": "1e586010390e547579e20b7699815d5e3aa4b7062c0400202d0cfe62c28b8a79"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\executed-runner.ts",
+    "bytes": 8722,
+    "sha256": "c96a482bdd8333dbd6310e5b47456e7c51fc5c3b76692e82ddc13faa929a54c9"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-tundra-conduit-101009-baseline\\events.jsonl",
+    "bytes": 2881342,
+    "sha256": "00a075a4176b7e3924d32b8d6d4b7f979803b9d26039443b1a53e697eae679b5"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-tundra-conduit-101009-baseline\\ready.json",
+    "bytes": 18773,
+    "sha256": "953279a03711720fcf4afd0632d23fbacdd67f2b3181e842321d5c57c525c151"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-tundra-conduit-101009-baseline\\result.json",
+    "bytes": 7140,
+    "sha256": "32f115fb6ce4bf001fe4b819f4ae523f15f83421da81f5557bc3690f378b16c4"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-tundra-conduit-101009-baseline\\samples.jsonl",
+    "bytes": 189950,
+    "sha256": "78a9ba2600728f627e528bd6bdf7d12db1ad8e323cfe8a2538603b443494e4db"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-tundra-conduit-101009-baseline.log",
+    "bytes": 102,
+    "sha256": "1faa2bca7773c92d7bd93af470a8e1cad503eb25b74c1e50903c15400eb6c245"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-tundra-conduit-101021-baseline\\events.jsonl",
+    "bytes": 2925958,
+    "sha256": "3485af3e2a72f1233138ea389f8e3d63d93f9ce56f96abdf26c523800f3b5f1e"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-tundra-conduit-101021-baseline\\ready.json",
+    "bytes": 18777,
+    "sha256": "1cd5fda2aff2c8574d57451cbe8ea43922245e641aaa244d8731c44e051329a8"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-tundra-conduit-101021-baseline\\result.json",
+    "bytes": 7205,
+    "sha256": "e324c73fe6e3b19dd4cec3325ef812b1ba0fe6550090b20b5fcd406d716c3bcc"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-tundra-conduit-101021-baseline\\samples.jsonl",
+    "bytes": 189714,
+    "sha256": "7aaabf4b2ff76b5e000ce8844c6a292c8013b5fb537299e04a2d6964017755c5"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-tundra-conduit-101021-baseline.log",
+    "bytes": 102,
+    "sha256": "88693fe6a81720dc6690213b6f5f017fc132dc1ea107581adbbd012fd6bf0761"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-tundra-slinger-101009-baseline\\events.jsonl",
+    "bytes": 407696,
+    "sha256": "117baa99c4f977ddc26004c77e5b1932bd16ff1fe97f9a012a4c1edaea2b46ae"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-tundra-slinger-101009-baseline\\ready.json",
+    "bytes": 17753,
+    "sha256": "d0cd9974194e8158eeb45f799347cb640bb6e9e42f28c5ef2a312361f7f67f2a"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-tundra-slinger-101009-baseline\\result.json",
+    "bytes": 4576,
+    "sha256": "5c8d4143c6bc96e2fde9cc399e11d67d4160408fb7f928d01db32ca9fad41eda"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-tundra-slinger-101009-baseline\\samples.jsonl",
+    "bytes": 48822,
+    "sha256": "b426677be445287d51179380a967a63cd4c5c48bddd24f229346d8e709a8fa54"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-tundra-slinger-101009-baseline.log",
+    "bytes": 100,
+    "sha256": "45f5b6866145200e73f7d5ba9cabea0017d5dbb1826789a3222d7b115c0cad73"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-tundra-slinger-101021-baseline\\events.jsonl",
+    "bytes": 1519853,
+    "sha256": "c0ad67f5c419423270c28c8e462ee36b6de4096a52e0b25ecd0119544a2e333b"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-tundra-slinger-101021-baseline\\ready.json",
+    "bytes": 17757,
+    "sha256": "0f6dae7fd8a118fd3871e203fcdfffb30e85824167d983e75c3e7e47cac78a69"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-tundra-slinger-101021-baseline\\result.json",
+    "bytes": 7644,
+    "sha256": "bd4b0370fb5e8e93ebd0c5a170f8006314e3919f0bd620ea6b3893864c6eeed5"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-tundra-slinger-101021-baseline\\samples.jsonl",
+    "bytes": 202656,
+    "sha256": "3465a02e9d7f415122cc0a79e69d6eacc28c1167fd6a75c928271d1c7644f280"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-tundra-slinger-101021-baseline.log",
+    "bytes": 102,
+    "sha256": "f535dd7566d1ca4e79c256359f2f25be347fa8e1c64c6a09979e1cfe9c70037e"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-tundra-striker-101009-baseline\\events.jsonl",
+    "bytes": 1663453,
+    "sha256": "6e7349db84ae444f3be412c205bd74cf8bd3d68b80feb939988c4a3a2f50302c"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-tundra-striker-101009-baseline\\ready.json",
+    "bytes": 17742,
+    "sha256": "85be4cba8ec451de5b91ca895333d4ad963f1d7f7083632bf3df285bb6613399"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-tundra-striker-101009-baseline\\result.json",
+    "bytes": 7767,
+    "sha256": "aa6ad6fec9f00f35ddcaad495cb547b319359af3b62b10ed47fe07351933ac0a"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-tundra-striker-101009-baseline\\samples.jsonl",
+    "bytes": 201014,
+    "sha256": "9fd1a766f112bd108486b1f1c78cc5765c8cf8d08b9ea3b6962d81bb49acff5b"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-tundra-striker-101009-baseline.log",
+    "bytes": 102,
+    "sha256": "8a6a97dfdde97cf8bb6e6ca1c793c066f0921262bb395cb1a17f1250c8826097"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-tundra-striker-101021-baseline\\events.jsonl",
+    "bytes": 1663173,
+    "sha256": "6e12dbf16659c3544bdf6a596de1ad36021a5bd63cb8573667408d60e1368831"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-tundra-striker-101021-baseline\\ready.json",
+    "bytes": 17746,
+    "sha256": "77564661ec596ca34ea31c463a2719619bff99425df5cb62c5f878adb1a3ffbe"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-tundra-striker-101021-baseline\\result.json",
+    "bytes": 7584,
+    "sha256": "41e0b6669d5e526639f80d8df3f548257ee43378bbc67b7503d09a4e8970e45c"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-tundra-striker-101021-baseline\\samples.jsonl",
+    "bytes": 200427,
+    "sha256": "a15300aa2c305878303ed07ae694c5a905270830adea2215bcc597b22150484e"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-tundra-striker-101021-baseline.log",
+    "bytes": 102,
+    "sha256": "12ba860fb39826fbd21abf7b03bbf8eb3afe34e09ad72365b38b853ace8d739e"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-conduit-101009-baseline\\events.jsonl",
+    "bytes": 137400,
+    "sha256": "9254b3bcd42d1b540099aac74ef5945b3ead3fcf593ccc773c5536d1d3c02745"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-conduit-101009-baseline\\ready.json",
+    "bytes": 24935,
+    "sha256": "b781624d8282c8ae488777a93159d952fdf57dcc6e410145ccc01645817fce2d"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-conduit-101009-baseline\\result.json",
+    "bytes": 9701,
+    "sha256": "f05899ab33777b84c637175d154ff5da32a7f70206e42d5e7f8d753b02907296"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-conduit-101009-baseline\\samples.jsonl",
+    "bytes": 5285,
+    "sha256": "741f9bf72da18fd1abe1816e839be06801a1bc09113e35ef0b41b24c2d2c1d08"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-conduit-101009-baseline.log",
+    "bytes": 101,
+    "sha256": "a4dbae18f47a983820ce1dbf0020b83a461c1ef8212c4dd456dc1fa261da64e8"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-conduit-101009-full\\events.jsonl",
+    "bytes": 156225,
+    "sha256": "58889b4924d484cccae637989dc7678f939f6a38ffaa007af4a2576b8403c734"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-conduit-101009-full\\ready.json",
+    "bytes": 24913,
+    "sha256": "a67563fc7e6566f20e9bccff657f0d6d5a618859f861f326a6431a4d0c11cca8"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-conduit-101009-full\\result.json",
+    "bytes": 10315,
+    "sha256": "2d32237ba1ebbc7129c30ccd5178d5a5ee391319165e98ccfcf3d0381a933b5a"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-conduit-101009-full\\samples.jsonl",
+    "bytes": 9252,
+    "sha256": "2dd8efbb9668a99ccb94d3fa90a3044567939e9f121beed2d916d5a868b97507"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-conduit-101009-full.log",
+    "bytes": 97,
+    "sha256": "32f724fc50de87bb38e5587deb1a5dfe045e58f7c1742d26f39b523ab83b3e2c"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-conduit-101009-heat\\events.jsonl",
+    "bytes": 136564,
+    "sha256": "212277f645e47792781cb9ad5a4a56fba9b22190634031084ff6448cc18244d6"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-conduit-101009-heat\\ready.json",
+    "bytes": 24915,
+    "sha256": "b26ae582c66920f8e6bdd2721eceeb785ec1a6ed5c0ffef2428c7f92a2961dd6"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-conduit-101009-heat\\result.json",
+    "bytes": 9693,
+    "sha256": "0ac20aaa08df4d8d9f7f2bf5a89a5c68e48bc1b74ebb1624e7994f59889c4420"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-conduit-101009-heat\\samples.jsonl",
+    "bytes": 5286,
+    "sha256": "ec0f25a302d99dfac51eafc0d2e1b7121e5da19f979f45d33bec527b4d8ef222"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-conduit-101009-heat.log",
+    "bytes": 97,
+    "sha256": "35c991838a72d742ec033a4ad98f4c5647a16965f57dad1cd31132c50d1912b9"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-conduit-101021-baseline\\events.jsonl",
+    "bytes": 505930,
+    "sha256": "7494411dc852e5766735a46e39baeae0edc7c9143a8f927f9fc6d075c34d7bec"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-conduit-101021-baseline\\ready.json",
+    "bytes": 24470,
+    "sha256": "439bc7f78a1b659139f1e0b690509be35cf14334d9e01f799002a53ae9dd7280"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-conduit-101021-baseline\\result.json",
+    "bytes": 10265,
+    "sha256": "30541535a8f39be7948c31a76b486997bb85320d314765dde9284b4de146e172"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-conduit-101021-baseline\\samples.jsonl",
+    "bytes": 37125,
+    "sha256": "05af11b3a417f8ef26f79941bb02102859998be4b9bc9d0d8cb0abf9a0d21d6e"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-conduit-101021-baseline.log",
+    "bytes": 103,
+    "sha256": "682c68aa38694fdfa4d3f3e99c85d06f80e2df9f8fb7df000cd4194e45371977"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-conduit-101021-full\\events.jsonl",
+    "bytes": 665784,
+    "sha256": "3d184515fb2ed4ab0ee546d077b1ded665ce75772dcb6fc1f423d2c801fc84ea"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-conduit-101021-full\\ready.json",
+    "bytes": 24448,
+    "sha256": "d9ea8b461cc593aaf2814109d1a5b916dad06d7f6260d2ab26796c162817d207"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-conduit-101021-full\\result.json",
+    "bytes": 10806,
+    "sha256": "db03637213cf428187e64e2c0a6232a6ec73a57fd75bd95fb48364794dd4478e"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-conduit-101021-full\\samples.jsonl",
+    "bytes": 36555,
+    "sha256": "476c5ee59df4a23b348c639028de1093a5acb7a97d0e127cb2e6ef5970853e68"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-conduit-101021-full.log",
+    "bytes": 99,
+    "sha256": "21b88d4932ad356bc09c29d85b437784953e2553325a1f5c1c915b061326be8e"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-conduit-101021-heat\\events.jsonl",
+    "bytes": 520144,
+    "sha256": "b834ec98c6a3253c85b58822648e4daf26d734787effed2629301a084f3e6e29"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-conduit-101021-heat\\ready.json",
+    "bytes": 24450,
+    "sha256": "9763a53a224b1b14339ced20982cae1991f841988d8e45f3bf65859f82637eaa"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-conduit-101021-heat\\result.json",
+    "bytes": 10251,
+    "sha256": "d3cce07c4fd51980be8537a475626f01318225a9a4abfc3bc0c30edfa79566aa"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-conduit-101021-heat\\samples.jsonl",
+    "bytes": 37873,
+    "sha256": "c4692cf92932df74985b963e4acc76b97e4d516cdcf2595f933ac9b646976a5a"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-conduit-101021-heat.log",
+    "bytes": 99,
+    "sha256": "934bb1ce1f50ff2909db19fdc3b338b62aa13047929f86b2bc613ddf41241bfd"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-slinger-101009-baseline\\events.jsonl",
+    "bytes": 1293796,
+    "sha256": "d116c06e950043d4a622b0eaa5d270ed1ab4ce024bebfccfc82f45b4ca08dfe4"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-slinger-101009-baseline\\ready.json",
+    "bytes": 23915,
+    "sha256": "3a22299ad6cd2af7d8101e8d7be05920c14a952ca54cd3199cf048fa97ae4b6c"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-slinger-101009-baseline\\result.json",
+    "bytes": 14293,
+    "sha256": "b4fb34e4830eb55065642acfd8182dfab38e2fa4906a50091e3cb2289595908e"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-slinger-101009-baseline\\samples.jsonl",
+    "bytes": 200181,
+    "sha256": "3b2f6b5c89435a22ff4088057509212aceed2180abf051cc72d9d5ed6cfe3d0f"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-slinger-101009-baseline.log",
+    "bytes": 104,
+    "sha256": "0b4477ee527d65f162095cc8d6e571099cd1a032ba1a0e37766ea7c484f5c0aa"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-slinger-101009-full\\events.jsonl",
+    "bytes": 2349194,
+    "sha256": "19763a4c5177247fdbf72878364e0873791c73d7cdc5dcfcee35d3473e7ddb2f"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-slinger-101009-full\\ready.json",
+    "bytes": 23893,
+    "sha256": "278efc01c8ebff7c6c68079dbedc6d7ece5fda1c497da00d1d349c47878b50b2"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-slinger-101009-full\\result.json",
+    "bytes": 14202,
+    "sha256": "9c53e6472a65dd2841215bf3c839447f98c167e9b0d38a066e1ea12b6d6735a6"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-slinger-101009-full\\samples.jsonl",
+    "bytes": 216041,
+    "sha256": "cc350a4f2a5f5f984063efc94f534411dbd85b1f59dde024f6f5808917f33119"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-slinger-101009-full.log",
+    "bytes": 101,
+    "sha256": "142047569e2c329a546bc56de30ffbb0786415488d3288463d73f63d57bd1098"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-slinger-101009-heat\\events.jsonl",
+    "bytes": 2356148,
+    "sha256": "ca0eddadd086d0b54382df2166037ea1299f07d7775a8d8564016477b108ac36"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-slinger-101009-heat\\ready.json",
+    "bytes": 23895,
+    "sha256": "93f8393b5cd1ede1a0544200b3d8e94ffee6c8f592e2790cf63ca40bc405f34e"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-slinger-101009-heat\\result.json",
+    "bytes": 14334,
+    "sha256": "fc3a12882720b2d19361810100c51d8578d17e2a518569c24d04529d70da93f6"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-slinger-101009-heat\\samples.jsonl",
+    "bytes": 216549,
+    "sha256": "f4b0b818d7a8aabf25616eeb60a4d6cb43c4e25241246d921bea849e2fd31a70"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-slinger-101009-heat.log",
+    "bytes": 101,
+    "sha256": "d208c2aa6455a0409d83e487e1b3292db394ce5095ab227cd1333e24b790da7a"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-slinger-101021-baseline\\events.jsonl",
+    "bytes": 676220,
+    "sha256": "a8d298b9271bba4d42911a1b675b145ca94e7a3f5e6615cdf4d1e45a020a81e3"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-slinger-101021-baseline\\ready.json",
+    "bytes": 23450,
+    "sha256": "3217d2d93534da95649c8706479068d66e88fac74fb393da46fb16ccb619b274"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-slinger-101021-baseline\\result.json",
+    "bytes": 11577,
+    "sha256": "6757b7cf85d87da0ed469fe32d77ffe49ab103ff1bcc3b230a403e0a6b9eaf97"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-slinger-101021-baseline\\samples.jsonl",
+    "bytes": 59897,
+    "sha256": "bdff4607a0489b2433c7b4d55cd6795f87ed7ef759def1ec23cce4dfe799d11e"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-slinger-101021-baseline.log",
+    "bytes": 103,
+    "sha256": "1e1cfe1896d447ad0e25f42142c40298404de3db58fb41f1baf4ecf2c8dac9cd"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-slinger-101021-full\\events.jsonl",
+    "bytes": 2229993,
+    "sha256": "2f0de6a71e033c8b52ef9dd33d407e50d48871af5abb2e9e9657a54f2f0c9e96"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-slinger-101021-full\\ready.json",
+    "bytes": 23428,
+    "sha256": "2cd8fe1bb117ecbf3863f705c9d480ae6409fa44551e481ce81f665d20117f73"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-slinger-101021-full\\result.json",
+    "bytes": 14714,
+    "sha256": "2a7e83fcfaba5f86de8a430351eb59052fa5a65a911b95379eb4895abfd329bb"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-slinger-101021-full\\samples.jsonl",
+    "bytes": 214086,
+    "sha256": "f6414fffc55356b90bcabd5f10b7822a51168f2a7b2a93b17cbee6fa18fdc37f"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-slinger-101021-full.log",
+    "bytes": 101,
+    "sha256": "1c92a45f95d301597aa00c49464915c1666a08eca4f8bc911948e27a0d907344"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-slinger-101021-heat\\events.jsonl",
+    "bytes": 2514718,
+    "sha256": "80a3170b329a5d7fce99073d92a90543aa1f3bdda28d8ac6b26a2b281c0385c7"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-slinger-101021-heat\\ready.json",
+    "bytes": 23430,
+    "sha256": "6b97337d256efcedd36e6afeb05590142a7c81c1349317083efba9502e525a60"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-slinger-101021-heat\\result.json",
+    "bytes": 13662,
+    "sha256": "aa08944e4041f2e74161baa7cb7a02402870bc8258d72db642b057f93991f326"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-slinger-101021-heat\\samples.jsonl",
+    "bytes": 218589,
+    "sha256": "a11a50ab9de6fa1f956262d0468367fcd00e558c311f7bf135d3f6bc7430f746"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-slinger-101021-heat.log",
+    "bytes": 101,
+    "sha256": "8f36a8b98b7fbdca866a7c77ca1e70a5ee210efdf659c3f3e8e71caf665e438a"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-striker-101009-baseline\\events.jsonl",
+    "bytes": 199072,
+    "sha256": "4c6735ac241a4dfe4e441ad0435f16e081d94040761231c7bee2b2b19dca8848"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-striker-101009-baseline\\ready.json",
+    "bytes": 23904,
+    "sha256": "0296db7c5d1ba6710fd66f54084e5091f5e2d8dbe78ed6e626678c0d865f4167"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-striker-101009-baseline\\result.json",
+    "bytes": 10068,
+    "sha256": "5f5e772bafd5391b85131f6e83204533b8760cbe479b329390288a4c9b8837e9"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-striker-101009-baseline\\samples.jsonl",
+    "bytes": 20071,
+    "sha256": "9767d0c83452e5204f17c5c04ef13c2e615aa4f26b0c468be2241774bdbfbe3f"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-striker-101009-baseline.log",
+    "bytes": 102,
+    "sha256": "f91ed19d563635deb0930a29af569c8dc4d3b57a7c327338b6b254f787b5b857"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-striker-101009-full\\events.jsonl",
+    "bytes": 1192546,
+    "sha256": "17b3c0cefe640d1b84db614d418b0a0b5b3e07557a9866a7dfabef45299952f8"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-striker-101009-full\\ready.json",
+    "bytes": 23882,
+    "sha256": "82526f79418145327e8308deb27a5ce6db57c17d4761f6c59784d406485efe17"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-striker-101009-full\\result.json",
+    "bytes": 12247,
+    "sha256": "eea022d7ac97817ce81de51ec8ec7feef8bc7f0a1b4d3f047f4f327247207499"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-striker-101009-full\\samples.jsonl",
+    "bytes": 134887,
+    "sha256": "0aeac335f33ea4b5062b1e9f6c6c638726736d575a3f62e6bb62566b0f24f103"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-striker-101009-full.log",
+    "bytes": 99,
+    "sha256": "6bdeaef047fce55be80f5b7687291d8e70789a7a3f4eb7c3396f48507c5281ce"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-striker-101009-heat\\events.jsonl",
+    "bytes": 287829,
+    "sha256": "71843205663adc93680e5bdb3d985537f505d92f246ef82f2510dcb2fa7282f1"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-striker-101009-heat\\ready.json",
+    "bytes": 23884,
+    "sha256": "837efe6fcff6c1d152dc4883b995c0f9ef4a4b8d5bfbfafd3b97234bd4ac8d76"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-striker-101009-heat\\result.json",
+    "bytes": 10430,
+    "sha256": "0bda1bcd7849c53fc4e336d21e0df2168e2cdaf7a80d620bfeca5ffef3820877"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-striker-101009-heat\\samples.jsonl",
+    "bytes": 29096,
+    "sha256": "2e91c95b65eeb68edf67f19a12fcb929da1320ef0fb04b7040454bfdd7d8d6d2"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-striker-101009-heat.log",
+    "bytes": 98,
+    "sha256": "44b3e0dd7c6c3b992bb131d5aef6c06301d5ec2ae2b6d9545af454b68d9276fe"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-striker-101021-baseline\\events.jsonl",
+    "bytes": 100959,
+    "sha256": "84fd44f0217964a4586f041aa671524fef964c4bbf9cf021aa25f8900bd01976"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-striker-101021-baseline\\ready.json",
+    "bytes": 23439,
+    "sha256": "10bd0925b59a5f385a0a6d839dabb3a013fc1f179abaa01648c42510093c9ea5"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-striker-101021-baseline\\result.json",
+    "bytes": 9703,
+    "sha256": "4e6e9e666c356421427ebc9f92a237f3c8362efd91b50a6d34c159bd14cf3403"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-striker-101021-baseline\\samples.jsonl",
+    "bytes": 12323,
+    "sha256": "8065a227957112d8b3133c84487a6f7bc4b7f9405fa143d0c8139b21270cb4c0"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-striker-101021-baseline.log",
+    "bytes": 101,
+    "sha256": "26f2c5f909a2cbf55ad15a54800de2132264098efcd8227bd37aae3ce4e3cb9c"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-striker-101021-full\\events.jsonl",
+    "bytes": 1743116,
+    "sha256": "6bdfc79ab3c847143e96070a283034aabc9317566fdc5facd5e76651dae6798c"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-striker-101021-full\\ready.json",
+    "bytes": 23417,
+    "sha256": "f3b2fe4e67eb20836c5265d74707a2f3c71334f3445af0feffb062494c4d3d86"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-striker-101021-full\\result.json",
+    "bytes": 13257,
+    "sha256": "c794f05f44acf0bf11e01b00be65a5bc0ee6cc8e335b8ea240061e8b0fcb984c"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-striker-101021-full\\samples.jsonl",
+    "bytes": 203146,
+    "sha256": "9a937e47feb5b7bc53e1ff4017313965735c2e1fca1157e88ca6fe80f44d523f"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-striker-101021-full.log",
+    "bytes": 100,
+    "sha256": "c1fbc7e27549a1b4f105cdd0011d63b82a09efc25554cda0640b11c9c529abe0"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-striker-101021-heat\\events.jsonl",
+    "bytes": 104678,
+    "sha256": "5105ec5abe1a143a774bd80dfcee4d81942d5d1b8f21a21dd4744b1452484488"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-striker-101021-heat\\ready.json",
+    "bytes": 23419,
+    "sha256": "0404cc59916c4c1b6ec70fb40bac274b75729eeced5d23b457ba53fa35b48764"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-striker-101021-heat\\result.json",
+    "bytes": 9690,
+    "sha256": "681a530d9e11ec4f2e1fcdb4e009808f7face1322cfd981fcef489538b072d40"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-striker-101021-heat\\samples.jsonl",
+    "bytes": 13043,
+    "sha256": "221847d486ffd15e81c6f3fda3fe18085787c1a6332f400d81723740d59a418f"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t3-volcanic-striker-101021-heat.log",
+    "bytes": 97,
+    "sha256": "69d4958fecbd1c0e96f96322a86ee20f4b78c4f35ac76230f89e26471920384c"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-tundra-conduit-101009-baseline\\events.jsonl",
+    "bytes": 3857584,
+    "sha256": "9ea611ea7115f6796bb5c547aa31f283e44bd62d743522081efd114c041b1903"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-tundra-conduit-101009-baseline\\ready.json",
+    "bytes": 20050,
+    "sha256": "9a22b2fc21fcbe658dc88fd208f1bb8262484dd09b933c5042614d7fdd1732ed"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-tundra-conduit-101009-baseline\\result.json",
+    "bytes": 7498,
+    "sha256": "5358ad7bbaf637c2a6bf970bdfd2303d699bd0adfc1e959eb0dd0cc258dc5e71"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-tundra-conduit-101009-baseline\\samples.jsonl",
+    "bytes": 188276,
+    "sha256": "36b19000c14a95252f425e8c5afeb3a24a27ee87a83fc7027c8bf510846abd65"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-tundra-conduit-101009-baseline.log",
+    "bytes": 102,
+    "sha256": "645c0703096910bb67d27b28e3e5f34fd649d54290c81573f9e694a8b0f10120"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-tundra-conduit-101021-baseline\\events.jsonl",
+    "bytes": 4044415,
+    "sha256": "fa90fa31f00fe1473f325040638eaa84ade1f3056bd9cda5067feb7397c82c84"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-tundra-conduit-101021-baseline\\ready.json",
+    "bytes": 20047,
+    "sha256": "1bc9a5bc42846c68033c1b501c1324c5c8190943e03cb7896e255d24595446f0"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-tundra-conduit-101021-baseline\\result.json",
+    "bytes": 7522,
+    "sha256": "914197e35fdf2a3200f3d86801018327b5ba48994e7e1b98a49e1ed25fe21b40"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-tundra-conduit-101021-baseline\\samples.jsonl",
+    "bytes": 188344,
+    "sha256": "7f650e6ab900085e58bae25be3d92e16a7a77b8e147ddbd3258c99bfcf0b12c6"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-tundra-conduit-101021-baseline.log",
+    "bytes": 102,
+    "sha256": "6ec8b8aa806e27ab90dcc5a76227f37437a169b8d1e70e0df51e642115be17e1"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-tundra-slinger-101009-baseline\\events.jsonl",
+    "bytes": 2360650,
+    "sha256": "ed00b18b4859a39b13f1eefa5bfb44035c5ede719724e8377385c8952c283abc"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-tundra-slinger-101009-baseline\\ready.json",
+    "bytes": 19037,
+    "sha256": "94d8ba6e13b4071677217337fbb01374342cdc90f87b1cefcb7a267124345d42"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-tundra-slinger-101009-baseline\\result.json",
+    "bytes": 7869,
+    "sha256": "37986a0f2d1c3cc3773a56119fa8af8dc39d2cb4f24e5f4bdd1cbb801543ead2"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-tundra-slinger-101009-baseline\\samples.jsonl",
+    "bytes": 206569,
+    "sha256": "8f2979bc362a337e28ec014db4002be730dc6bebb7da1ca9aa979cb58334e0eb"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-tundra-slinger-101009-baseline.log",
+    "bytes": 102,
+    "sha256": "ad78c0aa838958323bf19b9458762b17e9ea225a7a6b528faaaf45bedbc271f2"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-tundra-slinger-101021-baseline\\events.jsonl",
+    "bytes": 2331905,
+    "sha256": "bad65eed2333d1a083a2073cb5d3711139903358af072b769470f9839bd03c19"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-tundra-slinger-101021-baseline\\ready.json",
+    "bytes": 19034,
+    "sha256": "83de279692718a38dec48e0dadf8626c87d403c5c0d7020bada60e510884078d"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-tundra-slinger-101021-baseline\\result.json",
+    "bytes": 7965,
+    "sha256": "8735896352fe01c707d010e22b455cfbccbcba2f78a62be9c8168b53ab98162e"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-tundra-slinger-101021-baseline\\samples.jsonl",
+    "bytes": 210387,
+    "sha256": "5d14f27efbbff94ee72b323309875cac91f0b07e3a7f6702897708ba2868b0e2"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-tundra-slinger-101021-baseline.log",
+    "bytes": 102,
+    "sha256": "f536638fc6573818b4ba61f57403b9041bf8d82a4699e137dd5abbaa78dbfc48"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-tundra-striker-101009-baseline\\events.jsonl",
+    "bytes": 2324925,
+    "sha256": "1532e93fe640d734fbbd379ec88be5fd13030ffa11efb467bd36d7a7e3ad0b56"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-tundra-striker-101009-baseline\\ready.json",
+    "bytes": 18906,
+    "sha256": "94e7a10339f4e55815fc7c6c375238ee1de1a3bb933ecfcf5a1a999075a6fd7b"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-tundra-striker-101009-baseline\\result.json",
+    "bytes": 7979,
+    "sha256": "1db3d0c86c85c347873ad614bfff14dc5882a9984994eeb1841ac685a0f10c2f"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-tundra-striker-101009-baseline\\samples.jsonl",
+    "bytes": 208991,
+    "sha256": "2d9ced30785637c4e5841e532e2c598d12c4f03f62cb07407a7427640e2af3ff"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-tundra-striker-101009-baseline.log",
+    "bytes": 102,
+    "sha256": "f1dd092745d79b2877a084565b8542abe9159d7fbb373d2b6ff845cdaa1fe6ff"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-tundra-striker-101021-baseline\\events.jsonl",
+    "bytes": 2214035,
+    "sha256": "a3130d719e82a652cf460fd836a8fa396dfdc2118bd73feb5462a531098ea63a"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-tundra-striker-101021-baseline\\ready.json",
+    "bytes": 18903,
+    "sha256": "b7d92da573ea0cac8e6ec74a08d99f66228116b606daa423a1dd5027f587d201"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-tundra-striker-101021-baseline\\result.json",
+    "bytes": 8004,
+    "sha256": "d3340ac1691e62be9e69c69e4857e9e9059a73fb3b86f60fb59030e8d5027b2f"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-tundra-striker-101021-baseline\\samples.jsonl",
+    "bytes": 205801,
+    "sha256": "5cf2d9565c7ee62a7eaf67e6abb882b6578428cf576eb59f9df44045f788dc1e"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-tundra-striker-101021-baseline.log",
+    "bytes": 102,
+    "sha256": "a53819272e941046d118ae96f9025f2e5b7049645d55b6d9e7456d604dd75801"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-conduit-101009-baseline\\events.jsonl",
+    "bytes": 3878576,
+    "sha256": "07a1832a6d13bfb90cb8f711c1de216db9e49354a10e1e9bd3857d0dc34e132a"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-conduit-101009-baseline\\ready.json",
+    "bytes": 26142,
+    "sha256": "16026d81a1fdc82141be822d1c9ee06808079075167b31c5752c490dedb4e3fd"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-conduit-101009-baseline\\result.json",
+    "bytes": 14678,
+    "sha256": "dfd2277922da778fe4441fbfe5a7b17e46f526ba18b7be3f4c0acd1954ff008b"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-conduit-101009-baseline\\samples.jsonl",
+    "bytes": 203383,
+    "sha256": "e965521126d2c524faef9b2072ff6f30f89b799817690385893b5657de1efd0b"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-conduit-101009-baseline.log",
+    "bytes": 105,
+    "sha256": "5bd75636629b643838053c3d72d8d2fcfe7b3fd03c6297aba58ad227d7b3b37f"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-conduit-101009-full\\events.jsonl",
+    "bytes": 3892566,
+    "sha256": "09018160e36f57e356972ebe3a54431595ecb0ffd7cacb17e9328dd462a86bff"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-conduit-101009-full\\ready.json",
+    "bytes": 26113,
+    "sha256": "fefd65bc0715fead15da3fa63385933a19fa37c0c06f5943d836ede9b7e9e104"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-conduit-101009-full\\result.json",
+    "bytes": 13354,
+    "sha256": "8f37f2027865a1d707d0514bce8e6eda99f37ec5e4275195a5725410ca05ba7f"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-conduit-101009-full\\samples.jsonl",
+    "bytes": 203848,
+    "sha256": "762493c1562557d408db8fc10ec1bcec7fb3129ed5c0f7cd9928536a8c212050"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-conduit-101009-full.log",
+    "bytes": 101,
+    "sha256": "9902910a666f3d2ec530441558b92c5633a2dfab6d7419622bc8f78e5fd0ea3d"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-conduit-101009-heat\\events.jsonl",
+    "bytes": 980244,
+    "sha256": "e89b379fb5a5500f407a708bc66b9fff3d08f6b0fe1bb697b8cc35c4c1abc435"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-conduit-101009-heat\\ready.json",
+    "bytes": 26122,
+    "sha256": "8ee513c8c78039653904011dc34084beb779e18d2f344e66faa7f867b672b51d"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-conduit-101009-heat\\result.json",
+    "bytes": 11998,
+    "sha256": "5a87db03d5e99f02b7320ebba7c0ddf59a71f1f7cab78805d4c81ade6611daa3"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-conduit-101009-heat\\samples.jsonl",
+    "bytes": 47097,
+    "sha256": "ae442e3fca5a86249f73fb10e506a4250720824f7cdd0fb27473ed3e6b27ad54"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-conduit-101009-heat.log",
+    "bytes": 99,
+    "sha256": "e415c014e3a900a0c8d2e1582222a74c33f085aeeaa6da0dd096d8e857442130"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-conduit-101021-baseline\\events.jsonl",
+    "bytes": 429830,
+    "sha256": "1ca347a75c6396169e0f8ffe4273227c8281e6f69f3da4b797d5d91558e72b3f"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-conduit-101021-baseline\\ready.json",
+    "bytes": 25943,
+    "sha256": "d894f200fd196862b0859329a752587fc228f85ba40f07883a9a9ed5c628a262"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-conduit-101021-baseline\\result.json",
+    "bytes": 10553,
+    "sha256": "ada6c3eee8340ad8bd66e6854133f459aae5a1f24b2b31adb2f1d7ec7fbdd965"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-conduit-101021-baseline\\samples.jsonl",
+    "bytes": 18723,
+    "sha256": "d19eb4d70245e1c638e9e6f63f81b9ffb04943313e7a5a53ba2db99085290386"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-conduit-101021-baseline.log",
+    "bytes": 102,
+    "sha256": "880eb95fcdf30a24347a56e74740b3ef785bc47a84a80823e51ee0330a0be30f"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-conduit-101021-full\\events.jsonl",
+    "bytes": 2864480,
+    "sha256": "151afd1c9706bd20a5828e258517eba6d36b4a454b00d5e25b9aed4072c8ff36"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-conduit-101021-full\\ready.json",
+    "bytes": 25914,
+    "sha256": "09852192d04600f1c1ccfb18b337d195b5d1ef6d28541ef82842798057a79268"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-conduit-101021-full\\result.json",
+    "bytes": 12573,
+    "sha256": "77ae571a36671cc94dd43f48a67dd370eb7cbc25485d150537dbf101c3aefeb8"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-conduit-101021-full\\samples.jsonl",
+    "bytes": 139963,
+    "sha256": "25eaaeaf8ddf4081577075b51e3090388506b90fe274473b67949b3905e711d0"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-conduit-101021-full.log",
+    "bytes": 99,
+    "sha256": "2da8fe0504ae329edc3a41dd557133676718343193ebcab58bd2b28477a47871"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-conduit-101021-heat\\events.jsonl",
+    "bytes": 450186,
+    "sha256": "7183855a5cda988ca9b8a36eb9a231537ac855e511bf045e2e060fcce5724013"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-conduit-101021-heat\\ready.json",
+    "bytes": 25923,
+    "sha256": "71de32ae22b9882d814e6f902a91c04a2f7f3227e3a97b6b0a3caa641fe16b79"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-conduit-101021-heat\\result.json",
+    "bytes": 10774,
+    "sha256": "3b680823a2314ba2299d71145af0cbee7ae373d780340ad03f52dada44ad822f"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-conduit-101021-heat\\samples.jsonl",
+    "bytes": 19087,
+    "sha256": "4cbaec6a6bfe894c08d5524d3fc64ea380a40c1a180d0d046860a801570a4486"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-conduit-101021-heat.log",
+    "bytes": 98,
+    "sha256": "fddcae12be6c35fdec09edc384dc95bbcdece7900bf3c2f4d04a7c233a0e23f8"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-slinger-101009-baseline\\events.jsonl",
+    "bytes": 2969963,
+    "sha256": "1aa316e212707b6090b6dec2b1f38715f40b3657a083598f59712f5c1aa767cf"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-slinger-101009-baseline\\ready.json",
+    "bytes": 25129,
+    "sha256": "8bfa55a31ba5a7d878c15454725be883a8677969ffed957677605546a456c8e2"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-slinger-101009-baseline\\result.json",
+    "bytes": 14801,
+    "sha256": "29397307de8e4fd5c35b66af3bdc7f04f2cfddc34277d4ea4ca782a681c7ee1f"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-slinger-101009-baseline\\samples.jsonl",
+    "bytes": 214153,
+    "sha256": "2a4d5148a858b3a992872bf673b5a21ac0b9000cd4314b52072f9a25d692bba2"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-slinger-101009-baseline.log",
+    "bytes": 105,
+    "sha256": "a50de3668bef0af812fb59c5e358077b7fbfaf88e34c368055b1ad753797803f"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-slinger-101009-full\\events.jsonl",
+    "bytes": 1799376,
+    "sha256": "276a40a28273a2d24bc079a5d3581681b9866a8a9a17a76963baf6a69fe8db6d"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-slinger-101009-full\\ready.json",
+    "bytes": 25100,
+    "sha256": "507122a8932f6001e5bad48809a6ed8e4cd5158865900ee6d2625739a25bd515"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-slinger-101009-full\\result.json",
+    "bytes": 14139,
+    "sha256": "cd0c380d5566a1c99c8e59f96f41c517cad408cbd8d7d9c6d37bf170a73ddcf8"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-slinger-101009-full\\samples.jsonl",
+    "bytes": 211291,
+    "sha256": "05f03314629c8c6e0a1ebce5de31dc9d0d2902dcf2ec7f03307f9d71da9c6a2e"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-slinger-101009-full.log",
+    "bytes": 101,
+    "sha256": "8707b1c1f860733402ce3385cbb7cbcc3e6e290a9fa2ddb84431527d3d727c74"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-slinger-101009-heat\\events.jsonl",
+    "bytes": 3081159,
+    "sha256": "ca301d07351a49374ef2d3297d95eb14cab9096231c1f5e3ed9546d20f8ec53b"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-slinger-101009-heat\\ready.json",
+    "bytes": 25109,
+    "sha256": "764a7e99027fe4eeb6aa356dcdba4cf6d7340bba5d856885b13d10a339024960"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-slinger-101009-heat\\result.json",
+    "bytes": 14994,
+    "sha256": "91be92e7ff0aac3bef04800221604357c14ba54c7a7b941c27cc81069ed818a5"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-slinger-101009-heat\\samples.jsonl",
+    "bytes": 216412,
+    "sha256": "1b4d2df789dfde1192a3ba55c5e28426d0bb9e0fa9db975a3af5da8af58c7289"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-slinger-101009-heat.log",
+    "bytes": 101,
+    "sha256": "752f4e8413dfa2c69b1d2e61108d78b6ac055ae1ac30d9d910b2318adebf8d9b"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-slinger-101021-baseline\\events.jsonl",
+    "bytes": 3170758,
+    "sha256": "641ce082d2f59d2e27717e8823b2e5198ed496f5a7ccfff7781c9bb51d82d184"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-slinger-101021-baseline\\ready.json",
+    "bytes": 24930,
+    "sha256": "e90ca8bd6d4c50250a92e23f84db792f57b31997e93769a095f71713f550a70d"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-slinger-101021-baseline\\result.json",
+    "bytes": 13920,
+    "sha256": "f9ad9e54a563c03d515e4dfe2ac53296a24c3258aee1d5c4d58fcbeb2f326d59"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-slinger-101021-baseline\\samples.jsonl",
+    "bytes": 218485,
+    "sha256": "fceb0a7e2c0cf103b8548e4b434bbb18aaec6406027f21113b3f0d748456cf16"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-slinger-101021-baseline.log",
+    "bytes": 105,
+    "sha256": "8c6cd8cadde8ea1bd4e10a5ad9de802aa10c86b1f566abb8af54ea55280f3af3"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-slinger-101021-full\\events.jsonl",
+    "bytes": 2701210,
+    "sha256": "e4769365f76f54552d7fc978cdb08f84553bdec30c19cfeecb13bce9af45a70b"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-slinger-101021-full\\ready.json",
+    "bytes": 24901,
+    "sha256": "aee56cb65f1c50757cd8dd1618929b59e74cdeac513a82da4eeda15c0c4fe8af"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-slinger-101021-full\\result.json",
+    "bytes": 14169,
+    "sha256": "c872dea35f67bea19ec6615c75e8983394d0d0f3f759630d70cb1638d4a65a40"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-slinger-101021-full\\samples.jsonl",
+    "bytes": 212321,
+    "sha256": "cb328c646c6c0d69be259ed4c2fa646d14f0fcbfbee3cccef288f03607633c54"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-slinger-101021-full.log",
+    "bytes": 101,
+    "sha256": "fb10c35e107f1b8e176a1c6db065b558392ce9005b914b1ce8670bc6d65dbd0a"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-slinger-101021-heat\\events.jsonl",
+    "bytes": 3190735,
+    "sha256": "66c01f91eba80014a9333eff9372e9a078fa92e7feac3127d82337d517c7d99b"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-slinger-101021-heat\\ready.json",
+    "bytes": 24910,
+    "sha256": "14f9a9bc80c1ac83f58299168845701ce758cb79e8e263f65c84c1246a6e7c7b"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-slinger-101021-heat\\result.json",
+    "bytes": 15023,
+    "sha256": "570e6360254f1b304ab3cb4446510038735786e7057ddd9a0791d54e4598fadf"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-slinger-101021-heat\\samples.jsonl",
+    "bytes": 217282,
+    "sha256": "2df758c0e766faf9041760b23dfa92e16872cf451351bea52aad027fce6feb66"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-slinger-101021-heat.log",
+    "bytes": 101,
+    "sha256": "e41effa42dc64ebe54025101a77892184b8108a9ab5566042818450bb19d7764"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-striker-101009-baseline\\events.jsonl",
+    "bytes": 1770867,
+    "sha256": "f81acae94fd25116fd8be28dbed9a26eac1be8d305da2614c8f714273b7574b1"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-striker-101009-baseline\\ready.json",
+    "bytes": 24998,
+    "sha256": "bd978caf168c92280ae612a943d25d1f3703efbcd52a0044ec007a0a765885cd"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-striker-101009-baseline\\result.json",
+    "bytes": 12492,
+    "sha256": "5cc2e0417a75f77074c1e7a6e749d876b5219828edf2205a50b1ec63c7e1cf8f"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-striker-101009-baseline\\samples.jsonl",
+    "bytes": 142052,
+    "sha256": "7a5a132e2e832d8ec845313b44eccbc9a0fe6b88a8707704cc2997d6b5e14632"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-striker-101009-baseline.log",
+    "bytes": 104,
+    "sha256": "b25b02d556b615f8fdf09cd26f5badb25f8b2e0983faed42b30cb0e20946cc97"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-striker-101009-full\\events.jsonl",
+    "bytes": 2581715,
+    "sha256": "9c6ba262286347eafab1c5b431847fa4ed0cc2131375916cf94c683399c3b3a3"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-striker-101009-full\\ready.json",
+    "bytes": 24969,
+    "sha256": "2b694c778d88d4ae6aa460a35cee9e456c088137fa4672153c1b5a63dc2f1101"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-striker-101009-full\\result.json",
+    "bytes": 14453,
+    "sha256": "b4ec3d4dbfcbc1f7dedebd87879b5ef49431e4b771e65b13381c64d9ccf5b480"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-striker-101009-full\\samples.jsonl",
+    "bytes": 211460,
+    "sha256": "0647b9b3396dd1eff6959d830dc08dce193eec5fefe2c9362a6f2991fddf3530"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-striker-101009-full.log",
+    "bytes": 101,
+    "sha256": "5e7444e77ebe396516c7015a07be893abe633f015a80ea0a91dd62df41bf6b59"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-striker-101009-heat\\events.jsonl",
+    "bytes": 2306604,
+    "sha256": "1fcebfa2fc470ecf51ed64ebb24157bfe40652de15912d1d7e47b31a3d3e7731"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-striker-101009-heat\\ready.json",
+    "bytes": 24978,
+    "sha256": "3b9e14d07d5734326fc0556569fda0a765d9189c2fa5156dce5544f9ff4b5523"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-striker-101009-heat\\result.json",
+    "bytes": 13384,
+    "sha256": "c3470458c724099e472ce357d079f7dca3382302a867b720f64673781308aba4"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-striker-101009-heat\\samples.jsonl",
+    "bytes": 191667,
+    "sha256": "b1dc48f30837a91da9b7aadb80199a589d6e7f5df5960247ad0e7ca0bef632fe"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-striker-101009-heat.log",
+    "bytes": 100,
+    "sha256": "2aa2a349ba21fdd9f2c10fe4d3589bcf04df81e7c977591a93b37fbb98fda89e"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-striker-101021-baseline\\events.jsonl",
+    "bytes": 2246867,
+    "sha256": "b3a9d55f987990ecfe8eff5bcdcb6ee93c055edb6aded339174f56e43946cd09"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-striker-101021-baseline\\ready.json",
+    "bytes": 24799,
+    "sha256": "ebb52a6ed95df2054f1c30d28171fba7cf7acef3c5a286b4e41e8db2c58e9af0"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-striker-101021-baseline\\result.json",
+    "bytes": 14472,
+    "sha256": "00398a0a72062665b3867cd9665179da119fca2240a663b7a003592bbc0347f2"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-striker-101021-baseline\\samples.jsonl",
+    "bytes": 206508,
+    "sha256": "ffa957f36fab6859e9ee0b5760639733605dda9aacc4418a17b9251927cd4dc1"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-striker-101021-baseline.log",
+    "bytes": 105,
+    "sha256": "518a5e613cd6e5e68f659ed38eb88eb5b66fb1cbca58bb9be71fe86107d6eb78"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-striker-101021-full\\events.jsonl",
+    "bytes": 2414494,
+    "sha256": "543cf310f0318d5b75d3cde634a4cdbf09c2c6b9e05fa185b88f5b4c068fb033"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-striker-101021-full\\ready.json",
+    "bytes": 24770,
+    "sha256": "85bce284a4cc42819f7320c77ac3a76910aec88e9b459708c87ce6a956d7be67"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-striker-101021-full\\result.json",
+    "bytes": 14603,
+    "sha256": "786d809228741bf93e264758d00eabceca781dfa6bde9fabf8827deabc6ae632"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-striker-101021-full\\samples.jsonl",
+    "bytes": 210200,
+    "sha256": "1927978a21ebe3d86b8c191eb3d62b7bec7eb73958acdd261848981f42d08d60"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-striker-101021-full.log",
+    "bytes": 101,
+    "sha256": "39e253846c3dc65fa52378c3c53b098bb32ddf64c0ac67cb0ee62ce9ad71b43b"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-striker-101021-heat\\events.jsonl",
+    "bytes": 1737685,
+    "sha256": "0a0a7ddae6b22dca7e4c48c330b25cdcff0370f798bdea4bc963e55a59daa13b"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-striker-101021-heat\\ready.json",
+    "bytes": 24779,
+    "sha256": "51ba69320611f03d902b4196f34b31e33329b15c371e0df6c28ea6b2e1bc6c97"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-striker-101021-heat\\result.json",
+    "bytes": 14374,
+    "sha256": "45c13ab0a35d8f98695cc690ab3365f64b80148009450d18ee853b3467508a8c"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-striker-101021-heat\\samples.jsonl",
+    "bytes": 201618,
+    "sha256": "be8e84272e24f5607feaf6a0980aac28686aa54245128fd4f29d2fb6fa0236ac"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\farm-t4-volcanic-striker-101021-heat.log",
+    "bytes": 101,
+    "sha256": "dc1bb09360c2344253abdd05351f4a50a4254b0617d599571e5eda6f900bc474"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\hitbox-current-comparison.json",
+    "bytes": 53,
+    "sha256": "ed785dfcb47e37f5d59c0031319c33da3f021105c00934add17e5f6f5f3ccabd"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\manifest.json",
+    "bytes": 107804,
+    "sha256": "26ca58000f1aa5e9f095c98c183c85af941a049c1ee4755d0b553b3ce153d994"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\results.json",
+    "bytes": 603953,
+    "sha256": "b5a162d73bf9ed881d4419ed1c5bda67ea20823eff363952751818902e1c3697"
+  },
+  {
+    "path": "D:\\mmo-idle\\volcano-area-nerf-2026-09-25\\run-01\\working.diff",
+    "bytes": 169601,
+    "sha256": "afe2468a63c944b64f83248591665bffb835b4f22651293699e0ed7ad30ff1f9"
+  }
+]

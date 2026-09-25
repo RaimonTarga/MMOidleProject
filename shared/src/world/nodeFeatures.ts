@@ -504,7 +504,7 @@ function volcanicHeat(id: string): NodeFeatureSpec {
       coolingScaleStacks: 10,
       coolingRateMult: 2,
       payload: {
-        outgoingDamagePct: 0.03, incomingDamagePct: 0.045,
+        outgoingDamagePct: 0.03, incomingDamagePct: 0.035,
         damageSoftcapStacks: 10, damageSoftcapScale: 5,
       },
     },

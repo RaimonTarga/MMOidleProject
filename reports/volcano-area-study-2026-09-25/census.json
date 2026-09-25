@@ -1,0 +1,1652 @@
+{
+  "scope": "Static authoring arithmetic, not delivered DPS or live-player evidence",
+  "rows": [
+    {
+      "tier": 3,
+      "biome": "mountain",
+      "id": "mountain-colossus",
+      "name": "Mountain Colossus",
+      "hp": 4675,
+      "attack": 130,
+      "plating": 0,
+      "damageReduction": 0,
+      "speed": 16,
+      "attackRange": 15,
+      "attackCooldown": 3800,
+      "pullRange": 160,
+      "basicDps": 34.21052631578947,
+      "elite": false,
+      "density": 24
+    },
+    {
+      "tier": 3,
+      "biome": "mountain",
+      "id": "avalanche-ram",
+      "name": "Avalanche Ram",
+      "hp": 610,
+      "attack": 87,
+      "plating": 0,
+      "damageReduction": 0,
+      "speed": 38,
+      "attackRange": 12,
+      "attackCooldown": 2600,
+      "pullRange": 245,
+      "basicDps": 33.46153846153846,
+      "elite": false,
+      "density": 24
+    },
+    {
+      "tier": 3,
+      "biome": "mountain",
+      "id": "crag-mortar",
+      "name": "Crag Mortar",
+      "hp": 685,
+      "attack": 109,
+      "plating": 0,
+      "damageReduction": 0,
+      "speed": 30,
+      "attackRange": 250,
+      "attackCooldown": 3600,
+      "pullRange": 360,
+      "basicDps": 30.27777777777778,
+      "elite": false,
+      "density": 24
+    },
+    {
+      "tier": 3,
+      "biome": "swamp",
+      "id": "plague-hydra",
+      "name": "Plague-Shell Snapper",
+      "hp": 2320,
+      "attack": 37,
+      "plating": 4,
+      "damageReduction": 0,
+      "speed": 26,
+      "attackRange": 15,
+      "attackCooldown": 2200,
+      "pullRange": 185,
+      "basicDps": 16.818181818181817,
+      "dot": {
+        "debuffId": "plague-venom",
+        "label": "Plague",
+        "damagePerStack": 5,
+        "maxStacks": 6,
+        "tickIntervalMs": 1000,
+        "durationMs": 6000
+      },
+      "elite": false,
+      "density": 20
+    },
+    {
+      "tier": 3,
+      "biome": "swamp",
+      "id": "mire-hex-spitter",
+      "name": "Mire Hexer",
+      "hp": 510,
+      "attack": 42,
+      "plating": 0,
+      "damageReduction": 0,
+      "speed": 36,
+      "attackRange": 200,
+      "attackCooldown": 2200,
+      "pullRange": 230,
+      "basicDps": 19.09090909090909,
+      "elite": false,
+      "density": 20
+    },
+    {
+      "tier": 3,
+      "biome": "swamp",
+      "id": "bog-lurker",
+      "name": "Bog Lurker",
+      "hp": 490,
+      "attack": 43,
+      "plating": 0,
+      "damageReduction": 0,
+      "speed": 30,
+      "attackRange": 12,
+      "attackCooldown": 2600,
+      "pullRange": 240,
+      "basicDps": 16.53846153846154,
+      "dot": {
+        "debuffId": "lurker-venom",
+        "label": "Lurker Venom",
+        "damagePerStack": 5,
+        "maxStacks": 5,
+        "tickIntervalMs": 1000,
+        "durationMs": 4500,
+        "openerStacks": 3
+      },
+      "elite": false,
+      "density": 20
+    },
+    {
+      "tier": 3,
+      "biome": "cave",
+      "id": "deep-spider",
+      "name": "Deep Spider",
+      "hp": 610,
+      "attack": 60,
+      "plating": 0,
+      "damageReduction": 0.08,
+      "speed": 70,
+      "attackRange": 12,
+      "attackCooldown": 1500,
+      "pullRange": 220,
+      "basicDps": 40,
+      "dot": {
+        "debuffId": "deep-spider-venom",
+        "label": "Deep Venom",
+        "damagePerStack": 12,
+        "maxStacks": 3,
+        "tickIntervalMs": 1000,
+        "durationMs": 3000
+      },
+      "elite": true,
+      "density": 16
+    },
+    {
+      "tier": 3,
+      "biome": "cave",
+      "id": "cavern-troll",
+      "name": "Cavern Troll",
+      "hp": 4725,
+      "attack": 124,
+      "plating": 2,
+      "damageReduction": 0.28,
+      "speed": 14,
+      "attackRange": 15,
+      "attackCooldown": 3600,
+      "pullRange": 240,
+      "basicDps": 34.44444444444444,
+      "elite": true,
+      "density": 16
+    },
+    {
+      "tier": 3,
+      "biome": "cave",
+      "id": "crystal-gargoyle",
+      "name": "Crystal Gargoyle",
+      "hp": 700,
+      "attack": 70,
+      "plating": 1,
+      "damageReduction": 0.05,
+      "speed": 20,
+      "attackRange": 210,
+      "attackCooldown": 3200,
+      "pullRange": 185,
+      "basicDps": 21.875,
+      "elite": true,
+      "density": 16
+    },
+    {
+      "tier": 3,
+      "biome": "jungle",
+      "id": "jungle-stalker",
+      "name": "Jungle Stalker",
+      "hp": 1250,
+      "attack": 55,
+      "plating": 0,
+      "damageReduction": 0,
+      "speed": 78,
+      "attackRange": 12,
+      "attackCooldown": 1000,
+      "pullRange": 270,
+      "basicDps": 55,
+      "elite": false,
+      "density": 40
+    },
+    {
+      "tier": 3,
+      "biome": "jungle",
+      "id": "silverback",
+      "name": "Silverback",
+      "hp": 3200,
+      "attack": 83,
+      "plating": 0,
+      "damageReduction": 0,
+      "speed": 60,
+      "attackRange": 12,
+      "attackCooldown": 1800,
+      "pullRange": 240,
+      "basicDps": 46.111111111111114,
+      "elite": true,
+      "density": 40
+    },
+    {
+      "tier": 3,
+      "biome": "jungle",
+      "id": "canopy-harrier",
+      "name": "Canopy Chameleon",
+      "hp": 1150,
+      "attack": 45,
+      "plating": 0,
+      "damageReduction": 0,
+      "speed": 52,
+      "attackRange": 190,
+      "attackCooldown": 1400,
+      "pullRange": 250,
+      "basicDps": 32.142857142857146,
+      "elite": false,
+      "density": 40
+    },
+    {
+      "tier": 3,
+      "biome": "tundra",
+      "id": "frost-lurker",
+      "name": "Frost Lurker",
+      "hp": 950,
+      "attack": 160,
+      "plating": 0,
+      "damageReduction": 0.1,
+      "speed": 26,
+      "attackRange": 12,
+      "attackCooldown": 2600,
+      "pullRange": 170,
+      "basicDps": 61.53846153846154,
+      "elite": false,
+      "density": 16
+    },
+    {
+      "tier": 3,
+      "biome": "tundra",
+      "id": "glacier-bear",
+      "name": "Glacier Bear",
+      "hp": 3750,
+      "attack": 148,
+      "plating": 0,
+      "damageReduction": 0.14,
+      "speed": 22,
+      "attackRange": 15,
+      "attackCooldown": 3200,
+      "pullRange": 175,
+      "basicDps": 46.25,
+      "elite": false,
+      "density": 16
+    },
+    {
+      "tier": 3,
+      "biome": "tundra",
+      "id": "rime-caster",
+      "name": "Rime Caster",
+      "hp": 880,
+      "attack": 170,
+      "plating": 0,
+      "damageReduction": 0.08,
+      "speed": 30,
+      "attackRange": 200,
+      "attackCooldown": 2800,
+      "pullRange": 230,
+      "basicDps": 60.714285714285715,
+      "elite": false,
+      "density": 16
+    },
+    {
+      "tier": 3,
+      "biome": "desert",
+      "id": "dune-stalker",
+      "name": "Dune Stalker",
+      "hp": 4050,
+      "attack": 67,
+      "plating": 0,
+      "damageReduction": 0.08,
+      "speed": 30,
+      "attackRange": 12,
+      "attackCooldown": 2400,
+      "pullRange": 210,
+      "basicDps": 27.916666666666668,
+      "elite": false,
+      "pack": {
+        "role": "alpha",
+        "followers": [
+          {
+            "typeId": "sandweaver",
+            "count": 1
+          }
+        ]
+      },
+      "density": 16
+    },
+    {
+      "tier": 3,
+      "biome": "desert",
+      "id": "desert-basilisk",
+      "name": "Desert Basilisk",
+      "hp": 4050,
+      "attack": 80,
+      "plating": 0,
+      "damageReduction": 0.15,
+      "speed": 26,
+      "attackRange": 12,
+      "attackCooldown": 2800,
+      "pullRange": 190,
+      "basicDps": 28.571428571428573,
+      "elite": false,
+      "pack": {
+        "role": "alpha",
+        "followers": [
+          {
+            "typeId": "sandweaver",
+            "count": 1
+          }
+        ]
+      },
+      "density": 16
+    },
+    {
+      "tier": 3,
+      "biome": "desert",
+      "id": "sandweaver",
+      "name": "Gilded Scarab",
+      "hp": 510,
+      "attack": 96,
+      "plating": 0,
+      "damageReduction": 0,
+      "speed": 52,
+      "attackRange": 220,
+      "attackCooldown": 1900,
+      "pullRange": 250,
+      "basicDps": 50.526315789473685,
+      "elite": false,
+      "pack": {
+        "role": "follower"
+      },
+      "density": 16
+    },
+    {
+      "tier": 3,
+      "biome": "volcanic",
+      "id": "ember-scuttler",
+      "name": "Ember Scuttler",
+      "hp": 650,
+      "attack": 45,
+      "plating": 2,
+      "damageReduction": 0,
+      "speed": 64,
+      "attackRange": 12,
+      "attackCooldown": 1600,
+      "pullRange": 210,
+      "basicDps": 28.125,
+      "elite": false,
+      "pack": {
+        "role": "follower"
+      },
+      "density": 36
+    },
+    {
+      "tier": 3,
+      "biome": "volcanic",
+      "id": "cinder-hound",
+      "name": "Cinder Hound",
+      "hp": 1440,
+      "attack": 80,
+      "plating": 3,
+      "damageReduction": 0,
+      "speed": 70,
+      "attackRange": 12,
+      "attackCooldown": 1300,
+      "pullRange": 260,
+      "basicDps": 61.53846153846154,
+      "elite": false,
+      "pack": {
+        "role": "alpha",
+        "followRadius": 140,
+        "followers": [
+          {
+            "typeId": "ember-scuttler",
+            "count": 2
+          }
+        ],
+        "followerVariants": [
+          [
+            {
+              "typeId": "ember-scuttler",
+              "count": 2
+            }
+          ],
+          [
+            {
+              "typeId": "ember-scuttler",
+              "count": 1
+            }
+          ],
+          [
+            {
+              "typeId": "ash-slinger",
+              "count": 1
+            }
+          ]
+        ]
+      },
+      "density": 36
+    },
+    {
+      "tier": 3,
+      "biome": "volcanic",
+      "id": "magma-brute",
+      "name": "Magma Tortoise",
+      "hp": 3000,
+      "attack": 116,
+      "plating": 4,
+      "damageReduction": 0,
+      "speed": 22,
+      "attackRange": 15,
+      "attackCooldown": 3000,
+      "pullRange": 150,
+      "basicDps": 38.666666666666664,
+      "elite": false,
+      "abilities": [
+        {
+          "id": "molten-guard",
+          "name": "Molten Guard",
+          "castMs": 1000,
+          "cooldownMs": 14000,
+          "initialCooldownMs": 6000,
+          "target": "self",
+          "fx": "volcanic-guard",
+          "actions": [
+            {
+              "type": "shield",
+              "effectId": "magma-molten-guard",
+              "shieldPct": 0.09333333333333334,
+              "durationMs": 4500
+            }
+          ]
+        }
+      ],
+      "pack": {
+        "role": "alpha",
+        "followRadius": 140,
+        "followers": [
+          {
+            "typeId": "ember-scuttler",
+            "count": 3
+          }
+        ],
+        "followerVariants": [
+          [
+            {
+              "typeId": "ember-scuttler",
+              "count": 2
+            }
+          ],
+          [
+            {
+              "typeId": "ash-slinger",
+              "count": 1
+            }
+          ],
+          [
+            {
+              "typeId": "ash-slinger",
+              "count": 1
+            },
+            {
+              "typeId": "ember-scuttler",
+              "count": 1
+            }
+          ]
+        ]
+      },
+      "density": 36
+    },
+    {
+      "tier": 3,
+      "biome": "volcanic",
+      "id": "ash-slinger",
+      "name": "Ash Salamander",
+      "hp": 1330,
+      "attack": 84,
+      "plating": 2,
+      "damageReduction": 0,
+      "speed": 44,
+      "attackRange": 180,
+      "attackCooldown": 2000,
+      "pullRange": 230,
+      "basicDps": 42,
+      "elite": false,
+      "pack": {
+        "role": "follower"
+      },
+      "density": 36
+    },
+    {
+      "tier": 4,
+      "biome": "mountain",
+      "id": "granite-mammoth",
+      "name": "Granite Mammoth",
+      "hp": 13800,
+      "attack": 147,
+      "plating": 0,
+      "damageReduction": 0,
+      "speed": 16,
+      "attackRange": 15,
+      "attackCooldown": 3600,
+      "pullRange": 160,
+      "basicDps": 40.833333333333336,
+      "elite": false,
+      "density": 24
+    },
+    {
+      "tier": 4,
+      "biome": "mountain",
+      "id": "avalanche-tyrant",
+      "name": "Avalanche Tyrant",
+      "hp": 1600,
+      "attack": 116,
+      "plating": 0,
+      "damageReduction": 0,
+      "speed": 42,
+      "attackRange": 12,
+      "attackCooldown": 2500,
+      "pullRange": 300,
+      "basicDps": 46.4,
+      "elite": false,
+      "density": 24
+    },
+    {
+      "tier": 4,
+      "biome": "mountain",
+      "id": "cliffside-roc",
+      "name": "Cliffside Roc",
+      "hp": 1700,
+      "attack": 143,
+      "plating": 0,
+      "damageReduction": 0,
+      "speed": 105,
+      "attackRange": 12,
+      "attackCooldown": 3500,
+      "pullRange": 410,
+      "basicDps": 40.857142857142854,
+      "elite": false,
+      "density": 24
+    },
+    {
+      "tier": 4,
+      "biome": "mountain",
+      "id": "cragback-rhino",
+      "name": "Cragback Rhino",
+      "hp": 6600,
+      "attack": 90,
+      "plating": 16,
+      "damageReduction": 0.06,
+      "speed": 14,
+      "attackRange": 15,
+      "attackCooldown": 3800,
+      "pullRange": 150,
+      "basicDps": 23.68421052631579,
+      "elite": true,
+      "density": 24
+    },
+    {
+      "tier": 4,
+      "biome": "jungle",
+      "id": "hunting-panther",
+      "name": "Hunting Panther",
+      "hp": 2400,
+      "attack": 52,
+      "plating": 0,
+      "damageReduction": 0,
+      "speed": 82,
+      "attackRange": 12,
+      "attackCooldown": 1200,
+      "pullRange": 290,
+      "basicDps": 43.333333333333336,
+      "elite": false,
+      "density": 40
+    },
+    {
+      "tier": 4,
+      "biome": "jungle",
+      "id": "apex-silverback",
+      "name": "Apex Silverback",
+      "hp": 10000,
+      "attack": 77,
+      "plating": 0,
+      "damageReduction": 0,
+      "speed": 54,
+      "attackRange": 12,
+      "attackCooldown": 1800,
+      "pullRange": 250,
+      "basicDps": 42.77777777777778,
+      "elite": true,
+      "density": 40
+    },
+    {
+      "tier": 4,
+      "biome": "jungle",
+      "id": "thornback-lizard",
+      "name": "Thornback Chameleon",
+      "hp": 2500,
+      "attack": 52,
+      "plating": 0,
+      "damageReduction": 0,
+      "speed": 50,
+      "attackRange": 200,
+      "attackCooldown": 1500,
+      "pullRange": 260,
+      "basicDps": 34.666666666666664,
+      "elite": false,
+      "density": 40
+    },
+    {
+      "tier": 4,
+      "biome": "jungle",
+      "id": "emerald-constrictor",
+      "name": "Emerald Constrictor",
+      "hp": 12000,
+      "attack": 66,
+      "plating": 0,
+      "damageReduction": 0,
+      "speed": 62,
+      "attackRange": 12,
+      "attackCooldown": 1600,
+      "pullRange": 280,
+      "basicDps": 41.25,
+      "dot": {
+        "debuffId": "constrictor-venom",
+        "label": "Constrictor Venom",
+        "damagePerStack": 5,
+        "maxStacks": 5,
+        "tickIntervalMs": 1000,
+        "durationMs": 3000
+      },
+      "elite": true,
+      "density": 40
+    },
+    {
+      "tier": 4,
+      "biome": "tundra",
+      "id": "rime-tusk-mastodon",
+      "name": "Rime-Tusk Mastodon",
+      "hp": 3300,
+      "attack": 230,
+      "plating": 12,
+      "damageReduction": 0,
+      "speed": 18,
+      "attackRange": 15,
+      "attackCooldown": 3500,
+      "pullRange": 165,
+      "basicDps": 65.71428571428571,
+      "elite": false,
+      "abilities": [
+        {
+          "id": "frost-tusk-impact",
+          "name": "Frost-Tusk Impact",
+          "castMs": 1300,
+          "cooldownMs": 12000,
+          "initialCooldownMs": 5500,
+          "target": "player",
+          "fx": "frost-tusk-impact",
+          "actions": [
+            {
+              "type": "area-hit",
+              "radius": 110,
+              "multiplier": 1.6,
+              "knockback": {
+                "distance": 150
+              }
+            }
+          ]
+        }
+      ],
+      "density": 16
+    },
+    {
+      "tier": 4,
+      "biome": "tundra",
+      "id": "glacial-direbear",
+      "name": "Glacial Dire-Bear",
+      "hp": 4884,
+      "attack": 220,
+      "plating": 0,
+      "damageReduction": 0.14,
+      "speed": 18,
+      "attackRange": 15,
+      "attackCooldown": 3200,
+      "pullRange": 175,
+      "basicDps": 68.75,
+      "elite": false,
+      "density": 16
+    },
+    {
+      "tier": 4,
+      "biome": "tundra",
+      "id": "hoarfrost-yeti",
+      "name": "Hoarfrost Yeti",
+      "hp": 1800,
+      "attack": 190,
+      "plating": 0,
+      "damageReduction": 0.08,
+      "speed": 36,
+      "attackRange": 220,
+      "attackCooldown": 2900,
+      "pullRange": 260,
+      "basicDps": 65.51724137931035,
+      "elite": false,
+      "density": 16
+    },
+    {
+      "tier": 4,
+      "biome": "tundra",
+      "id": "permafrost-behemoth",
+      "name": "Permafrost Behemoth",
+      "hp": 7656,
+      "attack": 220,
+      "plating": 20,
+      "damageReduction": 0.12,
+      "speed": 12,
+      "attackRange": 15,
+      "attackCooldown": 4000,
+      "pullRange": 140,
+      "basicDps": 55,
+      "elite": true,
+      "density": 16
+    },
+    {
+      "tier": 4,
+      "biome": "desert",
+      "id": "sand-viper",
+      "name": "Sand Viper",
+      "hp": 4029,
+      "attack": 78,
+      "plating": 0,
+      "damageReduction": 0.08,
+      "speed": 28,
+      "attackRange": 12,
+      "attackCooldown": 2400,
+      "pullRange": 230,
+      "basicDps": 32.5,
+      "elite": false,
+      "pack": {
+        "role": "alpha",
+        "followers": [
+          {
+            "typeId": "sandspitter-cobra",
+            "count": 1
+          }
+        ]
+      },
+      "density": 16
+    },
+    {
+      "tier": 4,
+      "biome": "desert",
+      "id": "dune-basilisk",
+      "name": "Dune Basilisk",
+      "hp": 9006,
+      "attack": 90,
+      "plating": 10,
+      "damageReduction": 0.14,
+      "speed": 26,
+      "attackRange": 15,
+      "attackCooldown": 3000,
+      "pullRange": 190,
+      "basicDps": 30,
+      "elite": false,
+      "pack": {
+        "role": "alpha",
+        "followers": [
+          {
+            "typeId": "sandspitter-cobra",
+            "count": 1
+          }
+        ]
+      },
+      "density": 16
+    },
+    {
+      "tier": 4,
+      "biome": "desert",
+      "id": "dune-tyrant",
+      "name": "Dune Tyrant",
+      "hp": 6952,
+      "attack": 140,
+      "plating": 8,
+      "damageReduction": 0.08,
+      "speed": 20,
+      "attackRange": 15,
+      "attackCooldown": 3500,
+      "pullRange": 160,
+      "basicDps": 40,
+      "elite": true,
+      "pack": {
+        "role": "alpha",
+        "followers": [
+          {
+            "typeId": "sandspitter-cobra",
+            "count": 1
+          }
+        ]
+      },
+      "density": 16
+    },
+    {
+      "tier": 4,
+      "biome": "desert",
+      "id": "sandspitter-cobra",
+      "name": "Sunshield Scarab",
+      "hp": 569,
+      "attack": 150,
+      "plating": 0,
+      "damageReduction": 0,
+      "speed": 54,
+      "attackRange": 230,
+      "attackCooldown": 1900,
+      "pullRange": 280,
+      "basicDps": 78.94736842105263,
+      "elite": false,
+      "pack": {
+        "role": "follower"
+      },
+      "density": 16
+    },
+    {
+      "tier": 4,
+      "biome": "volcanic",
+      "id": "ember-skink",
+      "name": "Ember Skink",
+      "hp": 720,
+      "attack": 75,
+      "plating": 2,
+      "damageReduction": 0,
+      "speed": 70,
+      "attackRange": 12,
+      "attackCooldown": 1300,
+      "pullRange": 230,
+      "basicDps": 57.69230769230769,
+      "dot": {
+        "debuffId": "ember-burn",
+        "label": "Ember Burn",
+        "damagePerStack": 13,
+        "maxStacks": 4,
+        "tickIntervalMs": 1000,
+        "durationMs": 2000
+      },
+      "elite": false,
+      "pack": {
+        "role": "follower"
+      },
+      "density": 36
+    },
+    {
+      "tier": 4,
+      "biome": "volcanic",
+      "id": "infernal-direhound",
+      "name": "Infernal Direhound",
+      "hp": 1750,
+      "attack": 110,
+      "plating": 4,
+      "damageReduction": 0,
+      "speed": 72,
+      "attackRange": 12,
+      "attackCooldown": 1400,
+      "pullRange": 280,
+      "basicDps": 78.57142857142857,
+      "elite": false,
+      "pack": {
+        "role": "alpha",
+        "followRadius": 140,
+        "followers": [
+          {
+            "typeId": "ember-skink",
+            "count": 2
+          }
+        ],
+        "followerVariants": [
+          [
+            {
+              "typeId": "ember-skink",
+              "count": 2
+            }
+          ],
+          [
+            {
+              "typeId": "ember-skink",
+              "count": 1
+            }
+          ],
+          [
+            {
+              "typeId": "ashspitter-salamander",
+              "count": 1
+            }
+          ]
+        ]
+      },
+      "density": 36
+    },
+    {
+      "tier": 4,
+      "biome": "volcanic",
+      "id": "obsidian-tortoise",
+      "name": "Obsidian Tortoise",
+      "hp": 4488,
+      "attack": 100,
+      "plating": 8,
+      "damageReduction": 0,
+      "speed": 20,
+      "attackRange": 15,
+      "attackCooldown": 3000,
+      "pullRange": 155,
+      "basicDps": 33.333333333333336,
+      "elite": false,
+      "abilities": [
+        {
+          "id": "molten-eruption",
+          "name": "Molten Eruption",
+          "castMs": 1100,
+          "cooldownMs": 12000,
+          "initialCooldownMs": 5500,
+          "target": "player",
+          "fx": "volcanic-eruption",
+          "actions": [
+            {
+              "type": "hit",
+              "multiplier": 2.2
+            }
+          ]
+        }
+      ],
+      "pack": {
+        "role": "alpha",
+        "followRadius": 140,
+        "followers": [
+          {
+            "typeId": "ember-skink",
+            "count": 3
+          }
+        ],
+        "followerVariants": [
+          [
+            {
+              "typeId": "ember-skink",
+              "count": 2
+            }
+          ],
+          [
+            {
+              "typeId": "ashspitter-salamander",
+              "count": 1
+            }
+          ],
+          [
+            {
+              "typeId": "ashspitter-salamander",
+              "count": 1
+            },
+            {
+              "typeId": "ember-skink",
+              "count": 1
+            }
+          ]
+        ]
+      },
+      "density": 36
+    },
+    {
+      "tier": 4,
+      "biome": "volcanic",
+      "id": "ashspitter-salamander",
+      "name": "Ashspitter Salamander",
+      "hp": 1550,
+      "attack": 110,
+      "plating": 2,
+      "damageReduction": 0,
+      "speed": 46,
+      "attackRange": 190,
+      "attackCooldown": 1900,
+      "pullRange": 250,
+      "basicDps": 57.89473684210526,
+      "dot": {
+        "debuffId": "ashspitter-burn",
+        "label": "Ash Burn",
+        "damagePerStack": 16,
+        "maxStacks": 5,
+        "tickIntervalMs": 1000,
+        "durationMs": 2500
+      },
+      "elite": false,
+      "pack": {
+        "role": "follower"
+      },
+      "density": 36
+    },
+    {
+      "tier": 4,
+      "biome": "volcanic",
+      "id": "magma-salamander",
+      "name": "Magma Salamander",
+      "hp": 5808,
+      "attack": 150,
+      "plating": 6,
+      "damageReduction": 0.06,
+      "speed": 22,
+      "attackRange": 15,
+      "attackCooldown": 2600,
+      "pullRange": 160,
+      "basicDps": 57.69230769230769,
+      "elite": true,
+      "abilities": [
+        {
+          "id": "obsidian-shell",
+          "name": "Obsidian Shell",
+          "castMs": 1200,
+          "cooldownMs": 14000,
+          "initialCooldownMs": 6000,
+          "target": "self",
+          "fx": "volcanic-shell",
+          "actions": [
+            {
+              "type": "shield",
+              "effectId": "magma-obsidian-shell",
+              "shieldPct": 0.14,
+              "durationMs": 5000
+            }
+          ]
+        }
+      ],
+      "pack": {
+        "role": "alpha",
+        "followRadius": 140,
+        "followers": [
+          {
+            "typeId": "ember-skink",
+            "count": 2
+          }
+        ],
+        "followerVariants": [
+          [
+            {
+              "typeId": "ember-skink",
+              "count": 1
+            }
+          ],
+          [
+            {
+              "typeId": "ashspitter-salamander",
+              "count": 1
+            }
+          ]
+        ]
+      },
+      "density": 36
+    },
+    {
+      "tier": 4,
+      "biome": "graveyard",
+      "id": "bone-crawler",
+      "name": "Bone Crawler",
+      "hp": 1235,
+      "attack": 85,
+      "plating": 0,
+      "damageReduction": 0,
+      "speed": 78,
+      "attackRange": 12,
+      "attackCooldown": 1200,
+      "pullRange": 290,
+      "basicDps": 70.83333333333333,
+      "elite": false,
+      "pack": {
+        "role": "follower"
+      },
+      "density": 28
+    },
+    {
+      "tier": 4,
+      "biome": "graveyard",
+      "id": "plague-hound",
+      "name": "Plague Hound",
+      "hp": 1901,
+      "attack": 105,
+      "plating": 0,
+      "damageReduction": 0,
+      "speed": 70,
+      "attackRange": 12,
+      "attackCooldown": 1500,
+      "pullRange": 270,
+      "basicDps": 70,
+      "dot": {
+        "debuffId": "hound-plague",
+        "label": "Hound Plague",
+        "damagePerStack": 24,
+        "maxStacks": 5,
+        "tickIntervalMs": 1100,
+        "durationMs": 2500
+      },
+      "elite": false,
+      "pack": {
+        "role": "follower"
+      },
+      "density": 28
+    },
+    {
+      "tier": 4,
+      "biome": "graveyard",
+      "id": "carrion-vulture",
+      "name": "Carrion Vulture",
+      "hp": 1616,
+      "attack": 95,
+      "plating": 0,
+      "damageReduction": 0,
+      "speed": 46,
+      "attackRange": 200,
+      "attackCooldown": 1700,
+      "pullRange": 260,
+      "basicDps": 55.88235294117647,
+      "elite": false,
+      "pack": {
+        "role": "follower"
+      },
+      "density": 28
+    },
+    {
+      "tier": 4,
+      "biome": "graveyard",
+      "id": "plague-rat",
+      "name": "Bone Rat",
+      "hp": 950,
+      "attack": 65,
+      "plating": 0,
+      "damageReduction": 0,
+      "speed": 92,
+      "attackRange": 12,
+      "attackCooldown": 950,
+      "pullRange": 310,
+      "basicDps": 68.42105263157895,
+      "elite": false,
+      "pack": {
+        "role": "follower"
+      },
+      "density": 28
+    },
+    {
+      "tier": 4,
+      "biome": "graveyard",
+      "id": "gravewright",
+      "name": "Gravewright",
+      "hp": 5702,
+      "attack": 90,
+      "plating": 0,
+      "damageReduction": 0,
+      "speed": 40,
+      "attackRange": 200,
+      "attackCooldown": 1900,
+      "pullRange": 300,
+      "basicDps": 47.36842105263158,
+      "elite": true,
+      "pack": {
+        "role": "alpha",
+        "followers": [
+          {
+            "typeId": "bone-crawler",
+            "count": 2
+          }
+        ],
+        "followerVariants": [
+          [
+            {
+              "typeId": "plague-rat",
+              "count": 2
+            }
+          ],
+          [
+            {
+              "typeId": "bone-crawler",
+              "count": 1
+            }
+          ],
+          [
+            {
+              "typeId": "plague-hound",
+              "count": 1
+            }
+          ],
+          [
+            {
+              "typeId": "carrion-vulture",
+              "count": 1
+            },
+            {
+              "typeId": "plague-rat",
+              "count": 1
+            }
+          ]
+        ]
+      },
+      "density": 28
+    },
+    {
+      "tier": 4,
+      "biome": "trench",
+      "id": "abyssal-serpent",
+      "name": "Abyssal Serpent",
+      "hp": 16800,
+      "attack": 190,
+      "plating": 18,
+      "damageReduction": 0.2,
+      "speed": 28,
+      "attackRange": 15,
+      "attackCooldown": 2800,
+      "pullRange": 420,
+      "basicDps": 67.85714285714286,
+      "elite": true,
+      "density": 10
+    },
+    {
+      "tier": 4,
+      "biome": "trench",
+      "id": "hadal-stalker",
+      "name": "Hadal Stalker",
+      "hp": 16800,
+      "attack": 175,
+      "plating": 20,
+      "damageReduction": 0.1,
+      "speed": 22,
+      "attackRange": 240,
+      "attackCooldown": 3400,
+      "pullRange": 400,
+      "basicDps": 51.470588235294116,
+      "elite": true,
+      "density": 10
+    },
+    {
+      "tier": 4,
+      "biome": "trench",
+      "id": "elder-leviathan",
+      "name": "Elder Leviathan",
+      "hp": 17640,
+      "attack": 210,
+      "plating": 22,
+      "damageReduction": 0.24,
+      "speed": 20,
+      "attackRange": 15,
+      "attackCooldown": 3600,
+      "pullRange": 440,
+      "basicDps": 58.333333333333336,
+      "elite": true,
+      "abilities": [
+        {
+          "id": "carapace-renewal",
+          "name": "Carapace Renewal",
+          "castMs": 1300,
+          "cooldownMs": 16000,
+          "initialCooldownMs": 9000,
+          "target": "self",
+          "fx": "trench-carapace",
+          "actions": [
+            {
+              "type": "shield",
+              "effectId": "elder-carapace-renewal",
+              "shieldPct": 0.06,
+              "durationMs": 5000
+            }
+          ]
+        }
+      ],
+      "density": 10
+    }
+  ],
+  "packs": [
+    {
+      "tier": 3,
+      "alpha": "cinder-hound",
+      "variant": 1,
+      "members": [
+        {
+          "typeId": "cinder-hound",
+          "count": 1
+        },
+        {
+          "typeId": "ember-scuttler",
+          "count": 2
+        },
+        {
+          "typeId": "ember-scuttler",
+          "count": 2
+        }
+      ],
+      "count": 5,
+      "hp": 4040,
+      "basicDps": 174.03846153846155
+    },
+    {
+      "tier": 3,
+      "alpha": "cinder-hound",
+      "variant": 2,
+      "members": [
+        {
+          "typeId": "cinder-hound",
+          "count": 1
+        },
+        {
+          "typeId": "ember-scuttler",
+          "count": 2
+        },
+        {
+          "typeId": "ember-scuttler",
+          "count": 1
+        }
+      ],
+      "count": 4,
+      "hp": 3390,
+      "basicDps": 145.91346153846155
+    },
+    {
+      "tier": 3,
+      "alpha": "cinder-hound",
+      "variant": 3,
+      "members": [
+        {
+          "typeId": "cinder-hound",
+          "count": 1
+        },
+        {
+          "typeId": "ember-scuttler",
+          "count": 2
+        },
+        {
+          "typeId": "ash-slinger",
+          "count": 1
+        }
+      ],
+      "count": 4,
+      "hp": 4070,
+      "basicDps": 159.78846153846155
+    },
+    {
+      "tier": 3,
+      "alpha": "magma-brute",
+      "variant": 1,
+      "members": [
+        {
+          "typeId": "magma-brute",
+          "count": 1
+        },
+        {
+          "typeId": "ember-scuttler",
+          "count": 3
+        },
+        {
+          "typeId": "ember-scuttler",
+          "count": 2
+        }
+      ],
+      "count": 6,
+      "hp": 6250,
+      "basicDps": 179.29166666666666
+    },
+    {
+      "tier": 3,
+      "alpha": "magma-brute",
+      "variant": 2,
+      "members": [
+        {
+          "typeId": "magma-brute",
+          "count": 1
+        },
+        {
+          "typeId": "ember-scuttler",
+          "count": 3
+        },
+        {
+          "typeId": "ash-slinger",
+          "count": 1
+        }
+      ],
+      "count": 5,
+      "hp": 6280,
+      "basicDps": 165.04166666666666
+    },
+    {
+      "tier": 3,
+      "alpha": "magma-brute",
+      "variant": 3,
+      "members": [
+        {
+          "typeId": "magma-brute",
+          "count": 1
+        },
+        {
+          "typeId": "ember-scuttler",
+          "count": 3
+        },
+        {
+          "typeId": "ash-slinger",
+          "count": 1
+        },
+        {
+          "typeId": "ember-scuttler",
+          "count": 1
+        }
+      ],
+      "count": 6,
+      "hp": 6930,
+      "basicDps": 193.16666666666666
+    },
+    {
+      "tier": 4,
+      "alpha": "infernal-direhound",
+      "variant": 1,
+      "members": [
+        {
+          "typeId": "infernal-direhound",
+          "count": 1
+        },
+        {
+          "typeId": "ember-skink",
+          "count": 2
+        },
+        {
+          "typeId": "ember-skink",
+          "count": 2
+        }
+      ],
+      "count": 5,
+      "hp": 4630,
+      "basicDps": 309.3406593406594
+    },
+    {
+      "tier": 4,
+      "alpha": "infernal-direhound",
+      "variant": 2,
+      "members": [
+        {
+          "typeId": "infernal-direhound",
+          "count": 1
+        },
+        {
+          "typeId": "ember-skink",
+          "count": 2
+        },
+        {
+          "typeId": "ember-skink",
+          "count": 1
+        }
+      ],
+      "count": 4,
+      "hp": 3910,
+      "basicDps": 251.64835164835165
+    },
+    {
+      "tier": 4,
+      "alpha": "infernal-direhound",
+      "variant": 3,
+      "members": [
+        {
+          "typeId": "infernal-direhound",
+          "count": 1
+        },
+        {
+          "typeId": "ember-skink",
+          "count": 2
+        },
+        {
+          "typeId": "ashspitter-salamander",
+          "count": 1
+        }
+      ],
+      "count": 4,
+      "hp": 4740,
+      "basicDps": 251.85078079814923
+    },
+    {
+      "tier": 4,
+      "alpha": "obsidian-tortoise",
+      "variant": 1,
+      "members": [
+        {
+          "typeId": "obsidian-tortoise",
+          "count": 1
+        },
+        {
+          "typeId": "ember-skink",
+          "count": 3
+        },
+        {
+          "typeId": "ember-skink",
+          "count": 2
+        }
+      ],
+      "count": 6,
+      "hp": 8088,
+      "basicDps": 321.7948717948718
+    },
+    {
+      "tier": 4,
+      "alpha": "obsidian-tortoise",
+      "variant": 2,
+      "members": [
+        {
+          "typeId": "obsidian-tortoise",
+          "count": 1
+        },
+        {
+          "typeId": "ember-skink",
+          "count": 3
+        },
+        {
+          "typeId": "ashspitter-salamander",
+          "count": 1
+        }
+      ],
+      "count": 5,
+      "hp": 8198,
+      "basicDps": 264.30499325236167
+    },
+    {
+      "tier": 4,
+      "alpha": "obsidian-tortoise",
+      "variant": 3,
+      "members": [
+        {
+          "typeId": "obsidian-tortoise",
+          "count": 1
+        },
+        {
+          "typeId": "ember-skink",
+          "count": 3
+        },
+        {
+          "typeId": "ashspitter-salamander",
+          "count": 1
+        },
+        {
+          "typeId": "ember-skink",
+          "count": 1
+        }
+      ],
+      "count": 6,
+      "hp": 8918,
+      "basicDps": 321.99730094466935
+    },
+    {
+      "tier": 4,
+      "alpha": "magma-salamander",
+      "variant": 1,
+      "members": [
+        {
+          "typeId": "magma-salamander",
+          "count": 1
+        },
+        {
+          "typeId": "ember-skink",
+          "count": 2
+        },
+        {
+          "typeId": "ember-skink",
+          "count": 1
+        }
+      ],
+      "count": 4,
+      "hp": 7968,
+      "basicDps": 230.76923076923077
+    },
+    {
+      "tier": 4,
+      "alpha": "magma-salamander",
+      "variant": 2,
+      "members": [
+        {
+          "typeId": "magma-salamander",
+          "count": 1
+        },
+        {
+          "typeId": "ember-skink",
+          "count": 2
+        },
+        {
+          "typeId": "ashspitter-salamander",
+          "count": 1
+        }
+      ],
+      "count": 4,
+      "hp": 8798,
+      "basicDps": 230.97165991902835
+    }
+  ],
+  "heat": [
+    {
+      "stacks": 0,
+      "earliestSeconds": 0,
+      "dealt": 1,
+      "taken": 1,
+      "candidateTaken": 1
+    },
+    {
+      "stacks": 5,
+      "earliestSeconds": 12,
+      "dealt": 1.15,
+      "taken": 1.225,
+      "candidateTaken": 1.175
+    },
+    {
+      "stacks": 10,
+      "earliestSeconds": 27,
+      "dealt": 1.3,
+      "taken": 1.45,
+      "candidateTaken": 1.35
+    },
+    {
+      "stacks": 20,
+      "earliestSeconds": 57,
+      "dealt": 1.4647918433002163,
+      "taken": 1.6971877649503246,
+      "candidateTaken": 1.5422571505169191
+    },
+    {
+      "stacks": 25,
+      "earliestSeconds": 72,
+      "dealt": 1.5079441541679834,
+      "taken": 1.7619162312519754,
+      "candidateTaken": 1.592601513195981
+    },
+    {
+      "stacks": 40,
+      "earliestSeconds": 117,
+      "dealt": 1.591886522358297,
+      "taken": 1.8878297835374456,
+      "candidateTaken": 1.69053427608468
+    }
+  ]
+}

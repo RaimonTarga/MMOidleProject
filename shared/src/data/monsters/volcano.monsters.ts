@@ -178,7 +178,7 @@ export const volcanoMonsterEntries = [
     id: 'ash-slinger', name: 'Ash Salamander', color: 0xff4422,
     // Salamander line T3: STATIONARY ranged pressure that fires from the background
     // while the swarm closes. Does not kite. No personal ramp.
-    stats: { hp: 1330, attack: 84, plating: 2, damageReduction: 0, speed: 44, attackRange: 180, attackCooldown: 2000, pullRange: 230 },
+    stats: { hp: 1330, attack: 70, plating: 2, damageReduction: 0, speed: 44, attackRange: 180, attackCooldown: 2000, pullRange: 230 },
     behavior: 'ranged', attackStyle: 'fire-spit', biome: 'volcanic',
     rewards: { essence: 27, essenceType: 'red', level: 2, biomeXp: 165 },
     // Fires from the background and does NOT kite (locked).
@@ -196,8 +196,9 @@ export const volcanoMonsterEntries = [
     id: 'ember-skink', name: 'Ember Skink', color: 0xff6622,
     // Evolved swarm filler: the T3 Scuttler plus a light Burn on hit. No ramp.
     // Apply the same approximate fodder correction to T4 (1350 -> 720 HP,
-    // 90 -> 75 attack). T4 combat validation remains pending; authored Burn is unchanged.
-    stats: { hp: 720, attack: 75, plating: 2, damageReduction: 0, speed: 70, attackRange: 12, attackCooldown: 1300, pullRange: 230 },
+    // 90 -> 75 attack). Volcano area study: attack 75 -> 60 and Burn 13 -> 8
+    // reduce coordinated filler pressure while preserving pack size and cadence.
+    stats: { hp: 720, attack: 60, plating: 2, damageReduction: 0, speed: 70, attackRange: 12, attackCooldown: 1300, pullRange: 230 },
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 47, essenceType: 'red', level: 3, biomeXp: 280 },
     // Loose cohesion/separation so the high-density biome READS as a swarm.
@@ -206,7 +207,7 @@ export const volcanoMonsterEntries = [
     // ability-free apart from its light Burn: the fodder must stay visually quiet.
     pack: { role: 'follower' },
     ai: { wanderRadius: 250, leashRange: 660, idleMinMs: 1000, idleMaxMs: 3500 },
-    dotEffect: { debuffId: 'ember-burn', label: 'Ember Burn', damagePerStack: 13, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2000 },
+    dotEffect: { debuffId: 'ember-burn', label: 'Ember Burn', damagePerStack: 8, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2000 },
   }],
 
   ['infernal-direhound', {
@@ -268,7 +269,7 @@ export const volcanoMonsterEntries = [
     id: 'ashspitter-salamander', name: 'Ashspitter Salamander', color: 0xff4422,
     // Evolved ranged Burn pressure: stationary (not a kiter), stronger and more
     // persistent Burn than the Ash Salamander. Ignoring it lets the fire stack.
-    stats: { hp: 1550, attack: 110, plating: 2, damageReduction: 0, speed: 46, attackRange: 190, attackCooldown: 1900, pullRange: 250 },
+    stats: { hp: 1550, attack: 95, plating: 2, damageReduction: 0, speed: 46, attackRange: 190, attackCooldown: 1900, pullRange: 250 },
     behavior: 'ranged', attackStyle: 'fire-spit', biome: 'volcanic',
     rewards: { essence: 52, essenceType: 'red', level: 3, biomeXp: 310 },
     // Fires from the background and does NOT kite (locked).
@@ -276,7 +277,7 @@ export const volcanoMonsterEntries = [
     // THE T4 PACK GUNNER. Same role as the Ash Salamander a tier below.
     pack: { role: 'follower' },
     ai: { wanderRadius: 230, leashRange: 630, idleMinMs: 1200, idleMaxMs: 4000 },
-    dotEffect: { debuffId: 'ashspitter-burn', label: 'Ash Burn', damagePerStack: 16, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2500 },
+    dotEffect: { debuffId: 'ashspitter-burn', label: 'Ash Burn', damagePerStack: 12, maxStacks: 5, tickIntervalMs: 1000, durationMs: 2500 },
   }],
 
   ['magma-salamander', {

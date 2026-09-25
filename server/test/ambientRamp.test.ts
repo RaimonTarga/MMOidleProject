@@ -229,7 +229,7 @@ initCombatSystems();
   assert(tile!.stacks === BREAKPOINT, 'the tile reports live stacks');
   assert(tile!.durationPct === -1, 'uncapped Heat must not display a full-stack ceiling');
   assert(tile!.values?.some(v => v.label === 'Damage dealt' && v.value === '+30%') === true, 'tile reports actual dealt bonus');
-  assert(tile!.values?.some(v => v.label === 'Damage taken' && v.value === '+45%') === true, 'tile reports actual taken bonus');
+  assert(tile!.values?.some(v => v.label === 'Damage taken' && v.value === '+35%') === true, 'tile reports actual taken bonus');
   assert(tile!.speedMult === 1, 'volcano payload carries no move slow');
 
   // Disengaging sheds the ramp one stack at a time, and clears it.
@@ -284,7 +284,7 @@ initCombatSystems();
     lastIncrement = increment;
   }
   assert(playerOutgoingDamageMult(player.tracksCombat) > 1.5, 'Heat exceeds the former outgoing cap');
-  assert(playerIncomingDamageMult(player.tracksCombat) > 2, 'Heat exceeds the former incoming cap');
+  assert(playerIncomingDamageMult(player.tracksCombat) > 1 + TAKEN_PER_STACK * BREAKPOINT, 'incoming Heat continues beyond the softcap');
   syncPlayerBuffs(world, Date.now());
   const tile = player.hasStatus.activeBuffs.find(b => b.id === 'debuff-volcanic-heat')!;
   assert(tile.values?.some(v => v.label === 'Damage dealt' && v.value === '+74.2%') === true, 'high-stack HUD reflects logarithmic damage');

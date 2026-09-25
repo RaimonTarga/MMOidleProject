@@ -448,9 +448,9 @@ a stale ramp to clear when the destination does not author the same effect, and 
 
 **Volcano is a GREED ramp, not a burn.** Stacks are uncapped (`maxStacks: 0`).
 Combat starts at one stack and adds one every 3000 ms, accelerated 3x in boss vents.
-The first ten stacks give +3% damage dealt / +4.5% damage taken each: +30% / +45% at ten.
+The first ten stacks give +3% damage dealt / +3.5% damage taken each: +30% / +35% at ten.
 Above ten, effective damage stacks are `10 + 5 * ln(1 + (stacks - 10) / 5)`;
-multiply by 0.03 / 0.045 for the respective bonuses. Every stack still matters,
+multiply by 0.03 / 0.035 for the respective bonuses. Every stack still matters,
 but marginal gains decrease continuously. Combat and HUD share the same formula;
 the Heat tile shows actual stacks and bonuses to one decimal, with no maximum-fill ring.
 Out of combat the next stack takes `1500 / max(1, stacks / 10)` ms to cool
