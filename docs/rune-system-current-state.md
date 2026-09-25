@@ -235,7 +235,10 @@ makes no contact and deals no damage for 15 s, the target is deferred from selec
 for 30 s. Each target keeps its own clock. A brief switch to another target does not
 restart it; only contact, damage, leaving the target alone for longer than the 30 s
 deferral window, or turning avoidance off does. Before this, a one-tick selection
-flicker reset the clock, and a Volcanic player circled a lava pool's rim for minutes
+flicker reset the clock, and a Volcanic player circled a lava pool's rim for minutes.
+Selection also keeps its current target through a failed safe-path check if that
+target passed the check within the last second (`PATH_LOSS_GRACE_MS` in
+`targetPriority.ts`). A target that stays unreachable is dropped after that
 (`server/test/hazardApproachTargetFlicker.test.ts`).
 
 `rune.keepDistance`, `rune.waitForRegen`, `rune.waitForExecution`, and

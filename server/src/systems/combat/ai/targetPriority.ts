@@ -107,6 +107,16 @@ const SWITCH_MARGIN = 0.25;
  */
 const NEAREST_COMMIT_FRAC_SQ = 0.64;
 
+/**
+ * Path-check hysteresis. A target whose safe path/pull check passed within this
+ * window stays selected through a brief failure: on a hazard rim the path
+ * endpoint can sit exactly at the mob's pull range, and a one-tick flip to
+ * another mob restarted the hazard-approach budget (Volcanic approach stall).
+ * A target that stays unreachable is still dropped once the window passes.
+ */
+const PATH_LOSS_GRACE_MS = 1000;
+const lastPathOk = new WeakMap<PlayerEntity, { id: string; at: number }>();
+
 /** A glancing 1-damage hit is technically legal, but almost never a good target. */
 const GLANCE_PENALTY = 0.1;
 
@@ -274,7 +284,7 @@ export function selectAutoCombatAction(
         preferred = current;
       }
     }
-    chosen = pickPathReachableTarget(world, player, preferred, candidates);
+    chosen = pickPathReachableTarget(world, player, preferred, candidates, now);
   } else {
     candidates.sort((a, b) => b.score - a.score);
     const best = candidates[0];
@@ -287,7 +297,7 @@ export function selectAutoCombatAction(
         ? current
         : best;
 
-    chosen = pickPathReachableTarget(world, player, preferred, candidates);
+    chosen = pickPathReachableTarget(world, player, preferred, candidates, now);
   }
   if (!chosen) {
     clearAutoTarget(player);
@@ -448,8 +458,15 @@ function pickPathReachableTarget(
   player: PlayerEntity,
   preferred: TargetCandidate,
   candidates: TargetCandidate[],
+  now: number,
 ): TargetCandidate | null {
-  if (monsterHasPath(world, player, preferred.monster)) return preferred;
+  const preferredId = preferred.monster.isMonster.id;
+  if (monsterHasPath(world, player, preferred.monster)) {
+    lastPathOk.set(player, { id: preferredId, at: now });
+    return preferred;
+  }
+  const held = lastPathOk.get(player);
+  if (held?.id === preferredId && now - held.at < PATH_LOSS_GRACE_MS) return preferred;
   for (const entry of candidates) {
     if (entry.monster.isMonster.id === preferred.monster.isMonster.id) continue;
     if (monsterHasPath(world, player, entry.monster)) return entry;

@@ -72,9 +72,20 @@ pending merge approval.
   `!hasApproachAttempt → clearApproachAttempt` branch, which reset the Skink's 15 s
   hazard-approach budget. The Skink was never deferred, so the player kept walking the
   rim and into the hazard envelope, where the escape pushed it back out.
-- **Fix:** hazard-approach budgets are now kept per target in `blockedApproach.ts`. A
-  budget lapses only after 30 s untouched (the deferral window). No balance numbers
-  changed.
+- **Fix, part 1 (the load-bearing one):** hazard-approach budgets are now kept per
+  target in `blockedApproach.ts`. A budget lapses only after 30 s untouched (the
+  deferral window).
+- **Fix, part 2:** selection holds a target through a failed safe-path check for up to
+  1 s (`PATH_LOSS_GRACE_MS` in `targetPriority.ts`), which removes the one-tick flicker.
+  On its own this does NOT prevent the stall: the probe still stalls permanently
+  from about 340 s. No balance numbers changed.
+- **Slinger T4 seed 101009** (the Volcano study's 237.1 s gap, rerun of
+  `volcanoAreaStudy.ts`): same cause. Pre-fix reproduces 145 kills / 237.1 s exactly;
+  fixed gives 280 kills / 10.4 s.
+- **Known leftover:** the Striker probe still has 19 gaps of 15-28 s over 30 minutes
+  (24 with part 1 only). These are likely the 15 s budget being spent again on the
+  pool mob after each 30 s deferral, but that is not confirmed. Shortening them means
+  changing the 15 s / 30 s tunables, which is your call.
 - **Repro (develop at `7094727e`, same job file, damage-to-monsters progress signal):**
   the seed stalls from 348.6 s to 830.6 s (482 s), then again from 1151 s until the
   30-minute cutoff. With the fix, no gap reaches 60 s in 30 minutes. Guarded by
