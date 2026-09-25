@@ -208,6 +208,12 @@ damage sponge (`redirectionPct` of owner damage taken, redirected to a living
 summon — the Covenanter defense twin is preferred when present), monster AoE,
 and monster attacks against minion aggro targets.
 
+The sponge is registered inside `initDefenseSystems()`: after Guard, evasion, the
+damage cap and wards/barrier, before the owner's hit-to-DoT debt, cheat death and
+absorb. So summons take `redirectionPct` of post-shield damage before debt carves
+its share. Monster splash onto the owner is not redirected (nearby summons already
+take their own splash).
+
 `SUMMONER_T4_BUFFS` in `specs/buffs.ts` projects one buff per specialization,
 with labels `SHARD KILN ACCUSE ORDER WITHER RITUAL IDOL BOND TWINS` and world-log
 source names matching the tier-4 display names.

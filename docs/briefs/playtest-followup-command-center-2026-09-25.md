@@ -13,7 +13,7 @@ before merging.
 | # | Workstream | State | Where the work lives | Blocking decision |
 |---|---|---|---|---|
 | 1 | Volcano nerf | **Shipped to develop** | `da67d907` | none (verification only) |
-| 2 | Defense rework | Implemented, iterating (6 commits, unpushed) | branch `codex/defense-redesign-01`, worktree `../mmo-defense-candidate` | adopt the whole package or split it |
+| 2 | Defense rework | **(a1) pipeline fixes shipped**; charged-plating order + rebudget iterating | develop (a1); branch `feat/defense-rework`, worktree `../mmo-defense-rework` | rebudget numbers (after screen) |
 | 3 | Conduit buff | Maintenance runes + Rebuild Formation shipped (`ca90ec3f`); hp50 candidate **not applied** | `reports/conduit-study-2026-09-25/` (bench runner on develop) | early-only vs all tiers; how the extra HP carries through frame unlocks |
 | 4 | XP / mastery pacing | **First pass shipped to develop**; recalibrate after #2, #3, #6 | `feat/xp-pacing` (merged) | none (decided 2026-09-25, see section 4) |
 | 5 | Essence / upgrade economy | T2-T4 rescale committed locally (unpushed); campaign 02 prep uncommitted | branch `codex/economy-v2`, worktree `../mmo-economy-v2` | run after #4 is stable |
@@ -92,53 +92,55 @@ pending merge approval.
 
 ## 2. Defense rework
 
-- **Code:** `codex/defense-redesign-01`, 6 commits on `ff98ba45`, not pushed. It includes
-  the same Volcano values as develop (verified identical), so the rebase is clean there.
-- **Read:**
-  - `reports/defense-iteration-02/CONSOLIDATED-PATCH-NOTES.md` (full before/after, the best
-    single summary)
-  - `reports/defense-iteration-03/REPORT.md` (latest)
-  - `reports/player-defense-study-2026-09-25/REDESIGN-PROPOSAL.md` (on develop)
-- **What it does:**
-  - Plating narrowed to specialist families.
-  - General DR becomes the common layer.
-  - Ranged core HP penalties removed.
-  - Juggernaut trimmed.
-  - Desert gets opening protection.
-  - Tundra stationary DR is made multiplicative.
-  - Volcano hardening shrinks.
-  - Graveyard reactive plating.
-  - Class roots move from plating to DR.
-  - Pipeline-order fixes (listed above).
-- **State:**
-  - The old broad comparison was 81 vs 97 deaths in 218 cases. It has **never been
-    requalified** in one fresh full matrix against the original defenses with the updated
-    Volcano in both arms.
-  - Iteration 03 held all Desert/Jungle coefficient variants.
-  - Iteration 04 (finite-pack replay pilot) started, but only
-    `reports/defense-iteration-04/pilot-*` exists, uncommitted in the worktree.
-- **Session 2026-09-25 (`feat/t4-balance`):**
-  - **Adopted:** Voidwalker mitigation fix; Berserker 60→30; Juggernaut **logarithmic knee**. The
-    user chose the knee over the hard cap. Its tunables are `CRESCENDO_KNEE_MULT` 1.0 and
-    `CRESCENDO_KNEE_SCALE` 0.1.
-  - **Held:** Melter and Invoker, per the study's weak evidence grading. Each is a one-constant or
-    one-helper port from `codex/t4-scaling-candidate-01` if revived.
-  - **Screen:** 37-spec paired screen against develop, with sentinels bit-identical. Results are in
-    [SCREEN.md](../../reports/t4-balance-2026-09-25/SCREEN.md). Voidwalker at +0 no longer kills
-    the Titan. The user accepted this, since +0 is a sensitivity case.
-  - **Sign-off:** the user signed off on 30 / 1.0 / 0.1 and approved the merge.
-  - **Port fixes:** the Codex snapshot had dropped an import that Flash teleport still used, so the
-    candidate would have thrown at runtime. It also carried CRLF whole-file churn in 6 files
-    (normalized to LF).
-- **Original session goal:**
-  1. Rebase onto develop.
-  2. Commit the iteration-04 pilot.
-  3. Run the finite-pack replay the iteration-03 report specifies.
-  4. Run **one** fresh full original-vs-candidate matrix (all classes, T1-T4, bosses).
-  5. Decide adoption.
-  6. Human-play check.
-- **Decide with the user:** ship as one package, or split it (pipeline correctness fixes
-  first, armor rebudget second).
+- **Code:** branch `feat/defense-rework` (worktree `../mmo-defense-rework`). The Codex
+  package (`codex/defense-redesign-01`) is split into three parts:
+  - **(a1) pipeline fixes, on develop.** Qualified against original on the 888-run matrix:
+    farm deaths 87 → 86, boss wins 159 → 158, no class net loss above 1. Full suite
+    283/283.
+  - **(a2) charged-hit plating order, not shipped.** It completes the gross charged hit
+    before plating. On the original armor it cost 19/312 boss wins, all to named charged
+    boss attacks, so it waits for the rebudget.
+  - **(b) armor/core/class rebudget, not shipped.** It moves survival from ranged/casters
+    to melee. Now screening Jungle/Desert plating at 50% and 100% of the original values,
+    plus a Striker HP trim.
+- **Results:**
+  - [defense-rework-2026-09-25/REPORT.md](../../reports/defense-rework-2026-09-25/REPORT.md)
+    (on `feat/defense-rework`)
+  - [defense-iteration-04/REPORT.md](../../reports/defense-iteration-04/REPORT.md)
+    (finite-pack replay)
+- **Bug found in the Codex port, fixed in (a1):** debt forgiveness left the queued
+  installments behind, so forgiven debt came back later.
+- **Human-play check:** not done.
+
+### For the Conduit session: what (a1) changed for summons
+
+Owner `onDamageTaken` order (player defender), tested in `server/test/defensePipeline.test.ts`:
+
+- **Before:** amplifiers/stance → evasion → damage cap → wards → barrier → break-heal →
+  hit-to-DoT debt → cheat death → absorb → … → Guard → **summon redirection** (last).
+- **Now:** amplifiers/stance → **Guard** → evasion → damage cap → wards → barrier →
+  break-heal → **summon redirection** → hit-to-DoT debt → cheat death → absorb (capped at
+  current HP).
+
+For post-shield damage D, redirection share p and owner debt conversion d:
+
+- **Redirection before debt.** The summon takes `round(p·D)`; it used to take
+  `round(p·(1−d)·D)`. Owner immediate damage `(1−p)(1−d)·D` is unchanged, and owner debt
+  falls from `d·D` to `d(1−p)·D`. Nothing changes when d = 0. Debt sources are
+  Swamp/Graveyard armor and the Apprentice root; the Conduit root has none.
+- **Guard** now acts before wards/barrier, so it preserves shield capacity. It skips DoT
+  ticks. Redirected damage was already Guard-reduced before and still is.
+- **Cheat death** now sees post-redirection damage. It used to cap the lethal hit at hp−1
+  first and then redirect p of the capped amount.
+- **Monster splash onto the owner is NOT redirected** (the user decided this). Splash now
+  runs evasion, shields and debt, but skips the sponge, because nearby summons already
+  take their own splash.
+- **Charged hits are unchanged in (a1).** If (a2) lands with the rebudget, big charged
+  hits on the owner get larger post-shield D, and the summon's share grows with it.
+- `redirectDamageToMinion` is unchanged: raw HP subtraction, minimum 1.
+
+Re-measure hp50 on develop as it now stands. If (a2)+(b) land, re-measure again:
+Conduit's reference armor is Mountain, which (b) moves from plating to HP + DR.
 
 ## 3. Conduit buff
 

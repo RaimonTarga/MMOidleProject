@@ -111,8 +111,9 @@ will fill, the same way `defense.barrier-recharge-pct` does.
 - **Barrier / Ward** — a pool in front of HP, with its own recharge rules. See
   [barrier-ward-current-state.md](barrier-ward-current-state.md). Recovery does not
   improve capacity, recharge rate, or recharge delay.
-- **Absorb** (`defense.absorb-pct`) — scales from *incoming damage*, drains from
-  its own pool. Not max-HP healing, not Recovery-scaled.
+- **Absorb** (`defense.absorb-pct`) — scales from *incoming damage* that reaches HP
+  (after shields and summon redirection, capped at current HP), drains from its own
+  pool. Not max-HP healing, not Recovery-scaled.
 - **Cleanse** — untouched by this pass.
 
 ## 7. Player-facing surface

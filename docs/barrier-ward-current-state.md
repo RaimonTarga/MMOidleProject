@@ -41,8 +41,12 @@ server/src/systems/defense/barrier/
   mechanic, so nothing downstream re-reads the passive.
 - **Recharge** runs per-tick in `updateDefensiveSystems`.
 - Listener order in `onDamageTaken`:
-  `evasion → damage cap → wards → barrier → break heal → hit-to-DoT → cheat death → absorb`.
-  Registered in `initDefenseSystems()`, so live server and benches are identical.
+  `Guard → evasion → damage cap → wards → barrier → break heal → summon redirection →
+  hit-to-DoT → cheat death → absorb`. Guard registers just before `initDefenseSystems()`
+  (so it preserves ward/barrier capacity; it skips DoT ticks); the rest register inside
+  it, so live server and benches are identical.
+- Monster splash (`applyMonsterAoe`) and environmental hazard damage also spend
+  wards/barrier. Splash runs the full `onDamageTaken` chain except summon redirection.
 
 ## 3. The delay stamp
 
