@@ -46,18 +46,18 @@ export const volcanicRecipeEntries = [
     // CROSS-BIOME LINEAGE: evolves from the Plains vest (Enduring Robe). Plating is
     // carried forward literally, on the same stat key, and matured with the hardening ramp.
     evolvesFrom: 'plains-vest-t2',
-    cost: { red: 120, yellow: 30 }, stats: { maxHp: 90, plating: 20 }, // family-tag: inherits plains-vest-t2's Alacrity (plating answers frequent light hits)
+    cost: { red: 120, yellow: 30 }, stats: {"maxHp": 150, "plating": 8, "damageReduction": 0.14}, // family-tag: inherits plains-vest-t2's Alacrity (plating answers frequent light hits)
     reconstructCost: { red: 420, yellow: 105 }, reconstructCatalystCost: { alacrity: 3 },
-    mechanicEffects: { 'defense.hardening-per-sec': 3, 'defense.hardening-max': 24, 'defense.hardening-reset-pct': 0.25 },
+    mechanicEffects: {"defense.hardening-max": 8, "defense.hardening-per-sec": 1.3333333333333333, "defense.hardening-reset-pct": 0.25},
     tier: 3,
     icon: 'items/armor/emberforge-plate.png',
-    description: 'Plate quenched in a lava flow; it thickens against a steady fire and cracks only to a true blow.',
+    description: "Hardens under incoming attacks. Heavy gross impacts crack half the earned plating, even through shields.",
     upgrades: [
-      { stats: { maxHp: 20, plating: 5 }, cost: { red: 58, yellow: 20 },  requiredBiomeLevel: 3 },
-      { stats: { maxHp: 20, plating: 5 }, cost: { red: 146, yellow: 50 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 20, plating: 5 }, cost: { red: 234, yellow: 80 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 20, plating: 5 }, cost: { red: 380, yellow: 130 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 20, plating: 5 }, cost: { red: 646, yellow: 218 }, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 4 },
+      {"cost": {"red": 58, "yellow": 20}, "requiredBiomeLevel": 3, "stats": {"maxHp": 15, "plating": 1}},
+      {"cost": {"red": 146, "yellow": 50}, "requiredBiomeLevel": 4, "stats": {"maxHp": 15, "plating": 1}},
+      {"cost": {"red": 234, "yellow": 80}, "requiredBiomeLevel": 4, "stats": {"maxHp": 15, "plating": 0}},
+      {"cost": {"red": 380, "yellow": 130}, "catalystCost": {"alacrity": 2}, "requiredBiomeLevel": 4, "stats": {"maxHp": 15, "plating": 1}},
+      {"cost": {"red": 646, "yellow": 218}, "catalystCost": {"alacrity": 3}, "requiredBiomeLevel": 4, "stats": {"maxHp": 15, "plating": 1}}
     ],
   }],
 
@@ -158,22 +158,19 @@ export const volcanicRecipeEntries = [
     id: 'volcanic-vest-t4', name: 'Pyroclasm Mantle',
     recipeGroup: 'volcanic', requiredBiomeLevel: 8, slot: 'armor',
     evolvesFrom: 'volcanic-vest-t3',
-    cost: { red: 220, yellow: 55 }, stats: { maxHp: 165, plating: 38 }, // family-tag: hardening armor → Alacrity
+    cost: { red: 220, yellow: 55 }, stats: {"maxHp": 288, "plating": 12, "damageReduction": 0.18}, // family-tag: hardening armor → Alacrity
     reconstructCost: { red: 770, yellow: 193 }, reconstructCatalystCost: { alacrity: 4 },
-    // † hardening-max-dr-bonus: at max hardening, +6% DR for 3s before reset.
-    mechanicEffects: {
-      'defense.hardening-per-sec': 4, 'defense.hardening-max': 32, 'defense.hardening-reset-pct': 0.25,
-      'defense.hardening-max-dr-bonus': 0.06, 'defense.hardening-max-dr-ms': 3000,
-    },
+    // Pressure builds plating; gross heavy impacts crack half the earned ramp.
+    mechanicEffects: {"defense.hardening-max": 12, "defense.hardening-per-sec": 2, "defense.hardening-reset-pct": 0.25},
     tier: 4,
     icon: 'items/armor/pyroclasm-mantle.png',
-    description: 'It thickens against a steady fire until, at its hardest, it shrugs off even a true blow — once.',
+    description: "Hardens under incoming attacks. Heavy gross impacts crack half the earned plating, even through shields.",
     upgrades: [
-      { stats: { maxHp: 40, plating: 10 }, cost: { red: 126, yellow: 32 }, requiredBiomeLevel: 9 },
-      { stats: { maxHp: 40, plating: 10 }, cost: { red: 316, yellow: 79 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 40, plating: 10 }, cost: { red: 506, yellow: 126 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 40, plating: 10 }, cost: { red: 822, yellow: 205 }, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 40, plating: 10 }, cost: { red: 1390, yellow: 347 }, catalystCost: { alacrity: 4 }, requiredBiomeLevel: 10 },
+      {"cost": {"red": 126, "yellow": 32}, "requiredBiomeLevel": 9, "stats": {"maxHp": 29, "plating": 1}},
+      {"cost": {"red": 316, "yellow": 79}, "requiredBiomeLevel": 10, "stats": {"maxHp": 29, "plating": 1}},
+      {"cost": {"red": 506, "yellow": 126}, "requiredBiomeLevel": 10, "stats": {"maxHp": 29, "plating": 2}},
+      {"cost": {"red": 822, "yellow": 205}, "catalystCost": {"alacrity": 3}, "requiredBiomeLevel": 10, "stats": {"maxHp": 29, "plating": 1}},
+      {"cost": {"red": 1390, "yellow": 347}, "catalystCost": {"alacrity": 4}, "requiredBiomeLevel": 10, "stats": {"maxHp": 29, "plating": 1}}
     ],
   }],
 
@@ -181,23 +178,20 @@ export const volcanicRecipeEntries = [
     id: 'volcanic-vest-t4-lavatempered', name: 'Lava-Tempered Hide',
     recipeGroup: 'volcanic', requiredBiomeLevel: 8, slot: 'armor',
     evolvesFrom: 'volcanic-vest-t3',
-    cost: { red: 220, yellow: 55 }, stats: { maxHp: 150, plating: 28 }, // family-tag: hardening armor → Alacrity
+    cost: { red: 220, yellow: 55 }, stats: {"maxHp": 288, "plating": 12, "damageReduction": 0.18}, // family-tag: hardening armor → Alacrity
     reconstructCost: { red: 770, yellow: 193 }, reconstructCatalystCost: { alacrity: 4 },
     // † overheal-ward-pct: overheal from always-active Recovery becomes a temporary ward.
     //   Pairs naturally with Inferno Heart. (new key)
-    mechanicEffects: {
-      'defense.hardening-per-sec': 3, 'defense.hardening-max': 24, 'defense.hardening-reset-pct': 0.25,
-      'defense.overheal-ward-pct': 0.50,
-    },
+    mechanicEffects: {"defense.hardening-max": 6, "defense.hardening-per-sec": 1, "defense.hardening-reset-pct": 0.25, "defense.overheal-ward-pct": 0.5, "defense.overheal-ward-cap-pct": 0.15},
     tier: 4,
     icon: 'items/armor/lava-tempered-hide.png',
-    description: 'Quenched in a living flow, it banks the overflow of your own healing into a crust of fresh stone.',
+    description: "Hardens under incoming attacks. Heavy gross impacts crack half the earned plating, even through shields.",
     upgrades: [
-      { stats: { maxHp: 36, plating: 7 }, cost: { red: 126, yellow: 32 }, requiredBiomeLevel: 9 },
-      { stats: { maxHp: 36, plating: 7 }, cost: { red: 316, yellow: 79 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 36, plating: 7 }, cost: { red: 506, yellow: 126 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 36, plating: 7 }, cost: { red: 822, yellow: 205 }, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 36, plating: 7 }, cost: { red: 1390, yellow: 347 }, catalystCost: { alacrity: 4 }, requiredBiomeLevel: 10 },
+      {"cost": {"red": 126, "yellow": 32}, "requiredBiomeLevel": 9, "stats": {"maxHp": 29, "plating": 1}},
+      {"cost": {"red": 316, "yellow": 79}, "requiredBiomeLevel": 10, "stats": {"maxHp": 29, "plating": 1}},
+      {"cost": {"red": 506, "yellow": 126}, "requiredBiomeLevel": 10, "stats": {"maxHp": 29, "plating": 2}},
+      {"cost": {"red": 822, "yellow": 205}, "catalystCost": {"alacrity": 3}, "requiredBiomeLevel": 10, "stats": {"maxHp": 29, "plating": 1}},
+      {"cost": {"red": 1390, "yellow": 347}, "catalystCost": {"alacrity": 4}, "requiredBiomeLevel": 10, "stats": {"maxHp": 29, "plating": 1}}
     ],
   }],
 
@@ -243,9 +237,8 @@ export const volcanicRecipeEntries = [
   // See the CORES header in plains.recipes.ts. Volcanic owns THE STRIKE ITSELF —
   // burn weapons and heat, so it is where the on-hit amplifier comes from.
 
-  // T4 premium unrestricted — Catalyst: scales the flat on-hit term, which lands
-  // AFTER plating and DR. That unmitigated placement is what makes it a real axis
-  // rather than a second attack multiplier, and it is why it shines against armour.
+  // T4 premium unrestricted — Catalyst scales existing on-hit damage. Runtime
+  // mitigation is shared with the attack; this is not an armor-bypass effect.
   // L10 and 2,300 red / 8 Swarming make it Volcanic's late capstone.
   ['core-catalyst', {
     id: 'core-catalyst', name: 'Catalyst Core',
@@ -253,12 +246,11 @@ export const volcanicRecipeEntries = [
     lineageId: 'core-catalyst',
     cost: { red: 2300 }, catalystCost: { swarming: 8 }, // family-tag: on-hit proc amplifier → Swarming
     stats: {}, tier: 4,
-    // Trading attack (mitigated) for on-hit (unmitigated) is the actual shape here:
-    // better against heavily armoured targets, worse against soft ones. Worth little
-    // to a build carrying no on-hit damage — the specialisation is the cost.
-    mechanicEffects: { 'core.onhit-mult': 1.15, 'core.damage-dealt-pct': -0.15 },
+    // The specialization is the opportunity cost: no on-hit damage is granted
+    // to builds without it, and the core supplies no generic damage or defense.
+    mechanicEffects: { 'core.onhit-mult': 1.15 },
     icon: 'items/cores/catalyst.png',
-    description: 'Amplifies on-hit damage you already have; it grants none by itself. Armour is no comfort against something already inside it.',
+    description: 'Amplifies on-hit damage you already have; it grants none by itself.',
   }],
 
   // Frequency-forward Relic (many small mechanic events) in the biome whose native

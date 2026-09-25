@@ -67,20 +67,22 @@ export const forestRecipeEntries = [
   ['forest-vest-t1', {
     id: 'forest-vest-t1', name: 'Shaded Bindings',
     recipeGroup: 'forest', requiredBiomeLevel: 2, slot: 'armor',
-    cost: { green: 20 }, stats: { maxHp: 28, plating: 3, evasion: 0.16 }, tier: 1,
+    cost: { green: 20 }, stats: {"maxHp": 29, "evasion": 0.28, "damageReduction": 0.02}, tier: 1,
     icon: 'items/armor/shaded-bindings.png',
-    description: 'Woven in the dappled dark beneath the canopy, where shadow clings to cloth.',
+    description: "Evades soften direct hits and prevent eligible on-hit ailments. Jungle weave strengthens each evade.",
     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, same total (470).
     // +5 catalyst from forest-vest-t2's own family-tag ("evasion armor answers
     // frequent light hits → Alacrity").
     upgrades: [
-      { stats: { maxHp: 3, evasion: 0.01 }, cost: { green: 20 }, requiredBiomeLevel: 3 },
-      { stats: { maxHp: 3, plating: 1, evasion: 0.01 }, cost: { green: 45 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 3, evasion: 0.01 }, cost: { green: 70 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 3, plating: 1, evasion: 0.01 }, cost: { green: 115 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 3, evasion: 0.02 }, cost: { green: 150 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 4 },
+      {"cost": {"green": 20}, "requiredBiomeLevel": 3, "stats": {"maxHp": 3, "evasion": 0.016}},
+      {"cost": {"green": 45}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "evasion": 0.016}},
+      {"cost": {"green": 70}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "evasion": 0.016}},
+      {"cost": {"green": 115}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "evasion": 0.016}},
+      {"cost": {"green": 150}, "catalystCost": {"alacrity": 1}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "evasion": 0.016}}
     ],
-  }],
+
+mechanicEffects: {"defense.evade-mitigation": 0.1},
+}],
 
   // CHARM — the broadly-useful Recovery investment. Raw Recovery lifts OOC
   // regen, Squire's combat access, Striker pulses and every Recovery-tagged
@@ -181,18 +183,20 @@ export const forestRecipeEntries = [
     id: 'forest-vest-t2', name: 'Phantom Bindings',
     recipeGroup: 'forest', requiredBiomeLevel: 8, slot: 'armor',
     evolvesFrom: 'forest-vest-t1',
-    cost: { green: 48, yellow: 12 }, stats: { maxHp: 50, plating: 5, evasion: 0.24 }, tier: 2, // family-tag: evasion armor answers frequent light hits → Alacrity
+    cost: { green: 48, yellow: 12 }, stats: {"maxHp": 52, "evasion": 0.34, "damageReduction": 0.04}, tier: 2, // family-tag: evasion armor answers frequent light hits → Alacrity
     reconstructCost: { green: 168, yellow: 42 }, reconstructCatalystCost: { alacrity: 2 },
     icon: 'items/armor/phantom-bindings.png',
-    description: 'They say the weaver vanished the day it was finished. The cloth remembers the trick.',
+    description: "Evades soften direct hits and prevent eligible on-hit ailments. Jungle weave strengthens each evade.",
     upgrades: [
-      { stats: { maxHp: 5, evasion: 0.01 }, cost: { green: 29, yellow: 7 }, requiredBiomeLevel: 9 },
-      { stats: { maxHp: 5, plating: 1, evasion: 0.01 }, cost: { green: 72, yellow: 18 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 5, evasion: 0.01 }, cost: { green: 115, yellow: 29 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 5, plating: 1, evasion: 0.01 }, cost: { green: 187, yellow: 47 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 5, evasion: 0.02 }, cost: { green: 317, yellow: 79 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 10 },
+      {"cost": {"green": 29, "yellow": 7}, "requiredBiomeLevel": 9, "stats": {"maxHp": 5, "evasion": 0.016}},
+      {"cost": {"green": 72, "yellow": 18}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5, "evasion": 0.016}},
+      {"cost": {"green": 115, "yellow": 29}, "requiredBiomeLevel": 10, "stats": {"maxHp": 6, "evasion": 0.016}},
+      {"cost": {"green": 187, "yellow": 47}, "catalystCost": {"alacrity": 1}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5, "evasion": 0.016}},
+      {"cost": {"green": 317, "yellow": 79}, "catalystCost": {"alacrity": 2}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5, "evasion": 0.016}}
     ],
-  }],
+
+mechanicEffects: {"defense.evade-mitigation": 0.1},
+}],
 
   // CHARM — Recovery + Recovery-skill potency, deepened. Same shape as the
   // Heartroot Amulet: raw rate for everyone, potency for those who build on it.

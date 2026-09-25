@@ -194,7 +194,9 @@ for (const root of ['cadence', 'cooldown', 'reload', 'dot', 'energy'] as const) 
   const input = { usesSkills: player.usesSkills, equipment: player.holdsInventory.equipment, itemUpgrades: {}, playerTier: 4 };
   const baseline = previewEquipmentStats(input);
   const core = previewEquipmentStats({ ...input, equipment: { ...input.equipment, core: 'core-force' } });
-  assert(core.stats.damageDealtMult > baseline.stats.damageDealtMult && core.stats.maxHp < baseline.stats.maxHp, 'Core comparison includes mechanic modifiers and tradeoffs');
+  assert(core.stats.damageDealtMult > baseline.stats.damageDealtMult && core.stats.maxHp === baseline.stats.maxHp, 'Force comparison shows output without inventing an HP penalty');
+  const accelerant=previewEquipmentStats({...input,equipment:{...input.equipment,core:'core-accelerant'}});
+  assert(accelerant.stats.damageDealtMult < baseline.stats.damageDealtMult && accelerant.stats.attacksPerSecond > baseline.stats.attacksPerSecond,'Same-axis core tradeoffs remain visible');
   const p = { 'cadence.empowered-threshold': 4 };
   const comparison = resolveRelicComparison('cadence', p, { ...ZERO_RELIC_RATINGS, frequency: 0.35 }, ZERO_RELIC_RATINGS);
   assert(comparison?.archetype === 'cadence', 'cadence comparison');
@@ -252,4 +254,3 @@ for (const root of ['cadence', 'cooldown', 'reload', 'dot', 'energy'] as const) 
   assert(!unrated.some(line => line.includes('relic.mechanic')), 'raw relic keys stay hidden');
 }
 console.log('coreRelicIntegration: ok');
-

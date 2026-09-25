@@ -44,23 +44,20 @@ export const graveyardRecipeEntries = [
     id: 'graveyard-vest-t4', name: 'Plaguebound Mantle',
     recipeGroup: 'graveyard', requiredBiomeLevel: 2, slot: 'armor',
     evolvesFrom: 'swamp-vest-t3',
-    cost: { purple: 220 }, stats: { maxHp: 150, plating: 16 }, // family-tag: dot-resistance armor (Swamp inheritance) → Fortified
+    cost: { purple: 220 }, stats: {"maxHp": 302, "damageReduction": 0.18}, // family-tag: dot-resistance armor (Swamp inheritance) → Fortified
     reconstructCost: { purple: 770 }, reconstructCatalystCost: { fortified: 4 },
-    // Reactive plating: each hit taken grants +2 plating for 4s, stacking (refreshes
-    // duration) up to 15 stacks (+30 plating at full).
-    mechanicEffects: {
-      'defense.dot-resistance': 0.35, 'defense.hit-to-dot-pct': 0.08, 'defense.debuff-resistance': 0.25,
-      'defense.hit-plating-per-stack': 1, 'defense.hit-plating-max-stacks': 5, 'defense.hit-plating-duration-ms': 4000,
-    },
+    // Direct hits build a short anti-swarm layer; no unconditional plating.
+    // Each hit grants +2 plating for 4s, up to 5 stacks (+10).
+    mechanicEffects: {"defense.dot-resistance": 0.4, "defense.hit-to-dot-pct": 0.15, "defense.debuff-resistance": 0.2, "defense.hit-plating-per-stack": 2, "defense.hit-plating-max-stacks": 5, "defense.hit-plating-duration-ms": 4000},
     tier: 4,
     icon: 'items/armor/plaguebound-mantle.png',
-    description: 'The denser the swarm, the thicker the crust of clinging filth — and the harder you are to bite.',
+    description: "Resists damage over time and defers some direct damage. Direct hits grant 2 plating for 4 seconds, stacking up to 10 plating.",
     upgrades: [
-      { stats: { maxHp: 36, plating: 6 }, cost: { purple: 180 }, requiredBiomeLevel: 3 },
-      { stats: { maxHp: 36, plating: 6 }, cost: { purple: 450 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 36, plating: 6 }, cost: { purple: 719 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 36, plating: 6 }, cost: { purple: 1169 }, catalystCost: { fortified: 3 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 36, plating: 6 }, cost: { purple: 1978 }, catalystCost: { fortified: 4 }, requiredBiomeLevel: 4 },
+      {"cost": {"purple": 180}, "requiredBiomeLevel": 3, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"purple": 450}, "requiredBiomeLevel": 4, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"purple": 719}, "requiredBiomeLevel": 4, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"purple": 1169}, "catalystCost": {"fortified": 3}, "requiredBiomeLevel": 4, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"purple": 1978}, "catalystCost": {"fortified": 4}, "requiredBiomeLevel": 4, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}}
     ],
   }],
 
@@ -68,23 +65,20 @@ export const graveyardRecipeEntries = [
     id: 'graveyard-vest-t4-debtward', name: 'Grave Ward',
     recipeGroup: 'graveyard', requiredBiomeLevel: 2, slot: 'armor',
     evolvesFrom: 'swamp-vest-t3',
-    cost: { purple: 220 }, stats: { maxHp: 150, plating: 20 }, // family-tag: dot-resistance armor (Swamp inheritance) → Fortified
+    cost: { purple: 220 }, stats: {"maxHp": 302, "damageReduction": 0.18}, // family-tag: dot-resistance armor (Swamp inheritance) → Fortified
     reconstructCost: { purple: 770 }, reconstructCatalystCost: { fortified: 4 },
-    // † debt-cheat-death: once per combat, if accumulated damage debt would
-    //   exceed current HP, the debt clears completely. (new key, no shield needed)
-    mechanicEffects: {
-      'defense.dot-resistance': 0.40, 'defense.hit-to-dot-pct': 0.08,
-      'defense.debt-cheat-death': 1,
-    },
+    // Debt specialist: larger deferral trades away the Mantle anti-swarm layer.
+    // Debt is repaid normally; this armor grants no automatic forgiveness.
+    mechanicEffects: {"defense.dot-resistance": 0.25, "defense.hit-to-dot-pct": 0.3, "defense.debuff-resistance": 0.2},
     tier: 4,
     icon: 'items/armor/grave-ward.png',
-    description: 'It lets the debt of a hundred small wounds come due all at once — and then forgives it, once.',
+    description: "Resists damage over time and spreads part of incoming direct damage into debt.",
     upgrades: [
-      { stats: { maxHp: 36, plating: 4 }, cost: { purple: 180 }, requiredBiomeLevel: 3 },
-      { stats: { maxHp: 36, plating: 4 }, cost: { purple: 450 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 36, plating: 4 }, cost: { purple: 719 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 36, plating: 4 }, cost: { purple: 1169 }, catalystCost: { fortified: 3 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 36, plating: 4 }, cost: { purple: 1978 }, catalystCost: { fortified: 4 }, requiredBiomeLevel: 4 },
+      {"cost": {"purple": 180}, "requiredBiomeLevel": 3, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"purple": 450}, "requiredBiomeLevel": 4, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"purple": 719}, "requiredBiomeLevel": 4, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"purple": 1169}, "catalystCost": {"fortified": 3}, "requiredBiomeLevel": 4, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"purple": 1978}, "catalystCost": {"fortified": 4}, "requiredBiomeLevel": 4, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}}
     ],
   }],
 

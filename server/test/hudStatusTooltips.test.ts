@@ -102,7 +102,7 @@ function assertLegible(content: Parameters<typeof readableStrings>[0], what: str
   const descriptionChecks: Array<[string, string[], string[]]> = [
     ["debuff-slow", ["magnitude"], ["shortens"]],
     ["defense-hardening", ["builds while you stay engaged"], ["gained from being hit"]],
-    ["defense-stationary-dr", ["gradually fades"], ["Moving gives it up"]],
+    ["defense-stationary-dr", ["over 3 seconds", "over 1 second"], ["gradually fades"]],
     ["cadence-aftershock", ["on-hit damage"], ["on-hit effects"]],
     ["cooldown-eternal-charge", ["regular attack", "next execution"], []],
     ["reload-momentum", ["completed reload", "shortens reload time"], ["hit streak"]],

@@ -97,16 +97,13 @@ export const rootsAndFramesEntries = [
     id: 'cadence-root', name: 'Striker', tier: 0,
     classId: 'cadence-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Class mechanic — a five-hit finisher cycle, plus a Recovery pulse that activates 20% of your Recovery every 6s for 4s. Hits above 25% of max HP apply only half of their excess damage. A balanced bruiser — your recovery rate surges on a fixed cycle, sustaining you through prolonged engagements.',
-    cost: 1, statEffects: {
-      attackPct: 0.08, maxHpPct: 0.18, platingPct: 0.15,
-      attackSpeedPct: 0.06, moveSpeedPct: 0.04, damageReduction: 0.02,
-    },
+    description: 'Class mechanic — a five-hit finisher cycle, plus a Recovery pulse that activates 20% of your Recovery every 6s for 4s. A balanced bruiser — your recovery rate surges on a fixed cycle, sustaining you through prolonged engagements.',
+    cost: 1, statEffects: {"attackPct": 0.08, "maxHpPct": 0.25, "platingPct": 0.05, "attackSpeedPct": 0.06, "moveSpeedPct": 0.04, "damageReduction": 0.18},
     // Recovery pulse: every 6s, run at +20% Recovery for 4s. At the naked baseline
     // (Recovery 10) that is 10% × 0.20 × 4s ≈ 8% max HP per cycle — the same
     // throughput as the flat 8% burst this replaces, but it now scales with
     // Recovery gear instead of ignoring it. Numbers are a first pass.
-    mechanicEffects: { 'defense.recovery-pulse-pct': 0.20, 'defense.recovery-pulse-interval-ms': 6000, 'defense.recovery-pulse-duration-ms': 4000, 'defense.max-hit-pct': 0.25, 'defense.max-hit-mult': 0.5 } as Record<string, number>,
+    mechanicEffects: {"defense.recovery-pulse-pct": 0.2, "defense.recovery-pulse-interval-ms": 6000, "defense.recovery-pulse-duration-ms": 4000},
   }],
 
 
@@ -115,11 +112,8 @@ export const rootsAndFramesEntries = [
     classId: 'cooldown-root', subVariantId: null,
     parent: null, children: [],
     description: 'Class mechanic — prepare a timed execution on the 7s reference cycle at ×2; 10% of your Recovery stays active while you fight. The heaviest chassis in the game — enormous bulk and armor, bought with the slowest hands and feet.',
-    cost: 1, statEffects: {
-      attackPct: 0.18, maxHpPct: 0.30, platingPct: 0.30,
-      attackSpeedPct: -0.15, moveSpeedPct: -0.10, damageReduction: 0.04,
-    },
-    mechanicEffects: { 'defense.recovery-active-pct': 0.10 } as Record<string, number>,
+    cost: 1, statEffects: {"attackPct": 0.18, "maxHpPct": 0.3, "platingPct": 0.1, "attackSpeedPct": -0.15, "moveSpeedPct": -0.1, "damageReduction": 0.28},
+    mechanicEffects: {"defense.recovery-active-pct": 0.1},
   }],
 
 
@@ -127,17 +121,13 @@ export const rootsAndFramesEntries = [
     id: 'reload-root', name: 'Slinger', tier: 0,
     classId: 'reload-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Class mechanics — unleash a rapid clip, then reload. Weapon Attack damage retains 65% effectiveness at this extreme cadence. Flat on-hit damage stays at full strength, while weapon damage converted into damage over time retains 85% effectiveness. Kills activate 20% of your Recovery for 4s, evades gain 20% extra damage mitigation, and target acquisition radius is ×2.5.',
-    cost: 1, statEffects: {
-      attackPct: 0.20, maxHpPct: 0.07,
-      attackSpeedPct: 0.10, moveSpeedPct: 0.10,
-      attackRange: 120, evasion: 0.30,
-    },
+    description: 'Class mechanics — unleash a rapid clip, then reload. Weapon Attack damage retains 65% effectiveness at this extreme cadence. Flat on-hit damage stays at full strength, while weapon damage converted into damage over time retains 85% effectiveness. Kills activate 20% of your Recovery for 4s, evades gain 10% extra damage mitigation, and target acquisition radius is ×2.5.',
+    cost: 1, statEffects: {"attackPct": 0.2, "maxHpPct": 0.07, "attackSpeedPct": 0.1, "moveSpeedPct": 0.1, "attackRange": 120, "evasion": 0.3},
     // NOTE: max-ammo / reload-time-ms are set by the FRAME (Scout/Marksman/Artillerist),
     // not here — passives merge additively, so seeding them on the root too would stack
     // with the frame (e.g. 10 + 5 = 15 ammo). T3 nodes then delta off the frame's base
     // (e.g. snipe's reload.max-ammo: -2). Root-only falls back to the consumer defaults.
-    mechanicEffects: { 'defense.recovery-on-kill-pct': 0.20, 'defense.recovery-on-kill-ms': 4000, 'defense.evade-mitigation': 0.20, 'reload.acquire-radius-mult': 2.5 } as Record<string, number>,
+    mechanicEffects: {"defense.recovery-on-kill-pct": 0.2, "defense.recovery-on-kill-ms": 4000, "defense.evade-mitigation": 0.1, "reload.acquire-radius-mult": 2.5},
   }],
 
 
@@ -145,13 +135,9 @@ export const rootsAndFramesEntries = [
     id: 'energy-root', name: 'Spirit', tier: 0,
     classId: 'energy-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Class mechanic — channel each blow into a building surge of power. The lightest, fastest, highest-output chassis — almost no natural bulk, so a barrier worth 30% of your max HP takes the hits that do reach you. It recharges between fights, not during them.',
-    cost: 1, statEffects: {
-      attackPct: 0.15, maxHpPct: 0.03,
-      attackSpeedPct: 0.12, moveSpeedPct: 0.12,
-      attackRange: 130,
-    },
-    mechanicEffects: { 'defense.barrier-pct': 0.30 } as Record<string, number>,
+    description: 'Class mechanic — channel each blow into a building surge of power. The lightest, fastest, highest-output chassis — almost no natural bulk, so a barrier worth 30% of your max HP takes the hits that do reach you. It recharges after a quiet window without taking damage.',
+    cost: 1, statEffects: {"attackPct": 0.15, "maxHpPct": 0.03, "attackSpeedPct": 0.12, "moveSpeedPct": 0.12, "attackRange": 130},
+    mechanicEffects: {"defense.barrier-pct": 0.3},
   }],
 
 
@@ -159,13 +145,9 @@ export const rootsAndFramesEntries = [
     id: 'dot-root', name: 'Apprentice', tier: 0,
     classId: 'dot-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Class mechanics — your strikes leave lingering wounds; stack the pain until nothing survives. The middle chassis — no extreme in any direction — and a toxin-hardened body with 18% DoT resistance that converts 10% of incoming direct hits into delayed damage you can outlast.',
-    cost: 1, statEffects: {
-      attackPct: 0.10, maxHpPct: 0.12, platingPct: 0.08,
-      attackSpeedPct: 0.02, moveSpeedPct: 0.03,
-      attackRange: 60,
-    },
-    mechanicEffects: { 'defense.dot-resistance': 0.18, 'defense.hit-to-dot-pct': 0.10 } as Record<string, number>,
+    description: 'Class mechanics — your strikes leave lingering wounds; stack the pain until nothing survives. The middle chassis — no extreme in any direction — and a toxin-hardened body with 18% DoT resistance that converts 15% of incoming direct hits into delayed damage you can outlast.',
+    cost: 1, statEffects: {"attackPct": 0.1, "maxHpPct": 0.12, "attackSpeedPct": 0.02, "moveSpeedPct": 0.03, "attackRange": 60, "damageReduction": 0.08},
+    mechanicEffects: {"defense.dot-resistance": 0.18, "defense.hit-to-dot-pct": 0.15},
   }],
 
 
@@ -174,12 +156,8 @@ export const rootsAndFramesEntries = [
     classId: 'summoner-root', subVariantId: null,
     parent: null, children: ['summoner-light', 'summoner-balanced', 'summoner-heavy'],
     description: 'Class mechanic — maximum formation: 4 persistent summons before relic expansion. They fight in your place: your weapon sets their damage and cadence, while every body divides one shared formation offense and secondary-effect budget. Fallen slots rebuild one at a time from a 3.5s base (2.5s floor), costing 30% of the summon\'s max HP without taking you below 20% of your max HP.',
-    cost: 1, statEffects: {
-      attackPct: 0.08, maxHpPct: 0.08,
-      attackSpeedPct: 0.04, moveSpeedPct: 0.05,
-      attackRange: 150,
-    },
-    mechanicEffects: {} as Record<string, number>,
+    cost: 1, statEffects: {"attackPct": 0.08, "maxHpPct": 0.08, "attackSpeedPct": 0.04, "moveSpeedPct": 0.05, "attackRange": 150},
+    mechanicEffects: {},
   }],
 
 
@@ -200,10 +178,8 @@ export const rootsAndFramesEntries = [
     classId: 'summoner-root', subVariantId: 'light',
     parent: 'summoner-root', children: ['summoner-light-t3-a', 'summoner-light-t3-b', 'summoner-light-t3-c'],
     description: 'Formation mechanic — maximum summons before relic expansion: 6 (+2 from Conduit\'s 4). Six small, fast bodies share one formation budget: ×1.05 formation offense, 66% total summon-HP budget, ×1.18 movement, ×0.72 body size, and ×1.20 on-hit/secondary weapon effects. Reconstruction starts at 2.0s with a 1.5s floor; each loss costs little offense and reconstruction HP, while plating and area damage punish the swarm.',
-    cost: 1, statEffects: {
-      maxHpPct: 0.04, attackSpeedPct: 0.06, moveSpeedPct: 0.08,
-    },
-    mechanicEffects: {} as Record<string, number>,
+    cost: 1, statEffects: {"maxHpPct": 0.04, "attackSpeedPct": 0.06, "moveSpeedPct": 0.08, "platingPct": 0},
+    mechanicEffects: {},
   }],
 
   ['summoner-balanced', {
@@ -211,10 +187,8 @@ export const rootsAndFramesEntries = [
     classId: 'summoner-root', subVariantId: 'balanced',
     parent: 'summoner-root', children: ['summoner-balanced-t3-a', 'summoner-balanced-t3-b', 'summoner-balanced-t3-c'],
     description: 'Formation mechanic — maximum summons before relic expansion: 5 (+1 from Conduit\'s 4). Five medium bodies form the reference ensemble: ×1.00 formation offense, 100% total summon-HP budget, baseline movement and size, and 2.5s reconstruction with a 1.5s floor. Damage, durability, and reconstruction pressure stay moderate.',
-    cost: 1, statEffects: {
-      maxHpPct: 0.08, platingPct: 0.06, moveSpeedPct: 0.02,
-    },
-    mechanicEffects: {} as Record<string, number>,
+    cost: 1, statEffects: {"maxHpPct": 0.08, "platingPct": 0, "moveSpeedPct": 0.02},
+    mechanicEffects: {},
   }],
 
   ['summoner-heavy', {
@@ -222,11 +196,8 @@ export const rootsAndFramesEntries = [
     classId: 'summoner-root', subVariantId: 'heavy',
     parent: 'summoner-root', children: ['summoner-heavy-t3-a', 'summoner-heavy-t3-b', 'summoner-heavy-t3-c'],
     description: 'Formation mechanic — maximum summons before relic expansion: 2 (−2 from Conduit\'s 4). Two large bodies concentrate the budget: ×0.98 formation offense, 140% total summon-HP budget, ×0.78 movement, ×1.75 body size, and 3.92s reconstruction with a 2.5s floor. Each loss removes major offense and is expensive to reconstruct.',
-    cost: 1, statEffects: {
-      maxHpPct: 0.16, platingPct: 0.12,
-      attackSpeedPct: -0.06, moveSpeedPct: -0.06, damageReduction: 0.01,
-    },
-    mechanicEffects: {} as Record<string, number>,
+    cost: 1, statEffects: {"maxHpPct": 0.16, "platingPct": 0.05, "attackSpeedPct": -0.06, "moveSpeedPct": -0.06, "damageReduction": 0.01},
+    mechanicEffects: {},
   }],
 
 
@@ -235,10 +206,8 @@ export const rootsAndFramesEntries = [
     classId: 'cadence-root', subVariantId: 'light',
     parent: 'cadence-root', children: [],
     description: 'Cadence change — a 4-hit finisher cycle at ×1.5 empowered damage. Swift and agile, this frame trades bulk for a blistering attack pace: frequency over raw power.',
-    cost: 1, statEffects: {
-      attackPct: 0.06, maxHpPct: 0.04, attackSpeedPct: 0.12, moveSpeedPct: 0.10,
-    },
-    mechanicEffects: { 'cadence.empowered-threshold': 4, 'cadence.empowered-mult': 1.5 } as Record<string, number>,
+    cost: 1, statEffects: {"attackPct": 0.06, "maxHpPct": 0.04, "attackSpeedPct": 0.12, "moveSpeedPct": 0.1, "platingPct": 0},
+    mechanicEffects: {"cadence.empowered-threshold": 4, "cadence.empowered-mult": 1.5},
   }],
 
   ['cadence-balanced', {
@@ -246,11 +215,8 @@ export const rootsAndFramesEntries = [
     classId: 'cadence-root', subVariantId: 'balanced',
     parent: 'cadence-root', children: [],
     description: 'Cadence change — a 5-hit finisher cycle at ×2 empowered damage. A measured approach with modest gains across the board and no commitment to either extreme.',
-    cost: 1, statEffects: {
-      attackPct: 0.07, maxHpPct: 0.10, platingPct: 0.10,
-      attackSpeedPct: 0.04, moveSpeedPct: 0.03,
-    },
-    mechanicEffects: { 'cadence.empowered-threshold': 5, 'cadence.empowered-mult': 2.0 } as Record<string, number>,
+    cost: 1, statEffects: {"attackPct": 0.07, "maxHpPct": 0.1, "platingPct": 0.05, "attackSpeedPct": 0.04, "moveSpeedPct": 0.03},
+    mechanicEffects: {"cadence.empowered-threshold": 5, "cadence.empowered-mult": 2},
   }],
 
   ['cadence-heavy', {
@@ -258,11 +224,8 @@ export const rootsAndFramesEntries = [
     classId: 'cadence-root', subVariantId: 'heavy',
     parent: 'cadence-root', children: [],
     description: 'Cadence change — a 6-hit finisher cycle at ×4 empowered damage. Endurance over speed: significant bulk and armor, paid for in attack pace and footwork; patience is rewarded with one enormous blow.',
-    cost: 1, statEffects: {
-      attackPct: 0.05, maxHpPct: 0.18, platingPct: 0.20,
-      attackSpeedPct: -0.10, moveSpeedPct: -0.10, damageReduction: 0.02,
-    },
-    mechanicEffects: { 'cadence.empowered-threshold': 6, 'cadence.empowered-mult': 4.0 } as Record<string, number>,
+    cost: 1, statEffects: {"attackPct": 0.05, "maxHpPct": 0.18, "platingPct": 0.1, "attackSpeedPct": -0.1, "moveSpeedPct": -0.1, "damageReduction": 0.02},
+    mechanicEffects: {"cadence.empowered-threshold": 6, "cadence.empowered-mult": 4},
   }],
 
 
@@ -271,11 +234,8 @@ export const rootsAndFramesEntries = [
     classId: 'cooldown-root', subVariantId: 'light',
     parent: 'cooldown-root', children: [],
     description: 'Execution change — 5s recharge at ×1.5 damage. The aggressive tank keeps its armored core but trades patience for a fast, hungry tempo.',
-    cost: 1, statEffects: {
-      attackPct: 0.07, maxHpPct: 0.05, platingPct: 0.05,
-      attackSpeedPct: 0.12, moveSpeedPct: 0.10,
-    },
-    mechanicEffects: { 'cooldown.empowered-cd-ms': 5000, 'cooldown.empowered-mult': 1.5 } as Record<string, number>,
+    cost: 1, statEffects: {"attackPct": 0.07, "maxHpPct": 0.05, "platingPct": 0, "attackSpeedPct": 0.12, "moveSpeedPct": 0.1},
+    mechanicEffects: {"cooldown.empowered-cd-ms": 5000, "cooldown.empowered-mult": 1.5},
   }],
 
   ['cooldown-balanced', {
@@ -283,11 +243,8 @@ export const rootsAndFramesEntries = [
     classId: 'cooldown-root', subVariantId: 'balanced',
     parent: 'cooldown-root', children: [],
     description: 'Execution change — 7s recharge at ×2 damage. A sturdy foundation: substantial HP and armor amplify the class\'s defensive identity without tipping into immobility.',
-    cost: 1, statEffects: {
-      attackPct: 0.08, maxHpPct: 0.12, platingPct: 0.15,
-      attackSpeedPct: 0.03, moveSpeedPct: -0.02, damageReduction: 0.02,
-    },
-    mechanicEffects: { 'cooldown.empowered-cd-ms': 7000, 'cooldown.empowered-mult': 2.0 } as Record<string, number>,
+    cost: 1, statEffects: {"attackPct": 0.08, "maxHpPct": 0.12, "platingPct": 0.05, "attackSpeedPct": 0.03, "moveSpeedPct": -0.02, "damageReduction": 0.02},
+    mechanicEffects: {"cooldown.empowered-cd-ms": 7000, "cooldown.empowered-mult": 2},
   }],
 
   ['cooldown-heavy', {
@@ -298,11 +255,8 @@ export const rootsAndFramesEntries = [
     // individual hits, not merely maximum defense. Its sustained throughput is
     // constrained by the attack-speed penalty, not by a weak attack stat.
     description: 'Execution change — 8s recharge at ×3.5 damage. Fortress of patience: maximum bulk makes you a wall, and every blow lands like one — but you move like a boulder and swing even slower.',
-    cost: 1, statEffects: {
-      attackPct: 0.10, maxHpPct: 0.22, platingPct: 0.25,
-      attackSpeedPct: -0.12, moveSpeedPct: -0.12, damageReduction: 0.03,
-    },
-    mechanicEffects: { 'cooldown.empowered-cd-ms': 8000, 'cooldown.empowered-mult': 3.5 } as Record<string, number>,
+    cost: 1, statEffects: {"attackPct": 0.1, "maxHpPct": 0.22, "platingPct": 0.1, "attackSpeedPct": -0.12, "moveSpeedPct": -0.12, "damageReduction": 0.03},
+    mechanicEffects: {"cooldown.empowered-cd-ms": 8000, "cooldown.empowered-mult": 3.5},
   }],
 
 
@@ -311,13 +265,8 @@ export const rootsAndFramesEntries = [
     classId: 'dot-root', subVariantId: 'light',
     parent: 'dot-root', children: [],
     description: 'DoT change — up to 8 poison stacks; each hit converts 30% of your attack into poison. Ticks every 1s for 5s at ×1.25 DoT output. Apply wounds quickly and stay mobile.',
-    cost: 1, statEffects: {
-      attackPct: 0.06, maxHpPct: 0.04, attackSpeedPct: 0.10, moveSpeedPct: 0.10,
-    },
-    mechanicEffects: {
-      'dot.max-stacks': 8, 'dot.conversion-pct': 0.30,
-      'dot.tick-interval-ms': 1000, 'dot.duration-ms': 5000, 'dot.mechanic-mult': 1.25,
-    } as Record<string, number>,
+    cost: 1, statEffects: {"attackPct": 0.06, "maxHpPct": 0.04, "attackSpeedPct": 0.1, "moveSpeedPct": 0.1, "platingPct": 0},
+    mechanicEffects: {"dot.max-stacks": 8, "dot.conversion-pct": 0.3, "dot.tick-interval-ms": 1000, "dot.duration-ms": 5000, "dot.mechanic-mult": 1.25},
   }],
 
   ['dot-balanced', {
@@ -325,13 +274,8 @@ export const rootsAndFramesEntries = [
     classId: 'dot-root', subVariantId: 'balanced',
     parent: 'dot-root', children: [],
     description: 'DoT change — up to 6 burn stacks; each hit converts 50% of your attack into burn. Ticks every 1.5s for 5.5s at ×1.20 DoT output. A deliberate fighter who rewards measured pressure.',
-    cost: 1, statEffects: {
-      attackPct: 0.07, maxHpPct: 0.10, platingPct: 0.10, attackSpeedPct: 0.03,
-    },
-    mechanicEffects: {
-      'dot.max-stacks': 6, 'dot.conversion-pct': 0.50,
-      'dot.tick-interval-ms': 1500, 'dot.duration-ms': 5500, 'dot.mechanic-mult': 1.20,
-    } as Record<string, number>,
+    cost: 1, statEffects: {"attackPct": 0.07, "maxHpPct": 0.1, "platingPct": 0, "attackSpeedPct": 0.03},
+    mechanicEffects: {"dot.max-stacks": 6, "dot.conversion-pct": 0.5, "dot.tick-interval-ms": 1500, "dot.duration-ms": 5500, "dot.mechanic-mult": 1.2},
   }],
 
   ['dot-heavy', {
@@ -339,14 +283,8 @@ export const rootsAndFramesEntries = [
     classId: 'dot-root', subVariantId: 'heavy',
     parent: 'dot-root', children: [],
     description: 'DoT change — up to 3 frost stacks; each hit converts 70% of your attack into frost. Ticks every 2s for 6.5s at ×1.15 DoT output. A slow war of attrition built around deep, lingering wounds.',
-    cost: 1, statEffects: {
-      attackPct: 0.08, maxHpPct: 0.18, platingPct: 0.20,
-      attackSpeedPct: -0.10, moveSpeedPct: -0.10, damageReduction: 0.03,
-    },
-    mechanicEffects: {
-      'dot.max-stacks': 3, 'dot.conversion-pct': 0.70,
-      'dot.tick-interval-ms': 2000, 'dot.duration-ms': 6500, 'dot.mechanic-mult': 1.15,
-    } as Record<string, number>,
+    cost: 1, statEffects: {"attackPct": 0.08, "maxHpPct": 0.18, "platingPct": 0.05, "attackSpeedPct": -0.1, "moveSpeedPct": -0.1, "damageReduction": 0.03},
+    mechanicEffects: {"dot.max-stacks": 3, "dot.conversion-pct": 0.7, "dot.tick-interval-ms": 2000, "dot.duration-ms": 6500, "dot.mechanic-mult": 1.15},
   }],
 
 
@@ -360,11 +298,8 @@ export const rootsAndFramesEntries = [
     classId: 'reload-root', subVariantId: 'light',
     parent: 'reload-root', children: [],
     description: 'Reload change — 5-round clip and 1.2s reload. All-in on mobility with extra dodge: maximum uptime and a minimum profile to hit.',
-    cost: 1, statEffects: {
-      attackPct: 0.08, maxHpPct: 0.04,
-      attackSpeedPct: 0.10, moveSpeedPct: 0.10, evasion: 0.07,
-    },
-    mechanicEffects: { 'reload.max-ammo': 5, 'reload.reload-time-ms': 1200 } as Record<string, number>,
+    cost: 1, statEffects: {"attackPct": 0.08, "maxHpPct": 0.04, "attackSpeedPct": 0.1, "moveSpeedPct": 0.1, "evasion": 0.07, "platingPct": 0},
+    mechanicEffects: {"reload.max-ammo": 5, "reload.reload-time-ms": 1200},
   }],
 
   ['reload-balanced', {
@@ -372,11 +307,8 @@ export const rootsAndFramesEntries = [
     classId: 'reload-root', subVariantId: 'balanced',
     parent: 'reload-root', children: [],
     description: 'Reload change — 10-round clip and 2.0s reload. A steady burst fighter with modest avoidance: tempo and staying power in balance.',
-    cost: 1, statEffects: {
-      attackPct: 0.08, maxHpPct: 0.08,
-      attackSpeedPct: 0.04, moveSpeedPct: 0.04, evasion: 0.04,
-    },
-    mechanicEffects: { 'reload.max-ammo': 10, 'reload.reload-time-ms': 2000 } as Record<string, number>,
+    cost: 1, statEffects: {"attackPct": 0.08, "maxHpPct": 0.08, "attackSpeedPct": 0.04, "moveSpeedPct": 0.04, "evasion": 0.04, "platingPct": 0},
+    mechanicEffects: {"reload.max-ammo": 10, "reload.reload-time-ms": 2000},
   }],
 
   ['reload-heavy', {
@@ -384,11 +316,8 @@ export const rootsAndFramesEntries = [
     classId: 'reload-root', subVariantId: 'heavy',
     parent: 'reload-root', children: [],
     description: 'Reload change — 20-round clip and 3.0s reload. Slower but harder to put down: sustained bursting and real armor for the first time on this chassis, with longer planned downtime.',
-    cost: 1, statEffects: {
-      attackPct: 0.10, maxHpPct: 0.14, platingPct: 0.12,
-      attackSpeedPct: -0.04, moveSpeedPct: -0.05,
-    },
-    mechanicEffects: { 'reload.max-ammo': 20, 'reload.reload-time-ms': 3000 } as Record<string, number>,
+    cost: 1, statEffects: {"attackPct": 0.1, "maxHpPct": 0.14, "platingPct": 0.05, "attackSpeedPct": -0.04, "moveSpeedPct": -0.05},
+    mechanicEffects: {"reload.max-ammo": 20, "reload.reload-time-ms": 3000},
   }],
 
 
@@ -397,10 +326,8 @@ export const rootsAndFramesEntries = [
     classId: 'energy-root', subVariantId: 'light',
     parent: 'energy-root', children: [],
     description: 'Energy change — gain 20 energy per hit and discharge at ×1.5 damage. Pure momentum: blazing speed and rapid attacks thrive on frequent discharges and their AoE splash.',
-    cost: 1, statEffects: {
-      attackPct: 0.02, maxHpPct: 0.03, attackSpeedPct: 0.04, moveSpeedPct: 0.12,
-    },
-    mechanicEffects: { 'energy.per-hit': 20, 'energy.empowered-mult': 1.5 } as Record<string, number>,
+    cost: 1, statEffects: {"attackPct": 0.02, "maxHpPct": 0.03, "attackSpeedPct": 0.04, "moveSpeedPct": 0.12, "platingPct": 0},
+    mechanicEffects: {"energy.per-hit": 20, "energy.empowered-mult": 1.5},
   }],
 
   ['energy-balanced', {
@@ -408,11 +335,8 @@ export const rootsAndFramesEntries = [
     classId: 'energy-root', subVariantId: 'balanced',
     parent: 'energy-root', children: [],
     description: 'Energy change — gain 14 energy per hit and discharge at ×2 damage. Fast and capable, with extra punch and light armor without sacrificing mobility.',
-    cost: 1, statEffects: {
-      attackPct: 0.03, maxHpPct: 0.07, platingPct: 0.06,
-      attackSpeedPct: 0.00, moveSpeedPct: 0.06,
-    },
-    mechanicEffects: { 'energy.per-hit': 14, 'energy.empowered-mult': 2.0 } as Record<string, number>,
+    cost: 1, statEffects: {"attackPct": 0.03, "maxHpPct": 0.07, "platingPct": 0, "attackSpeedPct": 0, "moveSpeedPct": 0.06},
+    mechanicEffects: {"energy.per-hit": 14, "energy.empowered-mult": 2},
   }],
 
   ['energy-heavy', {
@@ -420,11 +344,8 @@ export const rootsAndFramesEntries = [
     classId: 'energy-root', subVariantId: 'heavy',
     parent: 'energy-root', children: [],
     description: 'Energy change — gain 10 energy per hit and discharge at ×6 damage. Measured power: heavier armor and damage reduction traded against attack pace; it builds slowly and hits very hard.',
-    cost: 1, statEffects: {
-      attackPct: 0.10, maxHpPct: 0.14, platingPct: 0.12,
-      attackSpeedPct: -0.10, moveSpeedPct: -0.08, damageReduction: 0.02,
-    },
-    mechanicEffects: { 'energy.per-hit': 10, 'energy.empowered-mult': 6.0 } as Record<string, number>,
+    cost: 1, statEffects: {"attackPct": 0.1, "maxHpPct": 0.14, "platingPct": 0.05, "attackSpeedPct": -0.1, "moveSpeedPct": -0.08, "damageReduction": 0.02},
+    mechanicEffects: {"energy.per-hit": 10, "energy.empowered-mult": 6},
   }],
 
 
@@ -450,32 +371,27 @@ export const rootsAndFramesEntries = [
     classId: 'cadence-root', subVariantId: null,
     parent: null, children: [],
     description: 'Fight at point-blank range. No reach at all, repaid with real bulk, armor, harder attacks and tighter healing pulses.',
-    cost: 1, statEffects: {
-      attackPct: 0.04, maxHpPct: 0.12, platingPct: 0.10, attackSpeedPct: 0.06,
-    },
-    mechanicEffects: { 'shared.damage-mult': 0.10, 'defense.recovery-pulse-pct': 0.10 } as Record<string, number>,
+    cost: 1, statEffects: {"attackPct": 0.04, "maxHpPct": 0.12, "attackSpeedPct": 0.06, "damageReduction": 0.04},
+    mechanicEffects: {"shared.damage-mult": 0.1, "defense.recovery-pulse-pct": 0.1},
   }],
   ['cadence-range-mid', {
     id: 'cadence-range-mid', name: 'Lancer', tier: 2,
     classId: 'cadence-root', subVariantId: null,
     parent: null, children: [],
     description: 'Increase your reach to the standard fighting distance. Solid all-around growth with no commitment to either extreme.',
-    cost: 1, statEffects: {
-      attackRange: 60,
-      attackPct: 0.06, maxHpPct: 0.08, platingPct: 0.06,
-      attackSpeedPct: 0.04, moveSpeedPct: 0.02,
-    },
-  }],
+    cost: 1, statEffects: {"attackRange": 60, "attackPct": 0.06, "maxHpPct": 0.08, "attackSpeedPct": 0.04, "moveSpeedPct": 0.02},
+
+mechanicEffects: {},
+}],
   ['cadence-range-far', {
     id: 'cadence-range-far', name: 'Phantom-Blade', tier: 2,
     classId: 'cadence-root', subVariantId: null,
     parent: null, children: [],
     description: 'Strike from a substantial distance. Minimal stat growth, but the reach and footspeed let you land hits before the enemy ever closes — distance as armor.',
-    cost: 1, statEffects: {
-      attackRange: 120,
-      attackPct: 0.03, maxHpPct: 0.03, attackSpeedPct: 0.02, moveSpeedPct: 0.08,
-    },
-  }],
+    cost: 1, statEffects: {"attackRange": 120, "attackPct": 0.03, "maxHpPct": 0.03, "attackSpeedPct": 0.02, "moveSpeedPct": 0.08},
+
+mechanicEffects: {},
+}],
 
   ['cooldown-range-close', {
     id: 'cooldown-range-close', name: 'Vanguard', tier: 2,
@@ -484,33 +400,27 @@ export const rootsAndFramesEntries = [
     // Squire needs LESS close compensation than any other class: its root
     // chassis was already designed to stand in melee.
     description: 'Fight at point-blank range. Reduced reach, repaid with heavier armor and harder attacks — and your in-combat regen surges to a constant 30% of your enormous out-of-combat rate.',
-    cost: 1, statEffects: {
-      attackRange: -40,
-      attackPct: 0.04, maxHpPct: 0.10, platingPct: 0.12, attackSpeedPct: 0.05,
-    },
-    mechanicEffects: { 'shared.damage-mult': 0.10, 'defense.recovery-active-pct': 0.20 } as Record<string, number>,
+    cost: 1, statEffects: {"attackRange": -40, "attackPct": 0.04, "maxHpPct": 0.1, "attackSpeedPct": 0.05, "damageReduction": 0.04},
+    mechanicEffects: {"shared.damage-mult": 0.1, "defense.recovery-active-pct": 0.2},
   }],
   ['cooldown-range-mid', {
     id: 'cooldown-range-mid', name: 'Phalanx', tier: 2,
     classId: 'cooldown-root', subVariantId: null,
     parent: null, children: [],
     description: 'The standard fighting distance. Solid all-around growth with no commitment to either extreme.',
-    cost: 1, statEffects: {
-      attackRange: 60,
-      attackPct: 0.06, maxHpPct: 0.08, platingPct: 0.08, attackSpeedPct: 0.03,
-    },
-  }],
+    cost: 1, statEffects: {"attackRange": 60, "attackPct": 0.06, "maxHpPct": 0.08, "attackSpeedPct": 0.03},
+
+mechanicEffects: {},
+}],
   ['cooldown-range-far', {
     id: 'cooldown-range-far', name: 'Sentinel', tier: 2,
     classId: 'cooldown-root', subVariantId: null,
     parent: null, children: [],
     description: 'Strike from a substantial distance. Minimal stat growth, but the reach and footspeed let a slow tank punish from afar — distance as armor.',
-    cost: 1, statEffects: {
-      attackRange: 120,
-      attackPct: 0.03, maxHpPct: 0.03, platingPct: 0.03,
-      attackSpeedPct: 0.02, moveSpeedPct: 0.06,
-    },
-  }],
+    cost: 1, statEffects: {"attackRange": 120, "attackPct": 0.03, "maxHpPct": 0.03, "attackSpeedPct": 0.02, "moveSpeedPct": 0.06},
+
+mechanicEffects: {},
+}],
 
   ['dot-range-close', {
     id: 'dot-range-close', name: 'Hexblade', tier: 2,
@@ -520,32 +430,27 @@ export const rootsAndFramesEntries = [
     // pool and the absorption payoff carry it, NOT heavy plating. It must not
     // read as a small Squire.
     description: 'Fight at point-blank range. Reduced reach, repaid with a much deeper HP pool and harder attacks — and your absorption pool deepens by 12%, turning you into a close-quarters drain-tank.',
-    cost: 1, statEffects: {
-      attackRange: -80,
-      attackPct: 0.04, maxHpPct: 0.15, platingPct: 0.08, attackSpeedPct: 0.06,
-    },
-    mechanicEffects: { 'shared.damage-mult': 0.10, 'defense.absorb-pct': 0.12 } as Record<string, number>,
+    cost: 1, statEffects: {"attackRange": -80, "attackPct": 0.04, "maxHpPct": 0.15, "attackSpeedPct": 0.06},
+    mechanicEffects: {"shared.damage-mult": 0.1, "defense.absorb-pct": 0.12},
   }],
   ['dot-range-mid', {
     id: 'dot-range-mid', name: 'Warlock', tier: 2,
     classId: 'dot-root', subVariantId: null,
     parent: null, children: [],
     description: 'The standard fighting distance. Solid all-around growth with no commitment to either extreme.',
-    cost: 1, statEffects: {
-      attackPct: 0.06, maxHpPct: 0.08, platingPct: 0.06,
-      attackSpeedPct: 0.04, moveSpeedPct: 0.02,
-    },
-  }],
+    cost: 1, statEffects: {"attackPct": 0.06, "maxHpPct": 0.08, "attackSpeedPct": 0.04, "moveSpeedPct": 0.02},
+
+mechanicEffects: {},
+}],
   ['dot-range-far', {
     id: 'dot-range-far', name: 'Harbinger', tier: 2,
     classId: 'dot-root', subVariantId: null,
     parent: null, children: [],
     description: 'Strike from a substantial distance. Minimal stat growth, but the reach and footspeed let you apply stacks and retreat — distance as armor.',
-    cost: 1, statEffects: {
-      attackRange: 100,
-      attackPct: 0.03, maxHpPct: 0.03, attackSpeedPct: 0.02, moveSpeedPct: 0.10,
-    },
-  }],
+    cost: 1, statEffects: {"attackRange": 100, "attackPct": 0.03, "maxHpPct": 0.03, "attackSpeedPct": 0.02, "moveSpeedPct": 0.1},
+
+mechanicEffects: {},
+}],
 
   ['reload-range-close', {
     id: 'reload-range-close', name: 'Breacher', tier: 2,
@@ -554,33 +459,27 @@ export const rootsAndFramesEntries = [
     // Melee survival comes from HP + evasion/evade-mitigation, deliberately not
     // from heavy plating — a Slinger in your face is still a Slinger.
     description: 'Fight at point-blank range. Reduced reach, repaid with a much larger HP pool and harder attacks — and your evasion sharpens: more dodges, and each one cuts deeper.',
-    cost: 1, statEffects: {
-      attackRange: -120, evasion: 0.10,
-      attackPct: 0.04, maxHpPct: 0.18, platingPct: 0.05,
-      attackSpeedPct: 0.06, moveSpeedPct: 0.02,
-    },
-    mechanicEffects: { 'shared.damage-mult': 0.10, 'defense.evade-mitigation': 0.10 } as Record<string, number>,
+    cost: 1, statEffects: {"attackRange": -120, "evasion": 0.1, "attackPct": 0.04, "maxHpPct": 0.18, "attackSpeedPct": 0.06, "moveSpeedPct": 0.02},
+    mechanicEffects: {"shared.damage-mult": 0.1, "defense.evade-mitigation": 0.1},
   }],
   ['reload-range-mid', {
     id: 'reload-range-mid', name: 'Enforcer', tier: 2,
     classId: 'reload-root', subVariantId: null,
     parent: null, children: [],
     description: 'The standard fighting distance. Solid all-around growth with no commitment to either extreme.',
-    cost: 1, statEffects: {
-      attackPct: 0.06, maxHpPct: 0.08, platingPct: 0.03,
-      attackSpeedPct: 0.04, moveSpeedPct: 0.04,
-    },
-  }],
+    cost: 1, statEffects: {"attackPct": 0.06, "maxHpPct": 0.08, "attackSpeedPct": 0.04, "moveSpeedPct": 0.04},
+
+mechanicEffects: {},
+}],
   ['reload-range-far', {
     id: 'reload-range-far', name: 'Deadeye', tier: 2,
     classId: 'reload-root', subVariantId: null,
     parent: null, children: [],
     description: 'Strike from a substantial distance. Minimal stat growth, but the reach and footspeed maximize your kiting buffer — distance as armor.',
-    cost: 1, statEffects: {
-      attackRange: 80,
-      attackPct: 0.03, maxHpPct: 0.03, attackSpeedPct: 0.02, moveSpeedPct: 0.12,
-    },
-  }],
+    cost: 1, statEffects: {"attackRange": 80, "attackPct": 0.03, "maxHpPct": 0.03, "attackSpeedPct": 0.02, "moveSpeedPct": 0.12},
+
+mechanicEffects: {},
+}],
 
   ['energy-range-close', {
     id: 'energy-range-close', name: 'Haunt', tier: 2,
@@ -590,33 +489,27 @@ export const rootsAndFramesEntries = [
     // most natural defensive value when forced into contact. It stays light
     // armor / high tempo / barrier-driven — never a Squire in disguise.
     description: 'Fight at point-blank range. Reduced reach, repaid with by far the deepest HP compensation in the tree — and your barrier swells to 40% of max HP, a deeper buffer to open each melee engagement with.',
-    cost: 1, statEffects: {
-      attackRange: -140,
-      attackPct: 0.04, maxHpPct: 0.20, platingPct: 0.04,
-      attackSpeedPct: 0.06, moveSpeedPct: 0.02,
-    },
-    mechanicEffects: { 'shared.damage-mult': 0.10, 'defense.barrier-pct': 0.10 } as Record<string, number>,
+    cost: 1, statEffects: {"attackRange": -140, "attackPct": 0.04, "maxHpPct": 0.2, "attackSpeedPct": 0.06, "moveSpeedPct": 0.02},
+    mechanicEffects: {"shared.damage-mult": 0.1, "defense.barrier-pct": 0.1},
   }],
   ['energy-range-mid', {
     id: 'energy-range-mid', name: 'Shade', tier: 2,
     classId: 'energy-root', subVariantId: null,
     parent: null, children: [],
     description: 'The standard fighting distance. Solid all-around growth with no commitment to either extreme.',
-    cost: 1, statEffects: {
-      attackPct: 0.06, maxHpPct: 0.08, platingPct: 0.03,
-      attackSpeedPct: 0.04, moveSpeedPct: 0.04,
-    },
-  }],
+    cost: 1, statEffects: {"attackPct": 0.06, "maxHpPct": 0.08, "attackSpeedPct": 0.04, "moveSpeedPct": 0.04},
+
+mechanicEffects: {},
+}],
   ['energy-range-far', {
     id: 'energy-range-far', name: 'Wisp', tier: 2,
     classId: 'energy-root', subVariantId: null,
     parent: null, children: [],
     description: 'Strike from a substantial distance. Minimal stat growth, but the reach and footspeed buy the untouched seconds your barrier needs to recharge — distance as armor.',
-    cost: 1, statEffects: {
-      attackRange: 80,
-      attackPct: 0.03, maxHpPct: 0.03, attackSpeedPct: 0.02, moveSpeedPct: 0.12,
-    },
-  }],
+    cost: 1, statEffects: {"attackRange": 80, "attackPct": 0.03, "maxHpPct": 0.03, "attackSpeedPct": 0.02, "moveSpeedPct": 0.12},
+
+mechanicEffects: {},
+}],
 
   // Summoner INVERTS the normal range logic. Close summons intercept and
   // protect the Conduit, so the Conduit itself keeps the smallest defensive
@@ -627,27 +520,25 @@ export const rootsAndFramesEntries = [
     classId: 'summoner-root', subVariantId: null,
     parent: null, children: [],
     description: 'Your summons keep watch at your shoulder. Melee bodies attack at 18px, gain ×1.25 summon HP and ×1.50 size, redirect 55% of incoming damage, and leave 25% of the defensive budget on the Conduit. Reconstructions keep the base interval, so this is the most protective but most expensive formation.',
-    cost: 1, statEffects: {
-      maxHpPct: 0.06, platingPct: 0.04,
-    },
-    mechanicEffects: {} as Record<string, number>,
+    cost: 1, statEffects: {"maxHpPct": 0.06},
+    mechanicEffects: {},
   }],
   ['summoner-range-mid', {
     id: 'summoner-range-mid', name: 'Procession', tier: 2,
     classId: 'summoner-root', subVariantId: null,
     parent: null, children: [],
     description: 'Your summons move with you in ordered formation. Reach bodies attack at 96px from a 72px preferred distance, use ×1.25 size, redirect 30% of incoming damage, and split defense evenly (50% to the Conduit, 50% to the formation). Reconstruction keeps the base interval.',
-    cost: 1, statEffects: {
-      maxHpPct: 0.10, platingPct: 0.06, moveSpeedPct: 0.02,
-    },
-  }],
+    cost: 1, statEffects: {"maxHpPct": 0.1, "moveSpeedPct": 0.02},
+
+mechanicEffects: {},
+}],
   ['summoner-range-far', {
     id: 'summoner-range-far', name: 'Harrier', tier: 2,
     classId: 'summoner-root', subVariantId: null,
     parent: null, children: [],
     description: 'Your summons are cast out ahead. Ranged bodies attack at 190px from a 165px preferred distance, have ×0.70 summon HP and ×1.12 movement, redirect only 8% of incoming damage, and leave 75% of the defensive budget on the Conduit. Their reconstruction interval is ×0.85 of base.',
-    cost: 1, statEffects: {
-      maxHpPct: 0.18, platingPct: 0.12, moveSpeedPct: 0.10, damageReduction: 0.02,
-    },
-  }],
+    cost: 1, statEffects: {"maxHpPct": 0.18, "moveSpeedPct": 0.1, "damageReduction": 0.02},
+
+mechanicEffects: {},
+}],
 ] satisfies [string, SkillNode][];

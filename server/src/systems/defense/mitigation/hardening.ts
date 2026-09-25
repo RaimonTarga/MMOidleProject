@@ -26,7 +26,6 @@ export function getHardeningBonus(player: PlayerEntity): number {
  * Called from:
  *   - `recalculatePlayerEntityStats` (before stats are rebuilt from equipment)
  *   - `updateDefensiveSystems` when the player leaves combat (OOC)
- *   - the `onDamageTaken` listener when a big hit triggers a reset
  */
 export function resetHardening(player: PlayerEntity): void {
   const bonus = Math.round(getResource(player.tracksCombat, BONUS_KEY));
@@ -36,24 +35,28 @@ export function resetHardening(player: PlayerEntity): void {
 }
 
 /**
- * Register the `onDamageTaken` listener that resets hardening when a single
- * hit deals ≥ `defense.hardening-reset-pct × maxHp` HP damage.
- * Runs last in the pipeline so we measure final HP damage (after shields etc.).
+ * Recent incoming attacks permit hardening to build. A gross hit at least
+ * `defense.hardening-reset-pct × maxHp` cracks half the earned plating,
+ * including hits absorbed by shields. The current hit uses its initial plating.
  */
 export function registerHardening(): void {
-  registerCombatListener('onDamageTaken', (ctx, _world) => {
+  registerCombatListener('onAttack',ctx=>{if(ctx.defenderType==='player')setCooldown(ctx.defender.tracksCombat,'hardeningIncomingPressure',3000);});
+  registerCombatListener('onDamageTaken', (ctx, world) => {
     if (ctx.defenderType !== 'player') return;
     const player = ctx.defender;
     const resetPct = player.usesSkills.passives['defense.hardening-reset-pct'] ?? 0;
     if (resetPct <= 0) return;
-    if (ctx.damage >= player.hasHealth.maxHp * resetPct) {
-      resetHardening(player);
+    if (!ctx.metadata.isDot && Number(ctx.metadata.incomingGross??ctx.damage) >= player.hasHealth.maxHp * resetPct) {
+      const before=getResource(player.tracksCombat,BONUS_KEY),after=before/2;
+      player.mitigatesDamage.plating+=Math.round(after)-Math.round(before);
+      setResource(player.tracksCombat,BONUS_KEY,after);
+      markSliceDirty(world,player,'mitigatesDamage');
     }
   });
 }
 
 /**
- * Per-tick ramp: while the player has an active attack target, gain
+ * Per-tick ramp: with an active attack target and recent incoming pressure, gain
  * `defense.hardening-per-sec` plating per second up to `defense.hardening-max`.
  * Modifies `mitigatesDamage.plating` in place and marks the slice dirty.
  */
@@ -61,6 +64,7 @@ export function runHardening(world: World, player: PlayerEntity, dt: number): vo
   const perSec = player.usesSkills.passives['defense.hardening-per-sec'] ?? 0;
   if (perSec <= 0) return;
   if (player.hasAttackTarget === undefined) return;
+  if (!isCooldownActive(player.tracksCombat,'hardeningIncomingPressure')) return;
 
   const maxBonus = player.usesSkills.passives['defense.hardening-max'] ?? 0;
   const cs = player.tracksCombat;

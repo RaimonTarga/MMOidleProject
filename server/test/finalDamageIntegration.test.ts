@@ -114,7 +114,9 @@ for (const mode of ['direct', 'aoe', 'dot'] as const) {
   const core = compareEquipmentStats(input, 'core', 'core-force');
   eq(core.after.stats.attack, normal.stats.attack, 'broad Core no longer changes Attack');
   assert(core.after.stats.damageDealtMult > 1 && core.after.stats.dps > normal.stats.dps, 'Core modifies final damage and DPS');
-  assert(core.relevant.includes('damageDealtMult') && core.relevant.includes('maxHp'), 'inventory includes both Core upside and cost');
+  assert(core.relevant.includes('damageDealtMult'), 'inventory includes the Core upside');
+  const accelerant = compareEquipmentStats(input, 'core', 'core-accelerant');
+  assert(accelerant.relevant.includes('damageDealtMult') && accelerant.relevant.includes('attacksPerSecond'), 'inventory includes both Core upside and cost');
   assert(!core.relevant.includes('attackRange') && !core.relevant.includes('dodgeRate'), 'inventory omits unrelated class stats');
   const same = compareEquipmentStats({ ...input, equipment: { ...input.equipment, core: 'core-force' } }, 'core', 'core-force');
   assert(same.relevant.includes('damageDealtMult'), 'equal replacements keep relevant unchanged values');

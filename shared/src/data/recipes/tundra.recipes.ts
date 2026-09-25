@@ -1,6 +1,6 @@
 import type { Recipe } from './types';
 
-// TUNDRA (debuts T3). Identity: stationary-ramp DR + cap armor / brittle weapon /
+// TUNDRA (debuts T3). Identity: stationary-ramp DR armor / brittle weapon /
 // barrier + absorb charm. Charm rework: upgrades ramp BOTH mechanics, recovery flat
 // (see mountain.recipes.ts header).
 // Tundra owns the FROST DoT weapon line: Rimebrand (T3) → Glacial Rimebrand (T4).
@@ -55,20 +55,17 @@ export const tundraRecipeEntries = [
   ['tundra-vest-t3', {
     id: 'tundra-vest-t3', name: 'Glacial Bulwark',
     recipeGroup: 'tundra', requiredBiomeLevel: 2, slot: 'armor',
-    cost: { blue: 100, red: 25 }, stats: { maxHp: 100, plating: 15 }, // family-tag: DR + damage-cap armor → Heavy
-    mechanicEffects: {
-      'defense.stationary-dr-pct': 0.15, 'defense.stationary-dr-ramptime-ms': 6000,
-      'defense.max-hit-pct': 0.25, 'defense.max-hit-mult': 0.5,
-    },
+    cost: { blue: 100, red: 25 }, stats: {"maxHp": 180, "plating": 2, "damageReduction": 0.14}, // family-tag: stationary DR armor → Heavy
+    mechanicEffects: {"defense.stationary-dr-pct": 0.15, "defense.stationary-dr-ramptime-ms": 3000},
     tier: 3,
     icon: 'items/armor/glacial-bulwark.png',
-    description: 'Stand still and the ice creeps over the plate, until you are part of the glacier itself.',
+    description: "Build damage reduction over 3 seconds while holding position in combat. Moving or leaving combat sheds it over 1 second.",
     upgrades: [
-      { stats: { maxHp: 22, plating: 4 }, cost: { blue: 66, red: 17 },  requiredBiomeLevel: 3 },
-      { stats: { maxHp: 22, plating: 4 }, cost: { blue: 166, red: 42 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 22, plating: 4 }, cost: { blue: 266, red: 66 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 22, plating: 4 }, cost: { blue: 432, red: 108 }, catalystCost: { heavy: 2 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 22, plating: 4 }, cost: { blue: 730, red: 182 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 4 },
+      {"cost": {"blue": 66, "red": 17}, "requiredBiomeLevel": 3, "stats": {"maxHp": 18, "plating": 0}},
+      {"cost": {"blue": 166, "red": 42}, "requiredBiomeLevel": 4, "stats": {"maxHp": 18, "plating": 0}},
+      {"cost": {"blue": 266, "red": 66}, "requiredBiomeLevel": 4, "stats": {"maxHp": 18, "plating": 1}},
+      {"cost": {"blue": 432, "red": 108}, "catalystCost": {"heavy": 2}, "requiredBiomeLevel": 4, "stats": {"maxHp": 18, "plating": 0}},
+      {"cost": {"blue": 730, "red": 182}, "catalystCost": {"heavy": 3}, "requiredBiomeLevel": 4, "stats": {"maxHp": 18, "plating": 0}}
     ],
   }],
 
@@ -165,21 +162,18 @@ export const tundraRecipeEntries = [
     id: 'tundra-vest-t4', name: 'Permafrost Sovereign',
     recipeGroup: 'tundra', requiredBiomeLevel: 8, slot: 'armor',
     evolvesFrom: 'tundra-vest-t3',
-    cost: { blue: 256, red: 64 }, stats: { maxHp: 180, plating: 28 }, // family-tag: DR + damage-cap armor → Heavy
+    cost: { blue: 256, red: 64 }, stats: {"maxHp": 346, "plating": 3, "damageReduction": 0.18}, // family-tag: stationary DR armor → Heavy
     reconstructCost: { blue: 896, red: 224 }, reconstructCatalystCost: { heavy: 4 },
-    mechanicEffects: {
-      'defense.stationary-dr-pct': 0.20, 'defense.stationary-dr-ramptime-ms': 5000,
-      'defense.max-hit-pct': 0.25, 'defense.max-hit-mult': 0.5,
-    },
+    mechanicEffects: {"defense.stationary-dr-pct": 0.2, "defense.stationary-dr-ramptime-ms": 3000},
     tier: 4,
     icon: 'items/armor/permafrost-sovereign.png',
-    description: 'Hold your ground and the glacier claims you for its own — and nothing moves a glacier.',
+    description: "Build damage reduction over 3 seconds while holding position in combat. Moving or leaving combat sheds it over 1 second.",
     upgrades: [
-      { stats: { maxHp: 42, plating: 7 }, cost: { blue: 130, red: 33 },  requiredBiomeLevel: 9 },
-      { stats: { maxHp: 42, plating: 7 }, cost: { blue: 326, red: 82 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 42, plating: 7 }, cost: { blue: 522, red: 131 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 42, plating: 7 }, cost: { blue: 849, red: 212 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 42, plating: 7 }, cost: { blue: 1436, red: 359 }, catalystCost: { heavy: 4 }, requiredBiomeLevel: 10 },
+      {"cost": {"blue": 130, "red": 33}, "requiredBiomeLevel": 9, "stats": {"maxHp": 35, "plating": 0}},
+      {"cost": {"blue": 326, "red": 82}, "requiredBiomeLevel": 10, "stats": {"maxHp": 34, "plating": 1}},
+      {"cost": {"blue": 522, "red": 131}, "requiredBiomeLevel": 10, "stats": {"maxHp": 35, "plating": 0}},
+      {"cost": {"blue": 849, "red": 212}, "catalystCost": {"heavy": 3}, "requiredBiomeLevel": 10, "stats": {"maxHp": 34, "plating": 1}},
+      {"cost": {"blue": 1436, "red": 359}, "catalystCost": {"heavy": 4}, "requiredBiomeLevel": 10, "stats": {"maxHp": 35, "plating": 0}}
     ],
   }],
 
@@ -263,12 +257,9 @@ export const tundraRecipeEntries = [
     stats: {}, tier: 3,
     // The cooldown clause is INERT without an ability tagged `mobility` (today:
     // Charge); the damage and movement halves are always on.
-    mechanicEffects: {
-      'core.damage-dealt-pct': 0.24, 'core.speed-mult': 0.25,
-      'core.mobility-cooldown-reduction-pct': 0.25, 'core.maxhp-mult': -0.20,
-    },
+    mechanicEffects: {"core.damage-dealt-pct": 0.18, "core.speed-mult": 0.25, "core.mobility-cooldown-reduction-pct": 0.25},
     icon: 'items/cores/scout.png',
-    description: 'Open ground and a long horizon. Nothing here helps you win a stand — only avoid one.',
+    description: "Amplifies movement and mobility abilities, with a modest damage bonus.",
   }],
 
   ['relic-glacial-bell', {

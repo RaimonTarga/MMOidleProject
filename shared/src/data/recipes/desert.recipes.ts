@@ -44,17 +44,17 @@ export const desertRecipeEntries = [
   ['desert-vest-t2', {
     id: 'desert-vest-t2', name: 'Duneplate of the Last Stand',
     recipeGroup: 'desert', requiredBiomeLevel: 2, slot: 'armor',
-    cost: { yellow: 35, purple: 25 }, stats: { maxHp: 44, plating: 10 }, // family-tag: last-stand (cheat-death) armor → Dominion
-    mechanicEffects: { 'defense.cheat-death': 1, 'defense.cleanse-stacks': 1, 'defense.cleanse-interval-ms': 8000 },
+    cost: { yellow: 35, purple: 25 }, stats: {"maxHp": 55, "damageReduction": 0.08}, // family-tag: last-stand (cheat-death) armor → Dominion
+    mechanicEffects: {"defense.engagement-dr-pct": 0.3, "defense.engagement-dr-ms": 6000},
     tier: 2,
     icon: 'items/armor/duneplate-last-stand.png',
-    description: 'Plate of the standfast dead, who are said to have refused to fall even once.',
+    description: "Gain strong damage reduction for 6 seconds from the first attack in a hostile engagement. Rearms after 6 seconds without engagement or incoming attacks.",
     upgrades: [
-      { stats: { maxHp: 12, plating: 3 }, cost: { yellow: 29, purple: 19 }, requiredBiomeLevel: 3 },
-      { stats: { maxHp: 12, plating: 3 }, cost: { yellow: 72, purple: 48 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 12, plating: 3 }, cost: { yellow: 115, purple: 77 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 12, plating: 3 }, cost: { yellow: 187, purple: 125 }, catalystCost: { dominion: 1 }, requiredBiomeLevel: 4 },
-      { stats: { maxHp: 12, plating: 3 }, cost: { yellow: 317, purple: 211 }, catalystCost: { dominion: 2 }, requiredBiomeLevel: 4 },
+      {"cost": {"yellow": 29, "purple": 19}, "requiredBiomeLevel": 3, "stats": {"maxHp": 6}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
+      {"cost": {"yellow": 72, "purple": 48}, "requiredBiomeLevel": 4, "stats": {"maxHp": 5}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
+      {"cost": {"yellow": 115, "purple": 77}, "requiredBiomeLevel": 4, "stats": {"maxHp": 6}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
+      {"cost": {"yellow": 187, "purple": 125}, "catalystCost": {"dominion": 1}, "requiredBiomeLevel": 4, "stats": {"maxHp": 5}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
+      {"cost": {"yellow": 317, "purple": 211}, "catalystCost": {"dominion": 2}, "requiredBiomeLevel": 4, "stats": {"maxHp": 6}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}}
     ],
   }],
 
@@ -123,18 +123,18 @@ export const desertRecipeEntries = [
     id: 'desert-vest-t3', name: 'Eternal Duneplate',
     recipeGroup: 'desert', requiredBiomeLevel: 8, slot: 'armor',
     evolvesFrom: 'desert-vest-t2',
-    cost: { yellow: 120, purple: 30 }, stats: { maxHp: 90, plating: 20 }, // family-tag: last-stand armor → Dominion
+    cost: { yellow: 120, purple: 30 }, stats: {"maxHp": 150, "damageReduction": 0.14}, // family-tag: last-stand armor → Dominion
     reconstructCost: { yellow: 420, purple: 105 }, reconstructCatalystCost: { dominion: 3 },
-    mechanicEffects: { 'defense.cheat-death': 1, 'defense.cleanse-stacks': 1, 'defense.cleanse-interval-ms': 8000, 'defense.debuff-resistance': 0.20 },
+    mechanicEffects: {"defense.engagement-dr-pct": 0.35, "defense.engagement-dr-ms": 6000},
     tier: 3,
     icon: 'items/armor/eternal-duneplate.png',
-    description: 'Worn by the standfast dead, who shed curses like sand and refused, once, to die.',
+    description: "Gain strong damage reduction for 6 seconds from the first attack in a hostile engagement. Rearms after 6 seconds without engagement or incoming attacks.",
     upgrades: [
-      { stats: { maxHp: 20, plating: 5 }, cost: { yellow: 76, purple: 19 },  requiredBiomeLevel: 9 },
-      { stats: { maxHp: 20, plating: 5 }, cost: { yellow: 190, purple: 47 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 20, plating: 5 }, cost: { yellow: 303, purple: 76 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 20, plating: 5 }, cost: { yellow: 493, purple: 123 }, catalystCost: { dominion: 2 }, requiredBiomeLevel: 10 },
-      { stats: { maxHp: 20, plating: 5 }, cost: { yellow: 834, purple: 209 }, catalystCost: { dominion: 3 }, requiredBiomeLevel: 10 },
+      {"cost": {"yellow": 76, "purple": 19}, "requiredBiomeLevel": 9, "stats": {"maxHp": 15}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
+      {"cost": {"yellow": 190, "purple": 47}, "requiredBiomeLevel": 10, "stats": {"maxHp": 15}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
+      {"cost": {"yellow": 303, "purple": 76}, "requiredBiomeLevel": 10, "stats": {"maxHp": 15}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
+      {"cost": {"yellow": 493, "purple": 123}, "catalystCost": {"dominion": 2}, "requiredBiomeLevel": 10, "stats": {"maxHp": 15}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
+      {"cost": {"yellow": 834, "purple": 209}, "catalystCost": {"dominion": 3}, "requiredBiomeLevel": 10, "stats": {"maxHp": 15}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}}
     ],
   }],
 
@@ -213,23 +213,19 @@ export const desertRecipeEntries = [
     id: 'desert-vest-t4', name: 'Deathless Duneplate',
     recipeGroup: 'desert', requiredBiomeLevel: 14, slot: 'armor',
     evolvesFrom: 'desert-vest-t3',
-    cost: { yellow: 220, purple: 55 }, stats: { maxHp: 165, plating: 38 },
+    cost: { yellow: 220, purple: 55 }, stats: {"maxHp": 288, "damageReduction": 0.18},
     reconstructCost: { yellow: 770, purple: 193 }, reconstructCatalystCost: { dominion: 4 },
-    // † post-cheat-death-heal: after cheat-death saves you, restore 30% max HP over 4s.
-    mechanicEffects: {
-      'defense.cheat-death': 1, 'defense.cleanse-stacks': 2, 'defense.cleanse-interval-ms': 8000,
-      'defense.debuff-resistance': 0.30,
-      'defense.post-cheat-death-heal-pct': 0.30, 'defense.post-cheat-death-heal-ms': 4000,
-    },
+    // Dawnward protects the opening of an engagement; no cheat-death rider.
+    mechanicEffects: {"defense.engagement-dr-pct": 0.4, "defense.engagement-dr-ms": 6000},
     tier: 4,
     icon: 'items/armor/deathless-duneplate.png',
-    description: 'The standfast dead refused to fall — and the wounds closed as the refusal held.',
+    description: "Gain strong damage reduction for 6 seconds from the first attack in a hostile engagement. Rearms after 6 seconds without engagement or incoming attacks.",
     upgrades: [
-      { stats: { maxHp: 40, plating: 9 }, cost: { yellow: 153, purple: 38 }, requiredBiomeLevel: 15 },
-      { stats: { maxHp: 40, plating: 9 }, cost: { yellow: 382, purple: 95 }, requiredBiomeLevel: 16 },
-      { stats: { maxHp: 40, plating: 9 }, cost: { yellow: 610, purple: 152 }, requiredBiomeLevel: 16 },
-      { stats: { maxHp: 40, plating: 9 }, cost: { yellow: 991, purple: 248 }, catalystCost: { dominion: 3 }, requiredBiomeLevel: 16 },
-      { stats: { maxHp: 40, plating: 9 }, cost: { yellow: 1677, purple: 419 }, catalystCost: { dominion: 4 }, requiredBiomeLevel: 16 },
+      {"cost": {"yellow": 153, "purple": 38}, "requiredBiomeLevel": 15, "stats": {"maxHp": 29}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
+      {"cost": {"yellow": 382, "purple": 95}, "requiredBiomeLevel": 16, "stats": {"maxHp": 29}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
+      {"cost": {"yellow": 610, "purple": 152}, "requiredBiomeLevel": 16, "stats": {"maxHp": 29}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
+      {"cost": {"yellow": 991, "purple": 248}, "catalystCost": {"dominion": 3}, "requiredBiomeLevel": 16, "stats": {"maxHp": 29}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
+      {"cost": {"yellow": 1677, "purple": 419}, "catalystCost": {"dominion": 4}, "requiredBiomeLevel": 16, "stats": {"maxHp": 29}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}}
     ],
   }],
 
@@ -287,13 +283,12 @@ export const desertRecipeEntries = [
     lineageId: 'core-force',
     cost: { yellow: 500 }, catalystCost: { dominion: 4 }, // family-tag: raw offence → Dominion
     stats: {}, tier: 2,
-    mechanicEffects: { 'core.damage-dealt-pct': 0.22, 'core.maxhp-mult': -0.12 },
+    mechanicEffects: {"core.damage-dealt-pct": 0.22},
     icon: 'items/cores/force.png',
-    description: 'It gives you the strike you wanted and takes the margin you were counting on.',
+    description: "A focused damage amplifier; choosing it forgoes another core’s protection.",
   }],
 
-  // T3 premium ranged — Sniper: the largest raw damage number in the T3 cast,
-  // paid for in eHP twice over. Struggles the moment anything closes the gap.
+  // T3 premium ranged — Sniper: ranged damage amplification without reducing HP.
   // Its L12 gate and 1,300 yellow / 6 Dominion price make it Desert's late
   // capstone.
   ['core-sniper', {
@@ -303,9 +298,9 @@ export const desertRecipeEntries = [
     cost: { yellow: 1300 }, catalystCost: { dominion: 6 }, // family-tag: ranged alpha-strike → Dominion
     stats: {}, tier: 3,
     // Deliberately no mobility bonus — the Scout core is the one that buys spacing.
-    mechanicEffects: { 'core.damage-dealt-pct': 0.40, 'core.maxhp-mult': -0.30, 'core.plating-mult': -0.25 },
+    mechanicEffects: {"core.damage-dealt-pct": 0.3},
     icon: 'items/cores/sniper.png',
-    description: 'Focuses the eye to a needlepoint, and leaves the body that much more exposed.',
+    description: "Amplifies ranged damage without reducing your health.",
   }],
 
   ['relic-withering-lens', {

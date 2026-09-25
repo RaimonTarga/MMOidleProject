@@ -81,10 +81,10 @@ const baseAttack = GAME_CONFIG.PLAYER_ATTACK;
 // and hardcoding the cast's numbers here would make every balance edit a test failure.
 const sniper = RECIPE_DATABASE.get("core-sniper")!;
 const sniperAttack = sniper.mechanicEffects!["core.damage-dealt-pct"]!;
-const sniperMaxHp = sniper.mechanicEffects!["core.maxhp-mult"]!;
+const sniperMaxHp = sniper.mechanicEffects!["core.maxhp-mult"];
 assert(
-  sniper.coreEligibility === "ranged" && sniperAttack > 0 && sniperMaxHp < 0,
-  "fixture expects core-sniper to be a ranged core with an attack upside and an HP tradeoff",
+  sniper.coreEligibility === "ranged" && sniperAttack > 0 && sniperMaxHp === undefined,
+  "Sniper amplifies ranged output without a max-HP penalty",
 );
 
 recalculatePlayerEntityStats(world, player);

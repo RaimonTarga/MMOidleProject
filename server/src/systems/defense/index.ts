@@ -23,6 +23,7 @@ import {
 import { COMBAT_ELAPSED_KEY } from "./core/pools";
 import { isPlayerInCombat } from "../combat/ai/engagement";
 import { isPlayerInHazardousNodeFeature } from "../world/nodeFeatures";
+import { registerEngagementDr, updateEngagementDr } from './mitigation/engagementDr';
 import { registerSummonerDamageSponge } from '../classes/archetypes/summoner';
 
 /**
@@ -31,6 +32,7 @@ import { registerSummonerDamageSponge } from '../classes/archetypes/summoner';
  * listeners run last in onDamageTaken.
  *
  * Guard registers before this module. Listener order here (player as defender):
+ *   0. Engagement DR   — Desert opening-window mitigation
  *   1. Evasion         — reduces ctx.damage by the evade-mitigation fraction
  *   2. Damage cap      — clamps to defense.max-hit-pct of maxHp
  *   3. Wards           — temporary absorb pools spend first (use-it-or-lose-it)
@@ -38,10 +40,11 @@ import { registerSummonerDamageSponge } from '../classes/archetypes/summoner';
  *   5. Break heal      — reads the emptied-pool metadata both absorbs set
  *   6. Summoner sponge — redirects surviving damage to a slime
  *   7. Hit-to-DoT      — redirects defense.hit-to-dot-pct to debt pool
- *   8. Cheat death     — caps lethal damage to hp-1 (once per combat)
+ *   8. Cheat death     — legacy compatibility hook, no current armor grant
  *   9. Damage absorb   — credits surviving HP damage into HoT pool
  */
 export function initDefenseSystems(): void {
+  withCombatRegistrationLabel('registerEngagementDr', registerEngagementDr);
   withCombatRegistrationLabel('registerEvasion', registerEvasion);
   withCombatRegistrationLabel('registerDamageCap', registerDamageCap);
   withCombatRegistrationLabel('registerWardAbsorb', registerWardAbsorb);      // before the barrier — wards are use-it-or-lose-it
@@ -69,6 +72,7 @@ export function updateDefensiveSystems(
   now: number,
 ): void {
   for (const player of world.livePlayers) {
+    updateEngagementDr(world, player, dt);
     const inCombat = isPlayerInCombat(player, now);
 
     // Deterministic dodge accumulator resets while out of combat (single balance

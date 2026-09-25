@@ -148,6 +148,7 @@ const BUFF_IDS = new Set([
   'defense-reactive-plating',
   'defense-revive-heal',
   'defense-stationary-dr',
+  'defense-engagement-dr',
   'defense-sustained-dr',
   'defense-ward',
   'dot-chill',
@@ -297,6 +298,7 @@ export function riteIconSource(id: string): AssetIconSource | null {
  * is still exactly right for it, so the id moved and the art did not.
  */
 const BUFF_ICON_ALIASES: Record<string, string> = {
+  'defense-engagement-dr': 'defense-sustained-dr',
   'defense-recovery': 'defense-burst',
 };
 

@@ -1,5 +1,7 @@
 # Stances — current state
 
+Branch note (2026-09-25): Defensive/Tanking plating bonuses are removed in the experimental defense candidate; [status and results](../reports/defense-redesign-01/REPORT.md). Not shipped.
+
 - **Code audit:** 2026-09-04 (Tier 3 placement/economy redistribution)
 - **Authoring contract:** `docs/stances-authoring-guide.md`
 - **Candidate postures / design notes:** `docs/stances-future-design-notes.md`
@@ -59,8 +61,8 @@ First-pass magnitudes are balance seeds in `shared/src/stances.ts`; the structur
 | Stance | RP | Static posture | Behavioral |
 |---|---:|---|---|
 | Offensive | 1 | +15% Damage, +10% Attack Speed, +10% damage taken | — |
-| Defensive | 1 | +20% Plating, -10% damage taken, -15% Damage | — |
-| Tanking | 3 | +40% Plating, -25% damage taken, -40% Damage, -20% Attack Speed | — |
+| Defensive | 1 | -10% damage taken, -15% Damage | — |
+| Tanking | 3 | -25% damage taken, -40% Damage, -20% Attack Speed | — |
 | Enraged | 3 | +30% Damage and +15% Attack Speed **only at <=25% HP**; no defensive penalty | HP gate, see below |
 | Perfection | 2 | +10% damage taken always; +20% Damage / +15% Attack Speed / +15% Move Speed **only at >=90% HP** | HP gate, see below |
 | Fleeting | 2 | +35% Move Speed, +15pp Evasion, -35% Damage, -20% Attack Speed | — |
