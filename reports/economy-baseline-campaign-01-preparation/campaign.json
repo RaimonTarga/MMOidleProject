@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "id": "economy-baseline-campaign-01",
+  "status": "prepared-unsealed-not-launchable",
+  "source": {
+    "revision": "ff98ba4513cb9fcb1e5752acfd56495268aff416",
+    "tree": "f1149f6d3756fa95b87754b21913f9e4ffb6882b",
+    "branch": "develop",
+    "referenceRevision": "ff98ba4513cb9fcb1e5752acfd56495268aff416"
+  },
+  "sourceDrift": false,
+  "authorizedScope": "preparation-only",
+  "launched": false,
+  "actors": [
+    {
+      "id": "striker",
+      "root": "cadence-root",
+      "frame": "cadence-balanced"
+    },
+    {
+      "id": "squire",
+      "root": "cooldown-root",
+      "frame": "cooldown-heavy"
+    },
+    {
+      "id": "apprentice",
+      "root": "dot-root",
+      "frame": "dot-balanced"
+    },
+    {
+      "id": "conduit",
+      "root": "summoner-root",
+      "frame": "summoner-balanced"
+    }
+  ],
+  "pacingLives": 32,
+  "rateCells": 1332,
+  "normalNodes": 140,
+  "snapshotFilesInspected": 784,
+  "provenanceCandidates": 225,
+  "rewardFacts": {
+    "biomeXp": [
+      2,
+      1.25,
+      1,
+      1
+    ],
+    "essence": [
+      2,
+      0.85,
+      0.7,
+      0.55
+    ],
+    "catalystThreshold": 100,
+    "catalystTierMultipliers": [
+      0.5,
+      1,
+      1,
+      1
+    ]
+  },
+  "pacingTargets": null,
+  "pacingVerdict": "unset-awaiting-product-targets",
+  "confirmation": {
+    "durationSimulatedMs": 3600000,
+    "timeScale": 1,
+    "red": "all",
+    "yellowPairsMaximum": 8,
+    "yellowSelection": "largest death-rate reduction first; tie by ratio descending then cell id",
+    "zeroDenominator": "positive/zero = red unbounded; zero/zero = uninformative; missing = unavailable",
+    "deduplicate": "exact profile/input-hash/lower-node/current-node; union metric reasons",
+    "automaticLaunch": false
+  },
+  "infrastructure": {
+    "defaultGlobalWorkers": 2,
+    "qualifiedCeiling": 4,
+    "strictFiveWayParallelLaunchSupported": false,
+    "requiresSchedulingResolution": true
+  }
+}

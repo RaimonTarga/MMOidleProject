@@ -1,0 +1,41 @@
+{
+  "scope": "preparation-artifacts-only-not-an-execution-seal",
+  "files": [
+    {
+      "file": "campaign.json",
+      "sha256": "1674dffb7796fff47e3dccbc686394685aeda87b2e703704181c0b504a612665"
+    },
+    {
+      "file": "route-authorities.json",
+      "sha256": "f90b247b28ec62f16ff5045aa2347fd2ff99379e13f1da2d6a7c0fc2cd6cc6ec"
+    },
+    {
+      "file": "later-tier-route-inventory.json",
+      "sha256": "6a2eaabfff580e7c0b39d54e37c000bf32d9e64f4d8c4428ef98bfe3c64165e2"
+    },
+    {
+      "file": "node-inventory.json",
+      "sha256": "4c62afab1f51c0cb6c73625a3bfdb8f1dd5a73e4e4e75a5d0aeb656fb99ffedc"
+    },
+    {
+      "file": "recipe-demand-catalogue.json",
+      "sha256": "3c93857ee294970622b0b2a629efac4beb8818a03721778213e02cabc7f98c64"
+    },
+    {
+      "file": "snapshot-inventory.json",
+      "sha256": "740c2f8bc043d24dc4f93d09008f833dea9bca4fa5883b776ce666333bc124d9"
+    },
+    {
+      "file": "pacing-matrix.json",
+      "sha256": "8bee16925e245e4c444479479e6ad7d81b3e29d014a20ce7e80bbb34b312dea3"
+    },
+    {
+      "file": "rate-matrix.json",
+      "sha256": "fad9b74fd17ab88d73ed0963867f0762f120cd675c5393a0ae8916a8bf0be347"
+    },
+    {
+      "file": "t2-input-validation.json",
+      "sha256": "1b0b63670a5ec4f55bda486781467bd4e51437bd32fa270c598c607c41dceb9b"
+    }
+  ]
+}
