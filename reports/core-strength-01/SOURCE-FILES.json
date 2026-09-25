@@ -1,0 +1,29 @@
+{
+  "files": [
+    {
+      "path": "shared/src/data/recipes/desert.recipes.ts",
+      "sha256": "a01972daece0911bb71a84c15558ace5f959920e9c3a18448c3942e0ea73cf1d"
+    },
+    {
+      "path": "shared/src/data/recipes/tundra.recipes.ts",
+      "sha256": "f4e3e477d2acbd0f1add77a48bf7b5c6990d75eae82aee15a58560ca007b8759"
+    },
+    {
+      "path": "shared/src/data/recipes/volcanic.recipes.ts",
+      "sha256": "005d1f0484fb0fcd0fc4903ebebdc9153466764d88707b09895b6ca1a1c498f6"
+    },
+    {
+      "path": "server/test/coreRangeGate.test.ts",
+      "sha256": "d3514147f879686cbfcbeb352a933241461f1638c02f3aa1b1c872c2bd942968"
+    },
+    {
+      "path": "server/bench/coreStudy.ts",
+      "sha256": "07d8a2731acd1f7859f85da8ff37d4772af464cc857c6b44303b0f4a93a26b97"
+    },
+    {
+      "path": "scripts/coreStrengthReport.mjs",
+      "sha256": "ad149b3899016525024b69b731bac62e080b86d02d8df69d532b9a380eb827ba"
+    }
+  ],
+  "base": "9159de976f3b0406e9a5e29dff6332778fdb5e4b"
+}

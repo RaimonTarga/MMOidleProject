@@ -1,0 +1,53 @@
+diff --git a/shared/src/data/recipes/desert.recipes.ts b/shared/src/data/recipes/desert.recipes.ts
+index 50b812c4..d987bfdb 100644
+--- a/shared/src/data/recipes/desert.recipes.ts
++++ b/shared/src/data/recipes/desert.recipes.ts
+@@ -287,9 +287,11 @@ export const desertRecipeEntries = [
+     lineageId: 'core-force',
+     cost: { yellow: 500 }, catalystCost: { dominion: 4 }, // family-tag: raw offence → Dominion
+     stats: {}, tier: 2,
+-    mechanicEffects: { 'core.damage-dealt-pct': 0.22, 'core.maxhp-mult': -0.12 },
++    mechanicEffects: {
++  "core.damage-dealt-pct": 0.18
++},
+     icon: 'items/cores/force.png',
+-    description: 'It gives you the strike you wanted and takes the margin you were counting on.',
++    description: "A focused damage amplifier; choosing it forgoes another core’s protection.",
+   }],
+
+   // T3 premium ranged — Sniper: the largest raw damage number in the T3 cast,
+@@ -303,9 +305,11 @@ export const desertRecipeEntries = [
+     cost: { yellow: 1300 }, catalystCost: { dominion: 6 }, // family-tag: ranged alpha-strike → Dominion
+     stats: {}, tier: 3,
+     // Deliberately no mobility bonus — the Scout core is the one that buys spacing.
+-    mechanicEffects: { 'core.damage-dealt-pct': 0.40, 'core.maxhp-mult': -0.30, 'core.plating-mult': -0.25 },
++    mechanicEffects: {
++  "core.damage-dealt-pct": 0.25
++},
+     icon: 'items/cores/sniper.png',
+-    description: 'Focuses the eye to a needlepoint, and leaves the body that much more exposed.',
++    description: "Amplifies ranged damage without reducing your health.",
+   }],
+
+   ['relic-withering-lens', {
+diff --git a/shared/src/data/recipes/tundra.recipes.ts b/shared/src/data/recipes/tundra.recipes.ts
+index cf57f9db..835080d5 100644
+--- a/shared/src/data/recipes/tundra.recipes.ts
++++ b/shared/src/data/recipes/tundra.recipes.ts
+@@ -264,11 +264,12 @@ export const tundraRecipeEntries = [
+     // The cooldown clause is INERT without an ability tagged `mobility` (today:
+     // Charge); the damage and movement halves are always on.
+     mechanicEffects: {
+-      'core.damage-dealt-pct': 0.24, 'core.speed-mult': 0.25,
+-      'core.mobility-cooldown-reduction-pct': 0.25, 'core.maxhp-mult': -0.20,
+-    },
++  "core.damage-dealt-pct": 0.12,
++  "core.speed-mult": 0.25,
++  "core.mobility-cooldown-reduction-pct": 0.25
++},
+     icon: 'items/cores/scout.png',
+-    description: 'Open ground and a long horizon. Nothing here helps you win a stand — only avoid one.',
++    description: "Amplifies movement and mobility abilities, with a modest damage bonus.",
+   }],
+
+   ['relic-glacial-bell', {

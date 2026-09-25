@@ -1,0 +1,38 @@
+[
+  {
+    "file": "server/src/systems/combat/engine/combat.ts",
+    "sha256": "5262a1ccde897ce2dce8f437626c3c060b2321ee1484c16218aa4bd5233955fb"
+  },
+  {
+    "file": "server/src/systems/combat/engine/combatPipeline.ts",
+    "sha256": "c04fbdaf07cac9627264d4b56b84b59ec159c3009029fef7ec4d7bdaabe63033"
+  },
+  {
+    "file": "server/src/systems/combatBootstrap.ts",
+    "sha256": "4bd027939b8ef182c77a5c6d519290f873dcf57ad9c3575022607986c3071a66"
+  },
+  {
+    "file": "server/src/systems/defense/index.ts",
+    "sha256": "1bf428ff0dc733bff18b1dd87e81f5e26d277779191571de4419481f06cd54df"
+  },
+  {
+    "file": "server/bench/defenseIteration03.ts",
+    "sha256": "6e906a19f38644584adb9865dc151eae649650463c498bd232eafdd10c928cb6"
+  },
+  {
+    "file": "server/bench/defenseThreat03.ts",
+    "sha256": "10aff1bce5a7d18921cc38089293082a422fa8859d14823e6d35ad4bf43af366"
+  },
+  {
+    "file": "server/bench/defenseBunker03.ts",
+    "sha256": "bc0513f0dc33f242c3b53be4bb129524e94ad1da7542bd23a422080cdc379bf5"
+  },
+  {
+    "file": "server/bench/defenseBurst03.ts",
+    "sha256": "bf80c70cf251223b83b84686efce265e536292c551a5806be91af8711247ac81"
+  },
+  {
+    "file": "server/test/defenseMeasurements.test.ts",
+    "sha256": "d338eb3fc9072b8ac70b1feed50b0edffd3c6078b97b934bf4267df667ea067a"
+  }
+]

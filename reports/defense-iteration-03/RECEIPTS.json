@@ -1,0 +1,98 @@
+{
+  "observations": 1282,
+  "diagnosticParity": true,
+  "reversalParity": true,
+  "runs": [
+    {
+      "run": "baseline",
+      "completed": 192,
+      "expected": 192,
+      "rowsSha256": "c7d8ba8ea39ea5ded195387412500b14a65f7d98e78b61cbd219c25399b948c1",
+      "manifestSha256": "99695fd9fe0c0213ba946c2c9d4610cb7ab5126f99878e614c19f3f937f68c05"
+    },
+    {
+      "run": "desert-dr",
+      "completed": 96,
+      "expected": 96,
+      "rowsSha256": "eb68931216f279b7c3b9c040f9913cb8de801985468e5677546a4ca3c18bd38f",
+      "manifestSha256": "6eb42e161ea837c1421d5e5edd875b210451b254cfd697155924227f83ea4733"
+    },
+    {
+      "run": "jungle-frequency",
+      "completed": 96,
+      "expected": 96,
+      "rowsSha256": "be2ae344d4f5c68efa61bccff7ccb306d504604bdd776e4fb8a7e4d87be6eec2",
+      "manifestSha256": "b6a340630f385cb8e8a68fb9eb2890f8c6165b1f11cfd9d1d80dab22083df57b"
+    },
+    {
+      "run": "jungle-strength",
+      "completed": 96,
+      "expected": 96,
+      "rowsSha256": "f72587b85a7034b82f0a3768a345dbe7f75af253b9205b8c2c7e518189e6f70f",
+      "manifestSha256": "1d21939bd254d5ae14e9051566865dfcd8ac9a3ae9b83232cb5c053e18ecc1ae"
+    },
+    {
+      "run": "fresh-baseline",
+      "completed": 96,
+      "expected": 96,
+      "rowsSha256": "01a6815348f849971cba085c3b21efd8cf0ea3cf52d0da7fe46e5988b70df9e3",
+      "manifestSha256": "0dbcaf83534c0e38fb97c98c1b5d5377bb154abb651a473ff7ff98bbf95e110b"
+    },
+    {
+      "run": "fresh-jungle-frequency",
+      "completed": 96,
+      "expected": 96,
+      "rowsSha256": "273b78f51f60d7be60b0101c36b0264686cffba5ee39dd20af3f83dd0871d073",
+      "manifestSha256": "374319be65c2521ba14d9dd592a610729c816fec654b5e20caf51b69b7bf5d1b"
+    },
+    {
+      "run": "fresh-jungle-strength",
+      "completed": 96,
+      "expected": 96,
+      "rowsSha256": "59e1d4142392a3f475fa4560077c74bdad4b88544bc2af4e54403659d6c5a708",
+      "manifestSha256": "c4f096f7a86f6261b017f20063859cb44a34f23fb6684cbc1b76626f9121b6a6"
+    },
+    {
+      "run": "fixed-threat",
+      "completed": 360,
+      "expected": 360,
+      "rowsSha256": "78b89515263471356e8fd5c7b5ba60360bccd025aa9e1ab8d8f2978385f9f4f6",
+      "manifestSha256": "660a8fb91b3e6b720766dcc59e65d2d0377c089faf91a73d90e9ff1fb005a97e"
+    },
+    {
+      "run": "bunker",
+      "completed": 96,
+      "expected": 96,
+      "rowsSha256": "20128126ae4acfe4f1babeee94e42d15b7f0f946073825d372a4f943a34e0cca",
+      "manifestSha256": "b63bb7dd08e94997aa5aa98ea53da4418e0eaf5a1030c9b35e2f4f2c5880e5a4"
+    },
+    {
+      "run": "bunker-burst",
+      "completed": 48,
+      "expected": 48,
+      "rowsSha256": "63d67e796f097f4073204c33191b3f90420a6045845e414dc29476321ba510e7",
+      "manifestSha256": "346ab004f5de08fd8b8ad7a3e676988723ef42a08fa59dfdbe693f3d720c1dcc"
+    },
+    {
+      "run": "diagnostic-replay",
+      "completed": 8,
+      "expected": 8,
+      "rowsSha256": "77d7dbfe66f04086b270085d4aff71858f2f539919b30e92316a00bdc6d2de6a",
+      "manifestSha256": "7a64b6c3cba977953acca7d1a3c8693b4f1a5d86a8fe5ab86e9fbd28161501d2"
+    },
+    {
+      "run": "reversal-baseline",
+      "completed": 1,
+      "expected": 1,
+      "rowsSha256": "b7bf1e7be0a4fa01b9f7f0519976a602b1fe46c9a3e80302f7ba9ff17e776d4a",
+      "manifestSha256": "775eba838f8feee72ca17b15f7d32005aa4f3848cd895b5a02f9087692987032"
+    },
+    {
+      "run": "reversal-frequency",
+      "completed": 1,
+      "expected": 1,
+      "rowsSha256": "c6d143f38c17e2554437ed2c5c2b4e0eece0828a40f911fd3711cd658cd42e58",
+      "manifestSha256": "9a9a987243f2d26582a040606b939734aba7efce4b5de4c22d1d74e0dc5e54b2"
+    }
+  ]
+}
