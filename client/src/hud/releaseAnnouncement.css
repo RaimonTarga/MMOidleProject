@@ -141,6 +141,18 @@
   margin: 5px 0;
 }
 
+/* Callouts: notes returning players must act on. */
+.release-card__markdown blockquote {
+  margin: 0 0 14px;
+  padding: 10px 14px;
+  border-left: 3px solid var(--hud-primary);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.release-card__markdown blockquote p:last-child {
+  margin-bottom: 0;
+}
+
 .release-card__markdown strong {
   color: #f6f1ff;
 }

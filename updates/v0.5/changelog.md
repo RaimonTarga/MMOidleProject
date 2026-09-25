@@ -1,6 +1,127 @@
 # v0.5 — A rebuilt game
 
-2026-09-24 · New playtest
+2026-09-24 · New playtest · Updated 2026-09-25
+
+## Playtest patch 2 — defenses, pacing and abilities
+
+Thanks for all the feedback from the first days of the playtest. This patch rebalances
+defenses, slows down late-tier mastery, cools off Volcano, reins in a few Tier 4
+outliers, and changes how abilities are triggered.
+
+> **Returning characters:** abilities no longer fire on their own. Open **Abilities** and
+> press **Use default timing** on each ability to restore automatic casting, or wire it
+> into your own Rune rules. Mastery progress is also not converted to the new XP curve;
+> start a fresh character for accurate pacing.
+
+### Abilities and Runes
+
+- Abilities no longer have a built-in trigger. They fire automatically only through a
+  **Use Ability** Rune rule. Without one, they are manual-only.
+- To compensate, every ability costs less RP. An ability plus its default rule costs what
+  the ability alone used to.
+- **Use default timing** in the Abilities panel equips a sensible rule for you. The panel
+  also lists which Runes fire each ability.
+- New starter Rune conditions: **When Controlled** (stunned, frozen, locked down or rooted)
+  and **Enemy in Contact** (a melee enemy within reach). Disengage no longer has a hidden
+  distance requirement.
+- **Break Free** now removes roots as well as your worst hard control, in a single use.
+  Breaking a lair drag's root ends the drag.
+
+### Defenses
+
+Plating (flat reduction per hit) is now a specialist stat. General damage reduction (DR)
+is the common defense layer.
+
+- **Armor families:**
+  - **Plains, Mountain, Tundra and Volcano** keep plating as their specialty, at reduced
+    amounts, plus some DR.
+  - **Jungle and Desert** keep a smaller amount of plating.
+  - **Forest, Cave, Swamp, Graveyard and Trench** trade plating for DR and extra health.
+- **Cave** is the dependable DR armor: 10% / 18% / 26% at T1 / T2 / T3, plus 0.8% per
+  upgrade.
+- **Jungle** evasion is stronger from T2 on: each evade softens the hit more.
+- **Desert** trades its last-stand effects (cheat death, automatic cleanse, debuff
+  resistance) for six seconds of opening protection. The protection triggers on the first
+  attack you make or take, and rearms after six quiet seconds.
+- **Tundra**'s stationary protection builds only while you stand still in combat. It builds
+  over 3 seconds, drops within a second of moving, and stacks with your other damage
+  reduction.
+- **Volcano** hardening builds more slowly and needs enemies attacking you. A single big
+  hit (25% of max HP or more) cracks half of it, even through shields.
+- **Lava-Tempered** overheal wards are capped at 15% of max HP.
+- **Plaguebound Mantle** gains temporary plating each time you're hit (up to 10).
+- **Cores:**
+  - Force, Scout and Sniper no longer cost health or plating. Scout is now +18% damage,
+    and Sniper +30%.
+  - Juggernaut is now +20% HP, +10% plating and 10% less damage taken (was +30% / +40% /
+    14%).
+- **Classes:**
+  - Squire and Striker trade most of their root plating for damage reduction (28% and 18%).
+  - Apprentice converts 15% of direct hits into delayed damage (was 10%).
+  - Slinger's evade mitigation is +10 points (was +20).
+- **Stances:** Defensive and Tanking Stance no longer add plating. Their damage-taken
+  reduction is unchanged.
+- **How damage is calculated:**
+  - Guards (Brace, Endure and others) now reduce a hit before your wards and barrier absorb
+    it, so shields last longer. Guards no longer reduce damage-over-time ticks.
+  - Class and item damage reduction now multiply instead of adding. With 20% from your class
+    and 10% from gear, you take 0.8 × 0.9 = 72% of the damage, not 70%.
+  - General damage reduction now counts in full against monster damage-over-time (it used to
+    count half).
+  - Charged and empowered monster attacks subtract your plating once, from the full hit.
+    Before, plating was also multiplied by the charge, so big telegraphed hits now land
+    harder on high-plating builds.
+  - Delayed damage (Swamp, Graveyard, Apprentice) is paid in four even one-second
+    installments. Its resistance is fixed when the damage is taken.
+  - Monster splash damage is defended like a normal hit: it can be evaded, and wards,
+    barrier and delayed damage apply. Environmental hazards also drain wards and barrier.
+  - Conduit summons take their share of your damage after your shields and before delayed
+    damage. Splash that hits you is not redirected to summons.
+
+### Volcano
+
+- Heat now increases the damage you take by 3.5% per stack (was 4.5%). The bonus to the
+  damage you deal is unchanged.
+- **Ash Salamander** hits for less (84 → 70).
+- **Ember Skink** hits for less (75 → 60), and its Burn is weaker (13 → 8).
+- **Ashspitter Salamander** hits for less (110 → 95), and its Burn is weaker (16 → 12).
+
+### Mastery pacing
+
+- Biome mastery now takes longer at higher tiers, so each tier lasts long enough to matter.
+  The aim is roughly 5 minutes per biome at T1, 15 at T2, 30 at T3, and 60 at T4.
+- T2 mastery is faster: 3,750 XP per tier (was 5,000).
+- T3 and T4 mastery need much more XP: 42,000 and 600,000 per tier (was 7,000 and 9,000).
+- T4 Tundra and Desert give more mastery XP per kill (×1.8 and ×2.4), so they keep pace
+  with the other T4 biomes.
+- Essence and catalyst drops are unchanged.
+
+### Tier 4 classes
+
+- **Voidwalker:** the stored-energy discharge is now reduced by enemy armor and damage
+  reduction, like any other hit (it used to ignore them). The early execute uses the same
+  damage to decide when to trigger.
+- **Berserker:** each Rampage stack speeds up attacks by 30 ms (was 60 ms).
+- **Juggernaut:** Crescendo still climbs for as long as the fight lasts, but past +100%
+  finisher damage it grows much more slowly.
+
+### Auto-combat fixes
+
+- Fixed auto-combat getting stuck circling the edge of a lava pool while trying to reach an
+  enemy standing in it. It now skips enemies sheltering in a hazard, and moves on.
+- **Recover First** no longer waits inside damaging terrain, where recovery never starts. It
+  steps out first.
+
+### Interface
+
+- Ability tiles show one clear state at a time: casting, armed, active, cooling, or ready.
+  Armed Techniques pulse gold until their hit lands. A short glint plays when an ability is
+  ready again.
+- Buffs and debuffs animate in and out. Dangerous stacks (Heat, Chill, Rot, Frost, Sundered,
+  Corroded) surge as they build. A cleanse shatters the removed effect instead of just
+  fading it. Marked, Stunned and Frozen are sorted first and highlighted.
+- Status tooltips stay open while you read them. An effect that ends while its tooltip is
+  open stays in place, marked **Ended** or **Cleansed**.
 
 ## Playtest patch — movement and multiplayer visuals
 
