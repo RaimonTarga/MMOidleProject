@@ -698,7 +698,7 @@ function estimateClassDamage(
       const mult = empowered?.effective ?? p['cadence.empowered-mult'] ?? CADENCE_DAMAGE_MULT_DEFAULT;
       const maxStacks = Math.max(1, Math.round(p['cadence.rampage-max-stacks'] ?? 10));
       const thresholdFloor = Math.max(1, Math.round(p['cadence.rampage-threshold-floor'] ?? 2));
-      const apsPerStackMs = Math.max(0, p['cadence.rampage-aps-per-stack-ms'] ?? 60);
+      const apsPerStackMs = Math.max(0, p['cadence.rampage-aps-per-stack-ms'] ?? 30);
       const atkPenPerStack = Math.max(0, p['cadence.rampage-atk-pen-per-stack'] ?? 0.08);
       const multPerStack = Math.max(0, p['cadence.rampage-mult-per-stack'] ?? 0.15);
       const baseThreshold = Math.max(thresholdFloor, Math.round((p['cadence.empowered-threshold'] ?? 5) + (p['cadence.threshold-mod'] ?? 0)));

@@ -431,8 +431,8 @@ const hit = (world: World, player: ReturnType<typeof fixture>['player'], target:
 
   close(rampageMult(base.player), RAMPAGE_MULT_PER_STACK, 'sanity: baseline finisher bonus per stack matches authored tuning');
   close(rampageMult(boosted.player), RAMPAGE_MULT_PER_STACK * 1.25, '+25% Buff Effect scales Rampage finisher damage per stack by exactly ×1.25');
-  close(rampageAps(base.player), 60, 'sanity: baseline attack-cooldown reduction per stack matches authored tuning');
-  close(rampageAps(boosted.player), 75, '+25% Buff Effect: 60ms per stack -> 75ms per stack');
+  close(rampageAps(base.player), RAMPAGE_APS_PER_STACK_MS, 'sanity: baseline attack-cooldown reduction per stack matches authored tuning');
+  close(rampageAps(boosted.player), RAMPAGE_APS_PER_STACK_MS * 1.25, '+25% Buff Effect scales the per-stack reduction by 1.25');
 
   // Runtime: a real empowered finisher must land the scaled multiplier, not the raw one.
   for (const { world, player } of [base, boosted]) {
@@ -464,8 +464,8 @@ const hit = (world: World, player: ReturnType<typeof fixture>['player'], target:
     player.performsAttack.attackCooldown = 2_000; // far from the 200ms floor, isolates the per-stack math
     recomputeRampageStats(player);
   }
-  close(base.player.usesCadence!.rampageCdReduction, 60, 'sanity: baseline cooldown reduction for one stack');
-  close(boosted.player.usesCadence!.rampageCdReduction, 75, 'recomputeRampageStats must apply the Buff-Effect-scaled reduction');
+  close(base.player.usesCadence!.rampageCdReduction, RAMPAGE_APS_PER_STACK_MS, 'sanity: baseline cooldown reduction for one stack');
+  close(boosted.player.usesCadence!.rampageCdReduction, RAMPAGE_APS_PER_STACK_MS * 1.25, 'recomputeRampageStats must apply the Buff-Effect-scaled reduction');
 
   // 5. Threshold reduction stays exactly −1 per stack, independent of Buff Effect.
   {
@@ -554,8 +554,8 @@ const hit = (world: World, player: ReturnType<typeof fixture>['player'], target:
   assert(cooldownLine !== undefined, 'preview must surface a Rampage cooldown-reduction buff line');
   close(finisherLine!.before, RAMPAGE_MULT_PER_STACK, 'preview before must match authored tuning');
   close(finisherLine!.after, RAMPAGE_MULT_PER_STACK * 1.25, 'preview after must match the runtime-scaled magnitude');
-  close(cooldownLine!.before, 60, 'preview before must match authored tuning');
-  close(cooldownLine!.after, 75, 'preview after must match the runtime-scaled magnitude');
+  close(cooldownLine!.before, RAMPAGE_APS_PER_STACK_MS, 'preview before must match authored tuning');
+  close(cooldownLine!.after, RAMPAGE_APS_PER_STACK_MS * 1.25, 'preview after must match the runtime-scaled magnitude');
 }
 
 console.log('relicMechanicEffectCoverage.test.ts: ok');

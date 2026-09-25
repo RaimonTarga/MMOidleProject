@@ -78,7 +78,7 @@ export const t3CombatEntriesA = [
       'cadence.rampage': 1,
       'cadence.rampage-max-stacks': 10,
       'cadence.rampage-threshold-floor': 2,
-      'cadence.rampage-aps-per-stack-ms': 60,
+      'cadence.rampage-aps-per-stack-ms': 30,
       'cadence.rampage-atk-pen-per-stack': 0.04,
       'cadence.rampage-mult-per-stack': 0.05,
       'cadence.rampage-decay-interval-ms': 8000,

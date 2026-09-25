@@ -58,7 +58,7 @@ export function relicEffectPreview(
     if ((p['cadence.debuff-plating-shred'] ?? 0) > 0) add('debuff', 'plating-shred', 'platingReduction', 'Plating removed per finisher', p['cadence.debuff-plating-shred']!, 'flat');
     if ((p['cadence.rampage'] ?? 0) > 0) {
       add('buff', 'cadence-rampage', 'multPerStack', 'Rampage finisher damage per stack', p['cadence.rampage-mult-per-stack'] ?? 0.15, 'percent');
-      add('buff', 'cadence-rampage', 'apsPerStackMs', 'Rampage attack cooldown reduction per stack', p['cadence.rampage-aps-per-stack-ms'] ?? 60, 'flat');
+      add('buff', 'cadence-rampage', 'apsPerStackMs', 'Rampage attack cooldown reduction per stack', p['cadence.rampage-aps-per-stack-ms'] ?? 30, 'flat');
     }
   }
   if (archetype === 'cooldown' && (p['cooldown.overdrive'] ?? 0) > 0) add('buff', 'cooldown-overdrive', 'attackSpeedPct', 'Overdrive attack-speed bonus', p['cooldown.overdrive-attack-speed-pct'] ?? 1, 'percent');

@@ -41,7 +41,7 @@ export const METRONOME_UNLOCK_TIER = 4;
 // Rampage (cadence-heavy-t3-a)
 export const RAMPAGE_MAX_STACKS       = 10;      // hard cap; the next finisher overloads → reset to 0
 export const RAMPAGE_THRESHOLD_FLOOR  = 2;       // threshold can never drop below this
-export const RAMPAGE_APS_PER_STACK_MS = 60;      // attack-cooldown reduction per stack
+export const RAMPAGE_APS_PER_STACK_MS = 30;      // attack-cooldown reduction per stack (60 -> 30, T4 scaling study)
 export const RAMPAGE_ATK_PEN_PER_STACK = 0.08;   // regular-attack damage penalty per stack (frac)
 export const RAMPAGE_MULT_PER_STACK    = 0.15;   // empowered-multiplier bonus per stack (frac)
 export const RAMPAGE_DECAY_INTERVAL_MS = 8_000;  // OOC: shed 1 stack per interval
