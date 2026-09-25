@@ -5,9 +5,7 @@ import {
 } from "../../../../../combat/engine/combatPipeline";
 import {
   isEmpoweredAttack,
-  setEmpoweredAttack,
 } from "../../../../../combat/engine/empoweredAttacks";
-import { markSliceDirty } from "../../../../../../ecs/dirtyHelpers";
 import { detachComponent } from "../../../../../../ecs/markerHelpers";
 import { stopEntity } from "../../../../../world/movement";
 import { NODE_REGISTRY } from "../../../../../../world/nodeRegistry";
@@ -77,8 +75,7 @@ function tryFlashTeleport(
  *   1. Suppress the standard empowered multiplier for paths with a custom
  *      discharge formula (Polarity Decay, Cascading Induction,
  *      Superconducting Mass, Capacitor Shunt).
- *   2. Singularity Execute: force discharge early if the target would die
- *      from the projected empowered damage.
+ *   2. Singularity Execute decides early discharge in onHit, after base mitigation.
  *   3. Flash: teleport into melee range near the target before the hit resolves.
  */
 export function registerBeforeAttack(): void {
@@ -89,7 +86,6 @@ export function registerBeforeAttack(): void {
     if (!entity?.usesEnergy) return;
 
     const player = entity;
-    const passives = player.usesSkills.passives;
 
     if (
       isEmpoweredAttack(entity) &&
@@ -114,26 +110,5 @@ export function registerBeforeAttack(): void {
       return;
     }
 
-    if (
-      hasPassive(player, "energy.singularity-execute") &&
-      ctx.defenderType === "monster" &&
-      !isEmpoweredAttack(entity)
-    ) {
-      const empMult = passives["energy.empowered-mult"] ?? 6.0;
-      const energy = player.usesEnergy!;
-      // Project at the CURRENT stored energy (execute can fire below max).
-      const scale = Math.max(0, energy.energy) / 100;
-      const projected = Math.floor(player.dealsDamage.attack * empMult * scale);
-      if (ctx.defender.hasHealth.hp <= projected) {
-        energy.dischargeEnergy = energy.energy;
-        energy.energy = 0; // execute SPENDS the stored energy (this was missing)
-        markSliceDirty(world, player, "usesEnergy");
-        setEmpoweredAttack(world, entity);
-        // The suppress block above already ran (isEmpoweredAttack was false then), so
-        // set it here too — otherwise the empowered multiplier double-applies on top of
-        // empoweredHit's own ×empMult, blowing the discharge past its projected damage.
-        ctx.metadata["suppressEmpoweredMult"] = true;
-      }
-    }
   });
 }

@@ -1,5 +1,10 @@
 import type { PassiveMap } from '../passives';
 
+/** Laser ticks retain the first 30 flat damage; excess contributes at 60%, before Catalyst. */
+export function laserOnHitDamage(base: number): number {
+  return Math.min(30, Math.max(0, base)) + Math.max(0, base - 30) * 0.6;
+}
+
 /** Existing flat on-hit damage before target defenses and final damage layers. The stored stat remains unscaled. */
 export function resolveOnHitDamage(
   base: number,

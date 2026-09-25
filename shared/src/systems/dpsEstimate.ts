@@ -47,7 +47,7 @@ import { resolveEmpoweredMultiplier } from './empoweredMult';
 import { resolveRelicPreview } from './relicPreview';
 import { relicRatingsFromPassives, resolveRelicMagnitudeMultiplier } from './relics';
 import { resolveLaserProfile } from './laserProfile';
-import { resolveOnHitDamage, mitigateOnHitDamage } from './onHitDamage';
+import { resolveOnHitDamage, mitigateOnHitDamage, laserOnHitDamage } from './onHitDamage';
 import { resolveDotClassProfile } from './dotClassProfile';
 import { resolveSummonerProfile, type SummonerProfileInput } from './summonerProfile';
 import { summonerSpecializationFor, type SummonerFrame } from '../data/summoner';
@@ -174,7 +174,9 @@ function genericCaveats(input: DpsEstimateInput): string[] {
  * the auto-attack number and says so in `caveats`, rather than reporting zero.
  */
 export function estimatePlayerDps(input: DpsEstimateInput): DpsEstimate {
-  input = { ...input, onHitDamage: resolveOnHitDamage(input.onHitDamage, input.passives) };
+  const onHit = input.archetype === 'reload' && (input.passives['reload.laser'] ?? 0) > 0
+    ? laserOnHitDamage(input.onHitDamage) : input.onHitDamage;
+  input = { ...input, onHitDamage: resolveOnHitDamage(onHit, input.passives) };
   const relic = resolveRelicPreview(input.archetype, input.passives, relicRatingsFromPassives(input.passives), { subVariant: input.selectedSubVariant, playerTier: input.playerTier });
   const cdSec = Math.max(1, input.attackCooldownMs) / 1000;
   const auto = autoAttackDps(input);

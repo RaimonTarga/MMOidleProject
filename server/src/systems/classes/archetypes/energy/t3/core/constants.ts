@@ -91,7 +91,7 @@ export const CHARGE_STATE_MAX = 2.0; // attack mult at full energy
 // Heavy — Critical Mass (energy-heavy-t3-b)
 export const CRITICAL_MASS_MAX           = 3;
 export const CRITICAL_MASS_DMG_PER_STACK = 0.20; // +discharge mult per stack
-export const CRITICAL_MASS_GAIN_PER_STACK = 0.20; // +energy gain per stack
+export const CRITICAL_MASS_GAIN_PER_STACK = 0.10; // +energy gain per stack
 export const CRITICAL_MASS_RESET_MS      = 5_000; // gap without damage that resets stacks
 
 // Heavy — Endless Storm (energy-heavy-t3-c)

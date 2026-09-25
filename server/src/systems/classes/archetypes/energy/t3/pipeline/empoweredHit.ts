@@ -1,5 +1,7 @@
+import { markSliceDirty } from '../../../../../../ecs/dirtyHelpers';
+import { outgoingFinalDamage } from '../../../../../combat/damage/finalDamage';
 import { registerCombatListener } from '../../../../../combat/engine/combatPipeline';
-import { isEmpoweredAttack } from '../../../../../combat/engine/empoweredAttacks';
+import { isEmpoweredAttack, setEmpoweredAttack } from '../../../../../combat/engine/empoweredAttacks';
 import {
   applyStatusEffect, removeStatusEffect, getTotalStacks,
 } from '@mmo-idle/shared';
@@ -29,17 +31,31 @@ import {
  *   - Capacitor Shunt        — discharge amplified by accumulated reservoir
  */
 export function registerEmpoweredHit(): void {
-  registerCombatListener('onHit', (ctx, _world) => {
+  registerCombatListener('onHit', (ctx, world) => {
     if (ctx.attackerType !== 'player') return;
 
     const entity = ctx.attacker;
     if (!entity?.usesEnergy) return;
-    if (!isEmpoweredAttack(entity)) return;
 
     const player = entity;
     const state  = entity.tracksCombat;
     const passives = player.usesSkills.passives;
     const energy = entity.usesEnergy;
+
+    // Check the already-mitigated base hit, exactly as the discharge below does.
+    // This remains a damage estimate: later dodge, shields and hit caps can prevent a kill.
+    if (hasPassive(player, 'energy.singularity-execute') && !isEmpoweredAttack(entity)
+      && ctx.defenderType === 'monster' && energy.energy > 0 && !ctx.metadata.chaoticMiss) {
+      const projected = Math.max(1, Math.floor(ctx.damage * (passives['energy.empowered-mult'] ?? 6) * energy.energy / 100));
+      if (ctx.defender.hasHealth.hp <= outgoingFinalDamage(world, player.isPlayer.id, projected)) {
+        energy.dischargeEnergy = energy.energy;
+        energy.energy = 0;
+        markSliceDirty(world, player, 'usesEnergy');
+        setEmpoweredAttack(world, player);
+        ctx.metadata['suppressEmpoweredMult'] = true;
+      }
+    }
+    if (!isEmpoweredAttack(entity)) return;
 
     if (hasPassive(player, 'energy.polarity-decay')) {
       ctx.damage = Math.max(1, Math.floor(player.dealsDamage.attack * PD_DISCHARGE_MULT));
@@ -143,7 +159,7 @@ export function registerEmpoweredHit(): void {
     if (hasPassive(player, 'energy.singularity-execute')) {
       const empMult = passives['energy.empowered-mult'] ?? 6.0;
       const scale   = Math.max(0, energy.dischargeEnergy) / 100;
-      ctx.damage    = Math.max(1, Math.floor(player.dealsDamage.attack * empMult * scale));
+      ctx.damage    = Math.max(1, Math.floor(ctx.damage * empMult * scale));
       // Void-themed discharge FX (client fxVoidDischarge).
       const existing = ctx.metadata['clientEffects'];
       ctx.metadata['clientEffects'] = Array.isArray(existing) ? [...existing, 'void-discharge'] : ['void-discharge'];

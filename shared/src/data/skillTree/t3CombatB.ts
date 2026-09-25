@@ -124,7 +124,7 @@ export const t3CombatEntriesB = [
       'energy.critical-mass': 1,
       'energy.critical-mass-max-stacks': 3,
       'energy.critical-mass-discharge-per-stack': 0.20,
-      'energy.critical-mass-gain-per-stack': 0.20,
+      'energy.critical-mass-gain-per-stack': 0.10,
       'energy.critical-mass-reset-ms': 5_000,
     },
   }],
