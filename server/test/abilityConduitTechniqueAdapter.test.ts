@@ -6,6 +6,7 @@ import {
   ABILITY_SWEEP_FX,
   GAME_CONFIG,
   STARTER_RUNE_IDS,
+  SUMMONER_CORE_TUNING,
   emptyEquipment,
   applyStatusEffect,
   getCooldown,
@@ -26,6 +27,11 @@ import { abilityCooldownKey } from '../src/systems/player/abilities/abilityCoold
 import { attackCadenceMult } from '../src/systems/combat/engine/attackCadence';
 import { takeWorldLogEvents } from '../src/world/worldLog';
 import { World } from '../src/world/World';
+
+// These cases pin the adapter's budget arithmetic (shares sum to one rider,
+// no body copies it), not balance. Hold the formation offense tuning at 1 so the
+// expected integers stay readable; every consumer scales by it uniformly.
+(SUMMONER_CORE_TUNING as { formationOffenseMult: number }).formationOffenseMult = 1;
 
 function assert(condition: boolean, message: string): void {
   if (!condition) throw new Error(message);

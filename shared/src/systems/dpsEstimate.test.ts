@@ -10,6 +10,7 @@
 
 import { estimatePlayerDps, type DpsEstimateInput } from './dpsEstimate';
 import type { PassiveMap } from '../passives';
+import { SUMMONER_CORE_TUNING, SUMMONER_FRAME_TUNING } from '../data/summoner';
 
 function assert(cond: boolean, msg: string): void {
   if (!cond) throw new Error(msg);
@@ -268,7 +269,9 @@ function testConduitFormationSecondaryBudgets(): void {
     'Consort estimator keeps the baseline formation on-hit budget');
   assert(part(estimate('heavy'), 'Formation flat on-hit') === 10,
     'Effigy estimator keeps the baseline formation on-hit budget');
-  assert(part(estimate('light'), '6 summons direct') === 105,
+  const splinterDirect = 100 * SUMMONER_FRAME_TUNING.light.offenseMult
+    * SUMMONER_CORE_TUNING.formationOffenseMult;
+  assert(Math.abs(part(estimate('light'), '6 summons direct') - splinterDirect) < 0.51,
     'Splinter secondary efficiency does not change direct formation Attack');
 }
 

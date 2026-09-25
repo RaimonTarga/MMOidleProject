@@ -102,8 +102,21 @@ Idolwright at Vigil range 3.94.
 
 `sizeMult` feeds `resolveMinionHitbox`, so it is **not** purely cosmetic.
 
+Formation offense: `SUMMONER_CORE_TUNING.formationOffenseMult` is 1.2
+(2026-09-25). Design intent: a FULL formation sits at or just above the top of
+its tier's damage, because the Conduit deals nothing on its own and each lost
+body removes its share. Long fights, bosses included, are expected to come out
+below the other classes. Measured at the T1 arrival build: 43.1 dps vs 35.7–41.0
+for the other roots (it was 35.9 at 1.0).
+
+Summon mitigation: every summon carries the Conduit's live plating and DR in
+full — a copy, not a split (`computeMinionMitigation` in `spawn.ts`, resynced
+each tick by `syncLiveMinionFrameStats`). Before 2026-09-25 summons spawned with
+0/0 and folded to Plains/Forest swarm hits that plating is tuned to absorb.
+
 Known gap: `conduitDefenseShare` is authored and exposed on the profile but has
-no consumer. The range descriptions promise it; nothing reads it yet.
+no consumer. The range descriptions promise it; nothing reads it yet. If wired,
+it should scale what summons inherit per range, not take plating from the Conduit.
 
 ## 5. Core Loop
 

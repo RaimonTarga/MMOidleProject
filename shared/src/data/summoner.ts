@@ -64,7 +64,13 @@ export interface SummonerRangeTuning {
 export const SUMMONER_CORE_TUNING = {
   rootCount: 4,
   apsInheritanceMult: 1,
-  formationOffenseMult: 1,
+  // DESIGNER BUFF, 2026-09-25: a FULL formation should sit at the top of its
+  // tier's damage, because the Conduit has no damage of its own and every lost
+  // body removes its share. At the T1 arrival build 1.0 measured second-lowest
+  // of six roots (35.9 dps vs 35.7-41.0); 1.2 measures 43.1, and one dead body
+  // drops it back to ~32. Per-summon attack rounds to an integer, so at low
+  // attack this moves in steps (1.2 and 1.25 land on the same T1 value).
+  formationOffenseMult: 1.2,
   // DESIGNER BUFF, 2026-08-25: Conduit's own bot playtesting hadn't reached a
   // boss fight yet when this was flagged, but the structural problem is
   // visible directly in the formula (`reconstruction.ts`): every fallen

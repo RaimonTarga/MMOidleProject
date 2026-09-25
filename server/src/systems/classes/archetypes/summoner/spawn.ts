@@ -82,6 +82,28 @@ export function computeMinionMaxHp(owner: PlayerEntity, slot = 0): number {
   );
 }
 
+/**
+ * Summons fight in the Conduit's armor: each body carries the owner's live
+ * plating and DR in full (a copy, not a split). Plains/Forest swarm hits are
+ * tuned to be eaten by plating, so unarmored summons took every hit at full
+ * strength while every other class shrugged them off.
+ */
+export function computeMinionMitigation(owner: PlayerEntity): { plating: number; damageReduction: number } {
+  return {
+    plating: owner.mitigatesDamage.plating,
+    damageReduction: owner.mitigatesDamage.damageReduction,
+  };
+}
+
+export function syncMinionMitigation(world: World, minion: MinionEntity, owner: PlayerEntity): void {
+  const desired = computeMinionMitigation(owner);
+  if (minion.mitigatesDamage.plating === desired.plating
+    && minion.mitigatesDamage.damageReduction === desired.damageReduction) return;
+  minion.mitigatesDamage.plating = desired.plating;
+  minion.mitigatesDamage.damageReduction = desired.damageReduction;
+  markSliceDirty(world, minion, 'mitigatesDamage');
+}
+
 export function syncMinionMaxHp(
   world: World,
   minion: MinionEntity,
@@ -222,10 +244,7 @@ export function spawnMinionForOwner(
       attackCooldown,
       lastAttackAt: 0,
     },
-    mitigatesDamage: {
-      plating: 0,
-      damageReduction: 0,
-    },
+    mitigatesDamage: computeMinionMitigation(owner),
     tracksCombat: makeTracksCombat(),
     hasStatus: {},
   };

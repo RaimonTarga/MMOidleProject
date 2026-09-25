@@ -11,6 +11,7 @@ import {
   spawnMinionForOwner,
   syncMinionHitbox,
   syncMinionMaxHp,
+  syncMinionMitigation,
 } from './spawn';
 import { driveMinion } from './ai';
 import { validateSummonerCommand } from './command';
@@ -109,6 +110,7 @@ function syncLiveMinionFrameStats(world: World, owner: SummonerPlayerEntity): vo
       markSliceDirty(world, minion, 'isMinion');
     }
     syncMinionMaxHp(world, minion, computeMinionMaxHp(owner, index));
+    syncMinionMitigation(world, minion, owner);
     if (minion.hasHealth.recovery !== desiredHpRegen) {
       minion.hasHealth.recovery = desiredHpRegen;
       markSliceDirty(world, minion, 'hasHealth');
