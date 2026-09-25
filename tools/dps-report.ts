@@ -1,3 +1,4 @@
+import { crescendoMultiplier } from '../server/src/systems/classes/archetypes/cadence/t3/core/crescendo';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
@@ -632,23 +633,15 @@ function chargeStateMultiplier(fillPct: number, minMult: number, maxMult: number
 }
 
 /**
- * Average Juggernaut crescendo finisher bonus over a sustained combat window.
- * Mirrors server crescendoMultiplier: a front-loaded ramp to `rampMult` over
- * `rampSeconds`, then an unbounded `tailPerSec` tail. Sampled at second
- * midpoints over the horizon (combat assumed continuous; resets out of combat).
+ * Average Juggernaut crescendo finisher bonus over a sustained combat window,
+ * using the server crescendoMultiplier (ramp, linear tail, log knee past +100%).
+ * Sampled at second midpoints over the horizon (combat assumed continuous;
+ * resets out of combat).
  */
 function averageCrescendoBonus(passives: PassiveMap, horizonSec: number): number {
-  const rampSeconds = Math.max(0.1, passives['cadence.crescendo-ramp-seconds'] ?? 15);
-  const rampMult = Math.max(0, passives['cadence.crescendo-ramp-mult'] ?? 0.45);
-  const tailPerSec = Math.max(0, passives['cadence.crescendo-tail-per-sec'] ?? 0.01);
   const steps = Math.max(1, Math.round(horizonSec));
   let sum = 0;
-  for (let s = 0; s < steps; s++) {
-    const t = s + 0.5;
-    let mult = rampMult * (Math.min(t, rampSeconds) / rampSeconds);
-    if (t > rampSeconds) mult += (t - rampSeconds) * tailPerSec;
-    sum += mult;
-  }
+  for (let s = 0; s < steps; s++) sum += crescendoMultiplier((s + 0.5) * 1000, passives);
   return sum / steps;
 }
 

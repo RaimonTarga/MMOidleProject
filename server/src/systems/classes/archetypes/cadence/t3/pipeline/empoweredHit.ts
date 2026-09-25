@@ -87,7 +87,7 @@ export function registerCadenceEmpoweredHit(): void {
     }
 
     // Crescendo (Juggernaut): amplify the finisher by the in-combat ramp multiplier
-    // (time-based, front-loaded then heavy DR — see core/crescendo.ts). Not consumed:
+    // (time-based, front-loaded then a log tail past +100% — see core/crescendo.ts). Not consumed:
     // it keeps climbing while you stay in combat and resets instantly when it ends.
     if ((passives['cadence.crescendo'] ?? 0) > 0 && cadence.crescendoTimerMs > 0) {
       ctx.damage = Math.round(ctx.damage * (1 + crescendoMultiplier(cadence.crescendoTimerMs, passives)));

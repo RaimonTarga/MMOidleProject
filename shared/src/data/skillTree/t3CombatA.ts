@@ -96,7 +96,7 @@ export const t3CombatEntriesA = [
     id: 'cadence-heavy-t3-c', name: 'Juggernaut', tier: 3,
     classId: 'cadence-root', subVariantId: 'heavy',
     parent: 'cadence-heavy', children: [],
-    description: 'Time in active combat ramps a Crescendo bonus that multiplies your finisher. The first several seconds give most of the bonus; it keeps climbing forever at a diminished rate. Resets instantly when you leave combat. Does not affect regular attacks.',
+    description: 'Time in active combat ramps a Crescendo bonus that multiplies your finisher. The first several seconds give most of the bonus; it keeps climbing forever, with logarithmic growth beyond +100%. Resets instantly when you leave combat. Does not affect regular attacks.',
     cost: 1, statEffects: {},
     mechanicEffects: { 'cadence.crescendo': 1, 'cadence.crescendo-ramp-seconds': 15, 'cadence.crescendo-ramp-mult': 0.45, 'cadence.crescendo-tail-per-sec': 0.01 },
   }],
