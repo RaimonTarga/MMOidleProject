@@ -1,0 +1,55 @@
+{
+  "stages": [
+    {
+      "stage": "t1-r2",
+      "observations": 42,
+      "pairs": 14,
+      "failures": 0,
+      "pairReceiptsMatch": true
+    },
+    {
+      "stage": "t1-iteration2",
+      "observations": 42,
+      "pairs": 14,
+      "failures": 0,
+      "pairReceiptsMatch": true
+    },
+    {
+      "stage": "t1-boss-followup",
+      "observations": 8,
+      "pairs": 4,
+      "failures": 0,
+      "pairReceiptsMatch": true
+    },
+    {
+      "stage": "t1-boss-orbit-r2",
+      "observations": 8,
+      "pairs": 4,
+      "failures": 0,
+      "pairReceiptsMatch": true
+    },
+    {
+      "stage": "t2",
+      "observations": 36,
+      "pairs": 18,
+      "failures": 0,
+      "pairReceiptsMatch": true
+    },
+    {
+      "stage": "t3",
+      "observations": 52,
+      "pairs": 26,
+      "failures": 0,
+      "pairReceiptsMatch": true
+    },
+    {
+      "stage": "t4",
+      "observations": 36,
+      "pairs": 18,
+      "failures": 0,
+      "pairReceiptsMatch": true
+    }
+  ],
+  "rawArtifacts": 896,
+  "baselineReplayCount": 14
+}

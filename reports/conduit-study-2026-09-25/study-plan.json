@@ -1,0 +1,30 @@
+{
+  "scope": "Adaptive local combat study; no gameplay adoption, deployment, account, database or economy-route changes",
+  "source": "D:\\mmo-idle\\conduit-study-2026-09-25\\source",
+  "baselineRevision": "ff98ba4513cb9fcb1e5752acfd56495268aff416",
+  "sourceInventory": "D:\\mmo-idle\\conduit-study-2026-09-25\\source-inventory.json",
+  "baselineDirtyDiff": "D:\\mmo-idle\\conduit-study-2026-09-25\\working.diff",
+  "tickMs": 100,
+  "stages": [
+    "t1-r2",
+    "t1-iteration2",
+    "t1-boss-followup",
+    "t1-boss-orbit-r2",
+    "t2",
+    "t3",
+    "t4"
+  ],
+  "failedSetup": "Seven zero-combat qualification failures retained in t1-qualification; starter Rune recipe validation repaired and ability budgets corrected in fresh t1-r2 output.",
+  "limitations": [
+    "Synthetic fixed combat packages, not fresh-character acquisition runs.",
+    "Fixed mastery; no economy or progression-time inference.",
+    "Bosses awakened directly; guardians and approach route excluded.",
+    "Other classes not compared; no universal class ranking.",
+    "T4 planned as one-seed coverage screen.",
+    "HP-treatment replacement payments approximately held fixed; rounding may differ by 1 HP."
+  ],
+  "hitboxes": {
+    "path": "D:\\mmo-idle\\volcano-heat-management-01\\hitboxes.json",
+    "sha256": "08bcc55633efe444d303c71977f7dcf87402157753af543e975e6c0c493afa83"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "passed": [
+    "pnpm --filter @mmo-idle/server exec tsc --noEmit -p tsconfig.bench.json",
+    "pnpm --filter @mmo-idle/server exec tsx --conditions=development test/summonerOverhaul.test.ts",
+    "pnpm --filter @mmo-idle/server exec tsx --conditions=development test/summonerSpecializations.test.ts",
+    "pnpm --filter @mmo-idle/server exec tsx --conditions=development test/runeClassMaintenance.test.ts",
+    "git diff --check -- server/bench/balance/ttkSurveySpec.ts"
+  ],
+  "fullSuiteRun": false,
+  "browserPlaytestRun": false,
+  "gameplayTuningAdopted": false,
+  "studyProcessesRemaining": 0,
+  "combatObservations": 224,
+  "rawArtifactsVerified": 896
+}

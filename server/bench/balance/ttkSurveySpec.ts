@@ -184,7 +184,7 @@ export function prepareSurveyBot(world: World, cell: SurveyCell, pos: {x:number;
   p.activeStance = stance;
   const c = SURVEY_CLASSES.find(c=>c.name===cell.className)!;
   const rules = declared.runeRules;
-  for (const r of RUNE_RECIPE_DATABASE.values()) if (r.runeId && rules.some(rule=>rule.actionId===r.runeId)) {
+  for (const r of RUNE_RECIPE_DATABASE.values()) if (!r.deprecated && r.runeId && !p.runesOwned.includes(r.runeId) && rules.some(rule=>rule.actionId===r.runeId)) {
     assert(isRuneRecipeUnlocked(r,p), `Unreachable rune ${r.id}`);
     if(!p.runesOwned.includes(r.runeId)) p.runesOwned.push(r.runeId);
   }
