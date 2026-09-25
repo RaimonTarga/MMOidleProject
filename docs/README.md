@@ -26,6 +26,7 @@ top-level doc.
 
 | Doc | Why |
 |---|---|
+| [Playtest follow-up command center](briefs/playtest-followup-command-center-2026-09-25.md) | **Start here for post-v0.5 work.** Status, code location, blocking decisions and session order for the six follow-up workstreams (Volcano, defense, Conduit, XP pacing, economy, T4 balance). |
 | [Volcano area nerf study](../reports/volcano-area-study-2026-09-25/EXPERIMENT.md) | **Applied** 2026-09-25: Heat incoming 4.5%→3.5%/stack, Ash Salamander 84→70, Ember Skink 75→60 + Burn 13→8, Ashspitter 110→95 + Burn 16→12. 52-observation farm/boss check; survival improves, Conduit still fails T3 Volcano. |
 | [Conduit durability study](../reports/conduit-study-2026-09-25/REPORT.md) | 224 observations; recommends +50% summon HP with replacement ratio 0.30→0.20 as the **early-game** candidate only. Not applied; upper tiers are package-dependent with regressions. |
 | [T4 scaling study](../reports/t4-scaling-study-2026-09-25/STUDY.md) | 185 World observations on T4 specialization outliers; proposes Voidwalker mitigation fix, Berserker/Juggernaut/Melter/Invoker ceiling cuts. Candidate code lives on `codex/t4-scaling-candidate-01` (smoke only). |
