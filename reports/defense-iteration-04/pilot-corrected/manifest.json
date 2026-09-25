@@ -1,0 +1,486 @@
+{
+  "schema": 2,
+  "variant": "baseline",
+  "traceAll": false,
+  "overrides": [],
+  "source": "0c8087a5a3ad1bea9e83782d83563b4717cbce5d",
+  "runnerSha256": "b4c201403dc406c5d95d5c56850f62906ae539e5320309980a3f1d28a9714b74",
+  "runnerSource": "import assert from 'node:assert/strict';\r\nimport { mkdirSync, writeFileSync, appendFileSync, existsSync, readFileSync } from 'node:fs';\r\nimport { resolve } from 'node:path';\r\nimport { execFileSync } from 'node:child_process';\r\nimport { createHash } from 'node:crypto';\r\nimport { DUNGEON_DEFS, NODE_BIOMES, ITEM_DATABASE, getResource } from '@mmo-idle/shared';\r\nimport { BREADTH_CELLS } from './balance/playerBreadthSpec';\r\nimport { prepareSurveyBot, SURVEY_CELLS, type SurveyCell } from './balance/ttkSurveySpec';\r\nimport { createBalanceWorld } from './balance/worldFactory';\r\nimport { setupArena, teardownArena, BOT_SPAWN } from './balance/arena';\r\nimport { ensureDungeon } from '../src/systems/world/dungeons/dungeon';\r\nimport { hydrateHitboxCacheFromArtifact, writeHitboxArtifact } from '../src/hitbox/cache';\r\nimport { setCombatMeasurementObserver, registerCombatListener, unregisterCombatListener, type CombatEventHandler } from '../src/systems/combat/engine/combatPipeline';\r\n\r\n// Separate in-memory worlds, no HTTP listeners, DB migrations or existing experiment mutations.\r\nasync function main(){\r\nconst out=resolve(process.argv[2] ?? '../reports/defense-redesign-01/baseline');\r\nassert(!existsSync(out), `Refusing to overwrite ${out}`);\r\nmkdirSync(out,{recursive:true});\r\nconst artifact=resolve('../reports/defense-redesign-01/hitboxes.json');\r\nif(!existsSync(artifact)) await writeHitboxArtifact(artifact);\r\nassert(hydrateHitboxCacheFromArtifact(artifact)>0);\r\nconst capMs=120000;\r\nconst variant=process.env.DEFENSE_VARIANT??'baseline';assert(['baseline','desert-dr','jungle-frequency','jungle-strength','grave-no-plating'].includes(variant));\r\nconst overrides:unknown[]=[];\r\nfor(const tier of [3,4]){\r\n const id=(variant==='desert-dr'?'desert-vest-t':'jungle-vest-t')+tier;\r\n const item=structuredClone(ITEM_DATABASE.get(id)!);\r\n if(variant==='desert-dr')item.statModifiers.damageReduction=(item.statModifiers.damageReduction??0)+.06;\r\n if(variant==='jungle-frequency')item.statModifiers.evasion=(item.statModifiers.evasion??0)+.10;\r\n if(variant==='jungle-strength')item.mechanicEffects={...item.mechanicEffects,'defense.evade-mitigation':(item.mechanicEffects?.['defense.evade-mitigation']??0)+.05};\r\n if(variant!=='baseline'&&variant!=='grave-no-plating'){ITEM_DATABASE.set(id,item);overrides.push(item);}\r\n}\r\nif(variant==='grave-no-plating'){\r\n const item=structuredClone(ITEM_DATABASE.get('graveyard-vest-t4')!);\r\n delete item.mechanicEffects!['defense.hit-plating-per-stack'];\r\n delete item.mechanicEffects!['defense.hit-plating-max-stacks'];\r\n delete item.mechanicEffects!['defense.hit-plating-duration-ms'];\r\n ITEM_DATABASE.set(item.isMonster.id,item);overrides.push(item);\r\n}\r\nconst declaredSeeds=[303007,303019,303041,303067];\r\nconst seeds=process.env.DEFENSE_SEED?[Number(process.env.DEFENSE_SEED)]:declaredSeeds;assert(seeds.every(s=>declaredSeeds.includes(s)));\r\nconst traceAll=process.env.DEFENSE_TRACE_ALL==='1';\r\nconst cells:SurveyCell[]=[];\r\nfunction add(tier:number,cls:string,armor:string,node:string,core?:string,plus=3,frame='balanced',boss=false,stance?:string|null){\r\n const base=BREADTH_CELLS.find(c=>c.tier===tier&&c.className===cls&&c.frame===frame&&c.role===(boss?'boss':'farm')&&!c.controlCaseId&&(!c.id.includes('-far-')))!;\r\n assert(base,`${tier}/${cls}/${frame}`);\r\n const cell=structuredClone(base); cell.nodeId=node; cell.upgradeLevel=plus; cell.isDungeon=boss;\r\n cell.build.gearItemIds.armor=armor;\r\n if(core)cell.build.gearItemIds.core=core;\r\n if(stance!==undefined)cell.stance=stance;\r\n cell.id=`${tier}-${cls}-${frame}-${armor}-${node}-${core??'reference'}-p${plus}-${stance??'default'}`;cell.build.id=cell.id;\r\n cells.push(cell);\r\n}\r\ntype Profile={id:string;tier:number;biome:string;armor:string;alpha?:string;members?:string[]};\r\nconst profiles:Profile[]=[];\r\nfor(const tier of [3,4]){\r\n for(const alpha of tier===3?['dune-stalker','desert-basilisk']:['sand-viper','dune-basilisk'])profiles.push({id:alpha,tier,biome:'desert',armor:'desert',alpha});\r\n profiles.push({id:'ambushers',tier,biome:'jungle',armor:'jungle',members:Array(3).fill(tier===3?'jungle-stalker':'hunting-panther')});\r\n profiles.push({id:'mixed-rally',tier,biome:'jungle',armor:'jungle',members:tier===3?['silverback','canopy-harrier','jungle-stalker']:['apex-silverback','thornback-lizard','hunting-panther']});\r\n for(const armor of ['desert','jungle'])profiles.push({id:'volcano-anchor',tier,biome:'volcanic',armor,alpha:tier===3?'magma-brute':'obsidian-tortoise'});\r\n}\r\nprofiles.push({id:'gravewright',tier:4,biome:'graveyard',armor:'graveyard',alpha:'gravewright'},\r\n {id:'plague-support',tier:4,biome:'graveyard',armor:'graveyard',members:['plague-hound','carrion-vulture','bone-crawler']},\r\n {id:'rat-pressure',tier:4,biome:'graveyard',armor:'graveyard',members:Array(4).fill('plague-rat')});\r\nconst profileByCell=new Map<string,Profile>();\r\nfor(const cls of ['squire','striker','slinger','apprentice','spirit','conduit'])for(const profile of profiles){\r\n if(variant==='desert-dr'&&profile.armor!=='desert'||variant.startsWith('jungle-')&&profile.armor!=='jungle'||variant==='grave-no-plating'&&profile.armor!=='graveyard')continue;\r\n add(profile.tier,cls,profile.armor+'-vest-t'+profile.tier,'node-t'+profile.tier+'-'+profile.biome+'-03');\r\n const cell=cells[cells.length-1];cell.id+='-'+profile.id;cell.build.id=cell.id;profileByCell.set(cell.id,profile);\r\n}\r\nconst filter=process.env.DEFENSE_CASE_FILTER;\r\nconst pattern=process.env.DEFENSE_CASE_PATTERN;\r\nconst selected=pattern?cells.filter(c=>new RegExp(pattern).test(c.id)):filter?cells.filter(c=>c.id.includes(filter)):cells;\r\nassert(selected.every(c=>NODE_BIOMES[c.nodeId])); if(process.env.DEFENSE_PREFLIGHT==='1'){for(const c of selected){const world=createBalanceWorld();const {view}=prepareSurveyBot(world,c,BOT_SPAWN);assert(view.selectedRange);teardownArena(world);}console.log('Core preflight: '+selected.length+' cells');return;}assert(selected.length>0);assert(new Set(selected.map(c=>c.id)).size===selected.length);\r\nfor(const c of selected)assert(ITEM_DATABASE.has(c.build.gearItemIds.armor!));\r\nwriteFileSync(resolve(out,'manifest.json'),JSON.stringify({schema:2,variant,traceAll,overrides,source:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),runnerSha256:createHash('sha256').update(readFileSync(__filename)).digest('hex'),runnerSource:readFileSync(__filename,'utf8'),diff:execFileSync('git',['diff'],{encoding:'utf8',maxBuffer:20e6}),hitboxSha256:createHash('sha256').update(readFileSync(artifact)).digest('hex'),scope:'Synthetic mature mastery, declared +0/+3/+5 gear; no acquisition, economy or live-player inference. First death ends farming. No respawn. One finite native pack or explicit unlinked cluster; full HP, native Runes. 10s aftermath after last enemy; Graveyard analyzed separately.',capMs,seeds,cells:selected,profiles},null,2));\r\nconst originalRandom=Math.random,originalNow=Date.now;\r\nlet completed=0;\r\nfor(const cell of selected)for(const seed of seeds){\r\n let state=seed;Math.random=()=>{state|=0;state=state+0x6D2B79F5|0;let t=Math.imul(state^state>>>15,1|state);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};\r\n let now=0;Date.now=()=>now;\r\n const world=createBalanceWorld();world.suppressRepopulation=true;\r\n const target={nodeId:cell.nodeId,biomeGroup:NODE_BIOMES[cell.nodeId].biomeGroup,contentTier:cell.tier,isDungeon:!!cell.isDungeon};\r\n let deathCause:unknown=null; const originalKill=world.killPlayer.bind(world);world.killPlayer=(id,cause)=>{deathCause=cause;originalKill(id,cause);};const samples:unknown[]=[];let dawnActiveMs=0;\r\n const layers:Record<string,number>={};let hpLost=0,hpHealed=0,hpWrites=0,evades=0,hitCount=0;\r\n setCombatMeasurementObserver(world,m=>{const key=m.event+':'+m.layer;layers[key]=(layers[key]??0)+m.before-m.after;});\r\n const nominalDamageByType:Record<string,number>={};let loggedAbsorbed=0;\r\n const journalPush=world.worldLogJournal.push.bind(world.worldLogJournal);\r\n world.worldLogJournal.push=(...events)=>{for(const e of events){if(e.kind==='damage'&&e.target.actorType==='player'){nominalDamageByType[e.damageType]=(nominalDamageByType[e.damageType]??0)+e.hpDamage;loggedAbsorbed+=e.absorbed;}}return journalPush(...events);};\r\n let kills=0,maxHit=0,fullHpLethalHits=0,damage=0;const hits:unknown[]=[];\r\n const listener:CombatEventHandler=ctx=>{if(ctx.defenderType==='player'){hitCount++;if(ctx.metadata.evaded)evades++;maxHit=Math.max(maxHit,ctx.damage);damage+=ctx.damage;if(ctx.damage>=ctx.defender.hasHealth.maxHp)fullHpLethalHits++;hits.push({t:now,attacker:ctx.attackerType==='monster'?ctx.attacker.isMonster.monsterTypeId:ctx.attackerType,hpBefore:ctx.defender.hasHealth.hp,damage:ctx.damage,gross:ctx.metadata.incomingGross,ability:ctx.metadata.abilityName,evaded:ctx.metadata.evaded});if(!traceAll&&hits.length>25)hits.shift();}};\r\n const kill:CombatEventHandler=ctx=>{if(ctx.defenderType==='monster')kills++;};\r\n registerCombatListener('onDamageTaken',listener);registerCombatListener('onKill',kill);\r\n try{\r\n  setupArena(world,target);\r\n  if(cell.isDungeon){ensureDungeon(world,cell.nodeId);const d=world.dungeons.get(cell.nodeId)!;assert(d);for(const id of d.guardianIds)world.removeMonsterEntity(id);d.guardianIds=[];d.guardiansEngaged=true;d.status='bossAwakening';d.bossAwakensAtMs=-1;}\r\n  for(const m of [...world.monsterEntitiesInNode(cell.nodeId)])world.removeMonsterEntity(m.isMonster.id);\r\n  assert.equal([...world.monsterEntitiesInNode(cell.nodeId)].length,0,'ambient monsters remain');\r\n  const profile=profileByCell.get(cell.id)!;\r\n  const anchor={x:BOT_SPAWN.x,y:BOT_SPAWN.y-180};\r\n  if(profile.alpha)assert(world.spawnPack(cell.nodeId,profile.alpha,anchor)?.length);\r\n  else profile.members!.forEach((id,i)=>assert(world.createMonster(cell.nodeId,id,{x:anchor.x+(i-(profile.members!.length-1)/2)*50,y:anchor.y})));\r\n  const fixture=[...world.monsterEntitiesInNode(cell.nodeId)].map(m=>({type:m.isMonster.monsterTypeId,position:m.hasPosition,health:m.hasHealth,attack:m.dealsDamage,defense:m.mitigatesDamage}));\r\n  const fixtureHash=createHash('sha256').update(JSON.stringify(fixture)).digest('hex');\r\n  const initialCount=fixture.length;\r\n  const seen=new Set([...world.monsterEntitiesInNode(cell.nodeId)].map(m=>m.isMonster.id));\r\n  let spawnedLater=0,emptySince:number|null=null,clearAtMs:number|null=null;\r\n  const {bot,view}=prepareSurveyBot(world,cell,BOT_SPAWN);const starting={hp:bot.hasHealth.maxHp,plating:bot.mitigatesDamage.plating,dr:bot.mitigatesDamage.damageReduction,equipment:bot.holdsInventory.equipment,skills:bot.usesSkills.unlockedSkills,passives:bot.usesSkills.passives};\r\n  let trackedHp=bot.hasHealth.hp;\r\n  Object.defineProperty(bot.hasHealth,'hp',{enumerable:true,configurable:true,get:()=>trackedHp,set:(v:number)=>{if(v<trackedHp)hpLost+=trackedHp-v;else hpHealed+=v-trackedHp;hpWrites++;trackedHp=v;}});\r\n  let outcome='timeout',bossSeen=false,bossHpFraction=1,minHp=1,lowHpMs=0;\r\n  for(;now<capMs;){world.tick(100,now);now+=100;world.pendingDeaths=[];if(getResource(bot.tracksCombat,'engagementDrRemainingMs')>0)dawnActiveMs+=100;if(now%1000===0){samples.push({t:now,x:bot.hasPosition.current.x,y:bot.hasPosition.current.y,target:bot.hasAttackTarget?.targetId,hp:bot.hasHealth.hp,debt:getResource(bot.tracksCombat,'damageDebtPool'),dawn:getResource(bot.tracksCombat,'engagementDrRemainingMs'),effects:structuredClone(bot.tracksCombat.statusEffects)});if(!traceAll&&samples.length>30)samples.shift();}minHp=Math.min(minHp,bot.hasHealth.hp/bot.hasHealth.maxHp);if(bot.hasHealth.hp/bot.hasHealth.maxHp<.25)lowHpMs+=100;\r\n   if(bot.hasHealth.hp<=0||bot.isDead){outcome='bot_died';break;}\r\n   const remaining=[...world.monsterEntitiesInNode(cell.nodeId)];\r\n   for(const m of remaining)if(!seen.has(m.isMonster.id)){seen.add(m.isMonster.id);spawnedLater++;}\r\n   if(remaining.length===0){\r\n    if(emptySince===null){emptySince=now;clearAtMs=now;}\r\n    // Ten seconds of native aftermath: death pools, debuffs and deferred damage.\r\n    if(now-emptySince>=10000){outcome='pack_cleared';break;}\r\n   }else emptySince=null;\r\n   if(cell.isDungeon){const boss=[...world.monsterEntitiesInNode(cell.nodeId)].find(m=>m.isMonster.monsterTypeId===DUNGEON_DEFS.get(cell.nodeId)!.boss.bossId);if(boss){bossSeen=true;bossHpFraction=boss.hasHealth.hp/boss.hasHealth.maxHp;}else if(bossSeen){outcome=world.dungeons.get(cell.nodeId)?.status==='cooldown'?'boss_killed':'boss_missing';if(outcome==='boss_killed')bossHpFraction=0;break;}}\r\n   if(bot.hasHealth.hp<=0||bot.isDead){outcome='bot_died';break;}\r\n  }\r\n  const row={id:cell.id,seed,profile,fixture,fixtureHash,initialCount,spawnedLater,clearAtMs,remaining:[...world.monsterEntitiesInNode(cell.nodeId)].map(m=>({type:m.isMonster.monsterTypeId,hp:m.hasHealth.hp})),outcome,elapsedMs:now,kills,bossSeen,bossHpFraction,minHp,lowHpMs,hpEnd:bot.hasHealth.hp,maxHit,fullHpLethalHits,damage,starting,lastHits:hits,deathCause,dawnActiveMs,samples,layers,hpLost,hpHealed,hpWrites,hitCount,evades,nominalDamageByType,loggedAbsorbed};\r\n  appendFileSync(resolve(out,'rows.jsonl'),JSON.stringify(row)+'\\n');\r\n  console.log(JSON.stringify({completed:++completed,total:selected.length*seeds.length,id:cell.id,seed,outcome,kills,elapsedMs:now}));\r\n }catch(error){appendFileSync(resolve(out,'failures.jsonl'),JSON.stringify({id:cell.id,seed,error:String(error)})+'\\n');throw error;}\r\n finally{setCombatMeasurementObserver(world);unregisterCombatListener('onDamageTaken',listener);unregisterCombatListener('onKill',kill);teardownArena(world);Math.random=originalRandom;Date.now=originalNow;}\r\n}\r\nwriteFileSync(resolve(out,'complete.json'),JSON.stringify({completed,expected:selected.length*seeds.length}));\r\n}\r\nmain().catch(error=>{console.error(error);process.exitCode=1;});\r\n",
+  "diff": "",
+  "hitboxSha256": "1bd84830ee3c138766b4360620e43d541419d3dbd2916aa79816f1ae287e61ca",
+  "scope": "Synthetic mature mastery, declared +0/+3/+5 gear; no acquisition, economy or live-player inference. First death ends farming. No respawn. One finite native pack or explicit unlinked cluster; full HP, native Runes. 10s aftermath after last enemy; Graveyard analyzed separately.",
+  "capMs": 120000,
+  "seeds": [
+    303007
+  ],
+  "cells": [
+    {
+      "id": "4-slinger-balanced-jungle-vest-t4-node-t4-jungle-03-reference-p3-default-mixed-rally",
+      "className": "slinger",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-jungle-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 3,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "4-slinger-balanced-jungle-vest-t4-node-t4-jungle-03-reference-p3-default-mixed-rally",
+        "classRoot": "reload-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "reload-root",
+          "reload-balanced",
+          "reload-range-mid",
+          "reload-balanced-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "jungle-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "identityId": "breadth-t4-slinger-balanced-a",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Bounty hunter",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Each attack applies a Death Mark stack to the target (up to 10). Reloading detonates all stacks on the current target for attack × stacks × 0.50 bonus damage.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Relic relic-equilibrium-shard: modest frequency and potency without signed penalty.",
+        "sweep has first offensive priority; multiple delivery opportunities support Sweep.",
+        "Offensive stance is always active; no stance switching.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ]
+    },
+    {
+      "id": "4-slinger-balanced-desert-vest-t4-node-t4-volcanic-03-reference-p3-default-volcano-anchor",
+      "className": "slinger",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-volcanic-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 3,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "4-slinger-balanced-desert-vest-t4-node-t4-volcanic-03-reference-p3-default-volcano-anchor",
+        "classRoot": "reload-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "reload-root",
+          "reload-balanced",
+          "reload-range-mid",
+          "reload-balanced-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "desert-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "identityId": "breadth-t4-slinger-balanced-a",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Bounty hunter",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Each attack applies a Death Mark stack to the target (up to 10). Reloading detonates all stacks on the current target for attack × stacks × 0.50 bonus damage.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Relic relic-equilibrium-shard: modest frequency and potency without signed penalty.",
+        "sweep has first offensive priority; multiple delivery opportunities support Sweep.",
+        "Offensive stance is always active; no stance switching.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ]
+    },
+    {
+      "id": "4-slinger-balanced-jungle-vest-t4-node-t4-volcanic-03-reference-p3-default-volcano-anchor",
+      "className": "slinger",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-volcanic-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 3,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "4-slinger-balanced-jungle-vest-t4-node-t4-volcanic-03-reference-p3-default-volcano-anchor",
+        "classRoot": "reload-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "reload-root",
+          "reload-balanced",
+          "reload-range-mid",
+          "reload-balanced-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "jungle-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "identityId": "breadth-t4-slinger-balanced-a",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Bounty hunter",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Each attack applies a Death Mark stack to the target (up to 10). Reloading detonates all stacks on the current target for attack × stacks × 0.50 bonus damage.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Relic relic-equilibrium-shard: modest frequency and potency without signed penalty.",
+        "sweep has first offensive priority; multiple delivery opportunities support Sweep.",
+        "Offensive stance is always active; no stance switching.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ]
+    },
+    {
+      "id": "4-slinger-balanced-graveyard-vest-t4-node-t4-graveyard-03-reference-p3-default-gravewright",
+      "className": "slinger",
+      "tier": 4,
+      "role": "farm",
+      "alternate": false,
+      "nodeId": "node-t4-graveyard-03",
+      "isDungeon": false,
+      "treatment": "authored-source",
+      "targetTypes": [],
+      "upgradeLevel": 3,
+      "stance": "offensive-stance",
+      "abilities": {
+        "techniques": [
+          "sweep",
+          "frenzy",
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind",
+          "brace",
+          "cleanse"
+        ]
+      },
+      "runeRules": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "orbit"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "build": {
+        "id": "4-slinger-balanced-graveyard-vest-t4-node-t4-graveyard-03-reference-p3-default-gravewright",
+        "classRoot": "reload-root",
+        "contentTier": 4,
+        "playerTier": 4,
+        "gearTier": 4,
+        "skillPath": [
+          "reload-root",
+          "reload-balanced",
+          "reload-range-mid",
+          "reload-balanced-t3-a"
+        ],
+        "gearItemIds": {
+          "weapon": "jungle-deathfang-rapier",
+          "armor": "graveyard-vest-t4",
+          "recovery": "mountain-charm-t4",
+          "mobility": "mountain-boots-t4",
+          "core": "core-tempered",
+          "relic": "relic-equilibrium-shard"
+        }
+      },
+      "identityId": "breadth-t4-slinger-balanced-a",
+      "frame": "balanced",
+      "range": "mid",
+      "pathName": "Bounty hunter",
+      "playerTreatment": "untreated",
+      "controlCaseId": null,
+      "preparationNotes": [
+        "Each attack applies a Death Mark stack to the target (up to 10). Reloading detonates all stacks on the current target for attack × stacks × 0.50 bonus damage.",
+        "Mature reachable biome caps; +5 where authored upgrades permit; full owner HP/barrier; production fresh summons; no rites.",
+        "Ordered abilities use production triggers. Only declared target-casting Brace replaces its low-HP default.",
+        "Historical starting point: package-fit-r1 balanced reference; frame/path changes are new packages, not historical reuses.",
+        "Relic relic-equilibrium-shard: modest frequency and potency without signed penalty.",
+        "sweep has first offensive priority; multiple delivery opportunities support Sweep.",
+        "Offensive stance is always active; no stance switching.",
+        "Unused RP is deliberate bounded-package headroom, not a claim of optimal allocation."
+      ]
+    }
+  ],
+  "profiles": [
+    {
+      "id": "dune-stalker",
+      "tier": 3,
+      "biome": "desert",
+      "armor": "desert",
+      "alpha": "dune-stalker"
+    },
+    {
+      "id": "desert-basilisk",
+      "tier": 3,
+      "biome": "desert",
+      "armor": "desert",
+      "alpha": "desert-basilisk"
+    },
+    {
+      "id": "ambushers",
+      "tier": 3,
+      "biome": "jungle",
+      "armor": "jungle",
+      "members": [
+        "jungle-stalker",
+        "jungle-stalker",
+        "jungle-stalker"
+      ]
+    },
+    {
+      "id": "mixed-rally",
+      "tier": 3,
+      "biome": "jungle",
+      "armor": "jungle",
+      "members": [
+        "silverback",
+        "canopy-harrier",
+        "jungle-stalker"
+      ]
+    },
+    {
+      "id": "volcano-anchor",
+      "tier": 3,
+      "biome": "volcanic",
+      "armor": "desert",
+      "alpha": "magma-brute"
+    },
+    {
+      "id": "volcano-anchor",
+      "tier": 3,
+      "biome": "volcanic",
+      "armor": "jungle",
+      "alpha": "magma-brute"
+    },
+    {
+      "id": "sand-viper",
+      "tier": 4,
+      "biome": "desert",
+      "armor": "desert",
+      "alpha": "sand-viper"
+    },
+    {
+      "id": "dune-basilisk",
+      "tier": 4,
+      "biome": "desert",
+      "armor": "desert",
+      "alpha": "dune-basilisk"
+    },
+    {
+      "id": "ambushers",
+      "tier": 4,
+      "biome": "jungle",
+      "armor": "jungle",
+      "members": [
+        "hunting-panther",
+        "hunting-panther",
+        "hunting-panther"
+      ]
+    },
+    {
+      "id": "mixed-rally",
+      "tier": 4,
+      "biome": "jungle",
+      "armor": "jungle",
+      "members": [
+        "apex-silverback",
+        "thornback-lizard",
+        "hunting-panther"
+      ]
+    },
+    {
+      "id": "volcano-anchor",
+      "tier": 4,
+      "biome": "volcanic",
+      "armor": "desert",
+      "alpha": "obsidian-tortoise"
+    },
+    {
+      "id": "volcano-anchor",
+      "tier": 4,
+      "biome": "volcanic",
+      "armor": "jungle",
+      "alpha": "obsidian-tortoise"
+    },
+    {
+      "id": "gravewright",
+      "tier": 4,
+      "biome": "graveyard",
+      "armor": "graveyard",
+      "alpha": "gravewright"
+    },
+    {
+      "id": "plague-support",
+      "tier": 4,
+      "biome": "graveyard",
+      "armor": "graveyard",
+      "members": [
+        "plague-hound",
+        "carrion-vulture",
+        "bone-crawler"
+      ]
+    },
+    {
+      "id": "rat-pressure",
+      "tier": 4,
+      "biome": "graveyard",
+      "armor": "graveyard",
+      "members": [
+        "plague-rat",
+        "plague-rat",
+        "plague-rat",
+        "plague-rat"
+      ]
+    }
+  ]
+}
