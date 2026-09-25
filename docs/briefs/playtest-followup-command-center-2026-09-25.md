@@ -82,14 +82,11 @@ pending merge approval.
 - **Slinger T4 seed 101009** (the Volcano study's 237.1 s gap, rerun of
   `volcanoAreaStudy.ts`): same cause. Pre-fix reproduces 145 kills / 237.1 s exactly;
   fixed gives 280 kills / 10.4 s.
-- **Known leftover:** the Striker probe still has 19 gaps of 15-28 s over 30 minutes
-  (24 with part 1 only). These are likely the 15 s budget being spent again on the
-  pool mob after each 30 s deferral, but that is not confirmed. Shortening them means
-  changing the 15 s / 30 s tunables, which is your call.
-- **Repro (develop at `7094727e`, same job file, damage-to-monsters progress signal):**
-  the seed stalls from 348.6 s to 830.6 s (482 s), then again from 1151 s until the
-  30-minute cutoff. With the fix, no gap reaches 60 s in 30 minutes. Guarded by
-  `server/test/hazardApproachTargetFlicker.test.ts` (mutation-checked).
+- **Known leftover:** with kills counted as progress (a first count of 19 gaps missed
+  one-hit kills), the Striker probe has 5 gaps of 15-25 s in 30 minutes, 96 s in total
+  (about 5%). All five are mostly spent targeting a mob in a hazard, and two end with the
+  original lava Skink deferred again: the 15 s budget re-spent after each 30 s deferral.
+  Shortening them means changing those tunables, which is your call.
 
 ## 2. Defense rework
 

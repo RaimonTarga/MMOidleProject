@@ -40,9 +40,11 @@ while(elapsed<maxMs){
       move:player.hasMovePath?{dest:(player.hasMovePath as any).destination??null,avoid:(player.hasMovePath as any).avoidHazards,mode:(player.hasMovePath as any).mode}:(player as any).isMoving??null});
   }
   world.tick(100,1800000000000+elapsed);elapsed+=100;
+  // One-hit kills remove the mob in the same tick, so count them as progress too.
+  const killed=world.worldLogJournal.some((e:any)=>e.kind==='kill'&&e.victim?.actorType==='monster');
   world.clearNodeEvents(target.nodeId);world.pendingDeaths=[];world.worldLogJournal=[];world.worldLogByPlayer.clear();
   if(recording)trace.push({t:elapsed,phase:'post',intent:player.hasAutoIntent?.reason,pos:{...player.hasPosition.current}});
-  let dmg=false;for(const m of world.monsterEntities){if(m.hasPosition.nodeId!==target.nodeId)continue;const prev=hpById.get(m.entityId);if(prev!==undefined&&m.hasHealth.hp<prev)dmg=true;hpById.set(m.entityId,m.hasHealth.hp);}const xp=dmg?elapsed:lastXp;
+  let dmg=killed;for(const m of world.monsterEntities){if(m.hasPosition.nodeId!==target.nodeId)continue;const prev=hpById.get(m.entityId);if(prev!==undefined&&m.hasHealth.hp<prev)dmg=true;hpById.set(m.entityId,m.hasHealth.hp);}const xp=dmg?elapsed:lastXp;
   if(xp!==lastXp){const gap=elapsed-lastXpAt;if(gap>=Number(process.env.GAP_MS??60000))gaps.push({from:lastXpAt,to:elapsed,gap});lastXp=xp;lastXpAt=elapsed;if(recording&&process.argv[5]!=='keep'){recording=false;}}
   if(!recording&&elapsed-lastXpAt===60000){recording=true;console.log('stall start',lastXpAt,'pos',player.hasPosition.current);}
   if(player.isDead){console.log('dead at',elapsed);break;}
