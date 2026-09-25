@@ -118,7 +118,8 @@ function applyBiomeXP(
   }
 
   const xpMult = GAME_CONFIG.BIOME_XP_REWARD_MULT_BY_TIER[biomeTier] ?? 1;
-  const scaledXpGain = Math.round(xpGain * xpMult);
+  const biomeMult = GAME_CONFIG.BIOME_XP_BIOME_TIER_MULT[biomeTier]?.[biomeGroup] ?? 1;
+  const scaledXpGain = Math.round(xpGain * xpMult * biomeMult);
 
   const prevUnlocked = [...entity.tracksProgression.unlockedRecipes];
   const newXP = (entity.tracksProgression.biomeXP[biomeGroup] ?? 0) + scaledXpGain;
