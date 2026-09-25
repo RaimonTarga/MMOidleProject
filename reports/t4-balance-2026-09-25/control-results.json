@@ -1,0 +1,2744 @@
+[
+  {
+    "index": 0,
+    "spec": {
+      "path": "energy-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "armor": false
+    },
+    "outcome": "window-ended",
+    "elapsedMs": 120000,
+    "damage": 86571,
+    "dps": 721.425,
+    "kills": 0,
+    "incoming": 0,
+    "minCd": 399,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 5824,
+        "absorbed": 0,
+        "damageEvents": 28,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 9800,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 400
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 19572,
+        "absorbed": 0,
+        "damageEvents": 86,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 29700,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 400
+      },
+      {
+        "atMs": 60000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 41650,
+        "absorbed": 0,
+        "damageEvents": 173,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 59700,
+        "longestKillGapMs": 60000,
+        "longestHpProgressGapMs": 400
+      },
+      {
+        "atMs": 120000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 86571,
+        "absorbed": 0,
+        "damageEvents": 347,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 119700,
+        "longestKillGapMs": 120000,
+        "longestHpProgressGapMs": 400
+      }
+    ],
+    "sources": {
+      "[]": 44222,
+      "[\"empowered\"]": 42349
+    },
+    "terminalHp": 343,
+    "bossKilled": false,
+    "wallMs": 1614.7386000000006
+  },
+  {
+    "index": 1,
+    "spec": {
+      "path": "energy-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "armor": true
+    },
+    "outcome": "window-ended",
+    "elapsedMs": 120000,
+    "damage": 55151,
+    "dps": 459.59166666666664,
+    "kills": 0,
+    "incoming": 0,
+    "minCd": 399,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 3160,
+        "absorbed": 0,
+        "damageEvents": 28,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 9800,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 400
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 11564,
+        "absorbed": 0,
+        "damageEvents": 86,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 29700,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 400
+      },
+      {
+        "atMs": 60000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 25922,
+        "absorbed": 0,
+        "damageEvents": 173,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 59700,
+        "longestKillGapMs": 60000,
+        "longestHpProgressGapMs": 400
+      },
+      {
+        "atMs": 120000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 55151,
+        "absorbed": 0,
+        "damageEvents": 347,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 119700,
+        "longestKillGapMs": 120000,
+        "longestHpProgressGapMs": 400
+      }
+    ],
+    "sources": {
+      "[]": 12802,
+      "[\"empowered\"]": 42349
+    },
+    "terminalHp": 343,
+    "bossKilled": false,
+    "wallMs": 1424.3202999999994
+  },
+  {
+    "index": 2,
+    "spec": {
+      "path": "energy-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "armor": false
+    },
+    "outcome": "window-ended",
+    "elapsedMs": 120000,
+    "damage": 151108,
+    "dps": 1259.2333333333333,
+    "kills": 0,
+    "incoming": 0,
+    "minCd": 399,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 10155,
+        "absorbed": 0,
+        "damageEvents": 28,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 9800,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 400
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 34144,
+        "absorbed": 0,
+        "damageEvents": 86,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 29700,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 400
+      },
+      {
+        "atMs": 60000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 72689,
+        "absorbed": 0,
+        "damageEvents": 173,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 59700,
+        "longestKillGapMs": 60000,
+        "longestHpProgressGapMs": 400
+      },
+      {
+        "atMs": 120000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 151108,
+        "absorbed": 0,
+        "damageEvents": 347,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 119700,
+        "longestKillGapMs": 120000,
+        "longestHpProgressGapMs": 400
+      }
+    ],
+    "sources": {
+      "[]": 76954,
+      "[\"empowered\"]": 74154
+    },
+    "terminalHp": 588,
+    "bossKilled": false,
+    "wallMs": 1620.8820000000014
+  },
+  {
+    "index": 3,
+    "spec": {
+      "path": "energy-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "armor": true
+    },
+    "outcome": "window-ended",
+    "elapsedMs": 120000,
+    "damage": 106558,
+    "dps": 887.9833333333333,
+    "kills": 0,
+    "incoming": 0,
+    "minCd": 399,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 6380,
+        "absorbed": 0,
+        "damageEvents": 28,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 9800,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 400
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 22794,
+        "absorbed": 0,
+        "damageEvents": 86,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 29700,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 400
+      },
+      {
+        "atMs": 60000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 50389,
+        "absorbed": 0,
+        "damageEvents": 173,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 59700,
+        "longestKillGapMs": 60000,
+        "longestHpProgressGapMs": 400
+      },
+      {
+        "atMs": 120000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 106558,
+        "absorbed": 0,
+        "damageEvents": 347,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 119700,
+        "longestKillGapMs": 120000,
+        "longestHpProgressGapMs": 400
+      }
+    ],
+    "sources": {
+      "[]": 32404,
+      "[\"empowered\"]": 74154
+    },
+    "terminalHp": 588,
+    "bossKilled": false,
+    "wallMs": 1053.8778999999995
+  },
+  {
+    "index": 4,
+    "spec": {
+      "path": "energy-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "farm",
+      "durationMs": 300000
+    },
+    "outcome": "window-ended",
+    "elapsedMs": 300000,
+    "damage": 118377,
+    "dps": 394.59,
+    "kills": 59,
+    "incoming": 2537.25,
+    "minCd": 399,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 1,
+        "firstKillMs": 5200,
+        "hpDamage": 3668,
+        "absorbed": 0,
+        "damageEvents": 19,
+        "lastKillMs": 5200,
+        "lastHpProgressMs": 9900,
+        "longestKillGapMs": 5200,
+        "longestHpProgressGapMs": 2100
+      },
+      {
+        "atMs": 30000,
+        "kills": 4,
+        "firstKillMs": 5200,
+        "hpDamage": 9396,
+        "absorbed": 0,
+        "damageEvents": 40,
+        "lastKillMs": 26000,
+        "lastHpProgressMs": 26000,
+        "longestKillGapMs": 9200,
+        "longestHpProgressGapMs": 6100
+      },
+      {
+        "atMs": 60000,
+        "kills": 8,
+        "firstKillMs": 5200,
+        "hpDamage": 18450,
+        "absorbed": 0,
+        "damageEvents": 82,
+        "lastKillMs": 51300,
+        "lastHpProgressMs": 60000,
+        "longestKillGapMs": 9200,
+        "longestHpProgressGapMs": 6300
+      },
+      {
+        "atMs": 120000,
+        "kills": 21,
+        "firstKillMs": 5200,
+        "hpDamage": 46743,
+        "absorbed": 0,
+        "damageEvents": 216,
+        "lastKillMs": 115100,
+        "lastHpProgressMs": 119800,
+        "longestKillGapMs": 12000,
+        "longestHpProgressGapMs": 10100
+      },
+      {
+        "atMs": 300000,
+        "kills": 59,
+        "firstKillMs": 5200,
+        "hpDamage": 118377,
+        "absorbed": 0,
+        "damageEvents": 547,
+        "lastKillMs": 297100,
+        "lastHpProgressMs": 299800,
+        "longestKillGapMs": 14300,
+        "longestHpProgressGapMs": 12100
+      }
+    ],
+    "sources": {
+      "[]": 60064,
+      "[\"empowered\"]": 55313,
+      "\"damage\"": 3000
+    },
+    "terminalHp": 343,
+    "bossKilled": false,
+    "wallMs": 6461.5124
+  },
+  {
+    "index": 5,
+    "spec": {
+      "path": "energy-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "boss",
+      "durationMs": 300000
+    },
+    "outcome": "boss-killed",
+    "elapsedMs": 75700,
+    "damage": 19559,
+    "dps": 258.37516512549536,
+    "kills": 1,
+    "incoming": 0,
+    "minCd": 438,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 1202,
+        "absorbed": 0,
+        "damageEvents": 14,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 7900,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 2100
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 6380,
+        "absorbed": 0,
+        "damageEvents": 42,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 27600,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 3100
+      },
+      {
+        "atMs": 60000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 15214,
+        "absorbed": 0,
+        "damageEvents": 94,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 59600,
+        "longestKillGapMs": 60000,
+        "longestHpProgressGapMs": 3900
+      }
+    ],
+    "sources": {
+      "[]": 8973,
+      "[\"empowered\"]": 10586
+    },
+    "terminalHp": 343,
+    "bossId": "node-t4-mountain-dungeon_monster-5",
+    "bossType": "iron-crest-titan",
+    "bossKilled": true,
+    "wallMs": 1009.3034000000007
+  },
+  {
+    "index": 6,
+    "spec": {
+      "path": "energy-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "farm",
+      "durationMs": 300000
+    },
+    "outcome": "window-ended",
+    "elapsedMs": 300000,
+    "damage": 197030,
+    "dps": 656.7666666666667,
+    "kills": 94,
+    "incoming": 20,
+    "minCd": 399,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 2,
+        "firstKillMs": 3700,
+        "hpDamage": 4839,
+        "absorbed": 0,
+        "damageEvents": 13,
+        "lastKillMs": 8400,
+        "lastHpProgressMs": 8400,
+        "longestKillGapMs": 4700,
+        "longestHpProgressGapMs": 2400
+      },
+      {
+        "atMs": 30000,
+        "kills": 7,
+        "firstKillMs": 3700,
+        "hpDamage": 14117,
+        "absorbed": 0,
+        "damageEvents": 40,
+        "lastKillMs": 29000,
+        "lastHpProgressMs": 29000,
+        "longestKillGapMs": 6300,
+        "longestHpProgressGapMs": 4300
+      },
+      {
+        "atMs": 60000,
+        "kills": 17,
+        "firstKillMs": 3700,
+        "hpDamage": 31823,
+        "absorbed": 0,
+        "damageEvents": 91,
+        "lastKillMs": 58500,
+        "lastHpProgressMs": 59700,
+        "longestKillGapMs": 6300,
+        "longestHpProgressGapMs": 4300
+      },
+      {
+        "atMs": 120000,
+        "kills": 34,
+        "firstKillMs": 3700,
+        "hpDamage": 69062,
+        "absorbed": 0,
+        "damageEvents": 195,
+        "lastKillMs": 118500,
+        "lastHpProgressMs": 118500,
+        "longestKillGapMs": 7200,
+        "longestHpProgressGapMs": 4800
+      },
+      {
+        "atMs": 300000,
+        "kills": 94,
+        "firstKillMs": 3700,
+        "hpDamage": 197030,
+        "absorbed": 0,
+        "damageEvents": 559,
+        "lastKillMs": 296500,
+        "lastHpProgressMs": 299900,
+        "longestKillGapMs": 8600,
+        "longestHpProgressGapMs": 6700
+      }
+    ],
+    "sources": {
+      "[]": 99732,
+      "[\"empowered\"]": 88025,
+      "\"damage\"": 9273
+    },
+    "terminalHp": 588,
+    "bossKilled": false,
+    "wallMs": 7173.823799999998
+  },
+  {
+    "index": 7,
+    "spec": {
+      "path": "energy-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "boss",
+      "durationMs": 300000
+    },
+    "outcome": "boss-killed",
+    "elapsedMs": 47000,
+    "damage": 19577,
+    "dps": 416.531914893617,
+    "kills": 1,
+    "incoming": 0,
+    "minCd": 438,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 2268,
+        "absorbed": 0,
+        "damageEvents": 14,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 7900,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 2100
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 11622,
+        "absorbed": 0,
+        "damageEvents": 42,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 29900,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 2700
+      }
+    ],
+    "sources": {
+      "[]": 9674,
+      "[\"empowered\"]": 9903
+    },
+    "terminalHp": 588,
+    "bossId": "node-t4-mountain-dungeon_monster-5",
+    "bossType": "iron-crest-titan",
+    "bossKilled": true,
+    "wallMs": 501.8680999999997
+  },
+  {
+    "index": 8,
+    "spec": {
+      "path": "energy-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 947,
+      "mode": "farm",
+      "durationMs": 300000
+    },
+    "outcome": "player-died",
+    "elapsedMs": 190400,
+    "damage": 80401,
+    "dps": 422.27415966386553,
+    "kills": 38,
+    "incoming": 2104,
+    "minCd": 399,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 1,
+        "firstKillMs": 4600,
+        "hpDamage": 2572,
+        "absorbed": 0,
+        "damageEvents": 13,
+        "lastKillMs": 4600,
+        "lastHpProgressMs": 9800,
+        "longestKillGapMs": 5400,
+        "longestHpProgressGapMs": 3600
+      },
+      {
+        "atMs": 30000,
+        "kills": 5,
+        "firstKillMs": 4600,
+        "hpDamage": 8907,
+        "absorbed": 0,
+        "damageEvents": 41,
+        "lastKillMs": 28900,
+        "lastHpProgressMs": 29800,
+        "longestKillGapMs": 8200,
+        "longestHpProgressGapMs": 6000
+      },
+      {
+        "atMs": 60000,
+        "kills": 10,
+        "firstKillMs": 4600,
+        "hpDamage": 19792,
+        "absorbed": 0,
+        "damageEvents": 87,
+        "lastKillMs": 56700,
+        "lastHpProgressMs": 56700,
+        "longestKillGapMs": 13000,
+        "longestHpProgressGapMs": 11100
+      },
+      {
+        "atMs": 120000,
+        "kills": 25,
+        "firstKillMs": 4600,
+        "hpDamage": 47468,
+        "absorbed": 0,
+        "damageEvents": 220,
+        "lastKillMs": 117600,
+        "lastHpProgressMs": 119800,
+        "longestKillGapMs": 13000,
+        "longestHpProgressGapMs": 11100
+      }
+    ],
+    "sources": {
+      "[]": 40413,
+      "[\"empowered\"]": 38252,
+      "\"damage\"": 1736
+    },
+    "terminalHp": 0,
+    "bossKilled": false,
+    "wallMs": 3608.799500000001
+  },
+  {
+    "index": 9,
+    "spec": {
+      "path": "energy-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 947,
+      "mode": "boss",
+      "durationMs": 300000
+    },
+    "outcome": "boss-killed",
+    "elapsedMs": 75700,
+    "damage": 19559,
+    "dps": 258.37516512549536,
+    "kills": 1,
+    "incoming": 0,
+    "minCd": 438,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 1202,
+        "absorbed": 0,
+        "damageEvents": 14,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 7900,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 2100
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 6380,
+        "absorbed": 0,
+        "damageEvents": 42,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 27600,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 3100
+      },
+      {
+        "atMs": 60000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 15214,
+        "absorbed": 0,
+        "damageEvents": 94,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 59600,
+        "longestKillGapMs": 60000,
+        "longestHpProgressGapMs": 3900
+      }
+    ],
+    "sources": {
+      "[]": 8973,
+      "[\"empowered\"]": 10586
+    },
+    "terminalHp": 343,
+    "bossId": "node-t4-mountain-dungeon_monster-5",
+    "bossType": "iron-crest-titan",
+    "bossKilled": true,
+    "wallMs": 551.0832999999984
+  },
+  {
+    "index": 10,
+    "spec": {
+      "path": "energy-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 947,
+      "mode": "farm",
+      "durationMs": 300000
+    },
+    "outcome": "window-ended",
+    "elapsedMs": 300000,
+    "damage": 194180,
+    "dps": 647.2666666666667,
+    "kills": 92,
+    "incoming": 0,
+    "minCd": 399,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 2,
+        "firstKillMs": 3800,
+        "hpDamage": 3594,
+        "absorbed": 0,
+        "damageEvents": 10,
+        "lastKillMs": 8200,
+        "lastHpProgressMs": 8200,
+        "longestKillGapMs": 4400,
+        "longestHpProgressGapMs": 3200
+      },
+      {
+        "atMs": 30000,
+        "kills": 9,
+        "firstKillMs": 3800,
+        "hpDamage": 19679,
+        "absorbed": 0,
+        "damageEvents": 56,
+        "lastKillMs": 29600,
+        "lastHpProgressMs": 30000,
+        "longestKillGapMs": 4800,
+        "longestHpProgressGapMs": 3300
+      },
+      {
+        "atMs": 60000,
+        "kills": 18,
+        "firstKillMs": 3800,
+        "hpDamage": 40224,
+        "absorbed": 0,
+        "damageEvents": 113,
+        "lastKillMs": 59200,
+        "lastHpProgressMs": 59200,
+        "longestKillGapMs": 8400,
+        "longestHpProgressGapMs": 6400
+      },
+      {
+        "atMs": 120000,
+        "kills": 38,
+        "firstKillMs": 3800,
+        "hpDamage": 82875,
+        "absorbed": 0,
+        "damageEvents": 235,
+        "lastKillMs": 119800,
+        "lastHpProgressMs": 119800,
+        "longestKillGapMs": 9700,
+        "longestHpProgressGapMs": 8500
+      },
+      {
+        "atMs": 300000,
+        "kills": 92,
+        "firstKillMs": 3800,
+        "hpDamage": 194180,
+        "absorbed": 0,
+        "damageEvents": 550,
+        "lastKillMs": 298400,
+        "lastHpProgressMs": 299900,
+        "longestKillGapMs": 9700,
+        "longestHpProgressGapMs": 8500
+      }
+    ],
+    "sources": {
+      "[]": 96365,
+      "[\"empowered\"]": 86819,
+      "\"damage\"": 10996
+    },
+    "terminalHp": 588,
+    "bossKilled": false,
+    "wallMs": 5939.7327000000005
+  },
+  {
+    "index": 11,
+    "spec": {
+      "path": "energy-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 947,
+      "mode": "boss",
+      "durationMs": 300000
+    },
+    "outcome": "boss-killed",
+    "elapsedMs": 47000,
+    "damage": 19577,
+    "dps": 416.531914893617,
+    "kills": 1,
+    "incoming": 0,
+    "minCd": 438,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 2268,
+        "absorbed": 0,
+        "damageEvents": 14,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 7900,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 2100
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 11622,
+        "absorbed": 0,
+        "damageEvents": 42,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 29900,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 2700
+      }
+    ],
+    "sources": {
+      "[]": 9674,
+      "[\"empowered\"]": 9903
+    },
+    "terminalHp": 588,
+    "bossId": "node-t4-mountain-dungeon_monster-5",
+    "bossType": "iron-crest-titan",
+    "bossKilled": true,
+    "wallMs": 384.4077000000034
+  },
+  {
+    "index": 12,
+    "spec": {
+      "path": "cadence-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    "outcome": "window-ended",
+    "elapsedMs": 120000,
+    "damage": 65727,
+    "dps": 547.725,
+    "kills": 0,
+    "incoming": 0,
+    "minCd": 1023,
+    "maxRampage": 10,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 1663,
+        "absorbed": 0,
+        "damageEvents": 7,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 9100,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 1700
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 10304,
+        "absorbed": 0,
+        "damageEvents": 22,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 29700,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 1700
+      },
+      {
+        "atMs": 60000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 32849,
+        "absorbed": 0,
+        "damageEvents": 48,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 59300,
+        "longestKillGapMs": 60000,
+        "longestHpProgressGapMs": 1700
+      },
+      {
+        "atMs": 120000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 65727,
+        "absorbed": 0,
+        "damageEvents": 96,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 120000,
+        "longestKillGapMs": 120000,
+        "longestHpProgressGapMs": 1700
+      }
+    ],
+    "sources": {
+      "[]": 15023,
+      "[\"empowered\"]": 50704
+    },
+    "terminalHp": 510,
+    "bossKilled": false,
+    "wallMs": 617.9873000000007
+  },
+  {
+    "index": 13,
+    "spec": {
+      "path": "cadence-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "graveyard-plague-axe"
+    },
+    "outcome": "window-ended",
+    "elapsedMs": 120000,
+    "damage": 155983,
+    "dps": 1299.8583333333333,
+    "kills": 0,
+    "incoming": 0,
+    "minCd": 212,
+    "maxRampage": 10,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 5606,
+        "absorbed": 0,
+        "damageEvents": 14,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 10000,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 1800
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 37579,
+        "absorbed": 0,
+        "damageEvents": 52,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 29300,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 1800
+      },
+      {
+        "atMs": 60000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 76432,
+        "absorbed": 0,
+        "damageEvents": 104,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 59300,
+        "longestKillGapMs": 60000,
+        "longestHpProgressGapMs": 1800
+      },
+      {
+        "atMs": 120000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 155983,
+        "absorbed": 0,
+        "damageEvents": 210,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 118800,
+        "longestKillGapMs": 120000,
+        "longestHpProgressGapMs": 1800
+      }
+    ],
+    "sources": {
+      "[]": 34036,
+      "[\"empowered\"]": 121947
+    },
+    "terminalHp": 510,
+    "bossKilled": false,
+    "wallMs": 769.4665999999997
+  },
+  {
+    "index": 14,
+    "spec": {
+      "path": "cadence-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    "outcome": "window-ended",
+    "elapsedMs": 120000,
+    "damage": 98441,
+    "dps": 820.3416666666667,
+    "kills": 0,
+    "incoming": 0,
+    "minCd": 1023,
+    "maxRampage": 10,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 2404,
+        "absorbed": 0,
+        "damageEvents": 7,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 9100,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 1700
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 15300,
+        "absorbed": 0,
+        "damageEvents": 22,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 29700,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 1700
+      },
+      {
+        "atMs": 60000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 49199,
+        "absorbed": 0,
+        "damageEvents": 48,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 59300,
+        "longestKillGapMs": 60000,
+        "longestHpProgressGapMs": 1700
+      },
+      {
+        "atMs": 120000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 98441,
+        "absorbed": 0,
+        "damageEvents": 96,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 120000,
+        "longestKillGapMs": 120000,
+        "longestHpProgressGapMs": 1700
+      }
+    ],
+    "sources": {
+      "[]": 21678,
+      "[\"empowered\"]": 76763
+    },
+    "terminalHp": 674,
+    "bossKilled": false,
+    "wallMs": 701.7856000000029
+  },
+  {
+    "index": 15,
+    "spec": {
+      "path": "cadence-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000,
+      "weapon": "graveyard-plague-axe"
+    },
+    "outcome": "window-ended",
+    "elapsedMs": 120000,
+    "damage": 298874,
+    "dps": 2490.616666666667,
+    "kills": 0,
+    "incoming": 0,
+    "minCd": 212,
+    "maxRampage": 10,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 10747,
+        "absorbed": 0,
+        "damageEvents": 14,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 10000,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 1800
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 72009,
+        "absorbed": 0,
+        "damageEvents": 52,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 29300,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 1800
+      },
+      {
+        "atMs": 60000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 146457,
+        "absorbed": 0,
+        "damageEvents": 104,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 59300,
+        "longestKillGapMs": 60000,
+        "longestHpProgressGapMs": 1800
+      },
+      {
+        "atMs": 120000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 298874,
+        "absorbed": 0,
+        "damageEvents": 210,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 118800,
+        "longestKillGapMs": 120000,
+        "longestHpProgressGapMs": 1800
+      }
+    ],
+    "sources": {
+      "[]": 65253,
+      "[\"empowered\"]": 233621
+    },
+    "terminalHp": 674,
+    "bossKilled": false,
+    "wallMs": 686.6376000000018
+  },
+  {
+    "index": 16,
+    "spec": {
+      "path": "cadence-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "farm",
+      "durationMs": 300000
+    },
+    "outcome": "player-died",
+    "elapsedMs": 12900,
+    "damage": 1876,
+    "dps": 145.42635658914728,
+    "kills": 0,
+    "incoming": 889,
+    "minCd": 1623,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 1450,
+        "absorbed": 0,
+        "damageEvents": 6,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 9700,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 2400
+      }
+    ],
+    "sources": {
+      "[]": 1876
+    },
+    "terminalHp": 0,
+    "bossKilled": false,
+    "wallMs": 203.62569999999687
+  },
+  {
+    "index": 17,
+    "spec": {
+      "path": "cadence-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "boss",
+      "durationMs": 300000
+    },
+    "outcome": "boss-killed",
+    "elapsedMs": 141600,
+    "damage": 20643,
+    "dps": 145.78389830508476,
+    "kills": 1,
+    "incoming": 1178,
+    "minCd": 1302,
+    "maxRampage": 8,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 483,
+        "absorbed": 0,
+        "damageEvents": 3,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 4000,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 6000
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 1119,
+        "absorbed": 0,
+        "damageEvents": 7,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 26300,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 7900
+      },
+      {
+        "atMs": 60000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 5407,
+        "absorbed": 0,
+        "damageEvents": 16,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 59000,
+        "longestKillGapMs": 60000,
+        "longestHpProgressGapMs": 12400
+      },
+      {
+        "atMs": 120000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 16281,
+        "absorbed": 0,
+        "damageEvents": 36,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 118300,
+        "longestKillGapMs": 120000,
+        "longestHpProgressGapMs": 12400
+      }
+    ],
+    "sources": {
+      "[]": 4777,
+      "[\"empowered\"]": 15866
+    },
+    "terminalHp": 301.67839999999984,
+    "bossId": "node-t4-mountain-dungeon_monster-5",
+    "bossType": "iron-crest-titan",
+    "bossKilled": true,
+    "wallMs": 944.6002000000008
+  },
+  {
+    "index": 18,
+    "spec": {
+      "path": "cadence-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "farm",
+      "durationMs": 300000
+    },
+    "outcome": "window-ended",
+    "elapsedMs": 300000,
+    "damage": 208978,
+    "dps": 696.5933333333334,
+    "kills": 57,
+    "incoming": 4784.925,
+    "minCd": 1023,
+    "maxRampage": 10,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 1,
+        "firstKillMs": 9300,
+        "hpDamage": 2096,
+        "absorbed": 0,
+        "damageEvents": 6,
+        "lastKillMs": 9300,
+        "lastHpProgressMs": 9300,
+        "longestKillGapMs": 9300,
+        "longestHpProgressGapMs": 2000
+      },
+      {
+        "atMs": 30000,
+        "kills": 2,
+        "firstKillMs": 9300,
+        "hpDamage": 7878,
+        "absorbed": 0,
+        "damageEvents": 15,
+        "lastKillMs": 17300,
+        "lastHpProgressMs": 29200,
+        "longestKillGapMs": 12700,
+        "longestHpProgressGapMs": 5900
+      },
+      {
+        "atMs": 60000,
+        "kills": 6,
+        "firstKillMs": 9300,
+        "hpDamage": 20398,
+        "absorbed": 0,
+        "damageEvents": 26,
+        "lastKillMs": 53300,
+        "lastHpProgressMs": 53300,
+        "longestKillGapMs": 13500,
+        "longestHpProgressGapMs": 7800
+      },
+      {
+        "atMs": 120000,
+        "kills": 18,
+        "firstKillMs": 9300,
+        "hpDamage": 65437,
+        "absorbed": 0,
+        "damageEvents": 73,
+        "lastKillMs": 118600,
+        "lastHpProgressMs": 118600,
+        "longestKillGapMs": 13500,
+        "longestHpProgressGapMs": 7900
+      },
+      {
+        "atMs": 300000,
+        "kills": 57,
+        "firstKillMs": 9300,
+        "hpDamage": 208978,
+        "absorbed": 0,
+        "damageEvents": 203,
+        "lastKillMs": 298800,
+        "lastHpProgressMs": 298800,
+        "longestKillGapMs": 13500,
+        "longestHpProgressGapMs": 7900
+      }
+    ],
+    "sources": {
+      "[]": 37788,
+      "[\"empowered\"]": 128844,
+      "\"damage\"": 42346
+    },
+    "terminalHp": 648.2028000000007,
+    "bossKilled": false,
+    "wallMs": 5236.786200000002
+  },
+  {
+    "index": 19,
+    "spec": {
+      "path": "cadence-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "boss",
+      "durationMs": 300000
+    },
+    "outcome": "boss-killed",
+    "elapsedMs": 95300,
+    "damage": 21627,
+    "dps": 226.93599160545645,
+    "kills": 1,
+    "incoming": 170,
+    "minCd": 1422,
+    "maxRampage": 6,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 723,
+        "absorbed": 0,
+        "damageEvents": 3,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 4000,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 6000
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 4328,
+        "absorbed": 0,
+        "damageEvents": 9,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 25900,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 7500
+      },
+      {
+        "atMs": 60000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 9238,
+        "absorbed": 0,
+        "damageEvents": 20,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 54700,
+        "longestKillGapMs": 60000,
+        "longestHpProgressGapMs": 7500
+      }
+    ],
+    "sources": {
+      "[]": 6088,
+      "[\"empowered\"]": 15539
+    },
+    "terminalHp": 618,
+    "bossId": "node-t4-mountain-dungeon_monster-5",
+    "bossType": "iron-crest-titan",
+    "bossKilled": true,
+    "wallMs": 579.0032999999967
+  },
+  {
+    "index": 20,
+    "spec": {
+      "path": "cadence-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 947,
+      "mode": "farm",
+      "durationMs": 300000
+    },
+    "outcome": "player-died",
+    "elapsedMs": 27500,
+    "damage": 7118,
+    "dps": 258.8363636363636,
+    "kills": 3,
+    "incoming": 941.0000000000001,
+    "minCd": 1503,
+    "maxRampage": 2,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 1450,
+        "absorbed": 0,
+        "damageEvents": 6,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 9900,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 2600
+      }
+    ],
+    "sources": {
+      "[]": 3149,
+      "[\"empowered\"]": 3969
+    },
+    "terminalHp": 0,
+    "bossKilled": false,
+    "wallMs": 446.68970000000263
+  },
+  {
+    "index": 21,
+    "spec": {
+      "path": "cadence-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 947,
+      "mode": "boss",
+      "durationMs": 300000
+    },
+    "outcome": "boss-killed",
+    "elapsedMs": 141600,
+    "damage": 20643,
+    "dps": 145.78389830508476,
+    "kills": 1,
+    "incoming": 1178,
+    "minCd": 1302,
+    "maxRampage": 8,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 483,
+        "absorbed": 0,
+        "damageEvents": 3,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 4000,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 6000
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 1119,
+        "absorbed": 0,
+        "damageEvents": 7,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 26300,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 7900
+      },
+      {
+        "atMs": 60000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 5407,
+        "absorbed": 0,
+        "damageEvents": 16,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 59000,
+        "longestKillGapMs": 60000,
+        "longestHpProgressGapMs": 12400
+      },
+      {
+        "atMs": 120000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 16281,
+        "absorbed": 0,
+        "damageEvents": 36,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 118300,
+        "longestKillGapMs": 120000,
+        "longestHpProgressGapMs": 12400
+      }
+    ],
+    "sources": {
+      "[]": 4777,
+      "[\"empowered\"]": 15866
+    },
+    "terminalHp": 301.67839999999984,
+    "bossId": "node-t4-mountain-dungeon_monster-5",
+    "bossType": "iron-crest-titan",
+    "bossKilled": true,
+    "wallMs": 1068.960500000001
+  },
+  {
+    "index": 22,
+    "spec": {
+      "path": "cadence-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 947,
+      "mode": "farm",
+      "durationMs": 300000
+    },
+    "outcome": "player-died",
+    "elapsedMs": 197700,
+    "damage": 147498,
+    "dps": 746.0698027314113,
+    "kills": 40,
+    "incoming": 4036.4500000000003,
+    "minCd": 1023,
+    "maxRampage": 10,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 1,
+        "firstKillMs": 8000,
+        "hpDamage": 1788,
+        "absorbed": 0,
+        "damageEvents": 5,
+        "lastKillMs": 8000,
+        "lastHpProgressMs": 8000,
+        "longestKillGapMs": 8000,
+        "longestHpProgressGapMs": 2400
+      },
+      {
+        "atMs": 30000,
+        "kills": 3,
+        "firstKillMs": 8000,
+        "hpDamage": 10499,
+        "absorbed": 0,
+        "damageEvents": 16,
+        "lastKillMs": 25000,
+        "lastHpProgressMs": 25000,
+        "longestKillGapMs": 9700,
+        "longestHpProgressGapMs": 5000
+      },
+      {
+        "atMs": 60000,
+        "kills": 11,
+        "firstKillMs": 8000,
+        "hpDamage": 37264,
+        "absorbed": 0,
+        "damageEvents": 43,
+        "lastKillMs": 55700,
+        "lastHpProgressMs": 55700,
+        "longestKillGapMs": 11600,
+        "longestHpProgressGapMs": 8000
+      },
+      {
+        "atMs": 120000,
+        "kills": 25,
+        "firstKillMs": 8000,
+        "hpDamage": 86413,
+        "absorbed": 0,
+        "damageEvents": 89,
+        "lastKillMs": 118100,
+        "lastHpProgressMs": 119700,
+        "longestKillGapMs": 11600,
+        "longestHpProgressGapMs": 8000
+      }
+    ],
+    "sources": {
+      "[]": 26541,
+      "[\"empowered\"]": 88301,
+      "\"damage\"": 32656
+    },
+    "terminalHp": 0,
+    "bossKilled": false,
+    "wallMs": 3645.3380000000034
+  },
+  {
+    "index": 23,
+    "spec": {
+      "path": "cadence-heavy-t3-a",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 947,
+      "mode": "boss",
+      "durationMs": 300000
+    },
+    "outcome": "boss-killed",
+    "elapsedMs": 95300,
+    "damage": 21627,
+    "dps": 226.93599160545645,
+    "kills": 1,
+    "incoming": 170,
+    "minCd": 1422,
+    "maxRampage": 6,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 723,
+        "absorbed": 0,
+        "damageEvents": 3,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 4000,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 6000
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 4328,
+        "absorbed": 0,
+        "damageEvents": 9,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 25900,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 7500
+      },
+      {
+        "atMs": 60000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 9238,
+        "absorbed": 0,
+        "damageEvents": 20,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 54700,
+        "longestKillGapMs": 60000,
+        "longestHpProgressGapMs": 7500
+      }
+    ],
+    "sources": {
+      "[]": 6088,
+      "[\"empowered\"]": 15539
+    },
+    "terminalHp": 618,
+    "bossId": "node-t4-mountain-dungeon_monster-5",
+    "bossType": "iron-crest-titan",
+    "bossKilled": true,
+    "wallMs": 596.052499999998
+  },
+  {
+    "index": 24,
+    "spec": {
+      "path": "cadence-heavy-t3-c",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    "outcome": "window-ended",
+    "elapsedMs": 120000,
+    "damage": 51685,
+    "dps": 430.7083333333333,
+    "kills": 0,
+    "incoming": 0,
+    "minCd": 1623,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 1663,
+        "absorbed": 0,
+        "damageEvents": 7,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 9100,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 1700
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 9871,
+        "absorbed": 0,
+        "damageEvents": 21,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 29700,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 1700
+      },
+      {
+        "atMs": 60000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 21028,
+        "absorbed": 0,
+        "damageEvents": 41,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 59300,
+        "longestKillGapMs": 60000,
+        "longestHpProgressGapMs": 1700
+      },
+      {
+        "atMs": 120000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 51685,
+        "absorbed": 0,
+        "damageEvents": 82,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 119800,
+        "longestKillGapMs": 120000,
+        "longestHpProgressGapMs": 1700
+      }
+    ],
+    "sources": {
+      "[]": 16882,
+      "[\"empowered\"]": 34803
+    },
+    "terminalHp": 510,
+    "bossKilled": false,
+    "wallMs": 555.9864999999991
+  },
+  {
+    "index": 25,
+    "spec": {
+      "path": "cadence-heavy-t3-c",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    "outcome": "window-ended",
+    "elapsedMs": 120000,
+    "damage": 77085,
+    "dps": 642.375,
+    "kills": 0,
+    "incoming": 0,
+    "minCd": 1623,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 2404,
+        "absorbed": 0,
+        "damageEvents": 7,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 9100,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 1700
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 14638,
+        "absorbed": 0,
+        "damageEvents": 21,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 29700,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 1700
+      },
+      {
+        "atMs": 60000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 31247,
+        "absorbed": 0,
+        "damageEvents": 41,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 59300,
+        "longestKillGapMs": 60000,
+        "longestHpProgressGapMs": 1700
+      },
+      {
+        "atMs": 120000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 77085,
+        "absorbed": 0,
+        "damageEvents": 82,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 119800,
+        "longestKillGapMs": 120000,
+        "longestHpProgressGapMs": 1700
+      }
+    ],
+    "sources": {
+      "[]": 24406,
+      "[\"empowered\"]": 52679
+    },
+    "terminalHp": 674,
+    "bossKilled": false,
+    "wallMs": 604.1327000000019
+  },
+  {
+    "index": 26,
+    "spec": {
+      "path": "cadence-heavy-t3-c",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 600000
+    },
+    "outcome": "window-ended",
+    "elapsedMs": 600000,
+    "damage": 673939,
+    "dps": 1123.2316666666666,
+    "kills": 0,
+    "incoming": 0,
+    "minCd": 1623,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 2404,
+        "absorbed": 0,
+        "damageEvents": 7,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 9100,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 1700
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 14638,
+        "absorbed": 0,
+        "damageEvents": 21,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 29700,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 1700
+      },
+      {
+        "atMs": 60000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 31247,
+        "absorbed": 0,
+        "damageEvents": 41,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 59300,
+        "longestKillGapMs": 60000,
+        "longestHpProgressGapMs": 1700
+      },
+      {
+        "atMs": 120000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 77085,
+        "absorbed": 0,
+        "damageEvents": 82,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 119800,
+        "longestKillGapMs": 120000,
+        "longestHpProgressGapMs": 1700
+      },
+      {
+        "atMs": 300000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 228187,
+        "absorbed": 0,
+        "damageEvents": 204,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 300000,
+        "longestKillGapMs": 300000,
+        "longestHpProgressGapMs": 1700
+      },
+      {
+        "atMs": 600000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 673939,
+        "absorbed": 0,
+        "damageEvents": 407,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 599900,
+        "longestKillGapMs": 600000,
+        "longestHpProgressGapMs": 1700
+      }
+    ],
+    "sources": {
+      "[]": 121416,
+      "[\"empowered\"]": 552523
+    },
+    "terminalHp": 674,
+    "bossKilled": false,
+    "wallMs": 2797.719200000007
+  },
+  {
+    "index": 27,
+    "spec": {
+      "path": "cadence-heavy-t3-c",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "farm",
+      "durationMs": 300000
+    },
+    "outcome": "player-died",
+    "elapsedMs": 12900,
+    "damage": 1876,
+    "dps": 145.42635658914728,
+    "kills": 0,
+    "incoming": 889,
+    "minCd": 1623,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 1450,
+        "absorbed": 0,
+        "damageEvents": 6,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 9700,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 2400
+      }
+    ],
+    "sources": {
+      "[]": 1876
+    },
+    "terminalHp": 0,
+    "bossKilled": false,
+    "wallMs": 269.04439999999886
+  },
+  {
+    "index": 28,
+    "spec": {
+      "path": "cadence-heavy-t3-c",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 173,
+      "mode": "boss",
+      "durationMs": 300000
+    },
+    "outcome": "boss-killed",
+    "elapsedMs": 232700,
+    "damage": 19979,
+    "dps": 85.85732703051139,
+    "kills": 1,
+    "incoming": 1773.6000000000001,
+    "minCd": 1782,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 483,
+        "absorbed": 0,
+        "damageEvents": 3,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 4000,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 6000
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 1303,
+        "absorbed": 0,
+        "damageEvents": 8,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 29600,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 8000
+      },
+      {
+        "atMs": 60000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 4037,
+        "absorbed": 0,
+        "damageEvents": 16,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 58300,
+        "longestKillGapMs": 60000,
+        "longestHpProgressGapMs": 8400
+      },
+      {
+        "atMs": 120000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 9412,
+        "absorbed": 0,
+        "damageEvents": 32,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 115900,
+        "longestKillGapMs": 120000,
+        "longestHpProgressGapMs": 8400
+      }
+    ],
+    "sources": {
+      "[]": 9639,
+      "[\"empowered\"]": 10340
+    },
+    "terminalHp": 403.8847999999998,
+    "bossId": "node-t4-mountain-dungeon_monster-5",
+    "bossType": "iron-crest-titan",
+    "bossKilled": true,
+    "wallMs": 1410.734500000006
+  },
+  {
+    "index": 29,
+    "spec": {
+      "path": "cadence-heavy-t3-c",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "farm",
+      "durationMs": 300000
+    },
+    "outcome": "window-ended",
+    "elapsedMs": 300000,
+    "damage": 127014,
+    "dps": 423.38,
+    "kills": 45,
+    "incoming": 7835.150000000001,
+    "minCd": 1623,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 1,
+        "firstKillMs": 9300,
+        "hpDamage": 2096,
+        "absorbed": 0,
+        "damageEvents": 6,
+        "lastKillMs": 9300,
+        "lastHpProgressMs": 9300,
+        "longestKillGapMs": 9300,
+        "longestHpProgressGapMs": 2000
+      },
+      {
+        "atMs": 30000,
+        "kills": 2,
+        "firstKillMs": 9300,
+        "hpDamage": 7670,
+        "absorbed": 0,
+        "damageEvents": 14,
+        "lastKillMs": 17300,
+        "lastHpProgressMs": 28400,
+        "longestKillGapMs": 12700,
+        "longestHpProgressGapMs": 5900
+      },
+      {
+        "atMs": 60000,
+        "kills": 7,
+        "firstKillMs": 9300,
+        "hpDamage": 21558,
+        "absorbed": 0,
+        "damageEvents": 38,
+        "lastKillMs": 59200,
+        "lastHpProgressMs": 59200,
+        "longestKillGapMs": 12800,
+        "longestHpProgressGapMs": 6600
+      },
+      {
+        "atMs": 120000,
+        "kills": 19,
+        "firstKillMs": 9300,
+        "hpDamage": 49140,
+        "absorbed": 0,
+        "damageEvents": 80,
+        "lastKillMs": 118300,
+        "lastHpProgressMs": 119600,
+        "longestKillGapMs": 12900,
+        "longestHpProgressGapMs": 6600
+      },
+      {
+        "atMs": 300000,
+        "kills": 45,
+        "firstKillMs": 9300,
+        "hpDamage": 127014,
+        "absorbed": 0,
+        "damageEvents": 200,
+        "lastKillMs": 296200,
+        "lastHpProgressMs": 299600,
+        "longestKillGapMs": 15500,
+        "longestHpProgressGapMs": 8600
+      }
+    ],
+    "sources": {
+      "[]": 49550,
+      "[\"empowered\"]": 57270,
+      "\"damage\"": 20194
+    },
+    "terminalHp": 613.2090000000002,
+    "bossKilled": false,
+    "wallMs": 5156.014999999999
+  },
+  {
+    "index": 30,
+    "spec": {
+      "path": "cadence-heavy-t3-c",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "boss",
+      "durationMs": 300000
+    },
+    "outcome": "boss-killed",
+    "elapsedMs": 149300,
+    "damage": 20598,
+    "dps": 137.96383121232418,
+    "kills": 1,
+    "incoming": 255,
+    "minCd": 1782,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 723,
+        "absorbed": 0,
+        "damageEvents": 3,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 4000,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 6000
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 1950,
+        "absorbed": 0,
+        "damageEvents": 8,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 26100,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 7600
+      },
+      {
+        "atMs": 60000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 7845,
+        "absorbed": 0,
+        "damageEvents": 18,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 57500,
+        "longestKillGapMs": 60000,
+        "longestHpProgressGapMs": 7600
+      },
+      {
+        "atMs": 120000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 16865,
+        "absorbed": 0,
+        "damageEvents": 38,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 119600,
+        "longestKillGapMs": 120000,
+        "longestHpProgressGapMs": 7600
+      }
+    ],
+    "sources": {
+      "[]": 10014,
+      "[\"empowered\"]": 10584
+    },
+    "terminalHp": 618,
+    "bossId": "node-t4-mountain-dungeon_monster-5",
+    "bossType": "iron-crest-titan",
+    "bossKilled": true,
+    "wallMs": 967.0384999999951
+  },
+  {
+    "index": 31,
+    "spec": {
+      "path": "cadence-heavy-t3-c",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 947,
+      "mode": "farm",
+      "durationMs": 300000
+    },
+    "outcome": "player-died",
+    "elapsedMs": 27500,
+    "damage": 5552,
+    "dps": 201.8909090909091,
+    "kills": 2,
+    "incoming": 942.0000000000001,
+    "minCd": 1623,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 1450,
+        "absorbed": 0,
+        "damageEvents": 6,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 9900,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 2600
+      }
+    ],
+    "sources": {
+      "[]": 3453,
+      "[\"empowered\"]": 2099
+    },
+    "terminalHp": 0,
+    "bossKilled": false,
+    "wallMs": 398.6453000000038
+  },
+  {
+    "index": 32,
+    "spec": {
+      "path": "cadence-heavy-t3-c",
+      "arm": "baseline",
+      "plus": 0,
+      "seed": 947,
+      "mode": "boss",
+      "durationMs": 300000
+    },
+    "outcome": "boss-killed",
+    "elapsedMs": 232700,
+    "damage": 19979,
+    "dps": 85.85732703051139,
+    "kills": 1,
+    "incoming": 1773.6000000000001,
+    "minCd": 1782,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 483,
+        "absorbed": 0,
+        "damageEvents": 3,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 4000,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 6000
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 1303,
+        "absorbed": 0,
+        "damageEvents": 8,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 29600,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 8000
+      },
+      {
+        "atMs": 60000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 4037,
+        "absorbed": 0,
+        "damageEvents": 16,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 58300,
+        "longestKillGapMs": 60000,
+        "longestHpProgressGapMs": 8400
+      },
+      {
+        "atMs": 120000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 9412,
+        "absorbed": 0,
+        "damageEvents": 32,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 115900,
+        "longestKillGapMs": 120000,
+        "longestHpProgressGapMs": 8400
+      }
+    ],
+    "sources": {
+      "[]": 9639,
+      "[\"empowered\"]": 10340
+    },
+    "terminalHp": 403.8847999999998,
+    "bossId": "node-t4-mountain-dungeon_monster-5",
+    "bossType": "iron-crest-titan",
+    "bossKilled": true,
+    "wallMs": 1335.0881999999983
+  },
+  {
+    "index": 33,
+    "spec": {
+      "path": "cadence-heavy-t3-c",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 947,
+      "mode": "farm",
+      "durationMs": 300000
+    },
+    "outcome": "window-ended",
+    "elapsedMs": 300000,
+    "damage": 130625,
+    "dps": 435.4166666666667,
+    "kills": 45,
+    "incoming": 6526.474999999999,
+    "minCd": 1623,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 1,
+        "firstKillMs": 8000,
+        "hpDamage": 1788,
+        "absorbed": 0,
+        "damageEvents": 5,
+        "lastKillMs": 8000,
+        "lastHpProgressMs": 8000,
+        "longestKillGapMs": 8000,
+        "longestHpProgressGapMs": 2400
+      },
+      {
+        "atMs": 30000,
+        "kills": 3,
+        "firstKillMs": 8000,
+        "hpDamage": 8281,
+        "absorbed": 0,
+        "damageEvents": 16,
+        "lastKillMs": 25600,
+        "lastHpProgressMs": 25600,
+        "longestKillGapMs": 10300,
+        "longestHpProgressGapMs": 4400
+      },
+      {
+        "atMs": 60000,
+        "kills": 9,
+        "firstKillMs": 8000,
+        "hpDamage": 23483,
+        "absorbed": 0,
+        "damageEvents": 46,
+        "lastKillMs": 48900,
+        "lastHpProgressMs": 59600,
+        "longestKillGapMs": 11100,
+        "longestHpProgressGapMs": 7400
+      },
+      {
+        "atMs": 120000,
+        "kills": 19,
+        "firstKillMs": 8000,
+        "hpDamage": 55028,
+        "absorbed": 0,
+        "damageEvents": 94,
+        "lastKillMs": 116900,
+        "lastHpProgressMs": 116900,
+        "longestKillGapMs": 12900,
+        "longestHpProgressGapMs": 7400
+      },
+      {
+        "atMs": 300000,
+        "kills": 45,
+        "firstKillMs": 8000,
+        "hpDamage": 130625,
+        "absorbed": 0,
+        "damageEvents": 204,
+        "lastKillMs": 294200,
+        "lastHpProgressMs": 294200,
+        "longestKillGapMs": 12900,
+        "longestHpProgressGapMs": 7700
+      }
+    ],
+    "sources": {
+      "[]": 48066,
+      "[\"empowered\"]": 58936,
+      "\"damage\"": 23623
+    },
+    "terminalHp": 674,
+    "bossKilled": false,
+    "wallMs": 4668.421000000002
+  },
+  {
+    "index": 34,
+    "spec": {
+      "path": "cadence-heavy-t3-c",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 947,
+      "mode": "boss",
+      "durationMs": 300000
+    },
+    "outcome": "boss-killed",
+    "elapsedMs": 149300,
+    "damage": 20598,
+    "dps": 137.96383121232418,
+    "kills": 1,
+    "incoming": 255,
+    "minCd": 1782,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 723,
+        "absorbed": 0,
+        "damageEvents": 3,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 4000,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 6000
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 1950,
+        "absorbed": 0,
+        "damageEvents": 8,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 26100,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 7600
+      },
+      {
+        "atMs": 60000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 7845,
+        "absorbed": 0,
+        "damageEvents": 18,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 57500,
+        "longestKillGapMs": 60000,
+        "longestHpProgressGapMs": 7600
+      },
+      {
+        "atMs": 120000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 16865,
+        "absorbed": 0,
+        "damageEvents": 38,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 119600,
+        "longestKillGapMs": 120000,
+        "longestHpProgressGapMs": 7600
+      }
+    ],
+    "sources": {
+      "[]": 10014,
+      "[\"empowered\"]": 10584
+    },
+    "terminalHp": 618,
+    "bossId": "node-t4-mountain-dungeon_monster-5",
+    "bossType": "iron-crest-titan",
+    "bossKilled": true,
+    "wallMs": 883.718200000003
+  },
+  {
+    "index": 35,
+    "spec": {
+      "path": "energy-heavy-t3-b",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    "outcome": "window-ended",
+    "elapsedMs": 120000,
+    "damage": 143634,
+    "dps": 1196.95,
+    "kills": 0,
+    "incoming": 0,
+    "minCd": 399,
+    "maxRampage": 0,
+    "maxCritical": 3,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 8601,
+        "absorbed": 0,
+        "damageEvents": 28,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 9800,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 400
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 33158,
+        "absorbed": 0,
+        "damageEvents": 86,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 29700,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 400
+      },
+      {
+        "atMs": 60000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 69598,
+        "absorbed": 0,
+        "damageEvents": 173,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 59700,
+        "longestKillGapMs": 60000,
+        "longestHpProgressGapMs": 400
+      },
+      {
+        "atMs": 120000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 143634,
+        "absorbed": 0,
+        "damageEvents": 347,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 119700,
+        "longestKillGapMs": 120000,
+        "longestHpProgressGapMs": 400
+      }
+    ],
+    "sources": {
+      "[]": 76004,
+      "[\"empowered\"]": 67630
+    },
+    "terminalHp": 588,
+    "bossKilled": false,
+    "wallMs": 929.7023000000045
+  },
+  {
+    "index": 36,
+    "spec": {
+      "path": "cadence-heavy-t3-b",
+      "arm": "baseline",
+      "plus": 5,
+      "seed": 173,
+      "mode": "probe",
+      "durationMs": 120000
+    },
+    "outcome": "window-ended",
+    "elapsedMs": 120000,
+    "damage": 58993,
+    "dps": 491.60833333333335,
+    "kills": 0,
+    "incoming": 0,
+    "minCd": 1623,
+    "maxRampage": 0,
+    "maxCritical": 0,
+    "windows": [
+      {
+        "atMs": 10000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 2404,
+        "absorbed": 0,
+        "damageEvents": 7,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 9100,
+        "longestKillGapMs": 10000,
+        "longestHpProgressGapMs": 1700
+      },
+      {
+        "atMs": 30000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 15456,
+        "absorbed": 0,
+        "damageEvents": 29,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 29700,
+        "longestKillGapMs": 30000,
+        "longestHpProgressGapMs": 2300
+      },
+      {
+        "atMs": 60000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 30164,
+        "absorbed": 0,
+        "damageEvents": 57,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 59300,
+        "longestKillGapMs": 60000,
+        "longestHpProgressGapMs": 2700
+      },
+      {
+        "atMs": 120000,
+        "kills": 0,
+        "firstKillMs": null,
+        "hpDamage": 58993,
+        "absorbed": 0,
+        "damageEvents": 115,
+        "lastKillMs": 0,
+        "lastHpProgressMs": 119800,
+        "longestKillGapMs": 120000,
+        "longestHpProgressGapMs": 2700
+      }
+    ],
+    "sources": {
+      "[]": 24406,
+      "[\"empowered\"]": 0,
+      "\"damage\"": 34587
+    },
+    "terminalHp": 674,
+    "bossKilled": false,
+    "wallMs": 606.329700000002
+  }
+]

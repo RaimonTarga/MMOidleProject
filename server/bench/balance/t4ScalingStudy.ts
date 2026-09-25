@@ -81,6 +81,21 @@ else if(mode==='probes') {
     add('energy-heavy-t3-b',['baseline','gain10'],{mode:'farm',seed,plus,durationMs:300000});
     add('reload-heavy-t3-a',['baseline','laserFlat25'],{mode:'farm',seed,plus,durationMs:300000});
   }
+} else if(mode==='screen') {
+  // feat/t4-balance paired screen: baseline arm only; run once per code tree (develop vs branch).
+  const farmBoss=(path:string,options:Partial<Spec>={})=>{for(const seed of [173,947])for(const plus of [0,5]) {
+    add(path,['baseline'],{mode:'farm',seed,plus,durationMs:300000,...options});
+    add(path,['baseline'],{mode:'boss',seed,plus,durationMs:300000,...options});
+  }};
+  for(const plus of [0,5])for(const armor of [false,true])add('energy-heavy-t3-a',['baseline'],{plus,armor});
+  farmBoss('energy-heavy-t3-a');
+  for(const plus of [0,5])for(const weapon of [undefined,'graveyard-plague-axe'])add('cadence-heavy-t3-a',['baseline'],{plus,weapon});
+  farmBoss('cadence-heavy-t3-a');
+  for(const plus of [0,5])add('cadence-heavy-t3-c',['baseline'],{plus});
+  add('cadence-heavy-t3-c',['baseline'],{durationMs:600000});
+  farmBoss('cadence-heavy-t3-c');
+  add('energy-heavy-t3-b',['baseline']);   // sentinel: untouched path
+  add('cadence-heavy-t3-b',['baseline']);  // sentinel: untouched path
 } else throw new Error('Unknown mode');
 const unique=specs.filter((s,i,a)=>a.findIndex(t=>JSON.stringify(t)===JSON.stringify(s))===i);
 writeFileSync(join(output,`${mode}-manifest.json`),JSON.stringify({mode,synthetic:true,economyEligible:false,dtMs:100,

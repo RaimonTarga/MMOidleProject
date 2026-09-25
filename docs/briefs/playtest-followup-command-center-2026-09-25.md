@@ -17,7 +17,7 @@ before merging.
 | 3 | Conduit buff | Maintenance runes + Rebuild Formation shipped (`ca90ec3f`); hp50 candidate **not applied** | `reports/conduit-study-2026-09-25/` (bench runner on develop) | early-only vs all tiers; how the extra HP carries through frame unlocks |
 | 4 | XP / mastery pacing | **First pass shipped to develop**; recalibrate after #2, #3, #6 | `feat/xp-pacing` (merged) | none (decided 2026-09-25, see section 4) |
 | 5 | Essence / upgrade economy | T2-T4 rescale committed locally (unpushed); campaign 02 prep uncommitted | branch `codex/economy-v2`, worktree `../mmo-economy-v2` | run after #4 is stable |
-| 6 | T4 class balance | Candidate code written, **smoke-tested only**, uncommitted | worktree `../mmo-t4-scaling-candidate` (branch `codex/t4-scaling-candidate-01`) | which of the 5 proposals to take |
+| 6 | T4 class balance | Voidwalker fix + Berserker + Juggernaut (log knee) implemented and screened; Melter/Invoker held | branch `feat/t4-balance`, worktree `../mmo-t4-balance`; [screen](../../reports/t4-balance-2026-09-25/SCREEN.md) | user sign-off on numbers + merge approval |
 
 ## Recommended order
 
@@ -118,7 +118,19 @@ pending merge approval.
   - Iteration 03 held all Desert/Jungle coefficient variants.
   - Iteration 04 (finite-pack replay pilot) started, but only
     `reports/defense-iteration-04/pilot-*` exists, uncommitted in the worktree.
-- **Session goal:**
+- **Session 2026-09-25 (`feat/t4-balance`):**
+  - **Adopted:** Voidwalker mitigation fix; Berserker 60→30; Juggernaut **logarithmic knee**. The
+    user chose the knee over the hard cap. Its tunables are `CRESCENDO_KNEE_MULT` 1.0 and
+    `CRESCENDO_KNEE_SCALE` 0.1.
+  - **Held:** Melter and Invoker, per the study's weak evidence grading. Each is a one-constant or
+    one-helper port from `codex/t4-scaling-candidate-01` if revived.
+  - **Screen:** 37-spec paired screen against develop, with sentinels bit-identical. Results are in
+    [SCREEN.md](../../reports/t4-balance-2026-09-25/SCREEN.md). Voidwalker at +0 no longer kills
+    the Titan.
+  - **Port fixes:** the Codex snapshot had dropped an import that Flash teleport still used, so the
+    candidate would have thrown at runtime. It also carried CRLF whole-file churn in 6 files
+    (normalized to LF).
+- **Original session goal:**
   1. Rebase onto develop.
   2. Commit the iteration-04 pilot.
   3. Run the finite-pack replay the iteration-03 report specifies.
