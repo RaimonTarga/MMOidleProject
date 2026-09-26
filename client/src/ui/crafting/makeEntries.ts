@@ -2,6 +2,7 @@ import {
   ABILITY_DATABASE,
   ABILITY_RECIPE_DATABASE,
   ACTION_DATABASE,
+  runeActionArchetypeNote,
   CONDITION_DATABASE,
   RUNE_RECIPE_DATABASE,
   RECIPE_DATABASE,
@@ -263,7 +264,10 @@ export function buildMakeEntries(sources: MakeSources): MakeEntry[] {
       ),
       learnedId: (id) => RUNE_RECIPE_DATABASE.get(id)?.runeId ?? null,
       blurb: (id) =>
-        ACTION_DATABASE.get(id)?.blurb ?? CONDITION_DATABASE.get(id)?.blurb ?? '',
+        [
+          ACTION_DATABASE.get(id)?.blurb ?? CONDITION_DATABASE.get(id)?.blurb ?? '',
+          runeActionArchetypeNote(id, sources.combatArchetype),
+        ].filter(Boolean).join(' '),
       displayName: (recipeId) => RUNE_RECIPE_DATABASE.get(recipeId)?.name ?? null,
       known: sources.ownedRunes,
       isUnlocked: (id) => {

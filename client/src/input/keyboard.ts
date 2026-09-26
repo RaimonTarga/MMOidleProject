@@ -183,6 +183,15 @@ export function attachKeyboard(scene: GameScene): () => void {
         return;
       }
 
+      if (
+        store.get(combatArchetypeAtom) === 'summoner'
+        && matchesKey(event, 'class.recall', bindings)
+      ) {
+        event.preventDefault();
+        hudBus.requestRecallSummons();
+        return;
+      }
+
       const abilities = store.get(attunedAbilitiesAtom);
       const ordered = [...abilities.techniques, ...abilities.guards];
       const slot = abilitySlotForKey(event, bindings);

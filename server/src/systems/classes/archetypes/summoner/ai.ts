@@ -28,6 +28,8 @@ import { runFormationAttack } from './formationAttack';
 import { attackHasteBonus } from '../../../combat/engine/attackCadence';
 import { computeMinionSpeed, despawnMinion, getFollowOffset } from './spawn';
 import {
+  isSummonerRecalling,
+  recallSpot,
   resolveCommandedFocusTarget,
   resolveCommandedMoveDestination,
 } from './command';
@@ -218,6 +220,18 @@ export function driveMinion(
   const escape = ownerStepsBack(owner) ? findMinionTelegraphEscape(world, minion, now) : null;
   if (escape) {
     setEntityMotion(world, minion, escape);
+    return;
+  }
+
+  if (isSummonerRecalling(owner)) {
+    const spot = recallSpot(owner, minion);
+    if (distance(minion.hasPosition.current, spot) > FOLLOW_HOVER_TOL) {
+      setEntityMotion(world, minion, spot);
+    } else {
+      stopEntity(world, minion);
+    }
+    setAttackTarget(world, minion, null);
+    cm.currentTargetId = null;
     return;
   }
 

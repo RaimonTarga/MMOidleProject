@@ -4,8 +4,10 @@ import {
   NO_STANCE_ID,
   abilityDef,
   attunedForFamily,
+  runeActionArchetypeNote,
   stanceDef,
   type AttunedAbilities,
+  type CombatArchetype,
   type EquippedRule,
 } from "@mmo-idle/shared";
 import { GameIcon } from "./GameIcon";
@@ -17,7 +19,11 @@ import {
 } from "./conceptIcons";
 
 
-export function runeResponse(rule: EquippedRule, abilities: AttunedAbilities) {
+export function runeResponse(
+  rule: EquippedRule,
+  abilities: AttunedAbilities,
+  combatArchetype?: CombatArchetype,
+) {
   if (rule.actionId === "use-ability") {
     const ability = abilityDef(rule.targetAbilityId);
     return { name: ability?.name ?? "Choose ability", icon: ability ? conceptAbilityIconSource(ability.id) : runeActionIconSource(rule.actionId), missing: !ability || ![...abilities.techniques, ...abilities.guards].includes(ability.id), detail: ability ? `Fires ${ability.name} while this situation holds, whenever it is off cooldown.` : "Choose an attuned ability. Learn and attune tools before targeting them." };
@@ -40,11 +46,12 @@ export function runeResponse(rule: EquippedRule, abilities: AttunedAbilities) {
   }
   if (rule.actionId === "wait-it-out" && rule.waitOutMode === "heat-managed") return { name: "Wait It Out / Manage Heat", icon: runeActionIconSource(rule.actionId), missing: false, detail: "Ordinary Volcano only: 25 Heat to request a break; resume at 10. Current fights finish first. Other afflictions do not extend this wait." };
   const action = ACTION_DATABASE.get(rule.actionId);
+  const note = runeActionArchetypeNote(rule.actionId, combatArchetype);
   return {
     name: action?.name ?? rule.actionId,
     icon: runeActionIconSource(rule.actionId),
     missing: !action,
-    detail: action?.blurb ?? "",
+    detail: [action?.blurb ?? "", note].filter(Boolean).join(" "),
   };
 }
 

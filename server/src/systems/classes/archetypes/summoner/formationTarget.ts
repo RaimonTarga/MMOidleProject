@@ -1,7 +1,7 @@
 import type { World } from '../../../../world/World';
 import type { PlayerEntity } from '../../../../ecs/entity';
 import { markSliceDirty } from '../../../../ecs/dirtyHelpers';
-import { resolveCommandedFocusTarget } from './command';
+import { isSummonerRepositioning, resolveCommandedFocusTarget } from './command';
 
 type SummonerTargetOwner = PlayerEntity & {
   summonsMinions: NonNullable<PlayerEntity['summonsMinions']>;
@@ -34,7 +34,7 @@ export function syncSummonerFormationTarget(
   const commandedFocus = resolveCommandedFocusTarget(world, owner);
   if (commandedFocus) {
     nextTargetId = commandedFocus.isMonster.id;
-  } else if (owner.hasSummonerCommand?.kind !== 'move') {
+  } else if (!isSummonerRepositioning(owner)) {
     const activeTargetIds: string[] = [];
     for (const minionId of summons.minionIds) {
       const minion = minionId ? world.getMinionEntity(minionId) : undefined;

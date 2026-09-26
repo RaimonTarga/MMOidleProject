@@ -45,6 +45,7 @@ export type ActionId =
   | 'stance.neutral'
   | StanceHotkeyAction
   | 'class.reload'
+  | 'class.recall'
   | AbilityHotkeyAction
   | 'close.overlay';
 
@@ -87,6 +88,7 @@ export const REBINDABLE_ACTIONS: readonly ActionId[] = [
   'stance.neutral',
   ...STANCE_HOTKEY_ACTIONS,
   'class.reload',
+  'class.recall',
   ...ABILITY_HOTKEY_ACTIONS,
 ];
 
@@ -119,6 +121,8 @@ export const DEFAULT_BINDINGS: Bindings = {
   'stance.slot7': { key: 'Digit8', pad: null, shift: true },
   'stance.slot8': { key: 'Digit9', pad: null, shift: true },
   'class.reload': { key: 'KeyR', pad: null },
+  // Same key as Slinger reload: each only fires for its own class.
+  'class.recall': { key: 'KeyR', pad: null },
   'ability.slot1': { key: 'Digit1', pad: null },
   'ability.slot2': { key: 'Digit2', pad: null },
   'ability.slot3': { key: 'Digit3', pad: null },
@@ -350,6 +354,7 @@ export const ACTION_LABELS: Record<ActionId, string> = {
   'stance.slot7': 'Use Stance 7',
   'stance.slot8': 'Use Stance 8',
   'class.reload': 'Slinger: Reload',
+  'class.recall': 'Conduit: Recall Summons',
   'ability.slot1': 'Use Ability 1',
   'ability.slot2': 'Use Ability 2',
   'ability.slot3': 'Use Ability 3',

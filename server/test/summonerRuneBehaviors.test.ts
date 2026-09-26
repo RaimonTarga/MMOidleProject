@@ -8,6 +8,7 @@ import {
   STARTER_RUNE_IDS,
   emptyEquipment,
   geometryContains,
+  runeActionArchetypeNote,
   setFlag,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
@@ -21,6 +22,11 @@ import { setAggroTarget } from '../src/systems/combat/ai/targeting';
 import { RUNE_TAUNT_CURRENT_TARGET_FLAG } from '../src/systems/combat/ai/runeConfig';
 import { emitCombatEvent, makeCombatContext } from '../src/systems/combat/engine/combatPipeline';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
+import {
+  RECALL_MAX_MS,
+  applySummonerRecall,
+  recallSpot,
+} from '../src/systems/classes/archetypes/summoner/command';
 
 function assert(condition: boolean, message: string): void {
   if (!condition) throw new Error(message);
@@ -140,5 +146,37 @@ const base = summonStep(0);
 const hasted = summonStep(0.5);
 assert(base > 0, 'fixture: the summon moves');
 assert(Math.abs(hasted / base - 1.5) < 0.05, `an out-of-combat sprint speeds summons too (${base} -> ${hasted})`);
+
+// ── Recall brings the formation back to the owner, then releases it ──────────
+{
+  const { world, owner, minions } = setup('recall');
+  let now = 2_000;
+  for (const [i, m] of minions().entries()) m.hasPosition.current = { x: 400 + 200 * Math.cos(i), y: 400 + 200 * Math.sin(i) };
+  applySummonerRecall(world, owner, now);
+  assert(owner.hasSummonerCommand?.kind === 'recall', 'recall attaches the command');
+  for (let i = 0; i < 20 && owner.hasSummonerCommand; i++) {
+    for (const m of minions()) driveMinion(world, m, owner, now);
+    assert(minions().every((m) => !m.hasAttackTarget), 'recalled summons drop their targets');
+    updateMovement(world, 100, now);
+    now += 100;
+    updateSummonerArchetype(world, 100, now);
+  }
+  assert(!owner.hasSummonerCommand, 'recall clears once the formation is home');
+  assert(minions().every((m) => Math.hypot(
+    m.hasPosition.current.x - recallSpot(owner, m).x,
+    m.hasPosition.current.y - recallSpot(owner, m).y,
+  ) <= 12), 'every summon ends at its spot around the owner');
+
+  // A blocked body cannot hold the formation idle forever.
+  minions()[0]!.hasPosition.current = { x: 4_000, y: 4_000 };
+  applySummonerRecall(world, owner, now);
+  updateSummonerArchetype(world, 100, now + RECALL_MAX_MS);
+  assert(!owner.hasSummonerCommand, 'recall times out');
+}
+
+// ── Class notes on shared runes show only for that class ─────────────────────
+assert(runeActionArchetypeNote('taunt-current-target', 'summoner') !== null, 'Conduit sees the summon taunt note');
+assert(runeActionArchetypeNote('step-back', 'summoner') !== null, 'Conduit sees the summon Step Back note');
+assert(runeActionArchetypeNote('taunt-current-target', 'cadence') === null, 'other classes do not');
 
 console.log('summonerRuneBehaviors: ok');

@@ -5,13 +5,14 @@ import { attachComponent, detachComponent } from '../../../ecs/markerHelpers';
 import { summonerProfileFor, usesSummonTechniques } from '../../classes/archetypes/summoner/profile';
 import { beginFormationTechnique } from '../../classes/archetypes/summoner/formationTechnique';
 import { runFormationAttack } from '../../classes/archetypes/summoner/formationAttack';
+import { isSummonerRepositioning } from '../../classes/archetypes/summoner/command';
 import { isHardControlled } from '../../combat/status/playerHardControl';
 import { setAttackTarget } from '../../combat/ai/targeting';
 import { setEntityMotion, stopEntity } from '../../world/movement';
 
 /** Physical participants only: neither replacements nor another owner's summons join. */
 export function formationChargeMinions(world: World, owner: PlayerEntity, target: MonsterEntity, ability: AbilityDef): MinionEntity[] {
-  if (!usesSummonTechniques(owner) || owner.hasSummonerCommand?.kind === 'move'
+  if (!usesSummonTechniques(owner) || isSummonerRepositioning(owner)
     || target.hasHealth.hp <= 0 || target.isConcealed || target.isInvulnerable
     || target.hasPosition.nodeId !== owner.hasPosition.nodeId
     || distanceSq(target.hasPosition.current, owner.hasPosition.current) > summonerProfileFor(owner).leashRadius ** 2) return [];

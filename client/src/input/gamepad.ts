@@ -73,6 +73,14 @@ export function attachGamepad(scene: GameScene): () => void {
         return;
       }
 
+      if (
+        store.get(combatArchetypeAtom) === 'summoner'
+        && matchesPad(index, 'class.recall', bindings)
+      ) {
+        hudBus.requestRecallSummons();
+        return;
+      }
+
       const abilities = store.get(attunedAbilitiesAtom);
       const ordered = [...abilities.techniques, ...abilities.guards];
       const slot = abilitySlotForPad(index, bindings);

@@ -29,15 +29,23 @@ const PULL_AT_HP_PCT = 0.9;
 const MAX_WAIT_MS = 60_000;
 const PULL_LIMIT_MS = Number(process.env.PROBE_LIMIT_MS ?? 60_000);
 
-function t1Node(biome: string) {
+function t1Node(biome: string, tier = 1) {
   const id = Object.entries(NODE_BIOMES)
-    .filter(([, i]) => i.biomeGroup === biome && i.biomeTier === 1 && i.kind === "normal")
+    .filter(([, i]) => i.biomeGroup === biome && i.biomeTier === tier && i.kind === "normal")
     .map(([nodeId]) => nodeId).sort()[0];
   if (!id) throw new Error(`no T1 ${biome} node`);
   return farmTargetForNode(id);
 }
 
-const CASES: { label: string; biome: string; pack: string[] }[] = [
+const LATE_CASES: { label: string; biome: string; pack: string[]; tier: number }[] = [
+  { label: "T3 Cave cavern troll", biome: "cave", pack: ["cavern-troll"], tier: 3 },
+  { label: "T3 Mountain colossus", biome: "mountain", pack: ["mountain-colossus"], tier: 3 },
+  { label: "T3 Mountain mortar+colossus", biome: "mountain", pack: ["crag-mortar", "mountain-colossus"], tier: 3 },
+  { label: "T4 Tundra yeti", biome: "tundra", pack: ["hoarfrost-yeti"], tier: 4 },
+  { label: "T4 Tundra behemoth", biome: "tundra", pack: ["permafrost-behemoth"], tier: 4 },
+  { label: "T4 Trench leviathan", biome: "trench", pack: ["elder-leviathan"], tier: 4 },
+];
+const CASES: { label: string; biome: string; pack: string[]; tier?: number }[] = process.env.PROBE_LATE === "1" ? LATE_CASES : [
   { label: "Forest wolf pack", biome: "forest", pack: ["young-wolf", "wolf", "young-wolf"] },
   { label: "Forest moss rats", biome: "forest", pack: ["forest-slime", "forest-slime", "forest-slime"] },
   { label: "Mountain titan", biome: "mountain", pack: ["granite-titan"] },
@@ -123,7 +131,7 @@ for (const [label, runes] of [["live code", []], ["+ Step Back", [STEP_BACK]]] a
   console.log(`
 == All roots, ${label} (${PULLS} pulls, >=${WALK_MS / 1000}s walk, next pull at ${PULL_AT_HP_PCT * 100}% HP) ==`);
   for (const c of cases) {
-    const target = t1Node(c.biome);
+    const target = t1Node(c.biome, c.tier);
     console.log(`
 -- ${c.label} (${target.nodeId})`);
     for (const root of ROOTS) {
@@ -135,7 +143,12 @@ for (const [label, runes] of [["live code", []], ["+ Step Back", [STEP_BACK]]] a
 
 console.log(`
 == Conduit variants ==`);
-const VARIANTS: Fixes[] = [
+const VARIANTS: Fixes[] = process.env.PROBE_LATE === "1" ? [
+  { name: "no area share", area: false, rebuild: true },
+  BOTH,
+  { name: "no area share +SB", area: false, rebuild: true, runes: [STEP_BACK] },
+  { ...BOTH, name: "both +Step Back", runes: [STEP_BACK] },
+] : [
   { name: "old (no fixes)", area: false, rebuild: false },
   BOTH,
   { ...BOTH, name: "+ Step Back", runes: [STEP_BACK] },
@@ -143,7 +156,7 @@ const VARIANTS: Fixes[] = [
   { ...BOTH, name: "+ Step Back + Taunt", runes: [STEP_BACK, TAUNT] },
 ];
 for (const c of cases) {
-  const target = t1Node(c.biome);
+  const target = t1Node(c.biome, c.tier);
   console.log(`
 -- ${c.label}`);
   for (const v of VARIANTS) {

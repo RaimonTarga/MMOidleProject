@@ -118,7 +118,7 @@ export function BuildRunesTab() {
             : {}),
         }
       : null;
-  const response = pending ? runeResponse(pending, abilities) : null;
+  const response = pending ? runeResponse(pending, abilities, archetype) : null;
   const next = pending ? composeRuneEdit(rules, pending, draft!.index) : rules;
   const nextSpent = runicPointLoadoutCost({ rules: next, rites, abilities, stances });
   const valid =

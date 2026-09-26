@@ -65,6 +65,7 @@ import { clearEngagement } from "../systems/combat/ai/engagement";
 import { attachComponent, detachComponent } from "../ecs/markerHelpers";
 import {
   applySummonerCommand,
+  applySummonerRecall,
   clearSummonerCommand,
 } from "../systems/classes/archetypes/summoner/command";
 import { relocateMinionsForOwner } from "../systems/classes/archetypes/summoner";
@@ -251,7 +252,10 @@ export function registerPlayerHandlers(
 
   socket.on("player:move", (pos, opts, ack) => {
     const p = world.getPlayerEntity(socket.id);
-    if (p && !p.isDead && !p.isChanneling) clearSummonerCommand(world, p);
+    // A recall follows the owner, so stepping out of a telegraph keeps it.
+    if (p && !p.isDead && !p.isChanneling && p.hasSummonerCommand?.kind !== "recall") {
+      clearSummonerCommand(world, p);
+    }
     const result = applyManualMoveIntent(world, p, pos, opts);
     if (typeof ack === "function") ack(result);
   });
@@ -260,6 +264,12 @@ export function registerPlayerHandlers(
     const p = liveSelf();
     if (!p) return;
     applySummonerCommand(world, p, pos);
+  });
+
+  socket.on("player:recallSummons", () => {
+    const p = liveSelf();
+    if (!p) return;
+    applySummonerRecall(world, p, Date.now());
   });
 
   socket.on("player:setAuto", (enabled) => {

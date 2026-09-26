@@ -488,7 +488,7 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
     {
       id: "step-back",
       name: "Step Back",
-      blurb: "Take the shortest reasonable route out of visible attack telegraphs. A Conduit's summons step out too.",
+      blurb: "Take the shortest reasonable route out of visible attack telegraphs.",
       cost: 2,
       tier: 1,
       channel: "MOVEMENT",
@@ -724,7 +724,7 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
     {
       id: "taunt-current-target",
       name: "Taunt Target",
-      blurb: "On hit, force your current enemy to attack you. A Conduit's summons draw it onto themselves. Has a 4 second cooldown.",
+      blurb: "On hit, force your current enemy to attack you. Has a 4 second cooldown.",
       cost: 1,
       tier: 1,
       channel: "CONTROL",
@@ -906,6 +906,26 @@ export function isRuneRuleKnown(rule: EquippedRule): boolean {
 
 export function isRuneRuleCompatible(rule: EquippedRule): boolean {
   return isRuneRuleCompatibleForArchetype(rule, undefined);
+}
+
+/**
+ * Class-specific addenda to a response's blurb, shown only to that class. The
+ * rule itself is shared; this says what it means for this class's body.
+ */
+const RUNE_ARCHETYPE_NOTES: Partial<Record<Exclude<CombatArchetype, null>, Partial<Record<RuneActionId, string>>>> = {
+  summoner: {
+    "taunt-current-target":
+      "Conduit: your summons taunt for you. A summon's hit pulls its target onto that summon.",
+    "step-back": "Conduit: your summons step out of telegraphs too.",
+  },
+};
+
+export function runeActionArchetypeNote(
+  actionId: string,
+  combatArchetype: CombatArchetype | undefined,
+): string | null {
+  if (!combatArchetype) return null;
+  return RUNE_ARCHETYPE_NOTES[combatArchetype]?.[actionId as RuneActionId] ?? null;
 }
 
 export function isRuneRuleCompatibleForArchetype(

@@ -10,6 +10,7 @@ export interface IntentMap {
   setAbilityLoadout: { equipped: AttunedAbilities };
   useAbility: string;
   manualReload: undefined;
+  recallSummons: undefined;
   craftStanceRecipe: string;
   setStanceLoadout: { slot: StanceSlot; stanceId: string | null; attunedStances?: string[] };
   setStanceControl: string | null;

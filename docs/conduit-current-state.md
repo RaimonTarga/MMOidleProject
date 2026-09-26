@@ -222,7 +222,18 @@ unrelated ground bake-off in development.
   than chasing back in. **Taunt Target** fires on summon hits too: the enemy is
   pulled onto the striking summon, unless it is already on one of that owner's
   summons. At the root this is a net loss (focused 20%-HP bodies die fast); it is
-  a Vigil/party-tank tool.
+  a Vigil/party-tank tool. Both Runes keep a class-neutral blurb; the Conduit
+  sees an extra line via `runeActionArchetypeNote` (shared `runeDatabase.ts`),
+  shown in the rune editor and crafting list only for that class.
+- **Recall** (`player:recallSummons`, hotkey R — the `class.recall` binding shares
+  Slinger's reload key, each gated by archetype): attaches a `recall`
+  `hasSummonerCommand`. Summons drop targets and return to their follow offsets
+  around the owner's *live* position, so the owner can step out of a telegraph and
+  the formation follows; `player:move` does not cancel it. Ends when every body
+  arrives or after `RECALL_MAX_MS` (3 s). Recall counts as repositioning like a
+  move command (`isSummonerRepositioning`): no formation target, handover,
+  ability targeting or formation charge while it runs. This is the manual answer
+  to slammers before Step Back unlocks (Cave mastery 2); bots cannot use it.
 - Summons never fall behind the Conduit: `computeMinionSpeed` floors their base
   at the owner's speed, and movement applies the owner's live mobility haste
   (`bootSpeedMultiplier`: sprints, ramps, gap-closers) to every summon step.
