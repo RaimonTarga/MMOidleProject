@@ -8,6 +8,7 @@
  */
 import {
   distanceSq,
+  getFlag,
   pointInHitbox,
   posHitboxFromEntity,
   resolveSummonerProfile,
@@ -17,6 +18,7 @@ import type { World } from '../../../../world/World';
 import type { MinionEntity, MonsterEntity, PlayerEntity } from '../../../../ecs/entity';
 import { attachComponent, detachComponent } from '../../../../ecs/markerHelpers';
 import { getFollowOffset } from './spawn';
+import { RUNE_RECALL_SUMMONS_FLAG } from '../../../combat/ai/runeConfig';
 
 const LEASH_MARGIN = 4;
 const ARRIVE_TOL = 10;
@@ -43,12 +45,13 @@ export interface HasSummonerCommand {
 
 /** Move and recall both pull the formation off the fight. */
 export function isSummonerRepositioning(owner: PlayerEntity): boolean {
-  const kind = owner.hasSummonerCommand?.kind;
-  return kind === 'move' || kind === 'recall';
+  return owner.hasSummonerCommand?.kind === 'move' || isSummonerRecalling(owner);
 }
 
+/** The R recall, or a Recall Summons rune whose situation holds (owner on auto). */
 export function isSummonerRecalling(owner: PlayerEntity): boolean {
-  return owner.hasSummonerCommand?.kind === 'recall';
+  return owner.hasSummonerCommand?.kind === 'recall'
+    || (owner.usesAutocombat.auto && getFlag(owner.tracksCombat, RUNE_RECALL_SUMMONS_FLAG));
 }
 
 function clampToLeash(owner: PlayerEntity, desired: Vec2, leashRadius: number): Vec2 {

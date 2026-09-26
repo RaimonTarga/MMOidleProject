@@ -234,6 +234,12 @@ unrelated ground bake-off in development.
   move command (`isSummonerRepositioning`): no formation target, handover,
   ability targeting or formation charge while it runs. This is the manual answer
   to slammers before Step Back unlocks (Cave mastery 2); bots cannot use it.
+- **Recall Summons rune** (starter, 1 RP, own `FORMATION` channel): the same recall,
+  driven by a situation instead of a key: Low HP (`hp-below-25`, pairs with Flee), While
+  Traveling, or Enemy Charging. For a Conduit, Enemy Charging also counts casts wound up
+  on its summons, so Guard/stance rules on that condition react to those too. Enemy
+  Charging → Recall is the automatic pre-Step-Back slam answer (designer call; weaker
+  than Step Back when the slam is centred near the owner). Bots can use it.
 - Summons never fall behind the Conduit: `computeMinionSpeed` floors their base
   at the owner's speed, and movement applies the owner's live mobility haste
   (`bootSpeedMultiplier`: sprints, ramps, gap-closers) to every summon step.
@@ -370,6 +376,8 @@ The rules in §7-8 SHOULD help Conduit; beyond the session probes they are unmea
 - **Reading results:** bot summaries carry `mechanics.formationAttrition` (alive at pull,
   full-formation rate, summon deaths per pull). Judge Conduit on attrition, not only clear time.
 - Do not equip Taunt Target on root Conduit templates (net loss in probes).
+- Recall Summons (Enemy Charging) is available to bot routes as the pre-Cave slam answer
+  but no template equips it yet — an unmeasured option, RP budget permitting.
 
 ## 11. Outstanding
 

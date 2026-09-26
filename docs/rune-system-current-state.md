@@ -38,6 +38,7 @@ Current channels:
 - `TRAVEL_PATHING`
 - `TRAVEL_RESPONSE`
 - `CONTROL`
+- `FORMATION` (Conduit only: where the formation stands, independent of owner movement)
 - `ABILITY` (per-ability timing, runtime execution arbitration)
 - `STANCE`
 
@@ -96,6 +97,7 @@ Actions:
 - `fight-back` (shown as "Fight Back")
 - `lead-the-way`
 - `taunt-current-target` (shown as "Taunt Target")
+- `recall-summons` (shown as "Recall Summons"; summoner only, starter; `hp-below-25`, `while-traveling`, `target-casting`)
 
 New players start with all situation fragments as baseline vocabulary, including
 `inside-telegraph`, plus the responses required by the default loadout and a small
@@ -196,6 +198,7 @@ The derived rune result is translated into existing AI controls:
 - `lead-the-way` sets `rune.leadTheWay` and uses the same local enemy-search
   behavior as `auto-path-enemy` while out of combat
 - `taunt-current-target` sets `rune.tauntCurrentTarget`
+- `recall-summons` sets `rune.recallSummons`; with owner auto on, summons behave as under the R recall (drop targets, hold their follow spots) while it holds. For a Conduit, `target-casting` also counts casts wound up on its own summons
 - `let-dots-finish` sets `rune.letDotsFinish`
 - `spread-dots` sets `rune.spreadDots`
 - `avoid-enemies` sets `rune.avoidEnemies`

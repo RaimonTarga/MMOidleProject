@@ -10,6 +10,10 @@ import {
   geometryContains,
   runeActionArchetypeNote,
   setFlag,
+  ACTION_DATABASE,
+  STARTER_RUNE_IDS,
+  deriveAutoConfigFromRunes,
+  type RuneContext,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { World } from '../src/world/World';
@@ -19,7 +23,7 @@ import { driveMinion } from '../src/systems/classes/archetypes/summoner/ai';
 import { publishGroundZone } from '../src/systems/world/groundZones';
 import { setEntityMotion, updateMovement } from '../src/systems/world/movement';
 import { setAggroTarget } from '../src/systems/combat/ai/targeting';
-import { RUNE_TAUNT_CURRENT_TARGET_FLAG } from '../src/systems/combat/ai/runeConfig';
+import { RUNE_RECALL_SUMMONS_FLAG, RUNE_TAUNT_CURRENT_TARGET_FLAG } from '../src/systems/combat/ai/runeConfig';
 import { emitCombatEvent, makeCombatContext } from '../src/systems/combat/engine/combatPipeline';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import {
@@ -172,6 +176,38 @@ assert(Math.abs(hasted / base - 1.5) < 0.05, `an out-of-combat sprint speeds sum
   applySummonerRecall(world, owner, now);
   updateSummonerArchetype(world, 100, now + RECALL_MAX_MS);
   assert(!owner.hasSummonerCommand, 'recall times out');
+}
+
+// ── Recall Summons rune: situation-driven recall, Conduit only ───────────────
+{
+  assert(STARTER_RUNE_IDS.includes('recall-summons'), 'Recall Summons is a starter rune');
+  assert(ACTION_DATABASE.get('recall-summons')?.cost === 1, 'Recall Summons costs 1 RP');
+  const rule = { conditionId: 'target-casting', actionId: 'recall-summons' };
+  const ctx: RuneContext = { hpPct: 1, inCombat: true, activelyEngaged: true, inParty: false, aggroCount: 1, combatArchetype: 'summoner' };
+  assert(deriveAutoConfigFromRunes([rule], { ...ctx, enemyCharging: true }).recallSummons, 'a cast wind-up arms the recall');
+  assert(!deriveAutoConfigFromRunes([rule], ctx).recallSummons, 'no wind-up, no recall');
+  assert(!deriveAutoConfigFromRunes([rule], { ...ctx, enemyCharging: true, combatArchetype: 'cadence' }).recallSummons,
+    'other classes cannot wire Recall Summons');
+
+  // The flag drives the same behaviour as the R recall, for as long as it holds.
+  const { world, owner, minions, monster } = setup('rune-recall');
+  owner.usesAutocombat.auto = true;
+  setFlag(owner.tracksCombat, RUNE_RECALL_SUMMONS_FLAG, true);
+  let now = 2_000;
+  const m0 = minions()[0]!;
+  m0.hasPosition.current = { x: 700, y: 400 };
+  setAggroTarget(world, monster, { id: owner.isPlayer.id, kind: 'player' }, now);
+  for (let i = 0; i < 40; i++) {
+    for (const m of minions()) driveMinion(world, m, owner, now);
+    updateMovement(world, 100, now);
+    now += 100;
+  }
+  assert(minions().every((m) => !m.hasAttackTarget), 'rune-recalled summons hold no target');
+  const spot = recallSpot(owner, m0);
+  assert(Math.hypot(m0.hasPosition.current.x - spot.x, m0.hasPosition.current.y - spot.y) <= 12,
+    'rune-recalled summons stand at their spots');
+  owner.usesAutocombat.auto = false;
+  assert(!owner.hasSummonerCommand, 'the rune recall is not a lingering command');
 }
 
 // ── Class notes on shared runes show only for that class ─────────────────────

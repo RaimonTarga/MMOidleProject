@@ -180,6 +180,8 @@ summon **attrition**, not damage (extra offense barely moved clears). Shipped, a
   design; before that the answer is manual: **R = Recall summons**).
 - **Taunt Target** fires on summon hits (pulls onto the summon); measured a *net loss* at root.
 - Summons share the owner's mobility haste.
+- **Recall Summons** starter rune (1 RP): Low HP / While Traveling / Enemy Charging (counts casts
+  on summons) → summons return to you. Botable pre-Step-Back slam answer; no template uses it yet.
 
 **For balance agents — these SHOULD help Conduit, unmeasured beyond the probes; test, don't assume:**
 
