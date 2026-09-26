@@ -8,7 +8,7 @@ import type { AttackTint } from './elementTint';
  * `spawn.ts` (resolveMinionType's sibling), so the formation's fighting
  * distance is legible from what its summons throw:
  *
- *   Vigil (close)      -> 'impact', the shared melee thump
+ *   Vigil (close)      -> fxConduitStrike, a small red nick at the target's edge
  *   Procession (mid)   -> fxConduitBolt, a fast red travelling orb
  *   Harrier (far)      -> fxConduitBeam, a short-lived red beam
  *
@@ -24,6 +24,69 @@ import type { AttackTint } from './elementTint';
  * show up in what the formation throws. The near-white hot core stays put either
  * way, which is what keeps beam-vs-bolt readable by shape.
  */
+
+/**
+ * Vigil / unchosen melee: deliberately low-key. A formation lands up to six of
+ * these on one target per volley, so the shared `impact` bloom (16px flash, two
+ * rings scaling to ~5x, 8 debris) stacked into noise. The summon's lunge already
+ * sells the hit; this only confirms contact.
+ *
+ * The nick sits on the target's edge FACING the attacker rather than on its
+ * centre, so a surrounding formation reads as a ring of small cuts around the
+ * target instead of one pile of overlapping blooms. A little angle jitter keeps
+ * repeat hits from the same summon from stamping an identical mark.
+ */
+export function fxConduitStrike(
+  scene: GameScene,
+  fromX: number,
+  fromY: number,
+  toX: number,
+  toY: number,
+  tint?: AttackTint,
+): void {
+  const body = tint?.glow ?? 0xff4455;
+  const dx = toX - fromX;
+  const dy = toY - fromY;
+  const len = Math.hypot(dx, dy) || 1;
+  const ux = dx / len;
+  const uy = dy / len;
+  // Pull the contact point back toward the attacker, but never past it.
+  const inset = Math.min(8, len * 0.5);
+  const cx = toX - ux * inset;
+  const cy = toY - uy * inset;
+
+  // Short stroke across the approach direction, tilted a little off-perpendicular.
+  const angle = Math.atan2(uy, ux) + Math.PI / 2 + (Math.random() - 0.5) * 0.9;
+  const half = 5;
+  const ox = Math.cos(angle) * half;
+  const oy = Math.sin(angle) * half;
+
+  const g = scene.add.graphics({ x: cx, y: cy }).setDepth(DEPTH.FX);
+  g.lineStyle(3, body, 0.45);
+  g.lineBetween(-ox, -oy, ox, oy);
+  g.lineStyle(1.25, 0xffe8e6, 0.9);
+  g.lineBetween(-ox * 0.8, -oy * 0.8, ox * 0.8, oy * 0.8);
+
+  scene.tweens.add({
+    targets: g,
+    alpha: 0,
+    scaleX: 1.35,
+    scaleY: 1.35,
+    duration: 130,
+    ease: 'Quad.easeOut',
+    onComplete: () => g.destroy(),
+  });
+
+  // Two flecks carried on through the target, not an omnidirectional burst.
+  const deg = (Math.atan2(uy, ux) * 180) / Math.PI;
+  burstFx(scene, 'ptx-dot', cx, cy, 2, 160, {
+    tint: tint?.particles ?? 0xff4455,
+    speed: { min: 30, max: 80 },
+    angle: { min: deg - 35, max: deg + 35 },
+    scale: { start: 0.3, end: 0 },
+    alpha: { start: 0.9, end: 0 },
+  });
+}
 
 /** Harrier: a beam that snaps on and fades inside ~140ms. */
 export function fxConduitBeam(

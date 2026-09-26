@@ -27,7 +27,7 @@ import {
   type Vec2,
 } from "@mmo-idle/shared";
 import { activateLaserBeam } from "../fx/laser";
-import { fxConduitBeam, fxConduitBolt } from "../fx/conduitSummon";
+import { fxConduitBeam, fxConduitBolt, fxConduitStrike } from "../fx/conduitSummon";
 import { activateHolyBeam, fxHolyFlash } from "../fx/holyBeam";
 import { fxCannonBlast } from "../fx/cannonFx";
 import { fxVoidDischarge } from "../fx/voidDischarge";
@@ -207,6 +207,7 @@ function attackSfxFor(archetype: CombatArchetype, style: string): SfxId {
   if (RANGED_ATTACK_STYLES.has(style)) return "attack-ranged";
   if (MAGIC_ATTACK_STYLES.has(style)) return "attack-magic";
   if (style === "impact") return "attack-blunt";
+  if (style === "conduit-strike") return "attack-melee";
   return "attack-melee";
 }
 
@@ -216,6 +217,12 @@ function attackSfxFor(archetype: CombatArchetype, style: string): SfxId {
 // pan); tune the radii to taste.
 const SFX_FALLOFF_INNER_PX = 300;
 const SFX_FALLOFF_OUTER_PX = 1150;
+
+// Per-style SFX gain for styles that fire in packs. A Conduit formation lands up
+// to six melee swings per volley, so each one plays well under a single hit.
+const SFX_GAIN_BY_STYLE: Record<string, number> = {
+  "conduit-strike": 0.35,
+};
 
 function listenerGain(scene: GameScene, sourceX: number, sourceY: number): number {
   const own = scene.state.ownId
@@ -605,6 +612,8 @@ const ATTACK_FX_BY_STYLE: Record<string, AttackFxFn> = {
     fxConduitBeam(scene, from.x, from.y, to.x, to.y, tint),
   'conduit-bolt': ({ scene, from, to, tint }) =>
     fxConduitBolt(scene, from.x, from.y, to.x, to.y, tint),
+  'conduit-strike': ({ scene, from, to, tint }) =>
+    fxConduitStrike(scene, from.x, from.y, to.x, to.y, tint),
   frost: ({ scene, to }) => fxFrost(scene, to.x, to.y),
   fire: ({ scene, to }) => fxFire(scene, to.x, to.y),
   void: ({ scene, to }) => fxVoid(scene, to.x, to.y),
@@ -1860,7 +1869,7 @@ export function spawnAttackEffect(
   // Spatialized attack SFX for other players / monsters / minions: attenuate by
   // distance from the local player so off-screen sources are faint. (Own-player
   // attacks come through the event path in dispatchCombatEvent at full volume.)
-  const gainMult = listenerGain(scene, from.x, from.y);
+  const gainMult = listenerGain(scene, from.x, from.y) * (SFX_GAIN_BY_STYLE[style] ?? 1);
   if (gainMult > 0) {
     const sfx =
       flags?.empowered || flags?.execution

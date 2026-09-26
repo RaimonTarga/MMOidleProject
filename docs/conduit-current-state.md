@@ -182,7 +182,7 @@ old lookup silently fell through to `impact`):
 
 | Mode | Style | FX |
 |---|---|---|
-| melee | `impact` | shared melee thump; lunges |
+| melee | `conduit-strike` | small red nick on the target's edge facing the summon, 130 ms; SFX at 0.35 gain; lunges |
 | reach | `conduit-bolt` | fast red orb, 120 ms; no lunge |
 | ranged | `conduit-beam` | red beam, fades in 140 ms; no lunge |
 
