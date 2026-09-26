@@ -19,17 +19,18 @@ export const tundraRecipeEntries = [
   ['tundra-permafrost-maul', {
     id: 'tundra-permafrost-maul', name: 'Permafrost Maul',
     recipeGroup: 'tundra', requiredBiomeLevel: 1, slot: 'weapon',
-    cost: { blue: 124 }, stats: { attack: 120 }, attacksPerSecond: 0.50, tier: 3, // family-tag: slow heavy maul → Heavy
+    // 2026-09-26 T2-T4 weapon normalization: Attack 120->98 (+5: 270->162).
+    cost: { blue: 124 }, stats: { attack: 98 }, attacksPerSecond: 0.50, tier: 3, // family-tag: slow heavy maul → Heavy
     mechanicEffects: { 'weapon.brittle-plating': 2, 'weapon.brittle-dr': 0.01, 'weapon.brittle-stacks': 8 },
     icon: 'items/weapons/permafrost-maul.png',
     element: 'frost',   // cosmetic attack tint only
     description: 'Each blow leaves a deep frost-crack; armor that takes enough of them simply gives.',
     upgrades: [
-      { stats: { attack: 30 }, cost: { blue: 93 },  requiredBiomeLevel: 2 },
-      { stats: { attack: 30 }, cost: { blue: 233 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 30 }, cost: { blue: 372 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 30 }, cost: { blue: 605 }, catalystCost: { heavy: 2 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 30 }, cost: { blue: 1023 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 13 }, cost: { blue: 93 },  requiredBiomeLevel: 2 },
+      { stats: { attack: 13 }, cost: { blue: 233 }, requiredBiomeLevel: 3 },
+      { stats: { attack: 13 }, cost: { blue: 372 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 13 }, cost: { blue: 605 }, catalystCost: { heavy: 2 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 12 }, cost: { blue: 1023 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -39,16 +40,17 @@ export const tundraRecipeEntries = [
   ['tundra-rimebrand', {
     id: 'tundra-rimebrand', name: 'Rimebrand',
     recipeGroup: 'tundra', requiredBiomeLevel: 3, slot: 'weapon',
-    cost: { blue: 120 }, stats: { attack: 96 }, attacksPerSecond: 0.60, tier: 3, // family-tag: frost DoT-conversion weapon → Fortified
+    // 2026-09-26 T2-T4 weapon normalization: Attack 96->84 (+5: 216->132).
+    cost: { blue: 120 }, stats: { attack: 84 }, attacksPerSecond: 0.60, tier: 3, // family-tag: frost DoT-conversion weapon → Fortified
     weaponDot: { effectId: 'tundra-rimebrand-burn', convPct: 0.70, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'frost' },
     icon: 'items/weapons/rimebrand.png',
     description: 'The first true frost-brand — slow and heavy, planting a cold in the wound that goes on biting after the blade is gone.',
     upgrades: [
-      { stats: { attack: 24 }, cost: { blue: 93 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 24 }, cost: { blue: 232 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 24 }, cost: { blue: 372 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 24 }, cost: { blue: 604 }, catalystCost: { fortified: 2 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 24 }, cost: { blue: 1023 }, catalystCost: { fortified: 3 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 10 }, cost: { blue: 93 }, requiredBiomeLevel: 3 },
+      { stats: { attack: 10 }, cost: { blue: 232 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 10 }, cost: { blue: 372 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 9 }, cost: { blue: 604 }, catalystCost: { fortified: 2 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 9 }, cost: { blue: 1023 }, catalystCost: { fortified: 3 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -117,7 +119,8 @@ export const tundraRecipeEntries = [
     id: 'tundra-glacial-tyrant-maul', name: 'Glacial Tyrant Maul',
     recipeGroup: 'tundra', requiredBiomeLevel: 7, slot: 'weapon',
     evolvesFrom: 'tundra-permafrost-maul',
-    cost: { blue: 273 }, stats: { attack: 200 }, attacksPerSecond: 0.50, tier: 4, // family-tag: capstone heavy maul → Heavy
+    // 2026-09-26 T2-T4 weapon normalization: Attack 200->204 (+5: 450->378).
+    cost: { blue: 273 }, stats: { attack: 204 }, attacksPerSecond: 0.50, tier: 4, // family-tag: capstone heavy maul → Heavy
     reconstructCost: { blue: 956 }, reconstructCatalystCost: { heavy: 4 },
     // † brittle-shatter-threshold: at max brittle stacks (8), strip the target's
     //   DR for 2s (brittle-shatter-dr-strip-ms). (new key)
@@ -129,11 +132,11 @@ export const tundraRecipeEntries = [
     element: 'frost',   // cosmetic attack tint only
     description: 'Every blow leaves a deeper frost-crack; the eighth simply ends the argument about whether armor holds.',
     upgrades: [
-      { stats: { attack: 50 }, cost: { blue: 185 },  requiredBiomeLevel: 8 },
-      { stats: { attack: 50 }, cost: { blue: 463 },  requiredBiomeLevel: 9 },
-      { stats: { attack: 50 }, cost: { blue: 740 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 50 }, cost: { blue: 1203 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 50 }, cost: { blue: 2036 }, catalystCost: { heavy: 4 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 35 }, cost: { blue: 185 },  requiredBiomeLevel: 8 },
+      { stats: { attack: 35 }, cost: { blue: 463 },  requiredBiomeLevel: 9 },
+      { stats: { attack: 35 }, cost: { blue: 740 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 35 }, cost: { blue: 1203 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 34 }, cost: { blue: 2036 }, catalystCost: { heavy: 4 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -144,17 +147,18 @@ export const tundraRecipeEntries = [
     // Evolves from Rimebrand (T3), Tundra's own genuinely-new frost-DoT weapon
     // line (no Swamp predecessor — see the file header). Base attack and mechanic
     // identity (`weaponDot`, convPct 0.70) are carried forward from the T3 item.
-    cost: { blue: 258 }, stats: { attack: 155 }, attacksPerSecond: 0.60, tier: 4, // family-tag: frost DoT-conversion weapon → Fortified
+    // 2026-09-26 T2-T4 weapon normalization: Attack 155->165 (+5: 330->310).
+    cost: { blue: 258 }, stats: { attack: 165 }, attacksPerSecond: 0.60, tier: 4, // family-tag: frost DoT-conversion weapon → Fortified
     reconstructCost: { blue: 903 }, reconstructCatalystCost: { fortified: 4 },
     weaponDot: { effectId: 'rimebrand-burn', convPct: 0.70, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'frost' },
     icon: 'items/weapons/glacial-rimebrand.png',
     description: 'It does not cut so much as plant a cold that goes on spreading after the blade is gone.',
     upgrades: [
-      { stats: { attack: 35 }, cost: { blue: 185 },  requiredBiomeLevel: 8 },
-      { stats: { attack: 35 }, cost: { blue: 463 },  requiredBiomeLevel: 9 },
-      { stats: { attack: 35 }, cost: { blue: 741 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 35 }, cost: { blue: 1204 }, catalystCost: { fortified: 3 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 35 }, cost: { blue: 2037 }, catalystCost: { fortified: 4 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 29 }, cost: { blue: 185 },  requiredBiomeLevel: 8 },
+      { stats: { attack: 29 }, cost: { blue: 463 },  requiredBiomeLevel: 9 },
+      { stats: { attack: 29 }, cost: { blue: 741 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 29 }, cost: { blue: 1204 }, catalystCost: { fortified: 3 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 29 }, cost: { blue: 2037 }, catalystCost: { fortified: 4 }, requiredBiomeLevel: 10 },
     ],
   }],
 

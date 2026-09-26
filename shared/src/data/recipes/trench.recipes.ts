@@ -21,7 +21,8 @@ export const trenchRecipeEntries = [
     // that pass; base `attack` value has NOT been revalidated against current
     // combat formulas — that remains a separate balance question.
     // INVARIANT: dead swing must NOT consume class mechanic resources.
-    cost: { green: 270 }, stats: { attack: 120 }, attacksPerSecond: 1.15, tier: 4, // family-tag: dead-swing/execute axe → Swarming
+    // 2026-09-26 T2-T4 weapon normalization: Attack 120->140 (+5: 240->257).
+    cost: { green: 270 }, stats: { attack: 140 }, attacksPerSecond: 1.15, tier: 4, // family-tag: dead-swing/execute axe → Swarming
     reconstructCost: { green: 945 }, reconstructCatalystCost: { swarming: 4 },
     // † execute-threshold-pct / execute-dmg-mult: vs targets below 20% HP, ×2.5.
     mechanicEffects: {
@@ -33,9 +34,9 @@ export const trenchRecipeEntries = [
     upgrades: [
       { stats: { attack: 24 }, cost: { green: 175 }, requiredBiomeLevel: 2 },
       { stats: { attack: 24 }, cost: { green: 439 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 24 }, cost: { green: 702 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 24 }, cost: { green: 1140 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 24 }, cost: { green: 1930 }, catalystCost: { swarming: 4 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 23 }, cost: { green: 702 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 23 }, cost: { green: 1140 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 23 }, cost: { green: 1930 }, catalystCost: { swarming: 4 }, requiredBiomeLevel: 4 },
     ],
   }],
 

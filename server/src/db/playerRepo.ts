@@ -495,13 +495,50 @@ function migrateRiteIds(ids: readonly string[] | undefined): string[] {
   return validRiteIds((ids ?? []).map((id) => LEGACY_RITE_IDS[id] ?? id));
 }
 
+/**
+ * Retired item ids -> the item a save that holds them receives instead.
+ *
+ * `thorn-needle` (2026-09-26) was an unintended on-hit sibling of Gale Needle that
+ * duplicated the Jungle Stinger Rapier. A holder gets the Gale Needle it branched
+ * beside, at the better of the two upgrade levels, so nobody loses progress. Runs
+ * BEFORE `pruneUnknownItems`, which would otherwise silently drop the item.
+ */
+const LEGACY_ITEM_IDS: Record<string, string> = {
+  "thorn-needle": "gale-needle",
+};
+
+const migrateItemIdList = (ids: readonly string[]): string[] =>
+  [...new Set(ids.map((id) => LEGACY_ITEM_IDS[id] ?? id))];
+
+/** Rewrite retired item ids in bag, equipment and upgrade levels. Idempotent. */
+export function migrateLegacyItems(inv: HoldsInventory): void {
+  inv.inventory = migrateItemIdList(inv.inventory);
+  for (const slot of EQUIPMENT_SLOTS) {
+    const id = inv.equipment[slot];
+    if (id && LEGACY_ITEM_IDS[id]) inv.equipment[slot] = LEGACY_ITEM_IDS[id];
+  }
+  for (const [from, to] of Object.entries(LEGACY_ITEM_IDS)) {
+    const level = inv.itemUpgrades[from];
+    if (level === undefined) continue;
+    inv.itemUpgrades[to] = Math.max(inv.itemUpgrades[to] ?? 0, level);
+    delete inv.itemUpgrades[from];
+  }
+}
+
+/** Unlocked recipe ids follow the same retirement map. */
+export function migrateLegacyRecipeIds(ids: readonly string[] | undefined): string[] {
+  return migrateItemIdList(ids ?? []);
+}
+
 function hydratePlayerSlices(row: CharacterRow): PersistedPlayerSlices {
   const holdsInventory = parseSlice<HoldsInventory>(row.holdsInventory);
   holdsInventory.equipment = normalizeEquipment(holdsInventory.equipment);
   holdsInventory.itemUpgrades = holdsInventory.itemUpgrades ?? {};
   holdsInventory.inventory = holdsInventory.inventory ?? [];
+  migrateLegacyItems(holdsInventory);
   pruneUnknownItems(holdsInventory);
   const tracksProgression = parseSlice<TracksProgression>(row.tracksProgression);
+  tracksProgression.unlockedRecipes = migrateLegacyRecipeIds(tracksProgression.unlockedRecipes);
   const hasPosition = parseSlice<HasPosition>(row.hasPosition);
   if (!WORLD_NODES.has(hasPosition.nodeId)) {
     hasPosition.nodeId = CLEARING_NODE_ID;

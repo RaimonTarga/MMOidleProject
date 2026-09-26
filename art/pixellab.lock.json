@@ -33461,6 +33461,116 @@
       "candidateFiles": [
         "candidate-2.png"
       ]
+    },
+    {
+      "at": "2026-09-26T15:37:30.289Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "pilgrim-quarterstaff",
+      "requestHash": "44634731c6d8e09ea797ac32",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-09-26T15:37:56.491Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "pilgrim-quarterstaff",
+      "requestHash": "44634731c6d8e09ea797ac32",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-09-26T15:38:16.619Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "pilgrim-quarterstaff",
+      "requestHash": "44634731c6d8e09ea797ac32",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-09-26T15:38:46.683Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "pilgrim-quarterstaff",
+      "requestHash": "44634731c6d8e09ea797ac32",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-09-26T15:39:04.120Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "pilgrim-quarterstaff",
+      "requestHash": "44634731c6d8e09ea797ac32",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-09-26T15:39:37.654Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "sunmonk-warstaff",
+      "requestHash": "c9af90e75a275bc3b18bd9d7",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-09-26T15:39:58.082Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "sunmonk-warstaff",
+      "requestHash": "c9af90e75a275bc3b18bd9d7",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-09-26T15:40:33.853Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "sunmonk-warstaff",
+      "requestHash": "c9af90e75a275bc3b18bd9d7",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-09-26T15:41:11.178Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "sunmonk-warstaff",
+      "requestHash": "c9af90e75a275bc3b18bd9d7",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-09-26T15:41:41.097Z",
+      "endpoint": "pixflux",
+      "category": "items",
+      "assetId": "sunmonk-warstaff",
+      "requestHash": "c9af90e75a275bc3b18bd9d7",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
     }
   ]
 }

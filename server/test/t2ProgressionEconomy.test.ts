@@ -31,7 +31,6 @@ const RETURNING_BIOME_LINEAGES: Array<{ t1: string; t2: string }> = [
   { t1: "plains-charm-t1", t2: "plains-charm-t2" },
   { t1: "plains-boots-t1", t2: "plains-boots-t2" },
   { t1: "flash-rapier", t2: "gale-needle" },
-  { t1: "flash-rapier", t2: "thorn-needle" },
   { t1: "forest-vest-t1", t2: "forest-vest-t2" },
   { t1: "forest-charm-t1", t2: "forest-charm-t2" },
   { t1: "forest-boots-t1", t2: "forest-boots-t2" },
@@ -78,9 +77,10 @@ for (const id of JUNGLE_DESERT_T2_IDS) {
   assert(recipe!.evolvesFrom === undefined, `${id}: Jungle/Desert gear must NOT have a T1 predecessor`);
 }
 
-// Flash Rapier still branches into both Gale Needle and Thorn Needle.
+// Flash Rapier evolves into Gale Needle. Its old on-hit sibling, Thorn Needle, was
+// retired 2026-09-26 (it duplicated the Jungle Stinger Rapier).
 assert(RECIPE_DATABASE.get("gale-needle")!.evolvesFrom === "flash-rapier", "gale-needle branches from flash-rapier");
-assert(RECIPE_DATABASE.get("thorn-needle")!.evolvesFrom === "flash-rapier", "thorn-needle branches from flash-rapier");
+assert(!RECIPE_DATABASE.has("thorn-needle"), "thorn-needle is retired");
 
 // A +2 predecessor cannot evolve; a +3 predecessor can. (Under the old +5 gate
 // this pair was +4 / +5; the shape of the assertion is what matters -- one step
@@ -106,9 +106,9 @@ assert(RECIPE_DATABASE.get("thorn-needle")!.evolvesFrom === "flash-rapier", "tho
   assert(ready.ok, "gale-needle: a +5 flash-rapier must be able to evolve");
 }
 
-// Reconstruction works with no predecessor at all, for both branches and for a
+// Reconstruction works with no predecessor at all, for the rapier evolution and for a
 // plain returning-biome lineage.
-for (const id of ["gale-needle", "thorn-needle", "knight-steelsword", "ruinous-axe"]) {
+for (const id of ["gale-needle", "knight-steelsword", "ruinous-axe"]) {
   const recipe = RECIPE_DATABASE.get(id)!;
   assert(!!recipe.reconstructCost, `${id}: must define a reconstruct path`);
   const check = checkReconstruct({ recipe, essences: fullEssences(), catalysts: { alacrity: 100, swarming: 100 } });
@@ -245,16 +245,12 @@ for (const id of ALL_T2_GEAR_IDS) {
   );
 }
 
-// Gale Needle / Thorn Needle normalization (§4): off the old ~1,920 doubling
+// Gale Needle normalization (§4): off the old ~1,920 doubling
 // curve, into the specialist-weapon band.
 {
   const gale = RECIPE_DATABASE.get("gale-needle")!;
   const galeTotal = essenceSum(gale.cost) + gale.upgrades!.reduce((a, u) => a + essenceSum(u.cost), 0);
   assert(galeTotal >= 900 && galeTotal <= 1100, `gale-needle total should land near 1,000 (got ${galeTotal})`);
-
-  const thorn = RECIPE_DATABASE.get("thorn-needle")!;
-  const thornTotal = essenceSum(thorn.cost) + thorn.upgrades!.reduce((a, u) => a + essenceSum(u.cost), 0);
-  assert(thornTotal >= 1050 && thornTotal <= 1150, `thorn-needle total should land in 1,050-1,150 (got ${thornTotal})`);
 }
 
 // ── Techniques / Guards (§10) ───────────────────────────────────────────────

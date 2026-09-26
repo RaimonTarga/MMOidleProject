@@ -1598,10 +1598,8 @@
         "initImageStrength": 65
       },
       "status": "accepted",
-      "sources": [
-        "item:thorn-needle"
-      ],
-      "notes": "too similar to the other one | R2: initImageStrength 200 -> 65 so the seed is only a light silhouette nudge and the prompt drives shape/escalation. Sibling divergence: banned gale-needle's polished/wind-streak look and pushed the barbed silhouette."
+      "sources": [],
+      "notes": "too similar to the other one | R2: initImageStrength 200 -> 65 so the seed is only a light silhouette nudge and the prompt drives shape/escalation. Sibling divergence: banned gale-needle's polished/wind-streak look and pushed the barbed silhouette. RETIRED 2026-09-26: the thorn-needle recipe was removed (it duplicated the Jungle Stinger Rapier; saves migrate to Gale Needle). Art kept for history; no recipe references it."
     },
     {
       "id": "quake-hammer",
@@ -5596,6 +5594,56 @@
       "candidates": 5,
       "status": "accepted",
       "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "pilgrim-quarterstaff",
+      "out": "items/weapons/pilgrim-quarterstaff.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a pilgrim's quarterstaff, a long straight wooden war staff running corner to corner, a plain sturdy shaft of sun-bleached pale ironwood with a worn sand-colored cloth grip wrap at the middle and simple brass-capped ends, a weathered desert traveler's fighting staff, no blade and no magic, a tiny sun glyph scratched into the brass cap, centered and filling about 85 percent of the frame on a slight diagonal, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of sun-bleached pale wood warm sand and dull brass, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, sword, blade, dagger, rapier, falchion, axe, hammer, maul, spear, spearhead, halberd, polearm blade, sheath, mage staff, wizard staff, crystal, orb, gem on top, glowing tip, crook, curved hook, cross shape, crucifix, bow, fire, flame, frost, ice, green venom, ornate gold bands, crimson wrap, dark polished wood",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "accepted",
+      "sources": [
+        "item:desert-pilgrim-quarterstaff"
+      ],
+      "notes": "2026-09-26 new Desert technique staff (T3). Flat pixflux root: no accepted staff predecessor exists (the line was swords before). 5 candidates per user request."
+    },
+    {
+      "id": "sunmonk-warstaff",
+      "out": "items/weapons/sunmonk-warstaff.png",
+      "size": {
+        "w": 32,
+        "h": 32
+      },
+      "endpoint": "pixflux",
+      "styleRef": null,
+      "prompt": "full-square fantasy game inventory item icon of a sunmonk's warstaff, a long straight martial war staff running corner to corner, a masterwork shaft of dark polished ironwood banded with bright sun-gold rings, both ends capped with heavy gold ferrules bearing a small sun-disc emblem, a deep crimson silk grip wrap at the middle, a disciplined desert monk's fighting staff, no blade and no orb, centered and filling about 85 percent of the frame on a slight diagonal, pure black background, bold flat pixel-art inventory icon readable instantly at 32x32, 64x64 pixel art, limited palette of dark polished wood bright sun-gold crimson and warm sand, crisp intentional pixel clusters, hard chunky outline, flat colors only, no gradient, no gloss, no shading, minimal detail",
+      "negative": "photograph, 3d render, realistic, painterly, smooth vector art, gradient, glow, soft blur, ornate decorative frame, badge, banner, ribbon, text, letters, numbers, watermark, drop shadow, cast shadow, checkerboard, multiple objects, duplicate, hand, arm, character, humanoid figure, face, logo, clipart, background scenery, ground, floor, sky, sword, blade, dagger, rapier, falchion, axe, hammer, maul, spear, spearhead, halberd, polearm blade, sheath, mage staff, wizard staff, crystal, orb, gem on top, glowing tip, crook, curved hook, cross shape, crucifix, bow, fire, flame, frost, ice, green venom, plain unadorned stick, bleached pale wood, cloth rag wrap",
+      "params": {
+        "outline": "selective outline",
+        "shading": "flat shading",
+        "detail": "low detail",
+        "textGuidanceScale": 11,
+        "generationScale": 2
+      },
+      "candidates": 5,
+      "status": "accepted",
+      "sources": [
+        "item:desert-sunmonk-warstaff"
+      ],
+      "notes": "2026-09-26 new Desert technique staff (T4, Kata). Generated flat alongside the T3 root at the user's request; if none keeps the line, re-roll img2img (strength ~65) from the accepted Pilgrim's Quarterstaff."
     }
   ]
 }

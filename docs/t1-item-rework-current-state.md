@@ -145,6 +145,15 @@ economy is its own pass (baseline §17).
   the balance pass — particularly the **Flash Rapier** (raw-throughput leader that
   compounds with every attack-count mechanic) and the **Poison Dagger**'s combined
   direct + DoT budget.
+- **Weapon pass (2026-09-26).** The Chaotic Axe was the best T1 weapon for every
+  class once per-hit scaling (Power Strike, class finishers) and monster plating
+  were counted, and a +5 T1 axe beat most T2 weapons at +0. Axes (T1 and T2) went
+  down about 5%, and every other weapon was lifted to within about ±8% of the axe
+  at +5. The Broadsword/Steelsword line became the Technique weapons (Technique
+  Power plus CDR). The T2 rapier/broadsword/dagger lines got T2-sized upgrade
+  curves (they had T1-sized ones). Rule used: a weapon at +0 clears its own
+  predecessor at +5 by at least 10%. Live table in
+  `design_docs/T1_ITEM_NUMERICAL_BASELINE.md` §6.
 
 ---
 

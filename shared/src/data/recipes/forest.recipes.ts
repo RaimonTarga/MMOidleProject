@@ -27,7 +27,7 @@ import type { Recipe } from './types';
 
 export const forestRecipeEntries = [
   // ── Rapier lineage (system rework Step 6 worked example) ───────────────────
-  // Flash Rapier (base) → Gale Needle / Thorn Needle (branches). Evolve consumes
+  // Flash Rapier (base) → Gale Needle. Evolve consumes
   // the +3 predecessor; reconstruction skips the chain for a higher cost.
   //
   // The rapier is the one lineage that spends part of its UPGRADE budget on
@@ -44,16 +44,18 @@ export const forestRecipeEntries = [
     id: 'flash-rapier', name: 'Flash Rapier',
     recipeGroup: 'forest', requiredBiomeLevel: 1, slot: 'weapon',
     lineageId: 'rapier',
-    cost: { green: 20 }, stats: { attack: 5 }, attacksPerSecond: 1.50, tier: 1,
+    // 2026-09-26 weapon pass: Attack 5->8 (+5: 8->12). Per-hit size is what Power
+    // Strike and monster plating reward, so the buff is Attack, not APS.
+    cost: { green: 20 }, stats: { attack: 8 }, attacksPerSecond: 1.50, tier: 1,
     icon: 'items/weapons/flash-rapier.png',
     description: 'Forged thin as a reed by duelists who prized speed above all.',
     // T1 economy pass (2026-08-28): Flash Rapier was the one T1 item whose total
     // (950) ran roughly double every other specialist weapon's — normalized here
     // to ~500, in line with Heavy Hammer/Chaotic Axe. Curve stays accelerating;
     // no attacksPerSecond/attack stat changes. +5 catalyst from its own T2
-    // evolutions (gale-needle/thorn-needle), both tagged alacrity.
+    // evolution (gale-needle), tagged alacrity.
     upgrades: [
-      { attacksPerSecond: 0.02, cost: { green: 25 }, requiredBiomeLevel: 2 },
+      { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: { green: 25 }, requiredBiomeLevel: 2 },
       { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: { green: 50 }, requiredBiomeLevel: 3 },
       { attacksPerSecond: 0.02, cost: { green: 75 }, requiredBiomeLevel: 4 },
       { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: { green: 125 }, requiredBiomeLevel: 5 },
@@ -69,7 +71,7 @@ export const forestRecipeEntries = [
     recipeGroup: 'forest', requiredBiomeLevel: 2, slot: 'armor',
     cost: { green: 20 }, stats: {"maxHp": 29, "evasion": 0.28, "damageReduction": 0.02}, tier: 1,
     icon: 'items/armor/shaded-bindings.png',
-    description: "Evades soften direct hits and prevent eligible on-hit ailments. Jungle weave strengthens each evade.",
+    description: "Evades soften direct hits; a full dodge also prevents on-hit ailments. Jungle weave strengthens each evade.",
     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, same total (470).
     // +5 catalyst from forest-vest-t2's own family-tag ("evasion armor answers
     // frequent light hits → Alacrity").
@@ -129,7 +131,7 @@ mechanicEffects: {"defense.evade-mitigation": 0.1},
   }],
 
   // ── T2 — Rapier lineage evolved forms (system rework Step 6) ───────────────
-  // Gale Needle = the primary evolution of Flash Rapier; Thorn Needle = a branch.
+  // Gale Needle = the evolution of Flash Rapier.
   // Evolve consumes the predecessor at +3; reconstruct skips it for a higher cost.
   // T2 economy pass (2026-08-29): normalized off the old doubling-to-+5 curve
   // (was 1,920 total) into the normal T2 specialist-weapon band (~1,000 total).
@@ -142,39 +144,24 @@ mechanicEffects: {"defense.evade-mitigation": 0.1},
     lineageId: 'rapier', evolvesFrom: 'flash-rapier',
     cost: { green: 60 },                                     // family-tag: fast rapier → Alacrity
     reconstructCost: { green: 210 }, reconstructCatalystCost: { alacrity: 2 }, // RECONSTRUCT (no predecessor)
-    stats: { attack: 9 }, attacksPerSecond: 1.60, tier: 2,
+    // 2026-09-26 weapon normalization: Attack 9->17 (+5: 14->35). The old curve was T1-sized, so a
+    // +5 Flash Rapier matched a +0 Gale Needle.
+    stats: { attack: 17 }, attacksPerSecond: 1.60, tier: 2,
     icon: 'items/weapons/gale-needle.png',
     description: 'A fencing blade machined to an impossible point, humming faintly when drawn.',
     upgrades: [
-      { attacksPerSecond: 0.02, cost: { green: 38 }, requiredBiomeLevel: 8 },
-      { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: { green: 94 }, requiredBiomeLevel: 9 },
-      { attacksPerSecond: 0.02, cost: { green: 150 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 2 }, attacksPerSecond: 0.02, cost: { green: 244 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 11 },
-      { stats: { attack: 2 }, attacksPerSecond: 0.02, cost: { green: 414 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 12 },
+      { stats: { attack: 4 }, attacksPerSecond: 0.02, cost: { green: 38 }, requiredBiomeLevel: 8 },
+      { stats: { attack: 3 }, attacksPerSecond: 0.02, cost: { green: 94 }, requiredBiomeLevel: 9 },
+      { stats: { attack: 3 }, attacksPerSecond: 0.02, cost: { green: 150 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 3 }, attacksPerSecond: 0.02, cost: { green: 244 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 11 },
+      { stats: { attack: 5 }, attacksPerSecond: 0.02, cost: { green: 414 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 12 },
     ],
   }],
 
-  // Branch B: trades part of the Attack budget for flat on-hit damage, which the
-  // rapier's cadence turns into its real payload. Same total budget as Gale
-  // Needle, split ~75/25 green/purple (retains the hybrid identity per §4/§13).
-  ['thorn-needle', {
-    id: 'thorn-needle', name: 'Thorn Needle',
-    recipeGroup: 'forest', requiredBiomeLevel: 7, slot: 'weapon',
-    lineageId: 'rapier', evolvesFrom: 'flash-rapier',         // branch B of the rapier lineage
-    cost: { green: 45, purple: 15 },                          // family-tag: rapid on-hit rapier → Alacrity
-    reconstructCost: { green: 157, purple: 53 }, reconstructCatalystCost: { alacrity: 2 },
-    stats: { attack: 5, onHitDamage: 4 }, attacksPerSecond: 1.50, tier: 2,
-    icon: 'items/weapons/thorn-needle.png',
-    element: 'bleed',   // cosmetic attack tint only
-    description: 'The same blade, barbed — it bites and lets the wound do the rest.',
-    upgrades: [
-      { stats: { onHitDamage: 1 }, cost: { green: 31, purple: 11 }, requiredBiomeLevel: 8 },
-      { stats: { attack: 1 }, cost: { green: 78, purple: 26 }, requiredBiomeLevel: 9 },
-      { stats: { onHitDamage: 1 }, cost: { green: 124, purple: 42 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 1 }, cost: { green: 202, purple: 68 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 11 },
-      { stats: { attack: 1, onHitDamage: 1 }, cost: { green: 344, purple: 114 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 12 },
-    ],
-  }],
+  // `thorn-needle` (an on-hit "branch B" of this lineage) was REMOVED 2026-09-26:
+  // it was never intended and duplicated the Jungle Stinger Rapier, the game's real
+  // on-hit rapier. Saves that hold it are migrated to Gale Needle on load
+  // (LEGACY_ITEM_IDS in server/src/db/playerRepo.ts).
 
   // T2 economy pass (2026-08-29): now an EVOLUTION of forest-vest-t1 (Shaded
   // Bindings) at +5 — see §5/§6/§7. Evolve pays no catalyst; reconstruct (no
@@ -186,7 +173,7 @@ mechanicEffects: {"defense.evade-mitigation": 0.1},
     cost: { green: 48, yellow: 12 }, stats: {"maxHp": 52, "evasion": 0.34, "damageReduction": 0.04}, tier: 2, // family-tag: evasion armor answers frequent light hits → Alacrity
     reconstructCost: { green: 168, yellow: 42 }, reconstructCatalystCost: { alacrity: 2 },
     icon: 'items/armor/phantom-bindings.png',
-    description: "Evades soften direct hits and prevent eligible on-hit ailments. Jungle weave strengthens each evade.",
+    description: "Evades soften direct hits; a full dodge also prevents on-hit ailments. Jungle weave strengthens each evade.",
     upgrades: [
       {"cost": {"green": 29, "yellow": 7}, "requiredBiomeLevel": 9, "stats": {"maxHp": 5, "evasion": 0.016}},
       {"cost": {"green": 72, "yellow": 18}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5, "evasion": 0.016}},

@@ -18,7 +18,6 @@ import type { T2BiomeGroup, T2MovementProfile } from "./t2Common";
  *   weapon                  atk   aps    naive dps   signature mechanic
  *   knight-steelsword        18   1.00        18.0   technique cooldown -12%
  *   gale-needle               9   1.60        14.4   (none)
- *   thorn-needle          5 + 4o  1.50        13.5   on-hit damage
  *   swamp-mirebrand          18   1.00        18.0   reservoir DoT
  *   quake-hammer             47   0.55        25.9   empowered mult +26%, cast speed +15%
  *   ruinous-axe              43   1.20        51.6   dead swing every 4th
@@ -105,7 +104,6 @@ export const T2_CLASS_PLANS: readonly T2ClassPlan[] = [
         adopt: ["gale-needle"],
         skip: {
           "forest-vest-t2": "24% evasion is strong, but Cadence already caps its worst hit; plating is worth more",
-          "thorn-needle": "on-hit damage does not interact with the Cadence finisher",
         },
       },
       swamp: {
@@ -204,7 +202,6 @@ export const T2_CLASS_PLANS: readonly T2ClassPlan[] = [
       forest: {
         skip: {
           "gale-needle": "raw speed without conversion does not feed a reservoir build",
-          "thorn-needle": "on-hit damage is flat and does not convert into DoT",
         },
       },
       swamp: {
@@ -247,13 +244,6 @@ export const T2_CLASS_PLANS: readonly T2ClassPlan[] = [
       plains: { adopt: PLAINS_CORE_KIT, skip: SKIP_STEELSWORD },
       forest: {
         adopt: ["gale-needle", "forest-vest-t2"],
-        skip: {
-          // Dropped from the baseline for an ORDERING reason, not a design one:
-          // reconstructing it costs 53 purple, and purple is not minted until
-          // Swamp -- one leg later. Asking for it here would farm green forever.
-          // `pnpm bot:t2-payable` lists this class of trap.
-          "thorn-needle": "unpayable on the Forest leg (needs purple, first minted in Swamp); a probe, not baseline",
-        },
       },
       swamp: {
         craftOnly: ["swamp-mirebrand"],

@@ -41,7 +41,10 @@ export const caveRecipeEntries = [
   ['chaotic-axe', {
     id: 'chaotic-axe', name: 'Chaotic Axe',
     recipeGroup: 'cave', requiredBiomeLevel: 1, slot: 'weapon',
-    cost: { red: 26 }, stats: { attack: 22 }, attacksPerSecond: 1.10, tier: 1,
+    // 2026-09-26 weapon pass: Attack 22->20 (+5: 32->29), about -5% throughput.
+    // Its per-hit size made it the best T1 weapon for every class once Power
+    // Strike and monster plating were counted, not only on raw DPS.
+    cost: { red: 26 }, stats: { attack: 20 }, attacksPerSecond: 1.10, tier: 1,
     mechanicEffects: { 'weapon.dead-swing-interval': 3 },
     icon: 'items/weapons/chaotic-axe.png',
     description: 'A wild, top-heavy thing that fights as much as it is wielded.',
@@ -52,7 +55,7 @@ export const caveRecipeEntries = [
       { stats: { attack: 1 }, cost: { red: 25 }, requiredBiomeLevel: 2 },
       { stats: { attack: 2 }, cost: { red: 45 }, requiredBiomeLevel: 3 },
       { stats: { attack: 2 }, cost: { red: 75 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 3 }, cost: { red: 125 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 2 }, cost: { red: 125 }, requiredBiomeLevel: 4 },
       { stats: { attack: 2 }, cost: { red: 155 }, catalystCost: { swarming: 1 }, requiredBiomeLevel: 4 },
     ],
   }],
@@ -124,16 +127,18 @@ mechanicEffects: {},
     id: 'ruinous-axe', name: 'Ruinous Axe',
     recipeGroup: 'cave', requiredBiomeLevel: 7, slot: 'weapon',
     evolvesFrom: 'chaotic-axe',
-    cost: { red: 60 }, stats: { attack: 43 }, attacksPerSecond: 1.20, tier: 2, // family-tag: chaotic-axe (counted disruption) → Swarming
+    // 2026-09-26 weapon normalization: Attack 43->31 (+5: 65->60). Its +0 sat 28% over the T2 +0
+    // median (a flat curve with a huge start); +5 is the axe's ~5% cut.
+    cost: { red: 60 }, stats: { attack: 31 }, attacksPerSecond: 1.20, tier: 2, // family-tag: chaotic-axe (counted disruption) → Swarming
     reconstructCost: { red: 210 }, reconstructCatalystCost: { swarming: 2 },
     mechanicEffects: { 'weapon.dead-swing-interval': 4 },
     icon: 'items/weapons/ruinous-axe.png',
     description: 'Bigger, meaner, and somehow better balanced — chaos with the faintest thread of discipline.',
     upgrades: [
-      { stats: { attack: 4 }, cost: { red: 44 }, requiredBiomeLevel: 8 },
-      { stats: { attack: 4 }, cost: { red: 110 }, requiredBiomeLevel: 9 },
-      { stats: { attack: 5 }, cost: { red: 177 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 4 }, cost: { red: 287 }, catalystCost: { swarming: 1 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 6 }, cost: { red: 44 }, requiredBiomeLevel: 8 },
+      { stats: { attack: 6 }, cost: { red: 110 }, requiredBiomeLevel: 9 },
+      { stats: { attack: 6 }, cost: { red: 177 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 6 }, cost: { red: 287 }, catalystCost: { swarming: 1 }, requiredBiomeLevel: 10 },
       { stats: { attack: 5 }, cost: { red: 486 }, catalystCost: { swarming: 2 }, requiredBiomeLevel: 10 },
     ],
   }],
@@ -205,17 +210,18 @@ mechanicEffects: {},
     // T3 economy pass (2026-08-30): EVOLUTION of ruinous-axe at +5; 2.00× its lifetime
     // total on the shipped accelerating curve; catalysts moved to +4/+5.
     evolvesFrom: 'ruinous-axe',
-    cost: { red: 120 }, stats: { attack: 78 }, attacksPerSecond: 1.20, tier: 3, // family-tag: chaotic-axe → Swarming
+    // 2026-09-26 T2-T4 weapon normalization: Attack 78->67 (+5: 117->112).
+    cost: { red: 120 }, stats: { attack: 67 }, attacksPerSecond: 1.20, tier: 3, // family-tag: chaotic-axe → Swarming
     reconstructCost: { red: 420 }, reconstructCatalystCost: { swarming: 3 },
     mechanicEffects: { 'weapon.dead-swing-interval': 5 },
     icon: 'items/weapons/cataclysm-axe.png',
     description: 'Chaos given an edge — and, at last, a little rhythm. Every fifth swing still finds only air.',
     upgrades: [
-      { stats: { attack: 8 }, cost: { red: 88 },  requiredBiomeLevel: 14 },
-      { stats: { attack: 8 }, cost: { red: 221 }, requiredBiomeLevel: 15 },
-      { stats: { attack: 8 }, cost: { red: 353 }, requiredBiomeLevel: 16 },
-      { stats: { attack: 7 }, cost: { red: 574 }, catalystCost: { swarming: 2 }, requiredBiomeLevel: 16 },
-      { stats: { attack: 8 }, cost: { red: 972 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 16 },
+      { stats: { attack: 10 }, cost: { red: 88 },  requiredBiomeLevel: 14 },
+      { stats: { attack: 9 }, cost: { red: 221 }, requiredBiomeLevel: 15 },
+      { stats: { attack: 9 }, cost: { red: 353 }, requiredBiomeLevel: 16 },
+      { stats: { attack: 8 }, cost: { red: 574 }, catalystCost: { swarming: 2 }, requiredBiomeLevel: 16 },
+      { stats: { attack: 9 }, cost: { red: 972 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 16 },
     ],
   }],
 

@@ -44,7 +44,8 @@ export const swampRecipeEntries = [
     // Recipe id kept stable (persisted in saves); name/element/effect rethemed to poison.
     id: 'ashbrand-blade', name: 'Poison Dagger',
     recipeGroup: 'swamp', requiredBiomeLevel: 1, slot: 'weapon',
-    cost: { purple: 22 }, stats: { attack: 10 }, attacksPerSecond: 0.90, tier: 1,
+    // 2026-09-26 weapon pass: Attack 10->12 (+5: 15->18).
+    cost: { purple: 22 }, stats: { attack: 12 }, attacksPerSecond: 0.90, tier: 1,
     weaponDot: { effectId: 'poison-dagger-burn', convPct: 0.50, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'poison' },
     icon: 'items/weapons/poison-dagger.png',
     description: 'A short blade kept slick with mire-venom that refuses to dry.',
@@ -56,7 +57,7 @@ export const swampRecipeEntries = [
       { stats: { attack: 1 }, cost: { purple: 45 }, requiredBiomeLevel: 3 },
       { stats: { attack: 1 }, cost: { purple: 70 }, requiredBiomeLevel: 4 },
       { stats: { attack: 1 }, cost: { purple: 115 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 1 }, cost: { purple: 150 }, catalystCost: { fortified: 1 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 2 }, cost: { purple: 150 }, catalystCost: { fortified: 1 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -134,17 +135,19 @@ export const swampRecipeEntries = [
     id: 'swamp-mirebrand', name: 'Venom Knife',
     recipeGroup: 'swamp', requiredBiomeLevel: 7, slot: 'weapon',
     evolvesFrom: 'ashbrand-blade',
-    cost: { purple: 52 }, stats: { attack: 18 }, attacksPerSecond: 1.0, tier: 2, // family-tag: poison DoT-conversion weapon → Fortified
+    // 2026-09-26 weapon normalization: Attack 18->22 (+5: 27->47), a T2-sized curve. Judged on sustained
+    // damage (DoT weapons start slow by design).
+    cost: { purple: 52 }, stats: { attack: 22 }, attacksPerSecond: 1.0, tier: 2, // family-tag: poison DoT-conversion weapon → Fortified
     reconstructCost: { purple: 182 }, reconstructCatalystCost: { fortified: 2 },
     weaponDot: { effectId: 'swamp-mirebrand-burn', convPct: 0.50, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'poison' },
     icon: 'items/weapons/venom-knife.png',
     description: 'The venom runs deeper now; what it touches keeps rotting.',
     upgrades: [
-      { stats: { attack: 2 }, cost: { purple: 47 }, requiredBiomeLevel: 8 },
-      { stats: { attack: 2 }, cost: { purple: 117 }, requiredBiomeLevel: 9 },
-      { stats: { attack: 2 }, cost: { purple: 187 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 2 }, cost: { purple: 304 }, catalystCost: { fortified: 1 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 1 }, cost: { purple: 515 }, catalystCost: { fortified: 2 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 5 }, cost: { purple: 47 }, requiredBiomeLevel: 8 },
+      { stats: { attack: 5 }, cost: { purple: 117 }, requiredBiomeLevel: 9 },
+      { stats: { attack: 5 }, cost: { purple: 187 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 4 }, cost: { purple: 304 }, catalystCost: { fortified: 1 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 6 }, cost: { purple: 515 }, catalystCost: { fortified: 2 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -228,17 +231,19 @@ export const swampRecipeEntries = [
     // DoT line is continuous and intact (ashbrand-blade → mirebrand → Plague Fang);
     // Tundra's Rimebrand is a separate FROST flavour, not a relocation of this chain.
     evolvesFrom: 'swamp-mirebrand',
-    cost: { purple: 116 }, stats: { attack: 32 }, attacksPerSecond: 1.00, tier: 3, // family-tag: poison DoT weapon → Fortified
+    // 2026-09-26 weapon normalization: Attack 32->54 (+5: 48->86), so +0 clears the buffed Venom Knife
+    // at +5 by 10% and +5 sits on the T3 median (sustained). No T4 successor.
+    cost: { purple: 116 }, stats: { attack: 54 }, attacksPerSecond: 1.00, tier: 3, // family-tag: poison DoT weapon → Fortified
     reconstructCost: { purple: 406 }, reconstructCatalystCost: { fortified: 3 },
     weaponDot: { effectId: 'swamp-blightbrand-burn', convPct: 0.50, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'poison' },
     icon: 'items/weapons/plague-fang.png',
     description: 'The rot it carries does more work than the edge ever could.',
     upgrades: [
-      { stats: { attack: 3 }, cost: { purple: 93 },  requiredBiomeLevel: 14 },
-      { stats: { attack: 3 }, cost: { purple: 233 }, requiredBiomeLevel: 15 },
-      { stats: { attack: 3 }, cost: { purple: 372 }, requiredBiomeLevel: 16 },
-      { stats: { attack: 3 }, cost: { purple: 605 }, catalystCost: { fortified: 2 }, requiredBiomeLevel: 16 },
-      { stats: { attack: 4 }, cost: { purple: 1025 }, catalystCost: { fortified: 3 }, requiredBiomeLevel: 16 },
+      { stats: { attack: 7 }, cost: { purple: 93 },  requiredBiomeLevel: 14 },
+      { stats: { attack: 7 }, cost: { purple: 233 }, requiredBiomeLevel: 15 },
+      { stats: { attack: 7 }, cost: { purple: 372 }, requiredBiomeLevel: 16 },
+      { stats: { attack: 6 }, cost: { purple: 605 }, catalystCost: { fortified: 2 }, requiredBiomeLevel: 16 },
+      { stats: { attack: 5 }, cost: { purple: 1025 }, catalystCost: { fortified: 3 }, requiredBiomeLevel: 16 },
     ],
   }],
 

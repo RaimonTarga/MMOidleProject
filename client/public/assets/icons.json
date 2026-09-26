@@ -7024,7 +7024,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/plague-axe.png",
+					"filename": "items/weapons/pilgrim-quarterstaff.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7039,6 +7039,27 @@
 					},
 					"frame": {
 						"x": 448,
+						"y": 320,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/plague-axe.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 480,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -7059,7 +7080,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 480,
+						"x": 512,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -7080,7 +7101,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 512,
+						"x": 544,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -7101,7 +7122,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 544,
+						"x": 576,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -7122,7 +7143,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 576,
+						"x": 608,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -7143,7 +7164,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 608,
+						"x": 640,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -7164,7 +7185,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 640,
+						"x": 672,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -7185,7 +7206,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 672,
+						"x": 704,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -7206,7 +7227,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 704,
+						"x": 736,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -7227,7 +7248,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 736,
+						"x": 768,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -7248,7 +7269,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 768,
+						"x": 800,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -7269,7 +7290,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 800,
+						"x": 832,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -7290,7 +7311,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 832,
+						"x": 864,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -7311,7 +7332,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 864,
+						"x": 896,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -7332,7 +7353,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 896,
+						"x": 928,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -7353,7 +7374,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 928,
+						"x": 960,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -7374,7 +7395,7 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 960,
+						"x": 992,
 						"y": 320,
 						"w": 32,
 						"h": 32
@@ -7395,27 +7416,6 @@
 						"h": 32
 					},
 					"frame": {
-						"x": 992,
-						"y": 320,
-						"w": 32,
-						"h": 32
-					}
-				},
-				{
-					"filename": "items/weapons/ruins-spellblade.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 32,
-						"h": 32
-					},
-					"frame": {
 						"x": 0,
 						"y": 352,
 						"w": 32,
@@ -7423,7 +7423,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/ruins-war-spear-variant-2.png",
+					"filename": "items/weapons/ruins-spellblade.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7444,7 +7444,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/ruins-war-spear-variant-3.png",
+					"filename": "items/weapons/ruins-war-spear-variant-2.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7465,7 +7465,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/ruins-war-spear-variant-4.png",
+					"filename": "items/weapons/ruins-war-spear-variant-3.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7486,7 +7486,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/ruins-war-spear.png",
+					"filename": "items/weapons/ruins-war-spear-variant-4.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7507,7 +7507,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/rune-sword-cold-1.png",
+					"filename": "items/weapons/ruins-war-spear.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7528,7 +7528,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/rune-sword-cold-2.png",
+					"filename": "items/weapons/rune-sword-cold-1.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7549,7 +7549,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/rune-sword-hot-1.png",
+					"filename": "items/weapons/rune-sword-cold-2.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7570,7 +7570,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/rune-sword-hot-2.png",
+					"filename": "items/weapons/rune-sword-hot-1.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7591,7 +7591,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/simple-axe.png",
+					"filename": "items/weapons/rune-sword-hot-2.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7612,7 +7612,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/solar-falchion.png",
+					"filename": "items/weapons/simple-axe.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7633,7 +7633,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/spear-1.png",
+					"filename": "items/weapons/solar-falchion.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7654,7 +7654,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/stinger-rapier.png",
+					"filename": "items/weapons/spear-1.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7675,7 +7675,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/stormlands-lightning-staff.png",
+					"filename": "items/weapons/stinger-rapier.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7696,7 +7696,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/sunsteel-falchion.png",
+					"filename": "items/weapons/stormlands-lightning-staff.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7717,7 +7717,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/sword-1.png",
+					"filename": "items/weapons/sunmonk-warstaff-variant-2.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7738,7 +7738,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/sword-2.png",
+					"filename": "items/weapons/sunmonk-warstaff.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7759,7 +7759,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/sword-3.png",
+					"filename": "items/weapons/sunsteel-falchion.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7780,7 +7780,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/sword-4.png",
+					"filename": "items/weapons/sword-1.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7801,7 +7801,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/thorn-needle.png",
+					"filename": "items/weapons/sword-2.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7822,7 +7822,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/underworlds-furnace-hammer-variant-2.png",
+					"filename": "items/weapons/sword-3.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7843,7 +7843,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/underworlds-furnace-hammer-variant-3.png",
+					"filename": "items/weapons/sword-4.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7864,7 +7864,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/underworlds-furnace-hammer.png",
+					"filename": "items/weapons/thorn-needle.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7885,7 +7885,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/venom-knife.png",
+					"filename": "items/weapons/underworlds-furnace-hammer-variant-2.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7906,7 +7906,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/venomthorn-rapier.png",
+					"filename": "items/weapons/underworlds-furnace-hammer-variant-3.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7927,7 +7927,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/warmaul.png",
+					"filename": "items/weapons/underworlds-furnace-hammer.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7948,7 +7948,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/whirling-morning-star.png",
+					"filename": "items/weapons/venom-knife.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7969,7 +7969,7 @@
 					}
 				},
 				{
-					"filename": "items/weapons/zenith-falchion.png",
+					"filename": "items/weapons/venomthorn-rapier.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -7984,6 +7984,69 @@
 					},
 					"frame": {
 						"x": 864,
+						"y": 352,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/warmaul.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 896,
+						"y": 352,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/whirling-morning-star.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 928,
+						"y": 352,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "items/weapons/zenith-falchion.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 960,
 						"y": 352,
 						"w": 32,
 						"h": 32

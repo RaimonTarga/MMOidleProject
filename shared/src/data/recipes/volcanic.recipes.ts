@@ -26,13 +26,14 @@ export const volcanicRecipeEntries = [
     // GENUINELY NEW (no T2 flurry weapon exists). Knight's Steelsword is NOT its
     // parent: that item's whole identity is technique CDR, which was retired to the
     // Arcanist Core, not to a weapon. Priced at the top of the T3 weapon band.
-    cost: { red: 140 }, stats: { attack: 34 }, attacksPerSecond: 1.65, tier: 3, // family-tag: new Volcanic item → Swarming (native)
+    // 2026-09-26 T2-T4 weapon normalization: Attack 34->39 (+5: 64->70).
+    cost: { red: 140 }, stats: { attack: 39 }, attacksPerSecond: 1.65, tier: 3, // family-tag: new Volcanic item → Swarming (native)
     mechanicEffects: { 'weapon.flurry-pct': 0.03, 'weapon.flurry-stacks': 5 },
     icon: 'items/weapons/cinderlash.png',
     element: 'fire',   // cosmetic attack tint only
     description: 'A whip of braided ember that strikes faster the longer it burns.',
     upgrades: [
-      { stats: { attack: 6 }, cost: { red: 96 },  requiredBiomeLevel: 2 },
+      { stats: { attack: 7 }, cost: { red: 96 },  requiredBiomeLevel: 2 },
       { stats: { attack: 6 }, cost: { red: 240 }, requiredBiomeLevel: 3 },
       { stats: { attack: 6 }, cost: { red: 384 }, requiredBiomeLevel: 4 },
       { stats: { attack: 6 }, cost: { red: 624 }, catalystCost: { swarming: 2 }, requiredBiomeLevel: 4 },
@@ -115,7 +116,8 @@ export const volcanicRecipeEntries = [
     id: 'volcanic-eruption-lash', name: 'Eruption Lash',
     recipeGroup: 'volcanic', requiredBiomeLevel: 7, slot: 'weapon',
     evolvesFrom: 'volcanic-cinderlash',
-    cost: { red: 308 }, stats: { attack: 58 }, attacksPerSecond: 1.80, tier: 4, // family-tag: flurry weapon → Swarming
+    // 2026-09-26 T2-T4 weapon normalization: Attack 58->65 (+5: 113->119).
+    cost: { red: 308 }, stats: { attack: 65 }, attacksPerSecond: 1.80, tier: 4, // family-tag: flurry weapon → Swarming
     reconstructCost: { red: 1078 }, reconstructCatalystCost: { swarming: 4 },
     mechanicEffects: { 'weapon.flurry-pct': 0.04, 'weapon.flurry-stacks': 5 },
     icon: 'items/weapons/eruption-lash.png',
@@ -126,7 +128,7 @@ export const volcanicRecipeEntries = [
       { stats: { attack: 11 }, cost: { red: 477 }, requiredBiomeLevel: 9 },
       { stats: { attack: 11 }, cost: { red: 764 }, requiredBiomeLevel: 10 },
       { stats: { attack: 11 }, cost: { red: 1241 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 11 }, cost: { red: 2099 }, catalystCost: { swarming: 4 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 10 }, cost: { red: 2099 }, catalystCost: { swarming: 4 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -140,17 +142,18 @@ export const volcanicRecipeEntries = [
     // Economy resolved by the T4 pass; base `attack` value has NOT been
     // revalidated against current combat formulas — that remains a separate
     // balance question.
-    cost: { red: 290 }, stats: { attack: 70 }, attacksPerSecond: 1.20, tier: 4, // family-tag: fast-DoT weapon → Swarming
+    // 2026-09-26 T2-T4 weapon normalization: Attack 70->105 (+5: 170->172).
+    cost: { red: 290 }, stats: { attack: 105 }, attacksPerSecond: 1.20, tier: 4, // family-tag: fast-DoT weapon → Swarming
     reconstructCost: { red: 1015 }, reconstructCatalystCost: { swarming: 4 },
     weaponDot: { effectId: 'cinderbrand-burn', convPct: 0.50, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'fire' },
     icon: 'items/weapons/cinderbrand.png',
     description: 'It leaves a fire under the skin that does the rest of the work while you move on.',
     upgrades: [
-      { stats: { attack: 20 }, cost: { red: 192 }, requiredBiomeLevel: 8 },
-      { stats: { attack: 20 }, cost: { red: 479 }, requiredBiomeLevel: 9 },
-      { stats: { attack: 20 }, cost: { red: 766 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 20 }, cost: { red: 1245 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 20 }, cost: { red: 2108 }, catalystCost: { swarming: 4 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 14 }, cost: { red: 192 }, requiredBiomeLevel: 8 },
+      { stats: { attack: 14 }, cost: { red: 479 }, requiredBiomeLevel: 9 },
+      { stats: { attack: 13 }, cost: { red: 766 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 13 }, cost: { red: 1245 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 13 }, cost: { red: 2108 }, catalystCost: { swarming: 4 }, requiredBiomeLevel: 10 },
     ],
   }],
 

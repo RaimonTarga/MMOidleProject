@@ -343,13 +343,27 @@ The implementation must be explicit about which combat events a dead swing trigg
 
 # 6. Weapon summary table
 
+Live values after the 2026-09-26 weapon pass:
+
 | Item | +0 Attack | +5 Attack | APS +0→+5 | Core mechanic |
 |---|---:|---:|---|---|
-| Iron Broadsword | 10 | 15 | 0.80 | Technique CDR 6→11% |
-| Flash Rapier | 5 | 8 | 1.50→1.60 | raw frequency |
-| Poison Dagger | 10 | 15 | 0.90 | 50% poison DoT conversion |
-| Heavy Hammer | 26 | 36 | 0.55 | Empowered bonus 15→22% |
-| Chaotic Axe | 24 | 36 | 1.10 | every 3rd swing dead |
+| Iron Broadsword | 13 | 19 | 0.90 | Technique CDR 8→16%, Technique Power 15→40% |
+| Flash Rapier | 8 | 12 | 1.50→1.60 | raw frequency |
+| Poison Dagger | 12 | 18 | 0.90 | 50% poison DoT conversion |
+| Heavy Hammer | 27 | 38 | 0.55 | Empowered bonus 15→22% |
+| Chaotic Axe | 20 | 29 | 1.10 | every 3rd swing dead |
+
+**Why raw DPS was the wrong yardstick (2026-09-26).** On raw autoattack DPS the axe
+and the rapier tie, as §5 intended. But nearly every damage multiplier in live
+fights scales PER HIT (Power Strike's 3-4.5x, Striker's finisher, Squire's
+execution), and monster plating taxes small hits. So at +5, with Power Strike
+against a 6-plating / 10%-DR dummy, the axe out-damaged the rapier by 41% and the
+broadsword by 57%, and it topped the T1 boss build search for every class. The
+pass measures each weapon with and without a Technique, against bare and armored
+targets (`server/scripts/_t1BossLab.ts` dummy treatments). At +5 every T1 weapon
+now lands within about ±8% of the axe in Technique fights. The Broadsword became
+the Technique weapon: axe-level with Power Strike and about 10% behind without a
+Technique.
 
 ---
 

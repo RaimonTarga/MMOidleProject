@@ -41,15 +41,15 @@ import type { Recipe } from './types';
 
 export const plainsRecipeEntries = [
   // ── T1 ──
-  // Cheaper than the other T1 weapons and below their raw budget, on purpose.
+  // The TECHNIQUE weapon (2026-09-26 weapon pass). Part of its budget is Technique
+  // CDR + Technique Power, so it matches the axe with a Technique wired (Power
+  // Strike: -2..-4% on the bench dummy) and trails it by ~10% without one. It was
+  // 40-45% behind the axe before; "cheap" no longer means "weak".
   ['iron-broadsword', {
     id: 'iron-broadsword', name: 'Iron Broadsword',
     recipeGroup: 'plains', requiredBiomeLevel: 1, slot: 'weapon',
-    cost: { yellow: 10 }, stats: { attack: 10 }, attacksPerSecond: 0.80, tier: 1,
-    // Technique CDR is the whole reason this stays a legitimate generalist pick
-    // despite the low raw budget. CDR is multiplicatively powerful, so 6→11% is
-    // intentionally conservative (baseline §5.2).
-    mechanicEffects: { 'technique.cooldown-reduction-pct': 0.06 },
+    cost: { yellow: 10 }, stats: { attack: 13 }, attacksPerSecond: 0.90, tier: 1,
+    mechanicEffects: { 'technique.cooldown-reduction-pct': 0.08, 'technique.power-pct': 0.15 },
     icon: 'items/weapons/iron-broadsword.png',
     description: 'Mass-forged for the ranks, dependable as sunrise. Ten thousand like it have won quiet wars.',
     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, same total (240)
@@ -57,11 +57,11 @@ export const plainsRecipeEntries = [
     // own T2 successor (knight-steelsword), an intentional "flexible payment"
     // identity noted on plains-boots-t2's family-tag comment.
     upgrades: [
-      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 10 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 25 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 35 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 60 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 75 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.02, 'technique.power-pct': 0.05 }, cost: { yellow: 10 }, requiredBiomeLevel: 2 },
+      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.05 }, cost: { yellow: 25 }, requiredBiomeLevel: 3 },
+      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.02, 'technique.power-pct': 0.05 }, cost: { yellow: 35 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.05 }, cost: { yellow: 60 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 2 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.02, 'technique.power-pct': 0.05 }, cost: { yellow: 75 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -142,20 +142,23 @@ mechanicEffects: {},
     id: 'knight-steelsword', name: "Knight's Steelsword",
     recipeGroup: 'plains', requiredBiomeLevel: 7, slot: 'weapon',
     evolvesFrom: 'iron-broadsword',
-    cost: { yellow: 45 }, stats: { attack: 18 }, attacksPerSecond: 1.00, tier: 2,
+    // 2026-09-26 weapon normalization: Attack 18->25 (+5: 27->51).
+    cost: { yellow: 45 }, stats: { attack: 25 }, attacksPerSecond: 1.00, tier: 2,
     reconstructCost: { yellow: 180 },
     icon: 'items/weapons/knight-steelsword.png',
-    // The generalist Technique stat, inherited from the Broadsword: Plains is the
-    // generalist biome, and this sidearm is still bought for its cadence of
-    // Techniques rather than for the raw number on the blade.
-    mechanicEffects: { 'technique.cooldown-reduction-pct': 0.12 },
+    // The Technique weapon, inherited from the Broadsword: bought for stronger,
+    // more frequent Techniques rather than for the raw number on the blade.
+    // 2026-09-26 weapon pass: a T2-sized upgrade curve (was +9 Attack over five
+    // steps, a T1-sized curve) and Technique Power. Watch the T3 stack with the
+    // Arcanist Core (+20% CDR / +20% power).
+    mechanicEffects: { 'technique.cooldown-reduction-pct': 0.13, 'technique.power-pct': 0.25 },
     description: 'A knight sidearm kept keen by habit and pride — plain, proven, never flashy.',
     upgrades: [
-      { stats: { attack: 2 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 27 }, requiredBiomeLevel: 8 },
-      { stats: { attack: 2 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 68 }, requiredBiomeLevel: 9 },
-      { stats: { attack: 2 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 108 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 2 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 176 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01 }, cost: { yellow: 296 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 6 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.04 }, cost: { yellow: 27 }, requiredBiomeLevel: 8 },
+      { stats: { attack: 6 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.04 }, cost: { yellow: 68 }, requiredBiomeLevel: 9 },
+      { stats: { attack: 5 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.04 }, cost: { yellow: 108 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 5 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.04 }, cost: { yellow: 176 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 4 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.04 }, cost: { yellow: 296 }, requiredBiomeLevel: 10 },
     ],
   }],
 

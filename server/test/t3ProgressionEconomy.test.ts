@@ -212,6 +212,8 @@ const T3_LINEAGES: Array<{ t2: string; t3: string }> = [
   { t2: "desert-vest-t2", t3: "desert-vest-t3" },
   { t2: "desert-charm-t2", t3: "desert-charm-t3" },
   { t2: "desert-boots-t2", t3: "desert-boots-t3" },
+  // Cross-biome (2026-09-26): the Plains Technique swords continue as the Desert staff.
+  { t2: "knight-steelsword", t3: "desert-pilgrim-quarterstaff" },
   // Cross-biome: the retiring starter biome's mechanics matured in Volcanic.
   { t2: "plains-vest-t2", t3: "volcanic-vest-t3" },
   { t2: "plains-charm-t2", t3: "volcanic-charm-t3" },
@@ -225,7 +227,7 @@ const T3_NEW_ITEMS = [
 
 /** T2 identities that deliberately END at T2 — no T3 item may name them. */
 const DEAD_END_T2_IDS = [
-  "knight-steelsword", "plains-boots-t2", "gale-needle", "thorn-needle",
+  "plains-boots-t2", "gale-needle",
   "forest-vest-t2", "forest-charm-t2", "forest-boots-t2",
 ];
 
@@ -233,7 +235,7 @@ const T3_GEAR = [...RECIPE_DATABASE.values()].filter(
   (r) => r.tier === 3 && r.slot !== "core" && r.slot !== "relic",
 );
 
-assert(T3_GEAR.length === 29, `29 T3 gear items expected, got ${T3_GEAR.length}`);
+assert(T3_GEAR.length === 30, `30 T3 gear items expected, got ${T3_GEAR.length}`);
 // Designer decision 2026-09-04 returned the gate to +3 (see
 // shared/src/systems/evolution.ts and
 // docs/briefs/t2-bossless-progression-campaign-2026-09-03.md section 12): the
@@ -241,11 +243,11 @@ assert(T3_GEAR.length === 29, `29 T3 gear items expected, got ${T3_GEAR.length}`
 // predecessors rather than rewarding commitment.
 assert(EVOLUTION_REQUIRED_PLUS === 3, "evolution requires a +3 predecessor (reverted from +5)");
 
-// 2a. Exactly the 22 approved lineages exist, by id.
+// 2a. Exactly the 23 approved lineages exist, by id.
 {
   const live = T3_GEAR.filter((r) => r.evolvesFrom).map((r) => `${r.evolvesFrom}->${r.id}`).sort();
   const want = T3_LINEAGES.map((l) => `${l.t2}->${l.t3}`).sort();
-  assert(live.length === 22, `exactly 22 T3 lineages expected, got ${live.length}`);
+  assert(live.length === 23, `exactly 23 T3 lineages expected, got ${live.length}`);
   assert(JSON.stringify(live) === JSON.stringify(want), `T3 lineage map mismatch:\n live ${live}\n want ${want}`);
 }
 
@@ -268,7 +270,7 @@ for (const id of T3_NEW_ITEMS) {
   assert(recipe!.evolvesFrom === undefined, `${id}: must have NO predecessor`);
   assert(recipe!.reconstructCost === undefined, `${id}: must have NO reconstruct cost`);
 }
-assert(T3_GEAR.filter((r) => !r.evolvesFrom).length === T3_NEW_ITEMS.length, "22 + 7 must account for all 29");
+assert(T3_GEAR.filter((r) => !r.evolvesFrom).length === T3_NEW_ITEMS.length, "23 + 7 must account for all 30");
 
 // 2c. The confirmed dead ends: nothing anywhere points back at them.
 for (const dead of DEAD_END_T2_IDS) {
@@ -337,7 +339,7 @@ const T3_TOTALS: Record<string, number> = {
   "cave-cataclysm-axe": 2328, "cave-vest-t3": 2418, "cave-charm-t3": 1006, "cave-boots-t3": 666,
   "swamp-blightbrand": 2444, "swamp-vest-t3": 2358, "swamp-charm-t3": 988, "swamp-boots-t3": 688,
   "jungle-venomthorn-rapier": 2090, "jungle-vest-t3": 2070, "jungle-charm-t3": 1008, "jungle-boots-t3": 660,
-  "desert-solar-cross": 2540, "desert-vest-t3": 2520, "desert-charm-t3": 1310, "desert-boots-t3": 864,
+  "desert-solar-cross": 2540, "desert-pilgrim-quarterstaff": 1440, "desert-vest-t3": 2520, "desert-charm-t3": 1310, "desert-boots-t3": 864,
   "volcanic-cinderlash": 2540, "volcanic-vest-t3": 2112, "volcanic-charm-t3": 1100, "volcanic-boots-t3": 680,
   "tundra-permafrost-maul": 2450, "tundra-rimebrand": 2444, "tundra-vest-t3": 2200,
   "tundra-charm-t3": 1050, "tundra-boots-t3": 670,

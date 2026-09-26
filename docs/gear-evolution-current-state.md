@@ -74,12 +74,56 @@ Base recipes are unchanged.
 - **`flash-rapier`** (base): `lineageId: 'rapier'`; upgrades extended to length 5 (+4/+5 placeholders).
 - **`gale-needle`** (retrofit of the existing T2 forest weapon): `evolvesFrom: 'flash-rapier'`,
   `lineageId: 'rapier'`, `reconstructCost`, length-5 upgrades. The primary evolution.
-- **`thorn-needle`** (new): second `evolvesFrom: 'flash-rapier'` sibling — demonstrates **branching**
-  (on-hit/venom variant).
+- ~~`thorn-needle`~~ **retired 2026-09-26.** It was an unintended on-hit sibling that duplicated the
+  Jungle Stinger Rapier. Saves holding it get a Gale Needle at the better upgrade level
+  (`LEGACY_ITEM_IDS` in `server/src/db/playerRepo.ts`). No T1 lineage branches any more; T4's
+  Mountain and Cave lines are the live examples of branching.
 - All evolution/reconstruct/+4/+5 numbers are PLACEHOLDERS.
 
 ⚠️ `gale-needle` was previously a plain-craftable T2 forest weapon; it is now evolution-only. Existing
 saves that hold it keep the item; the forge now offers Evolve/Reconstruct for it instead of Craft.
+
+## Weapon ladder rules (2026-09-26 normalization, T1-T4)
+
+Every weapon's Attack curve was re-set on these rules. Measure before changing a
+weapon number, and re-check the whole chain, because the floors cascade tier to tier.
+
+1. **Floor:** a weapon at +0 deals at least 1.10x what its own predecessor deals at
+   +5. A weapon with no predecessor (a biome's debut item) must clear the best
+   previous-tier weapon at +5.
+2. **Band:** at +5 every weapon lands within about ±5-10% of its tier's median,
+   judged on the basis it is built for:
+   - DoT-conversion weapons on sustained damage (they start slow by design);
+   - the Desert alpha-window line on the fight opener;
+   - everything else on the blend.
+3. **Tier medians stay put.** Monsters are tuned against current player power, so
+   outliers move toward the median rather than the median moving.
+4. **Curve shape follows the tier.** No "weak at +0, huge at +5" (or the reverse)
+   shapes. Normalizing +0 and +5 to the tier medians removes them.
+
+Instrument: `server/scripts/_t1BossLab.ts` dummy treatments. A boss with its
+offense stripped and 1M HP is hit for 60s per class (Striker, Squire, Apprentice,
+Slinger, Spirit), with and without Power Strike, against a bare and a
+6-plating / 10%-DR target. Damage is read at 60s (sustained) and 8s (opener).
+Each weapon is scored against the SAME class's median weapon, so class power gaps
+do not leak into weapon numbers. Conduit was excluded (rebalanced separately).
+The two T3 Tundra weapons were placeholders at +58/+66% over the T3 median; the T4
+Warmaul was at 0.43x. Dead-end lines (Forest needles, Plains swords, Swamp poison)
+have no successor floor.
+
+Resolved 2026-09-26: Detonate went to 5.0x/5.5x with a 1.2s cast, and ability damage now
+feeds weapon reservoirs. The hammer identities hold after normalization (Earthsunder: best
+Power Strike carrier; Warmaul: best for Striker/Squire; Tyrant: keeps 0.95 vs T4 boss armour,
+where the others keep 0.83-0.87). The Technique lineage shipped the same day as the **Desert technique staff**:
+Iron Broadsword (T1) -> Knight's Steelsword (T2) -> **Pilgrim's Quarterstaff** (T3,
+`desert-pilgrim-quarterstaff`) -> **Sunmonk's Warstaff** (T4, `desert-sunmonk-warstaff`).
+The Steelsword is no longer a dead end. The staffs carry Technique Power plus CDR and
+no cast speed (Mountain owns the wind-up). The Warstaff adds **Kata**
+(`server/src/systems/player/abilities/abilityKata.ts`): three strike Techniques build
+stacks, and the fourth spends them for +80% Technique Power; instant self-buffs
+neither build nor spend it. Measured: 0.99x the tier median at T3 and T4, and
+Power Strike adds ~36-39% on the staffs (~14% on an axe). Costs are 2.00x the
+predecessor lifetime (1,440 / 2,880 yellow), with the Dominion catalyst.
 
 ## Verified
 

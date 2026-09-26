@@ -22,7 +22,8 @@ export const graveyardRecipeEntries = [
     // combat formulas — that remains a separate balance question.
     // INVARIANT: the dead swing must NOT consume class mechanic resources
     //   (no cadence count, no energy, no cooldown progress).
-    cost: { purple: 270 }, stats: { attack: 150 }, attacksPerSecond: 1.10, tier: 4, // family-tag: dead-swing axe → Swarming
+    // 2026-09-26 T2-T4 weapon normalization: Attack 150->140 (+5: 300->258).
+    cost: { purple: 270 }, stats: { attack: 140 }, attacksPerSecond: 1.10, tier: 4, // family-tag: dead-swing axe → Swarming
     reconstructCost: { purple: 945 }, reconstructCatalystCost: { swarming: 4 },
     mechanicEffects: {
       'weapon.dead-swing-interval': 3,
@@ -32,11 +33,11 @@ export const graveyardRecipeEntries = [
     element: 'poison',   // cosmetic attack tint only
     description: 'Every third stroke lands flat and harmless — and leaves the rot to make the next one count double.',
     upgrades: [
-      { stats: { attack: 30 }, cost: { purple: 175 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 30 }, cost: { purple: 439 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 30 }, cost: { purple: 702 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 30 }, cost: { purple: 1140 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 30 }, cost: { purple: 1930 }, catalystCost: { swarming: 4 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 24 }, cost: { purple: 175 }, requiredBiomeLevel: 2 },
+      { stats: { attack: 24 }, cost: { purple: 439 }, requiredBiomeLevel: 3 },
+      { stats: { attack: 24 }, cost: { purple: 702 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 23 }, cost: { purple: 1140 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 23 }, cost: { purple: 1930 }, catalystCost: { swarming: 4 }, requiredBiomeLevel: 4 },
     ],
   }],
 

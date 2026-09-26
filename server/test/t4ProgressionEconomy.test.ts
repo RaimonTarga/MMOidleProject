@@ -39,12 +39,12 @@ const t4Gear: Recipe[] = [...RECIPE_DATABASE.values()].filter(
   (r) => r.tier === 4 && r.slot !== "relic" && r.slot !== "core",
 );
 
-assert(t4Gear.length === 39, `expected 39 ordinary T4 gear items, got ${t4Gear.length}`);
+assert(t4Gear.length === 40, `expected 40 ordinary T4 gear items, got ${t4Gear.length}`);
 
 const withLineage = t4Gear.filter((r) => !!r.evolvesFrom);
 const withoutLineage = t4Gear.filter((r) => !r.evolvesFrom);
 
-assert(withLineage.length === 36, `expected 36 T4 items with evolvesFrom, got ${withLineage.length}`);
+assert(withLineage.length === 37, `expected 37 T4 items with evolvesFrom, got ${withLineage.length}`);
 assert(withoutLineage.length === 3, `expected 3 T4 items without evolvesFrom, got ${withoutLineage.length}`);
 
 const NO_LINEAGE_IDS = new Set(["graveyard-boots-t4", "trench-charm-t4", "trench-boots-t4-treaders"]);
@@ -59,11 +59,11 @@ for (const r of t4Gear) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 2. Predecessors: exactly 26 distinct ids, each real, T3, slot-matched
+// 2. Predecessors: exactly 27 distinct ids, each real, T3, slot-matched
 // ═══════════════════════════════════════════════════════════════════════════
 
 const predecessorIds = new Set(withLineage.map((r) => r.evolvesFrom!));
-assert(predecessorIds.size === 26, `expected 26 distinct predecessor ids, got ${predecessorIds.size}`);
+assert(predecessorIds.size === 27, `expected 27 distinct predecessor ids, got ${predecessorIds.size}`);
 
 for (const child of withLineage) {
   const parent = RECIPE_DATABASE.get(child.evolvesFrom!);
@@ -226,6 +226,8 @@ const EXPECTED_FAMILY: Record<string, string> = {
   // Desert — native dominion (newly assigned)
   "desert-zenith-cross": "dominion", "desert-vest-t4": "dominion",
   "desert-charm-t4": "dominion", "desert-boots-t4": "dominion",
+  // Desert technique staff (2026-09-26), continuing the Plains Technique swords.
+  "desert-sunmonk-warstaff": "dominion",
   // Tundra — native heavy, Rimebrand keeps fortified
   "tundra-glacial-tyrant-maul": "heavy", "tundra-glacial-rimebrand": "fortified",
   "tundra-vest-t4": "heavy", "tundra-charm-t4": "heavy", "tundra-charm-t4-deepfreeze": "heavy",
@@ -245,7 +247,7 @@ const EXPECTED_FAMILY: Record<string, string> = {
   "trench-charm-t4": "dominion", "trench-boots-t4-treaders": "dominion",
 };
 
-assert(Object.keys(EXPECTED_FAMILY).length === 39, "family map must cover all 39 items");
+assert(Object.keys(EXPECTED_FAMILY).length === 40, "family map must cover all 40 items");
 
 for (const r of t4Gear) {
   const expectedFamily = EXPECTED_FAMILY[r.id];

@@ -54,7 +54,8 @@ export const mountainRecipeEntries = [
   ['heavy-hammer', {
     id: 'heavy-hammer', name: 'Heavy Hammer',
     recipeGroup: 'mountain', requiredBiomeLevel: 1, slot: 'weapon',
-    cost: { blue: 22 }, stats: { attack: 26 }, attacksPerSecond: 0.55, tier: 1,
+    // 2026-09-26 weapon pass: Attack 26->27 (+5: 36->38).
+    cost: { blue: 22 }, stats: { attack: 27 }, attacksPerSecond: 0.55, tier: 1,
     icon: 'items/weapons/heavy-hammer.png',
     mechanicEffects: { 'weapon.empowered-mult-bonus': 0.15 },
     description: 'Two-handed, brutal, and honest. It asks only that you find the time to swing it.',
@@ -66,7 +67,7 @@ export const mountainRecipeEntries = [
       { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 45 }, requiredBiomeLevel: 3 },
       { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 75 }, requiredBiomeLevel: 4 },
       { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 125 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 155 }, catalystCost: { heavy: 1 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 3 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 155 }, catalystCost: { heavy: 1 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -137,7 +138,8 @@ export const mountainRecipeEntries = [
     id: 'quake-hammer', name: 'Quake Hammer',
     recipeGroup: 'mountain', requiredBiomeLevel: 7, slot: 'weapon',
     evolvesFrom: 'heavy-hammer',
-    cost: { blue: 52 }, stats: { attack: 47 }, attacksPerSecond: 0.55, tier: 2, // family-tag: slow heavy hammer → Heavy
+    // 2026-09-26 weapon normalization: Attack 47->45 (+5: 70->85).
+    cost: { blue: 52 }, stats: { attack: 45 }, attacksPerSecond: 0.55, tier: 2, // family-tag: slow heavy hammer → Heavy
     reconstructCost: { blue: 182 }, reconstructCatalystCost: { heavy: 2 },
     icon: 'items/weapons/quake-hammer.png',
     // Cast Speed (abilities evolution §6.1) lives on Mountain's T2 hammer — the
@@ -149,11 +151,11 @@ export const mountainRecipeEntries = [
     },
     description: 'When it lands, the ground remembers it longer than the foe does.',
     upgrades: [
-      { stats: { attack: 4 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 47 }, requiredBiomeLevel: 8 },
-      { stats: { attack: 5 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 117 }, requiredBiomeLevel: 9 },
-      { stats: { attack: 4 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 187 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 5 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 304 }, catalystCost: { heavy: 1 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 5 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 515 }, catalystCost: { heavy: 2 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 9 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 47 }, requiredBiomeLevel: 8 },
+      { stats: { attack: 8 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 117 }, requiredBiomeLevel: 9 },
+      { stats: { attack: 8 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 187 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 8 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 304 }, catalystCost: { heavy: 1 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 7 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 515 }, catalystCost: { heavy: 2 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -225,18 +227,19 @@ export const mountainRecipeEntries = [
     id: 'mountain-avalanche-maul', name: 'Avalanche Maul',
     recipeGroup: 'mountain', requiredBiomeLevel: 13, slot: 'weapon',
     evolvesFrom: 'quake-hammer',
-    cost: { blue: 116 }, stats: { attack: 84 }, attacksPerSecond: 0.55, tier: 3, // family-tag: slow heavy maul → Heavy
+    // 2026-09-26 weapon normalization: Attack 84->96 (+5: 126->164). It sat 21% under the T3 +5 median.
+    cost: { blue: 116 }, stats: { attack: 96 }, attacksPerSecond: 0.55, tier: 3, // family-tag: slow heavy maul → Heavy
     reconstructCost: { blue: 406 }, reconstructCatalystCost: { heavy: 3 },
     icon: 'items/weapons/avalanche-maul.png',
     element: 'frost',   // cosmetic attack tint only
     mechanicEffects: { 'weapon.empowered-mult-bonus': 0.37 },
     description: 'It does not so much strike as arrive, the way a slope arrives on a village.',
     upgrades: [
-      { stats: { attack: 8 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 93 },  requiredBiomeLevel: 14 },
-      { stats: { attack: 9 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 233 }, requiredBiomeLevel: 15 },
-      { stats: { attack: 8 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 372 }, requiredBiomeLevel: 16 },
-      { stats: { attack: 9 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 605 }, catalystCost: { heavy: 2 }, requiredBiomeLevel: 16 },
-      { stats: { attack: 8 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 1025 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 16 },
+      { stats: { attack: 14 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 93 },  requiredBiomeLevel: 14 },
+      { stats: { attack: 15 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 233 }, requiredBiomeLevel: 15 },
+      { stats: { attack: 13 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 372 }, requiredBiomeLevel: 16 },
+      { stats: { attack: 13 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 605 }, catalystCost: { heavy: 2 }, requiredBiomeLevel: 16 },
+      { stats: { attack: 13 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 1025 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 16 },
     ],
   }],
 
@@ -311,16 +314,17 @@ export const mountainRecipeEntries = [
     id: 'mountain-earthsunder-maul', name: 'Earthsunder Maul',
     recipeGroup: 'mountain', requiredBiomeLevel: 19, slot: 'weapon',
     evolvesFrom: 'mountain-avalanche-maul',
-    cost: { blue: 256 }, stats: { attack: 240 }, attacksPerSecond: 0.40, tier: 4, // family-tag: capstone heavy maul → Heavy
+    // 2026-09-26 T2-T4 weapon normalization: Attack 240->264 (+5: 540->486).
+    cost: { blue: 256 }, stats: { attack: 264 }, attacksPerSecond: 0.40, tier: 4, // family-tag: capstone heavy maul → Heavy
     reconstructCost: { blue: 896 }, reconstructCatalystCost: { heavy: 4 },
     icon: 'items/weapons/earthsunder-maul.png',
     description: 'It does not strike the earth so much as remind it of an old grievance.',
     upgrades: [
-      { stats: { attack: 60 }, cost: { blue: 185 },  requiredBiomeLevel: 20 },
-      { stats: { attack: 60 }, cost: { blue: 463 },  requiredBiomeLevel: 21 },
-      { stats: { attack: 60 }, cost: { blue: 741 },  requiredBiomeLevel: 22 },
-      { stats: { attack: 60 }, cost: { blue: 1204 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 22 },
-      { stats: { attack: 60 }, cost: { blue: 2039 }, catalystCost: { heavy: 4 }, requiredBiomeLevel: 22 },
+      { stats: { attack: 45 }, cost: { blue: 185 },  requiredBiomeLevel: 20 },
+      { stats: { attack: 45 }, cost: { blue: 463 },  requiredBiomeLevel: 21 },
+      { stats: { attack: 44 }, cost: { blue: 741 },  requiredBiomeLevel: 22 },
+      { stats: { attack: 44 }, cost: { blue: 1204 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 22 },
+      { stats: { attack: 44 }, cost: { blue: 2039 }, catalystCost: { heavy: 4 }, requiredBiomeLevel: 22 },
     ],
   }],
 
@@ -328,7 +332,8 @@ export const mountainRecipeEntries = [
     id: 'mountain-warmaul', name: 'Warmaul',
     recipeGroup: 'mountain', requiredBiomeLevel: 19, slot: 'weapon',
     evolvesFrom: 'mountain-avalanche-maul',
-    cost: { blue: 240 }, stats: { attack: 98 }, attacksPerSecond: 0.55, tier: 4, // family-tag: capstone hammer → Heavy
+    // 2026-09-26 T2-T4 weapon normalization: Attack 98->184 (+5: 147->370).
+    cost: { blue: 240 }, stats: { attack: 184 }, attacksPerSecond: 0.55, tier: 4, // family-tag: capstone hammer → Heavy
     reconstructCost: { blue: 840 }, reconstructCatalystCost: { heavy: 4 },
     // ⚠⚠ empowered-mult-bonus MUST be implemented MULTIPLICATIVELY, not additively.
     // final empowered mult = base_mult * (1 + 0.48), i.e. a flat +48% to the
@@ -340,11 +345,11 @@ export const mountainRecipeEntries = [
     icon: 'items/weapons/warmaul.png',
     description: 'Lighter in the haft, quicker to the shoulder — it rewards the soldier who already knows when to swing.',
     upgrades: [
-      { stats: { attack: 10 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 186 },  requiredBiomeLevel: 20 },
-      { stats: { attack: 10 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 465 },  requiredBiomeLevel: 21 },
-      { stats: { attack: 10 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 744 }, requiredBiomeLevel: 22 },
-      { stats: { attack: 9 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 1208 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 22 },
-      { stats: { attack: 10 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 2045 }, catalystCost: { heavy: 4 }, requiredBiomeLevel: 22 },
+      { stats: { attack: 38 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 186 },  requiredBiomeLevel: 20 },
+      { stats: { attack: 38 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 465 },  requiredBiomeLevel: 21 },
+      { stats: { attack: 38 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 744 }, requiredBiomeLevel: 22 },
+      { stats: { attack: 34 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 1208 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 22 },
+      { stats: { attack: 38 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 2045 }, catalystCost: { heavy: 4 }, requiredBiomeLevel: 22 },
     ],
   }],
 

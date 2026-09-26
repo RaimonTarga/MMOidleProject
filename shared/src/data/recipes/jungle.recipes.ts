@@ -25,16 +25,17 @@ export const jungleRecipeEntries = [
   ['jungle-stinger-rapier', {
     id: 'jungle-stinger-rapier', name: 'Stinger Rapier',
     recipeGroup: 'jungle', requiredBiomeLevel: 1, slot: 'weapon',
-    cost: { green: 55}, stats: { attack: 10, onHitDamage: 8 }, attacksPerSecond: 1.55, tier: 2, // family-tag: fast on-hit rapier → Alacrity
+    // 2026-09-26 T2-T4 weapon normalization: Attack 10->11 (+5: 30->24). On-hit unchanged.
+    cost: { green: 55}, stats: { attack: 11, onHitDamage: 8 }, attacksPerSecond: 1.55, tier: 2, // family-tag: fast on-hit rapier → Alacrity
     icon: 'items/weapons/stinger-rapier.png',
     element: 'poison',   // cosmetic attack tint only
     description: 'A thin blade kept slick with something the jungle distilled and never named.',
     upgrades: [
-      { stats: { attack: 4, onHitDamage: 3 }, cost: { green: 40 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 4, onHitDamage: 3 }, cost: { green: 99 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 4, onHitDamage: 3 }, cost: { green: 158 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 4, onHitDamage: 3 }, cost: { green: 257 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 4, onHitDamage: 3 }, cost: { green: 436 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 3, onHitDamage: 3 }, cost: { green: 40 }, requiredBiomeLevel: 2 },
+      { stats: { attack: 3, onHitDamage: 3 }, cost: { green: 99 }, requiredBiomeLevel: 3 },
+      { stats: { attack: 3, onHitDamage: 3 }, cost: { green: 158 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 2, onHitDamage: 3 }, cost: { green: 257 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 2, onHitDamage: 3 }, cost: { green: 436 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -44,7 +45,7 @@ export const jungleRecipeEntries = [
     cost: { green: 48, yellow: 12 }, stats: {"maxHp": 52, "evasion": 0.28, "damageReduction": 0.04, plating: JUNGLE_PLATING.t2.base}, // family-tag: evasion armor (anti-fast-hit) → Alacrity
     tier: 2,
     icon: 'items/armor/verdant-weave.png',
-    description: "Evades soften direct hits and prevent eligible on-hit ailments. Jungle weave strengthens each evade.",
+    description: "Evades soften direct hits; a full dodge also prevents on-hit ailments. Jungle weave strengthens each evade.",
     upgrades: [
       {"cost": {"green": 31, "yellow": 8}, "requiredBiomeLevel": 3, "stats": {"maxHp": JUNGLE_T2_UPGRADE_HP, "evasion": 0.016, plating: JUNGLE_PLATING.t2.perUpgrade}},
       {"cost": {"green": 78, "yellow": 20}, "requiredBiomeLevel": 4, "stats": {"maxHp": JUNGLE_T2_UPGRADE_HP, "evasion": 0.016, plating: JUNGLE_PLATING.t2.perUpgrade}},
@@ -99,18 +100,19 @@ mechanicEffects: {"defense.evade-mitigation": 0.2},
     id: 'jungle-venomthorn-rapier', name: 'Venomthorn Rapier',
     recipeGroup: 'jungle', requiredBiomeLevel: 7, slot: 'weapon',
     // T3 economy pass (2026-08-30): EVOLUTION of jungle-stinger-rapier at +5 — same
-    // biome, same mechanic keys, same cadence. The Forest needles (gale-needle /
-    // thorn-needle) are deliberate DEAD ENDS: `evolvesFrom` is single-parent by design
+    // biome, same mechanic keys, same cadence. The Forest needle (gale-needle) is a
+    // deliberate DEAD END: `evolvesFrom` is single-parent by design
     // and Jungle authored its own unambiguous T2 predecessor. Forest players take the
     // reconstruct path.
     evolvesFrom: 'jungle-stinger-rapier',
-    cost: { green: 120 }, stats: { attack: 22, onHitDamage: 18 }, attacksPerSecond: 1.65, tier: 3, // family-tag: fast on-hit rapier → Alacrity
+    // 2026-09-26 T2-T4 weapon normalization: Attack 22->29 (+5: 42->50). On-hit unchanged.
+    cost: { green: 120 }, stats: { attack: 29, onHitDamage: 18 }, attacksPerSecond: 1.65, tier: 3, // family-tag: fast on-hit rapier → Alacrity
     reconstructCost: { green: 420 }, reconstructCatalystCost: { alacrity: 3 },
     icon: 'items/weapons/venomthorn-rapier.png',
     element: 'poison',   // cosmetic attack tint only
     description: 'Thin and quick, and slick with a thorn-sap that bites a little more with every touch.',
     upgrades: [
-      { stats: { attack: 4, onHitDamage: 4 }, cost: { green: 79 },  requiredBiomeLevel: 8 },
+      { stats: { attack: 5, onHitDamage: 4 }, cost: { green: 79 },  requiredBiomeLevel: 8 },
       { stats: { attack: 4, onHitDamage: 4 }, cost: { green: 197 }, requiredBiomeLevel: 9 },
       { stats: { attack: 4, onHitDamage: 4 }, cost: { green: 315 }, requiredBiomeLevel: 10 },
       { stats: { attack: 4, onHitDamage: 4 }, cost: { green: 512 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 10 },
@@ -126,7 +128,7 @@ mechanicEffects: {"defense.evade-mitigation": 0.2},
     reconstructCost: { green: 315, yellow: 105 }, reconstructCatalystCost: { alacrity: 3 },
     tier: 3,
     icon: 'items/armor/wildgrowth-weave.png',
-    description: "Evades soften direct hits and prevent eligible on-hit ailments. Jungle weave strengthens each evade.",
+    description: "Evades soften direct hits; a full dodge also prevents on-hit ailments. Jungle weave strengthens each evade.",
     upgrades: [
       {"cost": {"green": 59, "yellow": 19}, "requiredBiomeLevel": 9, "stats": {"maxHp": 15, "evasion": 0.016, plating: JUNGLE_PLATING.t3.perUpgrade}},
       {"cost": {"green": 146, "yellow": 49}, "requiredBiomeLevel": 10, "stats": {"maxHp": 14, "evasion": 0.016, plating: JUNGLE_PLATING.t3.perUpgrade}},
@@ -192,7 +194,8 @@ mechanicEffects: {"defense.evade-mitigation": 0.25},
     id: 'jungle-deathfang-rapier', name: 'Deathfang Rapier',
     recipeGroup: 'jungle', requiredBiomeLevel: 13, slot: 'weapon',
     evolvesFrom: 'jungle-venomthorn-rapier',
-    cost: { green: 264 }, stats: { attack: 34, onHitDamage: 30 }, attacksPerSecond: 1.75, tier: 4, // family-tag: capstone fast on-hit rapier → Alacrity
+    // 2026-09-26 T2-T4 weapon normalization: Attack 34->59 (+5: 84->108). On-hit unchanged.
+    cost: { green: 264 }, stats: { attack: 59, onHitDamage: 30 }, attacksPerSecond: 1.75, tier: 4, // family-tag: capstone fast on-hit rapier → Alacrity
     reconstructCost: { green: 924 }, reconstructCatalystCost: { alacrity: 4 },
     icon: 'items/weapons/deathfang-rapier.png',
     element: 'poison',   // cosmetic attack tint only
@@ -202,7 +205,7 @@ mechanicEffects: {"defense.evade-mitigation": 0.25},
       { stats: { attack: 10, onHitDamage: 8 }, cost: { green: 392 }, requiredBiomeLevel: 15 },
       { stats: { attack: 10, onHitDamage: 8 }, cost: { green: 627 }, requiredBiomeLevel: 16 },
       { stats: { attack: 10, onHitDamage: 8 }, cost: { green: 1018 }, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 16 },
-      { stats: { attack: 10, onHitDamage: 8 }, cost: { green: 1722 }, catalystCost: { alacrity: 4 }, requiredBiomeLevel: 16 },
+      { stats: { attack: 9, onHitDamage: 8 }, cost: { green: 1722 }, catalystCost: { alacrity: 4 }, requiredBiomeLevel: 16 },
     ],
   }],
 
@@ -217,7 +220,7 @@ mechanicEffects: {"defense.evade-mitigation": 0.25},
     mechanicEffects: {"defense.evade-mitigation": 0.3},
     tier: 4,
     icon: 'items/armor/primal-canopy.png',
-    description: "Evades soften direct hits and prevent eligible on-hit ailments. Jungle weave strengthens each evade.",
+    description: "Evades soften direct hits; a full dodge also prevents on-hit ailments. Jungle weave strengthens each evade.",
     upgrades: [
       {"cost": {"green": 124, "yellow": 31}, "requiredBiomeLevel": 15, "stats": {"maxHp": 27, "evasion": 0.016, plating: JUNGLE_PLATING.t4.perUpgrade}},
       {"cost": {"green": 310, "yellow": 77}, "requiredBiomeLevel": 16, "stats": {"maxHp": 27, "evasion": 0.016, plating: JUNGLE_PLATING.t4.perUpgrade}},
