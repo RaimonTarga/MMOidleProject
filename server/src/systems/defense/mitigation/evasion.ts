@@ -37,9 +37,16 @@ export function registerEvasion(): void {
       mutateSlice(world, player, 'evadesHits', (slice) => { slice.charge = acc - 1; });
       ctx.metadata['evaded'] = true;
       ctx.metadata['evadeMitigation'] = player.evadesHits.evadeMitigation;
-      // The attacking monster's debuffs/DoT are suppressed unless it pierces evade.
+      // Only a FULL dodge (evade mitigation >= 1) suppresses the attacking monster's
+      // debuffs/DoT; a graze still lets them land. Partial evasion used to block
+      // them too, which made evasion armor the answer to every ailment-driven
+      // fight (Swamp poison, Cave plating shred) as a side effect of softening
+      // hits. Full-dodge ailment immunity is the late-game payoff for stacking
+      // evade mitigation. A monster that pierces evade applies through either.
       const def = MONSTER_DATABASE.get(ctx.attacker.isMonster.monsterTypeId);
-      if (!def?.appliesThroughEvade) ctx.metadata['evadeBlocksDebuffs'] = true;
+      if (player.evadesHits.evadeMitigation >= 1 && !def?.appliesThroughEvade) {
+        ctx.metadata['evadeBlocksDebuffs'] = true;
+      }
     } else {
       mutateSlice(world, player, 'evadesHits', (slice) => { slice.charge = acc; });
     }
@@ -62,8 +69,10 @@ export function registerEvasion(): void {
 }
 
 /**
- * True when the current attack was evaded AND the source does not pierce evade.
- * Debuff/DoT/status appliers call this and early-return to suppress on a dodge.
+ * True when the current attack's debuffs/DoT must not land: a FULL player dodge
+ * (evade mitigation >= 1), or a monster dodge of a player hit, in either case
+ * unless the source pierces evade. Debuff/DoT/status appliers call this and
+ * early-return to suppress.
  */
 export function evadeBlocksDebuffs(ctx: CombatContext): boolean {
   return ctx.metadata['evadeBlocksDebuffs'] === true;

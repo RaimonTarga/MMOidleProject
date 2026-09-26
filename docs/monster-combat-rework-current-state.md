@@ -178,7 +178,8 @@ Player riders (`slow` / `antiheal` / `vulnerability`) reuse the shared player st
 than new ids, and go through `applyStrongestPlayerRider`: `applyStatusEffect` keeps the
 **existing** `data` when the status is already on the target, so a rider that loses the race to
 another source would otherwise refresh a clock and apply no magnitude at all. The harsher of the
-two values wins. Every rider is skipped on an evaded hit, per the global evade rule.
+two values wins. Every rider is skipped on a fully dodged hit, per the global evade rule (a partial-evade graze
+still applies riders since 2026-09-26).
 
 ⚠ **ONE CAST PER MONSTER.** The scheduler yields while a `chargedAttack`, `castedAttackSpeedBuff`
 or `lowHealthWard` wind-up is pending. Two invariants depend on it: `publishGroundZone` clears

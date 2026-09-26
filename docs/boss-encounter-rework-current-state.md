@@ -36,7 +36,7 @@ These changes supersede the older tuning below:
   Ambush wind-ups are 350 / 300 / 250 ms, with 90px reach. T2 also surfaces on contact
   rather than waiting out a fixed stealth timer.
   **Venomous Bite** has a 90px edge-to-edge reach and applies 3 / 4 poison stacks only
-  on a landed, non-evaded hit. Poison uses the normal monster DoT path, including
+  on a hit that is not fully dodged (a graze still poisons, since 2026-09-26). Poison uses the normal monster DoT path, including
   Warding/tenacity, shields, ticking, cleansing, and HUD status. Each stack deals
   14 / 16 damage each second for eight seconds before status resistance.
   The T4 wounded-frenzy gate remains at 50% HP.

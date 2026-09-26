@@ -183,9 +183,11 @@ Important formula conventions:
 - `biomeXpForLevel` is the only biome XP threshold function.
 - `biomeLevelCap(playerTier, biomeGroup)` takes exactly two args.
 - Evasion is a fraction from 0 to 1, not old `1/N` notation.
-- An evaded hit applies no debuffs/DoT: every on-hit debuff/DoT/status applier must
-  early-return on `evadeBlocksDebuffs(ctx)` (respects monster `appliesThroughEvade` /
-  player `shared.applies-through-evade`). Unlike a chaotic-axe miss, which still applies them.
+- Every on-hit debuff/DoT/status applier must early-return on `evadeBlocksDebuffs(ctx)`
+  (respects monster `appliesThroughEvade` / player `shared.applies-through-evade`). It is
+  true when a monster evades a player hit, but on the PLAYER side only for a full dodge
+  (evade mitigation >= 1): a graze still applies the monster's ailments. Unlike a
+  chaotic-axe miss, which always applies them.
 - Use shared melee/ranged helpers from `shared/src/data/skillTree/rootsAndFrames.ts`.
 
 ## World, Progression, And Persistence

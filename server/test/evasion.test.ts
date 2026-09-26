@@ -5,6 +5,7 @@
 
 import {
   GAME_CONFIG,
+  MONSTER_DATABASE,
   STARTER_RUNE_IDS,
   emptyEquipment,
 } from "@mmo-idle/shared";
@@ -247,5 +248,37 @@ assert(
   player.hasHealth.hp === beforeFull,
   "a full evade should cost no HP at all",
 );
+
+// ── Only a FULL dodge blocks ailments (2026-09-26) ───────────────────────────
+// A graze (partial evade mitigation) still lets the attacker's on-hit DoT land;
+// a full dodge blocks it; a monster that pierces evade applies through both.
+// Every hit is evaded at dodgeRate 1, so each case is one hit.
+
+const toad = world.createMonster("node-5-5", "grave-toadeater", { x: 410, y: 400 });
+assert(toad !== null, "test needs grave-toadeater, the T1 Swamp boss that poisons on hit");
+
+function clearAilments(): void {
+  player.tracksCombat.statusEffects = [];
+  if (player.hasDot) detachComponent(world, player, "hasDot");
+}
+function poisonedByEvadedHit(evadeMitigation: number): boolean {
+  clearAilments();
+  attachComponent(world, player, "evadesHits", { dodgeRate: 1, evadeMitigation, charge: 0 });
+  now += 1_000;
+  runMonsterAttack(world, toad!, player, now);
+  return player.hasDot !== undefined;
+}
+
+assert(poisonedByEvadedHit(0.6), "a partial evade (graze) must still apply the attacker's DoT");
+assert(!poisonedByEvadedHit(1), "a full dodge must block the attacker's DoT");
+
+const toadDef = MONSTER_DATABASE.get("grave-toadeater")!;
+toadDef.appliesThroughEvade = true;
+try {
+  assert(poisonedByEvadedHit(1), "a monster that pierces evade must apply its DoT through a full dodge");
+} finally {
+  delete toadDef.appliesThroughEvade;
+}
+clearAilments();
 
 console.log("evasion: ok");

@@ -442,11 +442,11 @@ export function initDotArchetype(): void {
 
     const player = ctx.defender;
     if (!canApplyPlayerDebuff(player)) return;
-    if (evadeBlocksDebuffs(ctx)) return; // evaded monster hit applies no DoT
+    if (evadeBlocksDebuffs(ctx)) return; // a fully dodged monster hit applies no DoT (a graze still does)
 
     // VENOMOUS OPENER (`dotEffect.openerStacks`): the ambush lineage's first bite
     // of a combat session lands several stacks at once. Consumed on the first hit
-    // that actually LANDS, so an evaded opener (returned above) does not burn it.
+    // that actually LANDS, so a fully dodged opener (returned above) does not burn it.
     const stacks = monsterDotStacksForHit(ctx.attacker, dotEffect, Date.now());
     for (let i = 0; i < stacks; i++) {
       applyMonsterDotToPlayer(world, ctx.attacker, player, dotEffect,
