@@ -1,0 +1,90 @@
+[
+ {
+  "tier": 4,
+  "biome": "graveyard",
+  "cls": "conduit",
+  "status": "M",
+  "min": 71.46666666666667,
+  "proj": 71.46666666666667,
+  "frac": 1,
+  "kpm": 13.614738805970148,
+  "xpm": 8407.05223880597
+ },
+ {
+  "tier": 4,
+  "biome": "graveyard",
+  "cls": "striker",
+  "status": "M",
+  "min": 54.84,
+  "proj": 54.84,
+  "frac": 1,
+  "kpm": 17.377826404084608,
+  "xpm": 10951.057622173596
+ },
+ {
+  "tier": 4,
+  "biome": "jungle",
+  "cls": "conduit",
+  "status": "M",
+  "min": 73.48166666666667,
+  "proj": 73.48166666666667,
+  "frac": 1,
+  "kpm": 4.912790038331557,
+  "xpm": 8179.6865431286715
+ },
+ {
+  "tier": 4,
+  "biome": "jungle",
+  "cls": "striker",
+  "status": "M",
+  "min": 55.405,
+  "proj": 55.405,
+  "frac": 1,
+  "kpm": 6.371266131215594,
+  "xpm": 10876.148362061185
+ },
+ {
+  "tier": 4,
+  "biome": "mountain",
+  "cls": "conduit",
+  "status": "M",
+  "min": 65.45,
+  "proj": 65.45,
+  "frac": 1,
+  "kpm": 5.1489686783804425,
+  "xpm": 9179.755538579067
+ },
+ {
+  "tier": 4,
+  "biome": "mountain",
+  "cls": "striker",
+  "status": "PLAT",
+  "min": 45.166666666666664,
+  "proj": 55.26225098850096,
+  "frac": 0.817315,
+  "kpm": 6.177121771217712,
+  "xpm": 10857.321033210334
+ },
+ {
+  "tier": 4,
+  "biome": "trench",
+  "cls": "conduit",
+  "status": "M",
+  "min": 80.3,
+  "proj": 80.3,
+  "frac": 1,
+  "kpm": 1.432129514321295,
+  "xpm": 7543.349937733499
+ },
+ {
+  "tier": 4,
+  "biome": "trench",
+  "cls": "striker",
+  "status": "M",
+  "min": 55.52333333333333,
+  "proj": 55.52333333333333,
+  "frac": 1,
+  "kpm": 2.0892117428108303,
+  "xpm": 10867.142942906887
+ }
+]

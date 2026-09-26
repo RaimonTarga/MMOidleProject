@@ -1,0 +1,15 @@
+tier-biome   |  BASE mastery   +3set    +5set |  CAND mastery   +3set    +5set
+t2-cave      |       5.1        -        - |     14.3     12.8        -
+t2-desert    |      15.3        -        - |     15.3        -        -
+t2-forest    |       9.4        -        - |     13.8        -        -
+t2-jungle    |      11.3        -        - |     15.0        -        -
+t2-mountain  |       8.0        -        - |     15.0        -        -
+t2-plains    |       6.9        -        - |     15.5     13.8        -
+t2-swamp     |       5.3        -        - |     15.3     13.0        -
+t3-cave      |      26.5        -        - |     29.7        -        -
+t3-desert    | 37.5(5/6)        -        - |29.2(5/6)        -        -
+t3-jungle    | 41.3(3/6)        -        - |33.1(4/6)        -        -
+t3-mountain  |      27.4        -        - |     30.8        -        -
+t3-swamp     | 18.3(5/6) 8.2(5/6)        - |31.4(5/6) 8.2(5/6)24.6(5/6)
+t3-tundra    |      35.6        -        - |     29.6        -        -
+t3-volcanic  |         -        -        - |        -        -        -

@@ -161,12 +161,18 @@ export const GAME_CONFIG = {
   /**
    * Per-biome multiplier on biomeXp, stacked on BIOME_XP_REWARD_MULT_BY_TIER.
    * Keyed by biomeTier, then biomeGroup; a missing entry is 1. Mastery XP only:
-   * essence and catalyst payouts ignore it. It evens out biome throughput, so a
-   * biome's T4 segment takes about the same time as the others. Volcanic has no
-   * entry because the approach stall blocks calibration.
+   * essence and catalyst payouts ignore it. It evens out biome throughput, so each
+   * biome's segment lands near its tier target (T2 15 / T3 30 / T4 60 min).
+   * T2/T3 factors are the bot-median time over target (six classes); T4 factors put
+   * the Striker reference near 55 min. Factors below 1 slow a biome without raising
+   * the tier budget, so earlier-tier nodes never become a faster route into a later
+   * segment. Volcanic T3 has no entry: bots die there before pacing is measurable.
+   * Evidence: reports/reward-mastery-study-2026-09-25/xp-sweep-2026-09-26.
    */
   BIOME_XP_MULT_BY_TIER_AND_BIOME: {
-    4: { tundra: 1.8, desert: 2.4 },
+    2: { cave: 0.35, swamp: 0.35, plains: 0.45, mountain: 0.55, forest: 0.65, jungle: 0.75 },
+    3: { swamp: 0.6, cave: 0.9, mountain: 0.9, tundra: 1.2, desert: 1.3, jungle: 1.4 },
+    4: { tundra: 1.8, desert: 2.4, mountain: 2.7, jungle: 3.4, graveyard: 2.85, trench: 2.6 },
   } as Readonly<Record<number, Readonly<Record<string, number>>>>,
   /**
    * Per-tier multiplier on essence granted to the player. T1's validated 2x

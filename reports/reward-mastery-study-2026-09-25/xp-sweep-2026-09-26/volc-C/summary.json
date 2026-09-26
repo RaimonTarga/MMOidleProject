@@ -1,0 +1,68 @@
+[
+ {
+  "tier": 3,
+  "biome": "volcanic",
+  "cls": "apprentice",
+  "status": "DEATH",
+  "min": 0.16333333333333333,
+  "proj": null,
+  "frac": 0.008,
+  "kpm": 12.244897959183673,
+  "xpm": 2057.1428571428573
+ },
+ {
+  "tier": 3,
+  "biome": "volcanic",
+  "cls": "conduit",
+  "status": "DEATH",
+  "min": 15.353333333333333,
+  "proj": 35.463894846834954,
+  "frac": 0.43292857142857144,
+  "kpm": 6.252713851498046,
+  "xpm": 1184.3030829353017
+ },
+ {
+  "tier": 3,
+  "biome": "volcanic",
+  "cls": "slinger",
+  "status": "DEATH",
+  "min": 1.2766666666666666,
+  "proj": 22.056766762649115,
+  "frac": 0.05788095238095238,
+  "kpm": 10.182767624020888,
+  "xpm": 1904.177545691906
+ },
+ {
+  "tier": 3,
+  "biome": "volcanic",
+  "cls": "spirit",
+  "status": "DEATH",
+  "min": 0.335,
+  "proj": null,
+  "frac": 0.016,
+  "kpm": 11.940298507462686,
+  "xpm": 2005.9701492537313
+ },
+ {
+  "tier": 3,
+  "biome": "volcanic",
+  "cls": "squire",
+  "status": "M",
+  "min": 21.985,
+  "proj": 21.985,
+  "frac": 1,
+  "kpm": 10.052308392085513,
+  "xpm": 1911.2576756879691
+ },
+ {
+  "tier": 3,
+  "biome": "volcanic",
+  "cls": "striker",
+  "status": "DEATH",
+  "min": 3.58,
+  "proj": 20.97071129707113,
+  "frac": 0.1707142857142857,
+  "kpm": 10.893854748603351,
+  "xpm": 2002.7932960893854
+ }
+]
