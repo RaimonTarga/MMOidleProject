@@ -153,6 +153,20 @@ function summonsInCombat(world: World, player: PlayerEntity): boolean {
   return false;
 }
 
+/** Summoner with at most half of its target summon count alive in its node. */
+function formationBroken(world: World, player: PlayerEntity): boolean {
+  const summons = player.summonsMinions;
+  if (!summons || summons.targetCount <= 0) return false;
+  const nodeId = player.hasPosition.nodeId;
+  let living = 0;
+  for (const id of summons.minionIds) {
+    const minion = world.getMinionEntity(id);
+    if (minion && minion.isMinion.ownerPlayerId === player.isPlayer.id
+      && minion.hasHealth.hp > 0 && minion.hasPosition.nodeId === nodeId) living++;
+  }
+  return living * 2 <= summons.targetCount;
+}
+
 /** Whether the player's current attack target is an elite (or a boss). */
 function isEliteTarget(world: World, targetId: string | undefined): boolean {
   if (!targetId) return false;
@@ -192,6 +206,7 @@ export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
       activelyEngaged: isPlayerActivelyInCombat(world, player) ||
         (heatManagementState(player) === "requested" && heatEngagementTargets(world, player).size > 0),
       summonsInCombat: summonsInCombat(world, player),
+      formationBroken: formationBroken(world, player),
       inParty: player.inParty !== undefined,
       aggroCount: currentAggroCount,
       combatArchetype: player.usesSkills.combatArchetype,

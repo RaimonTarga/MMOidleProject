@@ -40,6 +40,9 @@ const CONDITION_FACTS: Record<string, DetailLine[]> = {
   'n-aggro-3': [
     { key: 'threshold', label: 'Triggers at', value: '3+ enemies on you' },
   ],
+  'formation-broken': [
+    { key: 'threshold', label: 'Triggers at', value: 'half or fewer summons standing' },
+  ],
   'target-casting': [
     {
       key: 'window',

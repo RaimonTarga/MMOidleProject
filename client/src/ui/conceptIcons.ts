@@ -55,6 +55,7 @@ const CONDITION_IDS = new Set([
   'while-traveling',
   'stance-charged',
   'n-aggro-3',
+  'formation-broken',
 ]);
 
 const ACTION_IDS = new Set([

@@ -82,6 +82,10 @@ export type RuneConditionId =
   // Active while the active stance's own charge is full. Currently only Powering Up
   // charges, and this is how a rule LEAVES it to cash the charge in.
   | "stance-charged"
+  // Summoner only: at most half of your formation is standing (living summons in
+  // your node). Inert for every other archetype. Pairs with Flee so a Conduit whose
+  // summons are dying faster than they reform backs off to rebuild.
+  | "formation-broken"
   | "n-aggro-3";
 
 export type RuneActionId =
@@ -162,6 +166,7 @@ const COMBAT_CONDITIONS: readonly RuneConditionId[] = [
   "hp-below-25",
   "has-debuff",
   "n-aggro-3",
+  "formation-broken",
 ];
 
 const TARGETING_CONDITIONS: readonly RuneConditionId[] = [
@@ -342,6 +347,17 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
       id: "in-party",
       name: "In A Party",
       blurb: "Works while in a party with one or more players.",
+      cost: 1,
+      tier: 1,
+      kind: "state",
+    },
+  ],
+  [
+    "formation-broken",
+    {
+      id: "formation-broken",
+      name: "Formation Broken",
+      blurb: "Summoner only: works while half or fewer of your summons are standing.",
       cost: 1,
       tier: 1,
       kind: "state",
@@ -1302,6 +1318,8 @@ export interface RuneContext {
    * combat; movement and recovery rules keep the owner's own combat state.
    */
   summonsInCombat?: boolean;
+  /** Summoner with at most half its target summon count alive in its node. */
+  formationBroken?: boolean;
   inParty: boolean;
   aggroCount: number;
   combatArchetype?: CombatArchetype;
@@ -1438,6 +1456,8 @@ function isConditionActive(conditionId: string, ctx: RuneContext): boolean {
       return ctx.insideDangerousTelegraph ?? false;
     case "n-aggro-3":
       return ctx.aggroCount >= 3;
+    case "formation-broken":
+      return ctx.formationBroken ?? false;
     case "target-casting":
       return ctx.enemyCharging ?? false;
     case "before-empowered":
