@@ -79,3 +79,21 @@ react when you use their biome's Guard. Techniques never trigger charm effects.
 - **Inferno Heart (Volcanic T4)** is now a real step up from Magmaheart Stone.
 - **Overgrowth Pulse** turns less overflow healing into its ward, and the ward is capped at
   5% of max HP.
+
+## Tier 4 specializations rebalanced
+
+- **Blunderbuss bug fixed.** Each pellet fed your weapon's damage-over-time at full damage,
+  so a Rimebrand Blunderbuss was several times stronger than intended. Pellets now deal 22%
+  damage each, and the volley knocks enemies back a little less.
+- **Detonate** still cashes your weapon's damage-over-time at 5× (5.5× at rank II). Class
+  damage-over-time (Apprentice stacks, Conflagration, Permafrost) now pays out at 2×. At 5×
+  it made several Apprentice specializations two to three times stronger than everyone
+  else.
+- **Heavy frames** at T4 hit a little less hard with their big finisher, execution or
+  discharge (−1× for Striker and Squire, −2× for Spirit's Voidwalker and Invoker). They
+  keep their extra health and armor.
+- **Light Squire, Spirit and Apprentice specializations** gain +20% attack speed at T4.
+- Many specializations were tuned toward the middle of the pack. Descriptions show the new
+  numbers. Strongest trimmed: Berserker, Destroyer, Stalwart, Tempest, Duelist, Warmonger,
+  Bounty Hunter, Wind Spirit. Weakest raised: Surge, Dynamo, Shockblade, Venomslinger,
+  Zealot.

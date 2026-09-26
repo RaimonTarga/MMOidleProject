@@ -148,7 +148,8 @@ const EFFECT_FIELDS: Record<string, EffectFieldMeta> = {
   // the damage the target's afflictions still OWED — not the player's attack. On
   // `damageMult` it would inherit `damageFromAttack` and print a confidently
   // wrong absolute number beside it.
-  detonateMult: { label: 'Affliction damage', format: 'mult' },
+  detonateMult: { label: 'Weapon DoT damage', format: 'mult' },
+  classDotMult: { label: 'Class DoT damage', format: 'mult' },
   onHitDamage: { label: 'Bonus damage per hit', format: 'flat' },
   charges: { label: 'Attacks empowered', format: 'count' },
 };
@@ -169,7 +170,7 @@ const EFFECT_FIELD_ORDER: Record<AbilityEffectSpec['kind'], string[]> = {
   'attack-speed': ['attackSpeedPct', 'durationMs'],
   'break-free': ['controlResistPct', 'controlResistMs'],
   'spread-dots': ['maxTargets', 'radius'],
-  'detonate-dots': ['detonateMult'],
+  'detonate-dots': ['detonateMult', 'classDotMult'],
   // `element` is a DamageElement string, not a number, so it is deliberately
   // absent — the field formatter only speaks numbers.
   imbue: ['onHitDamage', 'charges'],

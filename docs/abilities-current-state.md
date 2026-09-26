@@ -500,8 +500,10 @@ condition — for free.
   `applied.stacks` instead hands out a free stack to everything Contagion touches (caught
   by `abilityAffliction.test.ts`).
 - **Detonate CONSUMES** every detonatable DoT and pays out what they still owed ×
-  `detonateMult` (5.0x / 5.5x since 2026-09-26, 1.2s cast; it was 1.2x / 1.4x with a 2s cast and lost
-  to Power Strike on every weapon), single-target. Effects are stripped **before** the damage lands: if the
+  a per-family multiplier, single-target: weapon reservoirs × `detonateMult` (5.0x / 5.5x, 1.2s
+  cast; a reservoir drains in ~4.5s so it owes little), every other family (class stacks,
+  Permafrost, Conflagration) × `classDotMult` (2.0x). A single 5x once applied to class stacks
+  too and made T4 Apprentice specs 2-3x the tier median on any weapon (fixed 2026-09-26). Effects are stripped **before** the damage lands: if the
   burst kills, the monster is removed inside `applyPlayerAoe`, and spent effects left on a
   corpse could be billed twice on the way out.
 - Both are **ownership-scoped by `sourceId`** — you act on your own damage over time and

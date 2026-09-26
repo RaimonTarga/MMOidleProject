@@ -316,6 +316,14 @@ export function resolveDetonate(
 
   const owed = totalRemainingDamage(entries);
   if (owed <= 0) return;
+  // Weapon reservoirs drain in ~4.5 s and hold only a few seconds of converted
+  // damage, so they cash out at the big multiplier. Class DoTs (and Permafrost,
+  // Conflagration) run long and owe far more; at the reservoir multiplier they
+  // made T4 Apprentice specs 2-3x the tier median, so they keep a modest one.
+  let payout = 0;
+  for (const entry of entries) {
+    payout += entry.remainingDamage * (entry.familyId === "weapon-reservoir" ? effect.detonateMult : effect.classDotMult);
+  }
 
   // Captured BEFORE the effects are stripped, and pushed before the damage in
   // case the burst kills: a dead monster's position is gone by the time
@@ -344,7 +352,7 @@ export function resolveDetonate(
     }
   }
 
-  const damage = Math.max(1, Math.round(owed * effect.detonateMult));
+  const damage = Math.max(1, Math.round(payout));
   // The element and the crit styling are the two things the damage number
   // cannot work out for itself: the AoE seam has no `player-hit` to hang them
   // on, so without them Detonate's biggest number renders plain white. Both are

@@ -258,12 +258,18 @@ export function initWeaponEffects(): void {
     if (!weaponDotProfileForWeapon(weaponId)) return;
     if (evadeBlocksDebuffs(ctx)) return;
 
+    // Blunderbuss pellets take their damage penalty later, in onDamageTaken; the
+    // reservoir is fed here, so it must see the pellet's penalized share or a
+    // volley pours a full clip of shots into the DoT (Rimebrand Blunderbuss 3x).
+    const pelletMult = ctx.metadata['blunderbussPellet'] === true
+      ? Math.max(0, 1 + (player.usesSkills.passives['reload.blunderbuss-damage-mult'] ?? 0))
+      : 1;
     ctx.damage = feedWeaponReservoir(
       world,
       player,
       ctx.defender,
       ctx.damage,
-      ctx.formation?.secondaryEffectMult ?? 1,
+      (ctx.formation?.secondaryEffectMult ?? 1) * pelletMult,
     );
   });
 }

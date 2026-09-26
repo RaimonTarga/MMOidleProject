@@ -16,6 +16,57 @@ export interface BreadthCell extends Night5Cell {
 const frames = ['light', 'balanced', 'heavy'] as const;
 const fastWeapon = (tier: number) => ['','', 'jungle-stinger-rapier', 'jungle-venomthorn-rapier', 'jungle-deathfang-rapier'][tier];
 const heavyWeapon = (tier: number) => ['','', 'quake-hammer', 'mountain-avalanche-maul', 'mountain-warmaul'][tier];
+// 2026-09-26 T4 class pass: each non-Conduit T4 path's measured best weapon (all 11
+// T4 weapons on a 16-plating / 15% DR dummy, +5, Tempered core, Equilibrium relic)
+// and its better cast Technique (Apprentice: Power Strike vs Detonate). Replaces the
+// frame-default weapon picks, which predated the T1-T4 weapon normalization.
+const T4_MEASURED: Record<string, [weapon: string, cast: 'power-strike' | 'detonate']> = {
+  'cadence-balanced-t3-a': ['desert-sunmonk-warstaff', 'power-strike'],
+  'cadence-balanced-t3-b': ['tundra-glacial-rimebrand', 'power-strike'],
+  'cadence-balanced-t3-c': ['desert-sunmonk-warstaff', 'power-strike'],
+  'cadence-heavy-t3-a': ['mountain-warmaul', 'power-strike'],
+  'cadence-heavy-t3-b': ['mountain-warmaul', 'power-strike'],
+  'cadence-heavy-t3-c': ['mountain-warmaul', 'power-strike'],
+  'cadence-light-t3-a': ['tundra-glacial-rimebrand', 'power-strike'],
+  'cadence-light-t3-b': ['tundra-glacial-rimebrand', 'power-strike'],
+  'cadence-light-t3-c': ['mountain-warmaul', 'power-strike'],
+  'cooldown-balanced-t3-a': ['mountain-warmaul', 'power-strike'],
+  'cooldown-balanced-t3-b': ['tundra-glacial-rimebrand', 'power-strike'],
+  'cooldown-balanced-t3-c': ['mountain-warmaul', 'power-strike'],
+  'cooldown-heavy-t3-a': ['mountain-warmaul', 'power-strike'],
+  'cooldown-heavy-t3-b': ['mountain-warmaul', 'power-strike'],
+  'cooldown-heavy-t3-c': ['mountain-earthsunder-maul', 'power-strike'],
+  'cooldown-light-t3-a': ['tundra-glacial-rimebrand', 'power-strike'],
+  'cooldown-light-t3-b': ['tundra-glacial-rimebrand', 'power-strike'],
+  'cooldown-light-t3-c': ['tundra-glacial-rimebrand', 'power-strike'],
+  'dot-balanced-t3-a': ['tundra-glacial-rimebrand', 'detonate'],
+  'dot-balanced-t3-b': ['tundra-glacial-rimebrand', 'detonate'],
+  'dot-balanced-t3-c': ['tundra-glacial-rimebrand', 'detonate'],
+  'dot-heavy-t3-a': ['mountain-earthsunder-maul', 'power-strike'],
+  'dot-heavy-t3-b': ['mountain-earthsunder-maul', 'detonate'],
+  'dot-heavy-t3-c': ['mountain-earthsunder-maul', 'detonate'],
+  'dot-light-t3-a': ['tundra-glacial-rimebrand', 'detonate'],
+  'dot-light-t3-b': ['graveyard-plague-axe', 'power-strike'],
+  'dot-light-t3-c': ['mountain-earthsunder-maul', 'power-strike'],
+  'energy-balanced-t3-a': ['desert-sunmonk-warstaff', 'power-strike'],
+  'energy-balanced-t3-b': ['desert-sunmonk-warstaff', 'power-strike'],
+  'energy-balanced-t3-c': ['desert-sunmonk-warstaff', 'power-strike'],
+  'energy-heavy-t3-a': ['graveyard-plague-axe', 'power-strike'],
+  'energy-heavy-t3-b': ['graveyard-plague-axe', 'power-strike'],
+  'energy-heavy-t3-c': ['graveyard-plague-axe', 'power-strike'],
+  'energy-light-t3-a': ['desert-sunmonk-warstaff', 'power-strike'],
+  'energy-light-t3-b': ['tundra-glacial-rimebrand', 'power-strike'],
+  'energy-light-t3-c': ['desert-sunmonk-warstaff', 'power-strike'],
+  'reload-balanced-t3-a': ['tundra-glacial-rimebrand', 'power-strike'],
+  'reload-balanced-t3-b': ['tundra-glacial-rimebrand', 'power-strike'],
+  'reload-balanced-t3-c': ['tundra-glacial-rimebrand', 'power-strike'],
+  'reload-heavy-t3-a': ['mountain-earthsunder-maul', 'power-strike'],
+  'reload-heavy-t3-b': ['tundra-glacial-rimebrand', 'power-strike'],
+  'reload-heavy-t3-c': ['tundra-glacial-rimebrand', 'power-strike'],
+  'reload-light-t3-a': ['tundra-glacial-rimebrand', 'power-strike'],
+  'reload-light-t3-b': ['tundra-glacial-rimebrand', 'power-strike'],
+  'reload-light-t3-c': ['mountain-earthsunder-maul', 'power-strike'],
+};
 
 function build(tier: number, root: typeof SURVEY_CLASSES[number], frame: BreadthCell['frame'], path: string | null, far = false): BreadthCell[] {
   const pathId = path ? `${root.prefix}-${frame}-t3-${path}` : null;
@@ -49,6 +100,8 @@ function build(tier: number, root: typeof SURVEY_CLASSES[number], frame: Breadth
     if (['cooldown-heavy-t3-b', 'energy-balanced-t3-b', 'cadence-heavy-t3-b'].includes(pathId ?? '')) {
       weapon = 'mountain-warmaul'; notes.push('Empowered or empowered-derived payload: Warmaul keeps the authored empowered modifier.');
     }
+    const measured = tier === 4 && pathId ? T4_MEASURED[pathId] : undefined;
+    if (measured) { weapon = measured[0]; notes.push(`Measured best T4 weapon for this path (2026-09-26 class pass): ${weapon}.`); }
     cell.build.gearItemIds.weapon = weapon;
     let core = tier === 2 ? 'core-tempered' : root.melee ? role === 'boss' ? 'core-duelist' : 'core-bruiser' : 'core-tempered';
     if (root.name === 'conduit') { core = 'core-survivalist'; notes.push('Survivalist funds ordinary Recovery and queue-scoped Recovery without changing payment/safety ratios.'); }
@@ -68,6 +121,14 @@ function build(tier: number, root: typeof SURVEY_CLASSES[number], frame: Breadth
       const aoe = slam ? 'slam' : 'sweep';
       cell.abilities!.techniques = tier === 2 ? [aoe] : tier === 3 ? [aoe, 'frenzy'] : [aoe, 'frenzy', 'expose-weakness'];
       notes.push(`${aoe} has first offensive priority; ${slam ? 'high Attack supports direct AoE burst' : 'multiple delivery opportunities support Sweep'}.`);
+    }
+    // Frenzy adds no attacks on a 2 s+ swing, so non-Conduit T3/T4 cells take their
+    // cast Technique in that slot instead (same 2 RP wiring cost).
+    if (tier >= 3 && root.name !== 'conduit') {
+      const cast = measured?.[1] ?? 'power-strike';
+      const techniques = cell.abilities!.techniques.filter(id => id !== 'frenzy');
+      if (!techniques.includes(cast) && techniques.length < cell.abilities!.techniques.length) techniques.unshift(cast);
+      cell.abilities!.techniques = techniques;
     }
     // Persistent defense complements reactive Brace's demonstrated cooldown gap.
     if (role === 'boss' && tier >= 3) {

@@ -7,7 +7,7 @@
  */
 import assert from 'node:assert/strict';
 import { readFileSync, appendFileSync } from 'node:fs';
-import { ABILITY_DATABASE, ITEM_DATABASE, RECIPE_DATABASE, MONSTER_DATABASE, NODE_BIOMES, composePlayerView, runicPointLoadoutCost, withReferenceAbilityWiring } from '@mmo-idle/shared';
+import { ABILITY_DATABASE, ITEM_DATABASE, RECIPE_DATABASE, MONSTER_DATABASE, NODE_BIOMES, SKILL_TREE, composePlayerView, runicPointLoadoutCost, withReferenceAbilityWiring } from '@mmo-idle/shared';
 import { createBalanceWorld } from '../bench/balance/worldFactory';
 import { setupArena, teardownArena, BOT_SPAWN } from '../bench/balance/arena';
 import { prepareSurveyBot, SURVEY_CLASSES, type SurveyCell } from '../bench/balance/ttkSurveySpec';
@@ -31,10 +31,20 @@ interface Row {
   prof?: { kind: 'swarm' | 'slam' | 'dot'; hit: number; cdMs?: number; dotPerStack?: number };
   /** Tally world-log events that touch the bot (diagnostics). */
   debugEvents?: boolean; tier?: number; upgrade?: number; stance?: string | null;
+  /** Class build: frame (default balanced), T4 spec letter (default a), range (default by class), core, relic. */
+  frame?: 'light' | 'balanced' | 'heavy'; spec?: 'a' | 'b' | 'c'; range?: 'close' | 'mid' | 'far'; core?: string; relic?: string;
   /** Weapon overrides for tuning: [+0, +5] endpoints; the whole delta rides on upgrade step 1. */
   /** Ability overrides: per-rank effect field values, plus cast/cooldown. */
   ap?: Record<string, { field?: string; values?: number[]; castMs?: number; cooldownMs?: number }>;
   wp?: Record<string, { atk?: [number, number]; aps?: [number, number]; me?: Record<string, [number, number]> }>;
+  /** Skill-node overrides: mechanicEffects / statEffects values merged onto the node. */
+  sp?: Record<string, { me?: Record<string, number>; st?: Record<string, number> }>;
+}
+
+function skillPathFor(row: Row, c: { prefix: string; melee: boolean }, tier: number): string[] {
+  const frame = row.frame ?? 'balanced';
+  const range = row.range ?? (c.melee ? 'close' : 'mid');
+  return [`${c.prefix}-root`, ...(tier >= 2 ? [`${c.prefix}-${frame}`] : []), ...(tier >= 3 ? [`${c.prefix}-range-${range}`] : []), ...(tier >= 4 ? [`${c.prefix}-${frame}-t3-${row.spec ?? 'a'}`] : [])];
 }
 
 const BOSS_NODE: Record<string, string> = {
@@ -118,6 +128,19 @@ function patchAbilities(ap: Row['ap']): () => void {
       if (a.castMs !== undefined) r.castMs = a.castMs;
       if (a.cooldownMs !== undefined) r.cooldownMs = a.cooldownMs;
     });
+  }
+  return () => { for (const u of undo.reverse()) u(); };
+}
+/** Install skill-node overrides; returns restore. */
+function patchSkills(sp: Row['sp']): () => void {
+  const undo: (() => void)[] = [];
+  for (const [id, o] of Object.entries(sp ?? {})) {
+    const node = SKILL_TREE.get(id) as any;
+    assert(node, `unknown skill node ${id}`);
+    const saved = { me: structuredClone(node.mechanicEffects), st: structuredClone(node.statEffects) };
+    undo.push(() => { node.mechanicEffects = saved.me; node.statEffects = saved.st; });
+    node.mechanicEffects = { ...(node.mechanicEffects ?? {}), ...(o.me ?? {}) };
+    node.statEffects = { ...(node.statEffects ?? {}), ...(o.st ?? {}) };
   }
   return () => { for (const u of undo.reverse()) u(); };
 }
@@ -206,6 +229,7 @@ function runFarm(row: Row) {
   Date.now = () => now;
   const restoreWeapons = patchWeapons(row.wp);
   const restoreAbilities = patchAbilities(row.ap);
+  const restoreSkills = patchSkills(row.sp);
   const nodeId = row.node!;
   const tier = NODE_BIOMES[nodeId]!.biomeTier;
   const c = SURVEY_CLASSES.find((x) => x.name === row.cls)!;
@@ -219,8 +243,8 @@ function runFarm(row: Row) {
       runeRules: pickRules(row, c.melee),
       build: {
         id: row.id, classRoot: `${c.prefix}-root`, contentTier: tier, playerTier: tier, gearTier: tier,
-        skillPath: [`${c.prefix}-root`, ...(tier >= 2 ? [`${c.prefix}-balanced`] : []), ...(tier >= 3 ? [`${c.prefix}-range-${c.melee ? 'close' : 'mid'}`] : []), ...(tier >= 4 ? [`${c.prefix}-balanced-t3-a`] : [])],
-        gearItemIds: { weapon: row.weapon, armor: row.armor, recovery: row.charm, mobility: row.boots },
+        skillPath: skillPathFor(row, c, tier),
+        gearItemIds: { weapon: row.weapon, armor: row.armor, recovery: row.charm, mobility: row.boots, ...(row.core ? { core: row.core } : {}), ...(row.relic ? { relic: row.relic } : {}) },
       },
     } as SurveyCell;
     const { bot } = prepareSurveyBot(world, cell, BOT_SPAWN);
@@ -257,7 +281,7 @@ function runFarm(row: Row) {
     };
   } finally {
     try { teardownArena(world); } catch { /* ignore */ }
-    restoreWeapons(); restoreAbilities();
+    restoreWeapons(); restoreAbilities(); restoreSkills();
     Date.now = realNow; Math.random = realRandom;
   }
 }
@@ -269,6 +293,7 @@ function run(row: Row) {
   Date.now = () => now;
   const restoreWeapons = patchWeapons(row.wp);
   const restoreAbilities = patchAbilities(row.ap);
+  const restoreSkills = patchSkills(row.sp);
   const restore = (TREATMENTS[row.treatment ?? 'live'] ?? (() => { throw Error(`unknown treatment ${row.treatment}`); }))(row);
   const nodeId = BOSS_NODE[row.boss]!;
   const tier = row.tier ?? 1;
@@ -285,8 +310,8 @@ function run(row: Row) {
       runeRules: pickRules(row, c.melee),
       build: {
         id: row.id, classRoot: `${c.prefix}-root`, contentTier: tier, playerTier: tier, gearTier: tier,
-        skillPath: [`${c.prefix}-root`, ...(tier >= 2 ? [`${c.prefix}-balanced`] : []), ...(tier >= 3 ? [`${c.prefix}-range-${c.melee ? 'close' : 'mid'}`] : []), ...(tier >= 4 ? [`${c.prefix}-balanced-t3-a`] : [])],
-        gearItemIds: { weapon: row.weapon, armor: row.armor, recovery: row.charm, mobility: row.boots },
+        skillPath: skillPathFor(row, c, tier),
+        gearItemIds: { weapon: row.weapon, armor: row.armor, recovery: row.charm, mobility: row.boots, ...(row.core ? { core: row.core } : {}), ...(row.relic ? { relic: row.relic } : {}) },
       },
     } as SurveyCell;
     const { bot, view } = prepareSurveyBot(world, cell, BOT_SPAWN);
@@ -353,7 +378,7 @@ function run(row: Row) {
     };
   } finally {
     try { teardownArena(world); } catch { /* ignore */ }
-    restore(); restoreWeapons(); restoreAbilities();
+    restore(); restoreWeapons(); restoreAbilities(); restoreSkills();
     Date.now = realNow; Math.random = realRandom;
   }
 }

@@ -55,15 +55,15 @@ if (VARIANT !== 'none') {
 }
 
 /** Class reference build per tier: T1 survey solo cell, T2-T4 balanced breadth cell. */
-function baseCell(tier: number, cls: string, boss: boolean): SurveyCell {
+function baseCell(tier: number, cls: string, boss: boolean, spec?: { frame: string; path: string }): SurveyCell {
   if (tier === 1) {
     const c = SURVEY_CELLS.find(c => c.tier === 1 && c.className === cls && c.role === 'solo' && !c.alternate);
     assert(c, `T1 survey cell ${cls}`);
     return structuredClone(c);
   }
   const role = boss ? 'boss' : 'farm';
-  const c = BREADTH_CELLS.find(c => c.tier === tier && c.className === cls && c.frame === 'balanced' && c.role === role
-    && !c.controlCaseId && !c.id.includes('-far-') && (tier < 4 || c.identityId.endsWith('-a')));
+  const c = BREADTH_CELLS.find(c => c.tier === tier && c.className === cls && c.frame === (spec?.frame ?? 'balanced') && c.role === role
+    && !c.controlCaseId && !c.id.includes('-far-') && (tier < 4 || c.identityId.endsWith('-' + (spec?.path ?? 'a'))));
   assert(c, `breadth cell ${tier}/${cls}/${role}`);
   return structuredClone(c);
 }
@@ -75,18 +75,25 @@ function referenceArmor(tier: number, cls: string): string {
 }
 
 const cells: SurveyCell[] = [];
-function add(kind: 'home' | 'ref' | 'boss', tier: number, cls: string, nodeId: string, armor: string) {
-  const cell = baseCell(tier, cls, kind === 'boss');
+function add(kind: 'home' | 'ref' | 'boss', tier: number, cls: string, nodeId: string, armor: string, spec?: { frame: string; path: string }) {
+  const cell = baseCell(tier, cls, kind === 'boss', spec);
   cell.nodeId = nodeId;
   cell.isDungeon = kind === 'boss';
   cell.upgradeLevel = kind === 'boss' ? BOSS_PLUS : FARM_PLUS;
   cell.build.gearItemIds.armor = armor;
-  cell.id = `${kind}-t${tier}-${cls}-${nodeId}-${armor}`;
+  cell.id = `${kind}-t${tier}-${cls}${spec ? `-${spec.frame}-${spec.path}` : ''}-${nodeId}-${armor}`;
   cell.build.id = cell.id;
   cells.push(cell);
 }
 
-for (const tier of [1, 2, 3, 4]) {
+// MATRIX_T4_SPECS=1 (2026-09-26 class pass): T4 bosses only, every frame x path.
+const T4_SPECS = process.env.MATRIX_T4_SPECS === '1';
+if (T4_SPECS) {
+  const bossNodes = [...DUNGEON_DEFS.entries()].filter(([, d]) => d.biomeTier === 4).map(([id]) => id);
+  for (const cls of CLASSES) for (const frame of ['light', 'balanced', 'heavy']) for (const path of ['a', 'b', 'c'])
+    for (const node of bossNodes) add('boss', 4, cls, node, referenceArmor(4, cls), { frame, path });
+}
+for (const tier of T4_SPECS ? [] : [1, 2, 3, 4]) {
   const farmNodes = Object.entries(NODE_BIOMES)
     .filter(([id, n]) => n.biomeTier === tier && id.endsWith('-03') && !id.includes('dungeon'))
     .map(([id, n]) => ({ id, biome: n.biomeGroup }));

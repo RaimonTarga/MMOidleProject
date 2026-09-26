@@ -23,6 +23,7 @@ import { setAttackTarget } from "../src/systems/combat/ai/targeting";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { runPlayerAttack } from "../src/systems/combat/engine/combat";
 import { resolveCastPayload } from "../src/systems/player/abilities/abilityEffects";
+import { makeCombatContext, emitCombatEvent } from "../src/systems/combat/engine/combatPipeline";
 import { fireWithReferenceWiring } from "./fixtures/abilityWiring";
 import { World } from "../src/world/World";
 
@@ -136,6 +137,25 @@ for (const abilityId of ["power-strike", "slam"]) {
   assert(pool(target) > 0, "setup: the reservoir must be primed");
   resolveCastPayload(world, player, ABILITY_DATABASE.get("detonate")!, target);
   assert(pool(target) === 0 && target.hasWeaponDot === undefined, "Detonate consumes the reservoir and does not refill it");
+}
+
+// ── 5. A Blunderbuss pellet feeds only its penalized share ──────────────────
+// The pellet penalty lands in onDamageTaken, after this onHit feed; without the
+// pellet multiplier a volley poured a full clip of shots into the reservoir.
+{
+  const feed = (pellet: boolean) => {
+    const { world, player } = spawn(`pellet-${pellet}`, [], WEAPON);
+    player.usesSkills.passives["reload.blunderbuss-damage-mult"] = -0.75;
+    const target = monsterAt(world, 430);
+    const ctx = makeCombatContext(player, "player", target, "monster");
+    ctx.damage = 100;
+    if (pellet) ctx.metadata["blunderbussPellet"] = true;
+    emitCombatEvent("onHit", ctx, world);
+    return pool(target);
+  };
+  const full = feed(false), pellet = feed(true);
+  assert(full > 0, "setup: an ordinary hit feeds the reservoir");
+  assert(Math.abs(pellet - full * 0.25) < 1e-6, `a pellet feeds its 25% share (got ${pellet} of ${full})`);
 }
 
 console.log("weaponReservoirAbilities: ok");

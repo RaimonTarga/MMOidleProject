@@ -42,15 +42,15 @@ const requiredFragments: Record<string, string[]> = {
   "energy-balanced": ["Energy change", "14 energy per hit", "×2 damage"],
   "energy-heavy": ["Energy change", "10 energy per hit", "×6 damage"],
 
-  "cooldown-balanced-t3-b": ["8 flat damage"],
+  "cooldown-balanced-t3-b": ["32 flat damage"],
   "cooldown-heavy-t3-a": ["fixed 8s window"],
-  "cooldown-heavy-t3-b": ["4s", "4× instead of 3.5×"],
+  "cooldown-heavy-t3-b": ["4s", "3× instead of the tier"],
   "reload-light-t3-c": ["at or above 95% health"],
-  "reload-balanced-t3-b": ["40% of normal attack damage"],
+  "reload-balanced-t3-b": ["22% of normal attack damage"],
   "energy-heavy-t3-a": ["20 energy per hit"],
   "dot-light-t3-b": ["1.5s live total"],
   "dot-balanced-t3-a": ["1.25× the max-stack DoT damage"],
-  "dot-heavy-t3-c": ["1.05× frost multiplier"],
+  "dot-heavy-t3-c": ["0.75× frost multiplier"],
 };
 
 for (const [id, fragments] of Object.entries(requiredFragments)) {

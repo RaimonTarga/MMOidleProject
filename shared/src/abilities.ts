@@ -163,7 +163,8 @@ export function abilityActsWhileControlled(ability: AbilityDef): boolean {
  *   field is a Technique Power field: breadth and reach are not damage stats.
  * - `detonate-dots`: casted Technique payload (Detonate) — CONSUMES every
  *   damage-over-time the player owns on the target and deals what they still
- *   owed, times `detonateMult`. Single-target on purpose: the multiplier is the
+ *   owed: weapon reservoirs times `detonateMult`, every other DoT family (class
+ *   stacks, Permafrost, Conflagration) times `classDotMult`. Single-target on purpose: the multiplier is the
  *   payoff, and splashing it would make Contagion→Detonate one AoE nuke rather
  *   than a two-cast combo.
  * - `imbue`: self-cast Technique payload (Imbue Lightning) — a charge-based
@@ -186,7 +187,7 @@ export type AbilityEffectSpec =
   | { kind: "attack-speed"; attackSpeedPct: number; durationMs: number }
   | { kind: "break-free"; controlResistPct?: number; controlResistMs?: number }
   | { kind: "spread-dots"; radius: number; maxTargets: number }
-  | { kind: "detonate-dots"; detonateMult: number }
+  | { kind: "detonate-dots"; detonateMult: number; classDotMult: number }
   | { kind: "imbue"; onHitDamage: number; charges: number; element: DamageElement };
 
 /**
@@ -479,7 +480,7 @@ export const TECHNIQUE_POWER_FIELDS: Partial<
   // Detonate's multiplier is a pure offensive payload, so it scales. The
   // remaining DoT damage it multiplies is NOT touched here — that already
   // reflects whatever the player's DoT investment earned.
-  "detonate-dots": ["detonateMult"],
+  "detonate-dots": ["detonateMult", "classDotMult"],
   // Imbue's on-hit value is authored FLAT, which makes Technique Power the thing
   // keeping it relevant past its home tier. `charges` is deliberately absent: a
   // damage stat must not buy duration, and a charge count is duration.
@@ -968,8 +969,8 @@ const abilities: AbilityDef[] = [
     // to detonate), so it stays the payoff for DoT builds rather than a universal
     // pick. Ability damage now also feeds weapon reservoirs (weaponReservoir.ts).
     ranks: [
-      { effect: { kind: "detonate-dots", detonateMult: 5.0 }, cooldownMs: 15000, castMs: 1200 },
-      { effect: { kind: "detonate-dots", detonateMult: 5.5 }, cooldownMs: 12000, castMs: 1200 },
+      { effect: { kind: "detonate-dots", detonateMult: 5.0, classDotMult: 2.0 }, cooldownMs: 15000, castMs: 1200 },
+      { effect: { kind: "detonate-dots", detonateMult: 5.5, classDotMult: 2.0 }, cooldownMs: 12000, castMs: 1200 },
     ],
   },
 
