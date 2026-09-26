@@ -4,6 +4,7 @@ import type { World } from "../../../world/World";
 import { attachComponent, detachComponent } from "../../../ecs/markerHelpers";
 import { mutateSlice } from "../../../ecs/dirtyHelpers";
 import { registerCombatListener } from "../../combat/engine/combatPipeline";
+import { isPlayerActivelyInCombat } from "../../combat/ai/engagement";
 
 /**
  * The barrier: a permanent absorb pool worth `defense.barrier-pct × maxHp` that
@@ -100,6 +101,17 @@ export function refillBarrier(world: World, player: PlayerEntity): void {
 }
 
 /**
+ * Restore `fraction` of the barrier's max immediately (charm Guard hooks). Does not
+ * touch the recharge delay: a Guard answers the hit, it does not end the fight.
+ */
+export function restoreBarrierFraction(world: World, player: PlayerEntity, fraction: number): void {
+  const barrier = player.hasBarrier;
+  if (!barrier || fraction <= 0 || barrier.current >= barrier.max) return;
+  const next = Math.min(barrier.max, barrier.current + barrier.max * fraction);
+  mutateSlice(world, player, "hasBarrier", (slice) => { slice.current = next; });
+}
+
+/**
  * Attach, resize or detach the barrier to match the player's current passives and
  * max HP. Called from `recalculatePlayerEntityStats`, which is the ONLY place the
  * pool's size is decided — gear swaps, level-ups and class affinities all move
@@ -144,7 +156,11 @@ export function runBarrierRecharge(world: World, player: PlayerEntity, dt: numbe
   const barrier = player.hasBarrier;
   if (!barrier) return;
 
-  const ready = undamaged >= barrierDelayMs(player);
+  // Tundra charm: holding position in active combat recharges the barrier even
+  // while being hit, at its own rate; otherwise the undamaged delay applies.
+  const holdRate = player.usesSkills.passives["defense.barrier-stationary-recharge-pct"] ?? 0;
+  const holding = holdRate > 0 && player.isMoving === undefined && isPlayerActivelyInCombat(world, player);
+  const ready = holding || undamaged >= barrierDelayMs(player);
   const full = barrier.current >= barrier.max;
 
   if (!ready || full) {
@@ -154,7 +170,8 @@ export function runBarrierRecharge(world: World, player: PlayerEntity, dt: numbe
     return;
   }
 
-  const gain = barrier.max * barrierRechargePct(player) * (dt / 1000);
+  const rate = undamaged >= barrierDelayMs(player) ? Math.max(barrierRechargePct(player), holding ? holdRate : 0) : holdRate;
+  const gain = barrier.max * rate * (dt / 1000);
   const next = Math.min(barrier.max, barrier.current + gain);
   if (next === barrier.current && barrier.recharging) return;
   mutateSlice(world, player, "hasBarrier", (slice) => {

@@ -116,6 +116,8 @@ const MECHANIC_FMT: Record<string, (v: number) => string> = {
   // A potency SCALE on Recovery skills, written as a fraction with no `-pct` to
   // say so; without this it reached the upgrade and evolution diffs as "0.1".
   'defense.recovery-skill-potency':   pct,
+  'defense.absorb-guard-bonus-pct':   pct,
+  'guard.cleanse-pulse':             v => (v > 0 ? 'on' : 'off'),
   'weapon.brittle-dr':                pct,
   'weapon.empowered-mult-bonus':      v => `+${pct(v)}`,
   'mobility.ramp-rate':               v => `${pct(v)}/s`,
@@ -286,6 +288,11 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
     mark('defense.barrier-pct', 'defense.barrier-delay-ms', 'defense.barrier-recharge-pct');
   }
 
+  if (has('defense.barrier-stationary-recharge-pct')) {
+    lines.push(`While holding position in combat, the barrier recharges ${pctK('defense.barrier-stationary-recharge-pct')} per second, even while being hit`);
+    mark('defense.barrier-stationary-recharge-pct');
+  }
+
   // Recovery access reads as a SHARE OF YOUR RECOVERY RATE, never a % of max HP —
   // the whole point is that it scales with the Recovery stat.
   if (has('defense.recovery-active-pct')) {
@@ -325,6 +332,11 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
   if (has('defense.absorb-pct')) {
     lines.push(`${pctK('defense.absorb-pct')} of damage taken becomes healing over time`);
     mark('defense.absorb-pct');
+  }
+
+  if (has('defense.absorb-guard-bonus-pct')) {
+    lines.push(`+${pctK('defense.absorb-guard-bonus-pct')} absorb while a Mitigation Guard (Brace, Endure, Bramble) is up`);
+    mark('defense.absorb-guard-bonus-pct');
   }
 
   if (has('defense.hit-to-dot-pct')) {
@@ -601,6 +613,27 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
     const forMs = has('guard.recovery-on-fire-ms') ? ` for ${secK('guard.recovery-on-fire-ms')}` : '';
     lines.push(`A Guard ability firing activates ${pctK('guard.recovery-on-fire-pct')} Recovery${forMs}`);
     mark('guard.recovery-on-fire-pct', 'guard.recovery-on-fire-ms');
+  }
+  // Charm Guard hooks (Guards only).
+  if (has('guard.barrier-refill-pct')) {
+    lines.push(`Firing a Mitigation Guard (Brace, Endure, Bramble) restores ${pctK('guard.barrier-refill-pct')} of your barrier`);
+    mark('guard.barrier-refill-pct');
+  }
+  if (has('guard.barrier-refill-on-control-pct')) {
+    lines.push(`Firing Break Free restores ${pctK('guard.barrier-refill-on-control-pct')} of your barrier`);
+    mark('guard.barrier-refill-on-control-pct');
+  }
+  if (has('guard.cleanse-pulse')) {
+    lines.push('Firing Cleanse or Break Free starts your Recovery pulse at once');
+    mark('guard.cleanse-pulse');
+  }
+  if (has('guard.recovery-ramp-advance-ms')) {
+    lines.push(`Firing a Guard advances ramping Recovery by ${secK('guard.recovery-ramp-advance-ms')}`);
+    mark('guard.recovery-ramp-advance-ms');
+  }
+  if (has('recovery.cooldown-reduction-pct')) {
+    lines.push(`${pctK('recovery.cooldown-reduction-pct')} shorter Recovery skill cooldowns (Second Wind and Recuperate)`);
+    mark('recovery.cooldown-reduction-pct');
   }
 
   // ── Weapon families with no prose elsewhere ────────────────────────────────

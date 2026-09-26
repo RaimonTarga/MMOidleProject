@@ -213,6 +213,32 @@ export function runRecovery(
 }
 
 /**
+ * Fire the periodic Recovery pulse NOW and restart its interval (Swamp charm
+ * Cleanse hook). No-op without a pulse mechanic equipped.
+ */
+export function triggerRecoveryPulse(player: PlayerEntity): void {
+  const passives = player.usesSkills.passives;
+  const pulsePct = passives['defense.recovery-pulse-pct'] ?? 0;
+  const pulseIntervalMs = passives['defense.recovery-pulse-interval-ms'] ?? 0;
+  if (pulsePct <= 0 || pulseIntervalMs <= 0) return;
+  const durationMs = passives['defense.recovery-pulse-duration-ms'] ?? GAME_CONFIG.RECOVERY_PULSE_MS;
+  activateRecovery(player.tracksCombat, 'pulse', pulsePct, durationMs);
+  setCooldown(player.tracksCombat, PULSE_CD, pulseIntervalMs);
+}
+
+/**
+ * Move the ramping-Recovery timer forward by `ms` (Jungle charm Guard hook),
+ * clamped to the ramp time. No-op without a ramp mechanic equipped.
+ */
+export function advanceRecoveryRamp(player: PlayerEntity, ms: number): void {
+  const passives = player.usesSkills.passives;
+  if ((passives['defense.recovery-ramp-start-pct'] ?? 0) <= 0 || ms <= 0) return;
+  const rampTimeMs = passives['defense.recovery-ramp-ramptime-ms'] ?? 10000;
+  const cs = player.tracksCombat;
+  setResource(cs, RAMP_TIMER_KEY, Math.min(getResource(cs, RAMP_TIMER_KEY) + ms, rampTimeMs));
+}
+
+/**
  * Reset the ramp timer when the player leaves combat so the next engagement
  * starts fresh from `start-pct`. No-op if the mechanic isn't present.
  */

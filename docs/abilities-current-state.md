@@ -785,6 +785,8 @@ and Break Free's resistance window unchanged. The charm no longer supplies perio
 cleanse, empty-cleanse healing, or per-stack healing. Desert armor retains its
 independent periodic cleanse. Recipe costs and flat Recovery are unchanged.
 
+**Charm Guard hooks (2026-09-26).** Charms react to their biome's Guard: Mitigation Guards restore the Mountain barrier; Cleanse and Break Free fire the Swamp/Graveyard pulse; any Guard advances the Jungle ramp; Break Free restores the Tundra barrier; Cave absorb is higher while a Mitigation Guard buff is up. The Trench charm adds `recovery.cooldown-reduction-pct` for Recovery-tagged abilities, under the same 90% cap. Techniques never trigger these. The code is `server/src/systems/defense/charmHooks.ts` (called from `maybeFireGuard`); the per-line table is in `docs/gear-evolution-current-state.md`; the test is `server/test/charmHooks.test.ts`.
+
 The equipment wiring regression fires Brace and Endure with upgraded Mountain armor,
 and Second Wind and Recuperate with upgraded Forest charm. Mountain Guard potency
 multiplies damage reduction and Brace's knockback resistance, capped at 90% per

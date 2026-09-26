@@ -88,18 +88,18 @@ export const graveyardRecipeEntries = [
     id: 'graveyard-charm-t4', name: 'Necrotic Pulse',
     recipeGroup: 'graveyard', requiredBiomeLevel: 3, slot: 'recovery',
     evolvesFrom: 'swamp-charm-t3',
-    cost: { purple: 150 }, stats: { recovery: 16 }, // family-tag: recovery-pulse charm (Swamp inheritance) → Fortified
+    cost: { purple: 150 }, stats: { recovery: 14 }, // family-tag: recovery-pulse charm (Swamp inheritance) → Fortified
     reconstructCost: { purple: 525 }, reconstructCatalystCost: { fortified: 4 },
-    mechanicEffects: { 'defense.recovery-pulse-pct': 0.11, 'defense.recovery-pulse-interval-ms': 6000 },
+    mechanicEffects: { 'defense.recovery-pulse-pct': 0.11, 'defense.recovery-pulse-interval-ms': 6000, 'guard.cleanse-pulse': 1 },
     tier: 4,
     icon: 'items/charms/necrotic-pulse.png',
     description: 'A slow, certain throb of returning life, timed like a tired heart that refuses to stop.',
     upgrades: [
-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.03 }, cost: { purple: 73 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.03 }, cost: { purple: 183 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.03 }, cost: { purple: 292 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.03 }, cost: { purple: 475 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.03 }, cost: { purple: 803 }, catalystCost: { fortified: 3 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.03 }, cost: { purple: 73 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 1.5 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.03 }, cost: { purple: 183 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 1.5 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.03 }, cost: { purple: 292 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 1.5 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.03 }, cost: { purple: 475 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 1.5 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.03 }, cost: { purple: 803 }, catalystCost: { fortified: 3 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -107,23 +107,24 @@ export const graveyardRecipeEntries = [
     id: 'graveyard-charm-t4-gravetide', name: 'Grave-Tide Pulse',
     recipeGroup: 'graveyard', requiredBiomeLevel: 3, slot: 'recovery',
     evolvesFrom: 'swamp-charm-t3',
-    cost: { purple: 150 }, stats: { recovery: 16 }, // family-tag: recovery-pulse charm (Swamp inheritance) → Fortified
+    cost: { purple: 150 }, stats: { recovery: 14 }, // family-tag: recovery-pulse charm (Swamp inheritance) → Fortified
     reconstructCost: { purple: 525 }, reconstructCatalystCost: { fortified: 4 },
     // Combined: slower burst, compensated by a baseline in-combat trickle.
     // +5: 12% active + 12% for 4s/8s = 18% mean access (2.88% HP/s at 16 Recovery).
     mechanicEffects: {
       'defense.recovery-pulse-pct': 0.04, 'defense.recovery-pulse-interval-ms': 8000,
       'defense.recovery-active-pct': 0.04,
+      'guard.cleanse-pulse': 1,
     },
     tier: 4,
     icon: 'items/charms/grave-tide-pulse.png',
     description: 'A tide that never fully goes out — it gives back in a steady seep between the larger swells.',
     upgrades: [
-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.01, 'defense.recovery-active-pct': 0.01 }, cost: { purple: 73 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02, 'defense.recovery-active-pct': 0.02 }, cost: { purple: 183 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.01, 'defense.recovery-active-pct': 0.01 }, cost: { purple: 292 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02, 'defense.recovery-active-pct': 0.02 }, cost: { purple: 475 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02, 'defense.recovery-active-pct': 0.02 }, cost: { purple: 803 }, catalystCost: { fortified: 3 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.01, 'defense.recovery-active-pct': 0.01 }, cost: { purple: 73 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 1.5 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02, 'defense.recovery-active-pct': 0.02 }, cost: { purple: 183 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 1.5 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.01, 'defense.recovery-active-pct': 0.01 }, cost: { purple: 292 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 1.5 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02, 'defense.recovery-active-pct': 0.02 }, cost: { purple: 475 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 1.5 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02, 'defense.recovery-active-pct': 0.02 }, cost: { purple: 803 }, catalystCost: { fortified: 3 }, requiredBiomeLevel: 4 },
     ],
   }],
 

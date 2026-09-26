@@ -46,9 +46,15 @@ export const DEFENSE_KEYS = [
   'defense.barrier-pct',
   'defense.barrier-recharge-pct',
   'defense.barrier-delay-ms',
+  // Tundra charm: while holding position in active combat, the barrier recharges
+  // this fraction of its max per second even while being hit (no undamaged delay).
+  'defense.barrier-stationary-recharge-pct',
   'defense.dot-resistance',
   'defense.hit-to-dot-pct',
   'defense.absorb-pct',
+  // Cave charm: extra absorb while a Mitigation Guard buff (Brace, Endure,
+  // Bramble) is active.
+  'defense.absorb-guard-bonus-pct',
   'defense.debuff-resistance',
   'defense.cleanse-stacks',
   'defense.cleanse-interval-ms',
@@ -550,6 +556,19 @@ export const GUARD_KEYS = [
   // GAME_CONFIG.RECOVERY_ON_GUARD_MS). Recovery access, not a flat maxHp heal.
   'guard.recovery-on-fire-pct',
   'guard.recovery-on-fire-ms',
+  // ── Charm Guard hooks (2026-09-26). Guards only: Techniques never trigger them.
+  // Mountain: a Mitigation Guard firing restores this fraction of barrier max.
+  'guard.barrier-refill-pct',
+  // Tundra: a Control Guard (Break Free) firing restores this fraction of barrier max.
+  'guard.barrier-refill-on-control-pct',
+  // Swamp/Graveyard: a Cleanse Guard firing starts the Recovery pulse now and
+  // restarts its interval (1 = on).
+  'guard.cleanse-pulse',
+  // Jungle: any Guard firing advances the ramping-Recovery timer by this many ms.
+  'guard.recovery-ramp-advance-ms',
+  // Trench: shorter Recovery-skill cooldowns (Second Wind, Recuperate), additive
+  // with family CDR under its cap.
+  'recovery.cooldown-reduction-pct',
 ] as const;
 
 // Core amplifiers. Carried by the `core` equipment slot (one core, always).

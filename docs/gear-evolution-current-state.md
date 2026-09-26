@@ -158,6 +158,41 @@ cutting that HP cost 9 of 32 T2 ranged boss wins in `bench/defenseMatrix05.ts`
 (22/42; it loses the Jungle/Forest bosses and gains the Swamp boss through DoT resistance).
 Revisit it after the ranged class pass rather than through armor.
 
+## Charm roles (2026-09-26)
+
+Charms own the Recovery side of abilities. Weapons carry Technique stats and Mountain
+armor carries Guard potency. A charm is flat Recovery (it grows with upgrades at every
+tier, about +50% from +0 to +5), one way of delivering Recovery, and from T2 a hook into
+its biome's Guard. **Only Guards trigger hooks:** a Technique never heals, because
+defense does not scale with offense. The hooks live in
+`server/src/systems/defense/charmHooks.ts` (called from `maybeFireGuard`). Cave's hook is a
+state check in `damageAbsorb.ts`, and Tundra's holding recharge is in `barrier.ts`.
+
+| Line | Delivery | Guard hook |
+|---|---|---|
+| Plains → Volcanic | Recovery on kill; Volcanic adds always-on Recovery | none |
+| Forest (T1-T2) | Recovery-skill potency (Second Wind, Recuperate) | the skills themselves |
+| Swamp → Graveyard | Periodic Recovery pulse | Cleanse / Break Free fire the pulse now |
+| Mountain | Barrier | Brace / Endure / Bramble restore 15/20/30% of it (T2/T3/T4) |
+| Cave (T1-T3) | Absorb | +8/10% absorb while a Mitigation Guard is up |
+| Jungle | Ramping Recovery in long fights | any Guard advances the ramp 3-4 s |
+| Desert | Cleanse / Break Free cooldowns | the Guards themselves |
+| Tundra | Barrier that recharges 2-2.5%/s while holding position, even under hits (Glacial); ramping absorb (Deepfreeze) | Break Free restores 50/100% of the barrier |
+| Trench (T4, standalone) | Recovery-skill potency + Recovery-skill cooldowns | the skills themselves |
+
+The survival lab (the same stand-and-fight profiles as armor, with the charm varied and
+the armor fixed) puts every charm within ~±10% of its tier median, with each charm's
+Guards equipped. Measured this way:
+
+- **Desert** (0.88-0.95) is low, because the lab has few cleansable debuffs.
+- **Trench** reads 0.90 with only Recovery skills attuned, and 1.00 with Brace + Second
+  Wind.
+- **Overgrowth** (Jungle T4 variant) is 1.18, and all of that is Squire (1.70). Its
+  always-on Recovery keeps the overheal ward topped up. The ward is now 10% of overflow,
+  capped at 5% of max HP (it was 25% and uncapped: 1.38 before this pass).
+
+The Forest charm ends at T2 with its biome, because a T4 item must evolve from a T3 item.
+
 ## Verified
 
 Typecheck clean (4 pkgs); shared rebuild clean; targetPriority + runeMaintenance pass. Sanity (built

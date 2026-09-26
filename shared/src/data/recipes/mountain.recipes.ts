@@ -186,7 +186,7 @@ export const mountainRecipeEntries = [
     evolvesFrom: 'mountain-charm-t1',
     cost: { blue: 42 }, stats: { recovery: 2 }, // family-tag: barrier pool (anti-spike) → Heavy
     reconstructCost: { blue: 147 }, reconstructCatalystCost: { heavy: 2 },
-    mechanicEffects: { 'defense.barrier-pct': 0.20 },
+    mechanicEffects: { 'defense.barrier-pct': 0.20, 'guard.barrier-refill-pct': 0.15 },
     tier: 2,
     icon: 'items/charms/iron-bulwark.png',
     description: 'A ward-stone the mountainfolk pass down, hand to weathered hand.',
@@ -271,7 +271,7 @@ export const mountainRecipeEntries = [
     evolvesFrom: 'mountain-charm-t2',
     cost: { blue: 100, red: 25 }, stats: { recovery: 3 }, // family-tag: barrier pool (anti-spike) → Heavy
     reconstructCost: { blue: 350, red: 88 }, reconstructCatalystCost: { heavy: 3 },
-    mechanicEffects: { 'defense.barrier-pct': 0.28 },
+    mechanicEffects: { 'defense.barrier-pct': 0.28, 'guard.barrier-refill-pct': 0.20 },
     tier: 3,
     icon: 'items/charms/bastion-heart.png',
     description: 'A core of mountain-heart stone that raises a wall of itself, over and over.',
@@ -401,7 +401,7 @@ export const mountainRecipeEntries = [
     evolvesFrom: 'mountain-charm-t3',
     cost: { blue: 220, red: 30 }, stats: { recovery: 6 }, // family-tag: barrier pool (anti-spike) → Heavy
     reconstructCost: { blue: 770, red: 105 }, reconstructCatalystCost: { heavy: 4 },
-    mechanicEffects: { 'defense.barrier-pct': 0.36 },
+    mechanicEffects: { 'defense.barrier-pct': 0.36, 'guard.barrier-refill-pct': 0.30 },
     tier: 4,
     icon: 'items/charms/fortress-heart.png',
     description: 'A keep in miniature: it throws up a wall, lets it fall, and throws up another, tireless as siegework.',
@@ -426,6 +426,7 @@ export const mountainRecipeEntries = [
     mechanicEffects: {
       'defense.barrier-pct': 0.32,
       'defense.barrier-break-heal-pct': 0.25,
+      'guard.barrier-refill-pct': 0.20,
     },
     tier: 4,
     icon: 'items/charms/shieldmend-ward.png',

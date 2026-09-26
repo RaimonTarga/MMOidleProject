@@ -70,20 +70,20 @@ export const trenchRecipeEntries = [
   ['trench-charm-t4', {
     id: 'trench-charm-t4', name: 'Pressure Vessel',
     recipeGroup: 'trench', requiredBiomeLevel: 3, slot: 'recovery',
-    cost: { green: 150 }, stats: { recovery: 16 }, // family-tag: Trench native recovery → Dominion
+    cost: { green: 150 }, stats: { recovery: 14 }, // family-tag: Trench native recovery → Dominion
     mechanicEffects: {
-      'defense.absorb-pct': 0.16,
-      'defense.recovery-pulse-pct': 0.10, 'defense.recovery-pulse-interval-ms': 8000,
+      'defense.recovery-skill-potency': 0.30,
+      'recovery.cooldown-reduction-pct': 0.15,
     },
     tier: 4,
     icon: 'items/charms/pressure-vessel.png',
-    description: 'Built to hold against a crushing deep — it softens the one enormous blow and breathes life back on a slow count.',
+    description: 'Built for the long breath held under a crushing deep: every second wind comes sooner, and fills you deeper.',
     upgrades: [
-      { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.recovery-pulse-pct': 0.02 }, cost: { green: 73 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.recovery-pulse-pct': 0.02 }, cost: { green: 183 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.recovery-pulse-pct': 0.02 }, cost: { green: 292 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.recovery-pulse-pct': 0.02 }, cost: { green: 475 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.absorb-pct': 0.03, 'defense.recovery-pulse-pct': 0.02 }, cost: { green: 803 }, catalystCost: { dominion: 3 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.02, 'recovery.cooldown-reduction-pct': 0.02 }, cost: { green: 73 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 1.5 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.02, 'recovery.cooldown-reduction-pct': 0.02 }, cost: { green: 183 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 1.5 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.02, 'recovery.cooldown-reduction-pct': 0.02 }, cost: { green: 292 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 1.5 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.02, 'recovery.cooldown-reduction-pct': 0.02 }, cost: { green: 475 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 1.5 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.02, 'recovery.cooldown-reduction-pct': 0.02 }, cost: { green: 803 }, catalystCost: { dominion: 3 }, requiredBiomeLevel: 4 },
     ],
   }],
 

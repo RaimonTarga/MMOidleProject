@@ -1,9 +1,13 @@
-import { addResource, getResource, setResource } from '@mmo-idle/shared';
+import { ABILITY_GUARD_EFFECT_IDS, addResource, getResource, hasStatusEffect, setResource } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { registerCombatListener } from '../../combat/engine/combatPipeline';
 import { ABSORB_POOL_KEY, POOL_DRAIN_MS, COMBAT_ELAPSED_KEY } from '../core/pools';
 import { applyHealToPlayer } from './healing';
+import { BRAMBLE_EFFECT_ID } from '../../player/abilities/abilityBramble';
+
+// Mitigation Guard buffs that switch on the Cave charm's absorb bonus.
+const MITIGATION_GUARD_EFFECT_IDS = [...ABILITY_GUARD_EFFECT_IDS, BRAMBLE_EFFECT_ID];
 
 /**
  * Register the damage-absorb listener on `onDamageTaken`.
@@ -33,6 +37,9 @@ export function registerDamageAbsorb(): void {
       const progress = ramptime > 0 ? Math.min(1, elapsed / ramptime) : 1;
       absorbPct = Math.max(flatPct, start + (rampMax - start) * progress);
     }
+    // Cave charm: more absorb while a Mitigation Guard (Brace, Endure, Bramble) is up.
+    const guardBonus = player.usesSkills.passives['defense.absorb-guard-bonus-pct'] ?? 0;
+    if (guardBonus > 0 && MITIGATION_GUARD_EFFECT_IDS.some(id => hasStatusEffect(player.tracksCombat, id))) absorbPct += guardBonus;
     if (absorbPct <= 0) return;
 
     addResource(player.tracksCombat, ABSORB_POOL_KEY, Math.min(ctx.damage, player.hasHealth.hp) * absorbPct);

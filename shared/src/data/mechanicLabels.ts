@@ -66,10 +66,12 @@ export const MECHANIC_LABELS: Partial<Record<PassiveKey, MechanicLabel>> = {
   'defense.barrier-pct':                  { label: 'Barrier' },
   'defense.barrier-recharge-pct':         { label: 'Barrier recharge', companion: true },
   'defense.barrier-delay-ms':             { label: 'Barrier delay', companion: true },
+  'defense.barrier-stationary-recharge-pct': { label: 'Barrier recharge while holding' },
   'defense.dot-resistance':               { label: 'DoT resist' },
   'defense.debuff-resistance':            { label: 'Debuff resist' },
   'defense.hit-to-dot-pct':               { label: 'Damage deferred' },
   'defense.absorb-pct':                   { label: 'Absorb' },
+  'defense.absorb-guard-bonus-pct':       { label: 'Absorb during Guards' },
   'defense.cleanse-stacks':               { label: 'Cleanse' },
   'defense.cleanse-interval-ms':          { label: 'Cleanse rate', companion: true },
   'defense.cleanse-empty-heal-pct':       { label: 'Cleanse heal' },
@@ -171,6 +173,11 @@ export const MECHANIC_LABELS: Partial<Record<PassiveKey, MechanicLabel>> = {
   'guard.duration-pct':                   { label: 'Guard duration' },
   'guard.recovery-on-fire-pct':           { label: 'Guard Recovery' },
   'guard.recovery-on-fire-ms':            { label: 'Guard Recovery duration', companion: true },
+  'guard.barrier-refill-pct':             { label: 'Barrier on Guard' },
+  'guard.barrier-refill-on-control-pct':  { label: 'Barrier on Break Free' },
+  'guard.cleanse-pulse':                  { label: 'Pulse on Cleanse' },
+  'guard.recovery-ramp-advance-ms':       { label: 'Ramp on Guard' },
+  'recovery.cooldown-reduction-pct':      { label: 'Recovery skill cooldown' },
 
   // ── Cores. Every `-mult` here is a FRACTION on the final summed stat
   //    (0.15 = +15%), not a multiplier — see the formatter table. ─────────────

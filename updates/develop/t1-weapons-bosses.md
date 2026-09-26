@@ -60,3 +60,22 @@
   HP, and debuff resistance that weakens slows, plating shred, anti-heal and marks.
   Swamp and Graveyard armor no longer carry debuff resistance.
 - **Mountain** plate gets a little more damage reduction at T3 and T4.
+
+## Charms work with your Guards
+
+Every charm now gains Recovery as you upgrade it, at every tier. From T2, most charms also
+react when you use their biome's Guard. Techniques never trigger charm effects.
+
+- **Mountain:** Brace, Endure and Bramble Guard restore part of your barrier (15% at T2,
+  20% at T3, 30% at T4).
+- **Swamp and Graveyard:** Cleanse and Break Free start your Recovery pulse at once.
+- **Cave:** absorb is stronger while Brace, Endure or Bramble Guard is up.
+- **Jungle:** any Guard pushes your ramping Recovery forward by 3–4 seconds.
+- **Tundra** is reworked for standing your ground. The Glacial charms' barrier keeps
+  recharging while you hold position, even while being hit, and Break Free restores it
+  (half at T3, fully at T4). Deepfreeze Ward is now a pure ramping absorb.
+- **Pressure Vessel (Trench)** is the Recovery-skill charm: Second Wind and Recuperate heal
+  more and come back sooner.
+- **Inferno Heart (Volcanic T4)** is now a real step up from Magmaheart Stone.
+- **Overgrowth Pulse** turns less overflow healing into its ward, and the ward is capped at
+  5% of max HP.

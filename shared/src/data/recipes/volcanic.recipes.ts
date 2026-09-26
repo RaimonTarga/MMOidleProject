@@ -72,18 +72,18 @@ export const volcanicRecipeEntries = [
     // CROSS-BIOME LINEAGE: evolves from the Plains charm (Stalwart Heart). Identical
     // `defense.recovery-on-kill-pct` key, extended with an always-active half.
     evolvesFrom: 'plains-charm-t2',
-    cost: { red: 75, yellow: 25 }, stats: { recovery: 11 }, // family-tag: inherits plains-charm-t2's Alacrity
+    cost: { red: 75, yellow: 25 }, stats: { recovery: 10 }, // family-tag: inherits plains-charm-t2's Alacrity
     reconstructCost: { red: 263, yellow: 88 }, reconstructCatalystCost: { alacrity: 3 },
     mechanicEffects: { 'defense.recovery-active-pct': 0.06, 'defense.recovery-on-kill-pct': 0.04 },
     tier: 3,
     icon: 'items/charms/magmaheart-stone.png',
     description: 'A still-molten heart that mends you mid-fight, and flares with every kill.',
     upgrades: [
-      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 30, yellow: 10 },  requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 75, yellow: 25 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 120, yellow: 40 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 195, yellow: 65 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 330, yellow: 110 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 30, yellow: 10 },  requiredBiomeLevel: 4 },
+      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 75, yellow: 25 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 120, yellow: 40 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 195, yellow: 65 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 330, yellow: 110 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -205,18 +205,18 @@ export const volcanicRecipeEntries = [
     id: 'volcanic-charm-t4', name: 'Inferno Heart',
     recipeGroup: 'volcanic', requiredBiomeLevel: 9, slot: 'recovery',
     evolvesFrom: 'volcanic-charm-t3',
-    cost: { red: 200, yellow: 50 }, stats: { recovery: 16 }, // family-tag: on-kill Recovery charm → Alacrity
+    cost: { red: 200, yellow: 50 }, stats: { recovery: 14 }, // family-tag: on-kill Recovery charm → Alacrity
     reconstructCost: { red: 700, yellow: 175 }, reconstructCatalystCost: { alacrity: 4 },
-    mechanicEffects: { 'defense.recovery-active-pct': 0.06, 'defense.recovery-on-kill-pct': 0.04 },
+    mechanicEffects: { 'defense.recovery-active-pct': 0.10, 'defense.recovery-on-kill-pct': 0.08 },
     tier: 4,
     icon: 'items/charms/inferno-heart.png',
     description: 'A heart that never fully cools — it mends you mid-swing and flares brighter with every fallen foe.',
     upgrades: [
-      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 62, yellow: 16 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 156, yellow: 39 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 250, yellow: 62 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 406, yellow: 101 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 686, yellow: 172 }, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 10 },
+      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 62, yellow: 16 }, requiredBiomeLevel: 10 },
+      { stats: { recovery: 1.5 }, mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 156, yellow: 39 }, requiredBiomeLevel: 10 },
+      { stats: { recovery: 1.5 }, mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 250, yellow: 62 }, requiredBiomeLevel: 10 },
+      { stats: { recovery: 1.5 }, mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 406, yellow: 101 }, requiredBiomeLevel: 10 },
+      { stats: { recovery: 1.5 }, mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 686, yellow: 172 }, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 10 },
     ],
   }],
 

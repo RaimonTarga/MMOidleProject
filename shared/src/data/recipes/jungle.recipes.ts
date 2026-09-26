@@ -59,21 +59,22 @@ mechanicEffects: {"defense.evade-mitigation": 0.2, "defense.dot-resistance": 0.1
   ['jungle-charm-t2', {
     id: 'jungle-charm-t2', name: 'Canopy Heart',
     recipeGroup: 'jungle', requiredBiomeLevel: 3, slot: 'recovery',
-    cost: { green: 45 }, stats: { recovery: 6 }, // family-tag: jungle recovery → Alacrity
+    cost: { green: 45 }, stats: { recovery: 5 }, // family-tag: jungle recovery → Alacrity
     mechanicEffects: {
       'defense.recovery-ramp-start-pct': 0.04,
       'defense.recovery-ramp-max-pct': 0.10,
       'defense.recovery-ramp-ramptime-ms': 10000,
+      'guard.recovery-ramp-advance-ms': 3000,
     },
     tier: 2,
     icon: 'items/charms/canopy-heart.png',
     description: 'A knot of ancient vine that wakes, slowly, to the rhythm of a long fight.',
     upgrades: [
-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 18 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 46 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 73 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 119 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 203 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 18 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 46 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 73 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 119 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 203 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -147,22 +148,23 @@ mechanicEffects: {"defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.
     // inheritance and green followed it, so mechanic and home colour are the same
     // colour — there is nothing left to splash.
     evolvesFrom: 'jungle-charm-t2',
-    cost: { green: 100 }, stats: { recovery: 11 }, // family-tag: jungle recovery → Alacrity
+    cost: { green: 100 }, stats: { recovery: 10 }, // family-tag: jungle recovery → Alacrity
     reconstructCost: { green: 350 }, reconstructCatalystCost: { alacrity: 3 },
     mechanicEffects: {
       'defense.recovery-ramp-start-pct': 0.05,
       'defense.recovery-ramp-max-pct': 0.14,
       'defense.recovery-ramp-ramptime-ms': 10000,
+      'guard.recovery-ramp-advance-ms': 3000,
     },
     tier: 3,
     icon: 'items/charms/worldvine-heart.png',
     description: 'It wakes slowly to a long fight, and by the end is pouring life back faster than it leaves.',
     upgrades: [
-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 36 },  requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 91 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 145 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 236 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 400 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 10 },
+      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 36 },  requiredBiomeLevel: 10 },
+      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 91 }, requiredBiomeLevel: 10 },
+      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 145 }, requiredBiomeLevel: 10 },
+      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 236 }, requiredBiomeLevel: 10 },
+      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 400 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -234,20 +236,21 @@ mechanicEffects: {"defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.
     id: 'jungle-charm-t4', name: 'Ancient Canopy',
     recipeGroup: 'jungle', requiredBiomeLevel: 15, slot: 'recovery',
     evolvesFrom: 'jungle-charm-t3',
-    cost: { green: 200 }, stats: { recovery: 16 }, // family-tag: jungle recovery → Alacrity
+    cost: { green: 200 }, stats: { recovery: 14 }, // family-tag: jungle recovery → Alacrity
     reconstructCost: { green: 700 }, reconstructCatalystCost: { alacrity: 4 },
     mechanicEffects: {
       'defense.recovery-ramp-start-pct': 0.04, 'defense.recovery-ramp-max-pct': 0.14, 'defense.recovery-ramp-ramptime-ms': 9000,
+      'guard.recovery-ramp-advance-ms': 4000,
     },
     tier: 4,
     icon: 'items/charms/ancient-canopy.png',
     description: 'Older than the trees around it, and by a long fight\'s end it is pouring life back faster than any blade can take it.',
     upgrades: [
-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 73 }, requiredBiomeLevel: 16 },
-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 182 }, requiredBiomeLevel: 16 },
-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 291 }, requiredBiomeLevel: 16 },
-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 472 }, requiredBiomeLevel: 16 },
-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 798 }, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 16 },
+      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 73 }, requiredBiomeLevel: 16 },
+      { stats: { recovery: 1.5 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 182 }, requiredBiomeLevel: 16 },
+      { stats: { recovery: 1.5 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 291 }, requiredBiomeLevel: 16 },
+      { stats: { recovery: 1.5 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 472 }, requiredBiomeLevel: 16 },
+      { stats: { recovery: 1.5 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 798 }, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 16 },
     ],
   }],
 
@@ -255,22 +258,26 @@ mechanicEffects: {"defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.
     id: 'jungle-charm-t4-overgrowth', name: 'Overgrowth Pulse',
     recipeGroup: 'jungle', requiredBiomeLevel: 15, slot: 'recovery',
     evolvesFrom: 'jungle-charm-t3',
-    cost: { green: 200 }, stats: { recovery: 16 }, // family-tag: jungle recovery → Alacrity
+    cost: { green: 200 }, stats: { recovery: 14 }, // family-tag: jungle recovery → Alacrity
     reconstructCost: { green: 700 }, reconstructCatalystCost: { alacrity: 4 },
     // † overheal-ward-pct: regen beyond max HP converts to a temporary ward.
     mechanicEffects: {
       'defense.recovery-ramp-start-pct': 0.04, 'defense.recovery-ramp-max-pct': 0.12, 'defense.recovery-ramp-ramptime-ms': 9000,
-      'defense.overheal-ward-pct': 0.25,
+      'defense.overheal-ward-pct': 0.10,
+      // Cap (fraction of max HP) on the ward: uncapped, overheal from constant
+      // Recovery stacked into a second health bar (Squire 3.7x survival in the lab).
+      'defense.overheal-ward-cap-pct': 0.05,
+      'guard.recovery-ramp-advance-ms': 4000,
     },
     tier: 4,
     icon: 'items/charms/overgrowth-pulse.png',
     description: 'It grows past the wound and keeps growing, hardening the surplus into a living shell.',
     upgrades: [
-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 73 }, requiredBiomeLevel: 16 },
-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 182 }, requiredBiomeLevel: 16 },
-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 291 }, requiredBiomeLevel: 16 },
-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 472 }, requiredBiomeLevel: 16 },
-      { mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 798 }, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 16 },
+      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 73 }, requiredBiomeLevel: 16 },
+      { stats: { recovery: 1.5 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 182 }, requiredBiomeLevel: 16 },
+      { stats: { recovery: 1.5 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 291 }, requiredBiomeLevel: 16 },
+      { stats: { recovery: 1.5 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 472 }, requiredBiomeLevel: 16 },
+      { stats: { recovery: 1.5 }, mechanicEffects: { 'defense.recovery-ramp-max-pct': 0.02 }, cost: { green: 798 }, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 16 },
     ],
   }],
 

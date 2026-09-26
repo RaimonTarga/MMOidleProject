@@ -50,6 +50,7 @@ import {
 } from "../../combat/status/playerHardControl";
 import { syncPlayerControlLockout } from "../../combat/status/playerControlLockout";
 import { activateRecovery } from "../../defense/regen/recovery";
+import { onGuardFired } from "../../defense/charmHooks";
 import { repositionPlayer } from "../../combat/damage/knockback";
 import { abilityCooldownKey, guardCooldownMs, startTechniqueCooldown } from "./abilityCooldowns";
 import { beginAbilityCast } from "./abilityCasting";
@@ -538,6 +539,8 @@ function maybeFireGuard(
       passives["guard.recovery-on-fire-ms"] ?? GAME_CONFIG.RECOVERY_ON_GUARD_MS,
     );
   }
+
+  onGuardFired(world, player, ability);
 
   setCooldown(player.tracksCombat, cdKey, guardCooldownMs(player, ability));
   setCooldown(player.tracksCombat, GUARD_WINDOW_KEY, GUARD_WINDOW_MS);

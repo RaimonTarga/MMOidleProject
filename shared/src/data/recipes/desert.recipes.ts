@@ -80,17 +80,17 @@ export const desertRecipeEntries = [
   ['desert-charm-t2', {
     id: 'desert-charm-t2', name: 'Mirage Talisman',
     recipeGroup: 'desert', requiredBiomeLevel: 3, slot: 'recovery',
-    cost: { yellow: 50, purple: 25 }, stats: { recovery: 6 }, // family-tag: cleanse/last-stand recovery → Dominion
+    cost: { yellow: 50, purple: 25 }, stats: { recovery: 5 }, // family-tag: cleanse/last-stand recovery → Dominion
     mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.15 },
     tier: 2,
     icon: 'items/charms/mirage-talisman.png',
     description: 'A shard of cooled glass that shows you water which is not there, and mends what is.',
     upgrades: [
-      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 15, purple: 8 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 39, purple: 19 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 62, purple: 31 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 101, purple: 50 }, requiredBiomeLevel: 4 },
-      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 171, purple: 84 }, catalystCost: { dominion: 1 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 0.5 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 15, purple: 8 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 0.5 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 39, purple: 19 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 0.5 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 62, purple: 31 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 0.5 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 101, purple: 50 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 0.5 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 171, purple: 84 }, catalystCost: { dominion: 1 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -186,18 +186,18 @@ export const desertRecipeEntries = [
     id: 'desert-charm-t3', name: 'Oasis Heart',
     recipeGroup: 'desert', requiredBiomeLevel: 9, slot: 'recovery',
     evolvesFrom: 'desert-charm-t2',
-    cost: { yellow: 100, purple: 25 }, stats: { recovery: 11 }, // family-tag: cleanse recovery → Dominion
+    cost: { yellow: 100, purple: 25 }, stats: { recovery: 10 }, // family-tag: cleanse recovery → Dominion
     reconstructCost: { yellow: 350, purple: 88 }, reconstructCatalystCost: { dominion: 3 },
     mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.20 },
     tier: 3,
     icon: 'items/charms/oasis-heart.png',
     description: 'A patient spring that helps you find the strength to purge curses and break your bonds again sooner.',
     upgrades: [
-      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 38, purple: 9 },  requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 95, purple: 24 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 152, purple: 38 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 246, purple: 62 }, requiredBiomeLevel: 10 },
-      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 417, purple: 104 }, catalystCost: { dominion: 2 }, requiredBiomeLevel: 10 },
+      { stats: { recovery: 1 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 38, purple: 9 },  requiredBiomeLevel: 10 },
+      { stats: { recovery: 1 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 95, purple: 24 }, requiredBiomeLevel: 10 },
+      { stats: { recovery: 1 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 152, purple: 38 }, requiredBiomeLevel: 10 },
+      { stats: { recovery: 0.5 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 246, purple: 62 }, requiredBiomeLevel: 10 },
+      { stats: { recovery: 0.5 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.01 }, cost: { yellow: 417, purple: 104 }, catalystCost: { dominion: 2 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -303,7 +303,7 @@ export const desertRecipeEntries = [
     id: 'desert-charm-t4', name: 'Last Oasis',
     recipeGroup: 'desert', requiredBiomeLevel: 15, slot: 'recovery',
     evolvesFrom: 'desert-charm-t3',
-    cost: { yellow: 200, purple: 50 }, stats: { recovery: 16 },
+    cost: { yellow: 200, purple: 50 }, stats: { recovery: 14 },
     reconstructCost: { yellow: 700, purple: 175 }, reconstructCatalystCost: { dominion: 4 },
     // 25% Cleanse cooldown reduction; each upgrade adds 1.5 percentage points.
     mechanicEffects: {
@@ -313,11 +313,11 @@ export const desertRecipeEntries = [
     icon: 'items/charms/last-oasis.png',
     description: 'The last spring never runs dry; each purge and broken bond brings the next within reach.',
     upgrades: [
-      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: { yellow: 76, purple: 19 }, requiredBiomeLevel: 16 },
-      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: { yellow: 190, purple: 47 }, requiredBiomeLevel: 16 },
-      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: { yellow: 303, purple: 76 }, requiredBiomeLevel: 16 },
-      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: { yellow: 493, purple: 123 }, requiredBiomeLevel: 16 },
-      { mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: { yellow: 834, purple: 209 }, catalystCost: { dominion: 3 }, requiredBiomeLevel: 16 },
+      { stats: { recovery: 1 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: { yellow: 76, purple: 19 }, requiredBiomeLevel: 16 },
+      { stats: { recovery: 1.5 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: { yellow: 190, purple: 47 }, requiredBiomeLevel: 16 },
+      { stats: { recovery: 1.5 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: { yellow: 303, purple: 76 }, requiredBiomeLevel: 16 },
+      { stats: { recovery: 1.5 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: { yellow: 493, purple: 123 }, requiredBiomeLevel: 16 },
+      { stats: { recovery: 1.5 }, mechanicEffects: { 'cleanse.cooldown-reduction-pct': 0.015 }, cost: { yellow: 834, purple: 209 }, catalystCost: { dominion: 3 }, requiredBiomeLevel: 16 },
     ],
   }],
 

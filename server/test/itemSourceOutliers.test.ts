@@ -192,9 +192,15 @@ for(const [id,speed] of [['desert-boots-t2',113],['desert-boots-t3',157],['deser
   eq(item.statModifiers.speed+upgradeStatBonusTotal(item,5).speed,speed,id+' completed speed');
 }
 {
-  const item=ITEM_DATABASE.get('graveyard-charm-t4-gravetide')!;
-  const p=itemMechanicEffectsAt(item,5);
-  const mean=item.statModifiers.recovery*(p['defense.recovery-active-pct']+p['defense.recovery-pulse-pct']*.5);
-  eq(mean,2.88,'Grave-Tide retains smoothing and clears predecessor item-only mean');
+  // Charms grow flat Recovery with upgrades at every tier (2026-09-26), so compare
+  // completed (+5) item-only means rather than pinning one number.
+  const itemMean=(id:string)=>{
+    const item=ITEM_DATABASE.get(id)!;
+    const p=itemMechanicEffectsAt(item,5);
+    const recovery=item.statModifiers.recovery+(upgradeStatBonusTotal(item,5).recovery??0);
+    return recovery*((p['defense.recovery-active-pct']??0)+(p['defense.recovery-pulse-pct']??0)*.5);
+  };
+  assert((ITEM_DATABASE.get('graveyard-charm-t4-gravetide')!.mechanicEffects?.['defense.recovery-active-pct']??0)>0,'Grave-Tide retains its always-on smoothing');
+  assert(itemMean('graveyard-charm-t4-gravetide')>itemMean('swamp-charm-t3'),'Grave-Tide clears its predecessor item-only mean');
 }
 console.log('itemSourceOutliers: ok');
