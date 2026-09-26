@@ -60,8 +60,15 @@ export const bossMonsterEntriesT1 = [
     isBoss: true,
     // Weakest personal hit of the five ON PURPOSE: roughly half this fight's damage
     // comes out of the swarm, so the razorback itself is priced as the smaller half
-    // of its own encounter. 34 is still under 2x the Boar, the biome's biggest trash hit.
-    stats: { hp: 1700, attack: 34, plating: 4, damageReduction: 0.02, speed: 50, attackRange: 15, attackCooldown: 2000, pullRange: 280 },
+    // of its own encounter.
+    //
+    // POST-DEFENSE-REWORK NERF (2026-09-26): attack 34->26 and a thinner swarm (below).
+    // The fight was priced against the old ~14-plating Plains vest, which floored a
+    // 12-damage slime to 1; the rework left that vest at 3 plating, so each slime hit
+    // lands ~7 and the swarm half of the fight roughly doubled. Measured on the T1
+    // boss lab (server/scripts/_t1BossLab.ts): Striker went 0/875 builds, and only
+    // kiting Slingers won reliably.
+    stats: { hp: 1700, attack: 26, plating: 4, damageReduction: 0.02, speed: 50, attackRange: 15, attackCooldown: 2000, pullRange: 280 },
     behavior: 'melee', attackStyle: 'gore', biome: 'plains',
     rewards: { essence: 100, essenceType: 'yellow', level: 5, biomeXp: 150 },
     ai: { wanderRadius: 120, leashRange: 750, idleMinMs: 1500, idleMaxMs: 4500 },
@@ -74,18 +81,19 @@ export const bossMonsterEntriesT1 = [
       phases: [
         { hpPct: 0.5, actions: [
           { type: 'cast', castMs: 2000, label: 'Rallying Cry', actions: [
-            { type: 'spawn-adds', monsterTypeId: 'plains-slime', count: 4, maxAlive: 6, offsetRange: 220 },
-            { type: 'spawn-adds', monsterTypeId: 'boar', count: 1, maxAlive: 6, offsetRange: 220 },
+            // 2026-09-26: 4 slimes + a boar (maxAlive 6) -> 2 slimes (maxAlive 4), no boar.
+            { type: 'spawn-adds', monsterTypeId: 'plains-slime', count: 2, maxAlive: 4, offsetRange: 220 },
             { type: 'roar', attackSpeedPct: 0.20, durationMs: 8000, radius: 320 },
           ] },
         ] },
       ],
-      // The swarm is HALF this encounter's output, so it is left at its authored
-      // strength and the boss's own stat block pays for it instead.
+      // The swarm is HALF this encounter's output. The adds keep their authored
+      // stats (plains-slime is a Plains anchor monster); the trickle is thinned
+      // instead: 2 every 10s (maxAlive 5) -> 1 every 12s (maxAlive 3), 2026-09-26.
       repeating: [
-        { intervalMs: 10_000, initialDelayMs: 4_000, actions: [
+        { intervalMs: 12_000, initialDelayMs: 4_000, actions: [
           { type: 'cast', castMs: 2000, label: 'Rallying Cry', actions: [
-            { type: 'spawn-adds', monsterTypeId: 'plains-slime', count: 2, maxAlive: 5, offsetRange: 220 },
+            { type: 'spawn-adds', monsterTypeId: 'plains-slime', count: 1, maxAlive: 3, offsetRange: 220 },
           ] },
         ] },
       ],
@@ -124,7 +132,15 @@ export const bossMonsterEntriesT1 = [
     // of the five" identity relative to the others (still faster than Plains'
     // 2000ms) while giving Guards/Recovery meaningfully more room between
     // hits. Re-measure against the bot baselines before tuning further.
-    stats: { hp: 1800, attack: 24, plating: 0, damageReduction: 0, speed: 60, attackRange: 15, attackCooldown: 1900, pullRange: 300 },
+    //
+    // POST-DEFENSE-REWORK NERF (2026-09-26): attack 24->18. The plating cliff above
+    // is gone (the rework left end-of-T1 plating at 0-6), so each claw now lands
+    // ~16 instead of ~10, and the fight went 0/5250 on the T1 boss lab across every
+    // class and build. At 18, every class's best build wins; 19 leaves Spirit on a
+    // knife-edge and 20 is mostly losses. DO NOT answer this boss with a Frenzy
+    // stack cap: players die before 4 stacks, and a capped boss stops spending
+    // 1.5s of every 6s casting, so a cap made the fight HARDER on the bench.
+    stats: { hp: 1800, attack: 18, plating: 0, damageReduction: 0, speed: 60, attackRange: 15, attackCooldown: 1900, pullRange: 300 },
     behavior: 'melee', attackStyle: 'bear-claws', biome: 'forest',
     rewards: { essence: 100, essenceType: 'green', level: 5, biomeXp: 150 },
     ai: { wanderRadius: 160, leashRange: 800, idleMinMs: 1200, idleMaxMs: 4000 },

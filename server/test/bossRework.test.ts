@@ -150,10 +150,10 @@ for (const id of ['gnarled-greatbear', 'apex-timberclaw']) {
 }
 assert(def('gnarled-greatbear').stats.hp === 1800, 'T1 Greatbear HP should be reduced by exactly 10%');
 assert(
-    def('gnarled-greatbear').stats.attack === 24 &&
+    def('gnarled-greatbear').stats.attack === 18 &&
     def('gnarled-greatbear').stats.attackCooldown === 1900 &&
     def('gnarled-greatbear').consecutiveHits === 2,
-  'T1 Greatbear balance change must preserve its attack, cadence, and combo',
+  'T1 Greatbear must keep its 2026-09-26 attack (18), cadence, and combo',
 );
 assert(
   !!def('apex-timberclaw').chargedAttack?.aoe &&
@@ -459,7 +459,7 @@ initCombatSystems();
   updateBossScripts(world, 1_999);
   assert(reinforcementAdds().length === 0, 'Rallying Cry should not spawn adds before completion');
   updateBossScripts(world, 1);
-  assert(reinforcementAdds().length === 5, 'Rallying Cry should spawn the full phase wave at completion');
+  assert(reinforcementAdds().length === 2, 'Rallying Cry should spawn the full phase wave (2 slimes since 2026-09-26) at completion');
   assert(!boss.isRooted && !boss.cannotAttack, 'Rallying Cry should release the boss at completion');
   const spawnedAdds = reinforcementAdds();
   assert(
@@ -478,7 +478,7 @@ initCombatSystems();
     'Rallying Cry should roar only after spawning so every reinforcement receives its haste',
   );
   const summonFx = world.takeNodeEvents(NODE).filter(event => event.kind === 'boss-fx' && event.fx === 'summon');
-  assert(summonFx.length === 5, 'each Rallying Cry add should publish its own spawn animation');
+  assert(summonFx.length === 2, 'each Rallying Cry add should publish its own spawn animation');
 
   const retarget = world.attachPlayerEntity(playerSlices('plains-cast-retarget'), 'plains-cast-retarget');
   setAggroTarget(world, boss, { id: retarget.isPlayer.id, kind: 'player' }, 3_000);
