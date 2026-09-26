@@ -55,6 +55,9 @@ export const RUNE_STANCE_TARGET_KEY = "rune.stanceTarget";
 // Weak ownership keeps this tick-local data out of persistence and releases departed players.
 const abilityDecisions = new WeakMap<PlayerEntity, string[]>();
 export function getAbilityRuneTargets(player: PlayerEntity): readonly string[] { return abilityDecisions.get(player) ?? []; }
+const timedAbilityDecisions = new WeakMap<PlayerEntity, string[]>();
+/** Active ability targets fired by a rule with a real condition (not `Always`). */
+export function getTimedAbilityRuneTargets(player: PlayerEntity): readonly string[] { return timedAbilityDecisions.get(player) ?? []; }
 
 const runeDecisions = new WeakMap<PlayerEntity, RuneTraceRule[]>();
 export function getRuneDecisions(player: PlayerEntity): RuneTraceRule[] {
@@ -362,6 +365,7 @@ export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
     setFlag(player.tracksCombat, RUNE_EVADE_TELEGRAPH_FLAG, stepBackOwnsMovement);
     recordHeatDecision(world, player, now, getFlag(player.tracksCombat, RUNE_WAIT_IT_OUT_FLAG), getFlag(player.tracksCombat, RUNE_WAIT_FOR_REGEN_FLAG));
     abilityDecisions.set(player, d.abilityTargets);
+    timedAbilityDecisions.set(player, d.timedAbilityTargets);
     setFlag(player.tracksCombat, RUNE_SWITCH_STANCE_FLAG, d.switchStance);
     setString(player.tracksCombat, RUNE_STANCE_TARGET_KEY, d.stanceTargetId ?? "");
   }

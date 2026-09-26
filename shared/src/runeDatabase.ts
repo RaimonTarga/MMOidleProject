@@ -1355,6 +1355,12 @@ export interface DerivedRuneConfig {
   /** Active ability targets in Rune priority order; runtime arbitrates executable candidates. */
   abilityTargets: string[];
   abilityRules: EquippedRule[];
+  /**
+   * Active ability targets with at least one active rule whose condition is not
+   * `Always`: the player picked the moment, so timing heuristics standing in
+   * for a missing condition (Charge's gap gate) must not second-guess it.
+   */
+  timedAbilityTargets: string[];
   config: AutocombatConfig;
   claimed: ClaimedRuneChannels;
   /** Every active OOC predicate; unlike exclusive channels these compose by action. */
@@ -1463,6 +1469,7 @@ export function deriveAutoConfigFromRunes(
   const derived: DerivedRuneConfig = {
     abilityTargets: [],
     abilityRules: [],
+    timedAbilityTargets: [],
     config: { ...BASELINE_RUNE_CONFIG },
     claimed,
     oocMaintenanceClaims: [],
@@ -1531,7 +1538,11 @@ export function deriveAutoConfigFromRunes(
     }
     if (action.id === "use-ability") {
       const abilityCtx = ctx.summonsInCombat && !ctx.inCombat ? { ...ctx, inCombat: true } : ctx;
-      if (raw.targetAbilityId && ABILITY_DATABASE.has(raw.targetAbilityId) && isConditionActive(condition.id, abilityCtx) && !derived.abilityTargets.includes(raw.targetAbilityId)) { derived.abilityTargets.push(raw.targetAbilityId); derived.abilityRules.push(raw); }
+      const abilityId = raw.targetAbilityId;
+      if (abilityId && ABILITY_DATABASE.has(abilityId) && isConditionActive(condition.id, abilityCtx)) {
+        if (!derived.abilityTargets.includes(abilityId)) { derived.abilityTargets.push(abilityId); derived.abilityRules.push(raw); }
+        if (condition.id !== "always" && !derived.timedAbilityTargets.includes(abilityId)) derived.timedAbilityTargets.push(abilityId);
+      }
       continue;
     }
     if (!isConditionActive(condition.id, ctx)) continue;

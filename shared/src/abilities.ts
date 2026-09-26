@@ -91,9 +91,10 @@ export type AbilityShape =
  */
 
 /**
- * Charge declines to auto-fire unless its target sits at least this far
- * (edge-to-edge px) beyond contact. Firing a gap-closer while already adjacent
- * burns the cooldown for nothing.
+ * Under an `Always` rule, Charge declines to auto-fire unless its target sits at
+ * least this far (edge-to-edge px) beyond contact, so unconditional wiring
+ * opens on distant enemies instead of spending the cooldown on whatever is
+ * adjacent. A rule with a real condition skips this gate (see `autoFireGateOpen`).
  */
 export const CHARGE_MIN_GAP_PX = 70;
 
