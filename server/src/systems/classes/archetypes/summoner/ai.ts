@@ -34,6 +34,11 @@ import {
 import { summonerProfileFor } from './profile';
 import { getRuneDecisions, RUNE_WAIT_FOR_SUMMONS_FLAG } from '../../../combat/ai/runeConfig';
 import { getAutoTargetId } from '../../../combat/ai/targetPriority';
+import {
+  activeAttackTelegraphs,
+  findMinionTelegraphEscape,
+  positionInsideTelegraph,
+} from '../../../combat/ai/telegraphEvasion';
 
 // Pixels — how close to the follow offset is "close enough" to idle.
 const FOLLOW_HOVER_TOL = 10;
@@ -175,6 +180,18 @@ function clampToLeash(
   };
 }
 
+/** The owner's Step Back rule moves each summon out of the telegraphs it stands in. */
+function ownerStepsBack(owner: PlayerEntity): boolean {
+  return owner.usesAutocombat.auto
+    && owner.tracksProgression.runesEquipped.some((rule) => rule.actionId === 'step-back');
+}
+
+/** Hold short rather than chase back into a telegraph the summon just left. */
+function destinationInsideTelegraph(world: World, minion: MinionEntity, dest: Vec2, now: number): boolean {
+  return activeAttackTelegraphs(world, minion.hasPosition.nodeId, now)
+    .some((zone) => positionInsideTelegraph(zone, dest));
+}
+
 export function driveMinion(
   world: World,
   minion: MinionEntity,
@@ -195,6 +212,12 @@ export function driveMinion(
   if (owner.isCastingAbility?.casterMinionId === minion.entityId) {
     stopEntity(world, minion);
     minion.performsAttack.lastAttackAt = now;
+    return;
+  }
+
+  const escape = ownerStepsBack(owner) ? findMinionTelegraphEscape(world, minion, now) : null;
+  if (escape) {
+    setEntityMotion(world, minion, escape);
     return;
   }
 
@@ -258,7 +281,8 @@ export function driveMinion(
     // Normal chase, but only as far as the leash allows.
     const desired = clampToLeash(owner, target.hasPosition.current, leashRadius);
     const distToDesired = distance(minion.hasPosition.current, desired);
-    if (distToDesired > FOLLOW_HOVER_TOL) {
+    const holdOutside = ownerStepsBack(owner) && destinationInsideTelegraph(world, minion, desired, now);
+    if (distToDesired > FOLLOW_HOVER_TOL && !holdOutside) {
       setEntityMotion(world, minion, desired);
     } else {
       stopEntity(world, minion);

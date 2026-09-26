@@ -27,6 +27,7 @@ import type {
 import { grantMonsterRewards } from "../../player/progression/rewards";
 import { makeCombatContext, emitCombatEvent, recordBaseDefenseMeasurement, type FormationAttackContribution } from "./combatPipeline";
 import { formationTempoWeight } from "../../classes/archetypes/summoner/profile";
+import { formationAreaMults } from "../../classes/archetypes/summoner/formationArea";
 import {
   monsterEmpoweredMultiplier,
   applyEnemySoftCap,
@@ -1366,13 +1367,17 @@ function resolveMonsterAbilityArea(
     if (!world.hasMonster(monster.isMonster.id)) return;
   }
 
-  for (const minion of world.collision.bodiesInCircle(
+  const minions = world.collision.bodiesInCircle(
     world.minionEntitiesInNode(nodeId),
     impact,
     action.radius,
-  )) {
+  );
+  const shares = formationAreaMults(minions);
+  for (const minion of minions) {
     if (minion.hasHealth.hp > 0) {
-      runMonsterAttackOnMinion(world, monster, minion, now, action.multiplier);
+      runMonsterAttackOnMinion(
+        world, monster, minion, now, action.multiplier * (shares.get(minion.isMinion.id) ?? 1),
+      );
     }
   }
 }
@@ -2162,8 +2167,9 @@ function resolveChargedSlam(
     impact,
     aoe.radius,
   );
+  const shares = formationAreaMults(minions);
   for (const minion of minions) {
-    runMonsterAttackOnMinion(world, monster, minion, now);
+    runMonsterAttackOnMinion(world, monster, minion, now, shares.get(minion.isMinion.id) ?? 1);
   }
 
   if (charged.pool) {
@@ -2305,8 +2311,11 @@ function resolveDelayedGroundZoneImpacts(world: World, now: number): void {
     }
     if (telemetryCapture) finishTelegraphResolutionTelemetry(world, telemetryCapture);
     if (world.hasMonster(ownerId)) {
+      const shares = formationAreaMults(minions.values());
       for (const minion of minions.values()) {
-        if (minion.hasHealth.hp > 0) runMonsterAttackOnMinion(world, monster, minion, now);
+        if (minion.hasHealth.hp > 0) {
+          runMonsterAttackOnMinion(world, monster, minion, now, shares.get(minion.isMinion.id) ?? 1);
+        }
       }
     }
 

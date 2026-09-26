@@ -544,13 +544,23 @@ export function updateMovement(world: World, dt: number, now: number) {
     }
   }
 
+  // Summons share their Conduit's live mobility haste (sprints, ramps, gap
+  // closers) so they keep pace; `computeMinionSpeed` already floors their base.
+  const ownerHaste = new Map<string, number>();
   for (const e of world.movingMinions) {
     if (e.isRooted) {
       stopEntity(world, e);
       continue;
     }
 
-    processMoverStep(world, e, dt, e.isChargingAbility?.speedMult ?? 1, 'monster', now);
+    const ownerId = e.isMinion.ownerPlayerId;
+    let haste = ownerHaste.get(ownerId);
+    if (haste === undefined) {
+      const owner = world.getPlayerEntity(ownerId);
+      haste = owner ? bootSpeedMultiplier(world, owner, now) : 1;
+      ownerHaste.set(ownerId, haste);
+    }
+    processMoverStep(world, e, dt, (e.isChargingAbility?.speedMult ?? 1) * haste, 'monster', now);
 
     const node = NODE_REGISTRY.get(e.hasPosition.nodeId);
     if (node) {

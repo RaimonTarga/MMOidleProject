@@ -186,7 +186,8 @@ The derived rune result is translated into existing AI controls:
 
 - `flee` sets `rune.flee`
 - `orbit` sets `rune.keepDistance`
-- `inside-telegraph -> step-back` sets `rune.evadeTelegraph`
+- `inside-telegraph -> step-back` sets `rune.evadeTelegraph`; a Conduit's summons
+  also step out of telegraphs they stand in (evaluated per body in summon `ai.ts`)
 - `wait-for-regen` sets `rune.waitForRegen`
 - `wait-for-execution` sets `rune.waitForExecution`
 - `wait-for-summons` sets `rune.waitForSummons` while a formation slot is absent and neither owner nor surviving summons are fighting
@@ -318,8 +319,10 @@ stacks, so the player rotates pressure across multi-enemy fights.
 
 `rune.tauntCurrentTarget` is read by
 `server/src/systems/combat/ai/taunt.ts`. On direct player hits, it forces the
-monster target to aggro that player unless the monster has `ignoresTaunts`. The
-taunt response has a 4 second internal cooldown per player.
+monster target to aggro that player unless the monster has `ignoresTaunts`. On a
+Conduit summon's hit it pulls the target onto that summon instead, unless the
+target is already on one of the owner's summons. The taunt response has a 4
+second internal cooldown per player (shared by the whole formation).
 
 ## Telegraph Dodge Telemetry
 

@@ -8,7 +8,7 @@ import {
   nearestGeometryExit,
   type Vec2,
 } from "@mmo-idle/shared";
-import type { PlayerEntity } from "../../../ecs/entity";
+import type { MinionEntity, PlayerEntity } from "../../../ecs/entity";
 import { attachComponent, detachComponent } from "../../../ecs/markerHelpers";
 import type { World } from "../../../world/World";
 import { actorFromPlayer } from "../../../world/worldLogActors";
@@ -25,7 +25,7 @@ import {
   stopEntity,
 } from "../../world/movement";
 import { resolveObstaclesForNode } from "../../world/nodeFeatures";
-import { suppressedFeatureIdsForEntity } from "../../world/pathMotion";
+import { inferMoverTarget, suppressedFeatureIdsForEntity } from "../../world/pathMotion";
 
 export type RuntimeAttackTelegraph =
   | RuntimeSlamTelegraph
@@ -219,17 +219,19 @@ function clampToNode(world: World, nodeId: string, pos: Vec2): Vec2 {
   };
 }
 
-function standable(world: World, player: PlayerEntity, pos: Vec2): boolean {
+type EscapingBody = PlayerEntity | MinionEntity;
+
+function standable(world: World, body: EscapingBody, pos: Vec2): boolean {
   return !moverOverlapsBlockShapes(
     pos,
-    world.collision.blockShapes(player.hasPosition.nodeId, "player"),
-    navigationPadForEntity(player),
+    world.collision.blockShapes(body.hasPosition.nodeId, inferMoverTarget(body)),
+    navigationPadForEntity(body),
   );
 }
 
 function findEscapeForThreats(
   world: World,
-  player: PlayerEntity,
+  player: EscapingBody,
   zones: readonly RuntimeAttackTelegraph[],
 ): Vec2 | null {
   if (zones.length === 0) return null;
@@ -283,6 +285,21 @@ export function findTelegraphEscapeDestination(
   now: number,
 ): Vec2 | null {
   return findEscapeForThreats(world, player, telegraphsContainingPlayer(world, player, now));
+}
+
+/**
+ * Step Back for a summon: the shortest standable point outside every telegraph
+ * the body stands in, or null when it is already safe (or boxed in).
+ */
+export function findMinionTelegraphEscape(
+  world: World,
+  minion: MinionEntity,
+  now: number,
+): Vec2 | null {
+  const zones = activeAttackTelegraphs(world, minion.hasPosition.nodeId, now).filter((zone) =>
+    positionInsideTelegraph(zone, minion.hasPosition.current),
+  );
+  return findEscapeForThreats(world, minion, zones);
 }
 
 function liveTrackedZones(world: World, response: EvadesTelegraphs): RuntimeAttackTelegraph[] {

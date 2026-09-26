@@ -19,6 +19,7 @@ import {
 import { recordWorldLogEvent } from "../../../world/worldLog";
 import { isInvulnerableMonster, isInvulnerablePlayer } from "../invulnerability";
 import { applyMonsterDamageTakenDebuffs } from "../../classes/shared/debuffs";
+import { formationAreaMults } from "../../classes/archetypes/summoner/formationArea";
 import { emitPlayerMonsterOnKill } from "./killHooks";
 import { makeCombatContext, emitCombatEvent } from '../engine/combatPipeline';
 
@@ -213,17 +214,20 @@ export function applyMonsterAoe(
     center,
     radius,
   );
+  // The primary target counts toward its formation's share even though the
+  // main swing already resolved it.
+  const shares = formationAreaMults(minions);
 
   for (const minion of minions) {
     if (minion.isMinion.id === excludeId) continue;
     if (minion.hasHealth.hp <= 0) continue;
 
-    const effectiveDmg = buildPlatingDrBreakdown({
+    const effectiveDmg = Math.round(buildPlatingDrBreakdown({
       grossDamage: baseDamage,
       effectivePlating: minion.mitigatesDamage.plating,
       platingMult: 1,
       damageReduction: minion.mitigatesDamage.damageReduction,
-    }).hpDamage;
+    }).hpDamage * (shares.get(minion.isMinion.id) ?? 1));
 
     minion.hasHealth.hp = Math.max(0, minion.hasHealth.hp - effectiveDmg);
     pushDamageEvent(world, minion, effectiveDmg, { sourceId: attacker.isMonster.id });

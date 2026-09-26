@@ -132,8 +132,11 @@ Each summoner tick:
 
 Reconstruction (`SUMMONER_CORE_TUNING`): base 3500 ms, Root/Heavy floor 2500 ms,
 Light/Balanced floor 1500 ms, HP cost ratio 0.3, safety floor 20% of max HP,
-in-combat regen 20%. Frame intervals and modifier order are listed in the R2
-adoption section below. Leash radius 320.
+in-combat regen 20%. Out of combat the queue advances 4x faster
+(`outOfCombatReconstructionSpeedMult`), so a formation wiped by one pack is back
+before the next pull; boss fights are all in combat and unaffected. Frame
+intervals and modifier order are listed in the R2 adoption section below.
+Leash radius 320.
 Hard entity cap 9.
 
 ## 6. Summon Visuals
@@ -213,6 +216,16 @@ unrelated ground bake-off in development.
 - `player:commandSummons` carries focus (click a monster) and move (click
   ground) commands. Move commands clamp to leash and clear when every live
   minion arrives within 10 px.
+- Owner movement/control Runes also drive the formation (2026-09-26). With owner
+  auto on and **Step Back** equipped, each summon walks out of any pending attack
+  telegraph it stands in (before commands and attacks) and holds outside rather
+  than chasing back in. **Taunt Target** fires on summon hits too: the enemy is
+  pulled onto the striking summon, unless it is already on one of that owner's
+  summons. At the root this is a net loss (focused 20%-HP bodies die fast); it is
+  a Vigil/party-tank tool.
+- Summons never fall behind the Conduit: `computeMinionSpeed` floors their base
+  at the owner's speed, and movement applies the owner's live mobility haste
+  (`bootSpeedMultiplier`: sprints, ramps, gap-closers) to every summon step.
 
 ## 8. Damage And Buffs
 
@@ -220,6 +233,13 @@ Minion damage is deliberately not the full player pipeline. Sources: the Conduit
 damage sponge (`redirectionPct` of owner damage taken, redirected to a living
 summon — the Covenanter defense twin is preferred when present), monster AoE,
 and monster attacks against minion aggro targets.
+
+Area hits are shared per formation (`formationArea.ts`): one splash, area ability,
+charged slam, aftershock/pool detonation or boss-pattern circle that catches N of
+an owner's summons deals N^-`areaShareExponent` (0.5) to each — 4 bodies take 50%
+each, 6 take 41%. A formation is one player's HP cut into bodies, so one circle
+must not land N player-hits. Boss charge sweeps (`hitMinion` hook) resolve body
+by body and are not shared.
 
 The sponge is registered inside `initDefenseSystems()`: after Guard, evasion, the
 damage cap and wards/barrier, before the owner's hit-to-DoT debt, cheat death and

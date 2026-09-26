@@ -488,7 +488,7 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
     {
       id: "step-back",
       name: "Step Back",
-      blurb: "Take the shortest reasonable route out of visible attack telegraphs.",
+      blurb: "Take the shortest reasonable route out of visible attack telegraphs. A Conduit's summons step out too.",
       cost: 2,
       tier: 1,
       channel: "MOVEMENT",
@@ -724,7 +724,7 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
     {
       id: "taunt-current-target",
       name: "Taunt Target",
-      blurb: "On hit, force your current enemy to attack you. Has a 4 second cooldown.",
+      blurb: "On hit, force your current enemy to attack you. A Conduit's summons draw it onto themselves. Has a 4 second cooldown.",
       cost: 1,
       tier: 1,
       channel: "CONTROL",

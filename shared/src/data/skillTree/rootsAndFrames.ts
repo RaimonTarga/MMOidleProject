@@ -155,7 +155,7 @@ export const rootsAndFramesEntries = [
     id: 'summoner-root', name: 'Conduit', tier: 0,
     classId: 'summoner-root', subVariantId: null,
     parent: null, children: ['summoner-light', 'summoner-balanced', 'summoner-heavy'],
-    description: 'Class mechanic — maximum formation: 4 persistent summons before relic expansion. They fight in your place: your weapon sets their damage and cadence, while every body divides one shared formation offense and secondary-effect budget. Fallen slots rebuild one at a time from a 3.5s base (2.5s floor), costing 30% of the summon\'s max HP without taking you below 20% of your max HP.',
+    description: 'Class mechanic — maximum formation: 4 persistent summons before relic expansion. They fight in your place: your weapon sets their damage and cadence, while every body divides one shared formation offense and secondary-effect budget. Fallen slots rebuild one at a time from a 3.5s base (2.5s floor; 4× faster out of combat), costing 30% of the summon\'s max HP without taking you below 20% of your max HP.',
     cost: 1, statEffects: {"attackPct": 0.08, "maxHpPct": 0.08, "attackSpeedPct": 0.04, "moveSpeedPct": 0.05, "attackRange": 150},
     mechanicEffects: {},
   }],

@@ -25,6 +25,7 @@ import { canApplyPlayerDebuff } from '../status/debuffGuard';
 import { applyStun } from '../status/stun';
 import { harmfulStatusDurationMult } from '../status/harmfulStatus';
 import { runMonsterAttack, runMonsterAttackOnMinion } from './combat';
+import { formationAreaMults } from '../../classes/archetypes/summoner/formationArea';
 import type { RuntimeSlamTelegraph } from '../../world/groundZones';
 
 export function initBossPatternCombat(): void {
@@ -123,7 +124,10 @@ function resolvePatternCircle(
     if (!geometryContains(geometry, minion.hasPosition.current)) continue;
     minions.push(minion);
   }
-  for (const minion of minions) runMonsterAttackOnMinion(world, monster, minion, now, 1, rawDamage);
+  const shares = formationAreaMults(minions);
+  for (const minion of minions) {
+    runMonsterAttackOnMinion(world, monster, minion, now, shares.get(minion.isMinion.id) ?? 1, rawDamage);
+  }
 
   // The circle ALWAYS erupts, hit or miss: a telegraph that resolves silently on
   // empty ground reads as a bug, and the eruption is what teaches that moving was

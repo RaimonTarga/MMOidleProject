@@ -60,6 +60,7 @@ export interface SummonerProfile {
   reconstructionHpCostRatio: number;
   reconstructionSafetyFloorPct: number;
   reconstructionCombatRegenPct: number;
+  outOfCombatReconstructionSpeedMult: number;
   battleBondConduitOffenseWeight: number;
 }
 
@@ -214,6 +215,7 @@ export function resolveSummonerProfile(input: SummonerProfileInput): SummonerPro
     reconstructionHpCostRatio: SUMMONER_CORE_TUNING.reconstructionHpCostRatio,
     reconstructionSafetyFloorPct: SUMMONER_CORE_TUNING.reconstructionSafetyFloorPct,
     reconstructionCombatRegenPct: SUMMONER_CORE_TUNING.reconstructionCombatRegenPct,
+    outOfCombatReconstructionSpeedMult: SUMMONER_CORE_TUNING.outOfCombatReconstructionSpeedMult,
     battleBondConduitOffenseWeight: specialization === 'battle-bond'
       ? SUMMONER_SPECIALIZATION_TUNING.battleBond.conduitOffenseWeight
       : 0,
@@ -233,4 +235,13 @@ export function summonerProfileWeightTotals(profile: SummonerProfile): {
     }),
     { offense: profile.battleBondConduitOffenseWeight, defense: 0, proc: profile.battleBondConduitOffenseWeight },
   );
+}
+
+/**
+ * Per-body damage multiplier when one area hit catches `caughtBodies` summons of
+ * the same formation. See `SUMMONER_CORE_TUNING.areaShareExponent`.
+ */
+export function summonAreaShareMult(caughtBodies: number): number {
+  if (caughtBodies <= 1) return 1;
+  return caughtBodies ** -SUMMONER_CORE_TUNING.areaShareExponent;
 }
