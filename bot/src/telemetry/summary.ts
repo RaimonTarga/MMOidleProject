@@ -173,6 +173,14 @@ export interface RunSummary {
       sharesLost: number;
       secondaryDamage: number;
     };
+    /** Conduit only (all-zero otherwise): formation state at each pull, and losses. */
+    formationAttrition: {
+      pulls: number;
+      meanAliveAtPull: number;
+      fullFormationPullRate: number;
+      summonDeaths: number;
+      summonDeathsPerPull: number;
+    };
     /**
      * Read-only boss-fight diagnostics. `range` answers "did Orbit/Chase hold
      * the intended distance"; `barrier`/`summons` stay all-zero for builds that
@@ -662,6 +670,16 @@ export function buildSummary(params: {
         deliveries: recorder.conduitFormation.deliveries,
         sharesLost: recorder.conduitFormation.sharesLost,
         secondaryDamage: round(recorder.conduitFormation.secondaryDamage),
+      },
+      formationAttrition: {
+        pulls: recorder.formationAttrition.pulls,
+        meanAliveAtPull: recorder.formationAttrition.pulls > 0
+          ? round(recorder.formationAttrition.aliveAtPullSum / recorder.formationAttrition.pulls) : 0,
+        fullFormationPullRate: recorder.formationAttrition.pulls > 0
+          ? round(recorder.formationAttrition.fullAtPull / recorder.formationAttrition.pulls) : 0,
+        summonDeaths: recorder.formationAttrition.summonDeaths,
+        summonDeathsPerPull: recorder.formationAttrition.pulls > 0
+          ? round(recorder.formationAttrition.summonDeaths / recorder.formationAttrition.pulls) : 0,
       },
       bossDiagnostics: buildBossDiagnostics(recorder.bossDiagnostics),
     },

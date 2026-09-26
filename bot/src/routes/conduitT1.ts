@@ -6,7 +6,7 @@ import { makeT1Route, type T1RouteConfig } from "./t1RouteBuilder";
 
 export const CONDUIT_T1_CONFIG: T1RouteConfig = {
   id: "conduit-t1",
-  version: "2.0.0",
+  version: "2.1.0",
   classRoot: "summoner-root",
   frameId: "summoner-balanced",
   description:

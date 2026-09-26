@@ -1,5 +1,6 @@
 import type { EquippedRule } from "@mmo-idle/shared";
 import type { Route, RouteStep } from "../route/types";
+import { routeWithClassRecovery } from "./classRecovery";
 import {
   biome,
   bossFight,
@@ -57,12 +58,12 @@ const BOSS_KIT = [
   "plains-boots-t1",
 ] as const;
 
-export const CONDUIT_V2_T1: Route = {
+export const CONDUIT_V2_T1: Route = routeWithClassRecovery({
   id: "conduit-v2-t1",
-  version: "1.0.0",
+  version: "1.1.0",
   classRoot: "summoner-root",
   description:
-    "Overnight v2, exploratory: Conduit trying Granite Barrier as the standing charm from Mountain onward (untested direction, paired with tonight's summon-rebuild buff), Second Wind swapped in for Mountain/Cave bosses, plus wait-for-regen + flee from the start.",
+    "Overnight v2, exploratory: Conduit trying Granite Barrier as the standing charm from Mountain onward (untested direction, paired with tonight's summon-rebuild buff), Second Wind swapped in for Mountain/Cave bosses, plus Rebuild Formation (in Recover First's slot, via routeWithClassRecovery) + flee from the start.",
 
   steps: [
     ...clearingOpening("summoner-root", RUNES),
@@ -194,4 +195,4 @@ export const CONDUIT_V2_T1: Route = {
 
   completion: standardCompletion(),
   milestones: standardMilestones(BOSS_KIT),
-};
+});

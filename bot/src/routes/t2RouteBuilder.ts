@@ -6,6 +6,7 @@ import {
 } from "@mmo-idle/shared";
 import type { TierCheckpointKind, TierEntryProfile } from "@mmo-idle/shared";
 import type { Condition, Route, RouteStep } from "../route/types";
+import { routeWithClassRecovery } from "./classRecovery";
 import {
   T2_PROGRESSION_ORDER,
   soleCatalystFamily,
@@ -381,6 +382,10 @@ export interface T2RouteConfig {
 export const T2_BOSSLESS_MASTERY_TARGET = maxGlobalMasteryAtTier(2);
 
 export function makeT2Route(config: T2RouteConfig): Route {
+  return routeWithClassRecovery(buildT2Route(config));
+}
+
+function buildT2Route(config: T2RouteConfig): Route {
   const { plan, branch } = config;
   const bossless = config.bossless === true;
   // The class's own Tier-2 entry template decides how each Tier-2 item can be
