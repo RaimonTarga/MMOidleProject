@@ -161,6 +161,9 @@
 .inv-filter-chip--slot.inv-filter-chip--active[data-slot="recovery"] { color: #44aa66; background: rgba(5,35,18,0.85);   border-color: rgba(40,150,90,0.60);  }
 .inv-filter-chip--slot.inv-filter-chip--active[data-slot="mobility"] { color: #8855cc; background: rgba(28,8,50,0.85);   border-color: rgba(130,70,210,0.60); }
 
+.inv-filter-chip--clear { margin-left: auto; }
+.inv-filter-chip--clear:disabled { opacity: 0.35; cursor: default; }
+
 .inv-filter-empty {
   font-size: 11px;
   color: var(--hud-text-dim, #77729e);

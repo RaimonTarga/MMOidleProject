@@ -22,7 +22,8 @@ import {
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { setAttackTarget } from "../src/systems/combat/ai/targeting";
-import { fireWithReferenceWiring, wireReferenceAbilities } from "./fixtures/abilityWiring";
+import { fireAbilities, fireWithReferenceWiring, wireReferenceAbilities } from "./fixtures/abilityWiring";
+import { attachComponent } from "../src/ecs/markerHelpers";
 import { updateAbilityCasts, updateAbilityCharges } from "../src/systems/player/abilities/abilityCasting";
 import { abilityCooldownKey } from "../src/systems/player/abilities/abilityCooldowns";
 import { updateMovement } from "../src/systems/world/movement";
@@ -218,6 +219,39 @@ fireWithReferenceWiring(world3, Date.now());
 assert(
   getCooldown(player3.tracksCombat, abilityCooldownKey("charge")) === 0,
   "Charge must not fire at a target that is already in contact",
+);
+
+// ── 7. A conditioned rule fires Charge from contact ──────────────────────────
+// The gap gate stands in for the condition `Always` lacks. `Empowered Ready ->
+// Charge` picked its own moment, so it must fire at melee range and land the
+// strike rider (regression: the gate briefly applied to every rule).
+const world4 = new World();
+const player4 = world4.attachPlayerEntity(
+  makePlayerSlices("charge-player-4"),
+  "charge-player-4",
+);
+player4.usesAutocombat.auto = true;
+player4.tracksProgression.runesEquipped = [
+  { conditionId: "before-empowered", actionId: "use-ability", targetAbilityId: "charge" },
+];
+const adjacent4 = world4.createMonster("node-5-5", "plains-slime", { x: 215, y: 400 });
+if (!adjacent4) throw new Error("failed to create adjacent monster");
+setAttackTarget(world4, player4, adjacent4.isMonster.id);
+
+const t4 = 2_000_000;
+fireAbilities(world4, t4);
+assert(!player4.isCastingAbility, "Empowered Ready -> Charge must wait for the empowered attack");
+attachComponent(world4, player4, "hasEmpoweredAttack", {});
+fireAbilities(world4, t4);
+assert(
+  player4.isCastingAbility?.abilityId === "charge",
+  "Empowered Ready -> Charge must fire at a target already in contact",
+);
+updateAbilityCasts(world4, t4 + CAST_MS);
+updateAbilityCharges(world4, t4 + CAST_MS);
+assert(
+  player4.hasArmedAbility?.abilityId === "charge",
+  "a point-blank Charge should arm its landing strike at once",
 );
 
 console.log("abilityCharge.test.ts: ok");

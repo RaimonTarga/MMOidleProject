@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
-import { useAtomValue } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import type { EquipmentSlot } from '@mmo-idle/shared';
 import {
   ITEM_DATABASE,
@@ -27,6 +27,7 @@ import { SLOT_LABELS, biomeName, tierColor } from './common';
 import { CostDisplay, WalletSummary } from './shared';
 import { computeUpgradeDiff } from './itemDisplay';
 import { ItemIcon } from '../ItemIcon';
+import { EMPTY_GEAR_FILTERS, upgradeFiltersAtom } from '../panelFilters';
 
 interface UpgradeResult {
   id: number;
@@ -96,9 +97,7 @@ export function UpgradeTab() {
   const nodeId       = useAtomValue(playerNodeIdAtom);
   const isTestRoom   = nodeId === TEST_ROOM_NODE_ID;
 
-  const [filterBiome, setFilterBiome] = useState<string | null>(null);
-  const [filterSlot,  setFilterSlot]  = useState<string | null>(null);
-  const [filterTier,  setFilterTier]  = useState<number | null>(null);
+  const [filters, setFilters] = useAtom(upgradeFiltersAtom);
 
   const [result, setResult] = useState<UpgradeResult | null>(null);
   const resultIdRef = useRef(0);
@@ -174,15 +173,24 @@ export function UpgradeTab() {
     return Array.from(ts).sort((a, b) => a - b);
   }, [items]);
 
+  // A remembered facet that no longer exists would filter invisibly.
+  const filterBiome = filters.biome && biomeGroups.includes(filters.biome) ? filters.biome : null;
+  const filterSlot  = filters.slot;
+  const filterTier  = filters.tier !== null && tiers.length > 1 && tiers.includes(filters.tier) ? filters.tier : null;
+  const isFiltered  = filterBiome !== null || filterSlot !== null || filterTier !== null;
+
   const filtered = useMemo(() => items.filter(def =>
     (!filterBiome || def.biomeGroup === filterBiome) &&
     (!filterSlot  || def.slot       === filterSlot)  &&
     (!filterTier  || def.tier       === filterTier),
   ), [items, filterBiome, filterSlot, filterTier]);
 
-  const toggleBiome = (g: string) => setFilterBiome(v => v === g ? null : g);
-  const toggleSlot  = (s: string) => setFilterSlot(v  => v === s ? null : s);
-  const toggleTier  = (t: number) => setFilterTier(v  => v === t ? null : t);
+  const setFilterBiome = (biome: string | null) => setFilters(f => ({ ...f, biome }));
+  const setFilterSlot  = (slot: string | null)  => setFilters(f => ({ ...f, slot }));
+  const setFilterTier  = (tier: number | null)  => setFilters(f => ({ ...f, tier }));
+  const toggleBiome = (g: string) => setFilterBiome(filterBiome === g ? null : g);
+  const toggleSlot  = (s: string) => setFilterSlot(filterSlot === s ? null : s);
+  const toggleTier  = (t: number) => setFilterTier(filterTier === t ? null : t);
 
   return (
     <div className="craft-body">
@@ -217,6 +225,11 @@ export function UpgradeTab() {
                 onClick={() => toggleSlot(s)}
               >{SLOT_LABELS[s]}</button>
             ))}
+            <button
+              className="craft-filter-chip craft-filter-chip--clear"
+              disabled={!isFiltered}
+              onClick={() => setFilters(EMPTY_GEAR_FILTERS)}
+            >Clear filters</button>
           </div>
           {tiers.length > 1 && (
             <div className="craft-filter-row">

@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { useAtomValue } from 'jotai';
+import { useMemo } from 'react';
+import { useAtom, useAtomValue } from 'jotai';
 import type { EquipmentSlot } from '@mmo-idle/shared';
 import { ITEM_DATABASE, RECIPE_DATABASE, TEST_ROOM_NODE_ID, relicIsUnlocked } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
@@ -7,6 +7,7 @@ import { inventoryAtom, itemUpgradesAtom, playerNodeIdAtom, playerTierAtom } fro
 import { SLOT_LABELS, biomeName, tierColor } from './constants';
 import { ItemIcon } from '../ItemIcon';
 import type { FocusedItem } from './useFocus';
+import { EMPTY_GEAR_FILTERS, backpackFiltersAtom } from '../panelFilters';
 
 const COLS = 4;
 const MIN_ROWS = 3;
@@ -21,9 +22,7 @@ export function BackpackGrid({ focused, onFocus }: Props) {
   const itemUpgrades = useAtomValue(itemUpgradesAtom);
   const playerTier = useAtomValue(playerTierAtom);
   const playerNodeId = useAtomValue(playerNodeIdAtom);
-  const [filterBiome, setFilterBiome] = useState<string | null>(null);
-  const [filterSlot,  setFilterSlot]  = useState<EquipmentSlot | null>(null);
-  const [filterTier,  setFilterTier]  = useState<number | null>(null);
+  const [filters, setFilters] = useAtom(backpackFiltersAtom);
 
   // Build rich item list with recipe metadata
   const items = useMemo(() => inventory.map((defId, i) => {
@@ -48,6 +47,11 @@ export function BackpackGrid({ focused, onFocus }: Props) {
     return Array.from(ts).sort((a, b) => a - b);
   }, [items]);
 
+  // A remembered facet that no longer exists would filter invisibly.
+  const filterBiome = filters.biome && biomeGroups.length > 1 && biomeGroups.includes(filters.biome) ? filters.biome : null;
+  const filterSlot  = filters.slot;
+  const filterTier  = filters.tier !== null && tiers.length > 1 && tiers.includes(filters.tier) ? filters.tier : null;
+
   const isFiltered = filterBiome !== null || filterSlot !== null || filterTier !== null;
 
   const filtered = useMemo(() => items.filter(({ def, recipe }) => {
@@ -69,9 +73,12 @@ export function BackpackGrid({ focused, onFocus }: Props) {
     });
   }, [isFiltered, filtered, items, inventory.length]);
 
-  const toggleBiome = (g: string) => setFilterBiome(v => v === g ? null : g);
-  const toggleSlot  = (s: EquipmentSlot) => setFilterSlot(v => v === s ? null : s);
-  const toggleTier  = (t: number) => setFilterTier(v => v === t ? null : t);
+  const setFilterBiome = (biome: string | null)        => setFilters(f => ({ ...f, biome }));
+  const setFilterSlot  = (slot: EquipmentSlot | null) => setFilters(f => ({ ...f, slot }));
+  const setFilterTier  = (tier: number | null)        => setFilters(f => ({ ...f, tier }));
+  const toggleBiome = (g: string) => setFilterBiome(filterBiome === g ? null : g);
+  const toggleSlot  = (s: EquipmentSlot) => setFilterSlot(filterSlot === s ? null : s);
+  const toggleTier  = (t: number) => setFilterTier(filterTier === t ? null : t);
 
   return (
     <div className="inv-backpack">
@@ -80,7 +87,7 @@ export function BackpackGrid({ focused, onFocus }: Props) {
       </div>
 
       {/* Filters — only show when there's something to filter */}
-      {items.length > 1 && (
+      {(items.length > 1 || isFiltered) && (
         <div className="inv-filters">
           {biomeGroups.length > 1 && (
             <div className="inv-filter-row">
@@ -119,6 +126,12 @@ export function BackpackGrid({ focused, onFocus }: Props) {
                   onClick={() => toggleSlot(s)}
                 >{SLOT_LABELS[s]}</button>
               ))}
+              <button
+                type="button"
+                className="inv-filter-chip inv-filter-chip--clear"
+                disabled={!isFiltered}
+                onClick={() => setFilters(EMPTY_GEAR_FILTERS)}
+              >Clear filters</button>
             </div>
           )}
           {tiers.length > 1 && (

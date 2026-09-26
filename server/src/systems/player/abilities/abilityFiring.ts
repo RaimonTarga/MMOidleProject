@@ -41,7 +41,7 @@ import {
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
 import type { PlayerEntity } from "../../../ecs/entity";
-import { getAbilityRuneTargets } from "../../combat/ai/runeConfig";
+import { getAbilityRuneTargets, getTimedAbilityRuneTargets } from "../../combat/ai/runeConfig";
 import {
   activePlayerRoots,
   isHardControlled,
@@ -292,10 +292,15 @@ function autoFireGateOpen(
   ability: AbilityDef,
 ): boolean {
   if (ability.shape === "charge") {
-    // A gap-closer needs a gap: something inside the ABILITY's reach that is
-    // meaningfully outside the player's own.
     const target = abilityTarget(world, player, ability);
     if (!target) return false;
+    // The gap gate stands in for the condition an `Always` rule lacks: "charge
+    // the next enemy worth closing on". A rule with a real condition (Empowered
+    // Ready -> Charge) chose its moment, and Charge still lands its strike
+    // rider from contact, so it fires at any range.
+    if (getTimedAbilityRuneTargets(player).includes(ability.id)) return true;
+    // A gap-closer needs a gap: something inside the ABILITY's reach that is
+    // meaningfully outside the player's own.
     if (usesSummonTechniques(player)) {
       return formationChargeHasGap(world, player, target, ability, CHARGE_MIN_GAP_PX);
     }

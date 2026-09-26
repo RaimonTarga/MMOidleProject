@@ -853,6 +853,9 @@
 .craft-filter-chip--slot.craft-filter-chip--active[data-slot="core"]     { color: #3fb8d0; background: rgba(5,34,42,0.85);  border-color: rgba(40,170,200,0.60); }
 .craft-filter-chip--slot.craft-filter-chip--active[data-slot="relic"]    { color: #cba53a; background: rgba(42,30,4,0.85);  border-color: rgba(200,160,55,0.60); }
 
+.craft-filter-chip--clear:disabled { opacity: 0.35; cursor: default; }
+.craft-filter-row > .craft-filter-chip--clear { margin-left: auto; }
+
 .craft-filter-chip--tier { color: #aa9944; border-color: rgba(180,160,40,0.35); }
 .craft-filter-chip--tier.craft-filter-chip--active { color: #ffdd44; background: rgba(40,32,6,0.88); border-color: rgba(220,190,40,0.65); }
 

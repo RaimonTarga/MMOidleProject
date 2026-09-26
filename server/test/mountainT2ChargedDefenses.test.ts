@@ -4,6 +4,7 @@ import {
   STARTER_RUNE_IDS,
   emptyEquipment,
   getStatusEffect,
+  makeTracksCombat,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { setAggroTarget, setAttackTarget } from '../src/systems/combat/ai/targeting';
@@ -11,6 +12,7 @@ import { runPlayerAttack, updateCombat } from '../src/systems/combat/engine/comb
 import { mirrorTargetStatus } from '../src/systems/combat/targetStatus';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { World } from '../src/world/World';
+import type { PlayerEntity } from '../src/ecs/entity';
 
 function assert(condition: boolean, message: string): asserts condition {
   if (!condition) throw new Error(message);
@@ -112,6 +114,59 @@ initCombatSystems();
   const hpBeforeHit = titan.hasHealth.hp;
   runPlayerAttack(world, player, titan, 2_100, { attackOrigin: player.hasPosition.current, aggroSource: { id: player.isPlayer.id, kind: 'player' } });
   assert(titan.hasHealth.hp > hpBeforeHit - 100, 'Granite Barrier should absorb part of the incoming direct hit before Titan HP');
+}
+
+// A Titan whose aggro is on a SUMMON still slams and still raises its barrier.
+// Regression: the minion-target branch of updateCombat only ran basic swings, so
+// Conduit summons holding aggro silenced every charged/self cast.
+function addSummon(world: World, owner: PlayerEntity, pos: { x: number; y: number }): string {
+  const id = `summon-${pos.x}-${pos.y}`;
+  world.ecs.add({
+    entityId: id,
+    isMinion: { id, ownerPlayerId: owner.isPlayer.id, slot: 0, slotId: 'a', role: 'melee', sizeMult: 1, monsterTypeId: 'plains-slime' },
+    controlsMinion: { ownerPlayerId: owner.isPlayer.id, followOffset: { x: 0, y: 0 } },
+    hasPosition: { current: { ...pos }, nodeId: owner.hasPosition.nodeId, speed: 100 },
+    hasHitbox: { radius: 16 },
+    hasHealth: { hp: 100_000, maxHp: 100_000, recovery: 0 },
+    dealsDamage: { attack: 1, onHitDamage: 0, attackStyle: 'impact' },
+    performsAttack: { attackRange: 20, attackCooldown: 1000, lastAttackAt: 0 },
+    mitigatesDamage: { plating: 0, damageReduction: 0 },
+    tracksCombat: makeTracksCombat(),
+    hasStatus: {},
+  } as never);
+  return id;
+}
+
+{
+  const world = new World();
+  const owner = world.attachPlayerEntity(playerSlices('conduit-owner'), 'conduit-owner');
+  owner.hasPosition.current = { x: 900, y: 900 };
+  const summonId = addSummon(world, owner, { x: 410, y: 400 });
+  const summon = world.getMinionEntity(summonId);
+  assert(summon, 'summon should be queryable');
+  const titan = world.createMonster(NODE, 'granite-titan', { x: 400, y: 400 });
+  assert(titan, 'Granite Titan should spawn');
+  setAggroTarget(world, titan, { id: summonId, kind: 'minion' }, 1_000);
+  titan.hasAwareness.state = 'attacking';
+  titan.performsAttack.lastAttackAt = 0;
+
+  updateCombat(world, 0, 4_000);
+  assert(
+    world.takeNodeEvents(NODE).some(event => event.kind === 'monster-cast-start' && event.label === 'Ground Slam'),
+    'a Titan fighting a summon should still begin Ground Slam',
+  );
+  const hpBefore = summon.hasHealth.hp;
+  updateCombat(world, 0, 6_400);
+  assert(summon.hasHealth.hp < hpBefore, 'Ground Slam should land on the summon standing in the circle');
+
+  titan.hasHealth.hp = titan.hasHealth.maxHp * 0.25;
+  updateCombat(world, 0, 6_500);
+  assert(
+    world.takeNodeEvents(NODE).some(event => event.kind === 'monster-cast-start' && event.label === 'Granite Barrier'),
+    'a low-health Titan fighting a summon should still cast Granite Barrier',
+  );
+  updateCombat(world, 0, 7_500);
+  assert(getStatusEffect(titan.tracksCombat, 'granite-barrier'), 'Granite Barrier should apply while fighting a summon');
 }
 
 console.log('mountainT2ChargedDefenses.test.ts: ok');

@@ -179,7 +179,7 @@ export const SUMMONER_RANGE_TUNING: Record<SummonerRange, SummonerRangeTuning> =
  * Harrier range (0.72 x 0.72 x 0.75 = 0.389), which the floor rescues.
  */
 export const SUMMON_ATTACK_STYLE: Record<SummonerAttackMode, string> = {
-  melee:  'impact',
+  melee:  'conduit-strike',
   reach:  'conduit-bolt',
   ranged: 'conduit-beam',
 };
