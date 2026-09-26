@@ -1963,6 +1963,94 @@ export function runMonsterAttackOnMinion(
 }
 
 /**
+ * The charged-attack state machine for a monster whose aggro target is a summon.
+ * Mirrors the player branch's begin / hold / resolve beats; returns true when the
+ * charge owns this tick. Lunges and chill-gated charges are player-shaped and
+ * stay armed until the monster turns on a player again.
+ */
+function updateChargedAttackOnMinion(
+  world: World,
+  monster: MonsterEntity,
+  minion: MinionEntity,
+  monsterDef: MonsterDefinition | undefined,
+  now: number,
+): boolean {
+  const charged = effectiveChargedAttack(monster);
+  if (!charged) return false;
+  const stunned =
+    isMonsterStunned(world, monster.isMonster.id) ||
+    isMonsterFrozen(world, monster.isMonster.id);
+
+  if (chargedCastEndsAt(monster) > 0) {
+    if (stunned) {
+      abortMonsterCast(world, monster);
+      return true;
+    }
+    if (now < chargedCastEndsAt(monster)) return true;
+    const impact = chargeAoeImpactPoint(monster);
+    completeCharge(monster, now, charged.cooldownMs);
+    if (charged.aoe && impact) {
+      resolveChargedSlam(world, monster, charged, charged.aoe, impact, now);
+      return true;
+    }
+    runMonsterAttackOnMinion(world, monster, minion, now, charged.multiplier);
+    const healPct = charged.healsSelfPct ?? 0;
+    if (healPct > 0 && world.hasMonster(monster.isMonster.id)) {
+      monster.hasHealth.hp = Math.min(
+        monster.hasHealth.maxHp,
+        monster.hasHealth.hp + Math.round(monster.hasHealth.maxHp * healPct),
+      );
+    }
+    world.pushEvent(monster.hasPosition.nodeId, {
+      kind: "monster-cast-end",
+      monsterId: monster.isMonster.id,
+      fired: true,
+      targetId: minion.isMinion.id,
+      fx: charged.fx,
+    });
+    if (minion.hasHealth.hp > 0 && world.hasMonster(monster.isMonster.id)) {
+      applyMonsterAttackSplash(
+        world,
+        monster,
+        minion.hasPosition.current,
+        minion.isMinion.id,
+        charged.name,
+      );
+    }
+    return true;
+  }
+
+  if (lungeSpecFor(monsterDef) !== undefined) return false;
+  if ((charged.requiresAmbientStacks ?? 0) > 0) return false;
+  const attackDue =
+    now - monster.performsAttack.lastAttackAt >= monsterAttackCooldown(monster);
+  const initialCd = charged.initialCooldownMs ?? charged.cooldownMs;
+  if (!chargeReady(monster, now, initialCd) || !attackDue || stunned) return false;
+
+  beginCharge(monster, now, charged.castMs);
+  if (charged.aoe) {
+    const impactPoint = { ...minion.hasPosition.current };
+    plantChargeAoe(monster, impactPoint);
+    publishGroundZone(world, monster.hasPosition.nodeId, {
+      kind: "slam-telegraph",
+      pos: impactPoint,
+      radius: charged.aoe.radius,
+      startedAtMs: now,
+      resolvesAtMs: now + charged.castMs,
+      ownerId: monster.isMonster.id,
+    });
+  }
+  world.pushEvent(monster.hasPosition.nodeId, {
+    kind: "monster-cast-start",
+    monsterId: monster.isMonster.id,
+    castMs: charged.castMs,
+    label: charged.name,
+    fx: charged.fx,
+  });
+  return true;
+}
+
+/**
  * If the monster defines `aoeAttack`, splash all OTHER players and enemy summons
  * within radius of the primary target. The primary already took its direct hit;
  * `primaryId` excludes it from the splash. Pure damage — no slow/DoT.
@@ -2635,16 +2723,30 @@ export function updateCombat(world: World, dt: number, now: number) {
       continue;
     }
     if (updateMonsterAbilities(world, e, null, now)) continue;
-    if (!world.collision.canReach(e, minion, e.performsAttack.attackRange)) {
+    const minionMonsterDef = MONSTER_DATABASE.get(e.isMonster.monsterTypeId);
+    // A planted slam is committed to its point whoever it was aimed at.
+    const minionSlamCommitted = chargedCastEndsAt(e) > 0 && isChargeAoePlanted(e);
+    if (
+      !minionSlamCommitted &&
+      !world.collision.canReach(e, minion, e.performsAttack.attackRange)
+    ) {
+      const minionWard = minionMonsterDef?.lowHealthWard;
       const castsOutsideAttackRange =
-        MONSTER_DATABASE.get(e.isMonster.monsterTypeId)?.castedAttackSpeedBuff?.castWhileOutOfRange === true;
-      if (castsOutsideAttackRange && updateCastedAttackSpeedBuff(world, e, now)) continue;
+        minionMonsterDef?.castedAttackSpeedBuff?.castWhileOutOfRange === true ||
+        lowHealthWardCastEndsAt(e) > 0 ||
+        (minionWard !== undefined && lowHealthWardReady(e, minionWard));
+      if (castsOutsideAttackRange && (updateLowHealthWard(world, e, now) || updateCastedAttackSpeedBuff(world, e, now))) continue;
       abortMonsterCast(world, e);
       setAttackTarget(world, e, null);
       continue;
     }
     setAttackTarget(world, e, minion.isMinion.id);
+    if (updateLowHealthWard(world, e, now)) continue;
     if (updateCastedAttackSpeedBuff(world, e, now)) continue;
+    // Charged attacks fire at summons too — otherwise a mob held by a summon
+    // silently loses its slam. Player-only riders (lunge leap, mark, precast
+    // stun, knockback, root/slow/antiheal, lair drag, chill gate) do not apply.
+    if (updateChargedAttackOnMinion(world, e, minion, minionMonsterDef, now)) continue;
     if (
       now - e.performsAttack.lastAttackAt >= monsterAttackCooldown(e)
     ) {
