@@ -171,6 +171,8 @@ export const MECHANIC_LABELS: Partial<Record<PassiveKey, MechanicLabel>> = {
   'technique.power-pct':                  { label: 'Technique power' },
   'technique.cooldown-reduction-pct':     { label: 'Technique cooldown' },
   'technique.cast-speed-pct':             { label: 'Cast speed' },
+  'technique.kata-power-pct':             { label: 'Kata' },
+  'technique.kata-stacks':                { label: 'Kata stacks', companion: true },
   'guard.cooldown-reduction-pct':         { label: 'Guard cooldown' },
   'cleanse.cooldown-reduction-pct':       { label: 'Cleanse cooldown' },
   'guard.potency-pct':                    { label: 'Guard potency' },

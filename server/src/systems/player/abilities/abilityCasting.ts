@@ -48,6 +48,7 @@ import { abilityEngagementRange, abilityTarget, summonAbilityCast, summonCanCast
 import { armTechnique } from "./abilityArming";
 import { usesSummonTechniques } from "../../classes/archetypes/summoner/profile";
 import { beginFormationCharge, cancelFormationCharge, formationChargeMinions, updateFormationCharge } from "./formationCharge";
+import { techniquePowerPctFor } from "./abilityKata";
 
 /**
  * Begin a wind-up. Returns true when the cast started (claiming the offensive
@@ -282,7 +283,7 @@ function beginAbilityCharge(
   const rank = abilityRankAt(ability, player.tracksProgression.playerTier);
   const effect = resolveAbilityEffect(ability, {
     playerTier: player.tracksProgression.playerTier,
-    techniquePowerPct: player.usesSkills.passives["technique.power-pct"] ?? 0,
+    techniquePowerPct: techniquePowerPctFor(player),
   });
   const speedMult = rank.chargeSpeedMult ?? 0;
   const chargeMaxMs = rank.chargeMaxMs ?? 0;

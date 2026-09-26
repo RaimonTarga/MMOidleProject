@@ -959,13 +959,17 @@ const abilities: AbilityDef[] = [
     // burst, so it must not be available for every ramp — otherwise a DoT build
     // stops being a DoT build and becomes a nuke on a short timer.
     //
-    // The multiplier sits above 1.0 at rank I on purpose. Front-loading damage
-    // you were owed anyway is genuinely valuable (it beats the target's healing,
-    // its phase changes, and its escape), but a 1.0x rank I would read as "this
-    // technique does nothing" to anyone not already thinking in DPS-vs-burst.
+    // 2026-09-26: 1.2x/1.4x with a 2s cast -> 5.0x/5.5x with a 1.2s cast, same
+    // cooldowns. A weapon reservoir drains in ~4.5s, so at any moment it holds only
+    // a few seconds of converted damage; at 1.2x Detonate lost to Power Strike on
+    // EVERY weapon, worst of all on the heavy-conversion Rimebrand. At 5x it beats
+    // Power Strike by ~15-45% sustained for the Apprentice and on DoT-conversion
+    // weapons, while plain weapons on other classes gain nothing (there is nothing
+    // to detonate), so it stays the payoff for DoT builds rather than a universal
+    // pick. Ability damage now also feeds weapon reservoirs (weaponReservoir.ts).
     ranks: [
-      { effect: { kind: "detonate-dots", detonateMult: 1.2 }, cooldownMs: 15000, castMs: 2000 },
-      { effect: { kind: "detonate-dots", detonateMult: 1.4 }, cooldownMs: 12000, castMs: 2000 },
+      { effect: { kind: "detonate-dots", detonateMult: 5.0 }, cooldownMs: 15000, castMs: 1200 },
+      { effect: { kind: "detonate-dots", detonateMult: 5.5 }, cooldownMs: 12000, castMs: 1200 },
     ],
   },
 

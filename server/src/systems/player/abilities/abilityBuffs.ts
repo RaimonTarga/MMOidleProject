@@ -10,6 +10,7 @@ import {
 } from "@mmo-idle/shared";
 import { defineBuff, type BuffDescriptor } from "../../combat/buffs/descriptor";
 import { BRAMBLE_EFFECT_ID } from "./abilityBramble";
+import { KATA_BUFFS } from "./abilityKata";
 
 /** Clock fraction for a timed effect, or -1 when it has no authored total. */
 function durationPct(remainingMs: number, totalMs: number): number {
@@ -89,6 +90,7 @@ const RECOVERY_ABILITY_BUFFS = ABILITY_RECOVERY_EFFECT_IDS.map((effectId, abilit
 export const ABILITY_BUFFS = [
   ...GUARD_ABILITY_BUFFS,
   ...RECOVERY_ABILITY_BUFFS,
+  ...KATA_BUFFS,
   defineBuff(
     "ability-bramble",
     ({ playerCs }) => {

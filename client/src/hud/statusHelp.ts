@@ -141,6 +141,7 @@ const STATUS_HELP: Record<string, StatusHelp> = {
 
   // -- Weapons ---------------------------------------------------------------
   flurry: b('Flurry', 'A weapon proc raising your attack speed while its stacks hold.'),
+  kata: b('Kata', 'The Desert staff’s rhythm: every strike Technique you fire adds a stack. Fire one at full stacks and it spends them to land with extra Technique Power. Instant self-buffs like Frenzy do not count, and the stacks fade if you stop.'),
   sunlight: b('Sunlight', 'The Desert Falchion’s alpha window: opening on a fresh enemy raises ALL the damage you deal — attacks, on-hit, Techniques, damage-over-time and summons — for a few seconds. Opening on another fresh enemy does not extend it; spend the window, then earn a new one.'),
 
   // -- Mobility boots --------------------------------------------------------

@@ -32,6 +32,7 @@ import { actorFromMonster, actorFromPlayer } from "../../../world/worldLogActors
 import { recordWorldLogEvent } from "../../../world/worldLog";
 import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
 import type { World } from "../../../world/World";
+import { techniquePowerPctFor } from "./abilityKata";
 
 /** Resolve an ability's effect through the shared Technique Power seam. */
 function afflictionEffect(
@@ -40,7 +41,7 @@ function afflictionEffect(
 ): AbilityEffectSpec {
   return resolveAbilityEffect(ability, {
     playerTier: player.tracksProgression.playerTier,
-    techniquePowerPct: player.usesSkills.passives["technique.power-pct"] ?? 0,
+    techniquePowerPct: techniquePowerPctFor(player),
   });
 }
 

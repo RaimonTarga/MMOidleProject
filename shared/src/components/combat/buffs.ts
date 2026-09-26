@@ -48,6 +48,8 @@ export const BUFF_IDS = [
   'flurry',
   // Desert Falchion's alpha window (shared/src/systems/alphaWindow.ts).
   'sunlight',
+  // Desert technique staff's Kata stacks (abilityKata.ts).
+  'kata',
   'debuff-slow',
   'debuff-root',
   'debuff-frost-ramp',

@@ -14,7 +14,6 @@ import {
   BRITTLE_EFFECT_ID,
   BRITTLE_DURATION_MS,
   DR_SHATTER_EFFECT_ID,
-  weaponDotBasisFromResolvedDirectDamage,
   SUNLIGHT_EFFECT_ID,
   FINAL_DAMAGE_DEALT_PCT_KEY,
   type DamageElement,
@@ -23,7 +22,6 @@ import { grantMonsterRewards } from "../../player/progression/rewards";
 import type { World } from "../../../world/World";
 import { defineBuff, type BuffDescriptor } from "../buffs/descriptor";
 import {
-  attachMarker,
   detachMarkerIfNoEffect,
 } from "../../../ecs/markerHelpers";
 import { markSliceDirty } from "../../../ecs/dirtyHelpers";
@@ -40,6 +38,7 @@ import { emitPlayerMonsterOnKill } from "./killHooks";
 import { applyMonsterDamageTakenDebuffs } from "../../classes/shared/debuffs";
 import { applyPlayerDebuff, playerDebuffConfig } from "../../classes/shared/applyPlayerDebuff";
 import { consumeWeightedProc } from '../../classes/archetypes/summoner/formationAttack';
+import { feedWeaponReservoir } from "./weaponReservoir";
 
 // ── Internal combat state keys ────────────────────────────────────────────────
 
@@ -256,50 +255,16 @@ export function initWeaponEffects(): void {
     const player = ctx.attacker;
     const weaponId = player.holdsInventory.equipment.weapon;
     if (!weaponId) return;
-    const profile = weaponDotProfileForWeapon(weaponId);
-    if (!profile) return;
+    if (!weaponDotProfileForWeapon(weaponId)) return;
     if (evadeBlocksDebuffs(ctx)) return;
 
-    // Class listeners already applied empowerment; store that resolved damage
-    // without removing the bonus or multiplying it a second time.
-    const reservoirBasis = weaponDotBasisFromResolvedDirectDamage(
+    ctx.damage = feedWeaponReservoir(
+      world,
+      player,
+      ctx.defender,
       ctx.damage,
-      player.usesSkills.combatArchetype,
-      player.usesSkills.passives,
+      ctx.formation?.secondaryEffectMult ?? 1,
     );
-    const poolGain = reservoirBasis
-      * profile.convPct
-      * profile.dotMultiplier
-      * (ctx.formation?.secondaryEffectMult ?? 1);
-
-    const effect = applyStatusEffect(ctx.defender.tracksCombat, {
-      id: profile.effectId,
-      maxStacks: 1,
-      instanced: false,
-      sourceId: player.isPlayer.id,
-      remainingMs: profile.drainDurationMs,
-      refreshable: true,
-      data: {
-        pool: 0,
-        nextTickIn: profile.tickIntervalMs,
-        tickIntervalMs: profile.tickIntervalMs,
-        tickOnExpire: 1,
-        drainDurationMs: profile.drainDurationMs,
-        dotMultiplier: profile.dotMultiplier,
-        slowPerStack: profile.slowPerStack ?? 0,
-      },
-    });
-
-    effect.data.pool = (effect.data.pool ?? 0) + poolGain;
-    effect.data.tickIntervalMs = profile.tickIntervalMs;
-    effect.data.tickOnExpire = 1;
-    effect.data.drainDurationMs = profile.drainDurationMs;
-    effect.data.dotMultiplier = profile.dotMultiplier;
-    effect.data.slowPerStack = profile.slowPerStack ?? 0;
-
-    attachMarker(world, ctx.defender, "hasWeaponDot");
-
-    ctx.damage = Math.max(1, Math.round(ctx.damage * (1 - profile.convPct)));
   });
 }
 

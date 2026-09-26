@@ -539,6 +539,12 @@ export const TECHNIQUE_KEYS = [
   // Shorten a casted Technique's wind-up by this fraction (capped 0.6 — the
   // telegraph is the cost that makes casts a fair trade).
   'technique.cast-speed-pct',
+  // KATA (Desert technique staff, T4): each strike Technique fired adds a stack
+  // (up to kata-stacks); a strike Technique fired AT full stacks spends them and
+  // resolves with +kata-power-pct Technique Power. Instant self-buffs (Frenzy)
+  // neither build nor spend it. See server/src/systems/player/abilities/abilityKata.ts.
+  'technique.kata-power-pct',
+  'technique.kata-stacks',
 ] as const;
 
 export const GUARD_KEYS = [

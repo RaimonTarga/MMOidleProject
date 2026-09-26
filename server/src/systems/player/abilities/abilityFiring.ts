@@ -61,6 +61,7 @@ import { formationChargeHasGap } from "./formationCharge";
 import { actorFromPlayer } from "../../../world/worldLogActors";
 import { recordWorldLogEvent } from "../../../world/worldLog";
 import { attachComponent, detachComponent } from "../../../ecs/markerHelpers";
+import { advanceKata, techniquePowerPctFor } from "./abilityKata";
 
 /** Hard cap on Break Free's control resistance — never total immunity. */
 const CONTROL_RESIST_CAP = 0.9;
@@ -376,7 +377,10 @@ function maybeFireTechnique(
     ability.shape === "self-cast"
   ) {
     const started = beginAbilityCast(world, player, ability, now, options.currentTargetOnly);
-    if (started) recordAbilityActivation(world, player, abilityId, 'technique');
+    if (started) {
+      advanceKata(player);
+      recordAbilityActivation(world, player, abilityId, 'technique');
+    }
     return { activated: started, claimed: started };
   }
 
@@ -420,6 +424,7 @@ function maybeFireTechnique(
       from,
       to: { ...player.hasPosition.current },
     });
+    advanceKata(player);
     recordAbilityActivation(world, player, abilityId, 'technique');
     if (effect.empowerMult !== undefined) {
       armTechnique(world, player, abilityId);
@@ -437,6 +442,7 @@ function maybeFireTechnique(
     playerId: player.isPlayer.id,
     ability: abilityId,
   });
+  advanceKata(player);
   recordAbilityActivation(world, player, abilityId, 'technique');
   return { activated: true, claimed: true };
 }
@@ -467,7 +473,7 @@ function recordAbilityActivation(
 function resolveTechniqueEffect(player: PlayerEntity, ability: AbilityDef) {
   return resolveAbilityEffect(ability, {
     playerTier: player.tracksProgression.playerTier,
-    techniquePowerPct: player.usesSkills.passives["technique.power-pct"] ?? 0,
+    techniquePowerPct: techniquePowerPctFor(player),
   });
 }
 

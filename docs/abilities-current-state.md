@@ -500,7 +500,8 @@ condition — for free.
   `applied.stacks` instead hands out a free stack to everything Contagion touches (caught
   by `abilityAffliction.test.ts`).
 - **Detonate CONSUMES** every detonatable DoT and pays out what they still owed ×
-  `detonateMult`, single-target. Effects are stripped **before** the damage lands: if the
+  `detonateMult` (5.0x / 5.5x since 2026-09-26, 1.2s cast; it was 1.2x / 1.4x with a 2s cast and lost
+  to Power Strike on every weapon), single-target. Effects are stripped **before** the damage lands: if the
   burst kills, the monster is removed inside `applyPlayerAoe`, and spent effects left on a
   corpse could be billed twice on the way out.
 - Both are **ownership-scoped by `sourceId`** — you act on your own damage over time and

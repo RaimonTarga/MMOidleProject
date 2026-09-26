@@ -327,16 +327,31 @@ this list now represents weapon reservoir DoTs, including Edge of Oblivion.
 
 Current entries:
 
-| Weapon | Effect id | Conversion | Tick | Drain | Multiplier | Element |
-| --- | --- | ---: | ---: | ---: | ---: | --- |
-| `ashbrand-blade` | `ashbrand-burn` | 30% | 1000 ms | 4500 ms | 1.15x | fire |
-| `swamp-mirebrand` | `swamp-mirebrand-burn` | 30% | 1000 ms | 4500 ms | 1.15x | fire |
-| `swamp-blightbrand` | `swamp-blightbrand-burn` | 30% | 1000 ms | 4500 ms | 1.15x | fire |
-| `swamp-frostbrand` | `swamp-frostbrand-burn` | 45% | 1000 ms | 4500 ms | 1.15x | frost |
-| `swamp-rimebrand` | `swamp-rimebrand-burn` | 45% | 1000 ms | 4500 ms | 1.15x | frost |
-| `tundra-glacial-rimebrand` | `rimebrand-burn` | 45% | 1000 ms | 4500 ms | 1.15x | frost |
-| `volcanic-blightbrand` | `blightbrand-burn` | 30% | 1000 ms | 4500 ms | 1.15x | fire |
-| `edge-of-oblivion` | `void-corruption` | 40% | 1000 ms | 4500 ms | 1.35x | doom |
+Live values (regenerated from `weaponDotProfileForWeapon` on 2026-09-26; the old
+table listed retired ids and 30% conversion). Conversion values live on each recipe's
+`weaponDot` field.
+
+| Weapon | Tier | Effect id | Conversion | Tick | Drain | Multiplier | Element |
+| --- | --- | --- | ---: | ---: | ---: | ---: | --- |
+| `ashbrand-blade` (Poison Dagger) | T1 | `poison-dagger-burn` | 50% | 1000 ms | 4500 ms | 1.5x | poison |
+| `swamp-mirebrand` (Venom Knife) | T2 | `swamp-mirebrand-burn` | 50% | 1000 ms | 4500 ms | 1.5x | poison |
+| `swamp-blightbrand` (Plague Fang) | T3 | `swamp-blightbrand-burn` | 50% | 1000 ms | 4500 ms | 1.5x | poison |
+| `tundra-rimebrand` | T3 | `tundra-rimebrand-burn` | 70% | 1000 ms | 4500 ms | 1.5x | frost |
+| `tundra-glacial-rimebrand` | T4 | `rimebrand-burn` | 70% | 1000 ms | 4500 ms | 1.5x | frost |
+| `volcanic-blightbrand` | T4 | `cinderbrand-burn` | 50% | 1000 ms | 4500 ms | 1.5x | fire |
+
+**What feeds a reservoir (2026-09-26).** A conversion weapon converts the wielder's
+damage whatever delivers it, through ONE function, `feedWeaponReservoir`
+(`server/src/systems/combat/damage/weaponReservoir.ts`):
+
+- normal swings, plus the Techniques that ride them (the `onHit` listener in `weaponEffects.ts`);
+- cast strikes (Power Strike, Slam) and Sweep / Slinger-sweep splash, which resolve
+  outside the attack pipeline, via `applyPlayerAoe(..., { feedsWeaponReservoir: true })`.
+
+Deliberately excluded: Detonate (its damage IS a consumed reservoir, so feeding it would
+loop) and Conduit formation splash (rebalanced separately). Casts still do NOT proc other
+on-hit effects (flat on-hit damage, the Apprentice class DoT). Covered by
+`server/test/weaponReservoirAbilities.test.ts`.
 
 `weaponDotProfileForWeapon(weaponId)` resolves the equipped weapon's reservoir
 profile.
@@ -522,8 +537,10 @@ DoTs/healing, absorption, lethal removal, and resync delivery.
 ## Evasion And Miss Semantics
 
 All checked DoT and debuff application paths early-return on
-`evadeBlocksDebuffs(ctx)`, so an evaded hit applies no DoT stacks or related
-debuffs.
+`evadeBlocksDebuffs(ctx)`. On the player side that is true only for a FULL
+dodge (evade mitigation >= 1): since 2026-09-26 a graze (partial evade) still
+applies the monster's DoT stacks and debuffs. A monster evading a player hit
+still blocks the player's DoT/debuffs.
 
 Chaotic weapon misses are different from evades. Chaotic misses can still apply
 on-hit effects unless blocked by evade logic.

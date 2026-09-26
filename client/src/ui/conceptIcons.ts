@@ -172,6 +172,7 @@ const BUFF_IDS = new Set([
   'energy-sm-pool',
   'energy-storm',
   'flurry',
+  'kata',
   'mob-burst',
   'mob-grave',
   'mob-haste',
@@ -309,6 +310,8 @@ const BUFF_ABILITY_ICON_ALIASES: Record<string, string> = {
   'ability-imbue': 'imbue-lightning',
   'ability-second-wind': 'second-wind',
   'ability-second-wind-2': 'second-wind',
+  // Kata builds toward an empowered Technique; Power Strike is the Technique it most often empowers.
+  kata: 'power-strike',
 };
 
 /**

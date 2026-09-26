@@ -21,6 +21,7 @@ import { isInvulnerableMonster, isInvulnerablePlayer } from "../invulnerability"
 import { applyMonsterDamageTakenDebuffs } from "../../classes/shared/debuffs";
 import { emitPlayerMonsterOnKill } from "./killHooks";
 import { makeCombatContext, emitCombatEvent } from '../engine/combatPipeline';
+import { feedWeaponReservoir } from "./weaponReservoir";
 
 /**
  * Authoritative target selection shared by direct AoE and class-specific riders.
@@ -57,6 +58,17 @@ export interface PlayerAoeFlavor {
   empowered?: boolean;
 }
 
+/** Damage behaviour of an AoE payload (unlike {@link PlayerAoeFlavor}, this is not cosmetic). */
+export interface PlayerAoeOptions {
+  /**
+   * Convert part of each victim's damage into the wielder's weapon DoT reservoir,
+   * exactly as a normal hit does. On for ability payloads that are the player's
+   * own damage (cast strikes, Sweep splash); off for Detonate, whose damage IS a
+   * consumed reservoir.
+   */
+  feedsWeaponReservoir?: boolean;
+}
+
 /**
  * Apply splash AoE damage from a player to all monsters within radius of a
  * center point, skipping any excluded monster (the primary target).
@@ -70,6 +82,7 @@ export function applyPlayerAoe(
   excludeId?: string,
   physicalSource: "player" | "summon" = "player",
   flavor: PlayerAoeFlavor = {},
+  options: PlayerAoeOptions = {},
 ): void {
   const toKill: Array<{ monster: MonsterEntity; damage: number }> = [];
   const attackerNodeId = attacker.hasPosition.nodeId;
@@ -79,8 +92,12 @@ export function applyPlayerAoe(
   const victims = playerAoeTargets(world, attacker, center, radius, excludeId);
 
   for (const monster of victims) {
+    // Gross, pre-mitigation — the same point a normal hit converts at in onHit.
+    const grossDamage = options.feedsWeaponReservoir
+      ? feedWeaponReservoir(world, attacker, monster, baseDamage)
+      : baseDamage;
     const mitigation = buildPlatingDrBreakdown({
-      grossDamage: baseDamage,
+      grossDamage,
       effectivePlating: monster.mitigatesDamage.plating,
       platingMult: 1,
       damageReduction: monster.mitigatesDamage.damageReduction,

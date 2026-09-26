@@ -61,6 +61,7 @@ import type {
 } from "../../../ecs/entity";
 import type { World } from "../../../world/World";
 import type { WorldLogActor } from "@mmo-idle/shared";
+import { techniquePowerPctFor } from "./abilityKata";
 
 /** Reporting-only: Technique/Sweep adapter contribution for combat-run diagnostics. */
 function recordTechniqueAdapter(
@@ -218,7 +219,7 @@ function techniqueEffect(
 ): AbilityEffectSpec {
   return resolveAbilityEffect(ability, {
     playerTier: player.tracksProgression.playerTier,
-    techniquePowerPct: player.usesSkills.passives["technique.power-pct"] ?? 0,
+    techniquePowerPct: techniquePowerPctFor(player),
   });
 }
 
@@ -307,7 +308,9 @@ function tagClientEffect(ctx: CombatContext, tag: string): void {
  *
  * Deliberately NOT routed through the normal attack pipeline: a cast is its own
  * action, so "every on-hit effect procs off the cast too" is an explicit design
- * decision rather than a side effect of reusing `runPlayerAttack`. The payload
+ * decision rather than a side effect of reusing `runPlayerAttack`. One deliberate
+ * exception: a DoT-conversion weapon converts the payload into its reservoir,
+ * because that is a property of the wielder's damage, not an on-hit proc. The payload
  * still passes through the target's defensive pipeline via `applyPlayerAoe`, so
  * plating/DR/caps all apply.
  */
@@ -342,7 +345,11 @@ export function resolveCastPayload(
   // circle on a monster whose origin has drifted from its body centre would miss.
   const damage = Math.max(1, Math.round(player.dealsDamage.attack * effect.damageMult));
   const radius = castStrikeFootprintRadius(effect) ?? 1;
-  applyPlayerAoe(world, player, target.hasPosition.current, radius, damage);
+  // A cast skips the attack pipeline, but it is still the wielder's damage: a
+  // DoT-conversion weapon converts it the same way it converts a swing.
+  applyPlayerAoe(world, player, target.hasPosition.current, radius, damage, undefined, "player", {}, {
+    feedsWeaponReservoir: true,
+  });
 
   // Stunning Strike: the control lands with the blow. Applied after the damage so
   // a killing blow doesn't spend the stun on a corpse, and through `applyStun` so
@@ -484,6 +491,11 @@ function applyTechniqueRider(
       effect.radius,
       splash,
       ctx.defender.isMonster.id,
+      "player",
+      {},
+      // Splash converts like the swing it rides. A Conduit formation delivery is
+      // left alone: summon splash is its own budget (rebalanced separately).
+      { feedsWeaponReservoir: !formationDelivery },
     );
     return;
   }
@@ -616,6 +628,9 @@ function applySlingerSweepShot(
     sweep.radius,
     splash,
     ctx.defender.isMonster.id,
+    "player",
+    {},
+    { feedsWeaponReservoir: true },
   );
 }
 

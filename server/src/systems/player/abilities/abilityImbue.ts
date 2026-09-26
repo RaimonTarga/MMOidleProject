@@ -30,6 +30,7 @@ import { registerCombatListener } from "../../combat/engine/combatPipeline";
 import type { CombatContext } from "../../combat/engine/combatPipeline";
 import type { PlayerEntity } from "../../../ecs/entity";
 import type { World } from "../../../world/World";
+import { techniquePowerPctFor } from "./abilityKata";
 
 /**
  * Apply the window. Charges and magnitude both come from the authored rank, with
@@ -43,7 +44,7 @@ export function applyImbueWindow(
 ): void {
   const effect = resolveAbilityEffect(ability, {
     playerTier: player.tracksProgression.playerTier,
-    techniquePowerPct: player.usesSkills.passives["technique.power-pct"] ?? 0,
+    techniquePowerPct: techniquePowerPctFor(player),
   });
   if (effect.kind !== "imbue") return;
 
