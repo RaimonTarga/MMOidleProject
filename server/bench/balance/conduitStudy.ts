@@ -12,10 +12,13 @@ import { BREADTH_CELLS } from './playerBreadthSpec';
 import { fastPassReadback, assertFastPassHitboxes } from './playerFastPassSpec';
 import { EnduranceProgress } from './enduranceProgress';
 import { ConduitRecorder } from './conduitRecorder';
+import { withConduitFormationRules } from './conduitFormationRules';
 import { hydrateHitboxCacheFromArtifact } from '../../src/hitbox/cache';
 import { ensureDungeon, tickDungeons } from '../../src/systems/world/dungeons/dungeon';
 
-type Arm = 'baseline' | 'tax15' | 'hp25' | 'combined' | 'tax0' | 'hp50' | 'hp100';
+// `rebuild-formation`: Rebuild Formation in Recover First's slot (conduitFormationRules.ts).
+// `pre-attrition`: disables the 2026-09-26 area share and fast out-of-combat rebuild (A/B).
+type Arm = 'baseline' | 'tax15' | 'hp25' | 'combined' | 'tax0' | 'hp50' | 'hp100' | 'rebuild-formation' | 'pre-attrition';
 interface Case { id:string; arm:Arm; seed:number; cell:SurveyCell; durationMs:number }
 interface Manifest { out:string; hitboxes:string; cases:Case[]; stage:string }
 const [mode, path, argument] = process.argv.slice(2);
@@ -77,10 +80,12 @@ if(['hp25','hp50','hp100','combined'].includes(spec.arm)) {
   for(const frame of Object.values(SUMMONER_FRAME_TUNING))frame.totalSummonHpPct*=hpMult;
   Object.assign(SUMMONER_CORE_TUNING,{reconstructionHpCostRatio:(spec.arm==='combined'?0.15:0.3)/hpMult});
 }
+if(spec.arm==='pre-attrition')Object.assign(SUMMONER_CORE_TUNING,{areaShareExponent:0,outOfCombatReconstructionSpeedMult:1});
 let rng=spec.seed>>>0;
 Math.random=()=>{rng+=0x6D2B79F5;let t=rng;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return ((t^(t>>>14))>>>0)/4294967296;};
 let now=1800000000000;Date.now=()=>now;
 const cell=structuredClone(spec.cell),world=createFarmWorld();
+if(spec.arm==='rebuild-formation'&&cell.runeRules)cell.runeRules=withConduitFormationRules(cell.runeRules);
 setupArena(world,{nodeId:cell.nodeId,biomeGroup:NODE_BIOMES[cell.nodeId].biomeGroup,contentTier:cell.tier,isDungeon:!!cell.isDungeon});
 let pos={...BOT_SPAWN};
 if(!cell.isDungeon) {

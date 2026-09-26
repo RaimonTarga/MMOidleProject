@@ -356,6 +356,21 @@ anchored it 17px off centre. The script now locates the head inside a narrow
 central band and expands **contiguously**, so a disconnected prop can never be
 merged into the head's width. Re-run it after adding any body with a raised prop.
 
+## 10c. Testing Conduit (bots and bench) — 2026-09-26
+
+The rules in §7-8 SHOULD help Conduit; beyond the session probes they are unmeasured.
+- **Bot routes:** Conduit routes run Rebuild Formation in Recover First's slot
+  (`bot/src/routes/classRecovery.ts`). Step Back comes from the route's own rune stages
+  (`conduit-t1` at Cave L2, T2 plans always; `conduit-v2-t1` never). Recall is manual-only
+  and no bot uses it, so bots look worse than a careful player in Cave before L2.
+- **Balance bench:** behaviour runes are per cell and unchanged by default. A Conduit cell
+  without `step-back` never dodges. Opt in with `withConduitFormationRules`
+  (`server/bench/balance/conduitFormationRules.ts`) or the `conduitStudy` arms
+  `rebuild-formation` / `pre-attrition`.
+- **Reading results:** bot summaries carry `mechanics.formationAttrition` (alive at pull,
+  full-formation rate, summon deaths per pull). Judge Conduit on attrition, not only clear time.
+- Do not equip Taunt Target on root Conduit templates (net loss in probes).
+
 ## 11. Outstanding
 
 - Kilnmaster reads at ~17 px even after the clamp; that spec may need its own
