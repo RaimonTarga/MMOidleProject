@@ -45,7 +45,7 @@ Terse on purpose.
   the segment budget and local-share tables, not by editing per-mob rewards.
 - A per-biome mastery XP multiplier (`BIOME_XP_MULT_BY_TIER_AND_BIOME`) evens out
   biomes whose kill throughput differs a lot within a tier. Since 2026-09-26 it
-  is calibrated for every T2–T4 biome except T3 Volcanic; a biome already on
+  is calibrated for every T2–T4 biome; a biome already on
   target has no entry (T2 ×0.35–0.75, T3 ×0.6–1.4,
   T4 ×1.8–3.4; values in `gameConfig.ts`). Factors below 1 slow a fast biome
   without raising the tier budget, so earlier-tier nodes never become a faster
@@ -61,7 +61,8 @@ Terse on purpose.
 - The first-pass budgets were measured with bots on T2 Desert, T3 Swamp/Tundra
   and T4 Tundra/Desert. The 2026-09-26 [all-biome sweep](../reports/reward-mastery-study-2026-09-25/xp-sweep-2026-09-26/RESULTS.md)
   calibrated the per-biome factors on every T2–T4 biome with a node/seed holdout.
-  T3 Volcanic is uncalibrated because bots die there before pacing is measurable. Recalibrate after the defense, Conduit and T4 class passes change
+  T3 Volcanic (×0.75) was calibrated after its same-day difficulty pass.
+  Recalibrate after the defense, Conduit and T4 class passes change
   throughput. The [reward study](../reports/reward-mastery-study-2026-09-25/README.md)
   uses active time in the biome as its working clock and records the remaining
   measurement assumptions and telemetry limitations.

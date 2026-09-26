@@ -14,7 +14,9 @@ Targets are T2 15, T3 30 and T4 60 minutes per biome segment.
 - **Candidate:** per-biome mastery XP factors at T2, T3 and T4. No budget change. After the
   change, every non-Volcanic biome lands within about ±15% of target, on both the calibration
   nodes and a holdout (different node and seed).
-- **Volcanic T3 is a survival problem, not a pacing one.** See the last section.
+- **Volcanic T3 was a survival problem, not a pacing one.** A follow-up difficulty pass (branch
+  `balance/volcanic-t3-nerf`) takes it from 12/12 bot deaths to 3/18, all of them Spirit, with a
+  30.6–32.0 min median after a ×0.75 XP factor. See the last section.
 
 ## Method
 
@@ -107,33 +109,59 @@ the fast biomes down cannot open that route.
    In T2 the extra rule pushes the survivor loadout over its rune-point budget (30/28), so T2
    was not measured.
 
-## Volcanic T3 (difficulty)
+## Volcanic T3 (difficulty pass, branch `balance/volcanic-t3-nerf`)
 
-Every class dies at T3 Volcanic. On node 02 (baseline), 5/6 die, 3 of them inside the first
-minute. On the holdout node 04, 6/6 die within 2 min. Damage attribution
-(`probe-damage.ts`, world-log damage events) shows deaths come from **direct hits of the
-pack**: Ember Scuttler swarms (43–57 per hit), Ash Salamander (68–101), Magma Tortoise (168).
-Environment/DoT damage is under 5%. Monster density near spawn matches other T3 biomes
-(3 within 700 px). The problem is that 3–5-body packs out-damage a 440–600 HP player.
+### Diagnosis
 
-Variants tested at runtime via `patched-harness.ts`, 6 classes each (deaths / 6):
+At the shipped values every bot dies at T3 Volcanic: 6/6 on node 02 and 6/6 on node 04, most
+inside 2 minutes. Damage attribution (`probe-damage.ts`, world-log damage events, 1 s aggro
+samples) shows two phases:
+
+- **Opening pull.** A Cinder Hound arrives with about four Ember Scuttlers, roughly 175 raw DPS.
+  It takes a full-HP 480–520 HP player to 0 in 3–5 s after 3–4 kills. Environment/DoT is under 5%.
+  Density near spawn is normal (3 monsters within 700 px).
+- **Heat late.** When the opening is survived, auto-farming never leaves combat, so Heat climbs to
+  27–50 stacks: +36–42% damage taken even after the soft cap. Two or three bodies (Tortoise +
+  Salamander, or Hound + Salamander) then burst a full-HP player in about 4 s.
+
+### Variants (runtime overlays via `patched-harness.ts`; deaths out of 6 per node)
 
 | Variant | Node 02 | Node 04 |
 |---|---:|---:|
-| Baseline | 5 | 6 (all < 2 min) |
+| Baseline | 6 | 6 |
 | A: Scuttler attack 45 → 34 | 5 | – |
-| B: smaller packs (Tortoise 3 → 2 Scuttlers, Hound 2 → 1) | 5 | – |
-| C: heat incoming 3.5% → 2% per stack | 5 | – |
+| B: smaller packs | 5 | – |
+| C: Heat 3.5% → 2% (all tiers) | 5 | – |
 | A+B | 4 | – |
-| B+D: B plus Scuttler 30, Salamander 55, Hound 65 | 4 | 4 |
+| B+D: B, Scuttler 30, Salamander 55, Hound 65 | 4 | 4 |
+| E1: B+D, Scuttler HP 500 | 3 | 4 |
+| E2: E1, Tortoise 95, T3 Heat 2.5% | 2 | 5 |
+| E3: B, Scuttler 500/30, Salamander 50, Hound 55, Tortoise 90, T3 Heat 2% | 1 | 2 |
+| G: across-the-board ×0.7 attack, B, Scuttler HP 500, T3 Heat 2.5% | 2 | 3 |
+| E4: E3, T3 Heat cap 20 | 1 | 2 |
+| **E5: E3, T3 Heat cap 15** | **0** | **2** |
+| E6: E3 at 3.5% Heat, cap 15 | 1 | 3 |
 
-Heat (C) barely matters at T3: the deaths happen before it builds. Even the strongest variant
-leaves only Squire (heavy) and Conduit alive. Survivors of B+D master in 22–38 min, near the
-30-minute target. **Recommendation:** use B+D as the minimum floor and look at why light and
-balanced frames lose the opening exchange. Candidates: Scuttler pull/aggro radius, how many packs
-chain on engagement, and whether Volcanic's native T3 armour is meant to carry fire mitigation.
-These loadouts use Mountain T3 gear because no Volcanic survivor cell exists. No Volcanic data
-change is proposed on this branch.
+### Shipped on the branch (E5, authored in data, then re-measured without overlays)
+
+- Packs: Tortoise 1 + 2 Scuttlers + one of {Scuttler, Salamander} = 4 (was 5–6).
+  Hound 1 + 1 Scuttler + one of {Scuttler, Salamander} = 3 (was 4–5). Density is unchanged,
+  so the same bodies arrive in smaller pulls.
+- Ember Scuttler 650/45 → 500/30. Cinder Hound attack 80 → 55. Magma Tortoise 116 → 90.
+  Ash Salamander 70 → 50.
+- T3 Heat: 2% taken per stack, capped at 15 (`volcanicHeat(id, biomeTier)`). T4 keeps 3.5%, uncapped.
+  Outgoing +3% per stack is unchanged but now also stops at 15.
+- T3 Volcanic mastery XP factor ×0.75, since survivors mastered in about 23 min.
+
+| Final (no overlays) | Deaths | Median mastery (min) |
+|---|---:|---:|
+| Node 02, seed 101051 | 1/6 (Spirit) | 30.6 |
+| Node 04, seed 101063 | 1/6 (Spirit) | 31.2 |
+| Node 05, seed 101077 (fresh holdout) | 1/6 (Spirit) | 32.0 |
+
+Spirit is the lightest frame (441 HP) and also dies in T3 Jungle and Swamp in these sweeps. That
+is class fragility, not a Volcanic outlier. The T3 Volcanic dungeon uses the same Heat feature, so
+its boss fight also gets the capped T3 Heat. It has not been re-measured.
 
 ## Reproduce
 
@@ -143,8 +171,13 @@ From `reports/reward-mastery-study-2026-09-25`:
 TIERS=2,3 WORKERS=10 node xp-sweep-2026-09-26/run.mjs <out>                 # T2+T3, calibration nodes
 TIERS=2,3 NODE=04 SEED=101063 node xp-sweep-2026-09-26/run.mjs <out>        # holdout
 TIERS=4 WALL=1500000 node xp-sweep-2026-09-26/run.mjs <out> 'mountain|jungle'
-TIERS=3 VOLC_VARIANT=BD node xp-sweep-2026-09-26/run.mjs <out> volcanic      # difficulty variants
+TIERS=3 VOLC_VARIANT=BD node xp-sweep-2026-09-26/run.mjs <out> volcanic      # letter variants
+xp-sweep-2026-09-26/volc-batch.sh E5 "$(cat xp-sweep-2026-09-26/v-E5.patch.json)"  # JSON overlay, nodes 02+04
 node xp-sweep-2026-09-26/summarize.cjs <out>
+node xp-sweep-2026-09-26/volc-compare.cjs <out>...                            # volcanic deaths/mastery table
 ```
+
+The overlay variants only reproduce against pre-pass data (develop `6e2838d6`). On this branch
+the authored values already include E5.
 
 `run.mjs` reads baked hitboxes from the main checkout (`../MMO idle/server/dist/hitbox`).

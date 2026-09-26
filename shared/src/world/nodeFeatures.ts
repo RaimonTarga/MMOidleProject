@@ -486,8 +486,13 @@ function lavaVent(id: string, x: number, y: number, radius: number): NodeFeature
  * damage stays where it always was: the lava vents.
  *
  * Linear through ten stacks, then diminishing returns with no stack ceiling.
+ *
+ * T3 is gentler (2026-09-26 volcanic T3 pass): 2% incoming per stack and a 15-stack
+ * cap. Uncapped, auto-farming never cools, so bots died carrying 27-50 stacks
+ * (+36-74% damage taken). T4 keeps the uncapped ramp; its bots master near target.
  */
-function volcanicHeat(id: string): NodeFeatureSpec {
+function volcanicHeat(id: string, biomeTier: number): NodeFeatureSpec {
+  const t3 = biomeTier <= 3;
   const cx = GAME_CONFIG.NODE_WIDTH / 2;
   const cy = GAME_CONFIG.NODE_HEIGHT / 2;
   return {
@@ -499,12 +504,12 @@ function volcanicHeat(id: string): NodeFeatureSpec {
     shape: { kind: "circle", x: cx, y: cy, radius: 1 },
     ambientRamp: {
       effectId: "volcanic-heat",
-      maxStacks: 0,
+      maxStacks: t3 ? 15 : 0,
       rampMs: 3000,
       coolingScaleStacks: 10,
       coolingRateMult: 2,
       payload: {
-        outgoingDamagePct: 0.03, incomingDamagePct: 0.035,
+        outgoingDamagePct: 0.03, incomingDamagePct: t3 ? 0.02 : 0.035,
         damageSoftcapStacks: 10, damageSoftcapScale: 5,
       },
     },
@@ -804,7 +809,7 @@ function canonicalFeaturesForNode(
     // node-wide and unchanged; only the positional lava varies.
     const isDungeon = node.kind === "dungeon";
     return [
-      volcanicHeat("volcanic_heat"),
+      volcanicHeat("volcanic_heat", node.biomeTier),
       ...generateVolcanicLakes(node.id, isDungeon).map((lake, i) =>
         lavaVent(
           `${isDungeon ? "boss_vent" : "lava_vent"}_${i}`,

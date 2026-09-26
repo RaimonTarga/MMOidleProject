@@ -9,8 +9,8 @@ for(const cell of DURABILITY16_CELLS) {
   assert.equal(cell.technique,'sweep');
   const expected=new Map<string,any>(JSON.parse(snapshot));
   expected.get('magma-brute').stats.hp=3000;
-  if(cell.treatment==='tortoise80'||cell.treatment==='both80') expected.get('magma-brute').stats.attack=116;
-  if(cell.treatment==='salamander80'||cell.treatment==='both80') expected.get('ash-slinger').stats.attack=70;
+  if(cell.treatment==='tortoise80'||cell.treatment==='both80') expected.get('magma-brute').stats.attack=90;
+  if(cell.treatment==='salamander80'||cell.treatment==='both80') expected.get('ash-slinger').stats.attack=50;
   const overlay=installDurability16Treatment(cell);
   try { assert.deepEqual([...MONSTER_DATABASE],[...expected]); }
   finally { overlay.restore(); }

@@ -252,7 +252,8 @@ for (const [id, d] of MONSTER_DATABASE) {
   const world = new World();
   const NODE = "node-t3-volcanic-01";
   const members = spawnPack(world, NODE, "magma-brute", { x: 1_200, y: 1_200 });
-  assert(!!members && members.length >= 5, "a Magma Tortoise herd should be 5+ strong");
+  // 5-6 until the 2026-09-26 volcanic T3 pass cut the herd to 4 (1 + 2 + one add-on).
+  assert(!!members && members.length >= 4, "a Magma Tortoise herd should be 4+ strong");
 
   const alpha = members![0];
   assert(alpha.inPack?.role === "alpha", "the tortoise should carry the alpha link");

@@ -92,7 +92,9 @@ export const volcanoMonsterEntries = [
     // directly contradicting its own "weak... filler" identity above.
     // V1q: pack fodder must die early enough to relieve pressure. V1p's four
     // prepared kits died before a kill; approved HP 1220 -> 650, attack 55 -> 45.
-    stats: { hp: 650, attack: 45, plating: 2, damageReduction: 0, speed: 64, attackRange: 12, attackCooldown: 1600, pullRange: 210 },
+    // 2026-09-26 volcanic T3 pass: HP 650 -> 500, attack 45 -> 30. A hound pull still
+    // brought ~4 scuttlers, ~175 raw DPS, killing full-HP T3 kits in 3-5 s.
+    stats: { hp: 500, attack: 30, plating: 2, damageReduction: 0, speed: 64, attackRange: 12, attackCooldown: 1600, pullRange: 210 },
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 25, essenceType: 'red', level: 2, biomeXp: 150 },
     // Loose cohesion/separation so the high-density biome READS as a swarm.
@@ -113,23 +115,23 @@ export const volcanoMonsterEntries = [
     // in the T3 ordinary-damage pass: a death-trace found the old value landing
     // 150-165 (up to 57% of a T3 arrival player's maxHP) as a plain ordinary hit,
     // stacked on top of the other fire mobs in the same pull.
-    stats: { hp: 1440, attack: 80, plating: 3, damageReduction: 0, speed: 70, attackRange: 12, attackCooldown: 1300, pullRange: 260 },
+    // 2026-09-26 volcanic T3 pass: 80 -> 55, and one follower instead of two.
+    stats: { hp: 1440, attack: 55, plating: 3, damageReduction: 0, speed: 70, attackRange: 12, attackCooldown: 1300, pullRange: 260 },
     behavior: 'melee', attackStyle: 'bite-fire', biome: 'volcanic',
     rewards: { essence: 29, essenceType: 'red', level: 2, biomeXp: 175 },
     ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 700, idleMaxMs: 3000 },
     swarm: { cohesion: 0.08, separation: 56 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 900 },
     // PACK ALPHA — the CATCHER pack: a fast hound that brings bodies with it and
-    // charges the lot of them onto whoever it engages. The small pack (3-5 total)
+    // charges the lot of them onto whoever it engages. The small pack (3 total)
     // is the light half of the biome's mixed-pack read; the tortoise herd below is
     // the heavy half.
     pack: {
       role: 'alpha', followRadius: 140,
-      followers: [{ typeId: 'ember-scuttler', count: 2 }],
+      followers: [{ typeId: 'ember-scuttler', count: 1 }],
       followerVariants: [
-        [{ typeId: 'ember-scuttler', count: 2 }],   // 5: a straight rush
-        [{ typeId: 'ember-scuttler', count: 1 }],   // 4: the lean version
-        [{ typeId: 'ash-slinger', count: 1 }],      // 4: rush + planted gunner
+        [{ typeId: 'ember-scuttler', count: 1 }],   // 3: a straight rush
+        [{ typeId: 'ash-slinger', count: 1 }],      // 3: rush + planted gunner
       ],
     },
   }],
@@ -145,7 +147,8 @@ export const volcanoMonsterEntries = [
     // one-shotting a T3 arrival player (320-342 raw damage against ~291 maxHP) as a
     // PLAIN ordinary hit. 145 keeps it the tier's heaviest sustained hitter while
     // Heat remains the reason a long fight becomes dangerous.
-    stats: { hp: 3000, attack: 116, plating: 4, damageReduction: 0, speed: 22, attackRange: 15, attackCooldown: 3000, pullRange: 150 },
+    // 2026-09-26 volcanic T3 pass: 116 -> 90, and a smaller herd (2 scuttlers, not 3).
+    stats: { hp: 3000, attack: 90, plating: 4, damageReduction: 0, speed: 22, attackRange: 15, attackCooldown: 3000, pullRange: 150 },
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 55, essenceType: 'red', level: 3, biomeXp: 330 },
     ai: { wanderRadius: 120, leashRange: 470, idleMinMs: 3000, idleMaxMs: 8500 },
@@ -156,11 +159,10 @@ export const volcanoMonsterEntries = [
     // the fodder flocks.
     pack: {
       role: 'alpha', followRadius: 140,
-      followers: [{ typeId: 'ember-scuttler', count: 3 }],
+      followers: [{ typeId: 'ember-scuttler', count: 2 }],
       followerVariants: [
-        [{ typeId: 'ember-scuttler', count: 2 }],                                   // 6: pure swarm
-        [{ typeId: 'ash-slinger', count: 1 }],                                      // 5: swarm + gunner
-        [{ typeId: 'ash-slinger', count: 1 }, { typeId: 'ember-scuttler', count: 1 }], // 6: both
+        [{ typeId: 'ember-scuttler', count: 1 }],   // 4: pure swarm
+        [{ typeId: 'ash-slinger', count: 1 }],      // 4: swarm + gunner
       ],
     },
     monsterAbilities: [{
@@ -178,7 +180,8 @@ export const volcanoMonsterEntries = [
     id: 'ash-slinger', name: 'Ash Salamander', color: 0xff4422,
     // Salamander line T3: STATIONARY ranged pressure that fires from the background
     // while the swarm closes. Does not kite. No personal ramp.
-    stats: { hp: 1330, attack: 70, plating: 2, damageReduction: 0, speed: 44, attackRange: 180, attackCooldown: 2000, pullRange: 230 },
+    // 2026-09-26 volcanic T3 pass: attack 70 -> 50; it finished most heat-late deaths.
+    stats: { hp: 1330, attack: 50, plating: 2, damageReduction: 0, speed: 44, attackRange: 180, attackCooldown: 2000, pullRange: 230 },
     behavior: 'ranged', attackStyle: 'fire-spit', biome: 'volcanic',
     rewards: { essence: 27, essenceType: 'red', level: 2, biomeXp: 165 },
     // Fires from the background and does NOT kite (locked).

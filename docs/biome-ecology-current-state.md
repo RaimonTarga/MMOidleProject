@@ -446,7 +446,9 @@ status carries a generic `isAmbientRamp` marker in its `data`, which is how the 
 a stale ramp to clear when the destination does not author the same effect, and how
 `isHarmfulPlayerStatusEffect` counts any future ramp as cleansable without an edit.
 
-**Volcano is a GREED ramp, not a burn.** Stacks are uncapped (`maxStacks: 0`).
+**Volcano is a GREED ramp, not a burn.** T4 stacks are uncapped (`maxStacks: 0`). T3 caps
+at 15 stacks and takes +2% (not +3.5%) per stack (2026-09-26): auto-farming never cools, and
+uncapped T3 bots died carrying 27–50 stacks. The capped T3 tile shows a fill ring like Chill.
 Combat starts at one stack and adds one every 3000 ms, accelerated 3x in boss vents.
 The first ten stacks give +3% damage dealt / +3.5% damage taken each: +30% / +35% at ten.
 Above ten, effective damage stacks are `10 + 5 * ln(1 + (stacks - 10) / 5)`;
@@ -614,8 +616,8 @@ bigger formation:
 
 | role | T3 | T4 |
 |---|---|---|
-| anchor alpha (5–6) | Magma Tortoise | Obsidian Tortoise |
-| catcher alpha (3–5) | Cinder Hound | Infernal Direhound |
+| anchor alpha (T3 4, T4 5–6) | Magma Tortoise | Obsidian Tortoise |
+| catcher alpha (T3 3, T4 3–5) | Cinder Hound | Infernal Direhound |
 | elite alpha (3–4) | — | Magma Salamander |
 | body follower | Ember Scuttler | Ember Skink |
 | gunner follower | Ash Salamander | Ashspitter Salamander |
@@ -623,6 +625,10 @@ bigger formation:
 Followers stay in `monsterPoolByTier` (unlike Desert's dealers), so a node is packs **plus**
 scattered bodies rather than only formations. The gunners are already `staticSentry`, so as
 followers they plant on the pack ring and shoot past the bodies for free.
+
+T3 packs were cut on 2026-09-26 (Tortoise 1+2+1, Hound 1+1+1) with Scuttler 500 HP / 30 attack,
+Hound 55, Tortoise 90 and Salamander 50: a Hound pull used to bring about four Scuttlers and
+kill full-HP T3 kits in 3–5 s. Evidence: `reports/reward-mastery-study-2026-09-25/xp-sweep-2026-09-26/RESULTS.md`.
 
 Deliberate restraint: **the fodder gained nothing.** Scuttlers and Skinks still have no
 ability and no telegraph. With six bodies converging, the player has to be able to tell

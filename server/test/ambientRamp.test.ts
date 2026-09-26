@@ -33,14 +33,22 @@ function assert(condition: boolean, message: string): void {
   if (!condition) throw new Error(message);
 }
 
-/** A volcanic node, and a corner of it well clear of every authored lava vent. */
-const HEAT_NODE = 'node-t3-volcanic-01';
+/**
+ * A volcanic node, and a corner of it well clear of every authored lava vent. T4:
+ * its heat keeps the uncapped ramp this file exercises (T3 is capped, pinned below).
+ */
+const HEAT_NODE = 'node-t4-volcanic-01';
 const COLD_NODE = 'node-5-5';
 const CLEAR_SPOT = { x: 150, y: 150 };
 
 const HEAT = RESOLVED_NODE_FEATURES[HEAT_NODE].find((f) => f.ambientRamp)?.ambientRamp;
 assert(HEAT !== undefined, `${HEAT_NODE} must author an ambientRamp feature`);
 const RAMP_MS = HEAT!.rampMs;
+
+// T3 heat is the gentler variant: capped at 15 stacks, 2% incoming per stack.
+const T3_HEAT = RESOLVED_NODE_FEATURES['node-t3-volcanic-01'].find((f) => f.ambientRamp)?.ambientRamp;
+assert(T3_HEAT?.maxStacks === 15 && T3_HEAT.payload.incomingDamagePct === 0.02, 'T3 heat is capped at 15 stacks, 2% taken per stack');
+assert(HEAT!.maxStacks === 0 && HEAT!.payload.incomingDamagePct === 0.035, 'T4 heat keeps the uncapped 3.5% ramp');
 const COOL_MS = RAMP_MS / (HEAT!.coolingRateMult ?? 1);
 const BREAKPOINT = HEAT!.payload.damageSoftcapStacks!;
 const TAKEN_PER_STACK = HEAT!.payload.incomingDamagePct ?? 0;

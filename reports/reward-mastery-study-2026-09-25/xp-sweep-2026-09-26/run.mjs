@@ -6,7 +6,7 @@ import {spawn,execFile} from 'node:child_process';
 const here=dirname(fileURLToPath(import.meta.url)),report=resolve(here,'..'),root=resolve(report,'../..');
 const out=resolve(here,process.argv[2]??'run');mkdirSync(resolve(out,'jobs'),{recursive:true});
 const filter=process.argv[3]?new RegExp(process.argv[3]):null;
-const harness=process.env.VOLC_VARIANT?resolve(here,'patched-harness.ts'):resolve(report,'run-bot-t4-cross.ts');
+const harness=(process.env.VOLC_VARIANT||process.env.VOLC_PATCH)?resolve(here,'patched-harness.ts'):resolve(report,'run-bot-t4-cross.ts');
 const historical=JSON.parse(readFileSync(resolve(report,'iteration-02/historical-survivors.json')));
 const inventory=JSON.parse(readFileSync(resolve(report,'economy-inventory.json')));
 const hitboxPath=resolve(root,'../MMO idle/server/dist/hitbox/baked-hitboxes.json');

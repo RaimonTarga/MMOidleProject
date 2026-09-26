@@ -1,0 +1,4 @@
+dir                     apprentic    conduit    slinger     spirit     squire    striker  deaths  medianM
+vfinal-n02                  31.6       31.4       30.6   D20.9@86%      30.2       26.6        1     30.6
+vfinal-n04                  31.2       38.7       32.2     D2.7@9%      30.9       26.6        1     31.2
+vfinal-n05                  32.0       32.6       32.1    D4.9@18%      32.0       27.7        1     32.0

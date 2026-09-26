@@ -7,7 +7,7 @@ const snapshot=JSON.stringify([...MONSTER_DATABASE]);
 for(const cell of DURABILITY20_CELLS){
  const expected=new Map<string,any>(JSON.parse(snapshot));
  if(cell.tier===2&&cell.role==='forest'){Object.assign(expected.get('ancient-wolf').stats,{hp:1575,attack:22});Object.assign(expected.get('ironwood-golem').stats,{hp:945,attack:25});}
- if(cell.tier===3&&cell.role==='volcanic'){Object.assign(expected.get('magma-brute').stats,{hp:3000,attack:116});expected.get('ash-slinger').stats.attack=70;}
+ if(cell.tier===3&&cell.role==='volcanic'){Object.assign(expected.get('magma-brute').stats,{hp:3000,attack:90});expected.get('ash-slinger').stats.attack=50;}
  const overlay=installDurability20Treatment(cell);
  try{assert.deepEqual([...MONSTER_DATABASE],[...expected]);}finally{overlay.restore();}
  assert.equal(JSON.stringify([...MONSTER_DATABASE]),snapshot);

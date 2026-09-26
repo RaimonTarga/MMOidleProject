@@ -25,8 +25,8 @@ const ADOPTED: Record<string, { hp: number; attack: number }> = {
   'ancient-wolf': { hp: 1575, attack: 22 },
   'ironwood-golem': { hp: 945, attack: 25 },
   // Volcano T3 (Durability19 via Durability15)
-  'magma-brute': { hp: 3000, attack: 116 },
-  'ash-slinger': { hp: 1330, attack: 70 }, // 84 -> 70 Volcano area nerf, 2026-09-25
+  'magma-brute': { hp: 3000, attack: 90 }, // 116 -> 90 volcanic T3 pass, 2026-09-26
+  'ash-slinger': { hp: 1330, attack: 50 }, // 84 -> 70 -> 50 Volcano nerfs, 2026-09-25/26
   // Volcano T4 (Durability23)
   'obsidian-tortoise': { hp: 4488, attack: 100 },
   'magma-salamander': { hp: 5808, attack: 150 },

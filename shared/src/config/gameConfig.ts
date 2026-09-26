@@ -166,12 +166,12 @@ export const GAME_CONFIG = {
    * T2/T3 factors are the bot-median time over target (six classes); T4 factors put
    * the Striker reference near 55 min. Factors below 1 slow a biome without raising
    * the tier budget, so earlier-tier nodes never become a faster route into a later
-   * segment. Volcanic T3 has no entry: bots die there before pacing is measurable.
+   * segment. Volcanic T3 was calibrated after its 2026-09-26 difficulty pass.
    * Evidence: reports/reward-mastery-study-2026-09-25/xp-sweep-2026-09-26.
    */
   BIOME_XP_MULT_BY_TIER_AND_BIOME: {
     2: { cave: 0.35, swamp: 0.35, plains: 0.45, mountain: 0.55, forest: 0.65, jungle: 0.75 },
-    3: { swamp: 0.6, cave: 0.9, mountain: 0.9, tundra: 1.2, desert: 1.3, jungle: 1.4 },
+    3: { swamp: 0.6, cave: 0.9, mountain: 0.9, tundra: 1.2, desert: 1.3, jungle: 1.4, volcanic: 0.75 },
     4: { tundra: 1.8, desert: 2.4, mountain: 2.7, jungle: 3.4, graveyard: 2.85, trench: 2.6 },
   } as Readonly<Record<number, Readonly<Record<string, number>>>>,
   /**
