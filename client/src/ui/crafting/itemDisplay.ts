@@ -116,9 +116,6 @@ const MECHANIC_FMT: Record<string, (v: number) => string> = {
   // A potency SCALE on Recovery skills, written as a fraction with no `-pct` to
   // say so; without this it reached the upgrade and evolution diffs as "0.1".
   'defense.recovery-skill-potency':   pct,
-  'defense.sustained-fight-dr-max':   pct,
-  'defense.sustained-fight-dr-bonus': pct,
-  'defense.hardening-max-dr-bonus':   pct,
   'weapon.brittle-dr':                pct,
   'weapon.empowered-mult-bonus':      v => `+${pct(v)}`,
   'mobility.ramp-rate':               v => `${pct(v)}/s`,
@@ -474,12 +471,6 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
     mark('weapon.execute-threshold-pct', 'weapon.execute-dmg-mult');
   }
 
-  if (has('defense.sustained-fight-dr-max')) {
-    const over = has('defense.sustained-fight-ramptime-ms') ? ` over ${secK('defense.sustained-fight-ramptime-ms')}` : '';
-    lines.push(`While in combat, ramp up to ${pctK('defense.sustained-fight-dr-max')} damage reduction${over}`);
-    mark('defense.sustained-fight-dr-max', 'defense.sustained-fight-dr-bonus', 'defense.sustained-fight-ramptime-ms');
-  }
-
   if (has('defense.absorb-ramp-max-pct')) {
     const over   = has('defense.absorb-ramptime-ms') ? ` over ${secK('defense.absorb-ramptime-ms')}` : '';
     const start  = has('defense.absorb-ramp-start-pct') ? `${pctK('defense.absorb-ramp-start-pct')}→` : '';
@@ -501,12 +492,6 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
   if (has('defense.max-hit-refills-barrier')) {
     lines.push('When the damage cap triggers, immediately refill your barrier');
     mark('defense.max-hit-refills-barrier');
-  }
-
-  if (has('defense.hardening-max-dr-bonus')) {
-    const dur = has('defense.hardening-max-dr-ms') ? ` for ${secK('defense.hardening-max-dr-ms')}` : '';
-    lines.push(`At max hardening, gain ${pctK('defense.hardening-max-dr-bonus')} damage reduction${dur}`);
-    mark('defense.hardening-max-dr-bonus', 'defense.hardening-max-dr-ms');
   }
 
   if (has('defense.overheal-ward-pct')) {
@@ -631,15 +616,6 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
   }
 
   // ── Defensive ramps with no prose elsewhere ────────────────────────────────
-  if (has('defense.hardening-per-sec')) {
-    const cap = has('defense.hardening-max') ? `, up to ${num(fx['defense.hardening-max'] ?? 0)}` : '';
-    const reset = has('defense.hardening-reset-pct')
-      ? `; a hit sheds ${pctK('defense.hardening-reset-pct')} of it`
-      : '';
-    lines.push(`Harden while unhit: +${num(fx['defense.hardening-per-sec'] ?? 0)} plating per second${cap}${reset}`);
-    mark('defense.hardening-per-sec', 'defense.hardening-max', 'defense.hardening-reset-pct');
-  }
-
   if (has('defense.recovery-ramp-max-pct')) {
     const from = has('defense.recovery-ramp-start-pct') ? `${pctK('defense.recovery-ramp-start-pct')}→` : '';
     const over = has('defense.recovery-ramp-ramptime-ms') ? ` over ${secK('defense.recovery-ramp-ramptime-ms')}` : '';

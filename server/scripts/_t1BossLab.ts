@@ -24,7 +24,13 @@ const args = Object.fromEntries(process.argv.slice(2).map((s) => {
 interface Row {
   id: string; boss: string; cls: string; weapon: string; armor: string; charm: string; boots: string;
   techniques: string[]; guards: string[]; rules?: { conditionId: string; actionId: string }[];
-  treatment?: string; seed?: number; capMs?: number; tier?: number; upgrade?: number; stance?: string | null;
+  treatment?: string; seed?: number; capMs?: number;
+  /** Farm mode: auto-farm an OPEN node (`node`) instead of fighting a boss. */
+  mode?: 'farm'; node?: string; durable?: boolean;
+  /** Survival profile for treatment 'attacker': equal raw DPS = 2*hit per second. */
+  prof?: { kind: 'swarm' | 'slam' | 'dot'; hit: number; cdMs?: number; dotPerStack?: number };
+  /** Tally world-log events that touch the bot (diagnostics). */
+  debugEvents?: boolean; tier?: number; upgrade?: number; stance?: string | null;
   /** Weapon overrides for tuning: [+0, +5] endpoints; the whole delta rides on upgrade step 1. */
   /** Ability overrides: per-rank effect field values, plus cast/cooldown. */
   ap?: Record<string, { field?: string; values?: number[]; castMs?: number; cooldownMs?: number }>;
@@ -55,6 +61,23 @@ const frenzy = (d: any) => d.bossScript.repeating[0].actions[0].actions[0];
 const TREATMENTS: Record<string, Patch> = {
   live: () => () => {},
   // Training dummies: the row's boss with its offense stripped and 1M HP.
+  // Survival dummy: 1e9 HP, no mechanics, one authored damage shape (row.prof).
+  attacker: (row) => patchDef(row.boss, (d) => {
+    dummy(d, 0, 0);
+    d.stats.hp = 1_000_000_000;
+    const h = row.prof!.hit;
+    const pr = row.prof!;
+    if (pr.cdMs !== undefined) {
+      // Explicit profile: hit size + cadence (+ optional poison) set by the plan.
+      d.stats.attack = h; d.stats.attackCooldown = pr.cdMs;
+      if (pr.dotPerStack) d.dotEffect = { debuffId: 'grave-toadeater-poison', label: 'Toad Poison', damagePerStack: pr.dotPerStack, maxStacks: 5, tickIntervalMs: 1000, durationMs: 6000 };
+    } else if (pr.kind === 'swarm') { d.stats.attack = h; d.stats.attackCooldown = 500; }
+    else if (pr.kind === 'slam') { d.stats.attack = 8 * h; d.stats.attackCooldown = 4000; }
+    else {
+      d.stats.attack = Math.max(1, Math.round(h / 2)); d.stats.attackCooldown = 1000;
+      d.dotEffect = { debuffId: 'grave-toadeater-poison', label: 'Toad Poison', damagePerStack: Math.max(1, Math.round(h * 0.3)), maxStacks: 5, tickIntervalMs: 1000, durationMs: 6000 };
+    }
+  }),
   'dummy-bare': (row) => patchDef(row.boss, (d) => dummy(d, 0, 0)),
   'dummy-armored': (row) => patchDef(row.boss, (d) => dummy(d, 6, 0.10)),
   // T4-realistic armour: median T4 boss is ~14 plating / 10% DR, up to 22 / 24%.
@@ -170,6 +193,75 @@ function forceBossPhase(world: World, nodeId: string): void {
 
 const realNow = Date.now, realRandom = Math.random;
 
+/**
+ * FARM mode: the bot auto-farms an open node for capMs. Reports kills/min,
+ * distance travelled and time split between moving and fighting. With
+ * durable=true the bot cannot die, isolating pace (travel + kill speed) from
+ * safety.
+ */
+function runFarm(row: Row) {
+  const seed = row.seed ?? 173;
+  let rs = seed, now = 1800000000000;
+  Math.random = () => { rs = (Math.imul(rs, 1664525) + 1013904223) >>> 0; return rs / 4294967296; };
+  Date.now = () => now;
+  const restoreWeapons = patchWeapons(row.wp);
+  const restoreAbilities = patchAbilities(row.ap);
+  const nodeId = row.node!;
+  const tier = NODE_BIOMES[nodeId]!.biomeTier;
+  const c = SURVEY_CLASSES.find((x) => x.name === row.cls)!;
+  const world = createBalanceWorld();
+  try {
+    setupArena(world, { nodeId, biomeGroup: NODE_BIOMES[nodeId]!.biomeGroup, contentTier: tier, isDungeon: false });
+    const cell: SurveyCell = {
+      id: row.id, className: row.cls, tier, role: 'farm', nodeId, alternate: false, isDungeon: false,
+      stance: row.stance === undefined ? (tier >= 2 ? 'offensive-stance' : null) : row.stance, upgradeLevel: row.upgrade ?? 5,
+      abilities: { techniques: row.techniques, guards: row.guards },
+      runeRules: pickRules(row, c.melee),
+      build: {
+        id: row.id, classRoot: `${c.prefix}-root`, contentTier: tier, playerTier: tier, gearTier: tier,
+        skillPath: [`${c.prefix}-root`, ...(tier >= 2 ? [`${c.prefix}-balanced`] : []), ...(tier >= 3 ? [`${c.prefix}-range-${c.melee ? 'close' : 'mid'}`] : []), ...(tier >= 4 ? [`${c.prefix}-balanced-t3-a`] : [])],
+        gearItemIds: { weapon: row.weapon, armor: row.armor, recovery: row.charm, mobility: row.boots },
+      },
+    } as SurveyCell;
+    const { bot } = prepareSurveyBot(world, cell, BOT_SPAWN);
+    if (row.durable) { bot.hasHealth.maxHp = 10_000_000; bot.hasHealth.hp = 10_000_000; }
+    const cap = row.capMs ?? 300_000;
+    let kills = 0, deaths = 0, dist = 0, movingMs = 0, combatMs = 0;
+    const killTimes: number[] = [];
+    let initial = 0; for (const _ of world.monsterEntitiesInNode(nodeId)) initial++;
+    let last = { ...bot.hasPosition.current };
+    world.worldLogJournal = []; world.worldLogByPlayer.clear(); world.takeNodeEvents(nodeId);
+    for (let elapsed = 0; elapsed < cap; elapsed += 100) {
+      now = 1800000000000 + elapsed;
+      world.tick(100, now);
+      for (const e of world.worldLogJournal as any[]) {
+        if (e.kind === 'kill' && e.killer?.id === bot.isPlayer.id) { kills++; killTimes.push(elapsed); }
+        if (e.kind === 'player-death') deaths++;
+      }
+      world.worldLogJournal = []; world.worldLogByPlayer.clear(); world.takeNodeEvents(nodeId);
+      const pos = bot.hasPosition.current;
+      const step = Math.hypot(pos.x - last.x, pos.y - last.y);
+      if (step > 0.5) { dist += step; movingMs += 100; }
+      if (bot.hasAttackTarget) combatMs += 100;
+      last = { ...pos };
+      if (row.durable) bot.hasHealth.hp = bot.hasHealth.maxHp;
+      world.pendingDeaths = [];
+    }
+    return {
+      id: row.id, mode: 'farm', node: nodeId, cls: row.cls, boots: row.boots, weapon: row.weapon, seed,
+      initial, tClearHalf: killTimes[Math.floor(initial / 2) - 1] !== undefined ? killTimes[Math.floor(initial / 2) - 1]! / 1000 : null,
+      tClear: killTimes[initial - 1] !== undefined ? killTimes[initial - 1]! / 1000 : null,
+      kills, killsPerMin: Math.round((kills / (cap / 60000)) * 10) / 10, deaths,
+      dist: Math.round(dist), avgMoveSpeed: movingMs > 0 ? Math.round(dist / (movingMs / 1000)) : 0,
+      movingPct: Math.round((movingMs / cap) * 100), targetPct: Math.round((combatMs / cap) * 100),
+    };
+  } finally {
+    try { teardownArena(world); } catch { /* ignore */ }
+    restoreWeapons(); restoreAbilities();
+    Date.now = realNow; Math.random = realRandom;
+  }
+}
+
 function run(row: Row) {
   const seed = row.seed ?? 173;
   let rs = seed, now = 1800000000000;
@@ -211,6 +303,7 @@ function run(row: Row) {
     let elapsed = 0, outcome = 'capped', minHp = 1, lastBotHp = bot.hasHealth.hp, hpLost = 0;
     let bossHp = bossMaxHp, killAt: number | null = null, deathAt: number | null = null, resetAt: number | null = null;
     let hpAt8: number | null = null;
+    const tally: Record<string, { n: number; amount: number }> = {};
     let fromBoss = 0, fromAdds = 0, maxAdds = 0, halfAt: number | null = null, killer: string | null = null;
     world.worldLogJournal = []; world.worldLogByPlayer.clear(); world.takeNodeEvents(nodeId);
     for (; elapsed < cap; elapsed += 100) {
@@ -219,7 +312,13 @@ function run(row: Row) {
       const hp = bot.hasHealth.hp;
       if (hp < lastBotHp) hpLost += lastBotHp - hp;
       lastBotHp = hp;
+      // Refill to 90%, never 100%: a full bar turns the next heal into overheal (ward).
+      if (row.durable && bot.hasHealth.hp > 0 && bot.hasHealth.hp < bot.hasHealth.maxHp * 0.5) { bot.hasHealth.hp = Math.floor(bot.hasHealth.maxHp * 0.9); lastBotHp = bot.hasHealth.hp; }
       for (const e of world.worldLogJournal as any[]) {
+        if (row.debugEvents && (e.target?.id === bot.isPlayer.id || e.player?.id === bot.isPlayer.id)) {
+          const k = e.kind + (e.kind === 'damage' ? (e.source?.id === bossEntityId ? ':boss' : ':other') : '');
+          const t = (tally[k] ??= { n: 0, amount: 0 }); t.n++; t.amount += e.hpDamage ?? e.amount ?? e.damage ?? 0;
+        }
         if (e.kind === 'kill' && (e.victim?.id === bossEntityId || e.victim?.name === def(row.boss).name)) killAt ??= elapsed;
         if (e.kind === 'player-death') { deathAt ??= elapsed; killer ??= e.cause?.killer?.name ?? e.cause?.killer?.monsterTypeId ?? JSON.stringify(e.cause ?? null).slice(0, 160); }
         if (e.kind === 'dungeon-message' && /reforms/i.test(e.message ?? '')) resetAt ??= elapsed;
@@ -249,7 +348,7 @@ function run(row: Row) {
     return {
       id: row.id, boss: row.boss, cls: row.cls, treatment: row.treatment ?? 'live', seed,
       weapon: row.weapon, armor: row.armor, charm: row.charm, techniques: row.techniques, guards: row.guards,
-      rules: chosenRules, outcome, won: isVictory(outcome as any), t: elapsed / 1000, dealt: bossMaxHp - bossHp, dps8: hpAt8 === null ? null : Math.round(((bossMaxHp - hpAt8) / 8.1) * 10) / 10, dps: Math.round(((bossMaxHp - bossHp) / Math.max(0.1, elapsed / 1000)) * 10) / 10, bossPctLeft: Math.round((bossHp / bossMaxHp) * 1000) / 10,
+      ...(row.debugEvents ? { tally } : {}), rules: chosenRules, outcome, won: isVictory(outcome as any), t: elapsed / 1000, dealt: bossMaxHp - bossHp, dps8: hpAt8 === null ? null : Math.round(((bossMaxHp - hpAt8) / 8.1) * 10) / 10, dps: Math.round(((bossMaxHp - bossHp) / Math.max(0.1, elapsed / 1000)) * 10) / 10, bossPctLeft: Math.round((bossHp / bossMaxHp) * 1000) / 10,
       minHpPct: Math.round(minHp * 1000) / 10, hpLost, fromBoss, fromAdds, maxAdds, halfAt: halfAt && halfAt / 1000, killer, loadout,
     };
   } finally {
@@ -266,6 +365,6 @@ for (let i = shard; i < plan.length; i += shards) {
   const row = plan[i]!;
   const started = realNow();
   let res: unknown;
-  try { res = run(row); } catch (e) { res = { id: row.id, boss: row.boss, cls: row.cls, treatment: row.treatment, error: String((e as Error).message).slice(0, 300) }; }
+  try { res = row.mode === 'farm' ? runFarm(row) : run(row); } catch (e) { res = { id: row.id, boss: row.boss, cls: row.cls, treatment: row.treatment, error: String((e as Error).message).slice(0, 300) }; }
   appendFileSync(args.out!, JSON.stringify({ ...(res as object), wallMs: realNow() - started }) + '\n');
 }

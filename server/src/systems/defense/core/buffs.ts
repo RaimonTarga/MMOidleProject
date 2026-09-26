@@ -6,10 +6,8 @@ import {
 } from './pools';
 import { activeRecoveryFraction, recoveryPerSecond } from '../regen/recovery';
 import { isPlayerInCombat } from '../../combat/ai/engagement';
-import { getHardeningBonus, getHardeningMaxDrBonus } from '../mitigation/hardening';
 import { getStationaryDrBonus } from '../mitigation/stationaryDr';
 import { getEngagementDrRemaining } from '../mitigation/engagementDr';
-import { getSustainedFightDrBonus } from '../mitigation/sustainedFightDr';
 import { getReactivePlatingBonus } from '../mitigation/reactivePlating';
 
 const NEUTRAL_OPTS = { category: 'neutral' as const, shape: 'square' as const };
@@ -105,32 +103,11 @@ export const DEFENSE_BUFFS = [
       ? { id: 'defense-stationary-dr', label: 'Frost', stacks: Math.round(bonus * 100), durationPct: -1, color: '#88ccff', logDetail: `+${Math.round(bonus * 100)}% damage reduction (stationary)`, values: [{ label: "Damage reduction", value: `+${Math.round(bonus * 100)}%`, good: true }] }
       : null;
   }, NEUTRAL_OPTS),
-  defineBuff('defense-sustained-dr', ({ player }) => {
-    if (!player) return null;
-    const bonus = getSustainedFightDrBonus(player);
-    return bonus > 0
-      ? { id: 'defense-sustained-dr', label: 'Endure', stacks: Math.round(bonus * 100), durationPct: -1, color: '#7faaff', logDetail: `+${Math.round(bonus * 100)}% damage reduction (sustained fight)`, values: [{ label: "Damage reduction", value: `+${Math.round(bonus * 100)}%`, good: true }] }
-      : null;
-  }, NEUTRAL_OPTS),
-  defineBuff('defense-hardening-maxdr', ({ player }) => {
-    if (!player) return null;
-    const bonus = getHardeningMaxDrBonus(player);
-    return bonus > 0
-      ? { id: 'defense-hardening-maxdr', label: 'Temper', stacks: Math.round(bonus * 100), durationPct: -1, color: '#ffaa66', logDetail: `+${Math.round(bonus * 100)}% damage reduction (max hardening)`, values: [{ label: "Damage reduction", value: `+${Math.round(bonus * 100)}%`, good: true }] }
-      : null;
-  }, NEUTRAL_OPTS),
   defineBuff('defense-reactive-plating', ({ player }) => {
     if (!player) return null;
     const bonus = getReactivePlatingBonus(player);
     return bonus > 0
       ? { id: 'defense-reactive-plating', label: 'Crust', stacks: bonus, durationPct: -1, color: '#c9a24a', logDetail: `+${bonus} plating (reactive)`, values: [{ label: "Plating", value: `+${bonus}`, good: true }] }
-      : null;
-  }, NEUTRAL_OPTS),
-  defineBuff('defense-hardening', ({ player }) => {
-    if (!player) return null;
-    const bonus = getHardeningBonus(player);
-    return bonus > 0
-      ? { id: 'defense-hardening', label: 'Hard', stacks: bonus, durationPct: -1, color: '#88cc44', logDetail: `+${bonus} plating`, values: [{ label: "Plating", value: `+${bonus}`, good: true }] }
       : null;
   }, NEUTRAL_OPTS),
 ] as const satisfies readonly BuffDescriptor[];

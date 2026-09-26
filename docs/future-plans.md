@@ -235,3 +235,21 @@ Compare fights started, simultaneous attackers, occupied thickets and rally yiel
 across tiers, both through natural auto-traversal and a player-directed bush approach.
 No Jungle density, roster or placement changes shipped; Chestbeat propagation is
 joined by the wider rally radius and temporary encounter coordination.
+
+## Boots follow-ups (2026-09-26)
+
+Raised during the boots curve pass (see `updates/develop` and `gear-evolution-current-state.md`).
+
+- **T5 boots: mobility-ability cooldown.** A boots line that shortens the cooldown of
+  *mobility* Techniques only (reposition shapes: Charge, Disengage). Not all Techniques:
+  general Technique CDR already belongs to the Plains -> Desert Technique weapons and the
+  Arcanist Core, so a third source would crowd that niche. The reposition shapes debut
+  at T2-T4, so T5 is the natural home.
+- **Utility lines that outlive their biome.** Stealth (a smaller monster pull radius, not
+  hard stealth) and slow resistance should stay viable past T3. Stealth continues into
+  the T4 Trench Stalkers. Slow resistance has no T4 heir: the Trench Treaders
+  (tenacity) are the natural continuation from `swamp-boots-t3`.
+- **Cross-pollination: out-of-combat speed + stealth.** Both are about moving safely
+  *between* fights, so they pair well. This is a candidate way to carry the Forest
+  out-of-combat line past T2 (Forest retires at T3), for example on a Trench or later
+  stealth boot.

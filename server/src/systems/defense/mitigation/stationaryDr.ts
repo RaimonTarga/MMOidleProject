@@ -1,9 +1,10 @@
-import { getResource, setResource } from '@mmo-idle/shared';
+import { getResource, setResource, isCooldownActive, setCooldown } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { markSliceDirty } from '../../../ecs/dirtyHelpers';
 import { isPlayerActivelyInCombat } from '../../combat/ai/engagement';
 import { isHardControlled } from '../../combat/status/playerHardControl';
+import { registerCombatListener } from '../../combat/engine/combatPipeline';
 
 // Mirrors the damage-reduction clamp applied in shared stats.ts so the ramp can
 // never push total DR past the cap (in-place additions bypass that clamp).
@@ -13,6 +14,18 @@ const DR_CAP = 0.9;
 const APPLIED_KEY = 'stationaryDrApplied';
 // Milliseconds held stationary, accumulated up to the ramp time.
 const RAMP_KEY = 'stationaryDrRampMs';
+// Held for PRESSURE_MS after each incoming attack. The stance builds only while
+// something is actually attacking you, so a stationary ranged player carrying a
+// target into the next pull does not keep full stacks between fights.
+const PRESSURE_CD = 'stationaryIncomingPressure';
+const PRESSURE_MS = 2000;
+
+/** Mark incoming pressure for the stance (any attack at the player, hit or not). */
+export function registerStationaryDr(): void {
+  registerCombatListener('onAttack', ctx => {
+    if (ctx.defenderType === 'player') setCooldown(ctx.defender.tracksCombat, PRESSURE_CD, PRESSURE_MS);
+  });
+}
 
 /**
  * Current stationary-DR bonus actually applied (a 0..1 fraction). Read by the
@@ -41,9 +54,9 @@ export function resetStationaryDr(player: PlayerEntity): void {
 }
 
 /**
- * Build while stationary in active combat. Movement (including displacement)
- * gets 250 ms grace, then sheds a full ramp in one second; leaving combat also
- * sheds the ramp. Hard control pauses accumulation. The ramp multiplies damage
+ * Build while stationary under incoming attacks. Movement (including
+ * displacement) gets 250 ms grace, then sheds a full ramp in one second; once
+ * the attacks stop (or combat ends) the ramp sheds over two seconds. Hard control pauses accumulation. The ramp multiplies damage
  * remaining after base DR and updates the networked mitigation stat in place.
  */
 export function runStationaryDr(world: World, player: PlayerEntity, dt: number): void {
@@ -56,15 +69,17 @@ export function runStationaryDr(world: World, player: PlayerEntity, dt: number):
   const prevRamp = getResource(cs, RAMP_KEY);
 
   // Actual position changes also catch movement caused by knockback or pulls.
-  const active = isPlayerActivelyInCombat(world, player);
+  const active = isPlayerActivelyInCombat(world, player) && isCooldownActive(cs, PRESSURE_CD);
   const x=player.hasPosition.current.x,y=player.hasPosition.current.y;
   const displaced=getResource(cs,'stationaryPositionKnown')>0 && (x!==getResource(cs,'stationaryLastX')||y!==getResource(cs,'stationaryLastY'));
   setResource(cs,'stationaryPositionKnown',1);setResource(cs,'stationaryLastX',x);setResource(cs,'stationaryLastY',y);
   const moving=player.isMoving!==undefined||displaced;
   const movementMs=moving?getResource(cs,'stationaryMovementMs')+dt:0;
   setResource(cs,'stationaryMovementMs',movementMs);
-  const newRamp = !active || (moving && movementMs>250)
+  const newRamp = moving && movementMs>250
     ? Math.max(prevRamp - dt * ramptime / 1000, 0)
+    : !active
+    ? Math.max(prevRamp - dt * ramptime / 2000, 0)
     : moving || isHardControlled(cs) ? prevRamp : Math.min(prevRamp + dt, ramptime);
   if (newRamp !== prevRamp) setResource(cs, RAMP_KEY, newRamp);
 

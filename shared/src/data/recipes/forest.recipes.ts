@@ -117,16 +117,19 @@ mechanicEffects: {"defense.evade-mitigation": 0.1},
     id: 'forest-boots-t1', name: 'Sprinter Wraps',
     recipeGroup: 'forest', requiredBiomeLevel: 4, slot: 'mobility',
     cost: { green: 10 }, stats: { speed: 22 }, tier: 1,
-    mechanicEffects: { 'mobility.ooc-speed-pct': 0.25 },
+    // 2026-09-26: out-of-combat speed +25->50% trimmed to +20->35% (T2: +55->80% ->
+    // +40->55%). Raw travel speed ran ~20% above every other boot; it applies to all
+    // node-to-node travel, which the single-node farm pace test undercounts.
+    mechanicEffects: { 'mobility.ooc-speed-pct': 0.20 },
     icon: 'items/boots/sprinter-wraps.png',
     description: 'Strips of supple hide that move when you move, and never before.',
     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, same total (160).
     upgrades: [
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 10 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 15 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 25 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 40 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 45 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.03 }, cost: { green: 10 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.03 }, cost: { green: 15 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.03 }, cost: { green: 25 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.03 }, cost: { green: 40 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.03 }, cost: { green: 45 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -213,15 +216,15 @@ mechanicEffects: {"defense.evade-mitigation": 0.1},
     evolvesFrom: 'forest-boots-t1',
     cost: { green: 40 }, stats: { speed: 40 }, tier: 2,
     reconstructCost: { green: 140 }, reconstructCatalystCost: { alacrity: 2 }, // family-tag: forest mobility → Alacrity
-    mechanicEffects: { 'mobility.ooc-speed-pct': 0.55 },
+    mechanicEffects: { 'mobility.ooc-speed-pct': 0.40 },
     icon: 'items/boots/windstep-wraps.png',
     description: 'Light enough that the wind mistakes the wearer for one of its own.',
     upgrades: [
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 12 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 30 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 48 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 3 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 78 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.05 }, cost: { green: 132 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.03 }, cost: { green: 12 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.03 }, cost: { green: 30 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.03 }, cost: { green: 48 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 3 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.03 }, cost: { green: 78 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.03 }, cost: { green: 132 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 10 },
     ],
   }],
 

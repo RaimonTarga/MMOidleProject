@@ -68,25 +68,18 @@ export const DEFENSE_KEYS = [
   'defense.recovery-ramp-start-pct',
   'defense.recovery-ramp-max-pct',
   'defense.recovery-ramp-ramptime-ms',
-  'defense.hardening-per-sec',
-  'defense.hardening-max',
-  'defense.hardening-reset-pct',
-  // Stationary active-combat DR applied multiplicatively to remaining damage.
-  // Movement gets 250 ms grace, then a full ramp decays in one second.
+  // Stationary DR applied multiplicatively to remaining damage; builds only under
+  // incoming attacks. Movement gets 250 ms grace, then a full ramp decays in one
+  // second; without attacks it decays over two.
   'defense.stationary-dr-pct',
   'defense.engagement-dr-pct',
   'defense.engagement-dr-ms',
   'defense.overheal-ward-cap-pct',
   // Diagnostic record of summed item DR before the class/item multiplicative
-  // grouping in stats.ts; sustained-fight ramps read it to respect the grouping.
+  // grouping in stats.ts.
   'defense.item-dr-base',
   'defense.stationary-dr-ramptime-ms',
   // ── T4 defensive mechanics ───────────────────────────────────────────────
-  // Sustained-fight DR: while in combat, gain `bonus` DR every step, capping at
-  // `dr-max`, reaching the cap over `ramptime-ms` (step = ramptime ÷ (max/bonus)).
-  'defense.sustained-fight-dr-bonus',
-  'defense.sustained-fight-dr-max',
-  'defense.sustained-fight-ramptime-ms',
   // Absorb that ramps in combat from `start` to `max` over `ramptime-ms`
   // (replaces flat absorb-pct on the conversion).
   'defense.absorb-ramp-start-pct',
@@ -107,13 +100,10 @@ export const DEFENSE_KEYS = [
   // 1 = when the damage cap triggers, immediately refill the barrier to full
   // (same cooldown gate as the break heal).
   'defense.max-hit-refills-barrier',
-  // At max hardening stacks, pulse +`bonus` DR for `ms`.
-  'defense.hardening-max-dr-bonus',
-  'defense.hardening-max-dr-ms',
   // Fraction of healing past max HP converted into a temporary ward.
   'defense.overheal-ward-pct',
-  // Reactive plating: each hit taken grants +`per-stack` plating for `duration-ms`,
-  // stacking (refreshing the timer) up to `max-stacks`.
+  // Reactive plating: each hit taken adds a +`per-stack` plating stack up to
+  // `max-stacks`; stacks hold for `duration-ms` after the last hit, then fade singly.
   'defense.hit-plating-per-stack',
   'defense.hit-plating-max-stacks',
   'defense.hit-plating-duration-ms',

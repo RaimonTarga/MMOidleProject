@@ -46,7 +46,7 @@ export const volcanoMonsterEntries = [
   // per-mob ramps stacked on top of the global ramp was two difficulty knobs doing
   // one job, and made every volcano mob the same monster. Each mob's job now is to
   // give the fight a reason NOT to end quickly, and Heat does the rest.
-  // Density + speed catch Far. Answer: hardening + active/on-kill Recovery.
+  // Density + speed catch Far. Answer: reactive plating + active/on-kill Recovery.
   //
   // ══ MIXED PACKS (ecology polish, 2026-09-11) — OVERTURNS the earlier locked
   // "density is the swarm, monster coordination is not" call ══

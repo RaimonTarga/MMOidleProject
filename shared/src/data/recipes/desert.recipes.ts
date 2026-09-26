@@ -1,17 +1,24 @@
 import type { Recipe } from './types';
 
-// DESERT (debuts T2). Identity: last-stand + cleanse armor / ambush weapon /
+// DESERT (debuts T2). Identity: opening-protection (Dawn) armor / ambush weapon /
 // Cleanse-ability charm. Upgrades shorten Cleanse-tagged ability cooldowns.
 // No automatic charm cleanse or fallback heal; armor keeps its own cleanse.
 
 // Specialist plating kept on the T2-T4 Desert armors after the defense rebudget:
 // half the pre-rebudget values (screened 2026-09-25; see
-// reports/defense-rework-2026-09-25).
+// reports/defense-rework-2026-09-25). 2026-09-26 armor niches: T3/T4 +0 values stay,
+// but the steep upgrade growth (+10/+15/+25) made Desert the best vest against
+// every small-hit fight with no trade-off, so growth is a third of that and T2
+// tops out level with the Plains robe (8), the plating specialist.
 const DESERT_PLATING = {
-  t2: { base: 5, perUpgrade: 2 },
-  t3: { base: 10, perUpgrade: 3 },
-  t4: { base: 19, perUpgrade: 5 },
+  t2: { base: 3, perUpgrade: 1 },
+  t3: { base: 10, perUpgrade: 1 },
+  t4: { base: 19, perUpgrade: 2 },
 } as const;
+// Dawn (opening protection) is the Desert niche: SHORT fights. Its strength stays
+// flat across tiers; each tier adds ~2s of duration instead. Do not push past
+// 10s — beyond that it stops being a short-fight armor.
+const DAWN = { pct: 0.3, t2Ms: 6000, t3Ms: 8000, t4Ms: 10000 } as const;
 
 export const desertRecipeEntries = [
   // ── T2 ──
@@ -55,11 +62,11 @@ export const desertRecipeEntries = [
   ['desert-vest-t2', {
     id: 'desert-vest-t2', name: 'Duneplate of the Last Stand',
     recipeGroup: 'desert', requiredBiomeLevel: 2, slot: 'armor',
-    cost: { yellow: 35, purple: 25 }, stats: {"maxHp": 55, "damageReduction": 0.08, plating: DESERT_PLATING.t2.base}, // family-tag: last-stand (cheat-death) armor → Dominion
-    mechanicEffects: {"defense.engagement-dr-pct": 0.3, "defense.engagement-dr-ms": 6000},
+    cost: { yellow: 35, purple: 25 }, stats: {"maxHp": 55, "damageReduction": 0.08, plating: DESERT_PLATING.t2.base}, // family-tag: opening-protection (Dawn) armor → Dominion
+    mechanicEffects: {"defense.engagement-dr-pct": DAWN.pct, "defense.engagement-dr-ms": DAWN.t2Ms},
     tier: 2,
     icon: 'items/armor/duneplate-last-stand.png',
-    description: "Gain strong damage reduction for 6 seconds from the first attack in a hostile engagement. Rearms after 6 seconds without engagement or incoming attacks.",
+    description: "Gain strong damage reduction for 6 seconds from the first attack in a hostile engagement. Rearms after 4 seconds without engagement or incoming attacks.",
     upgrades: [
       {"cost": {"yellow": 29, "purple": 19}, "requiredBiomeLevel": 3, "stats": {"maxHp": 6, plating: DESERT_PLATING.t2.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
       {"cost": {"yellow": 72, "purple": 48}, "requiredBiomeLevel": 4, "stats": {"maxHp": 5, plating: DESERT_PLATING.t2.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
@@ -90,16 +97,17 @@ export const desertRecipeEntries = [
   ['desert-boots-t2', {
     id: 'desert-boots-t2', name: 'Sand Sprint',
     recipeGroup: 'desert', requiredBiomeLevel: 4, slot: 'mobility',
-    cost: { yellow: 58 }, stats: { speed: 52 }, tier: 2, // family-tag: desert kite mobility → Dominion
+    // 2026-09-26 T2-T4 boots curve normalization: Speed 52->87 (+5: 113->113).
+    cost: { yellow: 58 }, stats: { speed: 87 }, tier: 2, // family-tag: desert kite mobility → Dominion
     mechanicEffects: { 'mobility.kite-speed-pct': 0.20 },
     icon: 'items/boots/sand-sprint.png',
     description: 'Wide and light, made to outpace a storm across open dune.',
     upgrades: [
-      { stats: { speed: 7 },  cost: { yellow: 15 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 11 }, cost: { yellow: 37 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 14 }, cost: { yellow: 60 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 14 }, cost: { yellow: 97 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 15 }, cost: { yellow: 165 }, catalystCost: { dominion: 1 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 3 },  cost: { yellow: 15 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 5 }, cost: { yellow: 37 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 6 }, cost: { yellow: 60 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 6 }, cost: { yellow: 97 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 6 }, cost: { yellow: 165 }, catalystCost: { dominion: 1 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -158,12 +166,12 @@ export const desertRecipeEntries = [
     id: 'desert-vest-t3', name: 'Eternal Duneplate',
     recipeGroup: 'desert', requiredBiomeLevel: 8, slot: 'armor',
     evolvesFrom: 'desert-vest-t2',
-    cost: { yellow: 120, purple: 30 }, stats: {"maxHp": 150, "damageReduction": 0.14, plating: DESERT_PLATING.t3.base}, // family-tag: last-stand armor → Dominion
+    cost: { yellow: 120, purple: 30 }, stats: {"maxHp": 150, "damageReduction": 0.14, plating: DESERT_PLATING.t3.base}, // family-tag: opening-protection (Dawn) armor → Dominion
     reconstructCost: { yellow: 420, purple: 105 }, reconstructCatalystCost: { dominion: 3 },
-    mechanicEffects: {"defense.engagement-dr-pct": 0.35, "defense.engagement-dr-ms": 6000},
+    mechanicEffects: {"defense.engagement-dr-pct": DAWN.pct, "defense.engagement-dr-ms": DAWN.t3Ms},
     tier: 3,
     icon: 'items/armor/eternal-duneplate.png',
-    description: "Gain strong damage reduction for 6 seconds from the first attack in a hostile engagement. Rearms after 6 seconds without engagement or incoming attacks.",
+    description: "Gain strong damage reduction for 8 seconds from the first attack in a hostile engagement. Rearms after 4 seconds without engagement or incoming attacks.",
     upgrades: [
       {"cost": {"yellow": 76, "purple": 19}, "requiredBiomeLevel": 9, "stats": {"maxHp": 15, plating: DESERT_PLATING.t3.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
       {"cost": {"yellow": 190, "purple": 47}, "requiredBiomeLevel": 10, "stats": {"maxHp": 15, plating: DESERT_PLATING.t3.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
@@ -197,17 +205,18 @@ export const desertRecipeEntries = [
     id: 'desert-boots-t3', name: 'Mirage Striders',
     recipeGroup: 'desert', requiredBiomeLevel: 10, slot: 'mobility',
     evolvesFrom: 'desert-boots-t2',
-    cost: { yellow: 90 }, stats: { speed: 86 }, tier: 3, // family-tag: desert kite mobility → Dominion
+    // 2026-09-26 T2-T4 boots curve normalization: Speed 86->125 (+5: 157->157).
+    cost: { yellow: 90 }, stats: { speed: 125 }, tier: 3, // family-tag: desert kite mobility → Dominion
     reconstructCost: { yellow: 315 }, reconstructCatalystCost: { dominion: 3 },
     mechanicEffects: { 'mobility.kite-speed-pct': 0.30 },
     icon: 'items/boots/mirage-striders.png',
     description: 'By the time the storm reaches where you stood, you are already a rumor on the next dune.',
     upgrades: [
-      { stats: { speed: 9 }, cost: { yellow: 31 },  requiredBiomeLevel: 10 },
-      { stats: { speed: 13 }, cost: { yellow: 77 },  requiredBiomeLevel: 10 },
-      { stats: { speed: 16 }, cost: { yellow: 124 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 16 }, cost: { yellow: 201 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 17 }, cost: { yellow: 341 }, catalystCost: { dominion: 2 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 4 }, cost: { yellow: 31 },  requiredBiomeLevel: 10 },
+      { stats: { speed: 6 }, cost: { yellow: 77 },  requiredBiomeLevel: 10 },
+      { stats: { speed: 7 }, cost: { yellow: 124 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 7 }, cost: { yellow: 201 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 8 }, cost: { yellow: 341 }, catalystCost: { dominion: 2 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -277,10 +286,10 @@ export const desertRecipeEntries = [
     cost: { yellow: 220, purple: 55 }, stats: {"maxHp": 288, "damageReduction": 0.18, plating: DESERT_PLATING.t4.base},
     reconstructCost: { yellow: 770, purple: 193 }, reconstructCatalystCost: { dominion: 4 },
     // Dawnward protects the opening of an engagement; no cheat-death rider.
-    mechanicEffects: {"defense.engagement-dr-pct": 0.4, "defense.engagement-dr-ms": 6000},
+    mechanicEffects: {"defense.engagement-dr-pct": DAWN.pct, "defense.engagement-dr-ms": DAWN.t4Ms},
     tier: 4,
     icon: 'items/armor/deathless-duneplate.png',
-    description: "Gain strong damage reduction for 6 seconds from the first attack in a hostile engagement. Rearms after 6 seconds without engagement or incoming attacks.",
+    description: "Gain strong damage reduction for 10 seconds from the first attack in a hostile engagement. Rearms after 4 seconds without engagement or incoming attacks.",
     upgrades: [
       {"cost": {"yellow": 153, "purple": 38}, "requiredBiomeLevel": 15, "stats": {"maxHp": 29, plating: DESERT_PLATING.t4.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
       {"cost": {"yellow": 382, "purple": 95}, "requiredBiomeLevel": 16, "stats": {"maxHp": 29, plating: DESERT_PLATING.t4.perUpgrade}, "mechanicEffects": {"defense.engagement-dr-pct": 0.01}},
@@ -317,17 +326,18 @@ export const desertRecipeEntries = [
     id: 'desert-boots-t4', name: 'Simoom Striders',
     recipeGroup: 'desert', requiredBiomeLevel: 16, slot: 'mobility',
     evolvesFrom: 'desert-boots-t3',
-    cost: { yellow: 198 }, stats: { speed: 121 }, tier: 4,
+    // 2026-09-26 T2-T4 boots curve normalization: Speed 121->173 (+5: 209->209).
+    cost: { yellow: 198 }, stats: { speed: 173 }, tier: 4,
     reconstructCost: { yellow: 693 }, reconstructCatalystCost: { dominion: 4 },
     mechanicEffects: { 'mobility.kite-speed-pct': 0.40 },
     icon: 'items/boots/simoom-striders.png',
     description: 'Named for the desert wind that arrives only as the dust it already left behind.',
     upgrades: [
-      { stats: { speed: 13 }, cost: { yellow: 61 },  requiredBiomeLevel: 16 },
-      { stats: { speed: 16 }, cost: { yellow: 153 }, requiredBiomeLevel: 16 },
-      { stats: { speed: 20 }, cost: { yellow: 245 }, requiredBiomeLevel: 16 },
-      { stats: { speed: 20 }, cost: { yellow: 398 }, requiredBiomeLevel: 16 },
-      { stats: { speed: 19 }, cost: { yellow: 673 }, catalystCost: { dominion: 3 }, requiredBiomeLevel: 16 },
+      { stats: { speed: 5 }, cost: { yellow: 61 },  requiredBiomeLevel: 16 },
+      { stats: { speed: 7 }, cost: { yellow: 153 }, requiredBiomeLevel: 16 },
+      { stats: { speed: 8 }, cost: { yellow: 245 }, requiredBiomeLevel: 16 },
+      { stats: { speed: 8 }, cost: { yellow: 398 }, requiredBiomeLevel: 16 },
+      { stats: { speed: 8 }, cost: { yellow: 673 }, catalystCost: { dominion: 3 }, requiredBiomeLevel: 16 },
     ],
   }],
 

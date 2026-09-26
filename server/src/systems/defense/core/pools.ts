@@ -17,7 +17,7 @@ export const CHEAT_DEATH_HEAL_RATE_KEY = 'cheatDeathHealRate';
 
 // Milliseconds elapsed in the current combat engagement (reset to 0 out of combat).
 // Maintained once per tick in updateDefensiveSystems; read by combat-duration ramps
-// (sustained-fight DR, absorb ramp) including from the combat pipeline.
+// (absorb ramp) including from the combat pipeline.
 export const COMBAT_ELAPSED_KEY = 'combatElapsedMs';
 
 /** Duration over which hit-to-DoT debt and the absorb pool drain (ms). */

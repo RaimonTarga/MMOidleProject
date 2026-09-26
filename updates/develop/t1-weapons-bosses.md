@@ -41,3 +41,22 @@
 - Only a full dodge now blocks a monster's poison, plating shred and other on-hit effects. A
   partial dodge (a graze) still softens the hit, but the effect lands. Evasion gear is no
   longer an accidental answer to the Swamp and Cave bosses.
+
+## Armor: every late vest has its own job
+
+- **Desert (Dawn)** is the short-fight armor. Dawn's damage reduction no longer climbs by
+  tier. It lasts longer instead: 6 seconds at T2, 8 at T3, 10 at T4. It rearms after 4
+  quiet seconds (was 6). Plating grows much less with upgrades.
+- **Jungle** weaves drop their plating and resist poison and other damage over time.
+- **Tundra** stance now builds only while you're actually being attacked. It fades 2
+  seconds after the attacks stop, so it no longer carries into the next fight. It builds
+  over 4 seconds (was 3) and peaks lower (12% at T3, 16% at T4).
+- **Volcanic** armor trades hardening for **reactive plating**. Every hit you take adds 1
+  plating, up to 10 (T3) or 16 (T4). Heavy hits no longer crack it, so it holds up late
+  in a long, hot fight.
+- **Graveyard** armor is back to its Swamp roots: stronger damage-over-time resistance
+  and damage spreading. It loses the hit plating (now on Volcanic armor).
+- **Deep Sea Carapace (Trench)** is the elite-fighting armor: high damage reduction, more
+  HP, and debuff resistance that weakens slows, plating shred, anti-heal and marks.
+  Swamp and Graveyard armor no longer carry debuff resistance.
+- **Mountain** plate gets a little more damage reduction at T3 and T4.

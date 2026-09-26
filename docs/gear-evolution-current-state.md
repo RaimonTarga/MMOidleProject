@@ -125,6 +125,39 @@ neither build nor spend it. Measured: 0.99x the tier median at T3 and T4, and
 Power Strike adds ~36-39% on the staffs (~14% on an axe). Costs are 2.00x the
 predecessor lifetime (1,440 / 2,880 yellow), with the Dominion catalyst.
 
+## Armor niches (2026-09-26)
+
+Each late armor line answers its own biome's threat instead of adding more of the
+same stats. Same survival rule as weapons: in the stand-and-fight lab
+(`server/scripts/_t1BossLab.ts`, `attacker` treatment: swarm / slam / DoT profiles of
+equal raw damage, every class, class-normalized), each vest lands within ~±12% of its
+tier's median overall, and specialists win their own profile while giving up another.
+
+| Line | Niche | Mechanic |
+|---|---|---|
+| Plains | Many small hits | Flat plating (the plating specialist) |
+| Forest | Pure dodge | Evasion |
+| Jungle | Evasion that survives poison | Evasion + stronger graze + DoT resistance; no plating |
+| Cave | Universal | Premium % DR |
+| Mountain | Guard | Guard potency + bulk |
+| Swamp → Graveyard | Damage over time | DoT resistance + hit-to-DoT debt (Mantle: resist; Grave Ward: defer) |
+| Tundra | Standing and trading | Stationary DR; builds only while attacked, fades 2 s after attacks stop |
+| Desert | Short fights | Dawn: 30-35% DR for 6/8/10 s (T2/T3/T4), rearms after 4 quiet s. Keep ≤10 s |
+| Volcanic | Long fights against swarms | Reactive plating: +1 per hit taken (cap 10/16), holds 3 s, fades one stack per 0.5 s; heavy hits don't crack it |
+| Trench | Elites | High DR + HP + debuff resistance (the only armor with it) |
+
+Hardening (`defense.hardening-*`) and sustained-fight DR (`defense.sustained-fight-*`)
+were removed with this pass (no item used them; restore from git history if needed). Tundra stays the
+best stand-and-trade vest when debuffs are not a factor; Trench trails it in the
+debuff-free lab (0.97 vs 1.12 at T4) by design.
+
+One deliberate exception: the T2 Jungle weave keeps its +12 HP per upgrade and reads
+1.25 in the lab (1.53 before). It is the reference armor for ranged and caster classes, and
+cutting that HP cost 9 of 32 T2 ranged boss wins in `bench/defenseMatrix05.ts`
+(Apprentice/Slinger/Spirit, near-misses). With the HP kept, boss wins match the old armor
+(22/42; it loses the Jungle/Forest bosses and gains the Swamp boss through DoT resistance).
+Revisit it after the ranged class pass rather than through armor.
+
 ## Verified
 
 Typecheck clean (4 pkgs); shared rebuild clean; targetPriority + runeMaintenance pass. Sanity (built

@@ -5,6 +5,8 @@ import { isPlayerActivelyInCombat } from '../../combat/ai/engagement';
 import { registerCombatListener } from '../../combat/engine/combatPipeline';
 
 const WINDOW='engagementDrRemainingMs', QUIET='engagementDrQuietMs', USED='engagementDrUsed';
+// Quiet time before Dawn rearms: short, so fast pulls each open protected.
+const REARM_QUIET_MS=4000;
 export function getEngagementDrRemaining(player:PlayerEntity):number{return getResource(player.tracksCombat,WINDOW);}
 function engage(player:PlayerEntity):void{
  const cs=player.tracksCombat;
@@ -25,5 +27,5 @@ export function updateEngagementDr(world:World,player:PlayerEntity,dt:number):vo
  // window during approach. The first confirmed attack starts protection.
  if(active){setResource(cs,QUIET,0);return;}
  const quiet=getResource(cs,QUIET)+dt;setResource(cs,QUIET,quiet);
- if(quiet>=6000)setResource(cs,USED,0);
+ if(quiet>=REARM_QUIET_MS)setResource(cs,USED,0);
 }

@@ -7,7 +7,7 @@
  * (in-combat flag, continuous-move timer, motion direction) — never an RNG roll.
  *
  * The 10 boot lines reduce to these primitives, all owned here:
- *   - Per-tick conditional speed multiplier (Plains/Desert/Tundra/Volcanic + the
+ *   - Per-tick conditional speed multiplier (Forest/Desert/Tundra/Volcanic + the
  *     timed-buff readers) folded into movement.ts via {@link bootSpeedMultiplier}.
  *   - Player-side detection-radius multiplier (Cave stealth / Jungle pull) read by
  *     ai.ts findAggro via {@link playerDetectionMult}.
@@ -86,7 +86,7 @@ export function bootSpeedMultiplier(
   const cs = player.tracksCombat;
   let pct = 0;
 
-  // Plains — out-of-combat sprint; collapses to base the instant combat starts.
+  // Forest — out-of-combat sprint; collapses to base the instant combat starts.
   const ooc = p["mobility.ooc-speed-pct"] ?? 0;
   if (ooc > 0 && !isPlayerInCombat(player, now)) pct += ooc;
 

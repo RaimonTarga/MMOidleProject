@@ -8,18 +8,13 @@ import { attachComponent, detachComponent } from './markerHelpers';
 import { markSliceDirty } from './dirtyHelpers';
 import { hitboxEqual, resolvePlayerHitbox } from '../hitbox/resolve';
 import { syncDevInvulnerability } from '../dev/syncDevInvulnerability';
-import { resetHardening, resetHardeningMaxDr } from '../systems/defense/mitigation/hardening';
 import { resetStationaryDr } from '../systems/defense/mitigation/stationaryDr';
-import { resetSustainedFightDr } from '../systems/defense/mitigation/sustainedFightDr';
 import { resetReactivePlating } from '../systems/defense/mitigation/reactivePlating';
 import { resetBramblePlating } from '../systems/player/abilities/abilityBramble';
 import { syncBarrier } from '../systems/defense/barrier/barrier';
 
 export function recalculatePlayerEntityStats(world: World, entity: PlayerEntity): void {
-  resetHardening(entity);
-  resetHardeningMaxDr(entity);
   resetStationaryDr(entity);
-  resetSustainedFightDr(entity);
   resetReactivePlating(entity);
   resetBramblePlating(entity);
   const evadesHits = entity.evadesHits

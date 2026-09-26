@@ -1,6 +1,6 @@
 import type { Recipe } from './types';
 
-// VOLCANIC (debuts T3). Identity: hardening armor / flurry weapon / always-active
+// VOLCANIC (debuts T3). Identity: reactive-plating armor / flurry weapon / always-active
 // + on-kill Recovery charm. Charm rework: upgrades ramp BOTH mechanics, recovery flat
 // (see mountain.recipes.ts header).
 //
@@ -45,14 +45,17 @@ export const volcanicRecipeEntries = [
     id: 'volcanic-vest-t3', name: 'Emberforge Plate',
     recipeGroup: 'volcanic', requiredBiomeLevel: 2, slot: 'armor',
     // CROSS-BIOME LINEAGE: evolves from the Plains vest (Enduring Robe). Plating is
-    // carried forward literally, on the same stat key, and matured with the hardening ramp.
+    // carried forward literally, on the same stat key, and matured into reactive plating:
+    // every hit taken adds a stack and heavy hits do not crack it. 2026-09-26 armor
+    // niches: this replaced hardening (plating per second, cracked by big hits), which
+    // fought the Volcano's Heat — late in a long fight hits grow and cracked it.
     evolvesFrom: 'plains-vest-t2',
-    cost: { red: 120, yellow: 30 }, stats: {"maxHp": 150, "plating": 8, "damageReduction": 0.14}, // family-tag: inherits plains-vest-t2's Alacrity (plating answers frequent light hits)
+    cost: { red: 120, yellow: 30 }, stats: {"maxHp": 150, "plating": 5, "damageReduction": 0.14}, // family-tag: inherits plains-vest-t2's Alacrity (plating answers frequent light hits)
     reconstructCost: { red: 420, yellow: 105 }, reconstructCatalystCost: { alacrity: 3 },
-    mechanicEffects: {"defense.hardening-max": 8, "defense.hardening-per-sec": 1.3333333333333333, "defense.hardening-reset-pct": 0.25},
+    mechanicEffects: {"defense.hit-plating-per-stack": 1, "defense.hit-plating-max-stacks": 10, "defense.hit-plating-duration-ms": 3000},
     tier: 3,
     icon: 'items/armor/emberforge-plate.png',
-    description: "Hardens under incoming attacks. Heavy gross impacts crack half the earned plating, even through shields.",
+    description: "Each direct hit taken adds 1 plating, up to 10. Heavy hits do not crack it. Stacks hold for 3 seconds after the last hit, then fade one at a time.",
     upgrades: [
       {"cost": {"red": 58, "yellow": 20}, "requiredBiomeLevel": 3, "stats": {"maxHp": 15, "plating": 1}},
       {"cost": {"red": 146, "yellow": 50}, "requiredBiomeLevel": 4, "stats": {"maxHp": 15, "plating": 1}},
@@ -90,16 +93,17 @@ export const volcanicRecipeEntries = [
     // GENUINELY NEW. Plains' Gale Boots are NOT its parent: kill-momentum
     // (`mobility.kill-speed-pct`) is the opposite shape to a standing bonus that is
     // SUPPRESSED on being hit. Kill momentum genuinely ends at T2.
-    cost: { red: 74 }, stats: { speed: 36 }, tier: 3, // family-tag: new Volcanic item → Swarming (native)
+    // 2026-09-26 T2-T4 boots curve normalization: Speed 36->73 (+5: 104->95).
+    cost: { red: 74 }, stats: { speed: 73 }, tier: 3, // family-tag: new Volcanic item → Swarming (native)
     mechanicEffects: { 'mobility.passive-speed-pct': 0.55, 'mobility.suppress-ms': 4000 },
     icon: 'items/boots/magma-walkers.png',
     description: 'Quick as a thrown spark — until a solid blow knocks the wind from them.',
     upgrades: [
-      { stats: { speed: 8 },  cost: { red: 24 },  requiredBiomeLevel: 4 },
-      { stats: { speed: 12 }, cost: { red: 61 },  requiredBiomeLevel: 4 },
-      { stats: { speed: 16 }, cost: { red: 97 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 16 }, cost: { red: 158 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 16 }, cost: { red: 266 }, catalystCost: { swarming: 2 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 3 },  cost: { red: 24 },  requiredBiomeLevel: 4 },
+      { stats: { speed: 4 }, cost: { red: 61 },  requiredBiomeLevel: 4 },
+      { stats: { speed: 5 }, cost: { red: 97 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 5 }, cost: { red: 158 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 5 }, cost: { red: 266 }, catalystCost: { swarming: 2 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -161,13 +165,12 @@ export const volcanicRecipeEntries = [
     id: 'volcanic-vest-t4', name: 'Pyroclasm Mantle',
     recipeGroup: 'volcanic', requiredBiomeLevel: 8, slot: 'armor',
     evolvesFrom: 'volcanic-vest-t3',
-    cost: { red: 220, yellow: 55 }, stats: {"maxHp": 288, "plating": 12, "damageReduction": 0.18}, // family-tag: hardening armor → Alacrity
+    cost: { red: 220, yellow: 55 }, stats: {"maxHp": 288, "plating": 8, "damageReduction": 0.18}, // family-tag: reactive-plating armor → Alacrity
     reconstructCost: { red: 770, yellow: 193 }, reconstructCatalystCost: { alacrity: 4 },
-    // Pressure builds plating; gross heavy impacts crack half the earned ramp.
-    mechanicEffects: {"defense.hardening-max": 12, "defense.hardening-per-sec": 2, "defense.hardening-reset-pct": 0.25},
+    mechanicEffects: {"defense.hit-plating-per-stack": 1, "defense.hit-plating-max-stacks": 16, "defense.hit-plating-duration-ms": 3000},
     tier: 4,
     icon: 'items/armor/pyroclasm-mantle.png',
-    description: "Hardens under incoming attacks. Heavy gross impacts crack half the earned plating, even through shields.",
+    description: "Each direct hit taken adds 1 plating, up to 16. Heavy hits do not crack it. Stacks hold for 3 seconds after the last hit, then fade one at a time.",
     upgrades: [
       {"cost": {"red": 126, "yellow": 32}, "requiredBiomeLevel": 9, "stats": {"maxHp": 29, "plating": 1}},
       {"cost": {"red": 316, "yellow": 79}, "requiredBiomeLevel": 10, "stats": {"maxHp": 29, "plating": 1}},
@@ -181,14 +184,14 @@ export const volcanicRecipeEntries = [
     id: 'volcanic-vest-t4-lavatempered', name: 'Lava-Tempered Hide',
     recipeGroup: 'volcanic', requiredBiomeLevel: 8, slot: 'armor',
     evolvesFrom: 'volcanic-vest-t3',
-    cost: { red: 220, yellow: 55 }, stats: {"maxHp": 288, "plating": 12, "damageReduction": 0.18}, // family-tag: hardening armor → Alacrity
+    cost: { red: 220, yellow: 55 }, stats: {"maxHp": 288, "plating": 8, "damageReduction": 0.18}, // family-tag: reactive-plating armor → Alacrity
     reconstructCost: { red: 770, yellow: 193 }, reconstructCatalystCost: { alacrity: 4 },
     // † overheal-ward-pct: overheal from always-active Recovery becomes a temporary ward.
     //   Pairs naturally with Inferno Heart. (new key)
-    mechanicEffects: {"defense.hardening-max": 6, "defense.hardening-per-sec": 1, "defense.hardening-reset-pct": 0.25, "defense.overheal-ward-pct": 0.5, "defense.overheal-ward-cap-pct": 0.15},
+    mechanicEffects: {"defense.hit-plating-per-stack": 1, "defense.hit-plating-max-stacks": 8, "defense.hit-plating-duration-ms": 3000, "defense.overheal-ward-pct": 0.5, "defense.overheal-ward-cap-pct": 0.15},
     tier: 4,
     icon: 'items/armor/lava-tempered-hide.png',
-    description: "Hardens under incoming attacks. Heavy gross impacts crack half the earned plating, even through shields.",
+    description: "Each direct hit taken adds 1 plating, up to 8. Overheal from always-active Recovery becomes a temporary ward.",
     upgrades: [
       {"cost": {"red": 126, "yellow": 32}, "requiredBiomeLevel": 9, "stats": {"maxHp": 29, "plating": 1}},
       {"cost": {"red": 316, "yellow": 79}, "requiredBiomeLevel": 10, "stats": {"maxHp": 29, "plating": 1}},
@@ -222,17 +225,18 @@ export const volcanicRecipeEntries = [
     id: 'volcanic-boots-t4', name: 'Pyroclast Treads',
     recipeGroup: 'volcanic', requiredBiomeLevel: 10, slot: 'mobility',
     evolvesFrom: 'volcanic-boots-t3',
-    cost: { red: 163 }, stats: { speed: 50 }, tier: 4, // family-tag: volcanic passive-speed mobility → Swarming
+    // 2026-09-26 T2-T4 boots curve normalization: Speed 50->105 (+5: 128->128).
+    cost: { red: 163 }, stats: { speed: 105 }, tier: 4, // family-tag: volcanic passive-speed mobility → Swarming
     reconstructCost: { red: 571 }, reconstructCatalystCost: { swarming: 4 },
     mechanicEffects: { 'mobility.passive-speed-pct': 0.70, 'mobility.suppress-ms': 3500 },
     icon: 'items/boots/pyroclast-treads.png',
     description: 'Swift as a thrown ember — until a solid blow stalls them, and the heat must build again.',
     upgrades: [
-      { stats: { speed: 10 }, cost: { red: 48 },  requiredBiomeLevel: 10 },
-      { stats: { speed: 14 }, cost: { red: 120 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 18 }, cost: { red: 192 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 18 }, cost: { red: 311 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 18 }, cost: { red: 526 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 3 }, cost: { red: 48 },  requiredBiomeLevel: 10 },
+      { stats: { speed: 4 }, cost: { red: 120 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 6 }, cost: { red: 192 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 5 }, cost: { red: 311 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 5 }, cost: { red: 526 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 10 },
     ],
   }],
 

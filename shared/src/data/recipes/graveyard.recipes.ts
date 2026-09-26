@@ -47,12 +47,13 @@ export const graveyardRecipeEntries = [
     evolvesFrom: 'swamp-vest-t3',
     cost: { purple: 220 }, stats: {"maxHp": 302, "damageReduction": 0.18}, // family-tag: dot-resistance armor (Swamp inheritance) → Fortified
     reconstructCost: { purple: 770 }, reconstructCatalystCost: { fortified: 4 },
-    // Direct hits build a short anti-swarm layer; no unconditional plating.
-    // Each hit grants +2 plating for 4s, up to 5 stacks (+10).
-    mechanicEffects: {"defense.dot-resistance": 0.4, "defense.hit-to-dot-pct": 0.15, "defense.debuff-resistance": 0.2, "defense.hit-plating-per-stack": 2, "defense.hit-plating-max-stacks": 5, "defense.hit-plating-duration-ms": 4000},
+    // 2026-09-26 armor niches: the pure Swamp continuation — resist damage over
+    // time and spread hits into it. The Mantle leans on resistance, Grave Ward on
+    // deferral. Its reactive plating moved to Volcanic, its debuff resist to Trench.
+    mechanicEffects: {"defense.dot-resistance": 0.45, "defense.hit-to-dot-pct": 0.2},
     tier: 4,
     icon: 'items/armor/plaguebound-mantle.png',
-    description: "Resists damage over time and defers some direct damage. Direct hits grant 2 plating for 4 seconds, stacking up to 10 plating.",
+    description: "Strongly resists damage over time and spreads part of incoming direct damage into debt.",
     upgrades: [
       {"cost": {"purple": 180}, "requiredBiomeLevel": 3, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
       {"cost": {"purple": 450}, "requiredBiomeLevel": 4, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
@@ -68,9 +69,9 @@ export const graveyardRecipeEntries = [
     evolvesFrom: 'swamp-vest-t3',
     cost: { purple: 220 }, stats: {"maxHp": 302, "damageReduction": 0.18}, // family-tag: dot-resistance armor (Swamp inheritance) → Fortified
     reconstructCost: { purple: 770 }, reconstructCatalystCost: { fortified: 4 },
-    // Debt specialist: larger deferral trades away the Mantle anti-swarm layer.
+    // Debt specialist: larger deferral, less resistance than the Mantle.
     // Debt is repaid normally; this armor grants no automatic forgiveness.
-    mechanicEffects: {"defense.dot-resistance": 0.25, "defense.hit-to-dot-pct": 0.3, "defense.debuff-resistance": 0.2},
+    mechanicEffects: {"defense.dot-resistance": 0.25, "defense.hit-to-dot-pct": 0.3},
     tier: 4,
     icon: 'items/armor/grave-ward.png',
     description: "Resists damage over time and spreads part of incoming direct damage into debt.",
@@ -133,7 +134,8 @@ export const graveyardRecipeEntries = [
   ['graveyard-boots-t4', {
     id: 'graveyard-boots-t4', name: 'Gravewalker Boots',
     recipeGroup: 'graveyard', requiredBiomeLevel: 4, slot: 'mobility',
-    cost: { purple: 80 }, stats: { speed: 30 }, tier: 4, // family-tag: Graveyard native mobility → Swarming
+    // 2026-09-26 T2-T4 boots curve normalization: Speed 30->75 (+5: 98->98).
+    cost: { purple: 80 }, stats: { speed: 75 }, tier: 4, // family-tag: Graveyard native mobility → Swarming
     mechanicEffects: {
       'mobility.kill-stack-speed-pct': 0.12,
       'mobility.kill-stack-tenacity-pct': 0.12,
@@ -142,11 +144,11 @@ export const graveyardRecipeEntries = [
     icon: 'items/boots/gravewalker-boots.png',
     description: 'Each fallen foe lends a little of its lingering haste — and the more that fall, the harder it becomes to hold you down.',
     upgrades: [
-      { stats: { speed: 8 },  cost: { purple: 50 },  requiredBiomeLevel: 4 },
-      { stats: { speed: 12 }, cost: { purple: 125 },  requiredBiomeLevel: 4 },
-      { stats: { speed: 16 }, cost: { purple: 200 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 16 }, cost: { purple: 326 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 16 }, cost: { purple: 551 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 3 },  cost: { purple: 50 },  requiredBiomeLevel: 4 },
+      { stats: { speed: 4 }, cost: { purple: 125 },  requiredBiomeLevel: 4 },
+      { stats: { speed: 6 }, cost: { purple: 200 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 5 }, cost: { purple: 326 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 5 }, cost: { purple: 551 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 4 },
     ],
   }],
 

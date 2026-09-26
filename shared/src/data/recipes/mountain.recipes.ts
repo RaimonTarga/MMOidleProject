@@ -250,7 +250,7 @@ export const mountainRecipeEntries = [
     id: 'mountain-vest-t3', name: 'Summit Aegis',
     recipeGroup: 'mountain', requiredBiomeLevel: 14, slot: 'armor',
     evolvesFrom: 'mountain-vest-t2',
-    cost: { blue: 116, red: 29 }, stats: {"maxHp": 180, "plating": 2, "damageReduction": 0.14}, // family-tag: Guard-amplifying plate → Heavy
+    cost: { blue: 116, red: 29 }, stats: {"maxHp": 180, "plating": 2, "damageReduction": 0.17}, // family-tag: Guard-amplifying plate → Heavy
     reconstructCost: { blue: 406, red: 102 }, reconstructCatalystCost: { heavy: 3 },
     mechanicEffects: {"guard.potency-pct": 0.25},
     tier: 3,
@@ -357,7 +357,7 @@ export const mountainRecipeEntries = [
     id: 'mountain-vest-t4', name: "Titan's Keep",
     recipeGroup: 'mountain', requiredBiomeLevel: 20, slot: 'armor',
     evolvesFrom: 'mountain-vest-t3',
-    cost: { blue: 256, red: 64 }, stats: {"maxHp": 346, "plating": 3, "damageReduction": 0.18}, // family-tag: capstone Guard plate → Heavy
+    cost: { blue: 256, red: 64 }, stats: {"maxHp": 346, "plating": 3, "damageReduction": 0.21}, // family-tag: capstone Guard plate → Heavy
     reconstructCost: { blue: 896, red: 224 }, reconstructCatalystCost: { heavy: 4 },
     // Timed Guard potency replaces the former cap-triggered barrier refill.
     mechanicEffects: {"guard.potency-pct": 0.3},
@@ -378,7 +378,7 @@ export const mountainRecipeEntries = [
     id: 'mountain-vest-t4-stormwall', name: 'Stormwall Plate',
     recipeGroup: 'mountain', requiredBiomeLevel: 20, slot: 'armor',
     evolvesFrom: 'mountain-vest-t3',
-    cost: { blue: 256, red: 64 }, stats: {"maxHp": 346, "plating": 3, "damageReduction": 0.18}, // family-tag: capstone anti-spike plate → Heavy
+    cost: { blue: 256, red: 64 }, stats: {"maxHp": 346, "plating": 3, "damageReduction": 0.21}, // family-tag: capstone anti-spike plate → Heavy
     reconstructCost: { blue: 896, red: 224 }, reconstructCatalystCost: { heavy: 4 },
     // † barrier-break-hp-recovery-pct: when the barrier is emptied, recover 30% of
     //   its max value as HP (armor-side variant; rider cooldown applies).

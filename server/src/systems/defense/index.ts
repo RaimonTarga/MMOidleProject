@@ -12,9 +12,7 @@ import { registerDamageAbsorb, runAbsorbDrain } from "./regen/damageAbsorb";
 import { registerRecoveryOnKill } from "./regen/recoveryOnKill";
 import { runDebuffCleanse } from "./mitigation/debuffCleanse";
 import { runRecovery, resetRecoveryRamp } from "./regen/recovery";
-import { registerHardening, runHardening, resetHardening, runHardeningMaxDr, resetHardeningMaxDr } from "./mitigation/hardening";
-import { runStationaryDr } from "./mitigation/stationaryDr";
-import { runSustainedFightDr } from "./mitigation/sustainedFightDr";
+import { registerStationaryDr, runStationaryDr } from "./mitigation/stationaryDr";
 import { registerReactivePlating, runReactivePlating } from "./mitigation/reactivePlating";
 import {
   registerBrambleReflect,
@@ -55,8 +53,8 @@ export function initDefenseSystems(): void {
   withCombatRegistrationLabel('registerCheatDeath', registerCheatDeath);
   withCombatRegistrationLabel('registerDamageAbsorb', registerDamageAbsorb);
   withCombatRegistrationLabel('registerRecoveryOnKill', registerRecoveryOnKill);
-  withCombatRegistrationLabel('registerHardening', registerHardening);
   withCombatRegistrationLabel('registerReactivePlating', registerReactivePlating);
+  withCombatRegistrationLabel('registerStationaryDr', registerStationaryDr);
   withCombatRegistrationLabel('registerBrambleReflect', registerBrambleReflect);
 }
 
@@ -82,11 +80,9 @@ export function updateDefensiveSystems(
       resetCheatDeath(player);
       resetDebtCheatDeath(player);
       resetRecoveryRamp(player);
-      resetHardening(player);
-      resetHardeningMaxDr(player);
     }
 
-    // Combat-elapsed timer for in-fight ramps (sustained-fight DR, absorb ramp).
+    // Combat-elapsed timer for in-fight ramps (absorb ramp).
     // Reset to 0 out of combat; accumulated before the ramps that read it run.
     setResource(
       player.tracksCombat,
@@ -104,11 +100,8 @@ export function updateDefensiveSystems(
     // all activate a fraction of the same rate, so they must not be applied
     // separately (that is what made them independent %-maxHp heals before).
     runRecovery(world, player, dt, inCombat, isPlayerInHazardousNodeFeature(world, player));
-    runHardening(world, player, dt);
-    runHardeningMaxDr(world, player);
     runStationaryDr(world, player, dt);
-    runSustainedFightDr(world, player);
-    runReactivePlating(world, player);
+    runReactivePlating(world, player, dt);
     runBramblePlating(world, player);
   }
 }

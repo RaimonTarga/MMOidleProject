@@ -253,13 +253,13 @@ export const swampRecipeEntries = [
   ['swamp-vest-t3', {
     id: 'swamp-vest-t3', name: 'Plaguebound Shroud',
     recipeGroup: 'swamp', requiredBiomeLevel: 14, slot: 'armor',
-    // PURE purple by design, not by omission: debuff-resist/cleanse IS the purple
-    // identity (it is what Desert's Eternal Duneplate borrows purple *for*). A Swamp
-    // item borrowing purple from Swamp is not a hybrid, so there is nothing to splash.
+    // PURE purple by design, not by omission: a Swamp item borrowing purple from
+    // Swamp is not a hybrid, so there is nothing to splash. (Debuff resistance moved
+    // to the Trench carapace on 2026-09-26; this lineage owns damage over time.)
     evolvesFrom: 'swamp-vest-t2',
     cost: { purple: 140 }, stats: {"maxHp": 158, "damageReduction": 0.14}, // family-tag: dot-resistance armor → Fortified
     reconstructCost: { purple: 490 }, reconstructCatalystCost: { fortified: 3 },
-    mechanicEffects: {"defense.dot-resistance": 0.35, "defense.hit-to-dot-pct": 0.2, "defense.debuff-resistance": 0.2},
+    mechanicEffects: {"defense.dot-resistance": 0.35, "defense.hit-to-dot-pct": 0.2},
     tier: 3,
     icon: 'items/armor/plaguebound-shroud.png',
     description: "Resists damage over time and spreads part of incoming direct damage into debt.",

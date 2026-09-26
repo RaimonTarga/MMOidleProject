@@ -1,12 +1,19 @@
-import { applyStatusEffect, getStatusEffect, getResource, setResource } from '@mmo-idle/shared';
+import { getResource, setResource, isCooldownActive, setCooldown } from '@mmo-idle/shared';
 import { registerCombatListener } from '../../combat/engine/combatPipeline';
 import type { PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { markSliceDirty } from '../../../ecs/dirtyHelpers';
 
-const EFFECT_ID = 'reactive-plating';
-// Integer plating currently added to mitigatesDamage.plating from the buff.
+// Integer plating currently added to mitigatesDamage.plating from the stacks.
 const APPLIED_KEY = 'reactivePlatingApplied';
+const STACKS_KEY = 'reactivePlatingStacks';
+// Milliseconds accumulated toward the next single-stack fade.
+const FADE_KEY = 'reactivePlatingFadeMs';
+// Held while hits keep landing; stacks only start fading once it lapses.
+const HOLD_CD = 'reactivePlatingHold';
+// After the hold window, stacks leave one at a time rather than all at once, so
+// a brief lull in a swarm fight costs a little plating, not the whole build.
+const FADE_STEP_MS = 500;
 
 /** Current reactive-plating bonus applied (integer plating). For the buff descriptor. */
 export function getReactivePlatingBonus(player: PlayerEntity): number {
@@ -15,16 +22,20 @@ export function getReactivePlatingBonus(player: PlayerEntity): number {
 
 /** Remove the applied reactive plating and zero tracking (recalc, before rebuild). */
 export function resetReactivePlating(player: PlayerEntity): void {
-  const applied = Math.round(getResource(player.tracksCombat, APPLIED_KEY));
+  const cs = player.tracksCombat;
+  setResource(cs, STACKS_KEY, 0);
+  setResource(cs, FADE_KEY, 0);
+  const applied = Math.round(getResource(cs, APPLIED_KEY));
   if (applied <= 0) return;
   player.mitigatesDamage.plating -= applied;
-  setResource(player.tracksCombat, APPLIED_KEY, 0);
+  setResource(cs, APPLIED_KEY, 0);
 }
 
 /**
  * Register the reactive-plating listener: each direct hit taken adds one stack
  * (up to `hit-plating-max-stacks`) and refreshes the `hit-plating-duration-ms`
- * window. The plating itself is synced from the stack count in runReactivePlating.
+ * hold window. Big hits do not crack it — the answer to long swarm fights under
+ * the Volcano's Heat, where late hits grow large.
  */
 export function registerReactivePlating(): void {
   registerCombatListener('onDamageTaken', (ctx, _world) => {
@@ -33,44 +44,35 @@ export function registerReactivePlating(): void {
     if (ctx.metadata['isDot']) return; // direct hits only
 
     const player = ctx.defender;
-    const perStack = player.usesSkills.passives['defense.hit-plating-per-stack'] ?? 0;
-    if (perStack <= 0) return;
+    const passives = player.usesSkills.passives;
+    if ((passives['defense.hit-plating-per-stack'] ?? 0) <= 0) return;
 
-    const maxStacks  = Math.max(1, Math.round(player.usesSkills.passives['defense.hit-plating-max-stacks'] ?? 1));
-    const durationMs = player.usesSkills.passives['defense.hit-plating-duration-ms'] ?? 4000;
-    applyStatusEffect(player.tracksCombat, {
-      id: EFFECT_ID,
-      maxStacks,
-      instanced: false,
-      refreshable: true,
-      remainingMs: durationMs,
-      sourceId: player.isPlayer.id,
-      data: { totalMs: durationMs, platingPerStack: perStack },
-    });
+    const cs = player.tracksCombat;
+    const maxStacks = Math.max(1, Math.round(passives['defense.hit-plating-max-stacks'] ?? 1));
+    setResource(cs, STACKS_KEY, Math.min(maxStacks, getResource(cs, STACKS_KEY) + 1));
+    setResource(cs, FADE_KEY, 0);
+    setCooldown(cs, HOLD_CD, passives['defense.hit-plating-duration-ms'] ?? 3000);
   });
 }
 
 /**
- * Per-tick sync of reactive plating onto `mitigatesDamage.plating` from the
- * current stack count (the status effect decays on its own in updateCombatState).
- * Applied in place (networked) so the stat sheet reflects it live.
+ * Per-tick: once the hold window lapses, drop one stack every FADE_STEP_MS, then
+ * sync the plating onto `mitigatesDamage.plating` in place (networked).
  */
-export function runReactivePlating(world: World, player: PlayerEntity): void {
+export function runReactivePlating(world: World, player: PlayerEntity, dt: number): void {
   const cs = player.tracksCombat;
   const perStack = player.usesSkills.passives['defense.hit-plating-per-stack'] ?? 0;
-  const applied = Math.round(getResource(cs, APPLIED_KEY));
+  let stacks = perStack > 0 ? getResource(cs, STACKS_KEY) : 0;
 
-  if (perStack <= 0) {
-    if (applied > 0) {
-      player.mitigatesDamage.plating -= applied;
-      setResource(cs, APPLIED_KEY, 0);
-      markSliceDirty(world, player, 'mitigatesDamage');
-    }
-    return;
+  if (stacks > 0 && !isCooldownActive(cs, HOLD_CD)) {
+    let fade = getResource(cs, FADE_KEY) + dt;
+    while (fade >= FADE_STEP_MS && stacks > 0) { fade -= FADE_STEP_MS; stacks -= 1; }
+    setResource(cs, FADE_KEY, stacks > 0 ? fade : 0);
+    setResource(cs, STACKS_KEY, stacks);
   }
 
-  const effect = getStatusEffect(cs, EFFECT_ID);
-  const target = effect ? Math.round(effect.stacks * perStack) : 0;
+  const applied = Math.round(getResource(cs, APPLIED_KEY));
+  const target = Math.round(stacks * perStack);
   const delta = target - applied;
   if (delta !== 0) {
     player.mitigatesDamage.plating += delta;

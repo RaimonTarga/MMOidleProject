@@ -70,12 +70,9 @@ export const BUFF_IDS = [
   'defense-absorb',
   'defense-recovery',
   'defense-debt',
-  'defense-hardening',
   'defense-revive-heal',     // post-cheat-death heal-over-time
   'defense-stationary-dr',   // stationary DR ramp
   'defense-engagement-dr',  // Desert opening protection
-  'defense-sustained-dr',    // sustained-fight DR ramp
-  'defense-hardening-maxdr', // max-hardening DR pulse
   'defense-reactive-plating',// on-hit stacking plating buff
   'summoner-volatile-brood',
   'summoner-endless-swarm',

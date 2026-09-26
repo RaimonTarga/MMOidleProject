@@ -5,16 +5,14 @@ import type { Recipe } from './types';
 // (see mountain.recipes.ts header). MIGRATION: hardening stripped from the T2 armor
 // (it now lives on Volcano) — Jungle armor is pure evasion+bulk at every tier.
 
-// Specialist plating kept on the T2-T4 Jungle weaves after the defense rebudget:
-// half the pre-rebudget values, so ranged/caster wearers keep a flat answer to
-// packs of small hitters (screened 2026-09-25; see reports/defense-rework-2026-09-25).
-const JUNGLE_PLATING = {
-  t2: { base: 3, perUpgrade: 1 },
-  t3: { base: 7, perUpgrade: 2 },
-  t4: { base: 12, perUpgrade: 3 },
-} as const;
-// T2 weave per-upgrade HP stays at its pre-rebudget +12: the rebudget's ~+5 left
-// +5 wearers 31 HP short and cost T2 Spirit three near-miss boss fights.
+// 2026-09-26 armor niches: Jungle is the evasion weave that holds up against
+// poison. Its plating went (flat plating is Plains/Desert's answer to small hits)
+// and damage-over-time resistance came in: only a full dodge blocks ailments, so
+// pure evasion folds to the Jungle's poison. It keeps a stronger graze and more
+// HP than Forest, and slightly less evasion.
+// T2 weave per-upgrade HP stays at its pre-rebudget +12: less left ranged/caster
+// wearers short in near-miss T2 boss fights (rebudget 2026-09-25, and re-measured by
+// the 2026-09-26 niches matrix: +6 lost 9 of 32 T2 ranged boss wins).
 const JUNGLE_T2_UPGRADE_HP = 12;
 
 export const jungleRecipeEntries = [
@@ -42,19 +40,19 @@ export const jungleRecipeEntries = [
   ['jungle-vest-t2', {
     id: 'jungle-vest-t2', name: 'Verdant Weave',
     recipeGroup: 'jungle', requiredBiomeLevel: 2, slot: 'armor',
-    cost: { green: 48, yellow: 12 }, stats: {"maxHp": 52, "evasion": 0.28, "damageReduction": 0.04, plating: JUNGLE_PLATING.t2.base}, // family-tag: evasion armor (anti-fast-hit) → Alacrity
+    cost: { green: 48, yellow: 12 }, stats: {"maxHp": 52, "evasion": 0.28, "damageReduction": 0.04}, // family-tag: evasion armor (anti-fast-hit) → Alacrity
     tier: 2,
     icon: 'items/armor/verdant-weave.png',
-    description: "Evades soften direct hits; a full dodge also prevents on-hit ailments. Jungle weave strengthens each evade.",
+    description: "Evades soften direct hits; a full dodge also prevents on-hit ailments. Jungle weave strengthens each evade and resists damage over time.",
     upgrades: [
-      {"cost": {"green": 31, "yellow": 8}, "requiredBiomeLevel": 3, "stats": {"maxHp": JUNGLE_T2_UPGRADE_HP, "evasion": 0.016, plating: JUNGLE_PLATING.t2.perUpgrade}},
-      {"cost": {"green": 78, "yellow": 20}, "requiredBiomeLevel": 4, "stats": {"maxHp": JUNGLE_T2_UPGRADE_HP, "evasion": 0.016, plating: JUNGLE_PLATING.t2.perUpgrade}},
-      {"cost": {"green": 125, "yellow": 31}, "requiredBiomeLevel": 4, "stats": {"maxHp": JUNGLE_T2_UPGRADE_HP, "evasion": 0.016, plating: JUNGLE_PLATING.t2.perUpgrade}},
-      {"cost": {"green": 203, "yellow": 51}, "catalystCost": {"alacrity": 1}, "requiredBiomeLevel": 4, "stats": {"maxHp": JUNGLE_T2_UPGRADE_HP, "evasion": 0.016, plating: JUNGLE_PLATING.t2.perUpgrade}},
-      {"cost": {"green": 342, "yellow": 86}, "catalystCost": {"alacrity": 2}, "requiredBiomeLevel": 4, "stats": {"maxHp": JUNGLE_T2_UPGRADE_HP, "evasion": 0.016, plating: JUNGLE_PLATING.t2.perUpgrade}}
+      {"cost": {"green": 31, "yellow": 8}, "requiredBiomeLevel": 3, "stats": {"maxHp": JUNGLE_T2_UPGRADE_HP, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"green": 78, "yellow": 20}, "requiredBiomeLevel": 4, "stats": {"maxHp": JUNGLE_T2_UPGRADE_HP, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"green": 125, "yellow": 31}, "requiredBiomeLevel": 4, "stats": {"maxHp": JUNGLE_T2_UPGRADE_HP, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"green": 203, "yellow": 51}, "catalystCost": {"alacrity": 1}, "requiredBiomeLevel": 4, "stats": {"maxHp": JUNGLE_T2_UPGRADE_HP, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"green": 342, "yellow": 86}, "catalystCost": {"alacrity": 2}, "requiredBiomeLevel": 4, "stats": {"maxHp": JUNGLE_T2_UPGRADE_HP, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}}
     ],
 
-mechanicEffects: {"defense.evade-mitigation": 0.2},
+mechanicEffects: {"defense.evade-mitigation": 0.2, "defense.dot-resistance": 0.15},
 }],
 
   // Charm: recovery flat; upgrades ramp ramp-regen MAX 0.21 -> 0.30 (start/ramptime flat).
@@ -82,16 +80,17 @@ mechanicEffects: {"defense.evade-mitigation": 0.2},
   ['jungle-boots-t2', {
     id: 'jungle-boots-t2', name: 'Vine Wraps',
     recipeGroup: 'jungle', requiredBiomeLevel: 4, slot: 'mobility',
-    cost: { green: 30 }, stats: { speed: 22 }, tier: 2, // family-tag: jungle mobility → Alacrity
+    // 2026-09-26 T2-T4 boots curve normalization: Speed 22->47 (+5: 61->61).
+    cost: { green: 30 }, stats: { speed: 47 }, tier: 2, // family-tag: jungle mobility → Alacrity
     mechanicEffects: { 'mobility.aggro-pull-pct': 0.50 },
     icon: 'items/boots/vine-wraps.png',
     description: 'Springy growth lashed to the feet, always eager to be running.',
     upgrades: [
-      { stats: { speed: 5 }, cost: { green: 12 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 7 }, cost: { green: 30 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 9 }, cost: { green: 48 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 9 }, cost: { green: 78 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 9 }, cost: { green: 132 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 2 }, cost: { green: 12 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 3 }, cost: { green: 30 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 3 }, cost: { green: 48 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 3 }, cost: { green: 78 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 3 }, cost: { green: 132 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -124,20 +123,20 @@ mechanicEffects: {"defense.evade-mitigation": 0.2},
     id: 'jungle-vest-t3', name: 'Wildgrowth Weave',
     recipeGroup: 'jungle', requiredBiomeLevel: 8, slot: 'armor',
     evolvesFrom: 'jungle-vest-t2',
-    cost: { green: 90, yellow: 30 }, stats: {"maxHp": 143, "evasion": 0.32, "damageReduction": 0.07, plating: JUNGLE_PLATING.t3.base}, // family-tag: evasion armor → Alacrity
+    cost: { green: 90, yellow: 30 }, stats: {"maxHp": 143, "evasion": 0.32, "damageReduction": 0.07}, // family-tag: evasion armor → Alacrity
     reconstructCost: { green: 315, yellow: 105 }, reconstructCatalystCost: { alacrity: 3 },
     tier: 3,
     icon: 'items/armor/wildgrowth-weave.png',
-    description: "Evades soften direct hits; a full dodge also prevents on-hit ailments. Jungle weave strengthens each evade.",
+    description: "Evades soften direct hits; a full dodge also prevents on-hit ailments. Jungle weave strengthens each evade and resists damage over time.",
     upgrades: [
-      {"cost": {"green": 59, "yellow": 19}, "requiredBiomeLevel": 9, "stats": {"maxHp": 15, "evasion": 0.016, plating: JUNGLE_PLATING.t3.perUpgrade}},
-      {"cost": {"green": 146, "yellow": 49}, "requiredBiomeLevel": 10, "stats": {"maxHp": 14, "evasion": 0.016, plating: JUNGLE_PLATING.t3.perUpgrade}},
-      {"cost": {"green": 234, "yellow": 78}, "requiredBiomeLevel": 10, "stats": {"maxHp": 15, "evasion": 0.016, plating: JUNGLE_PLATING.t3.perUpgrade}},
-      {"cost": {"green": 380, "yellow": 127}, "catalystCost": {"alacrity": 2}, "requiredBiomeLevel": 10, "stats": {"maxHp": 14, "evasion": 0.016, plating: JUNGLE_PLATING.t3.perUpgrade}},
-      {"cost": {"green": 644, "yellow": 214}, "catalystCost": {"alacrity": 3}, "requiredBiomeLevel": 10, "stats": {"maxHp": 15, "evasion": 0.016, plating: JUNGLE_PLATING.t3.perUpgrade}}
+      {"cost": {"green": 59, "yellow": 19}, "requiredBiomeLevel": 9, "stats": {"maxHp": 15, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"green": 146, "yellow": 49}, "requiredBiomeLevel": 10, "stats": {"maxHp": 14, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"green": 234, "yellow": 78}, "requiredBiomeLevel": 10, "stats": {"maxHp": 15, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"green": 380, "yellow": 127}, "catalystCost": {"alacrity": 2}, "requiredBiomeLevel": 10, "stats": {"maxHp": 14, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"green": 644, "yellow": 214}, "catalystCost": {"alacrity": 3}, "requiredBiomeLevel": 10, "stats": {"maxHp": 15, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}}
     ],
 
-mechanicEffects: {"defense.evade-mitigation": 0.25},
+mechanicEffects: {"defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.2},
 }],
 
   // Charm: recovery flat; upgrades ramp ramp-regen MAX 0.23 -> 0.35.
@@ -171,17 +170,18 @@ mechanicEffects: {"defense.evade-mitigation": 0.25},
     id: 'jungle-boots-t3', name: 'Canopy Striders',
     recipeGroup: 'jungle', requiredBiomeLevel: 10, slot: 'mobility',
     evolvesFrom: 'jungle-boots-t2',
-    cost: { green: 90 }, stats: { speed: 44 }, tier: 3, // family-tag: jungle mobility → Alacrity
+    // 2026-09-26 T2-T4 boots curve normalization: Speed 44->68 (+5: 88->88).
+    cost: { green: 90 }, stats: { speed: 68 }, tier: 3, // family-tag: jungle mobility → Alacrity
     reconstructCost: { green: 315 }, reconstructCatalystCost: { alacrity: 3 },
     mechanicEffects: { 'mobility.aggro-pull-pct': 0.65 },
     icon: 'items/boots/canopy-striders.png',
     description: 'They crash through the green loud enough to turn every hungry thing your way.',
     upgrades: [
-      { stats: { speed: 6 },  cost: { green: 23 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 8 },  cost: { green: 57 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 10 }, cost: { green: 91 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 10 }, cost: { green: 148 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 10 }, cost: { green: 251 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 3 },  cost: { green: 23 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 4 },  cost: { green: 57 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 5 }, cost: { green: 91 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 4 }, cost: { green: 148 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 4 }, cost: { green: 251 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -213,20 +213,20 @@ mechanicEffects: {"defense.evade-mitigation": 0.25},
     id: 'jungle-vest-t4', name: 'Primal Canopy',
     recipeGroup: 'jungle', requiredBiomeLevel: 14, slot: 'armor',
     evolvesFrom: 'jungle-vest-t3',
-    cost: { green: 220, yellow: 55 }, stats: {"maxHp": 274, "evasion": 0.36, "damageReduction": 0.1, plating: JUNGLE_PLATING.t4.base}, // family-tag: evasion armor → Alacrity
+    cost: { green: 220, yellow: 55 }, stats: {"maxHp": 274, "evasion": 0.36, "damageReduction": 0.1}, // family-tag: evasion armor → Alacrity
     reconstructCost: { green: 770, yellow: 193 }, reconstructCatalystCost: { alacrity: 4 },
     // Bonus evade-mitigation: increases the fraction of damage avoided on an evade
     // (the reload-class mechanic). Stacks on GAME_CONFIG.EVADE_MITIGATION_BASE.
-    mechanicEffects: {"defense.evade-mitigation": 0.3},
+    mechanicEffects: {"defense.evade-mitigation": 0.3, "defense.dot-resistance": 0.25},
     tier: 4,
     icon: 'items/armor/primal-canopy.png',
-    description: "Evades soften direct hits; a full dodge also prevents on-hit ailments. Jungle weave strengthens each evade.",
+    description: "Evades soften direct hits; a full dodge also prevents on-hit ailments. Jungle weave strengthens each evade and resists damage over time.",
     upgrades: [
-      {"cost": {"green": 124, "yellow": 31}, "requiredBiomeLevel": 15, "stats": {"maxHp": 27, "evasion": 0.016, plating: JUNGLE_PLATING.t4.perUpgrade}},
-      {"cost": {"green": 310, "yellow": 77}, "requiredBiomeLevel": 16, "stats": {"maxHp": 27, "evasion": 0.016, plating: JUNGLE_PLATING.t4.perUpgrade}},
-      {"cost": {"green": 494, "yellow": 124}, "requiredBiomeLevel": 16, "stats": {"maxHp": 27, "evasion": 0.016, plating: JUNGLE_PLATING.t4.perUpgrade}},
-      {"cost": {"green": 804, "yellow": 201}, "catalystCost": {"alacrity": 3}, "requiredBiomeLevel": 16, "stats": {"maxHp": 27, "evasion": 0.016, plating: JUNGLE_PLATING.t4.perUpgrade}},
-      {"cost": {"green": 1360, "yellow": 340}, "catalystCost": {"alacrity": 4}, "requiredBiomeLevel": 16, "stats": {"maxHp": 29, "evasion": 0.016, plating: JUNGLE_PLATING.t4.perUpgrade}}
+      {"cost": {"green": 124, "yellow": 31}, "requiredBiomeLevel": 15, "stats": {"maxHp": 27, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"green": 310, "yellow": 77}, "requiredBiomeLevel": 16, "stats": {"maxHp": 27, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"green": 494, "yellow": 124}, "requiredBiomeLevel": 16, "stats": {"maxHp": 27, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"green": 804, "yellow": 201}, "catalystCost": {"alacrity": 3}, "requiredBiomeLevel": 16, "stats": {"maxHp": 27, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"green": 1360, "yellow": 340}, "catalystCost": {"alacrity": 4}, "requiredBiomeLevel": 16, "stats": {"maxHp": 29, "evasion": 0.016}, "mechanicEffects": {"defense.dot-resistance": 0.02}}
     ],
   }],
 
@@ -279,17 +279,18 @@ mechanicEffects: {"defense.evade-mitigation": 0.25},
     id: 'jungle-boots-t4', name: 'Warpath Treads',
     recipeGroup: 'jungle', requiredBiomeLevel: 16, slot: 'mobility',
     evolvesFrom: 'jungle-boots-t3',
-    cost: { green: 198 }, stats: { speed: 66 }, tier: 4, // family-tag: jungle mobility → Alacrity
+    // 2026-09-26 T2-T4 boots curve normalization: Speed 66->97 (+5: 120->120).
+    cost: { green: 198 }, stats: { speed: 97 }, tier: 4, // family-tag: jungle mobility → Alacrity
     reconstructCost: { green: 693 }, reconstructCatalystCost: { alacrity: 4 },
     mechanicEffects: { 'mobility.aggro-pull-pct': 0.80 },
     icon: 'items/boots/warpath-treads.png',
     description: 'They tear through the green loud enough to wake the whole canopy — and bring all of it to you at once.',
     upgrades: [
-      { stats: { speed: 8 },  cost: { green: 45 },  requiredBiomeLevel: 16 },
-      { stats: { speed: 10 }, cost: { green: 112 }, requiredBiomeLevel: 16 },
-      { stats: { speed: 12 }, cost: { green: 180 }, requiredBiomeLevel: 16 },
-      { stats: { speed: 12 }, cost: { green: 292 }, requiredBiomeLevel: 16 },
-      { stats: { speed: 12 }, cost: { green: 493 }, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 16 },
+      { stats: { speed: 4 },  cost: { green: 45 },  requiredBiomeLevel: 16 },
+      { stats: { speed: 4 }, cost: { green: 112 }, requiredBiomeLevel: 16 },
+      { stats: { speed: 5 }, cost: { green: 180 }, requiredBiomeLevel: 16 },
+      { stats: { speed: 5 }, cost: { green: 292 }, requiredBiomeLevel: 16 },
+      { stats: { speed: 5 }, cost: { green: 493 }, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 16 },
     ],
   }],
 

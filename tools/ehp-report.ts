@@ -82,14 +82,6 @@ const DR_CAP = 0.9; // mirrors the shared stats.ts DR clamp and the in-place ser
  */
 const STATIONARY_FRACTION = clamp01(numberArg('--stationary-fraction') ?? 0.5);
 
-/**
- * Assumed seconds between hits large enough to trip `defense.hardening-reset-pct`
- * when only the attacker's SPIKE crosses that threshold (Volcanic). The report has
- * no spike cadence for a generic attacker, so this stands in. Chosen to sit between
- * a cadence finisher (every ~5 swings) and a boss charged cast (~10-20 s).
- */
-const HARDENING_SPIKE_INTERVAL_SEC = 12;
-
 function clamp01(v: number): number {
   return Math.max(0, Math.min(1, v));
 }
@@ -592,23 +584,15 @@ function recoveryPerSec(
 }
 
 /**
- * Time-averaged mitigation from the four RAMPING defences, over `REPORT_HORIZON_SEC`.
+ * Time-averaged mitigation from the RAMPING defences, over `REPORT_HORIZON_SEC`.
  *
  * These are conditional, so each is averaged over its own runtime ramp shape rather
  * than credited at its printed maximum:
  *
- *   hardening          (Volcanic)  plating +perSec/s, capped at `hardening-max`,
- *                                  reset to 0 by any hit >= `hardening-reset-pct x maxHp`
- *   reactive plating   (Wasteland) +perStack per direct hit taken, up to maxStacks,
- *                                  each hit refreshing a duration window
+ *   reactive plating   (Volcanic)  +perStack per direct hit taken, up to maxStacks,
+ *                                  held while hits keep landing inside the window
  *   stationary DR      (Tundra)    ramps to `stationary-dr-pct` over ramptime while
- *                                  standing, erodes at the same rate while moving
- *   sustained-fight DR (Trench)    +bonus per step, reaching `-max` at ramptime
- *
- * The hardening reset test is evaluated against the player's BASE mitigation, not
- * the hardened value. That breaks the circular dependency (hardening changes the
- * hit size that decides whether hardening resets) on the conservative side: it is
- * the reading at the start of a fight, before any plating has accumulated.
+ *                                  standing under attack, erodes while moving
  */
 function rampedMitigation(
   stats: PlayerStatsTarget,
@@ -623,60 +607,6 @@ function rampedMitigation(
 
   let platingBonus = 0;
   let drBonus = 0;
-
-  // ── Hardening (plating ramp with a big-hit reset) ─────────────────────────
-  const hardenPerSec = p['defense.hardening-per-sec'] ?? 0;
-  const hardenMax = p['defense.hardening-max'] ?? 0;
-  if (hardenPerSec > 0 && hardenMax > 0) {
-    const resetPct = p['defense.hardening-reset-pct'] ?? 0;
-    const threshold = resetPct > 0 ? maxHp * resetPct : Number.POSITIVE_INFINITY;
-    const baseHit = estimateMonsterHitDamage({
-      attack: attacker.attack,
-      targetPlating: basePlating,
-      targetDamageReduction: baseDr,
-    });
-    // Runtime multiplies the spike AFTER mitigation, so mirror that ordering here.
-    const spikeHit = baseHit * attacker.spikeMult;
-
-    let resetSec: number;
-    if (baseHit >= threshold) resetSec = 1 / hitsPerSec;
-    else if (spikeHit >= threshold) resetSec = HARDENING_SPIKE_INTERVAL_SEC;
-    else resetSec = Number.POSITIVE_INFINITY;
-
-    const rampSec = hardenMax / hardenPerSec;
-    let avg: number;
-    if (!Number.isFinite(resetSec)) {
-      // Never reset: ramps once, then holds at max for the rest of the window.
-      avg = REPORT_HORIZON_SEC > rampSec
-        ? hardenMax * (1 - rampSec / (2 * REPORT_HORIZON_SEC))
-        : (hardenPerSec * REPORT_HORIZON_SEC) / 2;
-    } else if (resetSec >= rampSec) {
-      // Sawtooth that reaches max before each reset.
-      avg = hardenMax * (1 - rampSec / (2 * resetSec));
-    } else {
-      // Reset before the ramp completes: a pure triangle wave.
-      avg = (hardenPerSec * resetSec) / 2;
-    }
-    platingBonus += avg;
-    notes.push(
-      `hardening averages +${asNumber(avg)} plating (max ${asNumber(hardenMax)}, `
-      + (Number.isFinite(resetSec) ? `reset every ${asNumber(resetSec)}s` : 'never reset')
-      + ')',
-    );
-
-    // Max-DR pulse: only live while hardening sits AT max, so it inherits the
-    // fraction of the window spent there.
-    const maxDrBonus = p['defense.hardening-max-dr-bonus'] ?? 0;
-    if (maxDrBonus > 0 && (p['defense.hardening-max-dr-ms'] ?? 0) > 0) {
-      const atMaxFrac = !Number.isFinite(resetSec)
-        ? Math.max(0, 1 - rampSec / REPORT_HORIZON_SEC)
-        : Math.max(0, 1 - rampSec / resetSec);
-      if (atMaxFrac > 0) {
-        drBonus += maxDrBonus * atMaxFrac;
-        notes.push(`hardening max-DR pulse active ${Math.round(atMaxFrac * 100)}% of the window`);
-      }
-    }
-  }
 
   // ── Reactive plating (stacks per hit taken) ───────────────────────────────
   const reactivePerStack = p['defense.hit-plating-per-stack'] ?? 0;
@@ -709,22 +639,6 @@ function rampedMitigation(
     notes.push(
       `stationary DR averages +${Math.round(avg * 100)}% `
       + `(${Math.round(STATIONARY_FRACTION * 100)}% stationary; max ${Math.round(stationaryMax * 100)}%)`,
-    );
-  }
-
-  // ── Sustained-fight DR (Trench) ───────────────────────────────────────────
-  const sustainedStep = p['defense.sustained-fight-dr-bonus'] ?? 0;
-  const sustainedMax = p['defense.sustained-fight-dr-max'] ?? 0;
-  const sustainedRampMs = p['defense.sustained-fight-ramptime-ms'] ?? 0;
-  if (sustainedStep > 0 && sustainedMax > 0 && sustainedRampMs > 0) {
-    const rampSec = sustainedRampMs / 1000;
-    const avg = REPORT_HORIZON_SEC >= rampSec
-      ? sustainedMax * (1 - rampSec / (2 * REPORT_HORIZON_SEC))
-      : (sustainedMax * REPORT_HORIZON_SEC) / (2 * rampSec);
-    drBonus += avg;
-    notes.push(
-      `sustained-fight DR averages +${Math.round(avg * 100)}% over ${REPORT_HORIZON_SEC}s `
-      + `(max ${Math.round(sustainedMax * 100)}% at ${asNumber(rampSec)}s)`,
     );
   }
 
@@ -1736,7 +1650,7 @@ Generated from \`tools/ehp-report.ts --llm-packet\`. Progression-focused compani
 - **Kill-burst** recovery is undercounted (no kill cadence modeled); flagged in the charm table.
 - **Evasion** is averaged (dodgeRate × evade-mitigation), not the deterministic first-hit accumulator.
 - **Barrier** is a flat one-time buffer — no between-engagement recharge, no burst-vs-chip interaction, no DoT bypass beyond notes.
-- **Ramping mitigations ARE modelled**, as duty-cycle averages over the ${REPORT_HORIZON_SEC}s window, never at their printed maximum: hardening (ramp + big-hit reset, assumed spike cadence ${HARDENING_SPIKE_INTERVAL_SEC}s when only a spike trips it), reactive plating (stack ramp against the attacker's own cadence), stationary DR (scaled by an assumed ${Math.round(STATIONARY_FRACTION * 100)}% stationary duty cycle — override with \`--stationary-fraction\`), and sustained-fight DR. Each is printed in the affected row's notes. The assumed duty cycles are the two judgement calls in this report; treat Tundra and Volcanic rows accordingly.
+- **Ramping mitigations ARE modelled**, as duty-cycle averages over the ${REPORT_HORIZON_SEC}s window, never at their printed maximum: reactive plating (stack ramp against the attacker's own cadence), stationary DR (scaled by an assumed ${Math.round(STATIONARY_FRACTION * 100)}% stationary duty cycle — override with \`--stationary-fraction\`). Each is printed in the affected row's notes. The assumed duty cycles are the two judgement calls in this report; treat Tundra and Volcanic rows accordingly.
 - **Not** modelled: core DR layer, wards, barrier recharge, barrier-break heals, on-kill Recovery.
 - **Multi-enemy pressure** is not modeled; a single attacker profile is assumed (idle pulls are often several mobs).
 

@@ -69,12 +69,9 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'defense-recovery': b('Recovery', 'How much of your Recovery rate is switched on right now. Out of combat everyone runs at 100%; in combat it is off by default and class passives, charms and Recovery skills each switch on a share, which add together. This tile is the only place that total is visible.'),
   'defense-revive-heal': b('Reviving', 'You survived a killing blow and are being healed back out of it over time.'),
   'defense-debt': { title: 'Damage debt', kind: 'debuff', help: 'Damage deferred rather than removed. Part of the hits you took is queued and ticks onto you over time instead of landing at once — it softens burst, it does not cancel it.' },
-  'defense-hardening': b('Hardening', 'Plating builds while you stay engaged under incoming attacks. A heavy gross hit cracks half the earned plating, even through a shield. Leaving combat removes it.'),
-  'defense-stationary-dr': b('Rooted stance', 'Damage reduction builds over 3 seconds while you hold position in combat. After a brief movement grace, it fades over 1 second while moving or out of combat.'),
-  'defense-engagement-dr': b('Dawnward', 'Damage reduction for 6 seconds after your first attack or an incoming attack. Attacking a new target does not refresh it. Rearms after 6 quiet seconds.'),
-  'defense-sustained-dr': b('Endurance', 'Extra damage reduction that climbs the longer a single fight runs, and resets when you leave combat.'),
-  'defense-hardening-maxdr': b('Tempered', 'Extra damage reduction while Hardening is full; it remains for its linger window after Hardening drops from maximum.'),
-  'defense-reactive-plating': b('Reactive plating', 'Each direct hit adds plating up to a cap and refreshes the window. The bonus fades when that window expires.'),
+  'defense-stationary-dr': b('Rooted stance', 'Damage reduction builds over 4 seconds while you hold position under attack. After a brief movement grace, it fades over 1 second while moving, and over 2 seconds once the attacks stop.'),
+  'defense-engagement-dr': b('Dawnward', 'Damage reduction for a few seconds (longer at higher tiers) after your first attack or an incoming attack. Attacking a new target does not refresh it. Rearms after 4 quiet seconds.'),
+  'defense-reactive-plating': b('Reactive plating', 'Each direct hit adds plating up to a cap and refreshes a short hold window. Heavy hits do not crack it. Once the hold lapses, the stacks fade one at a time.'),
 
   // -- Cadence ---------------------------------------------------------------
   'cadence-accelerando': m('Accelerando', 'Consecutive attacks shorten your attack cooldown, stack by stack. Breaking rhythm gives it back.'),

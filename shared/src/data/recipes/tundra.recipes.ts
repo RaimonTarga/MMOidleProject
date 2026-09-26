@@ -58,10 +58,10 @@ export const tundraRecipeEntries = [
     id: 'tundra-vest-t3', name: 'Glacial Bulwark',
     recipeGroup: 'tundra', requiredBiomeLevel: 2, slot: 'armor',
     cost: { blue: 100, red: 25 }, stats: {"maxHp": 180, "plating": 2, "damageReduction": 0.14}, // family-tag: stationary DR armor → Heavy
-    mechanicEffects: {"defense.stationary-dr-pct": 0.15, "defense.stationary-dr-ramptime-ms": 3000},
+    mechanicEffects: {"defense.stationary-dr-pct": 0.12, "defense.stationary-dr-ramptime-ms": 4000},
     tier: 3,
     icon: 'items/armor/glacial-bulwark.png',
-    description: "Build damage reduction over 3 seconds while holding position in combat. Moving or leaving combat sheds it over 1 second.",
+    description: "Build damage reduction over 4 seconds while holding position under attack. Moving sheds it over 1 second; once the attacks stop it fades over 2 seconds.",
     upgrades: [
       {"cost": {"blue": 66, "red": 17}, "requiredBiomeLevel": 3, "stats": {"maxHp": 18, "plating": 0}},
       {"cost": {"blue": 166, "red": 42}, "requiredBiomeLevel": 4, "stats": {"maxHp": 18, "plating": 0}},
@@ -95,16 +95,17 @@ export const tundraRecipeEntries = [
   ['tundra-boots-t3', {
     id: 'tundra-boots-t3', name: 'Glacier Striders',
     recipeGroup: 'tundra', requiredBiomeLevel: 4, slot: 'mobility',
-    cost: { blue: 80 }, stats: { speed: 30 }, tier: 3, // family-tag: tundra momentum mobility → Heavy
+    // 2026-09-26 T2-T4 boots curve normalization: Speed 30->68 (+5: 98->88).
+    cost: { blue: 80 }, stats: { speed: 68 }, tier: 3, // family-tag: tundra momentum mobility → Heavy
     mechanicEffects: { 'mobility.ramp-speed-pct': 0.60, 'mobility.ramp-rate': 0.30 },
     icon: 'items/boots/glacier-striders.png',
     description: 'They gather momentum across the ice and are loath to give it back.',
     upgrades: [
-      { stats: { speed: 8 },  cost: { blue: 24 },  requiredBiomeLevel: 4 },
-      { stats: { speed: 12 }, cost: { blue: 59 },  requiredBiomeLevel: 4 },
-      { stats: { speed: 16 }, cost: { blue: 94 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 16 }, cost: { blue: 153 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 16 }, cost: { blue: 260 }, catalystCost: { heavy: 2 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 2 },  cost: { blue: 24 },  requiredBiomeLevel: 4 },
+      { stats: { speed: 3 }, cost: { blue: 59 },  requiredBiomeLevel: 4 },
+      { stats: { speed: 5 }, cost: { blue: 94 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 5 }, cost: { blue: 153 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 5 }, cost: { blue: 260 }, catalystCost: { heavy: 2 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -168,10 +169,10 @@ export const tundraRecipeEntries = [
     evolvesFrom: 'tundra-vest-t3',
     cost: { blue: 256, red: 64 }, stats: {"maxHp": 346, "plating": 3, "damageReduction": 0.18}, // family-tag: stationary DR armor → Heavy
     reconstructCost: { blue: 896, red: 224 }, reconstructCatalystCost: { heavy: 4 },
-    mechanicEffects: {"defense.stationary-dr-pct": 0.2, "defense.stationary-dr-ramptime-ms": 3000},
+    mechanicEffects: {"defense.stationary-dr-pct": 0.16, "defense.stationary-dr-ramptime-ms": 4000},
     tier: 4,
     icon: 'items/armor/permafrost-sovereign.png',
-    description: "Build damage reduction over 3 seconds while holding position in combat. Moving or leaving combat sheds it over 1 second.",
+    description: "Build damage reduction over 4 seconds while holding position under attack. Moving sheds it over 1 second; once the attacks stop it fades over 2 seconds.",
     upgrades: [
       {"cost": {"blue": 130, "red": 33}, "requiredBiomeLevel": 9, "stats": {"maxHp": 35, "plating": 0}},
       {"cost": {"blue": 326, "red": 82}, "requiredBiomeLevel": 10, "stats": {"maxHp": 34, "plating": 1}},
@@ -232,17 +233,18 @@ export const tundraRecipeEntries = [
     id: 'tundra-boots-t4', name: 'Avalanche Striders',
     recipeGroup: 'tundra', requiredBiomeLevel: 10, slot: 'mobility',
     evolvesFrom: 'tundra-boots-t3',
-    cost: { blue: 176 }, stats: { speed: 42 }, tier: 4, // family-tag: tundra momentum mobility → Heavy
+    // 2026-09-26 T2-T4 boots curve normalization: Speed 42->97 (+5: 120->118).
+    cost: { blue: 176 }, stats: { speed: 97 }, tier: 4, // family-tag: tundra momentum mobility → Heavy
     reconstructCost: { blue: 616 }, reconstructCatalystCost: { heavy: 4 },
     mechanicEffects: { 'mobility.ramp-speed-pct': 0.75, 'mobility.ramp-rate': 0.35 },
     icon: 'items/boots/avalanche-striders.png',
     description: 'Slow to start and impossible to stop — by the far end of the ice you are a thing that simply happens to whatever is in the way.',
     upgrades: [
-      { stats: { speed: 10 }, cost: { blue: 47 },  requiredBiomeLevel: 10 },
-      { stats: { speed: 14 }, cost: { blue: 116 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 18 }, cost: { blue: 186 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 18 }, cost: { blue: 303 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 18 }, cost: { blue: 512 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 2 }, cost: { blue: 47 },  requiredBiomeLevel: 10 },
+      { stats: { speed: 4 }, cost: { blue: 116 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 5 }, cost: { blue: 186 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 5 }, cost: { blue: 303 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 5 }, cost: { blue: 512 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 10 },
     ],
   }],
 

@@ -49,15 +49,15 @@ biome can be very wrong for another.
 |---|---|---|---|---|
 | Plains | T1–T2 | Highest | Many small fast hits | Plating (flat subtract) |
 | Forest | T1–T2 | High | Frequent moderate hits | Evasion (counter-based dodge) |
-| Mountain | T1–T4 | Low | Rare massive hits (trip the damage cap) | Damage cap |
+| Mountain | T1–T4 | Low | Rare massive hits | Guard potency + bulk |
 | Swamp | T1–T3 | Medium | Low direct + heavy DoT | DoT-resistance + hit-to-DoT conversion |
 | Cave | T1–T3 | Lowest | Mixed elites: fast + bruiser + ranged | Premium %DR (universal) |
-| Jungle | T2–T4 | High | Fast on-hit, hardening | Evasion + hardening |
-| Desert | T2–T4 | Very low | Few tough, debuff-laden | Last-stand + cleanse |
-| Tundra | T3–T4 | Low | Slow big hitters + slowing debuffs | Hit-to-DoT debt + bulk |
-| Volcanic | T4 | High | Sustained heat attrition | In-combat regen |
-| Graveyard | T4 | Extreme high | Overwhelming weak undead (DoT contagion) | TBD |
-| Trench | T4 | Extreme low | Rare abyssal terrors | TBD *(design under review)* |
+| Jungle | T2–T4 | High | Fast on-hit, poison | Evasion + DoT-resistance |
+| Desert | T2–T4 | Very low | Few tough, debuff-laden | Opening protection (Dawn) for short fights |
+| Tundra | T3–T4 | Low | Slow big hitters + slowing debuffs | Stationary DR while under attack |
+| Volcanic | T3–T4 | High | Sustained heat attrition, mixed packs | Reactive plating (per hit taken, capped) |
+| Graveyard | T4 | Extreme high | Overwhelming weak undead (DoT contagion) | DoT-resistance + hit-to-DoT (Swamp lineage) |
+| Trench | T4 | Extreme low | Rare abyssal terrors | Elite armor: high DR + HP + debuff resistance |
 
 A biome's enemies, its craftable weapon, and its armor+charm all express the same
 theme. Picking gear from one biome and fighting in another is a deliberate trade-off.
@@ -141,12 +141,14 @@ Mitigation is split into archetypes, each suited to a different threat shape:
 |---|---|---|
 | Plating (flat subtract) | Many small hits | Plains |
 | Evasion (deterministic dodge) | Any hit size (flat % of hits) | Forest |
-| Damage cap (max-hit clamp) | Rare massive hits | Mountain |
-| DoT-resistance | Damage-over-time | Swamp |
+| Guard potency | Fights you answer with Guard abilities | Mountain |
+| DoT-resistance + hit-to-DoT debt | Damage-over-time; burst spread into DoT | Swamp → Graveyard |
+| Evasion + DoT-resistance | Fast hitters that poison | Jungle |
 | Premium %DR (multiplicative) | All shapes (universal) | Cave |
-| Hit-to-DoT debt conversion | Big burst hits → spread DoT | Tundra |
-| Last-stand (1× cheat-death) | Any killing blow | Desert |
-| Hardening (ramping plating) | Long sustained fights | Jungle |
+| Premium %DR + HP + debuff resistance | Elites that slow, shred and mark | Trench |
+| Stationary DR (while under attack) | Standing and trading hits | Tundra |
+| Opening protection (Dawn, 6/8/10 s by tier) | Short fights, fast pulls | Desert |
+| Reactive plating (per hit taken, capped) | Long fights against swarms | Volcanic |
 
 Recovery (charmed healing) is separate:
 - Kill-burst (heal on kill): Plains charm
