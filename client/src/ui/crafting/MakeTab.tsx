@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
-import { useAtomValue } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { EquipmentAbilityTags } from '../AbilityTags';
 import type { EssenceType } from '@mmo-idle/shared';
 import {
@@ -57,13 +57,7 @@ import { DetailLines } from '../describe/DetailLines';
 import { loadoutLinesFor, ruleLines } from '../describe';
 import { useAbilityContext } from '../describe/useAbilityContext';
 import type { AbilityContext } from '../describe';
-
-/**
- * Ordering the list can take. `default` is new-first — the answer to "what
- * changed while I was out" — then affordable, then the canonical kind/tier/name
- * order everything else uses.
- */
-type MakeSort = 'default' | 'name' | 'tier' | 'cost';
+import { EMPTY_MAKE_FILTERS, makeFiltersAtom, type MakeFilters, type MakeSort } from '../panelFilters';
 
 const SORT_FACETS: { sort: MakeSort; label: string }[] = [
   { sort: 'default', label: 'New first' },
@@ -297,13 +291,10 @@ function CraftStamp({ result }: { result: CraftResult }) {
  * Actions live in the detail pane, never in a row — see `BrowserPane`.
  */
 export function MakeTab() {
-  const [filterKind, setFilterKind] = useState<MakeKind | null>(null);
-  const [filterBiome, setFilterBiome] = useState<string | null>(null);
-  const [filterTier, setFilterTier] = useState<number | null>(null);
-  const [hideUnaffordable, setHideUnaffordable] = useState(false);
-  const [showLocked, setShowLocked] = useState(false);
-  const [sort, setSort] = useState<MakeSort>('default');
-  const [search, setSearch] = useState('');
+  const [filters, setFilters] = useAtom(makeFiltersAtom);
+  const { kind: filterKind, hideUnaffordable, showLocked, sort, search } = filters;
+  const setFilter = <K extends keyof MakeFilters>(key: K, value: MakeFilters[K]) =>
+    setFilters((prev) => ({ ...prev, [key]: value }));
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [craftResult, setCraftResult] = useState<CraftResult | null>(null);
 
@@ -382,6 +373,12 @@ export function MakeTab() {
     return [...values].sort((a, b) => a - b);
   }, [entries]);
 
+  // A remembered facet that no longer exists would filter invisibly.
+  const filterBiome = filters.biome && biomeGroups.includes(filters.biome) ? filters.biome : null;
+  const filterTier = filters.tier !== null && tiers.length > 1 && tiers.includes(filters.tier) ? filters.tier : null;
+  const isFiltered = filterKind !== null || filterBiome !== null || filterTier !== null
+    || hideUnaffordable || showLocked || sort !== 'default' || search !== '';
+
   const filtered = useMemo(() => {
     const needle = search.trim().toLowerCase();
     const matches = entries.filter((entry) =>
@@ -427,12 +424,12 @@ export function MakeTab() {
         placeholder="Search recipes…"
         value={search}
         aria-label="Search recipes"
-        onChange={(event) => setSearch(event.target.value)}
+        onChange={(event) => setFilter('search', event.target.value)}
       />
       <button
         type="button"
         className={`craft-filter-chip${hideUnaffordable ? ' craft-filter-chip--active' : ''}`}
-        onClick={() => setHideUnaffordable((value) => !value)}
+        onClick={() => setFilter('hideUnaffordable', !hideUnaffordable)}
       >
         Affordable
       </button>
@@ -442,9 +439,17 @@ export function MakeTab() {
       <button
         type="button"
         className={`craft-filter-chip${showLocked ? ' craft-filter-chip--active' : ''}`}
-        onClick={() => setShowLocked((value) => !value)}
+        onClick={() => setFilter('showLocked', !showLocked)}
       >
         Show locked
+      </button>
+      <button
+        type="button"
+        className="craft-filter-chip craft-filter-chip--clear"
+        disabled={!isFiltered}
+        onClick={() => setFilters(EMPTY_MAKE_FILTERS)}
+      >
+        Clear filters
       </button>
       <div className="craft-filter-row craft-filter-row--sort">
         <span className="craft-filter-label">Sort</span>
@@ -453,7 +458,7 @@ export function MakeTab() {
             key={facet.sort}
             type="button"
             className={`craft-filter-chip${sort === facet.sort ? ' craft-filter-chip--active' : ''}`}
-            onClick={() => setSort(facet.sort)}
+            onClick={() => setFilter('sort', facet.sort)}
           >
             {facet.label}
           </button>
@@ -463,7 +468,7 @@ export function MakeTab() {
         <button
           type="button"
           className={`craft-filter-chip${!filterKind ? ' craft-filter-chip--active' : ''}`}
-          onClick={() => setFilterKind(null)}
+          onClick={() => setFilter('kind', null)}
         >
           All
         </button>
@@ -477,7 +482,7 @@ export function MakeTab() {
               filterKind === facet.kind ? 'craft-filter-chip--active' : '',
             ].filter(Boolean).join(' ')}
             data-slot={facet.kind}
-            onClick={() => setFilterKind((value) => (value === facet.kind ? null : facet.kind))}
+            onClick={() => setFilter('kind', filterKind === facet.kind ? null : facet.kind)}
           >
             <KindGlyph kind={facet.kind} size={12} />
             {facet.label}
@@ -488,7 +493,7 @@ export function MakeTab() {
         <button
           type="button"
           className={`craft-filter-chip${!filterBiome ? ' craft-filter-chip--active' : ''}`}
-          onClick={() => setFilterBiome(null)}
+          onClick={() => setFilter('biome', null)}
         >
           All Biomes
         </button>
@@ -497,7 +502,7 @@ export function MakeTab() {
             key={group}
             type="button"
             className={`craft-filter-chip${filterBiome === group ? ' craft-filter-chip--active' : ''}`}
-            onClick={() => setFilterBiome((value) => (value === group ? null : group))}
+            onClick={() => setFilter('biome', filterBiome === group ? null : group)}
           >
             {biomeName(group)}
           </button>
@@ -510,7 +515,7 @@ export function MakeTab() {
             style={filterTier === tier
               ? { color: tierColor(tier), borderColor: `${tierColor(tier)}aa`, background: `${tierColor(tier)}18` }
               : { color: `${tierColor(tier)}bb` }}
-            onClick={() => setFilterTier((value) => (value === tier ? null : tier))}
+            onClick={() => setFilter('tier', filterTier === tier ? null : tier)}
           >
             T{tier}
           </button>
