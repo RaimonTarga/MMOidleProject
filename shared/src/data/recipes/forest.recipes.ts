@@ -167,7 +167,7 @@ mechanicEffects: {"defense.evade-mitigation": 0.1},
   // (LEGACY_ITEM_IDS in server/src/db/playerRepo.ts).
 
   // T2 economy pass (2026-08-29): now an EVOLUTION of forest-vest-t1 (Shaded
-  // Bindings) at +5 — see §5/§6/§7. Evolve pays no catalyst; reconstruct (no
+  // Bindings) at +3 — see §5/§6/§7. Evolve pays no catalyst; reconstruct (no
   // predecessor) costs ~3.5x essence + 2 alacrity. Catalysts moved to +4/+5.
   ['forest-vest-t2', {
     id: 'forest-vest-t2', name: 'Phantom Bindings',

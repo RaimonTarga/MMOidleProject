@@ -1,6 +1,7 @@
 # Player Sprites — Current State
 
-Decision landed 2026-07-12. This is the living truth for how player character
+Decision landed 2026-07-12; audited against the current manifest, atlas, and
+resolver on 2026-09-27. This is the living truth for how player character
 visuals are produced and rendered. Design rationale/constraints live in
 `design_docs/visual_and_aesthetics_design/player-visual-identity-bible.md`; the
 superseded bake-time composite idea is preserved in
@@ -330,11 +331,12 @@ than the Striker's or Squire's, which cost many generation rounds to separate
 by silhouette. Prefer to spend generation on silhouette and let a code pass do
 the colour identity afterward.
 
-## Tier 3 — SHIPPED 2026-08-01
+## Tier 3 — initial colour pass, 2026-08-01 (historical staging)
 
-**45 T3 bodies, zero generation.** `art/workbench/roster/t3.mjs` recolours each
-accepted tier-2 frame to a per-spec hue: 5 classes × 3 frames × 3 specs. One
-contact sheet to review instead of ~90 gallery candidates.
+**45 non-Conduit T3 bodies, zero generation.** `art/workbench/roster/t3.mjs`
+recoloured each accepted tier-2 frame to a per-spec hue: 5 classes × 3 frames ×
+3 specs. One contact sheet to review instead of ~90 gallery candidates. The
+Conduit was completed in the follow-up bespoke-body pass below.
 
 **Why not generate 15 T3 bodies.** A generated T3 body would be img2img from its
 own T2 frame, and we measured what that does: at the strength that keeps a body
@@ -358,7 +360,8 @@ would see at 64px, on a character whose T2 and T3 selves are never side by side.
   hue discrimination is weakest.
 - **Apprentice hues stay inside the frame's element** (venom / ember / rime),
   because the colour pass already made its frames elemental.
-- **Conduit is excluded entirely** — placeholder class pending a major rework.
+- **Conduit was excluded from this initial colour pass** — its nine bespoke
+  specialization bodies were completed in the follow-up pass below.
 
 `resolvePlayerFrame` now resolves T3 by **full spec node id**
 (`{archetype}-{variant}-t3-{a|b|c}`) before the generic
@@ -377,18 +380,19 @@ now follows:
 | head ring | range |
 | aura | live combat state only |
 
-## Tier 3 bespoke bodies — SHIPPED 2026-08-01 (all 45)
+## Tier 3 bespoke bodies — final roster SHIPPED 2026-08-08 (all 54)
 
-The 45 recolours above were **fully replaced by generated bodies**. Every T3
-spec now has bespoke art, produced in five batches for ~$3.10 and packed.
-Conduit/Summoner remains excluded (placeholder class pending rework).
+The initial 45 recolours above were **fully replaced by generated bodies**.
+The five original classes were produced in five batches for ~$3.10 and packed;
+the nine Conduit/Summoner specializations were completed in a follow-up batch.
+Every T3 spec across all six classes now has bespoke art.
 
 **The grammar evolved rather than breaking:** T1/T2 silhouette encodes
 **class + frame** (24 bodies); T3 silhouette encodes **spec**. Class family
 resemblance survives for free because every T3 body is an img2img chain from
 its own class-frame parent, and the palette stays in the class band.
 
-**The recipe, validated across 45 bodies:**
+**The recipe for the original 45 bodies:**
 
 ```jsonc
 "params": {
@@ -432,14 +436,13 @@ its own class-frame parent, and the palette stays in the class band.
 - **A two-colour split needs two hues, not two values.** Dualslinger's
   violet/amber split landed cleanly; Equinox's white/black split mostly didn't.
 
-**Head anchors:** `art/workbench/accents/anchors.mjs` now bakes **70** anchors
-(25 base + 45 T3). Its file list was hardcoded to the original 25, so every T3
-body silently fell back to the roster average — re-run it after adding bodies,
-and extend the list when a new family appears.
+**Head anchors:** `art/workbench/accents/anchors.mjs` now bakes **79** anchors
+(25 base + 54 T3). Its current class/spec lists include all six classes; rerun
+it after adding bodies so new families do not fall back to the roster average.
 
 ## Next up
 
-Stages 0–3, the colour pass, and all 45 T3 bodies are done.
+Stages 0–3, the colour pass, and all 54 T3 bodies are done.
 
 1. **Prune the retired range bodies** (`in-fighter`, `lancer`, `phantom-blade`,
    `vanguard`, …) and the loose `summoner-variant-*` frames kept as spares — all
@@ -450,7 +453,7 @@ Stages 0–3, the colour pass, and all 45 T3 bodies are done.
    They needed `initImageStrength` **65** rather than 75, because the Conduit parents
    are a plain robe column with no internal parts to reinterpret; see
    `docs/conduit-current-state.md` §10b. All six classes now have full T3 coverage:
-   **54 bespoke T3 bodies**.
+  **54 bespoke T3 bodies** across all six classes.
 
 ## Deferred
 
@@ -489,7 +492,7 @@ distinct places without any of them fighting.
    front-on facing drift. Same technique as the head rings: bake a shoulder
    anchor by alpha-scanning, draw props in code.
    *Risk:* the shoulder line varies more across bodies than the crown does
-   (crown spread is 4px across 70 bodies; shoulders will be worse). **Measure
+   (crown spread is 4px across 79 bodies; shoulders will be worse). **Measure
    the spread before committing** — if it is large, the prop needs to sit on a
    measured shoulder box rather than a single point.
 2. **Trailing back element (T6)** — banner, pennon, tail, or wing, rendered
@@ -508,8 +511,8 @@ distinct places without any of them fighting.
   hard floor at part-scale assets — asking for a 32px ornament returns a whole
   character. `art/manifests/accents.json` is retired and records this.
 - **Bake anchors, don't guess**, and remember to extend the file list in
-  `anchors.mjs` — it was hardcoded to 25 bodies and silently gave all 45 T3
-  bodies the fallback anchor.
+  `anchors.mjs` — it now enumerates the 25 base bodies and 54 T3 bodies; rerun
+  it whenever a new family is added.
 - **~3 accent slots is the budget** at 64px before the sprite reads as noise.
   The proposal above lands at exactly 3.
 - **Props are authored near-white** so a per-slot tint multiplies to the hue.
@@ -531,6 +534,6 @@ The range rings work because they encode a **choice** — they tell you somethin
 about how that player plays. An accent that only encodes *tier* says merely
 "this player is far along", which is weaker. If T5/T6 involve a real branch,
 encode the branch. If they are pure progression, consider spending the slot on
-**spec identity instead**: all 45 T3 specs currently have zero accent
+**spec identity instead**: all 54 T3 specs currently have zero accent
 representation, so a shoulder prop keyed to the spec family would add
 information rather than decoration.

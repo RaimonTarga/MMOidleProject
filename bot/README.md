@@ -9,7 +9,8 @@ observation comes from `DeltaSnapshot` and `world:events`. Numerical balance
 still belongs to `server/bench/`; this measures *progression over time*, which
 the bench cannot see.
 
-Plan and audit: [`docs/headless-bot-harness-plan.md`](../docs/headless-bot-harness-plan.md).
+Historical construction plan: [`docs/archive/headless-bot-harness-plan.md`](../docs/archive/headless-bot-harness-plan.md).
+Current operation: [`docs/bot-experience-command-center.md`](../docs/bot-experience-command-center.md).
 
 ## Running
 
@@ -172,7 +173,7 @@ pnpm bot:t2-templates        # every template, dumped, with its validation repor
 pnpm bot:t2-catalogue        # the live T2 item catalogue in control-route order
 pnpm bot:t2-reachability     # which T2 items each template can obtain, and how
 pnpm bot:t2-routes           # the 18 routes and every resolved acquisition path
-pnpm bot:t2-catalyst-demand  # total T2 catalyst demand per family
+pnpm bot:t2-catalyst-demand  # total T2 catalyst demand per family (demand only)
 pnpm bot:t2-report <batchDir>  # smoke matrix + gear adoption report
 ```
 
@@ -184,10 +185,10 @@ Three things about Tier 2 that are easy to get wrong:
   seals. There are six legal entry templates, not eighteen; the 18 routes buy
   their branch mid-run behind an `ifPossible`, and a walled run records a skipped
   conditional instead of stalling.
-- **Most Tier-2 gear cannot be crafted.** 20 of 32 recipes are evolutions;
+- **Most Tier-2 gear cannot be crafted.** 21 of 32 recipes are evolutions;
   `craftRecipe` refuses them. Evolution consumes a **bag** copy of the
-  predecessor at **+5**, so a worn item must be `unequip`ped first, and anything
-  below +5 pays ~3.5× reconstruction instead. `t2Acquisition.ts` resolves the
+  predecessor at **+3**, so a worn item must be `unequip`ped first, and anything
+  below +3 pays the higher reconstruction cost instead. `t2Acquisition.ts` resolves the
   path per item from the class's own template.
 - **Accelerated rewards include catalysts.** The reward multiplier scales
   catalyst progress alongside essence and biome XP, so accelerated playtests do
@@ -336,8 +337,9 @@ data. `harness.test.ts` verifies that every recipe, item, ability, rune fragment
 and dungeon a route names actually exists — a typo there would otherwise run for
 hours and never finish.
 
-Note: `summoner-root` (Conduit) is gated behind the server's `CONDUIT_ENABLED`
-flag, so a Conduit route needs that enabled to run at all.
+Note: `summoner-root` (Conduit) is enabled by default in the current client and
+server. Development tooling and authentication bypasses remain separate flags;
+live Conduit coverage is still a measurement question, not an availability gate.
 
 ## Practical experience studies
 

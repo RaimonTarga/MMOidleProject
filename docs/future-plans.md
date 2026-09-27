@@ -5,7 +5,7 @@ Each entry captures the feasibility verdict and the chosen direction so a future
 session doesn't re-derive it. When an entry gets scheduled, promote it to a full
 `docs/<feature>-plan.md` and mark the entry here as promoted.
 
-Status: current as of 2026-08-08.
+Status: current as of 2026-09-27.
 
 ---
 

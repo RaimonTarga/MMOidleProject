@@ -38,6 +38,7 @@ Current channels:
 - `TRAVEL_PATHING`
 - `TRAVEL_RESPONSE`
 - `CONTROL`
+- `FORMATION` (Conduit only: where the formation stands, independent of owner movement)
 - `ABILITY` (per-ability timing, runtime execution arbitration)
 - `STANCE`
 
@@ -96,6 +97,7 @@ Actions:
 - `fight-back` (shown as "Fight Back")
 - `lead-the-way`
 - `taunt-current-target` (shown as "Taunt Target")
+- `recall-summons` (shown as "Recall Summons"; summoner only, starter; `hp-below-25`, `while-traveling`, `target-casting`)
 
 New players start with all situation fragments as baseline vocabulary, including
 `inside-telegraph`, plus the responses required by the default loadout and a small
@@ -186,7 +188,8 @@ The derived rune result is translated into existing AI controls:
 
 - `flee` sets `rune.flee`
 - `orbit` sets `rune.keepDistance`
-- `inside-telegraph -> step-back` sets `rune.evadeTelegraph`
+- `inside-telegraph -> step-back` sets `rune.evadeTelegraph`; a Conduit's summons
+  also step out of telegraphs they stand in (evaluated per body in summon `ai.ts`)
 - `wait-for-regen` sets `rune.waitForRegen`
 - `wait-for-execution` sets `rune.waitForExecution`
 - `wait-for-summons` sets `rune.waitForSummons` while a formation slot is absent and neither owner nor surviving summons are fighting
@@ -195,6 +198,7 @@ The derived rune result is translated into existing AI controls:
 - `lead-the-way` sets `rune.leadTheWay` and uses the same local enemy-search
   behavior as `auto-path-enemy` while out of combat
 - `taunt-current-target` sets `rune.tauntCurrentTarget`
+- `recall-summons` sets `rune.recallSummons`; with owner auto on, summons behave as under the R recall (drop targets, hold their follow spots) while it holds. For a Conduit, `target-casting` also counts casts wound up on its own summons
 - `let-dots-finish` sets `rune.letDotsFinish`
 - `spread-dots` sets `rune.spreadDots`
 - `avoid-enemies` sets `rune.avoidEnemies`
@@ -318,8 +322,10 @@ stacks, so the player rotates pressure across multi-enemy fights.
 
 `rune.tauntCurrentTarget` is read by
 `server/src/systems/combat/ai/taunt.ts`. On direct player hits, it forces the
-monster target to aggro that player unless the monster has `ignoresTaunts`. The
-taunt response has a 4 second internal cooldown per player.
+monster target to aggro that player unless the monster has `ignoresTaunts`. On a
+Conduit summon's hit it pulls the target onto that summon instead, unless the
+target is already on one of the owner's summons. The taunt response has a 4
+second internal cooldown per player (shared by the whole formation).
 
 ## Telegraph Dodge Telemetry
 
@@ -416,9 +422,9 @@ Equipped ability details and HUD tooltips distinguish that default from configur
 Rune timing, including that the ability waits when no overriding condition matches.
 Rune action descriptions show the actual ability and retain the current position
 binding: replacing an equipped ability changes which ability that rule controls.
-The build dialog offers an optional, reversible wider desktop view. The current
-The board now includes unified RP attunement; Rite mechanics are unchanged;
-ability/stance attunement remains a future systems change.
+The build dialog offers an optional, reversible wider desktop view. The board
+now includes unified RP attunement. Ability and stance attunement are
+authoritative and live in their dedicated tabs; Rite mechanics are unchanged.
 
 The server exposes an optional `matchedRunes` snapshot from the authoritative rune
 fold, including stance destinations. Active-rune attribution uses that snapshot

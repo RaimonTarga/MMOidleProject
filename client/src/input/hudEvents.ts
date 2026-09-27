@@ -9,6 +9,7 @@ import {
   sendSetAbilityLoadout,
   sendUseAbility,
   sendManualReload,
+  sendRecallSummons,
   sendCraftStanceRecipe,
   sendSetStanceLoadout,
   sendSetStanceControl,
@@ -116,6 +117,11 @@ export function attachHudEvents(scene: GameScene): () => void {
   intents.on("manualReload", () => {
     if (isDeathOverlayActive()) return;
     sendManualReload(scene.socket, notifyCombatControlResult);
+  });
+
+  intents.on("recallSummons", () => {
+    if (isDeathOverlayActive()) return;
+    sendRecallSummons(scene.socket);
   });
 
   intents.on("craftStanceRecipe", (recipeId) => {

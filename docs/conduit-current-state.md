@@ -3,7 +3,7 @@
 Objective snapshot of the Conduit (summoner) as it is implemented today. Not a
 balance assessment and not a proposal.
 
-Updated 2026-08-08 against the shipped code. The previous version described
+Updated 2026-09-27 against the shipped code. The previous version described
 the pre-overhaul tier-3 path system (Predator's Howl, Acid Brood, Stone
 Sentinel, Mountain Guardian, ...), which no longer exists — see §9.
 
@@ -132,8 +132,11 @@ Each summoner tick:
 
 Reconstruction (`SUMMONER_CORE_TUNING`): base 3500 ms, Root/Heavy floor 2500 ms,
 Light/Balanced floor 1500 ms, HP cost ratio 0.3, safety floor 20% of max HP,
-in-combat regen 20%. Frame intervals and modifier order are listed in the R2
-adoption section below. Leash radius 320.
+in-combat regen 20%. Out of combat the queue advances 4x faster
+(`outOfCombatReconstructionSpeedMult`), so a formation wiped by one pack is back
+before the next pull; boss fights are all in combat and unaffected. Frame
+intervals and modifier order are listed in the R2 adoption section below.
+Leash radius 320.
 Hard entity cap 9.
 
 ## 6. Summon Visuals
@@ -213,6 +216,33 @@ unrelated ground bake-off in development.
 - `player:commandSummons` carries focus (click a monster) and move (click
   ground) commands. Move commands clamp to leash and clear when every live
   minion arrives within 10 px.
+- Owner movement/control Runes also drive the formation (2026-09-26). With owner
+  auto on and **Step Back** equipped, each summon walks out of any pending attack
+  telegraph it stands in (before commands and attacks) and holds outside rather
+  than chasing back in. **Taunt Target** fires on summon hits too: the enemy is
+  pulled onto the striking summon, unless it is already on one of that owner's
+  summons. At the root this is a net loss (focused 20%-HP bodies die fast); it is
+  a Vigil/party-tank tool. Both Runes keep a class-neutral blurb; the Conduit
+  sees an extra line via `runeActionArchetypeNote` (shared `runeDatabase.ts`),
+  shown in the rune editor and crafting list only for that class.
+- **Recall** (`player:recallSummons`, hotkey R — the `class.recall` binding shares
+  Slinger's reload key, each gated by archetype): attaches a `recall`
+  `hasSummonerCommand`. Summons drop targets and return to their follow offsets
+  around the owner's *live* position, so the owner can step out of a telegraph and
+  the formation follows; `player:move` does not cancel it. Ends when every body
+  arrives or after `RECALL_MAX_MS` (3 s). Recall counts as repositioning like a
+  move command (`isSummonerRepositioning`): no formation target, handover,
+  ability targeting or formation charge while it runs. This is the manual answer
+  to slammers before Step Back unlocks (Cave mastery 2); bots cannot use it.
+- **Recall Summons rune** (starter, 1 RP, own `FORMATION` channel): the same recall,
+  driven by a situation instead of a key: Low HP (`hp-below-25`, pairs with Flee), While
+  Traveling, or Enemy Charging. For a Conduit, Enemy Charging also counts casts wound up
+  on its summons, so Guard/stance rules on that condition react to those too. Enemy
+  Charging → Recall is the automatic pre-Step-Back slam answer (designer call; weaker
+  than Step Back when the slam is centred near the owner). Bots can use it.
+- Summons never fall behind the Conduit: `computeMinionSpeed` floors their base
+  at the owner's speed, and movement applies the owner's live mobility haste
+  (`bootSpeedMultiplier`: sprints, ramps, gap-closers) to every summon step.
 
 ## 8. Damage And Buffs
 
@@ -220,6 +250,13 @@ Minion damage is deliberately not the full player pipeline. Sources: the Conduit
 damage sponge (`redirectionPct` of owner damage taken, redirected to a living
 summon — the Covenanter defense twin is preferred when present), monster AoE,
 and monster attacks against minion aggro targets.
+
+Area hits are shared per formation (`formationArea.ts`): one splash, area ability,
+charged slam, aftershock/pool detonation or boss-pattern circle that catches N of
+an owner's summons deals N^-`areaShareExponent` (0.5) to each — 4 bodies take 50%
+each, 6 take 41%. A formation is one player's HP cut into bodies, so one circle
+must not land N player-hits. Boss charge sweeps (`hitMinion` hook) resolve body
+by body and are not shared.
 
 The sponge is registered inside `initDefenseSystems()`: after Guard, evasion, the
 damage cap and wards/barrier, before the owner's hit-to-DoT debt, cheat death and
@@ -324,6 +361,23 @@ opaque pixel is the crest, not the head, so the probe row measured the crest and
 anchored it 17px off centre. The script now locates the head inside a narrow
 central band and expands **contiguously**, so a disconnected prop can never be
 merged into the head's width. Re-run it after adding any body with a raised prop.
+
+## 10c. Testing Conduit (bots and bench) — 2026-09-26
+
+The rules in §7-8 SHOULD help Conduit; beyond the session probes they are unmeasured.
+- **Bot routes:** Conduit routes run Rebuild Formation in Recover First's slot
+  (`bot/src/routes/classRecovery.ts`). Step Back comes from the route's own rune stages
+  (`conduit-t1` at Cave L2, T2 plans always; `conduit-v2-t1` never). Recall is manual-only
+  and no bot uses it, so bots look worse than a careful player in Cave before L2.
+- **Balance bench:** behaviour runes are per cell and unchanged by default. A Conduit cell
+  without `step-back` never dodges. Opt in with `withConduitFormationRules`
+  (`server/bench/balance/conduitFormationRules.ts`) or the `conduitStudy` arms
+  `rebuild-formation` / `pre-attrition`.
+- **Reading results:** bot summaries carry `mechanics.formationAttrition` (alive at pull,
+  full-formation rate, summon deaths per pull). Judge Conduit on attrition, not only clear time.
+- Do not equip Taunt Target on root Conduit templates (net loss in probes).
+- Recall Summons (Enemy Charging) is available to bot routes as the pre-Cave slam answer
+  but no template equips it yet — an unmeasured option, RP budget permitting.
 
 ## 11. Outstanding
 

@@ -93,9 +93,9 @@ export interface PlayerView {
   partyMembers: PartyMember[];
   nodeId: string;
   essences: Record<EssenceType, number>;
-  /** Biome catalysts wallet, keyed by biome group. */
+  /** Node-modifier catalyst wallet, keyed by modifier family. */
   catalysts: Record<string, number>;
-  /** Accumulating progress toward the next catalyst, keyed by biome group. */
+  /** Accumulating progress toward the next modifier-family catalyst. */
   catalystProgress: Record<string, number>;
   level: number;
   skillPoints: number;

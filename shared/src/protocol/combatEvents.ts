@@ -173,6 +173,9 @@ type CombatEventPayload =
   // node-wide overhead callout used by player abilities; reload timing itself
   // remains authoritative state and is rendered separately on the overhead bar.
   | { kind: 'player-reload-start'; playerId: string; reloadMs: number }
+  // A Conduit called its formation back (R, or a Recall Summons rune as it
+  // starts). Drives the same node-wide overhead callout as player abilities.
+  | { kind: 'summons-recalled'; playerId: string }
   // Something actively STRIPPED harmful stacks off the player: the Cleanse
   // guard, Break Free, or the passive cleanse pulse. Emitted only when at least
   // one stack actually came off. It exists so the HUD can tell a cleanse from an

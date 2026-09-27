@@ -56,6 +56,11 @@ export const hudBus = {
     intents.emit('manualReload', undefined);
   },
 
+  /** Conduit: summons drop their targets and return to their spots around you. */
+  requestRecallSummons(): void {
+    intents.emit('recallSummons', undefined);
+  },
+
   /** Learn a stance (craft its recipe); server validates gate + cost. */
   requestCraftStanceRecipe(recipeId: string): void {
     intents.emit('craftStanceRecipe', recipeId);

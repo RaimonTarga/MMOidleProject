@@ -1,6 +1,10 @@
+> **ARCHIVED (2026-09-27) — COMPLETED v0.5 RELEASE RECORD.** The live procedure is
+> [`docs/release-flow.md`](../release-flow.md); this file preserves the v0.5
+> candidate decisions and validation evidence.
+
 # v0.5 playtest release readiness
 
-Updated 2026-09-24. [Player patch notes](../updates/v0.5/changelog.md).
+Updated 2026-09-24. [Player patch notes](../../updates/v0.5/changelog.md).
 
 ## Approved release decisions
 

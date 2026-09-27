@@ -1,235 +1,59 @@
 # MMO Idle — Game Overview & Gameplay Loop
 
-**Purpose:** Current-state design reference. Describes what the game is and how it plays
-*today*, as a baseline for evaluating design changes. Where mechanics are open or uncertain,
-that's noted explicitly. Companion to `design-bible.md` (invariants), `player-power-curve.md`
-(math), and `boss-design.md` (boss philosophy).
+**Status:** Implementation-facing design overview, audited 2026-09-27.
 
----
+This document describes the intended player-facing shape of MMO Idle without duplicating every implementation detail. For current numbers and runtime behavior, use the current-state documents in `docs/` and the source code. When this overview and the source disagree, the source wins.
 
-## 1. Elevator pitch
+## Elevator pitch
 
-An automatic-combat idle RPG played in a browser with friends. You build a character and
-set it loose in a monster-filled zone; the server resolves all fights without your input.
-Your decisions — class, gear, skill tree, zone choice — determine whether you live and how
-fast you progress. The game is cooperative, deterministic, and designed to run unattended
-for long stretches.
+MMO Idle is a server-authoritative, browser-based idle RPG. Players build a class, travel through a sparse authored world, fight monsters automatically, collect equipment and progression resources, and advance through increasingly specialized biome and dungeon content. The long-term loop combines passive/automated combat with deliberate build choices: equipment, Runes, class skills, stances, rites, mastery, and tier-gated evolution.
 
-Target scale: ~100 concurrent players, friends/small community. Not designed for thousands.
+## World structure
 
----
+- The **Clearing** is the T0 tutorial and safe starting area.
+- The authored world currently contains sparse T1–T4 region content. The live registry is the source of truth for node identity, coordinates, encounters, and biome assignment.
+- Regions are tiered collections of authored biomes. The current region/biome mapping is documented in [`docs/map-variety-plan.md`](../docs/map-variety-plan.md) and in `shared/src/world/map/regions.ts`.
+- Each authored biome/tier can expose a guarded dungeon encounter. Dungeon tuning is defined in `shared/src/config/gameConfig.ts`; it is not a substitute for checking the individual encounter data.
 
-## 2. The game world
+The world is intentionally not described here as a rectangular grid. Its current topology is a sparse registry, so systems that need traversal, encounter, or biome truth should read the node registry and region definitions.
 
-An **11×11 grid of nodes** (zones). The center node is the Clearing (T0 tutorial zone).
-Chebyshev distance from the center determines tier:
+## Core gameplay loop
 
-| Distance | Tier | Biomes at this tier |
-|---|---|---|
-| 0 | T0 | Clearing |
-| 1–2 | T1 | Plains, Forest, Mountain, Swamp, Cave |
-| 3 | T2 | Plains, Forest, Mountain, Swamp, Cave + Jungle, Desert |
-| 4 | T3 | Mountain, Swamp, Cave, Jungle, Desert + Tundra |
-| 5 | T4 | Jungle, Desert, Tundra, Volcanic, Graveyard, Trench |
+1. Start in the Clearing and establish the character’s initial class and loadout.
+2. Travel to an authored world node or dungeon.
+3. Let server-authoritative auto combat resolve encounters while choosing targets, abilities, stance behavior, and movement priorities.
+4. Receive combat rewards: equipment, essence, biome experience, and—where the node supports it—catalyst progress.
+5. Improve the build through the Forge, equipment upgrades, Runes, class progression, Global Mastery, and authored evolution recipes.
+6. Push toward bosses, seals, and later region tiers while adapting the build to each biome’s enemies and hazards.
 
-Each node has a biome type. Every biome has a distinct **damage shape** (what kind of
-threat its monsters pose) and a matching **defensive answer** (what armor/charm mechanic
-counters it). This is the core of the game's strategic depth — the right gear for one
-biome can be very wrong for another.
+The current resource and reward contracts are summarized in [`docs/aspects-catalysts-current-state.md`](../docs/aspects-catalysts-current-state.md), [`docs/global-mastery-current-state.md`](../docs/global-mastery-current-state.md), and [`docs/gear-evolution-current-state.md`](../docs/gear-evolution-current-state.md).
 
-**Dungeon nodes:** one per biome per tier. Same biome type, but monsters have ×2 HP /
-×1.6 ATK, and a persistent boss spawns in the dungeon. Killing the boss is gated progress
-(tier advancement quests require boss kills).
+## Classes and build identity
 
----
+The current class system is organized around class-specific root mechanics, shared frame/range choices, and authored specialization skills. The active skill families include cadence, cooldown, reload, energy, damage-over-time, and the summoner/Conduit family. The exact roster, prerequisites, and runtime behavior live in the shared skill data and class systems; the Conduit-specific living summary is [`docs/conduit-current-state.md`](../docs/conduit-current-state.md), while the broader implementation contract is tracked by the source-linked entries in [`docs/README.md`](../docs/README.md).
 
-## 3. Biomes and their damage shapes
+Abilities, Runes, stances, and rites add further build decisions. Their documentation is descriptive and source-linked rather than a second authoritative data table.
 
-| Biome | Tier | Density | Damage shape | Defensive answer |
-|---|---|---|---|---|
-| Plains | T1–T2 | Highest | Many small fast hits | Plating (flat subtract) |
-| Forest | T1–T2 | High | Frequent moderate hits | Evasion (counter-based dodge) |
-| Mountain | T1–T4 | Low | Rare massive hits | Guard potency + bulk |
-| Swamp | T1–T3 | Medium | Low direct + heavy DoT | DoT-resistance + hit-to-DoT conversion |
-| Cave | T1–T3 | Lowest | Mixed elites: fast + bruiser + ranged | Premium %DR (universal) |
-| Jungle | T2–T4 | High | Fast on-hit, poison | Evasion + DoT-resistance |
-| Desert | T2–T4 | Very low | Few tough, debuff-laden | Opening protection (Dawn) for short fights |
-| Tundra | T3–T4 | Low | Slow big hitters + slowing debuffs | Stationary DR while under attack |
-| Volcanic | T3–T4 | High | Sustained heat attrition, mixed packs | Reactive plating (per hit taken, capped) |
-| Graveyard | T4 | Extreme high | Overwhelming weak undead (DoT contagion) | DoT-resistance + hit-to-DoT (Swamp lineage) |
-| Trench | T4 | Extreme low | Rare abyssal terrors | Elite armor: high DR + HP + debuff resistance |
+## Equipment and progression
 
-A biome's enemies, its craftable weapon, and its armor+charm all express the same
-theme. Picking gear from one biome and fighting in another is a deliberate trade-off.
+Characters use six equipment slots: weapon, armor, recovery, mobility, core, and relic. Ordinary equipment supports authored upgrade steps; cores and relics follow their own evolution rules. Equipment costs and Global Mastery gates are defined by the shared item-upgrade and recipe data.
 
----
+Global Mastery is derived from biome progression rather than being an independent spendable XP bar. It gates Rune capacity and ordinary equipment upgrades, while authored recipes gate the larger evolution milestones. See [`docs/global-mastery-current-state.md`](../docs/global-mastery-current-state.md), [`docs/cores-current-state.md`](../docs/cores-current-state.md), and [`docs/relics-current-state.md`](../docs/relics-current-state.md).
 
-## 4. Gameplay loop — one session
+## Combat and defenses
 
-```
-Spawn in the Clearing
-  ↓
-Enable AUTO COMBAT → character walks to nearest monster, attacks automatically
-  ↓
-Monsters drop essence (currency) and biome XP
-  ↓
-Biome XP → biome level → unlocks crafting recipes for that biome
-  ↓
-Spend essence at the Forge → craft gear (weapon, armor, recovery, mobility)
-  ↓
-Gear stronger → move to a higher-tier biome
-  ↓
-Kill quests → skill points → unlock skill tree nodes (class upgrades)
-  ↓
-Boss kills → advance player tier (T1 quest requires a T1 dungeon boss kill, etc.)
-  ↓
-Repeat up the tier ladder: T0 → T1 → T2 → T3 → T4 (current content ceiling)
-```
+The combat model supports physical and magical damage, plating/mitigation, evasion, maximum-hit constraints, damage-over-time resistance, hit-to-dot conversion, recovery, barriers/wards, cleansing, hard control, and movement effects. These are separate runtime mechanics, not interchangeable labels: a class or item’s identity depends on how its complete defensive and offensive package is wired in source.
 
-This is the **main loop**. It's designed to run unattended: leave the tab open, come back
-to crafted gear and progress.
+Combat is simulated on the server at the authoritative logic cadence and broadcast to clients at a lower presentation cadence. Auto combat, traversal, target selection, ability execution, hazards, and rewards therefore need to be evaluated from server systems and telemetry rather than client presentation alone.
 
----
+## Automation and multiplayer shape
 
-## 5. The class system
+Players can run automated combat and traversal while the server maintains authoritative state. Party and co-op systems add shared encounter context without changing the requirement that individual progression and rewards follow their server-side contracts. Authentication, guest persistence, Discord linking, character management, and admin access are separate concerns; see [`docs/auth-and-characters-current-state.md`](../docs/auth-and-characters-current-state.md).
 
-Six archetypes, each with a different combat identity:
+## Documentation and source authority
 
-| Class | Core mechanic |
-|---|---|
-| Cadence | Hit counter → every Nth hit is a powerful finisher (×2 default) |
-| Energy | 0–100 energy pool → full discharge hits → explodes in empowered damage |
-| DoT | Attacks convert a fraction of damage into stacking poison/DoT over time |
-| Cooldown | Countdown timer → big execution hit on cooldown expiry |
-| Reload | Shots per "magazine" → burst window → forced reload pause |
-| Summoner | Minions fight for the player; player commands them, they scale with player stats |
-
-**Skill tree structure per class:**
-- **T0 root:** pick a class (commits to the archetype's core mechanic)
-- **T1 frame:** light / balanced / heavy (re-allocates budget between offense and defense; each frame changes how the mechanic behaves, not just the numbers)
-- **T2 range node:** close or far range (changes engagement distance and attack style)
-- **T3 path modifiers:** 9 options (3 per frame), each deepening the frame's identity
-- **T4 specs:** in progress; 45 designed, partially implemented
-
-One skill point per node. Points come from quest XP. You can reset your class for free,
-but you spend the same points to re-buy your tree.
-
----
-
-## 6. Equipment
-
-Four slots: **weapon, armor, recovery, mobility (boots)**.
-
-Each biome's crafting line produces a weapon archetype and an armor+charm pair that
-expresses the biome's theme. Upgrade levels +0 through +3 scale stats significantly
-(approximately ×1.8–2.2 on key stats at +3 vs +0).
-
-**Biome lifespan:** each biome's recipe line caps at a certain tier, then retires. Its
-mechanics carry forward as "crosses" inside richer later biomes. The active recipe
-roster at any tier is ~5–6 biomes, not the full 11.
-
-**Rune system:** rune loadout slots exist; `rune:setLoadout` is live. Rune design
-(costs, RP budget, validation, fragment drops) is a near-term authoring task.
-
----
-
-## 7. Defense model
-
-Mitigation is split into archetypes, each suited to a different threat shape:
-
-| Mechanic | Best against | Home biome |
-|---|---|---|
-| Plating (flat subtract) | Many small hits | Plains |
-| Evasion (deterministic dodge) | Any hit size (flat % of hits) | Forest |
-| Guard potency | Fights you answer with Guard abilities | Mountain |
-| DoT-resistance + hit-to-DoT debt | Damage-over-time; burst spread into DoT | Swamp → Graveyard |
-| Evasion + DoT-resistance | Fast hitters that poison | Jungle |
-| Premium %DR (multiplicative) | All shapes (universal) | Cave |
-| Premium %DR + HP + debuff resistance | Elites that slow, shred and mark | Trench |
-| Stationary DR (while under attack) | Standing and trading hits | Tundra |
-| Opening protection (Dawn, 6/8/10 s by tier) | Short fights, fast pulls | Desert |
-| Reactive plating (per hit taken, capped) | Long fights against swarms | Volcanic |
-
-Recovery (charmed healing) is separate:
-- Kill-burst (heal on kill): Plains charm
-- Raw out-of-combat regen: Forest charm
-- Periodic barrier/shield: Mountain charm
-- Absorb (damage → heal-over-time): Swamp charm
-- Regen-burst (periodic pulse): Cave charm
-- In-combat regen: Volcanic charm
-
-No single mitigation+recovery combination counters all threat shapes. A pure plating
-tank is immune to Plains trash but vulnerable to DoT and massive hits. This is the
-structural immortality cap — no hard stat limits needed.
-
----
-
-## 8. Bosses
-
-One boss per dungeon (per biome per tier). Boss philosophy:
-
-- A boss is its tier's trash theme concentrated into one entity + one new structural
-  layer per tier (tier's layer echoes what trash teaches).
-- T1: pure single-phase fight testing one mitigation shape.
-- T2: adds a 50% HP threshold phase (second damage shape).
-- T3: phase also flips range stance + capped enrage ramp.
-- T4: designed to add a defense-break window (not yet implemented).
-- Bosses can't be kited to triviality: every boss has charge (if slow) or speed+reach.
-- Slow/heavy bosses have AoE cleave to prevent summon body-blocking.
-
----
-
-## 9. The Void Overlord
-
-The Void Overlord is the world's optional raid-style encounter. Currently at the center
-of the world or in a special node. It requires a party. Its respawn cooldown is persisted
-through `worldStateRepo`. It's designed as a group challenge, not a solo requirement.
-
----
-
-## 10. Party system
-
-Parties are runtime-only (not persisted). Members in the same node share monster kill
-rewards. The game is designed as solo-complete but party-incentivized:
-- Solo: all content beatable, comfortable pace
-- Party: faster rewards, required for optional hard bosses only
-
-Party synergy (debuffs, auras, shared buffs) is implemented as item/class tags that
-scale in value with party size. Solo players lose nothing by grouping with others.
-
----
-
-## 11. Client experience
-
-- **Auto combat:** the primary verb is toggling auto-combat on and setting a kite/charge
-  preference. No other real-time input during combat.
-- **Navigation:** click-to-move on the world map, or use auto-traverse to have the
-  character path to a target zone automatically.
-- **HUD (desktop):** left sidebar (stats, buffs, essence), right sidebar (skill tree,
-  inventory, crafting, map, quests), floating AUTO COMBAT button.
-- **HUD (mobile):** portrait-first fixed top strip + chips + tab bar + bottom sheets.
-  Panel interiors are a pending redesign pass.
-- **Persistence:** character is saved to PostgreSQL on disconnect and every 30 seconds.
-  Server is fully authoritative; client only renders what it receives.
-
----
-
-## 12. Open design questions (as of June 2026)
-
-These are live design decisions, not settled:
-
-- **Trench:** authored but under review. Extreme low density at T4. May be reshaped
-  to carry a more distinct mechanic identity, or cut.
-- **T4 boss intent pass:** defense-break windows, enrage scripts, and tuning not yet
-  authored. Currently the T4 bosses are stat-only.
-- **Rune wave 1:** rune costs, RP budget, starter fragments, and loadout validation
-  need to be authored and balanced.
-- **Summoner identity:** frames don't differentiate offense cleanly; a bespoke design
-  pass is needed at T4. Currently the weakest-defined archetype.
-- **Desert last-stand:** exact trigger (HP threshold? recover-to-X%? cooldown length?)
-  not yet settled.
-- **Gauntlet (dungeon gauntlet mode):** wave spawner piloted on Mountain T2; full
-  rollout gated on T4 balance landing.
-- **In-game information design:** how much stat preview / matchup info to surface to
-  the player (mob side panels, damage shape tags) is an active design question.
-- **Auth:** localStorage UUID only; Discord OAuth is a planned but unscheduled feature.
+- [`docs/README.md`](../docs/README.md) is the documentation command center.
+- `docs/*-current-state.md` files summarize verified implementation behavior.
+- `design_docs/` holds design authority and proposals; it does not override runtime source.
+- `docs/archive/` and `design_docs/archive/` retain historical plans, handoffs, and context with an explicit successor where one exists.
+- `shared/` is the first place to inspect for shared data and contracts; `server/` is authoritative for runtime behavior; `client/` is presentation and interaction.

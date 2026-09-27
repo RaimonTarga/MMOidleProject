@@ -21,6 +21,10 @@ export function sendCommandSummons(socket: GameSocket, pos: Vec2): void {
   socket.emit('player:commandSummons', pos);
 }
 
+export function sendRecallSummons(socket: GameSocket): void {
+  socket.emit('player:recallSummons');
+}
+
 export function sendSetAuto(socket: GameSocket, enabled: boolean): void {
   socket.emit('player:setAuto', enabled);
 }

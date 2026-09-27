@@ -1,3 +1,8 @@
+> **ARCHIVED (2026-09-27) — HISTORICAL IMPLEMENTATION CONTEXT.** Conduit is now
+> part of the public roster. Current behavior lives in
+> `docs/conduit-current-state.md`; keep this file for the earlier feature-gate
+> and implementation context.
+
 # Conduit / Summoner — Core Implementation Context
 
 > Implementation handoff for a separate ChatGPT design session. This document describes the current code, its cross-system behavior, and its known temporary seams. It deliberately does not recommend a class redesign or theorycraft a replacement.

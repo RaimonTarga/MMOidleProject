@@ -5,9 +5,9 @@ import { TIER_ENTRY_PROFILES } from "../tierEntry/profiles";
  * Which Tier-2 items can each Tier-2 entry template actually obtain, and by
  * which path?
  *
- * 20 of the 32 Tier-2 recipes are EVOLUTIONS of a specific Tier-1 predecessor
+ * 21 of the 32 Tier-2 recipes are EVOLUTIONS of a specific Tier-1 predecessor
  * (`evolvesFrom`), and `craftRecipe` refuses them outright. An evolution needs
- * the predecessor sitting in the BAG at +5; otherwise the only route is
+ * the predecessor sitting in the BAG at +3; otherwise the only route is
  * reconstruction, which is a separate, more expensive cost axis and is only
  * possible where `reconstructCost` is authored.
  *

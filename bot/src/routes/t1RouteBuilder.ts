@@ -1,5 +1,6 @@
 import type { EquippedRule } from "@mmo-idle/shared";
 import type { Route, RouteStep } from "../route/types";
+import { routeWithClassRecovery } from "./classRecovery";
 import {
   biome,
   clearingOpening,
@@ -332,7 +333,7 @@ export function makeT1Route(config: T1RouteConfig): Route {
 
   steps.push(...bossSteps(config));
 
-  return {
+  return routeWithClassRecovery({
     id: config.id,
     version: config.version,
     classRoot: config.classRoot,
@@ -341,5 +342,5 @@ export function makeT1Route(config: T1RouteConfig): Route {
     steps,
     completion: standardCompletion(),
     milestones: standardMilestones(config.bossGear.milestoneItems),
-  };
+  });
 }

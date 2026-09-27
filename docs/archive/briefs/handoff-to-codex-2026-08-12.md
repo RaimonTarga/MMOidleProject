@@ -1,5 +1,6 @@
-> **ARCHIVED — one-time context-transfer memo from 2026-08-12.** Its next-step menu items
-> have all long since been decided one way or another.
+> **ARCHIVED — one-time context-transfer memo from 2026-08-12.** Its successor is the
+> current documentation index plus the active playtest command center; its next-step
+> menu items have all long since been decided one way or another.
 
 # Handoff to Codex — 2026-08-12
 

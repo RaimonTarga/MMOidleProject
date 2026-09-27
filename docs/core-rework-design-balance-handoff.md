@@ -2,7 +2,7 @@
 
 **Status:** Approved design direction for implementation planning  
 **Purpose:** Source document for Codex/Sol to produce an implementation plan, followed by implementation with a smaller coding model.  
-**Basis:** `cores-current-state-and-rework-context.md` plus the design decisions locked in the follow-up review.  
+**Basis:** `archive/cores-current-state-and-rework-context.md` plus the design decisions locked in the follow-up review.
 **Scope:** Rebalance and selectively redesign the existing Core cast so the Core slot delivers a true capstone power spike. Preserve the existing magnifier philosophy. Do not implement the full evolution system in this pass unless required by the planner for scaffolding.
 
 ---

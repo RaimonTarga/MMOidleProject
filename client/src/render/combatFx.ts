@@ -796,6 +796,7 @@ const GUARD_CALLOUT_COLORS: Record<string, string> = {
 const GUARD_CALLOUT_FALLBACK = "#9cd2ff";
 const TECHNIQUE_CALLOUT_COLOR = "#ffd24a";
 const RELOAD_CALLOUT_COLOR = "#f0b04f";
+const RECALL_CALLOUT_COLOR = "#9cd2ff";
 
 const TECHNIQUE_CONSUMED_TAGS = [
   ABILITY_SWEEP_FX,
@@ -1262,6 +1263,13 @@ export function dispatchCombatEvent(
         'Reloading',
         RELOAD_CALLOUT_COLOR,
       );
+    }
+    return;
+  }
+
+  if (ev.kind === 'summons-recalled') {
+    if (shouldRunClientFx() && state.sprite.has(ev.playerId)) {
+      spawnSkillCallout(state, scene, ev.playerId, 'Recall', RECALL_CALLOUT_COLOR);
     }
     return;
   }

@@ -1,3 +1,7 @@
+> **ARCHIVED (2026-09-27) — HISTORICAL IMPLEMENTATION PLAN.** The bot package is
+> now operated through `docs/bot-experience-command-center.md` and
+> `bot/README.md`; this file preserves the staged construction record.
+
 # Headless Progression Bot Harness — implementation plan
 
 **Status:** Stage B BUILT, 2026-08-25 — `bot/` package, Striker T1 route, telemetry.

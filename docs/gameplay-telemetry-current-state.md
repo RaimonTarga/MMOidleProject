@@ -1,6 +1,8 @@
 # Gameplay telemetry
 
-Server-owned balance evidence for deployed human play. Source: `server/src/analytics/gameplayRecorder.ts`, `gameplayWriter.ts`, `server/src/logdb/gameplayRepo.ts`, and `admin/src/tabs/GameplayTab.tsx`.
+**Audited:** 2026-09-27. Server-owned balance evidence for deployed human play.
+Source: `server/src/analytics/gameplayRecorder.ts`, `gameplayWriter.ts`,
+`server/src/logdb/gameplayRepo.ts`, and `admin/src/tabs/GameplayTab.tsx`.
 
 ## Storage and Railway setup
 
@@ -33,6 +35,13 @@ The optional development human-playtest filesystem recorder is unchanged. Bot/be
 - Boss encounter start/end with starting class/frame/range/skills/gear/upgrades/loadout, tier, level, biome levels, effective stats, same-node live party size, boss type, HP fraction, duration, outgoing boss damage and incoming damage during the attempt. Start is observed target acquisition or direct player/owned-minion damage involving a boss. Party members receive outcomes only when they participated, not merely because they saw the log.
 - Death context captured **before** cleanup: build, node, position, cause, authored ability, killer type, status IDs/stacks, and up to 32 recent incoming damage records from the preceding ten seconds. Damage sources already despawned can be unknown; the authoritative killing cause still carries its source snapshot.
 - Biome/tier milestones with elapsed session time.
+
+**Known implementation gap:** the current recorder wallet projection still
+enumerates `BIOME_DATABASE` keys for catalyst fields, while the live catalyst
+wallet is keyed by node-modifier families. Until `gameplayRecorder.ts` is
+updated to use `NODE_MODIFIER_FAMILIES`, telemetry catalyst wallet deltas are
+incomplete and must not be used as economy evidence. Essence, build, combat,
+and progression event fields retain the scope described above.
 
 ## Interpretation
 

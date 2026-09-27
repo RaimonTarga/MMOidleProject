@@ -1,7 +1,8 @@
 # Boss Encounters (T1–T4) — Current State
 
-**Status:** IMPLEMENTED 2026-08-23 — structure and mechanics only. Numbers are inherited,
-not re-pitched.
+**Status:** IMPLEMENTED through the Phase 7 encounter rework and the 2026-09-13
+personal-playtest polish. Numbers are inherited or explicitly scoped balance inputs,
+not a universal re-pitch.
 **Design authority:** [`design_docs/BOSS_ENCOUNTER_REWORK_HANDOFF_T1_T4_2026-08-23.md`](../design_docs/BOSS_ENCOUNTER_REWORK_HANDOFF_T1_T4_2026-08-23.md)
 **Code:** `shared/src/data/monsters/bossesT1..T4.ts`
 **Tests:** `server/test/bossEncounterRework.test.ts` (new seams + per-lineage identity),

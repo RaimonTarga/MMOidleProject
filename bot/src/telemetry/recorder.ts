@@ -13,6 +13,9 @@ import type {
 } from "./events";
 import type { TelemetrySink } from "./sink";
 
+/** A Conduit fight ends this long after the last engagement signal. */
+const FORMATION_FIGHT_GRACE_MS = 2_000;
+
 /** What the executor is currently doing. Time is attributed to exactly one. */
 export type Activity = "travel" | "farm" | "craft" | "boss" | "blocked" | "lease-wait" | "idle";
 
@@ -289,6 +292,16 @@ export class Recorder {
     sharesLost: 0,
     secondaryDamage: 0,
   };
+  /**
+   * Conduit attrition, over every fight (not just bosses): how whole the
+   * formation is when a pull starts, and how many summons die. A fight starts
+   * when the owner or any own summon engages, and ends after
+   * `FORMATION_FIGHT_GRACE_MS` with neither, so target switches don't split it.
+   */
+  formationAttrition = { pulls: 0, aliveAtPullSum: 0, fullAtPull: 0, summonDeaths: 0 };
+  private formationFightUntilMs = 0;
+  private formationNodeId = "";
+  private livingSummonIds = new Set<string>();
   /**
    * Affliction Techniques (Contagion / Detonate). `spreadTargetsSum` over
    * `casts` is the number that matters for Contagion: it says whether the
@@ -572,6 +585,7 @@ export class Recorder {
     this.trackProgressionDeltas(obs, nodeId);
     this.trackContention(obs, nodeId);
     this.sampleBossDiagnostics(obs);
+    this.trackFormationAttrition(obs, now, nodeId, attackers);
     this.trackProductiveActivity(obs, nodeId, attackers, dead);
 
     if (Date.now() - this.lastConcurrencySampleAt >= CONCURRENCY_SAMPLE_MS) {
@@ -853,6 +867,32 @@ export class Recorder {
    * sample: a boss attempt is minutes long at 10 Hz, so these are accumulated
    * and reported once in the summary.
    */
+  private trackFormationAttrition(obs: Observation, now: number, nodeId: string, attackers: number): void {
+    const self = obs.self;
+    if (!self || !(self.summonsMinions > 0) || self.isDead) {
+      this.livingSummonIds.clear();
+      return;
+    }
+    const own = obs.minions().filter((minion) => minion.ownerPlayerId === self.id);
+    const living = new Set(own.filter((minion) => minion.hp > 0).map((minion) => minion.id));
+    // A node change re-mirrors the formation; only same-node losses are deaths.
+    if (nodeId === this.formationNodeId) {
+      for (const id of this.livingSummonIds) if (!living.has(id)) this.formationAttrition.summonDeaths += 1;
+    }
+    this.livingSummonIds = living;
+    this.formationNodeId = nodeId;
+
+    const fighting = attackers > 0 || self.attackTargetId !== null
+      || own.some((minion) => minion.hp > 0 && minion.attackTargetId !== null);
+    if (!fighting) return;
+    if (now > this.formationFightUntilMs) {
+      this.formationAttrition.pulls += 1;
+      this.formationAttrition.aliveAtPullSum += self.summonActiveCount;
+      if (self.summonActiveCount >= self.summonsMinions) this.formationAttrition.fullAtPull += 1;
+    }
+    this.formationFightUntilMs = now + FORMATION_FIGHT_GRACE_MS;
+  }
+
   private sampleBossDiagnostics(obs: Observation): void {
     if (this.activity !== "boss") return;
     const self = obs.self;

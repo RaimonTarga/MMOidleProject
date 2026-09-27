@@ -1,7 +1,7 @@
 # Tier Balance — current state
 
 **Living truth for the T1–T4 numerical baseline.** Established 2026-08-23.
-Plan of record: [`briefs/t2-t4-numerical-baseline-handoff-2026-08-23.md`](briefs/t2-t4-numerical-baseline-handoff-2026-08-23.md) (now fulfilled).
+Plan of record: [`archive/briefs/t2-t4-numerical-baseline-handoff-2026-08-23.md`](archive/briefs/t2-t4-numerical-baseline-handoff-2026-08-23.md) (now fulfilled and archived).
 Method and formulas: [`briefs/t1-balance-context-2026-08-18.md`](briefs/t1-balance-context-2026-08-18.md).
 Regenerate every figure here with `pnpm tier:table --tier N` → `reports/tier-N-table.md`.
 

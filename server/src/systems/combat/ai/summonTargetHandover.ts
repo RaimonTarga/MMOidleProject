@@ -5,6 +5,7 @@ import type { MonsterEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { selectMonsterAggroCandidate } from './monsterTargeting';
 import { setAggroTarget, setAttackTarget } from './targeting';
+import { isSummonerRepositioning } from '../../classes/archetypes/summoner/command';
 
 /** A dead physical target need not end an engagement its formation is continuing. */
 export function handoverLostSummonTarget(world: World, monster: MonsterEntity, now: number): boolean {
@@ -13,7 +14,7 @@ export function handoverLostSummonTarget(world: World, monster: MonsterEntity, n
   const lost=world.getMinionEntity(aggro.targetId);
   if(!lost || lost.hasHealth.hp>0 || lost.hasPosition.nodeId!==monster.hasPosition.nodeId) return false;
   const owner=world.getPlayerEntity(lost.isMinion.ownerPlayerId);
-  if(!owner || owner.isDead || owner.hasHealth.hp<=0 || owner.hasPosition.nodeId!==monster.hasPosition.nodeId || owner.hasSummonerCommand?.kind==='move') return false;
+  if(!owner || owner.isDead || owner.hasHealth.hp<=0 || owner.hasPosition.nodeId!==monster.hasPosition.nodeId || isSummonerRepositioning(owner)) return false;
   const territory=monster.inPack?.coordination;
   if(distanceSq(monster.hasPosition.current,territory?.pursuitAnchor??monster.controlsMonster.spawn)>(territory?.leashRange??monster.controlsMonster.leashRange)**2) return false;
   // Preserve the existing targeting policy and pull radius. No new pursuit or

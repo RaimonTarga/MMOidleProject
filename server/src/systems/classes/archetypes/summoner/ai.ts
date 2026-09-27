@@ -28,12 +28,19 @@ import { runFormationAttack } from './formationAttack';
 import { attackHasteBonus } from '../../../combat/engine/attackCadence';
 import { computeMinionSpeed, despawnMinion, getFollowOffset } from './spawn';
 import {
+  isSummonerRecalling,
+  recallSpot,
   resolveCommandedFocusTarget,
   resolveCommandedMoveDestination,
 } from './command';
 import { summonerProfileFor } from './profile';
 import { getRuneDecisions, RUNE_WAIT_FOR_SUMMONS_FLAG } from '../../../combat/ai/runeConfig';
 import { getAutoTargetId } from '../../../combat/ai/targetPriority';
+import {
+  activeAttackTelegraphs,
+  findMinionTelegraphEscape,
+  positionInsideTelegraph,
+} from '../../../combat/ai/telegraphEvasion';
 
 // Pixels — how close to the follow offset is "close enough" to idle.
 const FOLLOW_HOVER_TOL = 10;
@@ -83,6 +90,35 @@ function findMinionTarget(
     }
   }
   return best;
+}
+
+/** The nearest monster this summon can already hit from where it stands. */
+function findReachableMonster(world: World, owner: PlayerEntity, minion: MinionEntity): MonsterEntity | null {
+  let best: MonsterEntity | null = null;
+  let bestDistSq = Infinity;
+  for (const m of world.monsterEntitiesInNode(owner.hasPosition.nodeId)) {
+    if (m.hasHealth.hp <= 0) continue;
+    if (!heatAllowsTarget(world, owner, m)) continue;
+    if (!world.collision.canReach(minion, m, minion.performsAttack.attackRange)) continue;
+    const distSq = distanceSq(m.hasPosition.current, minion.hasPosition.current);
+    if (distSq < bestDistSq) {
+      bestDistSq = distSq;
+      best = m;
+    }
+  }
+  return best;
+}
+
+/** Swing at `target` once the summon's (owner-hasted) cooldown is ready. */
+function strikeWhenReady(world: World, owner: PlayerEntity, minion: MinionEntity, target: MonsterEntity, now: number): void {
+  // Inherit offensive haste without copying body-local environmental slows.
+  if (now - minion.performsAttack.lastAttackAt >=
+    minion.performsAttack.attackCooldown / (1 + attackHasteBonus(owner.tracksCombat))) {
+    const outcome = runFormationAttack(world, owner, minion, target, now);
+    if (outcome !== 'cancelled') {
+      minion.performsAttack.lastAttackAt = now;
+    }
+  }
 }
 
 function countMinionsTargetingMonster(
@@ -175,6 +211,18 @@ function clampToLeash(
   };
 }
 
+/** The owner's Step Back rule moves each summon out of the telegraphs it stands in. */
+function ownerStepsBack(owner: PlayerEntity): boolean {
+  return owner.usesAutocombat.auto
+    && owner.tracksProgression.runesEquipped.some((rule) => rule.actionId === 'step-back');
+}
+
+/** Hold short rather than chase back into a telegraph the summon just left. */
+function destinationInsideTelegraph(world: World, minion: MinionEntity, dest: Vec2, now: number): boolean {
+  return activeAttackTelegraphs(world, minion.hasPosition.nodeId, now)
+    .some((zone) => positionInsideTelegraph(zone, dest));
+}
+
 export function driveMinion(
   world: World,
   minion: MinionEntity,
@@ -195,6 +243,30 @@ export function driveMinion(
   if (owner.isCastingAbility?.casterMinionId === minion.entityId) {
     stopEntity(world, minion);
     minion.performsAttack.lastAttackAt = now;
+    return;
+  }
+
+  const escape = ownerStepsBack(owner) ? findMinionTelegraphEscape(world, minion, now) : null;
+  if (escape) {
+    setEntityMotion(world, minion, escape);
+    return;
+  }
+
+  if (isSummonerRecalling(owner)) {
+    const spot = recallSpot(owner, minion);
+    if (distance(minion.hasPosition.current, spot) > FOLLOW_HOVER_TOL) {
+      setEntityMotion(world, minion, spot);
+      setAttackTarget(world, minion, null);
+      cm.currentTargetId = null;
+      return;
+    }
+    // Home: hold the spot, but strike back at anything already in reach
+    // rather than stand still while melee that followed it in keeps biting.
+    stopEntity(world, minion);
+    const inReach = findReachableMonster(world, owner, minion);
+    setAttackTarget(world, minion, inReach?.isMonster.id ?? null);
+    cm.currentTargetId = inReach?.isMonster.id ?? null;
+    if (inReach) strikeWhenReady(world, owner, minion, inReach, now);
     return;
   }
 
@@ -244,21 +316,15 @@ export function driveMinion(
         cm.currentTargetId = target.isMonster.id;
       }
 
-      // Inherit offensive haste without copying body-local environmental slows.
-      if (now - minion.performsAttack.lastAttackAt >=
-        minion.performsAttack.attackCooldown / (1 + attackHasteBonus(owner.tracksCombat))) {
-        const outcome = runFormationAttack(world, owner, minion, target, now);
-        if (outcome !== 'cancelled') {
-          minion.performsAttack.lastAttackAt = now;
-        }
-      }
+      strikeWhenReady(world, owner, minion, target, now);
       return;
     }
 
     // Normal chase, but only as far as the leash allows.
     const desired = clampToLeash(owner, target.hasPosition.current, leashRadius);
     const distToDesired = distance(minion.hasPosition.current, desired);
-    if (distToDesired > FOLLOW_HOVER_TOL) {
+    const holdOutside = ownerStepsBack(owner) && destinationInsideTelegraph(world, minion, desired, now);
+    if (distToDesired > FOLLOW_HOVER_TOL && !holdOutside) {
       setEntityMotion(world, minion, desired);
     } else {
       stopEntity(world, minion);

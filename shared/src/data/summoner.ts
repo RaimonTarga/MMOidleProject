@@ -84,6 +84,16 @@ export const SUMMONER_CORE_TUNING = {
   reconstructionHpCostRatio: 0.3, // was 0.5
   reconstructionSafetyFloorPct: 0.2,
   reconstructionCombatRegenPct: 0.2,
+  // 2026-09-26, early-game attrition: out of combat the queue advances this many
+  // times faster, so a formation wiped by one pack is back before the next pull
+  // (a root wipe was 4 x 3.5s = 14s of half a formation). Time, not stats — it
+  // does not compound with gear, and boss fights (all in combat) are untouched.
+  outOfCombatReconstructionSpeedMult: 4,
+  // Area damage is sized against one player's HP, but a formation is that HP cut
+  // into bodies, so one circle over N bodies used to land N player-hits' worth.
+  // Each body caught takes N^-exponent of the hit: 4 bodies take 50% each (2x a
+  // single hit in total), 6 take 41% (2.45x) — swarms still pay more for area.
+  areaShareExponent: 0.5,
   leashRadius: 320,
   hardEntityCap: 9,
 } as const;

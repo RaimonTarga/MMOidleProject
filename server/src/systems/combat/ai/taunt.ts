@@ -24,17 +24,23 @@ export function initRuneTauntSystem(): void {
       !aggroSource ||
       typeof aggroSource !== "object" ||
       !("kind" in aggroSource) ||
-      aggroSource.kind !== "player"
+      !("id" in aggroSource) ||
+      (aggroSource.kind !== "player" && aggroSource.kind !== "minion")
     ) {
       return;
     }
     if (!getFlag(player.tracksCombat, RUNE_TAUNT_CURRENT_TARGET_FLAG)) return;
     if (monster.hasHealth.hp <= 0) return;
     if (monsterIgnoresTaunts(monster)) return;
-    if (
-      monster.hasAggroTarget?.targetKind === "player" &&
-      monster.hasAggroTarget.targetId === player.isPlayer.id
-    ) {
+    // A Conduit's formation is "you": the striking summon draws the enemy, and
+    // an enemy already on any of this owner's summons is left where it is.
+    const aggro = monster.hasAggroTarget;
+    if (aggro?.targetKind === "player" && aggroSource.kind === "player"
+      && aggro.targetId === player.isPlayer.id) {
+      return;
+    }
+    if (aggro?.targetKind === "minion" && aggroSource.kind === "minion"
+      && world.getMinionEntity(aggro.targetId)?.isMinion.ownerPlayerId === player.isPlayer.id) {
       return;
     }
     if (getCooldown(player.tracksCombat, TAUNT_COOLDOWN_KEY) > 0) return;
@@ -42,7 +48,7 @@ export function initRuneTauntSystem(): void {
     setAggroTarget(
       world,
       monster,
-      { id: player.isPlayer.id, kind: "player" },
+      { id: String(aggroSource.id), kind: aggroSource.kind },
       Date.now(),
     );
     setCooldown(player.tracksCombat, TAUNT_COOLDOWN_KEY, RUNE_TAUNT_COOLDOWN_MS);

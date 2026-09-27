@@ -313,7 +313,11 @@ for (const route of T1_CONTROLLED_ROUTES) {
     const fireGuard = hasRule(boss.rules, "target-casting", "use-ability");
     assert(fireGuard === (boss.guard === "brace"), `${route.id}: fire-guard iff Brace at ${boss.biomeGroup}`);
     assert(hasRule(boss.rules, "always", "avoid-hazards"), `${route.id}: Avoid Hazards at ${boss.biomeGroup}`);
-    assert(hasRule(boss.rules, "always", "wait-for-regen"), `${route.id}: Wait for Regen at ${boss.biomeGroup}`);
+    // A Conduit waits for its formation instead (routeWithClassRecovery).
+    const recovery = route.classRoot === "summoner-root" ? "wait-for-summons" : "wait-for-regen";
+    assert(hasRule(boss.rules, "always", recovery), `${route.id}: ${recovery} at ${boss.biomeGroup}`);
+    assert(!hasRule(boss.rules, "always", recovery === "wait-for-regen" ? "wait-for-summons" : "wait-for-regen"),
+      `${route.id}: exactly one recovery rule at ${boss.biomeGroup}`);
   }
 
   const guards = Object.fromEntries(result.bosses.map((boss) => [boss.biomeGroup, boss.guard]));

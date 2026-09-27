@@ -1,113 +1,127 @@
 # Authentication and Characters — Current State
 
-Last updated: 2026-08-04
+**Audited:** 2026-09-27
+**Authority:** server/src/auth/, server/src/index.ts,
+server/src/db/playerRepo.ts, shared/src/protocol/characters.ts, and
+client/src/auth/ plus client/src/net/session.ts.
 
-## Player flow
+## Player authentication flow
 
-The landing page offers one-click guest play as the primary path and Discord OAuth as
-the secondary path. `POST /auth/guest` creates a real account with `discord_id = null`
-and an opaque non-expiring session. Before creating the account, the landing panel
-asks for an optional first-character name; leaving it blank uses the adjective +
-soul-synonym generator. The client stores the token as `mmo_session_token`, reloads
-out of spectator mode, creates that first character, and selects it immediately.
-Later sessions show Character Select normally, including for unlinked guests.
+The landing page offers guest play and Discord OAuth.
 
-`GET /auth/discord/login` starts the authorization-code flow with the `identify`
-scope. The callback upserts the Discord account, creates an opaque 30-day session,
-and redirects to `CLIENT_URL/#session=<token>`. Both authentication paths present the
-stored token as `handshake.auth.token` on the player Socket.IO connection.
+- POST /auth/guest creates a real account with discord_id = null and a
+  persistent-until-linked session. The first guest run can choose a character
+  name; an omitted name uses the shared generated-name helper.
+- GET /auth/discord/login starts the identify-scope OAuth flow. The callback
+  upserts the Discord account, creates a 30-day session, and returns the
+  session token in the client URL fragment.
+- A guest can start linking from authenticated
+  POST /auth/discord/link/start. The bearer session token stays in the request
+  header rather than the link URL. Linking an unclaimed Discord identity keeps
+  the guest account and characters and converts its sessions to the normal
+  30-day lifetime. Linking to an existing Discord account moves the guest
+  characters transactionally, retires the guest account/sessions, and returns a
+  fresh session for the target account.
+- Both player paths send the token as handshake.auth.token to the player
+  Socket.IO namespace. Socket authentication is separate from admin
+  authentication.
 
-Guests can start linking through authenticated `POST /auth/discord/link/start`; the
-session token is sent as a bearer header and never placed in the link URL. An
-unclaimed Discord identity upgrades the guest account in place and converts its
-permanent sessions to ordinary 30-day sessions. If that Discord identity already
-owns an account, live sockets for both accounts are saved and kicked, the guest
-characters are moved to the Discord account transactionally, the guest account and
-sessions are retired, and the callback returns a fresh target-account session. Link
-outcomes are returned in the URL fragment and shown as a toast.
+The client consumes a Discord session fragment, stores the credential under
+mmo_session_token, and clears the fragment. Guest first-run state is held in
+session storage so an existing guest can reload into the normal roster flow.
+Unauthenticated visitors use the isolated spectator landing flow; spectator
+connections never become player sessions or attach a character.
 
-An authenticated socket begins in the lobby and receives `account:characters` with
-both the roster and `{ displayName, isGuest }` account metadata.
-Creating, selecting, and soft-deleting characters use the shared `character:*`
-protocol. The client always shows Character Select after login or reload, and only
-dismisses its full-screen gate after the selected character receives `state:sync`.
-Settings → Switch Character reloads the page; disconnect saves the active character.
-Roster cards show the character's resolved in-world class sprite, Global Mastery,
-current biome, and last-played time. The displayed class follows the latest
-named identity in the unlocked path (root, frame, range class, then specialization),
-while later perk tiers retain the specialization name. Legacy progression level is
-not used as a roster stat.
+## Accounts, characters, and runtime identity
 
-## Identity and persistence
+Accounts and characters are separate records:
 
-- Accounts are keyed independently from characters and linked to Discord by a unique
-  nullable `discord_id`.
-- A null `discord_id` denotes a guest account. Guest and Discord players otherwise use
-  the same session, socket, roster, character, persistence, and duplicate-login paths.
-- Guest session rows have `expires_at = null`; Discord session rows expire after 30
-  days. Losing an unlinked guest token loses access to that progress by design.
-- Accounts may own unlimited characters. Names are account-local, 2–24 characters,
-  and validated by the shared `validateCharacterName` helper.
-- Characters are fully isolated: progression, inventory, equipment, recipes, build,
-  health, and position are stored per character row.
-- Saves and loads are keyed by character ID. `isPlayer.id` is normalized from the row
-  ID on load, then temporarily re-keyed to the socket ID while attached to the world.
-- Deletes are soft deletes (`deleted_at`) and hidden from player/admin lists.
-- Only one socket per account may be connected. A newer lobby or in-world connection
-  emits `session:kicked` to the previous socket.
+- account identity owns authentication, Discord linking, and duplicate-login
+  policy;
+- character identity owns progression, inventory, equipment, build, health,
+  position, and logs;
+- socket/entity identity is the live connection target used by the world and
+  admin actions.
 
-Runtime identity therefore has three distinct values:
+An account may own multiple characters. Character names are account-local,
+validated by validateCharacterName, and limited to 2–24 characters. Deletes are
+soft deletes using deleted_at. Loading normalizes the persisted player ID to
+the character row ID; while attached to a live socket, the ECS entity is
+temporarily keyed for runtime routing.
 
-| Identity | Lifetime | Use |
-|---|---|---|
-| Account ID | Stable | authentication, duplicate-session ownership |
-| Character ID | Stable | persistence, roster and per-character ops/log filters |
-| Socket/entity ID | Connection | live world entity and admin action target |
+Only one live socket per account is allowed. A newer lobby or in-world
+connection saves and kicks the older socket. Disconnect and duplicate-session
+paths save the active character.
 
-## Operations
+## Character select and presentation
 
-The Characters admin tab excludes soft-deleted rows, groups characters by account
-display name, and marks never-linked guest accounts. The Players tab shows account,
-character, and socket IDs.
-New persisted world-log entries store all three viewer identities, so reconnecting no
-longer prevents per-character filtering. Older rows display an unknown/legacy
-character ID because it was not recorded before log migration `0003`.
+After authentication or reload, the client remains behind Character Select
+until the selected character receives state:sync. Creating, selecting, and
+soft-deleting characters use the shared character protocol. The roster shows
+account metadata, guest status, resolved class identity, Global Mastery,
+current biome, and last-played time.
 
-There is no automated guest pruning. Any manual cleanup must be conservative and
-limited to never-linked accounts with zero characters and a stale `last_login_at`;
-deleting a guest account that owns characters permanently destroys player progress.
+The displayed class identity follows the latest named path selection (root,
+frame, range, and specialization). Legacy progression level is not used as a
+roster class label.
+
+## Admin boundary
+
+Admin access is implemented and is deliberately separate from player auth.
+
+- The /admin HTTP surface and /admin Socket.IO namespace validate a token
+  through server/src/admin/auth.ts.
+- In production, ADMIN_TOKEN must exist, be at least 32 characters, and match
+  the presented token using a timing-safe hash comparison. Missing or invalid
+  production credentials are rejected.
+- Non-production may allow the local admin surface without a configured token,
+  but setting ADMIN_TOKEN is still recommended for shared development.
+- ADMIN_TOKEN must remain server-side. It must never be exposed through a
+  VITE_* variable or committed.
+
+Player Discord authentication therefore does not grant admin access, and admin
+authentication does not grant a player session.
+
+## Persistence and cleanup
+
+Guest session rows use expires_at = null. Discord session rows expire after
+30 days. Losing an unlinked guest token loses access to that account by design.
+There is no automated guest pruning. Any manual cleanup must be limited to
+never-linked accounts with no characters and a deliberately stale
+last_login_at; deleting an account with characters destroys player progress.
+
+World-log rows preserve account, character, and socket/entity context where
+available. Older rows may have an unknown character ID because that field was
+added by the later log migration.
 
 ## Configuration
 
-Required to offer Discord sign-in/linking (guest play itself needs no new variables):
+The committed .env.example is the variable checklist:
 
 | Variable | Purpose |
-|---|---|
-| `DISCORD_CLIENT_ID` | Discord application client ID |
-| `DISCORD_CLIENT_SECRET` | Discord application secret; server-side only |
-| `DISCORD_REDIRECT_URI` | Exact registered callback ending in `/auth/discord/callback` |
-| `CLIENT_URL` | Player URL that receives the session fragment |
+| --- | --- |
+| DISCORD_CLIENT_ID | Discord application client ID |
+| DISCORD_CLIENT_SECRET | Server-side Discord application secret |
+| DISCORD_REDIRECT_URI | Registered callback ending in /auth/discord/callback |
+| CLIENT_URL | URL receiving the OAuth session fragment |
+| AUTH_DEV_BYPASS | Explicit non-production identity bypass |
+| VITE_AUTH_DEV_ACCOUNT_ID | Client half of the explicit dev bypass |
+| ADMIN_TOKEN | Server-side admin credential; required in production |
 
-For explicit offline development only, set server `AUTH_DEV_BYPASS=1` and client
-`VITE_AUTH_DEV_ACCOUNT_ID` to the same account ID. The bypass is refused when
-`NODE_ENV=production`. Guest mode now covers ordinary offline development, so bypass
-retirement can be handled as a separate cleanup.
-
-Discord authentication protects player sessions only. It does **not** protect
-`/admin` or the `/admin` Socket.IO namespace; admin authentication remains a separate
-deployment blocker and those surfaces must stay behind trusted access.
+Guest play needs no Discord configuration. AUTH_DEV_BYPASS is refused when
+NODE_ENV=production. DEV_TOOLS/production spectator behavior is controlled by
+the server environment and is not a production authentication path.
 
 ## Primary seams
 
-- OAuth routes: `server/src/auth/discordOAuth.ts`
-- Guest creation/rate limiting: `server/src/auth/guestAuth.ts`
-- Session storage/validation: `server/src/auth/sessionRepo.ts`
-- Socket authentication: `server/src/auth/socketAuth.ts`
-- Lobby and world entry: `server/src/index.ts`
-- Character persistence: `server/src/db/playerRepo.ts`
-- Shared protocol: `shared/src/protocol/characters.ts`, `socketEvents.ts`, `admin.ts`
-- Client session/gate: `client/src/net/session.ts`, `client/src/auth/`
-
-Unauthenticated visitors use the isolated live spectator landing flow; see
-`docs/spectator-landing-current-state.md`. Spectator sockets never become player
-sessions or attach characters.
+- OAuth and link routes: server/src/auth/discordOAuth.ts
+- Guest creation and rate limiting: server/src/auth/guestAuth.ts
+- Session storage/validation: server/src/auth/sessionRepo.ts
+- Player socket authentication: server/src/auth/socketAuth.ts
+- Admin authentication/namespace:
+  server/src/admin/auth.ts and server/src/admin/namespace.ts
+- Lobby, character operations, and world entry: server/src/index.ts
+- Character persistence: server/src/db/playerRepo.ts
+- Shared character protocol: shared/src/protocol/characters.ts and
+  shared/src/protocol/socketEvents.ts
+- Client session and gate: client/src/net/session.ts and client/src/auth/

@@ -14,7 +14,7 @@ before merging.
 |---|---|---|---|---|
 | 1 | Volcano nerf | **Shipped to develop** | `da67d907` | none (verification only) |
 | 2 | Defense rework | **Shipped to develop**: (a1) pipeline fixes, then (a2) charged-plating order + (b) rebudget | develop; history on branch `feat/defense-rework` | human-play check |
-| 3 | Conduit buff | Maintenance runes + Rebuild Formation shipped (`ca90ec3f`); hp50 candidate **not applied** | `reports/conduit-study-2026-09-25/` (bench runner on develop) | early-only vs all tiers; how the extra HP carries through frame unlocks |
+| 3 | Conduit buff | Maintenance runes + Rebuild Formation shipped (`ca90ec3f`); hp50 candidate **not applied**. 2026-09-26: attrition fixes + formation runes + bot/bench templates on branch `feat/conduit-early-attrition` (**unpushed**, see §3) | `reports/conduit-study-2026-09-25/` (bench runner on develop) | merge the branch; then measure it before choosing hp50 (§3) |
 | 4 | XP / mastery pacing | **First pass shipped to develop**; recalibrate after #2, #3, #6 | `feat/xp-pacing` (merged) | none (decided 2026-09-25, see section 4) |
 | 5 | Essence / upgrade economy | T2-T4 rescale committed locally (unpushed); campaign 02 prep uncommitted | branch `codex/economy-v2`, worktree `../mmo-economy-v2` | run after #4 is stable |
 | 6 | T4 class balance | **Shipped to develop**: Voidwalker fix + Berserker 30 + Juggernaut log knee (numbers signed off); Melter/Invoker held | [screen](../../reports/t4-balance-2026-09-25/SCREEN.md) | none (Melter/Invoker revivable later) |
@@ -168,6 +168,41 @@ defense arm (finite-pack replay), so this is not a defense regression.
   2. Re-measure on top of the defense result.
   3. Diagnose T3 owner exposure and summon targeting from the recorded failing lives.
   4. Do not stack a timer cut on top to hide those failures (the study's own advice).
+
+### 2026-09-26 session: attrition, not HP (branch `feat/conduit-early-attrition`, unpushed)
+
+Commits `8980fb1c`, `6a819ca9`, `456073ac` (+ bench/doc follow-up). Live rules in
+[conduit-current-state.md](../conduit-current-state.md) §7-8. Probes found early Conduit loses to
+summon **attrition**, not damage (extra offense barely moved clears). Shipped, all structural:
+
+- Area hits shared per formation (N^-0.5 per body); out-of-combat rebuild 4x faster.
+- Owner **Step Back** also moves each summon out of telegraphs (Cave L2 unlock, unchanged by
+  design; before that the answer is manual: **R = Recall summons**).
+- **Taunt Target** fires on summon hits (pulls onto the summon); measured a *net loss* at root.
+- Summons share the owner's mobility haste.
+- **Recall Summons** starter rune (1 RP): Low HP / While Traveling / Enemy Charging (counts casts
+  on summons) → summons return to you. Botable pre-Step-Back slam answer; no template uses it yet.
+
+**For balance agents — these SHOULD help Conduit, unmeasured beyond the probes; test, don't assume:**
+
+- **Bot routes** (`bot/`): Conduit routes run **Rebuild Formation in Recover First's slot**
+  (`routeWithClassRecovery`; `conduit-t1` 2.1.0, `conduit-v2-t1` 1.1.0, T2 plans, campaign
+  profiles). `conduit-t1` and T2 plans already carry Step Back; `conduit-v2-t1` does not (its RP
+  budget was spent on survivability by design) — an open variable. Run summaries now report
+  `mechanics.formationAttrition` (summons alive at pull, full-formation rate, summon
+  deaths/pull): read it next to clear time for any Conduit claim.
+- **Balance bench** (`server/bench/balance`): nothing changes by default (frozen packets keep
+  reproducing). Behaviour runes stay per-cell, so **a Conduit cell without `step-back` never
+  dodges and understates slammer/boss results** (probe: Cave Brute chain 5/5 deaths without,
+  0/5 with). Opt in via `withConduitFormationRules` (`conduitFormationRules.ts`), or the new
+  `conduitStudy` arms `rebuild-formation` and `pre-attrition` (the latter disables area share
+  + fast OOC rebuild for an A/B against this session).
+- Probes: `server/test/_conduitChainProbe.ts` (chained pulls; `PROBE_LATE=1` for T3/T4).
+  T4: area share changes nothing; T3: it removes slammer deaths. **Pre-existing:** T4 Conduit
+  already leads speed and safety (Yeti 2.2 s, Behemoth 13.3 s, min HP 96%) — watch that
+  before adding any early buff that carries upward.
+- Suggested order: merge the branch, re-measure T1/T3 with Step Back + Rebuild Formation,
+  *then* decide whether hp50 is still needed early.
 
 ## 4. XP / mastery pacing
 

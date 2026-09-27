@@ -1,125 +1,125 @@
-# Steps 3 + 4 — Current State (audited 2026-06-23)
+# Biome Mastery and Global Mastery — Current State
 
-> ⚠ **LARGELY STALE — read the code, not this doc.** It was audited before
-> `BIOME_LEVELS_PER_TIER` went 4 → 6 (it still says 4 throughout), and before the T3
-> progression/economy pass (2026-08-30) made `biomeLevelCap` **retirement-aware**: the
-> player's tier is now also clamped by the derived `BIOME_FINAL_TIER_BY_GROUP`, so a biome
-> stops adding mastery headroom once its authored content ends. Live ceilings are
-> **T1 30 / T2 72 / T3 114 / T4 156**, and the +1…+5 gates are 6/12/18/24/30, 38/47/55/64/72,
-> 80/89/97/106/114 and 122/131/139/148/156. The living description of that architecture is
-> `docs/briefs/T3_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-30.md`; a full rewrite of this
-> doc is overdue.
+**Audited:** 2026-09-27
+**Implementation:** shared/src/config/gameConfig.ts,
+shared/src/runeDatabase.ts, shared/src/systems/itemUpgrades.ts,
+shared/src/protocol/views.ts, and the progression reward/upgrade callers.
 
-Paired with `docs/archive/global-mastery-plan.md`. Covers **Step 3 (Recipe system + Biome Mastery,
-incl. the biome-levels-per-tier 4→6 expansion)** and **Step 4 (Global Mastery)**, planned and
-built together because GM derives from the biome-level track Step 3 reshapes.
+This replaces the former Step 3/4 planning snapshot, which still described a
+four-level segment and a not-yet-built Global Mastery system. The historical
+plan remains at [docs/archive/global-mastery-plan.md](archive/global-mastery-plan.md).
 
-This is a *what exists in code today* snapshot. Source files win over this doc if they diverge.
+## Biome mastery
 
----
+Normal biome content uses six local levels per tier segment:
 
-## Biome-level / recipe machinery (Step 3)
+- BIOME_LEVELS_PER_TIER is 6.
+- The local XP shares are 12, 14, 16, 18, 19, and 21 percent of that
+  segment's authored budget.
+- Segment budgets are currently 1,750 XP for T1, 3,750 for T2, 42,000 for T3,
+  and 600,000 for T4. Future tiers use the configured growth fallback; these
+  are pacing inputs, not a permanent balance guarantee.
+- Clearing is T0 tutorial content with its separate four-level threshold table
+  [0, 43, 172, 430, 860]. It does not use the normal six-level curve.
 
-- **`BIOME_LEVELS_PER_TIER = 4`** (`shared/src/config/gameConfig.ts:158`). The single constant
-  encoding "a tier segment is 4 biome levels." Consumed by:
-  - `biomeLevelOffset(group) = (startTier-1) * BIOME_LEVELS_PER_TIER` — shifts the XP curve for
-    biomes that first appear above T1 (e.g. volcanic@T2).
-  - `biomeLevelCap(playerTier, group) = (playerTier-startTier+1) * BIOME_LEVELS_PER_TIER` — the
-    **live** cap on how high a biome can be leveled. `clearing` is special-cased to a flat `4`.
-- **`BIOME_LEVEL_CAP_BY_TIER = [5,5,9,13,…]`** (`gameConfig.ts:106`). Pattern `4t+1`. **Appears to
-  have no code consumer** — only referenced in its own definition + a `types.ts` doc comment. The
-  authoritative cap is the `biomeLevelCap()` *function*. To re-confirm (`grep`) and either delete or
-  rederive when the constant changes.
-- **`requiredBiomeLevelForUpgrade`** (`shared/src/systems/itemUpgrades.ts:34`) — generic fallback for
-  items without an explicit `upgrades[]` array hardcodes `(item.tier - 1) * 4 + 1 + targetPlus`. The
-  `* 4` is the same "4 per tier" assumption, **not** routed through the constant.
+Biome start and final tiers are derived from NODE_BIOMES. Current authored
+start/final ranges are:
 
-### How recipe levels are numbered (critical)
+| Biome group | Start | Final |
+| --- | ---: | ---: |
+| Plains | 1 | 2 |
+| Forest | 1 | 2 |
+| Mountain | 1 | 4 |
+| Swamp | 1 | 3 |
+| Cave | 1 | 3 |
+| Jungle | 2 | 4 |
+| Desert | 2 | 4 |
+| Tundra | 3 | 4 |
+| Volcanic | 3 | 4 |
+| Graveyard | 4 | 4 |
+| Trench | 4 | 4 |
 
-`Recipe.requiredBiomeLevel` and `UpgradeStep.requiredBiomeLevel` are **biome-local absolute** levels
-that span tier segments. Example — `volcanic.recipes.ts` (volcanic startTier = **T3**; verified via
-`biomeLevelCap`):
-- its T3-segment gear is authored at `requiredBiomeLevel` 1–4.
-- its T4-segment gear is authored at 5–8.
-- gated by `biomeLevelCap(playerTier, 'volcanic')` = `(playerTier-2)*4` → 4 at T3, 8 at T4.
+The exact cap is biomeLevelCap(playerTier, biomeGroup): six levels per authored
+tier between the start and final tier. A retired biome stops gaining headroom
+when its authored content ends; this is a gain stop, not a retroactive clamp on
+legacy saves. Use the function rather than inventing a fixed cap table.
 
-So levels are dense in 4-wide bands: band *k* (0-based) = levels `[4k+1 … 4k+4]` = the (startTier+k)
-tier segment. **Consequence:** naively flipping `BIOME_LEVELS_PER_TIER` to 6 grows the cap to 6/tier,
-so each band's next-tier recipes become reachable **one tier early** — a gating regression. The fix is
-a level **remap** (see plan). Verified start tiers: jungle/desert = T2, volcanic/tundra = T3,
-graveyard/trench = T4; the remap is start-tier-independent so it preserves gating for all of them.
+Recipe and upgrade gates compare against the persisted biome-local level.
+Recipes with explicit requiredBiomeLevel values own their exact gate; the
+generic item-upgrade fallback derives its gate from the six-level segment
+constant. isBiomeFullyDoneAtTier only requires content reachable at the
+player's current tier, so a biome does not become an endless grind merely
+because the curve has room for later tiers.
 
-### Recipe / item surface to remap
+## Global Mastery
 
-`requiredBiomeLevel` literal counts (per `grep`):
+globalMastery(biomeLevel) is derived on demand as the sum of non-negative
+levels for real biome groups. It excludes Clearing and sanctuary and is not a
+separately persisted wallet or slice field. The same derivation is used for
+player views, character summaries, admin views, and server-side economy checks.
 
-| File | count | | File | count |
-|---|---|---|---|---|
-| mountain | 76 | | jungle | 52 |
-| swamp | 56 | | cave | 48 |
-| desert | 48 | | volcanic | 40 |
-| tundra | 40 | | forest | 32 |
-| plains | 32 | | graveyard | 24 |
-| trench | 20 | | clearing | 16 |
-| abyssUltimate | 4 | | trenchUltimate | 4 |
-| items.ts | 1 | | **total** | **≈ 493** |
+The maximum reachable aggregate at each player tier is currently:
 
-All under `shared/src/data/recipes/*` plus one in `shared/src/items.ts`. Volume → script the remap,
-don't hand-edit. `requiredBiomeLevel:` is a unique key prefix → a `requiredBiomeLevel:\s*(\d+)` regex
-remap is safe (won't touch essence costs etc.).
+| Player tier | Maximum Global Mastery |
+| ---: | ---: |
+| T0 | 0 |
+| T1 | 30 |
+| T2 | 72 |
+| T3 | 114 |
+| T4 | 156 |
+| T5+ | 156 until new authored biome content exists |
 
-### Gating / traverse interactions (already correct, do not regress)
+These maxima are sums of biomeLevelCap for the content actually authored at
+that tier. They are not a promise that a character has reached the value.
 
-- `craftRecipe` / `upgradeItem` compare `requiredBiomeLevel` against the live `biomeLevel[group]`.
-- `areAllBiomeRecipesUnlocked` (`biomeProgress.ts:38`) filters recipes by `requiredBiomeLevel > cap`
-  using the live `biomeLevelCap`. Auto-derives from the constant.
-- `isBiomeFullyDoneAtTier` (`biomeProgress.ts:95`) **explicitly does not require maxing biome level**
-  — auto-traverse advances once all *reachable* recipes are unlocked + nodes/boss cleared. So adding
-  empty top levels (5, 6) does **not** create grind. This is why an expansion with empty new levels
-  is benign for traversal.
+## Systems driven by Global Mastery
 
----
+### Rune capacity
 
-## Global Mastery (Step 4) — does not exist yet
+The rune budget is:
 
-- **No account/global aggregate.** Confirmed via `grep globalMastery` → only the roadmap docs.
-  Biome levels live per-group in `TracksProgression.biomeLevel: Record<string, number>`
-  (`shared/src/components/core/networkedSlices.ts:227`), persisted.
+- base capacity: 16 points;
+- one additional point per five Global Mastery;
+- non-negative, finite Global Mastery is clamped before calculation.
 
-### Formula #1 — Rune-point budget (tier-driven today)
+The authority is runeBudgetForGlobalMastery in shared/src/runeDatabase.ts.
+Old tier-based or crafted rune-point formulas are not current.
 
-- `runeBudgetForTier(playerTier, runePointBonus) = 8 + max(0,playerTier)*2 + max(0,runePointBonus)`
-  (`shared/src/runeDatabase.ts:421`).
-- Call sites (3 + def): server `playerLifecycle.ts:33` (on attach), server `index.ts:846`
-  (`rune:setLoadout`), client `RunesPanel.tsx:191`. `sanitizeRuneLoadout` trims the loadout to the
-  budget, so a **lower** budget silently drops equipped rune rules.
-- `runePointBonus` = sum of crafted `increase-rune-points` recipes. **Stays** in Step 4's formula
-  (Step 5 retires those recipes — out of scope here).
+### Item upgrade ceiling
 
-### Formula #2 — Item upgrade cap (flat today)
+MAX_UPGRADE is 5 for ordinary fallback items. An item's explicit upgrades array
+may set a different structural length. Cores and Relics are intentionally off
+the ordinary +N track and return a maximum of 0 from getMaxUpgrade.
 
-- `MAX_UPGRADE = 3`; per-item structural max `getMaxUpgrade(item) = item.upgrades?.length ?? 3`
-  (`itemUpgrades.ts:5,29`). All current items cap at +3.
-- `checkUpgrade` (`itemUpgrades.ts:106`) is the shared authority (server applies, client gates the
-  button). No GM input today. Server caller `itemUpgrade.ts:46`; client caller `UpgradeTab.tsx`.
+globalMasteryRequiredForUpgrade spreads +1 through +5 across the current tier's
+Global Mastery band:
 
-### Protocol / client
+| Item tier | +1 | +2 | +3 | +4 | +5 |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| T1 | 6 | 12 | 18 | 24 | 30 |
+| T2 | 38 | 47 | 55 | 64 | 72 |
+| T3 | 80 | 89 | 97 | 106 | 114 |
+| T4 | 122 | 131 | 139 | 148 | 156 |
 
-- `PlayerView` (`shared/src/protocol/views.ts`) carries `biomeLevel` (line 297 in composer) but **no**
-  `globalMastery`. Client has `biomeLevel` via atoms, so GM is client-derivable.
-- Admin `CharactersTab` surfaces essences/biomeLevel; no GM column.
+The server's checkUpgrade applies the Global Mastery ceiling in addition to
+the item's structural cap and its biome-level/economy requirements. The client
+uses the same shared calculator for display and affordability; it is not an
+authority.
 
----
+## Network and persistence contract
 
-## Cross-cutting checklist status for this step
+biomeXP and biomeLevel remain persisted inside TracksProgression. Global Mastery
+is derived and exposed in PlayerView, character summaries, and admin summaries.
+Adding or changing a derived display must not add a second persisted source of
+truth.
 
-- **Persistence/migration:** GM is **derived** (sum of `biomeLevel`) → no new persisted field, no
-  migration. Existing `biomeLevel` values are untouched by the 4→6 change (a level-4 biome is still
-  level 4, now mid-segment). Pre-release clean cutover for recipe-gating shifts.
-- **Networked allowlists / dev-boot invariants:** none — `PlayerView.globalMastery` is a view field,
-  not a networked *slice*. `NETWORKED_PLAYER_KEYS` unchanged.
-- **Protocol/views:** add `globalMastery` to `PlayerView` + composer (1 field).
-- **Admin:** add GM (read-only, derived) to the player summary / CharactersTab.
-- **combatBootstrap parity:** N/A — no new combat listener (RP budget + upgrade cap are not
-  combat-pipeline listeners).
-- **Rune-action catalog:** N/A this step.
+The relevant focused coverage includes:
+
+- shared/src/systems/itemUpgrades.test.ts for upgrade bands and ceilings;
+- server-side biome progression/economy tests for caps and recipe reachability;
+- shared/src/protocol/characters.test.ts for derived character summaries; and
+- server/test/clearingMastery.test.ts for the tutorial curve.
+
+When changing tier content, update the world authoring and let the derived
+start/final maps and cap tests expose the resulting economy. Do not edit this
+page to preserve an old numerical table.

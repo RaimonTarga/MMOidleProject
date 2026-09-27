@@ -1,6 +1,6 @@
 # MMO Idle Architecture
 
-Status: current as of 2026-07-06.
+Status: current as of 2026-09-27.
 
 This is the standing reference for how the codebase is structured. Read it end-to-end the first time, then use it as a lookup when adding new mechanics. If this doc and the code disagree, the code wins — file it as a doc bug. For per-system implementation detail and balance-in-progress notes beyond what's covered here, see the paired `docs/<system>-plan.md` / `docs/<system>-current-state.md` docs and the scoreboard in `docs/system-rework-status.md`.
 
@@ -394,10 +394,12 @@ Four of these (Abilities, Stances, Rites, Cores) are **loadout layers**: player-
 
 ### Aspects & Biome Catalysts economy
 
-- **State:** `TracksProgression.essences` (existing) plus new `catalysts` and `catalystProgress` (both `Record<string, number>` keyed by biome group) — all inside the already-networked/persisted `tracksProgression` slice, so no allowlist or migration work was needed to add them.
+- **State:** `TracksProgression.essences` (existing) plus `catalysts` and `catalystProgress` (both `Record<string, number>` keyed by node-modifier family) — all inside the already-networked/persisted `tracksProgression` slice, so no allowlist or migration work was needed to add them.
 - **Owner:** `grantCatalystProgress()` (`server/src/systems/player/progression/rewards.ts`) accumulates per-kill weight and mints whole catalysts at a configured threshold, carrying the remainder. Every crafting/upgrade/evolution site that spends catalysts follows the same read-then-subtract pattern as essence spending.
 - **Extension point:** a new catalyst axis is just a new key in the `Record<string, number>` maps plus a weight source and a cost entry at the relevant crafting site.
-- **Note:** `docs/aspects-catalysts-current-state.md` is titled and written as a pre-implementation audit ("catalysts don't exist yet") — that is stale; catalysts are fully implemented as described above. Trust this section and the code, not that doc's prose, until it's refreshed.
+- **Note:** The implementation record is `docs/aspects-catalysts-current-state.md`.
+  Catalyst wallets are keyed by node-modifier family; the former biome-keyed
+  design and pre-implementation snapshot are historical.
 
 ### Biome ecology AI primitives (packs, patrol, swarm, telegraphs)
 

@@ -1,10 +1,11 @@
 import type { DesiredBuild } from "./loadout";
 import { T2_CLASS_PLANS } from "../routes/t2GearPlans";
 import { t2Runes } from "../routes/t2Common";
+import { withClassRecovery } from "../routes/classRecovery";
 
 /** Explicit candidates for the first Plains readiness slice, not global optima. */
 export const CAMPAIGN_PROFILES = T2_CLASS_PLANS.map(plan => {
-  const rules = t2Runes(plan.movementProfile);
+  const rules = withClassRecovery(t2Runes(plan.movementProfile), plan.classRoot);
   const build = (technique: string, stance: string | null, boss: boolean): DesiredBuild => ({
     abilities: { techniques: [technique], guards: ["second-wind"] },
     // Only the boss candidate drops environmental avoidance. It is not admitted

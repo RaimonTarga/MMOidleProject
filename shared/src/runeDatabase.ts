@@ -27,6 +27,8 @@ export type RuneChannel =
   /** Whether a travel objective may yield to combat and resume afterwards. */
   | "TRAVEL_RESPONSE"
   | "CONTROL"
+  /** Conduit only: where the formation stands, independent of the owner's movement. */
+  | "FORMATION"
   | "ABILITY"
   | "STANCE";
 
@@ -103,6 +105,7 @@ export type RuneActionId =
   | "tactical-reload"
   | "wait-for-execution"
   | "wait-for-summons"
+  | "recall-summons"
   | "wait-for-regen"
   | "wait-it-out"
   | "auto-path-enemy"
@@ -157,6 +160,7 @@ export const RUNE_CHANNELS: RuneChannel[] = [
   "TRAVEL_PATHING",
   "TRAVEL_RESPONSE",
   "CONTROL",
+  "FORMATION",
   "ABILITY",
   "STANCE",
 ];
@@ -747,6 +751,20 @@ export const ACTION_DATABASE = new Map<string, ActionDef>([
       allowedConditionIds: CONTROL_CONDITIONS,
     },
   ],
+  [
+    "recall-summons",
+    {
+      id: "recall-summons",
+      name: "Recall Summons",
+      blurb:
+        "While this situation holds, your summons drop their targets and stay at your side, then rejoin the fight when it ends.",
+      cost: 1,
+      tier: 1,
+      channel: "FORMATION",
+      allowedConditionIds: ["hp-below-25", "while-traveling", "target-casting"],
+      requiredArchetype: "summoner",
+    },
+  ],
   ["use-ability", { id: "use-ability", name: "Use Ability", blurb: "Use an attuned ability whenever this situation holds and it is off cooldown.", cost: 1, tier: 1, channel: "ABILITY" }],
   [
     "switch-stance",
@@ -822,6 +840,7 @@ export const STARTER_RUNE_IDS: string[] = Array.from(
     "tactical-reload",
     "wait-for-execution",
     "wait-for-summons",
+    "recall-summons",
     "flee",
     "while-traveling",
     "fight-back",
@@ -906,6 +925,8 @@ export function runeChannelLabel(channel: RuneChannel): string {
       return "Travel Response";
     case "CONTROL":
       return "Control";
+    case "FORMATION":
+      return "Formation";
     case "ABILITY":
       return "Abilities";
     case "STANCE":
@@ -922,6 +943,26 @@ export function isRuneRuleKnown(rule: EquippedRule): boolean {
 
 export function isRuneRuleCompatible(rule: EquippedRule): boolean {
   return isRuneRuleCompatibleForArchetype(rule, undefined);
+}
+
+/**
+ * Class-specific addenda to a response's blurb, shown only to that class. The
+ * rule itself is shared; this says what it means for this class's body.
+ */
+const RUNE_ARCHETYPE_NOTES: Partial<Record<Exclude<CombatArchetype, null>, Partial<Record<RuneActionId, string>>>> = {
+  summoner: {
+    "taunt-current-target":
+      "Conduit: your summons taunt for you. A summon's hit pulls its target onto that summon.",
+    "step-back": "Conduit: your summons step out of telegraphs too.",
+  },
+};
+
+export function runeActionArchetypeNote(
+  actionId: string,
+  combatArchetype: CombatArchetype | undefined,
+): string | null {
+  if (!combatArchetype) return null;
+  return RUNE_ARCHETYPE_NOTES[combatArchetype]?.[actionId as RuneActionId] ?? null;
 }
 
 export function isRuneRuleCompatibleForArchetype(
@@ -1411,6 +1452,7 @@ export interface DerivedRuneConfig {
   followLeader: boolean;
   leadTheWay: boolean;
   tauntCurrentTarget: boolean;
+  recallSummons: boolean;
   letDotsFinish: boolean;
   spreadDots: boolean;
   /** A `focus-elites` rule is active this tick — prioritize elite-tagged enemies. */
@@ -1431,6 +1473,7 @@ function emptyClaims(): ClaimedRuneChannels {
     TRAVEL_PATHING: null,
     TRAVEL_RESPONSE: null,
     CONTROL: null,
+    FORMATION: null,
     ABILITY: null,
     STANCE: null,
   };
@@ -1521,6 +1564,7 @@ export function deriveAutoConfigFromRunes(
     followLeader: false,
     leadTheWay: false,
     tauntCurrentTarget: false,
+    recallSummons: false,
     letDotsFinish: false,
     spreadDots: false,
     focusElites: false,
@@ -1602,6 +1646,7 @@ export function deriveAutoConfigFromRunes(
   derived.travelPathingAction = claimed.TRAVEL_PATHING?.action.id ?? null;
   derived.travelResponseAction = claimed.TRAVEL_RESPONSE?.action.id ?? null;
   derived.controlAction = claimed.CONTROL?.action.id ?? null;
+  derived.recallSummons = claimed.FORMATION?.action.id === "recall-summons";
   derived.stanceAction = claimed.STANCE?.action.id ?? null;
   derived.stanceTargetId = claimed.STANCE?.rule.targetStanceId ?? null;
 

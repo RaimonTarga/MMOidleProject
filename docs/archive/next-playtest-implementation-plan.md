@@ -1,4 +1,4 @@
-> **PARTLY SUPERSEDED (2026-08-11).** Its phases and ordering (§2–3) are replaced
+> **ARCHIVED (2026-09-27) — HISTORICAL IMPLEMENTATION PLAN.** Its phases and ordering (§2–3) are replaced
 > by `docs/polish-and-balance-roadmap.md`. **Still live and worth reading:** the
 > tooling audit (§5), the defect list (§5.7), and the auto-combat wedge write-up
 > (§5.8). Do not plan from its phase table.

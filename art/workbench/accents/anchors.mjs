@@ -8,7 +8,7 @@
 // centre of the head. The client places an accent prop's bottom-centre there,
 // so a crest sits on the head of every body with no hand-tuned offsets.
 //
-// WHY BAKE RATHER THAN HARDCODE: the spread across the 24 bodies is small
+// WHY BAKE RATHER THAN HARDCODE: the spread across the current body roster is small
 // (topmost opaque row 1-4, head centre 30.5-34.0) because they all came from
 // the same img2img chain at the same framing — but 3px at 64px is ~5% of the
 // sprite, which is a visible slip on a prop sitting on the head. Baking also
@@ -38,8 +38,8 @@ const HEAD_BAND_MIN = 26;
 const HEAD_BAND_MAX = 38;
 
 const CLASSES = ['cadence', 'cooldown', 'dot', 'reload', 'energy', 'summoner'];
-// All six classes now have T3 bodies. Conduit was excluded while it was a
-// placeholder; its nine specialization bodies landed 2026-08-08.
+// All six classes now have T3 bodies. Conduit was excluded from the initial
+// colour pass; its nine specialization bodies landed 2026-08-08.
 const T3_CLASSES = ['cadence', 'cooldown', 'dot', 'reload', 'energy', 'summoner'];
 const FRAMES = ['light', 'medium', 'heavy'];
 const SPECS = ['a', 'b', 'c'];
@@ -49,7 +49,7 @@ const FILES = [
   ...CLASSES.flatMap((c) => [
     `${c}.png`, `light_${c}.png`, `medium_${c}.png`, `heavy_${c}.png`,
   ]),
-  // The 45 bespoke T3 spec bodies. These are real rendered bodies, so they need
+  // The 54 bespoke T3 spec bodies. These are real rendered bodies, so they need
   // real anchors — without them every T3 player fell back to the roster average
   // and wore their range ring at a slightly wrong height.
   ...T3_CLASSES.flatMap((c) =>

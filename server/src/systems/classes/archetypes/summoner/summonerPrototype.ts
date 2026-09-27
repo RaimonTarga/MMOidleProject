@@ -229,7 +229,7 @@ export function updateSummonerArchetype(world: World, dt: number, now: number): 
     spawnFreshSlots(world, summoner);
     tickSummonReconstruction(world, summoner, dt, now);
     syncLiveMinionFrameStats(world, summoner);
-    validateSummonerCommand(world, summoner);
+    validateSummonerCommand(world, summoner, now);
 
     for (const id of summoner.summonsMinions.minionIds) {
       const minion = id ? world.getMinionEntity(id) : undefined;

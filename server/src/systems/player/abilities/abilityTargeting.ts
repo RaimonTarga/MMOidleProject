@@ -30,6 +30,7 @@ import { isHardControlled } from "../../combat/status/playerHardControl";
 import { afflictionTechniqueHasWork } from "./abilityAffliction";
 import { summonerProfileFor, usesSummonTechniques } from "../../classes/archetypes/summoner/profile";
 import { formationChargeTarget } from "./formationCharge";
+import { isSummonerRepositioning } from "../../classes/archetypes/summoner/command";
 
 /** Validate the physical caster again throughout its wind-up. */
 export function summonCanCastAt(
@@ -38,7 +39,7 @@ export function summonCanCastAt(
 ): boolean {
   return usesSummonTechniques(player)
     && player.summonsMinions?.minionIds.includes(minion.entityId) === true
-    && player.hasSummonerCommand?.kind !== 'move'
+    && !isSummonerRepositioning(player)
     && minion.isMinion.ownerPlayerId === player.isPlayer.id
     && minion.hasHealth.hp > 0 && target.hasHealth.hp > 0
     && !target.isConcealed && !target.isInvulnerable

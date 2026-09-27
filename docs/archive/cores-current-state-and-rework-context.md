@@ -1,3 +1,7 @@
+> **ARCHIVED (2026-09-27) — HISTORICAL EXTERNAL-DESIGN EXPORT.** The live Core
+> record is `docs/cores-current-state.md`; design intent lives in
+> `design_docs/CORE_DESIGN_PHILOSOPHY.md`.
+
 # Cores — Current-State and Rework Context Export
 
 **Purpose of this document:** a self-contained export of the Core equipment-slot

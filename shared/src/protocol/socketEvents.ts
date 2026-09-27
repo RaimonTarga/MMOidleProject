@@ -205,6 +205,8 @@ export interface ClientToServerEvents {
   "player:move": (pos: Vec2, opts?: PlayerMoveOptions, ack?: (result: PlayerMoveResult) => void) => void;
   /** Summoner: shift+click command — focus a clicked enemy or move minions to a point. */
   "player:commandSummons": (pos: Vec2) => void;
+  /** Conduit only: summons drop their targets and return to their spots around you. */
+  "player:recallSummons": () => void;
   /** Enable or disable server-side auto-targeting for this player. */
   "player:setAuto": (enabled: boolean) => void;
   /** Slinger only: discard the current clip and start the authoritative reload lifecycle. */

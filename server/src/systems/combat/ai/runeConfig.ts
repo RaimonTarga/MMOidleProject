@@ -38,6 +38,7 @@ export const RUNE_TACTICAL_RELOAD_FLAG = "rune.tacticalReload";
 export const RUNE_FOLLOW_LEADER_FLAG = "rune.followLeader";
 export const RUNE_LEAD_THE_WAY_FLAG = "rune.leadTheWay";
 export const RUNE_TAUNT_CURRENT_TARGET_FLAG = "rune.tauntCurrentTarget";
+export const RUNE_RECALL_SUMMONS_FLAG = "rune.recallSummons";
 export const RUNE_LET_DOTS_FINISH_FLAG = "rune.letDotsFinish";
 export const RUNE_SPREAD_DOTS_FLAG = "rune.spreadDots";
 export const RUNE_FOCUS_ELITES_FLAG = "rune.focusElites";
@@ -105,6 +106,15 @@ function aggroStats(
       count++;
       if (!charging && isMonsterThreatening(world, monster, now)) charging = true;
       if (!contact) contact = inMeleeContact(player, playerBox, monster);
+    } else if (
+      // A Conduit's formation is "you" for Enemy Charging: a slam wound up on
+      // one of its summons is the cast a Recall/Guard rule is meant to answer.
+      !charging &&
+      monster.hasAggroTarget.targetKind === "minion" &&
+      world.getMinionEntity(monster.hasAggroTarget.targetId)?.isMinion.ownerPlayerId === player.isPlayer.id &&
+      isMonsterThreatening(world, monster, now)
+    ) {
+      charging = true;
     }
   }
   return { count, charging, contact };
@@ -351,6 +361,15 @@ export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
       player.tracksCombat,
       RUNE_TAUNT_CURRENT_TARGET_FLAG,
       d.tauntCurrentTarget,
+    );
+    // Call the rune recall out once, as it starts, like the R recall.
+    if (d.recallSummons && player.usesAutocombat.auto && !getFlag(player.tracksCombat, RUNE_RECALL_SUMMONS_FLAG)) {
+      world.pushEvent(player.hasPosition.nodeId, { kind: 'summons-recalled', playerId: player.isPlayer.id });
+    }
+    setFlag(
+      player.tracksCombat,
+      RUNE_RECALL_SUMMONS_FLAG,
+      d.recallSummons,
     );
     setFlag(player.tracksCombat, RUNE_LET_DOTS_FINISH_FLAG, d.letDotsFinish);
     setFlag(player.tracksCombat, RUNE_SPREAD_DOTS_FLAG, d.spreadDots);

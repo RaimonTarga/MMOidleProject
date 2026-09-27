@@ -1,6 +1,6 @@
 # Map Variety: Node Modifiers, Dual Economy & Regions — Design (v4, direction locked)
 
-**Status: DIRECTION LOCKED at the design level (2026-07-24).** v1 was a pre-decision brainstorm;
+**Status: DIRECTION LOCKED and implemented for the authored T1–T4 world (audited 2026-09-27).** v1 was a pre-decision brainstorm;
 v2 locked its broad direction; v3 incorporated the second game-design review and Stage A Q&A;
 v4 locks the post-Stage-A world-layout pass: exhaustive allowed biome × pace coverage, native
 duplicates, curated density overlays, a single stitched sparse world, organic multi-edge
@@ -9,22 +9,22 @@ capacity. See §5 for the decision log. **Both implementation plans are archived
 `docs/archive/map-variety-implementation-plan.md`, Stage B at
 `docs/archive/map-variety-regions-implementation-plan.md`. This doc is the living design
 authority for the map. Stage A (node modifiers + catalyst re-key on
-the existing 11×11 grid) SHIPPED 2026-07-24 (`feat/map-variety-stage-a`); Stage B shipped
-2026-07-24 and was refined into the four-tier spiral during playtesting.** All balance numbers
+the pre-regions grid) SHIPPED 2026-07-24 (`feat/map-variety-stage-a`); Stage B shipped
+2026-07-24 and was refined into the four-tier spiral during playtesting.** The source registry
+and modifier-family assignment are the current implementation authority; balance numbers
 remain PLACEHOLDER (user-owned tuning).
 
 **Scope: game design only.** Numbers (modifier percentages, mint thresholds, costs) are
 balance-pass territory, not fixed here.
 
-**Touches (when implemented):**
-- **Supersedes** part of the Step 2 Catalyst system as shipped
+**Shipped consequences:**
+- **Superseded** part of the Step 2 Catalyst system as shipped
   (`docs/system-rework-status.md`, Step 2): catalysts re-key from per-biome-group to
-  per-combat-family. This is a rework with hard consequences, not an addition — all existing
-  biome-group catalyst costs (forest worked example, stances, rites, evolution reconstruct)
-  must be re-authored or removed, and player catalyst wallets/progress are **wiped to zero**
-  on migration (placeholder-era playtest earnings, not worth converting).
-- **Resolves "Map traversal"**, currently `⏸️ unresolved` on `docs/system-rework-status.md`
-  (stitched sparse world + organic traversable frontiers, §3).
+  per-combat-family. This was a rework with hard consequences, not an addition: live recipe,
+  stance, rite, and reconstruction costs now use modifier families, and the old player
+  catalyst wallets/progress were **wiped to zero** on migration.
+- **Resolved "Map traversal"** from the old roadmap: the live world is one sparse registry
+  with authored exits and organic region frontiers, not separate maps.
 - Interacts with the parked **essence drop-volume tension** watch item
   (`BIOME_ESSENCE_TIER_MULT` dampens late-game essence; this adds a second currency stream,
   changing the shape of that tension).
@@ -33,9 +33,11 @@ balance-pass territory, not fixed here.
 
 ## 0. Problem statement
 
-Tier = Chebyshev distance from the center clearing on an 11×11 grid. The map does have
+The original v1 sketch treated tier as Chebyshev distance from the center clearing on an
+11×11 grid. That grid model is historical: the live map is an authored sparse T1–T4
+region registry with explicit coordinates and exits. The original map did have
 geographic wedges (tundra north, jungle southeast, swamp west), but every node of a given
-biome+tier is mechanically identical to every other — the map reads as "reskinned difficulty,"
+biome+tier was mechanically identical to every other — the map read as "reskinned difficulty,"
 not as a place with distinct locations worth remembering. Goal: give individual node instances
 real personality without diluting each biome's core identity (design bible §3–4 already spend a
 lot of care establishing that identity — this builds on it, not against it), and build a second
@@ -464,11 +466,10 @@ For implementers/reviewers, the locked rules in one place:
 
 Resolved ahead of the implementation plan so it can be written against them:
 
-- **Staging: modifiers first, regions second.** Stage A ships pace/density modifiers, monster
-  reshaping, the catalyst re-key, and the map information contract **on the existing 11×11
-  grid** (per-node assignment table authored against current node IDs — small, acknowledged
-  throwaway; the systems are not). Stage B replaces the grid with regions. Each stage is
-  independently playtestable.
+- **Staging: modifiers first, regions second.** This is the historical rollout sequence.
+  Stage A shipped pace/density modifiers, monster reshaping, the catalyst re-key, and the
+  map information contract on the pre-regions grid. Stage B then replaced that grid with
+  the live authored sparse regions. Each stage was independently playtestable.
 - **Map data model: one global sparse grid.** Real nodes occupy authored global row/column
   coordinates; absent cells are void negative space. Region membership is node metadata, not a
   separate map. Bounds, exits, pathing, player map, analytics, and ops views derive from the

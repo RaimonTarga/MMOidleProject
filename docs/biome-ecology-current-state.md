@@ -1,4 +1,4 @@
-# Biome Identity / Combat Ecology — Current State (audited 2026-08-08)
+# Biome Identity / Combat Ecology — Current State (latest pass audited 2026-09-21)
 
 **Companion to:** `docs/archive/biome-ecology-plan.md` (the Step 12 program plan) and
 `docs/archive/biome-ecology-pass2-plan.md` (the completed Pass 2 program).
