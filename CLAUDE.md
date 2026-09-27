@@ -93,11 +93,13 @@ on failure; a trailing `console.log("<name>: ok")` marks completion.
 
 - Locations: `server/test/*.test.ts` and `shared/src/**/*.test.ts`.
 - Run everything: `pnpm test` (runs `scripts/run-tests.mjs`, which discovers
-  and runs every file via
-  `pnpm --filter @mmo-idle/server exec tsx --conditions=development <file>`,
-  prints a per-file pass/fail summary, and exits nonzero on any failure).
-- Run a single file the same way, e.g.
-  `pnpm --filter @mmo-idle/server exec tsx --conditions=development test/dungeonPlains.test.ts`.
+  every file and runs them in parallel — `TEST_JOBS`, default half the cores —
+  as `node --conditions=development --import tsx <file>`, prints per-file
+  pass/fail with timings plus the slowest files, and exits nonzero on any failure).
+- Run a subset by path substring: `pnpm test -- boss summoner`.
+- Run a single file directly, e.g. from `server/`:
+  `node --conditions=development --import tsx test/dungeonPlains.test.ts`
+  (the `tsx` CLI works too but starts a second node, ~2 s slower per file).
 - `pnpm test:spatial` remains a narrower legacy alias for the two spatial/collision suites.
 - CI (`.github/workflows/ci.yml`) runs `pnpm typecheck` then `pnpm test` on
   push/PR to `develop`/`master`. No Postgres/Redis services are provisioned —

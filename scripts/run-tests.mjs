@@ -1,5 +1,6 @@
-import { spawnSync } from 'node:child_process';
+import { spawn } from 'node:child_process';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -65,41 +66,69 @@ const suites = [
   },
 ];
 
+// `pnpm test -- boss summoner` runs only files whose path contains a filter.
+const filters = process.argv.slice(2).filter((arg) => arg !== '--');
+
 const files = suites.flatMap((suite) =>
   suite.files
     .filter(isTestFile)
     .filter((file) => !suite.archivedFiles?.has(path.basename(file)))
     .sort()
     .map((file) => ({ suite, file })),
-);
+).filter(({ file }) => filters.length === 0
+  || filters.some((f) => path.relative(root, file).split(path.sep).join('/').includes(f)));
 
 if (files.length === 0) {
   console.error('No test files found.');
   process.exit(1);
 }
 
-const results = [];
+// Per-file startup dominated the old serial `pnpm exec tsx` loop (~6 s a file,
+// ~30 min in all): the tsx CLI spawns a second node. Load tsx in-process and
+// run files in parallel instead; every test builds its own World and temp dirs.
+const jobs = Math.max(1, Number(process.env.TEST_JOBS) || Math.floor(os.cpus().length / 2));
 
-for (const { suite, file } of files) {
+function runFile({ suite, file }) {
   const relFromPkg = path.relative(suite.cwd, file).split(path.sep).join('/');
   const label = path.relative(root, file).split(path.sep).join('/');
-  console.log(`\n=== ${label} ===`);
-  const res = spawnSync(
-    'pnpm',
-    ['--filter', suite.pkg, 'exec', 'tsx', '--conditions=development', relFromPkg],
-    { cwd: root, stdio: 'inherit', shell: true },
-  );
-  const passed = res.status === 0;
-  results.push({ file: label, passed });
+  const started = Date.now();
+  return new Promise((resolve) => {
+    const child = spawn(
+      process.execPath,
+      ['--conditions=development', '--import', 'tsx', relFromPkg],
+      { cwd: suite.cwd },
+    );
+    let output = '';
+    child.stdout.on('data', (chunk) => { output += chunk; });
+    child.stderr.on('data', (chunk) => { output += chunk; });
+    child.on('close', (code) => {
+      const result = { file: label, passed: code === 0, ms: Date.now() - started };
+      console.log(`${result.passed ? 'PASS' : 'FAIL'}  ${label}  (${(result.ms / 1000).toFixed(1)}s)`);
+      if (!result.passed) console.log(output.trimEnd().split('\n').map((l) => `      ${l}`).join('\n'));
+      resolve(result);
+    });
+  });
 }
 
-console.log('\n=== Test Summary ===');
-for (const { file, passed } of results) {
-  console.log(`${passed ? 'PASS' : 'FAIL'}  ${file}`);
-}
+console.log(`Running ${files.length} test files, ${jobs} at a time (TEST_JOBS to change).\n`);
+const suiteStarted = Date.now();
+const queue = [...files];
+const results = [];
+await Promise.all(Array.from({ length: jobs }, async () => {
+  while (queue.length > 0) results.push(await runFile(queue.shift()));
+}));
+results.sort((a, b) => a.file.localeCompare(b.file));
 
 const failed = results.filter((r) => !r.passed);
-console.log(`\n${results.length - failed.length}/${results.length} passed`);
+console.log('\n=== Slowest files ===');
+for (const r of [...results].sort((a, b) => b.ms - a.ms).slice(0, 8)) {
+  console.log(`${(r.ms / 1000).toFixed(1).padStart(6)}s  ${r.file}`);
+}
+if (failed.length > 0) {
+  console.log('\n=== Failed ===');
+  for (const { file } of failed) console.log(`FAIL  ${file}`);
+}
+console.log(`\n${results.length - failed.length}/${results.length} passed in ${((Date.now() - suiteStarted) / 1000).toFixed(0)}s`);
 
 if (failed.length > 0) {
   process.exit(1);
