@@ -4,7 +4,10 @@
  * Move: mobile minions path to the clicked spot (clamped to leash).
  * Recall (hotkey): minions drop their targets and return to their follow offsets
  * around the owner's LIVE position, so the owner can step out of a telegraph and
- * the formation comes along. Ends on arrival or after `RECALL_MAX_MS`.
+ * the formation comes along. Holds for `RECALL_HOLD_MS` even after arrival: in a
+ * melee brawl the summons are already home, and releasing on arrival sent them
+ * straight back into the fight within a tick or two. A summon that is home
+ * strikes back at anything already in its reach, but never chases.
  */
 import {
   distanceSq,
@@ -23,8 +26,10 @@ import { RUNE_RECALL_SUMMONS_FLAG } from '../../../combat/ai/runeConfig';
 const LEASH_MARGIN = 4;
 const ARRIVE_TOL = 10;
 const ARRIVE_TOL_SQ = ARRIVE_TOL * ARRIVE_TOL;
-/** Bodies that are blocked short of their spot must not hold the formation idle. */
-export const RECALL_MAX_MS = 3_000;
+/** Covers a full T1 slam wind-up (Ground Slam casts for 1.8 s) pressed as it starts. */
+export const RECALL_HOLD_MS = 2_000;
+/** Recalled summons sprint home, so the recall outruns melee that follows them. */
+export const RECALL_SPEED_MULT = 2;
 
 function computeLeashRadius(owner: PlayerEntity): number {
   return resolveSummonerProfile({
@@ -39,7 +44,7 @@ export interface HasSummonerCommand {
   kind: 'focus' | 'move' | 'recall';
   monsterId: string | null;
   pos: Vec2;
-  /** Recall only: when it was issued, for the `RECALL_MAX_MS` timeout. */
+  /** Recall only: when it was issued, for the `RECALL_HOLD_MS` window. */
   issuedAtMs?: number;
 }
 
@@ -124,6 +129,7 @@ export function applySummonerRecall(world: World, owner: PlayerEntity, now: numb
     pos:        { ...owner.hasPosition.current },
     issuedAtMs: now,
   });
+  world.pushEvent(owner.hasPosition.nodeId, { kind: 'summons-recalled', playerId: owner.isPlayer.id });
 }
 
 /** Live focus target from an active command, or null if none / invalid. */
@@ -155,7 +161,7 @@ export function validateSummonerCommand(world: World, owner: PlayerEntity, now: 
   if (!cmd) return;
 
   if (cmd.kind === 'recall') {
-    if (now - (cmd.issuedAtMs ?? now) >= RECALL_MAX_MS || recallArrived(world, owner)) {
+    if (now - (cmd.issuedAtMs ?? now) >= RECALL_HOLD_MS) {
       clearSummonerCommand(world, owner);
     }
     return;
@@ -182,18 +188,6 @@ export function validateSummonerCommand(world: World, owner: PlayerEntity, now: 
     }
   }
   clearSummonerCommand(world, owner);
-}
-
-function recallArrived(world: World, owner: PlayerEntity): boolean {
-  const summons = owner.summonsMinions;
-  if (!summons) return true;
-  for (const id of summons.minionIds) {
-    if (!id) continue;
-    const minion = world.getMinionEntity(id);
-    if (!minion || minion.hasHealth.hp <= 0) continue;
-    if (distanceSq(minion.hasPosition.current, recallSpot(owner, minion)) > ARRIVE_TOL_SQ) return false;
-  }
-  return true;
 }
 
 /** Where a recalled summon heads: its follow offset around the owner's live position. */

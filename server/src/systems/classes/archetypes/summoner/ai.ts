@@ -92,6 +92,35 @@ function findMinionTarget(
   return best;
 }
 
+/** The nearest monster this summon can already hit from where it stands. */
+function findReachableMonster(world: World, owner: PlayerEntity, minion: MinionEntity): MonsterEntity | null {
+  let best: MonsterEntity | null = null;
+  let bestDistSq = Infinity;
+  for (const m of world.monsterEntitiesInNode(owner.hasPosition.nodeId)) {
+    if (m.hasHealth.hp <= 0) continue;
+    if (!heatAllowsTarget(world, owner, m)) continue;
+    if (!world.collision.canReach(minion, m, minion.performsAttack.attackRange)) continue;
+    const distSq = distanceSq(m.hasPosition.current, minion.hasPosition.current);
+    if (distSq < bestDistSq) {
+      bestDistSq = distSq;
+      best = m;
+    }
+  }
+  return best;
+}
+
+/** Swing at `target` once the summon's (owner-hasted) cooldown is ready. */
+function strikeWhenReady(world: World, owner: PlayerEntity, minion: MinionEntity, target: MonsterEntity, now: number): void {
+  // Inherit offensive haste without copying body-local environmental slows.
+  if (now - minion.performsAttack.lastAttackAt >=
+    minion.performsAttack.attackCooldown / (1 + attackHasteBonus(owner.tracksCombat))) {
+    const outcome = runFormationAttack(world, owner, minion, target, now);
+    if (outcome !== 'cancelled') {
+      minion.performsAttack.lastAttackAt = now;
+    }
+  }
+}
+
 function countMinionsTargetingMonster(
   world: World,
   ownerId: string,
@@ -227,11 +256,17 @@ export function driveMinion(
     const spot = recallSpot(owner, minion);
     if (distance(minion.hasPosition.current, spot) > FOLLOW_HOVER_TOL) {
       setEntityMotion(world, minion, spot);
-    } else {
-      stopEntity(world, minion);
+      setAttackTarget(world, minion, null);
+      cm.currentTargetId = null;
+      return;
     }
-    setAttackTarget(world, minion, null);
-    cm.currentTargetId = null;
+    // Home: hold the spot, but strike back at anything already in reach
+    // rather than stand still while melee that followed it in keeps biting.
+    stopEntity(world, minion);
+    const inReach = findReachableMonster(world, owner, minion);
+    setAttackTarget(world, minion, inReach?.isMonster.id ?? null);
+    cm.currentTargetId = inReach?.isMonster.id ?? null;
+    if (inReach) strikeWhenReady(world, owner, minion, inReach, now);
     return;
   }
 
@@ -281,14 +316,7 @@ export function driveMinion(
         cm.currentTargetId = target.isMonster.id;
       }
 
-      // Inherit offensive haste without copying body-local environmental slows.
-      if (now - minion.performsAttack.lastAttackAt >=
-        minion.performsAttack.attackCooldown / (1 + attackHasteBonus(owner.tracksCombat))) {
-        const outcome = runFormationAttack(world, owner, minion, target, now);
-        if (outcome !== 'cancelled') {
-          minion.performsAttack.lastAttackAt = now;
-        }
-      }
+      strikeWhenReady(world, owner, minion, target, now);
       return;
     }
 

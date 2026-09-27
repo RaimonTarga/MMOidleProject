@@ -9,6 +9,7 @@ import {
   emptyEquipment,
   geometryContains,
   runeActionArchetypeNote,
+  getFlag,
   setFlag,
   ACTION_DATABASE,
   STARTER_RUNE_IDS,
@@ -23,11 +24,12 @@ import { driveMinion } from '../src/systems/classes/archetypes/summoner/ai';
 import { publishGroundZone } from '../src/systems/world/groundZones';
 import { setEntityMotion, updateMovement } from '../src/systems/world/movement';
 import { setAggroTarget } from '../src/systems/combat/ai/targeting';
-import { RUNE_RECALL_SUMMONS_FLAG, RUNE_TAUNT_CURRENT_TARGET_FLAG } from '../src/systems/combat/ai/runeConfig';
+import { RUNE_RECALL_SUMMONS_FLAG, RUNE_TAUNT_CURRENT_TARGET_FLAG, updateRuneDerivedConfig } from '../src/systems/combat/ai/runeConfig';
 import { emitCombatEvent, makeCombatContext } from '../src/systems/combat/engine/combatPipeline';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import {
-  RECALL_MAX_MS,
+  RECALL_HOLD_MS,
+  RECALL_SPEED_MULT,
   applySummonerRecall,
   recallSpot,
 } from '../src/systems/classes/archetypes/summoner/command';
@@ -136,9 +138,10 @@ initCombatSystems();
 }
 
 // ── Summons share the owner's mobility haste ─────────────────────────────────
-function summonStep(oocSpeedPct: number): number {
-  const { world, owner, minions } = setup(`haste-${oocSpeedPct}`);
+function summonStep(oocSpeedPct: number, recalling = false): number {
+  const { world, owner, minions } = setup(`haste-${oocSpeedPct}-${recalling}`);
   owner.usesSkills.passives['mobility.ooc-speed-pct'] = oocSpeedPct;
+  if (recalling) applySummonerRecall(world, owner, 5_000);
   const minion = minions()[0]!;
   const start = { ...minion.hasPosition.current };
   setEntityMotion(world, minion, { x: start.x + 1_000, y: start.y });
@@ -150,32 +153,79 @@ const base = summonStep(0);
 const hasted = summonStep(0.5);
 assert(base > 0, 'fixture: the summon moves');
 assert(Math.abs(hasted / base - 1.5) < 0.05, `an out-of-combat sprint speeds summons too (${base} -> ${hasted})`);
+assert(Math.abs(summonStep(0, true) / base - RECALL_SPEED_MULT) < 0.05, 'recalled summons sprint home');
 
-// ── Recall brings the formation back to the owner, then releases it ──────────
+// ── Recall brings the formation back to the owner and holds it there ─────────
 {
   const { world, owner, minions } = setup('recall');
   let now = 2_000;
+  const issuedAt = now;
   for (const [i, m] of minions().entries()) m.hasPosition.current = { x: 400 + 200 * Math.cos(i), y: 400 + 200 * Math.sin(i) };
+  world.takeNodeEvents(NODE);
   applySummonerRecall(world, owner, now);
   assert(owner.hasSummonerCommand?.kind === 'recall', 'recall attaches the command');
-  for (let i = 0; i < 20 && owner.hasSummonerCommand; i++) {
+  assert(world.takeNodeEvents(NODE).some((e) => e.kind === 'summons-recalled' && e.playerId === owner.isPlayer.id),
+    'recall is called out to the node');
+  while (now - issuedAt < RECALL_HOLD_MS - 100) {
     for (const m of minions()) driveMinion(world, m, owner, now);
     assert(minions().every((m) => !m.hasAttackTarget), 'recalled summons drop their targets');
     updateMovement(world, 100, now);
     now += 100;
     updateSummonerArchetype(world, 100, now);
   }
-  assert(!owner.hasSummonerCommand, 'recall clears once the formation is home');
   assert(minions().every((m) => Math.hypot(
     m.hasPosition.current.x - recallSpot(owner, m).x,
     m.hasPosition.current.y - recallSpot(owner, m).y,
   ) <= 12), 'every summon ends at its spot around the owner');
+  // Arriving does not release the formation: in melee it is home at once.
+  assert(owner.hasSummonerCommand?.kind === 'recall', 'recall holds after the formation is home');
+  updateSummonerArchetype(world, 100, issuedAt + RECALL_HOLD_MS);
+  assert(!owner.hasSummonerCommand, 'recall releases after the hold');
+}
 
-  // A blocked body cannot hold the formation idle forever.
-  minions()[0]!.hasPosition.current = { x: 4_000, y: 4_000 };
+// ── A recalled summon holds its spot but strikes back at melee in reach ──────
+{
+  const { world, owner, minions, monster } = setup('recall-defend');
+  let now = 2_000;
   applySummonerRecall(world, owner, now);
-  updateSummonerArchetype(world, 100, now + RECALL_MAX_MS);
-  assert(!owner.hasSummonerCommand, 'recall times out');
+  for (let i = 0; i < 10; i++) {
+    for (const m of minions()) driveMinion(world, m, owner, now);
+    updateMovement(world, 100, now);
+    now += 100;
+  }
+  const home = minions()[0]!;
+  const spot = { ...home.hasPosition.current };
+  monster.hasPosition.current = { x: spot.x + 12, y: spot.y };
+  monster.hasHealth.hp = monster.hasHealth.maxHp = 1_000_000;
+  for (const m of minions()) m.performsAttack.lastAttackAt = 0;
+  driveMinion(world, home, owner, now);
+  assert(home.hasAttackTarget?.targetId === monster.isMonster.id, 'a home summon takes the enemy in its reach');
+  assert(monster.hasHealth.hp < monster.hasHealth.maxHp, 'and strikes it');
+  updateMovement(world, 100, now);
+  assert(Math.hypot(home.hasPosition.current.x - spot.x, home.hasPosition.current.y - spot.y) <= 1,
+    'without leaving its spot');
+
+  monster.hasPosition.current = { x: spot.x + 150, y: spot.y };
+  driveMinion(world, home, owner, now + 100);
+  updateMovement(world, 100, now + 100);
+  assert(!home.hasAttackTarget, 'an enemy out of reach is not chased during a recall');
+  assert(Math.hypot(home.hasPosition.current.x - spot.x, home.hasPosition.current.y - spot.y) <= 1,
+    'the summon stays home');
+}
+
+// ── Recall Summons rune calls itself out once, as it starts ──────────────────
+{
+  const { world, owner } = setup('rune-recall-callout');
+  owner.usesAutocombat.auto = true;
+  owner.tracksProgression.runesEquipped = [{ conditionId: 'hp-below-25', actionId: 'recall-summons' }];
+  owner.hasHealth.hp = 100;
+  world.takeNodeEvents(NODE);
+  const callouts = () => world.takeNodeEvents(NODE).filter((e) => e.kind === 'summons-recalled').length;
+  updateRuneDerivedConfig(world, 2_000);
+  assert(getFlag(owner.tracksCombat, RUNE_RECALL_SUMMONS_FLAG), 'fixture: the rune recall is armed');
+  assert(callouts() === 1, 'the rune recall is called out as it starts');
+  updateRuneDerivedConfig(world, 2_100);
+  assert(callouts() === 0, 'a held rune recall is not called out every tick');
 }
 
 // ── Recall Summons rune: situation-driven recall, Conduit only ───────────────

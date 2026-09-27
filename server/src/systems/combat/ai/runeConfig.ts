@@ -347,6 +347,10 @@ export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
       RUNE_TAUNT_CURRENT_TARGET_FLAG,
       d.tauntCurrentTarget,
     );
+    // Call the rune recall out once, as it starts, like the R recall.
+    if (d.recallSummons && player.usesAutocombat.auto && !getFlag(player.tracksCombat, RUNE_RECALL_SUMMONS_FLAG)) {
+      world.pushEvent(player.hasPosition.nodeId, { kind: 'summons-recalled', playerId: player.isPlayer.id });
+    }
     setFlag(
       player.tracksCombat,
       RUNE_RECALL_SUMMONS_FLAG,
