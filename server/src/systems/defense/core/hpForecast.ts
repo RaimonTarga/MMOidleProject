@@ -4,11 +4,11 @@ import type { PlayerEntity } from '../../../ecs/entity';
 import { attackCadenceMult } from "../../combat/engine/attackCadence";
 import { imbueOnHitBonus } from "../../player/abilities/abilityImbue";
 import type { World } from '../../../world/World';
-import { getCheatDeathHealPool, getDefenseAbsorbPool, getDefenseDebtPool } from './pools';
+import { getDefenseAbsorbPool, getDefenseDebtPool } from './pools';
 
 // Display-only HP-bar forecast: how much pending damage will hit the player
 // (ticking DoT + deferred hit-to-DoT debt), and how much heal-over-time
-// (absorb + post-cheat-death pools) is queued. Mirrored onto hasStatus each tick
+// (the absorb pool) is queued. Mirrored onto hasStatus each tick
 // so the HP bar can render the red (pending damage) and dark-green (regen) layers.
 //
 // Recovery is deliberately absent: it is a RATE, not a queued pool, so there is no
@@ -41,7 +41,7 @@ function forecastIncomingDot(player: PlayerEntity, world: World): number {
 
 function forecastPendingHeal(player: PlayerEntity): number {
   const cs = player.tracksCombat;
-  return Math.round(getDefenseAbsorbPool(cs) + getCheatDeathHealPool(cs));
+  return Math.round(getDefenseAbsorbPool(cs));
 }
 
 export function mirrorHpForecast(world: World): void {

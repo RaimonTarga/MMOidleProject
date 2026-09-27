@@ -6,9 +6,6 @@ import {
   isCooldownActive,
   setCooldown,
   setString,
-  getCounter,
-  setCounter,
-  resetCounter,
   type TracksCombat,
 } from "@mmo-idle/shared";
 import type { PlayerEntity } from "../../../ecs/entity";
@@ -16,20 +13,12 @@ import type { World } from "../../../world/World";
 import { registerCombatListener } from "../../combat/engine/combatPipeline";
 import { isInvulnerablePlayer } from "../../combat/invulnerability";
 import { DEBT_POOL_KEY } from "../core/pools";
-import { tryCheatDeath } from "./cheatDeath";
 import {
   buildKillerFromMonster,
   readDebtKillerFromStrings,
 } from "../../world/deathCause";
 import { recordPlayerDamaged } from "../../../world/worldLogCombat";
 import { actorFromSourceId } from "../../../world/worldLogActors";
-
-const DEBT_CHEAT_USED = "debtCheatDeathUsed";
-
-/** Re-arm debt cheat-death for the next engagement (called when leaving combat). */
-export function resetDebtCheatDeath(player: PlayerEntity): void {
-  resetCounter(player.tracksCombat, DEBT_CHEAT_USED);
-}
 
 /**
  * Register the hit-to-DoT listener on `onDamageTaken`.
@@ -113,18 +102,6 @@ export function runDebtDrain(world: World, player: PlayerEntity): boolean {
   const debtPool = getResource(cs, DEBT_POOL_KEY);
   if (debtPool <= 0) return false;
 
-  // Debt cheat-death: once per combat, if the accumulated debt would exceed
-  // current HP, forgive the whole pool. Reset on leaving combat.
-  if (
-    (player.usesSkills.passives["defense.debt-cheat-death"] ?? 0) > 0 &&
-    getCounter(cs, DEBT_CHEAT_USED) === 0 &&
-    debtPool >= player.hasHealth.hp
-  ) {
-    clearDebt(cs);
-    setCounter(cs, DEBT_CHEAT_USED, 1);
-    return false;
-  }
-
   if (isCooldownActive(cs, "debtTick")) return false;
 
   setCooldown(cs, "debtTick", 1000);
@@ -164,7 +141,6 @@ export function runDebtDrain(world: World, player: PlayerEntity): boolean {
   player.hasHealth.hp = Math.max(0, player.hasHealth.hp - debtDamage);
   pushDamageEvent(world, player, debtDamage, { category: 'dot' });
   if (player.hasHealth.hp <= 0) {
-    if (tryCheatDeath(world, player)) return false;
     clearDebt(cs);
     world.killPlayer(player.isPlayer.id, {
       kind: "debt",

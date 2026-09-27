@@ -572,14 +572,6 @@ function recoveryPerSec(
   // which never happens inside a modeled fight. It is added to the effective pool
   // in `survivability` instead.
 
-  // Cleanse empty-heal (no player debuffs modeled, so the empty-heal branch).
-  const cleanseEmpty = p['defense.cleanse-empty-heal-pct'] ?? 0;
-  const cleanseInterval = p['defense.cleanse-interval-ms'] ?? 0;
-  if (cleanseEmpty > 0 && cleanseInterval > 0) {
-    healPerSec += (maxHp * cleanseEmpty) / (cleanseInterval / 1000);
-    notes.push(`cleanse empty-heal ${Math.round(cleanseEmpty * 100)}% maxHp / ${cleanseInterval / 1000}s`);
-  }
-
   return healPerSec;
 }
 
@@ -710,17 +702,12 @@ function evaluateSurvivability(stats: PlayerStatsTarget, attacker: Attacker): Su
 
   // Effective health pool for time-to-live (one-time saves, not throughput).
   const barrierAmount = (p['defense.barrier-pct'] ?? 0) * maxHp;
-  let pool = maxHp + barrierAmount;
+  const pool = maxHp + barrierAmount;
   if (barrierAmount > 0) {
     notes.push(
       `barrier ${Math.round((p['defense.barrier-pct'] ?? 0) * 100)}% maxHp `
       + '(one-time buffer — no in-fight recharge)',
     );
-  }
-  if ((p['defense.cheat-death'] ?? 0) > 0) {
-    const postHeal = (p['defense.post-cheat-death-heal-pct'] ?? 0) * maxHp;
-    pool += maxHp + postHeal; // a second near-full bar plus its recovery HoT
-    notes.push('cheat-death grants one extra near-full bar');
   }
 
   const ttlSec = netHpPerSec >= 0 || incomingDps <= 0
@@ -745,7 +732,7 @@ function evaluateSurvivability(stats: PlayerStatsTarget, attacker: Attacker): Su
   // A full barrier is the realistic opening state of an engagement, so it counts
   // toward the one-shot buffer.
   const standingBarrier = (p['defense.barrier-pct'] ?? 0) * maxHp;
-  const oneShotRisk = biggestHit >= maxHp + standingBarrier && (p['defense.cheat-death'] ?? 0) <= 0;
+  const oneShotRisk = biggestHit >= maxHp + standingBarrier;
   if (oneShotRisk) notes.push(`spike hit ${asNumber(biggestHit)} can one-shot (${asNumber(maxHp + standingBarrier)} buffer)`);
 
   return {
@@ -1520,7 +1507,7 @@ function renderReport(sections: string[]): string {
   <p>
     External balance/debug report built from shared item, skill, monster, and stat formulas, plus a
     steady-state re-implementation of the server defense pipeline (mitigation, shields, regen, absorb,
-    damage-cap, cheat-death). This is not an in-game panel and not a combat simulator. It omits movement,
+    damage-cap). This is not an in-game panel and not a combat simulator. It omits movement,
     kiting, real AoE target count, enemy AI, party effects, and overkill timing.
   </p>
   <p class="meta">

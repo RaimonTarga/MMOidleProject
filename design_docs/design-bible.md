@@ -59,9 +59,9 @@ Each mechanic has ONE home biome. Others borrow it as a cross or scaled variant,
 | dot-resist | Swamp | armor |
 | premium %DR | Cave | armor |
 | hit-to-dot (damage debt) | Tundra *(tent.)* | armor |
-| debuff-resist + cleanse | Desert | armor |
 | hardening (combat-duration plating, resets on big hit) | Jungle *(tent.)* | armor |
-| last-stand (deterministic cheat-death) | Desert | armor/charm |
+| opening protection (engagement DR from the first hit) | Desert | armor |
+| faster Cleanse (active guard cooldown) | Desert | charm |
 | kill-burst | Plains | charm |
 | raw regen (disengage-leveraged) | Forest | charm |
 | shield (periodic barrier) | Mountain | charm |
@@ -104,7 +104,7 @@ Each mechanic has ONE home biome. Others borrow it as a cross or scaled variant,
 
 **JUNGLE (intro T2, high density)** — cross biome: evasion + recovery + **hardening**. Weapon: **on-hit rapier variant** (atk->on-hit weight; higher DPS; on-hit ignores empowered scaling). Armor: hardening (ramp plating in combat, big hit resets) + evasion. Charm: regen that ramps with combat duration (mirrors hardening). Hybridizing IS its identity. Monsters and recipes authored T2–T4.
 
-**DESERT (intro T2, low density)** — "the standoff." Few tough, debuff-laden enemies. Weapon: **Ambush** (empowered on striking a full-HP target). Armor: **last-stand** (one deterministic cheat-death per fight) + **cleanse** secondary. Charm: cleanse / burst-heal-on-kill. Coheres as: alpha-strike the tough target, strip its debuffs, survive if it bites back. Monsters and recipes authored T2–T4.
+**DESERT (intro T2, low density)** — "the standoff." Few tough, debuff-laden enemies. Weapon: **Ambush** (empowered on striking a full-HP target). Armor: **opening protection** (strong damage reduction for a few seconds from the first attack of an engagement; rearms between fights). Charm: shortens the **Cleanse** guard's cooldown. Coheres as: alpha-strike the tough target, strip its debuffs, survive if it bites back. Monsters and recipes authored T2–T4.
 
 **TUNDRA (intro T3, low-mid density)** — slow hard hitters (frozen). Armor home: **hit-to-dot debt** + high bulk. Weapon: **frost / slow-debuff** — slows enemy attack speed (party hook). Charm: bulk regen. Monsters and recipes authored T3–T4.
 

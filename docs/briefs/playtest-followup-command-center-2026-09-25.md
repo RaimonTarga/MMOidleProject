@@ -112,8 +112,8 @@ pending merge approval.
 - **Residuals:**
   - Spirit farms 6 runs worse than original, spread across tiers.
   - T3 Volcano with Desert armor: Apprentice dies there cross-biome.
-  - Nothing grants automatic cleanse or armor cheat-death any more. Those mechanisms are now
-    unreachable code and can be cleaned up later.
+  - Nothing grants automatic cleanse or armor cheat-death any more. The unreachable code
+    (cheat-death, debt cheat-death, the passive cleanse pulse) was removed on 2026-09-27.
   - Human play has not been done.
 
 ### For the Conduit session: what (a1) changed for summons

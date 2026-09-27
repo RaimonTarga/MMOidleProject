@@ -42,7 +42,7 @@ server/src/systems/defense/barrier/
 - **Recharge** runs per-tick in `updateDefensiveSystems`.
 - Listener order in `onDamageTaken`:
   `Guard → evasion → damage cap → wards → barrier → break heal → summon redirection →
-  hit-to-DoT → cheat death → absorb`. Guard registers just before `initDefenseSystems()`
+  hit-to-DoT → absorb`. Guard registers just before `initDefenseSystems()`
   (so it preserves ward/barrier capacity; it skips DoT ticks); the rest register inside
   it, so live server and benches are identical.
 - Monster splash (`applyMonsterAoe`) and environmental hazard damage also spend

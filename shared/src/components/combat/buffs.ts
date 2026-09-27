@@ -72,7 +72,6 @@ export const BUFF_IDS = [
   'defense-absorb',
   'defense-recovery',
   'defense-debt',
-  'defense-revive-heal',     // post-cheat-death heal-over-time
   'defense-stationary-dr',   // stationary DR ramp
   'defense-engagement-dr',  // Desert opening protection
   'defense-reactive-plating',// on-hit stacking plating buff

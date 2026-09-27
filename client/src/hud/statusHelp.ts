@@ -70,7 +70,6 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'defense-ward': b('Ward', 'A temporary pool that absorbs damage before your health does. Unlike your barrier it expires rather than recharging.'),
   'defense-absorb': b('Absorb', 'Part of the damage you took was diverted into a pool that heals back over time. You still took the hit — this returns some of it gradually.'),
   'defense-recovery': b('Recovery', 'How much of your Recovery rate is switched on right now. Out of combat everyone runs at 100%; in combat it is off by default and class passives, charms and Recovery skills each switch on a share, which add together. This tile is the only place that total is visible.'),
-  'defense-revive-heal': b('Reviving', 'You survived a killing blow and are being healed back out of it over time.'),
   'defense-debt': { title: 'Damage debt', kind: 'debuff', help: 'Damage deferred rather than removed. Part of the hits you took is queued and ticks onto you over time instead of landing at once — it softens burst, it does not cancel it.' },
   'defense-stationary-dr': b('Rooted stance', 'Damage reduction builds over 4 seconds while you hold position under attack. After a brief movement grace, it fades over 1 second while moving, and over 2 seconds once the attacks stop.'),
   'defense-engagement-dr': b('Dawnward', 'Damage reduction for a few seconds (longer at higher tiers) after your first attack or an incoming attack. Attacking a new target does not refresh it. Rearms after 4 quiet seconds.'),

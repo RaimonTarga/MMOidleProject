@@ -10,11 +10,6 @@ import { getResource, type TracksCombat } from '@mmo-idle/shared';
 export const DEBT_POOL_KEY   = 'damageDebtPool';
 export const ABSORB_POOL_KEY = 'absorbPool';
 
-// Post-cheat-death recovery: remaining HP to restore, plus the fixed drain rate
-// (HP per ms) computed at trigger time so an arbitrary heal window drains linearly.
-export const CHEAT_DEATH_HEAL_POOL_KEY = 'cheatDeathHealPool';
-export const CHEAT_DEATH_HEAL_RATE_KEY = 'cheatDeathHealRate';
-
 // Milliseconds elapsed in the current combat engagement (reset to 0 out of combat).
 // Maintained once per tick in updateDefensiveSystems; read by combat-duration ramps
 // (absorb ramp) including from the combat pipeline.
@@ -31,10 +26,6 @@ export function getDefenseDebtPool(cs: TracksCombat): number {
 
 export function getDefenseAbsorbPool(cs: TracksCombat): number {
   return getResource(cs, ABSORB_POOL_KEY);
-}
-
-export function getCheatDeathHealPool(cs: TracksCombat): number {
-  return getResource(cs, CHEAT_DEATH_HEAL_POOL_KEY);
 }
 
 export function getCombatElapsedMs(cs: TracksCombat): number {

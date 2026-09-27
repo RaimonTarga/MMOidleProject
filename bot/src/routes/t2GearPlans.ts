@@ -180,7 +180,7 @@ export const T2_CLASS_PLANS: readonly T2ClassPlan[] = [
       jungle: { skip: { "jungle-stinger-rapier": "fast on-hit is the opposite of this class's mechanic" } },
       desert: {
         craftOnly: ["desert-sunsteel-cross"],
-        skip: { "desert-vest-t2": "cheat-death is attractive, but arrives after the run is already decided" },
+        skip: { "desert-vest-t2": "opening protection is attractive, but arrives after the run is already decided" },
       },
     },
   },

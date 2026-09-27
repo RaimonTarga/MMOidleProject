@@ -61,7 +61,6 @@ import {
 } from "../../../../world/worldLogActors";
 import { isInvulnerableMonster, isInvulnerablePlayer } from "../../../combat/invulnerability";
 import { applyMonsterDamageTakenDebuffs } from "../../shared/debuffs";
-import { tryCheatDeath } from "../../../defense/mitigation/cheatDeath";
 import { drainWards } from "../../../defense/barrier/wards";
 import { drainBarrier, stampBarrierDamage } from "../../../defense/barrier/barrier";
 import { DOT_EFFECT_ID } from "./t3/core/constants";
@@ -330,28 +329,18 @@ export function updateDotArchetype(world: World, dt: number): void {
     pushPlayerDotTickEvent(world, entity, monsterDotElement(world, effect.sourceId, effect), hpDamage, { sourceType: "monster", sourceId: effect.sourceId, absorbed });
 
     if (entity.hasHealth.hp <= 0) {
-      if (tryCheatDeath(world, entity)) {
-        if (effect.remainingMs <= 0) {
-          removeStatusEffect(state, effect.id);
-          detachMarkerIfNoMonsterDot(world, entity, state);
-        } else {
-          effect.data.nextTickIn = effect.data.tickIntervalMs;
-        }
-        continue;
-      } else {
-        playersToRespawn.push({
-          playerId,
-          cause: {
-            kind: "dot",
-            killer,
-            abilityName: effect.damageSource?.abilityName,
-            effectName: effect.damageSource?.effectName,
-            damage: hpDamage,
-            stacks: effect.stacks,
-          },
-        });
-        break;
-      }
+      playersToRespawn.push({
+        playerId,
+        cause: {
+          kind: "dot",
+          killer,
+          abilityName: effect.damageSource?.abilityName,
+          effectName: effect.damageSource?.effectName,
+          damage: hpDamage,
+          stacks: effect.stacks,
+        },
+      });
+      break;
     } else if (effect.remainingMs <= 0) {
       removeStatusEffect(state, effect.id);
       detachMarkerIfNoMonsterDot(world, entity, state);

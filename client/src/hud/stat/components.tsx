@@ -50,12 +50,6 @@ export function DefensePassivesSection({ passives: p }: { passives: Record<strin
   if (debuffRes > 0)
     rows.push({ label: 'Debuff Resist', value: `${Math.round(debuffRes * 100)}%`, help: help('defense.debuff-resistance') });
 
-  const cleanseStacks = p['defense.cleanse-stacks'] ?? 0;
-  if (cleanseStacks > 0) {
-    const iv = ((p['defense.cleanse-interval-ms'] ?? 0) / 1000).toFixed(0);
-    rows.push({ label: 'Cleanse', value: `${cleanseStacks} stacks / ${iv}s`, help: help('defense.cleanse-stacks') });
-  }
-
   if (rows.length === 0) return null;
 
   return (

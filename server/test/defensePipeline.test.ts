@@ -66,21 +66,6 @@ function fixture(identityId = 'breadth-t3-slinger-light') {
   assert.equal(getResource(bot.tracksCombat, DEBT_POOL_KEY), 0);
 }
 
-// Debt forgiveness clears queued installments, so forgiven debt never pays later.
-{
-  const { world, bot, hit } = fixture();
-  bot.usesSkills.passives = { 'defense.hit-to-dot-pct': 0.5, 'defense.debt-cheat-death': 1 };
-  bot.hasHealth.hp = 60;
-  hit(200);
-  assert.equal(getResource(bot.tracksCombat, DEBT_POOL_KEY), 100);
-  setCooldown(bot.tracksCombat, 'debtTick', 0); runDebtDrain(world, bot);
-  assert.equal(getResource(bot.tracksCombat, DEBT_POOL_KEY), 0, 'lethal debt is forgiven');
-  const hp = bot.hasHealth.hp;
-  hit(8);
-  for (let i = 0; i < 4; i++) { setCooldown(bot.tracksCombat, 'debtTick', 0); runDebtDrain(world, bot); }
-  assert.equal(hp - bot.hasHealth.hp, 4, 'only the new debt is paid; forgiven installments never return');
-}
-
 // Secondary splash enters the defensive pipeline (wards pay).
 {
   const { world, bot, monster } = fixture();

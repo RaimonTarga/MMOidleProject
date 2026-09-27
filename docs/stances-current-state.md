@@ -88,7 +88,7 @@ Every behavioral magnitude above is a named constant in `shared/src/stances.ts`
 `EXECUTE_HP_THRESHOLD`, ...). The server systems and the player-facing copy both read those
 constants, so a stance cannot advertise a number it does not apply.
 
-Predator's opener is armed only while the posture is active out of combat and is consumed by the first hit. Berserker damage is deterministic, bypasses ordinary mitigation/shields/cheat-death/on-damage listeners, and can kill with the dedicated stance death cause. Brawler's crowd table and the shared damage-taken multiplier compose in one listener, so a Brawler carrying a `damageTakenPct` would multiply both.
+Predator's opener is armed only while the posture is active out of combat and is consumed by the first hit. Berserker damage is deterministic, bypasses ordinary mitigation/shields/on-damage listeners, and can kill with the dedicated stance death cause. Brawler's crowd table and the shared damage-taken multiplier compose in one listener, so a Brawler carrying a `damageTakenPct` would multiply both.
 
 Runes normally own CONDITIONS; the stance owns the POSTURE. Intrinsic payoff requirements
 still live on the stance: Enraged's bonuses function only at or below 25% player HP, while

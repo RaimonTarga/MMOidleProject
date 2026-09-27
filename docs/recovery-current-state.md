@@ -88,8 +88,8 @@ On the **stat**, in `shared/src/systems/stats.ts`. Never in `applyHealToPlayer`.
 Because every in-combat regen effect is a fraction of the rate, scaling the rate
 already covers all of them; re-applying it per-heal would compound it (a +25% core
 landing as +56%). The tradeoff, taken deliberately: it no longer touches the heals
-that are *not* Recovery-derived — the absorb drain and the post-cheat-death HoT —
-which is correct, since those are separate systems (§6).
+that are *not* Recovery-derived — the absorb drain —
+which is correct, since that is a separate system (§6).
 
 ## 5. Recovery Skill Potency
 
@@ -131,7 +131,7 @@ will fill, the same way `defense.barrier-recharge-pct` does.
     icon was still right, so the id moved and the art did not.
 - **HP bar ghost layer** (`hasStatus.pendingHeal`) no longer includes Recovery:
   a rate has no finite amount owed to draw past current HP. It still covers the
-  absorb and post-cheat-death pools.
+  absorb pool.
 
 ## 8. Deliberately left for the balance / item pass
 

@@ -317,7 +317,7 @@ const stances: StanceDef[] = [
         value: `${pct(BERSERKER_SELF_DAMAGE_PCT)} max HP / sec`,
         detail: "while in combat",
         help:
-          "Direct damage dealt to you every second that combat state persists. It bypasses plating, damage reduction, barriers and cheat-death, and it will kill you if you hold the stance too long.",
+          "Direct damage dealt to you every second that combat state persists. It bypasses plating, damage reduction and barriers, and it will kill you if you hold the stance too long.",
         good: false,
       },
     ],

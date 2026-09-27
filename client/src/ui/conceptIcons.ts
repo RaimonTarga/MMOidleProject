@@ -150,7 +150,6 @@ const BUFF_IDS = new Set([
   'defense-hardening',
   'defense-hardening-maxdr',
   'defense-reactive-plating',
-  'defense-revive-heal',
   'defense-stationary-dr',
   'defense-engagement-dr',
   'defense-sustained-dr',

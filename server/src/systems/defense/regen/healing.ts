@@ -28,16 +28,16 @@ export function getDebuffResistanceMult(player: PlayerEntity): number {
  * Apply healing to a player with antiheal and maxHp cap applied.
  * When `world` is provided, emits a heal log event for applied HP.
  *
- * This is the single funnel for every player heal — all Recovery access, the
- * absorb drain, the post-cheat-death HoT — so antiheal and the overheal ward are
+ * This is the single funnel for every player heal — all Recovery access and the
+ * absorb drain — so antiheal and the overheal ward are
  * one place, not a per-effect concern. Route new healing through here; anything
  * that writes `hasHealth.hp` directly silently opts out of both.
  *
  * NOTE: `core.recovery-mult` is deliberately NOT applied here. It scales the
  * `recovery` STAT in shared/src/systems/stats.ts, and every in-combat regen
  * effect now activates a fraction of that stat — so applying it again per-heal
- * would compound it. Absorb and the cheat-death HoT are not Recovery-derived and
- * are not meant to scale with it (handoff §7).
+ * would compound it. Absorb is not Recovery-derived and is not meant to scale
+ * with it (handoff §7).
  */
 export function applyHealToPlayer(
   player: PlayerEntity,

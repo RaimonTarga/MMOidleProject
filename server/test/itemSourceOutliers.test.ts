@@ -1,4 +1,4 @@
-import { GAME_CONFIG, STARTER_RUNE_IDS, emptyEquipment, MONSTER_DATABASE, ITEM_DATABASE, applyStatusEffect, getStatusEffect, removeStatusEffect, getCounter, getCooldown, setCounter, CHAOTIC_HIT_COUNTER_KEY, estimatePlayerDps, itemMechanicEffectsAt, upgradeStatBonusTotal } from '@mmo-idle/shared';
+import { GAME_CONFIG, STARTER_RUNE_IDS, emptyEquipment, MONSTER_DATABASE, ITEM_DATABASE, applyStatusEffect, getStatusEffect, removeStatusEffect, getCounter, setCounter, CHAOTIC_HIT_COUNTER_KEY, estimatePlayerDps, itemMechanicEffectsAt, upgradeStatBonusTotal } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { World } from '../src/world/World';
 import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
@@ -9,8 +9,6 @@ import { runPlayerAttack, runMonsterAttack } from '../src/systems/combat/engine/
 import { updateReloadT3Ticks } from '../src/systems/classes/archetypes/reload/t3/ticks/laser';
 import { updateChanneledBeam } from '../src/systems/classes/archetypes/cooldown/t3/ticks/heavy/channeledBeam';
 import { equipItem } from '../src/systems/player/economy/inventory';
-import { updateDefensiveSystems } from '../src/systems/defense';
-import { runDebuffCleanse } from '../src/systems/defense/mitigation/debuffCleanse';
 import { applyResistedPlayerDebuff } from '../src/systems/combat/status/debuffGuard';
 import { applyPlatingShredStacks } from '../src/systems/combat/status/platingShred';
 import { getAntiHealMult } from '../src/systems/defense/regen/healing';
@@ -66,30 +64,6 @@ const attack = (world: World, player: ReturnType<typeof fixture>['player'], targ
 function equip(world: World, player: ReturnType<typeof fixture>['player'], id: string) {
   player.holdsInventory.inventory.push(id);
   assert(equipItem(world, player, id), 'equip '+id);
-}
-
-// Automatic cleanse -> defense update; buffs and immune effects survive. No armor
-// grants the cleanse since the defense rebudget, so drive the passives directly.
-{
-  const {world,player}=fixture(null);
-  player.usesSkills.passives['defense.cleanse-stacks']=2;
-  player.usesSkills.passives['defense.cleanse-interval-ms']=8000;
-  for(const [id,data] of [
-    ['sunlight',{attackPct:.25}], ['mob-forest-haste',{speedPct:.4}],
-    ['volcanic-heat',{isAmbientRamp:1,damageTakenPct:.03}],
-    ['cave-lockdown',{speedMult:0}], ['antiheal',{reductionPerStack:.2}],
-    ['tundra-chill',{isAmbientRamp:1}], ['monster-dot:test',{isDot:1}],
-  ] as [string,Record<string,number>][]) {
-    for(let i=0;i<3;i++) applyStatusEffect(player.tracksCombat,{id,sourceId:'test',maxStacks:10,remainingMs:5000,data});
-  }
-  updateDefensiveSystems(world,100,100);
-  for(const id of ['sunlight','mob-forest-haste','volcanic-heat','cave-lockdown','monster-dot:test'])
-    eq(getStatusEffect(player.tracksCombat,id)!.stacks,3,id+' untouched');
-  eq(getStatusEffect(player.tracksCombat,'antiheal')!.stacks,1,'armor cleanses harmful stack count');
-  eq(getStatusEffect(player.tracksCombat,'tundra-chill')!.stacks,1,'armor respects partial cleanse');
-  eq(getCooldown(player.tracksCombat,'cleanse'),8000,'independent armor clock');
-  runDebuffCleanse(world,player);
-  eq(getStatusEffect(player.tracksCombat,'antiheal')!.stacks,1,'no repeated pulse while on cooldown');
 }
 
 // Real monster hit riders receive equipment resistance; repeated applications do not compound it.

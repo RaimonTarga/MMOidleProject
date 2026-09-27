@@ -1,6 +1,5 @@
 import { defineBuff, type BuffDescriptor } from '../../combat/buffs/descriptor';
 import {
-  getCheatDeathHealPool,
   getDefenseAbsorbPool,
   getDefenseDebtPool,
 } from './pools';
@@ -81,13 +80,6 @@ export const DEFENSE_BUFFS = [
         { label: "As a share of max HP", value: `${pctOfMax.toFixed(1)}%/s` },
       ],
     };
-  }, NEUTRAL_OPTS),
-  defineBuff('defense-revive-heal', ({ playerCs }) => {
-    if (!playerCs) return null;
-    const pool = getCheatDeathHealPool(playerCs);
-    return pool > 0
-      ? { id: 'defense-revive-heal', label: 'Reviv', stacks: 1, durationPct: -1, color: '#aaffcc', logDetail: `${Math.round(pool)} recovery pool`, values: [{ label: "Healing still pooled", value: String(Math.round(pool)), good: true }] }
-      : null;
   }, NEUTRAL_OPTS),
   defineBuff('defense-debt', ({ playerCs }) => {
     if (!playerCs) return null;

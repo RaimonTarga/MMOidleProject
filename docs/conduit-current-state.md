@@ -259,7 +259,7 @@ must not land N player-hits. Boss charge sweeps (`hitMinion` hook) resolve body
 by body and are not shared.
 
 The sponge is registered inside `initDefenseSystems()`: after Guard, evasion, the
-damage cap and wards/barrier, before the owner's hit-to-DoT debt, cheat death and
+damage cap and wards/barrier, before the owner's hit-to-DoT debt and
 absorb. So summons take `redirectionPct` of post-shield damage before debt carves
 its share. Monster splash onto the owner is not redirected (nearby summons already
 take their own splash).

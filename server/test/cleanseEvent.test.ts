@@ -2,7 +2,7 @@
  * Wiring smoke test for the `player-cleansed` combat event.
  *
  * The HUD uses it to tell a cleanse apart from an ordinary expiry, so it must fire
- * from every active strip (Cleanse guard, Break Free, the passive cleanse pulse)
+ * from every active strip (Cleanse guard, Break Free)
  * and must NOT fire when nothing actually came off — otherwise the buff bar plays
  * the loud shatter over a quiet expiry.
  *
@@ -22,7 +22,6 @@ import {
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
 import { requestManualAbilityUse } from "../src/systems/player/abilities/abilityFiring";
-import { runDebuffCleanse } from "../src/systems/defense/mitigation/debuffCleanse";
 import { STUN_EFFECT } from "../src/systems/combat/status/stun";
 import { World } from "../src/world/World";
 
@@ -160,24 +159,6 @@ initCombatSystems();
 
   assert(!getStatusEffect(player.tracksCombat, STUN_EFFECT), "Break Free should remove the stun");
   assert(cleansedEvents(world, "bf") === 1, "Break Free removing control must emit player-cleansed");
-}
-
-// ── Passive cleanse pulse: event only when a stack actually came off ───────────
-{
-  const world = new World();
-  const player = world.attachPlayerEntity(makePlayerSlices("pulse", [], 1), "pulse");
-  player.usesSkills.passives["defense.cleanse-stacks"] = 1;
-  player.usesSkills.passives["defense.cleanse-interval-ms"] = 1_000;
-  world.takeNodeEvents(NODE);
-
-  runDebuffCleanse(world, player);
-  assert(cleansedEvents(world, "pulse") === 0, "an empty pulse must not emit player-cleansed");
-
-  player.tracksCombat.cooldowns = {};
-  paintSlow(player.tracksCombat);
-  runDebuffCleanse(world, player);
-  assert(!getStatusEffect(player.tracksCombat, "slow"), "the pulse should strip the slow");
-  assert(cleansedEvents(world, "pulse") === 1, "a pulse that removed a stack must emit player-cleansed");
 }
 
 console.log("cleanseEvent: ok");

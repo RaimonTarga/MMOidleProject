@@ -179,8 +179,6 @@ export interface ItemDefinition {
    *                                  after BARRIER_DELAY_MS without taking damage
    *   defense.barrier-recharge-pct — fraction of the pool refilled per second (overrides the default)
    *   defense.barrier-delay-ms     — undamaged time before the refill starts (overrides the default)
-   *   defense.cleanse-stacks       — stacks removed per cleanse trigger
-   *   defense.cleanse-interval-ms  — ms between cleanse triggers
    *
    * Guard-ability amplifiers (system rework Step 8) — only do anything while a
    * Guard ability is equipped; read at fire time in abilities/abilityFiring.ts:

@@ -6,11 +6,9 @@ import { registerDamageCap } from "./mitigation/damageCap";
 import { registerWardAbsorb } from "./barrier/wards";
 import { registerBarrierAbsorb, runBarrierRecharge } from "./barrier/barrier";
 import { registerBarrierBreakHeal } from "./barrier/barrierBreakHeal";
-import { registerHitToDot, runDebtDrain, resetDebtCheatDeath } from "./mitigation/hitToDot";
-import { registerCheatDeath, resetCheatDeath, runPostCheatDeathHeal } from "./mitigation/cheatDeath";
+import { registerHitToDot, runDebtDrain } from "./mitigation/hitToDot";
 import { registerDamageAbsorb, runAbsorbDrain } from "./regen/damageAbsorb";
 import { registerRecoveryOnKill } from "./regen/recoveryOnKill";
-import { runDebuffCleanse } from "./mitigation/debuffCleanse";
 import { runRecovery, resetRecoveryRamp } from "./regen/recovery";
 import { registerStationaryDr, runStationaryDr } from "./mitigation/stationaryDr";
 import { registerReactivePlating, runReactivePlating } from "./mitigation/reactivePlating";
@@ -38,8 +36,7 @@ import { registerSummonerDamageSponge } from '../classes/archetypes/summoner';
  *   5. Break heal      — reads the emptied-pool metadata both absorbs set
  *   6. Summoner sponge — redirects surviving damage to a slime
  *   7. Hit-to-DoT      — redirects defense.hit-to-dot-pct to debt pool
- *   8. Cheat death     — legacy compatibility hook, no current armor grant
- *   9. Damage absorb   — credits surviving HP damage into HoT pool
+ *   8. Damage absorb   — credits surviving HP damage into HoT pool
  */
 export function initDefenseSystems(): void {
   withCombatRegistrationLabel('registerEngagementDr', registerEngagementDr);
@@ -50,7 +47,6 @@ export function initDefenseSystems(): void {
   withCombatRegistrationLabel('registerBarrierBreakHeal', registerBarrierBreakHeal); // after both absorbs — reads their emptied-pool metadata
   withCombatRegistrationLabel('registerSummonerDamageSponge', registerSummonerDamageSponge);
   withCombatRegistrationLabel('registerHitToDot', registerHitToDot);
-  withCombatRegistrationLabel('registerCheatDeath', registerCheatDeath);
   withCombatRegistrationLabel('registerDamageAbsorb', registerDamageAbsorb);
   withCombatRegistrationLabel('registerRecoveryOnKill', registerRecoveryOnKill);
   withCombatRegistrationLabel('registerReactivePlating', registerReactivePlating);
@@ -77,8 +73,6 @@ export function updateDefensiveSystems(
     // lever via GAME_CONFIG.EVADE_OOC_RESET).
     if (!inCombat) {
       resetEvadeAccumulator(world, player);
-      resetCheatDeath(player);
-      resetDebtCheatDeath(player);
       resetRecoveryRamp(player);
     }
 
@@ -93,9 +87,7 @@ export function updateDefensiveSystems(
     if (runDebtDrain(world, player)) continue; // player died → skip remaining
 
     runAbsorbDrain(world, player, dt);
-    runPostCheatDeathHeal(world, player, dt);
     runBarrierRecharge(world, player, dt);
-    runDebuffCleanse(world, player);
     // One Recovery pass covers OOC regen AND every in-combat regen effect: they
     // all activate a fraction of the same rate, so they must not be applied
     // separately (that is what made them independent %-maxHp heals before).

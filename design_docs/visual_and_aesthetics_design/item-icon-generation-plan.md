@@ -263,8 +263,7 @@ Weapons drew their "+ what it does" hint from the damage profile. These slots dr
 | `defense.max-hit-*`, `hardening-*` | damage cap / hardening | thick reinforced band, threshold line across the plate |
 | `defense.hit-plating-*` | stacking plating | layered overlapping scales |
 | `defense.stationary-dr-*`, `sustained-fight-*` | ramp while holding ground | creeping crust/ice/moss spreading from the edges |
-| `defense.cheat-death`, `debt-cheat-death` | survive the killing blow | a single crack that stops short, faint second outline |
-| `defense.dot-resistance`, `cleanse-*` | purge/resist rot | ward glyph, droplets beading off and falling away |
+| `defense.dot-resistance` | purge/resist rot | ward glyph, droplets beading off and falling away |
 | `defense.regen-*`, `in-combat-regen-*` | steady mending | soft concentric pulse ring |
 | `defense.shield-*`, `absorb-*` | ward/absorb | a thin hovering plate or ice sheet in front of the object |
 | `guard.*` | Guard-ability amplifier | carved sigil on the charm face |

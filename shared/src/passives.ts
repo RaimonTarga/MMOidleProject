@@ -56,19 +56,11 @@ export const DEFENSE_KEYS = [
   // Bramble) is active.
   'defense.absorb-guard-bonus-pct',
   'defense.debuff-resistance',
-  'defense.cleanse-stacks',
-  'defense.cleanse-interval-ms',
   'defense.max-hit-pct',
   'defense.max-hit-mult',
   // Additive bonus (0..1) to the fraction of damage avoided on an evade, on top
   // of GAME_CONFIG.EVADE_MITIGATION_BASE. Final value is clamped to [0,1].
   'defense.evade-mitigation',
-  'defense.cheat-death',
-  // After cheat-death saves the player, restore this fraction of maxHp as a
-  // heal-over-time spread across post-cheat-death-heal-ms. 0.30 = 30% of maxHp.
-  'defense.post-cheat-death-heal-pct',
-  // Duration (ms) of the post-cheat-death heal-over-time window.
-  'defense.post-cheat-death-heal-ms',
   // Ramping Recovery access: climbs from `start` to `max` over `ramptime-ms` of
   // continuous combat, then holds. Same units as the other access keys.
   'defense.recovery-ramp-start-pct',
@@ -91,12 +83,6 @@ export const DEFENSE_KEYS = [
   'defense.absorb-ramp-start-pct',
   'defense.absorb-ramp-max-pct',
   'defense.absorb-ramptime-ms',
-  // Once per combat, if the damage-debt pool would exceed current HP, clear it.
-  'defense.debt-cheat-death',
-  // Heal when a cleanse pulse fires: per stack actually removed, or a flat heal
-  // when there was nothing to cleanse.
-  'defense.cleanse-empty-heal-pct',
-  'defense.cleanse-per-stack-heal-pct',
   // Heal a fraction of the barrier's max value when it is emptied, or of a ward's
   // max value when that ward breaks (two keys for the charm and armor variants;
   // summed). Barrier depletion is a routine event under the recharge model, so

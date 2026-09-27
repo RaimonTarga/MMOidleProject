@@ -280,8 +280,7 @@ Player DoTs bypass plating. General damage reduction applies in full (since the
 `defense.dot-resistance` applies. Guards do not reduce DoT ticks. Shields absorb DoT damage unless
 `data.bypassShield = 1`.
 
-If lethal, cheat death gets a chance. Otherwise `world.killPlayer()` receives a
-death cause of kind `dot`.
+If lethal, `world.killPlayer()` receives a death cause of kind `dot`.
 
 The player buff bar emits one `debuff-dot` icon per active monster DoT status.
 Each entry uses `iconKey = effect.id` so multiple monster DoTs can render and log

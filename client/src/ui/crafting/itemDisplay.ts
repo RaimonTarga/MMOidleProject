@@ -142,12 +142,9 @@ const MECHANIC_FMT: Record<string, (v: number) => string> = {
   'relic.mechanic-buff-effect':       signedPct,
   'relic.mechanic-debuff-effect':     signedPct,
   // Switches: the value is 1, and "1" is not the information.
-  'defense.cheat-death':              flag,
-  'defense.debt-cheat-death':         flag,
   'defense.max-hit-refills-barrier':  flag,
   'shared.applies-through-evade':     flag,
   // Counted things that read wrong as a bare number.
-  'defense.cleanse-stacks':           v => `${num(v)} stack${v === 1 ? '' : 's'}`,
   'defense.hit-plating-per-stack':    v => `+${num(v)}/stk`,
   'weapon.dead-swing-interval':       v => `every ${round1(v)}`,
   'summoner.minion-attack-cooldown':  sec,
@@ -318,17 +315,6 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
     mark('defense.recovery-skill-potency');
   }
 
-  if (has('defense.cheat-death')) {
-    lines.push('Survive a fatal hit with 1 HP (once per life)');
-    mark('defense.cheat-death');
-  }
-
-  if (has('defense.post-cheat-death-heal-pct')) {
-    const over = has('defense.post-cheat-death-heal-ms') ? ` over ${secK('defense.post-cheat-death-heal-ms')}` : '';
-    lines.push(`After cheat-death saves you, restore ${pctK('defense.post-cheat-death-heal-pct')} max HP${over}`);
-    mark('defense.post-cheat-death-heal-pct', 'defense.post-cheat-death-heal-ms');
-  }
-
   if (has('defense.absorb-pct')) {
     lines.push(`${pctK('defense.absorb-pct')} of damage taken becomes healing over time`);
     mark('defense.absorb-pct');
@@ -366,16 +352,6 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
     if (has('defense.debuff-resist'))     parts.push(`${pctK('defense.debuff-resist')} debuff resistance`);
     lines.push(parts.join(', '));
     mark('defense.dot-resistance', 'defense.debuff-resistance', 'defense.debuff-resist');
-  }
-
-  if (has('defense.cleanse-stacks')) {
-    const n = fx['defense.cleanse-stacks'] ?? 1;
-    const every = has('defense.cleanse-interval-ms') ? ` every ${secK('defense.cleanse-interval-ms')}` : '';
-    lines.push(`Remove ${n} debuff stack${n !== 1 ? 's' : ''}${every}`);
-    if (has('defense.cleanse-empty-heal-pct')) {
-      lines.push(`If no debuff to cleanse, heal ${pctK('defense.cleanse-empty-heal-pct')} max HP instead`);
-    }
-    mark('defense.cleanse-stacks', 'defense.cleanse-interval-ms', 'defense.cleanse-empty-heal-pct');
   }
 
   // ── Mobility (boot) mechanics ──────────────────────────────────────────────
@@ -490,11 +466,6 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
     mark('defense.absorb-ramp-max-pct', 'defense.absorb-ramp-start-pct', 'defense.absorb-ramptime-ms');
   }
 
-  if (has('defense.debt-cheat-death')) {
-    lines.push('Once per combat, clear all deferred damage debt if it would kill you');
-    mark('defense.debt-cheat-death');
-  }
-
   if (has('defense.barrier-break-heal-pct') || has('defense.barrier-break-hp-recovery-pct')) {
     const breakPct = (fx['defense.barrier-break-heal-pct'] ?? 0) + (fx['defense.barrier-break-hp-recovery-pct'] ?? 0);
     lines.push(`When your barrier is emptied, heal ${Math.round(breakPct * 100)}% of its max value as HP`);
@@ -509,11 +480,6 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
   if (has('defense.overheal-ward-pct')) {
     lines.push(`Healing past full HP becomes a temporary ward (${pctK('defense.overheal-ward-pct')} of the overflow)`);
     mark('defense.overheal-ward-pct');
-  }
-
-  if (has('defense.cleanse-per-stack-heal-pct')) {
-    lines.push(`Heal ${pctK('defense.cleanse-per-stack-heal-pct')} max HP per debuff stack cleansed`);
-    mark('defense.cleanse-per-stack-heal-pct');
   }
 
   if (has('defense.hit-plating-per-stack')) {
