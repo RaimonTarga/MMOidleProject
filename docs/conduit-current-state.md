@@ -84,7 +84,7 @@ Frame sets formation shape (`SUMMONER_FRAME_TUNING`):
 | root | 4 | 1.0 | 0.80 | 1.0 | 1.0 |
 | Splinter | 6 | 1.05 | 0.66 | 1.18 | 0.72 |
 | Consort | 5 | 1.0 | 1.00 | 1.0 | 1.0 |
-| Effigy | 2 | 0.98 | 1.40 | 0.78 | 1.75 |
+| Effigy | 2 | 1.15 (0.98 before 2026-09-28) | 1.40 | 0.78 | 1.75 |
 
 Range sets fighting distance and the visual treatment
 (`SUMMONER_RANGE_TUNING`):
@@ -379,11 +379,42 @@ The rules in §7-8 SHOULD help Conduit; beyond the session probes they are unmea
 - Recall Summons (Enemy Charging) is available to bot routes as the pre-Cave slam answer
   but no template equips it yet — an unmeasured option, RP budget permitting.
 
+## 10d. T4 boss speed — 2026-09-28
+
+Question: why does Conduit take ~twice as long as other classes to kill T4 bosses
+(0.47–0.74× the median non-Conduit spec on the breadth bench)? Measured with
+`server/scripts/_t4PowerLab.ts` (it now records summon attacks, damage, rebuilds and
+living-slot uptime through `observeSummoner`), every live T4 boss, both stance arms.
+
+- **Summon deaths are NOT the cause.** Summon slots are alive 94–100% of every live
+  T4 boss fight for all nine paths; rebuilds run 0–4 per minute (Iconoclast's ~10 are
+  its own authored detonations).
+- **The reference package was the biggest factor.** Every Conduit bench cell carried
+  Deathfang Rapier (Attack ~133 at +5), Frenzy and Orbit. A 133-Attack formation split
+  over 5–6 bodies, each paying (halved) plating on its share, keeps half or less of
+  its damage on 16–32 plating bosses; Frenzy adds no attacks on slower weapons; Orbit
+  drags a chasing boss away from its own slow summons. With a measured weapon
+  (Plague Axe / Earthsunder), Power Strike and no Orbit, the balanced paths went
+  0.47–0.59× → 0.87–1.02×. The breadth bench now uses that package for the balanced
+  and heavy T4 paths (`T4_MEASURED` in `playerBreadthSpec.ts`). Light paths keep
+  Deathfang: fast small bodies measured best on it.
+- **Effigy (heavy) was genuinely ~15% under** at ~0.72× on any package → frame
+  offense 0.98 → 1.15.
+
+Result on live T4 bosses: Conduit class median 0.82–0.84× (design target ~0.85,
+below the other classes because the formation is fragile by design), paths
+0.76–1.02×, win rates unchanged.
+
+Player-facing trap, not fixed: a fast low-Attack weapon is a poor Conduit weapon
+against plated bosses, and an orbiting Conduit drags bosses away from its summons.
+Nothing in the UI says so.
+
 ## 11. Outstanding
 
 - Kilnmaster reads at ~17 px even after the clamp; that spec may need its own
   floor or a deliberately simplified body.
 - `conduitDefenseShare` has no consumer (§4).
+- Fast-weapon and Orbit traps against plated, chasing bosses have no in-game hint (§10d).
 - The nine specialization player bodies read as a **somewhat samey set**. This is
   structural, not a production failure: the identity invariants lock the deep-red
   robe, the white ceramic mask and the hood across all nine, which are exactly the

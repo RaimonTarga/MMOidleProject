@@ -14,7 +14,7 @@
  */
 import assert from 'node:assert/strict';
 import { readFileSync, appendFileSync } from 'node:fs';
-import { BURN_FAMILY, ITEM_DATABASE, ABILITY_DATABASE, SKILL_TREE, MONSTER_DATABASE, NODE_BIOMES, DUNGEON_DEFS, composePlayerView, withReferenceAbilityWiring } from '@mmo-idle/shared';
+import { SUMMONER_FRAME_TUNING, SUMMONER_RANGE_TUNING, SUMMONER_SPECIALIZATION_TUNING, SUMMONER_CORE_TUNING, posHitboxFromEntity, reachGap, BURN_FAMILY, ITEM_DATABASE, ABILITY_DATABASE, SKILL_TREE, MONSTER_DATABASE, NODE_BIOMES, DUNGEON_DEFS, composePlayerView, withReferenceAbilityWiring } from '@mmo-idle/shared';
 import { createBalanceWorld } from '../bench/balance/worldFactory';
 import { setupArena, teardownArena, BOT_SPAWN } from '../bench/balance/arena';
 import { prepareSurveyBot, SURVEY_CELLS, SURVEY_CLASSES, type SurveyCell } from '../bench/balance/ttkSurveySpec';
@@ -51,6 +51,10 @@ interface Row {
   /** Weapon DoT profile overrides by weapon id; item stat overrides by item id. */
   wd?: Record<string, Record<string, number>>;
   ip?: Record<string, Record<string, number>>;
+  /** Summoner tuning overrides by path, rooted at {frame, range, spec, core}. */
+  st?: Record<string, unknown>;
+  /** Drop rune rules by action id (e.g. 'orbit'). */
+  dropRunes?: string[];
   /** Log summon state every N ms for the first 30 s (debug). */
   dbgMinionMs?: number;
   mp?: Record<string, { stats?: Record<string, number>; set?: Record<string, unknown>; paths?: Record<string, unknown> }>;
@@ -160,6 +164,12 @@ function patchMonsters(mp: Row["mp"]): () => void {
 
 function patchItems(row: Row): () => void {
   const undo: (() => void)[] = [];
+  if (row.st) {
+    const roots: any = { frame: SUMMONER_FRAME_TUNING, range: SUMMONER_RANGE_TUNING, spec: SUMMONER_SPECIALIZATION_TUNING, core: SUMMONER_CORE_TUNING };
+    const saved = structuredClone(roots);
+    for (const [p, v] of Object.entries(row.st)) setPath(roots, p, v);
+    undo.push(() => { for (const k of Object.keys(roots)) for (const kk of Object.keys(roots[k])) roots[k][kk] = saved[k][kk]; });
+  }
   for (const [id, o] of Object.entries(row.wd ?? {})) {
     const e = BURN_FAMILY.find((b) => b.weaponId === id) as any;
     assert(e, `unknown weapon dot ${id}`);
@@ -203,6 +213,7 @@ function run(row: Row) {
       const keep = new Set([...cell.abilities.techniques, ...cell.abilities.guards]);
       if (cell.runeRules) cell.runeRules = cell.runeRules.filter((r: any) => r.actionId !== 'use-ability' || keep.has(r.targetAbilityId));
     }
+    if (row.dropRunes) cell.runeRules = (cell.runeRules ?? []).filter((r: any) => !row.dropRunes!.includes(r.actionId));
     if (row.extraRules) cell.runeRules = [...(row.extraRules as any), ...(cell.runeRules ?? [])];
     setupArena(world, { nodeId, biomeGroup: NODE_BIOMES[nodeId]!.biomeGroup, contentTier: row.tier, isDungeon: true });
     ensureDungeon(world, nodeId);
@@ -266,7 +277,7 @@ function run(row: Row) {
         for (const id of bot.summonsMinions.minionIds) {
           const m = id ? world.getMinionEntity(id) : undefined; if (!m || !b) continue;
           const d = Math.hypot(m.hasPosition.current.x - b.hasPosition.current.x, m.hasPosition.current.y - b.hasPosition.current.y);
-          console.error(JSON.stringify({ t: elapsed, id: m.isMinion.slotId, d: Math.round(d), od: Math.round(Math.hypot(bot.hasPosition.current.x - b.hasPosition.current.x, bot.hasPosition.current.y - b.hasPosition.current.y)), pr: bot.performsAttack.attackRange, range: m.performsAttack.attackRange, cd: m.performsAttack.attackCooldown, last: m.performsAttack.lastAttackAt - 1800000000000, tgt: m.controlsMinion.currentTargetId, mv: !!(m as any).hasVelocity || !!(m as any).movesToTarget, state: (m.controlsMinion as any).state ?? (m.controlsMinion as any).mode }));
+          console.error(JSON.stringify({ t: elapsed, id: m.isMinion.slotId, d: Math.round(d), od: Math.round(Math.hypot(bot.hasPosition.current.x - b.hasPosition.current.x, bot.hasPosition.current.y - b.hasPosition.current.y)), pr: bot.performsAttack.attackRange, range: m.performsAttack.attackRange, gap: Math.round(reachGap(posHitboxFromEntity(m as any), posHitboxFromEntity(b as any))), hb: JSON.stringify((m as any).hasHitbox), bhb: elapsed === 0 ? JSON.stringify((b as any).hasHitbox) : undefined, moving: !!(m as any).isMoving, pos: [Math.round(m.hasPosition.current.x), Math.round(m.hasPosition.current.y)], opos: [Math.round(bot.hasPosition.current.x), Math.round(bot.hasPosition.current.y)], bpos: [Math.round(b.hasPosition.current.x), Math.round(b.hasPosition.current.y)], cd: m.performsAttack.attackCooldown, last: m.performsAttack.lastAttackAt - 1800000000000, tgt: m.controlsMinion.currentTargetId, mv: !!(m as any).hasVelocity || !!(m as any).movesToTarget, state: (m.controlsMinion as any).state ?? (m.controlsMinion as any).mode }));
         }
       }
       if (bot.summonsMinions && firstDmgAt !== null) {

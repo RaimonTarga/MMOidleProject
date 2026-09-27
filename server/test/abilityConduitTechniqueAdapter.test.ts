@@ -246,7 +246,7 @@ for (const expectation of [
   { name: 'root', frame: null, count: 4, splash: 60 },
   { name: 'Splinter', frame: 'light' as const, count: 6, splash: 63 },
   { name: 'Consort', frame: 'balanced' as const, count: 5, splash: 60 },
-  { name: 'Effigy', frame: 'heavy' as const, count: 2, splash: 58 },
+  { name: 'Effigy', frame: 'heavy' as const, count: 2, splash: 69 }, // offense 0.98 -> 1.15 (2026-09-28)
 ]) {
   const { world, player, minions } = setup(
     `conduit-sweep-${expectation.name}`,

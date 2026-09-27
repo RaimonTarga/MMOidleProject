@@ -66,6 +66,16 @@ const T4_MEASURED: Record<string, [weapon: string, cast: 'power-strike' | 'deton
   'reload-light-t3-a': ['tundra-glacial-rimebrand', 'power-strike'],
   'reload-light-t3-b': ['tundra-glacial-rimebrand', 'power-strike'],
   'reload-light-t3-c': ['mountain-earthsunder-maul', 'power-strike'],
+  // 2026-09-28 T4 Conduit pass: balanced/heavy paths measured the same way, on live T4
+  // bosses (light paths keep Deathfang: fast bodies measured best on it). Frenzy adds
+  // no attacks on these slow weapons, so the cast Technique replaces it, and Orbit is
+  // dropped: a circling owner drags the boss away from its own summons.
+  'summoner-balanced-t3-a': ['graveyard-plague-axe', 'power-strike'],
+  'summoner-balanced-t3-b': ['mountain-earthsunder-maul', 'power-strike'],
+  'summoner-balanced-t3-c': ['mountain-earthsunder-maul', 'power-strike'],
+  'summoner-heavy-t3-a': ['mountain-earthsunder-maul', 'power-strike'],
+  'summoner-heavy-t3-b': ['graveyard-plague-axe', 'power-strike'],
+  'summoner-heavy-t3-c': ['mountain-earthsunder-maul', 'power-strike'],
 };
 
 function build(tier: number, root: typeof SURVEY_CLASSES[number], frame: BreadthCell['frame'], path: string | null, far = false): BreadthCell[] {
@@ -124,7 +134,7 @@ function build(tier: number, root: typeof SURVEY_CLASSES[number], frame: Breadth
     }
     // Frenzy adds no attacks on a 2 s+ swing, so non-Conduit T3/T4 cells take their
     // cast Technique in that slot instead (same 2 RP wiring cost).
-    if (tier >= 3 && root.name !== 'conduit') {
+    if (tier >= 3 && (root.name !== 'conduit' || measured)) {
       const cast = measured?.[1] ?? 'power-strike';
       const techniques = cell.abilities!.techniques.filter(id => id !== 'frenzy');
       if (!techniques.includes(cast) && techniques.length < cell.abilities!.techniques.length) techniques.unshift(cast);
@@ -141,6 +151,10 @@ function build(tier: number, root: typeof SURVEY_CLASSES[number], frame: Breadth
       if (!(tier === 3 && frame === 'balanced' && !far && role === 'farm') && !closeException)
         cell.runeRules.push({ conditionId: 'in-combat', actionId: 'orbit' });
       notes.push('Orbit retained except historical T3 balanced/mid farming and owner-melee Champion. Pair copies are identical.');
+      if (measured) {
+        cell.runeRules = cell.runeRules!.filter(r => r.actionId !== 'orbit');
+        notes.push('Measured T4 Conduit package: no Orbit (a circling owner drags the boss off its summons).');
+      }
     }
     if (closeException || pathId === 'cooldown-heavy-t3-c' || pathId === 'reload-heavy-t3-a') {
       cell.runeRules = cell.runeRules!.filter(r => r.actionId !== 'orbit');

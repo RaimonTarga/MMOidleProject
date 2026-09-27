@@ -131,7 +131,11 @@ export const SUMMONER_FRAME_TUNING: Record<SummonerFrame, SummonerFrameTuning> =
   },
   heavy: {
     count: 2,
-    offenseMult: 0.98,
+    // 2026-09-28 T4 Conduit pass: 0.98 -> 1.15. With a sane package (slow weapon,
+    // Power Strike, no Orbit) Effigy paths still killed T4 bosses at ~0.72x the
+    // median non-Conduit spec; balanced/light sit at 0.8-1.0x. Summon deaths were not
+    // the cause (slots alive 97-100% of every heavy fight).
+    offenseMult: 1.15,
     secondaryEffectMult: 1,
     totalSummonHpPct: 1.4,
     moveSpeedMult: 0.78,
