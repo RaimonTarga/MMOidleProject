@@ -5,6 +5,7 @@ import type { GameScene } from '../scenes/GameScene';
 import { atlasHasFrame } from './sprites';
 import { burstFx } from '../fx/particles';
 import { nodeToScene } from './sceneCoords';
+import { monsterSpriteSize } from './monsterSize';
 
 /**
  * BURROW / STEALTH PRESENTATION.
@@ -183,7 +184,7 @@ export function syncConcealment(
   const now = monster.concealed;
   const was = meta.concealed;
   const usingBurrowArt = concealedFrameOverride(monster, scene) !== null;
-  const size = monster.isBoss ? 128 : 64;
+  const size = monsterSpriteSize(monster);
 
   if (now === was) {
     if (now !== undefined) applyConcealedLook(state, monster.id, size, usingBurrowArt);
