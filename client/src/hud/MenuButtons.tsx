@@ -10,6 +10,7 @@ import { MasteryPanel } from "../ui/MasteryPanel";
 import { InventoryPanel } from "../ui/InventoryPanel";
 import { CraftingPanel } from "../ui/CraftingPanel";
 import { MapPanel } from "../ui/MapPanel";
+import { AudioPanel } from "./AudioPanel";
 import { MaterialsPanel } from "./MaterialsPanel";
 import { QuestPanel } from "../ui/QuestPanel";
 import { SettingsPanel } from "./settings/SettingsPanel";
@@ -315,6 +316,7 @@ export function RightSidebar() {
       </nav>
 
       {visibility.materials && <MaterialsPanel />}
+      <AudioPanel />
       <ChangelogPanel />
 
       {treeOpen && <SkillTreePanel onClose={() => setTreeOpen(false)} />}

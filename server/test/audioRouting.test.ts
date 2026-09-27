@@ -1,0 +1,77 @@
+import assert from 'node:assert/strict';
+import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { attackCue, castCue, statusCue } from '../../client/src/audio/routing';
+import { ACCEPTED_SFX } from '../../client/src/audio/acceptedCatalog';
+import { bossMusicPhase, ZONE_MUSIC, BOSS_MUSIC } from '../../client/src/audio/musicCatalog';
+import { SFX_MANIFEST, sfxFiles, sfxKey } from '../../client/src/audio/manifest';
+import { VoiceBudget } from '../../client/src/audio/voiceBudget';
+
+assert.equal(attackCue('dot', 'magic', false, 'poison'), 'poison');
+assert.equal(attackCue('dot', 'magic', false, 'frost'), 'ice');
+assert.equal(attackCue('energy', 'magic'), 'spirit');
+assert.equal(attackCue('energy', 'magic', true), 'spirit-empowered');
+assert.equal(attackCue('cadence', 'slash', true), 'striker-empowered');
+assert.equal(attackCue('cooldown', 'impact', true), 'squire-empowered');
+assert.equal(attackCue(null, 'conduit-beam'), 'summon-hit');
+assert.equal(castCue('cataclysm-impact', 'end', false), undefined);
+assert.equal(castCue('cataclysm-cast', 'start'), undefined);
+assert.equal(castCue('cataclysm-impact', 'end', true), 'cataclysm');
+assert.equal(castCue('trench-current', 'end', true, 'Constrict'), 'constrict');
+assert.equal(castCue('strong-kick', 'end', true, 'Devour'), 'devour');
+assert.equal(statusCue({ id:'debuff-tundra-chill' }), undefined);
+assert.equal(statusCue({ id:'debuff-plating-shred' }), undefined);
+assert.equal(statusCue({ id:'debuff-dot', iconKey:'debuff-poison' }), 'poison-status');
+
+// Eight summons at three attacks/sec get at most one shared cue per 300 ms.
+const budget = new VoiceBudget();
+const summon = {};
+let count = 0;
+const releases: (() => void)[] = [];
+for (let ms = 0; ms < 10000; ms += 333) {
+  for (const release of releases.splice(0)) release();
+  for (let i = 0; i < 8; i++) {
+    const release = budget.acquire(summon, ms, 300, 2, 0, () => {});
+    if (release) { count++; releases.push(release); }
+  }
+}
+assert.equal(count, 31);
+let stopped = 0;
+const tight = new VoiceBudget(2);
+assert.ok(tight.acquire({}, 0, 0, 2, 0, () => stopped++));
+assert.ok(tight.acquire({}, 0, 0, 2, 0, () => stopped++));
+assert.equal(tight.acquire({}, 1, 0, 2, 0, () => {}), undefined);
+assert.ok(tight.acquire({}, 1, 0, 1, 3, () => stopped++));
+assert.equal(stopped, 1, 'major impact displaces a routine voice');
+tight.clear();
+assert.equal(stopped, 3, 'hidden/shutdown clears every voice');
+for (const stems of Object.values(ACCEPTED_SFX)) {
+  for (const stem of stems) assert.ok(existsSync(resolve(import.meta.dirname, '../../client/public/assets/audio/SFX/accepted', `${stem}.wav`)), stem);
+}
+console.log('audioRouting: ok (routing, cancellations, shared summon budget, priorities, accepted assets)');
+
+assert.equal(bossMusicPhase(20, 100, true, 2, true), 2);
+assert.equal(bossMusicPhase(20, 100, true, 3, true), 3);
+assert.equal(bossMusicPhase(100, 100, false, 4, true), 0);
+assert.equal(bossMusicPhase(70, 100, true, 4, true), 1);
+assert.equal(sfxKey('attack-melee'), sfxKey('slash'), 'aliases share one decoded buffer');
+assert.ok(sfxFiles(SFX_MANIFEST.kill)[0].includes('v4-death'));
+assert.ok(sfxFiles(SFX_MANIFEST.death)[0].includes('v34-player-death'));
+for (const track of new Set([...Object.values(ZONE_MUSIC), ...Object.values(BOSS_MUSIC).flat()])) {
+  assert.ok(existsSync(resolve(import.meta.dirname, '../../client/public/assets/audio/music/accepted', `${track}.ogg`)), track);
+}
+console.log('audioMusic: ok (tier phases, compatibility aliases, music files)');
+
+// Music is normalized by role without clipping or flattening quiet approaches.
+import { musicGain, musicVolume, ZONE_FADE_MS, BATTLE_FADE_MS } from '../../client/src/audio/musicMix';
+import loudness from '../../client/src/audio/musicLoudness.json';
+for (const [track, measurement] of Object.entries(loudness)) {
+  const gain = musicGain(track);
+  assert.ok(Number.isFinite(gain) && gain > 0);
+  assert.ok(measurement.truePeakDb + 20 * Math.log10(gain) <= -3 + 1e-6, track);
+}
+assert.ok(ZONE_FADE_MS > BATTLE_FADE_MS);
+assert.equal(musicVolume(0, 2, 0.5), 0, 'muting silences a partial fade');
+assert.equal(musicVolume(0.5, 0.5, 0.4), 0.1, 'slider preserves envelope and normalization');
+assert.equal(musicVolume(1, 2, 1), 1, 'maximum slider cannot exceed Phaser gain bounds');
+console.log('audioMix: ok (51 measured gains, peak headroom, transition/master gain)');

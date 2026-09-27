@@ -1,0 +1,206 @@
+{
+  "cinder": {
+    "lufs": -18.71,
+    "truePeakDb": -6.34
+  },
+  "v10-volcano-battle": {
+    "lufs": -13.82,
+    "truePeakDb": -3.03
+  },
+  "v10-volcano-eruption": {
+    "lufs": -12.28,
+    "truePeakDb": -2.3
+  },
+  "v11-tundra-climax": {
+    "lufs": -12.07,
+    "truePeakDb": -2.32
+  },
+  "v11-volcano-zone": {
+    "lufs": -19.72,
+    "truePeakDb": -7.12
+  },
+  "v12-volcano-cast-22s": {
+    "lufs": -12.68,
+    "truePeakDb": -1.81
+  },
+  "v12-volcano-cast-26s": {
+    "lufs": -12.7,
+    "truePeakDb": -1.98
+  },
+  "v13-forest-branchways": {
+    "lufs": -17.85,
+    "truePeakDb": -8.14
+  },
+  "v13-plains-open-road": {
+    "lufs": -18.78,
+    "truePeakDb": -8.14
+  },
+  "v13-swamp-stillwater": {
+    "lufs": -19.4,
+    "truePeakDb": -7.96
+  },
+  "v14-forest-escalation": {
+    "lufs": -13.6,
+    "truePeakDb": -3.52
+  },
+  "v14-forest-final": {
+    "lufs": -12.13,
+    "truePeakDb": -2.26
+  },
+  "v14-swamp-battle": {
+    "lufs": -15.21,
+    "truePeakDb": -2.26
+  },
+  "v14-swamp-escalation": {
+    "lufs": -13.71,
+    "truePeakDb": -2.63
+  },
+  "v14-swamp-final": {
+    "lufs": -12.28,
+    "truePeakDb": -1.75
+  },
+  "v15-plains-pulse-battle": {
+    "lufs": -13.6,
+    "truePeakDb": -2.33
+  },
+  "v15-plains-pulse-half": {
+    "lufs": -12.44,
+    "truePeakDb": -2.0
+  },
+  "v16-clearing-first-light": {
+    "lufs": -20.42,
+    "truePeakDb": -9.73
+  },
+  "v16-sanctuary-starlit": {
+    "lufs": -21.38,
+    "truePeakDb": -10.52
+  },
+  "v17-caves-lantern-hollows": {
+    "lufs": -19.05,
+    "truePeakDb": -7.57
+  },
+  "v19-desert-spacious": {
+    "lufs": -18.77,
+    "truePeakDb": -9.31
+  },
+  "v19-jungle-steady-canopy": {
+    "lufs": -18.02,
+    "truePeakDb": -3.96
+  },
+  "v20-desert-approach": {
+    "lufs": -30.71,
+    "truePeakDb": -21.76
+  },
+  "v20-desert-battle": {
+    "lufs": -13.95,
+    "truePeakDb": -2.57
+  },
+  "v20-desert-half": {
+    "lufs": -13.37,
+    "truePeakDb": -2.44
+  },
+  "v20-desert-quarter": {
+    "lufs": -12.2,
+    "truePeakDb": -2.33
+  },
+  "v20-jungle-approach": {
+    "lufs": -29.46,
+    "truePeakDb": -21.55
+  },
+  "v20-jungle-battle": {
+    "lufs": -13.95,
+    "truePeakDb": -2.28
+  },
+  "v20-jungle-half": {
+    "lufs": -12.9,
+    "truePeakDb": -2.43
+  },
+  "v20-jungle-quarter": {
+    "lufs": -11.95,
+    "truePeakDb": -2.04
+  },
+  "v21-trench-below-the-light": {
+    "lufs": -20.77,
+    "truePeakDb": -6.49
+  },
+  "v21-wasteland-ash-procession": {
+    "lufs": -21.52,
+    "truePeakDb": -7.64
+  },
+  "v22-trench-approach": {
+    "lufs": -30.39,
+    "truePeakDb": -26.3
+  },
+  "v22-trench-battle": {
+    "lufs": -14.2,
+    "truePeakDb": -2.34
+  },
+  "v22-trench-climax": {
+    "lufs": -11.99,
+    "truePeakDb": -1.78
+  },
+  "v22-trench-escalation": {
+    "lufs": -13.2,
+    "truePeakDb": -2.11
+  },
+  "v22-wasteland-approach": {
+    "lufs": -29.61,
+    "truePeakDb": -22.74
+  },
+  "v22-wasteland-battle": {
+    "lufs": -14.17,
+    "truePeakDb": -1.7
+  },
+  "v22-wasteland-climax": {
+    "lufs": -12.0,
+    "truePeakDb": -1.81
+  },
+  "v22-wasteland-escalation": {
+    "lufs": -13.31,
+    "truePeakDb": -2.04
+  },
+  "v23-caves-approach": {
+    "lufs": -30.95,
+    "truePeakDb": -26.05
+  },
+  "v23-caves-battle": {
+    "lufs": -14.12,
+    "truePeakDb": -2.78
+  },
+  "v23-caves-half": {
+    "lufs": -13.17,
+    "truePeakDb": -2.97
+  },
+  "v23-caves-quarter": {
+    "lufs": -11.96,
+    "truePeakDb": -2.59
+  },
+  "v6-mountain-reference-study": {
+    "lufs": -15.6,
+    "truePeakDb": -5.6
+  },
+  "v7-mountain-approach": {
+    "lufs": -30.17,
+    "truePeakDb": -23.31
+  },
+  "v8-mountain-battle": {
+    "lufs": -14.84,
+    "truePeakDb": -3.56
+  },
+  "v8-mountain-enrage": {
+    "lufs": -12.52,
+    "truePeakDb": -3.34
+  },
+  "v8-mountain-half": {
+    "lufs": -13.09,
+    "truePeakDb": -2.75
+  },
+  "v9-tundra-climax": {
+    "lufs": -12.57,
+    "truePeakDb": -2.42
+  },
+  "v9-tundra-zone": {
+    "lufs": -18.4,
+    "truePeakDb": -7.35
+  }
+}

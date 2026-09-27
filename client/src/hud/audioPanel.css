@@ -1,0 +1,7 @@
+.audio-panel__controls { display: grid; gap: 12px; }
+.audio-panel__row { display: grid; gap: 5px; font-size: 12px; color: var(--hud-text); }
+.audio-panel__row > label:first-child { display: flex; align-items: center; gap: 8px; }
+.audio-panel__row input[type="range"] { flex: 1; min-width: 0; width: 60px; accent-color: var(--hud-primary); }
+.audio-panel__row span { min-width: 32px; text-align: right; font-variant-numeric: tabular-nums; color: var(--hud-primary-strong); }
+.audio-panel__mute { display: flex; align-items: center; gap: 6px; color: var(--hud-text-muted); cursor: pointer; }
+.audio-panel__mute input { margin: 0; accent-color: var(--hud-primary); }
