@@ -278,7 +278,7 @@ export function setMusicForBiome(group: string): void {
 }
 
 /** Presentation follows server snapshots; it never advances a gameplay phase. */
-export function setEncounterMusic(group: string, boss?: { hp: number; maxHp: number; engaged: boolean; tier: number }): void {
+export function setEncounterMusic(group: string, boss?: { hp: number; maxHp: number; engaged: boolean; tier: number; typeId?: string }): void {
   if (!scene) return;
   if (currentBiome !== group) setMusicForBiome(group);
   if (!boss || boss.hp <= 0) finalCastUntil = 0;
@@ -295,7 +295,7 @@ export function setEncounterMusic(group: string, boss?: { hp: number; maxHp: num
       queueMusic('v12-volcano-cast-22s'); queueMusic('v12-volcano-cast-26s');
     }
   }
-  const phase = bossMusicPhase(boss.hp, boss.maxHp, boss.engaged, boss.tier, !!suite[3]);
+  const phase = bossMusicPhase(boss.hp, boss.maxHp, boss.engaged, boss.tier, !!suite[3], boss.typeId);
   const sameBattle = battleGroup === group && phase > 0;
   battleGroup = phase > 0 ? group : null;
   requestMusic(suite[phase], sameBattle);

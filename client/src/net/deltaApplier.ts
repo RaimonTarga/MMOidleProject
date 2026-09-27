@@ -242,7 +242,7 @@ export function applyDelta(
     const boss = Array.from(state.view.values()).find((view): view is MonsterView =>
       'isBoss' in view && view.isBoss && view.nodeId === own.nodeId && view.hp > 0);
     if (biome) setEncounterMusic(biome, own.isDead ? undefined : boss ? {
-      hp: boss.hp, maxHp: boss.maxHp, tier: NODE_BIOMES[own.nodeId]?.biomeTier ?? 1,
+      hp: boss.hp, maxHp: boss.maxHp, tier: NODE_BIOMES[own.nodeId]?.biomeTier ?? 1, typeId: boss.monsterTypeId,
       engaged: boss.attackTargetId != null || boss.hp < boss.maxHp,
     } : undefined);
 
