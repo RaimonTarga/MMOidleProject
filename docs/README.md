@@ -26,6 +26,7 @@ top-level doc.
 
 | Doc | Why |
 |---|---|
+| [Premium animation pass: mobs and players](briefs/premium-animation-mobs-players-2026-09-27.md) | Handoff for taking the boss animation treatment (wind-up clocks, body pose, auras, impact feel) to ordinary mobs and player attacks: toolkit, hook points, budget, order. |
 | [Boss lineage art list](briefs/boss-lineage-art-list-2026-09-27.md) | Icons and ground textures the boss-lineage redesign borrows art for, with Codex subjects, target paths and the one-line wiring each needs. |
 | [Playtest follow-up command center](briefs/playtest-followup-command-center-2026-09-25.md) | **Start here for post-v0.5 work.** Status, code location, blocking decisions and session order for the six follow-up workstreams (Volcano, defense, Conduit, XP pacing, economy, T4 balance). |
 | [Volcano area nerf study](../reports/volcano-area-study-2026-09-25/EXPERIMENT.md) | **Applied** 2026-09-25: Heat incoming 4.5%→3.5%/stack, Ash Salamander 84→70, Ember Skink 75→60 + Burn 13→8, Ashspitter 110→95 + Burn 16→12. 52-observation farm/boss check; survival improves, Conduit still fails T3 Volcano. |
