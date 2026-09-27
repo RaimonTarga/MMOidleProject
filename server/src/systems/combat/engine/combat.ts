@@ -28,6 +28,7 @@ import { grantMonsterRewards } from "../../player/progression/rewards";
 import { makeCombatContext, emitCombatEvent, recordBaseDefenseMeasurement, type FormationAttackContribution } from "./combatPipeline";
 import { formationTempoWeight } from "../../classes/archetypes/summoner/profile";
 import {
+  monsterBoneTitheMult,
   monsterEmpoweredMultiplier,
   applyEnemySoftCap,
   applyEnemyShield,
@@ -488,7 +489,7 @@ export function runPlayerAttack(
   // every source. Applied BEFORE the cap/barrier so the window amplifies the real
   // hit rather than the post-mitigation remainder — the point is to reward the
   // burst that cracked the shell.
-  ctx.damage = Math.round(ctx.damage * monsterShatterVulnerabilityMult(target));
+  ctx.damage = Math.round(ctx.damage * monsterShatterVulnerabilityMult(target) * monsterBoneTitheMult(target));
 
   const preCapDamage = ctx.damage;
   ctx.damage = applyEnemySoftCap(target, monsterDef, ctx.damage);

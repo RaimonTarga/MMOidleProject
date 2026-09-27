@@ -198,6 +198,17 @@ export type BossAction =
    */
   | { type: 'set-pattern'; patternId: string }
   /**
+   * BONE TITHE (Wasteland) — from now on the boss takes `damageReductionPerRisen`
+   * less damage per living risen it commands, up to `maxStacks`, shown as stacks.
+   * Clear the adds first.
+   */
+  | { type: 'bone-tithe'; damageReductionPerRisen: number; maxStacks: number }
+  /**
+   * HARVEST (Wasteland soft enrage) — every `intervalMs` it devours one of its risen
+   * and gains a permanent `attackMult`. A buff only, never a heal.
+   */
+  | { type: 'harvest'; intervalMs: number; attackMult: number }
+  /**
    * ADD / REMOVE PATTERN — arm a SECOND authored pattern (from `bossPatternVariants`)
    * alongside the main one, with its own cooldown; the boss still runs one sequence
    * at a time, and an added pattern gets first pick when both are ready. The Desert
@@ -487,6 +498,13 @@ export interface MonsterRaisesDead {
   castName?: string;
   /** Client resolve cue, reusing the ordinary monster cast event. */
   castFx?: string;
+  /** Corpses claimed and raised per cadence cast (default 1). Wasteland: numbers over quality. */
+  count?: number;
+  /**
+   * A STUN on the Raise wind-up stops it AND staggers the raiser for this long, with
+   * the stun tell (principle 5): the Wasteland's one control-answerable beat.
+   */
+  stunStaggerMs?: number;
 }
 
 /** A player-facing rider on a generic monster ability hit. */

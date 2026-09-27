@@ -35,6 +35,7 @@ import {
   BOSS_DEBUFF_KEY,
   circleGeometry,
   distanceSq,
+  removeStatusEffect,
   MONSTER_DATABASE,
   GAME_CONFIG,
   FROST_RAMP_EFFECT_ID,
@@ -49,11 +50,11 @@ import { initScriptsBoss } from '@mmo-idle/shared';
 import { attachComponent, detachComponent } from '../../../ecs/markerHelpers';
 import { markSliceDirty } from '../../../ecs/dirtyHelpers';
 import { setAggroTarget, setAttackTarget } from './targeting';
-import { BOSS_RALLIED_EFFECT_ID, BOSS_ROAR_HASTE_EFFECT_ID } from '../engine/monsterMechanics';
+import { BONE_TITHE_EFFECT_ID, BOSS_RALLIED_EFFECT_ID, BOSS_ROAR_HASTE_EFFECT_ID } from '../engine/monsterMechanics';
 import { abortMonsterCast } from '../engine/combat';
 import { publishFaultLineBurst, publishToxicPool } from '../../world/groundZones';
 import { stokeAmbientRamp } from '../../world/nodeFeatures';
-import { raiseCorpsesBurst } from './raiseDead';
+import { countRaisedBy, raiseCorpsesBurst } from './raiseDead';
 import { applyMonsterDotToPlayer } from '../status/monsterDot';
 import { hasIndependentRoot, setRooted } from '../../world/rooted';
 
@@ -82,6 +83,8 @@ export function updateBossScripts(world: World, dt: number): void {
       tickRoomAffliction(state, e, world, dt);
       tickRoomDebuffs(state, e, world, dt);
       tickVents(state, e, world);
+      tickBoneTithe(state, e, world);
+      tickHarvest(state, e, world, dt);
     }
 
     const bossEffectStacks: Record<string, number> = {};
@@ -163,6 +166,47 @@ function tickVents(state: ScriptsBoss, monster: MonsterEntity, world: World): vo
       scattered: true,
     });
   }
+}
+
+/** BONE TITHE: the boss's damage reduction tracks how many risen stand for it. */
+function tickBoneTithe(state: ScriptsBoss, monster: MonsterEntity, world: World): void {
+  const tithe = state.boneTithe;
+  if (!tithe) return;
+  const risen = Math.min(tithe.maxStacks, countRaisedBy(world, monster));
+  if (risen <= 0) {
+    removeStatusEffect(monster.tracksCombat, BONE_TITHE_EFFECT_ID);
+    return;
+  }
+  const effect = applyStatusEffect(monster.tracksCombat, {
+    id: BONE_TITHE_EFFECT_ID,
+    maxStacks: tithe.maxStacks,
+    remainingMs: 600_000,
+    refreshable: true,
+    sourceId: monster.isMonster.id,
+    data: { damageReductionPerStack: tithe.damageReductionPerRisen, totalMs: 600_000 },
+  });
+  effect.stacks = risen;
+}
+
+/** HARVEST: every interval it devours one of its risen for a permanent attack buff. */
+function tickHarvest(state: ScriptsBoss, monster: MonsterEntity, world: World, dt: number): void {
+  const harvest = state.harvest;
+  if (!harvest) return;
+  harvest.timerMs -= dt;
+  if (harvest.timerMs > 0) return;
+  harvest.timerMs = harvest.intervalMs;
+  const risen = [...world.monsterEntitiesInNode(monster.hasPosition.nodeId)]
+    .find(m => m.isRaised?.raiserId === monster.isMonster.id && m.hasHealth.hp > 0);
+  if (!risen) return;
+  world.pushEvent(monster.hasPosition.nodeId, {
+    kind: 'ecology-pulse',
+    monsterId: risen.isMonster.id,
+    pos: { ...risen.hasPosition.current },
+    pulse: 'raise-dead',
+  });
+  world.removeMonsterEntity(risen.isMonster.id);
+  applyAction({ type: 'stat-buff', stat: 'attack', mult: harvest.attackMult, label: 'harvest' }, monster, world, state);
+  pushBossFx(world, monster, 'frenzy');
 }
 
 /** The arena's boss-debuff ramps (Frostbite, Depth): a stack per interval, per player. */
@@ -745,6 +789,17 @@ function applyAction(
 
     case 'spread-pools': {
       state.poolSpread = { radiusPerSec: action.radiusPerSec, maxRadiusMult: action.maxRadiusMult };
+      break;
+    }
+
+    case 'bone-tithe': {
+      state.boneTithe = { damageReductionPerRisen: action.damageReductionPerRisen, maxStacks: action.maxStacks };
+      break;
+    }
+
+    case 'harvest': {
+      state.harvest = { intervalMs: action.intervalMs, timerMs: action.intervalMs, attackMult: action.attackMult };
+      pushBossFx(world, monster, 'roar', { radius: 480 });
       break;
     }
 

@@ -394,6 +394,16 @@ function beginRecovery(
   });
 }
 
+/**
+ * Stagger a boss from OUTSIDE its pattern (a stopped Raise Dead): the same
+ * rooted, not-attacking window with the stun tell a stopped pattern gets.
+ */
+export function staggerBoss(world: World, monster: MonsterEntity, label: string, durationMs: number, now: number): void {
+  if (monster.recoversFromPattern) return;
+  endPattern(world, monster, 'interrupted', now);
+  beginRecovery(world, monster, label, durationMs, true, now);
+}
+
 function endRecovery(world: World, monster: MonsterEntity): void {
   const recovery = monster.recoversFromPattern;
   if (!recovery) return;

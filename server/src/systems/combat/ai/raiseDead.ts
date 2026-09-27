@@ -18,6 +18,7 @@ import {
 import { setAggroTarget, setAttackTarget } from './targeting';
 import { hasIndependentRoot, setRooted } from '../../world/rooted';
 import { isMonsterStunned } from '../status/stun';
+import { staggerBoss } from './bossPatterns';
 import { isMonsterFrozen } from '../../classes/archetypes/dot/t3/core/selectors';
 import { chargedCastEndsAt } from '../engine/monsterMechanics';
 
@@ -220,6 +221,10 @@ export function updateRaisers(world: World, now: number): void {
         isMonsterFrozen(world, raiser.isMonster.id)
       ) {
         cancelRaiseCast(world, raiser);
+        // A STOPPED raise staggers its caster (principle 5), when authored.
+        if (spec.stunStaggerMs && raiser.isMonster.isBoss) {
+          staggerBoss(world, raiser, 'Raise Broken', spec.stunStaggerMs, now);
+        }
         continue;
       }
       if (now < castEndsAt) continue;
@@ -230,17 +235,23 @@ export function updateRaisers(world: World, now: number): void {
       // have been a lie, and a corpse reserved at the last moment by nobody could
       // be taken instead.
       const maxAlive = spec.maxAlive + (raiser.scriptsBoss?.raiseMaxAliveAdd ?? 0);
-      const corpse = countRaisedBy(world, raiser) < maxAlive
-        ? takeNearestCorpse(
-            world,
-            raiser.hasPosition.nodeId,
-            raiser.hasPosition.current,
-            spec.corpseRange,
-            raiser.isMonster.id,
-          )
-        : null;
+      // Several per cast when authored (Wasteland: numbers over quality).
+      const corpses: NonNullable<ReturnType<typeof takeNearestCorpse>>[] = [];
+      for (let i = 0; i < (spec.count ?? 1); i++) {
+        if (countRaisedBy(world, raiser) + corpses.length >= maxAlive) break;
+        const corpse = takeNearestCorpse(
+          world,
+          raiser.hasPosition.nodeId,
+          raiser.hasPosition.current,
+          spec.corpseRange,
+          raiser.isMonster.id,
+        );
+        if (!corpse) break;
+        corpses.push(corpse);
+      }
       releaseRaiseCast(world, raiser);
-      const fired = corpse ? raiseCorpse(world, raiser, corpse, spec, now) : false;
+      let fired = false;
+      for (const corpse of corpses) fired = raiseCorpse(world, raiser, corpse, spec, now) || fired;
       world.pushEvent(raiser.hasPosition.nodeId, {
         kind: 'monster-cast-end',
         monsterId: raiser.isMonster.id,
@@ -269,7 +280,7 @@ export function updateRaisers(world: World, now: number): void {
         !isMonsterStunned(world, raiser.isMonster.id) &&
         !isMonsterFrozen(world, raiser.isMonster.id)
       ) {
-        beginRaiseCast(world, raiser, spec, now);
+        beginRaiseCast(world, raiser, spec, now, spec.count ?? 1);
         setCounter(state, NEXT_RAISE_KEY, now + spec.intervalMs);
       }
       continue;

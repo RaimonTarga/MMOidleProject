@@ -143,6 +143,10 @@ export interface ScriptsBoss {
   phaseLabel?: string;
   /** Set by 'spread-pools': owned pools grow toward a cap. */
   poolSpread?: { radiusPerSec: number; maxRadiusMult: number };
+  /** Set by 'bone-tithe': damage reduction per living risen. */
+  boneTithe?: { damageReductionPerRisen: number; maxStacks: number };
+  /** Set by 'harvest': the devour clock. */
+  harvest?: { intervalMs: number; timerMs: number; attackMult: number };
   /** Set by 'vent-field': the arena's magma vents and their eruption clocks. */
   vents?: {
     pos: { x: number; y: number };

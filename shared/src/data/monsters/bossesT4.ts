@@ -662,12 +662,25 @@ export const bossMonsterEntriesT4 = [
     // wherever you killed them) but raises only ONE at a time on an 8s cadence. That
     // selectivity is the point: a boss raising everything constantly is a spawner,
     // and Plains already owns spawning. Placeholder numbers.
+    // WASTELAND (boss-lineage redesign 2026-09-27) — the successor to Plains: an
+    // adds fight where AoE matters most. Raises favour NUMBERS OVER QUALITY: several
+    // weak risen per cast (weak enough that single-target builds can still clear
+    // them). Three phases:
+    //   (1) Raise Dead on a cadence, three at a time. The Raise wind-up can be
+    //       STUNNED (its one control beat; stun arrives at T4): a stopped raise
+    //       staggers the boss. Or AoE the risen.
+    //   (2) ~60% Mass Resurrection, then BONE TITHE: it takes 6% less damage per
+    //       living risen (visible stacks, capped at 6). Clear the adds first.
+    //   (3) ~25% HARVEST, the soft enrage: every few seconds it devours one of its
+    //       risen for a permanent attack buff (no heal — that would only lengthen
+    //       the fight). Clear adds before it eats them, or race it.
     raisesDead: {
-      intervalMs: 8000, initialDelayMs: 5000, corpseRange: 520, maxAlive: 4,
+      intervalMs: 7000, initialDelayMs: 4000, corpseRange: 700, maxAlive: 7, count: 3,
       // Keep seed bodies available through slow pulls and the half-health cast.
       corpseLifetimeMs: 600_000,
-      hpMult: 0.75, damageMult: 0.80,
-      castMs: 1300, castName: 'Raise Dead', castFx: 'raise-dead',
+      hpMult: 0.45, damageMult: 0.60,
+      castMs: 1600, castName: 'Raise Dead', castFx: 'raise-dead',
+      stunStaggerMs: 3000,
     },
     bossScript: {
       phases: [
@@ -678,17 +691,21 @@ export const bossMonsterEntriesT4 = [
         //                    hazard in the fight.
         //   Carrion Vulture— ranged support through its existing undead haste.
         { hpPct: 1.0, actions: [
-          { type: 'spawn-adds', monsterTypeId: 'bone-crawler', count: 3, maxAlive: 5, offsetRange: 260 },
+          { type: 'spawn-adds', monsterTypeId: 'bone-crawler', count: 4, maxAlive: 6, offsetRange: 260 },
           { type: 'spawn-adds', monsterTypeId: 'plague-hound', count: 1, maxAlive: 5, offsetRange: 260 },
           { type: 'spawn-adds', monsterTypeId: 'carrion-vulture', count: 1, maxAlive: 5, offsetRange: 260 },
         ] },
         // ONE major Mass Resurrection: up to three remaining bodies get up at
         // once, and the tide is allowed to stand two deeper. There is no
         // second wave — a low-health repeat would make the first one meaningless.
-        { hpPct: 0.5, actions: [
+        { hpPct: 0.6, name: 'Bone Tithe', actions: [
           { type: 'cast', castMs: 1800, label: 'Mass Resurrection', fx: 'roar', actions: [
-            { type: 'raise-dead', count: 3, maxAliveAdd: 2 },
+            { type: 'raise-dead', count: 5, maxAliveAdd: 3, hpMult: 0.45, damageMult: 0.60 },
           ] },
+          { type: 'bone-tithe', damageReductionPerRisen: 0.06, maxStacks: 6 },
+        ] },
+        { hpPct: 0.25, name: 'Harvest', actions: [
+          { type: 'harvest', intervalMs: 4000, attackMult: 1.06 },
         ] },
       ],
     },

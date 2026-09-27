@@ -384,6 +384,7 @@ const TARGET_STATUS_ALIASES: Record<string, string> = {
   'boss-roar-haste': 'monster-howl-haste',
   'boss-rallied': 'monster-howl-haste',
   'boss-frenzy': 'monster-howl-haste',
+  'bone-tithe': 'necrotic-surge',
   'monster-death-empower': 'necrotic-surge',
   'elder-carapace-renewal': 'abyssal-carapace',
   'magma-molten-guard': 'molten-guard',

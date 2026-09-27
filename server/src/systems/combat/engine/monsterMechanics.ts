@@ -26,6 +26,15 @@ export const BOSS_ROAR_HASTE_EFFECT_ID = "boss-roar-haste";
 export const BOSS_RALLIED_EFFECT_ID = "boss-rallied";
 /** Jungle ambush burst: timed +attack speed / +damage on the boss itself. */
 export const BOSS_FRENZY_EFFECT_ID = "boss-frenzy";
+/** Wasteland Bone Tithe: damage reduction per stack (one stack per living risen). */
+export const BONE_TITHE_EFFECT_ID = "bone-tithe";
+
+/** Incoming-damage multiplier from Bone Tithe (1 when absent). */
+export function monsterBoneTitheMult(monster: MonsterEntity): number {
+  const tithe = getStatusEffect(monster.tracksCombat, BONE_TITHE_EFFECT_ID);
+  if (!tithe || tithe.stacks <= 0) return 1;
+  return Math.max(0.1, 1 - (tithe.data.damageReductionPerStack ?? 0) * tithe.stacks);
+}
 
 /** Effective basic-attack cadence after temporary roar haste and combat ramping. */
 export function monsterAttackCooldown(monster: MonsterEntity): number {
