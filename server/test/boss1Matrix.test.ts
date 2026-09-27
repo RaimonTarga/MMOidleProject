@@ -128,10 +128,13 @@ assertBoss1Definitions();
     assert(m.stats.attack === expected.attack, `${id}: attack drift`);
   }
 
-  // The 50% phase is what makes the cap load-bearing: the screen must be able to
-  // reach Mass Resurrection, or it measures a truncated fight.
-  const halfPhase = script.phases.find((p) => p.hpPct === 0.5);
-  assert(!!halfPhase, 'the 50% phase must exist, or the resolved cap is meaningless');
+  // The Mass Resurrection phase is what makes the cap load-bearing: the screen must
+  // be able to reach it, or it measures a truncated fight. (Moved 50% -> 60% by the
+  // 2026-09-27 boss-lineage redesign, which added Bone Tithe with it.)
+  const massPhase = script.phases.find((p) =>
+    (p.actions ?? []).some((a) => a.type === 'cast'),
+  );
+  assert(!!massPhase, 'the Mass Resurrection phase must exist, or the resolved cap is meaningless');
 }
 
 // ── The boss's own block, pinned.
