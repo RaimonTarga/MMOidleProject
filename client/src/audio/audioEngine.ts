@@ -324,12 +324,18 @@ export function setEncounterMusic(
   const suite = BOSS_MUSIC[group];
   const altarActive = dungeon === 'bossAwakening' || dungeon === 'boss';
   if (!suite || (!live && dungeon !== 'idle' && !altarActive)) {
+    const fightEnded = battleGroup !== null;
     battleGroup = null;
-    requestMusic(ZONE_MUSIC[group] ?? null);
+    const zone = ZONE_MUSIC[group] ?? null;
+    // The end of a fight should be heard at once: if the zone track is still
+    // downloading, fade the battle track out instead of playing on until it lands.
+    if (fightEnded && zone && !scene.cache.audio.exists(`music-${zone}`)) requestMusic(null);
+    requestMusic(zone);
     return;
   }
   if (effMusicVolume() > 0) {
-    for (const track of suite) queueMusic(track);
+    // The zone track too: it is what plays the moment the boss falls.
+    for (const track of [...suite, ZONE_MUSIC[group]]) if (track) queueMusic(track);
     if (group === 'volcanic') {
       queueMusic('v12-volcano-cast-22s'); queueMusic('v12-volcano-cast-26s');
     }
