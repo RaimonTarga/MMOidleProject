@@ -46,7 +46,7 @@ assert.equal(stopped, 1, 'major impact displaces a routine voice');
 tight.clear();
 assert.equal(stopped, 3, 'hidden/shutdown clears every voice');
 for (const stems of Object.values(ACCEPTED_SFX)) {
-  for (const stem of stems) assert.ok(existsSync(resolve(import.meta.dirname, '../../client/public/assets/audio/SFX/accepted', `${stem}.wav`)), stem);
+  for (const stem of stems) assert.ok(existsSync(resolve(import.meta.dirname, '../../client/public/assets/audio/SFX/accepted', `${stem}.ogg`)), stem);
 }
 console.log('audioRouting: ok (routing, cancellations, shared summon budget, priorities, accepted assets)');
 

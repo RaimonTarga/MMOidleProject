@@ -4,7 +4,8 @@ Accepted listening-study music and effects are wired into the client. No server 
 
 ## Catalog and routes
 
-- `client/src/audio/acceptedCatalog.ts`: 61 accepted sound families / 74 WAV masters, versioned filenames preserved.
+- `client/src/audio/acceptedCatalog.ts`: 61 accepted sound families / 74 files, versioned filenames preserved. The game serves Ogg Vorbis copies (1.2 MB total); the lossless WAV masters live in `art/audio/sfx-masters/` and are not served.
+- Only the routine combat effects plus hurt/death/dodge/empowered load with the game (`PRELOADED_SFX` in `manifest.ts`). Every other effect is fetched the first time it plays, and that first play is silent.
 - `musicCatalog.ts`: 13 zone assignments and 11 boss suites, 51 Ogg exports including the two volcanic final-cast cues. Plains uses the accepted pulse alternative; Sanctuary uses Starlight Refuge.
 - `routing.ts`: distinct class basics, class empowered hits, monster attack styles, named cast releases, ecology and boss cues. Unknown monster styles use the accepted blunt family. Generic DoT ticks, ordinary chill stacks and plating erosion stay silent.
 - Player status audio fires on semantic onset. Conduit owner events do not duplicate the minion attack path. All summons share a 300 ms cooldown and two-voice limit.
@@ -13,7 +14,7 @@ Accepted listening-study music and effects are wired into the client. No server 
 
 ## Music
 
-Music loads on demand when enabled; entering a boss encounter preloads its suite. Server snapshots choose approach/battle/50%/25%; a quarter phase is only used at tier 3+. A shared audio-clock timeline supplies the seek position when battle variations change. Lower-tier bosses do not acquire new gameplay phases.
+Music loads on demand when enabled; entering a boss encounter preloads its suite. Server snapshots choose approach/battle/escalation/final at each boss's own authored HP phase thresholds (`bossMusicPhase`); the last of two or more phases takes the final track. Bosses without HP phases fall back to 50%/25%, with the quarter phase only at tier 3+. A shared audio-clock timeline supplies the seek position when battle variations change. Lower-tier bosses do not acquire new gameplay phases.
 
 The current checkout still authors an 8-second Cataclysm wind-up. Its presentation uses the ending portion of the accepted buildup. The accepted 22/26-second versions are selected for those runtime cast durations when that gameplay branch lands. There is no final musical impact note; the accepted Cataclysm SFX voices the actual impact. This is not a combat timing change.
 
