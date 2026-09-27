@@ -1,7 +1,8 @@
 /**
  * Boss-lineage redesign — Mountain ("the charge is coming; how do you meet it?").
  * Wiring smoke: the plate refuses control, the later-phase double charge runs two
- * charges, a root pins the unplated re-aim into a stagger, and T4 Rockfall lands.
+ * charges, a root pins the unplated re-aim into a stagger, T4 Rockfall lands, and
+ * the T4 Landslide is a triple charge under bigger rocks.
  */
 import { ABILITY_ROOT_EFFECT_ID, getStatusEffect, MONSTER_DATABASE } from '@mmo-idle/shared';
 import { runningBossPatternDef } from '../src/systems/combat/ai/bossPatterns';
@@ -87,6 +88,28 @@ for (const id of ['crag-gorged-horn-behemoth', 'iron-crest-titan']) {
     MONSTER_DATABASE.get('iron-crest-titan')!.bossPatternVariants!.every(v => v.steps.every(s => s.kind !== 'fault-lines')),
     'the fault lines are cut',
   );
+}
+
+// ── T4 Landslide: the triple charge ──────────────────────────────────────────
+{
+  const a = arena('iron-crest-titan', { x: 1200, y: 1200 }, { x: 1500, y: 1200 });
+  a.boss.hasHealth.hp = Math.round(a.boss.hasHealth.maxHp * 0.2);
+  updateBossScripts(a.world, 0);
+  assert(a.boss.hasStatus.bossPhase === 'Landslide', 'the Landslide is announced');
+  const landslide = MONSTER_DATABASE.get('iron-crest-titan')!.bossPatternVariants!.find(v => v.id === 'titan-landslide')!;
+  assert(landslide.steps.filter(s => s.kind === 'charge').length === 3, 'Landslide charges three times');
+  const rocks = landslide.steps.filter(s => s.kind === 'rockfall');
+  const rockfall = MONSTER_DATABASE.get('iron-crest-titan')!.bossPatternVariants!.find(v => v.id === 'titan-rockfall')!;
+  const baseRock = rockfall.steps.find(s => s.kind === 'rockfall');
+  assert(rocks.length === 3 && rocks.every(r => r.kind === 'rockfall' && baseRock?.kind === 'rockfall' && r.radius > baseRock.radius),
+    'with a volley of bigger rocks before every run');
+  let sawRocks = false;
+  runUntil(a, () => {
+    pin(a.player, { x: 1500, y: 1200 });
+    sawRocks ||= (a.world.groundZones.get(a.nodeId) ?? []).some(z => z.kind === 'fault-line-telegraph' && z.scattered === true);
+    return sawRocks;
+  }, 8000);
+  assert(sawRocks, 'and the rocks actually fall');
 }
 
 console.log('bossLineageMountain: ok');

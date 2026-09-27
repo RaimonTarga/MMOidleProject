@@ -56,7 +56,7 @@ export const bossMonsterEntriesT4 = [
   // Identity: "the charge is coming; how do you meet it?", every answer at once.
   //
   // The lineage's arc (boss-lineage redesign): T1 lane charge → T2 behind a plate
-  // you can break → T3 a second, rootable charge → T4 the same, under Rockfall.
+  // you can break → T3 a second, rootable charge → T4 under Rockfall, then a triple.
   // ══════════════════════════════════════════════════════════════════════
   ['iron-crest-titan', {
     id: 'iron-crest-titan', name: 'Iron-Crest Titan', color: 0x8899bb,
@@ -66,14 +66,15 @@ export const bossMonsterEntriesT4 = [
     rewards: { essence: 620, essenceType: 'blue', level: 5, biomeXp: 930 },
     ai: { wanderRadius: 95, leashRange: 960, idleMinMs: 4000, idleMaxMs: 10000 },
     targeting: { prefersPlayers: true },
-    // T4 = the whole Mountain answer set (boss-lineage redesign 2026-09-27). Three
+    // T4 = the whole Mountain answer set (boss-lineage redesign 2026-09-27). Four
     // phases, each asking a new question of the same charge:
     //   (1) the plated charge (the T2/T3 fight) — break the plate, or dodge/Brace;
     //   (2) ~65% DOUBLE CHARGE — the plate drops after the first run, and the
     //       unplated re-aim can be rooted (T3 ladder) or stunned (T4 ladder);
-    //   (3) ~35% ROCKFALL — delayed impact circles rain around you as each wind-up
-    //       begins, so dodging the lane means reading the rocks too; the cooldowns
-    //       compress (the soft enrage).
+    //   (3) ~50% ROCKFALL — delayed impact circles rain around you as each wind-up
+    //       begins, so dodging the lane means reading the rocks too;
+    //   (4) ~25% LANDSLIDE, the soft enrage (playtest 2026-09-27) — a TRIPLE charge
+    //       with a volley of bigger rocks before every run, and it moves faster.
     // While plated it ignores root and stun. CUT: the delayed fault lines (they only
     // landed after the charge already hit you), and the Earthshatter follow-up — the
     // tackle is the payoff again.
@@ -144,6 +145,37 @@ export const bossMonsterEntriesT4 = [
           { kind: 'recovery', label: 'Spent', durationMs: 1000 },
         ],
       },
+      {
+        // LANDSLIDE (playtest 2026-09-27): the soft enrage is a TRIPLE charge, a
+        // volley of bigger rocks before every run, so the safe ground between them
+        // closes up. Both re-aims are unplated and rootable, as in the Double Charge.
+        chargeInstinct: { speedPct: 0.45, castReductionPct: 0.30, minCastMs: 400, cooldownReductionPct: 0.20 },
+        id: 'titan-landslide', name: 'Landslide',
+        damageMultiplier: 2.2, cooldownMs: 9000, initialCooldownMs: 3000,
+        stoppedBy: {
+          stun: { staggerMs: 2800, label: 'Staggered' },
+          root: { staggerMs: 1500, label: 'Stumbled' },
+        },
+        steps: [
+          { kind: 'cast', name: 'Titanplate', castMs: 900, fx: 'shield', guardable: false, rootable: true },
+          { kind: 'barrier', sourceId: 'titanplate', shieldPct: 0.05, blocksControl: true,
+            onBreak: { staggerMs: 3000, label: 'Plate Shattered' } },
+          { kind: 'rockfall', name: 'Landslide', count: 12, radius: 130, spread: 680, delayMs: 1800, damageMult: 0.55 },
+          { kind: 'cast', name: 'Titan Charge', castMs: 2400, fx: 'charge-lane',
+            lane: { length: 820, halfWidth: 104, lockAtCastPct: 0.6 } },
+          { kind: 'charge', speed: 560, maxTravelMs: 2400 },
+          { kind: 'drop-barrier', sourceId: 'titanplate' },
+          { kind: 'rockfall', name: 'Landslide', count: 12, radius: 130, spread: 680, delayMs: 1600, damageMult: 0.55 },
+          { kind: 'cast', name: 'Second Charge', castMs: 1400, fx: 'charge-lane', rootable: true,
+            lane: { length: 760, halfWidth: 104, lockAtCastPct: 0.5 } },
+          { kind: 'charge', speed: 600, damageMult: 0.85, maxTravelMs: 2200 },
+          { kind: 'rockfall', name: 'Landslide', count: 12, radius: 130, spread: 680, delayMs: 1500, damageMult: 0.55 },
+          { kind: 'cast', name: 'Third Charge', castMs: 1200, fx: 'charge-lane', rootable: true,
+            lane: { length: 720, halfWidth: 104, lockAtCastPct: 0.5 } },
+          { kind: 'charge', speed: 640, damageMult: 0.8, maxTravelMs: 2000 },
+          { kind: 'recovery', label: 'Spent', durationMs: 1000 },
+        ],
+      },
     ],
     bossScript: {
       phases: [
@@ -153,11 +185,15 @@ export const bossMonsterEntriesT4 = [
           { type: 'set-pattern', patternId: 'titan-double-charge' },
         ] },
         // Soft enrage: rocks on every wind-up, and the cycle compresses.
-        { hpPct: 0.35, name: 'Rockfall',
-          description: 'Rocks rain down around you before each charge, it moves 35% faster and it charges more often. Read the rocks and the lane together.',
+        { hpPct: 0.5, name: 'Rockfall',
+          description: 'Rocks rain down around you before each charge. Read the rocks and the lane together.',
           actions: [
           { type: 'set-pattern', patternId: 'titan-rockfall' },
-          { type: 'empower-charged', cooldownMult: 0.70 },
+        ] },
+        { hpPct: 0.25, name: 'Landslide',
+          description: 'It charges three times in a row, with a volley of bigger rocks before every run, and it moves 35% faster. The second and third wind-ups are unplated: root or stun them.',
+          actions: [
+          { type: 'set-pattern', patternId: 'titan-landslide' },
           { type: 'stat-buff', stat: 'speed', mult: 1.35, label: 'earthshaker-rush' },
         ] },
       ],

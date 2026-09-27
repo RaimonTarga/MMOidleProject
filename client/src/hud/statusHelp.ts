@@ -229,7 +229,7 @@ const BOSS_HELP: Record<string, StatusHelp> = {
   'relentless-pursuit': { title: 'Relentless Pursuit', kind: 'boss', help: 'The Dune-Stalker Emperor has entered its closing phase: it moves 30% faster, and its Execution cycle comes around sooner for the rest of the fight.' },
   'crag-rush': { title: 'Crag Rush', kind: 'boss', help: 'The Horn-Behemoth is in its final quarter: it moves 25% faster, and its charges wind up quicker and come around more often.' },
   'cinder-fury': { title: 'Cinder Fury', kind: 'boss', help: 'The Magma-Salamander’s attacks deal 15% more damage as its shell-and-vent cycle tightens.' },
-  'earthshaker-rush': { title: 'Earthshaker Rush', kind: 'boss', help: 'The Iron-Crest Titan has brought down the Rockfall: it moves 35% faster, and its charges come around more often.' },
+  'earthshaker-rush': { title: 'Earthshaker Rush', kind: 'boss', help: 'The Iron-Crest Titan is in its Landslide: it moves 35% faster and charges three times in a row, with bigger rocks before every run.' },
   sandsurge: { title: 'Sandsurge', kind: 'boss', help: 'The Dune-Throne Sovereign has dropped its kite and surges forward 35% faster for the rest of the fight.' },
   'bestial-frenzy': { title: 'Bestial Frenzy', kind: 'boss', help: 'Every few seconds the bear works itself up: each stack makes it attack and move faster for the rest of the fight, with no cap. The Timberclaw’s Stunning Swipe also winds up quicker with every stack. Kill it before the stacks run away.' },
   cornered: { title: 'Cornered', kind: 'boss', help: 'The Verdant-Crown Predator has stopped running and fights to the death: 40% more attack damage and 35% faster attacks for the rest of the fight.' },
