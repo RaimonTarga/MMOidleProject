@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {DEFAULT_AUTOCOMBAT_CONFIG} from '@mmo-idle/shared';
+import {DEFAULT_AUTOCOMBAT_CONFIG,findPathForMover,moverOverlapsBlockShapes,buildNavGrid,navigationBodyHalfExtents} from '@mmo-idle/shared';
 import {World} from '../src/world/World';
 import {selectAutoCombatAction} from '../src/systems/combat/ai/targetPriority';
 import {packTestPlayerSlices} from './fixtures/packTestPlayer';
@@ -24,4 +24,15 @@ assert.equal(pick(1000),rhino,'rhino is nearest from the west end of the ledge')
 // closer in a straight line, but its path goes the long way round.
 player.hasPosition.current={x:2423,y:3536};
 assert.equal(pick(1100),rhino,'a straight-line-closer mob behind a ledge must not steal the approach');
-console.log('mountainLedgeTargetFlipFlop: ok');
+
+// Same node, 128 min into the replay: the player stood clear beside the outer
+// ring's west ledge corner, but the nearest nav cell's centre lay across that
+// corner, so every path from here failed its first leg. With no path to any mob
+// the player idled forever while selection ran a failing A* per mob per tick.
+{
+  const half=navigationBodyHalfExtents('player');
+  const corner={x:583,y:3241};
+  assert(!moverOverlapsBlockShapes(corner,buildNavGrid(nodeId,'player',half).shapes,half),'the player can stand at the corner');
+  assert(findPathForMover(nodeId,'player',half,corner,{x:1600,y:3150}),'and must be able to path away from it');
+}
+console.log('mountainLedgeStalls: ok');

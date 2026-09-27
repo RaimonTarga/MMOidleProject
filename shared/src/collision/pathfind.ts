@@ -97,6 +97,42 @@ function isSegmentWalkableOnGrid(grid: NavGrid, from: Vec2, to: Vec2): boolean {
 }
 
 /**
+ * The cell A* starts from: the nearest walkable cell, unless its centre is only
+ * reachable THROUGH a block. A mover can stand clear beside a jagged Mountain
+ * ledge corner whose nearest cell centre lies across that corner; every route
+ * from it then failed the first-leg check, so the player could path nowhere and
+ * idled for minutes while auto-combat ran a full failing A* per monster per tick.
+ * Prefer the nearest cell whose centre is straight-line reachable.
+ */
+function reachableStartCell(grid: NavGrid, from: Vec2): { col: number; row: number } | null {
+  const nearest = nearestWalkableCell(grid, from);
+  if (!nearest || isPaddedSegmentClear(grid, from, cellToWorld(grid, nearest.col, nearest.row))) {
+    return nearest;
+  }
+  const start = worldToCell(grid, from);
+  for (let r = 0; r <= 2; r++) {
+    let best: { col: number; row: number } | null = null;
+    let bestDistSq = Infinity;
+    for (let dc = -r; dc <= r; dc++) {
+      for (let dr = -r; dr <= r; dr++) {
+        if (Math.max(Math.abs(dc), Math.abs(dr)) !== r) continue; // ring edge only
+        const col = start.col + dc;
+        const row = start.row + dr;
+        if (!isCellWalkable(grid, col, row)) continue;
+        const center = cellToWorld(grid, col, row);
+        const d = distanceSq(center, from);
+        if (d < bestDistSq && isPaddedSegmentClear(grid, from, center)) {
+          bestDistSq = d;
+          best = { col, row };
+        }
+      }
+    }
+    if (best) return best;
+  }
+  return nearest;
+}
+
+/**
  * Grid A* from `from` to `to`. Returns world-space waypoints (may be `[to]` on a
  * clear straight line). Returns null when no route exists.
  */
@@ -108,7 +144,7 @@ export function findPathOnGrid(grid: NavGrid, from: Vec2, to: Vec2): Vec2[] | nu
     return [to];
   }
 
-  const startCell = nearestWalkableCell(grid, from);
+  const startCell = reachableStartCell(grid, from);
   const endCell = nearestWalkableCell(grid, to);
   if (!startCell || !endCell) return null;
 

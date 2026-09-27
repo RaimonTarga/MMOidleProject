@@ -278,7 +278,7 @@ distance, or the rival is attacking the player and is closer. The path check
 stops ledge flip-flop: on a Mountain node, following the path to one mob can
 carry the player straight-line away from it, so two mobs on opposite sides of a
 ledge each looked 20% closer in turn and the player shuttled along the ledge
-(`server/test/mountainLedgeTargetFlipFlop.test.ts`). Explicit targeting strategies
+(`server/test/mountainLedgeStalls.test.ts`). Explicit targeting strategies
 such as `let-dots-finish`, `spread-dots`, and party leader focus continue to use
 the weighted scorer. It does not route to other nodes.
 
