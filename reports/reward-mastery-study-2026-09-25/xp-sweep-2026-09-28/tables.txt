@@ -1,0 +1,30 @@
+
+T2 (target 15 min) — projected minutes to mastery (* = censored/projected, D = died)
+biome      apprentic   conduit   slinger    spirit    squire   striker   median  ratio
+cave           15.0      16.0      14.0      12.9      18.0      22.2    16.0  0.94
+desert         14.7      19.0      13.9      12.2      14.4      16.1    14.7  1.02
+forest         15.0      15.8      13.2      13.7D     20.0      19.8    15.8  0.95
+jungle         16.0      13.8      14.2      12.9      20.1      20.1    16.0  0.94
+mountain       13.0      13.0      13.6      12.8      16.4      19.9    13.6  1.10
+plains         14.9      13.1      12.8      12.2      20.5      17.4    14.9  1.00
+swamp          14.5      13.4      13.8      12.9      19.0      19.1    14.5  1.04
+
+T3 (target 30 min) — projected minutes to mastery (* = censored/projected, D = died)
+biome      apprentic   conduit   slinger    spirit    squire   striker   median  ratio
+cave           25.9      29.6      30.5      23.4      25.3      24.7    25.9  1.16
+desert         33.3      47.5      32.6      29.2      24.6      25.8    32.6  0.92
+jungle         35.0      36.3      30.5      26.8      22.6      24.8    30.5  0.98
+mountain       29.6      37.2      32.9      26.1      29.6      31.6    31.6  0.95
+swamp          32.5      29.4      30.8      29.0      29.0      30.7    30.7  0.98
+tundra         31.3      28.4      30.8      27.3      24.8      27.3    28.4  1.06
+volcanic       33.2D     32.5      27.2      26.9      29.1      24.7    29.1  1.03
+
+T4 (target 60 min) — projected minutes to mastery (* = censored/projected, D = died)
+biome        conduit   striker   median  ratio
+desert         86.1      57.0    86.1  0.70
+graveyard      76.7      57.8    76.7  0.78
+jungle         80.9D     59.7    80.9  0.74
+mountain       75.6      59.4    75.6  0.79
+trench        104.8D     65.2   104.8  0.57
+tundra         74.0      63.0    74.0  0.81
+volcanic       75.9      63.6    75.9  0.79

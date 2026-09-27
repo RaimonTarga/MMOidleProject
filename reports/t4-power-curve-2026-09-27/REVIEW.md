@@ -402,3 +402,89 @@ Conduit is still ~1.5–2× slower on bosses (T4 173–428 s): a known Conduit c
 its own session.
 
 Evidence for this section: `iterations.txt` (rounds 1–5), `validation.txt` (final, from source).
+
+---
+
+## 10. Overnight 2026-09-28: T4 outliers, Conduit (commits `bf393f9e`, `8941794b`)
+
+Run autonomously while the designer slept. Every call below was taken on the designer's behalf
+under the standing rules: nerf only clear outliers, keep changes small and numeric, do not
+reopen earlier decisions.
+
+### Measure
+
+"Boss speed" = the median, over the 7 live T4 bosses, of (median non-Conduit kill time on that
+boss ÷ this spec's kill time), per stance arm (Defensive bench / Offensive). "Ceiling" = best
+heavy-dummy DPS over Offensive / Berserker / Perfection × four technique packages, ÷ the median
+spec's ceiling.
+
+### Before (at `1abeaa2e`)
+
+- Live outliers: Avenger 1.42–1.49, Destroyer 1.39–1.40, Stalwart 1.35–1.44, Icebreaker 1.36,
+  Melter 1.31–1.37. Ceiling top: Duelist 1.38 (Rimebrand + Detonate).
+- Floor: Channeler 0.73, Shockblade 0.75–0.78, Pyromancer 0.79–0.82, Spirit class 0.85–0.89.
+
+### Findings
+
+- **Avenger is a live-only outlier** (0.96 ceiling on a dummy): its vengeance banks RAW boss
+  damage, so it grew with the resized T4 boss offense.
+- **Glacial Rimebrand is the best T4 weapon for most specs, even without Detonate** (its 70%
+  plating-free conversion). With Detonate it was every class's ceiling. Detonate was already
+  trimmed once, so the weapon was trimmed this time.
+- **Berserker stance is best for 44/45 specs on a dummy, but not a clear outlier live.** Live
+  T4 bosses: Berserker 71% wins / 119 s median, Perfection 81% / 140 s, Offensive 82% / 149 s.
+  The HP drain is a real cost. Left alone.
+- **Spirit's T4 spec knobs are weak levers** (doubling a mechanic value adds 3–7%), and flat
+  attack speed is lumpy at the 10 Hz swing quantization. A flat +15% attack on every Spirit spec
+  was the only uniform lever.
+- **Melter** (1.28–1.34) loses 14–43% of its fights; trimming it made it both slower and
+  deadlier. Left alone.
+
+### Changes and result
+
+| change | before → after (live boss speed) |
+|---|---|
+| Avenger vengeance ×1.5 → ×0.5 | 1.42–1.49 → 1.22 |
+| Destroyer execution cooldown 4 → 5 s | 1.39–1.40 → 1.20–1.21 |
+| Stalwart ramp +35/+55% → +15/+25% | 1.35–1.44 → 1.22–1.24 |
+| Icebreaker frost −20% → −30% | 1.36–1.37 → 1.23–1.24 |
+| Glacial Rimebrand conversion 70% → 60% | top ceiling 1.38 → 1.24 |
+| Every Spirit spec +15% attack | Spirit 0.85–0.89 → 0.92–0.99 |
+| Shockblade aftershock on-hit 25 → 75 | 0.75–0.78 → ~0.85 |
+| Pyromancer stacks 40 → 55%, max-stack bonus ×1.25 → ×1.5 | 0.79–0.82 → 0.84–0.91 |
+| Firebrand ignition 35 → 50% | 0.83–0.86 → 0.91–0.94 |
+
+Class medians (bench / off): Squire 1.00/1.00, Striker 0.93/0.91, Apprentice 1.03/1.04, Slinger
+1.08/1.07, Spirit 0.99/0.92. T4 boss midpoint 177 s (contract 180), wins 91/84%, so boss HP
+was not re-sized.
+
+Still low: Channeler 0.78–0.81, Shockblade, Dualslinger 0.82 (not investigated).
+
+### Conduit: why it was ~2× slower
+
+- **Not summon deaths.** New lab diagnostics (`observeSummoner`): summon slots are alive 94–100%
+  of every live T4 boss fight, 0–4 rebuilds per minute.
+- **The bench package was the main factor.** Every Conduit reference cell carried:
+  - Deathfang Rapier: Attack ~133, split over 5–6 bodies, each paying plating on its share.
+  - Frenzy: no extra attacks on slow weapons.
+  - Orbit: the chasing boss is dragged away from slow summons. A heavy summon on a stationary
+    dummy was in reach only ~40% of the time.
+
+  With a measured weapon, Power Strike and no Orbit, the balanced paths went 0.47–0.59 → 0.87–1.02.
+  The breadth bench now uses that package for balanced/heavy T4 Conduit. Light paths keep
+  Deathfang: small fast bodies measured best on it.
+- **Effigy (heavy) was genuinely ~15% under** at ~0.72 on any package: frame offense 0.98 → 1.15.
+- **Result:** Conduit median 0.82–0.84 (target ~0.85), paths 0.76–1.02, win rates unchanged.
+  Details in `docs/conduit-current-state.md` §10d.
+- **Not fixed:** nothing tells a player that a fast weapon or Orbit is a trap for Conduit
+  against plated, chasing bosses.
+
+### Progression re-check (designer request)
+
+Same harness, nodes and seed as the 2026-09-26 XP sweep:
+`reports/reward-mastery-study-2026-09-25/xp-sweep-2026-09-28/RESULTS.md`.
+
+- **T2 / T3** are still on target (medians 13.6–16.0 / 25.9–32.6 min against 15 / 30).
+- **T4:** Striker 57–65 min (target 60); Conduit 74–105 min, as slow as before.
+- **Trench** got slower after the ×2 trash HP (Striker 55 → 65, Conduit 80 → 105 with a death).
+- No XP factors were changed.
