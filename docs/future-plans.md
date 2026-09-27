@@ -253,3 +253,15 @@ Raised during the boots curve pass (see `updates/develop` and `gear-evolution-cu
   *between* fights, so they pair well. This is a candidate way to carry the Forest
   out-of-combat line past T2 (Forest retires at T3), for example on a Trench or later
   stealth boot.
+
+## Weather and ambience layer (2026-09-27)
+
+Raised during the boss lineage review (`design_docs/boss-lineage-redesign.md`).
+
+- **Boss-phase ambience.** Intense boss phases get a screen-space client layer: Tundra
+  Blizzard (snow), Volcanic final phase (ash fall), Trench "Into the dark" (darkening
+  overlay + water distortion). One pooled Phaser emitter / overlay, capped particle count,
+  paused in hidden tabs, behind a quality toggle. The server publishes only a node-level
+  ambience tag; no gameplay effect.
+- **Dynamic node weather.** The same layer later drives random weather events per node
+  (rain, storm, sandstorm). Whether weather ever carries gameplay modifiers is open.

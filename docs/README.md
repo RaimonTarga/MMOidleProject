@@ -339,6 +339,7 @@ holds the art bibles, the overhaul roadmap, and the icon-generation workflows.
 | [economy-philosophy.md](../design_docs/economy-philosophy.md) | Reasoning behind XP / essence / crafting cost. |
 | [player-power-curve.md](../design_docs/player-power-curve.md) | Target power bands T0–T4. Pair with the generated `reports/` packets. |
 | [boss-design.md](../design_docs/boss-design.md) | Boss philosophy and per-tier layer curve. |
+| [boss-lineage-redesign.md](../design_docs/boss-lineage-redesign.md) | 2026-09-27 boss contract (fight length and phases per tier) and the per-lineage T1–T4 redesign. **Reviewed, not yet implemented**; supersedes boss-design.md's fight-length target. |
 | [t5-t8-endgame-suggestions.md](../design_docs/t5-t8-endgame-suggestions.md) | Proposals for the back half. Not canon. |
 | [CORE_T4_CAST.md](../design_docs/CORE_T4_CAST.md) | T4 core cast — design draft, not implemented. |
 | [ABILITY_CAST_AND_TIER_PROGRESSION_T1_T4.md](../design_docs/ABILITY_CAST_AND_TIER_PROGRESSION_T1_T4.md) | The T1–T4 ability roster, biome placement and authored per-tier ranks. **Implemented** — live state in `docs/abilities-current-state.md`. |

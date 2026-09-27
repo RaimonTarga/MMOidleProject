@@ -1,5 +1,10 @@
 # Boss Design — philosophy, layer curve, stat anchors
 
+> ⚠ **FIGHT-LENGTH TARGET SUPERSEDED (2026-09-27).** The boss contract (T1 ~50s,
+> T2 ~60s, T3 ~120s, T4 ~180s, phases per tier) and the per-lineage redesign live in
+> [`boss-lineage-redesign.md`](boss-lineage-redesign.md). This doc gets rewritten
+> against it once the redesign ships.
+
 > ⚠ **PARTLY SUPERSEDED (2026-08-23).** The T1–T4 boss encounter rework replaced this
 > doc's tier-layer TEMPLATE and its anti-summon guardrail. Read
 > [`BOSS_ENCOUNTER_REWORK_HANDOFF_T1_T4_2026-08-23.md`](BOSS_ENCOUNTER_REWORK_HANDOFF_T1_T4_2026-08-23.md)
