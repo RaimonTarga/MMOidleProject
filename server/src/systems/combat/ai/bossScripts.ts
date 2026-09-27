@@ -51,7 +51,7 @@ import { markSliceDirty } from '../../../ecs/dirtyHelpers';
 import { setAggroTarget, setAttackTarget } from './targeting';
 import { BOSS_RALLIED_EFFECT_ID, BOSS_ROAR_HASTE_EFFECT_ID } from '../engine/monsterMechanics';
 import { abortMonsterCast } from '../engine/combat';
-import { publishToxicPool } from '../../world/groundZones';
+import { publishFaultLineBurst, publishToxicPool } from '../../world/groundZones';
 import { stokeAmbientRamp } from '../../world/nodeFeatures';
 import { raiseCorpsesBurst } from './raiseDead';
 import { applyMonsterDotToPlayer } from '../status/monsterDot';
@@ -81,6 +81,7 @@ export function updateBossScripts(world: World, dt: number): void {
       tickPoolSpread(state, e, world, dt);
       tickRoomAffliction(state, e, world, dt);
       tickRoomDebuffs(state, e, world, dt);
+      tickVents(state, e, world);
     }
 
     const bossEffectStacks: Record<string, number> = {};
@@ -134,6 +135,33 @@ function tickRoomAffliction(state: ScriptsBoss, monster: MonsterEntity, world: W
   // The whole room, while the boss is engaged (the caller gates on that).
   for (const player of world.livePlayersInNode(monster.hasPosition.nodeId)) {
     applyMonsterDotToPlayer(world, monster, player, { ...room.dot, element: 'poison' }, room.dot.label);
+  }
+}
+
+/**
+ * Each vent erupts on its own clock: a delayed circle on the vent (the shared
+ * scattered-impact path, so a boss telegraph never erases it), resolved through
+ * the boss's hit pipeline. Being ON the vent when it goes is the mistake.
+ */
+function tickVents(state: ScriptsBoss, monster: MonsterEntity, world: World): void {
+  const rhythm = state.ventRhythm;
+  if (!rhythm || !state.vents) return;
+  const now = Date.now();
+  for (const vent of state.vents) {
+    if (now < vent.nextEruptAtMs) continue;
+    vent.nextEruptAtMs = now + rhythm.eruptEveryMs;
+    publishFaultLineBurst(world, monster.hasPosition.nodeId, {
+      kind: 'fault-line-telegraph',
+      sourceLabel: 'Vent Eruption',
+      pos: { ...vent.pos },
+      radius: vent.radius,
+      startedAtMs: now,
+      resolvesAtMs: now + rhythm.telegraphMs,
+      ownerId: monster.isMonster.id,
+      points: [{ ...vent.pos }],
+      damageMultiplier: rhythm.damageMult,
+      scattered: true,
+    });
   }
 }
 
@@ -717,6 +745,58 @@ function applyAction(
 
     case 'spread-pools': {
       state.poolSpread = { radiusPerSec: action.radiusPerSec, maxRadiusMult: action.maxRadiusMult };
+      break;
+    }
+
+    case 'vent-field': {
+      const now = Date.now();
+      state.ventRhythm = {
+        eruptEveryMs: action.eruptEveryMs,
+        telegraphMs: action.telegraphMs,
+        damageMult: action.damageMult,
+      };
+      const vents = (state.vents ??= []);
+      const spawn = monster.controlsMonster.spawn;
+      const nodeDef = NODE_REGISTRY.get(monster.hasPosition.nodeId);
+      const width = nodeDef?.width ?? GAME_CONFIG.NODE_WIDTH;
+      const height = nodeDef?.height ?? GAME_CONFIG.NODE_HEIGHT;
+      for (let i = vents.length; i < action.count; i++) {
+        const angle = (i / action.count) * Math.PI * 2 + Math.PI / 4;
+        const pos = {
+          x: Math.max(80, Math.min(width - 80, spawn.x + Math.cos(angle) * action.ringRadius)),
+          y: Math.max(80, Math.min(height - 80, spawn.y + Math.sin(angle) * action.ringRadius)),
+        };
+        publishToxicPool(world, monster.hasPosition.nodeId, {
+          kind: 'toxic-pool',
+          pos,
+          radius: action.radius,
+          startedAtMs: now,
+          // Lasts the fight; retired with the boss like every owned pool.
+          expiresAtMs: now + 3_600_000,
+          damagePerTick: 0,
+          tickIntervalMs: 1000,
+          flavor: 'magma-vent',
+          rampAccelMult: action.rampAccelMult,
+          ownerId: monster.isMonster.id,
+          sourceId: 'magma-vent',
+          sourceLabel: 'Magma Vent',
+          // Standing on it is a CHOICE (Heat for damage), so never auto-avoided.
+          semantics: { disposition: 'hostile-to-player', persistence: 'persistent', movementResponse: 'none' },
+          killer: {
+            monsterTypeId: monster.isMonster.monsterTypeId,
+            monsterName: monster.isMonster.name,
+            isBoss: monster.isMonster.isBoss,
+            nodeId: monster.hasPosition.nodeId,
+          },
+        });
+        vents.push({ pos, radius: action.radius, nextEruptAtMs: 0 });
+      }
+      // Staggered clocks so the vents erupt in turn, not all at once.
+      vents.forEach((vent, i) => {
+        vent.radius = action.radius;
+        vent.nextEruptAtMs = now + action.eruptEveryMs * ((i + 1) / vents.length);
+      });
+      pushBossFx(world, monster, 'roar', { radius: 480 });
       break;
     }
 

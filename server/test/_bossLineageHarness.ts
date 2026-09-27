@@ -63,11 +63,17 @@ export function arena(bossId: string, bossAt: Vec2, playerAt: Vec2, hp?: number,
   boss.hasAwareness.state = 'attacking';
   const pattern = MONSTER_DATABASE.get(bossId)!.bossPattern;
   const now = 1_000 + (pattern ? (pattern.initialCooldownMs ?? pattern.cooldownMs) : 0) + 100;
-  return { world, boss, player, now, nodeId };
+  const arenaState: Arena = { world, boss, player, now, nodeId };
+  // Wall-clock readers must agree with the simulated clock from the first action.
+  Date.now = () => arenaState.now;
+  return arenaState;
 }
 
 /** Full world ticks until `until` holds or `maxMs` passes; returns whether it held. */
 export function runUntil(a: Arena, until: () => boolean, maxMs: number, dt = 100): boolean {
+  // Systems that read the wall clock (boss scripts, raise dead, vents) must agree
+  // with the simulated one, exactly as the balance labs arrange it.
+  Date.now = () => a.now;
   for (let t = 0; t < maxMs; t += dt) {
     a.world.tick(dt, a.now);
     a.now += dt;

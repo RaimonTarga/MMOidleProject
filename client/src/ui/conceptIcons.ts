@@ -359,6 +359,9 @@ export function statusIconSource(id: string): AssetIconSource | null {
   const monsterDotIconId = MONSTER_DOT_ICON_ALIASES[id];
   if (monsterDotIconId) return statusIconSource(monsterDotIconId);
   if (id === 'second-wind') return source('abilities', id);
+  // Generic boss mechanic debuff tile (Eroded, Frostbite, Brittle, ...): the
+  // damage-taken debuff art until each gets its own.
+  if (id === 'debuff-boss') return source('statuses/debuffs', 'debuff-sundered');
   return null;
 }
 

@@ -526,7 +526,7 @@ function collectBossDebuffs(
         durationPct: totalMs > 0 && effect.remainingMs > 0 ? (effect.remainingMs / totalMs) * 100 : -1,
         color: def?.color ?? "#cc7755",
         category: "neutral",
-        iconKey: `debuff-${effect.id}`,
+        iconKey: "debuff-boss",
         instanceKey: effect.id,
         shape: "diamond",
         logSourceName: world.getMonsterEntity(effect.sourceId)?.isMonster.name ?? "Boss",

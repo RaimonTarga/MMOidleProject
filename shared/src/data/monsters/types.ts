@@ -211,6 +211,24 @@ export type BossAction =
    */
   | { type: 'spread-pools'; radiusPerSec: number; maxRadiusMult: number }
   /**
+   * VENT FIELD (Volcanic, boss-lineage redesign) — magma vents AROUND the arena
+   * (a ring about the boss's spawn), not under the boss. Standing on one speeds your
+   * Heat (`rampAccelMult`); each erupts on its own telegraphed rhythm, and you must
+   * be off it when it does. Re-issuing it retunes the rhythm of the vents already
+   * down (and adds more if `count` is higher): the caldera opening.
+   */
+  | {
+      type: 'vent-field';
+      count: number;
+      radius: number;
+      ringRadius: number;
+      rampAccelMult: number;
+      eruptEveryMs: number;
+      telegraphMs: number;
+      /** Eruption damage, as a multiple of the boss's attack. */
+      damageMult: number;
+    }
+  /**
    * ROOM DEBUFF — every `intervalMs`, each player in the boss's node gains one stack
    * of this boss debuff (up to `maxStacks`). Re-issuing it for the same effect
    * replaces the clock; `accelerate` shortens the interval after every stack (the

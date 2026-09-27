@@ -536,43 +536,27 @@ export const bossMonsterEntriesT3 = [
     rewards: { essence: 360, essenceType: 'red', level: 5, biomeXp: 540 },
     ai: { wanderRadius: 120, leashRange: 920, idleMinMs: 2500, idleMaxMs: 7000 },
     targeting: { prefersPlayers: true },
-    // VOLCANO = HEAT, VENT, AND THE CHOICE TO STAND IN IT.
-    //
-    // The shell closes and lays a visible MAGMA VENT. Staying in it accelerates the
-    // room's Heat — which raises damage DEALT and damage TAKEN together — while you
-    // work on the shell; stepping out returns you to the node's baseline rate and
-    // lets the Heat shed. Neither is the correct answer: that trade IS the encounter.
-    //
-    // Heat owns all the escalation. There is no hidden boss multiplier beside it,
-    // because the same escalation counted twice — once visibly on the player, once
-    // invisibly on the boss — is unreadable. And ordinary Cleanse cannot strip Heat
-    // (statusPolicy: 'immune'), so leaving the vent is the answer rather than a button.
-    //
-    // T3 teaches the plain cycle: normal -> shell plus vent -> stay or leave while
-    // you work on the shell -> the shell opens -> normal.
-    //
-    // REMOVED with the 2026-09-04 redesign: the independent Eruption charged attack
-    // and the 25% threshold Vent Rupture. Both duplicated the cycle — the shell
-    // already floods the ground on its own schedule, and a second pool arriving on a
-    // health threshold made the arena unreadable rather than more dangerous.
-    // `chargeOnAggro` removed with them.
-    //
-    // First shell at 85% so the cycle is taught early, then every 16s while engaged.
-    // 0.30 (not the roster's 0.15) because this one repeats — it has to be a wall
-    // you wait out or burn through, never a wall that stalls the fight.
-    shellUp: {
-      atHpPct: 0.85, durationMs: 3800, directDamageMult: 0.30, repeatIntervalMs: 16000,
-      pool: {
-        radius: 190, durationMs: 8000, damagePerTick: 12, tickIntervalMs: 1000,
-        flavor: 'magma-vent', rampAccelMult: 3, pullDistance: 200,
-      },
-    },
+    // VOLCANIC (boss-lineage redesign 2026-09-27) — THE HEAT RACE.
+    //   VENTS around the arena (not under the boss), and the boss KEEPS ATTACKING
+    //   — the old shell cycle, whose no-attack window relieved the pressure, is cut.
+    //   Standing on a vent speeds up your Heat (more damage dealt AND taken); every
+    //   vent erupts on its own telegraphed rhythm, and you must be off it when it
+    //   does. Pull the fight onto a vent if you want the Heat; bots that ignore vents
+    //   forgo the bonus (vents are never auto-avoided; eruptions are Step Back).
+    //   FINAL STRIKE at 25%: it stops attacking and charges an UNINTERRUPTIBLE blast
+    //   (Volcanic accepts no control) — a hard DPS check whose fixed raw hit an extreme
+    //   tank build (full tank gear + Guard) can survive. The long cast IS the soft
+    //   enrage; its length is the numbers-pass knob (~1.3x the median time to kill
+    //   the last quarter).
+    //   T3: (1) Heat + erupting vents; (2) ~50% the caldera opens — Heat builds
+    //   faster, vents erupt more often; (3) 25% Final Eruption.
+    controlImmune: true,
     bossPattern: {
       id: 'final-eruption', name: 'Final Eruption',
       damageMultiplier: 1, cooldownMs: 60000, initialCooldownMs: 0,
       armBelowHpPct: 0.25, oncePerLife: true,
       steps: [
-        { kind: 'cast', name: 'Final Eruption', castMs: 8000, fx: 'cataclysm-cast', interruptible: false },
+        { kind: 'cast', name: 'Final Eruption', castMs: 22000, fx: 'cataclysm-cast', interruptible: false },
         { kind: 'impact', name: 'Final Eruption', anchor: 'self', radius: 2000,
           damageMult: 1, rawDamage: 650, interruptible: false, telegraphMs: 400, fx: 'cataclysm-impact' },
         { kind: 'recovery', label: 'Spent', durationMs: 1000 },
@@ -580,9 +564,16 @@ export const bossMonsterEntriesT3 = [
     },
     bossScript: {
       phases: [
-        // Each cycle is worth more to it: the shell holds longer and the vent that
-        // comes with it burns hotter. One idea, tightened.
-        { hpPct: 0.5, actions: [{ type: 'stat-buff', stat: 'attack', mult: 1.15, label: 'cinder-fury' }] },
+        { hpPct: 1.0, actions: [
+          { type: 'vent-field', count: 4, radius: 150, ringRadius: 480, rampAccelMult: 3,
+            eruptEveryMs: 9000, telegraphMs: 1600, damageMult: 1.3 },
+        ] },
+        { hpPct: 0.5, name: 'Caldera Opens', actions: [
+          { type: 'vent-field', count: 5, radius: 160, ringRadius: 480, rampAccelMult: 3,
+            eruptEveryMs: 6000, telegraphMs: 1500, damageMult: 1.3 },
+          { type: 'stoke-ramp', rampMsMult: 0.7 },
+        ] },
+        { hpPct: 0.25, name: 'Final Eruption', actions: [] },
       ],
     },
   }],

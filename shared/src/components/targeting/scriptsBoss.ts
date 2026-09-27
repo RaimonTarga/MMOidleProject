@@ -143,6 +143,13 @@ export interface ScriptsBoss {
   phaseLabel?: string;
   /** Set by 'spread-pools': owned pools grow toward a cap. */
   poolSpread?: { radiusPerSec: number; maxRadiusMult: number };
+  /** Set by 'vent-field': the arena's magma vents and their eruption clocks. */
+  vents?: {
+    pos: { x: number; y: number };
+    radius: number;
+    nextEruptAtMs: number;
+  }[];
+  ventRhythm?: { eruptEveryMs: number; telegraphMs: number; damageMult: number };
   /** Set by 'room-debuff': the arena's own boss-debuff ramps (Frostbite, Depth). */
   roomDebuffs?: {
     effectId: string;

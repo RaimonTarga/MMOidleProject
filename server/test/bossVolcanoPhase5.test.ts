@@ -22,7 +22,7 @@ import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { updateBossPatterns } from '../src/systems/combat/ai/bossPatterns';
 import { setAggroTarget } from '../src/systems/combat/ai/targeting';
-import { updateShellUp } from '../src/systems/combat/ai/shellUp';
+import { updateBossScripts } from '../src/systems/combat/ai/bossScripts';
 import {
   activeAvoidablePersistentGroundZones,
   buildGroundZoneViews,
@@ -120,12 +120,16 @@ initCombatSystems();
 // The Vent.
 // ─────────────────────────────────────────────────────────────────────────────
 
+// Boss-lineage redesign (2026-09-27): vents are a FIELD around the arena laid at the
+// start of the fight (`vent-field`), not a shell's pool under the boss; they erupt
+// on a telegraphed rhythm and the boss keeps attacking. The spawn-pull is gone —
+// T4's Magma Shove is the lineage's deliberate "onto the vent" beat now.
 for (const id of ['cinder-shell-magma-salamander', 'caldera-sovereign']) {
   const def = MONSTER_DATABASE.get(id)!;
-  const vent = def.shellUp?.pool;
-  assert(vent?.flavor === 'magma-vent', `${id} should lay a magma vent`);
-  assert((vent.rampAccelMult ?? 1) > 1, `${id} vent should accelerate the room's Heat`);
-  assert((vent.pullDistance ?? 0) > 0, `${id} vent should pull its engaged player on spawn`);
+  const vent = def.bossScript?.phases?.flatMap(phase => phase.actions).find(action => action.type === 'vent-field');
+  assert(vent?.type === 'vent-field', `${id} should lay a magma vent field`);
+  assert(vent.rampAccelMult > 1, `${id} vent should accelerate the room's Heat`);
+  assert(!def.shellUp, `${id} no longer cycles a shell`);
   assert(def.chargedAttack === undefined, `${id} should drop its generic Eruption`);
   assert(def.chargeOnAggro === undefined, `${id} should drop the aggro speed burst`);
   assert(
@@ -144,45 +148,32 @@ function ventedWorld(id: string, playerId: string) {
   return { world, player, boss };
 }
 
-/** Drive the shell until it lays its vent. */
+/** Engage the boss so its opening phase lays the vent field; return one vent. */
 function layVent(world: World, boss: ReturnType<typeof ventedWorld>['boss']): RuntimeToxicPool {
-  const now = Date.now();
-  boss.hasHealth.hp = boss.hasHealth.maxHp * 0.5;
-  for (let i = 0; i < 40; i++) {
-    updateShellUp(world, now + i * 200);
-    const vent = (world.groundZones.get(HEAT_NODE) ?? []).find(
-      (zone): zone is RuntimeToxicPool => zone.kind === 'toxic-pool',
-    );
-    if (vent) return vent;
-  }
-  throw new Error('the shell never laid its vent');
+  void boss;
+  updateBossScripts(world, 0);
+  const vent = (world.groundZones.get(HEAT_NODE) ?? []).find(
+    (zone): zone is RuntimeToxicPool => zone.kind === 'toxic-pool' && zone.flavor === 'magma-vent',
+  );
+  if (vent) return vent;
+  throw new Error('the boss never laid its vents');
 }
 
-// The vent's spawn is an immediate action on the engaged player: one bounded pull
-// toward the vent, with the normal forced-movement event for the client.
+// The vents sit AROUND the arena, never under the boss: the boss keeps attacking,
+// so pulling the fight onto a vent is the player's choice.
 {
-  const { world, player, boss } = ventedWorld('cinder-shell-magma-salamander', 'vent-pull');
-  player.hasPosition.current = { x: boss.hasPosition.current.x + 340, y: boss.hasPosition.current.y };
-  const before = { ...player.hasPosition.current };
-  const vent = layVent(world, boss);
-  const moved = Math.hypot(
-    player.hasPosition.current.x - before.x,
-    player.hasPosition.current.y - before.y,
+  const { world, boss } = ventedWorld('cinder-shell-magma-salamander', 'vent-ring');
+  layVent(world, boss);
+  const vents = (world.groundZones.get(HEAT_NODE) ?? []).filter(
+    (zone): zone is RuntimeToxicPool => zone.kind === 'toxic-pool' && zone.flavor === 'magma-vent',
   );
-  assert(moved > 0, 'spawning the vent should pull the engaged player immediately');
-  assert(
-    Math.hypot(
-      player.hasPosition.current.x - vent.pos.x,
-      player.hasPosition.current.y - vent.pos.y,
-    ) < Math.hypot(before.x - vent.pos.x, before.y - vent.pos.y),
-    'the pull should move the player toward the vent, not away from it',
-  );
-  assert(
-    world.takeNodeEvents(HEAT_NODE).some(
-      event => event.kind === 'player-knockback' && event.playerId === player.isPlayer.id && event.reason === 'pull',
-    ),
-    'the vent pull should emit the reason-tagged forced-movement event',
-  );
+  assert(vents.length >= 4, 'a field of vents is laid');
+  for (const vent of vents) {
+    assert(
+      Math.hypot(vent.pos.x - boss.hasPosition.current.x, vent.pos.y - boss.hasPosition.current.y) > 250,
+      'no vent sits under the boss',
+    );
+  }
 }
 
 // A VENT IS NOT AUTO-AVOIDED. This is the load-bearing distinction: staying inside
@@ -329,7 +320,7 @@ function armedCaldera(hpPct: number) {
   const before = player.hasHealth.hp;
   let now = armedAt;
   updateBossPatterns(world, 100, now);
-  for (let i = 0; i < 200 && !boss.recoversFromPattern; i++) {
+  for (let i = 0; i < 400 && !boss.recoversFromPattern; i++) {
     now += 100;
     updateBossPatterns(world, 100, now);
   }

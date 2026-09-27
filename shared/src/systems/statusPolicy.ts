@@ -28,6 +28,7 @@
 
 import { AMBIENT_RAMP_KEY } from './ambientRamp';
 import { UNCLEANSABLE_KEY } from './bossDebuffs';
+import { monsterDotStatusEffectId } from './monsterDotFlavor';
 import type { StatusEffect } from '../components/combat/effects';
 import {
   CAVE_LOCKDOWN_EFFECT_ID,
@@ -90,6 +91,11 @@ const EXPLICIT_POLICIES = new Map<string, Partial<StatusPolicy>>([
   [CAVE_LOCKDOWN_EFFECT_ID, { harmful: true, cleanse: 'immune', hardControl: true }],
   [FROZEN_STATUS_ID, { harmful: true, cleanse: 'immune', hardControl: true }],
   [STUN_STATUS_ID, { harmful: true, cleanse: 'immune', hardControl: true }],
+  /**
+   * SIMMERING BURN (Volcanic T4, boss-lineage redesign): builds slowly all fight;
+   * Cleanse takes PART of it off, like Chill, rather than resetting the clock.
+   */
+  [monsterDotStatusEffectId('caldera-burn'), { harmful: true, cleanse: 'partial' }],
 ]);
 
 export function statusPolicyFor(id: string, data: Record<string, number>): StatusPolicy {

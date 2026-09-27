@@ -285,13 +285,16 @@ assert(
 );
 // Volcanic: HEAT, VENT, AND THE CHOICE TO STAND IN IT (2026-09-04 redesign).
 assert(!def('caldera-sovereign').rampOnCombat, 'T4 Volcanic must not run a parallel private ramp');
+// Boss-lineage redesign (2026-09-27): the shell cycle is CUT (its no-attack window
+// relieved the pressure); vents sit around the arena and erupt on a rhythm.
 for (const id of ['cinder-shell-magma-salamander', 'caldera-sovereign']) {
   const volcanic = def(id);
-  assert(!!volcanic.shellUp?.repeatIntervalMs, `${id} should cycle its shell`);
-  const vent = volcanic.shellUp.pool;
-  assert(vent?.flavor === 'magma-vent', `${id} shell should lay a magma vent`);
+  assert(!volcanic.shellUp, `${id} no longer shells up`);
+  assert(volcanic.controlImmune === true, `${id} accepts no control`);
+  const vents = volcanic.bossScript?.phases?.flatMap(p => p.actions).find(a => a.type === 'vent-field');
+  assert(vents?.type === 'vent-field', `${id} lays a vent field`);
   assert(
-    (vent.rampAccelMult ?? 1) > 1,
+    vents.rampAccelMult > 1,
     `${id} vent should ACCELERATE the room's Heat, not mint its own`,
   );
   // Heat owns all the escalation. A boss-side multiplier on top counts the same

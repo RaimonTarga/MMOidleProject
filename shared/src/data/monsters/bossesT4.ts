@@ -544,51 +544,24 @@ export const bossMonsterEntriesT4 = [
     rewards: { essence: 625, essenceType: 'red', level: 5, biomeXp: 938 },
     ai: { wanderRadius: 120, leashRange: 960, idleMinMs: 2500, idleMaxMs: 7000 },
     targeting: { prefersPlayers: true },
-    // VOLCANO = HEAT, VENT, AND THE CHOICE TO STAND IN IT.
-    //
-    // The shell closes and lays a visible MAGMA VENT. Staying in it accelerates the
-    // room's Heat — which raises damage DEALT and damage TAKEN together — while you
-    // work on the shell; stepping out returns you to the node's baseline rate and
-    // lets the Heat shed. Neither is the correct answer: that trade IS the encounter.
-    //
-    // Heat owns all the escalation. There is no hidden boss multiplier beside it,
-    // because the same escalation counted twice — once visibly on the player, once
-    // invisibly on the boss — is unreadable. And ordinary Cleanse cannot strip Heat
-    // (statusPolicy: 'immune'), so leaving the vent is the answer rather than a button.
-    //
-    // T4 runs the same loop, then adds ONE catastrophe. Near the final quarter the
-    // Caldera Sovereign stops attacking entirely and begins a long, obvious,
-    // UNINTERRUPTIBLE room-wide Cataclysm. The primary answer is to kill it before
-    // the cast completes; a very tanky or guarded build can survive the blast through
-    // ordinary damage resolution, and the fight simply continues — surviving a failed
-    // race is a legitimate outcome, not a win condition and not a loss condition.
-    //
-    // It fires ONCE per life (`oncePerLife`): repeating it would turn a decisive race
-    // into a metronome, and surviving it would stop meaning anything.
-    //
-    // SIMMERING BURN is low-damage, high-cap and long — attrition you can cleanse,
-    // deliberately unlike Heat, which you answer with your feet.
-    //
-    // REMOVED with the 2026-09-04 redesign: `scalesWithAmbientRamp` (see below), the
-    // generic Caldera Eruption, both `stoke-ramp` floor/cap pushes, the threshold
-    // Caldera Vent cast, and `chargeOnAggro`.
-    //
-    // > REVERSAL of a 2026-08-23 call. The capstone used to hit harder per Heat stack,
-    // > defended then as "for the apex of the Heat biome the ramp is the whole
-    // > encounter". But Heat ALREADY raises the damage the player takes, visibly, on
-    // > their own status bar. Adding an invisible boss-side multiplier on top counted
-    // > the same escalation twice and made the fight's difficulty curve unreadable.
-    dotEffect: {
-      debuffId: 'caldera-burn', label: 'Simmering Burn',
-      damagePerStack: 4, maxStacks: 12, tickIntervalMs: 1000, durationMs: 12000,
-    },
-    shellUp: {
-      atHpPct: 0.85, durationMs: 4000, directDamageMult: 0.30, repeatIntervalMs: 15000,
-      pool: {
-        radius: 210, durationMs: 9000, damagePerTick: 16, tickIntervalMs: 1000,
-        flavor: 'magma-vent', rampAccelMult: 3, pullDistance: 200,
-      },
-    },
+    // VOLCANIC (boss-lineage redesign 2026-09-27) — THE HEAT RACE.
+    //   VENTS around the arena (not under the boss), and the boss KEEPS ATTACKING
+    //   — the old shell cycle, whose no-attack window relieved the pressure, is cut.
+    //   Standing on a vent speeds up your Heat (more damage dealt AND taken); every
+    //   vent erupts on its own telegraphed rhythm, and you must be off it when it
+    //   does. Pull the fight onto a vent if you want the Heat; bots that ignore vents
+    //   forgo the bonus (vents are never auto-avoided; eruptions are Step Back).
+    //   FINAL STRIKE at 25%: it stops attacking and charges an UNINTERRUPTIBLE blast
+    //   (Volcanic accepts no control) — a hard DPS check whose fixed raw hit an extreme
+    //   tank build (full tank gear + Guard) can survive. The long cast IS the soft
+    //   enrage; its length is the numbers-pass knob (~1.3x the median time to kill
+    //   the last quarter).
+    //   T4: (1) the T3 cycle + SIMMERING BURN building slowly all fight (the room
+    //   lays it; Cleanse takes part of it off, like Chill); (2) ~50% MAGMA SHOVE: a
+    //   telegraphed shove onto the nearest vent — the Heat is yours if you get off
+    //   before it erupts; (3) 25% CATACLYSM, with the Simmering Burn accelerating
+    //   during the cast ("kill it while burning up").
+    controlImmune: true,
     bossPattern: {
       id: 'cataclysm', name: 'Cataclysm',
       damageMultiplier: 1.0, cooldownMs: 60000, initialCooldownMs: 0,
@@ -596,18 +569,44 @@ export const bossMonsterEntriesT4 = [
       oncePerLife: true,
       steps: [
         // Long, obvious, and explicitly UNINTERRUPTIBLE: the answer is the DPS race,
-        // not a stun. Marked guardable so Guard is still a legitimate way to eat it.
-        { kind: 'cast', name: 'Cataclysm', castMs: 8000, fx: 'cataclysm-cast', interruptible: false },
+        // not a stun. Guard is still a legitimate way to eat it.
+        { kind: 'cast', name: 'Cataclysm', castMs: 26000, fx: 'cataclysm-cast', interruptible: false },
         { kind: 'impact', name: 'Cataclysm', anchor: 'self', radius: 2000,
           damageMult: 1.0, rawDamage: 1000, interruptible: false, telegraphMs: 400, fx: 'cataclysm-impact' },
         { kind: 'recovery', label: 'Spent', durationMs: 1000 },
       ],
     },
+    bossPatternVariants: [{
+      id: 'caldera-magma-shove', name: 'Magma Shove',
+      damageMultiplier: 1, cooldownMs: 12000, initialCooldownMs: 2000, priority: 1,
+      armAboveHpPct: 0.25,
+      steps: [
+        { kind: 'pull', name: 'Magma Shove', castMs: 1000, distance: 320,
+          toward: 'nearest-pool', poolFlavors: ['magma-vent'], fx: 'trench-current' },
+      ],
+    }],
     bossScript: {
       phases: [
-        // The cycle tightens. No ramp stoking: the room's Heat is the player's own
-        // to manage, and a boss shoving a floor under it removes the choice.
-        { hpPct: 0.5, actions: [{ type: 'stat-buff', stat: 'attack', mult: 1.15, label: 'caldera-fury' }] },
+        { hpPct: 1.0, actions: [
+          { type: 'vent-field', count: 4, radius: 160, ringRadius: 500, rampAccelMult: 3,
+            eruptEveryMs: 8500, telegraphMs: 1500, damageMult: 1.3 },
+          { type: 'room-affliction', intervalMs: 5000, dot: {
+            debuffId: 'caldera-burn', label: 'Simmering Burn', color: '#ff7a33',
+            damagePerStack: 4, maxStacks: 12, tickIntervalMs: 1000, durationMs: 15000,
+          } },
+        ] },
+        { hpPct: 0.5, name: 'Magma Shove', actions: [
+          { type: 'add-pattern', patternId: 'caldera-magma-shove' },
+          { type: 'vent-field', count: 5, radius: 170, ringRadius: 500, rampAccelMult: 3,
+            eruptEveryMs: 6000, telegraphMs: 1400, damageMult: 1.3 },
+        ] },
+        { hpPct: 0.25, name: 'Cataclysm', actions: [
+          // The burn accelerates while the Cataclysm charges.
+          { type: 'room-affliction', intervalMs: 1500, dot: {
+            debuffId: 'caldera-burn', label: 'Simmering Burn', color: '#ff7a33',
+            damagePerStack: 4, maxStacks: 16, tickIntervalMs: 1000, durationMs: 15000,
+          } },
+        ] },
       ],
     },
   }],

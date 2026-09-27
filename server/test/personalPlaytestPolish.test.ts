@@ -339,8 +339,11 @@ for (const [id, raw] of [['cinder-shell-magma-salamander', 650], ['caldera-sover
   player.mitigatesDamage.plating = 100;
   player.mitigatesDamage.damageReduction = 0.2;
   const hp = player.hasHealth.hp;
-  for (let t = now + 100; t <= now + 10000; t += 100) {
-    if (t === now + 8100) applyStun(boss.tracksCombat, 2000, 'test');
+  // The cast length is the numbers-pass knob (boss-lineage redesign), so read it.
+  const first = MONSTER_DATABASE.get(id)!.bossPattern!.steps[0];
+  const castMs = first.kind === 'cast' ? first.castMs : 8000;
+  for (let t = now + 100; t <= now + castMs + 2000; t += 100) {
+    if (t === now + castMs + 100) applyStun(boss.tracksCombat, 2000, 'test');
     updateBossPatterns(world, 100, t);
   }
   assert(hp - player.hasHealth.hp === Math.round((raw - 100) * 0.8), `${id}: raw finisher respects plating and DR`);

@@ -60,15 +60,17 @@ const stepName = (a: ReturnType<typeof arena>) => {
 
   chill(a.player, 4);
   let frozen = false;
+  let spent = false;
   const hp = a.player.hasHealth.hp;
   runUntil(a, () => {
     pin(a.player, { x: 2650, y: 2400 });
     if (getStatusEffect(a.player.tracksCombat, FROZEN_STATUS_ID)) frozen = true;
-    return a.boss.recoversFromPattern !== undefined && stepName(a) === undefined;
-  }, 6000);
+    if (frozen && !getStatusEffect(a.player.tracksCombat, FROSTBITE_EFFECT_ID)) spent = true;
+    return spent;
+  }, 8000);
   assert(frozen, 'at the Chill threshold, Deep Freeze freezes the player');
   assert(a.player.hasHealth.hp < hp, 'and the Frost Burst centred on them lands');
-  assert(!getStatusEffect(a.player.tracksCombat, FROSTBITE_EFFECT_ID), 'the freeze spends the Frostbite');
+  assert(spent, 'the freeze spends the Frostbite');
   assert((getStatusEffect(a.player.tracksCombat, TUNDRA_CHILL_EFFECT_ID)?.stacks ?? 0) < 4, 'and the Chill');
 }
 
