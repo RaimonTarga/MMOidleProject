@@ -1,5 +1,6 @@
 import type { GameScene } from '../scenes/GameScene';
 import { burstFx } from './particles';
+import { flairCount, flairGlow, flairSize, type AttackFlair } from './attackFlair';
 import { DEPTH } from '../render/depth';
 import type { AttackTint } from './elementTint';
 
@@ -34,16 +35,22 @@ export function fxSquireSlam(
   toY: number,
   execution: boolean,
   tint?: AttackTint,
+  flair?: AttackFlair,
 ): void {
   const core = execution ? EXEC_CORE : BASE_CORE;
   const glow = tint?.glow ?? (execution ? EXEC_GLOW : BASE_GLOW);
   const spark = tint?.particles ?? core;
+  // FLAIR: a stage-0 Squire lands the blow and its shockwave only; the ground
+  // crater and cracks arrive with the frame (attackFlair.ts).
+  const grounded = flairGlow(flair);
+  const k = flairSize(1, flair);
 
   // Crater: a flattened ellipse on the ground plane, slightly below the target's
   // centre so it reads as the floor rather than as a ring around the body.
   const crater = scene.add
     .graphics({ x: toX, y: toY + 8 })
-    .setDepth(DEPTH.FX);
+    .setDepth(DEPTH.FX)
+    .setVisible(grounded);
   crater.lineStyle(execution ? 4 : 3, glow, 0.85);
   crater.strokeEllipse(0, 0, execution ? 46 : 36, execution ? 20 : 15);
   crater.setScale(0.5);
@@ -59,7 +66,7 @@ export function fxSquireSlam(
 
   // Cracks running out of the point of contact, written outward so the ground
   // splits rather than appearing pre-split. Squashed vertically to sit flat.
-  const cracks = scene.add.graphics({ x: toX, y: toY + 8 }).setDepth(DEPTH.FX);
+  const cracks = scene.add.graphics({ x: toX, y: toY + 8 }).setDepth(DEPTH.FX).setVisible(grounded);
   const angles = Array.from(
     { length: SPOKES },
     (_, i) => (i / SPOKES) * Math.PI * 2 + Math.random() * 0.4,
@@ -94,10 +101,12 @@ export function fxSquireSlam(
 
   // The blow itself: a hard bright core at contact, on the body not the floor.
   const hit = scene.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
-  hit.fillStyle(glow, execution ? 0.85 : 0.7);
-  hit.fillCircle(0, 0, execution ? 30 : 22);
+  if (grounded) {
+    hit.fillStyle(glow, execution ? 0.85 : 0.7);
+    hit.fillCircle(0, 0, (execution ? 30 : 22) * k);
+  }
   hit.fillStyle(core, 0.95);
-  hit.fillCircle(0, 0, execution ? 15 : 11);
+  hit.fillCircle(0, 0, (execution ? 15 : 11) * k);
   scene.tweens.add({
     targets: hit,
     alpha: 0,
@@ -115,8 +124,8 @@ export function fxSquireSlam(
   wave.strokeCircle(0, 0, 12);
   scene.tweens.add({
     targets: wave,
-    scaleX: execution ? 4.4 : 3.6,
-    scaleY: execution ? 4.4 : 3.6,
+    scaleX: (execution ? 4.4 : 3.6) * k,
+    scaleY: (execution ? 4.4 : 3.6) * k,
     alpha: 0,
     duration: 400,
     ease: 'Power2',
@@ -125,7 +134,7 @@ export function fxSquireSlam(
 
   // Debris goes UP and falls back — mass displaced, not sprayed. The heavy
   // gravityY is what makes it read as rubble instead of sparks.
-  burstFx(scene, 'ptx-dot', toX, toY + 4, execution ? 20 : 13, 560, {
+  burstFx(scene, 'ptx-dot', toX, toY + 4, flairCount(execution ? 20 : 13, flair), 560, {
     tint: spark,
     speed: { min: 90, max: execution ? 300 : 215 },
     angle: { min: 238, max: 302 },

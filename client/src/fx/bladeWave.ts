@@ -1,5 +1,6 @@
 import type { GameScene } from '../scenes/GameScene';
 import { burstFx } from './particles';
+import { flairCount, type AttackFlair } from './attackFlair';
 import { DEPTH } from '../render/depth';
 import type { AttackTint } from './elementTint';
 
@@ -33,6 +34,7 @@ export function fxBladeWave(
   toY: number,
   empowered: boolean,
   tint?: AttackTint,
+  flair?: AttackFlair,
 ): void {
   const core = empowered ? EMP_CORE : BASE_CORE;
   const glow = tint?.glow ?? (empowered ? EMP_GLOW : BASE_GLOW);
@@ -155,7 +157,7 @@ export function fxBladeWave(
 
     // Debris follows the flight direction — the wave carried through.
     const fwdDeg = (angle * 180) / Math.PI;
-    burstFx(scene, 'ptx-spark', toX, toY, empowered ? 16 : 11, 380, {
+    burstFx(scene, 'ptx-spark', toX, toY, flairCount(empowered ? 16 : 11, flair), 380, {
       tint: spark,
       speed: { min: 80, max: empowered ? 270 : 200 },
       angle: { min: fwdDeg - 55, max: fwdDeg + 55 },

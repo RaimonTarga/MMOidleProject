@@ -86,7 +86,7 @@ export const caveMonsterEntries = [
     // Evolved Cave Lurker: fast chaotic roamer that can wander into an existing
     // fight. VENOM is the tier's escalation — not evasion (removed, locked).
     stats: { hp: 350, attack: 35, plating: 0, damageReduction: 0.08, speed: 72, attackRange: 12, attackCooldown: 1800, pullRange: 220 },
-    behavior: 'melee', attackStyle: 'poison', biome: 'cave', elite: true,
+    behavior: 'melee', attackStyle: 'spider-fang', biome: 'cave', elite: true,
     rewards: { essence: 15, essenceType: 'red', level: 1, biomeXp: 85 },
     ai: { wanderRadius: 260, leashRange: 680, idleMinMs: 800, idleMaxMs: 3200 },
     dotEffect: { debuffId: 'spider-venom', label: 'Spider Venom', damagePerStack: 11, maxStacks: 3, tickIntervalMs: 1000, durationMs: 2000 },
@@ -113,7 +113,7 @@ export const caveMonsterEntries = [
       maxChargeMs: 3000,
       rootMs: 1700,
       followWithChargedAttack: true,
-      fx: 'dive-bomb',
+      fx: 'savage-rush',
     },
     // GROUND SLAM — wider and slower than the brute's; the T2 escalation is
     // FOOTPRINT, not speed, so the tell stays readable while the safe ground
@@ -155,7 +155,7 @@ export const caveMonsterEntries = [
     // space, stronger venom, and high speed that catches kiters (anti-Far).
     // NO evasion (locked) and deliberately no DR added back in its place.
     stats: { hp: 610, attack: 60, plating: 0, damageReduction: 0.08, speed: 70, attackRange: 12, attackCooldown: 1500, pullRange: 220 },
-    behavior: 'melee', attackStyle: 'poison', biome: 'cave', elite: true,
+    behavior: 'melee', attackStyle: 'spider-fang', biome: 'cave', elite: true,
     rewards: { essence: 55, essenceType: 'red', level: 3, biomeXp: 330 },
     // Roams harder and idles less than the Giant Spider - the T3 escalation of the
     // chaotic-roamer line is SPACE COVERED, since its evasion is gone.
@@ -183,7 +183,7 @@ export const caveMonsterEntries = [
       maxChargeMs: 3000,
       rootMs: 1700,
       followWithChargedAttack: true,
-      fx: 'dive-bomb',
+      fx: 'savage-rush',
     },
     // GROUND SLAM — the elite ceiling's version: widest footprint, longest tell.
     // Still escapable on foot at player base speed; that is the contract.

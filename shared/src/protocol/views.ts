@@ -225,6 +225,11 @@ export interface MinionView {
   attackCooldown: number;
   lastAttackAt: number;
   attackTargetId: string | null;
+  /**
+   * The last swing was a specialization beat (Marshal opener / coordinated strike,
+   * a ritual-charged hit, Champion's linked strike) — drawn heavier by the client.
+   */
+  lastAttackEmpowered?: boolean;
   attackStyle: string;
   speed: number;
   sizeMult: number;
@@ -274,6 +279,14 @@ export interface MonsterView {
   /** Set while the monster is burrowed / in cover: untargetable, and drawn as such. */
   concealed?: 'burrow' | 'stealth';
   hardControlled?: boolean;
+  /** Set while a charge-on-aggro speed burst is carrying the monster in. */
+  charging?: true;
+  /** The casted haste driving it, for the haste look (charges as `stacks`). */
+  hastedBy?: { effectId: string; stacks: number };
+  /** Retracted into its shell. */
+  shelled?: true;
+  /** Its next attack is empowered. */
+  primed?: true;
   hitboxRects: HitboxRect[];
 }
 
@@ -537,6 +550,10 @@ export function composeMonsterView(
     throneHealing: entity.hasStatus?.throneHealing,
     concealed: entity.hasStatus?.concealed,
     hardControlled: entity.hasStatus?.hardControlled,
+    charging: entity.hasStatus?.charging,
+    hastedBy: entity.hasStatus?.hastedBy,
+    shelled: entity.hasStatus?.shelled,
+    primed: entity.hasStatus?.primed,
     hitboxRects: entity.hasHitbox?.rects ?? [FALLBACK_MONSTER_AABB],
   };
 }
@@ -568,6 +585,7 @@ export function composeMinionView(entity: NetworkedEntity): MinionView | null {
     attackRange: entity.performsAttack.attackRange,
     attackCooldown: entity.performsAttack.attackCooldown,
     lastAttackAt: entity.performsAttack.lastAttackAt,
+    lastAttackEmpowered: entity.performsAttack.lastAttackEmpowered,
     attackTargetId: entity.hasAttackTarget?.targetId ?? null,
     attackStyle: entity.dealsDamage.attackStyle,
     speed: entity.hasPosition.speed,

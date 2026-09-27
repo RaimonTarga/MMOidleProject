@@ -1,5 +1,6 @@
 import type { GameScene } from '../scenes/GameScene';
 import { burstFx } from './particles';
+import { flairCount, type AttackFlair } from './attackFlair';
 import { DEPTH } from '../render/depth';
 import type { AttackTint } from './elementTint';
 
@@ -34,6 +35,7 @@ export function fxPikeBrace(
   toY: number,
   execution: boolean,
   tint?: AttackTint,
+  flair?: AttackFlair,
 ): void {
   const core = execution ? EXEC_CORE : BASE_CORE;
   const shaftColor = tint?.glow ?? (execution ? EXEC_SHAFT : BASE_SHAFT);
@@ -160,7 +162,7 @@ export function fxPikeBrace(
     });
 
     // Blunt trauma throws debris outward and down, not back along a shaft.
-    burstFx(scene, 'ptx-dot', toX, toY, execution ? 16 : 10, 420, {
+    burstFx(scene, 'ptx-dot', toX, toY, flairCount(execution ? 16 : 10, flair), 420, {
       tint: spark,
       speed: { min: 80, max: execution ? 260 : 190 },
       angle: { min: 0, max: 360 },

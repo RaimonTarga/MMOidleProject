@@ -53,7 +53,7 @@ initCombatSystems();
   assert(eagleDef?.stats.speed === 105 && eagleDef.ai.idleMinMs === 180 && eagleDef.ai.leashRange === 1_200, 'Stone Eagle should be significantly faster, change direction frequently while idle, and keep its target over a longer leash');
   assert(eagleDef.engageSequence?.kind === 'cast-charge-strike' && eagleDef.engageSequence.damageMultiplier === 1.25, 'Stone Eagle should author Skyfall Rend as a 1.25x landing strike');
   assert(rocDef?.attackStyle === 'talons' && rocDef.behavior === 'melee', 'Cliffside Roc should reuse the shared talon melee attack');
-  assert(rocDef.engageSequence?.kind === 'cast-charge-strike' && rocDef.engageSequence.damageMultiplier === 1.7 && rocDef.engageSequence.fx === 'dive-bomb', 'Cliffside Roc should inherit the telegraphed Skyfall Rend with an apex landing strike');
+  assert(rocDef.engageSequence?.kind === 'cast-charge-strike' && rocDef.engageSequence.damageMultiplier === 1.7 && rocDef.engageSequence.fx === 'roc-skyfall', 'Cliffside Roc should inherit the telegraphed Skyfall Rend with an apex landing strike');
 }
 
 // Sighting the player begins the cast in place. Once it resolves, the hawk
@@ -80,9 +80,16 @@ initCombatSystems();
     world.takeNodeEvents(NODE).some(event => event.kind === 'monster-cast-end' && event.fired && event.fx === 'dive-bomb'),
     'the cast completion should publish the Dive Bomb flight cue',
   );
+  assert(hawk.hasStatus.charging === true, 'the Dive Bomb dash should publish the charging bit for its rush look');
 
   hawk.hasPosition.current = { x: 789, y: 400 };
   updateMonsters(world, 0, 2_100);
+  assert(
+    world.takeNodeEvents(NODE).some(event =>
+      event.kind === 'monster-engage-land' && event.fx === 'dive-bomb' && event.targetId === player.isPlayer.id),
+    'contact should publish the Dive Bomb landing cue',
+  );
+  assert(hawk.hasStatus.charging === undefined, 'the dash look should end on contact');
   const root = getStatusEffect(player.tracksCombat, 'slow');
   assert(root?.remainingMs === 2_000 && root.data.speedMult === 0, 'contact at the end of Dive Bomb should root the player for two seconds');
   assert(!getStatusEffect(player.tracksCombat, 'stunned'), 'Dive Bomb should not stun the player');

@@ -14,6 +14,7 @@ import { ensureHpBar } from './healthBars';
 import { ensureCdBar } from './cooldownBars';
 import { applyLunge } from './interpolation';
 import { spawnAttackEffect } from './combatFx';
+import { playConduitStrike, playIconoclastMark } from '../fx/conduitPaths';
 import { resolveAttackTint, type AttackTint } from '../fx/elementTint';
 
 function minionScale(minion: MinionView): number {
@@ -148,6 +149,8 @@ export function upsertMinion(
   });
 
   applySummonTint(state, minion);
+  const ownerView = state.view.get(minion.ownerPlayerId) as PlayerView | undefined;
+  playIconoclastMark(scene, minion, ownerView);
 
   const meta = state.spriteMeta.get(minion.id);
   if (meta) meta.monsterIsRanged = isRangedSummonStyle(minion.attackStyle);
@@ -165,7 +168,13 @@ export function upsertMinion(
         minion.attackStyle,
         { x: vmSprite.x, y: vmSprite.y },
         { x: targetSprite.x, y: targetSprite.y },
-        { tint: summonAttackTint(state, minion) },
+        { tint: summonAttackTint(state, minion), empowered: minion.lastAttackEmpowered === true },
+      );
+      // The Conduit specialization's layer on the strike (fx/conduitPaths.ts).
+      playConduitStrike(
+        scene, minion, ownerView,
+        { x: vmSprite.x, y: vmSprite.y }, { x: targetSprite.x, y: targetSprite.y },
+        minion.lastAttackEmpowered === true,
       );
       // Only Vigil's melee summons lunge; Procession bolts and Harrier beams
       // fire from where they stand, exactly like ranged monsters.

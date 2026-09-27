@@ -13,6 +13,7 @@ import { clearMovementEffectsForEntity } from './movementEffects';
 import { endDetonateWindup } from '../fx/detonateWindup';
 import { endAllyAoeFootprint } from '../fx/allyAoeFootprint';
 import { clearBodyPose } from '../fx/bodyPose';
+import { forgetCamouflage } from '../fx/camouflage';
 
 export function destroyEntity(
   state: RenderState,
@@ -48,6 +49,7 @@ export function destroyEntity(
   state.kind.delete(id);
   state.entity.delete(id);
   state.view.delete(id);
+  forgetCamouflage(id);
   state.transform.delete(id);
   state.interpolation.delete(id);
   state.remotePlayerPositions.delete(id);

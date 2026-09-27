@@ -92,7 +92,7 @@ export function updateShellUp(world: World, now: number): void {
       setCounter(cs, SHELL_CAST_ENDS_KEY, 0);
       closeShell(world, monster, spec, now);
       world.pushEvent(monster.hasPosition.nodeId, {
-        kind: 'monster-cast-end', monsterId: monster.isMonster.id, fired: true,
+        kind: 'monster-cast-end', monsterId: monster.isMonster.id, fired: true, fx: 'shell-up',
       });
       continue;
     }
@@ -143,7 +143,7 @@ export function updateShellUp(world: World, now: number): void {
       stopEntity(world, monster);
       world.pushEvent(monster.hasPosition.nodeId, {
         kind: 'monster-cast-start', monsterId: monster.isMonster.id,
-        castMs: spec.castMs, label: 'Shell Up',
+        castMs: spec.castMs, label: 'Shell Up', fx: 'shell-up',
       });
       continue;
     }

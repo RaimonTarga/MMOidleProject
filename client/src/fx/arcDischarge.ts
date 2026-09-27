@@ -1,5 +1,6 @@
 import type { GameScene } from '../scenes/GameScene';
 import { burstFx } from './particles';
+import { flairCount, type AttackFlair } from './attackFlair';
 import { DEPTH } from '../render/depth';
 import type { AttackTint } from './elementTint';
 
@@ -35,6 +36,7 @@ export function fxArcDischarge(
   toY: number,
   empowered: boolean,
   tint?: AttackTint,
+  flair?: AttackFlair,
 ): void {
   const core = empowered ? EMP_CORE : BASE_CORE;
   const glow = tint?.glow ?? (empowered ? EMP_GLOW : BASE_GLOW);
@@ -107,7 +109,7 @@ export function fxArcDischarge(
     onComplete: () => flash.destroy(),
   });
 
-  burstFx(scene, 'ptx-spark', toX, toY, empowered ? 16 : 10, 300, {
+  burstFx(scene, 'ptx-spark', toX, toY, flairCount(empowered ? 16 : 10, flair), 300, {
     tint: spark,
     speed: { min: 70, max: empowered ? 260 : 180 },
     angle: { min: 0, max: 360 },

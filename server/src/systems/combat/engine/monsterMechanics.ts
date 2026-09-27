@@ -219,6 +219,47 @@ export function monsterEmpoweredMultiplier(
   return mult;
 }
 
+/** How far ahead of an empowered-cooldown hit its tell shows (it is a timer, not a count). */
+export const EMPOWERED_COOLDOWN_TELL_MS = 1_200;
+
+/**
+ * PRIMED — will this monster's NEXT attack be empowered (a cadence finisher, the
+ * empowered cooldown coming due, an unspent opening strike, a cadence volley)?
+ *
+ * A read-only mirror of `monsterEmpoweredMultiplier` / `monsterVolleyHits`: same
+ * keys, no mutation, so it can be asked every tick for the renderer's tell. The
+ * cooldown answers `EMPOWERED_COOLDOWN_TELL_MS` early, so the tell leads the hit.
+ */
+export function monsterNextAttackPrimed(
+  monster: MonsterEntity,
+  def: MonsterDefinition | undefined,
+  now: number,
+): boolean {
+  const cs = monster.tracksCombat;
+  const cadence = def?.cadenceFinisher;
+  if (cadence && cadence.everyNAttacks > 0 &&
+      (getCounter(cs, CADENCE_COUNTER_KEY) + 1) % cadence.everyNAttacks === 0) return true;
+
+  const volley = def?.cadenceVolley;
+  if (volley && volley.everyNAttacks > 0 &&
+      (getCounter(cs, VOLLEY_COUNTER_KEY) + 1) % volley.everyNAttacks === 0) return true;
+
+  const session = combatSession(monster, now);
+  const cooldown = def?.empoweredCooldown;
+  if (cooldown && cooldown.cooldownMs > 0) {
+    const nextAt = getCounter(cs, EMP_CD_SESSION_KEY) === session
+      ? getCounter(cs, EMP_CD_NEXT_KEY)
+      : session + cooldown.cooldownMs;
+    if (now >= nextAt - EMPOWERED_COOLDOWN_TELL_MS) return true;
+  }
+
+  const openingMult =
+    monster.tracksDungeon?.openingStrikeMult ?? def?.openingStrike?.multiplier ?? 1;
+  if (openingMult > 1 && getCounter(cs, OPENING_FIRED_SESSION_KEY) !== session) return true;
+
+  return false;
+}
+
 /**
  * How many full combat-pipeline hits this attack BEAT delivers.
  *

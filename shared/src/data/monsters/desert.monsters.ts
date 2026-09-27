@@ -83,7 +83,7 @@ export const desertMonsterEntries = [
     // killing the bot inside ~4-6s every respawn regardless of charm/recovery —
     // see the Sun Scarab and Stone Basilisk fixes in this same pass.
     stats: { hp: 1365, attack: 65, plating: 0, damageReduction: 0.08, speed: 30, attackRange: 12, attackCooldown: 2400, pullRange: 210 },
-    behavior: 'melee', attackStyle: 'poison', biome: 'desert',
+    behavior: 'melee', attackStyle: 'sting', biome: 'desert',
     rewards: { essence: 7, essenceType: 'yellow', level: 1, biomeXp: 40 },
     ai: { wanderRadius: 240, leashRange: 640, idleMinMs: 1500, idleMaxMs: 4500 },
     // Paired 1:1 with its tier's scarab, exactly like the basilisk family. The
@@ -158,7 +158,7 @@ export const desertMonsterEntries = [
     // Scorpion's rather than hiding Cripple on every ordinary hit. Durable, slow,
     // low direct offense. Paired 1:1 with the Gilded Scarab.
     stats: { hp: 4050, attack: 67, plating: 0, damageReduction: 0.08, speed: 30, attackRange: 12, attackCooldown: 2400, pullRange: 210 },
-    behavior: 'melee', attackStyle: 'poison', biome: 'desert',
+    behavior: 'melee', attackStyle: 'sting', biome: 'desert',
     rewards: { essence: 30, essenceType: 'yellow', level: 2, biomeXp: 180 },
     ai: { wanderRadius: 240, leashRange: 640, idleMinMs: 1500, idleMaxMs: 4500 },
     // Paired 1:1 with its tier's scarab, exactly like the basilisk family. The

@@ -44,7 +44,7 @@ export const swampMonsterEntries = [
     // BASELINE POISON ENEMY. Weak direct attack; the stacking poison is the whole
     // threat. No extra mechanic, deliberately.
     stats: { hp: 140, attack: 10, plating: 0, damageReduction: 0, speed: 28, attackRange: 12, attackCooldown: 2000, pullRange: 165 },
-    behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
+    behavior: 'melee', attackStyle: 'ooze-engulf', biome: 'swamp',
     rewards: { essence: 5, essenceType: 'purple', level: 1, biomeXp: 35 },
     ai: { wanderRadius: 160, leashRange: 530, idleMinMs: 2000, idleMaxMs: 5500 },
     // Fewer, heavier, faster-ticking stacks than before. The old 4-stack/1500ms poison
@@ -60,7 +60,7 @@ export const swampMonsterEntries = [
     // slow on hit, so the answer to Swamp is "cleanse and disengage" and the failure
     // state is being unable to. No further mechanic required.
     stats: { hp: 120, attack: 13, plating: 2, damageReduction: 0, speed: 30, attackRange: 12, attackCooldown: 2200, pullRange: 180 },
-    behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
+    behavior: 'melee', attackStyle: 'tongue-lash', biome: 'swamp',
     rewards: { essence: 6, essenceType: 'purple', level: 1, biomeXp: 42 },
     ai: { wanderRadius: 180, leashRange: 550, idleMinMs: 1800, idleMaxMs: 5000 },
     dotEffect: { debuffId: 'swamp-poison', label: 'Poison', damagePerStack: 4, maxStacks: 3, tickIntervalMs: 1000, durationMs: 4000 },
@@ -80,7 +80,7 @@ export const swampMonsterEntries = [
     // retracts — it cannot meaningfully attack or move, and becomes extremely
     // resistant to DIRECT damage. DoTs keep ticking while shelled, which is the out.
     stats: { hp: 680, attack: 24, plating: 6, damageReduction: 0, speed: 28, attackRange: 15, attackCooldown: 2200, pullRange: 185 },
-    behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
+    behavior: 'melee', attackStyle: 'snap', biome: 'swamp',
     rewards: { essence: 12, essenceType: 'purple', level: 1, biomeXp: 68 },
     ai: { wanderRadius: 170, leashRange: 560, idleMinMs: 2500, idleMaxMs: 7000 },
     // SHELL UP - one authored HP threshold, once per life. It retracts, stops
@@ -120,7 +120,7 @@ export const swampMonsterEntries = [
     // (normal bite 1, opener ~2); ordinary combat afterwards. It does NOT repeatedly
     // vanish and re-ambush.
     stats: { hp: 275, attack: 46, plating: 0, damageReduction: 0, speed: 75, attackRange: 12, attackCooldown: 2600, pullRange: 155 },
-    behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
+    behavior: 'melee', attackStyle: 'bite-venom', biome: 'swamp',
     rewards: { essence: 13, essenceType: 'purple', level: 1, biomeXp: 75 },
     ai: { wanderRadius: 500, leashRange: 540, idleMinMs: 450, idleMaxMs: 1200 },
     // Opening bite lands 2 stacks at once; every bite after it lands 1.
@@ -138,7 +138,7 @@ export const swampMonsterEntries = [
     // Progression: earlier Snapper shell = defense; later Snapper shell = defense +
     // space denial. Generic DR removed so HP + plating + shell carry the defense.
     stats: { hp: 2320, attack: 37, plating: 4, damageReduction: 0, speed: 26, attackRange: 15, attackCooldown: 2200, pullRange: 185 },
-    behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
+    behavior: 'melee', attackStyle: 'snap', biome: 'swamp',
     rewards: { essence: 65, essenceType: 'purple', level: 3, biomeXp: 390 },
     ai: { wanderRadius: 150, leashRange: 520, idleMinMs: 2800, idleMaxMs: 8000 },
     // SHELL UP, evolved: retracting also CONTAMINATES the ground around it, so the
@@ -198,7 +198,7 @@ export const swampMonsterEntries = [
     // range far over it makes it walk most of the way in before it may coil, which is
     // the ambush the lunge exists to replace.
     stats: { hp: 490, attack: 43, plating: 0, damageReduction: 0, speed: 30, attackRange: 12, attackCooldown: 2600, pullRange: 240 },
-    behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
+    behavior: 'melee', attackStyle: 'bite-bog', biome: 'swamp',
     rewards: { essence: 57, essenceType: 'purple', level: 3, biomeXp: 345 },
     // It LIVES in the bog: `idleAnchor` keeps it idling in the shallows of the nearest
     // pool instead of roaming past it, so the player meets it by approaching the water.

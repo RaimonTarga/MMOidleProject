@@ -14,6 +14,8 @@ import { ensureHpBar } from './healthBars';
 import { ensureCdBar } from './cooldownBars';
 import { applyLunge } from './interpolation';
 import { spawnAttackEffect } from './combatFx';
+import { releaseAnticipation } from '../fx/attackAnticipation';
+import { camouflageChanged, fxCamouflageShift } from '../fx/camouflage';
 import { concealedFrameOverride, syncConcealment } from './burrow';
 import { monsterBarOffsetY, monsterSpriteSize } from './monsterSize';
 import {
@@ -191,8 +193,15 @@ function syncMonsterEcologyTells(state: RenderState, monster: MonsterView): void
   // fades it far harder than camouflage does. Writing alpha here as well would
   // undo that on every patch.
   if (monster.concealed !== undefined) return;
-  sprite.setAlpha(isConcealedNow(monster) ? CAMOUFLAGE_ALPHA : 1);
+  const concealed = isConcealedNow(monster);
+  // Breaking cover (or melting back in) gets its own moment instead of an alpha
+  // snap. Only on a real transition — never on the first sighting of a monster.
+  if (camouflageChanged(monster.id, concealed) && sprite.visible) {
+    fxCamouflageShift(sprite.scene as GameScene, sprite, monster.monsterTypeId, !concealed);
+  }
+  sprite.setAlpha(concealed ? CAMOUFLAGE_ALPHA : 1);
 }
+
 
 export function refreshMonsterTints(state: RenderState): void {
   for (const id of state.ids) {
@@ -369,6 +378,7 @@ export function upsertMonster(
         { empowered: monster.lastAttackEmpowered === true },
       );
 
+      releaseAnticipation(scene, monster.id, prevAttackAt, targetSprite, meta?.monsterIsRanged === true);
       if (!meta?.monsterIsRanged) {
         applyLunge(state, monster.id, { ...targetInterp.base }, scene);
       }

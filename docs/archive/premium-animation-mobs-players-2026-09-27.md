@@ -1,3 +1,8 @@
+> **ARCHIVED (2026-09-28) — IMPLEMENTED HANDOFF.** The mob and player animation pass
+> this brief started is implemented on `feat/premium-mob-animations`. Live state is in
+> `docs/combat-animation-current-state.md`. This file keeps the original grammar,
+> toolkit notes and suggested order as rationale.
+
 # Premium animation pass for mobs and players — handoff (2026-09-27)
 
 The boss-lineage session gave every boss "premium" animations, and the user wants the

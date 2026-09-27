@@ -63,17 +63,26 @@ function debuffCount(scene: GameScene, playerId: string | undefined): number {
 /**
  * Jaws open over the victim and close across the cast. `devour` is the big one,
  * glowing hotter per distinct debuff; the serpent rears while it gathers.
+ *
+ * The jaws must never outlive the cast. They resolve on the matching fired
+ * cast-end (`opts.resolveFx` for callers whose cast ENDS under another id — a
+ * Trench elite's bite ends as `savage-maul` / `devour`), cancel on a stopped one,
+ * and otherwise tear down quietly: when the caster leaves the scene (a death or a
+ * node change sends no cast-end) or `ttlMs` after the cast should have ended.
  */
 export function fxMawWindup(
   scene: GameScene,
   monsterId: string,
   castMs: number,
   kind: 'bite' | 'devour',
+  /** Mob callers (Trench elites) size the jaws themselves and shake lighter, or not at all. */
+  opts: { width?: number; feel?: 'light' | 'medium' | 'heavy'; resolveFx?: string } = {},
 ): void {
   const targetId = castTargetId(scene, monsterId);
   const start = spriteAt(scene, targetId) ?? spriteAt(scene, monsterId);
   if (!start) return;
-  const width = kind === 'devour' ? 150 : 92;
+  const width = opts.width ?? (kind === 'devour' ? 150 : 92);
+  const feel = 'width' in opts ? opts.feel : kind === 'devour' ? 'heavy' : 'medium';
   const upper = scene.add.graphics().setDepth(DEPTH.FX + 1);
   const lower = scene.add.graphics().setDepth(DEPTH.FX + 1);
   upper.setAlpha(0);
@@ -82,7 +91,22 @@ export function fxMawWindup(
   tweenPose(scene, monsterId, { sy: 1.1, sx: 0.94, lift: 8 }, castMs * 0.85, 'Sine.easeOut');
 
   let last = start;
+  let done = false;
+  /** Fade the jaws out without a payoff (caster gone, or no cast-end ever came). */
+  const vanish = (): void => {
+    if (done) return;
+    done = true;
+    stop();
+    for (const jaw of [upper, lower]) {
+      scene.tweens.add({ targets: jaw, alpha: 0, duration: 200, onComplete: () => jaw.destroy() });
+    }
+  };
   const stop = follow(scene, () => {
+    if (!scene.state.sprite.has(monsterId)) {
+      // The caster died or left: no cast-end will ever come for these jaws.
+      queueMicrotask(vanish);
+      return false;
+    }
     const at = spriteAt(scene, targetId) ?? last;
     last = at;
     const k = Math.min(1, (performance.now() - began) / castMs);
@@ -101,6 +125,8 @@ export function fxMawWindup(
 
   registerWindup(scene, monsterId, {
     fire: (hit) => {
+      if (done) return;
+      done = true;
       stop();
       const at = hit ?? spriteAt(scene, targetId) ?? last;
       // SNAP.
@@ -124,7 +150,7 @@ export function fxMawWindup(
       }
       scene.time.delayedCall(kind === 'devour' ? 80 : 60, () => {
         splash(scene, at.x, at.y, kind === 'devour' ? 1.6 : 1);
-        impact(scene, kind === 'devour' ? 'heavy' : 'medium', at);
+        if (feel) impact(scene, feel, at);
       });
       // The lunge that does it, then the serpent settles.
       posePath(scene, monsterId, [
@@ -133,6 +159,8 @@ export function fxMawWindup(
       ]);
     },
     cancel: () => {
+      if (done) return;
+      done = true;
       // CHOKED: the jaws crack apart into bubbles.
       stop();
       for (const jaw of [upper, lower]) {
@@ -155,7 +183,14 @@ export function fxMawWindup(
       }
       releasePose(scene, monsterId, 300);
     },
-  }, { fx: kind === 'devour' ? 'devour-maw' : 'trench-bite' });
+    expire: () => {
+      vanish();
+      releasePose(scene, monsterId, 300);
+    },
+  }, {
+    fx: opts.resolveFx ?? (kind === 'devour' ? 'devour-maw' : 'trench-bite'),
+    ttlMs: castMs + 1500,
+  });
 }
 
 /** A burst of dark water with a white crest and a ring wave. */

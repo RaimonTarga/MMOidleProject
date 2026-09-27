@@ -2,6 +2,7 @@ import type { GameScene } from '../scenes/GameScene';
 import { burstFx } from './particles';
 import { DEPTH } from '../render/depth';
 import type { AttackTint } from './elementTint';
+import { flairCount, flairGlow, flairSize, type AttackFlair } from './attackFlair';
 
 /**
  * Striker (cadence) basic attack.
@@ -18,6 +19,10 @@ import type { AttackTint } from './elementTint';
  * An optional elemental `tint` recolors the wash and the sparks. The bright core
  * is deliberately left alone: it carries the empowered read, and a green weapon
  * must not be able to hide a surge.
+ *
+ * FLAIR (attackFlair.ts): a stage-0 Striker swings the bare steel — no ghost, no
+ * glow wash, no contact flash, a few sparks. The frame adds the wash and flash;
+ * from the range pick on it is the full stroke, growing a little with ascension.
  */
 
 const BASE_CORE = 0xffffff;
@@ -39,13 +44,15 @@ export function fxStrikerSlash(
   toY: number,
   empowered: boolean,
   tint?: AttackTint,
+  flair?: AttackFlair,
 ): void {
   const core = empowered ? EMP_CORE : BASE_CORE;
   const glow = tint?.glow ?? (empowered ? EMP_GLOW : BASE_GLOW);
   const spark = tint?.particles ?? glow;
-  const halfLen = empowered ? 62 : 48;
-  const maxWidth = empowered ? 9 : 6.5;
-  const bow = empowered ? 26 : 20;
+  const washed = flairGlow(flair);
+  const halfLen = flairSize(empowered ? 62 : 48, flair);
+  const maxWidth = flairSize(empowered ? 9 : 6.5, flair);
+  const bow = flairSize(empowered ? 26 : 20, flair);
 
   const attackAngle = Math.atan2(toY - fromY, toX - fromX);
   const mirror = mirrorNextSlash ? -1 : 1;
@@ -74,7 +81,8 @@ export function fxStrikerSlash(
   // the attacker, so the main cut lands on a line the eye already started.
   const ghost = scene.add
     .graphics({ x: toX - bx * 15, y: toY - by * 15 })
-    .setDepth(DEPTH.FX);
+    .setDepth(DEPTH.FX)
+    .setVisible(washed);
   ghost.lineStyle(1.5, glow, 0.4);
   ghost.beginPath();
   for (let i = 0; i <= SEGMENTS; i++) {
@@ -109,8 +117,10 @@ export function fxStrikerSlash(
       const p1 = pointAt(t1);
       // Taper: fat at the belly, vanishing at both tips.
       const w = maxWidth * Math.pow(Math.sin(Math.PI * ((t0 + t1) / 2)), 0.55);
-      blade.lineStyle(w * 2.1, glow, 0.34);
-      blade.lineBetween(p0.x, p0.y, p1.x, p1.y);
+      if (washed) {
+        blade.lineStyle(w * 2.1, glow, 0.34);
+        blade.lineBetween(p0.x, p0.y, p1.x, p1.y);
+      }
       blade.lineStyle(w, core, 1);
       blade.lineBetween(p0.x, p0.y, p1.x, p1.y);
     }
@@ -128,7 +138,8 @@ export function fxStrikerSlash(
   // the brightest point is where the edge actually passes through.
   const flash = scene.add
     .graphics({ x: toX + bx * bow * 0.35, y: toY + by * bow * 0.35 })
-    .setDepth(DEPTH.FX);
+    .setDepth(DEPTH.FX)
+    .setVisible(washed);
   flash.fillStyle(glow, empowered ? 0.7 : 0.55);
   flash.fillCircle(0, 0, empowered ? 26 : 20);
   scene.tweens.add({
@@ -144,7 +155,7 @@ export function fxStrikerSlash(
   // Sparks throw off the edge, so they fan along the chord instead of scattering
   // in a circle — the debris tells you which way the blade went.
   const chordDeg = (chordAngle * 180) / Math.PI;
-  burstFx(scene, 'ptx-spark', toX, toY, empowered ? 24 : 16, 420, {
+  burstFx(scene, 'ptx-spark', toX, toY, flairCount(empowered ? 24 : 16, flair), 420, {
     tint: core,
     speed: { min: 90, max: empowered ? 300 : 220 },
     angle: { min: chordDeg - 42, max: chordDeg + 42 },
@@ -152,7 +163,7 @@ export function fxStrikerSlash(
     alpha: { start: 1, end: 0 },
     rotate: { min: 0, max: 360 },
   });
-  burstFx(scene, 'ptx-spark', toX, toY, empowered ? 24 : 16, 420, {
+  burstFx(scene, 'ptx-spark', toX, toY, flairCount(empowered ? 24 : 16, flair), 420, {
     tint: spark,
     speed: { min: 90, max: empowered ? 300 : 220 },
     angle: { min: chordDeg + 138, max: chordDeg + 222 },

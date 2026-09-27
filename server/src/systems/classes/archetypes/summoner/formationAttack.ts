@@ -108,6 +108,13 @@ export function runFormationAttack(
     resultMetadata,
     formation,
   });
+  // The summon's swing is drawn from its snapshot; a specialization beat (opener,
+  // coordinated strike, ritual charge, linked strike) is drawn heavier. Written on
+  // EVERY swing so a beat never latches onto the next ordinary one.
+  minion.performsAttack.lastAttackEmpowered = outcome !== 'cancelled' && outcome !== 'dodged' && (
+    specialization.openingStrike || specialization.directDamageBonusWeight > 0 ||
+    specialization.consumeRitualCharge || resultMetadata.empowered === true
+  );
   emitSummonObservation(owner, { kind: 'attack', id: minion.entityId, targetId: target.entityId,
     targetType: target.isMonster.monsterTypeId, targetHpFractionBefore: hpBefore / target.hasHealth.maxHp,
     primaryHpDecrease: Math.max(0, hpBefore - Math.max(0, target.hasHealth.hp)), outcome });

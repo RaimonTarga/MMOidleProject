@@ -1,5 +1,6 @@
 import type { GameScene } from '../scenes/GameScene';
 import { burstFx } from './particles';
+import { flairCount, type AttackFlair } from './attackFlair';
 import { DEPTH } from '../render/depth';
 import type { AttackTint } from './elementTint';
 
@@ -32,6 +33,7 @@ export function fxSpearThrust(
   toY: number,
   empowered: boolean,
   tint?: AttackTint,
+  flair?: AttackFlair,
 ): void {
   const core = empowered ? EMP_CORE : BASE_CORE;
   const shaftColor = tint?.glow ?? (empowered ? EMP_SHAFT : BASE_SHAFT);
@@ -148,7 +150,7 @@ export function fxSpearThrust(
 
     // Debris sprays BACK along the shaft, the way a puncture actually throws it.
     const backDeg = (angle * 180) / Math.PI + 180;
-    burstFx(scene, 'ptx-spark', toX, toY, empowered ? 16 : 11, 340, {
+    burstFx(scene, 'ptx-spark', toX, toY, flairCount(empowered ? 16 : 11, flair), 340, {
       tint: spark,
       speed: { min: 80, max: empowered ? 260 : 190 },
       angle: { min: backDeg - 34, max: backDeg + 34 },
