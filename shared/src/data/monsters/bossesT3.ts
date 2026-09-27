@@ -662,17 +662,17 @@ export const bossMonsterEntriesT3 = [
     {
       // REACTIVE POSTURE, close: a telegraphed burst around the boss that adds Chill.
       id: 'rime-frost-nova', name: 'Frost Nova',
-      damageMultiplier: 1.7, cooldownMs: 7000, initialCooldownMs: 4000,
+      damageMultiplier: 1.7, cooldownMs: 10000, initialCooldownMs: 5000,
       armWhenTargetWithinPx: 170, priority: 1,
       steps: [
         { kind: 'impact', name: 'Frost Nova', anchor: 'self', radius: 200,
-          damageMult: 0.8, telegraphMs: 1100, fx: 'shatter', addsAmbientStacks: 2 },
+          damageMult: 0.6, telegraphMs: 1100, fx: 'shatter', addsAmbientStacks: 2 },
       ],
     },
     {
       // REACTIVE POSTURE, far: a spike volley that roots, then the boss walks up.
       id: 'rime-frost-spikes', name: 'Frost Spikes',
-      damageMultiplier: 1.7, cooldownMs: 8000, initialCooldownMs: 3000,
+      damageMultiplier: 1.7, cooldownMs: 10000, initialCooldownMs: 3000,
       armWhenTargetBeyondPx: 320, priority: 1,
       steps: [
         { kind: 'apply-status', name: 'Frost Spikes', castMs: 900, fx: 'frostbind',

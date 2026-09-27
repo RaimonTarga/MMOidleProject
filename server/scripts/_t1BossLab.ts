@@ -56,6 +56,25 @@ const BOSS_NODE: Record<string, string> = {
   'apex-timberclaw': 'node-t2-forest-dungeon',
   'crag-gorged-horn-behemoth': 'node-t3-mountain-dungeon',
   'iron-crest-titan': 'node-t4-mountain-dungeon',
+  // Boss-lineage redesign smoke (2026-09-27): every boss.
+  'gorging-razortusk': 'node-t2-plains-dungeon',
+  'stoneplate-juggernaut': 'node-t2-mountain-dungeon',
+  'mire-gorged-behemoth': 'node-t2-swamp-dungeon',
+  'chitinous-dreadbore': 'node-t2-cave-dungeon',
+  'dune-stalker-emperor': 'node-t2-desert-dungeon',
+  'jungle-dread-gorger': 'node-t2-jungle-dungeon',
+  'rot-spore-croc-behemoth': 'node-t3-swamp-dungeon',
+  'deep-core-burrow-gorger': 'node-t3-cave-dungeon',
+  'dune-carapace-monarch': 'node-t3-desert-dungeon',
+  'apex-bramble-slasher': 'node-t3-jungle-dungeon',
+  'cinder-shell-magma-salamander': 'node-t3-volcanic-dungeon',
+  'frost-plated-rime-mammoth': 'node-t3-tundra-dungeon',
+  'dune-throne-sovereign': 'node-t4-desert-dungeon',
+  'verdant-crown-predator': 'node-t4-jungle-dungeon',
+  'glacial-patriarch': 'node-t4-tundra-dungeon',
+  'caldera-sovereign': 'node-t4-volcanic-dungeon',
+  'charnel-crown-sovereign': 'node-t4-graveyard-dungeon',
+  'elder-trench-serpent': 'node-t4-trench-dungeon',
 };
 
 /** Named definition patches. Each returns its own restore. */
