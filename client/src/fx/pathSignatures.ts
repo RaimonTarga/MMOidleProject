@@ -378,13 +378,6 @@ const SIGNATURES: Record<string, Signature> = {
   'dot-light-t3-b': { motif: sigil, color: 0x8a5ad0, accent: 0xd0b0ff, n: 5 }, // Cultist
   'dot-light-t3-c': { motif: sigil, color: 0xd0e060, accent: 0xffffff, n: 8 }, // Zealot
   // Spirit (Equinox and Stormdancer replace their attack)
-  'energy-balanced-t3-b': { motif: shock, color: 0xa0c8ff, accent: 0xffffff }, // Stormbringer
-  'energy-balanced-t3-c': { motif: motes, color: 0xc8a0ff, accent: 0xffffff, n: -1 }, // Aetherist
-  'energy-heavy-t3-a': { motif: voidPull, color: 0x8a5ad0, accent: 0xd0b0ff }, // Voidwalker
-  'energy-heavy-t3-b': { motif: motes, color: 0xff9ad0, accent: 0xfff0ff, n: -1 }, // Invoker
-  'energy-heavy-t3-c': { motif: wind, color: 0x7fb0ff, accent: 0xffffff }, // Tempest
-  'energy-light-t3-b': { motif: shock, color: 0xfff07a, accent: 0xffffff }, // Surge
-  'energy-light-t3-c': { motif: halo, color: 0xfff0a0, accent: 0xffffff }, // Channeler
   // Slinger (Melter, Sniper, Blunderbuss replace their attack)
 };
 
