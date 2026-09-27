@@ -54,6 +54,7 @@ const vents = (a: ReturnType<typeof arena>) => (a.world.groundZones.get(a.nodeId
     return false;
   }, 12_000);
   assert(shoved, 'the Magma Shove fires');
+  assert(getStatusEffect(a.player.tracksCombat, 'slow'), 'and it lands the player slowed');
   const burnId = monsterDotStatusEffectId('caldera-burn');
   runUntil(a, () => false, 11_000);
   const burn = getStatusEffect(a.player.tracksCombat, burnId);
@@ -70,8 +71,10 @@ const vents = (a: ReturnType<typeof arena>) => (a.world.groundZones.get(a.nodeId
   assert(before === 9, `the Magma Shove phase widens the field to nine vents (${before})`);
   assert(vents(a).every(v => v.radius === 235), 'and widens the vents already down');
   const spot = { x: 2460, y: 2400 };
-  runUntil(a, () => { pin(a.player, spot); return vents(a).length > before; }, 9_000);
-  const opened = vents(a).find(v => Math.hypot(v.pos.x - spot.x, v.pos.y - spot.y) < 40);
+  // Around-the-boss vents open too now; wait for the one UNDER the player.
+  const under = () => vents(a).find(v => Math.hypot(v.pos.x - spot.x, v.pos.y - spot.y) < 1 && v.expiresAtMs - v.startedAtMs > 60_000);
+  runUntil(a, () => { pin(a.player, spot); return under() !== undefined; }, 9_000);
+  const opened = under();
   assert(opened, 'a fissure opens a vent under the player');
 }
 
@@ -98,6 +101,34 @@ const vents = (a: ReturnType<typeof arena>) => (a.world.groundZones.get(a.nodeId
   }, 25_000);
   assert(landed, 'the Final Eruption lands through full evasion');
   assert(!(a.boss.hasStatus.bossEffects ?? []).includes('final-eruption'), 'and its tile clears once it resolves');
+}
+
+// ── Vents split open around the boss, faster in the last phase ──────────────
+{
+  const around = (hpFrac: number): number => {
+    const a = arena('caldera-sovereign', { x: 2400, y: 2400 }, { x: 2460, y: 2400 }, undefined, 'node-t4-volcanic-dungeon');
+    a.boss.hasHealth.hp = Math.round(a.boss.hasHealth.maxHp * hpFrac);
+    updateBossScripts(a.world, 0);
+    const fixed = new Set(vents(a).map(v => v.id));
+    let opened = 0;
+    const seen = new Set<string>();
+    runUntil(a, () => {
+      pin(a.player, { x: 2460, y: 2400 });
+      a.boss.hasHealth.hp = Math.max(a.boss.hasHealth.hp, Math.round(a.boss.hasHealth.maxHp * hpFrac * 0.98));
+      for (const v of vents(a)) {
+        if (fixed.has(v.id) || seen.has(v.id)) continue;
+        seen.add(v.id);
+        const d = Math.hypot(v.pos.x - a.boss.hasPosition.current.x, v.pos.y - a.boss.hasPosition.current.y);
+        if (d <= 460 && v.expiresAtMs - v.startedAtMs < 10_000) opened++;
+      }
+      return false;
+    }, 6_000);
+    return opened;
+  };
+  const early = around(1);
+  const late = around(0.2);
+  assert(early >= 1, `short-lived vents split open around the boss (${early})`);
+  assert(late > early * 2, `and far faster in the last phase (${early} -> ${late})`);
 }
 
 console.log('bossLineageVolcanic: ok');

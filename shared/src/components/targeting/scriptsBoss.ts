@@ -166,6 +166,19 @@ export interface ScriptsBoss {
     /** The vent's ground zone, so a later phase can widen it in place. */
     zoneId?: string;
   }[];
+  /** Set by 'vent-spawner': transient vents opening around the boss. */
+  ventSpawner?: {
+    everyMs: number;
+    count: number;
+    minRadius: number;
+    maxRadius: number;
+    radius: number;
+    telegraphMs: number;
+    lingerMs: number;
+    damageMult: number;
+    rampAccelMult: number;
+    nextAtMs: number;
+  };
   ventRhythm?: {
     eruptEveryMs: number;
     telegraphMs: number;

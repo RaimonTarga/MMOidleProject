@@ -636,8 +636,11 @@ export const bossMonsterEntriesT4 = [
       damageMultiplier: 1, cooldownMs: 12000, initialCooldownMs: 2000, priority: 1,
       armAboveHpPct: 0.25,
       steps: [
+        // Lands you slowed (playtest 2026-09-27): getting off the vent is the answer,
+        // and now it takes committing to it.
         { kind: 'pull', name: 'Magma Shove', castMs: 1000, distance: 320,
-          toward: 'nearest-pool', poolFlavors: ['magma-vent'], fx: 'magma-shove' },
+          toward: 'nearest-pool', poolFlavors: ['magma-vent'], fx: 'magma-shove',
+          appliesDebuff: { effectId: 'slow', plainStatus: true, durationMs: 2500, data: { speedMult: 0.45 } } },
       ],
     }],
     bossScript: {
@@ -648,23 +651,28 @@ export const bossMonsterEntriesT4 = [
           { type: 'vent-field', count: 6, radius: 210, ringRadius: 540, rampAccelMult: 3,
             eruptEveryMs: 7500, telegraphMs: 1500, damageMult: 1.5,
             fissure: { everyMs: 14000, maxVents: 10 } },
+          // Playtest 2026-09-27: vents also keep splitting open AROUND THE BOSS.
+          { type: 'vent-spawner', everyMs: 2600, count: 1, minRadius: 60, maxRadius: 440, radius: 155, telegraphMs: 1400, lingerMs: 2200, damageMult: 1.4, rampAccelMult: 3 },
           { type: 'room-affliction', intervalMs: 5000, dot: {
             debuffId: 'caldera-burn', label: 'Simmering Burn', color: '#ff7a33',
             damagePerStack: 4, maxStacks: 12, tickIntervalMs: 1000, durationMs: 15000,
           } },
         ] },
         { hpPct: 0.5, name: 'Magma Shove',
-          description: 'It shoves you onto the nearest vent, more vents open and fissures split open under you. Take the Heat, but get off before the vent erupts.',
+          description: 'It shoves you onto the nearest vent and leaves you slowed there; more vents open around it and fissures split open under you. Take the Heat, but get off before the vent erupts.',
           actions: [
           { type: 'add-pattern', patternId: 'caldera-magma-shove' },
           { type: 'vent-field', count: 9, radius: 235, ringRadius: 540, rampAccelMult: 3,
             eruptEveryMs: 5500, telegraphMs: 1400, damageMult: 1.5,
             fissure: { everyMs: 8000, maxVents: 16 } },
+          { type: 'vent-spawner', everyMs: 1700, count: 2, minRadius: 60, maxRadius: 440, radius: 155, telegraphMs: 1350, lingerMs: 2200, damageMult: 1.4, rampAccelMult: 3 },
         ] },
         { hpPct: 0.25, name: 'Cataclysm',
-          description: 'It stops attacking and charges a Cataclysm that hits the whole arena while the Simmering Burn accelerates. It cannot be interrupted or evaded: kill it, or survive the blast with Guard and tank gear.',
+          description: 'It stops attacking and charges a Cataclysm that hits the whole arena, while vents burst open all around it and the Simmering Burn accelerates. The Cataclysm cannot be interrupted or evaded: kill it, or survive the blast with Guard and tank gear.',
           actions: [
           { type: 'set-weather', weather: 'ashfall' },
+          // The race against the Cataclysm, under a near-bullet-hell of vents.
+          { type: 'vent-spawner', everyMs: 650, count: 3, minRadius: 60, maxRadius: 440, radius: 140, telegraphMs: 1250, lingerMs: 2200, damageMult: 1.4, rampAccelMult: 3 },
           // The burn accelerates while the Cataclysm charges.
           { type: 'room-affliction', intervalMs: 1500, dot: {
             debuffId: 'caldera-burn', label: 'Simmering Burn', color: '#ff7a33',

@@ -83,6 +83,7 @@ export function updateBossScripts(world: World, dt: number): void {
       tickRoomAffliction(state, e, world, dt);
       tickRoomDebuffs(state, e, world, dt);
       tickVents(state, e, world);
+      tickVentSpawner(state, e, world);
       tickBoneTithe(state, e, world);
       tickHarvest(state, e, world, dt);
     }
@@ -189,6 +190,62 @@ function tickVents(state: ScriptsBoss, monster: MonsterEntity, world: World): vo
       ownerId: monster.isMonster.id,
       points: [{ ...vent.pos }],
       damageMultiplier: rhythm.damageMult,
+      scattered: true,
+      fx: 'vent-eruption',
+    });
+  }
+}
+
+/**
+ * VENT SPAWNER: short-lived vents splitting open around the boss on a rhythm. Each
+ * is a Heat pool for its short life and erupts once, behind its own telegraph.
+ */
+function tickVentSpawner(state: ScriptsBoss, monster: MonsterEntity, world: World): void {
+  const spawner = state.ventSpawner;
+  if (!spawner) return;
+  const now = Date.now();
+  if (now < spawner.nextAtMs) return;
+  spawner.nextAtMs = now + spawner.everyMs;
+  const nodeId = monster.hasPosition.nodeId;
+  const center = monster.hasPosition.current;
+  for (let i = 0; i < spawner.count; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const distance = spawner.minRadius + Math.random() * (spawner.maxRadius - spawner.minRadius);
+    const pos = clampToArena(monster, {
+      x: center.x + Math.cos(angle) * distance,
+      y: center.y + Math.sin(angle) * distance,
+    });
+    const zone = publishToxicPool(world, nodeId, {
+      kind: 'toxic-pool',
+      pos,
+      radius: spawner.radius,
+      startedAtMs: now,
+      expiresAtMs: now + spawner.telegraphMs + spawner.lingerMs,
+      damagePerTick: 0,
+      tickIntervalMs: 1000,
+      flavor: 'magma-vent',
+      rampAccelMult: spawner.rampAccelMult,
+      ownerId: monster.isMonster.id,
+      sourceId: 'magma-vent',
+      sourceLabel: 'Magma Vent',
+      semantics: { disposition: 'hostile-to-player', persistence: 'persistent', movementResponse: 'none' },
+      killer: {
+        monsterTypeId: monster.isMonster.monsterTypeId,
+        monsterName: monster.isMonster.name,
+        isBoss: monster.isMonster.isBoss,
+        nodeId,
+      },
+    });
+    publishFaultLineBurst(world, nodeId, {
+      kind: 'fault-line-telegraph',
+      sourceLabel: 'Vent Eruption',
+      pos: { ...zone.pos },
+      radius: spawner.radius,
+      startedAtMs: now,
+      resolvesAtMs: now + spawner.telegraphMs,
+      ownerId: monster.isMonster.id,
+      points: [{ ...zone.pos }],
+      damageMultiplier: spawner.damageMult,
       scattered: true,
       fx: 'vent-eruption',
     });
@@ -920,6 +977,15 @@ function applyAction(
         vent.nextEruptAtMs = now + action.eruptEveryMs * ((i + 1) / vents.length);
       });
       pushBossFx(world, monster, 'roar', { radius: 480 });
+      break;
+    }
+
+    case 'vent-spawner': {
+      const { type: _type, ...params } = action;
+      void _type;
+      // Retuning keeps the clock running, so a phase change never stalls the rhythm.
+      const nextAtMs = Math.min(state.ventSpawner?.nextAtMs ?? Infinity, Date.now() + action.everyMs);
+      state.ventSpawner = { ...params, nextAtMs };
       break;
     }
 

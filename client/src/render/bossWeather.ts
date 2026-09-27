@@ -29,7 +29,8 @@ interface WeatherLayer {
 
 // Blizzard spawns across a wider band (see BLIZZARD_DRIFT), so it needs more flakes
 // for the same on-screen density.
-const MAX_PARTICLES: Record<Weather, number> = { blizzard: 320, ashfall: 140, abyss: 0, sandstorm: 260, spores: 110 };
+// Ashfall denser since the 2026-09-27 playtest (140 -> 340).
+const MAX_PARTICLES: Record<Weather, number> = { blizzard: 320, ashfall: 340, abyss: 0, sandstorm: 260, spores: 110 };
 const layers = new WeakMap<GameScene, WeatherLayer>();
 
 function currentWeather(scene: GameScene): Weather | null {
@@ -71,7 +72,7 @@ function spawn(weather: Weather, w: number, h: number, anywhere: boolean): Parti
   const x = Math.random() * w * 1.2 - w * 0.1;
   const y = anywhere ? Math.random() * h : -10;
   // Ash: slow, drifting, some of it still glowing.
-  return { x, y, vx: -20 + Math.random() * 40, vy: 30 + Math.random() * 40, size: 1.5 + Math.random() * 2.5, life: Math.random() };
+  return { x, y, vx: -20 + Math.random() * 40, vy: 30 + Math.random() * 40, size: 1.8 + Math.random() * 2.8, life: Math.random() };
 }
 
 /** Per-frame: fade the layer toward the current boss weather and draw it. */

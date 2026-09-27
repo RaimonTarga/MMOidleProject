@@ -604,18 +604,25 @@ export const bossMonsterEntriesT3 = [
         { hpPct: 1.0, actions: [
           { type: 'vent-field', count: 6, radius: 200, ringRadius: 520, rampAccelMult: 3,
             eruptEveryMs: 8000, telegraphMs: 1600, damageMult: 1.5 },
+          // Playtest 2026-09-27: vents also keep splitting open AROUND THE BOSS.
+          { type: 'vent-spawner', everyMs: 3000, count: 1, minRadius: 60, maxRadius: 440, radius: 150, telegraphMs: 1400, lingerMs: 2200, damageMult: 1.4, rampAccelMult: 3 },
         ] },
         { hpPct: 0.5, name: 'Caldera Opens',
-          description: 'More vents open, they erupt more often, fissures start splitting open under you, and your Heat builds faster. Take the Heat, but be off a vent when it erupts.',
+          description: 'More vents open and erupt more often, vents split open around the boss twice as fast, fissures open under you, and your Heat builds faster. Take the Heat, but be off a vent when it erupts.',
           actions: [
           { type: 'vent-field', count: 8, radius: 220, ringRadius: 520, rampAccelMult: 3,
             eruptEveryMs: 5500, telegraphMs: 1500, damageMult: 1.5,
             fissure: { everyMs: 9000, maxVents: 14 } },
+          { type: 'vent-spawner', everyMs: 1900, count: 2, minRadius: 60, maxRadius: 440, radius: 150, telegraphMs: 1350, lingerMs: 2200, damageMult: 1.4, rampAccelMult: 3 },
           { type: 'stoke-ramp', rampMsMult: 0.7 },
         ] },
         { hpPct: 0.25, name: 'Final Eruption',
-          description: 'It stops attacking and charges an eruption that hits the whole arena. It cannot be interrupted or evaded: kill it before the cast ends, or survive the blast with Guard and tank gear.',
-          actions: [{ type: 'set-weather', weather: 'ashfall' }] },
+          description: 'It stops attacking and charges an eruption that hits the whole arena, while vents burst open all around it. The eruption cannot be interrupted or evaded: kill it before the cast ends, or survive the blast with Guard and tank gear.',
+          actions: [
+          { type: 'set-weather', weather: 'ashfall' },
+          // The race against the Final Eruption, under a near-bullet-hell of vents.
+          { type: 'vent-spawner', everyMs: 800, count: 2, minRadius: 60, maxRadius: 440, radius: 140, telegraphMs: 1300, lingerMs: 2200, damageMult: 1.4, rampAccelMult: 3 },
+        ] },
       ],
     },
   }],

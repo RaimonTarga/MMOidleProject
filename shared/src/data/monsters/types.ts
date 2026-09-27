@@ -260,6 +260,26 @@ export type BossAction =
       fissure?: { everyMs: number; maxVents: number };
     }
   /**
+   * VENT SPAWNER (Volcanic, playtest 2026-09-27) — every `everyMs`, `count` short-lived
+   * vents split open at random points `minRadius`..`maxRadius` around the boss's
+   * CURRENT position: each swells for `telegraphMs`, erupts, lingers `lingerMs` as a
+   * Heat pool and closes. Re-issuing it retunes the rhythm (the last phase's
+   * near-bullet-hell). Stops with the boss.
+   */
+  | {
+      type: 'vent-spawner';
+      everyMs: number;
+      count: number;
+      minRadius: number;
+      maxRadius: number;
+      radius: number;
+      telegraphMs: number;
+      lingerMs: number;
+      /** Eruption damage, as a multiple of the boss's attack. */
+      damageMult: number;
+      rampAccelMult: number;
+    }
+  /**
    * ROOM DEBUFF — every `intervalMs`, each player in the boss's node gains one stack
    * of this boss debuff (up to `maxStacks`). Re-issuing it for the same effect
    * replaces the clock; `accelerate` shortens the interval after every stack (the

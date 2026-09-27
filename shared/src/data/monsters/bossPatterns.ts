@@ -525,6 +525,8 @@ export type BossPatternStep =
        */
       toward?: 'boss' | 'nearest-pool';
       poolFlavors?: HazardFlavor[];
+      /** A debuff laid on the victim where the drag lands them (Magma Shove: a slow). */
+      appliesDebuff?: PatternDebuff;
       interruptible?: boolean;
       guardable?: boolean;
       fx?: string;

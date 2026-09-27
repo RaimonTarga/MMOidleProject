@@ -1524,6 +1524,10 @@ function tickStep(
             ?? monster.hasPosition.current
           : monster.hasPosition.current;
         hooks?.pullPlayer(world, target, anchor, step.distance);
+        // Where the drag lands them (Magma Shove's slow: harder to step off the vent).
+        if (step.appliesDebuff && canApplyPlayerDebuff(target) && !target.isDead) {
+          layBossDebuff(target, monster, step.appliesDebuff);
+        }
       }
       world.pushEvent(monster.hasPosition.nodeId, {
         kind: 'monster-cast-end',
