@@ -66,6 +66,9 @@ export function arena(bossId: string, bossAt: Vec2, playerAt: Vec2, hp?: number,
   const arenaState: Arena = { world, boss, player, now, nodeId };
   // Wall-clock readers must agree with the simulated clock from the first action.
   Date.now = () => arenaState.now;
+  // Rolls (dodges, on-hit slows) must repeat too, or an assertion flakes ~1 in 6.
+  let seed = 173;
+  Math.random = () => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return seed / 4294967296; };
   return arenaState;
 }
 
