@@ -3,9 +3,9 @@ import { join } from 'node:path';
 import { ABILITY_DATABASE, SKILL_TREE } from '@mmo-idle/shared';
 import { attackFlairOf, flairCount } from '../../client/src/fx/attackFlair';
 
-// PLAYER ATTACK PROGRESSION (client fx/attackFlair.ts + fx/pathSignatures.ts):
+// PLAYER ATTACK PROGRESSION (client fx/attackFlair.ts + fx/bespoke/):
 // the stage ladder follows class advancement, ascension scales intensity, and
-// every tier-3 specialization is visibly its own thing.
+// every tier-3 specialization has its own animation.
 
 function assert(condition: boolean, message: string): void {
   if (!condition) throw new Error(message);
@@ -47,10 +47,7 @@ const REPLACES_ATTACK = new Set([
   'reload-light-t3-c', // Sniper: heavy shell
   'reload-balanced-t3-b', // Blunderbuss: pellet volley
 ]);
-const sigSource = readFileSync(join(__dirname, '../../client/src/fx/pathSignatures.ts'), 'utf8');
-const table = sigSource.split('const SIGNATURES')[1] ?? '';
-const rows = new Set([...table.matchAll(/^\s+'([a-z]+-[a-z]+-t3-[abc])':/gm)].map((m) => m[1]));
-// Stateful bespoke attacks (fx/bespoke/<class>.ts): a third, exclusive way to be covered.
+// Bespoke attacks (fx/bespoke/<class>.ts): every other specialization must have one.
 const bespokeDir = join(__dirname, '../../client/src/fx/bespoke');
 const bespoke = new Set<string>();
 for (const file of readdirSync(bespokeDir).filter((f) => f.endsWith('.ts') && f !== 'kit.ts')) {
@@ -67,18 +64,16 @@ const missing: string[] = [];
 for (const node of (SKILL_TREE as Map<string, { id: string; tier: number; name: string }>).values()) {
   if (node.tier !== 3 || node.id.startsWith('summoner-')) continue;
   if (!/-t3-[abc]$/.test(node.id)) continue;
-  const ways = [rows.has(node.id), REPLACES_ATTACK.has(node.id), bespoke.has(node.id)].filter(Boolean).length;
+  const ways = [REPLACES_ATTACK.has(node.id), bespoke.has(node.id)].filter(Boolean).length;
   if (ways === 0) missing.push(`${node.name} (${node.id})`);
-  assert(ways <= 1, `${node.id} is covered more than one way (signature / replaced / bespoke)`);
+  assert(ways <= 1, `${node.id} is covered more than one way (replaced and bespoke)`);
 }
-assert(missing.length === 0, `specializations with no signature and no bespoke attack: ${missing.join(', ')}`);
-const covered = rows.size + REPLACES_ATTACK.size + bespoke.size;
+assert(missing.length === 0, `specializations with no bespoke attack: ${missing.join(', ')}`);
+const covered = REPLACES_ATTACK.size + bespoke.size;
 assert(covered === 45, `expected 45 combat specializations, got ${covered}`);
 
 const combatFx = readFileSync(join(__dirname, '../../client/src/render/combatFx.ts'), 'utf8');
-assert(combatFx.includes('playPathSignature(scene, flair, from, to, ev.empowered)'),
-  'the ordinary attack branch should play the path signature');
-assert(combatFx.includes('bespoke.payoff(hit)') && combatFx.includes('bespoke.hit?.(hit)'),
+assert(combatFx.includes('bespoke.payoff(hit)') && combatFx.includes('bespoke?.hit?.(hit)'),
   'the ordinary attack branch should dispatch bespoke paths (payoff + stateful hit layer)');
 assert(combatFx.includes('bespokePathFor(flair.specId)?.reload?.('),
   'player-reload-start should dispatch the bespoke reload beat');

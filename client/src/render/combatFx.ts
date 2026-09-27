@@ -227,8 +227,7 @@ import { fxDiveBomb, fxTalonStrike } from "../fx/talonStrike";
 import { fxOpenerLand, fxOpenerWindup, isOpenerFx } from "../fx/engageOpeners";
 import { fxMobCastWindup } from "../fx/mobCastWindups";
 import { attackFlairOf, type AttackFlair } from "../fx/attackFlair";
-import { playPathSignature } from "../fx/pathSignatures";
-import { bespokePathFor } from "../fx/bespokePaths";
+import { bespokePathFor, playAscensionRing } from "../fx/bespokePaths";
 import { fxDualScale } from "../fx/bespoke/slinger";
 import { abilityCallout, playAbilityRank } from "../fx/abilityRank";
 import {
@@ -2006,15 +2005,15 @@ function runFxForAttackStyle(
     fxDualSlash(scene, to.x, to.y, ev.empowered);
   } else {
     playEmpoweredRing(args);
-    // A bespoke path (fx/bespokePaths.ts) replaces the finisher outright and layers
-    // its live resource over ordinary hits; every other specialization draws its
-    // one-motif signature (fx/pathSignatures.ts) over the range attack.
+    // Stage 3: the specialization's bespoke attack (fx/bespokePaths.ts) replaces the
+    // payoff outright and layers its live resource over ordinary hits.
     const bespoke = flair.stage === 3 ? bespokePathFor(flair.specId) : undefined;
     const hit = {
       scene, player, playerId: ev.playerId, targetId: ev.targetId, from, to,
       empowered: ev.empowered, execution: ev.execution, k: flair.scale,
     };
     // The payoff beat: a finisher / discharge / last bullet, or a Squire execution.
+    if (ev.empowered || ev.execution) playAscensionRing(scene, flair, to);
     if (bespoke?.payoff && (ev.empowered || ev.execution)) {
       bespoke.payoff(hit);
     } else {
@@ -2023,11 +2022,7 @@ function runFxForAttackStyle(
         player.selectedRange,
         player.attackStyle,
       )(args);
-      if (bespoke) bespoke.hit?.(hit);
-      else {
-        playPathSignature(scene, flair, from, to, ev.empowered);
-        if (flair.stage === 3 && ev.empowered && ev.playerId === scene.myId) impactFeel(scene, "light", to);
-      }
+      bespoke?.hit?.(hit);
     }
   }
 

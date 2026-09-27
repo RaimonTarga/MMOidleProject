@@ -2,7 +2,7 @@
  * SQUIRE (cooldown) specializations — the execution class, so each path shows
  * what it is charging between executions and then spends it. Every payoff keeps
  * the Squire's own execution slam underneath, so an execution still reads as one.
- * Devout Priest keeps its holy channel (combatFx) and its signature halo.
+ * Devout Priest's execution is its holy channel (combatFx); its hits carry a halo.
  */
 import type { PlayerView } from '@mmo-idle/shared';
 import { DEPTH } from '../../render/depth';
@@ -259,6 +259,24 @@ export const SQUIRE_PATHS: PathTable = {
           scale: { start: 0.6, end: 0 }, alpha: { start: 1, end: 0 }, gravityY: -80,
         });
         feel(h);
+      });
+    },
+  },
+
+  // Devout Priest — a halo of holy light comes down over each hit, brighter as
+  // the channel readies; the execution itself is the holy beam (combatFx).
+  'cooldown-heavy-t3-c': {
+    hit: (h) => {
+      const ready = Math.max(0, Math.min(100, h.player.executionCooldownPct ?? 0)) / 100;
+      const g = h.scene.add.graphics({ x: h.to.x, y: h.to.y - 40 }).setDepth(DEPTH.FX);
+      g.lineStyle(2 + ready * 1.5, 0xfff0a0, 0.6 + 0.4 * ready);
+      g.strokeEllipse(0, 0, 30 * h.k, 10 * h.k);
+      h.scene.tweens.add({
+        targets: g, y: h.to.y + 6, alpha: 0, duration: 300, ease: 'Quad.easeIn', onComplete: () => g.destroy(),
+      });
+      burstFx(h.scene, 'ptx-spark', h.to.x, h.to.y, 3 + Math.round(ready * 5), 420, {
+        tint: [0xfff0a0, 0xffffff], speed: { min: 20, max: 60 }, angle: { min: 250, max: 290 },
+        scale: { start: 0.5, end: 0 }, alpha: { start: 1, end: 0 }, gravityY: -60,
       });
     },
   },

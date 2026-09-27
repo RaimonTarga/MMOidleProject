@@ -8,11 +8,11 @@
  *   STAGE      class advancement: 0 class root, 1 frame, 2 range, 3 specialization.
  *              It changes WHAT is drawn: stage 0 is the bare stroke; the frame adds
  *              the glow and contact flash; the range swaps in its own weapon shape
- *              (ATTACK_FX_BY_RANGE); the specialization adds its path signature
- *              (pathSignatures.ts) on every hit.
+ *              (ATTACK_FX_BY_RANGE); the specialization brings its own bespoke
+ *              attack (bespokePaths.ts) showing the path's resource.
  *   ASCENSION  `playerTier` (T0..T4 quest ascension). It changes HOW MUCH: particle
- *              counts and size climb a little per tier, and from T3 an empowered hit
- *              rings out in the path's colour.
+ *              counts and size climb a little per tier, and from T3 a specialized
+ *              payoff rings out in the class colour (bespokePaths.ts).
  *
  * Base FX take an optional `flair`; without one (monsters, minions, previews) they
  * draw exactly what they always did, which is the stage-2 look.
