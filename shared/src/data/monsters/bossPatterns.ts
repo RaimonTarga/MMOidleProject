@@ -109,6 +109,13 @@ export type BossPatternStep =
        */
       rootable?: boolean;
       fx?: string;
+      /**
+       * A boss-effect id shown on the boss (target frame tile, with the cast's
+       * clock) while this cast runs, so its tooltip can explain the mechanic being
+       * charged — the Volcanic final strike. Authored copy lives with the client's
+       * boss-effect help.
+       */
+      announce?: string;
     }
   /**
    * COMMITTED TRAVEL. The boss runs its locked lane, damaging each eligible target
@@ -156,6 +163,11 @@ export type BossPatternStep =
       rawDamage?: number;
       /** A committed uninterruptible finisher still resolves while its caster is stunned. */
       interruptible?: boolean;
+      /**
+       * Player evasion does not dodge or graze it (Volcanic final strike): an
+       * arena-wide DPS check an evasion build must not be able to ignore.
+       */
+      unevadable?: boolean;
       telegraphMs: number;
       stunMs?: number;
       /**
@@ -203,6 +215,8 @@ export type BossPatternStep =
       spread: number;
       delayMs: number;
       damageMult: number;
+      /** Each circle leaves this pool where it lands (Swamp Bile Rain). */
+      pool?: PatternPool;
     }
   /**
    * Raise a source-owned absorb barrier. Breaking it during the pattern is a real
@@ -632,6 +646,8 @@ export interface RunsBossPattern {
   stepEndsAtMs: number;
   /** Set when the current step has already done its one-time work. */
   stepStarted: boolean;
+  /** Boss-effect id a running cast is announcing (`cast.announce`). */
+  announcedEffect?: string;
   /** Player captured when the pattern began; the sequence is aimed at them. */
   targetId?: string;
   /** Geometry captured at the committing step; later steps read this. */

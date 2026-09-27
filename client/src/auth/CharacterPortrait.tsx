@@ -11,6 +11,7 @@ import {
   classEmblemIconSource,
   skillVocabularyIconSource,
 } from '../ui/conceptIcons';
+import { packedAssetUrl } from '../packedAssetUrl';
 
 interface AtlasFrame {
   filename: string;
@@ -25,7 +26,7 @@ let atlasFramesPromise: Promise<Map<string, AtlasFrame>> | null = null;
 let atlasImagePromise: Promise<HTMLImageElement> | null = null;
 
 function loadAtlasFrames(): Promise<Map<string, AtlasFrame>> {
-  atlasFramesPromise ??= fetch('/assets/sprites.json')
+  atlasFramesPromise ??= fetch(packedAssetUrl('/assets/sprites.json'))
     .then((response) => {
       if (!response.ok) throw new Error(`Unable to load character atlas (${response.status})`);
       return response.json() as Promise<AtlasJson>;
@@ -41,7 +42,7 @@ function loadAtlasImage(): Promise<HTMLImageElement> {
     const image = new Image();
     image.onload = () => resolve(image);
     image.onerror = () => reject(new Error('Unable to load character sprite atlas'));
-    image.src = '/assets/sprites.png';
+    image.src = packedAssetUrl('/assets/sprites.png');
   });
   return atlasImagePromise;
 }

@@ -69,7 +69,9 @@ export const bossMonsterEntriesT2 = [
     // Numbers placeholder — user balance pass after playtest.
     bossScript: {
       phases: [
-        { hpPct: 0.5, name: 'Stampede', actions: [
+        { hpPct: 0.5, name: 'Stampede',
+          description: 'The herd answers: a stampede bull charges in, two savanna hawks strike from range and more yearlings join. Thin the herd before the next Rallying Roar, or push the boss through it.',
+          actions: [
           { type: 'cast', castMs: 2000, label: 'Stampede', actions: [
             { type: 'spawn-adds', monsterTypeId: 'stampede-bull', count: 1, offsetRange: 220 },
             { type: 'spawn-adds', monsterTypeId: 'savanna-hawk', count: 2, at: 'target-ring', ringDistance: 400 },
@@ -227,7 +229,9 @@ export const bossMonsterEntriesT2 = [
     // ONE readable sequence it owns.
     bossScript: {
       phases: [
-        { hpPct: 0.5, name: 'Unyielding', actions: [
+        { hpPct: 0.5, name: 'Unyielding',
+          description: 'Its plated charge hits harder and comes around sooner. Stop the Stoneplate cast, or break the plate, to open it to stuns and roots.',
+          actions: [
           { type: 'empower-charged', multiplierMult: 1.15, cooldownMult: 0.80 },
         ] },
       ],
@@ -261,29 +265,46 @@ export const bossMonsterEntriesT2 = [
     //   Mire Lash  — a telegraphed tongue grab that DRAGS you toward the nearest
     //                pool it owns. Keep pools behind you, resist forced movement,
     //                step out after.
+    //   Bile Rain  — (playtest 2026-09-27: the arena never filled up) globs of bile
+    //                lobbed across the arena around you, each leaving a Bile Pool.
+    //                Pools are bigger and last a minute, so the room fills over the
+    //                fight — the swamp should end up as contaminated as the Cave.
     chargedAttack: {
       name: 'Bile Pool', castMs: 1100, cooldownMs: 8500, initialCooldownMs: 3500,
-      multiplier: 1.1, fx: 'strong-kick', aoe: { radius: 115, impactFx: 'pool-spawn' },
-      pool: { durationMs: 35000, damagePerTick: 5, tickIntervalMs: 1000, slowSpeedMult: 0.70 },
+      multiplier: 1.1, fx: 'strong-kick', aoe: { radius: 150, impactFx: 'pool-spawn' },
+      pool: { durationMs: 60000, damagePerTick: 5, tickIntervalMs: 1000, slowSpeedMult: 0.70 },
     },
     bossPattern: {
       id: 'mire-lash', name: 'Mire Lash',
       damageMultiplier: 1.0, cooldownMs: 11000, initialCooldownMs: 7000,
       steps: [
-        { kind: 'impact', name: 'Mire Spit', anchor: 'target', radius: 125,
+        { kind: 'impact', name: 'Mire Spit', anchor: 'target', radius: 165,
           damageMult: 0.4, telegraphMs: 1000, fx: 'pool-spawn',
-          pool: { durationMs: 35000, damagePerTick: 0, tickIntervalMs: 1000,
+          pool: { durationMs: 60000, damagePerTick: 0, tickIntervalMs: 1000,
             slowSpeedMult: 0.40, flavor: 'mire', label: 'Mire' } },
         { kind: 'wait', durationMs: 500 },
         { kind: 'pull', name: 'Mire Lash', castMs: 1200, distance: 280,
           toward: 'nearest-pool', fx: 'mire-lash' },
       ],
     },
+    bossPatternVariants: [{
+      id: 'mire-bile-rain', name: 'Bile Rain',
+      damageMultiplier: 1.0, cooldownMs: 13000, initialCooldownMs: 5000,
+      steps: [
+        { kind: 'cast', name: 'Bile Rain', castMs: 800 },
+        { kind: 'rockfall', name: 'Bile Rain', count: 4, radius: 115, spread: 560, delayMs: 1400,
+          damageMult: 0.3,
+          pool: { durationMs: 45000, damagePerTick: 5, tickIntervalMs: 1000, slowSpeedMult: 0.70, label: 'Bile Pool' } },
+      ],
+    }],
     // At 50% the rot escalates on the channels it owns: venom stacks faster
     // (cadence, not hit size) and the pools arrive sooner and wider.
     bossScript: {
       phases: [
-        { hpPct: 0.5, name: 'Rising Mire', actions: [
+        { hpPct: 1.0, actions: [{ type: 'add-pattern', patternId: 'mire-bile-rain' }] },
+        { hpPct: 0.5, name: 'Rising Mire',
+          description: 'Venom stacks faster, and Bile Pools come sooner and spread wider. Keep open ground behind you so the Mire Lash has nowhere bad to drag you.',
+          actions: [
           { type: 'enrage', atkMult: 1.0, cdMult: 0.70 }, // pure cadence: DoT stacks faster
           { type: 'empower-charged', cooldownMult: 0.70, radiusMult: 1.15 },
         ] },
@@ -348,7 +369,9 @@ export const bossMonsterEntriesT2 = [
     }],
     bossScript: {
       phases: [
-        { hpPct: 0.5, name: 'Second Dive', actions: [
+        { hpPct: 0.5, name: 'Second Dive',
+          description: 'It burrows twice in a row, erupting under you each time and leaving sinkholes. Damage the mound to drag it up early.',
+          actions: [
           { type: 'set-pattern', patternId: 'dreadbore-second-dive' },
         ] },
       ],
@@ -440,7 +463,9 @@ export const bossMonsterEntriesT2 = [
     },
     bossScript: {
       phases: [
-        { hpPct: 0.5, name: 'Relentless', actions: [
+        { hpPct: 0.5, name: 'Relentless',
+          description: 'It moves 30% faster, and its signature strike hits harder and comes around sooner. Save your defences for the cash-out.',
+          actions: [
           // The setup tightens: it closes faster and the cash-out comes around sooner.
           { type: 'stat-buff', stat: 'speed', mult: 1.3, label: 'relentless-pursuit' },
           { type: 'empower-charged', multiplierMult: 1.15, cooldownMult: 0.75 },
@@ -490,7 +515,7 @@ export const bossMonsterEntriesT2 = [
           sourceId: 'jungle-escape', shieldPct: 0.05,
           onBreak: { staggerMs: 1000, label: 'Caught' },
           instinctSpeedPct: 0.30,
-          flee: { speed: 330, escapeDistance: 400 } },
+          flee: { speed: 540, escapeDistance: 600 } },
         { kind: 'conceal', name: 'Vanished', marker: 'stealth', durationMs: 6000,
           relocate: 'near-target', emergeGap: 30, travelSpeed: 220, surfacesOnContact: true },
         { kind: 'payoff', name: 'Ambush', castMs: 350, fx: 'savage-maul',
@@ -512,7 +537,7 @@ export const bossMonsterEntriesT2 = [
           sourceId: 'jungle-escape', shieldPct: 0.05,
           onBreak: { staggerMs: 1000, label: 'Caught' },
           instinctSpeedPct: 0.30,
-          flee: { speed: 330, escapeDistance: 400 } },
+          flee: { speed: 540, escapeDistance: 600 } },
         { kind: 'conceal', name: 'Vanished', marker: 'stealth', durationMs: 6000,
           relocate: 'near-target', emergeGap: 30, travelSpeed: 220, surfacesOnContact: true },
         { kind: 'payoff', name: 'Ambush', castMs: 350, fx: 'savage-maul',
@@ -522,7 +547,9 @@ export const bossMonsterEntriesT2 = [
     }],
     bossScript: {
       phases: [
-        { hpPct: 0.5, name: 'Bloodlust', actions: [
+        { hpPct: 0.5, name: 'Bloodlust',
+          description: 'Its escapes turn predatory: it flees, vanishes, ambushes you and frenzies. Stun or root the flee, or break its guard, before it gets away.',
+          actions: [
           { type: 'set-pattern', patternId: 'gorger-escape-bloodlust' },
         ] },
       ],

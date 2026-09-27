@@ -89,6 +89,7 @@ import {
 import { applyMonsterAoe } from "../damage/aoeDamage";
 import {
   publishGroundZone,
+  publishPatternPool,
   publishToxicPool,
   publishFaultLineBurst,
   takeDueGroundZoneImpacts,
@@ -723,10 +724,13 @@ export function runMonsterAttack(
   rawDamage?: number,
   uninterruptible = false,
   abilityName?: string,
+  /** Player evasion neither dodges nor grazes this hit (see `registerEvasion`). */
+  unevadable = false,
 ): MonsterAttackOutcome {
   const baseAttack = rawDamage ?? monster.dealsDamage.attack;
   const ctx = makeCombatContext(monster, "monster", target, "player");
   if (abilityName) ctx.metadata["abilityName"] = abilityName;
+  if (unevadable) ctx.metadata["unevadable"] = true;
 
   if (!uninterruptible && isMonsterStunned(world, monster.isMonster.id)) {
     ctx.cancelled = true;
@@ -2314,6 +2318,9 @@ function resolveDelayedGroundZoneImpacts(world: World, now: number): void {
 
     if (impact.kind === 'fault-line-telegraph' && impact.scattered) {
       for (const point of impact.points) {
+        if (impact.leavesPool && world.hasMonster(ownerId)) {
+          publishPatternPool(world, monster, point, impact.leavesPool, impact.radius, now);
+        }
         world.pushEvent(monster.hasPosition.nodeId, {
           kind: 'boss-fx',
           monsterId: impact.id,

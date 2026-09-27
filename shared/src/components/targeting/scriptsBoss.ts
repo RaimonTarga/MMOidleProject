@@ -49,6 +49,12 @@ export interface ScriptsBoss {
   /** Currently active timed effects. */
   activeEffects: ActiveBossEffect[];
   /**
+   * The `bossEffects` keys the script published last tick. Other systems (boss
+   * patterns: recovery, instinct, cast announcements) publish onto the same list,
+   * so the script replaces only its own keys instead of the whole list.
+   */
+  publishedEffects?: string[];
+  /**
    * Runtime override of the monster's DoT-on-hit (set by a 'morph' action). When
    * present, the monster→player DoT listener uses this instead of the static def.
    */
@@ -154,8 +160,18 @@ export interface ScriptsBoss {
     pos: { x: number; y: number };
     radius: number;
     nextEruptAtMs: number;
+    /** The vent's ground zone, so a later phase can widen it in place. */
+    zoneId?: string;
   }[];
-  ventRhythm?: { eruptEveryMs: number; telegraphMs: number; damageMult: number };
+  ventRhythm?: {
+    eruptEveryMs: number;
+    telegraphMs: number;
+    damageMult: number;
+    radius: number;
+    rampAccelMult: number;
+    /** Fissures: a new vent splits open under a player and erupts at once. */
+    fissure?: { everyMs: number; maxVents: number; nextAtMs: number };
+  };
   /** Set by 'room-debuff': the arena's own boss-debuff ramps (Frostbite, Depth). */
   roomDebuffs?: {
     effectId: string;

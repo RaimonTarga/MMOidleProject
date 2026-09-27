@@ -507,13 +507,15 @@ for (const stage of ['flee', 'stalk'] as const) {
   // watched. Breaking the plate is the answer, not outrunning it. Boss-lineage
   // redesign (2026-09-27): fast enough that an ordinary chaser usually loses it
   // (the cap moved 2.5x -> 3.5x; a straight flee interpolates cleanly at ~400px/s).
+  // Playtest 2026-09-27: still "not sharp enough" — the cap moved to 6x, with the
+  // escape distance lengthened so the run still lasts over a second (asserted above).
   const guardStep = MONSTER_DATABASE.get(id)!.bossPattern!.steps.find(
     step => step.kind === 'escape-guard',
   )!;
   assert(guardStep.kind === 'escape-guard' && guardStep.flee !== undefined, 'setup: it flees');
   assert(
     guardStep.flee.speed > GAME_CONFIG.PLAYER_SPEED &&
-      guardStep.flee.speed < GAME_CONFIG.PLAYER_SPEED * 3.5,
+      guardStep.flee.speed < GAME_CONFIG.PLAYER_SPEED * 6,
     `the flee should outpace the player without blurring (${guardStep.flee.speed}px/s ` +
       `vs ${GAME_CONFIG.PLAYER_SPEED})`,
   );

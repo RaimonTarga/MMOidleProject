@@ -1022,7 +1022,7 @@ export function dispatchCombatEvent(
         if (ev.fx === "charge-lane") fxChargeLane(scene, caster.x, caster.y);
         else if (ev.fx === "burrow") fxBurrow(scene, caster.x, caster.y);
         else if (ev.fx === "predator-flee") fxPredatorFlee(scene, caster.x, caster.y);
-        else if (ev.fx === "cataclysm-cast") fxCataclysmCast(scene, caster.x, caster.y);
+        else if (ev.fx === "cataclysm-cast") fxCataclysmCast(scene, ev.monsterId, caster.x, caster.y, ev.castMs);
         // The Bog Lurker gathering itself at the water's edge. This is the beat the
         // whole ability is solvable from, so it has to be drawn on the wind-up and
         // not only on what lands.

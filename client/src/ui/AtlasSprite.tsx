@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import './atlasSprite.css';
+import { packedAssetUrl } from '../packedAssetUrl';
 
 interface AtlasFrame {
   x: number;
@@ -24,7 +25,7 @@ let manifestPromise: Promise<Map<string, AtlasFrame>> | null = null;
 
 function loadAtlasManifest(): Promise<Map<string, AtlasFrame>> {
   if (!manifestPromise) {
-    manifestPromise = fetch('/assets/sprites.json')
+    manifestPromise = fetch(packedAssetUrl('/assets/sprites.json'))
       .then((res) => res.json() as Promise<SpritesManifest>)
       .then((data) => {
         const texture = data.textures[0];
@@ -92,7 +93,7 @@ export function AtlasSprite({
       style={{
         width: rect.w * scale,
         height: rect.h * scale,
-        backgroundImage: 'url(/assets/sprites.png)',
+        backgroundImage: `url(${packedAssetUrl('/assets/sprites.png')})`,
         backgroundSize: `${rect.atlasW * scale}px ${rect.atlasH * scale}px`,
         backgroundPosition: `-${rect.x * scale}px -${rect.y * scale}px`,
       }}

@@ -13,6 +13,7 @@ import {
   SUNDERED_EFFECT_ID,
   type DeathKiller,
   type GroundZoneView,
+  type PatternPool,
   type PoolErosion,
   type Vec2,
 } from '@mmo-idle/shared';
@@ -146,6 +147,8 @@ export interface RuntimeFaultLineBurst extends RuntimeGroundZoneBase {
    * erase the rocks) and each rock pays off with its own impact cue.
    */
   scattered?: boolean;
+  /** Each scattered circle leaves this pool where it lands (Swamp Bile Rain). */
+  leavesPool?: PatternPool;
 }
 
 /** Node-scoped, runtime-only circles. Never persisted or rebuilt on thaw. */
@@ -221,6 +224,47 @@ export function publishToxicPool(
   };
   zonesFor(world, nodeId).push(published);
   return published;
+}
+
+/** The boss a pattern pool belongs to (cleared with it) and blames on a death. */
+interface PatternPoolOwner {
+  isMonster: { id: string; monsterTypeId: string; name: string; isBoss: boolean };
+  hasPosition: { nodeId: string };
+}
+
+/** Lay the pool a boss pattern leaves where it lands (impact or scattered rain). */
+export function publishPatternPool(
+  world: World,
+  owner: PatternPoolOwner,
+  at: Vec2,
+  pool: PatternPool,
+  fallbackRadius: number,
+  now: number,
+): RuntimeToxicPool {
+  const radius = pool.radius ?? fallbackRadius;
+  return publishToxicPool(world, owner.hasPosition.nodeId, {
+    kind: 'toxic-pool',
+    pos: { ...at },
+    radius,
+    baseRadius: radius,
+    startedAtMs: now,
+    expiresAtMs: now + pool.durationMs,
+    damagePerTick: pool.damagePerTick,
+    tickIntervalMs: pool.tickIntervalMs,
+    slowSpeedMult: pool.slowSpeedMult,
+    ...(pool.flavor ? { flavor: pool.flavor } : {}),
+    ...(pool.detonationMultiplier !== undefined ? { detonationMultiplier: pool.detonationMultiplier } : {}),
+    ...(pool.erodes ? { erodes: pool.erodes } : {}),
+    ownerId: owner.isMonster.id,
+    sourceId: `pattern-pool:${pool.label.toLowerCase().replace(/\s+/g, '-')}`,
+    sourceLabel: pool.label,
+    killer: {
+      monsterTypeId: owner.isMonster.monsterTypeId,
+      monsterName: owner.isMonster.name,
+      isBoss: owner.isMonster.isBoss,
+      nodeId: owner.hasPosition.nodeId,
+    },
+  });
 }
 
 /** Publish a linked-circle radial pattern that resolves as one delayed hit. */

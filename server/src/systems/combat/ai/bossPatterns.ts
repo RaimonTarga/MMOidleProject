@@ -43,6 +43,7 @@ import {
   publishChargeCorridor,
   publishFaultLineBurst,
   publishGroundZone,
+  publishPatternPool,
   publishToxicPool,
   reaimChargeCorridor,
   type RuntimeChargeCorridor,
@@ -332,6 +333,7 @@ export function endPattern(
   const state = monster.runsBossPattern;
   if (!state) return;
 
+  clearCastAnnouncement(world, monster, state);
   for (const sourceId of state.barrierSourceIds) clearSourceBarrier(monster, sourceId);
   // Retire the lane and any telegraph this pattern published. Owner-keyed, so it
   // cannot strand a circle for the sweeper to find after the boss has moved on.
@@ -357,6 +359,37 @@ export function endPattern(
       fired: false,
     });
   }
+}
+
+/** Show the effect a cast announces (`cast.announce`) with the cast's clock. */
+function publishCastAnnouncement(
+  world: World,
+  monster: MonsterEntity,
+  state: NonNullable<MonsterEntity['runsBossPattern']>,
+  effectId: string,
+  remainingMs: number,
+  totalMs: number,
+): void {
+  state.announcedEffect = effectId;
+  const effects = monster.hasStatus.bossEffects ?? [];
+  if (!effects.includes(effectId)) monster.hasStatus.bossEffects = [...effects, effectId];
+  (monster.hasStatus.bossEffectStacks ??= {})[effectId] = 1;
+  (monster.hasStatus.bossEffectDurations ??= {})[effectId] = { remainingMs: Math.max(0, remainingMs), totalMs };
+  markSliceDirty(world, monster, 'hasStatus');
+}
+
+function clearCastAnnouncement(
+  world: World,
+  monster: MonsterEntity,
+  state: NonNullable<MonsterEntity['runsBossPattern']>,
+): void {
+  const effectId = state.announcedEffect;
+  if (!effectId) return;
+  state.announcedEffect = undefined;
+  monster.hasStatus.bossEffects = (monster.hasStatus.bossEffects ?? []).filter(id => id !== effectId);
+  delete monster.hasStatus.bossEffectStacks?.[effectId];
+  delete monster.hasStatus.bossEffectDurations?.[effectId];
+  markSliceDirty(world, monster, 'hasStatus');
 }
 
 /** Put the boss into a visible, punishable recovery window. */
@@ -599,6 +632,7 @@ export interface PatternCombatHooks {
     rawDamage?: number,
     uninterruptible?: boolean,
     abilityName?: string,
+    unevadable?: boolean,
   ) => void;
 }
 
@@ -844,6 +878,7 @@ function beginStep(
   switch (step.kind) {
     case 'cast': {
       state.stepEndsAtMs = now + step.castMs;
+      if (step.announce) publishCastAnnouncement(world, monster, state, step.announce, step.castMs, step.castMs);
       world.pushEvent(monster.hasPosition.nodeId, {
         kind: 'monster-cast-start',
         monsterId: monster.isMonster.id,
@@ -1261,7 +1296,14 @@ function tickStep(
           paintLane(world, monster, state, step.lane, target, now, state.stepEndsAtMs);
         }
       }
-      return now >= state.stepEndsAtMs ? 'done' : 'running';
+      if (now >= state.stepEndsAtMs) {
+        clearCastAnnouncement(world, monster, state);
+        return 'done';
+      }
+      if (step.announce) {
+        publishCastAnnouncement(world, monster, state, step.announce, state.stepEndsAtMs - now, step.castMs);
+      }
+      return 'running';
     }
     case 'charge':
       return tickCommittedTravel(world, monster, state, pattern, step, dt, now);
@@ -1287,9 +1329,10 @@ function tickStep(
         step.rawDamage,
         step.interruptible === false,
         step.name,
+        step.unevadable,
       );
       if (!world.hasMonster(monster.isMonster.id)) return 'ended';
-      if (step.pool) layPatternPool(world, monster, at, step.pool, step.radius, now);
+      if (step.pool) publishPatternPool(world, monster, at, step.pool, step.radius, now);
       for (const victim of riderVictims) {
         if (victim.isDead || !world.getPlayerEntity(victim.isPlayer.id)) continue;
         if (step.addsAmbientStacks) addAmbientStacks(victim, step.addsAmbientStacks);
@@ -2106,8 +2149,11 @@ function resolvePayoff(
     if (landed && step.onHitPoison && canApplyPlayerDebuff(target) && !target.isDead) {
       const poison = step.onHitPoison;
       for (let i = 0; i < poison.stacks; i++) {
+        // Named for the step (Venomous Bite): without an id and label the poison fell
+        // back to the biome's generic DoT flavour and read as another monster's.
         applyMonsterDotToPlayer(world, monster, target, {
           ...poison, maxStacks: poison.stacks, element: 'poison',
+          debuffId: step.name.toLowerCase().replace(/\s+/g, '-'), label: step.name,
         }, step.name);
       }
     }
@@ -2294,41 +2340,6 @@ function dropThornSnare(
   });
 }
 
-/** Lay the pool an impact leaves behind, owned by the boss (cleared on its death). */
-function layPatternPool(
-  world: World,
-  monster: MonsterEntity,
-  at: Vec2,
-  pool: PatternPool,
-  impactRadius: number,
-  now: number,
-): void {
-  const radius = pool.radius ?? impactRadius;
-  publishToxicPool(world, monster.hasPosition.nodeId, {
-    kind: 'toxic-pool',
-    pos: { ...at },
-    radius,
-    baseRadius: radius,
-    startedAtMs: now,
-    expiresAtMs: now + pool.durationMs,
-    damagePerTick: pool.damagePerTick,
-    tickIntervalMs: pool.tickIntervalMs,
-    slowSpeedMult: pool.slowSpeedMult,
-    ...(pool.flavor ? { flavor: pool.flavor } : {}),
-    ...(pool.detonationMultiplier !== undefined ? { detonationMultiplier: pool.detonationMultiplier } : {}),
-    ...(pool.erodes ? { erodes: pool.erodes } : {}),
-    ownerId: monster.isMonster.id,
-    sourceId: `pattern-pool:${pool.label.toLowerCase().replace(/\s+/g, '-')}`,
-    sourceLabel: pool.label,
-    killer: {
-      monsterTypeId: monster.isMonster.monsterTypeId,
-      monsterName: monster.isMonster.name,
-      isBoss: monster.isMonster.isBoss,
-      nodeId: monster.hasPosition.nodeId,
-    },
-  });
-}
-
 /** Centre of the closest live pool this boss owns (optionally of given flavors). */
 function nearestOwnedPool(
   world: World,
@@ -2386,6 +2397,7 @@ function publishRockfall(
     points,
     damageMultiplier: pattern.damageMultiplier * step.damageMult,
     scattered: true,
+    ...(step.pool ? { leavesPool: step.pool } : {}),
   });
   void state;
 }

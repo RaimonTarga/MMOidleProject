@@ -29,6 +29,12 @@ import { nodeToScene } from './sceneCoords';
 
 /** How faded the body draws while it is under the ground. */
 const SUBMERGED_ALPHA = 0.32;
+/**
+ * STEALTH (Trench Into the Dark, Jungle Vanished) only fades the body: nothing
+ * went into the ground, so squashing and sinking it read as a stretched sprite
+ * (playtest 2026-09-27).
+ */
+const STEALTH_ALPHA = 0.38;
 /** Vertical squash on a body with no bespoke burrowed sprite. */
 const SUBMERGED_SCALE_Y = 0.4;
 /** How far into the ground the body sinks, in node px. */
@@ -123,9 +129,12 @@ function applyConcealedLook(
   id: string,
   size: number,
   usingBurrowArt: boolean,
+  marker: NonNullable<MonsterView['concealed']>,
 ): void {
   const sprite = state.sprite.get(id);
-  if (sprite) {
+  if (sprite && marker === 'stealth') {
+    sprite.setAlpha(STEALTH_ALPHA);
+  } else if (sprite) {
     sprite.setAlpha(usingBurrowArt ? 1 : SUBMERGED_ALPHA);
     // A bespoke burrowed sprite is already drawn as a mound; squashing it too
     // would flatten art authored at the right proportions.
@@ -186,7 +195,7 @@ export function syncConcealment(
   const size = monster.isBoss ? 128 : 64;
 
   if (now === was) {
-    if (now !== undefined) applyConcealedLook(state, monster.id, size, usingBurrowArt);
+    if (now !== undefined) applyConcealedLook(state, monster.id, size, usingBurrowArt, now);
     return;
   }
   meta.concealed = now;
@@ -204,9 +213,10 @@ export function syncConcealment(
   if (now !== undefined) {
     // GOING UNDER. Dirt first, so the body change happens behind it.
     if (now === 'burrow') spawnDirtCloud(scene, scenePos.x, scenePos.y, cloudScale);
-    // Sink only the improvised form; bespoke burrow art sits at its own height.
-    meta.visualOffsetY = usingBurrowArt ? undefined : SUBMERGED_SINK_PX;
-    applyConcealedLook(state, monster.id, size, usingBurrowArt);
+    // Sink only the improvised burrow; bespoke burrow art sits at its own height,
+    // and a stealthed body stays where it is.
+    meta.visualOffsetY = usingBurrowArt || now === 'stealth' ? undefined : SUBMERGED_SINK_PX;
+    applyConcealedLook(state, monster.id, size, usingBurrowArt, now);
     return;
   }
 

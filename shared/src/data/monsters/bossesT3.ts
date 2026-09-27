@@ -122,11 +122,15 @@ export const bossMonsterEntriesT3 = [
     }],
     bossScript: {
       phases: [
-        { hpPct: 0.6, name: 'Double Charge', actions: [
+        { hpPct: 0.6, name: 'Double Charge',
+          description: 'After the plated charge the Hornplate drops and it re-aims for a second charge. That unplated wind-up can be stopped with a root or a stun.',
+          actions: [
           { type: 'set-pattern', patternId: 'horn-double-charge' },
         ] },
         // Soft enrage: the whole sequence sooner, the wind-ups tighter.
-        { hpPct: 0.25, name: 'Crag Rush', actions: [
+        { hpPct: 0.25, name: 'Crag Rush',
+          description: 'It moves 25% faster, and its charges wind up quicker and come around more often.',
+          actions: [
           { type: 'empower-charged', cooldownMult: 0.70, castMsMult: 0.85 },
           { type: 'stat-buff', stat: 'speed', mult: 1.25, label: 'crag-rush' },
         ] },
@@ -239,10 +243,14 @@ export const bossMonsterEntriesT3 = [
     ],
     bossScript: {
       phases: [
-        { hpPct: 0.6, name: 'Tunnel Chase', actions: [
+        { hpPct: 0.6, name: 'Tunnel Chase',
+          description: 'It tunnels after you three times in a row, erupting beneath you and leaving sinkholes. Damage, root or stun the mound to drag it up early.',
+          actions: [
           { type: 'set-pattern', patternId: 'deep-core-tunnel-chase' },
         ] },
-        { hpPct: 0.25, name: 'Collapse', actions: [
+        { hpPct: 0.25, name: 'Collapse',
+          description: 'The tunnel chase comes around faster, and its sinkholes last far longer. The arena is closing in: finish it.',
+          actions: [
           { type: 'set-pattern', patternId: 'deep-core-collapse' },
         ] },
       ],
@@ -276,18 +284,20 @@ export const bossMonsterEntriesT3 = [
     //       resistance and Recovery stretch it; killing the boss is the answer.
     // Swamp does not demand Cleanse (the old pool vulnerability is gone); CUT with
     // the redesign: `chargeOnAggro` and the one enormous Rot Bloom pool.
+    // Playtest 2026-09-27: the pools never became a threat. They are bigger, last
+    // over a minute, and Bile Rain lobs a spread of them around you every cycle.
     chargedAttack: {
       name: 'Bile Pool', castMs: 1000, cooldownMs: 8000, initialCooldownMs: 3500,
-      multiplier: 1.2, fx: 'strong-kick', aoe: { radius: 130, impactFx: 'pool-spawn' },
-      pool: { durationMs: 35000, damagePerTick: 8, tickIntervalMs: 1000, slowSpeedMult: 0.65 },
+      multiplier: 1.2, fx: 'strong-kick', aoe: { radius: 175, impactFx: 'pool-spawn' },
+      pool: { durationMs: 75000, damagePerTick: 8, tickIntervalMs: 1000, slowSpeedMult: 0.65 },
     },
     bossPattern: {
       id: 'croc-mire-lash', name: 'Mire Lash',
       damageMultiplier: 1.0, cooldownMs: 10000, initialCooldownMs: 6500,
       steps: [
-        { kind: 'impact', name: 'Mire Spit', anchor: 'target', radius: 135,
+        { kind: 'impact', name: 'Mire Spit', anchor: 'target', radius: 180,
           damageMult: 0.4, telegraphMs: 1000, fx: 'pool-spawn',
-          pool: { durationMs: 35000, damagePerTick: 0, tickIntervalMs: 1000,
+          pool: { durationMs: 75000, damagePerTick: 0, tickIntervalMs: 1000,
             slowSpeedMult: 0.40, flavor: 'mire', label: 'Mire' } },
         { kind: 'wait', durationMs: 500 },
         { kind: 'pull', name: 'Mire Lash', castMs: 1100, distance: 300,
@@ -300,7 +310,7 @@ export const bossMonsterEntriesT3 = [
       steps: [
         // The spore detonates 5s after it lands: telegraph 1s + wait 1.2s + lash
         // 1.1s puts the drag ~2.3s into its life, with ~2.7s left to get out.
-        { kind: 'impact', name: 'Spore Spit', anchor: 'target', radius: 135,
+        { kind: 'impact', name: 'Spore Spit', anchor: 'target', radius: 165,
           damageMult: 0.4, telegraphMs: 1000, fx: 'pool-spawn',
           pool: { durationMs: 5000, damagePerTick: 6, tickIntervalMs: 1000,
             slowSpeedMult: 0.60, flavor: 'spore', detonationMultiplier: 2.25, label: 'Spore Pool' } },
@@ -308,15 +318,29 @@ export const bossMonsterEntriesT3 = [
         { kind: 'pull', name: 'Spore Lash', castMs: 1100, distance: 320,
           toward: 'nearest-pool', poolFlavors: ['spore'], fx: 'mire-lash' },
       ],
+    }, {
+      id: 'croc-bile-rain', name: 'Bile Rain',
+      damageMultiplier: 1.0, cooldownMs: 11000, initialCooldownMs: 4500,
+      steps: [
+        { kind: 'cast', name: 'Bile Rain', castMs: 800 },
+        { kind: 'rockfall', name: 'Bile Rain', count: 6, radius: 125, spread: 640, delayMs: 1400,
+          damageMult: 0.3,
+          pool: { durationMs: 60000, damagePerTick: 8, tickIntervalMs: 1000, slowSpeedMult: 0.65, label: 'Bile Pool' } },
+      ],
     }],
     bossScript: {
       phases: [
-        { hpPct: 0.6, name: 'Spore Bloom', actions: [
+        { hpPct: 1.0, actions: [{ type: 'add-pattern', patternId: 'croc-bile-rain' }] },
+        { hpPct: 0.6, name: 'Spore Bloom',
+          description: 'Its spit now lays Spore Pools that detonate a few seconds after landing, and the lash drags you toward them. Get out before they pop.',
+          actions: [
           { type: 'set-pattern', patternId: 'croc-spore-lash' },
           { type: 'enrage', atkMult: 1.0, cdMult: 0.80 }, // spores land faster
         ] },
-        { hpPct: 0.25, name: 'Rot Bloom', actions: [
-          { type: 'spread-pools', radiusPerSec: 8, maxRadiusMult: 1.8 },
+        { hpPct: 0.25, name: 'Rot Bloom',
+          description: 'Every pool spreads, and the whole room builds a rising Rot DoT until the boss dies. DoT resistance and Recovery buy time; killing it is the answer.',
+          actions: [
+          { type: 'spread-pools', radiusPerSec: 8, maxRadiusMult: 1.5 }, // pools start bigger now
           { type: 'room-affliction', intervalMs: 4000, dot: {
             debuffId: 'rot-bloom', label: 'Rot Bloom', color: '#7fae3a',
             damagePerStack: 6, maxStacks: 20, tickIntervalMs: 1000, durationMs: 12000,
@@ -403,20 +427,24 @@ export const bossMonsterEntriesT3 = [
         armWhenTargetWithinPx: 210,
         stoppedBy: { root: { staggerMs: 1500, label: 'Pinned' }, stun: { staggerMs: 2000, label: 'Staggered' } },
         steps: [
-          { kind: 'dash', name: 'Sand Step', direction: 'away', speed: 260, distance: 420,
-            maxTravelMs: 1800, rootable: true, fx: 'predator-flee' },
+          { kind: 'dash', name: 'Sand Step', direction: 'away', speed: 620, distance: 440,
+            maxTravelMs: 1000, rootable: true, fx: 'predator-flee' },
         ],
       },
     ],
     bossScript: {
       phases: [
-        { hpPct: 0.5, name: 'Standoff', actions: [
+        { hpPct: 0.5, name: 'Standoff',
+          description: 'It fights from range with stings: Death Sting marks you, Numbing Sting slows you and Execution cashes the mark in. Close in and it Sand Steps away; root it to stop the escape.',
+          actions: [
           { type: 'morph', isRanged: true, attackStyle: 'sandblast', attackRange: 240, kite: false },
           { type: 'set-pattern', patternId: 'monarch-standoff' },
           { type: 'add-pattern', patternId: 'monarch-sand-step' },
         ] },
         // Soft enrage: the sentence repeats faster.
-        { hpPct: 0.2, name: 'Sandstorm', actions: [{ type: 'empower-charged', cooldownMult: 0.65 }] },
+        { hpPct: 0.2, name: 'Sandstorm',
+          description: 'Its sting sequence comes around much faster.',
+          actions: [{ type: 'empower-charged', cooldownMult: 0.65 }] },
       ],
     },
   }],
@@ -469,7 +497,7 @@ export const bossMonsterEntriesT3 = [
           sourceId: 'jungle-escape', shieldPct: 0.05,
           onBreak: { staggerMs: 1000, label: 'Caught' },
           instinctSpeedPct: 0.30, rootable: true,
-          flee: { speed: 370, escapeDistance: 450 } },
+          flee: { speed: 600, escapeDistance: 660 } },
         { kind: 'conceal', name: 'Vanished', marker: 'stealth', durationMs: 6000,
           relocate: 'near-target', emergeGap: 30, travelSpeed: 240, surfacesOnContact: true },
         { kind: 'payoff', name: 'Ambush', castMs: 300, fx: 'savage-maul',
@@ -491,7 +519,7 @@ export const bossMonsterEntriesT3 = [
           sourceId: 'jungle-escape', shieldPct: 0.05,
           onBreak: { staggerMs: 1000, label: 'Caught' },
           instinctSpeedPct: 0.30, rootable: true,
-          flee: { speed: 370, escapeDistance: 450 } },
+          flee: { speed: 600, escapeDistance: 660 } },
         { kind: 'conceal', name: 'Vanished', marker: 'stealth', durationMs: 6000,
           relocate: 'near-target', emergeGap: 30, travelSpeed: 240, surfacesOnContact: true },
         { kind: 'payoff', name: 'Venomous Bite', castMs: 300, fx: 'savage-maul',
@@ -502,10 +530,14 @@ export const bossMonsterEntriesT3 = [
     }],
     bossScript: {
       phases: [
-        { hpPct: 0.6, name: 'Venomous Bite', actions: [
+        { hpPct: 0.6, name: 'Venomous Bite',
+          description: 'After fleeing it vanishes and ambushes you with a Venomous Bite that poisons heavily. Root or stun the flee before it gets away.',
+          actions: [
           { type: 'set-pattern', patternId: 'bramble-venom-escape' },
         ] },
-        { hpPct: 0.25, name: 'Hunted', actions: [
+        { hpPct: 0.25, name: 'Hunted',
+          description: 'Its signature attack comes around far more often.',
+          actions: [
           { type: 'empower-charged', cooldownMult: 0.60 },
         ] },
       ],
@@ -556,24 +588,33 @@ export const bossMonsterEntriesT3 = [
       damageMultiplier: 1, cooldownMs: 60000, initialCooldownMs: 0,
       armBelowHpPct: 0.25, oncePerLife: true,
       steps: [
-        { kind: 'cast', name: 'Final Eruption', castMs: 22000, fx: 'cataclysm-cast', interruptible: false },
+        { kind: 'cast', name: 'Final Eruption', castMs: 22000, fx: 'cataclysm-cast', interruptible: false,
+          announce: 'final-eruption' },
+        // Unevadable: an evasion build must not dodge its way past the DPS check.
         { kind: 'impact', name: 'Final Eruption', anchor: 'self', radius: 2000,
-          damageMult: 1, rawDamage: 650, interruptible: false, telegraphMs: 400, fx: 'cataclysm-impact' },
+          damageMult: 1, rawDamage: 650, interruptible: false, unevadable: true, telegraphMs: 400, fx: 'cataclysm-impact' },
         { kind: 'recovery', label: 'Spent', durationMs: 1000 },
       ],
     },
     bossScript: {
       phases: [
+        // Playtest 2026-09-27: vents were no threat. More, bigger, harder-hitting,
+        // and from Caldera Opens fissures split new ones open under the player.
         { hpPct: 1.0, actions: [
-          { type: 'vent-field', count: 4, radius: 150, ringRadius: 480, rampAccelMult: 3,
-            eruptEveryMs: 9000, telegraphMs: 1600, damageMult: 1.3 },
+          { type: 'vent-field', count: 6, radius: 200, ringRadius: 520, rampAccelMult: 3,
+            eruptEveryMs: 8000, telegraphMs: 1600, damageMult: 1.5 },
         ] },
-        { hpPct: 0.5, name: 'Caldera Opens', actions: [
-          { type: 'vent-field', count: 5, radius: 160, ringRadius: 480, rampAccelMult: 3,
-            eruptEveryMs: 6000, telegraphMs: 1500, damageMult: 1.3 },
+        { hpPct: 0.5, name: 'Caldera Opens',
+          description: 'More vents open, they erupt more often, fissures start splitting open under you, and your Heat builds faster. Take the Heat, but be off a vent when it erupts.',
+          actions: [
+          { type: 'vent-field', count: 8, radius: 220, ringRadius: 520, rampAccelMult: 3,
+            eruptEveryMs: 5500, telegraphMs: 1500, damageMult: 1.5,
+            fissure: { everyMs: 9000, maxVents: 14 } },
           { type: 'stoke-ramp', rampMsMult: 0.7 },
         ] },
-        { hpPct: 0.25, name: 'Final Eruption', actions: [{ type: 'set-weather', weather: 'ashfall' }] },
+        { hpPct: 0.25, name: 'Final Eruption',
+          description: 'It stops attacking and charges an eruption that hits the whole arena. It cannot be interrupted or evaded: kill it before the cast ends, or survive the blast with Guard and tank gear.',
+          actions: [{ type: 'set-weather', weather: 'ashfall' }] },
       ],
     },
   }],
@@ -690,10 +731,14 @@ export const bossMonsterEntriesT3 = [
           { type: 'room-debuff', effectId: FROSTBITE_EFFECT_ID, intervalMs: 6000, maxStacks: 10,
             data: { uncleansable: 1, ambientRampAccelPct: 0.12 } },
         ] },
-        { hpPct: 0.5, name: 'Brittle', actions: [
+        { hpPct: 0.5, name: 'Brittle',
+          description: 'Deep Freeze now leaves you Brittle, and a heavy Shatter follows it. Guard the Shatter, or be out of reach when it lands.',
+          actions: [
           { type: 'set-pattern', patternId: 'rime-deep-freeze-brittle' },
         ] },
-        { hpPct: 0.2, name: 'Blizzard', actions: [
+        { hpPct: 0.2, name: 'Blizzard',
+          description: 'A blizzard fills the room: Frostbite stacks on you faster and faster, and your Chill builds quicker. Frostbite cannot be cleansed; end the fight.',
+          actions: [
           { type: 'set-weather', weather: 'blizzard' },
           { type: 'room-debuff', effectId: FROSTBITE_EFFECT_ID, intervalMs: 4000, maxStacks: 10,
             data: { uncleansable: 1, ambientRampAccelPct: 0.12 },

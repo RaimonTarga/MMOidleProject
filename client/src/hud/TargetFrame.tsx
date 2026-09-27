@@ -15,7 +15,7 @@ const DOT_ELEMENT_COLOR: Record<string, string> = {
   doom:   '#9d4dff',
 };
 import { TooltipCard, useStatusStrip, type StripTileProps } from './primitives';
-import { bossEffectTooltipContent, targetStatusTooltipContent } from './statusTooltips';
+import { bossEffectTooltipContent, bossPhaseTooltipContent, targetStatusTooltipContent } from './statusTooltips';
 import './targetFrame.css';
 
 // Keep the frame up briefly after the target dies/clears so fast auto-retargeting
@@ -42,9 +42,16 @@ const DOT_ELEMENT_ICON: Record<string, string> = {
   doom: 'debuff-antiheal',
 };
 
+/** Key of the announced-phase tile (`BossPhase.name`), always first on a boss. */
+const PHASE_TILE_KEY = 'phase';
+/** Tile id the phase tile resolves its icon/colour through. */
+const BOSS_PHASE_TILE_ID = 'boss-phase';
+
 /** The card for one tile, live or held after it ended. */
-function tileTooltipContent(t: TileData, ended: boolean, targetName: string) {
-  const content = t.key.startsWith('b-')
+function tileTooltipContent(t: TileData, ended: boolean, targetName: string, monsterTypeId?: string) {
+  const content = t.key === PHASE_TILE_KEY
+    ? bossPhaseTooltipContent(monsterTypeId, t.label)
+    : t.key.startsWith('b-')
     ? bossEffectTooltipContent(t.id, t.label, t.stacks)
     : targetStatusTooltipContent(
       { id: t.id, stacks: t.stacks, remainingMs: t.remainingMs, totalMs: t.totalMs, values: t.values },
@@ -125,6 +132,19 @@ function buildTiles(
     : undefined;
 
   return [
+    // The announced phase leads the strip: a permanent tile whose card explains
+    // what the phase changed and what the answer is (`BossPhase.description`).
+    ...(shown.isBoss && shown.bossPhase
+      ? [{
+          key: PHASE_TILE_KEY,
+          id: BOSS_PHASE_TILE_ID,
+          ...bossEffectMeta(BOSS_PHASE_TILE_ID),
+          label: shown.bossPhase,
+          stacks: 1,
+          remainingMs: -1,
+          totalMs: 0,
+        }]
+      : []),
     ...shown.statuses.map((s) => {
       const meta = statusMeta(s.id);
       return {
@@ -192,7 +212,7 @@ export function TargetFrame() {
     enabled: true,
     resetKey: shown?.id,
     renderTip: ({ item, ended }) => (
-      <TooltipCard content={tileTooltipContent(item, ended, shown?.name ?? 'the target')} />
+      <TooltipCard content={tileTooltipContent(item, ended, shown?.name ?? 'the target', shown?.monsterTypeId)} />
     ),
   });
 
@@ -233,9 +253,6 @@ export function TargetFrame() {
       <div className="target-frame__name-row">
         <span className="target-frame__name">{shown.name}</span>
         {shown.isBoss && <span className="target-frame__boss-tag">BOSS</span>}
-        {shown.isBoss && shown.bossPhase && (
-          <span className="target-frame__boss-phase">{shown.bossPhase}</span>
-        )}
       </div>
 
       <div className="target-frame__track">
@@ -272,7 +289,7 @@ export function TargetFrame() {
               stacks={t.stacks}
               remainingMs={t.remainingMs}
               totalMs={t.totalMs}
-              bossEffect={t.key.startsWith('b-')}
+              bossEffect={t.key.startsWith('b-') || t.key === PHASE_TILE_KEY}
               ended={ended}
               stripProps={strip.tileProps(key)}
             />

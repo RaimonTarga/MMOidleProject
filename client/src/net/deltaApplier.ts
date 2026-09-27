@@ -300,6 +300,7 @@ export function applyDelta(
         bossEffectStacks: tm.bossEffectStacks ?? {},
         bossEffectDurations: tm.bossEffectDurations ?? {},
         bossPhase: tm.bossPhase,
+        monsterTypeId: tm.monsterTypeId,
         enemyBarrier: tm.enemyBarrier,
       };
       setTargetFrame(data);

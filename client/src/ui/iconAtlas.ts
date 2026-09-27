@@ -1,3 +1,5 @@
+import { packedAssetUrl } from '../packedAssetUrl';
+
 export interface AtlasFrame {
   x: number;
   y: number;
@@ -23,18 +25,18 @@ interface AtlasManifest {
 }
 
 export const UI_ICON_ATLAS: IconAtlasRef = {
-  manifestUrl: '/assets/UI_icons.json',
-  imageUrl: '/assets/UI_icons.png',
+  manifestUrl: packedAssetUrl('/assets/UI_icons.json'),
+  imageUrl: packedAssetUrl('/assets/UI_icons.png'),
 };
 
 export const ITEM_ICON_ATLAS: IconAtlasRef = {
-  manifestUrl: '/assets/icons.json',
-  imageUrl: '/assets/icons.png',
+  manifestUrl: packedAssetUrl('/assets/icons.json'),
+  imageUrl: packedAssetUrl('/assets/icons.png'),
 };
 
 export const SPRITE_ATLAS: IconAtlasRef = {
-  manifestUrl: '/assets/sprites.json',
-  imageUrl: '/assets/sprites.png',
+  manifestUrl: packedAssetUrl('/assets/sprites.json'),
+  imageUrl: packedAssetUrl('/assets/sprites.png'),
 };
 
 const manifestPromises = new Map<string, Promise<Map<string, AtlasFrame>>>();

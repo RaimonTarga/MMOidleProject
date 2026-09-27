@@ -74,10 +74,37 @@ balance labs).
   Crushing Depth. Mob pass: serpent Wound and stalker Pressure at boss strength,
   leviathan hits stack a damage-taken debuff.
 
+### First playtest pass (2026-09-27)
+
+- **Phase tile**: the announced phase is a permanent tile leading the target frame's
+  strip (not a title in the name row); its tooltip is the phase's authored
+  `BossPhase.description` (`bossStatusCopy.test.ts` requires one per named phase).
+- **Authored copy**: `debuff-boss` and `debuff-dot` tiles now show the specific
+  effect's copy (`bossDebuffHelp` from the shared registry, `DOT_HELP` by DoT id).
+  The Venomous Bite poison has its own id instead of the biome's generic flavour.
+- **Swamp**: bigger, minute-long Bile and Mire pools; **Bile Rain** (a `rockfall`
+  whose circles each leave a pool, via the new `rockfall.pool` rider) from the start
+  at T2 and T3.
+- **Volcanic**: 6 bigger vents on two rings from the start, 8/9 later, eruptions at
+  1.5x attack; **fissures** (`vent-field.fissure`) open a new vent under the player
+  and erupt it at once. The final strike is `unevadable` (player evasion neither
+  dodges nor grazes it) and the cast `announce`s a boss-effect tile explaining it.
+  The cast FX loops a quickening pulse and ends with the original 8s crescendo.
+- **Desert / Jungle**: dashes and flees roughly 1.6-2.4x faster.
+- **Trench**: stealth draws semi-transparent (no squash); Into the Dark's three
+  surges re-lay Wound, Crushing Pressure and Rend, each followed by a surfaced burst
+  window.
+- **Mountain T4**: Rockfall drops 11 rocks.
+- **Boss scripts** no longer overwrite pattern-published boss effects each tick
+  (recovery, instinct and cast tiles survive on scripted bosses).
+- Packed atlases load with a content-hash `?v=` (`client/src/packedAssetUrl.ts`), so a
+  repack is not hidden behind the one-hour asset cache.
+
 ### Known gaps (for the playtest / numbers pass)
 
 - HP and damage untouched: fight lengths will run short against the contract.
-- Rune condition and boss-debuff icons fall back to existing art (no new icons).
+- Rune condition, boss-debuff, boss DoT and pool-flavour art is borrowed; the list to
+  generate is [`briefs/boss-lineage-art-list-2026-09-27.md`](briefs/boss-lineage-art-list-2026-09-27.md).
 - Several boss mechanics are bot-answerable only with the new runes wired; the bench's
   default rule sets do not wire Enemy Shielded / Enemy Escaping / Debuff Pile.
 - Trench "Depth builds faster while it is gone" is approximated by a faster phase-wide

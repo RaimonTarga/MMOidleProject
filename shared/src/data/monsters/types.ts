@@ -247,6 +247,12 @@ export type BossAction =
       telegraphMs: number;
       /** Eruption damage, as a multiple of the boss's attack. */
       damageMult: number;
+      /**
+       * FISSURES — every `everyMs` a new vent splits open under a player and erupts
+       * straight away (telegraphed by `telegraphMs`), then stays as an ordinary vent,
+       * until the arena holds `maxVents`. The arena fills with vents over the fight.
+       */
+      fissure?: { everyMs: number; maxVents: number };
     }
   /**
    * ROOM DEBUFF — every `intervalMs`, each player in the boss's node gains one stack
@@ -320,6 +326,11 @@ export interface BossPhase {
    * next named phase replaces it. Unnamed phases stay silent escalation.
    */
   name?: string;
+  /**
+   * Authored player-facing text for an announced phase: what changed and what the
+   * answer is. Shown as the tooltip of the phase tile on the target frame.
+   */
+  description?: string;
   actions: BossAction[];
 }
 

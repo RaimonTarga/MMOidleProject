@@ -184,7 +184,8 @@ assert(def('rot-spore-croc-behemoth').dotEffect?.durationMs === 9000, 'T3 Swamp 
 for (const id of ['mire-gorged-behemoth', 'rot-spore-croc-behemoth']) {
   const pool = def(id).chargedAttack?.pool;
   assert(pool && pool.vulnerability === undefined, `${id}: pools no longer demand Cleanse`);
-  assert(pool.durationMs <= 40_000, `${id}: pools fade instead of walling the arena off`);
+  // Longer since the 2026-09-27 playtest (pools were no threat), still far short of the fight.
+  assert(pool.durationMs <= 90_000, `${id}: pools fade instead of walling the arena off`);
   const steps = def(id).bossPattern?.steps ?? [];
   assert(steps.some(step => step.kind === 'impact' && step.pool?.flavor === 'mire'), `${id}: lobs Mire pools`);
   assert(steps.some(step => step.kind === 'pull' && step.toward === 'nearest-pool'), `${id}: lashes you toward a pool`);

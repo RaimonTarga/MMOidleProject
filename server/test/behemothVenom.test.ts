@@ -81,11 +81,13 @@ const def = MONSTER_DATABASE.get(BOSS_ID)!;
   assert(pool.multiplier === 1.1, 'Corrosive Pool multiplier moved');
   assert(pool.pool?.damagePerTick === 5, 'Corrosive Pool payload moved');
   // Boss-lineage redesign: Swamp no longer demands Cleanse — the pool's corrosion
-  // vulnerability is gone, and the pool fades after 35s instead of 10 minutes.
+  // vulnerability is gone, and the pool fades instead of lasting 10 minutes
+  // (35s at first; 60s after the 2026-09-27 playtest, when pools were no threat).
   assert(pool.pool?.vulnerability === undefined, 'Bile Pool carries no vulnerability');
-  assert(pool.pool?.durationMs === 35_000, 'Bile Pool fades after 35s');
-  const phase = def.bossScript!.phases![0]!;
-  assert(phase.hpPct === 0.5, 'the 50% phase moved');
+  assert(pool.pool?.durationMs === 60_000, 'Bile Pool fades after 60s');
+  // Found by threshold: an engage-time phase (Bile Rain, 2026-09-27) now leads the list.
+  const phase = def.bossScript!.phases!.find(p => p.hpPct === 0.5)!;
+  assert(phase, 'the 50% phase moved');
   assert(JSON.stringify(phase.actions) === JSON.stringify([
     { type: 'enrage', atkMult: 1.0, cdMult: 0.70 },
     { type: 'empower-charged', cooldownMult: 0.70, radiusMult: 1.15 },

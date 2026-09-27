@@ -1,3 +1,5 @@
+import { bossDebuffDef } from '@mmo-idle/shared';
+
 // Central explanatory copy for every status the combat HUD can show: the buffs
 // and debuffs on your own bar, the debuffs on your target, and the boss effects
 // on an encounter frame.
@@ -225,23 +227,59 @@ const BOSS_HELP: Record<string, StatusHelp> = {
   'stat-buff-damageReduction': { title: 'Fortified', kind: 'boss', help: 'The boss has gained additional damage reduction for the rest of its life.' },
   'stat-buff-evasion': { title: 'Elusive', kind: 'boss', help: 'The boss has gained additional evasion for the rest of its life.' },
   'relentless-pursuit': { title: 'Relentless Pursuit', kind: 'boss', help: 'The Dune-Stalker Emperor has entered its closing phase: it moves 30% faster, and its Execution cycle comes around sooner for the rest of the fight.' },
-  'crag-rush': { title: 'Crag Rush', kind: 'boss', help: 'The Horn-Behemoth is in its final quarter: it moves 25% faster while Cragbreaker returns sooner.' },
+  'crag-rush': { title: 'Crag Rush', kind: 'boss', help: 'The Horn-Behemoth is in its final quarter: it moves 25% faster, and its charges wind up quicker and come around more often.' },
   'cinder-fury': { title: 'Cinder Fury', kind: 'boss', help: 'The Magma-Salamander’s attacks deal 15% more damage as its shell-and-vent cycle tightens.' },
-  'earthshaker-rush': { title: 'Earthshaker Rush', kind: 'boss', help: 'The Iron-Crest Titan is below 25%: it moves 35% faster and Earthshatter returns sooner.' },
+  'earthshaker-rush': { title: 'Earthshaker Rush', kind: 'boss', help: 'The Iron-Crest Titan has brought down the Rockfall: it moves 35% faster, and its charges come around more often.' },
   sandsurge: { title: 'Sandsurge', kind: 'boss', help: 'The Dune-Throne Sovereign has dropped its kite and surges forward 35% faster for the rest of the fight.' },
-  'bestial-frenzy': { title: 'Bestial Frenzy', kind: 'boss', help: 'The Verdant-Crown Predator is cornered: it stops fleeing and commits with 40% more attack damage and 25% more movement speed.' },
+  'bestial-frenzy': { title: 'Bestial Frenzy', kind: 'boss', help: 'Every few seconds the bear works itself up: each stack makes it attack and move faster for the rest of the fight, with no cap. The Timberclaw’s Stunning Swipe also winds up quicker with every stack. Kill it before the stacks run away.' },
+  cornered: { title: 'Cornered', kind: 'boss', help: 'The Verdant-Crown Predator has stopped running and fights to the death: 40% more attack damage and 35% faster attacks for the rest of the fight.' },
   'caldera-fury': { title: 'Caldera Fury', kind: 'boss', help: 'The Caldera Sovereign’s attacks deal 15% more damage as its final eruption race tightens.' },
   'blood-in-the-water': { title: 'Blood in the Water', kind: 'boss', help: 'The Elder Trench Serpent senses the finish: it closes 25% faster while Devour returns on a shorter cycle.' },
   morph: { title: 'Morphed', kind: 'boss', help: 'The boss has changed form, and with it which of its attacks are live.' },
   slam: { title: 'Slam', kind: 'boss', help: 'A heavy telegraphed blow is winding up. Distance is the answer.' },
   'charge-instinct': { title: 'Instinct', kind: 'boss', help: 'Each charge builds Instinct: future charges move faster without a stack cap, and each stack shortens the remaining wind-up by 30%, down to 0.4 seconds. T3 and T4 also shorten charge cooldown per stack (15% / 20%), down to 1 second. Landing a charge clears all stacks and restores its normal cooldown.' },
   'escape-instinct': { title: 'Escape Instinct', kind: 'boss', help: '+30% fleeing speed per stack. Stacks indefinitely until a successful escape clears them.' },
+  'final-eruption': {
+    title: 'Final Eruption',
+    kind: 'boss',
+    help: 'Charging an eruption that hits the whole arena when this clock runs out. It cannot be interrupted, and evasion does not dodge or graze it. Kill the boss before the cast ends, or survive the blast with Guard and tank gear.',
+  },
+  cataclysm: {
+    title: 'Cataclysm',
+    kind: 'boss',
+    help: 'Charging a Cataclysm that hits the whole arena when this clock runs out, while the Simmering Burn builds faster. It cannot be interrupted, and evasion does not dodge or graze it. Kill the boss before the cast ends, or survive the blast with Guard and tank gear.',
+  },
   'boss-stunned': {
     title: 'Stunned',
     kind: 'boss',
     help: 'Spent from its own attack. It cannot move or strike until it recovers — this is your window to hit it for free.',
   },
 };
+
+/**
+ * BOSS DoTs — authored copy for the named damage-over-time effects bosses lay,
+ * keyed by DoT debuff id (`monster-dot:<id>` on the player). They all share the
+ * `debuff-dot` tile; this is what tells Rot Bloom from Gorged Venom.
+ */
+const DOT_HELP: Record<string, StatusHelp> = {
+  'grave-toadeater-poison': d('Toad Poison', 'The Grave Toadeater’s poison stacks with each of its hits and ticks every second. DoT resistance shortens it; Cleanse clears it.'),
+  'mire-gorged-venom': d('Gorged Venom', 'The Behemoth’s venom stacks with every bite and ticks every second, faster once the mire rises. DoT resistance (Swamp armor) is the answer; Cleanse clears it.'),
+  'rot-spore-plague': d('Rot Spores', 'Spores from the Croc-Behemoth’s hits, stacking and ticking every second. DoT resistance shortens them; Cleanse clears them.'),
+  'rot-bloom': d('Rot Bloom', 'The whole room is rotting: a stack lands every few seconds until the boss dies, and Cleanse only buys a moment. DoT resistance and Recovery slow it down; killing the boss ends it.'),
+  'caldera-burn': d('Simmering Burn', 'The caldera’s heat builds on you all fight, and much faster while the Cataclysm charges. Cleanse takes part of it off; killing the boss ends it.'),
+  'venomous-bite': d('Venomous Bite', 'The predator’s ambush bite poisons you heavily for a few seconds. Stop the flee before it can ambush, or Cleanse the poison off.'),
+};
+
+/** Authored copy for a monster DoT tile, by its status id (`monster-dot:<id>`). */
+export function monsterDotHelp(statusEffectId: string): StatusHelp | undefined {
+  return DOT_HELP[statusEffectId.replace(/^monster-dot:/, '')];
+}
+
+/** Authored copy for a boss mechanic debuff tile (Eroded, Frostbite, Rend, ...). */
+export function bossDebuffHelp(effectId: string): StatusHelp | undefined {
+  const def = bossDebuffDef(effectId);
+  return def ? d(def.label, def.help) : undefined;
+}
 
 /** Fallback title for an id with no authored entry: `dot-frost-x` -> "Frost X". */
 export function prettifyStatusId(id: string): string {

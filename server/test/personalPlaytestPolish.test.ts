@@ -95,8 +95,9 @@ for (const id of ['jungle-dread-gorger', 'apex-bramble-slasher', 'verdant-crown-
   updateBossPatterns(world, 100, now);
   updateBossPatterns(world, 100, now + 100);
   const start = { ...boss.hasPosition.current };
-  const goal = { x: start.x + 200, y: start.y };
-  setMovePath(world, boss, goal, [10, 20, 200].map(dx => ({ x: start.x + dx, y: start.y })), 'monster');
+  // Long enough that four ticks at flee speed never reach the goal.
+  const goal = { x: start.x + 600, y: start.y };
+  setMovePath(world, boss, goal, [10, 20, 600].map(dx => ({ x: start.x + dx, y: start.y })), 'monster');
   for (let tick = 1; tick <= 4; tick++) {
     updateMovement(world, 100, now + 100 + tick * 100);
     assert(Math.abs(boss.hasPosition.current.x - start.x - boss.hasPosition.speed * 0.1 * tick) < 0.01,

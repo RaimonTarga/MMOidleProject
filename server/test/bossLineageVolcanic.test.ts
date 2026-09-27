@@ -3,7 +3,8 @@
  * Wiring smoke: the vent field erupts on a telegraphed rhythm and hurts a player
  * standing on a vent; the boss keeps attacking (no shell); T4's Simmering Burn
  * builds from the room and Cleanse only takes part of it; Magma Shove drags the
- * player toward a vent.
+ * player toward a vent. Fissures open new vents under the player; the final
+ * strike cannot be evaded and announces itself on the boss while it charges.
  */
 import { cleanseableStacks, monsterDotStatusEffectId, getStatusEffect } from '@mmo-idle/shared';
 import { updateBossScripts } from '../src/systems/combat/ai/bossScripts';
@@ -22,7 +23,7 @@ const vents = (a: ReturnType<typeof arena>) => (a.world.groundZones.get(a.nodeId
   const a = arena('cinder-shell-magma-salamander', { x: 2400, y: 2400 }, { x: 2500, y: 2400 }, undefined, 'node-t3-volcanic-dungeon');
   updateBossScripts(a.world, 0);
   const field = vents(a);
-  assert(field.length === 4, 'four vents ring the arena');
+  assert(field.length === 6, 'six vents ring the arena');
   const on = { ...field[0].pos };
   const hp = a.player.hasHealth.hp;
   let sawEruption = false;
@@ -58,6 +59,45 @@ const vents = (a: ReturnType<typeof arena>) => (a.world.groundZones.get(a.nodeId
   const burn = getStatusEffect(a.player.tracksCombat, burnId);
   assert(burn && burn.stacks >= 2, `the room builds Simmering Burn (stacks ${burn?.stacks})`);
   assert(cleanseableStacks(burnId, burn.data, 99) < 99, 'Cleanse only takes part of it');
+}
+
+// ── T4: fissures split new vents open under the player ───────────────────────
+{
+  const a = arena('caldera-sovereign', { x: 2400, y: 2400 }, { x: 2460, y: 2400 }, undefined, 'node-t4-volcanic-dungeon');
+  a.boss.hasHealth.hp = Math.round(a.boss.hasHealth.maxHp * 0.45);
+  updateBossScripts(a.world, 0);
+  const before = vents(a).length;
+  assert(before === 9, `the Magma Shove phase widens the field to nine vents (${before})`);
+  assert(vents(a).every(v => v.radius === 235), 'and widens the vents already down');
+  const spot = { x: 2460, y: 2400 };
+  runUntil(a, () => { pin(a.player, spot); return vents(a).length > before; }, 9_000);
+  const opened = vents(a).find(v => Math.hypot(v.pos.x - spot.x, v.pos.y - spot.y) < 40);
+  assert(opened, 'a fissure opens a vent under the player');
+}
+
+// ── T3: the Final Eruption announces itself and cannot be evaded ─────────────
+{
+  const a = arena('cinder-shell-magma-salamander', { x: 2400, y: 2400 }, { x: 2460, y: 2400 }, undefined, 'node-t3-volcanic-dungeon');
+  const floor = Math.round(a.boss.hasHealth.maxHp * 0.2);
+  a.boss.hasHealth.hp = floor;
+  // A perfect dodger: every ordinary hit is fully evaded.
+  a.player.evadesHits = { dodgeRate: 1, charge: 0, evadeMitigation: 1 };
+  updateBossScripts(a.world, 0);
+  const spot = { x: 2460, y: 2400 };
+  const announced = runUntil(a, () => {
+    pin(a.player, spot);
+    a.boss.hasHealth.hp = Math.max(a.boss.hasHealth.hp, floor);
+    return (a.boss.hasStatus.bossEffects ?? []).includes('final-eruption');
+  }, 5_000);
+  assert(announced, 'the charging Final Eruption shows on the boss');
+  const hp = a.player.hasHealth.hp;
+  const landed = runUntil(a, () => {
+    pin(a.player, spot);
+    a.boss.hasHealth.hp = Math.max(a.boss.hasHealth.hp, floor);
+    return a.player.hasHealth.hp < hp;
+  }, 25_000);
+  assert(landed, 'the Final Eruption lands through full evasion');
+  assert(!(a.boss.hasStatus.bossEffects ?? []).includes('final-eruption'), 'and its tile clears once it resolves');
 }
 
 console.log('bossLineageVolcanic: ok');

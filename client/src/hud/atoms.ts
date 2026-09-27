@@ -385,6 +385,8 @@ export interface TargetFrameData {
   bossEffectStacks: Record<string, number>;
   bossEffectDurations: Record<string, { remainingMs: number; totalMs: number }>;
   bossPhase?: string;
+  /** Monster type, for looking up authored boss text (phase descriptions). */
+  monsterTypeId?: string;
   enemyBarrier?: MonsterView['enemyBarrier'];
 }
 export const targetFrameAtom = atom<TargetFrameData | null>(null);

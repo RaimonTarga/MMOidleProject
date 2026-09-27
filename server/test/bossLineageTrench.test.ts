@@ -75,8 +75,15 @@ const stun = (a: ReturnType<typeof arena>) => applyStatusEffect(a.boss.tracksCom
   assert(a.boss.hasStatus.bossWeather === 'abyss', 'and the room goes dark (client ambience tag)');
   const sank = runUntil(a, () => { pin(a.player, { x: 2480, y: 2400 }); return a.boss.isConcealed !== undefined; }, 8000);
   assert(sank && a.boss.isConcealed!.targetable !== true, 'it sinks out of reach, untargetable');
-  const surged = runUntil(a, () => { pin(a.player, { x: 2480, y: 2400 }); return stepName(a) === 'Surge'; }, 8000);
+  const surged = runUntil(a, () => { pin(a.player, { x: 2480, y: 2400 }); return stepName(a) === 'Wounding Surge'; }, 8000);
   assert(surged, 'and surges up to strike');
+  // The dark phase re-lays the whole pile, Wound first (playtest 2026-09-27).
+  const wounded = runUntil(a, () => { pin(a.player, { x: 2480, y: 2400 }); return getStatusEffect(a.player.tracksCombat, 'antiheal') !== undefined; }, 4000);
+  assert(wounded, 'the Wounding Surge lays Wound in the dark phase too');
+  const crushed = runUntil(a, () => { pin(a.player, { x: 2480, y: 2400 }); return stepName(a) === 'Crushing Surge'; }, 15000);
+  assert(crushed, 'then the Crushing Surge');
+  const rent = runUntil(a, () => { pin(a.player, { x: 2480, y: 2400 }); return getStatusEffect(a.player.tracksCombat, REND_EFFECT_ID) !== undefined; }, 15000);
+  assert(rent, 'and the Rending Surge lays Rend');
 }
 
 console.log('bossLineageTrench: ok');

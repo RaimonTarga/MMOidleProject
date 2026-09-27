@@ -156,6 +156,7 @@ import {
   suppressCinematicChrome,
   suppressCinematicOverlays,
 } from "./cinematic/suppress";
+import { packedAssetUrl } from "../../packedAssetUrl";
 
 const CAMERA_HOLD_MARGIN = 80;
 const SHADOW_DEFS_KEY = "shadowDefs";
@@ -244,8 +245,8 @@ function instantReskinNode(scene: GameScene, nodeId: string): void {
  * drains, so every extra megabyte is dead time staring at an empty pane.
  */
 function queueFirstPaintAssets(scene: GameScene): void {
-  scene.load.atlas(ATLAS_KEY, "/assets/sprites.png", "/assets/sprites.json");
-  scene.load.json(SHADOW_DEFS_KEY, "/assets/shadows.json");
+  scene.load.atlas(ATLAS_KEY, packedAssetUrl("/assets/sprites.png"), packedAssetUrl("/assets/sprites.json"));
+  scene.load.json(SHADOW_DEFS_KEY, packedAssetUrl("/assets/shadows.json"));
 }
 
 /**

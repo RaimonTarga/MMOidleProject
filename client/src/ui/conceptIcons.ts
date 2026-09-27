@@ -428,10 +428,16 @@ const BOSS_EFFECT_ALIASES: Record<string, string> = {
   'earthshaker-rush': 'mob-haste',
   sandsurge: 'mob-haste',
   'caldera-fury': 'cadence-rampage',
+  cornered: 'cadence-rampage',
   'blood-in-the-water': 'mob-haste',
   'charge-instinct': 'mob-haste',
   'escape-instinct': 'mob-haste',
   'boss-stunned': 'debuff-stunned',
+  // Placeholder until the phase tile gets its own icon (see the boss icon list).
+  'boss-phase': 'monster-howl-haste',
+  // Placeholders until the Volcanic final strike gets its own icon.
+  'final-eruption': 'dot-conflag',
+  cataclysm: 'dot-conflag',
 };
 
 function aliasedStatusIconSource(alias: string | undefined): AssetIconSource | null {

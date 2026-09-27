@@ -132,12 +132,12 @@ export const bossMonsterEntriesT4 = [
           { kind: 'cast', name: 'Titanplate', castMs: 900, fx: 'shield', guardable: false, rootable: true },
           { kind: 'barrier', sourceId: 'titanplate', shieldPct: 0.05, blocksControl: true,
             onBreak: { staggerMs: 3000, label: 'Plate Shattered' } },
-          { kind: 'rockfall', name: 'Rockfall', count: 6, radius: 90, spread: 620, delayMs: 1800, damageMult: 0.55 },
+          { kind: 'rockfall', name: 'Rockfall', count: 11, radius: 95, spread: 720, delayMs: 1800, damageMult: 0.55 },
           { kind: 'cast', name: 'Titan Charge', castMs: 2600, fx: 'charge-lane',
             lane: { length: 820, halfWidth: 104, lockAtCastPct: 0.6 } },
           { kind: 'charge', speed: 540, maxTravelMs: 2400 },
           { kind: 'drop-barrier', sourceId: 'titanplate' },
-          { kind: 'rockfall', name: 'Rockfall', count: 6, radius: 90, spread: 620, delayMs: 1800, damageMult: 0.55 },
+          { kind: 'rockfall', name: 'Rockfall', count: 11, radius: 95, spread: 720, delayMs: 1800, damageMult: 0.55 },
           { kind: 'cast', name: 'Second Charge', castMs: 1500, fx: 'charge-lane', rootable: true,
             lane: { length: 760, halfWidth: 104, lockAtCastPct: 0.5 } },
           { kind: 'charge', speed: 580, damageMult: 0.85, maxTravelMs: 2200 },
@@ -147,11 +147,15 @@ export const bossMonsterEntriesT4 = [
     ],
     bossScript: {
       phases: [
-        { hpPct: 0.65, name: 'Double Charge', actions: [
+        { hpPct: 0.65, name: 'Double Charge',
+          description: 'After the plated charge the Titanplate drops and it re-aims for a second charge. That unplated wind-up can be stopped with a root or a stun.',
+          actions: [
           { type: 'set-pattern', patternId: 'titan-double-charge' },
         ] },
         // Soft enrage: rocks on every wind-up, and the cycle compresses.
-        { hpPct: 0.35, name: 'Rockfall', actions: [
+        { hpPct: 0.35, name: 'Rockfall',
+          description: 'Rocks rain down around you before each charge, it moves 35% faster and it charges more often. Read the rocks and the lane together.',
+          actions: [
           { type: 'set-pattern', patternId: 'titan-rockfall' },
           { type: 'empower-charged', cooldownMult: 0.70 },
           { type: 'stat-buff', stat: 'speed', mult: 1.35, label: 'earthshaker-rush' },
@@ -244,8 +248,8 @@ export const bossMonsterEntriesT4 = [
         armWhenTargetWithinPx: 210,
         stoppedBy: { root: { staggerMs: 1500, label: 'Pinned' }, stun: { staggerMs: 2000, label: 'Staggered' } },
         steps: [
-          { kind: 'dash', name: 'Sand Step', direction: 'away', speed: 260, distance: 420,
-            maxTravelMs: 1800, rootable: true, fx: 'predator-flee' },
+          { kind: 'dash', name: 'Sand Step', direction: 'away', speed: 660, distance: 460,
+            maxTravelMs: 1000, rootable: true, fx: 'predator-flee' },
         ],
       },
       {
@@ -260,24 +264,28 @@ export const bossMonsterEntriesT4 = [
           { kind: 'apply-status', name: 'Death Sting', castMs: 700, fx: 'death-sting',
             effectId: SUN_MARK_EFFECT_ID, stacks: 1, durationMs: 5000 },
           { kind: 'wait', durationMs: 300 },
-          { kind: 'dash', name: 'Dune Rush', direction: 'to-target', speed: 440, reach: 30,
-            maxTravelMs: 1500, rootable: true, fx: 'predator-flee' },
+          { kind: 'dash', name: 'Dune Rush', direction: 'to-target', speed: 720, reach: 30,
+            maxTravelMs: 1100, rootable: true, fx: 'predator-flee' },
           { kind: 'payoff', name: 'Execution', castMs: 550, fx: 'execution',
             damageMult: 1.0, amplifiedMult: 2.0, rootable: true,
             consumes: { effectId: SUN_MARK_EFFECT_ID }, radius: 120 },
-          { kind: 'dash', name: 'Withdraw', direction: 'away', speed: 400, distance: 520,
-            maxTravelMs: 1600, interruptible: false },
+          { kind: 'dash', name: 'Withdraw', direction: 'away', speed: 700, distance: 540,
+            maxTravelMs: 1000, interruptible: false },
         ],
       },
     ],
     bossScript: {
       phases: [
-        { hpPct: 0.55, name: 'Standoff', actions: [
+        { hpPct: 0.55, name: 'Standoff',
+          description: 'It fights from range with stings: Death Sting marks you, Numbing Sting slows you and Execution cashes the mark in. Close in and it Sand Steps away; root it to stop the escape.',
+          actions: [
           { type: 'morph', isRanged: true, attackStyle: 'sandblast', attackRange: 250, kite: false },
           { type: 'set-pattern', patternId: 'sovereign-standoff' },
           { type: 'add-pattern', patternId: 'sovereign-sand-step' },
         ] },
-        { hpPct: 0.2, name: 'Hit and Run', actions: [
+        { hpPct: 0.2, name: 'Hit and Run',
+          description: 'It dashes in, marks and executes you, then withdraws, a little faster every time. Root or stun the dash-in or the Execution to catch it.',
+          actions: [
           { type: 'set-pattern', patternId: 'sovereign-hit-and-run' },
         ] },
       ],
@@ -343,7 +351,7 @@ export const bossMonsterEntriesT4 = [
           sourceId: 'jungle-escape', shieldPct: 0.045,
           onBreak: { staggerMs: 1000, label: 'Caught' },
           instinctSpeedPct: 0.30, rootable: true,
-          flee: { speed: 410, escapeDistance: 500 } },
+          flee: { speed: 660, escapeDistance: 720 } },
         { kind: 'conceal', name: 'Vanished', marker: 'stealth', durationMs: 6000,
           relocate: 'near-target', emergeGap: 30, travelSpeed: 270, surfacesOnContact: true },
         { kind: 'payoff', name: 'Venomous Bite', castMs: 250, fx: 'savage-maul',
@@ -368,7 +376,7 @@ export const bossMonsterEntriesT4 = [
           onBreak: { staggerMs: 1000, label: 'Caught' },
           instinctSpeedPct: 0.30, rootable: true,
           snares: { intervalMs: 350, radius: 60, rootMs: 1500, durationMs: 12000 },
-          flee: { speed: 410, escapeDistance: 500 } },
+          flee: { speed: 660, escapeDistance: 720 } },
         { kind: 'conceal', name: 'Vanished', marker: 'stealth', durationMs: 6000,
           relocate: 'near-target', emergeGap: 30, travelSpeed: 270, surfacesOnContact: true },
         { kind: 'payoff', name: 'Venomous Bite', castMs: 250, fx: 'savage-maul',
@@ -379,10 +387,14 @@ export const bossMonsterEntriesT4 = [
     }],
     bossScript: {
       phases: [
-        { hpPct: 0.6, name: 'Thorn Snares', actions: [
+        { hpPct: 0.6, name: 'Thorn Snares',
+          description: 'Its flight scatters thorn snares that root you, and it ambushes with a Venomous Bite. Root or stun the flee before it gets away.',
+          actions: [
           { type: 'set-pattern', patternId: 'bloodfang-snare-escape' },
         ] },
-        { hpPct: 0.3, name: 'Cornered', actions: [
+        { hpPct: 0.3, name: 'Cornered',
+          description: 'It has stopped running and fights to the death: 40% more attack and 35% faster attacks.',
+          actions: [
           // Permanent frenzy: the soft enrage. It has given up on running.
           { type: 'stat-buff', stat: 'attack', mult: 1.40, label: 'cornered' },
           { type: 'stat-buff', stat: 'attackSpeed', mult: 1.35, label: 'cornered' },
@@ -500,10 +512,14 @@ export const bossMonsterEntriesT4 = [
           { type: 'room-debuff', effectId: FROSTBITE_EFFECT_ID, intervalMs: 5500, maxStacks: 10,
             data: { uncleansable: 1, ambientRampAccelPct: 0.12 } },
         ] },
-        { hpPct: 0.6, name: 'Ice Armor', actions: [
+        { hpPct: 0.6, name: 'Ice Armor',
+          description: 'It periodically encases itself in ice, rooted and not attacking. Break the armor for a stagger and 30% extra damage taken, or use the lull to recover.',
+          actions: [
           { type: 'add-pattern', patternId: 'patriarch-ice-armor' },
         ] },
-        { hpPct: 0.25, name: 'Blizzard', actions: [
+        { hpPct: 0.25, name: 'Blizzard',
+          description: 'A blizzard fills the room: Frostbite stacks faster and faster, and your Chill builds quicker. Ice Armor stops. Frostbite cannot be cleansed; end the fight.',
+          actions: [
           { type: 'set-weather', weather: 'blizzard' },
           { type: 'remove-pattern', patternId: 'patriarch-ice-armor' },
           { type: 'room-debuff', effectId: FROSTBITE_EFFECT_ID, intervalMs: 3500, maxStacks: 12,
@@ -571,9 +587,11 @@ export const bossMonsterEntriesT4 = [
       steps: [
         // Long, obvious, and explicitly UNINTERRUPTIBLE: the answer is the DPS race,
         // not a stun. Guard is still a legitimate way to eat it.
-        { kind: 'cast', name: 'Cataclysm', castMs: 26000, fx: 'cataclysm-cast', interruptible: false },
+        { kind: 'cast', name: 'Cataclysm', castMs: 26000, fx: 'cataclysm-cast', interruptible: false,
+          announce: 'cataclysm' },
+        // Unevadable: an evasion build must not dodge its way past the DPS check.
         { kind: 'impact', name: 'Cataclysm', anchor: 'self', radius: 2000,
-          damageMult: 1.0, rawDamage: 1000, interruptible: false, telegraphMs: 400, fx: 'cataclysm-impact' },
+          damageMult: 1.0, rawDamage: 1000, interruptible: false, unevadable: true, telegraphMs: 400, fx: 'cataclysm-impact' },
         { kind: 'recovery', label: 'Spent', durationMs: 1000 },
       ],
     },
@@ -589,19 +607,27 @@ export const bossMonsterEntriesT4 = [
     bossScript: {
       phases: [
         { hpPct: 1.0, actions: [
-          { type: 'vent-field', count: 4, radius: 160, ringRadius: 500, rampAccelMult: 3,
-            eruptEveryMs: 8500, telegraphMs: 1500, damageMult: 1.3 },
+          // Playtest 2026-09-27: vents were no threat. More, bigger, harder-hitting,
+          // and fissures split new ones open under the player all fight.
+          { type: 'vent-field', count: 6, radius: 210, ringRadius: 540, rampAccelMult: 3,
+            eruptEveryMs: 7500, telegraphMs: 1500, damageMult: 1.5,
+            fissure: { everyMs: 14000, maxVents: 10 } },
           { type: 'room-affliction', intervalMs: 5000, dot: {
             debuffId: 'caldera-burn', label: 'Simmering Burn', color: '#ff7a33',
             damagePerStack: 4, maxStacks: 12, tickIntervalMs: 1000, durationMs: 15000,
           } },
         ] },
-        { hpPct: 0.5, name: 'Magma Shove', actions: [
+        { hpPct: 0.5, name: 'Magma Shove',
+          description: 'It shoves you onto the nearest vent, more vents open and fissures split open under you. Take the Heat, but get off before the vent erupts.',
+          actions: [
           { type: 'add-pattern', patternId: 'caldera-magma-shove' },
-          { type: 'vent-field', count: 5, radius: 170, ringRadius: 500, rampAccelMult: 3,
-            eruptEveryMs: 6000, telegraphMs: 1400, damageMult: 1.3 },
+          { type: 'vent-field', count: 9, radius: 235, ringRadius: 540, rampAccelMult: 3,
+            eruptEveryMs: 5500, telegraphMs: 1400, damageMult: 1.5,
+            fissure: { everyMs: 8000, maxVents: 16 } },
         ] },
-        { hpPct: 0.25, name: 'Cataclysm', actions: [
+        { hpPct: 0.25, name: 'Cataclysm',
+          description: 'It stops attacking and charges a Cataclysm that hits the whole arena while the Simmering Burn accelerates. It cannot be interrupted or evaded: kill it, or survive the blast with Guard and tank gear.',
+          actions: [
           { type: 'set-weather', weather: 'ashfall' },
           // The burn accelerates while the Cataclysm charges.
           { type: 'room-affliction', intervalMs: 1500, dot: {
@@ -700,13 +726,17 @@ export const bossMonsterEntriesT4 = [
         // ONE major Mass Resurrection: up to three remaining bodies get up at
         // once, and the tide is allowed to stand two deeper. There is no
         // second wave — a low-health repeat would make the first one meaningless.
-        { hpPct: 0.6, name: 'Bone Tithe', actions: [
+        { hpPct: 0.6, name: 'Bone Tithe',
+          description: 'It raises the dead, and every risen standing for it gives it damage reduction. Clear the risen to strip its defence.',
+          actions: [
           { type: 'cast', castMs: 1800, label: 'Mass Resurrection', fx: 'roar', actions: [
             { type: 'raise-dead', count: 5, maxAliveAdd: 3, hpMult: 0.45, damageMult: 0.60 },
           ] },
           { type: 'bone-tithe', damageReductionPerRisen: 0.06, maxStacks: 6 },
         ] },
-        { hpPct: 0.25, name: 'Harvest', actions: [
+        { hpPct: 0.25, name: 'Harvest',
+          description: 'Every few seconds it devours one of its risen for a permanent attack boost. Clear the risen before it feeds.',
+          actions: [
           { type: 'harvest', intervalMs: 4000, attackMult: 1.06 },
         ] },
       ],
@@ -785,25 +815,38 @@ export const bossMonsterEntriesT4 = [
         { kind: 'recovery', label: 'Gorged', durationMs: 1000 },
       ],
     },
+    // Playtest 2026-09-27: the dark phase dropped the Wound, so the Devour's
+    // per-debuff scaling had less to read, and the surfaced windows were too short
+    // to burst. Each surge now lays one of the hunt's three debuffs in the same
+    // order (Wound, Crushing Pressure, Rend), and the serpent STAYS UP after each
+    // surge: that is the burst window.
     bossPatternVariants: [{
       id: 'trench-into-the-dark', name: 'Into the Dark',
       damageMultiplier: 2.4, cooldownMs: 9000, initialCooldownMs: 3000,
       stoppedBy: { stun: { staggerMs: 3000, label: 'Choked' } },
       steps: [
-        { kind: 'conceal', name: 'Into the Dark', marker: 'stealth', durationMs: 4000,
+        { kind: 'conceal', name: 'Into the Dark', marker: 'stealth', durationMs: 3500,
           relocate: 'near-target', emergeGap: 70, travelSpeed: 200, surfacesOnContact: true,
           feint: { retreatToPx: 480, untilPct: 0.45 }, interruptible: false },
-        { kind: 'payoff', name: 'Surge', castMs: 500, fx: 'savage-maul', reach: 110,
-          damageMult: 0.6, interruptible: false, appliesDebuff: { effectId: REND_EFFECT_ID, stacks: 1, maxStacks: 3, durationMs: 8000, data: { damageTakenPct: 0.08 } } },
-        { kind: 'conceal', name: 'Into the Dark', marker: 'stealth', durationMs: 4000,
+        { kind: 'payoff', name: 'Wounding Surge', castMs: 500, fx: 'savage-maul', reach: 110,
+          damageMult: 0.6, interruptible: false,
+          appliesDebuff: { effectId: 'antiheal', plainStatus: true, durationMs: 7000, data: { antihealReduction: 0.35 } } },
+        { kind: 'wait', durationMs: 3000 },
+        { kind: 'conceal', name: 'Into the Dark', marker: 'stealth', durationMs: 3500,
           relocate: 'near-target', emergeGap: 70, travelSpeed: 200, surfacesOnContact: true,
           feint: { retreatToPx: 480, untilPct: 0.45 }, interruptible: false },
-        { kind: 'payoff', name: 'Surge', castMs: 500, fx: 'trench-current', reach: 110,
-          damageMult: 0.6, interruptible: false, appliesDebuff: { effectId: 'slow', plainStatus: true, durationMs: 5000, data: { speedMult: 0.6 } } },
-        { kind: 'conceal', name: 'Into the Dark', marker: 'stealth', durationMs: 4000,
+        { kind: 'payoff', name: 'Crushing Surge', castMs: 500, fx: 'trench-current', reach: 110,
+          damageMult: 0.6, interruptible: false,
+          appliesDebuff: { effectId: 'slow', plainStatus: true, durationMs: 5000, data: { speedMult: 0.6 } } },
+        { kind: 'wait', durationMs: 3000 },
+        { kind: 'conceal', name: 'Into the Dark', marker: 'stealth', durationMs: 3500,
           relocate: 'near-target', emergeGap: 70, travelSpeed: 200, surfacesOnContact: true,
           feint: { retreatToPx: 480, untilPct: 0.45 }, interruptible: false },
-        { kind: 'payoff', name: 'Devour', castMs: 2000, fx: 'strong-kick', reach: 110,
+        { kind: 'payoff', name: 'Rending Surge', castMs: 500, fx: 'strong-kick', reach: 110,
+          damageMult: 0.6, interruptible: false,
+          appliesDebuff: { effectId: REND_EFFECT_ID, stacks: 1, maxStacks: 3, durationMs: 8000, data: { damageTakenPct: 0.08 } } },
+        { kind: 'wait', durationMs: 1500 },
+        { kind: 'payoff', name: 'Devour', castMs: 2400, fx: 'strong-kick', reach: 110,
           damageMult: 1.0, perDebuffMult: 0.35 },
         { kind: 'recovery', label: 'Gorged', durationMs: 1000 },
       ],
@@ -814,13 +857,17 @@ export const bossMonsterEntriesT4 = [
           { type: 'room-debuff', effectId: DEPTH_EFFECT_ID, intervalMs: 8000, maxStacks: 12,
             data: { uncleansable: 1, debuffDurationPct: 0.08 } },
         ] },
-        { hpPct: 0.6, name: 'Into the Dark', actions: [
+        { hpPct: 0.6, name: 'Into the Dark',
+          description: 'It sinks out of reach and circles as a shadow, surging up to Wound, Crush and Rend you before a Devour, and Depth builds faster. Hit it hard while it is surfaced.',
+          actions: [
           { type: 'set-weather', weather: 'abyss' },
           { type: 'set-pattern', patternId: 'trench-into-the-dark' },
           { type: 'room-debuff', effectId: DEPTH_EFFECT_ID, intervalMs: 4500, maxStacks: 16,
             data: { uncleansable: 1, debuffDurationPct: 0.08 } },
         ] },
-        { hpPct: 0.25, name: 'Crushing Depth', actions: [
+        { hpPct: 0.25, name: 'Crushing Depth',
+          description: 'Depth builds faster and faster, and its attacks come around more often. Depth cannot be cleansed; end the fight.',
+          actions: [
           { type: 'room-debuff', effectId: DEPTH_EFFECT_ID, intervalMs: 3000, maxStacks: 24,
             data: { uncleansable: 1, debuffDurationPct: 0.10 },
             accelerate: { intervalMult: 0.85, minIntervalMs: 1000 } },

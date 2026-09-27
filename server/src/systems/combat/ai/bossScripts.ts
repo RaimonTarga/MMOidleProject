@@ -103,9 +103,20 @@ export function updateBossScripts(world: World, dt: number): void {
         };
       }
     }
-    e.hasStatus.bossEffects = Object.keys(bossEffectStacks);
-    e.hasStatus.bossEffectStacks = bossEffectStacks;
-    e.hasStatus.bossEffectDurations = bossEffectDurations;
+    // Replace only the script's own keys: boss patterns publish onto the same list
+    // (recovery, instinct, cast announcements) and must survive the script's pass.
+    const previous = new Set(state.publishedEffects ?? []);
+    const stacks = { ...(e.hasStatus.bossEffectStacks ?? {}) };
+    const durations = { ...(e.hasStatus.bossEffectDurations ?? {}) };
+    for (const id of previous) { delete stacks[id]; delete durations[id]; }
+    const scriptKeys = Object.keys(bossEffectStacks);
+    e.hasStatus.bossEffects = [
+      ...(e.hasStatus.bossEffects ?? []).filter(id => !previous.has(id) && !(id in bossEffectStacks)),
+      ...scriptKeys,
+    ];
+    e.hasStatus.bossEffectStacks = { ...stacks, ...bossEffectStacks };
+    e.hasStatus.bossEffectDurations = { ...durations, ...bossEffectDurations };
+    state.publishedEffects = scriptKeys;
     e.hasStatus.bossPhase = state.phaseLabel;
     e.hasStatus.bossWeather = state.weather;
     markSliceDirty(world, e, 'hasStatus');
@@ -151,6 +162,20 @@ function tickVents(state: ScriptsBoss, monster: MonsterEntity, world: World): vo
   const rhythm = state.ventRhythm;
   if (!rhythm || !state.vents) return;
   const now = Date.now();
+
+  // FISSURE: a new vent splits open under a player and erupts straight away.
+  const fissure = rhythm.fissure;
+  if (fissure && now >= fissure.nextAtMs) {
+    fissure.nextAtMs = now + fissure.everyMs;
+    const players = [...world.livePlayersInNode(monster.hasPosition.nodeId)];
+    const victim = players.find(p => p.isPlayer.id === monster.hasAggroTarget?.targetId) ?? players[0];
+    if (victim && state.vents.length < fissure.maxVents) {
+      const vent = openVent(world, monster, clampToArena(monster, victim.hasPosition.current), rhythm.radius, rhythm.rampAccelMult, now);
+      vent.nextEruptAtMs = now; // erupts this tick, behind its telegraph
+      state.vents.push(vent);
+    }
+  }
+
   for (const vent of state.vents) {
     if (now < vent.nextEruptAtMs) continue;
     vent.nextEruptAtMs = now + rhythm.eruptEveryMs;
@@ -167,6 +192,52 @@ function tickVents(state: ScriptsBoss, monster: MonsterEntity, world: World): vo
       scattered: true,
     });
   }
+}
+
+/** Keep a vent inside the arena bounds. */
+function clampToArena(monster: MonsterEntity, pos: { x: number; y: number }): { x: number; y: number } {
+  const nodeDef = NODE_REGISTRY.get(monster.hasPosition.nodeId);
+  const width = nodeDef?.width ?? GAME_CONFIG.NODE_WIDTH;
+  const height = nodeDef?.height ?? GAME_CONFIG.NODE_HEIGHT;
+  return {
+    x: Math.max(80, Math.min(width - 80, pos.x)),
+    y: Math.max(80, Math.min(height - 80, pos.y)),
+  };
+}
+
+/** Lay one magma vent: a fight-long pool whose standing Heat is a choice. */
+function openVent(
+  world: World,
+  monster: MonsterEntity,
+  pos: { x: number; y: number },
+  radius: number,
+  rampAccelMult: number,
+  now: number,
+): NonNullable<ScriptsBoss['vents']>[number] {
+  const zone = publishToxicPool(world, monster.hasPosition.nodeId, {
+    kind: 'toxic-pool',
+    pos,
+    radius,
+    startedAtMs: now,
+    // Lasts the fight; retired with the boss like every owned pool.
+    expiresAtMs: now + 3_600_000,
+    damagePerTick: 0,
+    tickIntervalMs: 1000,
+    flavor: 'magma-vent',
+    rampAccelMult,
+    ownerId: monster.isMonster.id,
+    sourceId: 'magma-vent',
+    sourceLabel: 'Magma Vent',
+    // Standing on it is a CHOICE (Heat for damage), so never auto-avoided.
+    semantics: { disposition: 'hostile-to-player', persistence: 'persistent', movementResponse: 'none' },
+    killer: {
+      monsterTypeId: monster.isMonster.monsterTypeId,
+      monsterName: monster.isMonster.name,
+      isBoss: monster.isMonster.isBoss,
+      nodeId: monster.hasPosition.nodeId,
+    },
+  });
+  return { pos: { ...pos }, radius, nextEruptAtMs: now, zoneId: zone.id };
 }
 
 /** BONE TITHE: the boss's damage reduction tracks how many risen stand for it. */
@@ -810,46 +881,38 @@ function applyAction(
         eruptEveryMs: action.eruptEveryMs,
         telegraphMs: action.telegraphMs,
         damageMult: action.damageMult,
+        radius: action.radius,
+        rampAccelMult: action.rampAccelMult,
+        ...(action.fissure
+          ? { fissure: { ...action.fissure, nextAtMs: now + action.fissure.everyMs } }
+          : {}),
       };
       const vents = (state.vents ??= []);
       const spawn = monster.controlsMonster.spawn;
-      const nodeDef = NODE_REGISTRY.get(monster.hasPosition.nodeId);
-      const width = nodeDef?.width ?? GAME_CONFIG.NODE_WIDTH;
-      const height = nodeDef?.height ?? GAME_CONFIG.NODE_HEIGHT;
+      // Two rings on a golden-angle walk, so vents added by a later phase fall in
+      // the gaps between the ones already down instead of on top of them.
       for (let i = vents.length; i < action.count; i++) {
-        const angle = (i / action.count) * Math.PI * 2 + Math.PI / 4;
-        const pos = {
-          x: Math.max(80, Math.min(width - 80, spawn.x + Math.cos(angle) * action.ringRadius)),
-          y: Math.max(80, Math.min(height - 80, spawn.y + Math.sin(angle) * action.ringRadius)),
-        };
-        publishToxicPool(world, monster.hasPosition.nodeId, {
-          kind: 'toxic-pool',
-          pos,
-          radius: action.radius,
-          startedAtMs: now,
-          // Lasts the fight; retired with the boss like every owned pool.
-          expiresAtMs: now + 3_600_000,
-          damagePerTick: 0,
-          tickIntervalMs: 1000,
-          flavor: 'magma-vent',
-          rampAccelMult: action.rampAccelMult,
-          ownerId: monster.isMonster.id,
-          sourceId: 'magma-vent',
-          sourceLabel: 'Magma Vent',
-          // Standing on it is a CHOICE (Heat for damage), so never auto-avoided.
-          semantics: { disposition: 'hostile-to-player', persistence: 'persistent', movementResponse: 'none' },
-          killer: {
-            monsterTypeId: monster.isMonster.monsterTypeId,
-            monsterName: monster.isMonster.name,
-            isBoss: monster.isMonster.isBoss,
-            nodeId: monster.hasPosition.nodeId,
-          },
+        const angle = i * 2.39996 + Math.PI / 4;
+        const distance = action.ringRadius * (i % 2 === 0 ? 1 : 0.55);
+        const pos = clampToArena(monster, {
+          x: spawn.x + Math.cos(angle) * distance,
+          y: spawn.y + Math.sin(angle) * distance,
         });
-        vents.push({ pos, radius: action.radius, nextEruptAtMs: 0 });
+        vents.push(openVent(world, monster, pos, action.radius, action.rampAccelMult, now));
+      }
+      // A phase that widens the vents widens the ones already down, too.
+      for (const vent of vents) {
+        if (vent.radius >= action.radius) continue;
+        vent.radius = action.radius;
+        const zone = (world.groundZones.get(monster.hasPosition.nodeId) ?? []).find(z => z.id === vent.zoneId);
+        if (zone && zone.kind === 'toxic-pool') {
+          zone.radius = action.radius;
+          zone.baseRadius = action.radius;
+          zone.geometry = circleGeometry(zone.pos, zone.radius);
+        }
       }
       // Staggered clocks so the vents erupt in turn, not all at once.
       vents.forEach((vent, i) => {
-        vent.radius = action.radius;
         vent.nextEruptAtMs = now + action.eruptEveryMs * ((i + 1) / vents.length);
       });
       pushBossFx(world, monster, 'roar', { radius: 480 });

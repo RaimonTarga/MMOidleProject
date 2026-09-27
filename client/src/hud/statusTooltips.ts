@@ -16,6 +16,7 @@ import {
   abilityBlurbAt,
   abilityRankNumber,
   abilityRankNumeral,
+  MONSTER_DATABASE,
   type AbilityDef,
   type PlayerBuff,
   type StatusValue,
@@ -24,8 +25,10 @@ import {
 import type { TooltipCardContent, TooltipRow } from './primitives/TooltipCard';
 import { abilityLines, describeAbility, type AbilityContext } from '../ui/describe';
 import {
+  bossDebuffHelp,
   bossEffectHelp,
   buffHelp,
+  monsterDotHelp,
   prettifyStatusId,
   statusKindLabel,
   targetStatusHelp,
@@ -64,8 +67,22 @@ function hasRow(rows: readonly TooltipRow[], label: string): boolean {
 
 // -- Player buffs ------------------------------------------------------------
 
+/**
+ * The two shared tiles (`debuff-boss`, `debuff-dot`) carry many named effects;
+ * their copy comes from the specific effect (`instanceKey`) when it is authored.
+ */
+function specificBuffHelp(buff: PlayerBuff): StatusHelp | undefined {
+  if (!buff.instanceKey) return undefined;
+  if (buff.id === 'debuff-boss') return bossDebuffHelp(buff.instanceKey);
+  if (buff.id === 'debuff-dot') return monsterDotHelp(buff.instanceKey);
+  return undefined;
+}
+
 export function buffTooltipContent(buff: PlayerBuff): TooltipCardContent {
-  const help: StatusHelp | undefined = buffHelp(buff.id);
+  const specific = specificBuffHelp(buff);
+  const help: StatusHelp | undefined = specific ?? buffHelp(buff.id);
+  // A shared tile with no specific entry keeps the effect's own name as its title.
+  const sharedTile = !specific && (buff.id === 'debuff-boss' || buff.id === 'debuff-dot');
   const current = toRows(buff.values, `buff:${buff.id}`);
 
   // Stacks are worth a row only when the projection did not already publish one
@@ -80,7 +97,7 @@ export function buffTooltipContent(buff: PlayerBuff): TooltipCardContent {
   return {
     // The runtime label wins for buffs that name themselves from a source — a
     // Guard tile is called after the ability occupying the slot, not "Guard".
-    title: help?.title ?? prettifyStatusId(buff.label || buff.id),
+    title: sharedTile && buff.label ? buff.label : help?.title ?? prettifyStatusId(buff.label || buff.id),
     kicker: help ? statusKindLabel(help.kind) : 'Status',
     body: help?.help ?? FALLBACK_HELP,
     current,
@@ -126,6 +143,27 @@ export function bossEffectTooltipContent(
     kicker: 'Boss effect',
     body: help?.help ?? FALLBACK_HELP,
     current,
+  };
+}
+
+/** Authored text of a boss's announced phase (`BossPhase.description`). */
+function bossPhaseDescription(monsterTypeId: string | undefined, phaseName: string): string | undefined {
+  if (!monsterTypeId) return undefined;
+  const phases = MONSTER_DATABASE.get(monsterTypeId)?.bossScript?.phases ?? [];
+  return phases.find((phase) => phase.name === phaseName)?.description;
+}
+
+/** The card for the target frame's phase tile: the phase name and what it does. */
+export function bossPhaseTooltipContent(
+  monsterTypeId: string | undefined,
+  phaseName: string,
+): TooltipCardContent {
+  return {
+    title: phaseName,
+    kicker: 'Boss phase',
+    body: bossPhaseDescription(monsterTypeId, phaseName)
+      ?? 'The boss has entered a new phase of the fight.',
+    current: [],
   };
 }
 
