@@ -29,10 +29,26 @@ export const ERODED_EFFECT_ID = 'eroded';
 export const FROSTBITE_EFFECT_ID = 'frostbite';
 /** Tundra T3+: a Frost Burst leaves you Brittle — +damage taken, for the Shatter. */
 export const BOSS_BRITTLE_EFFECT_ID = 'boss-brittle';
+/** Trench: the tail lash tears you open — +damage taken per stack. */
+export const REND_EFFECT_ID = 'rend';
+/** Trench: the room's Depth — every debuff laid on you lasts longer per stack. */
+export const DEPTH_EFFECT_ID = 'depth';
+/** Status data key: fraction added to the duration of boss-laid debuffs PER STACK. */
+export const DEBUFF_DURATION_PCT_KEY = 'debuffDurationPct';
 /** Status data key: fraction added to the ambient ramp's build speed PER STACK. */
 export const AMBIENT_ACCEL_PCT_KEY = 'ambientRampAccelPct';
 
 export const BOSS_DEBUFFS: Record<string, BossDebuffDef> = {
+  [REND_EFFECT_ID]: {
+    label: 'Rend',
+    color: '#c24a4a',
+    help: 'The serpent\u2019s tail tore you open: you take extra damage per stack. One of the debuffs its Devour feeds on.',
+  },
+  [DEPTH_EFFECT_ID]: {
+    label: 'Depth',
+    color: '#34507a',
+    help: 'The pressure of the deep: every debuff laid on you lasts longer per stack. Cleanse cannot lift it; killing the serpent does.',
+  },
   [FROSTBITE_EFFECT_ID]: {
     label: 'Frostbite',
     color: '#9fd8ff',

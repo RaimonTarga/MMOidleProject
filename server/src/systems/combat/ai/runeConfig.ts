@@ -255,6 +255,9 @@ export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
         : false,
       targetShielded: (attackTarget?.hasStatus.enemyBarrier?.amount ?? 0) > 0,
       targetEscaping: bossEscapingFrom(world, player),
+      debuffCount: new Set(player.tracksCombat.statusEffects
+        .filter((e) => e.stacks > 0 && isHarmfulPlayerStatusEffect(e.id, e.data))
+        .map((e) => e.id)).size,
       traveling:
         player.hasAutoTraversePath !== undefined &&
         player.hasAutoTraversePath.targetNodeId !== player.hasPosition.nodeId &&

@@ -92,6 +92,9 @@ export type RuneConditionId =
   // Active while a boss fighting you is getting away or coming for you unseen: a
   // flee, a travelling burrow, a dash. The natural wiring for a root or stun.
   | "target-escaping"
+  // Active while you carry three or more DIFFERENT harmful debuffs — the moment a
+  // Cleanse buys the most (Trench Devour counts every distinct debuff).
+  | "debuff-pile"
   | "n-aggro-3";
 
 export type RuneActionId =
@@ -424,6 +427,17 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
       blurb: "Works while a boss fighting you is fleeing, dashing away, or travelling toward you underground.",
       cost: 1,
       tier: 2,
+      kind: "state",
+    },
+  ],
+  [
+    "debuff-pile",
+    {
+      id: "debuff-pile",
+      name: "Debuff Pile",
+      blurb: "Works while you carry three or more different harmful debuffs.",
+      cost: 1,
+      tier: 3,
       kind: "state",
     },
   ],
@@ -1388,6 +1402,8 @@ export interface RuneContext {
   targetShielded?: boolean;
   /** A boss fighting this player is fleeing, dashing, or travelling underground. */
   targetEscaping?: boolean;
+  /** Distinct harmful debuffs the player carries. */
+  debuffCount?: number;
   /**
    * The active stance's own charge is full. Only a charging posture (Powering Up)
    * ever sets this; every other stance leaves it false, so a `Stance Charged` rule
@@ -1515,6 +1531,8 @@ function isConditionActive(conditionId: string, ctx: RuneContext): boolean {
       return ctx.targetShielded ?? false;
     case "target-escaping":
       return ctx.targetEscaping ?? false;
+    case "debuff-pile":
+      return (ctx.debuffCount ?? 0) >= 3;
     default:
       return false;
   }

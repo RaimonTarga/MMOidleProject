@@ -57,6 +57,8 @@ import {
   ABILITY_ROOT_EFFECT_ID,
   ambientRampStatus,
   BOSS_DEBUFF_KEY,
+  DEBUFF_DURATION_PCT_KEY,
+  isHarmfulPlayerStatusEffect,
   DAMAGE_TAKEN_PCT_KEY,
   SHATTER_VULNERABLE_EFFECT_ID,
   applyStatusEffect,
@@ -561,6 +563,8 @@ export interface PatternCombatHooks {
     now: number,
     multiplier: number,
     abilityName?: string,
+    /** An uninterruptible step still lands while its caster is stunned. */
+    uninterruptible?: boolean,
   ) => boolean;
   hitMinion: (
     world: World,
@@ -2083,12 +2087,22 @@ function resolvePayoff(
     // set this up. `resolveCircle` cannot express that, so the area payoff resolves
     // its own victims here.
     for (const victim of victimsInCircle(world, monster, at, step.radius)) {
-      hooks.hitPlayer(world, monster, victim, now, payoffMultiplier(pattern, step, victim), step.name);
+      hooks.hitPlayer(world, monster, victim, now, payoffMultiplier(pattern, step, victim), step.name, step.interruptible === false);
       if (!world.hasMonster(monster.isMonster.id)) return;
     }
   } else if (target && (step.reach === undefined || world.collision.canReach(monster, target, step.reach))) {
     const before = target.hasHealth.hp;
-    const landed = hooks.hitPlayer(world, monster, target, now, payoffMultiplier(pattern, step, target), step.name);
+    // DEVOUR: the pile-up payoff, counted BEFORE the hit (and any rider) lands.
+    const pileMult = step.perDebuffMult
+      ? 1 + step.perDebuffMult * distinctDebuffs(target)
+      : 1;
+    const landed = hooks.hitPlayer(
+      world, monster, target, now, payoffMultiplier(pattern, step, target) * pileMult, step.name,
+      step.interruptible === false,
+    );
+    if (landed && step.appliesDebuff && canApplyPlayerDebuff(target) && !target.isDead) {
+      layBossDebuff(target, monster, step.appliesDebuff);
+    }
     if (landed && step.onHitPoison && canApplyPlayerDebuff(target) && !target.isDead) {
       const poison = step.onHitPoison;
       for (let i = 0; i < poison.stacks; i++) {
@@ -2212,6 +2226,15 @@ function paintLane(
   state.laneZoneId = published.id;
 }
 
+/** Distinct harmful debuffs a player carries (the Trench Devour's pile count). */
+function distinctDebuffs(player: PlayerEntity): number {
+  return player.tracksCombat.statusEffects.filter(
+    (effect) => effect.stacks > 0 && isHarmfulPlayerStatusEffect(effect.id, effect.data) &&
+      // Depth is the room, not a debuff the serpent laid on you.
+      (effect.data[DEBUFF_DURATION_PCT_KEY] ?? 0) === 0 && (effect.data.isAmbientRamp ?? 0) === 0,
+  ).length;
+}
+
 /** Push a player's ambient ramp (Tundra Chill) up by `stacks`, within its ceiling. */
 function addAmbientStacks(player: PlayerEntity, stacks: number): void {
   const ramp = ambientRampStatus(player.tracksCombat);
@@ -2222,13 +2245,20 @@ function addAmbientStacks(player: PlayerEntity, stacks: number): void {
 
 /** Lay a boss mechanic debuff (Brittle, ...) through debuff resistance. */
 function layBossDebuff(player: PlayerEntity, monster: MonsterEntity, debuff: PatternDebuff): void {
+  // DEPTH (Trench): every debuff the deep lays on you lasts longer per stack.
+  const durationMs = Math.round(debuff.durationMs * (1 + player.tracksCombat.statusEffects.reduce(
+    (total, status) => total + (status.data[DEBUFF_DURATION_PCT_KEY] ?? 0) * Math.max(1, status.stacks), 0)));
   const effect = applyResistedPlayerDebuff(player, {
     id: debuff.effectId,
     maxStacks: debuff.maxStacks ?? Math.max(1, debuff.stacks ?? 1),
-    remainingMs: debuff.durationMs,
+    remainingMs: durationMs,
     refreshable: true,
     sourceId: monster.isMonster.id,
-    data: { [BOSS_DEBUFF_KEY]: 1, totalMs: debuff.durationMs, ...(debuff.data ?? {}) },
+    data: {
+      ...(debuff.plainStatus ? {} : { [BOSS_DEBUFF_KEY]: 1 }),
+      totalMs: durationMs,
+      ...(debuff.data ?? {}),
+    },
   });
   if (effect && (debuff.stacks ?? 1) > 1) {
     effect.stacks = Math.min(effect.maxStacks || Infinity, effect.stacks + (debuff.stacks ?? 1) - 1);

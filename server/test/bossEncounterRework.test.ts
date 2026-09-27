@@ -362,15 +362,20 @@ for (const id of ['frost-plated-rime-mammoth', 'glacial-patriarch']) {
 // climbed somewhere you cannot.
 // Wasteland: the dead do not stay dead.
 assert(!!def('charnel-crown-sovereign').raisesDead, 'Wasteland boss should raise corpses');
-// Trench: ONE ENORMOUS DUEL, as an ordered sequence (2026-09-04 redesign).
-// Wound bite -> Undertow -> Constrict -> Devour, each with its own answer.
+// Trench: THE PRESSURE HUNT (boss-lineage redesign 2026-09-27). Wound, Pressure and
+// Rend pile debuffs, and the Devour hits harder per distinct debuff — it no longer
+// heals (that only lengthened the fight).
 {
   const serpent = def('elder-trench-serpent');
   const steps = serpent.bossPattern?.steps ?? [];
-  const devour = steps.find(step => step.kind === 'payoff');
+  const devour = steps.find(step => step.kind === 'payoff' && step.name === 'Devour');
   assert(devour?.kind === 'payoff', 'the Trench boss should build to a Devour payoff');
   assert(devour.radius === undefined, 'Trench Devour should be single-target — a bite is a bite');
-  assert((devour.healsSelfPct ?? 0) > 0, 'Trench Devour should restore the serpent when it LANDS');
+  assert(!devour.healsSelfPct, 'Trench Devour no longer heals');
+  assert((devour.perDebuffMult ?? 0) > 0, 'Trench Devour feeds on the debuff pile');
+  const riders = steps.flatMap(step => step.kind === 'payoff' && step.appliesDebuff ? [step.appliesDebuff.effectId] : []);
+  assert(riders.includes('antiheal') && riders.includes('slow') && riders.includes('rend'),
+    'Wound, Crushing Pressure and Rend pile three debuffs');
 
   const pull = steps.find(step => step.kind === 'pull');
   assert(pull?.kind === 'pull', 'Undertow should drag a disengaged target back');

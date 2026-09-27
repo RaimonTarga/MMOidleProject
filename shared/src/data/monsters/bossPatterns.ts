@@ -58,6 +58,11 @@ export interface PatternDebuff {
   durationMs: number;
   /** Extra numeric payload (`damageTakenPct`, ...), merged into the status data. */
   data?: Record<string, number>;
+  /**
+   * An ordinary status (antiheal, slow) rather than a registry boss debuff: it keeps
+   * its own HUD tile and is not marked `isBossDebuff`.
+   */
+  plainStatus?: boolean;
 }
 
 export interface PoolErosion {
@@ -297,6 +302,13 @@ export type BossPatternStep =
       /** Edge-to-edge reach for a single-target bite. */
       reach?: number;
       onHitPoison?: { stacks: number; damagePerStack: number; durationMs: number; tickIntervalMs: number };
+      /** A debuff the landed hit lays on the target (Trench Wound / Pressure / Rend). */
+      appliesDebuff?: PatternDebuff;
+      /**
+       * DEVOUR (Trench): +this fraction of damage PER DISTINCT harmful debuff the
+       * target carries when it lands — the pile-up payoff. Cleanse before it.
+       */
+      perDebuffMult?: number;
       interruptible?: boolean;
       guardable?: boolean;
       /** See the `cast` step: a root during this wind-up stops the pattern. */

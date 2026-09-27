@@ -1,6 +1,6 @@
 import { SUN_MARK_EFFECT_ID, TUNDRA_CHILL_EFFECT_ID } from '../../systems/monsterDebuffs';
 import { FROZEN_STATUS_ID } from '../../systems/statusPolicy';
-import { BOSS_BRITTLE_EFFECT_ID, FROSTBITE_EFFECT_ID } from '../../systems/bossDebuffs';
+import { BOSS_BRITTLE_EFFECT_ID, DEPTH_EFFECT_ID, FROSTBITE_EFFECT_ID, REND_EFFECT_ID } from '../../systems/bossDebuffs';
 import type { MonsterDefinition } from './types';
 
 // ════════════════════════════════════════════════════════════════════════
@@ -748,62 +748,80 @@ export const bossMonsterEntriesT4 = [
     rewards: { essence: 660, essenceType: 'green', level: 5, biomeXp: 990 },
     ai: { wanderRadius: 100, leashRange: 960, idleMinMs: 4500, idleMaxMs: 11000 },
     targeting: { prefersPlayers: true },
-    // TRENCH = ONE ENORMOUS DUEL, as a single readable sequence.
-    //
-    //   Wound bite  ->  Undertow drags a disengaged target back  ->  a brief
-    //   Constrict if it needs one  ->  a long, enormous Devour that HEALS it on hit.
-    //
-    // Every step has its own answer, and that is the point: Cleanse the Wound, Step
-    // Back out of the Devour, Break Free the Constrict then Step Back, Guard it, or
-    // simply tank it. Eating the Devour hands the fight back to the boss, which is
-    // what makes the long tell worth reading.
-    //
-    // UNDERTOW IS A PULL, not a speed buff and not a teleport (§5.10). A boss that
-    // permanently outruns you deletes ranged builds; one that blinks to you cannot be
-    // read at all. A bounded, resisted, obstacle-respecting drag can be seen coming
-    // and answered — and it is resisted by the same forced-movement stat that resists
-    // knockback, because being shoved and being dragged are one concept to the player.
-    //
-    // REMOVED with the 2026-09-04 redesign: `aoeAttack` (a boss AoE riding every
-    // ordinary swing, invisible and unanswerable), the periodic `enemyShield` and its
-    // 25% escalation, the whole Pressure / Crushing Tide / Undertow Current rotation
-    // (an anti-heal chip, a slow zone and a self-haste — three beats competing with
-    // the one bite that is supposed to BE the fight), and `chargeOnAggro`.
-    //
-    // The anti-heal now lives ONLY on the Wound bite: non-stacking, cleanseable, and
-    // attached to a beat the player can see. The old version applied it from ordinary
-    // hits AND an ability, which is how the Trench reached 75-90% suppression.
+    // TRENCH (boss-lineage redesign 2026-09-27) — THE PRESSURE HUNT.
+    //   An ancient sea beast hunting you, piling on more debuffs than one Cleanse
+    //   can keep up with:
+    //     WOUND (bite) anti-heal · CRUSHING PRESSURE slow · REND (tail) +damage taken.
+    //   The room builds DEPTH (uncleansable) that lengthens every debuff it lays.
+    //   DEVOUR no longer heals: it hits harder PER DISTINCT DEBUFF on you — Cleanse
+    //   is a timing decision (before the Devour; "Debuff Pile" is the rune for it).
+    //   A STUNNED Devour staggers the serpent: its one control beat (every other
+    //   step is uninterruptible). Debuff resistance (Trench armor), Recovery and
+    //   killing faster are the build answers.
+    //   Phases: (1) the hunt; (2) ~60% INTO THE DARK — it sinks out of reach, a
+    //   shadow circling you, surges up to strike and sinks again, and Depth builds
+    //   faster; (3) ~25% CRUSHING DEPTH, the soft enrage: Depth accelerates.
+    //   CUT: the 6% Devour heal, Constrict, the fixed Undertow-Constrict sequence
+    //   (the Undertow drag stays only as the hunt's opener, to reach a player at range).
     bossPattern: {
-      id: 'trench-devour', name: 'Devour',
-      damageMultiplier: 2.7, cooldownMs: 12000, initialCooldownMs: 6500,
+      id: 'trench-hunt', name: 'The Hunt',
+      damageMultiplier: 2.4, cooldownMs: 11000, initialCooldownMs: 5000,
+      stoppedBy: { stun: { staggerMs: 3000, label: 'Choked' } },
       steps: [
-        { kind: 'apply-status', name: 'Abyssal Bite', castMs: 1100, fx: 'savage-maul',
-          effectId: 'antiheal', stacks: 1, durationMs: 6000,
-          data: { antihealReduction: 0.35 } },
-        // The answer window for the Wound, and the moment a player who disengaged
-        // gets dragged back in.
-        { kind: 'wait', durationMs: 900 },
-        { kind: 'pull', name: 'Undertow', castMs: 1200, distance: 320, fx: 'trench-current' },
-        { kind: 'apply-status', name: 'Constrict', castMs: 700, fx: 'trench-current',
-          effectId: 'dot-frozen', stacks: 1, durationMs: 1200 },
-        // DEVOUR. Single-target by design — a bite is a bite, and the self-heal only
-        // resolves on a landed direct hit, so dodging it denies the heal outright.
-        { kind: 'payoff', name: 'Devour', castMs: 2600, fx: 'strong-kick',
-          damageMult: 1.0, healsSelfPct: 0.06 },
+        { kind: 'pull', name: 'Undertow', castMs: 900, distance: 280, fx: 'trench-current', interruptible: false },
+        { kind: 'payoff', name: 'Wounding Bite', castMs: 800, fx: 'savage-maul', reach: 90,
+          damageMult: 0.7, interruptible: false, appliesDebuff: { effectId: 'antiheal', plainStatus: true, durationMs: 7000, data: { antihealReduction: 0.35 } } },
+        { kind: 'wait', durationMs: 400 },
+        { kind: 'payoff', name: 'Crushing Pressure', castMs: 700, fx: 'trench-current', reach: 220,
+          damageMult: 0.4, interruptible: false, appliesDebuff: { effectId: 'slow', plainStatus: true, durationMs: 5000, data: { speedMult: 0.6 } } },
+        { kind: 'wait', durationMs: 400 },
+        { kind: 'payoff', name: 'Tail Lash', castMs: 700, fx: 'strong-kick', reach: 140,
+          damageMult: 0.5, interruptible: false, appliesDebuff: { effectId: REND_EFFECT_ID, stacks: 1, maxStacks: 3, durationMs: 8000, data: { damageTakenPct: 0.08 } } },
+        { kind: 'wait', durationMs: 600 },
+        { kind: 'payoff', name: 'Devour', castMs: 2400, fx: 'strong-kick', reach: 110,
+          damageMult: 1.0, perDebuffMult: 0.35 },
         { kind: 'recovery', label: 'Gorged', durationMs: 1000 },
       ],
     },
+    bossPatternVariants: [{
+      id: 'trench-into-the-dark', name: 'Into the Dark',
+      damageMultiplier: 2.4, cooldownMs: 9000, initialCooldownMs: 3000,
+      stoppedBy: { stun: { staggerMs: 3000, label: 'Choked' } },
+      steps: [
+        { kind: 'conceal', name: 'Into the Dark', marker: 'stealth', durationMs: 4000,
+          relocate: 'near-target', emergeGap: 70, travelSpeed: 200, surfacesOnContact: true,
+          feint: { retreatToPx: 480, untilPct: 0.45 }, interruptible: false },
+        { kind: 'payoff', name: 'Surge', castMs: 500, fx: 'savage-maul', reach: 110,
+          damageMult: 0.6, interruptible: false, appliesDebuff: { effectId: REND_EFFECT_ID, stacks: 1, maxStacks: 3, durationMs: 8000, data: { damageTakenPct: 0.08 } } },
+        { kind: 'conceal', name: 'Into the Dark', marker: 'stealth', durationMs: 4000,
+          relocate: 'near-target', emergeGap: 70, travelSpeed: 200, surfacesOnContact: true,
+          feint: { retreatToPx: 480, untilPct: 0.45 }, interruptible: false },
+        { kind: 'payoff', name: 'Surge', castMs: 500, fx: 'trench-current', reach: 110,
+          damageMult: 0.6, interruptible: false, appliesDebuff: { effectId: 'slow', plainStatus: true, durationMs: 5000, data: { speedMult: 0.6 } } },
+        { kind: 'conceal', name: 'Into the Dark', marker: 'stealth', durationMs: 4000,
+          relocate: 'near-target', emergeGap: 70, travelSpeed: 200, surfacesOnContact: true,
+          feint: { retreatToPx: 480, untilPct: 0.45 }, interruptible: false },
+        { kind: 'payoff', name: 'Devour', castMs: 2000, fx: 'strong-kick', reach: 110,
+          damageMult: 1.0, perDebuffMult: 0.35 },
+        { kind: 'recovery', label: 'Gorged', durationMs: 1000 },
+      ],
+    }],
     bossScript: {
       phases: [
-        // It gets hungrier: the bite lands harder and comes around sooner.
-        { hpPct: 0.5,  actions: [{ type: 'empower-charged', multiplierMult: 1.20, cooldownMult: 0.80 }] },
-        // BLOOD IN THE WATER. The low-health beat TIGHTENS THE GAPS and adds no new
-        // attacks: the sequence comes around faster and it closes quicker. It does
-        // not armour up — this fight should end by finally landing the kill, not by
-        // out-damaging a wall that appeared at 25%.
-        { hpPct: 0.25, actions: [
+        { hpPct: 1.0, actions: [
+          { type: 'room-debuff', effectId: DEPTH_EFFECT_ID, intervalMs: 8000, maxStacks: 12,
+            data: { uncleansable: 1, debuffDurationPct: 0.08 } },
+        ] },
+        { hpPct: 0.6, name: 'Into the Dark', actions: [
+          { type: 'set-pattern', patternId: 'trench-into-the-dark' },
+          { type: 'room-debuff', effectId: DEPTH_EFFECT_ID, intervalMs: 4500, maxStacks: 16,
+            data: { uncleansable: 1, debuffDurationPct: 0.08 } },
+        ] },
+        { hpPct: 0.25, name: 'Crushing Depth', actions: [
+          { type: 'room-debuff', effectId: DEPTH_EFFECT_ID, intervalMs: 3000, maxStacks: 24,
+            data: { uncleansable: 1, debuffDurationPct: 0.10 },
+            accelerate: { intervalMult: 0.85, minIntervalMs: 1000 } },
           { type: 'empower-charged', cooldownMult: 0.75 },
-          { type: 'stat-buff', stat: 'speed', mult: 1.25, label: 'blood-in-the-water' },
         ] },
       ],
     },

@@ -29,9 +29,9 @@ import type { RuntimeSlamTelegraph } from '../../world/groundZones';
 
 export function initBossPatternCombat(): void {
   setPatternCombatHooks({
-    hitPlayer(world, monster, player, now, multiplier, abilityName) {
+    hitPlayer(world, monster, player, now, multiplier, abilityName, uninterruptible = false) {
       const metadata: Record<string, unknown> = {};
-      const outcome = runMonsterAttack(world, monster, player, now, multiplier, metadata, undefined, false, abilityName);
+      const outcome = runMonsterAttack(world, monster, player, now, multiplier, metadata, undefined, uninterruptible, abilityName);
       if (outcome === 'hit') {
         const refreshed = world.getPlayerEntity(player.isPlayer.id);
         if (refreshed) markEngaged(world, refreshed, now);
