@@ -1,0 +1,58 @@
+== baseline (normalized packages)
+errors 0 []
+| boss | HP / pl / DR | def s (win%) | off s (win%) | midpoint | next HP @60 | top killers | per-class wins def/off |
+| gorging-razortusk | 4000 / 8 / 0.05 | 77 (13%) | 46 (7%) | 62 | 3900 | Gorging Razortusk / melee x18; Stampede Bull / melee x4; Prairie Yearling / melee x3 | squ 0/6, str 0/6, app 0/6, sli 3/6, spi 0/6 |
+| apex-timberclaw | 3750 / 0 / 0 | 37 (33%) | 26 (40%) | 32 | 7110 | Apex Timberclaw / melee x19 | squ 0/6, str 0/6, app 0/6, sli 6/6, spi 5/6 |
+| stoneplate-juggernaut | 5000 / 10 / 0.05 | 82 (100%) | 56 (93%) | 69 | 4370 | Stoneplate Juggernaut / melee x1 | squ 6/6, str 6/6, app 5/6, sli 6/6, spi 6/6 |
+| mire-gorged-behemoth | 3375 / 6 / 0.08 | 57 (53%) | 37 (27%) | 47 | 4310 | Mire-Gorged Behemoth / Mire Spit x13; Mire-Gorged Behemoth / Bile Pool x2; Mire-Gorged Behemoth / dot x2 | squ 2/6, str 0/6, app 4/6, sli 3/6, spi 3/6 |
+| chitinous-dreadbore | 4375 / 12 / 0.12 | 71 (80%) | 46 (73%) | 59 | 4470 | Chitinous Dreadbore / melee x4; Chitinous Dreadbore / Eruption x3 | squ 5/6, str 2/6, app 4/6, sli 6/6, spi 6/6 |
+| dune-stalker-emperor | 3750 / 12 / 0.08 | 45 (93%) | 32 (73%) | 39 | 5810 | Dune-Stalker Emperor / Execution x5 | squ 6/6, str 5/6, app 3/6, sli 5/6, spi 6/6 |
+| jungle-dread-gorger | 3625 / 0 / 0.03 | 47 (100%) | 31 (87%) | 39 | 5610 | Jungle Dread-Gorger / melee x2 | squ 6/6, str 5/6, app 5/6, sli 6/6, spi 6/6 |
+== round 1
+errors 0 []
+| boss | HP / pl / DR | def s (win%) | off s (win%) | midpoint | next HP @60 | top killers | per-class wins def/off |
+| gorging-razortusk#a70 | 4000 / 6 / 0.12 | 81 (20%) | 52 (27%) | 67 | 3610 | Gorging Razortusk / melee x12; Savanna Hawk / melee x4; Stampede Bull / melee x4 | squ 0/6, str 0/6, app 0/6, sli 6/6, spi 1/6 |
+| gorging-razortusk#a58 | 4000 / 6 / 0.12 | 81 (20%) | 52 (27%) | 67 | 3610 | Gorging Razortusk / melee x8; Savanna Hawk / melee x6; Prairie Yearling / melee x5 | squ 0/6, str 0/6, app 0/6, sli 6/6, spi 1/6 |
+| apex-timberclaw#f108 | 6500 / 0 / 0 | 65 (20%) | 49 (7%) | 57 | 6820 | Apex Timberclaw / melee x24; Apex Timberclaw / Stunning Swipe x2 | squ 0/6, str 0/6, app 0/6, sli 3/6, spi 1/6 |
+| apex-timberclaw#a36f108 | 6500 / 0 / 0 | 66 (27%) | 45 (33%) | 56 | 7030 | Apex Timberclaw / melee x19; Apex Timberclaw / debt x1; Apex Timberclaw / Stunning Swipe x1 | squ 0/6, str 0/6, app 0/6, sli 5/6, spi 4/6 |
+| mire-gorged-behemoth#v4 | 3980 / 6 / 0.15 | 76 (53%) | 50 (47%) | 63 | 3770 | Mire-Gorged Behemoth / Mire Spit x10; Mire-Gorged Behemoth / Bile Pool x2; Mire-Gorged Behemoth / Bile Rain x1 | squ 3/6, str 0/6, app 5/6, sli 3/6, spi 4/6 |
+| mire-gorged-behemoth#v3 | 3980 / 6 / 0.15 | 85 (87%) | 53 (73%) | 69 | 3450 | Mire-Gorged Behemoth / Mire Spit x6 | squ 5/6, str 2/6, app 6/6, sli 6/6, spi 5/6 |
+| stoneplate-juggernaut | 4000 / 14 / 0.05 | 65 (100%) | 44 (100%) | 54 | 4430 |  | squ 6/6, str 6/6, app 6/6, sli 6/6, spi 6/6 |
+| chitinous-dreadbore | 4060 / 12 / 0.2 | 72 (80%) | 46 (73%) | 59 | 4110 | Chitinous Dreadbore / melee x4; Chitinous Dreadbore / Eruption x3 | squ 5/6, str 2/6, app 4/6, sli 6/6, spi 6/6 |
+| dune-stalker-emperor | 5370 / 12 / 0.15 | 69 (100%) | 52 (67%) | 61 | 5310 | Dune-Stalker Emperor / Execution x4; Dune-Stalker Emperor / melee x1 | squ 6/6, str 4/6, app 4/6, sli 5/6, spi 6/6 |
+| jungle-dread-gorger | 5610 / 0 / 0.03 | 70 (60%) | 46 (53%) | 58 | 5790 | Jungle Dread-Gorger / melee x13 | squ 6/6, str 2/6, app 2/6, sli 5/6, spi 2/6 |
+== round 2
+errors 0 []
+| boss | HP / pl / DR | def s (win%) | off s (win%) | midpoint | next HP @60 | top killers | per-class wins def/off |
+| gorging-razortusk#A | 4000 / 6 / 0.12 | 81 (27%) | 52 (40%) | 66 | 3610 | Gorging Razortusk / melee x9; Prairie Yearling / melee x5; Stampede Bull / melee x4 | squ 0/6, str 0/6, app 2/6, sli 6/6, spi 2/6 |
+| gorging-razortusk#B | 4000 / 6 / 0.12 | 79 (27%) | 50 (47%) | 65 | 3710 | Gorging Razortusk / melee x7; Prairie Yearling / melee x5; Stampede Bull / melee x5 | squ 0/6, str 0/6, app 3/6, sli 6/6, spi 2/6 |
+| apex-timberclaw#A | 6800 / 0 / 0 | 67 (33%) | 46 (40%) | 56 | 7260 | Apex Timberclaw / melee x18; Apex Timberclaw / debt x1 | squ 0/6, str 0/6, app 0/6, sli 6/6, spi 5/6 |
+| apex-timberclaw#B | 6800 / 0 / 0 | 66 (60%) | 47 (67%) | 56 | 7280 | Apex Timberclaw / melee x10; Apex Timberclaw / Stunning Swipe x1 | squ 2/6, str 0/6, app 6/6, sli 6/6, spi 5/6 |
+| jungle-dread-gorger#A | 5790 / 0 / 0.03 | 73 (100%) | 50 (87%) | 62 | 5650 | Jungle Dread-Gorger / melee x2 | squ 6/6, str 6/6, app 4/6, sli 6/6, spi 6/6 |
+| jungle-dread-gorger#B | 5790 / 0 / 0.03 | 73 (100%) | 50 (100%) | 62 | 5650 |  | squ 6/6, str 6/6, app 6/6, sli 6/6, spi 6/6 |
+== round 3
+errors 0 []
+| boss | HP / pl / DR | def s (win%) | off s (win%) | midpoint | next HP @60 | top killers | per-class wins def/off |
+| gorging-razortusk#C | 3700 / 6 / 0.12 | 62 (53%) | 42 (67%) | 52 | 4270 | Gorging Razortusk / melee x6; Stampede Bull / melee x3; Savanna Hawk / melee x1 | squ 3/6, str 0/6, app 4/6, sli 6/6, spi 5/6 |
+| gorging-razortusk#D | 3700 / 6 / 0.12 | 60 (73%) | 41 (67%) | 50 | 4420 | Gorging Razortusk / melee x4; Savanna Hawk / melee x3; Prairie Yearling / melee x1 | squ 4/6, str 0/6, app 6/6, sli 6/6, spi 5/6 |
+| apex-timberclaw#C | 7000 / 0 / 0 | 68 (80%) | 49 (87%) | 59 | 7180 | Apex Timberclaw / melee x5 | squ 5/6, str 2/6, app 6/6, sli 6/6, spi 6/6 |
+| apex-timberclaw#D | 7000 / 0 / 0 | 68 (67%) | 49 (73%) | 59 | 7180 | Apex Timberclaw / melee x9 | squ 3/6, str 0/6, app 6/6, sli 6/6, spi 6/6 |
+== round 4 (Razortusk E)
+errors 0 []
+| boss | HP / pl / DR | def s (win%) | off s (win%) | midpoint | next HP @60 | top killers | per-class wins def/off |
+| gorging-razortusk#E | 4000 / 6 / 0.12 | 61 (80%) | 45 (87%) | 53 | 4490 | Gorging Razortusk / melee x3; Savanna Hawk / melee x1; Stampede Bull / melee x1 | squ 5/6, str 2/6, app 6/6, sli 6/6, spi 6/6 |
+== final from source (Cave at attack 85; trimmed to 76 after)
+errors 0 []
+| boss | HP / pl / DR | def s (win%) | off s (win%) | midpoint | next HP @60 | top killers | per-class wins def/off |
+| gorging-razortusk | 4490 / 6 / 0.12 | 67 (80%) | 49 (73%) | 58 | 4630 | Gorging Razortusk / melee x3; Stampede Bull / melee x2; Prairie Yearling / melee x1 | squ 4/6, str 1/6, app 6/6, sli 6/6, spi 6/6 |
+| apex-timberclaw | 7100 / 0 / 0 | 70 (73%) | 49 (87%) | 59 | 7180 | Apex Timberclaw / melee x6 | squ 5/6, str 1/6, app 6/6, sli 6/6, spi 6/6 |
+| stoneplate-juggernaut | 4430 / 14 / 0.05 | 75 (100%) | 51 (100%) | 63 | 4240 |  | squ 6/6, str 6/6, app 6/6, sli 6/6, spi 6/6 |
+| mire-gorged-behemoth | 3450 / 6 / 0.15 | 68 (87%) | 48 (80%) | 58 | 3570 | Mire-Gorged Behemoth / Mire Spit x3; Mire-Gorged Behemoth / dot x2 | squ 5/6, str 2/6, app 6/6, sli 6/6, spi 6/6 |
+| chitinous-dreadbore | 4110 / 12 / 0.2 | 73 (73%) | 49 (67%) | 61 | 4050 | Chitinous Dreadbore / melee x5; Chitinous Dreadbore / Eruption x4 | squ 4/6, str 2/6, app 3/6, sli 6/6, spi 6/6 |
+| dune-stalker-emperor | 5310 / 12 / 0.15 | 68 (100%) | 52 (67%) | 60 | 5280 | Dune-Stalker Emperor / Execution x4; Dune-Stalker Emperor / melee x1 | squ 6/6, str 4/6, app 4/6, sli 5/6, spi 6/6 |
+| jungle-dread-gorger | 5650 / 0 / 0.03 | 72 (100%) | 49 (93%) | 60 | 5610 | Jungle Dread-Gorger / melee x1 | squ 6/6, str 6/6, app 5/6, sli 6/6, spi 6/6 |
+== Cave trim
+errors 0 []
+| boss | HP / pl / DR | def s (win%) | off s (win%) | midpoint | next HP @60 | top killers | per-class wins def/off |
+| chitinous-dreadbore#a76 | 4110 / 12 / 0.2 | 75 (87%) | 49 (80%) | 62 | 3990 | Chitinous Dreadbore / Eruption x4; Chitinous Dreadbore / melee x1 | squ 6/6, str 3/6, app 4/6, sli 6/6, spi 6/6 |
+| chitinous-dreadbore#a70 | 4110 / 12 / 0.2 | 77 (100%) | 49 (80%) | 63 | 3910 | Chitinous Dreadbore / melee x3 | squ 6/6, str 4/6, app 5/6, sli 6/6, spi 6/6 |

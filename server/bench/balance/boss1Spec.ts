@@ -282,8 +282,9 @@ export function assertBoss1Definitions(): void {
   // ── Earlier slot: Apex Timberclaw, on explicit reference builds.
   const tc = MONSTER_DATABASE.get(BOSS1_TIMBERCLAW_BOSS_ID);
   assert(tc?.isBoss, `${BOSS1_TIMBERCLAW_BOSS_ID} missing or not a boss`);
-  assert.equal(tc.stats.hp, 3750, 'timberclaw hp drift');
-  assert.equal(tc.stats.attack, 44, 'timberclaw attack drift');
+  // Rebased 2026-09-27 (T2 boss pass).
+  assert.equal(tc.stats.hp, 7100, 'timberclaw hp drift');
+  assert.equal(tc.stats.attack, 22, 'timberclaw attack drift');
   const tcDef = [...DUNGEON_DEFS.values()].find((d) => d.nodeId === BOSS1_TIMBERCLAW_NODE_ID);
   assert(tcDef && tcDef.boss.bossId === BOSS1_TIMBERCLAW_BOSS_ID, 'timberclaw dungeon drift');
   const tcCells = BOSS1_BLOCKS['timberclaw']!.cells;

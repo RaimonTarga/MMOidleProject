@@ -5,7 +5,7 @@ Status: **review complete 2026-09-27; first implementation pass landed the same 
 the seams it added and the known gaps are in
 [`docs/boss-encounter-rework-current-state.md`](../docs/boss-encounter-rework-current-state.md)
 ("Boss lineage redesign — implemented"). **Numbers pass (step 6) done for T3/T4 on 2026-09-27**
-(`docs/tier-balance-current-state.md` §7; T2 not yet sized to its ~60 s). **Not done:** the
+(`docs/tier-balance-current-state.md` §7; T2 sized to ~60 s the same day). **Not done:** the
 designer playtest of each boss. The boss contract below replaces the old "constant
 30–45s boss TTK" target in `boss-design.md`.
 

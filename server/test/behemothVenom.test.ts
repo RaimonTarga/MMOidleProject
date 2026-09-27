@@ -47,8 +47,8 @@ initCombatSystems();
 
 const BOSS_ID = 'mire-gorged-behemoth';
 /** The adopted coefficient, spelled once. */
-// 6 -> 5 on 2026-09-27, when DoTs went back to paying half of player DR.
-const ADOPTED_PER_STACK = 5;
+// 6 -> 5 on 2026-09-27 (DoTs pay half of player DR), then 5 -> 3 in the T2 boss pass.
+const ADOPTED_PER_STACK = 3;
 /** What it replaced, kept so the direction of the adoption stays legible. */
 const PRE_ADOPTION_PER_STACK = 9;
 
@@ -73,10 +73,11 @@ const def = MONSTER_DATABASE.get(BOSS_ID)!;
   assert(dot.durationMs === 8000, `venom duration moved to ${dot.durationMs}`);
   assert(dot.openerStacks === undefined, 'venom gained an opener; the adoption assumed none');
 
-  assert(def.stats.hp === 3375, `boss HP moved to ${def.stats.hp}`);
+  // HP and DR rebased in the 2026-09-27 T2 boss pass.
+  assert(def.stats.hp === 3450, `boss HP moved to ${def.stats.hp}`);
   assert(def.stats.attack === 38, `the ordinary attack moved to ${def.stats.attack}`);
   assert(def.stats.plating === 6, `boss plating moved to ${def.stats.plating}`);
-  assert(def.stats.damageReduction === 0.08, `boss DR moved to ${def.stats.damageReduction}`);
+  assert(def.stats.damageReduction === 0.15, `boss DR moved to ${def.stats.damageReduction}`);
   assert(def.stats.attackCooldown === 2800, `attack cadence moved to ${def.stats.attackCooldown}`);
 
   const pool = def.chargedAttack!;

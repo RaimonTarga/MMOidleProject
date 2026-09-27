@@ -1,0 +1,72 @@
+{
+ "gorging-razortusk#C": {
+  "node": "plains",
+  "old": {
+   "hp": 4000,
+   "plating": 8,
+   "dr": 0.05
+  },
+  "hp": 3700,
+  "plating": 6,
+  "dr": 0.12,
+  "paths": {
+   "stats.attack": 45,
+   "bossScript.repeating.1.actions.0.actions.0.maxStacks": 1,
+   "bossScript.repeating.0.intervalMs": 15000,
+   "bossScript.repeating.0.actions.0.actions.0.count": 1,
+   "bossScript.repeating.0.actions.0.actions.0.maxAlive": 3,
+   "bossScript.phases.0.actions.0.actions.2.count": 1
+  }
+ },
+ "gorging-razortusk#D": {
+  "node": "plains",
+  "old": {
+   "hp": 4000,
+   "plating": 8,
+   "dr": 0.05
+  },
+  "hp": 3700,
+  "plating": 6,
+  "dr": 0.12,
+  "paths": {
+   "stats.attack": 45,
+   "bossScript.repeating.1.actions.0.actions.0.maxStacks": 1,
+   "bossScript.repeating.1.actions.0.actions.0.damagePct": 0.1,
+   "bossScript.repeating.1.actions.0.actions.0.attackSpeedPct": 0.1,
+   "bossScript.repeating.0.intervalMs": 15000,
+   "bossScript.repeating.0.actions.0.actions.0.count": 1,
+   "bossScript.repeating.0.actions.0.actions.0.maxAlive": 2,
+   "bossScript.phases.0.actions.0.actions.2.count": 1
+  }
+ },
+ "apex-timberclaw#C": {
+  "node": "forest",
+  "old": {
+   "hp": 3750,
+   "plating": 0,
+   "dr": 0
+  },
+  "hp": 7000,
+  "paths": {
+   "stats.attack": 22,
+   "bossScript.repeating.0.intervalMs": 12000,
+   "bossScript.repeating.0.actions.0.actions.0.mult": 1.06,
+   "bossScript.phases.0.actions.0.cdMult": 0.85
+  }
+ },
+ "apex-timberclaw#D": {
+  "node": "forest",
+  "old": {
+   "hp": 3750,
+   "plating": 0,
+   "dr": 0
+  },
+  "hp": 7000,
+  "paths": {
+   "stats.attack": 24,
+   "bossScript.repeating.0.intervalMs": 12000,
+   "bossScript.repeating.0.actions.0.actions.0.mult": 1.05,
+   "bossScript.phases.0.actions.0.cdMult": 0.85
+  }
+ }
+}

@@ -46,7 +46,7 @@ export const bossMonsterEntriesT2 = [
   ['gorging-razortusk', {
     id: 'gorging-razortusk', name: 'Gorging Razortusk', color: 0xcc9922,
     isBoss: true,
-    stats: { hp: 4000, attack: 96, plating: 8, damageReduction: 0.05, speed: 46, attackRange: 15, attackCooldown: 2200, pullRange: 320 },
+    stats: { hp: 4490, attack: 36, plating: 6, damageReduction: 0.12, speed: 46, attackRange: 15, attackCooldown: 2200, pullRange: 320 },
     behavior: 'melee', attackStyle: 'gore', biome: 'plains',
     rewards: { essence: 150, essenceType: 'yellow', level: 5, biomeXp: 225 },
     ai: { wanderRadius: 140, leashRange: 850, idleMinMs: 2000, idleMaxMs: 5500 },
@@ -67,6 +67,8 @@ export const bossMonsterEntriesT2 = [
     // CUT: the 25% boar-pair rally (one clear rhythm instead of three overlapping
     // beats) and the boss-hastening roars. Adds despawn on boss death.
     // Numbers placeholder — user balance pass after playtest.
+    // 2026-09-27 T2 boss pass (~60 s at the Defensive/Offensive midpoint, ~75%+ wins): attack 96 -> 36;
+    // herd 1 yearling / 15 s, max 2; Roar 1 stack at +10%. Melee could not out-sustain the herd.
     bossScript: {
       phases: [
         { hpPct: 0.5, name: 'Stampede',
@@ -75,19 +77,19 @@ export const bossMonsterEntriesT2 = [
           { type: 'cast', castMs: 2000, label: 'Stampede', castFx: 'stampede', actions: [
             { type: 'spawn-adds', monsterTypeId: 'stampede-bull', count: 1, offsetRange: 220 },
             { type: 'spawn-adds', monsterTypeId: 'savanna-hawk', count: 2, at: 'target-ring', ringDistance: 400 },
-            { type: 'spawn-adds', monsterTypeId: 'prairie-yearling', count: 2, maxAlive: 8, offsetRange: 220 },
+            { type: 'spawn-adds', monsterTypeId: 'prairie-yearling', count: 1, maxAlive: 8, offsetRange: 220 },
           ] },
         ] },
       ],
       repeating: [
-        { intervalMs: 10000, initialDelayMs: 5000, actions: [
+        { intervalMs: 15000, initialDelayMs: 5000, actions: [
           { type: 'cast', castMs: 1500, label: 'Call the Herd', castFx: 'herd-call', actions: [
-            { type: 'spawn-adds', monsterTypeId: 'prairie-yearling', count: 2, maxAlive: 5, offsetRange: 240 },
+            { type: 'spawn-adds', monsterTypeId: 'prairie-yearling', count: 1, maxAlive: 2, offsetRange: 240 },
           ] },
         ] },
         { intervalMs: 15000, initialDelayMs: 12000, actions: [
           { type: 'cast', castMs: 2000, label: 'Rallying Roar', fx: 'roar', actions: [
-            { type: 'empower-adds', attackSpeedPct: 0.20, damagePct: 0.20, maxStacks: 3 },
+            { type: 'empower-adds', attackSpeedPct: 0.10, damagePct: 0.10, maxStacks: 1 },
           ] },
         ] },
       ],
@@ -105,7 +107,7 @@ export const bossMonsterEntriesT2 = [
     // highest sustained damage of the tier" is the Forest identity and it should
     // still be the highest — being double the runner-up before the ramp starts is
     // a different boss, not a faster one. 44 opens at 59 dps, 1.35x Plains.
-    stats: { hp: 3750, attack: 44, plating: 0, damageReduction: 0, speed: 60, attackRange: 18, attackCooldown: 1500, pullRange: 310 },
+    stats: { hp: 7100, attack: 22, plating: 0, damageReduction: 0.00, speed: 60, attackRange: 18, attackCooldown: 1500, pullRange: 310 },
     behavior: 'melee', attackStyle: 'bear-claws', biome: 'forest',
     rewards: { essence: 155, essenceType: 'green', level: 5, biomeXp: 232 },
     ai: { wanderRadius: 130, leashRange: 830, idleMinMs: 1200, idleMaxMs: 4000 },
@@ -138,7 +140,7 @@ export const bossMonsterEntriesT2 = [
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
-          { type: 'enrage', atkMult: 1.15, cdMult: 0.70 }, // frequency surge
+          { type: 'enrage', atkMult: 1.15, cdMult: 0.85 }, // frequency surge (0.70 before the 2026-09-27 T2 pass)
         ] },
       ],
       // BESTIAL FRENZY IS THE FIGHT'S CLOCK, and it is meant to be: no stack cap, so
@@ -163,9 +165,11 @@ export const bossMonsterEntriesT2 = [
       // delay is left at 5000 so the first Frenzy still arrives on the same beat —
       // it is the RAMP that should be slower, not the introduction to it.
       repeating: [
-        { intervalMs: 6500, initialDelayMs: 5000, actions: [
+        // 2026-09-27 T2 boss pass (~60 s at the Defensive/Offensive midpoint, ~75%+ wins): attack 44 -> 22, Bestial Frenzy x1.12 / 6.5 s -> x1.06 / 12 s:
+        // an unbounded ramp every melee build lost to.
+        { intervalMs: 12000, initialDelayMs: 5000, actions: [
           { type: 'cast', castMs: 1500, label: 'Bestial Frenzy', fx: 'frenzy', actions: [
-            { type: 'stat-buff', stat: 'attackSpeed', mult: 1.12, moveSpeedMult: 1.10, label: 'bestial-frenzy' },
+            { type: 'stat-buff', stat: 'attackSpeed', mult: 1.06, moveSpeedMult: 1.10, label: 'bestial-frenzy' },
           ] },
         ] },
       ],
@@ -179,7 +183,7 @@ export const bossMonsterEntriesT2 = [
   ['stoneplate-juggernaut', {
     id: 'stoneplate-juggernaut', name: 'Stoneplate Juggernaut', color: 0x667788,
     isBoss: true,
-    stats: { hp: 5000, attack: 128, plating: 10, damageReduction: 0.05, speed: 20, attackRange: 72, attackCooldown: 4200, pullRange: 320 },
+    stats: { hp: 4430, attack: 128, plating: 14, damageReduction: 0.05, speed: 20, attackRange: 72, attackCooldown: 4200, pullRange: 320 },
     behavior: 'melee', attackStyle: 'quake', biome: 'mountain',
     rewards: { essence: 160, essenceType: 'blue', level: 5, biomeXp: 240 },
     ai: { wanderRadius: 120, leashRange: 850, idleMinMs: 3000, idleMaxMs: 7500 },
@@ -243,7 +247,7 @@ export const bossMonsterEntriesT2 = [
   ['mire-gorged-behemoth', {
     id: 'mire-gorged-behemoth', name: 'Mire-Gorged Behemoth', color: 0x2a4011,
     isBoss: true,
-    stats: { hp: 3375, attack: 38, plating: 6, damageReduction: 0.08, speed: 30, attackRange: 15, attackCooldown: 2800, pullRange: 300 },
+    stats: { hp: 3450, attack: 38, plating: 6, damageReduction: 0.15, speed: 30, attackRange: 15, attackCooldown: 2800, pullRange: 300 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 155, essenceType: 'purple', level: 5, biomeXp: 232 },
     ai: { wanderRadius: 110, leashRange: 800, idleMinMs: 2500, idleMaxMs: 6000 },
@@ -254,7 +258,7 @@ export const bossMonsterEntriesT2 = [
     // duration, the ordinary attack, the Corrosive Pool and the 50% phase are all
     // unchanged, and `server/test/behemothVenom.test.ts` pins that.
     // 2026-09-27: 6 -> 5 when DoTs went back to paying half of player DR (win rate held).
-    dotEffect: { debuffId: 'mire-gorged-venom', label: 'Gorged Venom', damagePerStack: 5, maxStacks: 4, tickIntervalMs: 1000, durationMs: 8000 },
+    dotEffect: { debuffId: 'mire-gorged-venom', label: 'Gorged Venom', damagePerStack: 3, maxStacks: 4, tickIntervalMs: 1000, durationMs: 8000 },
     // SWAMP T2 (boss-lineage redesign 2026-09-27): POOL VARIETY AND THE PULL.
     // Swamp stops demanding Cleanse — its answers are Swamp gear: DoT resistance
     // (armor) for the Bile, slow resistance (boots) for the Mire. Corrosion's
@@ -317,7 +321,7 @@ export const bossMonsterEntriesT2 = [
   ['chitinous-dreadbore', {
     id: 'chitinous-dreadbore', name: 'Chitinous Dreadbore', color: 0x442244,
     isBoss: true,
-    stats: { hp: 4375, attack: 85, plating: 12, damageReduction: 0.12, speed: 20, attackRange: 72, attackCooldown: 3600, pullRange: 280 },
+    stats: { hp: 3990, attack: 76, plating: 12, damageReduction: 0.20, speed: 20, attackRange: 72, attackCooldown: 3600, pullRange: 280 },
     behavior: 'melee', attackStyle: 'quake', biome: 'cave',
     rewards: { essence: 160, essenceType: 'red', level: 5, biomeXp: 240 },
     ai: { wanderRadius: 90, leashRange: 800, idleMinMs: 3000, idleMaxMs: 7500 },
@@ -397,7 +401,7 @@ export const bossMonsterEntriesT2 = [
   ['dune-stalker-emperor', {
     id: 'dune-stalker-emperor', name: 'Dune-Stalker Emperor', color: 0xddcc44,
     isBoss: true,
-    stats: { hp: 3750, attack: 85, plating: 12, damageReduction: 0.08, speed: 42, attackRange: 40, attackCooldown: 2600, pullRange: 340 },
+    stats: { hp: 5310, attack: 85, plating: 12, damageReduction: 0.15, speed: 42, attackRange: 40, attackCooldown: 2600, pullRange: 340 },
     behavior: 'melee', attackStyle: 'sandblast', biome: 'desert',
     rewards: { essence: 150, essenceType: 'yellow', level: 5, biomeXp: 225 },
     ai: { wanderRadius: 140, leashRange: 880, idleMinMs: 2000, idleMaxMs: 5500 },
@@ -486,7 +490,7 @@ export const bossMonsterEntriesT2 = [
   ['jungle-dread-gorger', {
     id: 'jungle-dread-gorger', name: 'Jungle Dread-Gorger', color: 0x117722,
     isBoss: true,
-    stats: { hp: 3625, attack: 85, plating: 0, damageReduction: 0.03, speed: 56, attackRange: 18, attackCooldown: 2400, pullRange: 320 },
+    stats: { hp: 5650, attack: 72, plating: 0, damageReduction: 0.03, speed: 56, attackRange: 18, attackCooldown: 2400, pullRange: 320 },
     behavior: 'melee', attackStyle: 'slash', biome: 'jungle',
     rewards: { essence: 145, essenceType: 'green', level: 5, biomeXp: 218 },
     ai: { wanderRadius: 150, leashRange: 840, idleMinMs: 1800, idleMaxMs: 4500 },

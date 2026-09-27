@@ -532,7 +532,8 @@ initCombatSystems();
   updateBossScripts(world, 5_000);  // Call the Herd starts
   updateBossScripts(world, 1_500);  // ...and resolves
   const herd = (boss.scriptsBoss!.spawnedAddIds ?? []).map(id => world.getMonsterEntity(id)!);
-  assert(herd.length === 2 && herd.every(add => add.isMonster.monsterTypeId === 'prairie-yearling'),
+  // One yearling per call since the 2026-09-27 T2 boss pass.
+  assert(herd.length === 1 && herd.every(add => add.isMonster.monsterTypeId === 'prairie-yearling'),
     'T2 trickle calls prairie yearlings');
   updateBossScripts(world, 5_500);  // Rallying Roar starts
   assert(

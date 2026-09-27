@@ -181,6 +181,13 @@ Player DoT ticks and procs skip plating and pay half of a monster's DR
 builds overrun can author `dotResistance` on top; none needed it at the 2026-09-27 measurement
 (Apprentice's kill time was exactly the class median).
 
+**T2 (same day, ~60 s):** 15 non-Conduit T2 builds with a normalized package (Power Strike +
+Second Wind + Brace; the bench's melee kits carried only Expose Weakness). Designer target: every
+boss at ~75%+ wins. Before, T2 was the deadliest tier (Plains 7–13%, Forest 33–40% with every melee
+build dying, Swamp 27–53%): melee could not out-sustain the Plains herd or the Forest frenzy ramp.
+Result: every T2 boss 58–63 s midpoint, wins 88% Defensive / 81% Offensive. Striker is still the
+weakest class on Plains and Forest (a class issue, not a boss one).
+
 Result (2026-09-27, 45 non-Conduit reference builds × every boss): T3 median 139 s Defensive /
 103 s Offensive (wins 85/74%); T4 208 / 149 s (wins 92/82%). T1/T2 bosses are unchanged except
 the two Swamp poisons, which were softened to hold their win rates under the DoT/DR rule.

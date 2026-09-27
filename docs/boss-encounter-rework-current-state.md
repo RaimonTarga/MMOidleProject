@@ -19,7 +19,8 @@ contract on 2026-09-27** (T3 ~2 min, T4 ~3 min; see `tier-balance-current-state.
 HP/plating/DR per boss, and the clocks or hits that turned lethal in longer fights
 (Caldera Cataclysm/Heat/vents/burn, Salamander Final Eruption/Heat/attack, Mammoth
 Frostbite/Chill, Charnel raise/Harvest/Invocation, Bramble venom, Monarch Execution,
-Predator Cornered). T2 is still at its old numbers.
+Predator Cornered). T2 was sized to ~60 s the same day (Plains herd and Forest ramp
+softened so melee builds can win; Forest's threat is its ramp, not its opening).
 
 Tests: `server/test/bossLineage{Seams,Mountain,Swamp,Cave,Desert,Jungle,Tundra,Volcanic,Wasteland,Trench}.test.ts`
 (shared harness `server/test/_bossLineageHarness.ts`, which mocks `Date.now` like the
@@ -142,7 +143,6 @@ carry `castFx` on their start/end events.
 
 ### Known gaps (for the playtest / numbers pass)
 
-- T2 HP and damage untouched: its fights still run short of the ~60 s contract.
 - Rune condition, boss-debuff, boss DoT and pool-flavour art is borrowed; the list to
   generate is [`briefs/boss-lineage-art-list-2026-09-27.md`](briefs/boss-lineage-art-list-2026-09-27.md).
 - Several boss mechanics are bot-answerable only with the new runes wired; the bench's

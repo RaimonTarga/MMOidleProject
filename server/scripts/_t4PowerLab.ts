@@ -195,6 +195,7 @@ function run(row: Row) {
     const cap = row.capMs ?? (row.treatment === 'live' ? 360_000 : row.treatment.startsWith('trash:') ? 60_000 : 120_000);
     let elapsed = 0, outcome = 'capped', minHp = 1, bossHp = bossMaxHp;
     let killer: string | null = null;
+    let takenBoss = 0; const takenOther: Record<string, number> = {};
     let killAt: number | null = null, deathAt: number | null = null, resetAt: number | null = null, firstDmgAt: number | null = null;
     const marks: Record<string, number> = {};
     world.worldLogJournal = []; world.worldLogByPlayer.clear(); world.takeNodeEvents(nodeId);
@@ -205,6 +206,12 @@ function run(row: Row) {
         if (e.kind === 'kill' && e.victim?.id === bossEntityId) killAt ??= elapsed;
         if (e.kind === 'player-death') { deathAt ??= elapsed; killer ??= [e.cause?.killer?.monsterName ?? e.cause?.killer?.name, e.cause?.ability ?? e.cause?.abilityName ?? e.cause?.kind].filter(Boolean).join(' / ') || JSON.stringify(e.cause ?? null).slice(0, 120); }
         if (e.kind === 'dungeon-message' && /reforms/i.test(e.message ?? '')) resetAt ??= elapsed;
+        // Damage taken split by source: the boss itself vs everything else (adds, zones).
+        if (e.kind === 'damage' && e.target?.id === bot.isPlayer.id) {
+          const amt = e.hpDamage ?? 0;
+          if (e.source?.id === bossEntityId) takenBoss += amt;
+          else { const k = e.source?.name ?? e.source?.id ?? 'other'; takenOther[k] = (takenOther[k] ?? 0) + amt; }
+        }
       }
       world.worldLogJournal = []; world.worldLogByPlayer.clear(); world.takeNodeEvents(nodeId);
       const live = findBoss();
@@ -228,7 +235,7 @@ function run(row: Row) {
     return {
       id: row.id, tier: row.tier, cls: row.cls, frame: row.frame ?? null, path: row.path ?? null, treatment: row.treatment, node: nodeId, seed,
       outcome, won: isVictory(outcome as any), t: elapsed / 1000, firstDmgS: firstDmgAt === null ? null : firstDmgAt / 1000, fightS,
-      bossMaxHp, dealt, dpsAll: fightS ? Math.round(dealt / fightS) : 0, ...dps, minHpPct: Math.round(minHp * 1000) / 10, killer, loadout, pkg,
+      bossMaxHp, dealt, dpsAll: fightS ? Math.round(dealt / fightS) : 0, ...dps, minHpPct: Math.round(minHp * 1000) / 10, killer, deathS: deathAt === null ? null : deathAt / 1000, takenBoss, takenOther, loadout, pkg,
     };
   } finally {
     try { teardownArena(world); } catch { /* ignore */ }
