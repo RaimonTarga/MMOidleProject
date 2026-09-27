@@ -57,6 +57,7 @@ import { stokeAmbientRamp } from '../../world/nodeFeatures';
 import { countRaisedBy, raiseCorpsesBurst } from './raiseDead';
 import { applyMonsterDotToPlayer } from '../status/monsterDot';
 import { hasIndependentRoot, setRooted } from '../../world/rooted';
+import { bossAdds } from './bossAdds';
 
 export type { ScriptsBoss, ActiveBossEffect } from '@mmo-idle/shared';
 export { initScriptsBoss } from '@mmo-idle/shared';
@@ -325,17 +326,34 @@ function tickHarvest(state: ScriptsBoss, monster: MonsterEntity, world: World, d
   harvest.timerMs -= dt;
   if (harvest.timerMs > 0) return;
   harvest.timerMs = harvest.intervalMs;
-  const risen = [...world.monsterEntitiesInNode(monster.hasPosition.nodeId)]
-    .find(m => m.isRaised?.raiserId === monster.isMonster.id && m.hasHealth.hp > 0);
-  if (!risen) return;
-  // Its own cue: the soul drawn out of the risen and into the boss.
-  world.pushEvent(monster.hasPosition.nodeId, {
+  // Corpses first (Wasteland redesign: it feeds on its dead), then the living army,
+  // one at a time.
+  const nodeId = monster.hasPosition.nodeId;
+  const corpses = world.corpses.get(nodeId) ?? [];
+  let fedAt: { x: number; y: number } | undefined;
+  if (corpses.length > 0) {
+    let best = 0;
+    for (let i = 1; i < corpses.length; i++) {
+      if (distanceSq(corpses[i]!.pos, monster.hasPosition.current) < distanceSq(corpses[best]!.pos, monster.hasPosition.current)) best = i;
+    }
+    const [eaten] = corpses.splice(best, 1);
+    if (corpses.length === 0) world.corpses.delete(nodeId);
+    fedAt = eaten ? { ...eaten.pos } : undefined;
+  } else {
+    const add = bossAdds(world, monster)[0];
+    if (add) {
+      fedAt = { ...add.hasPosition.current };
+      world.removeMonsterEntity(add.isMonster.id);
+    }
+  }
+  if (!fedAt) return;
+  // Its own cue: the soul drawn out of the body and into the boss.
+  world.pushEvent(nodeId, {
     kind: 'boss-fx',
     monsterId: monster.isMonster.id,
-    pos: { ...risen.hasPosition.current },
+    pos: fedAt,
     fx: 'harvest',
   });
-  world.removeMonsterEntity(risen.isMonster.id);
   applyAction({ type: 'stat-buff', stat: 'attack', mult: harvest.attackMult, label: 'harvest' }, monster, world, state);
 }
 
@@ -977,6 +995,11 @@ function applyAction(
         vent.nextEruptAtMs = now + action.eruptEveryMs * ((i + 1) / vents.length);
       });
       pushBossFx(world, monster, 'roar', { radius: 480 });
+      break;
+    }
+
+    case 'set-raising': {
+      state.raiseDisabled = !action.enabled;
       break;
     }
 

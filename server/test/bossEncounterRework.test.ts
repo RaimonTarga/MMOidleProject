@@ -553,6 +553,8 @@ initCombatSystems();
   // It fires ONCE, on engage, and never respawns — the distinction that keeps it a
   // starting condition rather than a reinforcement wave.
   updateBossScripts(world, 100);
+  // Summoned by the Invocation cast (Wasteland redesign 2026-09-27): let it land.
+  updateBossScripts(world, 1600);
   const entourage = [...world.monsterEntitiesInNode(NODE)].filter(m => m !== boss);
   assert(entourage.length > 0, 'the Sovereign should arrive with an entourage');
   const entourageIds = new Set(entourage.map(m => m.isMonster.id));
@@ -617,9 +619,9 @@ initCombatSystems();
     `there should be exactly ONE Mass Resurrection, found ${massResurrections.length}`,
   );
 
-  // The steady cadence still works: with corpses on the floor it claims them, one
-  // at a time, through the ordinary raiser tick rather than a phase burst. That
-  // cadence — not a threshold wave — is what the encounter runs on now.
+  // Wasteland redesign (2026-09-27): at 25% HARVEST the Sovereign STOPS raising and
+  // eats its dead instead, so the cadence must be silent here. (Raising in the
+  // earlier phases is covered by bossLineageWasteland.test.ts.)
   let raiseNow = 2_000;
   for (let i = 0; i < 60; i++) {
     raiseNow += 500;
@@ -627,7 +629,8 @@ initCombatSystems();
     if ([...world.monsterEntitiesInNode(NODE)].some(m => m.isRaised)) break;
   }
   const risen = [...world.monsterEntitiesInNode(NODE)].filter(m => m.isRaised);
-  assert(risen.length > 0, 'the necromancy should still claw corpses back up');
+  assert(risen.length === 0 && boss.scriptsBoss?.raiseDisabled === true,
+    'in the Harvest phase the Sovereign stops raising');
   assert(
     risen.every(m => m.isRaised!.raiserId === boss.isMonster.id),
     'risen units should be owned by the Sovereign so they crumble with it',

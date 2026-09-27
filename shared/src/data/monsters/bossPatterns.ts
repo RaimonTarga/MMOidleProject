@@ -218,7 +218,7 @@ export type BossPatternStep =
       /** Each circle leaves this pool where it lands (Swamp Bile Rain). */
       pool?: PatternPool;
       /** Client cue for the falling hazard: `rockfall` (default) or `bile-rain`. */
-      fx?: 'rockfall' | 'bile-rain';
+      fx?: 'rockfall' | 'bile-rain' | 'grave-burst';
     }
   /**
    * Raise a source-owned absorb barrier. Breaking it during the pattern is a real
@@ -247,6 +247,12 @@ export type BossPatternStep =
     }
   /** Drop a barrier this pattern raised, whether or not it was broken. */
   | { kind: 'drop-barrier'; sourceId: string }
+  /**
+   * RAISE (Wasteland): a cast that raises up to `count` corpses within `range` of
+   * the boss when it completes, using the boss's `raisesDead` scalars. A stun on
+   * the wind-up stops it (answered per `stoppedBy.stun`).
+   */
+  | { kind: 'raise'; name: string; castMs: number; count: number; range: number; fx?: string; interruptible?: boolean }
   /**
    * A cast whose payload is a STATUS on the captured target rather than damage.
    *
@@ -547,7 +553,8 @@ export type BossPatternStep =
   | {
       kind: 'dash';
       name: string;
-      direction: 'to-target' | 'away';
+      /** `to-corpse`: walk to the nearest corpse in the arena (Wasteland reclaim). */
+      direction: 'to-target' | 'away' | 'to-corpse';
       speed: number;
       maxTravelMs: number;
       /** `to-target`: stop within this edge distance of the target. */
@@ -613,6 +620,11 @@ export interface BossPattern {
    * player closes in, and never otherwise.
    */
   armWhenTargetWithinPx?: number;
+  /**
+   * Only while the boss has NO living adds and there are corpses to raise
+   * (Wasteland: it goes to reclaim its army).
+   */
+  armWhenNoAdds?: boolean;
   /** REACTIVE: only while the target is FARTHER than this (Tundra Frost Spikes). */
   armWhenTargetBeyondPx?: number;
   /**

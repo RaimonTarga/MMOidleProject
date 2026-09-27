@@ -6,6 +6,7 @@ import { DEPTH } from "./depth";
 import { drawVentTelegraph } from "../fx/volcanicBoss";
 import { drawEruptionTelegraph } from "../fx/earthBosses";
 import { drawFrostTelegraph } from "../fx/tundraBoss";
+import { drawBoneSpearTelegraph, drawGraveBurstTelegraph, drawSoulNovaTelegraph } from "../fx/wastelandBoss";
 
 /**
  * Runtime combat circles: Cave slam telegraphs and temporary toxic pools. Lifted
@@ -374,6 +375,12 @@ function drawZone(sprite: GroundZoneSprite, progress: number, nowMs: number): vo
     return;
   }
 
+  if (sprite.kind === 'fault-line-telegraph' && sprite.fx === 'grave-burst') {
+    // Wasteland Grave Burst: runes fill the circle, bone pushes up (wastelandBoss.ts).
+    drawGraveBurstTelegraph(graphic, x, y, radius, progress, (x * 7 + y * 13) % 97);
+    return;
+  }
+
   if (sprite.kind === 'fault-line-telegraph' && (sprite.fx === 'rockfall' || sprite.fx === 'bile-rain')) {
     // Something falling: its shadow grows on the ground, and it drops into view for
     // the last stretch of the wind-up, landing on the resolve.
@@ -495,6 +502,8 @@ function drawZone(sprite: GroundZoneSprite, progress: number, nowMs: number): vo
   // Tundra frost circles grow ice (earthBosses.ts / tundraBoss.ts).
   if (sprite.fx === 'deep-core-eruption') drawEruptionTelegraph(graphic, x, y, radius, progress, (x * 7 + y * 13) % 97);
   else if (sprite.fx === 'shatter') drawFrostTelegraph(graphic, x, y, radius, progress, (x * 7 + y * 13) % 97);
+  else if (sprite.fx === 'bone-spear') drawBoneSpearTelegraph(graphic, x, y, radius, progress);
+  else if (sprite.fx === 'soul-nova') drawSoulNovaTelegraph(graphic, x, y, radius, progress);
 
   // Impact flash — the last sliver of the wind-up.
   if (progress > 0.88) {

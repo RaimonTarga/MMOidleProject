@@ -81,6 +81,8 @@ import { isMonsterStunned } from '../status/stun';
 import { applyMonsterDotToPlayer } from '../status/monsterDot';
 import { monsterIgnoresControl } from '../status/controlImmunity';
 import { BOSS_FRENZY_EFFECT_ID } from '../engine/monsterMechanics';
+import { bossAdds } from './bossAdds';
+import { raiseCorpsesBurst } from './raiseDead';
 
 const PATTERN_SESSION_KEY = 'bossPatternSession';
 const PATTERN_USED_KEY = 'bossPatternUsed';
@@ -708,6 +710,13 @@ function tryArmPattern(world: World, monster: MonsterEntity, pattern: BossPatter
   if (pattern.armWhenTargetBeyondPx !== undefined && gapSq <= pattern.armWhenTargetBeyondPx ** 2) {
     return false;
   }
+  // RECLAIM (Wasteland): only with no army left and bodies to raise.
+  if (
+    pattern.armWhenNoAdds &&
+    (bossAdds(world, monster).length > 0 || (world.corpses.get(monster.hasPosition.nodeId)?.length ?? 0) === 0)
+  ) {
+    return false;
+  }
   if (
     pattern.armWhenTargetStatus &&
     (getStatusEffect(target.tracksCombat, pattern.armWhenTargetStatus.effectId)?.stacks ?? 0) <
@@ -989,6 +998,17 @@ function beginStep(
       // not wait for them — they are the finite tail of the payoff, and holding the
       // boss still until they land would double the recovery the design authored.
       state.stepEndsAtMs = now;
+      return true;
+    }
+    case 'raise': {
+      state.stepEndsAtMs = now + step.castMs;
+      world.pushEvent(monster.hasPosition.nodeId, {
+        kind: 'monster-cast-start',
+        monsterId: monster.isMonster.id,
+        castMs: step.castMs,
+        label: step.name,
+        fx: step.fx,
+      });
       return true;
     }
     case 'rockfall': {
@@ -1548,6 +1568,21 @@ function tickStep(
       });
       return 'done';
     }
+    case 'raise': {
+      if (stopPatternOnControl(world, monster, pattern, step, now)) return 'ended';
+      if (now < state.stepEndsAtMs) return 'running';
+      const spec = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId)?.raisesDead;
+      const raised = spec
+        ? raiseCorpsesBurst(world, monster, { ...spec, corpseRange: step.range }, step.count, Number.MAX_SAFE_INTEGER, now)
+        : 0;
+      world.pushEvent(monster.hasPosition.nodeId, {
+        kind: 'monster-cast-end',
+        monsterId: monster.isMonster.id,
+        fired: raised > 0,
+        fx: step.fx,
+      });
+      return 'done';
+    }
     case 'fault-lines':
     case 'rockfall':
     case 'drop-barrier':
@@ -1561,7 +1596,8 @@ function tickStep(
       const arrived = target !== null && dashArrived(world, monster, target, step);
       if (!arrived && now < state.stepEndsAtMs) {
         // Re-steer when the target has moved on or the body stalled.
-        const moved = target && (!state.fleeTargetPosition ||
+        // A walk to a corpse is not steered by the player's movements.
+        const moved = step.direction !== 'to-corpse' && target && (!state.fleeTargetPosition ||
           distanceSq(target.hasPosition.current, state.fleeTargetPosition) >= 48 ** 2);
         if (target && (moved || !monster.isMoving) && now - (state.lastFleeSteerMs ?? 0) >= 200) {
           state.lastFleeSteerMs = now;
@@ -1652,7 +1688,19 @@ function dashDestination(
   step: Extract<BossPatternStep, { kind: 'dash' }>,
 ): Vec2 | null {
   if (step.direction === 'to-target') return { ...target.hasPosition.current };
+  if (step.direction === 'to-corpse') return nearestCorpsePos(world, monster);
   return fleeDestination(world, monster, target);
+}
+
+/** The corpse nearest the boss anywhere in its arena, or null. */
+function nearestCorpsePos(world: World, monster: MonsterEntity): Vec2 | null {
+  let best: Vec2 | null = null;
+  let bestD = Infinity;
+  for (const corpse of world.corpses.get(monster.hasPosition.nodeId) ?? []) {
+    const d = distanceSq(corpse.pos, monster.hasPosition.current);
+    if (d < bestD) { bestD = d; best = corpse.pos; }
+  }
+  return best ? { ...best } : null;
 }
 
 /** A dash is over once it reached melee (`to-target`) or opened its gap (`away`). */
@@ -1664,6 +1712,11 @@ function dashArrived(
 ): boolean {
   if (step.direction === 'to-target') {
     return world.collision.canReach(monster, target, step.reach ?? 40);
+  }
+  if (step.direction === 'to-corpse') {
+    const state = monster.runsBossPattern;
+    return !state?.capturedEndpoint ||
+      distanceSq(monster.hasPosition.current, state.capturedEndpoint) <= (step.reach ?? 60) ** 2;
   }
   return distanceSq(monster.hasPosition.current, target.hasPosition.current) >= (step.distance ?? 400) ** 2;
 }

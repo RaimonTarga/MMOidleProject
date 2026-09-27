@@ -261,6 +261,8 @@ initCombatSystems();
   boss.hasHealth.hp = boss.hasHealth.maxHp * 0.5;
 
   updateBossScripts(world, 0);
+  // The Invocation opens the fight; the Mass Resurrection queues behind it.
+  updateBossScripts(world, 1600);
   assert(
     world.takeNodeEvents(NODE).some(event => event.kind === 'monster-cast-start' && event.label === 'Mass Resurrection'),
     'Charnel-Crown should announce Mass Resurrection at 50%',

@@ -166,6 +166,8 @@ export interface ScriptsBoss {
     /** The vent's ground zone, so a later phase can widen it in place. */
     zoneId?: string;
   }[];
+  /** Set by 'set-raising': the boss has stopped raising the dead. */
+  raiseDisabled?: boolean;
   /** Set by 'vent-spawner': transient vents opening around the boss. */
   ventSpawner?: {
     everyMs: number;

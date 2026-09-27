@@ -306,7 +306,7 @@ function describeBossPatternStep(step: BossPatternStep, pattern: BossPattern): s
     case 'frenzy':
       return `${step.name}: +${fmtPct(step.attackSpeedPct)} attack speed and +${fmtPct(step.damagePct)} damage for ${fmtMs(step.durationMs)}`;
     case 'dash':
-      return `${step.name}: dashes ${step.direction === 'to-target' ? 'onto its target' : `away to ${step.distance ?? 400}px`} at ${fmtNumber(step.speed)}px/s` +
+      return `${step.name}: dashes ${step.direction === 'to-target' ? 'onto its target' : step.direction === 'to-corpse' ? 'to the nearest corpse' : `away to ${step.distance ?? 400}px`} at ${fmtNumber(step.speed)}px/s` +
         (step.rootable ? '; a root stops it' : '') +
         (step.interruptible === false ? '; cannot be interrupted' : '');
     case 'rockfall':
@@ -314,6 +314,8 @@ function describeBossPatternStep(step: BossPatternStep, pattern: BossPattern): s
         ` each a ${step.radius}px circle, after ${fmtMs(step.delayMs)} for ${fmtMult(pattern.damageMultiplier * step.damageMult)} damage`;
     case 'drop-barrier':
       return `Drops the ${readableId(step.sourceId)} barrier`;
+    case 'raise':
+      return `Casts ${step.name} for ${fmtMs(step.castMs)}: raises up to ${step.count} corpses within ${step.range}px`;
     case 'apply-status':
       return `Casts ${step.name} for ${fmtMs(step.castMs)}: ${statusLabel(step.effectId, step.name)}` +
         ` ×${step.stacks} for ${fmtMs(step.durationMs)}${describePatternStatus(step)}` +

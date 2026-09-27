@@ -2320,6 +2320,7 @@ function resolveDelayedGroundZoneImpacts(world: World, now: number): void {
       const scatteredFx = impact.fx === 'rockfall' ? 'rock-impact'
         : impact.fx === 'bile-rain' ? 'bile-splat'
         : impact.fx === 'vent-eruption' ? 'vent-eruption'
+        : impact.fx === 'grave-burst' ? 'grave-burst'
         : 'slam';
       for (const point of impact.points) {
         if (impact.leavesPool && world.hasMonster(ownerId)) {

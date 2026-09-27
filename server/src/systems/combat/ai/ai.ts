@@ -338,8 +338,11 @@ export function updateMonsters(world: World, dt: number, now: number) {
       ai.lastAggroAt = now;
 
       // Leash check: if too far from spawn, give up and return.
+      // A boss's adds never leash on their own: they fight as long as their boss
+      // does (their target is synced to it above, and dropped when it drops).
       if (
         !e.inPack?.coordination &&
+        !isBossSpawnedAdd &&
         distanceSq(e.hasPosition.current, ai.spawn) >
         ai.leashRange * ai.leashRange
       ) {

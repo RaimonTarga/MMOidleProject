@@ -33,6 +33,8 @@ export const BOSS_BRITTLE_EFFECT_ID = 'boss-brittle';
 export const REND_EFFECT_ID = 'rend';
 /** Trench: the room's Depth — every debuff laid on you lasts longer per stack. */
 export const DEPTH_EFFECT_ID = 'depth';
+/** Wasteland: the Sovereign's hex — +damage taken while its army fights you. */
+export const HEX_OF_RUIN_EFFECT_ID = 'hex-of-ruin';
 /** Status data key: fraction added to the duration of boss-laid debuffs PER STACK. */
 export const DEBUFF_DURATION_PCT_KEY = 'debuffDurationPct';
 /** Status data key: fraction added to the ambient ramp's build speed PER STACK. */
@@ -58,6 +60,11 @@ export const BOSS_DEBUFFS: Record<string, BossDebuffDef> = {
     label: 'Brittle',
     color: '#cfe8ff',
     help: 'Frozen and cracked: you take extra damage for a few seconds. The boss\u2019s Shatter swing is coming — Guard it or stay out of reach.',
+  },
+  [HEX_OF_RUIN_EFFECT_ID]: {
+    label: 'Hex of Ruin',
+    color: '#8a5ab8',
+    help: 'The Sovereign has hexed you: you take extra damage from it and its army. Cleanse removes it.',
   },
   [ERODED_EFFECT_ID]: {
     label: 'Eroded',

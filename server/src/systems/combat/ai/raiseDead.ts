@@ -21,6 +21,7 @@ import { isMonsterStunned } from '../status/stun';
 import { staggerBoss } from './bossPatterns';
 import { isMonsterFrozen } from '../../classes/archetypes/dot/t3/core/selectors';
 import { chargedCastEndsAt } from '../engine/monsterMechanics';
+import { bindBossAdd } from './bossAdds';
 
 const SESSION_KEY = 'raiseDeadSession';
 const NEXT_RAISE_KEY = 'raiseDeadNextAt';
@@ -113,6 +114,8 @@ function raiseCorpse(
   if (!risen) return false;
 
   attachComponent(world, risen, 'isRaised', { raiserId: raiser.isMonster.id });
+  // A boss's risen join its army: its anchor, leash and target, kept in sync.
+  if (raiser.isMonster.isBoss) bindBossAdd(world, raiser, risen, now);
 
   // The dead come back diminished, and READ as raised: the name is the only tell
   // the client needs — it already rides the networked `isMonster` slice, so no
@@ -197,6 +200,11 @@ export function updateRaisers(world: World, now: number): void {
     if (!spec) continue;
     // A risen necromancer never raises: the tide has to terminate.
     if (raiser.isRaised) continue;
+    // A boss that has stopped raising (Wasteland's last phase feeds on its army).
+    if (raiser.scriptsBoss?.raiseDisabled) {
+      cancelRaiseCast(world, raiser);
+      continue;
+    }
     if (raiser.hasHealth.hp <= 0) continue;
 
     const aggro = raiser.hasAggroTarget;
@@ -275,6 +283,7 @@ export function updateRaisers(world: World, now: number): void {
     if ((spec.castMs ?? 0) > 0) {
       if (
         !raiser.cannotAttack &&
+        !raiser.runsBossPattern &&
         !raiser.scriptsBoss?.scriptedCast &&
         chargedCastEndsAt(raiser) <= 0 &&
         !isMonsterStunned(world, raiser.isMonster.id) &&

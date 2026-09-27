@@ -176,6 +176,14 @@ import { fxExecutionWindup, fxStingWindup } from "../fx/desertBoss";
 import { fxEncaseWindup, fxFreezeWindup, fxShatterWindup } from "../fx/tundraBoss";
 import { fxVentEruption } from "../fx/volcanicBoss";
 import {
+  fxBoneSpear,
+  fxGraveBurst,
+  fxGraveCast,
+  fxHexWindup,
+  fxSoulNova,
+  NECRO_HUNT,
+} from "../fx/wastelandBoss";
+import {
   fxBearFrenzyWindup,
   fxHarvest,
   fxPawRaise,
@@ -1096,7 +1104,13 @@ export function dispatchCombatEvent(
         else if (ev.fx === "stampede") fxStampedeWindup(scene, ev.monsterId, ev.castMs);
         else if (ev.fx === "frenzy") fxBearFrenzyWindup(scene, ev.monsterId, ev.castMs);
         else if (ev.fx === "paw-raise") fxPawRaise(scene, ev.monsterId, ev.castMs);
-        else if (ev.fx === "raise-dead" || ev.fx === "mass-raise") fxRaiseWindup(scene, ev.monsterId, ev.castMs, ev.fx);
+        else if (ev.fx === "raise-dead" || ev.fx === "mass-raise" || ev.fx === "invocation") fxRaiseWindup(scene, ev.monsterId, ev.castMs, ev.fx);
+        // Wasteland: the hexes, the Wrath's cast, and the glide to the bodies.
+        else if (ev.fx === "hex-ruin") fxHexWindup(scene, ev.monsterId, ev.castMs, "ruin", ev.fx);
+        else if (ev.fx === "hex-chill") fxHexWindup(scene, ev.monsterId, ev.castMs, "chill", ev.fx);
+        else if (ev.fx === "hex-wither") fxHexWindup(scene, ev.monsterId, ev.castMs, "wither", ev.fx);
+        else if (ev.fx === "grave-cast") fxGraveCast(scene, ev.monsterId, ev.castMs);
+        else if (ev.fx === "necro-glide") fxHuntBolt(scene, ev.monsterId, NECRO_HUNT);
         else if (ev.fx === "predator-flee") {
           // The bolt itself (lean, stretch, afterimages) for every hunter; the leaf
           // wrap only in the jungle — a Desert dash has no brush to close around it.
@@ -1214,6 +1228,11 @@ export function dispatchCombatEvent(
         playSfx("attack-blunt");
         fxEmerge(scene, impact.x, impact.y, ev.radius ?? 160);
         impactFeel(scene, "medium", impact);
+      } else if (impact && ev.fx === "bone-spear") {
+        playSfx("attack-blunt");
+        fxBoneSpear(scene, impact.x, impact.y, ev.radius ?? 85);
+      } else if (impact && ev.fx === "soul-nova") {
+        fxSoulNova(scene, impact.x, impact.y, ev.radius ?? 230);
       } else if (impact && ev.fx === "shatter") {
         fxShatter(scene, impact.x, impact.y, ev.radius ?? 195);
       } else if (impact && ev.fx === "cataclysm-impact") {
@@ -1342,6 +1361,8 @@ export function dispatchCombatEvent(
         fxVentEruption(scene, point.x, point.y, ev.radius ?? 180);
       } else if (ev.fx === "harvest") {
         fxHarvest(scene, ev.monsterId, point);
+      } else if (ev.fx === "grave-burst") {
+        fxGraveBurst(scene, point.x, point.y, ev.radius ?? 110);
       } else if (ev.fx === "slam") {
         playSfx("attack-blunt");
         fxSlam(scene, at.x, at.y, ev.radius ?? 120, ev.element);

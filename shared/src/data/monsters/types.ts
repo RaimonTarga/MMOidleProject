@@ -222,6 +222,8 @@ export type BossAction =
    * and gains a permanent `attackMult`. A buff only, never a heal.
    */
   | { type: 'harvest'; intervalMs: number; attackMult: number }
+  /** Stop (or resume) this boss's necromancy: its cadence raises and raise casts. */
+  | { type: 'set-raising'; enabled: boolean }
   /**
    * ADD / REMOVE PATTERN — arm a SECOND authored pattern (from `bossPatternVariants`)
    * alongside the main one, with its own cooldown; the boss still runs one sequence
@@ -545,6 +547,11 @@ export interface MonsterRaisesDead {
   castFx?: string;
   /** Corpses claimed and raised per cadence cast (default 1). Wasteland: numbers over quality. */
   count?: number;
+  /**
+   * The risen leave corpses again, so the army can be raised over and over until
+   * the raiser stops (Wasteland redesign: it keeps its army until the last phase).
+   */
+  reraisable?: boolean;
   /**
    * A STUN on the Raise wind-up stops it AND staggers the raiser for this long, with
    * the stun tell (principle 5): the Wasteland's one control-answerable beat.

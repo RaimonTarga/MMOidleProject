@@ -132,8 +132,8 @@ type CombatEventPayload =
   | { kind: 'boss-fx'; monsterId: string; pos: Vec2; fx: 'slam' | 'summon' | 'shield' | 'morph' | 'roar' | 'frenzy' | 'predator-frenzy' | 'stagger'
     // Typed scattered impacts (Rockfall, Bile Rain, vent eruptions) and a charge connecting.
     | 'rock-impact' | 'bile-splat' | 'vent-eruption' | 'charge-impact'
-    // Wasteland Harvest: `pos` is the risen being devoured.
-    | 'harvest'; radius?: number; element?: string }
+    // Wasteland Harvest: `pos` is the body being devoured. Grave Burst: one eruption.
+    | 'harvest' | 'grave-burst'; radius?: number; element?: string }
   // An announced boss phase began (`BossPhase.name`). The client calls the name out
   // over the boss; the lasting label rides `hasStatus.bossPhase` on the boss bar.
   | { kind: 'boss-phase'; monsterId: string; name: string }

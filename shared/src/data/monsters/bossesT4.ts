@@ -1,6 +1,6 @@
 import { SUN_MARK_EFFECT_ID, TUNDRA_CHILL_EFFECT_ID } from '../../systems/monsterDebuffs';
 import { FROZEN_STATUS_ID } from '../../systems/statusPolicy';
-import { BOSS_BRITTLE_EFFECT_ID, DEPTH_EFFECT_ID, FROSTBITE_EFFECT_ID, REND_EFFECT_ID } from '../../systems/bossDebuffs';
+import { BOSS_BRITTLE_EFFECT_ID, DEPTH_EFFECT_ID, FROSTBITE_EFFECT_ID, REND_EFFECT_ID, HEX_OF_RUIN_EFFECT_ID } from '../../systems/bossDebuffs';
 import type { MonsterDefinition } from './types';
 
 // ════════════════════════════════════════════════════════════════════════
@@ -709,69 +709,111 @@ export const bossMonsterEntriesT4 = [
   ['charnel-crown-sovereign', {
     id: 'charnel-crown-sovereign', name: 'Charnel-Crown Sovereign', color: 0x553366,
     isBoss: true,
-    stats: { hp: 19499, attack: 115, plating: 14, damageReduction: 0.08, speed: 28, attackRange: 20, attackCooldown: 2300, pullRange: 400 },
-    behavior: 'melee', attackStyle: 'poison', biome: 'graveyard',
+    // A RANGED caster now (redesign 2026-09-27): it stands back and hexes you while
+    // its army fights.
+    stats: { hp: 19499, attack: 115, plating: 14, damageReduction: 0.08, speed: 28, attackRange: 260, attackCooldown: 2300, pullRange: 400 },
+    behavior: 'ranged', attackStyle: 'magic', biome: 'graveyard',
     rewards: { essence: 615, essenceType: 'purple', level: 5, biomeXp: 923 },
     ai: { wanderRadius: 105, leashRange: 960, idleMinMs: 3000, idleMaxMs: 8000 },
     targeting: { prefersPlayers: true },
-    // WASTELAND = AUTHORED NECROMANCY. One opening entourage, visible corpses,
-    // selective Raise Dead, and ONE major Mass Resurrection. Risen deaths are
-    // permanent — the tide is finite, and killing a body twice is the last time.
-    //
-    // THE CORPSES ARE THE ENCOUNTER, so they are now VISIBLE (redesign §4.9): every
-    // body on the floor is broadcast with a stable id, and the ones a cast has
-    // claimed are marked and tethered to the boss WHILE THE CAST RUNS. Previously
-    // necromancy was invisible bookkeeping — things simply reappeared — and the
-    // player had no way to read which of the dead were coming back, or to answer it.
-    //
-    // REMOVED with the 2026-09-04 redesign: the generic Charnel Burst circle, the
-    // broad always-on Crown Decay DoT (a personal poison package competing with the
-    // corpse tide for the same attrition role — it made this read as a second Swamp
-    // boss), the 25% Deathless Tide wave and its cadence roar (§12.5: one major
-    // resurrection, no generic low-health nuke), and `chargeOnAggro`.
-    //
-    // The steady necromancy reaches wide (the arena is large and the corpses are
-    // wherever you killed them) but raises only ONE at a time on an 8s cadence. That
-    // selectivity is the point: a boss raising everything constantly is a spawner,
-    // and Plains already owns spawning. Placeholder numbers.
-    // WASTELAND (boss-lineage redesign 2026-09-27) — the successor to Plains: an
-    // adds fight where AoE matters most. Raises favour NUMBERS OVER QUALITY: several
-    // weak risen per cast (weak enough that single-target builds can still clear
-    // them). Three phases:
-    //   (1) Raise Dead on a cadence, three at a time. The Raise wind-up can be
-    //       STUNNED (its one control beat; stun arrives at T4): a stopped raise
-    //       staggers the boss. Or AoE the risen.
-    //   (2) ~60% Mass Resurrection, then BONE TITHE: it takes 6% less damage per
-    //       living risen (visible stacks, capped at 6). Clear the adds first.
-    //   (3) ~25% HARVEST, the soft enrage: every few seconds it devours one of its
-    //       risen for a permanent attack buff (no heal — that would only lengthen
-    //       the fight). Clear adds before it eats them, or race it.
+    // WASTELAND (redesign 2026-09-27, from the playtest) — THE COMMANDER AND ITS ARMY.
+    //   (1) INVOCATION: it opens by summoning its entourage. The army fights as one
+    //       force with it (shares its target, never leashes or idles on its own —
+    //       bossAdds.ts), and the boss SUPPORTS it from range with three cleansable
+    //       hexes on you: Hex of Ruin (+damage taken), Grave Chill (slow) and
+    //       Withering Hex (anti-heal). It raises the fallen on a cadence, and its
+    //       risen leave corpses again (`reraisable`), so the army keeps coming.
+    //       When the army is gone it walks to the corpses and raises them (Reclaim);
+    //       a stun on the raise staggers it.
+    //   (2) ~60% BONE TITHE: Mass Resurrection, then damage reduction per living add.
+    //   (3) ~25% HARVEST, the turn: it stops supporting and stops raising, devours
+    //       the corpses and then its living army one by one (each a permanent attack
+    //       boost), and casts to kill: Grave Burst circles, Bone Spears, and a Soul
+    //       Nova when you stand close. The boss is the threat now.
     raisesDead: {
-      intervalMs: 7000, initialDelayMs: 4000, corpseRange: 700, maxAlive: 7, count: 3,
-      // Keep seed bodies available through slow pulls and the half-health cast.
+      intervalMs: 9000, initialDelayMs: 8000, corpseRange: 700, maxAlive: 7, count: 2,
+      // Keep bodies available through slow pulls and the whole fight.
       corpseLifetimeMs: 600_000,
       hpMult: 0.45, damageMult: 0.60,
       castMs: 1600, castName: 'Raise Dead', castFx: 'raise-dead',
       stunStaggerMs: 3000,
+      reraisable: true,
     },
+    // THE HEXES — support for the army, cast from range on a rotation.
+    bossPattern: {
+      id: 'charnel-hexes', name: 'Hexes',
+      damageMultiplier: 1, cooldownMs: 8000, initialCooldownMs: 4500,
+      steps: [
+        { kind: 'apply-status', name: 'Hex of Ruin', castMs: 900, fx: 'hex-ruin',
+          effectId: HEX_OF_RUIN_EFFECT_ID, stacks: 1, durationMs: 8000,
+          data: { isBossDebuff: 1, damageTakenPct: 0.15 } as Record<string, number> },
+        { kind: 'wait', durationMs: 1500 },
+        { kind: 'apply-status', name: 'Grave Chill', castMs: 800, fx: 'hex-chill',
+          effectId: 'slow', stacks: 1, durationMs: 4000, data: { speedMult: 0.6 } as Record<string, number> },
+        { kind: 'wait', durationMs: 1500 },
+        { kind: 'apply-status', name: 'Withering Hex', castMs: 800, fx: 'hex-wither',
+          effectId: 'antiheal', stacks: 1, durationMs: 8000, data: { antihealReduction: 0.4 } as Record<string, number> },
+      ],
+    },
+    bossPatternVariants: [
+      {
+        // RECLAIM: its army is gone — it goes to the bodies and raises them.
+        id: 'charnel-reclaim', name: 'Reclaim',
+        damageMultiplier: 1, cooldownMs: 5000, initialCooldownMs: 0, priority: 3,
+        armWhenNoAdds: true, armAboveHpPct: 0.25,
+        stoppedBy: { stun: { staggerMs: 3000, label: 'Raise Broken' } },
+        steps: [
+          { kind: 'dash', name: 'Reclaim', direction: 'to-corpse', speed: 200, reach: 70,
+            maxTravelMs: 4000, fx: 'necro-glide' },
+          { kind: 'raise', name: 'Raise Dead', castMs: 1600, count: 4, range: 260, fx: 'raise-dead' },
+        ],
+      },
+      {
+        // THE WRATH (last phase): it casts to kill.
+        id: 'charnel-wrath', name: 'Wrath',
+        damageMultiplier: 1, cooldownMs: 5500, initialCooldownMs: 1500,
+        steps: [
+          { kind: 'cast', name: 'Grave Burst', castMs: 700, fx: 'grave-cast' },
+          { kind: 'rockfall', name: 'Grave Burst', fx: 'grave-burst', count: 5, radius: 115, spread: 300,
+            delayMs: 1300, damageMult: 0.8 },
+          { kind: 'wait', durationMs: 900 },
+          { kind: 'impact', name: 'Bone Spear', anchor: 'target', radius: 85,
+            damageMult: 1.3, telegraphMs: 900, fx: 'bone-spear' },
+          { kind: 'wait', durationMs: 600 },
+          { kind: 'impact', name: 'Bone Spear', anchor: 'target', radius: 85,
+            damageMult: 1.3, telegraphMs: 800, fx: 'bone-spear' },
+        ],
+      },
+      {
+        // SOUL NOVA (last phase): too close to it is its answer.
+        id: 'charnel-nova', name: 'Soul Nova',
+        damageMultiplier: 1, cooldownMs: 9000, initialCooldownMs: 2000, priority: 2,
+        armWhenTargetWithinPx: 190,
+        steps: [
+          { kind: 'impact', name: 'Soul Nova', anchor: 'self', radius: 230,
+            damageMult: 1.2, telegraphMs: 1100, fx: 'soul-nova' },
+        ],
+      },
+    ],
     bossScript: {
       phases: [
-        // The OPENING ENTOURAGE, on engage. Fires once and never respawns: these
-        // three are the seed corpses the whole encounter is fed from.
-        //   Bone Crawler   — corpse fodder, there to die and be raised.
-        //   Plague Hound   — limited plague pressure, and its death pool is the one
-        //                    hazard in the fight.
-        //   Carrion Vulture— ranged support through its existing undead haste.
+        // INVOCATION: the opening entourage, summoned by a short cast. These are
+        // the army and the first corpses of the fight.
+        //   Bone Crawler   — fodder, there to die and be raised.
+        //   Plague Hound   — plague pressure; its death pool is a hazard.
+        //   Carrion Vulture— ranged support through its undead haste.
         { hpPct: 1.0, actions: [
-          { type: 'spawn-adds', monsterTypeId: 'bone-crawler', count: 4, maxAlive: 6, offsetRange: 260 },
-          { type: 'spawn-adds', monsterTypeId: 'plague-hound', count: 1, maxAlive: 5, offsetRange: 260 },
-          { type: 'spawn-adds', monsterTypeId: 'carrion-vulture', count: 1, maxAlive: 5, offsetRange: 260 },
+          { type: 'cast', castMs: 1500, label: 'Invocation', fx: 'roar', castFx: 'invocation', actions: [
+            // No maxAlive: it caps ALL of the boss's spawned adds together, which left
+            // the vulture (5 already up) never spawning. The Invocation is one-shot.
+            { type: 'spawn-adds', monsterTypeId: 'bone-crawler', count: 4, offsetRange: 260 },
+            { type: 'spawn-adds', monsterTypeId: 'plague-hound', count: 1, offsetRange: 260 },
+            { type: 'spawn-adds', monsterTypeId: 'carrion-vulture', count: 1, offsetRange: 260 },
+          ] },
+          { type: 'add-pattern', patternId: 'charnel-reclaim' },
         ] },
-        // ONE major Mass Resurrection: up to three remaining bodies get up at
-        // once, and the tide is allowed to stand two deeper. There is no
-        // second wave — a low-health repeat would make the first one meaningless.
         { hpPct: 0.6, name: 'Bone Tithe',
-          description: 'It raises the dead, and every risen standing for it gives it damage reduction. Clear the risen to strip its defence.',
+          description: 'It raises the dead, and every add standing for it gives it damage reduction. Clear the army to strip its defence; Cleanse its hexes to blunt it.',
           actions: [
           { type: 'cast', castMs: 1800, label: 'Mass Resurrection', fx: 'roar', castFx: 'mass-raise', actions: [
             { type: 'raise-dead', count: 5, maxAliveAdd: 3, hpMult: 0.45, damageMult: 0.60 },
@@ -779,9 +821,13 @@ export const bossMonsterEntriesT4 = [
           { type: 'bone-tithe', damageReductionPerRisen: 0.06, maxStacks: 6 },
         ] },
         { hpPct: 0.25, name: 'Harvest',
-          description: 'Every few seconds it devours one of its risen for a permanent attack boost. Clear the risen before it feeds.',
+          description: 'It stops raising and supporting its army: it devours the corpses and then its living adds one by one, each a permanent attack boost, and casts to kill — Grave Burst circles, Bone Spears, and a Soul Nova if you stand close.',
           actions: [
-          { type: 'harvest', intervalMs: 4000, attackMult: 1.06 },
+          { type: 'set-raising', enabled: false },
+          { type: 'remove-pattern', patternId: 'charnel-reclaim' },
+          { type: 'set-pattern', patternId: 'charnel-wrath' },
+          { type: 'add-pattern', patternId: 'charnel-nova' },
+          { type: 'harvest', intervalMs: 2500, attackMult: 1.07 },
         ] },
       ],
     },

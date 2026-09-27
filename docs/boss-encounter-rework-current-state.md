@@ -100,6 +100,22 @@ balance labs).
 - Packed atlases load with a content-hash `?v=` (`client/src/packedAssetUrl.ts`), so a
   repack is not hidden behind the one-hour asset cache.
 
+### Wasteland redesign (2026-09-27, from the playtest)
+
+The Charnel-Crown Sovereign is now **a ranged commander and its army**:
+Invocation (a cast summoning the entourage) → the army fights as one force
+(`server/src/systems/combat/ai/bossAdds.ts`: summoned AND risen adds share the
+boss's target and never leash on their own) while the boss hexes from range
+(cleansable Hex of Ruin +15% damage taken, Grave Chill slow, Withering Hex
+anti-heal) and raises on a cadence. Its risen leave corpses again
+(`raisesDead.reraisable`), and with no army left it walks to the bodies and raises
+them (`charnel-reclaim`: `armWhenNoAdds`, dash `to-corpse`, the new pattern `raise`
+step; a stun staggers it). 60% Bone Tithe is unchanged. 25% HARVEST is the turn:
+`set-raising false`, it devours corpses and then living adds one by one (permanent
+attack), and casts to kill (`charnel-wrath`: Grave Burst circles, Bone Spears;
+`charnel-nova` when you stand close). Fixed on the way: the entourage's
+`spawn-adds maxAlive` counted ALL adds, so the Carrion Vulture never spawned.
+
 ### Premium animation pass (2026-09-27)
 
 Every lineage's signature actions are animated with the same grammar (set by the

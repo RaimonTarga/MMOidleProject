@@ -1,4 +1,4 @@
-import { MONSTER_DATABASE, NODE_BIOMES, RECIPE_DATABASE, ITEM_DATABASE } from '@mmo-idle/shared';
+import { MONSTER_DATABASE, NODE_BIOMES, RECIPE_DATABASE, ITEM_DATABASE, type BossAction } from '@mmo-idle/shared';
 import {
   BOSS1_BLOCKS,
   BOSS1_BOSS_ID,
@@ -114,11 +114,14 @@ assertBoss1Definitions();
   assert(!!script?.phases?.length, 'the boss must still have a script with phases');
 
   const summoned = new Set<string>();
-  for (const phase of script.phases) {
-    for (const action of phase.actions ?? []) {
+  // Casts nest their actions (the Sovereign's Invocation summons the entourage).
+  const walk = (actions: readonly BossAction[]): void => {
+    for (const action of actions) {
       if (action.type === 'spawn-adds' && action.monsterTypeId) summoned.add(action.monsterTypeId);
+      if (action.type === 'cast') walk(action.actions);
     }
-  }
+  };
+  for (const phase of script.phases) walk(phase.actions ?? []);
   assert(JSON.stringify([...summoned].sort()) === JSON.stringify(Object.keys(BOSS1_ESCORTS).sort()),
     `declared escorts must be exactly what the script spawns, got ${JSON.stringify([...summoned].sort())}`);
 

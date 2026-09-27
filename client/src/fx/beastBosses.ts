@@ -171,7 +171,7 @@ export function fxRaiseWindup(scene: GameScene, id: string, castMs: number, fx: 
   tweenPose(scene, id, { sx: 0.94, sy: 1.12, lift: 6 }, castMs * 0.7, 'Quad.easeOut');
   const g = scene.add.graphics().setDepth(DEPTH.BG_DECOR + 0.4);
   const began = performance.now();
-  const big = fx === 'mass-raise';
+  const big = fx === 'mass-raise' || fx === 'invocation';
   let nextWisp = began;
   const stop = follow(scene, () => {
     const p = spriteAt(scene, id);

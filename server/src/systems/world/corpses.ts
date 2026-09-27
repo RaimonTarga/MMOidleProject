@@ -60,7 +60,15 @@ function corpsesFor(world: World, nodeId: string): RuntimeCorpse[] {
  * where a tide re-raises itself forever.
  */
 export function recordCorpse(world: World, monster: MonsterEntity): void {
-  if (monster.isMonster.isBoss || monster.isRaised) return;
+  if (monster.isMonster.isBoss) return;
+  if (monster.isRaised) {
+    // Exception: a raiser that keeps its army (Wasteland) can raise its risen again,
+    // for as long as it is alive.
+    const raiser = world.getMonsterEntity(monster.isRaised.raiserId);
+    const reraisable = raiser && raiser.hasHealth.hp > 0 &&
+      MONSTER_DATABASE.get(raiser.isMonster.monsterTypeId)?.raisesDead?.reraisable;
+    if (!reraisable) return;
+  }
   if (!MONSTER_DATABASE.has(monster.isMonster.monsterTypeId)) return;
 
   const list = corpsesFor(world, monster.hasPosition.nodeId);

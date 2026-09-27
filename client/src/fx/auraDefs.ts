@@ -318,6 +318,30 @@ export const AURA_DEFS: AuraDef[] = [
     },
   },
 
+  // ── Wasteland: the Harvest — it grows as it feeds ───────────────────────────
+  {
+    id: 'harvest-wrath',
+    active: (v) => hasBossEffect(v, 'harvest'),
+    stacks: (v) => bossEffectStacks(v, 'harvest'),
+    pulseMs: 900,
+    ground: { color: 0x3fa060, scale: 1.4, alpha: 0.18 },
+    body: { color: 0x8fe0a0, alpha: [0.1, 0.32] },
+    tremblePx: 0.5,
+    beat: {
+      everyMs: 180,
+      draw: (c) =>
+        burstFx(c.scene, 'ptx-dot', c.x + (Math.random() - 0.5) * c.w * 0.6, c.y + c.h * 0.3,
+          Math.min(4, 1 + Math.floor(c.stacks / 2)), 800, {
+            tint: [0x8fe0a0, 0x6a4a9e],
+            speed: { min: 20, max: 60 },
+            angle: { min: 255, max: 285 },
+            scale: { start: 0.7, end: 0 },
+            alpha: { start: 0.8, end: 0 },
+            gravityY: -70,
+          }),
+    },
+  },
+
   // ── Adds: rallied / roar-hasted (Plains) ────────────────────────────────────
   {
     id: 'rallied',
@@ -350,6 +374,31 @@ export const AURA_DEFS: AuraDef[] = [
         const a = spin + (i / 8) * Math.PI * 2;
         g.lineBetween(x + Math.cos(a) * r * 1.2, y + Math.sin(a) * r * 1.2, x + Math.cos(a) * r * 1.7, y + Math.sin(a) * r * 1.7);
       }
+    },
+  },
+  {
+    // Wasteland Hex of Ruin: a cracked purple sigil hanging over the hexed.
+    id: 'hex-of-ruin',
+    on: 'player',
+    active: (v) => hasPlayerBuff(v, 'debuff-boss', 'hex-of-ruin'),
+    pulseMs: 800,
+    ground: { color: 0x7a4ab0, scale: 1.1, alpha: 0.14 },
+    overhead: (g, c) => {
+      const x = c.x;
+      const y = c.y - c.h * 0.7;
+      const r = 10 + c.pulse * 1.5;
+      const spin = c.age / 900;
+      g.lineStyle(2, 0xa76ae0, 0.95 * c.s);
+      g.strokeCircle(x, y, r);
+      g.beginPath();
+      for (let i = 0; i <= 5; i++) {
+        const a = spin + ((i * 2) / 5) * Math.PI * 2;
+        const px = x + Math.cos(a) * r * 0.85;
+        const py = y + Math.sin(a) * r * 0.85;
+        if (i === 0) g.moveTo(px, py);
+        else g.lineTo(px, py);
+      }
+      g.strokePath();
     },
   },
   {
