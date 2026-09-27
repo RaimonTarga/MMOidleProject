@@ -14,7 +14,7 @@ Accepted listening-study music and effects are wired into the client. No server 
 
 ## Music
 
-Music loads on demand when enabled; entering a boss encounter preloads its suite. Server snapshots choose approach/battle/escalation/final at each boss's own authored HP phase thresholds (`bossMusicPhase`); the last of two or more phases takes the final track. Bosses without HP phases fall back to 50%/25%, with the quarter phase only at tier 3+. A shared audio-clock timeline supplies the seek position when battle variations change. Lower-tier bosses do not acquire new gameplay phases.
+Music loads on demand when enabled; entering a boss encounter preloads its suite. In a dungeon the altar drives the suite: the dormant altar plays the approach (anticipation) track, activating it starts the battle track, and the boss's HP phases escalate it. Server snapshots choose approach/battle/escalation/final at each boss's own authored HP phase thresholds (`bossMusicPhase`); the last of two or more phases takes the final track. Bosses without HP phases fall back to 50%/25%, with the quarter phase only at tier 3+. A shared audio-clock timeline supplies the seek position when battle variations change. Lower-tier bosses do not acquire new gameplay phases.
 
 The current checkout still authors an 8-second Cataclysm wind-up. Its presentation uses the ending portion of the accepted buildup. The accepted 22/26-second versions are selected for those runtime cast durations when that gameplay branch lands. There is no final musical impact note; the accepted Cataclysm SFX voices the actual impact. This is not a combat timing change.
 

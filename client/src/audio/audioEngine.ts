@@ -305,14 +305,25 @@ export function setMusicForBiome(group: string): void {
   requestMusic(ZONE_MUSIC[group] ?? null);
 }
 
-/** Presentation follows server snapshots; it never advances a gameplay phase. */
-export function setEncounterMusic(group: string, boss?: { hp: number; maxHp: number; engaged: boolean; tier: number; typeId?: string }): void {
+/**
+ * Presentation follows server snapshots; it never advances a gameplay phase.
+ * In a dungeon the altar drives the suite: a dormant altar plays the approach
+ * (anticipation) track, activating it starts the battle track, and the boss's
+ * HP phases escalate from there. Elsewhere a boss plays approach until engaged.
+ */
+export function setEncounterMusic(
+  group: string,
+  boss?: { hp: number; maxHp: number; engaged: boolean; tier: number; typeId?: string },
+  dungeon?: 'idle' | 'bossAwakening' | 'boss' | 'cooldown',
+): void {
   if (!scene) return;
   if (currentBiome !== group) setMusicForBiome(group);
-  if (!boss || boss.hp <= 0) finalCastUntil = 0;
+  const live = boss && boss.hp > 0 ? boss : undefined;
+  if (!live) finalCastUntil = 0;
   if (performance.now() < finalCastUntil) return;
   const suite = BOSS_MUSIC[group];
-  if (!boss || boss.hp <= 0 || !suite) {
+  const altarActive = dungeon === 'bossAwakening' || dungeon === 'boss';
+  if (!suite || (!live && dungeon !== 'idle' && !altarActive)) {
     battleGroup = null;
     requestMusic(ZONE_MUSIC[group] ?? null);
     return;
@@ -323,7 +334,9 @@ export function setEncounterMusic(group: string, boss?: { hp: number; maxHp: num
       queueMusic('v12-volcano-cast-22s'); queueMusic('v12-volcano-cast-26s');
     }
   }
-  const phase = bossMusicPhase(boss.hp, boss.maxHp, boss.engaged, boss.tier, !!suite[3], boss.typeId);
+  const phase = live
+    ? bossMusicPhase(live.hp, live.maxHp, live.engaged || altarActive, live.tier, !!suite[3], live.typeId)
+    : altarActive ? 1 : 0;
   const sameBattle = battleGroup === group && phase > 0;
   battleGroup = phase > 0 ? group : null;
   requestMusic(suite[phase], sameBattle);

@@ -244,7 +244,7 @@ export function applyDelta(
     if (biome) setEncounterMusic(biome, own.isDead ? undefined : boss ? {
       hp: boss.hp, maxHp: boss.maxHp, tier: NODE_BIOMES[own.nodeId]?.biomeTier ?? 1, typeId: boss.monsterTypeId,
       engaged: boss.attackTargetId != null || boss.hp < boss.maxHp,
-    } : undefined);
+    } : undefined, !own.isDead && snapshot.dungeon?.nodeId === own.nodeId ? snapshot.dungeon.status : undefined);
 
     const summonHealth: SummonHealthView[] = [];
     for (const id of state.ids) {
