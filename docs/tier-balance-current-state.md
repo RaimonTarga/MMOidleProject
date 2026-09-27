@@ -194,6 +194,19 @@ the two Swamp poisons, which were softened to hold their win rates under the DoT
 
 The Void Overlord encounter was deleted on 2026-09-27 (it was unreachable legacy).
 
+**T4 class outliers (2026-09-28).** Measured as each spec's kill speed against the median spec on
+every live T4 boss (both stance arms) plus its damage ceiling on the heavy dummy (best stance ×
+technique package). Designer rule: nerf only clear outliers (> ~1.25× the median), lift the floor.
+Trims: Avenger vengeance ×1.5 → ×0.5 (it banks raw boss damage, so it scaled with the resized T4
+boss offense); Destroyer execution cooldown 4 → 5 s; Stalwart ramp +35/+55% → +15/+25%; Icebreaker
+frost −20% → −30%; Glacial Rimebrand conversion 70% → 60% (best T4 weapon for most specs and, with
+Detonate, every class's ceiling). Floor: every Spirit spec +15% attack; Shockblade aftershock on-hit
+25 → 75; Pyromancer stacks 40% → 55% and max-stack bonus ×1.25 → ×1.5; Firebrand ignition 35% → 50%.
+Result: class medians 0.91–1.07 (Spirit 0.85–0.89 → 0.92–0.99, Squire 1.06 → 1.00), top live spec
+1.20–1.24 except Melter (1.28–1.34, but it loses 14–43% of fights: left alone), top ceiling 1.38 →
+1.24. The T4 boss midpoint stayed on contract (177 s, wins 91/84%). Berserker stance was left alone:
+best on a dummy, but on live T4 bosses it costs ~10 points of win rate for ~20% speed.
+
 ---
 
 ## 8. ⚠ Open threads

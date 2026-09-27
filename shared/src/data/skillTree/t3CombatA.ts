@@ -15,7 +15,8 @@ export const t3CombatEntriesA = [
     description: 'After your finisher, your next 3 regular attacks fire their on-hit damage twice. Gain extra scaling on-hit damage.',
     cost: 1, statEffects: {},
     // 'cadence.aftershock-onhit-per-tier': flat on-hit = this × tiers-since-unlock (1× at unlock).
-    mechanicEffects: { 'cadence.aftershock': 1, 'cadence.aftershock-onhit-per-tier': 25, 'cadence.aftershock-attacks': 3 },
+    // 2026-09-28 T4 outlier pass: 25 -> 75 (slowest Striker spec on live T4 bosses, 0.75x the median).
+    mechanicEffects: { 'cadence.aftershock': 1, 'cadence.aftershock-onhit-per-tier': 75, 'cadence.aftershock-attacks': 3 },
   }],
   ['cadence-light-t3-b', {
     id: 'cadence-light-t3-b', name: 'Scrapper', tier: 3,
@@ -164,13 +165,15 @@ export const t3CombatEntriesA = [
     id: 'cooldown-balanced-t3-c', name: 'Stalwart', tier: 3,
     classId: 'cooldown-root', subVariantId: 'balanced',
     parent: 'cooldown-balanced', children: [],
-    description: 'The longer your execution cooldown runs uninterrupted, the more damage you deal, ramping over 7 seconds to +35% regular-attack damage and +55% execution damage. Triggering early yields a proportionally smaller payoff.',
+    description: 'The longer your execution cooldown runs uninterrupted, the more damage you deal, ramping over 7 seconds to +15% regular-attack damage and +25% execution damage. Triggering early yields a proportionally smaller payoff.',
     cost: 1, statEffects: {},
+    // 2026-09-28 T4 outlier pass: ramp +35%/+55% -> +15%/+25% (1.35-1.44x the median spec on live T4
+    // bosses, 1.27x its damage ceiling; the balanced frame alone is already 1.12x).
     mechanicEffects: {
       'cooldown.patience-paid': 1,
       'cooldown.patience-ramp-ms': 7000,
-      'cooldown.patience-attack-max': 0.35,
-      'cooldown.patience-execution-max': 0.55,
+      'cooldown.patience-attack-max': 0.15,
+      'cooldown.patience-execution-max': 0.25,
     },
   }],
 
@@ -182,16 +185,19 @@ export const t3CombatEntriesA = [
     parent: 'cooldown-heavy', children: [],
     description: 'Your execution deals bonus damage equal to a portion of all damage you have taken since your last execution (with a minimum floor so it never feels dead). The heavy frame\'s fixed 8s window makes the payoff predictable. At this tier your execution multiplier is 1 lower (3.5× → 2.5×).',
     cost: 1, statEffects: {},
-    mechanicEffects: { 'cooldown.vengeance': 1, 'cooldown.vengeance-mult': 1.5, 'cooldown.vengeance-floor': 30, 'cooldown.empowered-mult': -1 },
+    // 2026-09-28 T4 outlier pass: vengeance 1.5 -> 0.5. It banks RAW boss damage, so it grew with the
+    // resized T4 boss offense: 1.42-1.49x the median spec's kill speed (0.96x on a dummy).
+    mechanicEffects: { 'cooldown.vengeance': 1, 'cooldown.vengeance-mult': 0.5, 'cooldown.vengeance-floor': 30, 'cooldown.empowered-mult': -1 },
   }],
   ['cooldown-heavy-t3-b', {
     id: 'cooldown-heavy-t3-b', name: 'Destroyer', tier: 3,
     classId: 'cooldown-root', subVariantId: 'heavy',
     parent: 'cooldown-heavy', children: [],
-    description: 'Normal attacks deal no damage. Your execution fires on a greatly shortened cooldown (4s) and hits harder (3× instead of the tier\'s 2.5×). On-hit gear and charm triggers still fire on regular attacks. Out of combat, your execution stays primed — the first strike on a new target is an execution.',
+    description: 'Normal attacks deal no damage. Your execution fires on a greatly shortened cooldown (5s) and hits harder (3× instead of the tier\'s 2.5×). On-hit gear and charm triggers still fire on regular attacks. Out of combat, your execution stays primed — the first strike on a new target is an execution.',
     cost: 1, statEffects: {},
-    // Heavy frame is 8000ms / 3.5×; deltas land it at 4000ms / 4.0× (3.5 + 0.5).
-    mechanicEffects: { 'cooldown.singular-extraction': 1, 'cooldown.empowered-cd-ms': -4000, 'cooldown.empowered-mult': -0.5, 'cooldown.singular-no-target-ms': 4000 },
+    // Heavy frame is 8000ms / 3.5×; deltas land it at 5000ms / 3.0× (3.5 − 0.5).
+    // 2026-09-28 T4 outlier pass: cooldown 4000 -> 5000 ms (1.39x the median spec on live T4 bosses).
+    mechanicEffects: { 'cooldown.singular-extraction': 1, 'cooldown.empowered-cd-ms': -3000, 'cooldown.empowered-mult': -0.5, 'cooldown.singular-no-target-ms': 4000 },
   }],
   ['cooldown-heavy-t3-c', {
     id: 'cooldown-heavy-t3-c', name: 'Devout Priest', tier: 3,

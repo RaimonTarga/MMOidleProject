@@ -14,7 +14,7 @@
  */
 import assert from 'node:assert/strict';
 import { readFileSync, appendFileSync } from 'node:fs';
-import { ABILITY_DATABASE, SKILL_TREE, MONSTER_DATABASE, NODE_BIOMES, DUNGEON_DEFS, composePlayerView, withReferenceAbilityWiring } from '@mmo-idle/shared';
+import { BURN_FAMILY, ITEM_DATABASE, ABILITY_DATABASE, SKILL_TREE, MONSTER_DATABASE, NODE_BIOMES, DUNGEON_DEFS, composePlayerView, withReferenceAbilityWiring } from '@mmo-idle/shared';
 import { createBalanceWorld } from '../bench/balance/worldFactory';
 import { setupArena, teardownArena, BOT_SPAWN } from '../bench/balance/arena';
 import { prepareSurveyBot, SURVEY_CELLS, SURVEY_CLASSES, type SurveyCell } from '../bench/balance/ttkSurveySpec';
@@ -22,6 +22,7 @@ import { BREADTH_CELLS } from '../bench/balance/playerBreadthSpec';
 import { hydrateHitboxCacheFromArtifact } from '../src/hitbox/cache';
 import { ensureDungeon } from '../src/systems/world/dungeons/dungeon';
 import { classifyBossTick, isVictory } from '../bench/balance/bossTerminal';
+import { observeSummoner } from '../src/systems/classes/archetypes/summoner/observation';
 
 const args = Object.fromEntries(process.argv.slice(2).map((s) => {
   const i = s.indexOf('=');
@@ -45,6 +46,13 @@ interface Row {
   /** Monster def overrides by id (stats merged; other top-level fields replaced). */
   /** Skill-node mechanicEffects overrides. */
   sp?: Record<string, Record<string, number>>;
+  /** Skill-node statEffects overrides. */
+  ss?: Record<string, Record<string, number>>;
+  /** Weapon DoT profile overrides by weapon id; item stat overrides by item id. */
+  wd?: Record<string, Record<string, number>>;
+  ip?: Record<string, Record<string, number>>;
+  /** Log summon state every N ms for the first 30 s (debug). */
+  dbgMinionMs?: number;
   mp?: Record<string, { stats?: Record<string, number>; set?: Record<string, unknown>; paths?: Record<string, unknown> }>;
 }
 
@@ -107,8 +115,15 @@ function patchAbilities(ap: Row["ap"]): () => void {
   }
   return () => { for (const u of undo.reverse()) u(); };
 }
-function patchSkills(sp: Row['sp']): () => void {
+function patchSkills(sp: Row['sp'], ss?: Row['ss']): () => void {
   const undo: (() => void)[] = [];
+  for (const [id, st] of Object.entries(ss ?? {})) {
+    const n = SKILL_TREE.get(id) as any;
+    assert(n, `unknown skill ${id}`);
+    const saved = structuredClone(n.statEffects);
+    undo.push(() => { n.statEffects = saved; });
+    n.statEffects = { ...(n.statEffects ?? {}), ...st };
+  }
   for (const [id, me] of Object.entries(sp ?? {})) {
     const n = SKILL_TREE.get(id) as any;
     assert(n, `unknown skill ${id}`);
@@ -143,6 +158,21 @@ function patchMonsters(mp: Row["mp"]): () => void {
   return () => { for (const u of undo.reverse()) u(); };
 }
 
+function patchItems(row: Row): () => void {
+  const undo: (() => void)[] = [];
+  for (const [id, o] of Object.entries(row.wd ?? {})) {
+    const e = BURN_FAMILY.find((b) => b.weaponId === id) as any;
+    assert(e, `unknown weapon dot ${id}`);
+    const saved = { ...e }; Object.assign(e, o); undo.push(() => Object.assign(e, saved));
+  }
+  for (const [id, o] of Object.entries(row.ip ?? {})) {
+    const it = ITEM_DATABASE.get(id) as any;
+    assert(it, `unknown item ${id}`);
+    const saved = structuredClone(it.stats); Object.assign(it.stats, o); undo.push(() => { it.stats = saved; });
+  }
+  return () => { for (const u of undo.reverse()) u(); };
+}
+
 const realNow = Date.now, realRandom = Math.random;
 
 function run(row: Row) {
@@ -154,7 +184,8 @@ function run(row: Row) {
   const bossId = DUNGEON_DEFS.get(nodeId)!.boss.bossId;
   const restoreMp = patchMonsters(row.mp);
   const restoreAp = patchAbilities(row.ap);
-  const restoreSp = patchSkills(row.sp);
+  const restoreSp = patchSkills(row.sp, row.ss);
+  const restoreIp = patchItems(row);
   const restore = treatment(row, bossId);
   const world = createBalanceWorld();
   try {
@@ -198,6 +229,13 @@ function run(row: Row) {
     let takenBoss = 0; const takenOther: Record<string, number> = {};
     let killAt: number | null = null, deathAt: number | null = null, resetAt: number | null = null, firstDmgAt: number | null = null;
     const marks: Record<string, number> = {};
+    // Conduit diagnostics: summon attacks/damage on the boss, replacements, living-slot uptime.
+    const sm = { attacks: 0, dmg: 0, spawns: 0, replacements: 0, paidHp: 0, livingTicks: 0, slotTicks: 0, fightTicks: 0 };
+    const unobserve = bot.summonsMinions ? observeSummoner(bot, (e) => {
+      if (e.kind === 'attack') { sm.attacks++; if (e.targetId === boss.entityId) sm.dmg += e.primaryHpDecrease; }
+      else if (e.kind === 'spawn') { sm.spawns++; if (e.replacement) sm.replacements++; }
+      else if (e.kind === 'replacement-paid') sm.paidHp += e.hp;
+    }) : () => {};
     world.worldLogJournal = []; world.worldLogByPlayer.clear(); world.takeNodeEvents(nodeId);
     for (; elapsed < cap; elapsed += 100) {
       now = 1800000000000 + elapsed;
@@ -223,11 +261,24 @@ function run(row: Row) {
         playerDead: deathAt === elapsed || !!bot.isDead || bot.hasHealth.hp <= 0,
         bossPresent: live !== null, dungeonReset: resetAt === elapsed, bossSeen: true,
       });
+      if (row.dbgMinionMs && bot.summonsMinions && elapsed % row.dbgMinionMs === 0 && elapsed <= 30000) {
+        const b = findBoss();
+        for (const id of bot.summonsMinions.minionIds) {
+          const m = id ? world.getMinionEntity(id) : undefined; if (!m || !b) continue;
+          const d = Math.hypot(m.hasPosition.current.x - b.hasPosition.current.x, m.hasPosition.current.y - b.hasPosition.current.y);
+          console.error(JSON.stringify({ t: elapsed, id: m.isMinion.slotId, d: Math.round(d), od: Math.round(Math.hypot(bot.hasPosition.current.x - b.hasPosition.current.x, bot.hasPosition.current.y - b.hasPosition.current.y)), pr: bot.performsAttack.attackRange, range: m.performsAttack.attackRange, cd: m.performsAttack.attackCooldown, last: m.performsAttack.lastAttackAt - 1800000000000, tgt: m.controlsMinion.currentTargetId, mv: !!(m as any).hasVelocity || !!(m as any).movesToTarget, state: (m.controlsMinion as any).state ?? (m.controlsMinion as any).mode }));
+        }
+      }
+      if (bot.summonsMinions && firstDmgAt !== null) {
+        sm.fightTicks++; sm.slotTicks += bot.summonsMinions.targetCount;
+        for (const id of bot.summonsMinions.minionIds) { const m = id ? world.getMinionEntity(id) : undefined; if (m && m.hasHealth.hp > 0) sm.livingTicks++; }
+      }
       const v = composePlayerView(bot)!;
       minHp = Math.min(minHp, v.hp / v.maxHp);
       if (terminal !== null) { outcome = terminal; if (killAt !== null) bossHp = 0; break; }
       world.pendingDeaths = [];
     }
+    unobserve();
     const dealt = bossMaxHp - bossHp;
     const fightS = firstDmgAt === null ? null : (elapsed - firstDmgAt) / 1000;
     const dps: Record<string, number | null> = {};
@@ -236,10 +287,11 @@ function run(row: Row) {
       id: row.id, tier: row.tier, cls: row.cls, frame: row.frame ?? null, path: row.path ?? null, treatment: row.treatment, node: nodeId, seed,
       outcome, won: isVictory(outcome as any), t: elapsed / 1000, firstDmgS: firstDmgAt === null ? null : firstDmgAt / 1000, fightS,
       bossMaxHp, dealt, dpsAll: fightS ? Math.round(dealt / fightS) : 0, ...dps, minHpPct: Math.round(minHp * 1000) / 10, killer, deathS: deathAt === null ? null : deathAt / 1000, takenBoss, takenOther, loadout, pkg,
+      ...(bot.summonsMinions ? { summon: { ...sm, uptime: sm.slotTicks ? Math.round(1000 * sm.livingTicks / sm.slotTicks) / 1000 : null, dmgShare: dealt ? Math.round(1000 * sm.dmg / dealt) / 1000 : null, attacksPerSlotSec: sm.livingTicks ? Math.round(100 * sm.attacks / (sm.livingTicks / 10)) / 100 : null, slots: bot.summonsMinions.targetCount } } : {}),
     };
   } finally {
     try { teardownArena(world); } catch { /* ignore */ }
-    restore(); restoreAp(); restoreSp(); restoreMp();
+    restore(); restoreIp(); restoreAp(); restoreSp(); restoreMp();
     Date.now = realNow; Math.random = realRandom;
   }
 }
