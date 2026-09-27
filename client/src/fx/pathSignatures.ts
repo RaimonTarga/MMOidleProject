@@ -366,11 +366,6 @@ interface Signature {
 
 const SIGNATURES: Record<string, Signature> = {
   // Striker
-  'cadence-balanced-t3-a': { motif: echo, color: 0xffd27a, accent: 0xffffff }, // Maestro
-  'cadence-balanced-t3-b': { motif: wave, color: 0x3aa8c8, accent: 0xbff4ff }, // Wavecrest
-  'cadence-heavy-t3-b': { motif: blood, color: 0xc41e1e, accent: 0x7a0a10 }, // Hemomancer
-  'cadence-light-t3-a': { motif: shock, color: 0x7fd4ff, accent: 0xffffff }, // Shockblade
-  'cadence-light-t3-b': { motif: rend, color: 0xffa040, accent: 0xd8d0c0 }, // Scrapper
   // Squire
   'cooldown-balanced-t3-a': { motif: rings, color: 0xb8a8ff, accent: 0xffffff }, // Reverb
   'cooldown-balanced-t3-b': { motif: shock, color: 0xffe066, accent: 0xffffff }, // Dynamo

@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { ABILITY_DATABASE, SKILL_TREE } from '@mmo-idle/shared';
 import { attackFlairOf, flairCount } from '../../client/src/fx/attackFlair';
@@ -50,10 +50,18 @@ const REPLACES_ATTACK = new Set([
 const sigSource = readFileSync(join(__dirname, '../../client/src/fx/pathSignatures.ts'), 'utf8');
 const table = sigSource.split('const SIGNATURES')[1] ?? '';
 const rows = new Set([...table.matchAll(/^\s+'([a-z]+-[a-z]+-t3-[abc])':/gm)].map((m) => m[1]));
-const bespokeSource = readFileSync(join(__dirname, '../../client/src/fx/bespokePaths.ts'), 'utf8');
-const bespokeTable = bespokeSource.split('const BESPOKE_PATHS')[1]?.split('\n};')[0] ?? '';
-// Stateful bespoke attacks (fx/bespokePaths.ts): a third, exclusive way to be covered.
-const bespoke = new Set([...bespokeTable.matchAll(/^\s+'([a-z]+-[a-z]+-t3-[abc])':/gm)].map((m) => m[1]));
+// Stateful bespoke attacks (fx/bespoke/<class>.ts): a third, exclusive way to be covered.
+const bespokeDir = join(__dirname, '../../client/src/fx/bespoke');
+const bespoke = new Set<string>();
+for (const file of readdirSync(bespokeDir).filter((f) => f.endsWith('.ts') && f !== 'kit.ts')) {
+  const src = readFileSync(join(bespokeDir, file), 'utf8');
+  for (const m of src.matchAll(/^\s+'([a-z]+-[a-z]+-t3-[abc])':\s*\{/gm)) bespoke.add(m[1]);
+}
+const registry = readFileSync(join(__dirname, '../../client/src/fx/bespokePaths.ts'), 'utf8');
+for (const file of readdirSync(bespokeDir).filter((f) => f.endsWith('.ts') && f !== 'kit.ts')) {
+  const table = `${file.replace('.ts', '').toUpperCase()}_PATHS`;
+  assert(registry.includes(`...${table}`), `bespokePaths.ts should register ${table}`);
+}
 assert(bespoke.size >= 4, `parsed too few bespoke paths (${bespoke.size})`);
 const missing: string[] = [];
 for (const node of (SKILL_TREE as Map<string, { id: string; tier: number; name: string }>).values()) {
@@ -70,8 +78,10 @@ assert(covered === 45, `expected 45 combat specializations, got ${covered}`);
 const combatFx = readFileSync(join(__dirname, '../../client/src/render/combatFx.ts'), 'utf8');
 assert(combatFx.includes('playPathSignature(scene, flair, from, to, ev.empowered)'),
   'the ordinary attack branch should play the path signature');
-assert(combatFx.includes('bespoke.finisher(hit)') && combatFx.includes('bespoke.hit(hit)'),
-  'the ordinary attack branch should dispatch bespoke paths (finisher + stateful hit layer)');
+assert(combatFx.includes('bespoke.payoff(hit)') && combatFx.includes('bespoke.hit?.(hit)'),
+  'the ordinary attack branch should dispatch bespoke paths (payoff + stateful hit layer)');
+assert(combatFx.includes('bespokePathFor(flair.specId)?.reload?.('),
+  'player-reload-start should dispatch the bespoke reload beat');
 
 // ── Abilities progress by rank (client fx/abilityRank.ts) ────────────────────
 // Every Guard and Technique needs a rank colour, or its II-IV layers fall back to

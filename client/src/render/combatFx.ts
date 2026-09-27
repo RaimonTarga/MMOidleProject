@@ -1488,6 +1488,17 @@ export function dispatchCombatEvent(
   }
 
   if (ev.kind === 'player-reload-start') {
+    // Slinger paths with a reload beat (Warmonger's roar, Desperado's flourish).
+    const reloader = state.view.get(ev.playerId) as PlayerView | undefined;
+    const reloadSprite = state.sprite.get(ev.playerId);
+    if (shouldRunClientFx() && reloader && reloadSprite) {
+      const flair = attackFlairOf(reloader);
+      if (flair.stage === 3) {
+        bespokePathFor(flair.specId)?.reload?.({
+          scene, player: reloader, playerId: ev.playerId, at: { x: reloadSprite.x, y: reloadSprite.y },
+        });
+      }
+    }
     if (shouldRunClientFx() && state.sprite.has(ev.playerId)) {
       spawnSkillCallout(
         state,
@@ -1996,17 +2007,18 @@ function runFxForAttackStyle(
     const bespoke = flair.stage === 3 ? bespokePathFor(flair.specId) : undefined;
     const hit = {
       scene, player, playerId: ev.playerId, targetId: ev.targetId, from, to,
-      empowered: ev.empowered, k: flair.scale,
+      empowered: ev.empowered, execution: ev.execution, k: flair.scale,
     };
-    if (bespoke?.finisher && ev.empowered) {
-      bespoke.finisher(hit);
+    // The payoff beat: a finisher / discharge / last bullet, or a Squire execution.
+    if (bespoke?.payoff && (ev.empowered || ev.execution)) {
+      bespoke.payoff(hit);
     } else {
       resolveAttackFx(
         player.combatArchetype,
         player.selectedRange,
         player.attackStyle,
       )(args);
-      if (bespoke) bespoke.hit(hit);
+      if (bespoke) bespoke.hit?.(hit);
       else {
         playPathSignature(scene, flair, from, to, ev.empowered);
         if (flair.stage === 3 && ev.empowered && ev.playerId === scene.myId) impactFeel(scene, "light", to);
