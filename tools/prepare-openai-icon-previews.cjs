@@ -18,6 +18,13 @@ const groups = [
   ['statuses/buffs', 48, 48],
   ['statuses/debuffs', 48, 48],
 ];
+const DARK_BACKDROP_DIRECTORIES = new Set([
+  'runes/conditions',
+  'runes/actions',
+  'statuses/buffs',
+  'statuses/debuffs',
+]);
+const DARK_BACKDROP = '#11161d';
 
 function escapeXml(value) {
   return value.replace(/[<>&'"]/g, (character) => ({
@@ -98,11 +105,15 @@ async function main() {
       .sort();
 
     for (const filename of filenames) {
-      await sharp(path.join(sourceDirectory, filename))
+      let preview = sharp(path.join(sourceDirectory, filename))
         .resize(size, size, {
           fit: 'cover',
           kernel: sharp.kernel.lanczos3,
-        })
+        });
+      if (DARK_BACKDROP_DIRECTORIES.has(directory)) {
+        preview = preview.flatten({ background: DARK_BACKDROP });
+      }
+      await preview
         .png({
           compressionLevel: 9,
           adaptiveFiltering: true,

@@ -93,7 +93,7 @@ function StatusTile({
     >
       <div
         className={`tf-tile${icon ? ' tf-tile--art' : ''}`}
-        style={{ backgroundColor: color, boxShadow: `0 0 8px ${color}66` }}
+        style={{ backgroundColor: icon ? "#11161d" : color, boxShadow: `0 0 8px ${color}66` }}
       >
         <GameIcon
           source={icon}

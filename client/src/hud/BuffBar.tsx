@@ -165,7 +165,7 @@ function BuffIcon({ buff, interactive, stripProps, ghost, onGhostDone, ended, fx
           style={{
             position: "absolute",
             inset: 0,
-            backgroundColor: hasArt ? "transparent" : tone,
+            backgroundColor: hasArt ? "#11161d" : tone,
             border: hasArt ? "none" : "1.5px solid rgba(255,255,255,0.22)",
             borderRadius: hasArt ? 7 : shapeStyle.borderRadius,
             clipPath: hasArt ? undefined : shapeStyle.clipPath,

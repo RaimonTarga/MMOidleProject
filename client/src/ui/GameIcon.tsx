@@ -46,6 +46,13 @@ function dimensions(size: IconSize): { width: number; height: number } {
   };
 }
 
+function needsConceptBackdrop(source: IconSource | null | undefined): boolean {
+  return source?.kind === 'asset' && (
+    source.src.includes('/assets/concept-icons/statuses/')
+    || source.src.includes('/assets/concept-icons/runes/')
+  );
+}
+
 function useAtlasFrame(source: AtlasIconSource | null): AtlasFrame | null {
   const key = source
     ? `${source.atlas.manifestUrl}\u0000${source.atlas.imageUrl}\u0000${source.frameName}`
@@ -162,10 +169,11 @@ export function GameIcon({
     || (source?.kind === 'atlas' && !!frame)
     || (source?.kind === 'asset' && assetStatus === 'loaded');
   const usePixelated = pixelated ?? source?.kind === 'atlas';
+  const conceptBackdrop = needsConceptBackdrop(source);
 
   return (
     <Tag
-      className={`game-icon${usePixelated ? ' game-icon--pixelated' : ''}${className ? ` ${className}` : ''}`}
+      className={`game-icon${usePixelated ? ' game-icon--pixelated' : ''}${conceptBackdrop ? ' game-icon--concept-backdrop' : ''}${className ? ` ${className}` : ''}`}
       style={{ width, height, ...style }}
       title={title}
       data-icon-state={sourceReady ? 'ready' : 'fallback'}
