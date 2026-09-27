@@ -91,6 +91,8 @@ export interface RuntimeToxicPool extends RuntimeGroundZoneBase {
   vulnerability?: { damageTakenPct: number; durationMs: number };
   /** Stacking damage-taken boss debuff while inside (Cave sinkholes). */
   erodes?: PoolErosion;
+  /** Thorn snare: roots the first player inside for `rootMs`, then expires. */
+  snare?: { rootMs: number };
   erodeTimersByPlayerId?: Map<string, number>;
   ownerId?: string;
   detonationMultiplier?: number;
@@ -373,6 +375,8 @@ export function isAvoidableHostilePersistentGroundZone(
   if (zone.semantics.movementResponse !== 'avoid-hazards') return false;
   return (
     zone.damagePerTick > 0 ||
+    zone.snare !== undefined ||
+    zone.erodes !== undefined ||
     (zone.slowSpeedMult !== undefined && zone.slowSpeedMult < 1) ||
     (zone.vulnerability?.damageTakenPct ?? 0) > 0
   );
@@ -541,6 +545,22 @@ function tickToxicPool(
           isGroundZone: 1,
         },
       });
+    }
+
+    if (pool.snare && !isInvulnerablePlayer(player)) {
+      // SPRUNG: a root (the shared zero-speed slow — Break Free and Cleanse answer
+      // it), then the snare is spent.
+      applyResistedPlayerDebuff(player, {
+        id: 'slow',
+        maxStacks: 1,
+        remainingMs: pool.snare.rootMs,
+        refreshable: true,
+        sourceId: pool.ownerId ?? `ground-zone:${pool.id}`,
+        data: { speedMult: 0, totalMs: pool.snare.rootMs },
+      });
+      contact.harmfulEffects.add('slow');
+      pool.expiresAtMs = now;
+      continue;
     }
 
     if (pool.erodes && !isInvulnerablePlayer(player)) {

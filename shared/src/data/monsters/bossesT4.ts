@@ -313,52 +313,79 @@ export const bossMonsterEntriesT4 = [
     rewards: { essence: 605, essenceType: 'green', level: 5, biomeXp: 908 },
     ai: { wanderRadius: 150, leashRange: 960, idleMinMs: 2000, idleMaxMs: 6000 },
     targeting: { prefersPlayers: true },
-    // JUNGLE T4 = the full escape cycle, UNTIL IT IS CORNERED.
-    //
-    // Above 50% it runs the lineage's loop: Escape Guard, retreat, and either a
-    // stumble or a vanish-and-ambush with venom. Below 50% the wounded frenzy takes
-    // over and the pattern stops arming entirely (`armAboveHpPct`) — the boss has
-    // given up on running and commits to killing you.
-    //
-    // That is a GATE, not a fourth mechanic: the capstone's low-health state is the
-    // ABSENCE of the thing the lineage is about, which reads instantly in play and
-    // costs no new keywords.
-    //
-    // REMOVED with the 2026-09-04 redesign: passive `evasion` and the permanent
-    // evasion-to-zero phase that answered it, `openingStrike`, the always-on
-    // `dotEffect` (venom now follows a successful ambush only, so it MEANS
-    // something), Killing Leap, and `chargeOnAggro`.
+    // JUNGLE (boss-lineage redesign 2026-09-27) — PURSUIT AND FAILED ESCAPE.
+    //   FLEE: behind an Escape Guard it bolts, fast enough that an ordinary chaser
+    //     usually loses it. Stop it by BREAKING the guard (the ranged answer), by
+    //     HINDERING it (slow shortens the run; root at T3+, stun at T4 end it), or by
+    //     catching it with a gap-closer. A stopped flee is a <=1s stumble, not a
+    //     window: staying in the fight and losing its ambush IS its punishment.
+    //     Failed flees bank Escape Instinct (the next is faster).
+    //   ESCAPED: it stalks back unseen and AMBUSHES — then FRENZIES for ~5s
+    //     (+attack speed, +damage): the burst window you pay for letting it go.
+    //     Guard the reveal, out-defend the frenzy, or deny the escape.
+    //   T4: the cycle with the bite from the start (STUN also ends the flee);
+    //   ~60% THORN SNARES: the flee drops snares that root a chaser (Break Free);
+    //   <30% CORNERED: it stops fleeing for good and frenzies permanently — the
+    //   soft enrage (the flee patterns stop arming below 30%).
     bossPattern: {
       id: 'bloodfang-escape', name: 'Escape',
       damageMultiplier: 2.3, cooldownMs: 12000, initialCooldownMs: 7000,
-      armAboveHpPct: 0.5,
+      armAboveHpPct: 0.3,
+      stoppedBy: {
+        // A stopped flee is NOT a stagger window (principle 5 exception): being
+        // stopped is already its punishment. A <=1s stumble with the stun tell.
+        stun: { staggerMs: 1000, label: 'Stumbled' },
+        root: { staggerMs: 1000, label: 'Stumbled' },
+      },
       steps: [
-        // THE CORRECTED LOOP (2026-09-06) — see the T2 gorger. The capstone runs the
-        // lineage's fastest version of it: the shortest window to break the plate,
-        // the quickest flee, and the quickest return.
-        { kind: 'escape-guard', name: 'Flee', castMs: 2600, fx: 'predator-flee',
-          sourceId: 'jungle-escape', shieldPct: 0.06,
-          onBreak: { staggerMs: 2400, label: 'Cornered' },
-          instinctSpeedPct: 0.30,
-          flee: { speed: 360, escapeDistance: 500 } },
+        { kind: 'escape-guard', name: 'Flee', castMs: 3000, fx: 'predator-flee',
+          sourceId: 'jungle-escape', shieldPct: 0.045,
+          onBreak: { staggerMs: 1000, label: 'Caught' },
+          instinctSpeedPct: 0.30, rootable: true,
+          flee: { speed: 410, escapeDistance: 500 } },
         { kind: 'conceal', name: 'Vanished', marker: 'stealth', durationMs: 6000,
           relocate: 'near-target', emergeGap: 30, travelSpeed: 270, surfacesOnContact: true },
         { kind: 'payoff', name: 'Venomous Bite', castMs: 250, fx: 'savage-maul',
           damageMult: 1.0, reach: 90,
-          onHitPoison: { stacks: 4, damagePerStack: 16, durationMs: 8000, tickIntervalMs: 1000 } },
-        // NO RECOVERY AFTER A LANDED AMBUSH — the window belongs to the break. T2.
+          onHitPoison: { stacks: 4, damagePerStack: 18, durationMs: 4000, tickIntervalMs: 1000 } },
+        { kind: 'frenzy', name: 'Frenzy', durationMs: 5000, attackSpeedPct: 0.35, damagePct: 0.20 },
       ],
     },
+    bossPatternVariants: [{
+      id: 'bloodfang-snare-escape', name: 'Escape',
+      damageMultiplier: 2.3, cooldownMs: 12000, initialCooldownMs: 5000,
+      armAboveHpPct: 0.3,
+      stoppedBy: {
+        // A stopped flee is NOT a stagger window (principle 5 exception): being
+        // stopped is already its punishment. A <=1s stumble with the stun tell.
+        stun: { staggerMs: 1000, label: 'Stumbled' },
+        root: { staggerMs: 1000, label: 'Stumbled' },
+      },
+      steps: [
+        { kind: 'escape-guard', name: 'Flee', castMs: 3000, fx: 'predator-flee',
+          sourceId: 'jungle-escape', shieldPct: 0.045,
+          onBreak: { staggerMs: 1000, label: 'Caught' },
+          instinctSpeedPct: 0.30, rootable: true,
+          snares: { intervalMs: 350, radius: 60, rootMs: 1500, durationMs: 12000 },
+          flee: { speed: 410, escapeDistance: 500 } },
+        { kind: 'conceal', name: 'Vanished', marker: 'stealth', durationMs: 6000,
+          relocate: 'near-target', emergeGap: 30, travelSpeed: 270, surfacesOnContact: true },
+        { kind: 'payoff', name: 'Venomous Bite', castMs: 250, fx: 'savage-maul',
+          damageMult: 1.0, reach: 90,
+          onHitPoison: { stacks: 4, damagePerStack: 18, durationMs: 4000, tickIntervalMs: 1000 } },
+        { kind: 'frenzy', name: 'Frenzy', durationMs: 5000, attackSpeedPct: 0.35, damagePct: 0.20 },
+      ],
+    }],
     bossScript: {
       phases: [
-        { hpPct: 0.5, actions: [
-          // FRENZY. Cornered: it stops trying to escape (the pattern's health gate
-          // closes here) and commits everything to the duel.
-          { type: 'stat-buff', stat: 'attack', mult: 1.40, label: 'bestial-frenzy' },
-          { type: 'stat-buff', stat: 'speed', mult: 1.25, label: 'bestial-frenzy' },
+        { hpPct: 0.6, name: 'Thorn Snares', actions: [
+          { type: 'set-pattern', patternId: 'bloodfang-snare-escape' },
         ] },
-        // The frenzy peaks. Cadence only — the shape does not change again.
-        { hpPct: 0.25, actions: [{ type: 'enrage', atkMult: 1.0, cdMult: 0.75 }] },
+        { hpPct: 0.3, name: 'Cornered', actions: [
+          // Permanent frenzy: the soft enrage. It has given up on running.
+          { type: 'stat-buff', stat: 'attack', mult: 1.40, label: 'cornered' },
+          { type: 'stat-buff', stat: 'attackSpeed', mult: 1.35, label: 'cornered' },
+        ] },
       ],
     },
   }],

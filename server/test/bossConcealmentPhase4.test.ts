@@ -361,9 +361,11 @@ for (const stage of ['flee', 'stalk'] as const) {
     escapeInstinct(monster) === instinctBefore,
     `${stage}: a stun banks no Instinct — only breaking the plate teaches it anything`,
   );
+  // Boss-lineage redesign: a stopped flee is a <=1s stumble with the stun tell —
+  // "you stopped it" — never a long punish window.
   assert(
-    !monster.recoversFromPattern?.fromStagger,
-    `${stage}: a stun is not the stumble that breaking the plate causes`,
+    !monster.recoversFromPattern || monster.recoversFromPattern.totalMs <= 1_000,
+    `${stage}: a stopped flee is at most a one-second stumble`,
   );
 
   // And it STAYS cancelled for the rest of the stun: no late vanish, no sequence
@@ -502,14 +504,16 @@ for (const stage of ['flee', 'stalk'] as const) {
     `the flee should be long enough to read and answer (lasted ${fleeMs}ms)`,
   );
   // Slower than the player cannot get away; far faster than the player cannot be
-  // watched. Breaking the plate is the answer, not outrunning it.
+  // watched. Breaking the plate is the answer, not outrunning it. Boss-lineage
+  // redesign (2026-09-27): fast enough that an ordinary chaser usually loses it
+  // (the cap moved 2.5x -> 3.5x; a straight flee interpolates cleanly at ~400px/s).
   const guardStep = MONSTER_DATABASE.get(id)!.bossPattern!.steps.find(
     step => step.kind === 'escape-guard',
   )!;
   assert(guardStep.kind === 'escape-guard' && guardStep.flee !== undefined, 'setup: it flees');
   assert(
     guardStep.flee.speed > GAME_CONFIG.PLAYER_SPEED &&
-      guardStep.flee.speed < GAME_CONFIG.PLAYER_SPEED * 2.5,
+      guardStep.flee.speed < GAME_CONFIG.PLAYER_SPEED * 3.5,
     `the flee should outpace the player without blurring (${guardStep.flee.speed}px/s ` +
       `vs ${GAME_CONFIG.PLAYER_SPEED})`,
   );

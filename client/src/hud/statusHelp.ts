@@ -187,6 +187,7 @@ const TARGET_HELP: Record<string, StatusHelp> = {
   'summoner-withering-chorus': d('Chorus', 'Each distinct summon voice on the target deepens the affliction.'),
   'enemy-barrier': { title: 'Barrier', kind: 'buff', help: 'A temporary absorb shell is protecting this monster. Damage drains the shell before health; when a reforming clock is shown, sustained pressure is what keeps it broken.' },
   'source-barrier': { title: 'Barrier', kind: 'buff', help: 'A boss-owned absorb barrier is protecting this monster. Direct damage drains the ward before health; the pattern drops it when its defensive beat ends.' },
+  'boss-frenzy': b('Frenzy', 'The predator landed its ambush and is in a burst: faster attacks and harder hits for a few seconds. Guard it, out-defend it, or deny the escape next time.'),
   'boss-rallied': b('Rallied', 'The boss’s Rallying Roar has driven this add on: it attacks faster and hits harder for every stack, until it dies. Clear the herd before the next roar.'),
   'boss-roar-haste': b('Rallying Cry', 'A boss roar has hastened this monster, raising its attack cadence for the rally window. The cry adds speed, not a separate damage hit.'),
   'monster-death-empower': b('Necrotic Surge', 'A nearby undead ally died and left a death surge behind. Each stack raises this monster’s damage by 12% for six seconds, so leaving survivors near the corpse makes the pack worse.'),

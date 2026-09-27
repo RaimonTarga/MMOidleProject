@@ -49,7 +49,9 @@ export type HazardFlavor =
   /** Swamp T3 Spore pool: short-lived, detonates when it expires. */
   | 'spore'
   /** Cave T2+ sinkhole: collapsed ground; slows and erodes. */
-  | 'sinkhole';
+  | 'sinkhole'
+  /** Jungle T4 thorn snare: roots the first player to step on it, then is spent. */
+  | 'thorns';
 
 /**
  * Client-facing view of one zone. Mirrors the shape of the gauntlet's

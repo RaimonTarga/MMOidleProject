@@ -24,6 +24,8 @@ export const BOSS_ROAR_HASTE_EFFECT_ID = "boss-roar-haste";
  * `rallyDamagePct` per stack (read by `monsterDeathEmpowerMult`).
  */
 export const BOSS_RALLIED_EFFECT_ID = "boss-rallied";
+/** Jungle ambush burst: timed +attack speed / +damage on the boss itself. */
+export const BOSS_FRENZY_EFFECT_ID = "boss-frenzy";
 
 /** Effective basic-attack cadence after temporary roar haste and combat ramping. */
 export function monsterAttackCooldown(monster: MonsterEntity): number {

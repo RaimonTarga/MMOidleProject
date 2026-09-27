@@ -92,6 +92,8 @@ const MIRE_TINT = 0x9a7446;
 const SPORE_TINT = 0xd6f05a;
 /** Cave sinkhole: collapsed ground, dark and dusty. */
 const SINKHOLE_TINT = 0x6a5a48;
+/** Jungle thorn snare: a dark bramble patch. */
+const THORNS_TINT = 0x3f6a2a;
 
 export interface GroundZoneSprite {
   graphic: Phaser.GameObjects.Graphics;
@@ -383,6 +385,8 @@ function drawZone(sprite: GroundZoneSprite, progress: number, nowMs: number): vo
       } else if (sprite.flavor === "mire") {
         // Mire: the swamp art dragged to mud — slows, does not burn.
         sprite.image.setTint(MIRE_TINT);
+      } else if (sprite.flavor === "thorns") {
+        sprite.image.setTint(THORNS_TINT);
       } else if (sprite.flavor === "sinkhole") {
         sprite.image.setTint(SINKHOLE_TINT);
       } else if (sprite.flavor === "spore") {
@@ -407,6 +411,7 @@ function drawZone(sprite: GroundZoneSprite, progress: number, nowMs: number): vo
       : sprite.flavor === "mire" ? MIRE_TINT
       : sprite.flavor === "spore" ? SPORE_TINT
       : sprite.flavor === "sinkhole" ? SINKHOLE_TINT
+      : sprite.flavor === "thorns" ? THORNS_TINT
       : TOXIC_FILL;
     const line = sprite.flavor === "magma-vent"
       ? mixRgb(0xffa044, 0xffffa0, steamGlow)

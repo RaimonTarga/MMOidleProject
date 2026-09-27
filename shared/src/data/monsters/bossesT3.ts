@@ -441,62 +441,71 @@ export const bossMonsterEntriesT3 = [
     rewards: { essence: 340, essenceType: 'green', level: 5, biomeXp: 510 },
     ai: { wanderRadius: 140, leashRange: 920, idleMinMs: 2000, idleMaxMs: 6000 },
     targeting: { prefersPlayers: true },
-    // JUNGLE = PURSUIT AND FAILED ESCAPE. The one loop the whole lineage runs:
-    //
-    //   Escape Guard appears and the boss bolts for the far edge of its leash.
-    //     BREAK the guard  -> the retreat fails, it stumbles, and it banks one
-    //                         stack of Escape Instinct so the NEXT attempt
-    //                         is quicker.
-    //     LET IT FINISH    -> it vanishes into cover, resets Instinct, picks a
-    //                         valid re-entry point, and comes back with an ambush.
-    //
-    // BARRIER DAMAGE — not physical contact — is the test. That is deliberate and
-    // load-bearing: a boss whose whole idea is running away from you would otherwise
-    // be answerable only by melee, and ranged builds would have no counterplay at
-    // all. Instinct has no cap: failed retreats keep accelerating it until a successful
-    // escape wipes the stacks.
-    //
-    // T3 adds the AFTERMATH: a successful ambush lands venom on top of the hit, so
-    // letting it get away costs you for the next several seconds rather than only
-    // in the moment.
-    //
-    // REMOVED with the 2026-09-04 redesign: passive `evasion` (a flat miss chance is
-    // a texture, not a decision, and it made every build's damage read as unreliable
-    // rather than making the boss hard to pin down), `openingStrike`, Bramble Pounce,
-    // the 50% evasion surge, and `chargeOnAggro`.
+    // JUNGLE (boss-lineage redesign 2026-09-27) — PURSUIT AND FAILED ESCAPE.
+    //   FLEE: behind an Escape Guard it bolts, fast enough that an ordinary chaser
+    //     usually loses it. Stop it by BREAKING the guard (the ranged answer), by
+    //     HINDERING it (slow shortens the run; root at T3+, stun at T4 end it), or by
+    //     catching it with a gap-closer. A stopped flee is a <=1s stumble, not a
+    //     window: staying in the fight and losing its ambush IS its punishment.
+    //     Failed flees bank Escape Instinct (the next is faster).
+    //   ESCAPED: it stalks back unseen and AMBUSHES — then FRENZIES for ~5s
+    //     (+attack speed, +damage): the burst window you pay for letting it go.
+    //     Guard the reveal, out-defend the frenzy, or deny the escape.
+    //   T3: the ROOT answer arrives (a Binding Strike ends the flee); ~60% the
+    //   Venomous Bite opens the ambush (short-lived poison, burst not attrition);
+    //   ~25% Hunted, the soft enrage: it flees far more often.
     bossPattern: {
       id: 'timberclaw-escape', name: 'Escape',
       damageMultiplier: 2.0, cooldownMs: 13000, initialCooldownMs: 7000,
+      stoppedBy: {
+        // A stopped flee is NOT a stagger window (principle 5 exception): being
+        // stopped is already its punishment. A <=1s stumble with the stun tell.
+        stun: { staggerMs: 1000, label: 'Stumbled' },
+        root: { staggerMs: 1000, label: 'Stumbled' },
+      },
       steps: [
-        // THE CORRECTED LOOP (2026-09-06) — read the T2 gorger's comment first;
-        // everything there applies. This tier was left behind by that pass and had
-        // all of its faults: a stationary "escape" that went nowhere, a vanish that
-        // TELEPORTED the boss to its leash edge, and an Ambush (a payoff with no
-        // radius, and therefore no range check) firing from across the arena.
-        //
-        // Deepened rather than copied: it flees faster than T2 and stalks back
-        // at a readable stalking pace before a range-checked venomous bite.
-        { kind: 'escape-guard', name: 'Flee', castMs: 2800, fx: 'predator-flee',
-          sourceId: 'jungle-escape', shieldPct: 0.07,
-          onBreak: { staggerMs: 2500, label: 'Cornered' },
-          instinctSpeedPct: 0.30,
-          flee: { speed: 320, escapeDistance: 450 } },
+        { kind: 'escape-guard', name: 'Flee', castMs: 3000, fx: 'predator-flee',
+          sourceId: 'jungle-escape', shieldPct: 0.05,
+          onBreak: { staggerMs: 1000, label: 'Caught' },
+          instinctSpeedPct: 0.30, rootable: true,
+          flee: { speed: 370, escapeDistance: 450 } },
+        { kind: 'conceal', name: 'Vanished', marker: 'stealth', durationMs: 6000,
+          relocate: 'near-target', emergeGap: 30, travelSpeed: 240, surfacesOnContact: true },
+        { kind: 'payoff', name: 'Ambush', castMs: 300, fx: 'savage-maul',
+          damageMult: 1.0, reach: 90 },
+        { kind: 'frenzy', name: 'Frenzy', durationMs: 5000, attackSpeedPct: 0.35, damagePct: 0.20 },
+      ],
+    },
+    bossPatternVariants: [{
+      id: 'bramble-venom-escape', name: 'Escape',
+      damageMultiplier: 2.0, cooldownMs: 12000, initialCooldownMs: 5000,
+      stoppedBy: {
+        // A stopped flee is NOT a stagger window (principle 5 exception): being
+        // stopped is already its punishment. A <=1s stumble with the stun tell.
+        stun: { staggerMs: 1000, label: 'Stumbled' },
+        root: { staggerMs: 1000, label: 'Stumbled' },
+      },
+      steps: [
+        { kind: 'escape-guard', name: 'Flee', castMs: 3000, fx: 'predator-flee',
+          sourceId: 'jungle-escape', shieldPct: 0.05,
+          onBreak: { staggerMs: 1000, label: 'Caught' },
+          instinctSpeedPct: 0.30, rootable: true,
+          flee: { speed: 370, escapeDistance: 450 } },
         { kind: 'conceal', name: 'Vanished', marker: 'stealth', durationMs: 6000,
           relocate: 'near-target', emergeGap: 30, travelSpeed: 240, surfacesOnContact: true },
         { kind: 'payoff', name: 'Venomous Bite', castMs: 300, fx: 'savage-maul',
           damageMult: 1.0, reach: 90,
-          onHitPoison: { stacks: 3, damagePerStack: 14, durationMs: 8000, tickIntervalMs: 1000 } },
-        // NO RECOVERY AFTER A LANDED AMBUSH. The punish window is what BREAKING the
-        // plate buys, and nothing else — a predator that just bit you does not stun
-        // itself. Same call as T2.
+          onHitPoison: { stacks: 4, damagePerStack: 16, durationMs: 4000, tickIntervalMs: 1000 } },
+        { kind: 'frenzy', name: 'Frenzy', durationMs: 5000, attackSpeedPct: 0.35, damagePct: 0.20 },
       ],
-    },
+    }],
     bossScript: {
       phases: [
-        { hpPct: 0.5, actions: [
-          // The escape cycle comes around harder and far more often. The old
-          // evasion surge is gone with the passive evasion it doubled.
-          { type: 'empower-charged', multiplierMult: 1.20, cooldownMult: 0.55 },
+        { hpPct: 0.6, name: 'Venomous Bite', actions: [
+          { type: 'set-pattern', patternId: 'bramble-venom-escape' },
+        ] },
+        { hpPct: 0.25, name: 'Hunted', actions: [
+          { type: 'empower-charged', cooldownMult: 0.60 },
         ] },
       ],
     },

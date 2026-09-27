@@ -443,6 +443,12 @@ export type BossPatternStep =
       interruptible?: boolean;
       /** A player root ends the flee on the spot (Jungle T3+). */
       rootable?: boolean;
+      /**
+       * THORN SNARES (Jungle T4): while fleeing, drop a snare behind it every
+       * `intervalMs`. A player who steps on one is rooted for `rootMs` and the snare
+       * is spent. Chasing on foot gets risky; Break Free answers the root.
+       */
+      snares?: { intervalMs: number; radius: number; rootMs: number; durationMs: number };
       fx?: string;
     }
   /**
@@ -492,6 +498,13 @@ export type BossPatternStep =
       interruptible?: boolean;
       fx?: string;
     }
+  /**
+   * FRENZY (Jungle ambush burst). The boss gains +attack speed and +damage for
+   * `durationMs`, and the pattern ends — it goes straight back to fighting, hot.
+   * The burst window after a landed ambush: Guard it, out-defend it, or deny the
+   * escape that leads to it.
+   */
+  | { kind: 'frenzy'; name: string; durationMs: number; attackSpeedPct: number; damagePct: number }
   /** Dead time inside the sequence, with no cast bar. */
   | { kind: 'wait'; durationMs: number }
   /**
@@ -617,6 +630,8 @@ export interface RunsBossPattern {
   /** Wall-clock the outbound leg gives up at, so an unreachable point cannot stall the burrow. */
   feintEndsAtMs?: number;
   fleeStart?: Vec2;
+  /** Wall clock the next thorn snare drops at, while a snaring flee runs. */
+  nextSnareAtMs?: number;
   lastFleeSteerMs?: number;
   fleeTargetPosition?: Vec2;
   /** Set true when a barrier break staggered the pattern. */

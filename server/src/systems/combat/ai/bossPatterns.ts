@@ -72,6 +72,7 @@ import { isMonsterFrozen } from '../../classes/archetypes/dot/t3/core/selectors'
 import { isMonsterStunned } from '../status/stun';
 import { applyMonsterDotToPlayer } from '../status/monsterDot';
 import { monsterIgnoresControl } from '../status/controlImmunity';
+import { BOSS_FRENZY_EFFECT_ID } from '../engine/monsterMechanics';
 
 const PATTERN_SESSION_KEY = 'bossPatternSession';
 const PATTERN_USED_KEY = 'bossPatternUsed';
@@ -1132,6 +1133,29 @@ function beginStep(
       state.stepEndsAtMs = now + step.durationMs;
       return true;
     }
+    case 'frenzy': {
+      applyStatusEffect(monster.tracksCombat, {
+        id: BOSS_FRENZY_EFFECT_ID,
+        maxStacks: 1,
+        remainingMs: step.durationMs,
+        refreshable: true,
+        sourceId: monster.isMonster.id,
+        data: {
+          monsterAttackSpeedBuff: 1,
+          attackSpeedPct: step.attackSpeedPct,
+          rallyDamagePct: step.damagePct,
+          totalMs: step.durationMs,
+        },
+      });
+      world.pushEvent(monster.hasPosition.nodeId, {
+        kind: 'boss-fx',
+        monsterId: monster.isMonster.id,
+        pos: { ...monster.hasPosition.current },
+        fx: 'frenzy',
+      });
+      state.stepEndsAtMs = now;
+      return true;
+    }
     case 'dash': {
       const target = patternTarget(world, monster);
       if (!target) {
@@ -1327,6 +1351,10 @@ function tickStep(
         distanceSq(monster.hasPosition.current, state.fleeStart) >= 100 ** 2 &&
         distanceSq(monster.hasPosition.current, target.hasPosition.current) >= step.flee.escapeDistance ** 2;
       if (!escaped) {
+        if (step.snares && step.flee && now >= (state.nextSnareAtMs ?? now)) {
+          state.nextSnareAtMs = now + step.snares.intervalMs;
+          dropThornSnare(world, monster, step.snares, now);
+        }
         if (now >= state.stepEndsAtMs) {
           // Keeping up with the retreat is also a failed escape, on every Jungle tier.
           gainEscapeInstinct(monster);
@@ -1339,9 +1367,13 @@ function tickStep(
           distanceSq(target.hasPosition.current, state.fleeTargetPosition) >= 64 ** 2);
         const stalled = !monster.isMoving;
         const direction = monster.isMoving?.motion.direction;
+        // Heading INTO the pursuer (within ~35 degrees), not merely sideways: a
+        // cornered boss sliding along a wall runs 90-150 degrees off "away" by design.
+        const awayX = monster.hasPosition.current.x - (target?.hasPosition.current.x ?? 0);
+        const awayY = monster.hasPosition.current.y - (target?.hasPosition.current.y ?? 0);
         const towardPlayer = target && direction &&
-          direction.x * (monster.hasPosition.current.x - target.hasPosition.current.x) +
-          direction.y * (monster.hasPosition.current.y - target.hasPosition.current.y) <= 0;
+          (direction.x * awayX + direction.y * awayY) <
+            -0.82 * Math.hypot(direction.x, direction.y) * Math.max(1, Math.hypot(awayX, awayY));
         if (step.flee && target && (towardPlayer || ((targetMoved || stalled) && now - (state.lastFleeSteerMs ?? 0) >= 300))) {
           state.lastFleeSteerMs = now;
           const away = fleeDestination(world, monster, target);
@@ -1400,6 +1432,7 @@ function tickStep(
     case 'fault-lines':
     case 'rockfall':
     case 'drop-barrier':
+    case 'frenzy':
       return 'done';
     case 'wait':
       return now >= state.stepEndsAtMs ? 'done' : 'running';
@@ -2121,6 +2154,35 @@ function paintLane(
     damageMultiplier: 1,
   });
   state.laneZoneId = published.id;
+}
+
+/** A thorn snare where the fleeing boss stands: roots the first player to step on it. */
+function dropThornSnare(
+  world: World,
+  monster: MonsterEntity,
+  snare: { radius: number; rootMs: number; durationMs: number },
+  now: number,
+): void {
+  publishToxicPool(world, monster.hasPosition.nodeId, {
+    kind: 'toxic-pool',
+    pos: { ...monster.hasPosition.current },
+    radius: snare.radius,
+    startedAtMs: now,
+    expiresAtMs: now + snare.durationMs,
+    damagePerTick: 0,
+    tickIntervalMs: 1000,
+    flavor: 'thorns',
+    snare: { rootMs: snare.rootMs },
+    ownerId: monster.isMonster.id,
+    sourceId: 'thorn-snare',
+    sourceLabel: 'Thorn Snare',
+    killer: {
+      monsterTypeId: monster.isMonster.monsterTypeId,
+      monsterName: monster.isMonster.name,
+      isBoss: monster.isMonster.isBoss,
+      nodeId: monster.hasPosition.nodeId,
+    },
+  });
 }
 
 /** Lay the pool an impact leaves behind, owned by the boss (cleared on its death). */

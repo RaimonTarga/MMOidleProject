@@ -303,6 +303,8 @@ function describeBossPatternStep(step: BossPatternStep, pattern: BossPattern): s
       return `Raises a ${fmtPct(step.shieldPct)} max-HP barrier` +
         (step.blocksControl ? '; ignores stun and root while it holds' : '') +
         (step.onBreak ? `; breaking it causes ${step.onBreak.label} for ${fmtMs(step.onBreak.staggerMs)}` : '');
+    case 'frenzy':
+      return `${step.name}: +${fmtPct(step.attackSpeedPct)} attack speed and +${fmtPct(step.damagePct)} damage for ${fmtMs(step.durationMs)}`;
     case 'dash':
       return `${step.name}: dashes ${step.direction === 'to-target' ? 'onto its target' : `away to ${step.distance ?? 400}px`} at ${fmtNumber(step.speed)}px/s` +
         (step.rootable ? '; a root stops it' : '') +

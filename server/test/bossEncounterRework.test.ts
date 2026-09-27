@@ -276,8 +276,8 @@ for (const id of JUNGLE_IDS) {
 // The capstone STOPS escaping when wounded — the low-health state is the ABSENCE of
 // the lineage's mechanic, not a fourth one.
 assert(
-  def('verdant-crown-predator').bossPattern?.armAboveHpPct === 0.5,
-  'T4 Jungle should stop escaping once its frenzy begins',
+  def('verdant-crown-predator').bossPattern?.armAboveHpPct === 0.3,
+  'T4 Jungle should stop escaping once Cornered (30%, boss-lineage redesign)',
 );
 assert(
   !def('verdant-crown-predator').cadenceFinisher,

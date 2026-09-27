@@ -202,8 +202,13 @@ for (const id of ['jungle-dread-gorger', 'apex-bramble-slasher', 'verdant-crown-
 }
 
 // A real chase must move gradually, surface near the player, and bite with all venom stacks.
-for (const [id, stacks] of [['apex-bramble-slasher', 3], ['verdant-crown-predator', 4]] as const) {
+// Boss-lineage redesign: the T3 bite joins at its 60% phase, so it is tested there.
+for (const [id, stacks, hpPct] of [['apex-bramble-slasher', 4, 0.55], ['verdant-crown-predator', 4, 1]] as const) {
   const { world, player, boss, now } = setup(id);
+  if (hpPct < 1) {
+    boss.hasHealth.hp = Math.round(boss.hasHealth.maxHp * hpPct);
+    updateBossScripts(world, 0);
+  }
   let concealed = false;
   let poisoned = false;
   for (let t = now; t < now + 14000; t += 100) {

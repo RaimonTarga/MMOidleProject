@@ -380,6 +380,7 @@ const TARGET_STATUS_ALIASES: Record<string, string> = {
   'thornback-chameleon-barrage': 'thorn-spitter-barrage',
   'boss-roar-haste': 'monster-howl-haste',
   'boss-rallied': 'monster-howl-haste',
+  'boss-frenzy': 'monster-howl-haste',
   'monster-death-empower': 'necrotic-surge',
   'elder-carapace-renewal': 'abyssal-carapace',
   'magma-molten-guard': 'molten-guard',

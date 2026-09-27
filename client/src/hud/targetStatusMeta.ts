@@ -24,6 +24,7 @@ const STATUS_META: Record<string, StatusMeta> = {
   'thornback-chameleon-barrage': { label: 'Barrage', color: '#89dd59' },
   'boss-roar-haste': { label: 'Rallying Cry', color: '#b18cff' },
   'boss-rallied': { label: 'Rallied', color: '#ff9944' },
+  'boss-frenzy': { label: 'Frenzy', color: '#ff5533' },
   'monster-death-empower': { label: 'Necrotic Surge', color: '#c678e8' },
   'elder-carapace-renewal': { label: 'Abyssal Carapace', color: '#5ccdd0' },
   'magma-molten-guard': { label: 'Molten Guard', color: '#ff7a3c' },

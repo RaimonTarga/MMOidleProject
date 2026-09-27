@@ -465,95 +465,66 @@ export const bossMonsterEntriesT2 = [
     rewards: { essence: 145, essenceType: 'green', level: 5, biomeXp: 218 },
     ai: { wanderRadius: 150, leashRange: 840, idleMinMs: 1800, idleMaxMs: 4500 },
     targeting: { prefersPlayers: true },
-    // JUNGLE = PURSUIT AND FAILED ESCAPE. The one loop the whole lineage runs:
-    //
-    //   FLEE: the boss bolts for the far edge of its leash behind a plate.
-    //     BREAK the plate  -> the retreat fails, it stumbles, and it banks one
-    //                         stack of Escape Instinct so the NEXT attempt
-    //                         is quicker.
-    //     STUN IT          -> the attempt simply stops. No stumble and no Instinct
-    //                         — a plainer answer than the plate, and it has to be
-    //                         one, or a boss that "escapes" while hard-controlled
-    //                         cashes in on the far side of the control you spent.
-    //     LET IT FINISH    -> it slips into cover, resets Instinct, STALKS BACK
-    //                         unseen, and bites the moment it reaches you.
-    //
-    // THE 2026-09-06 CORRECTION. Every beat above was already written down and none
-    // of it was what the fight did. The guard was a stationary cast (the boss never
-    // bolted anywhere), the vanish TELEPORTED it to the leash edge the instant it
-    // succeeded, and the Ambush then fired from across the arena at a player it had
-    // never come near — a bite landing at 800px, out of nowhere, unanswerable and
-    // unreadable. The sequence now runs the shape the design always described: it
-    // runs (visible, breakable), it disappears, it comes back for you, and the bite
-    // is what happens when it arrives.
-    //
-    // BARRIER DAMAGE — not physical contact — is the test. That is deliberate and
-    // load-bearing: a boss whose whole idea is running away from you would otherwise
-    // be answerable only by melee, and ranged builds would have no counterplay at
-    // all. Instinct has no cap: failed retreats keep accelerating it until a successful
-    // escape wipes the stacks.
-    //
-    // T2 teaches the PLAIN cycle: no venom, no frenzy, just escape and ambush.
-    //
-    // REMOVED with the 2026-09-04 redesign: `openingStrike` (an unanswerable alpha
-    // strike before the fight has taught anything) and the one-shot Canopy Hunt
-    // speed phase, which was a substitute for the pursuit this loop now IS.
-    //
-    // Canopy Hunt was only removed from the COMMENT in 2026-09-04; the phase itself
-    // survived in the data until 2026-09-06. It is gone now, and with it the whole
-    // `bossScript` — T2 has no 50% escalation at all, which is the point: this tier
-    // teaches the plain cycle, and the escalation belongs to T3 (the escape comes
-    // around harder and far more often) and T4 (it stops escaping altogether).
+    // JUNGLE (boss-lineage redesign 2026-09-27) — PURSUIT AND FAILED ESCAPE.
+    //   FLEE: behind an Escape Guard it bolts, fast enough that an ordinary chaser
+    //     usually loses it. Stop it by BREAKING the guard (the ranged answer), by
+    //     HINDERING it (slow shortens the run; root at T3+, stun at T4 end it), or by
+    //     catching it with a gap-closer. A stopped flee is a <=1s stumble, not a
+    //     window: staying in the fight and losing its ambush IS its punishment.
+    //     Failed flees bank Escape Instinct (the next is faster).
+    //   ESCAPED: it stalks back unseen and AMBUSHES — then FRENZIES for ~5s
+    //     (+attack speed, +damage): the burst window you pay for letting it go.
+    //     Guard the reveal, out-defend the frenzy, or deny the escape.
+    //   T2: the plain cycle; 50% Bloodlust = a longer frenzy.
     bossPattern: {
       id: 'gorger-escape', name: 'Escape',
       damageMultiplier: 1.6, cooldownMs: 14000, initialCooldownMs: 8000,
+      stoppedBy: {
+        // A stopped flee is NOT a stagger window (principle 5 exception): being
+        // stopped is already its punishment. A <=1s stumble with the stun tell.
+        stun: { staggerMs: 1000, label: 'Stumbled' },
+        root: { staggerMs: 1000, label: 'Stumbled' },
+      },
       steps: [
-        // THE ESCAPE IS TIMED, AND THE TIME IS THE POINT. 3000ms of the boss visibly
-        // running with a breakable plate up — long enough to read as a chase you
-        // are losing, and long enough for the break to be a real decision rather
-        // than a reflex. (First pass tried 1500ms at 420px/s: the boss crossed
-        // ~630px in a second and a half, which at the 5 Hz broadcast is ~84px a
-        // packet, and the whole beat read as "cast, blink, gone".)
-        //
-        // ⚠ NOT distance-from-the-player, which was the tempting alternative: that
-        // condition is already satisfied the moment a ranged or kiting player opens
-        // up, so the escape would complete instantly exactly when the player is
-        // furthest from being able to answer it — the same "it triggers immediately"
-        // failure in a new costume. It also has no natural end when the boss is
-        // walled in or pinned against its own leash. Time is stable wherever
-        // everyone happens to be standing; distance is what the flee ACHIEVES.
-        //
-        // 220px/s is the visible pace: clearly faster than the player's 120, slow
-        // enough to watch. Over the window that is ~660px, which is what the stalk
-        // below is sized to take back.
         { kind: 'escape-guard', name: 'Flee', castMs: 3000, fx: 'predator-flee',
-          sourceId: 'jungle-escape', shieldPct: 0.07,
-          onBreak: { staggerMs: 2600, label: 'Cornered' },
+          sourceId: 'jungle-escape', shieldPct: 0.05,
+          onBreak: { staggerMs: 1000, label: 'Caught' },
           instinctSpeedPct: 0.30,
-          flee: { speed: 280, escapeDistance: 400 } },
-        // THE STALK, not a relocation. It goes invisible only once the escape has
-        // actually succeeded, then closes on you while unseen — `near-target` with
-        // real travel, exactly like the Cave burrow, so the marker is a tell the
-        // player tracks rather than a body that blinks across the map.
-        // A visible-rate stalk with a time limit: surface in bite range immediately
-        // on contact instead of sprinting back and waiting under the player.
+          flee: { speed: 330, escapeDistance: 400 } },
         { kind: 'conceal', name: 'Vanished', marker: 'stealth', durationMs: 6000,
           relocate: 'near-target', emergeGap: 30, travelSpeed: 220, surfacesOnContact: true },
-        // Which makes the Ambush a CONTACT bite: it lands because the thing that
-        // vanished is now standing on top of you, and the 800ms is the tell.
         { kind: 'payoff', name: 'Ambush', castMs: 350, fx: 'savage-maul',
           damageMult: 1.0, reach: 90 },
-        // NO RECOVERY AFTER A SUCCESSFUL AMBUSH (2026-09-06). It used to end on a
-        // 1600ms `Winded` window, which meant both branches of the loop finished
-        // with the boss lying down — and since the recovery's networked id is
-        // literally `boss-stunned`, the authored label never reached the player and
-        // the two read as the same outcome. A predator that just landed its ambush
-        // being stunned by it makes no sense, and it flattened the choice the whole
-        // pattern exists to pose.
-        //
-        // The punish window is now what BREAKING THE PLATE buys you, and nothing
-        // else: stop the escape and you get 2.6s of a helpless boss; let it go and
-        // you eat the bite and it goes straight back to fighting.
+        { kind: 'frenzy', name: 'Frenzy', durationMs: 5000, attackSpeedPct: 0.35, damagePct: 0.20 },
+      ],
+    },
+    bossPatternVariants: [{
+      id: 'gorger-escape-bloodlust', name: 'Escape',
+      damageMultiplier: 1.6, cooldownMs: 14000, initialCooldownMs: 6000,
+      stoppedBy: {
+        // A stopped flee is NOT a stagger window (principle 5 exception): being
+        // stopped is already its punishment. A <=1s stumble with the stun tell.
+        stun: { staggerMs: 1000, label: 'Stumbled' },
+        root: { staggerMs: 1000, label: 'Stumbled' },
+      },
+      steps: [
+        { kind: 'escape-guard', name: 'Flee', castMs: 3000, fx: 'predator-flee',
+          sourceId: 'jungle-escape', shieldPct: 0.05,
+          onBreak: { staggerMs: 1000, label: 'Caught' },
+          instinctSpeedPct: 0.30,
+          flee: { speed: 330, escapeDistance: 400 } },
+        { kind: 'conceal', name: 'Vanished', marker: 'stealth', durationMs: 6000,
+          relocate: 'near-target', emergeGap: 30, travelSpeed: 220, surfacesOnContact: true },
+        { kind: 'payoff', name: 'Ambush', castMs: 350, fx: 'savage-maul',
+          damageMult: 1.0, reach: 90 },
+        { kind: 'frenzy', name: 'Frenzy', durationMs: 8000, attackSpeedPct: 0.35, damagePct: 0.20 },
+      ],
+    }],
+    bossScript: {
+      phases: [
+        { hpPct: 0.5, name: 'Bloodlust', actions: [
+          { type: 'set-pattern', patternId: 'gorger-escape-bloodlust' },
+        ] },
       ],
     },
   }],
