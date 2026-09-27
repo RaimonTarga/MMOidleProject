@@ -190,6 +190,7 @@ function tickVents(state: ScriptsBoss, monster: MonsterEntity, world: World): vo
       points: [{ ...vent.pos }],
       damageMultiplier: rhythm.damageMult,
       scattered: true,
+      fx: 'vent-eruption',
     });
   }
 }
@@ -270,15 +271,15 @@ function tickHarvest(state: ScriptsBoss, monster: MonsterEntity, world: World, d
   const risen = [...world.monsterEntitiesInNode(monster.hasPosition.nodeId)]
     .find(m => m.isRaised?.raiserId === monster.isMonster.id && m.hasHealth.hp > 0);
   if (!risen) return;
+  // Its own cue: the soul drawn out of the risen and into the boss.
   world.pushEvent(monster.hasPosition.nodeId, {
-    kind: 'ecology-pulse',
-    monsterId: risen.isMonster.id,
+    kind: 'boss-fx',
+    monsterId: monster.isMonster.id,
     pos: { ...risen.hasPosition.current },
-    pulse: 'raise-dead',
+    fx: 'harvest',
   });
   world.removeMonsterEntity(risen.isMonster.id);
   applyAction({ type: 'stat-buff', stat: 'attack', mult: harvest.attackMult, label: 'harvest' }, monster, world, state);
-  pushBossFx(world, monster, 'frenzy');
 }
 
 /** The arena's boss-debuff ramps (Frostbite, Depth): a stack per interval, per player. */
@@ -359,6 +360,7 @@ function tickScriptedCast(
     kind: 'monster-cast-end',
     monsterId: monster.isMonster.id,
     fired: true,
+    ...(cast.castFx ? { fx: cast.castFx } : {}),
   });
 
   const next = state.scriptedCastQueue?.shift();
@@ -366,7 +368,7 @@ function tickScriptedCast(
 }
 
 function beginScriptedCast(
-  action: { castMs: number; label: string; actions: BossAction[]; fx?: 'roar' | 'frenzy' | 'shield' },
+  action: { castMs: number; label: string; actions: BossAction[]; fx?: 'roar' | 'frenzy' | 'shield'; castFx?: string },
   monster: MonsterEntity,
   world: World,
   state: ScriptsBoss,
@@ -396,6 +398,7 @@ function beginScriptedCast(
     remainingMs: action.castMs,
     label: action.label,
     actions: action.actions,
+    castFx: action.castFx ?? action.fx,
     ownsRoot,
     ownsCannotAttack,
   };
@@ -404,6 +407,7 @@ function beginScriptedCast(
     monsterId: monster.isMonster.id,
     castMs: action.castMs,
     label: action.label,
+    ...(action.castFx ?? action.fx ? { fx: action.castFx ?? action.fx } : {}),
   });
   pushBossFx(world, monster, action.fx ?? 'roar', { radius: 360 });
 }

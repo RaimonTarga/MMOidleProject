@@ -270,7 +270,7 @@ export const bossMonsterEntriesT4 = [
             damageMult: 1.0, amplifiedMult: 2.0, rootable: true,
             consumes: { effectId: SUN_MARK_EFFECT_ID }, radius: 120 },
           { kind: 'dash', name: 'Withdraw', direction: 'away', speed: 700, distance: 540,
-            maxTravelMs: 1000, interruptible: false },
+            maxTravelMs: 1000, interruptible: false, fx: 'predator-flee' },
         ],
       },
     ],
@@ -287,6 +287,7 @@ export const bossMonsterEntriesT4 = [
           description: 'It dashes in, marks and executes you, then withdraws, a little faster every time. Root or stun the dash-in or the Execution to catch it.',
           actions: [
           { type: 'set-pattern', patternId: 'sovereign-hit-and-run' },
+          { type: 'set-weather', weather: 'sandstorm' },
         ] },
       ],
     },
@@ -728,7 +729,7 @@ export const bossMonsterEntriesT4 = [
         { hpPct: 0.6, name: 'Bone Tithe',
           description: 'It raises the dead, and every risen standing for it gives it damage reduction. Clear the risen to strip its defence.',
           actions: [
-          { type: 'cast', castMs: 1800, label: 'Mass Resurrection', fx: 'roar', actions: [
+          { type: 'cast', castMs: 1800, label: 'Mass Resurrection', fx: 'roar', castFx: 'mass-raise', actions: [
             { type: 'raise-dead', count: 5, maxAliveAdd: 3, hpMult: 0.45, damageMult: 0.60 },
           ] },
           { type: 'bone-tithe', damageReductionPerRisen: 0.06, maxStacks: 6 },

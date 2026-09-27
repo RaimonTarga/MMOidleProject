@@ -1784,6 +1784,13 @@ function resolveTravelContacts(
       // The connection is what the rest of the sequence hangs off: it stops the
       // travel, and it gates every `requiresChargeHit` step after it.
       state.chargeConnected = true;
+      // The body lands on them: a cue the client gives weight to.
+      world.pushEvent(nodeId, {
+        kind: 'boss-fx',
+        monsterId: monster.isMonster.id,
+        pos: { ...player.hasPosition.current },
+        fx: 'charge-impact',
+      });
       const landed = hooks.hitPlayer(world, monster, player, now, multiplier, pattern.name);
       if (landed && pattern.chargeInstinct) {
         setCounter(monster.tracksCombat, CHARGE_INSTINCT_KEY, 0);
@@ -2399,6 +2406,7 @@ function publishRockfall(
     points,
     damageMultiplier: pattern.damageMultiplier * step.damageMult,
     scattered: true,
+    fx: step.fx ?? 'rockfall',
     ...(step.pool ? { leavesPool: step.pool } : {}),
   });
   void state;

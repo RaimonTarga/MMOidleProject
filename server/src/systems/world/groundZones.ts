@@ -149,6 +149,8 @@ export interface RuntimeFaultLineBurst extends RuntimeGroundZoneBase {
   scattered?: boolean;
   /** Each scattered circle leaves this pool where it lands (Swamp Bile Rain). */
   leavesPool?: PatternPool;
+  /** Client cue for what is falling / erupting (`rockfall`, `bile-rain`, `vent-eruption`). */
+  fx?: string;
 }
 
 /** Node-scoped, runtime-only circles. Never persisted or rebuilt on thaw. */
@@ -775,6 +777,7 @@ export function buildGroundZoneViews(
         radius: zone.radius,
         durationMs,
         remainingMs,
+        ...(zone.fx ? { fx: zone.fx } : {}),
       }));
     }
     return {

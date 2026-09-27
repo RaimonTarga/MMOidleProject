@@ -9,6 +9,7 @@ import { shouldRunClientFx } from '../fx/guard';
 import { bossBiome } from '../fx/bossBiome';
 import { fxJungleEmerge, fxJungleRustle, fxJungleVanish } from '../fx/jungleBoss';
 import { fxTrenchSubmerge, fxTrenchSurface, fxTrenchWake } from '../fx/trenchBoss';
+import { fxBurrowSurface, fxBurrowTrail } from '../fx/earthBosses';
 
 /**
  * STEALTH cues by biome: the Jungle predator slips into brush, the Trench serpent
@@ -230,9 +231,15 @@ export function syncConcealment(
 
   if (now === was) {
     if (now !== undefined) applyConcealedLook(state, monster.id, size, usingBurrowArt, now);
-    if (now === 'stealth') {
-      const drawn = state.sprite.get(monster.id);
-      if (drawn) stealthCue(scene, monster, drawn.x, drawn.y, 'trail');
+    const drawn = state.sprite.get(monster.id);
+    if (now === 'stealth' && drawn) stealthCue(scene, monster, drawn.x, drawn.y, 'trail');
+    // Underground: the ground cracks and throws clods where the mound passes.
+    if (now === 'burrow' && drawn && shouldRunClientFx()) {
+      const last = lastTrail.get(monster.id);
+      if (!last || Math.hypot(last.x - drawn.x, last.y - drawn.y) >= 14) {
+        lastTrail.set(monster.id, { x: drawn.x, y: drawn.y });
+        fxBurrowTrail(scene, drawn.x, drawn.y);
+      }
     }
     return;
   }
@@ -262,7 +269,11 @@ export function syncConcealment(
   // SURFACING. The dirt is thrown from where it actually came up — which, now that
   // the boss travels rather than teleports, is somewhere the player has been
   // watching the mound approach.
-  if (was === 'burrow') spawnDirtCloud(scene, scenePos.x, scenePos.y, cloudScale * 1.25);
+  if (was === 'burrow') {
+    spawnDirtCloud(scene, scenePos.x, scenePos.y, cloudScale * 1.25);
+    lastTrail.delete(monster.id);
+    if (shouldRunClientFx()) fxBurrowSurface(scene, monster.id);
+  }
   if (was === 'stealth') stealthCue(scene, monster, scenePos.x, scenePos.y, 'exit');
   meta.visualOffsetY = undefined;
   clearConcealedLook(state, monster.id, size, monster);

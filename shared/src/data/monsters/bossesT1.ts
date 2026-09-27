@@ -80,7 +80,7 @@ export const bossMonsterEntriesT1 = [
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
-          { type: 'cast', castMs: 2000, label: 'Rallying Cry', actions: [
+          { type: 'cast', castMs: 2000, label: 'Rallying Cry', castFx: 'roar', actions: [
             // 2026-09-26: 4 slimes + a boar (maxAlive 6) -> 2 slimes (maxAlive 4), no boar.
             { type: 'spawn-adds', monsterTypeId: 'plains-slime', count: 2, maxAlive: 4, offsetRange: 220 },
             { type: 'roar', attackSpeedPct: 0.20, durationMs: 8000, radius: 320 },
@@ -92,7 +92,7 @@ export const bossMonsterEntriesT1 = [
       // instead: 2 every 10s (maxAlive 5) -> 1 every 12s (maxAlive 3), 2026-09-26.
       repeating: [
         { intervalMs: 12_000, initialDelayMs: 4_000, actions: [
-          { type: 'cast', castMs: 2000, label: 'Rallying Cry', actions: [
+          { type: 'cast', castMs: 2000, label: 'Rallying Cry', castFx: 'roar', actions: [
             { type: 'spawn-adds', monsterTypeId: 'plains-slime', count: 1, maxAlive: 3, offsetRange: 220 },
           ] },
         ] },
@@ -235,7 +235,7 @@ export const bossMonsterEntriesT1 = [
     dotEffect: { debuffId: 'grave-toadeater-poison', label: 'Toad Poison', damagePerStack: 3, maxStacks: 4, tickIntervalMs: 1000, durationMs: 7000 },
     chargedAttack: {
       name: 'Bile Pool', castMs: 1200, cooldownMs: 8500, initialCooldownMs: 4000,
-      multiplier: 1.0, fx: 'strong-kick', aoe: { radius: 105, impactFx: 'pool-spawn' },
+      multiplier: 1.0, fx: 'bile-spew', aoe: { radius: 105, impactFx: 'pool-spawn' },
       // Effectively permanent (10 min): the rot stays until the Toadeater dies or
       // despawns, so the arena only ever shrinks. No fight is meant to run that long.
       pool: { durationMs: 600000, damagePerTick: 3, tickIntervalMs: 1000, slowSpeedMult: 0.65 },

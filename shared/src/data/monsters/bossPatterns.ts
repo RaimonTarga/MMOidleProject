@@ -217,6 +217,8 @@ export type BossPatternStep =
       damageMult: number;
       /** Each circle leaves this pool where it lands (Swamp Bile Rain). */
       pool?: PatternPool;
+      /** Client cue for the falling hazard: `rockfall` (default) or `bile-rain`. */
+      fx?: 'rockfall' | 'bile-rain';
     }
   /**
    * Raise a source-owned absorb barrier. Breaking it during the pattern is a real

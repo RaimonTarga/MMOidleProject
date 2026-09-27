@@ -100,6 +100,26 @@ balance labs).
 - Packed atlases load with a content-hash `?v=` (`client/src/packedAssetUrl.ts`), so a
   repack is not hidden behind the one-hour asset cache.
 
+### Premium animation pass (2026-09-27)
+
+Every lineage's signature actions are animated with the same grammar (set by the
+Trench pass the playtest liked): **a wind-up clock you can read, a visible payoff, a
+visible "you stopped it", weight on the big hits, and a lasting look for lasting
+states.** All client-only; the server only carries ids.
+
+| Piece | Where | What |
+|---|---|---|
+| Body motion | `client/src/fx/bodyPose.ts` | Crouch, leap, squash, lean, tremble and afterimages, layered over the sprite pipeline every frame (tweens target the pose, never the sprite). |
+| Wind-ups | `client/src/fx/windups.ts` | A caster's running wind-up, resolved by its matching `monster-cast-end` (fired: payoff; stopped: cancel visual) or expiring after `ttlMs` for pattern `cast` steps. `fire` may return `'continue'` to let the ordinary cue play too. |
+| Impact feel | `client/src/fx/impactFeel.ts` | Light / medium / heavy camera shake + hit-stop, behind Settings -> Screen shake. |
+| State auras | `client/src/fx/bossAuras.ts` + `auraDefs.ts` | Persistent looks driven by the view: Frenzy, Cornered, Bestial Frenzy stacks, plates, Ice Armor, charge rush, speed phases, Rising Mire, the final-strike charge, Bone Tithe, rallied adds, and player marks (Marked, Frozen, Brittle, Frostbite, Eroded, Depth). |
+| Lineages | `client/src/fx/{jungle,trench,earth,swamp,desert,tundra,volcanic}Boss(es).ts`, `beastBosses.ts` | Per-lineage wind-ups and payoffs; zone overlays (falling rocks/bile, vents, eruption cracks, frost spikes) in `render/groundZones.ts`. |
+| Weather | `client/src/render/bossWeather.ts` | Blizzard, ash fall, abyss, **sandstorm** (Desert late phases), **spores** (Swamp Rot Bloom). |
+
+Server-side ids added for it: boss-fx `predator-frenzy`, `charge-impact`, `rock-impact`,
+`bile-splat`, `vent-eruption`, `harvest`; scattered bursts carry `fx`; scripted casts
+carry `castFx` on their start/end events.
+
 ### Known gaps (for the playtest / numbers pass)
 
 - HP and damage untouched: fight lengths will run short against the contract.

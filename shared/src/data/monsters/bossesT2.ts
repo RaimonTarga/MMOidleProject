@@ -72,7 +72,7 @@ export const bossMonsterEntriesT2 = [
         { hpPct: 0.5, name: 'Stampede',
           description: 'The herd answers: a stampede bull charges in, two savanna hawks strike from range and more yearlings join. Thin the herd before the next Rallying Roar, or push the boss through it.',
           actions: [
-          { type: 'cast', castMs: 2000, label: 'Stampede', actions: [
+          { type: 'cast', castMs: 2000, label: 'Stampede', castFx: 'stampede', actions: [
             { type: 'spawn-adds', monsterTypeId: 'stampede-bull', count: 1, offsetRange: 220 },
             { type: 'spawn-adds', monsterTypeId: 'savanna-hawk', count: 2, at: 'target-ring', ringDistance: 400 },
             { type: 'spawn-adds', monsterTypeId: 'prairie-yearling', count: 2, maxAlive: 8, offsetRange: 220 },
@@ -81,7 +81,7 @@ export const bossMonsterEntriesT2 = [
       ],
       repeating: [
         { intervalMs: 10000, initialDelayMs: 5000, actions: [
-          { type: 'cast', castMs: 1500, label: 'Call the Herd', actions: [
+          { type: 'cast', castMs: 1500, label: 'Call the Herd', castFx: 'herd-call', actions: [
             { type: 'spawn-adds', monsterTypeId: 'prairie-yearling', count: 2, maxAlive: 5, offsetRange: 240 },
           ] },
         ] },
@@ -113,7 +113,7 @@ export const bossMonsterEntriesT2 = [
     consecutiveHits: 2,
     chargedAttack: {
       name: 'Stunning Swipe', castMs: 700, cooldownMs: 8000, initialCooldownMs: 3500,
-      multiplier: 1.25, stunMs: 900,
+      multiplier: 1.25, stunMs: 900, fx: 'paw-raise',
       // Its own cue, not the generic shockwave every other AoE charge draws: the
       // ordinary claw rhythm stays `bear-claws` (the T1 Greatbear's look, which is
       // the lineage's identity) and the swipe is the thing that reads as different.
@@ -271,7 +271,7 @@ export const bossMonsterEntriesT2 = [
     //                fight — the swamp should end up as contaminated as the Cave.
     chargedAttack: {
       name: 'Bile Pool', castMs: 1100, cooldownMs: 8500, initialCooldownMs: 3500,
-      multiplier: 1.1, fx: 'strong-kick', aoe: { radius: 150, impactFx: 'pool-spawn' },
+      multiplier: 1.1, fx: 'bile-spew', aoe: { radius: 150, impactFx: 'pool-spawn' },
       pool: { durationMs: 60000, damagePerTick: 5, tickIntervalMs: 1000, slowSpeedMult: 0.70 },
     },
     bossPattern: {
@@ -291,8 +291,8 @@ export const bossMonsterEntriesT2 = [
       id: 'mire-bile-rain', name: 'Bile Rain',
       damageMultiplier: 1.0, cooldownMs: 13000, initialCooldownMs: 5000,
       steps: [
-        { kind: 'cast', name: 'Bile Rain', castMs: 800 },
-        { kind: 'rockfall', name: 'Bile Rain', count: 4, radius: 115, spread: 560, delayMs: 1400,
+        { kind: 'cast', name: 'Bile Rain', castMs: 800, fx: 'bile-heave' },
+        { kind: 'rockfall', name: 'Bile Rain', fx: 'bile-rain', count: 4, radius: 115, spread: 560, delayMs: 1400,
           damageMult: 0.3,
           pool: { durationMs: 45000, damagePerTick: 5, tickIntervalMs: 1000, slowSpeedMult: 0.70, label: 'Bile Pool' } },
       ],

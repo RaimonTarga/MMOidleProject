@@ -1,7 +1,7 @@
 /**
  * BOSS WEATHER — a screen-space ambience layer for intense boss phases
- * (boss-lineage redesign): Tundra's Blizzard, Volcanic ash fall, and the Trench's
- * "into the dark" abyss. Purely presentational: the server only publishes a tag
+ * (boss-lineage redesign): Tundra's Blizzard, Volcanic ash fall, the Trench's
+ * "into the dark" abyss, the Desert sandstorm and the Swamp's rot spores. Purely presentational: the server only publishes a tag
  * (`hasStatus.bossWeather` on the boss), never any gameplay.
  *
  * Budget, by design: ONE Graphics object redrawn per frame (one batched draw), a
@@ -29,7 +29,7 @@ interface WeatherLayer {
 
 // Blizzard spawns across a wider band (see BLIZZARD_DRIFT), so it needs more flakes
 // for the same on-screen density.
-const MAX_PARTICLES: Record<Weather, number> = { blizzard: 320, ashfall: 140, abyss: 0 };
+const MAX_PARTICLES: Record<Weather, number> = { blizzard: 320, ashfall: 140, abyss: 0, sandstorm: 260, spores: 110 };
 const layers = new WeakMap<GameScene, WeatherLayer>();
 
 function currentWeather(scene: GameScene): Weather | null {
@@ -55,6 +55,18 @@ function spawn(weather: Weather, w: number, h: number, anywhere: boolean): Parti
       : Math.random() * (w + h * BLIZZARD_DRIFT) - w * 0.05;
     const y = anywhere ? Math.random() * h : -10;
     return { x, y, vx: -140 - Math.random() * 120, vy: 220 + Math.random() * 180, size: 1.5 + Math.random() * 2, life: 1 };
+  }
+  if (weather === "sandstorm") {
+    // Driven sideways, hard: spawns off the left edge (or anywhere on the first fill).
+    const x = anywhere ? Math.random() * w : -30 - Math.random() * 60;
+    const y = Math.random() * h;
+    return { x, y, vx: 520 + Math.random() * 380, vy: 30 + Math.random() * 60, size: 1 + Math.random() * 2, life: Math.random() };
+  }
+  if (weather === "spores") {
+    // Rising slowly from below, wobbling; a few glow.
+    const x = Math.random() * w;
+    const y = anywhere ? Math.random() * h : h + 10;
+    return { x, y, vx: -10 + Math.random() * 20, vy: -(18 + Math.random() * 30), size: 1.5 + Math.random() * 2.5, life: Math.random() };
   }
   const x = Math.random() * w * 1.2 - w * 0.1;
   const y = anywhere ? Math.random() * h : -10;
@@ -122,6 +134,18 @@ export function updateBossWeather(scene: GameScene, dtMs: number): void {
   if (weather === "blizzard") {
     g.fillStyle(0xdff2ff, 0.10 * layer.strength);
     g.fillRect(ox, oy, w, h);
+  } else if (weather === "sandstorm") {
+    // A tan haze that breathes, plus a few broad gusts rolling across.
+    g.fillStyle(0xc9a15a, (0.14 + 0.04 * Math.sin(layer.t * 1.3)) * layer.strength);
+    g.fillRect(ox, oy, w, h);
+    for (let i = 0; i < 3; i++) {
+      const gx = ox + ((layer.t * (180 + i * 60) + i * w * 0.4) % (w * 1.6)) - w * 0.3;
+      g.fillStyle(0xe0c080, 0.07 * layer.strength);
+      g.fillEllipse(gx, oy + h * (0.25 + i * 0.25), w * 0.5, h * 0.18);
+    }
+  } else if (weather === "spores") {
+    g.fillStyle(0x3d5a1a, 0.08 * layer.strength);
+    g.fillRect(ox, oy, w, h);
   } else {
     g.fillStyle(0x2a1208, 0.12 * layer.strength);
     g.fillRect(ox, oy, w, h);
@@ -132,7 +156,21 @@ export function updateBossWeather(scene: GameScene, dtMs: number): void {
     // Blizzard flakes may start off the right edge and drift in; only cull them
     // once they are past where any drift could still bring them on screen.
     const maxX = weather === "blizzard" ? w + h * BLIZZARD_DRIFT + 20 : w + 20;
-    if (p.y > h + 10 || p.x < -20 || p.x > maxX) Object.assign(p, spawn(weather, w, h, false));
+    const minX = weather === "sandstorm" ? -100 : -20;
+    if (weather === "spores") p.x += Math.sin(layer.t * 1.6 + p.life * 20) * 12 * dt;
+    if (p.y > h + 10 || p.y < -20 || p.x < minX || p.x > maxX) Object.assign(p, spawn(weather, w, h, false));
+    if (weather === "sandstorm") {
+      // Streaks, not dots: sand driven sideways.
+      g.lineStyle(p.size, p.life > 0.7 ? 0xf0d9a0 : 0xc9a15a, 0.55 * layer.strength);
+      g.lineBetween(ox + p.x, oy + p.y, ox + p.x - 14 - p.size * 4, oy + p.y - 1);
+      continue;
+    }
+    if (weather === "spores") {
+      const glow = p.life > 0.75;
+      g.fillStyle(glow ? 0xd4f07a : 0x8ec43a, (glow ? 0.85 : 0.5) * layer.strength);
+      g.fillCircle(ox + p.x, oy + p.y, p.size);
+      continue;
+    }
     if (weather === "blizzard") {
       g.fillStyle(0xffffff, 0.75 * layer.strength);
     } else {

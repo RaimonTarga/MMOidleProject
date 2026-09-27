@@ -2317,6 +2317,10 @@ function resolveDelayedGroundZoneImpacts(world: World, now: number): void {
     }
 
     if (impact.kind === 'fault-line-telegraph' && impact.scattered) {
+      const scatteredFx = impact.fx === 'rockfall' ? 'rock-impact'
+        : impact.fx === 'bile-rain' ? 'bile-splat'
+        : impact.fx === 'vent-eruption' ? 'vent-eruption'
+        : 'slam';
       for (const point of impact.points) {
         if (impact.leavesPool && world.hasMonster(ownerId)) {
           publishPatternPool(world, monster, point, impact.leavesPool, impact.radius, now);
@@ -2325,7 +2329,7 @@ function resolveDelayedGroundZoneImpacts(world: World, now: number): void {
           kind: 'boss-fx',
           monsterId: impact.id,
           pos: { ...point },
-          fx: 'slam',
+          fx: scatteredFx,
           radius: impact.radius,
           element: MONSTER_DATABASE.get(monster.isMonster.monsterTypeId)?.attackStyle,
         });

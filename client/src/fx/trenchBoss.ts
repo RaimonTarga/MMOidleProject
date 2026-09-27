@@ -12,7 +12,7 @@
  *   THE DARK   a submerge swirl, a wake trailing the hidden body, and a column of
  *              water where it surfaces.
  */
-import type { MonsterView, PlayerView } from '@mmo-idle/shared';
+import type { PlayerView } from '@mmo-idle/shared';
 import type { GameScene } from '../scenes/GameScene';
 import { DEPTH } from '../render/depth';
 import { burstFx } from './particles';
@@ -25,64 +25,7 @@ const DEEP = 0x123a5a;
 const ABYSS = 0x07182a;
 const FANG = 0xeaf6ff;
 
-type Pt = { x: number; y: number };
-
-function spriteAt(scene: GameScene, id: string | undefined): Pt | undefined {
-  const s = id ? scene.state.sprite.get(id) : undefined;
-  return s ? { x: s.x, y: s.y } : undefined;
-}
-
-/** The serpent's current victim, for wind-ups (cast-start carries no target). */
-export function castTargetId(scene: GameScene, monsterId: string): string | undefined {
-  const view = scene.state.view.get(monsterId) as MonsterView | undefined;
-  return view?.attackTargetId ?? scene.state.ownId ?? undefined;
-}
-
-// ── Running wind-ups, so a cast-end can resolve or cancel them ────────────────
-
-interface Windup {
-  /** Called when the cast fires; returns nothing. */
-  fire(at: Pt | undefined): void;
-  /** Called when the cast is stopped (stun, reset). */
-  cancel(): void;
-}
-const windups = new WeakMap<GameScene, Map<string, Windup>>();
-
-function registerWindup(scene: GameScene, monsterId: string, w: Windup): void {
-  let map = windups.get(scene);
-  if (!map) {
-    map = new Map();
-    windups.set(scene, map);
-  }
-  map.get(monsterId)?.cancel();
-  map.set(monsterId, w);
-}
-
-/** Resolve a running Trench wind-up (cast-end). Returns true when one existed. */
-export function resolveTrenchWindup(scene: GameScene, monsterId: string, fired: boolean, at?: Pt): boolean {
-  const map = windups.get(scene);
-  const w = map?.get(monsterId);
-  if (!w) return false;
-  map!.delete(monsterId);
-  if (fired) w.fire(at);
-  else w.cancel();
-  return true;
-}
-
-/** A per-frame follower that stops itself when `step` returns false. */
-function follow(scene: GameScene, step: () => boolean): () => void {
-  let stopped = false;
-  const tick = (): void => {
-    if (stopped || !step()) stop();
-  };
-  const stop = (): void => {
-    if (stopped) return;
-    stopped = true;
-    scene.events.off('update', tick);
-  };
-  scene.events.on('update', tick);
-  return stop;
-}
+import { castTargetId, follow, registerWindup, spriteAt, type Pt } from './windups';
 
 // ── JAWS (Wounding Bite, the surges' bite, Devour) ──────────────────────────
 
@@ -212,7 +155,7 @@ export function fxMawWindup(
       }
       releasePose(scene, monsterId, 300);
     },
-  });
+  }, { fx: kind === 'devour' ? 'devour-maw' : 'trench-bite' });
 }
 
 /** A burst of dark water with a white crest and a ring wave. */
@@ -274,7 +217,7 @@ export function fxUndertowWindup(scene: GameScene, monsterId: string, castMs: nu
       stop();
       arcs.forEach((g) => g.destroy());
     },
-  });
+  }, { fx: 'undertow' });
 }
 
 /** Water streaming from the victim back to the serpent while the drag happens. */
@@ -386,7 +329,7 @@ export function fxPressureWindup(scene: GameScene, monsterId: string, castMs: nu
       stop();
       g.destroy();
     },
-  });
+  }, { fx: 'crushing-pressure' });
 }
 
 // ── TAIL LASH ────────────────────────────────────────────────────────────────
@@ -409,7 +352,7 @@ export function fxTailWindup(scene: GameScene, monsterId: string, castMs: number
       if (from && at) tailSweep(scene, from, at, side);
     },
     cancel: () => releasePose(scene, monsterId, 280),
-  });
+  }, { fx: 'tail-lash' });
 }
 
 /** A thick crescent of tail swinging through the victim, trailing spray. */

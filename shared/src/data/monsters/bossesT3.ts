@@ -288,7 +288,7 @@ export const bossMonsterEntriesT3 = [
     // over a minute, and Bile Rain lobs a spread of them around you every cycle.
     chargedAttack: {
       name: 'Bile Pool', castMs: 1000, cooldownMs: 8000, initialCooldownMs: 3500,
-      multiplier: 1.2, fx: 'strong-kick', aoe: { radius: 175, impactFx: 'pool-spawn' },
+      multiplier: 1.2, fx: 'bile-spew', aoe: { radius: 175, impactFx: 'pool-spawn' },
       pool: { durationMs: 75000, damagePerTick: 8, tickIntervalMs: 1000, slowSpeedMult: 0.65 },
     },
     bossPattern: {
@@ -322,8 +322,8 @@ export const bossMonsterEntriesT3 = [
       id: 'croc-bile-rain', name: 'Bile Rain',
       damageMultiplier: 1.0, cooldownMs: 11000, initialCooldownMs: 4500,
       steps: [
-        { kind: 'cast', name: 'Bile Rain', castMs: 800 },
-        { kind: 'rockfall', name: 'Bile Rain', count: 6, radius: 125, spread: 640, delayMs: 1400,
+        { kind: 'cast', name: 'Bile Rain', castMs: 800, fx: 'bile-heave' },
+        { kind: 'rockfall', name: 'Bile Rain', fx: 'bile-rain', count: 6, radius: 125, spread: 640, delayMs: 1400,
           damageMult: 0.3,
           pool: { durationMs: 60000, damagePerTick: 8, tickIntervalMs: 1000, slowSpeedMult: 0.65, label: 'Bile Pool' } },
       ],
@@ -340,6 +340,7 @@ export const bossMonsterEntriesT3 = [
         { hpPct: 0.25, name: 'Rot Bloom',
           description: 'Every pool spreads, and the whole room builds a rising Rot DoT until the boss dies. DoT resistance and Recovery buy time; killing it is the answer.',
           actions: [
+          { type: 'set-weather', weather: 'spores' },
           { type: 'spread-pools', radiusPerSec: 8, maxRadiusMult: 1.5 }, // pools start bigger now
           { type: 'room-affliction', intervalMs: 4000, dot: {
             debuffId: 'rot-bloom', label: 'Rot Bloom', color: '#7fae3a',
@@ -444,7 +445,7 @@ export const bossMonsterEntriesT3 = [
         // Soft enrage: the sentence repeats faster.
         { hpPct: 0.2, name: 'Sandstorm',
           description: 'Its sting sequence comes around much faster.',
-          actions: [{ type: 'empower-charged', cooldownMult: 0.65 }] },
+          actions: [{ type: 'empower-charged', cooldownMult: 0.65 }, { type: 'set-weather', weather: 'sandstorm' }] },
       ],
     },
   }],

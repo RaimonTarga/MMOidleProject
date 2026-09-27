@@ -8,7 +8,7 @@ import type { MonsterBehavior } from './behavior';
 // ── Boss script types ─────────────────────────────────────────────────────────
 
 /** Presentational boss-phase weather (see the `set-weather` action). */
-export type BossWeather = 'blizzard' | 'ashfall' | 'abyss';
+export type BossWeather = 'blizzard' | 'ashfall' | 'abyss' | 'sandstorm' | 'spores';
 
 /**
  * All actions a boss can take, as a discriminated union.
@@ -114,6 +114,11 @@ export type BossAction =
       actions: BossAction[];
       /** Cast-start cue. Defaults to the rallying-roar treatment. */
       fx?: 'roar' | 'frenzy' | 'shield';
+      /**
+       * Client animation id carried on the cast's start and end events (the wind-up
+       * and the release). Defaults to `fx`.
+       */
+      castFx?: string;
     }
   /**
    * RAISE DEAD (Wasteland) — one burst resurrection. Claims up to `count` corpses

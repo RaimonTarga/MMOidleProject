@@ -106,6 +106,8 @@ export interface ScriptsBoss {
     remainingMs: number;
     label: string;
     actions: BossAction[];
+    /** Client animation id for the cast's start/end events. */
+    castFx?: string;
     ownsRoot: boolean;
     ownsCannotAttack: boolean;
   };
@@ -115,6 +117,7 @@ export interface ScriptsBoss {
     label: string;
     actions: BossAction[];
     fx?: 'roar' | 'frenzy' | 'shield';
+    castFx?: string;
   }[];
   /**
    * Runtime scalars on the boss's `chargedAttack` (set by 'empower-charged'). Stored

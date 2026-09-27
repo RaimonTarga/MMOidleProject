@@ -79,7 +79,8 @@ const wipeAdds = (a: ReturnType<typeof arena>) => {
   runUntil(a, () => {
     pin(a.player, { x: 2600, y: 2400 });
     for (const e of a.world.takeNodeEvents(NODE)) {
-      if (e.kind === 'ecology-pulse' && !a.world.hasMonster(e.monsterId)) devoured.push(e.monsterId);
+      // Harvest draws its own cue at the risen it devours (the soul drawn into the boss).
+      if (e.kind === 'boss-fx' && e.fx === 'harvest') devoured.push(`${e.pos.x},${e.pos.y}`);
     }
     return a.boss.dealsDamage.attack > attack;
   }, 6000);
