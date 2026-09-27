@@ -199,7 +199,7 @@ export const bossMonsterEntriesT1 = [
           lane: { length: 620, halfWidth: 78, lockAtCastPct: 0.5 } },
         // 620px at 470px/s ≈ 1.3s of travel; maxTravelMs is the obstruction guard.
         { kind: 'charge', speed: 470, maxTravelMs: 2000 },
-        { kind: 'recovery', label: 'Winded', durationMs: 2200 },
+        { kind: 'recovery', label: 'Winded', durationMs: 1000 },
       ],
     },
     // MOUNTAIN EXAM = "survive the slam". The 50% beat makes the SLAM worse rather

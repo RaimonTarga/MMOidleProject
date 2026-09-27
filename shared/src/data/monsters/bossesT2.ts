@@ -191,7 +191,7 @@ export const bossMonsterEntriesT2 = [
         // 700px at 500px/s ≈ 1.4s of travel.
         { kind: 'charge', speed: 500, maxTravelMs: 2100 },
         { kind: 'drop-barrier', sourceId: 'stoneplate' },
-        { kind: 'recovery', label: 'Overextended', durationMs: 2600 },
+        { kind: 'recovery', label: 'Overextended', durationMs: 1000 },
       ],
     },
     // MOUNTAIN EXAM = "break the guarded position". At 50% the charge comes around
@@ -314,7 +314,7 @@ export const bossMonsterEntriesT2 = [
           contactSlow: { speedMult: 0.5, durationMs: 2000 } },
         { kind: 'impact', name: 'Eruption', anchor: 'self', radius: 165,
           damageMult: 1.0, telegraphMs: 750, fx: 'deep-core-eruption' },
-        { kind: 'recovery', label: 'Surfaced', durationMs: 2200 },
+        { kind: 'recovery', label: 'Surfaced', durationMs: 1000 },
       ],
     },
     // CAVE EXAM = "your shell erodes". At 50% the corrosion bites deeper (+1 plating
@@ -411,7 +411,7 @@ export const bossMonsterEntriesT2 = [
         { kind: 'payoff', name: 'Execution', castMs: 1300, fx: 'execution',
           damageMult: 1.0, amplifiedMult: 2.0,
           consumes: { effectId: SUN_MARK_EFFECT_ID }, radius: 150 },
-        { kind: 'recovery', label: 'Spent', durationMs: 1800 },
+        { kind: 'recovery', label: 'Spent', durationMs: 1000 },
       ],
     },
     bossScript: {

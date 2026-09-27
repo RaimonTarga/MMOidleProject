@@ -794,6 +794,8 @@ const GUARD_CALLOUT_COLORS: Record<string, string> = {
   recuperate: "#bdf3e4",
 };
 const GUARD_CALLOUT_FALLBACK = "#9cd2ff";
+/** Announced boss phase names: the boss-bar gold, so the callout and the label read as one. */
+const BOSS_PHASE_CALLOUT_COLOR = "#ffcc55";
 const TECHNIQUE_CALLOUT_COLOR = "#ffd24a";
 const RELOAD_CALLOUT_COLOR = "#f0b04f";
 
@@ -1220,6 +1222,16 @@ export function dispatchCombatEvent(
     }
     return;
   }
+
+  if (ev.kind === "boss-phase") {
+    if (shouldRunClientFx() && state.sprite.has(ev.monsterId)) {
+      spawnSkillCallout(state, scene, ev.monsterId, ev.name, BOSS_PHASE_CALLOUT_COLOR);
+    }
+    return;
+  }
+
+  // Telemetry-only: the stagger it may cause arrives as its own `boss-fx`.
+  if (ev.kind === "boss-pattern-stopped") return;
 
   if (ev.kind === "player-guard") {
     // A self-facing Guard fired — overlay its FX on the player's sprite plus a

@@ -171,6 +171,13 @@ export type BossAction =
       /** Extra stack counts at which the threshold poison fires (Cave T3+). */
       extraThresholds?: number[];
     }
+  /**
+   * SET PATTERN — swap the boss's ordered pattern for one of its authored
+   * `bossPatternVariants` (by id) from here on. How a phase changes the QUESTION
+   * rather than the numbers: Mountain T3's second phase charges twice, Cave T3's
+   * second phase runs the tunnel chase. A pattern already running finishes first.
+   */
+  | { type: 'set-pattern'; patternId: string }
   | {
       type: 'morph';
       isRanged?: boolean;
@@ -200,6 +207,12 @@ export type BossAction =
 export interface BossPhase {
   /** 0.0–1.0 fraction of maxHp below which this phase fires. */
   hpPct: number;
+  /**
+   * ANNOUNCED PHASE. A named phase is a change the player must be told about:
+   * it roars as it fires and the name becomes the boss bar's phase label until the
+   * next named phase replaces it. Unnamed phases stay silent escalation.
+   */
+  name?: string;
   actions: BossAction[];
 }
 
@@ -1156,6 +1169,17 @@ export interface MonsterDefinition {
    * accumulation the redesign exists to undo.
    */
   bossPattern?: BossPattern;
+  /**
+   * Alternate patterns a `set-pattern` phase action can switch to. Each keeps its
+   * own id; runtime state (`scriptsBoss.patternOverrideId`) names the active one.
+   */
+  bossPatternVariants?: BossPattern[];
+  /**
+   * ACCEPTS NO CONTROL (boss-lineage-redesign principle 6). Player stuns and roots
+   * do not land, and hard control never interrupts its casts. Tundra and Volcanic:
+   * their answers are movement, Guard and damage, never a Stunning Strike.
+   */
+  controlImmune?: boolean;
   chargedAttack?: {
     name: string;
     castMs: number;

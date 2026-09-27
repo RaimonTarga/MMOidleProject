@@ -487,9 +487,11 @@ function windUpBehemoth(world: World, primaryId: string, at: Vec2) {
   assert(!!monster.recoversFromPattern, 'the sequence should end in a recovery');
   assert(!monster.runsBossPattern, 'the pattern cursor is released when recovery opens');
   assert(!!monster.isRooted && !!monster.cannotAttack, 'a recovering boss is open to punishment');
+  // Boss-lineage redesign principle 5: a COMPLETED charge earns no stun tell — only
+  // a stopped one does. The brief recovery is real (rooted, no swings) but silent.
   assert(
-    (monster.hasStatus.bossEffects ?? []).includes(BOSS_RECOVERY_EFFECT),
-    'the recovery is visible to the client, not an invisible cooldown',
+    !(monster.hasStatus.bossEffects ?? []).includes(BOSS_RECOVERY_EFFECT),
+    'a completed recovery does not borrow the stagger tell',
   );
   assert(lane(world) === undefined, 'the lane is retired once the charge is done');
 

@@ -57,6 +57,12 @@ export type BossPatternStep =
        * up, a posture change) so Guard is not spent answering nothing.
        */
       guardable?: boolean;
+      /**
+       * A player ROOT (Binding Strike) landing during this wind-up stops the
+       * pattern, answered per `BossPattern.stoppedBy.root`. Default false: root is a
+       * movement control, so only a wind-up whose payoff is MOVEMENT can be pinned.
+       */
+      rootable?: boolean;
       fx?: string;
     }
   /**
@@ -142,6 +148,11 @@ export type BossPatternStep =
       shieldPct: number;
       /** Recovery the boss is staggered into when the barrier is broken. */
       onBreak?: { staggerMs: number; label: string };
+      /**
+       * While this barrier stands the boss ignores player stun and root: break the
+       * plate first, or control the boss before it plates (Mountain T2+).
+       */
+      blocksControl?: boolean;
     }
   /** Drop a barrier this pattern raised, whether or not it was broken. */
   | { kind: 'drop-barrier'; sourceId: string }
@@ -216,6 +227,8 @@ export type BossPatternStep =
       onHitPoison?: { stacks: number; damagePerStack: number; durationMs: number; tickIntervalMs: number };
       interruptible?: boolean;
       guardable?: boolean;
+      /** See the `cast` step: a root during this wind-up stops the pattern. */
+      rootable?: boolean;
       fx?: string;
     }
   /**
@@ -329,6 +342,8 @@ export type BossPatternStep =
        * encounter genuinely means to be committed.
        */
       interruptible?: boolean;
+      /** A player root pins the travelling body and stops the pattern (Cave T3 mound). */
+      rootable?: boolean;
       fx?: string;
     }
   /**
@@ -372,6 +387,8 @@ export type BossPatternStep =
        * nothing, but it does not get away either.
        */
       interruptible?: boolean;
+      /** A player root ends the flee on the spot (Jungle T3+). */
+      rootable?: boolean;
       fx?: string;
     }
   /**
@@ -434,6 +451,17 @@ export interface BossPattern {
    * player a fresh copy of a beat they already answered.
    */
   oncePerLife?: boolean;
+  /**
+   * STOPPED, NOT COMPLETED (boss-lineage-redesign principle 5). When the player's
+   * control stops this pattern — a stun on an interruptible step, a root on a
+   * `rootable` one — the boss is staggered for `staggerMs` with the stun visual:
+   * the one clear "you stopped it, punish now" signal. Omitted: the pattern simply
+   * ends with no window (the pre-redesign behaviour).
+   */
+  stoppedBy?: {
+    stun?: { staggerMs: number; label: string };
+    root?: { staggerMs: number; label: string };
+  };
 }
 
 /** Runtime cursor for the pattern a boss is currently committed to. */
@@ -469,6 +497,8 @@ export interface RunsBossPattern {
    * the time — so the watch cannot live inside the step that raised it.
    */
   watchedBarrier?: { sourceId: string; staggerMs: number; label: string };
+  /** A raised `blocksControl` barrier: while it holds, player stun and root do not land. */
+  controlBarrierSourceId?: string;
   /** Bodies already damaged by the current committed travel. */
   chargeHitIds: string[];
   /**

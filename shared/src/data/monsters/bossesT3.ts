@@ -78,7 +78,7 @@ export const bossMonsterEntriesT3 = [
         { kind: 'impact', name: 'Cragbreaker', anchor: 'captured-endpoint',
           radius: 205, damageMult: 1.45, telegraphMs: 900, fx: 'ground-slam',
           requiresChargeHit: true },
-        { kind: 'recovery', label: 'Overextended', durationMs: 2600 },
+        { kind: 'recovery', label: 'Overextended', durationMs: 1000 },
       ],
     },
     bossScript: {
@@ -158,7 +158,7 @@ export const bossMonsterEntriesT3 = [
           contactSlow: { speedMult: 0.45, durationMs: 2500 } },
         { kind: 'impact', name: 'Deep-Core Eruption', anchor: 'self', radius: 155,
           damageMult: 1.0, telegraphMs: 1100, fx: 'deep-core-eruption' },
-        { kind: 'recovery', label: 'Surfaced', durationMs: 2400 },
+        { kind: 'recovery', label: 'Surfaced', durationMs: 1000 },
       ],
     },
     bossScript: {
@@ -285,7 +285,7 @@ export const bossMonsterEntriesT3 = [
         { kind: 'payoff', name: 'Execution', castMs: 1300, fx: 'execution',
           damageMult: 1.0, amplifiedMult: 1.9,
           consumes: { effectId: SUN_MARK_EFFECT_ID }, radius: 155 },
-        { kind: 'recovery', label: 'Spent', durationMs: 1900 },
+        { kind: 'recovery', label: 'Spent', durationMs: 1000 },
       ],
     },
     bossScript: {
@@ -447,7 +447,7 @@ export const bossMonsterEntriesT3 = [
         { kind: 'cast', name: 'Final Eruption', castMs: 8000, fx: 'cataclysm-cast', interruptible: false },
         { kind: 'impact', name: 'Final Eruption', anchor: 'self', radius: 2000,
           damageMult: 1, rawDamage: 650, interruptible: false, telegraphMs: 400, fx: 'cataclysm-impact' },
-        { kind: 'recovery', label: 'Spent', durationMs: 3000 },
+        { kind: 'recovery', label: 'Spent', durationMs: 1000 },
       ],
     },
     bossScript: {
@@ -515,7 +515,7 @@ export const bossMonsterEntriesT3 = [
           requires: { effectId: TUNDRA_CHILL_EFFECT_ID, minStacks: 4 } },
         { kind: 'impact', name: 'Shatter', anchor: 'self', radius: 195,
           damageMult: 1.0, telegraphMs: 1300, fx: 'shatter' },
-        { kind: 'recovery', label: 'Thawing', durationMs: 2000 },
+        { kind: 'recovery', label: 'Thawing', durationMs: 1000 },
       ],
     },
     bossScript: {

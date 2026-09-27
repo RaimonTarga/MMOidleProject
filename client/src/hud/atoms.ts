@@ -384,6 +384,7 @@ export interface TargetFrameData {
   bossEffects: string[];
   bossEffectStacks: Record<string, number>;
   bossEffectDurations: Record<string, { remainingMs: number; totalMs: number }>;
+  bossPhase?: string;
   enemyBarrier?: MonsterView['enemyBarrier'];
 }
 export const targetFrameAtom = atom<TargetFrameData | null>(null);
@@ -664,6 +665,7 @@ function targetFrameEqual(a: TargetFrameData | null, b: TargetFrameData | null):
     a.id !== b.id || a.hp !== b.hp || a.maxHp !== b.maxHp ||
     a.attack !== b.attack || a.plating !== b.plating ||
     a.damageReduction !== b.damageReduction || a.isBoss !== b.isBoss ||
+    a.bossPhase !== b.bossPhase ||
     a.statuses.length !== b.statuses.length || a.bossEffects.length !== b.bossEffects.length
   ) return false;
   for (let i = 0; i < a.statuses.length; i++) {

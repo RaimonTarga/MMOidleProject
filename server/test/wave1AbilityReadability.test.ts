@@ -17,6 +17,7 @@ import { syncPlayerBuffs } from '../src/systems/combat/buffs/buffSync';
 import { updateCombat } from '../src/systems/combat/engine/combat';
 import { syncEnemyBarrierState } from '../src/systems/combat/engine/enemyBarrierState';
 import { applyEnemyShield } from '../src/systems/combat/engine/monsterMechanics';
+import { clearSourceBarrier } from '../src/systems/combat/engine/sourceBarriers';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { World } from '../src/world/World';
 
@@ -89,10 +90,39 @@ initCombatSystems();
     updateBossPatterns(world, 100, now);
   }
   assert(!!boss.recoversFromPattern, 'the pattern should reach its recovery');
+  assert(recoveryStep.durationMs <= 1_000, 'a completed charge recovers in about a second (principle 5)');
+  assert(
+    boss.hasStatus.bossEffectDurations?.[BOSS_RECOVERY_EFFECT] === undefined,
+    'a COMPLETED pattern publishes no stagger clock: the stun tell is earned by stopping it',
+  );
+}
+
+// A STOPPED pattern is the punish window, so its stagger clock is legible on the
+// target frame for exactly as long as it lasts (boss-lineage-redesign principle 5).
+{
+  const world = new World();
+  const player = world.attachPlayerEntity(playerSlices('stagger-target'), 'stagger-target');
+  const boss = world.createMonster(NODE, 'stoneplate-juggernaut', { x: 400, y: 400 });
+  assert(boss, 'Stoneplate Juggernaut should spawn');
+  const pattern = MONSTER_DATABASE.get('stoneplate-juggernaut')!.bossPattern!;
+  const plate = pattern.steps.find(
+    (step): step is Extract<typeof step, { kind: 'barrier' }> => step.kind === 'barrier',
+  )!;
+  setAggroTarget(world, boss, { id: player.isPlayer.id, kind: 'player' }, 1_000);
+  boss.hasAwareness.state = 'attacking';
+  let now = 1_000 + (pattern.initialCooldownMs ?? pattern.cooldownMs) + 1_000;
+  for (let i = 0; i < 30 && !boss.runsBossPattern?.watchedBarrier; i++) {
+    updateBossPatterns(world, 100, now);
+    now += 100;
+  }
+  assert(!!boss.runsBossPattern?.watchedBarrier, 'the plate should be up');
+  clearSourceBarrier(boss, plate.sourceId); // broken
+  updateBossPatterns(world, 100, now);
+  assert(boss.recoversFromPattern?.fromStagger === true, 'breaking the plate staggers the boss');
   const clock = boss.hasStatus.bossEffectDurations?.[BOSS_RECOVERY_EFFECT];
   assert(
-    clock?.totalMs === recoveryStep.durationMs && clock.remainingMs === recoveryStep.durationMs,
-    'the recovery should publish its real target-frame clock the moment it opens',
+    clock?.totalMs === plate.onBreak!.staggerMs && clock.remainingMs === plate.onBreak!.staggerMs,
+    'the stagger publishes its real target-frame clock the moment it opens',
   );
 }
 

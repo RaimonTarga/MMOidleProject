@@ -115,7 +115,7 @@ export const bossMonsterEntriesT4 = [
           requiresChargeHit: true },
         // The long reset the lineage builds toward: the whole sentence is answerable,
         // and answering it buys real time on the boss.
-        { kind: 'recovery', label: 'Spent', durationMs: 3200 },
+        { kind: 'recovery', label: 'Spent', durationMs: 1000 },
       ],
     },
     bossScript: {
@@ -183,7 +183,7 @@ export const bossMonsterEntriesT4 = [
         { kind: 'payoff', name: 'Execution', castMs: 1500, fx: 'execution',
           damageMult: 1.0, amplifiedMult: 2.0,
           consumes: { effectId: SUN_MARK_EFFECT_ID }, radius: 180 },
-        { kind: 'recovery', label: 'Spent', durationMs: 2000 },
+        { kind: 'recovery', label: 'Spent', durationMs: 1000 },
       ],
     },
     bossScript: {
@@ -329,7 +329,7 @@ export const bossMonsterEntriesT4 = [
           requires: { effectId: TUNDRA_CHILL_EFFECT_ID, minStacks: 5 } },
         { kind: 'impact', name: 'Glacial Collapse', anchor: 'self', radius: 250,
           damageMult: 1.0, telegraphMs: 1500, fx: 'shatter' },
-        { kind: 'recovery', label: 'Thawing', durationMs: 2400 },
+        { kind: 'recovery', label: 'Thawing', durationMs: 1000 },
       ],
     },
     bossScript: {
@@ -429,7 +429,7 @@ export const bossMonsterEntriesT4 = [
         { kind: 'cast', name: 'Cataclysm', castMs: 8000, fx: 'cataclysm-cast', interruptible: false },
         { kind: 'impact', name: 'Cataclysm', anchor: 'self', radius: 2000,
           damageMult: 1.0, rawDamage: 1000, interruptible: false, telegraphMs: 400, fx: 'cataclysm-impact' },
-        { kind: 'recovery', label: 'Spent', durationMs: 3000 },
+        { kind: 'recovery', label: 'Spent', durationMs: 1000 },
       ],
     },
     bossScript: {
@@ -603,7 +603,7 @@ export const bossMonsterEntriesT4 = [
         // resolves on a landed direct hit, so dodging it denies the heal outright.
         { kind: 'payoff', name: 'Devour', castMs: 2600, fx: 'strong-kick',
           damageMult: 1.0, healsSelfPct: 0.06 },
-        { kind: 'recovery', label: 'Gorged', durationMs: 2600 },
+        { kind: 'recovery', label: 'Gorged', durationMs: 1000 },
       ],
     },
     bossScript: {

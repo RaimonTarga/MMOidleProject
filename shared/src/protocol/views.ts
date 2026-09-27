@@ -265,6 +265,7 @@ export interface MonsterView {
   bossEffects?: string[];
   bossEffectStacks?: Record<string, number>;
   bossEffectDurations?: Record<string, { remainingMs: number; totalMs: number }>;
+  bossPhase?: string;
   enemyBarrier?: NonNullable<HasStatus['enemyBarrier']>;
   targetStatus?: TargetStatusView[];
   ultimateStatus?: UltimateStatus;
@@ -527,6 +528,7 @@ export function composeMonsterView(
     bossEffects: entity.hasStatus?.bossEffects,
     bossEffectStacks: entity.hasStatus?.bossEffectStacks,
     bossEffectDurations: entity.hasStatus?.bossEffectDurations,
+    bossPhase: entity.hasStatus?.bossPhase,
     enemyBarrier: entity.hasStatus?.enemyBarrier,
     targetStatus: entity.hasStatus?.targetStatus,
     ultimateStatus: entity.hasStatus?.ultimateStatus,

@@ -130,6 +130,13 @@ type CombatEventPayload =
   // the same concussion-and-stars language means "this target cannot act" everywhere;
   // the event remains distinct because it is the boss's recovery state, not a hit.
   | { kind: 'boss-fx'; monsterId: string; pos: Vec2; fx: 'slam' | 'summon' | 'shield' | 'morph' | 'roar' | 'frenzy' | 'stagger'; radius?: number; element?: string }
+  // An announced boss phase began (`BossPhase.name`). The client calls the name out
+  // over the boss; the lasting label rides `hasStatus.bossPhase` on the boss bar.
+  | { kind: 'boss-phase'; monsterId: string; name: string }
+  // The player's control stopped a boss pattern mid-wind-up (stun or root). The
+  // stagger, when authored, arrives separately as `boss-fx: stagger`; this one is
+  // for telemetry and the bot's bookkeeping.
+  | { kind: 'boss-pattern-stopped'; monsterId: string; by: 'stun' | 'root' }
   // A self-facing Guard ability fired (Brace / Cleanse / Second Wind). Drives the
   // in-world Guard FX on the player's sprite, shown to the whole node so allies see
   // each other react. `ability` is the ability id; the client picks the FX by id.

@@ -96,6 +96,7 @@ export function updateBossScripts(world: World, dt: number): void {
     e.hasStatus.bossEffects = Object.keys(bossEffectStacks);
     e.hasStatus.bossEffectStacks = bossEffectStacks;
     e.hasStatus.bossEffectDurations = bossEffectDurations;
+    e.hasStatus.bossPhase = state.phaseLabel;
     markSliceDirty(world, e, 'hasStatus');
   }
 }
@@ -261,6 +262,18 @@ function checkPhaseTransitions(
     if (hpPct > phases[i].hpPct) continue;
 
     state.phaseTriggered[i] = true;
+    // ANNOUNCED PHASE: the one generic "the fight just changed" beat. The roar is
+    // the moment; the label on the boss bar is the reminder of which fight this is.
+    const name = phases[i].name;
+    if (name) {
+      state.phaseLabel = name;
+      pushBossFx(world, monster, 'roar', { radius: 360 });
+      world.pushEvent(monster.hasPosition.nodeId, {
+        kind: 'boss-phase',
+        monsterId: monster.isMonster.id,
+        name,
+      });
+    }
     for (const action of phases[i].actions) {
       applyAction(action, monster, world, state);
     }
@@ -609,6 +622,13 @@ function applyAction(
 
     case 'cast': {
       beginScriptedCast(action, monster, world, state);
+      break;
+    }
+
+    case 'set-pattern': {
+      // Read by `bossPatternFor`; a pattern already running notices the id change
+      // and finishes through its own teardown, so a swap never splices two sequences.
+      state.patternOverrideId = action.patternId;
       break;
     }
 

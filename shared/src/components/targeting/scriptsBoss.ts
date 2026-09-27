@@ -135,6 +135,10 @@ export interface ScriptsBoss {
   };
   /** Added to `raisesDead.maxAlive` by a 'raise-dead' action carrying `maxAliveAdd`. */
   raiseMaxAliveAdd?: number;
+  /** Id of the `bossPatternVariants` entry a 'set-pattern' action switched to. */
+  patternOverrideId?: string;
+  /** Name of the last announced (named) phase; mirrored to the boss bar. */
+  phaseLabel?: string;
 }
 
 export function initScriptsBoss(script: BossScript): ScriptsBoss {

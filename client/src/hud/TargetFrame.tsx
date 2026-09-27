@@ -233,6 +233,9 @@ export function TargetFrame() {
       <div className="target-frame__name-row">
         <span className="target-frame__name">{shown.name}</span>
         {shown.isBoss && <span className="target-frame__boss-tag">BOSS</span>}
+        {shown.isBoss && shown.bossPhase && (
+          <span className="target-frame__boss-phase">{shown.bossPhase}</span>
+        )}
       </div>
 
       <div className="target-frame__track">
