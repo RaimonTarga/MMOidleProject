@@ -2,7 +2,7 @@
 
 > **IN PROGRESS (2026-09-04). Phases 0-7 are SHIPPED; Phase 8 (cleanup and tuning handoff) remains.**
 >
-> Design source: [BOSS_ENCOUNTER_REDESIGN_IMPLEMENTATION_HANDOFF_2026-09-04.md](BOSS_ENCOUNTER_REDESIGN_IMPLEMENTATION_HANDOFF_2026-09-04.md). Live code and data remain authoritative for current behavior.
+> Design source: [archived boss encounter handoff](archive/BOSS_ENCOUNTER_REDESIGN_IMPLEMENTATION_HANDOFF_2026-09-04.md). Live code and data remain authoritative for current behavior.
 >
 > **Delivered so far — see [§8 Phased delivery](#8-phased-delivery) for what each phase covered:**
 >

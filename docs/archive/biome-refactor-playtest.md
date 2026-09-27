@@ -1,3 +1,8 @@
+> **ARCHIVED (2026-09-27) — HISTORICAL PLAYTEST NOTES.** The T1 dungeon authoring
+> pass is recorded here for rationale and unanswered questions. Current dungeon
+> behavior lives in `docs/dungeon-current-state.md`; biome mechanics live in
+> `docs/biome-ecology-current-state.md`.
+
 # Biome Refactor — Dungeon Playtest Notes
 
 Running notes + open questions from the per-biome T1 dungeon authoring pass

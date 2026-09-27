@@ -1,259 +1,166 @@
 # MMO Idle
 
-Browser-based hobbyist MMORPG / idle game built for a small group of friends (~100 players max). Characters fight automatically — you build the character, choose a class, and make strategic decisions. No twitch input required.
+MMO Idle is a solo-first, server-authoritative idle RPG. The client renders a
+shared world, while the server owns movement, combat, progression, crafting,
+equipment, and persistence. The repository is a pnpm workspace containing the
+game client, operations UI, server, shared rules, bot harness, and asset tools.
 
----
+The source code is authoritative. Documentation explains the current system,
+design intent, or historical evidence; if a document disagrees with shared/ or
+server/, fix the document rather than inferring behavior from it.
 
-## Concept
+## Current shape
 
-- **2D top-down**, sprite-based world made up of an 11×11 grid of zones (nodes).
-- Players in the same zone see each other in real time.
-- **Idle / automatic combat** — your character walks around the zone and fights monsters without clicking. You influence outcomes through gear, class mechanics, and the skill tree.
-- **Fully cooperative** — no PvP.
-- **Mobile and tablet friendly** — portrait-first HUD with responsive layout.
+- **World:** Clearing is the T0 tutorial hub. Playable region data is authored
+  for T1 through T4 in shared/src/world/map/; the current registry contains
+  170 sparse nodes in a 16-row by 14-column bounding box. Normal nodes carry
+  one of the five node modifiers (alacrity, heavy, swarming, dominion, or
+  fortified), and each authored biome/tier has a guarded dungeon.
+- **Progression:** biome mastery uses six levels per normal tier segment;
+  Clearing has its separate four-level tutorial curve. Global Mastery is a
+  derived sum of real biome levels and excludes Clearing. It drives rune-point
+  capacity and the item upgrade ceiling.
+- **Builds:** the six root mechanics are Cadence, Cooldown, Reload, Energy,
+  DoT, and Conduit. The skill tree adds frame, range, and specialization
+  choices as authored by the current tree data. Abilities, Runes, Stances,
+  Rites, Cores, Relics, Charms, and gear are separate build layers.
+- **Equipment:** the slots are weapon, armor, recovery, mobility, core, and
+  relic. Ordinary upgradeable items can reach +5 when their definition permits
+  it; Cores and Relics use named evolution rules instead of the ordinary +N
+  track.
+- **Runtime:** the server runs a 10 Hz logic loop and 5 Hz broadcast loop.
+  Connected characters autosave every 30 seconds and save again on disconnect.
+  Gameplay telemetry is written to the separate log database when enabled.
 
----
+The current world and content counts are intentionally described at the level
+of the registry and data loaders. Re-run the source-level checks when adding a
+region or tier instead of treating this paragraph as a second configuration
+file.
 
-## Tech stack
+## Repository layout
 
-| Layer | Choice |
-|---|---|
-| Language | TypeScript (strict, everywhere) |
-| Client | Phaser 3 + React 19 HUD + Vite on :3000 |
-| Admin | React ops dashboard + Vite on :3001 |
-| Server | Node.js + Express + Socket.IO on :4000 |
-| Realtime | Socket.IO rooms (one per node) |
-| ECS | miniplex (server-side entity/component model) |
-| Database | PostgreSQL (game DB :5432, log DB :5433) + Drizzle ORM |
-| Cache / pub-sub | Redis :6379 |
-| Auth | Discord OAuth + opaque 30-day localStorage session token |
-| Packages | pnpm workspaces monorepo |
+| Path | Responsibility |
+| --- | --- |
+| client/ | Phaser rendering, React HUD, auth/lobby, input, effects, and presentation state |
+| admin/ | React operations dashboard and admin Socket.IO client |
+| server/ | ECS world, authoritative simulation, auth, persistence, admin namespace, and telemetry |
+| shared/ | Shared types, protocol views, world authoring, item/recipe data, progression, and pure rules |
+| bot/ | Headless route executor, policy experiments, telemetry recorder, and run dashboard |
+| scripts/ | Build, release, experiment, report, art, and environment tooling |
+| art/ | Source assets, manifests, and generated/packed art inputs |
+| reports/ | Generated analysis and QA artifacts; not the live source of game rules |
+| docs/ | Current-state records, active operations notes, briefs, and archived evidence |
+| design_docs/ | Design and architecture authority; historical material is under design_docs/archive/ |
 
----
+## Local development
 
-## Project layout
+Prerequisites are Node.js 22+ and pnpm 8.15.1 (the version pinned in
+package.json). Docker is required for the local PostgreSQL and Redis services.
 
-```
-/
-├── shared/   Cross-boundary types, protocol DTOs, pure formulas, static databases
-├── client/   Phaser 3 canvas + React HUD overlays + Vite build
-├── admin/    React ops dashboard (logs, analytics, world map, player inspect)
-├── server/   Express + Socket.IO + authoritative ECS simulation + persistence
-└── tools/    Balance reports (DPS / eHP / mob), Rust balance TUI
-```
-
-Everything that crosses the network boundary is defined in `shared/` first. The server is fully authoritative — the client only renders what the server sends.
-
----
-
-## Getting started
-
-**Prerequisites:** Node.js 20+, pnpm, Docker (for the local database stack).
-
-```bash
-npm install -g pnpm
-git clone <repo-url>
-cd mmo-idle
+~~~powershell
 pnpm install
-```
+Copy-Item .env.example .env        # PowerShell; fill in only what you need
+pnpm db:up
+pnpm dev:server                    # http://localhost:4000
+pnpm dev:client                    # http://localhost:3000
+pnpm dev:admin                     # http://localhost:3001
+~~~
 
-### Development (three terminals)
+The three development commands can run concurrently in separate terminals.
+pnpm dev:server starts the game database, log database, and Redis first. The
+Docker development stack is an alternative:
 
-```bash
-pnpm dev:server   # spins up db/logdb/redis via Docker, then server on :4000
-pnpm dev:client   # player app on :3000
-pnpm dev:admin    # ops dashboard on :3001
-```
-
-The server starts the Docker services automatically on `dev:server`. If you prefer to manage them separately:
-
-```bash
-pnpm db:up        # postgres game DB, postgres log DB, redis (detached)
-pnpm db:down
-pnpm db:reset     # wipe volumes and restart
-pnpm db:logs      # tail compose logs
-```
-
-### Full dev stack in Docker (hot-reload)
-
-```bash
-pnpm docker:dev   # builds dev image and starts everything with hot-reload
-pnpm docker:rebuild   # rebuild the dev image after dependency changes
+~~~bash
+pnpm docker:dev
 pnpm docker:down
-```
+~~~
 
-### Production-like stack
+For a production-shaped local container, use pnpm docker:up. It builds the
+application image, runs the server on port 4000, and starts the database and
+Redis dependencies. pnpm db:reset is destructive to local Docker volumes; use
+it only when deliberately resetting local data.
 
-```bash
-pnpm docker:up    # full stack build + run (--profile full)
-pnpm docker:down
-```
+## Authentication and local access
 
-### LAN / playtesting (production build)
+Guest play creates a real account with a persistent-until-linked guest session.
+Discord OAuth creates a normal 30-day session. Linking a guest to Discord keeps
+the account and characters, then converts the guest session to the ordinary
+30-day lifetime. Session tokens are stored by the client and sent to the player
+Socket.IO namespace; they are not admin credentials.
 
-```bash
-pnpm play   # builds client with ops map enabled, starts server in production mode
-```
+Production admin HTTP/Socket.IO access is separately protected by ADMIN_TOKEN.
+The server rejects short or missing production tokens; do not put the token in a
+VITE_* variable or commit it. Development-only identity bypass is controlled by
+AUTH_DEV_BYPASS=1 plus VITE_AUTH_DEV_ACCOUNT_ID, and is refused in production.
+Anonymous spectator and bot-watch flows are development tooling, not production
+player auth.
 
-Friends on the same network connect to `http://<your-lan-ip>:4000`.
+Copy .env.example to .env for the complete variable list. The core local
+services use:
 
----
+- game PostgreSQL on localhost:5432 (DATABASE_URL),
+- telemetry/log PostgreSQL on localhost:5433 (LOG_DATABASE_URL), and
+- Redis on localhost:6379 (REDIS_URL).
 
-## Build and type-check
+Discord variables are optional for guest-only local work. ADMIN_TOKEN is
+required for production admin access. Telemetry details and retention policy
+live in [docs/gameplay-telemetry-current-state.md](docs/gameplay-telemetry-current-state.md).
 
-```bash
-pnpm build        # shared → client → admin → server (in dependency order)
-pnpm typecheck    # tsc --noEmit across all packages
-```
+## Useful commands
 
----
+The root package.json is the command index. The most common checks are:
 
-## Architecture
+~~~bash
+pnpm typecheck
+pnpm test
+pnpm build
+pnpm play                         # build and serve the client/server locally
+pnpm bot:preflight                # validate bot prerequisites before a long run
+pnpm test:spatial                 # focused spatial/world checks
+pnpm size:check
+~~~
 
-### Tick loop
+Focused families include `pnpm bench:server`, `pnpm bench:balance`, the
+`pnpm bot:t2-*` catalogue/route/validation commands, `pnpm experiment:*`,
+`pnpm dps:report`, `pnpm ehp:report`, `pnpm mob:report`, `pnpm tier:table`,
+and `pnpm art:*` commands. Read the relevant
+current-state or operator document before treating a bot run, report, or
+accelerated reward run as balance evidence.
 
-The server runs two decoupled intervals:
+Release preparation and deployment checks are documented in
+[docs/release-flow.md](docs/release-flow.md). Do not infer production health
+from a local build; verify the deployed /healthz and the intended live URL
+when doing release work.
 
-- **Logic tick — 10 Hz (100 ms):** movement, combat pipeline, AI, DoT ticks, defense systems, archetype mechanics
-- **Broadcast tick — 5 Hz (200 ms):** builds a node delta and emits `node:delta` to all players in that node
+## Documentation map
 
-Combat events (hits, kills) are queued between broadcasts so the client never misses an animation.
+Start with the [documentation index](docs/README.md). It distinguishes four
+categories:
 
-### ECS
+1. **Current state** — implementation facts cross-checked against source.
+2. **Design authority** — intended behavior and design constraints in
+   [design_docs/](design_docs/).
+3. **Active plans and briefs** — scoped work that is explicitly still open.
+4. **Historical evidence** — completed plans, handoffs, experiment packets,
+   reports, and superseded decisions under docs/archive/, design_docs/archive/,
+   or the evidence index in docs/briefs/.
 
-Server world is a miniplex ECS. Entities have typed component bags; component presence gates behavior (no string discriminators). Canonical queries live on the `World` class. Networked components are allowlisted in `NETWORKED_PLAYER_KEYS` / `NETWORKED_MONSTER_KEYS` and serialized as add/patch/remove deltas.
+High-value entry points:
 
-### Combat pipeline
+- [Architecture](design_docs/architecture.md)
+- [Current-state documentation](docs/README.md#systems--current-state)
+- [Playtest command center](docs/briefs/playtest-followup-command-center-2026-09-25.md)
+- [Release flow](docs/release-flow.md)
+- [Bot command center](docs/bot-experience-command-center.md)
+- [Telemetry current state](docs/gameplay-telemetry-current-state.md)
 
-`beforeAttack → onAttack → onHit → onDamageTaken → afterHit → onKill`
+When a shipped plan is no longer needed for active work, fold its durable
+facts into the relevant current-state document and move the plan to the
+appropriate archive with an ARCHIVED header. Keep dated experiment results
+and raw receipts as evidence; they are not promises about current behavior.
 
-All class mechanics register as pipeline listeners. The server is the single source of truth for all damage, HP, and state.
+## License and project status
 
-### Persistence
-
-On connect the server loads the player from PostgreSQL (or creates one). Characters are saved on disconnect and every 30 seconds. Persisted slices: identity, progression, inventory, skills, position, health. Runtime state (archetype slices, passives, combat state) is rebuilt from the persisted data on attach.
-
-DB migrations run at boot from `server/src/db/migrations` (game DB) and `server/src/logdb/migrations` (log DB).
-
----
-
-## What's implemented
-
-### World
-
-- 11×11 node grid; Chebyshev distance from center determines tier (T0–T4 today; T5–T8 designed, not authored)
-- Biomes: Plains, Forest, Mountain, Swamp, Cave (starters); Desert, Jungle (T2+); Tundra, Volcanic, Graveyard, Trench (T3–T4)
-- Dungeon nodes (one per biome per tier) — monsters at ×2 HP / ×1.6 ATK; boss per dungeon
-- Node transitions, leash-break returns, kite-prevention AI
-
-### Combat
-
-- Automatic aggro, retaliation aggro, auto-targeting
-- AoE splash on empowered hits; boss AoE cleave
-- Death / respawn in the Clearing
-
-### Class system — 6 archetypes
-
-Each archetype has a T0 root, T1 sub-variant (light / balanced / heavy), T2 universal range node, and T3 path modifiers. T4 specs designed and partially implemented.
-
-| Class | Mechanic | T3 status | T4 status |
-|---|---|---|---|
-| Cadence | Hit counter → empowered finisher | All 9 implemented | Specs designed |
-| Energy | 0–100 energy → empowered discharge | All 9 implemented | Specs designed |
-| DoT | Stacking damage-over-time conversion | All 9 implemented | Specs designed |
-| Cooldown | Countdown timer → execution | All 9 implemented | Specs designed |
-| Reload | Magazine burst → reload window | All 9 implemented | Specs designed |
-| Summoner | Minion command and scaling | Root + frames | Specs designed |
-
-### Defense and recovery
-
-Five recovery archetypes via equipment passives: in-combat regen, periodic shield, damage absorption (HoT pool), burst regen, and out-of-combat regen. DoT resistance, debuff cleanse, evasion (deterministic counter model).
-
-### Equipment and crafting
-
-- 4 equipment slots: weapon, armor, recovery, mobility
-- Rune loadout system
-- Crafting unlocked by biome kill-count thresholds; essences as currency
-- Upgrade system (+0 to +3 per item)
-
-### Progression
-
-- Skill tree T0–T3 fully implemented; T4 nodes in progress; T5–T7 placeholders
-- Skill points from quest XP (tier quests gated on dungeon boss kills)
-- Biome XP → biome level → recipe unlocks
-
-### Parties
-
-- Runtime party system (not persisted); party members in the same node share rewards
-
-### Client HUD
-
-- **Desktop:** left sidebar (stats, buffs, essences), right sidebar (skill tree, inventory, crafting, map, quests)
-- **Mobile / tablet:** portrait-first fixed top strip + chip bar + tab bar + bottom sheets; ongoing panel-internals pass
-- Buff bar with clock-sweep overlays and stack badges
-- 11×11 world map with dungeon markers, boss status, and click-to-navigate
-
-### Admin dashboard
-
-- Tabs: logs, analytics, world log, ops map, players, characters, debug
-- Structured operational log (PostgreSQL log DB, 7-day retention)
-- Redis-backed telemetry (`world:telemetry` / `admin:telemetry`)
-
----
-
-## Balance tools
-
-All tools output to `reports/`. HTML reports are browser-viewable; `--llm-packet` produces a Markdown version for pasting into balance sessions.
-
-```bash
-pnpm dps:report             # player DPS × class × gear sweep → reports/dps-report.html
-pnpm ehp:report             # player survivability sweep → reports/ehp-report.html
-pnpm mob:report             # monster stat/threat analysis → reports/mob-report.html
-pnpm dps:llm [--tier=N]     # Markdown LLM packet for DPS session
-pnpm ehp:llm [--tier=N]     # Markdown LLM packet for eHP session
-pnpm mob:llm [--tier=N]     # Markdown LLM packet for monster balance session
-
-pnpm bench:server           # server-side combat benchmarks
-pnpm bench:balance          # balance benchmarks
-pnpm bench:tui              # Rust balance TUI (requires Cargo)
-pnpm test:spatial           # spatial hitbox unit tests
-pnpm bake:hitboxes          # pre-compute hitboxes
-pnpm size:check             # bundle size check
-```
-
----
-
-## Production environment variables
-
-| Variable | Purpose |
-|---|---|
-| `DATABASE_URL` | PostgreSQL game DB connection string |
-| `LOG_DATABASE_URL` | PostgreSQL log DB connection string |
-| `REDIS_URL` | Redis connection string |
-| `LOG_RETENTION_DAYS` | Log retention (default 7) |
-| `DISCORD_CLIENT_ID` | Discord OAuth application client ID |
-| `DISCORD_CLIENT_SECRET` | Discord OAuth application client secret |
-| `DISCORD_REDIRECT_URI` | Exact registered callback URL, ending in `/auth/discord/callback` |
-| `CLIENT_URL` | Player-client URL receiving the minted session fragment |
-| `AUTH_DEV_BYPASS` | Set to `1` for explicit `devAccountId` socket auth outside production only |
-| `VITE_AUTH_DEV_ACCOUNT_ID` | Optional matching account ID for the Vite client when the server dev bypass is enabled |
-
-Discord login uses the OAuth2 authorization-code flow with the `identify` scope.
-Register every callback URL exactly in the Discord developer portal; localhost,
-LAN/tunnel, and deployed URLs are separate redirect entries.
-
-These credentials protect the player session only. They do not protect `/admin` or
-the `/admin` Socket.IO namespace; keep both behind trusted access until separate
-admin authentication is implemented. See
-[`docs/auth-and-characters-current-state.md`](docs/auth-and-characters-current-state.md).
-
----
-
-## Known gaps / next priorities
-
-- Finish and verify Railway-style deployment (game DB + log DB + Redis)
-- Admin auth not implemented — keep admin behind trusted-dev access only
-- Continue T4 balance and playtest passes
-- Some T3+ monster balance still placeholder
-- Pre-login spectator presentation
-- Mobile HUD panel internals (desktop-styled panels need portrait redesign)
+This is a private, active project. The package version is currently 0.5; the
+version and release records describe delivery state, not a promise that every
+design document in the repository is current.

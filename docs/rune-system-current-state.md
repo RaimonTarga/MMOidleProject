@@ -422,9 +422,9 @@ Equipped ability details and HUD tooltips distinguish that default from configur
 Rune timing, including that the ability waits when no overriding condition matches.
 Rune action descriptions show the actual ability and retain the current position
 binding: replacing an equipped ability changes which ability that rule controls.
-The build dialog offers an optional, reversible wider desktop view. The current
-The board now includes unified RP attunement; Rite mechanics are unchanged;
-ability/stance attunement remains a future systems change.
+The build dialog offers an optional, reversible wider desktop view. The board
+now includes unified RP attunement. Ability and stance attunement are
+authoritative and live in their dedicated tabs; Rite mechanics are unchanged.
 
 The server exposes an optional `matchedRunes` snapshot from the authoritative rune
 fold, including stance destinations. Active-rune attribution uses that snapshot

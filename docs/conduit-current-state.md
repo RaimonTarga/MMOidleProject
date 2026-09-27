@@ -3,7 +3,7 @@
 Objective snapshot of the Conduit (summoner) as it is implemented today. Not a
 balance assessment and not a proposal.
 
-Updated 2026-08-08 against the shipped code. The previous version described
+Updated 2026-09-27 against the shipped code. The previous version described
 the pre-overhaul tier-3 path system (Predator's Howl, Acid Brood, Stone
 Sentinel, Mountain Guardian, ...), which no longer exists — see §9.
 

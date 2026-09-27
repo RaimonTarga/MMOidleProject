@@ -1,6 +1,7 @@
 # Monster Combat Rework (T1–T4) — Current State
 
-> **🔨 IMPLEMENTED 2026-08-22** — structure, behavior and primitives are in.
+> **🔨 IMPLEMENTED** — structure, behavior and primitives are in; the latest
+> authoring corrections in this record run through 2026-09-12.
 > **Numbers are NOT.** Every magnitude added by this pass is a placeholder; the balance
 > pass is a separate, user-owned task.
 >

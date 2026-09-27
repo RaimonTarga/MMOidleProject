@@ -1,3 +1,7 @@
+> **ARCHIVED (2026-09-27) — HISTORICAL IMPLEMENTATION CONTEXT.** The live Core
+> record is `docs/cores-current-state.md`; design authority is
+> `design_docs/CORE_DESIGN_PHILOSOPHY.md`.
+
 # MMO Idle: Core Item Slot - Implementation Context
 
 **Repository snapshot:** `feat/ui-info-layer` at commit `d2fa188`  

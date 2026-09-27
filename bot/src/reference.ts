@@ -138,14 +138,14 @@ for (const node of [...SKILL_TREE.values()].filter((n) => n.tier === 0)) {
   if (me) w(`- **Mechanics:** ${me}`);
   w();
 }
-w("> `summoner-root` (Conduit) is gated behind the server's `CONDUIT_ENABLED` flag.");
+w("> `summoner-root` (Conduit) is enabled in the current client and server; development tooling and authentication bypasses remain separate flags.");
 w();
 
 // ── Map ──────────────────────────────────────────────────────────────────────
 
 w("## 3. The world map");
 w();
-w("An 11x11 grid of nodes. Travel is gate-to-gate between orthogonally adjacent");
+w("The live world is an authored sparse registry of T1-T4 nodes plus the T0 Clearing.");
 w("nodes; the server owns pathing (`player:navigateTo`), so a route only names a");
 w("destination. Routes should name content (`{ biomeGroup, tier }`), not node ids.");
 w();

@@ -1,3 +1,8 @@
+> **ARCHIVED (2026-09-27) — HISTORICAL DESIGN HANDOFF.** The locked design was
+> implemented through the phased plan. Live behavior is in
+> `docs/boss-encounter-rework-current-state.md`; the remaining implementation
+> cleanup record is `docs/boss-encounter-redesign-implementation-plan-2026-09-04.md`.
+
 # Boss Encounter Redesign — Implementation Planning Handoff
 
 **Status:** Design pass approved / ready for implementation planning  

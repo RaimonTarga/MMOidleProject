@@ -1,19 +1,24 @@
 # Spectator Landing Page — Current State
 
-Last updated: 2026-08-04
+**Audited:** 2026-09-27
 
 > **PARKED on the landing page, 2026-09-05.** A visitor with no credential now
 > boots no Phaser game and opens no spectator socket at all
-> (`isLandingOnlySession` in `client/src/net/session.ts`); the landing page is
-> the prerecorded video backdrop and the login panel. Everything below still
-> describes the spectator as built, and the dev `?watch=` path still uses it.
-> The live pane rendered black and the work was parked to focus on the video —
-> see `docs/landing-cinematic-current-state.md`, "PARKED: the live spectator
-> pane". The Clearing-fallback removal recorded below is NOT parked; it shipped.
+> (`isLandingOnlySession` in `client/src/net/session.ts`); the default landing
+> page is the prerecorded video backdrop and the login panel. The retained
+> spectator implementation below is used only by the development `?watch=` path.
+> The live pane rendered black and the production-facing work was parked to focus
+> on the video — see `docs/landing-cinematic-current-state.md`, "PARKED: the live
+> spectator pane". The Clearing-fallback removal recorded below is NOT parked; it shipped.
 
-## Player flow
+The sections describing a split login/live-world view therefore document the
+retained development watch mode, not the default unauthenticated landing flow.
 
-Visitors without a session token or explicit development identity connect with
+## Development watch flow
+
+The following is the retained implementation for the development `?watch=` path;
+it does not describe the default unauthenticated landing page. A development
+watcher without a session token or explicit development identity connects with
 `handshake.auth.spectate === true`. The landing gate remains visible as a split
 login/live-world view while the normal Phaser scene renders behind it. A compact,
 translucent login capsule leaves most of the live world unobscured, while the status
@@ -23,7 +28,7 @@ Signing in with Discord navigates away and naturally disconnects the spectator.
 Authenticated connections continue through the normal character lobby and never use
 the spectator stream.
 
-## Server authority and privacy
+## Server authority and privacy for watch mode
 
 Spectator sockets have no player entity and do not register gameplay handlers.
 Character create/select/delete requests are explicitly rejected. A dedicated manager
@@ -78,7 +83,7 @@ gone. Covered by `server/test/spectatorManager.test.ts`.
 - Privacy, per-IP capacity, idle pause, fallback, and spectator authentication have
   automated regression coverage.
 
-## Client behavior
+## Client behavior in watch mode
 
 The spectator boot preloads only the shared sprite/effect/decor set plus the
 clearing's ground art (the fallback view and spawn node) — a fraction of the full

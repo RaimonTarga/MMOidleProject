@@ -6,7 +6,7 @@
 - `master` is the production branch Railway is expected to deploy.
 - `release-vX.Y` is an immutable release snapshot.
 
-Versions use X.Y semantics. The v0.5 [readiness record](next-playtest-release-readiness.md)
+Versions use X.Y semantics. The v0.5 [readiness record](archive/next-playtest-release-readiness.md)
 and [patch notes](../updates/v0.5/changelog.md) document the current playtest decisions.
 
 ## Preparation and publication

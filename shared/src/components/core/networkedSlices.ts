@@ -350,16 +350,17 @@ export interface TracksProgression {
   skillPoints: number;
   essences: Record<EssenceType, number>;
   /**
-   * Biome catalysts wallet, keyed by biome group (e.g. `forest`). One catalyst
-   * per biome group, uncapped. Minted from `catalystProgress` crossing a
-   * threshold; spent alongside essence on catalyst-gated recipes/upgrades.
+   * Node-modifier catalyst wallet, keyed by the five modifier families (for
+   * example `alacrity`). One catalyst per family is uncapped. Minted from
+   * `catalystProgress` crossing a threshold; spent alongside essence on
+   * catalyst-gated recipes/upgrades.
    */
   catalysts: Record<string, number>;
   /**
-   * Accumulating kill-progress toward the next catalyst, keyed by biome group.
-   * Each kill adds the monster's catalyst weight; crossing
-   * `GAME_CONFIG.CATALYST_PROGRESS_PER_UNIT` mints 1 catalyst and carries the
-   * remainder.
+   * Accumulating kill-progress toward the next modifier-family catalyst. Each
+   * kill in a normal node adds the monster's catalyst weight under that node's
+   * modifier; crossing `GAME_CONFIG.CATALYST_PROGRESS_PER_UNIT` mints 1
+   * catalyst and carries the remainder.
    */
   catalystProgress: Record<string, number>;
   biomeXP: Record<string, number>;

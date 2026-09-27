@@ -2,7 +2,8 @@
 
 **Status: TARGET / partially-verified spec.**
 Passives are pulled from `rootsAndFrames_balanced.ts` (confirmed). Skill tree
-T0–T3 is fully authored; T4 is in progress. Items are authored through T4
+T0–T3 is fully authored in the current source; T4 skill nodes remain a target,
+not a shipped layer. Items are authored through T4
 but numerical balance is an ongoing pass — treat §4–§5 figures as targets /
 right-order-of-magnitude until a sim confirms stacking for a given tier.
 When numbers shift, re-run `pnpm mob:report` and `pnpm ehp:report` and update §3.
@@ -34,8 +35,8 @@ of a re-derivation.
 | Base attack range | 12 (melee) |
 
 Total attack = `15 + root + frame + weapon`. APS = `weapon.attacksPerSecond × (1 + Σ attackSpeedPct)`.
-Tree depth: **T0 = root, T1 = +frame, T2 = +range node, T3 = +path modifier (9 options per class).** T4 spec nodes are in progress.
-The §4 power bands below reflect the **T2 snapshot** (root + frame + range only) because T3 paths vary too widely to average cleanly. When running a T3+ balance session, use the `pnpm dps:report` and `pnpm ehp:report` tools which enumerate every build combo explicitly.
+Tree depth: **T0 = root, T1 = +frame, T2 = +range node, T3 = +path modifier (9 options per class).** T4 spec nodes remain unimplemented target content. These are skill-tree node tiers, not content-entry tiers: a character entering content Tier 2 has root + frame; the range node becomes available after the three Tier-2 seals on the way out.
+The §4 power bands below reflect the **skill-tree T2 snapshot** (root + frame + range only) because T3 paths vary too widely to average cleanly. When running a content-tier entry or a T3+ balance session, use the current progression source and the `pnpm dps:report` / `pnpm ehp:report` tools, which enumerate every build combo explicitly.
 
 ---
 
@@ -250,7 +251,7 @@ glass through the shield. That's the ceiling on T4 `H_med`.)
 - **Gear budgets (§5)** are targets; items have been authored through T4 but exact
   stacking is unconfirmed. Run `pnpm ehp:report` to read back actual player stats
   from the live item + skill formulas.
-- **T3–T4 tree nodes** — T3 is fully implemented; T4 is in progress. §4 bands are
+- **T3–T4 tree nodes** — T3 is fully implemented; T4 remains target content. §4 bands are
   still the T2 snapshot; T3 paths add meaningful variance (use the report tools for
   per-spec data at T3+).
 - **Heal-throughput soft cap + debt-conversion cap** — engine gates in place per §6.4.

@@ -1,6 +1,6 @@
 # Tier-2 Bot Testing Infrastructure — current state
 
-**Status:** LIVE as of 2026-09-02. This is the living truth for the Tier-2 bot
+**Status:** LIVE; audited 2026-09-27. This is the living truth for the Tier-2 bot
 testing platform. Where this doc and the code disagree, the code wins — fix the
 doc.
 
@@ -31,10 +31,11 @@ tier a character can afford is always `playerTier - 1`:
 
 `server/bench/balance/progression.ts` agrees:
 `maxSkillTreeTierForContent(contentTier) = contentTier - 1`.
-`design_docs/player-power-curve.md` and `design_docs/game-overview.md` describe
-the "T2 snapshot" as root + frame + range, which contradicts both. **The code
-wins**; the design docs are stale on this point and are listed under Known
-Issues.
+`design_docs/player-power-curve.md` uses **skill-tree node tier** language for
+its "T2 snapshot" (root + frame + range); that is not the same thing as a
+Tier-2 content-entry template. The bot's Tier-2 entry is root + frame, and the
+range node becomes available after the three Tier-2 seals on the way out.
+Keep those two tier labels separate when reading the power-curve estimates.
 
 ### What that means for an 18-build campaign
 
@@ -81,7 +82,7 @@ pnpm bot:t2-templates      # full template dump + per-template validation report
 pnpm bot:t2-catalogue      # live T2 item catalogue in control-route order
 pnpm bot:t2-reachability   # which T2 items each template can obtain, and how
 pnpm bot:t2-routes         # the 18 routes and every resolved acquisition path
-pnpm bot:t2-catalyst-demand # total T2 catalyst demand per family (never accelerated)
+pnpm bot:t2-catalyst-demand # total T2 catalyst demand per family (demand only; no run acceleration)
 pnpm bot:t2-report <dir>   # smoke matrix + gear adoption from a batch directory
 
 # one run
@@ -204,7 +205,8 @@ impossible characters.
 
 **Result, 2026-09-02: 18/18 templates PASS offline; 5/5 classes exercised PASS
 live against the running dev server (212–221 combined checks each, 0 errors).
-Conduit is not yet exercised live — it needs `CONDUIT_ENABLED`.**
+Conduit was not included in that historical live coverage. It is enabled by
+default now; future coverage should add it as a separate measured class.**
 
 ---
 
@@ -227,13 +229,14 @@ Deliberate properties:
   never tried produces no evidence about that boss. Exhausting attempts records
   `boss-step-exhausted` and continues; being walled is data, not a crash.
 - **Every upgrade is `opportunistic`.** The Tier-2 upgrade ceiling is **+0 until
-  Global Mastery 42** and only reaches +5 at **GM 72 — every one of the seven
+  Global Mastery 38** and only reaches +5 at **GM 72 — every one of the seven
   biomes at its cap**. A fixed `toPlus` would park the bot waiting for headroom
   that only arrives by farming a *different* biome.
 - **Runes and abilities are carried forward unchanged** from the Tier-1 endgame
-  profile. Tier 2 opens four new rune recipes and four new abilities; adopting
-  any of them in the baseline would make automation quality a second variable
-  moving alongside biome difficulty. They are probes, not baseline.
+  profile. The live database currently contains 22 authored abilities across
+  T1–T4 and 16 rune recipes; adopting newly available content in the baseline
+  would make automation quality a second variable moving alongside biome
+  difficulty. They are probes, not baseline.
 - **Cost-farming is catalyst-aware.** Catalysts are minted by the node MODIFIER
   and by nothing else, and modifiers are static per node. A cost-farm pointed at
   the plain biome ref waits on a wallet that may never fill — measured: a Striker
@@ -255,11 +258,11 @@ adoption report scores the hypotheses against what the runs actually did.
 
 ## 6. The other structural finding: Tier-2 gear is mostly *not craftable*
 
-**20 of the 32 Tier-2 recipes are evolutions** (`evolvesFrom`) of one specific
+**21 of the 32 Tier-2 recipes are evolutions** (`evolvesFrom`) of one specific
 Tier-1 item, and `craftRecipe` refuses them outright. Only the eight
 Jungle/Desert pieces and the three Cores are plain crafts. An evolution offers:
 
-- **EVOLVE** — consume a **bag** copy of the predecessor at **+5**, pay the cheap
+- **EVOLVE** — consume a **bag** copy of the predecessor at **+3**, pay the cheap
   `cost`.
 - **RECONSTRUCT** — pay `reconstructCost` (~3.5×), no predecessor, and only
   where that cost is authored.
@@ -272,13 +275,15 @@ Two traps, both live, both now handled:
    the route silently pays reconstruction — three times the price, for no reason
    a reader of the run could ever see. Hence the new `unequip` step.
 
-2. **`EVOLUTION_REQUIRED_PLUS` is 5** (raised from 3 on 2026-08-29). The
-   canonical Tier-1 routes take only *some* gear to +5 — Striker's `flash-rapier`
-   ends at **+4**, its `iron-broadsword` at **+1**, `plains-charm-t1` at **+2** —
-   so most lineages are **not evolvable at Tier-2 entry no matter what the route
-   does**. This is recorded as a finding, not routed around.
+2. **`EVOLUTION_REQUIRED_PLUS` is 3.** It was raised to +5 for the 2026-08-29
+   progression pass, then lowered back to +3 on 2026-09-04 because the canonical
+   Tier-1 routes did not take every predecessor to +5. The current gate is the
+   shared constant in `shared/src/systems/evolution.ts`; rerun reachability after
+   changing it.
 
-Across the six class plans (50 planned acquisitions):
+The following counts are the historical six-class reachability result from the
+superseded +5 gate. They are retained as evidence, not as a current forecast;
+`pnpm bot:t2-reachability` is the authority for a fresh run after the +3 change.
 
 | path | count |
 |---|---:|
@@ -305,11 +310,11 @@ Total Tier-2 catalyst demand, derived live (`pnpm bot:t2-catalyst-demand`):
 | family | demand |
 |---|---:|
 | alacrity | 40 |
-| swarming | 17 |
-| fortified | 17 |
 | heavy | 16 |
-| dominion | 9 |
-| **total** | **99** |
+| swarming | 16 |
+| dominion | 16 |
+| fortified | 20 |
+| **total** | **108** |
 
 The `catalyst-primed` arm remains available when a test needs the entire tier's
 catalyst demand in its starting wallet and must remove kill-count variance. It
@@ -507,14 +512,13 @@ two arms with one variable each.
 
 ### Progression
 
-- **`EVOLUTION_REQUIRED_PLUS` moved 3 → 5 on 2026-08-29 and the canonical Tier-1
-  routes were never updated.** They leave their characters unable to *evolve*
-  most of their own lineages, forcing ~3.5× reconstruction costs across Tier 2.
-  Either the T1 routes should take more items to +5, or the +5 gate is too
-  strict — a designer call, with the evidence in §6.
-- `design_docs/player-power-curve.md` and `design_docs/game-overview.md` state
-  that a Tier-2 character holds root + frame + **range**. Live progression and
-  the balance bench both say root + frame only. Doc bug; see §1.
+- **`EVOLUTION_REQUIRED_PLUS` is 3.** The +5 interval was a historical
+  2026-08-29 experiment and is retained in §6.4 as evidence; the shared
+  constant, current reachability output, and canonical route assumptions now
+  use +3.
+- The range-node timing is intentional: a Tier-2 **entry** character has root +
+  frame, while the skill-tree T2 snapshot in the power-curve document includes
+  range after the three Tier-2 seals. Do not use the latter as an entry profile.
 
 ### Suspected balance (evidence recorded, nothing changed)
 
@@ -557,10 +561,10 @@ two arms with one variable each.
 
 In order, because each unblocks the next.
 
-1. **Decide the two progression questions before spending machine time.**
-   (a) Should the canonical Tier-1 routes take more gear to +5, so Tier-2
-   evolution is reachable? (b) Is `focus-elites` allowed to start a fight across
-   the node? Both change what every subsequent run measures.
+1. **Validate the current progression and targeting assumptions before spending
+   machine time.** Run `pnpm bot:t2-reachability` against the live +3 gate and
+   decide whether `focus-elites` is allowed to start a fight across the node.
+   Treat the old +5 reachability rows in §6.4 as historical evidence only.
 2. **Run the 18-route accelerated smoke matrix to completion** and read
    `bot:t2-report`. The question is progression integrity — can each build reach
    Desert at all, and where does each one stop — not balance.

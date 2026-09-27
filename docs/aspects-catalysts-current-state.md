@@ -1,72 +1,108 @@
-# Aspects + Catalysts — Current State (pre-implementation)
+# Aspects and Catalysts — Current State
 
-**Steps:** 1 (Aspect Essence economy) + 2 (Biome Catalysts), implemented together.
-**Companion:** `docs/archive/aspects-catalysts-plan.md`. **Index:** `docs/system-rework-roadmap.md`.
-**Audited:** 2026-06-23 (code read, not assumed).
+**Audited:** 2026-09-27
+**Source authority:** shared item/progression data and the authoritative reward
+and crafting paths. The historical implementation plan is
+[archived](archive/aspects-catalysts-plan.md).
 
----
+This page replaces the former pre-implementation snapshot. Essence labels,
+catalyst wallets, progress accumulation, family-keyed costs, client views, and
+persistence are implemented. Numeric reward weights and costs remain balance
+inputs, not settled design promises.
 
-## Essences (Step 1)
+## Essence / Aspect economy
 
-- `EssenceType = 'red' | 'blue' | 'green' | 'yellow' | 'purple'` — `shared/src/items.ts:3`.
-  `ESSENCE_TYPES`, `ESSENCE_COLORS` alongside. Flat across all tiers (no per-tier essence).
-- `BIOME_PRIMARY_ESSENCE` (`items.ts:15`) maps each biome group → one essence.
-- Wallet: `TracksProgression.essences: Record<EssenceType, number>`
-  (`shared/src/components/core/networkedSlices.ts:213`).
-- Monster drop shape: `rewards: { essence: number; essenceType: EssenceType; level; biomeXp? }`
-  (`shared/src/data/monsters/types.ts:242`) — single essence per mob, flat amount.
-- Essence granted in `rewardPlayer` / `applyKillRewardsToPlayer`
-  (`server/src/systems/player/progression/rewards.ts:30,152`). Tier multiplier
-  `GAME_CONFIG.BIOME_ESSENCE_TIER_MULT` is applied (currently *dampens* late game).
-- Spent in `craftRecipe` (`server/src/systems/player/economy/crafting.ts:50-63`) and
-  `upgradeItem` / `checkUpgrade` (`server/src/systems/player/economy/itemUpgrade.ts:60`,
-  `shared/src/systems/itemUpgrades.ts:97-121`).
-- **Display:** the player-facing name is derived directly from the key
-  (`type.charAt(0).toUpperCase()...`) in `client/src/hud/EssencePanel.tsx:53`. **No label map exists.**
-  `EssenceType` / `ESSENCE_COLORS` referenced in ~41 files (client HUD, crafting, runes,
-  bestiary, admin, server reason strings).
-- Persistence: stored as a JSON object `{red,blue,green,yellow,purple}` per player row;
-  default seeded in `server/src/db/playerRepo.ts:226`, snapshotted at `:155`.
+Essence keeps color keys in persistence, protocol, and recipe data:
 
-## Monster data files (Step 1 authoring + Step 2 weights)
+- red, blue, green, yellow, and purple are the five EssenceType values;
+- the player-facing labels are Deep, Stone, Wild, Might, and Rot;
+- ESSENCE_LABELS and essenceLabel in shared/src/items.ts are the display
+  authority; UI and player-facing messages should not capitalize raw keys;
+- BIOME_PRIMARY_ESSENCE supplies the default essence identity for authored
+  biome recipes;
+- the wallet lives in TracksProgression.essences and is included in PlayerView;
+- monster definitions author essence type and amount, with tier and node
+  modifier reward multipliers applied by the server kill-reward path;
+- crafting, upgrades, evolution, and reconstruction spend essence through their
+  server-authoritative economy helpers.
 
-18 files under `shared/src/data/monsters/` (`plains/forest/swamp/mountain/cave` +
-`jungle/desert/volcano/tundra/graveyard/trench` + `advancedBiomesB` + `bossesT1..T4` +
-`tutorial`), assembled via `index.ts` into `MONSTER_DATABASE`.
+Late-tier Essence multipliers intentionally differ from mastery XP multipliers.
+Do not infer progression pacing from the raw item reward field alone; use the
+current GAME_CONFIG reward functions and measured reports.
 
-> **Update 2026-07-24 (Map Variety Stage A):** catalysts are now keyed by **combat
-> family** (`alacrity`/`brutality`/`blight`/`volatility`/`predation`), not by biome
-> group. The five families, per-node assignment table, and reshaping math live in
-> `shared/src/world/nodeModifiers.ts` + `nodeModifierMap.ts`. Every kill grants the
-> **node's pace family** catalyst (`NODE_MODIFIERS[nodeId].pace`) via
-> `grantCatalystProgress` in `rewards.ts`. Swarming and Elite Ground are currently
-> dormant behind `DENSITY_MODIFIERS_ENABLED = false`; they have no authoring,
-> runtime, reward, or UI effect. `catalystLabel` delegates to
-> `catalystFamilyLabel`. Authored sinks (forest recipes, stances, rites) were re-tagged
-> by each item's own combat expression. **Player wallets were wiped** (migration
-> `0002_wipe_catalyst_wallets.sql`) and are hydrate-sanitized to family keys on load
-> (`playerRepo.ts`). All magnitudes/tags are PLACEHOLDER (user tunes). Design authority:
-> `docs/map-variety-plan.md`; plan: `docs/archive/map-variety-implementation-plan.md`.
+## Catalyst families
 
-## Catalysts (Step 2) — **nothing exists**
+Catalysts are keyed by the node's combat modifier, not by biome:
 
-- No catalyst currency, wallet, progress counter, monster weight, or recipe-cost axis.
-- `TracksProgression` is networked **as a whole slice** (`NETWORKED_PLAYER_KEYS` in
-  `shared/src/protocol/networkedEntity.ts:55`) — new fields on it sync automatically.
-- Reward granting (incl. party same-node sharing) flows through `grantMonsterRewards` →
-  `applyKillRewardsToPlayer` (`rewards.ts:227,152`); the party loop already re-invokes
-  `applyKillRewardsToPlayer` per same-node member.
-- Recipe/upgrade costs are `Partial<Record<EssenceType, number>>` only
-  (`Recipe.cost` in `shared/src/data/recipes/types.ts:39`; `UpgradeStep.cost` in `items.ts:73`).
-- First-clear boss state persists via `TracksProgression.bossesCleared`
-  (appended in `rewards.ts:204-209`) — the natural hook for one-time boss catalyst bundles.
+| Family | Player-facing label |
+| --- | --- |
+| alacrity | Alacrity Catalyst |
+| heavy | Heavy Catalyst |
+| swarming | Swarming Catalyst |
+| dominion | Dominion Catalyst |
+| fortified | Fortified Catalyst |
 
-## Resolved choices folded in (2026-06-23 Q&A + this session)
+The canonical list is NODE_MODIFIER_FAMILIES in
+shared/src/world/nodeModifierTypes.ts. The modifier assignment and native/ban
+tables are in shared/src/world/nodeModifierTypes.ts and
+shared/src/world/nodeModifierMap.ts. Dungeons, Clearing, the test room, and
+other nodes without a normal node modifier do not grant catalyst progress.
 
-- **Rename = display-name only.** Keep internal keys; add an `ESSENCE_LABELS` map.
-  Mapping: Might←yellow, Wild←green, Rot←purple, Stone←blue, Deep←red.
-- **Catalysts: one per biome group**, uncapped, wallet keyed by biome group string.
-- **Per-mob essence variety, catalyst weights, and catalyst recipe costs are all
-  authored now** with sensible placeholders (user retunes — balance is user-owned).
-</content>
-</invoke>
+## Grant and mint rules
+
+The authoritative path is grantMonsterRewards in
+server/src/systems/player/progression/rewards.ts:
+
+1. Resolve the node's modifier and the monster's authored catalystWeight.
+   Without an explicit weight, the monster's base Essence reward is used.
+2. Apply the node reward premium and the development reward multiplier.
+3. Apply the tier-specific catalyst progress multiplier; T1 currently grants
+   half progress while the universal threshold remains unchanged.
+4. Accumulate the result in catalystProgress[modifier].
+5. Mint whole catalysts whenever the accumulator crosses
+   GAME_CONFIG.CATALYST_PROGRESS_PER_UNIT (currently 100), carrying the
+   remainder into the next kill.
+
+The development reward multiplier scales Essence, biome XP, and catalyst
+progress together. A run that uses a value other than 1 is non-canonical for
+economy conclusions. Bosses use the node's reward identity for ordinary reward
+credit, but dungeon nodes have no modifier and therefore no catalyst grant.
+
+## Spending and presentation
+
+Recipes and upgrade/evolution/reconstruction steps may carry a
+catalystCost or reconstructCatalystCost keyed by a modifier family. Server
+crafting/evolution/upgrade paths validate and subtract both Essence and
+Catalysts. The client uses the same shared affordability and preview rules for
+Make, Upgrade, and Evolution/Reconstruction surfaces.
+
+TracksProgression carries both catalysts and catalystProgress. PlayerView,
+character summaries, admin progression actions, and the Materials panel expose
+the same family-keyed records. The authoritative accumulator may be fractional
+at T1; the HUD rounds its displayed progress without changing the stored value.
+
+## Persistence and migration
+
+The family-keyed wallet is sanitized on load by
+server/src/db/playerRepo.ts. Migration 0002 wiped the old biome-keyed catalyst
+wallet because the keys cannot be safely translated to the new modifier
+families. Unknown or retired keys are dropped during hydration. New saves start
+with empty catalyst maps and acquire family entries through kills or explicit
+admin/test profiles.
+
+The focused re-key and reward-contract coverage is
+server/test/catalystRekey.test.ts. It verifies family-keyed progress and minting,
+no biome-keyed entries, no catalyst credit from Clearing or dungeons, and
+family-keyed reconstruction costs.
+
+## Known balance boundaries
+
+The current modifier magnitudes, reward factors, monster weights, threshold, and
+most catalyst costs are authored tuning inputs. The implementation makes the
+economy real; it does not claim that the current values are final or that a
+synthetic accelerated run proves live pacing.
+
+If adding a new modifier family, update the shared vocabulary, node assignment
+validation, wallet hydration, client icon/label maps, recipe costs, and focused
+tests together. If changing a key set, preserve or explicitly migrate saved
+wallets rather than silently reviving old biome-keyed entries.

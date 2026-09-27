@@ -21,7 +21,8 @@ const CLASS_ARCHETYPES: Record<string, CombatArchetype> = {
 
 /** Validate and apply a skill unlock. Returns false if validation fails. */
 export function unlockSkill(world: World, entity: PlayerEntity, skillId: string): boolean {
-  // Conduit is disabled for production playtests; reject new selections there.
+  // Conduit is part of the public roster in every environment; keep this guard
+  // for a future emergency feature flag, aligned with the client flag.
   if (skillId === 'summoner-root' && !CONDUIT_ENABLED) return false;
 
   const result = canUnlockEntitySkill(entity, skillId);

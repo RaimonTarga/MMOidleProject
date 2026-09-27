@@ -1,55 +1,51 @@
 # Project Brief — MMO Idle
 
-Brief overview for opening a new conversation. For agent context, the main reference
-is `CLAUDE.md`. For design context, see `design_docs/game-overview.md`.
-
----
+Short orientation for opening a new conversation. For agent rules, read
+`CLAUDE.md`. For the design overview, read `design_docs/game-overview.md`; for
+implementation facts, start with `docs/README.md`.
 
 ## What this is
 
-A browser-based hobbyist MMORPG / idle game for a small group of friends (~100 players).
-Characters fight automatically in a 2D top-down world. No twitch input — you build the
-character and make strategic decisions, the server resolves all outcomes.
+MMO Idle is a cooperative, server-authoritative browser idle RPG. Characters
+travel and fight automatically in a 2D top-down world while players make build
+decisions through classes, skills, equipment, Runes, and progression systems.
+The server owns movement, combat, rewards, persistence, and authentication state;
+the client renders authoritative views and sends intent.
 
-- Fully cooperative, no PvP
-- Mobile and tablet friendly (portrait-first HUD)
-- Server authoritative ECS, split tick: 10 Hz logic / 5 Hz broadcast
+## Tech stack and local shape
 
-## Tech stack (current)
+- TypeScript monorepo managed by pnpm 8.15.1; Node.js 22 is the local/runtime baseline.
+- Phaser 3 plus React/Vite player client on port 3000.
+- React/Vite admin client on port 3001.
+- Node/Express/Socket.IO authoritative server on port 4000.
+- PostgreSQL game database on 5432, separate telemetry/log database on 5433, and Redis on 6379.
+- Guest sessions and Discord OAuth serve player authentication; production admin access uses `ADMIN_TOKEN`.
+- `shared/` owns cross-boundary data and rules, `server/` owns runtime authority,
+  `client/` owns presentation, `bot/` owns headless tooling, and `scripts/` owns
+  reports, experiments, releases, and asset workflows.
 
-- **Language:** TypeScript (strict, everywhere)
-- **Client:** Phaser 3 + React 19 HUD + Vite on :3000
-- **Admin:** React ops dashboard + Vite on :3001
-- **Server:** Node.js + Express + Socket.IO + miniplex ECS on :4000
-- **Database:** PostgreSQL (game DB :5432, log DB :5433) + Drizzle ORM
-- **Cache:** Redis :6379
-- **Auth:** localStorage UUID (Discord OAuth is a TODO)
-- **Packages:** pnpm workspaces monorepo
+## Audited current state (2026-09-27)
 
-## Repo shape
+- The Clearing is the T0 tutorial hub. The live world is an authored sparse
+  T1–T4 registry of 170 nodes, not the historical 11×11 grid.
+- Six class roots are authored: Cadence, Cooldown, Reload, Energy, DoT, and
+  Conduit. The current skill tree has authored T0–T3 layers; T4 skill nodes are
+  still target content. Conduit is enabled in all environments, while development
+  tooling and auth bypasses remain independently controlled.
+- Equipment has six slots: weapon, armor, recovery, mobility, core, and relic.
+  Ordinary items use the authored upgrade track; Cores and Relics use named
+  evolution rules.
+- Global Mastery is derived from biome progression and gates Rune capacity and
+  ordinary item upgrades. Catalysts are keyed by node modifier family, not biome.
+- The server runs a 10 Hz logic loop and 5 Hz broadcast loop. Gameplay telemetry
+  is stored in the separate log database when enabled.
 
-```
-client/   Phaser + React player app
-admin/    React ops dashboard
-server/   Express + Socket.IO + authoritative ECS simulation
-shared/   Cross-boundary types, protocol, pure formulas, static data
-tools/    Balance reports (dps-report, ehp-report, mob-report) + Rust TUI
-```
+## Key references
 
-## Current state (June 2026)
-
-- Content authored through T4 (11×11 grid, 11 biomes, T0–T4 monsters + bosses + recipes)
-- 6 class archetypes: Cadence, Energy, DoT, Cooldown, Reload, Summoner
-- T0–T3 skill tree fully implemented; T4 specs in progress
-- Rune loadout system live; rune balance pass pending
-- Mobile HUD shell done; panel internals redesign in progress
-- Railway-style deployment in progress; admin auth not yet implemented
-
-## Key design documents
-
-- `design_docs/game-overview.md` — what the game is and how it plays (start here)
-- `design_docs/design-bible.md` — core invariants, biome roster, weapon archetypes, math baseline
-- `design_docs/player-power-curve.md` — stat bands, eHP/DPS lookup tables, monster tuning guide
-- `design_docs/boss-design.md` — boss philosophy, per-tier layer curve, stat anchors
-- `docs/system-rework-roadmap.md` + `docs/system-rework-status.md` — current roadmap and live scoreboard (post-T4 system rework). The old `design_docs/archive/roadmap-2026-06.md` (T4 milestone) is archived/historical.
-- `CLAUDE.md` — agent coding guide (architecture rules, commands, ECS conventions)
+- `docs/README.md` — documentation command center and archive lifecycle.
+- `design_docs/game-overview.md` — concise gameplay and system overview.
+- `design_docs/design-bible.md` — design invariants and long-term vocabulary.
+- `design_docs/player-power-curve.md` — target stat bands, explicitly not a runtime contract.
+- `docs/system-rework-roadmap.md` and `docs/system-rework-status.md` — current
+  follow-up roadmap and implementation scoreboard.
+- `CLAUDE.md` — repository instructions and source-first engineering rules.

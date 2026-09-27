@@ -12,12 +12,12 @@ import { soleCatalystFamily, t2, t2FarmFor, type T2BiomeGroup } from "./t2Common
  *
  * ── The constraint that shapes the whole tier ──────────────────────────────
  *
- * 20 of the 32 Tier-2 recipes are EVOLUTIONS (`evolvesFrom`) of one specific
+ * 21 of the 32 Tier-2 recipes are EVOLUTIONS (`evolvesFrom`) of one specific
  * Tier-1 item, and `craftRecipe` refuses them outright ("This item must be
  * evolved or reconstructed"). Only the eight Jungle/Desert pieces and the three
  * Cores are plain crafts. An evolution offers two paths:
  *
- *   EVOLVE       consume a BAG copy of the predecessor at +5, pay the cheap
+ *   EVOLVE       consume a BAG copy of the predecessor at +3, pay the cheap
  *                `cost`. Roughly a third of the reconstruct price.
  *   RECONSTRUCT  pay `reconstructCost` instead, no predecessor needed -- and
  *                only where that cost is authored at all.

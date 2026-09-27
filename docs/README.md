@@ -1,407 +1,180 @@
 # Documentation Index
 
-Map of every living doc, what it is for, and where history goes.
-Last sorted: 2026-09-17.
+**Last audited:** 2026-09-27
 
-**If code and any doc disagree, the code wins — fix the doc.**
+This is the navigation page for documentation that is useful in the current
+repository. It is deliberately not a dump of every dated report. Source code
+wins over every document: shared rules and server behavior are the evidence
+for implementation claims.
 
-## The four kinds of doc
+## The four kinds of documentation
 
-| Kind | Lives in | Job |
-|---|---|---|
-| **Design authority** | `design_docs/` | What a system *should* be. Intent, invariants, bands. Survives implementation. |
-| **Current state** | `docs/<system>-current-state.md` | What the code *does* today. The living truth. Updated whenever the system changes. |
-| **Implementation plan** | `docs/<system>-*-plan.md` | How and in what order to build it. **Archived once shipped.** |
-| **History** | `docs/archive/`, `design_docs/archive/` | Shipped plans and superseded brainstorms. Every file carries an `ARCHIVED` header naming its live successor. Never trust as current. |
+1. **Current state** — what the checked-in code and data do now.
+2. **Design authority** — intended behavior, constraints, and vocabulary in
+   design_docs/.
+3. **Active plans and operations** — scoped work that is still open or an
+   operating procedure that is still used.
+4. **Historical evidence** — completed plans, handoffs, experiment packets,
+   reports, and superseded decisions under docs/archive/, design_docs/archive/,
+   docs/briefs/, or reports/.
 
-**Lifecycle:** a plan ships → fold anything still true into the paired
-`*-current-state.md` → `git mv` the plan into `archive/` → stamp a one-line
-`> **ARCHIVED (date) — implemented; live state in X.**` header → repoint inbound
-references. New feature ideas start in `docs/future-plans.md`, not a fresh
-top-level doc.
-
----
+A current-state page should say when it was audited, name the owning source
+paths, distinguish shipped behavior from placeholder balance, and link focused
+tests where they exist. A dated packet or report is not a current rule merely
+because it is detailed.
 
 ## Start here
 
-| Doc | Why |
-|---|---|
-| [Playtest follow-up command center](briefs/playtest-followup-command-center-2026-09-25.md) | **Start here for post-v0.5 work.** Status, code location, blocking decisions and session order for the six follow-up workstreams (Volcano, defense, Conduit, XP pacing, economy, T4 balance). |
-| [Volcano area nerf study](../reports/volcano-area-study-2026-09-25/EXPERIMENT.md) | **Applied** 2026-09-25: Heat incoming 4.5%→3.5%/stack, Ash Salamander 84→70, Ember Skink 75→60 + Burn 13→8, Ashspitter 110→95 + Burn 16→12. 52-observation farm/boss check; survival improves, Conduit still fails T3 Volcano. |
-| [Conduit durability study](../reports/conduit-study-2026-09-25/REPORT.md) | 224 observations; recommends +50% summon HP with replacement ratio 0.30→0.20 as the **early-game** candidate only. Not applied; upper tiers are package-dependent with regressions. |
-| [T4 scaling study](../reports/t4-scaling-study-2026-09-25/STUDY.md) | 185 World observations on T4 specialization outliers; proposes Voidwalker mitigation fix, Berserker/Juggernaut/Melter/Invoker ceiling cuts. Voidwalker/Berserker/Juggernaut adopted on `feat/t4-balance`; Melter/Invoker held. |
-| [T4 class balance screen](../reports/t4-balance-2026-09-25/SCREEN.md) | 37-spec paired World screen (develop vs `feat/t4-balance`) for the adopted Voidwalker fix, Berserker 60→30 and Juggernaut log knee; tunables and open sign-offs. |
-| [Player defense redesign proposal](../reports/player-defense-study-2026-09-25/REDESIGN-PROPOSAL.md) | All 30 armors, 12 cores, class defenses and damage ordering; preserves biome identities and adds ranged contact-survival criteria. Source audit and prototype values only; implementation and iterations live on `codex/defense-redesign-01`. |
-| [Defense rework qualification](../reports/defense-rework-2026-09-25/REPORT.md) | 2026-09-25: the Codex defense package, split and **shipped** in two merges, (a1) pipeline fixes then (a2) charged-plating order + (b) rebudget with half Jungle/Desert plating kept. Final 888-run matrix against original: farm deaths 87 → 79, boss wins 159 → 185; [finite-pack replay](../reports/defense-iteration-04/REPORT.md) 47 → 32 deaths. |
-| [Playtest 3 reward and mastery study](../reports/reward-mastery-study-2026-09-25/README.md) | 140-node audit and [joint XP/essence proposal](../reports/reward-mastery-study-2026-09-25/PROPOSAL.md): concrete ranges, 117 gear schedules, +3-at-mastery/+5-at-1.5× targets, and telemetry follow-through. Isolated candidate tested in 184 bot simulations; [iteration 05: XP-only holdout, 16/24 mastered](../reports/reward-mastery-study-2026-09-25/iteration-05/RESULTS.md); [iteration 04: T4 build-by-biome diagnosis and corrections](../reports/reward-mastery-study-2026-09-25/iteration-04/RESULTS.md); [iteration 03: T4 fast-end 50-minute screen](../reports/reward-mastery-study-2026-09-25/iteration-03/RESULTS.md); [iteration 02 results: original T1 XP, calibrated T2, surviving setups](../reports/reward-mastery-study-2026-09-25/iteration-02/RESULTS.md); [results and rejection of the full package](../reports/reward-mastery-study-2026-09-25/RESULTS.md). Raw >1 MB traces are local-only. |
-| [Economy baseline campaign 01 preparation](../reports/economy-baseline-campaign-01-preparation/README.md) | Proposed 1,332 rate cells and 32 tier lives; source/input audit, eight incompatible historical T2 handoffs, missing canonical later-tier inputs and launch gates. Not sealed or launched; superseded by campaign 02 preparation on `codex/economy-v2`. |
-| [T3 Tundra class/frame 01 preparation](../reports/player-fast-pass/t3-tundra-class-frame-01-preparation/README.md) | Sealed 52-observation ordinary-Tundra class/frame screen, 52/52 zero-tick qualified; Squire Slam discarded by user correction, main combat unlaunched. |
-| [Guard coverage 01 handoff](../reports/player-fast-pass/guard-coverage-01-preparation/LUNA_RUN.md) | Integrated measured session correction; 32 fresh Endure comparison cells, zero-tick qualified, execution pending. |
-| [Player package-fit r1 packet](briefs/player-package-fit-operator-packet.md) | Prepared revised AoE/reactive-Brace packages, 36-row ceiling, machine-readable Luna report contract and scoped commit/push requirement; main run not launched. |
-| [Player balance fast-pass packet](briefs/player-balance-fast-pass-operator-packet.md) | Prepared 36-observation T2-T4 player-package screen, frozen source identity, exact commands, qualification, and decision ledger; main batch not launched. |
-| [Conduit recovery preparation](../reports/player-fast-pass/conduit-recovery-preparation/README.md) | Local production R1 adoption, 102 historical farm-only completions, and optional 24-observation R1/R2 packet; combat batches unrun. |
-| [Day 2 bounded comparison preparation](../reports/player-fast-pass/day2-bounded-01-preparation/README.md) | Qualified separate session-correction candidate and four fixed package comparisons; 24 new observations plus 16 reused controls, exact Luna handoff, no combat launched. |
-| [Overnight endurance 01 preparation](../reports/player-fast-pass/overnight-endurance-01-preparation/README.md) | Sealed 336-case T3/T4 endurance and paired-charm ledger, zero-tick qualified builds, Conduit diagnosis-only disposition and exact Luna execution/publication handoff; main combat unrun. |
-| [Farming sustain 01 preparation](../reports/player-fast-pass/farming-sustain-01-preparation/README.md) | Sealed 20-case charm/native Recuperating screen, zero-tick receipts, fixed-source handoff and focused Conduit trace review; main combat unrun. |
-| [Player breadth 01 operator packet](briefs/player-breadth-01-operator-packet.md) | Prepared 204-observation class/frame/path screen with isolated Conduit reconstruction-r1, legal catalogue, null-safe telemetry and exact execution contract; main packet not launched. |
-| [Gameplay telemetry](gameplay-telemetry-current-state.md) | Railway storage/configuration, gameplay-only field boundary, encounter/decision semantics, admin access, retention and reliability limits. |
-| [Telemetry MCP setup](telemetry-mcp-setup.md) | Deployed read-only MCP service, restricted PostgreSQL login, production verification receipt, and Railway/Codex connection instructions. |
-| [Boss5 report](briefs/bot-balance-boss5-report.md) | Execution record for the 120-fight Boss5 breadth screen at `e1a6f321`: 14/18 Block B bosses verified cleanly, **4 preserved as identity failures** (`t1-plains` real wandering fauna; `t3-swamp`/`t3-volcanic`/`t4-volcanic` a boss hazard object mislabeled as add damage — two different causes, neither a summoned creature). Block C: 85 strictly dominates 104 on every root that differs (4 flips, 0 reversals). No fight pooled across bosses, tiers, or arms. |
-| [Boss5 operator packet](briefs/bot-balance-boss5-operator-packet.md) | **Executed 2026-09-19; see the report above.** Roster BREADTH plus one bounded Cave refinement: every in-scope active solo boss with no usable current evidence (N = **18** — T1 five, T3 seven, T4 six), one block per boss, six tier-legal reference packages, one predeclared seed, installing **nothing**; plus `chitinous-dreadbore` attack **104 vs 85** on the Boss4 Brace references, where **both** arms are treated because 104 is a candidate and authored source is still 139. **6 x 18 + 12 = 120 fights.** |
-| [Boss4 addendum](briefs/bot-balance-boss4-addendum.md) | **Decisions and five corrections** on the Boss4 screen, from existing evidence only. Behemoth venom **9 -> 6 is ADOPTED into source** and its block retired so it cannot be applied twice; Dreadbore 104 is a **fallback, not an adoption**. Corrects the Cave apprentice 50% crossing, **withdraws** the Eruption-multiplier inference (`grossDamage` is the base attack on both paths), the shred-only explanation of `hpDamage` variance, the 18-vs-**24** Cave observation total, and restates the Conduit accounting gap as unknown. |
-| [Boss4 report](briefs/bot-balance-boss4-report.md) | Execution record for the 24-fight Boss4 screen: Swamp 2/6 -> **4/6**, Cave 0/6 -> **1/6**, 24/24 verified, all 12 controls reproducing their Boss3 arm exactly. **Read the addendum above with it** — five of its prose claims are corrected there; its tables stand. |
-| [Boss4 operator packet](briefs/bot-balance-boss4-operator-packet.md) | **Executed 2026-09-19; its Swamp block is now RETIRED.** One local enemy-pressure candidate per boss — Behemoth venom 9 -> 6 per stack on the Boss3 Cleanse package, Dreadbore attack 139 -> 104 on the Boss3 Brace reference — two independent blocks, 6 roots x 2 arms on the carried seed `98011`, 300 s cap: 24 fights. |
-| [Boss3 report](briefs/bot-balance-boss3-report.md) | Execution record for the 24-fight Boss3 screen at `aedef122`: Swamp responds (0/6 -> 2/6), Cave does not (0/6 -> 0/6). Read its **§11 corrections** with it — `minHpFraction` is a 100 ms tick minimum, not a terminal value, and the fight counts and "nothing got worse" claims are corrected there. |
-| [Boss3 operator packet](briefs/bot-balance-boss3-operator-packet.md) | **Executed 2026-09-19.** One defensive substitution — Brace -> Cleanse at index 1 of the ordered Guard list — against the two T2 bosses that beat every portable reference; 2 blocks x 6 roots x 2 arms on the reused Boss2 seed, 300 s cap: 24 fights. No balance value changes. |
-| [Boss2 review](briefs/bot-balance-boss2-review.md) | Corrections to the Boss2 report from its own artifacts (Conduit has one victory, not two; the Corrosive-Pool attribution claim is withdrawn; Dreadbore is burst, not attrition) plus the verified Cleanse eligibility, costs and selection facts the Boss3 packet rests on. |
-| [Boss2 report](briefs/bot-balance-boss2-report.md) | Execution record for the 36-fight Boss2 screen at `96cf77d4`, completing T2 boss coverage at 42 observations. Read alongside the review above, which corrects it. |
-| [Boss2 operator packet](briefs/bot-balance-boss2-operator-packet.md) | **Executed 2026-09-19.** The six remaining T2 bosses x six portable reference packages x one declared seed `98011`, 300 s cap: 36 fights. Carries the six Boss1 Timberclaw rows forward (tagged as reused) for a seven-boss coverage map. |
-| [Boss1 review](briefs/bot-balance-boss1-review.md) | What Boss1's 18 fights do and do not establish: Timberclaw 1/6 with all five losses kept, Sovereign 12/12 reviewed-not-certified, guardian access unmeasured, no cross-slot tier comparison. |
-| [Boss1 declaration audit](briefs/bot-balance-boss1-stance-declaration-audit.md) | Retrospective resolution of the Sovereign block's failed stance-declaration verification, without new combat. Preserves the original failure; establishes intent from pre-execution sources and checks all 18 fights against their raw event logs. |
-| [Boss1 report](briefs/bot-balance-boss1-report.md) | Execution record for the 18-fight Boss1 screen at `66d33d57`. Read alongside the review and audit above, which correct and extend it. |
-| [Durability 32 operator packet](briefs/bot-balance-durability32-operator-packet.md) | Executed once: post-repair Jungle regression screen, T1 Mountain Power Shot 2.2/1.8 comparison, and Jungle T4 breadth after the repair gate; 40 cells / 120 observations, no production edits. |
-| [Durability 32 report](briefs/bot-balance-durability32-report.md) | Completed all 120 observations. Bush-trap repair passed its one exercised case (11/12 not exercised); found a distinct, still-open idle/freeze signature in 5/12 Jungle-repair and 13/36 Jungle-breadth observations unrelated to the bush trap; Power Shot 1.8 candidate shrinks hit size 9-20% but shows no clean survival-rate effect at T1; synthetic evidence only, no production adoption. |
-| [Durability 24 operator packet](briefs/bot-balance-durability24-operator-packet.md) | Executed once: four-arm Graveyard leader/escort HP redistribution and Focus Elites targeting comparison, with T4B Blunderbuss stress and pacing guardrails; 56 cells / 168 observations, no production edits. |
-| [Durability 24 report](briefs/bot-balance-durability24-report.md) | Completed the 56-cell / 168-observation Graveyard screen with geometry parity, targeting samples, Risen/DoT/death audit, normal-targeting HP candidate disposition, synthetic evidence only, and no production adoption. |
-| [Durability 23 operator packet](briefs/bot-balance-durability23-operator-packet.md) | Executed once: Volcano anchor HP-only comparison, Graveyard Focus Elites counterplay, and bounded Jungle exposure; 64 cells / 192 observations, no production edits. |
-| [Durability 23 report](briefs/bot-balance-durability23-report.md) | Completed all 64 cells / 192 observations with verified blocks; one Volcano death, 20 Graveyard deaths, six Jungle wall ceilings, geometry parity, synthetic evidence only, no production adoption. |
-| [Durability 22 operator packet](briefs/bot-balance-durability22-operator-packet.md) | Executed once: four-block T4 control/candidate HP overlay and Trench mini-boss pacing survey; 96 cells / 288 observations, no production edits. |
-| [Durability 22 report](briefs/bot-balance-durability22-report.md) | Completed 96-cell / 288-observation Trench, Mountain, Tundra, and Desert overlay screen; five player deaths, no wall ceilings, geometry parity verified, synthetic evidence only, no production balance adoption. |
-| [Durability 20 operator packet](briefs/bot-balance-durability20-operator-packet.md) | Prepared 504-run T2/T3 roster coverage survey with selected Forest/Volcano packages, finite remaining-work map; not launched. |
-| [Durability 20 report](briefs/bot-balance-durability20-report.md) | Completed the 504-run T2/T3 roster coverage matrix; runner complete but frozen verifier stopped on 20 wall-ceiling outcome labels before official exposure audit, synthetic evidence only, no balance edits. |
-| [Durability 19 operator packet](briefs/bot-balance-durability19-operator-packet.md) | Prepared 144-run fresh-seed Forest/Volcano candidate confirmation on current combat snapshot; no production patch or launch. |
-| [Durability 19 report](briefs/bot-balance-durability19-report.md) | Completed 48-cell / 144-observation current-runtime Forest/Volcano adult durability confirmation; one death, five long-quiet arm-runs across four excluded pairs, 68 eligible pairs, synthetic evidence only, no balance edits. |
-| [Durability 18 operator packet](briefs/bot-balance-durability18-operator-packet.md) | Executed once: 24-run Forest03 Wolf attack versus defensive stance comparison for Striker/Apprentice; synthetic evidence retained, no balance edits. |
-| [Durability 18 report](briefs/bot-balance-durability18-report.md) | Completed 8-cell / 24-observation Forest03 Wolf attack and stance comparison; one death, two additional sub-20% survivors, six matched sets, synthetic evidence only, no balance edits. |
-| [Durability 17 operator packet](briefs/bot-balance-durability17-operator-packet.md) | Prepared 144-run T2 Forest adult durability/pressure trial across six roots, retaining fragile whelps; no production patch or launch. |
-| [Durability 17 report](briefs/bot-balance-durability17-report.md) | Completed 48-cell / 144-observation T2 Forest adult durability/pressure trial; eight deaths, eight additional sub-20% survivors, two long-quiet exclusions, matched sensitivity retained, synthetic evidence only, no balance edits. |
-| [Durability 16 operator packet](briefs/bot-balance-durability16-operator-packet.md) | Prepared 72-run species-specific Volcano attack comparison at fixed candidate anchor HP; no production patch or launch. |
-| [Durability 16 report](briefs/bot-balance-durability16-report.md) | Completed 24-cell / 72-observation Volcano attack-relief comparison; one death, one additional sub-20% survivor, seven long-quiet flags, 15/18 matched sets, exact Durability15 bookends, synthetic evidence only, no balance edits. |
-| [Durability 15 operator packet](briefs/bot-balance-durability15-operator-packet.md) | Prepared 144-run paired Volcano anchor HP/attack trial across six classes; exposure exclusions retained, no production patch or launch. |
-| [Durability 15 report](briefs/bot-balance-durability15-report.md) | Completed 48-cell / 144-observation Volcano anchor HP/attack trial; three deaths, two additional sub-20% survivors, eight long-quiet flags, matched sensitivity retained, synthetic evidence only, no balance edits. |
-| [Durability 14 report](briefs/bot-balance-durability14-report.md) | Completed 24-cell / 72-observation repaired-runtime Volcano Sweep/Slam comparison; four terminal exposure gaps, two deaths, one sub-20% survivor, synthetic evidence only, no balance edits. |
-| [Durability 13 report](briefs/bot-balance-durability13-report.md) | Gate-stopped after 15 sustained-engagement observations: one Swamp Striker/6151 83.2s quiet interval; conditional 72-run Volcano Sweep/Slam block not launched, no balance edits. |
-| [Durability 14 operator packet](briefs/bot-balance-durability14-operator-packet.md) | Swamp boundary-handoff repair passes 15 local checks; manual Luna resumes only the pending 72 Volcano comparisons, no balance changes. |
-| [Durability 13 operator packet](briefs/bot-balance-durability13-operator-packet.md) | Frozen movement repair; 15 sustained-engagement checks gate 72 Volcano Sweep/Slam observations, manual Luna, no balance changes. |
-| [Durability 12 report](briefs/bot-balance-durability12-report.md) | Completed 148-observation screen and direct frozen replay investigation: overlapping-bush retreat failure, deep-lava target feasibility and leash oscillation; follow-up repair and qualification in Durability13. |
-| [Durability 12 operator packet](briefs/bot-balance-durability12-operator-packet.md) | Hazard approach verification followed by six-class T2 Plains/T3 Volcano Sweep versus Slam comparison; 148 observations, no new balance overlays. |
-| [Durability 11 report](briefs/bot-balance-durability11-report.md) | Completed 42-cell/126-observation fresh-seed confirmation of adopted Bear/Snapper stats and targeted Jungle stances; two deaths and one no-contact engagement limitation; synthetic evidence only, no live edits. |
-| [Durability 11 operator packet](briefs/bot-balance-durability11-operator-packet.md) | Fresh-seed confirmation of adopted Bear/Snapper stats and targeted Jungle stances; 42 cells/126 observations; known Swamp movement stall tracked separately. |
-| [Durability 10 operator packet](briefs/bot-balance-durability10-operator-packet.md) | Missing Bear continuation first, then T3 Snapper HP bracket and separate Jungle stance/ramp trials; 324 observations, explicit artifact validation, no new live stats. |
-| [Durability 10 report](briefs/bot-balance-durability10-report.md) | Completed 108 configurations / 324 observations across Bear, T3 Snapper HP, and Jungle stance/ramp; verifier-backed synthetic evidence only, no live edits. |
-| [Durability 9 operator packet](briefs/bot-balance-durability9-operator-packet.md) | Ready: approved role HP/Desert pressure patch old/new comparison plus experimental Bear attack relief; 232 cells/696 observations, manual Luna execution. |
-| [Durability 9 report](briefs/bot-balance-durability9-report.md) | Block A completed 200 cells/600 observations, then stopped on the prescribed post-block identity guard; Block B not launched, synthetic evidence only. |
-| [Night 4 planner review](briefs/bot-balance-night4-review.md) | Verified overnight results, Conduit/TTK/secondary-hit interpretation corrections, and recommended role-based durability plus local pressure follow-up; no new live changes. |
-| [Night 4 operator packet](briefs/bot-balance-night4-operator-packet.md) | Ready for manual Luna: three fixed overnight blocks, 28 T2/T3 nodes, six-class breadth, Desert/Bear treatments and Sweep/Slam pairs; 312 cells/936 observations, no live edits. |
-| [Night 4 report](briefs/bot-balance-night4-report.md) | Completed 312-cell/936-observation broad encounter, Desert/Bear, and Sweep/Slam screen; synthetic evidence only, outer-median and inactivity audit retained, no live edits. |
-| [T1–T3 TTK survey operator packet](briefs/bot-balance-ttk-survey-operator-packet.md) | Execute the six-class duration baseline and targeted weapon comparisons; synthetic server benchmark, no balance edits. |
-| [Durability 1 operator packet](briefs/bot-balance-durability1-operator-packet.md) | Completed once: seven-biome T3 HP-only trial, six baselines plus weapon alternatives, T1/T2 controls and Volcano contact telemetry; 192 cells/576 observations. |
-| [Durability 2 operator packet](briefs/bot-balance-durability2-operator-packet.md) | Completed once: T2/T3 named-elite HP and attack calibration toward provisional duration bands; 160 cells/480 observations. |
-| [Durability 3 operator packet](briefs/bot-balance-durability3-operator-packet.md) | Completed: HP/defense exchange and separate T2 Eagle/Thrower pressure arms; 152 cells/456 observations, no DoT resistance or live edits. |
-| [Durability 8 operator packet](briefs/bot-balance-durability8-operator-packet.md) | Completed once: T3 Desert controller HP and Glacier Bear shield-scaling probe; 48 cells/144 observations. |
-| [Durability 8 report](briefs/bot-balance-durability8-report.md) | Completed 48-cell/144-observation Desert controller and Tundra Bear shield screen; synthetic evidence only, fixed-shell Bear candidate and 2x–3x Desert bracket returned, no live edits. |
-| [Durability 7 operator packet](briefs/bot-balance-durability7-operator-packet.md) | Completed T2 Mountain pressure comparison; Titan attack84 selected after review. |
-| [Durability 7 report](briefs/bot-balance-durability7-report.md) | Completed 24-cell/120-observation T2 Mountain pressure attribution; synthetic evidence only, Titan-reduction candidate, no balance edits. |
-| [Durability 6 operator packet](briefs/bot-balance-durability6-operator-packet.md) | Completed paired previous/new HP confirmation on current Sweep code; 64 cells/192 observations; typical-duration targets15-25s T2 /25-35s T3. |
-| [Durability 6 report](briefs/bot-balance-durability6-report.md) | Completed 64-cell/192-observation typical-duration HP adjustment screen; synthetic evidence only, no balance edits. |
-| [Durability 5 operator packet](briefs/bot-balance-durability5-operator-packet.md) | Completed once: combined authored Cave/Mountain durability and Eagle patch confirmation; six baselines plus two weapon alternatives, 32 cells/160 observations. |
-| [Durability 5 report](briefs/bot-balance-durability5-report.md) | Completed 32-cell/160-observation combined Cave/Mountain durability and Stone Eagle confirmation; synthetic only, no balance edits. |
-| [Durability 4 operator packet](briefs/bot-balance-durability4-operator-packet.md) | Completed: Conduit axe/on-hit/heavy versus plating and Eagle dive-only multipliers; 60 cells/300 observations, five seeds. |
-| [Durability 4 report](briefs/bot-balance-durability4-report.md) | Completed 60-cell/300-observation Conduit equipment-counter and Stone Eagle dive-isolation experiment; synthetic only, no live or balance edits. |
-| [Durability 1 report](briefs/bot-balance-durability1-report.md) | Completed 192-cell/576-observation T3 HP-only response trial with enemy-type HP/TTK, class treatment pairs, pressure, weapon comparisons, engagement/inactivity audit, and synthetic evidence boundaries. |
-| [Durability 2 report](briefs/bot-balance-durability2-report.md) | Completed named-elite TTK calibration with HP/attack treatment pairs, pressure/survival, Granite Barrier traces, death attribution, and outgoing-damage-gap audit; synthetic only. |
-| [Durability 3 report](briefs/bot-balance-durability3-report.md) | Completed 152-cell/456-observation defense-identity and T2 companion-pressure trial with named-elite TTK, plating/DR comparison, Eagle dive chronology, Cave root/Slam traces, pressure/death attribution, and inactivity diagnostics; synthetic only. |
-| [T1–T3 TTK survey report](briefs/bot-balance-ttk-survey-report.md) | Completed 66-cell/198-observation duration survey with seed-level censor/death context, enemy TTK/HP, swarm pressure, and Conduit/Slinger comparisons. |
-| [Volcano finishing operator packet](briefs/bot-balance-volcano-finish-operator-packet.md) | Executable four-case T4 Expose Weakness / Colossus screen and sampled final-phase evidence. |
-| [briefs/bot-balance-volcano-finish-report.md](briefs/bot-balance-volcano-finish-report.md) | Volcano finishing result: both Empty-relic cells died before victory; both Colossus cells won/returned; no global relic or balance conclusion. |
-| [briefs/bot-balance-validation-exit-plan.md](briefs/bot-balance-validation-exit-plan.md) | Remaining validation gates, Volcano inactivity diagnosis and transition to mobs/items/classes/economy balance passes. |
-| [briefs/bot-balance-validation-exit-operator-packet.md](briefs/bot-balance-validation-exit-operator-packet.md) | Launch-ready, user-operated qualified Volcano diagnostic and six remaining T4 boss screens from verified returns; no balance edits. |
-| [briefs/bot-balance-validation-exit-report.md](briefs/bot-balance-validation-exit-report.md) | Validation-exit execution: five clean T4 boss wins/returns, one Volcanic first-death exception, and one unresolved productive-inactivity window. |
-| [briefs/bot-balance-night3-operator-packet.md](briefs/bot-balance-night3-operator-packet.md) | Fixed12-case overnight T4 Colossus Heart comparison: Mountain boss and four farming biomes; Luna-only operation. |
-| [briefs/bot-balance-v1z-operator-packet.md](briefs/bot-balance-v1z-operator-packet.md) | T4 Jungle/Desert farming coverage, actual mastery caps and +2 defense preparation. |
-| [briefs/bot-balance-v1z-report.md](briefs/bot-balance-v1z-report.md) | V1z result: Voidwalker reached Jungle18/Desert18, completed both five-minute observations and recovered returns, bought the prescribed +2 defenses, and retained sealed non-canonical evidence with no balance edit. |
-| [briefs/bot-balance-v1y-operator-packet.md](briefs/bot-balance-v1y-operator-packet.md) | Voidwalker T4 entry, affordable Mountain defenses, mastery and sustained farming qualification. |
-| [briefs/bot-balance-v1y-report.md](briefs/bot-balance-v1y-report.md) | V1y result: Voidwalker entered T4, reached Mountain24/GM124, bought the prescribed +1 defenses, completed the 5-minute Mountain observation, and returned rested; sealed non-canonical evidence retained with no balance edit. |
-| [briefs/bot-balance-v1x-operator-packet.md](briefs/bot-balance-v1x-operator-packet.md) | Sequential Mountain/Cave four-seal T4 handoff; corrected progression, safe captures and Docker resource observations. |
-| [briefs/bot-balance-v1x-report.md](briefs/bot-balance-v1x-report.md) | V1x result: one character cleared Mountain and Cave, returned after each, unlocked T4 with one unspent point, and retained exact non-canonical evidence with no balance edit. |
-| [briefs/bot-balance-v1w-operator-packet.md](briefs/bot-balance-v1w-operator-packet.md) | Five remaining T3 boss screens, earned T4 handoff and saved Voidwalker direction. |
-| [briefs/bot-balance-v1w-report.md](briefs/bot-balance-v1w-report.md) | V1w result: Mountain, Cave, Desert, and Jungle recorded named T3 boss wins but failed the T4 handoff assertion; Swamp died to a scripted pool DoT; sealed non-canonical evidence retained with no balance edit. |
-| [briefs/bot-balance-v1v-operator-packet.md](briefs/bot-balance-v1v-operator-packet.md) | Two Tundra boss replicas with Cleanse/Break Free and audited travel from the earned Volcano return. |
-| [briefs/bot-balance-v1v-report.md](briefs/bot-balance-v1v-report.md) | V1v result: both Tundra replicas cleared the guardians, killed the named Rime-Mammoth, won the boss attempt, returned safely, and retained sealed non-canonical diagnostic evidence with no balance edit. |
-| [briefs/bot-balance-v1u2-operator-packet.md](briefs/bot-balance-v1u2-operator-packet.md) | Resume GM96 preparation with audited waypoints and staged upgrades before gated boss replicas. |
-| [briefs/bot-balance-v1u2-report.md](briefs/bot-balance-v1u2-report.md) | V1u2 result: audited GM114 preparation passed, then both fresh tempo/barrier Volcano replicas cleared and safely returned; sealed non-canonical diagnostic evidence with hashes retained and no balance edit. |
-| [briefs/bot-balance-v1u-operator-packet.md](briefs/bot-balance-v1u-operator-packet.md) | Earn full T3 tempo/barrier preparation, then two gated Volcano boss attempts. |
-| [briefs/bot-balance-v1u-report.md](briefs/bot-balance-v1u-report.md) | V1u result: preparation passed the Mountain gate, then died during Jungle travel before the earned T3 kit or boss attempts; sealed non-canonical evidence with hashes retained and no balance edit. |
-| [briefs/bot-balance-v1t-report.md](briefs/bot-balance-v1t-report.md) | V1t result: both independent Volcano runs cleared all 12 guardians and reached the named boss, then died before boss kill/progression or safe return; sealed non-canonical evidence with hashes retained and no balance edit. |
-| [briefs/bot-balance-v1t-operator-packet.md](briefs/bot-balance-v1t-operator-packet.md) | Prepared Volcano dungeon/boss validation: two independent attempts from the paid V1s pursuit checkpoint; no new balance changes. |
-| [briefs/bot-balance-v1s-operator-packet.md](briefs/bot-balance-v1s-operator-packet.md) | Prepared six checkpoint runs testing repeatable five-minute Volcano farming and recovered returns with unchanged control/pursuit builds. |
-| [briefs/bot-balance-v1s-report.md](briefs/bot-balance-v1s-report.md) | V1s result: control died in all three natural five-minute screens; pursuit completed and recovered in all three; sealed non-canonical evidence with hashes retained and no balance edit. |
-| [briefs/bot-balance-v1r-operator-packet.md](briefs/bot-balance-v1r-operator-packet.md) | Prepared three short named-checkpoint Volcano screens: control, focused targeting, and paid pursuit counterplay; no further balance edits. |
-| [briefs/bot-balance-v1r-report.md](briefs/bot-balance-v1r-report.md) | V1r result: control and pursuit completed natural Volcano observation and recovered return; focus died before the full window; one-pass, non-canonical evidence with hashes retained and no balance edit. |
-| [named-progression-checkpoints.md](named-progression-checkpoints.md) | Named safe/rested capture and independent short continuations: authoring, normalization, provenance and exact runner commands. |
-| [briefs/named-checkpoint-acceptance.md](briefs/named-checkpoint-acceptance.md) | Implementation checks and bounded real-server capture/restore acceptance evidence; proposed short Volcano use. |
-| [briefs/bot-balance-autonomous-night-plan.md](briefs/bot-balance-autonomous-night-plan.md) | Activated Astra–Luna night: Cave/Jungle, continuous T3 entry, conditional exploration and balance proposals only. |
-| [briefs/bot-balance-night2-ledger.md](briefs/bot-balance-night2-ledger.md) | Closed overnight packet accounting, source audit and strategy evidence. |
-| [briefs/bot-balance-night2-handoff.md](briefs/bot-balance-night2-handoff.md) | Completed autonomous night: T2 class evidence, earned T3 transit blocker, verified lava diagnostic and next decisions. |
-| [briefs/bot-balance-v1q-operator-packet.md](briefs/bot-balance-v1q-operator-packet.md) | Prepared four-case validation of approved Volcano fodder HP/attack reductions against retained V1p evidence; T4 adjustment remains provisional. |
-| [briefs/bot-balance-v1q-report.md](briefs/bot-balance-v1q-report.md) | V1q result: every fixed Volcano arm killed one reduced Scuttler but died before a roster clear; no post-clear tail, T4 case, live route, or balance change. |
-| [briefs/bot-balance-v1p-operator-packet.md](briefs/bot-balance-v1p-operator-packet.md) | Closed Volcano swarm-kit diagnostics and natural Tundra counterplay farming packet. |
-| [briefs/bot-balance-v1p-report.md](briefs/bot-balance-v1p-report.md) | V1p result: all four fixed Volcano swarm-kit fixtures died before a kill; one natural Tundra route farmed 300 seconds and 22 kills, then died on return transit; sealed, non-canonical evidence with hashes retained. |
-| [briefs/bot-balance-v1o-operator-packet.md](briefs/bot-balance-v1o-operator-packet.md) | Closed eight-case Tundra pursuit/Volcano pressure diagnostic packet; includes post-run RP prose correction. |
-| [briefs/bot-balance-v1o-report.md](briefs/bot-balance-v1o-report.md) | V1o execution result: four fixed-seed clears and four gameplay deaths across Tundra pursuit counterplay and Volcano roster/Heat diagnostics; non-canonical, non-economy evidence with hashes retained. |
-| [briefs/bot-balance-v1n-biome-audit.md](briefs/bot-balance-v1n-biome-audit.md) | Volcano pack/Heat pressure and Heavy bear damage reconstruction; corrected anti-kiting interpretation, guard timing and telemetry limits. |
-| [briefs/bot-balance-v1n-operator-packet.md](briefs/bot-balance-v1n-operator-packet.md) | Two independent earned-Wisp T3 pressure screens: Volcano and Tundra, bounded farming and recovered return. |
-| [briefs/bot-balance-v1n-report.md](briefs/bot-balance-v1n-report.md) | V1n execution result: both independent T3 pressure screens reached their resolved target node, then stopped on first gameplay death before farm completion or safe return; release and evidence hashes retained. |
-| [briefs/bot-balance-v1m-assessment.md](briefs/bot-balance-v1m-assessment.md) | Verified safe T3 checkpoint, strict branched import qualification and transition to targeted T3 exploration. |
-| [briefs/bot-balance-v1m-operator-packet.md](briefs/bot-balance-v1m-operator-packet.md) | User-launched Luna: earn Wisp before Spirit T3 travel; one fixed bridge, first-death stop, no downstream execution. |
-| [briefs/bot-balance-v1m-report.md](briefs/bot-balance-v1m-report.md) | V1m execution result: Wisp unlocked after three T2 seals; 28RP travel build reached recovered T3 Sanctuary with zero deaths; non-canonical single-case evidence only. |
-| [briefs/bot-balance-v1l-operator-packet.md](briefs/bot-balance-v1l-operator-packet.md) | User-launched Luna: one unchanged Spirit bridge on the static-hazard fix, retaining Avoid Hazards and Recover First. |
-| [briefs/bot-balance-v1l-report.md](briefs/bot-balance-v1l-report.md) | V1l execution result: three T2 seals and natural T3, then first-death stop in Volcanic transit; static-hazard escape telemetry was unobserved. |
-| [briefs/bot-balance-night2-a-operator-packet.md](briefs/bot-balance-night2-a-operator-packet.md) | Night 2 packet A: Cave Brace timing and Jungle Hamstring feasibility. |
-| [briefs/bot-balance-night2-a-report.md](briefs/bot-balance-night2-a-report.md) | Night 2 packet A execution: four Cave timing cases and two Jungle Hamstring cases, with terminal evidence and release hashes. |
-| [briefs/bot-balance-night2-b-report.md](briefs/bot-balance-night2-b-report.md) | Night 2 packet B bridge result: three T2 seals and earned T3, then declared first-death stop during T3 Sanctuary travel. |
-| [briefs/bot-balance-night2-b-operator-packet.md](briefs/bot-balance-night2-b-operator-packet.md) | Night 2 conditional continuous three-seal bridge and strict earned T3 handoff. |
-| [briefs/bot-balance-night2-c-operator-packet.md](briefs/bot-balance-night2-c-operator-packet.md) | Night 2 ordinary travel-rune and dual-Guard bridge package after the first transit failure. |
-| [briefs/bot-balance-night2-d-report.md](briefs/bot-balance-night2-d-report.md) | Night 2 packet D execution: four Squire Plains armor cases in ABBA order, with three clears and one first-death stop. |
-| [briefs/bot-balance-night2-d-operator-packet.md](briefs/bot-balance-night2-d-operator-packet.md) | Final overnight fallback: Bulwark Squire Plains armor comparison with class-specific delivery and kill recovery. |
-| [briefs/bot-balance-night2-c-report.md](briefs/bot-balance-night2-c-report.md) | Night 2 packet C execution: earned T3, activated ordinary travel combat, then stopped on first Volcanic transit DoT death. |
-| [briefs/bot-balance-v1j-assessment.md](briefs/bot-balance-v1j-assessment.md) | Mountain feasibility, fragile Swamp outcomes and damage-type mitigation hypotheses. |
-| [briefs/bot-balance-v1k-operator-packet.md](briefs/bot-balance-v1k-operator-packet.md) | Eight runs: Swamp armor comparison, Cave/Desert coverage and bounded post-clear observation. |
-| [briefs/bot-balance-v1k-swamp-study.json](briefs/bot-balance-v1k-swamp-study.json) | Cave armor versus Bog Wrappings under fixed Bog Eye and ability rules. |
-| [briefs/bot-balance-v1k-report.md](briefs/bot-balance-v1k-report.md) | V1k execution ledger: Swamp armor comparison, Cave loss coverage, Desert wins and preserved post-clear evidence. |
-| [briefs/bot-experiment-resource-lifecycle.md](briefs/bot-experiment-resource-lifecycle.md) | Automatic terminal network release, retained data, manual recovery command and V1j capacity incident. |
-| [briefs/bot-balance-theorycrafting-reference.md](briefs/bot-balance-theorycrafting-reference.md) | Source-grounded encounter/build reasoning, corrected human Plains evidence, legal T2 RP alternatives and prioritized future comparisons. |
-| [briefs/bot-balance-v1i-assessment.md](briefs/bot-balance-v1i-assessment.md) | Accepted preparation and Spirit T2 results, inference limits and next encounter hypotheses. |
-| [briefs/bot-balance-v1j-operator-packet.md](briefs/bot-balance-v1j-operator-packet.md) | Six bounded Spirit runs: Mountain coverage and Swamp barrier versus periodic Recovery. |
-| [briefs/bot-balance-v1j-swamp-study.json](briefs/bot-balance-v1j-swamp-study.json) | Frozen Swamp charm comparison with identical preparation and abilities. |
-| [briefs/bot-balance-v1j-report.md](briefs/bot-balance-v1j-report.md) | V1j retry complete: Mountain 2/2 wins; Swamp barrier/recovery each 1/2 wins with valid boss deaths retained; first capacity-blocked attempt preserved as history. |
-| [briefs/bot-balance-v1a-assessment.md](briefs/bot-balance-v1a-assessment.md) | Preparation timeout, supervisor rename failure and scoped preparation/infrastructure repairs. |
-| [briefs/bot-balance-v1b-assessment.md](briefs/bot-balance-v1b-assessment.md) | Valid finalization, acquisition timeout and decision to separate preparation. |
-| [briefs/bot-balance-v1c-assessment.md](briefs/bot-balance-v1c-assessment.md) | Post-death travel stall diagnosis and scoped executor recovery repair. |
-| [briefs/bot-balance-v1d-assessment.md](briefs/bot-balance-v1d-assessment.md) | Preparation success, inherited failure review and earned T1 encounter entry. |
-| [briefs/bot-balance-v1e-operator-packet.md](briefs/bot-balance-v1e-operator-packet.md) | Exact V1d snapshot entry and one Plains boss probe with Plains Charm/Sweep. |
-| [briefs/bot-balance-v1e-report.md](briefs/bot-balance-v1e-report.md) | V1e execution result; imported earned T1 Striker swapped to Plains Charm and cleared the Plains dungeon/Tusked Razorback in one bounded attempt. |
-| [briefs/bot-balance-v1e-assessment.md](briefs/bot-balance-v1e-assessment.md) | Current T1/T2 confidence, accepted Plains result and overnight preparation validation. |
-| [briefs/bot-balance-night1-operator-packet.md](briefs/bot-balance-night1-operator-packet.md) | Bounded 25-run overnight program: T1 bosses, dual-Guard Swamp comparison and six T2 progression screens. |
-| [briefs/bot-balance-night1-report.md](briefs/bot-balance-night1-report.md) | Durable execution ledger and morning handoff for the Night 1 T1/T2 isolated experiment program. |
-| [briefs/bot-balance-night1-assessment.md](briefs/bot-balance-night1-assessment.md) | Swamp results, entry-observation repair, evidence counts and updated T3/T4 balance issue. |
-| [briefs/bot-balance-v1f-operator-packet.md](briefs/bot-balance-v1f-operator-packet.md) | Atomic entry qualification followed by Swamp comparison and four T1 boss probes with the integrated mechanic repairs. |
-| [briefs/bot-balance-v1f-report.md](briefs/bot-balance-v1f-report.md) | V1f execution ledger for atomic entry validation, the Swamp comparison, and remaining T1 coverage. |
-| [briefs/bot-balance-v1f-assessment.md](briefs/bot-balance-v1f-assessment.md) | Accepted T1 results, premature-stop and guardian/boss corrections, Cave hypothesis and T2 next steps. |
-| [briefs/bot-balance-v1g-operator-packet.md](briefs/bot-balance-v1g-operator-packet.md) | Plains coverage, Cave corrosion comparison and six-class T2 progression screen with explicit outcome classification. |
-| [briefs/bot-balance-v1g-cave-study.json](briefs/bot-balance-v1g-cave-study.json) | Frozen Cave Expose/Second Wind versus Second Wind/Cleanse comparison arms. |
-| [briefs/bot-balance-v1g-report.md](briefs/bot-balance-v1g-report.md) | V1g execution ledger for Plains, Cave corrosion, and the independent T2 progression screen. |
-| [briefs/bot-balance-v1g-assessment.md](briefs/bot-balance-v1g-assessment.md) | V1g interpretation, current source changes, human Cave evidence and next decisions. |
-| [briefs/bot-balance-v1h-operator-packet.md](briefs/bot-balance-v1h-operator-packet.md) | Current Cave builds, Mountain check and targeted T2 catalyst follow-up;13 bounded runs. |
-| [briefs/bot-balance-v1h-cave-study.json](briefs/bot-balance-v1h-cave-study.json) | Four Cave packages separating ability, recovery and Brace hypotheses. |
-| [briefs/bot-balance-v1h-report.md](briefs/bot-balance-v1h-report.md) | V1h execution ledger for current Cave counterplay, the Mountain check, and targeted T2 progression screens. |
-| [briefs/bot-balance-v1h-assessment.md](briefs/bot-balance-v1h-assessment.md) | V1h conclusions, wrong-resource diagnosis and prepared T2 boss direction. |
-| [briefs/bot-balance-v1i-operator-packet.md](briefs/bot-balance-v1i-operator-packet.md) | Eight runs: resource-farming repair checks and independent Spirit Plains/Forest boss tests. |
-| [briefs/bot-balance-v1i-plains-study.json](briefs/bot-balance-v1i-plains-study.json) | Spirit Axe versus Gale Needle under the same prepared Plains package. |
-| [briefs/bot-balance-v1i-report.md](briefs/bot-balance-v1i-report.md) | V1i execution ledger for corrected T2 resource reselection and prepared Spirit Plains/Forest boss coverage. |
-| [briefs/bot-balance-night1-swamp-study.json](briefs/bot-balance-night1-swamp-study.json) | Frozen Swamp comparison arms for the overnight operator packet. |
-| [briefs/bot-balance-v1d-operator-packet.md](briefs/bot-balance-v1d-operator-packet.md) | One preparation-only validation of repaired transit recovery. |
-| [briefs/bot-balance-v1d-report.md](briefs/bot-balance-v1d-report.md) | V1d execution result; one natural transit death recovered to the Plains supplier and the full GM30/+5 preparation completed. |
-| [briefs/bot-balance-v1c-operator-packet.md](briefs/bot-balance-v1c-operator-packet.md) | One fresh 30-minute preparation-only qualification, with no boss attempt. |
-| [briefs/bot-balance-v1c-report.md](briefs/bot-balance-v1c-report.md) | V1c execution result; GM30 and Chaotic Axe +5 reached, then travel to the Plains Vest supplier stalled before final readiness. |
-| [briefs/bot-balance-v1b-operator-packet.md](briefs/bot-balance-v1b-operator-packet.md) | Revised one-run Plains boss probe with unchanged required kit and bounded worker-stop contingency. |
-| [briefs/bot-balance-v1b-report.md](briefs/bot-balance-v1b-report.md) | V1b execution result; repaired supervisor finalized a fresh run that timed out during full-kit preparation before the boss probe. |
-| [briefs/bot-balance-q2d-assessment.md](briefs/bot-balance-q2d-assessment.md) | All six initial readiness profiles accepted; campaign state and first boss preparation rationale. |
-| [briefs/bot-balance-v1a-operator-packet.md](briefs/bot-balance-v1a-operator-packet.md) | Frozen fresh-start Striker T1 Plains boss probe, earned GM30/+5 preparation and one dungeon attempt. |
-| [briefs/bot-balance-v1a-report.md](briefs/bot-balance-v1a-report.md) | V1a Striker Plains boss probe timed out during preparation; supervisor state write failed, so no boss result. |
-| [briefs/bot-balance-q2c-assessment.md](briefs/bot-balance-q2c-assessment.md) | Conduit/Slinger passes, Spirit infrastructure stop and bounded network capacity repair. |
-| [briefs/bot-balance-q2d-operator-packet.md](briefs/bot-balance-q2d-operator-packet.md) | Resume never-started Spirit, then Apprentice and Squire through sequential pass gates. |
-| [briefs/bot-balance-q2b-assessment.md](briefs/bot-balance-q2b-assessment.md) | Verified Striker local behavior success, report corrections, and remaining-class decision. |
-| [briefs/bot-balance-q2c-operator-packet.md](briefs/bot-balance-q2c-operator-packet.md) | Five remaining class checks, created individually after each preceding pass. |
-| [briefs/bot-balance-q2-assessment.md](briefs/bot-balance-q2-assessment.md) | Q2 transit confound and local observation repair decision. |
-| [briefs/bot-balance-q2b-operator-packet.md](briefs/bot-balance-q2b-operator-packet.md) | Single Striker repair check before further class or boss tests. |
-| [briefs/bot-balance-q1-assessment.md](briefs/bot-balance-q1-assessment.md) | Astra's evidence review: configuration success and the post-build observation gap. |
-| [briefs/bot-balance-q2-operator-packet.md](briefs/bot-balance-q2-operator-packet.md) | Frozen six-case post-build behavior observation experiment for Luna. |
-| [briefs/bot-balance-q0-report.md](briefs/bot-balance-q0-report.md) | Astra's implemented profiles, readiness routes and qualification limits. |
-| [briefs/bot-balance-q1-operator-packet.md](briefs/bot-balance-q1-operator-packet.md) | Luna's prepared six-case Plains readiness operation and factual report contract. |
-| [briefs/bot-balance-q1-report.md](briefs/bot-balance-q1-report.md) | Luna's completed six-case Plains readiness execution report; configuration qualification only. |
-| [briefs/bot-balance-q2-report.md](briefs/bot-balance-q2-report.md) | Luna's Q2 post-configuration behavior observation report; timed out before a completed 60-second window. |
-| [briefs/bot-balance-q2b-report.md](briefs/bot-balance-q2b-report.md) | Luna's single Striker Q2b local observation repair report; both post-build windows completed on the current Plains node. |
-| [briefs/bot-balance-q2c-report.md](briefs/bot-balance-q2c-report.md) | Q2c Conduit and Slinger local behavior qualification; stopped before Spirit after a Docker network allocation failure. |
-| [briefs/bot-balance-q2d-report.md](briefs/bot-balance-q2d-report.md) | Q2d resumed Spirit after network repair and qualified Spirit, Apprentice, and Squire local behavior. |
-| [briefs/bot-balance-campaign-state.md](briefs/bot-balance-campaign-state.md) | Expert-prepared solo viability campaign: decisions, template shortlist, validity rules and current evidence ledger. |
-| [briefs/bot-balance-q0-template-qualification.md](briefs/bot-balance-q0-template-qualification.md) | Astra preparation specification: qualify current templates and propose bounded readiness cases before runtime experiments. |
-| [runic-attunement-current-state.md](runic-attunement-current-state.md) | Unified RP reservations, named ability rules, arbitration and save migration. |
-| [system-rework-status.md](system-rework-status.md) | **The scoreboard.** What is designed / in progress / done across all 15 rework steps, with a dated session log. |
-| [system-rework-roadmap.md](system-rework-roadmap.md) | The step ordering and dependency graph behind that scoreboard. |
-| [polish-and-balance-roadmap.md](polish-and-balance-roadmap.md) | **The current program.** Seven workstreams and their ordering for the polish + balance phase, then T5/T6 as an extrapolation. |
-| [next-playtest-implementation-plan.md](next-playtest-implementation-plan.md) | Phases superseded; still the reference for the tooling audit (§5), defect list (§5.7), and the auto-combat wedge (§5.8). |
-| [future-plans.md](future-plans.md) | Parking lot for decided-in-spirit, not-yet-scheduled features. |
-| [player-movement-current-state.md](player-movement-current-state.md) | Manual movement consistency: contact sliding, exact click paths, bounded recovery, acknowledgement ownership, validation, and outstanding live acceptance. Includes the archived implementation specification. |
-| [../design_docs/architecture.md](../design_docs/architecture.md) | How the codebase is structured. Read end to end once. |
-| [../design_docs/design-bible.md](../design_docs/design-bible.md) | The combat/design invariants nothing may violate. |
+- [Project README](../README.md) — setup, repository shape, auth boundaries,
+  common commands, and the current world/progression summary.
+- [Architecture](../design_docs/architecture.md) — source ownership,
+  authoritative boundaries, tick schedule, persistence, and system seams.
+- [Playtest command center](briefs/playtest-followup-command-center-2026-09-25.md)
+  — active release/playtest scope and evidence rules.
+- [Release flow](release-flow.md) — local, Docker, and Railway-shaped delivery.
+- [Gameplay telemetry](gameplay-telemetry-current-state.md) — log database,
+  event contract, retention, admin queries, and interpretation limits.
+- [Bot experience command center](bot-experience-command-center.md) — live
+  route/economy experiment procedure and evidence boundaries.
 
 ## Systems — current state
 
-| System | Doc | Design authority |
-|---|---|---|
-| Player movement | [player-movement-current-state.md](player-movement-current-state.md) | — |
-| Abilities (Technique / Guard) | [abilities-current-state.md](abilities-current-state.md) | [ABILITY_CAST_AND_TIER_PROGRESSION_T1_T4.md](../design_docs/ABILITY_CAST_AND_TIER_PROGRESSION_T1_T4.md) |
-| Aspects + catalysts | [aspects-catalysts-current-state.md](aspects-catalysts-current-state.md) | — |
-| Audio | [audio-current-state.md](audio-current-state.md) | — |
-| Auth + characters | [auth-and-characters-current-state.md](auth-and-characters-current-state.md) | — |
-| Balance Lab | [balance-lab-current-state.md](balance-lab-current-state.md) | [player-power-curve.md](../design_docs/player-power-curve.md) |
-| Solo bot build controls and preflight | [bot-harness-capability-audit.md](bot-harness-capability-audit.md) | — |
-| Practical bot experience studies and command-center handoff | [bot-experience-command-center.md](bot-experience-command-center.md) | — |
-| Bot experiment runner | [bot-experiment-runner-current-state.md](bot-experiment-runner-current-state.md) | — |
-| T1 numerical balance packet | [balance/t1-numerical-balance-packet-2026-08-27.md](balance/t1-numerical-balance-packet-2026-08-27.md) | — |
-| Barrier & Ward | [barrier-ward-current-state.md](barrier-ward-current-state.md) | — |
-| Biome identity / ecology | [biome-ecology-current-state.md](biome-ecology-current-state.md) | — |
-| Charms (Guard amplifiers) | [charms-current-state.md](charms-current-state.md) | — |
-| Conduit (summoner) | [conduit-current-state.md](conduit-current-state.md) | [summoner-overhaul-design-source.md](../design_docs/summoner-overhaul-design-source.md) |
-| Cores | [cores-current-state.md](cores-current-state.md) | [CORE_DESIGN_PHILOSOPHY.md](../design_docs/CORE_DESIGN_PHILOSOPHY.md), [CORE_CAST_REVIEW_DRAFT.md](../design_docs/CORE_CAST_REVIEW_DRAFT.md) |
-| DoT systems | [dot-systems-current-state.md](dot-systems-current-state.md) | — |
-| Dungeons (guarded altar) | [dungeon-current-state.md](dungeon-current-state.md) | [dungeon-design-brainstorm.md](../design_docs/archive/dungeon-design-brainstorm.md) (historical) |
-| Gear evolution | [gear-evolution-current-state.md](gear-evolution-current-state.md) | — |
-| Global mastery + recipes | [global-mastery-current-state.md](global-mastery-current-state.md) | — |
-| Monster behavior | [monster-behavior-current-state.md](monster-behavior-current-state.md) | [boss-design.md](../design_docs/boss-design.md) |
-| Monster combat rework (T1-T4) | [monster-combat-rework-current-state.md](monster-combat-rework-current-state.md) | [MONSTER_COMBAT_REWORK_HANDOFF_T1_T4_2026-08-22.md](../design_docs/MONSTER_COMBAT_REWORK_HANDOFF_T1_T4_2026-08-22.md) |
-| Boss encounters (T1-T4) | [boss-encounter-rework-current-state.md](boss-encounter-rework-current-state.md) | [BOSS_ENCOUNTER_REWORK_HANDOFF_T1_T4_2026-08-23.md](../design_docs/BOSS_ENCOUNTER_REWORK_HANDOFF_T1_T4_2026-08-23.md) |
-| Monster targeting | [monster-targeting-current-state.md](monster-targeting-current-state.md) | — |
-| Node modifiers | [node-modifiers-current-state.md](node-modifiers-current-state.md) | [map-variety-plan.md](map-variety-plan.md) (map design authority; its §1.2/§1.6 are superseded) |
-| Player sprites | [player-sprites-current-state.md](player-sprites-current-state.md) | [player-visual-identity-bible.md](../design_docs/visual_and_aesthetics_design/player-visual-identity-bible.md) |
-| Recovery | [recovery-current-state.md](recovery-current-state.md) | [T1_ITEM_DESIGN_PHILOSOPHY.md](../design_docs/T1_ITEM_DESIGN_PHILOSOPHY.md), [RECOVERY_REGEN_REWORK_HANDOFF.md](../design_docs/archive/RECOVERY_REGEN_REWORK_HANDOFF.md) (historical) |
-| Tier balance (T1-T4 numbers) | [tier-balance-current-state.md](tier-balance-current-state.md) | [archive/briefs/t2-t4-numerical-baseline-handoff-2026-08-23.md](archive/briefs/t2-t4-numerical-baseline-handoff-2026-08-23.md) (archived, fulfilled), [briefs/t1-balance-context-2026-08-18.md](briefs/t1-balance-context-2026-08-18.md) |
-| Relics | [relics-current-state.md](relics-current-state.md) | [relics-design.md](../design_docs/relics-design.md) |
-| Rites | [rites-current-state.md](rites-current-state.md) | [rites-authoring-guide.md](rites-authoring-guide.md) |
-| Runes | [rune-system-current-state.md](rune-system-current-state.md) | — |
-| Tier seals | [seals-current-state.md](seals-current-state.md) | — |
-| Spectator landing | [spectator-landing-current-state.md](spectator-landing-current-state.md) | — |
-| Stances | [stances-current-state.md](stances-current-state.md) | [stances-authoring-guide.md](stances-authoring-guide.md), [stances-future-design-notes.md](stances-future-design-notes.md) (candidate postures, four of them built but deliberately unplaced) |
-| T1 item rework | [t1-item-rework-current-state.md](t1-item-rework-current-state.md) | [T1_ITEM_DESIGN_PHILOSOPHY.md](../design_docs/T1_ITEM_DESIGN_PHILOSOPHY.md), [T1_ITEM_NUMERICAL_BASELINE.md](../design_docs/T1_ITEM_NUMERICAL_BASELINE.md) |
+### Runtime, world, and combat
 
-`rites-current-state.md` and `stances-current-state.md` double as external-review
-handoffs: both systems have complete machinery and thin, placeholder content.
+| System | Current-state record |
+| --- | --- |
+| Abilities | [abilities-current-state.md](abilities-current-state.md) |
+| Barrier and ward | [barrier-ward-current-state.md](barrier-ward-current-state.md) |
+| Biome ecology | [biome-ecology-current-state.md](biome-ecology-current-state.md) |
+| Boss encounters | [boss-encounter-rework-current-state.md](boss-encounter-rework-current-state.md) |
+| Conduit | [conduit-current-state.md](conduit-current-state.md) |
+| Damage over time | [dot-systems-current-state.md](dot-systems-current-state.md) |
+| Dungeons | [dungeon-current-state.md](dungeon-current-state.md) |
+| Monster behavior | [monster-behavior-current-state.md](monster-behavior-current-state.md) |
+| Monster combat rework | [monster-combat-rework-current-state.md](monster-combat-rework-current-state.md) |
+| Monster targeting | [monster-targeting-current-state.md](monster-targeting-current-state.md) |
+| Node modifiers | [node-modifiers-current-state.md](node-modifiers-current-state.md) |
+| Player movement | [player-movement-current-state.md](player-movement-current-state.md) |
+| Recovery | [recovery-current-state.md](recovery-current-state.md) |
 
-## In-flight plans
+### Progression, economy, and equipment
 
-| Doc | State |
-|---|---|
-| [boss-encounter-redesign-implementation-plan-2026-09-04.md](boss-encounter-redesign-implementation-plan-2026-09-04.md) | **In progress — Phases 0-7 shipped 2026-09-04; Phase 8 (cleanup and tuning handoff) remains.** Converts the locked boss-redesign handoff into shared engine contracts, boss-by-boss loops and deletion lists, automation/telemetry requirements, sprite decisions, phased vertical slices, and acceptance tests. Numerical tuning remains a later evidence-driven pass. |
-| [isolated-parallel-reservation-redesign-plan.md](isolated-parallel-reservation-redesign-plan.md) | **Implemented but superseded for canonical use (2026-09-05).** Exact-node permits and hop-by-hop protected transit remain available for legacy shared-world experiments and incident reproduction. Canonical cohorts now use one frozen private server/world per run; live state is in [bot-experiment-runner-current-state.md](bot-experiment-runner-current-state.md). |
-| [headless-bot-harness-plan.md](headless-bot-harness-plan.md) | **Open plan — the headless progression bot harness (W5d, the parked agent harness minus the LLM).** Stage A audit + Stage B build done 2026-08-25; live `bot/` package with a Striker T1 route (usage: [bot/README.md](../bot/README.md)). Records that no new gameplay protocol is needed (every route primitive maps to a shipped intent), that `NETWORKED_PLAYER_KEYS` already *is* the observable-information boundary, and that `world:events` already carries the whole death trace. Six traps: guest auth rate-limits to 5 accounts/hour so bots use `AUTH_DEV_BYPASS`; the live server has NO time scaling; `tools/` is not typechecked so the harness is its own workspace package; the lobby emits `character:*Result` BEFORE clearing its mutation guard (fatal to any client acting at machine speed); `composePlayerView` needs all six player slices or returns null; and craft/upgrade spend cannot be a wallet diff because the wallet only moves on the next 5 Hz delta. |
-| [briefs/class-animation-pass-handoff-2026-09-12.md](briefs/class-animation-pass-handoff-2026-09-12.md) | **Open handoff — the CLASS attack-animation pass, written as reference for the coming monster/boss pass.** Records the 17 new `client/src/fx/` files (class baselines, six tier-2 range variants, six tier-4 path attacks, seven tier-4 threshold cues, the cosmetic element tint) and the reusable seams the monster pass should build on rather than rebuild: `pushClientEffect`, the shared `protocol/clientEffects.ts` FX-id registry, `AttackTint`/`elementColor`/`blendTints`, `fxDotTick`, the `t4Triggers` shard/ring/flash helpers, and the 13 existing `bossCues`. Carries the design rules (never tint the bright core, because colour is the empowered/execution tell; weight is expressed as LAYER since averaging hues in RGB collapses to grey — measured, fire+frost 50/50 is 14% saturation; shards outward = broke, inward = closed; chip buffs are authoritative and are NEVER removed, an aura is only a visual representation of one; signature FX stay untinted where colour is a mechanic tell) and the traps (never tween `scaleX` on world-space geometry — it squashes width on vertical attacks, hit twice; a tag next to a `pushEvent` may be going to the damage LOG and not the event, which is why Justicar drew nothing; Phaser's ease is `Stepped` with `easeParams`; `BuffId` is a closed union and is the enforcement point for the chip rule). Ships the monster-side starting census — 148 monsters, all 17 attack styles already have an FX, and **41 of them share `impact`**, which is also the unrecognised-style fallback: the bestiary equivalent of the generic Squire baseline this pass replaced. **Zero visual verification** — Phaser FX have no test coverage. Overlaps the ability-readability handoff below; reconcile before authoring. |
-| [briefs/monster-boss-animation-audit-2026-09-12.md](briefs/monster-boss-animation-audit-2026-09-12.md) | **Open audit — candidate list for the MONSTER/BOSS animation pass, in two parts: (A) mobs whose basic attack is a distinct enough verb to deserve its own `attackStyle`, and (B) named abilities that still have no animation. Nothing implemented.** Opens with a census CORRECTION — the live `MONSTER_DATABASE` holds **124** monsters, not 148, and `impact` is 33 real users, not 41; the gap is `advancedBiomesB.ts`, whose import is commented out at `data/monsters/index.ts:14`, so its 18 monsters are invisible to grep but absent from the game. Documents the actual draw path: `monsters.ts:365` calls `spawnAttackEffect` with the mob's `attackStyle` and **no flags**, so a monster's style IS its whole basic attack, monsters can carry no element tint (`resolveAttackTint` reads the *player's* weapon), and **the `empowered` variants that `fxBearClaws`/`fxBite`/`fxSlash`/`fxArrow`/`fxGunshot` already draw are unreachable code on the monster path** — which is why every cadence finisher, timed empower and opening strike has no tell, and is the audit's cheapest win (needs one published bit; the view carries only `lastAttackAt`). Part A lists 14 mobs whose own bestiary copy names a different verb than their style draws (Cave Lurker and Ironclaw Badger are described as clawed but use `impact`; Glacier/Glacial Dire-Bear are bears on `frost`; Abyssal Serpent and Elder Leviathan bite but use `impact`; **Bone Crawler and Bone Rat are on `poison` while carrying no DoT at all**), the 7 ranged mobs that fire nothing because `fxPoison`/`fxFire`/`fxFrost` take only a target position, a five-family split for `impact` (`gore` 8 / `troll-fist` 3 / `ape-fist` 3 / `reptile-tail` 4, keeping the genuine stone-slam cases), and that **`void` has zero live users** — `fxVoid` is wired but unreachable. Part B finds that `chargedAttack.aoe.impactFx` exists and **Apex Timberclaw is its only user** (its own comment: "its own cue, not the generic shockwave every other AoE charge draws"), so 13 of 14 AoE charged attacks take the generic shockwave — the three Swamp bosses' pool-spawn signature included; that `strong-kick` and `power-shot` are NOT neutral placeholders but the Cliff Hopper's stone-dust shove and the Ridge Ambusher's arrow release, with 15 named abilities (three Petrifying Gazes, Sunbeam, Frostbind, Wither, Plague Hex, Stalactite Shot…) on the latter as an `else` fallback; and **two wiring bugs — `stagger` is pushed by `bossPatterns.ts:257` and dropped by the client's six-id `boss-fx` chain, so the punish window every boss pattern's counterplay earns draws nothing, and `huge-boulder` is unhandled and falls through to `fxPowerShot` despite `fxBoulder` already serving that mob's basic attack**. Closes with the mechanics that have no `fx` field at all (cadence finisher/volley, empowered cooldown, opening strike, ramp, low-health ward, enemy shield, on-death hazard), a suggested order, and two research traps: never grep the data files (counts the dead file) and never regex-parse `bestiaryText.ts`, whose keys are inconsistently quoted (`'desert-basilisk':` but `sandweaver:`) so a quoted-key pattern shifts every following mob's text onto the previous mob. **Zero visual verification.** |
-| [briefs/monster-boss-ability-readability-handoff-2026-09-02.md](briefs/monster-boss-ability-readability-handoff-2026-09-02.md) | **Open handoff — monster/boss ability readability after Wave 1.** Records the shipped barrier/timer/necromancy baseline, the remaining boss conversions and feedback-only cases by tier/biome, reusable cast-footprint/phase-state/callout seams, exact balance and acceptance cautions, and the explicit exclusion of the deprecated Void Overlord. |
-| [landing-cinematic-current-state.md](landing-cinematic-current-state.md) | **SHIPPED 2026-09-05 — the prerecorded landing backdrop, THREE Tier-1 clips on a rotation. The live spectator pane is PARKED.** The landing page is encoded MP4s + a WebP poster and a login panel; it boots NO Phaser game and NO socket (`isLandingOnlySession`). The primary clip is alone on the critical path and variants are fetched one at a time only after it plays, crossfading at a loop end (`landingClips.ts`). A dev-only `?cinematic=<clipId>` mode drives the REAL scene for capture (`pnpm landing:capture`). **The stutter was NOT the encoder:** the scene paints ~23 fps under the recorder's 25 fps grid, so ~2 slots/s are repeats, and a real-delta camera turned a late frame into a double step — fixed by capping the game to the capture fps, stepping the camera once per rendered frame, and dropping repeats at encode time (detected by RUN LENGTH, since a repeat and an authored hold look identical by magnitude). **Shots are now routed at the live monster positions** (`route.ts`), because a zoom-1 frame is 4% of a node and the old clip had no monster in 3 of 4 frames. **Frames come from CDP `Page.startScreencast`, not Playwright's recorder:** the recorder's VP8 master ran at ~1.29 Mbps, which is ample for a static frame and starves a full-frame pan — the measured cause of “soft while the camera moves, sharp when it stops” (CRF 10 at 14 Mbps was indistinguishable from CRF 26, so the source was the ceiling, not the bits). Switching cut motion softness (moving/still sharpness 0.947 → 0.998) and HALVED the payload, which with cave and swamp cut after review (too sparse and too low-contrast to carry a frame) now sits at 8.09 MB. **`Page.screencast` is a SAMPLER, not one message per paint** — a dropped paint is a dropped camera step, which reads as a stutter 1-2s into a clip (obvious only while the camera is still easing in), and looked biome-specific but was not; the frame handler now acks and returns without touching disk, and `beacon.frames` vs frames collected reports `LOST n of m` so a bad take cannot ship silently. Also records the encode findings (CRF 26 still transparent against a sharp master, denoise is a rounding error, downscaling loses to a higher CRF), that the world plays back fast when the page paints under the capture rate (per-clip `--fps`; mountain ships at 18), and the CSS bug where the parked pane rules made every capture record black. Its investigation brief is archived in `archive/briefs/`. |
-| [t2-bot-testing-infrastructure.md](t2-bot-testing-infrastructure.md) | **Current state — the Tier-2 bot testing platform (2026-09-02).** 18 branch routes over one fixed control biome order (Plains→Forest→Swamp→Mountain→Cave→Jungle→Desert), 18 validated tier-entry templates across three economy arms (`clean` / `natural` / `catalyst-primed`), and two-pass template validation (~120 offline + ~90 live checks) that aborts a run rather than produce evidence from an impossible character. Records four structural findings the campaign turns on: **(1)** the tier-2 range node is bought with the T3 advance point, so there are SIX legal T2-entry templates, not eighteen, and the branch differentiates only the back half of the tier — the design docs disagree and are stale; **(2)** 20 of 32 T2 recipes are EVOLUTIONS that `craftRecipe` refuses, evolution needs the predecessor in the BAG at +5, and `EVOLUTION_REQUIRED_PLUS` moved 3→5 without the T1 routes following, so 22 of 50 planned acquisitions must pay ~3.5× reconstruction; **(3)** the dev reward multiplier deliberately never scales catalysts, so an accelerated T2 run is CATALYST-bound (99 catalysts tier-wide, ~2 per 300 s measured at 100×) — hence the `catalyst-primed` arm; **(4)** `In Combat → Focus Highest HP` was driving ACQUISITION, walking the bot across the node to a 4,000 HP unengaged monster (fixed, with a regression test). Also carries the Conduit weapon-scaling note (minion DPS ∝ `attack × APS`, speed-neutral; flat plating and un-inherited `onHitDamage` break the tie toward slow). |
-| [../reports/t2-experiment-ledger.md](../reports/t2-experiment-ledger.md) | **Experiment ledger for the T2 build-out**, human- and machine-readable (`t2-experiment-ledger.json`). Nine experiments including the failures, plus six open hypotheses. Every entry carries hypothesis / control / variable / result / classification / confidence. Notable: the Plains T2 boss killed a catalyst-primed Striker twice with a **61-damage hit into a 183 HP pool** and was left at 91.7% — recorded as AMBIGUOUS on purpose, because that build was fighting it with a Tier-1 weapon. |
-| [../reports/bot-route-reference.md](../reports/bot-route-reference.md) | **GENERATED (`pnpm bot:reference`) — the route-authoring knowledge packet.** Self-contained: gating rules, all six class roots with affinities, the world-map shape + T1 node/modifier table, every T1 monster stat block, the T0/T1 gear catalogue with +5 cost totals, T1 abilities, the full rune condition/action tables with starter-vs-recipe flags, and the route DSL with the designer's Striker baseline as a worked example. Regenerate rather than edit. |
-| [ui-redesign-plan.md](ui-redesign-plan.md) | Phased desktop HUD redesign with review gates; Part III (apparatus wave) still ahead. |
-| [map-variety-plan.md](map-variety-plan.md) | Design authority for the world map (layout, regions, catalyst economy). Both stages shipped. Its node-modifier sections (§1.2 pace families, §1.6 density overlay) were superseded 2026-08-21 — live modifier behavior is in [node-modifiers-current-state.md](node-modifiers-current-state.md). |
-| [terrain-variance-plan.md](terrain-variance-plan.md) | **Living record of the biome visual pass (CLOSED 2026-08-17).** SS8-9 are the levers and the per-biome log — every biome's generators, measured numbers and open dials. S10 records what was deferred. SS1-7 are an earlier, PARKED gameplay-terrain plan; do not start on those. |
-| [briefs/T1_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-28.md](briefs/T1_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-28.md) | **IMPLEMENTED 2026-08-28 — the T1 progression/economy rebalance, and the authoritative "what shipped" record.** Full before→after cost table for all 20 T1 gear items, the ability/Rune unlock+cost table, final catalyst assignments (+5 only, 9 items), the `wait-for-regen`/Recover-First legality finding (it's a starter rune since a 2026-08-25 call — the recipe is a no-op), the T1 node-modifier accessibility check for all four catalyst families used, and the one real bug found (Sweep's route gear-plan crafted the L3 charm before the ability's own new L2 gate, fixed in `t1GearPlans.ts`). Its baseline/proposal predecessors are archived in `archive/briefs/`. |
-| [briefs/T2_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-29.md](briefs/T2_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-29.md) | **IMPLEMENTED 2026-08-29 — the T2 progression/economy rebalance, and the authoritative "what shipped" record.** Catalysts removed from every T2 base/evolution craft (moved to weapon/armor +4:1/+5:2, recovery/mobility +5:1); 19 new T1→T2 evolution lineages authored (all five returning biomes, all four slots) on top of the one pre-existing Flash Rapier lineage, all requiring a +5 predecessor (raised from +3); Gale Needle/Thorn Needle normalized off their doubling-to-+5 curve into the ~1,000-1,100 specialist band; Hamstring/Charge/Bramble Guard/Endure costs dropped ~4-5x to match the T1 mandatory-counterplay philosophy; the four mistagged Tier-2 Swamp Runes moved from the T1 band into Swamp L7-10; T2-accessible Stances' catalyst cut to 1 unit. Its baseline predecessor is archived in `archive/briefs/`. |
-| [briefs/T3_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-30.md](briefs/T3_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-30.md) | **IMPLEMENTED 2026-08-30 — the T3 progression/economy rebalance, and the authoritative "what shipped" record.** `biomeLevelCap` is now **retirement-aware** (new derived `BIOME_FINAL_TIER_BY_GROUP`), so a biome stops growing mastery headroom when its authored content ends — max GM becomes 30/72/**114**/**156** (was 30/72/126/192) and T3's +5 finally lands on content a T3 player can reach, killing the ~2,200-kill retired-biome debt; **T1/T2 gates are bit-identical**. 22 T2→T3 evolution lineages authored (20 continuing + the game's first 2 cross-biome, Plains→Volcanic armor/charm) with 7 confirmed dead ends; multi-parent evolution **explicitly rejected** (no schema change). All 29 T3 gear items repriced off the flat +3=+4=+5 plateau onto the shipped accelerating curve (~70% of post-base spend in +4/+5) at a clean 2.00× tier step, tightening the Swamp:Jungle kit disparity from 1.45× to 1.11×; catalysts moved off the base craft to +4/+5 and applied to Volcanic for the first time. T3 abilities cut ~4× (650/760 → 150–210), T3 stance catalysts 5 → 2, rite catalysts 4–6 → 2–3 with **all six essence costs untouched**. 14 dead quest monster IDs across T2–T4 fixed and permanently guarded. T4's GM ceiling shift to 156 is an intentional, uncompensated side effect. `pnpm test` 112/112, typecheck clean. Its proposal/baseline predecessors are archived in `archive/briefs/`. |
-| [briefs/T4_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-30.md](briefs/T4_PROGRESSION_ECONOMY_IMPLEMENTATION_2026-08-30.md) | **IMPLEMENTED 2026-08-30 — the T4 progression/economy rebalance, and the authoritative "what shipped" record.** 36 of 39 ordinary T4 gear items gained real `evolvesFrom` lineage for the first time (26 distinct T3/Cave/Swamp predecessors, 10 branch groups incl. 3 cross-biome Cave/Swamp→Graveyard/Trench handoffs; 3 genuinely-new items: Gravewalker Boots, Pressure Vessel, Abyssal Treaders), closing the one tier boundary with zero evolution instances. All 39 items repriced off the flat +3=+4=+5 plateau onto the shipped accelerating curve at a clean 2.00× T3 lifetime step; catalyst schedule made uniform across all 7 biomes (weapon/armor 0/0/0/0/3/4, recovery/mobility 0/0/0/0/0/3, reconstruction 4), closing the "4-of-7 biomes charge nothing" hole and giving Desert its first-ever T4 catalyst family (dominion). T4 abilities repriced off the abandoned 1,300/1,500 ladder to 300/320/380/420; Recuperating Stance's isolated catalyst-7 outlier cut to 3; Trench's 3 monsters + boss corrected from blue/purple to green essence, matching Trench's own gear. Relics/Runes/Rites/Cores and the GM architecture (156 ceiling, 36 grandfathered excess) are all confirmed byte-for-byte unchanged. `pnpm test` 114/114, typecheck clean. Its proposal/baseline predecessors are archived in `archive/briefs/`. |
-| [briefs/bot-t1-testing-handover-2026-08-26.md](briefs/bot-t1-testing-handover-2026-08-26.md) | **Open brief — headless bot T1 route testing.** Six baselines + 4 experiment variants + 6 survivability-focused "v2" routes authored and validated; a chain of real bugs found and fixed along the way (nearest-node pathing, two stuck-boss-loop races, an ackDeath crash that killed whole batches, a server bug where dying mid-upgrade silently hung the client, and a rune bug where `fire-guard` was suppressing Second Wind's/Cleanse's own built-in triggers all session). Three open findings not yet acted on: an upgrade-rejection retry bug, a 235-death Mountain anomaly on `squire-v2-t1`, and an unconfirmed Granite Barrier regression signal. Exact run commands and file map included. |
-| [briefs/isolated-parallel-lease-incident-2026-09-04.md](briefs/isolated-parallel-lease-incident-2026-09-04.md) | **Open incident brief — Candidate F cohort.** Records the lease cascade behind the first-wave timeouts, the repeatable Conduit Forest-04 transit hazard, the remaining contamination risk, and the recommendation to use sequential execution for the next canonical batch while treating isolated-parallel as experimental. |
-| [briefs/t1-economy-candidate-c-2026-08-31.md](briefs/t1-economy-candidate-c-2026-08-31.md) | **Open brief — T1 economy candidate C, implemented and under overnight test.** Keeps the 2x reward setting for essence/mastery XP; cuts every T1 `+5` **essence** cost 25% (round-to-nearest-5, all 20 items, catalyst asks untouched at 1); makes the catalyst mint threshold per biome tier with **T1 at 150 kill-weight** instead of the global 100; and **decouples catalyst progress from the dev reward multiplier** entirely (that multiplier is for skipping farming, not for minting discoveries) — a combined ÷3 on T1 catalyst acquisition, calibrated from the 2x cohort's measured per-family flows. Adds the instrumentation the previous deep-dive lacked: full wallet snapshots (including `catalystProgress`) at run start / every milestone / both ends of every block / before every spend / run end, typed failed-predicate `blockReasons` replacing the generic `{blocked:1}`, `fromLevel` on upgrades, and the live economy candidate stamped into every run header. Records the one family that does not fit a universal rule (Fortified, ≈5/run) and why it is route exposure — 28 min of grinding in Fortified nodes vs 4 in Alacrity — rather than a rate error. Overnight cohort: `bot/runs/t1-candidate-c-2026-09-01/batch-2026-08-31T22-02-05-159Z/`, 20 runs (Striker/Squire/Apprentice/Conduit × 5). |
-| [briefs/T1_FINAL_VALIDATION_HANDOFF_2026-08-30.md](briefs/T1_FINAL_VALIDATION_HANDOFF_2026-08-30.md) | **Open validation handoff.** Final unattended six-route T1 batch: canonical route IDs, the Cave `cleanse`→`second-wind` correction to verify, Spirit and Conduit coverage gaps, Slinger telemetry caveat, swamp-pool observation, authoritative kill-event rules, and scope boundaries for the final pass. |
-| [biome-refactor-playtest.md](biome-refactor-playtest.md) | Open playtest notes and unanswered questions from the per-biome T1 dungeon pass. |
-| [briefs/t2-bossless-progression-campaign-2026-09-03.md](briefs/t2-bossless-progression-campaign-2026-09-03.md) | **Open brief — the live T2 campaign plan.** Audit of the Tier-2 bot platform plus the design for a BOSSLESS progression cohort, because T2 boss balance is being reworked and is inadmissible as evidence. Establishes that nothing inside Tier 2 gates on a boss clear (no recipe sets `requiredBossClear`, travel is ungated, `biomeLevelCap` reads `playerTier` only), so a bossless arm loses no content coverage — only the range branch, which is bought on the way OUT of the tier anyway, making pre-branch the legitimate state for all of ordinary T2. Records that the branch CANNOT be synthesised today (`applyTierEntryProfile` hardcodes `unlockedSkills` and `selectedRange: null`), the weapon-arrival-leg confound (Striker and Conduit carry a T1 weapon through leg 4), and eight designer decisions taken 2026-09-04 in section 12. |
-| [briefs/t2-overnight-run-log-2026-09-04.md](briefs/t2-overnight-run-log-2026-09-04.md) | Running log of the unattended implementation session. Records three findings: `focus-elites` never had a legal out-of-combat reach (TARGETING actions only accept in-combat/in-party/n-aggro-3), so narrowing it cost nothing; Slinger and Conduit are BOSS-walled in Tier 1 rather than economy-walled (both reach GM 30 and still never advance); and the +5 evolution gate was NOT the dominant cause of expensive T2 gear — measured, only 12 of 95 reconstructions flip to evolves, the rest being predecessor-ABSENT, which substantially weakens ledger hypothesis T2-H06. |
-| [briefs/t2-focused-experiment-2026-09-10.md](briefs/t2-focused-experiment-2026-09-10.md) | **Closeout — cross-cohort experiment queue repair + focused T2 campaign, no balance changes.** Adds a durable cross-manifest queue controller (`scripts/experiment/queue.mjs`) so multiple bot-experiment cohorts share one global worker cap instead of each owning an isolated pool; verified live (4-worker cap, cross-cohort backfill, zero duplicate runs) before the campaign ran. 164 runs across 12 manifests: Spirit/Conduit weapon A/B, Apprentice/Slinger Contagion A/B, Tempered-vs-Survivalist for three classes, and a Squire/Striker Jungle-wall diagnostic. Central finding: every stall this session (Squire, Striker, Apprentice, Slinger alike) hit the identical node `node-t2-jungle-04` with a 90-96% unengaged-combat-sample signature and near-zero deaths — a kill-rate/engagement collapse, not a death spiral or class/frame effect. Records three harness bugs found and fixed along the way (checkpoint snapshots vs `--requireTierEntrySnapshot`, a missing entry-assertion override, and a nested-snapshot-directory mis-selection). |
-| [briefs/biome-mastery-progression-redesign-2026-09-11.md](briefs/biome-mastery-progression-redesign-2026-09-11.md) | **Implemented progression-design pass.** Replaces the absolute-level power curve with explicit tier-local six-level budgets and records the before/after XP tables, audit, validation, and manual-playtest questions. |
-| [briefs/t2-route-theorycraft-2026-08-30.md](briefs/t2-route-theorycraft-2026-08-30.md) | **Open brief — EXPLORATORY, not an authority.** Read-only survey producing source material for future T2+ bot-route planning: a T1 route audit plus tentative T2 routes for all six roots and T3/T4 sketches, with every claim tagged Confirmed / Strong-inference / Theorycraft. Three findings block a T2 route outright — `craftRecipe()` rejects any `evolvesFrom` recipe so the bot cannot make 21 of the 29 T2 items (the evolve path is a separate `crafting:evolveItem` intent the harness never emits); no route calls `unlockSkill`, so the T1 gauntlet fights bosses 3-5 with the tier-2 sub-variant frame unspent (leaving T1 takes **two** seals, not one, contradicting `t1Common.ts`'s comment); and stance craft/loadout intents are absent although stances unlock at T2. Also records that catalysts cannot be earned in a dungeon (`NODE_MODIFIERS` is normal-nodes-only, and the boss `catalystBundle` the T2 ledger describes no longer exists), that a T2 item's +1 needs GM 38 against a GM-30 tier-2 entry, that the pending Cave `cleanse`→`second-wind` fix is right for a throughput reason rather than the stated "no relevant debuff" one (plating shred *is* cleansable), and a list of six other stale doc/code contradictions. Ends with a reusable route template and five candidate experiments. Published copy: <https://claude.ai/code/artifact/1132d5ef-87a1-4007-8754-441e4a7a6eb3>. |
-| [briefs/t1-boss-numbers-2026-08-21.md](briefs/t1-boss-numbers-2026-08-21.md) | **Open brief.** The T1 boss numerical pass: all five calibrated to one end-of-tier band (5.5x cost spread -> 1.11x). Records two tooling defects it found — `--mode boss` never fought a boss, and the tier table ignored `consecutiveHits` — and why the Gnarled Greatbear cannot be tuned off the plating cliff until the mitigation pass lands. |
-| [briefs/mitigation-rebalance-handoff-2026-08-18.md](briefs/mitigation-rebalance-handoff-2026-08-18.md) | **Open brief.** Why T1 difficulty spans 16x instead of ~2x: flat plating means each biome's native armour answers its own monsters unequally. The next balance pass starts here. |
-| [briefs/t1-balance-context-2026-08-18.md](briefs/t1-balance-context-2026-08-18.md) | Self-contained Tier 1 context pack (formulas, method, biome data, every monster's stat block) for reasoning about balance without codebase access. Regenerate its figures with `pnpm tier:table --tier=1`. **Two things in it are now stale:** its node-modifier magnitudes (it says M = 0.15-0.30; the code says 0.05-0.20) and its T1 Mountain/Caverns figures, which moved 2026-08-23 when the tier table learned to see charged attacks. |
-| [briefs/tier-by-tier-monster-balance-handoff-2026-08-13.md](briefs/tier-by-tier-monster-balance-handoff-2026-08-13.md) | Fresh-session roadmap and locked decisions for collaborative tier-by-tier monster authoring and Balance Lab instrumentation. |
-| [briefs/d3-t5-t6.md](briefs/d3-t5-t6.md) | Self-contained brief for an external design session on tiers 5–6. Not yet fulfilled. |
-| [cores-current-state-and-rework-context.md](cores-current-state-and-rework-context.md) | **Open — audit export for the next Core rework pass.** Self-contained current-state export of the Core slot system (not a proposal) prepared for an external design/planning pass. |
-| [core-rework-design-balance-handoff.md](core-rework-design-balance-handoff.md) | **Open — approved design direction for the next Core rework**, built on the audit above plus locked follow-up decisions. Source document for an implementation plan; does not yet include the full evolution system. |
+| System | Current-state record |
+| --- | --- |
+| Aspects and catalysts | [aspects-catalysts-current-state.md](aspects-catalysts-current-state.md) |
+| Charms | [charms-current-state.md](charms-current-state.md) |
+| Cores | [cores-current-state.md](cores-current-state.md) |
+| Global Mastery | [global-mastery-current-state.md](global-mastery-current-state.md) |
+| Gear evolution | [gear-evolution-current-state.md](gear-evolution-current-state.md) |
+| Relics | [relics-current-state.md](relics-current-state.md) |
+| Rites | [rites-current-state.md](rites-current-state.md) |
+| Runes | [rune-system-current-state.md](rune-system-current-state.md) |
+| Runic attunement | [runic-attunement-current-state.md](runic-attunement-current-state.md) |
+| Seals and tier advancement | [seals-current-state.md](seals-current-state.md) |
+| Stances | [stances-current-state.md](stances-current-state.md) |
+| T1 item rework | [t1-item-rework-current-state.md](t1-item-rework-current-state.md) |
+| Tier balance | [tier-balance-current-state.md](tier-balance-current-state.md) |
 
-## Reference
+### Client, auth, and presentation
 
-| Doc | Job |
-|---|---|
-| [release-flow.md](release-flow.md) | Branch model and Railway deployment configuration. |
-| [next-playtest-release-readiness.md](next-playtest-release-readiness.md) | v0.5 release decisions, validation, Railway status and [patch notes](../updates/v0.5/changelog.md). |
-| [map-variety-regions-atlas.md](map-variety-regions-atlas.md) | Human-readable view of the runtime map. Canonical coordinates live in `shared/src/world/map/`. |
-| [ui-redesign-baseline/](ui-redesign-baseline/) | Pre-redesign HUD screenshots + capture matrix. |
+| System | Current-state record |
+| --- | --- |
+| Authentication and characters | [auth-and-characters-current-state.md](auth-and-characters-current-state.md) |
+| Audio | [audio-current-state.md](audio-current-state.md) |
+| Landing cinematic | [landing-cinematic-current-state.md](landing-cinematic-current-state.md) |
+| Player sprites | [player-sprites-current-state.md](player-sprites-current-state.md) |
+| Spectator landing | [spectator-landing-current-state.md](spectator-landing-current-state.md) |
 
-## design_docs/
+### Operations, telemetry, and bot tooling
 
-Design authority and pinned session context. `visual_and_aesthetics_design/`
-holds the art bibles, the overhaul roadmap, and the icon-generation workflows.
+| Area | Current-state record |
+| --- | --- |
+| Balance lab | [balance-lab-current-state.md](balance-lab-current-state.md) |
+| Bot experience experiments | [bot-experience-command-center.md](bot-experience-command-center.md) |
+| Frozen bot runner | [bot-experiment-runner-current-state.md](bot-experiment-runner-current-state.md) |
+| Bot capability audit | [bot-harness-capability-audit.md](bot-harness-capability-audit.md) |
+| Tier-2 bot infrastructure | [t2-bot-testing-infrastructure.md](t2-bot-testing-infrastructure.md) |
+| Gameplay telemetry | [gameplay-telemetry-current-state.md](gameplay-telemetry-current-state.md) |
+| Telemetry MCP | [telemetry-mcp-setup.md](telemetry-mcp-setup.md) |
 
-| Doc | Job |
-|---|---|
-| [architecture.md](../design_docs/architecture.md) | Standing structural reference for the codebase. |
-| [design-bible.md](../design_docs/design-bible.md) | Core invariants. Paste at the top of a design session. |
-| [game-overview.md](../design_docs/game-overview.md) | What the game is and how it plays today. |
-| [economy-philosophy.md](../design_docs/economy-philosophy.md) | Reasoning behind XP / essence / crafting cost. |
-| [player-power-curve.md](../design_docs/player-power-curve.md) | Target power bands T0–T4. Pair with the generated `reports/` packets. |
-| [boss-design.md](../design_docs/boss-design.md) | Boss philosophy and per-tier layer curve. |
-| [t5-t8-endgame-suggestions.md](../design_docs/t5-t8-endgame-suggestions.md) | Proposals for the back half. Not canon. |
-| [CORE_T4_CAST.md](../design_docs/CORE_T4_CAST.md) | T4 core cast — design draft, not implemented. |
-| [ABILITY_CAST_AND_TIER_PROGRESSION_T1_T4.md](../design_docs/ABILITY_CAST_AND_TIER_PROGRESSION_T1_T4.md) | The T1–T4 ability roster, biome placement and authored per-tier ranks. **Implemented** — live state in `docs/abilities-current-state.md`. |
+## Active plans and operational records
 
-Generated balance packets (`reports/dps-*`, `ehp-*`, `mob-*`,
-`*-mechanics-packet.md`) are build output of `pnpm dps:report` / `ehp:report` /
-`mob:report`, not authored docs — regenerate rather than edit.
+These pages are not all implementation truth. Each has a status at its top;
+read the linked current-state page before using it to describe shipped
+behavior.
 
-- [Night5 overnight operator packet](briefs/bot-balance-night5-operator-packet.md) — frozen Mountain pull-control, T4 specialization roster, weapons and sustained farming; prepared, not launched.
-- [Night5 report](briefs/bot-balance-night5-report.md) — exact one-shot launcher stopped before the first observation on a Windows `--import` path error; zero observations and no balance evidence.
+- [Future plans](future-plans.md) — backlog and deliberately deferred ideas.
+- [Boss redesign implementation plan](boss-encounter-redesign-implementation-plan-2026-09-04.md)
+  — the remaining cleanup/tuning handoff after the shipped phases.
+- [Core rework design/balance handoff](core-rework-design-balance-handoff.md) —
+  approved direction for a future Core pass; implementation is not implied.
+- [Map variety design](map-variety-plan.md) — locked node-modifier and region
+  design vocabulary.
+- [Terrain variance plan](terrain-variance-plan.md) — parked terrain work.
+- [UI redesign plan](ui-redesign-plan.md) — presentation work and review
+  history; verify implementation against client code.
+- [Stance future design notes](stances-future-design-notes.md) — unimplemented
+  design ideas only.
+- [Named progression checkpoints](named-progression-checkpoints.md) —
+  command-center acceptance procedure and implementation record.
+- [System rework roadmap](system-rework-roadmap.md) and [system rework
+  status](system-rework-status.md) — current follow-up queue and implementation
+  scoreboard after the authored T1–T4 construction pass.
+- [Rite authoring guide](rites-authoring-guide.md) and [stance authoring
+  guide](stances-authoring-guide.md) — authoring contracts for new content.
 
-- [Night5-R1 repaired operator packet](briefs/bot-balance-night5-r1-operator-packet.md) — Windows loader fix tested; same overnight matrix, executed once at the fresh output root; see the report for sealed partial-block outcomes.
-- [Night5-R1 report](briefs/bot-balance-night5-r1-report.md) — exact sequential batch completed with four budget-partial blocks, two completed blocks, and no production-balance conclusion.
+## Reference and authoring pages
 
-- [Night5-R1 planner review and invited-playtest roadmap](briefs/bot-balance-night5-r1-review.md) — raw-result interpretation, missing T4 coverage, minimum release gates and deferred polishing work.
+- [Map regions atlas](map-variety-regions-atlas.md) — human-readable map view;
+  source coordinates remain canonical.
+- [Named progression checkpoints](named-progression-checkpoints.md) —
+  acceptance and continuation procedure for named playtest states.
+- [Release flow](release-flow.md) — branch, packaging, and deployment checks.
+- [T1 item rework](t1-item-rework-current-state.md) — the shipped Clearing/T1
+  item cast and its source-linked constraints.
 
-- [Durability21 operator packet](briefs/bot-balance-durability21-operator-packet.md) — prepared108-observation T4 missing-biome screen plus bounded read-only death-case review; not launched.
-- [Durability21 report](briefs/bot-balance-durability21-report.md) — completed the 108-run T4 Tundra/Volcanic/Trench screen and read-only Night5-R1 death-case review; one player death, synthetic evidence only, no balance edits.
+## Design authority
 
-- [Durability22 operator packet](briefs/bot-balance-durability22-operator-packet.md) — provisional T4 role HP treatments, all-species Trench40–60s goal, paired controls; executed once; see the Durability22 report for the retained synthetic evidence.
+The flat files in design_docs/ are the design and architecture source set:
 
-- [Durability23 operator packet](briefs/bot-balance-durability23-operator-packet.md) — executed once; Volcano anchor durability, Graveyard Focus Elites and bounded Jungle coverage; see the report for retained evidence.
-- [Durability24 operator packet](briefs/bot-balance-durability24-operator-packet.md) — executed once; four-arm Graveyard leader/escort HP redistribution, Focus Elites interaction, and T4B Blunderbuss stress; see the report for retained evidence.
-- [Durability24 report](briefs/bot-balance-durability24-report.md) — completed 56 cells / 168 observations with verified geometry, targeting and death-event audit, synthetic evidence only, and no production adoption.
-- [Durability25 operator packet](briefs/bot-balance-durability25-operator-packet.md) — executed once; frozen Mountain/Desert T2–T4 matched tier-pacing screen, 72 cells / 216 observations.
-- [Durability25 report](briefs/bot-balance-durability25-report.md) — completed the 216-observation Mountain/Desert pacing screen with READY/geometry, body-TTK, actual pack-duration, survival, and death-event audits; synthetic evidence only, no numeric or production adoption.
-- [Durability26 operator packet](briefs/bot-balance-durability26-operator-packet.md) — executed once; selected T4 Mountain/Desert anchor HP trial with bounded Durability25 Mountain T2 pressure review, 48 cells / 144 observations.
-- [Durability26 report](briefs/bot-balance-durability26-report.md) — completed the verified synthetic T4 anchor trial and read-only T2 death audit; candidate values require adjustment and no production adoption follows.
-- [Durability27 operator packet](briefs/bot-balance-durability27-operator-packet.md) — executed once; T2 Mountain attack pressure and Desert controller durability comparison, 48 cells / 144 observations.
-- [Durability27 report](briefs/bot-balance-durability27-report.md) — completed the verified synthetic Mountain/Desert screen with READY/geometry, body-TTK, survival, raw pressure, terminal-death, and actual two-enemy encounter audits; adjust/hold candidates, no production adoption.
-- [Durability28 operator packet](briefs/bot-balance-durability28-operator-packet.md) — executed once; paired melee stance screen on retained T2/T4 mob packages, 24 cells / 72 observations.
-- [Durability28 report](briefs/bot-balance-durability28-report.md) — completed the verified synthetic stance screen with READY/geometry, per-seed body medians, episode/death/ward audits, and no production adoption.
-- [Durability29 operator packet](briefs/bot-balance-durability29-operator-packet.md) — executed once; paired Mountain T2/T4 attack-relief comparison, 48 cells / 144 observations.
-- [Durability29 report](briefs/bot-balance-durability29-report.md) — completed the verified Mountain attack-only screen with READY parity, per-seed body medians, ward/death/wall audit, and no production adoption.
-- [Durability30 operator packet](briefs/bot-balance-durability30-operator-packet.md) — executed once; 72 paired Trench Stalker HP observations and 12 unchanged Jungle CPU-profiled diagnostic replays.
-- [Durability30 report](briefs/bot-balance-durability30-report.md) — completed the verified Trench pacing/attrition audit and Durability23 Jungle CPU comparison; Stalker scalar rejected for universal adoption, synthetic evidence only.
-- [Durability31 operator packet](briefs/bot-balance-durability31-operator-packet.md) — executed once; 12 unchanged Jungle replays with observation-scoped CPU profiles and navigation counters.
-- [Durability31 report](briefs/bot-balance-durability31-report.md) — completed the verified navigation diagnosis; repeated null paths originate inside status-only Jungle slow bushes, synthetic diagnostic evidence only, no repair implemented or adopted.
-- [Durability32 operator packet](briefs/bot-balance-durability32-operator-packet.md) — PREPARED, NOT LAUNCHED; post-repair Jungle regression, T1 Mountain Power Shot 2.2 vs 1.8, and Jungle breadth gated on the repair; 40 cells / 120 observations across three separately reported blocks.
-- [Mob candidate adoption review](briefs/bot-balance-mob-adoption-review.md) — current-source reconciliation of every retained mob package: none are live, the candidates are stacked overlays, defense coupling must be carried, plus the T2 Mountain Striker disposition.
-- [Bot balance next steps 2026-09-18](briefs/bot-balance-next-steps-2026-09-18.md) — command-center assignment brief: balance phase order, the new T1 Mountain Power Shot exception, and the fix-then-prepare scope that produced the repair and the Durability32 packet.
-- [Durability32 report](briefs/bot-balance-durability32-report.md) — executed once; 120/120 observations across three blocks, carrying a dated correction record for the four conclusions that did not survive recomputation from the raw artifacts.
-- [Durability32 review and next steps](briefs/bot-balance-durability32-review-and-next-steps.md) — the corrected review: the Jungle stall located as a centre-vs-footprint false negative, Mountain outcomes and Power Shot attribution recomputed from raw data, and the Durability33 assignment.
-- [Durability33 operator packet](briefs/bot-balance-durability33-operator-packet.md) — executed once; post-repair Jungle regression, T1 Mountain at the route's earned entry kit, and Jungle breadth gated on behaviour rather than artifacts; 28 cells / 84 observations.
-- [Durability33 report](briefs/bot-balance-durability33-report.md) — executed once; 84/84 observations, 58/58 successful hazard escapes and zero trapped rows, carrying a dated correction record for five conclusions.
-- [Durability33 review and next steps](briefs/bot-balance-durability33-review-and-next-steps.md) — the corrected review: navigation closed, Jungle species timing measured, the Conduit and Brace framings retracted, and the Durability34 assignment.
-- [Durability34 operator packet](briefs/bot-balance-durability34-operator-packet.md) — executed once; a Jungle HP-only role candidate and a T1 Mountain guard substitution, two independent blocks, 36 cells / 108 observations.
-- [Durability34 report](briefs/bot-balance-durability34-report.md) — executed once; 108/108 observations, the Jungle HP package and the Mountain guard substitution, carrying a dated correction record for five findings.
-- [Durability34 review and next steps](briefs/bot-balance-durability34-review-and-next-steps.md) — the corrected review: the arm-pooling tooling bug fixed, Brace shown to work but cover only 5% of alive time, the unsupported T3 anchor retracted, and the Durability35 assignment.
-- [Durability35 operator packet](briefs/bot-balance-durability35-operator-packet.md) — executed once; one local T1 Mountain enemy-pressure package, base attack 50 → 40 on both species, across two node contexts; 24 cells / 72 observations.
-- [Durability35 report](briefs/bot-balance-durability35-report.md) — executed once; 72 observations, survival 7/36 → 28/36 with zero adverse flips, carrying a dated correction record for four numerical findings.
-- [Durability35 review and next steps](briefs/bot-balance-durability35-review-and-next-steps.md) — the corrected review: the audit orientation defect fixed, counting units separated, the T1 package adopted into source, T2 Striker dispositioned by extraction, and the Durability36 assignment.
-- [Durability36 operator packet](briefs/bot-balance-durability36-operator-packet.md) — PREPARED, NOT LAUNCHED; a local T1 Mountain armor adaptation and the actual Jungle T2/T3/T4 role-duration ladder, two independent blocks; 24 cells / 72 observations.
-- [Durability36 report](briefs/bot-balance-durability36-report.md) — executed once; 72/72 observations, the Mountain armor swap producing one adverse flip in 9 paired outcomes, and the Jungle duration ladder showing body clean-TTK and episode duration fall tier to tier while throughput rises, synthetic evidence only, no balance edits.
-- [Mob adoption manifest](briefs/bot-balance-mob-adoption-manifest.md) — resolved final authored values with explicit per-package statuses, layers flattened and exact defence coupling; **ADOPTED into source 2026-09-18**, with the Jungle T4 rows superseded by the Durability36 ladder and four tier labels corrected against the live biome pools.
-- [Durability37 operator packet](briefs/bot-balance-durability37-operator-packet.md) — PREPARED, NOT LAUNCHED; the mob integration regression, two independent blocks that install nothing: the Jungle duration ladder re-measured on the adopted package, and one bounded spot check per other changed biome-tier family; 38 cells / 74 observations.
-- [Durability37 report](briefs/bot-balance-durability37-report.md) — executed once at `bdee5dca`; 74/74 observations, the Jungle primary-lineage body TTK now RISING 10.95 → 14.84 → 23.85 s, five T3 Jungle deaths and one T2 Forest death, synthetic evidence only, no balance edits.
-- [Boss numerical starter packet](briefs/bot-balance-boss-numerical-starter-packet.md) — DRAFTED, **BLOCKED at the earlier-tier slot**; the first boss screen (2 bosses × 6 roots × 2 seeds), reusing `bench/bossExam.ts` rather than `--mode boss`; prerequisites 1 and 3 met, 2 and 4 outstanding.
-- [D37 decision note and boss screen blocker](briefs/bot-balance-d37-decision-and-boss-screen-blocker-2026-09-18.md) — §5's boss conclusion is **WITHDRAWN** (see the T2 boss benchmark gap brief); D37 receipts independently verified (definitions hash recomputed, 74/74 `hpTreatment` empty), a red test found shipped in the adoption commit, and the six deaths dispositioned.
-- [Boss1 operator packet](briefs/bot-balance-boss1-operator-packet.md) — **FROZEN, NOT LAUNCHED**; the earlier/later boss numerical screen on the corrected runner: `apex-timberclaw` (T2, six explicit reference builds, 6 fights) and `charnel-crown-sovereign` (T4, the preserved qualified preparation, 12 fights) = **18 fights**. The T3 Jungle exception stays out and is asserted out.
-- [T2 boss benchmark gap](briefs/bot-balance-t2-boss-benchmark-gap-2026-09-18.md) — the execution ledger for every boss figure reported on 2026-09-18, the WITHDRAWN inverted-curve inference, the recovered V1i run in which **Apex Timberclaw was beaten 2/2**, the concrete build/RP/stance/automation/encounter mismatches against `bossExam.ts`, and the 5-fight bounded reproduction. Nothing launched.
-- [Boss reference operator packet](briefs/bot-balance-boss-reference-operator-packet.md) — **EXECUTED; question answered** (A boss-killed 30,300 ms, B bot-died 12,900 ms with the boss on 2,521 HP); a two-case check on Apex Timberclaw — the recovered V1i historical package vs the legacy benchmark package, same skill path, same seed, same 300 s cap, **2 fights**. Qualification spends zero fights. A win for Case A establishes a usable reference for this boss and build only.
-- [Boss runner repair](briefs/bot-balance-boss-runner-repair-2026-09-19.md) — the shared-runner defect that recorded a player wipe as a 100%-removed victory with twelve phantom adds, the fix (authoritative kill evidence required; terminal HP preserved; post-terminal bodies excluded), the strengthened cross-field verification, and the corrected re-read of the two existing recordings with the originals untouched.
-- [Farming stance 01 preparation](../reports/player-fast-pass/farming-stance-01-preparation/README.md) — prepared, not launched; measured Conduit R2 adopted locally, six fixed packages across two stances and two ordinary fixtures, 24 observations, legal build receipts and frozen execution commands.
+- [architecture.md](../design_docs/architecture.md)
+- [design-bible.md](../design_docs/design-bible.md)
+- [game-overview.md](../design_docs/game-overview.md)
+- [economy-philosophy.md](../design_docs/economy-philosophy.md)
+- [player-power-curve.md](../design_docs/player-power-curve.md)
+- [boss-design.md](../design_docs/boss-design.md)
+- [relics-design.md](../design_docs/relics-design.md)
+- [summoner-overhaul-design-source.md](../design_docs/summoner-overhaul-design-source.md)
+- [ability cast and tier progression](../design_docs/ABILITY_CAST_AND_TIER_PROGRESSION_T1_T4.md)
+- [core design philosophy](../design_docs/CORE_DESIGN_PHILOSOPHY.md)
+- [core cast review](../design_docs/CORE_CAST_REVIEW_DRAFT.md)
+- [core T4 cast](../design_docs/CORE_T4_CAST.md)
+- [T1 item design philosophy](../design_docs/T1_ITEM_DESIGN_PHILOSOPHY.md)
+- [T1 item numerical baseline](../design_docs/T1_ITEM_NUMERICAL_BASELINE.md)
+- [T5–T8 endgame suggestions](../design_docs/t5-t8-endgame-suggestions.md)
 
-- [Desert strategy 01 Luna packet](../reports/player-fast-pass/desert-strategy-01-preparation/README.md) — prepared and zero-tick qualified, main run unlaunched; 24 T4 targeting observations on the canonical formation Rune inheritance fix, source/readbacks and six-root evidence seed.
+Some design files intentionally describe targets rather than shipped behavior.
+Use the current-state table above and the source when they conflict.
+
+## Historical material and archive lifecycle
+
+- [Archive guide](archive/README.md) explains how completed plans and
+  handoffs are moved without losing provenance.
+- [Briefs and evidence](briefs/README.md) explains the active/history split for
+  dated operator packets, reports, audits, and experiment receipts.
+- [docs/archive/](archive/) contains completed or superseded project plans and
+  historical current-state exports.
+- [design_docs/archive/](../design_docs/archive/) contains historical design
+  authority and implementation context.
+- [v0.5 release readiness](archive/next-playtest-release-readiness.md) is a
+  completed release record; use [release-flow.md](release-flow.md) for the live
+  procedure.
+- [reports/](../reports/) contains generated artifacts. Reports can support an
+  observation, but they do not override current source or prove a different
+  matchup than the one they measured.
+
+When a plan ships, fold durable facts into the relevant current-state record,
+add or refresh an archive header naming the successor, then move the plan.
+When evidence is still useful, preserve it and label its scope, branch,
+revision, and canonical/non-canonical status. Do not silently delete old
+receipts merely because their conclusions are no longer current.

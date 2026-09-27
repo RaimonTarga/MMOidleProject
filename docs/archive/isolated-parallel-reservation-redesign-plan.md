@@ -1,10 +1,14 @@
+> **ARCHIVED (2026-09-27) — HISTORICAL EXPERIMENTAL-CONCURRENCY PLAN.** Canonical
+> evidence uses the sequential frozen-run architecture documented in
+> `docs/bot-experiment-runner-current-state.md`.
+
 # Isolated-parallel reservation, transit, and liveness redesign
 
 **Status:** IMPLEMENTATION COMPLETE — deterministic validation passed; staged
 live rollout pending, 2026-09-04.
 
 **Source incident:**
-[briefs/isolated-parallel-lease-incident-2026-09-04.md](briefs/isolated-parallel-lease-incident-2026-09-04.md).
+[../briefs/isolated-parallel-lease-incident-2026-09-04.md](../briefs/isolated-parallel-lease-incident-2026-09-04.md).
 
 **Goal:** repair `isolated-parallel` so exclusive node combat is the normal path,
 while a separately configured liveness layer guarantees that contention or route

@@ -190,7 +190,9 @@ Important formula conventions:
 
 ## World, Progression, And Persistence
 
-- World is an 11x11 node grid from `NODE_BIOMES`; center is the clearing.
+- World is an authored sparse node registry from `shared/src/world/map/`, with
+  the Clearing as T0 and current playable region content spanning T1–T4. Do not
+  assume a rectangular grid; use the registry and region definitions.
 - Node freeze/thaw makes monsters ephemeral. Never persist monster combat state,
   aggro, movement, boss runtime state, status effects, or minions.
 - Boss respawn markers are runtime/client-facing; the Void Overlord cooldown is

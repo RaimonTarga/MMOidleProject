@@ -1,3 +1,7 @@
+> **ARCHIVED (2026-09-27) — HISTORICAL ROADMAP.** Its workstream ordering is
+> superseded by the current playtest command center and current-state pages.
+> Keep this file for the rationale and completed UI/balance work it records.
+
 # Polish & Balance Roadmap
 
 > **Supersedes the phase ordering in `docs/archive/next-playtest-roadmap.md`** (archived) and

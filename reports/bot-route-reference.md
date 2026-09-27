@@ -34,12 +34,10 @@ therefore bought with **breadth**:
 One T1 biome maxes at 6 GM, so a single-biome character can only ever reach **+1**.
 All five maxed = GM 30, which is exactly what **+5** needs.
 
-**Ability slots at player tier 1: 1 Technique, 1 Guard.**
-Every mid-run ability change is therefore a REPLACEMENT, not an addition.
-(Tier 3 grants a 2nd Technique; tier 4 a 2nd Guard.)
+Abilities and stances reserve Runic Points; there is no tier capacity cap.
 
-**Runic Points**: budget is `8 + floor(GM / 10)` — 8 at GM 0,
-11 at GM 30. Each equipped rune rule costs condition + action.
+**Runic Points**: budget is `16 + floor(GM / 5)` — 16 at GM 0,
+22 at GM 30. Each equipped rune rule costs condition + action.
 
 **Biome XP curve** (local six-level segments, cumulative per biome):
 
@@ -47,9 +45,9 @@ Each segment uses the same local shares — 12/14/16/18/19/21% — with a tier-s
 | segment | budget | L1 | L2 | L3 | L4 | L5 | L6 |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | T1 | 1750 | 210 | 455 | 735 | 1050 | 1383 | 1750 |
-| T2 | 5000 | 600 | 1300 | 2100 | 3000 | 3950 | 5000 |
-| T3 | 7000 | 840 | 1820 | 2940 | 4200 | 5530 | 7000 |
-| T4 | 9000 | 1080 | 2340 | 3780 | 5400 | 7110 | 9000 |
+| T2 | 3750 | 450 | 975 | 1575 | 2250 | 2963 | 3750 |
+| T3 | 42000 | 5040 | 10920 | 17640 | 25200 | 33180 | 42000 |
+| T4 | 600000 | 72000 | 156000 | 252000 | 360000 | 474000 | 600000 |
 
 Segments after T4 grow by 1.2x per tier until explicitly retuned.
 
@@ -60,50 +58,50 @@ are class affinities applied once after gear.
 
 ### Striker — `cadence-root`
 
-Find the rhythm of battle. Every few hits your attack surges with accumulated force. A balanced bruiser — your recovery rate surges on a fixed cycle, sustaining you through prolonged engagements.
+Class mechanic — a five-hit finisher cycle, plus a Recovery pulse that activates 20% of your Recovery every 6s for 4s. A balanced bruiser — your recovery rate surges on a fixed cycle, sustaining you through prolonged engagements.
 
-- **Affinities:** attackPct 0.08, maxHpPct 0.18, platingPct 0.15, attackSpeedPct 0.06, moveSpeedPct 0.04, damageReduction 0.02
-- **Mechanics:** defense.recovery-pulse-pct 0.2, defense.recovery-pulse-interval-ms 6000, defense.recovery-pulse-duration-ms 4000, defense.max-hit-pct 0.25, defense.max-hit-mult 0.5
+- **Affinities:** attackPct 0.08, maxHpPct 0.18, platingPct 0.05, attackSpeedPct 0.06, moveSpeedPct 0.04, damageReduction 0.18
+- **Mechanics:** defense.recovery-pulse-pct 0.2, defense.recovery-pulse-interval-ms 6000, defense.recovery-pulse-duration-ms 4000
 
 ### Squire — `cooldown-root`
 
-Patience is power. Prepare a devastating strike on a set cycle. The heaviest chassis in the game — enormous bulk and armor, bought with the slowest hands and feet — and 10% of your Recovery rate stays active even while you fight.
+Class mechanic — prepare a timed execution on the 7s reference cycle at ×2; 10% of your Recovery stays active while you fight. The heaviest chassis in the game — enormous bulk and armor, bought with the slowest hands and feet.
 
-- **Affinities:** attackPct 0.18, maxHpPct 0.3, platingPct 0.3, attackSpeedPct -0.15, moveSpeedPct -0.1, damageReduction 0.04
+- **Affinities:** attackPct 0.18, maxHpPct 0.3, platingPct 0.1, attackSpeedPct -0.15, moveSpeedPct -0.1, damageReduction 0.28
 - **Mechanics:** defense.recovery-active-pct 0.1
 
 ### Slinger — `reload-root`
 
-Unleash a rapid clip then reload. Your speed is doubled and damage per shot halved as a fundamental multiplier — a light, evasive frame that fights from range and weaves around incoming blows.
+Class mechanics — unleash a rapid clip, then reload. Weapon Attack damage retains 65% effectiveness at this extreme cadence. Flat on-hit damage stays at full strength, while weapon damage converted into damage over time retains 85% effectiveness. Kills activate 20% of your Recovery for 4s, evades gain 10% extra damage mitigation, and target acquisition radius is ×2.5.
 
 - **Affinities:** attackPct 0.2, maxHpPct 0.07, attackSpeedPct 0.1, moveSpeedPct 0.1, attackRange 120, evasion 0.3
-- **Mechanics:** defense.recovery-on-kill-pct 0.2, defense.recovery-on-kill-ms 4000, defense.evade-mitigation 0.2, reload.acquire-radius-mult 2.5
+- **Mechanics:** defense.recovery-on-kill-pct 0.2, defense.recovery-on-kill-ms 4000, defense.evade-mitigation 0.1, reload.acquire-radius-mult 2.5
 
 ### Spirit — `energy-root`
 
-Channel each blow into a building surge of power. The lightest, fastest, highest-output chassis — almost no natural bulk, so a barrier worth 30% of your max HP takes the hits that do reach you. It recharges between fights, not during them.
+Class mechanic — channel each blow into a building surge of power. The lightest, fastest, highest-output chassis — almost no natural bulk, so a barrier worth 30% of your max HP takes the hits that do reach you. It recharges after a quiet window without taking damage.
 
 - **Affinities:** attackPct 0.15, maxHpPct 0.03, attackSpeedPct 0.12, moveSpeedPct 0.12, attackRange 130
 - **Mechanics:** defense.barrier-pct 0.3
 
 ### Apprentice — `dot-root`
 
-Your strikes leave lingering wounds. Stack the pain until nothing survives. The middle chassis — no extreme in any direction — and a toxin-hardened body that resists DoT damage by 18% and converts 10% of incoming direct hits into delayed damage you can outlast.
+Class mechanics — your strikes leave lingering wounds; stack the pain until nothing survives. The middle chassis — no extreme in any direction — and a toxin-hardened body with 18% DoT resistance that converts 15% of incoming direct hits into delayed damage you can outlast.
 
-- **Affinities:** attackPct 0.1, maxHpPct 0.12, platingPct 0.08, attackSpeedPct 0.02, moveSpeedPct 0.03, attackRange 60
-- **Mechanics:** defense.dot-resistance 0.18, defense.hit-to-dot-pct 0.1
+- **Affinities:** attackPct 0.1, maxHpPct 0.12, attackSpeedPct 0.02, moveSpeedPct 0.03, attackRange 60, damageReduction 0.08
+- **Mechanics:** defense.dot-resistance 0.18, defense.hit-to-dot-pct 0.15
 
 ### Conduit — `summoner-root`
 
-Four persistent summons fight in your place. Your weapon sets their damage and cadence while the formation shares one offense and proc budget. Fallen slots rebuild one at a time, costing HP without crossing your safety floor.
+Class mechanic — maximum formation: 4 persistent summons before relic expansion. They fight in your place: your weapon sets their damage and cadence, while every body divides one shared formation offense and secondary-effect budget. Fallen slots rebuild one at a time from a 3.5s base (2.5s floor; 4× faster out of combat), costing 30% of the summon's max HP without taking you below 20% of your max HP.
 
 - **Affinities:** attackPct 0.08, maxHpPct 0.08, attackSpeedPct 0.04, moveSpeedPct 0.05, attackRange 150
 
-> `summoner-root` (Conduit) is gated behind the server's `CONDUIT_ENABLED` flag.
+> `summoner-root` (Conduit) is enabled in the current client and server; development tooling and authentication bypasses remain separate flags.
 
 ## 3. The world map
 
-An 11x11 grid of nodes. Travel is gate-to-gate between orthogonally adjacent
+The live world is an authored sparse registry of T1-T4 nodes plus the T0 Clearing.
 nodes; the server owns pathing (`player:navigateTo`), so a route only names a
 destination. Routes should name content (`{ biomeGroup, tier }`), not node ids.
 
@@ -199,15 +197,15 @@ Essence type per biome: plains = yellow · forest = green · cave = red · mount
 |---|---|---|---|---|---|---|---|---|---|
 | Cave Lurker `cave-lurker` | normal | 225 | 31 | 1 | 0.05 | 12 | 1400 | melee | 10 |
 | Cave Brute `cave-brute` | normal | 250 | 80 | 1 | 0.1 | 12 | 2800 | melee | 13 |
-| Obsidian Broodmother `obsidian-broodmother` | **BOSS** | 1750 | 47 | 6 | 0.1 | 18 | 2800 | melee | 110 |
+| Obsidian Broodmother `obsidian-broodmother` | **BOSS** | 1750 | 40 | 6 | 0.1 | 18 | 2800 | melee | 110 |
 
 ### Mountain (`mountain`, blue essence)
 
 | monster | role | hp | atk | plate | DR | rng | cd(ms) | behavior | essence |
 |---|---|---|---|---|---|---|---|---|---|
-| Cliff Hopper `cliff-hopper` | normal | 190 | 50 | 0 | 0 | 12 | 3000 | melee | 6 |
-| Cliff Hopper `cliff-hopper` | normal | 190 | 50 | 0 | 0 | 12 | 3000 | melee | 6 |
-| Ridge Ambusher `ridge-archer` | normal | 240 | 50 | 0 | 0 | 210 | 3100 | ranged | 8 |
+| Cliff Hopper `cliff-hopper` | normal | 190 | 40 | 0 | 0 | 12 | 3000 | melee | 6 |
+| Cliff Hopper `cliff-hopper` | normal | 190 | 40 | 0 | 0 | 12 | 3000 | melee | 6 |
+| Ridge Ambusher `ridge-archer` | normal | 240 | 40 | 0 | 0 | 210 | 3100 | ranged | 8 |
 | Crag Behemoth `crag-behemoth` | **BOSS** | 2100 | 56 | 0 | 0 | 18 | 3500 | melee | 105 |
 
 ### Swamp (`swamp`, purple essence)
@@ -231,23 +229,23 @@ dungeon. Plan armor and Guards for the guard fight, not just the boss.
 | clearing | `clearing-charm-t1` | recovery | 3 | 3 green | recovery 2 |  |
 | clearing | `clearing-boots-t1` | mobility | 4 | 3 green | speed 12 |  |
 | plains | `iron-broadsword` | weapon | 1 | 10 yellow | attack 10, aps 0.8 | technique.cooldown-reduction-pct 0.06 |
-| plains | `plains-vest-t1` | armor | 2 | 20 yellow | maxHp 24, plating 7 |  |
+| plains | `plains-vest-t1` | armor | 2 | 20 yellow | maxHp 27, plating 2, damageReduction 0.04 |  |
 | plains | `plains-charm-t1` | recovery | 3 | 10 yellow | recovery 1 | defense.recovery-on-kill-pct 0.2, defense.recovery-on-kill-ms 4000 |
 | plains | `plains-boots-t1` | mobility | 4 | 10 yellow | speed 18 | mobility.kill-speed-pct 0.25, mobility.kill-speed-ms 3000 |
 | forest | `flash-rapier` | weapon | 1 | 20 green | attack 5, aps 1.5 |  |
-| forest | `forest-vest-t1` | armor | 2 | 20 green | maxHp 28, plating 3, evasion 0.16 |  |
+| forest | `forest-vest-t1` | armor | 2 | 20 green | maxHp 29, evasion 0.28, damageReduction 0.02 | defense.evade-mitigation 0.1 |
 | forest | `forest-charm-t1` | recovery | 3 | 15 green | recovery 3 | defense.recovery-skill-potency 0.1 |
 | forest | `forest-boots-t1` | mobility | 4 | 10 green | speed 22 | mobility.ooc-speed-pct 0.25 |
 | cave | `chaotic-axe` | weapon | 1 | 26 red | attack 22, aps 1.1 | weapon.dead-swing-interval 3 |
-| cave | `cave-vest-t1` | armor | 2 | 22 red | maxHp 28, plating 4, damageReduction 0.06 |  |
+| cave | `cave-vest-t1` | armor | 2 | 22 red | maxHp 30, damageReduction 0.1 |  |
 | cave | `cave-charm-t1` | recovery | 3 | 18 red | recovery 2 | defense.absorb-pct 0.08 |
 | cave | `cave-boots-t1` | mobility | 4 | 18 red | speed 20 | mobility.stealth-pct 0.25 |
 | mountain | `heavy-hammer` | weapon | 1 | 22 blue | attack 26, aps 0.55 | weapon.empowered-mult-bonus 0.15 |
-| mountain | `mountain-vest-t1` | armor | 2 | 22 blue | maxHp 32, plating 5 | guard.potency-pct 0.15 |
+| mountain | `mountain-vest-t1` | armor | 2 | 22 blue | maxHp 36, plating 1, damageReduction 0.04 | guard.potency-pct 0.15 |
 | mountain | `mountain-charm-t1` | recovery | 3 | 18 blue | recovery 1 | defense.barrier-pct 0.12 |
 | mountain | `mountain-boots-t1` | mobility | 4 | 18 blue | speed 16 | mobility.approach-speed-pct 0.35 |
 | swamp | `ashbrand-blade` | weapon | 1 | 22 purple | attack 10, aps 0.9 |  |
-| swamp | `swamp-vest-t1` | armor | 2 | 22 purple | maxHp 30, plating 4 | defense.dot-resistance 0.2 |
+| swamp | `swamp-vest-t1` | armor | 2 | 22 purple | maxHp 32, damageReduction 0.04 | defense.dot-resistance 0.25 |
 | swamp | `swamp-charm-t1` | recovery | 3 | 18 purple | recovery 2 | defense.recovery-pulse-pct 0.2, defense.recovery-pulse-interval-ms 8000, defense.recovery-pulse-duration-ms 4000 |
 | swamp | `swamp-boots-t1` | mobility | 4 | 18 purple | speed 18 | mobility.slow-resistance 0.25 |
 
@@ -310,6 +308,8 @@ ordered by priority. Both fragments must be owned. Fragments not marked
 | `hp-above-90` | 1 | yes | Works while your health is at or above 90%. |
 | `target-hp-below-25` | 1 | yes | Works while your current target is at or under 25% health. |
 | `has-debuff` | 1 | yes | Works while you are carrying a harmful debuff or damage-over-time effect. |
+| `controlled` | 1 | yes | Works while you are stunned, locked down, frozen or rooted. |
+| `enemy-contact` | 1 | yes | Works while a melee enemy targeting you is close enough to hit you. |
 | `in-party` | 1 | yes | Works while in a party with one or more players. |
 | `n-aggro-3` | 2 | yes | Works when three or more enemies are chasing you. |
 | `inside-telegraph` | 1 | yes | Works while you are standing inside an unresolved hostile attack telegraph. |
@@ -335,9 +335,11 @@ ordered by priority. Both fragments must be owned. Fragments not marked
 | `let-dots-finish` | 1 | TARGETING | **no** | Prefer a new enemy when your damage over time should finish the current one. |
 | `spread-dots` | 2 | TARGETING | **no** | In multi-enemy fights, rotate targets to keep your damage over time active. |
 | `focus-elites` | 2 | TARGETING | **no** | Prioritize elite enemies (the yellow-outlined standouts) — necromancers, apex predators — before clearing the rest. |
-| `tactical-reload` | 1 | RESOURCE_MAINTENANCE | **no** | Out of combat, pause to refill reload-class clips. |
-| `wait-for-execution` | 1 | OOC_MAINTENANCE | **no** | Out of combat, wait until your cooldown-class execution is ready. |
+| `tactical-reload` | 1 | RESOURCE_MAINTENANCE | yes | Pause to refill your clip. Always holds as soon as combat disengages; Out of Combat waits for the combat grace period to expire. |
+| `wait-for-execution` | 1 | OOC_MAINTENANCE | yes | Wait until your execution is ready. Always holds as soon as combat disengages; Out of Combat waits for the combat grace period to expire. |
+| `wait-for-summons` | 1 | OOC_MAINTENANCE | yes | Wait until every missing summon is reconstructed, without waiting for full summon HP. Always holds as soon as combat disengages; Out of Combat waits for the combat grace period to expire. |
 | `wait-for-regen` | 1 | OOC_MAINTENANCE | yes | Hold position until HP is full instead of moving on. With Always, it holds as soon as nothing is attacking you, without waiting for combat to time out. |
+| `wait-it-out` | 1 | OOC_MAINTENANCE | yes | Hold position until temporary harmful effects fade. With Always, it holds as soon as nothing is attacking you, without waiting for combat to time out. |
 | `auto-path-enemy` | 0 | GLOBAL_STRATEGY | yes | When idle, path to the nearest valid enemy in this node. |
 | `avoid-hazards` | 2 | PATH_SAFETY | **no** | Route around damaging and slowing terrain when pathing. |
 | `careful-pulling` | 2 | APPROACH_STYLE | **no** | While approaching a target, bias movement away from nearby non-target elites. |
@@ -345,18 +347,14 @@ ordered by priority. Both fragments must be owned. Fragments not marked
 | `fight-back` | 0 | TRAVEL_RESPONSE | yes | Pause travel when attacked, use your normal combat rules, then resume the route. |
 | `lead-the-way` | 0 | GLOBAL_STRATEGY | yes | As party leader, look for enemies in this zone so followers can trail you. |
 | `taunt-current-target` | 1 | CONTROL | yes | On hit, force your current enemy to attack you. Has a 4 second cooldown. |
-| `fire-technique` | 1 | TECHNIQUE | yes | Override your Technique's auto-timing: arm it when this situation holds instead of the default. |
-| `fire-technique-2` | 1 | TECHNIQUE_2 | yes | Override the auto-timing of your SECOND Technique. Inert until a second Technique slot is unlocked. |
-| `fire-guard` | 1 | GUARD | yes | Override your Guard's auto-timing: trigger it when this situation holds instead of the default. |
-| `fire-guard-2` | 1 | GUARD_2 | yes | Override the auto-timing of your SECOND Guard. Inert until a second Guard slot is unlocked. |
+| `recall-summons` | 1 | FORMATION | yes | While this situation holds, your summons drop their targets and stay at your side, then rejoin the fight when it ends. |
+| `use-ability` | 1 | ABILITY | yes | Use an attuned ability whenever this situation holds and it is off cooldown. |
 | `switch-stance` | 0 | STANCE | yes | Switch to a chosen learned stance while this situation holds, reverting to your default otherwise. |
 
 ### Rune forge recipes (how non-starter fragments are unlocked)
 
 | recipe | unlocks | kind | gate | cost |
 |---|---|---|---|---|
-| `rune-recipe-reload-safely` | `tactical-reload` | action | forest L2 | 140 green + 60 blue |
-| `rune-recipe-ready-execution` | `wait-for-execution` | action | forest L3 | 140 green + 60 red |
 | `rune-recipe-focus-highest-hp` | `focus-highest-max-hp` | action | forest L4 | 220 green |
 | `rune-recipe-avoid-hazards` | `avoid-hazards` | action | swamp L2 | 25 purple |
 | `rune-recipe-careful-pulling` | `careful-pulling` | action | cave L3 | 115 red |
@@ -457,7 +455,7 @@ Standing kit into the gauntlet: `chaotic-axe`, `swamp-charm-t1`, `plains-boots-t
 with `plains-vest-t1` (plating 7) for Plains/Forest and `mountain-vest-t1`
 (guard potency 15%) for Mountain/Swamp/Cave.
 
-Per-boss loadout — one Technique + one Guard is all tier 1 allows:
+Per-boss baseline choices — the live game supports ordered repertoires within shared RP:
 
 | boss | armor | technique | guard |
 |---|---|---|---|
@@ -478,6 +476,7 @@ Standing Rune loadout after Mountain L2 (8/10 RP at GM20):
 ```
 
 Step Back must precede Chase because both claim MOVEMENT. Avoid Hazards is a separate
-PATHING channel. Second Wind and Cleanse use built-in triggers, so neither carries
-`fire-guard`. The Brace-tank A/B omits Step Back and equips that rule only with Brace.
+PATHING channel. Abilities have no built-in trigger: `applyBuild` appends each attuned
+ability's reference `use-ability` rule unless the route wires it. The Brace-tank A/B omits
+Step Back and wires Brace to `target-casting` instead.
 

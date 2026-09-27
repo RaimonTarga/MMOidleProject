@@ -185,7 +185,7 @@ Everything else in §2 authors keys that already exist.
 |---|---|
 | **Amplifier (buff potency)** | There is no unified buff-magnitude field — every mechanic reads its own keys. This is a subsystem, not a core, and it should stop being planned as one. |
 | **Warden / any threat core** | No taunt system exists beyond the `taunt-current-target` rune. |
-| **Summon cores** | The `summoner.*` keys would make this nearly free, but `CONDUIT_ENABLED` is false outside dev — it would ship as content no player can reach. |
+| **Summon cores** | The `summoner.*` keys are now reachable because Conduit is enabled in all environments, but the summon-core cast remains design-only until its economy, eligibility, and runtime interactions are authored and tested. |
 | **Heavy Core** | Dropped, not blocked. Its identity (big slow hits) is now covered by Juggernaut→Colossus and by Accelerant read in reverse; a third "trade speed for size" core would be redundant. |
 
 ---

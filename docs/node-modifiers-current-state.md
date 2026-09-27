@@ -1,4 +1,4 @@
-# Node Modifiers — Current State
+# Node Modifiers — Current State (audited 2026-09-27)
 
 **Living truth for what node modifiers do today.** Design authority for the map as a
 whole is [map-variety-plan.md](map-variety-plan.md), but that doc's §1.2 (five *pace*

@@ -1,12 +1,13 @@
 # Audio / Sound Engine — Current State
 
 Client-only sound layer: combat **SFX** + per-biome **background music**, with separate
-SFX/Music volume controls in Settings.
+SFX/Music volume controls in Settings. Audited against the current client and asset
+manifest on 2026-09-27.
 
-> **🔨 IMPLEMENTED 2026-06-28** — engine, manifest, persisted settings, combat-event SFX
-> triggers, biome-driven music, and the Settings → Audio tab. Ships with **synthesized
-> fallback cues only**; no real audio files exist yet (drop them in per the manifest to
-> switch over). Music is silent until tracks are added.
+> **🔨 IMPLEMENTED** — engine, manifest, persisted settings, combat-event SFX triggers,
+> biome-driven music, and the Settings → Audio tab. The repository now ships 18 real
+> SFX files; every cue still has a synthesized fallback. Music remains silent because
+> `MUSIC_MANIFEST` has no real track paths yet.
 
 ## TL;DR
 
@@ -21,8 +22,9 @@ changes**, no new dependencies.
 
 - **Manifest** ([client/src/audio/manifest.ts](../client/src/audio/manifest.ts)): the
   declarative catalog.
-  - `SFX_MANIFEST: Record<SfxId, SfxDef>` — ids: `attack-melee`, `attack-ranged`,
-    `attack-magic`, `take-damage`, `kill`, `dodge`, `death`, `empowered`, `pack-call`. Each has
+  - `SFX_MANIFEST: Record<SfxId, SfxDef>` — ids include `attack-melee`, `attack-blunt`,
+    `attack-ranged`, `attack-magic`, `take-damage`, `kill`, `boss-death`, `frozen`,
+    `debuff-apply`, `debuff-receive`, `dodge`, `death`, `empowered`, and `pack-call`. Each has
     an optional `file` (a single path **or an array of variant paths** — the engine picks one at
     random per play), a `fallback` (array of `SynthTone` oscillator notes), and two per-play
     randomizers: `gainVariance` (± volume) and `pitchVariance` (± playback rate/pitch). Three
@@ -30,14 +32,16 @@ changes**, no new dependencies.
     cues; omitted on the one-off death sting).
   - `MUSIC_MANIFEST: Partial<Record<string, string>>` — biome group → track path, keyed off
     `BIOME_TEXTURES` (clearing, forest, plains, swamp, mountain, cave, jungle, tundra, desert,
-    volcanic, graveyard, trench, abyss). All `undefined` until files land.
+    volcanic, graveyard, trench, abyss). All are currently `undefined`, so music is silent.
   - `sfxKey(id)` / `musicKey(group)` produce Phaser cache keys; `AUDIO_SFX_DIR` /
-    `AUDIO_MUSIC_DIR` are the path conventions (`/assets/audio/sfx`, `/assets/audio/music`).
+  `AUDIO_MUSIC_DIR` are the path conventions (`/assets/audio/SFX`, `/assets/audio/music`). The uppercase
+  `SFX` segment is intentional for Linux case-sensitive serving.
 
 - **Settings** ([client/src/audio/audioSettings.ts](../client/src/audio/audioSettings.ts)):
   `AudioSettings { sfxVolume, musicVolume, sfxMuted, musicMuted }` (volumes 0–1), persisted
-  under `mmo_audio_settings_v1` (defaults 0.6 SFX / 0.4 Music). Mirrors the shape of
-  `gameplaySettings.ts`. Exposes Jotai atoms (`sfxVolumeAtom`, `musicVolumeAtom`,
+  under `mmo_audio_settings_v3` (defaults 0.3 SFX / 0.2 Music, both muted). The v3
+  key deliberately retires older saved preferences so the temporary playtest mute
+  policy applies to returning players. Exposes Jotai atoms (`sfxVolumeAtom`, `musicVolumeAtom`,
   `sfxMutedAtom`, `musicMutedAtom`) seeded from storage for the UI.
 
 - **Engine** ([client/src/audio/audioEngine.ts](../client/src/audio/audioEngine.ts)): module
@@ -115,7 +119,9 @@ track. Use **seamless 2–5 min loops**, not long-form tracks — the engine pla
 
 ## Known gaps / next steps
 
-- **No real assets yet** — synth cues for SFX, silence for music.
+- **No real music assets yet** — 18 real SFX files are loaded from
+  `client/public/assets/audio/SFX`; synth cues remain the fallback and music is
+  silent until tracks are authored.
 - **Music preloads eagerly**: `preloadGameAssets` loads *all* registered music at boot. Once the
   full 13-biome set exists (~50 MB), switch to **lazy-load on biome entry** (load the one track
   inside `setMusicForBiome`, cache after first load) so unreached late-tier biomes don't bloat

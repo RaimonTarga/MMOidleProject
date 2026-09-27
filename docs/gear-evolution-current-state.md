@@ -1,8 +1,12 @@
 # Step 6 — Gear Evolution & Reconstruction — Current State
 
-Paired with `docs/archive/gear-evolution-plan.md`. Reflects what shipped this session: the **structural
-machinery + one worked lineage**. Authoring the remaining lineages and tuning +4/+5 / evolution
-costs is the user's later pass.
+**Audited:** 2026-09-27.
+
+The structural machinery and authored gear lineages now cover the live T1–T4
+recipe set. This page is paired with the historical
+[`docs/archive/gear-evolution-plan.md`](archive/gear-evolution-plan.md). Numerical
+costs and balance remain user-owned tuning inputs, but the data is no longer a
+single-lineage implementation placeholder.
 
 ## Data model
 
@@ -71,12 +75,15 @@ Base recipes are unchanged.
 
 ## Worked lineage — `forest.recipes.ts` (the `rapier` lineage)
 
-- **`flash-rapier`** (base): `lineageId: 'rapier'`; upgrades extended to length 5 (+4/+5 placeholders).
+- **`flash-rapier`** (base): `lineageId: 'rapier'`; its five-step upgrade track is
+  the base of the branch.
 - **`gale-needle`** (retrofit of the existing T2 forest weapon): `evolvesFrom: 'flash-rapier'`,
   `lineageId: 'rapier'`, `reconstructCost`, length-5 upgrades. The primary evolution.
 - **`thorn-needle`** (new): second `evolvesFrom: 'flash-rapier'` sibling — demonstrates **branching**
   (on-hit/venom variant).
-- All evolution/reconstruct/+4/+5 numbers are PLACEHOLDERS.
+- The rapier remains an example of the general lineage grammar, not the only
+  authored lineage. Evolution, reconstruction, and upgrade costs are live
+  authored values whose balance is still subject to measured tuning.
 
 ⚠️ `gale-needle` was previously a plain-craftable T2 forest weapon; it is now evolution-only. Existing
 saves that hold it keep the item; the forge now offers Evolve/Reconstruct for it instead of Craft.
@@ -87,9 +94,12 @@ Typecheck clean (4 pkgs); shared rebuild clean; targetPriority + runeMaintenance
 package): lineage fields resolve; `checkEvolve` rejects no-predecessor / +2 and accepts +3-with-funds;
 `checkReconstruct` accepts with funds; `gale-needle` max upgrade = 5.
 
-## Deferred (not this session)
+## Deferred or deliberately out of scope
 
 - +5 rewards: cheaper branch-switch, partial refund (roadmap "+5 role"). v1 switching = craft the sibling.
 - Per-id (not per-instance) upgrade quirk: re-acquiring an id you already leveled inherits that level;
   "evolved item starts at +0" holds only on first acquisition.
-- Lineages for the other 3 slots × biomes; +4/+5 and evolution-cost tuning (user balance pass).
+- Automatic branch switching/refunds; the current behavior is to craft or evolve
+  the selected sibling through its authored path.
+- Per-tier numerical retuning and future T5+ lineages; current T1–T4 data is
+  authored and the implementation contract should not be inferred for new tiers.

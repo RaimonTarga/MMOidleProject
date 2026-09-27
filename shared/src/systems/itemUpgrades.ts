@@ -198,7 +198,7 @@ export function checkUpgrade(params: {
   currentPlus: number;
   biomeLevel: number;
   essences: Record<EssenceType, number>;
-  /** Player's catalyst wallet, keyed by biome group. Absent treated as empty. */
+  /** Player's catalyst wallet, keyed by node modifier family. Absent treated as empty. */
   catalysts?: Record<string, number>;
   /** Global Mastery — opens the upgrade ceiling. Absent → ceiling non-binding. */
   globalMastery?: number;
