@@ -1232,7 +1232,9 @@ function beginStep(
         kind: 'boss-fx',
         monsterId: monster.isMonster.id,
         pos: { ...monster.hasPosition.current },
-        fx: 'frenzy',
+        // The pattern Frenzy is the Jungle predator's (its own cue and aura);
+        // the Forest bear's scripted Bestial Frenzy keeps `frenzy`.
+        fx: 'predator-frenzy',
       });
       state.stepEndsAtMs = now;
       return true;

@@ -5,6 +5,40 @@ import type { GameScene } from '../scenes/GameScene';
 import { atlasHasFrame } from './sprites';
 import { burstFx } from '../fx/particles';
 import { nodeToScene } from './sceneCoords';
+import { shouldRunClientFx } from '../fx/guard';
+import { bossBiome } from '../fx/bossBiome';
+import { fxJungleEmerge, fxJungleRustle, fxJungleVanish } from '../fx/jungleBoss';
+import { fxTrenchSubmerge, fxTrenchSurface, fxTrenchWake } from '../fx/trenchBoss';
+
+/**
+ * STEALTH cues by biome: the Jungle predator slips into brush, the Trench serpent
+ * sinks into dark water. Enter, a trail while hidden, and the break from cover.
+ */
+type StealthCue = 'enter' | 'trail' | 'exit';
+const lastTrail = new Map<string, { x: number; y: number }>();
+
+function stealthCue(scene: GameScene, monster: MonsterView, x: number, y: number, cue: StealthCue): void {
+  if (!shouldRunClientFx()) return;
+  const trench = bossBiome(scene, monster.id) === 'trench';
+  if (cue === 'trail') {
+    // Only where it actually moved: a still, hidden body leaves no wake.
+    const last = lastTrail.get(monster.id);
+    if (last && Math.hypot(last.x - x, last.y - y) < 10) return;
+    lastTrail.set(monster.id, { x, y });
+    if (trench) fxTrenchWake(scene, x, y);
+    else fxJungleRustle(scene, x, y + 18);
+    return;
+  }
+  lastTrail.delete(monster.id);
+  if (cue === 'enter') {
+    if (trench) fxTrenchSubmerge(scene, x, y);
+    else fxJungleVanish(scene, x, y);
+  } else if (trench) {
+    fxTrenchSurface(scene, x, y);
+  } else {
+    fxJungleEmerge(scene, x, y);
+  }
+}
 
 /**
  * BURROW / STEALTH PRESENTATION.
@@ -196,6 +230,10 @@ export function syncConcealment(
 
   if (now === was) {
     if (now !== undefined) applyConcealedLook(state, monster.id, size, usingBurrowArt, now);
+    if (now === 'stealth') {
+      const drawn = state.sprite.get(monster.id);
+      if (drawn) stealthCue(scene, monster, drawn.x, drawn.y, 'trail');
+    }
     return;
   }
   meta.concealed = now;
@@ -213,6 +251,7 @@ export function syncConcealment(
   if (now !== undefined) {
     // GOING UNDER. Dirt first, so the body change happens behind it.
     if (now === 'burrow') spawnDirtCloud(scene, scenePos.x, scenePos.y, cloudScale);
+    if (now === 'stealth') stealthCue(scene, monster, scenePos.x, scenePos.y, 'enter');
     // Sink only the improvised burrow; bespoke burrow art sits at its own height,
     // and a stealthed body stays where it is.
     meta.visualOffsetY = usingBurrowArt || now === 'stealth' ? undefined : SUBMERGED_SINK_PX;
@@ -224,6 +263,7 @@ export function syncConcealment(
   // the boss travels rather than teleports, is somewhere the player has been
   // watching the mound approach.
   if (was === 'burrow') spawnDirtCloud(scene, scenePos.x, scenePos.y, cloudScale * 1.25);
+  if (was === 'stealth') stealthCue(scene, monster, scenePos.x, scenePos.y, 'exit');
   meta.visualOffsetY = undefined;
   clearConcealedLook(state, monster.id, size, monster);
 }

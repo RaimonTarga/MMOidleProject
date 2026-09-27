@@ -140,6 +140,23 @@ import { fxStalactiteShot, fxBurrow, fxEmerge } from "../fx/caveCues";
 import { fxGroundSlam, fxChargeLane, fxBombardment } from "../fx/mountainCues";
 import { fxPredatorFlee, fxPressureLance } from "../fx/predatorCues";
 import { fxCataclysmCast, fxCataclysmImpact } from "../fx/cataclysm";
+import {
+  cancelWindup,
+  DESERT_HUNT,
+  fxAmbushPounce,
+  fxAmbushWindup,
+  fxHuntBolt,
+  fxPredatorFrenzy,
+  JUNGLE_HUNT,
+} from "../fx/jungleBoss";
+import {
+  fxMawWindup,
+  fxPressureWindup,
+  fxTailWindup,
+  fxUndertowWindup,
+  resolveTrenchWindup,
+} from "../fx/trenchBoss";
+import { bossBiome } from "../fx/bossBiome";
 import { fxSweep } from "../fx/sweep";
 import { fxExposeWeakness } from "../fx/heavyStrike";
 import { fxBrace } from "../fx/brace";
@@ -1021,7 +1038,21 @@ export function dispatchCombatEvent(
       if (caster) {
         if (ev.fx === "charge-lane") fxChargeLane(scene, caster.x, caster.y);
         else if (ev.fx === "burrow") fxBurrow(scene, caster.x, caster.y);
-        else if (ev.fx === "predator-flee") fxPredatorFlee(scene, caster.x, caster.y);
+        else if (ev.fx === "predator-flee") {
+          // The bolt itself (lean, stretch, afterimages) for every hunter; the leaf
+          // wrap only in the jungle — a Desert dash has no brush to close around it.
+          const desert = bossBiome(scene, ev.monsterId) === "desert";
+          if (!desert) fxPredatorFlee(scene, caster.x, caster.y);
+          fxHuntBolt(scene, ev.monsterId, desert ? DESERT_HUNT : JUNGLE_HUNT);
+        }
+        // Jungle ambush: the crouch and the eye glint.
+        else if (ev.fx === "ambush-pounce" || ev.fx === "venom-pounce") fxAmbushWindup(scene, ev.monsterId, ev.castMs);
+        // Trench wind-ups, resolved (or cancelled) by the matching cast-end.
+        else if (ev.fx === "undertow") fxUndertowWindup(scene, ev.monsterId, ev.castMs);
+        else if (ev.fx === "trench-bite") fxMawWindup(scene, ev.monsterId, ev.castMs, "bite");
+        else if (ev.fx === "devour-maw") fxMawWindup(scene, ev.monsterId, ev.castMs, "devour");
+        else if (ev.fx === "crushing-pressure") fxPressureWindup(scene, ev.monsterId, ev.castMs);
+        else if (ev.fx === "tail-lash") fxTailWindup(scene, ev.monsterId, ev.castMs);
         else if (ev.fx === "cataclysm-cast") fxCataclysmCast(scene, ev.monsterId, caster.x, caster.y, ev.castMs);
         // The Bog Lurker gathering itself at the water's edge. This is the beat the
         // whole ability is solvable from, so it has to be drawn on the wind-up and
@@ -1041,10 +1072,29 @@ export function dispatchCombatEvent(
 
   if (ev.kind === "monster-cast-end") {
     endCastBar(state, ev.monsterId);
+    // A stopped cast (stun, reset) unwinds its wind-up: the Trench jaws crack
+    // apart ("Choked"), a crouch springs back up.
+    if (!ev.fired) {
+      if (!resolveTrenchWindup(scene, ev.monsterId, false)) cancelWindup(scene, ev.monsterId);
+    }
     // On a fired shot, rip the flashy projectile from the monster to its target.
     if (ev.fired && shouldRunClientFx()) {
       const monster = state.sprite.get(ev.monsterId);
       const target = ev.targetId ? state.sprite.get(ev.targetId) : undefined;
+      const hitAt = target ? { x: target.x, y: target.y } : undefined;
+      if (
+        ev.fx === "undertow" || ev.fx === "trench-bite" || ev.fx === "devour-maw" ||
+        ev.fx === "crushing-pressure" || ev.fx === "tail-lash"
+      ) {
+        resolveTrenchWindup(scene, ev.monsterId, true, hitAt);
+        return;
+      }
+      if (monster && (ev.fx === "ambush-pounce" || ev.fx === "venom-pounce")) {
+        const to = hitAt ?? { x: monster.x + 60, y: monster.y };
+        fxAmbushPounce(scene, ev.monsterId, ev.targetId, { x: monster.x, y: monster.y }, to,
+          ev.fx === "venom-pounce" ? "venom" : "maul");
+        return;
+      }
       const impact = ev.pos ? nodeToScene(ev.pos.x, ev.pos.y) : undefined;
       if (monster && ev.fx === "howl") {
         fxDireHowl(scene, monster.x, monster.y);
@@ -1225,6 +1275,8 @@ export function dispatchCombatEvent(
         fxBossRoar(scene, at.x, at.y, ev.radius ?? 260);
       } else if (ev.fx === "frenzy") {
         fxBestialFrenzy(scene, at.x, at.y);
+      } else if (ev.fx === "predator-frenzy") {
+        fxPredatorFrenzy(scene, ev.monsterId, at.x, at.y);
       } else if (ev.fx === "stagger") {
         // The punish window. `bossPatterns.ts` has always published this and the
         // client never drew it, so breaking a plate or an escape-guard — the only

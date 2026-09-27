@@ -10,6 +10,8 @@ export interface GameplaySettings {
   uiFontScale: number;
   /** Show the auto-combat intent thought bubble over characters. Off by default. */
   intentBubblesEnabled: boolean;
+  /** Camera shake and hit-stop on heavy boss impacts. On by default. */
+  screenShakeEnabled: boolean;
 }
 
 const LEGACY_STORAGE_KEY = 'mmo_gameplay_settings_v1';
@@ -28,6 +30,7 @@ const DEFAULTS: GameplaySettings = {
   deathNotificationsEnabled: false,
   uiFontScale: 1,
   intentBubblesEnabled: false,
+  screenShakeEnabled: true,
 };
 
 function clampUiFontScale(value: unknown): number {

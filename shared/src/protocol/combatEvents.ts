@@ -129,7 +129,7 @@ type CombatEventPayload =
   // to punishment. Its client presentation reuses the player's hard-stun cue so
   // the same concussion-and-stars language means "this target cannot act" everywhere;
   // the event remains distinct because it is the boss's recovery state, not a hit.
-  | { kind: 'boss-fx'; monsterId: string; pos: Vec2; fx: 'slam' | 'summon' | 'shield' | 'morph' | 'roar' | 'frenzy' | 'stagger'; radius?: number; element?: string }
+  | { kind: 'boss-fx'; monsterId: string; pos: Vec2; fx: 'slam' | 'summon' | 'shield' | 'morph' | 'roar' | 'frenzy' | 'predator-frenzy' | 'stagger'; radius?: number; element?: string }
   // An announced boss phase began (`BossPhase.name`). The client calls the name out
   // over the boss; the lasting label rides `hasStatus.bossPhase` on the boss bar.
   | { kind: 'boss-phase'; monsterId: string; name: string }

@@ -27,7 +27,9 @@ interface WeatherLayer {
   t: number;
 }
 
-const MAX_PARTICLES: Record<Weather, number> = { blizzard: 220, ashfall: 140, abyss: 0 };
+// Blizzard spawns across a wider band (see BLIZZARD_DRIFT), so it needs more flakes
+// for the same on-screen density.
+const MAX_PARTICLES: Record<Weather, number> = { blizzard: 320, ashfall: 140, abyss: 0 };
 const layers = new WeakMap<GameScene, WeatherLayer>();
 
 function currentWeather(scene: GameScene): Weather | null {
@@ -39,12 +41,23 @@ function currentWeather(scene: GameScene): Weather | null {
   return null;
 }
 
+/**
+ * Blizzard snow drifts LEFT as it falls (up to ~1.2 px sideways per px down), so a
+ * flake that reaches the bottom-right corner has to start well past the right edge.
+ * Spawning only across the screen width left that corner bare (playtest 2026-09-27).
+ */
+const BLIZZARD_DRIFT = 1.2;
+
 function spawn(weather: Weather, w: number, h: number, anywhere: boolean): Particle {
-  const x = Math.random() * w * 1.2 - w * 0.1;
-  const y = anywhere ? Math.random() * h : -10;
   if (weather === "blizzard") {
+    const x = anywhere
+      ? Math.random() * w * 1.1 - w * 0.05
+      : Math.random() * (w + h * BLIZZARD_DRIFT) - w * 0.05;
+    const y = anywhere ? Math.random() * h : -10;
     return { x, y, vx: -140 - Math.random() * 120, vy: 220 + Math.random() * 180, size: 1.5 + Math.random() * 2, life: 1 };
   }
+  const x = Math.random() * w * 1.2 - w * 0.1;
+  const y = anywhere ? Math.random() * h : -10;
   // Ash: slow, drifting, some of it still glowing.
   return { x, y, vx: -20 + Math.random() * 40, vy: 30 + Math.random() * 40, size: 1.5 + Math.random() * 2.5, life: Math.random() };
 }
@@ -116,7 +129,10 @@ export function updateBossWeather(scene: GameScene, dtMs: number): void {
   for (const p of layer.particles) {
     p.x += p.vx * dt;
     p.y += p.vy * dt;
-    if (p.y > h + 10 || p.x < -20 || p.x > w + 20) Object.assign(p, spawn(weather, w, h, false));
+    // Blizzard flakes may start off the right edge and drift in; only cull them
+    // once they are past where any drift could still bring them on screen.
+    const maxX = weather === "blizzard" ? w + h * BLIZZARD_DRIFT + 20 : w + 20;
+    if (p.y > h + 10 || p.x < -20 || p.x > maxX) Object.assign(p, spawn(weather, w, h, false));
     if (weather === "blizzard") {
       g.fillStyle(0xffffff, 0.75 * layer.strength);
     } else {

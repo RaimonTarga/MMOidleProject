@@ -79,6 +79,9 @@ export function SettingsPanel({ onClose, onSwitchCharacter }: Props) {
   const [deathNotificationsEnabled, setDeathNotificationsEnabled] = useState(
     () => loadGameplaySettings().deathNotificationsEnabled,
   );
+  const [screenShakeEnabled, setScreenShakeEnabled] = useState(
+    () => loadGameplaySettings().screenShakeEnabled,
+  );
   const [intentBubblesEnabled, setIntentBubblesEnabled] = useState(
     () => loadGameplaySettings().intentBubblesEnabled,
   );
@@ -211,6 +214,11 @@ export function SettingsPanel({ onClose, onSwitchCharacter }: Props) {
     setAutoTraverseEnabled(enabled);
     saveGameplaySettings({ autoTraverseEnabled: enabled });
     hudBus.requestSetAutoTraverse(enabled);
+  }
+
+  function handleScreenShakeToggle(enabled: boolean): void {
+    setScreenShakeEnabled(enabled);
+    saveGameplaySettings({ screenShakeEnabled: enabled });
   }
 
   function handleIntentBubblesToggle(enabled: boolean): void {
@@ -389,6 +397,19 @@ export function SettingsPanel({ onClose, onSwitchCharacter }: Props) {
               A thought bubble above each character telegraphing their current auto
               action — the monster they're hunting, where they're travelling, who
               they're following. Emotes always show.
+            </p>
+
+            <label className="settings-toggle-row">
+              <input
+                type="checkbox"
+                checked={screenShakeEnabled}
+                onChange={(e) => handleScreenShakeToggle(e.target.checked)}
+              />
+              <span>Screen shake</span>
+            </label>
+            <p className="settings-help">
+              A short camera shake and a brief pause on heavy boss impacts. Turn it
+              off if camera motion bothers you; the effects still play.
             </p>
 
             <label className="settings-toggle-row">
