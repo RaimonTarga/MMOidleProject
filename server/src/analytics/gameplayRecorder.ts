@@ -25,7 +25,6 @@ export function gameplayBuild(p: PlayerEntity): GameplayBuild {
     auto: p.usesAutocombat.auto, autoTraverse: p.usesAutocombat.autoTraverse,
     priorityMode: p.usesAutocombat.priorityMode, acquireRadius: p.usesAutocombat.acquireRadius,
     focusLeaderTarget: p.usesAutocombat.focusLeaderTarget,
-    engageUltimateBosses: p.usesAutocombat.engageUltimateBosses,
     fleeWhenLow: p.usesAutocombat.fleeWhenLow, fleeHpPct: p.usesAutocombat.fleeHpPct,
   };
 }

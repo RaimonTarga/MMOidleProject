@@ -89,7 +89,7 @@ export interface Recipe {
   icon?: string;
   /**
    * If set, recipe unlocks only when this token is present in bossesCleared
-   * (e.g. ultimate:void-overlord).
+   * (any boss-clear key, e.g. `mountain:4`).
    */
   requiredBossClear?: string;
   // ── Lineage / evolution (system rework Step 6) ──────────────────────────────

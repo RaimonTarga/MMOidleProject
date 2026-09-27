@@ -55,7 +55,6 @@ export interface SocketHandlers {
   onUpgradeResult(result: { success: boolean; reason?: string; itemId: string; newLevel: number }): void;
   onPlayerDied(payload: PlayerDeathPayload): void;
   onPlayerAscended(tier: number): void;
-  onOverlordFelled(): void;
   onBossFelled(markers: BossFelledMarker[]): void;
   onWorldEvents(events: WorldLogEvent[]): void;
   onUpdateAnnouncement(payload: ReleaseAnnouncementPayload): void;
@@ -96,7 +95,6 @@ export function wireSocketHandlers(
   socket.on('inventory:upgradeResult', (r) => h.onUpgradeResult(r));
   socket.on('player:died', (p) => h.onPlayerDied(p));
   socket.on('player:ascended', (t) => h.onPlayerAscended(t));
-  socket.on('overlord:felled', () => h.onOverlordFelled());
   socket.on('world:bossFelled', (m) => h.onBossFelled(m));
   socket.on('world:events', (e) => h.onWorldEvents(e));
   socket.on('game:updateAnnouncement', (p) => h.onUpdateAnnouncement(p));
@@ -130,7 +128,6 @@ export function wireSocketHandlers(
     socket.off('inventory:upgradeResult');
     socket.off('player:died');
     socket.off('player:ascended');
-    socket.off('overlord:felled');
     socket.off('world:bossFelled');
     socket.off('world:events');
     socket.off('game:updateAnnouncement');

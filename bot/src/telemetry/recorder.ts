@@ -599,7 +599,6 @@ export class Recorder {
           bosses: obs.monsters().filter(m => m.isBoss).map(m => ({
             id: m.id, monsterTypeId: m.monsterTypeId, hp: m.hp, maxHp: m.maxHp,
             pos: { ...m.pos }, state: m.state,
-            ultimateStatus: m.ultimateStatus ? structuredClone(m.ultimateStatus) : undefined,
             bossEffects: m.bossEffects ? [...m.bossEffects] : undefined,
             targetStatus: m.targetStatus ? structuredClone(m.targetStatus) : undefined,
           })),

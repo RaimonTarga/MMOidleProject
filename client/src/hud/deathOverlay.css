@@ -41,10 +41,6 @@
   top: -64px;
 }
 
-.death-card__void-sprite {
-  background-repeat: no-repeat;
-}
-
 .death-card__header {
   font-size: 14px;
   font-weight: 700;

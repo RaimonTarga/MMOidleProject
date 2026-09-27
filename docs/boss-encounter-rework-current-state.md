@@ -216,8 +216,8 @@ more specific.*
 
 ## 2. The active roster
 
-26 dungeon bosses across 11 lineages. `void-overlord` (and its wardens / void adds) is
-soft-discarded legacy and was **not** touched.
+26 dungeon bosses across 11 lineages. The legacy `void-overlord` staged encounter (with its
+wardens and void adds) was deleted on 2026-09-27; no world node hosted it.
 
 | Biome | Identity in one sentence | Tiers |
 |---|---|---|
@@ -812,5 +812,5 @@ beat is the lesson.
    +30% dealt / +45% taken at ten, then logarithmic growth. Boss vents accelerate
    accumulation 3x even above ten; out-of-combat cooling accelerates at high stacks.
    See `biome-ecology-current-state.md` for formulas. The T4 stoke was removed.
-7. **`void-overlord` is untouched legacy.** Not redesigned, not rebalanced, not part of the
-   active design table.
+7. **`void-overlord` was deleted (2026-09-27).** It was unreachable legacy: no world node
+   hosted it.

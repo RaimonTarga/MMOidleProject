@@ -76,7 +76,7 @@ function validatePersistent(s: ProgressionCheckpointState): void {
   for (const key of ['unlockedRecipes','bossesCleared','clearedNodes','visitedNodes','runesOwned','runeRecipesCrafted','knownAbilities','knownStances','knownRites','equippedRites','attunedStances'] as const) unique(p[key] ?? [],key);
   unique(s.holdsInventory.inventory,'inventory'); unique(skills.unlockedSkills,'skills');
   unique([...p.attunedAbilities.techniques,...p.attunedAbilities.guards],'attuned abilities');
-  for (const key of p.bossesCleared) { if(key==='ultimate:void-overlord') { requireThat(p.playerTier>=5,'Future ultimate clear'); continue; } const [group,raw]=key.split(':');const tier=Number(raw);requireThat(Number.isInteger(tier) && tier<=p.playerTier && bossSealSourcesAtTier(tier).includes(group), `Invalid boss clear ${key}`); }
+  for (const key of p.bossesCleared) { if(key==='ultimate:void-overlord') continue; /* legacy token in old saves; the encounter was deleted 2026-09-27 */ const [group,raw]=key.split(':');const tier=Number(raw);requireThat(Number.isInteger(tier) && tier<=p.playerTier && bossSealSourcesAtTier(tier).includes(group), `Invalid boss clear ${key}`); }
   for (const value of Object.values(p.catalystProgress)) requireThat(value<GAME_CONFIG.CATALYST_PROGRESS_PER_UNIT,'Unminted catalyst progress exceeds current threshold');
   for (let tier=1;tier<p.playerTier;tier++) requireThat(sealsRequiredForTier(tier)>0 && sealsHeldAtTier(p.bossesCleared,tier)>=sealsRequiredForTier(tier), `Missing earned tier ${tier} seals`);
   for (const [group,level] of Object.entries(p.biomeLevel)) requireThat(BIOME_DATABASE.has(group) && Number.isInteger(level) && level<=biomeLevelCap(p.playerTier,group), `Invalid mastery ${group}`);

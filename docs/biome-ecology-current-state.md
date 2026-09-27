@@ -45,8 +45,7 @@ State lives in two components:
   **server-only scratch**: `spawn`, `wanderRadius`, `leashRange`, idle timers, `baseSpeed`,
   `kiteTimer`, charge/ramp accumulators. This is where new per-monster AI scratch belongs.
 
-Tick order (`World.tick`, `server/src/world/World.ts:337`): `updateBossScripts` →
-`updateUltimateEncounters` → … → `updateMonsters` (357) → `updateCombat` → … The new
+Tick order (`World.tick`, `server/src/world/World.ts:337`): `updateBossScripts` → … → `updateMonsters` (357) → `updateCombat` → … The new
 coordination systems slot **before `updateMonsters`** (they set intent that `updateMonsters` reads)
 or are folded into it.
 
@@ -108,8 +107,6 @@ counterpart is section 9's ground zones — circles spawned by combat that live 
 
 - `bossScript` (`BossScript`: phases + repeating; actions incl. `summon`/`spawn-adds`/`morph`/
   `slam`/`enrage`/`shield`…) — `ai/bossScripts.ts`.
-- `ultimateEncounter` (`UltimateEncounter`: objective-gated stages, waves, environmental DoT) —
-  `ai/ultimateEncounter.ts`.
 - Guarded-altar dungeons (altar / killable guardians / per-biome guard posture) —
   `docs/dungeon-current-state.md`. The guard postures are built ON these ecology primitives
   (packs, `holdPost`/`holdPatrol`), not on dungeon-only AI.
@@ -126,7 +123,7 @@ counterpart is section 9's ground zones — circles spawned by combat that live 
   allowlist and passing the invariant (fix the invariant, not the check).
 - **Node-scoped payloads are a different seam and touch neither.** `DeltaSnapshot`
   (`shared/src/protocol/delta.ts`) carries per-node, non-entity state alongside the entity
-  deltas — `voidOverlordRespawn`, `dungeonGauntlet`, and now `groundZones`. They are built in
+  deltas — `dungeonGauntlet` and `groundZones`. They are built in
   `server/src/world/nodeDelta.ts` (and `spectatorSnapshot.ts`) and read straight off the
   snapshot client-side. Reach for this before inventing a component.
 

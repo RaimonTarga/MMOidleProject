@@ -385,17 +385,6 @@ export function clearAmbientRampOverride(world: World, nodeId: string): void {
   world.ambientRampOverrides.delete(nodeId);
 }
 
-function isPreFinalUltimateStage(world: World, nodeId: string): boolean {
-  for (const boss of world.ultimateMonsters) {
-    if (boss.hasPosition.nodeId !== nodeId) continue;
-    if (!boss.scriptsUltimate?.engaged) continue;
-    const encounter = MONSTER_DATABASE.get(boss.isMonster.monsterTypeId)?.ultimateEncounter;
-    if (!encounter) continue;
-    return boss.scriptsUltimate.stageIndex < encounter.stages.length - 1;
-  }
-  return false;
-}
-
 function isFeatureDamageActive(
   world: World,
   nodeId: string,
@@ -407,9 +396,6 @@ function isFeatureDamageActive(
     damage.requiresActiveBlock &&
     world.suppressedFeatureBlocks.has(`${nodeId}:${feature.id}`)
   ) {
-    return false;
-  }
-  if (damage.preFinalStageOnly && !isPreFinalUltimateStage(world, nodeId)) {
     return false;
   }
   return true;
@@ -546,7 +532,6 @@ function applyAndTickMonsterNodeFeatures(
   if (!features || features.length === 0) return;
 
   let hasDamageEffect = false;
-  let throneHealing = false;
 
   for (const feature of features) {
     const inside = pointInNodeFeatureShape(monster.hasPosition.current, feature.shape);
@@ -564,8 +549,7 @@ function applyAndTickMonsterNodeFeatures(
     const heal = feature.healWhileInside;
     if (
       heal?.targets.includes('monster') &&
-      inside &&
-      (!heal.encounterAddsOnly || monster.isEncounterAdd)
+      inside
     ) {
       if (monster.hasHealth.hp < monster.hasHealth.maxHp) {
         const healAmount = Math.max(
@@ -578,13 +562,7 @@ function applyAndTickMonsterNodeFeatures(
         );
         markSliceDirty(world, monster, 'hasHealth');
       }
-      throneHealing = true;
     }
-  }
-
-  if (monster.hasStatus.throneHealing !== throneHealing) {
-    monster.hasStatus.throneHealing = throneHealing;
-    markSliceDirty(world, monster, 'hasStatus');
   }
 
   if (hasDamageEffect) {

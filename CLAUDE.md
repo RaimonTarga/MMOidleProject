@@ -204,8 +204,7 @@ Important formula conventions:
   assume a rectangular grid; use the registry and region definitions.
 - Node freeze/thaw makes monsters ephemeral. Never persist monster combat state,
   aggro, movement, boss runtime state, status effects, or minions.
-- Boss respawn markers are runtime/client-facing; the Void Overlord cooldown is
-  persisted through `worldStateRepo`.
+- Boss respawn markers are runtime/client-facing and not persisted.
 - Player persistence is component-shaped JSON columns in Postgres. Persisted slices
   include player identity/progression/inventory/skills/position/health; runtime slices
   and passives are rebuilt on attach/recalc.
@@ -248,7 +247,7 @@ Player server-to-client highlights:
 - `account:characters`, `character:createResult`, `character:deleteResult`,
   `character:selectResult`
 - `crafting:result`, `inventory:upgradeResult`
-- `player:died`, `player:ascended`, `overlord:felled`
+- `player:died`, `player:ascended`
 - `world:events`, `world:bossFelled`
 - `session:kicked`
 

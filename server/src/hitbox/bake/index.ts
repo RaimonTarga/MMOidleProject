@@ -3,7 +3,6 @@ import { readFileSync, writeFileSync } from 'fs';
 import path from 'path';
 import sharp from 'sharp';
 import {
-  buildVoidOverlordAtlasFrames,
   type HitboxRect,
   type ShadowDef,
   type ShadowDefsFile,
@@ -136,10 +135,5 @@ export async function bakeSpriteHitboxes(
   } else {
     frames = Object.entries(atlasJson.frames).map(([filename, f]) => ({ filename, ...f }));
   }
-  return bakeFramesFromPng(atlasPngPath, frames);
-}
-
-export async function bakeVoidOverlordHitboxes(atlasPngPath: string): Promise<BakeResult> {
-  const frames = buildVoidOverlordAtlasFrames();
   return bakeFramesFromPng(atlasPngPath, frames);
 }

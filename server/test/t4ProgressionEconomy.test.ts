@@ -408,15 +408,7 @@ for (const [id, snap] of Object.entries(TRENCH_MONSTER_SNAPSHOT)) {
   assert(boss!.rewards?.biomeXp === 990, "elder-trench-serpent biomeXp must be unchanged (990)");
 }
 
-// Soft-discarded warden must remain byte-for-byte unchanged (still purple).
-{
-  const warden = MONSTER_DATABASE.get("elder-trench-serpent-warden");
-  assert(!!warden, "elder-trench-serpent-warden must exist");
-  assert(
-    warden!.rewards === undefined || warden!.rewards.essenceType !== "green",
-    "elder-trench-serpent-warden must NOT be touched by the green-essence find/replace",
-  );
-}
+// (The soft-discarded Void Overlord warden was deleted with the encounter on 2026-09-27.)
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 12. Relics: exactly 8, unchanged placement/gates/mechanics, normalized economy

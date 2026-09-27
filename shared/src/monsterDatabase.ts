@@ -14,7 +14,6 @@ export type {
   BossPhase,
   BossWeather,
   BossScript,
-  EncounterStage,
   MonsterAbility,
   MonsterAbilityAction,
   MonsterAbilityPlayerEffect,
@@ -23,10 +22,4 @@ export type {
   MonsterTargeting,
   MonsterTargetingMode,
   RepeatingAction,
-  StageAction,
-  StageCondition,
-  UltimateEncounter,
-  UltimateEnvironmentalDot,
-  UltimateSavedBaseline,
-  WaveDef,
 } from './data/monsters';

@@ -1383,7 +1383,6 @@ export const BASELINE_RUNE_CONFIG: AutocombatConfig = {
   fleeHpPct: 0.25,
   acquireRadius: BASELINE_ACQUIRE_RADIUS,
   focusLeaderTarget: false,
-  engageUltimateBosses: false,
 };
 
 export interface RuneContext {

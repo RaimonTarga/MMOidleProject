@@ -194,7 +194,6 @@ export function assertBoss2Definitions(): void {
   const screened = new Set([...BOSS2_BOSSES.map((b) => b.bossId), BOSS1_TIMBERCLAW_BOSS_ID]);
   assert.deepEqual([...live].sort(), [...screened].sort(),
     `T2 dungeon roster drift: live ${[...live].sort().join(',')} vs screened ${[...screened].sort().join(',')}`);
-  assert(!live.has('void-overlord'), 'the deprecated Void Overlord is not a T2 dungeon boss');
 
   for (const b of BOSS2_BOSSES) {
     const def = t2.find((d) => d.nodeId === b.nodeId);

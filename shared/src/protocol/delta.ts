@@ -29,13 +29,6 @@ export type EntityDelta =
       netId: NetworkId;
     };
 
-export interface VoidOverlordRespawnState {
-  nodeId: string;
-  pos: Vec2;
-  remainingMs: number;
-  durationMs: number;
-}
-
 export interface DeltaSnapshot {
   tick: number;
   /** Server clock sampled when this snapshot is built. */
@@ -44,7 +37,6 @@ export interface DeltaSnapshot {
   full: boolean;
   deltas: EntityDelta[];
   events: CombatEvent[];
-  voidOverlordRespawn?: VoidOverlordRespawnState;
   dungeon?: DungeonView;
   /**
    * Node-scoped combat circles (telegraphed slams). Runtime-only and omitted

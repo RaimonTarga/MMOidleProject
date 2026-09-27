@@ -384,88 +384,6 @@ export interface BossScript {
   repeating?: RepeatingAction[];
 }
 
-// ── Ultimate encounter types ──────────────────────────────────────────────────
-
-/**
- * Objective-driven encounter script for major bosses.
- *
- * Unlike BossScript, stages advance from explicit conditions such as clearing
- * tracked waves or elites rather than HP thresholds.
- */
-export interface UltimateEncounter {
-  anchor?: 'center';
-  /** Empty-node reset is handled by node freeze/thaw; this covers party wipes. */
-  reset: { onWipe: boolean };
-  stages: EncounterStage[];
-  /** When set, staged adds spawn on this node feature's perimeter instead of around the boss. */
-  spawnFromFeatureId?: string;
-}
-
-export interface EncounterStage {
-  id: string;
-  /** HUD label; falls back to id.toUpperCase() when omitted. */
-  displayName?: string;
-  /** Overrides server-built objective headline when set. */
-  objectiveLabel?: string;
-  /** Default false. Final stages usually set this true and omit completeWhen. */
-  vulnerable?: boolean;
-  onEnter: StageAction[];
-  /** Omit on a final stage that ends only when the boss dies. */
-  completeWhen?: StageCondition;
-}
-
-export type StageAction =
-  | { type: 'spawn-waves'; waves: WaveDef[] }
-  | { type: 'spawn-elites'; monsterTypeId: string; count: number; offsetRange?: number }
-  | {
-      type: 'environmental-dot';
-      effectId: string;
-      damagePerStack: number;
-      tickIntervalMs: number;
-      /** Pass 0 for linear stacks × damagePerStack (used by void flood ramp). */
-      maxStacks: number;
-      refreshMs: number;
-      /** Max stacks the hazard ramps up to over the fight. */
-      stackCap?: number;
-      /** HUD hint, e.g. "Leave the throne hazard". */
-      hazardHint?: string;
-    }
-  | { type: 'set-invulnerable'; value: boolean }
-  | { type: 'set-rooted'; value: boolean }
-  | { type: 'set-cannot-attack'; value: boolean }
-  /** Toggle a node-feature obstacle on/off for this node while engaged. */
-  | { type: 'set-feature-block'; featureId: string; value: boolean };
-
-export interface WaveDef {
-  adds: { monsterTypeId: string; count: number }[];
-}
-
-export type StageCondition =
-  | { kind: 'adds-cleared' }
-  | { kind: 'elites-cleared' }
-  | { kind: 'waves-cleared' };
-
-export interface UltimateEnvironmentalDot {
-  effectId: string;
-  damagePerStack: number;
-  tickIntervalMs: number;
-  maxStacks: number;
-  refreshMs: number;
-  refreshTimerMs: number;
-  /** Max stacks the flood ramp reaches. */
-  stackCap: number;
-  /** Current ramp intensity (1..stackCap). */
-  currentStacks: number;
-  /** Refresh cycles since flood started — ramp skips the first. */
-  refreshCount: number;
-}
-
-export interface UltimateSavedBaseline {
-  speed?: number;
-  pullRange?: number;
-  spawn?: Vec2;
-}
-
 // ── Monster definition ────────────────────────────────────────────────────────
 
 export type MonsterTargetingMode = 'closest' | 'lowest-hp';
@@ -690,8 +608,6 @@ export interface MonsterDefinition {
   elite?: boolean;
   /** Fight script — opt-in boss mechanics (phases, regen, enrage, summons, etc.). */
   bossScript?: BossScript;
-  /** Objective-driven multi-stage encounter controller. */
-  ultimateEncounter?: UltimateEncounter;
   /** How this monster chooses an aggro target when first pulled. Defaults to closest. */
   targeting?: MonsterTargeting;
   /** Optional player-kill trigger. Fires before the dead monster is removed. */

@@ -9,7 +9,7 @@ import { openGatedUnlocks } from './gatedUnlocks';
 import { loadGameplaySettings } from '../settings/gameplaySettings';
 import { sendSetAutocombatConfig, sendSetAutoTraverse } from './intents';
 import { hudBus } from "../hudBus";
-import { notifyTargetDotTick, syncPlayerAtoms, nodeLoadingAtom, setDungeon, setSummonHealth, setTargetFrame, setZoneBoss, setZonePlayers, type SummonHealthView, type TargetFrameData, type ZonePlayer } from "../hud/atoms";
+import { notifyTargetDotTick, syncPlayerAtoms, nodeLoadingAtom, setDungeon, setSummonHealth, setTargetFrame, setZonePlayers, type SummonHealthView, type TargetFrameData, type ZonePlayer } from "../hud/atoms";
 import { getDefaultStore } from "jotai";
 import type { GameScene } from "../scenes/GameScene";
 import type { RenderState } from "../render/state";
@@ -29,9 +29,6 @@ import { fxSummonDisperse, fxSummonForm } from "../fx/summonMist";
 import { playSfx } from "../audio/audioEngine";
 import { notePlayerStatusCues } from "../audio/statusCues";
 import { notifyDeltaAppliedDuringTabResync, shouldRunClientFx } from "../fx/guard";
-import { refreshNodeDecorState } from "../scenes/game/overlays";
-import { setVoidThroneHazardLifted } from "../scenes/game/voidThrone";
-import { syncVoidOverlordRespawn } from "../render/voidOverlordTomb";
 import { syncGroundZones } from "../render/groundZones";
 import { syncCorpses } from "../render/corpses";
 import { syncTombstones } from "../render/tombstones";
@@ -88,12 +85,6 @@ export function applyDelta(
       state.ids.add(delta.netId);
       state.kind.set(delta.netId, delta.entityKind);
       liveIds.add(delta.netId);
-      if (
-        delta.entityKind === "monster" &&
-        delta.components?.isMonster?.monsterTypeId === "void-overlord"
-      ) {
-        setVoidThroneHazardLifted(scene, false);
-      }
     } else {
       entity = state.entity.get(delta.netId) ?? {};
       state.entity.set(delta.netId, entity);
@@ -148,9 +139,6 @@ export function applyDelta(
 
   for (const netId of pendingRemoves) {
     const entity = state.entity.get(netId);
-    if (entity?.isMonster?.monsterTypeId === "void-overlord") {
-      setVoidThroneHazardLifted(scene, true);
-    }
     // A monster leaving the live node via a patch delta means it died (node
     // changes come through the full-sync path below, not here). Play the retro
     // bar-fade dissolve off its still-present sprite before it is destroyed —
@@ -174,16 +162,12 @@ export function applyDelta(
     }
     destroyEntity(state, netId, scene);
   }
-  syncVoidOverlordRespawn(state, snapshot.voidOverlordRespawn, scene);
   setDungeon(snapshot.dungeon ?? null);
   syncGroundZones(scene, snapshot.groundZones);
   syncCorpses(scene, snapshot.corpses);
   syncTombstones(scene, snapshot.tombstones);
   syncStunOrbits(scene, collectHardControlled(scene));
   refreshMonsterTints(state);
-  if (snapshot.voidOverlordRespawn) {
-    setVoidThroneHazardLifted(scene, true);
-  }
 
   if (snapshot.full) {
     for (const id of [...state.ids]) {
@@ -264,21 +248,6 @@ export function applyDelta(
     zonePlayers.sort((a, b) => a.name.localeCompare(b.name));
     setZonePlayers(zonePlayers);
 
-    let zoneBoss = null;
-    for (const id of state.ids) {
-      if (state.kind.get(id) !== "monster") continue;
-      const m = state.view.get(id) as MonsterView | undefined;
-      if (!m || m.nodeId !== own.nodeId || !m.ultimateStatus) continue;
-      zoneBoss = {
-        id: m.id,
-        name: m.name,
-        hp: m.hp,
-        maxHp: m.maxHp,
-        status: m.ultimateStatus,
-      };
-      break;
-    }
-    setZoneBoss(zoneBoss);
 
     // Resolve the local player's current attack target → top-center target frame.
     const targetId = own.attackTargetId;
@@ -323,7 +292,6 @@ export function applyDelta(
       lastTargetRef = null;
     }
 
-    refreshNodeDecorState(scene);
 
     if (!state.gameplaySettingsSynced) {
       const gameplaySettings = loadGameplaySettings();

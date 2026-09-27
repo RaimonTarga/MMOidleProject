@@ -57,8 +57,6 @@ export interface NodeFeatureSpec {
     contactBandPx?: number;
     /** Skip damage while this feature's movement block is suppressed. */
     requiresActiveBlock?: boolean;
-    /** Only during an engaged ultimate encounter before the final stage. */
-    preFinalStageOnly?: boolean;
   };
   /** While inside: refresh status (e.g. slow uses speedMult + totalMs in data). */
   statusWhileInside?: {
@@ -80,8 +78,6 @@ export interface NodeFeatureSpec {
   healWhileInside?: {
     hpPctPerSec: number;
     targets: FeatureTarget[];
-    /** When true, only encounter adds (not the boss or ambient mobs) heal. */
-    encounterAddsOnly?: boolean;
   };
   spawns?: {
     monsterTypeId: string;
@@ -682,35 +678,6 @@ const LEGACY_NODE_FEATURE_TEMPLATES: Record<string, NodeFeatureSpec[]> = {
     rotPool("rot_pool_c", 3720, 1240, 375, 3),
     rotPool("rot_pool_d", 1230, 1240, 240, 3),
     rotPool("rot_pool_e", 3540, 3560, 255, 3),
-  ],
-  "node-10-0": [
-    {
-      id: "abyssal_throne",
-      x: GAME_CONFIG.NODE_WIDTH / 2,
-      y: GAME_CONFIG.NODE_HEIGHT / 2,
-      displayW: 1440,
-      displayH: 1440,
-      hitboxScale: 0.78,
-      hitboxKind: "ellipse",
-      hitboxHeightScale: 0.91,
-      blocksMovement: ["player"],
-      damage: {
-        effectId: "void-throne",
-        damagePerStack: 1,
-        tickIntervalMs: 2000,
-        maxStacks: 1,
-        refreshMs: 5000,
-        targets: ["player"],
-        contactBandPx: 48,
-        requiresActiveBlock: true,
-        preFinalStageOnly: true,
-      },
-      healWhileInside: {
-        hpPctPerSec: 0.05,
-        targets: ["monster"],
-        encounterAddsOnly: true,
-      },
-    },
   ],
 };
 

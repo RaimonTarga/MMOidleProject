@@ -338,21 +338,12 @@ function passesGates(
     return false;
   }
 
-  // Mid-encounter invulnerability and dormant encounter shields are hard skips:
+  // Invulnerability is a hard skip:
   // a cancelled swing is not "low damage"; it is no target at all.
   if (monster.isInvulnerable) return false;
   // A burrowed or hidden boss is not there to be fought. Skipping it here is what
   // stops the player standing over a burrow hole swinging at nothing.
   if (isConcealedEntity(monster)) return false;
-
-  // Do not wake ultimate encounters unless the player/bench explicitly asks to.
-  if (
-    monster.scriptsUltimate &&
-    !monster.scriptsUltimate.engaged &&
-    !ctx.cfg.engageUltimateBosses
-  ) {
-    return false;
-  }
 
   // Acquisition radius: an un-aggroed mob is only engaged if it sits within the
   // (rune-derived) acquire radius and inside its leash anchor. Monsters already
@@ -644,13 +635,6 @@ export function nearestEngageableMonster(
     if (skipBosses && monster.isMonster.isBoss) continue;
     if (monster.isInvulnerable) continue;
     if (isConcealedEntity(monster)) continue;
-    if (
-      monster.scriptsUltimate &&
-      !monster.scriptsUltimate.engaged &&
-      !player.usesAutocombat.engageUltimateBosses
-    ) {
-      continue;
-    }
     // A monster racing back to its spawn cannot be caught — heading toward it
     // just produces the same chase/abandon oscillation. Skip it while idle.
     if (monster.hasAwareness?.state === "returning") continue;

@@ -536,7 +536,6 @@ export function sceneToNodeCoords(
 }
 
 export const DEFAULT_AUTOCOMBAT_CONFIG: AutocombatConfig = {
-  engageUltimateBosses: false,
   fleeWhenLow: true,
   fleeHpPct: 0.25,
   priorityMode: "balanced",

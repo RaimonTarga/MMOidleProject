@@ -149,8 +149,6 @@ export interface ServerToClientEvents {
   "player:died": (payload: PlayerDeathPayload) => void;
   /** Sent when a player unlocks a skill and advances to the next tier. */
   "player:ascended": (tier: number) => void;
-  /** Sent to contributors still on the node when the Void Overlord is defeated. */
-  "overlord:felled": () => void;
   /** Authoritative combat/progression log records for the combat log panel. */
   "world:events": (events: WorldLogEvent[]) => void;
   /** Active dungeon boss respawn cooldowns for the world map. */

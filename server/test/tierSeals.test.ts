@@ -73,7 +73,7 @@ assert(
 // Non-biome tokens share the bossesCleared list and must never count.
 assert(
   sealsHeldAtTier(["ultimate:void-overlord"], 1) === 0,
-  "the void-overlord token is not a tier seal",
+  "a legacy non-biome token (old saves) is not a tier seal",
 );
 assert(
   sealsHeldAtTier(["not-a-biome:1"], 1) === 0,

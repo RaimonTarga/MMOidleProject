@@ -296,8 +296,7 @@ export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
       ac.fleeWhenLow !== d.config.fleeWhenLow ||
       ac.fleeHpPct !== d.config.fleeHpPct ||
       ac.acquireRadius !== acquireRadius ||
-      ac.focusLeaderTarget !== d.config.focusLeaderTarget ||
-      ac.engageUltimateBosses !== d.config.engageUltimateBosses;
+      ac.focusLeaderTarget !== d.config.focusLeaderTarget;
 
     if (changed) {
       ac.priorityMode = d.config.priorityMode;
@@ -305,7 +304,6 @@ export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
       ac.fleeHpPct = d.config.fleeHpPct;
       ac.acquireRadius = acquireRadius;
       ac.focusLeaderTarget = d.config.focusLeaderTarget;
-      ac.engageUltimateBosses = d.config.engageUltimateBosses;
       markSliceDirty(world, player, "usesAutocombat");
     }
 

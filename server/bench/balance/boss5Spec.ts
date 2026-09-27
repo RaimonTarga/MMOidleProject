@@ -84,14 +84,11 @@ export const BOSS5_COVERED: Record<string, string> = {
 };
 
 /**
- * The one boss deliberately excluded from scope, and why.
- *
- * The Void Overlord is not a dungeon boss at all -- it does not appear in
- * `DUNGEON_DEFS` -- so it falls out of the roster structurally rather than by being
- * filtered here. This entry exists so that a future change which DID put it in a
- * dungeon would be a visible contradiction rather than a silent addition.
+ * Bosses deliberately excluded from scope. Empty since the Void Overlord (the one
+ * entry, never a dungeon boss) was deleted on 2026-09-27; kept so a future exclusion
+ * is declared here rather than filtered silently.
  */
-export const BOSS5_OUT_OF_SCOPE = ['void-overlord'] as const;
+export const BOSS5_OUT_OF_SCOPE: readonly string[] = [];
 
 export interface Boss5Boss {
   bossId: string;

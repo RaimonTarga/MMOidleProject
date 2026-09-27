@@ -150,23 +150,8 @@ function checkAbsentState(entity: ServerEntity, violations: string[]): void {
   if (entity.isBossEngaged && !entity.scriptsBoss) {
     violations.push(`${entity.entityId}: isBossEngaged present without scriptsBoss`);
   }
-  if (entity.isUltimateEngaged && !entity.scriptsUltimate) {
-    violations.push(`${entity.entityId}: isUltimateEngaged present without scriptsUltimate`);
-  }
-  if (entity.hasStatus?.ultimateStatus && !entity.isUltimateEngaged) {
-    violations.push(`${entity.entityId}: ultimateStatus present without isUltimateEngaged`);
-  }
-  if (entity.hasStatus?.ultimateStatus) {
-    const status = entity.hasStatus.ultimateStatus;
-    if (status.stageIndex < 0 || status.stageIndex >= status.stageCount) {
-      violations.push(`${entity.entityId}: ultimateStatus.stageIndex out of range`);
-    }
-  }
   if (entity.isInvulnerable && !entity.isMonster && !entity.isPlayer) {
     violations.push(`${entity.entityId}: isInvulnerable present on non-entity`);
-  }
-  if (entity.isEncounterAdd && !entity.isMonster) {
-    violations.push(`${entity.entityId}: isEncounterAdd present on non-monster`);
   }
   if (entity.isNodeFeatureSpawn && !entity.isMonster) {
     violations.push(`${entity.entityId}: isNodeFeatureSpawn present on non-monster`);

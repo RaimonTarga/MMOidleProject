@@ -79,16 +79,6 @@ export function buildNodeDelta(
     events,
   };
 
-  const respawnMarker = world.bossRespawnMarkers.get(nodeId);
-  if (respawnMarker?.monsterTypeId === "void-overlord") {
-    snapshot.voidOverlordRespawn = {
-      nodeId,
-      pos: respawnMarker.pos,
-      durationMs: respawnMarker.durationMs,
-      remainingMs: Math.max(0, respawnMarker.respawnAt - Date.now()),
-    };
-  }
-
   const dungeon = world.buildDungeonView(nodeId);
   if (dungeon) snapshot.dungeon = dungeon;
 

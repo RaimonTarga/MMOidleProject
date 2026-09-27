@@ -22,7 +22,6 @@ import { setAggroTarget } from '../src/systems/combat/ai/targeting';
 import { markEngaged } from '../src/systems/combat/ai/engagement';
 import { updateStanceSwitch } from '../src/systems/player/stances/stanceSwitch';
 import { updateNodeFeatures } from '../src/systems/world/nodeFeatures';
-import { updateUltimateEncounters } from '../src/systems/combat/ai/ultimateEncounter';
 import { updateAlternatingCurrents } from '../src/systems/classes/archetypes/energy/t3/ticks/alternatingCurrents';
 import { updateDotArchetype } from '../src/systems/classes/archetypes/dot/dotPrototype';
 import { attachComponent, attachMarker } from '../src/ecs/markerHelpers';
@@ -202,20 +201,6 @@ for (const effectId of ['combat-text-environment', 'swamp-rot']) {
     const { entries } = probe(world, [player, target], () => updateNodeFeatures(world, 1000));
     assert(entries.every(e => e.hint.isDot));
   } finally { RESOLVED_NODE_FEATURES[NODE] = saved; }
-}
-// Ultimate environmental DoT through its real tick driver.
-{
-  const { world, player } = setup();
-  const boss = monster(world, 'void-overlord');
-  assert(boss.scriptsUltimate);
-  boss.scriptsUltimate.engaged = true;
-  boss.scriptsUltimate.stageIndex = -1;
-  boss.scriptsUltimate.activeDot = {
-    effectId: 'text-ultimate-dot', damagePerStack: 8, tickIntervalMs: 1000, refreshMs: 5000,
-    maxStacks: 1, stackCap: 1, currentStacks: 1, refreshCount: 0, refreshTimerMs: 0,
-  };
-  const { entries } = probe(world, [player], () => updateUltimateEncounters(world, 1000));
-  assert(entries[0].hint.isDot);
 }
 // Audit finding: Alternating Currents damage was logged but had no text event.
 {

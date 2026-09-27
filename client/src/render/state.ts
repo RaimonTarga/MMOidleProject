@@ -12,7 +12,6 @@ import type {
   PlayerView,
   MonsterView,
   MinionView,
-  VoidOverlordRespawnState,
   Vec2,
   DamageElement,
 } from "@mmo-idle/shared";
@@ -153,7 +152,7 @@ export interface RenderState {
       monsterBehavior?: string;
       monsterIsRanged?: boolean;
       isOwn?: boolean;
-      /** Skip atlas frame refresh on patch (void-overlord sheet sprites). */
+      /** Skip atlas frame refresh on patch (sprites driven by their own sheet). */
       skipFrameRefresh?: boolean;
       /** True when sprite is a Phaser Sprite with a running animation. */
       isAnimated?: boolean;
@@ -196,15 +195,6 @@ export interface RenderState {
   auras: Map<string, Phaser.GameObjects.Graphics>;
   /** Per-player identity accent overlays (see client/src/fx/identityAccent.ts). */
   identityAccents: Map<string, Phaser.GameObjects.Image>;
-  voidOverlordRespawn: {
-    payload: VoidOverlordRespawnState;
-    deadlineMs: number;
-    sprite: Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle;
-    label: Phaser.GameObjects.Text;
-    lastText: string;
-  } | null;
-  /** True after the Void Overlord dies until a new one spawns (client prediction). */
-  voidThroneHazardLifted: boolean;
   movementEffectNextAt: Map<string, number>;
   ledgeHopNextAt: Map<string, number>;
   knownUnlockedRecipes: Set<string>;
@@ -289,8 +279,6 @@ export function createRenderState(): RenderState {
     },
     auras: new Map(),
     identityAccents: new Map(),
-    voidOverlordRespawn: null,
-    voidThroneHazardLifted: false,
     movementEffectNextAt: new Map(),
     ledgeHopNextAt: new Map(),
     knownUnlockedRecipes: new Set(),

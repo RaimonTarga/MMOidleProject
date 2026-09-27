@@ -860,9 +860,6 @@ export const bossMonsterEntriesT4 = [
   // the thing is the size of the arena, and a body slam from it plausibly catches
   // everything nearby. It is not the anti-summon crutch it used to be elsewhere —
   // it is also the beat that stops a summon wall from being free real estate.
-  //
-  // The `void-overlord` staged encounter below is legacy/soft-discarded and is NOT
-  // part of the active design table. This serpent is the Trench's boss.
   // ══════════════════════════════════════════════════════════════════════
   ['elder-trench-serpent', {
     id: 'elder-trench-serpent', name: 'Elder Trench Serpent', color: 0x335577,
@@ -970,127 +967,6 @@ export const bossMonsterEntriesT4 = [
         ] },
       ],
     },
-  }],
-
-
-  // ══════════════════════════════════════════════════════════════════════
-  // LEGACY — Void Overlord staged apex encounter.
-  //
-  // SOFT-DISCARDED. Left untouched by the 2026-08-23 encounter rework by explicit
-  // instruction: not redesigned, not rebalanced, not used as inspiration for the
-  // active Trench boss above. Its presence here is history, not intent.
-  // ══════════════════════════════════════════════════════════════════════
-
-  ['elder-trench-serpent-warden', {
-    id: 'elder-trench-serpent-warden', name: 'Elder Trench Serpent Warden', color: 0x223355,
-    // Elite encounter unit; spawned in Stage 2 of the Void Overlord encounter.
-    // Not a dungeon boss — no biomeXp, no essence reward of its own.
-    stats: { hp: 7341, attack: 137, plating: 18, damageReduction: 0.18, speed: 20, attackRange: 22, attackCooldown: 3400, pullRange: 350 },
-    behavior: 'melee', attackStyle: 'bite-trench', biome: 'trench',
-    rewards: { essence: 0, essenceType: 'purple', level: 0, biomeXp: 0 },
-    ai: { wanderRadius: 100, leashRange: 900, idleMinMs: 3000, idleMaxMs: 8000 },
-    chargeOnAggro: { speedMult: 2.2, durationMs: 1100 },
-    cadenceFinisher: { everyNAttacks: 4, multiplier: 2.2 },   // 231
-    enemySoftCap: { capPct: 0.25, capMult: 0.5 },
-  }],
-
-  ['void-overlord', {
-    id: 'void-overlord', name: 'Void Overlord', color: 0x220044,
-    isBoss: true,
-    stats: { hp: 29822, attack: 150, plating: 22, damageReduction: 0.24, speed: 18, attackRange: 22, attackCooldown: 3200, pullRange: 400 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'trench',
-    rewards: { essence: 2000, essenceType: 'purple', level: 5, biomeXp: 3000 },
-    ai: { wanderRadius: 0, leashRange: 980, idleMinMs: 4000, idleMaxMs: 9000 },
-    cadenceFinisher: { everyNAttacks: 4, multiplier: 2.8 },   // 322 — the deepest cap trip
-    enemyShield: { shieldPct: 0.30, intervalMs: 16000, durationMs: 6000 },
-    enemySoftCap: { capPct: 0.25, capMult: 0.5 },
-    ultimateEncounter: {
-      anchor: 'center',
-      reset: { onWipe: true },
-      spawnFromFeatureId: 'abyssal_throne',
-      stages: [
-        {
-          id: 'waves',
-          displayName: 'Summoning Waves',
-          objectiveLabel: 'Clear all summoned adds',
-          onEnter: [
-            { type: 'set-invulnerable', value: true },
-            { type: 'set-rooted', value: true },
-            { type: 'set-cannot-attack', value: true },
-            {
-              type: 'spawn-waves',
-              waves: [
-                { adds: [{ monsterTypeId: 'void-horror', count: 12 }] },
-                { adds: [{ monsterTypeId: 'void-horror', count: 9 }, { monsterTypeId: 'void-hulk', count: 4 }] },
-                { adds: [{ monsterTypeId: 'void-hulk', count: 8 }] },
-              ],
-            },
-          ],
-          completeWhen: { kind: 'waves-cleared' },
-        },
-        {
-          id: 'wardens',
-          displayName: 'Void Wardens',
-          objectiveLabel: 'Slay the Void Wardens',
-          onEnter: [
-            { type: 'set-rooted', value: true },
-            { type: 'set-cannot-attack', value: true },
-            { type: 'spawn-elites', monsterTypeId: 'elder-trench-serpent-warden', count: 3, offsetRange: 280 },
-          ],
-          completeWhen: { kind: 'elites-cleared' },
-        },
-        {
-          id: 'flood',
-          displayName: 'The Flood',
-          vulnerable: true,
-          onEnter: [
-            { type: 'set-invulnerable', value: false },
-            { type: 'set-rooted', value: false },
-            { type: 'set-cannot-attack', value: false },
-            { type: 'set-feature-block', featureId: 'abyssal_throne', value: false },
-            {
-              // The void-flood is an environmental DoT that escalates over time,
-              // capped at 40 stacks. Rewards killing the boss fast; punishes stalling.
-              type: 'environmental-dot',
-              effectId: 'void-flood',
-              damagePerStack: 1,
-              tickIntervalMs: 1000,
-              maxStacks: 0,
-              refreshMs: 5000,
-              stackCap: 40,
-              hazardHint: 'The flood permeates the abyss',
-            },
-          ],
-        },
-      ],
-    },
-  }],
-
-
-  // ── Encounter-only add types (spawned by Void Overlord stages) ─────────
-  // Defined here for colocation. Not dungeon-spawned independently.
-
-  ['void-horror', {
-    id: 'void-horror', name: 'Void Horror', color: 0x331144,
-    // Stage-1 swarm filler. Fast, low HP, frequent light hits. The threat
-    // is volume (12 → 9 → 8 of them). DoT pressure adds up fast.
-    stats: { hp: 872, attack: 68, plating: 0, damageReduction: 0, speed: 82, attackRange: 12, attackCooldown: 1100, pullRange: 310 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'trench',
-    rewards: { essence: 0, essenceType: 'purple', level: 0, biomeXp: 0 },
-    ai: { wanderRadius: 350, leashRange: 850, idleMinMs: 400, idleMaxMs: 2000 },
-    dotEffect: { debuffId: 'void-horror-corruption', label: 'Void Corruption', damagePerStack: 12, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2000 },
-  }],
-
-  ['void-hulk', {
-    id: 'void-hulk', name: 'Void Hulk', color: 0x221133,
-    // Stage-1 heavy add. Slow, hard-hitting, high plating — the anchor unit
-    // in each wave. Tests pierce tools (Rupture, brittle weapon) mid-encounter.
-    stats: { hp: 5047, attack: 124, plating: 16, damageReduction: 0.16, speed: 22, attackRange: 15, attackCooldown: 3500, pullRange: 200 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'trench',
-    rewards: { essence: 0, essenceType: 'purple', level: 0, biomeXp: 0 },
-    ai: { wanderRadius: 100, leashRange: 750, idleMinMs: 3000, idleMaxMs: 8000 },
-    chargeOnAggro: { speedMult: 2.0, durationMs: 1200 },
-    cadenceFinisher: { everyNAttacks: 4, multiplier: 2.0 },   // 190
   }],
 
 ] satisfies [string, MonsterDefinition][];

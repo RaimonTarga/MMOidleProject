@@ -33,9 +33,7 @@ import {
 } from './balance/farmMatrix';
 import {
   enumerateBuildsForContentTier,
-  enumerateOverlordTargets,
 } from './balance/progression';
-import { runOverlordMatch } from './balance/runMatch';
 import { runFarm } from './balance/runFarm';
 import { computeBalanceScore } from './balance/scoring';
 import type { BenchMode } from './balance/types';
@@ -43,8 +41,6 @@ import { ensureBenchHitboxCache } from './harness';
 
 const DEFAULT_TIERS = [0, 1, 2, 3, 4];
 const MAX_TIME_SCALE = 10;
-/** Overlords are ~20-min fights; default the solo-boss cap up when in that mode. */
-const OVERLORD_DEFAULT_MAX_SECONDS = 1500;
 /** Farm runs measure a RATE, so they want a long wall: one simulated hour. */
 const FARM_DEFAULT_MAX_SECONDS = 3600;
 /**
@@ -62,16 +58,16 @@ const FARM_DEFAULT_MAX_SECONDS = 3600;
 const MAX_TRUSTED_TIME_SCALE = 2;
 
 function parseMode(raw: string): BenchMode {
-  if (raw === 'boss' || raw === 'overlord' || raw === 'farm') return raw;
-  throw new Error('Invalid --mode (use boss, overlord or farm)');
+  if (raw === 'boss' || raw === 'farm') return raw;
+  throw new Error('Invalid --mode (use boss or farm)');
 }
 
 function printUsage(): void {
   console.error(`Usage: tsx bench/balanceRun.ts [options]
 
 Options:
-  --mode <boss|overlord|farm>
-                         boss = solo dungeon-boss matrix; overlord = 4-bot party;
+  --mode <boss|farm>
+                         boss = solo dungeon-boss matrix;
                          farm = open-world income rates (default: boss)
   --tier <n>[,<n>...]   Content tiers (default: 0,1,2,3,4)
   --biome <group>        Filter biome group (e.g. forest, clearing)
@@ -85,10 +81,6 @@ Options:
                          values above 2 understate simulated throughput)
   --max-seconds <n>      Sim-time timeout per match (default: 600)
   --single               Run one build × one target then exit
-  --sample <n>           Overlord only: cap to n randomly-sampled party scenarios
-                         (stratified across classes, optimized builds first; 0 = all)
-  --party <id,id,...>    Overlord only: reconstruct this exact party and run a single
-                         logged match (use with --biome/--tier/--log). Skips the matrix.
   --shard-count <n>      Total shards for parallel runs (default: 1)
   --shard-index <n>      This shard's index, 0-based (default: 0). Each shard
                          simulates entries where globalIndex %% shardCount == n
@@ -135,7 +127,6 @@ function parseArgs(argv: string[]): BalanceCliArgs {
     allPaths: false,
     shardIndex: 0,
     shardCount: 1,
-    sampleSize: 0,
     allBuilds: false,
   };
   let maxSecondsProvided = false;
@@ -173,10 +164,6 @@ function parseArgs(argv: string[]): BalanceCliArgs {
       maxSecondsProvided = true;
     } else if (arg === '--single') {
       args.single = true;
-    } else if (arg === '--sample' && argv[i + 1]) {
-      const n = Number(argv[++i]);
-      if (!Number.isInteger(n) || n < 0) throw new Error('Invalid --sample');
-      args.sampleSize = n;
     } else if (arg === '--shard-count' && argv[i + 1]) {
       const n = Number(argv[++i]);
       if (!Number.isInteger(n) || n < 1) throw new Error('Invalid --shard-count');
@@ -214,12 +201,6 @@ function parseArgs(argv: string[]): BalanceCliArgs {
         throw new Error('Invalid --gear-sweep (need >= 1 upgrade level, e.g. 0,3,5)');
       }
       args.gearSweep = [...new Set(levels)].sort((a, b) => a - b);
-    } else if (arg === '--party' && argv[i + 1]) {
-      // Build ids join skill nodes with `+`, never a comma — safe to split.
-      args.partyIds = argv[++i]
-        .split(',')
-        .map((s) => s.trim())
-        .filter(Boolean);
     } else if (arg === '--help' || arg === '-h') {
       printUsage();
       process.exit(0);
@@ -232,10 +213,6 @@ function parseArgs(argv: string[]): BalanceCliArgs {
     throw new Error('--shard-index must be < --shard-count');
   }
 
-  // Overlords are long fights — default the sim cap higher unless explicitly set.
-  if (args.mode === 'overlord' && !maxSecondsProvided) {
-    args.maxSimSeconds = OVERLORD_DEFAULT_MAX_SECONDS;
-  }
   if (args.mode === 'farm') {
     if (!maxSecondsProvided) args.maxSimSeconds = FARM_DEFAULT_MAX_SECONDS;
     // Ordinary farm and fight runs share the measured-safe default. A sweep is
@@ -493,7 +470,7 @@ function resolveGear(
 }
 
 function toJsonlMatch(entry: MatrixEntry): BalanceJsonlMatch {
-  const { build, result, party } = entry;
+  const { build, result } = entry;
   const seconds = result.simDurationMs / 1000;
   const maxHp = result.maxHp;
   const base = {
@@ -501,28 +478,12 @@ function toJsonlMatch(entry: MatrixEntry): BalanceJsonlMatch {
     schemaVersion: BALANCE_JSONL_SCHEMA_VERSION,
     kind: 'match' as const,
     gearItemIds: build.gearItemIds,
-    // All party members run the same tier loadout, so gear is shared.
     gear: resolveGear(build.gearItemIds),
     balance: computeBalanceScore(result),
     dps: seconds > 0 ? result.damageDealt / seconds : 0,
     incomingDps: seconds > 0 ? result.damageTaken / seconds : 0,
     hpFraction: maxHp > 0 ? result.botHpEnd / maxHp : 0,
   };
-
-  if (party) {
-    return {
-      ...base,
-      classRoot: 'party',
-      skillPath: [],
-      perks: [],
-      party: party.map((m) => ({
-        buildId: m.id,
-        classRoot: m.classRoot,
-        skillPath: m.skillPath,
-        perks: resolvePerks(m.skillPath),
-      })),
-    };
-  }
 
   return {
     ...base,
@@ -552,55 +513,6 @@ function printJsonlMatch(entry: MatrixEntry): void {
   console.log(JSON.stringify(toJsonlMatch(entry)));
 }
 
-/**
- * On-demand re-run of one exact overlord party (by member build ids) with the
- * fight log captured. Used by the TUI detail screen — the matrix path can't
- * re-run a party via `--build/--class`, so we rebuild it from the pool here.
- */
-function runPartyLog(args: BalanceCliArgs): void {
-  const ids = args.partyIds ?? [];
-  const candidates = enumerateOverlordTargets({ biome: args.biome });
-  const target =
-    candidates.find((t) => t.contentTier === args.tiers[0]) ?? candidates[0];
-  if (!target) {
-    console.error('No overlord target for the given --biome/--tier.');
-    process.exit(1);
-  }
-
-  // At overlord (T4) content the realistic skill cap equals full depth, so this
-  // pool matches whatever the original run produced regardless of --all-paths.
-  const pool = enumerateBuildsForContentTier(
-    target.contentTier,
-    target.biomeGroup,
-    undefined,
-    args.allPaths,
-  );
-  const byId = new Map<string, BuildSpec>(pool.map((b) => [b.id, b]));
-  const party: BuildSpec[] = [];
-  for (const id of ids) {
-    const build = byId.get(id);
-    if (!build) {
-      console.error(`Party build id not found in ${target.biomeGroup} pool: ${id}`);
-      process.exit(1);
-    }
-    party.push(build);
-  }
-  const [leader] = party;
-  if (!leader) {
-    console.error('No --party build ids supplied.');
-    process.exit(1);
-  }
-
-  const result = runOverlordMatch(party, target, {
-    maxSimSeconds: args.maxSimSeconds,
-    timeScale: args.timeScale,
-    captureLog: true,
-  });
-
-  printJsonlMeta(args, 1);
-  printJsonlMatch({ build: leader, party, result });
-}
-
 async function main(): Promise<void> {
   process.env.BALANCE_BENCH = '1';
   let args: BalanceCliArgs;
@@ -617,12 +529,6 @@ async function main(): Promise<void> {
   // server (see `ensureBenchHitboxCache`). Skipped for --dry-run (no simulation).
   if (!args.dryRun) {
     await ensureBenchHitboxCache();
-  }
-
-  // On-demand single-party re-run (TUI fight log): skip the matrix entirely.
-  if (args.mode === 'overlord' && args.partyIds && args.partyIds.length > 0) {
-    runPartyLog(args);
-    return;
   }
 
   if (args.mode === 'farm') {

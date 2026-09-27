@@ -185,7 +185,7 @@ Result (2026-09-27, 45 non-Conduit reference builds × every boss): T3 median 13
 103 s Offensive (wins 85/74%); T4 208 / 149 s (wins 92/82%). T1/T2 bosses are unchanged except
 the two Swamp poisons, which were softened to hold their win rates under the DoT/DR rule.
 
-The Void Overlord encounter is deprecated (to be removed) and was not resized.
+The Void Overlord encounter was deleted on 2026-09-27 (it was unreachable legacy).
 
 ---
 

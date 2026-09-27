@@ -112,7 +112,6 @@ function sanitizeAutocombatConfig(input: AutocombatConfig): AutocombatConfig {
     : DEFAULT_AUTOCOMBAT_CONFIG.priorityMode;
 
   return {
-    engageUltimateBosses: !!raw.engageUltimateBosses,
     fleeWhenLow:
       raw.fleeWhenLow === undefined
         ? DEFAULT_AUTOCOMBAT_CONFIG.fleeWhenLow

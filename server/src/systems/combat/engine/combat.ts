@@ -136,8 +136,6 @@ import {
   actorFromMinion,
 } from "../../../world/worldLogActors";
 import { buildPlatingDrBreakdown } from "../../../world/worldLogCombat";
-import { markUltimateContributor } from "../ai/ultimateContributors";
-import { tryEngageUltimateEncounter } from "../ai/ultimateEncounter";
 import {
   effectivePlatingAfterShred,
   effectiveDamageReductionAfterBrittle,
@@ -324,13 +322,6 @@ export function runPlayerAttack(
   ctx.metadata.aggroSource = opts.aggroSource;
   if (opts.metadata) {
     Object.assign(ctx.metadata, opts.metadata);
-  }
-
-  if (target.scriptsUltimate && !target.scriptsUltimate.engaged) {
-    tryEngageUltimateEncounter(world, target);
-    if (!target.hasAggroTarget) {
-      setAggroTarget(world, target, opts.aggroSource, now);
-    }
   }
 
   // Chaotic weapon family: every Nth attack whiffs. Determined here (not in an
@@ -523,7 +514,6 @@ export function runPlayerAttack(
         })()
       : actorFromPlayer(player);
 
-  markUltimateContributor(world, target, player.isPlayer.id);
   recordWorldLogEvent(
     world,
     {

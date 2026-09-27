@@ -22,14 +22,7 @@ import {
   applySpriteOutline,
   clearSpriteOutline,
 } from './sprites';
-import { VOID_OVERLORD_DISPLAY } from '../sprites/voidOverlordSheet';
-import {
-  ensureVoidOverlordBossSprite,
-  ensureVoidOverlordMinionSprite,
-  shouldUseVoidOverlordSheet,
-} from './ultimateBossSprites';
 
-const THRONE_HEAL_TINT = 0xbb66ff;
 // Dungeon guardians wear a red outline (glow) rather than a tint, so their own
 // sprite colors stay readable while still flagging them as the room's threat.
 const GUARDIAN_OUTLINE = 0xff3333;
@@ -153,9 +146,6 @@ function syncMonsterThroneTint(
   if (state.dungeonGuardianIds.has(monster.id)) {
     resetSpriteTint(sprite, monster.color);
     applySpriteOutline(sprite, GUARDIAN_OUTLINE);
-  } else if (monster.throneHealing) {
-    clearSpriteOutline(sprite);
-    applySpriteTint(sprite, THRONE_HEAL_TINT);
   } else if (isEliteType(monster.monsterTypeId)) {
     resetSpriteTint(sprite, monster.color);
     applySpriteOutline(sprite, ELITE_OUTLINE);
@@ -212,19 +202,6 @@ function upsertSheetMonsterSprite(
 ): void {
   const meta = state.spriteMeta.get(monster.id);
   if (!meta) return;
-
-  if (monster.monsterTypeId === 'void-overlord') {
-    meta.barOffsetY = VOID_OVERLORD_DISPLAY['void-overlord'].barOffsetY;
-    ensureVoidOverlordBossSprite(state, monster.id, monster.pos, scene);
-    return;
-  }
-
-  if (shouldUseVoidOverlordSheet(monster.monsterTypeId)) {
-    meta.barOffsetY = VOID_OVERLORD_DISPLAY[monster.monsterTypeId].barOffsetY;
-    meta.visualOffsetY = undefined;
-    ensureVoidOverlordMinionSprite(state, monster.id, monster, scene);
-    return;
-  }
 
   const spriteSize = monsterSpriteSize(monster);
   meta.barOffsetY = monsterBarOffsetY(monster);

@@ -283,7 +283,6 @@ export function materializeBot(
   Object.assign(entity.usesAutocombat, DEFAULT_AUTOCOMBAT_CONFIG, {
     auto: true,
     autoTraverse: false,
-    engageUltimateBosses: true,
   });
   entity.hasHealth.hp = entity.hasHealth.maxHp;
   return entity;

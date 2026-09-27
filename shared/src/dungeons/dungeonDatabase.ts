@@ -447,8 +447,6 @@ function bossForDungeon(nodeId: string): string | null {
 function buildDungeonDef(nodeId: string): DungeonDef | null {
   const info = NODE_BIOMES[nodeId];
   if (!info?.isDungeon) return null;
-  // The Void Overlord throne keeps its own ultimate-encounter system.
-  if (info.bossTypeId === "void-overlord") return null;
   const bossId = bossForDungeon(nodeId);
   const guard = buildGuardDef(nodeId);
   if (!bossId || !guard) return null;

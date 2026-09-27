@@ -75,7 +75,6 @@ import { tickAllMechanics } from "../systems/classes/registry";
 import { updateWeaponEffects } from "../systems/combat/damage/weaponEffects";
 import { updateBossScripts } from "../systems/combat/ai/bossScripts";
 import { updateBossPatterns } from "../systems/combat/ai/bossPatterns";
-import { updateUltimateEncounters } from "../systems/combat/ai/ultimateEncounter";
 import { updateWards, updateDefensiveSystems } from "../systems/defense";
 import { updateKnockback } from "../systems/combat/damage/knockback";
 import { updateLairDrags } from "../systems/combat/damage/lairDrag";
@@ -180,7 +179,6 @@ export class World {
   readonly concealedMonsters = this.monsterEntities.with("isConcealed");
   /** Bosses standing in an authored, punishable recovery window. */
   readonly recoveringMonsters = this.monsterEntities.with("recoversFromPattern");
-  readonly ultimateMonsters = this.monsterEntities.with("scriptsUltimate");
   readonly movingMonsters = this.monsterEntities.with("isMoving");
   readonly aggroedMonsters = this.monsterEntities.with("hasAggroTarget");
   readonly detonatedMonsters = this.monsterEntities.with("hasDetonation");
@@ -260,8 +258,6 @@ export class World {
   pendingDeaths: PendingDeath[] = [];
   /** Player IDs whose quest completion advanced their tier. Drained by the server loop. */
   pendingAscensions: string[] = [];
-  /** Contributors on-node when the Void Overlord dies — drained for overlay emit. */
-  pendingOverlordFelled: string[] = [];
   /**
    * Dev-only multiplier on everything a kill pays out (essence, biome XP,
    * catalyst progress, boss catalyst bundle). Server-global and runtime-only: it
@@ -316,13 +312,6 @@ export class World {
    * caldera; runtime-only, cleared on boss death and on node freeze.
    */
   ambientRampOverrides = new Map<string, AmbientRampOverride>();
-  /**
-   * Persist (marker) or clear (null) the server-global Void Overlord respawn
-   * cooldown so it survives node freeze/thaw and server restarts. Set by
-   * index.ts at boot; left null in benchmarks/tests (no DB).
-   */
-  overlordRespawnPersist: ((marker: PersistedBossRespawn | null) => void) | null =
-    null;
   /** Broadcast active boss-felled markers to all clients (world map). Set by index.ts. */
   bossFelledBroadcast: (() => void) | null = null;
   /** Optional analytics hooks installed by the server entrypoint. */
@@ -463,7 +452,6 @@ export class World {
     // pattern owns its boss outright, so it has to have advanced (and possibly
     // released the boss) before AI, movement and combat get a look at it.
     updateBossPatterns(this, dt, now);
-    updateUltimateEncounters(this, dt);
     updatePartyFollow(this, now);
     updateAutoTraverse(this, now);
     updateAutoTargets(this, now);

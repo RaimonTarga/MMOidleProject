@@ -22,7 +22,6 @@ export interface GameplayBuild {
   priorityMode: string;
   acquireRadius: number;
   focusLeaderTarget: boolean;
-  engageUltimateBosses: boolean;
   fleeWhenLow: boolean;
   fleeHpPct: number;
 }

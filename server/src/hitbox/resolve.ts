@@ -5,15 +5,11 @@ import {
   FALLBACK_BOSS_AABB,
   FALLBACK_MONSTER_AABB,
   FALLBACK_PLAYER_AABB,
-  isVoidOverlordSheetMonster,
   MINION_BASE_DISPLAY_SIZE,
   MONSTER_DISPLAY_SIZE,
   PLAYER_DISPLAY_SIZE,
   resolveMonsterFrame,
   resolvePlayerFrame,
-  resolveVoidOverlordBossFrameName,
-  resolveVoidOverlordMinionFrameName,
-  VOID_OVERLORD_DISPLAY,
 } from '@mmo-idle/shared';
 import type { PlayerEntity, ServerEntity } from '../ecs/entity';
 import type { World } from '../world/World';
@@ -73,25 +69,6 @@ export function resolveMonsterHitbox(
   isBoss: boolean,
   entityId?: string,
 ): HasHitbox {
-  if (isVoidOverlordSheetMonster(monsterTypeId)) {
-    const display = VOID_OVERLORD_DISPLAY[monsterTypeId];
-    const frameName =
-      monsterTypeId === 'void-overlord'
-        ? resolveVoidOverlordBossFrameName()
-        : entityId
-          ? resolveVoidOverlordMinionFrameName(monsterTypeId, entityId)
-          : null;
-    const fb = isBoss ? FALLBACK_BOSS_AABB : FALLBACK_MONSTER_AABB;
-    if (display) {
-      return resolveHitboxByFrame(
-        frameName,
-        display.displayW,
-        display.displayH,
-        fb,
-      );
-    }
-  }
-
   const frame = resolveMonsterFrame(monsterTypeId);
   const displaySize = isBoss ? BOSS_DISPLAY_SIZE : MONSTER_DISPLAY_SIZE;
   const fb = isBoss ? FALLBACK_BOSS_AABB : FALLBACK_MONSTER_AABB;

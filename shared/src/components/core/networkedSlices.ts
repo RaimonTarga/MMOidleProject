@@ -101,32 +101,6 @@ export interface EvadesHits {
   charge: number;
 }
 
-/** Presentation-ready objective row for ultimate boss HUD. */
-export interface UltimateObjectiveStatus {
-  headline: string;
-  detail?: string;
-  current?: number;
-  total?: number;
-}
-
-/** Active environmental hazard synced for ultimate boss HUD. */
-export interface UltimateHazardStatus {
-  effectId: string;
-  dmgPerTick: number;
-  tickMs: number;
-  hint?: string;
-}
-
-/** Ultimate boss encounter HUD payload — populated server-side each tick. */
-export interface UltimateStatus {
-  stageLabel: string;
-  stageIndex: number;
-  stageCount: number;
-  invulnerable: boolean;
-  objective?: UltimateObjectiveStatus;
-  hazard?: UltimateHazardStatus;
-}
-
 /**
  * Compact debuff descriptor for the target frame. Populated only for monsters
  * that are currently a player's attack target (see the server targetStatus
@@ -206,10 +180,6 @@ export interface HasStatus {
    * window is open.
    */
   onHitDamageBonus?: number;
-  /** Ultimate bosses only — populated by ultimateEncounter sync. */
-  ultimateStatus?: UltimateStatus;
-  /** Encounter adds healing inside the void throne ring. */
-  throneHealing?: boolean;
   /**
    * CONCEALED — mirrors the server-only `IsConcealed` component for the renderer.
    *
@@ -250,8 +220,6 @@ export type AutocombatPriorityMode =
 
 /** User-tunable server-side auto-combat behavior. */
 export interface AutocombatConfig {
-  /** Allow auto-combat to wake dormant ultimate encounters such as the Void Overlord. */
-  engageUltimateBosses: boolean;
   /** Leave combat when low HP and losing the trade. */
   fleeWhenLow: boolean;
   /** HP fraction at or below which flee checks can trigger. */

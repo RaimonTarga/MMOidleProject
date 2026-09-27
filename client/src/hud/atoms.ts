@@ -20,7 +20,6 @@ import type {
   SubVariant,
   SummonSlotView,
   TargetStatusView,
-  UltimateStatus,
   BossFelledMarker,
   DungeonView,
   HumanPlaytestStatus,
@@ -359,16 +358,6 @@ export interface ZonePlayer {
 /** Players in the local player's current zone (for the party panel). */
 export const zonePlayersAtom = atom<ZonePlayer[]>([]);
 
-/** One ultimate boss per node — first engaged match wins. See deltaApplier scan. */
-export interface ZoneBoss {
-  id: string;
-  name: string;
-  hp: number;
-  maxHp: number;
-  status: UltimateStatus;
-}
-export const zoneBossAtom = atom<ZoneBoss | null>(null);
-
 /** Current attack target — drives the top-center target frame. Resolved each
  *  broadcast in deltaApplier from the local player's attackTargetId. */
 export interface TargetFrameData {
@@ -616,48 +605,6 @@ export function setZonePlayers(next: ZonePlayer[]): void {
   const store = getDefaultStore();
   if (zonePlayersEqual(store.get(zonePlayersAtom), next)) return;
   store.set(zonePlayersAtom, next);
-}
-
-function zoneBossEqual(a: ZoneBoss | null, b: ZoneBoss | null): boolean {
-  if (a === b) return true;
-  if (!a || !b) return false;
-  if (
-    a.id !== b.id ||
-    a.name !== b.name ||
-    a.hp !== b.hp ||
-    a.maxHp !== b.maxHp
-  ) {
-    return false;
-  }
-  const sa = a.status;
-  const sb = b.status;
-  if (
-    sa.stageLabel !== sb.stageLabel ||
-    sa.stageIndex !== sb.stageIndex ||
-    sa.stageCount !== sb.stageCount ||
-    sa.invulnerable !== sb.invulnerable
-  ) {
-    return false;
-  }
-  const oa = sa.objective;
-  const ob = sb.objective;
-  if (oa?.headline !== ob?.headline || oa?.detail !== ob?.detail ||
-      oa?.current !== ob?.current || oa?.total !== ob?.total) {
-    return false;
-  }
-  const ha = sa.hazard;
-  const hb = sb.hazard;
-  if (ha?.effectId !== hb?.effectId || ha?.dmgPerTick !== hb?.dmgPerTick ||
-      ha?.tickMs !== hb?.tickMs || ha?.hint !== hb?.hint) {
-    return false;
-  }
-  return true;
-}
-
-export function setZoneBoss(next: ZoneBoss | null): void {
-  const store = getDefaultStore();
-  if (zoneBossEqual(store.get(zoneBossAtom), next)) return;
-  store.set(zoneBossAtom, next);
 }
 
 function targetFrameEqual(a: TargetFrameData | null, b: TargetFrameData | null): boolean {
@@ -922,7 +869,6 @@ function resetPlayerAtoms(): void {
   setAutoPath(null);
   setParty(null);
   setZonePlayers([]);
-  setZoneBoss(null);
   setTargetFrame(null);
   setBossFelledMarkers([]);
   setDungeon(null);

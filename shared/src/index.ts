@@ -63,7 +63,6 @@ export * from './hitbox/constants';
 export * from './hitbox/resolveHitbox';
 export * from './sprites/frameMaps';
 export * from './sprites/headAnchors';
-export * from './sprites/voidOverlordLayout';
 export * from './types/combat';
 export * from './components';
 export * from './protocol/networkedEntity';
@@ -108,9 +107,7 @@ export * from './world/tallProps';
 export * from './quests/questDatabase';
 export * from './config/gameConfig';
 export * from './emotes';
-export * from './ultimate/hazardDisplay';
 export * from './systems/systemVisibility';
-export * from './ultimate/gear';
 export * from "./attunementMigration";
 
 export * from './systems/onHitDamage';

@@ -7,7 +7,6 @@ import { grantMonsterRewards } from '../../player/progression/rewards';
 import { isInvulnerableMonster } from '../invulnerability';
 import { renewPackPursuit, setAggroTarget } from '../ai/targeting';
 import { markEngaged } from '../ai/engagement';
-import { markUltimateContributor } from '../ai/ultimateContributors';
 import { recordWorldLogEvent } from '../../../world/worldLog';
 import {
   actorFromMonster,
@@ -66,7 +65,6 @@ export function applyPlayerProcDamage(
 
   target.hasHealth.hp -= hpDamage;
   renewPackPursuit(world, target, { id: playerId, kind: 'player' });
-  markUltimateContributor(world, target, playerId);
 
   if (
     target.isMonster.isBoss &&

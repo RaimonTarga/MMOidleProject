@@ -31,7 +31,6 @@ import {
   makeTracksCombat,
   resetTracksCombat,
   initScriptsBoss,
-  initScriptsUltimate,
   getCavePatrols,
 } from "@mmo-idle/shared";
 import type { MonsterEntity } from "../../../ecs/entity";
@@ -48,7 +47,6 @@ import { despawnMinionsForOwner } from "../../classes/archetypes/summoner";
 import { resetNodeFeatureRuntimeState } from "../nodeFeatures";
 import { resetEvadeAccumulator } from "../../defense/mitigation/evasion";
 import { refillBarrier } from "../../defense/barrier/barrier";
-import { applyDormantUltimateBoss } from "../../combat/ai/ultimateEncounter";
 import { cancelActiveTelegraphResponse } from "../../combat/ai/telegraphEvasion";
 
 // Regular monsters in dungeon nodes are scaled up; boss stats come from the database directly.
@@ -305,11 +303,6 @@ export function createMonster(
       "scriptsBoss",
       initScriptsBoss(def.bossScript),
     );
-  }
-
-  if (def.ultimateEncounter) {
-    world.ecs.addComponent(entity, "scriptsUltimate", initScriptsUltimate());
-    applyDormantUltimateBoss(world, entity, def);
   }
 
   // STATIC SENTRY: a perched mob holds the spot it spawned on. Unlike
@@ -1062,7 +1055,6 @@ export function ensureBoss(world: World, nodeId: string): void {
   if (boss) {
     world.bossRespawnAt.delete(nodeId);
     world.bossRespawnMarkers.delete(nodeId);
-    if (typeId === "void-overlord") world.overlordRespawnPersist?.(null);
     world.broadcastBossFelledState();
   }
 }
