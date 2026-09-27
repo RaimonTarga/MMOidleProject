@@ -48,49 +48,6 @@ export function fxDuelistShot(scene: GameScene, fromX: number, fromY: number, to
   });
 }
 
-/**
- * Dualslinger on-hit shot (the odd, 2× on-hit round). A cool electric-blue tracer
- * with a crisp cyan impact spark — visually distinct from the warm standard/attack
- * shot, so the alternating attack/on-hit rhythm reads at a glance.
- */
-export function fxAltShot(scene: GameScene, fromX: number, fromY: number, toX: number, toY: number): void {
-  const core = 0xf8fc03;   // yellow core
-  const blue = 0x3aa0ff;   // electric blue body
-
-  const g = scene.add.graphics().setDepth(DEPTH.FX);
-  g.lineStyle(6, blue, 0.2);
-  g.lineBetween(fromX, fromY, toX, toY);
-  g.lineStyle(3, blue, 0.85);
-  g.lineBetween(fromX, fromY, toX, toY);
-  g.lineStyle(1.5, core, 1);
-  g.lineBetween(fromX, fromY, toX, toY);
-  scene.tweens.add({ targets: g, alpha: 0, duration: 110, ease: 'Quad.easeIn', onComplete: () => g.destroy() });
-
-  const muzzle = scene.add.graphics({ x: fromX, y: fromY }).setDepth(DEPTH.FX);
-  muzzle.fillStyle(blue, 0.5);
-  muzzle.fillCircle(0, 0, 9);
-  muzzle.fillStyle(core, 0.85);
-  muzzle.fillCircle(0, 0, 4.5);
-  scene.tweens.add({ targets: muzzle, alpha: 0, scaleX: 2, scaleY: 2, duration: 100, onComplete: () => muzzle.destroy() });
-
-  const flash = scene.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
-  flash.fillStyle(blue, 0.5);
-  flash.fillCircle(0, 0, 16);
-  flash.fillStyle(core, 0.85);
-  flash.fillCircle(0, 0, 8);
-  scene.tweens.add({ targets: flash, alpha: 0, scaleX: 2.6, scaleY: 2.6, duration: 170, ease: 'Quad.easeOut', onComplete: () => flash.destroy() });
-
-  const travelAngleDeg = Math.atan2(toY - fromY, toX - fromX) * 180 / Math.PI;
-  const backDeg = (travelAngleDeg + 180 + 360) % 360;
-  burstFx(scene, 'ptx-spark', toX, toY, 9, 240, {
-    tint: blue,
-    speed: { min: 90, max: 230 },
-    angle: { min: backDeg - 40, max: backDeg + 40 },
-    scale: { start: 0.85, end: 0 },
-    alpha: { start: 1, end: 0 },
-    rotate: { min: 0, max: 360 },
-  });
-}
 
 /**
  * Bounty Hunter Death Mark detonation — a small, punchy explosion on the target:
@@ -137,9 +94,9 @@ export function fxDeathMarkBlast(scene: GameScene, x: number, y: number): void {
  * tracer halo, the muzzle and the debris; the thin bright core keeps the
  * archetype/empowered color, which is what makes a surge readable.
  *
- * The T3 signature shots above (Duelist red, Dualslinger blue) deliberately take
- * no tint: their colors are mechanic tells, not flavor — the red/blue
- * alternation IS the on-hit rhythm indicator.
+ * The T3 signature shots (Duelist red above; Dualslinger's gold and blue rounds in
+ * bespoke/slinger.ts) deliberately take no tint: their colors are mechanic tells,
+ * not flavor — Dualslinger's alternation IS the on-hit rhythm indicator.
  *
  * FLAIR (attackFlair.ts): stage 0 is a bare tracer and a small hit flash; the
  * halo and muzzle flash arrive with the frame.

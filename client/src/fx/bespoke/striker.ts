@@ -1,16 +1,46 @@
 /**
  * STRIKER (cadence) specializations — the combo class, so most of these read the
  * build-up toward the finisher (`cadenceCount` / `cadenceThreshold`) or a buff the
- * finisher leaves behind. Swiftblade replaces its attack in combatFx and is absent.
+ * finisher leaves behind. Swiftblade's finisher is drawn by `fxSwiftbladeStrike`
+ * below, called from combatFx's Swiftblade branch.
  */
 import type { PlayerView } from '@mmo-idle/shared';
+import type { GameScene } from '../../scenes/GameScene';
+import { fxStrikerSlash } from '../strikerSlash';
+import type { AttackTint } from '../elementTint';
+import type { AttackFlair } from '../attackFlair';
 import { DEPTH } from '../../render/depth';
 import { burstFx } from '../particles';
 import { drawCracks, ring } from '../bossKit';
 import {
   angleOf, bolt, buffStacks, chainRing, crescent, fadeOut, feel, targetHas, targetView,
-  type BespokeHit, type PathTable,
+  type BespokeHit, type P, type PathTable,
 } from './kit';
+
+// ── Swiftblade: the Striker's own cut, twice ──────────────────────────────────
+
+/** When each player's last Swiftblade cut was drawn, to space the pair. */
+const lastSwiftCut = new Map<string, number>();
+
+/**
+ * SWIFTBLADE's finisher strikes twice, and each strike arrives as its own hit
+ * event in the same tick. Each draws the Striker's regular crescent (the path's
+ * whole niche is "the Striker cut, doubled"); the second of a pair is held back a
+ * beat so the two read as a double slash, and the crescent's built-in alternation
+ * crosses them.
+ */
+export function fxSwiftbladeStrike(
+  scene: GameScene, playerId: string, from: P, to: P, tint: AttackTint | undefined, flair: AttackFlair,
+): void {
+  const now = performance.now();
+  const last = lastSwiftCut.get(playerId) ?? -Infinity;
+  const second = now - last < 80;
+  lastSwiftCut.set(playerId, second ? -Infinity : now);
+  const big = { ...flair, scale: flair.scale * 1.12 };
+  const cut = (): void => fxStrikerSlash(scene, from.x, from.y, to.x, to.y, false, tint, big);
+  if (second) scene.time.delayedCall(90, cut);
+  else cut();
+}
 
 // ── Maestro: a note per build-up hit, resolved into a chord ─────────────────
 

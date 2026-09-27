@@ -6,6 +6,7 @@
  * PlayerView / MonsterView already carries (aura, activeBuffs, combo / ammo /
  * energy fields, the target's status list), so remote players see it too.
  *
+ *   attack   replaces the ordinary hit's animation outright (Dualslinger's rounds);
  *   hit      a layer over an ordinary hit (the range attack still draws beneath);
  *   payoff   replaces the whole finisher / execution / discharge animation;
  *   reload   a beat on `player-reload-start` (Slinger paths).
@@ -40,6 +41,7 @@ export interface BespokeReload {
 }
 
 export interface BespokePath {
+  attack?(h: BespokeHit): void;
   hit?(h: BespokeHit): void;
   payoff?(h: BespokeHit): void;
   reload?(r: BespokeReload): void;

@@ -67,7 +67,7 @@ import { fxSiegeBlow } from "../fx/siegeBlow";
 import { fxPikeBrace } from "../fx/pikeBrace";
 import { fxSquireSlam } from "../fx/squireSlam";
 import { fxImpact } from "../fx/impact";
-import { fxGunshot, fxDuelistShot, fxAltShot, fxDeathMarkBlast } from "../fx/gunshot";
+import { fxGunshot, fxDuelistShot, fxDeathMarkBlast } from "../fx/gunshot";
 import { fxBoulder } from "../fx/boulder";
 import { fxArrow } from "../fx/arrow";
 import { fxBite } from "../fx/bite";
@@ -105,7 +105,6 @@ import { fxFire } from "../fx/fire";
 import { fxVoid } from "../fx/voidFx";
 import { fxFirstStrike } from "../fx/firstStrike";
 import { fxAftershock } from "../fx/aftershock";
-import { fxDualSlash } from "../fx/dualSlash";
 import { fxBearClaws } from "../fx/bearClaws";
 // MONSTER/BOSS animation pass — see docs/briefs/monster-boss-animation-audit-2026-09-12.md.
 import { fxBoneStrike } from "../fx/boneStrike";
@@ -228,7 +227,8 @@ import { fxOpenerLand, fxOpenerWindup, isOpenerFx } from "../fx/engageOpeners";
 import { fxMobCastWindup } from "../fx/mobCastWindups";
 import { attackFlairOf, type AttackFlair } from "../fx/attackFlair";
 import { bespokePathFor, playAscensionRing } from "../fx/bespokePaths";
-import { fxDualScale } from "../fx/bespoke/slinger";
+import { fxDualBlueRound } from "../fx/bespoke/slinger";
+import { fxSwiftbladeStrike } from "../fx/bespoke/striker";
 import { abilityCallout, playAbilityRank } from "../fx/abilityRank";
 import {
   fxCharnelMaul, fxConstrict, fxHindKick, fxOozeEngulf, fxSnap, fxSpiderFang, fxSting,
@@ -1951,12 +1951,9 @@ function runFxForAttackStyle(
     playEmpoweredRing(args);
     fxDuelistShot(scene, from.x, from.y, to.x, to.y);
   } else if (isAltShot) {
-    // Dualslinger on-hit (odd) round: blue shot instead of the normal gunshot.
-    fxAltShot(scene, from.x, from.y, to.x, to.y);
-    // Its balance scale tips on both rounds (the even one draws via bespoke/slinger.ts).
-    if (flair.stage === 3 && flair.specId === "reload-balanced-t3-c") {
-      fxDualScale(scene, player, from, "blue", flair.scale);
-    }
+    // Dualslinger on-hit (odd) round: the spiralling arcane round, the opposite of
+    // its gold kinetic round (fx/bespoke/slinger.ts).
+    fxDualBlueRound(scene, from, to, flair.scale);
   } else if (isDeathMarkBlast) {
     // Bounty Hunter detonation: a small explosion on the target (no shot tracer).
     fxDeathMarkBlast(scene, to.x, to.y);
@@ -1999,10 +1996,10 @@ function runFxForAttackStyle(
       tint,
     );
   } else if (isSwiftblade) {
-    // Swiftblade replaces the default cadence slash with its dual diagonal slash;
-    // both the primary and the extra strikes carry this effect.
+    // Swiftblade's finisher is the Striker's own cut, twice: the primary and the
+    // extra strike each carry this effect and each draw one crescent.
     playEmpoweredRing(args);
-    fxDualSlash(scene, to.x, to.y, ev.empowered);
+    fxSwiftbladeStrike(scene, ev.playerId, from, to, tint, flair);
   } else {
     playEmpoweredRing(args);
     // Stage 3: the specialization's bespoke attack (fx/bespokePaths.ts) replaces the
@@ -2017,7 +2014,8 @@ function runFxForAttackStyle(
     if (bespoke?.payoff && (ev.empowered || ev.execution)) {
       bespoke.payoff(hit);
     } else {
-      resolveAttackFx(
+      if (bespoke?.attack) bespoke.attack(hit);
+      else resolveAttackFx(
         player.combatArchetype,
         player.selectedRange,
         player.attackStyle,

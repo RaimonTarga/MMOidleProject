@@ -40,7 +40,7 @@ const base = { selectedSubVariant: null, selectedRange: null, unlockedSkills: []
 // Paths that REPLACE their basic attack wholesale in combatFx (and so never reach
 // the signature layer). Keep this list short and named: anything else needs a row.
 const REPLACES_ATTACK = new Set([
-  'cadence-light-t3-c', // Swiftblade: dual diagonal slash
+  'cadence-light-t3-c', // Swiftblade: the Striker crescent, doubled (fxSwiftbladeStrike)
   'energy-balanced-t3-a', // Equinox: charge / discharge arc
   'energy-light-t3-a', // Stormdancer: lightning dagger
   'reload-heavy-t3-a', // Melter: laser
