@@ -229,6 +229,7 @@ import { fxMobCastWindup } from "../fx/mobCastWindups";
 import { attackFlairOf, type AttackFlair } from "../fx/attackFlair";
 import { playPathSignature } from "../fx/pathSignatures";
 import { bespokePathFor } from "../fx/bespokePaths";
+import { fxDualScale } from "../fx/bespoke/slinger";
 import { abilityCallout, playAbilityRank } from "../fx/abilityRank";
 import {
   fxCharnelMaul, fxConstrict, fxHindKick, fxOozeEngulf, fxSnap, fxSpiderFang, fxSting,
@@ -1953,6 +1954,10 @@ function runFxForAttackStyle(
   } else if (isAltShot) {
     // Dualslinger on-hit (odd) round: blue shot instead of the normal gunshot.
     fxAltShot(scene, from.x, from.y, to.x, to.y);
+    // Its balance scale tips on both rounds (the even one draws via bespoke/slinger.ts).
+    if (flair.stage === 3 && flair.specId === "reload-balanced-t3-c") {
+      fxDualScale(scene, player, from, "blue", flair.scale);
+    }
   } else if (isDeathMarkBlast) {
     // Bounty Hunter detonation: a small explosion on the target (no shot tracer).
     fxDeathMarkBlast(scene, to.x, to.y);

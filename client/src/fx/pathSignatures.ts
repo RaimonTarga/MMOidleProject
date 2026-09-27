@@ -386,12 +386,6 @@ const SIGNATURES: Record<string, Signature> = {
   'energy-light-t3-b': { motif: shock, color: 0xfff07a, accent: 0xffffff }, // Surge
   'energy-light-t3-c': { motif: halo, color: 0xfff0a0, accent: 0xffffff }, // Channeler
   // Slinger (Melter, Sniper, Blunderbuss replace their attack)
-  'reload-balanced-t3-a': { motif: reticle, color: 0xff8833, accent: 0xffffff }, // Bounty hunter
-  'reload-balanced-t3-c': { motif: smoke, color: 0xd8c080, accent: 0x8ab0ff }, // Dualslinger
-  'reload-heavy-t3-b': { motif: smoke, color: 0xd8a040, accent: 0xff6a3a }, // Warmonger
-  'reload-heavy-t3-c': { motif: smoke, color: 0xb0a090, accent: 0x6a6258 }, // Cannoneer
-  'reload-light-t3-a': { motif: smoke, color: 0xd8c080, accent: 0xff4433 }, // Duelist
-  'reload-light-t3-b': { motif: smoke, color: 0xffc040, accent: 0xffe0a0 }, // Desperado
 };
 
 /** Whether this specialization has a signature layer. */
