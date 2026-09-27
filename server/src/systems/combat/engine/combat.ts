@@ -2310,6 +2310,19 @@ function resolveDelayedGroundZoneImpacts(world: World, now: number): void {
       }
     }
 
+    if (impact.kind === 'fault-line-telegraph' && impact.scattered) {
+      for (const point of impact.points) {
+        world.pushEvent(monster.hasPosition.nodeId, {
+          kind: 'boss-fx',
+          monsterId: impact.id,
+          pos: { ...point },
+          fx: 'slam',
+          radius: impact.radius,
+          element: MONSTER_DATABASE.get(monster.isMonster.monsterTypeId)?.attackStyle,
+        });
+      }
+      continue;
+    }
     const maxRadius = impact.kind === 'toxic-pool'
       ? impact.radius
       : Math.max(

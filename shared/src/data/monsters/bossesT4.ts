@@ -52,18 +52,10 @@ export const bossMonsterEntriesT4 = [
 
   // ══════════════════════════════════════════════════════════════════════
   // MOUNTAIN — "Iron-Crest Titan"
-  // Identity: TELEGRAPHED CATASTROPHIC IMPACT, at its most elaborate.
+  // Identity: "the charge is coming; how do you meet it?", every answer at once.
   //
-  // The lineage's whole arc lands here:
-  //   T1 circle Slam → T2 stronger Slam behind a defended position →
-  //   T3 charge-lock-Slam → T4 charge-lock-Earthshatter WITH delayed fault lines.
-  // The aftershock is the T4 layer: the impact is survivable, and then the ground
-  // splits along six radial lines 900ms later. Reading the first hit is not enough.
-  //
-  // `cadenceFinisher` is kept — unlike the generic version on the other T4 bosses,
-  // a deterministic every-4th heavy hit is the SMALL version of the same reading
-  // skill the Earthshatter tests, and it is the only pressure between slams on a
-  // 4.2s swing timer. Both phases escalate the slam; nothing else is bolted on.
+  // The lineage's arc (boss-lineage redesign): T1 lane charge → T2 behind a plate
+  // you can break → T3 a second, rootable charge → T4 the same, under Rockfall.
   // ══════════════════════════════════════════════════════════════════════
   ['iron-crest-titan', {
     id: 'iron-crest-titan', name: 'Iron-Crest Titan', color: 0x8899bb,
@@ -73,60 +65,94 @@ export const bossMonsterEntriesT4 = [
     rewards: { essence: 620, essenceType: 'blue', level: 5, biomeXp: 930 },
     ai: { wanderRadius: 95, leashRange: 960, idleMinMs: 4000, idleMaxMs: 10000 },
     targeting: { prefersPlayers: true },
-    // T4 = the full Mountain sentence: committed impact → Earthshatter → delayed
-    // fault lines → a long reset. The cracks are the FINITE tail of the payoff, not
-    // persistent terrain — they resolve once and are gone, which is why the pattern
-    // does not wait on them before opening its recovery.
-    //
-    // REMOVED with the 2026-09-04 redesign: `chargeOnAggro`, the legacy
-    // `engageSequence` opener (a second, worse copy of the charge the pattern now
-    // owns), the standalone circular Earthshatter, and `cadenceFinisher` — an
-    // independent every-4th heavy hit competing with the sequence for the player's
-    // attention is precisely the accumulation this rework exists to undo.
+    // T4 = the whole Mountain answer set (boss-lineage redesign 2026-09-27). Three
+    // phases, each asking a new question of the same charge:
+    //   (1) the plated charge (the T2/T3 fight) — break the plate, or dodge/Brace;
+    //   (2) ~65% DOUBLE CHARGE — the plate drops after the first run, and the
+    //       unplated re-aim can be rooted (T3 ladder) or stunned (T4 ladder);
+    //   (3) ~35% ROCKFALL — delayed impact circles rain around you as each wind-up
+    //       begins, so dodging the lane means reading the rocks too; the cooldowns
+    //       compress (the soft enrage).
+    // While plated it ignores root and stun. CUT: the delayed fault lines (they only
+    // landed after the charge already hit you), and the Earthshatter follow-up — the
+    // tackle is the payoff again.
     bossPattern: {
       chargeInstinct: { speedPct: 0.45, castReductionPct: 0.30, minCastMs: 400, cooldownReductionPct: 0.20 },
-      id: 'titan-earthshatter', name: 'Titan Earthshatter',
+      id: 'titan-charge', name: 'Titan Charge',
       damageMultiplier: 2.2, cooldownMs: 9000, initialCooldownMs: 4500,
+      stoppedBy: {
+        stun: { staggerMs: 2800, label: 'Staggered' },
+        root: { staggerMs: 1500, label: 'Stumbled' },
+      },
       steps: [
+        { kind: 'cast', name: 'Titanplate', castMs: 900, fx: 'shield', guardable: false, rootable: true },
+        { kind: 'barrier', sourceId: 'titanplate', shieldPct: 0.05, blocksControl: true,
+          onBreak: { staggerMs: 3000, label: 'Plate Shattered' } },
         { kind: 'cast', name: 'Titan Charge', castMs: 2600, fx: 'charge-lane',
           lane: { length: 820, halfWidth: 104, lockAtCastPct: 0.6 } },
         // 820px at 540px/s ≈ 1.5s of travel, or less — it STOPS on the body it hits.
-        //
-        // THE CHARGE IS THE SETUP, NOT THE PAYOFF (2026-09-06). damageMult 1.0 -> 0.3:
-        // the tackle is a shove that announces the sentence, and Earthshatter is
-        // where the damage lives. The whole sequence is now one decision — read the
-        // lane and get off it, or eat all of it.
-        { kind: 'charge', speed: 540, damageMult: 0.3, maxTravelMs: 2400 },
-        // `requiresChargeHit`: a dodged charge draws no circle at all. It used to
-        // erupt at the far lane tip regardless, which taught nothing on a miss and
-        // occasionally clipped a player who had dodged correctly. And because the
-        // charge now stops where it connects, `captured-endpoint` IS the collision —
-        // the shatter lands on the player it just ran down.
-        //
-        // Deliberately not escapable from dead centre (240px is ~2s of running
-        // against a 950ms tell): eating the tackle is the mistake, and this is what
-        // the mistake costs. The fault lines below are still a real positional test,
-        // so the capstone keeps its second beat.
-        { kind: 'impact', name: 'Earthshatter', anchor: 'captured-endpoint',
-          radius: 240, damageMult: 1.35, telegraphMs: 950, fx: 'ground-slam',
-          requiresChargeHit: true },
-        { kind: 'fault-lines', anchor: 'captured-endpoint', delayMs: 900, rayCount: 6,
-          length: 330, lineRadius: 24, innerRadius: 95, damageMult: 0.6,
-          requiresChargeHit: true },
-        // The long reset the lineage builds toward: the whole sentence is answerable,
-        // and answering it buys real time on the boss.
+        { kind: 'charge', speed: 540, maxTravelMs: 2400 },
+        { kind: 'drop-barrier', sourceId: 'titanplate' },
         { kind: 'recovery', label: 'Spent', durationMs: 1000 },
       ],
     },
+    bossPatternVariants: [
+      {
+        chargeInstinct: { speedPct: 0.45, castReductionPct: 0.30, minCastMs: 400, cooldownReductionPct: 0.20 },
+        id: 'titan-double-charge', name: 'Double Charge',
+        damageMultiplier: 2.2, cooldownMs: 10000, initialCooldownMs: 4500,
+        stoppedBy: {
+          stun: { staggerMs: 2800, label: 'Staggered' },
+          root: { staggerMs: 1500, label: 'Stumbled' },
+        },
+        steps: [
+          { kind: 'cast', name: 'Titanplate', castMs: 900, fx: 'shield', guardable: false, rootable: true },
+          { kind: 'barrier', sourceId: 'titanplate', shieldPct: 0.05, blocksControl: true,
+            onBreak: { staggerMs: 3000, label: 'Plate Shattered' } },
+          { kind: 'cast', name: 'Titan Charge', castMs: 2600, fx: 'charge-lane',
+            lane: { length: 820, halfWidth: 104, lockAtCastPct: 0.6 } },
+          { kind: 'charge', speed: 540, maxTravelMs: 2400 },
+          { kind: 'drop-barrier', sourceId: 'titanplate' },
+          { kind: 'cast', name: 'Second Charge', castMs: 1500, fx: 'charge-lane', rootable: true,
+            lane: { length: 760, halfWidth: 104, lockAtCastPct: 0.5 } },
+          { kind: 'charge', speed: 580, damageMult: 0.85, maxTravelMs: 2200 },
+          { kind: 'recovery', label: 'Spent', durationMs: 1000 },
+        ],
+      },
+      {
+        chargeInstinct: { speedPct: 0.45, castReductionPct: 0.30, minCastMs: 400, cooldownReductionPct: 0.20 },
+        id: 'titan-rockfall', name: 'Rockfall',
+        damageMultiplier: 2.2, cooldownMs: 10000, initialCooldownMs: 4500,
+        stoppedBy: {
+          stun: { staggerMs: 2800, label: 'Staggered' },
+          root: { staggerMs: 1500, label: 'Stumbled' },
+        },
+        steps: [
+          { kind: 'cast', name: 'Titanplate', castMs: 900, fx: 'shield', guardable: false, rootable: true },
+          { kind: 'barrier', sourceId: 'titanplate', shieldPct: 0.05, blocksControl: true,
+            onBreak: { staggerMs: 3000, label: 'Plate Shattered' } },
+          { kind: 'rockfall', name: 'Rockfall', count: 6, radius: 90, spread: 620, delayMs: 1800, damageMult: 0.55 },
+          { kind: 'cast', name: 'Titan Charge', castMs: 2600, fx: 'charge-lane',
+            lane: { length: 820, halfWidth: 104, lockAtCastPct: 0.6 } },
+          { kind: 'charge', speed: 540, maxTravelMs: 2400 },
+          { kind: 'drop-barrier', sourceId: 'titanplate' },
+          { kind: 'rockfall', name: 'Rockfall', count: 6, radius: 90, spread: 620, delayMs: 1800, damageMult: 0.55 },
+          { kind: 'cast', name: 'Second Charge', castMs: 1500, fx: 'charge-lane', rootable: true,
+            lane: { length: 760, halfWidth: 104, lockAtCastPct: 0.5 } },
+          { kind: 'charge', speed: 580, damageMult: 0.85, maxTravelMs: 2200 },
+          { kind: 'recovery', label: 'Spent', durationMs: 1000 },
+        ],
+      },
+    ],
     bossScript: {
       phases: [
-        // The fault lines multiply and bite harder: the safe gaps between rays close.
-        { hpPct: 0.5, actions: [
-          { type: 'empower-charged', multiplierMult: 1.15, aftershockRayCountAdd: 3, aftershockDamageMult: 1.15 },
+        { hpPct: 0.65, name: 'Double Charge', actions: [
+          { type: 'set-pattern', patternId: 'titan-double-charge' },
         ] },
-        // Then the whole sequence comes at you sooner. Same idea, no new keywords.
-        { hpPct: 0.25, actions: [
-          { type: 'empower-charged', cooldownMult: 0.70, radiusMult: 1.10 },
+        // Soft enrage: rocks on every wind-up, and the cycle compresses.
+        { hpPct: 0.35, name: 'Rockfall', actions: [
+          { type: 'set-pattern', patternId: 'titan-rockfall' },
+          { type: 'empower-charged', cooldownMult: 0.70 },
           { type: 'stat-buff', stat: 'speed', mult: 1.35, label: 'earthshaker-rush' },
         ] },
       ],

@@ -188,11 +188,19 @@ export const bossMonsterEntriesT2 = [
       chargeInstinct: { speedPct: 0.35, castReductionPct: 0.30, minCastMs: 400 },
       id: 'stoneplate-charge', name: 'Stoneplate Charge',
       damageMultiplier: 2.0, cooldownMs: 11000, initialCooldownMs: 5000,
+      // Control before it plates (boss-lineage redesign): a stun or root on the
+      // Stoneplate cast stops the sequence. Once plated it ignores control.
+      stoppedBy: {
+        stun: { staggerMs: 2500, label: 'Staggered' },
+        root: { staggerMs: 1500, label: 'Stumbled' },
+      },
       steps: [
         // Plate up. Not guardable: the player answers this by HITTING it, not by
         // spending a Guard charge on a beat that deals no damage.
-        { kind: 'cast', name: 'Stoneplate', castMs: 900, fx: 'shield', guardable: false },
-        { kind: 'barrier', sourceId: 'stoneplate', shieldPct: 0.06,
+        { kind: 'cast', name: 'Stoneplate', castMs: 900, fx: 'shield', guardable: false, rootable: true },
+        // While plated it ignores stun and root (`blocksControl`): break the plate
+        // first. Breaking it is the T2 stop answer and staggers the boss.
+        { kind: 'barrier', sourceId: 'stoneplate', shieldPct: 0.06, blocksControl: true,
           onBreak: { staggerMs: 3200, label: 'Plate Shattered' } },
         { kind: 'cast', name: 'Stoneplate Charge', castMs: 2300, fx: 'charge-lane',
           lane: { length: 700, halfWidth: 90, lockAtCastPct: 0.55 } },
@@ -207,7 +215,7 @@ export const bossMonsterEntriesT2 = [
     // ONE readable sequence it owns.
     bossScript: {
       phases: [
-        { hpPct: 0.5, actions: [
+        { hpPct: 0.5, name: 'Unyielding', actions: [
           { type: 'empower-charged', multiplierMult: 1.15, cooldownMult: 0.80 },
         ] },
       ],

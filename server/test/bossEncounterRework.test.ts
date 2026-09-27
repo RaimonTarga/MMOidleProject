@@ -17,7 +17,7 @@ import {
   emptyEquipment,
   getStatusEffect,
 } from '@mmo-idle/shared';
-import type { BossAction } from '@mmo-idle/shared';
+import type { BossAction, MonsterDefinition } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { updateBossScripts } from '../src/systems/combat/ai/bossScripts';
 import { updateRaisers } from '../src/systems/combat/ai/raiseDead';
@@ -419,16 +419,30 @@ initCombatSystems();
 }
 
 // ── `empower-charged` scales the signature attack, and composes ───────────────
+// A patched fixture: after the 2026-09-27 lineage redesign no shipped boss carries
+// both a radius-scaled impact AND two composing empower phases, but the seam must
+// keep working for the ones that do scale a pattern (Mountain, Swamp, Tundra).
 {
+  const fixture = def('crag-behemoth') as MonsterDefinition;
+  const saved = structuredClone(fixture);
+  fixture.bossPattern = {
+    ...saved.bossPattern!,
+    steps: [
+      ...saved.bossPattern!.steps.filter(step => step.kind !== 'recovery'),
+      { kind: 'impact', name: 'Fixture Slam', anchor: 'self', radius: 150, damageMult: 1, telegraphMs: 800 },
+      { kind: 'recovery', label: 'Winded', durationMs: 1000 },
+    ],
+  };
+  fixture.bossScript = { phases: [
+    { hpPct: 0.5, actions: [{ type: 'empower-charged', multiplierMult: 1.2, radiusMult: 1.15 }] },
+    { hpPct: 0.25, actions: [{ type: 'empower-charged', cooldownMult: 0.7 }] },
+  ] };
   const world = new World();
-  const boss = world.createMonster(NODE, 'crag-gorged-horn-behemoth', { x: 400, y: 400 });
-  assert(!!boss, 'T3 Mountain boss should spawn');
+  const boss = world.createMonster(NODE, 'crag-behemoth', { x: 400, y: 400 });
+  assert(!!boss, 'fixture boss should spawn');
   setAggroTarget(world, boss, { id: 'charged-target', kind: 'player' }, 1_000);
 
-  // T3 Mountain's signature is now an ordered PATTERN rather than a chargedAttack,
-  // and `empower-charged` deliberately still drives it: converting a boss must not
-  // silently turn its authored 50% phase into a no-op.
-  const base = def('crag-gorged-horn-behemoth').bossPattern!;
+  const base = fixture.bossPattern!;
   boss.hasHealth.hp = boss.hasHealth.maxHp * 0.49;
   updateBossScripts(world, 100);
   const after50 = boss.scriptsBoss!.chargedOverride;
@@ -458,12 +472,12 @@ initCombatSystems();
     bossPatternFor(boss)!.cooldownMs < base.cooldownMs,
     'cooldownMult should bring the pattern around sooner',
   );
-  // The authored definition is the single source of the base numbers; overrides are
-  // stored as multipliers and applied on read, never written back.
   assert(
-    def('crag-gorged-horn-behemoth').bossPattern!.damageMultiplier === base.damageMultiplier,
+    fixture.bossPattern!.damageMultiplier === base.damageMultiplier,
     'base definition should be untouched by the override',
   );
+  for (const key of Object.keys(fixture)) delete (fixture as unknown as Record<string, unknown>)[key];
+  Object.assign(fixture, saved);
 }
 
 // ── `empower-shred` deepens a corrosion that is ALREADY on the player ─────────

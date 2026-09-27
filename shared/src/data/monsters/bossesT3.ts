@@ -36,12 +36,10 @@ export const bossMonsterEntriesT3 = [
 
   // ══════════════════════════════════════════════════════════════════════
   // MOUNTAIN — "Crag-Gorged Horn-Behemoth"
-  // Identity: TELEGRAPHED CATASTROPHIC IMPACT.
+  // Identity: "the charge is coming; how do you meet it?"
   //
-  // T3's real second layer is the CHARGE-LOCK-SLAM: `engageSequence` makes it
-  // sprint at you, plant, and only then wind up — so the slam is no longer a
-  // stationary metronome you can simply walk around. Both phases escalate that
-  // one attack (wider, then more often), because the slam IS the encounter.
+  // T3's layer (boss-lineage redesign): the DOUBLE CHARGE, and the first control
+  // answer on the player's ladder — a root pins the unplated second wind-up.
   // ══════════════════════════════════════════════════════════════════════
   ['crag-gorged-horn-behemoth', {
     id: 'crag-gorged-horn-behemoth', name: 'Crag-Gorged Horn-Behemoth', color: 0x6688cc,
@@ -51,43 +49,73 @@ export const bossMonsterEntriesT3 = [
     rewards: { essence: 340, essenceType: 'blue', level: 5, biomeXp: 510 },
     ai: { wanderRadius: 100, leashRange: 920, idleMinMs: 3500, idleMaxMs: 8500 },
     targeting: { prefersPlayers: true },
-    // T3 = the lane PLUS a payoff where it lands. The Colossus charges, then
-    // Cragbreaker erupts on the point it CHARGED TO — the endpoint it captured, not
-    // wherever the player drifted to afterwards. Reading the lane therefore answers
-    // both halves at once, which is what makes the tier feel like one attack rather
-    // than two stapled together.
+    // T3 = "THE CHARGE IS COMING; HOW DO YOU MEET IT?", with a second question
+    // (boss-lineage redesign 2026-09-27). Three phases:
+    //   (1) the plated charge carried over from T2 — break the plate to stagger it;
+    //   (2) ~60% DOUBLE CHARGE: the plated first charge, then the plate drops and it
+    //       re-aims and charges again on a shorter wind-up. The second wind-up is
+    //       unplated, so a Binding Strike root pins it (the T3 control answer);
+    //   (3) ~25% soft enrage: the sequence comes around sooner and winds up faster.
     //
-    // REMOVED with the 2026-09-04 redesign: `chargeOnAggro` and the legacy
-    // `engageSequence` charge-lock opener (the pattern IS the charge now, so the
-    // opener was a second, worse copy of it), plus the standalone circular slam.
+    // Answers every charge: DODGE (free, but feeds Charge Instinct), BRACE on the
+    // telegraph, or STOP it — plate break, or control before/between plates. While
+    // plated it ignores root and stun (`blocksControl`).
+    //
+    // CUT with the redesign: Cragbreaker (it only landed if the charge already hit
+    // you — more damage for the same mistake, not a new question). The tackle is
+    // the payoff again (damageMult 0.3 -> 1.0).
     bossPattern: {
       chargeInstinct: { speedPct: 0.40, castReductionPct: 0.30, minCastMs: 400, cooldownReductionPct: 0.15 },
-      id: 'cragbreaker', name: 'Cragbreaker',
+      id: 'horn-charge', name: 'Horn Charge',
       damageMultiplier: 2.0, cooldownMs: 9000, initialCooldownMs: 4500,
+      stoppedBy: {
+        stun: { staggerMs: 2500, label: 'Staggered' },
+        root: { staggerMs: 1500, label: 'Stumbled' },
+      },
       steps: [
-        { kind: 'cast', name: 'Cragbreaker Charge', castMs: 2400, fx: 'charge-lane',
+        { kind: 'cast', name: 'Hornplate', castMs: 900, fx: 'shield', guardable: false, rootable: true },
+        { kind: 'barrier', sourceId: 'hornplate', shieldPct: 0.05, blocksControl: true,
+          onBreak: { staggerMs: 3000, label: 'Plate Shattered' } },
+        { kind: 'cast', name: 'Horn Charge', castMs: 2400, fx: 'charge-lane',
           lane: { length: 760, halfWidth: 96, lockAtCastPct: 0.55 } },
         // 760px at 520px/s ≈ 1.5s of travel, or less — it STOPS on the body it hits.
-        // The tackle is the setup (damageMult 1.0 -> 0.3); Cragbreaker is the payoff.
-        { kind: 'charge', speed: 520, damageMult: 0.3, maxTravelMs: 2200 },
-        // Centred on the CAPTURED endpoint — which, now that the charge stops where
-        // it connects, is the collision itself rather than a tip it never reached.
-        // Reading the lane still answers both halves at once, and answering it now
-        // answers ALL of it: `requiresChargeHit` means a dodged charge draws no
-        // circle. Getting run down is the mistake; this is what it costs.
-        { kind: 'impact', name: 'Cragbreaker', anchor: 'captured-endpoint',
-          radius: 205, damageMult: 1.45, telegraphMs: 900, fx: 'ground-slam',
-          requiresChargeHit: true },
+        { kind: 'charge', speed: 520, maxTravelMs: 2200 },
+        { kind: 'drop-barrier', sourceId: 'hornplate' },
         { kind: 'recovery', label: 'Overextended', durationMs: 1000 },
       ],
     },
+    bossPatternVariants: [{
+      chargeInstinct: { speedPct: 0.40, castReductionPct: 0.30, minCastMs: 400, cooldownReductionPct: 0.15 },
+      id: 'horn-double-charge', name: 'Double Charge',
+      damageMultiplier: 2.0, cooldownMs: 10000, initialCooldownMs: 4500,
+      stoppedBy: {
+        stun: { staggerMs: 2500, label: 'Staggered' },
+        root: { staggerMs: 1500, label: 'Stumbled' },
+      },
+      steps: [
+        { kind: 'cast', name: 'Hornplate', castMs: 900, fx: 'shield', guardable: false, rootable: true },
+        { kind: 'barrier', sourceId: 'hornplate', shieldPct: 0.05, blocksControl: true,
+          onBreak: { staggerMs: 3000, label: 'Plate Shattered' } },
+        { kind: 'cast', name: 'Horn Charge', castMs: 2400, fx: 'charge-lane',
+          lane: { length: 760, halfWidth: 96, lockAtCastPct: 0.55 } },
+        { kind: 'charge', speed: 520, maxTravelMs: 2200 },
+        // The plate comes down after the first run: the re-aim is the unplated
+        // wind-up a root or stun can stop.
+        { kind: 'drop-barrier', sourceId: 'hornplate' },
+        { kind: 'cast', name: 'Second Charge', castMs: 1500, fx: 'charge-lane', rootable: true,
+          lane: { length: 700, halfWidth: 96, lockAtCastPct: 0.5 } },
+        { kind: 'charge', speed: 560, damageMult: 0.85, maxTravelMs: 2000 },
+        { kind: 'recovery', label: 'Overextended', durationMs: 1000 },
+      ],
+    }],
     bossScript: {
       phases: [
-        // The impact grows: harder, and it covers more of the arena.
-        { hpPct: 0.5,  actions: [{ type: 'empower-charged', multiplierMult: 1.20, radiusMult: 1.15 }] },
-        // Then it comes for you faster and swings sooner. Same one idea, tightened.
-        { hpPct: 0.25, actions: [
-          { type: 'empower-charged', cooldownMult: 0.70 },
+        { hpPct: 0.6, name: 'Double Charge', actions: [
+          { type: 'set-pattern', patternId: 'horn-double-charge' },
+        ] },
+        // Soft enrage: the whole sequence sooner, the wind-ups tighter.
+        { hpPct: 0.25, name: 'Crag Rush', actions: [
+          { type: 'empower-charged', cooldownMult: 0.70, castMsMult: 0.85 },
           { type: 'stat-buff', stat: 'speed', mult: 1.25, label: 'crag-rush' },
         ] },
       ],

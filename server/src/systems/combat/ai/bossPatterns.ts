@@ -771,6 +771,9 @@ function beginStep(
       state.capturedEndpoint = { ...lane.end };
       state.chargeHalfWidth = lane.halfWidth;
       state.chargeHitIds = [];
+      // Per CHARGE, not per pattern: a double charge whose first run connected must
+      // not read its second run as already tackled.
+      state.chargeConnected = false;
       if (pattern.chargeInstinct) {
         setCounter(monster.tracksCombat, CHARGE_INSTINCT_KEY,
           chargeInstinct(monster) + 1);
@@ -841,6 +844,11 @@ function beginStep(
       // The cracks resolve on the shared delayed-impact path, so the pattern does
       // not wait for them — they are the finite tail of the payoff, and holding the
       // boss still until they land would double the recovery the design authored.
+      state.stepEndsAtMs = now;
+      return true;
+    }
+    case 'rockfall': {
+      publishRockfall(world, monster, state, step, pattern, now);
       state.stepEndsAtMs = now;
       return true;
     }
@@ -1274,6 +1282,7 @@ function tickStep(
       return 'done';
     }
     case 'fault-lines':
+    case 'rockfall':
     case 'drop-barrier':
       return 'done';
     case 'wait':
@@ -1945,6 +1954,47 @@ function paintLane(
     damageMultiplier: 1,
   });
   state.laneZoneId = published.id;
+}
+
+/**
+ * Scatter delayed rock circles around the pattern's target: one planted under
+ * them, the rest spread across the arena near them. Resolved as ONE delayed
+ * impact on the fault-line path, so a player caught by two rocks is hit once.
+ */
+function publishRockfall(
+  world: World,
+  monster: MonsterEntity,
+  state: NonNullable<MonsterEntity['runsBossPattern']>,
+  step: Extract<BossPatternStep, { kind: 'rockfall' }>,
+  pattern: BossPattern,
+  now: number,
+): void {
+  const target = patternTarget(world, monster);
+  const center = target ? target.hasPosition.current : monster.hasPosition.current;
+  const nodeId = monster.hasPosition.nodeId;
+  const points: Vec2[] = [clampToNode(nodeId, { ...center })];
+  for (let i = 1; i < step.count; i++) {
+    // Evenly fanned with jitter, so the safe ground between rocks is readable.
+    const angle = (i / Math.max(1, step.count - 1)) * Math.PI * 2 + Math.random() * 0.6;
+    const distance = step.radius * 1.6 + Math.random() * Math.max(0, step.spread - step.radius * 1.6);
+    points.push(clampToNode(nodeId, {
+      x: center.x + Math.cos(angle) * distance,
+      y: center.y + Math.sin(angle) * distance,
+    }));
+  }
+  publishFaultLineBurst(world, nodeId, {
+    kind: 'fault-line-telegraph',
+    sourceLabel: step.name,
+    pos: { ...center },
+    radius: step.radius,
+    startedAtMs: now,
+    resolvesAtMs: now + step.delayMs,
+    ownerId: monster.isMonster.id,
+    points,
+    damageMultiplier: pattern.damageMultiplier * step.damageMult,
+    scattered: true,
+  });
+  void state;
 }
 
 function publishFaultLines(

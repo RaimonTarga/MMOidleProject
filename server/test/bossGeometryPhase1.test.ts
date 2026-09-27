@@ -1295,49 +1295,31 @@ for (const id of ['crag-behemoth', 'stoneplate-juggernaut', 'crag-gorged-horn-be
   assert(hit.damage > 0, `${id}: and the tackle should land`);
 }
 
-// NO CONNECTION, NO PAYOFF. The two bosses that follow their charge with a circle
-// must publish NOTHING when the charge misses — the old version erupted at the lane
-// tip regardless, teaching nothing and occasionally clipping a correct dodge.
-for (const [id, standOff] of [
-  ['crag-gorged-horn-behemoth', 900],
-  ['iron-crest-titan', 960],
-] as const) {
-  const steps = MONSTER_DATABASE.get(id)!.bossPattern!.steps;
-  const impact = steps.find(step => step.kind === 'impact');
-  assert(impact?.kind === 'impact' && impact.requiresChargeHit === true,
-    `${id}: its circle should be gated on the charge connecting`);
-
-  const missed = runCharge(id, standOff);
-  assert(!missed.connected, `${id}: setup — the charge should miss from ${standOff}px`);
-  assert(
-    !missed.sawTelegraph,
-    `${id}: a missed charge must draw no circle at all`,
-  );
-  assert(missed.damage === 0, `${id}: and deal nothing`);
-
-  // ...and everything still fires when it DOES connect.
-  const landed = runCharge(id, 300);
-  assert(landed.connected, `${id}: setup — the charge should connect from 300px`);
-  assert(landed.sawTelegraph, `${id}: a landed charge should publish its circle`);
-  assert(
-    landed.damage > missed.damage,
-    `${id}: connecting must cost the player more than dodging`,
-  );
-}
-
-// THE CHARGE IS THE SETUP, THE CIRCLE IS THE PAYOFF. Magnitudes belong to balance,
-// but the ORDERING is a design claim: a tackle that hits harder than the shatter it
-// sets up would invert the sequence the player is being asked to read.
+// BOSS-LINEAGE REDESIGN (2026-09-27): the follow-up circles are CUT. Cragbreaker and
+// Earthshatter (+ fault lines) only landed when the charge had already hit you —
+// more damage for the same mistake, not a new question. The tackle is the payoff
+// again, and the later tiers ask new questions of the charge instead: a plate that
+// blocks control, then a second, rootable charge (T3), then Rockfall (T4).
 for (const id of ['crag-gorged-horn-behemoth', 'iron-crest-titan']) {
-  const steps = MONSTER_DATABASE.get(id)!.bossPattern!.steps;
-  const charge = steps.find(step => step.kind === 'charge');
-  const impact = steps.find(step => step.kind === 'impact');
-  assert(charge?.kind === 'charge' && impact?.kind === 'impact', `${id}: charge then circle`);
-  assert(
-    (charge.damageMult ?? 1) < impact.damageMult,
-    `${id}: the tackle (${charge.damageMult ?? 1}) must set up the circle ` +
-      `(${impact.damageMult}), not out-hit it`,
-  );
+  const def = MONSTER_DATABASE.get(id)!;
+  for (const pattern of [def.bossPattern!, ...(def.bossPatternVariants ?? [])]) {
+    assert(!pattern.steps.some(step => step.kind === 'impact' || step.kind === 'fault-lines'),
+      `${id}/${pattern.id}: no follow-up circle rides on a landed charge`);
+    const plate = pattern.steps.find(step => step.kind === 'barrier');
+    assert(plate?.kind === 'barrier' && plate.blocksControl === true,
+      `${id}/${pattern.id}: the charge comes from behind a plate that blocks control`);
+    assert(pattern.stoppedBy?.stun && pattern.stoppedBy.root, `${id}/${pattern.id}: stun and root stop it`);
+  }
+  const double = def.bossPatternVariants!.find(v => v.steps.filter(s => s.kind === 'charge').length === 2);
+  assert(double, `${id}: a phase variant charges twice`);
+  const reaim = double.steps.filter(step => step.kind === 'cast' && step.lane)[1];
+  assert(reaim?.kind === 'cast' && reaim.rootable === true, `${id}: the unplated re-aim is rootable`);
+  const dropIndex = double.steps.findIndex(step => step.kind === 'drop-barrier');
+  assert(dropIndex >= 0 && dropIndex < double.steps.indexOf(reaim), `${id}: the plate drops before the re-aim`);
 }
+assert(
+  MONSTER_DATABASE.get('iron-crest-titan')!.bossPatternVariants!.some(v => v.steps.some(s => s.kind === 'rockfall')),
+  'the Titan rains rocks in its final phase',
+);
 
 console.log('bossGeometryPhase1: ok');

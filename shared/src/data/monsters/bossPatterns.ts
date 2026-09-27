@@ -138,6 +138,22 @@ export type BossPatternStep =
       requiresChargeHit?: boolean;
     }
   /**
+   * ROCKFALL (Mountain T4) — delayed impact circles rain across the arena around
+   * the target: one on where they stand, the rest scattered within `spread`. They
+   * resolve together `delayMs` later on the shared delayed-impact path, and the
+   * pattern does not wait for them — publish one just before a charge wind-up and
+   * the player has to read the rocks AND the lane at once.
+   */
+  | {
+      kind: 'rockfall';
+      name: string;
+      count: number;
+      radius: number;
+      spread: number;
+      delayMs: number;
+      damageMult: number;
+    }
+  /**
    * Raise a source-owned absorb barrier. Breaking it during the pattern is a real
    * answer: it staggers the boss and cancels the rest of the sequence.
    */

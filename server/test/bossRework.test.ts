@@ -256,29 +256,14 @@ for (const id of mountainIds.slice(2)) {
     monster.engageSequence === undefined,
     `${id} should not keep the legacy charge-lock opener alongside its pattern`,
   );
+  // Boss-lineage redesign: the tackle IS the payoff (Cragbreaker / Earthshatter
+  // and the fault lines are cut); later tiers add a second charge instead.
   const steps = monster.bossPattern?.steps ?? [];
-  const chargeIndex = steps.findIndex(step => step.kind === 'charge');
-  const impactIndex = steps.findIndex(step => step.kind === 'impact');
-  assert(chargeIndex >= 0 && impactIndex > chargeIndex, `${id} should charge, then slam`);
-  const impact = steps[impactIndex];
-  assert(
-    impact.kind === 'impact' && impact.anchor === 'captured-endpoint',
-    `${id} should erupt where it charged TO, not where the player later stood`,
-  );
-}
-{
-  const steps = def('iron-crest-titan').bossPattern?.steps ?? [];
-  const impactIndex = steps.findIndex(step => step.kind === 'impact');
-  const faultIndex = steps.findIndex(step => step.kind === 'fault-lines');
-  assert(
-    impactIndex >= 0 && faultIndex > impactIndex,
-    'T4 Mountain should follow its slam with radial fault lines',
-  );
-  // The cracks are the finite TAIL of the payoff, so the recovery has to come after
-  // them — a recovery that opened before the last damage landed would be a punish
-  // window the player cannot actually use.
-  const recoveryIndex = steps.findIndex(step => step.kind === 'recovery');
-  assert(recoveryIndex > faultIndex, 'T4 Mountain should recover after its fault lines');
+  assert(steps.some(step => step.kind === 'charge'), `${id} should charge`);
+  assert(!steps.some(step => step.kind === 'impact' || step.kind === 'fault-lines'),
+    `${id} should not follow its charge with a circle`);
+  assert((monster.bossPatternVariants ?? []).some(v => v.steps.filter(step => step.kind === 'charge').length === 2),
+    `${id} should gain a double charge in a later phase`);
 }
 
 // Caverns corrosion stacks for the encounter, and every tier keeps ONE telegraphed

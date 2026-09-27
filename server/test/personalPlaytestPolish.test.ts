@@ -316,8 +316,9 @@ for (const id of ['crag-behemoth', 'stoneplate-juggernaut', 'crag-gorged-horn-be
   }
   boss.hasHealth.hp = boss.hasHealth.maxHp * 0.24;
   updateBossScripts(world, 100);
-  const phaseCast = bossPatternFor(boss)!.steps[chargeIndex - 1];
-  assert(phaseCast.kind === 'cast' && phaseCast.castMs >= pattern.chargeInstinct!.minCastMs,
+  // Phases may switch to a pattern variant (boss-lineage redesign), so find its lane.
+  const phaseCast = bossPatternFor(boss)!.steps.find(step => step.kind === 'cast' && step.lane);
+  assert(phaseCast?.kind === 'cast' && phaseCast.castMs >= pattern.chargeInstinct!.minCastMs,
     `${id}: phase empowerment also respects the minimum wind-up`);
   clearBossPatternState(world, boss);
   assert(chargeInstinct(boss) === 0 && !boss.hasStatus.bossEffects?.includes('charge-instinct'), `${id}: reset clears visible Instinct`);

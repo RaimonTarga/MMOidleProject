@@ -130,6 +130,12 @@ export interface RuntimeFaultLineBurst extends RuntimeGroundZoneBase {
   resolvesAtMs: number;
   points: Vec2[];
   damageMultiplier: number;
+  /**
+   * ROCKFALL: scattered independent circles rather than one connected burst. They
+   * outlive the owner's next telegraph (a lane painted right after them must not
+   * erase the rocks) and each rock pays off with its own impact cue.
+   */
+  scattered?: boolean;
 }
 
 /** Node-scoped, runtime-only circles. Never persisted or rebuilt on thaw. */
@@ -295,7 +301,9 @@ export function clearGroundZonesByOwner(
   const list = world.groundZones.get(nodeId);
   if (!list) return;
   const kept = list.filter(zone =>
-    zone.kind === 'toxic-pool' || zone.ownerId !== ownerId,
+    zone.kind === 'toxic-pool' ||
+    (zone.kind === 'fault-line-telegraph' && zone.scattered === true) ||
+    zone.ownerId !== ownerId,
   );
   if (kept.length === list.length) return;
   if (kept.length === 0) world.groundZones.delete(nodeId);

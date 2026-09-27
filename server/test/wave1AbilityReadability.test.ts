@@ -176,7 +176,7 @@ initCombatSystems();
   );
 }
 
-// T2 Plains now delays its wave behind the same Rallying Cry vocabulary as T1.
+// T2 Plains delays its 50% Stampede behind a visible cast, like T1's Rallying Cry.
 {
   const world = new World();
   const player = world.attachPlayerEntity(playerSlices('t2-rally-target'), 't2-rally-target');
@@ -187,16 +187,17 @@ initCombatSystems();
 
   updateBossScripts(world, 0);
   assert(
-    world.takeNodeEvents(NODE).some(event => event.kind === 'monster-cast-start' && event.label === 'Rallying Cry'),
-    'T2 Plains threshold should start Rallying Cry',
+    world.takeNodeEvents(NODE).some(event => event.kind === 'monster-cast-start' && event.label === 'Stampede'),
+    'T2 Plains threshold should start the Stampede cast',
   );
   const reinforcements = () => [...world.monsterEntities].filter(monster =>
-    monster.isMonster.monsterTypeId === 'plains-slime' ||
-    monster.isMonster.monsterTypeId === 'boar',
+    monster.isMonster.monsterTypeId === 'stampede-bull' ||
+    monster.isMonster.monsterTypeId === 'savanna-hawk' ||
+    monster.isMonster.monsterTypeId === 'prairie-yearling',
   );
   assert(reinforcements().length === 0, 'the reinforcement wave should wait for cast completion');
   updateBossScripts(world, 2_000);
-  assert(reinforcements().length === 6, 'the six-unit wave should arrive when Rallying Cry completes');
+  assert(reinforcements().length === 5, 'bull, two hawks and two yearlings arrive when the Stampede completes');
 }
 
 // Carrion Vulture announces its ally haste and does not buff itself.

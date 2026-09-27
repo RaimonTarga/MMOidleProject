@@ -282,6 +282,7 @@ function describeBossPatternStep(step: BossPatternStep, pattern: BossPattern): s
         (step.lane ? `, painting a ${step.lane.length}px lane ${step.lane.halfWidth}px half-wide` +
           (step.lane.lockAtCastPct !== undefined ? ` that commits at ${fmtPct(step.lane.lockAtCastPct)} of the cast` : '') : '') +
         (step.interruptible === false ? '; cannot be interrupted' : '') +
+        (step.rootable ? '; a root stops it' : '') +
         (step.guardable === false ? '; Guard does not answer this beat' : '');
     case 'charge':
       return `Charges at ${fmtNumber(step.speed)}px/s for up to ${fmtMs(step.maxTravelMs)}` +
@@ -300,7 +301,11 @@ function describeBossPatternStep(step: BossPatternStep, pattern: BossPattern): s
         (step.requiresChargeHit ? '; only if the charge connected' : '');
     case 'barrier':
       return `Raises a ${fmtPct(step.shieldPct)} max-HP barrier` +
+        (step.blocksControl ? '; ignores stun and root while it holds' : '') +
         (step.onBreak ? `; breaking it causes ${step.onBreak.label} for ${fmtMs(step.onBreak.staggerMs)}` : '');
+    case 'rockfall':
+      return `${step.name}: ${step.count} rocks fall around the target (one on them, the rest within ${step.spread}px),` +
+        ` each a ${step.radius}px circle, after ${fmtMs(step.delayMs)} for ${fmtMult(pattern.damageMultiplier * step.damageMult)} damage`;
     case 'drop-barrier':
       return `Drops the ${readableId(step.sourceId)} barrier`;
     case 'apply-status':
@@ -486,8 +491,25 @@ function describeEngageSequence(def: MonsterDefinition): BestiaryAbilityLine | n
   };
 }
 
-function describeBossPattern(def: MonsterDefinition): BestiaryAbilityLine | null {
-  const pattern = def.bossPattern;
+/** Base pattern plus every phase-switched variant, each with its own trigger. */
+function describeBossPatterns(def: MonsterDefinition): BestiaryAbilityLine[] {
+  const lines: BestiaryAbilityLine[] = [];
+  const base = describeBossPattern(def, def.bossPattern);
+  if (base) lines.push(base);
+  for (const variant of def.bossPatternVariants ?? []) {
+    const phase = def.bossScript?.phases?.find(p =>
+      p.actions.some(a => a.type === 'set-pattern' && a.patternId === variant.id));
+    const line = describeBossPattern(def, variant);
+    if (!line) continue;
+    if (phase) {
+      line.trigger = `From ${phase.name ? `${phase.name} (` : ''}${fmtPct(phase.hpPct)} HP${phase.name ? ')' : ''}, replacing the previous sequence`;
+    }
+    lines.push(line);
+  }
+  return lines;
+}
+
+function describeBossPattern(def: MonsterDefinition, pattern: BossPattern | undefined): BestiaryAbilityLine | null {
   if (!pattern) return null;
   const triggerParts: string[] = [];
   if (pattern.armAboveHpPct !== undefined) triggerParts.push(`at or above ${fmtPct(pattern.armAboveHpPct)} HP`);
@@ -501,6 +523,9 @@ function describeBossPattern(def: MonsterDefinition): BestiaryAbilityLine | null
     initialCooldownMs: pattern.initialCooldownMs,
     trigger: triggerParts.length > 0 ? triggerParts.join(' and ') : 'While engaged',
     detail: `Commits to one ordered sequence for ${fmtMult(pattern.damageMultiplier)} base damage, suppressing ordinary attacks until recovery` +
+      (pattern.stoppedBy?.stun ? `; a stun on an interruptible wind-up staggers it for ${fmtMs(pattern.stoppedBy.stun.staggerMs)}` : '') +
+      (pattern.stoppedBy?.root ? `; a root on a rootable wind-up staggers it for ${fmtMs(pattern.stoppedBy.root.staggerMs)}` : '') +
+      (def.controlImmune ? '; it ignores stun and root' : '') +
       (pattern.oncePerLife ? '; runs once per life.' : '.'),
     steps: pattern.steps.map((step) => describeBossPatternStep(step, pattern)),
   };
@@ -788,7 +813,7 @@ export function describeMonsterAbilities(
     });
   }
 
-  push(describeBossPattern(def));
+  for (const line of describeBossPatterns(def)) push(line);
 
   if (def.bossScript) {
     for (const [index, phase] of (def.bossScript.phases ?? []).entries()) {
