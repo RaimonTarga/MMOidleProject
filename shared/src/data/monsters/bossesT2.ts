@@ -39,33 +39,41 @@ export const bossMonsterEntriesT2 = [
     rewards: { essence: 150, essenceType: 'yellow', level: 5, biomeXp: 225 },
     ai: { wanderRadius: 140, leashRange: 850, idleMinMs: 2000, idleMaxMs: 5500 },
     targeting: { prefersPlayers: true },
-    // PLAINS EXAM = "survive the swarm", T2 escalation: a constant slime trickle plus
-    // two rally beats (50% = a slime wave and a boar, 25% = a boar pair and more
-    // slimes). The old 50% self-enrage was removed — the razortusk's answer to losing
-    // is to call MORE of the herd, never to become the tier's best personal attacker.
-    // Adds despawn on boss death. Numbers placeholder — user balance pass.
+    // PLAINS EXAM = "survive the swarm", T2 twist (boss-lineage redesign 2026-09-27):
+    // THE RALLY EMPOWERS THE HERD. T1 asks "can you clear the trickle?"; T2 asks
+    // "can you clear it before the roar makes it dangerous?".
+    //
+    //   Call the Herd  — a T2 yearling trickle (was the T1 Field Hare: a tier-1 mob
+    //                    in a tier-2 fight, never retunable without moving T1).
+    //   Rallying Roar  — a telegraphed cast on its own ~15s clock: every living add
+    //                    gains a lasting stack of Rallied (+attack speed, +damage)
+    //                    until it dies. Answer: AoE Techniques and add priority.
+    //   50% STAMPEDE   — one announced rally: a Stampede Bull joins, and two Savanna
+    //                    Hawks are called in AT RANGE so their Dive Bomb (a 2s root)
+    //                    actually happens — the anti-kite lesson the zone teaches.
+    //
+    // CUT: the 25% boar-pair rally (one clear rhythm instead of three overlapping
+    // beats) and the boss-hastening roars. Adds despawn on boss death.
+    // Numbers placeholder — user balance pass after playtest.
     bossScript: {
       phases: [
-        { hpPct: 0.5, actions: [
-          { type: 'cast', castMs: 2000, label: 'Rallying Cry', actions: [
-            { type: 'spawn-adds', monsterTypeId: 'plains-slime', count: 5, offsetRange: 220 },
-            { type: 'spawn-adds', monsterTypeId: 'boar', count: 1, offsetRange: 220 },
-            { type: 'roar', attackSpeedPct: 0.25, durationMs: 8000, radius: 320 },
-          ] },
-        ] },
-        { hpPct: 0.25, actions: [
-          { type: 'cast', castMs: 2000, label: 'Rallying Cry', actions: [
-            { type: 'spawn-adds', monsterTypeId: 'boar', count: 2, offsetRange: 220 },
-            { type: 'spawn-adds', monsterTypeId: 'plains-slime', count: 4, offsetRange: 220 },
-            { type: 'roar', attackSpeedPct: 0.25, durationMs: 6000, radius: 300 },
+        { hpPct: 0.5, name: 'Stampede', actions: [
+          { type: 'cast', castMs: 2000, label: 'Stampede', actions: [
+            { type: 'spawn-adds', monsterTypeId: 'stampede-bull', count: 1, offsetRange: 220 },
+            { type: 'spawn-adds', monsterTypeId: 'savanna-hawk', count: 2, at: 'target-ring', ringDistance: 400 },
+            { type: 'spawn-adds', monsterTypeId: 'prairie-yearling', count: 2, maxAlive: 8, offsetRange: 220 },
           ] },
         ] },
       ],
       repeating: [
-        { intervalMs: 10000, initialDelayMs: 6000, actions: [
-          { type: 'cast', castMs: 2000, label: 'Rallying Cry', actions: [
-            { type: 'spawn-adds', monsterTypeId: 'plains-slime', count: 2, offsetRange: 240 },
-            { type: 'roar', attackSpeedPct: 0.25, durationMs: 6000, radius: 300 },
+        { intervalMs: 10000, initialDelayMs: 5000, actions: [
+          { type: 'cast', castMs: 1500, label: 'Call the Herd', actions: [
+            { type: 'spawn-adds', monsterTypeId: 'prairie-yearling', count: 2, maxAlive: 5, offsetRange: 240 },
+          ] },
+        ] },
+        { intervalMs: 15000, initialDelayMs: 12000, actions: [
+          { type: 'cast', castMs: 2000, label: 'Rallying Roar', fx: 'roar', actions: [
+            { type: 'empower-adds', attackSpeedPct: 0.20, damagePct: 0.20, maxStacks: 3 },
           ] },
         ] },
       ],

@@ -47,7 +47,7 @@ import { initScriptsBoss } from '@mmo-idle/shared';
 import { attachComponent, detachComponent } from '../../../ecs/markerHelpers';
 import { markSliceDirty } from '../../../ecs/dirtyHelpers';
 import { setAggroTarget, setAttackTarget } from './targeting';
-import { BOSS_ROAR_HASTE_EFFECT_ID } from '../engine/monsterMechanics';
+import { BOSS_RALLIED_EFFECT_ID, BOSS_ROAR_HASTE_EFFECT_ID } from '../engine/monsterMechanics';
 import { abortMonsterCast } from '../engine/combat';
 import { publishToxicPool } from '../../world/groundZones';
 import { stokeAmbientRamp } from '../../world/nodeFeatures';
@@ -603,12 +603,18 @@ function applyAction(
       if (action.maxAlive !== undefined) {
         budget = Math.min(budget, Math.max(0, action.maxAlive - state.spawnedAddIds.length));
       }
+      // A `target-ring` add arrives at a distance from the boss's TARGET, so an
+      // add with an engage opener (a hawk's dive) has the room to perform it.
+      const ringTarget = action.at === 'target-ring' && monster.hasAggroTarget?.targetKind === 'player'
+        ? world.getPlayerEntity(monster.hasAggroTarget.targetId)
+        : undefined;
       for (let i = 0; i < budget; i++) {
         const angle = Math.random() * Math.PI * 2;
-        const dist  = Math.random() * offsetRange;
+        const dist  = ringTarget ? (action.ringDistance ?? 380) : Math.random() * offsetRange;
+        const anchor = ringTarget?.hasPosition.current ?? monster.hasPosition.current;
         const pos = {
-          x: Math.max(64, Math.min(nodeWidth  - 64, monster.hasPosition.current.x + Math.cos(angle) * dist)),
-          y: Math.max(64, Math.min(nodeHeight - 64, monster.hasPosition.current.y + Math.sin(angle) * dist)),
+          x: Math.max(64, Math.min(nodeWidth  - 64, anchor.x + Math.cos(angle) * dist)),
+          y: Math.max(64, Math.min(nodeHeight - 64, anchor.y + Math.sin(angle) * dist)),
         };
         const add = world.createMonster(monster.hasPosition.nodeId, action.monsterTypeId, pos);
         if (add) {
@@ -622,6 +628,30 @@ function applyAction(
 
     case 'cast': {
       beginScriptedCast(action, monster, world, state);
+      break;
+    }
+
+    case 'empower-adds': {
+      state.spawnedAddIds = (state.spawnedAddIds ?? []).filter((id) => world.hasMonster(id));
+      const maxStacks = action.maxStacks ?? 3;
+      for (const id of state.spawnedAddIds) {
+        const add = world.getMonsterEntity(id);
+        if (!add || add.hasHealth.hp <= 0) continue;
+        const rally = applyStatusEffect(add.tracksCombat, {
+          id: BOSS_RALLIED_EFFECT_ID,
+          maxStacks,
+          // Lasts until the add dies — the herd does not calm down.
+          remainingMs: 600_000,
+          refreshable: true,
+          sourceId: monster.isMonster.id,
+          data: { monsterAttackSpeedBuff: 1, attackSpeedPct: 0, rallyDamagePct: action.damagePct, totalMs: 600_000 },
+        });
+        // The haste reader sums `attackSpeedPct` per EFFECT, not per stack.
+        const live = rally ?? getStatusEffect(add.tracksCombat, BOSS_RALLIED_EFFECT_ID);
+        if (live) live.data.attackSpeedPct = action.attackSpeedPct * live.stacks;
+        pushBossFx(world, add, 'frenzy');
+      }
+      pushBossFx(world, monster, 'roar', { radius: 420 });
       break;
     }
 

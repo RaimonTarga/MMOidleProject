@@ -83,7 +83,26 @@ export type BossAction =
   | { type: 'apply-soft-cap'; capPct: number; capMult: number }
   | { type: 'shed-defense' }
   | { type: 'modify-ramp-debuff'; moveSlowMaxPct: number; atkSlowMaxPct: number }
-  | { type: 'spawn-adds'; monsterTypeId: string; count: number; offsetRange?: number; maxAlive?: number }
+  | {
+      type: 'spawn-adds';
+      monsterTypeId: string;
+      count: number;
+      offsetRange?: number;
+      maxAlive?: number;
+      /**
+       * Where the adds arrive. Default `boss` (scattered within `offsetRange` of it).
+       * `target-ring` places them `ringDistance` from the boss's target, so an add
+       * with an engage opener (the Savanna Hawk's Dive Bomb) has room to perform it.
+       */
+      at?: 'boss' | 'target-ring';
+      ringDistance?: number;
+    }
+  /**
+   * EMPOWER ADDS (Plains T2 Rallying Roar) — every living add this boss spawned
+   * gains a stack of Rallied: +attack speed and +damage per stack, until it dies.
+   * The escalation is the herd's, never the boss's own duel.
+   */
+  | { type: 'empower-adds'; attackSpeedPct: number; damagePct: number; maxStacks?: number }
   | {
       /** A visible, non-damaging boss cast that resolves its actions at completion. */
       type: 'cast';

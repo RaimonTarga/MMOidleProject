@@ -14,13 +14,17 @@ import { publishToxicPool } from '../../world/groundZones';
 import { recordCorpse } from '../../world/corpses';
 import { clearAmbientRampOverride } from '../../world/nodeFeatures';
 
+import { BOSS_RALLIED_EFFECT_ID } from '../engine/monsterMechanics';
+
 export const DEATH_EMPOWER_EFFECT_ID = 'monster-death-empower';
 
 /** Damage multiplier from nearby allies dying with `empowerAllies`. */
 export function monsterDeathEmpowerMult(monster: MonsterEntity): number {
   const effect = getStatusEffect(monster.tracksCombat, DEATH_EMPOWER_EFFECT_ID);
-  if (!effect) return 1;
-  return 1 + Math.max(0, effect.data['damagePct'] ?? 0) * effect.stacks;
+  const rally = getStatusEffect(monster.tracksCombat, BOSS_RALLIED_EFFECT_ID);
+  const rallyMult = rally ? 1 + Math.max(0, rally.data['rallyDamagePct'] ?? 0) * rally.stacks : 1;
+  if (!effect) return rallyMult;
+  return (1 + Math.max(0, effect.data['damagePct'] ?? 0) * effect.stacks) * rallyMult;
 }
 
 function empowerNearbyAllies(world: World, dead: MonsterEntity): void {

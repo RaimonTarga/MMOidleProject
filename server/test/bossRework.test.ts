@@ -24,9 +24,11 @@ import {
 } from '../src/systems/combat/engine/combat';
 import { updateCombatState } from '../src/systems/combat/engine/combatState';
 import {
+  BOSS_RALLIED_EFFECT_ID,
   BOSS_ROAR_HASTE_EFFECT_ID,
   monsterAttackCooldown,
 } from '../src/systems/combat/engine/monsterMechanics';
+import { monsterDeathEmpowerMult } from '../src/systems/combat/damage/monsterDeathEffects';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { STUN_EFFECT } from '../src/systems/combat/status/stun';
 import { applyPlatingShredStacks } from '../src/systems/combat/status/platingShred';
@@ -108,7 +110,11 @@ assert(
   'T1 Plains reinforcement paths should use the 2-second Rallying Cry cast',
 );
 assert(hasAction('gorging-razortusk', 'spawn-adds'), 'T2 Plains should still spawn mobs');
-assert(hasAction('gorging-razortusk', 'roar'), 'T2 Plains should keep the allied haste roar');
+assert(hasAction('gorging-razortusk', 'empower-adds'), 'T2 Plains Rallying Roar should empower the herd');
+assert(
+  !scriptActions('gorging-razortusk').some(a => a.type === 'spawn-adds' && (a.monsterTypeId === 'plains-slime' || a.monsterTypeId === 'boar')),
+  'T2 Plains summons the T2 herd, never T1 mobs',
+);
 for (const id of ['tusked-razorback', 'gorging-razortusk']) {
   assert(!hasAction(id, 'enrage'), `${id} must not self-enrage — Plains escalates the herd`);
 }
@@ -512,24 +518,49 @@ initCombatSystems();
   assert(comboDamage === oneHit * 2, `Forest claw combo should deal two hits (${comboDamage} != ${oneHit * 2})`);
 }
 
-// The Plains roar buffs both its owner and nearby allies through the cadence gate.
+// The T1 Plains roar buffs both its owner and nearby allies through the cadence gate.
 {
   const world = new World();
-  const boss = world.createMonster(NODE, 'gorging-razortusk', { x: 400, y: 400 });
+  const boss = world.createMonster(NODE, 'tusked-razorback', { x: 400, y: 400 });
   const ally = world.createMonster(NODE, 'plains-slime', { x: 450, y: 400 });
   assert(!!boss && !!ally, 'roar fixtures should spawn');
   setAggroTarget(world, boss, { id: 'roar-target', kind: 'player' }, 1_000);
-  updateBossScripts(world, 6_000);
+  boss.hasHealth.hp = Math.round(boss.hasHealth.maxHp * 0.4);
+  updateBossScripts(world, 100);
   assert(
     world.takeNodeEvents(NODE).some(event =>
       event.kind === 'monster-cast-start' && event.label === 'Rallying Cry',
     ),
-    'T2 Plains reinforcement cadence should announce Rallying Cry before the roar',
+    'T1 Plains rally should announce Rallying Cry before the roar',
   );
   updateBossScripts(world, 2_000);
   assert(!!getStatusEffect(boss.tracksCombat, BOSS_ROAR_HASTE_EFFECT_ID), 'roar should haste the boss');
   assert(!!getStatusEffect(ally.tracksCombat, BOSS_ROAR_HASTE_EFFECT_ID), 'roar should haste nearby allies');
   assert(monsterAttackCooldown(ally) < ally.performsAttack.attackCooldown, 'roar haste should shorten attack cadence');
+}
+
+// T2 Plains: the Rallying Roar empowers the boss's own herd, lastingly, per stack.
+{
+  const world = new World();
+  const boss = world.createMonster(NODE, 'gorging-razortusk', { x: 400, y: 400 })!;
+  setAggroTarget(world, boss, { id: 'roar-target', kind: 'player' }, 1_000);
+  updateBossScripts(world, 5_000);  // Call the Herd starts
+  updateBossScripts(world, 1_500);  // ...and resolves
+  const herd = (boss.scriptsBoss!.spawnedAddIds ?? []).map(id => world.getMonsterEntity(id)!);
+  assert(herd.length === 2 && herd.every(add => add.isMonster.monsterTypeId === 'prairie-yearling'),
+    'T2 trickle calls prairie yearlings');
+  updateBossScripts(world, 5_500);  // Rallying Roar starts
+  assert(
+    world.takeNodeEvents(NODE).some(event => event.kind === 'monster-cast-start' && event.label === 'Rallying Roar'),
+    'the roar is a telegraphed cast',
+  );
+  updateBossScripts(world, 2_000);  // ...and resolves
+  const add = herd[0];
+  const rally = getStatusEffect(add.tracksCombat, BOSS_RALLIED_EFFECT_ID);
+  assert(rally && rally.stacks === 1, 'every living add gains a Rallied stack');
+  assert(monsterAttackCooldown(add) < add.performsAttack.attackCooldown, 'Rallied adds attack faster');
+  assert(monsterDeathEmpowerMult(add) > 1, 'Rallied adds hit harder');
+  assert(!getStatusEffect(boss.tracksCombat, BOSS_RALLIED_EFFECT_ID), 'the boss itself is not empowered');
 }
 
 // T2 Mountain's Stoneplate barrier is a REAL absorb pool on the shared damage path,

@@ -18,6 +18,12 @@ import {
 import type { MonsterEntity } from "../../../ecs/entity";
 
 export const BOSS_ROAR_HASTE_EFFECT_ID = "boss-roar-haste";
+/**
+ * Plains T2 Rallying Roar: a stacking, lasting buff on a boss's adds. Carries
+ * `monsterAttackSpeedBuff` (read below with every casted haste) and
+ * `rallyDamagePct` per stack (read by `monsterDeathEmpowerMult`).
+ */
+export const BOSS_RALLIED_EFFECT_ID = "boss-rallied";
 
 /** Effective basic-attack cadence after temporary roar haste and combat ramping. */
 export function monsterAttackCooldown(monster: MonsterEntity): number {
