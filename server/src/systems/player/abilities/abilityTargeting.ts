@@ -106,13 +106,18 @@ export function abilityTarget(
   const summonCast = summonAbilityCast(world, player, ability, currentOnly);
   if (summonCast) return summonCast.target;
   const range = abilityEngagementRange(player, ability);
-  const currentId = player.hasAttackTarget?.targetId;
+  // A Conduit owner never holds a direct attack target — its summons fight — so
+  // its current target is the formation's. An armed Technique is delivered by
+  // the summons' next hits, so the owner's own reach does not gate it.
+  const summonTechniques = usesSummonTechniques(player);
+  const currentId = player.hasAttackTarget?.targetId
+    ?? (summonTechniques ? player.summonsMinions?.formationTargetId ?? undefined : undefined);
   const current = currentId ? world.getMonsterEntity(currentId) : undefined;
   if (
     current &&
     current.hasHealth.hp > 0 &&
     current.hasPosition.nodeId === player.hasPosition.nodeId &&
-    world.collision.canReach(player, current, range)
+    ((summonTechniques && ability.shape === 'armed') || world.collision.canReach(player, current, range))
   ) {
     return current;
   }
