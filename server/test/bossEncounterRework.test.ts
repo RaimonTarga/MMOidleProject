@@ -17,7 +17,7 @@ import {
   emptyEquipment,
   getStatusEffect,
 } from '@mmo-idle/shared';
-import type { BossAction } from '@mmo-idle/shared';
+import type { BossAction, MonsterDefinition } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { updateBossScripts } from '../src/systems/combat/ai/bossScripts';
 import { updateRaisers } from '../src/systems/combat/ai/raiseDead';
@@ -276,8 +276,8 @@ for (const id of JUNGLE_IDS) {
 // The capstone STOPS escaping when wounded — the low-health state is the ABSENCE of
 // the lineage's mechanic, not a fourth one.
 assert(
-  def('verdant-crown-predator').bossPattern?.armAboveHpPct === 0.5,
-  'T4 Jungle should stop escaping once its frenzy begins',
+  def('verdant-crown-predator').bossPattern?.armAboveHpPct === 0.3,
+  'T4 Jungle should stop escaping once Cornered (30%, boss-lineage redesign)',
 );
 assert(
   !def('verdant-crown-predator').cadenceFinisher,
@@ -285,13 +285,16 @@ assert(
 );
 // Volcanic: HEAT, VENT, AND THE CHOICE TO STAND IN IT (2026-09-04 redesign).
 assert(!def('caldera-sovereign').rampOnCombat, 'T4 Volcanic must not run a parallel private ramp');
+// Boss-lineage redesign (2026-09-27): the shell cycle is CUT (its no-attack window
+// relieved the pressure); vents sit around the arena and erupt on a rhythm.
 for (const id of ['cinder-shell-magma-salamander', 'caldera-sovereign']) {
   const volcanic = def(id);
-  assert(!!volcanic.shellUp?.repeatIntervalMs, `${id} should cycle its shell`);
-  const vent = volcanic.shellUp.pool;
-  assert(vent?.flavor === 'magma-vent', `${id} shell should lay a magma vent`);
+  assert(!volcanic.shellUp, `${id} no longer shells up`);
+  assert(volcanic.controlImmune === true, `${id} accepts no control`);
+  const vents = volcanic.bossScript?.phases?.flatMap(p => p.actions).find(a => a.type === 'vent-field');
+  assert(vents?.type === 'vent-field', `${id} lays a vent field`);
   assert(
-    (vent.rampAccelMult ?? 1) > 1,
+    vents.rampAccelMult > 1,
     `${id} vent should ACCELERATE the room's Heat, not mint its own`,
   );
   // Heat owns all the escalation. A boss-side multiplier on top counts the same
@@ -359,15 +362,20 @@ for (const id of ['frost-plated-rime-mammoth', 'glacial-patriarch']) {
 // climbed somewhere you cannot.
 // Wasteland: the dead do not stay dead.
 assert(!!def('charnel-crown-sovereign').raisesDead, 'Wasteland boss should raise corpses');
-// Trench: ONE ENORMOUS DUEL, as an ordered sequence (2026-09-04 redesign).
-// Wound bite -> Undertow -> Constrict -> Devour, each with its own answer.
+// Trench: THE PRESSURE HUNT (boss-lineage redesign 2026-09-27). Wound, Pressure and
+// Rend pile debuffs, and the Devour hits harder per distinct debuff — it no longer
+// heals (that only lengthened the fight).
 {
   const serpent = def('elder-trench-serpent');
   const steps = serpent.bossPattern?.steps ?? [];
-  const devour = steps.find(step => step.kind === 'payoff');
+  const devour = steps.find(step => step.kind === 'payoff' && step.name === 'Devour');
   assert(devour?.kind === 'payoff', 'the Trench boss should build to a Devour payoff');
   assert(devour.radius === undefined, 'Trench Devour should be single-target — a bite is a bite');
-  assert((devour.healsSelfPct ?? 0) > 0, 'Trench Devour should restore the serpent when it LANDS');
+  assert(!devour.healsSelfPct, 'Trench Devour no longer heals');
+  assert((devour.perDebuffMult ?? 0) > 0, 'Trench Devour feeds on the debuff pile');
+  const riders = steps.flatMap(step => step.kind === 'payoff' && step.appliesDebuff ? [step.appliesDebuff.effectId] : []);
+  assert(riders.includes('antiheal') && riders.includes('slow') && riders.includes('rend'),
+    'Wound, Crushing Pressure and Rend pile three debuffs');
 
   const pull = steps.find(step => step.kind === 'pull');
   assert(pull?.kind === 'pull', 'Undertow should drag a disengaged target back');
@@ -419,16 +427,30 @@ initCombatSystems();
 }
 
 // ── `empower-charged` scales the signature attack, and composes ───────────────
+// A patched fixture: after the 2026-09-27 lineage redesign no shipped boss carries
+// both a radius-scaled impact AND two composing empower phases, but the seam must
+// keep working for the ones that do scale a pattern (Mountain, Swamp, Tundra).
 {
+  const fixture = def('crag-behemoth') as MonsterDefinition;
+  const saved = structuredClone(fixture);
+  fixture.bossPattern = {
+    ...saved.bossPattern!,
+    steps: [
+      ...saved.bossPattern!.steps.filter(step => step.kind !== 'recovery'),
+      { kind: 'impact', name: 'Fixture Slam', anchor: 'self', radius: 150, damageMult: 1, telegraphMs: 800 },
+      { kind: 'recovery', label: 'Winded', durationMs: 1000 },
+    ],
+  };
+  fixture.bossScript = { phases: [
+    { hpPct: 0.5, actions: [{ type: 'empower-charged', multiplierMult: 1.2, radiusMult: 1.15 }] },
+    { hpPct: 0.25, actions: [{ type: 'empower-charged', cooldownMult: 0.7 }] },
+  ] };
   const world = new World();
-  const boss = world.createMonster(NODE, 'crag-gorged-horn-behemoth', { x: 400, y: 400 });
-  assert(!!boss, 'T3 Mountain boss should spawn');
+  const boss = world.createMonster(NODE, 'crag-behemoth', { x: 400, y: 400 });
+  assert(!!boss, 'fixture boss should spawn');
   setAggroTarget(world, boss, { id: 'charged-target', kind: 'player' }, 1_000);
 
-  // T3 Mountain's signature is now an ordered PATTERN rather than a chargedAttack,
-  // and `empower-charged` deliberately still drives it: converting a boss must not
-  // silently turn its authored 50% phase into a no-op.
-  const base = def('crag-gorged-horn-behemoth').bossPattern!;
+  const base = fixture.bossPattern!;
   boss.hasHealth.hp = boss.hasHealth.maxHp * 0.49;
   updateBossScripts(world, 100);
   const after50 = boss.scriptsBoss!.chargedOverride;
@@ -458,23 +480,28 @@ initCombatSystems();
     bossPatternFor(boss)!.cooldownMs < base.cooldownMs,
     'cooldownMult should bring the pattern around sooner',
   );
-  // The authored definition is the single source of the base numbers; overrides are
-  // stored as multipliers and applied on read, never written back.
   assert(
-    def('crag-gorged-horn-behemoth').bossPattern!.damageMultiplier === base.damageMultiplier,
+    fixture.bossPattern!.damageMultiplier === base.damageMultiplier,
     'base definition should be untouched by the override',
   );
+  for (const key of Object.keys(fixture)) delete (fixture as unknown as Record<string, unknown>)[key];
+  Object.assign(fixture, saved);
 }
 
 // ── `empower-shred` deepens a corrosion that is ALREADY on the player ─────────
+// Fixture: the lineage redesign removed plating shred from every shipped boss; the
+// seam is kept (and covered) for future authoring.
 {
+  const broodmother = def('obsidian-broodmother') as MonsterDefinition;
+  const saved = structuredClone(broodmother);
+  broodmother.castsPlatingShred = { platingPerStack: 1, maxStacks: 6 };
+  broodmother.bossScript = { phases: [{ hpPct: 0.5, actions: [{ type: 'empower-shred', maxStacksAdd: 3 }] }] };
   const world = new World();
   const player = world.attachPlayerEntity(playerSlices('shred-deepen'), 'shred-deepen');
   const boss = world.createMonster(NODE, 'obsidian-broodmother', { x: 400, y: 400 });
   assert(!!boss, 'Cave boss should spawn');
   setAggroTarget(world, boss, { id: player.isPlayer.id, kind: 'player' }, 1_000);
 
-  const broodmother = def('obsidian-broodmother');
   const authored = broodmother.castsPlatingShred!;
   for (let i = 0; i < authored.maxStacks + 2; i++) {
     applyPlatingShredStacks(world, boss, player, broodmother, 1);
@@ -491,9 +518,11 @@ initCombatSystems();
     deepened.stacks === authored.maxStacks + 1,
     'a raised ceiling must apply to the corrosion already standing on the player',
   );
+  for (const key of Object.keys(broodmother)) delete (broodmother as unknown as Record<string, unknown>)[key];
+  Object.assign(broodmother, saved);
 }
 
-// ── `spawn-pool` puts a real ground zone under the boss ───────────────────────
+// ── Rot Bloom (T3 Swamp soft enrage): pools spread, the room rots ─────────────
 {
   const world = new World();
   const boss = world.createMonster(NODE, 'rot-spore-croc-behemoth', { x: 400, y: 400 });
@@ -501,11 +530,10 @@ initCombatSystems();
   setAggroTarget(world, boss, { id: 'bloom-target', kind: 'player' }, 1_000);
   boss.hasHealth.hp = boss.hasHealth.maxHp * 0.20;
   updateBossScripts(world, 100);
-  const zones = buildGroundZoneViews(world, NODE, Date.now()) ?? [];
-  assert(
-    zones.some(zone => zone.kind === 'toxic-pool'),
-    'the 25% Rot Bloom should publish a hazard pool',
-  );
+  assert(boss.scriptsBoss?.poolSpread && boss.scriptsBoss.roomAffliction,
+    'the 25% Rot Bloom spreads the pools and turns the room toxic');
+  assert(boss.hasStatus.bossPhase === 'Rot Bloom', 'and it is announced');
+  void buildGroundZoneViews;
 }
 
 // ── `raise-dead` gives back only what the player already killed ───────────────
@@ -525,6 +553,8 @@ initCombatSystems();
   // It fires ONCE, on engage, and never respawns — the distinction that keeps it a
   // starting condition rather than a reinforcement wave.
   updateBossScripts(world, 100);
+  // Summoned by the Invocation cast (Wasteland redesign 2026-09-27): let it land.
+  updateBossScripts(world, 1600);
   const entourage = [...world.monsterEntitiesInNode(NODE)].filter(m => m !== boss);
   assert(entourage.length > 0, 'the Sovereign should arrive with an entourage');
   const entourageIds = new Set(entourage.map(m => m.isMonster.id));
@@ -589,9 +619,9 @@ initCombatSystems();
     `there should be exactly ONE Mass Resurrection, found ${massResurrections.length}`,
   );
 
-  // The steady cadence still works: with corpses on the floor it claims them, one
-  // at a time, through the ordinary raiser tick rather than a phase burst. That
-  // cadence — not a threshold wave — is what the encounter runs on now.
+  // Wasteland redesign (2026-09-27): at 25% HARVEST the Sovereign STOPS raising and
+  // eats its dead instead, so the cadence must be silent here. (Raising in the
+  // earlier phases is covered by bossLineageWasteland.test.ts.)
   let raiseNow = 2_000;
   for (let i = 0; i < 60; i++) {
     raiseNow += 500;
@@ -599,7 +629,8 @@ initCombatSystems();
     if ([...world.monsterEntitiesInNode(NODE)].some(m => m.isRaised)) break;
   }
   const risen = [...world.monsterEntitiesInNode(NODE)].filter(m => m.isRaised);
-  assert(risen.length > 0, 'the necromancy should still claw corpses back up');
+  assert(risen.length === 0 && boss.scriptsBoss?.raiseDisabled === true,
+    'in the Harvest phase the Sovereign stops raising');
   assert(
     risen.every(m => m.isRaised!.raiserId === boss.isMonster.id),
     'risen units should be owned by the Sovereign so they crumble with it',

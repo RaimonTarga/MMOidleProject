@@ -12,6 +12,7 @@ import { destroyThoughtBubble } from './thoughtBubbles';
 import { clearMovementEffectsForEntity } from './movementEffects';
 import { endDetonateWindup } from '../fx/detonateWindup';
 import { endAllyAoeFootprint } from '../fx/allyAoeFootprint';
+import { clearBodyPose } from '../fx/bodyPose';
 
 export function destroyEntity(
   state: RenderState,
@@ -23,6 +24,7 @@ export function destroyEntity(
     scene.tweens.killTweensOf(interp);
     scene.tweens.killTweensOf(interp.lungeOffset);
   }
+  clearBodyPose(scene, id);
 
   destroySprite(state, id);
   destroyShadow(state, id);

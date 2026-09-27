@@ -1,4 +1,16 @@
 import { SUN_MARK_EFFECT_ID } from '../../systems/monsterDebuffs';
+import { ERODED_EFFECT_ID } from '../../systems/bossDebuffs';
+import type { PatternPool } from './bossPatterns';
+
+/**
+ * Cave T2 sinkhole: collapsed ground an eruption leaves behind. No damage; a slow,
+ * and a stacking Eroded (+4% damage taken per second inside, up to 6).
+ */
+const SINKHOLE_T2: PatternPool = {
+  durationMs: 30_000, damagePerTick: 0, tickIntervalMs: 1000, slowSpeedMult: 0.65,
+  flavor: 'sinkhole', label: 'Sinkhole',
+  erodes: { effectId: ERODED_EFFECT_ID, damageTakenPctPerStack: 0.04, maxStacks: 6, durationMs: 5000, intervalMs: 1000 },
+};
 import type { MonsterDefinition } from './types';
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -39,33 +51,43 @@ export const bossMonsterEntriesT2 = [
     rewards: { essence: 150, essenceType: 'yellow', level: 5, biomeXp: 225 },
     ai: { wanderRadius: 140, leashRange: 850, idleMinMs: 2000, idleMaxMs: 5500 },
     targeting: { prefersPlayers: true },
-    // PLAINS EXAM = "survive the swarm", T2 escalation: a constant slime trickle plus
-    // two rally beats (50% = a slime wave and a boar, 25% = a boar pair and more
-    // slimes). The old 50% self-enrage was removed — the razortusk's answer to losing
-    // is to call MORE of the herd, never to become the tier's best personal attacker.
-    // Adds despawn on boss death. Numbers placeholder — user balance pass.
+    // PLAINS EXAM = "survive the swarm", T2 twist (boss-lineage redesign 2026-09-27):
+    // THE RALLY EMPOWERS THE HERD. T1 asks "can you clear the trickle?"; T2 asks
+    // "can you clear it before the roar makes it dangerous?".
+    //
+    //   Call the Herd  — a T2 yearling trickle (was the T1 Field Hare: a tier-1 mob
+    //                    in a tier-2 fight, never retunable without moving T1).
+    //   Rallying Roar  — a telegraphed cast on its own ~15s clock: every living add
+    //                    gains a lasting stack of Rallied (+attack speed, +damage)
+    //                    until it dies. Answer: AoE Techniques and add priority.
+    //   50% STAMPEDE   — one announced rally: a Stampede Bull joins, and two Savanna
+    //                    Hawks are called in AT RANGE so their Dive Bomb (a 2s root)
+    //                    actually happens — the anti-kite lesson the zone teaches.
+    //
+    // CUT: the 25% boar-pair rally (one clear rhythm instead of three overlapping
+    // beats) and the boss-hastening roars. Adds despawn on boss death.
+    // Numbers placeholder — user balance pass after playtest.
     bossScript: {
       phases: [
-        { hpPct: 0.5, actions: [
-          { type: 'cast', castMs: 2000, label: 'Rallying Cry', actions: [
-            { type: 'spawn-adds', monsterTypeId: 'plains-slime', count: 5, offsetRange: 220 },
-            { type: 'spawn-adds', monsterTypeId: 'boar', count: 1, offsetRange: 220 },
-            { type: 'roar', attackSpeedPct: 0.25, durationMs: 8000, radius: 320 },
-          ] },
-        ] },
-        { hpPct: 0.25, actions: [
-          { type: 'cast', castMs: 2000, label: 'Rallying Cry', actions: [
-            { type: 'spawn-adds', monsterTypeId: 'boar', count: 2, offsetRange: 220 },
-            { type: 'spawn-adds', monsterTypeId: 'plains-slime', count: 4, offsetRange: 220 },
-            { type: 'roar', attackSpeedPct: 0.25, durationMs: 6000, radius: 300 },
+        { hpPct: 0.5, name: 'Stampede',
+          description: 'The herd answers: a stampede bull charges in, two savanna hawks strike from range and more yearlings join. Thin the herd before the next Rallying Roar, or push the boss through it.',
+          actions: [
+          { type: 'cast', castMs: 2000, label: 'Stampede', castFx: 'stampede', actions: [
+            { type: 'spawn-adds', monsterTypeId: 'stampede-bull', count: 1, offsetRange: 220 },
+            { type: 'spawn-adds', monsterTypeId: 'savanna-hawk', count: 2, at: 'target-ring', ringDistance: 400 },
+            { type: 'spawn-adds', monsterTypeId: 'prairie-yearling', count: 2, maxAlive: 8, offsetRange: 220 },
           ] },
         ] },
       ],
       repeating: [
-        { intervalMs: 10000, initialDelayMs: 6000, actions: [
-          { type: 'cast', castMs: 2000, label: 'Rallying Cry', actions: [
-            { type: 'spawn-adds', monsterTypeId: 'plains-slime', count: 2, offsetRange: 240 },
-            { type: 'roar', attackSpeedPct: 0.25, durationMs: 6000, radius: 300 },
+        { intervalMs: 10000, initialDelayMs: 5000, actions: [
+          { type: 'cast', castMs: 1500, label: 'Call the Herd', castFx: 'herd-call', actions: [
+            { type: 'spawn-adds', monsterTypeId: 'prairie-yearling', count: 2, maxAlive: 5, offsetRange: 240 },
+          ] },
+        ] },
+        { intervalMs: 15000, initialDelayMs: 12000, actions: [
+          { type: 'cast', castMs: 2000, label: 'Rallying Roar', fx: 'roar', actions: [
+            { type: 'empower-adds', attackSpeedPct: 0.20, damagePct: 0.20, maxStacks: 3 },
           ] },
         ] },
       ],
@@ -91,7 +113,7 @@ export const bossMonsterEntriesT2 = [
     consecutiveHits: 2,
     chargedAttack: {
       name: 'Stunning Swipe', castMs: 700, cooldownMs: 8000, initialCooldownMs: 3500,
-      multiplier: 1.25, stunMs: 900,
+      multiplier: 1.25, stunMs: 900, fx: 'paw-raise',
       // Its own cue, not the generic shockwave every other AoE charge draws: the
       // ordinary claw rhythm stays `bear-claws` (the T1 Greatbear's look, which is
       // the lineage's identity) and the swipe is the thing that reads as different.
@@ -180,18 +202,26 @@ export const bossMonsterEntriesT2 = [
       chargeInstinct: { speedPct: 0.35, castReductionPct: 0.30, minCastMs: 400 },
       id: 'stoneplate-charge', name: 'Stoneplate Charge',
       damageMultiplier: 2.0, cooldownMs: 11000, initialCooldownMs: 5000,
+      // Control before it plates (boss-lineage redesign): a stun or root on the
+      // Stoneplate cast stops the sequence. Once plated it ignores control.
+      stoppedBy: {
+        stun: { staggerMs: 2500, label: 'Staggered' },
+        root: { staggerMs: 1500, label: 'Stumbled' },
+      },
       steps: [
         // Plate up. Not guardable: the player answers this by HITTING it, not by
         // spending a Guard charge on a beat that deals no damage.
-        { kind: 'cast', name: 'Stoneplate', castMs: 900, fx: 'shield', guardable: false },
-        { kind: 'barrier', sourceId: 'stoneplate', shieldPct: 0.06,
+        { kind: 'cast', name: 'Stoneplate', castMs: 900, fx: 'shield', guardable: false, rootable: true },
+        // While plated it ignores stun and root (`blocksControl`): break the plate
+        // first. Breaking it is the T2 stop answer and staggers the boss.
+        { kind: 'barrier', sourceId: 'stoneplate', shieldPct: 0.06, blocksControl: true,
           onBreak: { staggerMs: 3200, label: 'Plate Shattered' } },
         { kind: 'cast', name: 'Stoneplate Charge', castMs: 2300, fx: 'charge-lane',
           lane: { length: 700, halfWidth: 90, lockAtCastPct: 0.55 } },
         // 700px at 500px/s ≈ 1.4s of travel.
         { kind: 'charge', speed: 500, maxTravelMs: 2100 },
         { kind: 'drop-barrier', sourceId: 'stoneplate' },
-        { kind: 'recovery', label: 'Overextended', durationMs: 2600 },
+        { kind: 'recovery', label: 'Overextended', durationMs: 1000 },
       ],
     },
     // MOUNTAIN EXAM = "break the guarded position". At 50% the charge comes around
@@ -199,15 +229,17 @@ export const bossMonsterEntriesT2 = [
     // ONE readable sequence it owns.
     bossScript: {
       phases: [
-        { hpPct: 0.5, actions: [
+        { hpPct: 0.5, name: 'Unyielding',
+          description: 'Its plated charge hits harder and comes around sooner. Stop the Stoneplate cast, or break the plate, to open it to stuns and roots.',
+          actions: [
           { type: 'empower-charged', multiplierMult: 1.15, cooldownMult: 0.80 },
         ] },
       ],
     },
   }],
 
-  // SWAMP — ROT / ATTRITION. T2's added layer is CORROSION: the pool no longer just
-  // hurts, it makes everything else hurt more while you stand in it.
+  // SWAMP — ROT ARENA. T2's added layer: a second pool kind (Mire) and a lash that
+  // drags you toward the pools.
   ['mire-gorged-behemoth', {
     id: 'mire-gorged-behemoth', name: 'Mire-Gorged Behemoth', color: 0x2a4011,
     isBoss: true,
@@ -222,22 +254,57 @@ export const bossMonsterEntriesT2 = [
     // duration, the ordinary attack, the Corrosive Pool and the 50% phase are all
     // unchanged, and `server/test/behemothVenom.test.ts` pins that.
     dotEffect: { debuffId: 'mire-gorged-venom', label: 'Gorged Venom', damagePerStack: 6, maxStacks: 4, tickIntervalMs: 1000, durationMs: 8000 },
+    // SWAMP T2 (boss-lineage redesign 2026-09-27): POOL VARIETY AND THE PULL.
+    // Swamp stops demanding Cleanse — its answers are Swamp gear: DoT resistance
+    // (armor) for the Bile, slow resistance (boots) for the Mire. Corrosion's
+    // vulnerability rider is gone.
+    //
+    //   Bile Pool  — the damage pool (the T1 lesson), now FADING after 35s instead
+    //                of lasting the fight, so a long fight cannot wall the arena off.
+    //   Mire Spit  — a lobbed second pool type: no damage, a heavy slow.
+    //   Mire Lash  — a telegraphed tongue grab that DRAGS you toward the nearest
+    //                pool it owns. Keep pools behind you, resist forced movement,
+    //                step out after.
+    //   Bile Rain  — (playtest 2026-09-27: the arena never filled up) globs of bile
+    //                lobbed across the arena around you, each leaving a Bile Pool.
+    //                Pools are bigger and last a minute, so the room fills over the
+    //                fight — the swamp should end up as contaminated as the Cave.
     chargedAttack: {
-      name: 'Corrosive Pool', castMs: 1100, cooldownMs: 8500, initialCooldownMs: 3500,
-      multiplier: 1.1, fx: 'strong-kick', aoe: { radius: 115, impactFx: 'pool-spawn' },
-      // Effectively permanent (10 min) — retired with the boss, like T1's Bile Pool.
-      pool: {
-        durationMs: 600000, damagePerTick: 5, tickIntervalMs: 1000, slowSpeedMult: 0.60,
-        vulnerability: { damageTakenPct: 0.12, durationMs: 1500 },
-      },
+      name: 'Bile Pool', castMs: 1100, cooldownMs: 8500, initialCooldownMs: 3500,
+      multiplier: 1.1, fx: 'bile-spew', aoe: { radius: 150, impactFx: 'pool-spawn' },
+      pool: { durationMs: 60000, damagePerTick: 5, tickIntervalMs: 1000, slowSpeedMult: 0.70 },
     },
-    // SWAMP EXAM = "survive the rot". Its charged pool leaves Corrosion, increasing
-    // damage taken while the player remains in the hazard. At 50% the rot escalates
-    // on BOTH channels it owns: venom stacks faster (cadence, not hit size) and the
-    // pools arrive sooner and wider. No adds — Swamp's pressure is the ground.
+    bossPattern: {
+      id: 'mire-lash', name: 'Mire Lash',
+      damageMultiplier: 1.0, cooldownMs: 11000, initialCooldownMs: 7000,
+      steps: [
+        { kind: 'impact', name: 'Mire Spit', anchor: 'target', radius: 165,
+          damageMult: 0.4, telegraphMs: 1000, fx: 'pool-spawn',
+          pool: { durationMs: 60000, damagePerTick: 0, tickIntervalMs: 1000,
+            slowSpeedMult: 0.40, flavor: 'mire', label: 'Mire' } },
+        { kind: 'wait', durationMs: 500 },
+        { kind: 'pull', name: 'Mire Lash', castMs: 1200, distance: 280,
+          toward: 'nearest-pool', fx: 'mire-lash' },
+      ],
+    },
+    bossPatternVariants: [{
+      id: 'mire-bile-rain', name: 'Bile Rain',
+      damageMultiplier: 1.0, cooldownMs: 13000, initialCooldownMs: 5000,
+      steps: [
+        { kind: 'cast', name: 'Bile Rain', castMs: 800, fx: 'bile-heave' },
+        { kind: 'rockfall', name: 'Bile Rain', fx: 'bile-rain', count: 4, radius: 115, spread: 560, delayMs: 1400,
+          damageMult: 0.3,
+          pool: { durationMs: 45000, damagePerTick: 5, tickIntervalMs: 1000, slowSpeedMult: 0.70, label: 'Bile Pool' } },
+      ],
+    }],
+    // At 50% the rot escalates on the channels it owns: venom stacks faster
+    // (cadence, not hit size) and the pools arrive sooner and wider.
     bossScript: {
       phases: [
-        { hpPct: 0.5, actions: [
+        { hpPct: 1.0, actions: [{ type: 'add-pattern', patternId: 'mire-bile-rain' }] },
+        { hpPct: 0.5, name: 'Rising Mire',
+          description: 'Venom stacks faster, and Bile Pools come sooner and spread wider. Keep open ground behind you so the Mire Lash has nowhere bad to drag you.',
+          actions: [
           { type: 'enrage', atkMult: 1.0, cdMult: 0.70 }, // pure cadence: DoT stacks faster
           { type: 'empower-charged', cooldownMult: 0.70, radiusMult: 1.15 },
         ] },
@@ -245,8 +312,7 @@ export const bossMonsterEntriesT2 = [
     },
   }],
 
-  // CAVE — ENDURANCE / DEFENSIVE EROSION. T2's added layer is ARMOURED SUPPORT: a
-  // second brute to outlast, while the corrosion keeps eating your plating.
+  // CAVE — THE BURROWER. T2's added layer: sinkholes that make WHERE you dodge matter.
   ['chitinous-dreadbore', {
     id: 'chitinous-dreadbore', name: 'Chitinous Dreadbore', color: 0x442244,
     isBoss: true,
@@ -255,77 +321,58 @@ export const bossMonsterEntriesT2 = [
     rewards: { essence: 160, essenceType: 'red', level: 5, biomeXp: 240 },
     ai: { wanderRadius: 90, leashRange: 800, idleMinMs: 3000, idleMaxMs: 7500 },
     targeting: { prefersPlayers: true },
-    appliesPlatingShred: { platingPerStack: 2, maxStacks: 6 },
-    // T2 = T1's erosion, now delivered from UNDERNEATH. The Dreadbore erodes you,
-    // burrows out of reach, reserves a valid spot near you, shows the circle, and
-    // erupts for a heavy hit plus a dose of shred.
+    // CAVE T2 (boss-lineage redesign 2026-09-27): SINKHOLES — where you dodge now
+    // matters. The T1 burrow (a targetable mound you can drag up with damage), and
+    // every eruption leaves collapsed ground for ~30s: standing in it slows you and
+    // stacks ERODED (+damage taken per stack, fades once you step out). 50%: it dives
+    // straight back down for a second eruption.
     //
-    // BURROW MEANS UNTARGETABLE, not flat damage reduction. The old version simply
-    // gave the boss DR for a few seconds, which taught the player nothing and could
-    // be ignored by continuing to swing; being genuinely unable to reach it is what
-    // makes the emergence circle worth reading. Step Back avoids it, Guard absorbs
-    // it, and tanking stays legal.
-    //
-    // REMOVED with the 2026-09-04 redesign: the circular Chitin Slam, `chargeOnAggro`,
-    // Carapace Seal, and the DR-only burrow.
+    // CUT: plating shred (erosion is a damage-taken debuff now, not plating).
     bossPattern: {
       id: 'dreadbore-emergence', name: 'Dreadbore',
       damageMultiplier: 1.6, cooldownMs: 9000, initialCooldownMs: 4000,
+      stoppedBy: { damage: { pctMaxHp: 0.05, staggerMs: 2500, label: 'Dragged Up' } },
       steps: [
         { kind: 'cast', name: 'Burrow', castMs: 550, fx: 'burrow', guardable: false },
-        // OUT, THEN BACK, ON ONE LINE (2026-09-06, settled). This burrow went
-        // through four shapes before landing here: a 1600ms straight walk (a long
-        // boring approach), a 500ms sprint at 1300px/s (nothing to read), a true
-        // spiral, and a two-waypoint triangle. Both curved versions read as the boss
-        // TELEPORTING, and the reason is not the path — it is the wire.
-        //
-        // ⚠ WHY IT CANNOT CURVE. Node deltas broadcast at 5 Hz, and the client snaps
-        // its interpolation whenever the drawn body falls more than 80px behind the
-        // position it just received. Down a straight line the renderer keeps pace at
-        // any speed, because it chases at the speed the body is actually moving. At
-        // a CORNER it is still heading the old way, so the error is about one packet
-        // of travel — speed * 0.2 — and anything past ~400px/s snaps. A curve is
-        // therefore only available below 400px/s, which is too slow for the detour
-        // to fit in a burrow of sane length. One reversal is the shape that survives.
-        //
-        // 380px/s keeps even the apex reversal under the snap threshold (76px of
-        // divergence against the 80px budget), and it is well under a third of the
-        // 1300 this started at.
-        //
-        // RETREAT IS A DISTANCE FROM YOU, NOT A DISTANCE TRAVELLED. It falls back
-        // until it is 460px away and no further, so standing in its face buys the
-        // biggest retreat and there is nothing to gain by giving chase. An authored
-        // travel distance did this backwards: from melee it barely left, and from
-        // range it retreated so far it could not get back.
-        //
-        // `surfacesOnContact` makes the 3000ms a CEILING rather than a cost — the
-        // burrow ends the moment it reaches you, so a chase that resolves in two
-        // seconds is two seconds long instead of two seconds and a pause. That is
-        // also what lets the ceiling be generous enough to run down a kiting player
-        // without punishing everyone else with dead air.
-        { kind: 'conceal', name: 'Burrowed', marker: 'burrow', durationMs: 3000,
-          relocate: 'near-target', emergeGap: 0, travelSpeed: 380,
+        // OUT, THEN BACK, ON ONE LINE (2026-09-06, settled) — a straight feint is
+        // the only burrow shape the 5 Hz client interpolation renders without
+        // snapping (see the conceal step's `feint` docs in bossPatterns.ts).
+        { kind: 'conceal', name: 'Burrowed', marker: 'burrow', durationMs: 3000, burst: { mult: 2.2, ms: 900 },
+          relocate: 'near-target', emergeGap: 0, travelSpeed: 380, targetable: true,
           feint: { retreatToPx: 460, untilPct: 0.35 }, surfacesOnContact: true,
-          // Pins you as it arrives. At T2 the eruption is ALREADY inescapable on
-          // foot from where the burrow surfaces (~110px to clear against a 750ms
-          // tell), so this is not what makes the circle land — it is what makes the
-          // dash-out answers and the recovery afterwards cost something. T3 is where
-          // the same rider actually decides the hit.
           contactSlow: { speedMult: 0.5, durationMs: 2000 } },
         { kind: 'impact', name: 'Eruption', anchor: 'self', radius: 165,
-          damageMult: 1.0, telegraphMs: 750, fx: 'deep-core-eruption' },
-        { kind: 'recovery', label: 'Surfaced', durationMs: 2200 },
+          damageMult: 1.0, telegraphMs: 750, fx: 'deep-core-eruption', pool: SINKHOLE_T2 },
+        { kind: 'recovery', label: 'Surfaced', durationMs: 1000 },
       ],
     },
-    // CAVE EXAM = "your shell erodes". At 50% the corrosion bites deeper (+1 plating
-    // per stack), then the Dreadbore seals its own carapace for a short, readable
-    // defensive window. The old troll add, enrage, and speed buff were generic and
-    // said nothing about this lineage.
+    bossPatternVariants: [{
+      id: 'dreadbore-second-dive', name: 'Second Dive',
+      damageMultiplier: 1.6, cooldownMs: 9500, initialCooldownMs: 4000,
+      stoppedBy: { damage: { pctMaxHp: 0.05, staggerMs: 2500, label: 'Dragged Up' } },
+      steps: [
+        { kind: 'cast', name: 'Burrow', castMs: 550, fx: 'burrow', guardable: false },
+        { kind: 'conceal', name: 'Burrowed', marker: 'burrow', durationMs: 3000, burst: { mult: 2.2, ms: 900 },
+          relocate: 'near-target', emergeGap: 0, travelSpeed: 380, targetable: true,
+          feint: { retreatToPx: 460, untilPct: 0.35 }, surfacesOnContact: true,
+          contactSlow: { speedMult: 0.5, durationMs: 2000 } },
+        { kind: 'impact', name: 'Eruption', anchor: 'self', radius: 165,
+          damageMult: 1.0, telegraphMs: 750, fx: 'deep-core-eruption', pool: SINKHOLE_T2 },
+        // Straight back down: no cast, no recovery between the two.
+        { kind: 'conceal', name: 'Dive', marker: 'burrow', durationMs: 2400, burst: { mult: 2.2, ms: 900 },
+          relocate: 'near-target', emergeGap: 0, travelSpeed: 420, targetable: true,
+          surfacesOnContact: true },
+        { kind: 'impact', name: 'Eruption', anchor: 'self', radius: 165,
+          damageMult: 1.0, telegraphMs: 750, fx: 'deep-core-eruption', pool: SINKHOLE_T2 },
+        { kind: 'recovery', label: 'Surfaced', durationMs: 1000 },
+      ],
+    }],
     bossScript: {
       phases: [
-        { hpPct: 0.5, actions: [
-          { type: 'empower-shred', platingPerStackAdd: 1 },
-
+        { hpPct: 0.5, name: 'Second Dive',
+          description: 'It burrows twice in a row, erupting under you each time and leaving sinkholes. Damage the mound to drag it up early.',
+          actions: [
+          { type: 'set-pattern', patternId: 'dreadbore-second-dive' },
         ] },
       ],
     },
@@ -411,12 +458,14 @@ export const bossMonsterEntriesT2 = [
         { kind: 'payoff', name: 'Execution', castMs: 1300, fx: 'execution',
           damageMult: 1.0, amplifiedMult: 2.0,
           consumes: { effectId: SUN_MARK_EFFECT_ID }, radius: 150 },
-        { kind: 'recovery', label: 'Spent', durationMs: 1800 },
+        { kind: 'recovery', label: 'Spent', durationMs: 1000 },
       ],
     },
     bossScript: {
       phases: [
-        { hpPct: 0.5, actions: [
+        { hpPct: 0.5, name: 'Relentless',
+          description: 'It moves 30% faster, and its signature strike hits harder and comes around sooner. Save your defences for the cash-out.',
+          actions: [
           // The setup tightens: it closes faster and the cash-out comes around sooner.
           { type: 'stat-buff', stat: 'speed', mult: 1.3, label: 'relentless-pursuit' },
           { type: 'empower-charged', multiplierMult: 1.15, cooldownMult: 0.75 },
@@ -441,95 +490,68 @@ export const bossMonsterEntriesT2 = [
     rewards: { essence: 145, essenceType: 'green', level: 5, biomeXp: 218 },
     ai: { wanderRadius: 150, leashRange: 840, idleMinMs: 1800, idleMaxMs: 4500 },
     targeting: { prefersPlayers: true },
-    // JUNGLE = PURSUIT AND FAILED ESCAPE. The one loop the whole lineage runs:
-    //
-    //   FLEE: the boss bolts for the far edge of its leash behind a plate.
-    //     BREAK the plate  -> the retreat fails, it stumbles, and it banks one
-    //                         stack of Escape Instinct so the NEXT attempt
-    //                         is quicker.
-    //     STUN IT          -> the attempt simply stops. No stumble and no Instinct
-    //                         — a plainer answer than the plate, and it has to be
-    //                         one, or a boss that "escapes" while hard-controlled
-    //                         cashes in on the far side of the control you spent.
-    //     LET IT FINISH    -> it slips into cover, resets Instinct, STALKS BACK
-    //                         unseen, and bites the moment it reaches you.
-    //
-    // THE 2026-09-06 CORRECTION. Every beat above was already written down and none
-    // of it was what the fight did. The guard was a stationary cast (the boss never
-    // bolted anywhere), the vanish TELEPORTED it to the leash edge the instant it
-    // succeeded, and the Ambush then fired from across the arena at a player it had
-    // never come near — a bite landing at 800px, out of nowhere, unanswerable and
-    // unreadable. The sequence now runs the shape the design always described: it
-    // runs (visible, breakable), it disappears, it comes back for you, and the bite
-    // is what happens when it arrives.
-    //
-    // BARRIER DAMAGE — not physical contact — is the test. That is deliberate and
-    // load-bearing: a boss whose whole idea is running away from you would otherwise
-    // be answerable only by melee, and ranged builds would have no counterplay at
-    // all. Instinct has no cap: failed retreats keep accelerating it until a successful
-    // escape wipes the stacks.
-    //
-    // T2 teaches the PLAIN cycle: no venom, no frenzy, just escape and ambush.
-    //
-    // REMOVED with the 2026-09-04 redesign: `openingStrike` (an unanswerable alpha
-    // strike before the fight has taught anything) and the one-shot Canopy Hunt
-    // speed phase, which was a substitute for the pursuit this loop now IS.
-    //
-    // Canopy Hunt was only removed from the COMMENT in 2026-09-04; the phase itself
-    // survived in the data until 2026-09-06. It is gone now, and with it the whole
-    // `bossScript` — T2 has no 50% escalation at all, which is the point: this tier
-    // teaches the plain cycle, and the escalation belongs to T3 (the escape comes
-    // around harder and far more often) and T4 (it stops escaping altogether).
+    // JUNGLE (boss-lineage redesign 2026-09-27) — PURSUIT AND FAILED ESCAPE.
+    //   FLEE: behind an Escape Guard it bolts, fast enough that an ordinary chaser
+    //     usually loses it. Stop it by BREAKING the guard (the ranged answer), by
+    //     HINDERING it (slow shortens the run; root at T3+, stun at T4 end it), or by
+    //     catching it with a gap-closer. A stopped flee is a <=1s stumble, not a
+    //     window: staying in the fight and losing its ambush IS its punishment.
+    //     Failed flees bank Escape Instinct (the next is faster).
+    //   ESCAPED: it stalks back unseen and AMBUSHES — then FRENZIES for ~5s
+    //     (+attack speed, +damage): the burst window you pay for letting it go.
+    //     Guard the reveal, out-defend the frenzy, or deny the escape.
+    //   T2: the plain cycle; 50% Bloodlust = a longer frenzy.
     bossPattern: {
       id: 'gorger-escape', name: 'Escape',
       damageMultiplier: 1.6, cooldownMs: 14000, initialCooldownMs: 8000,
+      stoppedBy: {
+        // A stopped flee is NOT a stagger window (principle 5 exception): being
+        // stopped is already its punishment. A <=1s stumble with the stun tell.
+        stun: { staggerMs: 1000, label: 'Stumbled' },
+        root: { staggerMs: 1000, label: 'Stumbled' },
+      },
       steps: [
-        // THE ESCAPE IS TIMED, AND THE TIME IS THE POINT. 3000ms of the boss visibly
-        // running with a breakable plate up — long enough to read as a chase you
-        // are losing, and long enough for the break to be a real decision rather
-        // than a reflex. (First pass tried 1500ms at 420px/s: the boss crossed
-        // ~630px in a second and a half, which at the 5 Hz broadcast is ~84px a
-        // packet, and the whole beat read as "cast, blink, gone".)
-        //
-        // ⚠ NOT distance-from-the-player, which was the tempting alternative: that
-        // condition is already satisfied the moment a ranged or kiting player opens
-        // up, so the escape would complete instantly exactly when the player is
-        // furthest from being able to answer it — the same "it triggers immediately"
-        // failure in a new costume. It also has no natural end when the boss is
-        // walled in or pinned against its own leash. Time is stable wherever
-        // everyone happens to be standing; distance is what the flee ACHIEVES.
-        //
-        // 220px/s is the visible pace: clearly faster than the player's 120, slow
-        // enough to watch. Over the window that is ~660px, which is what the stalk
-        // below is sized to take back.
         { kind: 'escape-guard', name: 'Flee', castMs: 3000, fx: 'predator-flee',
-          sourceId: 'jungle-escape', shieldPct: 0.07,
-          onBreak: { staggerMs: 2600, label: 'Cornered' },
+          sourceId: 'jungle-escape', shieldPct: 0.05,
+          onBreak: { staggerMs: 1000, label: 'Caught' },
           instinctSpeedPct: 0.30,
-          flee: { speed: 280, escapeDistance: 400 } },
-        // THE STALK, not a relocation. It goes invisible only once the escape has
-        // actually succeeded, then closes on you while unseen — `near-target` with
-        // real travel, exactly like the Cave burrow, so the marker is a tell the
-        // player tracks rather than a body that blinks across the map.
-        // A visible-rate stalk with a time limit: surface in bite range immediately
-        // on contact instead of sprinting back and waiting under the player.
+          flee: { speed: 540, escapeDistance: 600 } },
         { kind: 'conceal', name: 'Vanished', marker: 'stealth', durationMs: 6000,
           relocate: 'near-target', emergeGap: 30, travelSpeed: 220, surfacesOnContact: true },
-        // Which makes the Ambush a CONTACT bite: it lands because the thing that
-        // vanished is now standing on top of you, and the 800ms is the tell.
-        { kind: 'payoff', name: 'Ambush', castMs: 350, fx: 'savage-maul',
+        { kind: 'payoff', name: 'Ambush', castMs: 350, fx: 'ambush-pounce',
           damageMult: 1.0, reach: 90 },
-        // NO RECOVERY AFTER A SUCCESSFUL AMBUSH (2026-09-06). It used to end on a
-        // 1600ms `Winded` window, which meant both branches of the loop finished
-        // with the boss lying down — and since the recovery's networked id is
-        // literally `boss-stunned`, the authored label never reached the player and
-        // the two read as the same outcome. A predator that just landed its ambush
-        // being stunned by it makes no sense, and it flattened the choice the whole
-        // pattern exists to pose.
-        //
-        // The punish window is now what BREAKING THE PLATE buys you, and nothing
-        // else: stop the escape and you get 2.6s of a helpless boss; let it go and
-        // you eat the bite and it goes straight back to fighting.
+        { kind: 'frenzy', name: 'Frenzy', durationMs: 5000, attackSpeedPct: 0.35, damagePct: 0.20 },
+      ],
+    },
+    bossPatternVariants: [{
+      id: 'gorger-escape-bloodlust', name: 'Escape',
+      damageMultiplier: 1.6, cooldownMs: 14000, initialCooldownMs: 6000,
+      stoppedBy: {
+        // A stopped flee is NOT a stagger window (principle 5 exception): being
+        // stopped is already its punishment. A <=1s stumble with the stun tell.
+        stun: { staggerMs: 1000, label: 'Stumbled' },
+        root: { staggerMs: 1000, label: 'Stumbled' },
+      },
+      steps: [
+        { kind: 'escape-guard', name: 'Flee', castMs: 3000, fx: 'predator-flee',
+          sourceId: 'jungle-escape', shieldPct: 0.05,
+          onBreak: { staggerMs: 1000, label: 'Caught' },
+          instinctSpeedPct: 0.30,
+          flee: { speed: 540, escapeDistance: 600 } },
+        { kind: 'conceal', name: 'Vanished', marker: 'stealth', durationMs: 6000,
+          relocate: 'near-target', emergeGap: 30, travelSpeed: 220, surfacesOnContact: true },
+        { kind: 'payoff', name: 'Ambush', castMs: 350, fx: 'ambush-pounce',
+          damageMult: 1.0, reach: 90 },
+        { kind: 'frenzy', name: 'Frenzy', durationMs: 8000, attackSpeedPct: 0.35, damagePct: 0.20 },
+      ],
+    }],
+    bossScript: {
+      phases: [
+        { hpPct: 0.5, name: 'Bloodlust',
+          description: 'Its escapes turn predatory: it flees, vanishes, ambushes you and frenzies. Stun or root the flee, or break its guard, before it gets away.',
+          actions: [
+          { type: 'set-pattern', patternId: 'gorger-escape-bloodlust' },
+        ] },
       ],
     },
   }],

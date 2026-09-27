@@ -20,6 +20,7 @@ import {
   MONSTER_DATABASE,
   STARTER_RUNE_IDS,
   emptyEquipment,
+  type BossAction,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
@@ -149,6 +150,8 @@ function sovereign(world: World, playerId: string): MonsterEntity {
   world.attachPlayerEntity(playerSlices('slow-pull'), 'slow-pull');
   const boss = sovereign(world, 'slow-pull');
   updateBossScripts(world, 100);
+  // The Invocation (the entourage's summoning cast) runs first; let it finish.
+  updateBossScripts(world, 1600);
   for (const add of [...world.monsterEntitiesInNode(NODE)].filter(m => m !== boss)) {
     world.removeMonsterEntity(add.isMonster.id);
   }
@@ -335,7 +338,9 @@ for (const end of ['reset', 'death', 'removed', 'timeout'] as const) {
   assert(risen.length <= 3, `three bodies must never yield more than three risen (got ${risen.length})`);
 }
 
-// RISEN DEATHS ARE PERMANENT: a risen unit leaves no corpse, so the tide terminates.
+// THE SOVEREIGN KEEPS ITS ARMY (Wasteland redesign 2026-09-27): its risen leave a
+// body again while it lives (`raisesDead.reraisable`) — the tide now ends when the
+// Harvest phase stops the raising and eats the dead, or when the Sovereign dies.
 {
   const world = new World();
   world.attachPlayerEntity(playerSlices('rise-terminal'), 'rise-terminal');
@@ -353,8 +358,18 @@ for (const end of ['reset', 'death', 'removed', 'timeout'] as const) {
   risen.hasHealth.hp = 0;
   recordCorpse(world, risen);
   assert(
-    buildCorpseViews(world, NODE, Date.now()) === undefined,
-    'a risen unit must leave no reusable corpse — the tide has to terminate',
+    buildCorpseViews(world, NODE, Date.now())?.length === 1,
+    "the Sovereign's risen leave a body it can raise again",
+  );
+
+  // Once the Sovereign is dead, its risen leave nothing: the tide terminates.
+  const second = world.createMonster(NODE, 'bone-crawler', { x: 460, y: 400 })!;
+  second.isRaised = { raiserId: boss.isMonster.id };
+  boss.hasHealth.hp = 0;
+  recordCorpse(world, second);
+  assert(
+    buildCorpseViews(world, NODE, Date.now())?.length === 1,
+    'with its raiser dead, a risen leaves no reusable corpse',
   );
 }
 
@@ -389,14 +404,17 @@ for (const end of ['reset', 'death', 'removed', 'timeout'] as const) {
   );
   assert(def.chargeOnAggro === undefined, 'and the aggro speed burst with it');
 
-  // The opening entourage: one shot, on engage, with the three authored roles.
+  // The opening entourage: one shot, on engage, with the three authored roles —
+  // summoned by the Invocation cast (Wasteland redesign 2026-09-27).
+  const flat = (actions: readonly BossAction[]): BossAction[] =>
+    actions.flatMap(action => action.type === 'cast' ? [action, ...flat(action.actions)] : [action]);
   const opener = (def.bossScript?.phases ?? []).find(phase =>
-    phase.actions.some(action => action.type === 'spawn-adds'),
+    flat(phase.actions).some(action => action.type === 'spawn-adds'),
   );
   assert(!!opener, 'the Sovereign should arrive with an entourage');
   assert(opener.hpPct === 1.0, 'which fires on engage, never mid-fight');
-  const spawned = opener.actions
-    .filter((action): action is Extract<typeof action, { type: 'spawn-adds' }> =>
+  const spawned = flat(opener.actions)
+    .filter((action): action is Extract<BossAction, { type: 'spawn-adds' }> =>
       action.type === 'spawn-adds')
     .map(action => action.monsterTypeId);
   for (const role of ['bone-crawler', 'plague-hound', 'carrion-vulture']) {

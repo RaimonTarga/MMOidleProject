@@ -140,6 +140,8 @@ import {
 } from "./mapTransition";
 import { tickSpectatorReadiness } from "./spectatorReady";
 import { drawGroundZones } from "../../render/groundZones";
+import { updateBossWeather } from "../../render/bossWeather";
+import { updateBossAuras } from "../../fx/bossAuras";
 import { drawCorpses } from "../../render/corpses";
 import { drawTombstones } from "../../render/tombstones";
 import { drawStunOrbits } from "../../render/stunOrbit";
@@ -155,6 +157,7 @@ import {
   suppressCinematicChrome,
   suppressCinematicOverlays,
 } from "./cinematic/suppress";
+import { packedAssetUrl } from "../../packedAssetUrl";
 
 const CAMERA_HOLD_MARGIN = 80;
 const SHADOW_DEFS_KEY = "shadowDefs";
@@ -243,8 +246,8 @@ function instantReskinNode(scene: GameScene, nodeId: string): void {
  * drains, so every extra megabyte is dead time staring at an empty pane.
  */
 function queueFirstPaintAssets(scene: GameScene): void {
-  scene.load.atlas(ATLAS_KEY, "/assets/sprites.png", "/assets/sprites.json");
-  scene.load.json(SHADOW_DEFS_KEY, "/assets/shadows.json");
+  scene.load.atlas(ATLAS_KEY, packedAssetUrl("/assets/sprites.png"), packedAssetUrl("/assets/sprites.json"));
+  scene.load.json(SHADOW_DEFS_KEY, packedAssetUrl("/assets/shadows.json"));
 }
 
 /**
@@ -600,6 +603,8 @@ export function updateGameScene(scene: GameScene, delta: number): void {
     drawStunOrbits(scene);
     drawSkillCallouts(scene.state);
     updateEffectOverlays(scene.state, scene, dt);
+    updateBossWeather(scene, dt * 1000);
+    updateBossAuras(scene, dt * 1000);
     updateMovementEffects(scene.state, scene);
     updateLaserBeam(scene.state, scene);
     updateHolyBeam(scene.state, scene);

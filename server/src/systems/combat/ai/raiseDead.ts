@@ -18,8 +18,10 @@ import {
 import { setAggroTarget, setAttackTarget } from './targeting';
 import { hasIndependentRoot, setRooted } from '../../world/rooted';
 import { isMonsterStunned } from '../status/stun';
+import { staggerBoss } from './bossPatterns';
 import { isMonsterFrozen } from '../../classes/archetypes/dot/t3/core/selectors';
 import { chargedCastEndsAt } from '../engine/monsterMechanics';
+import { bindBossAdd } from './bossAdds';
 
 const SESSION_KEY = 'raiseDeadSession';
 const NEXT_RAISE_KEY = 'raiseDeadNextAt';
@@ -112,6 +114,8 @@ function raiseCorpse(
   if (!risen) return false;
 
   attachComponent(world, risen, 'isRaised', { raiserId: raiser.isMonster.id });
+  // A boss's risen join its army: its anchor, leash and target, kept in sync.
+  if (raiser.isMonster.isBoss) bindBossAdd(world, raiser, risen, now);
 
   // The dead come back diminished, and READ as raised: the name is the only tell
   // the client needs — it already rides the networked `isMonster` slice, so no
@@ -196,6 +200,11 @@ export function updateRaisers(world: World, now: number): void {
     if (!spec) continue;
     // A risen necromancer never raises: the tide has to terminate.
     if (raiser.isRaised) continue;
+    // A boss that has stopped raising (Wasteland's last phase feeds on its army).
+    if (raiser.scriptsBoss?.raiseDisabled) {
+      cancelRaiseCast(world, raiser);
+      continue;
+    }
     if (raiser.hasHealth.hp <= 0) continue;
 
     const aggro = raiser.hasAggroTarget;
@@ -220,6 +229,10 @@ export function updateRaisers(world: World, now: number): void {
         isMonsterFrozen(world, raiser.isMonster.id)
       ) {
         cancelRaiseCast(world, raiser);
+        // A STOPPED raise staggers its caster (principle 5), when authored.
+        if (spec.stunStaggerMs && raiser.isMonster.isBoss) {
+          staggerBoss(world, raiser, 'Raise Broken', spec.stunStaggerMs, now);
+        }
         continue;
       }
       if (now < castEndsAt) continue;
@@ -230,17 +243,23 @@ export function updateRaisers(world: World, now: number): void {
       // have been a lie, and a corpse reserved at the last moment by nobody could
       // be taken instead.
       const maxAlive = spec.maxAlive + (raiser.scriptsBoss?.raiseMaxAliveAdd ?? 0);
-      const corpse = countRaisedBy(world, raiser) < maxAlive
-        ? takeNearestCorpse(
-            world,
-            raiser.hasPosition.nodeId,
-            raiser.hasPosition.current,
-            spec.corpseRange,
-            raiser.isMonster.id,
-          )
-        : null;
+      // Several per cast when authored (Wasteland: numbers over quality).
+      const corpses: NonNullable<ReturnType<typeof takeNearestCorpse>>[] = [];
+      for (let i = 0; i < (spec.count ?? 1); i++) {
+        if (countRaisedBy(world, raiser) + corpses.length >= maxAlive) break;
+        const corpse = takeNearestCorpse(
+          world,
+          raiser.hasPosition.nodeId,
+          raiser.hasPosition.current,
+          spec.corpseRange,
+          raiser.isMonster.id,
+        );
+        if (!corpse) break;
+        corpses.push(corpse);
+      }
       releaseRaiseCast(world, raiser);
-      const fired = corpse ? raiseCorpse(world, raiser, corpse, spec, now) : false;
+      let fired = false;
+      for (const corpse of corpses) fired = raiseCorpse(world, raiser, corpse, spec, now) || fired;
       world.pushEvent(raiser.hasPosition.nodeId, {
         kind: 'monster-cast-end',
         monsterId: raiser.isMonster.id,
@@ -264,12 +283,13 @@ export function updateRaisers(world: World, now: number): void {
     if ((spec.castMs ?? 0) > 0) {
       if (
         !raiser.cannotAttack &&
+        !raiser.runsBossPattern &&
         !raiser.scriptsBoss?.scriptedCast &&
         chargedCastEndsAt(raiser) <= 0 &&
         !isMonsterStunned(world, raiser.isMonster.id) &&
         !isMonsterFrozen(world, raiser.isMonster.id)
       ) {
-        beginRaiseCast(world, raiser, spec, now);
+        beginRaiseCast(world, raiser, spec, now, spec.count ?? 1);
         setCounter(state, NEXT_RAISE_KEY, now + spec.intervalMs);
       }
       continue;

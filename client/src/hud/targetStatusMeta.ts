@@ -23,6 +23,10 @@ const STATUS_META: Record<string, StatusMeta> = {
   'canopy-chameleon-barrage': { label: 'Barrage', color: '#89dd59' },
   'thornback-chameleon-barrage': { label: 'Barrage', color: '#89dd59' },
   'boss-roar-haste': { label: 'Rallying Cry', color: '#b18cff' },
+  'boss-rallied': { label: 'Rallied', color: '#ff9944' },
+  'boss-frenzy': { label: 'Frenzy', color: '#ff5533' },
+  'bone-tithe': { label: 'Bone Tithe', color: '#c9b98a' },
+  harvest: { label: 'Harvest', color: '#b04a6a' },
   'monster-death-empower': { label: 'Necrotic Surge', color: '#c678e8' },
   'elder-carapace-renewal': { label: 'Abyssal Carapace', color: '#5ccdd0' },
   'magma-molten-guard': { label: 'Molten Guard', color: '#ff7a3c' },
@@ -76,6 +80,7 @@ const BOSS_META: Record<string, StatusMeta> = {
   sandsurge: { label: 'Sandsurge', color: '#e4b84f' },
   'bestial-frenzy': { label: 'Bestial Frenzy', color: '#e85d45' },
   'caldera-fury': { label: 'Caldera Fury', color: '#ff6b38' },
+  cornered: { label: 'Cornered', color: '#e85d45' },
   'blood-in-the-water': { label: 'Blood in the Water', color: '#e05252' },
   morph:       { label: 'Morph',     color: '#dd66cc' },
   slam:        { label: 'Slam',      color: '#ff7744' },
@@ -85,6 +90,11 @@ const BOSS_META: Record<string, StatusMeta> = {
   'charge-instinct': { label: 'Instinct', color: '#ffbb66' },
   'escape-instinct': { label: 'Escape Instinct', color: '#aadd77' },
   'boss-stunned': { label: 'Stunned', color: '#ffdd44' },
+  // Volcanic final strike, shown while it charges (`cast.announce`).
+  'final-eruption': { label: 'Final Eruption', color: '#ff5a1f' },
+  cataclysm: { label: 'Cataclysm', color: '#ff5a1f' },
+  // The announced phase tile (label is the phase name, set by the target frame).
+  'boss-phase': { label: 'Phase', color: '#e8b64a' },
 };
 
 function prettify(id: string): string {

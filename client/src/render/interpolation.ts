@@ -12,6 +12,7 @@ import { getOwnBlockShapes, getOwnMovePad } from '../input/obstacleResolve';
 import { predictManualMove, predictClickMove } from '../input/movement';
 import { correctPlayerPosition } from './movementCorrection';
 import { predictAutoPath } from './autoPathPrediction';
+import { applyBodyPose } from '../fx/bodyPose';
 
 function spriteDrawY(baseY: number, visualOffsetY?: number): number {
   return baseY + (visualOffsetY ?? 0);
@@ -137,6 +138,8 @@ export function stepInterpolation(scene: GameScene, dt: number): void {
     const drawY = nodeToSceneY(nodeY + (meta?.visualOffsetY ?? 0));
     sprite.setPosition(nodeToSceneX(nodeX), drawY);
     sprite.setDepth(DEPTH.SPRITE + sceneDepthY(nodeY, meta?.visualOffsetY));
+    // Procedural body motion (crouch, leap, squash) over the pipeline's size.
+    applyBodyPose(scene, id, sprite);
   }
 }
 

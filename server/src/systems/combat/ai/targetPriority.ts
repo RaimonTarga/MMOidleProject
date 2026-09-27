@@ -40,6 +40,7 @@ import { effectivePartyLeaderId } from "../../player/party/partySystem";
 import { playerDetectionMult } from '../../world/mobility/mobilityBoots';
 import { approachDeferred, hazardSheltersTarget } from './blockedApproach';
 import { HAZARD_TARGET_CLEARANCE, playerHazardContainingPoint } from './dynamicHazardAvoidance';
+import { isConcealedEntity } from "../invulnerability";
 
 export type AutoCombatAction =
   | { kind: "attack"; target: MonsterEntity }
@@ -342,7 +343,7 @@ function passesGates(
   if (monster.isInvulnerable) return false;
   // A burrowed or hidden boss is not there to be fought. Skipping it here is what
   // stops the player standing over a burrow hole swinging at nothing.
-  if (monster.isConcealed) return false;
+  if (isConcealedEntity(monster)) return false;
 
   // Do not wake ultimate encounters unless the player/bench explicitly asks to.
   if (
@@ -642,7 +643,7 @@ export function nearestEngageableMonster(
     if (!heatAllowsTarget(world, player, monster)) continue;
     if (skipBosses && monster.isMonster.isBoss) continue;
     if (monster.isInvulnerable) continue;
-    if (monster.isConcealed) continue;
+    if (isConcealedEntity(monster)) continue;
     if (
       monster.scriptsUltimate &&
       !monster.scriptsUltimate.engaged &&

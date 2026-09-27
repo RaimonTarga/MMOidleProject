@@ -28,6 +28,7 @@ import {
   monsterAbilityCastEndsAt,
   monsterAbilityTargetId,
 } from '../engine/monsterMechanics';
+import { runningBossPatternDef } from './bossPatterns';
 
 /** What a player-facing consumer needs to react to one incoming cast. */
 export interface GuardableThreat {
@@ -131,17 +132,27 @@ export function guardableThreatsFor(
   // An ordered pattern's own casts. Only a `cast` step qualifies, and only one
   // that has not opted out via `guardable: false` — a barrier going up or a posture
   // change is a beat the player READS, not one they spend a Guard on.
+  //
+  // A damaging `payoff` (Execution, Devour, Ambush) and a telegraphed `impact`
+  // circle are wind-ups the player must answer too — the redesign's rune answers
+  // for Desert, Trench and the Tundra Shatter all hang off Guard on these.
+  // Read from the RUNNING definition, which after a `set-pattern` phase is a variant.
   const pattern = monster.runsBossPattern;
   if (pattern) {
-    const definition = def.bossPattern;
-    const step = definition?.steps[pattern.stepIndex];
-    if (
-      definition &&
-      definition.id === pattern.patternId &&
-      step?.kind === 'cast' &&
-      (step.guardable ?? true) &&
-      pattern.stepEndsAtMs > now
-    ) {
+    const step = runningBossPatternDef(monster)?.steps[pattern.stepIndex];
+    const guardable =
+      step !== undefined &&
+      pattern.stepStarted &&
+      pattern.stepEndsAtMs > now &&
+      !pattern.skippedStepIndexes.includes(pattern.stepIndex) &&
+      ((step.kind === 'cast' && (step.guardable ?? true)) ||
+        (step.kind === 'payoff' && (step.guardable ?? true)) ||
+        step.kind === 'impact');
+    if (guardable) {
+      const planted =
+        (step.kind === 'cast' && step.lane !== undefined) ||
+        step.kind === 'impact' ||
+        (step.kind === 'payoff' && step.radius !== undefined);
       threats.push({
         monsterId: monster.isMonster.id,
         castName: step.name,
@@ -149,8 +160,8 @@ export function guardableThreatsFor(
         completesAtMs: pattern.stepEndsAtMs,
         targetId: pattern.targetId,
         zoneId: zoneIdFor(world, monster),
-        // A lane is painted on the ground, so moving off it is a real answer.
-        responses: step.lane ? ['step-back', 'guard', 'tank'] : ['guard', 'tank'],
+        // A lane or circle is painted on the ground, so moving off it is a real answer.
+        responses: planted ? ['step-back', 'guard', 'tank'] : ['guard', 'tank'],
       });
     }
   }

@@ -3,6 +3,10 @@ import type { GameScene } from "../scenes/GameScene";
 import { HAZARD_POOL_ART } from "../sprites";
 import { burstFx } from "../fx/particles";
 import { DEPTH } from "./depth";
+import { drawVentTelegraph } from "../fx/volcanicBoss";
+import { drawEruptionTelegraph } from "../fx/earthBosses";
+import { drawFrostTelegraph } from "../fx/tundraBoss";
+import { drawBoneSpearTelegraph, drawGraveBurstTelegraph, drawSoulNovaTelegraph } from "../fx/wastelandBoss";
 
 /**
  * Runtime combat circles: Cave slam telegraphs and temporary toxic pools. Lifted
@@ -87,6 +91,14 @@ function steamVentTint(glowStrength: number): number {
   return mixRgb(0xffffff, STEAM_VENT_WARM_COLOR, glowStrength * STEAM_VENT_GLOW_MAX);
 }
 
+/** Swamp Mire pool (slow, no damage) and Spore pool (detonates) tints. */
+const MIRE_TINT = 0x9a7446;
+const SPORE_TINT = 0xd6f05a;
+/** Cave sinkhole: collapsed ground, dark and dusty. */
+const SINKHOLE_TINT = 0x6a5a48;
+/** Jungle thorn snare: a dark bramble patch. */
+const THORNS_TINT = 0x3f6a2a;
+
 export interface GroundZoneSprite {
   graphic: Phaser.GameObjects.Graphics;
   /** Textured pool decal; telegraphs continue using `graphic` only. */
@@ -138,6 +150,14 @@ export function syncGroundZones(
     if (!sprite) {
       const poolArt = zone.flavor === "magma-vent"
         ? HAZARD_POOL_ART.steamVent
+        : zone.flavor === "sinkhole"
+        ? HAZARD_POOL_ART.sinkhole
+        : zone.flavor === "mire"
+        ? HAZARD_POOL_ART.mire
+        : zone.flavor === "spore"
+        ? HAZARD_POOL_ART.sporePool
+        : zone.flavor === "thorns"
+        ? HAZARD_POOL_ART.thornSnare
         : HAZARD_POOL_ART.poison;
       sprite = {
         graphic: scene.add.graphics().setDepth(DEPTH.BG_DECOR + 0.3),
@@ -347,6 +367,51 @@ function drawZone(sprite: GroundZoneSprite, progress: number, nowMs: number): vo
   const { graphic, x, y, radius } = sprite;
   graphic.clear();
 
+  if (sprite.kind === 'fault-line-telegraph' && sprite.fx === 'vent-eruption') {
+    // A vent about to erupt: the swell is the clock (volcanicBoss.ts).
+    drawVentTelegraph(graphic, x, y, radius, progress, (x * 7 + y * 13) % 97);
+    graphic.lineStyle(2, 0xffa044, 0.35 + 0.5 * progress);
+    graphic.strokeCircle(x, y, radius);
+    return;
+  }
+
+  if (sprite.kind === 'fault-line-telegraph' && sprite.fx === 'grave-burst') {
+    // Wasteland Grave Burst: runes fill the circle, bone pushes up (wastelandBoss.ts).
+    drawGraveBurstTelegraph(graphic, x, y, radius, progress, (x * 7 + y * 13) % 97);
+    return;
+  }
+
+  if (sprite.kind === 'fault-line-telegraph' && (sprite.fx === 'rockfall' || sprite.fx === 'bile-rain')) {
+    // Something falling: its shadow grows on the ground, and it drops into view for
+    // the last stretch of the wind-up, landing on the resolve.
+    const bile = sprite.fx === 'bile-rain';
+    graphic.lineStyle(2, bile ? 0xa8d66a : 0xd8cdb4, 0.55 + 0.4 * progress);
+    graphic.strokeCircle(x, y, radius);
+    graphic.fillStyle(0x000000, 0.12 + 0.3 * progress);
+    graphic.fillEllipse(x, y, radius * 1.6 * (0.3 + 0.7 * progress), radius * 0.8 * (0.3 + 0.7 * progress));
+    if (progress > 0.55) {
+      const fall = 1 - (progress - 0.55) / 0.45;
+      const dropY = y - fall * fall * 260;
+      const size = radius * 0.34;
+      if (bile) {
+        graphic.fillStyle(0x4f7a1c, 0.95);
+        graphic.fillCircle(x, dropY, size);
+        graphic.fillStyle(0x8ec43a, 1);
+        graphic.fillCircle(x - size * 0.2, dropY - size * 0.2, size * 0.75);
+        graphic.fillStyle(0xd4f07a, 0.9);
+        graphic.fillCircle(x - size * 0.4, dropY - size * 0.4, size * 0.25);
+      } else {
+        graphic.fillStyle(0x5d6773, 1);
+        graphic.fillCircle(x, dropY, size);
+        graphic.fillStyle(0x8c96a3, 1);
+        graphic.fillCircle(x - size * 0.22, dropY - size * 0.22, size * 0.72);
+        graphic.fillStyle(0xb8c2cc, 0.9);
+        graphic.fillCircle(x - size * 0.42, dropY - size * 0.42, size * 0.25);
+      }
+    }
+    return;
+  }
+
   if (sprite.kind === 'fault-line-telegraph') {
     // Each view is one linked segment in a radial crack. The dark footprint is
     // visible immediately; the hot core fills toward impact across the chain.
@@ -374,6 +439,17 @@ function drawZone(sprite: GroundZoneSprite, progress: number, nowMs: number): vo
       if (sprite.flavor === "magma-vent") {
         if (steamGlow > 0) sprite.image.setTint(steamVentTint(steamGlow));
         else sprite.image.clearTint();
+      } else if (sprite.flavor === "mire") {
+        // Mire: the swamp art dragged to mud — slows, does not burn.
+        sprite.image.setTint(MIRE_TINT);
+      } else if (sprite.flavor === "thorns") {
+        sprite.image.setTint(THORNS_TINT);
+      } else if (sprite.flavor === "sinkhole") {
+        sprite.image.setTint(SINKHOLE_TINT);
+      } else if (sprite.flavor === "spore") {
+        // Spore: sickly yellow, flashing brighter as the detonation nears.
+        const urgency = progress > 0.6 ? (Math.sin(nowMs / 70) + 1) / 2 : 0;
+        sprite.image.setTint(mixRgb(SPORE_TINT, 0xffffff, urgency * 0.6));
       } else {
         sprite.image.clearTint();
       }
@@ -389,6 +465,10 @@ function drawZone(sprite: GroundZoneSprite, progress: number, nowMs: number): vo
     // Texture loading failure fallback: keep the hazard readable.
     const fill = sprite.flavor === "magma-vent"
       ? mixRgb(0x6b3d29, 0xa94d1d, steamGlow)
+      : sprite.flavor === "mire" ? MIRE_TINT
+      : sprite.flavor === "spore" ? SPORE_TINT
+      : sprite.flavor === "sinkhole" ? SINKHOLE_TINT
+      : sprite.flavor === "thorns" ? THORNS_TINT
       : TOXIC_FILL;
     const line = sprite.flavor === "magma-vent"
       ? mixRgb(0xffa044, 0xffffa0, steamGlow)
@@ -417,6 +497,13 @@ function drawZone(sprite: GroundZoneSprite, progress: number, nowMs: number): vo
   // Inner fill: the countdown. Reaches the rim exactly on impact.
   graphic.fillStyle(fill, 0.4);
   graphic.fillCircle(x, y, radius * progress);
+
+  // Lineage overlays over the countdown: the Cave eruption cracks the ground, the
+  // Tundra frost circles grow ice (earthBosses.ts / tundraBoss.ts).
+  if (sprite.fx === 'deep-core-eruption') drawEruptionTelegraph(graphic, x, y, radius, progress, (x * 7 + y * 13) % 97);
+  else if (sprite.fx === 'shatter') drawFrostTelegraph(graphic, x, y, radius, progress, (x * 7 + y * 13) % 97);
+  else if (sprite.fx === 'bone-spear') drawBoneSpearTelegraph(graphic, x, y, radius, progress);
+  else if (sprite.fx === 'soul-nova') drawSoulNovaTelegraph(graphic, x, y, radius, progress);
 
   // Impact flash — the last sliver of the wind-up.
   if (progress > 0.88) {

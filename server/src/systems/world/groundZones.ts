@@ -1,6 +1,7 @@
 import { incomingFinalDamage } from '../combat/damage/finalDamage';
 import {
   applyStatusEffect,
+  BOSS_DEBUFF_KEY,
   circleGeometry,
   corridorGeometry,
   type DamageMitigationBreakdown,
@@ -12,11 +13,14 @@ import {
   SUNDERED_EFFECT_ID,
   type DeathKiller,
   type GroundZoneView,
+  type PatternPool,
+  type PoolErosion,
   type Vec2,
 } from '@mmo-idle/shared';
 import type { World } from '../../world/World';
 import { markSliceDirty } from '../../ecs/dirtyHelpers';
 import { isInvulnerablePlayer } from '../combat/invulnerability';
+import { applyResistedPlayerDebuff } from '../combat/status/debuffGuard';
 import { recordWorldLogEvent } from '../../world/worldLog';
 import { actorFromPlayer } from '../../world/worldLogActors';
 import { buildSimpleBreakdown, recordPlayerDamaged } from '../../world/worldLogCombat';
@@ -67,6 +71,8 @@ export interface RuntimeSlamTelegraph extends RuntimeGroundZoneBase {
 export interface RuntimeToxicPool extends RuntimeGroundZoneBase {
   kind: 'toxic-pool';
   expiresAtMs: number;
+  /** The radius it was laid at; `spread-pools` grows it toward a multiple of this. */
+  baseRadius?: number;
   damagePerTick: number;
   tickIntervalMs: number;
   slowSpeedMult?: number;
@@ -84,6 +90,11 @@ export interface RuntimeToxicPool extends RuntimeGroundZoneBase {
    */
   rampAccelMult?: number;
   vulnerability?: { damageTakenPct: number; durationMs: number };
+  /** Stacking damage-taken boss debuff while inside (Cave sinkholes). */
+  erodes?: PoolErosion;
+  /** Thorn snare: roots the first player inside for `rootMs`, then expires. */
+  snare?: { rootMs: number };
+  erodeTimersByPlayerId?: Map<string, number>;
   ownerId?: string;
   detonationMultiplier?: number;
   /** Stable mechanic attribution (for example `bile-pool`), not the runtime id. */
@@ -130,6 +141,16 @@ export interface RuntimeFaultLineBurst extends RuntimeGroundZoneBase {
   resolvesAtMs: number;
   points: Vec2[];
   damageMultiplier: number;
+  /**
+   * ROCKFALL: scattered independent circles rather than one connected burst. They
+   * outlive the owner's next telegraph (a lane painted right after them must not
+   * erase the rocks) and each rock pays off with its own impact cue.
+   */
+  scattered?: boolean;
+  /** Each scattered circle leaves this pool where it lands (Swamp Bile Rain). */
+  leavesPool?: PatternPool;
+  /** Client cue for what is falling / erupting (`rockfall`, `bile-rain`, `vent-eruption`). */
+  fx?: string;
 }
 
 /** Node-scoped, runtime-only circles. Never persisted or rebuilt on thaw. */
@@ -205,6 +226,47 @@ export function publishToxicPool(
   };
   zonesFor(world, nodeId).push(published);
   return published;
+}
+
+/** The boss a pattern pool belongs to (cleared with it) and blames on a death. */
+interface PatternPoolOwner {
+  isMonster: { id: string; monsterTypeId: string; name: string; isBoss: boolean };
+  hasPosition: { nodeId: string };
+}
+
+/** Lay the pool a boss pattern leaves where it lands (impact or scattered rain). */
+export function publishPatternPool(
+  world: World,
+  owner: PatternPoolOwner,
+  at: Vec2,
+  pool: PatternPool,
+  fallbackRadius: number,
+  now: number,
+): RuntimeToxicPool {
+  const radius = pool.radius ?? fallbackRadius;
+  return publishToxicPool(world, owner.hasPosition.nodeId, {
+    kind: 'toxic-pool',
+    pos: { ...at },
+    radius,
+    baseRadius: radius,
+    startedAtMs: now,
+    expiresAtMs: now + pool.durationMs,
+    damagePerTick: pool.damagePerTick,
+    tickIntervalMs: pool.tickIntervalMs,
+    slowSpeedMult: pool.slowSpeedMult,
+    ...(pool.flavor ? { flavor: pool.flavor } : {}),
+    ...(pool.detonationMultiplier !== undefined ? { detonationMultiplier: pool.detonationMultiplier } : {}),
+    ...(pool.erodes ? { erodes: pool.erodes } : {}),
+    ownerId: owner.isMonster.id,
+    sourceId: `pattern-pool:${pool.label.toLowerCase().replace(/\s+/g, '-')}`,
+    sourceLabel: pool.label,
+    killer: {
+      monsterTypeId: owner.isMonster.monsterTypeId,
+      monsterName: owner.isMonster.name,
+      isBoss: owner.isMonster.isBoss,
+      nodeId: owner.hasPosition.nodeId,
+    },
+  });
 }
 
 /** Publish a linked-circle radial pattern that resolves as one delayed hit. */
@@ -295,7 +357,9 @@ export function clearGroundZonesByOwner(
   const list = world.groundZones.get(nodeId);
   if (!list) return;
   const kept = list.filter(zone =>
-    zone.kind === 'toxic-pool' || zone.ownerId !== ownerId,
+    zone.kind === 'toxic-pool' ||
+    (zone.kind === 'fault-line-telegraph' && zone.scattered === true) ||
+    zone.ownerId !== ownerId,
   );
   if (kept.length === list.length) return;
   if (kept.length === 0) world.groundZones.delete(nodeId);
@@ -357,6 +421,8 @@ export function isAvoidableHostilePersistentGroundZone(
   if (zone.semantics.movementResponse !== 'avoid-hazards') return false;
   return (
     zone.damagePerTick > 0 ||
+    zone.snare !== undefined ||
+    zone.erodes !== undefined ||
     (zone.slowSpeedMult !== undefined && zone.slowSpeedMult < 1) ||
     (zone.vulnerability?.damageTakenPct ?? 0) > 0
   );
@@ -527,6 +593,44 @@ function tickToxicPool(
       });
     }
 
+    if (pool.snare && !isInvulnerablePlayer(player)) {
+      // SPRUNG: a root (the shared zero-speed slow — Break Free and Cleanse answer
+      // it), then the snare is spent.
+      applyResistedPlayerDebuff(player, {
+        id: 'slow',
+        maxStacks: 1,
+        remainingMs: pool.snare.rootMs,
+        refreshable: true,
+        sourceId: pool.ownerId ?? `ground-zone:${pool.id}`,
+        data: { speedMult: 0, totalMs: pool.snare.rootMs },
+      });
+      contact.harmfulEffects.add('slow');
+      pool.expiresAtMs = now;
+      continue;
+    }
+
+    if (pool.erodes && !isInvulnerablePlayer(player)) {
+      const timers = (pool.erodeTimersByPlayerId ??= new Map());
+      const due = timers.get(player.isPlayer.id) ?? now;
+      if (now >= due) {
+        timers.set(player.isPlayer.id, now + pool.erodes.intervalMs);
+        contact.harmfulEffects.add(pool.erodes.effectId);
+        // Through debuff resistance: the Trench armor's niche answers it too.
+        applyResistedPlayerDebuff(player, {
+          id: pool.erodes.effectId,
+          maxStacks: pool.erodes.maxStacks,
+          remainingMs: pool.erodes.durationMs,
+          refreshable: true,
+          sourceId: pool.ownerId ?? `ground-zone:${pool.id}`,
+          data: {
+            [BOSS_DEBUFF_KEY]: 1,
+            [DAMAGE_TAKEN_PCT_KEY]: pool.erodes.damageTakenPctPerStack,
+            totalMs: pool.erodes.durationMs,
+          },
+        });
+      }
+    }
+
     if (pool.damagePerTick <= 0) continue;
 
     const nextAt = pool.tickTimersByPlayerId.get(player.isPlayer.id) ?? now;
@@ -673,6 +777,7 @@ export function buildGroundZoneViews(
         radius: zone.radius,
         durationMs,
         remainingMs,
+        ...(zone.fx ? { fx: zone.fx } : {}),
       }));
     }
     return {

@@ -8,6 +8,14 @@
   line-height: 1;
 }
 
+/* Concept status/rune assets are allowed to have legacy transparent pixels,
+   but their square must remain readable wherever they are reused. New art is
+   flattened to this same backdrop by the preview pipeline. */
+.game-icon--concept-backdrop {
+  background: #11161d;
+  border-radius: 4px;
+}
+
 .game-icon__fallback,
 .game-icon__layer {
   grid-area: 1 / 1;

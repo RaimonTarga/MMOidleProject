@@ -46,5 +46,54 @@ export function fleeDestination(world: World, monster: MonsterEntity, target: Pl
     const gain = distanceSq(candidate, player) - distanceSq(from, player);
     if (gain > bestGain) { best = candidate; bestGain = gain; }
   }
+  return best ?? cornerEscape(from, player, width, height, shapes);
+}
+
+/** Closest a pursuer may be to the escape line when slipping past them. */
+const CORNER_PASS_CLEARANCE = 110;
+
+/**
+ * CORNERED (boss-lineage redesign bug fix). Every outward line is blocked, so the
+ * boss slides ALONG the wall or slips past the pursuer's side instead of standing
+ * still: wider angles (90-150 degrees off "straight away"), accepted only when the
+ * line keeps clear of the pursuer, preferring whatever ends farthest from them.
+ */
+function cornerEscape(
+  from: Vec2,
+  player: Vec2,
+  width: number,
+  height: number,
+  shapes: ReturnType<typeof inflateShape>[],
+): Vec2 | null {
+  const bearing = Math.atan2(from.y - player.y, from.x - player.x);
+  let best: Vec2 | null = null;
+  let bestDistance = 0;
+  for (const degrees of [90, -90, 105, -105, 120, -120, 135, -135, 150, -150]) {
+    const angle = bearing + degrees * Math.PI / 180;
+    const direction = { x: Math.cos(angle), y: Math.sin(angle) };
+    let length = 420;
+    if (direction.x > 1e-6) length = Math.min(length, (width - 40 - from.x) / direction.x);
+    if (direction.x < -1e-6) length = Math.min(length, (40 - from.x) / direction.x);
+    if (direction.y > 1e-6) length = Math.min(length, (height - 40 - from.y) / direction.y);
+    if (direction.y < -1e-6) length = Math.min(length, (40 - from.y) / direction.y);
+    if (length < 80) continue;
+    const end = { x: from.x + direction.x * length, y: from.y + direction.y * length };
+    let fraction = 1;
+    for (const shape of shapes) {
+      const hit = segmentEntryT(from, end, shape);
+      if (hit !== null) fraction = Math.min(fraction, hit);
+    }
+    const clear = length * fraction - 2;
+    if (clear < 80) continue;
+    const candidate = { x: from.x + direction.x * clear, y: from.y + direction.y * clear };
+    // Never THROUGH the pursuer: the closest point of the line to them must stay clear.
+    const t = Math.max(0, Math.min(1,
+      ((player.x - from.x) * (candidate.x - from.x) + (player.y - from.y) * (candidate.y - from.y)) /
+      Math.max(1, (candidate.x - from.x) ** 2 + (candidate.y - from.y) ** 2)));
+    const closest = { x: from.x + (candidate.x - from.x) * t, y: from.y + (candidate.y - from.y) * t };
+    if (distanceSq(closest, player) < CORNER_PASS_CLEARANCE ** 2) continue;
+    const d = distanceSq(candidate, player);
+    if (d > bestDistance) { best = candidate; bestDistance = d; }
+  }
   return best;
 }

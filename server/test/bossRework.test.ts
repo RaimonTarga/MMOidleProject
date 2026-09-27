@@ -24,9 +24,11 @@ import {
 } from '../src/systems/combat/engine/combat';
 import { updateCombatState } from '../src/systems/combat/engine/combatState';
 import {
+  BOSS_RALLIED_EFFECT_ID,
   BOSS_ROAR_HASTE_EFFECT_ID,
   monsterAttackCooldown,
 } from '../src/systems/combat/engine/monsterMechanics';
+import { monsterDeathEmpowerMult } from '../src/systems/combat/damage/monsterDeathEffects';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { STUN_EFFECT } from '../src/systems/combat/status/stun';
 import { applyPlatingShredStacks } from '../src/systems/combat/status/platingShred';
@@ -108,7 +110,11 @@ assert(
   'T1 Plains reinforcement paths should use the 2-second Rallying Cry cast',
 );
 assert(hasAction('gorging-razortusk', 'spawn-adds'), 'T2 Plains should still spawn mobs');
-assert(hasAction('gorging-razortusk', 'roar'), 'T2 Plains should keep the allied haste roar');
+assert(hasAction('gorging-razortusk', 'empower-adds'), 'T2 Plains Rallying Roar should empower the herd');
+assert(
+  !scriptActions('gorging-razortusk').some(a => a.type === 'spawn-adds' && (a.monsterTypeId === 'plains-slime' || a.monsterTypeId === 'boar')),
+  'T2 Plains summons the T2 herd, never T1 mobs',
+);
 for (const id of ['tusked-razorback', 'gorging-razortusk']) {
   assert(!hasAction(id, 'enrage'), `${id} must not self-enrage — Plains escalates the herd`);
 }
@@ -171,20 +177,23 @@ for (const id of ['grave-toadeater', 'mire-gorged-behemoth', 'rot-spore-croc-beh
 assert(def('grave-toadeater').dotEffect?.durationMs === 7000, 'T1 Swamp poison should last 7 seconds');
 assert(def('mire-gorged-behemoth').dotEffect?.durationMs === 8000, 'T2 Swamp venom should last 8 seconds');
 assert(def('rot-spore-croc-behemoth').dotEffect?.durationMs === 9000, 'T3 Swamp spores should last 9 seconds');
-const rotSporeMorph = def('rot-spore-croc-behemoth').bossScript?.phases
-  ?.find(phase => phase.hpPct === 0.25)
-  ?.actions.find(action => action.type === 'morph');
+// Boss-lineage redesign (2026-09-27): Swamp stops demanding Cleanse (no pool
+// vulnerability), pools FADE instead of lasting the fight from T2 on, a second pool
+// kind (Mire) and a lash that drags toward pools arrive at T2, and T3's Spore pools
+// are the ones that detonate.
+for (const id of ['mire-gorged-behemoth', 'rot-spore-croc-behemoth']) {
+  const pool = def(id).chargedAttack?.pool;
+  assert(pool && pool.vulnerability === undefined, `${id}: pools no longer demand Cleanse`);
+  // Longer since the 2026-09-27 playtest (pools were no threat), still far short of the fight.
+  assert(pool.durationMs <= 90_000, `${id}: pools fade instead of walling the arena off`);
+  const steps = def(id).bossPattern?.steps ?? [];
+  assert(steps.some(step => step.kind === 'impact' && step.pool?.flavor === 'mire'), `${id}: lobs Mire pools`);
+  assert(steps.some(step => step.kind === 'pull' && step.toward === 'nearest-pool'), `${id}: lashes you toward a pool`);
+}
+const sporeVariant = def('rot-spore-croc-behemoth').bossPatternVariants?.[0];
 assert(
-  rotSporeMorph?.type === 'morph' && rotSporeMorph.dotEffect?.durationMs === 9000,
-  'T3 Rot Spores morph should preserve the 9-second lineage duration',
-);
-assert(
-  (def('mire-gorged-behemoth').chargedAttack?.pool?.vulnerability?.damageTakenPct ?? 0) > 0,
-  'T2 Swamp pools should increase damage taken',
-);
-assert(
-  (def('rot-spore-croc-behemoth').chargedAttack?.pool?.detonationMultiplier ?? 0) > 1,
-  'T3 Swamp pools should detonate at expiry',
+  sporeVariant?.steps.some(step => step.kind === 'impact' && step.pool?.flavor === 'spore' && (step.pool.detonationMultiplier ?? 0) > 1),
+  'T3 Swamp Spore pools detonate at expiry',
 );
 
 // Mountain's sequence grows from slow slam, to stun, to charge-lock-slam.
@@ -250,50 +259,32 @@ for (const id of mountainIds.slice(2)) {
     monster.engageSequence === undefined,
     `${id} should not keep the legacy charge-lock opener alongside its pattern`,
   );
+  // Boss-lineage redesign: the tackle IS the payoff (Cragbreaker / Earthshatter
+  // and the fault lines are cut); later tiers add a second charge instead.
   const steps = monster.bossPattern?.steps ?? [];
-  const chargeIndex = steps.findIndex(step => step.kind === 'charge');
-  const impactIndex = steps.findIndex(step => step.kind === 'impact');
-  assert(chargeIndex >= 0 && impactIndex > chargeIndex, `${id} should charge, then slam`);
-  const impact = steps[impactIndex];
-  assert(
-    impact.kind === 'impact' && impact.anchor === 'captured-endpoint',
-    `${id} should erupt where it charged TO, not where the player later stood`,
-  );
-}
-{
-  const steps = def('iron-crest-titan').bossPattern?.steps ?? [];
-  const impactIndex = steps.findIndex(step => step.kind === 'impact');
-  const faultIndex = steps.findIndex(step => step.kind === 'fault-lines');
-  assert(
-    impactIndex >= 0 && faultIndex > impactIndex,
-    'T4 Mountain should follow its slam with radial fault lines',
-  );
-  // The cracks are the finite TAIL of the payoff, so the recovery has to come after
-  // them — a recovery that opened before the last damage landed would be a punish
-  // window the player cannot actually use.
-  const recoveryIndex = steps.findIndex(step => step.kind === 'recovery');
-  assert(recoveryIndex > faultIndex, 'T4 Mountain should recover after its fault lines');
+  assert(steps.some(step => step.kind === 'charge'), `${id} should charge`);
+  assert(!steps.some(step => step.kind === 'impact' || step.kind === 'fault-lines'),
+    `${id} should not follow its charge with a circle`);
+  assert((monster.bossPatternVariants ?? []).some(v => v.steps.filter(step => step.kind === 'charge').length === 2),
+    `${id} should gain a double charge in a later phase`);
 }
 
-// Caverns corrosion stacks for the encounter, and every tier keeps ONE telegraphed
-// beat. T1's is now a Breach that applies a larger dose of the SAME corrosion rather
-// than a generic damage circle that taught nothing about erosion (2026-09-04); T2/T3
-// still run their planted slams until the Phase 4 burrow conversion.
+// Boss-lineage redesign (2026-09-27): Cave is THE BURROWER at every tier — a
+// targetable mound you can drag up with damage — and plating shred is gone. Its
+// erosion is the sinkholes' Eroded debuff from T2 on.
 for (const id of ['obsidian-broodmother', 'chitinous-dreadbore', 'deep-core-burrow-gorger']) {
   const cave = def(id);
-  assert(!!(cave.appliesPlatingShred ?? cave.castsPlatingShred), `${id} should corrode plating`);
-  const breach = cave.monsterAbilities?.some((ability) =>
-    ability.actions.some((action) => action.type === 'plating-shred'),
-  );
+  assert(!cave.appliesPlatingShred && !cave.castsPlatingShred, `${id} no longer shreds plating`);
+  const burrow = cave.bossPattern?.steps.find(step => step.kind === 'conceal');
+  assert(burrow?.kind === 'conceal' && burrow.targetable === true, `${id} burrows as a targetable mound`);
+  assert(!!cave.bossPattern?.stoppedBy?.damage, `${id}: damage on the mound drags it up`);
+}
+for (const id of ['chitinous-dreadbore', 'deep-core-burrow-gorger']) {
   assert(
-    !!cave.chargedAttack?.aoe || breach || !!cave.bossPattern,
-    `${id} should keep one telegraphed beat — a Breach, a planted slam, or a burrow sequence`,
+    def(id).bossPattern!.steps.some(step => step.kind === 'impact' && step.pool?.flavor === 'sinkhole' && !!step.pool.erodes),
+    `${id}: eruptions leave eroding sinkholes`,
   );
 }
-assert(
-  def('deep-core-burrow-gorger').appliesPlatingShred?.thresholdPoison?.atStacks.length === 2,
-  'T3 Caverns should trigger poison at authored corrosion thresholds',
-);
 
 // Every former scripted screen-wide slam is now a bounded, charged ground tell.
 const migratedSlamIds = [
@@ -512,24 +503,49 @@ initCombatSystems();
   assert(comboDamage === oneHit * 2, `Forest claw combo should deal two hits (${comboDamage} != ${oneHit * 2})`);
 }
 
-// The Plains roar buffs both its owner and nearby allies through the cadence gate.
+// The T1 Plains roar buffs both its owner and nearby allies through the cadence gate.
 {
   const world = new World();
-  const boss = world.createMonster(NODE, 'gorging-razortusk', { x: 400, y: 400 });
+  const boss = world.createMonster(NODE, 'tusked-razorback', { x: 400, y: 400 });
   const ally = world.createMonster(NODE, 'plains-slime', { x: 450, y: 400 });
   assert(!!boss && !!ally, 'roar fixtures should spawn');
   setAggroTarget(world, boss, { id: 'roar-target', kind: 'player' }, 1_000);
-  updateBossScripts(world, 6_000);
+  boss.hasHealth.hp = Math.round(boss.hasHealth.maxHp * 0.4);
+  updateBossScripts(world, 100);
   assert(
     world.takeNodeEvents(NODE).some(event =>
       event.kind === 'monster-cast-start' && event.label === 'Rallying Cry',
     ),
-    'T2 Plains reinforcement cadence should announce Rallying Cry before the roar',
+    'T1 Plains rally should announce Rallying Cry before the roar',
   );
   updateBossScripts(world, 2_000);
   assert(!!getStatusEffect(boss.tracksCombat, BOSS_ROAR_HASTE_EFFECT_ID), 'roar should haste the boss');
   assert(!!getStatusEffect(ally.tracksCombat, BOSS_ROAR_HASTE_EFFECT_ID), 'roar should haste nearby allies');
   assert(monsterAttackCooldown(ally) < ally.performsAttack.attackCooldown, 'roar haste should shorten attack cadence');
+}
+
+// T2 Plains: the Rallying Roar empowers the boss's own herd, lastingly, per stack.
+{
+  const world = new World();
+  const boss = world.createMonster(NODE, 'gorging-razortusk', { x: 400, y: 400 })!;
+  setAggroTarget(world, boss, { id: 'roar-target', kind: 'player' }, 1_000);
+  updateBossScripts(world, 5_000);  // Call the Herd starts
+  updateBossScripts(world, 1_500);  // ...and resolves
+  const herd = (boss.scriptsBoss!.spawnedAddIds ?? []).map(id => world.getMonsterEntity(id)!);
+  assert(herd.length === 2 && herd.every(add => add.isMonster.monsterTypeId === 'prairie-yearling'),
+    'T2 trickle calls prairie yearlings');
+  updateBossScripts(world, 5_500);  // Rallying Roar starts
+  assert(
+    world.takeNodeEvents(NODE).some(event => event.kind === 'monster-cast-start' && event.label === 'Rallying Roar'),
+    'the roar is a telegraphed cast',
+  );
+  updateBossScripts(world, 2_000);  // ...and resolves
+  const add = herd[0];
+  const rally = getStatusEffect(add.tracksCombat, BOSS_RALLIED_EFFECT_ID);
+  assert(rally && rally.stacks === 1, 'every living add gains a Rallied stack');
+  assert(monsterAttackCooldown(add) < add.performsAttack.attackCooldown, 'Rallied adds attack faster');
+  assert(monsterDeathEmpowerMult(add) > 1, 'Rallied adds hit harder');
+  assert(!getStatusEffect(boss.tracksCombat, BOSS_RALLIED_EFFECT_ID), 'the boss itself is not empowered');
 }
 
 // T2 Mountain's Stoneplate barrier is a REAL absorb pool on the shared damage path,
@@ -598,7 +614,12 @@ initCombatSystems();
   const boss = world.createMonster(NODE, 'obsidian-broodmother', { x: 400, y: 400 });
   assert(!!boss, 'Caverns boss should spawn');
   setAggroTarget(world, boss, { id: player.isPlayer.id, kind: 'player' }, 1_000);
-  const broodmother = MONSTER_DATABASE.get('obsidian-broodmother')!;
+  // Fixture spec: no shipped boss corrodes plating after the lineage redesign, but
+  // the runtime is kept (and covered) for future authoring.
+  const broodmother = {
+    ...MONSTER_DATABASE.get('obsidian-broodmother')!,
+    castsPlatingShred: { platingPerStack: 1, maxStacks: 6 },
+  };
   runMonsterAttack(world, boss, player, 10_000);
   assert(!getStatusEffect(player.tracksCombat, PLATING_SHRED_EFFECT_ID), 'ordinary Broodmother attacks do not corrode plating');
   applyPlatingShredStacks(world, boss, player, broodmother, 2);
@@ -610,8 +631,18 @@ initCombatSystems();
   assert(!getStatusEffect(player.tracksCombat, PLATING_SHRED_EFFECT_ID), 'corrosion should clear on disengage');
 }
 
-// T3 Caverns poison appears only on the authored corrosion threshold hits.
+// Corrosion threshold poison appears only on the authored threshold hits (fixture:
+// patched onto the T3 Cave boss, which no longer ships it).
 {
+  const gorger = MONSTER_DATABASE.get('deep-core-burrow-gorger')!;
+  const savedShred = gorger.appliesPlatingShred;
+  gorger.appliesPlatingShred = {
+    platingPerStack: 2, maxStacks: 8,
+    thresholdPoison: {
+      atStacks: [3, 6], debuffId: 'deep-core-corrosive-venom', label: 'Corrosive Venom',
+      damagePerStack: 16, maxStacks: 2, tickIntervalMs: 1000, durationMs: 6000, element: 'poison',
+    },
+  };
   const world = new World();
   const player = world.attachPlayerEntity(playerSlices('threshold-poison'), 'threshold-poison');
   const boss = world.createMonster(NODE, 'deep-core-burrow-gorger', { x: 400, y: 400 });
@@ -628,6 +659,7 @@ initCombatSystems();
   assert(getStatusEffect(player.tracksCombat, poisonId)?.stacks === 1, 'non-threshold hits must not add poison');
   runMonsterAttack(world, boss, player, 60_000);
   assert(getStatusEffect(player.tracksCombat, poisonId)?.stacks === 2, 'threshold 6 should add the second poison stack');
+  gorger.appliesPlatingShred = savedShred;
 }
 
 // Expiring T3 pools detonate once through the owner boss's real damage pipeline.

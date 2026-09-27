@@ -41,6 +41,7 @@ import {
   findMinionTelegraphEscape,
   positionInsideTelegraph,
 } from '../../../combat/ai/telegraphEvasion';
+import { isConcealedEntity } from "../../../combat/invulnerability";
 
 // Pixels — how close to the follow offset is "close enough" to idle.
 const FOLLOW_HOVER_TOL = 10;
@@ -64,7 +65,7 @@ function inheritedRuneTarget(world: World, owner: PlayerEntity, leashRadius: num
     ACTION_DATABASE.get(rule.actionId)?.channel === 'TARGETING')) return undefined;
   const id = getAutoTargetId(owner);
   const target = id ? world.getMonsterEntity(id) : undefined;
-  if (!target || target.hasHealth.hp <= 0 || target.isInvulnerable || target.isConcealed
+  if (!target || target.hasHealth.hp <= 0 || target.isInvulnerable || isConcealedEntity(target)
     || target.hasPosition.nodeId !== owner.hasPosition.nodeId
     || distanceSq(target.hasPosition.current, owner.hasPosition.current) > leashRadius * leashRadius) return null;
   return target;

@@ -31,6 +31,9 @@ export function registerEvasion(): void {
     if (ctx.defenderType !== 'player' || ctx.attackerType !== 'monster') return;
     const player = ctx.defender;
     if (!player.evadesHits || player.evadesHits.dodgeRate <= 0) return;
+    // An unevadable hit (Volcanic final strike) neither dodges nor spends the
+    // charge: the next ordinary hit still gets the dodge it built toward.
+    if (ctx.metadata['unevadable'] === true) return;
 
     const acc = player.evadesHits.charge + player.evadesHits.dodgeRate;
     if (acc >= 1) {

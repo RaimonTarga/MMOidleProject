@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { resolveMonsterFrame } from '@mmo-idle/shared';
+import { packedAssetUrl } from '../../packedAssetUrl';
 
 // Renders a single monster's atlas frame as a cropped DOM element, reusing the
 // exact game texture atlas (/assets/sprites.png) the Phaser scene draws from.
 // We parse the atlas JSON once and crop via background-position so no Phaser
 // canvas is needed inside React.
 
-const ATLAS_IMAGE_URL = '/assets/sprites.png';
-const ATLAS_JSON_URL = '/assets/sprites.json';
+const ATLAS_IMAGE_URL = packedAssetUrl('/assets/sprites.png');
+const ATLAS_JSON_URL = packedAssetUrl('/assets/sprites.json');
 
 interface FrameRect {
   x: number;

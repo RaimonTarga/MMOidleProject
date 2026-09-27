@@ -45,6 +45,7 @@ export type { MonsterBehavior } from './behavior';
 export type {
   BossAction,
   BossPhase,
+  BossWeather,
   BossScript,
   EncounterStage,
   MonsterAbility,
@@ -67,6 +68,9 @@ export type {
   BossPattern,
   BossPatternStep,
   PatternAnchor,
+  PatternPool,
+  PoolErosion,
+  PatternDebuff,
   RecoversFromPattern,
   RunsBossPattern,
 } from './bossPatterns';

@@ -31,6 +31,7 @@ import { afflictionTechniqueHasWork } from "./abilityAffliction";
 import { summonerProfileFor, usesSummonTechniques } from "../../classes/archetypes/summoner/profile";
 import { formationChargeTarget } from "./formationCharge";
 import { isSummonerRepositioning } from "../../classes/archetypes/summoner/command";
+import { isConcealedEntity } from "../../combat/invulnerability";
 
 /** Validate the physical caster again throughout its wind-up. */
 export function summonCanCastAt(
@@ -42,7 +43,7 @@ export function summonCanCastAt(
     && !isSummonerRepositioning(player)
     && minion.isMinion.ownerPlayerId === player.isPlayer.id
     && minion.hasHealth.hp > 0 && target.hasHealth.hp > 0
-    && !target.isConcealed && !target.isInvulnerable
+    && !isConcealedEntity(target) && !target.isInvulnerable
     && minion.hasPosition.nodeId === player.hasPosition.nodeId
     && target.hasPosition.nodeId === player.hasPosition.nodeId
     && !isHardControlled(minion.tracksCombat)

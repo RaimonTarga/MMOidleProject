@@ -43,6 +43,7 @@ import {
 import { applyClassDotStack } from "../../classes/archetypes/dot/dotPrototype";
 import { registerReloadLifecycleHook } from "../../classes/archetypes/reload/reloadLifecycle";
 import { applyMonsterRoot, applyMonsterSlow } from "../../combat/status/monsterControl";
+import { monsterIgnoresControl } from "../../combat/status/controlImmunity";
 import { applyStun } from "../../combat/status/stun";
 import { attachComponent, detachComponent } from "../../../ecs/markerHelpers";
 import {
@@ -354,7 +355,9 @@ export function resolveCastPayload(
   // Stunning Strike: the control lands with the blow. Applied after the damage so
   // a killing blow doesn't spend the stun on a corpse, and through `applyStun` so
   // the shared post-stun immunity keeps chain-locking off the table.
-  if (effect.stunMs && effect.stunMs > 0 && target.hasHealth.hp > 0) {
+  // A plated or control-immune boss refuses it outright (principle 6), rather than
+  // showing a stun that its pattern then ignores.
+  if (effect.stunMs && effect.stunMs > 0 && target.hasHealth.hp > 0 && !monsterIgnoresControl(target)) {
     applyStun(target.tracksCombat, effect.stunMs, player.isPlayer.id);
   }
 }

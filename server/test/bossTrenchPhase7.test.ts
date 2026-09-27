@@ -180,18 +180,16 @@ function gap(player: PlayerEntity, anchor: { x: number; y: number }): number {
 const SERPENT = MONSTER_DATABASE.get('elder-trench-serpent')!;
 const PATTERN = SERPENT.bossPattern!;
 
-// The authored sequence: Wound, then the catch, then the bite.
+// The authored hunt (boss-lineage redesign): the Undertow catch, the debuff pile,
+// then the Devour.
 {
   const kinds = PATTERN.steps.map(step => step.kind);
-  assert(kinds.includes('apply-status'), 'the sequence should open with the Wound');
-  assert(kinds.includes('pull'), 'and drag a disengaged target back');
-  assert(kinds.includes('payoff'), 'before the Devour');
-  assert(kinds.includes('recovery'), 'and end in a punishable recovery');
+  assert(kinds.includes('pull'), 'the hunt drags a disengaged target back');
+  assert(kinds.includes('payoff'), 'before the bites and the Devour');
   assert(
     kinds.indexOf('pull') < kinds.indexOf('payoff'),
     'Undertow catches BEFORE the bite, or it catches nothing',
   );
-
   // No permanent speed and no teleport anywhere in the sequence.
   assert(SERPENT.chargeOnAggro === undefined, 'no aggro speed burst');
   assert(SERPENT.engageSequence === undefined, 'and no legacy engage charge');
@@ -249,47 +247,24 @@ function advanceUntil(world: World, from: number, predicate: () => boolean, max 
   );
 }
 
-// DEVOUR HEALS ONLY ON A HIT. Denying it is what makes the long tell worth reading.
+// DEVOUR NO LONGER HEALS (boss-lineage redesign): a landed Devour hurts, and the
+// serpent's health does not move.
 {
-  function devourHeal(dodge: boolean): number {
-    const world = new World();
-    const player = world.attachPlayerEntity(playerSlices('devour', 405, 400), 'devour');
-    const { monster, armedAt } = armedSerpent(world, 'devour');
-    monster.hasHealth.hp = Math.round(monster.hasHealth.maxHp * 0.5);
-    const hpBefore = monster.hasHealth.hp;
-
-    updateBossPatterns(world, 100, armedAt);
-    let now = armedAt;
-    for (let i = 0; i < 300 && !monster.recoversFromPattern; i++) {
-      now += 100;
-      // A dodging player leaves the node entirely, which is the cleanest way to be
-      // unhittable without also cancelling the sequence through some other path.
-      if (dodge) player.hasPosition.nodeId = 'node-0-0';
-      updateBossPatterns(world, 100, now);
-    }
-    return monster.hasHealth.hp - hpBefore;
+  const world = new World();
+  const player = world.attachPlayerEntity(playerSlices('devour', 405, 400), 'devour');
+  const { monster, armedAt } = armedSerpent(world, 'devour');
+  monster.hasHealth.hp = Math.round(monster.hasHealth.maxHp * 0.5);
+  const bossHp = monster.hasHealth.hp;
+  const playerHp = player.hasHealth.hp;
+  updateBossPatterns(world, 100, armedAt);
+  let now = armedAt;
+  for (let i = 0; i < 300 && !monster.recoversFromPattern; i++) {
+    now += 100;
+    player.hasPosition.current = { x: 405, y: 400 };
+    updateBossPatterns(world, 100, now);
   }
-
-  const healedOnHit = devourHeal(false);
-  const healedOnMiss = devourHeal(true);
-  assert(healedOnHit > 0, 'a landed Devour should feed the serpent');
-  assert(healedOnMiss <= 0, 'a Devour that never lands must heal it nothing');
-}
-
-// BLOOD IN THE WATER tightens the gaps and adds no attacks.
-{
-  const lowHealth = (SERPENT.bossScript?.phases ?? []).find(phase => phase.hpPct === 0.25);
-  assert(!!lowHealth, 'the Serpent should have a low-health beat');
-  assert(
-    lowHealth.actions.every(
-      action => action.type === 'empower-charged' || action.type === 'stat-buff',
-    ),
-    'Blood in the Water should only tighten what exists — no new attacks',
-  );
-  assert(
-    !lowHealth.actions.some(action => action.type === 'apply-shield'),
-    'and it should not armour up: the fight ends by landing the kill',
-  );
+  assert(player.hasHealth.hp < playerHp, 'the hunt lands');
+  assert(monster.hasHealth.hp <= bossHp, 'and heals the serpent nothing');
 }
 
 console.log('bossTrenchPhase7: ok');

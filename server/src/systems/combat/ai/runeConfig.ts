@@ -19,6 +19,7 @@ import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
 import { playerDotAtMaxStacks } from "../damage/dotInventory";
 import { markSliceDirty } from "../../../ecs/dirtyHelpers";
 import { isMonsterThreatening } from "./guardableThreats";
+import { bossPatternEscaping } from "./bossPatterns";
 import { isPlayerActivelyInCombat, isPlayerInCombat } from "./engagement";
 import {
   telegraphsContainingPlayer,
@@ -180,6 +181,19 @@ function formationBroken(world: World, player: PlayerEntity): boolean {
   return living * 2 <= summons.targetCount;
 }
 
+/**
+ * A boss fighting this player is getting away (flee, dash) or coming for them
+ * underground — the moment a root or stun answers (Enemy Escaping).
+ */
+function bossEscapingFrom(world: World, player: PlayerEntity): boolean {
+  for (const monster of world.patternMonsters) {
+    if (monster.hasPosition.nodeId !== player.hasPosition.nodeId) continue;
+    if (monster.runsBossPattern?.targetId !== player.isPlayer.id) continue;
+    if (bossPatternEscaping(monster)) return true;
+  }
+  return false;
+}
+
 /** Whether the player's current attack target is an elite (or a boss). */
 function isEliteTarget(world: World, targetId: string | undefined): boolean {
   if (!targetId) return false;
@@ -249,6 +263,11 @@ export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
       targetAtMaxDotStacks: attackTarget
         ? playerDotAtMaxStacks(world, player, attackTarget)
         : false,
+      targetShielded: (attackTarget?.hasStatus.enemyBarrier?.amount ?? 0) > 0,
+      targetEscaping: bossEscapingFrom(world, player),
+      debuffCount: new Set(player.tracksCombat.statusEffects
+        .filter((e) => e.stacks > 0 && isHarmfulPlayerStatusEffect(e.id, e.data))
+        .map((e) => e.id)).size,
       traveling:
         player.hasAutoTraversePath !== undefined &&
         player.hasAutoTraversePath.targetNodeId !== player.hasPosition.nodeId &&

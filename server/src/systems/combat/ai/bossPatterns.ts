@@ -28,7 +28,10 @@ import {
   moverOverlapsBlockShapes,
   type BossPattern,
   type BossPatternStep,
+  type HazardFlavor,
   type PatternAnchor,
+  type PatternDebuff,
+  type PatternPool,
   type Vec2,
 } from '@mmo-idle/shared';
 import type { MinionEntity, MonsterEntity, PlayerEntity } from '../../../ecs/entity';
@@ -40,6 +43,8 @@ import {
   publishChargeCorridor,
   publishFaultLineBurst,
   publishGroundZone,
+  publishPatternPool,
+  publishToxicPool,
   reaimChargeCorridor,
   type RuntimeChargeCorridor,
 } from '../../world/groundZones';
@@ -50,13 +55,20 @@ import { distanceSq } from '@mmo-idle/shared';
 import { markSliceDirty } from '../../../ecs/dirtyHelpers';
 import { hasIndependentRoot, setRooted } from '../../world/rooted';
 import {
+  ABILITY_ROOT_EFFECT_ID,
+  ambientRampStatus,
+  BOSS_DEBUFF_KEY,
+  DEBUFF_DURATION_PCT_KEY,
+  isHarmfulPlayerStatusEffect,
+  DAMAGE_TAKEN_PCT_KEY,
+  SHATTER_VULNERABLE_EFFECT_ID,
   applyStatusEffect,
   getCounter,
   getStatusEffect,
   removeStatusEffect,
   setCounter,
 } from '@mmo-idle/shared';
-import { canApplyPlayerDebuff } from '../status/debuffGuard';
+import { applyResistedPlayerDebuff, canApplyPlayerDebuff } from '../status/debuffGuard';
 import { harmfulStatusDurationMult } from '../status/harmfulStatus';
 import { syncPlayerControlLockout } from '../status/playerControlLockout';
 import {
@@ -67,6 +79,10 @@ import {
 import { isMonsterFrozen } from '../../classes/archetypes/dot/t3/core/selectors';
 import { isMonsterStunned } from '../status/stun';
 import { applyMonsterDotToPlayer } from '../status/monsterDot';
+import { monsterIgnoresControl } from '../status/controlImmunity';
+import { BOSS_FRENZY_EFFECT_ID } from '../engine/monsterMechanics';
+import { bossAdds } from './bossAdds';
+import { raiseCorpsesBurst } from './raiseDead';
 
 const PATTERN_SESSION_KEY = 'bossPatternSession';
 const PATTERN_USED_KEY = 'bossPatternUsed';
@@ -97,8 +113,10 @@ const ARRIVAL_EPSILON_PX = 60;
  * cooldown, `castMsMult` its wind-ups, `radiusMult` its impact circles, and the
  * aftershock scalars its fault lines.
  */
-export function bossPatternFor(monster: MonsterEntity): BossPattern | undefined {
-  const pattern = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId)?.bossPattern;
+export function bossPatternFor(monster: MonsterEntity, patternId?: string): BossPattern | undefined {
+  const pattern = patternId === undefined
+    ? activeBossPatternDef(monster)
+    : bossPatternDefById(monster, patternId);
   const scale = monster.scriptsBoss?.chargedOverride;
   if (!pattern) return pattern;
   const stacks = chargeInstinct(monster);
@@ -143,6 +161,44 @@ export function bossPatternFor(monster: MonsterEntity): BossPattern | undefined 
   };
 }
 
+/** An authored pattern of this boss (base or variant) by id, unscaled. */
+export function bossPatternDefById(monster: MonsterEntity, patternId: string): BossPattern | undefined {
+  const def = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId);
+  if (!def) return undefined;
+  if (def.bossPattern?.id === patternId) return def.bossPattern;
+  return def.bossPatternVariants?.find(variant => variant.id === patternId);
+}
+
+/**
+ * The authored pattern this boss arms NEXT: its `set-pattern` override when a phase
+ * named one, otherwise the base `bossPattern`. Unscaled — see `bossPatternFor`.
+ */
+export function activeBossPatternDef(monster: MonsterEntity): BossPattern | undefined {
+  const overrideId = monster.scriptsBoss?.patternOverrideId;
+  const override = overrideId ? bossPatternDefById(monster, overrideId) : undefined;
+  return override ?? MONSTER_DATABASE.get(monster.isMonster.monsterTypeId)?.bossPattern;
+}
+
+/** The authored definition of the pattern CURRENTLY RUNNING, if any. Unscaled. */
+export function runningBossPatternDef(monster: MonsterEntity): BossPattern | undefined {
+  const running = monster.runsBossPattern;
+  return running ? bossPatternDefById(monster, running.patternId) : undefined;
+}
+
+/**
+ * The boss is in a MOVEMENT beat a root or stun is meant to answer: fleeing behind
+ * an Escape Guard, travelling underground or unseen toward its target, or dashing.
+ * Drives the `Enemy Escaping` rune condition.
+ */
+export function bossPatternEscaping(monster: MonsterEntity): boolean {
+  const state = monster.runsBossPattern;
+  if (!state?.stepStarted) return false;
+  const step = runningBossPatternDef(monster)?.steps[state.stepIndex];
+  if (!step) return false;
+  if (step.kind === 'escape-guard' || step.kind === 'dash') return true;
+  return step.kind === 'conceal' && step.travelSpeed !== undefined && step.rootable === true;
+}
+
 /** True while an ordered pattern or its recovery owns this monster. */
 export function patternOwnsMonster(monster: MonsterEntity): boolean {
   return monster.runsBossPattern !== undefined || monster.recoversFromPattern !== undefined;
@@ -160,23 +216,55 @@ export function patternSuppressesOrdinaryActions(monster: MonsterEntity): boolea
  * per-combat cooldown, so re-engaging a boss restarts its opening delay rather
  * than letting a pattern fire the instant it re-aggros.
  */
+/**
+ * Counter keys for a pattern's cooldown. The main pattern (base or `set-pattern`
+ * variant) shares the legacy keys; an `add-pattern` extra keeps its own clock.
+ */
+function patternKeys(monster: MonsterEntity, patternId: string): { session: string; next: string; runs: string } {
+  const extra = monster.scriptsBoss?.extraPatternIds?.includes(patternId) === true;
+  return extra
+    ? { session: `${PATTERN_SESSION_KEY}:${patternId}`, next: `${PATTERN_CD_NEXT_KEY}:${patternId}`, runs: `bossPatternRuns:${patternId}` }
+    : { session: PATTERN_SESSION_KEY, next: PATTERN_CD_NEXT_KEY, runs: `bossPatternRuns:${patternId}` };
+}
+
 function patternReady(monster: MonsterEntity, pattern: BossPattern, now: number): boolean {
   const aggro = monster.hasAggroTarget;
   if (!aggro) return false;
   const cs = monster.tracksCombat;
-  if (getCounter(cs, PATTERN_SESSION_KEY) !== aggro.sinceMs) {
-    setCounter(cs, PATTERN_SESSION_KEY, aggro.sinceMs);
+  const keys = patternKeys(monster, pattern.id);
+  if (getCounter(cs, keys.session) !== aggro.sinceMs) {
+    setCounter(cs, keys.session, aggro.sinceMs);
     setCounter(
       cs,
-      PATTERN_CD_NEXT_KEY,
+      keys.next,
       aggro.sinceMs + (pattern.initialCooldownMs ?? pattern.cooldownMs),
     );
   }
-  return now >= getCounter(cs, PATTERN_CD_NEXT_KEY);
+  return now >= getCounter(cs, keys.next);
 }
 
 function armPatternCooldown(monster: MonsterEntity, pattern: BossPattern, now: number): void {
-  setCounter(monster.tracksCombat, PATTERN_CD_NEXT_KEY, now + pattern.cooldownMs);
+  const keys = patternKeys(monster, pattern.id);
+  let cooldown = pattern.cooldownMs;
+  const accel = pattern.accelerate;
+  if (accel) {
+    const runs = getCounter(monster.tracksCombat, keys.runs);
+    cooldown = Math.max(accel.minCooldownMs, cooldown * accel.cooldownMultPerRun ** runs);
+  }
+  setCounter(monster.tracksCombat, keys.next, now + cooldown);
+}
+
+/** The patterns this boss may arm now: added extras first, then the main one. */
+function armablePatterns(monster: MonsterEntity): BossPattern[] {
+  const list: BossPattern[] = [];
+  for (const id of monster.scriptsBoss?.extraPatternIds ?? []) {
+    const extra = bossPatternFor(monster, id);
+    if (extra) list.push(extra);
+  }
+  const main = bossPatternFor(monster);
+  if (main) list.push(main);
+  // Higher priority first; the sort is stable, so ties keep extras ahead of main.
+  return list.sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
 }
 
 // ── Encounter Instinct ──────────────────────────────────────────────────────────
@@ -247,6 +335,7 @@ export function endPattern(
   const state = monster.runsBossPattern;
   if (!state) return;
 
+  clearCastAnnouncement(world, monster, state);
   for (const sourceId of state.barrierSourceIds) clearSourceBarrier(monster, sourceId);
   // Retire the lane and any telegraph this pattern published. Owner-keyed, so it
   // cannot strand a circle for the sweeper to find after the boss has moved on.
@@ -274,6 +363,37 @@ export function endPattern(
   }
 }
 
+/** Show the effect a cast announces (`cast.announce`) with the cast's clock. */
+function publishCastAnnouncement(
+  world: World,
+  monster: MonsterEntity,
+  state: NonNullable<MonsterEntity['runsBossPattern']>,
+  effectId: string,
+  remainingMs: number,
+  totalMs: number,
+): void {
+  state.announcedEffect = effectId;
+  const effects = monster.hasStatus.bossEffects ?? [];
+  if (!effects.includes(effectId)) monster.hasStatus.bossEffects = [...effects, effectId];
+  (monster.hasStatus.bossEffectStacks ??= {})[effectId] = 1;
+  (monster.hasStatus.bossEffectDurations ??= {})[effectId] = { remainingMs: Math.max(0, remainingMs), totalMs };
+  markSliceDirty(world, monster, 'hasStatus');
+}
+
+function clearCastAnnouncement(
+  world: World,
+  monster: MonsterEntity,
+  state: NonNullable<MonsterEntity['runsBossPattern']>,
+): void {
+  const effectId = state.announcedEffect;
+  if (!effectId) return;
+  state.announcedEffect = undefined;
+  monster.hasStatus.bossEffects = (monster.hasStatus.bossEffects ?? []).filter(id => id !== effectId);
+  delete monster.hasStatus.bossEffectStacks?.[effectId];
+  delete monster.hasStatus.bossEffectDurations?.[effectId];
+  markSliceDirty(world, monster, 'hasStatus');
+}
+
 /** Put the boss into a visible, punishable recovery window. */
 function beginRecovery(
   world: World,
@@ -296,7 +416,11 @@ function beginRecovery(
     ownsRoot,
     ownsCannotAttack,
   });
-  // Published NOW, not on the next tick: the recovery is the punish window, and a
+  // PRINCIPLE 5: only a STOPPED mechanic earns the stun visual. A completed one
+  // gets a brief, unannounced recovery (<= ~1s, authored) and no punish tell —
+  // the damage window is earned by stopping the boss, not handed out for waiting.
+  if (!fromStagger) return;
+  // Published NOW, not on the next tick: the stagger is the punish window, and a
   // window the client learns about a tick late is a window the player starts late.
   publishRecoveryStatus(world, monster, monster.recoversFromPattern!, now);
   world.pushEvent(monster.hasPosition.nodeId, {
@@ -305,6 +429,16 @@ function beginRecovery(
     pos: { ...monster.hasPosition.current },
     fx: 'stagger',
   });
+}
+
+/**
+ * Stagger a boss from OUTSIDE its pattern (a stopped Raise Dead): the same
+ * rooted, not-attacking window with the stun tell a stopped pattern gets.
+ */
+export function staggerBoss(world: World, monster: MonsterEntity, label: string, durationMs: number, now: number): void {
+  if (monster.recoversFromPattern) return;
+  endPattern(world, monster, 'interrupted', now);
+  beginRecovery(world, monster, label, durationMs, true, now);
 }
 
 function endRecovery(world: World, monster: MonsterEntity): void {
@@ -362,7 +496,7 @@ function anchorPoint(
   state: NonNullable<MonsterEntity['runsBossPattern']>,
   anchor: PatternAnchor,
 ): Vec2 {
-  if (anchor === 'captured-endpoint' && state.capturedEndpoint) {
+  if ((anchor === 'captured-endpoint' || anchor === 'target') && state.capturedEndpoint) {
     return { ...state.capturedEndpoint };
   }
   return { ...monster.hasPosition.current };
@@ -464,6 +598,8 @@ export interface PatternCombatHooks {
     now: number,
     multiplier: number,
     abilityName?: string,
+    /** An uninterruptible step still lands while its caster is stunned. */
+    uninterruptible?: boolean,
   ) => boolean;
   hitMinion: (
     world: World,
@@ -498,6 +634,7 @@ export interface PatternCombatHooks {
     rawDamage?: number,
     uninterruptible?: boolean,
     abilityName?: string,
+    unevadable?: boolean,
   ) => void;
 }
 
@@ -517,10 +654,10 @@ export function updateBossPatterns(world: World, dt: number, now = Date.now()): 
       endRecovery(world, monster);
       continue;
     }
-    // Mirror the window onto the networked boss-effect slice so the client can
+    // Mirror a STAGGER onto the networked boss-effect slice so the client can
     // show WHY the boss is standing there. Written AFTER `updateBossScripts`,
     // which rebuilds these fields wholesale each tick and would otherwise erase it.
-    publishRecoveryStatus(world, monster, recovery, now);
+    if (recovery.fromStagger) publishRecoveryStatus(world, monster, recovery, now);
   }
 
   for (const monster of [...world.patternMonsters]) {
@@ -529,47 +666,85 @@ export function updateBossPatterns(world: World, dt: number, now = Date.now()): 
 
   for (const monster of [...world.aggroedMonsters]) {
     if (patternOwnsMonster(monster)) continue;
-    const pattern = bossPatternFor(monster);
-    if (!pattern || pattern.steps.length === 0) continue;
     if (monster.hasAggroTarget.targetKind !== 'player') continue;
     if (isMonsterStunned(world, monster.isMonster.id) || isMonsterFrozen(world, monster.isMonster.id)) {
       continue;
     }
-    // HEALTH GATE. Outside the authored band the pattern never arms — the boss is
-    // not "failing to escape", it has stopped trying, and its ordinary behaviour
-    // takes over. Checked before the cooldown so a gated-out pattern does not burn
-    // its timer in the background and fire the instant the band reopens.
-    // ONCE PER LIFE. Checked before everything else so a spent catastrophe costs
-    // nothing to skip, and so re-pulling the boss cannot hand the player a fresh
-    // copy of a beat they already answered.
-    if (pattern.oncePerLife && getCounter(monster.tracksCombat, PATTERN_USED_KEY) === 1) {
-      continue;
+    for (const pattern of armablePatterns(monster)) {
+      if (tryArmPattern(world, monster, pattern, now)) break;
     }
-    const hpPct = monster.hasHealth.hp / Math.max(1, monster.hasHealth.maxHp);
-    if (pattern.armAboveHpPct !== undefined && hpPct <= pattern.armAboveHpPct) continue;
-    if (pattern.armBelowHpPct !== undefined && hpPct > pattern.armBelowHpPct) continue;
-    if (!patternReady(monster, pattern, now)) continue;
-    const target = world.getPlayerEntity(monster.hasAggroTarget.targetId);
-    if (!target || target.hasPosition.nodeId !== monster.hasPosition.nodeId) continue;
-
-    // The pattern holds movement and swings for its whole run — but only claims
-    // the locks that were not already held by something else.
-    const ownsRoot = !hasIndependentRoot(monster);
-    const ownsCannotAttack = !monster.cannotAttack;
-    attachComponent(
-      world,
-      monster,
-      'runsBossPattern',
-      initRunsBossPattern(pattern.id, now, target.isPlayer.id, ownsRoot, ownsCannotAttack),
-    );
-    if (ownsRoot) setRooted(world, monster, true);
-    if (ownsCannotAttack) attachComponent(world, monster, 'cannotAttack', {});
-    stopEntity(world, monster);
-    armPatternCooldown(monster, pattern, now);
-    if (pattern.oncePerLife) setCounter(monster.tracksCombat, PATTERN_USED_KEY, 1);
   }
 
   publishConcealment(world);
+}
+
+/** Start `pattern` on `monster` if every gate passes. Returns true when it started. */
+function tryArmPattern(world: World, monster: MonsterEntity, pattern: BossPattern, now: number): boolean {
+  if (pattern.steps.length === 0) return false;
+  const aggro = monster.hasAggroTarget;
+  if (!aggro) return false;
+  // ONCE PER LIFE. Checked before everything else so a spent catastrophe costs
+  // nothing to skip, and so re-pulling the boss cannot hand the player a fresh
+  // copy of a beat they already answered.
+  const usedKey = patternKeys(monster, pattern.id).next === PATTERN_CD_NEXT_KEY
+    ? PATTERN_USED_KEY
+    : `${PATTERN_USED_KEY}:${pattern.id}`;
+  if (pattern.oncePerLife && getCounter(monster.tracksCombat, usedKey) === 1) return false;
+  // HEALTH GATE. Outside the authored band the pattern never arms — the boss is
+  // not "failing to escape", it has stopped trying, and its ordinary behaviour
+  // takes over. Checked before the cooldown so a gated-out pattern does not burn
+  // its timer in the background and fire the instant the band reopens.
+  const hpPct = monster.hasHealth.hp / Math.max(1, monster.hasHealth.maxHp);
+  if (pattern.armAboveHpPct !== undefined && hpPct <= pattern.armAboveHpPct) return false;
+  if (pattern.armBelowHpPct !== undefined && hpPct > pattern.armBelowHpPct) return false;
+  if (!patternReady(monster, pattern, now)) return false;
+  const target = world.getPlayerEntity(aggro.targetId);
+  if (!target || target.hasPosition.nodeId !== monster.hasPosition.nodeId) return false;
+  // REACTIVE: only while the target is close (the Desert standoff's dash-escape),
+  // only while it is far (Tundra Frost Spikes), or only once it carries enough of
+  // a status (Tundra Deep Freeze at the Chill threshold).
+  const gapSq = distanceSq(target.hasPosition.current, monster.hasPosition.current);
+  if (pattern.armWhenTargetWithinPx !== undefined && gapSq > pattern.armWhenTargetWithinPx ** 2) {
+    return false;
+  }
+  if (pattern.armWhenTargetBeyondPx !== undefined && gapSq <= pattern.armWhenTargetBeyondPx ** 2) {
+    return false;
+  }
+  // RECLAIM (Wasteland): only with no army left and bodies to raise.
+  if (
+    pattern.armWhenNoAdds &&
+    (bossAdds(world, monster).length > 0 || (world.corpses.get(monster.hasPosition.nodeId)?.length ?? 0) === 0)
+  ) {
+    return false;
+  }
+  if (
+    pattern.armWhenTargetStatus &&
+    (getStatusEffect(target.tracksCombat, pattern.armWhenTargetStatus.effectId)?.stacks ?? 0) <
+      pattern.armWhenTargetStatus.minStacks
+  ) {
+    return false;
+  }
+
+  // The pattern holds movement and swings for its whole run — but only claims
+  // the locks that were not already held by something else.
+  const ownsRoot = !hasIndependentRoot(monster);
+  const ownsCannotAttack = !monster.cannotAttack;
+  attachComponent(
+    world,
+    monster,
+    'runsBossPattern',
+    initRunsBossPattern(pattern.id, now, target.isPlayer.id, ownsRoot, ownsCannotAttack),
+  );
+  if (ownsRoot) setRooted(world, monster, true);
+  if (ownsCannotAttack) attachComponent(world, monster, 'cannotAttack', {});
+  stopEntity(world, monster);
+  armPatternCooldown(monster, pattern, now);
+  if (pattern.accelerate) {
+    const runs = patternKeys(monster, pattern.id).runs;
+    setCounter(monster.tracksCombat, runs, getCounter(monster.tracksCombat, runs) + 1);
+  }
+  if (pattern.oncePerLife) setCounter(monster.tracksCombat, usedKey, 1);
+  return true;
 }
 
 /**
@@ -599,8 +774,10 @@ function publishConcealment(world: World): void {
 
 function advancePattern(world: World, monster: MonsterEntity, dt: number, now: number): void {
   const state = monster.runsBossPattern!;
-  const pattern = bossPatternFor(monster);
-  if (!pattern || pattern.id !== state.patternId) {
+  // Resolved by the RUNNING id, not the active one: a `set-pattern` phase that fires
+  // mid-sequence lets this run finish, and the new pattern arms next time.
+  const pattern = bossPatternFor(monster, state.patternId);
+  if (!pattern) {
     endPattern(world, monster, 'reset', now);
     return;
   }
@@ -639,6 +816,22 @@ function advancePattern(world: World, monster: MonsterEntity, dt: number, now: n
   // untouched; at 10 Hz the stagger still lands within a tick of the killing blow.
   const watched = state.watchedBarrier;
   if (watched && sourceBarrierRemaining(monster, watched.sourceId) <= 0) {
+    // The shell cracked: an authored vulnerability window rides the stagger.
+    const brokenStep = pattern.steps.find(
+      (candidate): candidate is Extract<BossPatternStep, { kind: 'barrier' }> =>
+        candidate.kind === 'barrier' && candidate.sourceId === watched.sourceId,
+    );
+    const vulnerable = brokenStep?.onBreak?.vulnerability;
+    if (vulnerable) {
+      applyStatusEffect(monster.tracksCombat, {
+        id: SHATTER_VULNERABLE_EFFECT_ID,
+        maxStacks: 1,
+        remainingMs: vulnerable.durationMs,
+        refreshable: true,
+        sourceId: monster.isMonster.id,
+        data: { [DAMAGE_TAKEN_PCT_KEY]: vulnerable.damageTakenPct, totalMs: vulnerable.durationMs },
+      });
+    }
     state.staggered = true;
     state.watchedBarrier = undefined;
     state.barrierSourceIds = state.barrierSourceIds.filter(id => id !== watched.sourceId);
@@ -694,6 +887,7 @@ function beginStep(
   switch (step.kind) {
     case 'cast': {
       state.stepEndsAtMs = now + step.castMs;
+      if (step.announce) publishCastAnnouncement(world, monster, state, step.announce, step.castMs, step.castMs);
       world.pushEvent(monster.hasPosition.nodeId, {
         kind: 'monster-cast-start',
         monsterId: monster.isMonster.id,
@@ -723,6 +917,9 @@ function beginStep(
       state.capturedEndpoint = { ...lane.end };
       state.chargeHalfWidth = lane.halfWidth;
       state.chargeHitIds = [];
+      // Per CHARGE, not per pattern: a double charge whose first run connected must
+      // not read its second run as already tackled.
+      state.chargeConnected = false;
       if (pattern.chargeInstinct) {
         setCounter(monster.tracksCombat, CHARGE_INSTINCT_KEY,
           chargeInstinct(monster) + 1);
@@ -762,6 +959,13 @@ function beginStep(
         state.stepEndsAtMs = now;
         return true;
       }
+      if (step.anchor === 'target') {
+        // A lobbed attack: planted where the target stands NOW, answered by moving.
+        const target = patternTarget(world, monster);
+        state.capturedEndpoint = target
+          ? { ...target.hasPosition.current }
+          : { ...monster.hasPosition.current };
+      }
       const at = anchorPoint(monster, state, step.anchor);
       state.stepEndsAtMs = now + step.telegraphMs;
       publishGroundZone(world, monster.hasPosition.nodeId, {
@@ -796,6 +1000,22 @@ function beginStep(
       state.stepEndsAtMs = now;
       return true;
     }
+    case 'raise': {
+      state.stepEndsAtMs = now + step.castMs;
+      world.pushEvent(monster.hasPosition.nodeId, {
+        kind: 'monster-cast-start',
+        monsterId: monster.isMonster.id,
+        castMs: step.castMs,
+        label: step.name,
+        fx: step.fx,
+      });
+      return true;
+    }
+    case 'rockfall': {
+      publishRockfall(world, monster, state, step, pattern, now);
+      state.stepEndsAtMs = now;
+      return true;
+    }
     case 'barrier': {
       const raised = raiseSourceBarrier(
         monster,
@@ -809,6 +1029,7 @@ function beginStep(
       // Watch for the break from here on, and MOVE ON. The barrier is not a step the
       // sequence waits inside — the boss raises it and then prepares its charge from
       // behind it, and breaking the plate is meant to interrupt that preparation.
+      if (raised > 0 && step.blocksControl) state.controlBarrierSourceId = step.sourceId;
       if (raised > 0 && step.onBreak) {
         state.watchedBarrier = {
           sourceId: step.sourceId,
@@ -894,12 +1115,17 @@ function beginStep(
       attachComponent(world, monster, 'isConcealed', {
         marker: step.marker,
         endsAtMs: now + step.durationMs,
+        ...(step.targetable ? { targetable: true } : {}),
       });
+      state.concealStartHp = monster.hasHealth.hp;
       // Drop every lock on it the instant it goes: a player left holding an attack
-      // target they cannot reach keeps swinging at empty ground.
-      for (const player of world.livePlayersInNode(monster.hasPosition.nodeId)) {
-        if (player.hasAttackTarget?.targetId === monster.isMonster.id) {
-          setAttackTarget(world, player, null);
+      // target they cannot reach keeps swinging at empty ground. A TARGETABLE mound
+      // keeps them — hitting it is the answer.
+      if (!step.targetable) {
+        for (const player of world.livePlayersInNode(monster.hasPosition.nodeId)) {
+          if (player.hasAttackTarget?.targetId === monster.isMonster.id) {
+            setAttackTarget(world, player, null);
+          }
         }
       }
       world.pushEvent(monster.hasPosition.nodeId, {
@@ -1008,6 +1234,60 @@ function beginStep(
       state.stepEndsAtMs = now + step.durationMs;
       return true;
     }
+    case 'frenzy': {
+      applyStatusEffect(monster.tracksCombat, {
+        id: BOSS_FRENZY_EFFECT_ID,
+        maxStacks: 1,
+        remainingMs: step.durationMs,
+        refreshable: true,
+        sourceId: monster.isMonster.id,
+        data: {
+          monsterAttackSpeedBuff: 1,
+          attackSpeedPct: step.attackSpeedPct,
+          rallyDamagePct: step.damagePct,
+          totalMs: step.durationMs,
+        },
+      });
+      world.pushEvent(monster.hasPosition.nodeId, {
+        kind: 'boss-fx',
+        monsterId: monster.isMonster.id,
+        pos: { ...monster.hasPosition.current },
+        // The pattern Frenzy is the Jungle predator's (its own cue and aura);
+        // the Forest bear's scripted Bestial Frenzy keeps `frenzy`.
+        fx: 'predator-frenzy',
+      });
+      state.stepEndsAtMs = now;
+      return true;
+    }
+    case 'dash': {
+      const target = patternTarget(world, monster);
+      if (!target) {
+        endPattern(world, monster, 'target-lost', now);
+        return false;
+      }
+      state.stepEndsAtMs = now + step.maxTravelMs;
+      state.lastFleeSteerMs = now;
+      state.fleeTargetPosition = { ...target.hasPosition.current };
+      // Same hand-off as the charge and the flee: release the root, raise the
+      // speed the client interpolates with, and give the mover a destination.
+      if (state.ownsRoot) setRooted(world, monster, false);
+      state.savedSpeed = monster.hasPosition.speed;
+      monster.hasPosition.speed = step.speed;
+      markSliceDirty(world, monster, 'hasPosition');
+      const destination = dashDestination(world, monster, target, step);
+      if (destination) {
+        state.capturedEndpoint = { ...destination };
+        setEntityMotion(world, monster, destination, { mode: 'direct' });
+      }
+      world.pushEvent(monster.hasPosition.nodeId, {
+        kind: 'monster-cast-start',
+        monsterId: monster.isMonster.id,
+        castMs: step.maxTravelMs,
+        label: step.name,
+        fx: step.fx,
+      });
+      return true;
+    }
     case 'recovery': {
       // Recovery leaves the pattern: the sequence is over and what remains is the
       // punish window, which outlives the cursor. Anything still owned is released
@@ -1030,14 +1310,7 @@ function tickStep(
 ): StepOutcome {
   switch (step.kind) {
     case 'cast': {
-      if (
-        (step.interruptible ?? true) &&
-        (isMonsterStunned(world, monster.isMonster.id) ||
-          isMonsterFrozen(world, monster.isMonster.id))
-      ) {
-        endPattern(world, monster, 'interrupted', now);
-        return 'ended';
-      }
+      if (stopPatternOnControl(world, monster, pattern, step, now)) return 'ended';
       // A lane keeps tracking until its lock; everything else is already committed.
       if (step.lane) {
         const target = patternTarget(world, monster);
@@ -1045,7 +1318,14 @@ function tickStep(
           paintLane(world, monster, state, step.lane, target, now, state.stepEndsAtMs);
         }
       }
-      return now >= state.stepEndsAtMs ? 'done' : 'running';
+      if (now >= state.stepEndsAtMs) {
+        clearCastAnnouncement(world, monster, state);
+        return 'done';
+      }
+      if (step.announce) {
+        publishCastAnnouncement(world, monster, state, step.announce, state.stepEndsAtMs - now, step.castMs);
+      }
+      return 'running';
     }
     case 'charge':
       return tickCommittedTravel(world, monster, state, pattern, step, dt, now);
@@ -1054,6 +1334,11 @@ function tickStep(
       // A gated-out impact published no telegraph and must resolve no damage.
       if (state.skippedStepIndexes.includes(state.stepIndex)) return 'done';
       const at = anchorPoint(monster, state, step.anchor);
+      // Captured BEFORE the hit resolves: knockback must not decide who the
+      // rider (Chill, Brittle) lands on.
+      const riderVictims = step.addsAmbientStacks || step.appliesDebuff
+        ? victimsInCircle(world, monster, at, step.radius)
+        : [];
       hooks?.resolveCircle(
         world,
         monster,
@@ -1066,8 +1351,17 @@ function tickStep(
         step.rawDamage,
         step.interruptible === false,
         step.name,
+        step.unevadable,
       );
       if (!world.hasMonster(monster.isMonster.id)) return 'ended';
+      if (step.pool) publishPatternPool(world, monster, at, step.pool, step.radius, now);
+      for (const victim of riderVictims) {
+        if (victim.isDead || !world.getPlayerEntity(victim.isPlayer.id)) continue;
+        if (step.addsAmbientStacks) addAmbientStacks(victim, step.addsAmbientStacks);
+        if (step.appliesDebuff && canApplyPlayerDebuff(victim)) {
+          layBossDebuff(victim, monster, step.appliesDebuff);
+        }
+      }
       return 'done';
     }
     // Raising a barrier takes no time of its own; the watch registered above is what
@@ -1075,14 +1369,7 @@ function tickStep(
     case 'barrier':
       return 'done';
     case 'apply-status': {
-      if (
-        (step.interruptible ?? true) &&
-        (isMonsterStunned(world, monster.isMonster.id) ||
-          isMonsterFrozen(world, monster.isMonster.id))
-      ) {
-        endPattern(world, monster, 'interrupted', now);
-        return 'ended';
-      }
+      if (stopPatternOnControl(world, monster, pattern, step, now)) return 'ended';
       if (now < state.stepEndsAtMs) return 'running';
       // A skipped gate wrote `stepEndsAtMs = now` and pushed no cast, so it falls
       // straight through here without applying anything. That is the intent.
@@ -1099,6 +1386,8 @@ function tickStep(
         });
         syncPlayerControlLockout(world, target);
       }
+      // Deep Freeze SPENDS the Frostbite that fed it: the clock starts over.
+      if (target) for (const id of step.consumesOnResolve ?? []) removeStatusEffect(target.tracksCombat, id);
       world.pushEvent(monster.hasPosition.nodeId, {
         kind: 'monster-cast-end',
         monsterId: monster.isMonster.id,
@@ -1109,14 +1398,7 @@ function tickStep(
       return 'done';
     }
     case 'payoff': {
-      if (
-        (step.interruptible ?? true) &&
-        (isMonsterStunned(world, monster.isMonster.id) ||
-          isMonsterFrozen(world, monster.isMonster.id))
-      ) {
-        endPattern(world, monster, 'interrupted', now);
-        return 'ended';
-      }
+      if (stopPatternOnControl(world, monster, pattern, step, now)) return 'ended';
       if (now < state.stepEndsAtMs) return 'running';
       resolvePayoff(world, monster, state, pattern, step, now);
       if (!world.hasMonster(monster.isMonster.id)) return 'ended';
@@ -1126,12 +1408,19 @@ function tickStep(
       // Same rule as every other wind-up: a hard-controlled boss does not get to
       // keep travelling while untargetable and then cash in its payoff. `endPattern`
       // detaches the concealment, stops the body and puts its speed back.
-      if (
-        (step.interruptible ?? true) &&
-        (isMonsterStunned(world, monster.isMonster.id) ||
-          isMonsterFrozen(world, monster.isMonster.id))
-      ) {
+      if (stopPatternOnControl(world, monster, pattern, step, now)) return 'ended';
+      // DRAGGED UP: enough damage on a targetable mound surfaces it staggered, and
+      // the eruption that would have followed never happens.
+      const dragUp = pattern.stoppedBy?.damage;
+      if (step.targetable && dragUp && state.concealStartHp !== undefined &&
+          state.concealStartHp - monster.hasHealth.hp >= dragUp.pctMaxHp * monster.hasHealth.maxHp) {
         endPattern(world, monster, 'interrupted', now);
+        beginRecovery(world, monster, dragUp.label, dragUp.staggerMs, true, now);
+        world.pushEvent(monster.hasPosition.nodeId, {
+          kind: 'boss-pattern-stopped',
+          monsterId: monster.isMonster.id,
+          by: 'damage',
+        });
         return 'ended';
       }
       // ARRIVED. Once the retreat is spent and the boss is on its target, the
@@ -1146,6 +1435,16 @@ function tickStep(
       if (now < state.stepEndsAtMs && !arrived) {
         if (step.travelSpeed !== undefined && step.relocate === 'near-target') {
           steerConcealedTravel(world, monster, state, step, now);
+        }
+        if (step.burst && step.travelSpeed !== undefined) {
+          // The burst out of the dive, easing back to the stalking speed.
+          const elapsed = now - (state.stepEndsAtMs - step.durationMs);
+          const k = Math.max(0, 1 - elapsed / step.burst.ms);
+          const speed = step.travelSpeed * (1 + (step.burst.mult - 1) * k * k);
+          if (Math.abs(monster.hasPosition.speed - speed) > 4) {
+            monster.hasPosition.speed = speed;
+            markSliceDirty(world, monster, 'hasPosition');
+          }
         }
         return 'running';
       }
@@ -1181,19 +1480,16 @@ function tickStep(
       // stunned, then vanished and ambushed on the far side of the control the
       // player had just spent. Distinct from breaking the plate — a stun banks no
       // Instinct and causes no stumble, it simply stops the attempt.
-      if (
-        (step.interruptible ?? true) &&
-        (isMonsterStunned(world, monster.isMonster.id) ||
-          isMonsterFrozen(world, monster.isMonster.id))
-      ) {
-        endPattern(world, monster, 'interrupted', now);
-        return 'ended';
-      }
+      if (stopPatternOnControl(world, monster, pattern, step, now)) return 'ended';
       const target = patternTarget(world, monster);
       const escaped = step.flee && target && state.fleeStart &&
         distanceSq(monster.hasPosition.current, state.fleeStart) >= 100 ** 2 &&
         distanceSq(monster.hasPosition.current, target.hasPosition.current) >= step.flee.escapeDistance ** 2;
       if (!escaped) {
+        if (step.snares && step.flee && now >= (state.nextSnareAtMs ?? now)) {
+          state.nextSnareAtMs = now + step.snares.intervalMs;
+          dropThornSnare(world, monster, step.snares, now);
+        }
         if (now >= state.stepEndsAtMs) {
           // Keeping up with the retreat is also a failed escape, on every Jungle tier.
           gainEscapeInstinct(monster);
@@ -1206,9 +1502,13 @@ function tickStep(
           distanceSq(target.hasPosition.current, state.fleeTargetPosition) >= 64 ** 2);
         const stalled = !monster.isMoving;
         const direction = monster.isMoving?.motion.direction;
+        // Heading INTO the pursuer (within ~35 degrees), not merely sideways: a
+        // cornered boss sliding along a wall runs 90-150 degrees off "away" by design.
+        const awayX = monster.hasPosition.current.x - (target?.hasPosition.current.x ?? 0);
+        const awayY = monster.hasPosition.current.y - (target?.hasPosition.current.y ?? 0);
         const towardPlayer = target && direction &&
-          direction.x * (monster.hasPosition.current.x - target.hasPosition.current.x) +
-          direction.y * (monster.hasPosition.current.y - target.hasPosition.current.y) <= 0;
+          (direction.x * awayX + direction.y * awayY) <
+            -0.82 * Math.hypot(direction.x, direction.y) * Math.max(1, Math.hypot(awayX, awayY));
         if (step.flee && target && (towardPlayer || ((targetMoved || stalled) && now - (state.lastFleeSteerMs ?? 0) >= 300))) {
           state.lastFleeSteerMs = now;
           const away = fleeDestination(world, monster, target);
@@ -1242,20 +1542,22 @@ function tickStep(
       return 'done';
     }
     case 'pull': {
-      if (
-        (step.interruptible ?? true) &&
-        (isMonsterStunned(world, monster.isMonster.id) ||
-          isMonsterFrozen(world, monster.isMonster.id))
-      ) {
-        endPattern(world, monster, 'interrupted', now);
-        return 'ended';
-      }
+      if (stopPatternOnControl(world, monster, pattern, step, now)) return 'ended';
       if (now < state.stepEndsAtMs) return 'running';
       const target = patternTarget(world, monster);
       if (target) {
-        // Toward the BOSS, through the shared forced-movement helper so the same
-        // resistance, clamping and obstacle resolution apply as to any shove.
-        hooks?.pullPlayer(world, target, monster.hasPosition.current, step.distance);
+        // Toward the BOSS (or its nearest pool), through the shared forced-movement
+        // helper so the same resistance, clamping and obstacle resolution apply as
+        // to any shove.
+        const anchor = step.toward === 'nearest-pool'
+          ? nearestOwnedPool(world, monster, target.hasPosition.current, step.poolFlavors, now)
+            ?? monster.hasPosition.current
+          : monster.hasPosition.current;
+        hooks?.pullPlayer(world, target, anchor, step.distance);
+        // Where the drag lands them (Magma Shove's slow: harder to step off the vent).
+        if (step.appliesDebuff && canApplyPlayerDebuff(target) && !target.isDead) {
+          layBossDebuff(target, monster, step.appliesDebuff);
+        }
       }
       world.pushEvent(monster.hasPosition.nodeId, {
         kind: 'monster-cast-end',
@@ -1266,14 +1568,101 @@ function tickStep(
       });
       return 'done';
     }
+    case 'raise': {
+      if (stopPatternOnControl(world, monster, pattern, step, now)) return 'ended';
+      if (now < state.stepEndsAtMs) return 'running';
+      const spec = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId)?.raisesDead;
+      const raised = spec
+        ? raiseCorpsesBurst(world, monster, { ...spec, corpseRange: step.range }, step.count, Number.MAX_SAFE_INTEGER, now)
+        : 0;
+      world.pushEvent(monster.hasPosition.nodeId, {
+        kind: 'monster-cast-end',
+        monsterId: monster.isMonster.id,
+        fired: raised > 0,
+        fx: step.fx,
+      });
+      return 'done';
+    }
     case 'fault-lines':
+    case 'rockfall':
     case 'drop-barrier':
+    case 'frenzy':
       return 'done';
     case 'wait':
       return now >= state.stepEndsAtMs ? 'done' : 'running';
+    case 'dash': {
+      if (stopPatternOnControl(world, monster, pattern, step, now)) return 'ended';
+      const target = patternTarget(world, monster);
+      const arrived = target !== null && dashArrived(world, monster, target, step);
+      if (!arrived && now < state.stepEndsAtMs) {
+        // Re-steer when the target has moved on or the body stalled.
+        // A walk to a corpse is not steered by the player's movements.
+        const moved = step.direction !== 'to-corpse' && target && (!state.fleeTargetPosition ||
+          distanceSq(target.hasPosition.current, state.fleeTargetPosition) >= 48 ** 2);
+        if (target && (moved || !monster.isMoving) && now - (state.lastFleeSteerMs ?? 0) >= 200) {
+          state.lastFleeSteerMs = now;
+          state.fleeTargetPosition = { ...target.hasPosition.current };
+          const destination = dashDestination(world, monster, target, step);
+          if (destination) {
+            state.capturedEndpoint = { ...destination };
+            setEntityMotion(world, monster, destination, { mode: 'direct' });
+          }
+        }
+        return 'running';
+      }
+      stopFleeing(world, monster, state);
+      world.pushEvent(monster.hasPosition.nodeId, {
+        kind: 'monster-cast-end',
+        monsterId: monster.isMonster.id,
+        fired: true,
+      });
+      return 'done';
+    }
     case 'recovery':
       return 'ended';
   }
+}
+
+/**
+ * THE PLAYER STOPPED IT. Hard control (stun / freeze) on an interruptible step, or a
+ * Binding Strike root on a `rootable` one, ends the pattern — and when the pattern
+ * authors `stoppedBy`, staggers the boss with the stun visual (principle 5): the
+ * earned window. A `controlImmune` boss or one behind a `blocksControl` plate is
+ * never stopped this way. Returns true when the pattern ended.
+ */
+function stopPatternOnControl(
+  world: World,
+  monster: MonsterEntity,
+  pattern: BossPattern,
+  step: BossPatternStep,
+  now: number,
+): boolean {
+  if (monsterIgnoresControl(monster)) return false;
+  const flags = step as { interruptible?: boolean; rootable?: boolean };
+  let kind: 'stun' | 'root' | null = null;
+  if (
+    (flags.interruptible ?? true) &&
+    (isMonsterStunned(world, monster.isMonster.id) || isMonsterFrozen(world, monster.isMonster.id))
+  ) {
+    kind = 'stun';
+  } else if (flags.rootable && monsterHasAbilityRoot(monster)) {
+    kind = 'root';
+  }
+  if (!kind) return false;
+  endPattern(world, monster, 'interrupted', now);
+  const stagger = pattern.stoppedBy?.[kind];
+  if (stagger) beginRecovery(world, monster, stagger.label, stagger.staggerMs, true, now);
+  world.pushEvent(monster.hasPosition.nodeId, {
+    kind: 'boss-pattern-stopped',
+    monsterId: monster.isMonster.id,
+    by: kind,
+  });
+  return true;
+}
+
+/** A player root (Binding Strike) is holding this monster — not a scripted hold. */
+function monsterHasAbilityRoot(monster: MonsterEntity): boolean {
+  return (getStatusEffect(monster.tracksCombat, ABILITY_ROOT_EFFECT_ID)?.remainingMs ?? 0) > 0;
 }
 
 function finishStep(
@@ -1289,6 +1678,47 @@ function finishStep(
     // Hand the lane to the charge step; do NOT clear it here.
     state.laneZoneId = laneZone(world, monster)?.id;
   }
+}
+
+/** Where a dash is heading this tick: onto the target, or away from it. */
+function dashDestination(
+  world: World,
+  monster: MonsterEntity,
+  target: PlayerEntity,
+  step: Extract<BossPatternStep, { kind: 'dash' }>,
+): Vec2 | null {
+  if (step.direction === 'to-target') return { ...target.hasPosition.current };
+  if (step.direction === 'to-corpse') return nearestCorpsePos(world, monster);
+  return fleeDestination(world, monster, target);
+}
+
+/** The corpse nearest the boss anywhere in its arena, or null. */
+function nearestCorpsePos(world: World, monster: MonsterEntity): Vec2 | null {
+  let best: Vec2 | null = null;
+  let bestD = Infinity;
+  for (const corpse of world.corpses.get(monster.hasPosition.nodeId) ?? []) {
+    const d = distanceSq(corpse.pos, monster.hasPosition.current);
+    if (d < bestD) { bestD = d; best = corpse.pos; }
+  }
+  return best ? { ...best } : null;
+}
+
+/** A dash is over once it reached melee (`to-target`) or opened its gap (`away`). */
+function dashArrived(
+  world: World,
+  monster: MonsterEntity,
+  target: PlayerEntity,
+  step: Extract<BossPatternStep, { kind: 'dash' }>,
+): boolean {
+  if (step.direction === 'to-target') {
+    return world.collision.canReach(monster, target, step.reach ?? 40);
+  }
+  if (step.direction === 'to-corpse') {
+    const state = monster.runsBossPattern;
+    return !state?.capturedEndpoint ||
+      distanceSq(monster.hasPosition.current, state.capturedEndpoint) <= (step.reach ?? 60) ** 2;
+  }
+  return distanceSq(monster.hasPosition.current, target.hasPosition.current) >= (step.distance ?? 400) ** 2;
 }
 
 /** Put the boss's authored speed back. Idempotent, so every exit path may call it. */
@@ -1421,12 +1851,20 @@ function resolveTravelContacts(
       // The connection is what the rest of the sequence hangs off: it stops the
       // travel, and it gates every `requiresChargeHit` step after it.
       state.chargeConnected = true;
+      // The body lands on them: a cue the client gives weight to.
+      world.pushEvent(nodeId, {
+        kind: 'boss-fx',
+        monsterId: monster.isMonster.id,
+        pos: { ...player.hasPosition.current },
+        fx: 'charge-impact',
+      });
       const landed = hooks.hitPlayer(world, monster, player, now, multiplier, pattern.name);
       if (landed && pattern.chargeInstinct) {
         setCounter(monster.tracksCombat, CHARGE_INSTINCT_KEY, 0);
         // Discard the shortened timer armed at pattern start after a successful hit.
         if (pattern.chargeInstinct.cooldownReductionPct) {
-          armPatternCooldown(monster, bossPatternFor(monster)!, now);
+          // Re-resolved AFTER the reset, so the normal (un-accelerated) cooldown arms.
+          armPatternCooldown(monster, bossPatternFor(monster, pattern.id)!, now);
         }
       }
       if (!world.hasMonster(monster.isMonster.id)) return;
@@ -1768,17 +2206,30 @@ function resolvePayoff(
     // set this up. `resolveCircle` cannot express that, so the area payoff resolves
     // its own victims here.
     for (const victim of victimsInCircle(world, monster, at, step.radius)) {
-      hooks.hitPlayer(world, monster, victim, now, payoffMultiplier(pattern, step, victim), step.name);
+      hooks.hitPlayer(world, monster, victim, now, payoffMultiplier(pattern, step, victim), step.name, step.interruptible === false);
       if (!world.hasMonster(monster.isMonster.id)) return;
     }
   } else if (target && (step.reach === undefined || world.collision.canReach(monster, target, step.reach))) {
     const before = target.hasHealth.hp;
-    const landed = hooks.hitPlayer(world, monster, target, now, payoffMultiplier(pattern, step, target), step.name);
+    // DEVOUR: the pile-up payoff, counted BEFORE the hit (and any rider) lands.
+    const pileMult = step.perDebuffMult
+      ? 1 + step.perDebuffMult * distinctDebuffs(target)
+      : 1;
+    const landed = hooks.hitPlayer(
+      world, monster, target, now, payoffMultiplier(pattern, step, target) * pileMult, step.name,
+      step.interruptible === false,
+    );
+    if (landed && step.appliesDebuff && canApplyPlayerDebuff(target) && !target.isDead) {
+      layBossDebuff(target, monster, step.appliesDebuff);
+    }
     if (landed && step.onHitPoison && canApplyPlayerDebuff(target) && !target.isDead) {
       const poison = step.onHitPoison;
       for (let i = 0; i < poison.stacks; i++) {
+        // Named for the step (Venomous Bite): without an id and label the poison fell
+        // back to the biome's generic DoT flavour and read as another monster's.
         applyMonsterDotToPlayer(world, monster, target, {
           ...poison, maxStacks: poison.stacks, element: 'poison',
+          debuffId: step.name.toLowerCase().replace(/\s+/g, '-'), label: step.name,
         }, step.name);
       }
     }
@@ -1895,6 +2346,137 @@ function paintLane(
     damageMultiplier: 1,
   });
   state.laneZoneId = published.id;
+}
+
+/** Distinct harmful debuffs a player carries (the Trench Devour's pile count). */
+function distinctDebuffs(player: PlayerEntity): number {
+  return player.tracksCombat.statusEffects.filter(
+    (effect) => effect.stacks > 0 && isHarmfulPlayerStatusEffect(effect.id, effect.data) &&
+      // Depth is the room, not a debuff the serpent laid on you.
+      (effect.data[DEBUFF_DURATION_PCT_KEY] ?? 0) === 0 && (effect.data.isAmbientRamp ?? 0) === 0,
+  ).length;
+}
+
+/** Push a player's ambient ramp (Tundra Chill) up by `stacks`, within its ceiling. */
+function addAmbientStacks(player: PlayerEntity, stacks: number): void {
+  const ramp = ambientRampStatus(player.tracksCombat);
+  if (!ramp) return;
+  const cap = ramp.data.maxStacks ?? 0;
+  ramp.stacks = cap > 0 ? Math.min(cap, ramp.stacks + stacks) : ramp.stacks + stacks;
+}
+
+/** Lay a boss mechanic debuff (Brittle, ...) through debuff resistance. */
+function layBossDebuff(player: PlayerEntity, monster: MonsterEntity, debuff: PatternDebuff): void {
+  // DEPTH (Trench): every debuff the deep lays on you lasts longer per stack.
+  const durationMs = Math.round(debuff.durationMs * (1 + player.tracksCombat.statusEffects.reduce(
+    (total, status) => total + (status.data[DEBUFF_DURATION_PCT_KEY] ?? 0) * Math.max(1, status.stacks), 0)));
+  const effect = applyResistedPlayerDebuff(player, {
+    id: debuff.effectId,
+    maxStacks: debuff.maxStacks ?? Math.max(1, debuff.stacks ?? 1),
+    remainingMs: durationMs,
+    refreshable: true,
+    sourceId: monster.isMonster.id,
+    data: {
+      ...(debuff.plainStatus ? {} : { [BOSS_DEBUFF_KEY]: 1 }),
+      totalMs: durationMs,
+      ...(debuff.data ?? {}),
+    },
+  });
+  if (effect && (debuff.stacks ?? 1) > 1) {
+    effect.stacks = Math.min(effect.maxStacks || Infinity, effect.stacks + (debuff.stacks ?? 1) - 1);
+  }
+}
+
+/** A thorn snare where the fleeing boss stands: roots the first player to step on it. */
+function dropThornSnare(
+  world: World,
+  monster: MonsterEntity,
+  snare: { radius: number; rootMs: number; durationMs: number },
+  now: number,
+): void {
+  publishToxicPool(world, monster.hasPosition.nodeId, {
+    kind: 'toxic-pool',
+    pos: { ...monster.hasPosition.current },
+    radius: snare.radius,
+    startedAtMs: now,
+    expiresAtMs: now + snare.durationMs,
+    damagePerTick: 0,
+    tickIntervalMs: 1000,
+    flavor: 'thorns',
+    snare: { rootMs: snare.rootMs },
+    ownerId: monster.isMonster.id,
+    sourceId: 'thorn-snare',
+    sourceLabel: 'Thorn Snare',
+    killer: {
+      monsterTypeId: monster.isMonster.monsterTypeId,
+      monsterName: monster.isMonster.name,
+      isBoss: monster.isMonster.isBoss,
+      nodeId: monster.hasPosition.nodeId,
+    },
+  });
+}
+
+/** Centre of the closest live pool this boss owns (optionally of given flavors). */
+function nearestOwnedPool(
+  world: World,
+  monster: MonsterEntity,
+  from: Vec2,
+  flavors: HazardFlavor[] | undefined,
+  now: number,
+): Vec2 | undefined {
+  let best: Vec2 | undefined;
+  let bestD = Infinity;
+  for (const zone of world.groundZones.get(monster.hasPosition.nodeId) ?? []) {
+    if (zone.kind !== 'toxic-pool' || zone.ownerId !== monster.isMonster.id) continue;
+    if (now >= zone.expiresAtMs) continue;
+    if (flavors && !flavors.includes(zone.flavor ?? 'toxic')) continue;
+    const d = distanceSq(zone.pos, from);
+    if (d < bestD) { bestD = d; best = zone.pos; }
+  }
+  return best ? { ...best } : undefined;
+}
+
+/**
+ * Scatter delayed rock circles around the pattern's target: one planted under
+ * them, the rest spread across the arena near them. Resolved as ONE delayed
+ * impact on the fault-line path, so a player caught by two rocks is hit once.
+ */
+function publishRockfall(
+  world: World,
+  monster: MonsterEntity,
+  state: NonNullable<MonsterEntity['runsBossPattern']>,
+  step: Extract<BossPatternStep, { kind: 'rockfall' }>,
+  pattern: BossPattern,
+  now: number,
+): void {
+  const target = patternTarget(world, monster);
+  const center = target ? target.hasPosition.current : monster.hasPosition.current;
+  const nodeId = monster.hasPosition.nodeId;
+  const points: Vec2[] = [clampToNode(nodeId, { ...center })];
+  for (let i = 1; i < step.count; i++) {
+    // Evenly fanned with jitter, so the safe ground between rocks is readable.
+    const angle = (i / Math.max(1, step.count - 1)) * Math.PI * 2 + Math.random() * 0.6;
+    const distance = step.radius * 1.6 + Math.random() * Math.max(0, step.spread - step.radius * 1.6);
+    points.push(clampToNode(nodeId, {
+      x: center.x + Math.cos(angle) * distance,
+      y: center.y + Math.sin(angle) * distance,
+    }));
+  }
+  publishFaultLineBurst(world, nodeId, {
+    kind: 'fault-line-telegraph',
+    sourceLabel: step.name,
+    pos: { ...center },
+    radius: step.radius,
+    startedAtMs: now,
+    resolvesAtMs: now + step.delayMs,
+    ownerId: monster.isMonster.id,
+    points,
+    damageMultiplier: pattern.damageMultiplier * step.damageMult,
+    scattered: true,
+    fx: step.fx ?? 'rockfall',
+    ...(step.pool ? { leavesPool: step.pool } : {}),
+  });
+  void state;
 }
 
 function publishFaultLines(

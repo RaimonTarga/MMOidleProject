@@ -10,6 +10,145 @@ not a universal re-pitch.
 
 If this doc and the code disagree, the code wins.
 
+## Boss lineage redesign — implemented 2026-09-27 (first pass, awaiting playtest)
+
+Design authority: [`design_docs/boss-lineage-redesign.md`](../design_docs/boss-lineage-redesign.md).
+Every section of this doc BELOW this one describes the 2026-09-04 / 09-13 state; where
+the two disagree, this section (and the code) wins. **Numbers are placeholders**: the
+contract's fight lengths (T2 ~60s, T3 ~2 min, T4 ~3 min) are the numbers pass's job
+(§4 step 6 of the design doc), not done here.
+
+Tests: `server/test/bossLineage{Seams,Mountain,Swamp,Cave,Desert,Jungle,Tundra,Volcanic,Wasteland,Trench}.test.ts`
+(shared harness `server/test/_bossLineageHarness.ts`, which mocks `Date.now` like the
+balance labs).
+
+### Shared seams
+
+| Seam | Where | What |
+|---|---|---|
+| Announced phases | `BossPhase.name` → `hasStatus.bossPhase`, `boss-phase` event | Roar + callout over the boss; the name stays on the boss bar. |
+| Pattern variants | `bossPatternVariants`, `set-pattern`, `add-pattern` / `remove-pattern` | A phase swaps the main sequence (a running one finishes first) or arms a second one with its own cooldown. |
+| Arming gates | `armWhenTargetWithinPx` / `BeyondPx` / `Status`, `priority`, `accelerate` | Reactive patterns (Desert dash-escape, Tundra Nova/Spikes, Deep Freeze at the Chill threshold), per-run acceleration. |
+| Principle 5 | recovery split in `bossPatterns.ts`, `publishHardControl` | Completed recoveries ≤ 1s and SILENT; only a stopped mechanic (`stoppedBy.stun/root/damage`, barrier break) staggers with the stun tell. |
+| Principle 6 | `controlImmune`, barrier `blocksControl`, `controlImmunity.ts` | Tundra/Volcanic refuse stun/root; a plated boss ignores control until the plate breaks. `rootable` steps answer Binding Strike. |
+| New steps | `rockfall`, `dash`, `frenzy` | Mountain T4 rocks, Desert dash-in/dash-escape, Jungle ambush burst. |
+| Step riders | impact `anchor: 'target'` + `pool`, `addsAmbientStacks`, `appliesDebuff`; pull `toward: 'nearest-pool'`; payoff `appliesDebuff` / `perDebuffMult`; apply-status `consumesOnResolve`; barrier `onBreak.vulnerability`; conceal `targetable`; escape-guard `snares` | Swamp/Cave pools, the lash, Brittle, Trench pile, Ice Armor, Cave mound, Jungle snares. |
+| Arena actions | `spread-pools`, `room-affliction` (DoT), `room-debuff` (boss debuff, accelerating), `vent-field`, `bone-tithe`, `harvest`, `empower-adds`, `set-weather` | Cleared with the boss (`bossArena.ts`). |
+| Boss debuffs | `shared/src/systems/bossDebuffs.ts` (`isBossDebuff`, `uncleansable`) → one `debuff-boss` tile | Eroded, Frostbite, Brittle, Rend, Depth. |
+| Rune conditions | `target-shielded` (Enemy Shielded), `target-escaping` (Enemy Escaping), `debuff-pile` (Debuff Pile) | Enemy Charging also covers pattern payoffs and impact circles now. |
+| Ambience | `render/bossWeather.ts` | Blizzard, ash fall, abyss; presentational only. |
+
+### Per lineage
+
+- **Plains** — T1 unchanged. T2: T2 herd (yearlings/bull) instead of T1 mobs;
+  **Rallying Roar** (15s cast) gives every living add a lasting Rallied stack; 50%
+  Stampede calls a bull + two Savanna Hawks at range. 25% boar rally cut.
+- **Forest** — unchanged (checked: the Stunning Swipe's 300ms floor leaves a rune-fired
+  Brace room; Brace is instant).
+- **Swamp** — no longer demands Cleanse (pool vulnerability gone). T2: Bile pools fade
+  after 35s, Mire pools (slow, no damage), Mire Lash drags you toward a pool. T3: 60%
+  Spore Bloom (detonating spores, lash toward spores), 25% Rot Bloom (pools spread,
+  room Rot DoT).
+- **Mountain** — T1 unchanged. T2: plate blocks control; stop the Stoneplate cast or
+  break the plate. T3: Cragbreaker cut; 60% Double Charge (unplated rootable re-aim);
+  25% Crag Rush. T4: fault lines cut; 65% Double Charge; 35% Rockfall.
+- **Cave** — plating shred cut everywhere; the burrow is a targetable mound at every
+  tier (damage drags it up). T2 sinkholes stack Eroded; 50% Second Dive. T3 60% Tunnel
+  Chase (three eruptions), 25% Collapse; root pins the mound.
+- **Desert** — T3 50% Standoff (ranged sentence + rootable Sand Step dash-escape); 20%
+  Sandstorm. T4 55% Standoff, 20% Hit-and-Run (dash in, Execution, withdraw; 7.5s
+  cooldown floor; root/stun on the dash-in or combo = Caught).
+- **Jungle** — flee 330/370/410 px/s; stopped flee / guard break are ≤1s; landed ambush →
+  5s Frenzy. T3 root answer, 60% Venomous Bite, 25% Hunted. T4 60% Thorn Snares, <30%
+  Cornered. Cornered-flee bug fixed (`bossFlee.cornerEscape`).
+- **Tundra** — controlImmune; Frostbite room debuff; Deep Freeze at the threshold,
+  spends Chill + Frostbite; Frost Burst on the frozen player; Frost Nova / Frost Spikes.
+  T3 50% Brittle → Shatter, 20% Blizzard. T4 Brittle from the start, 60% Ice Armor,
+  25% Blizzard. Stale T3 Ice Armor removed.
+- **Volcanic** — controlImmune; shell cycle cut; vent field around the arena erupting on
+  a rhythm; final strike 22s (T3) / 26s (T4) casts. T3 50% Caldera Opens. T4 Simmering
+  Burn room DoT (partial cleanse), 50% Magma Shove, burn accelerates in the Cataclysm.
+- **Wasteland** — three weak risen per Raise; stunned Raise staggers; 60% Bone Tithe;
+  25% Harvest.
+- **Trench** — Wound / Crushing Pressure / Rend pile; Depth lengthens debuffs; Devour +35%
+  per distinct debuff, no heal, the only stunnable beat; 60% Into the Dark; 25%
+  Crushing Depth. Mob pass: serpent Wound and stalker Pressure at boss strength,
+  leviathan hits stack a damage-taken debuff.
+
+### First playtest pass (2026-09-27)
+
+- **Phase tile**: the announced phase is a permanent tile leading the target frame's
+  strip (not a title in the name row); its tooltip is the phase's authored
+  `BossPhase.description` (`bossStatusCopy.test.ts` requires one per named phase).
+- **Authored copy**: `debuff-boss` and `debuff-dot` tiles now show the specific
+  effect's copy (`bossDebuffHelp` from the shared registry, `DOT_HELP` by DoT id).
+  The Venomous Bite poison has its own id instead of the biome's generic flavour.
+- **Swamp**: bigger, minute-long Bile and Mire pools; **Bile Rain** (a `rockfall`
+  whose circles each leave a pool, via the new `rockfall.pool` rider) from the start
+  at T2 and T3.
+- **Volcanic**: 6 bigger vents on two rings from the start, 8/9 later, eruptions at
+  1.5x attack; **fissures** (`vent-field.fissure`) open a new vent under the player
+  and erupt it at once. The final strike is `unevadable` (player evasion neither
+  dodges nor grazes it) and the cast `announce`s a boss-effect tile explaining it.
+  The cast FX loops a quickening pulse and ends with the original 8s crescendo.
+- **Desert / Jungle**: dashes and flees roughly 1.6-2.4x faster.
+- **Trench**: stealth draws semi-transparent (no squash); Into the Dark's three
+  surges re-lay Wound, Crushing Pressure and Rend, each followed by a surfaced burst
+  window.
+- **Mountain T4**: Rockfall drops 11 rocks.
+- **Boss scripts** no longer overwrite pattern-published boss effects each tick
+  (recovery, instinct and cast tiles survive on scripted bosses).
+- Packed atlases load with a content-hash `?v=` (`client/src/packedAssetUrl.ts`), so a
+  repack is not hidden behind the one-hour asset cache.
+
+### Wasteland redesign (2026-09-27, from the playtest)
+
+The Charnel-Crown Sovereign is now **a ranged commander and its army**:
+Invocation (a cast summoning the entourage) → the army fights as one force
+(`server/src/systems/combat/ai/bossAdds.ts`: summoned AND risen adds share the
+boss's target and never leash on their own) while the boss hexes from range
+(cleansable Hex of Ruin +15% damage taken, Grave Chill slow, Withering Hex
+anti-heal) and raises on a cadence. Its risen leave corpses again
+(`raisesDead.reraisable`), and with no army left it walks to the bodies and raises
+them (`charnel-reclaim`: `armWhenNoAdds`, dash `to-corpse`, the new pattern `raise`
+step; a stun staggers it). 60% Bone Tithe is unchanged. 25% HARVEST is the turn:
+`set-raising false`, it devours corpses and then living adds one by one (permanent
+attack), and casts to kill (`charnel-wrath`: Grave Burst circles, Bone Spears;
+`charnel-nova` when you stand close). Fixed on the way: the entourage's
+`spawn-adds maxAlive` counted ALL adds, so the Carrion Vulture never spawned.
+
+### Premium animation pass (2026-09-27)
+
+Every lineage's signature actions are animated with the same grammar (set by the
+Trench pass the playtest liked): **a wind-up clock you can read, a visible payoff, a
+visible "you stopped it", weight on the big hits, and a lasting look for lasting
+states.** All client-only; the server only carries ids.
+
+| Piece | Where | What |
+|---|---|---|
+| Body motion | `client/src/fx/bodyPose.ts` | Crouch, leap, squash, lean, tremble and afterimages, layered over the sprite pipeline every frame (tweens target the pose, never the sprite). |
+| Wind-ups | `client/src/fx/windups.ts` | A caster's running wind-up, resolved by its matching `monster-cast-end` (fired: payoff; stopped: cancel visual) or expiring after `ttlMs` for pattern `cast` steps. `fire` may return `'continue'` to let the ordinary cue play too. |
+| Impact feel | `client/src/fx/impactFeel.ts` | Light / medium / heavy camera shake + hit-stop, behind Settings -> Screen shake. |
+| State auras | `client/src/fx/bossAuras.ts` + `auraDefs.ts` | Persistent looks driven by the view: Frenzy, Cornered, Bestial Frenzy stacks, plates, Ice Armor, charge rush, speed phases, Rising Mire, the final-strike charge, Bone Tithe, rallied adds, and player marks (Marked, Frozen, Brittle, Frostbite, Eroded, Depth). |
+| Lineages | `client/src/fx/{jungle,trench,earth,swamp,desert,tundra,volcanic}Boss(es).ts`, `beastBosses.ts` | Per-lineage wind-ups and payoffs; zone overlays (falling rocks/bile, vents, eruption cracks, frost spikes) in `render/groundZones.ts`. |
+| Weather | `client/src/render/bossWeather.ts` | Blizzard, ash fall, abyss, **sandstorm** (Desert late phases), **spores** (Swamp Rot Bloom). |
+
+Server-side ids added for it: boss-fx `predator-frenzy`, `charge-impact`, `rock-impact`,
+`bile-splat`, `vent-eruption`, `harvest`; scattered bursts carry `fx`; scripted casts
+carry `castFx` on their start/end events.
+
+### Known gaps (for the playtest / numbers pass)
+
+- HP and damage untouched: fight lengths will run short against the contract.
+- Rune condition, boss-debuff, boss DoT and pool-flavour art is borrowed; the list to
+  generate is [`briefs/boss-lineage-art-list-2026-09-27.md`](briefs/boss-lineage-art-list-2026-09-27.md).
+- Several boss mechanics are bot-answerable only with the new runes wired; the bench's
+  default rule sets do not wire Enemy Shielded / Enemy Escaping / Debuff Pile.
+- Trench "Depth builds faster while it is gone" is approximated by a faster phase-wide
+  Depth clock; the Leviathan's damage-taken rider reads as "Sundered", not "Rend".
+- The abyss ambience uses drifting caustic bands, not a true displacement shader, and
+  no weather layer has been checked in a browser.
+
 ## Personal playtest corrections — 2026-09-13
 
 These changes supersede the older tuning below:

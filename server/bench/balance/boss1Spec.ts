@@ -264,10 +264,16 @@ export function assertBoss1Definitions(): void {
   // The escorts named above must be the ones the script actually summons, or the
   // receipt rule is checking species the fight never produces.
   const summoned = new Set<string>();
-  for (const phase of (boss as { bossScript?: { phases?: { actions?: { type: string; monsterTypeId?: string }[] }[] } }).bossScript?.phases ?? []) {
-    for (const action of phase.actions ?? []) {
+  type ScriptAction = { type: string; monsterTypeId?: string; actions?: ScriptAction[] };
+  // Casts nest their actions (the Sovereign's Invocation summons the entourage).
+  const walk = (actions: ScriptAction[]): void => {
+    for (const action of actions) {
       if (action.type === 'spawn-adds' && action.monsterTypeId) summoned.add(action.monsterTypeId);
+      if (action.actions) walk(action.actions);
     }
+  };
+  for (const phase of (boss as { bossScript?: { phases?: { actions?: ScriptAction[] }[] } }).bossScript?.phases ?? []) {
+    walk(phase.actions ?? []);
   }
   assert.deepEqual([...summoned].sort(), Object.keys(BOSS1_ESCORTS).sort(),
     'the script\'s spawn-adds species must be exactly the declared escorts');

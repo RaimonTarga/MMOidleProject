@@ -6,6 +6,41 @@ import { atlasHasFrame } from './sprites';
 import { burstFx } from '../fx/particles';
 import { nodeToScene } from './sceneCoords';
 import { monsterSpriteSize } from './monsterSize';
+import { shouldRunClientFx } from '../fx/guard';
+import { bossBiome } from '../fx/bossBiome';
+import { fxJungleEmerge, fxJungleRustle, fxJungleVanish } from '../fx/jungleBoss';
+import { fxTrenchSubmerge, fxTrenchSurface, fxTrenchWake } from '../fx/trenchBoss';
+import { fxBurrowSurface, fxBurrowTrail } from '../fx/earthBosses';
+
+/**
+ * STEALTH cues by biome: the Jungle predator slips into brush, the Trench serpent
+ * sinks into dark water. Enter, a trail while hidden, and the break from cover.
+ */
+type StealthCue = 'enter' | 'trail' | 'exit';
+const lastTrail = new Map<string, { x: number; y: number }>();
+
+function stealthCue(scene: GameScene, monster: MonsterView, x: number, y: number, cue: StealthCue): void {
+  if (!shouldRunClientFx()) return;
+  const trench = bossBiome(scene, monster.id) === 'trench';
+  if (cue === 'trail') {
+    // Only where it actually moved: a still, hidden body leaves no wake.
+    const last = lastTrail.get(monster.id);
+    if (last && Math.hypot(last.x - x, last.y - y) < 10) return;
+    lastTrail.set(monster.id, { x, y });
+    if (trench) fxTrenchWake(scene, x, y);
+    else fxJungleRustle(scene, x, y + 18);
+    return;
+  }
+  lastTrail.delete(monster.id);
+  if (cue === 'enter') {
+    if (trench) fxTrenchSubmerge(scene, x, y);
+    else fxJungleVanish(scene, x, y);
+  } else if (trench) {
+    fxTrenchSurface(scene, x, y);
+  } else {
+    fxJungleEmerge(scene, x, y);
+  }
+}
 
 /**
  * BURROW / STEALTH PRESENTATION.
@@ -30,6 +65,12 @@ import { monsterSpriteSize } from './monsterSize';
 
 /** How faded the body draws while it is under the ground. */
 const SUBMERGED_ALPHA = 0.32;
+/**
+ * STEALTH (Trench Into the Dark, Jungle Vanished) only fades the body: nothing
+ * went into the ground, so squashing and sinking it read as a stretched sprite
+ * (playtest 2026-09-27).
+ */
+const STEALTH_ALPHA = 0.38;
 /** Vertical squash on a body with no bespoke burrowed sprite. */
 const SUBMERGED_SCALE_Y = 0.4;
 /** How far into the ground the body sinks, in node px. */
@@ -124,9 +165,12 @@ function applyConcealedLook(
   id: string,
   size: number,
   usingBurrowArt: boolean,
+  marker: NonNullable<MonsterView['concealed']>,
 ): void {
   const sprite = state.sprite.get(id);
-  if (sprite) {
+  if (sprite && marker === 'stealth') {
+    sprite.setAlpha(STEALTH_ALPHA);
+  } else if (sprite) {
     sprite.setAlpha(usingBurrowArt ? 1 : SUBMERGED_ALPHA);
     // A bespoke burrowed sprite is already drawn as a mound; squashing it too
     // would flatten art authored at the right proportions.
@@ -187,7 +231,17 @@ export function syncConcealment(
   const size = monsterSpriteSize(monster);
 
   if (now === was) {
-    if (now !== undefined) applyConcealedLook(state, monster.id, size, usingBurrowArt);
+    if (now !== undefined) applyConcealedLook(state, monster.id, size, usingBurrowArt, now);
+    const drawn = state.sprite.get(monster.id);
+    if (now === 'stealth' && drawn) stealthCue(scene, monster, drawn.x, drawn.y, 'trail');
+    // Underground: the ground cracks and throws clods where the mound passes.
+    if (now === 'burrow' && drawn && shouldRunClientFx()) {
+      const last = lastTrail.get(monster.id);
+      if (!last || Math.hypot(last.x - drawn.x, last.y - drawn.y) >= 14) {
+        lastTrail.set(monster.id, { x: drawn.x, y: drawn.y });
+        fxBurrowTrail(scene, drawn.x, drawn.y);
+      }
+    }
     return;
   }
   meta.concealed = now;
@@ -205,16 +259,23 @@ export function syncConcealment(
   if (now !== undefined) {
     // GOING UNDER. Dirt first, so the body change happens behind it.
     if (now === 'burrow') spawnDirtCloud(scene, scenePos.x, scenePos.y, cloudScale);
-    // Sink only the improvised form; bespoke burrow art sits at its own height.
-    meta.visualOffsetY = usingBurrowArt ? undefined : SUBMERGED_SINK_PX;
-    applyConcealedLook(state, monster.id, size, usingBurrowArt);
+    if (now === 'stealth') stealthCue(scene, monster, scenePos.x, scenePos.y, 'enter');
+    // Sink only the improvised burrow; bespoke burrow art sits at its own height,
+    // and a stealthed body stays where it is.
+    meta.visualOffsetY = usingBurrowArt || now === 'stealth' ? undefined : SUBMERGED_SINK_PX;
+    applyConcealedLook(state, monster.id, size, usingBurrowArt, now);
     return;
   }
 
   // SURFACING. The dirt is thrown from where it actually came up — which, now that
   // the boss travels rather than teleports, is somewhere the player has been
   // watching the mound approach.
-  if (was === 'burrow') spawnDirtCloud(scene, scenePos.x, scenePos.y, cloudScale * 1.25);
+  if (was === 'burrow') {
+    spawnDirtCloud(scene, scenePos.x, scenePos.y, cloudScale * 1.25);
+    lastTrail.delete(monster.id);
+    if (shouldRunClientFx()) fxBurrowSurface(scene, monster.id);
+  }
+  if (was === 'stealth') stealthCue(scene, monster, scenePos.x, scenePos.y, 'exit');
   meta.visualOffsetY = undefined;
   clearConcealedLook(state, monster.id, size, monster);
 }

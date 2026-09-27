@@ -3615,6 +3615,78 @@
       },
       "status": "accepted",
       "notes": "Exploratory overnight concept batch 2026-09-10. Source-art candidates only; preserve all alternatives for gallery review. Do not accept, pack, wire, or add gameplay sources in this pass."
+    },
+    {
+      "id": "boss-cave-t1-burrowed",
+      "out": "sprites/bosses/boss-cave-t1-burrowed.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "sources": [
+        "obsidian-broodmother"
+      ],
+      "status": "accepted",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east",
+        "colorImage": "sprites/bosses/boss-cave-t1.png"
+      },
+      "prompt": "the Obsidian Broodmother burrowed just beneath the surface, a long lean low mound of compact dun earth sweeping forward like a wake, the sleek swept-back pale bone-grey carapace plates of her back breaking through the crown of the mound in a narrow streamlined ridge, a few small glossy obsidian-black spine plates along the ridge, a narrow pointed head just cresting the leading edge with two narrowed pale glints, loose soil clods and a thin furrow trailing behind, predatory and fast-looking, filling roughly 70 percent of a 128 by 128 sprite, no visible legs and no full body, three-quarter low top-down view facing right, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, pale bone-grey and dun shell with sparse obsidian accents over charcoal-brown earth",
+      "negative": "generic rock, ordinary hill, landscape, cavern, cave walls, floor plane, surrounding terrain, scenery, background elements, environmental scene, pedestal, platform, base, cast shadow, drop shadow, bright white, neon, purple, violet, green, blue, red, colorful, magical glow, flames, water, plants, skulls, extra creatures, visible full legs, standing, walking, upright, bipedal, fully surfaced monster, many eyes, eye cluster, spider, worm, larva, maggot, robot, mechanical drill, cartoon, chibi, cute, rounded soft shapes, toy-like, plush, mascot, front view, facing camera, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "notes": "2026-09-27: bespoke burrowed body for obsidian-broodmother (each Cave boss gets its own mound; the shared boss-cave-burrowed frame is superseded once these ship). Palette pinned to the boss's own sprite via colorImage, no img2img so the standing silhouette does not drag in. 5 candidates for the user's pick."
+    },
+    {
+      "id": "boss-cave-t2-burrowed",
+      "out": "sprites/bosses/boss-cave-t2-burrowed.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "sources": [
+        "chitinous-dreadbore"
+      ],
+      "status": "accepted",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east",
+        "colorImage": "sprites/bosses/boss-cave-t2.png"
+      },
+      "prompt": "the Dreadbore burrowed just beneath the surface, a broad heavy mound of churned charcoal-brown earth, large interlocking pale bone-grey carapace plates breaking through the top of the mound, a continuous glossy obsidian-black spine ridge running along the crest like a dorsal keel, a wedge-shaped armored tunneling head and short horns pushing out of the leading edge, cracked soil plates tilting up around the break and angular clods falling back, heavy and powerful, filling roughly 80 percent of a 128 by 128 sprite, no visible legs and no full body, three-quarter low top-down view facing right, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, pale bone-grey and dun shell with a full obsidian spine ridge over charcoal-brown earth",
+      "negative": "generic rock, ordinary hill, landscape, cavern, cave walls, floor plane, surrounding terrain, scenery, background elements, environmental scene, pedestal, platform, base, cast shadow, drop shadow, bright white, neon, purple, violet, green, blue, red, colorful, magical glow, flames, water, plants, skulls, extra creatures, visible full legs, standing, walking, upright, bipedal, fully surfaced monster, many eyes, eye cluster, spider, worm, larva, maggot, robot, mechanical drill, cartoon, chibi, cute, rounded soft shapes, toy-like, plush, mascot, front view, facing camera, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "notes": "2026-09-27: bespoke burrowed body for chitinous-dreadbore (each Cave boss gets its own mound; the shared boss-cave-burrowed frame is superseded once these ship). Palette pinned to the boss's own sprite via colorImage, no img2img so the standing silhouette does not drag in. 5 candidates for the user's pick."
+    },
+    {
+      "id": "boss-cave-t3-burrowed",
+      "out": "sprites/bosses/boss-cave-t3-burrowed.png",
+      "size": {
+        "w": 128,
+        "h": 128
+      },
+      "sources": [
+        "deep-core-burrow-gorger"
+      ],
+      "status": "accepted",
+      "candidates": 5,
+      "params": {
+        "outline": "lineless",
+        "shading": "highly detailed shading",
+        "detail": "highly detailed",
+        "view": "low top-down",
+        "direction": "east",
+        "colorImage": "sprites/bosses/boss-cave-t3.png"
+      },
+      "prompt": "the Deep-Core Burrow-Gorger burrowed just beneath the surface, an immense wide heaving mound of fractured bedrock and dark earth stretching almost edge to edge, huge cracked ancient bone-grey carapace plates with old scars and broken edges splitting the ground apart along its back, a glossy obsidian crown and long curved horns rising out of the leading edge, big slabs of broken rock tilted up around the body and heavy clods falling away, ancient and titanic, filling roughly 90 percent of a 128 by 128 sprite, no visible legs and no full body, three-quarter low top-down view facing right, isolated on an empty background, painterly pixel art, soft volumetric shading, minimal outline, pale bone-grey and dun ancient shell with obsidian crown and horns over dark charcoal earth and grey rock",
+      "negative": "generic rock, ordinary hill, landscape, cavern, cave walls, floor plane, surrounding terrain, scenery, background elements, environmental scene, pedestal, platform, base, cast shadow, drop shadow, bright white, neon, purple, violet, green, blue, red, colorful, magical glow, flames, water, plants, skulls, extra creatures, visible full legs, standing, walking, upright, bipedal, fully surfaced monster, many eyes, eye cluster, spider, worm, larva, maggot, robot, mechanical drill, cartoon, chibi, cute, rounded soft shapes, toy-like, plush, mascot, front view, facing camera, blurry, 3d render, photograph, hard black outline, text, watermark",
+      "notes": "2026-09-27: bespoke burrowed body for deep-core-burrow-gorger (each Cave boss gets its own mound; the shared boss-cave-burrowed frame is superseded once these ship). Palette pinned to the boss's own sprite via colorImage, no img2img so the standing silhouette does not drag in. 5 candidates for the user's pick."
     }
   ]
 }

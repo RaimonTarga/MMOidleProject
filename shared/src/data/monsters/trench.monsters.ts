@@ -52,7 +52,8 @@ export const trenchMonsterEntries = [
     chargedAttack: {
       name: 'Abyssal Bite', castMs: 1700, cooldownMs: 10000, initialCooldownMs: 5000,
       multiplier: 2.0, fx: 'savage-maul',
-      appliesAntiheal: { reduction: 0.28, durationMs: 6000 },
+      // Boss-lineage redesign mob pass: the Serpent's WOUND at full strength.
+      appliesAntiheal: { reduction: 0.35, durationMs: 7000 },
     },
     // ONE ABILITY, and it is the bite above (2026-09-04 redesign §5.9). The Undertow
     // Lunge, Tail Sweep and Predatory Surge are REMOVED.
@@ -93,7 +94,9 @@ export const trenchMonsterEntries = [
       // The standoff lesson, on the one readable beat: landing it buys the Stalker
       // a moment of distance. Bounded and telegraphed, unlike the three stacking
       // slows it replaces.
-      appliesSlow: { speedMult: 0.70, durationMs: 2000 },
+      // Boss-lineage redesign mob pass: the Serpent's CRUSHING PRESSURE at full
+      // strength (was 0.70 / 2s).
+      appliesSlow: { speedMult: 0.60, durationMs: 5000 },
     },
     // ONE ABILITY, and it is the Lance above (2026-09-04 redesign §5.9). Depth Bolt,
     // Silt Mine and Current Shift are REMOVED.
@@ -136,6 +139,10 @@ export const trenchMonsterEntries = [
       multiplier: 2.0, fx: 'savage-maul',
       aoe: { radius: 170, impactFx: 'devour' },
     },
+    // Boss-lineage redesign mob pass: the Serpent's REND lesson — its hits open you
+    // up (+8% damage taken per stack, 3 max). Uses the shared stacking vulnerability
+    // (it reads "Sundered" on the HUD until Rend gets its own on-hit rider).
+    appliesVulnerability: { damageTakenPct: 0.08, maxStacks: 3, durationMs: 8000 },
     // ONE committed attack (the Devour above) plus the carapace (2026-09-04 §5.9).
     // Lantern Pulse and Body Sweep are REMOVED — a lure slow and a knockback sweep
     // on the STAND-AND-FIGHT monster were pure clutter over the one enormous bite

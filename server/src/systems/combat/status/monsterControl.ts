@@ -28,6 +28,7 @@ import type { World } from "../../../world/World";
 import { setRooted } from "../../world/rooted";
 import { markSliceDirty } from "../../../ecs/dirtyHelpers";
 import { isMonsterStunned } from "./stun";
+import { monsterIgnoresControl } from "./controlImmunity";
 import { CHILL_EFFECT, FROZEN_EFFECT } from "../../classes/archetypes/dot/t3/core/constants";
 import {
   CHILL_ATK_MULT,
@@ -81,6 +82,8 @@ export function applyMonsterRoot(
   sourceId: string,
 ): void {
   if (durationMs <= 0) return;
+  // Plated / control-immune bosses refuse the root (see controlImmunity.ts).
+  if (monsterIgnoresControl(monster)) return;
   applyStatusEffect(monster.tracksCombat, {
     id: ABILITY_ROOT_EFFECT_ID,
     maxStacks: 1,
@@ -185,7 +188,9 @@ function publishHardControl(world: World): void {
     const held =
       isMonsterStunned(world, entity.isMonster.id) ||
       getStatusEffect(entity.tracksCombat, FROZEN_EFFECT) !== undefined ||
-      entity.recoversFromPattern !== undefined;
+      // A STAGGER only (principle 5): a completed pattern's brief recovery is not
+      // a punish window and must not borrow the stun tell.
+      entity.recoversFromPattern?.fromStagger === true;
     if ((entity.hasStatus.hardControlled ?? false) === held) continue;
     entity.hasStatus.hardControlled = held;
     markSliceDirty(world, entity, 'hasStatus');

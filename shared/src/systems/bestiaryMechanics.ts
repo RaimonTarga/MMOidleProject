@@ -282,6 +282,7 @@ function describeBossPatternStep(step: BossPatternStep, pattern: BossPattern): s
         (step.lane ? `, painting a ${step.lane.length}px lane ${step.lane.halfWidth}px half-wide` +
           (step.lane.lockAtCastPct !== undefined ? ` that commits at ${fmtPct(step.lane.lockAtCastPct)} of the cast` : '') : '') +
         (step.interruptible === false ? '; cannot be interrupted' : '') +
+        (step.rootable ? '; a root stops it' : '') +
         (step.guardable === false ? '; Guard does not answer this beat' : '');
     case 'charge':
       return `Charges at ${fmtNumber(step.speed)}px/s for up to ${fmtMs(step.maxTravelMs)}` +
@@ -300,9 +301,21 @@ function describeBossPatternStep(step: BossPatternStep, pattern: BossPattern): s
         (step.requiresChargeHit ? '; only if the charge connected' : '');
     case 'barrier':
       return `Raises a ${fmtPct(step.shieldPct)} max-HP barrier` +
+        (step.blocksControl ? '; ignores stun and root while it holds' : '') +
         (step.onBreak ? `; breaking it causes ${step.onBreak.label} for ${fmtMs(step.onBreak.staggerMs)}` : '');
+    case 'frenzy':
+      return `${step.name}: +${fmtPct(step.attackSpeedPct)} attack speed and +${fmtPct(step.damagePct)} damage for ${fmtMs(step.durationMs)}`;
+    case 'dash':
+      return `${step.name}: dashes ${step.direction === 'to-target' ? 'onto its target' : step.direction === 'to-corpse' ? 'to the nearest corpse' : `away to ${step.distance ?? 400}px`} at ${fmtNumber(step.speed)}px/s` +
+        (step.rootable ? '; a root stops it' : '') +
+        (step.interruptible === false ? '; cannot be interrupted' : '');
+    case 'rockfall':
+      return `${step.name}: ${step.count} rocks fall around the target (one on them, the rest within ${step.spread}px),` +
+        ` each a ${step.radius}px circle, after ${fmtMs(step.delayMs)} for ${fmtMult(pattern.damageMultiplier * step.damageMult)} damage`;
     case 'drop-barrier':
       return `Drops the ${readableId(step.sourceId)} barrier`;
+    case 'raise':
+      return `Casts ${step.name} for ${fmtMs(step.castMs)}: raises up to ${step.count} corpses within ${step.range}px`;
     case 'apply-status':
       return `Casts ${step.name} for ${fmtMs(step.castMs)}: ${statusLabel(step.effectId, step.name)}` +
         ` ×${step.stacks} for ${fmtMs(step.durationMs)}${describePatternStatus(step)}` +
@@ -324,7 +337,7 @@ function describeBossPatternStep(step: BossPatternStep, pattern: BossPattern): s
         (step.interruptible === false ? '; cannot be interrupted' : '');
     }
     case 'conceal':
-      return `${step.name}: leaves a ${step.marker} marker and becomes untargetable for up to ${fmtMs(step.durationMs)}` +
+      return `${step.name}: leaves a ${step.marker} marker and becomes ${step.targetable ? 'a targetable mound' : 'untargetable'} for up to ${fmtMs(step.durationMs)}` +
         (step.travelSpeed ? ` and travels at ${fmtNumber(step.travelSpeed)}px/s` : '') +
         (step.relocate === 'near-target' ? ` to ${step.emergeGap ?? 0}px from the target` : '') +
         (step.relocate === 'leash-edge' ? ' toward the far edge of its leash' : '') +
@@ -486,8 +499,28 @@ function describeEngageSequence(def: MonsterDefinition): BestiaryAbilityLine | n
   };
 }
 
-function describeBossPattern(def: MonsterDefinition): BestiaryAbilityLine | null {
-  const pattern = def.bossPattern;
+/** Base pattern plus every phase-switched variant, each with its own trigger. */
+function describeBossPatterns(def: MonsterDefinition): BestiaryAbilityLine[] {
+  const lines: BestiaryAbilityLine[] = [];
+  const base = describeBossPattern(def, def.bossPattern);
+  if (base) lines.push(base);
+  for (const variant of def.bossPatternVariants ?? []) {
+    const phase = def.bossScript?.phases?.find(p =>
+      p.actions.some(a => (a.type === 'set-pattern' || a.type === 'add-pattern') && a.patternId === variant.id));
+    const added = phase?.actions.some(a => a.type === 'add-pattern' && a.patternId === variant.id) === true;
+    const line = describeBossPattern(def, variant);
+    if (!line) continue;
+    if (phase) {
+      line.trigger = `From ${phase.name ? `${phase.name} (` : ''}${fmtPct(phase.hpPct)} HP${phase.name ? ')' : ''}` +
+        (added ? ', alongside the main sequence' : ', replacing the previous sequence') +
+        (variant.armWhenTargetWithinPx !== undefined ? `, when you come within ${variant.armWhenTargetWithinPx}px` : '');
+    }
+    lines.push(line);
+  }
+  return lines;
+}
+
+function describeBossPattern(def: MonsterDefinition, pattern: BossPattern | undefined): BestiaryAbilityLine | null {
   if (!pattern) return null;
   const triggerParts: string[] = [];
   if (pattern.armAboveHpPct !== undefined) triggerParts.push(`at or above ${fmtPct(pattern.armAboveHpPct)} HP`);
@@ -501,6 +534,10 @@ function describeBossPattern(def: MonsterDefinition): BestiaryAbilityLine | null
     initialCooldownMs: pattern.initialCooldownMs,
     trigger: triggerParts.length > 0 ? triggerParts.join(' and ') : 'While engaged',
     detail: `Commits to one ordered sequence for ${fmtMult(pattern.damageMultiplier)} base damage, suppressing ordinary attacks until recovery` +
+      (pattern.stoppedBy?.stun ? `; a stun on an interruptible wind-up staggers it for ${fmtMs(pattern.stoppedBy.stun.staggerMs)}` : '') +
+      (pattern.stoppedBy?.root ? `; a root on a rootable wind-up staggers it for ${fmtMs(pattern.stoppedBy.root.staggerMs)}` : '') +
+      (pattern.stoppedBy?.damage ? `; ${fmtPct(pattern.stoppedBy.damage.pctMaxHp)} of its max HP dealt to its burrow mound drags it up, staggered for ${fmtMs(pattern.stoppedBy.damage.staggerMs)}` : '') +
+      (def.controlImmune ? '; it ignores stun and root' : '') +
       (pattern.oncePerLife ? '; runs once per life.' : '.'),
     steps: pattern.steps.map((step) => describeBossPatternStep(step, pattern)),
   };
@@ -788,7 +825,7 @@ export function describeMonsterAbilities(
     });
   }
 
-  push(describeBossPattern(def));
+  for (const line of describeBossPatterns(def)) push(line);
 
   if (def.bossScript) {
     for (const [index, phase] of (def.bossScript.phases ?? []).entries()) {

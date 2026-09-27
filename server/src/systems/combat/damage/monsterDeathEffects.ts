@@ -13,14 +13,22 @@ import { registerCombatListener } from '../engine/combatPipeline';
 import { publishToxicPool } from '../../world/groundZones';
 import { recordCorpse } from '../../world/corpses';
 import { clearAmbientRampOverride } from '../../world/nodeFeatures';
+import { clearRoomAffliction } from '../ai/bossArena';
+
+import { BOSS_FRENZY_EFFECT_ID, BOSS_RALLIED_EFFECT_ID } from '../engine/monsterMechanics';
 
 export const DEATH_EMPOWER_EFFECT_ID = 'monster-death-empower';
 
 /** Damage multiplier from nearby allies dying with `empowerAllies`. */
 export function monsterDeathEmpowerMult(monster: MonsterEntity): number {
   const effect = getStatusEffect(monster.tracksCombat, DEATH_EMPOWER_EFFECT_ID);
-  if (!effect) return 1;
-  return 1 + Math.max(0, effect.data['damagePct'] ?? 0) * effect.stacks;
+  const rally = getStatusEffect(monster.tracksCombat, BOSS_RALLIED_EFFECT_ID);
+  const frenzy = getStatusEffect(monster.tracksCombat, BOSS_FRENZY_EFFECT_ID);
+  const rallyMult =
+    (rally ? 1 + Math.max(0, rally.data['rallyDamagePct'] ?? 0) * rally.stacks : 1) *
+    (frenzy && frenzy.remainingMs > 0 ? 1 + Math.max(0, frenzy.data['rallyDamagePct'] ?? 0) : 1);
+  if (!effect) return rallyMult;
+  return (1 + Math.max(0, effect.data['damagePct'] ?? 0) * effect.stacks) * rallyMult;
 }
 
 function empowerNearbyAllies(world: World, dead: MonsterEntity): void {
@@ -93,6 +101,8 @@ export function initMonsterDeathEffects(): void {
     // A boss that stoked its room's ambient ramp takes the stoke with it.
     if (ctx.defender.isMonster.isBoss) {
       clearAmbientRampOverride(world, ctx.defender.hasPosition.nodeId);
+      // ...and a room it turned toxic (Swamp Rot Bloom) clears with it.
+      clearRoomAffliction(world, ctx.defender);
     }
     spawnDeathHazard(world, ctx.defender);
     empowerNearbyAllies(world, ctx.defender);

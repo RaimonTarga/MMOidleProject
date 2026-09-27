@@ -3,6 +3,7 @@ import type { StatusEffect } from '../components/combat/effects';
 import type { TracksCombat } from '../components/combat/tracksCombat';
 import { AMBIENT_RAMP_KEY } from './ambientRamp';
 import { isMonsterDotStatusEffectId } from './monsterDotFlavor';
+import { BOSS_DEBUFF_KEY } from './bossDebuffs';
 
 /**
  * Tundra rampDebuff (MonsterDefinition.rampDebuff) — a single stacking status
@@ -135,5 +136,6 @@ export function isHarmfulPlayerStatusEffect(
   if ((data['isDot'] ?? 0) !== 0) return true;
   if ((data['isNodeFeature'] ?? 0) !== 0) return true;
   if ((data[AMBIENT_RAMP_KEY] ?? 0) !== 0) return true;
+  if ((data[BOSS_DEBUFF_KEY] ?? 0) !== 0) return true;
   return false;
 }

@@ -88,6 +88,15 @@ export type RuneConditionId =
   // your node). Inert for every other archetype. Pairs with Flee so a Conduit whose
   // summons are dying faster than they reform backs off to rebuild.
   | "formation-broken"
+  // Active while the enemy you are attacking is behind an absorb barrier — a boss
+  // plate, an Escape Guard, an Ice Armor. The natural wiring for a burst Technique.
+  | "target-shielded"
+  // Active while a boss fighting you is getting away or coming for you unseen: a
+  // flee, a travelling burrow, a dash. The natural wiring for a root or stun.
+  | "target-escaping"
+  // Active while you carry three or more DIFFERENT harmful debuffs — the moment a
+  // Cleanse buys the most (Trench Devour counts every distinct debuff).
+  | "debuff-pile"
   | "n-aggro-3";
 
 export type RuneActionId =
@@ -171,6 +180,9 @@ const COMBAT_CONDITIONS: readonly RuneConditionId[] = [
   "has-debuff",
   "n-aggro-3",
   "formation-broken",
+  // `Enemy Shielded -> Flee` is how a build takes the breather an armoured boss
+  // offers (Tundra T4 Ice Armor) instead of bursting the shell.
+  "target-shielded",
 ];
 
 const TARGETING_CONDITIONS: readonly RuneConditionId[] = [
@@ -397,6 +409,39 @@ export const CONDITION_DATABASE = new Map<string, ConditionDef>([
       blurb: "Works while an enemy attacking you is winding up a cast-time attack.",
       cost: 2,
       tier: 2,
+      kind: "state",
+    },
+  ],
+  [
+    "target-shielded",
+    {
+      id: "target-shielded",
+      name: "Enemy Shielded",
+      blurb: "Works while the enemy you are attacking is behind a barrier that absorbs damage.",
+      cost: 1,
+      tier: 2,
+      kind: "state",
+    },
+  ],
+  [
+    "target-escaping",
+    {
+      id: "target-escaping",
+      name: "Enemy Escaping",
+      blurb: "Works while a boss fighting you is fleeing, dashing away, or travelling toward you underground.",
+      cost: 1,
+      tier: 2,
+      kind: "state",
+    },
+  ],
+  [
+    "debuff-pile",
+    {
+      id: "debuff-pile",
+      name: "Debuff Pile",
+      blurb: "Works while you carry three or more different harmful debuffs.",
+      cost: 1,
+      tier: 3,
       kind: "state",
     },
   ],
@@ -1394,6 +1439,12 @@ export interface RuneContext {
   targetAtMaxDotStacks?: boolean;
   /** An intentional server-owned map navigation path still has work to do. */
   traveling?: boolean;
+  /** The current attack target is behind a live absorb barrier. */
+  targetShielded?: boolean;
+  /** A boss fighting this player is fleeing, dashing, or travelling underground. */
+  targetEscaping?: boolean;
+  /** Distinct harmful debuffs the player carries. */
+  debuffCount?: number;
   /**
    * The active stance's own charge is full. Only a charging posture (Powering Up)
    * ever sets this; every other stance leaves it false, so a `Stance Charged` rule
@@ -1519,6 +1570,12 @@ function isConditionActive(conditionId: string, ctx: RuneContext): boolean {
       return ctx.traveling ?? false;
     case "stance-charged":
       return ctx.stanceCharged ?? false;
+    case "target-shielded":
+      return ctx.targetShielded ?? false;
+    case "target-escaping":
+      return ctx.targetEscaping ?? false;
+    case "debuff-pile":
+      return (ctx.debuffCount ?? 0) >= 3;
     default:
       return false;
   }

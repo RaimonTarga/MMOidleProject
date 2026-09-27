@@ -104,6 +104,8 @@ read the linked current-state page before using it to describe shipped
 behavior.
 
 - [Future plans](future-plans.md) — backlog and deliberately deferred ideas.
+- [Premium animation pass: mobs and players](briefs/premium-animation-mobs-players-2026-09-27.md) — handoff for taking the boss animation treatment (wind-up clocks, body pose, auras, impact feel) to ordinary mobs and player attacks.
+- [Boss lineage art list](briefs/boss-lineage-art-list-2026-09-27.md) — icons and ground textures the boss lineages borrow art for, with target paths and wiring.
 - [Boss redesign implementation plan](boss-encounter-redesign-implementation-plan-2026-09-04.md)
   — the remaining cleanup/tuning handoff after the shipped phases.
 - [Core rework design/balance handoff](core-rework-design-balance-handoff.md) —
@@ -143,7 +145,7 @@ The flat files in design_docs/ are the design and architecture source set:
 - [economy-philosophy.md](../design_docs/economy-philosophy.md)
 - [player-power-curve.md](../design_docs/player-power-curve.md)
 - [boss-design.md](../design_docs/boss-design.md)
-- [boss-lineage-redesign.md](../design_docs/boss-lineage-redesign.md) — 2026-09-27 boss contract (fight length and phases per tier) and per-lineage T1–T4 redesign; supersedes boss-design.md's fight-length target
+- [boss-lineage-redesign.md](../design_docs/boss-lineage-redesign.md) — 2026-09-27 boss contract (fight length and phases per tier) and per-lineage T1–T4 redesign; **first pass implemented 2026-09-27**, numbers pass pending; supersedes boss-design.md's fight-length target
 - [relics-design.md](../design_docs/relics-design.md)
 - [summoner-overhaul-design-source.md](../design_docs/summoner-overhaul-design-source.md)
 - [ability cast and tier progression](../design_docs/ABILITY_CAST_AND_TIER_PROGRESSION_T1_T4.md)

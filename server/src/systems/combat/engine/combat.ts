@@ -29,6 +29,7 @@ import { makeCombatContext, emitCombatEvent, recordBaseDefenseMeasurement, type 
 import { formationTempoWeight } from "../../classes/archetypes/summoner/profile";
 import { formationAreaMults } from "../../classes/archetypes/summoner/formationArea";
 import {
+  monsterBoneTitheMult,
   monsterEmpoweredMultiplier,
   applyEnemySoftCap,
   applyEnemyShield,
@@ -89,6 +90,7 @@ import {
 import { applyMonsterAoe } from "../damage/aoeDamage";
 import {
   publishGroundZone,
+  publishPatternPool,
   publishToxicPool,
   publishFaultLineBurst,
   takeDueGroundZoneImpacts,
@@ -145,6 +147,7 @@ import {
   finishTelegraphResolutionTelemetry,
   recordTelegraphResolutionVictim,
 } from "../ai/telegraphEvasion";
+import { isConcealedEntity } from "../invulnerability";
 
 export type PlayerAttackOutcome = "cancelled" | "dodged" | "hit" | "killed";
 export type MonsterAttackOutcome = "cancelled" | "hit" | "killed";
@@ -488,7 +491,7 @@ export function runPlayerAttack(
   // every source. Applied BEFORE the cap/barrier so the window amplifies the real
   // hit rather than the post-mitigation remainder — the point is to reward the
   // burst that cracked the shell.
-  ctx.damage = Math.round(ctx.damage * monsterShatterVulnerabilityMult(target));
+  ctx.damage = Math.round(ctx.damage * monsterShatterVulnerabilityMult(target) * monsterBoneTitheMult(target));
 
   const preCapDamage = ctx.damage;
   ctx.damage = applyEnemySoftCap(target, monsterDef, ctx.damage);
@@ -722,10 +725,13 @@ export function runMonsterAttack(
   rawDamage?: number,
   uninterruptible = false,
   abilityName?: string,
+  /** Player evasion neither dodges nor grazes this hit (see `registerEvasion`). */
+  unevadable = false,
 ): MonsterAttackOutcome {
   const baseAttack = rawDamage ?? monster.dealsDamage.attack;
   const ctx = makeCombatContext(monster, "monster", target, "player");
   if (abilityName) ctx.metadata["abilityName"] = abilityName;
+  if (unevadable) ctx.metadata["unevadable"] = true;
 
   if (!uninterruptible && isMonsterStunned(world, monster.isMonster.id)) {
     ctx.cancelled = true;
@@ -2257,7 +2263,7 @@ function* targetableMonstersForPlayer(world: World, player: PlayerEntity): Gener
     player.hasAutoTraversePath !== undefined &&
     player.hasAutoTraversePath.targetNodeId !== player.hasPosition.nodeId;
   for (const monster of world.monsterEntitiesInNode(player.hasPosition.nodeId)) {
-    if (monster.isConcealed) continue;
+    if (isConcealedEntity(monster)) continue;
     if (
       travelIsActive &&
       !(
@@ -2319,6 +2325,27 @@ function resolveDelayedGroundZoneImpacts(world: World, now: number): void {
       }
     }
 
+    if (impact.kind === 'fault-line-telegraph' && impact.scattered) {
+      const scatteredFx = impact.fx === 'rockfall' ? 'rock-impact'
+        : impact.fx === 'bile-rain' ? 'bile-splat'
+        : impact.fx === 'vent-eruption' ? 'vent-eruption'
+        : impact.fx === 'grave-burst' ? 'grave-burst'
+        : 'slam';
+      for (const point of impact.points) {
+        if (impact.leavesPool && world.hasMonster(ownerId)) {
+          publishPatternPool(world, monster, point, impact.leavesPool, impact.radius, now);
+        }
+        world.pushEvent(monster.hasPosition.nodeId, {
+          kind: 'boss-fx',
+          monsterId: impact.id,
+          pos: { ...point },
+          fx: scatteredFx,
+          radius: impact.radius,
+          element: MONSTER_DATABASE.get(monster.isMonster.monsterTypeId)?.attackStyle,
+        });
+      }
+      continue;
+    }
     const maxRadius = impact.kind === 'toxic-pool'
       ? impact.radius
       : Math.max(

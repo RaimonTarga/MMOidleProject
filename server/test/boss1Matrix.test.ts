@@ -1,4 +1,4 @@
-import { MONSTER_DATABASE, NODE_BIOMES, RECIPE_DATABASE, ITEM_DATABASE } from '@mmo-idle/shared';
+import { MONSTER_DATABASE, NODE_BIOMES, RECIPE_DATABASE, ITEM_DATABASE, type BossAction } from '@mmo-idle/shared';
 import {
   BOSS1_BLOCKS,
   BOSS1_BOSS_ID,
@@ -114,11 +114,14 @@ assertBoss1Definitions();
   assert(!!script?.phases?.length, 'the boss must still have a script with phases');
 
   const summoned = new Set<string>();
-  for (const phase of script.phases) {
-    for (const action of phase.actions ?? []) {
+  // Casts nest their actions (the Sovereign's Invocation summons the entourage).
+  const walk = (actions: readonly BossAction[]): void => {
+    for (const action of actions) {
       if (action.type === 'spawn-adds' && action.monsterTypeId) summoned.add(action.monsterTypeId);
+      if (action.type === 'cast') walk(action.actions);
     }
-  }
+  };
+  for (const phase of script.phases) walk(phase.actions ?? []);
   assert(JSON.stringify([...summoned].sort()) === JSON.stringify(Object.keys(BOSS1_ESCORTS).sort()),
     `declared escorts must be exactly what the script spawns, got ${JSON.stringify([...summoned].sort())}`);
 
@@ -128,10 +131,13 @@ assertBoss1Definitions();
     assert(m.stats.attack === expected.attack, `${id}: attack drift`);
   }
 
-  // The 50% phase is what makes the cap load-bearing: the screen must be able to
-  // reach Mass Resurrection, or it measures a truncated fight.
-  const halfPhase = script.phases.find((p) => p.hpPct === 0.5);
-  assert(!!halfPhase, 'the 50% phase must exist, or the resolved cap is meaningless');
+  // The Mass Resurrection phase is what makes the cap load-bearing: the screen must
+  // be able to reach it, or it measures a truncated fight. (Moved 50% -> 60% by the
+  // 2026-09-27 boss-lineage redesign, which added Bone Tithe with it.)
+  const massPhase = script.phases.find((p) =>
+    (p.actions ?? []).some((a) => a.type === 'cast'),
+  );
+  assert(!!massPhase, 'the Mass Resurrection phase must exist, or the resolved cap is meaningless');
 }
 
 // ── The boss's own block, pinned.

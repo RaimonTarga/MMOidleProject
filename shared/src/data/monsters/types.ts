@@ -7,6 +7,9 @@ import type { MonsterBehavior } from './behavior';
 
 // ── Boss script types ─────────────────────────────────────────────────────────
 
+/** Presentational boss-phase weather (see the `set-weather` action). */
+export type BossWeather = 'blizzard' | 'ashfall' | 'abyss' | 'sandstorm' | 'spores';
+
 /**
  * All actions a boss can take, as a discriminated union.
  *
@@ -83,7 +86,26 @@ export type BossAction =
   | { type: 'apply-soft-cap'; capPct: number; capMult: number }
   | { type: 'shed-defense' }
   | { type: 'modify-ramp-debuff'; moveSlowMaxPct: number; atkSlowMaxPct: number }
-  | { type: 'spawn-adds'; monsterTypeId: string; count: number; offsetRange?: number; maxAlive?: number }
+  | {
+      type: 'spawn-adds';
+      monsterTypeId: string;
+      count: number;
+      offsetRange?: number;
+      maxAlive?: number;
+      /**
+       * Where the adds arrive. Default `boss` (scattered within `offsetRange` of it).
+       * `target-ring` places them `ringDistance` from the boss's target, so an add
+       * with an engage opener (the Savanna Hawk's Dive Bomb) has room to perform it.
+       */
+      at?: 'boss' | 'target-ring';
+      ringDistance?: number;
+    }
+  /**
+   * EMPOWER ADDS (Plains T2 Rallying Roar) — every living add this boss spawned
+   * gains a stack of Rallied: +attack speed and +damage per stack, until it dies.
+   * The escalation is the herd's, never the boss's own duel.
+   */
+  | { type: 'empower-adds'; attackSpeedPct: number; damagePct: number; maxStacks?: number }
   | {
       /** A visible, non-damaging boss cast that resolves its actions at completion. */
       type: 'cast';
@@ -92,6 +114,11 @@ export type BossAction =
       actions: BossAction[];
       /** Cast-start cue. Defaults to the rallying-roar treatment. */
       fx?: 'roar' | 'frenzy' | 'shield';
+      /**
+       * Client animation id carried on the cast's start and end events (the wind-up
+       * and the release). Defaults to `fx`.
+       */
+      castFx?: string;
     }
   /**
    * RAISE DEAD (Wasteland) — one burst resurrection. Claims up to `count` corpses
@@ -171,6 +198,126 @@ export type BossAction =
       /** Extra stack counts at which the threshold poison fires (Cave T3+). */
       extraThresholds?: number[];
     }
+  /**
+   * SET PATTERN — swap the boss's ordered pattern for one of its authored
+   * `bossPatternVariants` (by id) from here on. How a phase changes the QUESTION
+   * rather than the numbers: Mountain T3's second phase charges twice, Cave T3's
+   * second phase runs the tunnel chase. A pattern already running finishes first.
+   */
+  | { type: 'set-pattern'; patternId: string }
+  /**
+   * BOSS WEATHER — a purely presentational tag for an intense phase (Tundra
+   * Blizzard, Volcanic ash fall, Trench abyss). The client draws a screen-space
+   * weather layer while it is set; `null` clears it. No gameplay.
+   */
+  | { type: 'set-weather'; weather: BossWeather | null }
+  /**
+   * BONE TITHE (Wasteland) — from now on the boss takes `damageReductionPerRisen`
+   * less damage per living risen it commands, up to `maxStacks`, shown as stacks.
+   * Clear the adds first.
+   */
+  | { type: 'bone-tithe'; damageReductionPerRisen: number; maxStacks: number }
+  /**
+   * HARVEST (Wasteland soft enrage) — every `intervalMs` it devours one of its risen
+   * and gains a permanent `attackMult`. A buff only, never a heal.
+   */
+  | { type: 'harvest'; intervalMs: number; attackMult: number }
+  /** Stop (or resume) this boss's necromancy: its cadence raises and raise casts. */
+  | { type: 'set-raising'; enabled: boolean }
+  /**
+   * ADD / REMOVE PATTERN — arm a SECOND authored pattern (from `bossPatternVariants`)
+   * alongside the main one, with its own cooldown; the boss still runs one sequence
+   * at a time, and an added pattern gets first pick when both are ready. The Desert
+   * standoff adds its reactive dash-escape this way.
+   */
+  | { type: 'add-pattern'; patternId: string }
+  | { type: 'remove-pattern'; patternId: string }
+  /**
+   * SPREAD POOLS (Swamp Rot Bloom) — from now on every pool this boss owns grows
+   * `radiusPerSec` until it reaches `maxRadiusMult` × the radius it was laid at.
+   */
+  | { type: 'spread-pools'; radiusPerSec: number; maxRadiusMult: number }
+  /**
+   * VENT FIELD (Volcanic, boss-lineage redesign) — magma vents AROUND the arena
+   * (a ring about the boss's spawn), not under the boss. Standing on one speeds your
+   * Heat (`rampAccelMult`); each erupts on its own telegraphed rhythm, and you must
+   * be off it when it does. Re-issuing it retunes the rhythm of the vents already
+   * down (and adds more if `count` is higher): the caldera opening.
+   */
+  | {
+      type: 'vent-field';
+      count: number;
+      radius: number;
+      ringRadius: number;
+      rampAccelMult: number;
+      eruptEveryMs: number;
+      telegraphMs: number;
+      /** Eruption damage, as a multiple of the boss's attack. */
+      damageMult: number;
+      /**
+       * FISSURES — every `everyMs` a new vent splits open under a player and erupts
+       * straight away (telegraphed by `telegraphMs`), then stays as an ordinary vent,
+       * until the arena holds `maxVents`. The arena fills with vents over the fight.
+       */
+      fissure?: { everyMs: number; maxVents: number };
+    }
+  /**
+   * VENT SPAWNER (Volcanic, playtest 2026-09-27) — every `everyMs`, `count` short-lived
+   * vents split open at random points `minRadius`..`maxRadius` around the boss's
+   * CURRENT position: each swells for `telegraphMs`, erupts, lingers `lingerMs` as a
+   * Heat pool and closes. Re-issuing it retunes the rhythm (the last phase's
+   * near-bullet-hell). Stops with the boss.
+   */
+  | {
+      type: 'vent-spawner';
+      everyMs: number;
+      count: number;
+      minRadius: number;
+      maxRadius: number;
+      radius: number;
+      telegraphMs: number;
+      lingerMs: number;
+      /** Eruption damage, as a multiple of the boss's attack. */
+      damageMult: number;
+      rampAccelMult: number;
+    }
+  /**
+   * ROOM DEBUFF — every `intervalMs`, each player in the boss's node gains one stack
+   * of this boss debuff (up to `maxStacks`). Re-issuing it for the same effect
+   * replaces the clock; `accelerate` shortens the interval after every stack (the
+   * Tundra Blizzard's "faster and faster"). Cleared from everyone when the boss dies.
+   * Tundra Frostbite, Trench Depth.
+   */
+  | {
+      type: 'room-debuff';
+      effectId: string;
+      intervalMs: number;
+      maxStacks: number;
+      /** -1 (default) = lasts until the boss dies. */
+      durationMs?: number;
+      data?: Record<string, number>;
+      accelerate?: { intervalMult: number; minIntervalMs: number };
+    }
+  /**
+   * ROOM AFFLICTION — the arena itself turns on the player: every `intervalMs`
+   * each engaged player in the boss's node gains one stack of this DoT, up to
+   * `dot.maxStacks`, refreshing its duration. Cleared from everyone when the boss
+   * dies. The Swamp's Rot Bloom soft enrage; DoT resistance and Recovery stretch
+   * it, killing the boss ends it.
+   */
+  | {
+      type: 'room-affliction';
+      intervalMs: number;
+      dot: {
+        debuffId: string;
+        label: string;
+        color?: string;
+        damagePerStack: number;
+        maxStacks: number;
+        tickIntervalMs: number;
+        durationMs: number;
+      };
+    }
   | {
       type: 'morph';
       isRanged?: boolean;
@@ -200,6 +347,17 @@ export type BossAction =
 export interface BossPhase {
   /** 0.0–1.0 fraction of maxHp below which this phase fires. */
   hpPct: number;
+  /**
+   * ANNOUNCED PHASE. A named phase is a change the player must be told about:
+   * it roars as it fires and the name becomes the boss bar's phase label until the
+   * next named phase replaces it. Unnamed phases stay silent escalation.
+   */
+  name?: string;
+  /**
+   * Authored player-facing text for an announced phase: what changed and what the
+   * answer is. Shown as the tooltip of the phase tile on the target frame.
+   */
+  description?: string;
   actions: BossAction[];
 }
 
@@ -387,6 +545,18 @@ export interface MonsterRaisesDead {
   castName?: string;
   /** Client resolve cue, reusing the ordinary monster cast event. */
   castFx?: string;
+  /** Corpses claimed and raised per cadence cast (default 1). Wasteland: numbers over quality. */
+  count?: number;
+  /**
+   * The risen leave corpses again, so the army can be raised over and over until
+   * the raiser stops (Wasteland redesign: it keeps its army until the last phase).
+   */
+  reraisable?: boolean;
+  /**
+   * A STUN on the Raise wind-up stops it AND staggers the raiser for this long, with
+   * the stun tell (principle 5): the Wasteland's one control-answerable beat.
+   */
+  stunStaggerMs?: number;
 }
 
 /** A player-facing rider on a generic monster ability hit. */
@@ -1156,6 +1326,17 @@ export interface MonsterDefinition {
    * accumulation the redesign exists to undo.
    */
   bossPattern?: BossPattern;
+  /**
+   * Alternate patterns a `set-pattern` phase action can switch to. Each keeps its
+   * own id; runtime state (`scriptsBoss.patternOverrideId`) names the active one.
+   */
+  bossPatternVariants?: BossPattern[];
+  /**
+   * ACCEPTS NO CONTROL (boss-lineage-redesign principle 6). Player stuns and roots
+   * do not land, and hard control never interrupts its casts. Tundra and Volcanic:
+   * their answers are movement, Guard and damage, never a Stunning Strike.
+   */
+  controlImmune?: boolean;
   chargedAttack?: {
     name: string;
     castMs: number;

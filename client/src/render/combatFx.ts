@@ -131,12 +131,68 @@ import {
   fxDeathrollLunge,
   fxDragWake,
   fxDragDestination,
+  fxMireLash,
+  fxMireLashWindup,
+  MAGMA_SHOVE_PALETTE,
 } from "../fx/swampCues";
 import { fxDeepFreeze, fxFrostWindUp, fxShatter, fxGlacialSlam } from "../fx/tundraCues";
 import { fxStalactiteShot, fxBurrow, fxEmerge } from "../fx/caveCues";
 import { fxGroundSlam, fxChargeLane, fxBombardment } from "../fx/mountainCues";
 import { fxPredatorFlee, fxPressureLance } from "../fx/predatorCues";
 import { fxCataclysmCast, fxCataclysmImpact } from "../fx/cataclysm";
+import {
+  cancelWindup,
+  DESERT_HUNT,
+  fxAmbushPounce,
+  fxAmbushWindup,
+  fxHuntBolt,
+  fxPredatorFrenzy,
+  JUNGLE_HUNT,
+} from "../fx/jungleBoss";
+import {
+  fxMawWindup,
+  fxPressureWindup,
+  fxTailWindup,
+  fxUndertowWindup,
+} from "../fx/trenchBoss";
+import { castTargetId, isBossFxSuppressed, resolveWindup, spriteAt } from "../fx/windups";
+import { impact as impactFeel } from "../fx/impactFeel";
+import {
+  fxBurrowWindup,
+  fxChargeImpact,
+  fxChargeWindup,
+  fxPlateWindup,
+  fxRockImpact,
+} from "../fx/earthBosses";
+import {
+  fxBileHeave,
+  fxBileSplat,
+  fxBileSpewWindup,
+  fxLashLunge,
+  fxSpitGlob,
+  fxSpitWindup,
+} from "../fx/swampBoss";
+import { fxExecutionWindup, fxStingWindup } from "../fx/desertBoss";
+import { fxEncaseWindup, fxFreezeWindup, fxShatterWindup } from "../fx/tundraBoss";
+import { fxVentEruption } from "../fx/volcanicBoss";
+import {
+  fxBoneSpear,
+  fxGraveBurst,
+  fxGraveCast,
+  fxHexWindup,
+  fxSoulNova,
+  NECRO_HUNT,
+} from "../fx/wastelandBoss";
+import {
+  fxBearFrenzyWindup,
+  fxHarvest,
+  fxPawRaise,
+  fxRaiseWindup,
+  fxRisenEmerge,
+  fxRoarWindup,
+  fxStampedeWindup,
+} from "../fx/beastBosses";
+import { bossBiome } from "../fx/bossBiome";
 import { fxSweep } from "../fx/sweep";
 import { fxExposeWeakness } from "../fx/heavyStrike";
 import { fxBrace } from "../fx/brace";
@@ -794,6 +850,8 @@ const GUARD_CALLOUT_COLORS: Record<string, string> = {
   recuperate: "#bdf3e4",
 };
 const GUARD_CALLOUT_FALLBACK = "#9cd2ff";
+/** Announced boss phase names: the boss-bar gold, so the callout and the label read as one. */
+const BOSS_PHASE_CALLOUT_COLOR = "#ffcc55";
 const TECHNIQUE_CALLOUT_COLOR = "#ffd24a";
 const RELOAD_CALLOUT_COLOR = "#f0b04f";
 const RECALL_CALLOUT_COLOR = "#9cd2ff";
@@ -968,6 +1026,10 @@ export function dispatchCombatEvent(
         return;
       }
       if (ev.pulse === "frost-shatter") playSfx("frozen");
+      if (ev.pulse === "raise-dead") {
+        const at = nodeToScene(ev.pos.x, ev.pos.y);
+        fxRisenEmerge(scene, at.x, at.y);
+      }
       const color =
         ev.pulse === "sun-mark"
           ? SUN_MARK_PULSE_COLOR
@@ -1015,10 +1077,57 @@ export function dispatchCombatEvent(
     if (shouldRunClientFx() && ev.fx) {
       const caster = state.sprite.get(ev.monsterId);
       if (caster) {
-        if (ev.fx === "charge-lane") fxChargeLane(scene, caster.x, caster.y);
-        else if (ev.fx === "burrow") fxBurrow(scene, caster.x, caster.y);
-        else if (ev.fx === "predator-flee") fxPredatorFlee(scene, caster.x, caster.y);
-        else if (ev.fx === "cataclysm-cast") fxCataclysmCast(scene, caster.x, caster.y);
+        if (ev.fx === "charge-lane") {
+          fxChargeLane(scene, caster.x, caster.y);
+          fxChargeWindup(scene, ev.monsterId, ev.castMs);
+        } else if (ev.fx === "burrow") {
+          fxBurrow(scene, caster.x, caster.y);
+          fxBurrowWindup(scene, ev.monsterId, ev.castMs);
+        }
+        // ── Premium boss wind-ups (2026-09-27): each resolves on its cast-end. ──
+        else if (ev.fx === "shield") {
+          if (bossBiome(scene, ev.monsterId) === "tundra") fxEncaseWindup(scene, ev.monsterId, ev.castMs);
+          else fxPlateWindup(scene, ev.monsterId, ev.castMs);
+        }
+        else if (ev.fx === "bile-spew") fxBileSpewWindup(scene, ev.monsterId, ev.castMs);
+        else if (ev.fx === "pool-spawn") {
+          // A lobbed spit (Mire / Spore): the glob flies for the whole telegraph.
+          fxSpitWindup(scene, ev.monsterId, ev.castMs);
+          const victim = spriteAt(scene, castTargetId(scene, ev.monsterId));
+          if (victim) fxSpitGlob(scene, ev.monsterId, victim, ev.castMs, ev.label.startsWith("Spore"));
+        }
+        else if (ev.fx === "bile-heave") fxBileHeave(scene, ev.monsterId, ev.castMs);
+        else if (ev.fx === "death-sting") fxStingWindup(scene, ev.monsterId, ev.castMs, "death");
+        else if (ev.fx === "numbing-sting") fxStingWindup(scene, ev.monsterId, ev.castMs, "numbing");
+        else if (ev.fx === "execution") fxExecutionWindup(scene, ev.monsterId, ev.castMs);
+        else if (ev.fx === "shatter" && ev.label === "Shatter") fxShatterWindup(scene, ev.monsterId, ev.castMs);
+        else if (ev.fx === "roar" || ev.fx === "herd-call") fxRoarWindup(scene, ev.monsterId, ev.castMs, ev.fx === "herd-call");
+        else if (ev.fx === "stampede") fxStampedeWindup(scene, ev.monsterId, ev.castMs);
+        else if (ev.fx === "frenzy") fxBearFrenzyWindup(scene, ev.monsterId, ev.castMs);
+        else if (ev.fx === "paw-raise") fxPawRaise(scene, ev.monsterId, ev.castMs);
+        else if (ev.fx === "raise-dead" || ev.fx === "mass-raise" || ev.fx === "invocation") fxRaiseWindup(scene, ev.monsterId, ev.castMs, ev.fx);
+        // Wasteland: the hexes, the Wrath's cast, and the glide to the bodies.
+        else if (ev.fx === "hex-ruin") fxHexWindup(scene, ev.monsterId, ev.castMs, "ruin", ev.fx);
+        else if (ev.fx === "hex-chill") fxHexWindup(scene, ev.monsterId, ev.castMs, "chill", ev.fx);
+        else if (ev.fx === "hex-wither") fxHexWindup(scene, ev.monsterId, ev.castMs, "wither", ev.fx);
+        else if (ev.fx === "grave-cast") fxGraveCast(scene, ev.monsterId, ev.castMs);
+        else if (ev.fx === "necro-glide") fxHuntBolt(scene, ev.monsterId, NECRO_HUNT);
+        else if (ev.fx === "predator-flee") {
+          // The bolt itself (lean, stretch, afterimages) for every hunter; the leaf
+          // wrap only in the jungle — a Desert dash has no brush to close around it.
+          const desert = bossBiome(scene, ev.monsterId) === "desert";
+          if (!desert) fxPredatorFlee(scene, caster.x, caster.y);
+          fxHuntBolt(scene, ev.monsterId, desert ? DESERT_HUNT : JUNGLE_HUNT);
+        }
+        // Jungle ambush: the crouch and the eye glint.
+        else if (ev.fx === "ambush-pounce" || ev.fx === "venom-pounce") fxAmbushWindup(scene, ev.monsterId, ev.castMs);
+        // Trench wind-ups, resolved (or cancelled) by the matching cast-end.
+        else if (ev.fx === "undertow") fxUndertowWindup(scene, ev.monsterId, ev.castMs);
+        else if (ev.fx === "trench-bite") fxMawWindup(scene, ev.monsterId, ev.castMs, "bite");
+        else if (ev.fx === "devour-maw") fxMawWindup(scene, ev.monsterId, ev.castMs, "devour");
+        else if (ev.fx === "crushing-pressure") fxPressureWindup(scene, ev.monsterId, ev.castMs);
+        else if (ev.fx === "tail-lash") fxTailWindup(scene, ev.monsterId, ev.castMs);
+        else if (ev.fx === "cataclysm-cast") fxCataclysmCast(scene, ev.monsterId, caster.x, caster.y, ev.castMs);
         // The Bog Lurker gathering itself at the water's edge. This is the beat the
         // whole ability is solvable from, so it has to be drawn on the wind-up and
         // not only on what lands.
@@ -1026,7 +1135,13 @@ export function dispatchCombatEvent(
         // Deep Freeze's wind-up. The RELEASE is already drawn on `monster-cast-end`
         // below (`frostbind` -> fxDeepFreeze, anchored on the victim), so this adds
         // only the caster-side tell and must not repeat the lock animation.
-        else if (ev.fx === "frostbind") fxFrostWindUp(scene, caster.x, caster.y);
+        else if (ev.fx === "frostbind") {
+          fxFrostWindUp(scene, caster.x, caster.y);
+          fxFreezeWindup(scene, ev.monsterId, ev.castMs);
+        }
+        // The Swamp boss's grab (and the Volcanic shove): the swell is the tell.
+        else if (ev.fx === "mire-lash") fxMireLashWindup(scene, caster.x, caster.y, ev.castMs);
+        else if (ev.fx === "magma-shove") fxMireLashWindup(scene, caster.x, caster.y, ev.castMs, MAGMA_SHOVE_PALETTE);
       }
     }
     return;
@@ -1034,11 +1149,26 @@ export function dispatchCombatEvent(
 
   if (ev.kind === "monster-cast-end") {
     endCastBar(state, ev.monsterId);
+    // A stopped cast (stun, reset) unwinds its wind-up: the Trench jaws crack
+    // apart ("Choked"), a crouch springs back up.
+    if (!ev.fired) {
+      if (!resolveWindup(scene, ev.monsterId, false)) cancelWindup(scene, ev.monsterId);
+    }
     // On a fired shot, rip the flashy projectile from the monster to its target.
     if (ev.fired && shouldRunClientFx()) {
       const monster = state.sprite.get(ev.monsterId);
       const target = ev.targetId ? state.sprite.get(ev.targetId) : undefined;
+      const hitAt = target ? { x: target.x, y: target.y } : undefined;
       const impact = ev.pos ? nodeToScene(ev.pos.x, ev.pos.y) : undefined;
+      // Any registered wind-up (Trench jaws, Desert sigils, Tundra ice, ...)
+      // owns its own payoff.
+      if (resolveWindup(scene, ev.monsterId, true, hitAt ?? impact, ev.fx) === 'owned') return;
+      if (monster && (ev.fx === "ambush-pounce" || ev.fx === "venom-pounce")) {
+        const to = hitAt ?? { x: monster.x + 60, y: monster.y };
+        fxAmbushPounce(scene, ev.monsterId, ev.targetId, { x: monster.x, y: monster.y }, to,
+          ev.fx === "venom-pounce" ? "venom" : "maul");
+        return;
+      }
       if (monster && ev.fx === "howl") {
         fxDireHowl(scene, monster.x, monster.y);
       } else if (monster && ev.fx === "chest-beat") {
@@ -1098,11 +1228,18 @@ export function dispatchCombatEvent(
       } else if (impact && ev.fx === "deep-core-eruption") {
         playSfx("attack-blunt");
         fxEmerge(scene, impact.x, impact.y, ev.radius ?? 160);
+        impactFeel(scene, "medium", impact);
+      } else if (impact && ev.fx === "bone-spear") {
+        playSfx("attack-blunt");
+        fxBoneSpear(scene, impact.x, impact.y, ev.radius ?? 85);
+      } else if (impact && ev.fx === "soul-nova") {
+        fxSoulNova(scene, impact.x, impact.y, ev.radius ?? 230);
       } else if (impact && ev.fx === "shatter") {
         fxShatter(scene, impact.x, impact.y, ev.radius ?? 195);
       } else if (impact && ev.fx === "cataclysm-impact") {
         playSfx("attack-blunt");
         fxCataclysmImpact(scene, impact.x, impact.y, ev.radius ?? 2000);
+        impactFeel(scene, "heavy");
       } else if (impact && ev.fx === "bombardment") {
         fxBombardment(scene, impact.x, impact.y, ev.radius ?? 130);
       } else if (impact && ev.fx === "deep-freeze-area") {
@@ -1159,6 +1296,14 @@ export function dispatchCombatEvent(
         fxTrenchSweep(scene, impact.x, impact.y, ev.radius ?? 155);
       } else if (impact && ev.fx === "trench-silt-mine") {
         fxTrenchMine(scene, impact.x, impact.y, ev.radius ?? 115);
+      } else if (monster && target && ev.fx === "mire-lash") {
+        playSfx("attack-blunt");
+        fxLashLunge(scene, ev.monsterId, hitAt);
+        fxMireLash(scene, monster.x, monster.y, target.x, target.y);
+      } else if (monster && target && ev.fx === "magma-shove") {
+        playSfx("attack-blunt");
+        fxLashLunge(scene, ev.monsterId, hitAt);
+        fxMireLash(scene, monster.x, monster.y, target.x, target.y, MAGMA_SHOVE_PALETTE);
       } else if (monster && ev.fx === "trench-current") {
         fxTrenchCurrent(scene, monster.x, monster.y);
       } else if (monster && ev.fx === "trench-surge") {
@@ -1199,7 +1344,27 @@ export function dispatchCombatEvent(
         ev.fx !== "slam" && sprite
           ? { x: sprite.x, y: sprite.y }
           : nodeToScene(ev.pos.x, ev.pos.y);
-      if (ev.fx === "slam") {
+      // Cues anchored on the event's own point (a victim, a rock, a vent, a risen),
+      // never on the boss sprite.
+      const point = nodeToScene(ev.pos.x, ev.pos.y);
+      if ((ev.fx === "roar" || ev.fx === "frenzy") && isBossFxSuppressed(scene, ev.monsterId, ev.fx)) {
+        // A scripted cast's start-of-cast puff: its wind-up draws the build and
+        // its release draws the burst (beastBosses.ts).
+      } else if (ev.fx === "charge-impact") {
+        fxChargeImpact(scene, point.x, point.y);
+      } else if (ev.fx === "rock-impact") {
+        playSfx("attack-blunt");
+        fxRockImpact(scene, point.x, point.y, ev.radius ?? 90);
+      } else if (ev.fx === "bile-splat") {
+        fxBileSplat(scene, point.x, point.y, ev.radius ?? 110);
+      } else if (ev.fx === "vent-eruption") {
+        playSfx("attack-blunt");
+        fxVentEruption(scene, point.x, point.y, ev.radius ?? 180);
+      } else if (ev.fx === "harvest") {
+        fxHarvest(scene, ev.monsterId, point);
+      } else if (ev.fx === "grave-burst") {
+        fxGraveBurst(scene, point.x, point.y, ev.radius ?? 110);
+      } else if (ev.fx === "slam") {
         playSfx("attack-blunt");
         fxSlam(scene, at.x, at.y, ev.radius ?? 120, ev.element);
       } else if (ev.fx === "summon") {
@@ -1212,6 +1377,8 @@ export function dispatchCombatEvent(
         fxBossRoar(scene, at.x, at.y, ev.radius ?? 260);
       } else if (ev.fx === "frenzy") {
         fxBestialFrenzy(scene, at.x, at.y);
+      } else if (ev.fx === "predator-frenzy") {
+        fxPredatorFrenzy(scene, ev.monsterId, at.x, at.y);
       } else if (ev.fx === "stagger") {
         // The punish window. `bossPatterns.ts` has always published this and the
         // client never drew it, so breaking a plate or an escape-guard — the only
@@ -1221,6 +1388,16 @@ export function dispatchCombatEvent(
     }
     return;
   }
+
+  if (ev.kind === "boss-phase") {
+    if (shouldRunClientFx() && state.sprite.has(ev.monsterId)) {
+      spawnSkillCallout(state, scene, ev.monsterId, ev.name, BOSS_PHASE_CALLOUT_COLOR);
+    }
+    return;
+  }
+
+  // Telemetry-only: the stagger it may cause arrives as its own `boss-fx`.
+  if (ev.kind === "boss-pattern-stopped") return;
 
   if (ev.kind === "player-guard") {
     // A self-facing Guard fired — overlay its FX on the player's sprite plus a
@@ -1549,11 +1726,22 @@ export function dispatchCombatEvent(
     // render baseline and prediction target to the recoil position so the shove
     // actually lands; movement re-paths forward from here on the next tick.
     scene.tweens.killTweensOf(interp.lungeOffset);
-    interp.lungeOffset.x = 0;
-    interp.lungeOffset.y = 0;
+    // A PULL is a haul, not a shove: slide the drawn body from where it was to where
+    // the drag left it, accelerating, so the player SEES themselves being dragged
+    // (the Mire Lash tongue retracts over the same beat). Knockback keeps its snap.
+    const fromX = interp.base.x + interp.lungeOffset.x;
+    const fromY = interp.base.y + interp.lungeOffset.y;
     interp.base.x = ev.pos.x;
     interp.base.y = ev.pos.y;
     transform.target = { x: ev.pos.x, y: ev.pos.y };
+    if (ev.reason === "pull" && shouldRunClientFx()) {
+      interp.lungeOffset.x = fromX - ev.pos.x;
+      interp.lungeOffset.y = fromY - ev.pos.y;
+      scene.tweens.add({ targets: interp.lungeOffset, x: 0, y: 0, duration: 420, ease: "Quad.easeIn" });
+    } else {
+      interp.lungeOffset.x = 0;
+      interp.lungeOffset.y = 0;
+    }
     return;
   }
 

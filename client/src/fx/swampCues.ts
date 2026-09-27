@@ -248,3 +248,111 @@ export function fxDragDestination(
     onComplete: () => ring.destroy(),
   });
 }
+
+// ── MIRE LASH (Swamp T2/T3 boss pull; also the Volcanic Magma Shove) ─────────
+//
+// The pull used to borrow the Trench's current pulse — a small ring on the boss —
+// and the player simply snapped to where the drag left them. Nothing read as
+// "grabbed and hauled". Three beats now, each doing one job:
+//   1. WIND-UP (the cast bar): the throat swells in tightening pulses, so the grab
+//      is readable from the whole cast, not only when it lands;
+//   2. THE LASH: a thick tongue shoots out to the victim and slaps with a mud burst;
+//   3. THE HAUL: it retracts toward the boss, trailing mud, while the victim's sprite
+//      slides along the drag (see the `player-knockback` pull branch in combatFx).
+
+export interface LashPalette {
+  tongue: number;
+  edge: number;
+  splat: number[];
+}
+
+export const MIRE_LASH_PALETTE: LashPalette = {
+  tongue: 0x9c4a6a,
+  edge: 0x3a1a2a,
+  splat: [0x4a3a28, 0x6b5236, ROT_DARK, ROT],
+};
+
+export const MAGMA_SHOVE_PALETTE: LashPalette = {
+  tongue: 0xff7a2a,
+  edge: 0x5a1a08,
+  splat: [0xff9a3a, 0xc2410c, 0x3a2a22, 0xffd27a],
+};
+
+/** The throat swelling over the cast: rings that tighten and speed up. */
+export function fxMireLashWindup(
+  scene: GameScene, x: number, y: number, castMs: number, palette: LashPalette = MIRE_LASH_PALETTE,
+): void {
+  const pulses = Math.max(2, Math.min(5, Math.round(castMs / 300)));
+  for (let i = 0; i < pulses; i++) {
+    const at = (castMs * i) / pulses;
+    scene.time.delayedCall(at, () => {
+      const ring = scene.add.graphics({ x, y: y - 18 }).setDepth(DEPTH.FX);
+      ring.lineStyle(4, palette.tongue, 0.85);
+      ring.strokeCircle(0, 0, 58 - i * 6);
+      ring.fillStyle(palette.edge, 0.25);
+      ring.fillCircle(0, 0, 16 + i * 4);
+      scene.tweens.add({
+        targets: ring, scale: 0.35, alpha: 0, duration: 260,
+        onComplete: () => ring.destroy(),
+      });
+    });
+  }
+}
+
+/** The tongue out, the slap, and the haul back. */
+export function fxMireLash(
+  scene: GameScene, fromX: number, fromY: number, toX: number, toY: number,
+  palette: LashPalette = MIRE_LASH_PALETTE,
+): void {
+  const g = scene.add.graphics().setDepth(DEPTH.FX);
+  const mouth = { x: fromX, y: fromY - 18 };
+  const draw = (tipX: number, tipY: number, thickness: number) => {
+    g.clear();
+    g.lineStyle(thickness + 6, palette.edge, 0.9);
+    g.lineBetween(mouth.x, mouth.y, tipX, tipY);
+    g.lineStyle(thickness, palette.tongue, 1);
+    g.lineBetween(mouth.x, mouth.y, tipX, tipY);
+    g.fillStyle(palette.edge, 0.95);
+    g.fillCircle(tipX, tipY, thickness * 0.9 + 3);
+    g.fillStyle(palette.tongue, 1);
+    g.fillCircle(tipX, tipY, thickness * 0.9);
+  };
+  const shoot = { t: 0 };
+  scene.tweens.add({
+    targets: shoot, t: 1, duration: 120, ease: 'Quad.easeOut',
+    onUpdate: () => draw(mouth.x + (toX - mouth.x) * shoot.t, mouth.y + (toY - mouth.y) * shoot.t, 11),
+    onComplete: () => {
+      // THE SLAP.
+      burstFx(scene, 'ptx-dot', toX, toY, 26, 520, {
+        speed: { min: 60, max: 220 }, angle: { min: 0, max: 360 }, gravityY: 280,
+        scale: { start: 1.3, end: 0.1 }, alpha: { start: 0.95, end: 0 }, tint: palette.splat,
+      });
+      const ring = scene.add.graphics({ x: toX, y: toY }).setDepth(DEPTH.FX);
+      ring.lineStyle(4, palette.tongue, 0.9);
+      ring.strokeCircle(0, 0, 22);
+      scene.tweens.add({
+        targets: ring, scale: 2.2, alpha: 0, duration: 320,
+        onComplete: () => ring.destroy(),
+      });
+      // THE HAUL: the tip rides back toward the boss, shedding mud as it goes.
+      const haul = { t: 0 };
+      let lastDrop = 0;
+      scene.tweens.add({
+        targets: haul, t: 1, duration: 420, ease: 'Quad.easeIn',
+        onUpdate: () => {
+          const x = toX + (mouth.x - toX) * haul.t;
+          const y = toY + (mouth.y - toY) * haul.t;
+          draw(x, y, 11 - 5 * haul.t);
+          if (haul.t - lastDrop > 0.12) {
+            lastDrop = haul.t;
+            burstFx(scene, 'ptx-dot', x, y + 14, 5, 480, {
+              speed: { min: 10, max: 50 }, angle: { min: 200, max: 340 }, gravityY: 200,
+              scale: { start: 0.9, end: 0.1 }, alpha: { start: 0.85, end: 0 }, tint: palette.splat,
+            });
+          }
+        },
+        onComplete: () => g.destroy(),
+      });
+    },
+  });
+}

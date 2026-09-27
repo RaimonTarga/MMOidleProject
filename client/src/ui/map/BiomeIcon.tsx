@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { loadUIAtlas, type AtlasFrame } from '../uiAtlas';
 import { BIOME_ICONS } from './constants';
+import { packedAssetUrl } from '../../packedAssetUrl';
 
 function useBiomeFrame(frameName: string | null): AtlasFrame | null {
   const [frame, setFrame] = useState<AtlasFrame | null>(null);
@@ -32,7 +33,7 @@ export function BiomeIcon({ biomeGroup, size = 32, className }: BiomeIconProps) 
       style={{
         width: rect.w * scale,
         height: rect.h * scale,
-        backgroundImage: 'url(/assets/UI_icons.png)',
+        backgroundImage: `url(${packedAssetUrl('/assets/UI_icons.png')})`,
         backgroundSize: `${rect.atlasW * scale}px ${rect.atlasH * scale}px`,
         backgroundPosition: `-${rect.x * scale}px -${rect.y * scale}px`,
         backgroundRepeat: 'no-repeat',

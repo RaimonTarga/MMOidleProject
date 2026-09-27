@@ -382,13 +382,13 @@ export function resolveMonsterFrame(monsterTypeId: string): string | null {
  * dropping the sprite in later a one-line change here.
  */
 export const MONSTER_BURROW_FRAMES: Record<string, string> = {
-  // ONE burrowed body shared by both Cave burrowers. A mound of disturbed rock
-  // reads as the same event at either tier, and the tiers are already separated by
-  // the sequence around it — the T3 burrow is longer, faster and wider. Bespoke
-  // mounds would be two assets spent distinguishing a silhouette the player sees
-  // for under two seconds.
-  'chitinous-dreadbore':     'sprites/bosses/boss-cave-burrowed.png',
-  'deep-core-burrow-gorger': 'sprites/bosses/boss-cave-burrowed.png',
+  // One bespoke burrowed body per Cave boss (2026-09-27). The boss-lineage redesign
+  // moved the burrow down to T1 and made the mound a targetable body the player
+  // watches and hits for seconds at a time, so each boss's mound now carries that
+  // boss's own features. (The old shared `boss-cave-burrowed.png` is superseded.)
+  'obsidian-broodmother':    'sprites/bosses/boss-cave-t1-burrowed.png',
+  'chitinous-dreadbore':     'sprites/bosses/boss-cave-t2-burrowed.png',
+  'deep-core-burrow-gorger': 'sprites/bosses/boss-cave-t3-burrowed.png',
 };
 
 export function resolveMonsterBurrowFrame(monsterTypeId: string): string | null {

@@ -177,8 +177,10 @@ for (const monsterId of [T3_BOSS, T4_BOSS]) {
 
   assert(!sawFrozen, `${monsterId}: under the gate, Frozen must never land`);
   assert(!sawLock, `${monsterId}: a skipped freeze must take no control`);
-  // The next step keeps its authored behavior — it is not gated with the freeze.
-  assert(player.hasHealth.hp < hpBefore, `${monsterId}: the Shatter should still resolve`);
+  // Boss-lineage redesign: Deep Freeze fires when you REACH the threshold, not on
+  // a timer — below it the whole sequence (freeze and Frost Burst) never arms.
+  assert(!monster.runsBossPattern && !monster.recoversFromPattern && player.hasHealth.hp === hpBefore,
+    `${monsterId}: under the gate the Deep Freeze never arms`);
 }
 
 // ── 2. At the threshold: Frozen, the locks, and the player debuff entry ──────

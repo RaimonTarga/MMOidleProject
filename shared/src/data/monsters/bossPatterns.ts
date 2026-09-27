@@ -23,13 +23,58 @@
  */
 
 import type { Vec2 } from '../../systems/spatial';
+import type { HazardFlavor } from '../../world/groundZones';
 
 /** Where a pattern's committed geometry is measured from. */
 export type PatternAnchor =
   /** The point captured when the pattern committed (a charge endpoint). */
   | 'captured-endpoint'
   /** Wherever the boss is standing at this step. */
-  | 'self';
+  | 'self'
+  /** Where the pattern's target stands when this step begins (a lobbed attack). */
+  | 'target';
+
+/** A lingering pool an `impact` leaves where it lands (Swamp Mire / Spore pools). */
+export interface PatternPool {
+  /** Pool radius; defaults to the impact's radius. */
+  radius?: number;
+  durationMs: number;
+  damagePerTick: number;
+  tickIntervalMs: number;
+  slowSpeedMult?: number;
+  flavor?: HazardFlavor;
+  /** Detonates when it expires, through the owner's hit pipeline. */
+  detonationMultiplier?: number;
+  /** While standing inside, stack a damage-taken boss debuff (Cave sinkholes: Eroded). */
+  erodes?: PoolErosion;
+  label: string;
+}
+
+/** A boss mechanic debuff a pattern step lays on its victims (see bossDebuffs.ts). */
+export interface PatternDebuff {
+  effectId: string;
+  stacks?: number;
+  maxStacks?: number;
+  durationMs: number;
+  /** Extra numeric payload (`damageTakenPct`, ...), merged into the status data. */
+  data?: Record<string, number>;
+  /**
+   * An ordinary status (antiheal, slow) rather than a registry boss debuff: it keeps
+   * its own HUD tile and is not marked `isBossDebuff`.
+   */
+  plainStatus?: boolean;
+}
+
+export interface PoolErosion {
+  effectId: string;
+  /** Added damage taken per stack. */
+  damageTakenPctPerStack: number;
+  maxStacks: number;
+  /** How long the debuff lingers after the last stack (it decays once you leave). */
+  durationMs: number;
+  /** One stack per this long spent inside. */
+  intervalMs: number;
+}
 
 export type BossPatternStep =
   /**
@@ -57,7 +102,20 @@ export type BossPatternStep =
        * up, a posture change) so Guard is not spent answering nothing.
        */
       guardable?: boolean;
+      /**
+       * A player ROOT (Binding Strike) landing during this wind-up stops the
+       * pattern, answered per `BossPattern.stoppedBy.root`. Default false: root is a
+       * movement control, so only a wind-up whose payoff is MOVEMENT can be pinned.
+       */
+      rootable?: boolean;
       fx?: string;
+      /**
+       * A boss-effect id shown on the boss (target frame tile, with the cast's
+       * clock) while this cast runs, so its tooltip can explain the mechanic being
+       * charged — the Volcanic final strike. Authored copy lives with the client's
+       * boss-effect help.
+       */
+      announce?: string;
     }
   /**
    * COMMITTED TRAVEL. The boss runs its locked lane, damaging each eligible target
@@ -105,6 +163,11 @@ export type BossPatternStep =
       rawDamage?: number;
       /** A committed uninterruptible finisher still resolves while its caster is stunned. */
       interruptible?: boolean;
+      /**
+       * Player evasion does not dodge or graze it (Volcanic final strike): an
+       * arena-wide DPS check an evasion build must not be able to ignore.
+       */
+      unevadable?: boolean;
       telegraphMs: number;
       stunMs?: number;
       /**
@@ -116,6 +179,12 @@ export type BossPatternStep =
        * decision — read the lane and get off it, or eat the whole sentence.
        */
       requiresChargeHit?: boolean;
+      /** A pool left where the circle lands. */
+      pool?: PatternPool;
+      /** Adds this many stacks of the room's ambient ramp (Tundra Chill) to victims. */
+      addsAmbientStacks?: number;
+      /** A boss debuff laid on every victim (Tundra Brittle). */
+      appliesDebuff?: PatternDebuff;
       fx?: string;
     }
   /** Delayed radial cracks from the anchor — the finite payoff, not terrain. */
@@ -132,6 +201,26 @@ export type BossPatternStep =
       requiresChargeHit?: boolean;
     }
   /**
+   * ROCKFALL (Mountain T4) — delayed impact circles rain across the arena around
+   * the target: one on where they stand, the rest scattered within `spread`. They
+   * resolve together `delayMs` later on the shared delayed-impact path, and the
+   * pattern does not wait for them — publish one just before a charge wind-up and
+   * the player has to read the rocks AND the lane at once.
+   */
+  | {
+      kind: 'rockfall';
+      name: string;
+      count: number;
+      radius: number;
+      spread: number;
+      delayMs: number;
+      damageMult: number;
+      /** Each circle leaves this pool where it lands (Swamp Bile Rain). */
+      pool?: PatternPool;
+      /** Client cue for the falling hazard: `rockfall` (default) or `bile-rain`. */
+      fx?: 'rockfall' | 'bile-rain' | 'grave-burst';
+    }
+  /**
    * Raise a source-owned absorb barrier. Breaking it during the pattern is a real
    * answer: it staggers the boss and cancels the rest of the sequence.
    */
@@ -140,11 +229,30 @@ export type BossPatternStep =
       sourceId: string;
       /** Fraction of the boss's max HP the barrier absorbs. */
       shieldPct: number;
-      /** Recovery the boss is staggered into when the barrier is broken. */
-      onBreak?: { staggerMs: number; label: string };
+      /**
+       * Recovery the boss is staggered into when the barrier is broken. With
+       * `vulnerability`, the broken boss also takes extra damage for a while (the
+       * Tundra Ice Armor payoff for bursting the shell).
+       */
+      onBreak?: {
+        staggerMs: number;
+        label: string;
+        vulnerability?: { damageTakenPct: number; durationMs: number };
+      };
+      /**
+       * While this barrier stands the boss ignores player stun and root: break the
+       * plate first, or control the boss before it plates (Mountain T2+).
+       */
+      blocksControl?: boolean;
     }
   /** Drop a barrier this pattern raised, whether or not it was broken. */
   | { kind: 'drop-barrier'; sourceId: string }
+  /**
+   * RAISE (Wasteland): a cast that raises up to `count` corpses within `range` of
+   * the boss when it completes, using the boss's `raisesDead` scalars. A stun on
+   * the wind-up stops it (answered per `stoppedBy.stun`).
+   */
+  | { kind: 'raise'; name: string; castMs: number; count: number; range: number; fx?: string; interruptible?: boolean }
   /**
    * A cast whose payload is a STATUS on the captured target rather than damage.
    *
@@ -172,6 +280,8 @@ export type BossPatternStep =
        * When the gate is closed the step is skipped, not retried forever.
        */
       requires?: { effectId: string; minStacks: number };
+      /** Strip these statuses from the target when the cast resolves (Deep Freeze spends Frostbite). */
+      consumesOnResolve?: string[];
       /** Hard control during the cast aborts the pattern. Defaults to true. */
       interruptible?: boolean;
       /** Defaults to true; set false for a beat the player reads rather than guards. */
@@ -214,8 +324,17 @@ export type BossPatternStep =
       /** Edge-to-edge reach for a single-target bite. */
       reach?: number;
       onHitPoison?: { stacks: number; damagePerStack: number; durationMs: number; tickIntervalMs: number };
+      /** A debuff the landed hit lays on the target (Trench Wound / Pressure / Rend). */
+      appliesDebuff?: PatternDebuff;
+      /**
+       * DEVOUR (Trench): +this fraction of damage PER DISTINCT harmful debuff the
+       * target carries when it lands — the pile-up payoff. Cleanse before it.
+       */
+      perDebuffMult?: number;
       interruptible?: boolean;
       guardable?: boolean;
+      /** See the `cast` step: a root during this wind-up stops the pattern. */
+      rootable?: boolean;
       fx?: string;
     }
   /**
@@ -236,6 +355,12 @@ export type BossPatternStep =
       name: string;
       marker: 'burrow' | 'stealth';
       durationMs: number;
+      /**
+       * A burst out of the dive (Cave, playtest 2026-09-27): travel starts at `mult`
+       * times `travelSpeed` and eases back down to it over `ms`. Not a permanent
+       * speed-up — the lunge underground, then the stalk.
+       */
+      burst?: { mult: number; ms: number };
       relocate: 'near-target' | 'leash-edge' | 'none';
       /** Distance from the target for `near-target`. Ignored otherwise. */
       emergeGap?: number;
@@ -329,6 +454,14 @@ export type BossPatternStep =
        * encounter genuinely means to be committed.
        */
       interruptible?: boolean;
+      /** A player root pins the travelling body and stops the pattern (Cave T3 mound). */
+      rootable?: boolean;
+      /**
+       * A VISIBLE, TARGETABLE mound (Cave, boss-lineage redesign): the boss is drawn
+       * burrowed but can still be hit, and `BossPattern.stoppedBy.damage` drags it up
+       * early — surfacing staggered, the eruption fizzling.
+       */
+      targetable?: boolean;
       fx?: string;
     }
   /**
@@ -372,6 +505,14 @@ export type BossPatternStep =
        * nothing, but it does not get away either.
        */
       interruptible?: boolean;
+      /** A player root ends the flee on the spot (Jungle T3+). */
+      rootable?: boolean;
+      /**
+       * THORN SNARES (Jungle T4): while fleeing, drop a snare behind it every
+       * `intervalMs`. A player who steps on one is rooted for `rootMs` and the snare
+       * is spent. Chasing on foot gets risky; Break Free answers the root.
+       */
+      snares?: { intervalMs: number; radius: number; rootMs: number; durationMs: number };
       fx?: string;
     }
   /**
@@ -388,10 +529,49 @@ export type BossPatternStep =
       castMs: number;
       /** Pixels dragged, before resistance. */
       distance: number;
+      /**
+       * What the drag pulls TOWARD. Default `boss` (Trench Undertow). `nearest-pool`
+       * drags the target toward the closest live pool this boss owns — the Swamp's
+       * Mire Lash, the Volcanic Magma Shove — optionally only pools of `poolFlavors`.
+       * With no such pool in the arena it falls back to the boss.
+       */
+      toward?: 'boss' | 'nearest-pool';
+      poolFlavors?: HazardFlavor[];
+      /** A debuff laid on the victim where the drag lands them (Magma Shove: a slow). */
+      appliesDebuff?: PatternDebuff;
       interruptible?: boolean;
       guardable?: boolean;
       fx?: string;
     }
+  /**
+   * DASH (Desert standoff / hit-and-run). A burst of visible travel: `to-target`
+   * closes to within `reach` of the target (the dash-in), `away` retreats until
+   * `distance` from it (the dash-escape). The body really moves, at `speed` px/s,
+   * re-steering as the target moves, and ends on arrival or after `maxTravelMs`.
+   * A root (`rootable`) or stun (`interruptible`) during it stops the pattern.
+   */
+  | {
+      kind: 'dash';
+      name: string;
+      /** `to-corpse`: walk to the nearest corpse in the arena (Wasteland reclaim). */
+      direction: 'to-target' | 'away' | 'to-corpse';
+      speed: number;
+      maxTravelMs: number;
+      /** `to-target`: stop within this edge distance of the target. */
+      reach?: number;
+      /** `away`: stop once this far (centre to centre) from the target. */
+      distance?: number;
+      rootable?: boolean;
+      interruptible?: boolean;
+      fx?: string;
+    }
+  /**
+   * FRENZY (Jungle ambush burst). The boss gains +attack speed and +damage for
+   * `durationMs`, and the pattern ends — it goes straight back to fighting, hot.
+   * The burst window after a landed ambush: Guard it, out-defend it, or deny the
+   * escape that leads to it.
+   */
+  | { kind: 'frenzy'; name: string; durationMs: number; attackSpeedPct: number; damagePct: number }
   /** Dead time inside the sequence, with no cast bar. */
   | { kind: 'wait'; durationMs: number }
   /**
@@ -434,6 +614,49 @@ export interface BossPattern {
    * player a fresh copy of a beat they already answered.
    */
   oncePerLife?: boolean;
+  /**
+   * REACTIVE ARMING. The pattern only starts while its target is within this many
+   * pixels (centre to centre). The Desert standoff's dash-escape: it fires when a
+   * player closes in, and never otherwise.
+   */
+  armWhenTargetWithinPx?: number;
+  /**
+   * Only while the boss has NO living adds and there are corpses to raise
+   * (Wasteland: it goes to reclaim its army).
+   */
+  armWhenNoAdds?: boolean;
+  /** REACTIVE: only while the target is FARTHER than this (Tundra Frost Spikes). */
+  armWhenTargetBeyondPx?: number;
+  /**
+   * REACTIVE: only while the target carries at least `minStacks` of `effectId`.
+   * Tundra's Deep Freeze fires when you reach the Chill threshold, not on a timer.
+   */
+  armWhenTargetStatus?: { effectId: string; minStacks: number };
+  /**
+   * Arming priority when several patterns are ready at once (higher first; default
+   * 0; ties keep added extras ahead of the main pattern).
+   */
+  priority?: number;
+  /**
+   * The pattern comes around faster every time it runs: its cooldown is multiplied
+   * by `cooldownMultPerRun` per completed arm, floored at `minCooldownMs`. The Desert
+   * hit-and-run's soft enrage (bursts come faster, but never under ~4s, so Dawn
+   * armor re-arms between them).
+   */
+  accelerate?: { cooldownMultPerRun: number; minCooldownMs: number };
+  /**
+   * STOPPED, NOT COMPLETED (boss-lineage-redesign principle 5). When the player's
+   * control stops this pattern — a stun on an interruptible step, a root on a
+   * `rootable` one — the boss is staggered for `staggerMs` with the stun visual:
+   * the one clear "you stopped it, punish now" signal. Omitted: the pattern simply
+   * ends with no window (the pre-redesign behaviour).
+   */
+  stoppedBy?: {
+    stun?: { staggerMs: number; label: string };
+    root?: { staggerMs: number; label: string };
+    /** Damage dealt to a `targetable` conceal, as a fraction of max HP, drags it up. */
+    damage?: { pctMaxHp: number; staggerMs: number; label: string };
+  };
 }
 
 /** Runtime cursor for the pattern a boss is currently committed to. */
@@ -445,6 +668,8 @@ export interface RunsBossPattern {
   stepEndsAtMs: number;
   /** Set when the current step has already done its one-time work. */
   stepStarted: boolean;
+  /** Boss-effect id a running cast is announcing (`cast.announce`). */
+  announcedEffect?: string;
   /** Player captured when the pattern began; the sequence is aimed at them. */
   targetId?: string;
   /** Geometry captured at the committing step; later steps read this. */
@@ -469,6 +694,8 @@ export interface RunsBossPattern {
    * the time — so the watch cannot live inside the step that raised it.
    */
   watchedBarrier?: { sourceId: string; staggerMs: number; label: string };
+  /** A raised `blocksControl` barrier: while it holds, player stun and root do not land. */
+  controlBarrierSourceId?: string;
   /** Bodies already damaged by the current committed travel. */
   chargeHitIds: string[];
   /**
@@ -489,10 +716,14 @@ export interface RunsBossPattern {
   /** Wall-clock the outbound leg gives up at, so an unreachable point cannot stall the burrow. */
   feintEndsAtMs?: number;
   fleeStart?: Vec2;
+  /** Wall clock the next thorn snare drops at, while a snaring flee runs. */
+  nextSnareAtMs?: number;
   lastFleeSteerMs?: number;
   fleeTargetPosition?: Vec2;
   /** Set true when a barrier break staggered the pattern. */
   staggered: boolean;
+  /** Boss HP when the current targetable conceal began (for `stoppedBy.damage`). */
+  concealStartHp?: number;
   /**
    * The monster's authored movement speed, saved while a committed charge raises it.
    *

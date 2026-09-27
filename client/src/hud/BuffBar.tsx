@@ -85,7 +85,7 @@ function BuffIcon({ buff, interactive, stripProps, ghost, onGhostDone, ended, fx
   const critical = CRITICAL_BUFF_IDS.has(buff.id);
   const size = critical ? CRITICAL_ICON_SIZE : ICON_SIZE;
   const shapeStyle = SHAPE_STYLE[buff.shape];
-  const icon = statusIconSource(buff.iconKey);
+  const icon = statusIconSource(buff.iconKey, buff.instanceKey);
   const hasArt = icon !== null;
   const tone = displayTone(buff);
   const catClass =
@@ -165,7 +165,7 @@ function BuffIcon({ buff, interactive, stripProps, ghost, onGhostDone, ended, fx
           style={{
             position: "absolute",
             inset: 0,
-            backgroundColor: hasArt ? "transparent" : tone,
+            backgroundColor: hasArt ? "#11161d" : tone,
             border: hasArt ? "none" : "1.5px solid rgba(255,255,255,0.22)",
             borderRadius: hasArt ? 7 : shapeStyle.borderRadius,
             clipPath: hasArt ? undefined : shapeStyle.clipPath,

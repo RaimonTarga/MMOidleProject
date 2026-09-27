@@ -1,5 +1,17 @@
 import { SUN_MARK_EFFECT_ID, TUNDRA_CHILL_EFFECT_ID } from '../../systems/monsterDebuffs';
 import { FROZEN_STATUS_ID } from '../../systems/statusPolicy';
+import { BOSS_BRITTLE_EFFECT_ID, FROSTBITE_EFFECT_ID } from '../../systems/bossDebuffs';
+import { ERODED_EFFECT_ID } from '../../systems/bossDebuffs';
+import type { PatternPool } from './bossPatterns';
+
+/** Cave T3 sinkhole: slows and erodes (+5% damage taken per second inside, up to 6). */
+const SINKHOLE_T3: PatternPool = {
+  durationMs: 30_000, damagePerTick: 0, tickIntervalMs: 1000, slowSpeedMult: 0.6,
+  flavor: 'sinkhole', label: 'Sinkhole',
+  erodes: { effectId: ERODED_EFFECT_ID, damageTakenPctPerStack: 0.05, maxStacks: 6, durationMs: 5000, intervalMs: 1000 },
+};
+/** Collapse (T3 soft enrage): the sinkholes last longer and pile up. */
+const SINKHOLE_T3_COLLAPSE: PatternPool = { ...SINKHOLE_T3, durationMs: 50_000 };
 import type { MonsterDefinition } from './types';
 
 // ════════════════════════════════════════════════════════════════════════
@@ -36,12 +48,10 @@ export const bossMonsterEntriesT3 = [
 
   // ══════════════════════════════════════════════════════════════════════
   // MOUNTAIN — "Crag-Gorged Horn-Behemoth"
-  // Identity: TELEGRAPHED CATASTROPHIC IMPACT.
+  // Identity: "the charge is coming; how do you meet it?"
   //
-  // T3's real second layer is the CHARGE-LOCK-SLAM: `engageSequence` makes it
-  // sprint at you, plant, and only then wind up — so the slam is no longer a
-  // stationary metronome you can simply walk around. Both phases escalate that
-  // one attack (wider, then more often), because the slam IS the encounter.
+  // T3's layer (boss-lineage redesign): the DOUBLE CHARGE, and the first control
+  // answer on the player's ladder — a root pins the unplated second wind-up.
   // ══════════════════════════════════════════════════════════════════════
   ['crag-gorged-horn-behemoth', {
     id: 'crag-gorged-horn-behemoth', name: 'Crag-Gorged Horn-Behemoth', color: 0x6688cc,
@@ -51,43 +61,77 @@ export const bossMonsterEntriesT3 = [
     rewards: { essence: 340, essenceType: 'blue', level: 5, biomeXp: 510 },
     ai: { wanderRadius: 100, leashRange: 920, idleMinMs: 3500, idleMaxMs: 8500 },
     targeting: { prefersPlayers: true },
-    // T3 = the lane PLUS a payoff where it lands. The Colossus charges, then
-    // Cragbreaker erupts on the point it CHARGED TO — the endpoint it captured, not
-    // wherever the player drifted to afterwards. Reading the lane therefore answers
-    // both halves at once, which is what makes the tier feel like one attack rather
-    // than two stapled together.
+    // T3 = "THE CHARGE IS COMING; HOW DO YOU MEET IT?", with a second question
+    // (boss-lineage redesign 2026-09-27). Three phases:
+    //   (1) the plated charge carried over from T2 — break the plate to stagger it;
+    //   (2) ~60% DOUBLE CHARGE: the plated first charge, then the plate drops and it
+    //       re-aims and charges again on a shorter wind-up. The second wind-up is
+    //       unplated, so a Binding Strike root pins it (the T3 control answer);
+    //   (3) ~25% soft enrage: the sequence comes around sooner and winds up faster.
     //
-    // REMOVED with the 2026-09-04 redesign: `chargeOnAggro` and the legacy
-    // `engageSequence` charge-lock opener (the pattern IS the charge now, so the
-    // opener was a second, worse copy of it), plus the standalone circular slam.
+    // Answers every charge: DODGE (free, but feeds Charge Instinct), BRACE on the
+    // telegraph, or STOP it — plate break, or control before/between plates. While
+    // plated it ignores root and stun (`blocksControl`).
+    //
+    // CUT with the redesign: Cragbreaker (it only landed if the charge already hit
+    // you — more damage for the same mistake, not a new question). The tackle is
+    // the payoff again (damageMult 0.3 -> 1.0).
     bossPattern: {
       chargeInstinct: { speedPct: 0.40, castReductionPct: 0.30, minCastMs: 400, cooldownReductionPct: 0.15 },
-      id: 'cragbreaker', name: 'Cragbreaker',
+      id: 'horn-charge', name: 'Horn Charge',
       damageMultiplier: 2.0, cooldownMs: 9000, initialCooldownMs: 4500,
+      stoppedBy: {
+        stun: { staggerMs: 2500, label: 'Staggered' },
+        root: { staggerMs: 1500, label: 'Stumbled' },
+      },
       steps: [
-        { kind: 'cast', name: 'Cragbreaker Charge', castMs: 2400, fx: 'charge-lane',
+        { kind: 'cast', name: 'Hornplate', castMs: 900, fx: 'shield', guardable: false, rootable: true },
+        { kind: 'barrier', sourceId: 'hornplate', shieldPct: 0.05, blocksControl: true,
+          onBreak: { staggerMs: 3000, label: 'Plate Shattered' } },
+        { kind: 'cast', name: 'Horn Charge', castMs: 2400, fx: 'charge-lane',
           lane: { length: 760, halfWidth: 96, lockAtCastPct: 0.55 } },
         // 760px at 520px/s ≈ 1.5s of travel, or less — it STOPS on the body it hits.
-        // The tackle is the setup (damageMult 1.0 -> 0.3); Cragbreaker is the payoff.
-        { kind: 'charge', speed: 520, damageMult: 0.3, maxTravelMs: 2200 },
-        // Centred on the CAPTURED endpoint — which, now that the charge stops where
-        // it connects, is the collision itself rather than a tip it never reached.
-        // Reading the lane still answers both halves at once, and answering it now
-        // answers ALL of it: `requiresChargeHit` means a dodged charge draws no
-        // circle. Getting run down is the mistake; this is what it costs.
-        { kind: 'impact', name: 'Cragbreaker', anchor: 'captured-endpoint',
-          radius: 205, damageMult: 1.45, telegraphMs: 900, fx: 'ground-slam',
-          requiresChargeHit: true },
-        { kind: 'recovery', label: 'Overextended', durationMs: 2600 },
+        { kind: 'charge', speed: 520, maxTravelMs: 2200 },
+        { kind: 'drop-barrier', sourceId: 'hornplate' },
+        { kind: 'recovery', label: 'Overextended', durationMs: 1000 },
       ],
     },
+    bossPatternVariants: [{
+      chargeInstinct: { speedPct: 0.40, castReductionPct: 0.30, minCastMs: 400, cooldownReductionPct: 0.15 },
+      id: 'horn-double-charge', name: 'Double Charge',
+      damageMultiplier: 2.0, cooldownMs: 10000, initialCooldownMs: 4500,
+      stoppedBy: {
+        stun: { staggerMs: 2500, label: 'Staggered' },
+        root: { staggerMs: 1500, label: 'Stumbled' },
+      },
+      steps: [
+        { kind: 'cast', name: 'Hornplate', castMs: 900, fx: 'shield', guardable: false, rootable: true },
+        { kind: 'barrier', sourceId: 'hornplate', shieldPct: 0.05, blocksControl: true,
+          onBreak: { staggerMs: 3000, label: 'Plate Shattered' } },
+        { kind: 'cast', name: 'Horn Charge', castMs: 2400, fx: 'charge-lane',
+          lane: { length: 760, halfWidth: 96, lockAtCastPct: 0.55 } },
+        { kind: 'charge', speed: 520, maxTravelMs: 2200 },
+        // The plate comes down after the first run: the re-aim is the unplated
+        // wind-up a root or stun can stop.
+        { kind: 'drop-barrier', sourceId: 'hornplate' },
+        { kind: 'cast', name: 'Second Charge', castMs: 1500, fx: 'charge-lane', rootable: true,
+          lane: { length: 700, halfWidth: 96, lockAtCastPct: 0.5 } },
+        { kind: 'charge', speed: 560, damageMult: 0.85, maxTravelMs: 2000 },
+        { kind: 'recovery', label: 'Overextended', durationMs: 1000 },
+      ],
+    }],
     bossScript: {
       phases: [
-        // The impact grows: harder, and it covers more of the arena.
-        { hpPct: 0.5,  actions: [{ type: 'empower-charged', multiplierMult: 1.20, radiusMult: 1.15 }] },
-        // Then it comes for you faster and swings sooner. Same one idea, tightened.
-        { hpPct: 0.25, actions: [
-          { type: 'empower-charged', cooldownMult: 0.70 },
+        { hpPct: 0.6, name: 'Double Charge',
+          description: 'After the plated charge the Hornplate drops and it re-aims for a second charge. That unplated wind-up can be stopped with a root or a stun.',
+          actions: [
+          { type: 'set-pattern', patternId: 'horn-double-charge' },
+        ] },
+        // Soft enrage: the whole sequence sooner, the wind-ups tighter.
+        { hpPct: 0.25, name: 'Crag Rush',
+          description: 'It moves 25% faster, and its charges wind up quicker and come around more often.',
+          actions: [
+          { type: 'empower-charged', cooldownMult: 0.70, castMsMult: 0.85 },
           { type: 'stat-buff', stat: 'speed', mult: 1.25, label: 'crag-rush' },
         ] },
       ],
@@ -97,13 +141,8 @@ export const bossMonsterEntriesT3 = [
 
   // ══════════════════════════════════════════════════════════════════════
   // CAVE — "Deep-Core Burrow-Gorger"
-  // Identity: ENDURANCE / DEFENSIVE EROSION.
-  //
-  // T3's second layer was already right: plating shred stops being a slow tax and
-  // becomes a THRESHOLD — corrosion at 3 and 6 stacks detonates into Corrosive
-  // Venom. The phases now extend that same ladder (a higher ceiling, new threshold
-  // rungs, a deeper bite) plus one armoured body to outlast, instead of the generic
-  // enrage/speed pair they used to carry.
+  // Identity: THE BURROWER (boss-lineage redesign). T3 = the tunnel chase and
+  // the root answer; erosion is the sinkholes' damage-taken debuff, not plating.
   // ══════════════════════════════════════════════════════════════════════
   ['deep-core-burrow-gorger', {
     id: 'deep-core-burrow-gorger', name: 'Deep-Core Burrow-Gorger', color: 0x332244,
@@ -113,68 +152,106 @@ export const bossMonsterEntriesT3 = [
     rewards: { essence: 355, essenceType: 'red', level: 5, biomeXp: 530 },
     ai: { wanderRadius: 85, leashRange: 890, idleMinMs: 4000, idleMaxMs: 10000 },
     targeting: { prefersPlayers: true },
-    appliesPlatingShred: {
-      platingPerStack: 2,
-      maxStacks: 8,
-      thresholdPoison: {
-        atStacks: [3, 6],
-        debuffId: 'deep-core-corrosive-venom',
-        label: 'Corrosive Venom',
-        damagePerStack: 16,
-        maxStacks: 2,
-        tickIntervalMs: 1000,
-        durationMs: 6000,
-        element: 'poison',
-      },
-    },
-    // T3 = the evolved burrow. Same shape as T2, bigger, and the corrosion's
-    // threshold poison is what makes it bite — that already begins only after the
-    // existing defence-breach rungs, so the eruption does not need its own poison
-    // bolted on to feel like Cave.
-    //
-    // REMOVED with the 2026-09-04 redesign: the circular Deep-Core Slam,
-    // `chargeOnAggro`, and the DR-only Deep Burrow cast.
+    // CAVE T3 (boss-lineage redesign 2026-09-27) — three phases, ~2 minutes:
+    //   (1) the T2 fight: a targetable mound (drag it up with damage), eruptions
+    //       that leave Eroding sinkholes;
+    //   (2) ~60% TUNNEL CHASE: it stays under and erupts THREE times in a row along
+    //       your path, each surfacing where you just were — keep moving, choose the
+    //       path, mind the sinkholes it leaves;
+    //   (3) ~25% COLLAPSE, the soft enrage: shorter gaps between burrows, and the
+    //       sinkholes last longer and pile up.
+    // T3 is where the player's ROOT arrives: a Binding Strike on the travelling
+    // mound pins it and forces it up, staggered. CUT: plating shred and its
+    // threshold poison.
     bossPattern: {
       id: 'deep-core-emergence', name: 'Deep-Core Burrow',
       damageMultiplier: 1.7, cooldownMs: 8500, initialCooldownMs: 4000,
+      stoppedBy: {
+        damage: { pctMaxHp: 0.04, staggerMs: 2500, label: 'Dragged Up' },
+        root: { staggerMs: 2000, label: 'Pinned Up' },
+        stun: { staggerMs: 2500, label: 'Staggered' },
+      },
       steps: [
         { kind: 'cast', name: 'Deep Burrow', castMs: 700, fx: 'burrow', guardable: false },
-        // THE EVOLVED BURROW (2026-09-06) — the same shape T2 now runs, deepened.
-        // Read the T2 Dreadbore's comment first; everything there applies, including
-        // why the path is a straight line and cannot be a curve.
-        //
-        // It was left behind by the T2 rework and it showed: at `emergeGap: 100` on
-        // a 155px eruption it surfaced ~136px from a running player — on the LIP of
-        // its own circle, which one step cleared for free against a 1100ms tell.
-        // The T3 burrow was the easier of the two to walk out of, which is backwards.
-        //
-        // Deepened rather than copied: it falls back further than T2 (520 vs 460),
-        // and its contact slow bites harder and lasts longer. That slow is doing
-        // real work here, unlike at T2 where the circle already could not be walked
-        // out of — this is the tier where being pinned is what lands the hit.
-        { kind: 'conceal', name: 'Burrowed', marker: 'burrow', durationMs: 3000,
-          relocate: 'near-target', emergeGap: 0, travelSpeed: 420,
-          feint: { retreatToPx: 520, untilPct: 0.35 }, surfacesOnContact: true,
-          contactSlow: { speedMult: 0.45, durationMs: 2500 } },
+        { kind: 'conceal', name: 'Burrowed', marker: 'burrow', durationMs: 3000, burst: { mult: 2.2, ms: 900 },
+          relocate: 'near-target', emergeGap: 0, travelSpeed: 420, targetable: true, rootable: true,
+          feint: { retreatToPx: 520, untilPct: 0.35 },
+          contactSlow: { speedMult: 0.55, durationMs: 1500 },
+          surfacesOnContact: true },
         { kind: 'impact', name: 'Deep-Core Eruption', anchor: 'self', radius: 155,
-          damageMult: 1.0, telegraphMs: 1100, fx: 'deep-core-eruption' },
-        { kind: 'recovery', label: 'Surfaced', durationMs: 2400 },
+          damageMult: 1.0, telegraphMs: 1000, fx: 'deep-core-eruption', pool: SINKHOLE_T3 },
+        { kind: 'recovery', label: 'Surfaced', durationMs: 1000 },
       ],
     },
+    bossPatternVariants: [
+      {
+        id: 'deep-core-tunnel-chase', name: 'Tunnel Chase',
+        damageMultiplier: 1.5, cooldownMs: 11000, initialCooldownMs: 4000,
+        stoppedBy: {
+        damage: { pctMaxHp: 0.04, staggerMs: 2500, label: 'Dragged Up' },
+        root: { staggerMs: 2000, label: 'Pinned Up' },
+        stun: { staggerMs: 2500, label: 'Staggered' },
+      },
+        steps: [
+          { kind: 'cast', name: 'Deep Burrow', castMs: 700, fx: 'burrow', guardable: false },
+        { kind: 'conceal', name: 'Tunnel', marker: 'burrow', durationMs: 2200, burst: { mult: 2.2, ms: 900 },
+          relocate: 'near-target', emergeGap: 0, travelSpeed: 440, targetable: true, rootable: true,
+          surfacesOnContact: true },
+        { kind: 'impact', name: 'Deep-Core Eruption', anchor: 'self', radius: 150,
+          damageMult: 1.0, telegraphMs: 700, fx: 'deep-core-eruption', pool: SINKHOLE_T3 },
+        { kind: 'conceal', name: 'Tunnel', marker: 'burrow', durationMs: 2200, burst: { mult: 2.2, ms: 900 },
+          relocate: 'near-target', emergeGap: 0, travelSpeed: 440, targetable: true, rootable: true,
+          surfacesOnContact: true },
+        { kind: 'impact', name: 'Deep-Core Eruption', anchor: 'self', radius: 150,
+          damageMult: 1.0, telegraphMs: 700, fx: 'deep-core-eruption', pool: SINKHOLE_T3 },
+        { kind: 'conceal', name: 'Tunnel', marker: 'burrow', durationMs: 2200, burst: { mult: 2.2, ms: 900 },
+          relocate: 'near-target', emergeGap: 0, travelSpeed: 440, targetable: true, rootable: true,
+          surfacesOnContact: true },
+        { kind: 'impact', name: 'Deep-Core Eruption', anchor: 'self', radius: 150,
+          damageMult: 1.0, telegraphMs: 700, fx: 'deep-core-eruption', pool: SINKHOLE_T3 },
+          { kind: 'recovery', label: 'Surfaced', durationMs: 1000 },
+        ],
+      },
+      {
+        id: 'deep-core-collapse', name: 'Collapse',
+        damageMultiplier: 1.5, cooldownMs: 8000, initialCooldownMs: 3000,
+        stoppedBy: {
+        damage: { pctMaxHp: 0.04, staggerMs: 2500, label: 'Dragged Up' },
+        root: { staggerMs: 2000, label: 'Pinned Up' },
+        stun: { staggerMs: 2500, label: 'Staggered' },
+      },
+        steps: [
+          { kind: 'cast', name: 'Deep Burrow', castMs: 600, fx: 'burrow', guardable: false },
+        { kind: 'conceal', name: 'Tunnel', marker: 'burrow', durationMs: 2200, burst: { mult: 2.2, ms: 900 },
+          relocate: 'near-target', emergeGap: 0, travelSpeed: 440, targetable: true, rootable: true,
+          surfacesOnContact: true },
+        { kind: 'impact', name: 'Deep-Core Eruption', anchor: 'self', radius: 150,
+          damageMult: 1.0, telegraphMs: 700, fx: 'deep-core-eruption', pool: SINKHOLE_T3_COLLAPSE },
+        { kind: 'conceal', name: 'Tunnel', marker: 'burrow', durationMs: 2200, burst: { mult: 2.2, ms: 900 },
+          relocate: 'near-target', emergeGap: 0, travelSpeed: 440, targetable: true, rootable: true,
+          surfacesOnContact: true },
+        { kind: 'impact', name: 'Deep-Core Eruption', anchor: 'self', radius: 150,
+          damageMult: 1.0, telegraphMs: 700, fx: 'deep-core-eruption', pool: SINKHOLE_T3_COLLAPSE },
+        { kind: 'conceal', name: 'Tunnel', marker: 'burrow', durationMs: 2200, burst: { mult: 2.2, ms: 900 },
+          relocate: 'near-target', emergeGap: 0, travelSpeed: 440, targetable: true, rootable: true,
+          surfacesOnContact: true },
+        { kind: 'impact', name: 'Deep-Core Eruption', anchor: 'self', radius: 150,
+          damageMult: 1.0, telegraphMs: 700, fx: 'deep-core-eruption', pool: SINKHOLE_T3_COLLAPSE },
+          { kind: 'recovery', label: 'Surfaced', durationMs: 1000 },
+        ],
+      },
+    ],
     bossScript: {
       phases: [
-        // The ceiling lifts and two more threshold rungs appear above where the
-        // fight used to top out — the erosion keeps going instead of plateauing.
-        { hpPct: 0.5, actions: [
-          { type: 'empower-shred', maxStacksAdd: 4, extraThresholds: [9, 12] },
+        { hpPct: 0.6, name: 'Tunnel Chase',
+          description: 'It tunnels after you three times in a row, erupting beneath you and leaving sinkholes. Damage, root or stun the mound to drag it up early.',
+          actions: [
+          { type: 'set-pattern', patternId: 'deep-core-tunnel-chase' },
         ] },
-        // Last quarter: each stack bites harder, and the boss burrows behind a
-        // temporary shell so the corrosion has a defensive climax without another body.
-        // Last quarter: each stack bites harder. The old Deep Burrow cast that sat
-        // here was a flat-DR shell wearing the burrow's name; the real burrow is
-        // now the encounter's whole spine, so a second fake one is gone.
-        { hpPct: 0.25, actions: [
-          { type: 'empower-shred', platingPerStackAdd: 1 },
+        { hpPct: 0.25, name: 'Collapse',
+          description: 'The tunnel chase comes around faster, and its sinkholes last far longer. The arena is closing in: finish it.',
+          actions: [
+          { type: 'set-pattern', patternId: 'deep-core-collapse' },
         ] },
       ],
     },
@@ -185,14 +262,8 @@ export const bossMonsterEntriesT3 = [
   // SWAMP — "Rot-Spore Croc-Behemoth"
   // Identity: ROT / ATTRITION / HAZARDOUS ARENA. The lineage's finale.
   //
-  // T3's second layer is pool VULNERABILITY + DETONATION: the ground does not just
-  // tick, it amplifies everything else and then goes off.
-  //
-  // ENCOUNTER REWORK: the old 25% `attack x4` is gone. It turned the tier's
-  // attrition boss into its biggest direct hitter for the last quarter of the fight,
-  // which is the exact opposite of what Swamp is for. In its place the ROT escalates:
-  // the spores thicken (`morph` on the DoT) and the arena floods with one enormous
-  // ROT BLOOM. Escalation should make the rot harder to survive, not replace it.
+  // T3's layer (boss-lineage redesign): pools that DETONATE, a lash that drags you
+  // into them, and a room that rots faster the longer the fight runs.
   // ══════════════════════════════════════════════════════════════════════
   ['rot-spore-croc-behemoth', {
     id: 'rot-spore-croc-behemoth', name: 'Rot-Spore Croc-Behemoth', color: 0x1a3311,
@@ -202,37 +273,79 @@ export const bossMonsterEntriesT3 = [
     rewards: { essence: 345, essenceType: 'purple', level: 5, biomeXp: 518 },
     ai: { wanderRadius: 105, leashRange: 880, idleMinMs: 2800, idleMaxMs: 7000 },
     targeting: { prefersPlayers: true },
-    chargeOnAggro: { speedMult: 2.0, durationMs: 1200 },
     dotEffect: { debuffId: 'rot-spore-plague', label: 'Rot Spores', damagePerStack: 13, maxStacks: 6, tickIntervalMs: 1000, durationMs: 9000 },
+    // SWAMP T3 (boss-lineage redesign 2026-09-27) — three phases, ~2 minutes:
+    //   (1) the T2 fight: Bile and Mire pools, and the Mire Lash drag;
+    //   (2) ~60% SPORE BLOOM: the lobbed pools are Spore pools that detonate a few
+    //       seconds after landing, and the lash now drags you toward a SPORE — the
+    //       combo is being yanked into a pool about to pop;
+    //   (3) ~25% ROT BLOOM, the soft enrage: every pool spreads toward a cap, and the
+    //       whole room builds a rising Rot DoT (cleared when the boss dies). DoT
+    //       resistance and Recovery stretch it; killing the boss is the answer.
+    // Swamp does not demand Cleanse (the old pool vulnerability is gone); CUT with
+    // the redesign: `chargeOnAggro` and the one enormous Rot Bloom pool.
+    // Playtest 2026-09-27: the pools never became a threat. They are bigger, last
+    // over a minute, and Bile Rain lobs a spread of them around you every cycle.
     chargedAttack: {
-      name: 'Spore Pool', castMs: 1000, cooldownMs: 8000, initialCooldownMs: 3500,
-      multiplier: 1.2, fx: 'strong-kick', aoe: { radius: 130, impactFx: 'pool-spawn' },
-      // Deliberately NOT extended to the swamp lineage's 10-minute pools: this one
-      // detonates on expiry, so a fight-length duration would delete the payoff.
-      pool: {
-        durationMs: 9000, damagePerTick: 8, tickIntervalMs: 1000, slowSpeedMult: 0.55,
-        vulnerability: { damageTakenPct: 0.16, durationMs: 1800 },
-        detonationMultiplier: 2.25,
-      },
+      name: 'Bile Pool', castMs: 1000, cooldownMs: 8000, initialCooldownMs: 3500,
+      multiplier: 1.2, fx: 'bile-spew', aoe: { radius: 175, impactFx: 'pool-spawn' },
+      pool: { durationMs: 75000, damagePerTick: 8, tickIntervalMs: 1000, slowSpeedMult: 0.65 },
     },
+    bossPattern: {
+      id: 'croc-mire-lash', name: 'Mire Lash',
+      damageMultiplier: 1.0, cooldownMs: 10000, initialCooldownMs: 6500,
+      steps: [
+        { kind: 'impact', name: 'Mire Spit', anchor: 'target', radius: 180,
+          damageMult: 0.4, telegraphMs: 1000, fx: 'pool-spawn',
+          pool: { durationMs: 75000, damagePerTick: 0, tickIntervalMs: 1000,
+            slowSpeedMult: 0.40, flavor: 'mire', label: 'Mire' } },
+        { kind: 'wait', durationMs: 500 },
+        { kind: 'pull', name: 'Mire Lash', castMs: 1100, distance: 300,
+          toward: 'nearest-pool', fx: 'mire-lash' },
+      ],
+    },
+    bossPatternVariants: [{
+      id: 'croc-spore-lash', name: 'Spore Lash',
+      damageMultiplier: 1.0, cooldownMs: 9000, initialCooldownMs: 5000,
+      steps: [
+        // The spore detonates 5s after it lands: telegraph 1s + wait 1.2s + lash
+        // 1.1s puts the drag ~2.3s into its life, with ~2.7s left to get out.
+        { kind: 'impact', name: 'Spore Spit', anchor: 'target', radius: 165,
+          damageMult: 0.4, telegraphMs: 1000, fx: 'pool-spawn',
+          pool: { durationMs: 5000, damagePerTick: 6, tickIntervalMs: 1000,
+            slowSpeedMult: 0.60, flavor: 'spore', detonationMultiplier: 2.25, label: 'Spore Pool' } },
+        { kind: 'wait', durationMs: 1200 },
+        { kind: 'pull', name: 'Spore Lash', castMs: 1100, distance: 320,
+          toward: 'nearest-pool', poolFlavors: ['spore'], fx: 'mire-lash' },
+      ],
+    }, {
+      id: 'croc-bile-rain', name: 'Bile Rain',
+      damageMultiplier: 1.0, cooldownMs: 11000, initialCooldownMs: 4500,
+      steps: [
+        { kind: 'cast', name: 'Bile Rain', castMs: 800, fx: 'bile-heave' },
+        { kind: 'rockfall', name: 'Bile Rain', fx: 'bile-rain', count: 6, radius: 125, spread: 640, delayMs: 1400,
+          damageMult: 0.3,
+          pool: { durationMs: 60000, damagePerTick: 8, tickIntervalMs: 1000, slowSpeedMult: 0.65, label: 'Bile Pool' } },
+      ],
+    }],
     bossScript: {
       phases: [
-        // Cadence only (atkMult 1.0): stacks land faster and the pools come sooner,
-        // so more of the arena is contaminated at once. The slap stays trivial.
-        { hpPct: 0.5, actions: [
-          { type: 'enrage', atkMult: 1.0, cdMult: 0.65 },
-          { type: 'empower-charged', cooldownMult: 0.70, radiusMult: 1.15 },
+        { hpPct: 1.0, actions: [{ type: 'add-pattern', patternId: 'croc-bile-rain' }] },
+        { hpPct: 0.6, name: 'Spore Bloom',
+          description: 'Its spit now lays Spore Pools that detonate a few seconds after landing, and the lash drags you toward them. Get out before they pop.',
+          actions: [
+          { type: 'set-pattern', patternId: 'croc-spore-lash' },
+          { type: 'enrage', atkMult: 1.0, cdMult: 0.80 }, // spores land faster
         ] },
-        // ROT BLOOM: the spores thicken and the floor beneath the boss becomes a
-        // long-lived hazard in its own right. Standing and trading is the losing play.
-        { hpPct: 0.25, actions: [
-          { type: 'morph', dotEffect: {
-            debuffId: 'rot-spore-plague', label: 'Rot Spores',
-            damagePerStack: 17, maxStacks: 8, tickIntervalMs: 1000, durationMs: 9000,
+        { hpPct: 0.25, name: 'Rot Bloom',
+          description: 'Every pool spreads, and the whole room builds a rising Rot DoT until the boss dies. DoT resistance and Recovery buy time; killing it is the answer.',
+          actions: [
+          { type: 'set-weather', weather: 'spores' },
+          { type: 'spread-pools', radiusPerSec: 8, maxRadiusMult: 1.5 }, // pools start bigger now
+          { type: 'room-affliction', intervalMs: 4000, dot: {
+            debuffId: 'rot-bloom', label: 'Rot Bloom', color: '#7fae3a',
+            damagePerStack: 6, maxStacks: 20, tickIntervalMs: 1000, durationMs: 12000,
           } },
-          // Effectively permanent (10 min), retired with the boss. Unlike the Spore
-          // Pool above this one never detonates, so nothing is lost by it lingering.
-          { type: 'spawn-pool', radius: 260, durationMs: 600000, damagePerTick: 14, tickIntervalMs: 1000, slowSpeedMult: 0.55 },
         ] },
       ],
     },
@@ -243,13 +356,8 @@ export const bossMonsterEntriesT3 = [
   // DESERT — "Dune-Carapace Monarch"
   // Identity: SETUP / CONTROL -> PUNISHMENT.
   //
-  // T3's second layer is the RANGE MORPH, and the rework fuses it to the lineage's
-  // mark instead of letting it be a separate trick:
-  //   100–50%  melee CONTROLLER — slows, and paints Sun Mark with its own hits.
-  //   below 50% ranged PUNISHER — it backs off and the Sandburst becomes the
-  //            cash-out, landing on whatever setup it left on you.
-  // The mark does NOT go away when the boss changes range; that pairing is the
-  // whole point of the phase.
+  // T3's layer (boss-lineage redesign): the STANDOFF. The same mark -> slow ->
+  // Execution sentence, run from range from 50%, with a dash-escape when you close.
   // ══════════════════════════════════════════════════════════════════════
   ['dune-carapace-monarch', {
     id: 'dune-carapace-monarch', name: 'Dune-Carapace Monarch', color: 0xccaa22,
@@ -285,19 +393,59 @@ export const bossMonsterEntriesT3 = [
         { kind: 'payoff', name: 'Execution', castMs: 1300, fx: 'execution',
           damageMult: 1.0, amplifiedMult: 1.9,
           consumes: { effectId: SUN_MARK_EFFECT_ID }, radius: 155 },
-        { kind: 'recovery', label: 'Spent', durationMs: 1900 },
+        { kind: 'recovery', label: 'Spent', durationMs: 1000 },
       ],
     },
+    // STANDOFF (boss-lineage redesign 2026-09-27) — the ranged phase, done right.
+    // The old kiter backed off at ~43px/s only when you were inside 145px, and its
+    // sequence rooted it for most of the phase, so it never really kited. Now at 50%
+    // it leaps back to range and runs the sentence FROM there; close in and it
+    // dash-escapes back out (Sand Step, rootable). Ranged builds duel it, melee
+    // chases it (a few seconds of hits after each dash), a root stops the dash.
+    bossPatternVariants: [
+      {
+        // STANDOFF — the same sentence, run from range. Shorter than the melee
+        // version so the Execution never roots the boss into a free melee target.
+        id: 'monarch-standoff', name: 'Death Sting',
+        damageMultiplier: 1.6, cooldownMs: 8000, initialCooldownMs: 2500,
+        steps: [
+          { kind: 'apply-status', name: 'Death Sting', castMs: 1000, fx: 'death-sting',
+            effectId: SUN_MARK_EFFECT_ID, stacks: 1, durationMs: 6500 },
+          { kind: 'wait', durationMs: 500 },
+          { kind: 'apply-status', name: 'Numbing Sting', castMs: 600, fx: 'numbing-sting',
+            effectId: 'slow', stacks: 1, durationMs: 4000, data: { speedMult: 0.3 } },
+          { kind: 'wait', durationMs: 400 },
+          { kind: 'payoff', name: 'Execution', castMs: 1100, fx: 'execution',
+            damageMult: 1.0, amplifiedMult: 1.9,
+            consumes: { effectId: SUN_MARK_EFFECT_ID }, radius: 155 },
+        ],
+      },
+      {
+        // The dash-escape: close in on it and it springs back to range. Visible
+        // (~260px/s, far faster than a player), on a 6s clock, and a ROOT stops it.
+        id: 'monarch-sand-step', name: 'Sand Step',
+        damageMultiplier: 1, cooldownMs: 6000, initialCooldownMs: 0,
+        armWhenTargetWithinPx: 210,
+        stoppedBy: { root: { staggerMs: 1500, label: 'Pinned' }, stun: { staggerMs: 2000, label: 'Staggered' } },
+        steps: [
+          { kind: 'dash', name: 'Sand Step', direction: 'away', speed: 620, distance: 440,
+            maxTravelMs: 1000, rootable: true, fx: 'predator-flee' },
+        ],
+      },
+    ],
     bossScript: {
       phases: [
-        { hpPct: 0.5, actions: [
-          { type: 'morph', isRanged: true, attackStyle: 'sandblast', attackRange: 240, kite: true },
-          // Act II: the Sandburst stops being a punctuation mark and becomes the
-          // punishment. Longer reach, and the mark it left is still on you.
-          { type: 'empower-charged', multiplierMult: 1.20, cooldownMult: 0.80 },
+        { hpPct: 0.5, name: 'Standoff',
+          description: 'It fights from range with stings: Death Sting marks you, Numbing Sting slows you and Execution cashes the mark in. Close in and it Sand Steps away; root it to stop the escape.',
+          actions: [
+          { type: 'morph', isRanged: true, attackStyle: 'sandblast', attackRange: 240, kite: false },
+          { type: 'set-pattern', patternId: 'monarch-standoff' },
+          { type: 'add-pattern', patternId: 'monarch-sand-step' },
         ] },
-        // Last quarter: the cash-out comes around roughly twice as often.
-        { hpPct: 0.25, actions: [{ type: 'empower-charged', cooldownMult: 0.65 }] },
+        // Soft enrage: the sentence repeats faster.
+        { hpPct: 0.2, name: 'Sandstorm',
+          description: 'Its sting sequence comes around much faster.',
+          actions: [{ type: 'empower-charged', cooldownMult: 0.65 }, { type: 'set-weather', weather: 'sandstorm' }] },
       ],
     },
   }],
@@ -323,62 +471,75 @@ export const bossMonsterEntriesT3 = [
     rewards: { essence: 340, essenceType: 'green', level: 5, biomeXp: 510 },
     ai: { wanderRadius: 140, leashRange: 920, idleMinMs: 2000, idleMaxMs: 6000 },
     targeting: { prefersPlayers: true },
-    // JUNGLE = PURSUIT AND FAILED ESCAPE. The one loop the whole lineage runs:
-    //
-    //   Escape Guard appears and the boss bolts for the far edge of its leash.
-    //     BREAK the guard  -> the retreat fails, it stumbles, and it banks one
-    //                         stack of Escape Instinct so the NEXT attempt
-    //                         is quicker.
-    //     LET IT FINISH    -> it vanishes into cover, resets Instinct, picks a
-    //                         valid re-entry point, and comes back with an ambush.
-    //
-    // BARRIER DAMAGE — not physical contact — is the test. That is deliberate and
-    // load-bearing: a boss whose whole idea is running away from you would otherwise
-    // be answerable only by melee, and ranged builds would have no counterplay at
-    // all. Instinct has no cap: failed retreats keep accelerating it until a successful
-    // escape wipes the stacks.
-    //
-    // T3 adds the AFTERMATH: a successful ambush lands venom on top of the hit, so
-    // letting it get away costs you for the next several seconds rather than only
-    // in the moment.
-    //
-    // REMOVED with the 2026-09-04 redesign: passive `evasion` (a flat miss chance is
-    // a texture, not a decision, and it made every build's damage read as unreliable
-    // rather than making the boss hard to pin down), `openingStrike`, Bramble Pounce,
-    // the 50% evasion surge, and `chargeOnAggro`.
+    // JUNGLE (boss-lineage redesign 2026-09-27) — PURSUIT AND FAILED ESCAPE.
+    //   FLEE: behind an Escape Guard it bolts, fast enough that an ordinary chaser
+    //     usually loses it. Stop it by BREAKING the guard (the ranged answer), by
+    //     HINDERING it (slow shortens the run; root at T3+, stun at T4 end it), or by
+    //     catching it with a gap-closer. A stopped flee is a <=1s stumble, not a
+    //     window: staying in the fight and losing its ambush IS its punishment.
+    //     Failed flees bank Escape Instinct (the next is faster).
+    //   ESCAPED: it stalks back unseen and AMBUSHES — then FRENZIES for ~5s
+    //     (+attack speed, +damage): the burst window you pay for letting it go.
+    //     Guard the reveal, out-defend the frenzy, or deny the escape.
+    //   T3: the ROOT answer arrives (a Binding Strike ends the flee); ~60% the
+    //   Venomous Bite opens the ambush (short-lived poison, burst not attrition);
+    //   ~25% Hunted, the soft enrage: it flees far more often.
     bossPattern: {
       id: 'timberclaw-escape', name: 'Escape',
       damageMultiplier: 2.0, cooldownMs: 13000, initialCooldownMs: 7000,
+      stoppedBy: {
+        // A stopped flee is NOT a stagger window (principle 5 exception): being
+        // stopped is already its punishment. A <=1s stumble with the stun tell.
+        stun: { staggerMs: 1000, label: 'Stumbled' },
+        root: { staggerMs: 1000, label: 'Stumbled' },
+      },
       steps: [
-        // THE CORRECTED LOOP (2026-09-06) — read the T2 gorger's comment first;
-        // everything there applies. This tier was left behind by that pass and had
-        // all of its faults: a stationary "escape" that went nowhere, a vanish that
-        // TELEPORTED the boss to its leash edge, and an Ambush (a payoff with no
-        // radius, and therefore no range check) firing from across the arena.
-        //
-        // Deepened rather than copied: it flees faster than T2 and stalks back
-        // at a readable stalking pace before a range-checked venomous bite.
-        { kind: 'escape-guard', name: 'Flee', castMs: 2800, fx: 'predator-flee',
-          sourceId: 'jungle-escape', shieldPct: 0.07,
-          onBreak: { staggerMs: 2500, label: 'Cornered' },
-          instinctSpeedPct: 0.30,
-          flee: { speed: 320, escapeDistance: 450 } },
+        { kind: 'escape-guard', name: 'Flee', castMs: 3000, fx: 'predator-flee',
+          sourceId: 'jungle-escape', shieldPct: 0.05,
+          onBreak: { staggerMs: 1000, label: 'Caught' },
+          instinctSpeedPct: 0.30, rootable: true,
+          flee: { speed: 600, escapeDistance: 660 } },
         { kind: 'conceal', name: 'Vanished', marker: 'stealth', durationMs: 6000,
           relocate: 'near-target', emergeGap: 30, travelSpeed: 240, surfacesOnContact: true },
-        { kind: 'payoff', name: 'Venomous Bite', castMs: 300, fx: 'savage-maul',
-          damageMult: 1.0, reach: 90,
-          onHitPoison: { stacks: 3, damagePerStack: 14, durationMs: 8000, tickIntervalMs: 1000 } },
-        // NO RECOVERY AFTER A LANDED AMBUSH. The punish window is what BREAKING the
-        // plate buys, and nothing else — a predator that just bit you does not stun
-        // itself. Same call as T2.
+        { kind: 'payoff', name: 'Ambush', castMs: 300, fx: 'ambush-pounce',
+          damageMult: 1.0, reach: 90 },
+        { kind: 'frenzy', name: 'Frenzy', durationMs: 5000, attackSpeedPct: 0.35, damagePct: 0.20 },
       ],
     },
+    bossPatternVariants: [{
+      id: 'bramble-venom-escape', name: 'Escape',
+      damageMultiplier: 2.0, cooldownMs: 12000, initialCooldownMs: 5000,
+      stoppedBy: {
+        // A stopped flee is NOT a stagger window (principle 5 exception): being
+        // stopped is already its punishment. A <=1s stumble with the stun tell.
+        stun: { staggerMs: 1000, label: 'Stumbled' },
+        root: { staggerMs: 1000, label: 'Stumbled' },
+      },
+      steps: [
+        { kind: 'escape-guard', name: 'Flee', castMs: 3000, fx: 'predator-flee',
+          sourceId: 'jungle-escape', shieldPct: 0.05,
+          onBreak: { staggerMs: 1000, label: 'Caught' },
+          instinctSpeedPct: 0.30, rootable: true,
+          flee: { speed: 600, escapeDistance: 660 } },
+        { kind: 'conceal', name: 'Vanished', marker: 'stealth', durationMs: 6000,
+          relocate: 'near-target', emergeGap: 30, travelSpeed: 240, surfacesOnContact: true },
+        { kind: 'payoff', name: 'Venomous Bite', castMs: 300, fx: 'venom-pounce',
+          damageMult: 1.0, reach: 90,
+          onHitPoison: { stacks: 4, damagePerStack: 16, durationMs: 4000, tickIntervalMs: 1000 } },
+        { kind: 'frenzy', name: 'Frenzy', durationMs: 5000, attackSpeedPct: 0.35, damagePct: 0.20 },
+      ],
+    }],
     bossScript: {
       phases: [
-        { hpPct: 0.5, actions: [
-          // The escape cycle comes around harder and far more often. The old
-          // evasion surge is gone with the passive evasion it doubled.
-          { type: 'empower-charged', multiplierMult: 1.20, cooldownMult: 0.55 },
+        { hpPct: 0.6, name: 'Venomous Bite',
+          description: 'After fleeing it vanishes and ambushes you with a Venomous Bite that poisons heavily. Root or stun the flee before it gets away.',
+          actions: [
+          { type: 'set-pattern', patternId: 'bramble-venom-escape' },
+        ] },
+        { hpPct: 0.25, name: 'Hunted',
+          description: 'Its signature attack comes around far more often.',
+          actions: [
+          { type: 'empower-charged', cooldownMult: 0.60 },
         ] },
       ],
     },
@@ -408,53 +569,60 @@ export const bossMonsterEntriesT3 = [
     rewards: { essence: 360, essenceType: 'red', level: 5, biomeXp: 540 },
     ai: { wanderRadius: 120, leashRange: 920, idleMinMs: 2500, idleMaxMs: 7000 },
     targeting: { prefersPlayers: true },
-    // VOLCANO = HEAT, VENT, AND THE CHOICE TO STAND IN IT.
-    //
-    // The shell closes and lays a visible MAGMA VENT. Staying in it accelerates the
-    // room's Heat — which raises damage DEALT and damage TAKEN together — while you
-    // work on the shell; stepping out returns you to the node's baseline rate and
-    // lets the Heat shed. Neither is the correct answer: that trade IS the encounter.
-    //
-    // Heat owns all the escalation. There is no hidden boss multiplier beside it,
-    // because the same escalation counted twice — once visibly on the player, once
-    // invisibly on the boss — is unreadable. And ordinary Cleanse cannot strip Heat
-    // (statusPolicy: 'immune'), so leaving the vent is the answer rather than a button.
-    //
-    // T3 teaches the plain cycle: normal -> shell plus vent -> stay or leave while
-    // you work on the shell -> the shell opens -> normal.
-    //
-    // REMOVED with the 2026-09-04 redesign: the independent Eruption charged attack
-    // and the 25% threshold Vent Rupture. Both duplicated the cycle — the shell
-    // already floods the ground on its own schedule, and a second pool arriving on a
-    // health threshold made the arena unreadable rather than more dangerous.
-    // `chargeOnAggro` removed with them.
-    //
-    // First shell at 85% so the cycle is taught early, then every 16s while engaged.
-    // 0.30 (not the roster's 0.15) because this one repeats — it has to be a wall
-    // you wait out or burn through, never a wall that stalls the fight.
-    shellUp: {
-      atHpPct: 0.85, durationMs: 3800, directDamageMult: 0.30, repeatIntervalMs: 16000,
-      pool: {
-        radius: 190, durationMs: 8000, damagePerTick: 12, tickIntervalMs: 1000,
-        flavor: 'magma-vent', rampAccelMult: 3, pullDistance: 200,
-      },
-    },
+    // VOLCANIC (boss-lineage redesign 2026-09-27) — THE HEAT RACE.
+    //   VENTS around the arena (not under the boss), and the boss KEEPS ATTACKING
+    //   — the old shell cycle, whose no-attack window relieved the pressure, is cut.
+    //   Standing on a vent speeds up your Heat (more damage dealt AND taken); every
+    //   vent erupts on its own telegraphed rhythm, and you must be off it when it
+    //   does. Pull the fight onto a vent if you want the Heat; bots that ignore vents
+    //   forgo the bonus (vents are never auto-avoided; eruptions are Step Back).
+    //   FINAL STRIKE at 25%: it stops attacking and charges an UNINTERRUPTIBLE blast
+    //   (Volcanic accepts no control) — a hard DPS check whose fixed raw hit an extreme
+    //   tank build (full tank gear + Guard) can survive. The long cast IS the soft
+    //   enrage; its length is the numbers-pass knob (~1.3x the median time to kill
+    //   the last quarter).
+    //   T3: (1) Heat + erupting vents; (2) ~50% the caldera opens — Heat builds
+    //   faster, vents erupt more often; (3) 25% Final Eruption.
+    controlImmune: true,
     bossPattern: {
       id: 'final-eruption', name: 'Final Eruption',
       damageMultiplier: 1, cooldownMs: 60000, initialCooldownMs: 0,
       armBelowHpPct: 0.25, oncePerLife: true,
       steps: [
-        { kind: 'cast', name: 'Final Eruption', castMs: 8000, fx: 'cataclysm-cast', interruptible: false },
+        { kind: 'cast', name: 'Final Eruption', castMs: 22000, fx: 'cataclysm-cast', interruptible: false,
+          announce: 'final-eruption' },
+        // Unevadable: an evasion build must not dodge its way past the DPS check.
         { kind: 'impact', name: 'Final Eruption', anchor: 'self', radius: 2000,
-          damageMult: 1, rawDamage: 650, interruptible: false, telegraphMs: 400, fx: 'cataclysm-impact' },
-        { kind: 'recovery', label: 'Spent', durationMs: 3000 },
+          damageMult: 1, rawDamage: 650, interruptible: false, unevadable: true, telegraphMs: 400, fx: 'cataclysm-impact' },
+        { kind: 'recovery', label: 'Spent', durationMs: 1000 },
       ],
     },
     bossScript: {
       phases: [
-        // Each cycle is worth more to it: the shell holds longer and the vent that
-        // comes with it burns hotter. One idea, tightened.
-        { hpPct: 0.5, actions: [{ type: 'stat-buff', stat: 'attack', mult: 1.15, label: 'cinder-fury' }] },
+        // Playtest 2026-09-27: vents were no threat. More, bigger, harder-hitting,
+        // and from Caldera Opens fissures split new ones open under the player.
+        { hpPct: 1.0, actions: [
+          { type: 'vent-field', count: 6, radius: 200, ringRadius: 520, rampAccelMult: 3,
+            eruptEveryMs: 8000, telegraphMs: 1600, damageMult: 1.5 },
+          // Playtest 2026-09-27: vents also keep splitting open AROUND THE BOSS.
+          { type: 'vent-spawner', everyMs: 3000, count: 1, minRadius: 60, maxRadius: 440, radius: 150, telegraphMs: 1400, lingerMs: 2200, damageMult: 1.4, rampAccelMult: 3 },
+        ] },
+        { hpPct: 0.5, name: 'Caldera Opens',
+          description: 'More vents open and erupt more often, vents split open around the boss twice as fast, fissures open under you, and your Heat builds faster. Take the Heat, but be off a vent when it erupts.',
+          actions: [
+          { type: 'vent-field', count: 8, radius: 220, ringRadius: 520, rampAccelMult: 3,
+            eruptEveryMs: 5500, telegraphMs: 1500, damageMult: 1.5,
+            fissure: { everyMs: 9000, maxVents: 14 } },
+          { type: 'vent-spawner', everyMs: 1900, count: 2, minRadius: 60, maxRadius: 440, radius: 150, telegraphMs: 1350, lingerMs: 2200, damageMult: 1.4, rampAccelMult: 3 },
+          { type: 'stoke-ramp', rampMsMult: 0.7 },
+        ] },
+        { hpPct: 0.25, name: 'Final Eruption',
+          description: 'It stops attacking and charges an eruption that hits the whole arena, while vents burst open all around it. The eruption cannot be interrupted or evaded: kill it before the cast ends, or survive the blast with Guard and tank gear.',
+          actions: [
+          { type: 'set-weather', weather: 'ashfall' },
+          // The race against the Final Eruption, under a near-bullet-hell of vents.
+          { type: 'vent-spawner', everyMs: 800, count: 2, minRadius: 60, maxRadius: 440, radius: 140, telegraphMs: 1300, lingerMs: 2200, damageMult: 1.4, rampAccelMult: 3 },
+        ] },
       ],
     },
   }],
@@ -484,54 +652,106 @@ export const bossMonsterEntriesT3 = [
     rewards: { essence: 350, essenceType: 'blue', level: 5, biomeXp: 525 },
     ai: { wanderRadius: 100, leashRange: 900, idleMinMs: 3000, idleMaxMs: 8000 },
     targeting: { prefersPlayers: true },
-    // TUNDRA = THE CHILL CHECK. The ROOM builds Chill; the boss asks whether you let
-    // it get too deep.
-    //
-    //   Deep Freeze is unavoidable and targeted, and it CHECKS your stacks. Below the
-    //   threshold it simply does not land — the gate is checked at cast start, so the
-    //   question was decided before the cast, by whether you cleansed and kept moving.
-    //   Above it you are Frozen, and a large, dodgeable Shatter follows.
-    //
-    // A Frozen player is not out of answers: Frozen is hard control, so Break Free
-    // strips it and Step Back then clears the circle. Guarding or tanking the Shatter
-    // stays legal. What is NOT legal is damage that secretly scales with Chill — the
-    // stacks decide IF you get frozen, never how hard anything hits.
-    //
-    // Cleanse REDUCES Chill rather than deleting it (statusPolicy: 'partial'): the
-    // room re-applies it continuously, so a full strip would be true for a second and
-    // read as the button not working.
-    //
-    // REMOVED with the 2026-09-04 redesign: `chargeOnAggro`, the per-hit `rampDebuff`
-    // (the boss adding its OWN chill on top of the room's made two sources of one
-    // resource, and the encounter reads the room's), the Ice Armor / vulnerability
-    // shield pair (a generic anti-burst clip in the one lineage explicitly about
-    // rewarding burst), and the generic Permafrost Slam circle.
+    // TUNDRA (boss-lineage redesign 2026-09-27) — THE CHILL CLOCK.
+    //   The room builds Chill; FROSTBITE stacks slowly on top, cannot be cleansed,
+    //   and makes Chill build faster. Cleanse still strips Chill (partially) but only
+    //   DELAYS the freeze: DEEP FREEZE fires when you reach the threshold, and
+    //   resolving it spends both. Your build sets how often freezes come, never
+    //   whether. The FROST BURST is centred on the frozen player, so ranged builds
+    //   are tested too. Reactive posture: FROST NOVA when you are close (step out),
+    //   FROST SPIKES when you are far (a root, then it walks up — Break Free).
+    //   Tundra accepts NO control (`controlImmune`): stuns and roots do not land.
+    //   T3: (1) the clock; (2) ~50% BRITTLE: a Frost Burst cracks you and a heavy
+    //   Shatter swing follows; (3) ~20% BLIZZARD, the soft enrage: Frostbite and
+    //   Chill build faster and faster. (The stale 25% Ice Armor is gone.)
+    controlImmune: true,
     bossPattern: {
-      id: 'rime-shatter', name: 'Deep Freeze',
-      damageMultiplier: 1.7, cooldownMs: 8500, initialCooldownMs: 4500,
+      id: 'rime-deep-freeze', name: 'Deep Freeze',
+      damageMultiplier: 1.7, cooldownMs: 3000, initialCooldownMs: 3000,
+      // Fires when YOU reach the Chill threshold, never on a timer.
+      armWhenTargetStatus: { effectId: TUNDRA_CHILL_EFFECT_ID, minStacks: 4 },
+      priority: 2,
       steps: [
-        { kind: 'apply-status', name: 'Deep Freeze', castMs: 1400, fx: 'frostbind',
+        { kind: 'apply-status', name: 'Deep Freeze', castMs: 1200, fx: 'frostbind',
           effectId: FROZEN_STATUS_ID, stacks: 1, durationMs: 2200,
-          requires: { effectId: TUNDRA_CHILL_EFFECT_ID, minStacks: 4 } },
-        { kind: 'impact', name: 'Shatter', anchor: 'self', radius: 195,
-          damageMult: 1.0, telegraphMs: 1300, fx: 'shatter' },
-        { kind: 'recovery', label: 'Thawing', durationMs: 2000 },
+          requires: { effectId: TUNDRA_CHILL_EFFECT_ID, minStacks: 4 },
+          // The freeze spends the cold that fed it: Chill and Frostbite start over.
+          consumesOnResolve: [TUNDRA_CHILL_EFFECT_ID, FROSTBITE_EFFECT_ID] },
+        // FROST BURST, centred on the frozen player — ranged builds are tested too.
+        // Break Free then step out, Guard it, or tank it (Tundra armor).
+        { kind: 'impact', name: 'Frost Burst', anchor: 'target', radius: 190,
+          damageMult: 1.0, telegraphMs: 1300, fx: 'shatter', },
+        { kind: 'recovery', label: 'Thawing', durationMs: 1000 },
       ],
     },
+    bossPatternVariants: [
+    {
+      id: 'rime-deep-freeze-brittle', name: 'Deep Freeze',
+      damageMultiplier: 1.7, cooldownMs: 3000, initialCooldownMs: 3000,
+      // Fires when YOU reach the Chill threshold, never on a timer.
+      armWhenTargetStatus: { effectId: TUNDRA_CHILL_EFFECT_ID, minStacks: 4 },
+      priority: 2,
+      steps: [
+        { kind: 'apply-status', name: 'Deep Freeze', castMs: 1200, fx: 'frostbind',
+          effectId: FROZEN_STATUS_ID, stacks: 1, durationMs: 2200,
+          requires: { effectId: TUNDRA_CHILL_EFFECT_ID, minStacks: 4 },
+          // The freeze spends the cold that fed it: Chill and Frostbite start over.
+          consumesOnResolve: [TUNDRA_CHILL_EFFECT_ID, FROSTBITE_EFFECT_ID] },
+        // FROST BURST, centred on the frozen player — ranged builds are tested too.
+        // Break Free then step out, Guard it, or tank it (Tundra armor).
+        { kind: 'impact', name: 'Frost Burst', anchor: 'target', radius: 190,
+          damageMult: 1.0, telegraphMs: 1300, fx: 'shatter',
+          appliesDebuff: { effectId: BOSS_BRITTLE_EFFECT_ID, durationMs: 4000, data: { damageTakenPct: 0.30 } }, },
+        // BRITTLE -> SHATTER: the heavy follow-up swing on a cracked target. Guard it,
+        // or be out of its reach when it lands.
+        { kind: 'payoff', name: 'Shatter', castMs: 1400, fx: 'shatter', damageMult: 1.2, reach: 70 },
+        { kind: 'recovery', label: 'Thawing', durationMs: 1000 },
+      ],
+    },
+    {
+      // REACTIVE POSTURE, close: a telegraphed burst around the boss that adds Chill.
+      id: 'rime-frost-nova', name: 'Frost Nova',
+      damageMultiplier: 1.7, cooldownMs: 10000, initialCooldownMs: 5000,
+      armWhenTargetWithinPx: 170, priority: 1,
+      steps: [
+        { kind: 'impact', name: 'Frost Nova', anchor: 'self', radius: 200,
+          damageMult: 0.6, telegraphMs: 1100, fx: 'shatter', addsAmbientStacks: 2 },
+      ],
+    },
+    {
+      // REACTIVE POSTURE, far: a spike volley that roots, then the boss walks up.
+      id: 'rime-frost-spikes', name: 'Frost Spikes',
+      damageMultiplier: 1.7, cooldownMs: 10000, initialCooldownMs: 3000,
+      armWhenTargetBeyondPx: 320, priority: 1,
+      steps: [
+        { kind: 'apply-status', name: 'Frost Spikes', castMs: 900, fx: 'frostbind',
+          effectId: 'slow', stacks: 1, durationMs: 1800, data: { speedMult: 0 } },
+        { kind: 'dash', name: 'Advance', direction: 'to-target', speed: 150, reach: 20,
+          maxTravelMs: 2500, interruptible: false },
+      ],
+    },
+    ],
     bossScript: {
       phases: [
-        // The Slam grows — and by now the room has chilled you enough to feel it.
-        { hpPct: 0.5, actions: [
-          { type: 'empower-charged', multiplierMult: 1.20, radiusMult: 1.10 },
+        { hpPct: 1.0, actions: [
+          { type: 'add-pattern', patternId: 'rime-frost-nova' },
+          { type: 'add-pattern', patternId: 'rime-frost-spikes' },
+          { type: 'room-debuff', effectId: FROSTBITE_EFFECT_ID, intervalMs: 6000, maxStacks: 10,
+            data: { uncleansable: 1, ambientRampAccelPct: 0.12 } },
         ] },
-        // The armour thickens and returns sooner, so the shatter windows get rarer
-        // and more valuable. Escalation on the mechanic the lineage is named for.
-        { hpPct: 0.25, actions: [
-          { type: 'apply-shield', shieldPct: 0.24, intervalMs: 9000, durationMs: 6500,
-            shatter: {
-              selfDamagePct: 0.10,
-              vulnerability: { damageTakenPct: 0.25, durationMs: 4500 },
-            } },
+        { hpPct: 0.5, name: 'Brittle',
+          description: 'Deep Freeze now leaves you Brittle, and a heavy Shatter follows it. Guard the Shatter, or be out of reach when it lands.',
+          actions: [
+          { type: 'set-pattern', patternId: 'rime-deep-freeze-brittle' },
+        ] },
+        { hpPct: 0.2, name: 'Blizzard',
+          description: 'A blizzard fills the room: Frostbite stacks on you faster and faster, and your Chill builds quicker. Frostbite cannot be cleansed; end the fight.',
+          actions: [
+          { type: 'set-weather', weather: 'blizzard' },
+          { type: 'room-debuff', effectId: FROSTBITE_EFFECT_ID, intervalMs: 4000, maxStacks: 10,
+            data: { uncleansable: 1, ambientRampAccelPct: 0.12 },
+            accelerate: { intervalMult: 0.85, minIntervalMs: 1500 } },
+          { type: 'stoke-ramp', rampMsMult: 0.6 },
         ] },
       ],
     },

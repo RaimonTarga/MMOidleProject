@@ -17,6 +17,7 @@ import { syncPlayerBuffs } from '../src/systems/combat/buffs/buffSync';
 import { updateCombat } from '../src/systems/combat/engine/combat';
 import { syncEnemyBarrierState } from '../src/systems/combat/engine/enemyBarrierState';
 import { applyEnemyShield } from '../src/systems/combat/engine/monsterMechanics';
+import { clearSourceBarrier } from '../src/systems/combat/engine/sourceBarriers';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { World } from '../src/world/World';
 
@@ -89,10 +90,39 @@ initCombatSystems();
     updateBossPatterns(world, 100, now);
   }
   assert(!!boss.recoversFromPattern, 'the pattern should reach its recovery');
+  assert(recoveryStep.durationMs <= 1_000, 'a completed charge recovers in about a second (principle 5)');
+  assert(
+    boss.hasStatus.bossEffectDurations?.[BOSS_RECOVERY_EFFECT] === undefined,
+    'a COMPLETED pattern publishes no stagger clock: the stun tell is earned by stopping it',
+  );
+}
+
+// A STOPPED pattern is the punish window, so its stagger clock is legible on the
+// target frame for exactly as long as it lasts (boss-lineage-redesign principle 5).
+{
+  const world = new World();
+  const player = world.attachPlayerEntity(playerSlices('stagger-target'), 'stagger-target');
+  const boss = world.createMonster(NODE, 'stoneplate-juggernaut', { x: 400, y: 400 });
+  assert(boss, 'Stoneplate Juggernaut should spawn');
+  const pattern = MONSTER_DATABASE.get('stoneplate-juggernaut')!.bossPattern!;
+  const plate = pattern.steps.find(
+    (step): step is Extract<typeof step, { kind: 'barrier' }> => step.kind === 'barrier',
+  )!;
+  setAggroTarget(world, boss, { id: player.isPlayer.id, kind: 'player' }, 1_000);
+  boss.hasAwareness.state = 'attacking';
+  let now = 1_000 + (pattern.initialCooldownMs ?? pattern.cooldownMs) + 1_000;
+  for (let i = 0; i < 30 && !boss.runsBossPattern?.watchedBarrier; i++) {
+    updateBossPatterns(world, 100, now);
+    now += 100;
+  }
+  assert(!!boss.runsBossPattern?.watchedBarrier, 'the plate should be up');
+  clearSourceBarrier(boss, plate.sourceId); // broken
+  updateBossPatterns(world, 100, now);
+  assert(boss.recoversFromPattern?.fromStagger === true, 'breaking the plate staggers the boss');
   const clock = boss.hasStatus.bossEffectDurations?.[BOSS_RECOVERY_EFFECT];
   assert(
-    clock?.totalMs === recoveryStep.durationMs && clock.remainingMs === recoveryStep.durationMs,
-    'the recovery should publish its real target-frame clock the moment it opens',
+    clock?.totalMs === plate.onBreak!.staggerMs && clock.remainingMs === plate.onBreak!.staggerMs,
+    'the stagger publishes its real target-frame clock the moment it opens',
   );
 }
 
@@ -146,7 +176,7 @@ initCombatSystems();
   );
 }
 
-// T2 Plains now delays its wave behind the same Rallying Cry vocabulary as T1.
+// T2 Plains delays its 50% Stampede behind a visible cast, like T1's Rallying Cry.
 {
   const world = new World();
   const player = world.attachPlayerEntity(playerSlices('t2-rally-target'), 't2-rally-target');
@@ -157,16 +187,17 @@ initCombatSystems();
 
   updateBossScripts(world, 0);
   assert(
-    world.takeNodeEvents(NODE).some(event => event.kind === 'monster-cast-start' && event.label === 'Rallying Cry'),
-    'T2 Plains threshold should start Rallying Cry',
+    world.takeNodeEvents(NODE).some(event => event.kind === 'monster-cast-start' && event.label === 'Stampede'),
+    'T2 Plains threshold should start the Stampede cast',
   );
   const reinforcements = () => [...world.monsterEntities].filter(monster =>
-    monster.isMonster.monsterTypeId === 'plains-slime' ||
-    monster.isMonster.monsterTypeId === 'boar',
+    monster.isMonster.monsterTypeId === 'stampede-bull' ||
+    monster.isMonster.monsterTypeId === 'savanna-hawk' ||
+    monster.isMonster.monsterTypeId === 'prairie-yearling',
   );
   assert(reinforcements().length === 0, 'the reinforcement wave should wait for cast completion');
   updateBossScripts(world, 2_000);
-  assert(reinforcements().length === 6, 'the six-unit wave should arrive when Rallying Cry completes');
+  assert(reinforcements().length === 5, 'bull, two hawks and two yearlings arrive when the Stampede completes');
 }
 
 // Carrion Vulture announces its ally haste and does not buff itself.
@@ -230,6 +261,8 @@ initCombatSystems();
   boss.hasHealth.hp = boss.hasHealth.maxHp * 0.5;
 
   updateBossScripts(world, 0);
+  // The Invocation opens the fight; the Mass Resurrection queues behind it.
+  updateBossScripts(world, 1600);
   assert(
     world.takeNodeEvents(NODE).some(event => event.kind === 'monster-cast-start' && event.label === 'Mass Resurrection'),
     'Charnel-Crown should announce Mass Resurrection at 50%',

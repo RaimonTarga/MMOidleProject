@@ -95,8 +95,9 @@ for (const id of ['jungle-dread-gorger', 'apex-bramble-slasher', 'verdant-crown-
   updateBossPatterns(world, 100, now);
   updateBossPatterns(world, 100, now + 100);
   const start = { ...boss.hasPosition.current };
-  const goal = { x: start.x + 200, y: start.y };
-  setMovePath(world, boss, goal, [10, 20, 200].map(dx => ({ x: start.x + dx, y: start.y })), 'monster');
+  // Long enough that four ticks at flee speed never reach the goal.
+  const goal = { x: start.x + 600, y: start.y };
+  setMovePath(world, boss, goal, [10, 20, 600].map(dx => ({ x: start.x + dx, y: start.y })), 'monster');
   for (let tick = 1; tick <= 4; tick++) {
     updateMovement(world, 100, now + 100 + tick * 100);
     assert(Math.abs(boss.hasPosition.current.x - start.x - boss.hasPosition.speed * 0.1 * tick) < 0.01,
@@ -202,8 +203,13 @@ for (const id of ['jungle-dread-gorger', 'apex-bramble-slasher', 'verdant-crown-
 }
 
 // A real chase must move gradually, surface near the player, and bite with all venom stacks.
-for (const [id, stacks] of [['apex-bramble-slasher', 3], ['verdant-crown-predator', 4]] as const) {
+// Boss-lineage redesign: the T3 bite joins at its 60% phase, so it is tested there.
+for (const [id, stacks, hpPct] of [['apex-bramble-slasher', 4, 0.55], ['verdant-crown-predator', 4, 1]] as const) {
   const { world, player, boss, now } = setup(id);
+  if (hpPct < 1) {
+    boss.hasHealth.hp = Math.round(boss.hasHealth.maxHp * hpPct);
+    updateBossScripts(world, 0);
+  }
   let concealed = false;
   let poisoned = false;
   for (let t = now; t < now + 14000; t += 100) {
@@ -316,8 +322,9 @@ for (const id of ['crag-behemoth', 'stoneplate-juggernaut', 'crag-gorged-horn-be
   }
   boss.hasHealth.hp = boss.hasHealth.maxHp * 0.24;
   updateBossScripts(world, 100);
-  const phaseCast = bossPatternFor(boss)!.steps[chargeIndex - 1];
-  assert(phaseCast.kind === 'cast' && phaseCast.castMs >= pattern.chargeInstinct!.minCastMs,
+  // Phases may switch to a pattern variant (boss-lineage redesign), so find its lane.
+  const phaseCast = bossPatternFor(boss)!.steps.find(step => step.kind === 'cast' && step.lane);
+  assert(phaseCast?.kind === 'cast' && phaseCast.castMs >= pattern.chargeInstinct!.minCastMs,
     `${id}: phase empowerment also respects the minimum wind-up`);
   clearBossPatternState(world, boss);
   assert(chargeInstinct(boss) === 0 && !boss.hasStatus.bossEffects?.includes('charge-instinct'), `${id}: reset clears visible Instinct`);
@@ -333,8 +340,11 @@ for (const [id, raw] of [['cinder-shell-magma-salamander', 650], ['caldera-sover
   player.mitigatesDamage.plating = 100;
   player.mitigatesDamage.damageReduction = 0.2;
   const hp = player.hasHealth.hp;
-  for (let t = now + 100; t <= now + 10000; t += 100) {
-    if (t === now + 8100) applyStun(boss.tracksCombat, 2000, 'test');
+  // The cast length is the numbers-pass knob (boss-lineage redesign), so read it.
+  const first = MONSTER_DATABASE.get(id)!.bossPattern!.steps[0];
+  const castMs = first.kind === 'cast' ? first.castMs : 8000;
+  for (let t = now + 100; t <= now + castMs + 2000; t += 100) {
+    if (t === now + castMs + 100) applyStun(boss.tracksCombat, 2000, 'test');
     updateBossPatterns(world, 100, t);
   }
   assert(hp - player.hasHealth.hp === Math.round((raw - 100) * 0.8), `${id}: raw finisher respects plating and DR`);

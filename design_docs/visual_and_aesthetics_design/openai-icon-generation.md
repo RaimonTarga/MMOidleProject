@@ -35,6 +35,10 @@ shared direction:
 > words, letters, numbers, logo, watermark, border, UI frame, or transparent
 > checkerboard.
 
+The preview pipeline flattens status, buff, debuff, and rune derivatives onto
+the opaque `#11161d` backdrop. `GameIcon` applies the same backdrop at render
+time as a guard for older transparent assets that are still reused by the HUD.
+
 Do not use franchise names or request copies of existing game artwork. Describe
 the desired readability, materials, lighting, and silhouette directly.
 

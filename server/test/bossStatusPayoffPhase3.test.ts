@@ -26,6 +26,7 @@ import {
   emptyEquipment,
   getStatusEffect,
   resolveMonsterDotDebuff,
+  type MonsterDefinition,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
@@ -365,10 +366,11 @@ function chill(player: PlayerEntity, stacks: number): void {
   });
 
   assert(!everFrozen, 'an under-chilled target must not be frozen');
+  // Boss-lineage redesign: the freeze arms only at the threshold (never on a timer),
+  // so an under-chilled target simply never sees the sequence start.
   assert(
-    (monster.runsBossPattern?.skippedStepIndexes.length ?? 0) > 0 ||
-      monster.recoversFromPattern !== undefined,
-    'the gated step should be SKIPPED, not retried forever',
+    !monster.runsBossPattern && !monster.recoversFromPattern,
+    'under the Chill threshold the Deep Freeze never arms',
   );
 }
 
@@ -411,21 +413,35 @@ function chill(player: PlayerEntity, stacks: number): void {
 // The plating-shred rider: a larger dose of the SAME corrosion.
 // ─────────────────────────────────────────────────────────────────────────────
 
+// FIXTURES (2026-09-27): the boss-lineage redesign removed plating shred and the
+// Breach from every shipped boss (Cave erosion is the sinkholes' Eroded debuff now).
+// The runtime is kept for future authoring, so it is exercised on patched copies of
+// the old Cave definitions; each block restores what it patched.
+const FIXTURE_BREACH = {
+  id: 'obsidian-breach', name: 'Breach', castMs: 1700,
+  cooldownMs: 9500, initialCooldownMs: 4500, target: 'player' as const, fx: 'strong-kick',
+  actions: [{ type: 'hit' as const, multiplier: 1.1 }, { type: 'plating-shred' as const, stacks: 2 }],
+};
+function patchShred(id: string, patch: Partial<MonsterDefinition>): () => void {
+  const target = MONSTER_DATABASE.get(id)! as MonsterDefinition;
+  const saved = structuredClone(target);
+  Object.assign(target, patch);
+  return () => {
+    for (const key of Object.keys(target)) delete (target as unknown as Record<string, unknown>)[key];
+    Object.assign(target, saved);
+  };
+}
+const GORGER_SHRED: MonsterDefinition['appliesPlatingShred'] = {
+  platingPerStack: 2, maxStacks: 8,
+  thresholdPoison: {
+    atStacks: [3, 6], debuffId: 'deep-core-corrosive-venom', label: 'Corrosive Venom',
+    damagePerStack: 16, maxStacks: 2, tickIntervalMs: 1000, durationMs: 6000, element: 'poison',
+  },
+};
 {
-  const broodmother = MONSTER_DATABASE.get('obsidian-broodmother');
-  assert(!!broodmother?.castsPlatingShred && !broodmother.appliesPlatingShred, 'Cave T1 corrosion belongs only to casts');
-  const breach = broodmother.monsterAbilities?.[0];
-  assert(!!breach, 'Cave T1 should telegraph a Breach');
-  const shred = breach.actions.find(action => action.type === 'plating-shred');
-  assert(shred?.type === 'plating-shred', 'the Breach should apply plating shred');
-  assert(
-    shred.stacks === 2,
-    'the approved T1 Breach applies two stacks',
-  );
-  assert(
-    broodmother.chargedAttack === undefined,
-    'the generic damage circle it replaces should be gone',
-  );
+  const broodmother = MONSTER_DATABASE.get('obsidian-broodmother')!;
+  assert(!broodmother.castsPlatingShred && !broodmother.appliesPlatingShred && !broodmother.monsterAbilities,
+    'Cave T1 no longer carries the Breach or plating shred (lineage redesign)');
 }
 
 // N stacks land as N, and each threshold crossed on the way fires its poison — a
@@ -433,6 +449,7 @@ function chill(player: PlayerEntity, stacks: number): void {
 {
   const world = new World();
   const player = world.attachPlayerEntity(playerSlices('shred-dose'), 'shred-dose');
+  const restore = patchShred('deep-core-burrow-gorger', { appliesPlatingShred: GORGER_SHRED });
   const monster = world.createMonster(NODE, 'deep-core-burrow-gorger', { x: 400, y: 400 })!;
   const def = MONSTER_DATABASE.get('deep-core-burrow-gorger')!;
   const poison = def.appliesPlatingShred!.thresholdPoison!;
@@ -453,12 +470,14 @@ function chill(player: PlayerEntity, stacks: number): void {
     getStatusEffect(player.tracksCombat, poisonId) !== undefined,
     'and should fire the threshold poison it LEAPT OVER, not skip it',
   );
+  restore();
 }
 
 // The dose is capped by the authored ceiling like any other corrosion.
 {
   const world = new World();
   const player = world.attachPlayerEntity(playerSlices('shred-cap'), 'shred-cap');
+  const restore = patchShred('obsidian-broodmother', { castsPlatingShred: { platingPerStack: 1, maxStacks: 6 } });
   const monster = world.createMonster(NODE, 'obsidian-broodmother', { x: 400, y: 400 })!;
   const def = MONSTER_DATABASE.get('obsidian-broodmother')!;
   const ceiling = def.castsPlatingShred!.maxStacks;
@@ -469,12 +488,18 @@ function chill(player: PlayerEntity, stacks: number): void {
     getStatusEffect(player.tracksCombat, PLATING_SHRED_EFFECT_ID)?.stacks === ceiling,
     'a big dose still respects the authored ceiling',
   );
+  restore();
 }
 
 // Actual attack/cast delivery: the Breach hit must not sneak in an extra stack.
 {
   const world = new World();
   const player = world.attachPlayerEntity(playerSlices('breach-only'), 'breach-only');
+  const restore = patchShred('obsidian-broodmother', {
+    castsPlatingShred: { platingPerStack: 1, maxStacks: 6 },
+    monsterAbilities: [FIXTURE_BREACH],
+    bossPattern: undefined,
+  });
   const monster = world.createMonster(NODE, 'obsidian-broodmother', { x: 400, y: 400 })!;
   player.usesSkills.passives = {};
   setAggroTarget(world, monster, { id: player.isPlayer.id, kind: 'player' }, 1000);
@@ -489,5 +514,6 @@ function chill(player: PlayerEntity, stacks: number): void {
   assert(getStatusEffect(player.tracksCombat, PLATING_SHRED_EFFECT_ID)?.stacks === 2, 'completed Breach applies exactly two stacks');
   runMonsterAttack(world, monster, player, 8000);
   assert(getStatusEffect(player.tracksCombat, PLATING_SHRED_EFFECT_ID)?.stacks === 2, 'later ordinary attack leaves corrosion unchanged');
+  restore();
 }
 console.log('bossStatusPayoffPhase3: ok');

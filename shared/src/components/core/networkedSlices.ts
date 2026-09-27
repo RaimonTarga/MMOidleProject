@@ -163,6 +163,10 @@ export interface HasStatus {
   bossEffectStacks?: Record<string, number>;
   /** Bosses only — live clocks for the effects named by `bossEffects`. */
   bossEffectDurations?: Record<string, { remainingMs: number; totalMs: number }>;
+  /** Bosses only — the current announced phase's name, shown on the boss bar. */
+  bossPhase?: string;
+  /** Bosses only — presentational phase weather drawn by the client. */
+  bossWeather?: 'blizzard' | 'ashfall' | 'abyss' | 'sandstorm' | 'spores';
   /**
    * Monsters only — authoritative absorb state for the overhead/target barrier UI.
    * Amount 0 with a recharge clock represents a broken barrier reforming.
