@@ -272,7 +272,13 @@ a very large acquire radius so the player can find valid enemies anywhere in the
 current node. Plain `nearest` / `focus-closest` selection is a strict geometric
 distance ordering followed by the existing path-reachability check; threat,
 quest, cluster, and empowered-attack score bonuses cannot select a farther target,
-and the normal target-switch margin is not applied. Explicit targeting strategies
+and the scored switch margin is not applied. Instead a committed target is kept
+unless a rival is ~20% closer both in a straight line and in walking (path)
+distance, or the rival is attacking the player and is closer. The path check
+stops ledge flip-flop: on a Mountain node, following the path to one mob can
+carry the player straight-line away from it, so two mobs on opposite sides of a
+ledge each looked 20% closer in turn and the player shuttled along the ledge
+(`server/test/mountainLedgeTargetFlipFlop.test.ts`). Explicit targeting strategies
 such as `let-dots-finish`, `spread-dots`, and party leader focus continue to use
 the weighted scorer. It does not route to other nodes.
 

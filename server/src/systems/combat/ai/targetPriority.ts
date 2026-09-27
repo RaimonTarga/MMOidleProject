@@ -107,6 +107,14 @@ const SWITCH_MARGIN = 0.25;
  * 0.64 in squared distance) to steal the player's current approach target.
  * Prevents flip-flop between near-equidistant mobs and leash-edge jitter while
  * still honoring "nearest" once committed.
+ *
+ * A steal must also be ~20% shorter in TRAVEL (path length), not just in a
+ * straight line. Across walls the two disagree: walking the path to the current
+ * target can carry the player straight-line AWAY from it, e.g. along a Mountain
+ * ledge to the gap. On node-t4-mountain-02 a rhino inside the inner ring (path
+ * east to the gap) and a mammoth outside the outer ring (path west round the
+ * ledge) each became straight-line "20% closer" as the player walked toward the
+ * other, and the player shuttled along the ledge for minutes.
  */
 const NEAREST_COMMIT_FRAC_SQ = 0.64;
 
@@ -278,7 +286,11 @@ export function selectAutoCombatAction(
       );
       if (closerAttacker) {
         preferred = closerAttacker;
-      } else if (nearest.distSq < current.distSq * NEAREST_COMMIT_FRAC_SQ) {
+      } else if (
+        nearest.distSq < current.distSq * NEAREST_COMMIT_FRAC_SQ &&
+        travelDistanceSq(world, player, nearest.monster) <
+          travelDistanceSq(world, player, current.monster) * NEAREST_COMMIT_FRAC_SQ
+      ) {
         // Commitment hysteresis: only abandon the current approach target for
         // one that is meaningfully closer, so two near-equidistant mobs (or a
         // mob jittering around its leash edge) do not cause target flip-flop.
@@ -446,6 +458,28 @@ function monsterHasPath(
     setString(player.tracksCombat, 'autoApproachBlocked', 'no-safe-contact-or-pull');
   }
   return false;
+}
+
+/** Squared length of the walk to `monster`'s attack goal; 0 in reach, Infinity with no path. */
+function travelDistanceSq(world: World, player: PlayerEntity, monster: MonsterEntity): number {
+  if (world.collision.canReach(player, monster, player.performsAttack.attackRange)) return 0;
+  const path = findPathForMover(
+    player.hasPosition.nodeId,
+    "player",
+    navigationPadForEntity(player),
+    player.hasPosition.current,
+    attackPathGoal(player, monster),
+    suppressedFeatureIdsForNode(world, player.hasPosition.nodeId),
+    getFlag(player.tracksCombat, 'rune.avoidNodeHazards'),
+  );
+  if (!path?.length) return Number.POSITIVE_INFINITY;
+  let length = 0;
+  let from = player.hasPosition.current;
+  for (const point of path) {
+    length += Math.hypot(point.x - from.x, point.y - from.y);
+    from = point;
+  }
+  return length * length;
 }
 
 /**
