@@ -337,7 +337,7 @@ export const bossMonsterEntriesT2 = [
         // OUT, THEN BACK, ON ONE LINE (2026-09-06, settled) — a straight feint is
         // the only burrow shape the 5 Hz client interpolation renders without
         // snapping (see the conceal step's `feint` docs in bossPatterns.ts).
-        { kind: 'conceal', name: 'Burrowed', marker: 'burrow', durationMs: 3000,
+        { kind: 'conceal', name: 'Burrowed', marker: 'burrow', durationMs: 3000, burst: { mult: 2.2, ms: 900 },
           relocate: 'near-target', emergeGap: 0, travelSpeed: 380, targetable: true,
           feint: { retreatToPx: 460, untilPct: 0.35 }, surfacesOnContact: true,
           contactSlow: { speedMult: 0.5, durationMs: 2000 } },
@@ -352,14 +352,14 @@ export const bossMonsterEntriesT2 = [
       stoppedBy: { damage: { pctMaxHp: 0.05, staggerMs: 2500, label: 'Dragged Up' } },
       steps: [
         { kind: 'cast', name: 'Burrow', castMs: 550, fx: 'burrow', guardable: false },
-        { kind: 'conceal', name: 'Burrowed', marker: 'burrow', durationMs: 3000,
+        { kind: 'conceal', name: 'Burrowed', marker: 'burrow', durationMs: 3000, burst: { mult: 2.2, ms: 900 },
           relocate: 'near-target', emergeGap: 0, travelSpeed: 380, targetable: true,
           feint: { retreatToPx: 460, untilPct: 0.35 }, surfacesOnContact: true,
           contactSlow: { speedMult: 0.5, durationMs: 2000 } },
         { kind: 'impact', name: 'Eruption', anchor: 'self', radius: 165,
           damageMult: 1.0, telegraphMs: 750, fx: 'deep-core-eruption', pool: SINKHOLE_T2 },
         // Straight back down: no cast, no recovery between the two.
-        { kind: 'conceal', name: 'Dive', marker: 'burrow', durationMs: 2400,
+        { kind: 'conceal', name: 'Dive', marker: 'burrow', durationMs: 2400, burst: { mult: 2.2, ms: 900 },
           relocate: 'near-target', emergeGap: 0, travelSpeed: 420, targetable: true,
           surfacesOnContact: true },
         { kind: 'impact', name: 'Eruption', anchor: 'self', radius: 165,

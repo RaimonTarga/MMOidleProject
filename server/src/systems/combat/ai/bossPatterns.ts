@@ -1416,6 +1416,16 @@ function tickStep(
         if (step.travelSpeed !== undefined && step.relocate === 'near-target') {
           steerConcealedTravel(world, monster, state, step, now);
         }
+        if (step.burst && step.travelSpeed !== undefined) {
+          // The burst out of the dive, easing back to the stalking speed.
+          const elapsed = now - (state.stepEndsAtMs - step.durationMs);
+          const k = Math.max(0, 1 - elapsed / step.burst.ms);
+          const speed = step.travelSpeed * (1 + (step.burst.mult - 1) * k * k);
+          if (Math.abs(monster.hasPosition.speed - speed) > 4) {
+            monster.hasPosition.speed = speed;
+            markSliceDirty(world, monster, 'hasPosition');
+          }
+        }
         return 'running';
       }
       if (step.travelSpeed !== undefined) {

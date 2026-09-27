@@ -283,7 +283,7 @@ export const bossMonsterEntriesT1 = [
       },
       steps: [
         { kind: 'cast', name: 'Burrow', castMs: 700, fx: 'burrow', guardable: false },
-        { kind: 'conceal', name: 'Burrowed', marker: 'burrow', durationMs: 3200,
+        { kind: 'conceal', name: 'Burrowed', marker: 'burrow', durationMs: 3200, burst: { mult: 2.2, ms: 900 },
           relocate: 'near-target', emergeGap: 0, travelSpeed: 340, targetable: true,
           feint: { retreatToPx: 420, untilPct: 0.30 }, surfacesOnContact: true },
         // Escapable from dead centre at T1 (130px against a 1.2s tell at 120px/s):

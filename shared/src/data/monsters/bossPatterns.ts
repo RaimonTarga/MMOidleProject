@@ -349,6 +349,12 @@ export type BossPatternStep =
       name: string;
       marker: 'burrow' | 'stealth';
       durationMs: number;
+      /**
+       * A burst out of the dive (Cave, playtest 2026-09-27): travel starts at `mult`
+       * times `travelSpeed` and eases back down to it over `ms`. Not a permanent
+       * speed-up — the lunge underground, then the stalk.
+       */
+      burst?: { mult: number; ms: number };
       relocate: 'near-target' | 'leash-edge' | 'none';
       /** Distance from the target for `near-target`. Ignored otherwise. */
       emergeGap?: number;
