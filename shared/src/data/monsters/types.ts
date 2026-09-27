@@ -211,6 +211,23 @@ export type BossAction =
    */
   | { type: 'spread-pools'; radiusPerSec: number; maxRadiusMult: number }
   /**
+   * ROOM DEBUFF — every `intervalMs`, each player in the boss's node gains one stack
+   * of this boss debuff (up to `maxStacks`). Re-issuing it for the same effect
+   * replaces the clock; `accelerate` shortens the interval after every stack (the
+   * Tundra Blizzard's "faster and faster"). Cleared from everyone when the boss dies.
+   * Tundra Frostbite, Trench Depth.
+   */
+  | {
+      type: 'room-debuff';
+      effectId: string;
+      intervalMs: number;
+      maxStacks: number;
+      /** -1 (default) = lasts until the boss dies. */
+      durationMs?: number;
+      data?: Record<string, number>;
+      accelerate?: { intervalMult: number; minIntervalMs: number };
+    }
+  /**
    * ROOM AFFLICTION — the arena itself turns on the player: every `intervalMs`
    * each engaged player in the boss's node gains one stack of this DoT, up to
    * `dot.maxStacks`, refreshing its duration. Cleared from everyone when the boss

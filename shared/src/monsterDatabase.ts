@@ -8,6 +8,7 @@ export type {
   PatternAnchor,
   PatternPool,
   PoolErosion,
+  PatternDebuff,
   RecoversFromPattern,
   RunsBossPattern,
   BossPhase,

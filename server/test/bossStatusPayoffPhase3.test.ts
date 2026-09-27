@@ -366,10 +366,11 @@ function chill(player: PlayerEntity, stacks: number): void {
   });
 
   assert(!everFrozen, 'an under-chilled target must not be frozen');
+  // Boss-lineage redesign: the freeze arms only at the threshold (never on a timer),
+  // so an under-chilled target simply never sees the sequence start.
   assert(
-    (monster.runsBossPattern?.skippedStepIndexes.length ?? 0) > 0 ||
-      monster.recoversFromPattern !== undefined,
-    'the gated step should be SKIPPED, not retried forever',
+    !monster.runsBossPattern && !monster.recoversFromPattern,
+    'under the Chill threshold the Deep Freeze never arms',
   );
 }
 

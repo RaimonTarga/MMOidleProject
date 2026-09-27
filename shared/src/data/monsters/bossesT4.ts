@@ -1,5 +1,6 @@
 import { SUN_MARK_EFFECT_ID, TUNDRA_CHILL_EFFECT_ID } from '../../systems/monsterDebuffs';
 import { FROZEN_STATUS_ID } from '../../systems/statusPolicy';
+import { BOSS_BRITTLE_EFFECT_ID, FROSTBITE_EFFECT_ID } from '../../systems/bossDebuffs';
 import type { MonsterDefinition } from './types';
 
 // ════════════════════════════════════════════════════════════════════════
@@ -417,34 +418,97 @@ export const bossMonsterEntriesT4 = [
     rewards: { essence: 640, essenceType: 'blue', level: 5, biomeXp: 960 },
     ai: { wanderRadius: 90, leashRange: 960, idleMinMs: 4000, idleMaxMs: 10000 },
     targeting: { prefersPlayers: true },
-    // T4 = the same Chill check, with a much larger Collapse. Same response chain
-    // (Break Free then Step Back, or Guard, or tank); the tier changes the size of
-    // the payoff, not the question.
-    //
-    // REMOVED with the 2026-09-04 redesign: `chargeOnAggro`, the per-hit `rampDebuff`,
-    // the Ice Armor shield/vulnerability pair, the generic Glacial Collapse circle —
-    // and, importantly, `scalesWithAmbientRamp`. That last one made the boss's damage
-    // secretly climb with the room's Chill, which §5.6 forbids outright: the stacks
-    // decide IF you get frozen, never how hard anything hits. A hidden multiplier on
-    // an already-unavoidable hit is the least readable escalation available.
+    // TUNDRA (boss-lineage redesign 2026-09-27) — THE CHILL CLOCK.
+    //   The room builds Chill; FROSTBITE stacks slowly on top, cannot be cleansed,
+    //   and makes Chill build faster. Cleanse still strips Chill (partially) but only
+    //   DELAYS the freeze: DEEP FREEZE fires when you reach the threshold, and
+    //   resolving it spends both. Your build sets how often freezes come, never
+    //   whether. The FROST BURST is centred on the frozen player, so ranged builds
+    //   are tested too. Reactive posture: FROST NOVA when you are close (step out),
+    //   FROST SPIKES when you are far (a root, then it walks up — Break Free).
+    //   Tundra accepts NO control (`controlImmune`): stuns and roots do not land.
+    //   T4: (1) the T3 fight including Brittle/Shatter; (2) ~60% ICE ARMOR: it
+    //   encases itself and stops attacking — BREAK it (Shattered: staggered and
+    //   taking +30% damage) or DISENGAGE and use the breather; it keeps its aggro
+    //   and does not reset or heal while encased; (3) ~25% BLIZZARD, harsher.
+    controlImmune: true,
     bossPattern: {
-      id: 'glacial-collapse', name: 'Deep Freeze',
-      damageMultiplier: 1.9, cooldownMs: 9500, initialCooldownMs: 5000,
+      id: 'patriarch-deep-freeze', name: 'Deep Freeze',
+      damageMultiplier: 1.9, cooldownMs: 3000, initialCooldownMs: 3000,
+      // Fires when YOU reach the Chill threshold, never on a timer.
+      armWhenTargetStatus: { effectId: TUNDRA_CHILL_EFFECT_ID, minStacks: 5 },
+      priority: 2,
       steps: [
-        { kind: 'apply-status', name: 'Deep Freeze', castMs: 1500, fx: 'frostbind',
+        { kind: 'apply-status', name: 'Deep Freeze', castMs: 1300, fx: 'frostbind',
           effectId: FROZEN_STATUS_ID, stacks: 1, durationMs: 2400,
-          requires: { effectId: TUNDRA_CHILL_EFFECT_ID, minStacks: 5 } },
-        { kind: 'impact', name: 'Glacial Collapse', anchor: 'self', radius: 250,
-          damageMult: 1.0, telegraphMs: 1500, fx: 'shatter' },
+          requires: { effectId: TUNDRA_CHILL_EFFECT_ID, minStacks: 5 },
+          // The freeze spends the cold that fed it: Chill and Frostbite start over.
+          consumesOnResolve: [TUNDRA_CHILL_EFFECT_ID, FROSTBITE_EFFECT_ID] },
+        // FROST BURST, centred on the frozen player — ranged builds are tested too.
+        // Break Free then step out, Guard it, or tank it (Tundra armor).
+        { kind: 'impact', name: 'Frost Burst', anchor: 'target', radius: 230,
+          damageMult: 1.0, telegraphMs: 1400, fx: 'shatter',
+          appliesDebuff: { effectId: BOSS_BRITTLE_EFFECT_ID, durationMs: 4000, data: { damageTakenPct: 0.30 } }, },
+        // BRITTLE -> SHATTER: the heavy follow-up swing on a cracked target. Guard it,
+        // or be out of its reach when it lands.
+        { kind: 'payoff', name: 'Shatter', castMs: 1400, fx: 'shatter', damageMult: 1.2, reach: 70 },
         { kind: 'recovery', label: 'Thawing', durationMs: 1000 },
       ],
     },
+    bossPatternVariants: [
+    {
+      // REACTIVE POSTURE, close: a telegraphed burst around the boss that adds Chill.
+      id: 'patriarch-frost-nova', name: 'Frost Nova',
+      damageMultiplier: 1.9, cooldownMs: 7000, initialCooldownMs: 4000,
+      armWhenTargetWithinPx: 170, priority: 1,
+      steps: [
+        { kind: 'impact', name: 'Frost Nova', anchor: 'self', radius: 200,
+          damageMult: 0.8, telegraphMs: 1100, fx: 'shatter', addsAmbientStacks: 2 },
+      ],
+    },
+    {
+      // REACTIVE POSTURE, far: a spike volley that roots, then the boss walks up.
+      id: 'patriarch-frost-spikes', name: 'Frost Spikes',
+      damageMultiplier: 1.9, cooldownMs: 8000, initialCooldownMs: 3000,
+      armWhenTargetBeyondPx: 320, priority: 1,
+      steps: [
+        { kind: 'apply-status', name: 'Frost Spikes', castMs: 900, fx: 'frostbind',
+          effectId: 'slow', stacks: 1, durationMs: 1800, data: { speedMult: 0 } },
+        { kind: 'dash', name: 'Advance', direction: 'to-target', speed: 150, reach: 20,
+          maxTravelMs: 2500, interruptible: false },
+      ],
+    },
+    {
+      id: 'patriarch-ice-armor', name: 'Ice Armor',
+      damageMultiplier: 1, cooldownMs: 25000, initialCooldownMs: 0, priority: 3,
+      steps: [
+        { kind: 'cast', name: 'Encase', castMs: 1000, fx: 'shield', guardable: false },
+        { kind: 'barrier', sourceId: 'ice-armor', shieldPct: 0.10,
+          onBreak: { staggerMs: 3500, label: 'Shattered',
+            vulnerability: { damageTakenPct: 0.30, durationMs: 6000 } } },
+        // Encased: rooted, not attacking. The breather, or the burst window.
+        { kind: 'wait', durationMs: 9000 },
+        { kind: 'drop-barrier', sourceId: 'ice-armor' },
+      ],
+    },
+    ],
     bossScript: {
       phases: [
-        // The Collapse widens and lands more often. One idea, tightened — no new
-        // defensive keyword bolted on for the tier.
-        { hpPct: 0.25, actions: [
-          { type: 'empower-charged', multiplierMult: 1.20, cooldownMult: 0.75, radiusMult: 1.10 },
+        { hpPct: 1.0, actions: [
+          { type: 'add-pattern', patternId: 'patriarch-frost-nova' },
+          { type: 'add-pattern', patternId: 'patriarch-frost-spikes' },
+          { type: 'room-debuff', effectId: FROSTBITE_EFFECT_ID, intervalMs: 5500, maxStacks: 10,
+            data: { uncleansable: 1, ambientRampAccelPct: 0.12 } },
+        ] },
+        { hpPct: 0.6, name: 'Ice Armor', actions: [
+          { type: 'add-pattern', patternId: 'patriarch-ice-armor' },
+        ] },
+        { hpPct: 0.25, name: 'Blizzard', actions: [
+          { type: 'remove-pattern', patternId: 'patriarch-ice-armor' },
+          { type: 'room-debuff', effectId: FROSTBITE_EFFECT_ID, intervalMs: 3500, maxStacks: 12,
+            data: { uncleansable: 1, ambientRampAccelPct: 0.14 },
+            accelerate: { intervalMult: 0.8, minIntervalMs: 1000 } },
+          { type: 'stoke-ramp', rampMsMult: 0.5 },
         ] },
       ],
     },

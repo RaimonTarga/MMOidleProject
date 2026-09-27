@@ -3,6 +3,7 @@ import { pushDamageEvent } from '../combat/damage/damageEvent';
 import { drainWards } from '../defense/barrier/wards';
 import { drainBarrier, stampBarrierDamage } from '../defense/barrier/barrier';
 import {
+  AMBIENT_ACCEL_PCT_KEY,
   applyStatusEffect,
   computeScaledDotDamage,
   GAME_CONFIG,
@@ -284,7 +285,13 @@ function updateAmbientRamp(world: World, dt: number, now: number): void {
     // shed normally. Deliberately an accelerator rather than a second Heat source or
     // a floor: the biome already owns what Heat is, and a hazard minting its own
     // parallel counter would give the player two numbers where the design has one.
-    const accel = hazardRampAcceleration(
+    // FROSTBITE (Tundra): a boss debuff can make the room's ramp build faster for
+    // the player carrying it — `ambientRampAccelPct` per stack, summed.
+    const bodyAccel = 1 + player.tracksCombat.statusEffects.reduce(
+      (total, status) => total + (status.data[AMBIENT_ACCEL_PCT_KEY] ?? 0) * Math.max(1, status.stacks),
+      0,
+    );
+    const accel = bodyAccel * hazardRampAcceleration(
       world,
       nodeId,
       player.hasPosition.current,

@@ -50,6 +50,16 @@ export interface PatternPool {
   label: string;
 }
 
+/** A boss mechanic debuff a pattern step lays on its victims (see bossDebuffs.ts). */
+export interface PatternDebuff {
+  effectId: string;
+  stacks?: number;
+  maxStacks?: number;
+  durationMs: number;
+  /** Extra numeric payload (`damageTakenPct`, ...), merged into the status data. */
+  data?: Record<string, number>;
+}
+
 export interface PoolErosion {
   effectId: string;
   /** Added damage taken per stack. */
@@ -154,6 +164,10 @@ export type BossPatternStep =
       requiresChargeHit?: boolean;
       /** A pool left where the circle lands. */
       pool?: PatternPool;
+      /** Adds this many stacks of the room's ambient ramp (Tundra Chill) to victims. */
+      addsAmbientStacks?: number;
+      /** A boss debuff laid on every victim (Tundra Brittle). */
+      appliesDebuff?: PatternDebuff;
       fx?: string;
     }
   /** Delayed radial cracks from the anchor — the finite payoff, not terrain. */
@@ -194,8 +208,16 @@ export type BossPatternStep =
       sourceId: string;
       /** Fraction of the boss's max HP the barrier absorbs. */
       shieldPct: number;
-      /** Recovery the boss is staggered into when the barrier is broken. */
-      onBreak?: { staggerMs: number; label: string };
+      /**
+       * Recovery the boss is staggered into when the barrier is broken. With
+       * `vulnerability`, the broken boss also takes extra damage for a while (the
+       * Tundra Ice Armor payoff for bursting the shell).
+       */
+      onBreak?: {
+        staggerMs: number;
+        label: string;
+        vulnerability?: { damageTakenPct: number; durationMs: number };
+      };
       /**
        * While this barrier stands the boss ignores player stun and root: break the
        * plate first, or control the boss before it plates (Mountain T2+).
@@ -231,6 +253,8 @@ export type BossPatternStep =
        * When the gate is closed the step is skipped, not retried forever.
        */
       requires?: { effectId: string; minStacks: number };
+      /** Strip these statuses from the target when the cast resolves (Deep Freeze spends Frostbite). */
+      consumesOnResolve?: string[];
       /** Hard control during the cast aborts the pattern. Defaults to true. */
       interruptible?: boolean;
       /** Defaults to true; set false for a beat the player reads rather than guards. */
@@ -553,6 +577,18 @@ export interface BossPattern {
    * player closes in, and never otherwise.
    */
   armWhenTargetWithinPx?: number;
+  /** REACTIVE: only while the target is FARTHER than this (Tundra Frost Spikes). */
+  armWhenTargetBeyondPx?: number;
+  /**
+   * REACTIVE: only while the target carries at least `minStacks` of `effectId`.
+   * Tundra's Deep Freeze fires when you reach the Chill threshold, not on a timer.
+   */
+  armWhenTargetStatus?: { effectId: string; minStacks: number };
+  /**
+   * Arming priority when several patterns are ready at once (higher first; default
+   * 0; ties keep added extras ahead of the main pattern).
+   */
+  priority?: number;
   /**
    * The pattern comes around faster every time it runs: its cooldown is multiplied
    * by `cooldownMultPerRun` per completed arm, floored at `minCooldownMs`. The Desert

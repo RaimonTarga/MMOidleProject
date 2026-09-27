@@ -2,7 +2,7 @@
  * Arena-level boss state that must be torn down from OUTSIDE the script runtime
  * (the kill listener), kept free of the bossScripts -> combat import chain.
  */
-import { removeStatusEffect } from '@mmo-idle/shared';
+import { BOSS_DEBUFF_KEY, removeStatusEffect } from '@mmo-idle/shared';
 import type { MonsterEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 
@@ -12,12 +12,14 @@ import type { World } from '../../../world/World';
  */
 export function clearRoomAffliction(world: World, monster: MonsterEntity): void {
   const state = monster.scriptsBoss;
-  if (!state?.roomAffliction) return;
+  if (!state?.roomAffliction && !state?.roomDebuffs?.length) return;
   for (const player of world.livePlayersInNode(monster.hasPosition.nodeId)) {
     const debuffIds = player.tracksCombat.statusEffects
-      .filter(effect => effect.sourceId === monster.isMonster.id && effect.data.isDot === 1)
+      .filter(effect => effect.sourceId === monster.isMonster.id &&
+        (effect.data.isDot === 1 || effect.data[BOSS_DEBUFF_KEY] === 1))
       .map(effect => effect.id);
     for (const id of debuffIds) removeStatusEffect(player.tracksCombat, id);
   }
   state.roomAffliction = undefined;
+  state.roomDebuffs = undefined;
 }

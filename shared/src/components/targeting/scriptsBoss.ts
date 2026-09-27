@@ -143,6 +143,16 @@ export interface ScriptsBoss {
   phaseLabel?: string;
   /** Set by 'spread-pools': owned pools grow toward a cap. */
   poolSpread?: { radiusPerSec: number; maxRadiusMult: number };
+  /** Set by 'room-debuff': the arena's own boss-debuff ramps (Frostbite, Depth). */
+  roomDebuffs?: {
+    effectId: string;
+    intervalMs: number;
+    timerMs: number;
+    maxStacks: number;
+    durationMs: number;
+    data: Record<string, number>;
+    accelerate?: { intervalMult: number; minIntervalMs: number };
+  }[];
   /** Set by 'room-affliction': the arena's own DoT ramp and its timer. */
   roomAffliction?: {
     intervalMs: number;

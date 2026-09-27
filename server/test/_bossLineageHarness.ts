@@ -20,10 +20,10 @@ export function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }
 
-export function playerSlices(id: string, x: number, y: number, hp = 1_000_000): PersistedPlayerSlices {
+export function playerSlices(id: string, x: number, y: number, hp = 1_000_000, nodeId = NODE): PersistedPlayerSlices {
   return {
     isPlayer: { id, name: id },
-    hasPosition: { current: { x, y }, nodeId: NODE, speed: GAME_CONFIG.PLAYER_SPEED },
+    hasPosition: { current: { x, y }, nodeId, speed: GAME_CONFIG.PLAYER_SPEED },
     hasHealth: { hp, maxHp: hp, recovery: 0 },
     tracksProgression: {
       level: 0, skillPoints: 0,
@@ -50,19 +50,20 @@ export interface Arena {
   player: PlayerEntity;
   /** Wall clock the next tick runs at. */
   now: number;
+  nodeId: string;
 }
 
 /** A boss aggroed onto a (very durable) player, ready for its first pattern. */
-export function arena(bossId: string, bossAt: Vec2, playerAt: Vec2, hp?: number): Arena {
+export function arena(bossId: string, bossAt: Vec2, playerAt: Vec2, hp?: number, nodeId = NODE): Arena {
   const world = new World();
-  const player = world.attachPlayerEntity(playerSlices(`${bossId}-p`, playerAt.x, playerAt.y, hp), `${bossId}-p`);
-  const boss = world.createMonster(NODE, bossId, bossAt);
+  const player = world.attachPlayerEntity(playerSlices(`${bossId}-p`, playerAt.x, playerAt.y, hp, nodeId), `${bossId}-p`);
+  const boss = world.createMonster(nodeId, bossId, bossAt);
   assert(boss, `${bossId} should spawn`);
   setAggroTarget(world, boss, { id: player.isPlayer.id, kind: 'player' }, 1_000);
   boss.hasAwareness.state = 'attacking';
   const pattern = MONSTER_DATABASE.get(bossId)!.bossPattern;
   const now = 1_000 + (pattern ? (pattern.initialCooldownMs ?? pattern.cooldownMs) : 0) + 100;
-  return { world, boss, player, now };
+  return { world, boss, player, now, nodeId };
 }
 
 /** Full world ticks until `until` holds or `maxMs` passes; returns whether it held. */

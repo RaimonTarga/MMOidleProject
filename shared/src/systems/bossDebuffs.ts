@@ -25,7 +25,24 @@ export const UNCLEANSABLE_KEY = 'uncleansable';
 /** Cave T2+: sinkholes; +damage taken per stack, decays. */
 export const ERODED_EFFECT_ID = 'eroded';
 
+/** Tundra: slow, uncleansable; each stack makes the room's Chill build faster. */
+export const FROSTBITE_EFFECT_ID = 'frostbite';
+/** Tundra T3+: a Frost Burst leaves you Brittle — +damage taken, for the Shatter. */
+export const BOSS_BRITTLE_EFFECT_ID = 'boss-brittle';
+/** Status data key: fraction added to the ambient ramp's build speed PER STACK. */
+export const AMBIENT_ACCEL_PCT_KEY = 'ambientRampAccelPct';
+
 export const BOSS_DEBUFFS: Record<string, BossDebuffDef> = {
+  [FROSTBITE_EFFECT_ID]: {
+    label: 'Frostbite',
+    color: '#9fd8ff',
+    help: 'The cold is in you: each stack makes the room\u2019s Chill build faster. Cleanse cannot touch it; a Deep Freeze spends it.',
+  },
+  [BOSS_BRITTLE_EFFECT_ID]: {
+    label: 'Brittle',
+    color: '#cfe8ff',
+    help: 'Frozen and cracked: you take extra damage for a few seconds. The boss\u2019s Shatter swing is coming — Guard it or stay out of reach.',
+  },
   [ERODED_EFFECT_ID]: {
     label: 'Eroded',
     color: '#b08a5a',

@@ -32,6 +32,7 @@
 import type { BossAction, BossPhase, BossScript, RepeatingAction } from '@mmo-idle/shared';
 import {
   applyStatusEffect,
+  BOSS_DEBUFF_KEY,
   circleGeometry,
   distanceSq,
   MONSTER_DATABASE,
@@ -79,6 +80,7 @@ export function updateBossScripts(world: World, dt: number): void {
       if (script.repeating) tickRepeatingActions(state,  script.repeating,  e, world, dt);
       tickPoolSpread(state, e, world, dt);
       tickRoomAffliction(state, e, world, dt);
+      tickRoomDebuffs(state, e, world, dt);
     }
 
     const bossEffectStacks: Record<string, number> = {};
@@ -132,6 +134,30 @@ function tickRoomAffliction(state: ScriptsBoss, monster: MonsterEntity, world: W
   // The whole room, while the boss is engaged (the caller gates on that).
   for (const player of world.livePlayersInNode(monster.hasPosition.nodeId)) {
     applyMonsterDotToPlayer(world, monster, player, { ...room.dot, element: 'poison' }, room.dot.label);
+  }
+}
+
+/** The arena's boss-debuff ramps (Frostbite, Depth): a stack per interval, per player. */
+function tickRoomDebuffs(state: ScriptsBoss, monster: MonsterEntity, world: World, dt: number): void {
+  for (const room of state.roomDebuffs ?? []) {
+    room.timerMs -= dt;
+    if (room.timerMs > 0) continue;
+    for (const player of world.livePlayersInNode(monster.hasPosition.nodeId)) {
+      const effect = applyStatusEffect(player.tracksCombat, {
+        id: room.effectId,
+        maxStacks: room.maxStacks,
+        remainingMs: room.durationMs,
+        refreshable: true,
+        sourceId: monster.isMonster.id,
+        data: { [BOSS_DEBUFF_KEY]: 1, ...room.data, ...(room.durationMs > 0 ? { totalMs: room.durationMs } : {}) },
+      });
+      // A lasting ramp: a re-applied effect keeps its data, so refresh the payload.
+      Object.assign(effect.data, room.data);
+    }
+    if (room.accelerate) {
+      room.intervalMs = Math.max(room.accelerate.minIntervalMs, room.intervalMs * room.accelerate.intervalMult);
+    }
+    room.timerMs = room.intervalMs;
   }
 }
 
@@ -691,6 +717,21 @@ function applyAction(
 
     case 'spread-pools': {
       state.poolSpread = { radiusPerSec: action.radiusPerSec, maxRadiusMult: action.maxRadiusMult };
+      break;
+    }
+
+    case 'room-debuff': {
+      const rooms = (state.roomDebuffs ??= []).filter(room => room.effectId !== action.effectId);
+      rooms.push({
+        effectId: action.effectId,
+        intervalMs: action.intervalMs,
+        timerMs: action.intervalMs,
+        maxStacks: action.maxStacks,
+        durationMs: action.durationMs ?? -1,
+        data: { ...(action.data ?? {}) },
+        ...(action.accelerate ? { accelerate: { ...action.accelerate } } : {}),
+      });
+      state.roomDebuffs = rooms;
       break;
     }
 

@@ -1,5 +1,6 @@
 import { SUN_MARK_EFFECT_ID, TUNDRA_CHILL_EFFECT_ID } from '../../systems/monsterDebuffs';
 import { FROZEN_STATUS_ID } from '../../systems/statusPolicy';
+import { BOSS_BRITTLE_EFFECT_ID, FROSTBITE_EFFECT_ID } from '../../systems/bossDebuffs';
 import { ERODED_EFFECT_ID } from '../../systems/bossDebuffs';
 import type { PatternPool } from './bossPatterns';
 
@@ -611,54 +612,101 @@ export const bossMonsterEntriesT3 = [
     rewards: { essence: 350, essenceType: 'blue', level: 5, biomeXp: 525 },
     ai: { wanderRadius: 100, leashRange: 900, idleMinMs: 3000, idleMaxMs: 8000 },
     targeting: { prefersPlayers: true },
-    // TUNDRA = THE CHILL CHECK. The ROOM builds Chill; the boss asks whether you let
-    // it get too deep.
-    //
-    //   Deep Freeze is unavoidable and targeted, and it CHECKS your stacks. Below the
-    //   threshold it simply does not land — the gate is checked at cast start, so the
-    //   question was decided before the cast, by whether you cleansed and kept moving.
-    //   Above it you are Frozen, and a large, dodgeable Shatter follows.
-    //
-    // A Frozen player is not out of answers: Frozen is hard control, so Break Free
-    // strips it and Step Back then clears the circle. Guarding or tanking the Shatter
-    // stays legal. What is NOT legal is damage that secretly scales with Chill — the
-    // stacks decide IF you get frozen, never how hard anything hits.
-    //
-    // Cleanse REDUCES Chill rather than deleting it (statusPolicy: 'partial'): the
-    // room re-applies it continuously, so a full strip would be true for a second and
-    // read as the button not working.
-    //
-    // REMOVED with the 2026-09-04 redesign: `chargeOnAggro`, the per-hit `rampDebuff`
-    // (the boss adding its OWN chill on top of the room's made two sources of one
-    // resource, and the encounter reads the room's), the Ice Armor / vulnerability
-    // shield pair (a generic anti-burst clip in the one lineage explicitly about
-    // rewarding burst), and the generic Permafrost Slam circle.
+    // TUNDRA (boss-lineage redesign 2026-09-27) — THE CHILL CLOCK.
+    //   The room builds Chill; FROSTBITE stacks slowly on top, cannot be cleansed,
+    //   and makes Chill build faster. Cleanse still strips Chill (partially) but only
+    //   DELAYS the freeze: DEEP FREEZE fires when you reach the threshold, and
+    //   resolving it spends both. Your build sets how often freezes come, never
+    //   whether. The FROST BURST is centred on the frozen player, so ranged builds
+    //   are tested too. Reactive posture: FROST NOVA when you are close (step out),
+    //   FROST SPIKES when you are far (a root, then it walks up — Break Free).
+    //   Tundra accepts NO control (`controlImmune`): stuns and roots do not land.
+    //   T3: (1) the clock; (2) ~50% BRITTLE: a Frost Burst cracks you and a heavy
+    //   Shatter swing follows; (3) ~20% BLIZZARD, the soft enrage: Frostbite and
+    //   Chill build faster and faster. (The stale 25% Ice Armor is gone.)
+    controlImmune: true,
     bossPattern: {
-      id: 'rime-shatter', name: 'Deep Freeze',
-      damageMultiplier: 1.7, cooldownMs: 8500, initialCooldownMs: 4500,
+      id: 'rime-deep-freeze', name: 'Deep Freeze',
+      damageMultiplier: 1.7, cooldownMs: 3000, initialCooldownMs: 3000,
+      // Fires when YOU reach the Chill threshold, never on a timer.
+      armWhenTargetStatus: { effectId: TUNDRA_CHILL_EFFECT_ID, minStacks: 4 },
+      priority: 2,
       steps: [
-        { kind: 'apply-status', name: 'Deep Freeze', castMs: 1400, fx: 'frostbind',
+        { kind: 'apply-status', name: 'Deep Freeze', castMs: 1200, fx: 'frostbind',
           effectId: FROZEN_STATUS_ID, stacks: 1, durationMs: 2200,
-          requires: { effectId: TUNDRA_CHILL_EFFECT_ID, minStacks: 4 } },
-        { kind: 'impact', name: 'Shatter', anchor: 'self', radius: 195,
-          damageMult: 1.0, telegraphMs: 1300, fx: 'shatter' },
+          requires: { effectId: TUNDRA_CHILL_EFFECT_ID, minStacks: 4 },
+          // The freeze spends the cold that fed it: Chill and Frostbite start over.
+          consumesOnResolve: [TUNDRA_CHILL_EFFECT_ID, FROSTBITE_EFFECT_ID] },
+        // FROST BURST, centred on the frozen player — ranged builds are tested too.
+        // Break Free then step out, Guard it, or tank it (Tundra armor).
+        { kind: 'impact', name: 'Frost Burst', anchor: 'target', radius: 190,
+          damageMult: 1.0, telegraphMs: 1300, fx: 'shatter', },
         { kind: 'recovery', label: 'Thawing', durationMs: 1000 },
       ],
     },
+    bossPatternVariants: [
+    {
+      id: 'rime-deep-freeze-brittle', name: 'Deep Freeze',
+      damageMultiplier: 1.7, cooldownMs: 3000, initialCooldownMs: 3000,
+      // Fires when YOU reach the Chill threshold, never on a timer.
+      armWhenTargetStatus: { effectId: TUNDRA_CHILL_EFFECT_ID, minStacks: 4 },
+      priority: 2,
+      steps: [
+        { kind: 'apply-status', name: 'Deep Freeze', castMs: 1200, fx: 'frostbind',
+          effectId: FROZEN_STATUS_ID, stacks: 1, durationMs: 2200,
+          requires: { effectId: TUNDRA_CHILL_EFFECT_ID, minStacks: 4 },
+          // The freeze spends the cold that fed it: Chill and Frostbite start over.
+          consumesOnResolve: [TUNDRA_CHILL_EFFECT_ID, FROSTBITE_EFFECT_ID] },
+        // FROST BURST, centred on the frozen player — ranged builds are tested too.
+        // Break Free then step out, Guard it, or tank it (Tundra armor).
+        { kind: 'impact', name: 'Frost Burst', anchor: 'target', radius: 190,
+          damageMult: 1.0, telegraphMs: 1300, fx: 'shatter',
+          appliesDebuff: { effectId: BOSS_BRITTLE_EFFECT_ID, durationMs: 4000, data: { damageTakenPct: 0.30 } }, },
+        // BRITTLE -> SHATTER: the heavy follow-up swing on a cracked target. Guard it,
+        // or be out of its reach when it lands.
+        { kind: 'payoff', name: 'Shatter', castMs: 1400, fx: 'shatter', damageMult: 1.2, reach: 70 },
+        { kind: 'recovery', label: 'Thawing', durationMs: 1000 },
+      ],
+    },
+    {
+      // REACTIVE POSTURE, close: a telegraphed burst around the boss that adds Chill.
+      id: 'rime-frost-nova', name: 'Frost Nova',
+      damageMultiplier: 1.7, cooldownMs: 7000, initialCooldownMs: 4000,
+      armWhenTargetWithinPx: 170, priority: 1,
+      steps: [
+        { kind: 'impact', name: 'Frost Nova', anchor: 'self', radius: 200,
+          damageMult: 0.8, telegraphMs: 1100, fx: 'shatter', addsAmbientStacks: 2 },
+      ],
+    },
+    {
+      // REACTIVE POSTURE, far: a spike volley that roots, then the boss walks up.
+      id: 'rime-frost-spikes', name: 'Frost Spikes',
+      damageMultiplier: 1.7, cooldownMs: 8000, initialCooldownMs: 3000,
+      armWhenTargetBeyondPx: 320, priority: 1,
+      steps: [
+        { kind: 'apply-status', name: 'Frost Spikes', castMs: 900, fx: 'frostbind',
+          effectId: 'slow', stacks: 1, durationMs: 1800, data: { speedMult: 0 } },
+        { kind: 'dash', name: 'Advance', direction: 'to-target', speed: 150, reach: 20,
+          maxTravelMs: 2500, interruptible: false },
+      ],
+    },
+    ],
     bossScript: {
       phases: [
-        // The Slam grows — and by now the room has chilled you enough to feel it.
-        { hpPct: 0.5, actions: [
-          { type: 'empower-charged', multiplierMult: 1.20, radiusMult: 1.10 },
+        { hpPct: 1.0, actions: [
+          { type: 'add-pattern', patternId: 'rime-frost-nova' },
+          { type: 'add-pattern', patternId: 'rime-frost-spikes' },
+          { type: 'room-debuff', effectId: FROSTBITE_EFFECT_ID, intervalMs: 6000, maxStacks: 10,
+            data: { uncleansable: 1, ambientRampAccelPct: 0.12 } },
         ] },
-        // The armour thickens and returns sooner, so the shatter windows get rarer
-        // and more valuable. Escalation on the mechanic the lineage is named for.
-        { hpPct: 0.25, actions: [
-          { type: 'apply-shield', shieldPct: 0.24, intervalMs: 9000, durationMs: 6500,
-            shatter: {
-              selfDamagePct: 0.10,
-              vulnerability: { damageTakenPct: 0.25, durationMs: 4500 },
-            } },
+        { hpPct: 0.5, name: 'Brittle', actions: [
+          { type: 'set-pattern', patternId: 'rime-deep-freeze-brittle' },
+        ] },
+        { hpPct: 0.2, name: 'Blizzard', actions: [
+          { type: 'room-debuff', effectId: FROSTBITE_EFFECT_ID, intervalMs: 4000, maxStacks: 10,
+            data: { uncleansable: 1, ambientRampAccelPct: 0.12 },
+            accelerate: { intervalMult: 0.85, minIntervalMs: 1500 } },
+          { type: 'stoke-ramp', rampMsMult: 0.6 },
         ] },
       ],
     },

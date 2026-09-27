@@ -30,6 +30,7 @@ import {
   type BossPatternStep,
   type HazardFlavor,
   type PatternAnchor,
+  type PatternDebuff,
   type PatternPool,
   type Vec2,
 } from '@mmo-idle/shared';
@@ -54,13 +55,17 @@ import { markSliceDirty } from '../../../ecs/dirtyHelpers';
 import { hasIndependentRoot, setRooted } from '../../world/rooted';
 import {
   ABILITY_ROOT_EFFECT_ID,
+  ambientRampStatus,
+  BOSS_DEBUFF_KEY,
+  DAMAGE_TAKEN_PCT_KEY,
+  SHATTER_VULNERABLE_EFFECT_ID,
   applyStatusEffect,
   getCounter,
   getStatusEffect,
   removeStatusEffect,
   setCounter,
 } from '@mmo-idle/shared';
-import { canApplyPlayerDebuff } from '../status/debuffGuard';
+import { applyResistedPlayerDebuff, canApplyPlayerDebuff } from '../status/debuffGuard';
 import { harmfulStatusDurationMult } from '../status/harmfulStatus';
 import { syncPlayerControlLockout } from '../status/playerControlLockout';
 import {
@@ -253,7 +258,8 @@ function armablePatterns(monster: MonsterEntity): BossPattern[] {
   }
   const main = bossPatternFor(monster);
   if (main) list.push(main);
-  return list;
+  // Higher priority first; the sort is stable, so ties keep extras ahead of main.
+  return list.sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
 }
 
 // ── Encounter Instinct ──────────────────────────────────────────────────────────
@@ -644,10 +650,20 @@ function tryArmPattern(world: World, monster: MonsterEntity, pattern: BossPatter
   if (!patternReady(monster, pattern, now)) return false;
   const target = world.getPlayerEntity(aggro.targetId);
   if (!target || target.hasPosition.nodeId !== monster.hasPosition.nodeId) return false;
-  // REACTIVE: only while the target is close (the Desert standoff's dash-escape).
+  // REACTIVE: only while the target is close (the Desert standoff's dash-escape),
+  // only while it is far (Tundra Frost Spikes), or only once it carries enough of
+  // a status (Tundra Deep Freeze at the Chill threshold).
+  const gapSq = distanceSq(target.hasPosition.current, monster.hasPosition.current);
+  if (pattern.armWhenTargetWithinPx !== undefined && gapSq > pattern.armWhenTargetWithinPx ** 2) {
+    return false;
+  }
+  if (pattern.armWhenTargetBeyondPx !== undefined && gapSq <= pattern.armWhenTargetBeyondPx ** 2) {
+    return false;
+  }
   if (
-    pattern.armWhenTargetWithinPx !== undefined &&
-    distanceSq(target.hasPosition.current, monster.hasPosition.current) > pattern.armWhenTargetWithinPx ** 2
+    pattern.armWhenTargetStatus &&
+    (getStatusEffect(target.tracksCombat, pattern.armWhenTargetStatus.effectId)?.stacks ?? 0) <
+      pattern.armWhenTargetStatus.minStacks
   ) {
     return false;
   }
@@ -743,6 +759,22 @@ function advancePattern(world: World, monster: MonsterEntity, dt: number, now: n
   // untouched; at 10 Hz the stagger still lands within a tick of the killing blow.
   const watched = state.watchedBarrier;
   if (watched && sourceBarrierRemaining(monster, watched.sourceId) <= 0) {
+    // The shell cracked: an authored vulnerability window rides the stagger.
+    const brokenStep = pattern.steps.find(
+      (candidate): candidate is Extract<BossPatternStep, { kind: 'barrier' }> =>
+        candidate.kind === 'barrier' && candidate.sourceId === watched.sourceId,
+    );
+    const vulnerable = brokenStep?.onBreak?.vulnerability;
+    if (vulnerable) {
+      applyStatusEffect(monster.tracksCombat, {
+        id: SHATTER_VULNERABLE_EFFECT_ID,
+        maxStacks: 1,
+        remainingMs: vulnerable.durationMs,
+        refreshable: true,
+        sourceId: monster.isMonster.id,
+        data: { [DAMAGE_TAKEN_PCT_KEY]: vulnerable.damageTakenPct, totalMs: vulnerable.durationMs },
+      });
+    }
     state.staggered = true;
     state.watchedBarrier = undefined;
     state.barrierSourceIds = state.barrierSourceIds.filter(id => id !== watched.sourceId);
@@ -1224,6 +1256,11 @@ function tickStep(
       // A gated-out impact published no telegraph and must resolve no damage.
       if (state.skippedStepIndexes.includes(state.stepIndex)) return 'done';
       const at = anchorPoint(monster, state, step.anchor);
+      // Captured BEFORE the hit resolves: knockback must not decide who the
+      // rider (Chill, Brittle) lands on.
+      const riderVictims = step.addsAmbientStacks || step.appliesDebuff
+        ? victimsInCircle(world, monster, at, step.radius)
+        : [];
       hooks?.resolveCircle(
         world,
         monster,
@@ -1239,6 +1276,13 @@ function tickStep(
       );
       if (!world.hasMonster(monster.isMonster.id)) return 'ended';
       if (step.pool) layPatternPool(world, monster, at, step.pool, step.radius, now);
+      for (const victim of riderVictims) {
+        if (victim.isDead || !world.getPlayerEntity(victim.isPlayer.id)) continue;
+        if (step.addsAmbientStacks) addAmbientStacks(victim, step.addsAmbientStacks);
+        if (step.appliesDebuff && canApplyPlayerDebuff(victim)) {
+          layBossDebuff(victim, monster, step.appliesDebuff);
+        }
+      }
       return 'done';
     }
     // Raising a barrier takes no time of its own; the watch registered above is what
@@ -1263,6 +1307,8 @@ function tickStep(
         });
         syncPlayerControlLockout(world, target);
       }
+      // Deep Freeze SPENDS the Frostbite that fed it: the clock starts over.
+      if (target) for (const id of step.consumesOnResolve ?? []) removeStatusEffect(target.tracksCombat, id);
       world.pushEvent(monster.hasPosition.nodeId, {
         kind: 'monster-cast-end',
         monsterId: monster.isMonster.id,
@@ -2154,6 +2200,29 @@ function paintLane(
     damageMultiplier: 1,
   });
   state.laneZoneId = published.id;
+}
+
+/** Push a player's ambient ramp (Tundra Chill) up by `stacks`, within its ceiling. */
+function addAmbientStacks(player: PlayerEntity, stacks: number): void {
+  const ramp = ambientRampStatus(player.tracksCombat);
+  if (!ramp) return;
+  const cap = ramp.data.maxStacks ?? 0;
+  ramp.stacks = cap > 0 ? Math.min(cap, ramp.stacks + stacks) : ramp.stacks + stacks;
+}
+
+/** Lay a boss mechanic debuff (Brittle, ...) through debuff resistance. */
+function layBossDebuff(player: PlayerEntity, monster: MonsterEntity, debuff: PatternDebuff): void {
+  const effect = applyResistedPlayerDebuff(player, {
+    id: debuff.effectId,
+    maxStacks: debuff.maxStacks ?? Math.max(1, debuff.stacks ?? 1),
+    remainingMs: debuff.durationMs,
+    refreshable: true,
+    sourceId: monster.isMonster.id,
+    data: { [BOSS_DEBUFF_KEY]: 1, totalMs: debuff.durationMs, ...(debuff.data ?? {}) },
+  });
+  if (effect && (debuff.stacks ?? 1) > 1) {
+    effect.stacks = Math.min(effect.maxStacks || Infinity, effect.stacks + (debuff.stacks ?? 1) - 1);
+  }
 }
 
 /** A thorn snare where the fleeing boss stands: roots the first player to step on it. */
