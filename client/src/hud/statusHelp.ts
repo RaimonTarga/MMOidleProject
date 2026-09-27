@@ -42,6 +42,7 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'debuff-slow': d('Slow', 'Your movement speed is cut. Slow resistance weakens the slow’s magnitude, while the figure below is what you are actually moving at after that resistance.'),
   'debuff-root': d('Root', 'You cannot move. A cave Pin also stops you attacking. Rooting is hard control: break-free effects and control resistance are what answer it, not slow resistance.'),
   'debuff-frost-ramp': d('Frost', 'Cold takes your legs and your tempo together. Each hit adds a stack, increasing the movement slow and attack-cooldown penalty up to the cap; it fades after the last hit.'),
+  'debuff-boss': d('Boss mechanic', 'A debuff a boss mechanic put on you. Its name and values say what it does — read them, then answer the mechanic that applied it.'),
   'debuff-dot': d('Damage over time', 'Damage that keeps landing after the hit that applied it. It ignores plating entirely and only half your damage reduction applies, so armour is the wrong answer — DoT resistance and killing the source are.'),
   'debuff-swamp-rot': d('Rot', 'Swamp rot stacks with every hit and ticks for a share of its stacks. Like all damage over time it goes straight past plating.'),
   'debuff-sun-mark': d('Marked', 'You are painted for the next heavy blow, which lands amplified instead of ordinary. Cleansing the mark, or being somewhere else when it lands, is the whole counter.'),

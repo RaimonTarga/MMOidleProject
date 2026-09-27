@@ -7,10 +7,15 @@ function assert(condition: boolean, message: string): void {
 }
 
 const playable = [...MONSTER_DATABASE.values()].filter((def) => def.biome !== 'testroom');
-const caveCorrosion = describeMonsterMechanics(MONSTER_DATABASE.get('obsidian-broodmother')!)
-  .find(line => line.id === 'plating-shred');
-assert(!!caveCorrosion?.detail.includes('6 stacks initially, then 9 at 50% boss HP'),
-  'Cave corrosion description must expose its phase-dependent cap');
+// Boss-lineage redesign: the Cave burrow is a targetable mound, and the bestiary
+// must say that damage on it is an answer.
+const caveBurrow = describeMonsterAbilities(MONSTER_DATABASE.get('obsidian-broodmother')!)
+  .find(line => line.id.startsWith('boss-pattern-'));
+assert(!!caveBurrow?.detail.includes('drags it up'),
+  'Cave burrow description must expose the damage drag-up answer');
+assert(!!caveBurrow?.steps?.some(step => step.includes('targetable mound')),
+  'and describe the mound as targetable');
+void describeMonsterMechanics;
 assert(Object.keys(BESTIARY_TEXT).length === playable.length, 'every playable monster should have authored bestiary text');
 
 const missingAbilityCoverage: string[] = [];

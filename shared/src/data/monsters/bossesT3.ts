@@ -1,5 +1,16 @@
 import { SUN_MARK_EFFECT_ID, TUNDRA_CHILL_EFFECT_ID } from '../../systems/monsterDebuffs';
 import { FROZEN_STATUS_ID } from '../../systems/statusPolicy';
+import { ERODED_EFFECT_ID } from '../../systems/bossDebuffs';
+import type { PatternPool } from './bossPatterns';
+
+/** Cave T3 sinkhole: slows and erodes (+5% damage taken per second inside, up to 6). */
+const SINKHOLE_T3: PatternPool = {
+  durationMs: 30_000, damagePerTick: 0, tickIntervalMs: 1000, slowSpeedMult: 0.6,
+  flavor: 'sinkhole', label: 'Sinkhole',
+  erodes: { effectId: ERODED_EFFECT_ID, damageTakenPctPerStack: 0.05, maxStacks: 6, durationMs: 5000, intervalMs: 1000 },
+};
+/** Collapse (T3 soft enrage): the sinkholes last longer and pile up. */
+const SINKHOLE_T3_COLLAPSE: PatternPool = { ...SINKHOLE_T3, durationMs: 50_000 };
 import type { MonsterDefinition } from './types';
 
 // ════════════════════════════════════════════════════════════════════════
@@ -125,13 +136,8 @@ export const bossMonsterEntriesT3 = [
 
   // ══════════════════════════════════════════════════════════════════════
   // CAVE — "Deep-Core Burrow-Gorger"
-  // Identity: ENDURANCE / DEFENSIVE EROSION.
-  //
-  // T3's second layer was already right: plating shred stops being a slow tax and
-  // becomes a THRESHOLD — corrosion at 3 and 6 stacks detonates into Corrosive
-  // Venom. The phases now extend that same ladder (a higher ceiling, new threshold
-  // rungs, a deeper bite) plus one armoured body to outlast, instead of the generic
-  // enrage/speed pair they used to carry.
+  // Identity: THE BURROWER (boss-lineage redesign). T3 = the tunnel chase and
+  // the root answer; erosion is the sinkholes' damage-taken debuff, not plating.
   // ══════════════════════════════════════════════════════════════════════
   ['deep-core-burrow-gorger', {
     id: 'deep-core-burrow-gorger', name: 'Deep-Core Burrow-Gorger', color: 0x332244,
@@ -141,68 +147,102 @@ export const bossMonsterEntriesT3 = [
     rewards: { essence: 355, essenceType: 'red', level: 5, biomeXp: 530 },
     ai: { wanderRadius: 85, leashRange: 890, idleMinMs: 4000, idleMaxMs: 10000 },
     targeting: { prefersPlayers: true },
-    appliesPlatingShred: {
-      platingPerStack: 2,
-      maxStacks: 8,
-      thresholdPoison: {
-        atStacks: [3, 6],
-        debuffId: 'deep-core-corrosive-venom',
-        label: 'Corrosive Venom',
-        damagePerStack: 16,
-        maxStacks: 2,
-        tickIntervalMs: 1000,
-        durationMs: 6000,
-        element: 'poison',
-      },
-    },
-    // T3 = the evolved burrow. Same shape as T2, bigger, and the corrosion's
-    // threshold poison is what makes it bite — that already begins only after the
-    // existing defence-breach rungs, so the eruption does not need its own poison
-    // bolted on to feel like Cave.
-    //
-    // REMOVED with the 2026-09-04 redesign: the circular Deep-Core Slam,
-    // `chargeOnAggro`, and the DR-only Deep Burrow cast.
+    // CAVE T3 (boss-lineage redesign 2026-09-27) — three phases, ~2 minutes:
+    //   (1) the T2 fight: a targetable mound (drag it up with damage), eruptions
+    //       that leave Eroding sinkholes;
+    //   (2) ~60% TUNNEL CHASE: it stays under and erupts THREE times in a row along
+    //       your path, each surfacing where you just were — keep moving, choose the
+    //       path, mind the sinkholes it leaves;
+    //   (3) ~25% COLLAPSE, the soft enrage: shorter gaps between burrows, and the
+    //       sinkholes last longer and pile up.
+    // T3 is where the player's ROOT arrives: a Binding Strike on the travelling
+    // mound pins it and forces it up, staggered. CUT: plating shred and its
+    // threshold poison.
     bossPattern: {
       id: 'deep-core-emergence', name: 'Deep-Core Burrow',
       damageMultiplier: 1.7, cooldownMs: 8500, initialCooldownMs: 4000,
+      stoppedBy: {
+        damage: { pctMaxHp: 0.04, staggerMs: 2500, label: 'Dragged Up' },
+        root: { staggerMs: 2000, label: 'Pinned Up' },
+        stun: { staggerMs: 2500, label: 'Staggered' },
+      },
       steps: [
         { kind: 'cast', name: 'Deep Burrow', castMs: 700, fx: 'burrow', guardable: false },
-        // THE EVOLVED BURROW (2026-09-06) — the same shape T2 now runs, deepened.
-        // Read the T2 Dreadbore's comment first; everything there applies, including
-        // why the path is a straight line and cannot be a curve.
-        //
-        // It was left behind by the T2 rework and it showed: at `emergeGap: 100` on
-        // a 155px eruption it surfaced ~136px from a running player — on the LIP of
-        // its own circle, which one step cleared for free against a 1100ms tell.
-        // The T3 burrow was the easier of the two to walk out of, which is backwards.
-        //
-        // Deepened rather than copied: it falls back further than T2 (520 vs 460),
-        // and its contact slow bites harder and lasts longer. That slow is doing
-        // real work here, unlike at T2 where the circle already could not be walked
-        // out of — this is the tier where being pinned is what lands the hit.
         { kind: 'conceal', name: 'Burrowed', marker: 'burrow', durationMs: 3000,
-          relocate: 'near-target', emergeGap: 0, travelSpeed: 420,
-          feint: { retreatToPx: 520, untilPct: 0.35 }, surfacesOnContact: true,
-          contactSlow: { speedMult: 0.45, durationMs: 2500 } },
+          relocate: 'near-target', emergeGap: 0, travelSpeed: 420, targetable: true, rootable: true,
+          feint: { retreatToPx: 520, untilPct: 0.35 },
+          contactSlow: { speedMult: 0.55, durationMs: 1500 },
+          surfacesOnContact: true },
         { kind: 'impact', name: 'Deep-Core Eruption', anchor: 'self', radius: 155,
-          damageMult: 1.0, telegraphMs: 1100, fx: 'deep-core-eruption' },
+          damageMult: 1.0, telegraphMs: 1000, fx: 'deep-core-eruption', pool: SINKHOLE_T3 },
         { kind: 'recovery', label: 'Surfaced', durationMs: 1000 },
       ],
     },
+    bossPatternVariants: [
+      {
+        id: 'deep-core-tunnel-chase', name: 'Tunnel Chase',
+        damageMultiplier: 1.5, cooldownMs: 11000, initialCooldownMs: 4000,
+        stoppedBy: {
+        damage: { pctMaxHp: 0.04, staggerMs: 2500, label: 'Dragged Up' },
+        root: { staggerMs: 2000, label: 'Pinned Up' },
+        stun: { staggerMs: 2500, label: 'Staggered' },
+      },
+        steps: [
+          { kind: 'cast', name: 'Deep Burrow', castMs: 700, fx: 'burrow', guardable: false },
+        { kind: 'conceal', name: 'Tunnel', marker: 'burrow', durationMs: 2200,
+          relocate: 'near-target', emergeGap: 0, travelSpeed: 440, targetable: true, rootable: true,
+          surfacesOnContact: true },
+        { kind: 'impact', name: 'Deep-Core Eruption', anchor: 'self', radius: 150,
+          damageMult: 1.0, telegraphMs: 700, fx: 'deep-core-eruption', pool: SINKHOLE_T3 },
+        { kind: 'conceal', name: 'Tunnel', marker: 'burrow', durationMs: 2200,
+          relocate: 'near-target', emergeGap: 0, travelSpeed: 440, targetable: true, rootable: true,
+          surfacesOnContact: true },
+        { kind: 'impact', name: 'Deep-Core Eruption', anchor: 'self', radius: 150,
+          damageMult: 1.0, telegraphMs: 700, fx: 'deep-core-eruption', pool: SINKHOLE_T3 },
+        { kind: 'conceal', name: 'Tunnel', marker: 'burrow', durationMs: 2200,
+          relocate: 'near-target', emergeGap: 0, travelSpeed: 440, targetable: true, rootable: true,
+          surfacesOnContact: true },
+        { kind: 'impact', name: 'Deep-Core Eruption', anchor: 'self', radius: 150,
+          damageMult: 1.0, telegraphMs: 700, fx: 'deep-core-eruption', pool: SINKHOLE_T3 },
+          { kind: 'recovery', label: 'Surfaced', durationMs: 1000 },
+        ],
+      },
+      {
+        id: 'deep-core-collapse', name: 'Collapse',
+        damageMultiplier: 1.5, cooldownMs: 8000, initialCooldownMs: 3000,
+        stoppedBy: {
+        damage: { pctMaxHp: 0.04, staggerMs: 2500, label: 'Dragged Up' },
+        root: { staggerMs: 2000, label: 'Pinned Up' },
+        stun: { staggerMs: 2500, label: 'Staggered' },
+      },
+        steps: [
+          { kind: 'cast', name: 'Deep Burrow', castMs: 600, fx: 'burrow', guardable: false },
+        { kind: 'conceal', name: 'Tunnel', marker: 'burrow', durationMs: 2200,
+          relocate: 'near-target', emergeGap: 0, travelSpeed: 440, targetable: true, rootable: true,
+          surfacesOnContact: true },
+        { kind: 'impact', name: 'Deep-Core Eruption', anchor: 'self', radius: 150,
+          damageMult: 1.0, telegraphMs: 700, fx: 'deep-core-eruption', pool: SINKHOLE_T3_COLLAPSE },
+        { kind: 'conceal', name: 'Tunnel', marker: 'burrow', durationMs: 2200,
+          relocate: 'near-target', emergeGap: 0, travelSpeed: 440, targetable: true, rootable: true,
+          surfacesOnContact: true },
+        { kind: 'impact', name: 'Deep-Core Eruption', anchor: 'self', radius: 150,
+          damageMult: 1.0, telegraphMs: 700, fx: 'deep-core-eruption', pool: SINKHOLE_T3_COLLAPSE },
+        { kind: 'conceal', name: 'Tunnel', marker: 'burrow', durationMs: 2200,
+          relocate: 'near-target', emergeGap: 0, travelSpeed: 440, targetable: true, rootable: true,
+          surfacesOnContact: true },
+        { kind: 'impact', name: 'Deep-Core Eruption', anchor: 'self', radius: 150,
+          damageMult: 1.0, telegraphMs: 700, fx: 'deep-core-eruption', pool: SINKHOLE_T3_COLLAPSE },
+          { kind: 'recovery', label: 'Surfaced', durationMs: 1000 },
+        ],
+      },
+    ],
     bossScript: {
       phases: [
-        // The ceiling lifts and two more threshold rungs appear above where the
-        // fight used to top out — the erosion keeps going instead of plateauing.
-        { hpPct: 0.5, actions: [
-          { type: 'empower-shred', maxStacksAdd: 4, extraThresholds: [9, 12] },
+        { hpPct: 0.6, name: 'Tunnel Chase', actions: [
+          { type: 'set-pattern', patternId: 'deep-core-tunnel-chase' },
         ] },
-        // Last quarter: each stack bites harder, and the boss burrows behind a
-        // temporary shell so the corrosion has a defensive climax without another body.
-        // Last quarter: each stack bites harder. The old Deep Burrow cast that sat
-        // here was a flat-DR shell wearing the burrow's name; the real burrow is
-        // now the encounter's whole spine, so a second fake one is gone.
-        { hpPct: 0.25, actions: [
-          { type: 'empower-shred', platingPerStackAdd: 1 },
+        { hpPct: 0.25, name: 'Collapse', actions: [
+          { type: 'set-pattern', patternId: 'deep-core-collapse' },
         ] },
       ],
     },

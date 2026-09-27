@@ -136,7 +136,7 @@ type CombatEventPayload =
   // The player's control stopped a boss pattern mid-wind-up (stun or root). The
   // stagger, when authored, arrives separately as `boss-fx: stagger`; this one is
   // for telemetry and the bot's bookkeeping.
-  | { kind: 'boss-pattern-stopped'; monsterId: string; by: 'stun' | 'root' }
+  | { kind: 'boss-pattern-stopped'; monsterId: string; by: 'stun' | 'root' | 'damage' }
   // A self-facing Guard ability fired (Brace / Cleanse / Second Wind). Drives the
   // in-world Guard FX on the player's sprite, shown to the whole node so allies see
   // each other react. `ability` is the ability id; the client picks the FX by id.

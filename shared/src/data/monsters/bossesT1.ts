@@ -252,8 +252,7 @@ export const bossMonsterEntriesT1 = [
     },
   }],
 
-  // CAVE — ENDURANCE / DEFENSIVE EROSION. The longer it lasts, the less armour you
-  // have left. Its own bulk buys the time its corrosion needs.
+  // CAVE — THE BURROWER. Read the mound, leave the circle — or drag it up.
   ['obsidian-broodmother', {
     id: 'obsidian-broodmother', name: 'Obsidian Broodmother', color: 0x334455,
     isBoss: true,
@@ -265,31 +264,40 @@ export const bossMonsterEntriesT1 = [
     rewards: { essence: 110, essenceType: 'red', level: 5, biomeXp: 165 },
     ai: { wanderRadius: 80, leashRange: 680, idleMinMs: 2500, idleMaxMs: 6500 },
     targeting: { prefersPlayers: true },
-    castsPlatingShred: { platingPerStack: 1, maxStacks: 6 },
-    // T1 corrosion is carried only by the visible Breach cast. Ordinary attacks
-    // deal damage without eroding plating; a completed Breach adds two stacks.
+    // CAVE T1 (boss-lineage redesign 2026-09-27): THE BURROWER, moved down from T2.
+    // Burrow -> a visible mound travels toward you -> it surfaces and erupts.
+    // The lesson: read the mound, leave the circle.
     //
-    // REMOVED with the 2026-09-04 redesign: the circular Obsidian Slam (a generic
-    // damage circle that taught nothing about erosion, and duplicated the question
-    // Mountain's lane already asks better) and `chargeOnAggro`.
-    monsterAbilities: [{
-      id: 'obsidian-breach', name: 'Breach', castMs: 1700,
-      cooldownMs: 9500, initialCooldownMs: 4500, target: 'player', fx: 'strong-kick',
-      actions: [
-        // Damage is deliberately modest — the corrosion is the payload. The old
-        // slam's 1.8x is gone with it; this beat is a defensive event, not a spike.
-        { type: 'hit', multiplier: 1.1 },
-        { type: 'plating-shred', stacks: 2 },
+    // The mound is TARGETABLE: enough damage on it drags the boss up early,
+    // STAGGERED (the stun tell), and the eruption fizzles — the damage answer, like
+    // the Mountain plate. Slow shortens its travel. Stepping out of the circle, or
+    // Guarding it, are always answers.
+    //
+    // CUT: Breach and plating shred (the designer disliked erosion-as-plating; the
+    // lineage's erosion is now a damage-taken debuff from T2's sinkholes).
+    bossPattern: {
+      id: 'brood-emergence', name: 'Burrow',
+      damageMultiplier: 1.6, cooldownMs: 10000, initialCooldownMs: 4500,
+      stoppedBy: {
+        damage: { pctMaxHp: 0.07, staggerMs: 2500, label: 'Dragged Up' },
+      },
+      steps: [
+        { kind: 'cast', name: 'Burrow', castMs: 700, fx: 'burrow', guardable: false },
+        { kind: 'conceal', name: 'Burrowed', marker: 'burrow', durationMs: 3200,
+          relocate: 'near-target', emergeGap: 0, travelSpeed: 340, targetable: true,
+          feint: { retreatToPx: 420, untilPct: 0.30 }, surfacesOnContact: true },
+        // Escapable from dead centre at T1 (130px against a 1.2s tell at 120px/s):
+        // the entry lesson is to read it and walk out.
+        { kind: 'impact', name: 'Eruption', anchor: 'self', radius: 130,
+          damageMult: 1.0, telegraphMs: 1200, fx: 'deep-core-eruption' },
+        { kind: 'recovery', label: 'Surfaced', durationMs: 1000 },
       ],
-    }],
-    // CAVE EXAM = "your shell erodes". At 50% the corrosion deepens: three more
-    // stacks of plating shred, so the back half of the fight is fought in measurably
-    // worse armour than the front half. That is the lineage's whole idea, and it
-    // replaces the generic timed shield the boss used to gain here.
+    },
+    // One gentle escalation: it burrows more often in the back half.
     bossScript: {
       phases: [
         { hpPct: 0.5, actions: [
-          { type: 'empower-shred', maxStacksAdd: 3 },
+          { type: 'empower-charged', cooldownMult: 0.80 },
         ] },
       ],
     },

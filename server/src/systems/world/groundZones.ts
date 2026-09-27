@@ -1,6 +1,7 @@
 import { incomingFinalDamage } from '../combat/damage/finalDamage';
 import {
   applyStatusEffect,
+  BOSS_DEBUFF_KEY,
   circleGeometry,
   corridorGeometry,
   type DamageMitigationBreakdown,
@@ -12,11 +13,13 @@ import {
   SUNDERED_EFFECT_ID,
   type DeathKiller,
   type GroundZoneView,
+  type PoolErosion,
   type Vec2,
 } from '@mmo-idle/shared';
 import type { World } from '../../world/World';
 import { markSliceDirty } from '../../ecs/dirtyHelpers';
 import { isInvulnerablePlayer } from '../combat/invulnerability';
+import { applyResistedPlayerDebuff } from '../combat/status/debuffGuard';
 import { recordWorldLogEvent } from '../../world/worldLog';
 import { actorFromPlayer } from '../../world/worldLogActors';
 import { buildSimpleBreakdown, recordPlayerDamaged } from '../../world/worldLogCombat';
@@ -86,6 +89,9 @@ export interface RuntimeToxicPool extends RuntimeGroundZoneBase {
    */
   rampAccelMult?: number;
   vulnerability?: { damageTakenPct: number; durationMs: number };
+  /** Stacking damage-taken boss debuff while inside (Cave sinkholes). */
+  erodes?: PoolErosion;
+  erodeTimersByPlayerId?: Map<string, number>;
   ownerId?: string;
   detonationMultiplier?: number;
   /** Stable mechanic attribution (for example `bile-pool`), not the runtime id. */
@@ -535,6 +541,28 @@ function tickToxicPool(
           isGroundZone: 1,
         },
       });
+    }
+
+    if (pool.erodes && !isInvulnerablePlayer(player)) {
+      const timers = (pool.erodeTimersByPlayerId ??= new Map());
+      const due = timers.get(player.isPlayer.id) ?? now;
+      if (now >= due) {
+        timers.set(player.isPlayer.id, now + pool.erodes.intervalMs);
+        contact.harmfulEffects.add(pool.erodes.effectId);
+        // Through debuff resistance: the Trench armor's niche answers it too.
+        applyResistedPlayerDebuff(player, {
+          id: pool.erodes.effectId,
+          maxStacks: pool.erodes.maxStacks,
+          remainingMs: pool.erodes.durationMs,
+          refreshable: true,
+          sourceId: pool.ownerId ?? `ground-zone:${pool.id}`,
+          data: {
+            [BOSS_DEBUFF_KEY]: 1,
+            [DAMAGE_TAKEN_PCT_KEY]: pool.erodes.damageTakenPctPerStack,
+            totalMs: pool.erodes.durationMs,
+          },
+        });
+      }
     }
 
     if (pool.damagePerTick <= 0) continue;

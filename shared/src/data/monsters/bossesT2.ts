@@ -1,4 +1,16 @@
 import { SUN_MARK_EFFECT_ID } from '../../systems/monsterDebuffs';
+import { ERODED_EFFECT_ID } from '../../systems/bossDebuffs';
+import type { PatternPool } from './bossPatterns';
+
+/**
+ * Cave T2 sinkhole: collapsed ground an eruption leaves behind. No damage; a slow,
+ * and a stacking Eroded (+4% damage taken per second inside, up to 6).
+ */
+const SINKHOLE_T2: PatternPool = {
+  durationMs: 30_000, damagePerTick: 0, tickIntervalMs: 1000, slowSpeedMult: 0.65,
+  flavor: 'sinkhole', label: 'Sinkhole',
+  erodes: { effectId: ERODED_EFFECT_ID, damageTakenPctPerStack: 0.04, maxStacks: 6, durationMs: 5000, intervalMs: 1000 },
+};
 import type { MonsterDefinition } from './types';
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -279,8 +291,7 @@ export const bossMonsterEntriesT2 = [
     },
   }],
 
-  // CAVE — ENDURANCE / DEFENSIVE EROSION. T2's added layer is ARMOURED SUPPORT: a
-  // second brute to outlast, while the corrosion keeps eating your plating.
+  // CAVE — THE BURROWER. T2's added layer: sinkholes that make WHERE you dodge matter.
   ['chitinous-dreadbore', {
     id: 'chitinous-dreadbore', name: 'Chitinous Dreadbore', color: 0x442244,
     isBoss: true,
@@ -289,77 +300,56 @@ export const bossMonsterEntriesT2 = [
     rewards: { essence: 160, essenceType: 'red', level: 5, biomeXp: 240 },
     ai: { wanderRadius: 90, leashRange: 800, idleMinMs: 3000, idleMaxMs: 7500 },
     targeting: { prefersPlayers: true },
-    appliesPlatingShred: { platingPerStack: 2, maxStacks: 6 },
-    // T2 = T1's erosion, now delivered from UNDERNEATH. The Dreadbore erodes you,
-    // burrows out of reach, reserves a valid spot near you, shows the circle, and
-    // erupts for a heavy hit plus a dose of shred.
+    // CAVE T2 (boss-lineage redesign 2026-09-27): SINKHOLES — where you dodge now
+    // matters. The T1 burrow (a targetable mound you can drag up with damage), and
+    // every eruption leaves collapsed ground for ~30s: standing in it slows you and
+    // stacks ERODED (+damage taken per stack, fades once you step out). 50%: it dives
+    // straight back down for a second eruption.
     //
-    // BURROW MEANS UNTARGETABLE, not flat damage reduction. The old version simply
-    // gave the boss DR for a few seconds, which taught the player nothing and could
-    // be ignored by continuing to swing; being genuinely unable to reach it is what
-    // makes the emergence circle worth reading. Step Back avoids it, Guard absorbs
-    // it, and tanking stays legal.
-    //
-    // REMOVED with the 2026-09-04 redesign: the circular Chitin Slam, `chargeOnAggro`,
-    // Carapace Seal, and the DR-only burrow.
+    // CUT: plating shred (erosion is a damage-taken debuff now, not plating).
     bossPattern: {
       id: 'dreadbore-emergence', name: 'Dreadbore',
       damageMultiplier: 1.6, cooldownMs: 9000, initialCooldownMs: 4000,
+      stoppedBy: { damage: { pctMaxHp: 0.05, staggerMs: 2500, label: 'Dragged Up' } },
       steps: [
         { kind: 'cast', name: 'Burrow', castMs: 550, fx: 'burrow', guardable: false },
-        // OUT, THEN BACK, ON ONE LINE (2026-09-06, settled). This burrow went
-        // through four shapes before landing here: a 1600ms straight walk (a long
-        // boring approach), a 500ms sprint at 1300px/s (nothing to read), a true
-        // spiral, and a two-waypoint triangle. Both curved versions read as the boss
-        // TELEPORTING, and the reason is not the path — it is the wire.
-        //
-        // ⚠ WHY IT CANNOT CURVE. Node deltas broadcast at 5 Hz, and the client snaps
-        // its interpolation whenever the drawn body falls more than 80px behind the
-        // position it just received. Down a straight line the renderer keeps pace at
-        // any speed, because it chases at the speed the body is actually moving. At
-        // a CORNER it is still heading the old way, so the error is about one packet
-        // of travel — speed * 0.2 — and anything past ~400px/s snaps. A curve is
-        // therefore only available below 400px/s, which is too slow for the detour
-        // to fit in a burrow of sane length. One reversal is the shape that survives.
-        //
-        // 380px/s keeps even the apex reversal under the snap threshold (76px of
-        // divergence against the 80px budget), and it is well under a third of the
-        // 1300 this started at.
-        //
-        // RETREAT IS A DISTANCE FROM YOU, NOT A DISTANCE TRAVELLED. It falls back
-        // until it is 460px away and no further, so standing in its face buys the
-        // biggest retreat and there is nothing to gain by giving chase. An authored
-        // travel distance did this backwards: from melee it barely left, and from
-        // range it retreated so far it could not get back.
-        //
-        // `surfacesOnContact` makes the 3000ms a CEILING rather than a cost — the
-        // burrow ends the moment it reaches you, so a chase that resolves in two
-        // seconds is two seconds long instead of two seconds and a pause. That is
-        // also what lets the ceiling be generous enough to run down a kiting player
-        // without punishing everyone else with dead air.
+        // OUT, THEN BACK, ON ONE LINE (2026-09-06, settled) — a straight feint is
+        // the only burrow shape the 5 Hz client interpolation renders without
+        // snapping (see the conceal step's `feint` docs in bossPatterns.ts).
         { kind: 'conceal', name: 'Burrowed', marker: 'burrow', durationMs: 3000,
-          relocate: 'near-target', emergeGap: 0, travelSpeed: 380,
+          relocate: 'near-target', emergeGap: 0, travelSpeed: 380, targetable: true,
           feint: { retreatToPx: 460, untilPct: 0.35 }, surfacesOnContact: true,
-          // Pins you as it arrives. At T2 the eruption is ALREADY inescapable on
-          // foot from where the burrow surfaces (~110px to clear against a 750ms
-          // tell), so this is not what makes the circle land — it is what makes the
-          // dash-out answers and the recovery afterwards cost something. T3 is where
-          // the same rider actually decides the hit.
           contactSlow: { speedMult: 0.5, durationMs: 2000 } },
         { kind: 'impact', name: 'Eruption', anchor: 'self', radius: 165,
-          damageMult: 1.0, telegraphMs: 750, fx: 'deep-core-eruption' },
+          damageMult: 1.0, telegraphMs: 750, fx: 'deep-core-eruption', pool: SINKHOLE_T2 },
         { kind: 'recovery', label: 'Surfaced', durationMs: 1000 },
       ],
     },
-    // CAVE EXAM = "your shell erodes". At 50% the corrosion bites deeper (+1 plating
-    // per stack), then the Dreadbore seals its own carapace for a short, readable
-    // defensive window. The old troll add, enrage, and speed buff were generic and
-    // said nothing about this lineage.
+    bossPatternVariants: [{
+      id: 'dreadbore-second-dive', name: 'Second Dive',
+      damageMultiplier: 1.6, cooldownMs: 9500, initialCooldownMs: 4000,
+      stoppedBy: { damage: { pctMaxHp: 0.05, staggerMs: 2500, label: 'Dragged Up' } },
+      steps: [
+        { kind: 'cast', name: 'Burrow', castMs: 550, fx: 'burrow', guardable: false },
+        { kind: 'conceal', name: 'Burrowed', marker: 'burrow', durationMs: 3000,
+          relocate: 'near-target', emergeGap: 0, travelSpeed: 380, targetable: true,
+          feint: { retreatToPx: 460, untilPct: 0.35 }, surfacesOnContact: true,
+          contactSlow: { speedMult: 0.5, durationMs: 2000 } },
+        { kind: 'impact', name: 'Eruption', anchor: 'self', radius: 165,
+          damageMult: 1.0, telegraphMs: 750, fx: 'deep-core-eruption', pool: SINKHOLE_T2 },
+        // Straight back down: no cast, no recovery between the two.
+        { kind: 'conceal', name: 'Dive', marker: 'burrow', durationMs: 2400,
+          relocate: 'near-target', emergeGap: 0, travelSpeed: 420, targetable: true,
+          surfacesOnContact: true },
+        { kind: 'impact', name: 'Eruption', anchor: 'self', radius: 165,
+          damageMult: 1.0, telegraphMs: 750, fx: 'deep-core-eruption', pool: SINKHOLE_T2 },
+        { kind: 'recovery', label: 'Surfaced', durationMs: 1000 },
+      ],
+    }],
     bossScript: {
       phases: [
-        { hpPct: 0.5, actions: [
-          { type: 'empower-shred', platingPerStackAdd: 1 },
-
+        { hpPct: 0.5, name: 'Second Dive', actions: [
+          { type: 'set-pattern', patternId: 'dreadbore-second-dive' },
         ] },
       ],
     },

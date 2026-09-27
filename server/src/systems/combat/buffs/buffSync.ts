@@ -15,6 +15,8 @@ import {
   FROZEN_STATUS_ID,
   SUNDERED_EFFECT_ID,
   PLATING_SHRED_EFFECT_ID,
+  BOSS_DEBUFF_KEY,
+  bossDebuffDef,
   DAMAGE_DEALT_PCT_KEY,
   DAMAGE_TAKEN_PCT_KEY,
   statusDamageAmplifierPct,
@@ -496,10 +498,44 @@ export function syncPlayerBuffs(world: World, now: number): void {
       }
     }
     buffs.push(...collectMonsterDotDebuffs(playerCs, world));
+    buffs.push(...collectBossDebuffs(playerCs, world));
 
     entity.hasStatus.activeBuffs = buffs;
     recordBuffTransitions(world, entity, previousBuffs, buffs);
   }
+}
+
+/** Boss mechanic debuffs (Eroded, Frostbite, ...): one generic tile each, per registry row. */
+function collectBossDebuffs(
+  playerCs: NonNullable<BuffProjectionContext["playerCs"]>,
+  world: World,
+): PlayerBuff[] {
+  return playerCs.statusEffects
+    .filter((effect) => (effect.data[BOSS_DEBUFF_KEY] ?? 0) !== 0 && effect.stacks > 0)
+    .map((effect) => {
+      const def = bossDebuffDef(effect.id);
+      const label = def?.label ?? effect.id;
+      const totalMs = effect.data["totalMs"] ?? effect.remainingMs;
+      const takenPct = Math.round(statusDamageAmplifierPct(effect, DAMAGE_TAKEN_PCT_KEY) * 100);
+      const values: NonNullable<PlayerBuff["values"]> = [{ label: "Stacks", value: String(effect.stacks) }];
+      if (takenPct > 0) values.push({ label: "Damage taken", value: `+${takenPct}%`, good: false });
+      return {
+        id: "debuff-boss",
+        label,
+        stacks: effect.stacks,
+        durationPct: totalMs > 0 && effect.remainingMs > 0 ? (effect.remainingMs / totalMs) * 100 : -1,
+        color: def?.color ?? "#cc7755",
+        category: "neutral",
+        iconKey: `debuff-${effect.id}`,
+        instanceKey: effect.id,
+        shape: "diamond",
+        logSourceName: world.getMonsterEntity(effect.sourceId)?.isMonster.name ?? "Boss",
+        logSourceSide: "enemy",
+        logDetail: def?.help ?? label,
+        remainingMs: effect.remainingMs,
+        values,
+      } satisfies PlayerBuff;
+    });
 }
 
 function collectMonsterDotDebuffs(

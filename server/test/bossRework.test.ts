@@ -268,25 +268,22 @@ for (const id of mountainIds.slice(2)) {
     `${id} should gain a double charge in a later phase`);
 }
 
-// Caverns corrosion stacks for the encounter, and every tier keeps ONE telegraphed
-// beat. T1's is now a Breach that applies a larger dose of the SAME corrosion rather
-// than a generic damage circle that taught nothing about erosion (2026-09-04); T2/T3
-// still run their planted slams until the Phase 4 burrow conversion.
+// Boss-lineage redesign (2026-09-27): Cave is THE BURROWER at every tier — a
+// targetable mound you can drag up with damage — and plating shred is gone. Its
+// erosion is the sinkholes' Eroded debuff from T2 on.
 for (const id of ['obsidian-broodmother', 'chitinous-dreadbore', 'deep-core-burrow-gorger']) {
   const cave = def(id);
-  assert(!!(cave.appliesPlatingShred ?? cave.castsPlatingShred), `${id} should corrode plating`);
-  const breach = cave.monsterAbilities?.some((ability) =>
-    ability.actions.some((action) => action.type === 'plating-shred'),
-  );
+  assert(!cave.appliesPlatingShred && !cave.castsPlatingShred, `${id} no longer shreds plating`);
+  const burrow = cave.bossPattern?.steps.find(step => step.kind === 'conceal');
+  assert(burrow?.kind === 'conceal' && burrow.targetable === true, `${id} burrows as a targetable mound`);
+  assert(!!cave.bossPattern?.stoppedBy?.damage, `${id}: damage on the mound drags it up`);
+}
+for (const id of ['chitinous-dreadbore', 'deep-core-burrow-gorger']) {
   assert(
-    !!cave.chargedAttack?.aoe || breach || !!cave.bossPattern,
-    `${id} should keep one telegraphed beat — a Breach, a planted slam, or a burrow sequence`,
+    def(id).bossPattern!.steps.some(step => step.kind === 'impact' && step.pool?.flavor === 'sinkhole' && !!step.pool.erodes),
+    `${id}: eruptions leave eroding sinkholes`,
   );
 }
-assert(
-  def('deep-core-burrow-gorger').appliesPlatingShred?.thresholdPoison?.atStacks.length === 2,
-  'T3 Caverns should trigger poison at authored corrosion thresholds',
-);
 
 // Every former scripted screen-wide slam is now a bounded, charged ground tell.
 const migratedSlamIds = [
@@ -616,7 +613,12 @@ initCombatSystems();
   const boss = world.createMonster(NODE, 'obsidian-broodmother', { x: 400, y: 400 });
   assert(!!boss, 'Caverns boss should spawn');
   setAggroTarget(world, boss, { id: player.isPlayer.id, kind: 'player' }, 1_000);
-  const broodmother = MONSTER_DATABASE.get('obsidian-broodmother')!;
+  // Fixture spec: no shipped boss corrodes plating after the lineage redesign, but
+  // the runtime is kept (and covered) for future authoring.
+  const broodmother = {
+    ...MONSTER_DATABASE.get('obsidian-broodmother')!,
+    castsPlatingShred: { platingPerStack: 1, maxStacks: 6 },
+  };
   runMonsterAttack(world, boss, player, 10_000);
   assert(!getStatusEffect(player.tracksCombat, PLATING_SHRED_EFFECT_ID), 'ordinary Broodmother attacks do not corrode plating');
   applyPlatingShredStacks(world, boss, player, broodmother, 2);
@@ -628,8 +630,18 @@ initCombatSystems();
   assert(!getStatusEffect(player.tracksCombat, PLATING_SHRED_EFFECT_ID), 'corrosion should clear on disengage');
 }
 
-// T3 Caverns poison appears only on the authored corrosion threshold hits.
+// Corrosion threshold poison appears only on the authored threshold hits (fixture:
+// patched onto the T3 Cave boss, which no longer ships it).
 {
+  const gorger = MONSTER_DATABASE.get('deep-core-burrow-gorger')!;
+  const savedShred = gorger.appliesPlatingShred;
+  gorger.appliesPlatingShred = {
+    platingPerStack: 2, maxStacks: 8,
+    thresholdPoison: {
+      atStacks: [3, 6], debuffId: 'deep-core-corrosive-venom', label: 'Corrosive Venom',
+      damagePerStack: 16, maxStacks: 2, tickIntervalMs: 1000, durationMs: 6000, element: 'poison',
+    },
+  };
   const world = new World();
   const player = world.attachPlayerEntity(playerSlices('threshold-poison'), 'threshold-poison');
   const boss = world.createMonster(NODE, 'deep-core-burrow-gorger', { x: 400, y: 400 });
@@ -646,6 +658,7 @@ initCombatSystems();
   assert(getStatusEffect(player.tracksCombat, poisonId)?.stacks === 1, 'non-threshold hits must not add poison');
   runMonsterAttack(world, boss, player, 60_000);
   assert(getStatusEffect(player.tracksCombat, poisonId)?.stacks === 2, 'threshold 6 should add the second poison stack');
+  gorger.appliesPlatingShred = savedShred;
 }
 
 // Expiring T3 pools detonate once through the owner boss's real damage pipeline.

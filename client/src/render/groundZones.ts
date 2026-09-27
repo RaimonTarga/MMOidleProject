@@ -90,6 +90,8 @@ function steamVentTint(glowStrength: number): number {
 /** Swamp Mire pool (slow, no damage) and Spore pool (detonates) tints. */
 const MIRE_TINT = 0x9a7446;
 const SPORE_TINT = 0xd6f05a;
+/** Cave sinkhole: collapsed ground, dark and dusty. */
+const SINKHOLE_TINT = 0x6a5a48;
 
 export interface GroundZoneSprite {
   graphic: Phaser.GameObjects.Graphics;
@@ -381,6 +383,8 @@ function drawZone(sprite: GroundZoneSprite, progress: number, nowMs: number): vo
       } else if (sprite.flavor === "mire") {
         // Mire: the swamp art dragged to mud — slows, does not burn.
         sprite.image.setTint(MIRE_TINT);
+      } else if (sprite.flavor === "sinkhole") {
+        sprite.image.setTint(SINKHOLE_TINT);
       } else if (sprite.flavor === "spore") {
         // Spore: sickly yellow, flashing brighter as the detonation nears.
         const urgency = progress > 0.6 ? (Math.sin(nowMs / 70) + 1) / 2 : 0;
@@ -402,6 +406,7 @@ function drawZone(sprite: GroundZoneSprite, progress: number, nowMs: number): vo
       ? mixRgb(0x6b3d29, 0xa94d1d, steamGlow)
       : sprite.flavor === "mire" ? MIRE_TINT
       : sprite.flavor === "spore" ? SPORE_TINT
+      : sprite.flavor === "sinkhole" ? SINKHOLE_TINT
       : TOXIC_FILL;
     const line = sprite.flavor === "magma-vent"
       ? mixRgb(0xffa044, 0xffffa0, steamGlow)

@@ -481,14 +481,19 @@ initCombatSystems();
 }
 
 // ── `empower-shred` deepens a corrosion that is ALREADY on the player ─────────
+// Fixture: the lineage redesign removed plating shred from every shipped boss; the
+// seam is kept (and covered) for future authoring.
 {
+  const broodmother = def('obsidian-broodmother') as MonsterDefinition;
+  const saved = structuredClone(broodmother);
+  broodmother.castsPlatingShred = { platingPerStack: 1, maxStacks: 6 };
+  broodmother.bossScript = { phases: [{ hpPct: 0.5, actions: [{ type: 'empower-shred', maxStacksAdd: 3 }] }] };
   const world = new World();
   const player = world.attachPlayerEntity(playerSlices('shred-deepen'), 'shred-deepen');
   const boss = world.createMonster(NODE, 'obsidian-broodmother', { x: 400, y: 400 });
   assert(!!boss, 'Cave boss should spawn');
   setAggroTarget(world, boss, { id: player.isPlayer.id, kind: 'player' }, 1_000);
 
-  const broodmother = def('obsidian-broodmother');
   const authored = broodmother.castsPlatingShred!;
   for (let i = 0; i < authored.maxStacks + 2; i++) {
     applyPlatingShredStacks(world, boss, player, broodmother, 1);
@@ -505,6 +510,8 @@ initCombatSystems();
     deepened.stacks === authored.maxStacks + 1,
     'a raised ceiling must apply to the corrosion already standing on the player',
   );
+  for (const key of Object.keys(broodmother)) delete (broodmother as unknown as Record<string, unknown>)[key];
+  Object.assign(broodmother, saved);
 }
 
 // ── Rot Bloom (T3 Swamp soft enrage): pools spread, the room rots ─────────────

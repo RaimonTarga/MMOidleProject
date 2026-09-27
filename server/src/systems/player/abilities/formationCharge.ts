@@ -8,11 +8,12 @@ import { runFormationAttack } from '../../classes/archetypes/summoner/formationA
 import { isHardControlled } from '../../combat/status/playerHardControl';
 import { setAttackTarget } from '../../combat/ai/targeting';
 import { setEntityMotion, stopEntity } from '../../world/movement';
+import { isConcealedEntity } from "../../combat/invulnerability";
 
 /** Physical participants only: neither replacements nor another owner's summons join. */
 export function formationChargeMinions(world: World, owner: PlayerEntity, target: MonsterEntity, ability: AbilityDef): MinionEntity[] {
   if (!usesSummonTechniques(owner) || owner.hasSummonerCommand?.kind === 'move'
-    || target.hasHealth.hp <= 0 || target.isConcealed || target.isInvulnerable
+    || target.hasHealth.hp <= 0 || isConcealedEntity(target) || target.isInvulnerable
     || target.hasPosition.nodeId !== owner.hasPosition.nodeId
     || distanceSq(target.hasPosition.current, owner.hasPosition.current) > summonerProfileFor(owner).leashRadius ** 2) return [];
   return (owner.summonsMinions?.minionIds ?? []).flatMap(id => {

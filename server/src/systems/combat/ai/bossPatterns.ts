@@ -961,12 +961,17 @@ function beginStep(
       attachComponent(world, monster, 'isConcealed', {
         marker: step.marker,
         endsAtMs: now + step.durationMs,
+        ...(step.targetable ? { targetable: true } : {}),
       });
+      state.concealStartHp = monster.hasHealth.hp;
       // Drop every lock on it the instant it goes: a player left holding an attack
-      // target they cannot reach keeps swinging at empty ground.
-      for (const player of world.livePlayersInNode(monster.hasPosition.nodeId)) {
-        if (player.hasAttackTarget?.targetId === monster.isMonster.id) {
-          setAttackTarget(world, player, null);
+      // target they cannot reach keeps swinging at empty ground. A TARGETABLE mound
+      // keeps them — hitting it is the answer.
+      if (!step.targetable) {
+        for (const player of world.livePlayersInNode(monster.hasPosition.nodeId)) {
+          if (player.hasAttackTarget?.targetId === monster.isMonster.id) {
+            setAttackTarget(world, player, null);
+          }
         }
       }
       world.pushEvent(monster.hasPosition.nodeId, {
@@ -1174,6 +1179,20 @@ function tickStep(
       // keep travelling while untargetable and then cash in its payoff. `endPattern`
       // detaches the concealment, stops the body and puts its speed back.
       if (stopPatternOnControl(world, monster, pattern, step, now)) return 'ended';
+      // DRAGGED UP: enough damage on a targetable mound surfaces it staggered, and
+      // the eruption that would have followed never happens.
+      const dragUp = pattern.stoppedBy?.damage;
+      if (step.targetable && dragUp && state.concealStartHp !== undefined &&
+          state.concealStartHp - monster.hasHealth.hp >= dragUp.pctMaxHp * monster.hasHealth.maxHp) {
+        endPattern(world, monster, 'interrupted', now);
+        beginRecovery(world, monster, dragUp.label, dragUp.staggerMs, true, now);
+        world.pushEvent(monster.hasPosition.nodeId, {
+          kind: 'boss-pattern-stopped',
+          monsterId: monster.isMonster.id,
+          by: 'damage',
+        });
+        return 'ended';
+      }
       // ARRIVED. Once the retreat is spent and the boss is on its target, the
       // concealment has done its job — waiting out the rest of `durationMs` is dead
       // air with the boss sitting invisible on top of the player. See
@@ -1994,6 +2013,7 @@ function layPatternPool(
     slowSpeedMult: pool.slowSpeedMult,
     ...(pool.flavor ? { flavor: pool.flavor } : {}),
     ...(pool.detonationMultiplier !== undefined ? { detonationMultiplier: pool.detonationMultiplier } : {}),
+    ...(pool.erodes ? { erodes: pool.erodes } : {}),
     ownerId: monster.isMonster.id,
     sourceId: `pattern-pool:${pool.label.toLowerCase().replace(/\s+/g, '-')}`,
     sourceLabel: pool.label,

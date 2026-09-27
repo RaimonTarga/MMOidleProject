@@ -47,7 +47,9 @@ export type HazardFlavor =
   /** Swamp T2+ Mire: no damage, a heavy slow. Answered by slow resistance. */
   | 'mire'
   /** Swamp T3 Spore pool: short-lived, detonates when it expires. */
-  | 'spore';
+  | 'spore'
+  /** Cave T2+ sinkhole: collapsed ground; slows and erodes. */
+  | 'sinkhole';
 
 /**
  * Client-facing view of one zone. Mirrors the shape of the gauntlet's

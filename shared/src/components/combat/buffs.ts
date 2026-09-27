@@ -54,6 +54,8 @@ export const BUFF_IDS = [
   'debuff-root',
   'debuff-frost-ramp',
   'debuff-dot',
+  // Any boss mechanic debuff (shared/src/systems/bossDebuffs.ts), labelled per id.
+  'debuff-boss',
   'debuff-swamp-rot',
   'debuff-sun-mark',
   'debuff-volcanic-heat',

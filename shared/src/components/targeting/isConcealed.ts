@@ -21,4 +21,9 @@ export interface IsConcealed {
   marker: 'burrow' | 'stealth';
   /** Wall-clock ms this concealment is expected to end (telemetry + client cue). */
   endsAtMs: number;
+  /**
+   * A VISIBLE, TARGETABLE burrow (Cave, boss-lineage redesign): drawn as the mound
+   * but still a legal target, so damage on it can drag the boss up early.
+   */
+  targetable?: boolean;
 }

@@ -329,7 +329,7 @@ function describeBossPatternStep(step: BossPatternStep, pattern: BossPattern): s
         (step.interruptible === false ? '; cannot be interrupted' : '');
     }
     case 'conceal':
-      return `${step.name}: leaves a ${step.marker} marker and becomes untargetable for up to ${fmtMs(step.durationMs)}` +
+      return `${step.name}: leaves a ${step.marker} marker and becomes ${step.targetable ? 'a targetable mound' : 'untargetable'} for up to ${fmtMs(step.durationMs)}` +
         (step.travelSpeed ? ` and travels at ${fmtNumber(step.travelSpeed)}px/s` : '') +
         (step.relocate === 'near-target' ? ` to ${step.emergeGap ?? 0}px from the target` : '') +
         (step.relocate === 'leash-edge' ? ' toward the far edge of its leash' : '') +
@@ -525,6 +525,7 @@ function describeBossPattern(def: MonsterDefinition, pattern: BossPattern | unde
     detail: `Commits to one ordered sequence for ${fmtMult(pattern.damageMultiplier)} base damage, suppressing ordinary attacks until recovery` +
       (pattern.stoppedBy?.stun ? `; a stun on an interruptible wind-up staggers it for ${fmtMs(pattern.stoppedBy.stun.staggerMs)}` : '') +
       (pattern.stoppedBy?.root ? `; a root on a rootable wind-up staggers it for ${fmtMs(pattern.stoppedBy.root.staggerMs)}` : '') +
+      (pattern.stoppedBy?.damage ? `; ${fmtPct(pattern.stoppedBy.damage.pctMaxHp)} of its max HP dealt to its burrow mound drags it up, staggered for ${fmtMs(pattern.stoppedBy.damage.staggerMs)}` : '') +
       (def.controlImmune ? '; it ignores stun and root' : '') +
       (pattern.oncePerLife ? '; runs once per life.' : '.'),
     steps: pattern.steps.map((step) => describeBossPatternStep(step, pattern)),

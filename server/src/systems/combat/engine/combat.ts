@@ -144,6 +144,7 @@ import {
   finishTelegraphResolutionTelemetry,
   recordTelegraphResolutionVictim,
 } from "../ai/telegraphEvasion";
+import { isConcealedEntity } from "../invulnerability";
 
 export type PlayerAttackOutcome = "cancelled" | "dodged" | "hit" | "killed";
 export type MonsterAttackOutcome = "cancelled" | "hit" | "killed";
@@ -2251,7 +2252,7 @@ function* targetableMonstersForPlayer(world: World, player: PlayerEntity): Gener
     player.hasAutoTraversePath !== undefined &&
     player.hasAutoTraversePath.targetNodeId !== player.hasPosition.nodeId;
   for (const monster of world.monsterEntitiesInNode(player.hasPosition.nodeId)) {
-    if (monster.isConcealed) continue;
+    if (isConcealedEntity(monster)) continue;
     if (
       travelIsActive &&
       !(

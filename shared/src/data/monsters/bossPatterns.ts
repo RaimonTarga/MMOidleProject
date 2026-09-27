@@ -45,7 +45,20 @@ export interface PatternPool {
   flavor?: HazardFlavor;
   /** Detonates when it expires, through the owner's hit pipeline. */
   detonationMultiplier?: number;
+  /** While standing inside, stack a damage-taken boss debuff (Cave sinkholes: Eroded). */
+  erodes?: PoolErosion;
   label: string;
+}
+
+export interface PoolErosion {
+  effectId: string;
+  /** Added damage taken per stack. */
+  damageTakenPctPerStack: number;
+  maxStacks: number;
+  /** How long the debuff lingers after the last stack (it decays once you leave). */
+  durationMs: number;
+  /** One stack per this long spent inside. */
+  intervalMs: number;
 }
 
 export type BossPatternStep =
@@ -379,6 +392,12 @@ export type BossPatternStep =
       interruptible?: boolean;
       /** A player root pins the travelling body and stops the pattern (Cave T3 mound). */
       rootable?: boolean;
+      /**
+       * A VISIBLE, TARGETABLE mound (Cave, boss-lineage redesign): the boss is drawn
+       * burrowed but can still be hit, and `BossPattern.stoppedBy.damage` drags it up
+       * early — surfacing staggered, the eruption fizzling.
+       */
+      targetable?: boolean;
       fx?: string;
     }
   /**
@@ -504,6 +523,8 @@ export interface BossPattern {
   stoppedBy?: {
     stun?: { staggerMs: number; label: string };
     root?: { staggerMs: number; label: string };
+    /** Damage dealt to a `targetable` conceal, as a fraction of max HP, drags it up. */
+    damage?: { pctMaxHp: number; staggerMs: number; label: string };
   };
 }
 
@@ -566,6 +587,8 @@ export interface RunsBossPattern {
   fleeTargetPosition?: Vec2;
   /** Set true when a barrier break staggered the pattern. */
   staggered: boolean;
+  /** Boss HP when the current targetable conceal began (for `stoppedBy.damage`). */
+  concealStartHp?: number;
   /**
    * The monster's authored movement speed, saved while a committed charge raises it.
    *

@@ -121,8 +121,16 @@ for (const id of ['chitinous-dreadbore', 'deep-core-burrow-gorger']) {
   assert(def.chargeOnAggro === undefined, `${id} should drop the aggro speed burst`);
 }
 
-// Burrowing makes the boss genuinely untargetable — not merely damage-immune.
+// An UNTARGETABLE concealment (Jungle stealth; patched onto the Dreadbore here, whose
+// own burrow became a targetable mound in the 2026-09-27 lineage redesign) is
+// genuinely untargetable — not merely damage-immune.
 {
+  const dreadDef = MONSTER_DATABASE.get('chitinous-dreadbore')!;
+  const savedPattern = dreadDef.bossPattern!;
+  dreadDef.bossPattern = {
+    ...savedPattern,
+    steps: savedPattern.steps.map(step => step.kind === 'conceal' ? { ...step, targetable: false } : step),
+  };
   const world = new World();
   const player = world.attachPlayerEntity(playerSlices('burrow-target'), 'burrow-target');
   const { monster, armedAt } = armPattern(world, 'chitinous-dreadbore', 'burrow-target');
@@ -155,6 +163,23 @@ for (const id of ['chitinous-dreadbore', 'deep-core-burrow-gorger']) {
     aggroSource: { id: player.isPlayer.id, kind: 'player' },
   });
   assert(monster.hasHealth.hp === hpBefore, 'a burrowed boss cannot be damaged');
+  dreadDef.bossPattern = savedPattern;
+}
+
+// The Cave mound (lineage redesign): drawn burrowed, but a legal target — damage on
+// it is the answer that drags the boss up.
+{
+  const world = new World();
+  const player = world.attachPlayerEntity(playerSlices('mound-target'), 'mound-target');
+  const { monster, armedAt } = armPattern(world, 'chitinous-dreadbore', 'mound-target');
+  const now = advanceUntil(world, armedAt, () => monster.isConcealed !== undefined);
+  assert(monster.isConcealed?.targetable === true, 'the Cave burrow is a targetable mound');
+  const hpBefore = monster.hasHealth.hp;
+  runPlayerAttack(world, player, monster, now, {
+    attackOrigin: { ...player.hasPosition.current },
+    aggroSource: { id: player.isPlayer.id, kind: 'player' },
+  });
+  assert(monster.hasHealth.hp < hpBefore, 'the mound can be damaged');
 }
 
 // It comes back up, targetable again, at a standable point near its target.

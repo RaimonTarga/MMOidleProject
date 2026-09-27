@@ -68,6 +68,7 @@ export type {
   BossPatternStep,
   PatternAnchor,
   PatternPool,
+  PoolErosion,
   RecoversFromPattern,
   RunsBossPattern,
 } from './bossPatterns';
