@@ -7,6 +7,9 @@ import type { MonsterBehavior } from './behavior';
 
 // ── Boss script types ─────────────────────────────────────────────────────────
 
+/** Presentational boss-phase weather (see the `set-weather` action). */
+export type BossWeather = 'blizzard' | 'ashfall' | 'abyss';
+
 /**
  * All actions a boss can take, as a discriminated union.
  *
@@ -197,6 +200,12 @@ export type BossAction =
    * second phase runs the tunnel chase. A pattern already running finishes first.
    */
   | { type: 'set-pattern'; patternId: string }
+  /**
+   * BOSS WEATHER — a purely presentational tag for an intense phase (Tundra
+   * Blizzard, Volcanic ash fall, Trench abyss). The client draws a screen-space
+   * weather layer while it is set; `null` clears it. No gameplay.
+   */
+  | { type: 'set-weather'; weather: BossWeather | null }
   /**
    * BONE TITHE (Wasteland) — from now on the boss takes `damageReductionPerRisen`
    * less damage per living risen it commands, up to `maxStacks`, shown as stacks.

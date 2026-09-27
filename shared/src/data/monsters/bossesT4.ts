@@ -504,6 +504,7 @@ export const bossMonsterEntriesT4 = [
           { type: 'add-pattern', patternId: 'patriarch-ice-armor' },
         ] },
         { hpPct: 0.25, name: 'Blizzard', actions: [
+          { type: 'set-weather', weather: 'blizzard' },
           { type: 'remove-pattern', patternId: 'patriarch-ice-armor' },
           { type: 'room-debuff', effectId: FROSTBITE_EFFECT_ID, intervalMs: 3500, maxStacks: 12,
             data: { uncleansable: 1, ambientRampAccelPct: 0.14 },
@@ -601,6 +602,7 @@ export const bossMonsterEntriesT4 = [
             eruptEveryMs: 6000, telegraphMs: 1400, damageMult: 1.3 },
         ] },
         { hpPct: 0.25, name: 'Cataclysm', actions: [
+          { type: 'set-weather', weather: 'ashfall' },
           // The burn accelerates while the Cataclysm charges.
           { type: 'room-affliction', intervalMs: 1500, dot: {
             debuffId: 'caldera-burn', label: 'Simmering Burn', color: '#ff7a33',
@@ -813,6 +815,7 @@ export const bossMonsterEntriesT4 = [
             data: { uncleansable: 1, debuffDurationPct: 0.08 } },
         ] },
         { hpPct: 0.6, name: 'Into the Dark', actions: [
+          { type: 'set-weather', weather: 'abyss' },
           { type: 'set-pattern', patternId: 'trench-into-the-dark' },
           { type: 'room-debuff', effectId: DEPTH_EFFECT_ID, intervalMs: 4500, maxStacks: 16,
             data: { uncleansable: 1, debuffDurationPct: 0.08 } },

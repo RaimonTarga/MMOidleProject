@@ -107,6 +107,7 @@ export function updateBossScripts(world: World, dt: number): void {
     e.hasStatus.bossEffectStacks = bossEffectStacks;
     e.hasStatus.bossEffectDurations = bossEffectDurations;
     e.hasStatus.bossPhase = state.phaseLabel;
+    e.hasStatus.bossWeather = state.weather;
     markSliceDirty(world, e, 'hasStatus');
   }
 }
@@ -884,6 +885,11 @@ function applyAction(
 
     case 'remove-pattern': {
       state.extraPatternIds = (state.extraPatternIds ?? []).filter(id => id !== action.patternId);
+      break;
+    }
+
+    case 'set-weather': {
+      state.weather = action.weather ?? undefined;
       break;
     }
 

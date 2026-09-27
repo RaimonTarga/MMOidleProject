@@ -573,7 +573,7 @@ export const bossMonsterEntriesT3 = [
             eruptEveryMs: 6000, telegraphMs: 1500, damageMult: 1.3 },
           { type: 'stoke-ramp', rampMsMult: 0.7 },
         ] },
-        { hpPct: 0.25, name: 'Final Eruption', actions: [] },
+        { hpPct: 0.25, name: 'Final Eruption', actions: [{ type: 'set-weather', weather: 'ashfall' }] },
       ],
     },
   }],
@@ -694,6 +694,7 @@ export const bossMonsterEntriesT3 = [
           { type: 'set-pattern', patternId: 'rime-deep-freeze-brittle' },
         ] },
         { hpPct: 0.2, name: 'Blizzard', actions: [
+          { type: 'set-weather', weather: 'blizzard' },
           { type: 'room-debuff', effectId: FROSTBITE_EFFECT_ID, intervalMs: 4000, maxStacks: 10,
             data: { uncleansable: 1, ambientRampAccelPct: 0.12 },
             accelerate: { intervalMult: 0.85, minIntervalMs: 1500 } },

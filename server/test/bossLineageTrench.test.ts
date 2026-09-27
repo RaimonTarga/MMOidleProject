@@ -72,6 +72,7 @@ const stun = (a: ReturnType<typeof arena>) => applyStatusEffect(a.boss.tracksCom
   a.boss.hasHealth.hp = Math.round(a.boss.hasHealth.maxHp * 0.55);
   updateBossScripts(a.world, 0);
   assert(a.boss.hasStatus.bossPhase === 'Into the Dark', 'Into the Dark is announced');
+  assert(a.boss.hasStatus.bossWeather === 'abyss', 'and the room goes dark (client ambience tag)');
   const sank = runUntil(a, () => { pin(a.player, { x: 2480, y: 2400 }); return a.boss.isConcealed !== undefined; }, 8000);
   assert(sank && a.boss.isConcealed!.targetable !== true, 'it sinks out of reach, untargetable');
   const surged = runUntil(a, () => { pin(a.player, { x: 2480, y: 2400 }); return stepName(a) === 'Surge'; }, 8000);

@@ -45,6 +45,7 @@ export type { MonsterBehavior } from './behavior';
 export type {
   BossAction,
   BossPhase,
+  BossWeather,
   BossScript,
   EncounterStage,
   MonsterAbility,

@@ -1,0 +1,128 @@
+/**
+ * BOSS WEATHER — a screen-space ambience layer for intense boss phases
+ * (boss-lineage redesign): Tundra's Blizzard, Volcanic ash fall, and the Trench's
+ * "into the dark" abyss. Purely presentational: the server only publishes a tag
+ * (`hasStatus.bossWeather` on the boss), never any gameplay.
+ *
+ * Budget, by design: ONE Graphics object redrawn per frame (one batched draw), a
+ * capped pool of particles, no tweens, and nothing at all while the tab is hidden
+ * or client FX are off. The same layer can later drive dynamic node weather.
+ */
+import type { MonsterView } from "@mmo-idle/shared";
+import type { GameScene } from "../scenes/game/GameScene";
+import { shouldRunClientFx } from "../fx/guard";
+import { screenSpaceScale } from "./cameraZoom";
+import { DEPTH } from "./depth";
+
+type Weather = NonNullable<MonsterView["bossWeather"]>;
+
+interface Particle { x: number; y: number; vx: number; vy: number; size: number; life: number }
+
+interface WeatherLayer {
+  graphic: Phaser.GameObjects.Graphics;
+  weather: Weather | null;
+  /** 0..1 fade: in when a weather starts, out when it clears. */
+  strength: number;
+  particles: Particle[];
+  t: number;
+}
+
+const MAX_PARTICLES: Record<Weather, number> = { blizzard: 220, ashfall: 140, abyss: 0 };
+const layers = new WeakMap<GameScene, WeatherLayer>();
+
+function currentWeather(scene: GameScene): Weather | null {
+  for (const [id, view] of scene.state.view) {
+    if (scene.state.kind.get(id) !== "monster") continue;
+    const weather = (view as MonsterView).bossWeather;
+    if (weather) return weather;
+  }
+  return null;
+}
+
+function spawn(weather: Weather, w: number, h: number, anywhere: boolean): Particle {
+  const x = Math.random() * w * 1.2 - w * 0.1;
+  const y = anywhere ? Math.random() * h : -10;
+  if (weather === "blizzard") {
+    return { x, y, vx: -140 - Math.random() * 120, vy: 220 + Math.random() * 180, size: 1.5 + Math.random() * 2, life: 1 };
+  }
+  // Ash: slow, drifting, some of it still glowing.
+  return { x, y, vx: -20 + Math.random() * 40, vy: 30 + Math.random() * 40, size: 1.5 + Math.random() * 2.5, life: Math.random() };
+}
+
+/** Per-frame: fade the layer toward the current boss weather and draw it. */
+export function updateBossWeather(scene: GameScene, dtMs: number): void {
+  let layer = layers.get(scene);
+  const target = shouldRunClientFx() && !document.hidden ? currentWeather(scene) : null;
+  if (!layer) {
+    if (!target) return;
+    layer = {
+      graphic: scene.add.graphics().setScrollFactor(0).setDepth(DEPTH.FX + 1000),
+      weather: target,
+      strength: 0,
+      particles: [],
+      t: 0,
+    };
+    layers.set(scene, layer);
+  }
+  if (document.hidden) return;
+  const dt = Math.min(0.1, dtMs / 1000);
+  // A weather change fades the old one out before the new one fades in.
+  if (target && target === layer.weather) layer.strength = Math.min(1, layer.strength + dt / 1.5);
+  else layer.strength = Math.max(0, layer.strength - dt / 1.2);
+  if (layer.strength <= 0) {
+    layer.graphic.clear();
+    layer.particles.length = 0;
+    layer.weather = target;
+    return;
+  }
+  const weather = layer.weather!;
+  layer.t += dt;
+
+  const cam = scene.cameras.main;
+  const k = screenSpaceScale(cam);
+  const w = scene.scale.width * k;
+  const h = scene.scale.height * k;
+  const ox = scene.scale.width / 2 - w / 2;
+  const oy = scene.scale.height / 2 - h / 2;
+  const g = layer.graphic;
+  g.clear();
+
+  if (weather === "abyss") {
+    // The room goes deeper: a darkening wash plus a few slow drifting caustic
+    // bands standing in for water distortion.
+    g.fillStyle(0x02101f, 0.42 * layer.strength);
+    g.fillRect(ox, oy, w, h);
+    for (let i = 0; i < 5; i++) {
+      const phase = layer.t * (0.15 + i * 0.04) + i * 1.7;
+      const cx = ox + w * (0.5 + 0.45 * Math.sin(phase));
+      const cy = oy + h * (0.5 + 0.4 * Math.cos(phase * 0.8 + i));
+      g.fillStyle(0x3a7fb0, 0.06 * layer.strength);
+      g.fillEllipse(cx, cy, w * 0.5, h * 0.12);
+    }
+    return;
+  }
+
+  const cap = MAX_PARTICLES[weather];
+  while (layer.particles.length < cap * layer.strength) {
+    layer.particles.push(spawn(weather, w, h, layer.particles.length < cap / 2));
+  }
+  if (weather === "blizzard") {
+    g.fillStyle(0xdff2ff, 0.10 * layer.strength);
+    g.fillRect(ox, oy, w, h);
+  } else {
+    g.fillStyle(0x2a1208, 0.12 * layer.strength);
+    g.fillRect(ox, oy, w, h);
+  }
+  for (const p of layer.particles) {
+    p.x += p.vx * dt;
+    p.y += p.vy * dt;
+    if (p.y > h + 10 || p.x < -20 || p.x > w + 20) Object.assign(p, spawn(weather, w, h, false));
+    if (weather === "blizzard") {
+      g.fillStyle(0xffffff, 0.75 * layer.strength);
+    } else {
+      const glow = p.life > 0.8;
+      g.fillStyle(glow ? 0xff8a3a : 0x6b625c, (glow ? 0.9 : 0.6) * layer.strength);
+    }
+    g.fillCircle(ox + p.x, oy + p.y, p.size);
+  }
+}

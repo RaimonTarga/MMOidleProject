@@ -141,6 +141,8 @@ export interface ScriptsBoss {
   extraPatternIds?: string[];
   /** Name of the last announced (named) phase; mirrored to the boss bar. */
   phaseLabel?: string;
+  /** Presentational weather set by 'set-weather'; mirrored to `hasStatus.bossWeather`. */
+  weather?: 'blizzard' | 'ashfall' | 'abyss';
   /** Set by 'spread-pools': owned pools grow toward a cap. */
   poolSpread?: { radiusPerSec: number; maxRadiusMult: number };
   /** Set by 'bone-tithe': damage reduction per living risen. */

@@ -12,6 +12,7 @@ export type {
   RecoversFromPattern,
   RunsBossPattern,
   BossPhase,
+  BossWeather,
   BossScript,
   EncounterStage,
   MonsterAbility,

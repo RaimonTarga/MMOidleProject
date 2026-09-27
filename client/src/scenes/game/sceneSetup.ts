@@ -140,6 +140,7 @@ import {
 } from "./mapTransition";
 import { tickSpectatorReadiness } from "./spectatorReady";
 import { drawGroundZones } from "../../render/groundZones";
+import { updateBossWeather } from "../../render/bossWeather";
 import { drawCorpses } from "../../render/corpses";
 import { drawTombstones } from "../../render/tombstones";
 import { drawStunOrbits } from "../../render/stunOrbit";
@@ -600,6 +601,7 @@ export function updateGameScene(scene: GameScene, delta: number): void {
     drawStunOrbits(scene);
     drawSkillCallouts(scene.state);
     updateEffectOverlays(scene.state, scene, dt);
+    updateBossWeather(scene, dt * 1000);
     updateMovementEffects(scene.state, scene);
     updateLaserBeam(scene.state, scene);
     updateHolyBeam(scene.state, scene);
