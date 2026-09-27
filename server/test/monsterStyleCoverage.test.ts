@@ -219,4 +219,13 @@ for (const [, def] of MONSTER_DATABASE) {
 }
 assert(noWindup.length === 0, `mob charged attacks with no wind-up on the body: ${noWindup.join(', ')}`);
 
+// The Trench jaws (fxMawWindup) once stuck on the player: a Trench ELITE's bite ends
+// as `savage-maul` / `devour`, not the boss's `trench-bite`, so a landed bite never
+// resolved them, and nothing expired them when no cast-end came at all.
+const trenchSource = readFileSync(join(__dirname, '../../client/src/fx/trenchBoss.ts'), 'utf8');
+assert(windupSource.includes('resolveFx: def.chargedAttack?.aoe?.impactFx ?? fx'),
+  'mob Trench bites must resolve their jaws under the id their cast ENDS with');
+assert(trenchSource.includes('ttlMs: castMs + 1500') && trenchSource.includes('!scene.state.sprite.has(monsterId)'),
+  'the Trench jaws must expire, and vanish when their caster leaves the scene');
+
 console.log('monsterStyleCoverage: ok');

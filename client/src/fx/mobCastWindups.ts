@@ -622,7 +622,13 @@ export function fxMobCastWindup(scene: GameScene, monsterId: string, castMs: num
   if (spec === 'maw') {
     // The Trench jaws the boss made famous, at elite weight.
     const devour = def.chargedAttack?.aoe !== undefined;
-    fxMawWindup(scene, monsterId, castMs, 'bite', { width: devour ? 150 : 92, feel: devour ? 'light' : undefined });
+    // A Trench elite's bite ENDS as its impact id (`devour`) or as `savage-maul`, not
+    // as the boss's `trench-bite`, so the jaws must resolve under that id.
+    fxMawWindup(scene, monsterId, castMs, 'bite', {
+      width: devour ? 150 : 92,
+      feel: devour ? 'light' : undefined,
+      resolveFx: def.chargedAttack?.aoe?.impactFx ?? fx,
+    });
     return true;
   }
 
