@@ -15,6 +15,7 @@ import { ensureCdBar } from './cooldownBars';
 import { applyLunge } from './interpolation';
 import { spawnAttackEffect } from './combatFx';
 import { concealedFrameOverride, syncConcealment } from './burrow';
+import { monsterBarOffsetY, monsterSpriteSize } from './monsterSize';
 import {
   applySpriteTint,
   resetSpriteTint,
@@ -204,14 +205,6 @@ export function refreshMonsterTints(state: RenderState): void {
   }
 }
 
-function defaultBarOffsetY(monster: MonsterView): number {
-  return monster.isBoss ? 50 : 40;
-}
-
-function defaultSpriteSize(monster: MonsterView): number {
-  return monster.isBoss ? 128 : 64;
-}
-
 function upsertSheetMonsterSprite(
   state: RenderState,
   monster: MonsterView,
@@ -233,8 +226,8 @@ function upsertSheetMonsterSprite(
     return;
   }
 
-  const spriteSize = defaultSpriteSize(monster);
-  meta.barOffsetY = defaultBarOffsetY(monster);
+  const spriteSize = monsterSpriteSize(monster);
+  meta.barOffsetY = monsterBarOffsetY(monster);
   meta.skipFrameRefresh = false;
   meta.isAnimated = false;
   meta.visualOffsetY = undefined;
@@ -260,7 +253,7 @@ export function upsertMonster(
 
     state.spriteMeta.set(monster.id, {
       currentFrame: null,
-      barOffsetY: defaultBarOffsetY(monster),
+      barOffsetY: monsterBarOffsetY(monster),
       entityName: monster.name,
       monsterBehavior: monster.behavior,
       monsterIsRanged: monster.isRanged,
@@ -347,7 +340,7 @@ export function upsertMonster(
   }
 
   if (!meta?.skipFrameRefresh) {
-    const spriteSize = defaultSpriteSize(monster);
+    const spriteSize = monsterSpriteSize(monster);
     updateSpriteFrame(state, monster.id, monster, scene, {
       displayW: spriteSize,
       displayH: spriteSize,

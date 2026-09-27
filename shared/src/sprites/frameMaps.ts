@@ -396,6 +396,71 @@ export function resolveMonsterBurrowFrame(monsterTypeId: string): string | null 
 }
 
 /**
+ * DISPLAY SCALE for regular monsters whose body should read bigger than the
+ * standard 64px mob. Every monster sprite is authored at 64px, so without this a
+ * Granite Mammoth draws the same height as a Field Hare. Presentation only: no
+ * collision, range or hitbox reads it.
+ *
+ * Bosses draw at their own 128px size and ignore this map. Regular mobs stay at
+ * or below 1.75 (112px) so a boss is always the largest body in the room.
+ * Omitted types draw at 1.
+ */
+export const MONSTER_DISPLAY_SCALE: Record<string, number> = {
+  // ── Large (80px): heavy beasts a head above the common mob ─────────────────
+  'stampede-bull':         1.25,
+  'ancient-wolf':          1.25, // Dire Wolf
+  'ironwood-golem':        1.25, // Ironclaw Badger
+  'cave-brute':            1.25,
+  'giant-spider':          1.25,
+  'deep-spider':           1.25,
+  'avalanche-ram':         1.25,
+  'peak-archer':           1.25, // Boulder Thrower
+  'swamp-hydra':           1.25, // Moss-Shell Snapper
+  'bog-lurker':            1.25,
+  'silverback':            1.25,
+  'glacier-bear':          1.25,
+  'dune-stalker':          1.25,
+  'desert-basilisk':       1.25,
+  'magma-brute':           1.25, // Magma Tortoise
+  'infernal-direhound':    1.25,
+  'ashspitter-salamander': 1.25,
+  'thornback-lizard':      1.25,
+  'emerald-constrictor':   1.25,
+
+  // ── Huge (96px): golems, trolls, titans, apex predators ────────────────────
+  'granite-titan':         1.5,
+  'crag-mortar':           1.5,
+  'cave-troll':            1.5,
+  'plague-hydra':          1.5,  // Plague-Shell Snapper
+  'apex-silverback':       1.5,
+  'hoarfrost-yeti':        1.5,
+  'glacial-direbear':      1.5,
+  'avalanche-tyrant':      1.5,
+  'cragback-rhino':        1.5,
+  'cliffside-roc':         1.5,
+  'dune-basilisk':         1.5,
+  'dune-tyrant':           1.5,
+  'obsidian-tortoise':     1.5,
+  'magma-salamander':      1.5,
+  'charnel-brute':         1.5,
+  'gravewright':           1.5,
+  'abyssal-serpent':       1.5,
+  'hadal-stalker':         1.5,
+
+  // ── Colossal (112px): the biggest non-boss bodies in the game ──────────────
+  'mountain-colossus':     1.75,
+  'granite-mammoth':       1.75,
+  'cavern-troll':          1.75,
+  'rime-tusk-mastodon':    1.75,
+  'permafrost-behemoth':   1.75,
+  'elder-leviathan':       1.75,
+};
+
+export function resolveMonsterDisplayScale(monsterTypeId: string): number {
+  return MONSTER_DISPLAY_SCALE[monsterTypeId] ?? 1;
+}
+
+/**
  * Identity accent — a persistent overlay rendered with the player body (halo,
  * glyph, hand glow) expressing range/path/tier identity WITHOUT swapping the
  * body sprite. Distinct from combat-state auras (PlayerView.aura, transient,
