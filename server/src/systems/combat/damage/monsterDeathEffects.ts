@@ -13,6 +13,7 @@ import { registerCombatListener } from '../engine/combatPipeline';
 import { publishToxicPool } from '../../world/groundZones';
 import { recordCorpse } from '../../world/corpses';
 import { clearAmbientRampOverride } from '../../world/nodeFeatures';
+import { clearRoomAffliction } from '../ai/bossArena';
 
 import { BOSS_RALLIED_EFFECT_ID } from '../engine/monsterMechanics';
 
@@ -97,6 +98,8 @@ export function initMonsterDeathEffects(): void {
     // A boss that stoked its room's ambient ramp takes the stoke with it.
     if (ctx.defender.isMonster.isBoss) {
       clearAmbientRampOverride(world, ctx.defender.hasPosition.nodeId);
+      // ...and a room it turned toxic (Swamp Rot Bloom) clears with it.
+      clearRoomAffliction(world, ctx.defender);
     }
     spawnDeathHazard(world, ctx.defender);
     empowerNearbyAllies(world, ctx.defender);

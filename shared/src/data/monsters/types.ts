@@ -197,6 +197,31 @@ export type BossAction =
    * second phase runs the tunnel chase. A pattern already running finishes first.
    */
   | { type: 'set-pattern'; patternId: string }
+  /**
+   * SPREAD POOLS (Swamp Rot Bloom) — from now on every pool this boss owns grows
+   * `radiusPerSec` until it reaches `maxRadiusMult` × the radius it was laid at.
+   */
+  | { type: 'spread-pools'; radiusPerSec: number; maxRadiusMult: number }
+  /**
+   * ROOM AFFLICTION — the arena itself turns on the player: every `intervalMs`
+   * each engaged player in the boss's node gains one stack of this DoT, up to
+   * `dot.maxStacks`, refreshing its duration. Cleared from everyone when the boss
+   * dies. The Swamp's Rot Bloom soft enrage; DoT resistance and Recovery stretch
+   * it, killing the boss ends it.
+   */
+  | {
+      type: 'room-affliction';
+      intervalMs: number;
+      dot: {
+        debuffId: string;
+        label: string;
+        color?: string;
+        damagePerStack: number;
+        maxStacks: number;
+        tickIntervalMs: number;
+        durationMs: number;
+      };
+    }
   | {
       type: 'morph';
       isRanged?: boolean;

@@ -213,14 +213,8 @@ export const bossMonsterEntriesT3 = [
   // SWAMP — "Rot-Spore Croc-Behemoth"
   // Identity: ROT / ATTRITION / HAZARDOUS ARENA. The lineage's finale.
   //
-  // T3's second layer is pool VULNERABILITY + DETONATION: the ground does not just
-  // tick, it amplifies everything else and then goes off.
-  //
-  // ENCOUNTER REWORK: the old 25% `attack x4` is gone. It turned the tier's
-  // attrition boss into its biggest direct hitter for the last quarter of the fight,
-  // which is the exact opposite of what Swamp is for. In its place the ROT escalates:
-  // the spores thicken (`morph` on the DoT) and the arena floods with one enormous
-  // ROT BLOOM. Escalation should make the rot harder to survive, not replace it.
+  // T3's layer (boss-lineage redesign): pools that DETONATE, a lash that drags you
+  // into them, and a room that rots faster the longer the fight runs.
   // ══════════════════════════════════════════════════════════════════════
   ['rot-spore-croc-behemoth', {
     id: 'rot-spore-croc-behemoth', name: 'Rot-Spore Croc-Behemoth', color: 0x1a3311,
@@ -230,37 +224,62 @@ export const bossMonsterEntriesT3 = [
     rewards: { essence: 345, essenceType: 'purple', level: 5, biomeXp: 518 },
     ai: { wanderRadius: 105, leashRange: 880, idleMinMs: 2800, idleMaxMs: 7000 },
     targeting: { prefersPlayers: true },
-    chargeOnAggro: { speedMult: 2.0, durationMs: 1200 },
     dotEffect: { debuffId: 'rot-spore-plague', label: 'Rot Spores', damagePerStack: 13, maxStacks: 6, tickIntervalMs: 1000, durationMs: 9000 },
+    // SWAMP T3 (boss-lineage redesign 2026-09-27) — three phases, ~2 minutes:
+    //   (1) the T2 fight: Bile and Mire pools, and the Mire Lash drag;
+    //   (2) ~60% SPORE BLOOM: the lobbed pools are Spore pools that detonate a few
+    //       seconds after landing, and the lash now drags you toward a SPORE — the
+    //       combo is being yanked into a pool about to pop;
+    //   (3) ~25% ROT BLOOM, the soft enrage: every pool spreads toward a cap, and the
+    //       whole room builds a rising Rot DoT (cleared when the boss dies). DoT
+    //       resistance and Recovery stretch it; killing the boss is the answer.
+    // Swamp does not demand Cleanse (the old pool vulnerability is gone); CUT with
+    // the redesign: `chargeOnAggro` and the one enormous Rot Bloom pool.
     chargedAttack: {
-      name: 'Spore Pool', castMs: 1000, cooldownMs: 8000, initialCooldownMs: 3500,
+      name: 'Bile Pool', castMs: 1000, cooldownMs: 8000, initialCooldownMs: 3500,
       multiplier: 1.2, fx: 'strong-kick', aoe: { radius: 130, impactFx: 'pool-spawn' },
-      // Deliberately NOT extended to the swamp lineage's 10-minute pools: this one
-      // detonates on expiry, so a fight-length duration would delete the payoff.
-      pool: {
-        durationMs: 9000, damagePerTick: 8, tickIntervalMs: 1000, slowSpeedMult: 0.55,
-        vulnerability: { damageTakenPct: 0.16, durationMs: 1800 },
-        detonationMultiplier: 2.25,
-      },
+      pool: { durationMs: 35000, damagePerTick: 8, tickIntervalMs: 1000, slowSpeedMult: 0.65 },
     },
+    bossPattern: {
+      id: 'croc-mire-lash', name: 'Mire Lash',
+      damageMultiplier: 1.0, cooldownMs: 10000, initialCooldownMs: 6500,
+      steps: [
+        { kind: 'impact', name: 'Mire Spit', anchor: 'target', radius: 135,
+          damageMult: 0.4, telegraphMs: 1000, fx: 'pool-spawn',
+          pool: { durationMs: 35000, damagePerTick: 0, tickIntervalMs: 1000,
+            slowSpeedMult: 0.40, flavor: 'mire', label: 'Mire' } },
+        { kind: 'wait', durationMs: 500 },
+        { kind: 'pull', name: 'Mire Lash', castMs: 1100, distance: 300,
+          toward: 'nearest-pool', fx: 'trench-current' },
+      ],
+    },
+    bossPatternVariants: [{
+      id: 'croc-spore-lash', name: 'Spore Lash',
+      damageMultiplier: 1.0, cooldownMs: 9000, initialCooldownMs: 5000,
+      steps: [
+        // The spore detonates 5s after it lands: telegraph 1s + wait 1.2s + lash
+        // 1.1s puts the drag ~2.3s into its life, with ~2.7s left to get out.
+        { kind: 'impact', name: 'Spore Spit', anchor: 'target', radius: 135,
+          damageMult: 0.4, telegraphMs: 1000, fx: 'pool-spawn',
+          pool: { durationMs: 5000, damagePerTick: 6, tickIntervalMs: 1000,
+            slowSpeedMult: 0.60, flavor: 'spore', detonationMultiplier: 2.25, label: 'Spore Pool' } },
+        { kind: 'wait', durationMs: 1200 },
+        { kind: 'pull', name: 'Spore Lash', castMs: 1100, distance: 320,
+          toward: 'nearest-pool', poolFlavors: ['spore'], fx: 'trench-current' },
+      ],
+    }],
     bossScript: {
       phases: [
-        // Cadence only (atkMult 1.0): stacks land faster and the pools come sooner,
-        // so more of the arena is contaminated at once. The slap stays trivial.
-        { hpPct: 0.5, actions: [
-          { type: 'enrage', atkMult: 1.0, cdMult: 0.65 },
-          { type: 'empower-charged', cooldownMult: 0.70, radiusMult: 1.15 },
+        { hpPct: 0.6, name: 'Spore Bloom', actions: [
+          { type: 'set-pattern', patternId: 'croc-spore-lash' },
+          { type: 'enrage', atkMult: 1.0, cdMult: 0.80 }, // spores land faster
         ] },
-        // ROT BLOOM: the spores thicken and the floor beneath the boss becomes a
-        // long-lived hazard in its own right. Standing and trading is the losing play.
-        { hpPct: 0.25, actions: [
-          { type: 'morph', dotEffect: {
-            debuffId: 'rot-spore-plague', label: 'Rot Spores',
-            damagePerStack: 17, maxStacks: 8, tickIntervalMs: 1000, durationMs: 9000,
+        { hpPct: 0.25, name: 'Rot Bloom', actions: [
+          { type: 'spread-pools', radiusPerSec: 8, maxRadiusMult: 1.8 },
+          { type: 'room-affliction', intervalMs: 4000, dot: {
+            debuffId: 'rot-bloom', label: 'Rot Bloom', color: '#7fae3a',
+            damagePerStack: 6, maxStacks: 20, tickIntervalMs: 1000, durationMs: 12000,
           } },
-          // Effectively permanent (10 min), retired with the boss. Unlike the Spore
-          // Pool above this one never detonates, so nothing is lost by it lingering.
-          { type: 'spawn-pool', radius: 260, durationMs: 600000, damagePerTick: 14, tickIntervalMs: 1000, slowSpeedMult: 0.55 },
         ] },
       ],
     },

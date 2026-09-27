@@ -23,13 +23,30 @@
  */
 
 import type { Vec2 } from '../../systems/spatial';
+import type { HazardFlavor } from '../../world/groundZones';
 
 /** Where a pattern's committed geometry is measured from. */
 export type PatternAnchor =
   /** The point captured when the pattern committed (a charge endpoint). */
   | 'captured-endpoint'
   /** Wherever the boss is standing at this step. */
-  | 'self';
+  | 'self'
+  /** Where the pattern's target stands when this step begins (a lobbed attack). */
+  | 'target';
+
+/** A lingering pool an `impact` leaves where it lands (Swamp Mire / Spore pools). */
+export interface PatternPool {
+  /** Pool radius; defaults to the impact's radius. */
+  radius?: number;
+  durationMs: number;
+  damagePerTick: number;
+  tickIntervalMs: number;
+  slowSpeedMult?: number;
+  flavor?: HazardFlavor;
+  /** Detonates when it expires, through the owner's hit pipeline. */
+  detonationMultiplier?: number;
+  label: string;
+}
 
 export type BossPatternStep =
   /**
@@ -122,6 +139,8 @@ export type BossPatternStep =
        * decision — read the lane and get off it, or eat the whole sentence.
        */
       requiresChargeHit?: boolean;
+      /** A pool left where the circle lands. */
+      pool?: PatternPool;
       fx?: string;
     }
   /** Delayed radial cracks from the anchor — the finite payoff, not terrain. */
@@ -421,6 +440,14 @@ export type BossPatternStep =
       castMs: number;
       /** Pixels dragged, before resistance. */
       distance: number;
+      /**
+       * What the drag pulls TOWARD. Default `boss` (Trench Undertow). `nearest-pool`
+       * drags the target toward the closest live pool this boss owns — the Swamp's
+       * Mire Lash, the Volcanic Magma Shove — optionally only pools of `poolFlavors`.
+       * With no such pool in the arena it falls back to the boss.
+       */
+      toward?: 'boss' | 'nearest-pool';
+      poolFlavors?: HazardFlavor[];
       interruptible?: boolean;
       guardable?: boolean;
       fx?: string;

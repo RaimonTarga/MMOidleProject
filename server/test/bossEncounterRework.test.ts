@@ -507,7 +507,7 @@ initCombatSystems();
   );
 }
 
-// ── `spawn-pool` puts a real ground zone under the boss ───────────────────────
+// ── Rot Bloom (T3 Swamp soft enrage): pools spread, the room rots ─────────────
 {
   const world = new World();
   const boss = world.createMonster(NODE, 'rot-spore-croc-behemoth', { x: 400, y: 400 });
@@ -515,11 +515,10 @@ initCombatSystems();
   setAggroTarget(world, boss, { id: 'bloom-target', kind: 'player' }, 1_000);
   boss.hasHealth.hp = boss.hasHealth.maxHp * 0.20;
   updateBossScripts(world, 100);
-  const zones = buildGroundZoneViews(world, NODE, Date.now()) ?? [];
-  assert(
-    zones.some(zone => zone.kind === 'toxic-pool'),
-    'the 25% Rot Bloom should publish a hazard pool',
-  );
+  assert(boss.scriptsBoss?.poolSpread && boss.scriptsBoss.roomAffliction,
+    'the 25% Rot Bloom spreads the pools and turns the room toxic');
+  assert(boss.hasStatus.bossPhase === 'Rot Bloom', 'and it is announced');
+  void buildGroundZoneViews;
 }
 
 // ── `raise-dead` gives back only what the player already killed ───────────────

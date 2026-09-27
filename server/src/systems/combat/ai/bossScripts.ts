@@ -32,6 +32,7 @@
 import type { BossAction, BossPhase, BossScript, RepeatingAction } from '@mmo-idle/shared';
 import {
   applyStatusEffect,
+  circleGeometry,
   distanceSq,
   MONSTER_DATABASE,
   GAME_CONFIG,
@@ -52,6 +53,7 @@ import { abortMonsterCast } from '../engine/combat';
 import { publishToxicPool } from '../../world/groundZones';
 import { stokeAmbientRamp } from '../../world/nodeFeatures';
 import { raiseCorpsesBurst } from './raiseDead';
+import { applyMonsterDotToPlayer } from '../status/monsterDot';
 import { hasIndependentRoot, setRooted } from '../../world/rooted';
 
 export type { ScriptsBoss, ActiveBossEffect } from '@mmo-idle/shared';
@@ -75,6 +77,8 @@ export function updateBossScripts(world: World, dt: number): void {
     if (e.isBossEngaged) {
       if (script.phases)    checkPhaseTransitions(state, script.phases,    e, world);
       if (script.repeating) tickRepeatingActions(state,  script.repeating,  e, world, dt);
+      tickPoolSpread(state, e, world, dt);
+      tickRoomAffliction(state, e, world, dt);
     }
 
     const bossEffectStacks: Record<string, number> = {};
@@ -98,6 +102,36 @@ export function updateBossScripts(world: World, dt: number): void {
     e.hasStatus.bossEffectDurations = bossEffectDurations;
     e.hasStatus.bossPhase = state.phaseLabel;
     markSliceDirty(world, e, 'hasStatus');
+  }
+}
+
+// ── Arena escalation (Swamp Rot Bloom) ───────────────────────────────────────
+
+/** Grow every live pool this boss owns toward its spread cap. */
+function tickPoolSpread(state: ScriptsBoss, monster: MonsterEntity, world: World, dt: number): void {
+  const spread = state.poolSpread;
+  if (!spread) return;
+  for (const zone of world.groundZones.get(monster.hasPosition.nodeId) ?? []) {
+    if (zone.kind !== 'toxic-pool' || zone.ownerId !== monster.isMonster.id) continue;
+    const base = zone.baseRadius ?? zone.radius;
+    zone.baseRadius = base;
+    const cap = base * spread.maxRadiusMult;
+    if (zone.radius >= cap) continue;
+    zone.radius = Math.min(cap, zone.radius + spread.radiusPerSec * (dt / 1000));
+    zone.geometry = circleGeometry(zone.pos, zone.radius);
+  }
+}
+
+/** The arena's own DoT ramp: one stack per interval on every engaged player here. */
+function tickRoomAffliction(state: ScriptsBoss, monster: MonsterEntity, world: World, dt: number): void {
+  const room = state.roomAffliction;
+  if (!room) return;
+  room.timerMs -= dt;
+  if (room.timerMs > 0) return;
+  room.timerMs = room.intervalMs;
+  // The whole room, while the boss is engaged (the caller gates on that).
+  for (const player of world.livePlayersInNode(monster.hasPosition.nodeId)) {
+    applyMonsterDotToPlayer(world, monster, player, { ...room.dot, element: 'poison' }, room.dot.label);
   }
 }
 
@@ -652,6 +686,17 @@ function applyAction(
         pushBossFx(world, add, 'frenzy');
       }
       pushBossFx(world, monster, 'roar', { radius: 420 });
+      break;
+    }
+
+    case 'spread-pools': {
+      state.poolSpread = { radiusPerSec: action.radiusPerSec, maxRadiusMult: action.maxRadiusMult };
+      break;
+    }
+
+    case 'room-affliction': {
+      state.roomAffliction = { intervalMs: action.intervalMs, timerMs: 0, dot: { ...action.dot } };
+      pushBossFx(world, monster, 'roar', { radius: 480 });
       break;
     }
 

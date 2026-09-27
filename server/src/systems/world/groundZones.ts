@@ -67,6 +67,8 @@ export interface RuntimeSlamTelegraph extends RuntimeGroundZoneBase {
 export interface RuntimeToxicPool extends RuntimeGroundZoneBase {
   kind: 'toxic-pool';
   expiresAtMs: number;
+  /** The radius it was laid at; `spread-pools` grows it toward a multiple of this. */
+  baseRadius?: number;
   damagePerTick: number;
   tickIntervalMs: number;
   slowSpeedMult?: number;

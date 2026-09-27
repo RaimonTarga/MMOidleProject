@@ -139,6 +139,22 @@ export interface ScriptsBoss {
   patternOverrideId?: string;
   /** Name of the last announced (named) phase; mirrored to the boss bar. */
   phaseLabel?: string;
+  /** Set by 'spread-pools': owned pools grow toward a cap. */
+  poolSpread?: { radiusPerSec: number; maxRadiusMult: number };
+  /** Set by 'room-affliction': the arena's own DoT ramp and its timer. */
+  roomAffliction?: {
+    intervalMs: number;
+    timerMs: number;
+    dot: {
+      debuffId: string;
+      label: string;
+      color?: string;
+      damagePerStack: number;
+      maxStacks: number;
+      tickIntervalMs: number;
+      durationMs: number;
+    };
+  };
 }
 
 export function initScriptsBoss(script: BossScript): ScriptsBoss {

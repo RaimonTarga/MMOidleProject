@@ -43,7 +43,11 @@ export type HazardFlavor =
    * trades damage taken for damage dealt, and a rune that dragged the player out
    * would be answering a question the encounter meant them to answer themselves.
    */
-  | 'magma-vent';
+  | 'magma-vent'
+  /** Swamp T2+ Mire: no damage, a heavy slow. Answered by slow resistance. */
+  | 'mire'
+  /** Swamp T3 Spore pool: short-lived, detonates when it expires. */
+  | 'spore';
 
 /**
  * Client-facing view of one zone. Mirrors the shape of the gauntlet's

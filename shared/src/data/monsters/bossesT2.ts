@@ -222,8 +222,8 @@ export const bossMonsterEntriesT2 = [
     },
   }],
 
-  // SWAMP — ROT / ATTRITION. T2's added layer is CORROSION: the pool no longer just
-  // hurts, it makes everything else hurt more while you stand in it.
+  // SWAMP — ROT ARENA. T2's added layer: a second pool kind (Mire) and a lash that
+  // drags you toward the pools.
   ['mire-gorged-behemoth', {
     id: 'mire-gorged-behemoth', name: 'Mire-Gorged Behemoth', color: 0x2a4011,
     isBoss: true,
@@ -238,22 +238,40 @@ export const bossMonsterEntriesT2 = [
     // duration, the ordinary attack, the Corrosive Pool and the 50% phase are all
     // unchanged, and `server/test/behemothVenom.test.ts` pins that.
     dotEffect: { debuffId: 'mire-gorged-venom', label: 'Gorged Venom', damagePerStack: 6, maxStacks: 4, tickIntervalMs: 1000, durationMs: 8000 },
+    // SWAMP T2 (boss-lineage redesign 2026-09-27): POOL VARIETY AND THE PULL.
+    // Swamp stops demanding Cleanse — its answers are Swamp gear: DoT resistance
+    // (armor) for the Bile, slow resistance (boots) for the Mire. Corrosion's
+    // vulnerability rider is gone.
+    //
+    //   Bile Pool  — the damage pool (the T1 lesson), now FADING after 35s instead
+    //                of lasting the fight, so a long fight cannot wall the arena off.
+    //   Mire Spit  — a lobbed second pool type: no damage, a heavy slow.
+    //   Mire Lash  — a telegraphed tongue grab that DRAGS you toward the nearest
+    //                pool it owns. Keep pools behind you, resist forced movement,
+    //                step out after.
     chargedAttack: {
-      name: 'Corrosive Pool', castMs: 1100, cooldownMs: 8500, initialCooldownMs: 3500,
+      name: 'Bile Pool', castMs: 1100, cooldownMs: 8500, initialCooldownMs: 3500,
       multiplier: 1.1, fx: 'strong-kick', aoe: { radius: 115, impactFx: 'pool-spawn' },
-      // Effectively permanent (10 min) — retired with the boss, like T1's Bile Pool.
-      pool: {
-        durationMs: 600000, damagePerTick: 5, tickIntervalMs: 1000, slowSpeedMult: 0.60,
-        vulnerability: { damageTakenPct: 0.12, durationMs: 1500 },
-      },
+      pool: { durationMs: 35000, damagePerTick: 5, tickIntervalMs: 1000, slowSpeedMult: 0.70 },
     },
-    // SWAMP EXAM = "survive the rot". Its charged pool leaves Corrosion, increasing
-    // damage taken while the player remains in the hazard. At 50% the rot escalates
-    // on BOTH channels it owns: venom stacks faster (cadence, not hit size) and the
-    // pools arrive sooner and wider. No adds — Swamp's pressure is the ground.
+    bossPattern: {
+      id: 'mire-lash', name: 'Mire Lash',
+      damageMultiplier: 1.0, cooldownMs: 11000, initialCooldownMs: 7000,
+      steps: [
+        { kind: 'impact', name: 'Mire Spit', anchor: 'target', radius: 125,
+          damageMult: 0.4, telegraphMs: 1000, fx: 'pool-spawn',
+          pool: { durationMs: 35000, damagePerTick: 0, tickIntervalMs: 1000,
+            slowSpeedMult: 0.40, flavor: 'mire', label: 'Mire' } },
+        { kind: 'wait', durationMs: 500 },
+        { kind: 'pull', name: 'Mire Lash', castMs: 1200, distance: 280,
+          toward: 'nearest-pool', fx: 'trench-current' },
+      ],
+    },
+    // At 50% the rot escalates on the channels it owns: venom stacks faster
+    // (cadence, not hit size) and the pools arrive sooner and wider.
     bossScript: {
       phases: [
-        { hpPct: 0.5, actions: [
+        { hpPct: 0.5, name: 'Rising Mire', actions: [
           { type: 'enrage', atkMult: 1.0, cdMult: 0.70 }, // pure cadence: DoT stacks faster
           { type: 'empower-charged', cooldownMult: 0.70, radiusMult: 1.15 },
         ] },

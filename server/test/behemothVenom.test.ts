@@ -80,7 +80,10 @@ const def = MONSTER_DATABASE.get(BOSS_ID)!;
   const pool = def.chargedAttack!;
   assert(pool.multiplier === 1.1, 'Corrosive Pool multiplier moved');
   assert(pool.pool?.damagePerTick === 5, 'Corrosive Pool payload moved');
-  assert(pool.pool?.vulnerability?.damageTakenPct === 0.12, 'Corrosive Pool vulnerability moved');
+  // Boss-lineage redesign: Swamp no longer demands Cleanse — the pool's corrosion
+  // vulnerability is gone, and the pool fades after 35s instead of 10 minutes.
+  assert(pool.pool?.vulnerability === undefined, 'Bile Pool carries no vulnerability');
+  assert(pool.pool?.durationMs === 35_000, 'Bile Pool fades after 35s');
   const phase = def.bossScript!.phases![0]!;
   assert(phase.hpPct === 0.5, 'the 50% phase moved');
   assert(JSON.stringify(phase.actions) === JSON.stringify([

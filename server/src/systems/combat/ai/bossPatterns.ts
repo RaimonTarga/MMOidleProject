@@ -28,7 +28,9 @@ import {
   moverOverlapsBlockShapes,
   type BossPattern,
   type BossPatternStep,
+  type HazardFlavor,
   type PatternAnchor,
+  type PatternPool,
   type Vec2,
 } from '@mmo-idle/shared';
 import type { MinionEntity, MonsterEntity, PlayerEntity } from '../../../ecs/entity';
@@ -40,6 +42,7 @@ import {
   publishChargeCorridor,
   publishFaultLineBurst,
   publishGroundZone,
+  publishToxicPool,
   reaimChargeCorridor,
   type RuntimeChargeCorridor,
 } from '../../world/groundZones';
@@ -408,7 +411,7 @@ function anchorPoint(
   state: NonNullable<MonsterEntity['runsBossPattern']>,
   anchor: PatternAnchor,
 ): Vec2 {
-  if (anchor === 'captured-endpoint' && state.capturedEndpoint) {
+  if ((anchor === 'captured-endpoint' || anchor === 'target') && state.capturedEndpoint) {
     return { ...state.capturedEndpoint };
   }
   return { ...monster.hasPosition.current };
@@ -813,6 +816,13 @@ function beginStep(
         state.stepEndsAtMs = now;
         return true;
       }
+      if (step.anchor === 'target') {
+        // A lobbed attack: planted where the target stands NOW, answered by moving.
+        const target = patternTarget(world, monster);
+        state.capturedEndpoint = target
+          ? { ...target.hasPosition.current }
+          : { ...monster.hasPosition.current };
+      }
       const at = anchorPoint(monster, state, step.anchor);
       state.stepEndsAtMs = now + step.telegraphMs;
       publishGroundZone(world, monster.hasPosition.nodeId, {
@@ -1118,6 +1128,7 @@ function tickStep(
         step.name,
       );
       if (!world.hasMonster(monster.isMonster.id)) return 'ended';
+      if (step.pool) layPatternPool(world, monster, at, step.pool, step.radius, now);
       return 'done';
     }
     // Raising a barrier takes no time of its own; the watch registered above is what
@@ -1268,9 +1279,14 @@ function tickStep(
       if (now < state.stepEndsAtMs) return 'running';
       const target = patternTarget(world, monster);
       if (target) {
-        // Toward the BOSS, through the shared forced-movement helper so the same
-        // resistance, clamping and obstacle resolution apply as to any shove.
-        hooks?.pullPlayer(world, target, monster.hasPosition.current, step.distance);
+        // Toward the BOSS (or its nearest pool), through the shared forced-movement
+        // helper so the same resistance, clamping and obstacle resolution apply as
+        // to any shove.
+        const anchor = step.toward === 'nearest-pool'
+          ? nearestOwnedPool(world, monster, target.hasPosition.current, step.poolFlavors, now)
+            ?? monster.hasPosition.current
+          : monster.hasPosition.current;
+        hooks?.pullPlayer(world, target, anchor, step.distance);
       }
       world.pushEvent(monster.hasPosition.nodeId, {
         kind: 'monster-cast-end',
@@ -1954,6 +1970,60 @@ function paintLane(
     damageMultiplier: 1,
   });
   state.laneZoneId = published.id;
+}
+
+/** Lay the pool an impact leaves behind, owned by the boss (cleared on its death). */
+function layPatternPool(
+  world: World,
+  monster: MonsterEntity,
+  at: Vec2,
+  pool: PatternPool,
+  impactRadius: number,
+  now: number,
+): void {
+  const radius = pool.radius ?? impactRadius;
+  publishToxicPool(world, monster.hasPosition.nodeId, {
+    kind: 'toxic-pool',
+    pos: { ...at },
+    radius,
+    baseRadius: radius,
+    startedAtMs: now,
+    expiresAtMs: now + pool.durationMs,
+    damagePerTick: pool.damagePerTick,
+    tickIntervalMs: pool.tickIntervalMs,
+    slowSpeedMult: pool.slowSpeedMult,
+    ...(pool.flavor ? { flavor: pool.flavor } : {}),
+    ...(pool.detonationMultiplier !== undefined ? { detonationMultiplier: pool.detonationMultiplier } : {}),
+    ownerId: monster.isMonster.id,
+    sourceId: `pattern-pool:${pool.label.toLowerCase().replace(/\s+/g, '-')}`,
+    sourceLabel: pool.label,
+    killer: {
+      monsterTypeId: monster.isMonster.monsterTypeId,
+      monsterName: monster.isMonster.name,
+      isBoss: monster.isMonster.isBoss,
+      nodeId: monster.hasPosition.nodeId,
+    },
+  });
+}
+
+/** Centre of the closest live pool this boss owns (optionally of given flavors). */
+function nearestOwnedPool(
+  world: World,
+  monster: MonsterEntity,
+  from: Vec2,
+  flavors: HazardFlavor[] | undefined,
+  now: number,
+): Vec2 | undefined {
+  let best: Vec2 | undefined;
+  let bestD = Infinity;
+  for (const zone of world.groundZones.get(monster.hasPosition.nodeId) ?? []) {
+    if (zone.kind !== 'toxic-pool' || zone.ownerId !== monster.isMonster.id) continue;
+    if (now >= zone.expiresAtMs) continue;
+    if (flavors && !flavors.includes(zone.flavor ?? 'toxic')) continue;
+    const d = distanceSq(zone.pos, from);
+    if (d < bestD) { bestD = d; best = zone.pos; }
+  }
+  return best ? { ...best } : undefined;
 }
 
 /**

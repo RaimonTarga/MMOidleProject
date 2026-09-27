@@ -177,20 +177,22 @@ for (const id of ['grave-toadeater', 'mire-gorged-behemoth', 'rot-spore-croc-beh
 assert(def('grave-toadeater').dotEffect?.durationMs === 7000, 'T1 Swamp poison should last 7 seconds');
 assert(def('mire-gorged-behemoth').dotEffect?.durationMs === 8000, 'T2 Swamp venom should last 8 seconds');
 assert(def('rot-spore-croc-behemoth').dotEffect?.durationMs === 9000, 'T3 Swamp spores should last 9 seconds');
-const rotSporeMorph = def('rot-spore-croc-behemoth').bossScript?.phases
-  ?.find(phase => phase.hpPct === 0.25)
-  ?.actions.find(action => action.type === 'morph');
+// Boss-lineage redesign (2026-09-27): Swamp stops demanding Cleanse (no pool
+// vulnerability), pools FADE instead of lasting the fight from T2 on, a second pool
+// kind (Mire) and a lash that drags toward pools arrive at T2, and T3's Spore pools
+// are the ones that detonate.
+for (const id of ['mire-gorged-behemoth', 'rot-spore-croc-behemoth']) {
+  const pool = def(id).chargedAttack?.pool;
+  assert(pool && pool.vulnerability === undefined, `${id}: pools no longer demand Cleanse`);
+  assert(pool.durationMs <= 40_000, `${id}: pools fade instead of walling the arena off`);
+  const steps = def(id).bossPattern?.steps ?? [];
+  assert(steps.some(step => step.kind === 'impact' && step.pool?.flavor === 'mire'), `${id}: lobs Mire pools`);
+  assert(steps.some(step => step.kind === 'pull' && step.toward === 'nearest-pool'), `${id}: lashes you toward a pool`);
+}
+const sporeVariant = def('rot-spore-croc-behemoth').bossPatternVariants?.[0];
 assert(
-  rotSporeMorph?.type === 'morph' && rotSporeMorph.dotEffect?.durationMs === 9000,
-  'T3 Rot Spores morph should preserve the 9-second lineage duration',
-);
-assert(
-  (def('mire-gorged-behemoth').chargedAttack?.pool?.vulnerability?.damageTakenPct ?? 0) > 0,
-  'T2 Swamp pools should increase damage taken',
-);
-assert(
-  (def('rot-spore-croc-behemoth').chargedAttack?.pool?.detonationMultiplier ?? 0) > 1,
-  'T3 Swamp pools should detonate at expiry',
+  sporeVariant?.steps.some(step => step.kind === 'impact' && step.pool?.flavor === 'spore' && (step.pool.detonationMultiplier ?? 0) > 1),
+  'T3 Swamp Spore pools detonate at expiry',
 );
 
 // Mountain's sequence grows from slow slam, to stun, to charge-lock-slam.

@@ -87,6 +87,10 @@ function steamVentTint(glowStrength: number): number {
   return mixRgb(0xffffff, STEAM_VENT_WARM_COLOR, glowStrength * STEAM_VENT_GLOW_MAX);
 }
 
+/** Swamp Mire pool (slow, no damage) and Spore pool (detonates) tints. */
+const MIRE_TINT = 0x9a7446;
+const SPORE_TINT = 0xd6f05a;
+
 export interface GroundZoneSprite {
   graphic: Phaser.GameObjects.Graphics;
   /** Textured pool decal; telegraphs continue using `graphic` only. */
@@ -374,6 +378,13 @@ function drawZone(sprite: GroundZoneSprite, progress: number, nowMs: number): vo
       if (sprite.flavor === "magma-vent") {
         if (steamGlow > 0) sprite.image.setTint(steamVentTint(steamGlow));
         else sprite.image.clearTint();
+      } else if (sprite.flavor === "mire") {
+        // Mire: the swamp art dragged to mud — slows, does not burn.
+        sprite.image.setTint(MIRE_TINT);
+      } else if (sprite.flavor === "spore") {
+        // Spore: sickly yellow, flashing brighter as the detonation nears.
+        const urgency = progress > 0.6 ? (Math.sin(nowMs / 70) + 1) / 2 : 0;
+        sprite.image.setTint(mixRgb(SPORE_TINT, 0xffffff, urgency * 0.6));
       } else {
         sprite.image.clearTint();
       }
@@ -389,6 +400,8 @@ function drawZone(sprite: GroundZoneSprite, progress: number, nowMs: number): vo
     // Texture loading failure fallback: keep the hazard readable.
     const fill = sprite.flavor === "magma-vent"
       ? mixRgb(0x6b3d29, 0xa94d1d, steamGlow)
+      : sprite.flavor === "mire" ? MIRE_TINT
+      : sprite.flavor === "spore" ? SPORE_TINT
       : TOXIC_FILL;
     const line = sprite.flavor === "magma-vent"
       ? mixRgb(0xffa044, 0xffffa0, steamGlow)

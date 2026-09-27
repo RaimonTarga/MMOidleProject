@@ -6,6 +6,7 @@ export type {
   BossPattern,
   BossPatternStep,
   PatternAnchor,
+  PatternPool,
   RecoversFromPattern,
   RunsBossPattern,
   BossPhase,
