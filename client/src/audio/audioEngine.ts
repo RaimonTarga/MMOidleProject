@@ -45,6 +45,8 @@ let finalCastUntil = 0;
 const audioDebug = (import.meta.env.DEV || import.meta.env.VITE_DEV_TOOLS === 'true')
   && new URLSearchParams(window.location.search).has('audioDebug');
 const pendingMusic = new Set<string>();
+const pendingSfx = new Set<string>();
+const failedSfx = new Set<string>();
 const failedMusic = new Set<string>();
 type MusicVoice = { sound: Phaser.Sound.WebAudioSound; level: number; gain: number };
 const musicVoices = new Map<Phaser.Sound.BaseSound, MusicVoice>();
@@ -111,6 +113,7 @@ export function initAudio(s: Phaser.Scene): void {
     requestedTrack = playingTrack = battleGroup = null;
     finalCastUntil = 0;
     pendingMusic.clear();
+    pendingSfx.clear();
     failedMusic.clear();
     for (const voice of musicVoices.values()) { s.tweens.killTweensOf(voice); voice.sound.destroy(); }
     musicVoices.clear();
@@ -171,12 +174,17 @@ export function playSfx(id: SfxId, opts?: { gainMult?: number }): void {
   const playVol = Math.max(0, vol * (def.gain ?? 1) * jitterMult(def.gainVariance));
   const rate = jitterMult(def.pitchVariance);
 
-  // Pick a random loaded variant; fall back to the synth cue if none loaded.
-  const variantCount = sfxFiles(def).length;
-  if (variantCount > 0) {
-    const i = Math.floor(Math.random() * variantCount);
-    const key = sfxKey(id, i);
-    if (scene.cache.audio.exists(key)) {
+  // Pick a random loaded variant. An effect not loaded yet is fetched now and
+  // this play falls back to the synth cue (silent for accepted effects).
+  const files = sfxFiles(def);
+  if (files.length > 0) {
+    const cache = scene.cache.audio;
+    let key = sfxKey(id, Math.floor(Math.random() * files.length));
+    if (!cache.exists(key)) {
+      files.forEach((file, j) => queueSfx(sfxKey(id, j), file));
+      key = files.map((_, j) => sfxKey(id, j)).find((k) => cache.exists(k)) ?? key;
+    }
+    if (cache.exists(key)) {
       let sound: Phaser.Sound.BaseSound | undefined;
       const release = voices.acquire(def, performance.now(), def.cooldownMs ?? SFX_THROTTLE_MS,
         def.maxVoices ?? 2, def.priority ?? 1, () => sound?.destroy());
@@ -196,6 +204,26 @@ export function playSfx(id: SfxId, opts?: { gainMult?: number }): void {
 /** Semantic suppression for an animation reused by a different status (Constrict). */
 export function suppressSfx(id: SfxId, ms: number): void {
   suppressed.set(SFX_MANIFEST[id], performance.now() + ms);
+}
+
+/** Fetch one effect file on first use; failures are not retried this session. */
+function queueSfx(key: string, file: string): void {
+  if (!scene || pendingSfx.has(key) || failedSfx.has(key) || scene.cache.audio.exists(key)) return;
+  const owner = scene;
+  pendingSfx.add(key);
+  const failure = (f: { key: string }): void => {
+    if (f.key !== key) return;
+    pendingSfx.delete(key);
+    failedSfx.add(key);
+    owner.load.off('loaderror', failure);
+  };
+  owner.load.on('loaderror', failure);
+  owner.load.once(`filecomplete-audio-${key}`, () => {
+    owner.load.off('loaderror', failure);
+    pendingSfx.delete(key);
+  });
+  owner.load.audio(key, file);
+  if (!owner.load.isLoading()) owner.load.start();
 }
 
 function queueMusic(track: string, onReady?: () => void): void {
@@ -277,25 +305,44 @@ export function setMusicForBiome(group: string): void {
   requestMusic(ZONE_MUSIC[group] ?? null);
 }
 
-/** Presentation follows server snapshots; it never advances a gameplay phase. */
-export function setEncounterMusic(group: string, boss?: { hp: number; maxHp: number; engaged: boolean; tier: number }): void {
+/**
+ * Presentation follows server snapshots; it never advances a gameplay phase.
+ * In a dungeon the altar drives the suite: a dormant altar plays the approach
+ * (anticipation) track, activating it starts the battle track, and the boss's
+ * HP phases escalate from there. Elsewhere a boss plays approach until engaged.
+ */
+export function setEncounterMusic(
+  group: string,
+  boss?: { hp: number; maxHp: number; engaged: boolean; tier: number; typeId?: string },
+  dungeon?: 'idle' | 'bossAwakening' | 'boss' | 'cooldown',
+): void {
   if (!scene) return;
   if (currentBiome !== group) setMusicForBiome(group);
-  if (!boss || boss.hp <= 0) finalCastUntil = 0;
+  const live = boss && boss.hp > 0 ? boss : undefined;
+  if (!live) finalCastUntil = 0;
   if (performance.now() < finalCastUntil) return;
   const suite = BOSS_MUSIC[group];
-  if (!boss || boss.hp <= 0 || !suite) {
+  const altarActive = dungeon === 'bossAwakening' || dungeon === 'boss';
+  if (!suite || (!live && dungeon !== 'idle' && !altarActive)) {
+    const fightEnded = battleGroup !== null;
     battleGroup = null;
-    requestMusic(ZONE_MUSIC[group] ?? null);
+    const zone = ZONE_MUSIC[group] ?? null;
+    // The end of a fight should be heard at once: if the zone track is still
+    // downloading, fade the battle track out instead of playing on until it lands.
+    if (fightEnded && zone && !scene.cache.audio.exists(`music-${zone}`)) requestMusic(null);
+    requestMusic(zone);
     return;
   }
   if (effMusicVolume() > 0) {
-    for (const track of suite) queueMusic(track);
+    // The zone track too: it is what plays the moment the boss falls.
+    for (const track of [...suite, ZONE_MUSIC[group]]) if (track) queueMusic(track);
     if (group === 'volcanic') {
       queueMusic('v12-volcano-cast-22s'); queueMusic('v12-volcano-cast-26s');
     }
   }
-  const phase = bossMusicPhase(boss.hp, boss.maxHp, boss.engaged, boss.tier, !!suite[3]);
+  const phase = live
+    ? bossMusicPhase(live.hp, live.maxHp, live.engaged || altarActive, live.tier, !!suite[3], live.typeId)
+    : altarActive ? 1 : 0;
   const sameBattle = battleGroup === group && phase > 0;
   battleGroup = phase > 0 ? group : null;
   requestMusic(suite[phase], sameBattle);

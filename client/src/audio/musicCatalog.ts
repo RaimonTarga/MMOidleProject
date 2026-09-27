@@ -1,4 +1,6 @@
-// Accepted compositions. Boss arrays: approach, battle, 50%, optional 25%.
+import { MONSTER_DATABASE } from '@mmo-idle/shared';
+
+// Accepted compositions. Boss arrays: approach, battle, escalation, optional final.
 export const ZONE_MUSIC: Record<string, string> = {
   "clearing": "v16-clearing-first-light",
   "sanctuary": "v16-sanctuary-starlit",
@@ -82,9 +84,24 @@ export const BOSS_MUSIC: Record<string, string[]> = {
 };
 export const musicFile = (track: string): string => `/assets/audio/music/accepted/${track}.ogg`;
 
-/** Lower-tier bosses do not acquire a fabricated quarter-health music phase. */
-export function bossMusicPhase(hp: number, maxHp: number, engaged: boolean, tier: number, hasFinal: boolean): number {
+/**
+ * Music stage: 0 approach, 1 battle, 2 escalation, 3 final. It follows the boss's
+ * own authored HP phases, firing at the same `hp% <= hpPct` test as bossScripts.ts
+ * (the lineages change phase at 65/60/55/50% and 30/25/20%, not a fixed 50/25).
+ * The last of two or more phases takes the final track when the suite has one.
+ * A boss without HP phases falls back to 50% / 25%, and lower-tier bosses do not
+ * acquire a fabricated quarter-health phase there.
+ */
+export function bossMusicPhase(
+  hp: number, maxHp: number, engaged: boolean, tier: number, hasFinal: boolean, bossTypeId?: string,
+): number {
   if (!engaged) return 0;
   const ratio = hp / Math.max(1, maxHp);
-  return ratio <= 0.25 && tier >= 3 && hasFinal ? 3 : ratio <= 0.5 ? 2 : 1;
+  const thresholds = (bossTypeId ? MONSTER_DATABASE.get(bossTypeId)?.bossScript?.phases ?? [] : [])
+    .map((phase) => phase.hpPct)
+    .filter((pct) => pct < 1);
+  if (thresholds.length === 0) return ratio <= 0.25 && tier >= 3 && hasFinal ? 3 : ratio <= 0.5 ? 2 : 1;
+  const crossed = thresholds.filter((pct) => ratio <= pct).length;
+  if (crossed === 0) return 1;
+  return crossed === thresholds.length && thresholds.length >= 2 && hasFinal ? 3 : 2;
 }

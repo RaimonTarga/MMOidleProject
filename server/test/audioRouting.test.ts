@@ -46,7 +46,7 @@ assert.equal(stopped, 1, 'major impact displaces a routine voice');
 tight.clear();
 assert.equal(stopped, 3, 'hidden/shutdown clears every voice');
 for (const stems of Object.values(ACCEPTED_SFX)) {
-  for (const stem of stems) assert.ok(existsSync(resolve(import.meta.dirname, '../../client/public/assets/audio/SFX/accepted', `${stem}.wav`)), stem);
+  for (const stem of stems) assert.ok(existsSync(resolve(import.meta.dirname, '../../client/public/assets/audio/SFX/accepted', `${stem}.ogg`)), stem);
 }
 console.log('audioRouting: ok (routing, cancellations, shared summon budget, priorities, accepted assets)');
 
@@ -54,6 +54,14 @@ assert.equal(bossMusicPhase(20, 100, true, 2, true), 2);
 assert.equal(bossMusicPhase(20, 100, true, 3, true), 3);
 assert.equal(bossMusicPhase(100, 100, false, 4, true), 0);
 assert.equal(bossMusicPhase(70, 100, true, 4, true), 1);
+// Authored thresholds, not a fixed 50/25: Iron-Crest Titan phases at 65/50/25%,
+// Dune-Throne Sovereign at 55/20%.
+assert.equal(bossMusicPhase(70, 100, true, 4, true, 'iron-crest-titan'), 1, 'titan above its first phase');
+assert.equal(bossMusicPhase(60, 100, true, 4, true, 'iron-crest-titan'), 2, 'titan escalates at 65%');
+assert.equal(bossMusicPhase(25, 100, true, 4, true, 'iron-crest-titan'), 3, 'titan goes final at its last phase');
+assert.equal(bossMusicPhase(22, 100, true, 4, true, 'dune-throne-sovereign'), 2, 'sovereign is not final until 20%');
+assert.equal(bossMusicPhase(20, 100, true, 4, true, 'dune-throne-sovereign'), 3, 'sovereign final at 20%');
+assert.equal(bossMusicPhase(20, 100, true, 4, false, 'dune-throne-sovereign'), 2, 'no final track, stays escalated');
 assert.equal(sfxKey('attack-melee'), sfxKey('slash'), 'aliases share one decoded buffer');
 assert.ok(sfxFiles(SFX_MANIFEST.kill)[0].includes('v4-death'));
 assert.ok(sfxFiles(SFX_MANIFEST.death)[0].includes('v34-player-death'));
