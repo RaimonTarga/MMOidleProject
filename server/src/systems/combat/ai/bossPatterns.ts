@@ -184,7 +184,7 @@ export function bossPatternEscaping(monster: MonsterEntity): boolean {
   if (!state?.stepStarted) return false;
   const step = runningBossPatternDef(monster)?.steps[state.stepIndex];
   if (!step) return false;
-  if (step.kind === 'escape-guard') return true;
+  if (step.kind === 'escape-guard' || step.kind === 'dash') return true;
   return step.kind === 'conceal' && step.travelSpeed !== undefined && step.rootable === true;
 }
 
@@ -205,23 +205,54 @@ export function patternSuppressesOrdinaryActions(monster: MonsterEntity): boolea
  * per-combat cooldown, so re-engaging a boss restarts its opening delay rather
  * than letting a pattern fire the instant it re-aggros.
  */
+/**
+ * Counter keys for a pattern's cooldown. The main pattern (base or `set-pattern`
+ * variant) shares the legacy keys; an `add-pattern` extra keeps its own clock.
+ */
+function patternKeys(monster: MonsterEntity, patternId: string): { session: string; next: string; runs: string } {
+  const extra = monster.scriptsBoss?.extraPatternIds?.includes(patternId) === true;
+  return extra
+    ? { session: `${PATTERN_SESSION_KEY}:${patternId}`, next: `${PATTERN_CD_NEXT_KEY}:${patternId}`, runs: `bossPatternRuns:${patternId}` }
+    : { session: PATTERN_SESSION_KEY, next: PATTERN_CD_NEXT_KEY, runs: `bossPatternRuns:${patternId}` };
+}
+
 function patternReady(monster: MonsterEntity, pattern: BossPattern, now: number): boolean {
   const aggro = monster.hasAggroTarget;
   if (!aggro) return false;
   const cs = monster.tracksCombat;
-  if (getCounter(cs, PATTERN_SESSION_KEY) !== aggro.sinceMs) {
-    setCounter(cs, PATTERN_SESSION_KEY, aggro.sinceMs);
+  const keys = patternKeys(monster, pattern.id);
+  if (getCounter(cs, keys.session) !== aggro.sinceMs) {
+    setCounter(cs, keys.session, aggro.sinceMs);
     setCounter(
       cs,
-      PATTERN_CD_NEXT_KEY,
+      keys.next,
       aggro.sinceMs + (pattern.initialCooldownMs ?? pattern.cooldownMs),
     );
   }
-  return now >= getCounter(cs, PATTERN_CD_NEXT_KEY);
+  return now >= getCounter(cs, keys.next);
 }
 
 function armPatternCooldown(monster: MonsterEntity, pattern: BossPattern, now: number): void {
-  setCounter(monster.tracksCombat, PATTERN_CD_NEXT_KEY, now + pattern.cooldownMs);
+  const keys = patternKeys(monster, pattern.id);
+  let cooldown = pattern.cooldownMs;
+  const accel = pattern.accelerate;
+  if (accel) {
+    const runs = getCounter(monster.tracksCombat, keys.runs);
+    cooldown = Math.max(accel.minCooldownMs, cooldown * accel.cooldownMultPerRun ** runs);
+  }
+  setCounter(monster.tracksCombat, keys.next, now + cooldown);
+}
+
+/** The patterns this boss may arm now: added extras first, then the main one. */
+function armablePatterns(monster: MonsterEntity): BossPattern[] {
+  const list: BossPattern[] = [];
+  for (const id of monster.scriptsBoss?.extraPatternIds ?? []) {
+    const extra = bossPatternFor(monster, id);
+    if (extra) list.push(extra);
+  }
+  const main = bossPatternFor(monster);
+  if (main) list.push(main);
+  return list;
 }
 
 // ── Encounter Instinct ──────────────────────────────────────────────────────────
@@ -578,47 +609,68 @@ export function updateBossPatterns(world: World, dt: number, now = Date.now()): 
 
   for (const monster of [...world.aggroedMonsters]) {
     if (patternOwnsMonster(monster)) continue;
-    const pattern = bossPatternFor(monster);
-    if (!pattern || pattern.steps.length === 0) continue;
     if (monster.hasAggroTarget.targetKind !== 'player') continue;
     if (isMonsterStunned(world, monster.isMonster.id) || isMonsterFrozen(world, monster.isMonster.id)) {
       continue;
     }
-    // HEALTH GATE. Outside the authored band the pattern never arms — the boss is
-    // not "failing to escape", it has stopped trying, and its ordinary behaviour
-    // takes over. Checked before the cooldown so a gated-out pattern does not burn
-    // its timer in the background and fire the instant the band reopens.
-    // ONCE PER LIFE. Checked before everything else so a spent catastrophe costs
-    // nothing to skip, and so re-pulling the boss cannot hand the player a fresh
-    // copy of a beat they already answered.
-    if (pattern.oncePerLife && getCounter(monster.tracksCombat, PATTERN_USED_KEY) === 1) {
-      continue;
+    for (const pattern of armablePatterns(monster)) {
+      if (tryArmPattern(world, monster, pattern, now)) break;
     }
-    const hpPct = monster.hasHealth.hp / Math.max(1, monster.hasHealth.maxHp);
-    if (pattern.armAboveHpPct !== undefined && hpPct <= pattern.armAboveHpPct) continue;
-    if (pattern.armBelowHpPct !== undefined && hpPct > pattern.armBelowHpPct) continue;
-    if (!patternReady(monster, pattern, now)) continue;
-    const target = world.getPlayerEntity(monster.hasAggroTarget.targetId);
-    if (!target || target.hasPosition.nodeId !== monster.hasPosition.nodeId) continue;
-
-    // The pattern holds movement and swings for its whole run — but only claims
-    // the locks that were not already held by something else.
-    const ownsRoot = !hasIndependentRoot(monster);
-    const ownsCannotAttack = !monster.cannotAttack;
-    attachComponent(
-      world,
-      monster,
-      'runsBossPattern',
-      initRunsBossPattern(pattern.id, now, target.isPlayer.id, ownsRoot, ownsCannotAttack),
-    );
-    if (ownsRoot) setRooted(world, monster, true);
-    if (ownsCannotAttack) attachComponent(world, monster, 'cannotAttack', {});
-    stopEntity(world, monster);
-    armPatternCooldown(monster, pattern, now);
-    if (pattern.oncePerLife) setCounter(monster.tracksCombat, PATTERN_USED_KEY, 1);
   }
 
   publishConcealment(world);
+}
+
+/** Start `pattern` on `monster` if every gate passes. Returns true when it started. */
+function tryArmPattern(world: World, monster: MonsterEntity, pattern: BossPattern, now: number): boolean {
+  if (pattern.steps.length === 0) return false;
+  const aggro = monster.hasAggroTarget;
+  if (!aggro) return false;
+  // ONCE PER LIFE. Checked before everything else so a spent catastrophe costs
+  // nothing to skip, and so re-pulling the boss cannot hand the player a fresh
+  // copy of a beat they already answered.
+  const usedKey = patternKeys(monster, pattern.id).next === PATTERN_CD_NEXT_KEY
+    ? PATTERN_USED_KEY
+    : `${PATTERN_USED_KEY}:${pattern.id}`;
+  if (pattern.oncePerLife && getCounter(monster.tracksCombat, usedKey) === 1) return false;
+  // HEALTH GATE. Outside the authored band the pattern never arms — the boss is
+  // not "failing to escape", it has stopped trying, and its ordinary behaviour
+  // takes over. Checked before the cooldown so a gated-out pattern does not burn
+  // its timer in the background and fire the instant the band reopens.
+  const hpPct = monster.hasHealth.hp / Math.max(1, monster.hasHealth.maxHp);
+  if (pattern.armAboveHpPct !== undefined && hpPct <= pattern.armAboveHpPct) return false;
+  if (pattern.armBelowHpPct !== undefined && hpPct > pattern.armBelowHpPct) return false;
+  if (!patternReady(monster, pattern, now)) return false;
+  const target = world.getPlayerEntity(aggro.targetId);
+  if (!target || target.hasPosition.nodeId !== monster.hasPosition.nodeId) return false;
+  // REACTIVE: only while the target is close (the Desert standoff's dash-escape).
+  if (
+    pattern.armWhenTargetWithinPx !== undefined &&
+    distanceSq(target.hasPosition.current, monster.hasPosition.current) > pattern.armWhenTargetWithinPx ** 2
+  ) {
+    return false;
+  }
+
+  // The pattern holds movement and swings for its whole run — but only claims
+  // the locks that were not already held by something else.
+  const ownsRoot = !hasIndependentRoot(monster);
+  const ownsCannotAttack = !monster.cannotAttack;
+  attachComponent(
+    world,
+    monster,
+    'runsBossPattern',
+    initRunsBossPattern(pattern.id, now, target.isPlayer.id, ownsRoot, ownsCannotAttack),
+  );
+  if (ownsRoot) setRooted(world, monster, true);
+  if (ownsCannotAttack) attachComponent(world, monster, 'cannotAttack', {});
+  stopEntity(world, monster);
+  armPatternCooldown(monster, pattern, now);
+  if (pattern.accelerate) {
+    const runs = patternKeys(monster, pattern.id).runs;
+    setCounter(monster.tracksCombat, runs, getCounter(monster.tracksCombat, runs) + 1);
+  }
+  if (pattern.oncePerLife) setCounter(monster.tracksCombat, usedKey, 1);
+  return true;
 }
 
 /**
@@ -1080,6 +1132,35 @@ function beginStep(
       state.stepEndsAtMs = now + step.durationMs;
       return true;
     }
+    case 'dash': {
+      const target = patternTarget(world, monster);
+      if (!target) {
+        endPattern(world, monster, 'target-lost', now);
+        return false;
+      }
+      state.stepEndsAtMs = now + step.maxTravelMs;
+      state.lastFleeSteerMs = now;
+      state.fleeTargetPosition = { ...target.hasPosition.current };
+      // Same hand-off as the charge and the flee: release the root, raise the
+      // speed the client interpolates with, and give the mover a destination.
+      if (state.ownsRoot) setRooted(world, monster, false);
+      state.savedSpeed = monster.hasPosition.speed;
+      monster.hasPosition.speed = step.speed;
+      markSliceDirty(world, monster, 'hasPosition');
+      const destination = dashDestination(world, monster, target, step);
+      if (destination) {
+        state.capturedEndpoint = { ...destination };
+        setEntityMotion(world, monster, destination, { mode: 'direct' });
+      }
+      world.pushEvent(monster.hasPosition.nodeId, {
+        kind: 'monster-cast-start',
+        monsterId: monster.isMonster.id,
+        castMs: step.maxTravelMs,
+        label: step.name,
+        fx: step.fx,
+      });
+      return true;
+    }
     case 'recovery': {
       // Recovery leaves the pattern: the sequence is over and what remains is the
       // punish window, which outlives the cursor. Anything still owned is released
@@ -1322,6 +1403,33 @@ function tickStep(
       return 'done';
     case 'wait':
       return now >= state.stepEndsAtMs ? 'done' : 'running';
+    case 'dash': {
+      if (stopPatternOnControl(world, monster, pattern, step, now)) return 'ended';
+      const target = patternTarget(world, monster);
+      const arrived = target !== null && dashArrived(world, monster, target, step);
+      if (!arrived && now < state.stepEndsAtMs) {
+        // Re-steer when the target has moved on or the body stalled.
+        const moved = target && (!state.fleeTargetPosition ||
+          distanceSq(target.hasPosition.current, state.fleeTargetPosition) >= 48 ** 2);
+        if (target && (moved || !monster.isMoving) && now - (state.lastFleeSteerMs ?? 0) >= 200) {
+          state.lastFleeSteerMs = now;
+          state.fleeTargetPosition = { ...target.hasPosition.current };
+          const destination = dashDestination(world, monster, target, step);
+          if (destination) {
+            state.capturedEndpoint = { ...destination };
+            setEntityMotion(world, monster, destination, { mode: 'direct' });
+          }
+        }
+        return 'running';
+      }
+      stopFleeing(world, monster, state);
+      world.pushEvent(monster.hasPosition.nodeId, {
+        kind: 'monster-cast-end',
+        monsterId: monster.isMonster.id,
+        fired: true,
+      });
+      return 'done';
+    }
     case 'recovery':
       return 'ended';
   }
@@ -1382,6 +1490,30 @@ function finishStep(
     // Hand the lane to the charge step; do NOT clear it here.
     state.laneZoneId = laneZone(world, monster)?.id;
   }
+}
+
+/** Where a dash is heading this tick: onto the target, or away from it. */
+function dashDestination(
+  world: World,
+  monster: MonsterEntity,
+  target: PlayerEntity,
+  step: Extract<BossPatternStep, { kind: 'dash' }>,
+): Vec2 | null {
+  if (step.direction === 'to-target') return { ...target.hasPosition.current };
+  return fleeDestination(world, monster, target);
+}
+
+/** A dash is over once it reached melee (`to-target`) or opened its gap (`away`). */
+function dashArrived(
+  world: World,
+  monster: MonsterEntity,
+  target: PlayerEntity,
+  step: Extract<BossPatternStep, { kind: 'dash' }>,
+): boolean {
+  if (step.direction === 'to-target') {
+    return world.collision.canReach(monster, target, step.reach ?? 40);
+  }
+  return distanceSq(monster.hasPosition.current, target.hasPosition.current) >= (step.distance ?? 400) ** 2;
 }
 
 /** Put the boss's authored speed back. Idempotent, so every exit path may call it. */

@@ -700,6 +700,17 @@ function applyAction(
       break;
     }
 
+    case 'add-pattern': {
+      const extras = (state.extraPatternIds ??= []);
+      if (!extras.includes(action.patternId)) extras.push(action.patternId);
+      break;
+    }
+
+    case 'remove-pattern': {
+      state.extraPatternIds = (state.extraPatternIds ?? []).filter(id => id !== action.patternId);
+      break;
+    }
+
     case 'set-pattern': {
       // Read by `bossPatternFor`; a pattern already running notices the id change
       // and finishes through its own teardown, so a swap never splices two sequences.

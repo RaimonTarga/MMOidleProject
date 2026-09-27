@@ -164,13 +164,8 @@ export const bossMonsterEntriesT4 = [
   // DESERT — "Dune-Throne Sovereign"
   // Identity: SETUP / CONTROL -> PUNISHMENT, as a three-act duel.
   //
-  //   ACT I  (100–50%) SETUP. Melee controller: slows on every hit, and paints
-  //     Sun Mark with its own blows. It is preparing a punishment.
-  //   ACT II (50–25%)  PUNISHMENT. It backs off to 250 range and kites, and the
-  //     Sandstorm Rupture becomes the cash-out for everything it set up in Act I.
-  //     Chasing it eats free slowed hits; standing still eats the Rupture.
-  //   ACT III (<25%)   EXECUTION. It stops controlling space entirely and commits
-  //     to killing you at melee range.
+  //   ACT I   melee duel; ACT II standoff (from 55%); ACT III hit-and-run (20%).
+  //   See the pattern notes below (boss-lineage redesign 2026-09-27).
   //
   // The mark carries THROUGH the range morph — that pairing is the point. Desert
   // compresses the biome's controller/dealer pairing into one duellist, which is
@@ -212,18 +207,77 @@ export const bossMonsterEntriesT4 = [
         { kind: 'recovery', label: 'Spent', durationMs: 1000 },
       ],
     },
+    // THREE POSTURES (boss-lineage redesign 2026-09-27), one sentence:
+    //   ACT I   melee duel — the T2 sequence;
+    //   ACT II  55%: STANDOFF — the sentence from range, with a rootable dash-escape;
+    //   ACT III 20%: HIT-AND-RUN, the soft enrage — it marks from range, DASHES IN,
+    //           cashes the mark with a short Execution combo, and withdraws faster
+    //           than you can follow. Uncatchable, never unhittable: the combo is the
+    //           damage window for every build. Bursts come faster each time, but the
+    //           gaps stay >= ~4s, so Dawn armor re-arms before every dash-in. Root or
+    //           stun the dash-in or the combo and it is stuck in melee, staggered —
+    //           the earned big window.
+    bossPatternVariants: [
+      {
+        // STANDOFF — the same sentence, run from range. Shorter than the melee
+        // version so the Execution never roots the boss into a free melee target.
+        id: 'sovereign-standoff', name: 'Death Sting',
+        damageMultiplier: 1.8, cooldownMs: 8000, initialCooldownMs: 2500,
+        steps: [
+          { kind: 'apply-status', name: 'Death Sting', castMs: 1000, fx: 'death-sting',
+            effectId: SUN_MARK_EFFECT_ID, stacks: 1, durationMs: 7000 },
+          { kind: 'wait', durationMs: 500 },
+          { kind: 'apply-status', name: 'Numbing Sting', castMs: 600, fx: 'numbing-sting',
+            effectId: 'slow', stacks: 1, durationMs: 4000, data: { speedMult: 0.28 } },
+          { kind: 'wait', durationMs: 400 },
+          { kind: 'payoff', name: 'Execution', castMs: 1100, fx: 'execution',
+            damageMult: 1.0, amplifiedMult: 2.0,
+            consumes: { effectId: SUN_MARK_EFFECT_ID }, radius: 180 },
+        ],
+      },
+      {
+        // The dash-escape: close in on it and it springs back to range. Visible
+        // (~260px/s, far faster than a player), on a 6s clock, and a ROOT stops it.
+        id: 'sovereign-sand-step', name: 'Sand Step',
+        damageMultiplier: 1, cooldownMs: 6000, initialCooldownMs: 0,
+        armWhenTargetWithinPx: 210,
+        stoppedBy: { root: { staggerMs: 1500, label: 'Pinned' }, stun: { staggerMs: 2000, label: 'Staggered' } },
+        steps: [
+          { kind: 'dash', name: 'Sand Step', direction: 'away', speed: 260, distance: 420,
+            maxTravelMs: 1800, rootable: true, fx: 'predator-flee' },
+        ],
+      },
+      {
+        id: 'sovereign-hit-and-run', name: 'Hit and Run',
+        damageMultiplier: 1.8, cooldownMs: 10000, initialCooldownMs: 1500,
+        accelerate: { cooldownMultPerRun: 0.92, minCooldownMs: 7500 },
+        stoppedBy: {
+          root: { staggerMs: 3000, label: 'Caught' },
+          stun: { staggerMs: 3000, label: 'Caught' },
+        },
+        steps: [
+          { kind: 'apply-status', name: 'Death Sting', castMs: 700, fx: 'death-sting',
+            effectId: SUN_MARK_EFFECT_ID, stacks: 1, durationMs: 5000 },
+          { kind: 'wait', durationMs: 300 },
+          { kind: 'dash', name: 'Dune Rush', direction: 'to-target', speed: 440, reach: 30,
+            maxTravelMs: 1500, rootable: true, fx: 'predator-flee' },
+          { kind: 'payoff', name: 'Execution', castMs: 550, fx: 'execution',
+            damageMult: 1.0, amplifiedMult: 2.0, rootable: true,
+            consumes: { effectId: SUN_MARK_EFFECT_ID }, radius: 120 },
+          { kind: 'dash', name: 'Withdraw', direction: 'away', speed: 400, distance: 520,
+            maxTravelMs: 1600, interruptible: false },
+        ],
+      },
+    ],
     bossScript: {
       phases: [
-        { hpPct: 0.5, actions: [
-          // ACT II — standoff, and the Rupture becomes the punishment.
-          { type: 'morph', isRanged: true, attackStyle: 'sandblast', attackRange: 250, kite: true },
-          { type: 'empower-charged', multiplierMult: 1.25, cooldownMult: 0.75, radiusMult: 1.10 },
+        { hpPct: 0.55, name: 'Standoff', actions: [
+          { type: 'morph', isRanged: true, attackStyle: 'sandblast', attackRange: 250, kite: false },
+          { type: 'set-pattern', patternId: 'sovereign-standoff' },
+          { type: 'add-pattern', patternId: 'sovereign-sand-step' },
         ] },
-        { hpPct: 0.25, actions: [
-          // ACT III — it drops the kite and commits.
-          { type: 'morph', isRanged: false, attackRange: 20, kite: false },
-          { type: 'stat-buff', stat: 'speed', mult: 1.35, label: 'sandsurge' },
-          { type: 'empower-charged', cooldownMult: 0.70 },
+        { hpPct: 0.2, name: 'Hit and Run', actions: [
+          { type: 'set-pattern', patternId: 'sovereign-hit-and-run' },
         ] },
       ],
     },

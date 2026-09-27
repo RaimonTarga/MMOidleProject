@@ -137,6 +137,8 @@ export interface ScriptsBoss {
   raiseMaxAliveAdd?: number;
   /** Id of the `bossPatternVariants` entry a 'set-pattern' action switched to. */
   patternOverrideId?: string;
+  /** Extra variant patterns armed alongside the main one ('add-pattern'). */
+  extraPatternIds?: string[];
   /** Name of the last announced (named) phase; mirrored to the boss bar. */
   phaseLabel?: string;
   /** Set by 'spread-pools': owned pools grow toward a cap. */

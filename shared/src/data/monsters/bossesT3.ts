@@ -330,13 +330,8 @@ export const bossMonsterEntriesT3 = [
   // DESERT — "Dune-Carapace Monarch"
   // Identity: SETUP / CONTROL -> PUNISHMENT.
   //
-  // T3's second layer is the RANGE MORPH, and the rework fuses it to the lineage's
-  // mark instead of letting it be a separate trick:
-  //   100–50%  melee CONTROLLER — slows, and paints Sun Mark with its own hits.
-  //   below 50% ranged PUNISHER — it backs off and the Sandburst becomes the
-  //            cash-out, landing on whatever setup it left on you.
-  // The mark does NOT go away when the boss changes range; that pairing is the
-  // whole point of the phase.
+  // T3's layer (boss-lineage redesign): the STANDOFF. The same mark -> slow ->
+  // Execution sentence, run from range from 50%, with a dash-escape when you close.
   // ══════════════════════════════════════════════════════════════════════
   ['dune-carapace-monarch', {
     id: 'dune-carapace-monarch', name: 'Dune-Carapace Monarch', color: 0xccaa22,
@@ -375,16 +370,52 @@ export const bossMonsterEntriesT3 = [
         { kind: 'recovery', label: 'Spent', durationMs: 1000 },
       ],
     },
+    // STANDOFF (boss-lineage redesign 2026-09-27) — the ranged phase, done right.
+    // The old kiter backed off at ~43px/s only when you were inside 145px, and its
+    // sequence rooted it for most of the phase, so it never really kited. Now at 50%
+    // it leaps back to range and runs the sentence FROM there; close in and it
+    // dash-escapes back out (Sand Step, rootable). Ranged builds duel it, melee
+    // chases it (a few seconds of hits after each dash), a root stops the dash.
+    bossPatternVariants: [
+      {
+        // STANDOFF — the same sentence, run from range. Shorter than the melee
+        // version so the Execution never roots the boss into a free melee target.
+        id: 'monarch-standoff', name: 'Death Sting',
+        damageMultiplier: 1.6, cooldownMs: 8000, initialCooldownMs: 2500,
+        steps: [
+          { kind: 'apply-status', name: 'Death Sting', castMs: 1000, fx: 'death-sting',
+            effectId: SUN_MARK_EFFECT_ID, stacks: 1, durationMs: 6500 },
+          { kind: 'wait', durationMs: 500 },
+          { kind: 'apply-status', name: 'Numbing Sting', castMs: 600, fx: 'numbing-sting',
+            effectId: 'slow', stacks: 1, durationMs: 4000, data: { speedMult: 0.3 } },
+          { kind: 'wait', durationMs: 400 },
+          { kind: 'payoff', name: 'Execution', castMs: 1100, fx: 'execution',
+            damageMult: 1.0, amplifiedMult: 1.9,
+            consumes: { effectId: SUN_MARK_EFFECT_ID }, radius: 155 },
+        ],
+      },
+      {
+        // The dash-escape: close in on it and it springs back to range. Visible
+        // (~260px/s, far faster than a player), on a 6s clock, and a ROOT stops it.
+        id: 'monarch-sand-step', name: 'Sand Step',
+        damageMultiplier: 1, cooldownMs: 6000, initialCooldownMs: 0,
+        armWhenTargetWithinPx: 210,
+        stoppedBy: { root: { staggerMs: 1500, label: 'Pinned' }, stun: { staggerMs: 2000, label: 'Staggered' } },
+        steps: [
+          { kind: 'dash', name: 'Sand Step', direction: 'away', speed: 260, distance: 420,
+            maxTravelMs: 1800, rootable: true, fx: 'predator-flee' },
+        ],
+      },
+    ],
     bossScript: {
       phases: [
-        { hpPct: 0.5, actions: [
-          { type: 'morph', isRanged: true, attackStyle: 'sandblast', attackRange: 240, kite: true },
-          // Act II: the Sandburst stops being a punctuation mark and becomes the
-          // punishment. Longer reach, and the mark it left is still on you.
-          { type: 'empower-charged', multiplierMult: 1.20, cooldownMult: 0.80 },
+        { hpPct: 0.5, name: 'Standoff', actions: [
+          { type: 'morph', isRanged: true, attackStyle: 'sandblast', attackRange: 240, kite: false },
+          { type: 'set-pattern', patternId: 'monarch-standoff' },
+          { type: 'add-pattern', patternId: 'monarch-sand-step' },
         ] },
-        // Last quarter: the cash-out comes around roughly twice as often.
-        { hpPct: 0.25, actions: [{ type: 'empower-charged', cooldownMult: 0.65 }] },
+        // Soft enrage: the sentence repeats faster.
+        { hpPct: 0.2, name: 'Sandstorm', actions: [{ type: 'empower-charged', cooldownMult: 0.65 }] },
       ],
     },
   }],

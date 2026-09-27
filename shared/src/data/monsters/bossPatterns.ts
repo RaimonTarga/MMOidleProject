@@ -471,6 +471,27 @@ export type BossPatternStep =
       guardable?: boolean;
       fx?: string;
     }
+  /**
+   * DASH (Desert standoff / hit-and-run). A burst of visible travel: `to-target`
+   * closes to within `reach` of the target (the dash-in), `away` retreats until
+   * `distance` from it (the dash-escape). The body really moves, at `speed` px/s,
+   * re-steering as the target moves, and ends on arrival or after `maxTravelMs`.
+   * A root (`rootable`) or stun (`interruptible`) during it stops the pattern.
+   */
+  | {
+      kind: 'dash';
+      name: string;
+      direction: 'to-target' | 'away';
+      speed: number;
+      maxTravelMs: number;
+      /** `to-target`: stop within this edge distance of the target. */
+      reach?: number;
+      /** `away`: stop once this far (centre to centre) from the target. */
+      distance?: number;
+      rootable?: boolean;
+      interruptible?: boolean;
+      fx?: string;
+    }
   /** Dead time inside the sequence, with no cast bar. */
   | { kind: 'wait'; durationMs: number }
   /**
@@ -513,6 +534,19 @@ export interface BossPattern {
    * player a fresh copy of a beat they already answered.
    */
   oncePerLife?: boolean;
+  /**
+   * REACTIVE ARMING. The pattern only starts while its target is within this many
+   * pixels (centre to centre). The Desert standoff's dash-escape: it fires when a
+   * player closes in, and never otherwise.
+   */
+  armWhenTargetWithinPx?: number;
+  /**
+   * The pattern comes around faster every time it runs: its cooldown is multiplied
+   * by `cooldownMultPerRun` per completed arm, floored at `minCooldownMs`. The Desert
+   * hit-and-run's soft enrage (bursts come faster, but never under ~4s, so Dawn
+   * armor re-arms between them).
+   */
+  accelerate?: { cooldownMultPerRun: number; minCooldownMs: number };
   /**
    * STOPPED, NOT COMPLETED (boss-lineage-redesign principle 5). When the player's
    * control stops this pattern — a stun on an interruptible step, a root on a

@@ -303,6 +303,10 @@ function describeBossPatternStep(step: BossPatternStep, pattern: BossPattern): s
       return `Raises a ${fmtPct(step.shieldPct)} max-HP barrier` +
         (step.blocksControl ? '; ignores stun and root while it holds' : '') +
         (step.onBreak ? `; breaking it causes ${step.onBreak.label} for ${fmtMs(step.onBreak.staggerMs)}` : '');
+    case 'dash':
+      return `${step.name}: dashes ${step.direction === 'to-target' ? 'onto its target' : `away to ${step.distance ?? 400}px`} at ${fmtNumber(step.speed)}px/s` +
+        (step.rootable ? '; a root stops it' : '') +
+        (step.interruptible === false ? '; cannot be interrupted' : '');
     case 'rockfall':
       return `${step.name}: ${step.count} rocks fall around the target (one on them, the rest within ${step.spread}px),` +
         ` each a ${step.radius}px circle, after ${fmtMs(step.delayMs)} for ${fmtMult(pattern.damageMultiplier * step.damageMult)} damage`;
@@ -498,11 +502,14 @@ function describeBossPatterns(def: MonsterDefinition): BestiaryAbilityLine[] {
   if (base) lines.push(base);
   for (const variant of def.bossPatternVariants ?? []) {
     const phase = def.bossScript?.phases?.find(p =>
-      p.actions.some(a => a.type === 'set-pattern' && a.patternId === variant.id));
+      p.actions.some(a => (a.type === 'set-pattern' || a.type === 'add-pattern') && a.patternId === variant.id));
+    const added = phase?.actions.some(a => a.type === 'add-pattern' && a.patternId === variant.id) === true;
     const line = describeBossPattern(def, variant);
     if (!line) continue;
     if (phase) {
-      line.trigger = `From ${phase.name ? `${phase.name} (` : ''}${fmtPct(phase.hpPct)} HP${phase.name ? ')' : ''}, replacing the previous sequence`;
+      line.trigger = `From ${phase.name ? `${phase.name} (` : ''}${fmtPct(phase.hpPct)} HP${phase.name ? ')' : ''}` +
+        (added ? ', alongside the main sequence' : ', replacing the previous sequence') +
+        (variant.armWhenTargetWithinPx !== undefined ? `, when you come within ${variant.armWhenTargetWithinPx}px` : '');
     }
     lines.push(line);
   }

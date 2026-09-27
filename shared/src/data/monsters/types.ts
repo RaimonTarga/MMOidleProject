@@ -198,6 +198,14 @@ export type BossAction =
    */
   | { type: 'set-pattern'; patternId: string }
   /**
+   * ADD / REMOVE PATTERN — arm a SECOND authored pattern (from `bossPatternVariants`)
+   * alongside the main one, with its own cooldown; the boss still runs one sequence
+   * at a time, and an added pattern gets first pick when both are ready. The Desert
+   * standoff adds its reactive dash-escape this way.
+   */
+  | { type: 'add-pattern'; patternId: string }
+  | { type: 'remove-pattern'; patternId: string }
+  /**
    * SPREAD POOLS (Swamp Rot Bloom) — from now on every pool this boss owns grows
    * `radiusPerSec` until it reaches `maxRadiusMult` × the radius it was laid at.
    */
