@@ -146,6 +146,14 @@ export function syncGroundZones(
     if (!sprite) {
       const poolArt = zone.flavor === "magma-vent"
         ? HAZARD_POOL_ART.steamVent
+        : zone.flavor === "sinkhole"
+        ? HAZARD_POOL_ART.sinkhole
+        : zone.flavor === "mire"
+        ? HAZARD_POOL_ART.mire
+        : zone.flavor === "spore"
+        ? HAZARD_POOL_ART.sporePool
+        : zone.flavor === "thorns"
+        ? HAZARD_POOL_ART.thornSnare
         : HAZARD_POOL_ART.poison;
       sprite = {
         graphic: scene.add.graphics().setDepth(DEPTH.BG_DECOR + 0.3),

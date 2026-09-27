@@ -49,6 +49,9 @@ const CONDITION_IDS = new Set([
   'in-party',
   'inside-telegraph',
   'target-casting',
+  'target-shielded',
+  'target-escaping',
+  'debuff-pile',
   'before-empowered',
   'target-elite',
   'target-max-stacks',
@@ -233,6 +236,9 @@ const TARGET_BUFF_ICON_IDS = new Set([
   'molten-guard',
   'obsidian-shell',
   'necrotic-surge',
+  'boss-phase',
+  'boss-final-strike',
+  'boss-cornered',
 ]);
 
 // A target-only debuff whose raw server id is not part of the player's BuffId
@@ -332,10 +338,33 @@ const DEBUFF_BUFF_DIR_ICON_ALIASES: Record<string, string> = {
 const MONSTER_DOT_ICON_ALIASES: Record<string, string> = {
   'monster-dot:ember-burn': 'dot-conflag',
   'monster-dot:ashspitter-burn': 'dot-conflag',
-  'monster-dot:caldera-burn': 'dot-conflag',
+  'monster-dot:caldera-burn': 'dot-simmering-burn',
+  'monster-dot:rot-bloom': 'dot-rot-bloom',
+  'monster-dot:mire-gorged-venom': 'dot-gorged-venom',
+  'monster-dot:rot-spore-plague': 'dot-rot-spores',
+  'monster-dot:venomous-bite': 'dot-venomous-bite',
 };
 
-export function statusIconSource(id: string): AssetIconSource | null {
+const MONSTER_DOT_ART_ICON_IDS = new Set([
+  'dot-rot-bloom',
+  'dot-simmering-burn',
+  'dot-gorged-venom',
+  'dot-rot-spores',
+  'dot-venomous-bite',
+]);
+
+/** Boss mechanic debuffs share one runtime id and distinguish their authored
+ * tile through PlayerBuff.instanceKey. Unknown mechanics retain the readable
+ * generic tile until their own art is added. */
+const BOSS_DEBUFF_ICON_ALIASES: Record<string, string> = {
+  eroded: 'boss-eroded',
+  frostbite: 'boss-frostbite',
+  'boss-brittle': 'boss-brittle',
+  rend: 'boss-rend',
+  depth: 'boss-depth',
+};
+
+export function statusIconSource(id: string, instanceKey?: string): AssetIconSource | null {
   if (BUFF_IDS.has(id)) {
     const abilityIconId = BUFF_ABILITY_ICON_ALIASES[id];
     if (abilityIconId) return conceptAbilityIconSource(abilityIconId);
@@ -356,12 +385,16 @@ export function statusIconSource(id: string): AssetIconSource | null {
   if (TARGET_DEBUFF_ICON_IDS.has(id)) {
     return source('statuses/debuffs', id);
   }
+  if (MONSTER_DOT_ART_ICON_IDS.has(id)) {
+    return source('statuses/debuffs', id);
+  }
   const monsterDotIconId = MONSTER_DOT_ICON_ALIASES[id];
   if (monsterDotIconId) return statusIconSource(monsterDotIconId);
   if (id === 'second-wind') return source('abilities', id);
-  // Generic boss mechanic debuff tile (Eroded, Frostbite, Brittle, ...): the
-  // damage-taken debuff art until each gets its own.
-  if (id === 'debuff-boss') return source('statuses/debuffs', 'debuff-sundered');
+  if (id === 'debuff-boss') {
+    const iconId = instanceKey ? BOSS_DEBUFF_ICON_ALIASES[instanceKey] : undefined;
+    return source('statuses/debuffs', iconId ?? 'debuff-sundered');
+  }
   return null;
 }
 
@@ -428,16 +461,14 @@ const BOSS_EFFECT_ALIASES: Record<string, string> = {
   'earthshaker-rush': 'mob-haste',
   sandsurge: 'mob-haste',
   'caldera-fury': 'cadence-rampage',
-  cornered: 'cadence-rampage',
+  cornered: 'boss-cornered',
   'blood-in-the-water': 'mob-haste',
   'charge-instinct': 'mob-haste',
   'escape-instinct': 'mob-haste',
   'boss-stunned': 'debuff-stunned',
-  // Placeholder until the phase tile gets its own icon (see the boss icon list).
-  'boss-phase': 'monster-howl-haste',
-  // Placeholders until the Volcanic final strike gets its own icon.
-  'final-eruption': 'dot-conflag',
-  cataclysm: 'dot-conflag',
+  'boss-phase': 'boss-phase',
+  'final-eruption': 'boss-final-strike',
+  cataclysm: 'boss-final-strike',
 };
 
 function aliasedStatusIconSource(alias: string | undefined): AssetIconSource | null {

@@ -1763,7 +1763,7 @@ export interface HazardPoolArt {
 
 /** Runtime ground-effect art. Volcanic vents use a static heat-crack decal. */
 export const HAZARD_POOL_ART: Readonly<
-  Record<"poison" | "steamVent", HazardPoolArt>
+  Record<"poison" | "steamVent" | "sinkhole" | "mire" | "sporePool" | "thornSnare", HazardPoolArt>
 > = {
   poison: {
     key: "hazard_pool_poison",
@@ -1772,6 +1772,22 @@ export const HAZARD_POOL_ART: Readonly<
   steamVent: {
     key: "hazard_pool_steam_vent",
     file: "/assets/environment/hazards/steam-vent.png",
+  },
+  sinkhole: {
+    key: "hazard_pool_sinkhole",
+    file: "/assets/environment/hazards/sinkhole.png",
+  },
+  mire: {
+    key: "hazard_pool_mire",
+    file: "/assets/environment/hazards/mire.png",
+  },
+  sporePool: {
+    key: "hazard_pool_spore",
+    file: "/assets/environment/hazards/spore-pool.png",
+  },
+  thornSnare: {
+    key: "hazard_pool_thorn_snare",
+    file: "/assets/environment/hazards/thorn-snare.png",
   },
 };
 
