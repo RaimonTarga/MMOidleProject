@@ -228,6 +228,7 @@ import { fxOpenerLand, fxOpenerWindup, isOpenerFx } from "../fx/engageOpeners";
 import { fxMobCastWindup } from "../fx/mobCastWindups";
 import { attackFlairOf, type AttackFlair } from "../fx/attackFlair";
 import { playPathSignature } from "../fx/pathSignatures";
+import { bespokePathFor } from "../fx/bespokePaths";
 import { abilityCallout, playAbilityRank } from "../fx/abilityRank";
 import {
   fxCharnelMaul, fxConstrict, fxHindKick, fxOozeEngulf, fxSnap, fxSpiderFang, fxSting,
@@ -1989,15 +1990,28 @@ function runFxForAttackStyle(
     fxDualSlash(scene, to.x, to.y, ev.empowered);
   } else {
     playEmpoweredRing(args);
-    resolveAttackFx(
-      player.combatArchetype,
-      player.selectedRange,
-      player.attackStyle,
-    )(args);
-    // Stage 3 of the attack progression: the specialization's own mark on every
-    // ordinary hit (fx/pathSignatures.ts). Bespoke replacements above never get it.
-    playPathSignature(scene, flair, from, to, ev.empowered);
-    if (flair.stage === 3 && ev.empowered && ev.playerId === scene.myId) impactFeel(scene, "light", to);
+    // A bespoke path (fx/bespokePaths.ts) replaces the finisher outright and layers
+    // its live resource over ordinary hits; every other specialization draws its
+    // one-motif signature (fx/pathSignatures.ts) over the range attack.
+    const bespoke = flair.stage === 3 ? bespokePathFor(flair.specId) : undefined;
+    const hit = {
+      scene, player, playerId: ev.playerId, targetId: ev.targetId, from, to,
+      empowered: ev.empowered, k: flair.scale,
+    };
+    if (bespoke?.finisher && ev.empowered) {
+      bespoke.finisher(hit);
+    } else {
+      resolveAttackFx(
+        player.combatArchetype,
+        player.selectedRange,
+        player.attackStyle,
+      )(args);
+      if (bespoke) bespoke.hit(hit);
+      else {
+        playPathSignature(scene, flair, from, to, ev.empowered);
+        if (flair.stage === 3 && ev.empowered && ev.playerId === scene.myId) impactFeel(scene, "light", to);
+      }
+    }
   }
 
   if (isFlashTeleport) {

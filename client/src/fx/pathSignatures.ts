@@ -8,7 +8,9 @@
  * motif (a small renderer) and the path's colour. Specializations that already
  * REPLACE their whole attack (Melter's laser, Sniper's shell, Stormdancer's dagger,
  * Equinox, Swiftblade, Duelist, Dualslinger's alt round, Blunderbuss pellets, ...)
- * never reach this layer: it is only called from the ordinary attack branch.
+ * never reach this layer: it is only called from the ordinary attack branch. Paths
+ * with a full stateful attack (Berserker, Juggernaut, Justicar, Venomslinger) live
+ * in bespokePaths.ts instead.
  *
  * Empowered hits draw the motif bigger; from ascension T3 they also ring out in the
  * path colour. Summoner paths are absent by design (the formation is the attack).
@@ -366,10 +368,7 @@ const SIGNATURES: Record<string, Signature> = {
   // Striker
   'cadence-balanced-t3-a': { motif: echo, color: 0xffd27a, accent: 0xffffff }, // Maestro
   'cadence-balanced-t3-b': { motif: wave, color: 0x3aa8c8, accent: 0xbff4ff }, // Wavecrest
-  'cadence-balanced-t3-c': { motif: sigil, color: 0xffe07a, accent: 0xffffff, n: 4 }, // Justicar
-  'cadence-heavy-t3-a': { motif: embers, color: 0xff3b2f, accent: 0xffa040 }, // Berserker
   'cadence-heavy-t3-b': { motif: blood, color: 0xc41e1e, accent: 0x7a0a10 }, // Hemomancer
-  'cadence-heavy-t3-c': { motif: quake, color: 0xc8b89a, accent: 0x8a7a60 }, // Juggernaut
   'cadence-light-t3-a': { motif: shock, color: 0x7fd4ff, accent: 0xffffff }, // Shockblade
   'cadence-light-t3-b': { motif: rend, color: 0xffa040, accent: 0xd8d0c0 }, // Scrapper
   // Squire
@@ -389,7 +388,6 @@ const SIGNATURES: Record<string, Signature> = {
   'dot-heavy-t3-a': { motif: shards, color: 0xbfe8ff, accent: 0xffffff, n: 1 }, // Icebreaker
   'dot-heavy-t3-b': { motif: shards, color: 0x9fdcff, accent: 0xe8f8ff, n: -1 }, // Winter Warden
   'dot-heavy-t3-c': { motif: wind, color: 0xd8f0ff, accent: 0x9fdcff }, // Wind Spirit
-  'dot-light-t3-a': { motif: venom, color: 0x9ad65a, accent: 0xd8f0a0 }, // Venomslinger
   'dot-light-t3-b': { motif: sigil, color: 0x8a5ad0, accent: 0xd0b0ff, n: 5 }, // Cultist
   'dot-light-t3-c': { motif: sigil, color: 0xd0e060, accent: 0xffffff, n: 8 }, // Zealot
   // Spirit (Equinox and Stormdancer replace their attack)

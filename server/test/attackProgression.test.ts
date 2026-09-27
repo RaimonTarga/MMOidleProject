@@ -50,19 +50,28 @@ const REPLACES_ATTACK = new Set([
 const sigSource = readFileSync(join(__dirname, '../../client/src/fx/pathSignatures.ts'), 'utf8');
 const table = sigSource.split('const SIGNATURES')[1] ?? '';
 const rows = new Set([...table.matchAll(/^\s+'([a-z]+-[a-z]+-t3-[abc])':/gm)].map((m) => m[1]));
+const bespokeSource = readFileSync(join(__dirname, '../../client/src/fx/bespokePaths.ts'), 'utf8');
+const bespokeTable = bespokeSource.split('const BESPOKE_PATHS')[1]?.split('\n};')[0] ?? '';
+// Stateful bespoke attacks (fx/bespokePaths.ts): a third, exclusive way to be covered.
+const bespoke = new Set([...bespokeTable.matchAll(/^\s+'([a-z]+-[a-z]+-t3-[abc])':/gm)].map((m) => m[1]));
+assert(bespoke.size >= 4, `parsed too few bespoke paths (${bespoke.size})`);
 const missing: string[] = [];
 for (const node of (SKILL_TREE as Map<string, { id: string; tier: number; name: string }>).values()) {
   if (node.tier !== 3 || node.id.startsWith('summoner-')) continue;
   if (!/-t3-[abc]$/.test(node.id)) continue;
-  if (!rows.has(node.id) && !REPLACES_ATTACK.has(node.id)) missing.push(`${node.name} (${node.id})`);
-  assert(!(rows.has(node.id) && REPLACES_ATTACK.has(node.id)), `${node.id} is both replaced and signed`);
+  const ways = [rows.has(node.id), REPLACES_ATTACK.has(node.id), bespoke.has(node.id)].filter(Boolean).length;
+  if (ways === 0) missing.push(`${node.name} (${node.id})`);
+  assert(ways <= 1, `${node.id} is covered more than one way (signature / replaced / bespoke)`);
 }
 assert(missing.length === 0, `specializations with no signature and no bespoke attack: ${missing.join(', ')}`);
-assert(rows.size + REPLACES_ATTACK.size === 45, `expected 45 combat specializations, got ${rows.size + REPLACES_ATTACK.size}`);
+const covered = rows.size + REPLACES_ATTACK.size + bespoke.size;
+assert(covered === 45, `expected 45 combat specializations, got ${covered}`);
 
 const combatFx = readFileSync(join(__dirname, '../../client/src/render/combatFx.ts'), 'utf8');
 assert(combatFx.includes('playPathSignature(scene, flair, from, to, ev.empowered)'),
   'the ordinary attack branch should play the path signature');
+assert(combatFx.includes('bespoke.finisher(hit)') && combatFx.includes('bespoke.hit(hit)'),
+  'the ordinary attack branch should dispatch bespoke paths (finisher + stateful hit layer)');
 
 // ── Abilities progress by rank (client fx/abilityRank.ts) ────────────────────
 // Every Guard and Technique needs a rank colour, or its II-IV layers fall back to
