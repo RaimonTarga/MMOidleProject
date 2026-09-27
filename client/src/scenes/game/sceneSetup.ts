@@ -90,6 +90,7 @@ import {
 import { maybeNotifyDeath } from "../../notifications/deathNotification";
 import { initAudio, playSfx } from "../../audio/audioEngine";
 import {
+  PRELOADED_SFX,
   SFX_MANIFEST,
   sfxFiles,
   sfxKey,
@@ -326,9 +327,10 @@ export function preloadGameAssets(scene: GameScene): void {
   // Dev footage capture teleports across the whole map mid-shot, so it keeps
   // the old everything-up-front behaviour.
   if (scene.cinematic) queueNodeArt(scene, new Set(Object.keys(NODE_BIOMES)));
-  // Accepted effects share cache keys across compatibility aliases. Music streams on demand.
+  // Only the common combat effects load up front (shared cache keys across
+  // compatibility aliases); the rest, and all music, stream on first use.
   const queuedAudio = new Set<string>();
-  for (const id of Object.keys(SFX_MANIFEST) as SfxId[]) {
+  for (const id of PRELOADED_SFX as ReadonlySet<SfxId>) {
     sfxFiles(SFX_MANIFEST[id]).forEach((file, i) => {
       const key = sfxKey(id, i);
       if (!queuedAudio.has(key)) scene.load.audio(key, file);

@@ -20,8 +20,17 @@ const aliases: Record<string, AcceptedSfxId> = {
   frozen: 'freeze', 'debuff-apply': 'curse', 'debuff-receive': 'curse',
   empowered: 'striker-empowered', 'pack-call': 'pack', death: 'player-death',
 };
+const ROUTINE_SFX = ['slash','blunt','shot','spirit','fire','ice','poison','magic','bone','claw','bite','maul','bow','rock-launch','summon-hit'];
+/**
+ * Loaded with the game: sounds nearly every fight plays. Everything else (boss,
+ * cast and status cues) is fetched the first time it plays, like zone art, so a
+ * visitor never downloads effects for content they have not reached.
+ */
+export const PRELOADED_SFX: ReadonlySet<string> = new Set([
+  ...ROUTINE_SFX, 'hurt', 'death', 'dodge', 'striker-empowered', 'squire-empowered', 'spirit-empowered',
+]);
 for (const [id, stems] of Object.entries(ACCEPTED_SFX)) {
-  const routine = ['slash','blunt','shot','spirit','fire','ice','poison','magic','bone','claw','bite','maul','bow','rock-launch','summon-hit'].includes(id);
+  const routine = ROUTINE_SFX.includes(id);
   const major = ['cataclysm','boss-death','player-death'].includes(id);
   SFX_MANIFEST[id as SfxId] = {
     file: stems.map(stem => `${AUDIO_SFX_DIR}/accepted/${stem}.wav`), fallback: [],
