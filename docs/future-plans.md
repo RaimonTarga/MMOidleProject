@@ -265,3 +265,18 @@ Raised during the boss lineage review (`design_docs/boss-lineage-redesign.md`).
   check of how it looks.
 - **Dynamic node weather.** The same layer later drives random weather events per node
   (rain, storm, sandstorm). Whether weather ever carries gameplay modifiers is open.
+
+## Animation preview tool (2026-09-28)
+
+The premium animation pass (see [combat-animation-current-state.md](combat-animation-current-state.md))
+added dozens of mob wind-ups, lasting states and 45 specialization attacks, and the
+only way to see one today is to find that mob or build that character in a live
+game. Reviewing them all that way is too slow.
+
+Idea: a dev-only preview page or scene that renders any FX on demand against a dummy
+target, with pickers for monster type and cast, class / frame / range /
+specialization, ascension tier, ability rank, and the resource values the bespoke
+paths read (Rampage stage, Crescendo %, target stacks, energy, ...), plus
+replay and slow-motion. Most FX already take plain inputs (scene, points, view
+fields), so the tool can build fake views rather than run combat. Not started.
+
