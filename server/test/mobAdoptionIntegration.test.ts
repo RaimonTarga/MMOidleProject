@@ -52,10 +52,10 @@ const ADOPTED: Record<string, { hp: number; attack: number }> = {
   'cragback-rhino': { hp: 6600, attack: 90 },
   'cliffside-roc': { hp: 1700, attack: 143 },
   'avalanche-tyrant': { hp: 1600, attack: 116 },
-  // Trench T4 (Durability22)
-  'elder-leviathan': { hp: 17640, attack: 210 },
-  'abyssal-serpent': { hp: 16800, attack: 190 },
-  'hadal-stalker': { hp: 16800, attack: 175 },
+  // Trench T4 (Durability22; HP rebased 2026-09-27, T4 power curve)
+  'elder-leviathan': { hp: 31800, attack: 210 },
+  'abyssal-serpent': { hp: 32800, attack: 190 },
+  'hadal-stalker': { hp: 34500, attack: 175 },
   // Tundra T4 (Durability22)
   'permafrost-behemoth': { hp: 7656, attack: 220 },
   'glacial-direbear': { hp: 4884, attack: 220 },

@@ -384,10 +384,12 @@ for (const [id, spec] of Object.entries(EXPECTED_ABILITIES)) {
 // package moved them deliberately (2800/4200/5880 -> 16800/16800/17640; the 21000
 // hadal-stalker candidate was REJECTED). Rewards are untouched by that adoption,
 // which is exactly what the three assertions above this one still prove.
+// REBASED 2026-09-27 (T4 power curve): Trench mobs tuned to ~1 min each, so HP
+// roughly doubled and rewards per kill moved x2.2 to hold reward per minute.
 const TRENCH_MONSTER_SNAPSHOT: Record<string, { essence: number; biomeXp: number; hp: number }> = {
-  "hadal-stalker": { essence: 210, biomeXp: 1260, hp: 16800 },
-  "abyssal-serpent": { essence: 260, biomeXp: 1560, hp: 16800 },
-  "elder-leviathan": { essence: 400, biomeXp: 2400, hp: 17640 },
+  "hadal-stalker": { essence: 462, biomeXp: 2772, hp: 34500 },
+  "abyssal-serpent": { essence: 572, biomeXp: 3432, hp: 32800 },
+  "elder-leviathan": { essence: 880, biomeXp: 5280, hp: 31800 },
 };
 for (const [id, snap] of Object.entries(TRENCH_MONSTER_SNAPSHOT)) {
   const mon = MONSTER_DATABASE.get(id);

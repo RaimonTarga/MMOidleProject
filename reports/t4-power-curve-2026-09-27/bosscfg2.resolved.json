@@ -1,0 +1,227 @@
+{
+ "apex-bramble-slasher#m": {
+  "tier": 3,
+  "node": "jungle",
+  "old": {
+   "hp": 11701,
+   "plating": 0,
+   "dr": 0.03
+  },
+  "plating": 0,
+  "dr": 0.05,
+  "mid": 59.5,
+  "hp": 25120,
+  "paths": {
+   "bossPatternVariants[id=bramble-venom-escape].damageMultiplier": 1.7,
+   "bossPatternVariants[id=bramble-venom-escape].steps[kind=payoff].onHitPoison.damagePerStack": 12
+  }
+ },
+ "apex-bramble-slasher#s": {
+  "tier": 3,
+  "node": "jungle",
+  "old": {
+   "hp": 11701,
+   "plating": 0,
+   "dr": 0.03
+  },
+  "plating": 0,
+  "dr": 0.05,
+  "mid": 59.5,
+  "hp": 25120,
+  "paths": {
+   "bossPatternVariants[id=bramble-venom-escape].damageMultiplier": 1.5,
+   "bossPatternVariants[id=bramble-venom-escape].steps[kind=payoff].onHitPoison.damagePerStack": 10
+  }
+ },
+ "cinder-shell-magma-salamander#m": {
+  "tier": 3,
+  "node": "volcanic",
+  "old": {
+   "hp": 11462,
+   "plating": 8,
+   "dr": 0.04
+  },
+  "plating": 8,
+  "dr": 0.3,
+  "mid": 55,
+  "hp": 19870,
+  "paths": {
+   "bossPattern.steps.0.castMs": 42000,
+   "bossScript.phases.0.actions.+": {
+    "type": "stoke-ramp",
+    "rampMsMult": 1.9
+   },
+   "bossScript.phases.1.actions[type=stoke-ramp].rampMsMult": 1.33,
+   "stats.attack": 150
+  }
+ },
+ "cinder-shell-magma-salamander#s": {
+  "tier": 3,
+  "node": "volcanic",
+  "old": {
+   "hp": 11462,
+   "plating": 8,
+   "dr": 0.04
+  },
+  "plating": 8,
+  "dr": 0.3,
+  "mid": 55,
+  "hp": 19870,
+  "paths": {
+   "bossPattern.steps.0.castMs": 42000,
+   "bossScript.phases.0.actions.+": {
+    "type": "stoke-ramp",
+    "rampMsMult": 1.9
+   },
+   "bossScript.phases.1.actions[type=stoke-ramp].rampMsMult": 1.33,
+   "stats.attack": 130
+  }
+ },
+ "dune-carapace-monarch#m": {
+  "tier": 3,
+  "node": "desert",
+  "old": {
+   "hp": 11940,
+   "plating": 10,
+   "dr": 0.08
+  },
+  "plating": 10,
+  "dr": 0.3,
+  "mid": 76,
+  "hp": 16320,
+  "paths": {
+   "bossPattern.damageMultiplier": 1.35,
+   "bossPatternVariants[id=monarch-standoff].damageMultiplier": 1.35
+  }
+ },
+ "dune-carapace-monarch#s": {
+  "tier": 3,
+  "node": "desert",
+  "old": {
+   "hp": 11940,
+   "plating": 10,
+   "dr": 0.08
+  },
+  "plating": 10,
+  "dr": 0.3,
+  "mid": 76,
+  "hp": 16320,
+  "paths": {
+   "bossPattern.damageMultiplier": 1.15,
+   "bossPatternVariants[id=monarch-standoff].damageMultiplier": 1.15
+  }
+ },
+ "verdant-crown-predator#m": {
+  "tier": 4,
+  "node": "jungle",
+  "old": {
+   "hp": 18352,
+   "plating": 0,
+   "dr": 0.04
+  },
+  "plating": 0,
+  "dr": 0.08,
+  "mid": 28,
+  "hp": 114850,
+  "paths": {
+   "bossScript.phases[name=Cornered].actions[stat=attack].mult": 1.2,
+   "bossScript.phases[name=Cornered].actions[stat=attackSpeed].mult": 1.2
+  }
+ },
+ "verdant-crown-predator#s": {
+  "tier": 4,
+  "node": "jungle",
+  "old": {
+   "hp": 18352,
+   "plating": 0,
+   "dr": 0.04
+  },
+  "plating": 0,
+  "dr": 0.08,
+  "mid": 28,
+  "hp": 114850,
+  "paths": {
+   "bossScript.phases[name=Cornered].actions[stat=attack].mult": 1.1,
+   "bossScript.phases[name=Cornered].actions[stat=attackSpeed].mult": 1.1
+  }
+ },
+ "caldera-sovereign#m": {
+  "tier": 4,
+  "node": "volcanic",
+  "old": {
+   "hp": 20646,
+   "plating": 10,
+   "dr": 0.05
+  },
+  "plating": 10,
+  "dr": 0.35,
+  "mid": 28.8,
+  "hp": 81770,
+  "paths": {
+   "bossPattern.steps.0.castMs": 60000,
+   "bossScript.phases.0.actions.+": {
+    "type": "stoke-ramp",
+    "rampMsMult": 3
+   },
+   "bossPattern.steps[kind=impact].rawDamage": 800
+  }
+ },
+ "caldera-sovereign#s": {
+  "tier": 4,
+  "node": "volcanic",
+  "old": {
+   "hp": 20646,
+   "plating": 10,
+   "dr": 0.05
+  },
+  "plating": 10,
+  "dr": 0.35,
+  "mid": 28.8,
+  "hp": 81770,
+  "paths": {
+   "bossPattern.steps.0.castMs": 60000,
+   "bossScript.phases.0.actions.+": {
+    "type": "stoke-ramp",
+    "rampMsMult": 3
+   },
+   "bossPattern.steps[kind=impact].rawDamage": 650
+  }
+ },
+ "charnel-crown-sovereign#m": {
+  "tier": 4,
+  "node": "graveyard",
+  "old": {
+   "hp": 19499,
+   "plating": 14,
+   "dr": 0.08
+  },
+  "plating": 14,
+  "dr": 0.25,
+  "mid": 91,
+  "hp": 29560,
+  "paths": {
+   "bossScript.phases.2.actions[type=harvest].intervalMs": 4250,
+   "raisesDead.intervalMs": 15300,
+   "bossScript.phases.1.actions[type=cast].actions[type=raise-dead].damageMult": 0.45
+  }
+ },
+ "charnel-crown-sovereign#s": {
+  "tier": 4,
+  "node": "graveyard",
+  "old": {
+   "hp": 19499,
+   "plating": 14,
+   "dr": 0.08
+  },
+  "plating": 14,
+  "dr": 0.25,
+  "mid": 91,
+  "hp": 29560,
+  "paths": {
+   "bossScript.phases.2.actions[type=harvest].intervalMs": 4250,
+   "raisesDead.intervalMs": 15300,
+   "bossScript.phases.1.actions[type=cast].actions[type=raise-dead].damageMult": 0.45,
+   "bossScript.phases.0.actions[type=cast].actions[monsterTypeId=bone-crawler].count": 3
+  }
+ }
+}

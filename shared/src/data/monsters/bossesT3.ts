@@ -56,7 +56,7 @@ export const bossMonsterEntriesT3 = [
   ['crag-gorged-horn-behemoth', {
     id: 'crag-gorged-horn-behemoth', name: 'Crag-Gorged Horn-Behemoth', color: 0x6688cc,
     isBoss: true,
-    stats: { hp: 12418, attack: 204, plating: 12, damageReduction: 0.05, speed: 18, attackRange: 72, attackCooldown: 4200, pullRange: 360 },
+    stats: { hp: 16070, attack: 204, plating: 20, damageReduction: 0.15, speed: 18, attackRange: 72, attackCooldown: 4200, pullRange: 360 },
     behavior: 'melee', attackStyle: 'quake', biome: 'mountain',
     rewards: { essence: 340, essenceType: 'blue', level: 5, biomeXp: 510 },
     ai: { wanderRadius: 100, leashRange: 920, idleMinMs: 3500, idleMaxMs: 8500 },
@@ -147,7 +147,7 @@ export const bossMonsterEntriesT3 = [
   ['deep-core-burrow-gorger', {
     id: 'deep-core-burrow-gorger', name: 'Deep-Core Burrow-Gorger', color: 0x332244,
     isBoss: true,
-    stats: { hp: 12895, attack: 196, plating: 16, damageReduction: 0.15, speed: 16, attackRange: 72, attackCooldown: 4500, pullRange: 330 },
+    stats: { hp: 14360, attack: 196, plating: 12, damageReduction: 0.35, speed: 16, attackRange: 72, attackCooldown: 4500, pullRange: 330 },
     behavior: 'melee', attackStyle: 'quake', biome: 'cave',
     rewards: { essence: 355, essenceType: 'red', level: 5, biomeXp: 530 },
     ai: { wanderRadius: 85, leashRange: 890, idleMinMs: 4000, idleMaxMs: 10000 },
@@ -268,7 +268,7 @@ export const bossMonsterEntriesT3 = [
   ['rot-spore-croc-behemoth', {
     id: 'rot-spore-croc-behemoth', name: 'Rot-Spore Croc-Behemoth', color: 0x1a3311,
     isBoss: true,
-    stats: { hp: 11940, attack: 52, plating: 8, damageReduction: 0.10, speed: 28, attackRange: 18, attackCooldown: 3400, pullRange: 330 },
+    stats: { hp: 10790, attack: 52, plating: 8, damageReduction: 0.30, speed: 28, attackRange: 18, attackCooldown: 3400, pullRange: 330 },
     behavior: 'melee', attackStyle: 'poison', biome: 'swamp',
     rewards: { essence: 345, essenceType: 'purple', level: 5, biomeXp: 518 },
     ai: { wanderRadius: 105, leashRange: 880, idleMinMs: 2800, idleMaxMs: 7000 },
@@ -362,7 +362,7 @@ export const bossMonsterEntriesT3 = [
   ['dune-carapace-monarch', {
     id: 'dune-carapace-monarch', name: 'Dune-Carapace Monarch', color: 0xccaa22,
     isBoss: true,
-    stats: { hp: 11940, attack: 196, plating: 10, damageReduction: 0.08, speed: 42, attackRange: 20, attackCooldown: 3000, pullRange: 350 },
+    stats: { hp: 15800, attack: 196, plating: 10, damageReduction: 0.30, speed: 42, attackRange: 20, attackCooldown: 3000, pullRange: 350 },
     behavior: 'melee', attackStyle: 'sandblast', biome: 'desert',
     rewards: { essence: 345, essenceType: 'yellow', level: 5, biomeXp: 518 },
     ai: { wanderRadius: 140, leashRange: 900, idleMinMs: 2200, idleMaxMs: 6500 },
@@ -377,7 +377,8 @@ export const bossMonsterEntriesT3 = [
     // generic Sandburst circle it used as filler.
     bossPattern: {
       id: 'monarch-execution', name: 'Death Sting',
-      damageMultiplier: 1.6, cooldownMs: 9000, initialCooldownMs: 4500,
+      // 2026-09-27 T4 power curve: Execution 1.6 -> 1.35 (win rate held as the fight grew x1.6).
+      damageMultiplier: 1.35, cooldownMs: 9000, initialCooldownMs: 4500,
       steps: [
         { kind: 'apply-status', name: 'Death Sting', castMs: 1100, fx: 'death-sting',
           effectId: SUN_MARK_EFFECT_ID, stacks: 1, durationMs: 6500 },
@@ -407,7 +408,7 @@ export const bossMonsterEntriesT3 = [
         // STANDOFF — the same sentence, run from range. Shorter than the melee
         // version so the Execution never roots the boss into a free melee target.
         id: 'monarch-standoff', name: 'Death Sting',
-        damageMultiplier: 1.6, cooldownMs: 8000, initialCooldownMs: 2500,
+        damageMultiplier: 1.35, cooldownMs: 8000, initialCooldownMs: 2500,
         steps: [
           { kind: 'apply-status', name: 'Death Sting', castMs: 1000, fx: 'death-sting',
             effectId: SUN_MARK_EFFECT_ID, stacks: 1, durationMs: 6500 },
@@ -466,7 +467,7 @@ export const bossMonsterEntriesT3 = [
   ['apex-bramble-slasher', {
     id: 'apex-bramble-slasher', name: 'Apex Bramble-Slasher', color: 0x115522,
     isBoss: true,
-    stats: { hp: 11701, attack: 104, plating: 0, damageReduction: 0.03, speed: 64, attackRange: 18, attackCooldown: 1500, pullRange: 340 },
+    stats: { hp: 22400, attack: 104, plating: 0, damageReduction: 0.05, speed: 64, attackRange: 18, attackCooldown: 1500, pullRange: 340 },
     behavior: 'melee', attackStyle: 'slash', biome: 'jungle',
     rewards: { essence: 340, essenceType: 'green', level: 5, biomeXp: 510 },
     ai: { wanderRadius: 140, leashRange: 920, idleMinMs: 2000, idleMaxMs: 6000 },
@@ -508,7 +509,8 @@ export const bossMonsterEntriesT3 = [
     },
     bossPatternVariants: [{
       id: 'bramble-venom-escape', name: 'Escape',
-      damageMultiplier: 2.0, cooldownMs: 12000, initialCooldownMs: 5000,
+      // 2026-09-27 T4 power curve: 2.0 -> 1.5 and poison 16 -> 10, keeping the win rate as the fight grew x2.
+      damageMultiplier: 1.5, cooldownMs: 12000, initialCooldownMs: 5000,
       stoppedBy: {
         // A stopped flee is NOT a stagger window (principle 5 exception): being
         // stopped is already its punishment. A <=1s stumble with the stun tell.
@@ -525,7 +527,7 @@ export const bossMonsterEntriesT3 = [
           relocate: 'near-target', emergeGap: 30, travelSpeed: 240, surfacesOnContact: true },
         { kind: 'payoff', name: 'Venomous Bite', castMs: 300, fx: 'venom-pounce',
           damageMult: 1.0, reach: 90,
-          onHitPoison: { stacks: 4, damagePerStack: 16, durationMs: 4000, tickIntervalMs: 1000 } },
+          onHitPoison: { stacks: 4, damagePerStack: 10, durationMs: 4000, tickIntervalMs: 1000 } },
         { kind: 'frenzy', name: 'Frenzy', durationMs: 5000, attackSpeedPct: 0.35, damagePct: 0.20 },
       ],
     }],
@@ -564,7 +566,7 @@ export const bossMonsterEntriesT3 = [
   ['cinder-shell-magma-salamander', {
     id: 'cinder-shell-magma-salamander', name: 'Cinder-Shell Magma-Salamander', color: 0xee4400,
     isBoss: true,
-    stats: { hp: 11462, attack: 179, plating: 8, damageReduction: 0.04, speed: 26, attackRange: 18, attackCooldown: 3000, pullRange: 340 },
+    stats: { hp: 18760, attack: 130, plating: 8, damageReduction: 0.30, speed: 26, attackRange: 18, attackCooldown: 3000, pullRange: 340 },
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 360, essenceType: 'red', level: 5, biomeXp: 540 },
     ai: { wanderRadius: 120, leashRange: 920, idleMinMs: 2500, idleMaxMs: 7000 },
@@ -589,7 +591,9 @@ export const bossMonsterEntriesT3 = [
       damageMultiplier: 1, cooldownMs: 60000, initialCooldownMs: 0,
       armBelowHpPct: 0.25, oncePerLife: true,
       steps: [
-        { kind: 'cast', name: 'Final Eruption', castMs: 22000, fx: 'cataclysm-cast', interruptible: false,
+        // 2026-09-27 T4 power curve: the DPS check stretches x1.9 with the fight (the arena's
+        // Heat clock does too, in nodeFeatures.ts volcanicHeat).
+        { kind: 'cast', name: 'Final Eruption', castMs: 42000, fx: 'cataclysm-cast', interruptible: false,
           announce: 'final-eruption' },
         // Unevadable: an evasion build must not dodge its way past the DPS check.
         { kind: 'impact', name: 'Final Eruption', anchor: 'self', radius: 2000,
@@ -647,7 +651,7 @@ export const bossMonsterEntriesT3 = [
   ['frost-plated-rime-mammoth', {
     id: 'frost-plated-rime-mammoth', name: 'Frost-Plated Rime-Mammoth', color: 0x88ccee,
     isBoss: true,
-    stats: { hp: 12895, attack: 204, plating: 12, damageReduction: 0.12, speed: 18, attackRange: 20, attackCooldown: 4200, pullRange: 360 },
+    stats: { hp: 19100, attack: 204, plating: 22, damageReduction: 0.15, speed: 18, attackRange: 20, attackCooldown: 4200, pullRange: 360 },
     behavior: 'melee', attackStyle: 'frost', biome: 'tundra',
     rewards: { essence: 350, essenceType: 'blue', level: 5, biomeXp: 525 },
     ai: { wanderRadius: 100, leashRange: 900, idleMinMs: 3000, idleMaxMs: 8000 },
@@ -736,7 +740,8 @@ export const bossMonsterEntriesT3 = [
         { hpPct: 1.0, actions: [
           { type: 'add-pattern', patternId: 'rime-frost-nova' },
           { type: 'add-pattern', patternId: 'rime-frost-spikes' },
-          { type: 'room-debuff', effectId: FROSTBITE_EFFECT_ID, intervalMs: 6000, maxStacks: 10,
+          // 2026-09-27 T4 power curve: Frostbite and Chill clocks x1.6 with the fight length (HP x1.5).
+          { type: 'room-debuff', effectId: FROSTBITE_EFFECT_ID, intervalMs: 9600, maxStacks: 10,
             data: { uncleansable: 1, ambientRampAccelPct: 0.12 } },
         ] },
         { hpPct: 0.5, name: 'Brittle',
@@ -748,10 +753,10 @@ export const bossMonsterEntriesT3 = [
           description: 'A blizzard fills the room: Frostbite stacks on you faster and faster, and your Chill builds quicker. Frostbite cannot be cleansed; end the fight.',
           actions: [
           { type: 'set-weather', weather: 'blizzard' },
-          { type: 'room-debuff', effectId: FROSTBITE_EFFECT_ID, intervalMs: 4000, maxStacks: 10,
+          { type: 'room-debuff', effectId: FROSTBITE_EFFECT_ID, intervalMs: 6400, maxStacks: 10,
             data: { uncleansable: 1, ambientRampAccelPct: 0.12 },
             accelerate: { intervalMult: 0.85, minIntervalMs: 1500 } },
-          { type: 'stoke-ramp', rampMsMult: 0.6 },
+          { type: 'stoke-ramp', rampMsMult: 0.96 },
         ] },
       ],
     },

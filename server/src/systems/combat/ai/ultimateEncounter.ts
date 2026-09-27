@@ -7,6 +7,7 @@ import {
   initScriptsUltimate,
   MONSTER_DATABASE,
   pointNearNodeFeatureShapeEdge,
+  GAME_CONFIG,
   randomPointOnShapeEdge,
   removeStatusEffect,
   RESOLVED_NODE_FEATURES,
@@ -695,7 +696,7 @@ function tickPlayerEnvironmentalDot(
   const dotResist = Math.min(0.9, player.usesSkills.passives["defense.dot-resistance"] ?? 0);
   let damage = Math.max(
     1,
-    Math.round(base * (1 - player.mitigatesDamage.damageReduction) * (1 - dotResist)),
+    Math.round(base * (1 - player.mitigatesDamage.damageReduction * GAME_CONFIG.DOT_DR_SHARE) * (1 - dotResist)),
   );
 
   damage = incomingFinalDamage(world, player, damage);

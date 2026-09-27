@@ -1,0 +1,23 @@
+errors 0 capped 6
+
+### T3: trash TTK (one mob, median over non-Conduit reference builds, seconds from first hit) vs boss
+| biome | trash (HP → TTK s) | spawn-weighted mean TTK | slowest trash | boss HP | boss TTK live (bench / offensive) | boss ÷ weighted trash | boss ÷ slowest trash |
+| Swamp | Plague-Shell Snapper 2320→6.4; Mire Hexer 510→1.7; Bog Lurker 490→1.7 | 3.3 | 6.4 | 11940 | 118.6 / 86.7 | 36.3 | 18.5 |
+| Mountain | Mountain Colossus 4675→13.7; Avalanche Ram 610→1.7; Crag Mortar 685→1.7 | 5.7 | 13.7 | 12418 | 91.7 / 65 | 16.1 | 6.7 |
+| Caverns | Deep Spider* 610→1.7; Cavern Troll* 4725→18; Crystal Gargoyle* 700→1.7 | 7.1 | 18 | 12895 | 106.1 / 69.5 | 14.9 | 5.9 |
+| Jungle | Jungle Stalker 1250→3.1; Silverback* 3200→9.6; Canopy Chameleon 1150→2.8 | 5.2 | 9.6 | 11701 | 68.9 / 50.1 | 13.3 | 7.2 |
+| Desert | Dune Stalker 4050→13.3; Desert Basilisk 4050→13.3; Gilded Scarab x2 510→1.7 | 7.5 | 13.3 | 11940 | 81.7 / 69.5 | 10.9 | 6.1 |
+| Tundra | Frost Lurker 950→2.6; Glacier Bear 3750→13.3; Rime Caster 880→2.2 | 6 | 13.3 | 12895 | 89.5 / 64.9 | 14.8 | 6.7 |
+| Volcanic | Ember Scuttler x4 500→1.7; Cinder Hound 1440→3.6; Magma Tortoise 3000→9.1; Ash Salamander 1330→3.1 | 3.2 | 9.1 | 11462 | 62.3 / 47.6 | 19.3 | 6.8 |
+
+### T4: trash TTK (one mob, median over non-Conduit reference builds, seconds from first hit) vs boss
+| biome | trash (HP → TTK s) | spawn-weighted mean TTK | slowest trash | boss HP | boss TTK live (bench / offensive) | boss ÷ weighted trash | boss ÷ slowest trash |
+| Mountain | Granite Mammoth 13800→14.9; Avalanche Tyrant 1600→1.7; Cliffside Roc 1700→1.7; Cragback Rhino* 6600→8 | 6.6 | 14.9 | 19499 | 44.5 / 36.2 | 6.8 | 3 |
+| Jungle | Hunting Panther 2400→1.7; Apex Silverback* 10000→11.6; Thornback Chameleon 2500→1.7; Emerald Constrictor* 12000→13.5 | 7.1 | 13.5 | 18352 | 32.2 / 23.8 | 4.5 | 2.4 |
+| Desert | Sand Viper 4029→4.2; Dune Basilisk 9006→12; Dune Tyrant* 6952→9; Sunshield Scarab x3 569→1.7 | 5.1 | 12 | 17893 | 37.7 / 24.9 | 7.5 | 3.1 |
+| Tundra | Rime-Tusk Mastodon 3300→2.4; Glacial Dire-Bear 4884→6; Hoarfrost Yeti 1800→1.7; Permafrost Behemoth* 7656→10 | 5 | 10 | 22940 | 47.1 / 36.2 | 9.4 | 4.7 |
+| Volcanic | Ember Skink x8 720→1.7; Infernal Direhound 1750→1.7; Obsidian Tortoise 4488→4.8; Ashspitter Salamander 1550→1.7; Magma Salamander* 5808→7 | 2.4 | 7 | 20646 | 34.4 / 23.1 | 14.3 | 4.9 |
+| Wasteland | Bone Crawler x3 1235→1.7; Plague Hound 1901→1.7; Carrion Vulture 1616→1.7; Bone Rat 950→1.7; Gravewright* 5702→6.4 | 2.4 | 6.4 | 19499 | 113.6 / 69 | 47.9 | 17.7 |
+| Deep-Sea Trench | Abyssal Serpent* 16800→20.1; Hadal Stalker* 16800→19; Elder Leviathan* 17640→23.2 | 20.8 | 23.2 | 21793 | 44.6 / 33.4 | 2.1 | 1.9 |
+
+median effective DPS vs trash dummies: T3 338.5 T4 828

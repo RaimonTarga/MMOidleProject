@@ -1,4 +1,5 @@
 import { outgoingFinalDamage } from './finalDamage';
+import { mitigatePlayerTickOnMonster } from './monsterTickMitigation';
 import { registerCombatListener } from "../engine/combatPipeline";
 import {
   applyStatusEffect,
@@ -362,7 +363,7 @@ function updateBurnEffects(world: World, dt: number): void {
           if (effect.remainingMs <= 0) removeStatusEffect(state, effectId);
           continue;
         }
-        const damage = outgoingFinalDamage(world, effect.sourceId, applyMonsterDamageTakenDebuffs(state, baseDamage));
+        const damage = outgoingFinalDamage(world, effect.sourceId, applyMonsterDamageTakenDebuffs(state, mitigatePlayerTickOnMonster(e, baseDamage, 'dot')));
         effect.data.pool = Math.max(0, (effect.data.pool ?? 0) - baseDamage);
         recordMonsterDamagedByPlayer(
           world,

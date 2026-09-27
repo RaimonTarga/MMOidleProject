@@ -39,10 +39,12 @@ export const trenchMonsterEntries = [
     // Approved T4 pressure pass: ordinary attack 230 -> 190 and Abyssal Bite
     // multiplier 2.5 -> 2.0. The hunter keeps its meaningful telegraphed Wound
     // bite, pursuit, and defensive identity without repeatable ordinary-hit burst.
-    stats: { hp: 16800, attack: 190, plating: 18, damageReduction: 0.20, speed: 28, attackRange: 15, attackCooldown: 2800, pullRange: 420 },
+    // 2026-09-27 T4 power curve: tuned to ~1 min per mob for a median build (mini-boss,
+    // not boss); DR-leaning eHP. Rewards x2.2 so reward per minute holds.
+    stats: { hp: 32800, attack: 190, plating: 18, damageReduction: 0.35, speed: 28, attackRange: 15, attackCooldown: 2800, pullRange: 420 },
     behavior: 'melee', attackStyle: 'bite-trench', biome: 'trench',
     elite: true,
-    rewards: { essence: 260, essenceType: 'green', level: 4, biomeXp: 1560 },
+    rewards: { essence: 572, essenceType: 'green', level: 4, biomeXp: 3432 },
     ai: { wanderRadius: 320, leashRange: 760, idleMinMs: 5000, idleMaxMs: 14000 },
     // `chargeOnAggro` REMOVED 2026-09-04: a speed burst on aggro made the opening
     // seconds unreadable, and the hunter's pursuit is already expressed by its
@@ -79,12 +81,14 @@ export const trenchMonsterEntries = [
     // Approved T4 pressure pass: ordinary attack 210 -> 175 and Pressure Lance
     // multiplier 2.4 -> 2.0. The ranged standoff, catchability, and telegraphed
     // slow rider remain unchanged.
-    stats: { hp: 16800, attack: 175, plating: 20, damageReduction: 0.10, speed: 22, attackRange: 240, attackCooldown: 3400, pullRange: 400 },
+    // 2026-09-27 T4 power curve: tuned to ~1 min per mob for a median build (mini-boss,
+    // not boss); DR-leaning eHP. Rewards x2.2 so reward per minute holds.
+    stats: { hp: 34500, attack: 175, plating: 20, damageReduction: 0.30, speed: 22, attackRange: 240, attackCooldown: 3400, pullRange: 400 },
     // `kiter`: it maintains standoff. Speed 22 is far below player base, so a
     // charging or mobile build always catches it - that contract is load-bearing.
     behavior: 'kiter', attackStyle: 'gunshot', biome: 'trench',
     elite: true,
-    rewards: { essence: 210, essenceType: 'green', level: 4, biomeXp: 1260 },
+    rewards: { essence: 462, essenceType: 'green', level: 4, biomeXp: 2772 },
     ai: { wanderRadius: 300, leashRange: 720, idleMinMs: 5500, idleMaxMs: 14000 },
     // PRESSURE LANCE - a periodic telegraphed heavy projectile, replacing the melee
     // cadence finisher it carried as a charger.
@@ -125,10 +129,12 @@ export const trenchMonsterEntries = [
     // Approved T4 pressure pass: ordinary attack 260 -> 210 and Devour
     // multiplier 2.4 -> 2.0. The anchor keeps its enormous HP, shell window,
     // defenses, and clear stand-and-fight telegraph.
-    stats: { hp: 17640, attack: 210, plating: 22, damageReduction: 0.24, speed: 20, attackRange: 15, attackCooldown: 3600, pullRange: 440 },
+    // 2026-09-27 T4 power curve: tuned to ~1 min per mob for a median build (mini-boss,
+    // not boss); DR-leaning eHP. Rewards x2.2 so reward per minute holds.
+    stats: { hp: 31800, attack: 210, plating: 22, damageReduction: 0.40, speed: 20, attackRange: 15, attackCooldown: 3600, pullRange: 440 },
     behavior: 'melee', attackStyle: 'bite-trench', biome: 'trench',
     elite: true,
-    rewards: { essence: 400, essenceType: 'green', level: 4, biomeXp: 2400 },
+    rewards: { essence: 880, essenceType: 'green', level: 4, biomeXp: 5280 },
     ai: { wanderRadius: 280, leashRange: 700, idleMinMs: 8000, idleMaxMs: 20000 },
     // No aggressive anti-kite charge (locked, unless testing proves it necessary):
     // this is the stand-and-fight monster, and chasing is the Serpent's job.
@@ -157,9 +163,9 @@ export const trenchMonsterEntries = [
         cooldownMs: 16000, initialCooldownMs: 9000, target: 'self', fx: 'trench-carapace',
         actions: [{
           type: 'shield', effectId: 'elder-carapace-renewal',
-          // Coupled to the HP adoption (5880 -> 17640): shieldPct x maxHp, so the
-          // barrier holds its pre-adoption ABSOLUTE budget of 0.18 x 5880 = 1058.4.
-          shieldPct: 0.06, durationMs: 5000,
+          // Coupled to the HP adoptions (5880 -> 17640 -> 31800): shieldPct x maxHp, so the
+          // barrier holds its original ABSOLUTE budget of 0.18 x 5880 = 1058.4.
+          shieldPct: (0.18 * 5880) / 31800, durationMs: 5000,
         }],
       },
     ],

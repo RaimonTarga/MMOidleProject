@@ -1,5 +1,6 @@
 import { outgoingFinalDamage, incomingFinalDamage } from '../../../combat/damage/finalDamage';
-import { resolveDotStackCap } from '@mmo-idle/shared';
+import { mitigatePlayerTickOnMonster } from '../../../combat/damage/monsterTickMitigation';
+import { GAME_CONFIG, resolveDotStackCap } from '@mmo-idle/shared';
 import {
   MONSTER_DATABASE,
   computeDotClassDamagePerStack,
@@ -182,6 +183,7 @@ export function updateDotArchetype(world: World, dt: number): void {
           effect.data.edDiminishRate,
         )
       : computeScaledDotDamage(effect);
+    damage = mitigatePlayerTickOnMonster(entity, damage, 'dot');
 
     // Apply DoT vulnerability effects to DoT ticks.
     damage = Math.max(1, Math.round(damage * getSmolderMult(state) * getFrozenMult(state) * getFrostbiteDotTakenMult(state)));
@@ -258,7 +260,7 @@ export function updateDotArchetype(world: World, dt: number): void {
 
   // ── Player-side: monster-applied DoT ticking on players ──────────────────
   // DoT bypasses plating (flat armor) — that is its inherent identity.
-  // damageReduction (%) applies so builds without dot-resistance retain baseline
+  // damageReduction (%) applies at DOT_DR_SHARE so builds without dot-resistance retain baseline
   // protection; dot-resistance is the dedicated counter that stacks on top.
   const playersToRespawn: Array<{ playerId: string; cause: DeathCause }> = [];
 
@@ -283,8 +285,8 @@ export function updateDotArchetype(world: World, dt: number): void {
       0.9,
       entity.usesSkills.passives["defense.dot-resistance"] ?? 0,
     );
-    // General DR applies fully to DoT; dedicated resistance adds specialization.
-    const drForDot = entity.mitigatesDamage.damageReduction;
+    // General DR applies at GAME_CONFIG.DOT_DR_SHARE; dedicated resistance adds specialization.
+    const drForDot = entity.mitigatesDamage.damageReduction * GAME_CONFIG.DOT_DR_SHARE;
     const damage = Math.max(
       1,
       Math.round(base * (1 - drForDot) * (1 - dotResist)),

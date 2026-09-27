@@ -1,4 +1,5 @@
 import { outgoingFinalDamage } from '../../../../../combat/damage/finalDamage';
+import { mitigatePlayerTickOnMonster } from '../../../../../combat/damage/monsterTickMitigation';
 import { getStatusEffects, pruneStatusEffects } from '@mmo-idle/shared';
 import type { World } from '../../../../../../world/World';
 import { detachMarkerIfNoEffects } from '../../../../../../ecs/markerHelpers';
@@ -33,7 +34,7 @@ export function updateHemorrhages(world: World, dt: number): void {
 
       bleed.data['nextTickIn'] = bleed.data['tickIntervalMs'];
       bleed.stacks--; // consume a stack — drives the target-frame countdown
-      const tickDmg = outgoingFinalDamage(world, bleed.sourceId, applyMonsterDamageTakenDebuffs(state, bleed.data['damagePerTick']));
+      const tickDmg = outgoingFinalDamage(world, bleed.sourceId, applyMonsterDamageTakenDebuffs(state, mitigatePlayerTickOnMonster(entity, bleed.data['damagePerTick'], 'dot')));
       recordMonsterDamagedByPlayer(
         world,
         bleed.sourceId,

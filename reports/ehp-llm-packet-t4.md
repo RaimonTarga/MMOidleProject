@@ -18,7 +18,7 @@ Generated from `tools/ehp-report.ts --llm-packet`. Progression-focused companion
 - **Kill-burst** recovery is undercounted (no kill cadence modeled); flagged in the charm table.
 - **Evasion** is averaged (dodgeRate × evade-mitigation), not the deterministic first-hit accumulator.
 - **Barrier** is a flat one-time buffer — no between-engagement recharge, no burst-vs-chip interaction, no DoT bypass beyond notes.
-- **Ramping mitigations ARE modelled**, as duty-cycle averages over the 60s window, never at their printed maximum: hardening (ramp + big-hit reset, assumed spike cadence 12s when only a spike trips it), reactive plating (stack ramp against the attacker's own cadence), stationary DR (scaled by an assumed 50% stationary duty cycle — override with `--stationary-fraction`), and sustained-fight DR. Each is printed in the affected row's notes. The assumed duty cycles are the two judgement calls in this report; treat Tundra and Volcanic rows accordingly.
+- **Ramping mitigations ARE modelled**, as duty-cycle averages over the 60s window, never at their printed maximum: reactive plating (stack ramp against the attacker's own cadence), stationary DR (scaled by an assumed 50% stationary duty cycle — override with `--stationary-fraction`). Each is printed in the affected row's notes. The assumed duty cycles are the two judgement calls in this report; treat Tundra and Volcanic rows accordingly.
 - **Not** modelled: core DR layer, wards, barrier recharge, barrier-break heals, on-kill Recovery.
 - **Multi-enemy pressure** is not modeled; a single attacker profile is assumed (idle pulls are often several mobs).
 
@@ -26,22 +26,22 @@ Generated from `tools/ehp-report.ts --llm-packet`. Progression-focused companion
 
 | Checkpoint | Gear | Attacker | Avg eHP | Avg net/s | Min TTL | Safe % | Blocked |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Prev-tier +3 vs current mobs | T3 +3 | 121 atk / 0.41 aps / 4.33 dot / ×1.02 | 706 | -7.09 | 13.3s | 25.0% | 0 |
-| Current +0 vs current mobs (entry) | T4 +0 | 121 atk / 0.41 aps / 4.33 dot / ×1.02 | 982 | -10.1 | 13.8s | 30.6% | 0 |
-| Current +3 vs current mobs (geared) | T4 +3 | 121 atk / 0.41 aps / 4.33 dot / ×1.02 | 4294 | 19.2 | sustains | 100% | 0 |
-| Current +3 vs boss/elite | T4 +3 | 204 atk / 0.24 aps / 0.00 dot / ×1.00 | 1397 | 8.03 | 50.9s | 47.2% | 0 |
-| Current +3 vs next-tier mobs | T4 +3 | 184 atk / 0.40 aps / 9.50 dot / ×1.24 | 1272 | -7.53 | 17.0s | 30.6% | 0 |
+| Prev-tier +3 vs current mobs | T3 +3 | 82.6 atk / 0.41 aps / 4.33 dot / ×1.00 | 710 | 1.56 | 33.2s | 44.4% | 0 |
+| Current +0 vs current mobs (entry) | T4 +0 | 82.6 atk / 0.41 aps / 4.33 dot / ×1.00 | 997 | -7.49 | 26.2s | 33.3% | 0 |
+| Current +3 vs current mobs (geared) | T4 +3 | 82.6 atk / 0.41 aps / 4.33 dot / ×1.00 | 1289 | 20.9 | sustains | 100% | 0 |
+| Current +3 vs boss/elite | T4 +3 | 204 atk / 0.24 aps / 0.00 dot / ×1.00 | 1318 | 18.0 | 96.1s | 66.7% | 0 |
+| Current +3 vs next-tier mobs | T4 +3 | 123 atk / 0.40 aps / 8.07 dot / ×1.11 | 1231 | 11.9 | 47.9s | 50.0% | 0 |
 
 ## Class Average eHP By Checkpoint
 
 | Class | Prev-tier +3 vs current mobs | Current +0 vs current mobs (entry) | Current +3 vs current mobs (geared) | Current +3 vs boss/elite | Current +3 vs next-tier mobs |
 | --- | --- | --- | --- | --- | --- |
-| Apprentice | 689 | 946 | 5111 | 1238 | 1228 |
-| Conduit | 610 | 824 | 3279 | 1131 | 1048 |
-| Slinger | 688 | 958 | 2978 | 1614 | 1267 |
-| Spirit | 514 | 716 | 2551 | 971 | 918 |
-| Squire | 982 | 1415 | 6545 | 1998 | 1841 |
-| Striker | 753 | 1030 | 5303 | 1427 | 1332 |
+| Apprentice | 690 | 969 | 1232 | 1185 | 1244 |
+| Conduit | 565 | 759 | 1035 | 1005 | 975 |
+| Slinger | 830 | 1163 | 1479 | 1630 | 1440 |
+| Spirit | 532 | 738 | 971 | 944 | 918 |
+| Squire | 914 | 1314 | 1677 | 1779 | 1564 |
+| Striker | 730 | 1042 | 1341 | 1362 | 1242 |
 
 ## Armor Comparison
 
@@ -49,55 +49,55 @@ _No charm equipped; eHP/TTL/net are vs the avg-mob profile, averaged over spec-a
 
 | Armor | Plus | maxHP | Plating | DR | Evasion | Special | eHP | TTL | Net/s | Best matchup | Worst matchup |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Deathless Duneplate | +0 | 165 | 38.0 | 0.00% | 0.00 | defense.cheat-death=1.00, defense.cleanse-interval-ms=8000, defense.cleanse-stacks=2.00, defense.debuff-resistance=0.30, defense.post-cheat-death-heal-ms=4000, defense.post-cheat-death-heal-pct=0.30 | 608 | 30.8s | -29.2 | DoT-heavy | hardest |
-| Deathless Duneplate | +5 | 365 | 83.0 | 0.00% | 0.00 | defense.cheat-death=1.00, defense.cleanse-interval-ms=8000, defense.cleanse-stacks=2.00, defense.debuff-resistance=0.30, defense.post-cheat-death-heal-ms=4000, defense.post-cheat-death-heal-pct=0.30 | 3732 | 137s | -7.20 | avg mob | hardest |
-| Deep Sea Carapace | +0 | 90.0 | 24.0 | 22.0% | 0.00 | defense.sustained-fight-dr-bonus=0.01, defense.sustained-fight-dr-max=0.05, defense.sustained-fight-ramptime-ms=10000 | 472 | 10.1s | -27.2 | avg mob | DoT-heavy |
-| Deep Sea Carapace | +5 | 200 | 54.0 | 32.0% | 0.00 | defense.sustained-fight-dr-bonus=0.01, defense.sustained-fight-dr-max=0.05, defense.sustained-fight-ramptime-ms=10000 | 1328 | 47.4s | -14.0 | avg mob | DoT-heavy |
-| Grave Ward | +0 | 150 | 20.0 | 0.00% | 0.00 | defense.debt-cheat-death=1.00, defense.dot-resistance=0.40, defense.hit-to-dot-pct=0.08 | 492 | 10.5s | -34.3 | DoT-heavy | hardest |
-| Grave Ward | +5 | 330 | 40.0 | 0.00% | 0.00 | defense.debt-cheat-death=1.00, defense.dot-resistance=0.40, defense.hit-to-dot-pct=0.08 | 1124 | 85.4s | -24.0 | DoT-heavy | hardest |
-| Lava-Tempered Hide | +0 | 150 | 28.0 | 0.00% | 0.00 | defense.hardening-max=24.0, defense.hardening-per-sec=3.00, defense.hardening-reset-pct=0.25, defense.overheal-ward-pct=0.50 | 589 | 13.5s | -29.3 | DoT-heavy | hardest |
-| Lava-Tempered Hide | +5 | 330 | 63.0 | 0.00% | 0.00 | defense.hardening-max=24.0, defense.hardening-per-sec=3.00, defense.hardening-reset-pct=0.25, defense.overheal-ward-pct=0.50 | 3208 | 106s | -7.83 | avg mob | hardest |
-| Permafrost Sovereign | +0 | 180 | 28.0 | 0.00% | 0.00 | defense.max-hit-mult=0.50, defense.max-hit-pct=0.25, defense.stationary-dr-pct=0.20, defense.stationary-dr-ramptime-ms=5000 | 612 | 13.6s | -30.4 | hardest | next-tier |
-| Permafrost Sovereign | +5 | 390 | 63.0 | 0.00% | 0.00 | defense.max-hit-mult=0.50, defense.max-hit-pct=0.25, defense.stationary-dr-pct=0.20, defense.stationary-dr-ramptime-ms=5000 | 2068 | 59.1s | -13.9 | avg mob | hardest |
-| Plaguebound Mantle | +0 | 150 | 16.0 | 0.00% | 0.00 | defense.debuff-resistance=0.25, defense.dot-resistance=0.35, defense.hit-plating-duration-ms=4000, defense.hit-plating-max-stacks=5.00, defense.hit-plating-per-stack=1.00, defense.hit-to-dot-pct=0.08 | 484 | 10.3s | -34.8 | DoT-heavy | boss |
-| Plaguebound Mantle | +5 | 330 | 46.0 | 0.00% | 0.00 | defense.debuff-resistance=0.25, defense.dot-resistance=0.35, defense.hit-plating-duration-ms=4000, defense.hit-plating-max-stacks=5.00, defense.hit-plating-per-stack=1.00, defense.hit-to-dot-pct=0.08 | 1330 | 40.8s | -19.9 | DoT-heavy | hardest |
-| Primal Canopy | +0 | 145 | 24.0 | 0.00% | 0.55 | defense.evade-mitigation=0.20 | 715 | 16.1s | -22.6 | boss | DoT-heavy |
-| Primal Canopy | +5 | 320 | 54.0 | 0.00% | 0.70 | defense.evade-mitigation=0.20 | 2015 | 70.7s | -11.7 | avg mob | DoT-heavy |
-| Pyroclasm Mantle | +0 | 165 | 38.0 | 0.00% | 0.00 | defense.hardening-max=32.0, defense.hardening-max-dr-bonus=0.06, defense.hardening-max-dr-ms=3000, defense.hardening-per-sec=4.00, defense.hardening-reset-pct=0.25 | 967 | 181s | -18.6 | avg mob | hardest |
-| Pyroclasm Mantle | +5 | 365 | 88.0 | 0.00% | 0.00 | defense.hardening-max=32.0, defense.hardening-max-dr-bonus=0.06, defense.hardening-max-dr-ms=3000, defense.hardening-per-sec=4.00, defense.hardening-reset-pct=0.25 | 7265 | 143s | -0.48 | avg mob | hardest |
-| Stormwall Plate | +0 | 187 | 22.0 | 0.00% | 0.00 | defense.barrier-break-hp-recovery-pct=0.30, defense.max-hit-mult=0.50, defense.max-hit-pct=0.25, guard.potency-pct=0.54 | 534 | 11.5s | -35.9 | hardest | avg mob |
-| Stormwall Plate | +5 | 280 | 33.0 | 0.00% | 0.00 | defense.barrier-break-hp-recovery-pct=0.30, defense.max-hit-mult=0.50, defense.max-hit-pct=0.25, guard.potency-pct=0.64 | 809 | 19.5s | -30.5 | DoT-heavy | next-tier |
-| Titan's Keep | +0 | 187 | 29.0 | 0.00% | 0.00 | defense.max-hit-mult=0.50, defense.max-hit-pct=0.25, defense.max-hit-refills-barrier=1.00, guard.potency-pct=0.54 | 581 | 12.8s | -33.0 | hardest | next-tier |
-| Titan's Keep | +5 | 280 | 44.0 | 0.00% | 0.00 | defense.max-hit-mult=0.50, defense.max-hit-pct=0.25, defense.max-hit-refills-barrier=1.00, guard.potency-pct=0.64 | 961 | 29.6s | -25.4 | DoT-heavy | next-tier |
+| Deathless Duneplate | +0 | 288 | 19.0 | 18.0% | 0.00 | defense.engagement-dr-ms=10000, defense.engagement-dr-pct=0.30 | 933 | 46.5s | -17.9 | avg mob | DoT-heavy |
+| Deathless Duneplate | +5 | 433 | 29.0 | 18.0% | 0.00 | defense.engagement-dr-ms=10000, defense.engagement-dr-pct=0.35 | 1501 | 116s | -13.6 | avg mob | DoT-heavy |
+| Deep Sea Carapace | +0 | 330 | 0.00 | 26.0% | 0.00 | defense.debuff-resistance=0.30 | 890 | 60.6s | -21.0 | hardest | DoT-heavy |
+| Deep Sea Carapace | +5 | 475 | 0.00 | 30.0% | 0.00 | defense.debuff-resistance=0.40 | 1250 | 47.6s | -18.5 | hardest | DoT-heavy |
+| Grave Ward | +0 | 302 | 0.00 | 18.0% | 0.00 | defense.dot-resistance=0.25, defense.hit-to-dot-pct=0.30 | 867 | 574s | -20.3 | hardest | DoT-heavy |
+| Grave Ward | +5 | 452 | 0.00 | 18.0% | 0.00 | defense.dot-resistance=0.35, defense.hit-to-dot-pct=0.30 | 1254 | 47.2s | -17.8 | hardest | DoT-heavy |
+| Lava-Tempered Hide | +0 | 288 | 8.00 | 18.0% | 0.00 | defense.hit-plating-duration-ms=3000, defense.hit-plating-max-stacks=8.00, defense.hit-plating-per-stack=1.00, defense.overheal-ward-cap-pct=0.15, defense.overheal-ward-pct=0.50 | 879 | 50.9s | -19.2 | avg mob | DoT-heavy |
+| Lava-Tempered Hide | +5 | 433 | 14.0 | 18.0% | 0.00 | defense.hit-plating-duration-ms=3000, defense.hit-plating-max-stacks=8.00, defense.hit-plating-per-stack=1.00, defense.overheal-ward-cap-pct=0.15, defense.overheal-ward-pct=0.50 | 1314 | 53.5s | -16.1 | avg mob | DoT-heavy |
+| Permafrost Sovereign | +0 | 346 | 3.00 | 18.0% | 0.00 | defense.stationary-dr-pct=0.16, defense.stationary-dr-ramptime-ms=4000 | 974 | 223s | -19.6 | hardest | DoT-heavy |
+| Permafrost Sovereign | +5 | 519 | 5.00 | 18.0% | 0.00 | defense.stationary-dr-pct=0.16, defense.stationary-dr-ramptime-ms=4000 | 1376 | 61.1s | -17.7 | hardest | DoT-heavy |
+| Plaguebound Mantle | +0 | 302 | 0.00 | 18.0% | 0.00 | defense.dot-resistance=0.45, defense.hit-to-dot-pct=0.20 | 917 | 74.3s | -19.0 | DoT-heavy | boss |
+| Plaguebound Mantle | +5 | 452 | 0.00 | 18.0% | 0.00 | defense.dot-resistance=0.55, defense.hit-to-dot-pct=0.20 | 1316 | 51.8s | -16.7 | DoT-heavy | boss |
+| Primal Canopy | +0 | 274 | 0.00 | 10.0% | 0.36 | defense.dot-resistance=0.25, defense.evade-mitigation=0.30 | 957 | 112s | -16.9 | hardest | DoT-heavy |
+| Primal Canopy | +5 | 411 | 0.00 | 10.0% | 0.44 | defense.dot-resistance=0.35, defense.evade-mitigation=0.30 | 1444 | 62.6s | -13.8 | hardest | DoT-heavy |
+| Pyroclasm Mantle | +0 | 288 | 8.00 | 18.0% | 0.00 | defense.hit-plating-duration-ms=3000, defense.hit-plating-max-stacks=16.0, defense.hit-plating-per-stack=1.00 | 926 | 41.2s | -18.1 | avg mob | DoT-heavy |
+| Pyroclasm Mantle | +5 | 433 | 14.0 | 18.0% | 0.00 | defense.hit-plating-duration-ms=3000, defense.hit-plating-max-stacks=16.0, defense.hit-plating-per-stack=1.00 | 1385 | 61.5s | -15.0 | avg mob | DoT-heavy |
+| Stormwall Plate | +0 | 346 | 3.00 | 21.0% | 0.00 | defense.barrier-break-hp-recovery-pct=0.20, defense.barrier-pct=0.10, guard.potency-pct=0.20 | 908 | 95.4s | -21.2 | hardest | DoT-heavy |
+| Stormwall Plate | +5 | 519 | 5.00 | 21.0% | 0.00 | defense.barrier-break-hp-recovery-pct=0.20, defense.barrier-pct=0.10, guard.potency-pct=0.30 | 1284 | 55.7s | -19.3 | hardest | DoT-heavy |
+| Titan's Keep | +0 | 346 | 3.00 | 21.0% | 0.00 | guard.potency-pct=0.30 | 908 | 86.8s | -21.2 | hardest | DoT-heavy |
+| Titan's Keep | +5 | 519 | 5.00 | 21.0% | 0.00 | guard.potency-pct=0.40 | 1284 | 50.8s | -19.3 | hardest | DoT-heavy |
 
 ## Charm Comparison
 
-_Reference armor Stormwall Plate +3; metrics vs avg-mob profile averaged over class builds. eHP contribution = eHP with charm − without. Kill-burst needs a kill cadence to value fully._
+_Reference armor Permafrost Sovereign +3; metrics vs avg-mob profile averaged over class builds. eHP contribution = eHP with charm − without. Kill-burst needs a kill cadence to value fully._
 
 | Charm | Plus | recovery | Special | Recov/s | eHP contrib | TTL | Best matchup | Worst matchup |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Ancient Canopy | +0 | 16.0 | defense.recovery-ramp-max-pct=0.14, defense.recovery-ramp-ramptime-ms=9000, defense.recovery-ramp-start-pct=0.04 | 15.9 | -274 | 18.3s | hardest | avg mob |
-| Ancient Canopy | +5 | 16.0 | defense.recovery-ramp-max-pct=0.24, defense.recovery-ramp-ramptime-ms=9000, defense.recovery-ramp-start-pct=0.04 | 27.4 | 0.00 | 95.6s | DoT-heavy | next-tier |
-| Deepfreeze Ward | +0 | 16.0 | defense.absorb-ramp-max-pct=0.18, defense.absorb-ramp-start-pct=0.04, defense.absorb-ramptime-ms=12000, defense.barrier-pct=0.14 | 10.4 | -274 | 21.8s | hardest | DoT-heavy |
-| Deepfreeze Ward | +5 | 16.0 | defense.absorb-ramp-max-pct=0.33, defense.absorb-ramp-start-pct=0.04, defense.absorb-ramptime-ms=12000, defense.barrier-pct=0.29 | 14.3 | 0.00 | 64.3s | hardest | next-tier |
-| Fortress Heart | +0 | 6.00 | defense.barrier-pct=0.36 | 4.43 | -274 | 17.2s | hardest | avg mob |
-| Fortress Heart | +5 | 9.00 | defense.barrier-pct=0.42 | 6.70 | 0.00 | 83.1s | DoT-heavy | next-tier |
-| Glacial Ward | +0 | 16.0 | defense.absorb-pct=0.12, defense.barrier-pct=0.17 | 11.1 | -274 | 23.9s | hardest | DoT-heavy |
-| Glacial Ward | +5 | 16.0 | defense.absorb-pct=0.27, defense.barrier-pct=0.32 | 17.1 | 0.00 | 103s | hardest | boss |
-| Grave-Tide Pulse | +0 | 16.0 | defense.recovery-active-pct=0.04, defense.recovery-pulse-interval-ms=8000, defense.recovery-pulse-pct=0.04 | 12.9 | -274 | 15.6s | hardest | avg mob |
-| Grave-Tide Pulse | +5 | 16.0 | defense.recovery-active-pct=0.09, defense.recovery-pulse-interval-ms=8000, defense.recovery-pulse-pct=0.09 | 26.9 | 0.00 | 56.7s | DoT-heavy | next-tier |
-| Inferno Heart | +0 | 16.0 | defense.recovery-active-pct=0.06, defense.recovery-on-kill-pct=0.04 (on-kill Recovery undercounted) | 12.9 | -274 | 15.6s | hardest | avg mob |
-| Inferno Heart | +5 | 16.0 | defense.recovery-active-pct=0.16, defense.recovery-on-kill-pct=0.14 (on-kill Recovery undercounted) | 30.0 | 0.00 | 77.9s | DoT-heavy | next-tier |
-| Last Oasis | +0 | 16.0 | defense.cleanse-empty-heal-pct=0.07, defense.cleanse-interval-ms=6000, defense.cleanse-per-stack-heal-pct=0.02, defense.cleanse-stacks=2.00 | 11.4 | -274 | 25.5s | hardest | avg mob |
-| Last Oasis | +5 | 16.0 | defense.cleanse-empty-heal-pct=0.15, defense.cleanse-interval-ms=6000, defense.cleanse-per-stack-heal-pct=0.02, defense.cleanse-stacks=2.00 | 21.2 | 0.00 | 40.5s | DoT-heavy | next-tier |
-| Necrotic Pulse | +0 | 16.0 | defense.recovery-pulse-interval-ms=6000, defense.recovery-pulse-pct=0.11 | 14.2 | -274 | 16.6s | hardest | avg mob |
-| Necrotic Pulse | +5 | 16.0 | defense.recovery-pulse-interval-ms=6000, defense.recovery-pulse-pct=0.26 | 31.7 | 0.00 | 51.7s | DoT-heavy | next-tier |
-| Overgrowth Pulse | +0 | 16.0 | defense.overheal-ward-pct=0.25, defense.recovery-ramp-max-pct=0.12, defense.recovery-ramp-ramptime-ms=9000, defense.recovery-ramp-start-pct=0.04 | 14.9 | -274 | 17.3s | hardest | avg mob |
-| Overgrowth Pulse | +5 | 16.0 | defense.overheal-ward-pct=0.25, defense.recovery-ramp-max-pct=0.22, defense.recovery-ramp-ramptime-ms=9000, defense.recovery-ramp-start-pct=0.04 | 26.1 | 0.00 | 61.6s | DoT-heavy | next-tier |
-| Pressure Vessel | +0 | 16.0 | defense.absorb-pct=0.16, defense.recovery-pulse-interval-ms=8000, defense.recovery-pulse-pct=0.10 | 17.4 | -274 | 20.0s | hardest | DoT-heavy |
-| Pressure Vessel | +5 | 16.0 | defense.absorb-pct=0.31, defense.recovery-pulse-interval-ms=8000, defense.recovery-pulse-pct=0.20 | 31.8 | 0.00 | 46.6s | hardest | boss |
-| Shieldmend Ward | +0 | 6.00 | defense.barrier-break-heal-pct=0.25, defense.barrier-pct=0.32 | 4.43 | -274 | 16.7s | hardest | avg mob |
-| Shieldmend Ward | +5 | 9.00 | defense.barrier-break-heal-pct=0.25, defense.barrier-pct=0.37 | 6.70 | 0.00 | 80.2s | DoT-heavy | next-tier |
+| Ancient Canopy | +0 | 14.0 | defense.recovery-ramp-max-pct=0.14, defense.recovery-ramp-ramptime-ms=9000, defense.recovery-ramp-start-pct=0.04, guard.recovery-ramp-advance-ms=4000 | 22.4 | -402 | 52.2s | hardest | DoT-heavy |
+| Ancient Canopy | +5 | 21.0 | defense.recovery-ramp-max-pct=0.24, defense.recovery-ramp-ramptime-ms=9000, defense.recovery-ramp-start-pct=0.04, guard.recovery-ramp-advance-ms=4000 | 52.8 | 0.00 | sustains | hardest | DoT-heavy |
+| Deepfreeze Ward | +0 | 14.0 | defense.absorb-ramp-max-pct=0.30, defense.absorb-ramp-start-pct=0.06, defense.absorb-ramptime-ms=12000 | 13.0 | -402 | 205s | hardest | DoT-heavy |
+| Deepfreeze Ward | +5 | 21.0 | defense.absorb-ramp-max-pct=0.45, defense.absorb-ramp-start-pct=0.06, defense.absorb-ramptime-ms=12000 | 21.9 | 0.00 | 44.0s | hardest | DoT-heavy |
+| Fortress Heart | +0 | 6.00 | defense.barrier-pct=0.36, guard.barrier-refill-pct=0.30 | 6.52 | -402 | 123s | hardest | DoT-heavy |
+| Fortress Heart | +5 | 9.00 | defense.barrier-pct=0.42, guard.barrier-refill-pct=0.30 | 10.6 | 0.00 | 374s | hardest | DoT-heavy |
+| Glacial Ward | +0 | 14.0 | defense.barrier-pct=0.22, defense.barrier-stationary-recharge-pct=0.03, guard.barrier-refill-on-control-pct=1.00 | 9.68 | -402 | 64.1s | hardest | DoT-heavy |
+| Glacial Ward | +5 | 21.0 | defense.barrier-pct=0.37, defense.barrier-stationary-recharge-pct=0.03, guard.barrier-refill-on-control-pct=1.00 | 17.2 | 0.00 | 47.3s | hardest | DoT-heavy |
+| Grave-Tide Pulse | +0 | 14.0 | defense.recovery-active-pct=0.04, defense.recovery-pulse-interval-ms=8000, defense.recovery-pulse-pct=0.04, guard.cleanse-pulse=1.00 | 18.2 | -402 | 37.9s | hardest | DoT-heavy |
+| Grave-Tide Pulse | +5 | 21.0 | defense.recovery-active-pct=0.12, defense.recovery-pulse-interval-ms=8000, defense.recovery-pulse-pct=0.12, guard.cleanse-pulse=1.00 | 63.6 | 0.00 | sustains | hardest | DoT-heavy |
+| Inferno Heart | +0 | 14.0 | defense.recovery-active-pct=0.10, defense.recovery-on-kill-pct=0.08 (on-kill Recovery undercounted) | 23.9 | -402 | 60.2s | hardest | DoT-heavy |
+| Inferno Heart | +5 | 21.0 | defense.recovery-active-pct=0.20, defense.recovery-on-kill-pct=0.18 (on-kill Recovery undercounted) | 68.1 | 0.00 | sustains | hardest | DoT-heavy |
+| Last Oasis | +0 | 14.0 | cleanse.cooldown-reduction-pct=0.25 | 9.68 | -402 | 52.8s | hardest | DoT-heavy |
+| Last Oasis | +5 | 21.0 | cleanse.cooldown-reduction-pct=0.33 | 17.2 | 0.00 | 35.2s | hardest | DoT-heavy |
+| Necrotic Pulse | +0 | 14.0 | defense.recovery-pulse-interval-ms=6000, defense.recovery-pulse-pct=0.11, guard.cleanse-pulse=1.00 | 20.1 | -402 | 43.1s | hardest | DoT-heavy |
+| Necrotic Pulse | +5 | 21.0 | defense.recovery-pulse-interval-ms=6000, defense.recovery-pulse-pct=0.26, guard.cleanse-pulse=1.00 | 61.3 | 0.00 | sustains | hardest | DoT-heavy |
+| Overgrowth Pulse | +0 | 14.0 | defense.overheal-ward-cap-pct=0.05, defense.overheal-ward-pct=0.10, defense.recovery-ramp-max-pct=0.12, defense.recovery-ramp-ramptime-ms=9000, defense.recovery-ramp-start-pct=0.04, guard.recovery-ramp-advance-ms=4000 | 21.0 | -402 | 46.3s | hardest | DoT-heavy |
+| Overgrowth Pulse | +5 | 21.0 | defense.overheal-ward-cap-pct=0.05, defense.overheal-ward-pct=0.10, defense.recovery-ramp-max-pct=0.22, defense.recovery-ramp-ramptime-ms=9000, defense.recovery-ramp-start-pct=0.04, guard.recovery-ramp-advance-ms=4000 | 50.3 | 0.00 | 8812s | hardest | DoT-heavy |
+| Pressure Vessel | +0 | 14.0 | defense.recovery-skill-potency=0.30, recovery.cooldown-reduction-pct=0.15 | 9.68 | -402 | 52.8s | hardest | DoT-heavy |
+| Pressure Vessel | +5 | 21.0 | defense.recovery-skill-potency=0.40, recovery.cooldown-reduction-pct=0.25 | 17.2 | 0.00 | 35.2s | hardest | DoT-heavy |
+| Shieldmend Ward | +0 | 6.00 | defense.barrier-break-heal-pct=0.25, defense.barrier-pct=0.32, guard.barrier-refill-pct=0.20 | 6.52 | -402 | 120s | hardest | DoT-heavy |
+| Shieldmend Ward | +5 | 9.00 | defense.barrier-break-heal-pct=0.25, defense.barrier-pct=0.37, guard.barrier-refill-pct=0.20 | 10.6 | 0.00 | 360s | hardest | DoT-heavy |
 
 ## Biome Route
 
@@ -105,13 +105,13 @@ _Player at current +3 gear, spec-agnostic best loadout, vs each biome's tier-3 p
 
 | Biome | Attacker | Best loadout | eHP | In DPS | Recov/s | Net/s | TTL | Spike %HP | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Mountain | 109 atk / 0.30 aps / 0.00 dot / ×1.00 | Squire / Bulwark / Vanguard / No spec · Deathless Duneplate/Necrotic Pulse | 67808 | 0.30 | 70.3 | 70.0 | sustains | 0.16% | Safe |
-| Swamp | 40.7 atk / 0.43 aps / 18.3 dot / ×1.00 | Squire / Bulwark / Vanguard / No spec · Grave Ward/Necrotic Pulse | 1817 | 11.4 | 65.3 | 53.9 | sustains | 0.17% | Safe |
-| Caverns | 89.7 atk / 0.36 aps / 12.0 dot / ×1.00 | Squire / Bulwark / Vanguard / No spec · Deathless Duneplate/Necrotic Pulse | 2242 | 12.4 | 70.3 | 57.9 | sustains | 0.16% | Safe |
-| Jungle | 61.0 atk / 0.71 aps / 0.00 dot / ×1.15 | Squire / Bulwark / Vanguard / No spec · Primal Canopy/Necrotic Pulse | 57992 | 0.43 | 63.9 | 63.5 | sustains | 0.20% | Safe |
-| Tundra | 285 atk / 0.35 aps / 0.00 dot / ×1.00 | Squire / Bulwark / Vanguard / No spec · Primal Canopy/Pressure Vessel | 1377 | 41.0 | 66.3 | 25.3 | sustains | 34.7% | Safe |
-| Desert | 90.0 atk / 0.38 aps / 0.00 dot / ×1.00 | Squire / Bulwark / Vanguard / No spec · Deathless Duneplate/Necrotic Pulse | 56160 | 0.38 | 70.3 | 69.9 | sustains | 0.16% | Safe |
-| Volcanic | 151 atk / 0.51 aps / 0.00 dot / ×1.00 | Squire / Bulwark / Vanguard / No spec · Pyroclasm Mantle/Necrotic Pulse | 23556 | 2.03 | 70.3 | 68.3 | sustains | 0.64% | Safe |
+| Mountain | 109 atk / 0.30 aps / 0.00 dot / ×1.00 | Squire / Bulwark / Vanguard / No spec · Permafrost Sovereign/Inferno Heart | 2105 | 13.8 | 115 | 101 | sustains | 5.16% | Safe |
+| Swamp | 40.7 atk / 0.43 aps / 18.3 dot / ×1.00 | Squire / Bulwark / Vanguard / No spec · Plaguebound Mantle/Inferno Heart | 1670 | 17.1 | 103 | 85.6 | sustains | 2.63% | Safe |
+| Caverns | 84.7 atk / 0.36 aps / 12.0 dot / ×1.00 | Squire / Bulwark / Vanguard / No spec · Plaguebound Mantle/Inferno Heart | 1684 | 20.2 | 103 | 82.5 | sustains | 5.52% | Safe |
+| Jungle | 61.0 atk / 0.71 aps / 0.00 dot / ×1.00 | Squire / Bulwark / Vanguard / No spec · Deathless Duneplate/Inferno Heart | 3131 | 10.7 | 99.2 | 88.5 | sustains | 1.95% | Safe |
+| Tundra | 159 atk / 0.35 aps / 0.00 dot / ×1.00 | Squire / Bulwark / Vanguard / No spec · Permafrost Sovereign/Inferno Heart | 2057 | 24.1 | 115 | 90.7 | sustains | 7.74% | Safe |
+| Desert | 73.5 atk / 0.38 aps / 0.00 dot / ×1.00 | Squire / Bulwark / Vanguard / No spec · Deathless Duneplate/Inferno Heart | 2573 | 8.46 | 99.2 | 90.7 | sustains | 2.86% | Safe |
+| Volcanic | 56.3 atk / 0.51 aps / 0.00 dot / ×1.00 | Squire / Bulwark / Vanguard / No spec · Deathless Duneplate/Inferno Heart | 3332 | 6.58 | 99.2 | 92.6 | sustains | 1.69% | Safe |
 
 ## Boss Matchups By Class
 
@@ -119,12 +119,12 @@ _Best current +3 loadout for each class vs each boss; cell = TTL (⚠ = one-shot
 
 | Class | Crag-Gorged Horn-Behemoth | Frost-Plated Rime-Mammoth | Deep-Core Burrow-Gorger | Dune-Carapace Monarch | Cinder-Shell Magma-Salamander | Apex Bramble-Slasher | Rot-Spore Croc-Behemoth |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Apprentice | sustains | sustains | sustains | sustains | sustains | sustains | 32.1s |
-| Conduit | 6439s | 6439s | sustains | 102s | 14652s | sustains | 15.9s |
-| Slinger | sustains | sustains | sustains | sustains | sustains | sustains | 15.6s |
-| Spirit | 334s | 334s | sustains | 91.5s | 270s | sustains | 20.5s |
+| Apprentice | sustains | sustains | sustains | sustains | sustains | 1451s | sustains |
+| Conduit | sustains | sustains | sustains | 75.5s | sustains | 69.2s | 40.0s |
+| Slinger | sustains | sustains | sustains | sustains | sustains | sustains | 44.5s |
+| Spirit | 3933s | 3933s | sustains | 88.8s | sustains | 79.2s | 50.8s |
 | Squire | sustains | sustains | sustains | sustains | sustains | sustains | sustains |
-| Striker | sustains | sustains | sustains | sustains | sustains | sustains | 308s |
+| Striker | sustains | sustains | sustains | sustains | sustains | sustains | sustains |
 
 ## Best Gear Per Boss
 
@@ -132,13 +132,13 @@ _Single highest-survival loadout (any class) at current +3 vs each boss._
 
 | Boss | Attacker | Best build | Armor | Charm | eHP | TTL | Net/s | Spike %HP | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Crag-Gorged Horn-Behemoth | 204 atk / 0.24 aps / 0.00 dot / ×1.00 | Squire / Bulwark / Vanguard / No spec | Pyroclasm Mantle | Necrotic Pulse | 2546 | sustains | 58.4 | 8.01% | Safe |
-| Frost-Plated Rime-Mammoth | 204 atk / 0.24 aps / 0.00 dot / ×1.00 | Squire / Bulwark / Vanguard / No spec | Pyroclasm Mantle | Necrotic Pulse | 2546 | sustains | 58.4 | 8.01% | Safe |
-| Deep-Core Burrow-Gorger | 196 atk / 0.22 aps / 0.00 dot / ×1.00 | Squire / Bulwark / Vanguard / No spec | Pyroclasm Mantle | Necrotic Pulse | 2844 | sustains | 60.7 | 6.89% | Safe |
-| Dune-Carapace Monarch | 196 atk / 0.33 aps / 0.00 dot / ×1.00 | Squire / Bulwark / Vanguard / No spec | Pyroclasm Mantle | Necrotic Pulse | 2844 | sustains | 56.0 | 6.89% | Safe |
-| Cinder-Shell Magma-Salamander | 179 atk / 0.33 aps / 0.00 dot / ×1.00 | Squire / Bulwark / Vanguard / No spec | Pyroclasm Mantle | Necrotic Pulse | 3989 | sustains | 61.0 | 4.49% | Safe |
-| Apex Bramble-Slasher | 104 atk / 0.67 aps / 0.00 dot / ×1.00 | Squire / Bulwark / Vanguard / No spec | Deathless Duneplate | Necrotic Pulse | 64896 | sustains | 69.6 | 0.16% | Safe |
-| Rot-Spore Croc-Behemoth | 52.0 atk / 0.29 aps / 78.0 dot / ×1.00 | Squire / Bulwark / Vanguard / No spec | Grave Ward | Necrotic Pulse | 1149 | sustains | 18.3 | 0.17% | Safe |
+| Crag-Gorged Horn-Behemoth | 204 atk / 0.24 aps / 0.00 dot / ×1.00 | Squire / Bulwark / Vanguard / No spec | Permafrost Sovereign | Inferno Heart | 2042 | sustains | 93.6 | 9.99% | Safe |
+| Frost-Plated Rime-Mammoth | 204 atk / 0.24 aps / 0.00 dot / ×1.00 | Squire / Bulwark / Vanguard / No spec | Permafrost Sovereign | Inferno Heart | 2042 | sustains | 93.6 | 9.99% | Safe |
+| Deep-Core Burrow-Gorger | 196 atk / 0.22 aps / 0.00 dot / ×1.00 | Squire / Bulwark / Vanguard / No spec | Permafrost Sovereign | Inferno Heart | 2031 | sustains | 95.6 | 9.65% | Safe |
+| Dune-Carapace Monarch | 196 atk / 0.33 aps / 0.00 dot / ×1.00 | Squire / Bulwark / Vanguard / No spec | Permafrost Sovereign | Inferno Heart | 2031 | sustains | 86.1 | 9.65% | Safe |
+| Cinder-Shell Magma-Salamander | 130 atk / 0.33 aps / 0.00 dot / ×1.00 | Squire / Bulwark / Vanguard / No spec | Permafrost Sovereign | Inferno Heart | 2068 | sustains | 96.1 | 6.29% | Safe |
+| Apex Bramble-Slasher | 104 atk / 0.67 aps / 0.00 dot / ×1.00 | Squire / Bulwark / Vanguard / No spec | Deathless Duneplate | Inferno Heart | 2107 | sustains | 73.8 | 4.94% | Safe |
+| Rot-Spore Croc-Behemoth | 52.0 atk / 0.29 aps / 78.0 dot / ×1.00 | Squire / Bulwark / Vanguard / No spec | Plaguebound Mantle | Inferno Heart | 1640 | sustains | 57.3 | 3.39% | Safe |
 
 ## Armor Matrix By Attacker Profile
 
@@ -146,64 +146,64 @@ _Survival score (mitigation × pool incl. recovery) at +3, no charm, averaged ov
 
 | Armor | avg mob | DoT-heavy | hardest | boss | next-tier |
 | --- | --- | --- | --- | --- | --- |
-| Deathless Duneplate | 4438 | 1522 | 1218 | 1643 | 1593 |
-| Deep Sea Carapace | 1551 | 980 | 1070 | 1214 | 1079 |
-| Grave Ward | 1306 | 1987 | 944 | 1003 | 1056 |
-| Lava-Tempered Hide | 3821 | 1408 | 1036 | 1432 | 1401 |
-| Permafrost Sovereign | 2434 | 1604 | 1339 | 1511 | 1448 |
-| Plaguebound Mantle | 1549 | 2147 | 982 | 1056 | 1133 |
-| Primal Canopy | 2339 | 1382 | 1689 | 1899 | 1627 |
-| Pyroclasm Mantle | 8349 | 1522 | 1376 | 2964 | 2672 |
-| Stormwall Plate | 940 | 987 | 942 | 873 | 829 |
-| Titan's Keep | 1120 | 1159 | 977 | 933 | 888 |
+| Deathless Duneplate | 1746 | 1313 | 1517 | 1457 | 1462 |
+| Deep Sea Carapace | 1452 | 1167 | 1560 | 1557 | 1415 |
+| Grave Ward | 1453 | 1420 | 1456 | 1452 | 1448 |
+| Lava-Tempered Hide | 1527 | 1213 | 1417 | 1341 | 1355 |
+| Permafrost Sovereign | 1601 | 1285 | 1675 | 1661 | 1534 |
+| Plaguebound Mantle | 1525 | 1701 | 1467 | 1464 | 1533 |
+| Primal Canopy | 1669 | 1477 | 1738 | 1732 | 1643 |
+| Pyroclasm Mantle | 1610 | 1273 | 1454 | 1341 | 1397 |
+| Stormwall Plate | 1622 | 1351 | 1671 | 1654 | 1558 |
+| Titan's Keep | 1493 | 1243 | 1539 | 1523 | 1435 |
 
 ## Charm Matrix By Attacker Profile
 
-_Survival score at +3 with reference armor Stormwall Plate, averaged over class builds._
+_Survival score at +3 with reference armor Permafrost Sovereign, averaged over class builds._
 
 | Charm | avg mob | DoT-heavy | hardest | boss | next-tier |
 | --- | --- | --- | --- | --- | --- |
-| Ancient Canopy | 1519 | 1598 | 1500 | 1399 | 1328 |
-| Deepfreeze Ward | 1436 | 1426 | 1539 | 1333 | 1332 |
-| Fortress Heart | 1357 | 1427 | 1348 | 1254 | 1190 |
-| Glacial Ward | 1528 | 1477 | 1697 | 1425 | 1455 |
-| Grave-Tide Pulse | 1508 | 1586 | 1488 | 1388 | 1318 |
-| Inferno Heart | 1582 | 1664 | 1564 | 1458 | 1384 |
-| Last Oasis | 1371 | 1442 | 1351 | 1260 | 1198 |
-| Necrotic Pulse | 1624 | 1708 | 1606 | 1497 | 1421 |
-| Overgrowth Pulse | 1488 | 1565 | 1469 | 1369 | 1301 |
-| Pressure Vessel | 1622 | 1556 | 1817 | 1514 | 1554 |
-| Shieldmend Ward | 1317 | 1384 | 1307 | 1216 | 1154 |
+| Ancient Canopy | 2828 | 2251 | 2964 | 2940 | 2706 |
+| Deepfreeze Ward | 2047 | 1635 | 2255 | 2193 | 2015 |
+| Fortress Heart | 2321 | 1856 | 2429 | 2410 | 2222 |
+| Glacial Ward | 2441 | 1939 | 2561 | 2541 | 2336 |
+| Grave-Tide Pulse | 3099 | 2469 | 3246 | 3221 | 2965 |
+| Inferno Heart | 3212 | 2561 | 3364 | 3337 | 3073 |
+| Last Oasis | 1932 | 1529 | 2031 | 2014 | 1848 |
+| Necrotic Pulse | 3041 | 2423 | 3186 | 3161 | 2910 |
+| Overgrowth Pulse | 2764 | 2200 | 2897 | 2874 | 2645 |
+| Pressure Vessel | 1932 | 1529 | 2031 | 2014 | 1848 |
+| Shieldmend Ward | 2252 | 1800 | 2358 | 2339 | 2156 |
 
 
 ## Top / Bottom Loadouts (current +3 vs current mobs)
 
 | Build | Loadout | Survival | eHP | In DPS | Recov/s | TTL | Spike %HP |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Squire / Bulwark / Vanguard / No spec | Pyroclasm Mantle/Necrotic Pulse | 19088 | 7096 | 4.74 | 70.3 | sustains | 0.16% |
-| Squire / Knight / Vanguard / No spec | Pyroclasm Mantle/Necrotic Pulse | 17895 | 6653 | 4.74 | 65.9 | sustains | 0.17% |
-| Squire / Warrior / Vanguard / No spec | Pyroclasm Mantle/Necrotic Pulse | 17070 | 6346 | 4.74 | 62.9 | sustains | 0.18% |
-| Striker / Breaker / In-Fighter / No spec | Pyroclasm Mantle/Necrotic Pulse | 14909 | 6482 | 4.74 | 49.4 | sustains | 0.18% |
-| Striker / Skirmisher / In-Fighter / No spec | Pyroclasm Mantle/Necrotic Pulse | 14098 | 6129 | 4.74 | 46.7 | sustains | 0.19% |
-| Squire / Bulwark / Sentinel / No spec | Pyroclasm Mantle/Necrotic Pulse | 12967 | 6789 | 4.74 | 36.2 | sustains | 0.17% |
-| Striker / Breaker / Phantom-Blade / No spec | Pyroclasm Mantle/Necrotic Pulse | 12411 | 6084 | 4.74 | 37.1 | sustains | 0.19% |
-| Squire / Knight / Sentinel / No spec | Pyroclasm Mantle/Necrotic Pulse | 12120 | 6346 | 4.74 | 33.9 | sustains | 0.18% |
-| Apprentice / Rime-Bound / Hexblade / No spec | Pyroclasm Mantle/Necrotic Pulse | 11575 | 7608 | 3.96 | 19.4 | sustains | 0.18% |
-| Squire / Warrior / Sentinel / No spec | Pyroclasm Mantle/Necrotic Pulse | 11534 | 6039 | 4.74 | 32.2 | sustains | 0.19% |
+| Squire / Bulwark / Vanguard / No spec | Deathless Duneplate/Inferno Heart | 5600 | 1910 | 15.4 | 99.2 | sustains | 3.51% |
+| Squire / Knight / Vanguard / No spec | Deathless Duneplate/Inferno Heart | 5115 | 1745 | 15.8 | 93.0 | sustains | 3.88% |
+| Squire / Warrior / Vanguard / No spec | Deathless Duneplate/Inferno Heart | 4758 | 1623 | 16.2 | 88.7 | sustains | 4.21% |
+| Striker / Breaker / In-Fighter / No spec | Deathless Duneplate/Inferno Heart | 3866 | 1539 | 17.5 | 70.9 | sustains | 4.55% |
+| Squire / Bulwark / Sentinel / No spec | Deathless Duneplate/Inferno Heart | 3626 | 1733 | 16.2 | 53.6 | sustains | 3.94% |
+| Striker / Skirmisher / In-Fighter / No spec | Deathless Duneplate/Inferno Heart | 3493 | 1390 | 18.3 | 67.0 | sustains | 5.11% |
+| Squire / Knight / Sentinel / No spec | Deathless Duneplate/Inferno Heart | 3311 | 1583 | 16.6 | 50.2 | sustains | 4.35% |
+| Striker / Flurry / In-Fighter / No spec | Deathless Duneplate/Inferno Heart | 3267 | 1301 | 18.7 | 64.1 | sustains | 5.50% |
+| Striker / Breaker / Phantom-Blade / No spec | Deathless Duneplate/Inferno Heart | 3080 | 1380 | 18.3 | 54.2 | sustains | 5.15% |
+| Squire / Warrior / Sentinel / No spec | Deathless Duneplate/Inferno Heart | 3077 | 1471 | 17.0 | 47.8 | sustains | 4.73% |
 
 
 | Build | Loadout | Survival | eHP | In DPS | Recov/s | TTL | Spike %HP |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Spirit / Spark / Wisp / No spec | Pyroclasm Mantle/Necrotic Pulse | 3289 | 1807 | 12.5 | 14.6 | sustains | 4.86% |
-| Conduit / Splinter / Vigil / No spec | Pyroclasm Mantle/Necrotic Pulse | 3292 | 2166 | 11.3 | 15.7 | sustains | 3.82% |
-| Slinger / Scout / Deadeye / No spec | Pyroclasm Mantle/Necrotic Pulse | 3364 | 2213 | 10.7 | 15.2 | sustains | 4.65% |
-| Slinger / Marksman / Deadeye / No spec | Pyroclasm Mantle/Necrotic Pulse | 3424 | 2253 | 10.9 | 15.7 | sustains | 4.50% |
-| Spirit / Wraith / Wisp / No spec | Pyroclasm Mantle/Necrotic Pulse | 3920 | 2154 | 10.9 | 15.1 | sustains | 3.76% |
-| Conduit / Consort / Vigil / No spec | Pyroclasm Mantle/Necrotic Pulse | 3987 | 2623 | 9.67 | 16.3 | sustains | 2.83% |
-| Apprentice / Venom vessel / Harbinger / No spec | Pyroclasm Mantle/Necrotic Pulse | 4085 | 2688 | 9.19 | 15.9 | sustains | 3.12% |
-| Conduit / Splinter / Harrier / No spec | Pyroclasm Mantle/Necrotic Pulse | 4438 | 2920 | 9.26 | 17.4 | sustains | 2.45% |
-| Spirit / Spark / Haunt / No spec | Pyroclasm Mantle/Necrotic Pulse | 4443 | 2314 | 11.3 | 16.8 | sustains | 3.58% |
-| Slinger / Artillerist / Deadeye / No spec | Pyroclasm Mantle/Necrotic Pulse | 4659 | 3065 | 8.39 | 16.5 | sustains | 2.57% |
+| Conduit / Splinter / Vigil / No spec | Deathless Duneplate/Inferno Heart | 1545 | 924 | 23.2 | 25.1 | sustains | 8.20% |
+| Conduit / Consort / Vigil / No spec | Deathless Duneplate/Inferno Heart | 1598 | 955 | 23.2 | 26.0 | sustains | 7.93% |
+| Spirit / Spark / Wisp / No spec | Deathless Duneplate/Inferno Heart | 1683 | 853 | 23.2 | 23.2 | sustains | 8.88% |
+| Conduit / Splinter / Harrier / No spec | Deathless Duneplate/Inferno Heart | 1733 | 1036 | 22.8 | 27.7 | sustains | 7.28% |
+| Spirit / Wraith / Wisp / No spec | Deathless Duneplate/Inferno Heart | 1745 | 885 | 23.2 | 24.1 | sustains | 8.57% |
+| Conduit / Effigy / Vigil / No spec | Deathless Duneplate/Inferno Heart | 1765 | 1055 | 22.4 | 27.7 | sustains | 7.12% |
+| Conduit / Consort / Harrier / No spec | Deathless Duneplate/Inferno Heart | 1783 | 1067 | 22.8 | 28.5 | sustains | 7.08% |
+| Apprentice / Venom vessel / Harbinger / No spec | Plaguebound Mantle/Inferno Heart | 1840 | 1100 | 20.3 | 26.2 | sustains | 10.4% |
+| Spirit / Phantasm / Wisp / No spec | Deathless Duneplate/Inferno Heart | 1920 | 973 | 22.4 | 25.5 | sustains | 7.72% |
+| Apprentice / Ember mage / Harbinger / No spec | Plaguebound Mantle/Inferno Heart | 1934 | 1157 | 20.3 | 27.6 | sustains | 9.92% |
 
 
 ## Outlier Summary
@@ -212,13 +212,7 @@ _Flags items >±25% of tier-average survival, dominant items, early-sustain load
 
 | Flag | Item / Build | Detail |
 | --- | --- | --- |
-| armor > +25% tier avg | Deathless Duneplate | survival 4438 vs avg 2785 |
-| armor < -25% tier avg | Deep Sea Carapace | survival 1551 vs avg 2785 |
-| armor < -25% tier avg | Grave Ward | survival 1306 vs avg 2785 |
-| armor > +25% tier avg | Lava-Tempered Hide | survival 3821 vs avg 2785 |
-| armor < -25% tier avg | Plaguebound Mantle | survival 1549 vs avg 2785 |
-| armor > +25% tier avg | Pyroclasm Mantle | survival 8349 vs avg 2785 |
-| armor < -25% tier avg | Stormwall Plate | survival 940 vs avg 2785 |
-| armor < -25% tier avg | Titan's Keep | survival 1120 vs avg 2785 |
-| sustains too early | 11 build(s) | already immortal vs avg mobs on entry (+0) gear |
+| charm > +25% tier avg | Inferno Heart | survival 3212 vs avg 2534 |
+| dominant charm | Inferno Heart | best survival in every matchup profile |
+| sustains too early | 12 build(s) | already immortal vs avg mobs on entry (+0) gear |
 

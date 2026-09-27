@@ -140,34 +140,52 @@ describing the encounter — a solo mini-boss threatens through per-hit spike an
 of the exchange, not through attrition from a crowd.
 
 Trench is authored as exactly that (density 10, N=1, "every enemy is a mini-boss"), so it
-is held to **cost per kill** instead, and excluded from both the sustained fit and the eHP
-fit. That freedom is used deliberately: it sits at **7 269 eHP / 212 DPS** rather than the
-3 097 / 497 the ladder would have demanded — long rather than frantic — while landing its
-cost/kill target (1.544 M against 1.539 M).
+is excluded from both the sustained fit and the eHP fit and held to **time to kill** instead:
+**~1 minute per mob for a median T4 build** (designer call 2026-09-27: mini-boss tier, never
+boss tier). Measured 2026-09-27 at 48–50 s on Offensive and ~65 s on Defensive (one mob,
+mechanics stripped), with DR-leaning durability:
+
+| mob | HP | plating | DR |
+|---|---:|---:|---:|
+| Abyssal Serpent | 32,800 | 18 | 35% |
+| Hadal Stalker | 34,500 | 20 | 30% |
+| Elder Leviathan | 31,800 | 22 | 40% |
+
+Rewards per kill were raised ×2.2 with it so reward per minute holds.
 
 ---
 
 ## 7. Bosses
 
-Premise inherited from the T1 pass (`91f0c85`): bosses are **end-of-tier exams**, not rungs
-on the railroad. Biome decides mechanics, never progression level.
+**Sized to the fight-length contract, not to trash HP** (2026-09-27, T4 power curve review,
+`reports/t4-power-curve-2026-09-27/`). The old anchor — every tier's bosses at ×8.13 of the
+top ladder biome's trash HP — pinned T4 bosses to Wasteland, the thinnest trash in the tier,
+while the player's weapon ladder doubled damage again. Measured T4 median kills were 29–42 s
+against a 180 s target, shorter than T3.
 
-Calibrated **in the vacuum**, because the player-dependent instrument is broken (§8). Each
-tier's bosses were scaled uniformly — preserving every in-tier relative position, which
-encodes their mechanics — until the tier's boss mean matched T1's accepted ratios against
-the tier's top **ladder** biome (T4 uses Wasteland, not Trench, since Trench is the
-deliberate off-ladder outlier):
+Contract (boss lineage redesign §2): median build **T3 ~120 s, T4 ~180 s**, measured as the
+midpoint of the breadth reference builds on Defensive and on Offensive stance. Per boss, HP
+was iterated in the live fight until that midpoint landed; each boss then kept its previous
+win rate (the killing mechanic was re-timed or softened where longer fights made it lethal).
 
-| | T1 | T2 | T3 | T4 |
-|---|---|---|---|---|
-| boss HP ÷ trash HP | ×8.13 | ×8.13 | ×8.13 | ×8.13 |
-| boss DPS ÷ trash DPS | ×0.736 | ×0.739 | ×0.735 | ×0.734 |
+eHP **profiles** differ on purpose, leaning on generic DR because it affects every build:
 
-The **Void Overlord** encounter (`void-overlord`, `void-horror`, `void-hulk`,
-`elder-trench-serpent-warden`) was scaled by the same uniform T4 factors. It is not a tier
-boss, but leaving it would have made the game's final encounter weaker than ordinary T4
-trash. Its internal stage relationships are untouched; the encounter redesign owns its
-shape.
+| profile | bosses | shape |
+|---|---|---|
+| DR | T3 Cave, Swamp, Desert, Volcanic; T4 Desert, Volcanic, Wasteland, Trench | DR 25–40% |
+| Plating | T3/T4 Mountain, T3/T4 Tundra | plating 20–32, modest DR |
+| Raw HP | T3/T4 Jungle | no plating, DR ≤ 8% |
+
+Player DoT ticks and procs skip plating and pay half of a monster's DR
+(`GAME_CONFIG.DOT_DR_SHARE`, the same rule monster DoTs follow on players). A boss that DoT
+builds overrun can author `dotResistance` on top; none needed it at the 2026-09-27 measurement
+(Apprentice's kill time was exactly the class median).
+
+Result (2026-09-27, 45 non-Conduit reference builds × every boss): T3 median 139 s Defensive /
+103 s Offensive (wins 85/74%); T4 208 / 149 s (wins 92/82%). T1/T2 bosses are unchanged except
+the two Swamp poisons, which were softened to hold their win rates under the DoT/DR rule.
+
+The Void Overlord encounter is deprecated (to be removed) and was not resized.
 
 ---
 

@@ -1,7 +1,8 @@
 /**
  * Mire-Gorged Behemoth venom — the ADOPTED coefficient, pinned narrowly.
  *
- * `dotEffect.damagePerStack` was written into source as **6** on 2026-09-19, from the
+ * `dotEffect.damagePerStack` was written into source as **6** on 2026-09-19 (now **5**,
+ * 2026-09-27, T4 power curve DoT/DR rule), from the
  * Boss4 `swamp-pressure` screen (24/24 verified observations; 2/6 -> 4/6 victories on
  * the Boss3 Cleanse reference). This file is the regression that keeps it there, and
  * it is deliberately NARROW: it pins the one adopted number, proves that number is
@@ -46,7 +47,8 @@ initCombatSystems();
 
 const BOSS_ID = 'mire-gorged-behemoth';
 /** The adopted coefficient, spelled once. */
-const ADOPTED_PER_STACK = 6;
+// 6 -> 5 on 2026-09-27, when DoTs went back to paying half of player DR.
+const ADOPTED_PER_STACK = 5;
 /** What it replaced, kept so the direction of the adoption stays legible. */
 const PRE_ADOPTION_PER_STACK = 9;
 

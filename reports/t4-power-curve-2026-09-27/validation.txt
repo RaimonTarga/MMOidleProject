@@ -1,0 +1,52 @@
+V errors 0 []
+
+| tier | boss | HP before → after | bench s before → after (win%) | off s before → after (win%) | Conduit bench s / win% after |
+| T1 | plains | 1700 → 1700 | 47 → 47 (20 → 20%) | — | 53 / 100% |
+| T1 | forest | 1800 → 1800 | — → — (0 → 0%) | — | — / 0% |
+| T1 | swamp | 2100 → 2100 | 63 → — (40 → 0%) | — | — / 0% |
+| T1 | cave | 1750 → 1750 | 50 → 50 (100 → 100%) | — | 60 / 100% |
+| T1 | mountain | 2100 → 2100 | 59 → 59 (100 → 100%) | — | 85 / 100% |
+  T1 before bench: median 56 s, wins 52%
+  T1 after bench: median 52 s, wins 44%
+| T2 | plains | 4000 → 4000 | 46 → 46 (7 → 7%) | — | — / 0% |
+| T2 | forest | 3750 → 3750 | 26 → 26 (40 → 40%) | — | — / 0% |
+| T2 | desert | 3750 → 3750 | 35 → 35 (80 → 80%) | — | 47 / 67% |
+| T2 | jungle | 3625 → 3625 | 31 → 31 (93 → 93%) | — | 36 / 33% |
+| T2 | swamp | 3375 → 3375 | 36 → 40 (33 → 20%) | — | — / 0% |
+| T2 | cave | 4375 → 4375 | 48 → 48 (67 → 67%) | — | 67 / 33% |
+| T2 | mountain | 5000 → 5000 | 60 → 60 (93 → 93%) | — | 94 / 100% |
+  T2 before bench: median 36 s, wins 59%
+  T2 after bench: median 36 s, wins 57%
+| T3 | mountain | 12418 → 16070 | 92 → 140 (93 → 93%) | 65 → 99 (80 → 80%) | 284 / 100% |
+| T3 | jungle | 11701 → 22400 | 69 → 143 (93 → 93%) | 50 → 98 (93 → 73%) | 271 / 100% |
+| T3 | desert | 11940 → 15800 | 82 → 129 (60 → 53%) | 70 → 104 (47 → 47%) | 186 / 100% |
+| T3 | volcanic | 11462 → 18760 | 62 → 140 (100 → 93%) | 48 → 109 (73 → 87%) | 266 / 100% |
+| T3 | tundra | 12895 → 19100 | 90 → 142 (87 → 80%) | 65 → 103 (80 → 67%) | 237 / 100% |
+| T3 | cave | 12895 → 14360 | 106 → 137 (80 → 93%) | 70 → 104 (73 → 80%) | 220 / 100% |
+| T3 | swamp | 11940 → 10790 | 119 → 137 (73 → 87%) | 87 → 100 (100 → 87%) | 126 / 67% |
+  T3 before bench: median 82 s, wins 84%
+  T3 before off: median 64 s, wins 78%
+  T3 after bench: median 139 s, wins 85%
+  T3 after off: median 103 s, wins 74%
+| T4 | volcanic | 20646 → 74130 | 34 → 199 (62 → 78%) | 23 → 146 (87 → 58%) | 377 / 100% |
+| T4 | desert | 17893 → 71080 | 38 → 205 (100 → 100%) | 25 → 150 (100 → 100%) | 281 / 100% |
+| T4 | tundra | 22940 → 90450 | 47 → 219 (100 → 100%) | 36 → 158 (100 → 98%) | 345 / 100% |
+| T4 | mountain | 19499 → 73140 | 45 → 201 (100 → 100%) | 36 → 146 (100 → 100%) | 428 / 100% |
+| T4 | jungle | 18352 → 112570 | 32 → 210 (100 → 98%) | 24 → 146 (100 → 80%) | 296 / 78% |
+| T4 | trench | 21793 → 68910 | 45 → 204 (100 → 98%) | 33 → 146 (100 → 84%) | 314 / 100% |
+| T4 | graveyard | 19499 → 42000 | 114 → 223 (33 → 69%) | 69 → 134 (38 → 56%) | 173 / 67% |
+  T4 before bench: median 42 s, wins 85%
+  T4 before off: median 29 s, wins 89%
+  T4 after bench: median 208 s, wins 92%
+  T4 after off: median 149 s, wins 82%
+
+### Normalized DPS medians (heavy dummy, non-Conduit), before → after
+T1: 34 → 34   range 24–47 → 24–45
+T2: 114 → 114   range 93–141 → 93–135
+T3: 270 → 265   range 203–411 → 203–411
+T4: 905 → 867   range 650–1117 → 650–1117
+
+### Trench trash TTK (offensive, one mob), before → after
+abyssal-serpent 20.1 → 48.3
+hadal-stalker 19 → 48.3
+elder-leviathan 23.2 → 50

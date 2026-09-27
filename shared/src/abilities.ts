@@ -968,9 +968,13 @@ const abilities: AbilityDef[] = [
     // weapons, while plain weapons on other classes gain nothing (there is nothing
     // to detonate), so it stays the payoff for DoT builds rather than a universal
     // pick. Ability damage now also feeds weapon reservoirs (weaponReservoir.ts).
+    //
+    // 2026-09-27 T4 power curve: weapon reservoir 5.0/5.5 -> 3.6/4.0. With Glacial
+    // Rimebrand it was every class's damage ceiling (up to x1.5 the median spec);
+    // it now stays the best pick on a conversion weapon (~+20% over Power Strike).
     ranks: [
-      { effect: { kind: "detonate-dots", detonateMult: 5.0, classDotMult: 2.0 }, cooldownMs: 15000, castMs: 1200 },
-      { effect: { kind: "detonate-dots", detonateMult: 5.5, classDotMult: 2.0 }, cooldownMs: 12000, castMs: 1200 },
+      { effect: { kind: "detonate-dots", detonateMult: 3.6, classDotMult: 2.0 }, cooldownMs: 15000, castMs: 1200 },
+      { effect: { kind: "detonate-dots", detonateMult: 4.0, classDotMult: 2.0 }, cooldownMs: 12000, castMs: 1200 },
     ],
   },
 

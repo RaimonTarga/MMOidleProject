@@ -171,6 +171,11 @@ Component naming uses verb phrases: `HasHealth`, `UsesSkills`, `TracksCombat`,
 - `TracksCombat` is server-only scratch state: counters, resources, cooldowns,
   flags, strings, status effects. Use helper APIs, not raw map spelunking.
 - Status effect `data` is `Record<string, number>` only.
+- DoT ticks and player procs skip plating and pay `GAME_CONFIG.DOT_DR_SHARE` (half) of the
+  target's DR, both directions; monster `dotResistance` stacks on top (`mitigatePlayerTickOnMonster`).
+- One multiplier per hit: a Technique rider landing on an empowered hit scales the hit as it
+  was before the empowered multiplier (mechanics that apply their own record it in
+  `ctx.metadata.empoweredMultiplier`).
 - Archetype runtime state lives on archetype slices, not in `TracksCombat`.
 
 Current class roots include cadence, cooldown, dot, reload, energy, and summoner.

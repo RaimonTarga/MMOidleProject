@@ -119,15 +119,15 @@ export const t3CombatEntriesB = [
     id: 'energy-heavy-t3-b', name: 'Invoker', tier: 3,
     classId: 'energy-root', subVariantId: 'heavy',
     parent: 'energy-heavy', children: [],
-    description: 'Each consecutive discharge (no long gap between them) adds a stack, up to 3: more discharge damage AND faster energy gain. Stacks reset after 5 seconds without dealing damage. Rewards uninterrupted farming. At this tier your discharge multiplier is 2 lower (6× → 4×).',
+    description: 'Each consecutive discharge (no long gap between them) adds a stack, up to 3: more discharge damage AND faster energy gain. Stacks reset after 5 seconds without dealing damage. Rewards uninterrupted farming. At this tier your discharge multiplier is 1 lower (6× → 5×).',
     cost: 1, statEffects: {},
     mechanicEffects: {
       'energy.critical-mass': 1,
       'energy.critical-mass-max-stacks': 3,
-      'energy.critical-mass-discharge-per-stack': 0.20,
+      'energy.critical-mass-discharge-per-stack': 0.25,
       'energy.critical-mass-gain-per-stack': 0.20,
       'energy.critical-mass-reset-ms': 5_000,
-      'energy.empowered-mult': -2,
+      'energy.empowered-mult': -1,
     },
   }],
   ['energy-heavy-t3-c', {

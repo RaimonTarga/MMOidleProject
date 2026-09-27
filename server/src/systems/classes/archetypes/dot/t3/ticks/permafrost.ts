@@ -1,4 +1,5 @@
 import { outgoingFinalDamage } from '../../../../../combat/damage/finalDamage';
+import { mitigatePlayerTickOnMonster } from '../../../../../combat/damage/monsterTickMitigation';
 import { getStatusEffect } from '@mmo-idle/shared';
 import { detachMarkerIfNoEffect } from '../../../../../../ecs/markerHelpers';
 import { grantMonsterRewards } from '../../../../../player/progression/rewards';
@@ -48,7 +49,7 @@ export function updatePermafrost(world: World, dt: number): void {
     const hits   = Math.min(PERM_MAX_HITS, effect.data.hits ?? 0);
     const pct    = hits * PERM_PCT_PER_HIT;
     const base   = Math.max(1, Math.round(source.dealsDamage.attack * pct));
-    let damage = Math.round(base * getSmolderMult(monsterState) * getFrozenMult(monsterState) * getFrostbiteDotTakenMult(monsterState));
+    let damage = Math.round(mitigatePlayerTickOnMonster(entity, base, 'dot') * getSmolderMult(monsterState) * getFrozenMult(monsterState) * getFrostbiteDotTakenMult(monsterState));
     damage = Math.max(1, applyMonsterDamageTakenDebuffs(monsterState, damage));
     damage = outgoingFinalDamage(world, effect.sourceId, damage);
     recordMonsterDamagedByPlayer(

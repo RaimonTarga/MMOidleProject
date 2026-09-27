@@ -1,5 +1,5 @@
 import { playerFinalDamageMultipliers } from '../../combat/damage/finalDamage';
-import { computeLinearDotDamage, isMonsterDotStatusEffectId } from '@mmo-idle/shared';
+import { GAME_CONFIG, computeLinearDotDamage, isMonsterDotStatusEffectId } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../ecs/entity';
 import { attackCadenceMult } from "../../combat/engine/attackCadence";
 import { imbueOnHitBonus } from "../../player/abilities/abilityImbue";
@@ -26,7 +26,7 @@ function forecastIncomingDot(player: PlayerEntity, world: World): number {
   for (const dot of dots) {
     const perTick = computeLinearDotDamage(dot);
     const dotResist = Math.min(0.9, player.usesSkills.passives['defense.dot-resistance'] ?? 0);
-    const drForDot = player.mitigatesDamage.damageReduction * 0.5;
+    const drForDot = player.mitigatesDamage.damageReduction * GAME_CONFIG.DOT_DR_SHARE;
     const mitigatedPerTick = perTick * (1 - drForDot) * (1 - dotResist);
     const tickMs = dot.data['tickIntervalMs'] || 1000;
     const ticksLeft = Math.ceil(dot.remainingMs / tickMs);

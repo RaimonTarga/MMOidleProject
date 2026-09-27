@@ -68,7 +68,8 @@ export const BOSS1_ESCORTS: Record<string, { hp: number; attack: number }> = {
 };
 
 /** The boss's own authored block, pinned so a silent stat edit invalidates the screen. */
-export const BOSS1_BOSS_STATS = { hp: 19499, attack: 115, plating: 14, damageReduction: 0.08 };
+// Rebased 2026-09-27 (T4 power curve: bosses sized to the ~180 s fight contract).
+export const BOSS1_BOSS_STATS = { hp: 42000, attack: 115, plating: 14, damageReduction: 0.25 };
 
 /**
  * Six roots, from the QUALIFIED T4 graveyard builds Durability37 already uses

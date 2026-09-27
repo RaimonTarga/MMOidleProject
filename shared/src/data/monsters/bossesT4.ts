@@ -61,7 +61,7 @@ export const bossMonsterEntriesT4 = [
   ['iron-crest-titan', {
     id: 'iron-crest-titan', name: 'Iron-Crest Titan', color: 0x8899bb,
     isBoss: true,
-    stats: { hp: 19499, attack: 228, plating: 14, damageReduction: 0.06, speed: 16, attackRange: 20, attackCooldown: 4200, pullRange: 420 },
+    stats: { hp: 73140, attack: 228, plating: 28, damageReduction: 0.15, speed: 16, attackRange: 20, attackCooldown: 4200, pullRange: 420 },
     behavior: 'melee', attackStyle: 'quake', biome: 'mountain',
     rewards: { essence: 620, essenceType: 'blue', level: 5, biomeXp: 930 },
     ai: { wanderRadius: 95, leashRange: 960, idleMinMs: 4000, idleMaxMs: 10000 },
@@ -215,7 +215,7 @@ export const bossMonsterEntriesT4 = [
   ['dune-throne-sovereign', {
     id: 'dune-throne-sovereign', name: 'Dune-Throne Sovereign', color: 0xddbb33,
     isBoss: true,
-    stats: { hp: 17893, attack: 185, plating: 8, damageReduction: 0.08, speed: 44, attackRange: 20, attackCooldown: 2800, pullRange: 400 },
+    stats: { hp: 71080, attack: 185, plating: 8, damageReduction: 0.35, speed: 44, attackRange: 20, attackCooldown: 2800, pullRange: 400 },
     behavior: 'melee', attackStyle: 'sandblast', biome: 'desert',
     rewards: { essence: 595, essenceType: 'yellow', level: 5, biomeXp: 893 },
     ai: { wanderRadius: 140, leashRange: 960, idleMinMs: 2500, idleMaxMs: 7000 },
@@ -348,7 +348,7 @@ export const bossMonsterEntriesT4 = [
   ['verdant-crown-predator', {
     id: 'verdant-crown-predator', name: 'Verdant-Crown Predator', color: 0x115522,
     isBoss: true,
-    stats: { hp: 18352, attack: 117, plating: 0, damageReduction: 0.04, speed: 76, attackRange: 20, attackCooldown: 1400, pullRange: 400 },
+    stats: { hp: 112570, attack: 117, plating: 0, damageReduction: 0.08, speed: 76, attackRange: 20, attackCooldown: 1400, pullRange: 400 },
     // A clawing predator, not a swordsman: the basic swing takes the light rake
     // (`claws-light`) rather than the generic blade arc. Deliberately NOT the
     // full-weight Forest `bear-claws` — this cat is fast and lean, and the heavy
@@ -432,8 +432,9 @@ export const bossMonsterEntriesT4 = [
           description: 'It has stopped running and fights to the death: 40% more attack and 35% faster attacks.',
           actions: [
           // Permanent frenzy: the soft enrage. It has given up on running.
-          { type: 'stat-buff', stat: 'attack', mult: 1.40, label: 'cornered' },
-          { type: 'stat-buff', stat: 'attackSpeed', mult: 1.35, label: 'cornered' },
+          // 2026-09-27 T4 power curve: Cornered 1.40/1.35 -> 1.2/1.2; the last 30% now lasts ~55 s, not ~9 s.
+          { type: 'stat-buff', stat: 'attack', mult: 1.2, label: 'cornered' },
+          { type: 'stat-buff', stat: 'attackSpeed', mult: 1.2, label: 'cornered' },
         ] },
       ],
     },
@@ -461,7 +462,7 @@ export const bossMonsterEntriesT4 = [
   ['glacial-patriarch', {
     id: 'glacial-patriarch', name: 'Glacial Patriarch', color: 0x77aadd,
     isBoss: true,
-    stats: { hp: 22940, attack: 189, plating: 22, damageReduction: 0.14, speed: 14, attackRange: 20, attackCooldown: 4500, pullRange: 420 },
+    stats: { hp: 90450, attack: 189, plating: 32, damageReduction: 0.18, speed: 14, attackRange: 20, attackCooldown: 4500, pullRange: 420 },
     behavior: 'melee', attackStyle: 'frost', biome: 'tundra',
     rewards: { essence: 640, essenceType: 'blue', level: 5, biomeXp: 960 },
     ai: { wanderRadius: 90, leashRange: 960, idleMinMs: 4000, idleMaxMs: 10000 },
@@ -592,7 +593,7 @@ export const bossMonsterEntriesT4 = [
   ['caldera-sovereign', {
     id: 'caldera-sovereign', name: 'Caldera Sovereign', color: 0xee3300,
     isBoss: true,
-    stats: { hp: 20646, attack: 130, plating: 10, damageReduction: 0.05, speed: 24, attackRange: 20, attackCooldown: 2600, pullRange: 400 },
+    stats: { hp: 74130, attack: 130, plating: 10, damageReduction: 0.35, speed: 24, attackRange: 20, attackCooldown: 2600, pullRange: 400 },
     behavior: 'melee', attackStyle: 'fire', biome: 'volcanic',
     rewards: { essence: 625, essenceType: 'red', level: 5, biomeXp: 938 },
     ai: { wanderRadius: 120, leashRange: 960, idleMinMs: 2500, idleMaxMs: 7000 },
@@ -623,11 +624,14 @@ export const bossMonsterEntriesT4 = [
       steps: [
         // Long, obvious, and explicitly UNINTERRUPTIBLE: the answer is the DPS race,
         // not a stun. Guard is still a legitimate way to eat it.
-        { kind: 'cast', name: 'Cataclysm', castMs: 26000, fx: 'cataclysm-cast', interruptible: false,
+        // 2026-09-27 T4 power curve (HP x3.6, fight ~6x longer): Cataclysm 26 -> 60 s and
+        // 1000 -> 650 raw; vents x0.75, Simmering Burn 4 -> 3/stack; the arena's Heat clock
+        // is x5 slower (volcanicHeat in nodeFeatures.ts).
+        { kind: 'cast', name: 'Cataclysm', castMs: 60000, fx: 'cataclysm-cast', interruptible: false,
           announce: 'cataclysm' },
         // Unevadable: an evasion build must not dodge its way past the DPS check.
         { kind: 'impact', name: 'Cataclysm', anchor: 'self', radius: 2000,
-          damageMult: 1.0, rawDamage: 1000, interruptible: false, unevadable: true, telegraphMs: 400, fx: 'cataclysm-impact' },
+          damageMult: 1.0, rawDamage: 650, interruptible: false, unevadable: true, telegraphMs: 400, fx: 'cataclysm-impact' },
         { kind: 'recovery', label: 'Spent', durationMs: 1000 },
       ],
     },
@@ -649,13 +653,13 @@ export const bossMonsterEntriesT4 = [
           // Playtest 2026-09-27: vents were no threat. More, bigger, harder-hitting,
           // and fissures split new ones open under the player all fight.
           { type: 'vent-field', count: 6, radius: 210, ringRadius: 540, rampAccelMult: 3,
-            eruptEveryMs: 7500, telegraphMs: 1500, damageMult: 1.5,
+            eruptEveryMs: 7500, telegraphMs: 1500, damageMult: 1.13,
             fissure: { everyMs: 14000, maxVents: 10 } },
           // Playtest 2026-09-27: vents also keep splitting open AROUND THE BOSS.
-          { type: 'vent-spawner', everyMs: 2600, count: 1, minRadius: 60, maxRadius: 440, radius: 155, telegraphMs: 1400, lingerMs: 2200, damageMult: 1.4, rampAccelMult: 3 },
+          { type: 'vent-spawner', everyMs: 2600, count: 1, minRadius: 60, maxRadius: 440, radius: 155, telegraphMs: 1400, lingerMs: 2200, damageMult: 1.05, rampAccelMult: 3 },
           { type: 'room-affliction', intervalMs: 5000, dot: {
             debuffId: 'caldera-burn', label: 'Simmering Burn', color: '#ff7a33',
-            damagePerStack: 4, maxStacks: 12, tickIntervalMs: 1000, durationMs: 15000,
+            damagePerStack: 3, maxStacks: 12, tickIntervalMs: 1000, durationMs: 15000,
           } },
         ] },
         { hpPct: 0.5, name: 'Magma Shove',
@@ -663,20 +667,20 @@ export const bossMonsterEntriesT4 = [
           actions: [
           { type: 'add-pattern', patternId: 'caldera-magma-shove' },
           { type: 'vent-field', count: 9, radius: 235, ringRadius: 540, rampAccelMult: 3,
-            eruptEveryMs: 5500, telegraphMs: 1400, damageMult: 1.5,
+            eruptEveryMs: 5500, telegraphMs: 1400, damageMult: 1.13,
             fissure: { everyMs: 8000, maxVents: 16 } },
-          { type: 'vent-spawner', everyMs: 1700, count: 2, minRadius: 60, maxRadius: 440, radius: 155, telegraphMs: 1350, lingerMs: 2200, damageMult: 1.4, rampAccelMult: 3 },
+          { type: 'vent-spawner', everyMs: 1700, count: 2, minRadius: 60, maxRadius: 440, radius: 155, telegraphMs: 1350, lingerMs: 2200, damageMult: 1.05, rampAccelMult: 3 },
         ] },
         { hpPct: 0.25, name: 'Cataclysm',
           description: 'It stops attacking and charges a Cataclysm that hits the whole arena, while vents burst open all around it and the Simmering Burn accelerates. The Cataclysm cannot be interrupted or evaded: kill it, or survive the blast with Guard and tank gear.',
           actions: [
           { type: 'set-weather', weather: 'ashfall' },
           // The race against the Cataclysm, under a near-bullet-hell of vents.
-          { type: 'vent-spawner', everyMs: 650, count: 3, minRadius: 60, maxRadius: 440, radius: 140, telegraphMs: 1250, lingerMs: 2200, damageMult: 1.4, rampAccelMult: 3 },
+          { type: 'vent-spawner', everyMs: 650, count: 3, minRadius: 60, maxRadius: 440, radius: 140, telegraphMs: 1250, lingerMs: 2200, damageMult: 1.05, rampAccelMult: 3 },
           // The burn accelerates while the Cataclysm charges.
-          { type: 'room-affliction', intervalMs: 1500, dot: {
+          { type: 'room-affliction', intervalMs: 3000, dot: {
             debuffId: 'caldera-burn', label: 'Simmering Burn', color: '#ff7a33',
-            damagePerStack: 4, maxStacks: 16, tickIntervalMs: 1000, durationMs: 15000,
+            damagePerStack: 3, maxStacks: 16, tickIntervalMs: 1000, durationMs: 15000,
           } },
         ] },
       ],
@@ -711,7 +715,7 @@ export const bossMonsterEntriesT4 = [
     isBoss: true,
     // A RANGED caster now (redesign 2026-09-27): it stands back and hexes you while
     // its army fights.
-    stats: { hp: 19499, attack: 115, plating: 14, damageReduction: 0.08, speed: 28, attackRange: 260, attackCooldown: 2300, pullRange: 400 },
+    stats: { hp: 42000, attack: 115, plating: 14, damageReduction: 0.25, speed: 28, attackRange: 260, attackCooldown: 2300, pullRange: 400 },
     behavior: 'ranged', attackStyle: 'magic', biome: 'graveyard',
     rewards: { essence: 615, essenceType: 'purple', level: 5, biomeXp: 923 },
     ai: { wanderRadius: 105, leashRange: 960, idleMinMs: 3000, idleMaxMs: 8000 },
@@ -731,7 +735,8 @@ export const bossMonsterEntriesT4 = [
     //       boost), and casts to kill: Grave Burst circles, Bone Spears, and a Soul
     //       Nova when you stand close. The boss is the threat now.
     raisesDead: {
-      intervalMs: 9000, initialDelayMs: 8000, corpseRange: 700, maxAlive: 7, count: 2,
+      // 2026-09-27 T4 power curve: raise and Harvest clocks x1.7 with the fight length.
+      intervalMs: 15300, initialDelayMs: 8000, corpseRange: 700, maxAlive: 7, count: 2,
       // Keep bodies available through slow pulls and the whole fight.
       corpseLifetimeMs: 600_000,
       hpMult: 0.45, damageMult: 0.60,
@@ -806,7 +811,7 @@ export const bossMonsterEntriesT4 = [
           { type: 'cast', castMs: 1500, label: 'Invocation', fx: 'roar', castFx: 'invocation', actions: [
             // No maxAlive: it caps ALL of the boss's spawned adds together, which left
             // the vulture (5 already up) never spawning. The Invocation is one-shot.
-            { type: 'spawn-adds', monsterTypeId: 'bone-crawler', count: 4, offsetRange: 260 },
+            { type: 'spawn-adds', monsterTypeId: 'bone-crawler', count: 3, offsetRange: 260 },
             { type: 'spawn-adds', monsterTypeId: 'plague-hound', count: 1, offsetRange: 260 },
             { type: 'spawn-adds', monsterTypeId: 'carrion-vulture', count: 1, offsetRange: 260 },
           ] },
@@ -827,7 +832,7 @@ export const bossMonsterEntriesT4 = [
           { type: 'remove-pattern', patternId: 'charnel-reclaim' },
           { type: 'set-pattern', patternId: 'charnel-wrath' },
           { type: 'add-pattern', patternId: 'charnel-nova' },
-          { type: 'harvest', intervalMs: 2500, attackMult: 1.07 },
+          { type: 'harvest', intervalMs: 4250, attackMult: 1.07 },
         ] },
       ],
     },
@@ -862,7 +867,7 @@ export const bossMonsterEntriesT4 = [
   ['elder-trench-serpent', {
     id: 'elder-trench-serpent', name: 'Elder Trench Serpent', color: 0x335577,
     isBoss: true,
-    stats: { hp: 21793, attack: 143, plating: 20, damageReduction: 0.22, speed: 22, attackRange: 22, attackCooldown: 3200, pullRange: 400 },
+    stats: { hp: 68910, attack: 143, plating: 20, damageReduction: 0.40, speed: 22, attackRange: 22, attackCooldown: 3200, pullRange: 400 },
     behavior: 'melee', attackStyle: 'bite-trench', biome: 'trench',
     // T4 economy pass (2026-08-30): essenceType purple → green, matching Trench's
     // own gear home colour and its trash-mob essence correction. Quantity/level/

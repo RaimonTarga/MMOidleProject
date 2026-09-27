@@ -253,7 +253,8 @@ export const bossMonsterEntriesT2 = [
     // boss-side pressure value, not a rebalance of the encounter: cap, cadence,
     // duration, the ordinary attack, the Corrosive Pool and the 50% phase are all
     // unchanged, and `server/test/behemothVenom.test.ts` pins that.
-    dotEffect: { debuffId: 'mire-gorged-venom', label: 'Gorged Venom', damagePerStack: 6, maxStacks: 4, tickIntervalMs: 1000, durationMs: 8000 },
+    // 2026-09-27: 6 -> 5 when DoTs went back to paying half of player DR (win rate held).
+    dotEffect: { debuffId: 'mire-gorged-venom', label: 'Gorged Venom', damagePerStack: 5, maxStacks: 4, tickIntervalMs: 1000, durationMs: 8000 },
     // SWAMP T2 (boss-lineage redesign 2026-09-27): POOL VARIETY AND THE PULL.
     // Swamp stops demanding Cleanse — its answers are Swamp gear: DoT resistance
     // (armor) for the Bile, slow resistance (boots) for the Mire. Corrosion's

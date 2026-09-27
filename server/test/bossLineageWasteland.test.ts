@@ -52,9 +52,10 @@ const stepName = (a: ReturnType<typeof arena>) => {
   updateBossScripts(a.world, 0);
   const invoked = a.world.takeNodeEvents(NODE).some(e => e.kind === 'monster-cast-start' && e.label === 'Invocation');
   assert(invoked, 'it opens with the Invocation cast');
-  runUntil(a, () => { pin(a.player, SPOT); return bossAdds(a.world, a.boss).length >= 6; }, 3000);
+  runUntil(a, () => { pin(a.player, SPOT); return bossAdds(a.world, a.boss).length >= 5; }, 3000);
   const army = bossAdds(a.world, a.boss);
-  assert(army.length >= 6, `the Invocation summons its entourage (${army.length})`);
+  // 3 Bone Crawlers (4 before 2026-09-27) + Plague Hound + Carrion Vulture.
+  assert(army.length >= 5, `the Invocation summons its entourage (${army.length})`);
   assert(army.every(m => m.hasAggroTarget?.targetId === a.player.isPlayer.id), 'and the army shares its target');
 
   // Dragged far past its leash, an add keeps fighting instead of going home.

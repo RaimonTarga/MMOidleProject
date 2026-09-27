@@ -14,9 +14,12 @@ If this doc and the code disagree, the code wins.
 
 Design authority: [`design_docs/boss-lineage-redesign.md`](../design_docs/boss-lineage-redesign.md).
 Every section of this doc BELOW this one describes the 2026-09-04 / 09-13 state; where
-the two disagree, this section (and the code) wins. **Numbers are placeholders**: the
-contract's fight lengths (T2 ~60s, T3 ~2 min, T4 ~3 min) are the numbers pass's job
-(§4 step 6 of the design doc), not done here.
+the two disagree, this section (and the code) wins. **T3/T4 numbers were sized to the
+contract on 2026-09-27** (T3 ~2 min, T4 ~3 min; see `tier-balance-current-state.md` §7):
+HP/plating/DR per boss, and the clocks or hits that turned lethal in longer fights
+(Caldera Cataclysm/Heat/vents/burn, Salamander Final Eruption/Heat/attack, Mammoth
+Frostbite/Chill, Charnel raise/Harvest/Invocation, Bramble venom, Monarch Execution,
+Predator Cornered). T2 is still at its old numbers.
 
 Tests: `server/test/bossLineage{Seams,Mountain,Swamp,Cave,Desert,Jungle,Tundra,Volcanic,Wasteland,Trench}.test.ts`
 (shared harness `server/test/_bossLineageHarness.ts`, which mocks `Date.now` like the
@@ -139,7 +142,7 @@ carry `castFx` on their start/end events.
 
 ### Known gaps (for the playtest / numbers pass)
 
-- HP and damage untouched: fight lengths will run short against the contract.
+- T2 HP and damage untouched: its fights still run short of the ~60 s contract.
 - Rune condition, boss-debuff, boss DoT and pool-flavour art is borrowed; the list to
   generate is [`briefs/boss-lineage-art-list-2026-09-27.md`](briefs/boss-lineage-art-list-2026-09-27.md).
 - Several boss mechanics are bot-answerable only with the new runes wired; the bench's

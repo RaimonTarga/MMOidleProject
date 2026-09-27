@@ -53,7 +53,8 @@ const stepName = (a: ReturnType<typeof arena>) => {
   applyMonsterRoot(a.world, a.boss, 1500, 'test');
   assert(!getStatusEffect(a.boss.tracksCombat, ABILITY_ROOT_EFFECT_ID), 'a root never lands on it');
   updateBossScripts(a.world, 0);
-  runUntil(a, () => { pin(a.player, { x: 2650, y: 2400 }); return false; }, 6200);
+  // Frostbite's first stack lands after one interval (9.6 s since 2026-09-27).
+  runUntil(a, () => { pin(a.player, { x: 2650, y: 2400 }); return false; }, 9800);
   const frost = getStatusEffect(a.player.tracksCombat, FROSTBITE_EFFECT_ID);
   assert(frost && frost.stacks >= 1, 'the room lays Frostbite');
   assert(!isCleanseable(frost.id, frost.data), 'Frostbite cannot be cleansed');
@@ -66,7 +67,7 @@ const stepName = (a: ReturnType<typeof arena>) => {
     pin(a.player, { x: 2650, y: 2400 });
     if (getStatusEffect(a.player.tracksCombat, FROZEN_STATUS_ID)) frozen = true;
     if (frozen && !getStatusEffect(a.player.tracksCombat, FROSTBITE_EFFECT_ID)) spent = true;
-    return spent;
+    return spent && a.player.hasHealth.hp < hp;
   }, 8000);
   assert(frozen, 'at the Chill threshold, Deep Freeze freezes the player');
   assert(a.player.hasHealth.hp < hp, 'and the Frost Burst centred on them lands');

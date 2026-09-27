@@ -7,8 +7,8 @@ for(const b of Object.values(DURABILITY30_BLOCKS))for(const c of b.cells){
  const o=installDurability30Treatment(c);
  if(c.role==='jungle')assert.equal(snap(),before);
  else {
-  assert.equal(MONSTER_DATABASE.get('hadal-stalker')!.stats.hp,c.treatment==='candidate'?21000:16800);
-  assert.equal(MONSTER_DATABASE.get('elder-leviathan')!.stats.hp,17640);
+  assert.equal(MONSTER_DATABASE.get('hadal-stalker')!.stats.hp,c.treatment==='candidate'?21000:34500);
+  assert.equal(MONSTER_DATABASE.get('elder-leviathan')!.stats.hp,31800);
  }
  o.restore();assert.equal(snap(),before);
 }

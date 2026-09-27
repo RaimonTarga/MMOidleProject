@@ -1255,6 +1255,11 @@ export interface MonsterDefinition {
    */
   evasion?: number;
   /**
+   * Fraction of player DoT tick damage this monster ignores (0..0.9), on top of
+   * the DOT_DR_SHARE of its general DR. The dedicated counter to DoT builds.
+   */
+  dotResistance?: number;
+  /**
    * Fraction of damage avoided on one of this monster's dodges (0..1). Defaults
    * to GAME_CONFIG.EVADE_MITIGATION_BASE (0.5). Set to 1 to fully negate the hit
    * (the legacy behavior).

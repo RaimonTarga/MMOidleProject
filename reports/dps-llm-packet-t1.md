@@ -21,9 +21,9 @@ Generated from `tools/dps-report.ts`. This packet is Markdown only; it intention
 | Average mob HP | 161 |
 | Average plating | 0.40 |
 | Average DR | 1.50% |
-| Reference optimal-build average DPS | 47.8 |
-| Target TTK at reference DPS | 3.36s |
-| Expected DPS band | 32.0 - 71.7 |
+| Reference optimal-build average DPS | 56.0 |
+| Target TTK at reference DPS | 2.87s |
+| Expected DPS band | 37.5 - 84.0 |
 
 | Profile | Monster | HP | Plating | DR | Defensive notes |
 | --- | --- | --- | --- | --- | --- |
@@ -38,28 +38,28 @@ Generated from `tools/dps-report.ts`. This packet is Markdown only; it intention
 
 | Build | Optimal Weapon | ATK | On-hit | APS | CD ms | Range | HP | Plating | DR | Class passives | Mechanic frequency | Formula notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Apprentice | Chaotic Axe +5 | 52.0 | 0.00 | 1.12 | 891 | 72.0 | 112 | 2.00 | 0.00% | - | DoT cap 6 stacks, tick 1500ms | dead swing every 3 hits |
-| Conduit | Chaotic Axe +5 | 51.0 | 0.00 | 1.14 | 874 | 162 | 108 | 2.00 | 0.00% | - | 4 root/mid summons at 1.14 APS each; one formation budget | 4 root mid summons at 1.14 APS; formation budget normalized; dead swing every 3 hits |
-| Slinger | Poison Dagger +5 | 21.0 | 0.00 | 1.50 | 505 | 132 | 107 | 2.00 | 0.00% | reload.acquire-radius-mult=2.50 | 10 shots, 1600ms reload, 1.50 effective shots/s | poison-dagger-burn reservoir DoT from weapon profile |
-| Spirit | Chaotic Axe +5 | 54.0 | 0.00 | 1.23 | 812 | 142 | 103 | 2.00 | 0.00% | - | discharge every 9 hits (0.14/s) | dead swing every 3 hits |
-| Squire | Chaotic Axe +5 | 55.0 | 0.00 | 0.94 | 1069 | 12.0 | 130 | 3.00 | 4.00% | - | empowered every 7.00s (0.14/s) | dead swing every 3 hits |
-| Striker | Chaotic Axe +5 | 51.0 | 0.00 | 1.17 | 858 | 12.0 | 118 | 2.00 | 2.00% | - | finisher every 5 hits (0.23/s) | dead swing every 3 hits |
+| Apprentice | Heavy Hammer +5 | 58.0 | 0.00 | 0.56 | 1782 | 72.0 | 112 | 2.00 | 8.00% | - | DoT cap 6 stacks, tick 1500ms | dot steady-state hit estimate |
+| Conduit | Chaotic Axe +5 | 48.0 | 0.00 | 1.14 | 874 | 162 | 108 | 2.00 | 0.00% | - | 4 root/mid summons at 1.14 APS each; one formation budget | 4 root mid summons at 1.14 APS; formation budget normalized; dead swing every 3 hits |
+| Slinger | Poison Dagger +5 | 26.0 | 0.00 | 1.50 | 505 | 132 | 107 | 2.00 | 0.00% | reload.acquire-radius-mult=2.50 | 10 shots, 1600ms reload, 1.50 effective shots/s | poison-dagger-burn post-mitigation reservoir DoT from weapon profile; flat on-hit excluded |
+| Spirit | Flash Rapier +5 | 31.0 | 0.00 | 1.79 | 558 | 142 | 103 | 2.00 | 0.00% | - | discharge every 9 hits (0.20/s) | energy steady-state hit estimate |
+| Squire | Flash Rapier +5 | 32.0 | 0.00 | 1.36 | 735 | 12.0 | 130 | 2.00 | 28.0% | - | empowered every 7.00s (0.14/s) | cooldown steady-state hit estimate |
+| Striker | Flash Rapier +5 | 29.0 | 0.00 | 1.69 | 590 | 12.0 | 118 | 2.00 | 18.0% | - | finisher every 5 hits (0.34/s) | cadence steady-state hit estimate |
 
 
 ## 4. Weapon Input Table (+0 and +5)
 
 | Weapon | Plus | Stats | Effects | Formulas | Scaling notes |
 | --- | --- | --- | --- | --- | --- |
-| Chaotic Axe | +0 | attack=22.0 | weapon.dead-swing-interval=3.00 | 1.10 APS base | explicit steps 0/5 |
-| Chaotic Axe | +5 | attack=32.0 | weapon.dead-swing-interval=3.00 | 1.10 APS base | explicit steps 5/5 |
-| Flash Rapier | +0 | attack=5.00 | - | 1.50 APS base | explicit steps 0/5 |
-| Flash Rapier | +5 | attack=8.00 | - | 1.50 APS base | explicit steps 5/5 |
-| Heavy Hammer | +0 | attack=26.0 | weapon.empowered-mult-bonus=0.15 | 0.55 APS base | explicit steps 0/5 |
-| Heavy Hammer | +5 | attack=36.0 | weapon.empowered-mult-bonus=0.22 | 0.55 APS base | explicit steps 5/5 |
-| Iron Broadsword | +0 | attack=10.0 | technique.cooldown-reduction-pct=0.06 | 0.80 APS base | explicit steps 0/5 |
-| Iron Broadsword | +5 | attack=15.0 | technique.cooldown-reduction-pct=0.11 | 0.80 APS base | explicit steps 5/5 |
-| Poison Dagger | +0 | attack=10.0 | - | 0.90 APS base; poison-dagger-burn DoT reservoir 50.0% conversion x1.50 | explicit steps 0/5 |
-| Poison Dagger | +5 | attack=15.0 | - | 0.90 APS base; poison-dagger-burn DoT reservoir 50.0% conversion x1.50 | explicit steps 5/5 |
+| Chaotic Axe | +0 | attack=20.0 | weapon.dead-swing-interval=3.00 | 1.10 APS base | explicit steps 0/5 |
+| Chaotic Axe | +5 | attack=29.0 | weapon.dead-swing-interval=3.00 | 1.10 APS base | explicit steps 5/5 |
+| Flash Rapier | +0 | attack=8.00 | - | 1.50 APS base | explicit steps 0/5 |
+| Flash Rapier | +5 | attack=12.0 | - | 1.50 APS base | explicit steps 5/5 |
+| Heavy Hammer | +0 | attack=27.0 | weapon.empowered-mult-bonus=0.15 | 0.55 APS base | explicit steps 0/5 |
+| Heavy Hammer | +5 | attack=38.0 | weapon.empowered-mult-bonus=0.22 | 0.55 APS base | explicit steps 5/5 |
+| Iron Broadsword | +0 | attack=13.0 | technique.cooldown-reduction-pct=0.08, technique.power-pct=0.15 | 0.90 APS base | explicit steps 0/5 |
+| Iron Broadsword | +5 | attack=19.0 | technique.cooldown-reduction-pct=0.16, technique.power-pct=0.40 | 0.90 APS base | explicit steps 5/5 |
+| Poison Dagger | +0 | attack=12.0 | - | 0.90 APS base; poison-dagger-burn DoT reservoir 50.0% conversion x1.50 | explicit steps 0/5 |
+| Poison Dagger | +5 | attack=18.0 | - | 0.90 APS base; poison-dagger-burn DoT reservoir 50.0% conversion x1.50 | explicit steps 5/5 |
 
 
 ## 5. Top / Bottom Builds And Outliers
@@ -68,24 +68,24 @@ Top 10 builds:
 
 | Build | Weapon | DPS | Direct | Class | DoT | Weapon/proc | Flag |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Conduit | Chaotic Axe +5 | 54.9 | 0.00 | 54.9 | 0.00 | 0.00 | - |
-| Apprentice | Chaotic Axe +5 | 51.5 | 19.5 | 0.00 | 32.0 | 0.00 | - |
-| Spirit | Chaotic Axe +5 | 50.8 | 43.5 | 7.25 | 0.00 | 0.00 | - |
-| Striker | Chaotic Axe +5 | 50.5 | 38.9 | 11.7 | 0.00 | 0.00 | - |
-| Squire | Chaotic Axe +5 | 41.4 | 33.7 | 7.71 | 0.00 | 0.00 | - |
-| Slinger | Poison Dagger +5 | 37.6 | 15.0 | 0.00 | 0.00 | 22.6 | - |
+| Conduit | Chaotic Axe +5 | 64.1 | 0.00 | 64.1 | 0.00 | 0.00 | - |
+| Spirit | Flash Rapier +5 | 59.9 | 53.8 | 6.17 | 0.00 | 0.00 | - |
+| Striker | Flash Rapier +5 | 57.3 | 47.5 | 9.83 | 0.00 | 0.00 | - |
+| Slinger | Poison Dagger +5 | 55.7 | 18.8 | 0.00 | 0.00 | 36.9 | - |
+| Apprentice | Heavy Hammer +5 | 52.3 | 16.3 | 0.00 | 36.0 | 0.00 | - |
+| Squire | Flash Rapier +5 | 46.7 | 42.2 | 4.57 | 0.00 | 0.00 | - |
 
 
 Bottom 10 builds:
 
 | Build | Weapon | DPS | Direct | Class | DoT | Weapon/proc | Flag |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Slinger | Poison Dagger +5 | 37.6 | 15.0 | 0.00 | 0.00 | 22.6 | - |
-| Squire | Chaotic Axe +5 | 41.4 | 33.7 | 7.71 | 0.00 | 0.00 | - |
-| Striker | Chaotic Axe +5 | 50.5 | 38.9 | 11.7 | 0.00 | 0.00 | - |
-| Spirit | Chaotic Axe +5 | 50.8 | 43.5 | 7.25 | 0.00 | 0.00 | - |
-| Apprentice | Chaotic Axe +5 | 51.5 | 19.5 | 0.00 | 32.0 | 0.00 | - |
-| Conduit | Chaotic Axe +5 | 54.9 | 0.00 | 54.9 | 0.00 | 0.00 | - |
+| Squire | Flash Rapier +5 | 46.7 | 42.2 | 4.57 | 0.00 | 0.00 | - |
+| Apprentice | Heavy Hammer +5 | 52.3 | 16.3 | 0.00 | 36.0 | 0.00 | - |
+| Slinger | Poison Dagger +5 | 55.7 | 18.8 | 0.00 | 0.00 | 36.9 | - |
+| Striker | Flash Rapier +5 | 57.3 | 47.5 | 9.83 | 0.00 | 0.00 | - |
+| Spirit | Flash Rapier +5 | 59.9 | 53.8 | 6.17 | 0.00 | 0.00 | - |
+| Conduit | Chaotic Axe +5 | 64.1 | 0.00 | 64.1 | 0.00 | 0.00 | - |
 
 
 All optimal-weapon outliers:
@@ -97,58 +97,58 @@ _No data._
 
 | Class | Avg DPS | Samples |
 | --- | --- | --- |
-| Spirit | 44.4 | 5 |
-| Striker | 42.8 | 5 |
-| Apprentice | 41.2 | 5 |
-| Squire | 36.7 | 5 |
-| Conduit | 36.1 | 5 |
-| Slinger | 34.8 | 5 |
+| Spirit | 48.4 | 5 |
+| Conduit | 48.4 | 5 |
+| Striker | 46.8 | 5 |
+| Apprentice | 44.8 | 5 |
+| Slinger | 43.4 | 5 |
+| Squire | 40.2 | 5 |
 
 
 ## 7. Average DPS Per Weapon
 
 | Weapon | Avg DPS | Samples |
 | --- | --- | --- |
-| Chaotic Axe | 47.7 | 6 |
-| Flash Rapier | 41.7 | 6 |
-| Poison Dagger | 40.0 | 6 |
-| Heavy Hammer | 37.7 | 6 |
-| Iron Broadsword | 29.6 | 6 |
+| Flash Rapier | 51.1 | 6 |
+| Poison Dagger | 47.4 | 6 |
+| Chaotic Axe | 47.1 | 6 |
+| Heavy Hammer | 41.3 | 6 |
+| Iron Broadsword | 39.8 | 6 |
 
 
 Weapon DPS against target shapes:
 
 | Weapon | neutral T1 dummy | high-plating T1 dummy | high-HP elite T1 dummy | Shape sources |
 | --- | --- | --- | --- | --- |
-| Chaotic Axe +5 | 47.7 | 46.5 | 43.8 | neutral T1 dummy: 10 mob average, biome tier 1 fallback; high-plating T1 dummy: Mud Toad; high-HP elite T1 dummy: Cave Brute |
-| Flash Rapier +5 | 41.7 | 38.2 | 37.4 | neutral T1 dummy: 10 mob average, biome tier 1 fallback; high-plating T1 dummy: Mud Toad; high-HP elite T1 dummy: Cave Brute |
-| Heavy Hammer +5 | 37.7 | 37.0 | 34.3 | neutral T1 dummy: 10 mob average, biome tier 1 fallback; high-plating T1 dummy: Mud Toad; high-HP elite T1 dummy: Cave Brute |
-| Iron Broadsword +5 | 29.6 | 28.6 | 27.0 | neutral T1 dummy: 10 mob average, biome tier 1 fallback; high-plating T1 dummy: Mud Toad; high-HP elite T1 dummy: Cave Brute |
-| Poison Dagger +5 | 40.0 | 38.6 | 36.3 | neutral T1 dummy: 10 mob average, biome tier 1 fallback; high-plating T1 dummy: Mud Toad; high-HP elite T1 dummy: Cave Brute |
+| Chaotic Axe +5 | 47.1 | 45.2 | 42.5 | neutral T1 dummy: 10 mob average, biome tier 1 fallback; high-plating T1 dummy: Mud Toad; high-HP elite T1 dummy: Cave Brute |
+| Flash Rapier +5 | 51.1 | 48.6 | 46.0 | neutral T1 dummy: 10 mob average, biome tier 1 fallback; high-plating T1 dummy: Mud Toad; high-HP elite T1 dummy: Cave Brute |
+| Heavy Hammer +5 | 41.3 | 40.6 | 37.6 | neutral T1 dummy: 10 mob average, biome tier 1 fallback; high-plating T1 dummy: Mud Toad; high-HP elite T1 dummy: Cave Brute |
+| Iron Broadsword +5 | 39.8 | 38.1 | 35.7 | neutral T1 dummy: 10 mob average, biome tier 1 fallback; high-plating T1 dummy: Mud Toad; high-HP elite T1 dummy: Cave Brute |
+| Poison Dagger +5 | 47.4 | 45.9 | 43.2 | neutral T1 dummy: 10 mob average, biome tier 1 fallback; high-plating T1 dummy: Mud Toad; high-HP elite T1 dummy: Cave Brute |
 
 
 ## 8. Best Weapon Per Class
 
 | Class | Weapon | Avg DPS | Samples |
 | --- | --- | --- | --- |
-| Striker | Chaotic Axe | 50.5 | 1 |
-| Squire | Chaotic Axe | 41.4 | 1 |
-| Apprentice | Chaotic Axe | 51.5 | 1 |
-| Spirit | Chaotic Axe | 50.8 | 1 |
-| Slinger | Poison Dagger | 37.6 | 1 |
-| Conduit | Chaotic Axe | 54.9 | 1 |
+| Striker | Flash Rapier | 57.3 | 1 |
+| Squire | Flash Rapier | 46.7 | 1 |
+| Apprentice | Heavy Hammer | 52.3 | 1 |
+| Spirit | Flash Rapier | 59.9 | 1 |
+| Slinger | Poison Dagger | 55.7 | 1 |
+| Conduit | Chaotic Axe | 64.1 | 1 |
 
 
 ## 9. Worst Weapon Per Class
 
 | Class | Weapon | Avg DPS | Samples |
 | --- | --- | --- | --- |
-| Striker | Iron Broadsword | 31.7 | 1 |
-| Squire | Iron Broadsword | 28.1 | 1 |
-| Apprentice | Iron Broadsword | 33.1 | 1 |
-| Spirit | Iron Broadsword | 34.0 | 1 |
-| Slinger | Iron Broadsword | 27.5 | 1 |
-| Conduit | Iron Broadsword | 23.3 | 1 |
+| Striker | Heavy Hammer | 39.2 | 1 |
+| Squire | Iron Broadsword | 35.4 | 1 |
+| Apprentice | Iron Broadsword | 40.5 | 1 |
+| Spirit | Heavy Hammer | 41.1 | 1 |
+| Slinger | Iron Broadsword | 37.6 | 1 |
+| Conduit | Heavy Hammer | 36.6 | 1 |
 
 
 ## 10. Outlier Detail
@@ -161,4 +161,4 @@ _No data._
 - Direct hit formula is shared `estimatePlayerHitDamage`; stats are rebuilt through shared `recalculatePlayerStats`.
 - Cadence, cooldown, energy, reload, DoT, summoner, weapon debuffs, and weapon DoT reservoirs are deterministic steady-state estimates.
 - Runtime combat events, proc randomness, target swapping, overkill, downtime, minion death/pathing, AoE splash value, and enemy offensive pressure are not modeled.
-- Report notes observed in this tier: `4 root mid summons at 0.57 APS; formation budget normalized`, `4 root mid summons at 0.83 APS; formation budget normalized`, `4 root mid summons at 0.94 APS; formation budget normalized`, `4 root mid summons at 1.14 APS; formation budget normalized`, `4 root mid summons at 1.66 APS; formation budget normalized`, `dead swing every 3 hits`, `poison-dagger-burn reservoir DoT from weapon profile`.
+- Report notes observed in this tier: `4 root mid summons at 0.57 APS; formation budget normalized`, `4 root mid summons at 0.94 APS; formation budget normalized`, `4 root mid summons at 1.14 APS; formation budget normalized`, `4 root mid summons at 1.66 APS; formation budget normalized`, `dead swing every 3 hits`, `poison-dagger-burn post-mitigation reservoir DoT from weapon profile; flat on-hit excluded`.

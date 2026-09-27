@@ -1,3 +1,6 @@
+> **ARCHIVED — implemented 2026-09-27.** Findings and the applied pass are in
+> `reports/t4-power-curve-2026-09-27/REVIEW.md`; live state in `docs/tier-balance-current-state.md` §6–7.
+
 # T4 power curve review: handoff (2026-09-27)
 
 **Status: not started.** Analysis session brief. Change no balance numbers until the

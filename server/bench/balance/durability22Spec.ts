@@ -15,7 +15,8 @@ export const DURABILITY22_SEEDS=[38011,40009,42013] as const;
 // retained Desert decision; a last-writer-wins pass would wrongly leave 4503.
 // hadal-stalker stays 16800 -- the 21000 candidate was REJECTED.
 export const DURABILITY22_HP:Record<string,[number,number]>={
- 'elder-leviathan':[17640,17640],'abyssal-serpent':[16800,16800],'hadal-stalker':[16800,16800],
+ // Trench rebased 2026-09-27 (T4 power curve: ~1 min per mob).
+ 'elder-leviathan':[31800,31800],'abyssal-serpent':[32800,32800],'hadal-stalker':[34500,34500],
  'granite-mammoth':[13800,13800],'cragback-rhino':[6600,6600],
  'avalanche-tyrant':[1600,1600],'cliffside-roc':[1700,1700],
  'permafrost-behemoth':[7656,7656],'glacial-direbear':[4884,4884],
