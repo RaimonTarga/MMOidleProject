@@ -104,6 +104,7 @@ read the linked current-state page before using it to describe shipped
 behavior.
 
 - [Future plans](future-plans.md) — backlog and deliberately deferred ideas.
+- [T4 power curve review](briefs/t4-power-curve-review-2026-09-27.md) — **next numbers session**: T1–T4 player power, the T3→T4 damage jump, the T4 mob-vs-boss TTK matrix; gates the next player patch.
 - [Premium animation pass: mobs and players](briefs/premium-animation-mobs-players-2026-09-27.md) — handoff for taking the boss animation treatment (wind-up clocks, body pose, auras, impact feel) to ordinary mobs and player attacks.
 - [Boss lineage art list](briefs/boss-lineage-art-list-2026-09-27.md) — icons and ground textures the boss lineages borrow art for, with target paths and wiring.
 - [Boss redesign implementation plan](boss-encounter-redesign-implementation-plan-2026-09-04.md)
