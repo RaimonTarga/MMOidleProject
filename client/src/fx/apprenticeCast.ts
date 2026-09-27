@@ -1,6 +1,7 @@
 import type { GameScene } from '../scenes/GameScene';
 import type { DotPath } from './dot';
 import { burstFx } from './particles';
+import { flairCount, flairGlow, type AttackFlair } from './attackFlair';
 import { DEPTH } from '../render/depth';
 import type { AttackTint } from './elementTint';
 
@@ -35,12 +36,14 @@ export function fxApprenticeCast(
   empowered: boolean,
   onImpact: () => void,
   tint?: AttackTint,
+  /** Stage 0 throws the bare mote; the casting rune arrives with the frame (attackFlair.ts). */
+  flair?: AttackFlair,
 ): void {
   const { core, glow } = PALETTE_BY_ELEMENT[element];
   const spark = tint?.particles ?? core;
-  const size = empowered ? 15 : 11;
+  const size = (empowered ? 15 : 11) * (flair ? flair.scale : 1);
 
-  const rune = scene.add.graphics({ x: fromX, y: fromY - 10 }).setDepth(DEPTH.FX);
+  const rune = scene.add.graphics({ x: fromX, y: fromY - 10 }).setDepth(DEPTH.FX).setVisible(flairGlow(flair));
   rune.lineStyle(empowered ? 2.5 : 2, glow, 0.92);
   rune.strokeCircle(0, 0, size);
   rune.lineStyle(1.25, core, 0.9);
@@ -62,7 +65,7 @@ export function fxApprenticeCast(
     onComplete: () => rune.destroy(),
   });
 
-  burstFx(scene, 'ptx-spark', fromX, fromY - 10, empowered ? 8 : 5, 260, {
+  burstFx(scene, 'ptx-spark', fromX, fromY - 10, flairCount(empowered ? 8 : 5, flair), 260, {
     tint: glow,
     speed: { min: 25, max: empowered ? 110 : 75 },
     angle: { min: 0, max: 360 },
@@ -116,6 +119,7 @@ export function fxApprenticeCloseCast(
   empowered: boolean,
   onImpact: () => void,
   tint?: AttackTint,
+  flair?: AttackFlair,
 ): void {
   const { core, glow } = PALETTE_BY_ELEMENT[element];
   const spark = tint?.particles ?? core;
@@ -165,7 +169,7 @@ export function fxApprenticeCloseCast(
     },
   });
 
-  burstFx(scene, 'ptx-spark', toX, toY, empowered ? 10 : 6, 260, {
+  burstFx(scene, 'ptx-spark', toX, toY,flairCount(empowered ? 10 : 6, flair), 260, {
     tint: spark,
     speed: { min: 45, max: empowered ? 180 : 120 },
     angle: { min: (angle * 180) / Math.PI - 80, max: (angle * 180) / Math.PI + 80 },

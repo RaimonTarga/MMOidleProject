@@ -3,6 +3,7 @@ import type { GameScene } from '../scenes/GameScene';
 import { burstFx } from './particles';
 import { DEPTH } from '../render/depth';
 import type { AttackTint } from './elementTint';
+import { flairCount, flairGlow, type AttackFlair } from './attackFlair';
 
 /**
  * Jagged polyline between two points. Shared with `equinoxArc`, which varies the
@@ -35,23 +36,29 @@ export function zigzagPoints(
 /**
  * The Spirit's arc. An optional elemental `tint` recolors the wide glow and the
  * sparks; the thin bright bolt keeps its own color so a discharge still reads.
+ *
+ * FLAIR (attackFlair.ts): stage 0 is a single bare bolt with a few sparks; the
+ * glow arrives with the frame, and later stages crackle harder (more jag).
  */
-export function fxLightning(scene: GameScene, fromX: number, fromY: number, toX: number, toY: number, discharge: boolean, tint?: AttackTint): void {
+export function fxLightning(scene: GameScene, fromX: number, fromY: number, toX: number, toY: number, discharge: boolean, tint?: AttackTint, flair?: AttackFlair): void {
   const color = discharge ? 0xffffff : 0x88aaff;
   const glowCol = tint?.glow ?? (discharge ? 0xaaccff : 0x3355cc);
-  const segs = discharge ? 9 : 6;
-  const spread = discharge ? 28 : 14;
+  const segs = (discharge ? 9 : 6) + (flair?.stage === 3 ? 2 : 0);
+  const spread = (discharge ? 28 : 14) * (flair ? flair.scale : 1);
+  const washed = flairGlow(flair);
   const pts = zigzagPoints(fromX, fromY, toX, toY, segs, spread);
 
   const g = scene.add.graphics().setDepth(DEPTH.FX);
-  g.lineStyle(discharge ? 6 : 4, glowCol, 0.22);
-  for (let i = 1; i < pts.length; i++) g.lineBetween(pts[i - 1].x, pts[i - 1].y, pts[i].x, pts[i].y);
+  if (washed) {
+    g.lineStyle(discharge ? 6 : 4, glowCol, 0.22);
+    for (let i = 1; i < pts.length; i++) g.lineBetween(pts[i - 1].x, pts[i - 1].y, pts[i].x, pts[i].y);
+  }
   g.lineStyle(discharge ? 2.5 : 1.5, color, 1);
   for (let i = 1; i < pts.length; i++) g.lineBetween(pts[i - 1].x, pts[i - 1].y, pts[i].x, pts[i].y);
   scene.tweens.add({ targets: g, alpha: 0, duration: discharge ? 220 : 130, onComplete: () => g.destroy() });
 
   if (!discharge) {
-    burstFx(scene, 'ptx-spark', toX, toY, 5, 180, {
+    burstFx(scene, 'ptx-spark', toX, toY, flairCount(5, flair), 180, {
       tint: tint?.particles ?? 0x88aaff, speed: { min: 60, max: 160 }, angle: { min: 0, max: 360 },
       scale: { start: 0.7, end: 0 }, alpha: { start: 1, end: 0 }, rotate: { min: 0, max: 360 },
     });
@@ -76,7 +83,7 @@ export function fxLightning(scene: GameScene, fromX: number, fromY: number, toX:
   ring.lineStyle(3, 0xaaddff, 1);
   ring.strokeCircle(0, 0, 10);
   scene.tweens.add({ targets: ring, scaleX: 5.5, scaleY: 5.5, alpha: 0, duration: 340, ease: 'Power2', onComplete: () => ring.destroy() });
-  burstFx(scene, 'ptx-spark', toX, toY, 18, 400, {
+  burstFx(scene, 'ptx-spark', toX, toY, flairCount(18, flair), 400, {
     tint: 0x88ccff, speed: { min: 120, max: 380 }, angle: { min: 0, max: 360 },
     scale: { start: 1.1, end: 0 }, alpha: { start: 1, end: 0 }, rotate: { min: 0, max: 360 },
   });

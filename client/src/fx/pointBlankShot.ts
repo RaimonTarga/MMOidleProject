@@ -1,5 +1,6 @@
 import type { GameScene } from '../scenes/GameScene';
 import { burstFx } from './particles';
+import { flairCount, type AttackFlair } from './attackFlair';
 import { DEPTH } from '../render/depth';
 import type { AttackTint } from './elementTint';
 
@@ -31,6 +32,7 @@ export function fxPointBlankShot(
   toY: number,
   empowered: boolean,
   tint?: AttackTint,
+  flair?: AttackFlair,
 ): void {
   const core = empowered ? EMP_CORE : BASE_CORE;
   const glow = tint?.glow ?? (empowered ? EMP_GLOW : BASE_GLOW);
@@ -112,7 +114,7 @@ export function fxPointBlankShot(
   // hot gas kicked BACK past the shooter's shoulder. The backwash is what makes
   // it read as point-blank rather than as a distant hit.
   const fwdDeg = (angle * 180) / Math.PI;
-  burstFx(scene, 'ptx-spark', toX, toY, empowered ? 18 : 12, 360, {
+  burstFx(scene, 'ptx-spark', toX, toY, flairCount(empowered ? 18 : 12, flair), 360, {
     tint: spark,
     speed: { min: 110, max: empowered ? 330 : 240 },
     angle: { min: fwdDeg - 48, max: fwdDeg + 48 },
@@ -120,7 +122,7 @@ export function fxPointBlankShot(
     alpha: { start: 1, end: 0 },
     rotate: { min: 0, max: 360 },
   });
-  burstFx(scene, 'ptx-dot', mx, my, empowered ? 12 : 8, 420, {
+  burstFx(scene, 'ptx-dot', mx, my, flairCount(empowered ? 12 : 8, flair), 420, {
     tint: glow,
     speed: { min: 60, max: empowered ? 190 : 140 },
     angle: { min: fwdDeg + 150, max: fwdDeg + 210 },

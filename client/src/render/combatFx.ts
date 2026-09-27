@@ -226,6 +226,9 @@ import { fxPowerShot } from "../fx/powerShot";
 import { fxDiveBomb, fxTalonStrike } from "../fx/talonStrike";
 import { fxOpenerLand, fxOpenerWindup, isOpenerFx } from "../fx/engageOpeners";
 import { fxMobCastWindup } from "../fx/mobCastWindups";
+import { attackFlairOf, type AttackFlair } from "../fx/attackFlair";
+import { playPathSignature } from "../fx/pathSignatures";
+import { abilityCallout, playAbilityRank } from "../fx/abilityRank";
 import {
   fxCharnelMaul, fxConstrict, fxHindKick, fxOozeEngulf, fxSnap, fxSpiderFang, fxSting,
   fxStoneFist, fxTongueLash, fxVoidLash, fxWispTouch, VOID_FIST,
@@ -382,6 +385,11 @@ interface AttackFxArgs {
    * "keep your own palette" — every FX treats it as optional.
    */
   tint?: AttackTint;
+  /**
+   * The attacker's visual progression (class stage + ascension, fx/attackFlair.ts).
+   * Players only; absent for monsters and minions, whose FX keep their full look.
+   */
+  flair?: AttackFlair;
 }
 
 type AttackFxFn = (args: AttackFxArgs) => void;
@@ -546,7 +554,7 @@ function playEmpoweredRing(args: AttackFxArgs): void {
 
 /** The Apprentice attack, with the caller choosing the projectile or close cast. */
 function dotAttackFx(args: AttackFxArgs, cast: typeof fxApprenticeCast): void {
-  const { scene, ev, from, to, dotPath, tint } = args;
+  const { scene, ev, from, to, dotPath, tint, flair } = args;
   const element = dotPath ?? "poison";
   cast(scene, from.x, from.y, to.x, to.y, element, ev.empowered, () => {
     switch (element) {
@@ -562,20 +570,20 @@ function dotAttackFx(args: AttackFxArgs, cast: typeof fxApprenticeCast): void {
       default:
         fxPoisonSmog(scene, to.x, to.y, ev.empowered);
     }
-  }, tint);
+  }, tint, flair);
 }
 
 const ATTACK_FX_BY_ARCHETYPE: Record<NonNullArchetype, AttackFxFn> = {
-  cadence: ({ scene, ev, from, to, tint }) =>
-    fxStrikerSlash(scene, from.x, from.y, to.x, to.y, ev.empowered, tint),
+  cadence: ({ scene, ev, from, to, tint, flair }) =>
+    fxStrikerSlash(scene, from.x, from.y, to.x, to.y, ev.empowered, tint, flair),
   // NOT fxImpact: that is the generic fallback style, authored on 41 monsters.
   // The heaviest chassis in the game gets its own weight.
-  cooldown: ({ scene, ev, to, tint }) =>
-    fxSquireSlam(scene, to.x, to.y, ev.execution, tint),
-  reload: ({ scene, ev, from, to, tint }) =>
-    fxGunshot(scene, from.x, from.y, to.x, to.y, ev.empowered, 1, tint),
-  energy: ({ scene, ev, from, to, tint }) =>
-    fxLightning(scene, from.x, from.y, to.x, to.y, ev.empowered, tint),
+  cooldown: ({ scene, ev, to, tint, flair }) =>
+    fxSquireSlam(scene, to.x, to.y, ev.execution, tint, flair),
+  reload: ({ scene, ev, from, to, tint, flair }) =>
+    fxGunshot(scene, from.x, from.y, to.x, to.y, ev.empowered, 1, tint, flair),
+  energy: ({ scene, ev, from, to, tint, flair }) =>
+    fxLightning(scene, from.x, from.y, to.x, to.y, ev.empowered, tint, flair),
   dot: (args) => dotAttackFx(args, fxApprenticeCast),
   // Summoner uses a plain melee impact from the slime — the slime sprite is
   // the FX, and the empowered ring is handled separately via the player's
@@ -594,27 +602,27 @@ const ATTACK_FX_BY_ARCHETYPE: Record<NonNullArchetype, AttackFxFn> = {
 const ATTACK_FX_BY_RANGE: Record<string, AttackFxFn> = {
   // ── cadence ──
   // Lancer traded the In-Fighter's crescent for reach — so it thrusts.
-  "cadence-range-mid": ({ scene, ev, from, to, tint }) =>
-    fxSpearThrust(scene, from.x, from.y, to.x, to.y, ev.empowered, tint),
+  "cadence-range-mid": ({ scene, ev, from, to, tint, flair }) =>
+    fxSpearThrust(scene, from.x, from.y, to.x, to.y, ev.empowered, tint, flair),
   // Phantom-Blade fights at 132px with a sword, so the cut is thrown.
-  "cadence-range-far": ({ scene, ev, from, to, tint }) =>
-    fxBladeWave(scene, from.x, from.y, to.x, to.y, ev.empowered, tint),
+  "cadence-range-far": ({ scene, ev, from, to, tint, flair }) =>
+    fxBladeWave(scene, from.x, from.y, to.x, to.y, ev.empowered, tint, flair),
 
   // ── cooldown ──
   // Phalanx sets the pike and punches; Sentinel sends it through the ground.
-  "cooldown-range-mid": ({ scene, ev, from, to, tint }) =>
-    fxPikeBrace(scene, from.x, from.y, to.x, to.y, ev.execution, tint),
-  "cooldown-range-far": ({ scene, ev, from, to, tint }) =>
-    fxSiegeBlow(scene, from.x, from.y, to.x, to.y, ev.execution, tint),
+  "cooldown-range-mid": ({ scene, ev, from, to, tint, flair }) =>
+    fxPikeBrace(scene, from.x, from.y, to.x, to.y, ev.execution, tint, flair),
+  "cooldown-range-far": ({ scene, ev, from, to, tint, flair }) =>
+    fxSiegeBlow(scene, from.x, from.y, to.x, to.y, ev.execution, tint, flair),
 
   // ── reload / energy / dot ──
   // The three CLOSE picks all floor to 12px (stats.ts clamps negative range at
   // PLAYER_ATTACK_RANGE), so their parent classes' travel-based FX had no
   // distance left to draw. Each gets a contact animation instead.
-  "reload-range-close": ({ scene, ev, from, to, tint }) =>
-    fxPointBlankShot(scene, from.x, from.y, to.x, to.y, ev.empowered, tint),
-  "energy-range-close": ({ scene, ev, from, to, tint }) =>
-    fxArcDischarge(scene, from.x, from.y, to.x, to.y, ev.empowered, tint),
+  "reload-range-close": ({ scene, ev, from, to, tint, flair }) =>
+    fxPointBlankShot(scene, from.x, from.y, to.x, to.y, ev.empowered, tint, flair),
+  "energy-range-close": ({ scene, ev, from, to, tint, flair }) =>
+    fxArcDischarge(scene, from.x, from.y, to.x, to.y, ev.empowered, tint, flair),
   // Hexblade drags the spell into the enemy instead of throwing it.
   "dot-range-close": (args) => dotAttackFx(args, fxApprenticeCloseCast),
 };
@@ -1453,7 +1461,9 @@ export function dispatchCombatEvent(
       if (sprite) {
         const fx = GUARD_FX_BY_ABILITY[ev.ability];
         if (fx) fx(scene, sprite.x, sprite.y);
-        const name = abilityDef(ev.ability)?.name ?? ev.ability;
+        // Rank II+ layers around the Guard's own animation (fx/abilityRank.ts).
+        playAbilityRank(scene, ev.playerId, ev.ability, { x: sprite.x, y: sprite.y });
+        const name = abilityCallout(scene, ev.playerId, ev.ability);
         spawnSkillCallout(
           state,
           scene,
@@ -1529,10 +1539,11 @@ export function dispatchCombatEvent(
               return live ? { x: live.x, y: live.y } : null;
             },
           });
+          playAbilityRank(scene, ev.playerId, ev.ability, { x: sprite.x, y: sprite.y });
           state.techniqueArmed.delete(ev.playerId);
           if (ev.playerId === scene.myId) notifyAbilityFired(ev.ability);
         }
-        const name = abilityDef(ev.ability)?.name ?? ev.ability;
+        const name = abilityCallout(scene, ev.playerId, ev.ability);
         spawnSkillCallout(
           state,
           scene,
@@ -1552,12 +1563,13 @@ export function dispatchCombatEvent(
     if (shouldRunClientFx()) {
       const fx = REPOSITION_FX_BY_ABILITY[ev.ability];
       if (fx) fx(scene, ev.from, ev.to);
+      playAbilityRank(scene, ev.playerId, ev.ability, ev.to);
       if (state.sprite.has(actorId)) {
         spawnSkillCallout(
           state,
           scene,
           actorId,
-          abilityDef(ev.ability)?.name ?? ev.ability,
+          abilityCallout(scene, ev.playerId, ev.ability),
           TECHNIQUE_CALLOUT_COLOR,
         );
       }
@@ -1577,7 +1589,7 @@ export function dispatchCombatEvent(
       state,
       ev.casterMinionId ?? ev.playerId,
       ev.castMs,
-      abilityDef(ev.ability)?.name ?? ev.ability,
+      abilityCallout(scene, ev.playerId, ev.ability),
     );
     // An ability that shipped a target AND a colour gets a wind-up drawn on that
     // target for the whole cast. Both fields are optional on the event, so an
@@ -1650,6 +1662,7 @@ export function dispatchCombatEvent(
     // watching a swamp build work should see the infection travel.
     if (shouldRunClientFx() && ev.links.length > 0) {
       fxContagion(scene, ev.from, ev.links);
+      playAbilityRank(scene, ev.playerId, "contagion", ev.from);
     }
     return;
   }
@@ -1664,6 +1677,7 @@ export function dispatchCombatEvent(
       // (or died to the burst) stops here rather than on the next frame.
       endDetonateWindup(state, ev.playerId);
       fxDetonate(scene, ev.pos.x, ev.pos.y, ev.element);
+      playAbilityRank(scene, ev.playerId, "detonate", ev.pos);
       // Detonate always reads as a crit — it is the payoff of the whole
       // affliction pair. The audio half of the same tell the server flags on
       // the damage number, kept to the acting player so a node full of casters
@@ -1691,6 +1705,7 @@ export function dispatchCombatEvent(
       // which is what would happen if this still required an impact point.
       const impact = ev.targetPos ?? (origin ? { x: origin.x, y: origin.y } : undefined);
       if (fx && origin && impact) fx(scene, { x: origin.x, y: origin.y }, impact);
+      if (impact) playAbilityRank(scene, ev.playerId, ev.ability, impact);
     }
     if (ev.playerId === scene.myId) {
       notifyAbilityCastEnded();
@@ -1717,8 +1732,11 @@ export function dispatchCombatEvent(
     // the hit event carries FX tags, not the ability. Pulse the right HUD tile
     // here, before the entry is dropped; with two Technique slots equipped a
     // slot-kind guess would pulse the wrong one.
+    const consumed = state.techniqueArmed.get(ev.playerId)!.abilityId;
+    const victim = state.sprite.get(ev.targetId);
+    if (victim) playAbilityRank(scene, ev.playerId, consumed, { x: victim.x, y: victim.y });
     if (ev.playerId === scene.myId) {
-      notifyAbilityFired(state.techniqueArmed.get(ev.playerId)!.abilityId);
+      notifyAbilityFired(consumed);
       notifyAbilityArmed(null);
     }
     state.techniqueArmed.delete(ev.playerId);
@@ -1889,7 +1907,8 @@ function runFxForAttackStyle(
   const tint =
     resolveAttackTint(player, dotPath ?? null, transientElement(ev.effects)) ??
     undefined;
-  const args: AttackFxArgs = { scene, ev, player, from, to, dotPath, tint };
+  const flair = attackFlairOf(player);
+  const args: AttackFxArgs = { scene, ev, player, from, to, dotPath, tint, flair };
 
   // Blunderbuss volley: each pellet is its own bullet, all fired at once from a
   // shared muzzle to its own scattered endpoint (angle + distance randomized
@@ -1975,6 +1994,10 @@ function runFxForAttackStyle(
       player.selectedRange,
       player.attackStyle,
     )(args);
+    // Stage 3 of the attack progression: the specialization's own mark on every
+    // ordinary hit (fx/pathSignatures.ts). Bespoke replacements above never get it.
+    playPathSignature(scene, flair, from, to, ev.empowered);
+    if (flair.stage === 3 && ev.empowered && ev.playerId === scene.myId) impactFeel(scene, "light", to);
   }
 
   if (isFlashTeleport) {

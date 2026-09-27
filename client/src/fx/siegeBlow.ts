@@ -1,5 +1,6 @@
 import type { GameScene } from '../scenes/GameScene';
 import { burstFx } from './particles';
+import { flairCount, type AttackFlair } from './attackFlair';
 import { DEPTH } from '../render/depth';
 import type { AttackTint } from './elementTint';
 
@@ -34,6 +35,7 @@ export function fxSiegeBlow(
   toY: number,
   execution: boolean,
   tint?: AttackTint,
+  flair?: AttackFlair,
 ): void {
   const core = execution ? EXEC_CORE : BASE_CORE;
   const glow = tint?.glow ?? (execution ? EXEC_GLOW : BASE_GLOW);
@@ -128,7 +130,7 @@ export function fxSiegeBlow(
         ease: 'Quad.easeOut',
         onComplete: () => arc.destroy(),
       });
-      burstFx(scene, 'ptx-dot', x, y, 3, 300, {
+      burstFx(scene, 'ptx-dot', x, y, flairCount(3, flair), 300, {
         tint: glow,
         speed: { min: 30, max: 90 },
         angle: { min: 200, max: 340 },
@@ -170,7 +172,7 @@ export function fxSiegeBlow(
       onComplete: () => flash.destroy(),
     });
 
-    burstFx(scene, 'ptx-dot', toX, toY, execution ? 18 : 12, 520, {
+    burstFx(scene, 'ptx-dot', toX, toY, flairCount(execution ? 18 : 12, flair), 520, {
       tint: spark,
       speed: { min: 90, max: execution ? 300 : 220 },
       angle: { min: 232, max: 308 },
