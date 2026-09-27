@@ -258,10 +258,10 @@ Raised during the boots curve pass (see `updates/develop` and `gear-evolution-cu
 
 Raised during the boss lineage review (`design_docs/boss-lineage-redesign.md`).
 
-- **Boss-phase ambience.** Intense boss phases get a screen-space client layer: Tundra
-  Blizzard (snow), Volcanic final phase (ash fall), Trench "Into the dark" (darkening
-  overlay + water distortion). One pooled Phaser emitter / overlay, capped particle count,
-  paused in hidden tabs, behind a quality toggle. The server publishes only a node-level
-  ambience tag; no gameplay effect.
+- **Boss-phase ambience — first pass IMPLEMENTED 2026-09-27** (`client/src/render/bossWeather.ts`,
+  `set-weather` boss action → `hasStatus.bossWeather`): Blizzard snow, ash fall, abyss
+  darkening with drifting caustic bands. Still open: a true water-distortion shader for the
+  Trench, an explicit quality toggle (it follows the client-FX switch today), and a browser
+  check of how it looks.
 - **Dynamic node weather.** The same layer later drives random weather events per node
   (rain, storm, sandstorm). Whether weather ever carries gameplay modifiers is open.
