@@ -1,5 +1,5 @@
 {
-  "atlasHash": "85820391a21add76e4f8e56afa94577fae78ccfbd4fce46ef1fc4abaace5d6cf",
+  "atlasHash": "658d4c1f33a0ea57bae8121dd060de845022eebb04d7882917e39608fc9cf334",
   "frames": {
     "sprites/accents/crest-close-cadence.png": {
       "sourceW": 32,
@@ -121,17 +121,35 @@
       "footY": 45,
       "halfWAtFoot": 25
     },
+    "sprites/bosses/boss-cave-t1-burrowed.png": {
+      "sourceW": 128,
+      "sourceH": 128,
+      "footY": 46,
+      "halfWAtFoot": 40.5
+    },
     "sprites/bosses/boss-cave-t1.png": {
       "sourceW": 128,
       "sourceH": 128,
       "footY": 42,
       "halfWAtFoot": 39
     },
+    "sprites/bosses/boss-cave-t2-burrowed.png": {
+      "sourceW": 128,
+      "sourceH": 128,
+      "footY": 49,
+      "halfWAtFoot": 47
+    },
     "sprites/bosses/boss-cave-t2.png": {
       "sourceW": 128,
       "sourceH": 128,
       "footY": 52,
       "halfWAtFoot": 10.5
+    },
+    "sprites/bosses/boss-cave-t3-burrowed.png": {
+      "sourceW": 128,
+      "sourceH": 128,
+      "footY": 60,
+      "halfWAtFoot": 33
     },
     "sprites/bosses/boss-cave-t3.png": {
       "sourceW": 128,

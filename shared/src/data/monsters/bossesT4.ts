@@ -583,7 +583,7 @@ export const bossMonsterEntriesT4 = [
       armAboveHpPct: 0.25,
       steps: [
         { kind: 'pull', name: 'Magma Shove', castMs: 1000, distance: 320,
-          toward: 'nearest-pool', poolFlavors: ['magma-vent'], fx: 'trench-current' },
+          toward: 'nearest-pool', poolFlavors: ['magma-vent'], fx: 'magma-shove' },
       ],
     }],
     bossScript: {

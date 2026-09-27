@@ -33571,6 +33571,171 @@
       "candidateFiles": [
         "candidate-5.png"
       ]
+    },
+    {
+      "at": "2026-09-27T09:13:14.588Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boss-cave-t1-burrowed",
+      "requestHash": "c3eeba864015063f78a2b0ca",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-09-27T09:13:34.893Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boss-cave-t1-burrowed",
+      "requestHash": "c3eeba864015063f78a2b0ca",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-09-27T09:14:05.008Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boss-cave-t1-burrowed",
+      "requestHash": "c3eeba864015063f78a2b0ca",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-09-27T09:14:45.922Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boss-cave-t1-burrowed",
+      "requestHash": "c3eeba864015063f78a2b0ca",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-09-27T09:15:06.625Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boss-cave-t1-burrowed",
+      "requestHash": "c3eeba864015063f78a2b0ca",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-09-27T09:15:30.145Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boss-cave-t2-burrowed",
+      "requestHash": "19ef3bee11e331d6ca2fc447",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-09-27T09:16:01.305Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boss-cave-t2-burrowed",
+      "requestHash": "19ef3bee11e331d6ca2fc447",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-09-27T09:16:40.647Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boss-cave-t2-burrowed",
+      "requestHash": "19ef3bee11e331d6ca2fc447",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-09-27T09:16:59.754Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boss-cave-t2-burrowed",
+      "requestHash": "19ef3bee11e331d6ca2fc447",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-09-27T09:17:18.700Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boss-cave-t2-burrowed",
+      "requestHash": "19ef3bee11e331d6ca2fc447",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
+    },
+    {
+      "at": "2026-09-27T09:17:55.467Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boss-cave-t3-burrowed",
+      "requestHash": "48f8dcee9dc1fd83639e3b9e",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-1.png"
+      ]
+    },
+    {
+      "at": "2026-09-27T09:18:15.658Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boss-cave-t3-burrowed",
+      "requestHash": "48f8dcee9dc1fd83639e3b9e",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-2.png"
+      ]
+    },
+    {
+      "at": "2026-09-27T09:18:32.978Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boss-cave-t3-burrowed",
+      "requestHash": "48f8dcee9dc1fd83639e3b9e",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-3.png"
+      ]
+    },
+    {
+      "at": "2026-09-27T09:18:58.175Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boss-cave-t3-burrowed",
+      "requestHash": "48f8dcee9dc1fd83639e3b9e",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-4.png"
+      ]
+    },
+    {
+      "at": "2026-09-27T09:19:17.195Z",
+      "endpoint": "pixflux",
+      "category": "monsters",
+      "assetId": "boss-cave-t3-burrowed",
+      "requestHash": "48f8dcee9dc1fd83639e3b9e",
+      "usd": null,
+      "candidateFiles": [
+        "candidate-5.png"
+      ]
     }
   ]
 }

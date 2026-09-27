@@ -291,7 +291,7 @@ export const bossMonsterEntriesT3 = [
             slowSpeedMult: 0.40, flavor: 'mire', label: 'Mire' } },
         { kind: 'wait', durationMs: 500 },
         { kind: 'pull', name: 'Mire Lash', castMs: 1100, distance: 300,
-          toward: 'nearest-pool', fx: 'trench-current' },
+          toward: 'nearest-pool', fx: 'mire-lash' },
       ],
     },
     bossPatternVariants: [{
@@ -306,7 +306,7 @@ export const bossMonsterEntriesT3 = [
             slowSpeedMult: 0.60, flavor: 'spore', detonationMultiplier: 2.25, label: 'Spore Pool' } },
         { kind: 'wait', durationMs: 1200 },
         { kind: 'pull', name: 'Spore Lash', castMs: 1100, distance: 320,
-          toward: 'nearest-pool', poolFlavors: ['spore'], fx: 'trench-current' },
+          toward: 'nearest-pool', poolFlavors: ['spore'], fx: 'mire-lash' },
       ],
     }],
     bossScript: {

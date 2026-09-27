@@ -276,7 +276,7 @@ export const bossMonsterEntriesT2 = [
             slowSpeedMult: 0.40, flavor: 'mire', label: 'Mire' } },
         { kind: 'wait', durationMs: 500 },
         { kind: 'pull', name: 'Mire Lash', castMs: 1200, distance: 280,
-          toward: 'nearest-pool', fx: 'trench-current' },
+          toward: 'nearest-pool', fx: 'mire-lash' },
       ],
     },
     // At 50% the rot escalates on the channels it owns: venom stacks faster

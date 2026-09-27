@@ -131,6 +131,9 @@ import {
   fxDeathrollLunge,
   fxDragWake,
   fxDragDestination,
+  fxMireLash,
+  fxMireLashWindup,
+  MAGMA_SHOVE_PALETTE,
 } from "../fx/swampCues";
 import { fxDeepFreeze, fxFrostWindUp, fxShatter, fxGlacialSlam } from "../fx/tundraCues";
 import { fxStalactiteShot, fxBurrow, fxEmerge } from "../fx/caveCues";
@@ -1028,6 +1031,9 @@ export function dispatchCombatEvent(
         // below (`frostbind` -> fxDeepFreeze, anchored on the victim), so this adds
         // only the caster-side tell and must not repeat the lock animation.
         else if (ev.fx === "frostbind") fxFrostWindUp(scene, caster.x, caster.y);
+        // The Swamp boss's grab (and the Volcanic shove): the swell is the tell.
+        else if (ev.fx === "mire-lash") fxMireLashWindup(scene, caster.x, caster.y, ev.castMs);
+        else if (ev.fx === "magma-shove") fxMireLashWindup(scene, caster.x, caster.y, ev.castMs, MAGMA_SHOVE_PALETTE);
       }
     }
     return;
@@ -1160,6 +1166,12 @@ export function dispatchCombatEvent(
         fxTrenchSweep(scene, impact.x, impact.y, ev.radius ?? 155);
       } else if (impact && ev.fx === "trench-silt-mine") {
         fxTrenchMine(scene, impact.x, impact.y, ev.radius ?? 115);
+      } else if (monster && target && ev.fx === "mire-lash") {
+        playSfx("attack-blunt");
+        fxMireLash(scene, monster.x, monster.y, target.x, target.y);
+      } else if (monster && target && ev.fx === "magma-shove") {
+        playSfx("attack-blunt");
+        fxMireLash(scene, monster.x, monster.y, target.x, target.y, MAGMA_SHOVE_PALETTE);
       } else if (monster && ev.fx === "trench-current") {
         fxTrenchCurrent(scene, monster.x, monster.y);
       } else if (monster && ev.fx === "trench-surge") {
@@ -1553,11 +1565,22 @@ export function dispatchCombatEvent(
     // render baseline and prediction target to the recoil position so the shove
     // actually lands; movement re-paths forward from here on the next tick.
     scene.tweens.killTweensOf(interp.lungeOffset);
-    interp.lungeOffset.x = 0;
-    interp.lungeOffset.y = 0;
+    // A PULL is a haul, not a shove: slide the drawn body from where it was to where
+    // the drag left it, accelerating, so the player SEES themselves being dragged
+    // (the Mire Lash tongue retracts over the same beat). Knockback keeps its snap.
+    const fromX = interp.base.x + interp.lungeOffset.x;
+    const fromY = interp.base.y + interp.lungeOffset.y;
     interp.base.x = ev.pos.x;
     interp.base.y = ev.pos.y;
     transform.target = { x: ev.pos.x, y: ev.pos.y };
+    if (ev.reason === "pull" && shouldRunClientFx()) {
+      interp.lungeOffset.x = fromX - ev.pos.x;
+      interp.lungeOffset.y = fromY - ev.pos.y;
+      scene.tweens.add({ targets: interp.lungeOffset, x: 0, y: 0, duration: 420, ease: "Quad.easeIn" });
+    } else {
+      interp.lungeOffset.x = 0;
+      interp.lungeOffset.y = 0;
+    }
     return;
   }
 
