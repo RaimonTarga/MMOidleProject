@@ -1,0 +1,581 @@
+{
+  "source": "Accepted audio-probe selections-v43; authored synthesis masters; no reference-song audio used.",
+  "sfx": [
+    {
+      "file": "v24-bossdeath-1.wav",
+      "duration": 1.7,
+      "sha256": "db75d7bac174d530dfe625cff027a4cbfbf04844cca540242ca2c2f490f62e13"
+    },
+    {
+      "file": "v24-bossdeath-2.wav",
+      "duration": 1.7,
+      "sha256": "93af3e7e8278668ed32b26a00ebeedcb3742d4b4232cd7c4f4fe7fcbef5cf1b9"
+    },
+    {
+      "file": "v24-hit-1.wav",
+      "duration": 0.17,
+      "sha256": "573a75ad03a86c5ebd03cfcdfb7aede938c6bd68149430fa2e55f4f03e6f7d1e"
+    },
+    {
+      "file": "v24-hit-2.wav",
+      "duration": 0.17,
+      "sha256": "1f598bc286762da3085cce29d9c4b46922bb0bb076e9b6d8c1b4b3bec9176c2e"
+    },
+    {
+      "file": "v24-pack-1.wav",
+      "duration": 0.65,
+      "sha256": "dad61b544d09626dc3ddb91b0adbb609ca6a1fcd9d664ec3bc1026ea38ec31fd"
+    },
+    {
+      "file": "v24-pack-2.wav",
+      "duration": 0.65,
+      "sha256": "c6bbc166b1189fd8bae4c1501d70170d04228ed49dcd39a1a5a4b0a4e7bd8afd"
+    },
+    {
+      "file": "v25-cataclysm-1.wav",
+      "duration": 6.0,
+      "sha256": "9b8a20a7221aec2bb671e300589b6d29bad5b59dd1539abbccf862887072caa6"
+    },
+    {
+      "file": "v25-cataclysm-2.wav",
+      "duration": 8.0,
+      "sha256": "0adfbbc6a22fe83fea673284071ccd86fbc3509bd3dc50020aa6dd759ac65100"
+    },
+    {
+      "file": "v28-curse-1.wav",
+      "duration": 0.53,
+      "sha256": "0fb156bf9ca277be7b4d1905a8d1c8138f7b0205e987f576d534264c4efac18f"
+    },
+    {
+      "file": "v28-poison-1.wav",
+      "duration": 0.46,
+      "sha256": "71ce03c47f5e1b674830f2290be7e2e226442d7139fe5caa9139baf86f19e076"
+    },
+    {
+      "file": "v28-slow-1.wav",
+      "duration": 0.43,
+      "sha256": "8a1e138911e799b1351775a234d37b3f61dd1ce9365baa77a6defa2dea9875b8"
+    },
+    {
+      "file": "v28-squire-1.wav",
+      "duration": 0.4,
+      "sha256": "35b085bba9166b9d9db9d9f3592ceb3b2ce518f2f4631a7a53c8c46dd1f93568"
+    },
+    {
+      "file": "v28-squire-2.wav",
+      "duration": 0.4,
+      "sha256": "93dd8acd6eabaa6ac87889a79d693f4aa00d290e3701122bb0906d0f485b2ba4"
+    },
+    {
+      "file": "v29-burn-2.wav",
+      "duration": 0.58,
+      "sha256": "f2e8190bfa843477f93b466c20a1687132b76e792d0b84dc69dd7ce7c1e8f07b"
+    },
+    {
+      "file": "v29-snare-2.wav",
+      "duration": 0.36,
+      "sha256": "ee171a3eebd988da4f5f33676c3105ad80d201236215c9030d7efac1ca6588ac"
+    },
+    {
+      "file": "v30-lightning-1.wav",
+      "duration": 1.05,
+      "sha256": "3996fce4b7ecca8a9e9fcacdea57297c4139cb38aedf3a9f88d19f587607dc81"
+    },
+    {
+      "file": "v30-striker-1.wav",
+      "duration": 0.47,
+      "sha256": "6a56f64d1815466d90e12bdf88dcdeaf9ba7e2fa80f1cdf9d5938ebd9a049307"
+    },
+    {
+      "file": "v31-conduit-2.wav",
+      "duration": 0.16,
+      "sha256": "ef400e467a03b8858268922e66cff2b8957fc57dd4ad9db8f80b2f46d42e09d7"
+    },
+    {
+      "file": "v31-slinger-2.wav",
+      "duration": 0.25,
+      "sha256": "aaed4e7e9c68725508004a3be8020ec0771d4304ffbd9198f8d63be90ee1b21d"
+    },
+    {
+      "file": "v31-spirit-1.wav",
+      "duration": 0.37,
+      "sha256": "385e1549feb7054f2948957fe4a36082b6c23c41683c8a6701c68b4456552056"
+    },
+    {
+      "file": "v31-striker-1.wav",
+      "duration": 0.21,
+      "sha256": "5eb764a47093cb6dccb57bfe00f4f183a3af3ce5bbd3e9aea4db95cf250ab489"
+    },
+    {
+      "file": "v31-striker-2.wav",
+      "duration": 0.21,
+      "sha256": "495f20e592d0c22d51569731097aa24a184feca5c5374f20a3445e9bf616f1d5"
+    },
+    {
+      "file": "v32-fire-2.wav",
+      "duration": 0.42,
+      "sha256": "066d5a411ea19e1da71647f6c277dca1e75e6895f77530c9870cbabc5e905612"
+    },
+    {
+      "file": "v32-ice-1.wav",
+      "duration": 0.36,
+      "sha256": "b630ca3286693f6bea0574028dc418038374f441b4b31923853297cdf2399dfb"
+    },
+    {
+      "file": "v32-poison-2.wav",
+      "duration": 0.42,
+      "sha256": "0f11b9c7eeeb46851b5f878268289eaa287a0491a521d81c31198f5ed6c445b0"
+    },
+    {
+      "file": "v32-squire-2.wav",
+      "duration": 0.29,
+      "sha256": "94897d06af47e0660e96651da97bd2a55731dcca8530f5edbc4bde8c80d07d3a"
+    },
+    {
+      "file": "v34-armor-break-1.wav",
+      "duration": 0.52,
+      "sha256": "02235f200e33d81e5b9273829cbc8256f105fa5f0fb01d1b96f0c7919923b6db"
+    },
+    {
+      "file": "v34-bite-2.wav",
+      "duration": 0.23,
+      "sha256": "beaeeb0538a2f120598e4d0f635154a55b4f48ff8ca837494f1da63b2b32bbb2"
+    },
+    {
+      "file": "v34-claw-1.wav",
+      "duration": 0.27,
+      "sha256": "1a62acbfd340679816ad359b1c416da46dccf938539827b76c6353dd5461d715"
+    },
+    {
+      "file": "v34-explosion-1.wav",
+      "duration": 1.15,
+      "sha256": "444117fc2f7e296dcca0f627b1300d559c9b145ea00b37b2260fdc6bdfad70b6"
+    },
+    {
+      "file": "v34-maul-2.wav",
+      "duration": 0.43,
+      "sha256": "b0d7c9af7ff28d921255f673268935f4a4eb5080e283fd9c964ba8d99d464e12"
+    },
+    {
+      "file": "v34-player-death-1.wav",
+      "duration": 1.25,
+      "sha256": "4f58303aee7afd927e59a1278b004b96ba4382d92d1209a7b45358b213b59332"
+    },
+    {
+      "file": "v34-rock-impact-2.wav",
+      "duration": 0.62,
+      "sha256": "53bf1ca02f70634d0a56c2d8b6f7f8797f0d0d3ed5215f5632ab9cc48d0e8469"
+    },
+    {
+      "file": "v34-rock-launch-1.wav",
+      "duration": 0.4,
+      "sha256": "ecfb16cfbfc682b7efbcd0c002d63e8242eaeeed306f864be57c5bbeb5a21025"
+    },
+    {
+      "file": "v35-burrow-1.wav",
+      "duration": 0.82,
+      "sha256": "babf81a1730b785c880b31148780c36ff1d320369ced6259d596eee196eee2a2"
+    },
+    {
+      "file": "v35-detonation-1.wav",
+      "duration": 1.0,
+      "sha256": "62a1eea3ab64fd54af3ff967c3483e7ea35fc95dc9c13e075e7c6e463a079be5"
+    },
+    {
+      "file": "v35-emerge-2.wav",
+      "duration": 0.88,
+      "sha256": "ad7e55c6d66bc8fad3ec5a9981ac98d7824f71b974c949278fc89d655d8651f4"
+    },
+    {
+      "file": "v35-pool-1.wav",
+      "duration": 0.68,
+      "sha256": "a4de53e3ff21bb19fe06d787043e6d077664c586706db3e813df379ff585b13a"
+    },
+    {
+      "file": "v36-shield-break-1.wav",
+      "duration": 0.64,
+      "sha256": "0211ebac5e9798195ef9ecb9d14d7aeeda1135134578fd7875c076dd7a3e6c8d"
+    },
+    {
+      "file": "v36-shield-up-1.wav",
+      "duration": 0.95,
+      "sha256": "e91fa7720218c87a8ca9782bbe127e816eb6b15610a1211f0f085caec918bdc6"
+    },
+    {
+      "file": "v37-frenzy-1.wav",
+      "duration": 0.94,
+      "sha256": "9db6b29656a9fd9c4a1cb4e0371d106fba656469f3cff53531fb50ec58194089"
+    },
+    {
+      "file": "v37-rally-1.wav",
+      "duration": 1.35,
+      "sha256": "3fb34ea6a801de1be7a6795ab81039ba51c798eeb04e222e39603774f798eb4b"
+    },
+    {
+      "file": "v37-rally-2.wav",
+      "duration": 1.35,
+      "sha256": "073230fe3d9d32f0c3f07da197b89576102e9f18f02b6962dfc3cc9d8fc6ae2d"
+    },
+    {
+      "file": "v38-raise-dead-1.wav",
+      "duration": 0.48,
+      "sha256": "87b48b52641603abb9db107cf9f0d59fa7ba01ae97538a3d7a78f225a98b91d7"
+    },
+    {
+      "file": "v39-ambush-1.wav",
+      "duration": 0.58,
+      "sha256": "36c03f1661e0e0c83b7836bffc126cd63af56ac5af137b40ec3c43015d7286eb"
+    },
+    {
+      "file": "v39-escape-2.wav",
+      "duration": 0.44,
+      "sha256": "3cca164ac770758ec505e59a0d93d490523e53b7333bc7b22981df9f2bee17bc"
+    },
+    {
+      "file": "v39-execution-1.wav",
+      "duration": 0.63,
+      "sha256": "41c5e670b6633320747599a19c7d88e6405b1a31227a62250afebda2eb7fb0fd"
+    },
+    {
+      "file": "v39-sand-2.wav",
+      "duration": 0.4,
+      "sha256": "722534633d712d23cbf2bade17d453438a6b2404cf07ca65cd5d1950486efc43"
+    },
+    {
+      "file": "v39-sunbeam-2.wav",
+      "duration": 0.76,
+      "sha256": "23e33d727cac48a6069233375afa882a4a926358004792b7cb54d12607dbdaaf"
+    },
+    {
+      "file": "v4-death-1.wav",
+      "duration": 0.8,
+      "sha256": "2c6aa18f4ffb0cce05f2e847545659d9473d98f060b939182029f294c8f9a1fe"
+    },
+    {
+      "file": "v4-dodge-1.wav",
+      "duration": 0.3,
+      "sha256": "32fd11d455db1390ab7f8baabb79b744f0127a98e8c04c4e55c7fa4d1b4d40fc"
+    },
+    {
+      "file": "v40-constrict-1.wav",
+      "duration": 0.55,
+      "sha256": "c7208271680034e563c7c1dfa2b804d74c1e16b7546da2f2fe266bc1531e0577"
+    },
+    {
+      "file": "v40-devour-2.wav",
+      "duration": 0.72,
+      "sha256": "17b7d13a6a22d6175a3e834af4dd6c625c94053a644076283ed1f6e84ad75cfd"
+    },
+    {
+      "file": "v40-mark-2.wav",
+      "duration": 0.95,
+      "sha256": "bd7ce6701a1cc0e951c01c56b07b3cd7d26adb96ed76650ac4e5e6270bff3397"
+    },
+    {
+      "file": "v40-pressure-lance-1.wav",
+      "duration": 0.53,
+      "sha256": "d7dc5bc0f5fd51b0e648d3372ab6539930683f0e4670c9ce355f71fd65ae49be"
+    },
+    {
+      "file": "v40-shatter-2.wav",
+      "duration": 0.88,
+      "sha256": "ae9087012032063c460fedb4120e1ebf7f2d321beb45f2a07ccd0e2d96adcd4f"
+    },
+    {
+      "file": "v40-undertow-1.wav",
+      "duration": 0.85,
+      "sha256": "daca232ecd12da19130e65523886faf1e008fe73b8309dcbfc171de0d5192b79"
+    },
+    {
+      "file": "v41-bone-1.wav",
+      "duration": 0.29,
+      "sha256": "51ea4586274f9561407bb7e243fc12c3602929884aba11b94012868d73eb648b"
+    },
+    {
+      "file": "v41-charge-1.wav",
+      "duration": 0.67,
+      "sha256": "a9a9494910844f522393735187ba5a75b487b455eecf28546c4ef6d382f56118"
+    },
+    {
+      "file": "v41-deathroll-1.wav",
+      "duration": 0.9,
+      "sha256": "bccc89ab24f826ba536e25164cdb2d183bab9fbcceed17e1caf0f70f9919b1f8"
+    },
+    {
+      "file": "v41-fault-lines-1.wav",
+      "duration": 0.95,
+      "sha256": "13008c53ca13065a2492c9f4c483bebbe55a9f6622f4891b0bc0b688bc192575"
+    },
+    {
+      "file": "v42-magic-1.wav",
+      "duration": 0.37,
+      "sha256": "a269267e5a58767ec59bb2418ba29ad3f1b9cec60d85cea32090ff79ff8fdefe"
+    },
+    {
+      "file": "v42-magic-2.wav",
+      "duration": 0.44,
+      "sha256": "c41cd97fe258376fab90ca676340283dc50c719373aed1866e5d9792ff0a81f2"
+    },
+    {
+      "file": "v5-arrow-2-1.wav",
+      "duration": 0.27,
+      "sha256": "e22796c0fb1508f4dc069a15c267a10f015cd6f01f36b9606349496b9ba4c2b7"
+    },
+    {
+      "file": "v5-arrow-2-2.wav",
+      "duration": 0.27,
+      "sha256": "cecb80c5c15230ad2aabe34ed67b63185011d61758f6b12a41dc20251af20020"
+    },
+    {
+      "file": "v5-heal-2-1.wav",
+      "duration": 0.6,
+      "sha256": "24d1ab1c57de0f89e4d49b7878c9257a75f5a222546a3895f1eba3276fd5a49c"
+    },
+    {
+      "file": "v5-heal-2-2.wav",
+      "duration": 0.6,
+      "sha256": "cc2cfad76df82acf8cdc319de41d04e8fd7b183b05d0e82414792b34c2d21186"
+    },
+    {
+      "file": "v5-summon-1-1.wav",
+      "duration": 0.25,
+      "sha256": "f7b89147522748d2b75bd3e68c0cdb5a35e3250f4aac6c2e130b5bad09aa0662"
+    },
+    {
+      "file": "v5-summon-1-2.wav",
+      "duration": 0.25,
+      "sha256": "07429fa07064f845868fd32549cffb37d7b71f1c5548e7112b3d3d4570ba02ad"
+    },
+    {
+      "file": "v6-block-1-1.wav",
+      "duration": 0.32,
+      "sha256": "d05ffc3c08a615ff459a0457f13820205a05d3faf30b71850bdadf943f97afb7"
+    },
+    {
+      "file": "v6-block-1-2.wav",
+      "duration": 0.32,
+      "sha256": "bb17c6c00cc8ca3a2aa4f7082ba8ac33044d2c1f07dad8ab38eea9f9383754e8"
+    },
+    {
+      "file": "v6-ice-1-1.wav",
+      "duration": 0.72,
+      "sha256": "83abfbce08b43729e92034cf63d6e0f73f19264188bcb1c785dd68d0fe94e0c3"
+    },
+    {
+      "file": "v6-ice-2-1.wav",
+      "duration": 0.72,
+      "sha256": "4c097989d3ed38330767276b699eeaf3d4d13be757852d5a1067948bbb4142e3"
+    },
+    {
+      "file": "v6-slam-impact-2.wav",
+      "duration": 1.15,
+      "sha256": "e88e0e9839edc66ddaecb4b6cbd6674fd54ca16cbbe653e4e507844e4f0c3084"
+    }
+  ],
+  "music": [
+    {
+      "file": "cinder.ogg",
+      "sha256": "70751420b115092064a82d6abc37315b2012a351cdb34e0bff892cfdc4fcb473"
+    },
+    {
+      "file": "v10-volcano-battle.ogg",
+      "sha256": "9a71b9b6401575c20ba24006fb30794c21396e4eaafaace97754a4c2c757a9ed"
+    },
+    {
+      "file": "v10-volcano-eruption.ogg",
+      "sha256": "e59f23f01abc9741740661ad17dee2d5cbc83238ce2822b606f6802ff6fbf8bf"
+    },
+    {
+      "file": "v11-tundra-climax.ogg",
+      "sha256": "0e4add0b31894e0488d6e89a6da74a0ba595ebb6f21dc5bed1b8ac518dd7b164"
+    },
+    {
+      "file": "v11-volcano-zone.ogg",
+      "sha256": "baf639bf7bc2c4318bf6964b6e476460ba3154663e7bf14c03392aef0789289d"
+    },
+    {
+      "file": "v12-volcano-cast-22s.ogg",
+      "sha256": "79e4f83b4e3abd72f0efdcb1448781654149c39e13292c585d776b5c2d921fc9"
+    },
+    {
+      "file": "v12-volcano-cast-26s.ogg",
+      "sha256": "f823478e8228abd6060e2b366fedfac6eac5bbd656eecf662bf2a3e15826f802"
+    },
+    {
+      "file": "v13-forest-branchways.ogg",
+      "sha256": "6da05733d85256157ce902ce6e85c0483f39f9a4a09e5520f6e64d453b9516f1"
+    },
+    {
+      "file": "v13-plains-open-road.ogg",
+      "sha256": "4524d3f6e1e7d9bc5a290b5d2dd77cfd2902028408875e2db30a38a609dc4446"
+    },
+    {
+      "file": "v13-swamp-stillwater.ogg",
+      "sha256": "d65d0aca31107f358fd24919b457c6c2f296574896468b8ebf31fa820ecd97e3"
+    },
+    {
+      "file": "v14-forest-escalation.ogg",
+      "sha256": "93b49ea6c6fd039df04d9461cf3999d1a906647dc419bf5544b84a4a170336d9"
+    },
+    {
+      "file": "v14-forest-final.ogg",
+      "sha256": "8af3f6172a875483244f9b9adc0dcd9df439dfd200e75026bad589e80d4702cf"
+    },
+    {
+      "file": "v14-swamp-battle.ogg",
+      "sha256": "171e1386b2b3b0ee2053896a2ef3b2593a915ec2e0880a4386771f019881e23d"
+    },
+    {
+      "file": "v14-swamp-escalation.ogg",
+      "sha256": "8cffcbd622d2069bd629748e1f78d036cc8a8e0d417b97ef5ff3aeaa4cad3b00"
+    },
+    {
+      "file": "v14-swamp-final.ogg",
+      "sha256": "eb2c9397a7001be5c203eda36648a22faf82a75e42357ac5e3e28aed3aca721f"
+    },
+    {
+      "file": "v15-plains-pulse-battle.ogg",
+      "sha256": "2aaf132bd556f1c91b2284e9006db1342bea92d033667e3a955255cc12131889"
+    },
+    {
+      "file": "v15-plains-pulse-half.ogg",
+      "sha256": "2cd94f26744b2ff5e7585cf78057b18ef6a78801e5de151482184ac8229776e1"
+    },
+    {
+      "file": "v16-clearing-first-light.ogg",
+      "sha256": "12b37bf86d573763b652c90450522510637b0f9ce7990f7118e0f56d6506878b"
+    },
+    {
+      "file": "v16-sanctuary-starlit.ogg",
+      "sha256": "255be7169d9373711f997faa3c769b54c6d5d76fc040af22f91bccf57069a3d2"
+    },
+    {
+      "file": "v17-caves-lantern-hollows.ogg",
+      "sha256": "d75fe54b83df43ba20fca998c2383b7fbfca9bca6ba2ad69a220c3dfb11ab4b1"
+    },
+    {
+      "file": "v19-desert-spacious.ogg",
+      "sha256": "588d1c5a17220cf94393d3f6a4f463ff643689b3e8218bf6ca956b65e70479f1"
+    },
+    {
+      "file": "v19-jungle-steady-canopy.ogg",
+      "sha256": "2e73f6a1e3d196748a594c53b1fe3422e88e57ce96b0c95899bddcc50a0b374e"
+    },
+    {
+      "file": "v20-desert-approach.ogg",
+      "sha256": "63bc464df7a96e85932b4814dac0e01b7f422547982acd3093233dcf48234daa"
+    },
+    {
+      "file": "v20-desert-battle.ogg",
+      "sha256": "bac7a7a4cc3fa6747e9ed029fffbbcb287d56d89648f89ff5da676228a1422e7"
+    },
+    {
+      "file": "v20-desert-half.ogg",
+      "sha256": "ffea176af3dbfbf3ffefc0b8c7477b77cc02ed2eb3dc89f9412ba57971aec21f"
+    },
+    {
+      "file": "v20-desert-quarter.ogg",
+      "sha256": "c0636f98ab0bd9b5dd7ff52e1e1239de95f5840d194b387c90416fbfcd7b1cb5"
+    },
+    {
+      "file": "v20-jungle-approach.ogg",
+      "sha256": "6ff71f61938c56d76360f52212f0fdb430ebc6cc9071bac5dfa23e71f03fd77a"
+    },
+    {
+      "file": "v20-jungle-battle.ogg",
+      "sha256": "1695ca91de33424bd6ee181e81af882c50e1e1af2090bf6d2fce7682cc8b6447"
+    },
+    {
+      "file": "v20-jungle-half.ogg",
+      "sha256": "d11682fc3fc2445f844fc0ff2c1dcda6bac2cce9358a87992cba407f8d8545b8"
+    },
+    {
+      "file": "v20-jungle-quarter.ogg",
+      "sha256": "b2ce075aff7308c711beb081d2f52b0bb4b6baa219ebe973c20ee5ebe8717618"
+    },
+    {
+      "file": "v21-trench-below-the-light.ogg",
+      "sha256": "0558cc9686c1430eaea2d53c1ff48a1839924e5817dbbfd5c8f3bc3540847e71"
+    },
+    {
+      "file": "v21-wasteland-ash-procession.ogg",
+      "sha256": "1143259fa66764b930beaf7f28e99278b84e3b19a34c6b72ab01ef0e6d8d357e"
+    },
+    {
+      "file": "v22-trench-approach.ogg",
+      "sha256": "7b78b434ad231cfc093da4d4e4d110d6c2e8d23709823f25f8fe4e16396bd8d0"
+    },
+    {
+      "file": "v22-trench-battle.ogg",
+      "sha256": "431a7e7175509ac80c8a03bdc1fbc6f2415f2719fc597b6d87c42713d9e488c3"
+    },
+    {
+      "file": "v22-trench-climax.ogg",
+      "sha256": "a7c83f6a4918b408c6f4e09692748369dbf0e7db5907545c3bda877c442b1939"
+    },
+    {
+      "file": "v22-trench-escalation.ogg",
+      "sha256": "4822f8792e5dbdb2415e44249b39a46390dd95fe53c6114a39d6019b4298e71f"
+    },
+    {
+      "file": "v22-wasteland-approach.ogg",
+      "sha256": "0bed22652a998c1d9c600b6d47c9f41d76c5ced7727b592e5ed43e84a4229e2b"
+    },
+    {
+      "file": "v22-wasteland-battle.ogg",
+      "sha256": "92e59737ca44b81e6966ca3ddf9c4f000a276097cf36a4b4450103edbc9e254a"
+    },
+    {
+      "file": "v22-wasteland-climax.ogg",
+      "sha256": "989939eaff8a5623879dadf396b41d04d7642967b7a62b1b3eb5be82a60fe8d2"
+    },
+    {
+      "file": "v22-wasteland-escalation.ogg",
+      "sha256": "89cbc4c0edb2ebd5bfcb086fd4d1f87373cffa7b9076b22f6e565d6a9da2c57d"
+    },
+    {
+      "file": "v23-caves-approach.ogg",
+      "sha256": "c09626a3e2335ebd4477b84b66b850007dbb85d46bb0f39daef2861ad7041979"
+    },
+    {
+      "file": "v23-caves-battle.ogg",
+      "sha256": "5a0a546ce9319a218ab2724326e6bf7c4b6aef3a06f952ad109ed0d2320acad4"
+    },
+    {
+      "file": "v23-caves-half.ogg",
+      "sha256": "518c7f4990c07f367214bb4c7d08615d6cb1bd7d4fed347530c2c815756d5f4f"
+    },
+    {
+      "file": "v23-caves-quarter.ogg",
+      "sha256": "f7730f233e3d4f062d13a4e4a117596f3f817598b78f963448169c1fda202778"
+    },
+    {
+      "file": "v6-mountain-reference-study.ogg",
+      "sha256": "a83ae774fba7ec590ac40c7630dee920931ceda486ef751740d3c05625e68540"
+    },
+    {
+      "file": "v7-mountain-approach.ogg",
+      "sha256": "64fcfe10925e9b07fcc7d521242aa5dcd12ec9543113f1e75ff06723413a6e3a"
+    },
+    {
+      "file": "v8-mountain-battle.ogg",
+      "sha256": "c188428ff3eba2f2573affaffb791394e53b578dedfc0b0e4fd9d94fdbf35bfe"
+    },
+    {
+      "file": "v8-mountain-enrage.ogg",
+      "sha256": "e945cccbf6a3647261369e23753638e3ca3f9be25454b9202a22650074345fff"
+    },
+    {
+      "file": "v8-mountain-half.ogg",
+      "sha256": "c968b8d3d6fcf039caff812b8b9e199e0b39eb4e41bd3bbbbda266f842c6e85e"
+    },
+    {
+      "file": "v9-tundra-climax.ogg",
+      "sha256": "4aed2de4cfec543de44c99539db7dc24c507090a3ab68e6678fd2468c12bf317"
+    },
+    {
+      "file": "v9-tundra-zone.ogg",
+      "sha256": "ae0936de1b4ee6888fb3f25db8d6119828b9dde1b0f776d1fd78ce4df7864f16"
+    }
+  ]
+}

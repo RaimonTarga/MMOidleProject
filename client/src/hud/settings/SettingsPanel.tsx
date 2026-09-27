@@ -454,8 +454,7 @@ export function SettingsPanel({ onClose, onSwitchCharacter }: Props) {
               <strong>Audio preview</strong>
               <p>
                 Audio is still a work in progress and starts muted for this playtest.
-                Enable it below if you’d like to try it. The current sounds are
-                placeholders and don’t reflect the planned final audio.
+                Enable it below if you’d like to try it. The accepted music and sound effects are ready for in-game mixing feedback.
               </p>
             </div>
             <label className="settings-toggle-row">

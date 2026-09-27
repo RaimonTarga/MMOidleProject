@@ -4,6 +4,7 @@ import {
   composeMonsterView,
   composePlayerView,
   RECIPE_DATABASE,
+  NODE_BIOMES,
 } from "@mmo-idle/shared";
 import { openGatedUnlocks } from './gatedUnlocks';
 import { loadGameplaySettings } from '../settings/gameplaySettings';
@@ -26,7 +27,7 @@ import { prepareCombatText, renderCombatText } from '../render/combatText';
 import { spawnDamageNumber } from '../fx/particles';
 import { fxBossDeath, fxMobDeath } from "../fx/monsterDeath";
 import { fxSummonDisperse, fxSummonForm } from "../fx/summonMist";
-import { playSfx } from "../audio/audioEngine";
+import { playSfx, setEncounterMusic } from "../audio/audioEngine";
 import { notePlayerStatusCues } from "../audio/statusCues";
 import { notifyDeltaAppliedDuringTabResync, shouldRunClientFx } from "../fx/guard";
 import { refreshNodeDecorState } from "../scenes/game/overlays";
@@ -237,6 +238,13 @@ export function applyDelta(
     }
     syncPlayerAtoms(own);
     notePlayerStatusCues(own);
+    const biome = NODE_BIOMES[own.nodeId]?.biomeGroup;
+    const boss = Array.from(state.view.values()).find((view): view is MonsterView =>
+      'isBoss' in view && view.isBoss && view.nodeId === own.nodeId && view.hp > 0);
+    if (biome) setEncounterMusic(biome, own.isDead ? undefined : boss ? {
+      hp: boss.hp, maxHp: boss.maxHp, tier: NODE_BIOMES[own.nodeId]?.biomeTier ?? 1,
+      engaged: boss.attackTargetId != null || boss.hp < boss.maxHp,
+    } : undefined);
 
     const summonHealth: SummonHealthView[] = [];
     for (const id of state.ids) {

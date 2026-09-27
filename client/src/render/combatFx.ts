@@ -169,7 +169,8 @@ import { fxCleanse } from "../fx/cleanse";
 import { fxPowerShot } from "../fx/powerShot";
 import { fxDiveBomb, fxTalonStrike } from "../fx/talonStrike";
 import { shouldRunClientFx } from "../fx/guard";
-import { playSfx } from "../audio/audioEngine";
+import { playSfx, playFinalCastMusic, suppressSfx } from "../audio/audioEngine";
+import { attackCue, castCue, ecologyCues, bossCues } from "../audio/routing";
 import type { SfxId } from "../audio/manifest";
 import { startCastBar, endCastBar } from "./castBars";
 import { spawnSkillCallout } from "./skillCallouts";
@@ -191,38 +192,9 @@ import { DEPTH } from "./depth";
 
 type NonNullArchetype = Exclude<CombatArchetype, null>;
 
-const RANGED_ATTACK_STYLES = new Set(["gunshot", "boulder"]);
-const MAGIC_ATTACK_STYLES = new Set([
-  "magic", "fire", "frost", "poison", "void",
-  "conduit-beam", "conduit-bolt",
-]);
-
-/** Pick the SFX cue for the local player's attack from archetype/style. */
-function attackSfxFor(archetype: CombatArchetype, style: string): SfxId {
-  if (archetype === "reload") return "attack-ranged";
-  if (archetype === "energy" || archetype === "dot") return "attack-magic";
-  // Cooldown hits land as heavy, blunt blows rather than bladed slashes.
-  if (archetype === "cooldown") return "attack-blunt";
-  if (archetype === "cadence" || archetype === "summoner") return "attack-melee";
-  if (RANGED_ATTACK_STYLES.has(style)) return "attack-ranged";
-  if (MAGIC_ATTACK_STYLES.has(style)) return "attack-magic";
-  if (style === "impact") return "attack-blunt";
-  if (style === "conduit-strike") return "attack-melee";
-  return "attack-melee";
-}
-
-// Positional SFX falloff for snapshot-driven (other-entity) attacks: full volume
-// within INNER scene px of the local player, fading to silent by OUTER — so an
-// off-screen source reads as a faint noise. Pure distance attenuation (no stereo
-// pan); tune the radii to taste.
 const SFX_FALLOFF_INNER_PX = 300;
 const SFX_FALLOFF_OUTER_PX = 1150;
 
-// Per-style SFX gain for styles that fire in packs. A Conduit formation lands up
-// to six melee swings per volley, so each one plays well under a single hit.
-const SFX_GAIN_BY_STYLE: Record<string, number> = {
-  "conduit-strike": 0.35,
-};
 
 function listenerGain(scene: GameScene, sourceX: number, sourceY: number): number {
   const own = scene.state.ownId
@@ -958,8 +930,9 @@ export function dispatchCombatEvent(
   if (ev.kind === "ecology-pulse") {
     // Node-wide ecology tells, not own-player gated.
     if (shouldRunClientFx()) {
+      const cue = ecologyCues[ev.pulse];
+      if (cue) playSfx(cue, { gainMult: listenerGain(scene, ev.pos.x, ev.pos.y) * 0.7 });
       if (ev.pulse === "pack-call") {
-        playSfx("pack-call");
         fxPackCall(scene, ev.pos);
         return;
       }
@@ -967,7 +940,6 @@ export function dispatchCombatEvent(
         fxShellUp(scene, ev.pos.x, ev.pos.y);
         return;
       }
-      if (ev.pulse === "frost-shatter") playSfx("frozen");
       const color =
         ev.pulse === "sun-mark"
           ? SUN_MARK_PULSE_COLOR
@@ -1008,6 +980,10 @@ export function dispatchCombatEvent(
   if (ev.kind === "monster-cast-start") {
     // Node-wide telegraph: open the cast bar over the charging monster.
     startCastBar(state, ev.monsterId, ev.castMs, ev.label);
+    if (ev.fx === 'cataclysm-cast') playFinalCastMusic(ev.castMs);
+    const cue = castCue(ev.fx, 'start');
+    const source = state.sprite.get(ev.monsterId);
+    if (cue && source && shouldRunClientFx()) playSfx(cue, { gainMult: listenerGain(scene, source.x, source.y) * 0.7 });
     // WIND-UP cues. A boss-pattern `cast` step emits only this event — it has no
     // cast-end of its own — so a step whose whole point is the wind-up (a committed
     // charge, a burrow, an escape) can only be drawn here. Anchored on the caster,
@@ -1033,12 +1009,17 @@ export function dispatchCombatEvent(
   }
 
   if (ev.kind === "monster-cast-end") {
+    const castLabel = state.castState.get(ev.monsterId)?.label;
+    if (ev.fired && castLabel === 'Constrict' && ev.targetId === scene.myId) suppressSfx('freeze', 1500);
     endCastBar(state, ev.monsterId);
     // On a fired shot, rip the flashy projectile from the monster to its target.
     if (ev.fired && shouldRunClientFx()) {
       const monster = state.sprite.get(ev.monsterId);
       const target = ev.targetId ? state.sprite.get(ev.targetId) : undefined;
       const impact = ev.pos ? nodeToScene(ev.pos.x, ev.pos.y) : undefined;
+      const cue = castCue(ev.fx, 'end', ev.fired, castLabel);
+      const source = impact ?? monster ?? target;
+      if (cue && source) playSfx(cue, { gainMult: listenerGain(scene, source.x, source.y) * 0.8 });
       if (monster && ev.fx === "howl") {
         fxDireHowl(scene, monster.x, monster.y);
       } else if (monster && ev.fx === "chest-beat") {
@@ -1087,21 +1068,16 @@ export function dispatchCombatEvent(
         const at = target ?? impact ?? monster;
         if (at) fxExecution(scene, at.x, at.y, ev.radius ?? 150);
       } else if (impact && ev.fx === "pool-spawn") {
-        playSfx("attack-blunt");
         fxPoolSpawn(scene, impact.x, impact.y, ev.radius ?? 110);
       } else if (impact && ev.fx === "ground-slam") {
-        playSfx("attack-blunt");
         fxGroundSlam(scene, impact.x, impact.y, ev.radius ?? 120);
       } else if (impact && ev.fx === "glacial-slam") {
-        playSfx("attack-blunt");
         fxGlacialSlam(scene, impact.x, impact.y, ev.radius ?? 150);
       } else if (impact && ev.fx === "deep-core-eruption") {
-        playSfx("attack-blunt");
         fxEmerge(scene, impact.x, impact.y, ev.radius ?? 160);
       } else if (impact && ev.fx === "shatter") {
         fxShatter(scene, impact.x, impact.y, ev.radius ?? 195);
       } else if (impact && ev.fx === "cataclysm-impact") {
-        playSfx("attack-blunt");
         fxCataclysmImpact(scene, impact.x, impact.y, ev.radius ?? 2000);
       } else if (impact && ev.fx === "bombardment") {
         fxBombardment(scene, impact.x, impact.y, ev.radius ?? 130);
@@ -1124,7 +1100,7 @@ export function dispatchCombatEvent(
         if (monster && land) {
           fxBoulder(scene, monster.x, monster.y, land.x, land.y);
           scene.time.delayedCall(260, () => {
-            playSfx("attack-blunt");
+            playSfx("rock-impact", { gainMult: listenerGain(scene, land.x, land.y) * 0.65 });
             fxGroundSlam(scene, land.x, land.y, ev.radius ?? 83);
           });
         }
@@ -1151,7 +1127,6 @@ export function dispatchCombatEvent(
       } else if (impact && ev.fx === "timberclaw-swipe") {
         // Anchored on the planted circle, never the caster: the boss has already
         // moved on by the time its sweep resolves.
-        playSfx("attack-blunt");
         fxTimberclawSwipe(scene, impact.x, impact.y, ev.radius ?? 90);
       } else if (impact && ev.fx === "trench-tail-sweep") {
         fxTrenchSweep(scene, impact.x, impact.y, ev.radius ?? 145);
@@ -1199,8 +1174,9 @@ export function dispatchCombatEvent(
         ev.fx !== "slam" && sprite
           ? { x: sprite.x, y: sprite.y }
           : nodeToScene(ev.pos.x, ev.pos.y);
+      const cue = bossCues[ev.fx];
+      if (cue) playSfx(cue, { gainMult: listenerGain(scene, at.x, at.y) * 0.8 });
       if (ev.fx === "slam") {
-        playSfx("attack-blunt");
         fxSlam(scene, at.x, at.y, ev.radius ?? 120, ev.element);
       } else if (ev.fx === "summon") {
         fxSummonBurst(scene, at.x, at.y);
@@ -1241,7 +1217,9 @@ export function dispatchCombatEvent(
         );
       }
       if (ev.playerId === scene.myId) {
-        playSfx("empowered");
+        const cue = ['cleanse', 'second-wind', 'recuperate'].includes(ev.ability) ? 'heal'
+          : ev.ability === 'break-free' ? 'shield-break' : 'block';
+        playSfx(cue);
         notifyAbilityCooldownStarted(ev.ability);
         notifyAbilityFired(ev.ability);
       }
@@ -1446,7 +1424,7 @@ export function dispatchCombatEvent(
       // affliction pair. The audio half of the same tell the server flags on
       // the damage number, kept to the acting player so a node full of casters
       // cannot stack the cue.
-      if (ev.playerId === scene.myId) playSfx("empowered");
+      if (ev.playerId === scene.myId) playSfx("detonation");
     }
     return;
   }
@@ -1477,7 +1455,9 @@ export function dispatchCombatEvent(
       if (ev.fired) {
         notifyAbilityCooldownStarted(ev.ability);
         notifyAbilityFired(ev.ability);
-        playSfx("empowered");
+        const cue = ev.ability === 'slam' ? 'slam' : ev.ability === 'snipe' ? 'shot'
+          : ev.ability === 'imbue-lightning' ? 'spirit-empowered' : 'striker-empowered';
+        playSfx(cue);
       }
     }
     return;
@@ -1523,7 +1503,7 @@ export function dispatchCombatEvent(
         runFxForAttackStyle(state, ev, scene, presentation);
         const gainMult = listenerGain(scene, from.x, from.y);
         if (gainMult > 0) playSfx(ev.empowered || ev.execution ? 'empowered'
-          : attackSfxFor(player.combatArchetype ?? null, player.attackStyle), { gainMult });
+          : attackCue(player.combatArchetype ?? null, player.attackStyle), { gainMult });
         if (ev.evadedPartial) spawnGrazeLabel(state, scene, ev.targetId);
         return;
       }
@@ -1563,8 +1543,10 @@ export function dispatchCombatEvent(
       : undefined);
     if (shouldRunClientFx() && (isOwnPlayerEvent || isWatchedPlayerEvent)) {
       // Throttled in the engine, so pellet bursts collapse to one cue.
-      if (ev.empowered || ev.execution) playSfx("empowered");
-      else playSfx(attackSfxFor(player?.combatArchetype ?? null, player?.attackStyle ?? ""));
+      // Minions voice their own attacks; do not double them with the owner hit event.
+      if (!player?.summonsMinions) playSfx(attackCue(player?.combatArchetype ?? null,
+        player?.attackStyle ?? '', ev.empowered || ev.execution,
+        player?.combatArchetype === 'dot' ? getDotPath(player) : undefined));
     }
     // Minion hits already play FX from minions.ts (lastAttackAt); skip body lunge/FX.
     if (shouldRunClientFx() && (player?.summonsMinions ?? 0) === 0) {
@@ -1877,12 +1859,10 @@ export function spawnAttackEffect(
   // Spatialized attack SFX for other players / monsters / minions: attenuate by
   // distance from the local player so off-screen sources are faint. (Own-player
   // attacks come through the event path in dispatchCombatEvent at full volume.)
-  const gainMult = listenerGain(scene, from.x, from.y) * (SFX_GAIN_BY_STYLE[style] ?? 1);
+  const gainMult = listenerGain(scene, from.x, from.y) * (flags?.archetype ? 0.7 : 0.55);
   if (gainMult > 0) {
     const sfx =
-      flags?.empowered || flags?.execution
-        ? "empowered"
-        : attackSfxFor(flags?.archetype ?? null, style);
+      attackCue(flags?.archetype ?? null, style, flags?.empowered || flags?.execution, flags?.dotPath);
     playSfx(sfx, { gainMult });
   }
 }
