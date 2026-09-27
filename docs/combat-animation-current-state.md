@@ -1,12 +1,13 @@
 # Combat animation (mobs and players) — current state
 
-**Last audited:** 2026-09-28 (branch `feat/premium-mob-animations`).
+**Last audited:** 2026-09-28 (branch `feat/premium-mob-animations`, incl. Conduit paths).
 **Owning source:** `client/src/fx/` (animation modules), `client/src/render/combatFx.ts`
 (event dispatch), `client/src/render/monsters.ts`, `server/src/systems/combat/ai/ai.ts`
 and `server/src/systems/combat/engine/monsterStateMirror.ts` (presentation state the
 server publishes).
 **Tests:** `server/test/monsterStyleCoverage.test.ts`, `chargeOnAggroVisual.test.ts`,
-`monsterStateMirror.test.ts`, `plainsHawkDiveBomb.test.ts`, `attackProgression.test.ts`.
+`monsterStateMirror.test.ts`, `plainsHawkDiveBomb.test.ts`, `attackProgression.test.ts`,
+`conduitPathFx.test.ts`.
 
 This page covers the premium animation pass that took the boss-lineage grammar to
 ordinary mobs and to player attacks and abilities. Boss animations are documented in
@@ -105,6 +106,31 @@ holy channel, and the T3 threshold triggers (`fx/t4Triggers.ts`).
 Paths that read `targetStatus` depend on the server mirroring the target's status
 list, which it does for any monster that is somebody's attack target.
 
+### Conduit specializations — `fx/conduitPaths.ts`
+
+A Conduit fights through its formation, so its nine paths are drawn on the summons'
+strikes (`minions.ts`, from the summon snapshot) by `playConduitStrike`, keyed by the
+summon type (`conduit-summon-<path>`):
+
+| Path | Look | Reads |
+| --- | --- | --- |
+| Inquisitor | accusing eye over the target, a pip per marking summon | target `summoner-harried` stacks |
+| Kilnmaster | ember-trailed strikes | — |
+| Iconoclast | the marked summon cracks and glows each snapshot; shards burst on `summon-shatter` | owner `summonSlots[].marked`, event |
+| Marshal | gold pennant + drilled strike on openers / coordinated strikes | minion `lastAttackEmpowered` |
+| Chorister | sound-wave voices; a note per voice orbits the target | target `summoner-withering-chorus` stacks |
+| Ritualist | rune pips on charged summons; rune burst when a charge is spent | owner `summonSlots[].ritualCharges`, `lastAttackEmpowered` |
+| Covenanter | red crescent (offense twin) / blue shield-bash (defense twin) | summon type |
+| Champion | tether to the bonded summon brightening with bond progress; gold chain on the linked strike, from either body | owner buff `summoner-battle-bond`, `lastAttackEmpowered` / `empowered` |
+| Idolwright | colossal stomp: cracks, ground ring, rubble | — |
+
+Server signals added for these: `MinionView.lastAttackEmpowered` (written on every
+formation swing in `runFormationAttack`, true for an opener, coordinated strike,
+ritual-charged hit or linked strike), `player-hit.fromSummon` (a summon's blow), and
+the `summon-shatter` event (Iconoclast detonations, `deliberate` for the marked slot).
+Conduit hit events stay undrawn (summons draw from snapshots) except a Champion's own
+blows (`drawsOwnHit` in combatFx), which previously drew nothing at all.
+
 ### Abilities — `fx/abilityRank.ts`
 
 Rank = shared `abilityRankNumber(def, playerTier)`, computed on the client. Around
@@ -126,7 +152,6 @@ ability's existing look; abilities have no stage-0 thinning.
 
 ## Open / deferred
 
-- Conduit's 9 specializations are out of scope for now (the summons are its visuals).
 - No in-browser verification tool: a preview tool for animations is in
   [future-plans.md](future-plans.md).
 - Most of this pass was reviewed only in part by the designer; expect iteration.

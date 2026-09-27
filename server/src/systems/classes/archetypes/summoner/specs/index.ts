@@ -224,6 +224,13 @@ function detonate(
   if (owner.controlsSummons.explodedMinionIds.includes(minion.isMinion.id)) return;
   owner.controlsSummons.explodedMinionIds.push(minion.isMinion.id);
   const tuning = SUMMONER_SPECIALIZATION_TUNING.volatileBrood;
+  world.pushEvent(owner.hasPosition.nodeId, {
+    kind: 'summon-shatter',
+    playerId: owner.isPlayer.id,
+    pos: { ...center },
+    radius: tuning.explosionRadius,
+    deliberate: mult >= tuning.explosionDamageMult,
+  });
   applyPlayerAoe(
     world,
     owner,

@@ -225,6 +225,11 @@ export interface MinionView {
   attackCooldown: number;
   lastAttackAt: number;
   attackTargetId: string | null;
+  /**
+   * The last swing was a specialization beat (Marshal opener / coordinated strike,
+   * a ritual-charged hit, Champion's linked strike) — drawn heavier by the client.
+   */
+  lastAttackEmpowered?: boolean;
   attackStyle: string;
   speed: number;
   sizeMult: number;
@@ -580,6 +585,7 @@ export function composeMinionView(entity: NetworkedEntity): MinionView | null {
     attackRange: entity.performsAttack.attackRange,
     attackCooldown: entity.performsAttack.attackCooldown,
     lastAttackAt: entity.performsAttack.lastAttackAt,
+    lastAttackEmpowered: entity.performsAttack.lastAttackEmpowered,
     attackTargetId: entity.hasAttackTarget?.targetId ?? null,
     attackStyle: entity.dealsDamage.attackStyle,
     speed: entity.hasPosition.speed,

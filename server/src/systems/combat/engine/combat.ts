@@ -454,6 +454,7 @@ export function runPlayerAttack(
   ctx.damage = outgoingFinalDamage(world, player.isPlayer.id, ctx.damage);
 
   const isEmpowered = !!ctx.metadata["empoweredAttack"];
+  if (opts.resultMetadata) opts.resultMetadata.empowered = isEmpowered;
   const isExecution = isEmpowered && player.usesCooldown !== undefined;
 
   // NOTE: empowered attacks no longer carry an inherent AoE splash. AoE is now an
@@ -603,6 +604,8 @@ export function runPlayerAttack(
     damage: ctx.damage,
     empowered: isEmpowered,
     execution: isExecution,
+    // A Conduit summon's blow: the client draws it from the summon's own snapshot.
+    ...(ctx.formation?.side === "summon" ? { fromSummon: true as const } : {}),
     effects:
       clientEffects && clientEffects.length > 0 ? clientEffects : undefined,
     playerPos: { ...opts.attackOrigin },

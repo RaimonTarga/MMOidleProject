@@ -37,7 +37,7 @@ type CombatEventPayload =
   // client uses to style the damage number: shield-absorbed amount renders a
   // separate blue shielded number (even when no HP was lost), a partial evade /
   // damage-cap trip restyles the HP number. Omitted when the mechanic didn't fire.
-  | { kind: 'player-hit';  playerId: string; targetId: string; targetName: string; damage: number; empowered: boolean; execution: boolean; effects?: string[]; playerPos?: Vec2; targetPos?: Vec2; pelletIndex?: number; pelletTotal?: number; absorbed?: number; evadedPartial?: boolean; capped?: boolean }
+  | { kind: 'player-hit';  playerId: string; targetId: string; targetName: string; damage: number; empowered: boolean; execution: boolean; effects?: string[]; playerPos?: Vec2; targetPos?: Vec2; pelletIndex?: number; pelletTotal?: number; absorbed?: number; evadedPartial?: boolean; capped?: boolean; fromSummon?: true }
   | { kind: 'player-kill'; playerId: string; targetId: string; targetName: string; damage: number; biomeXpGained: number; essenceGained: number; essenceType: EssenceType; empowered?: boolean; execution?: boolean }
   // A monster→player hit. Drives the player's incoming damage-number styling:
   // `empowered` enlarges it (a future monster "crit"), and the mitigation hints
@@ -101,6 +101,9 @@ type CombatEventPayload =
   // victim. The cast-end above fires when the dash LAUNCHES; this is the contact,
   // where the root lands or the amplified strike is armed. `fx` is the opener's own
   // art id and `pos` the contact point. Purely cosmetic.
+  // Iconoclast (Conduit): a summon shattered in a weapon-scaled blast — the marked
+  // slot's deliberate detonation, or a natural death. Purely cosmetic.
+  | { kind: 'summon-shatter'; playerId: string; pos: Vec2; radius: number; deliberate: boolean }
   | { kind: 'monster-engage-land'; monsterId: string; targetId: string; pos: Vec2; fx?: string }
   // DEATHROLL DRAG telegraph, shown to the whole node. A monster has a player in its
   // jaws and is hauling them back to its lair. `start` fires once with `pos` at the
