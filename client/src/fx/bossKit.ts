@@ -219,3 +219,14 @@ export function dirTo(a: Pt, b: Pt): Pt {
 
 /** Degrees of a direction. */
 export const deg = (d: Pt): number => (Math.atan2(d.y, d.x) * 180) / Math.PI;
+
+/** Direction the body is moving right now (toward its broadcast destination). */
+export function travelDir(scene: GameScene, id: string): Pt | null {
+  const transform = scene.state.transform.get(id);
+  const interp = scene.state.interpolation.get(id);
+  if (!transform || !interp) return null;
+  const dx = transform.target.x - interp.base.x;
+  const dy = transform.target.y - interp.base.y;
+  const d = Math.hypot(dx, dy);
+  return d > 1 ? { x: dx / d, y: dy / d } : null;
+}

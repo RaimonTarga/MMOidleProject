@@ -37,6 +37,7 @@ import {
 import { isMonsterKnockedBack } from "../damage/knockback";
 import { isDraggingPrey } from "../damage/lairDrag";
 import { lungeWantsPosition } from "./ambushLunge";
+import { markSliceDirty } from "../../../ecs/dirtyHelpers";
 import { setEntityMotion, stopEntity } from "../../world/movement";
 import { resolveObstaclesForNode } from "../../world/nodeFeatures";
 import { harmfulStatusDurationMult } from '../status/harmfulStatus';
@@ -244,6 +245,7 @@ function syncBossSpawnedAddTarget(
 }
 
 export function updateMonsters(world: World, dt: number, now: number) {
+  const charging = new Set<MonsterEntity>();
   for (const e of world.monsterEntities) {
     const ai = e.controlsMonster;
     const id = e.isMonster.id;
@@ -476,6 +478,11 @@ export function updateMonsters(world: World, dt: number, now: number) {
             });
           }
           if (hasLine) {
+            world.pushEvent(e.hasPosition.nodeId, {
+              kind: 'monster-engage-land', monsterId: e.isMonster.id,
+              targetId: target.entity.isPlayer.id, fx: monsterDef.engageSequence.fx,
+              pos: { ...e.hasPosition.current },
+            });
             if (monsterDef.engageSequence.kind === 'cast-charge-root') {
               // Contact, rather than the ensuing basic hit, is the landing. The
               // root therefore happens exactly when the dive arrives, stopping
@@ -503,6 +510,7 @@ export function updateMonsters(world: World, dt: number, now: number) {
             continue;
           }
           e.hasPosition.speed = Math.round(ai.baseSpeed * monsterDef.engageSequence.speedMult);
+          charging.add(e);
           e.hasAwareness.state = 'chasing';
           setAttackTarget(world, e, target.entity.isPlayer.id);
           setMonsterTarget(world, e, targetPos);
@@ -524,6 +532,7 @@ export function updateMonsters(world: World, dt: number, now: number) {
           e.hasPosition.speed = Math.round(
             ai.baseSpeed * monsterDef!.engageSequence!.speedMult,
           );
+          charging.add(e);
           e.hasAwareness.state = 'chasing';
           setAttackTarget(world, e, target.entity.isPlayer.id);
           setMonsterTarget(world, e, targetPos);
@@ -590,6 +599,7 @@ export function updateMonsters(world: World, dt: number, now: number) {
         if (charge && (ai.chargeRemainingMs ?? 0) > 0) {
           ai.chargeRemainingMs = Math.max(0, (ai.chargeRemainingMs ?? 0) - dt);
           e.hasPosition.speed = Math.round(ai.baseSpeed * charge.speedMult);
+          charging.add(e);
         } else if (isKiter) {
           // Kiters re-close at base speed only — the player-kite ramp below would
           // push them past player base speed (120) and make them uncatchable.
@@ -754,6 +764,22 @@ export function updateMonsters(world: World, dt: number, now: number) {
           break;
       }
     }
+  }
+  publishCharging(world, charging);
+}
+
+/**
+ * Mirror "a charge is carrying it this tick" (a `chargeOnAggro` burst or an engage
+ * opener's dash) onto the networked status slice. Reconciled from the set of monsters the chase branch actually boosted, so
+ * every exit (stun, knockback, leash, reaching range, death) clears it for free.
+ */
+function publishCharging(world: World, charging: ReadonlySet<MonsterEntity>): void {
+  for (const e of world.monsterEntities) {
+    const on = charging.has(e);
+    if ((e.hasStatus.charging === true) === on) continue;
+    if (on) e.hasStatus.charging = true;
+    else delete e.hasStatus.charging;
+    markSliceDirty(world, e, 'hasStatus');
   }
 }
 

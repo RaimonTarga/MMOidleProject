@@ -71,6 +71,7 @@ import { updateCombat } from "../systems/combat/engine/combat";
 import { updateTransitions } from "../systems/world/transitions";
 import { updateCombatState } from "../systems/combat/engine/combatState";
 import { syncEnemyBarrierState } from "../systems/combat/engine/enemyBarrierState";
+import { syncMonsterStateMirror } from "../systems/combat/engine/monsterStateMirror";
 import { tickAllMechanics } from "../systems/classes/registry";
 import { updateWeaponEffects } from "../systems/combat/damage/weaponEffects";
 import { updateBossScripts } from "../systems/combat/ai/bossScripts";
@@ -494,6 +495,7 @@ export class World {
     updateSwarm(this);
     updateCombat(this, dt, now);
     syncEnemyBarrierState(this, now);
+    syncMonsterStateMirror(this, now);
     updateCombatTransitions(this, now);
     updateDefensiveSystems(this, dt, now);
     syncPlayerBuffs(this, now);

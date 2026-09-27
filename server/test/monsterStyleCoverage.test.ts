@@ -79,6 +79,22 @@ for (const style of [
   'bite-trench',
   'bite-fire',
   'bite-venom',
+  // Second split (2026-09-27): the rest of `poison` and `impact`.
+  'sting',
+  'spider-fang',
+  'charnel-maul',
+  'constrict',
+  'ooze-engulf',
+  'tongue-lash',
+  'snap',
+  'wisp-touch',
+  'hind-kick',
+  'stone-fist',
+  'void-lash',
+  'void-fist',
+  'bite-plague',
+  'bite-bog',
+  'gnaw',
 ]) {
   assert(registeredStyles.has(style), `${style} must stay registered client-side`);
   assert(authoredStyles.has(style), `${style} must stay in use by at least one monster`);
@@ -104,6 +120,18 @@ const HANDLED_ELSEWHERE = new Set([
 
 const handledCues = new Set<string>(HANDLED_ELSEWHERE);
 for (const m of source.matchAll(/ev\.fx === "([a-z0-9-]+)"/g)) handledCues.add(m[1]);
+
+// Engage openers are routed by `isOpenerFx` to `fx/engageOpeners.ts`, keyed by its
+// OPENER_RUSH table. Count those ids as handled only while combatFx really routes
+// openers at the wind-up AND at the landing.
+const OPENERS_FX = join(__dirname, '../../client/src/fx/engageOpeners.ts');
+const openerSource = readFileSync(OPENERS_FX, 'utf8');
+const openerTable = openerSource.split('export const OPENER_RUSH')[1]?.split('\n};')[0] ?? '';
+assert(
+  source.includes('isOpenerFx(ev.fx)) fxOpenerWindup(') && source.includes('fxOpenerLand('),
+  'combatFx should route engage openers to their wind-up and landing',
+);
+for (const m of openerTable.matchAll(/^  '([a-z0-9-]+)': \{/gm)) handledCues.add(m[1]);
 
 const emitted = new Map<string, string[]>();
 const note = (fx: string, who: string) => {
@@ -162,5 +190,33 @@ assert(
   source.includes('ev.fx === "huge-boulder"'),
   '`huge-boulder` must still have its own branch, not fall through to fxPowerShot',
 );
+
+// ─── 3. Every ordinary mob's charged attack has a wind-up, not just a cast bar ──
+// The wind-up is the beat the player answers, so it must be drawn on the body. It
+// comes from `fx/mobCastWindups.ts` (a `case '<fx>'`) or from a branch in the
+// cast-START chain of combatFx (the older Sting / Frostbind / Deathroll wind-ups).
+const WINDUPS_FX = join(__dirname, '../../client/src/fx/mobCastWindups.ts');
+const windupSource = readFileSync(WINDUPS_FX, 'utf8');
+const castStartChain = source.split('ev.kind === "monster-cast-start"')[1]?.split('ev.kind === "monster-cast-end"')[0] ?? '';
+assert(
+  castStartChain.includes('fxMobCastWindup(scene, ev.monsterId, ev.castMs, ev.fx)'),
+  'combatFx should hand mob casts to fxMobCastWindup at cast start',
+);
+const noWindup: string[] = [];
+for (const [, def] of MONSTER_DATABASE) {
+  const d = def as any;
+  if (d.isBoss || d.biome === 'testroom') continue;
+  const ids: string[] = [];
+  if (d.chargedAttack?.fx) ids.push(d.chargedAttack.fx);
+  for (const ability of d.monsterAbilities ?? []) {
+    const attacks = ability.actions.some((a: any) => a.type === 'hit' || a.type === 'area-hit');
+    if (attacks && ability.fx) ids.push(ability.fx);
+  }
+  for (const fx of ids) {
+    const drawn = windupSource.includes(`case '${fx}'`) || castStartChain.includes(`ev.fx === "${fx}"`);
+    if (!drawn) noWindup.push(`${fx} (${d.name})`);
+  }
+}
+assert(noWindup.length === 0, `mob charged attacks with no wind-up on the body: ${noWindup.join(', ')}`);
 
 console.log('monsterStyleCoverage: ok');

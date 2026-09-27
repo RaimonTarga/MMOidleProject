@@ -274,6 +274,14 @@ export interface MonsterView {
   /** Set while the monster is burrowed / in cover: untargetable, and drawn as such. */
   concealed?: 'burrow' | 'stealth';
   hardControlled?: boolean;
+  /** Set while a charge-on-aggro speed burst is carrying the monster in. */
+  charging?: true;
+  /** The casted haste driving it, for the haste look (charges as `stacks`). */
+  hastedBy?: { effectId: string; stacks: number };
+  /** Retracted into its shell. */
+  shelled?: true;
+  /** Its next attack is empowered. */
+  primed?: true;
   hitboxRects: HitboxRect[];
 }
 
@@ -537,6 +545,10 @@ export function composeMonsterView(
     throneHealing: entity.hasStatus?.throneHealing,
     concealed: entity.hasStatus?.concealed,
     hardControlled: entity.hasStatus?.hardControlled,
+    charging: entity.hasStatus?.charging,
+    hastedBy: entity.hasStatus?.hastedBy,
+    shelled: entity.hasStatus?.shelled,
+    primed: entity.hasStatus?.primed,
     hitboxRects: entity.hasHitbox?.rects ?? [FALLBACK_MONSTER_AABB],
   };
 }

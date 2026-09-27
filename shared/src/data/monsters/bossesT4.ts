@@ -1070,7 +1070,7 @@ export const bossMonsterEntriesT4 = [
     // Stage-1 swarm filler. Fast, low HP, frequent light hits. The threat
     // is volume (12 → 9 → 8 of them). DoT pressure adds up fast.
     stats: { hp: 872, attack: 68, plating: 0, damageReduction: 0, speed: 82, attackRange: 12, attackCooldown: 1100, pullRange: 310 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'trench',
+    behavior: 'melee', attackStyle: 'void-lash', biome: 'trench',
     rewards: { essence: 0, essenceType: 'purple', level: 0, biomeXp: 0 },
     ai: { wanderRadius: 350, leashRange: 850, idleMinMs: 400, idleMaxMs: 2000 },
     dotEffect: { debuffId: 'void-horror-corruption', label: 'Void Corruption', damagePerStack: 12, maxStacks: 4, tickIntervalMs: 1000, durationMs: 2000 },
@@ -1081,7 +1081,7 @@ export const bossMonsterEntriesT4 = [
     // Stage-1 heavy add. Slow, hard-hitting, high plating — the anchor unit
     // in each wave. Tests pierce tools (Rupture, brittle weapon) mid-encounter.
     stats: { hp: 5047, attack: 124, plating: 16, damageReduction: 0.16, speed: 22, attackRange: 15, attackCooldown: 3500, pullRange: 200 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'trench',
+    behavior: 'melee', attackStyle: 'void-fist', biome: 'trench',
     rewards: { essence: 0, essenceType: 'purple', level: 0, biomeXp: 0 },
     ai: { wanderRadius: 100, leashRange: 750, idleMinMs: 3000, idleMaxMs: 8000 },
     chargeOnAggro: { speedMult: 2.0, durationMs: 1200 },

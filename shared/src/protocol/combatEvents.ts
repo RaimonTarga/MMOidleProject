@@ -97,6 +97,11 @@ type CombatEventPayload =
   // the damage + interrupt are server-authoritative. `fx` selects the charged-shot art.
   | { kind: 'monster-cast-start'; monsterId: string; castMs: number; label: string; fx?: string }
   | { kind: 'monster-cast-end'; monsterId: string; fired: boolean; targetId?: string; pos?: Vec2; radius?: number; fx?: string }
+  // An engage opener (Dive Bomb, Skyfall Rend, Savage Rush, Rime Pounce) reached its
+  // victim. The cast-end above fires when the dash LAUNCHES; this is the contact,
+  // where the root lands or the amplified strike is armed. `fx` is the opener's own
+  // art id and `pos` the contact point. Purely cosmetic.
+  | { kind: 'monster-engage-land'; monsterId: string; targetId: string; pos: Vec2; fx?: string }
   // DEATHROLL DRAG telegraph, shown to the whole node. A monster has a player in its
   // jaws and is hauling them back to its lair. `start` fires once with `pos` at the
   // DESTINATION and `durationMs` the length of the haul, so the client can draw where

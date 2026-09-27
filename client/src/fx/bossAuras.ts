@@ -16,7 +16,7 @@
  */
 import type { MonsterView } from '@mmo-idle/shared';
 import type { GameScene } from '../scenes/GameScene';
-import type { AnyView, AuraContext, AuraSubject } from './auraTypes';
+import { auraAppliesTo, type AnyView, type AuraContext, type AuraSubject } from './auraTypes';
 import { shouldRunClientFx } from './guard';
 import { setTremble } from './bodyPose';
 import { AURA_DEFS } from './auraDefs';
@@ -63,7 +63,7 @@ export function updateBossAuras(scene: GameScene, dtMs: number): void {
     if (!subject) continue;
     const sprite = scene.state.sprite.get(id);
     const wanted = running && sprite
-      ? AURA_DEFS.filter((a) => (a.on ?? 'boss') === subject && a.active(view))
+      ? AURA_DEFS.filter((a) => auraAppliesTo(a, subject) && a.active(view))
       : [];
     let st = map?.get(id);
     if (!st && wanted.length === 0) continue;
@@ -87,7 +87,7 @@ export function updateBossAuras(scene: GameScene, dtMs: number): void {
     let tremble = 0;
 
     for (const def of AURA_DEFS) {
-      if ((def.on ?? 'boss') !== subject) continue;
+      if (!auraAppliesTo(def, subject)) continue;
       const on = wanted.includes(def);
       let inst = st.auras.get(def.id);
       if (!inst && !on) continue;
@@ -149,6 +149,7 @@ export function updateBossAuras(scene: GameScene, dtMs: number): void {
           .setVisible(sprite.visible);
       }
 
+      def.under?.(st.ground, c);
       def.overhead?.(st.overhead, c);
 
       if (def.beat && on && now >= inst.nextBeatAt) {

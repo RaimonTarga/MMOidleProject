@@ -6,6 +6,13 @@ import { MONSTER_DATABASE, type MonsterView } from '@mmo-idle/shared';
 import { DEPTH } from '../render/depth';
 import { burstFx } from './particles';
 import { impact } from './impactFeel';
+import { chargeBeat, chargeKickoff, chargeSkid, drawChargeStreaks, rushPaletteOf } from './chargeRush';
+import {
+  barrierIntegrity, barrierStyleOf, defOf, drawBarrier, drawPrimedGlint, drawQuills, drawShellDome,
+  primedAccentOf, shellStyleOf,
+} from './mobStates';
+import { posePath, releasePose, tweenPose } from './bodyPose';
+import { ring } from './bossKit';
 import {
   bossEffectStacks,
   hasBossEffect,
@@ -21,6 +28,10 @@ const biomeOf = (view: AnyView): string | undefined =>
   MONSTER_DATABASE.get((view as MonsterView).monsterTypeId)?.biome;
 
 const PLATE_IDS = ['barrier:stoneplate', 'barrier:hornplate', 'barrier:titanplate'];
+
+const hasteId = (v: AnyView): string | undefined => (v as MonsterView).hastedBy?.effectId;
+/** Last drawn barrier integrity per monster: a pool that ran dry SHATTERS, one that expired fades. */
+const lastIntegrity = new Map<string, number>();
 
 /** Shards thrown out from (or falling off) a body. */
 function shards(c: AuraContext, colors: number[], burst: boolean): void {
@@ -346,11 +357,169 @@ export const AURA_DEFS: AuraDef[] = [
   {
     id: 'rallied',
     on: 'monster',
-    active: (v) => hasTargetStatus(v, 'boss-rallied') || hasTargetStatus(v, 'boss-roar-haste'),
+    // The mirrored haste reaches the client for every add, not only the targeted one.
+    active: (v) =>
+      hasTargetStatus(v, 'boss-rallied') || hasTargetStatus(v, 'boss-roar-haste') ||
+      hasteId(v) === 'boss-rallied' || hasteId(v) === 'boss-roar-haste',
     stacks: (v) => Math.max(targetStatusStacks(v, 'boss-rallied'), 1),
     pulseMs: 700,
     ground: { color: 0xffb02e, scale: 1.1, alpha: 0.14 },
     body: { color: 0xffc04a, alpha: [0.06, 0.2] },
+  },
+
+  // ── Mobs: charge-on-aggro burst (chargeRush.ts) ────────────────────────────
+  {
+    id: 'charge-rush',
+    on: ['monster', 'boss'],
+    active: (v) => (v as MonsterView).charging === true,
+    under: (g, c) => drawChargeStreaks(g, c, rushPaletteOf(c)),
+    beat: { everyMs: 110, draw: (c) => chargeBeat(c, rushPaletteOf(c)) },
+    onStart: (c) => chargeKickoff(c, rushPaletteOf(c)),
+    onEnd: (c) => chargeSkid(c, rushPaletteOf(c)),
+  },
+
+  // ── Mobs: shields and wards (mobStates.ts) ─────────────────────────────────
+  {
+    // Sunshield Scarab, the bears, the stone wards, Molten Guard / Obsidian Shell /
+    // Carapace Renewal: a bubble that dims and cracks as its pool drains.
+    id: 'mob-barrier',
+    on: 'monster',
+    active: (v) => ((v as MonsterView).enemyBarrier?.amount ?? 0) > 0,
+    pulseMs: 900,
+    overhead: (g, c) => {
+      lastIntegrity.set(c.id, barrierIntegrity(c));
+      drawBarrier(g, c, barrierStyleOf(defOf(c)));
+    },
+    onStart: (c) => {
+      const style = barrierStyleOf(defOf(c));
+      assemble(c, style.edge, 10);
+      ring(c.scene, c.x, c.y, style.edge, { from: c.w * 0.4, scale: 1.6, width: 2, ms: 320, alpha: 0.6 });
+    },
+    onEnd: (c, v) => {
+      const style = barrierStyleOf(defOf(c));
+      const broken = (lastIntegrity.get(c.id) ?? 1) < 0.35 ||
+        ((v as MonsterView).enemyBarrier?.rechargeRemainingMs ?? 0) > 0;
+      lastIntegrity.delete(c.id);
+      shards(c, style.shards, broken);
+      if (broken) ring(c.scene, c.x, c.y, style.edge, { from: c.w * 0.5, scale: 2.2, width: 3, ms: 300 });
+    },
+  },
+
+  // ── Mobs: Snapper shell ────────────────────────────────────────────────────
+  {
+    id: 'mob-shell',
+    on: 'monster',
+    active: (v) => (v as MonsterView).shelled === true,
+    pulseMs: 1400,
+    ground: { color: 0x1a2414, scale: 1.1, alpha: 0.14 },
+    overhead: (g, c) => drawShellDome(g, c.x, c.y, c.w, c.h, 1, c.s, shellStyleOf(defOf(c))),
+    beat: {
+      everyMs: 700,
+      draw: (c) =>
+        burstFx(c.scene, 'ptx-dot', c.x + (Math.random() - 0.5) * c.w * 0.6, c.y, 2, 700, {
+          tint: shellStyleOf(defOf(c)).motes,
+          speed: { min: 5, max: 20 }, angle: { min: 60, max: 120 },
+          scale: { start: 0.6, end: 0 }, alpha: { start: 0.8, end: 0 }, gravityY: 120,
+        }),
+    },
+    onStart: (c) => {
+      // It clamps down: the body pulls in under the carapace.
+      tweenPose(c.scene, c.id, { sx: 1.14, sy: 0.8, lift: 0, rot: 0 }, 140, 'Quad.easeIn');
+      ring(c.scene, c.x, c.y + c.h * 0.3, shellStyleOf(defOf(c)).rim, { from: c.w * 0.3, scale: 1.8, width: 2, ms: 260, flat: true });
+    },
+    onEnd: (c) => {
+      posePath(c.scene, c.id, [
+        { sx: 0.92, sy: 1.12, lift: 6, ms: 110, ease: 'Quad.easeOut' },
+        { sx: 1, sy: 1, lift: 0, ms: 280, ease: 'Back.easeOut' },
+      ]);
+      const style = shellStyleOf(defOf(c));
+      shards(c, [style.shell, style.plate, style.rim], true);
+    },
+  },
+
+  // ── Mobs: primed empowered hit (the finisher / opener tell) ────────────────
+  {
+    // Granite Mammoth, Emerald Constrictor, Charnel Brute, Cragback Rhino, the
+    // Jungle ambushers, the Crystal Gargoyle: their NEXT attack is the big one.
+    id: 'mob-primed',
+    on: 'monster',
+    active: (v) => (v as MonsterView).primed === true,
+    pulseMs: 380,
+    ground: { color: 0xffffff, scale: 0.95, alpha: 0.08 },
+    tremblePx: 0.5,
+    overhead: (g, c) => drawPrimedGlint(g, c, primedAccentOf(defOf(c))),
+    onStart: (c) => {
+      // It sets itself: a small crouch, and the light gathers in.
+      tweenPose(c.scene, c.id, { sx: 1.06, sy: 0.94 }, 220, 'Quad.easeOut');
+      burstFx(c.scene, 'ptx-spark', c.x + c.w * 0.18, c.y - c.h * 0.28, 6, 360, {
+        tint: [primedAccentOf(defOf(c)), 0xffffff], speed: { min: 20, max: 60 }, angle: { min: 0, max: 360 },
+        scale: { start: 0.5, end: 0 }, alpha: { start: 0.9, end: 0 },
+      });
+    },
+    // The empowered hit draws its own payoff; the crouch just lets go.
+    onEnd: (c) => releasePose(c.scene, c.id, 200),
+  },
+
+  // ── Mobs: casted hastes (Howl, Chest Beat, Barrage, Screech) ───────────────
+  {
+    // Dire Wolf's Howl, on every wolf it reached: red ferocity, eyes lit.
+    id: 'mob-howl',
+    on: 'monster',
+    active: (v) => hasteId(v) === 'monster-howl-haste',
+    pulseMs: 500,
+    ground: { color: 0xff3b2f, scale: 1.05, alpha: 0.12 },
+    body: { color: 0xff3b2f, alpha: [0.04, 0.16] },
+    tremblePx: 0.4,
+    overhead: (g, c) => {
+      const y = c.y - c.h * 0.22;
+      g.fillStyle(0xff4a3a, (0.6 + 0.4 * c.pulse) * c.s);
+      g.fillCircle(c.x - 5, y, 2.2);
+      g.fillCircle(c.x + 5, y, 2.2);
+    },
+  },
+  {
+    // Ape Chest Beat: gold fury, sparks rising off the shoulders.
+    id: 'mob-chestbeat',
+    on: 'monster',
+    active: (v) => hasteId(v) === 'monster-ape-chestbeat',
+    pulseMs: 420,
+    ground: { color: 0xffa62e, scale: 1.1, alpha: 0.13 },
+    body: { color: 0xffb040, alpha: [0.05, 0.2] },
+    beat: {
+      everyMs: 200,
+      draw: (c) =>
+        burstFx(c.scene, 'ptx-spark', c.x + (Math.random() - 0.5) * c.w * 0.5, c.y - c.h * 0.1, 2, 480, {
+          tint: [0xffc04a, 0xfff0a0], speed: { min: 30, max: 90 }, angle: { min: 250, max: 290 },
+          scale: { start: 0.5, end: 0 }, alpha: { start: 0.9, end: 0 }, gravityY: -100,
+        }),
+    },
+  },
+  {
+    // Barrage (Thorn Spitter, the Chameleons): one quill per empowered shot left.
+    id: 'mob-barrage',
+    on: 'monster',
+    active: (v) => hasteId(v)?.endsWith('-barrage') === true,
+    stacks: (v) => (v as MonsterView).hastedBy?.stacks ?? 1,
+    pulseMs: 600,
+    ground: { color: 0x9ad65a, scale: 0.95, alpha: 0.1 },
+    overhead: (g, c) => drawQuills(g, c, c.stacks, 0x9ad65a),
+  },
+  {
+    // Carrion Vulture's Necrotic Screech on the undead it reached.
+    id: 'mob-screech',
+    on: 'monster',
+    active: (v) => hasteId(v) === 'carrion-screech-haste',
+    pulseMs: 700,
+    ground: { color: 0x6a9a5a, scale: 1.05, alpha: 0.13 },
+    body: { color: 0x8fe0a0, alpha: [0.04, 0.16] },
+    beat: {
+      everyMs: 240,
+      draw: (c) =>
+        burstFx(c.scene, 'ptx-dot', c.x + (Math.random() - 0.5) * c.w * 0.5, c.y + c.h * 0.2, 2, 800, {
+          tint: [0x8fe0a0, 0x6a4a9e], speed: { min: 15, max: 50 }, angle: { min: 255, max: 285 },
+          scale: { start: 0.7, end: 0 }, alpha: { start: 0.8, end: 0 }, gravityY: -70,
+        }),
+    },
   },
 
   // ── Player marks ────────────────────────────────────────────────────────────

@@ -230,6 +230,30 @@ export interface HasStatus {
    * answer for monsters (whose status list is only broadcast while targeted).
    */
   hardControlled?: boolean;
+  /**
+   * CHARGING — set on the ticks a charge is actually carrying the monster: a
+   * `chargeOnAggro` speed burst, or an engage opener's dash (Dive Bomb, Savage Rush).
+   *
+   * Both are server-only AI scratch, and the burst pauses rather than ends when the
+   * monster reaches attack range, so the client cannot infer it from speed or
+   * state. Written by the AI pass that applies it.
+   */
+  charging?: true;
+  /**
+   * HASTED — the strongest casted attack-speed buff on the monster (a Howl, a
+   * Chest Beat, a Barrage's charges, a boss's roar), for its persistent look.
+   * `stacks` is the remaining charge count for per-attack buffs. Mirrored for
+   * every monster, not only targeted ones (see `syncMonsterStateMirror`).
+   */
+  hastedBy?: { effectId: string; stacks: number };
+  /** SHELLED — retracted into its shell (Snappers): direct damage is resisted. */
+  shelled?: true;
+  /**
+   * PRIMED — its next attack is empowered (a cadence finisher, the empowered
+   * cooldown coming due, an unspent opening strike, a cadence volley). The tell
+   * that leads the hit; the hit itself already draws its empowered variant.
+   */
+  primed?: true;
 }
 
 // ─── Player-specific ─────────────────────────────────────────────────────────

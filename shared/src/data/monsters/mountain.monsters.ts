@@ -51,7 +51,7 @@ export const mountainMonsterEntries = [
     // Strong Kick's multiplier is unchanged at 1.9 and derives from this attack,
     // so its damage moves with the base cut. That is intended.
     stats: { hp: 190, attack: 40, plating: 0, damageReduction: 0, speed: 28, attackRange: 12, attackCooldown: 3000, pullRange: 420 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
+    behavior: 'melee', attackStyle: 'hind-kick', biome: 'mountain',
     rewards: { essence: 6, essenceType: 'blue', level: 1, biomeXp: 42 },
     ai: { wanderRadius: 200, leashRange: 640, idleMinMs: 1500, idleMaxMs: 4500 },
     chargeOnAggro: { speedMult: 3.0, durationMs: 1200 },
@@ -101,7 +101,7 @@ export const mountainMonsterEntries = [
     // A modest engagement charge may remain against trivial kiting.
     // HP-led durability; Granite Barrier continues to scale with maximum HP.
     stats: { hp: 1656, attack: 54, plating: 0, damageReduction: 0, speed: 18, attackRange: 15, attackCooldown: 3800, pullRange: 160 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
+    behavior: 'melee', attackStyle: 'stone-fist', biome: 'mountain',
     rewards: { essence: 14, essenceType: 'blue', level: 1, biomeXp: 80 },
     ai: { wanderRadius: 110, leashRange: 460, idleMinMs: 3500, idleMaxMs: 9000 },
     chargeOnAggro: { speedMult: 2.5, durationMs: 1200 },
@@ -131,12 +131,12 @@ export const mountainMonsterEntries = [
     behavior: 'melee', attackStyle: 'talons', biome: 'mountain',
     rewards: { essence: 12, essenceType: 'blue', level: 1, biomeXp: 68 },
     ai: { wanderRadius: 430, leashRange: 1200, idleMinMs: 180, idleMaxMs: 720 },
-    // One telegraphed aerial alpha strike. It uses the shared dive trail, but
-    // pays off in damage rather than pinning the player in place.
+    // One telegraphed aerial alpha strike. It shares the raptor dive with the hawk
+    // (in stone), but pays off in damage rather than pinning the player in place.
     flies: true,
     engageSequence: {
       kind: 'cast-charge-strike', name: 'Skyfall Rend', castMs: 1000,
-      speedMult: 4, maxChargeMs: 2800, damageMultiplier: 1.25, fx: 'dive-bomb',
+      speedMult: 4, maxChargeMs: 2800, damageMultiplier: 1.25, fx: 'skyfall-rend',
     },
   }],
 
@@ -165,7 +165,7 @@ export const mountainMonsterEntries = [
     // threatening footprint and durability. Still deliberate and readable.
     // HP-led durability retains weapon access and the existing ward mechanic.
     stats: { hp: 4675, attack: 130, plating: 0, damageReduction: 0, speed: 16, attackRange: 15, attackCooldown: 3800, pullRange: 160 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'mountain',
+    behavior: 'melee', attackStyle: 'stone-fist', biome: 'mountain',
     rewards: { essence: 75, essenceType: 'blue', level: 3, biomeXp: 440 },
     ai: { wanderRadius: 90, leashRange: 420, idleMinMs: 4000, idleMaxMs: 10500 },
     // Same Slam family as the Titan; the escalation is FOOTPRINT and durability, not
@@ -276,7 +276,7 @@ export const mountainMonsterEntries = [
     ai: { wanderRadius: 460, leashRange: 1200, idleMinMs: 180, idleMaxMs: 720 },
     engageSequence: {
       kind: 'cast-charge-strike', name: 'Skyfall Rend', castMs: 1000,
-      speedMult: 4, maxChargeMs: 2800, damageMultiplier: 1.7, fx: 'dive-bomb',
+      speedMult: 4, maxChargeMs: 2800, damageMultiplier: 1.7, fx: 'roc-skyfall',
     },
   }],
 

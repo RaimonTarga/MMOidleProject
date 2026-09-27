@@ -20,6 +20,7 @@ import { burstFx } from './particles';
 import { afterimages, posePath, releasePose, tweenPose } from './bodyPose';
 import { impact } from './impactFeel';
 import { fxBite } from './bite';
+import { travelDir } from './bossKit';
 
 export interface HuntPalette {
   /** Afterimage / trail tint. */
@@ -36,17 +37,6 @@ const RAKE_EDGE = 0xff5a4a;
 const VENOM = 0x8ee03c;
 const VENOM_DEEP = 0x3f8a1c;
 const EYE = 0xffd23a;
-
-/** Direction the body is moving right now (toward its broadcast destination). */
-function travelDir(scene: GameScene, id: string): { x: number; y: number } | null {
-  const transform = scene.state.transform.get(id);
-  const interp = scene.state.interpolation.get(id);
-  if (!transform || !interp) return null;
-  const dx = transform.target.x - interp.base.x;
-  const dy = transform.target.y - interp.base.y;
-  const d = Math.hypot(dx, dy);
-  return d > 1 ? { x: dx / d, y: dy / d } : null;
-}
 
 // ── FLEE ─────────────────────────────────────────────────────────────────────
 

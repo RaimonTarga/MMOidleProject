@@ -69,11 +69,14 @@ export function fxMawWindup(
   monsterId: string,
   castMs: number,
   kind: 'bite' | 'devour',
+  /** Mob callers (Trench elites) size the jaws themselves and shake lighter, or not at all. */
+  opts: { width?: number; feel?: 'light' | 'medium' | 'heavy' } = {},
 ): void {
   const targetId = castTargetId(scene, monsterId);
   const start = spriteAt(scene, targetId) ?? spriteAt(scene, monsterId);
   if (!start) return;
-  const width = kind === 'devour' ? 150 : 92;
+  const width = opts.width ?? (kind === 'devour' ? 150 : 92);
+  const feel = 'width' in opts ? opts.feel : kind === 'devour' ? 'heavy' : 'medium';
   const upper = scene.add.graphics().setDepth(DEPTH.FX + 1);
   const lower = scene.add.graphics().setDepth(DEPTH.FX + 1);
   upper.setAlpha(0);
@@ -124,7 +127,7 @@ export function fxMawWindup(
       }
       scene.time.delayedCall(kind === 'devour' ? 80 : 60, () => {
         splash(scene, at.x, at.y, kind === 'devour' ? 1.6 : 1);
-        impact(scene, kind === 'devour' ? 'heavy' : 'medium', at);
+        if (feel) impact(scene, feel, at);
       });
       // The lunge that does it, then the serpent settles.
       posePath(scene, monsterId, [

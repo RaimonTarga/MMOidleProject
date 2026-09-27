@@ -96,6 +96,11 @@ export function resolveWindup(
   return entry.windup.fire(at) === 'continue' ? 'continue' : 'owned';
 }
 
+/** True while this caster has a wind-up running (its body belongs to the cast). */
+export function hasWindup(scene: GameScene, monsterId: string): boolean {
+  return registries.get(scene)?.has(monsterId) ?? false;
+}
+
 // ── Superseded one-shot cues ─────────────────────────────────────────────────
 
 const suppressed = new WeakMap<GameScene, Map<string, number>>();

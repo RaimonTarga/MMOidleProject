@@ -224,6 +224,12 @@ import { fxCharge, fxDisengage } from "../fx/reposition";
 import { fxCleanse } from "../fx/cleanse";
 import { fxPowerShot } from "../fx/powerShot";
 import { fxDiveBomb, fxTalonStrike } from "../fx/talonStrike";
+import { fxOpenerLand, fxOpenerWindup, isOpenerFx } from "../fx/engageOpeners";
+import { fxMobCastWindup } from "../fx/mobCastWindups";
+import {
+  fxCharnelMaul, fxConstrict, fxHindKick, fxOozeEngulf, fxSnap, fxSpiderFang, fxSting,
+  fxStoneFist, fxTongueLash, fxVoidLash, fxWispTouch, VOID_FIST,
+} from "../fx/mobVerbs";
 import { shouldRunClientFx } from "../fx/guard";
 import { playSfx } from "../audio/audioEngine";
 import type { SfxId } from "../audio/manifest";
@@ -758,6 +764,30 @@ const ATTACK_FX_BY_STYLE: Record<string, AttackFxFn> = {
   dart: ({ scene, from, to }) => fxDart(scene, from.x, from.y, to.x, to.y),
   "fire-spit": ({ scene, from, to }) => fxFireSpit(scene, from.x, from.y, to.x, to.y),
   "frost-bolt": ({ scene, from, to }) => fxFrostBolt(scene, from.x, from.y, to.x, to.y),
+
+  // ─── SECOND SPLIT (2026-09-27): the rest of `poison` and `impact` ──────────
+  // Fourteen creatures drew the same green puff and seven the same bloom. Each
+  // now performs the verb its sprite shows (fx/mobVerbs.ts).
+  sting: ({ scene, ev, from, to }) => fxSting(scene, from, to, ev.empowered),
+  "spider-fang": ({ scene, ev, to }) => fxSpiderFang(scene, to, ev.empowered),
+  "charnel-maul": ({ scene, ev, from, to }) => fxCharnelMaul(scene, from, to, ev.empowered),
+  constrict: ({ scene, ev, to }) => fxConstrict(scene, to, ev.empowered),
+  "ooze-engulf": ({ scene, ev, from, to }) => fxOozeEngulf(scene, from, to, ev.empowered),
+  "tongue-lash": ({ scene, ev, from, to }) => fxTongueLash(scene, from, to, ev.empowered),
+  snap: ({ scene, ev, to }) => fxSnap(scene, to, ev.empowered),
+  "wisp-touch": ({ scene, from, to }) => fxWispTouch(scene, from, to),
+  "hind-kick": ({ scene, ev, from, to }) => fxHindKick(scene, from, to, ev.empowered),
+  "stone-fist": ({ scene, ev, to }) => fxStoneFist(scene, to, ev.empowered),
+  "void-fist": ({ scene, ev, to }) => fxStoneFist(scene, to, ev.empowered, VOID_FIST),
+  "void-lash": ({ scene, ev, from, to }) => fxVoidLash(scene, from, to, ev.empowered),
+  // Palette members of the bite family: a skeletal hound's bone fangs trailing
+  // plague, a bog croc's murky jaws, a moss rat's small gnaw.
+  "bite-plague": ({ scene, ev, to }) =>
+    fxBite(scene, to.x, to.y, ev.empowered, { weight: 0.95, fang: 0xe8e0d0, gore: 0x6a9a5a, gravityY: -40 }),
+  "bite-bog": ({ scene, ev, to }) =>
+    fxBite(scene, to.x, to.y, ev.empowered, { weight: 1.3, fang: 0xd8d0a0, gore: 0x4a5a2a, gravityY: 180 }),
+  gnaw: ({ scene, ev, to }) =>
+    fxBite(scene, to.x, to.y, ev.empowered, { weight: 0.55, fang: 0xf0e8d0, gore: 0x6a8a3a, gravityY: 160 }),
 };
 
 // Self-facing Guard FX, keyed by ability id. Drawn on the firing player's sprite
@@ -1054,6 +1084,12 @@ export function dispatchCombatEvent(
     return;
   }
 
+  if (ev.kind === "monster-engage-land") {
+    // Node-wide: watching a hawk pin a party member is information too.
+    if (shouldRunClientFx()) fxOpenerLand(scene, ev.monsterId, ev.targetId, ev.fx);
+    return;
+  }
+
   if (ev.kind === "monster-drag") {
     // Node-wide, like every other ecology tell: watching someone else get hauled into
     // a bog is information about the bog. The victim's actual motion arrives as
@@ -1077,7 +1113,9 @@ export function dispatchCombatEvent(
     if (shouldRunClientFx() && ev.fx) {
       const caster = state.sprite.get(ev.monsterId);
       if (caster) {
-        if (ev.fx === "charge-lane") {
+        // Ordinary mobs' charged attacks and cast abilities (fx/mobCastWindups.ts).
+        if (fxMobCastWindup(scene, ev.monsterId, ev.castMs, ev.fx)) { /* drawn */ }
+        else if (ev.fx === "charge-lane") {
           fxChargeLane(scene, caster.x, caster.y);
           fxChargeWindup(scene, ev.monsterId, ev.castMs);
         } else if (ev.fx === "burrow") {
@@ -1142,6 +1180,9 @@ export function dispatchCombatEvent(
         // The Swamp boss's grab (and the Volcanic shove): the swell is the tell.
         else if (ev.fx === "mire-lash") fxMireLashWindup(scene, caster.x, caster.y, ev.castMs);
         else if (ev.fx === "magma-shove") fxMireLashWindup(scene, caster.x, caster.y, ev.castMs, MAGMA_SHOVE_PALETTE);
+        // Engage openers (Dive Bomb, Skyfall Rend, Savage Rush, Rime Pounce): the
+        // wind-up clock; launch resolves it, `monster-engage-land` is the contact.
+        else if (isOpenerFx(ev.fx)) fxOpenerWindup(scene, ev.monsterId, ev.castMs, ev.fx);
       }
     }
     return;
@@ -1277,8 +1318,13 @@ export function dispatchCombatEvent(
         // the victim for the target-following version (Molten Eruption). Drawing a
         // committed slam on the player who successfully walked out of it would
         // contradict the counterplay the telegraph exists to offer.
+        // The Mastodon's committed area lands as ice; the Tortoise's eruption
+        // draws its own payoff from its wind-up, so this is only its fallback.
         const at = impact ?? target;
-        if (at) fxStrongKick(scene, at.x, at.y);
+        if (at && ev.fx === "frost-tusk-impact") {
+          playSfx("attack-blunt");
+          fxGlacialSlam(scene, at.x, at.y, ev.radius ?? 110);
+        } else if (at) fxStrongKick(scene, at.x, at.y);
       } else if (ev.fx === "trench-lantern-pulse") {
         // Anchor on the victim, else the caster, else the broadcast impact. Every
         // branch must resolve a real anchor — a missing sprite must skip the cue,
@@ -1312,13 +1358,12 @@ export function dispatchCombatEvent(
         fxShieldUp(scene, monster.x, monster.y);
       } else if (monster && (ev.fx === "volcanic-guard" || ev.fx === "volcanic-shell")) {
         fxShieldUp(scene, monster.x, monster.y);
-      } else if (monster && target && ev.fx === "dive-bomb") {
-        fxDiveBomb(scene, monster.x, monster.y, target.x, target.y);
-      } else if (monster && target && ev.fx === "rime-pounce") {
-        // Same committed rush line as Dive Bomb, in frost: the Frost Lurker is a
-        // ground predator, so it reuses the motion primitive rather than the
-        // raptor palette.
-        fxDiveBomb(scene, monster.x, monster.y, target.x, target.y, 0x6699bb, 0xccffff);
+      } else if (monster && target && isOpenerFx(ev.fx)) {
+        // Only reached when no wind-up was registered (the cast began before this
+        // client saw the monster): the launch as a bare committed line. Frost for
+        // the ground predator, gold for everything else.
+        if (ev.fx === "rime-pounce") fxDiveBomb(scene, monster.x, monster.y, target.x, target.y, 0x6699bb, 0xccffff);
+        else fxDiveBomb(scene, monster.x, monster.y, target.x, target.y);
       } else if (monster && target) {
         if (ev.fx === "strong-kick") {
           fxStrongKick(scene, target.x, target.y);

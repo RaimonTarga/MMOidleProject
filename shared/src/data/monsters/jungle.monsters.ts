@@ -127,7 +127,7 @@ export const jungleMonsterEntries = [
     // with a pounce. Poison is DE-EMPHASIZED here (removed, locked) — venom is the
     // Snake's early-tier note, speed is this one's.
     stats: { hp: 1250, attack: 55, plating: 0, damageReduction: 0, speed: 78, attackRange: 12, attackCooldown: 1000, pullRange: 270 },
-    behavior: 'melee', attackStyle: 'poison', biome: 'jungle',
+    behavior: 'melee', attackStyle: 'claws-light', biome: 'jungle',
     rewards: { essence: 25, essenceType: 'green', level: 2, biomeXp: 150 },
     ai: { wanderRadius: 300, leashRange: 760, idleMinMs: 600, idleMaxMs: 2600 },
     openingStrike: { multiplier: 1.75 },  // deliberate engagement alpha; density and speed remain the threat
@@ -215,7 +215,7 @@ export const jungleMonsterEntries = [
     // REMOVED (locked): evasion, combat ramp, and the extra defensive layers. Light
     // venom stays for snake flavor.
     stats: { hp: 12000, attack: 66, plating: 0, damageReduction: 0, speed: 62, attackRange: 12, attackCooldown: 1600, pullRange: 280 },
-    behavior: 'melee', attackStyle: 'poison', biome: 'jungle', elite: true,
+    behavior: 'melee', attackStyle: 'constrict', biome: 'jungle', elite: true,
     rewards: { essence: 130, essenceType: 'green', level: 4, biomeXp: 780 },
     ai: { wanderRadius: 280, leashRange: 720, idleMinMs: 800, idleMaxMs: 3000 },
     // CONSTRICT - the headline. Every 4th attack hits heavier AND briefly roots.

@@ -65,7 +65,7 @@ export const graveyardMonsterEntries = [
     // Aggressive charge, modest plague, and a contaminated pool on death that
     // matters for POSITIONING (short-lived; it must not dominate encounter damage).
     stats: { hp: 1901, attack: 105, plating: 0, damageReduction: 0, speed: 70, attackRange: 12, attackCooldown: 1500, pullRange: 270 },
-    behavior: 'melee', attackStyle: 'poison', biome: 'graveyard',
+    behavior: 'melee', attackStyle: 'bite-plague', biome: 'graveyard',
     rewards: { essence: 50, essenceType: 'purple', level: 3, biomeXp: 300 },
     ai: { wanderRadius: 290, leashRange: 750, idleMinMs: 700, idleMaxMs: 3000 },
     // Occasionally runs with a Gravewright. It is the entourage member you most
@@ -123,7 +123,7 @@ export const graveyardMonsterEntries = [
     // rewards Rupture/pierce. Its stacking DoT is already stripped per the locked
     // Wasteland identity; on-death ally empowerment (capped) is the mechanic it keeps.
     stats: { hp: 1800, attack: 90, plating: 16, damageReduction: 0.08, speed: 18, attackRange: 15, attackCooldown: 3200, pullRange: 155 },
-    behavior: 'melee', attackStyle: 'poison', biome: 'graveyard',
+    behavior: 'melee', attackStyle: 'charnel-maul', biome: 'graveyard',
     rewards: { essence: 160, essenceType: 'purple', level: 4, biomeXp: 960 },
     ai: { wanderRadius: 110, leashRange: 460, idleMinMs: 4000, idleMaxMs: 11000 },
     cadenceFinisher: { everyNAttacks: 4, multiplier: 2.4 },   // 216

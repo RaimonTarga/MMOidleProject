@@ -33,7 +33,7 @@ export const plainsMonsterEntries = [
     id: 'plains-slime', name: 'Field Hare', color: 0xddee55,
     // Swarm filler. Tiny hits that plating eats to nothing; dangerous only in numbers.
     stats: { hp: 50, attack: 12, plating: 0, damageReduction: 0, speed: 46, attackRange: 12, attackCooldown: 2000, pullRange: 190 },
-    behavior: 'melee', attackStyle: 'impact', biome: 'plains',
+    behavior: 'melee', attackStyle: 'hind-kick', biome: 'plains',
     rewards: { essence: 2, essenceType: 'yellow', level: 1, biomeXp: 10 },
     ai: { wanderRadius: 250, leashRange: 640, idleMinMs: 1200, idleMaxMs: 4000 },
     // Plains swarm: while chasing, slimes converge as a group (gentle cohesion) and
