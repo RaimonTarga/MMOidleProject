@@ -9,12 +9,14 @@
  */
 import type { BespokePath, PathTable } from './bespoke/kit';
 import { STRIKER_PATHS } from './bespoke/striker';
+import { SQUIRE_PATHS } from './bespoke/squire';
 import { APPRENTICE_PATHS } from './bespoke/apprentice';
 
 export type { BespokeHit, BespokeReload, BespokePath } from './bespoke/kit';
 
 const BESPOKE_PATHS: PathTable = {
   ...STRIKER_PATHS,
+  ...SQUIRE_PATHS,
   ...APPRENTICE_PATHS,
 };
 

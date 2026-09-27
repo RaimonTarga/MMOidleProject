@@ -367,15 +367,7 @@ interface Signature {
 const SIGNATURES: Record<string, Signature> = {
   // Striker
   // Squire
-  'cooldown-balanced-t3-a': { motif: rings, color: 0xb8a8ff, accent: 0xffffff }, // Reverb
-  'cooldown-balanced-t3-b': { motif: shock, color: 0xffe066, accent: 0xffffff }, // Dynamo
-  'cooldown-balanced-t3-c': { motif: aegis, color: 0x9fd0ff, accent: 0xffffff }, // Stalwart
-  'cooldown-heavy-t3-a': { motif: sigil, color: 0xff7a4a, accent: 0xffd0a0, n: 5 }, // Avenger
-  'cooldown-heavy-t3-b': { motif: quake, color: 0x8a6a5a, accent: 0x4a3a30 }, // Destroyer
   'cooldown-heavy-t3-c': { motif: halo, color: 0xfff0a0, accent: 0xffffff }, // Devout Priest
-  'cooldown-light-t3-a': { motif: shadow, color: 0x4a2a6e, accent: 0xb89ae0 }, // Assassin
-  'cooldown-light-t3-b': { motif: motes, color: 0xe0f0ff, accent: 0xfff4c0, n: 1 }, // Transcendant
-  'cooldown-light-t3-c': { motif: rend, color: 0xd8e0e8, accent: 0xffffff }, // Sunderer
   // Apprentice
   'dot-balanced-t3-a': { motif: embers, color: 0xff8a3a, accent: 0xffe08a }, // Pyromancer
   'dot-balanced-t3-b': { motif: sigil, color: 0xff6a1a, accent: 0xffd08a, n: 3 }, // Firebrand
