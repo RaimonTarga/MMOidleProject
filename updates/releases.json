@@ -29,6 +29,12 @@
       "title": "A rebuilt game",
       "releasedAt": 1790373219225,
       "markdownPath": "v0.5/changelog.md"
+    },
+    {
+      "version": "0.6",
+      "title": "Every boss, rebuilt",
+      "releasedAt": 1790576174050,
+      "markdownPath": "v0.6/changelog.md"
     }
   ]
 }
