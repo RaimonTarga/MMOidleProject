@@ -91,3 +91,19 @@ test('freshly fetched divergent production blocks a cut', () => {
   assert.match(result.stderr, /cannot fast-forward/);
   assert.equal(f.git('ls-remote', 'origin'), before);
 });
+
+test('a patch version prepares and cuts its own release branch', () => {
+  const f = fixture();
+  assert.equal(f.run('prepare', '0.4.1').status, 0);
+  f.write('updates/v0.4.1/changelog.md', '# v0.4.1\n\nA patch.\n');
+  const result = f.run('cut', '0.4.1', '--skip-checks');
+  assert.equal(result.status, 0, result.stderr);
+  for (const file of packages) {
+    assert.equal(JSON.parse(f.git('show', `HEAD:${file}`)).version, '0.4.1', file);
+  }
+  const versions = JSON.parse(f.git('show', 'HEAD:updates/releases.json')).releases.map((r) => r.version);
+  assert.deepEqual(versions, ['0.4', '0.4.1']);
+  const refs = f.git('ls-remote', 'origin', 'refs/heads/develop', 'refs/heads/master', 'refs/heads/release-v0.4.1').split('\n');
+  assert.equal(refs.length, 3);
+  assert.equal(new Set(refs.map((line) => line.split(/\s+/)[0])).size, 1);
+});

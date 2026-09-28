@@ -30,7 +30,7 @@ function main() {
 
   const version = normalizeVersion(versionArg);
   if (!version) {
-    fail('Expected a major.minor version like 1.2.');
+    fail('Expected a major.minor version like 1.2, or a patch like 1.2.1.');
   }
 
   if (command === 'prepare') {
@@ -249,7 +249,7 @@ function resolvePreviousReleaseRef() {
     .split('\n')
     .map((ref) => ref.trim())
     .filter(Boolean)
-    .filter((ref) => /(^|\/)release-v\d+\.\d+$/.test(ref));
+    .filter((ref) => /(^|\/)release-v\d+\.\d+(\.\d+)?$/.test(ref));
   refs.sort(compareReleaseRefs);
   return refs.at(-1) ?? null;
 }
@@ -257,8 +257,9 @@ function resolvePreviousReleaseRef() {
 function compareReleaseRefs(a, b) {
   const av = versionParts(a.replace(/^origin\//, '').replace(RELEASE_BRANCH_PREFIX, ''));
   const bv = versionParts(b.replace(/^origin\//, '').replace(RELEASE_BRANCH_PREFIX, ''));
-  for (let i = 0; i < 2; i++) {
-    if (av[i] !== bv[i]) return av[i] - bv[i];
+  // A missing patch number reads as 0, so 0.6 sorts before 0.6.1.
+  for (let i = 0; i < 3; i++) {
+    if ((av[i] ?? 0) !== (bv[i] ?? 0)) return (av[i] ?? 0) - (bv[i] ?? 0);
   }
   return a.localeCompare(b);
 }
@@ -320,7 +321,7 @@ function writeJson(file, value) {
 function normalizeVersion(value) {
   if (typeof value !== 'string') return null;
   const version = value.trim().replace(/^v/i, '');
-  return /^\d+\.\d+$/.test(version) ? version : null;
+  return /^\d+\.\d+(\.\d+)?$/.test(version) ? version : null;
 }
 
 function versionParts(version) {
@@ -329,7 +330,7 @@ function versionParts(version) {
 
 function printHelp() {
   console.log(`Usage:
-  pnpm release:prepare 1.2 [--dry-run]
+  pnpm release:prepare 1.2 [--dry-run]     (or a patch: 1.2.1)
   pnpm release:cut 1.2 [--skip-checks]
 
 Branch model:
