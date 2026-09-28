@@ -15,7 +15,6 @@
  *   wisp-touch    Tiny Wisp      a mote of light darts in and sparks
  *   hind-kick     hare, goat     hind legs lash out low in the dust
  *   stone-fist    granite golems a boulder fist drops, the ground cracks
- *   void-lash     Void Horror    a tentacle whips across in a sine
  *
  * Each takes `empowered` and draws a heavier variant for amplified beats.
  */
@@ -284,8 +283,6 @@ export interface FistPalette {
 }
 
 const GRANITE: FistPalette = { fist: 0x5a534c, lit: 0x8a837a, crack: 0x2a2520, debris: [0x5a534c, 0x8a837a, 0xb0a898] };
-/** The Void Hulk's fist: abyssal stone veined violet. */
-export const VOID_FIST: FistPalette = { fist: 0x2a1a3a, lit: 0x6a3aa0, crack: 0x8a5ad0, debris: [0x2a1a3a, 0x6a3aa0, 0xb080ff] };
 
 export function fxStoneFist(scene: GameScene, to: P, empowered: boolean, palette: FistPalette = GRANITE): void {
   const r = empowered ? 16 : 12;
@@ -311,40 +308,3 @@ export function fxStoneFist(scene: GameScene, to: P, empowered: boolean, palette
   });
 }
 
-// ── void-lash ────────────────────────────────────────────────────────────────
-
-export function fxVoidLash(scene: GameScene, from: P, to: P, empowered: boolean): void {
-  const g = scene.add.graphics().setDepth(DEPTH.FX);
-  const obj = { t: 0 };
-  const dx = to.x - from.x;
-  const dy = to.y - from.y;
-  const len = Math.hypot(dx, dy) || 1;
-  const nx = -dy / len;
-  const ny = dx / len;
-  scene.tweens.add({
-    targets: obj, t: 1, duration: 130, ease: 'Quad.easeOut',
-    onUpdate: () => {
-      g.clear();
-      for (const [w, c, a] of [[empowered ? 8 : 6, 0x2a1040, 0.8], [2.5, 0xb080ff, 1]] as const) {
-        g.lineStyle(w, c, a);
-        g.beginPath();
-        for (let i = 0; i <= 14; i++) {
-          const s = (i / 14) * obj.t;
-          const wave = Math.sin(s * Math.PI * 3 + obj.t * 6) * 10 * (1 - s);
-          const x = from.x + dx * s + nx * wave;
-          const y = from.y - 6 + dy * s + ny * wave;
-          if (i === 0) g.moveTo(x, y);
-          else g.lineTo(x, y);
-        }
-        g.strokePath();
-      }
-    },
-    onComplete: () => {
-      fade(scene, g, 180, 30);
-      burstFx(scene, 'ptx-dot', to.x, to.y - 6, empowered ? 12 : 7, 520, {
-        tint: [0x6a3aa0, 0xb080ff, 0x2a1040], speed: { min: 30, max: 110 }, angle: { min: 0, max: 360 },
-        scale: { start: 0.7, end: 0 }, alpha: { start: 1, end: 0 }, gravityY: -40,
-      });
-    },
-  });
-}

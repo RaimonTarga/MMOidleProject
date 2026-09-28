@@ -234,7 +234,7 @@ import { championTether, fxSummonShatter } from "../fx/conduitPaths";
 import { abilityCallout, playAbilityRank } from "../fx/abilityRank";
 import {
   fxCharnelMaul, fxConstrict, fxHindKick, fxOozeEngulf, fxSnap, fxSpiderFang, fxSting,
-  fxStoneFist, fxTongueLash, fxVoidLash, fxWispTouch, VOID_FIST,
+  fxStoneFist, fxTongueLash, fxWispTouch,
 } from "../fx/mobVerbs";
 import { shouldRunClientFx } from "../fx/guard";
 import { playSfx, playFinalCastMusic, suppressSfx } from "../audio/audioEngine";
@@ -761,8 +761,6 @@ const ATTACK_FX_BY_STYLE: Record<string, AttackFxFn> = {
   "wisp-touch": ({ scene, from, to }) => fxWispTouch(scene, from, to),
   "hind-kick": ({ scene, ev, from, to }) => fxHindKick(scene, from, to, ev.empowered),
   "stone-fist": ({ scene, ev, to }) => fxStoneFist(scene, to, ev.empowered),
-  "void-fist": ({ scene, ev, to }) => fxStoneFist(scene, to, ev.empowered, VOID_FIST),
-  "void-lash": ({ scene, ev, from, to }) => fxVoidLash(scene, from, to, ev.empowered),
   // Palette members of the bite family: a skeletal hound's bone fangs trailing
   // plague, a bog croc's murky jaws, a moss rat's small gnaw.
   "bite-plague": ({ scene, ev, to }) =>

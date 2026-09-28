@@ -90,8 +90,6 @@ for (const style of [
   'wisp-touch',
   'hind-kick',
   'stone-fist',
-  'void-lash',
-  'void-fist',
   'bite-plague',
   'bite-bog',
   'gnaw',

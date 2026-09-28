@@ -92,8 +92,6 @@ export class GameScene extends Phaser.Scene {
   cameraTarget!: Phaser.GameObjects.Arc;
   flashCameraHold = false;
   flashCameraHoldTargetId: string | null = null;
-  /** Current opacity of the void-flood mist post-FX (0–1, eased by fade). */
-  mistIntensity = 0;
   /** Eased strength (0–1) of the current altar glow while the player stands on it. */
   altarGlowStrength = 0;
   /** Active altar interaction prompt (thought bubble above own head). */
