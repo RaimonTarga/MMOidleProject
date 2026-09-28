@@ -35,6 +35,12 @@
       "title": "Every boss, rebuilt",
       "releasedAt": 1790576174050,
       "markdownPath": "v0.6/changelog.md"
+    },
+    {
+      "version": "0.6.1",
+      "title": "Clearer menus",
+      "releasedAt": 1790628301560,
+      "markdownPath": "v0.6.1/changelog.md"
     }
   ]
 }
