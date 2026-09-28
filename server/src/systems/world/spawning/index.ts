@@ -1,3 +1,4 @@
+import { clampMonsterRoamTarget, MONSTER_ROAM_MARGIN } from '../monsterRoaming';
 import {
   GAME_CONFIG,
   NODE_BIOMES,
@@ -179,6 +180,7 @@ export function createMonster(
   nodeId: string,
   typeId: string,
   pos: Vec2,
+  ambient = false,
 ): MonsterEntity | null {
   const def = MONSTER_DATABASE.get(typeId);
   if (!def) {
@@ -191,6 +193,7 @@ export function createMonster(
   const hitbox = resolveMonsterHitbox(typeId, isBoss, id);
   const spawnPos = terrainSafeMonsterSpawnPos(nodeId, def, pos);
   if (!spawnPos) return null;
+  if (ambient && distanceSq(spawnPos, clampMonsterRoamTarget(spawnPos, NODE_REGISTRY.get(nodeId))) > 0) return null;
   const nodeDef = NODE_REGISTRY.get(nodeId);
   const isDungeon = nodeDef?.isDungeon ?? false;
   const usesGuardedAltar = isDungeonNode(nodeId);
@@ -376,6 +379,7 @@ export function spawnMonster(world: World, nodeId: string): boolean {
       pos,
     );
     if (!terrainSafePos) continue;
+    if (distanceSq(terrainSafePos, clampMonsterRoamTarget(terrainSafePos, node)) > 0) continue;
     pos = terrainSafePos;
 
     if (!isAmbientSpawnPosClear(world, nodeId, pos, minDistSq, typeDef)) {
@@ -383,9 +387,9 @@ export function spawnMonster(world: World, nodeId: string): boolean {
     }
 
     if (typeDef?.pack?.role === "alpha") {
-      return spawnPack(world, nodeId, typeId, pos) !== null;
+      return spawnPack(world, nodeId, typeId, pos, true) !== null;
     }
-    const monster = createMonster(world, nodeId, typeId, pos);
+    const monster = createMonster(world, nodeId, typeId, pos, true);
     if (!monster) return false;
     if (shouldAssignMountainHoldPost) {
       assignMountainHoldPost(world, nodeId, monster, typeDef, monster.hasPosition.current);
@@ -593,9 +597,11 @@ function isAmbientSpawnPosClear(
 }
 
 function randomSpawnPos(node: { width: number; height: number }): Vec2 {
+  const x = Math.min(MONSTER_ROAM_MARGIN, node.width / 2);
+  const y = Math.min(MONSTER_ROAM_MARGIN, node.height / 2);
   return {
-    x: Math.floor(Math.random() * (node.width - 128)) + 64,
-    y: Math.floor(Math.random() * (node.height - 128)) + 64,
+    x: x + Math.random() * (node.width - 2 * x),
+    y: y + Math.random() * (node.height - 2 * y),
   };
 }
 
@@ -888,15 +894,16 @@ export function spawnPack(
   nodeId: string,
   alphaTypeId: string,
   anchor: Vec2,
+  ambient = false,
 ): MonsterEntity[] | null {
   const packDef = MONSTER_DATABASE.get(alphaTypeId)?.pack;
   if (!packDef || packDef.role !== "alpha") {
-    const lone = createMonster(world, nodeId, alphaTypeId, anchor);
+    const lone = createMonster(world, nodeId, alphaTypeId, anchor, ambient);
     return lone ? [lone] : null;
   }
 
   const packId = `${nodeId}:pack:${packSeq++}`;
-  const alpha = createMonster(world, nodeId, alphaTypeId, anchor);
+  const alpha = createMonster(world, nodeId, alphaTypeId, anchor, ambient);
   if (!alpha) return null;
   const coordination = createPackCoordination(alpha);
   world.ecs.addComponent(alpha, "inPack", { packId, role: "alpha", coordination });
@@ -909,8 +916,9 @@ export function spawnPack(
     let idx = 0;
     for (const group of groups) {
       for (let i = 0; i < group.count; i++) {
-        const pos = followerSpawnPos(anchor, idx, total, node);
-        const f = createMonster(world, nodeId, group.typeId, pos);
+        const candidate = followerSpawnPos(anchor, idx, total, node);
+        const pos = ambient ? clampMonsterRoamTarget(candidate, node) : candidate;
+        const f = createMonster(world, nodeId, group.typeId, pos, ambient);
         if (f) {
           world.ecs.addComponent(f, "inPack", { packId, role: "follower", coordination });
           members.push(f);

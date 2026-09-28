@@ -7,6 +7,11 @@ sessions, 2026-08-08/09) — see §§9–11 and 18–20.
 
 Read source when it disagrees with this doc.
 
+Idle wander destinations (including patrols and pack following) are inset 240px from
+zone edges. Ambient spawns and their pack followers use the same buffer. Combat
+pursuit, return paths, scripted encounter placement, and terrain detours keep their
+existing behavior; this reduces entrance crowding without making borders safe zones.
+
 > **Audit note 2026-08-08:** this doc previously claimed "spec'd, primitives not yet built".
 > That was stale by roughly six weeks — packs/call-allies, fixed patrol routes and swarm
 > convergence had all shipped, and `server/test/biomeEcology.test.ts` pins them. Sections 2,

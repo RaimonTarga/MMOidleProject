@@ -1,3 +1,4 @@
+import { clampMonsterRoamTarget } from '../../world/monsterRoaming';
 import { handoverLostSummonTarget } from './summonTargetHandover';
 import type { World } from "../../../world/World";
 import type {
@@ -208,7 +209,9 @@ function setMonsterTarget(
   entity: MonsterEntity,
   target: Vec2,
 ): void {
-  setEntityMotion(world, entity, target);
+  setEntityMotion(world, entity, entity.hasAwareness.state === "wandering"
+    ? clampMonsterRoamTarget(target, NODE_REGISTRY.get(entity.hasPosition.nodeId))
+    : target);
 }
 
 function stopMonster(world: World, entity: MonsterEntity): void {
