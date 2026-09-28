@@ -4,8 +4,9 @@ import { resolve } from 'node:path';
 import { attackCue, castCue, statusCue } from '../../client/src/audio/routing';
 import { ACCEPTED_SFX } from '../../client/src/audio/acceptedCatalog';
 import { bossMusicPhase, ZONE_MUSIC, BOSS_MUSIC } from '../../client/src/audio/musicCatalog';
-import { SFX_MANIFEST, sfxFiles, sfxKey } from '../../client/src/audio/manifest';
+import { PRELOADED_SFX, SFX_MANIFEST, sfxFiles, sfxKey } from '../../client/src/audio/manifest';
 import { VoiceBudget } from '../../client/src/audio/voiceBudget';
+import { monsterDeathCue } from '../../client/src/audio/deathRouting';
 
 assert.equal(attackCue('dot', 'magic', false, 'poison'), 'poison');
 assert.equal(attackCue('dot', 'magic', false, 'frost'), 'ice');
@@ -63,7 +64,7 @@ assert.equal(bossMusicPhase(22, 100, true, 4, true, 'dune-throne-sovereign'), 2,
 assert.equal(bossMusicPhase(20, 100, true, 4, true, 'dune-throne-sovereign'), 3, 'sovereign final at 20%');
 assert.equal(bossMusicPhase(20, 100, true, 4, false, 'dune-throne-sovereign'), 2, 'no final track, stays escalated');
 assert.equal(sfxKey('attack-melee'), sfxKey('slash'), 'aliases share one decoded buffer');
-assert.ok(sfxFiles(SFX_MANIFEST.kill)[0].includes('v4-death'));
+assert.ok(sfxFiles(SFX_MANIFEST.kill)[0].includes('v48-humanoid-2'));
 assert.ok(sfxFiles(SFX_MANIFEST.death)[0].includes('v34-player-death'));
 for (const track of new Set([...Object.values(ZONE_MUSIC), ...Object.values(BOSS_MUSIC).flat()])) {
   assert.ok(existsSync(resolve(import.meta.dirname, '../../client/public/assets/audio/music/accepted', `${track}.ogg`)), track);
@@ -83,3 +84,26 @@ assert.equal(musicVolume(0, 2, 0.5), 0, 'muting silences a partial fade');
 assert.equal(musicVolume(0.5, 0.5, 0.4), 0.1, 'slider preserves envelope and normalization');
 assert.equal(musicVolume(1, 2, 1), 1, 'maximum slider cannot exceed Phaser gain bounds');
 console.log('audioMix: ok (51 measured gains, peak headroom, transition/master gain)');
+
+// First enemy death must not silently trigger an on-demand download.
+const bootAudio = new Set([...PRELOADED_SFX].flatMap(id =>
+  sfxFiles(SFX_MANIFEST[id as keyof typeof SFX_MANIFEST]).map((_, i) => sfxKey(id as keyof typeof SFX_MANIFEST, i))));
+assert.ok(bootAudio.has(sfxKey('kill')), 'preload the enemy-collapse buffer');
+assert.notEqual(sfxKey('kill'), sfxKey('death'), 'enemy and player death stay distinct');
+for (const [id, cue] of [
+  ['tiny-slime', 'death-magic'], ['ironwood-golem', 'death-animal'],
+  ['dust-djinn', 'death-animal'], ['forest-slime', 'death-animal'],
+  ['cave-troll', 'death-humanoid'], ['cave-gargoyle', 'death-stone'],
+  ['plague-hound', 'death-undead'], ['abyssal-serpent', 'death-aquatic'],
+] as const) {
+  assert.equal(monsterDeathCue(id), cue, id);
+  assert.ok(bootAudio.has(sfxKey(cue)), `${cue} is ready on the first kill`);
+  assert.ok(SFX_MANIFEST[cue].gain! <= 0.65);
+  assert.ok(SFX_MANIFEST[cue].cooldownMs! >= 220);
+}
+assert.equal(monsterDeathCue(undefined), 'death-humanoid');
+assert.equal(monsterDeathCue('tiny-slime', true), 'boss-death', 'boss takes precedence over body family');
+assert.ok(bootAudio.has(sfxKey('boss-death')), 'first boss collapse is preloaded');
+assert.deepEqual(ACCEPTED_SFX['boss-death'], ['v49-boss-3']);
+assert.equal(SFX_MANIFEST['boss-death'].pitchVariance, 0, 'preserve the long collapse timing');
+console.log('deathAudio: ok (families, legacy IDs, boss precedence, first-use preload, mix bounds)');

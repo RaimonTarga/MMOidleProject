@@ -193,8 +193,13 @@ export const ACCEPTED_SFX = {
     "v4-death-1"
   ],
   "boss-death": [
-    "v24-bossdeath-1",
-    "v24-bossdeath-2"
-  ]
+    "v49-boss-3"
+  ],
+  "death-magic": ["v48-magic-1"],
+  "death-animal": ["v48-animal-2"],
+  "death-humanoid": ["v48-humanoid-2"],
+  "death-undead": ["v49-undead-2"],
+  "death-stone": ["v49-stone-1"],
+  "death-aquatic": ["v49-aquatic-2"]
 } as const;
 export type AcceptedSfxId = keyof typeof ACCEPTED_SFX;

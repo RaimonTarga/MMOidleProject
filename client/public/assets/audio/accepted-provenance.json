@@ -1,5 +1,5 @@
 {
-  "source": "Accepted audio-probe selections-v43; authored synthesis masters; no reference-song audio used.",
+  "source": "Accepted audio-probe selections-v43 plus death families v48/v49; authored synthesis masters; no reference-song audio used.",
   "sfx": [
     {
       "file": "v24-bossdeath-1.wav",
@@ -370,6 +370,41 @@
       "file": "v6-slam-impact-2.wav",
       "duration": 1.15,
       "sha256": "e88e0e9839edc66ddaecb4b6cbd6674fd54ca16cbbe653e4e507844e4f0c3084"
+    },
+    {
+      "file": "v48-magic-1.wav",
+      "duration": 1.04,
+      "sha256": "0f35f61661873251013cb7408ccebc697428d37c9bef96544d281b92552987ae"
+    },
+    {
+      "file": "v48-animal-2.wav",
+      "duration": 1.02,
+      "sha256": "08b100f9445d1fc1e24b64c8987d843fa92c9bac90d56dacabb90765923306e8"
+    },
+    {
+      "file": "v48-humanoid-2.wav",
+      "duration": 1.08,
+      "sha256": "afa0e16f094bdef210382c19de27d1405b22cabfd175709d1e002c1124efc4c9"
+    },
+    {
+      "file": "v49-undead-2.wav",
+      "duration": 1.1,
+      "sha256": "0deeb176881e66e7dacbae44151e37c2bccefd41d2aac5131703c168136f944a"
+    },
+    {
+      "file": "v49-stone-1.wav",
+      "duration": 1.1,
+      "sha256": "7953d29c377581cfa236fa5e784b193a3939bcf1036e2d011881ee83536da7b4"
+    },
+    {
+      "file": "v49-aquatic-2.wav",
+      "duration": 1.18,
+      "sha256": "351318b4434b0e2d2d2d7b34bae7a9d4179bc717c3a0db0335df9c8d79cd572e"
+    },
+    {
+      "file": "v49-boss-3.wav",
+      "duration": 3.25,
+      "sha256": "47b2293ec7829bba8fb7a8d2e128d28202727c67f587b3ceaaa8abc1849b0dc1"
     }
   ],
   "music": [

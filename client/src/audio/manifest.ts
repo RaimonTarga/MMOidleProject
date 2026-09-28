@@ -16,28 +16,31 @@ export const SFX_MANIFEST = {} as Record<SfxId, SfxDef>;
 // Old call sites share accepted masters until they can select a more specific family.
 const aliases: Record<string, AcceptedSfxId> = {
   'attack-melee': 'slash', 'attack-blunt': 'blunt', 'attack-ranged': 'bow',
-  'attack-magic': 'magic', 'take-damage': 'hurt', kill: 'death',
+  'attack-magic': 'magic', 'take-damage': 'hurt', kill: 'death-humanoid',
   frozen: 'freeze', 'debuff-apply': 'curse', 'debuff-receive': 'curse',
   empowered: 'striker-empowered', 'pack-call': 'pack', death: 'player-death',
 };
 const ROUTINE_SFX = ['slash','blunt','shot','spirit','fire','ice','poison','magic','bone','claw','bite','maul','bow','rock-launch','summon-hit'];
+export const DEATH_SFX = ['death-magic', 'death-animal', 'death-humanoid', 'death-undead', 'death-stone', 'death-aquatic'] as const;
 /**
- * Loaded with the game: sounds nearly every fight plays. Everything else (boss,
- * cast and status cues) is fetched the first time it plays, like zone art, so a
+ * Loaded with the game: routine combat and all death cues. Other cast and status
+ * cues are fetched the first time they play, like zone art, so a
  * visitor never downloads effects for content they have not reached.
  */
+// `death` aliases player death; `kill` owns the separate enemy-collapse buffer.
 export const PRELOADED_SFX: ReadonlySet<string> = new Set([
-  ...ROUTINE_SFX, 'hurt', 'death', 'dodge', 'striker-empowered', 'squire-empowered', 'spirit-empowered',
+  ...ROUTINE_SFX, ...DEATH_SFX, 'boss-death', 'hurt', 'death', 'kill', 'dodge', 'striker-empowered', 'squire-empowered', 'spirit-empowered',
 ]);
 for (const [id, stems] of Object.entries(ACCEPTED_SFX)) {
   const routine = ROUTINE_SFX.includes(id);
   const major = ['cataclysm','boss-death','player-death'].includes(id);
+  const dispersal = id.startsWith('death-');
   SFX_MANIFEST[id as SfxId] = {
     file: stems.map(stem => `${AUDIO_SFX_DIR}/accepted/${stem}.ogg`), fallback: [],
-    gain: id === 'summon-hit' ? 0.3 : routine ? 0.55 : major ? 0.8 : 0.65,
-    pitchVariance: major ? 0 : 0.035, gainVariance: major ? 0 : 0.08,
-    cooldownMs: id === 'summon-hit' ? 300 : routine ? 110 : 180,
-    maxVoices: major ? 1 : 2, priority: major ? 3 : routine ? 0 : 2,
+    gain: id === 'summon-hit' ? 0.3 : id === 'boss-death' ? 0.65 : routine ? 0.55 : major ? 0.8 : 0.65,
+    pitchVariance: major ? 0 : dispersal ? 0.025 : 0.035, gainVariance: major ? 0 : 0.08,
+    cooldownMs: id === 'summon-hit' ? 300 : dispersal ? 220 : routine ? 110 : 180,
+    maxVoices: major ? 1 : 2, priority: major ? 3 : dispersal ? 1 : routine ? 0 : 2,
   };
 }
 for (const [alias, id] of Object.entries(aliases)) SFX_MANIFEST[alias as SfxId] = SFX_MANIFEST[id];

@@ -239,6 +239,7 @@ import {
 import { shouldRunClientFx } from "../fx/guard";
 import { playSfx, playFinalCastMusic, suppressSfx } from "../audio/audioEngine";
 import { attackCue, castCue, ecologyCues, bossCues } from "../audio/routing";
+import { monsterDeathCue } from "../audio/deathRouting";
 import type { SfxId } from "../audio/manifest";
 import { startCastBar, endCastBar } from "./castBars";
 import { spawnSkillCallout } from "./skillCallouts";
@@ -289,6 +290,7 @@ export interface PlayerAttackPresentation {
   targetBase?: Vec2;
   targetSize: number;
   killedBoss: boolean;
+  targetMonsterTypeId?: string;
 }
 
 export function capturePlayerAttack(
@@ -309,6 +311,7 @@ export function capturePlayerAttack(
     targetBase: targetBase ? { ...targetBase } : undefined,
     targetSize: Math.max(target.displayWidth, target.displayHeight),
     killedBoss: state.entity.get(ev.targetId)?.isMonster?.isBoss ?? false,
+    targetMonsterTypeId: state.entity.get(ev.targetId)?.isMonster?.monsterTypeId,
   };
 }
 
@@ -1832,7 +1835,8 @@ export function dispatchCombatEvent(
       // Bosses get their own death sting from the removal path (deltaApplier);
       // don't also fire the generic enemy-death cue for them.
       const killedBoss = presentation?.killedBoss ?? state.entity.get(ev.targetId)?.isMonster?.isBoss ?? false;
-      if (!killedBoss) playSfx("kill");
+      if (!killedBoss) playSfx(monsterDeathCue(presentation?.targetMonsterTypeId
+        ?? state.entity.get(ev.targetId)?.isMonster?.monsterTypeId));
       spawnRewardFloaters(scene, ev, presentation?.to);
     }
   }
