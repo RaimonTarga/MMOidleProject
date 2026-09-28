@@ -51,4 +51,3 @@ const pack = spawnPack(world, nodeId, 'wolf', { x: 240, y: 2400 }, true);
 assert(pack && pack.length === 3, 'Border-adjacent ambient pack must retain its followers');
 for (const mob of pack) assert(inside(mob.controlsMonster.spawn), 'Pack followers must also spawn inside');
 console.log('monsterRoamingBorder: ok');
-
