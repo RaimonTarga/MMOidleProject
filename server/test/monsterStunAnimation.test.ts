@@ -28,6 +28,7 @@ const context = vm.createContext({
   syncConcealment: () => {},
   spawnAttackEffect: () => { effects++; },
   applyLunge: () => { lunges++; },
+  releaseAnticipation: () => {},
 });
 vm.runInContext(ts.transpileModule(upsert.getText(source), {
   compilerOptions: { module: ts.ModuleKind.CommonJS },

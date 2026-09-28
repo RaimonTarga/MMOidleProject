@@ -6,6 +6,7 @@ import ts from 'typescript';
 import * as shared from '@mmo-idle/shared';
 import { createRenderState } from '../../client/src/render/state';
 import { nodeToScene } from '../../client/src/render/sceneCoords';
+import { attackFlairOf } from '../../client/src/fx/attackFlair';
 import type { PlayerAttackPresentation } from '../../client/src/render/combatFx';
 import type { GameScene } from '../../client/src/scenes/GameScene';
 
@@ -16,18 +17,19 @@ function declarations(file: string, names: string[]): string {
   return source.statements.filter(statement =>
     (ts.isFunctionDeclaration(statement) && names.includes(statement.name?.text ?? '')) ||
     (ts.isVariableStatement(statement) && statement.declarationList.declarations.some(declaration =>
-      ts.isIdentifier(declaration.name) && declaration.name.text.endsWith('_CLIENT_EFFECT'))),
+      ts.isIdentifier(declaration.name)
+        && (declaration.name.text.endsWith('_CLIENT_EFFECT') || names.includes(declaration.name.text)))),
   ).map(statement => statement.getText(source)).join('\n');
 }
 const context = vm.createContext({
-  ...shared, exports: {}, nodeToScene,
+  ...shared, exports: {}, nodeToScene, attackFlairOf,
   resolveAttackTint: () => undefined,
   transientElement: () => undefined,
   playEmpoweredRing: () => {},
   resolveAttackFx: () => () => {},
 });
 vm.runInContext(ts.transpileModule([
-  declarations('../../client/src/render/combatFx.ts', ['capturePlayerAttack', 'runFxForAttackStyle']),
+  declarations('../../client/src/render/combatFx.ts', ['capturePlayerAttack', 'runFxForAttackStyle', 'CHAMPION_SPEC']),
   declarations('../../client/src/render/interpolation.ts', ['applyLunge']),
 ].join('\n'), { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText, context);
 const { capturePlayerAttack, runFxForAttackStyle } = vm.runInContext(

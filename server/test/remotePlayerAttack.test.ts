@@ -5,6 +5,7 @@ import ts from 'typescript';
 import * as shared from '@mmo-idle/shared';
 import * as interpolation from '../../client/src/render/interpolation';
 import * as coords from '../../client/src/render/sceneCoords';
+import * as attackFlair from '../../client/src/fx/attackFlair';
 import { createRenderState } from '../../client/src/render/state';
 
 // Execute the real combat dispatcher with graphics/audio endpoints replaced by
@@ -21,6 +22,7 @@ runInNewContext(code, {
     if (name === '@mmo-idle/shared') return shared;
     if (name === './interpolation') return interpolation;
     if (name === './sceneCoords') return coords;
+    if (name === '../fx/attackFlair') return attackFlair;
     return new Proxy({}, { get(_target, key: string) {
       if (key === 'shouldRunClientFx') return () => enabled;
       if (key === 'listenerGain') return () => 0.5;
