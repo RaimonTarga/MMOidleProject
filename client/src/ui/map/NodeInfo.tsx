@@ -26,7 +26,8 @@ import {
 } from '../../hud/atoms';
 import { hudBus } from '../../hudBus';
 import { DEV_TOOLS_ENABLED } from '../../devTools';
-import { dungeonBadgeLabel, hexDot, tileColor } from './constants';
+import { dungeonBadgeLabel, hexDot, isNodeCharted, tileColor } from './constants';
+import { AreaDangerLabel } from '../../hud/AreaInformation';
 import { bfsPath } from './pathing';
 import { useMapClock } from './useMapClock';
 import { BiomeIcon } from './BiomeIcon';
@@ -223,9 +224,10 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
 
   const [openMonster, setOpenMonster] = useState<string | null>(null);
   const [openRecipe,  setOpenRecipe]  = useState<string | null>(null);
+  const [showDetails, setShowDetails] = useState(false);
 
   // Collapse all expanded rows whenever the selected zone changes.
-  useEffect(() => { setOpenMonster(null); setOpenRecipe(null); }, [nodeId]);
+  useEffect(() => { setOpenMonster(null); setOpenRecipe(null); setShowDetails(false); }, [nodeId]);
 
   const info  = NODE_BIOMES[nodeId];
   const biome = info ? BIOME_DATABASE.get(info.biomeGroup) : null;
@@ -271,6 +273,46 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
   if (!info || !biome) return <div className="map-info__empty">Unknown zone.</div>;
 
   const { biomeGroup, biomeTier } = info;
+  const region = info.regionId ? WORLD_REGIONS.get(info.regionId) : undefined;
+
+  const travel = (
+    <div className="map-travel">
+      {isCurrent ? (
+        <span className="map-travel__here">You are here</span>
+      ) : travelPath ? (
+        <button className="map-travel__btn" onClick={handleTravel}>
+          Travel here <span className="map-travel__steps">{steps} {steps === 1 ? 'step' : 'steps'}</span>
+        </button>
+      ) : (
+        <span className="map-travel__none">No route</span>
+      )}
+      {DEV_TOOLS_ENABLED && !isCurrent && (
+        <button className="map-travel__teleport" onClick={handleTeleport} title="Dev: teleport">⚡</button>
+      )}
+    </div>
+  );
+
+  // Tier-gate fog: an uncharted node names only its region. Travel still works.
+  if (!isNodeCharted(biomeTier, playerTier)) {
+    return (
+      <div className="map-node-info map-node-info--uncharted">
+        <div className="map-node-info__top">
+          <div className="map-node-info__heading">
+            <span className="map-node-info__unknown" aria-hidden="true">?</span>
+            <div className="map-node-info__titles">
+              <span className="map-node-info__name">Uncharted</span>
+              <span className="map-node-info__tier">
+                {region?.displayName ?? `Tier ${biomeTier}`} · Tier {biomeTier}
+              </span>
+            </div>
+          </div>
+          {travel}
+        </div>
+        <p className="map-node-info__fog">Reach Tier {biomeTier} to chart this region.</p>
+      </div>
+    );
+  }
+
   const isDungeon    = info.isDungeon === true;
   const isSanctuary  = info.kind === 'sanctuary';
   const dungeonBadge = dungeonBadgeLabel(info);
@@ -291,11 +333,15 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
   const biomeLevel = biomeLevelByGroup[biomeGroup] ?? 0;
   // max(): a legacy save above a retired biome's cap still displays sensibly (T3 pass).
   const levelCap   = Math.max(biomeLevelCap(playerTier, biomeGroup), biomeLevel);
-  const region = info.regionId ? WORLD_REGIONS.get(info.regionId) : undefined;
   const tierLabel  = biomeTier === 0
     ? 'Starting Zone'
     : `${region?.displayName ?? `Tier ${biomeTier}`} · Tier ${biomeTier}`;
   const coord      = nodeIdToCoord(nodeId);
+  const xpFloor    = biomeXpForBiomeLevel(biomeGroup, biomeLevel);
+  const xpCeil     = biomeXpForBiomeLevel(biomeGroup, biomeLevel + 1);
+  const levelPct   = xpCeil > xpFloor ? Math.min(100, Math.max(0, (biomeXP - xpFloor) / (xpCeil - xpFloor)) * 100) : 100;
+  const nextUnlock = unlockLevels.find(([reqLevel]) => reqLevel > biomeLevel);
+  const hasDetails = !!modifier || isDungeon || monsters.length > 0 || unlockLevels.length > 0;
 
   return (
     <div className="map-node-info">
@@ -315,20 +361,42 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
           </div>
         </div>
 
-        <div className="map-travel">
-          {isCurrent ? (
-            <span className="map-travel__here">You are here</span>
-          ) : travelPath ? (
-            <button className="map-travel__btn" onClick={handleTravel}>
-              Travel here <span className="map-travel__steps">{steps} {steps === 1 ? 'step' : 'steps'}</span>
-            </button>
-          ) : (
-            <span className="map-travel__none">No route</span>
+        {travel}
+      </div>
+
+      <div className="map-summary">
+        <AreaDangerLabel info={info} />
+        <dl className="map-summary__rows">
+          {isDungeon && (
+            <div className="map-summary__row">
+              <dt>Boss</dt>
+              <dd>
+                {felledBoss
+                  ? `Felled · back in ${formatRespawnRemaining(felledMarker!.respawnAt, mapNow)}`
+                  : bosses.map((boss) => boss.name).join(', ') || 'Boss encounter'}
+              </dd>
+            </div>
           )}
-          {DEV_TOOLS_ENABLED && !isCurrent && (
-            <button className="map-travel__teleport" onClick={handleTeleport} title="Dev: teleport">⚡</button>
+          {unlockLevels.length > 0 && (
+            <div className="map-summary__row">
+              <dt>Biome level</dt>
+              <dd>
+                Lv {biomeLevel}
+                {biomeLevel >= levelCap ? ' (max)' : ` · ${Math.floor(levelPct)}%`}
+              </dd>
+            </div>
           )}
-        </div>
+          {unlockLevels.length > 0 && (
+            <div className="map-summary__row">
+              <dt>Next unlock</dt>
+              <dd>
+                {nextUnlock
+                  ? `Lv ${nextUnlock[0]} · ${nextUnlock[1].length} ${nextUnlock[1].length === 1 ? 'recipe' : 'recipes'}`
+                  : 'All unlocked'}
+              </dd>
+            </div>
+          )}
+        </dl>
       </div>
 
       {isSanctuary && (
@@ -342,6 +410,18 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
         </section>
       )}
 
+      {hasDetails && (
+        <button
+          type="button"
+          className="map-details-toggle"
+          aria-expanded={showDetails}
+          onClick={() => setShowDetails((open) => !open)}
+        >
+          {showDetails ? 'Hide details ▴' : 'Details ▾'}
+        </button>
+      )}
+
+      {showDetails && (<>
       {modifier && (
         <section
           className="map-modifier"
@@ -473,6 +553,8 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
           })}
         </section>
       )}
+
+      </>)}
 
       {monsters.length === 0 && unlockLevels.length === 0 && !isDungeon && !isSanctuary && (
         <div className="map-info__empty">No content in this zone yet.</div>

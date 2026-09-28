@@ -4,18 +4,16 @@ import {
   useMemo,
   useRef,
   useState,
+  type CSSProperties,
 } from 'react';
 import { useAtomValue } from 'jotai';
 import {
   BIOME_DATABASE,
   NODE_BIOMES,
-  NODE_MODIFIERS,
-  MODIFIER_COLORS,
-  MODIFIER_LABELS,
-  MODIFIER_SUMMARIES,
   WORLD_MAP_BOUNDS,
   WORLD_NODE_LIST,
   WORLD_REGIONS,
+  areaDanger,
   mapCoordForNodeId,
   worldNodeExits,
 } from '@mmo-idle/shared';
@@ -24,16 +22,17 @@ import {
   autoPathAtom,
   bossFelledByNodeAtom,
   playerNodeIdAtom,
+  playerTierAtom,
 } from '../../hud/atoms';
 import {
   DUNGEON_ICON,
   dungeonBadgeLabel,
-  mapTierColor,
+  isNodeCharted,
+  mapDangerColor,
   tileColor,
 } from './constants';
 import { NodeInfo } from './NodeInfo';
 import { BiomeIcon } from './BiomeIcon';
-import { ModifierIcon } from './ModifierIcon';
 import { atlasIcon, GameIcon } from '../GameIcon';
 import { DEV_TOOLS_ENABLED } from '../../devTools';
 import { DialogHeader, GameDialog } from '../../hud/primitives';
@@ -65,6 +64,7 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
   const playerNodeId = useAtomValue(playerNodeIdAtom);
   const bossFelledByNode = useAtomValue(bossFelledByNodeAtom);
   const busAutoPath = useAtomValue(autoPathAtom);
+  const playerTier = useAtomValue(playerTierAtom);
   const viewportRef = useRef<HTMLDivElement>(null);
   const pointersRef = useRef(
     new Map<
@@ -79,8 +79,6 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
   const [autoPath, setAutoPath] = useState<string[] | null>(null);
   const [camera, setCamera] = useState<Camera>({ x: 24, y: 24, scale: 0.7 });
   const [query, setQuery] = useState('');
-  const [tierFilter, setTierFilter] = useState('all');
-  const [biomeFilter, setBiomeFilter] = useState('all');
 
   useEffect(() => setAutoPath(busAutoPath), [busAutoPath]);
   useEffect(() => {
@@ -259,29 +257,19 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
     setSelectedId(id);
   }
 
-  const biomeOptions = useMemo(
-    () =>
-      [...new Set(WORLD_NODE_LIST.map((node) => node.biomeGroup))]
-        .sort()
-        .filter((biome) => biome !== 'clearing' && biome !== 'sanctuary'),
-    [],
-  );
   const normalizedQuery = query.trim().toLowerCase();
-
-  function nodeMatches(nodeId: string): boolean {
+  const charted = (nodeId: string): boolean => {
     const node = NODE_BIOMES[nodeId];
-    if (!node) return false;
-    if (tierFilter !== 'all' && node.regionId !== tierFilter) return false;
-    if (biomeFilter !== 'all' && node.biomeGroup !== biomeFilter) return false;
+    return !!node && isNodeCharted(node.biomeTier, playerTier);
+  };
+
+  // Uncharted nodes never match a search: matching would leak what is there.
+  function nodeMatches(nodeId: string): boolean {
     if (!normalizedQuery) return true;
-    const modifier = NODE_MODIFIERS[nodeId];
-    return [
-      node.displayName,
-      node.biomeGroup,
-      modifier?.modifier,
-    ]
-      .filter(Boolean)
-      .some((value) => String(value).toLowerCase().includes(normalizedQuery));
+    const node = NODE_BIOMES[nodeId];
+    if (!node || !charted(nodeId)) return false;
+    return [node.displayName, BIOME_DATABASE.get(node.biomeGroup)?.name ?? node.biomeGroup]
+      .some((value) => value.toLowerCase().includes(normalizedQuery));
   }
 
   const regionLabels = useMemo(
@@ -292,13 +280,14 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
         );
         return {
           ...region,
+          charted: nodes.some((node) => isNodeCharted(node.biomeTier, playerTier)),
           row:
             nodes.reduce((sum, node) => sum + node.map.row, 0) / nodes.length,
           col:
             nodes.reduce((sum, node) => sum + node.map.col, 0) / nodes.length,
         };
       }),
-    [],
+    [playerTier],
   );
 
   return (
@@ -313,27 +302,9 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
           className="world-map-search"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Find biome, modifier, or place…"
+          placeholder="Find a place…"
           aria-label="Search world map"
         />
-        <select
-          value={tierFilter}
-          onChange={(event) => setTierFilter(event.target.value)}
-          aria-label="Filter by tier"
-        >
-          <option value="all">All tiers</option>
-          {[...WORLD_REGIONS.values()].map((region) => (
-            <option key={region.id} value={region.id}>Tier {region.tier}</option>
-          ))}
-        </select>
-        <select value={biomeFilter} onChange={(event) => setBiomeFilter(event.target.value)}>
-          <option value="all">All biomes</option>
-          {biomeOptions.map((biome) => (
-            <option key={biome} value={biome}>
-              {BIOME_DATABASE.get(biome)?.name ?? biome}
-            </option>
-          ))}
-        </select>
         <span className="world-map-toolbar__hint">Drag · wheel or pinch to zoom</span>
       </div>
 
@@ -389,6 +360,7 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
                     NODE_SIZE / 2;
                   const onPath =
                     pathSet.has(node.id) && pathSet.has(neighborId);
+                  const uncharted = !charted(node.id) || !charted(neighborId);
                   return (
                     <line
                       key={`${node.id}-${neighborId}`}
@@ -396,11 +368,11 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
                       y1={y1}
                       x2={x2}
                       y2={y2}
-                      className={
-                        onPath
-                          ? 'world-map-route world-map-route--path'
-                          : 'world-map-route'
-                      }
+                      className={[
+                        'world-map-route',
+                        onPath ? 'world-map-route--path' : '',
+                        uncharted && !onPath ? 'world-map-route--uncharted' : '',
+                      ].filter(Boolean).join(' ')}
                     />
                   );
                 });
@@ -410,7 +382,7 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
             {regionLabels.map((region) => (
               <span
                 key={region.id}
-                className="world-map-region-label"
+                className={`world-map-region-label${region.charted ? '' : ' world-map-region-label--uncharted'}`}
                 style={{
                   left:
                     (region.col - WORLD_MAP_BOUNDS.minCol + 0.5) * CELL_STEP,
@@ -419,21 +391,28 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
                 }}
               >
                 {region.displayName}
+                {!region.charted && (
+                  <span className="world-map-region-label__fog">Uncharted</span>
+                )}
               </span>
             ))}
 
             {WORLD_NODE_LIST.map((node) => {
               const info = NODE_BIOMES[node.id];
               const biome = BIOME_DATABASE.get(node.biomeGroup);
-              const modifier = NODE_MODIFIERS[node.id];
+              const isCharted = charted(node.id);
+              const danger = isCharted && info ? areaDanger(info) : null;
               const isCurrent = playerNodeId === node.id;
               const isSelected = selectedId === node.id;
               const isDestination = node.id === destNode;
               const isPath = !isCurrent && pathSet.has(node.id);
               const isFelled =
                 (bossFelledByNode[node.id]?.respawnAt ?? 0) > Date.now();
-              const dungeonBadge = dungeonBadgeLabel(info);
+              const dungeonBadge = isCharted ? dungeonBadgeLabel(info) : null;
               const matches = nodeMatches(node.id);
+              const placeName = node.kind === 'sanctuary'
+                ? 'Sanctuary'
+                : biome?.name ?? node.biomeGroup;
 
               return (
                 <button
@@ -441,9 +420,10 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
                   type="button"
                   className={[
                     'world-map-node',
-                    node.kind === 'dungeon' ? 'world-map-node--dungeon' : '',
-                    node.kind === 'sanctuary' ? 'world-map-node--sanctuary' : '',
-                    node.kind === 'tutorial' ? 'world-map-node--tutorial' : '',
+                    !isCharted ? 'world-map-node--uncharted' : '',
+                    isCharted && node.kind === 'dungeon' ? 'world-map-node--dungeon' : '',
+                    isCharted && node.kind === 'sanctuary' ? 'world-map-node--sanctuary' : '',
+                    isCharted && node.kind === 'tutorial' ? 'world-map-node--tutorial' : '',
                     isCurrent ? 'world-map-node--current' : '',
                     isSelected ? 'world-map-node--selected' : '',
                     isPath ? 'world-map-node--path' : '',
@@ -451,7 +431,7 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
                     highlightSet.has(node.id)
                       ? 'world-map-node--highlight'
                       : '',
-                    isFelled ? 'world-map-node--felled' : '',
+                    isCharted && isFelled ? 'world-map-node--felled' : '',
                     !matches ? 'world-map-node--filtered' : '',
                   ]
                     .filter(Boolean)
@@ -461,50 +441,29 @@ export function MapPanel({ onClose, highlightNodes, focusNodeId }: Props) {
                       (node.map.col - WORLD_MAP_BOUNDS.minCol) * CELL_STEP,
                     top:
                       (node.map.row - WORLD_MAP_BOUNDS.minRow) * CELL_STEP,
-                    background: tileColor(node.biomeGroup),
-                  }}
+                    background: isCharted ? tileColor(node.biomeGroup) : undefined,
+                    ...(danger ? { '--map-danger': mapDangerColor(danger) } : {}),
+                  } as CSSProperties}
+                  data-danger={danger ?? undefined}
                   onClick={(event) => handleTileClick(node.id, event)}
-                  title={`${node.displayName}${DEV_TOOLS_ENABLED ? ' · Shift+Click to teleport' : ''}`}
+                  title={`${isCharted ? placeName : 'Uncharted'}${DEV_TOOLS_ENABLED ? ' · Shift+Click to teleport' : ''}`}
+                  aria-label={isCharted ? placeName : 'Uncharted'}
                 >
-                  {node.kind !== 'tutorial' && (
-                    <span
-                      className="world-map-node__tier"
-                      style={{
-                        background: mapTierColor(node.biomeTier),
-                        color: '#090a0d',
-                      }}
-                      title={`Tier ${node.biomeTier}`}
-                    >
-                      T{node.biomeTier}
-                    </span>
-                  )}
-                  <BiomeIcon
-                    biomeGroup={node.biomeGroup}
-                    size={30}
-                    className={[
-                      'world-map-node__icon',
-                      node.kind === 'dungeon'
-                        ? 'world-map-node__icon--dungeon'
-                        : '',
-                    ]
-                      .filter(Boolean)
-                      .join(' ')}
-                  />
-                  <span className="world-map-node__name">
-                    {node.kind === 'sanctuary'
-                      ? 'Sanctuary'
-                      : biome?.name ?? node.biomeGroup}
-                  </span>
-                  {modifier && (
-                    <span
-                      className="world-map-node__pace"
-                      style={{
-                        background: MODIFIER_COLORS[modifier.modifier],
-                      }}
-                      title={`${MODIFIER_LABELS[modifier.modifier]} — ${MODIFIER_SUMMARIES[modifier.modifier]}`}
-                    >
-                      <ModifierIcon modifier={modifier.modifier} size={16} />
-                    </span>
+                  {isCharted ? (
+                    <BiomeIcon
+                      biomeGroup={node.biomeGroup}
+                      size={34}
+                      className={[
+                        'world-map-node__icon',
+                        node.kind === 'dungeon'
+                          ? 'world-map-node__icon--dungeon'
+                          : '',
+                      ]
+                        .filter(Boolean)
+                        .join(' ')}
+                    />
+                  ) : (
+                    <span className="world-map-node__unknown" aria-hidden="true">?</span>
                   )}
                   {dungeonBadge && (
                     <span className="world-map-node__dungeon" title="Dungeon">

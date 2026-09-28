@@ -108,8 +108,6 @@ try {
 
   const variants = {
     'rune-editor': ['runes', 'Add rule'],
-    'skill-build': ['skills', 'Your build'],
-    'skill-compare': ['classes', 'Compare choices'],
     'inventory-stats': ['inventory', 'Stats', 'tab'],
     character: ['mobile', '^Stats$'],
     more: ['mobile', 'More'],
@@ -144,7 +142,7 @@ try {
           }
           await page.waitForTimeout(100);
           const expected = {
-            'rune-editor': '.rune-editor', 'skill-build': '.skill-build-view', 'skill-compare': '.skill-comparison',
+            'rune-editor': '.rune-editor',
             'inventory-stats': '#inventory-stats', character: '.mhud-sheet', more: '.mhud-more', quests: '.mhud-sheet',
           };
           await page.locator(expected[surface]).waitFor({ timeout: 5000 });

@@ -64,6 +64,21 @@ export interface PlayerStatsTarget {
   equippedRites?:  readonly string[];
   /** Optional callback when cadence threshold is recalculated (writes to usesCadence on server). */
   resetCadenceCounters?: (threshold: number) => void;
+  /**
+   * Preview only (the inventory stat sheet): leave these mechanic-effect keys of
+   * one equipped item out of the rebuild, to measure whether they move the
+   * numbers. Never set by the live server.
+   */
+  previewOmitItemEffects?: { defId: string; keys: ReadonlySet<string> };
+}
+
+function omitKeys(
+  fx: Record<string, number> | undefined,
+  omit: { defId: string; keys: ReadonlySet<string> } | undefined,
+  defId: string,
+): Record<string, number> | undefined {
+  if (!fx || !omit || omit.defId !== defId) return fx;
+  return Object.fromEntries(Object.entries(fx).filter(([key]) => !omit.keys.has(key)));
 }
 
 
@@ -276,7 +291,7 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
         applyStatModToTarget(p, stat, value);
       }
     }
-    mergePassives(p.usesSkills.passives, def.mechanicEffects, pulseAcc);
+    mergePassives(p.usesSkills.passives, omitKeys(def.mechanicEffects, p.previewOmitItemEffects, defId), pulseAcc);
 
     // Item upgrade bonuses: all stat and mechanic effect deltas from upgrade steps.
     const plus = p.holdsInventory.itemUpgrades?.[defId] ?? 0;
@@ -286,7 +301,7 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
         if (stat === 'evasion') { if (value > 0) evasionChance += value; }
         else applyStatModToTarget(p, stat, value);
       }
-      const meFx = upgradeMechanicEffectsTotal(def, plus);
+      const meFx = omitKeys(upgradeMechanicEffectsTotal(def, plus), p.previewOmitItemEffects, defId) ?? {};
       if (Object.keys(meFx).length > 0) mergePassives(p.usesSkills.passives, meFx, pulseAcc);
     }
   }

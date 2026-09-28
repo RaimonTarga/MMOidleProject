@@ -15,6 +15,8 @@ export interface EquipmentPreviewInput {
   hpFraction?: number;
   activeStance?: string | null;
   equippedRites?: readonly string[];
+  /** Leave these mechanic-effect keys of one equipped item out (see `PlayerStatsTarget`). */
+  omitItemEffects?: { defId: string; keys: ReadonlySet<string> };
 }
 
 /** Detached inputs: use the server's stat formula without modifying the live build. */
@@ -29,6 +31,7 @@ export function previewEquipmentStats(input: EquipmentPreviewInput) {
     usesSkills: { ...input.usesSkills, unlockedSkills: [...input.usesSkills.unlockedSkills], passives: {} },
     holdsInventory: { equipment: { ...input.equipment }, inventory: [], itemUpgrades: { ...input.itemUpgrades } },
     playerTier: input.playerTier, activeStance: input.activeStance, equippedRites: input.equippedRites,
+    previewOmitItemEffects: input.omitItemEffects,
   };
   const { cannotAttack } = recalculatePlayerStats(target);
   const passives = target.usesSkills.passives;

@@ -14,7 +14,13 @@ import {
   runesOwnedAtom,
   unlockedRecipesAtom,
 } from '../../hud/atoms';
-import { buildMakeEntries, type MakeEntry } from './makeEntries';
+import {
+  buildMakeEntries,
+  unlockedMakeKinds,
+  type MakeEntry,
+  type MakeKind,
+  type MakeSources,
+} from './makeEntries';
 
 /**
  * Everything the player could make right now, from every recipe database.
@@ -24,6 +30,17 @@ import { buildMakeEntries, type MakeEntry } from './makeEntries';
  * dialog is closed, so it cannot be told by the list.
  */
 export function useMakeEntries(): MakeEntry[] {
+  const sources = useMakeSources();
+  return useMemo(() => buildMakeEntries(sources), [sources]);
+}
+
+/** The recipe kinds whose first recipe has unlocked; the Crafting rail shows only these. */
+export function useUnlockedMakeKinds(): Set<MakeKind> {
+  const sources = useMakeSources();
+  return useMemo(() => unlockedMakeKinds(sources), [sources]);
+}
+
+function useMakeSources(): MakeSources {
   const nodeId = useAtomValue(playerNodeIdAtom);
   const unlockedRecipeIds = useAtomValue(unlockedRecipesAtom);
   const inventory = useAtomValue(inventoryAtom);
@@ -47,7 +64,7 @@ export function useMakeEntries(): MakeEntry[] {
 
   const isTestRoom = nodeId === TEST_ROOM_NODE_ID;
 
-  return useMemo(() => buildMakeEntries({
+  return useMemo(() => ({
     unlockedRecipeIds,
     ownedGearIds,
     equippedGearIds: equippedSet,

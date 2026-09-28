@@ -261,13 +261,33 @@ function ordinal(n: number): string {
 // Converts mechanicEffects key/value pairs into human-readable lines.
 // Companion keys (e.g. interval alongside pct) are consumed together.
 export function formatMechanicEffects(fx: Record<string, number> | undefined): string[] {
+  return formatMechanicEffectEntries(fx).map((entry) => entry.text);
+}
+
+/** One rendered effect line and the mechanic keys it describes. */
+export interface MechanicEffectEntry {
+  text: string;
+  /** Keys this line speaks for; empty for advisory lines with no key of their own. */
+  keys: string[];
+}
+
+/**
+ * `formatMechanicEffects`, keeping which keys each line came from. Keys are
+ * attached to the most recently written line, matching the push-then-mark
+ * order every clause below follows.
+ */
+export function formatMechanicEffectEntries(fx: Record<string, number> | undefined): MechanicEffectEntry[] {
   if (!fx || Object.keys(fx).length === 0) return [];
   const lines: string[] = [];
+  const lineKeys: string[][] = [];
   const seen  = new Set<string>();
   const has   = (k: string) => k in fx;
   const pctK  = (k: string) => `${Math.round((fx[k] ?? 0) * 100)}%`;
   const secK  = (k: string) => `${Math.round((fx[k] ?? 0) / 1000)}s`;
-  const mark  = (...keys: string[]) => keys.forEach(k => seen.add(k));
+  const mark  = (...keys: string[]) => keys.forEach(k => {
+    seen.add(k);
+    if (lines.length > 0 && k in fx) (lineKeys[lines.length - 1] ??= []).push(k);
+  });
 
   // Relics use their character-resolved profile instead of raw ratings.
   mark('relic.mechanic-frequency', 'relic.mechanic-potency', 'relic.mechanic-buff-effect', 'relic.mechanic-debuff-effect');
@@ -633,9 +653,10 @@ export function formatMechanicEffects(fx: Record<string, number> | undefined): s
     if (seen.has(k) || v === 0) continue;
     const m = mechanicMeta(k);
     lines.push(`${m.label} ${m.fmt(v)}`);
+    lineKeys[lines.length - 1] = [k];
   }
 
-  return lines;
+  return lines.map((text, index) => ({ text, keys: lineKeys[index] ?? [] }));
 }
 
 const seconds = (ms: number): string => `${round1(ms / 1000)}s`;
@@ -645,9 +666,22 @@ const precise = (v: number) => String(Math.round(v * 100) / 100);
 /** Concrete class effects are the primary item description. */
 export function formatResolvedRelicProfile(profile: ResolvedRelicProfile | null): string[] {
   if (!profile) return ['Choose a class to see this relic’s effects'];
-  const lines: string[] = [];
+  return resolvedRelicProfileRows(profile).map((row) =>
+    row.before === undefined ? row.label : `${row.label}: ${beforeAfter(row.before, row.after!)}`);
+}
+
+/** One relic mechanic change; a bare `label` row is a note with no numbers. */
+export interface RelicProfileRow {
+  label: string;
+  before?: string;
+  after?: string;
+}
+
+/** The relic profile as before → after rows, for surfaces that lay it out as a table. */
+export function resolvedRelicProfileRows(profile: ResolvedRelicProfile): RelicProfileRow[] {
+  const lines: RelicProfileRow[] = [];
   const pair = (label: string, value: { before: number; after: number }, fmt: (n: number) => string = precise) =>
-    lines.push(`${label}: ${beforeAfter(fmt(value.before), fmt(value.after))}`);
+    lines.push({ label, before: fmt(value.before), after: fmt(value.after) });
   const mult = (v: number) => `×${precise(v)}`;
   switch (profile.archetype) {
     case 'cadence':
@@ -690,7 +724,7 @@ export function formatResolvedRelicProfile(profile: ResolvedRelicProfile | null)
       pair(`${prefix} · ${effect.label}`, effect, effect.unit === 'percent' ? n => `${precise(n * 100)}%` : effect.unit === 'multiplier' ? mult : precise);
     }
     for (const note of profile.secondaryNotes ?? []) {
-      if (note.kind === kind) lines.push(`${prefix} · ${note.message}`);
+      if (note.kind === kind) lines.push({ label: `${prefix} · ${note.message}` });
     }
   }
   return lines;

@@ -1,0 +1,87 @@
+@import "./tokens.css";
+
+/* Category rail beside a BrowserPane (Crafting, Inventory). Each entry says
+   what is in its category before you click. */
+.category-rail-layout {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.category-rail {
+  display: flex;
+  flex: 0 0 172px;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+  border-right: 1px solid var(--hud-edge-divider);
+  background: rgba(14, 13, 10, 0.6);
+  scrollbar-width: thin;
+}
+
+.category-rail__item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  min-width: 0;
+  padding: 9px 11px;
+  border: 0;
+  border-bottom: 1px solid var(--hud-edge-divider);
+  background: transparent;
+  color: var(--hud-text-muted);
+  font: 700 11px monospace;
+  text-align: left;
+  cursor: pointer;
+}
+
+.category-rail__item:hover { color: var(--hud-text); background: rgba(255, 240, 200, 0.03); }
+
+.category-rail__item[aria-pressed="true"] {
+  color: var(--hud-primary-strong);
+  background: color-mix(in srgb, var(--hud-primary) 10%, transparent);
+  box-shadow: inset 3px 0 0 var(--hud-primary);
+}
+
+.category-rail__item:focus-visible { outline: 1px solid var(--hud-primary); outline-offset: -2px; }
+
+/* Gear above, learned skills below. */
+.category-rail__item--divider { border-top: 2px solid var(--hud-edge-light); }
+
+.category-rail__name { display: flex; align-items: center; gap: 6px; }
+
+.category-rail__detail {
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--hud-text-dim);
+  font-size: 9px;
+  font-weight: 400;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.category-rail__ready { color: #6fd08c; font-weight: 700; }
+.category-rail__fresh { color: var(--hud-primary-strong); }
+
+@media (max-width: 1100px) {
+  /* The rail becomes a horizontal strip above the list. */
+  .category-rail-layout { flex-direction: column; }
+  .category-rail {
+    flex: 0 0 auto;
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border-right: 0;
+    border-bottom: 1px solid var(--hud-edge-divider);
+  }
+  .category-rail__item {
+    flex: 0 0 auto;
+    max-width: 180px;
+    min-height: var(--hud-hit-target);
+    border-bottom: 0;
+    border-right: 1px solid var(--hud-edge-divider);
+    white-space: nowrap;
+  }
+  .category-rail__item--divider { border-top: 0; border-left: 2px solid var(--hud-edge-light); }
+  .category-rail__item[aria-pressed="true"] { box-shadow: inset 0 -3px 0 var(--hud-primary); }
+}

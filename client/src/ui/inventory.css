@@ -71,7 +71,7 @@
 /* ── Body — three-column grid ────────────────────────────────────────────── */
 .inv-body {
   display: grid;
-  grid-template-columns: 226px 1fr 230px;
+  grid-template-columns: 226px 1fr 300px;
   gap: 16px;
   flex: 1;
   min-height: 0;
@@ -155,11 +155,15 @@
 .inv-filter-chip--slot[data-slot="armor"]    { color: #336699; border-color: rgba(40,80,160,0.35); }
 .inv-filter-chip--slot[data-slot="recovery"] { color: #337755; border-color: rgba(30,120,70,0.35); }
 .inv-filter-chip--slot[data-slot="mobility"] { color: #664499; border-color: rgba(100,55,170,0.35); }
+.inv-filter-chip--slot[data-slot="core"]     { color: #2f8ca0; border-color: rgba(40,140,160,0.35); }
+.inv-filter-chip--slot[data-slot="relic"]    { color: #9c7f2c; border-color: rgba(160,128,44,0.35); }
 
 .inv-filter-chip--slot.inv-filter-chip--active[data-slot="weapon"]   { color: #cc7730; background: rgba(45,16,5,0.85);  border-color: rgba(180,100,40,0.60); }
 .inv-filter-chip--slot.inv-filter-chip--active[data-slot="armor"]    { color: #4488bb; background: rgba(8,22,55,0.85);   border-color: rgba(50,100,190,0.60); }
 .inv-filter-chip--slot.inv-filter-chip--active[data-slot="recovery"] { color: #44aa66; background: rgba(5,35,18,0.85);   border-color: rgba(40,150,90,0.60);  }
 .inv-filter-chip--slot.inv-filter-chip--active[data-slot="mobility"] { color: #8855cc; background: rgba(28,8,50,0.85);   border-color: rgba(130,70,210,0.60); }
+.inv-filter-chip--slot.inv-filter-chip--active[data-slot="core"]     { color: #3fb8d0; background: rgba(6,36,46,0.85);   border-color: rgba(40,170,200,0.60); }
+.inv-filter-chip--slot.inv-filter-chip--active[data-slot="relic"]    { color: #cba53a; background: rgba(44,31,5,0.85);   border-color: rgba(200,160,55,0.60); }
 
 .inv-filter-chip--clear { margin-left: auto; }
 .inv-filter-chip--clear:disabled { opacity: 0.35; cursor: default; }
@@ -462,14 +466,7 @@
   font-weight: 600;
 }
 
-.inv-stat-row--up   .inv-stat-row__value { color: #a8e8b8; }
-.inv-stat-row--down .inv-stat-row__value { color: #e8a8a8; }
-
 /* Derived rows (APS, DPS) — slightly dimmer until a comparison is active */
-.inv-stat-row--derived .inv-stat-row__label { color: #606088; }
-.inv-stat-row--derived .inv-stat-row__value { color: #a8a8cc; }
-.inv-stat-row--derived.inv-stat-row--up   .inv-stat-row__value { color: #a8e8b8; }
-.inv-stat-row--derived.inv-stat-row--down .inv-stat-row__value { color: #e8a8a8; }
 
 .inv-stat-row__arrow {
   color: #555575;
@@ -477,30 +474,21 @@
   flex-shrink: 0;
 }
 
-.inv-stat-row__proposed {
-  min-width: 32px;
-  font-weight: bold;
-}
-
-.inv-stat-row--up   .inv-stat-row__proposed { color: #66ee88; }
-.inv-stat-row--down .inv-stat-row__proposed { color: #ee6666; }
-
-.inv-stat-row__delta {
-  font-size: 10px;
-  font-weight: bold;
-  margin-left: 2px;
-}
-
-.inv-stat-row__delta--up   { color: #44cc66; }
-.inv-stat-row__delta--down { color: #cc4455; }
-
 /* Footer */
+/* Pinned to the bottom of the stats column, so an item with a long effect list
+   (relics) never pushes Equip / Replace out of view. */
 .inv-stat-sheet__footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   gap: 5px;
   margin-top: auto;
-  padding-top: 6px;
+  padding: 8px 0 2px;
+  border-top: 1px solid var(--hud-edge-divider);
+  background: #0a081a; /* the sheet's own card colour on phones */
+  box-shadow: 0 -8px 12px -8px rgba(0, 0, 0, 0.6);
 }
 
 .inv-stat-sheet__hint {
@@ -604,7 +592,7 @@
 /* Phase 7 dialog pilot. The legacy .inv-overlay/.inv-panel/.inv-header rules
    above remain for Settings and Quests until their own shell migrations. */
 .inventory-dialog {
-  height: 580px;
+  height: 640px;
 }
 
 .inventory-dialog .inv-body {
@@ -662,6 +650,8 @@
     border: 0;
     border-radius: 0;
   }
+
+  .inventory-dialog .inv-stat-sheet__footer { background: var(--hud-material-panel); }
 
   .inventory-dialog .inv-stat-sheet__heading,
   .inventory-dialog .inv-stat-sheet__item-header,
@@ -740,3 +730,90 @@
     border-bottom-color: var(--hud-primary);
   }
 }
+
+/* ── Stat sheet: stable rows, deltas, effect accounting ──────────────────── */
+.inv-stat-sheet--preview { outline: 1px dashed rgba(201, 176, 106, 0.55); outline-offset: 4px; }
+
+.inv-sheet__versus { margin-top: 3px; color: var(--hud-text-dim); font-size: 9px; }
+.inv-sheet__versus b { color: var(--hud-text-muted); font-weight: 600; }
+
+.inv-sheet__bigs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+
+.inv-sheet__big {
+  display: flex;
+  flex-direction: column;
+  padding: 6px 8px;
+  border: 1px solid var(--hud-edge-divider);
+  background: var(--hud-material-inset);
+}
+
+.inv-sheet__big span { color: var(--hud-text-dim); font-size: 8px; letter-spacing: 1.2px; text-transform: uppercase; }
+.inv-sheet__big b { color: var(--hud-text); font-size: 17px; font-variant-numeric: tabular-nums; }
+.inv-sheet__big em { color: var(--hud-text-dim); font-size: 9px; font-style: normal; }
+.inv-sheet__big--up { border-color: rgba(70, 160, 100, 0.55); }
+.inv-sheet__big--up b { color: #66e08e; }
+.inv-sheet__big--down { border-color: rgba(170, 70, 70, 0.55); }
+.inv-sheet__big--down b { color: #ef6f6a; }
+
+.inv-sheet__group + .inv-sheet__group { margin-top: 4px; }
+.inv-sheet__group-label {
+  margin: 4px 0 1px;
+  color: var(--hud-primary);
+  font-size: 8px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+}
+
+.inv-stat-row { position: relative; align-items: center; }
+.inv-stat-row__value { font-variant-numeric: tabular-nums; }
+.inv-stat-row__was { color: var(--hud-text-dim); font-weight: 400; }
+.inv-stat-row--up .inv-stat-row__now { color: #66e08e; }
+.inv-stat-row--down .inv-stat-row__now { color: #ef6f6a; }
+.inv-stat-row--idle { opacity: 0.45; }
+.inv-stat-row--changed .inv-stat-row__now { display: inline-block; animation: inv-sheet-arrive 0.3s ease; }
+
+@keyframes inv-sheet-arrive {
+  from { opacity: 0.2; transform: translateY(2px); }
+  to { opacity: 1; transform: none; }
+}
+
+.inv-sheet__chip {
+  flex: 0 0 auto;
+  min-width: 44px;
+  padding: 0 4px;
+  border: 1px solid var(--hud-edge-divider);
+  color: var(--hud-text-dim);
+  font-size: 9px;
+  font-weight: 700;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.inv-sheet__chip--up { color: #66e08e; border-color: rgba(70, 160, 100, 0.5); background: rgba(20, 50, 30, 0.6); }
+.inv-sheet__chip--down { color: #ef6f6a; border-color: rgba(170, 70, 70, 0.5); background: rgba(55, 18, 18, 0.6); }
+
+/* How big the change is, relative to the stat, as a hairline under the row. */
+.inv-sheet__mag { position: absolute; left: 0; bottom: -1px; height: 2px; opacity: 0.7; }
+.inv-sheet__mag--up { background: #66e08e; }
+.inv-sheet__mag--down { background: #ef6f6a; }
+
+.inv-sheet__fx { display: flex; gap: 6px; font-size: 10px; line-height: 1.4; color: #c0bce8; }
+.inv-sheet__tag { flex: 0 0 12px; text-align: center; }
+.inv-sheet__fx--counted .inv-sheet__tag { color: #66e08e; }
+.inv-sheet__fx--uncounted .inv-sheet__tag { color: var(--hud-primary); }
+.inv-sheet__fx--note { color: var(--hud-text-muted); }
+.inv-sheet__fx--lost { color: #ef6f6a; text-decoration: line-through; text-decoration-color: rgba(239, 111, 106, 0.55); }
+.inv-stat-sheet__effects-label + .inv-stat-sheet__effects-list { margin-bottom: 6px; }
+.inv-stat-row--relic .inv-stat-row__now { color: var(--hud-primary-strong); }
+
+.inv-sheet__foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.inv-sheet__pin { color: var(--hud-text-dim); font-size: 9px; }
+.inv-stat-sheet__btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.inv-item-slot--pinned,
+.inv-equip-slot--pinned { box-shadow: 0 0 0 1px var(--hud-primary), inset 0 0 10px rgba(212, 179, 90, 0.18); }
+
+@media (prefers-reduced-motion: reduce) {
+  .inv-stat-row--changed .inv-stat-row__now { animation: none; }
+}
+.inv-sheet__note { padding: 3px 0; color: var(--hud-text-muted); font-size: 10px; line-height: 1.4; }

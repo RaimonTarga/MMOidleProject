@@ -199,20 +199,6 @@
   letter-spacing: 0.3px;
 }
 
-/* ── Recipe list ─────────────────────────────────────────────────────────── */
-.craft-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  max-height: 460px;
-  overflow-y: auto;
-  padding-right: 2px;
-}
-
-.craft-list::-webkit-scrollbar       { width: 4px; }
-.craft-list::-webkit-scrollbar-track { background: #141210; }
-.craft-list::-webkit-scrollbar-thumb { background: #3a3630; border-radius: 2px; }
-
 /* ── Recipe card ─────────────────────────────────────────────────────────── */
 .craft-recipe {
   position: relative;
@@ -320,33 +306,6 @@
   text-overflow: ellipsis;
 }
 
-.craft-recipe__slot-badge {
-  font-size: 8px;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 1px 6px;
-  border-radius: 3px;
-  flex-shrink: 0;
-  border: 1px solid rgba(80, 80, 160, 0.35);
-  color: #7070a8;
-  background: rgba(20, 18, 45, 0.80);
-}
-
-.craft-recipe__slot-badge[data-slot="weapon"]   { color: #cc7730; border-color: rgba(180,100,40,0.40); background: rgba(50,18,6,0.60); }
-.craft-recipe__slot-badge[data-slot="armor"]    { color: #4488bb; border-color: rgba(50,100,190,0.40); background: rgba(10,26,60,0.60); }
-.craft-recipe__slot-badge[data-slot="recovery"] { color: #44aa66; border-color: rgba(40,150,90,0.40);  background: rgba(6,40,22,0.60);  }
-.craft-recipe__slot-badge[data-slot="mobility"] { color: #8855cc; border-color: rgba(130,70,210,0.40); background: rgba(32,10,56,0.60); }
-.craft-recipe__slot-badge[data-slot="core"]     { color: #3fb8d0; border-color: rgba(40,170,200,0.40); background: rgba(6,36,46,0.60);  }
-.craft-recipe__slot-badge[data-slot="relic"]    { color: #cba53a; border-color: rgba(200,160,55,0.40); background: rgba(44,31,5,0.60);  }
-
-.craft-recipe__tier-badge {
-  font-size: 9px;
-  color: #aaa8dc;
-  font-weight: bold;
-  flex-shrink: 0;
-}
-
 /* The grey "OWNED / EQUIPPED" chip is gone: owned recipes no longer appear in
    the craft list at all, and Upgrade's equipped state is carried by the card's
    own frame (`.craft-upgrade--equipped`). */
@@ -406,16 +365,6 @@
   top: 0;
   font-size: 7px;
   color: #6a78c0;
-}
-
-/* ── Footer (desc + button / lock) ──────────────────────────────────────── */
-.craft-recipe__footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 1px;
 }
 
 .craft-recipe__desc {
@@ -791,74 +740,6 @@
   font-size: 9px;
 }
 
-/* ── Filter chips ────────────────────────────────────────────────────────── */
-.craft-filters {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  margin-bottom: 12px;
-}
-
-.craft-filter-row {
-  display: flex;
-  gap: 4px;
-  flex-wrap: wrap;
-}
-
-.craft-filter-chip {
-  background: var(--btn-bg);
-  border-top: 1px solid var(--bevel-light);
-  border-left: 1px solid var(--bevel-light);
-  border-right: 1px solid var(--bevel-dark);
-  border-bottom: 1px solid var(--bevel-dark);
-  color: var(--hud-text-dim);
-  font-family: monospace;
-  font-size: 9px;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 3px 9px;
-  border-radius: 2px;
-  cursor: pointer;
-  transition: color 0.10s;
-  white-space: nowrap;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.craft-filter-chip:hover:not(.craft-filter-chip--active) {
-  color: var(--hud-text-muted);
-}
-
-.craft-filter-chip--active {
-  border-top-color: var(--bevel-dark);
-  border-left-color: var(--bevel-dark);
-  border-right-color: var(--bevel-light);
-  border-bottom-color: var(--bevel-light);
-  color: var(--hud-primary);
-}
-
-.craft-filter-chip--slot[data-slot="weapon"]   { color: #886644; border-color: rgba(140,80,30,0.35); }
-.craft-filter-chip--slot[data-slot="armor"]    { color: #336699; border-color: rgba(40,80,160,0.35); }
-.craft-filter-chip--slot[data-slot="recovery"] { color: #337755; border-color: rgba(30,120,70,0.35); }
-.craft-filter-chip--slot[data-slot="mobility"] { color: #664499; border-color: rgba(100,55,170,0.35); }
-.craft-filter-chip--slot[data-slot="core"]     { color: #2f8ca0; border-color: rgba(40,140,160,0.35); }
-.craft-filter-chip--slot[data-slot="relic"]    { color: #9c7f2c; border-color: rgba(160,128,44,0.35); }
-
-.craft-filter-chip--slot.craft-filter-chip--active[data-slot="weapon"]   { color: #cc7730; background: rgba(45,16,5,0.85); border-color: rgba(180,100,40,0.60); }
-.craft-filter-chip--slot.craft-filter-chip--active[data-slot="armor"]    { color: #4488bb; background: rgba(8,22,55,0.85);  border-color: rgba(50,100,190,0.60); }
-.craft-filter-chip--slot.craft-filter-chip--active[data-slot="recovery"] { color: #44aa66; background: rgba(5,35,18,0.85);  border-color: rgba(40,150,90,0.60);  }
-.craft-filter-chip--slot.craft-filter-chip--active[data-slot="mobility"] { color: #8855cc; background: rgba(28,8,50,0.85);  border-color: rgba(130,70,210,0.60); }
-.craft-filter-chip--slot.craft-filter-chip--active[data-slot="core"]     { color: #3fb8d0; background: rgba(5,34,42,0.85);  border-color: rgba(40,170,200,0.60); }
-.craft-filter-chip--slot.craft-filter-chip--active[data-slot="relic"]    { color: #cba53a; background: rgba(42,30,4,0.85);  border-color: rgba(200,160,55,0.60); }
-
-.craft-filter-chip--clear:disabled { opacity: 0.35; cursor: default; }
-.craft-filter-row > .craft-filter-chip--clear { margin-left: auto; }
-
-.craft-filter-chip--tier { color: #aa9944; border-color: rgba(180,160,40,0.35); }
-.craft-filter-chip--tier.craft-filter-chip--active { color: #ffdd44; background: rgba(40,32,6,0.88); border-color: rgba(220,190,40,0.65); }
-
 /* ── Craft result card overlay ───────────────────────────────────────────── */
 @keyframes craft-result-anim {
   0%   { opacity: 0; }
@@ -922,39 +803,15 @@
    content div it never was, so the whole tab scrolled as one page and reading
    down a long recipe list pushed the craft controls out of the viewport. Bound
    the tab to the dialog and the list becomes the thing that scrolls. */
-.crafting-dialog__content--make {
+.crafting-dialog__content--make,
+.crafting-dialog__content--upgrade {
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
-/* Scroll ownership for the Upgrade tab.
-   Upgrade is one page, so the dialog content is its only scroller. The card
-   list used to cap itself at a fixed height and scroll too, which put a second
-   scrollbar inside the first and — now that the shell has an authored height —
-   would leave the list stranded mid-dialog with empty space beneath it. One
-   scroller, the whole page. */
-.crafting-dialog__content--upgrade .craft-list {
-  max-height: none;
-  overflow: visible;
-}
-
-/* An authored shell height means an empty Upgrade is a tall blank box with one
-   line pinned to the top of it, which reads as a rendering failure rather than
-   as "nothing here". Center the notice in the space the wallet leaves instead.
-   Desktop only: on touch the dialog still sizes to its content, so there is no
-   space to center in. */
-@media (min-width: 1101px) {
-  .crafting-dialog__content--upgrade .craft-body {
-    min-height: 100%;
-  }
-
-  .crafting-dialog__content--upgrade .craft-empty {
-    margin-block: auto;
-  }
-}
-
-.craft-body--make {
+.craft-body--make,
+.craft-body--browser {
   position: relative;
   flex: 1;
   min-height: 0;
@@ -1556,29 +1413,6 @@
   box-shadow: inset 3px 0 0 var(--hud-success);
 }
 
-.craft-recipe__equipped-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  flex-shrink: 0;
-  padding: 1px 6px;
-  border: 1px solid color-mix(in srgb, var(--hud-success) 55%, transparent);
-  border-radius: 3px;
-  background: color-mix(in srgb, var(--hud-success) 15%, transparent);
-  color: var(--hud-success);
-  font-size: 8px;
-  font-weight: bold;
-  letter-spacing: 0.5px;
-}
-
-.craft-recipe__equipped-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--hud-success);
-  box-shadow: 0 0 4px var(--hud-success);
-}
-
 /* ── Upgrade diff block (per-stat / per-mechanic change list) ─────────────── */
 .craft-upgrade__diff {
   display: flex;
@@ -1924,16 +1758,6 @@
 }
 
 /* ── Ultimate gear ───────────────────────────────────────────────────────── */
-.craft-filter-chip--ultimate {
-  color: #aa88ff;
-  border-color: rgba(120, 60, 200, 0.45);
-}
-
-.craft-filter-chip--ultimate.craft-filter-chip--active {
-  color: #cc99ff;
-  border-color: rgba(160, 80, 255, 0.65);
-  background: rgba(80, 30, 140, 0.25);
-}
 
 .craft-recipe--ultimate {
   border-color: rgba(120, 60, 200, 0.55);
@@ -1985,28 +1809,27 @@
 
   .crafting-dialog__content { padding: 12px 12px 18px; }
 
-  /* Let the panel own the scroll instead of a nested fixed-height list. */
-  .craft-list    { max-height: none; }
-
   .craft-recipe        { gap: 9px; padding: 9px 10px; }
   .craft-recipe__icon  { width: 44px; height: 44px; }
   .craft-recipe__name  { font-size: 11px; }
   .craft-recipe__btn   { padding: 8px 16px; }  /* keep a tappable target */
   .craft-wallet        { gap: 4px 6px; margin-bottom: 12px; }
-  .craft-filters       { margin-bottom: 10px; }
+
 }
 
 /* ── Make: the unified recipe browser ────────────────────────────────────────
    Gear and technique recipes share one row shape, one detail pane, and one
    cost grammar. The pane manages its own scrolling, so this section opts out
    of the dialog content's padding and scroll. */
-.craft-body--make {
+.craft-body--make,
+.craft-body--browser {
   flex: 1;
   min-height: 0;
   margin: -16px -20px -24px;
 }
 
-.craft-body--make .craft-wallet {
+.craft-body--make .craft-wallet,
+.craft-body--browser .craft-wallet {
   margin: 0;
   border-width: 0 0 1px;
   border-radius: 0;
@@ -2016,18 +1839,27 @@
   min-height: 0;
 }
 
-.make-search {
-  flex: 1 1 180px;
-  min-width: 0;
-  max-width: 260px;
-  height: 26px;
-  padding: 3px 7px;
-  background: var(--hud-material-inset);
-  border: 1px solid var(--hud-edge-light);
-  border-radius: 2px;
-  color: var(--hud-text);
-  font: 10px monospace;
+.make-row__need {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 5px;
+  color: var(--hud-text-dim);
+  font-size: 9px;
+  font-variant-numeric: tabular-nums;
 }
+
+.make-locked-toggle {
+  margin: 8px 6px 4px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--hud-text-dim);
+  font: 10px monospace;
+  text-decoration: underline dotted;
+  cursor: pointer;
+}
+
+.make-locked-toggle:hover { color: var(--hud-text); }
 
 .make-icon {
   display: inline-flex;
@@ -2109,18 +1941,6 @@
   font-size: 8px;
   font-weight: bold;
   letter-spacing: 0.8px;
-}
-
-/* The sort row reads as a control, not another facet of the filter. */
-.craft-filter-row--sort {
-  align-items: center;
-}
-
-.craft-filter-label {
-  color: var(--hud-text-dim);
-  font-size: 9px;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
 }
 
 .make-detail__head {
@@ -2509,20 +2329,18 @@
 @media (max-width: 1100px) {
   /* Filters can fill a phone by themselves. Let the whole page scroll, with
      only the recipe roster capped so its detail/actions remain reachable. */
-  .crafting-dialog__content--make { display: block; overflow-y: auto; }
+  .crafting-dialog__content--make,
+  .crafting-dialog__content--upgrade { display: block; overflow-y: auto; }
   .crafting-dialog__content { padding: 12px 12px 18px; }
-  .craft-body--make .browser-pane__body { flex: none; overflow: visible; }
-  .craft-body--make .browser-pane__list { max-height: 36dvh; }
-  .craft-body--make .browser-pane__detail { overflow: visible; }
-  .make-browser .craft-filter-row {
-    width: 100%;
-    min-width: 0;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-  }
-  .make-browser .craft-filter-row > * { flex-shrink: 0; }
+  .craft-body--make .browser-pane__body,
+  .craft-body--browser .browser-pane__body { flex: none; overflow: visible; }
+  .craft-body--make .browser-pane__list,
+  .craft-body--browser .browser-pane__list { max-height: 36dvh; }
+  .craft-body--make .browser-pane__detail,
+  .craft-body--browser .browser-pane__detail { overflow: visible; }
 
-  .craft-body--make {
+  .craft-body--make,
+  .craft-body--browser {
     margin: -12px -12px -18px;
   }
 
@@ -2551,17 +2369,6 @@
 
   .craft-forge-reveal__copy strong {
     font-size: 15px;
-  }
-
-  .make-search {
-    flex: 1 1 100%;
-    max-width: none;
-    min-height: var(--hud-hit-target);
-  }
-
-  .craft-body--make .craft-filter-chip {
-    min-height: var(--hud-hit-target-compact);
-    touch-action: manipulation;
   }
 
   .craft-upgrade__req { flex: 0 0 auto; }
@@ -2637,3 +2444,87 @@
     display: none;
   }
 }
+
+/* Upgrade browser: compact rows, the next step in the detail pane. */
+.upgrade-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+.upgrade-row__icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid;
+  border-radius: 2px;
+  font: bold 9px/1 monospace;
+}
+
+.upgrade-row__main {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.upgrade-row__name {
+  overflow: hidden;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.upgrade-row__meta { color: var(--hud-text-dim); font-size: 9px; }
+
+.upgrade-row--blocked { opacity: 0.62; }
+
+.upgrade-row__dot {
+  flex: 0 0 auto;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(120, 110, 90, 0.4);
+}
+
+.upgrade-row__dot--ready {
+  background: #5de88a;
+  box-shadow: 0 0 6px rgba(93, 232, 138, 0.6);
+}
+
+.upgrade-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.upgrade-detail__head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 56px;
+}
+
+.upgrade-detail__title {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.upgrade-detail__reqs .craft-upgrade__req { flex: 0 0 auto; }
+
+.upgrade-detail__reqs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+}
+
+.upgrade-detail__btn { align-self: flex-start; }

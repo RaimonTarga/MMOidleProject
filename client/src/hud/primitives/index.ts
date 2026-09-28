@@ -34,3 +34,5 @@ export { useStatusStrip } from "./useStatusStrip";
 export type { StripEntry, StripTileProps } from "./useStatusStrip";
 export { TooltipCard } from "./TooltipCard";
 export type { TooltipCardContent, TooltipRow } from "./TooltipCard";
+export { CategoryRail, RailLayout } from "./CategoryRail";
+export type { CategoryRailItem, CategoryRailProps } from "./CategoryRail";

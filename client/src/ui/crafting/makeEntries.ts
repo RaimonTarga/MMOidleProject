@@ -201,10 +201,11 @@ export const MAKE_KIND_LABELS: Record<MakeKind, string> = {
   rune: 'Rune',
 };
 
-export function buildMakeEntries(sources: MakeSources): MakeEntry[] {
-  const entries = [
-    ...gearEntries(sources),
-    ...techniqueEntries({
+/** One spec per learnable kind, shared by the entry list and `unlockedMakeKinds`. */
+function techniqueSpecs(sources: MakeSources): TechniqueSpec[] {
+  const gates = { biomeLevel: sources.biomeLevel, bossesCleared: sources.bossesCleared };
+  return [
+    {
       kind: 'technique',
       recipes: ABILITY_RECIPE_DATABASE.values(),
       learnedId: (id) => ABILITY_RECIPE_DATABASE.get(id)?.abilityId ?? null,
@@ -213,13 +214,10 @@ export function buildMakeEntries(sources: MakeSources): MakeEntry[] {
       known: sources.knownAbilities,
       isUnlocked: (id) => {
         const recipe = ABILITY_RECIPE_DATABASE.get(id);
-        return !!recipe && isAbilityRecipeUnlocked(recipe, {
-          biomeLevel: sources.biomeLevel,
-          bossesCleared: sources.bossesCleared,
-        });
+        return !!recipe && isAbilityRecipeUnlocked(recipe, gates);
       },
-    }),
-    ...techniqueEntries({
+    },
+    {
       kind: 'stance',
       recipes: STANCE_RECIPE_DATABASE.values(),
       learnedId: (id) => STANCE_RECIPE_DATABASE.get(id)?.stanceId ?? null,
@@ -228,13 +226,10 @@ export function buildMakeEntries(sources: MakeSources): MakeEntry[] {
       known: sources.knownStances,
       isUnlocked: (id) => {
         const recipe = STANCE_RECIPE_DATABASE.get(id);
-        return !!recipe && isStanceRecipeUnlocked(recipe, {
-          biomeLevel: sources.biomeLevel,
-          bossesCleared: sources.bossesCleared,
-        });
+        return !!recipe && isStanceRecipeUnlocked(recipe, gates);
       },
-    }),
-    ...techniqueEntries({
+    },
+    {
       kind: 'rite',
       recipes: RITE_RECIPE_DATABASE.values(),
       learnedId: (id) => RITE_RECIPE_DATABASE.get(id)?.riteId ?? null,
@@ -243,15 +238,12 @@ export function buildMakeEntries(sources: MakeSources): MakeEntry[] {
       known: sources.knownRites,
       isUnlocked: (id) => {
         const recipe = RITE_RECIPE_DATABASE.get(id);
-        return !!recipe && isRiteRecipeUnlocked(recipe, {
-          biomeLevel: sources.biomeLevel,
-          bossesCleared: sources.bossesCleared,
-        });
+        return !!recipe && isRiteRecipeUnlocked(recipe, gates);
       },
-    }),
+    },
     // Rune fragments are made here too (V5): crafting a rune is making a thing,
     // and it was the last recipe kind still being spent from inside Build.
-    ...techniqueEntries({
+    {
       kind: 'rune',
       // `!r.deprecated` is belt-and-suspenders: a deprecated recipe's rune is
       // always a starter default too, so `known` already filters it below —
@@ -272,12 +264,34 @@ export function buildMakeEntries(sources: MakeSources): MakeEntry[] {
       known: sources.ownedRunes,
       isUnlocked: (id) => {
         const recipe = RUNE_RECIPE_DATABASE.get(id);
-        return !!recipe && isRuneRecipeUnlocked(recipe, {
-          biomeLevel: sources.biomeLevel,
-          bossesCleared: sources.bossesCleared,
-        });
+        return !!recipe && isRuneRecipeUnlocked(recipe, gates);
       },
-    }),
+    },
+  ];
+}
+
+/**
+ * The kinds whose first recipe has unlocked — the Crafting rail shows only
+ * these. Ownership is deliberately ignored: a category you have crafted out
+ * stays on the rail, and one you have never reached stays hidden.
+ */
+export function unlockedMakeKinds(sources: MakeSources): Set<MakeKind> {
+  const kinds = new Set<MakeKind>();
+  for (const recipe of RECIPE_DATABASE.values()) {
+    if (sources.isTestRoom || sources.unlockedRecipeIds.includes(recipe.id)) kinds.add(recipe.slot);
+  }
+  for (const spec of techniqueSpecs(sources)) {
+    for (const recipe of spec.recipes) {
+      if (spec.isUnlocked(recipe.id)) { kinds.add(spec.kind); break; }
+    }
+  }
+  return kinds;
+}
+
+export function buildMakeEntries(sources: MakeSources): MakeEntry[] {
+  const entries = [
+    ...gearEntries(sources),
+    ...techniqueSpecs(sources).flatMap(techniqueEntries),
   ];
 
   // Highest tier first within each kind: the thing a player is working toward is

@@ -673,6 +673,71 @@
 
 .map-travel { display: flex; align-items: center; gap: 6px; }
 
+/* First-view summary: danger, boss, progress. Depth sits behind Details. */
+.map-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 4px 2px 2px;
+}
+
+.map-summary .area-danger { font-size: 12px; gap: 6px; }
+
+.map-summary__rows {
+  width: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.map-summary__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 3px;
+  border-bottom: 1px dotted rgba(90, 82, 60, 0.35);
+  font: 10px monospace;
+}
+
+.map-summary__row dt { color: var(--hud-text-dim); }
+.map-summary__row dd { margin: 0; color: var(--hud-text); text-align: right; }
+
+.map-details-toggle {
+  align-self: flex-start;
+  padding: 5px 9px;
+  color: var(--hud-text-muted);
+  border: 1px solid rgba(105, 94, 66, 0.48);
+  border-radius: 2px;
+  background: #191711;
+  font: 700 9px monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.map-details-toggle:hover { color: var(--hud-primary-strong); border-color: rgba(201, 176, 106, 0.7); }
+
+.map-node-info--uncharted .map-node-info__top { border-left-color: rgba(120, 110, 90, 0.45); }
+
+.map-node-info__unknown {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  color: rgba(150, 140, 118, 0.55);
+  border: 1px dashed rgba(120, 110, 90, 0.45);
+  font: 700 18px monospace;
+}
+
+.map-node-info__fog {
+  margin: 4px 2px;
+  color: var(--hud-text-muted);
+  font: 10px/1.5 monospace;
+}
+
 .map-travel__btn {
   flex: 1;
   font-family: monospace;
@@ -1145,8 +1210,7 @@
   background: rgba(14, 13, 10, 0.82);
 }
 
-.world-map-toolbar input,
-.world-map-toolbar select {
+.world-map-toolbar input {
   min-width: 0;
   height: 26px;
   padding: 3px 7px;
@@ -1224,6 +1288,10 @@
   stroke-linecap: round;
 }
 
+.world-map-route--uncharted {
+  stroke: rgba(90, 84, 70, 0.14);
+}
+
 .world-map-route--path {
   stroke: rgba(76, 174, 255, 0.9);
   stroke-width: 9;
@@ -1240,6 +1308,23 @@
   text-transform: uppercase;
   white-space: nowrap;
   pointer-events: none;
+}
+
+/* Uncharted regions keep their name, drawn above the silhouettes. */
+.world-map-region-label--uncharted {
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: rgba(214, 203, 235, 0.42);
+  text-shadow: 0 2px 6px #000;
+}
+
+.world-map-region-label__fog {
+  color: rgba(212, 179, 90, 0.7);
+  font-size: 15px;
+  letter-spacing: 0.3em;
 }
 
 .world-map-node {
@@ -1266,6 +1351,34 @@
     filter 120ms ease,
     border-color 120ms ease,
     box-shadow 120ms ease;
+}
+
+/* Danger band as an inner ring, independent of the state borders/glows. */
+.world-map-node[data-danger]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 3px solid var(--map-danger);
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: inset 0 0 8px color-mix(in srgb, var(--map-danger) 35%, transparent);
+}
+
+/* Tier-gate fog: shape and position only. */
+.world-map-node--uncharted {
+  background: #121110;
+  border: 1px dashed rgba(120, 110, 90, 0.28);
+  box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.5);
+}
+
+.world-map-node--uncharted:hover {
+  filter: none;
+  border-color: rgba(170, 158, 128, 0.55);
+}
+
+.world-map-node__unknown {
+  color: rgba(150, 140, 118, 0.3);
+  font: 700 18px monospace;
 }
 
 .world-map-node:nth-of-type(3n) {
@@ -1340,32 +1453,7 @@
   pointer-events: none;
 }
 
-.world-map-node__tier {
-  position: absolute;
-  left: 3px;
-  top: 3px;
-  box-sizing: border-box;
-  min-width: 15px;
-  height: 15px;
-  padding: 0 1px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid rgba(5, 6, 8, 0.72);
-  border-radius: 3px;
-  font: 700 6px monospace;
-  letter-spacing: 0;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.42);
-}
 
-.world-map-node__name {
-  width: 100%;
-  color: rgba(255, 255, 255, 0.88);
-  font: 8px/1.05 monospace;
-  text-align: center;
-  overflow-wrap: break-word;
-  white-space: normal;
-}
 
 .world-map-node__icon {
   flex-shrink: 0;
@@ -1385,21 +1473,6 @@
     drop-shadow(0 -1px 0 rgba(255, 58, 58, 0.98));
 }
 
-.world-map-node__pace {
-  position: absolute;
-  right: 3px;
-  top: 3px;
-  box-sizing: border-box;
-  width: 18px;
-  height: 18px;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid rgba(5, 6, 8, 0.72);
-  border-radius: 4px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.42);
-}
 
 .pace-icon {
   display: inline-flex;
@@ -1416,11 +1489,6 @@
   user-select: none;
 }
 
-.world-map-node__kind {
-  color: #ff9b8e;
-  font: 6px monospace;
-  letter-spacing: 0.06em;
-}
 
 .world-map-node__dungeon {
   position: absolute;

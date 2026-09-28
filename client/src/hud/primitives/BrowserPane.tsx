@@ -1,4 +1,5 @@
 import {
+  Fragment,
   useCallback,
   useRef,
   type KeyboardEvent,
@@ -21,6 +22,14 @@ export interface BrowserPaneProps<T> {
   emptyList?: ReactNode;
   emptyDetail?: ReactNode;
   className?: string;
+  /**
+   * Optional section label per item. A heading is drawn wherever it changes, so
+   * callers pass items already ordered by group. Headings are presentation, not
+   * options: arrow keys move between items only.
+   */
+  groupOf?: (item: T) => string;
+  /** Rendered after the last row, inside the list scroller. */
+  listFooter?: ReactNode;
 }
 
 /**
@@ -46,6 +55,8 @@ export function BrowserPane<T>({
   emptyList,
   emptyDetail,
   className,
+  groupOf,
+  listFooter,
 }: BrowserPaneProps<T>) {
   const listRef = useRef<HTMLDivElement>(null);
   const selectedItem = items.find((item) => itemKey(item) === selectedKey) ?? null;
@@ -96,12 +107,17 @@ export function BrowserPane<T>({
           {items.length === 0 && (
             <div className="browser-pane__empty">{emptyList ?? 'Nothing here yet.'}</div>
           )}
-          {items.map((item) => {
+          {items.map((item, index) => {
             const key = itemKey(item);
             const selected = key === selectedKey;
+            const group = groupOf?.(item);
+            const heading = group !== undefined && (index === 0 || groupOf!(items[index - 1]) !== group);
             return (
+              <Fragment key={key}>
+              {heading && (
+                <div className="browser-pane__group" role="presentation">{group}</div>
+              )}
               <div
-                key={key}
                 data-browser-key={key}
                 className={`browser-row${selected ? ' browser-row--selected' : ''}`}
                 role="option"
@@ -111,8 +127,10 @@ export function BrowserPane<T>({
               >
                 {renderItem(item, { selected })}
               </div>
+              </Fragment>
             );
           })}
+          {listFooter}
         </div>
 
         <div className="browser-pane__detail">

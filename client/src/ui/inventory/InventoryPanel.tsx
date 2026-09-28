@@ -6,7 +6,7 @@ import { StatSheet } from './StatSheet';
 import { playerIdAtom } from '../../hud/atoms';
 import { useIsMobile } from '../../hud/useIsMobile';
 import { DialogHeader, DialogTab, DialogTabs, GameDialog } from '../../hud/primitives';
-import { useFocusWithDelay } from './useFocus';
+import { useComparePin } from './useFocus';
 import '../inventory.css';
 
 interface Props {
@@ -20,8 +20,9 @@ type InvSection = 'gear' | 'bag' | 'stats';
 export function InventoryPanel({ onClose }: Props) {
   const playerId = useAtomValue(playerIdAtom);
   const isMobile = useIsMobile();
-  const { focused, focus } = useFocusWithDelay();
   const [section, setSection] = useState<InvSection>('bag');
+  // On phones the sheet is its own tab: pinning an item takes you to it.
+  const compare = useComparePin(() => { if (isMobile) setSection('stats'); });
 
   const showGear = !isMobile || section === 'gear';
   const showBag = !isMobile || section === 'bag';
@@ -61,17 +62,17 @@ export function InventoryPanel({ onClose }: Props) {
           <div className="inv-body">
             {showGear && (
               <div id="inventory-gear" className="inv-left" role={isMobile ? 'tabpanel' : undefined}>
-                <EquipmentSlots focused={focused} onFocus={focus} />
+                <EquipmentSlots compare={compare} />
               </div>
             )}
             {showBag && (
               <div id="inventory-bag" className="inv-center" role={isMobile ? 'tabpanel' : undefined}>
-                <BackpackGrid focused={focused} onFocus={focus} />
+                <BackpackGrid compare={compare} />
               </div>
             )}
             {showStats && (
               <div id="inventory-stats" className="inv-right" role={isMobile ? 'tabpanel' : undefined}>
-                <StatSheet focused={focused} onFocus={focus} />
+                <StatSheet compare={compare} />
               </div>
             )}
           </div>

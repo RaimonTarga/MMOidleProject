@@ -124,3 +124,19 @@
     -webkit-tap-highlight-color: transparent;
   }
 }
+
+.browser-pane__group {
+  position: sticky;
+  top: -6px;
+  z-index: 1;
+  margin: 6px -6px 2px;
+  padding: 5px 14px;
+  background: rgba(18, 17, 13, 0.97);
+  border-bottom: 1px solid var(--hud-edge-divider);
+  color: var(--hud-text-dim);
+  font: 700 9px monospace;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.browser-pane__group:first-child { margin-top: -6px; }

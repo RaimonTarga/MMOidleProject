@@ -1,4 +1,4 @@
-import type { NodeBiomeInfo } from '@mmo-idle/shared';
+import type { AreaDanger, NodeBiomeInfo } from '@mmo-idle/shared';
 
 export const BIOME_TILE_COLORS: Record<string, string> = {
   clearing:   '#2e5e2e',
@@ -55,6 +55,31 @@ const MAP_TIER_COLORS: Record<number, string> = {
 
 export function mapTierColor(tier: number): string {
   return MAP_TIER_COLORS[tier] ?? MAP_TIER_COLORS[0];
+}
+
+/**
+ * Danger band → tile border. Bands are authored within their tier, so they are
+ * only ever drawn on charted nodes (see `isNodeCharted`).
+ */
+const MAP_DANGER_COLORS: Record<AreaDanger, string> = {
+  1: '#6fcf5a',
+  2: '#e6c84a',
+  3: '#f08a3a',
+  4: '#e8453a',
+  /** Dungeons: boss fights, above every biome band. */
+  5: '#d4145a',
+};
+
+export function mapDangerColor(danger: AreaDanger): string {
+  return MAP_DANGER_COLORS[danger];
+}
+
+/**
+ * Tier-gate fog: the player's own tier and everything below it are charted;
+ * higher tiers stay on the map as silhouettes (clickable, routable, no details).
+ */
+export function isNodeCharted(biomeTier: number, playerTier: number): boolean {
+  return biomeTier <= Math.max(playerTier, 1);
 }
 
 /** Map badge for static dungeon exam nodes. */

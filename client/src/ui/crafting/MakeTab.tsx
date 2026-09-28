@@ -3,7 +3,10 @@ import { useAtom, useAtomValue } from 'jotai';
 import { EquipmentAbilityTags } from '../AbilityTags';
 import type { EssenceType } from '@mmo-idle/shared';
 import {
+  ESSENCE_COLORS,
   TEST_ROOM_NODE_ID,
+  catalystLabel,
+  essenceLabel,
   ITEM_DATABASE,
   abilityDef,
   checkEvolve,
@@ -11,6 +14,7 @@ import {
   coreEligibilityLabel,
   isEvolvedRecipe,
   isRestrictedCore,
+  requiredPlusFor,
   relicRatingsFromPassives, relicRatingsFromEffects,
   resolveRelicComparison,
 } from '@mmo-idle/shared';
@@ -27,7 +31,7 @@ import {
   passivesAtom, playerTierAtom, activeStanceAtom, equippedRitesAtom, hpAtom, maxHpAtom,
   selectedSubVariantAtom, selectedRangeAtom, unlockedSkillsAtom,
 } from '../../hud/atoms';
-import { BrowserPane } from '../../hud/primitives';
+import { BrowserPane, CategoryRail, RailLayout } from '../../hud/primitives';
 import { SLOT_ABBR, biomeName, tierColor } from './common';
 import { CostDisplay, WalletSummary } from './shared';
 import { statEntries, formatMechanicEffects, formatResolvedRelicProfile, formatWeaponEffects } from './itemDisplay';
@@ -42,7 +46,7 @@ import {
 import { EvolutionPreview, ReconstructOption } from './EvolutionPreview';
 import { evolutionPlan } from './evolutionPlan';
 import { useNewEntries } from './useNewEntries';
-import { eligibleMakeKeys, useMakeEntries } from './useMakeEntries';
+import { eligibleMakeKeys, useMakeEntries, useUnlockedMakeKinds } from './useMakeEntries';
 import { GameIcon } from '../GameIcon';
 import { makeKindIconSource } from '../systemIcons';
 import { ItemIcon } from '../ItemIcon';
@@ -57,26 +61,42 @@ import { DetailLines } from '../describe/DetailLines';
 import { loadoutLinesFor, ruleLines } from '../describe';
 import { useAbilityContext } from '../describe/useAbilityContext';
 import type { AbilityContext } from '../describe';
-import { EMPTY_MAKE_FILTERS, makeFiltersAtom, type MakeFilters, type MakeSort } from '../panelFilters';
+import { makeFiltersAtom } from '../panelFilters';
 
-const SORT_FACETS: { sort: MakeSort; label: string }[] = [
-  { sort: 'default', label: 'New first' },
-  { sort: 'name', label: 'Name' },
-  { sort: 'tier', label: 'Tier' },
-  { sort: 'cost', label: 'Cost' },
-];
-
-/** Total essence + catalyst outlay, for the cost sort. */
-function entryCost(entry: MakeEntry): number {
-  const essence = Object.values(entry.cost).reduce<number>((sum, n) => sum + (n ?? 0), 0);
-  const catalyst = Object.values(entry.catalystCost ?? {}).reduce<number>((sum, n) => sum + (n ?? 0), 0);
-  return essence + catalyst;
+/** What a recipe still needs, per material; empty when it is affordable. */
+function missingMaterials(
+  entry: MakeEntry,
+  essences: Record<EssenceType, number>,
+  catalysts: Record<string, number>,
+): { key: string; label: string; amount: number; color?: string }[] {
+  const essence = (Object.entries(entry.cost) as [EssenceType, number][])
+    .filter(([type, amount]) => (essences[type] ?? 0) < amount)
+    .map(([type, amount]) => ({
+      key: type,
+      label: essenceLabel(type),
+      amount: amount - (essences[type] ?? 0),
+      color: ESSENCE_COLORS[type],
+    }));
+  const catalyst = (Object.entries(entry.catalystCost ?? {}) as [string, number][])
+    .filter(([family, amount]) => (catalysts[family] ?? 0) < amount)
+    .map(([family, amount]) => ({
+      key: family,
+      label: catalystLabel(family),
+      amount: amount - (catalysts[family] ?? 0),
+    }));
+  return [...essence, ...catalyst];
 }
 
-const KIND_FACETS: { kind: MakeKind; label: string }[] = KIND_ORDER.map((kind) => ({
-  kind,
-  label: kind === 'mobility' ? 'Mobility' : MAKE_KIND_LABELS[kind],
-}));
+type MakeSection = 'new' | 'ready' | 'short' | 'locked';
+
+const SECTION_LABELS: Record<MakeSection, string> = {
+  new: 'New',
+  ready: 'Ready to craft',
+  short: 'Not ready yet',
+  locked: 'Locked',
+};
+
+const SECTION_ORDER: MakeSection[] = ['new', 'ready', 'short', 'locked'];
 
 function kindLabel(kind: MakeKind): string {
   return MAKE_KIND_LABELS[kind] ?? kind;
@@ -292,9 +312,6 @@ function CraftStamp({ result }: { result: CraftResult }) {
  */
 export function MakeTab() {
   const [filters, setFilters] = useAtom(makeFiltersAtom);
-  const { kind: filterKind, hideUnaffordable, showLocked, sort, search } = filters;
-  const setFilter = <K extends keyof MakeFilters>(key: K, value: MakeFilters[K]) =>
-    setFilters((prev) => ({ ...prev, [key]: value }));
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [craftResult, setCraftResult] = useState<CraftResult | null>(null);
 
@@ -304,6 +321,7 @@ export function MakeTab() {
   const catalysts = useAtomValue(catalystsAtom);
   const inventory = useAtomValue(inventoryAtom);
   const itemUpgrades = useAtomValue(itemUpgradesAtom);
+  const equipment = useAtomValue(equipmentAtom);
 
   const isTestRoom = nodeId === TEST_ROOM_NODE_ID;
   // Techniques deepen with tier and passives, so a recipe quotes what it would
@@ -361,168 +379,136 @@ export function MakeTab() {
   const eligibleKeys = useMemo(() => eligibleMakeKeys(entries), [entries]);
   const newEntries = useNewEntries('craft', playerId, eligibleKeys);
 
-  const biomeGroups = useMemo(() => {
-    const groups = new Set<string>();
-    for (const entry of entries) if (entry.recipeGroup) groups.add(entry.recipeGroup);
-    return [...groups].sort();
-  }, [entries]);
+  // A category joins the rail when its first recipe unlocks, never before.
+  const unlockedKinds = useUnlockedMakeKinds();
+  const railKinds = useMemo(
+    () => KIND_ORDER.filter((kind) => isTestRoom || unlockedKinds.has(kind)),
+    [unlockedKinds, isTestRoom],
+  );
 
-  const tiers = useMemo(() => {
-    const values = new Set<number>();
-    for (const entry of entries) values.add(entry.tier);
-    return [...values].sort((a, b) => a - b);
-  }, [entries]);
+  // Anything that was new while this panel is open stays in the New section
+  // until it closes; only its badge clears on sight. Otherwise hovering a row
+  // would move it out from under the cursor.
+  const openedNewRef = useRef(new Set<string>());
+  for (const entry of entries) if (newEntries.has(entry.key)) openedNewRef.current.add(entry.key);
 
-  // A remembered facet that no longer exists would filter invisibly.
-  const filterBiome = filters.biome && biomeGroups.includes(filters.biome) ? filters.biome : null;
-  const filterTier = filters.tier !== null && tiers.length > 1 && tiers.includes(filters.tier) ? filters.tier : null;
-  const isFiltered = filterKind !== null || filterBiome !== null || filterTier !== null
-    || hideUnaffordable || showLocked || sort !== 'default' || search !== '';
+  // An evolution is makeable when either path is open: evolving an owned,
+  // upgraded predecessor, or reconstructing from raw materials. Materials alone
+  // say nothing about the first path.
+  const canMake = (entry: MakeEntry): boolean => {
+    if (isTestRoom) return true;
+    const recipe = entry.gear;
+    if (!recipe || !isEvolvedRecipe(recipe)) return entryAffordable(entry, essences, catalysts);
+    return checkEvolve({ recipe, inventory, equipment, itemUpgrades, essences, catalysts }).ok
+      || (!!recipe.reconstructCost && checkReconstruct({ recipe, essences, catalysts }).ok);
+  };
 
-  const filtered = useMemo(() => {
-    const needle = search.trim().toLowerCase();
-    const matches = entries.filter((entry) =>
-      (showLocked || entry.unlocked)
-      && (!filterKind || entry.kind === filterKind)
-      && (!filterBiome || entry.recipeGroup === filterBiome)
-      && (!filterTier || entry.tier === filterTier)
-      && (!needle || entry.name.toLowerCase().includes(needle))
-      && (!hideUnaffordable || entryAffordable(entry, essences, catalysts)),
-    );
+  /** The row's short "what is missing" line for an evolution whose materials are covered. */
+  const evolveNeed = (entry: MakeEntry): string => {
+    const recipe = entry.gear;
+    if (!recipe?.evolvesFrom || !isEvolvedRecipe(recipe)) return '';
+    const source = ITEM_DATABASE.get(recipe.evolvesFrom)?.name ?? 'source item';
+    const owned = inventory.includes(recipe.evolvesFrom) || equipment[recipe.slot] === recipe.evolvesFrom;
+    return owned ? `needs ${source} +${requiredPlusFor(recipe)}` : `needs ${source}`;
+  };
 
-    // `entries` already arrives in kind/tier/name order, so every sort below
-    // only has to impose its own key and let that carry the ties.
-    const sorted = matches.slice();
-    if (sort === 'name') sorted.sort((a, b) => a.name.localeCompare(b.name));
-    else if (sort === 'tier') sorted.sort((a, b) => b.tier - a.tier);
-    else if (sort === 'cost') sorted.sort((a, b) => entryCost(a) - entryCost(b));
-    else {
-      // Default: what just became available, then what you can afford right now,
-      // then everything else. Answers "what changed" before "what exists".
-      const rank = (entry: MakeEntry) => {
-        if (newEntries.has(entry.key)) return 0;
-        if (!entry.unlocked) return 3;
-        return entryAffordable(entry, essences, catalysts) ? 1 : 2;
-      };
-      sorted.sort((a, b) => rank(a) - rank(b));
+  const sectionOf = (entry: MakeEntry): MakeSection => {
+    if (!entry.unlocked) return 'locked';
+    if (openedNewRef.current.has(entry.key)) return 'new';
+    return canMake(entry) ? 'ready' : 'short';
+  };
+
+  const railStats = useMemo(() => {
+    const stats = new Map<MakeKind, { ready: number; fresh: number; open: number; isNew: boolean }>();
+    for (const kind of railKinds) {
+      const open = entries.filter((entry) => entry.kind === kind && entry.unlocked);
+      const fresh = open.filter((entry) => newEntries.has(entry.key)).length;
+      stats.set(kind, {
+        ready: open.filter(canMake).length,
+        fresh,
+        open: open.length,
+        // Every recipe in it is still unseen: the category itself just arrived.
+        isNew: open.length > 0 && fresh === open.length,
+      });
     }
-    return sorted;
-  }, [
-    entries, filterKind, filterBiome, filterTier, hideUnaffordable, showLocked,
-    search, sort, essences, catalysts, newEntries,
-  ]);
+    return stats;
+  }, [railKinds, entries, newEntries, essences, catalysts, isTestRoom, inventory, equipment, itemUpgrades]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // A remembered category that is no longer on the rail would select nothing;
+  // fall back to where the news is, then to what can be made.
+  const railKind: MakeKind | null = filters.kind && railKinds.includes(filters.kind)
+    ? filters.kind
+    : railKinds.find((kind) => (railStats.get(kind)?.fresh ?? 0) > 0)
+      ?? railKinds.find((kind) => (railStats.get(kind)?.ready ?? 0) > 0)
+      ?? railKinds[0]
+      ?? null;
+  const showLocked = filters.showLocked;
+
+  const inKind = useMemo(
+    () => entries.filter((entry) => entry.kind === railKind),
+    [entries, railKind],
+  );
+  const lockedCount = inKind.filter((entry) => !entry.unlocked).length;
+
+  // `entries` already arrives in tier/name order; sections only regroup it.
+  const filtered = inKind
+    .filter((entry) => showLocked || entry.unlocked)
+    .map((entry) => ({ entry, rank: SECTION_ORDER.indexOf(sectionOf(entry)) }))
+    .sort((a, b) => a.rank - b.rank)
+    .map(({ entry }) => entry);
 
   const selected = filtered.find((entry) => entry.key === selectedKey)
     ?? filtered[0]
     ?? null;
 
-  const toolbar = (
-    <>
-      <input
-        className="make-search"
-        type="search"
-        placeholder="Search recipes…"
-        value={search}
-        aria-label="Search recipes"
-        onChange={(event) => setFilter('search', event.target.value)}
-      />
-      <button
-        type="button"
-        className={`craft-filter-chip${hideUnaffordable ? ' craft-filter-chip--active' : ''}`}
-        onClick={() => setFilter('hideUnaffordable', !hideUnaffordable)}
-      >
-        Affordable
-      </button>
-      {/* Locked recipes are hidden by default — the list is for what you can
-          make. The chip brings back the ladder of what is coming, which is the
-          job Crafting's old Progress tab used to do. */}
-      <button
-        type="button"
-        className={`craft-filter-chip${showLocked ? ' craft-filter-chip--active' : ''}`}
-        onClick={() => setFilter('showLocked', !showLocked)}
-      >
-        Show locked
-      </button>
-      <button
-        type="button"
-        className="craft-filter-chip craft-filter-chip--clear"
-        disabled={!isFiltered}
-        onClick={() => setFilters(EMPTY_MAKE_FILTERS)}
-      >
-        Clear filters
-      </button>
-      <div className="craft-filter-row craft-filter-row--sort">
-        <span className="craft-filter-label">Sort</span>
-        {SORT_FACETS.map((facet) => (
-          <button
-            key={facet.sort}
-            type="button"
-            className={`craft-filter-chip${sort === facet.sort ? ' craft-filter-chip--active' : ''}`}
-            onClick={() => setFilter('sort', facet.sort)}
-          >
-            {facet.label}
-          </button>
-        ))}
-      </div>
-      <div className="craft-filter-row">
-        <button
-          type="button"
-          className={`craft-filter-chip${!filterKind ? ' craft-filter-chip--active' : ''}`}
-          onClick={() => setFilter('kind', null)}
-        >
-          All
-        </button>
-        {KIND_FACETS.map((facet) => (
-          <button
-            key={facet.kind}
-            type="button"
-            className={[
-              'craft-filter-chip',
-              TECHNIQUE_KINDS.includes(facet.kind) ? 'craft-filter-chip--technique' : 'craft-filter-chip--slot',
-              filterKind === facet.kind ? 'craft-filter-chip--active' : '',
-            ].filter(Boolean).join(' ')}
-            data-slot={facet.kind}
-            onClick={() => setFilter('kind', filterKind === facet.kind ? null : facet.kind)}
-          >
-            <KindGlyph kind={facet.kind} size={12} />
-            {facet.label}
-          </button>
-        ))}
-      </div>
-      <div className="craft-filter-row">
-        <button
-          type="button"
-          className={`craft-filter-chip${!filterBiome ? ' craft-filter-chip--active' : ''}`}
-          onClick={() => setFilter('biome', null)}
-        >
-          All Biomes
-        </button>
-        {biomeGroups.map((group) => (
-          <button
-            key={group}
-            type="button"
-            className={`craft-filter-chip${filterBiome === group ? ' craft-filter-chip--active' : ''}`}
-            onClick={() => setFilter('biome', filterBiome === group ? null : group)}
-          >
-            {biomeName(group)}
-          </button>
-        ))}
-        {tiers.length > 1 && tiers.map((tier) => (
-          <button
-            key={tier}
-            type="button"
-            className={`craft-filter-chip craft-filter-chip--tier${filterTier === tier ? ' craft-filter-chip--active' : ''}`}
-            style={filterTier === tier
-              ? { color: tierColor(tier), borderColor: `${tierColor(tier)}aa`, background: `${tierColor(tier)}18` }
-              : { color: `${tierColor(tier)}bb` }}
-            onClick={() => setFilter('tier', filterTier === tier ? null : tier)}
-          >
-            T{tier}
-          </button>
-        ))}
-      </div>
-    </>
+  const rail = (
+    <CategoryRail
+      label="Recipe categories"
+      selectedKey={railKind}
+      onSelect={(key) => {
+        setFilters((prev) => ({ ...prev, kind: key as MakeKind }));
+        setSelectedKey(null);
+      }}
+      items={railKinds.map((kind, index) => {
+        const stats = railStats.get(kind);
+        return {
+          key: kind,
+          dataSlot: kind,
+          // Gear above, learned skills below.
+          divider: index > 0
+            && !TECHNIQUE_KINDS.includes(railKinds[index - 1])
+            && TECHNIQUE_KINDS.includes(kind),
+          label: (
+            <>
+              <KindGlyph kind={kind} size={14} />
+              {kindLabel(kind)}
+              {stats?.isNew && <span className="make-row__new">NEW</span>}
+            </>
+          ),
+          detail: (
+            <>
+              {stats && stats.ready > 0
+                ? <span className="category-rail__ready">{stats.ready} ready</span>
+                : stats && stats.open > 0 ? 'none ready' : 'all made'}
+              {stats && stats.fresh > 0 && !stats.isNew && (
+                <span className="category-rail__fresh"> · {stats.fresh} new</span>
+              )}
+            </>
+          ),
+        };
+      })}
+    />
   );
+
+  const lockedToggle = lockedCount > 0 ? (
+    <button
+      type="button"
+      className="make-locked-toggle"
+      onClick={() => setFilters((prev) => ({ ...prev, showLocked: !prev.showLocked }))}
+    >
+      {showLocked ? 'Hide' : 'Show'} {lockedCount} locked {lockedCount === 1 ? 'recipe' : 'recipes'}
+    </button>
+  ) : undefined;
 
   return (
     <div className="craft-body craft-body--make">
@@ -532,10 +518,14 @@ export function MakeTab() {
           : <CraftStamp key={craftResult.id} result={craftResult} />
       )}
       <WalletSummary essences={essences} catalysts={catalysts} />
+      <RailLayout>
+      {rail}
       <BrowserPane
-        label="Recipes"
+        label={railKind ? `${kindLabel(railKind)} recipes` : 'Recipes'}
         className="make-browser"
         items={filtered}
+        groupOf={(entry) => SECTION_LABELS[sectionOf(entry)]}
+        listFooter={lockedToggle}
         itemKey={(entry) => entry.key}
         selectedKey={selected?.key ?? null}
         onSelect={(key) => {
@@ -543,15 +533,15 @@ export function MakeTab() {
           newEntries.clear(key);
           setSelectedKey(key);
         }}
-        toolbar={toolbar}
-        emptyList={entries.length === 0
+        emptyList={railKinds.length === 0
           ? 'No recipes unlocked yet.'
-          : 'No recipes match the current filter.'}
+          : 'Everything here is made. New recipes arrive as your biome levels rise.'}
         emptyDetail="Select a recipe to see what it makes."
         renderItem={(entry) => (
           <MakeRow
             entry={entry}
-            affordable={entryAffordable(entry, essences, catalysts)}
+            missing={isTestRoom || canMake(entry) ? [] : missingMaterials(entry, essences, catalysts)}
+            need={isTestRoom || canMake(entry) ? '' : evolveNeed(entry)}
             isNew={newEntries.has(entry.key)}
             onSeen={() => newEntries.clear(entry.key)}
           />
@@ -578,35 +568,37 @@ export function MakeTab() {
           />
         )}
       />
+      </RailLayout>
     </div>
   );
 }
 
 /**
- * A row states what the thing IS and whether it is news. It used to end in a
- * READY/SHORT/LOCKED/LEARNED chip, which spent the most valuable column in the
- * list restating what the list already guaranteed: owned and learned recipes are
- * gone from it entirely, locked ones are hidden unless you ask for them, and
- * affordability is a property you can see in the cost panel — and is now carried
- * by the row's own dimming rather than by a word.
+ * A row states what the thing IS and whether it is news. Its kind is the rail's
+ * job and its section is the list's; the row adds only what is still missing,
+ * because "what do I need" is the next question after "what can I make".
  */
 function MakeRow({
   entry,
-  affordable,
+  missing,
+  need,
   isNew,
   onSeen,
 }: {
   entry: MakeEntry;
-  affordable: boolean;
+  missing: ReturnType<typeof missingMaterials>;
+  /** A non-material blocker, e.g. an evolution's source item or its upgrade level. */
+  need: string;
   isNew: boolean;
   onSeen: () => void;
 }) {
+  const short = entry.unlocked && (missing.length > 0 || need !== '');
   return (
     <span
       className={[
         'make-row',
         !entry.unlocked ? 'make-row--locked' : '',
-        entry.unlocked && !affordable ? 'make-row--short' : '',
+        short ? 'make-row--short' : '',
       ].filter(Boolean).join(' ')}
       // Hovering counts as reading it — the badge is a "look here", and it has
       // done its job the moment you do.
@@ -616,13 +608,27 @@ function MakeRow({
       <span className="make-row__main">
         <span className="make-row__name">{entry.name}</span>
         <span className="make-row__meta">
-          <KindGlyph kind={entry.kind} size={10} />
-          {kindLabel(entry.kind)} · T{entry.tier}
+          T{entry.tier}
           {entry.recipeGroup ? ` · ${biomeName(entry.recipeGroup)}` : ''}
         </span>
       </span>
       {isNew && <span className="make-row__new">NEW</span>}
-      {!entry.unlocked && <span className="make-row__state make-row__state--locked">LOCKED</span>}
+      {!isNew && short && (
+        <span className="make-row__need">
+          {need
+            ? <span>{need}</span>
+            : missing.map((item) => (
+              <span key={item.key} style={item.color ? { color: item.color } : undefined}>
+                -{item.amount}
+              </span>
+            ))}
+        </span>
+      )}
+      {!entry.unlocked && (
+        <span className="make-row__state make-row__state--locked">
+          {entry.unlockHint.replace(/^Reach /, '') || 'Locked'}
+        </span>
+      )}
     </span>
   );
 }

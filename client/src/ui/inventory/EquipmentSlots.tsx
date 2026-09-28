@@ -1,17 +1,15 @@
 import { useAtomValue } from 'jotai';
 import { EQUIPMENT_SLOTS, ITEM_DATABASE, TEST_ROOM_NODE_ID, coreEligibilityLabel, coreIsActive, isRestrictedCore, relicIsUnlocked } from '@mmo-idle/shared';
-import { hudBus } from '../../hudBus';
 import { equipmentAtom, itemUpgradesAtom, playerNodeIdAtom, playerTierAtom, selectedRangeAtom } from '../../hud/atoms';
 import { SLOT_LABELS, tierColor } from './constants';
 import { ItemIcon } from '../ItemIcon';
-import type { FocusedItem } from './useFocus';
+import type { ComparePin } from './useFocus';
 
 interface Props {
-  focused: FocusedItem | null;
-  onFocus: (item: FocusedItem | null) => void;
+  compare: ComparePin;
 }
 
-export function EquipmentSlots({ focused, onFocus }: Props) {
+export function EquipmentSlots({ compare }: Props) {
   const equipment = useAtomValue(equipmentAtom);
   const itemUpgrades = useAtomValue(itemUpgradesAtom);
   const selectedRange = useAtomValue(selectedRangeAtom);
@@ -26,7 +24,8 @@ export function EquipmentSlots({ focused, onFocus }: Props) {
           const defId = equipment[slot];
           const def = defId ? ITEM_DATABASE.get(defId) : null;
           const filled = def != null;
-          const isFocused = focused?.source === 'equipped' && focused.equipSlot === slot;
+          const isShown = !!defId && compare.shown === defId;
+          const isPinned = !!defId && compare.pinned === defId;
           const color = filled ? tierColor(def.tier) : null;
           const plus = defId ? (itemUpgrades[defId] ?? 0) : 0;
           const coreInactive = filled && slot === 'core'
@@ -42,7 +41,8 @@ export function EquipmentSlots({ focused, onFocus }: Props) {
               className={[
                 'inv-equip-slot',
                 filled ? 'inv-equip-slot--filled' : 'inv-equip-slot--empty',
-                isFocused ? 'inv-equip-slot--focused' : '',
+                isShown ? 'inv-equip-slot--focused' : '',
+                isPinned ? 'inv-equip-slot--pinned' : '',
                 coreInactive ? 'inv-equip-slot--inactive' : '',
                 relicLocked ? 'inv-equip-slot--inactive' : '',
               ].filter(Boolean).join(' ')}
@@ -50,19 +50,14 @@ export function EquipmentSlots({ focused, onFocus }: Props) {
               title={relicLocked ? 'Relics unlock at Tier 4' : coreInactive
                 ? `Inactive — ${coreEligibilityLabel(def.coreEligibility).toLowerCase()}`
                 : undefined}
-              aria-label={filled ? `Unequip ${def.name}` : `${SLOT_LABELS[slot]} slot empty`}
-              disabled={!filled || relicLocked}
-              onMouseEnter={() => {
-                if (filled && defId) onFocus({ defId, source: 'equipped', equipSlot: slot });
-              }}
-              onMouseLeave={() => onFocus(null)}
-              onFocus={() => {
-                if (filled && defId) onFocus({ defId, source: 'equipped', equipSlot: slot });
-              }}
-              onBlur={() => onFocus(null)}
-              onClick={() => {
-                if (filled) hudBus.requestUnequipItem(slot);
-              }}
+              aria-label={filled ? `Show what ${def.name} gives you` : `${SLOT_LABELS[slot]} slot empty`}
+              aria-pressed={filled ? isPinned : undefined}
+              disabled={!filled}
+              onMouseEnter={() => { if (filled && defId) compare.hover(defId); }}
+              onMouseLeave={() => compare.hover(null)}
+              onFocus={() => { if (filled && defId) compare.hover(defId); }}
+              onBlur={() => compare.hover(null)}
+              onClick={() => { if (filled && defId) compare.togglePin(defId); }}
             >
               <span
                 className="inv-equip-slot__icon"

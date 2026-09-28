@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtomValue } from 'jotai';
 import type { EquipmentSlot } from '@mmo-idle/shared';
 import {
   ITEM_DATABASE,
@@ -27,7 +27,7 @@ import { SLOT_LABELS, biomeName, tierColor } from './common';
 import { CostDisplay, WalletSummary } from './shared';
 import { computeUpgradeDiff } from './itemDisplay';
 import { ItemIcon } from '../ItemIcon';
-import { EMPTY_GEAR_FILTERS, upgradeFiltersAtom } from '../panelFilters';
+import { BrowserPane } from '../../hud/primitives';
 
 interface UpgradeResult {
   id: number;
@@ -86,6 +86,12 @@ function UpgradeReveal({ item, result }: { item: UpgradeItem; result: UpgradeRes
   );
 }
 
+/**
+ * Upgrade is a light master/detail browser: every owned item with headroom,
+ * equipped first, and everything about the next step in the detail pane.
+ * The upgrade system itself is expected to change, so this stays deliberately
+ * plain.
+ */
 export function UpgradeTab() {
   const inventory    = useAtomValue(inventoryAtom);
   const equipment    = useAtomValue(equipmentAtom);
@@ -97,8 +103,7 @@ export function UpgradeTab() {
   const nodeId       = useAtomValue(playerNodeIdAtom);
   const isTestRoom   = nodeId === TEST_ROOM_NODE_ID;
 
-  const [filters, setFilters] = useAtom(upgradeFiltersAtom);
-
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [result, setResult] = useState<UpgradeResult | null>(null);
   const resultIdRef = useRef(0);
   const resultTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -161,243 +166,159 @@ export function UpgradeTab() {
       });
   }, [inventory, equippedSet, isTestRoom, itemUpgrades, result]);
 
-  const biomeGroups = useMemo(() => {
-    const groups = new Set<string>();
-    for (const def of items) if (def.biomeGroup) groups.add(def.biomeGroup);
-    return Array.from(groups).sort();
-  }, [items]);
+  const stepFor = (def: UpgradeItem) => {
+    const currentPlus = itemUpgrades[def.id] ?? 0;
+    const haveLevel = def.biomeGroup ? (biomeLevel[def.biomeGroup] ?? 0) : 0;
+    const check = checkUpgrade({ item: def, currentPlus, biomeLevel: haveLevel, essences, catalysts, globalMastery: gm });
+    const isMaxed = currentPlus >= getMaxUpgrade(def);
+    return { currentPlus, haveLevel, isMaxed, canUpgrade: !isMaxed && (isTestRoom || check.ok) };
+  };
 
-  const tiers = useMemo(() => {
-    const ts = new Set<number>();
-    for (const def of items) ts.add(def.tier);
-    return Array.from(ts).sort((a, b) => a - b);
-  }, [items]);
-
-  // A remembered facet that no longer exists would filter invisibly.
-  const filterBiome = filters.biome && biomeGroups.includes(filters.biome) ? filters.biome : null;
-  const filterSlot  = filters.slot;
-  const filterTier  = filters.tier !== null && tiers.length > 1 && tiers.includes(filters.tier) ? filters.tier : null;
-  const isFiltered  = filterBiome !== null || filterSlot !== null || filterTier !== null;
-
-  const filtered = useMemo(() => items.filter(def =>
-    (!filterBiome || def.biomeGroup === filterBiome) &&
-    (!filterSlot  || def.slot       === filterSlot)  &&
-    (!filterTier  || def.tier       === filterTier),
-  ), [items, filterBiome, filterSlot, filterTier]);
-
-  const setFilterBiome = (biome: string | null) => setFilters(f => ({ ...f, biome }));
-  const setFilterSlot  = (slot: string | null)  => setFilters(f => ({ ...f, slot }));
-  const setFilterTier  = (tier: number | null)  => setFilters(f => ({ ...f, tier }));
-  const toggleBiome = (g: string) => setFilterBiome(filterBiome === g ? null : g);
-  const toggleSlot  = (s: string) => setFilterSlot(filterSlot === s ? null : s);
-  const toggleTier  = (t: number) => setFilterTier(filterTier === t ? null : t);
+  const selected = items.find((def) => def.id === selectedId) ?? items[0] ?? null;
 
   return (
-    <div className="craft-body">
+    <div className="craft-body craft-body--browser">
       <WalletSummary essences={essences} catalysts={catalysts} />
+      <BrowserPane
+        label="Upgradeable items"
+        className="upgrade-browser"
+        items={items}
+        itemKey={(def) => def.id}
+        selectedKey={selected?.id ?? null}
+        onSelect={setSelectedId}
+        groupOf={(def) => (equippedSet.has(def.id) ? 'Equipped' : 'In your bag')}
+        emptyList="No upgradeable items. Craft or equip gear first."
+        renderItem={(def) => {
+          const { currentPlus, canUpgrade } = stepFor(def);
+          return (
+            <span className={`upgrade-row${canUpgrade ? '' : ' upgrade-row--blocked'}`}>
+              <span
+                className="upgrade-row__icon"
+                style={{ borderColor: `${tierColor(def.tier)}77`, background: `${tierColor(def.tier)}0d` }}
+              >
+                {def.icon
+                  ? <ItemIcon frameName={def.icon} />
+                  : SLOT_LABELS[def.slot]?.slice(0, 3).toUpperCase()}
+              </span>
+              <span className="upgrade-row__main">
+                <span className="upgrade-row__name">{def.name}</span>
+                <span className="upgrade-row__meta">{SLOT_LABELS[def.slot] ?? def.slot} · T{def.tier}</span>
+              </span>
+              {currentPlus > 0 && <span className="craft-upgrade__level">+{currentPlus}</span>}
+              <span
+                className={`upgrade-row__dot${canUpgrade ? ' upgrade-row__dot--ready' : ''}`}
+                title={canUpgrade ? 'Ready to upgrade' : 'Not ready'}
+                aria-label={canUpgrade ? 'Ready to upgrade' : 'Not ready'}
+              />
+            </span>
+          );
+        }}
+        renderDetail={(def) => {
+          const slot          = def.slot as EquipmentSlot;
+          const { currentPlus, haveLevel, isMaxed, canUpgrade } = stepFor(def);
+          const gmCeiling     = isTestRoom ? getMaxUpgrade(def) : upgradeCeilingFromGlobalMastery(gm, def.tier);
+          const gmLocked      = !isTestRoom && !isMaxed && currentPlus + 1 > gmCeiling;
+          const diff          = isMaxed ? [] : computeUpgradeDiff(def, currentPlus);
+          const reqLevel      = requiredBiomeLevelForUpgrade(def, currentPlus + 1);
+          const reqMastery    = globalMasteryRequiredForUpgrade(def.tier, currentPlus + 1);
+          const levelMet      = isTestRoom || haveLevel >= reqLevel;
+          const masteryMet    = isTestRoom || gm >= reqMastery;
+          const cost          = upgradeCostFor(def, currentPlus + 1);
+          const catalystCost  = upgradeCatalystCostFor(def, currentPlus + 1);
+          const cardResult    = result?.itemId === def.id ? result : null;
 
-      {/* Filters */}
-      {items.length > 0 && (
-        <div className="craft-filters">
-          <div className="craft-filter-row">
-            <button
-              className={`craft-filter-chip${!filterBiome ? ' craft-filter-chip--active' : ''}`}
-              onClick={() => setFilterBiome(null)}
-            >All</button>
-            {biomeGroups.map(g => (
-              <button
-                key={g}
-                className={`craft-filter-chip${filterBiome === g ? ' craft-filter-chip--active' : ''}`}
-                onClick={() => toggleBiome(g)}
-              >{biomeName(g)}</button>
-            ))}
-          </div>
-          <div className="craft-filter-row">
-            <button
-              className={`craft-filter-chip${!filterSlot ? ' craft-filter-chip--active' : ''}`}
-              onClick={() => setFilterSlot(null)}
-            >All Slots</button>
-            {(['weapon', 'armor', 'recovery', 'mobility'] as const).map(s => (
-              <button
-                key={s}
-                className={`craft-filter-chip craft-filter-chip--slot${filterSlot === s ? ' craft-filter-chip--active' : ''}`}
-                data-slot={s}
-                onClick={() => toggleSlot(s)}
-              >{SLOT_LABELS[s]}</button>
-            ))}
-            <button
-              className="craft-filter-chip craft-filter-chip--clear"
-              disabled={!isFiltered}
-              onClick={() => setFilters(EMPTY_GEAR_FILTERS)}
-            >Clear filters</button>
-          </div>
-          {tiers.length > 1 && (
-            <div className="craft-filter-row">
-              <button
-                className={`craft-filter-chip${!filterTier ? ' craft-filter-chip--active' : ''}`}
-                onClick={() => setFilterTier(null)}
-              >All Tiers</button>
-              {tiers.map(t => (
-                <button
-                  key={t}
-                  className={`craft-filter-chip craft-filter-chip--tier${filterTier === t ? ' craft-filter-chip--active' : ''}`}
-                  style={filterTier === t
-                    ? { color: tierColor(t), borderColor: `${tierColor(t)}aa`, background: `${tierColor(t)}18` }
-                    : { color: `${tierColor(t)}bb` }
-                  }
-                  onClick={() => toggleTier(t)}
-                >T{t}</button>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-
-      {items.length === 0 ? (
-        <div className="craft-empty">No upgradeable items. Craft or equip gear first.</div>
-      ) : filtered.length === 0 ? (
-        <div className="craft-empty">No items match the current filter.</div>
-      ) : (
-        <div className="craft-list">
-          {filtered.map(def => {
-            const slot        = def.slot as EquipmentSlot;
-            const currentPlus = itemUpgrades[def.id] ?? 0;
-            const structuralMax = getMaxUpgrade(def);
-            const gmCeiling   = isTestRoom ? structuralMax : upgradeCeilingFromGlobalMastery(gm, def.tier);
-            const isMaxed     = currentPlus >= structuralMax;
-            const gmLocked    = !isTestRoom && !isMaxed && currentPlus + 1 > gmCeiling;
-            const diff        = isMaxed ? [] : computeUpgradeDiff(def, currentPlus);
-
-            const reqLevel    = requiredBiomeLevelForUpgrade(def, currentPlus + 1);
-            const reqMastery  = globalMasteryRequiredForUpgrade(def.tier, currentPlus + 1);
-            const haveLevel   = def.biomeGroup ? (biomeLevel[def.biomeGroup] ?? 0) : 0;
-            const levelMet    = isTestRoom || haveLevel >= reqLevel;
-            const masteryMet  = isTestRoom || gm >= reqMastery;
-            const cost        = upgradeCostFor(def, currentPlus + 1);
-            const catalystCost = upgradeCatalystCostFor(def, currentPlus + 1);
-            const check       = checkUpgrade({ item: def, currentPlus, biomeLevel: haveLevel, essences, catalysts, globalMastery: gm });
-            const canUpgrade  = !isMaxed && (isTestRoom || check.ok);
-
-            const cardResult = result?.itemId === def.id ? result : null;
-
-            const equipped = equippedSet.has(def.id);
-
-            return (
+          return (
+            <div className="upgrade-detail">
               <div
-                key={def.id}
-                className={[
-                  'craft-recipe',
-                  'craft-upgrade',
-                  isMaxed ? 'craft-upgrade--maxed' : '',
-                  cardResult?.success ? 'craft-upgrade--revealing' : '',
-                  // Equipped gear is what an upgrade actually changes about your
-                  // character right now, so the card says so with its whole
-                  // frame rather than with one grey chip among four badges.
-                  equipped ? 'craft-upgrade--equipped' : '',
-                ].filter(Boolean).join(' ')}
+                className={`craft-upgrade upgrade-detail__head${cardResult?.success ? ' craft-upgrade--revealing' : ''}`}
                 style={{ '--upgrade-reveal-tone': tierColor(def.tier) } as CSSProperties}
               >
                 {cardResult?.success && (
                   <UpgradeReveal key={cardResult.id} item={def} result={cardResult} />
                 )}
-                {cardResult && !cardResult.success && (
-                  <div className="craft-card-result craft-card-result--err">
-                    <span className="craft-card-result__icon">✗</span>
-                    <span className="craft-card-result__text">
-                      {cardResult.reason ?? 'Upgrade failed'}
-                    </span>
-                  </div>
-                )}
-
-                <div
+                <span
                   className="craft-recipe__icon"
                   data-slot={slot}
-                  style={{
-                    borderColor: `${tierColor(def.tier)}77`,
-                    background:  `${tierColor(def.tier)}0d`,
-                    color:       `${tierColor(def.tier)}cc`,
-                  }}
+                  style={{ borderColor: `${tierColor(def.tier)}77`, background: `${tierColor(def.tier)}0d` }}
                 >
-                  {def.icon
-                    ? <ItemIcon frameName={def.icon} />
-                    : SLOT_LABELS[slot]?.slice(0, 3).toUpperCase()}
-                </div>
-
-                <div className="craft-recipe__content">
-                  <div className="craft-recipe__header">
-                    <span className="craft-recipe__name">{def.name}</span>
+                  {def.icon ? <ItemIcon frameName={def.icon} /> : SLOT_LABELS[slot]?.slice(0, 3).toUpperCase()}
+                </span>
+                <span className="upgrade-detail__title">
+                  <span className="craft-recipe__name">
+                    {def.name}
                     {currentPlus > 0 && <span className="craft-upgrade__level">+{currentPlus}</span>}
-                    <span className="craft-recipe__slot-badge" data-slot={slot}>{SLOT_LABELS[slot] ?? slot}</span>
-                    <span className="craft-recipe__tier-badge">T{def.tier}</span>
-                    {equipped && (
-                      <span className="craft-recipe__equipped-badge">
-                        <span className="craft-recipe__equipped-dot" aria-hidden="true" />
-                        EQUIPPED
+                  </span>
+                  <span className="upgrade-row__meta">
+                    {SLOT_LABELS[slot] ?? slot} · T{def.tier}{equippedSet.has(def.id) ? ' · Equipped' : ''}
+                  </span>
+                </span>
+              </div>
+
+              {cardResult && !cardResult.success && (
+                <div className="craft-card-result craft-card-result--err">
+                  <span className="craft-card-result__icon">✗</span>
+                  <span className="craft-card-result__text">{cardResult.reason ?? 'Upgrade failed'}</span>
+                </div>
+              )}
+
+              {isMaxed ? (
+                <div className="craft-upgrade__diff craft-upgrade__diff--maxed">
+                  <span className="craft-upgrade__max">MAX +{getMaxUpgrade(def)}</span>
+                </div>
+              ) : diff.length > 0 && (
+                <div className="craft-upgrade__diff">
+                  <span className="craft-upgrade__diff-title">+{currentPlus + 1}</span>
+                  {diff.map((row, i) => (
+                    <div
+                      key={i}
+                      className={`craft-upgrade__diff-row craft-upgrade__diff-row--${row.up ? 'up' : 'down'}`}
+                    >
+                      <span className="craft-upgrade__diff-label">{row.label}</span>
+                      <span className="craft-upgrade__diff-from">{row.from}</span>
+                      <span className="craft-upgrade__diff-arrow">→</span>
+                      <span className="craft-upgrade__diff-to">{row.to}</span>
+                      {row.delta && <span className="craft-upgrade__diff-delta">{row.delta}</span>}
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {!isMaxed && (
+                <>
+                  <div className="make-detail__cost-label">Cost</div>
+                  {cost && (
+                    <CostDisplay cost={cost} essences={essences} catalystCost={catalystCost ?? undefined} catalysts={catalysts} />
+                  )}
+                  <div className="upgrade-detail__reqs">
+                    <span className={`craft-upgrade__req${levelMet ? ' craft-upgrade__req--ok' : ' craft-upgrade__req--bad'}`}>
+                      {isTestRoom
+                        ? 'Test room bypass'
+                        : `${biomeName(def.biomeGroup!)} Lv ${reqLevel}${!levelMet ? ` (have ${haveLevel})` : ''}`}
+                    </span>
+                    {!isTestRoom && (
+                      <span className={`craft-upgrade__req${masteryMet ? ' craft-upgrade__req--ok' : ' craft-upgrade__req--bad'}`}>
+                        GM {reqMastery}{!masteryMet ? ` (have ${gm})` : ''}
                       </span>
                     )}
                   </div>
-
-                  {isMaxed ? (
-                    <div className="craft-upgrade__diff craft-upgrade__diff--maxed">
-                      <span className="craft-upgrade__max">MAX +{getMaxUpgrade(def)}</span>
-                    </div>
-                  ) : diff.length > 0 ? (
-                    <div className="craft-upgrade__diff">
-                      <span className="craft-upgrade__diff-title">+{currentPlus + 1}</span>
-                      {diff.map((row, i) => (
-                        <div
-                          key={i}
-                          className={`craft-upgrade__diff-row craft-upgrade__diff-row--${row.up ? 'up' : 'down'}`}
-                        >
-                          <span className="craft-upgrade__diff-label">{row.label}</span>
-                          <span className="craft-upgrade__diff-from">{row.from}</span>
-                          <span className="craft-upgrade__diff-arrow">→</span>
-                          <span className="craft-upgrade__diff-to">{row.to}</span>
-                          {row.delta && (
-                            <span className="craft-upgrade__diff-delta">{row.delta}</span>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  ) : null}
-
-                  {!isMaxed && cost && (
-                    <CostDisplay cost={cost} essences={essences} catalystCost={catalystCost ?? undefined} catalysts={catalysts} />
-                  )}
-
-                  {!isMaxed && (
-                    <div className="craft-recipe__footer">
-                      <span className={`craft-upgrade__req${levelMet ? ' craft-upgrade__req--ok' : ' craft-upgrade__req--bad'}`}>
-                        {isTestRoom
-                          ? 'Test room bypass'
-                          : `${biomeName(def.biomeGroup!)} Lv ${reqLevel}${!levelMet ? ` (have ${haveLevel})` : ''}`}
-                      </span>
-                      {!isTestRoom && (
-                        <span className={`craft-upgrade__req${masteryMet ? ' craft-upgrade__req--ok' : ' craft-upgrade__req--bad'}`}>
-                          GM {reqMastery}{!masteryMet ? ` (have ${gm})` : ''}
-                        </span>
-                      )}
-                      <button
-                        className="craft-recipe__btn"
-                        disabled={!canUpgrade || cardResult?.success === true}
-                        onClick={() => {
-                          if (canUpgrade && cardResult?.success !== true) {
-                            hudBus.requestUpgradeItem(def.id);
-                          }
-                        }}
-                      >
-                        {canUpgrade
-                          ? `Upgrade +${currentPlus + 1}`
-                          : gmLocked ? 'Mastery Locked' : !levelMet ? 'Locked' : 'Insufficient'}
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
+                  <button
+                    type="button"
+                    className="craft-recipe__btn upgrade-detail__btn"
+                    disabled={!canUpgrade || cardResult?.success === true}
+                    onClick={() => {
+                      if (canUpgrade && cardResult?.success !== true) hudBus.requestUpgradeItem(def.id);
+                    }}
+                  >
+                    {canUpgrade
+                      ? `Upgrade to +${currentPlus + 1}`
+                      : gmLocked ? 'Mastery Locked' : !levelMet ? 'Locked' : 'Insufficient'}
+                  </button>
+                </>
+              )}
+            </div>
+          );
+        }}
+      />
     </div>
   );
 }
