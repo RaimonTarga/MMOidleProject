@@ -654,8 +654,13 @@ function addEmpoweredDamage(
     ));
     return;
   }
+  // One multiplier per hit: a rider landing on the class's empowered hit scales
+  // the hit as it was before the empowered multiplier, so the two add instead of
+  // compounding (Charge wired to Empowered Ready was a x2 outlier).
+  const empoweredMult = ctx.metadata["empoweredAttack"] ? Number(ctx.metadata["empoweredMultiplier"] ?? 1) : 1;
+  const basis = empoweredMult > 1 ? formationBasis / empoweredMult : formationBasis;
   ctx.damage = Math.max(0, Math.round(
-    ctx.damage + formationBasis * Math.max(0, mult - 1),
+    ctx.damage + basis * Math.max(0, mult - 1),
   ));
 }
 

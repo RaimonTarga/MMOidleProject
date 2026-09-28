@@ -1,7 +1,7 @@
 import { resolveFinalDamageMultipliers } from '../systems/finalDamage';
 import { resolveLaserProfile } from '../systems/laserProfile';
 import type { EquipmentMap, EssenceType } from "../items";
-import type { HasAutoIntent, HasEmote, HasStatus, PartyMember, TargetStatusView, UltimateStatus } from "../components";
+import type { HasAutoIntent, HasEmote, HasStatus, PartyMember, TargetStatusView } from "../components";
 import type { PassiveMap } from "../passives";
 import { isRangedCombatant, type SubVariant } from "../skillTree";
 import type { MonsterBehavior } from "../data/monsters/behavior";
@@ -274,8 +274,6 @@ export interface MonsterView {
   bossWeather?: HasStatus['bossWeather'];
   enemyBarrier?: NonNullable<HasStatus['enemyBarrier']>;
   targetStatus?: TargetStatusView[];
-  ultimateStatus?: UltimateStatus;
-  throneHealing?: boolean;
   /** Set while the monster is burrowed / in cover: untargetable, and drawn as such. */
   concealed?: 'burrow' | 'stealth';
   hardControlled?: boolean;
@@ -546,8 +544,6 @@ export function composeMonsterView(
     bossWeather: entity.hasStatus?.bossWeather,
     enemyBarrier: entity.hasStatus?.enemyBarrier,
     targetStatus: entity.hasStatus?.targetStatus,
-    ultimateStatus: entity.hasStatus?.ultimateStatus,
-    throneHealing: entity.hasStatus?.throneHealing,
     concealed: entity.hasStatus?.concealed,
     hardControlled: entity.hasStatus?.hardControlled,
     charging: entity.hasStatus?.charging,

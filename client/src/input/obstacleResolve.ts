@@ -6,15 +6,10 @@ import {
   type Vec2,
 } from '@mmo-idle/shared';
 import type { RenderState } from '../render/state';
-import { ABYSSAL_THRONE_FEATURE_ID, isVoidThroneUnblocked } from '../scenes/game/voidThrone';
 import type { GameScene } from '../scenes/GameScene';
 
 export function getOwnBlockShapes(scene: GameScene): NodeFeatureShape[] {
-  const suppressed = new Set<string>();
-  if (isVoidThroneUnblocked(scene)) {
-    suppressed.add(ABYSSAL_THRONE_FEATURE_ID);
-  }
-  return blockShapesForMover(scene.state.ownNodeId, 'player', suppressed);
+  return blockShapesForMover(scene.state.ownNodeId, 'player', new Set<string>());
 }
 
 export function getOwnMovePad(state: RenderState): Vec2 {

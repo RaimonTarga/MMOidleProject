@@ -42,7 +42,6 @@ import type {
   InParty,
   IsBossEngaged,
   IsChanneling,
-  IsEncounterAdd,
   IsNodeFeatureSpawn,
   IsRaised,
   IsInvulnerable,
@@ -52,7 +51,6 @@ import type {
   IsMoving,
   IsPlayer,
   IsRooted,
-  IsUltimateEngaged,
   MitigatesDamage,
   OverridesStance,
   QueuesAbilities,
@@ -60,7 +58,6 @@ import type {
   RecoversFromPattern,
   RunsBossPattern,
   ScriptsBoss,
-  ScriptsUltimate,
   SummonsMinions,
   TracksCombat,
   TracksProgression,
@@ -319,9 +316,7 @@ export interface ServerEntity {
    * cooldown, which is invisible and does not stop the boss doing other things.
    */
   recoversFromPattern?: RecoversFromPattern;
-  scriptsUltimate?: ScriptsUltimate;
   isBossEngaged?: IsBossEngaged;
-  isEncounterAdd?: IsEncounterAdd;
   isNodeFeatureSpawn?: IsNodeFeatureSpawn;
   isRaised?: IsRaised;
   isInvulnerable?: IsInvulnerable;
@@ -330,7 +325,6 @@ export interface ServerEntity {
    * from `isInvulnerable`, which stays targetable — see `IsConcealed`.
    */
   isConcealed?: IsConcealed;
-  isUltimateEngaged?: IsUltimateEngaged;
   tracksDungeon?: TracksDungeon;
 
   // ── Player (S8) ───────────────────────────────────────────────

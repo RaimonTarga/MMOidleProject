@@ -5,7 +5,7 @@ import type { HitboxDef } from '@mmo-idle/shared';
 import type * as schema from '../db/schema';
 import type { HitboxRow } from '../db/hitboxRepo';
 import { loadHitboxCache, replaceAllHitboxes } from '../db/hitboxRepo';
-import { getAtlasPaths, getVoidOverlordPaths } from './paths';
+import { getAtlasPaths } from './paths';
 
 type DB = NodePgDatabase<typeof schema>;
 
@@ -44,23 +44,16 @@ async function bakeHitboxRows(
   const { createHash } = await import('crypto');
   const {
     bakeSpriteHitboxes,
-    bakeVoidOverlordHitboxes,
     sha256File,
     writeShadowDefsFile,
   } = await import('./bake/index');
 
   const mainHash = sha256File(atlasPngPath);
-  const voidPaths = getVoidOverlordPaths();
-  const voidHash = sha256File(voidPaths.png);
-  const atlasHash = createHash('sha256')
-    .update(mainHash)
-    .update(voidHash)
-    .digest('hex');
+  const atlasHash = createHash('sha256').update(mainHash).digest('hex');
 
   const main = await bakeSpriteHitboxes(atlasPngPath, atlasJsonPath);
-  const voidBaked = await bakeVoidOverlordHitboxes(voidPaths.png);
-  const rows = [...main.rows, ...voidBaked.rows];
-  const shadowDefs = { ...main.shadowDefs, ...voidBaked.shadowDefs };
+  const rows = main.rows;
+  const shadowDefs = main.shadowDefs;
 
   writeShadowDefsFile(atlasJsonPath, atlasHash, shadowDefs);
 

@@ -1,4 +1,5 @@
 import { outgoingFinalDamage } from './finalDamage';
+import { mitigatePlayerTickOnMonster } from './monsterTickMitigation';
 import { TEST_ROOM_NODE_ID } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
@@ -6,7 +7,6 @@ import { grantMonsterRewards } from '../../player/progression/rewards';
 import { isInvulnerableMonster } from '../invulnerability';
 import { renewPackPursuit, setAggroTarget } from '../ai/targeting';
 import { markEngaged } from '../ai/engagement';
-import { markUltimateContributor } from '../ai/ultimateContributors';
 import { recordWorldLogEvent } from '../../../world/worldLog';
 import {
   actorFromMonster,
@@ -46,7 +46,7 @@ export function applyPlayerProcDamage(
 
   const hpDamage = Math.max(
     1,
-    applyMonsterDamageTakenDebuffs(target.tracksCombat, outgoingFinalDamage(world, player.isPlayer.id, damage)),
+    applyMonsterDamageTakenDebuffs(target.tracksCombat, outgoingFinalDamage(world, player.isPlayer.id, mitigatePlayerTickOnMonster(target, damage, 'proc'))),
   );
   const nodeId = player.hasPosition.nodeId;
   const playerId = player.isPlayer.id;
@@ -65,7 +65,6 @@ export function applyPlayerProcDamage(
 
   target.hasHealth.hp -= hpDamage;
   renewPackPursuit(world, target, { id: playerId, kind: 'player' });
-  markUltimateContributor(world, target, playerId);
 
   if (
     target.isMonster.isBoss &&

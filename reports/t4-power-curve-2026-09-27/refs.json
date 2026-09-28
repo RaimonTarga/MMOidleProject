@@ -1,0 +1,176 @@
+{
+ "squire": {
+  "spec": "balanced-a",
+  "t4gear": {
+   "weapon": "mountain-warmaul",
+   "armor": "mountain-vest-t4",
+   "recovery": "mountain-charm-t4",
+   "mobility": "mountain-boots-t4",
+   "core": "core-duelist",
+   "relic": "relic-equilibrium-shard"
+  },
+  "t3gear": {
+   "weapon": "mountain-avalanche-maul",
+   "armor": "mountain-vest-t3",
+   "recovery": "mountain-charm-t3",
+   "mobility": "mountain-boots-t3",
+   "core": "core-duelist"
+  },
+  "t4abil": {
+   "techniques": [
+    "power-strike",
+    "expose-weakness"
+   ],
+   "guards": [
+    "second-wind",
+    "brace",
+    "cleanse"
+   ]
+  }
+ },
+ "striker": {
+  "spec": "balanced-a",
+  "t4gear": {
+   "weapon": "desert-sunmonk-warstaff",
+   "armor": "mountain-vest-t4",
+   "recovery": "mountain-charm-t4",
+   "mobility": "mountain-boots-t4",
+   "core": "core-duelist",
+   "relic": "relic-equilibrium-shard"
+  },
+  "t3gear": {
+   "weapon": "mountain-avalanche-maul",
+   "armor": "mountain-vest-t3",
+   "recovery": "mountain-charm-t3",
+   "mobility": "mountain-boots-t3",
+   "core": "core-duelist"
+  },
+  "t4abil": {
+   "techniques": [
+    "power-strike",
+    "expose-weakness"
+   ],
+   "guards": [
+    "second-wind",
+    "brace",
+    "cleanse"
+   ]
+  }
+ },
+ "apprentice": {
+  "spec": "light-b",
+  "t4gear": {
+   "weapon": "graveyard-plague-axe",
+   "armor": "jungle-vest-t4",
+   "recovery": "mountain-charm-t4",
+   "mobility": "mountain-boots-t4",
+   "core": "core-accelerant",
+   "relic": "relic-equilibrium-shard"
+  },
+  "t3gear": {
+   "weapon": "tundra-rimebrand",
+   "armor": "jungle-vest-t3",
+   "recovery": "mountain-charm-t3",
+   "mobility": "mountain-boots-t3",
+   "core": "core-accelerant"
+  },
+  "t4abil": {
+   "techniques": [
+    "power-strike",
+    "expose-weakness"
+   ],
+   "guards": [
+    "second-wind",
+    "brace",
+    "cleanse"
+   ]
+  }
+ },
+ "slinger": {
+  "spec": "heavy-c",
+  "t4gear": {
+   "weapon": "tundra-glacial-rimebrand",
+   "armor": "jungle-vest-t4",
+   "recovery": "mountain-charm-t4",
+   "mobility": "mountain-boots-t4",
+   "core": "core-tempered",
+   "relic": "relic-colossus-heart"
+  },
+  "t3gear": {
+   "weapon": "tundra-rimebrand",
+   "armor": "jungle-vest-t3",
+   "recovery": "mountain-charm-t3",
+   "mobility": "mountain-boots-t3",
+   "core": "core-tempered"
+  },
+  "t4abil": {
+   "techniques": [
+    "power-strike",
+    "expose-weakness"
+   ],
+   "guards": [
+    "second-wind",
+    "brace",
+    "cleanse"
+   ]
+  }
+ },
+ "spirit": {
+  "spec": "balanced-b",
+  "t4gear": {
+   "weapon": "desert-sunmonk-warstaff",
+   "armor": "jungle-vest-t4",
+   "recovery": "mountain-charm-t4",
+   "mobility": "mountain-boots-t4",
+   "core": "core-tempered",
+   "relic": "relic-equilibrium-shard"
+  },
+  "t3gear": {
+   "weapon": "tundra-rimebrand",
+   "armor": "jungle-vest-t3",
+   "recovery": "mountain-charm-t3",
+   "mobility": "mountain-boots-t3",
+   "core": "core-tempered"
+  },
+  "t4abil": {
+   "techniques": [
+    "power-strike",
+    "expose-weakness"
+   ],
+   "guards": [
+    "second-wind",
+    "brace",
+    "cleanse"
+   ]
+  }
+ },
+ "conduit": {
+  "spec": "balanced-a",
+  "t4gear": {
+   "weapon": "jungle-deathfang-rapier",
+   "armor": "mountain-vest-t4",
+   "recovery": "mountain-charm-t4",
+   "mobility": "mountain-boots-t4",
+   "core": "core-survivalist",
+   "relic": "relic-equilibrium-shard"
+  },
+  "t3gear": {
+   "weapon": "tundra-rimebrand",
+   "armor": "mountain-vest-t3",
+   "recovery": "mountain-charm-t3",
+   "mobility": "mountain-boots-t3",
+   "core": "core-survivalist"
+  },
+  "t4abil": {
+   "techniques": [
+    "power-strike",
+    "expose-weakness"
+   ],
+   "guards": [
+    "second-wind",
+    "brace",
+    "cleanse"
+   ]
+  }
+ }
+}

@@ -10,7 +10,7 @@ import cors from "cors";
 import compression from "compression";
 import path from "path";
 
-import { World, type PersistedBossRespawn } from "./world/World";
+import { World } from "./world/World";
 import { takeWorldLogEvents } from "./world/worldLog";
 import { HumanPlaytestRecorderManager } from "./playtest/humanPlaytestRecorder";
 import {
@@ -40,11 +40,6 @@ import type {
   ProcessTelemetry,
 } from "@mmo-idle/shared";
 import { db, runMigrations } from "./db/index";
-import {
-  readWorldState,
-  writeWorldState,
-  clearWorldState,
-} from "./db/worldStateRepo";
 import {
   hydrateHitboxCacheFromArtifact,
   hydrateHitboxCacheFromDb,
@@ -201,36 +196,6 @@ function accountIdForSocket(socketId: string): string | undefined {
   return sessionsBySocket.get(socketId)?.accountId;
 }
 
-/** Server-global key for the persisted Void Overlord respawn cooldown. */
-const OVERLORD_RESPAWN_KEY = "void-overlord-respawn";
-
-/**
- * Re-seed the in-memory Void Overlord respawn cooldown from the DB on boot so a
- * server restart (or any node despawn) does not bring the overlord back early.
- * Drops the record if the cooldown already elapsed while the server was down.
- */
-async function restoreOverlordRespawn(world: World): Promise<void> {
-  const raw = await readWorldState(db, OVERLORD_RESPAWN_KEY);
-  if (!raw) return;
-
-  let saved: PersistedBossRespawn;
-  try {
-    saved = JSON.parse(raw) as PersistedBossRespawn;
-  } catch {
-    await clearWorldState(db, OVERLORD_RESPAWN_KEY);
-    return;
-  }
-
-  if (saved.respawnAt <= Date.now()) {
-    await clearWorldState(db, OVERLORD_RESPAWN_KEY);
-    return;
-  }
-
-  const { nodeId, ...marker } = saved;
-  world.bossRespawnAt.set(nodeId, marker.respawnAt);
-  world.bossRespawnMarkers.set(nodeId, marker);
-}
-
 async function boot(): Promise<void> {
   await runMigrations();
   await runLogMigrations();
@@ -303,15 +268,6 @@ async function boot(): Promise<void> {
     io.sockets.sockets.get(playerId)?.emit("node:preparing", { nodeId });
   };
 
-  world.overlordRespawnPersist = (marker) => {
-    const op = marker
-      ? writeWorldState(db, OVERLORD_RESPAWN_KEY, JSON.stringify(marker))
-      : clearWorldState(db, OVERLORD_RESPAWN_KEY);
-    void op.catch((err) =>
-      log.error({ err }, "overlord respawn persist failed"),
-    );
-  };
-  await restoreOverlordRespawn(world);
 
   const emitBossFelledState = () => {
     io.emit("world:bossFelled", world.buildBossFelledSnapshot());
@@ -536,10 +492,6 @@ async function boot(): Promise<void> {
           ?.emit("player:ascended", p.tracksProgression.currentSkillTier);
     }
     world.pendingAscensions = [];
-    for (const playerId of world.pendingOverlordFelled) {
-      io.sockets.sockets.get(playerId)?.emit("overlord:felled");
-    }
-    world.pendingOverlordFelled = [];
   }, LOGIC_MS);
 
   // Broadcast tick — 5 Hz. Sends authoritative component deltas to each player.

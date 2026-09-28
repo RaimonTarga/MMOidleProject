@@ -171,6 +171,11 @@ Component naming uses verb phrases: `HasHealth`, `UsesSkills`, `TracksCombat`,
 - `TracksCombat` is server-only scratch state: counters, resources, cooldowns,
   flags, strings, status effects. Use helper APIs, not raw map spelunking.
 - Status effect `data` is `Record<string, number>` only.
+- DoT ticks and player procs skip plating and pay `GAME_CONFIG.DOT_DR_SHARE` (half) of the
+  target's DR, both directions; monster `dotResistance` stacks on top (`mitigatePlayerTickOnMonster`).
+- One multiplier per hit: a Technique rider landing on an empowered hit scales the hit as it
+  was before the empowered multiplier (mechanics that apply their own record it in
+  `ctx.metadata.empoweredMultiplier`).
 - Archetype runtime state lives on archetype slices, not in `TracksCombat`.
 
 Current class roots include cadence, cooldown, dot, reload, energy, and summoner.
@@ -199,8 +204,7 @@ Important formula conventions:
   assume a rectangular grid; use the registry and region definitions.
 - Node freeze/thaw makes monsters ephemeral. Never persist monster combat state,
   aggro, movement, boss runtime state, status effects, or minions.
-- Boss respawn markers are runtime/client-facing; the Void Overlord cooldown is
-  persisted through `worldStateRepo`.
+- Boss respawn markers are runtime/client-facing and not persisted.
 - Player persistence is component-shaped JSON columns in Postgres. Persisted slices
   include player identity/progression/inventory/skills/position/health; runtime slices
   and passives are rebuilt on attach/recalc.
@@ -243,7 +247,7 @@ Player server-to-client highlights:
 - `account:characters`, `character:createResult`, `character:deleteResult`,
   `character:selectResult`
 - `crafting:result`, `inventory:upgradeResult`
-- `player:died`, `player:ascended`, `overlord:felled`
+- `player:died`, `player:ascended`
 - `world:events`, `world:bossFelled`
 - `session:kicked`
 

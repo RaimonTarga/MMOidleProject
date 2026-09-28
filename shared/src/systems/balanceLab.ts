@@ -608,7 +608,7 @@ function damageType(monster: MonsterDefinition): BalanceLabDamageType {
 }
 
 function monsterRole(monster: MonsterDefinition): string {
-  if (monster.isBoss) return monster.ultimateEncounter ? 'Ultimate' : 'Boss';
+  if (monster.isBoss) return 'Boss';
   if (monsterDotDps(monster) > monster.stats.attack * aps(monster)) return 'DoT';
   if (monster.aoeAttack) return 'AoE';
   if (monster.behavior === 'ranged' || monster.behavior === 'kiter') return 'Ranged';

@@ -140,7 +140,6 @@ export function spawnBenchPlayers(
     syncArchetypeSlices(world, entity);
     Object.assign(entity.usesAutocombat, DEFAULT_AUTOCOMBAT_CONFIG, {
       auto: scenario.autoCombat,
-      engageUltimateBosses: true,
     });
   }
 }

@@ -98,7 +98,7 @@ const vents = (a: ReturnType<typeof arena>) => (a.world.groundZones.get(a.nodeId
     pin(a.player, spot);
     a.boss.hasHealth.hp = Math.max(a.boss.hasHealth.hp, floor);
     return a.player.hasHealth.hp < hp;
-  }, 25_000);
+  }, 45_000); // the cast is 42 s since 2026-09-27
   assert(landed, 'the Final Eruption lands through full evasion');
   assert(!(a.boss.hasStatus.bossEffects ?? []).includes('final-eruption'), 'and its tile clears once it resolves');
 }

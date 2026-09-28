@@ -277,7 +277,6 @@ updateRuneDerivedConfig(world, now);   // stamps rune-derived flags read later t
 tickAllMechanics(world, dt, now);      // class registry: cooldown → energy → reload → dot → cadence
 updateWeaponEffects(world, dt);
 updateBossScripts(world, dt);
-updateUltimateEncounters(world, dt);
 updatePartyFollow(world, now);
 updateAutoTraverse(world);
 updateAutoTargets(world, now);
@@ -452,7 +451,7 @@ client/src/
     interpolation.ts effectOverlays.ts combatFx.ts
     players.ts monsters.ts destroy.ts
     castBars.ts dungeonHazards.ts minions.ts movementEffects.ts
-    nodeGates.ts thoughtBubbles.ts ultimateBossSprites.ts depth.ts
+    nodeGates.ts thoughtBubbles.ts depth.ts
   fx/                         ← one file per attack style
   input/                      ← clickToMove, autoPath, keyboard, debug
   audio/                      ← sound engine

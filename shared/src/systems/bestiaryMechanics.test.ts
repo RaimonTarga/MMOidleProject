@@ -63,7 +63,6 @@ for (const def of playable) {
   if (def.bossPattern) expectedIds.push(`boss-pattern-${def.bossPattern.id}`);
   for (const [index] of (def.bossScript?.phases ?? []).entries()) expectedIds.push(`boss-phase-${index}-${def.bossScript?.phases?.[index].hpPct}`);
   for (const [index] of (def.bossScript?.repeating ?? []).entries()) expectedIds.push(`boss-repeat-${index}`);
-  if (def.ultimateEncounter) expectedIds.push('ultimate-encounter');
 
   for (const id of expectedIds) {
     if (!ids.has(id)) missingAbilityCoverage.push(`${def.id}/${id}`);

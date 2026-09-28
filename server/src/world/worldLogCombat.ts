@@ -5,7 +5,6 @@ import type {
 } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../ecs/entity';
 import type { World } from './World';
-import { markUltimateContributor } from '../systems/combat/ai/ultimateContributors';
 import { recordWorldLogEvent } from './worldLog';
 import {
   actorFromMonster,
@@ -74,7 +73,6 @@ export function recordMonsterDamagedByPlayer(
   mitigation?: DamageMitigationBreakdown,
   tags?: string[],
 ): void {
-  markUltimateContributor(world, monster, ownerPlayerId);
   recordWorldLogEvent(
     world,
     {

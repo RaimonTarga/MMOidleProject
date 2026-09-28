@@ -14,7 +14,7 @@ already told you to look at.
 - Reference players are tier 4 (a player of tier P fights biome tier P-1); **no tier-5 gear authored yet, best-available T4 used as the reference**. Defensive stats are averaged over spec-agnostic class builds × armor × recovery.
 - Reference player DPS uses shared `estimatePlayerDps` across concrete class builds, including full Conduit formations. T3 specialization, abilities, target-state mechanics, and shields/soft-caps remain outside this planning TTK; cross-check the detailed DPS packet for spec-level clear speed.
 - TTL = player maxHP ÷ incoming DPS with **no player recovery** (that lives in the eHP packet). Incoming DPS folds plating/DR/averaged evasion; player DoT-resistance is not applied here.
-- Not a combat simulator: no movement, kiting, real AoE target count, AI, or party effects. 28 mobs; tier avg HP 1788, avg total DPS 104.
+- Not a combat simulator: no movement, kiting, real AoE target count, AI, or party effects. 28 mobs; tier avg HP 7609, avg total DPS 67.1.
 
 ## The Walk
 
@@ -22,13 +22,13 @@ _Each biome measured against the player who actually arrives there, in authored 
 
 | # | Biome | Arrive with | GM | Mob TTK | Your TTL | Worst hit %HP | Cost/kill | Step |  |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | Mountain | T4 +0 | 126 | 4.32s | 7.56s | 84.0% (Granite Mammoth) | 57.2% | - | baseline |
-| 2 | Jungle | T4 +0 | 135 | 5.62s | 14.6s | 17.6% (Emerald Constrictor) | 38.5% | 0.67x | EASIER |
-| 3 | Desert | T4 +1 | 145 | 8.57s | 9.04s | 131% (Dune Tyrant) | 94.8% | 2.46x | WALL |
-| 4 | Tundra | T4 +2 | 154 | 5.89s | 3.68s | 203% (Permafrost Behemoth) | 160% | 1.69x | ok |
-| 5 | Volcanic | T4 +2 | 164 | 7.80s | 4.44s | 43.8% (Magma Salamander) | 176% | 1.10x | ok |
-| 6 | Wasteland | T4 +3 | 173 | 9.22s | 4.98s | 33.9% (Plague Hound) | 185% | 1.05x | ok |
-| 7 | Deep-Sea Trench | T4 +4 | 183 | 19.3s | 6.70s | 87.1% (Elder Leviathan) | 288% | 1.56x | ok |
+| 1 | Mountain | T4 +0 | 114 | 29.8s | 17.3s | 30.0% (Granite Mammoth) | 172% | - | baseline |
+| 2 | Jungle | T4 +0 | 120 | 32.1s | 16.2s | 15.8% (Emerald Constrictor) | 198% | 1.15x | ok |
+| 3 | Desert | T4 +1 | 126 | 32.1s | 17.1s | 36.4% (Dune Tyrant) | 188% | 0.95x | flat |
+| 4 | Tundra | T4 +2 | 132 | 19.0s | 12.0s | 49.2% (Permafrost Behemoth) | 158% | 0.84x | EASIER |
+| 5 | Volcanic | T4 +2 | 138 | 11.1s | 11.8s | 16.5% (Magma Salamander) | 94.2% | 0.60x | EASIER |
+| 6 | Wasteland | T4 +3 | 144 | 7.49s | 10.8s | 10.5% (Plague Hound) | 69.6% | 0.74x | EASIER |
+| 7 | Deep-Sea Trench | T4 +4 | 150 | 159s | 12.2s | 41.3% (Elder Leviathan) | 1301% | 18.7x | WALL |
 
 ## Walls & Stalls
 
@@ -36,19 +36,15 @@ _Only the rungs that break the pattern. Everything absent from this table walked
 
 | Biome | Signal | Detail |
 | --- | --- | --- |
-| Mountain | Heavy spike | Granite Mammoth hits for 84.0% of maxHP |
-| Mountain | Low TTL | 7.56s to die under mean pressure (no recovery modelled) |
-| Jungle | No progression | cost/kill is 0.67x the previous rung — the climb stalls here |
-| Jungle | Low TTL | 14.6s to die under mean pressure (no recovery modelled) |
-| Desert | Difficulty wall | cost/kill jumps 2.46x over the previous rung |
-| Desert | One-shot | Dune Tyrant hits for 131% of the arrival player's maxHP |
-| Desert | Low TTL | 9.04s to die under mean pressure (no recovery modelled) |
-| Tundra | One-shot | Permafrost Behemoth hits for 203% of the arrival player's maxHP |
-| Tundra | Low TTL | 3.68s to die under mean pressure (no recovery modelled) |
-| Volcanic | Low TTL | 4.44s to die under mean pressure (no recovery modelled) |
-| Wasteland | Low TTL | 4.98s to die under mean pressure (no recovery modelled) |
-| Deep-Sea Trench | Heavy spike | Elder Leviathan hits for 87.1% of maxHP |
-| Deep-Sea Trench | Low TTL | 6.70s to die under mean pressure (no recovery modelled) |
+| Desert | No progression | cost/kill is 0.95x the previous rung — the climb stalls here |
+| Tundra | No progression | cost/kill is 0.84x the previous rung — the climb stalls here |
+| Tundra | Low TTL | 12.0s to die under mean pressure (no recovery modelled) |
+| Volcanic | No progression | cost/kill is 0.60x the previous rung — the climb stalls here |
+| Volcanic | Low TTL | 11.8s to die under mean pressure (no recovery modelled) |
+| Wasteland | No progression | cost/kill is 0.74x the previous rung — the climb stalls here |
+| Wasteland | Low TTL | 10.8s to die under mean pressure (no recovery modelled) |
+| Deep-Sea Trench | Difficulty wall | cost/kill jumps 18.7x over the previous rung |
+| Deep-Sea Trench | Low TTL | 12.2s to die under mean pressure (no recovery modelled) |
 
 
 ## Arrival Players
@@ -57,13 +53,13 @@ _Derived, not assumed: GM accrues per biome mastered and gates upgrade level, so
 
 | # | Arrive at | Gear | GM | maxHP | Plating | DR | Dodge | Ref atk | Ref APS |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | Mountain | T4 +0 | 126 | 341 | 35.1 | 4.09% | 11.3% | 149 | 0.89 |
-| 2 | Jungle | T4 +0 | 135 | 341 | 35.1 | 4.09% | 11.3% | 149 | 0.89 |
-| 3 | Desert | T4 +1 | 145 | 384 | 42.4 | 4.29% | 11.5% | 175 | 0.89 |
-| 4 | Tundra | T4 +2 | 154 | 426 | 49.7 | 4.49% | 11.6% | 200 | 0.89 |
-| 5 | Volcanic | T4 +2 | 164 | 426 | 49.7 | 4.49% | 11.6% | 200 | 0.89 |
-| 6 | Wasteland | T4 +3 | 173 | 470 | 57.0 | 4.69% | 11.7% | 226 | 0.89 |
-| 7 | Deep-Sea Trench | T4 +4 | 183 | 512 | 64.4 | 4.89% | 11.8% | 252 | 0.89 |
+| 1 | Mountain | T4 +0 | 114 | 545 | 6.73 | 27.2% | 9.82% | 179 | 0.90 |
+| 2 | Jungle | T4 +0 | 120 | 545 | 6.73 | 27.2% | 9.82% | 179 | 0.90 |
+| 3 | Desert | T4 +1 | 126 | 586 | 7.14 | 27.3% | 9.97% | 207 | 0.90 |
+| 4 | Tundra | T4 +2 | 132 | 626 | 7.86 | 27.3% | 10.1% | 234 | 0.90 |
+| 5 | Volcanic | T4 +2 | 138 | 626 | 7.86 | 27.3% | 10.1% | 234 | 0.90 |
+| 6 | Wasteland | T4 +3 | 144 | 667 | 8.47 | 27.4% | 10.2% | 261 | 0.90 |
+| 7 | Deep-Sea Trench | T4 +4 | 150 | 707 | 9.20 | 27.5% | 10.4% | 288 | 0.90 |
 
 
 ---
@@ -78,13 +74,13 @@ _Bosses for biome tier 4 vs the boss-ready reference player (T4 +3). TTK uses th
 
 | Boss | Biome | HP | Attack profile | Raw DPS | Spike | Defenses | Expected TTK | Player TTL | Status | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Elder Trench Serpent | Deep-Sea Trench | 21793 | 143 @ 0.31 aps | 67.2 | ×2.70 | plate 20.0, DR 22.0%, shield 28.0% | 113s | 10.6s | Risky | TTK undercounted (shield/softcap) |
-| Dune-Throne Sovereign | Desert | 17893 | 185 @ 0.36 aps | 92.1 | ×2.00 | plate 8.00, DR 8.00% | 75.2s | 6.87s | Blocked | kills player fast |
-| Verdant-Crown Predator | Jungle | 18352 | 117 @ 0.71 aps | 140 | ×2.60 | plate 0.00, DR 4.00%, evasion 25.0% | 71.0s | 4.69s | Blocked | kills player fast |
-| Iron-Crest Titan | Mountain | 19499 | 228 @ 0.24 aps | 104 | ×2.20 | plate 14.0, DR 6.00% | 83.4s | 5.71s | Blocked | kills player fast |
-| Glacial Patriarch | Tundra | 22940 | 189 @ 0.22 aps | 70.1 | ×1.90 | plate 22.0, DR 14.0%, shield 20.0% | 111s | 8.96s | Risky | TTK undercounted (shield/softcap) |
-| Caldera Sovereign | Volcanic | 20646 | 130 @ 0.38 aps | 124 | ×1.80 | plate 10.0, DR 5.00% | 85.4s | 4.77s | Blocked | kills player fast |
-| Charnel-Crown Sovereign | Wasteland | 19499 | 115 @ 0.43 aps | 83.4 | ×1.70 | plate 14.0, DR 8.00% | 85.0s | 8.19s | Risky | - |
+| Elder Trench Serpent | Deep-Sea Trench | 68910 | 143 @ 0.31 aps | 44.7 | ×1.00 | plate 20.0, DR 40.0% | 394s | 23.5s | Safe | TTK slog |
+| Dune-Throne Sovereign | Desert | 71080 | 185 @ 0.36 aps | 66.1 | ×1.00 | plate 8.00, DR 35.0% | 357s | 15.7s | Risky | TTK slog |
+| Verdant-Crown Predator | Jungle | 112570 | 117 @ 0.71 aps | 83.6 | ×1.20 | plate 0.00, DR 8.00% | 399s | 12.7s | Risky | TTK slog |
+| Iron-Crest Titan | Mountain | 73140 | 228 @ 0.24 aps | 54.3 | ×1.00 | plate 28.0, DR 15.0% | 324s | 18.9s | Risky | TTK slog |
+| Glacial Patriarch | Tundra | 90450 | 189 @ 0.22 aps | 42.0 | ×1.00 | plate 32.0, DR 18.0% | 423s | 24.7s | Safe | TTK slog |
+| Caldera Sovereign | Volcanic | 74130 | 130 @ 0.38 aps | 50.0 | ×1.00 | plate 10.0, DR 35.0% | 376s | 21.0s | Safe | TTK slog |
+| Charnel-Crown Sovereign | Wasteland | 42000 | 115 @ 0.43 aps | 50.0 | ×1.00 | plate 14.0, DR 25.0% | 192s | 21.1s | Safe | TTK slog |
 
 ## Mob / Boss Diagnostic Signals
 
@@ -92,72 +88,66 @@ _Attention signals only: mobs >±25% of biome-tier average on HP / raw DPS / spi
 
 | Flag | Subject | Detail |
 | --- | --- | --- |
-| HP > +25% tier avg | Abyssal Serpent | 4200 vs avg 1788 (×2.35) |
-| Raw DPS > +25% tier avg | Abyssal Serpent | 126 vs avg 94.5 (×1.33) |
-| Spike > +25% tier avg | Abyssal Serpent | 575 vs avg 307 (×1.87) |
-| HP > +25% tier avg | Hadal Stalker | 2800 vs avg 1788 (×1.57) |
-| Spike > +25% tier avg | Hadal Stalker | 504 vs avg 307 (×1.64) |
-| HP > +25% tier avg | Elder Leviathan | 5880 vs avg 1788 (×3.29) |
-| Spike > +25% tier avg | Elder Leviathan | 624 vs avg 307 (×2.03) |
-| Raw DPS < -25% tier avg | Sand Viper | 32.5 vs avg 94.5 (×0.34) |
-| Spike < -25% tier avg | Sand Viper | 78.0 vs avg 307 (×0.25) |
-| Raw DPS < -25% tier avg | Dune Basilisk | 42.0 vs avg 94.5 (×0.44) |
-| Spike < -25% tier avg | Dune Basilisk | 104 vs avg 307 (×0.34) |
-| Spike > +25% tier avg | Dune Tyrant | 644 vs avg 307 (×2.10) |
-| HP < -25% tier avg | Hunting Panther | 704 vs avg 1788 (×0.39) |
-| Raw DPS < -25% tier avg | Hunting Panther | 43.3 vs avg 94.5 (×0.46) |
-| Spike < -25% tier avg | Hunting Panther | 114 vs avg 307 (×0.37) |
-| HP < -25% tier avg | Apex Silverback | 1056 vs avg 1788 (×0.59) |
-| Raw DPS < -25% tier avg | Apex Silverback | 42.8 vs avg 94.5 (×0.45) |
-| Spike < -25% tier avg | Apex Silverback | 112 vs avg 307 (×0.36) |
-| HP < -25% tier avg | Thornback Chameleon | 748 vs avg 1788 (×0.42) |
-| Raw DPS < -25% tier avg | Thornback Chameleon | 34.7 vs avg 94.5 (×0.37) |
-| Spike < -25% tier avg | Thornback Chameleon | 52.0 vs avg 307 (×0.17) |
-| Raw DPS < -25% tier avg | Emerald Constrictor | 51.6 vs avg 94.5 (×0.55) |
-| Spike < -25% tier avg | Emerald Constrictor | 132 vs avg 307 (×0.43) |
-| HP < -25% tier avg | Granite Mammoth | 779 vs avg 1788 (×0.44) |
-| Raw DPS < -25% tier avg | Granite Mammoth | 63.9 vs avg 94.5 (×0.68) |
-| HP < -25% tier avg | Avalanche Tyrant | 533 vs avg 1788 (×0.30) |
-| HP < -25% tier avg | Cliffside Roc | 574 vs avg 1788 (×0.32) |
-| Raw DPS < -25% tier avg | Cliffside Roc | 51.1 vs avg 94.5 (×0.54) |
-| Spike < -25% tier avg | Cliffside Roc | 179 vs avg 307 (×0.58) |
-| HP < -25% tier avg | Cragback Rhino | 923 vs avg 1788 (×0.52) |
-| Raw DPS < -25% tier avg | Cragback Rhino | 54.6 vs avg 94.5 (×0.58) |
-| HP < -25% tier avg | Rime-Tusk Mastodon | 924 vs avg 1788 (×0.52) |
-| Raw DPS > +25% tier avg | Rime-Tusk Mastodon | 150 vs avg 94.5 (×1.59) |
-| Spike > +25% tier avg | Rime-Tusk Mastodon | 842 vs avg 307 (×2.75) |
-| HP < -25% tier avg | Glacial Dire-Bear | 1221 vs avg 1788 (×0.68) |
-| HP < -25% tier avg | Hoarfrost Yeti | 693 vs avg 1788 (×0.39) |
-| Raw DPS > +25% tier avg | Hoarfrost Yeti | 127 vs avg 94.5 (×1.34) |
-| Raw DPS > +25% tier avg | Permafrost Behemoth | 183 vs avg 94.5 (×1.94) |
-| Spike > +25% tier avg | Permafrost Behemoth | 1053 vs avg 307 (×3.43) |
-| HP < -25% tier avg | Ember Skink | 1043 vs avg 1788 (×0.58) |
-| Raw DPS > +25% tier avg | Ember Skink | 129 vs avg 94.5 (×1.37) |
-| Spike < -25% tier avg | Ember Skink | 168 vs avg 307 (×0.55) |
-| Raw DPS > +25% tier avg | Infernal Direhound | 150 vs avg 94.5 (×1.59) |
-| Spike < -25% tier avg | Infernal Direhound | 210 vs avg 307 (×0.68) |
-| HP > +25% tier avg | Obsidian Tortoise | 2244 vs avg 1788 (×1.26) |
-| Raw DPS < -25% tier avg | Obsidian Tortoise | 43.3 vs avg 94.5 (×0.46) |
-| Spike < -25% tier avg | Obsidian Tortoise | 220 vs avg 307 (×0.72) |
-| HP < -25% tier avg | Ashspitter Salamander | 1188 vs avg 1788 (×0.66) |
-| Spike < -25% tier avg | Ashspitter Salamander | 183 vs avg 307 (×0.60) |
-| HP > +25% tier avg | Magma Salamander | 2904 vs avg 1788 (×1.62) |
-| Raw DPS > +25% tier avg | Bone Crawler | 133 vs avg 94.5 (×1.40) |
-| Spike < -25% tier avg | Bone Crawler | 159 vs avg 307 (×0.52) |
-| HP > +25% tier avg | Plague Hound | 3168 vs avg 1788 (×1.77) |
-| Raw DPS > +25% tier avg | Plague Hound | 149 vs avg 94.5 (×1.58) |
-| Spike < -25% tier avg | Plague Hound | 224 vs avg 307 (×0.73) |
-| HP > +25% tier avg | Carrion Vulture | 2693 vs avg 1788 (×1.51) |
-| Spike < -25% tier avg | Carrion Vulture | 189 vs avg 307 (×0.62) |
-| Raw DPS > +25% tier avg | Bone Rat | 143 vs avg 94.5 (×1.52) |
-| Spike < -25% tier avg | Bone Rat | 136 vs avg 307 (×0.44) |
-| HP > +25% tier avg | Gravewright | 2851 vs avg 1788 (×1.59) |
-| Raw DPS < -25% tier avg | Gravewright | 62.1 vs avg 94.5 (×0.66) |
-| Spike < -25% tier avg | Gravewright | 118 vs avg 307 (×0.38) |
-| high boss lethality | Dune-Throne Sovereign | player TTL 6.87s, spike 58.9% |
-| high boss lethality | Verdant-Crown Predator | player TTL 4.69s, spike 38.3% |
-| high boss lethality | Iron-Crest Titan | player TTL 5.71s, spike 85.2% |
-| high boss lethality | Caldera Sovereign | player TTL 4.77s, spike 31.7% |
+| HP > +25% tier avg | Abyssal Serpent | 32800 vs avg 7609 (×4.31) |
+| Raw DPS > +25% tier avg | Abyssal Serpent | 94.3 vs avg 59.0 (×1.60) |
+| Spike > +25% tier avg | Abyssal Serpent | 380 vs avg 172 (×2.20) |
+| HP > +25% tier avg | Hadal Stalker | 34500 vs avg 7609 (×4.53) |
+| Raw DPS > +25% tier avg | Hadal Stalker | 79.5 vs avg 59.0 (×1.35) |
+| Spike > +25% tier avg | Hadal Stalker | 350 vs avg 172 (×2.03) |
+| HP > +25% tier avg | Elder Leviathan | 31800 vs avg 7609 (×4.18) |
+| Raw DPS > +25% tier avg | Elder Leviathan | 82.7 vs avg 59.0 (×1.40) |
+| Spike > +25% tier avg | Elder Leviathan | 420 vs avg 172 (×2.44) |
+| HP < -25% tier avg | Sand Viper | 4029 vs avg 7609 (×0.53) |
+| Spike < -25% tier avg | Sand Viper | 78.0 vs avg 172 (×0.45) |
+| Raw DPS < -25% tier avg | Dune Basilisk | 38.5 vs avg 59.0 (×0.65) |
+| Spike < -25% tier avg | Dune Basilisk | 90.0 vs avg 172 (×0.52) |
+| Spike > +25% tier avg | Dune Tyrant | 308 vs avg 172 (×1.79) |
+| HP < -25% tier avg | Hunting Panther | 2400 vs avg 7609 (×0.32) |
+| Raw DPS < -25% tier avg | Hunting Panther | 43.3 vs avg 59.0 (×0.73) |
+| Spike < -25% tier avg | Hunting Panther | 91.0 vs avg 172 (×0.53) |
+| HP > +25% tier avg | Apex Silverback | 10000 vs avg 7609 (×1.31) |
+| Raw DPS < -25% tier avg | Apex Silverback | 42.8 vs avg 59.0 (×0.73) |
+| Spike < -25% tier avg | Apex Silverback | 77.0 vs avg 172 (×0.45) |
+| HP < -25% tier avg | Thornback Chameleon | 2500 vs avg 7609 (×0.33) |
+| Raw DPS < -25% tier avg | Thornback Chameleon | 34.7 vs avg 59.0 (×0.59) |
+| Spike < -25% tier avg | Thornback Chameleon | 52.0 vs avg 172 (×0.30) |
+| HP > +25% tier avg | Emerald Constrictor | 12000 vs avg 7609 (×1.58) |
+| HP > +25% tier avg | Granite Mammoth | 13800 vs avg 7609 (×1.81) |
+| Spike > +25% tier avg | Granite Mammoth | 235 vs avg 172 (×1.36) |
+| HP < -25% tier avg | Avalanche Tyrant | 1600 vs avg 7609 (×0.21) |
+| HP < -25% tier avg | Cliffside Roc | 1700 vs avg 7609 (×0.22) |
+| Raw DPS < -25% tier avg | Cliffside Roc | 40.9 vs avg 59.0 (×0.69) |
+| Raw DPS < -25% tier avg | Cragback Rhino | 37.2 vs avg 59.0 (×0.63) |
+| Spike > +25% tier avg | Cragback Rhino | 225 vs avg 172 (×1.30) |
+| HP < -25% tier avg | Rime-Tusk Mastodon | 3300 vs avg 7609 (×0.43) |
+| Spike > +25% tier avg | Rime-Tusk Mastodon | 230 vs avg 172 (×1.33) |
+| HP < -25% tier avg | Glacial Dire-Bear | 4884 vs avg 7609 (×0.64) |
+| Spike > +25% tier avg | Glacial Dire-Bear | 220 vs avg 172 (×1.28) |
+| HP < -25% tier avg | Hoarfrost Yeti | 1800 vs avg 7609 (×0.24) |
+| Raw DPS > +25% tier avg | Hoarfrost Yeti | 79.2 vs avg 59.0 (×1.34) |
+| Spike > +25% tier avg | Hoarfrost Yeti | 228 vs avg 172 (×1.32) |
+| Raw DPS > +25% tier avg | Permafrost Behemoth | 90.4 vs avg 59.0 (×1.53) |
+| Spike > +25% tier avg | Permafrost Behemoth | 440 vs avg 172 (×2.55) |
+| HP < -25% tier avg | Ember Skink | 720 vs avg 7609 (×0.09) |
+| Spike < -25% tier avg | Ember Skink | 60.0 vs avg 172 (×0.35) |
+| HP < -25% tier avg | Infernal Direhound | 1750 vs avg 7609 (×0.23) |
+| Raw DPS > +25% tier avg | Infernal Direhound | 78.6 vs avg 59.0 (×1.33) |
+| Spike < -25% tier avg | Infernal Direhound | 110 vs avg 172 (×0.64) |
+| HP < -25% tier avg | Obsidian Tortoise | 4488 vs avg 7609 (×0.59) |
+| Raw DPS < -25% tier avg | Obsidian Tortoise | 33.3 vs avg 59.0 (×0.57) |
+| Spike < -25% tier avg | Obsidian Tortoise | 100 vs avg 172 (×0.58) |
+| HP < -25% tier avg | Ashspitter Salamander | 1550 vs avg 7609 (×0.20) |
+| Spike < -25% tier avg | Ashspitter Salamander | 95.0 vs avg 172 (×0.55) |
+| HP < -25% tier avg | Bone Crawler | 1235 vs avg 7609 (×0.16) |
+| Spike < -25% tier avg | Bone Crawler | 85.0 vs avg 172 (×0.49) |
+| HP < -25% tier avg | Plague Hound | 1901 vs avg 7609 (×0.25) |
+| Spike < -25% tier avg | Plague Hound | 105 vs avg 172 (×0.61) |
+| HP < -25% tier avg | Carrion Vulture | 1616 vs avg 7609 (×0.21) |
+| Spike < -25% tier avg | Carrion Vulture | 95.0 vs avg 172 (×0.55) |
+| HP < -25% tier avg | Bone Rat | 950 vs avg 7609 (×0.12) |
+| Spike < -25% tier avg | Bone Rat | 65.0 vs avg 172 (×0.38) |
+| HP < -25% tier avg | Gravewright | 5702 vs avg 7609 (×0.75) |
+| Spike < -25% tier avg | Gravewright | 90.0 vs avg 172 (×0.52) |
 | biome single-type | Deep-Sea Trench | 100% Direct damage |
 | biome single-type | Desert | 100% Direct damage |
 | biome single-type | Mountain | 100% Direct damage |
@@ -170,31 +160,31 @@ _Every non-boss spawn in biome tier 4, sorted by raw total DPS within each biome
 
 | Biome | Mob | Role | HP | Attack | APS / CD | Raw DPS | DoT/s | Plating | DR | Range | Speed | Spike | Specials |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Deep-Sea Trench | Abyssal Serpent | Spiker | 4200 | 230 | 0.36 / 2800ms | 126 | 0.00 | 18.0 | 20.0% | 15.0 | 28.0 | ×2.50 | charge ×2.50 |
-| Deep-Sea Trench | Elder Leviathan | Spiker | 5880 | 260 | 0.28 / 3600ms | 112 | 0.00 | 22.0 | 24.0% | 15.0 | 20.0 | ×2.40 | shield 30.0%/16.0s |
-| Deep-Sea Trench | Hadal Stalker | Spiker | 2800 | 210 | 0.29 / 3400ms | 105 | 0.00 | 20.0 | 10.0% | 240 | 22.0 | ×2.40 | - |
-| Desert | Dune Tyrant | Spiker | 1738 | 230 | 0.29 / 3500ms | 118 | 0.00 | 8.00 | 8.00% | 15.0 | 20.0 | ×2.80 | slow ×0.40 |
-| Desert | Dune Basilisk | Tank | 1501 | 104 | 0.33 / 3000ms | 42.0 | 0.00 | 10.0 | 14.0% | 15.0 | 26.0 | ×1.00 | - |
-| Desert | Sand Viper | Bruiser | 1343 | 78.0 | 0.42 / 2400ms | 32.5 | 0.00 | 0.00 | 8.00% | 12.0 | 28.0 | ×1.00 | slow ×0.45 |
-| Jungle | Emerald Constrictor | Spiker | 1408 | 66.0 | 0.63 / 1600ms | 51.6 | 25.0 | 0.00 | 0.00% | 12.0 | 62.0 | ×2.00 | dot 25.0/s×5, cadence 4→×2.00 |
-| Jungle | Hunting Panther | Spiker | 704 | 52.0 | 0.83 / 1200ms | 43.3 | 0.00 | 0.00 | 0.00% | 12.0 | 82.0 | ×2.20 | - |
-| Jungle | Apex Silverback | Bruiser | 1056 | 77.0 | 0.56 / 1800ms | 42.8 | 0.00 | 0.00 | 0.00% | 12.0 | 54.0 | ×1.45 | ramp +45.0% atk, charge ×2.80 |
-| Jungle | Thornback Chameleon | Bruiser | 748 | 52.0 | 0.67 / 1500ms | 34.7 | 0.00 | 0.00 | 0.00% | 200 | 50.0 | ×1.00 | - |
-| Mountain | Avalanche Tyrant | Spiker | 533 | 145 | 0.40 / 2500ms | 81.2 | 0.00 | 0.00 | 0.00% | 12.0 | 42.0 | ×1.80 | charge ×2.80 |
-| Mountain | Granite Mammoth | Spiker | 779 | 184 | 0.28 / 3600ms | 63.9 | 0.00 | 0.00 | 0.00% | 15.0 | 16.0 | ×2.00 | cadence 4→×2.00, charge ×2.50 |
-| Mountain | Cragback Rhino | Spiker | 923 | 113 | 0.26 / 3800ms | 54.6 | 0.00 | 16.0 | 6.00% | 15.0 | 14.0 | ×3.20 | cooldown 10.0s→×3.20, softcap 25.0%×0.50, charge ×2.20 |
-| Mountain | Cliffside Roc | Bruiser | 574 | 179 | 0.29 / 3500ms | 51.1 | 0.00 | 0.00 | 0.00% | 260 | 34.0 | ×1.00 | - |
-| Tundra | Permafrost Behemoth | Spiker | 1914 | 351 | 0.25 / 4000ms | 183 | 0.00 | 20.0 | 12.0% | 15.0 | 12.0 | ×3.00 | charge ×2.00 |
-| Tundra | Rime-Tusk Mastodon | Spiker | 924 | 421 | 0.29 / 3500ms | 150 | 0.00 | 12.0 | 0.00% | 15.0 | 18.0 | ×2.00 | cadence 4→×2.00, charge ×2.30 |
-| Tundra | Hoarfrost Yeti | Bruiser | 693 | 302 | 0.34 / 2900ms | 127 | 0.00 | 0.00 | 8.00% | 220 | 36.0 | ×1.20 | - |
-| Tundra | Glacial Dire-Bear | Bruiser | 1221 | 369 | 0.31 / 3200ms | 115 | 0.00 | 0.00 | 14.0% | 15.0 | 18.0 | ×1.00 | shield 22.0%/12.0s |
-| Volcanic | Ember Skink | Bruiser | 1043 | 168 | 0.77 / 1300ms | 129 | 52.0 | 2.00 | 0.00% | 12.0 | 70.0 | ×1.00 | dot 52.0/s×4 |
-| Volcanic | Ashspitter Salamander | Bruiser | 1188 | 183 | 0.53 / 1900ms | 96.3 | 80.0 | 2.00 | 0.00% | 190 | 46.0 | ×1.00 | dot 80.0/s×5 |
-| Volcanic | Infernal Direhound | Bruiser | 1386 | 210 | 0.71 / 1400ms | 150 | 0.00 | 4.00 | 0.00% | 12.0 | 72.0 | ×1.00 | charge ×2.50 |
-| Volcanic | Magma Salamander | Bruiser | 2904 | 246 | 0.38 / 2600ms | 94.6 | 0.00 | 6.00 | 6.00% | 15.0 | 22.0 | ×1.00 | shield 28.0%/14.0s |
-| Volcanic | Obsidian Tortoise | Spiker | 2244 | 100 | 0.33 / 3000ms | 43.3 | 0.00 | 8.00 | 0.00% | 15.0 | 20.0 | ×2.20 | cadence 4→×2.20 |
-| Wasteland | Plague Hound | Bruiser | 3168 | 224 | 0.67 / 1500ms | 149 | 109 | 0.00 | 0.00% | 12.0 | 70.0 | ×1.00 | dot 109/s×5, charge ×2.50 |
-| Wasteland | Bone Rat | Bruiser | 1584 | 136 | 1.05 / 950ms | 143 | 0.00 | 0.00 | 0.00% | 12.0 | 92.0 | ×1.00 | - |
-| Wasteland | Bone Crawler | Bruiser | 2059 | 159 | 0.83 / 1200ms | 133 | 0.00 | 0.00 | 0.00% | 12.0 | 78.0 | ×1.00 | - |
-| Wasteland | Carrion Vulture | Bruiser | 2693 | 189 | 0.59 / 1700ms | 111 | 0.00 | 0.00 | 0.00% | 200 | 46.0 | ×1.00 | - |
-| Wasteland | Gravewright | Bruiser | 2851 | 118 | 0.53 / 1900ms | 62.1 | 0.00 | 0.00 | 0.00% | 200 | 40.0 | ×1.00 | - |
+| Deep-Sea Trench | Abyssal Serpent | Spiker | 32800 | 190 | 0.36 / 2800ms | 94.3 | 0.00 | 18.0 | 35.0% | 15.0 | 28.0 | ×2.00 | - |
+| Deep-Sea Trench | Elder Leviathan | Spiker | 31800 | 210 | 0.28 / 3600ms | 82.7 | 0.00 | 22.0 | 40.0% | 15.0 | 20.0 | ×2.00 | - |
+| Deep-Sea Trench | Hadal Stalker | Spiker | 34500 | 175 | 0.29 / 3400ms | 79.5 | 0.00 | 20.0 | 30.0% | 240 | 22.0 | ×2.00 | - |
+| Desert | Dune Tyrant | Spiker | 6952 | 140 | 0.29 / 3500ms | 63.2 | 0.00 | 8.00 | 8.00% | 15.0 | 20.0 | ×2.20 | slow ×0.40 |
+| Desert | Sand Viper | Bruiser | 4029 | 78.0 | 0.42 / 2400ms | 53.1 | 0.00 | 0.00 | 8.00% | 12.0 | 28.0 | ×1.00 | - |
+| Desert | Dune Basilisk | Tank | 9006 | 90.0 | 0.33 / 3000ms | 38.5 | 0.00 | 10.0 | 14.0% | 15.0 | 26.0 | ×1.00 | - |
+| Jungle | Emerald Constrictor | Spiker | 12000 | 66.0 | 0.63 / 1600ms | 51.6 | 25.0 | 0.00 | 0.00% | 12.0 | 62.0 | ×2.00 | dot 25.0/s×5, cadence 4→×2.00 |
+| Jungle | Hunting Panther | Bruiser | 2400 | 52.0 | 0.83 / 1200ms | 43.3 | 0.00 | 0.00 | 0.00% | 12.0 | 82.0 | ×1.75 | - |
+| Jungle | Apex Silverback | Bruiser | 10000 | 77.0 | 0.56 / 1800ms | 42.8 | 0.00 | 0.00 | 0.00% | 12.0 | 54.0 | ×1.00 | charge ×2.80 |
+| Jungle | Thornback Chameleon | Bruiser | 2500 | 52.0 | 0.67 / 1500ms | 34.7 | 0.00 | 0.00 | 0.00% | 200 | 50.0 | ×1.00 | - |
+| Mountain | Avalanche Tyrant | Bruiser | 1600 | 116 | 0.40 / 2500ms | 60.9 | 0.00 | 0.00 | 0.00% | 12.0 | 42.0 | ×1.50 | charge ×2.80 |
+| Mountain | Granite Mammoth | Bruiser | 13800 | 147 | 0.28 / 3600ms | 47.0 | 0.00 | 0.00 | 0.00% | 15.0 | 16.0 | ×1.60 | cadence 4→×1.60, charge ×2.50 |
+| Mountain | Cliffside Roc | Bruiser | 1700 | 143 | 0.29 / 3500ms | 40.9 | 0.00 | 0.00 | 0.00% | 12.0 | 105 | ×1.00 | - |
+| Mountain | Cragback Rhino | Spiker | 6600 | 90.0 | 0.26 / 3800ms | 37.2 | 0.00 | 16.0 | 6.00% | 15.0 | 14.0 | ×2.50 | cooldown 10.0s→×2.50, softcap 25.0%×0.50, charge ×2.20 |
+| Tundra | Permafrost Behemoth | Spiker | 7656 | 220 | 0.25 / 4000ms | 90.4 | 0.00 | 20.0 | 12.0% | 15.0 | 12.0 | ×2.00 | charge ×2.00 |
+| Tundra | Hoarfrost Yeti | Bruiser | 1800 | 190 | 0.34 / 2900ms | 79.2 | 0.00 | 0.00 | 8.00% | 220 | 36.0 | ×1.20 | - |
+| Tundra | Glacial Dire-Bear | Bruiser | 4884 | 220 | 0.31 / 3200ms | 68.8 | 0.00 | 0.00 | 14.0% | 15.0 | 18.0 | ×1.00 | shield 5.50%/12.0s |
+| Tundra | Rime-Tusk Mastodon | Tank | 3300 | 230 | 0.29 / 3500ms | 65.7 | 0.00 | 12.0 | 0.00% | 15.0 | 18.0 | ×1.00 | charge ×2.30 |
+| Volcanic | Ashspitter Salamander | DoT | 1550 | 95.0 | 0.53 / 1900ms | 50.0 | 60.0 | 2.00 | 0.00% | 190 | 46.0 | ×1.00 | dot 60.0/s×5 |
+| Volcanic | Infernal Direhound | Bruiser | 1750 | 110 | 0.71 / 1400ms | 78.6 | 0.00 | 4.00 | 0.00% | 12.0 | 72.0 | ×1.00 | charge ×2.50 |
+| Volcanic | Ember Skink | Bruiser | 720 | 60.0 | 0.77 / 1300ms | 46.2 | 32.0 | 2.00 | 0.00% | 12.0 | 70.0 | ×1.00 | dot 32.0/s×4 |
+| Volcanic | Magma Salamander | Bruiser | 5808 | 150 | 0.38 / 2600ms | 57.7 | 0.00 | 6.00 | 6.00% | 15.0 | 22.0 | ×1.00 | - |
+| Volcanic | Obsidian Tortoise | Tank | 4488 | 100 | 0.33 / 3000ms | 33.3 | 0.00 | 8.00 | 0.00% | 15.0 | 20.0 | ×1.00 | - |
+| Wasteland | Plague Hound | DoT | 1901 | 105 | 0.67 / 1500ms | 70.0 | 109 | 0.00 | 0.00% | 12.0 | 70.0 | ×1.00 | dot 109/s×5, charge ×2.50 |
+| Wasteland | Bone Crawler | Bruiser | 1235 | 85.0 | 0.83 / 1200ms | 70.8 | 0.00 | 0.00 | 0.00% | 12.0 | 78.0 | ×1.00 | - |
+| Wasteland | Bone Rat | Bruiser | 950 | 65.0 | 1.05 / 950ms | 68.4 | 0.00 | 0.00 | 0.00% | 12.0 | 92.0 | ×1.00 | - |
+| Wasteland | Carrion Vulture | Bruiser | 1616 | 95.0 | 0.59 / 1700ms | 55.9 | 0.00 | 0.00 | 0.00% | 200 | 46.0 | ×1.00 | - |
+| Wasteland | Gravewright | Bruiser | 5702 | 90.0 | 0.53 / 1900ms | 47.4 | 0.00 | 0.00 | 0.00% | 200 | 40.0 | ×1.00 | - |

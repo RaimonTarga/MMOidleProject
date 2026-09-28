@@ -471,7 +471,7 @@ export const BESTIARY_TEXT: Readonly<Record<string, BestiaryText>> = {
     description: 'Charnel-Crown Sovereign does not conjure an endless army; it cultivates a finite tide. It begins with a small entourage, raises nearby corpses one at a time, and uses Mass Resurrection to reach deeper into the grave when the fight crosses half health.',
   },
 
-  // Trench and the ultimate encounter
+  // Trench
   'abyssal-serpent': {
     profile: 'Anti-recovery bite elite',
     description: 'Abyssal Serpents teach the Trench\'s central warning in miniature. Abyssal Bite suppresses recovery after a visible wind-up, so a long fight against one is a fight you must choose to end.',
@@ -487,21 +487,5 @@ export const BESTIARY_TEXT: Readonly<Record<string, BestiaryText>> = {
   'elder-trench-serpent': {
     profile: 'Wound-and-devour boss',
     description: 'Elder Trench Serpent fights one long sentence: Abyssal Bite wounds recovery, Undertow drags the target back, Constrict steals a moment, and Devour heals the serpent if it lands. Every step has a different answer, but none reward standing still.',
-  },
-  'elder-trench-serpent-warden': {
-    profile: 'Armored trench warden',
-    description: 'Elder Trench Serpent Wardens are sent to hold the line, not to duel elegantly. Their timed finisher, hard shell, and opening rush reward the player who chooses a target quickly and refuses to let the warden settle in.',
-  },
-  'void-overlord': {
-    profile: 'Staged abyssal encounter',
-    description: 'Void Overlord is not a normal pull. The encounter seals the arena, sends waves, calls three wardens, and finally exposes the overlord beneath a growing Flood; the objective between stages is part of the boss ability.',
-  },
-  'void-horror': {
-    profile: 'Corrupting abyssal add',
-    description: 'Void Horrors are the light-footed bodies that carry the Flood forward. Their Void Corruption stacks quickly in close quarters, making the wave phase more dangerous the longer its perimeter remains intact.',
-  },
-  'void-hulk': {
-    profile: 'Charging abyssal add',
-    description: 'Void Hulks are the heavy shapes inside an abyssal wave. They open with a rush and deliver a regular empowered strike, giving the add phase both a body to clear and a beat to respect.',
   },
 } as const;

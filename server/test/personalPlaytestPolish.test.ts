@@ -331,7 +331,7 @@ for (const id of ['crag-behemoth', 'stoneplate-juggernaut', 'crag-gorged-horn-be
 }
 
 // Both finishers arm at 25%, resolve the authored raw hit through armor, and stay spent.
-for (const [id, raw] of [['cinder-shell-magma-salamander', 650], ['caldera-sovereign', 1000]] as const) {
+for (const [id, raw] of [['cinder-shell-magma-salamander', 650], ['caldera-sovereign', 650]] as const) {
   const { world, player, boss, now } = setup(id);
   boss.hasHealth.hp = boss.hasHealth.maxHp * 0.26;
   updateBossPatterns(world, 100, now);

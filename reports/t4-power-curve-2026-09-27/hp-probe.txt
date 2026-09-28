@@ -1,0 +1,33 @@
+rows 735 errors 0
+| boss | T3 ×1 | T3 ×1.5 | T4 ×1 | T4 ×3 | T4 ×5 |
+| t3-mountain | 92 s, 93% | 141 s, 93% |  |  |  |
+| t3-desert | 82 s, 60% | 127 s, 47% |  |  |  |
+| t3-volcanic | 62 s, 100% | 92 s, 67% |  |  |  |
+| t3-jungle | 69 s, 93% | 107 s, 80% |  |  |  |
+| t3-cave | 106 s, 80% | 148 s, 80% |  |  |  |
+| t3-swamp | 119 s, 73% | 172 s, 40% |  |  |  |
+| t3-tundra | 90 s, 87% | 132 s, 73% |  |  |  |
+| t4-volcanic |  |  | 34 s, 62% | 65 s, 9% | 115 s, 2% |
+| t4-jungle |  |  | 32 s, 100% | 96 s, 96% | 159 s, 82% |
+| t4-mountain |  |  | 45 s, 100% | 145 s, 100% | 240 s, 100% |
+| t4-desert |  |  | 38 s, 100% | 107 s, 100% | 178 s, 100% |
+| t4-trench |  |  | 45 s, 100% | 141 s, 98% | 229 s, 98% |
+| t4-graveyard |  |  | 114 s, 33% | 280 s, 36% | 432 s, 24% |
+| t4-tundra |  |  | 47 s, 100% | 153 s, 100% | 248 s, 100% |
+| **all** | **82 s, 84%** | **125 s, 69%** | **42 s, 85%** | **128 s, 77%** | **210 s, 72%** |
+
+outcomes:
+T3 ×1 {"boss-killed":88,"bot-died":16,"capped":1}
+T3 ×1.5 {"boss-killed":72,"bot-died":31,"capped":2}
+T4 ×1 {"bot-died":47,"boss-killed":268}
+T4 ×3 {"boss-killed":242,"bot-died":73}
+T4 ×5 {"boss-killed":228,"bot-died":86,"capped":1}
+
+T4 ×5 per class (median s, win%):
+squire 194 76
+striker 223 73
+apprentice 189 75
+slinger 205 75
+spirit 288 63
+
+T4 ×5 min HP% median (wins): 70.85  ×1: 93.05

@@ -14,9 +14,13 @@ If this doc and the code disagree, the code wins.
 
 Design authority: [`design_docs/boss-lineage-redesign.md`](../design_docs/boss-lineage-redesign.md).
 Every section of this doc BELOW this one describes the 2026-09-04 / 09-13 state; where
-the two disagree, this section (and the code) wins. **Numbers are placeholders**: the
-contract's fight lengths (T2 ~60s, T3 ~2 min, T4 ~3 min) are the numbers pass's job
-(§4 step 6 of the design doc), not done here.
+the two disagree, this section (and the code) wins. **T3/T4 numbers were sized to the
+contract on 2026-09-27** (T3 ~2 min, T4 ~3 min; see `tier-balance-current-state.md` §7):
+HP/plating/DR per boss, and the clocks or hits that turned lethal in longer fights
+(Caldera Cataclysm/Heat/vents/burn, Salamander Final Eruption/Heat/attack, Mammoth
+Frostbite/Chill, Charnel raise/Harvest/Invocation, Bramble venom, Monarch Execution,
+Predator Cornered). T2 was sized to ~60 s the same day (Plains herd and Forest ramp
+softened so melee builds can win; Forest's threat is its ramp, not its opening).
 
 Tests: `server/test/bossLineage{Seams,Mountain,Swamp,Cave,Desert,Jungle,Tundra,Volcanic,Wasteland,Trench}.test.ts`
 (shared harness `server/test/_bossLineageHarness.ts`, which mocks `Date.now` like the
@@ -139,7 +143,6 @@ carry `castFx` on their start/end events.
 
 ### Known gaps (for the playtest / numbers pass)
 
-- HP and damage untouched: fight lengths will run short against the contract.
 - Rune condition, boss-debuff, boss DoT and pool-flavour art is borrowed; the list to
   generate is [`briefs/boss-lineage-art-list-2026-09-27.md`](briefs/boss-lineage-art-list-2026-09-27.md).
 - Several boss mechanics are bot-answerable only with the new runes wired; the bench's
@@ -213,8 +216,8 @@ more specific.*
 
 ## 2. The active roster
 
-26 dungeon bosses across 11 lineages. `void-overlord` (and its wardens / void adds) is
-soft-discarded legacy and was **not** touched.
+26 dungeon bosses across 11 lineages. The legacy `void-overlord` staged encounter (with its
+wardens and void adds) was deleted on 2026-09-27; no world node hosted it.
 
 | Biome | Identity in one sentence | Tiers |
 |---|---|---|
@@ -809,5 +812,5 @@ beat is the lesson.
    +30% dealt / +45% taken at ten, then logarithmic growth. Boss vents accelerate
    accumulation 3x even above ten; out-of-combat cooling accelerates at high stacks.
    See `biome-ecology-current-state.md` for formulas. The T4 stoke was removed.
-7. **`void-overlord` is untouched legacy.** Not redesigned, not rebalanced, not part of the
-   active design table.
+7. **`void-overlord` was deleted (2026-09-27).** It was unreachable legacy: no world node
+   hosted it.

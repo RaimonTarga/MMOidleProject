@@ -109,7 +109,7 @@ function distance(a: { x: number; y: number }, b: { x: number; y: number }): num
 // ── 0. Every dungeon node generates a def ────────────────────────────────────
 {
   const dungeonNodes = Object.entries(NODE_BIOMES).filter(
-    ([, info]) => info.isDungeon && info.bossTypeId !== "void-overlord",
+    ([, info]) => info.isDungeon,
   );
   assert(dungeonNodes.length > 0, "the world has dungeon nodes");
   for (const [nodeId] of dungeonNodes) {
@@ -130,14 +130,6 @@ function distance(a: { x: number; y: number }, b: { x: number; y: number }): num
         );
       }
     }
-  }
-  // The Void Overlord throne (unauthored in the current world map) keeps its own
-  // ultimate-encounter system and is excluded by the def builder.
-  const throne = Object.entries(NODE_BIOMES).find(
-    ([, info]) => info.bossTypeId === "void-overlord",
-  );
-  if (throne) {
-    assert(!DUNGEON_DEFS.has(throne[0]), "the throne is not a guarded-altar dungeon");
   }
 }
 

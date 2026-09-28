@@ -140,34 +140,72 @@ describing the encounter — a solo mini-boss threatens through per-hit spike an
 of the exchange, not through attrition from a crowd.
 
 Trench is authored as exactly that (density 10, N=1, "every enemy is a mini-boss"), so it
-is held to **cost per kill** instead, and excluded from both the sustained fit and the eHP
-fit. That freedom is used deliberately: it sits at **7 269 eHP / 212 DPS** rather than the
-3 097 / 497 the ladder would have demanded — long rather than frantic — while landing its
-cost/kill target (1.544 M against 1.539 M).
+is excluded from both the sustained fit and the eHP fit and held to **time to kill** instead:
+**~1 minute per mob for a median T4 build** (designer call 2026-09-27: mini-boss tier, never
+boss tier). Measured 2026-09-27 at 48–50 s on Offensive and ~65 s on Defensive (one mob,
+mechanics stripped), with DR-leaning durability:
+
+| mob | HP | plating | DR |
+|---|---:|---:|---:|
+| Abyssal Serpent | 32,800 | 18 | 35% |
+| Hadal Stalker | 34,500 | 20 | 30% |
+| Elder Leviathan | 31,800 | 22 | 40% |
+
+Rewards per kill were raised ×2.2 with it so reward per minute holds.
 
 ---
 
 ## 7. Bosses
 
-Premise inherited from the T1 pass (`91f0c85`): bosses are **end-of-tier exams**, not rungs
-on the railroad. Biome decides mechanics, never progression level.
+**Sized to the fight-length contract, not to trash HP** (2026-09-27, T4 power curve review,
+`reports/t4-power-curve-2026-09-27/`). The old anchor — every tier's bosses at ×8.13 of the
+top ladder biome's trash HP — pinned T4 bosses to Wasteland, the thinnest trash in the tier,
+while the player's weapon ladder doubled damage again. Measured T4 median kills were 29–42 s
+against a 180 s target, shorter than T3.
 
-Calibrated **in the vacuum**, because the player-dependent instrument is broken (§8). Each
-tier's bosses were scaled uniformly — preserving every in-tier relative position, which
-encodes their mechanics — until the tier's boss mean matched T1's accepted ratios against
-the tier's top **ladder** biome (T4 uses Wasteland, not Trench, since Trench is the
-deliberate off-ladder outlier):
+Contract (boss lineage redesign §2): median build **T3 ~120 s, T4 ~180 s**, measured as the
+midpoint of the breadth reference builds on Defensive and on Offensive stance. Per boss, HP
+was iterated in the live fight until that midpoint landed; each boss then kept its previous
+win rate (the killing mechanic was re-timed or softened where longer fights made it lethal).
 
-| | T1 | T2 | T3 | T4 |
-|---|---|---|---|---|
-| boss HP ÷ trash HP | ×8.13 | ×8.13 | ×8.13 | ×8.13 |
-| boss DPS ÷ trash DPS | ×0.736 | ×0.739 | ×0.735 | ×0.734 |
+eHP **profiles** differ on purpose, leaning on generic DR because it affects every build:
 
-The **Void Overlord** encounter (`void-overlord`, `void-horror`, `void-hulk`,
-`elder-trench-serpent-warden`) was scaled by the same uniform T4 factors. It is not a tier
-boss, but leaving it would have made the game's final encounter weaker than ordinary T4
-trash. Its internal stage relationships are untouched; the encounter redesign owns its
-shape.
+| profile | bosses | shape |
+|---|---|---|
+| DR | T3 Cave, Swamp, Desert, Volcanic; T4 Desert, Volcanic, Wasteland, Trench | DR 25–40% |
+| Plating | T3/T4 Mountain, T3/T4 Tundra | plating 20–32, modest DR |
+| Raw HP | T3/T4 Jungle | no plating, DR ≤ 8% |
+
+Player DoT ticks and procs skip plating and pay half of a monster's DR
+(`GAME_CONFIG.DOT_DR_SHARE`, the same rule monster DoTs follow on players). A boss that DoT
+builds overrun can author `dotResistance` on top; none needed it at the 2026-09-27 measurement
+(Apprentice's kill time was exactly the class median).
+
+**T2 (same day, ~60 s):** 15 non-Conduit T2 builds with a normalized package (Power Strike +
+Second Wind + Brace; the bench's melee kits carried only Expose Weakness). Designer target: every
+boss at ~75%+ wins. Before, T2 was the deadliest tier (Plains 7–13%, Forest 33–40% with every melee
+build dying, Swamp 27–53%): melee could not out-sustain the Plains herd or the Forest frenzy ramp.
+Result: every T2 boss 58–63 s midpoint, wins 88% Defensive / 81% Offensive. Striker is still the
+weakest class on Plains and Forest (a class issue, not a boss one).
+
+Result (2026-09-27, 45 non-Conduit reference builds × every boss): T3 median 139 s Defensive /
+103 s Offensive (wins 85/74%); T4 208 / 149 s (wins 92/82%). T1/T2 bosses are unchanged except
+the two Swamp poisons, which were softened to hold their win rates under the DoT/DR rule.
+
+The Void Overlord encounter was deleted on 2026-09-27 (it was unreachable legacy).
+
+**T4 class outliers (2026-09-28).** Measured as each spec's kill speed against the median spec on
+every live T4 boss (both stance arms) plus its damage ceiling on the heavy dummy (best stance ×
+technique package). Designer rule: nerf only clear outliers (> ~1.25× the median), lift the floor.
+Trims: Avenger vengeance ×1.5 → ×0.5 (it banks raw boss damage, so it scaled with the resized T4
+boss offense); Destroyer execution cooldown 4 → 5 s; Stalwart ramp +35/+55% → +15/+25%; Icebreaker
+frost −20% → −30%; Glacial Rimebrand conversion 70% → 60% (best T4 weapon for most specs and, with
+Detonate, every class's ceiling). Floor: every Spirit spec +15% attack; Shockblade aftershock on-hit
+25 → 75; Pyromancer stacks 40% → 55% and max-stack bonus ×1.25 → ×1.5; Firebrand ignition 35% → 50%.
+Result: class medians 0.91–1.07 (Spirit 0.85–0.89 → 0.92–0.99, Squire 1.06 → 1.00), top live spec
+1.20–1.24 except Melter (1.28–1.34, but it loses 14–43% of fights: left alone), top ceiling 1.38 →
+1.24. The T4 boss midpoint stayed on contract (177 s, wins 91/84%). Berserker stance was left alone:
+best on a dummy, but on live T4 bosses it costs ~10 points of win rate for ~20% speed.
 
 ---
 

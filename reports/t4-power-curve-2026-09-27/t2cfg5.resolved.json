@@ -1,0 +1,24 @@
+{
+ "chitinous-dreadbore#a76": {
+  "node": "cave",
+  "old": {
+   "hp": 4110,
+   "plating": 12,
+   "dr": 0.2
+  },
+  "paths": {
+   "stats.attack": 76
+  }
+ },
+ "chitinous-dreadbore#a70": {
+  "node": "cave",
+  "old": {
+   "hp": 4110,
+   "plating": 12,
+   "dr": 0.2
+  },
+  "paths": {
+   "stats.attack": 70
+  }
+ }
+}

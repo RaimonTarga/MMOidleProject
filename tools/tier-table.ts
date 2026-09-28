@@ -562,7 +562,6 @@ function partialTags(m: MonsterDefinition): string[] {
   if (m.enemyShield?.shatter) t.push('shatter');
   if (m.scalesWithAmbientRamp) t.push('ambient-scaled');
   if (m.bossScript) t.push('boss-script');
-  if (m.ultimateEncounter) t.push('ultimate');
   if (m.raisesDead) t.push('raise-adds');
   // A one-shot defensive state: real eHP for the fight, but only once per life and
   // only against direct damage, so it cannot honestly be folded into the eHP curve.

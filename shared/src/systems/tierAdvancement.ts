@@ -81,7 +81,7 @@ export function sealsHeldAtTier(bossesCleared: readonly string[], tier: number):
   const suffix = `:${tier}`;
   const seen = new Set<string>();
   for (const key of bossesCleared) {
-    // Non-biome tokens also live in bossesCleared (e.g. `ultimate:void-overlord`);
+    // Non-biome tokens can live in bossesCleared (old saves hold `ultimate:void-overlord`);
     // they carry no numeric tier and must never count toward advancement.
     if (!key.endsWith(suffix)) continue;
     const group = key.slice(0, -suffix.length);

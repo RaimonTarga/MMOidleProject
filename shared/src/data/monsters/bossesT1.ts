@@ -232,7 +232,8 @@ export const bossMonsterEntriesT1 = [
     // landed hit refreshes the whole duration. Was 4 x4 = 16 dps — approved 2026-08-28
     // after live evidence showed poison, not direct hits or Bile Pool, was the fatal
     // pressure in two clean boss fights (Striker died ~31% HP both times, ~38.2s each).
-    dotEffect: { debuffId: 'grave-toadeater-poison', label: 'Toad Poison', damagePerStack: 3, maxStacks: 4, tickIntervalMs: 1000, durationMs: 7000 },
+    // 2026-09-27: 3 -> 2 when DoTs went back to paying half of player DR (win rate held).
+    dotEffect: { debuffId: 'grave-toadeater-poison', label: 'Toad Poison', damagePerStack: 2, maxStacks: 4, tickIntervalMs: 1000, durationMs: 7000 },
     chargedAttack: {
       name: 'Bile Pool', castMs: 1200, cooldownMs: 8500, initialCooldownMs: 4000,
       multiplier: 1.0, fx: 'bile-spew', aoe: { radius: 105, impactFx: 'pool-spawn' },

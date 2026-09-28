@@ -7,7 +7,7 @@ import {
 
 /**
  * Aggregates combat metrics for one or more tracked players. For a solo boss run
- * this is a single bot; for an overlord run it sums across the whole party and
+ * this is a single bot; with several tracked players it sums across all of them and
  * records which members died.
  */
 export class BalanceMetricsCollector {

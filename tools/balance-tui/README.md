@@ -20,6 +20,10 @@ remember. On the **Configure run** screen, pick your **mode**, tiers, biome, cla
 time scale, max seconds, single-match toggle, and **all-paths** toggle, watch the
 live **expected matches** count update, then activate **Run ▶**.
 
+> **2026-09-27:** the Void Overlord and the bench's `--mode overlord` / `--party` / `--sample`
+> were deleted. The TUI's Overlord toggle below is stale (the bench now rejects that mode)
+> until the Rust side is cleaned up.
+
 **Mode (Boss vs Overlord):** the top field toggles between two benches:
 
 - **Boss** — the solo dungeon-boss matrix (one bot per build × content tier).

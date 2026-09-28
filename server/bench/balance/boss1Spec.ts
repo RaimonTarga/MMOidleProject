@@ -68,7 +68,8 @@ export const BOSS1_ESCORTS: Record<string, { hp: number; attack: number }> = {
 };
 
 /** The boss's own authored block, pinned so a silent stat edit invalidates the screen. */
-export const BOSS1_BOSS_STATS = { hp: 19499, attack: 115, plating: 14, damageReduction: 0.08 };
+// Rebased 2026-09-27 (T4 power curve: bosses sized to the ~180 s fight contract).
+export const BOSS1_BOSS_STATS = { hp: 42000, attack: 115, plating: 14, damageReduction: 0.25 };
 
 /**
  * Six roots, from the QUALIFIED T4 graveyard builds Durability37 already uses
@@ -281,8 +282,9 @@ export function assertBoss1Definitions(): void {
   // ── Earlier slot: Apex Timberclaw, on explicit reference builds.
   const tc = MONSTER_DATABASE.get(BOSS1_TIMBERCLAW_BOSS_ID);
   assert(tc?.isBoss, `${BOSS1_TIMBERCLAW_BOSS_ID} missing or not a boss`);
-  assert.equal(tc.stats.hp, 3750, 'timberclaw hp drift');
-  assert.equal(tc.stats.attack, 44, 'timberclaw attack drift');
+  // Rebased 2026-09-27 (T2 boss pass).
+  assert.equal(tc.stats.hp, 7100, 'timberclaw hp drift');
+  assert.equal(tc.stats.attack, 22, 'timberclaw attack drift');
   const tcDef = [...DUNGEON_DEFS.values()].find((d) => d.nodeId === BOSS1_TIMBERCLAW_NODE_ID);
   assert(tcDef && tcDef.boss.bossId === BOSS1_TIMBERCLAW_BOSS_ID, 'timberclaw dungeon drift');
   const tcCells = BOSS1_BLOCKS['timberclaw']!.cells;

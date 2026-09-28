@@ -55,10 +55,6 @@ export const GRAVE_DISPLAY_W = 70;
 export const GRAVE_DISPLAY_H = 70;
 /** Label offset above grave crown (used by drawLabels). */
 export const GRAVE_LABEL_OFFSET_Y = GRAVE_DISPLAY_H * 0.55 + 8;
-export const VOID_TOMB_TEXTURE_KEY = "void_tomb";
-export const VOID_TOMB_FILE = "/assets/ultimate_bosses/void_tomb.png";
-export const VOID_TOMB_DISPLAY_W = 280;
-export const VOID_TOMB_DISPLAY_H = 280;
 
 // ── Scattered forest trees (2×2 sheet, one tree variant per 1024px cell) ──────
 export const TREES_KEY = "env_trees";
@@ -204,11 +200,6 @@ export {
   resolvePlayerFrame,
 };
 
-export {
-  VOID_OVERLORD_TEXTURE_KEY,
-  VOID_OVERLORD_FILE,
-  initVoidOverlordSheet,
-} from "./sprites/voidOverlordSheet";
 
 /**
  * Returns the atlas frame name for a player.

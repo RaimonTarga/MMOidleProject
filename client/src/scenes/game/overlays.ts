@@ -55,7 +55,6 @@ import {
 } from "../../render/wangGround";
 import type { GameScene } from "./GameScene";
 import { MM_H, MM_PAD, MM_W } from "./nodeExits";
-import { isVoidThroneUnblocked } from "./voidThrone";
 import { resolvedMinimapTierPalette, uiTierActivationIsActive } from "../../hud/uiTier";
 import { isMobileViewport } from "../../breakpoints";
 import { TINT_DEPTH, nodeTintOverlay, nodeTintMultiply } from "../../render/biomeTint";
@@ -990,8 +989,6 @@ function updateNodeDecorForNode(scene: GameScene, nodeId: string): void {
   for (const img of scene.nodeTrees) img.destroy();
   scene.nodeTrees = [];
 
-  const throneOpen =
-    nodeId === scene.state.ownNodeId && isVoidThroneUnblocked(scene);
   scene.nodeBiomeDecor = [
     ...buildBiomeDecorImages(scene, nodeId, 0, 0, 0, false),
     ...buildFeatureScatterImages(scene, nodeId, 0, 0, 0, false),
@@ -1002,7 +999,7 @@ function updateNodeDecorForNode(scene: GameScene, nodeId: string): void {
     0,
     0,
     0,
-    throneOpen,
+    false,
   );
   scene.nodePlaceholders = buildNodePlaceholderFeatures(
     scene,
@@ -1025,23 +1022,6 @@ export function updateNodeDecor(scene: GameScene): void {
   updateNodeDecorForNode(scene, scene.state.ownNodeId);
 }
 
-export function refreshNodeDecorState(scene: GameScene): void {
-  const arts = NODE_DECOR[scene.state.ownNodeId];
-  if (!arts) return;
-
-  const throneOpen = isVoidThroneUnblocked(scene);
-  for (const img of scene.nodeDecor) {
-    const featureId = img.getData("featureId") as string | undefined;
-    const art = arts.find((a) => a.featureId === featureId);
-    if (!art) continue;
-    const textureKey = throneOpen && art.openKey ? art.openKey : art.key;
-    if (img.texture.key === textureKey || !scene.textures.exists(textureKey))
-      continue;
-    const displayW = img.displayWidth;
-    const displayH = img.displayHeight;
-    img.setTexture(textureKey).setDisplaySize(displayW, displayH);
-  }
-}
 
 export function drawExitMarkers(scene: GameScene): void {
   scene.exitMarkers.clear();

@@ -1,0 +1,81 @@
+{
+ "caldera-sovereign#a": {
+  "tier": 4,
+  "node": "volcanic",
+  "old": {
+   "hp": 20646,
+   "plating": 10,
+   "dr": 0.05
+  },
+  "plating": 10,
+  "dr": 0.35,
+  "mid": 28.8,
+  "hp": 80000,
+  "paths": {
+   "bossPattern.steps.0.castMs": 60000,
+   "bossScript.phases.0.actions.+": {
+    "type": "stoke-ramp",
+    "rampMsMult": 3
+   },
+   "bossPattern.steps[kind=impact].rawDamage": 650,
+   "bossScript.phases.0.actions[type=vent-field].damageMult": 1.13,
+   "bossScript.phases.0.actions[type=vent-spawner].damageMult": 1.05,
+   "bossScript.phases.1.actions[type=vent-field].damageMult": 1.13,
+   "bossScript.phases.1.actions[type=vent-spawner].damageMult": 1.05,
+   "bossScript.phases.2.actions[type=vent-spawner].damageMult": 1.05,
+   "bossScript.phases.0.actions[type=stoke-ramp].rampMsMult": 5,
+   "bossScript.phases.0.actions[type=room-affliction].dot.damagePerStack": 3,
+   "bossScript.phases.2.actions[type=room-affliction].dot.damagePerStack": 3,
+   "bossScript.phases.2.actions[type=room-affliction].intervalMs": 3000
+  }
+ },
+ "caldera-sovereign#b": {
+  "tier": 4,
+  "node": "volcanic",
+  "old": {
+   "hp": 20646,
+   "plating": 10,
+   "dr": 0.05
+  },
+  "plating": 10,
+  "dr": 0.35,
+  "mid": 28.8,
+  "hp": 80000,
+  "paths": {
+   "bossPattern.steps.0.castMs": 60000,
+   "bossScript.phases.0.actions.+": {
+    "type": "stoke-ramp",
+    "rampMsMult": 3
+   },
+   "bossPattern.steps[kind=impact].rawDamage": 500,
+   "bossScript.phases.0.actions[type=vent-field].damageMult": 1.13,
+   "bossScript.phases.0.actions[type=vent-spawner].damageMult": 1.05,
+   "bossScript.phases.1.actions[type=vent-field].damageMult": 1.13,
+   "bossScript.phases.1.actions[type=vent-spawner].damageMult": 1.05,
+   "bossScript.phases.2.actions[type=vent-spawner].damageMult": 1.05,
+   "bossScript.phases.0.actions[type=stoke-ramp].rampMsMult": 5,
+   "bossScript.phases.0.actions[type=room-affliction].dot.damagePerStack": 3,
+   "bossScript.phases.2.actions[type=room-affliction].dot.damagePerStack": 3,
+   "bossScript.phases.2.actions[type=room-affliction].intervalMs": 3000,
+   "stats.attack": 110
+  }
+ },
+ "charnel-crown-sovereign#c3h": {
+  "tier": 4,
+  "node": "graveyard",
+  "old": {
+   "hp": 19499,
+   "plating": 14,
+   "dr": 0.08
+  },
+  "plating": 14,
+  "dr": 0.25,
+  "mid": 91,
+  "hp": 42000,
+  "paths": {
+   "bossScript.phases.2.actions[type=harvest].intervalMs": 4250,
+   "raisesDead.intervalMs": 15300,
+   "bossScript.phases.0.actions[type=cast].actions[monsterTypeId=bone-crawler].count": 3
+  }
+ }
+}

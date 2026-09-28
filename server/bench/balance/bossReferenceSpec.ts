@@ -63,7 +63,8 @@ export const BOSSREF_CAP_MS = 300000;
 export const BOSSREF_SKILL_PATH = ['energy-root', 'energy-heavy'] as const;
 
 /** Apex Timberclaw's authored block, pinned so a silent edit invalidates the check. */
-export const BOSSREF_BOSS_STATS = { hp: 3750, attack: 44, plating: 0, damageReduction: 0 };
+// Rebased 2026-09-27 (T2 boss pass).
+export const BOSSREF_BOSS_STATS = { hp: 7100, attack: 22, plating: 0, damageReduction: 0 };
 
 /**
  * Case A — the complete historical successful package.

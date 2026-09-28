@@ -113,7 +113,9 @@ export function registerEmpoweredMultiplier(
     // empoweredAttack metadata set so their own onHit handlers can detect the trigger.
     if (ctx.metadata['suppressEmpoweredMult']) {
       ctx.metadata['empoweredAttack']     = true;
-      ctx.metadata['empoweredMultiplier'] = 1;
+      // Keep a multiplier the mechanic recorded itself (energy discharges) so
+      // Technique riders still see it; otherwise the standard one is 1.
+      ctx.metadata['empoweredMultiplier'] = Number(ctx.metadata['empoweredMultiplier'] ?? 1);
       ctx.metadata['empoweredBonus']      = 0;
       return;
     }

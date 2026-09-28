@@ -20,7 +20,6 @@ import {
 } from '@mmo-idle/shared';
 import { findDungeonNodeFor } from '../../src/world/nodePath';
 import {
-  OVERLORD_PARTY_SIZE,
   type BuildSpec,
   type ContentTarget,
   type GearSlot,
@@ -553,27 +552,6 @@ export function representativeBuildsPerClass(
   return picks;
 }
 
-/**
- * Every overlord encounter in the world: a dungeon node whose boss is an
- * objective-driven `ultimateEncounter`. Currently just the void-overlord
- * (`node-10-0`, abyss T4), but new overlords are picked up automatically.
- */
-export function enumerateOverlordTargets(filter?: MatrixFilter): ContentTarget[] {
-  const targets: ContentTarget[] = [];
-  for (const [nodeId, info] of Object.entries(NODE_BIOMES)) {
-    if (!info.isDungeon || !info.bossTypeId) continue;
-    if (!MONSTER_DATABASE.get(info.bossTypeId)?.ultimateEncounter) continue;
-    if (filter?.biome && filter.biome !== info.biomeGroup) continue;
-    targets.push({
-      nodeId,
-      biomeGroup: info.biomeGroup,
-      contentTier: info.biomeTier,
-      isDungeon: true,
-    });
-  }
-  return targets;
-}
-
 interface ClassGroup {
   classRoot: string;
   builds: BuildSpec[];
@@ -595,146 +573,8 @@ function groupBuildsByClass(builds: BuildSpec[]): ClassGroup[] {
   return groups;
 }
 
-/** Lazy `k`-combinations of `[0, n)`, yielded as ascending index tuples. */
-function* indexCombinations(n: number, k: number): Generator<number[]> {
-  if (k < 0 || k > n) return;
-  const idx = Array.from({ length: k }, (_, i) => i);
-  while (true) {
-    yield idx.slice();
-    let p = k - 1;
-    while (p >= 0 && idx[p] === n - k + p) p--;
-    if (p < 0) break;
-    idx[p]++;
-    for (let q = p + 1; q < k; q++) idx[q] = idx[q - 1] + 1;
-  }
-}
-
-/** Cartesian product across groups — one build picked from each group. */
-function* cartesianBuilds(groups: ClassGroup[]): Generator<BuildSpec[]> {
-  if (groups.length === 0) {
-    yield [];
-    return;
-  }
-  const counts = groups.map((g) => g.builds.length);
-  const pick = new Array<number>(groups.length).fill(0);
-  while (true) {
-    yield groups.map((g, i) => g.builds[pick[i]]);
-    let p = groups.length - 1;
-    while (p >= 0 && pick[p] === counts[p] - 1) {
-      pick[p] = 0;
-      p--;
-    }
-    if (p < 0) break;
-    pick[p]++;
-  }
-}
-
-/** `e_k` — the elementary symmetric polynomial (sum of all `k`-subset products). */
-function elementarySymmetric(counts: number[], k: number): number {
-  if (k < 0) return 0;
-  const e = new Array<number>(k + 1).fill(0);
-  e[0] = 1;
-  for (const c of counts) {
-    for (let j = k; j >= 1; j--) e[j] += e[j - 1] * c;
-  }
-  return e[k];
-}
-
-function classOrderIndex(classRoot: string): number {
-  return CLASS_ROOTS.indexOf(classRoot as (typeof CLASS_ROOTS)[number]);
-}
-
-/**
- * The set of `size`-distinct-class strata. Each combo is a list of class groups
- * in `CLASS_ROOTS` order. When `lockClass` is set, every combo includes it.
- */
-function classCombos(
-  groups: ClassGroup[],
-  lockClass: string | undefined,
-  size: number,
-): ClassGroup[][] {
-  if (groups.length < size) return [];
-  const combos: ClassGroup[][] = [];
-
-  if (lockClass) {
-    const lockIdx = groups.findIndex((g) => g.classRoot === lockClass);
-    if (lockIdx < 0) return [];
-    const lockGroup = groups[lockIdx];
-    const others = groups.filter((_, i) => i !== lockIdx);
-    for (const combo of indexCombinations(others.length, size - 1)) {
-      const chosen = [lockGroup, ...combo.map((i) => others[i])].sort(
-        (a, b) => classOrderIndex(a.classRoot) - classOrderIndex(b.classRoot),
-      );
-      combos.push(chosen);
-    }
-    return combos;
-  }
-
-  for (const combo of indexCombinations(groups.length, size)) {
-    combos.push(combo.map((i) => groups[i]));
-  }
-  return combos;
-}
-
-/**
- * Every overlord party: `size` builds drawn from `size` **distinct** classes
- * (no class appears twice — a realistic group never runs 4 of one class). When
- * `lockClass` is set, every party is guaranteed to include one build of that
- * class (the "locked slot"), with the remaining slots filled from distinct other
- * classes. Yielded lazily; classes are kept in `CLASS_ROOTS` order so the
- * partition is deterministic for sharding.
- */
-export function* enumerateDistinctClassParties(
-  builds: BuildSpec[],
-  lockClass?: string,
-  size = OVERLORD_PARTY_SIZE,
-): Generator<BuildSpec[]> {
-  const groups = groupBuildsByClass(builds);
-  for (const combo of classCombos(groups, lockClass, size)) {
-    yield* cartesianBuilds(combo);
-  }
-}
-
-/** Exact count of distinct-class parties (mirrors `enumerateDistinctClassParties`). */
-export function countDistinctClassParties(
-  builds: BuildSpec[],
-  lockClass?: string,
-  size = OVERLORD_PARTY_SIZE,
-): number {
-  const groups = groupBuildsByClass(builds);
-  if (groups.length < size) return 0;
-
-  if (lockClass) {
-    const lockIdx = groups.findIndex((g) => g.classRoot === lockClass);
-    if (lockIdx < 0) return 0;
-    const lockCount = groups[lockIdx].builds.length;
-    const otherCounts = groups
-      .filter((_, i) => i !== lockIdx)
-      .map((g) => g.builds.length);
-    return lockCount * elementarySymmetric(otherCounts, size - 1);
-  }
-
-  return elementarySymmetric(
-    groups.map((g) => g.builds.length),
-    size,
-  );
-}
-
-// ── Stratified random sampling (overlord) ───────────────────────────────────
-
 /** Deterministic seed so every shard process samples the identical scenarios. */
 const SAMPLE_SEED = 0x9e3779b9;
-
-/** Small fast PRNG; deterministic given a seed (so samples are reproducible). */
-function mulberry32(seed: number): () => number {
-  let a = seed >>> 0;
-  return () => {
-    a = (a + 0x6d2b79f5) | 0;
-    let t = Math.imul(a ^ (a >>> 15), 1 | a);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
 
 const MELEE_PREFIXES = new Set(['cadence', 'cooldown']);
 const RANGED_PREFIXES = new Set(['energy', 'reload']);
@@ -776,94 +616,6 @@ function rangeFitScore(build: BuildSpec): 0 | 1 | 2 {
   }
   // summoner / unknown → ranged-leaning.
   return range === 'range-far' || range === 'range-mid' ? 2 : 1;
-}
-
-/** Sort builds optimized-first (range fit desc); shuffle within equal score for variety. */
-function prioritizeBuilds(builds: BuildSpec[], rng: () => number): BuildSpec[] {
-  return builds
-    .map((b) => ({ b, score: rangeFitScore(b), jitter: rng() }))
-    .sort((x, y) => y.score - x.score || x.jitter - y.jitter)
-    .map((x) => x.b);
-}
-
-/** Index tuples bounded by `lengths`, summing to exactly `remaining`, from `pos`. */
-function* boundedCompositions(
-  remaining: number,
-  lengths: number[],
-  pos: number,
-): Generator<number[]> {
-  if (pos === lengths.length - 1) {
-    if (remaining <= lengths[pos] - 1) yield [remaining];
-    return;
-  }
-  const maxHere = Math.min(remaining, lengths[pos] - 1);
-  for (let v = 0; v <= maxHere; v++) {
-    for (const rest of boundedCompositions(remaining - v, lengths, pos + 1)) {
-      yield [v, ...rest];
-    }
-  }
-}
-
-/**
- * Index tuples over the cartesian product of `lengths`, yielded in ascending
- * coordinate-sum order. With per-class lists pre-sorted optimized-first, low
- * coordinate sums = the most optimized parties, so these come first.
- */
-function* diagonalIndexTuples(lengths: number[]): Generator<number[]> {
-  const maxSum = lengths.reduce((acc, l) => acc + (l - 1), 0);
-  for (let s = 0; s <= maxSum; s++) {
-    yield* boundedCompositions(s, lengths, 0);
-  }
-}
-
-/**
- * Up to `target` overlord parties, sampled to (1) spread evenly across class
- * archetypes (round-robin over the distinct-class strata), (2) spot-check build
- * variants rather than exhaust them, and (3) prioritize "optimized" builds —
- * those whose range node fits their archetype — over mismatched ones.
- *
- * Deterministic (fixed seed) so every shard process produces the same ordered
- * sample and simulates its slice. If `target` exceeds the full space it simply
- * degrades to a full (optimized-first) enumeration.
- */
-export function* sampleDistinctClassParties(
-  builds: BuildSpec[],
-  lockClass: string | undefined,
-  target: number,
-  size = OVERLORD_PARTY_SIZE,
-): Generator<BuildSpec[]> {
-  if (target <= 0) return;
-  const groups = groupBuildsByClass(builds);
-  const combos = classCombos(groups, lockClass, size);
-  if (combos.length === 0) return;
-
-  const rng = mulberry32(SAMPLE_SEED);
-  const streams = combos.map((combo) => {
-    const lists = combo.map((g) => prioritizeBuilds(g.builds, rng));
-    return {
-      lists,
-      gen: diagonalIndexTuples(lists.map((l) => l.length)),
-      done: false,
-    };
-  });
-
-  let produced = 0;
-  let active = true;
-  while (produced < target && active) {
-    active = false;
-    for (const st of streams) {
-      if (st.done) continue;
-      const next = st.gen.next();
-      if (next.done) {
-        st.done = true;
-        continue;
-      }
-      active = true;
-      yield st.lists.map((list, i) => list[next.value[i]]);
-      produced++;
-      if (produced >= target) return;
-    }
-  }
 }
 
 export function enumerateContentTargets(

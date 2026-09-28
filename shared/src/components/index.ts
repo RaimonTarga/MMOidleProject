@@ -19,15 +19,12 @@ export * from "./targeting/hasAttackTarget";
 export * from "./targeting/hasKnockback";
 export * from "./targeting/dragsPrey";
 export * from "./targeting/isBossEngaged";
-export * from "./targeting/isEncounterAdd";
 export * from "./targeting/isNodeFeatureSpawn";
 export * from "./targeting/isRaised";
 export * from "./targeting/isConcealed";
 export * from "./targeting/isInvulnerable";
 export * from "./targeting/isRooted";
-export * from "./targeting/isUltimateEngaged";
 export * from "./targeting/scriptsBoss";
-export * from "./targeting/scriptsUltimate";
 
 export * from "./archetypes/cadence/hasDetonation";
 export * from "./archetypes/cadence/hasHemorrhage";

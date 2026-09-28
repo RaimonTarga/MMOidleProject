@@ -29,7 +29,6 @@ const WEIGHTS: BalanceWeights = {
 
 /** Ideal fight-duration windows (seconds). Attrition danger climbs past max. */
 const BOSS_TARGET = { minSecs: 60, maxSecs: 180 }; // regular dungeon boss: 1–3 min
-const OVERLORD_TARGET = { minSecs: 1080, maxSecs: 1200 }; // overlord: ~18–20 min
 
 /** Difficulty thresholds for each rating bucket (upper bound, exclusive). */
 export const RATING_BANDS: { rating: BalanceRating; max: number }[] = [
@@ -44,12 +43,6 @@ function clamp01(v: number): number {
   return Math.max(0, Math.min(1, v));
 }
 
-/** True when the node's boss is an objective-driven ultimate (overlord) fight. */
-export function isOverlordBoss(bossTypeId: string | undefined): boolean {
-  if (!bossTypeId) return false;
-  return MONSTER_DATABASE.get(bossTypeId)?.ultimateEncounter !== undefined;
-}
-
 function ratingFromDifficulty(difficulty: number): BalanceRating {
   for (const band of RATING_BANDS) {
     if (difficulty < band.max) return band.rating;
@@ -58,8 +51,7 @@ function ratingFromDifficulty(difficulty: number): BalanceRating {
 }
 
 export function computeBalanceScore(result: BalanceRunResult): BalanceScore {
-  const isOverlord = isOverlordBoss(result.bossTypeId);
-  const target = isOverlord ? OVERLORD_TARGET : BOSS_TARGET;
+  const target = BOSS_TARGET;
 
   const seconds = result.simDurationMs / 1000;
   const hpFraction = result.maxHp > 0 ? result.botHpEnd / result.maxHp : 0;
@@ -92,7 +84,9 @@ export function computeBalanceScore(result: BalanceRunResult): BalanceScore {
     seconds,
     targetMinSecs: target.minSecs,
     targetMaxSecs: target.maxSecs,
-    isOverlord,
+    // Always false since the overlord mode was removed (2026-09-27); kept because the
+    // balance TUI parses it as a required field.
+    isOverlord: false,
     outcomeGated,
     weights: WEIGHTS,
   };

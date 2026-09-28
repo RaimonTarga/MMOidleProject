@@ -1,0 +1,63 @@
+== round 0
+errors 0 []
+| boss | HP / pl / DR | bench s (win%) | off s (win%) | midpoint | target | next HP | top killers |
+| crag-gorged-horn-behemoth | 17090 / 20 / 0.15 | 147 (93%) | 107 (80%) | 127 | 120 | 16110 | Crag-Gorged Horn-Behemoth / Double Charg ×2; Crag-Gorged Horn-Behemoth / debt ×1; Crag-Gorged Horn-Behemoth / melee ×1 |
+| deep-core-burrow-gorger | 13450 / 12 / 0.35 | 134 (87%) | 90 (73%) | 112 | 120 | 14420 | Deep-Core Burrow-Gorger / Deep-Core Erup ×5; Deep-Core Burrow-Gorger / debt ×1 |
+| rot-spore-croc-behemoth | 10820 / 8 / 0.3 | 146 (87%) | 99 (73%) | 122 | 120 | 10610 | Rot-Spore Croc-Behemoth / Rot Bloom ×2; Rot-Spore Croc-Behemoth / Spore Spit ×2; Rot-Spore Croc-Behemoth / Spore Pool ×1 |
+| dune-carapace-monarch | 14340 / 10 / 0.3 | 122 (40%) | 92 (40%) | 107 | 120 | 16060 | Dune-Carapace Monarch / Execution ×12; Dune-Carapace Monarch / ranged ×5; Dune-Carapace Monarch / debt ×1 |
+| apex-bramble-slasher | 23110 / 0 / 0.05 | 142 (60%) | 88 (47%) | 115 | 120 | 24060 | Apex Bramble-Slasher / Venomous Bite ×9; Apex Bramble-Slasher / melee ×3; Apex Bramble-Slasher / debt ×2 |
+| cinder-shell-magma-salamander | 18230 / 8 / 0.3 | 111 (47%) | 95 (33%) | 103 | 120 | 21190 | Cinder-Shell Magma-Salamander / melee ×14; Cinder-Shell Magma-Salamander / Vent Eru ×4 |
+| frost-plated-rime-mammoth | 19410 / 22 / 0.15 | 145 (80%) | 106 (53%) | 125 | 120 | 18570 | Frost-Plated Rime-Mammoth / Shatter ×10 |
+| iron-crest-titan | 79340 / 28 / 0.15 | 223 (100%) | 160 (100%) | 192 | 180 | 74480 |  |
+| dune-throne-sovereign | 73400 / 8 / 0.35 | 217 (100%) | 152 (100%) | 184 | 180 | 71770 |  |
+| verdant-crown-predator | 113060 / 0 / 0.08 | 203 (73%) | 145 (60%) | 174 | 180 | 116890 | Verdant-Crown Predator / melee ×9; Verdant-Crown Predator / debt ×1 |
+| glacial-patriarch | 94420 / 32 / 0.18 | 226 (100%) | 156 (100%) | 191 | 180 | 89120 |  |
+| caldera-sovereign | 88290 / 10 / 0.35 | 0 (0%) | 0 (0%) | 0 | 180 | Infinity | Caldera Sovereign / Cataclysm ×26; Caldera Sovereign / Vent Eruption ×3; Caldera Sovereign / melee ×1 |
+| charnel-crown-sovereign | 31440 / 14 / 0.25 | 187 (33%) | 126 (7%) | 156 | 180 | 36280 | Bone Crawler / melee ×8; Plague Hound / dot ×4; Charnel-Crown Sovereign / ranged ×3 |
+| elder-trench-serpent | 77370 / 20 / 0.4 | 238 (100%) | 163 (87%) | 200 | 180 | 69480 | Elder Trench Serpent / Devour ×2 |
+== round 1
+errors 0 []
+| boss | HP / pl / DR | bench s (win%) | off s (win%) | midpoint | target | next HP | top killers |
+| crag-gorged-horn-behemoth | 16110 / 20 / 0.15 | 142 (93%) | 99 (80%) | 120 | 120 | 16070 | Crag-Gorged Horn-Behemoth / Double Charg ×2; Crag-Gorged Horn-Behemoth / debt ×1; Crag-Gorged Horn-Behemoth / melee ×1 |
+| deep-core-burrow-gorger | 14420 / 12 / 0.35 | 137 (93%) | 104 (80%) | 120 | 120 | 14360 | Deep-Core Burrow-Gorger / Deep-Core Erup ×3; Deep-Core Burrow-Gorger / debt ×1 |
+| rot-spore-croc-behemoth | 10610 / 8 / 0.3 | 139 (93%) | 96 (80%) | 118 | 120 | 10790 | Rot-Spore Croc-Behemoth / Bile Pool ×2; Rot-Spore Croc-Behemoth / dot ×2 |
+| dune-carapace-monarch | 16060 / 10 / 0.3 | 131 (47%) | 105 (47%) | 118 | 120 | 16320 | Dune-Carapace Monarch / Execution ×12; Dune-Carapace Monarch / debt ×2; Dune-Carapace Monarch / ranged ×2 |
+| apex-bramble-slasher | 24060 / 0 / 0.05 | 147 (60%) | 83 (40%) | 115 | 120 | 25120 | Apex Bramble-Slasher / Venomous Bite ×8; Apex Bramble-Slasher / melee ×5; Apex Bramble-Slasher / debt ×2 |
+| cinder-shell-magma-salamander | 21190 / 8 / 0.3 | 149 (53%) | 107 (47%) | 128 | 120 | 19870 | Cinder-Shell Magma-Salamander / melee ×11; Cinder-Shell Magma-Salamander / Vent Eru ×4 |
+| frost-plated-rime-mammoth | 18570 / 22 / 0.15 | 134 (87%) | 99 (73%) | 117 | 120 | 19100 | Frost-Plated Rime-Mammoth / Shatter ×5; Frost-Plated Rime-Mammoth / debt ×1 |
+| iron-crest-titan | 74480 / 28 / 0.15 | 215 (100%) | 152 (100%) | 183 | 180 | 73140 |  |
+| dune-throne-sovereign | 71770 / 8 / 0.35 | 217 (100%) | 146 (100%) | 182 | 180 | 71080 |  |
+| verdant-crown-predator | 116890 / 0 / 0.08 | 218 (73%) | 148 (60%) | 183 | 180 | 114850 | Verdant-Crown Predator / melee ×9; Verdant-Crown Predator / debt ×1 |
+| glacial-patriarch | 89120 / 32 / 0.18 | 203 (100%) | 152 (87%) | 177 | 180 | 90450 | Glacial Patriarch / Shatter ×1; Glacial Patriarch / debt ×1 |
+| charnel-crown-sovereign | 36280 / 14 / 0.25 | 215 (33%) | 227 (13%) | 221 | 180 | 29560 | Bone Crawler / melee ×8; Plague Hound / dot ×4; Charnel-Crown Sovereign / ranged ×3 |
+| elder-trench-serpent | 69480 / 20 / 0.4 | 210 (100%) | 153 (87%) | 182 | 180 | 68910 | Elder Trench Serpent / Devour ×2 |
+| caldera-sovereign#h3 | 88290 / 10 / 0.35 | 226 (53%) | 163 (33%) | 194 | 180 | 81770 | Caldera Sovereign / Cataclysm ×8; Caldera Sovereign / Vent Eruption ×4; Caldera Sovereign / Simmering Burn ×3 |
+| caldera-sovereign#h6 | 88290 / 10 / 0.35 | 233 (33%) | 187 (20%) | 210 | 180 | 75750 | Caldera Sovereign / Vent Eruption ×8; Caldera Sovereign / Cataclysm ×7; Caldera Sovereign / melee ×5 |
+== round 2
+errors 0 []
+| boss | HP / pl / DR | bench s (win%) | off s (win%) | midpoint | target | next HP | top killers |
+| apex-bramble-slasher#m | 25120 / 0 / 0.05 | 157 (87%) | 108 (67%) | 132 | 120 | 22820 | Apex Bramble-Slasher / melee ×5; Apex Bramble-Slasher / Venomous Bite ×2 |
+| apex-bramble-slasher#s | 25120 / 0 / 0.05 | 162 (93%) | 108 (67%) | 135 | 120 | 22400 | Apex Bramble-Slasher / melee ×4; Apex Bramble-Slasher / Venomous Bite ×2 |
+| cinder-shell-magma-salamander#m | 19870 / 8 / 0.3 | 145 (93%) | 109 (60%) | 127 | 120 | 18780 | Cinder-Shell Magma-Salamander / Vent Eru ×3; Cinder-Shell Magma-Salamander / Final Er ×2; Cinder-Shell Magma-Salamander / melee ×2 |
+| cinder-shell-magma-salamander#s | 19870 / 8 / 0.3 | 144 (100%) | 110 (67%) | 127 | 120 | 18760 | Cinder-Shell Magma-Salamander / Final Er ×2; Cinder-Shell Magma-Salamander / Vent Eru ×2; Cinder-Shell Magma-Salamander / melee ×1 |
+| dune-carapace-monarch#m | 16320 / 10 / 0.3 | 140 (67%) | 108 (53%) | 124 | 120 | 15800 | Dune-Carapace Monarch / Execution ×6; Dune-Carapace Monarch / ranged ×5; Dune-Carapace Monarch / debt ×1 |
+| dune-carapace-monarch#s | 16320 / 10 / 0.3 | 153 (80%) | 110 (73%) | 131 | 120 | 14930 | Dune-Carapace Monarch / ranged ×4; Dune-Carapace Monarch / Execution ×3 |
+| verdant-crown-predator#m | 114850 / 0 / 0.08 | 217 (100%) | 150 (87%) | 184 | 180 | 112570 | Verdant-Crown Predator / melee ×2 |
+| verdant-crown-predator#s | 114850 / 0 / 0.08 | 217 (100%) | 149 (93%) | 183 | 180 | 113110 | Verdant-Crown Predator / melee ×1 |
+| caldera-sovereign#m | 81770 / 10 / 0.35 | 193 (47%) | 142 (27%) | 168 | 180 | 87810 | Caldera Sovereign / Vent Eruption ×8; Caldera Sovereign / Cataclysm ×5; Caldera Sovereign / melee ×4 |
+| caldera-sovereign#s | 81770 / 10 / 0.35 | 197 (53%) | 142 (27%) | 170 | 180 | 86720 | Caldera Sovereign / Vent Eruption ×10; Caldera Sovereign / Cataclysm ×5; Caldera Sovereign / melee ×3 |
+| charnel-crown-sovereign#m | 29560 / 14 / 0.25 | 173 (33%) | 143 (13%) | 158 | 180 | 33690 | Bone Crawler / melee ×8; Plague Hound / dot ×4; Charnel-Crown Sovereign / ranged ×3 |
+| charnel-crown-sovereign#s | 29560 / 14 / 0.25 | 174 (60%) | 124 (47%) | 149 | 180 | 35760 | Bone Crawler / melee ×5; Plague Hound / dot ×3; Carrion Vulture / ranged ×3 |
+== round 3
+errors 0 []
+| boss | HP / pl / DR | bench s (win%) | off s (win%) | midpoint | target | next HP | top killers |
+| caldera-sovereign#v75 | 87000 / 10 / 0.35 | 223 (60%) | 173 (20%) | 198 | 180 | 79210 | Caldera Sovereign / melee ×6; Caldera Sovereign / Simmering Burn ×5; Caldera Sovereign / Cataclysm ×5 |
+| caldera-sovereign#v60 | 87000 / 10 / 0.35 | 222 (53%) | 174 (27%) | 198 | 180 | 79010 | Caldera Sovereign / Simmering Burn ×6; Caldera Sovereign / Cataclysm ×6; Caldera Sovereign / melee ×4 |
+| charnel-crown-sovereign#c3 | 35000 / 14 / 0.25 | 177 (53%) | 112 (47%) | 144 | 180 | 43650 | Bone Crawler / melee ×5; Carrion Vulture / ranged ×3; Plague Hound / dot ×3 |
+| charnel-crown-sovereign#c3d | 35000 / 14 / 0.25 | 177 (53%) | 112 (47%) | 144 | 180 | 43650 | Bone Crawler / melee ×5; Plague Hound / dot ×3; Carrion Vulture / ranged ×3 |
+== round 4
+errors 0 []
+| boss | HP / pl / DR | bench s (win%) | off s (win%) | midpoint | target | next HP | top killers |
+| caldera-sovereign#a | 80000 / 10 / 0.35 | 214 (93%) | 175 (53%) | 194 | 180 | 74130 | Caldera Sovereign / Vent Eruption ×4; Caldera Sovereign / melee ×2; Caldera Sovereign / Simmering Burn ×1 |
+| caldera-sovereign#b | 80000 / 10 / 0.35 | 211 (100%) | 175 (80%) | 193 | 180 | 74600 | Caldera Sovereign / melee ×2; Caldera Sovereign / Vent Eruption ×1 |
+| charnel-crown-sovereign#c3h | 42000 / 14 / 0.25 | 228 (60%) | 133 (40%) | 181 | 180 | 41850 | Bone Crawler / melee ×5; Carrion Vulture / ranged ×3; Plague Hound / dot ×3 |

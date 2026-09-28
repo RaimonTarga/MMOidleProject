@@ -56,13 +56,8 @@ import {
   FEATURE_SCATTER,
   emoteAnimKey,
   emoteTextureKey,
-  initVoidOverlordSheet,
   THOUGHT_BUBBLE_FILE,
   THOUGHT_BUBBLE_KEY,
-  VOID_OVERLORD_FILE,
-  VOID_OVERLORD_TEXTURE_KEY,
-  VOID_TOMB_FILE,
-  VOID_TOMB_TEXTURE_KEY,
 } from "../../sprites";
 import { stepInterpolation, getOwnBase } from "../../render/interpolation";
 import { stepCombatPlayback } from '../../render/combatPlayback';
@@ -104,11 +99,8 @@ import { updateHolyBeam } from "../../fx/holyBeam";
 import { updateCannonCharge } from "../../fx/cannonFx";
 import { updatePlayerAuras } from "../../fx/aura";
 import { updateIdentityAccents } from "../../fx/identityAccent";
-import { initMistPostFx, updateMistPostFx } from "../../fx/mistPostFx";
 import { updateAltarGlow } from "../../fx/altarGlow";
 import { updateAltarPrompt } from "../../render/altarPrompt";
-import { updateVoidOverlordRespawn } from "../../render/voidOverlordTomb";
-import { isVoidFloodActive } from "./voidThrone";
 import { attachClickToMove } from "../../input/clickToMove";
 import { attachGamepad } from "../../input/gamepad";
 import { attachHudEvents } from "../../input/hudEvents";
@@ -128,7 +120,7 @@ import {
   applyPeekCameraBounds,
   syncSceneBackdrop,
 } from "./peekCamera";
-import { showAscensionOverlay, showOverlordFelledOverlay } from "./screenOverlays";
+import { showAscensionOverlay } from "./screenOverlays";
 import type { GameScene } from "./GameScene";
 import { rebuildNeighborLayer } from "../../render/neighborScenes";
 import {
@@ -319,8 +311,6 @@ export function preloadGameAssets(scene: GameScene): void {
   }
 
   queuePresentationAssets(scene);
-  scene.load.image(VOID_OVERLORD_TEXTURE_KEY, VOID_OVERLORD_FILE);
-  scene.load.image(VOID_TOMB_TEXTURE_KEY, VOID_TOMB_FILE);
   // Zone art (ground, hazards, altars, trees, decor) is NOT loaded here: the
   // player's node is unknown until a character is picked, and loading all 13
   // biomes cost every visitor ~90 MB. It streams around the player instead —
@@ -349,7 +339,6 @@ export function preloadGameAssets(scene: GameScene): void {
 function adoptDeferredSpectatorAssets(scene: GameScene): void {
   initEffectFrames(scene);
   initEmoteAnimations(scene);
-  initVoidOverlordSheet(scene);
   const nodeId = scene.state.ownNodeId || scene.lastDrawnNodeId;
   if (nodeId && !scene.transitioning) instantReskinNode(scene, nodeId);
 }
@@ -421,8 +410,6 @@ function prefetchLobbyNodeArt(scene: GameScene, payload: AccountCharactersPayloa
  */
 function startDeferredSpectatorAssets(scene: GameScene): void {
   queuePresentationAssets(scene);
-  scene.load.image(VOID_OVERLORD_TEXTURE_KEY, VOID_OVERLORD_FILE);
-  scene.load.image(VOID_TOMB_TEXTURE_KEY, VOID_TOMB_FILE);
   runLoadBatch(scene, () => {
     adoptDeferredSpectatorAssets(scene);
     scene.spectatorPresentationLoaded = true;
@@ -438,10 +425,6 @@ export function createGameScene(scene: GameScene): void {
   initEmoteAnimations(scene);
   initParticleTextures(scene);
   initEffectFrames(scene);
-  // Spectators load the overlord texture in the deferred pass; its completion
-  // hook runs this init instead.
-  if (!scene.spectatorMode) initVoidOverlordSheet(scene);
-  initMistPostFx(scene);
   if (scene.spectatorMode || scene.cinematic) {
     // The landing preview is intentionally silent. Muting Phaser itself is the
     // final backstop, while skipping initAudio also prevents music subscriptions
@@ -612,8 +595,6 @@ export function updateGameScene(scene: GameScene, delta: number): void {
     updateCannonCharge(scene.state, scene);
     updatePlayerAuras(scene.state, scene);
     updateIdentityAccents(scene.state, scene);
-    updateVoidOverlordRespawn(scene.state, scene);
-    updateMistPostFx(scene, isVoidFloodActive(scene), scene.time.now, dt);
     updateAltarGlow(scene, dt);
     updateAltarPrompt(scene);
     drawExitMarkers(scene);
@@ -827,9 +808,6 @@ function connectSocket(scene: GameScene): () => void {
     },
     onPlayerAscended: (tier) => {
       showAscensionOverlay(scene, tier);
-    },
-    onOverlordFelled: () => {
-      showOverlordFelledOverlay(scene);
     },
     onBossFelled: (markers) => {
       setBossFelledMarkers(markers);

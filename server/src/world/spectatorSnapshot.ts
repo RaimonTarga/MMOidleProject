@@ -67,16 +67,6 @@ export function buildSpectatorNodeSnapshot(
     events,
   };
 
-  const marker = world.bossRespawnMarkers.get(nodeId);
-  if (marker?.monsterTypeId === "void-overlord") {
-    snapshot.voidOverlordRespawn = {
-      nodeId,
-      pos: marker.pos,
-      durationMs: marker.durationMs,
-      remainingMs: Math.max(0, marker.respawnAt - Date.now()),
-    };
-  }
-
   const groundZones = buildGroundZoneViews(world, nodeId, Date.now());
   if (groundZones) snapshot.groundZones = groundZones;
 

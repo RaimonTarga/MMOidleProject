@@ -66,7 +66,6 @@ function featureRegions(nodeId: string): CollisionRegion[] {
           effectId: feature.damage.effectId,
           contactBandPx: feature.damage.contactBandPx ?? 0,
           requiresActiveBlock: feature.damage.requiresActiveBlock ? 1 : 0,
-          preFinalStageOnly: feature.damage.preFinalStageOnly ? 1 : 0,
           damageTarget: feature.damage.targets.join(','),
         },
       });
@@ -95,7 +94,6 @@ function featureRegions(nodeId: string): CollisionRegion[] {
         data: {
           ...base.data,
           hpPctPerSec: feature.healWhileInside.hpPctPerSec,
-          encounterAddsOnly: feature.healWhileInside.encounterAddsOnly ? 1 : 0,
           healTarget: feature.healWhileInside.targets.join(','),
         },
       });

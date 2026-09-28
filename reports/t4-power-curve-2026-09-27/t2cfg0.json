@@ -1,0 +1,9 @@
+{
+ "gorging-razortusk":    {"node":"plains","old":{"hp":4000,"plating":8,"dr":0.05}},
+ "apex-timberclaw":      {"node":"forest","old":{"hp":3750,"plating":0,"dr":0}},
+ "stoneplate-juggernaut":{"node":"mountain","old":{"hp":5000,"plating":10,"dr":0.05}},
+ "mire-gorged-behemoth": {"node":"swamp","old":{"hp":3375,"plating":6,"dr":0.08}},
+ "chitinous-dreadbore":  {"node":"cave","old":{"hp":4375,"plating":12,"dr":0.12}},
+ "dune-stalker-emperor": {"node":"desert","old":{"hp":3750,"plating":12,"dr":0.08}},
+ "jungle-dread-gorger":  {"node":"jungle","old":{"hp":3625,"plating":0,"dr":0.03}}
+}

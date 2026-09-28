@@ -384,10 +384,12 @@ for (const [id, spec] of Object.entries(EXPECTED_ABILITIES)) {
 // package moved them deliberately (2800/4200/5880 -> 16800/16800/17640; the 21000
 // hadal-stalker candidate was REJECTED). Rewards are untouched by that adoption,
 // which is exactly what the three assertions above this one still prove.
+// REBASED 2026-09-27 (T4 power curve): Trench mobs tuned to ~1 min each, so HP
+// roughly doubled and rewards per kill moved x2.2 to hold reward per minute.
 const TRENCH_MONSTER_SNAPSHOT: Record<string, { essence: number; biomeXp: number; hp: number }> = {
-  "hadal-stalker": { essence: 210, biomeXp: 1260, hp: 16800 },
-  "abyssal-serpent": { essence: 260, biomeXp: 1560, hp: 16800 },
-  "elder-leviathan": { essence: 400, biomeXp: 2400, hp: 17640 },
+  "hadal-stalker": { essence: 462, biomeXp: 2772, hp: 34500 },
+  "abyssal-serpent": { essence: 572, biomeXp: 3432, hp: 32800 },
+  "elder-leviathan": { essence: 880, biomeXp: 5280, hp: 31800 },
 };
 for (const [id, snap] of Object.entries(TRENCH_MONSTER_SNAPSHOT)) {
   const mon = MONSTER_DATABASE.get(id);
@@ -406,15 +408,7 @@ for (const [id, snap] of Object.entries(TRENCH_MONSTER_SNAPSHOT)) {
   assert(boss!.rewards?.biomeXp === 990, "elder-trench-serpent biomeXp must be unchanged (990)");
 }
 
-// Soft-discarded warden must remain byte-for-byte unchanged (still purple).
-{
-  const warden = MONSTER_DATABASE.get("elder-trench-serpent-warden");
-  assert(!!warden, "elder-trench-serpent-warden must exist");
-  assert(
-    warden!.rewards === undefined || warden!.rewards.essenceType !== "green",
-    "elder-trench-serpent-warden must NOT be touched by the green-essence find/replace",
-  );
-}
+// (The soft-discarded Void Overlord warden was deleted with the encounter on 2026-09-27.)
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 12. Relics: exactly 8, unchanged placement/gates/mechanics, normalized economy

@@ -104,6 +104,14 @@ export const GAME_CONFIG = {
    */
   BARRIER_BREAK_RIDER_CD_MS: 8000,
 
+  // ── Damage over time vs general DR ───────────────────────────────────────────
+  /**
+   * Share of general damage reduction that DoT ticks and procs pay. Symmetric:
+   * monster DoTs on players and player DoTs/procs on monsters both skip plating
+   * and pay this fraction of DR; dedicated dot resistance stacks on top.
+   */
+  DOT_DR_SHARE: 0.5,
+
   // ── Evasion (fully deterministic — fractional accumulator, no RNG) ─────────────
   /**
    * Baseline fraction of a hit's damage avoided when it is evaded (0.5 = half).
@@ -528,7 +536,6 @@ export function sceneToNodeCoords(
 }
 
 export const DEFAULT_AUTOCOMBAT_CONFIG: AutocombatConfig = {
-  engageUltimateBosses: false,
   fleeWhenLow: true,
   fleeHpPct: 0.25,
   priorityMode: "balanced",

@@ -1,4 +1,4 @@
-import { NODE_BIOMES, NODE_MODIFIERS, modifierRewardMult, MONSTER_DATABASE, RECIPE_DATABASE, biomeLevelCap, biomeXpForBiomeLevel, biomeXpRewardMult, bossClearKey, BIOME_DATABASE, ULTIMATE_CLEAR_VOID_OVERLORD, GAME_CONFIG, catalystProgressPerUnit, catalystProgressRewardMult } from '@mmo-idle/shared';
+import { NODE_BIOMES, NODE_MODIFIERS, modifierRewardMult, MONSTER_DATABASE, RECIPE_DATABASE, biomeLevelCap, biomeXpForBiomeLevel, biomeXpRewardMult, bossClearKey, BIOME_DATABASE, GAME_CONFIG, catalystProgressPerUnit, catalystProgressRewardMult } from '@mmo-idle/shared';
 import type { EssenceType } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
@@ -6,7 +6,6 @@ import { markSliceDirty } from '../../../ecs/dirtyHelpers';
 import { checkSealTierAdvance, registerKillForQuests } from './questSystem';
 import { recordWorldLogEvent } from '../../../world/worldLog';
 import { actorFromPlayer } from '../../../world/worldLogActors';
-import { notifyVoidOverlordDeath } from '../../combat/ai/ultimateEncounter';
 import { onDungeonMonsterRewarded } from '../../world/dungeons/dungeon';
 
 export interface KillRewards {
@@ -18,7 +17,6 @@ export interface KillRewards {
 
 const FALLBACK_REWARDS: KillRewards = { essence: 1, essenceType: 'green', level: 1 };
 const DEFAULT_BOSS_RESPAWN_MS = 30_000;
-const VOID_OVERLORD_RESPAWN_MS = 5 * 60_000;
 
 export interface KillRewardInfo {
   essenceGained: number;
@@ -62,10 +60,7 @@ function grantCatalystProgress(
 
 
 function scheduleBossRespawn(world: World, monster: MonsterEntity): void {
-  const durationMs =
-    monster.isMonster.monsterTypeId === 'void-overlord'
-      ? VOID_OVERLORD_RESPAWN_MS
-      : DEFAULT_BOSS_RESPAWN_MS;
+  const durationMs = DEFAULT_BOSS_RESPAWN_MS;
   const respawnAt = Date.now() + durationMs;
   const nodeId = monster.hasPosition.nodeId;
 
@@ -78,12 +73,6 @@ function scheduleBossRespawn(world: World, monster: MonsterEntity): void {
   world.bossRespawnAt.set(nodeId, respawnAt);
   world.bossRespawnMarkers.set(nodeId, marker);
 
-  if (monster.isMonster.monsterTypeId === 'void-overlord') {
-    world.suppressedFeatureBlocks.add(`${nodeId}:abyssal_throne`);
-    // The overlord cooldown is global and long (5 min); persist it so it is
-    // remembered across node despawn (freeze/thaw) and server restarts.
-    world.overlordRespawnPersist?.({ nodeId, ...marker });
-  }
 
   world.broadcastBossFelledState();
 }
@@ -237,7 +226,7 @@ function applyKillRewardsToPlayer(
     Math.max(1, Math.round((rewards.biomeXp ?? 1) * rewardMult * debugMult)),
   );
   const questResult = registerKillForQuests(recipient, monster.isMonster.monsterTypeId);
-  if (monster.isMonster.isBoss && !monster.isEncounterAdd) {
+  if (monster.isMonster.isBoss) {
     if (!options.suppressBossRespawn) {
       scheduleBossRespawn(world, monster);
     }
@@ -246,13 +235,6 @@ function applyKillRewardsToPlayer(
       const key = bossClearKey(info.biomeGroup, info.biomeTier);
       if (!recipient.tracksProgression.bossesCleared.includes(key)) {
         recipient.tracksProgression.bossesCleared.push(key);
-        markSliceDirty(world, recipient, 'tracksProgression');
-      }
-    }
-    if (monster.isMonster.monsterTypeId === 'void-overlord') {
-      const token = ULTIMATE_CLEAR_VOID_OVERLORD;
-      if (!recipient.tracksProgression.bossesCleared.includes(token)) {
-        recipient.tracksProgression.bossesCleared.push(token);
         markSliceDirty(world, recipient, 'tracksProgression');
       }
     }
@@ -318,10 +300,6 @@ export function grantMonsterRewards(
     suppressBossRespawn,
   });
   const dungeonResult = onDungeonMonsterRewarded(world, killerPlayerId, monster);
-
-  if (monster.isMonster.monsterTypeId === 'void-overlord') {
-    notifyVoidOverlordDeath(world, monster, killerPlayerId);
-  }
 
   // Despawn any adds the boss spawned via a 'spawn-adds' script action.
   const spawnedAddIds = monster.scriptsBoss?.spawnedAddIds;

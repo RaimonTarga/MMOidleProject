@@ -1,0 +1,107 @@
+errors 12
+   D-apprentice-st3-berserker-stance D-apprentice-st3-berserker-stance: illegal ability budget
+   D-apprentice-st3-enraged-stance D-apprentice-st3-enraged-stance: illegal ability budget
+   D-apprentice-st3-execute-stance D-apprentice-st3-execute-stance: illegal ability budget
+   D-slinger-st3-berserker-stance D-slinger-st3-berserker-stance: illegal ability budget
+   D-slinger-st3-enraged-stance D-slinger-st3-enraged-stance: illegal ability budget
+   D-slinger-st3-execute-stance D-slinger-st3-execute-stance: illegal ability budget
+   D-spirit-st3-berserker-stance D-spirit-st3-berserker-stance: illegal ability budget
+   D-spirit-st3-enraged-stance D-spirit-st3-enraged-stance: illegal ability budget
+   D-spirit-st3-execute-stance D-spirit-st3-execute-stance: illegal ability budget
+   D-conduit-st3-enraged-stance D-conduit-st3-enraged-stance: illegal ability budget
+   D-conduit-st3-berserker-stance D-conduit-st3-berserker-stance: illegal ability budget
+   D-conduit-st3-execute-stance D-conduit-st3-execute-stance: illegal ability budget
+
+### Cumulative layers (dps60, T4 host dummy-heavy); step multiplier in ()
+| class (T4 spec) | T3 native | L0 T3 kit @T4 | +weapon | +armor/charm/boots | +core | +spec | +relic | total L5/T3native |
+| squire | 355 | 371 (1.05) | 845 (2.28) | 845 (1.00) | 845 (1.00) | 883 (1.04) | 927 (1.05) | **2.61** |
+| striker | 359 | 378 (1.05) | 860 (2.28) | 860 (1.00) | 860 (1.00) | 904 (1.05) | 912 (1.01) | **2.54** |
+| apprentice | 263 | 278 (1.06) | 562 (2.02) | 541 (0.96) | 541 (1.00) | 854 (1.58) | 911 (1.07) | **3.46** |
+| slinger | 349 | 368 (1.05) | 833 (2.26) | 831 (1.00) | 831 (1.00) | 997 (1.20) | 987 (0.99) | **2.83** |
+| spirit | 277 | 297 (1.07) | 698 (2.35) | 697 (1.00) | 697 (1.00) | 716 (1.03) | 716 (1.00) | **2.58** |
+| conduit | 220 | 221 (1.00) | 333 (1.51) | 312 (0.94) | 312 (1.00) | 349 (1.12) | 413 (1.18) | **1.88** |
+
+### Leave-one-out from full T4 (L5): full / without layer
+| class | full | -weapon | -def gear | -core | -spec | -relic |
+| squire | 927 | 2.29 | 1.00 | 1.00 | 1.04 | 1.05 |
+| striker | 912 | 2.20 | 1.00 | 1.00 | 1.05 | 1.01 |
+| apprentice | 911 | 2.11 | 0.98 | 1.00 | 1.63 | 1.07 |
+| slinger | 987 | 2.25 | 1.00 | 1.00 | 1.21 | 0.99 |
+| spirit | 716 | 2.32 | 1.00 | 1.00 | 1.02 | 1.00 |
+| conduit | 413 | 1.51 | 0.94 | 1.00 | 1.17 | 1.18 |
+
+### Stance sweep, T4 full build (vs offensive) and T3 native (vs offensive)
+squire
+  T4: defensive 0.72, berserker 1.21, enraged 0.85, execute 0.85, time-to-strike 0.93, reaper 0.72, brawler 0.85, perfection 1.08, powering-up 0.34
+  T3: defensive 0.75, berserker 1.25, enraged 0.88, execute 0.88
+striker
+  T4: defensive 0.69, berserker 1.17, enraged 0.81, execute 0.81, time-to-strike 0.76, reaper 0.69, brawler 0.81, perfection 1.04, powering-up 0.35
+  T3: defensive 0.69, berserker 1.21, enraged 0.81, execute 0.81
+apprentice
+  T4: defensive 0.74, berserker 1.29, enraged 0.87, execute 0.87, time-to-strike 0.77, reaper 0.74, brawler 0.87, perfection 1.15, powering-up 0.41
+  T3: defensive 0.71
+slinger
+  T4: defensive 0.69, berserker 1.17, enraged 0.81, execute 0.81, time-to-strike 0.78, reaper 0.69, brawler 0.81, perfection 1.04, powering-up 0.32
+  T3: defensive 0.67
+spirit
+  T4: defensive 0.70, berserker 1.17, enraged 0.82, execute 0.82, time-to-strike 0.73, reaper 0.70, brawler 0.82, perfection 1.04, powering-up 0.36
+  T3: defensive 0.71
+conduit
+  T4: defensive 0.73, berserker 1.23, enraged 0.87, execute 0.87, time-to-strike 0.67, reaper 0.73, brawler 0.87, perfection 1.07, powering-up 0.32
+  T3: defensive 0.70
+
+### Ability sweep: PS + X instead of PS + Expose (ratio vs PS+Expose)
+squire
+  T4: snipe 0.92, stunning-strike 0.92, imbue-lightning 0.84, charge 0.91, detonate 0.89, quick-strike 1.05, binding-strike 0.92, frenzy 0.97
+  T3: charge 0.94, detonate 0.92, quick-strike 1.03, binding-strike 0.95, frenzy 1.00
+striker
+  T4: snipe 0.89, stunning-strike 0.86, imbue-lightning 0.87, charge 0.88, detonate 0.84, quick-strike 1.24, binding-strike 0.99, frenzy 0.95
+  T3: charge 0.89, detonate 0.87, quick-strike 1.01, binding-strike 0.89, frenzy 0.97
+apprentice
+  T4: snipe 0.95, stunning-strike 0.92, imbue-lightning 0.91, charge 0.95, detonate 0.69, quick-strike 0.97, binding-strike 0.95, frenzy 1.05
+  T3: charge 0.94, detonate 1.23, quick-strike 0.94, binding-strike 0.94, frenzy 0.97
+slinger
+  T4: snipe 0.93, stunning-strike 0.87, imbue-lightning 0.89, charge 0.93, detonate 1.48, quick-strike 0.93, binding-strike 0.93, frenzy 0.99
+  T3: charge 0.95, detonate 1.34, quick-strike 0.94, binding-strike 0.94, frenzy 0.95
+spirit
+  T4: snipe 0.95, stunning-strike 0.91, imbue-lightning 0.89, charge 0.90, detonate 0.82, quick-strike 1.17, binding-strike 0.97, frenzy 0.91
+  T3: charge 1.00, detonate 1.39, quick-strike 0.95, binding-strike 0.94, frenzy 0.97
+conduit
+  T4: snipe 0.93, stunning-strike 0.96, imbue-lightning 0.92, charge 0.98, detonate 0.91, quick-strike 0.95, binding-strike 0.98, frenzy 0.97
+  T3: charge 1.07, detonate 1.48, quick-strike 1.00, binding-strike 0.94, frenzy 0.99
+
+### Core sweep (ratio vs the reference core)
+squire
+  T4: tempered 0.82, force 0.89, duelist 1.00, bruiser 0.92, accelerant 0.74, arcanist 0.83, sniper 0.73, scout 0.73, catalyst 0.73, controller 0.77, juggernaut 0.68
+  T3: tempered 0.82, force 0.90, duelist 1.00, bruiser 0.94, accelerant 0.74, arcanist 0.84, sniper 0.74, scout 0.74
+striker
+  T4: tempered 0.84, force 0.92, duelist 1.00, bruiser 0.96, accelerant 0.73, arcanist 0.84, sniper 0.75, scout 0.75, catalyst 0.75, controller 0.80, juggernaut 0.63
+  T3: tempered 0.81, force 0.89, duelist 1.00, bruiser 0.94, accelerant 0.80, arcanist 0.82, sniper 0.73, scout 0.73
+apprentice
+  T4: tempered 1.20, force 1.31, duelist 1.07, bruiser 1.07, accelerant 1.00, arcanist 1.18, sniper 1.39, scout 1.26, catalyst 1.07, controller 1.17, juggernaut 1.07
+  T3: tempered 1.14, force 1.24, duelist 1.02, bruiser 1.02, accelerant 1.00, arcanist 1.16, sniper 1.32, scout 1.18
+slinger
+  T4: tempered 1.00, force 1.09, duelist 0.89, bruiser 0.89, accelerant 0.92, arcanist 0.97, sniper 1.16, scout 1.05, catalyst 0.89, controller 0.94, juggernaut 0.89
+  T3: tempered 1.00, force 1.09, duelist 0.89, bruiser 0.89, accelerant 0.89, arcanist 0.96, sniper 1.16, scout 1.05
+spirit
+  T4: tempered 1.00, force 1.09, duelist 0.89, bruiser 0.89, accelerant 0.84, arcanist 1.02, sniper 1.16, scout 1.05, catalyst 0.89, controller 0.95, juggernaut 0.89
+  T3: tempered 1.00, force 1.09, duelist 0.89, bruiser 0.89, accelerant 0.98, arcanist 1.02, sniper 1.16, scout 1.07
+conduit
+  T4: tempered 1.11, force 1.22, duelist 1.00, bruiser 1.00, accelerant 0.94, arcanist 1.10, sniper 1.31, scout 1.04, catalyst 1.34, controller 1.06, juggernaut 1.00
+  T3: tempered 1.11, force 1.21, duelist 1.00, bruiser 1.00, accelerant 1.07, arcanist 1.22, sniper 1.30, scout 1.19
+
+### Live player build
+LIVEP-dummy-armored    capped t=120s dps60=1324 dpsAll=1255 minHp=100
+LIVEP-noSpec           capped t=120s dps60=1100 dpsAll=1112 minHp=100
+LIVEP-live-mountain    boss-killed t=15.1s dps60=null dpsAll=1611 minHp=100
+LIVEP-avalanche        capped t=120s dps60=610 dpsAll=556 minHp=100
+LIVEP-live-desert      boss-killed t=16s dps60=null dpsAll=1366 minHp=100
+LIVEP-noTTS            capped t=120s dps60=1115 dpsAll=1015 minHp=100
+LIVEP-live-volcanic    boss-killed t=15.2s dps60=null dpsAll=1679 minHp=100
+LIVEP-dummy-heavy      capped t=120s dps60=1234 dpsAll=1169 minHp=100
+LIVEP-noCharge         capped t=120s dps60=575 dpsAll=590 minHp=100
+LIVEP-live-jungle      boss-killed t=15.1s dps60=null dpsAll=1504 minHp=100
+LIVEP-live-trench      boss-killed t=24.8s dps60=null dpsAll=995 minHp=100
+LIVEP-live-tundra      boss-killed t=24.4s dps60=null dpsAll=1072 minHp=100
+LIVEP-noRelic          capped t=120s dps60=1128 dpsAll=1078 minHp=100
+LIVEP-live-graveyard   bot-died t=26.2s dps60=null dpsAll=0 minHp=0

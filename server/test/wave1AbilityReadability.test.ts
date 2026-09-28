@@ -197,7 +197,7 @@ initCombatSystems();
   );
   assert(reinforcements().length === 0, 'the reinforcement wave should wait for cast completion');
   updateBossScripts(world, 2_000);
-  assert(reinforcements().length === 5, 'bull, two hawks and two yearlings arrive when the Stampede completes');
+  assert(reinforcements().length === 4, 'bull, two hawks and one yearling arrive when the Stampede completes');
 }
 
 // Carrion Vulture announces its ally haste and does not buff itself.

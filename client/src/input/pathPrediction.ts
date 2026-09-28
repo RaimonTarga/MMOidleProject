@@ -10,22 +10,14 @@ import type { RenderState } from '../render/state';
 import type { GameScene } from '../scenes/GameScene';
 import { isCurrentClickOrder } from './clickOrder';
 import {
-  ABYSSAL_THRONE_FEATURE_ID,
-  isVoidThroneUnblocked,
-} from '../scenes/game/voidThrone';
-import {
   getOwnBlockShapes,
   getOwnMovePad,
 } from './obstacleResolve';
 
 const replannedBlockedPaths = new WeakSet<RenderState>();
 
-function suppressedFeatureIds(scene: GameScene): Set<string> {
-  const suppressed = new Set<string>();
-  if (isVoidThroneUnblocked(scene)) {
-    suppressed.add(ABYSSAL_THRONE_FEATURE_ID);
-  }
-  return suppressed;
+function suppressedFeatureIds(_scene: GameScene): Set<string> {
+  return new Set<string>();
 }
 
 export function clearOwnMovePath(state: RenderState): void {

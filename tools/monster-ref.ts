@@ -9,7 +9,6 @@ import {
   type BossScript,
   type MonsterDefinition,
   type RepeatingAction,
-  type UltimateEncounter,
 } from '@mmo-idle/shared';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -256,35 +255,6 @@ function renderBossScript(script: BossScript): string[] {
   return lines;
 }
 
-function renderUltimate(u: UltimateEncounter): string[] {
-  const lines: string[] = [`Anchor: ${u.anchor ?? 'none'}; wipe reset: ${u.reset.onWipe}`];
-  for (const s of u.stages) {
-    lines.push(`  Stage "${s.displayName ?? s.id}"${s.vulnerable ? ' (VULNERABLE)' : ''}:`);
-    for (const a of s.onEnter) {
-      if (a.type === 'spawn-waves') {
-        for (const w of a.waves) {
-          lines.push(`    • wave: ${w.adds.map((x) => `${x.count}× ${x.monsterTypeId}`).join(', ')}`);
-        }
-      } else if (a.type === 'spawn-elites') {
-        lines.push(`    • spawn elites: ${a.count}× ${a.monsterTypeId}`);
-      } else if (a.type === 'environmental-dot') {
-        lines.push(`    • env DoT: ${n(a.damagePerStack, 2)}/stack × ${a.maxStacks}, tick ${ms(a.tickIntervalMs)}, refresh ${ms(a.refreshMs)}${a.stackCap ? `, ramp cap ${a.stackCap}` : ''}${a.hazardHint ? ` (hint: "${a.hazardHint}")` : ''}`);
-      } else if (a.type === 'set-invulnerable') {
-        lines.push(`    • set invulnerable: ${a.value}`);
-      } else if (a.type === 'set-rooted') {
-        lines.push(`    • set rooted: ${a.value}`);
-      } else if (a.type === 'set-cannot-attack') {
-        lines.push(`    • set cannot-attack: ${a.value}`);
-      } else if (a.type === 'set-feature-block') {
-        lines.push(`    • feature block "${a.featureId}": ${a.value}`);
-      }
-    }
-    if (s.completeWhen) lines.push(`    → complete when: ${s.completeWhen.kind}`);
-    else lines.push(`    → complete when: boss dies`);
-  }
-  return lines;
-}
-
 // ─── HTML rendering ───────────────────────────────────────────────────────────
 
 function htmlMonsterTable(monsters: MonsterDefinition[], isBoss: boolean): string {
@@ -335,10 +305,9 @@ function htmlMonsterTable(monsters: MonsterDefinition[], isBoss: boolean): strin
 }
 
 function htmlBossScript(m: MonsterDefinition): string {
-  if (!m.bossScript && !m.ultimateEncounter) return '';
+  if (!m.bossScript) return '';
   const lines: string[] = [];
   if (m.bossScript)        lines.push(...renderBossScript(m.bossScript));
-  if (m.ultimateEncounter) { lines.push('— Ultimate encounter —'); lines.push(...renderUltimate(m.ultimateEncounter)); }
   if (lines.length === 0) return '';
   return `<details class="boss-script"><summary>Fight script</summary><pre>${esc(lines.join('\n'))}</pre></details>`;
 }
@@ -352,7 +321,7 @@ function htmlBossCard(m: MonsterDefinition): string {
     : '';
 
   return `<div class="boss-card">
-    <h5>${esc(m.name)} <small>${esc(m.id)}${m.ultimateEncounter ? ' · ULTIMATE' : ''}</small></h5>
+    <h5>${esc(m.name)} <small>${esc(m.id)}</small></h5>
     <table class="boss-stat-table">
       <thead><tr>
         <th>HP</th><th>Attack</th><th>APS</th><th>Atk CD</th>
@@ -524,7 +493,7 @@ function mdSpecials(m: MonsterDefinition): string {
 
 function mdBossBlock(m: MonsterDefinition): string {
   const lines: string[] = [];
-  lines.push(`#### ${m.name} \`${m.id}\`${m.ultimateEncounter ? ' _(Ultimate)_' : ''}`);
+  lines.push(`#### ${m.name} \`${m.id}\``);
   lines.push('');
   lines.push(mdMonsterTable([m]));
   const specials = mechanicLines(m);
@@ -542,14 +511,6 @@ function mdBossBlock(m: MonsterDefinition): string {
       lines.push('```');
       lines.push('');
     }
-  }
-  if (m.ultimateEncounter) {
-    const uLines = renderUltimate(m.ultimateEncounter);
-    lines.push('**Ultimate encounter:**');
-    lines.push('```');
-    lines.push(...uLines);
-    lines.push('```');
-    lines.push('');
   }
   return lines.join('\n');
 }

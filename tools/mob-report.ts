@@ -258,7 +258,7 @@ function damageType(monster: MonsterDefinition): DamageType {
 
 /** Single primary tag for the at-a-glance role column. Specials carry the rest. */
 function monsterRole(monster: MonsterDefinition): string {
-  if (monster.isBoss) return monster.ultimateEncounter ? 'Ultimate' : 'Boss';
+  if (monster.isBoss) return 'Boss';
   const dot = monsterDotDps(monster).dps;
   const direct = rawDirectDps(monster);
   if (dot > direct) return 'DoT';
@@ -289,7 +289,6 @@ function monsterSpecials(monster: MonsterDefinition): string[] {
   if (monster.isRanged) out.push('ranged');
   if (monster.kite) out.push('kite');
   if (monster.bossScript) out.push('script');
-  if (monster.ultimateEncounter) out.push('ultimate');
   return out;
 }
 
@@ -1178,7 +1177,6 @@ function bossNotes(boss: MonsterDefinition, ttk: number, threat: Threat | null):
   if (ttk > BOSS_TTK_SLOG_SEC) notes.push('TTK slog');
   if (threat?.status === 'Blocked') notes.push(threat.spikePctHp >= 1 ? 'one-shots player' : 'kills player fast');
   if (boss.enemyShield || boss.enemySoftCap) notes.push('TTK undercounted (shield/softcap)');
-  if (boss.ultimateEncounter) notes.push('staged encounter');
   return notes.join('; ') || '-';
 }
 

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { dotElementForPlayer, weaponDotProfileForEffect, type StatusValue } from '@mmo-idle/shared';
-import { targetFrameAtom, zoneBossAtom, combatArchetypeAtom, passivesAtom, selectedSubVariantAtom, type TargetFrameData } from './atoms';
+import { targetFrameAtom, combatArchetypeAtom, passivesAtom, selectedSubVariantAtom, type TargetFrameData } from './atoms';
 import { statusMeta, bossEffectMeta } from './targetStatusMeta';
 import { GameIcon } from '../ui/GameIcon';
 import { bossEffectIconSource, targetStatusIconSource } from '../ui/conceptIcons';
@@ -196,7 +196,6 @@ function buildTiles(
 
 export function TargetFrame() {
   const live = useAtomValue(targetFrameAtom);
-  const boss = useAtomValue(zoneBossAtom);
   const combatArchetype = useAtomValue(combatArchetypeAtom);
   const passives = useAtomValue(passivesAtom);
   const subVariant = useAtomValue(selectedSubVariantAtom);
@@ -227,8 +226,7 @@ export function TargetFrame() {
     return () => { if (timer.current) { clearTimeout(timer.current); timer.current = null; } };
   }, [live, strip.frozen]);
 
-  // Hide while an ultimate boss bar owns the top of the screen.
-  if (boss || !shown) return null;
+  if (!shown) return null;
 
   const hpPct = shown.maxHp > 0 ? Math.max(0, Math.min(100, (shown.hp / shown.maxHp) * 100)) : 0;
   const hpColor = hpPct > 50 ? '#44ee44' : hpPct > 25 ? '#eeaa22' : '#ee3322';

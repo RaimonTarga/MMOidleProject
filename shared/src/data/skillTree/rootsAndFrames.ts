@@ -195,7 +195,7 @@ export const rootsAndFramesEntries = [
     id: 'summoner-heavy', name: 'Effigy', tier: 1,
     classId: 'summoner-root', subVariantId: 'heavy',
     parent: 'summoner-root', children: ['summoner-heavy-t3-a', 'summoner-heavy-t3-b', 'summoner-heavy-t3-c'],
-    description: 'Formation mechanic — maximum summons before relic expansion: 2 (−2 from Conduit\'s 4). Two large bodies concentrate the budget: ×0.98 formation offense, 140% total summon-HP budget, ×0.78 movement, ×1.75 body size, and 3.92s reconstruction with a 2.5s floor. Each loss removes major offense and is expensive to reconstruct.',
+    description: 'Formation mechanic — maximum summons before relic expansion: 2 (−2 from Conduit\'s 4). Two large bodies concentrate the budget: ×1.15 formation offense, 140% total summon-HP budget, ×0.78 movement, ×1.75 body size, and 3.92s reconstruction with a 2.5s floor. Each loss removes major offense and is expensive to reconstruct.',
     cost: 1, statEffects: {"maxHpPct": 0.16, "platingPct": 0.05, "attackSpeedPct": -0.06, "moveSpeedPct": -0.06, "damageReduction": 0.01},
     mechanicEffects: {},
   }],

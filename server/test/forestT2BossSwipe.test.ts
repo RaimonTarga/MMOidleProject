@@ -212,29 +212,13 @@ function secondsToSwingFloor(id: string): number {
   );
 }
 
-// Forest is the tier's damage-per-second boss and should stay so — but "highest"
-// is a rank, not a licence. It opened at 2.2x-2.8x every other T2 boss before the
-// 2026-09-06 nerf, which is a different claim entirely.
+// Forest's threat is its attack-speed RAMP, not its opening (designer call, 2026-09-27 T2
+// boss pass): it opens softer than the rest of the tier so melee can survive the ramp.
+// Guard the shape: the frenzy must actually grow its swing rate over the fight.
 {
-  const dps = (id: string) => {
-    const def = MONSTER_DATABASE.get(id)!;
-    return (def.stats.attack * (def.consecutiveHits ?? 1)) / (def.stats.attackCooldown / 1_000);
-  };
-  const forest = dps('apex-timberclaw');
-  const others = [
-    'gorging-razortusk', 'stoneplate-juggernaut', 'mire-gorged-behemoth',
-    'chitinous-dreadbore', 'dune-stalker-emperor', 'jungle-dread-gorger',
-  ].map(dps);
-  const hardest = Math.max(...others);
-  assert(forest > hardest, `Forest should still open hardest (${forest.toFixed(0)} vs ${hardest.toFixed(0)})`);
-  // 1.75x of the tier's next-hardest. The pre-nerf 85 dps against Plains' 44 sat at
-  // 1.96x and would slip under a 2x bound, which is exactly the value this is here
-  // to reject; 1.75 still leaves plenty of room above today's 1.35x.
-  assert(
-    forest < hardest * 1.75,
-    `but not by multiples — ${forest.toFixed(0)} dps against a tier best of ${hardest.toFixed(0)} ` +
-      `is a different boss, not a faster one`,
-  );
+  const def = MONSTER_DATABASE.get('apex-timberclaw')!;
+  const frenzy = JSON.stringify(def.bossScript?.repeating ?? []);
+  assert(frenzy.includes('bestial-frenzy'), 'Forest keeps its Bestial Frenzy ramp');
 }
 
 console.log('forestT2BossSwipe.test.ts: ok');

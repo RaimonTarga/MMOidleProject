@@ -83,9 +83,8 @@ assert(
 );
 
 // Unsupported / deferred monster types safely fall back to `null` rather than
-// throwing or guessing — deferred (charnel-brute), a boss (void-overlord),
-// and an empty id.
-for (const unmapped of ["charnel-brute", "void-overlord", ""]) {
+// throwing or guessing — deferred (charnel-brute), an unknown id, and an empty id.
+for (const unmapped of ["charnel-brute", "no-such-monster", ""]) {
   assert(
     resolveCorpsePresentation(unmapped) === null,
     `${unmapped || "(empty id)"} should have no configured presentation`,

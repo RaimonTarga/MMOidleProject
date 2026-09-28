@@ -242,7 +242,8 @@ function layVent(world: World, boss: ReturnType<typeof ventedWorld>['boss']): Ru
   ambientRampStatus(player.tracksCombat)!.stacks = 10;
   ambientRampStatus(outside.tracksCombat)!.stacks = 10;
   world.takeNodeEvents(HEAT_NODE);
-  for (let i = 0; i < 30; i++) {
+  // One baseline Heat interval: the T4 arena clock is 15 s since 2026-09-27 (x5).
+  for (let i = 0; i < 150; i++) {
     player.tracksEngagement = Date.now();
     outside.tracksEngagement = Date.now();
     updateNodeFeatures(world, 100);
@@ -320,7 +321,7 @@ function armedCaldera(hpPct: number) {
   const before = player.hasHealth.hp;
   let now = armedAt;
   updateBossPatterns(world, 100, now);
-  for (let i = 0; i < 400 && !boss.recoversFromPattern; i++) {
+  for (let i = 0; i < 700 && !boss.recoversFromPattern; i++) { // the cast is 60 s since 2026-09-27
     now += 100;
     updateBossPatterns(world, 100, now);
   }

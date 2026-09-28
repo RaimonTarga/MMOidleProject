@@ -3,7 +3,6 @@ import type {
   MonsterAbility,
   MonsterAbilityAction,
   MonsterDefinition,
-  StageAction,
 } from '../data/monsters/types';
 import type { BossPattern, BossPatternStep } from '../data/monsters/bossPatterns';
 import { MONSTER_DATABASE, monsterIsRanged, monsterKites } from '../data/monsters';
@@ -361,40 +360,6 @@ function describeBossPatternStep(step: BossPatternStep, pattern: BossPattern): s
   }
 }
 
-function describeStageAction(action: StageAction): string {
-  switch (action.type) {
-    case 'spawn-waves':
-      return action.waves.map((wave, index) =>
-        `Wave ${index + 1}: ${wave.adds.map((add) => `${add.count} × ${monsterLabel(add.monsterTypeId)}`).join(', ')}`,
-      ).join('; ');
-    case 'spawn-elites':
-      if (action.offsetRange !== undefined) {
-        return `Spawns ${action.count} \u00d7 ${monsterLabel(action.monsterTypeId)} elite${action.count === 1 ? '' : 's'} within ${action.offsetRange}px`;
-      }
-      return `Spawns ${action.count} × ${monsterLabel(action.monsterTypeId)} elite${action.count === 1 ? '' : 's'}`;
-    case 'environmental-dot': {
-      const stackCap = action.stackCap ?? action.maxStacks;
-      return `Activates ${statusLabel(action.effectId)}: ${fmtNumber(action.damagePerStack)} damage per stack every ${fmtMs(action.tickIntervalMs)}` +
-        `, refreshing every ${fmtMs(action.refreshMs)}, up to ${stackCap > 0 ? stackCap : 'an uncapped'} stacks` +
-        (action.hazardHint ? ` (${action.hazardHint})` : '');
-    }
-    case 'set-invulnerable':
-      return action.value ? 'Boss becomes invulnerable' : 'Boss becomes vulnerable';
-    case 'set-rooted':
-      return action.value ? 'Boss is rooted' : 'Boss can move again';
-    case 'set-cannot-attack':
-      return action.value ? 'Boss stops attacking' : 'Boss resumes attacking';
-    case 'set-feature-block':
-      return `${action.value ? 'Activates' : 'Opens'} ${readableId(action.featureId)}`;
-  }
-}
-
-function describeStageCondition(kind: string): string {
-  if (kind === 'adds-cleared') return 'after all adds are defeated';
-  if (kind === 'elites-cleared') return 'after all elites are defeated';
-  return 'after all waves are defeated';
-}
-
 function describeChargedAttack(def: MonsterDefinition): BestiaryAbilityLine | null {
   const charged = def.chargedAttack;
   if (!charged) return null;
@@ -540,27 +505,6 @@ function describeBossPattern(def: MonsterDefinition, pattern: BossPattern | unde
       (def.controlImmune ? '; it ignores stun and root' : '') +
       (pattern.oncePerLife ? '; runs once per life.' : '.'),
     steps: pattern.steps.map((step) => describeBossPatternStep(step, pattern)),
-  };
-}
-
-function describeUltimateEncounter(def: MonsterDefinition): BestiaryAbilityLine | null {
-  const encounter = def.ultimateEncounter;
-  if (!encounter) return null;
-  return {
-    id: 'ultimate-encounter',
-    name: 'Ultimate encounter',
-    icon: '☠',
-    kind: 'encounter',
-    trigger: 'On boss engagement',
-    detail: `${encounter.stages.length}-stage objective fight` +
-      (encounter.reset.onWipe ? '; resets on a party wipe' : '') +
-      (encounter.spawnFromFeatureId ? `; waves emerge from ${readableId(encounter.spawnFromFeatureId)}` : '') + '.',
-    steps: encounter.stages.map((stage, index) => {
-      const label = stage.displayName ?? stage.id.toUpperCase();
-      const actions = stage.onEnter.map(describeStageAction).join('; ');
-      const completion = stage.completeWhen ? `, then advances ${describeStageCondition(stage.completeWhen.kind)}` : ', then ends when the boss dies';
-      return `Stage ${index + 1} — ${label}: ${actions}${completion}`;
-    }),
   };
 }
 
@@ -854,7 +798,6 @@ export function describeMonsterAbilities(
     }
   }
 
-  push(describeUltimateEncounter(def));
   return abilities;
 }
 
@@ -1233,16 +1176,6 @@ export function describeMonsterMechanics(
         category: 'ability',
         detail: r.actions.map(describeBossAction).join('; ') + '.',
       });
-    });
-  }
-
-  if (def.ultimateEncounter) {
-    lines.push({
-      id: 'ultimate',
-      icon: '☠',
-      label: 'Multi-stage encounter',
-      category: 'ability',
-      detail: `A staged boss fight (${def.ultimateEncounter.stages.length} stages) with objectives between phases.`,
     });
   }
 

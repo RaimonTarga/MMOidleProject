@@ -1,0 +1,228 @@
+{
+ "crag-gorged-horn-behemoth": {
+  "tier": 3,
+  "node": "mountain",
+  "old": {
+   "hp": 12418,
+   "plating": 12,
+   "dr": 0.05
+  },
+  "plating": 20,
+  "dr": 0.15,
+  "mid": 78,
+  "hp": 16110
+ },
+ "deep-core-burrow-gorger": {
+  "tier": 3,
+  "node": "cave",
+  "old": {
+   "hp": 12895,
+   "plating": 16,
+   "dr": 0.15
+  },
+  "plating": 12,
+  "dr": 0.35,
+  "mid": 88,
+  "hp": 14420
+ },
+ "rot-spore-croc-behemoth": {
+  "tier": 3,
+  "node": "swamp",
+  "old": {
+   "hp": 11940,
+   "plating": 8,
+   "dr": 0.1
+  },
+  "plating": 8,
+  "dr": 0.3,
+  "mid": 103,
+  "hp": 10610
+ },
+ "dune-carapace-monarch": {
+  "tier": 3,
+  "node": "desert",
+  "old": {
+   "hp": 11940,
+   "plating": 10,
+   "dr": 0.08
+  },
+  "plating": 10,
+  "dr": 0.3,
+  "mid": 76,
+  "hp": 16060
+ },
+ "apex-bramble-slasher": {
+  "tier": 3,
+  "node": "jungle",
+  "old": {
+   "hp": 11701,
+   "plating": 0,
+   "dr": 0.03
+  },
+  "plating": 0,
+  "dr": 0.05,
+  "mid": 59.5,
+  "hp": 24060
+ },
+ "cinder-shell-magma-salamander": {
+  "tier": 3,
+  "node": "volcanic",
+  "old": {
+   "hp": 11462,
+   "plating": 8,
+   "dr": 0.04
+  },
+  "plating": 8,
+  "dr": 0.3,
+  "mid": 55,
+  "hp": 21190,
+  "paths": {
+   "bossPattern.steps.0.castMs": 42000,
+   "bossScript.phases.0.actions.+": {
+    "type": "stoke-ramp",
+    "rampMsMult": 1.9
+   },
+   "bossScript.phases.1.actions[type=stoke-ramp].rampMsMult": 1.33
+  }
+ },
+ "frost-plated-rime-mammoth": {
+  "tier": 3,
+  "node": "tundra",
+  "old": {
+   "hp": 12895,
+   "plating": 12,
+   "dr": 0.12
+  },
+  "plating": 22,
+  "dr": 0.15,
+  "mid": 77,
+  "hp": 18570,
+  "paths": {
+   "bossScript.phases.0.actions[type=room-debuff].intervalMs": 9600,
+   "bossScript.phases.2.actions[type=room-debuff].intervalMs": 6400,
+   "bossScript.phases.2.actions[type=stoke-ramp].rampMsMult": 0.96
+  }
+ },
+ "iron-crest-titan": {
+  "tier": 4,
+  "node": "mountain",
+  "old": {
+   "hp": 19499,
+   "plating": 14,
+   "dr": 0.06
+  },
+  "plating": 28,
+  "dr": 0.15,
+  "mid": 40,
+  "hp": 74480
+ },
+ "dune-throne-sovereign": {
+  "tier": 4,
+  "node": "desert",
+  "old": {
+   "hp": 17893,
+   "plating": 8,
+   "dr": 0.08
+  },
+  "plating": 8,
+  "dr": 0.35,
+  "mid": 31,
+  "hp": 71770
+ },
+ "verdant-crown-predator": {
+  "tier": 4,
+  "node": "jungle",
+  "old": {
+   "hp": 18352,
+   "plating": 0,
+   "dr": 0.04
+  },
+  "plating": 0,
+  "dr": 0.08,
+  "mid": 28,
+  "hp": 116890
+ },
+ "glacial-patriarch": {
+  "tier": 4,
+  "node": "tundra",
+  "old": {
+   "hp": 22940,
+   "plating": 22,
+   "dr": 0.14
+  },
+  "plating": 32,
+  "dr": 0.18,
+  "mid": 41.7,
+  "hp": 89120
+ },
+ "charnel-crown-sovereign": {
+  "tier": 4,
+  "node": "graveyard",
+  "old": {
+   "hp": 19499,
+   "plating": 14,
+   "dr": 0.08
+  },
+  "plating": 14,
+  "dr": 0.25,
+  "mid": 91,
+  "hp": 36280,
+  "paths": {
+   "bossScript.phases.2.actions[type=harvest].intervalMs": 4250,
+   "raisesDead.intervalMs": 15300
+  }
+ },
+ "elder-trench-serpent": {
+  "tier": 4,
+  "node": "trench",
+  "old": {
+   "hp": 21793,
+   "plating": 20,
+   "dr": 0.22
+  },
+  "plating": 20,
+  "dr": 0.4,
+  "mid": 39,
+  "hp": 69480
+ },
+ "caldera-sovereign#h3": {
+  "tier": 4,
+  "node": "volcanic",
+  "old": {
+   "hp": 20646,
+   "plating": 10,
+   "dr": 0.05
+  },
+  "plating": 10,
+  "dr": 0.35,
+  "mid": 28.8,
+  "hp": 88290,
+  "paths": {
+   "bossPattern.steps.0.castMs": 60000,
+   "bossScript.phases.0.actions.+": {
+    "type": "stoke-ramp",
+    "rampMsMult": 3
+   }
+  }
+ },
+ "caldera-sovereign#h6": {
+  "tier": 4,
+  "node": "volcanic",
+  "old": {
+   "hp": 20646,
+   "plating": 10,
+   "dr": 0.05
+  },
+  "plating": 10,
+  "dr": 0.35,
+  "mid": 28.8,
+  "hp": 88290,
+  "paths": {
+   "bossPattern.steps.0.castMs": 60000,
+   "bossScript.phases.0.actions.+": {
+    "type": "stoke-ramp",
+    "rampMsMult": 6
+   }
+  }
+ }
+}

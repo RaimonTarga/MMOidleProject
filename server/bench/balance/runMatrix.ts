@@ -6,21 +6,15 @@ import type {
   MatrixFilter,
 } from './types';
 import {
-  countDistinctClassParties,
   enumerateBuildsForContentTier,
   enumerateContentTargets,
-  enumerateDistinctClassParties,
-  enumerateOverlordTargets,
-  sampleDistinctClassParties,
 } from './progression';
-import { runBalanceMatch, runOverlordMatch } from './runMatch';
+import { runBalanceMatch } from './runMatch';
 
-/** One simulated match: a solo build (boss) or a party (overlord). */
+/** One simulated match: a solo build against a boss. */
 export interface MatrixEntry {
-  /** Representative build (solo build, or party leader for overlord runs). */
+  /** The build that ran. */
   build: BuildSpec;
-  /** Full roster for overlord runs; undefined for solo boss runs. */
-  party?: BuildSpec[];
   result: BalanceRunResult;
 }
 
@@ -54,28 +48,7 @@ function enumerateMatrixPairs(
   return pairs;
 }
 
-function countOverlordMatrix(args: BalanceCliArgs): number {
-  const filter = matrixFilter(args);
-  let total = 0;
-  for (const target of enumerateOverlordTargets(filter)) {
-    // Parties span every class (no class filter on the pool); the selected class
-    // is a lock — at least one party slot must be that class.
-    const builds = enumerateBuildsForContentTier(
-      target.contentTier,
-      target.biomeGroup,
-      undefined,
-      args.allPaths,
-    );
-    const full = countDistinctClassParties(builds, args.classRoot);
-    const comps = args.sampleSize > 0 ? Math.min(args.sampleSize, full) : full;
-    if (args.single) return comps > 0 ? 1 : 0;
-    total += comps;
-  }
-  return total;
-}
-
 export function countBalanceMatrix(args: BalanceCliArgs): number {
-  if (args.mode === 'overlord') return countOverlordMatrix(args);
   return enumerateMatrixPairs(args).length;
 }
 
@@ -100,34 +73,6 @@ export function* iterateBalanceMatrix(
     globalIndex++;
     return take;
   };
-
-  if (args.mode === 'overlord') {
-    const filter = matrixFilter(args);
-    for (const target of enumerateOverlordTargets(filter)) {
-      // Pool spans every class; `filter.classRoot` locks one slot rather than
-      // narrowing the pool, and parties never repeat a class.
-      const builds = enumerateBuildsForContentTier(
-        target.contentTier,
-        target.biomeGroup,
-        undefined,
-        args.allPaths,
-      );
-      const parties =
-        args.sampleSize > 0
-          ? sampleDistinctClassParties(builds, filter.classRoot, args.sampleSize)
-          : enumerateDistinctClassParties(builds, filter.classRoot);
-      for (const party of parties) {
-        if (!inShard()) continue;
-        yield {
-          build: party[0],
-          party,
-          result: runOverlordMatch(party, target, matchOpts),
-        };
-        if (args.single) return;
-      }
-    }
-    return;
-  }
 
   for (const { build, target } of enumerateMatrixPairs(args)) {
     if (!inShard()) continue;

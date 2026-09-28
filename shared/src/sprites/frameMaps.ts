@@ -304,8 +304,6 @@ export const MONSTER_FRAMES: Record<string, string> = {
   'caldera-sovereign':      'sprites/bosses/boss-volcano-t4.png',
   'charnel-crown-sovereign':'sprites/bosses/boss-graveyard-t4.png',
   'elder-trench-serpent':   'sprites/bosses/boss-trench-t4.png',
-  // elder-trench-serpent-warden: intentionally unmapped — Void Overlord fight
-  // scrapped pending redesign; no sprite until the rework lands.
 
   // ── Conduit summons ──────────────────────────────────────────────────────────
   // Root keeps the original body. Frames and specializations resolve to their

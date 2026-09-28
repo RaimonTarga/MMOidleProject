@@ -2,13 +2,16 @@ import type { SkillNode } from './types';
 
 export const t3CombatEntriesB = [
   // ── Tier 3: Energy — Light ────────────────────────────────────────────────────
+  // 2026-09-28 T4 outlier pass: every Spirit spec +15% attack. Spirit was the slowest T4 class on
+  // bosses (0.85-0.89x the median spec, damage ceiling 0.67-0.99x) and its spec nodes
+  // carry little raw damage, so the lift sits on the spec rather than one mechanic.
 
   ['energy-light-t3-a', {
     id: 'energy-light-t3-a', name: 'Stormdancer', tier: 3,
     classId: 'energy-root', subVariantId: 'light',
     parent: 'energy-light', children: [],
-    description: 'Your lightning condenses into daggers. Blue Shift at low energy hits harder; Red Shift at high energy hits lighter but attacks faster, moves faster, and evades more. Energy builds slowly while you Flash the same fight and decays back to Blue Shift over 2 seconds when you disengage. +20% attack speed.',
-    cost: 1, statEffects: { evasion: 0.25, attackSpeedPct: 0.2 },
+    description: 'Your lightning condenses into daggers. Blue Shift at low energy hits harder; Red Shift at high energy hits lighter but attacks faster, moves faster, and evades more. Energy builds slowly while you Flash the same fight and decays back to Blue Shift over 2 seconds when you disengage. +20% attack speed and +15% attack.',
+    cost: 1, statEffects: { evasion: 0.25, attackSpeedPct: 0.2, attackPct: 0.15 },
     mechanicEffects: {
       'energy.flash': 1,
       'energy.flash-energy-per-hit': 5,
@@ -24,8 +27,8 @@ export const t3CombatEntriesB = [
     id: 'energy-light-t3-b', name: 'Surge', tier: 3,
     classId: 'energy-root', subVariantId: 'light',
     parent: 'energy-light', children: [],
-    description: 'Discharge deals no damage — instead it triggers Overdrive: a significant attack-damage bonus (favouring high base-ATK weapons, not APS). Energy then decays from full to empty; when it empties, Overdrive ends and you rebuild. +20% attack speed.',
-    cost: 1, statEffects: { attackSpeedPct: 0.2 },
+    description: 'Discharge deals no damage — instead it triggers Overdrive: a significant attack-damage bonus (favouring high base-ATK weapons, not APS). Energy then decays from full to empty; when it empties, Overdrive ends and you rebuild. +20% attack speed and +15% attack.',
+    cost: 1, statEffects: { attackSpeedPct: 0.2, attackPct: 0.15 },
     mechanicEffects: {
       'energy.overdrive': 1,
       'energy.overdrive-attack-damage-pct': 0.6,
@@ -36,8 +39,8 @@ export const t3CombatEntriesB = [
     id: 'energy-light-t3-c', name: 'Channeler', tier: 3,
     classId: 'energy-root', subVariantId: 'light',
     parent: 'energy-light', children: [],
-    description: 'Discharge is suppressed. While energy stays above the threshold you build unlimited Flow stacks, each adding flat on-hit damage (not attack damage), scaling per tier with diminishing returns as stacks pile up. But energy decay ramps the longer you sustain — eventually it outpaces you and resets. Ramps through 3 channel stages (10 / 20 / 21+). No attack-speed bonus. +20% attack speed.',
-    cost: 1, statEffects: { attackSpeedPct: 0.2 },
+    description: 'Discharge is suppressed. While energy stays above the threshold you build unlimited Flow stacks, each adding flat on-hit damage (not attack damage), scaling per tier with diminishing returns as stacks pile up. But energy decay ramps the longer you sustain — eventually it outpaces you and resets. Ramps through 3 channel stages (10 / 20 / 21+). No attack-speed bonus. +20% attack speed and +15% attack.',
+    cost: 1, statEffects: { attackSpeedPct: 0.2, attackPct: 0.15 },
     mechanicEffects: {
       'energy.upkeep': 1,
       'energy.upkeep-stack-interval-ms': 1_000,
@@ -59,8 +62,8 @@ export const t3CombatEntriesB = [
     id: 'energy-balanced-t3-a', name: 'Equinox', tier: 3,
     classId: 'energy-root', subVariantId: 'balanced',
     parent: 'energy-balanced', children: [],
-    description: 'Each discharge flips you between two states. Charge State: slow energy gain, +on-hit damage (flat, scaling per tier), slower attacks, ending in a weak discharge. Discharge State: fast energy gain, +attack damage, faster attacks, ending in a strong discharge. Always in one phase working toward the next.',
-    cost: 1, statEffects: {},
+    description: 'Each discharge flips you between two states. Charge State: slow energy gain, +on-hit damage (flat, scaling per tier), slower attacks, ending in a weak discharge. Discharge State: fast energy gain, +attack damage, faster attacks, ending in a strong discharge. Always in one phase working toward the next. +15% attack.',
+    cost: 1, statEffects: { attackPct: 0.15 },
     mechanicEffects: {
       'energy.binary-cycle': 1,
       'energy.binary-charge-onhit-bonus': 0.30,
@@ -78,8 +81,8 @@ export const t3CombatEntriesB = [
     id: 'energy-balanced-t3-b', name: 'Stormbringer', tier: 3,
     classId: 'energy-root', subVariantId: 'balanced',
     parent: 'energy-balanced', children: [],
-    description: 'Discharge becomes a storm of 4 uniform empowered strikes (1.5× each) — the discharge itself is the first, then your next 3 regular attacks. Each is a real empowered attack, so on-hit and empowered-triggered gear all apply.',
-    cost: 1, statEffects: {},
+    description: 'Discharge becomes a storm of 4 uniform empowered strikes (1.5× each) — the discharge itself is the first, then your next 3 regular attacks. Each is a real empowered attack, so on-hit and empowered-triggered gear all apply. +15% attack.',
+    cost: 1, statEffects: { attackPct: 0.15 },
     mechanicEffects: {
       'energy.awakened-lightning': 1,
       'energy.awakened-strike-count': 4,
@@ -90,8 +93,8 @@ export const t3CombatEntriesB = [
     id: 'energy-balanced-t3-c', name: 'Aetherist', tier: 3,
     classId: 'energy-root', subVariantId: 'balanced',
     parent: 'energy-balanced', children: [],
-    description: 'Your attack damage oscillates with your current energy: 0.5× at empty, 1× at half (neutral), up to 2× at full. A continuous wave — strongest just before discharge, weakest right after. Neutral on average, all about timing.',
-    cost: 1, statEffects: {},
+    description: 'Your attack damage oscillates with your current energy: 0.5× at empty, 1× at half (neutral), up to 2× at full. A continuous wave — strongest just before discharge, weakest right after. Neutral on average, all about timing. +15% attack.',
+    cost: 1, statEffects: { attackPct: 0.15 },
     mechanicEffects: {
       'energy.charge-state': 1,
       'energy.charge-state-min-mult': 0.5,
@@ -105,8 +108,8 @@ export const t3CombatEntriesB = [
     id: 'energy-heavy-t3-a', name: 'Voidwalker', tier: 3,
     classId: 'energy-root', subVariantId: 'heavy',
     parent: 'energy-heavy', children: [],
-    description: 'Doubles your max energy (200), and +100 more for each tier beyond this one (300 next tier, 400 after, …). You gain 20 energy per hit on the live heavy path, and generation accelerates the fuller the pool. If a basic hit would kill via the discharge\'s projected damage, it triggers an immediate early discharge, spending the stored energy. At this tier your discharge multiplier is 2 lower (6× → 4×).',
-    cost: 1, statEffects: {},
+    description: 'Doubles your max energy (200), and +100 more for each tier beyond this one (300 next tier, 400 after, …). You gain 20 energy per hit on the live heavy path, and generation accelerates the fuller the pool. If a basic hit would kill via the discharge\'s projected damage, it triggers an immediate early discharge, spending the stored energy. At this tier your discharge multiplier is 2 lower (6× → 4×). +15% attack.',
+    cost: 1, statEffects: { attackPct: 0.15 },
     mechanicEffects: {
       'energy.singularity-execute': 1,
       'energy.max-bonus': 100,
@@ -119,23 +122,23 @@ export const t3CombatEntriesB = [
     id: 'energy-heavy-t3-b', name: 'Invoker', tier: 3,
     classId: 'energy-root', subVariantId: 'heavy',
     parent: 'energy-heavy', children: [],
-    description: 'Each consecutive discharge (no long gap between them) adds a stack, up to 3: more discharge damage AND faster energy gain. Stacks reset after 5 seconds without dealing damage. Rewards uninterrupted farming. At this tier your discharge multiplier is 2 lower (6× → 4×).',
-    cost: 1, statEffects: {},
+    description: 'Each consecutive discharge (no long gap between them) adds a stack, up to 3: more discharge damage AND faster energy gain. Stacks reset after 5 seconds without dealing damage. Rewards uninterrupted farming. At this tier your discharge multiplier is 1 lower (6× → 5×). +15% attack.',
+    cost: 1, statEffects: { attackPct: 0.15 },
     mechanicEffects: {
       'energy.critical-mass': 1,
       'energy.critical-mass-max-stacks': 3,
-      'energy.critical-mass-discharge-per-stack': 0.20,
+      'energy.critical-mass-discharge-per-stack': 0.25,
       'energy.critical-mass-gain-per-stack': 0.20,
       'energy.critical-mass-reset-ms': 5_000,
-      'energy.empowered-mult': -2,
+      'energy.empowered-mult': -1,
     },
   }],
   ['energy-heavy-t3-c', {
     id: 'energy-heavy-t3-c', name: 'Tempest', tier: 3,
     classId: 'energy-root', subVariantId: 'heavy',
     parent: 'energy-heavy', children: [],
-    description: 'Discharge deals normal damage and brands the target with a Storm instead of a burst — a damage-over-time debuff worth 4.5× your attack over its base 4.5s, extended +1s by each normal attack (up to 7.5s, adding more total damage). Near-permanent uptime even with a slow weapon; discharges refresh it.',
-    cost: 1, statEffects: {},
+    description: 'Discharge deals normal damage and brands the target with a Storm instead of a burst — a damage-over-time debuff worth 4.5× your attack over its base 4.5s, extended +1s by each normal attack (up to 7.5s, adding more total damage). Near-permanent uptime even with a slow weapon; discharges refresh it. +15% attack.',
+    cost: 1, statEffects: { attackPct: 0.15 },
     mechanicEffects: {
       'energy.endless-storm': 1,
       'energy.endless-storm-total-mult': 4.5,
@@ -196,24 +199,26 @@ export const t3CombatEntriesB = [
     id: 'dot-balanced-t3-a', name: 'Pyromancer', tier: 3,
     classId: 'dot-root', subVariantId: 'balanced',
     parent: 'dot-balanced', children: [],
-    description: 'Each hit applies 2 burn stacks instead of 1, but each stack deals 40% of normal tick damage. Hitting a target already at max stacks deals bonus direct damage equal to 1.25× the max-stack DoT damage.',
+    description: 'Each hit applies 2 burn stacks instead of 1, but each stack deals 55% of normal tick damage. Hitting a target already at max stacks deals bonus direct damage equal to 1.5× the max-stack DoT damage.',
     cost: 1, statEffects: {},
     mechanicEffects: {
       'dot.fan-the-flames': 1,
       'dot.fan-the-flames-stacks-per-hit': 2,
-      'dot.fan-the-flames-stack-damage-mult': 0.4,
-      'dot.fan-the-flames-max-stack-bonus-mult': 1.25,
+      // 2026-09-28 T4 outlier pass: 0.4 -> 0.55 and 1.25x -> 1.5x (0.79x the median spec on live T4 bosses).
+      'dot.fan-the-flames-stack-damage-mult': 0.55,
+      'dot.fan-the-flames-max-stack-bonus-mult': 1.5,
     },
   }],
   ['dot-balanced-t3-b', {
     id: 'dot-balanced-t3-b', name: 'Firebrand', tier: 3,
     classId: 'dot-root', subVariantId: 'balanced',
     parent: 'dot-balanced', children: [],
-    description: 'Your first attack on a fresh (or fully un-burned) target sears in all 6 fire stacks at once, at 35% tick value each. Once a target is fully branded, your attacks against it bypass the fire conversion entirely and land as full 100% direct hits while the burn keeps ticking (and refreshes its duration).',
+    description: 'Your first attack on a fresh (or fully un-burned) target sears in all 6 fire stacks at once, at 50% tick value each. Once a target is fully branded, your attacks against it bypass the fire conversion entirely and land as full 100% direct hits while the burn keeps ticking (and refreshes its duration).',
     cost: 1, statEffects: {},
     mechanicEffects: {
       'dot.ignition': 1,
-      'dot.ignition-stack-damage-mult': 0.35,
+      // 2026-09-28 T4 outlier pass: 0.35 -> 0.5 (0.83-0.86x the median spec on live T4 bosses).
+      'dot.ignition-stack-damage-mult': 0.5,
     },
   }],
   ['dot-balanced-t3-c', {
@@ -236,14 +241,15 @@ export const t3CombatEntriesB = [
     id: 'dot-heavy-t3-a', name: 'Icebreaker', tier: 3,
     classId: 'dot-root', subVariantId: 'heavy',
     parent: 'dot-heavy', children: [],
-    description: 'Below max frost stacks, attacks convert at the normal 70%. At max stacks (3), your direct attacks deal full damage (0% conversion) while the frost keeps ticking — and the target takes a 5% damage-reduction debuff, so the full-power hits land even harder. At this tier your frost deals 20% less damage.',
+    description: 'Below max frost stacks, attacks convert at the normal 70%. At max stacks (3), your direct attacks deal full damage (0% conversion) while the frost keeps ticking — and the target takes a 5% damage-reduction debuff, so the full-power hits land even harder. At this tier your frost deals 30% less damage.',
     cost: 1, statEffects: {},
     // TODO(balance): verify full-power direct hits interact correctly with high-plating enemies.
     mechanicEffects: {
       'dot.rimeshatter': 1,
       'dot.rimeshatter-dr-reduction': 0.05,
       'dot.rimeshatter-duration-ms': 2_000,
-      'dot.mechanic-mult': -0.2,
+      // 2026-09-28 T4 outlier pass: -0.2 -> -0.3 (1.36x the median spec on live T4 bosses).
+      'dot.mechanic-mult': -0.3,
     },
   }],
   ['dot-heavy-t3-b', {

@@ -152,7 +152,9 @@ export const tundraRecipeEntries = [
     // 2026-09-26 T2-T4 weapon normalization: Attack 155->165 (+5: 330->310).
     cost: { blue: 258 }, stats: { attack: 165 }, attacksPerSecond: 0.60, tier: 4, // family-tag: frost DoT-conversion weapon → Fortified
     reconstructCost: { blue: 903 }, reconstructCatalystCost: { fortified: 4 },
-    weaponDot: { effectId: 'rimebrand-burn', convPct: 0.70, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'frost' },
+    // 2026-09-28 T4 outlier pass: convPct 0.70 -> 0.60. It was the best T4 weapon for most specs (its
+    // plating-free conversion) and, with Detonate, every class's damage ceiling (1.2-1.38x).
+    weaponDot: { effectId: 'rimebrand-burn', convPct: 0.60, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'frost' },
     icon: 'items/weapons/glacial-rimebrand.png',
     description: 'It does not cut so much as plant a cold that goes on spreading after the blade is gone.',
     upgrades: [

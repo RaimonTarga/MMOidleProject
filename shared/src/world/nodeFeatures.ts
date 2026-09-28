@@ -57,8 +57,6 @@ export interface NodeFeatureSpec {
     contactBandPx?: number;
     /** Skip damage while this feature's movement block is suppressed. */
     requiresActiveBlock?: boolean;
-    /** Only during an engaged ultimate encounter before the final stage. */
-    preFinalStageOnly?: boolean;
   };
   /** While inside: refresh status (e.g. slow uses speedMult + totalMs in data). */
   statusWhileInside?: {
@@ -80,8 +78,6 @@ export interface NodeFeatureSpec {
   healWhileInside?: {
     hpPctPerSec: number;
     targets: FeatureTarget[];
-    /** When true, only encounter adds (not the boss or ambient mobs) heal. */
-    encounterAddsOnly?: boolean;
   };
   spawns?: {
     monsterTypeId: string;
@@ -491,8 +487,12 @@ function lavaVent(id: string, x: number, y: number, radius: number): NodeFeature
  * cap. Uncapped, auto-farming never cools, so bots died carrying 27-50 stacks
  * (+36-74% damage taken). T4 keeps the uncapped ramp; its bots master near target.
  */
-function volcanicHeat(id: string, biomeTier: number): NodeFeatureSpec {
+function volcanicHeat(id: string, biomeTier: number, isDungeon: boolean): NodeFeatureSpec {
   const t3 = biomeTier <= 3;
+  // Boss arenas run a slower Heat clock, so the ramp keeps its shape across the boss
+  // fight-length contract (2026-09-27: T3 fights ~x1.9 longer, T4 ~x5). The room owns
+  // Heat; the boss never stokes it (2026-09-04 redesign).
+  const clock = isDungeon ? (t3 ? 1.9 : 5) : 1;
   const cx = GAME_CONFIG.NODE_WIDTH / 2;
   const cy = GAME_CONFIG.NODE_HEIGHT / 2;
   return {
@@ -505,7 +505,7 @@ function volcanicHeat(id: string, biomeTier: number): NodeFeatureSpec {
     ambientRamp: {
       effectId: "volcanic-heat",
       maxStacks: t3 ? 15 : 0,
-      rampMs: 3000,
+      rampMs: Math.round(3000 * clock),
       coolingScaleStacks: 10,
       coolingRateMult: 2,
       payload: {
@@ -679,35 +679,6 @@ const LEGACY_NODE_FEATURE_TEMPLATES: Record<string, NodeFeatureSpec[]> = {
     rotPool("rot_pool_d", 1230, 1240, 240, 3),
     rotPool("rot_pool_e", 3540, 3560, 255, 3),
   ],
-  "node-10-0": [
-    {
-      id: "abyssal_throne",
-      x: GAME_CONFIG.NODE_WIDTH / 2,
-      y: GAME_CONFIG.NODE_HEIGHT / 2,
-      displayW: 1440,
-      displayH: 1440,
-      hitboxScale: 0.78,
-      hitboxKind: "ellipse",
-      hitboxHeightScale: 0.91,
-      blocksMovement: ["player"],
-      damage: {
-        effectId: "void-throne",
-        damagePerStack: 1,
-        tickIntervalMs: 2000,
-        maxStacks: 1,
-        refreshMs: 5000,
-        targets: ["player"],
-        contactBandPx: 48,
-        requiresActiveBlock: true,
-        preFinalStageOnly: true,
-      },
-      healWhileInside: {
-        hpPctPerSec: 0.05,
-        targets: ["monster"],
-        encounterAddsOnly: true,
-      },
-    },
-  ],
 };
 
 const SWAMP_NORMAL_TEMPLATES = [
@@ -809,7 +780,7 @@ function canonicalFeaturesForNode(
     // node-wide and unchanged; only the positional lava varies.
     const isDungeon = node.kind === "dungeon";
     return [
-      volcanicHeat("volcanic_heat", node.biomeTier),
+      volcanicHeat("volcanic_heat", node.biomeTier, isDungeon),
       ...generateVolcanicLakes(node.id, isDungeon).map((lake, i) =>
         lavaVent(
           `${isDungeon ? "boss_vent" : "lava_vent"}_${i}`,

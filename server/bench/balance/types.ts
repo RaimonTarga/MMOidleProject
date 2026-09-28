@@ -7,13 +7,11 @@ export type BalanceOutputFormat = 'csv' | 'jsonl';
 
 /**
  * Which kind of content the bench is exercising.
- * `boss` / `overlord` measure a FIGHT (clear one node, once). `farm` measures a
+ * `boss` measures a FIGHT (clear one node, once). `farm` measures a
  * RUN: repopulation on, no clear-break, income ledgered per simulated hour.
  */
-export type BenchMode = 'boss' | 'overlord' | 'farm';
+export type BenchMode = 'boss' | 'farm';
 
-/** Party size used for overlord runs. */
-export const OVERLORD_PARTY_SIZE = 4;
 
 export type BalanceOutcome = 'clear' | 'bot_died' | 'timeout';
 
@@ -61,14 +59,6 @@ export interface BalanceRunResult {
   maxHp: number;
   /** Type id of the dungeon boss present in the node (for difficulty targeting). */
   bossTypeId?: string;
-  /**
-   * Overlord (party) runs only: the build ids of all party members, and how many
-   * of them died. Solo boss runs leave these undefined. For party runs the
-   * `damageDealt` / `damageTaken` / `botHpEnd` / `maxHp` fields are party totals,
-   * so `botHpEnd / maxHp` is the party-average end-HP fraction.
-   */
-  partyBuildIds?: string[];
-  partyDeaths?: number;
   fightLog?: FightLogLine[];
 }
 
@@ -178,7 +168,7 @@ export interface MatrixFilter {
 }
 
 export interface BalanceCliArgs {
-  /** `boss` = solo dungeon-boss matrix; `overlord` = 4-bot party vs an overlord. */
+  /** `boss` = solo dungeon-boss matrix; `farm` = income run. */
   mode: BenchMode;
   tiers: number[];
   biome?: string;
@@ -203,18 +193,6 @@ export interface BalanceCliArgs {
   shardIndex: number;
   /** Total number of shards. `1` = no sharding (run the full matrix). */
   shardCount: number;
-  /**
-   * Overlord-only: cap the run to this many randomly-sampled party scenarios per
-   * overlord target (stratified across class archetypes, optimized builds first).
-   * `0` = no cap (full distinct-class enumeration).
-   */
-  sampleSize: number;
-  /**
-   * Overlord-only on-demand re-run: the exact party member build ids to
-   * reconstruct and run as a single logged match (use with `--biome`/`--tier`
-   * and `--log`). When set, the matrix is skipped entirely.
-   */
-  partyIds?: string[];
   /** Farm-only: farm this exact node instead of the per-biome representatives. */
   farmNodeId?: string;
   /**
@@ -295,15 +273,6 @@ export interface BalanceGearInfo {
   upgrades: BalanceUpgradeStepInfo[];
 }
 
-/** One party member in an overlord run, resolved to readable build info. */
-export interface BalancePartyMemberInfo {
-  buildId: string;
-  classRoot: string;
-  skillPath: string[];
-  /** Skill path resolved to readable perk names + descriptions. */
-  perks: BalancePerkInfo[];
-}
-
 export interface BalanceJsonlMatch extends BalanceRunResult {
   /** Always {@link BALANCE_JSONL_SCHEMA_VERSION}; typed as `number` so producers can build records incrementally. */
   schemaVersion: number;
@@ -311,15 +280,10 @@ export interface BalanceJsonlMatch extends BalanceRunResult {
   classRoot: string;
   skillPath: string[];
   gearItemIds: Partial<Record<GearSlot, string>>;
-  /** Skill path resolved to readable perk names + descriptions (solo boss runs). */
+  /** Skill path resolved to readable perk names + descriptions. */
   perks: BalancePerkInfo[];
   /** Equipped gear resolved to names, stats, and upgrade paths. */
   gear: BalanceGearInfo[];
-  /**
-   * Overlord runs only: the resolved roster (4 members). Gear is shared (all
-   * members run the same tier loadout) so it stays in `gear`.
-   */
-  party?: BalancePartyMemberInfo[];
   /** Computed composite difficulty score + breakdown. */
   balance: BalanceScore;
   dps: number;
