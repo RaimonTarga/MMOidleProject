@@ -36,6 +36,7 @@ import { syncTombstones } from "../render/tombstones";
 import { syncStunOrbits } from "../render/stunOrbit";
 import { clearOwnMovePath } from '../input/pathPrediction';
 import { RemotePlayerPosition } from '../render/remotePlayerPosition';
+import { observeAreaArrival } from '../hud/areaInformationState';
 
 // Last frame's resolved target — lets us detect when a target dies (its id
 // vanishes from view) so the target frame can drain HP to 0 before fading.
@@ -220,6 +221,7 @@ export function applyDelta(
         hudBus.notifyRecipeUnlock(unlock.name, unlock.recipeGroup);
       }
     }
+    observeAreaArrival(own, options.stateSync === true);
     syncPlayerAtoms(own);
     notePlayerStatusCues(own);
     const biome = NODE_BIOMES[own.nodeId]?.biomeGroup;

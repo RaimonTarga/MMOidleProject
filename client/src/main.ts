@@ -14,6 +14,7 @@ import { AutoCombatButton } from './hud/AutoCombatButton';
 import { MobileHUD } from './hud/MobileHUD';
 import { RecipeToastLayer } from './hud/RecipeToastLayer';
 import { NodeLoadingOverlay } from './hud/NodeLoadingOverlay';
+import { AreaInformation } from './hud/AreaInformation';
 import { TabResyncOverlay } from './hud/TabResyncOverlay';
 import { DeathOverlay } from './hud/DeathOverlay';
 import { ReleaseAnnouncementOverlay } from './hud/ReleaseAnnouncementOverlay';
@@ -104,6 +105,7 @@ createRoot(document.getElementById('auto-btn-overlay')!).render(createElement(Au
 createRoot(document.getElementById('mobile-hud')!).render(createElement(MobileHUD));
 createRoot(document.getElementById('toast-overlay')!).render(createElement(RecipeToastLayer));
 createRoot(document.getElementById('node-loading-overlay')!).render(createElement(NodeLoadingOverlay));
+createRoot(document.getElementById('area-information-overlay')!).render(createElement(AreaInformation));
 createRoot(document.getElementById('tab-resync-overlay')!).render(createElement(TabResyncOverlay));
 createRoot(document.getElementById('death-overlay')!).render(createElement(DeathOverlay));
 createRoot(document.getElementById('release-announcement-overlay')!).render(createElement(ReleaseAnnouncementOverlay));

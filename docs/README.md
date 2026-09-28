@@ -54,6 +54,7 @@ because it is detailed.
 | Monster combat rework | [monster-combat-rework-current-state.md](monster-combat-rework-current-state.md) |
 | Monster targeting | [monster-targeting-current-state.md](monster-targeting-current-state.md) |
 | Node modifiers | [node-modifiers-current-state.md](node-modifiers-current-state.md) |
+| Area banners and danger previews | [area-information-current-state.md](area-information-current-state.md) |
 | Player movement | [player-movement-current-state.md](player-movement-current-state.md) |
 | Recovery | [recovery-current-state.md](recovery-current-state.md) |
 

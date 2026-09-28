@@ -1,0 +1,47 @@
+#area-information-overlay { position: absolute; inset: 0; pointer-events: none; z-index: 24; overflow: hidden; }
+.area-arrival, .area-exit { box-sizing: border-box; font-family: ui-sans-serif, system-ui, sans-serif; color: #eee4d1; text-shadow: 0 2px 4px #000; pointer-events: none; }
+.area-arrival { position: absolute; top: 38%; left: 50%; transform: translate(-50%, -50%); width: min(580px, 94%); padding: 20px 22px; text-align: center; background: linear-gradient(90deg, transparent, #101116d9 18%, #101116d9 82%, transparent); animation: area-arrival-fade var(--arrival-duration) both; }
+.area-arrival::before, .area-arrival::after { content: ''; display: block; height: 1px; background: linear-gradient(90deg, transparent, #ab9271, transparent); }
+.area-arrival::before { margin-bottom: 13px; }
+.area-arrival::after { margin-top: 13px; }
+.area-arrival h2 { margin: 0 0 7px; font-family: Georgia, 'Times New Roman', serif; font-size: clamp(24px, 3.2vw, 38px); font-weight: 500; letter-spacing: .045em; line-height: 1.15; overflow-wrap: anywhere; }
+.area-arrival__eyebrow { color: #c9b58f; text-transform: uppercase; font-size: 10px; letter-spacing: .2em; margin-bottom: 7px; }
+.area-arrival__metadata { font-size: 13px; color: #d4cbbb; margin-bottom: 10px; }
+.area-danger { display: inline-flex; gap: 8px; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+.area-danger__skull { display: inline-flex; image-rendering: pixelated; }
+.area-danger__defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+/* The glow sits on the wrapper so it follows the tinted skull, not the raw icon. */
+.area-danger__skull-wrap { display: inline-flex; }
+.area-danger--1 { color: #ddd3bd; }
+.area-danger--2 { color: #f0c16b; }
+.area-danger--3 { color: #ffa165; }
+.area-danger--4 { color: #ff7979; }
+.area-danger--5 { color: #ff4d6d; }
+.area-danger--1 .area-danger__skull-wrap { filter: drop-shadow(0 0 2px #ddd3bd55); }
+.area-danger--2 .area-danger__skull-wrap { filter: drop-shadow(0 0 3px #f0c16b88); }
+.area-danger--3 .area-danger__skull-wrap { filter: drop-shadow(0 0 4px #ff8a3d99); }
+.area-danger--4 .area-danger__skull-wrap { filter: drop-shadow(0 0 5px #ff3b3bbb); }
+.area-danger--5 .area-danger__skull-wrap { filter: drop-shadow(0 0 5px #ff1f4f) drop-shadow(0 0 10px #8a0020); animation: area-danger-boss-pulse 1.6s ease-in-out infinite; }
+@keyframes area-danger-boss-pulse { 50% { filter: drop-shadow(0 0 7px #ff1f4f) drop-shadow(0 0 14px #b0103a); } }
+.area-danger--special { color: #b8d5cc; }
+.area-arrival__modifier { margin: 10px auto 0; max-width: 410px; font-size: 13px; line-height: 1.5; color: #d9d1c3; }
+.area-arrival__modifier strong { color: #f0d6a7; }
+.area-arrival--return { padding: 10px 18px; }
+.area-arrival--return h2 { font-size: clamp(21px, 2.6vw, 30px); }
+.area-exit { position: absolute; max-width: min(270px, 76%); padding: 9px 12px; border: 1px solid #a68b5c66; border-radius: 3px; background: #111419e8; box-shadow: 0 2px 12px #0006; text-align: center; }
+.area-exit--north { top: 100px; left: 50%; transform: translateX(-50%); }
+.area-exit--south { bottom: 150px; left: 50%; transform: translateX(-50%); }
+.area-exit--west { left: 12px; top: 42%; transform: translateY(-50%); }
+.area-exit--east { right: 12px; top: 42%; transform: translateY(-50%); }
+.area-exit__name { font-size: 13px; font-weight: 600; overflow-wrap: anywhere; }
+.area-exit__metadata { font-size: 11px; color: #c6bcaa; margin: 4px 0; }
+.area-exit .area-danger { font-size: 12px; gap: 6px; }
+/* On compact viewports, pair corner signs in separate columns so they cannot overlap. */
+@media (max-width: 600px), (max-height: 500px) {
+  .area-exits--multiple { position: absolute; left: 8px; right: 8px; top: 42%; transform: translateY(-50%); display: flex; justify-content: center; align-items: flex-start; gap: 8px; }
+  .area-exits--multiple .area-exit { position: static; transform: none; flex: 1; min-width: 0; max-width: 270px; padding: 8px; }
+  .area-exits--multiple .area-danger { flex-wrap: wrap; gap: 3px; }
+}
+@keyframes area-arrival-fade { 0% { opacity: 0; } 10%, 76% { opacity: 1; } 100% { opacity: 0; } }
+@media (max-width: 600px) { .area-arrival { top: 35%; padding: 13px 12px; } .area-arrival__modifier { font-size: 12px; } .area-exit { max-width: 220px; } .area-exit--north { top: 112px; } .area-exit--south { bottom: 175px; } }
+@media (prefers-reduced-motion: reduce) { .area-arrival, .area-danger--5 .area-danger__skull-wrap { animation: none; } }
