@@ -112,6 +112,24 @@ export function activeAttackTelegraphs(
     .sort((a, b) => a.id.localeCompare(b.id));
 }
 
+/**
+ * Hostile AoEs that have not resolved yet, by PRESENCE rather than clock. The
+ * resolving tick is the one that matters: body AI runs before combat, so a
+ * clock-based `now < resolvesAtMs` check lets a summon step back in on the very
+ * tick the slam lands. Resolution (or an abort) clears the zone itself.
+ */
+function unresolvedAttackTelegraphs(world: World, nodeId: string): RuntimeAttackTelegraph[] {
+  return (world.groundZones.get(nodeId) ?? []).filter(
+    (zone): zone is RuntimeAttackTelegraph =>
+      zone.kind !== "toxic-pool" && world.hasMonster(zone.ownerId),
+  );
+}
+
+/** Would a summon standing at `pos` be caught by a telegraph that has not landed yet? */
+export function positionInsideUnresolvedTelegraph(world: World, nodeId: string, pos: Vec2): boolean {
+  return unresolvedAttackTelegraphs(world, nodeId).some((zone) => positionInsideTelegraph(zone, pos));
+}
+
 export function telegraphsContainingPlayer(
   world: World,
   player: PlayerEntity,
@@ -288,16 +306,17 @@ export function findTelegraphEscapeDestination(
 }
 
 /**
- * Step Back for a summon: the shortest standable point outside every telegraph
- * the body stands in, or null when it is already safe (or boxed in).
+ * Step Back for a summon: the shortest standable point outside every unresolved
+ * telegraph the body stands in or grazes, or null when it is already clear (or
+ * boxed in). A summon keeps walking until it clears the escape margin, so it
+ * does not park on the rim where any nudge puts it back under the slam.
  */
 export function findMinionTelegraphEscape(
   world: World,
   minion: MinionEntity,
-  now: number,
 ): Vec2 | null {
-  const zones = activeAttackTelegraphs(world, minion.hasPosition.nodeId, now).filter((zone) =>
-    positionInsideTelegraph(zone, minion.hasPosition.current),
+  const zones = unresolvedAttackTelegraphs(world, minion.hasPosition.nodeId).filter((zone) =>
+    geometryContains(zone.geometry, minion.hasPosition.current, RUNE_TELEGRAPH_ESCAPE_CLEARANCE),
   );
   return findEscapeForThreats(world, minion, zones);
 }

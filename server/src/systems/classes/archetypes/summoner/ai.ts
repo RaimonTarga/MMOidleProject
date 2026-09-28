@@ -37,9 +37,8 @@ import { summonerProfileFor } from './profile';
 import { getRuneDecisions, RUNE_WAIT_FOR_SUMMONS_FLAG } from '../../../combat/ai/runeConfig';
 import { getAutoTargetId } from '../../../combat/ai/targetPriority';
 import {
-  activeAttackTelegraphs,
   findMinionTelegraphEscape,
-  positionInsideTelegraph,
+  positionInsideUnresolvedTelegraph,
 } from '../../../combat/ai/telegraphEvasion';
 import { isConcealedEntity } from "../../../combat/invulnerability";
 
@@ -218,10 +217,23 @@ function ownerStepsBack(owner: PlayerEntity): boolean {
     && owner.tracksProgression.runesEquipped.some((rule) => rule.actionId === 'step-back');
 }
 
-/** Hold short rather than chase back into a telegraph the summon just left. */
-function destinationInsideTelegraph(world: World, minion: MinionEntity, dest: Vec2, now: number): boolean {
-  return activeAttackTelegraphs(world, minion.hasPosition.nodeId, now)
-    .some((zone) => positionInsideTelegraph(zone, dest));
+/**
+ * Walk toward `dest`, or stand still when Step Back is on and `dest` lies under
+ * a telegraph that has not landed yet — rather than chase, retreat or follow the
+ * owner back into a slam the summon just left.
+ */
+function moveMinionOutsideTelegraphs(
+  world: World,
+  owner: PlayerEntity,
+  minion: MinionEntity,
+  dest: Vec2,
+): void {
+  if (ownerStepsBack(owner)
+    && positionInsideUnresolvedTelegraph(world, minion.hasPosition.nodeId, dest)) {
+    stopEntity(world, minion);
+    return;
+  }
+  setEntityMotion(world, minion, dest);
 }
 
 export function driveMinion(
@@ -247,7 +259,7 @@ export function driveMinion(
     return;
   }
 
-  const escape = ownerStepsBack(owner) ? findMinionTelegraphEscape(world, minion, now) : null;
+  const escape = ownerStepsBack(owner) ? findMinionTelegraphEscape(world, minion) : null;
   if (escape) {
     setEntityMotion(world, minion, escape);
     return;
@@ -305,7 +317,7 @@ export function driveMinion(
         const dy = minion.hasPosition.current.y - target.hasPosition.current.y;
         const length = Math.sqrt(dx * dx + dy * dy) || 1;
         const retreat = profile.preferredDistance - targetDistance;
-        setEntityMotion(world, minion, clampToLeash(owner, {
+        moveMinionOutsideTelegraphs(world, owner, minion, clampToLeash(owner, {
           x: minion.hasPosition.current.x + (dx / length) * retreat,
           y: minion.hasPosition.current.y + (dy / length) * retreat,
         }, leashRadius));
@@ -324,9 +336,8 @@ export function driveMinion(
     // Normal chase, but only as far as the leash allows.
     const desired = clampToLeash(owner, target.hasPosition.current, leashRadius);
     const distToDesired = distance(minion.hasPosition.current, desired);
-    const holdOutside = ownerStepsBack(owner) && destinationInsideTelegraph(world, minion, desired, now);
-    if (distToDesired > FOLLOW_HOVER_TOL && !holdOutside) {
-      setEntityMotion(world, minion, desired);
+    if (distToDesired > FOLLOW_HOVER_TOL) {
+      moveMinionOutsideTelegraphs(world, owner, minion, desired);
     } else {
       stopEntity(world, minion);
     }
@@ -344,7 +355,7 @@ export function driveMinion(
     y: owner.hasPosition.current.y + off.y,
   };
   if (distance(minion.hasPosition.current, idleAt) > FOLLOW_HOVER_TOL) {
-    setEntityMotion(world, minion, idleAt);
+    moveMinionOutsideTelegraphs(world, owner, minion, idleAt);
   } else {
     stopEntity(world, minion);
   }

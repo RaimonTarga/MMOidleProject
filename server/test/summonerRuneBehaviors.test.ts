@@ -115,8 +115,38 @@ function summonsInsideAfterTelegraph(stepBack: boolean): number {
 assert(summonsInsideAfterTelegraph(false) === 4, 'without Step Back the summons hold their positions');
 assert(summonsInsideAfterTelegraph(true) === 0, 'with Step Back every summon leaves the telegraph');
 
-// ── Taunt Target draws the enemy onto the striking summon ────────────────────
 initCombatSystems();
+
+// ── Step Back holds summons outside the slam through the tick it lands ───────
+// Summon AI runs before combat, so on the resolving tick a clock-based check let
+// every summon on the rim take one chase step back under a Cave Troll's Ground
+// Slam. Positions after a tick are the positions the slam resolved against.
+{
+  const { world, owner, minions, monster } = setup('step-back-slam');
+  world.removeMonsterEntity(monster.isMonster.id);
+  owner.usesAutocombat.auto = true;
+  owner.tracksProgression.runesEquipped = [{ conditionId: 'inside-telegraph', actionId: 'step-back' }];
+  const troll = world.createMonster(NODE, 'cave-troll', { x: 550, y: 400 })!;
+  troll.hasHealth.hp = troll.hasHealth.maxHp = 1e9;
+
+  let now = 2_000;
+  let pending: { id: string; contains: (pos: { x: number; y: number }) => boolean } | null = null;
+  let slamsResolved = 0;
+  for (let i = 0; i < 400 && slamsResolved < 2; i++) {
+    now += 100;
+    world.tick(100, now);
+    const zone = (world.groundZones.get(NODE) ?? []).find((z) => z.kind === 'slam-telegraph');
+    if (pending && zone?.id !== pending.id) {
+      const caught = minions().filter((m) => m && pending!.contains(m.hasPosition.current));
+      assert(caught.length === 0, `Step Back summons stood under the slam as it landed: ${caught.length}`);
+      slamsResolved++;
+    }
+    pending = zone ? { id: zone.id, contains: (pos) => geometryContains(zone.geometry, pos) } : null;
+  }
+  assert(slamsResolved === 2, `fixture: the troll should slam the formation twice, saw ${slamsResolved}`);
+}
+
+// ── Taunt Target draws the enemy onto the striking summon ────────────────────
 {
   const { world, owner, minions, monster } = setup('taunt');
   setFlag(owner.tracksCombat, RUNE_TAUNT_CURRENT_TARGET_FLAG, true);
