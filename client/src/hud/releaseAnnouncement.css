@@ -195,7 +195,9 @@
 .release-card__footer {
   flex-shrink: 0;
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   padding: 16px 28px 20px;
   border-top: 1px solid rgba(80, 72, 52, 0.35);
 }
@@ -218,6 +220,31 @@
 
 .release-card__primary:hover {
   color: var(--hud-primary-strong);
+}
+
+.release-card__pager {
+  display: flex;
+  gap: 8px;
+}
+
+.release-card__page {
+  padding: 7px 12px;
+  border: 1px solid rgba(80, 72, 52, 0.55);
+  border-radius: 1px;
+  background: transparent;
+  color: var(--hud-text-muted);
+  font-family: ui-monospace, monospace;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.release-card__page:hover:not(:disabled) {
+  color: var(--hud-primary);
+}
+
+.release-card__page:disabled {
+  opacity: 0.5;
+  cursor: default;
 }
 
 /* On short phones the heading and footer can consume the whole card at large

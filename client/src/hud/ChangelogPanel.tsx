@@ -1,14 +1,11 @@
 import { useState } from 'react';
-import manifestText from '../../../updates/releases.json?raw';
 import packageText from '../../../package.json?raw';
 import { showReleaseAnnouncement } from './atoms';
+import { RELEASES, loadReleaseNotes } from './releaseNotes';
 import './releaseAnnouncement.css';
 
 const version: string = JSON.parse(packageText).version;
-const release = (JSON.parse(manifestText).releases as {
-  version: string; title: string; releasedAt: number; markdownPath: string;
-}[]).find(entry => entry.version === version);
-const notes = import.meta.glob('../../../updates/v*/changelog.md', { query: '?raw', import: 'default' });
+const release = RELEASES.find(entry => entry.version === version);
 
 export function ChangelogPanel({ onOpen }: { onOpen?: () => void }) {
   const [loading, setLoading] = useState(false);
@@ -19,9 +16,9 @@ export function ChangelogPanel({ onOpen }: { onOpen?: () => void }) {
     setLoading(true);
     setError(false);
     try {
-      const markdown = await notes[`../../../updates/${current.markdownPath}`]() as string;
+      const payload = await loadReleaseNotes(current);
       onOpen?.();
-      showReleaseAnnouncement({ ...current, markdown });
+      showReleaseAnnouncement(payload);
     } catch {
       setError(true);
     } finally {
