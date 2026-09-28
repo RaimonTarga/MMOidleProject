@@ -59,4 +59,3 @@ export const hasPlayerBuff = (view: AnyView, id: string, instanceKey?: string): 
   ((view as PlayerView).activeBuffs ?? []).some(
     (b) => b.id === id && (instanceKey === undefined || b.instanceKey === instanceKey),
   );
-

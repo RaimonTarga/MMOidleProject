@@ -307,4 +307,3 @@ export function fxStoneFist(scene: GameScene, to: P, empowered: boolean, palette
     },
   });
 }
-

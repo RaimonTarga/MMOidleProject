@@ -279,4 +279,3 @@ specialization, ascension tier, ability rank, and the resource values the bespok
 paths read (Rampage stage, Crescendo %, target stacks, energy, ...), plus
 replay and slow-motion. Most FX already take plain inputs (scene, points, view
 fields), so the tool can build fake views rather than run combat. Not started.
-

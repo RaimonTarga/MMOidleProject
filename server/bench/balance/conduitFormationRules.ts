@@ -13,4 +13,3 @@ export function withConduitFormationRules<T extends { conditionId: string; actio
 ): T[] {
   return rules.map((rule) => rule.actionId === 'wait-for-regen' ? { ...rule, actionId: 'wait-for-summons' } : rule);
 }
-

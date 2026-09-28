@@ -105,5 +105,3 @@ try {
   mkdirSync(dirname(job.output),{recursive:true});writeFileSync(job.output,JSON.stringify(result,null,2)+'\n');
   console.log(JSON.stringify({id:job.id,wallSeconds:result.wallSeconds,masteryMs:mastery?.elapsedMs??null,deathMs:death?.elapsedMs??null,level:result.final.level,funds,all3,all5}));
 } finally {teardownArena(world);Math.random=random;Date.now=clock;}
-
-

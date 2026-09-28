@@ -116,4 +116,3 @@ export function runBalanceMatch(
     teardownArena(world);
   }
 }
-
