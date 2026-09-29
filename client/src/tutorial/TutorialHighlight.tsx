@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useAtomValue } from 'jotai';
 import { tutorialAnchorSelector } from '@mmo-idle/shared';
-import { tutorialHighlightAtom } from './atoms';
+import { tutorialHighlightAtom, tutorialPressAtom } from './atoms';
 
 interface Box {
   left: number;
@@ -43,7 +43,17 @@ function sameBox(a: Box | null, b: Box | null): boolean {
  */
 export function TutorialHighlight() {
   const anchor = useAtomValue(tutorialHighlightAtom);
+  const presses = useAtomValue(tutorialPressAtom);
   const [box, setBox] = useState<Box | null>(null);
+  // True for one pulse after each press. A flag, not a class tied to the count:
+  // the ring remounts on every new anchor and must not replay an old press.
+  const [pulsing, setPulsing] = useState(false);
+  useEffect(() => {
+    if (presses === 0) return;
+    setPulsing(true);
+    const timer = setTimeout(() => setPulsing(false), 360);
+    return () => clearTimeout(timer);
+  }, [presses]);
 
   useEffect(() => {
     if (!anchor) {
@@ -71,7 +81,8 @@ export function TutorialHighlight() {
   if (!box) return null;
   return createPortal(
     <div
-      className="tutorial-ring"
+      key={pulsing ? `press-${presses}` : 'ring'}
+      className={`tutorial-ring${pulsing ? ' tutorial-ring--press' : ''}`}
       aria-hidden
       style={{
         left: box.left - RING_PAD,

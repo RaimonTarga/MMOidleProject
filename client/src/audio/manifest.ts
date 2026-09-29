@@ -1,6 +1,7 @@
 import { ACCEPTED_SFX, type AcceptedSfxId } from './acceptedCatalog';
 export type SfxId = AcceptedSfxId | 'attack-melee' | 'attack-blunt' | 'attack-ranged' | 'attack-magic'
-  | 'take-damage' | 'kill' | 'frozen' | 'debuff-apply' | 'debuff-receive' | 'empowered' | 'pack-call';
+  | 'take-damage' | 'kill' | 'frozen' | 'debuff-apply' | 'debuff-receive' | 'empowered' | 'pack-call'
+  | 'tutorial-ready' | 'tutorial-action';
 export interface SynthTone {
   freq: number; delay?: number; duration: number; gain?: number; type?: OscillatorType;
 }
@@ -44,6 +45,25 @@ for (const [id, stems] of Object.entries(ACCEPTED_SFX)) {
   };
 }
 for (const [alias, id] of Object.entries(aliases)) SFX_MANIFEST[alias as SfxId] = SFX_MANIFEST[id];
+
+// Guided tutorial UI cues (client/src/tutorial). The designer's recordings go at
+// these paths; until a file exists the soft synth fallback plays instead, so the
+// cue is never silent. Kept quiet and unjittered: they are UI, not combat.
+SFX_MANIFEST['tutorial-ready'] = {
+  file: `${AUDIO_SFX_DIR}/ui/tutorial-ready.ogg`,
+  // A gentle rising two-note chime: "your turn".
+  fallback: [
+    { freq: 659, duration: 0.18, gain: 0.22 },
+    { freq: 988, delay: 0.12, duration: 0.3, gain: 0.2 },
+  ],
+  gain: 0.5, cooldownMs: 600, maxVoices: 1, priority: 2,
+};
+SFX_MANIFEST['tutorial-action'] = {
+  file: `${AUDIO_SFX_DIR}/ui/tutorial-action.ogg`,
+  // A short soft tick when the guide presses a button.
+  fallback: [{ freq: 1320, duration: 0.06, gain: 0.14, type: 'triangle' }],
+  gain: 0.4, cooldownMs: 120, maxVoices: 1, priority: 1,
+};
 
 /** Normalized list of variant file paths for a SFX def (empty if none). */
 export function sfxFiles(def: SfxDef): string[] {

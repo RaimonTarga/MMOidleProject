@@ -18,6 +18,7 @@ import {
   type TutorialScript,
   type TutorialStep,
 } from '@mmo-idle/shared';
+import { playSfx } from '../audio/audioEngine';
 import { hudBus } from '../hudBus';
 import {
   buildOpenAtom,
@@ -31,7 +32,7 @@ import {
 import { closePrimaryOverlays, openPrimaryOverlay } from '../input/overlayStack';
 import { bfsPath } from '../ui/map/pathing';
 import { makeFiltersAtom } from '../ui/panelFilters';
-import { tutorialFocusAtom, tutorialHighlightAtom } from './atoms';
+import { tutorialFocusAtom, tutorialHighlightAtom, tutorialPressAtom } from './atoms';
 
 /**
  * The guide's hands (docs/guided-tutorial-plan.md, "Director behavior").
@@ -154,6 +155,14 @@ async function point(anchor: string, signal: AbortSignal): Promise<void> {
   await pause(POINT_MS, signal);
 }
 
+/** The ring's press pulse + the action cue, so a point and a click read differently. */
+const PRESS_MS = 220;
+async function pressPointed(signal: AbortSignal): Promise<void> {
+  store.set(tutorialPressAtom, (n) => n + 1);
+  playSfx('tutorial-action');
+  await pause(PRESS_MS, signal);
+}
+
 function report(beat: TutorialBeat, status: TutorialRunStatus, message?: string): void {
   store.set(tutorialRunAtom, { beatId: beat.id, status, message });
 }
@@ -180,6 +189,7 @@ async function autoCombatOn(beat: TutorialBeat, signal: AbortSignal): Promise<vo
   if (requireView().auto) return;
   report(beat, 'working');
   await point(TUTORIAL_ANCHORS.autoCombat, signal);
+  await pressPointed(signal);
   hudBus.requestSetAutoTraverse(false);
   hudBus.requestSetAuto(true);
   const on = await waitAlive((v) => v.auto, signal, ACTION_TIMEOUT_MS);
@@ -248,6 +258,7 @@ async function makeEntry(
   await point(TUTORIAL_ANCHORS.makeRow(entryKey), signal);
   await point(TUTORIAL_ANCHORS.makeAction, signal);
   requireView();
+  await pressPointed(signal);
   press();
   // Learning something can wake a UI unlock that reshuffles the rail; never
   // leave the ring on a button that may be gone by the next frame.
@@ -287,6 +298,7 @@ async function equip(definitionId: string, beat: TutorialBeat, signal: AbortSign
   await point(TUTORIAL_ANCHORS.inventoryItem(definitionId), signal);
   await point(TUTORIAL_ANCHORS.inventoryAction, signal);
   requireView();
+  await pressPointed(signal);
   hudBus.requestEquipItem(definitionId);
   const worn = await waitAlive((v) => v.equipment[item.slot] === definitionId, signal, ACTION_TIMEOUT_MS);
   if (!worn) throw new TutorialStop(`${item.name} was not equipped. Press Next to try again.`, 'error');
@@ -315,6 +327,7 @@ async function upgrade(
   while (plus() < step.toPlus) {
     const before = plus();
     await point(TUTORIAL_ANCHORS.upgradeAction, signal);
+    await pressPointed(signal);
     hudBus.requestUpgradeItem(step.definitionId);
     const done = await waitAlive((v) => (v.itemUpgrades[step.definitionId] ?? 0) > before, signal, ACTION_TIMEOUT_MS);
     if (!done) throw new TutorialStop(`The ${item.name} upgrade did not go through. Press Next to try again.`, 'error');
@@ -358,7 +371,10 @@ async function applyAbilities(
     await sendRunes(unwired, signal);
     const added = [...abilities.techniques, ...abilities.guards].find((id) =>
       !view.attunedAbilities.techniques.includes(id) && !view.attunedAbilities.guards.includes(id));
-    if (added) await point(TUTORIAL_ANCHORS.abilityAttune(added), signal);
+    if (added) {
+      await point(TUTORIAL_ANCHORS.abilityAttune(added), signal);
+      await pressPointed(signal);
+    }
     hudBus.requestSetAbilityLoadout(abilities);
     const set = await waitAlive(
       (v) => same(v.attunedAbilities.techniques, abilities.techniques) && same(v.attunedAbilities.guards, abilities.guards),
@@ -461,6 +477,7 @@ async function attemptBoss(
     if (dungeon()?.status === 'idle') {
       report(beat, 'working');
       await point(TUTORIAL_ANCHORS.altar, signal);
+      await pressPointed(signal);
       for (let attempt = 0; attempt < 3 && dungeon()?.status === 'idle'; attempt += 1) {
         hudBus.requestActivateDungeonAltar();
         await waitAlive(() => dungeon()?.status !== 'idle', signal, 4_000);

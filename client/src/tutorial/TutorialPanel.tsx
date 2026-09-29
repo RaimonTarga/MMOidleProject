@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import {
   resolveBeatIndex,
@@ -6,9 +6,11 @@ import {
   tutorialScriptFor,
   type PlayerView,
   type TutorialBeat,
+  type TutorialScript,
 } from '@mmo-idle/shared';
 import { selectedCharacterIdAtom } from '../auth/lobbyState';
 import { deathOverlayAtom, localPlayerViewAtom, playerIdAtom } from '../hud/atoms';
+import { playSfx } from '../audio/audioEngine';
 import { GradientConduit, HudPanel } from '../hud/primitives';
 import { resetTutorialRun, respawnForTutorial, runBeat, tutorialRunAtom } from './director';
 import { TutorialHighlight } from './TutorialHighlight';
@@ -55,6 +57,47 @@ function useTutorialChoice(characterId: string | null): [Choice | null, (choice:
   return [choice, update];
 }
 
+/**
+ * How far through Tier 1 the guide is: a thin fill plus one tick per chapter,
+ * the current chapter's tick lit. Replaces the bare "24 / 83" counter.
+ */
+function RouteStrip({ script, index }: { script: TutorialScript; index: number }) {
+  const chapters = useMemo(() => {
+    const starts: Array<{ name: string; at: number }> = [];
+    script.beats.forEach((beat, i) => {
+      if (starts[starts.length - 1]?.name !== beat.chapter) starts.push({ name: beat.chapter, at: i });
+    });
+    return starts;
+  }, [script]);
+  const total = script.beats.length;
+  const current = chapters.filter((c) => c.at <= index).pop()?.name;
+  return (
+    <div
+      className="tutorial-route"
+      role="progressbar"
+      aria-label="Tier 1 route"
+      aria-valuemin={0}
+      aria-valuemax={total}
+      aria-valuenow={index}
+      title={`Step ${Math.min(index + 1, total)} of ${total}`}
+    >
+      <div className="tutorial-route__fill" style={{ width: `${(index / total) * 100}%` }} />
+      {chapters.map((chapter) => (
+        <span
+          key={chapter.name}
+          className={[
+            'tutorial-route__tick',
+            chapter.at <= index ? 'tutorial-route__tick--passed' : '',
+            chapter.name === current ? 'tutorial-route__tick--current' : '',
+          ].filter(Boolean).join(' ')}
+          style={{ left: `${(chapter.at / total) * 100}%` }}
+          title={chapter.name}
+        />
+      ))}
+    </div>
+  );
+}
+
 function ProgressLines({ beat, view }: { beat: TutorialBeat; view: PlayerView }) {
   const rows = (beat.progress ?? []).flatMap((ref) => tutorialProgress(ref, view));
   if (rows.length === 0) return null;
@@ -96,6 +139,29 @@ export function TutorialPanel() {
     controller.current = null;
     resetTutorialRun();
   }, []);
+
+  const script = view ? tutorialScriptFor(view.selectedClass) : null;
+  const index = script && view ? resolveBeatIndex(script, view) : -1;
+  const currentBeatId = script?.beats[index]?.id ?? null;
+
+  // "Your turn" moment: a waiting beat just finished and the next one is up.
+  // Only that transition (not a Stop, not a death) glows and chimes, once.
+  const [readyPulse, setReadyPulse] = useState(0);
+  const lastRun = useRef(run);
+  useEffect(() => {
+    const previous = lastRun.current;
+    lastRun.current = run;
+    if (previous?.status === 'waiting' && run === null && previous.beatId !== currentBeatId && choice === 'on') {
+      setReadyPulse((n) => n + 1);
+      playSfx('tutorial-ready');
+    }
+  }, [run, currentBeatId, choice]);
+  // Clear the glow class once its one-shot animation has played.
+  useEffect(() => {
+    if (readyPulse === 0) return;
+    const timer = setTimeout(() => setReadyPulse(0), 1400);
+    return () => clearTimeout(timer);
+  }, [readyPulse]);
 
   // A character switch or unmount must never leave the guide pressing buttons.
   useEffect(() => stop, [stop, playerId]);
@@ -156,8 +222,7 @@ export function TutorialPanel() {
     );
   }
 
-  const script = tutorialScriptFor(view.selectedClass);
-  const index = resolveBeatIndex(script, view);
+  if (!script) return null;
   const beat = script.beats[index] ?? null;
   const busy = !!run && (run.status === 'working' || run.status === 'waiting' || run.status === 'player');
   const ownRun = run && beat && run.beatId === beat.id ? run : null;
@@ -185,16 +250,20 @@ export function TutorialPanel() {
     <HudPanel className="sidebar-panel tutorial-panel">
       <div className="panel-title tutorial-panel__title">
         <span>Guide</span>
-        {beat && <span className="tutorial-panel__count">{index + 1} / {script.beats.length}</span>}
         <button type="button" className="tutorial-panel__stop" onClick={() => setChoice('off')}>
           Stop
         </button>
       </div>
+      {beat && <RouteStrip script={script} index={index} />}
       {beat && <div className="tutorial-panel__chapter">{beat.chapter}</div>}
 
       {beat ? (
         <>
-          <p className={`tutorial-panel__line${ownRun?.status === 'error' ? ' tutorial-panel__line--error' : ''}`}>
+          <p
+            // Keyed by the text so each new line fades in instead of snapping.
+            key={line}
+            className={`tutorial-panel__line tutorial-panel__line--enter${ownRun?.status === 'error' ? ' tutorial-panel__line--error' : ''}`}
+          >
             {line}
           </p>
           {ownRun?.status === 'waiting' && !dead && <ProgressLines beat={beat} view={view} />}
@@ -206,7 +275,7 @@ export function TutorialPanel() {
             <div className="tutorial-panel__actions">
               <button
                 type="button"
-                className="tutorial-button tutorial-button--primary tutorial-button--next"
+                className={`tutorial-button tutorial-button--primary tutorial-button--next${readyPulse ? ' tutorial-button--ready' : ''}`}
                 onClick={next}
               >
                 Next
