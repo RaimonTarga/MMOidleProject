@@ -163,9 +163,13 @@ export function TutorialPanel() {
     return () => clearTimeout(timer);
   }, [readyPulse]);
 
+  // Stop asks first; the guide keeps working underneath until confirmed.
+  const [confirmingStop, setConfirmingStop] = useState(false);
+
   // A character switch or unmount must never leave the guide pressing buttons.
   useEffect(() => stop, [stop, playerId]);
   useEffect(() => {
+    setConfirmingStop(false);
     if (choice !== 'on') stop();
   }, [choice, stop]);
 
@@ -250,10 +254,29 @@ export function TutorialPanel() {
     <HudPanel className="sidebar-panel tutorial-panel">
       <div className="panel-title tutorial-panel__title">
         <span>Guide</span>
-        <button type="button" className="tutorial-panel__stop" onClick={() => setChoice('off')}>
-          Stop
-        </button>
+        {!confirmingStop && (
+          <button type="button" className="tutorial-panel__stop" onClick={() => setConfirmingStop(true)}>
+            Stop
+          </button>
+        )}
       </div>
+
+      {confirmingStop ? (
+        <div className="tutorial-panel__confirm" role="alertdialog" aria-label="Stop the guide?">
+          <p className="tutorial-panel__line tutorial-panel__line--enter">Stop the guide?</p>
+          <p className="tutorial-panel__note">
+            You can pick it up again any time from the Guide tab, and it continues right where you left off.
+          </p>
+          <div className="tutorial-panel__actions">
+            <button type="button" className="tutorial-button tutorial-button--danger" onClick={() => setChoice('off')}>
+              Stop guide
+            </button>
+            <button type="button" className="tutorial-button" autoFocus onClick={() => setConfirmingStop(false)}>
+              Keep going
+            </button>
+          </div>
+        </div>
+      ) : (<>
       {beat && <RouteStrip script={script} index={index} />}
       {beat && <div className="tutorial-panel__chapter">{beat.chapter}</div>}
 
@@ -290,6 +313,7 @@ export function TutorialPanel() {
             : 'Waiting for your class.'}
         </p>
       )}
+      </>)}
       <TutorialHighlight />
     </HudPanel>
   );
