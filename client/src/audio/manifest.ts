@@ -24,13 +24,14 @@ const aliases: Record<string, AcceptedSfxId> = {
 const ROUTINE_SFX = ['slash','blunt','shot','spirit','fire','ice','poison','magic','bone','claw','bite','maul','bow','rock-launch','summon-hit'];
 export const DEATH_SFX = ['death-magic', 'death-animal', 'death-humanoid', 'death-undead', 'death-stone', 'death-aquatic'] as const;
 /**
- * Loaded with the game: routine combat and all death cues. Other cast and status
+ * Loaded with the game: routine combat, tutorial notifications and all death cues. Other cast and status
  * cues are fetched the first time they play, like zone art, so a
  * visitor never downloads effects for content they have not reached.
  */
 // `death` aliases player death; `kill` owns the separate enemy-collapse buffer.
 export const PRELOADED_SFX: ReadonlySet<string> = new Set([
   ...ROUTINE_SFX, ...DEATH_SFX, 'boss-death', 'hurt', 'death', 'kill', 'dodge', 'striker-empowered', 'squire-empowered', 'spirit-empowered',
+  'tutorial-ready', 'tutorial-action',
 ]);
 for (const [id, stems] of Object.entries(ACCEPTED_SFX)) {
   const routine = ROUTINE_SFX.includes(id);
@@ -46,22 +47,16 @@ for (const [id, stems] of Object.entries(ACCEPTED_SFX)) {
 }
 for (const [alias, id] of Object.entries(aliases)) SFX_MANIFEST[alias as SfxId] = SFX_MANIFEST[id];
 
-// Guided tutorial UI cues (client/src/tutorial). The designer's recordings go at
-// these paths; until a file exists the soft synth fallback plays instead, so the
-// cue is never silent. Kept quiet and unjittered: they are UI, not combat.
+// Accepted v50 Soft Retro pair. Preloaded for the first tutorial interaction;
+// quiet and unjittered so the two notification roles stay recognizable.
 SFX_MANIFEST['tutorial-ready'] = {
   file: `${AUDIO_SFX_DIR}/ui/tutorial-ready.ogg`,
-  // A gentle rising two-note chime: "your turn".
-  fallback: [
-    { freq: 659, duration: 0.18, gain: 0.22 },
-    { freq: 988, delay: 0.12, duration: 0.3, gain: 0.2 },
-  ],
+  fallback: [],
   gain: 0.5, cooldownMs: 600, maxVoices: 1, priority: 2,
 };
 SFX_MANIFEST['tutorial-action'] = {
   file: `${AUDIO_SFX_DIR}/ui/tutorial-action.ogg`,
-  // A short soft tick when the guide presses a button.
-  fallback: [{ freq: 1320, duration: 0.06, gain: 0.14, type: 'triangle' }],
+  fallback: [],
   gain: 0.4, cooldownMs: 120, maxVoices: 1, priority: 1,
 };
 

@@ -107,3 +107,15 @@ assert.ok(bootAudio.has(sfxKey('boss-death')), 'first boss collapse is preloaded
 assert.deepEqual(ACCEPTED_SFX['boss-death'], ['v49-boss-3']);
 assert.equal(SFX_MANIFEST['boss-death'].pitchVariance, 0, 'preserve the long collapse timing');
 console.log('deathAudio: ok (families, legacy IDs, boss precedence, first-use preload, mix bounds)');
+
+// Tutorial notifications must use the selected recordings on their first play.
+for (const id of ['tutorial-ready', 'tutorial-action'] as const) {
+  assert.deepEqual(sfxFiles(SFX_MANIFEST[id]), [`/assets/audio/SFX/ui/${id}.ogg`]);
+  assert.ok(existsSync(resolve(import.meta.dirname, '../../client/public/assets/audio/SFX/ui', `${id}.ogg`)), id);
+  assert.ok(bootAudio.has(sfxKey(id)), `${id} is preloaded before the guide starts`);
+  assert.equal(SFX_MANIFEST[id].pitchVariance ?? 0, 0);
+  assert.equal(SFX_MANIFEST[id].maxVoices, 1);
+  assert.deepEqual(SFX_MANIFEST[id].fallback, [], 'no unselected placeholder tone');
+}
+assert.notEqual(sfxKey('tutorial-ready'), sfxKey('tutorial-action'));
+console.log('tutorialAudio: ok (selected files, first-use preload, distinct cues)');

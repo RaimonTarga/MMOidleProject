@@ -1,5 +1,5 @@
 {
-  "source": "Accepted audio-probe selections-v43 plus death families v48/v49; authored synthesis masters; no reference-song audio used.",
+  "source": "Accepted audio-probe selections-v43, death families v48/v49, tutorial Soft Retro v50; authored synthesis masters; no reference-song audio used.",
   "sfx": [
     {
       "file": "v24-bossdeath-1.wav",
@@ -405,6 +405,20 @@
       "file": "v49-boss-3.wav",
       "duration": 3.25,
       "sha256": "47b2293ec7829bba8fb7a8d2e128d28202727c67f587b3ceaaa8abc1849b0dc1"
+    },
+    {
+      "file": "v50-tutorial-ready-c.wav",
+      "duration": 0.72,
+      "sha256": "9c96e0d9472038cd2ab1363403c2e791bc3f953060228a2986107ec30b554718",
+      "runtimeFile": "SFX/ui/tutorial-ready.ogg",
+      "runtimeSha256": "0e09ce47124f77efba052cee174fe94cb31d65576315cff2d529dc579715404e"
+    },
+    {
+      "file": "v50-tutorial-done-c.wav",
+      "duration": 0.39,
+      "sha256": "586b6defc15097fbfe4ee6d7c6d076c03dd8725043aa2202b95bf03920d819f3",
+      "runtimeFile": "SFX/ui/tutorial-action.ogg",
+      "runtimeSha256": "661b062e89749abe6f37a2ae228b91df51582104a559877cdded1976d9db0768"
     }
   ],
   "music": [

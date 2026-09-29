@@ -5,7 +5,7 @@ Accepted listening-study music and effects are wired into the client. No server 
 ## Catalog and routes
 
 - `client/src/audio/acceptedCatalog.ts`: accepted sound families with versioned filenames preserved. The game serves Ogg Vorbis copies; lossless WAV masters live in `art/audio/sfx-masters/` and are not served. Superseded masters remain available for comparison.
-- Routine combat effects plus hurt/player death/dodge/empowered and all seven creature/boss death cues load with the game (`PRELOADED_SFX` in `manifest.ts`). Every other effect is fetched the first time it plays, and that first play is silent.
+- Routine combat effects plus hurt/player death/dodge/empowered, both tutorial notifications, and all seven creature/boss death cues load with the game (`PRELOADED_SFX` in `manifest.ts`). Every other effect is fetched the first time it plays, and that first play is silent.
 - `musicCatalog.ts`: 13 zone assignments and 11 boss suites, 51 Ogg exports including the two volcanic final-cast cues. Plains uses the accepted pulse alternative; Sanctuary uses Starlight Refuge.
 - `routing.ts`: distinct class basics, class empowered hits, monster attack styles, named cast releases, ecology and boss cues. Unknown monster styles use the accepted blunt family. Generic DoT ticks, ordinary chill stacks and plating erosion stay silent.
 - Player status audio fires on semantic onset. Conduit owner events do not duplicate the minion attack path. All summons share a 300 ms cooldown and two-voice limit.
@@ -21,6 +21,12 @@ Accepted v48/v49 selections: Magic A (`v48-magic-1`), Animal B (`v48-animal-2`),
 The existing local/watched-player confirmed-kill path owns normal death sounds, including summon and DoT kills. Buffered attacks capture the monster type before entity removal so the later kill cue retains its family. Nearby deaths credited to other players do not add normal death sounds. Bosses retain their existing immediate/buffered removal presentation paths, now using Ancient Husk instead of the previous sting; the kill-event path skips them to avoid double playback. No new audio is attached to arbitrary ordinary-monster removals or zone changes.
 
 Normal dispersal uses gain 0.65, 220 ms per-family cooldown, two concurrent voices per family, priority 1, and small gain/pitch variation. The boss uses gain 0.65, priority 3 and one voice. All obey the shared 12-voice budget and saved mute/volume settings. Preloading every death family prevents the previous first-kill silent download.
+
+## Tutorial notifications
+
+The accepted v50 Soft Retro pair is served at `SFX/ui/tutorial-ready.ogg` (0.72 seconds, master `v50-tutorial-ready-c.wav`) and `SFX/ui/tutorial-action.ogg` (0.39 seconds, master `v50-tutorial-done-c.wav`). Both preload with the game and respect the existing SFX mute/volume settings. Their lossless masters and provenance are retained alongside the other accepted sounds.
+
+`TutorialPanel` plays ready when a waiting beat finishes and a different beat becomes available. The director plays action with its automatic button-press pulse, including crafting and equipping; it is action feedback, not server-confirmed success. Existing tutorial progression and timing are unchanged. The ready/action gains remain 0.5/0.4, with no pitch jitter and one voice per cue. Placeholder synth tones have been removed.
 
 ## Music
 
