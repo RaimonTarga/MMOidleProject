@@ -56,8 +56,12 @@ export interface TutorialRun {
 
 export const tutorialRunAtom = atom<TutorialRun | null>(null);
 
-/** How long the ring rests on each control before the guide presses it. */
-const POINT_MS = 650;
+/**
+ * How long the ring rests on each control before the guide presses it. 650 ms
+ * read as too fast in the designer's playtest (2026-09-29); long enough to
+ * follow each click, short enough that a craft + equip beat stays snappy.
+ */
+const POINT_MS = 1000;
 /** Crafting, equipping and loadout changes settle within a few deltas. */
 const ACTION_TIMEOUT_MS = 8_000;
 const TRAVEL_TIMEOUT_MS = 5 * 60_000;
