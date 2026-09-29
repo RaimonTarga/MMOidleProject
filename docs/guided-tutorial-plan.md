@@ -213,6 +213,22 @@ All 2026-09-29, dev stack, 25x rewards (pipeline evidence, not balance evidence)
 
   Same GM-30 Striker against the other bosses (survey, fast retries): Mountain,
   Swamp and Cave all won on the first try (75 s, 65 s, 59 s).
+- **Rerun with the Mountain as second seal (commit `689770f8`, all six in
+  parallel, 25x, normal retries):**
+
+  | Class | Plains seal | Mountain seal | Route |
+  |---|---|---|---|
+  | Striker | 1st try | 1st try | **completed, 26 min** |
+  | Slinger | 1st try | 1st try | **completed, 22 min** |
+  | Spirit | 1st try | 1st try | **completed, 19 min** |
+  | Conduit | 1st try | 1st try | **completed, 34 min** |
+  | Apprentice | 2nd try | 2nd try | **completed, 28 min** |
+  | Squire | 3rd try (two 12-min timeouts with the boss at 3% and 1%) | not reached | hit the 50-min run cap |
+
+  Squire's Plains-boss timeouts happened in both batches: the fight stalls with
+  the Razorback at 1–3% HP for the full 12 minutes. Suspected (unverified): the
+  boss's endless one-slime-per-12-s trickle keeps the Squire's timed strikes on
+  adds. Worth watching in a hand playtest.
 
 ## Findings
 
