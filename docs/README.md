@@ -107,6 +107,7 @@ read the linked current-state page before using it to describe shipped
 behavior.
 
 - [Future plans](future-plans.md) — backlog and deliberately deferred ideas.
+- [Guided T1 tutorial plan](guided-tutorial-plan.md) — optional desktop guide that plays Tier 1 beat by beat from bot-validated scripts; Phase 1 in progress.
 - [Release v0.6 record](briefs/release-v0.6-2026-09-28.md) — what shipped in v0.6, merged branches, save policy, bandwidth changes, validation and the deploy check.
 - [T4 power curve review](archive/briefs/t4-power-curve-review-2026-09-27.md) — ARCHIVED 2026-09-27: done; report in `reports/t4-power-curve-2026-09-27/REVIEW.md`, live state in [tier-balance-current-state.md](tier-balance-current-state.md) §6–7.
 - [Boss lineage art list](briefs/boss-lineage-art-list-2026-09-27.md) — icons and ground textures the boss lineages borrow art for, with target paths and wiring.

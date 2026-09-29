@@ -1,4 +1,4 @@
-import type { AutocombatConfig, EquipmentSlot, AttunedAbilities, EquippedRule, EvolveMode, StanceSlot } from '@mmo-idle/shared';
+import type { AutocombatConfig, EquipmentSlot, AttunedAbilities, EquippedRule, EvolveMode, StanceSlot, Vec2 } from '@mmo-idle/shared';
 import { intents } from './intents';
 
 type RecipeUnlockListener = (name: string, biomeGroup: string) => void;
@@ -11,6 +11,14 @@ export const hudBus = {
   /** Called by HUD components — GameScene listens for the resulting CustomEvent. */
   requestAutoToggle(): void {
     intents.emit('toggleAuto', undefined);
+  },
+
+  requestSetAuto(enabled: boolean): void {
+    intents.emit('setAuto', enabled);
+  },
+
+  requestMoveTo(pos: Vec2): void {
+    intents.emit('moveTo', pos);
   },
 
   /** Persist and push auto-traverse preference to the server. */

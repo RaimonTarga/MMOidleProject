@@ -7,6 +7,8 @@ import {
   upgradeCatalystCostFor,
   upgradeCeilingFromGlobalMastery,
   upgradeCostFor,
+  remainingUpgradeCost,
+  viewCanAffordUpgrades,
   worldNodeExits,
   type EssenceType,
 } from "@mmo-idle/shared";
@@ -78,6 +80,12 @@ export function evaluate(condition: Condition, ctx: ConditionContext): boolean {
       return obs.canUpgrade(condition.definitionId).ok;
     case "globalMasteryAtLeast":
       return (obs.self?.globalMastery ?? 0) >= condition.value;
+    case "classSelected":
+      return (obs.self?.selectedClass ?? null) !== null;
+    case "runeRecipeCrafted":
+      return obs.self?.runeRecipesCrafted.includes(condition.recipeId) ?? false;
+    case "canAffordUpgrades":
+      return !!obs.self && viewCanAffordUpgrades(obs.self, condition.items);
     case "elapsedMs":
       return ctx.elapsedMs >= condition.ms;
     case "allOf":
@@ -130,6 +138,12 @@ export function describe(condition: Condition): string {
       return `can upgrade ${condition.definitionId}`;
     case "globalMasteryAtLeast":
       return `global mastery >= ${condition.value}`;
+    case "classSelected":
+      return "a class selected";
+    case "runeRecipeCrafted":
+      return `rune recipe ${condition.recipeId} crafted`;
+    case "canAffordUpgrades":
+      return `can afford ${condition.items.map((t) => `${t.definitionId}+${t.toPlus}`).join(", ")}`;
     case "elapsedMs":
       return `elapsed >= ${Math.round(condition.ms / 1000)}s`;
     case "allOf":
@@ -162,6 +176,19 @@ export function shortfall(condition: Condition, obs: Observation): Record<string
       case "biomeLevelAtLeast": {
         const missing = c.level - obs.biomeLevel(c.biomeGroup);
         if (missing > 0) out[`biomeLevel.${c.biomeGroup}`] = missing;
+        break;
+      }
+      case "canAffordUpgrades": {
+        if (!obs.self) break;
+        const remaining = remainingUpgradeCost(obs.self, c.items);
+        for (const [essence, amount] of Object.entries(remaining.essence)) {
+          const missing = (amount ?? 0) - obs.essence(essence as EssenceType);
+          if (missing > 0) out[`essence.${essence}`] = missing;
+        }
+        for (const [family, amount] of Object.entries(remaining.catalysts)) {
+          const missing = amount - obs.catalyst(family);
+          if (missing > 0) out[`catalyst.${family}`] = missing;
+        }
         break;
       }
       case "allOf":

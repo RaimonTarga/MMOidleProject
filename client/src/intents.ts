@@ -1,7 +1,11 @@
-import type { AutocombatConfig, EquipmentSlot, AttunedAbilities, EquippedRule, EvolveMode, StanceSlot } from '@mmo-idle/shared';
+import type { AutocombatConfig, EquipmentSlot, AttunedAbilities, EquippedRule, EvolveMode, StanceSlot, Vec2 } from '@mmo-idle/shared';
 
 export interface IntentMap {
   toggleAuto: undefined;
+  /** Explicit on/off, for callers that must not race a player's own toggle (the guided tutorial). */
+  setAuto: boolean;
+  /** Pathfinding walk to a point in the current node. */
+  moveTo: Vec2;
   setAutoTraverse: boolean;
   setAutocombatConfig: AutocombatConfig;
   setRuneLoadout: EquippedRule[];

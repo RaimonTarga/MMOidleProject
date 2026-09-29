@@ -1,4 +1,4 @@
-import { ABILITY_DATABASE } from "@mmo-idle/shared";
+import { ABILITY_DATABASE, TUTORIAL_ANCHORS } from "@mmo-idle/shared";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useAtomValue } from "jotai";
 import {
@@ -150,7 +150,7 @@ export function BuildRunesTab() {
     commit(value);
   }
   return (
-    <div className="build-tab-body rune-workspace">
+    <div className="build-tab-body rune-workspace" data-tutorial-anchor={TUTORIAL_ANCHORS.runesBoard}>
       <AttunementBudget loadout={{ rules, rites, abilities, stances }} budget={budget} />
       {error && (
         <p className="rune-error" role="alert">

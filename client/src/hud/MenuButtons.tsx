@@ -1,6 +1,8 @@
 import { BehaviorPanel } from './BehaviorPanel';
+import { TutorialPanel } from "../tutorial/TutorialPanel";
 import { useEffect, useMemo, useState } from "react";
 import { useAtom, useAtomValue } from "jotai";
+import { TUTORIAL_ANCHORS } from "@mmo-idle/shared";
 import { GameIcon, type IconSource } from "../ui/GameIcon";
 import { hudBus } from "../hudBus";
 import { SkillTreePanel } from "../ui/SkillTreePanel";
@@ -82,6 +84,8 @@ interface RightNavButtonProps {
   unlockSystems?: readonly UiUnlockSystem[];
   /** Sets the entry apart from the destinations above it, e.g. a session action. */
   standalone?: boolean;
+  /** `data-tutorial-anchor` for the guided tutorial to point at. */
+  anchor?: string;
   onClick: () => void;
 }
 
@@ -100,6 +104,7 @@ function RightNavButton({
   badgeCount,
   unlockSystems,
   standalone,
+  anchor,
   onClick,
 }: RightNavButtonProps) {
   return (
@@ -109,6 +114,7 @@ function RightNavButton({
         className={`right-nav-button${selected ? " right-nav-button--selected" : ""}`}
         aria-pressed={selected}
         data-ui-unlock-system={unlockSystems?.join(" ") || undefined}
+        data-tutorial-anchor={anchor}
         disabled={disabled}
         onClick={onClick}
       >
@@ -214,6 +220,7 @@ export function RightSidebar() {
 
   return (
     <div className="sidebar sidebar-right desktop-hud">
+      <TutorialPanel />
       {visibility.progression && (
       <QuestPanel
         showMastery={showMastery}
@@ -231,6 +238,7 @@ export function RightSidebar() {
             selected={treeOpen}
             badge={badges.has("passiveTree") || (!treeOpen && skillPoints > 0)}
             unlockSystems={["passiveTree"]}
+            anchor={TUTORIAL_ANCHORS.menuPassiveTree}
             onClick={() => {
               badges.clear("passiveTree");
               togglePrimaryOverlay("skill-tree");
@@ -246,6 +254,8 @@ export function RightSidebar() {
             badge={badges.has(entry.gate)}
             badgeTone="unlock"
             unlockSystems={[entry.gate]}
+            anchor={entry.tab === "runes" ? TUTORIAL_ANCHORS.menuRunes
+              : entry.tab === "abilities" ? TUTORIAL_ANCHORS.menuAbilities : undefined}
             onClick={() => {
               badges.clear(entry.gate);
               toggleBuildTab(entry.tab);
@@ -261,6 +271,7 @@ export function RightSidebar() {
             badge={badges.has("inventory")}
             badgeTone="unlock"
             unlockSystems={["inventory"]}
+            anchor={TUTORIAL_ANCHORS.menuInventory}
             onClick={() => {
               badges.clear("inventory");
               togglePrimaryOverlay("inventory");
@@ -276,6 +287,7 @@ export function RightSidebar() {
             badge={badges.has("crafting") || newRecipes.count > 0}
             badgeCount={newRecipes.count}
             unlockSystems={["crafting"]}
+            anchor={TUTORIAL_ANCHORS.menuCrafting}
             onClick={() => {
               badges.clear("crafting");
               toggleCraftDestination("make");
@@ -289,6 +301,7 @@ export function RightSidebar() {
             selected={craftTab === "upgrade"}
             disabled={dead}
             unlockSystems={["crafting"]}
+            anchor={TUTORIAL_ANCHORS.menuUpgrade}
             onClick={() => toggleCraftDestination("upgrade")}
           />
         )}
@@ -300,6 +313,7 @@ export function RightSidebar() {
             badge={badges.has("map")}
             badgeTone="unlock"
             unlockSystems={["map"]}
+            anchor={TUTORIAL_ANCHORS.menuMap}
             onClick={() => {
               badges.clear("map");
               togglePrimaryOverlay("map");

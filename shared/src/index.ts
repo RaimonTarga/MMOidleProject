@@ -108,6 +108,7 @@ export * from './quests/questDatabase';
 export * from './config/gameConfig';
 export * from './emotes';
 export * from './systems/systemVisibility';
+export * from './tutorial';
 export * from "./attunementMigration";
 
 export * from './systems/onHitDamage';

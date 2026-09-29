@@ -1,4 +1,5 @@
 import { useAtomValue } from "jotai";
+import { TUTORIAL_ANCHORS } from "@mmo-idle/shared";
 import { hudBus } from "../hudBus";
 import { autoAtom, playerIdAtom } from "./atoms";
 import "./hud.css";
@@ -14,6 +15,7 @@ export function AutoCombatButton() {
         type="button"
         className={`combat-auto-button combat-auto-button--${auto ? "on" : "off"}`}
         aria-pressed={auto}
+        data-tutorial-anchor={TUTORIAL_ANCHORS.autoCombat}
         onClick={() => hudBus.requestAutoToggle()}
         title="Toggle server-side auto combat"
       >

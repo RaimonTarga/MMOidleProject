@@ -27,6 +27,7 @@ import {
   type EquippedRule,
   type EssenceType,
   type EquipmentSlot,
+  withReferenceAbilityWiring,
 } from "@mmo-idle/shared";
 import type { Intents } from "../net/intents";
 import {
@@ -1246,7 +1247,11 @@ export class RouteExecutor {
       wait: (predicate, what) => this.waitUntil(predicate, { timeoutMs: 15_000, what }),
       report: detail => recorder.emit({ kind: "build-change", atMs: recorder.now(), system: "loadout", detail }),
     });
-    this.expectedBuild = structuredClone(build);
+    // What `applyBuild` actually equipped: it appends reference wiring for any
+    // attuned ability the rules leave unwired (abilities have no built-in trigger
+    // since 2026-09-25). Expecting the unwired build made every ability-learning
+    // step fail the drift check on its next poll.
+    this.expectedBuild = structuredClone({ ...build, runeRules: withReferenceAbilityWiring(build.runeRules, build.abilities) });
     if (auto) await this.emitUntil(() => intents.setAuto(true), () => obs.self?.auto === true, { timeoutMs: 5000, what: "resume combat after verified build" });
   }
 

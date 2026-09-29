@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import { EquipmentAbilityTags } from '../AbilityTags';
 import {
-  ITEM_DATABASE, RECIPE_DATABASE, TEST_ROOM_NODE_ID,
+  ITEM_DATABASE, RECIPE_DATABASE, TEST_ROOM_NODE_ID, TUTORIAL_ANCHORS,
   coreEligibilityLabel, coreIsActive, isRestrictedCore, relicIsUnlocked,
   type EquipmentSlot,
 } from '@mmo-idle/shared';
@@ -90,6 +90,7 @@ export function StatSheet({ compare }: Props) {
               type="button"
               className={`inv-stat-sheet__btn${sheet.mode === 'contribution' ? ' inv-stat-sheet__btn--unequip' : ''}`}
               disabled={relicLocked}
+              data-tutorial-anchor={TUTORIAL_ANCHORS.inventoryAction}
               onClick={handleAction}
             >
               {relicLocked

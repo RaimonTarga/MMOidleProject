@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAtomValue } from 'jotai';
-import { SKILL_TREE, canUnlockSkill } from '@mmo-idle/shared';
+import { SKILL_TREE, TUTORIAL_ANCHORS, canUnlockSkill } from '@mmo-idle/shared';
 import type { SkillNode, SubVariant } from '@mmo-idle/shared';
 import { hudBus } from '../hudBus';
 import { CONDUIT_BLOCKED_DESC, isBlockedConduit, isPlaceholder, nodeName, nodeDescription } from './skillNodePresentation';
@@ -380,7 +380,7 @@ function NodeDesc({
       <div className="skill-desc__footer">
         {status === 'unlocked' && <span className="skill-desc__state skill-desc__state--owned">✓ Unlocked</span>}
         {status === 'available' && (
-          <button type="button" className="skill-confirm-btn" onClick={() => onUnlock(node)}>
+          <button type="button" className="skill-confirm-btn" data-tutorial-anchor={TUTORIAL_ANCHORS.classConfirm} onClick={() => onUnlock(node)}>
             Unlock {nodeName(node)} · {costLabel(node.cost)}
           </button>
         )}
@@ -468,7 +468,10 @@ export function SkillTreePanel({ onClose }: Props) {
               </button>
             )}
           </div>
-          <div className={`skill-cards${choices.length > 3 ? ' skill-cards--many' : ''}`}>
+          <div
+            className={`skill-cards${choices.length > 3 ? ' skill-cards--many' : ''}`}
+            data-tutorial-anchor={TUTORIAL_ANCHORS.classChoices}
+          >
             {choices.map((node) => (
               <ChoiceCard
                 key={node.id}

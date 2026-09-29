@@ -30,6 +30,11 @@ export const charactersAtom = atom<CharacterSummary[]>([]);
 export const accountSummaryAtom = atom<AccountSummary | null>(null);
 export const guestFirstRunPendingAtom = atom(hasGuestFirstRun());
 export const characterActionBusyAtom = atom(false);
+/**
+ * The character this client last asked to play. Stable across reconnects, unlike
+ * the in-world player id, which the server sets to the socket id per connection.
+ */
+export const selectedCharacterIdAtom = atom<string | null>(null);
 export const authMessageAtom = atom<string | null>(null);
 export const spectatorStatusAtom = atom<SpectateStatus | null>(null);
 /**
@@ -244,5 +249,6 @@ export function selectLobbyCharacter(characterId: string): void {
   store.set(characterActionBusyAtom, true);
   store.set(authMessageAtom, null);
   store.set(authPhaseAtom, 'entering');
+  store.set(selectedCharacterIdAtom, characterId);
   socket.emit('character:select', { characterId });
 }

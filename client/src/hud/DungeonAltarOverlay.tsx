@@ -1,4 +1,5 @@
 import { useAtomValue } from "jotai";
+import { TUTORIAL_ANCHORS } from "@mmo-idle/shared";
 import { dungeonAtom, playerNodeIdAtom, playerPosAtom } from "./atoms";
 import { hudBus } from "../hudBus";
 import "./hud.css";
@@ -57,6 +58,7 @@ export function DungeonAltarOverlay() {
       <div className="dungeon-altar__progress">{progressText}</div>
       <button
         className="dungeon-altar__button"
+        data-tutorial-anchor={TUTORIAL_ANCHORS.altar}
         disabled={!canBegin}
         onClick={() => hudBus.requestActivateDungeonAltar()}
       >

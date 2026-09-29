@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAtomValue } from 'jotai';
+import { TUTORIAL_ANCHORS } from '@mmo-idle/shared';
 import {
   formatDeathCauseLabel,
   formatDeathLocation,
@@ -134,6 +135,7 @@ export function DeathOverlay() {
           <button
             type="button"
             className="death-card__continue"
+            data-tutorial-anchor={TUTORIAL_ANCHORS.respawn}
             onClick={() => clearDeathOverlay()}
           >
             RESPAWN

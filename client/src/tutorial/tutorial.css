@@ -1,0 +1,155 @@
+/* Guided Tier-1 tutorial: rail card + the ring around what the guide presses. */
+
+.tutorial-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--hud-space-2);
+}
+
+.tutorial-panel__title {
+  display: flex;
+  align-items: baseline;
+  gap: var(--hud-space-2);
+}
+
+.tutorial-panel__count {
+  color: var(--hud-text-dim);
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.tutorial-panel__stop {
+  margin-left: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--hud-text-muted);
+  font: inherit;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.tutorial-panel__stop:hover { color: var(--hud-text); }
+
+.tutorial-panel__line {
+  margin: 0;
+  color: var(--hud-text);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.tutorial-panel__line--error { color: var(--hud-warning); }
+
+.tutorial-panel__note {
+  margin: 0;
+  color: var(--hud-text-dim);
+  font-size: 11px;
+}
+
+.tutorial-panel__status {
+  color: var(--hud-text-muted);
+  font-size: 11px;
+  font-style: italic;
+}
+
+.tutorial-panel__actions {
+  display: flex;
+  gap: var(--hud-space-2);
+}
+
+.tutorial-button {
+  flex: 1;
+  min-height: var(--hud-hit-target-compact, 28px);
+  padding: 4px 10px;
+  border: 1px solid var(--hud-edge-divider);
+  border-radius: 3px;
+  background: var(--hud-material-control, rgba(0, 0, 0, 0.3));
+  color: var(--hud-text);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color var(--hud-motion-fast, 120ms), color var(--hud-motion-fast, 120ms);
+}
+
+.tutorial-button:hover:not(:disabled) { border-color: var(--hud-primary); }
+
+.tutorial-button:focus-visible {
+  outline: var(--hud-focus-width, 2px) solid var(--hud-focus-color, currentColor);
+  outline-offset: var(--hud-focus-offset, 2px);
+}
+
+.tutorial-button:disabled { opacity: 0.5; cursor: default; }
+
+.tutorial-button--primary {
+  border-color: var(--hud-primary);
+  color: var(--hud-primary-strong);
+  font-weight: 600;
+}
+
+.tutorial-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tutorial-progress__row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+}
+
+.tutorial-progress__label { color: var(--hud-text-dim); }
+.tutorial-progress__value { color: var(--hud-text-muted); font-variant-numeric: tabular-nums; }
+
+/* Collapsed state: a small tab that reopens the offer. */
+.tutorial-tab {
+  align-self: flex-end;
+  padding: 2px 10px;
+  border: 1px solid var(--hud-edge-divider);
+  border-radius: 3px;
+  background: var(--hud-material-control, rgba(0, 0, 0, 0.3));
+  color: var(--hud-text-muted);
+  font: inherit;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.tutorial-tab:hover { color: var(--hud-text); border-color: var(--hud-primary); }
+
+/* Above every dialog (dialogs sit at 1000, toasts at 9000). */
+.tutorial-ring {
+  position: fixed;
+  z-index: 10000;
+  border: 3px solid #ffd76a;
+  border-radius: 6px;
+  pointer-events: none;
+  box-shadow:
+    0 0 0 2px rgba(0, 0, 0, 0.7),
+    0 0 18px 4px rgba(255, 200, 80, 0.75),
+    inset 0 0 12px rgba(255, 200, 80, 0.35);
+  animation: tutorial-ring-pulse 1.1s ease-in-out infinite;
+}
+
+/* Pulses size, not opacity, so the ring is never faint when it matters. */
+@keyframes tutorial-ring-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tutorial-ring { animation: none; }
+}
+
+.tutorial-panel__chapter {
+  margin-top: -4px;
+  color: var(--hud-text-muted);
+  font-size: 10px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}

@@ -42,6 +42,7 @@ import {
 } from "../net/intents";
 import type { GameScene } from "../scenes/GameScene";
 import { setAutoMode } from "./autoPath";
+import { sendClampedMove } from "./movement";
 
 export function attachHudEvents(scene: GameScene): () => void {
   const disposers: Array<() => void> = [];
@@ -56,6 +57,15 @@ export function attachHudEvents(scene: GameScene): () => void {
 
   intents.on("toggleAuto", () => {
     setAutoMode(scene, !scene.autoMode);
+  });
+
+  intents.on("setAuto", (enabled) => {
+    if (scene.autoMode !== enabled) setAutoMode(scene, enabled);
+  });
+
+  intents.on("moveTo", (pos) => {
+    if (isDeathOverlayActive()) return;
+    sendClampedMove(scene, pos, { pathfind: true });
   });
 
   intents.on("setAutoTraverse", (enabled) => {

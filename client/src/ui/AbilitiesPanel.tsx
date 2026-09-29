@@ -1,7 +1,7 @@
 import { useId, useState } from "react";
 import { LoadoutFeedback } from "./LoadoutFeedback";
 import { useAtomValue } from "jotai";
-import { ABILITY_DATABASE, CONDITION_DATABASE, abilityBlurbAt, abilityDisplayName, attunedAbilityIds, attunedForFamily, referenceAbilityRule, runeRuleCost, runicPointLoadoutCost, runeBudgetForGlobalMastery } from "@mmo-idle/shared";
+import { ABILITY_DATABASE, CONDITION_DATABASE, TUTORIAL_ANCHORS, abilityBlurbAt, abilityDisplayName, attunedAbilityIds, attunedForFamily, referenceAbilityRule, runeRuleCost, runicPointLoadoutCost, runeBudgetForGlobalMastery } from "@mmo-idle/shared";
 import { hudBus } from "../hudBus";
 import { attunedAbilitiesAtom, knownAbilitiesAtom, playerTierAtom, runesEquippedAtom, equippedRitesAtom, attunedStancesAtom, globalMasteryAtom, passivesAtom, attackAtom, maxHpAtom, attackRangeAtom, combatArchetypeAtom } from "../hud/atoms";
 import { abilityTiming } from "./describe/abilityTiming";
@@ -69,7 +69,7 @@ export function AbilitiesPanelContent() {
             </button>
             <div className="attunement-control">
               <span className="attunement-price">{ability.attunementCost} RP</span>
-              <button type="button" className="attunement-button" aria-pressed={isAttuned} disabled={blocked} aria-label={`${isAttuned ? "Unattune" : "Attune"} ${ability.name}`} title={`${nextSpent} / ${budget} RP after this change${isAttuned && timing.overrides.length ? ". Also removes this ability's Rune rules." : ""}`} onClick={() => hudBus.requestSetAbilityLoadout(next)}>{isAttuned ? "Unattune" : "Attune"}</button>
+              <button type="button" className="attunement-button" data-tutorial-anchor={TUTORIAL_ANCHORS.abilityAttune(id)} aria-pressed={isAttuned} disabled={blocked} aria-label={`${isAttuned ? "Unattune" : "Attune"} ${ability.name}`} title={`${nextSpent} / ${budget} RP after this change${isAttuned && timing.overrides.length ? ". Also removes this ability's Rune rules." : ""}`} onClick={() => hudBus.requestSetAbilityLoadout(next)}>{isAttuned ? "Unattune" : "Attune"}</button>
             </div>
           </div>
           <div className="ability-entry__behavior"><span>Timing</span>{" "}

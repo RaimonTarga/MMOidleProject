@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import type { EquipmentSlot } from '@mmo-idle/shared';
-import { EQUIPMENT_SLOTS, ITEM_DATABASE, TEST_ROOM_NODE_ID, relicIsUnlocked } from '@mmo-idle/shared';
+import { EQUIPMENT_SLOTS, ITEM_DATABASE, TEST_ROOM_NODE_ID, TUTORIAL_ANCHORS, relicIsUnlocked } from '@mmo-idle/shared';
 import { inventoryAtom, itemUpgradesAtom, playerNodeIdAtom, playerTierAtom } from '../../hud/atoms';
 import { SLOT_LABELS, tierColor } from './constants';
 import { ItemIcon } from '../ItemIcon';
@@ -147,6 +147,7 @@ export function BackpackGrid({ compare }: Props) {
                 style={color ? { borderColor: `${color}77` } : undefined}
                 aria-label={def ? `Compare ${def.name}${relicLocked ? ' (relics unlock at Tier 4)' : ''}` : 'Empty backpack slot'}
                 aria-pressed={def ? isPinned : undefined}
+                data-tutorial-anchor={defId ? TUTORIAL_ANCHORS.inventoryItem(defId) : undefined}
                 disabled={!defId || !def}
                 onMouseEnter={() => { if (def && defId) compare.hover(defId); }}
                 onMouseLeave={() => compare.hover(null)}

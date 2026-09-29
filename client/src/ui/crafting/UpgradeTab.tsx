@@ -4,6 +4,7 @@ import type { EquipmentSlot } from '@mmo-idle/shared';
 import {
   ITEM_DATABASE,
   TEST_ROOM_NODE_ID,
+  TUTORIAL_ANCHORS,
   checkUpgrade,
   globalMasteryRequiredForUpgrade,
   getMaxUpgrade,
@@ -13,6 +14,7 @@ import {
   upgradeCeilingFromGlobalMastery,
 } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
+import { tutorialFocusAtom } from '../../tutorial/atoms';
 import {
   biomeLevelAtom,
   catalystsAtom,
@@ -104,6 +106,11 @@ export function UpgradeTab() {
   const isTestRoom   = nodeId === TEST_ROOM_NODE_ID;
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  // The guided tutorial selects the item it is about to upgrade.
+  const tutorialFocus = useAtomValue(tutorialFocusAtom);
+  useEffect(() => {
+    if (tutorialFocus?.surface === 'upgrade') setSelectedId(tutorialFocus.definitionId);
+  }, [tutorialFocus]);
   const [result, setResult] = useState<UpgradeResult | null>(null);
   const resultIdRef = useRef(0);
   const resultTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -191,7 +198,10 @@ export function UpgradeTab() {
         renderItem={(def) => {
           const { currentPlus, canUpgrade } = stepFor(def);
           return (
-            <span className={`upgrade-row${canUpgrade ? '' : ' upgrade-row--blocked'}`}>
+            <span
+              className={`upgrade-row${canUpgrade ? '' : ' upgrade-row--blocked'}`}
+              data-tutorial-anchor={TUTORIAL_ANCHORS.upgradeRow(def.id)}
+            >
               <span
                 className="upgrade-row__icon"
                 style={{ borderColor: `${tierColor(def.tier)}77`, background: `${tierColor(def.tier)}0d` }}
@@ -304,6 +314,7 @@ export function UpgradeTab() {
                   <button
                     type="button"
                     className="craft-recipe__btn upgrade-detail__btn"
+                    data-tutorial-anchor={TUTORIAL_ANCHORS.upgradeAction}
                     disabled={!canUpgrade || cardResult?.success === true}
                     onClick={() => {
                       if (canUpgrade && cardResult?.success !== true) hudBus.requestUpgradeItem(def.id);

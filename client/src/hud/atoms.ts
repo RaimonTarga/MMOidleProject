@@ -98,6 +98,12 @@ export function flashEmoteWheel(highlight: EmoteWheelDirection): void {
 }
 
 export const playerIdAtom = atom<string | null>(null);
+/**
+ * The whole local player view, for readers that evaluate shared predicates over
+ * it (the guided tutorial) rather than one field. Replaced on every sync, so
+ * subscribe to the narrow atoms below for rendering.
+ */
+export const localPlayerViewAtom = atom<PlayerView | null>(null);
 export const playerNameAtom = atom<string | null>(null);
 export const playerNodeIdAtom = atom<string | null>(null);
 export const playerPosAtom = atom<Vec2 | null>(null);
@@ -758,6 +764,7 @@ function resetPlayerAtoms(): void {
   const store = getDefaultStore();
 
   store.set(playerIdAtom, null);
+  store.set(localPlayerViewAtom, null);
   store.set(playerNameAtom, null);
   store.set(playerNodeIdAtom, null);
   store.set(respawnFromNodeAtom, null);
@@ -884,6 +891,7 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   }
 
   setIfChanged(playerIdAtom, player.id);
+  setIfChanged(localPlayerViewAtom, player);
   setIfChanged(playerNameAtom, player.name);
   setIfChanged(playerNodeIdAtom, player.nodeId);
   // The respawn landed: drop the bridge so walking back into that node later

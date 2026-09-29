@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { BackpackGrid } from './BackpackGrid';
 import { EquipmentSlots } from './EquipmentSlots';
 import { StatSheet } from './StatSheet';
 import { playerIdAtom } from '../../hud/atoms';
+import { tutorialFocusAtom } from '../../tutorial/atoms';
 import { useIsMobile } from '../../hud/useIsMobile';
 import { DialogHeader, DialogTab, DialogTabs, GameDialog } from '../../hud/primitives';
 import { useComparePin } from './useFocus';
@@ -23,6 +24,14 @@ export function InventoryPanel({ onClose }: Props) {
   const [section, setSection] = useState<InvSection>('bag');
   // On phones the sheet is its own tab: pinning an item takes you to it.
   const compare = useComparePin(() => { if (isMobile) setSection('stats'); });
+  // The guided tutorial pins the item it is about to equip.
+  const tutorialFocus = useAtomValue(tutorialFocusAtom);
+  const { pinned, togglePin } = compare;
+  useEffect(() => {
+    if (tutorialFocus?.surface === 'inventory' && pinned !== tutorialFocus.definitionId) {
+      togglePin(tutorialFocus.definitionId);
+    }
+  }, [tutorialFocus]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const showGear = !isMobile || section === 'gear';
   const showBag = !isMobile || section === 'bag';

@@ -4,6 +4,7 @@ import { EquipmentAbilityTags } from '../AbilityTags';
 import type { EssenceType } from '@mmo-idle/shared';
 import {
   ESSENCE_COLORS,
+  TUTORIAL_ANCHORS,
   TEST_ROOM_NODE_ID,
   catalystLabel,
   essenceLabel,
@@ -19,6 +20,7 @@ import {
   resolveRelicComparison,
 } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
+import { tutorialFocusAtom } from '../../tutorial/atoms';
 import {
   catalystsAtom,
   essencesAtom,
@@ -313,6 +315,11 @@ function CraftStamp({ result }: { result: CraftResult }) {
 export function MakeTab() {
   const [filters, setFilters] = useAtom(makeFiltersAtom);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  // The guided tutorial selects the recipe it is about to craft.
+  const tutorialFocus = useAtomValue(tutorialFocusAtom);
+  useEffect(() => {
+    if (tutorialFocus?.surface === 'make') setSelectedKey(tutorialFocus.entryKey);
+  }, [tutorialFocus]);
   const [craftResult, setCraftResult] = useState<CraftResult | null>(null);
 
   const playerId = useAtomValue(playerIdAtom);
@@ -600,6 +607,7 @@ function MakeRow({
         !entry.unlocked ? 'make-row--locked' : '',
         short ? 'make-row--short' : '',
       ].filter(Boolean).join(' ')}
+      data-tutorial-anchor={TUTORIAL_ANCHORS.makeRow(entry.key)}
       // Hovering counts as reading it — the badge is a "look here", and it has
       // done its job the moment you do.
       onMouseEnter={isNew ? onSeen : undefined}
@@ -849,6 +857,7 @@ function MakeDetail({
               className="craft-recipe__btn"
               disabled={blocked !== ''}
               title={blocked}
+              data-tutorial-anchor={TUTORIAL_ANCHORS.makeAction}
               onClick={() => onAttempt(() => {
                 if (recipe) hudBus.requestCraftRecipe(recipe.id);
                 else learnIntent();

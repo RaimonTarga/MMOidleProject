@@ -1,4 +1,4 @@
-import type { EquipmentSlot, EquippedRule, EssenceType, EvolveMode, TierCheckpointKind } from "@mmo-idle/shared";
+import type { EquipmentSlot, EquippedRule, EssenceType, EvolveMode, TierCheckpointKind, TutorialUpgradeTarget } from "@mmo-idle/shared";
 import type { DesiredBuild } from "../loadout/loadout";
 
 /**
@@ -38,6 +38,10 @@ export type Condition =
   | { type: "canReconstruct"; recipeId: string }
   | { type: "canUpgrade"; definitionId: string }
   | { type: "globalMasteryAtLeast"; value: number }
+  // Guided-tutorial vocabulary (shared/src/tutorial/types.ts), so tutorial scripts run as routes.
+  | { type: "classSelected" }
+  | { type: "runeRecipeCrafted"; recipeId: string }
+  | { type: "canAffordUpgrades"; items: TutorialUpgradeTarget[] }
   | { type: "elapsedMs"; ms: number }
   | { type: "allOf"; of: Condition[] }
   | { type: "anyOf"; of: Condition[] }
