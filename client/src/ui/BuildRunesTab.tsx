@@ -1,4 +1,4 @@
-import { ABILITY_DATABASE, TUTORIAL_ANCHORS } from "@mmo-idle/shared";
+import { ABILITY_DATABASE, TUTORIAL_ANCHORS, tutorialRuleKey } from "@mmo-idle/shared";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useAtomValue } from "jotai";
 import {
@@ -16,6 +16,7 @@ import {
   type EquippedRule,
 } from "@mmo-idle/shared";
 import { hudBus } from "../hudBus";
+import { tutorialRuneDraftAtom } from "../tutorial/atoms";
 import {
   combatArchetypeAtom,
   attunedAbilitiesAtom,
@@ -59,6 +60,12 @@ export function BuildRunesTab() {
     step?.focus({ preventScroll: true });
     step?.scrollIntoView({ block: "nearest" });
   }, [draft?.conditionId, draft?.actionId]);
+  // The guided tutorial fills the new-rule draft in, one choice at a time.
+  const tutorialDraft = useAtomValue(tutorialRuneDraftAtom);
+  useEffect(() => {
+    if (!tutorialDraft) return;
+    setDraft({ index: null, ...tutorialDraft });
+  }, [tutorialDraft]);
   const [reset, setReset] = useState(false);
   const [error, setError] = useState("");
   useEffect(() => {
@@ -177,6 +184,7 @@ export function BuildRunesTab() {
                   <button
                     type="button"
                     key={c.id}
+                    data-tutorial-anchor={TUTORIAL_ANCHORS.runesWhen(c.id)}
                     aria-pressed={draft.conditionId === c.id}
                     onClick={() => {
                       const fits =
@@ -226,6 +234,7 @@ export function BuildRunesTab() {
                     <button
                       type="button"
                       key={a.id}
+                      data-tutorial-anchor={TUTORIAL_ANCHORS.runesDo(a.id)}
                       aria-pressed={draft.actionId === a.id}
                       onClick={() =>
                         setDraft({
@@ -256,7 +265,7 @@ export function BuildRunesTab() {
               {response && draft.actionId !== "use-ability" && draft.actionId !== "switch-stance" && <p className="rune-detail">{response.detail}</p>}
             </section>
             {draft.actionId === "wait-it-out" && <section aria-label="Wait mode"><button type="button" aria-pressed={draft.waitOutMode !== "heat-managed"} onClick={() => setDraft({ ...draft, waitOutMode: "all" })}>All eligible statuses</button><button type="button" disabled={draft.conditionId !== "always"} aria-pressed={draft.waitOutMode === "heat-managed"} onClick={() => setDraft({ ...draft, waitOutMode: "heat-managed" })}>Manage Heat</button><p>Always only. Ordinary Volcano: 25 Heat to request a break; resume at 10. Current fights finish first.</p></section>}
-            {draft.actionId === "use-ability" && <section ref={destinationSection} tabIndex={-1} aria-label="Choose attuned ability" className="rune-editor__destinations"><h3>Choose attuned ability</h3><div className="rune-choice-grid">{[...abilities.techniques, ...abilities.guards].map(id => <button className="rune-ability-choice" type="button" key={id} aria-pressed={draft.targetAbilityId === id} onClick={() => setDraft({ ...draft, targetAbilityId: id })}>{ABILITY_DATABASE.get(id)?.name}</button>)}</div><p>Attunement is already paid. This rule costs only its logic.</p></section>}
+            {draft.actionId === "use-ability" && <section ref={destinationSection} tabIndex={-1} aria-label="Choose attuned ability" className="rune-editor__destinations"><h3>Choose attuned ability</h3><div className="rune-choice-grid">{[...abilities.techniques, ...abilities.guards].map(id => <button className="rune-ability-choice" type="button" key={id} data-tutorial-anchor={TUTORIAL_ANCHORS.runesAbility(id)} aria-pressed={draft.targetAbilityId === id} onClick={() => setDraft({ ...draft, targetAbilityId: id })}>{ABILITY_DATABASE.get(id)?.name}</button>)}</div><p>Attunement is already paid. This rule costs only its logic.</p></section>}
             {draft.actionId === "switch-stance" && (
               <section
                 ref={destinationSection}
@@ -318,6 +327,7 @@ export function BuildRunesTab() {
               </span>
               <button
                 type="button"
+                data-tutorial-anchor={TUTORIAL_ANCHORS.runesCommit}
                 disabled={!valid || (nextSpent > budget && nextSpent >= spent)}
                 onClick={() => commit(next)}
               >
@@ -361,6 +371,7 @@ export function BuildRunesTab() {
             <button
               type="button"
               className="rune-add-rule"
+              data-tutorial-anchor={TUTORIAL_ANCHORS.runesAdd}
               onClick={() =>
                 setDraft({ index: null, conditionId: "", actionId: "" })
               }
@@ -440,6 +451,7 @@ export function BuildRunesTab() {
                           <button
                             type="button"
                             aria-label="Move rule higher"
+                            data-tutorial-anchor={TUTORIAL_ANCHORS.runesUp(tutorialRuleKey(rule))}
                             disabled={rank === 0}
                             onClick={() => move(index, indices[rank - 1])}
                           >
@@ -456,6 +468,7 @@ export function BuildRunesTab() {
                           <button
                             type="button"
                             aria-label="Remove rule"
+                            data-tutorial-anchor={TUTORIAL_ANCHORS.runesRemove(tutorialRuleKey(rule))}
                             onClick={() =>
                               commit(rules.filter((_, i) => i !== index))
                             }

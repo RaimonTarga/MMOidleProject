@@ -77,7 +77,7 @@ export function AbilitiesPanelContent() {
               ? <>Fired by {timing.overrides.map((rule, i) => <span key={i} className="attunement-rune-seal">{CONDITION_DATABASE.get(rule.conditionId)?.name ?? rule.conditionId} → Use Ability</span>)}</>
               : defaultRule
                 ? <>No Rune fires it.{" "}
-                  <button type="button" className="attunement-button attunement-button--quiet ability-entry__default-rule" disabled={defaultRuleSpent > budget}
+                  <button type="button" className="attunement-button attunement-button--quiet ability-entry__default-rule" data-tutorial-anchor={TUTORIAL_ANCHORS.abilityTiming(id)} disabled={defaultRuleSpent > budget}
                     title={defaultRuleSpent > budget ? `Needs ${defaultRuleSpent - budget} more available RP` : `Adds "${defaultRuleName} → Use Ability" to your Runes · ${defaultRuleSpent} / ${budget} RP after this change`}
                     onClick={() => hudBus.requestSetRuneLoadout([...rules, defaultRule])}>
                     Use default timing: {defaultRuleName} (+{defaultRuleCost} RP)

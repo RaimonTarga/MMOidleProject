@@ -17,3 +17,16 @@ export type TutorialFocus =
   | { surface: 'upgrade'; definitionId: string };
 
 export const tutorialFocusAtom = atom<TutorialFocus | null>(null);
+
+/**
+ * The Rune board's new-rule draft as the guide fills it in, one choice at a
+ * time (the draft is local state in BuildRunesTab, like the Make selection).
+ * null = no request; the tab resets its own draft when the loadout changes.
+ */
+export interface TutorialRuneDraft {
+  conditionId: string;
+  actionId: string;
+  targetAbilityId?: string;
+}
+
+export const tutorialRuneDraftAtom = atom<TutorialRuneDraft | null>(null);
