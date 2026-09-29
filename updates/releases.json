@@ -41,6 +41,12 @@
       "title": "Clearer menus",
       "releasedAt": 1790628301560,
       "markdownPath": "v0.6.1/changelog.md"
+    },
+    {
+      "version": "0.6.2",
+      "title": "Guided Tier 1",
+      "releasedAt": 1790714066103,
+      "markdownPath": "v0.6.2/changelog.md"
     }
   ]
 }
