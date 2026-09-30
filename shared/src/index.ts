@@ -39,6 +39,7 @@ export * from './systems/itemUpgrades';
 export * from './systems/t1EconomyExperiment';
 export * from './systems/evolution';
 export * from './data/lineages';
+export * from './data/families';
 export * from './systems/lineages';
 export * from './systems/cores';
 export * from './systems/relics';

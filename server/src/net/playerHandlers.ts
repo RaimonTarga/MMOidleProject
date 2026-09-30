@@ -1,5 +1,5 @@
 import { captureProgressionCheckpoint, restoreProgressionCheckpoint } from '../admin/progressionCheckpoint';
-import { runicLoadoutFromProgression, runicPointEditAllowed, attunedAbilityIds } from "@mmo-idle/shared";
+import { runicLoadoutFromProgression, runicPointEditAllowed, attunedAbilityIds, ROW_KINDS } from "@mmo-idle/shared";
 import type { Socket } from "socket.io";
 import {
   DEFAULT_AUTOCOMBAT_CONFIG,
@@ -52,6 +52,13 @@ import {
   setRiteLoadout,
 } from "../systems/player/economy/riteCrafting";
 import { upgradeItem } from "../systems/player/economy/itemUpgrade";
+import {
+  setLineageActive,
+  unlockLineageCard,
+  unlockLineageForm,
+  wearLineageForm,
+  type LineageAction,
+} from "../systems/player/economy/lineages";
 import {
   handlePartyDisconnect,
   joinParty,
@@ -591,6 +598,55 @@ export function registerPlayerHandlers(
     const result = upgradeItem(world, p, itemId);
     world.gameplay?.decision(p, "upgrade", itemId, telemetryBefore, result.success);
     socket.emit("inventory:upgradeResult", result);
+  });
+
+  // ── Lineage trees (progression rework Phase 1) ─────────────────────────────
+  // All four answer on one event, because the client's reaction is the same:
+  // refresh the tree panel, and on failure show the reason the shared check gave.
+  const lineageReject = (lineageId: string, action: LineageAction): void => {
+    socket.emit("lineage:result", { success: false, reason: NOT_LIVE_REASON, lineageId, action });
+  };
+
+  socket.on("lineage:unlockCard", (payload) => {
+    const p = liveSelf();
+    if (!payload || typeof payload.lineageId !== "string" || typeof payload.cardId !== "string") return;
+    if (!p) return lineageReject(payload.lineageId, "unlockCard");
+    const telemetryBefore = world.gameplay?.beforeDecision(p);
+    const result = unlockLineageCard(world, p, payload.lineageId, payload.cardId);
+    world.gameplay?.decision(p, "lineage-card", payload.cardId, telemetryBefore, result.success);
+    socket.emit("lineage:result", result);
+  });
+
+  socket.on("lineage:setActive", (payload) => {
+    const p = liveSelf();
+    if (!payload || typeof payload.lineageId !== "string") return;
+    if (payload.cardId !== null && typeof payload.cardId !== "string") return;
+    if (!ROW_KINDS.includes(payload.row)) return;
+    if (!p) return lineageReject(payload.lineageId, "setActive");
+    const telemetryBefore = world.gameplay?.beforeDecision(p);
+    const result = setLineageActive(world, p, payload.lineageId, payload.row, payload.cardId);
+    world.gameplay?.decision(p, "lineage-active", payload.cardId, telemetryBefore, result.success);
+    socket.emit("lineage:result", result);
+  });
+
+  socket.on("lineage:unlockForm", (payload) => {
+    const p = liveSelf();
+    if (!payload || typeof payload.lineageId !== "string" || typeof payload.recipeId !== "string") return;
+    if (!p) return lineageReject(payload.lineageId, "unlockForm");
+    const telemetryBefore = world.gameplay?.beforeDecision(p);
+    const result = unlockLineageForm(world, p, payload.lineageId, payload.recipeId);
+    world.gameplay?.decision(p, "lineage-gate", payload.recipeId, telemetryBefore, result.success);
+    socket.emit("lineage:result", result);
+  });
+
+  socket.on("lineage:wearForm", (payload) => {
+    const p = liveSelf();
+    if (!payload || typeof payload.lineageId !== "string" || typeof payload.recipeId !== "string") return;
+    if (!p) return lineageReject(payload.lineageId, "wearForm");
+    const telemetryBefore = world.gameplay?.beforeDecision(p);
+    const result = wearLineageForm(world, p, payload.lineageId, payload.recipeId);
+    world.gameplay?.decision(p, "lineage-form", payload.recipeId, telemetryBefore, result.success);
+    socket.emit("lineage:result", result);
   });
 
   socket.on("party:join", (targetPlayerId: string) => {

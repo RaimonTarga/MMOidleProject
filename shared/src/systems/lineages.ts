@@ -17,6 +17,7 @@
  */
 import { ESSENCE_LABELS } from '../items';
 import type { EquipmentSlot, EssenceType } from '../items';
+import type { SubVariant } from '../data/skillTree/types';
 import { biomeLevelCap } from '../config/gameConfig';
 import type { HoldsInventory } from '../components/core/networkedSlices';
 import {
@@ -39,6 +40,23 @@ import type {
 export interface LineageCheck {
   ok: boolean;
   reason?: string;
+}
+
+/**
+ * The defensive face a frame expresses (design §3.1). Defensive cards pay out in
+ * full on the matching face and at `OFF_FACE_SCALAR` off it — bias, never lock,
+ * so no encounter hard-counters a frame. Offensive cards ignore this entirely.
+ *
+ * No sub-variant chosen yet means no bias: a card pays in full rather than being
+ * penalised for a choice the player has not made.
+ */
+export function defensiveFaceForSubVariant(sub: SubVariant | null | undefined): DefensiveFace | undefined {
+  switch (sub) {
+    case 'light':    return 'avoid';
+    case 'balanced': return 'sustain';
+    case 'heavy':    return 'endure';
+    default:         return undefined;
+  }
 }
 
 const OK: LineageCheck = { ok: true };

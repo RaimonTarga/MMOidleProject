@@ -13,6 +13,7 @@ import type {
   TracksProgression,
   UsesSkills,
   SummonsMinions,
+  PacketId,
 } from '@mmo-idle/shared';
 import {
   DEFAULT_RUNE_LOADOUT,
@@ -28,6 +29,9 @@ import {
   runeIdsFromCraftedRecipes,
   validRiteIds,
   NODE_MODIFIER_FAMILIES,
+  PACKET_IDS,
+  CAPSTONE_MATERIALS,
+  normalizeLineageProgressMap,
   CLEARING_NODE_ID,
   WORLD_NODES,
   buildCharacterSummary,
@@ -461,6 +465,37 @@ function sanitizeFamilyWallet(
 }
 
 /**
+ * Keep only live packet keys in a shard wallet, and only biomes that actually
+ * have a capstone material in a capstone wallet.
+ *
+ * Same job as {@link sanitizeFamilyWallet}: a wallet is the one place a retired
+ * key can sit forever, invisible until something tries to spend it.
+ */
+export function sanitizeShardWallet(
+  wallet: Partial<Record<PacketId, number>> | undefined,
+): Partial<Record<PacketId, number>> {
+  const out: Partial<Record<PacketId, number>> = {};
+  if (!wallet) return out;
+  for (const packet of PACKET_IDS) {
+    const value = wallet[packet];
+    if (typeof value === 'number' && Number.isFinite(value)) out[packet] = Math.max(0, value);
+  }
+  return out;
+}
+
+export function sanitizeCapstoneWallet(
+  wallet: Record<string, number> | undefined,
+): Record<string, number> {
+  const out: Record<string, number> = {};
+  if (!wallet) return out;
+  for (const biome of CAPSTONE_MATERIALS.keys()) {
+    const value = wallet[biome];
+    if (typeof value === 'number' && Number.isFinite(value)) out[biome] = Math.max(0, value);
+  }
+  return out;
+}
+
+/**
  * Drop item ids that no longer exist in ITEM_DATABASE.
  *
  * Recipes get retired (the placeholder core cast was deleted outright), and a save
@@ -536,6 +571,11 @@ function hydratePlayerSlices(row: CharacterRow): PersistedPlayerSlices {
   holdsInventory.equipment = normalizeEquipment(holdsInventory.equipment);
   holdsInventory.itemUpgrades = holdsInventory.itemUpgrades ?? {};
   holdsInventory.inventory = holdsInventory.inventory ?? [];
+  // Lineage trees drop unknown lineage, card and form ids, and any active row
+  // pointing at a card the save no longer owns. A save written before Phase 1
+  // simply has none; the tree is rebuilt from the forms the player holds when
+  // the entity attaches.
+  holdsInventory.lineages = normalizeLineageProgressMap(holdsInventory.lineages);
   migrateLegacyItems(holdsInventory);
   pruneUnknownItems(holdsInventory);
   const tracksProgression = parseSlice<TracksProgression>(row.tracksProgression);
@@ -565,6 +605,10 @@ function hydratePlayerSlices(row: CharacterRow): PersistedPlayerSlices {
       // the re-key migration can never resurface.
       catalysts:        sanitizeFamilyWallet(tracksProgression.catalysts),
       catalystProgress: sanitizeFamilyWallet(tracksProgression.catalystProgress),
+      // Lineage wallets (Phase 1). Keyed by packet and by biome respectively, and
+      // absent from every save written before the progression rework.
+      shards:     sanitizeShardWallet(tracksProgression.shards),
+      capstones:  sanitizeCapstoneWallet(tracksProgression.capstones),
       bossesCleared: tracksProgression.bossesCleared ?? [],
       clearedNodes:   tracksProgression.clearedNodes ?? [],
       visitedNodes:
@@ -647,6 +691,8 @@ function buildFreshSlices(
       essences:         { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
       catalysts:        {},
       catalystProgress: {},
+      shards:           {},
+      capstones:        {},
       biomeXP:          {},
       biomeLevel:       {},
       unlockedRecipes:  [],

@@ -9,6 +9,7 @@ import {
 import type { World } from "../../../world/World";
 import type { PlayerEntity } from "../../../ecs/entity";
 import { markSliceDirty } from "../../../ecs/dirtyHelpers";
+import { syncLineagesFromInventory } from './lineageSync';
 
 const TEST_ROOM_ESSENCE_AMOUNT = 1_000_000_000;
 
@@ -92,5 +93,8 @@ export function craftRecipe(
     recipe.id,
   ];
   markSliceDirty(world, entity, "holdsInventory");
+  // Crafting a lineage's T1 base form IS taking that slot's lineage, so the tree
+  // opens with it — there is no separate "unlock the tree" purchase (design §2).
+  syncLineagesFromInventory(world, entity);
   return { success: true };
 }

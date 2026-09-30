@@ -1,4 +1,4 @@
-import { NODE_BIOMES, NODE_MODIFIERS, modifierRewardMult, MONSTER_DATABASE, RECIPE_DATABASE, biomeLevelCap, biomeXpForBiomeLevel, biomeXpRewardMult, bossClearKey, BIOME_DATABASE, GAME_CONFIG, catalystProgressPerUnit, catalystProgressRewardMult } from '@mmo-idle/shared';
+import { NODE_BIOMES, NODE_MODIFIERS, modifierRewardMult, MONSTER_DATABASE, RECIPE_DATABASE, biomeLevelCap, biomeXpForBiomeLevel, biomeXpRewardMult, bossClearKey, BIOME_DATABASE, GAME_CONFIG, catalystProgressPerUnit, catalystProgressRewardMult, familyForMonster, CAPSTONE_MATERIALS, SHARD_BASE_PER_KILL, SHARD_TIER_MULT } from '@mmo-idle/shared';
 import type { EssenceType } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
@@ -56,6 +56,54 @@ function grantCatalystProgress(
   if (minted > 0) {
     prog.catalysts[familyKey] = (prog.catalysts[familyKey] ?? 0) + minted;
   }
+}
+
+/**
+ * Lineage shards and boss capstones (progression rework Phase 1b).
+ *
+ * Deterministic, like every other lineage material: every kill drops a little of
+ * the shard its mob family favours, and the biome boss drops its capstone every
+ * kill (design §1, §12). No rolls and no pity timer — costs gate the pace.
+ *
+ * A monster outside the five T1-biome families drops no shard. That is the
+ * Phase 1 footprint, not a rule: Phase 2 authors the remaining families along
+ * with per-node blends, and until then cards only exist at T1 anyway.
+ *
+ * Runs ALONGSIDE the catalyst accumulator, which Phase 2 deletes.
+ */
+function grantLineageMaterials(
+  world: World,
+  recipient: PlayerEntity,
+  monster: MonsterEntity,
+  params: { biomeTier: number; biomeGroup: string | undefined; rewardMult: number; debugMult: number },
+): void {
+  const prog = recipient.tracksProgression;
+  let touched = false;
+
+  const family = familyForMonster(monster.isMonster.monsterTypeId);
+  if (family && !monster.isMonster.isBoss) {
+    // Shards scale by tier the way essence does, so lower-tier farming stays a
+    // slow but legal route rather than a dead one.
+    const amount = Math.max(
+      1,
+      Math.round(
+        SHARD_BASE_PER_KILL * (SHARD_TIER_MULT[params.biomeTier] ?? 1) * params.rewardMult * params.debugMult,
+      ),
+    );
+    prog.shards[family.drops] = (prog.shards[family.drops] ?? 0) + amount;
+    touched = true;
+  }
+
+  // The boss is the only way up a tree, so its capstone is not multiplier-scaled
+  // by node identity: one kill, one capstone, every time. The dev reward
+  // multiplier still applies, so a playtest can reach a gate without farming it.
+  if (monster.isMonster.isBoss && params.biomeGroup && CAPSTONE_MATERIALS.has(params.biomeGroup)) {
+    prog.capstones[params.biomeGroup] =
+      (prog.capstones[params.biomeGroup] ?? 0) + Math.max(1, Math.round(params.debugMult));
+    touched = true;
+  }
+
+  if (touched) markSliceDirty(world, recipient, 'tracksProgression');
 }
 
 
@@ -219,6 +267,12 @@ function applyKillRewardsToPlayer(
     );
     markSliceDirty(world, recipient, 'tracksProgression');
   }
+  grantLineageMaterials(world, recipient, monster, {
+    biomeTier,
+    biomeGroup: biomeInfo?.biomeGroup,
+    rewardMult,
+    debugMult,
+  });
   const biomeResult = applyBiomeXP(
     world,
     recipient,

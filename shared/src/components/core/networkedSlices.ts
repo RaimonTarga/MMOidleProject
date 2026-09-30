@@ -18,7 +18,7 @@ import type { EquippedRule } from '../../runeDatabase';
 import type { AttunedAbilities } from '../../abilities';
 import type { EquippedStances } from '../../stances';
 import type { EquippedRites } from '../../rites';
-import type { LineageProgressMap } from '../../data/lineages/types';
+import type { LineageProgressMap, PacketId } from '../../data/lineages/types';
 
 export type { HasHitbox };
 
@@ -360,6 +360,22 @@ export interface TracksProgression {
    * catalyst and carries the remainder.
    */
   catalystProgress: Record<string, number>;
+  /**
+   * Lineage shard wallet, keyed by PACKET (progression rework Phase 1). Eight
+   * shards for the whole game; every kill drops a little of the shard its mob
+   * family favours, so the material's name says what it buys and the map says
+   * where it drops (design §12). Shards gate a card, essence pays the bulk.
+   *
+   * Runs ALONGSIDE `catalysts` through Phase 1. Phase 2 deletes the catalyst
+   * accumulator and this becomes the only kill-driven material wallet.
+   */
+  shards: Partial<Record<PacketId, number>>;
+  /**
+   * Boss capstone wallet, keyed by BIOME. The biome's boss drops one every kill,
+   * and a gate costs several — which is why the boss is the only way up a
+   * lineage tree (design §5).
+   */
+  capstones: Record<string, number>;
   biomeXP: Record<string, number>;
   biomeLevel: Record<string, number>;
   unlockedRecipes: string[];

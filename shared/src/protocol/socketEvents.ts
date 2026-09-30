@@ -2,6 +2,7 @@ import type { EquipmentSlot } from "../items";
 import type { AttunedAbilities } from "../abilities";
 import type { StanceSlot } from "../stances";
 import type { EvolveMode } from "../systems/evolution";
+import type { RowKind } from "../data/lineages/types";
 import type { AutocombatConfig } from "../components/core/networkedSlices";
 import type { EquippedRule } from "../runeDatabase";
 import type { BossFelledMarker } from "./bossFelled";
@@ -145,6 +146,19 @@ export interface ServerToClientEvents {
     itemId: string;
     newLevel: number;
   }) => void;
+  /**
+   * Immediate result of any lineage-tree action (progression rework Phase 1):
+   * buying a card, swapping the active card of a row, paying a gate, or wearing
+   * an owned form. One event for all four, because the client's reaction is the
+   * same — refresh the tree panel and, on failure, show the reason.
+   */
+  "lineage:result": (result: {
+    success: boolean;
+    reason?: string;
+    lineageId: string;
+    /** Which action this answers, so the panel knows what to re-render. */
+    action: "unlockCard" | "setActive" | "unlockForm" | "wearForm";
+  }) => void;
   /** Sent when a player's HP reaches zero — corpse stays at death site until ack. */
   "player:died": (payload: PlayerDeathPayload) => void;
   /** Sent when a player unlocks a skill and advances to the next tier. */
@@ -267,6 +281,15 @@ export interface ClientToServerEvents {
   "crafting:evolveItem": (payload: { recipeId: string; mode: EvolveMode }) => void;
   /** Attempt to upgrade an owned item by ID (+1). Server validates and applies. */
   "inventory:upgradeItem": (itemId: string) => void;
+  // ── Lineage trees (progression rework Phase 1) ─────────────────────────────
+  /** Buy a card. Permanent; costs essence and the card's own lane shard. */
+  "lineage:unlockCard": (payload: { lineageId: string; cardId: string }) => void;
+  /** Make an owned card the active one for its row. Free; null clears the row. */
+  "lineage:setActive": (payload: { lineageId: string; row: RowKind; cardId: string | null }) => void;
+  /** Pay a gate: essence, the crowned lane's shard, and the boss capstone. */
+  "lineage:unlockForm": (payload: { lineageId: string; recipeId: string }) => void;
+  /** Wear an owned form. Free; mirrors into `equipment[slot]`. */
+  "lineage:wearForm": (payload: { lineageId: string; recipeId: string }) => void;
   /** Join the party of the target player (the target's leader becomes your leader). */
   "party:join": (targetPlayerId: string) => void;
   /** Leave your current party (disbands it if you are the leader). */

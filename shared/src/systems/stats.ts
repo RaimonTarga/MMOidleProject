@@ -19,6 +19,7 @@ import { mergePassives, makePulseAccumulator, finalizePulse } from '../passives'
 import { relicRatingsFromPassives, resolveCadenceRelicProfile } from './relics';
 import { summonerSpecializationFor } from '../data/summoner';
 import { SLINGER_DIRECT_ATTACK_EFFECTIVENESS } from './classSecondaryDamage';
+import { defensiveFaceForSubVariant, resolveActiveLineages } from './lineages';
 
 /**
  * Map a raw evasion rating (Σ 1/N across all evasion sources) to a deterministic
@@ -260,6 +261,27 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     mergePassives(p.usesSkills.passives, stance.mechanicEffects, pulseAcc);
   }
 
+  // 2b. Lineage stat rows (progression rework Phase 1).
+  //
+  // Resolved ONCE here, before the cooldown fold, because a Tempo stat row grants
+  // `attackSpeedPct` and attack speed has to land before step 2a computes the
+  // cooldown, which is the line immediately below. The flat half of the same
+  // result is applied with equipment in step 3c, because a card is item power and
+  // must sit inside the magnitude the class affinities then multiply.
+  //
+  // Only a lineage whose worn form is the item actually equipped in its slot
+  // contributes, and only the active card of each row — owning a card is not
+  // playing it.
+  const lineageEffects = resolveActiveLineages(
+    p.holdsInventory,
+    defensiveFaceForSubVariant(p.usesSkills.selectedSubVariant),
+  );
+  attackSpeedPct += lineageEffects.statEffects.attackSpeedPct ?? 0;
+  if ((lineageEffects.statEffects.evasion ?? 0) > 0) evasionChance += lineageEffects.statEffects.evasion!;
+  if (lineageEffects.statEffects.attackPct) {
+    affinities.attack += lineageEffects.statEffects.attackPct;
+  }
+
   p.performsAttack.attackCooldown = Math.round(
     p.performsAttack.attackCooldown / Math.max(0.1, 1 + attackSpeedPct),
   );
@@ -307,6 +329,15 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
       if (Object.keys(meFx).length > 0) mergePassives(p.usesSkills.passives, meFx, pulseAcc);
     }
   }
+  // 3c. The flat half of the lineage stat rows, folded with equipment so class
+  // affinities multiply it. Percentages and evasion already landed in step 2b;
+  // damage reduction joins the ITEM bucket, because a card is item power.
+  for (const [stat, value] of Object.entries(lineageEffects.statEffects)) {
+    if (stat === 'attackSpeedPct' || stat === 'attackPct' || stat === 'evasion') continue;
+    if (stat === 'damageReduction') { itemDr += value; continue; }
+    applyStatModToTarget(p, stat, value);
+  }
+
   p.mitigatesDamage.damageReduction = 1 - (1-classDr)*(1-Math.min(.9,Math.max(0,itemDr)));
   if (itemDr > 0) p.usesSkills.passives['defense.item-dr-base'] = itemDr;
   finalizePulse(pulseAcc, p.usesSkills.passives);

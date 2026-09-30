@@ -16,6 +16,8 @@ function presentationDefaults(projection: SpectatorPlayer): Partial<NetworkedEnt
       essences: {} as never,
       catalysts: {},
       catalystProgress: {},
+      shards: {},
+      capstones: {},
       biomeXP: {},
       biomeLevel: {},
       unlockedRecipes: [],

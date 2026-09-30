@@ -253,6 +253,30 @@ ever crowned, so the entry cannot outlive the gap.
 
 Every magnitude in the table is PROVISIONAL and unbenched; the lane-budget check is §1.5.
 
+**Built 2026-09-30 (Phase 1b, `feat/lineage-data-model`).** Scope was split with the
+designer: 1b is the economy, the protocol, the wallets and persistence; the combat card
+runtime and the `mechanic-fired` seam are **1c**, so the seam's double-fire risk gets its
+own review rather than riding in on a large diff. Stat rows are live and felt; payoff
+cards are bought, activated and persisted but do nothing in combat yet.
+
+Three decisions taken with the designer on 2026-09-30:
+
+1. **`active` is one card per row across the whole tree**, as the sketch above types it —
+   not one per band. Paying a gate therefore retires the band below it as power, and the
+   collapsed summary line is a wardrobe to reslot from, not a stack that keeps paying.
+2. **Both wallets land now, additively.** `TracksProgression.shards` (keyed by packet) and
+   `.capstones` (keyed by biome) ship in 1b and drop on kills; `catalysts` is untouched and
+   Phase 2 deletes it. This makes the tree playable and the economy testable a phase early,
+   at the cost of a reward-seam change Phase 2 revisits.
+3. Combat runtime deferred, as above.
+
+**Family data arrived early.** Shard drops need to know which family a mob belongs to, so
+`shared/src/data/families/` (plan §2.1) is authored now — but only its `drops` half is
+live. Per-node blends, family-driven spawning and the removal of node modifiers stay in
+Phase 2. Every non-boss monster of the five T1 biomes is in exactly one family, enforced by
+`server/test/lineageMaterials.test.ts`, because a mob in no family is a kill that silently
+pays nothing. Mountain, Cave and Swamp remain PROPOSED pending bible open decision 2.
+
 ### 1.2 Protocol (`shared/src/protocol/socketEvents.ts`)
 
 Client to server: `lineage:unlockCard { lineageId, cardId }`, `lineage:setActive
@@ -287,6 +311,43 @@ the client's intent layer; no direct UI emits.
 - Persistence: `server/src/db/playerRepo.ts` hydrates `lineages` (default `{}`), drops
   unknown card/form ids, and a migration `0008_lineages.sql` adds nothing if the JSON
   column already holds the slice (verify; component-shaped JSON should absorb it).
+
+**Built 2026-09-30 (Phase 1b).** As listed, minus the card runtime and the
+`mechanic-fired` seam, which are 1c. What shipped:
+
+- `server/src/systems/player/economy/lineages.ts` — the four handlers. Each validates with
+  the shared check, spends exactly the resolved cost, mutates through `mutateSlice`, and
+  recalculates. A refused action spends nothing (tested).
+- `server/src/systems/player/economy/lineageSync.ts` — `ensureLineageProgress`,
+  `syncLineagesFromInventory`, `syncWornFormFromEquipment`. Split out of the handlers so
+  the equip path can call it without an import cycle. A tree is born from HOLDING the
+  crafted base form: crafting it, equipping it, or loading a save that has it all open the
+  tree, because taking the slot has always been how you take the lineage (design §2).
+  Equipping a form outside the tree panel moves `wornForm` with it — without that the two
+  disagree and `resolveActiveLineages` deliberately goes dark.
+- Stat rows fold in `shared/src/systems/stats.ts`. Resolved once in a new step 2b, because
+  a Tempo row grants `attackSpeedPct` and attack speed must land before the cooldown is
+  computed; the flat half applies with equipment in 3c so class affinities multiply it, and
+  lineage `damageReduction` joins the ITEM DR bucket. A card is item power.
+- Rewards: `grantLineageMaterials` in the one kill seam. Deterministic — N kills is exactly
+  N times one kill, no rolls and no pity timer (tested). The dev reward multiplier reaches
+  shards like every other payout.
+- Persistence: `normalizeLineageProgressMap` on load, plus `sanitizeShardWallet` /
+  `sanitizeCapstoneWallet` beside `sanitizeFamilyWallet`. **No migration was needed** — the
+  component-shaped JSON columns absorb the new keys, as §1.1 suspected. `attachPlayerEntity`
+  normalizes the two wallets so no construction site has to.
+- `PlayerView` carries `shards`, `capstones` and `lineages` so 1c has them.
+- Bulk item grants open their trees: `applyTierEntryProfile` and the character wipe in
+  `gameActions.ts`. Found by `progressionCheckpoint.test.ts`, whose rebuild-equals-capture
+  invariant caught a dev profile holding a Gale Needle with no tree behind it.
+
+**Known limitation for 1c.** `previewEquipmentStats` builds a synthetic inventory with no
+`lineages`, so the stat sheet and the swap preview currently ignore lineage cards. Feeding
+the real trees through the preview is 1c's job, alongside the tree panel itself.
+
+Tests: `lineageEconomy` (spend/refuse/discount/gate/wear, stat row reaching stats),
+`lineageMaterials` (determinism plus the family partition over every T1 mob),
+`lineagePersistence` (a pre-rework save rebuilds its trees and invents no progress).
 
 ### 1.4 Client
 

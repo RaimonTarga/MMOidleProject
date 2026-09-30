@@ -8,6 +8,7 @@ import {
   recalculatePlayerStatsPreservingCombatState,
 } from '../../../ecs/playerEntityFormulas';
 import { resetCoreCombatState } from '../../combat/cores';
+import { syncWornFormFromEquipment } from './lineageSync';
 
 export function recalculateAfterEquipmentChange(
   world: World,
@@ -48,6 +49,9 @@ export function equipItem(world: World, entity: PlayerEntity, definitionId: stri
   }
 
   entity.holdsInventory.equipment[slot] = definitionId;
+  // Equipping a lineage form through the ordinary inventory path has to move
+  // `wornForm` with it, or the tree and the slot disagree and the tree goes dark.
+  syncWornFormFromEquipment(world, entity, definitionId);
   recalculateAfterEquipmentChange(world, entity, slot);
   syncArchetypeSlices(world, entity);
   return true;
