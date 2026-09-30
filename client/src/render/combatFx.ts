@@ -260,6 +260,10 @@ import { applyLunge } from "./interpolation";
 import { nodeToScene } from "./sceneCoords";
 import type { RenderState } from "./state";
 import { DEPTH } from "./depth";
+// Deliberately NOT `import.meta.env.DEV`: `remotePlayerAttack.test.ts` transpiles
+// this whole file to CommonJS and runs it in a vm, where `import.meta` is a
+// syntax error. Keep this file free of it.
+import { DEV_TOOLS_ENABLED } from "../devTools";
 
 type NonNullArchetype = Exclude<CombatArchetype, null>;
 
@@ -579,6 +583,9 @@ function fxCardFlash(scene: GameScene, at: { x: number; y: number }, color: numb
   });
 }
 
+/** Unknown `card-fx` keys are reported once each, not once per event. */
+const warnedUnknownFx = new Set<string>();
+
 /**
  * One handler per `LineageFxKey`. The six `.trail` keys are NOT drawn here —
  * the stat row is a persistent cosmetic derived client-side from the active
@@ -654,8 +661,9 @@ function fxLineageCard(scene: GameScene, ev: CombatEvent & { kind: "card-fx" }):
     case "engagement.trail":
       return;
     default:
-      // Unknown key: draw nothing (contract).
-      if (import.meta.env.DEV) {
+      // Unknown key: draw nothing (contract), and say so once per key in dev.
+      if (DEV_TOOLS_ENABLED && !warnedUnknownFx.has(ev.fx)) {
+        warnedUnknownFx.add(ev.fx);
         // eslint-disable-next-line no-console
         console.warn(`card-fx: no client handler for '${ev.fx}'`);
       }
