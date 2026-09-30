@@ -4,8 +4,6 @@ import { RECIPE_DATABASE } from '../../data/recipes';
 import { ITEM_DATABASE } from '../../itemDatabase';
 import type { EssenceType } from '../../items';
 import { RUNE_RECIPE_DATABASE } from '../../runeRecipes';
-import { upgradeCatalystCostFor } from '../../systems/itemUpgrades';
-import { NODE_BIOMES } from '../../world/nodeBiomes';
 import type {
   TutorialBeat,
   TutorialCondition,
@@ -96,12 +94,12 @@ const ITEM_REASON: Record<string, string> = {
 };
 
 const CRAFT_REASON: Record<string, string> = {
-  'chaotic-axe': 'The Chaotic Axe hits hardest of anything here but whiffs now and then. Once upgraded, it is worth it.',
-  'ashbrand-blade': 'The Poison Dagger poisons what it hits. It becomes your main weapon once it is upgraded.',
+  'chaotic-axe': 'The Chaotic Axe hits hardest of anything here but whiffs now and then. Worth it.',
+  'ashbrand-blade': 'The Poison Dagger poisons what it hits. It becomes your main weapon.',
 };
 
 const EQUIP_REASON: Record<string, string> = {
-  'chaotic-axe': 'The axe is upgraded enough now. Switch to it.',
+  'chaotic-axe': 'The axe is ready. Switch to it.',
   'ashbrand-blade': 'The Poison Dagger is ready. Switch to it.',
 };
 
@@ -131,13 +129,8 @@ function name(definitionId: string): string {
   return ITEM_DATABASE.get(definitionId)?.name ?? definitionId;
 }
 
-function biomeRef(biome: string, modifier?: string): TutorialNodeRef {
-  return { kind: 'biome', biomeGroup: biome, tier: 1, pick: 'uncleared', ...(modifier ? { modifier } : {}) };
-}
-
-function biomeHasModifier(biome: string, family: string): boolean {
-  return Object.values(NODE_BIOMES).some((info) =>
-    info.biomeGroup === biome && info.biomeTier === 1 && info.kind === 'normal' && info.modifier === family);
+function biomeRef(biome: string): TutorialNodeRef {
+  return { kind: 'biome', biomeGroup: biome, tier: 1, pick: 'uncleared' };
 }
 
 /** Essence (+ biome level) gate for a recipe as conditions. */
@@ -197,19 +190,15 @@ class ScriptBuilder {
     const recipe = RECIPE_DATABASE.get(recipeId);
     if (!recipe) throw new Error(`unknown recipe ${recipeId}`);
     const itemName = name(recipeId);
-    const catalysts = Object.entries(recipe.catalystCost ?? {}).filter(([, amount]) => (amount ?? 0) > 0);
     this.push({
       id: `farm:${recipeId}`,
       chapter,
       say: sayFarm ?? `Next up: the ${itemName}.`,
       waiting: `Fighting in ${BIOME_NAME[recipe.recipeGroup as T1Biome] ?? recipe.recipeGroup} until the ${itemName} is ready.`,
-      progress: [
-        ...costProgress(recipe.cost, recipe.recipeGroup, recipe.requiredBiomeLevel),
-        ...catalysts.map(([family, amount]): TutorialProgressRef => ({ type: 'catalyst', family, amount: amount ?? 0 })),
-      ],
+      progress: costProgress(recipe.cost, recipe.recipeGroup, recipe.requiredBiomeLevel),
       steps: [{
         type: 'farm',
-        at: biomeRef(recipe.recipeGroup, catalysts[0]?.[0]),
+        at: biomeRef(recipe.recipeGroup),
         until: {
           type: 'anyOf',
           of: [{ type: 'hasItem', definitionId: recipeId }, { type: 'canCraft', recipeId }],
@@ -324,41 +313,12 @@ class ScriptBuilder {
     const ordered = [...groups.entries()].sort(([a], [b]) => (a === leg ? -1 : b === leg ? 1 : 0));
     let first = true;
     for (const [biome, items] of ordered) {
-      const catalystNeed = new Map<string, number>();
-      for (const target of items) {
-        const item = ITEM_DATABASE.get(target.definitionId)!;
-        for (let plus = (this.plannedPlus.get(target.definitionId) ?? 0) + 1; plus <= target.toPlus; plus += 1) {
-          for (const [family, amount] of Object.entries(upgradeCatalystCostFor(item, plus) ?? {})) {
-            catalystNeed.set(family, (catalystNeed.get(family) ?? 0) + (amount ?? 0));
-          }
-        }
-      }
-      const family = [...catalystNeed.keys()][0];
       const done: TutorialCondition = {
         type: 'allOf',
         of: items.map((t): TutorialCondition => ({ type: 'itemAtLeastPlus', definitionId: t.definitionId, plus: t.toPlus })),
       };
       const key = `${leg}:${this.upgradeSets}:${biome}`;
       const zone = BIOME_NAME[biome as T1Biome] ?? biome;
-
-      // A zone with no node of the needed modifier gets its catalysts elsewhere first.
-      if (family && !biomeHasModifier(biome, family)) {
-        const source = T1_BIOME_ORDER.find((b) => biomeHasModifier(b, family));
-        if (!source) throw new Error(`no T1 node mints ${family}`);
-        const amount = catalystNeed.get(family)!;
-        this.push({
-          id: `catalysts:${key}`,
-          chapter,
-          say: 'These upgrades also need catalysts, which drop in specially marked zones.',
-          waiting: `Fighting in a marked part of ${BIOME_NAME[source]} for catalysts.`,
-          progress: [{ type: 'catalyst', family, amount }],
-          steps: [{
-            type: 'farm',
-            at: biomeRef(source, family),
-            until: { type: 'anyOf', of: [done, { type: 'catalystAtLeast', family, amount }] },
-          }],
-        });
-      }
 
       const names = items.map((t) => name(t.definitionId)).join(', ');
       this.push({
@@ -371,7 +331,7 @@ class ScriptBuilder {
         progress: [{ type: 'upgradeCost', items }],
         steps: [{
           type: 'farm',
-          at: biomeRef(biome, family && biomeHasModifier(biome, family) ? family : undefined),
+          at: biomeRef(biome),
           until: { type: 'anyOf', of: [done, { type: 'canAffordUpgrades', items }] },
         }],
       });

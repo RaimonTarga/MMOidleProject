@@ -7,11 +7,9 @@ import { bossClearKey } from '../systems/biomeProgress';
 import {
   getMaxUpgrade,
   requiredBiomeLevelForUpgrade,
-  upgradeCatalystCostFor,
   upgradeCeilingFromGlobalMastery,
   upgradeCostFor,
 } from '../systems/itemUpgrades';
-import { catalystFamilyLabel } from '../world/nodeModifiers';
 import type { TutorialCondition, TutorialProgressRef, TutorialUpgradeTarget } from './types';
 
 /** The slice of the local player's view the guide reads. Both the client and the bot compose a full `PlayerView`. */
@@ -27,7 +25,6 @@ export type TutorialView = Pick<
   | 'globalMastery'
   | 'unlockedRecipes'
   | 'essences'
-  | 'catalysts'
   | 'inventory'
   | 'equipment'
   | 'itemUpgrades'
@@ -51,9 +48,6 @@ export function viewCanAffordRecipe(view: TutorialView, recipeId: string): boole
   for (const [type, amount] of Object.entries(recipe.cost)) {
     if ((view.essences[type as EssenceType] ?? 0) < (amount ?? 0)) return false;
   }
-  for (const [family, amount] of Object.entries(recipe.catalystCost ?? {})) {
-    if ((view.catalysts[family] ?? 0) < (amount ?? 0)) return false;
-  }
   return true;
 }
 
@@ -61,7 +55,6 @@ export interface RemainingUpgradeCost {
   /** Every remaining level is open (owned item, Global Mastery, biome level, not past max). */
   gatesOpen: boolean;
   essence: Partial<Record<EssenceType, number>>;
-  catalysts: Record<string, number>;
 }
 
 /** What is still to pay to take every item from its current level to its target. */
@@ -69,7 +62,7 @@ export function remainingUpgradeCost(
   view: Pick<TutorialView, 'inventory' | 'equipment' | 'itemUpgrades' | 'globalMastery' | 'biomeLevel'>,
   items: readonly TutorialUpgradeTarget[],
 ): RemainingUpgradeCost {
-  const out: RemainingUpgradeCost = { gatesOpen: true, essence: {}, catalysts: {} };
+  const out: RemainingUpgradeCost = { gatesOpen: true, essence: {} };
   for (const target of items) {
     const item = ITEM_DATABASE.get(target.definitionId);
     const current = view.itemUpgrades[target.definitionId] ?? 0;
@@ -88,9 +81,6 @@ export function remainingUpgradeCost(
         const key = type as EssenceType;
         out.essence[key] = (out.essence[key] ?? 0) + (amount ?? 0);
       }
-      for (const [family, amount] of Object.entries(upgradeCatalystCostFor(item, plus) ?? {})) {
-        out.catalysts[family] = (out.catalysts[family] ?? 0) + (amount ?? 0);
-      }
     }
   }
   return out;
@@ -101,9 +91,6 @@ export function viewCanAffordUpgrades(view: TutorialView, items: readonly Tutori
   if (!remaining.gatesOpen) return false;
   for (const [type, amount] of Object.entries(remaining.essence)) {
     if ((view.essences[type as EssenceType] ?? 0) < (amount ?? 0)) return false;
-  }
-  for (const [family, amount] of Object.entries(remaining.catalysts)) {
-    if ((view.catalysts[family] ?? 0) < amount) return false;
   }
   return true;
 }
@@ -120,8 +107,6 @@ export function evaluateTutorialCondition(condition: TutorialCondition, view: Tu
       return view.globalMastery >= condition.value;
     case 'essenceAtLeast':
       return (view.essences[condition.essence] ?? 0) >= condition.amount;
-    case 'catalystAtLeast':
-      return (view.catalysts[condition.family] ?? 0) >= condition.amount;
     case 'recipeUnlocked':
       return view.unlockedRecipes.includes(condition.recipeId);
     case 'canCraft': {
@@ -195,26 +180,11 @@ export function tutorialProgress(ref: TutorialProgressRef, view: TutorialView): 
     }
     case 'essence':
       return [essenceProgress(view, ref.essence, ref.amount)];
-    case 'catalyst':
-      return [{
-        current: Math.min(view.catalysts[ref.family] ?? 0, ref.amount),
-        target: ref.amount,
-        label: catalystFamilyLabel(ref.family),
-      }];
     case 'upgradeCost': {
       const remaining = remainingUpgradeCost(view, ref.items);
-      return [
-        ...Object.entries(remaining.essence)
-          .filter(([, amount]) => (amount ?? 0) > 0)
-          .map(([type, amount]) => essenceProgress(view, type as EssenceType, amount ?? 0)),
-        ...Object.entries(remaining.catalysts)
-          .filter(([, amount]) => amount > 0)
-          .map(([family, amount]) => ({
-            current: Math.min(view.catalysts[family] ?? 0, amount),
-            target: amount,
-            label: catalystFamilyLabel(family),
-          })),
-      ];
+      return Object.entries(remaining.essence)
+        .filter(([, amount]) => (amount ?? 0) > 0)
+        .map(([type, amount]) => essenceProgress(view, type as EssenceType, amount ?? 0));
     }
   }
 }

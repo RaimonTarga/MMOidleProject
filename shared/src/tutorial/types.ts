@@ -28,7 +28,6 @@ export type TutorialCondition =
   | { type: 'biomeLevelAtLeast'; biomeGroup: string; level: number }
   | { type: 'globalMasteryAtLeast'; value: number }
   | { type: 'essenceAtLeast'; essence: EssenceType; amount: number }
-  | { type: 'catalystAtLeast'; family: string; amount: number }
   | { type: 'recipeUnlocked'; recipeId: string }
   | { type: 'canCraft'; recipeId: string }
   | { type: 'hasItem'; definitionId: string }
@@ -39,8 +38,8 @@ export type TutorialCondition =
   | { type: 'bossCleared'; biomeGroup: string; tier: number }
   /**
    * Every listed item can be taken from its CURRENT level to its target right
-   * now: Global Mastery, biome level, and the summed essence + catalyst cost
-   * of all remaining levels. Monotone across the upgrades themselves: each one
+   * now: Global Mastery, biome level, and the summed essence cost of all
+   * remaining levels. Monotone across the upgrades themselves: each one
    * spends exactly what it removes from the remaining cost.
    */
   | { type: 'canAffordUpgrades'; items: TutorialUpgradeTarget[] }
@@ -73,7 +72,6 @@ export type TutorialProgressRef =
   | { type: 'biomeLevel'; biomeGroup: string; level: number }
   | { type: 'essenceFor'; recipeId: string }
   | { type: 'essence'; essence: EssenceType; amount: number }
-  | { type: 'catalyst'; family: string; amount: number }
   | { type: 'upgradeCost'; items: TutorialUpgradeTarget[] };
 
 /**
