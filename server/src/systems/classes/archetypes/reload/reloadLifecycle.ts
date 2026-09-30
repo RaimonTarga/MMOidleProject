@@ -2,6 +2,7 @@ import type { World } from '../../../../world/World';
 import type { PlayerEntity } from '../../../../ecs/entity';
 import { markSliceDirty } from '../../../../ecs/dirtyHelpers';
 import { registerCombatListener } from '../../../combat/engine/combatPipeline';
+import { emitMechanicFired } from '../../../combat/engine/mechanicFired';
 import {
   DEFAULT_RELOAD_TIME_MULT,
   DEFAULT_MOMENTUM_RELOAD_REDUCTION,
@@ -131,6 +132,10 @@ export function completeReload(world: World, player: PlayerEntity): void {
   for (const hook of _hooks) {
     hook.onComplete?.(world, player);
   }
+  // `mechanic-fired` (progression rework 1c): the clip coming back IS reload's
+  // moment. No `ctx` — a reload completes on a timer, not on an attack, so there
+  // is no exchange to latch and none to scale a payoff off.
+  emitMechanicFired(world, player);
 }
 
 /** afterHit listener: deferred reload-start hooks for in-combat empty-clip reloads. */

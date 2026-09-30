@@ -1,5 +1,6 @@
 import { registerCombatListener } from '../../../combat/engine/combatPipeline';
 import { setEmpoweredAttack, registerEmpoweredMultiplier, isEmpoweredAttack } from '../../../combat/engine/empoweredAttacks';
+import { emitMechanicFired } from '../../../combat/engine/mechanicFired';
 import { initEnergyT3 } from './t3';
 import type { World } from '../../../../world/World';
 import {
@@ -50,6 +51,18 @@ export function initEnergyArchetype(): void {
     attackerType:      'player',
     attackerSlice:     'usesEnergy',
     passiveKey:        'energy.empowered-mult',
+  });
+
+  // `mechanic-fired` (progression rework 1c): the discharge IS energy's moment.
+  // The pool draining is not — energy fills and empties continuously, and a card
+  // that fired on that would fire on nothing in particular. `empoweredAttack`
+  // metadata is set only by the handler above that consumed the charge, so this
+  // is precisely "the burst just landed".
+  registerCombatListener('onHit', (ctx, world) => {
+    if (ctx.attackerType !== 'player') return;
+    if (!ctx.metadata['empoweredAttack']) return;
+    if (!ctx.attacker.usesEnergy) return;
+    emitMechanicFired(world, ctx.attacker, ctx);
   });
 
   registerCombatListener('afterHit', (ctx, _world) => {

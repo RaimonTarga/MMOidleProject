@@ -1,5 +1,6 @@
 import { registerCombatListener } from '../../../combat/engine/combatPipeline';
 import { setEmpoweredAttack, isEmpoweredAttack, registerEmpoweredMultiplier } from '../../../combat/engine/empoweredAttacks';
+import { emitMechanicFired } from '../../../combat/engine/mechanicFired';
 import { initCooldownT3 } from './t3';
 import type { World } from '../../../../world/World';
 import { relicRatingsFromPassives, resolveCooldownRelicProfile } from '@mmo-idle/shared';
@@ -97,7 +98,7 @@ export function initCooldownArchetype(): void {
   initCooldownT3();
 
   // After the execution fires, restart the preparation cycle.
-  registerCombatListener('onHit', (ctx, _world) => {
+  registerCombatListener('onHit', (ctx, world) => {
     if (ctx.attackerType !== 'player') return;
     if (!ctx.metadata['empoweredAttack']) return;
 
@@ -109,5 +110,10 @@ export function initCooldownArchetype(): void {
 
     const cdMs = resolveExecutionCooldownMs(entity);
     cd.executionCooldownMs = cdMs;
+
+    // `mechanic-fired` (progression rework 1c): this handler already IS "the
+    // execution's empowered flag was consumed" — it is why the cycle restarts —
+    // so the seam rides it rather than duplicating the gate in a second listener.
+    emitMechanicFired(world, entity, ctx);
   });
 }

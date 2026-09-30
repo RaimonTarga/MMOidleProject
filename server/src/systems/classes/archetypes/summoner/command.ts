@@ -22,6 +22,7 @@ import type { MinionEntity, MonsterEntity, PlayerEntity } from '../../../../ecs/
 import { attachComponent, detachComponent } from '../../../../ecs/markerHelpers';
 import { getFollowOffset } from './spawn';
 import { RUNE_RECALL_SUMMONS_FLAG } from '../../../combat/ai/runeConfig';
+import { emitMechanicFired } from '../../../combat/engine/mechanicFired';
 
 const LEASH_MARGIN = 4;
 const ARRIVE_TOL = 10;
@@ -110,14 +111,19 @@ export function applySummonerCommand(world: World, owner: PlayerEntity, pos: Vec
       monsterId: monster.isMonster.id,
       pos:       rounded,
     });
-    return;
+  } else {
+    attachComponent(world, owner, 'hasSummonerCommand', {
+      kind:      'move',
+      monsterId: null,
+      pos:       rounded,
+    });
   }
 
-  attachComponent(world, owner, 'hasSummonerCommand', {
-    kind:      'move',
-    monsterId: null,
-    pos:       rounded,
-  });
+  // `mechanic-fired` (progression rework 1c): commanding the formation IS the
+  // summoner's moment — the one thing the root asks the player to do by hand.
+  // Focus and move are the same intent pointed at different things, so they share
+  // the emission; the early return became an else so there is only ever one.
+  emitMechanicFired(world, owner);
 }
 
 export function applySummonerRecall(world: World, owner: PlayerEntity, now: number): void {

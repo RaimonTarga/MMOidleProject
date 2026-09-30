@@ -48,6 +48,7 @@ import {
   monsterDotElement,
 } from "../../../combat/damage/dotTickEvent";
 import { emitPlayerMonsterOnKill } from "../../../combat/damage/killHooks";
+import { emitMechanicFired } from "../../../combat/engine/mechanicFired";
 import { buildKillerFromSourceId } from "../../../world/deathCause";
 import {
   buildSimpleBreakdown,
@@ -117,6 +118,11 @@ export function applyClassDotStack(
   attacker: PlayerEntity,
   defender: MonsterEntity,
   application = resolveClassDotStackApplication(attacker),
+  /**
+   * The exchange this stack rode in on, when there was one. Only used as the
+   * `mechanic-fired` latch below — the stack itself never reads it.
+   */
+  ctx?: Parameters<typeof emitMechanicFired>[2],
 ): void {
   const effect = applyStatusEffect(defender.tracksCombat, {
     id: DOT_EFFECT_ID,
@@ -138,6 +144,20 @@ export function applyClassDotStack(
   effect.data.tickIntervalMs = application.tickIntervalMs;
   effect.data.tickOnExpire = 1;
   attachMarker(world, defender, "hasDot");
+
+  // `mechanic-fired` (progression rework 1c): a full stack is the DoT root's
+  // moment. ONCE PER TARGET PER FILL — the latch lives on the effect's own data,
+  // so it is per target by construction and disappears with the effect when the
+  // stack drops off, which is exactly when a refill should be able to fire again.
+  // Every further hit into a capped stack is the same fill, not a new one.
+  if (application.maxStacks > 0 && effect.stacks >= application.maxStacks) {
+    if (effect.data.maxStackFired !== 1) {
+      effect.data.maxStackFired = 1;
+      emitMechanicFired(world, attacker, ctx);
+    }
+  } else if (effect.data.maxStackFired === 1) {
+    effect.data.maxStackFired = 0;
+  }
 }
 
 // Re-export the pure tick formula from shared so existing importers don't change paths.
@@ -415,7 +435,7 @@ export function initDotArchetype(): void {
       );
     }
 
-    applyClassDotStack(world, attacker, ctx.defender, application);
+    applyClassDotStack(world, attacker, ctx.defender, application, ctx);
   });
 
   // ── Monster → Player: DoT stack application ───────────────────────────────
