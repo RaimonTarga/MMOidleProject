@@ -13,6 +13,7 @@
 //
 // Run: pnpm --filter @mmo-idle/server exec tsx --conditions=development test/dungeons.test.ts
 
+import { baseRecoveryForTier } from '@mmo-idle/shared';
 import {
   DUNGEON_DEFS,
   GAME_CONFIG,
@@ -55,7 +56,7 @@ function makePlayerSlices(
   return {
     isPlayer: { id, name: id },
     hasPosition: { current: { ...pos }, nodeId, speed: GAME_CONFIG.PLAYER_SPEED },
-    hasHealth: { hp: maxHp, maxHp, recovery: GAME_CONFIG.PLAYER_RECOVERY },
+    hasHealth: { hp: maxHp, maxHp, recovery: baseRecoveryForTier(0) },
     tracksProgression: {
       level: 0,
       skillPoints: 0,

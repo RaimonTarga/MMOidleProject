@@ -597,8 +597,12 @@ const abilities: AbilityDef[] = [
     tier: 1,
     icon: "second-wind",
     // The STRONG/SHORT half of the Recovery pair (Recuperate is weak/long).
-    // At base Recovery 10, rank I restores ~20% of max HP over the window and
-    // rank III ~28%, before antiheal and the overheal ward.
+    // Recovery is flat HP/s (Phase 0b, 2026-09-30): rank I restores recovery × 0.5
+    // × 4 s — at the naked T1 base of 6.5 HP/s that is 13 HP, ~10% of a 130 HP
+    // reference pool; charms add to it and a bigger pool does not. If human play
+    // says the button is too weak, raise `recoveryPct` here rather than the base
+    // rate: the 0a bench showed doubling it while a bot fires it at fight start
+    // simply cancels a base-rate cut.
     ranks: [
       { effect: { kind: "heal", recoveryPct: 0.5, durationMs: 4000 }, cooldownMs: 12000 },
       { effect: { kind: "heal", recoveryPct: 0.6, durationMs: 4000 }, cooldownMs: 12000 },

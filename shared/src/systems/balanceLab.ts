@@ -642,7 +642,12 @@ function maxItemTier(): number {
 }
 
 function defensiveItemScore(item: ItemDefinition): number {
-  return (item.statModifiers.maxHp ?? 0) + (item.statModifiers.plating ?? 0) * 5 + (item.statModifiers.damageReduction ?? 0) * 100 + (item.statModifiers.recovery ?? 0) * 4 + (item.mechanicEffects?.['defense.barrier-pct'] ?? 0) * 100;
+  // Recovery is flat HP/s (Phase 0b). The old weight of 4 per point was per
+  // 1%-of-pool point; 400 / referencePool keeps the same relative weight at the
+  // item's own tier so a T4 charm's 78 HP/s is not read as 20× a T1 charm's 4.
+  const pools = GAME_CONFIG.RECOVERY_REFERENCE_POOL_BY_TIER;
+  const pool = pools[Math.max(0, Math.min(pools.length - 1, item.tier))];
+  return (item.statModifiers.maxHp ?? 0) + (item.statModifiers.plating ?? 0) * 5 + (item.statModifiers.damageReduction ?? 0) * 100 + (item.statModifiers.recovery ?? 0) * (400 / pool) + (item.mechanicEffects?.['defense.barrier-pct'] ?? 0) * 100;
 }
 
 function countIds(ids: readonly string[]): Map<string, number> {

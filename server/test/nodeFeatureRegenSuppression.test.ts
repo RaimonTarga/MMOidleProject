@@ -19,6 +19,7 @@
 // (a swamp rot pool), which this test also pins so the fix cannot regress the
 // original "standing in lava" intent.
 
+import { baseRecoveryForTier } from '@mmo-idle/shared';
 import {
   GAME_CONFIG,
   NODE_FEATURES,
@@ -46,7 +47,7 @@ function makePlayerSlices(id: string, nodeId: string, x: number, y: number): Per
   return {
     isPlayer: { id, name: id },
     hasPosition: { current: { x, y }, nodeId, speed: GAME_CONFIG.PLAYER_SPEED },
-    hasHealth: { hp: 500, maxHp: 1_000, recovery: GAME_CONFIG.PLAYER_RECOVERY },
+    hasHealth: { hp: 500, maxHp: 1_000, recovery: baseRecoveryForTier(0) },
     tracksProgression: {
       level: 0,
       skillPoints: 0,

@@ -10,6 +10,7 @@
 // detaches again. The result is the auto-combat wedge: full HP, a live target, a
 // planned route, and a player that never moves again.
 
+import { baseRecoveryForTier } from "@mmo-idle/shared";
 import { GAME_CONFIG, emptyEquipment } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { navigationPadForEntity } from "../src/systems/world/movement";
@@ -31,7 +32,7 @@ function playerSlices(id: string, nodeId: string): PersistedPlayerSlices {
     hasHealth: {
       hp: GAME_CONFIG.PLAYER_MAX_HP,
       maxHp: GAME_CONFIG.PLAYER_MAX_HP,
-      recovery: GAME_CONFIG.PLAYER_RECOVERY,
+      recovery: baseRecoveryForTier(0),
     },
     tracksProgression: {
       level: 0,

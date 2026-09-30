@@ -8,6 +8,7 @@
  *
  * Run: pnpm --filter @mmo-idle/server exec tsx --conditions=development test/cleanseEvent.test.ts
  */
+import { baseRecoveryForTier } from '@mmo-idle/shared';
 import {
   GAME_CONFIG,
   STARTER_RUNE_IDS,
@@ -42,7 +43,7 @@ function makePlayerSlices(id: string, guards: string[], playerTier: number): Per
     hasHealth: {
       hp: GAME_CONFIG.PLAYER_MAX_HP,
       maxHp: GAME_CONFIG.PLAYER_MAX_HP,
-      recovery: GAME_CONFIG.PLAYER_RECOVERY,
+      recovery: baseRecoveryForTier(0),
     },
     tracksProgression: {
       level: 0,

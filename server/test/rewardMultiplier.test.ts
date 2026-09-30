@@ -12,6 +12,7 @@
 //
 // Run: pnpm --filter @mmo-idle/server exec tsx --conditions=development test/rewardMultiplier.test.ts
 
+import { baseRecoveryForTier } from '@mmo-idle/shared';
 import {
   DEBUG_REWARD_MULT_DEFAULT,
   DEBUG_REWARD_MULT_MAX,
@@ -42,7 +43,7 @@ function makePlayer(id: string, playerTier = 4): PersistedPlayerSlices {
     hasHealth: {
       hp: GAME_CONFIG.PLAYER_MAX_HP,
       maxHp: GAME_CONFIG.PLAYER_MAX_HP,
-      recovery: GAME_CONFIG.PLAYER_RECOVERY,
+      recovery: baseRecoveryForTier(0),
     },
     tracksProgression: {
       level: 0,

@@ -2,8 +2,9 @@
 // a fraction of `hasHealth.recovery` instead of inventing its own %-maxHp heal.
 // What is worth pinning is the wiring a mistake would silently break — that
 // fractions from different sources ADD, that a source refreshes rather than
-// stacks itself, that the payout is the rate (so it moves when Recovery moves),
-// and that out of combat the player runs at a flat 100%.
+// stacks itself, that the payout is the FLAT rate (HP/s, so it moves when
+// Recovery moves and not when max HP does), and that out of combat the player
+// heals a fixed share of max HP that ignores the stat entirely (Phase 0b).
 //
 // Numbers here are mechanic invariants, never balance values: every expectation
 // is derived from whatever the config and skill tree actually say.
@@ -13,6 +14,7 @@
 import {
   GAME_CONFIG,
   SKILL_TREE,
+  baseRecoveryForTier,
   STARTER_RUNE_IDS,
   emptyEquipment,
   getResource,
@@ -25,6 +27,7 @@ import { initCombatSystems } from "../src/systems/combatBootstrap";
 import {
   activateRecovery,
   activeRecoveryFraction,
+  oocRecoveryPerSecond,
   recoveryPerSecond,
   resetRecoverySources,
   runRecovery,
@@ -64,7 +67,7 @@ function makePlayerSlices(id: string): PersistedPlayerSlices {
       nodeId: "node-5-5",
       speed: GAME_CONFIG.PLAYER_SPEED,
     },
-    hasHealth: { hp: 500, maxHp: 1_000, recovery: GAME_CONFIG.PLAYER_RECOVERY },
+    hasHealth: { hp: 500, maxHp: 1_000, recovery: baseRecoveryForTier(0) },
     tracksProgression: {
       level: 0,
       skillPoints: 0,
@@ -106,13 +109,13 @@ initCombatSystems();
 
 const world = new World();
 
-// ── Out of combat is a flat 100%; in combat starts at zero ───────────────────
+// ── Out of combat is a fixed share of max HP; in combat starts at zero ───────
 
 {
   const player = world.attachPlayerEntity(makePlayerSlices("ooc"), "ooc");
   assert(
-    activeRecoveryFraction(player, false) === 1,
-    "out of combat the player recovers at the full rate",
+    activeRecoveryFraction(player, false) === 0,
+    "out of combat no Recovery FRACTION is active — OOC healing is its own fixed rate",
   );
   assert(
     activeRecoveryFraction(player, true) === 0,
@@ -121,16 +124,32 @@ const world = new World();
 
   // A node hazard suppresses the OOC rate without touching in-combat access.
   assert(
-    activeRecoveryFraction(player, false, true) === 0,
-    "a node-feature hazard blocks out-of-combat Recovery",
+    oocRecoveryPerSecond(player, true) === 0,
+    "a node-feature hazard blocks out-of-combat healing",
   );
 
   const before = player.hasHealth.hp;
   advance(player, 1_000, false);
-  const expected = player.hasHealth.maxHp * (GAME_CONFIG.PLAYER_RECOVERY / 100);
+  const expected = player.hasHealth.maxHp * GAME_CONFIG.OOC_RECOVERY_PCT;
   assert(
     Math.abs(player.hasHealth.hp - (before + expected)) < 0.001,
     `one OOC second should restore ${expected} HP, got ${player.hasHealth.hp - before}`,
+  );
+
+  // The OOC rate is independent of the stat: zero Recovery heals exactly the same.
+  player.hasHealth.recovery = 0;
+  const beforeZero = player.hasHealth.hp;
+  advance(player, 1_000, false);
+  assert(
+    Math.abs(player.hasHealth.hp - (beforeZero + expected)) < 0.001,
+    "out-of-combat healing must not depend on hasHealth.recovery",
+  );
+  // ...and empty-to-full takes the same wall time at any pool size.
+  player.hasHealth.hp = 0;
+  advanceTicks(player, Math.round(1_000 / GAME_CONFIG.OOC_RECOVERY_PCT), false);
+  assert(
+    player.hasHealth.hp >= player.hasHealth.maxHp - 0.001,
+    `empty to full should take ${1 / GAME_CONFIG.OOC_RECOVERY_PCT} s out of combat`,
   );
 }
 
@@ -200,7 +219,8 @@ const world = new World();
   assert(getResource(cs, "recovery.killPct") === 0, "the lapsed fraction is cleared");
 }
 
-// ── The payout is the RATE: raise Recovery, the same fraction heals more ─────
+// ── The payout is the FLAT RATE: raise Recovery and the same fraction heals more;
+//    raise max HP and it does not ────────────────────────────────────────────
 
 {
   const player = world.attachPlayerEntity(makePlayerSlices("scaling"), "scaling");
@@ -208,6 +228,15 @@ const world = new World();
   activateRecovery(cs, "skill", 0.5, 60_000);
 
   const atBase = recoveryPerSecond(player, activeRecoveryFraction(player, true));
+  assert(
+    Math.abs(atBase - (player.hasHealth.recovery ?? 0) * 0.5) < 1e-9,
+    `50% of a ${player.hasHealth.recovery} HP/s rate should heal ${(player.hasHealth.recovery ?? 0) * 0.5} HP/s, got ${atBase}`,
+  );
+  player.hasHealth.maxHp *= 4;
+  assert(
+    Math.abs(recoveryPerSecond(player, activeRecoveryFraction(player, true)) - atBase) < 1e-9,
+    "a bigger pool must not heal faster: Recovery is flat HP/s",
+  );
   player.hasHealth.recovery = (player.hasHealth.recovery ?? 0) * 2;
   const atDouble = recoveryPerSecond(player, activeRecoveryFraction(player, true));
   assert(
@@ -221,6 +250,30 @@ const world = new World();
   assert(
     Math.abs(player.hasHealth.hp - (100 + atDouble)) < 0.001,
     `runRecovery should apply ${atDouble} HP, got ${player.hasHealth.hp - 100}`,
+  );
+}
+
+// ── The base rate is per player tier, from the reference-pool table ──────────
+
+{
+  const player = world.attachPlayerEntity(makePlayerSlices("tiers"), "tiers");
+  const pools = GAME_CONFIG.RECOVERY_REFERENCE_POOL_BY_TIER;
+  for (let tier = 0; tier < pools.length; tier++) {
+    player.tracksProgression.playerTier = tier;
+    recalculatePlayerEntityStats(world, player);
+    const expected = Math.round(GAME_CONFIG.RECOVERY_BASE_FRACTION * pools[tier] * 10) / 10;
+    assert(
+      player.hasHealth.recovery === expected,
+      `tier ${tier} naked Recovery should be ${expected} HP/s, got ${player.hasHealth.recovery}`,
+    );
+    assert(
+      player.hasHealth.recovery === baseRecoveryForTier(tier),
+      "recalc and baseRecoveryForTier must agree",
+    );
+  }
+  assert(
+    baseRecoveryForTier(pools.length + 3) === baseRecoveryForTier(pools.length - 1),
+    "tiers past the table hold at the last entry",
   );
 }
 

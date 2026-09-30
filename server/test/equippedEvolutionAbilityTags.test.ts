@@ -1,3 +1,4 @@
+import { baseRecoveryForTier } from "@mmo-idle/shared";
 import assert from "node:assert/strict";
 import { ABILITY_DATABASE, GAME_CONFIG, STARTER_RUNE_IDS, emptyEquipment, getStatusEffect,
   ITEM_DATABASE, RECIPE_DATABASE, requiredPlusFor, abilityTags, abilityHasTag, abilityRankAt,
@@ -27,7 +28,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
     hasHealth: {
       hp: GAME_CONFIG.PLAYER_MAX_HP,
       maxHp: GAME_CONFIG.PLAYER_MAX_HP,
-      recovery: GAME_CONFIG.PLAYER_RECOVERY,
+      recovery: baseRecoveryForTier(0),
     },
     tracksProgression: {
       level: 0,

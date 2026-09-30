@@ -1,3 +1,4 @@
+import { baseRecoveryForTier } from '@mmo-idle/shared';
 import {
   tierEntryProfileFromT1Snapshot,
   type T1CharacterSnapshot,
@@ -70,7 +71,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
     hasHealth: {
       hp: GAME_CONFIG.PLAYER_MAX_HP,
       maxHp: GAME_CONFIG.PLAYER_MAX_HP,
-      recovery: GAME_CONFIG.PLAYER_RECOVERY,
+      recovery: baseRecoveryForTier(0),
     },
     tracksProgression: {
       level: 0,

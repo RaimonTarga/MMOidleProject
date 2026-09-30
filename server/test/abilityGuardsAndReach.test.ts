@@ -14,6 +14,7 @@
  *
  * Run: pnpm --filter @mmo-idle/server exec tsx --conditions=development test/abilityGuardsAndReach.test.ts
  */
+import { baseRecoveryForTier } from '@mmo-idle/shared';
 import {
   ABILITY_CONTROL_RESIST_EFFECT_ID,
   ABILITY_FRENZY_EFFECT_ID,
@@ -64,7 +65,7 @@ function makePlayerSlices(
     hasHealth: {
       hp: GAME_CONFIG.PLAYER_MAX_HP,
       maxHp: GAME_CONFIG.PLAYER_MAX_HP,
-      recovery: GAME_CONFIG.PLAYER_RECOVERY,
+      recovery: baseRecoveryForTier(0),
     },
     tracksProgression: {
       level: 0,

@@ -1,3 +1,4 @@
+import { baseRecoveryForTier } from "@mmo-idle/shared";
 import { DEFAULT_RUNE_LOADOUT } from "@mmo-idle/shared";
 import {
   GAME_CONFIG,
@@ -30,7 +31,7 @@ function playerSlices(): PersistedPlayerSlices {
     hasHealth: {
       hp: GAME_CONFIG.PLAYER_MAX_HP,
       maxHp: GAME_CONFIG.PLAYER_MAX_HP,
-      recovery: GAME_CONFIG.PLAYER_RECOVERY,
+      recovery: baseRecoveryForTier(0),
     },
     tracksProgression: {
       level: 0,

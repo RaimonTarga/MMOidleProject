@@ -60,10 +60,11 @@ function applyQueueScopedCombatRecovery(
 ): void {
   if (!hasReconstructionDebt(owner)) return;
   if (!isPlayerInCombat(owner, now)) return;
-  const regenPctPerSecond = owner.hasHealth.recovery ?? 0;
-  if (regenPctPerSecond <= 0) return;
+  // Flat HP/s (Phase 0b): a share of the owner's Recovery rate, not of the pool.
+  const recoveryPerSecond = owner.hasHealth.recovery ?? 0;
+  if (recoveryPerSecond <= 0) return;
   const recoveryRatio = summonerProfileFor(owner).reconstructionCombatRegenPct;
-  const amount = owner.hasHealth.maxHp * (regenPctPerSecond / 100) * (dt / 1_000) * recoveryRatio;
+  const amount = recoveryPerSecond * (dt / 1_000) * recoveryRatio;
   const before = owner.hasHealth.hp;
   applyHealToPlayer(owner, owner.tracksCombat, amount, world);
   emitSummonObservation(owner, { kind: 'queue-heal', hp: owner.hasHealth.hp - before });

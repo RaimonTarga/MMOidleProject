@@ -30,7 +30,7 @@ export const STAT_HELP: Record<string, string> = {
   classAffinity:
     'A class affinity: a percentage of the stat you already have, rather than a flat number. Every affinity your class tree grants for a stat is added together, then applied once to your gear-built total — root +30%, frame +22% and range +10% Max HP is +62%, not three separate multiplications. Because it scales with your equipment, your class keeps the same shape at every tier instead of being drowned out by better gear.',
   recovery:
-    'Your recovery rate: 1 point restores 1% of your max HP per second while Recovery is fully active. Out of combat it runs at 100%. In combat it is off by default — class passives, charms and skills each switch on a share of it, and those shares add together.',
+    'Your in-combat recovery rate: 1 point restores 1 HP per second while Recovery is fully active. It does not grow with your max HP. In combat it is off by default — class passives, charms and skills each switch on a share of it, and those shares add together. Out of combat you heal a fixed 10% of max HP per second regardless of this stat.',
 
   // ── Evasion ───────────────────────────────────────────────────────────────
   dodgeRate:

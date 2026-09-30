@@ -13,6 +13,7 @@
  *
  * Run: pnpm --filter @mmo-idle/server exec tsx --conditions=development test/abilityTempo.test.ts
  */
+import { baseRecoveryForTier } from '@mmo-idle/shared';
 import {
   ABILITY_DATABASE,
   GAME_CONFIG,
@@ -66,7 +67,7 @@ function slices(id: string, options: Options = {}): PersistedPlayerSlices {
       nodeId: "node-5-5",
       speed: GAME_CONFIG.PLAYER_SPEED,
     },
-    hasHealth: { hp: 5_000, maxHp: 5_000, recovery: GAME_CONFIG.PLAYER_RECOVERY },
+    hasHealth: { hp: 5_000, maxHp: 5_000, recovery: baseRecoveryForTier(0) },
     tracksProgression: {
       level: 0,
       skillPoints: 0,

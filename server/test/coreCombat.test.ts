@@ -4,6 +4,7 @@
 //
 // Run: pnpm --filter @mmo-idle/server exec tsx --conditions=development test/coreCombat.test.ts
 
+import { baseRecoveryForTier } from "@mmo-idle/shared";
 import {
   ABILITY_DATABASE,
   abilityCooldownMs,
@@ -45,7 +46,7 @@ function makePlayerSlices(id: string): PersistedPlayerSlices {
     hasHealth: {
       hp: GAME_CONFIG.PLAYER_MAX_HP,
       maxHp: GAME_CONFIG.PLAYER_MAX_HP,
-      recovery: GAME_CONFIG.PLAYER_RECOVERY,
+      recovery: baseRecoveryForTier(0),
     },
     tracksProgression: {
       level: 0, skillPoints: 0,
@@ -102,8 +103,8 @@ const world = new World();
   recalculatePlayerEntityStats(world, player);
   const base = player.hasHealth.recovery ?? 0;
   assert(
-    base === GAME_CONFIG.PLAYER_RECOVERY,
-    `expected the naked baseline Recovery ${GAME_CONFIG.PLAYER_RECOVERY}, got ${base}`,
+    base === baseRecoveryForTier(player.tracksProgression.playerTier),
+    `expected the naked baseline Recovery ${baseRecoveryForTier(player.tracksProgression.playerTier)}, got ${base}`,
   );
 
   player.usesSkills.unlockedSkills = [];

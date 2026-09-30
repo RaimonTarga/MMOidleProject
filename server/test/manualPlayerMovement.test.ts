@@ -1,3 +1,4 @@
+import { baseRecoveryForTier } from '@mmo-idle/shared';
 import { GAME_CONFIG, emptyEquipment, moverOverlapsBlockShapes, navigationBodyHalfExtents, type NodeFeatureShape } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { applyManualMoveIntent } from '../src/systems/world/manualMove';
@@ -19,7 +20,7 @@ function playerSlices(id: string, nodeId: string): PersistedPlayerSlices {
     hasHealth: {
       hp: GAME_CONFIG.PLAYER_MAX_HP,
       maxHp: GAME_CONFIG.PLAYER_MAX_HP,
-      recovery: GAME_CONFIG.PLAYER_RECOVERY,
+      recovery: baseRecoveryForTier(0),
     },
     tracksProgression: {
       level: 0,

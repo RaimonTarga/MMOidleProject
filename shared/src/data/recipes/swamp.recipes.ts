@@ -89,7 +89,7 @@ export const swampRecipeEntries = [
   ['swamp-charm-t1', {
     id: 'swamp-charm-t1', name: 'Murk Eye',
     recipeGroup: 'swamp', requiredBiomeLevel: 3, slot: 'recovery',
-    cost: { purple: 18 }, stats: { recovery: 2 },
+    cost: { purple: 18 }, stats: { recovery: 2.6 },
     mechanicEffects: {
       'defense.recovery-pulse-pct': 0.20,
       'defense.recovery-pulse-interval-ms': 8000,
@@ -102,7 +102,7 @@ export const swampRecipeEntries = [
     upgrades: [
       { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 10 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 25 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 40 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 1.3 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 40 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 60 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 75 }, requiredBiomeLevel: 4 },
     ],
@@ -183,7 +183,7 @@ export const swampRecipeEntries = [
     id: 'swamp-charm-t2', name: 'Bog Eye',
     recipeGroup: 'swamp', requiredBiomeLevel: 9, slot: 'recovery',
     evolvesFrom: 'swamp-charm-t1',
-    cost: { purple: 44 }, stats: { recovery: 4 }, // family-tag: attrition-Recovery charm → Fortified
+    cost: { purple: 44 }, stats: { recovery: 8 }, // family-tag: attrition-Recovery charm → Fortified
     reconstructCost: { purple: 154 }, reconstructCatalystCost: { fortified: 2 },
     mechanicEffects: {
       'defense.recovery-pulse-pct': 0.32,
@@ -196,9 +196,9 @@ export const swampRecipeEntries = [
     description: 'A bog-touched eye that drinks deep and gives quietly back.',
     upgrades: [
       { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 18 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 45 }, requiredBiomeLevel: 10 },
+      { stats: { recovery: 2 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 45 }, requiredBiomeLevel: 10 },
       { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 72 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 117 }, requiredBiomeLevel: 10 },
+      { stats: { recovery: 2 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 117 }, requiredBiomeLevel: 10 },
       { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 198 }, catalystCost: { fortified: 1 }, requiredBiomeLevel: 10 },
     ],
   }],
@@ -281,7 +281,7 @@ export const swampRecipeEntries = [
     // from another biome's mechanic, so the hybrid rule ("splash = the colour of the
     // borrowed mechanic") produces no splash here.
     evolvesFrom: 'swamp-charm-t2',
-    cost: { purple: 100 }, stats: { recovery: 7 }, // family-tag: attrition-Recovery charm → Fortified
+    cost: { purple: 100 }, stats: { recovery: 23.1 }, // family-tag: attrition-Recovery charm → Fortified
     reconstructCost: { purple: 350 }, reconstructCatalystCost: { fortified: 3 },
     mechanicEffects: {
       'defense.recovery-pulse-pct': 0.44,
@@ -294,10 +294,10 @@ export const swampRecipeEntries = [
     description: 'It weeps for every wound, and gives the tears back as strength.',
     upgrades: [
       { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 36 },  requiredBiomeLevel: 16 },
-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 89 }, requiredBiomeLevel: 16 },
+      { stats: { recovery: 3.3 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 89 }, requiredBiomeLevel: 16 },
       { mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 142 }, requiredBiomeLevel: 16 },
-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 231 }, requiredBiomeLevel: 16 },
-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 390 }, catalystCost: { fortified: 2 }, requiredBiomeLevel: 16 },
+      { stats: { recovery: 3.3 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 231 }, requiredBiomeLevel: 16 },
+      { stats: { recovery: 3.3 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02 }, cost: { purple: 390 }, catalystCost: { fortified: 2 }, requiredBiomeLevel: 16 },
     ],
   }],
 

@@ -1,3 +1,4 @@
+import { baseRecoveryForTier } from '@mmo-idle/shared';
 import {
   CLEARING_NODE_ID,
   GAME_CONFIG,
@@ -32,7 +33,7 @@ const slices: PersistedPlayerSlices = {
   hasHealth: {
     hp: GAME_CONFIG.PLAYER_MAX_HP,
     maxHp: GAME_CONFIG.PLAYER_MAX_HP,
-    recovery: GAME_CONFIG.PLAYER_RECOVERY,
+    recovery: baseRecoveryForTier(0),
   },
   tracksProgression: {
     level: 0,

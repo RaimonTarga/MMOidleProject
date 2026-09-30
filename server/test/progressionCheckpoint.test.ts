@@ -1,3 +1,4 @@
+import { baseRecoveryForTier } from '@mmo-idle/shared';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
 import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
@@ -24,7 +25,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
     hasHealth: {
       hp: GAME_CONFIG.PLAYER_MAX_HP,
       maxHp: GAME_CONFIG.PLAYER_MAX_HP,
-      recovery: GAME_CONFIG.PLAYER_RECOVERY,
+      recovery: baseRecoveryForTier(0),
     },
     tracksProgression: {
       level: 0,

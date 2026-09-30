@@ -4,6 +4,7 @@
 // Rampage. Each block compares an otherwise identical build at secondary
 // relic rating 0 vs +25%, using the real runtime call sites (not a
 // reimplementation of the formula).
+import { baseRecoveryForTier } from '@mmo-idle/shared';
 import {
   GAME_CONFIG,
   STARTER_RUNE_IDS,
@@ -121,7 +122,7 @@ function fixture(archetype: 'dot' | 'energy' | 'cadence') {
   const slices: PersistedPlayerSlices = {
     isPlayer: { id, name: id },
     hasPosition: { current: { x: 400, y: 400 }, nodeId: 'node-clearing', speed: GAME_CONFIG.PLAYER_SPEED },
-    hasHealth: { hp: 1000, maxHp: 1000, recovery: GAME_CONFIG.PLAYER_RECOVERY },
+    hasHealth: { hp: 1000, maxHp: 1000, recovery: baseRecoveryForTier(0) },
     tracksProgression: {
       level: 0, skillPoints: 0, essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
       catalysts: {}, catalystProgress: {}, biomeXP: {}, biomeLevel: {}, unlockedRecipes: [],

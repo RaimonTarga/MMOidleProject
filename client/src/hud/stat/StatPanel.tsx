@@ -366,9 +366,9 @@ export function StatPanel() {
                 id: 'regen',
                 glyph: STAT_GLYPH.regen,
                 value: String(Math.round(player.recovery * 10) / 10),
-                // Recovery is a rate expressed in points, where 1 point = 1% of
-                // max HP per second at 100% active Recovery — not raw HP/s.
-                unit: '',
+                // Recovery is a flat rate: 1 point = 1 HP per second at 100%
+                // active Recovery (Phase 0b). It no longer scales with max HP.
+                unit: 'HP/s',
                 name: 'Recovery',
                 help: STAT_HELP.recovery,
                 watch: player.recovery,
@@ -433,7 +433,7 @@ export function StatPanel() {
               value={player ? `${Math.round(player.damageReduction * 100)}%` : '—'}
               help={STAT_HELP.damageReduction}
             />
-            <StatRow label="Recovery" value={player ? `${player.recovery}` : '—'} help={STAT_HELP.recovery} />
+            <StatRow label="Recovery" value={player ? `${player.recovery} HP/s` : '—'} help={STAT_HELP.recovery} />
           </div>
 
           {player && player.dodgeRate > 0 && (

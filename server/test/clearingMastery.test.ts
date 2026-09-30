@@ -2,6 +2,7 @@
 // move a fresh player through the dedicated Clearing table without changing
 // the First Blood quest or unrelated reward currencies.
 
+import { baseRecoveryForTier } from '@mmo-idle/shared';
 import {
   CLEARING_MASTERY_XP_THRESHOLDS,
   GAME_CONFIG,
@@ -26,7 +27,7 @@ function freshPlayer(id: string): PersistedPlayerSlices {
     hasHealth: {
       hp: GAME_CONFIG.PLAYER_MAX_HP,
       maxHp: GAME_CONFIG.PLAYER_MAX_HP,
-      recovery: GAME_CONFIG.PLAYER_RECOVERY,
+      recovery: baseRecoveryForTier(0),
     },
     tracksProgression: {
       level: 0,

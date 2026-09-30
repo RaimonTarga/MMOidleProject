@@ -10,7 +10,7 @@ import type { Recipe } from './types';
 // It is meant to be replaced wholesale by T1 specialist gear, not invested in.
 //
 // Sanity check (before class affinity), with the full set equipped:
-//   HP 100 → 120 · plating 2 → 6 · Recovery 10 → 12 · raw DPS (15+8) × 0.75 ≈ 17
+//   HP 100 → 120 · plating 2 → 6 · Recovery 5 → 7 HP/s · raw DPS (15+8) × 0.75 ≈ 17
 //   A 50 HP Plains Slime therefore takes three clean Club hits.
 // ─────────────────────────────────────────────────────────────────────────
 

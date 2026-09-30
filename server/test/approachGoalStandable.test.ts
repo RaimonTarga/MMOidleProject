@@ -17,6 +17,7 @@
  * bug even when procedural terrain reshuffles (which is exactly how it first
  * surfaced — a node-size change moved which trunk the sibling test picks).
  */
+import { baseRecoveryForTier } from '@mmo-idle/shared';
 import {
   aabbHalfExtents,
   emptyEquipment,
@@ -44,7 +45,7 @@ function playerSlices(id: string, nodeId: string): PersistedPlayerSlices {
     hasHealth: {
       hp: GAME_CONFIG.PLAYER_MAX_HP,
       maxHp: GAME_CONFIG.PLAYER_MAX_HP,
-      recovery: GAME_CONFIG.PLAYER_RECOVERY,
+      recovery: baseRecoveryForTier(0),
     },
     tracksProgression: {
       level: 0, skillPoints: 0,

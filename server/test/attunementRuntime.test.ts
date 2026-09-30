@@ -1,3 +1,4 @@
+import { baseRecoveryForTier } from "@mmo-idle/shared";
 import { saveCharacter, loadCharacter } from "../src/db/playerRepo";
 import type { DB } from "../src/db/playerRepo";
 import { ABILITY_DATABASE, GAME_CONFIG, STARTER_RUNE_IDS, emptyEquipment, getCooldown, getStatusEffect, runicPointLoadoutCost, runicLoadoutFromProgression, composePlayerView } from "@mmo-idle/shared";
@@ -22,7 +23,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
       // Below Brace's hp-below 0.5 trigger so both Guards want to fire.
       hp: Math.round(GAME_CONFIG.PLAYER_MAX_HP * 0.4),
       maxHp: GAME_CONFIG.PLAYER_MAX_HP,
-      recovery: GAME_CONFIG.PLAYER_RECOVERY,
+      recovery: baseRecoveryForTier(0),
     },
     tracksProgression: {
       level: 0,

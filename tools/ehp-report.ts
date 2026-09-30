@@ -519,7 +519,9 @@ function recoveryPerSec(
   notes: string[],
 ): number {
   // HP/s at 100% active Recovery. Every access fraction below is a share of this.
-  const fullRate = maxHp * (recoveryStat / 100);
+  // Recovery is flat (Phase 0b): the stat IS the HP/s; max HP no longer enters.
+  void maxHp;
+  const fullRate = recoveryStat;
   let healPerSec = 0;
 
   const inCombatPct = p['defense.recovery-active-pct'] ?? 0;

@@ -14,6 +14,7 @@
  *
  * Run: pnpm --filter @mmo-idle/server exec tsx --conditions=development test/_sweepTempoMeasure.ts
  */
+import { baseRecoveryForTier } from '@mmo-idle/shared';
 import {
   ABILITY_DATABASE,
   GAME_CONFIG,
@@ -45,7 +46,7 @@ function slices(id: string, tier: number, archetype: Archetype, frame: string | 
   return {
     isPlayer: { id, name: id },
     hasPosition: { current: { x: 400, y: 400 }, nodeId: "node-5-5", speed: GAME_CONFIG.PLAYER_SPEED },
-    hasHealth: { hp: 100_000, maxHp: 100_000, recovery: GAME_CONFIG.PLAYER_RECOVERY },
+    hasHealth: { hp: 100_000, maxHp: 100_000, recovery: baseRecoveryForTier(0) },
     tracksProgression: {
       level: 0, skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },

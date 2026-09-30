@@ -1,3 +1,4 @@
+import { baseRecoveryForTier } from "@mmo-idle/shared";
 import assert from "node:assert/strict";
 import {
   ACTION_DATABASE, DEFAULT_AUTOCOMBAT_CONFIG, DEFAULT_RUNE_LOADOUT, GAME_CONFIG,
@@ -30,7 +31,7 @@ function makeReloadPlayerSlices(id: string): PersistedPlayerSlices {
     hasHealth: {
       hp: GAME_CONFIG.PLAYER_MAX_HP / 2,
       maxHp: GAME_CONFIG.PLAYER_MAX_HP,
-      recovery: GAME_CONFIG.PLAYER_RECOVERY,
+      recovery: baseRecoveryForTier(0),
     },
     tracksProgression: {
       level: 0,

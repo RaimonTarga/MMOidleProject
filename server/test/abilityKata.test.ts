@@ -7,6 +7,7 @@
  *
  * Run: pnpm --filter @mmo-idle/server exec tsx --conditions=development test/abilityKata.test.ts
  */
+import { baseRecoveryForTier } from '@mmo-idle/shared';
 import {
   GAME_CONFIG,
   STARTER_RUNE_IDS,
@@ -33,7 +34,7 @@ function slices(id: string, weapon: string | null): PersistedPlayerSlices {
   return {
     isPlayer: { id, name: id },
     hasPosition: { current: { x: 400, y: 400 }, nodeId: "node-5-5", speed: GAME_CONFIG.PLAYER_SPEED },
-    hasHealth: { hp: GAME_CONFIG.PLAYER_MAX_HP, maxHp: GAME_CONFIG.PLAYER_MAX_HP, recovery: GAME_CONFIG.PLAYER_RECOVERY },
+    hasHealth: { hp: GAME_CONFIG.PLAYER_MAX_HP, maxHp: GAME_CONFIG.PLAYER_MAX_HP, recovery: baseRecoveryForTier(0) },
     tracksProgression: {
       level: 0, skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },

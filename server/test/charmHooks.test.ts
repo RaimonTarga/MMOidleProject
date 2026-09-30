@@ -1,6 +1,7 @@
 // Charm Guard hooks (2026-09-26): each charm line's Recovery delivery answers to its
 // own biome's Guard. Real charms at +5, real Guards fired through rune wiring.
 // Expectations read the equipped values, so the balance pass can move numbers freely.
+import { baseRecoveryForTier } from "@mmo-idle/shared";
 import assert from "node:assert/strict";
 import {
   ABILITY_DATABASE, GAME_CONFIG, STARTER_RUNE_IDS, applyStatusEffect, emptyEquipment,
@@ -21,7 +22,7 @@ function slices(id: string): PersistedPlayerSlices {
   return {
     isPlayer: { id, name: id },
     hasPosition: { current: { x: 400, y: 400 }, nodeId: "node-5-5", speed: GAME_CONFIG.PLAYER_SPEED },
-    hasHealth: { hp: 1000, maxHp: 1000, recovery: GAME_CONFIG.PLAYER_RECOVERY },
+    hasHealth: { hp: 1000, maxHp: 1000, recovery: baseRecoveryForTier(0) },
     tracksProgression: {
       level: 0, skillPoints: 0, essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
       catalysts: {}, catalystProgress: {}, biomeXP: {}, biomeLevel: {}, unlockedRecipes: [],

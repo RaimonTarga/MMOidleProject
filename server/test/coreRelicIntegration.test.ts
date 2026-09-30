@@ -1,4 +1,5 @@
 // Runtime regressions for class-resolved relics and the common on-hit channel.
+import { baseRecoveryForTier } from '@mmo-idle/shared';
 import {
   GAME_CONFIG, STARTER_RUNE_IDS, emptyEquipment, ITEM_DATABASE,
   relicRatingsFromEffects, resolveRelicPreview, resolveSummonerProfile,
@@ -24,7 +25,7 @@ function fixture(archetype: 'cadence' | 'cooldown' | 'reload' | 'dot' | 'energy'
   const slices: PersistedPlayerSlices = {
     isPlayer: { id, name: id },
     hasPosition: { current: { x: 400, y: 400 }, nodeId: 'node-clearing', speed: GAME_CONFIG.PLAYER_SPEED },
-    hasHealth: { hp: 1000, maxHp: 1000, recovery: GAME_CONFIG.PLAYER_RECOVERY },
+    hasHealth: { hp: 1000, maxHp: 1000, recovery: baseRecoveryForTier(0) },
     tracksProgression: {
       level: 0, skillPoints: 0, essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
       catalysts: {}, catalystProgress: {}, biomeXP: {}, biomeLevel: {}, unlockedRecipes: [],

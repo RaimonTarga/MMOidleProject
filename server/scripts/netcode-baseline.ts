@@ -2,6 +2,7 @@
  * Offline netcode payload baseline — run with:
  *   pnpm --filter @mmo-idle/server exec tsx scripts/netcode-baseline.ts
  */
+import { baseRecoveryForTier } from '@mmo-idle/shared';
 import {
   emptyEquipment,
   GAME_CONFIG,
@@ -52,7 +53,7 @@ function makePlayer(id: string, nodeId: string, name: string): PersistedPlayerSl
     hasHealth: {
       hp: GAME_CONFIG.PLAYER_MAX_HP,
       maxHp: GAME_CONFIG.PLAYER_MAX_HP,
-      recovery: GAME_CONFIG.PLAYER_RECOVERY,
+      recovery: baseRecoveryForTier(0),
     },
     tracksProgression: {
       level: 0,

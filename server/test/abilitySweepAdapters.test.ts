@@ -1,4 +1,5 @@
 /** Focused wiring coverage for the Apprentice and Slinger Sweep adapters. */
+import { baseRecoveryForTier } from '@mmo-idle/shared';
 import {
   ABILITY_DATABASE,
   ABILITY_SWEEP_FX,
@@ -93,7 +94,7 @@ function makePlayerSlices(id: string, archetype: SweepArchetype): PersistedPlaye
     hasHealth: {
       hp: GAME_CONFIG.PLAYER_MAX_HP,
       maxHp: GAME_CONFIG.PLAYER_MAX_HP,
-      recovery: GAME_CONFIG.PLAYER_RECOVERY,
+      recovery: baseRecoveryForTier(0),
     },
     tracksProgression: {
       level: 0,

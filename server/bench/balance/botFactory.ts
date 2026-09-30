@@ -1,3 +1,4 @@
+import { baseRecoveryForTier } from '@mmo-idle/shared';
 import {
   ABILITY_DATABASE,
   DEFAULT_AUTOCOMBAT_CONFIG,
@@ -178,7 +179,7 @@ function buildBotSlices(
     hasHealth: {
       hp: GAME_CONFIG.PLAYER_MAX_HP,
       maxHp: GAME_CONFIG.PLAYER_MAX_HP,
-      recovery: GAME_CONFIG.PLAYER_RECOVERY,
+      recovery: baseRecoveryForTier(0),
     },
     tracksProgression: {
       level: 0,

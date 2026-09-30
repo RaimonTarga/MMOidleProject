@@ -30,6 +30,17 @@ import { stopEntity } from '../../../world/movement';
 import { summonerProfileFor } from './profile';
 import { emitSummonObservation } from './observation';
 
+/**
+ * A minion's flat out-of-combat Recovery (HP/s): the owner's flat rate scaled
+ * by the minion's pool relative to the owner's, so a body one third the size
+ * heals a third as many HP per second and refills on the same clock (Phase 0b).
+ */
+export function minionRecoveryFor(owner: PlayerEntity, minionMaxHp: number): number {
+  const ownerMaxHp = Math.max(1, owner.hasHealth.maxHp);
+  return Math.round((owner.hasHealth.recovery ?? 0) * (minionMaxHp / ownerMaxHp) * 100) / 100;
+}
+
+
 const MINION_BASE_HP_MIN = 10;
 const FOLLOW_RADIUS = 44;
 
@@ -232,7 +243,7 @@ export function spawnMinionForOwner(
     hasHealth: {
       hp: maxHp,
       maxHp,
-      recovery: owner.hasHealth.recovery,
+      recovery: minionRecoveryFor(owner, maxHp),
     },
     dealsDamage: {
       attack,

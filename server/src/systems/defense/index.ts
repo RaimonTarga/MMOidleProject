@@ -114,6 +114,7 @@ export {
 export {
   activateRecovery,
   activeRecoveryFraction,
+  oocRecoveryPerSecond,
   recoveryPerSecond,
   type RecoverySourceId,
 } from "./regen/recovery";

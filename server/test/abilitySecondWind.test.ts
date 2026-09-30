@@ -1,3 +1,4 @@
+import { baseRecoveryForTier } from "@mmo-idle/shared";
 import {
   ABILITY_GUARD_EFFECT_ID,
   ABILITY_SECOND_WIND_EFFECT_ID,
@@ -34,7 +35,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
     hasHealth: {
       hp: GAME_CONFIG.PLAYER_MAX_HP,
       maxHp: GAME_CONFIG.PLAYER_MAX_HP,
-      recovery: GAME_CONFIG.PLAYER_RECOVERY,
+      recovery: baseRecoveryForTier(0),
     },
     tracksProgression: {
       level: 0,
@@ -129,9 +130,10 @@ assert(
 );
 
 // Healing is paid out by the Recovery engine, not a bespoke HoT: at Recovery 10
-// and 50% active, one second restores maxHp × (10/100) × 0.5 = 5% of max HP.
+// and 50% active, one second restores recovery × 0.5 HP — the rate is flat
+// (Phase 0b), so max HP does not enter.
 runRecovery(world, player, 1000, true);
-const perSecond = maxHp * (GAME_CONFIG.PLAYER_RECOVERY / 100) * 0.5;
+const perSecond = (player.hasHealth.recovery ?? 0) * 0.5;
 assert(
   Math.abs(player.hasHealth.hp - (hpBefore + perSecond)) < 0.001,
   `Second Wind should restore ${perSecond} HP in its first second, got ${player.hasHealth.hp - hpBefore}`,

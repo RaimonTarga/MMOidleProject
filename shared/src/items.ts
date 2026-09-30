@@ -163,7 +163,8 @@ export interface ItemDefinition {
    *   defense.dot-resistance        — mitigate incoming DoT damage by X (0–1)
    *   defense.debuff-resistance     — reduce non-DoT debuff magnitude by X (0–1)
    *   ── Recovery access. These do NOT heal a % of maxHp; each switches on a
-   *   fraction of the player's Recovery RATE (1 Recovery = 1% maxHp/sec at 100%).
+   *   fraction of the player's Recovery RATE (1 Recovery = 1 HP/sec at 100%; flat,
+   *   authored per tier — Phase 0b).
    *   Fractions from different sources ADD; see defense/regen/recovery.ts.
    *   defense.recovery-active-pct  — fraction of Recovery kept active while in combat
    *   defense.recovery-pulse-pct      — fraction of Recovery switched on per pulse (needs interval)

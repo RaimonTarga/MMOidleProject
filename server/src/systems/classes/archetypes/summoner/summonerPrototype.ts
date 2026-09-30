@@ -12,6 +12,7 @@ import {
   syncMinionHitbox,
   syncMinionMaxHp,
   syncMinionMitigation,
+  minionRecoveryFor,
 } from './spawn';
 import { driveMinion } from './ai';
 import { validateSummonerCommand } from './command';
@@ -79,7 +80,6 @@ function reconcileMinionSlots(world: World, owner: SummonerPlayerEntity): void {
 function syncLiveMinionFrameStats(world: World, owner: SummonerPlayerEntity): void {
   const profile = summonerProfileFor(owner);
   const desiredSpeed = computeMinionSpeed(owner);
-  const desiredHpRegen = owner.hasHealth.recovery;
   for (let index = 0; index < owner.summonsMinions.minionIds.length; index++) {
     const id = owner.summonsMinions.minionIds[index];
     const minion = id ? world.getMinionEntity(id) : undefined;
@@ -111,6 +111,7 @@ function syncLiveMinionFrameStats(world: World, owner: SummonerPlayerEntity): vo
     }
     syncMinionMaxHp(world, minion, computeMinionMaxHp(owner, index));
     syncMinionMitigation(world, minion, owner);
+    const desiredHpRegen = minionRecoveryFor(owner, minion.hasHealth.maxHp);
     if (minion.hasHealth.recovery !== desiredHpRegen) {
       minion.hasHealth.recovery = desiredHpRegen;
       markSliceDirty(world, minion, 'hasHealth');
@@ -169,13 +170,11 @@ function runMinionRegen(
   if (minion.hasHealth.hp >= minion.hasHealth.maxHp) return;
   const recovery = minion.hasHealth.recovery ?? 0;
   if (recovery <= 0 || isMinionInCombat(world, owner, minion, now)) return;
-  applyHealToMinion(
-    minion,
-    owner.isPlayer.id,
-    minion.hasHealth.maxHp * (recovery / 100) * (dt / 1_000),
-    world,
-  );
+  // Flat HP/s (Phase 0b): the minion's rate is already scaled to its own pool
+  // by `minionRecoveryFor`, so this is the owner's share applied directly.
+  applyHealToMinion(minion, owner.isPlayer.id, recovery * (dt / 1_000), world);
 }
+
 
 function collectDeaths(world: World, owner: SummonerPlayerEntity): void {
   const summons = owner.summonsMinions;

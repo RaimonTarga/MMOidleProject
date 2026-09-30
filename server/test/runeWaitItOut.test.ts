@@ -1,3 +1,4 @@
+import { baseRecoveryForTier } from '@mmo-idle/shared';
 import {
   ACTION_DATABASE,
   DEFAULT_AUTOCOMBAT_CONFIG,
@@ -57,7 +58,7 @@ function makePlayerSlices(
     hasHealth: {
       hp,
       maxHp: GAME_CONFIG.PLAYER_MAX_HP,
-      recovery: GAME_CONFIG.PLAYER_RECOVERY,
+      recovery: baseRecoveryForTier(0),
     },
     tracksProgression: {
       level: 0,

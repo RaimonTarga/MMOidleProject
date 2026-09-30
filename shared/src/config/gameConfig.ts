@@ -50,9 +50,28 @@ export const GAME_CONFIG = {
   PLAYER_ATTACK_RANGE: 12,
   /** Milliseconds between attacks when unarmed. Overridden by weapon attacksPerSecond when a weapon is equipped. */
   PLAYER_ATTACK_COOLDOWN: 3000,
-  /** Recovery: 1 point = 1% of maxHp restored per second at 100% active Recovery. */
-  PLAYER_RECOVERY: 10,
-  /** Milliseconds after leaving combat (no monster aggroed) before Recovery returns to 100% */
+  // ── Recovery (flat model, progression rework Phase 0b, 2026-09-30) ─────────
+  // Recovery is a FLAT rate: 1 point restores 1 HP per second while fully
+  // active. It no longer scales with max HP, so the pool is a budget and the
+  // rate is a choice (design bible §15). The base rate is per player tier so a
+  // naked character at tier entry recovers the same 5% of its reference pool
+  // per second it did under the old percentage model, and the pool outgrows
+  // the rate within the tier.
+  /**
+   * Reference max-HP pool per player tier, indexed by `tracksProgression.playerTier`
+   * (0 = fresh character in the Clearing, 1–4 = T1–T4). Seeds are the naked
+   * base plus the tier's entry gear; provisional until the per-tier pool raise.
+   */
+  RECOVERY_REFERENCE_POOL_BY_TIER: [100, 130, 200, 330, 560] as const,
+  /** Naked base Recovery = this fraction of the tier's reference pool, in HP/s. */
+  RECOVERY_BASE_FRACTION: 0.05,
+  /**
+   * Out-of-combat healing is a fixed share of max HP per second, independent of
+   * the Recovery stat, after `COMBAT_REGEN_DELAY`. 0.10 = empty to full in 10 s
+   * at every tier (the pre-Phase-0 rate). Node hazards suppress only this branch.
+   */
+  OOC_RECOVERY_PCT: 0.10,
+  /** Milliseconds after leaving combat (no monster aggroed) before out-of-combat healing starts */
   COMBAT_REGEN_DELAY: 4000,
 
   // ── Recovery access windows ───────────────────────────────────────────────
@@ -203,6 +222,16 @@ export const GAME_CONFIG = {
    */
   CATALYST_PROGRESS_REWARD_MULT_BY_TIER: { 1: 0.5 } as Readonly<Record<number, number>>,
 } as const;
+
+/**
+ * Naked base Recovery (HP/s) for a player tier: a fixed fraction of that tier's
+ * reference pool. Tiers past the table hold at the last entry.
+ */
+export function baseRecoveryForTier(playerTier: number | undefined): number {
+  const pools = GAME_CONFIG.RECOVERY_REFERENCE_POOL_BY_TIER;
+  const index = Math.max(0, Math.min(pools.length - 1, Math.floor(playerTier ?? 0)));
+  return Math.round(GAME_CONFIG.RECOVERY_BASE_FRACTION * pools[index] * 10) / 10;
+}
 
 /** Universal kill-weight required to mint one catalyst. */
 export function catalystProgressPerUnit(): number {

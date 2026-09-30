@@ -14,7 +14,7 @@ import { EQUIPMENT_SLOTS } from '../items';
 import { coreIsActive } from './cores';
 import { activeStanceModifiers, stanceDef, type StanceModifiers } from '../stances';
 import { effectiveAttacksPerSecond, upgradeMechanicEffectsTotal, upgradeStatBonusTotal } from './itemUpgrades';
-import { GAME_CONFIG } from '../index';
+import { GAME_CONFIG, baseRecoveryForTier } from '../index';
 import { mergePassives, makePulseAccumulator, finalizePulse } from '../passives';
 import { relicRatingsFromPassives, resolveCadenceRelicProfile } from './relics';
 import { summonerSpecializationFor } from '../data/summoner';
@@ -194,7 +194,9 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
   p.performsAttack.attackRange  = GAME_CONFIG.PLAYER_ATTACK_RANGE;
   p.performsAttack.attackCooldown = GAME_CONFIG.PLAYER_ATTACK_COOLDOWN;
   p.hasHealth.maxHp             = GAME_CONFIG.PLAYER_MAX_HP;
-  p.hasHealth.recovery           = GAME_CONFIG.PLAYER_RECOVERY;
+  // Flat HP/s, seeded per player tier (Phase 0b): the pool is a budget, the rate
+  // a choice, so the base does not follow max HP inside a tier.
+  p.hasHealth.recovery           = baseRecoveryForTier(p.playerTier);
   p.hasPosition.speed           = GAME_CONFIG.PLAYER_SPEED;
 
   // 1b. Weapon attack rate. Upgrade steps may add an APS delta (the rapier

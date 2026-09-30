@@ -97,7 +97,7 @@ export const mountainRecipeEntries = [
   ['mountain-charm-t1', {
     id: 'mountain-charm-t1', name: 'Granite Barrier',
     recipeGroup: 'mountain', requiredBiomeLevel: 3, slot: 'recovery',
-    cost: { blue: 18 }, stats: { recovery: 1 },
+    cost: { blue: 18 }, stats: { recovery: 1.3 },
     mechanicEffects: { 'defense.barrier-pct': 0.12 },
     tier: 1,
     icon: 'items/charms/granite-barrier.png',
@@ -106,7 +106,7 @@ export const mountainRecipeEntries = [
     upgrades: [
       { mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 10 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 25 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 40 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 1.3 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 40 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 60 }, requiredBiomeLevel: 4 },
       { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 75 }, requiredBiomeLevel: 4 },
     ],
@@ -184,7 +184,7 @@ export const mountainRecipeEntries = [
     id: 'mountain-charm-t2', name: 'Iron Bulwark',
     recipeGroup: 'mountain', requiredBiomeLevel: 9, slot: 'recovery',
     evolvesFrom: 'mountain-charm-t1',
-    cost: { blue: 42 }, stats: { recovery: 2 }, // family-tag: barrier pool (anti-spike) → Heavy
+    cost: { blue: 42 }, stats: { recovery: 4 }, // family-tag: barrier pool (anti-spike) → Heavy
     reconstructCost: { blue: 147 }, reconstructCatalystCost: { heavy: 2 },
     mechanicEffects: { 'defense.barrier-pct': 0.20, 'guard.barrier-refill-pct': 0.15 },
     tier: 2,
@@ -192,7 +192,7 @@ export const mountainRecipeEntries = [
     description: 'A ward-stone the mountainfolk pass down, hand to weathered hand.',
     upgrades: [
       { mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 17 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 43 }, requiredBiomeLevel: 10 },
+      { stats: { recovery: 2 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 43 }, requiredBiomeLevel: 10 },
       { mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 68 }, requiredBiomeLevel: 10 },
       { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 111 }, requiredBiomeLevel: 10 },
       { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 187 }, catalystCost: { heavy: 1 }, requiredBiomeLevel: 10 },
@@ -269,7 +269,7 @@ export const mountainRecipeEntries = [
     id: 'mountain-charm-t3', name: 'Bastion Heart',
     recipeGroup: 'mountain', requiredBiomeLevel: 15, slot: 'recovery',
     evolvesFrom: 'mountain-charm-t2',
-    cost: { blue: 100, red: 25 }, stats: { recovery: 3 }, // family-tag: barrier pool (anti-spike) → Heavy
+    cost: { blue: 100, red: 25 }, stats: { recovery: 9.9 }, // family-tag: barrier pool (anti-spike) → Heavy
     reconstructCost: { blue: 350, red: 88 }, reconstructCatalystCost: { heavy: 3 },
     mechanicEffects: { 'defense.barrier-pct': 0.28, 'guard.barrier-refill-pct': 0.20 },
     tier: 3,
@@ -277,9 +277,9 @@ export const mountainRecipeEntries = [
     description: 'A core of mountain-heart stone that raises a wall of itself, over and over.',
     upgrades: [
       { mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 26, red: 6 },  requiredBiomeLevel: 16 },
-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 65, red: 16 }, requiredBiomeLevel: 16 },
+      { stats: { recovery: 3.3 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 65, red: 16 }, requiredBiomeLevel: 16 },
       { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 104, red: 26 }, requiredBiomeLevel: 16 },
-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 169, red: 42 }, requiredBiomeLevel: 16 },
+      { stats: { recovery: 3.3 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 169, red: 42 }, requiredBiomeLevel: 16 },
       { mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 286, red: 71 }, catalystCost: { heavy: 2 }, requiredBiomeLevel: 16 },
     ],
   }],
@@ -399,18 +399,18 @@ export const mountainRecipeEntries = [
     id: 'mountain-charm-t4', name: 'Fortress Heart',
     recipeGroup: 'mountain', requiredBiomeLevel: 21, slot: 'recovery',
     evolvesFrom: 'mountain-charm-t3',
-    cost: { blue: 220, red: 30 }, stats: { recovery: 6 }, // family-tag: barrier pool (anti-spike) → Heavy
+    cost: { blue: 220, red: 30 }, stats: { recovery: 33.6 }, // family-tag: barrier pool (anti-spike) → Heavy
     reconstructCost: { blue: 770, red: 105 }, reconstructCatalystCost: { heavy: 4 },
     mechanicEffects: { 'defense.barrier-pct': 0.36, 'guard.barrier-refill-pct': 0.30 },
     tier: 4,
     icon: 'items/charms/fortress-heart.png',
     description: 'A keep in miniature: it throws up a wall, lets it fall, and throws up another, tireless as siegework.',
     upgrades: [
-      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 57, red: 8 }, requiredBiomeLevel: 22 },
-      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 143, red: 19 }, requiredBiomeLevel: 22 },
-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 229, red: 31 }, requiredBiomeLevel: 22 },
-      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 371, red: 51 }, requiredBiomeLevel: 22 },
-      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 627, red: 86 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 22 },
+      { stats: { recovery: 2.8 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 57, red: 8 }, requiredBiomeLevel: 22 },
+      { stats: { recovery: 2.8 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 143, red: 19 }, requiredBiomeLevel: 22 },
+      { stats: { recovery: 5.6 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 229, red: 31 }, requiredBiomeLevel: 22 },
+      { stats: { recovery: 2.8 }, mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 371, red: 51 }, requiredBiomeLevel: 22 },
+      { stats: { recovery: 2.8 }, mechanicEffects: { 'defense.barrier-pct': 0.015 }, cost: { blue: 627, red: 86 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 22 },
     ],
   }],
 
@@ -419,7 +419,7 @@ export const mountainRecipeEntries = [
     id: 'mountain-charm-t4-shieldmend', name: 'Shieldmend Ward',
     recipeGroup: 'mountain', requiredBiomeLevel: 21, slot: 'recovery',
     evolvesFrom: 'mountain-charm-t3',
-    cost: { blue: 220, red: 30 }, stats: { recovery: 6 }, // family-tag: barrier-break survival → Heavy
+    cost: { blue: 220, red: 30 }, stats: { recovery: 33.6 }, // family-tag: barrier-break survival → Heavy
     reconstructCost: { blue: 770, red: 105 }, reconstructCatalystCost: { heavy: 4 },
     // † barrier-break-heal-pct: when the barrier is emptied, heal 25% of its max
     //   value as HP (rider cooldown applies).
@@ -432,11 +432,11 @@ export const mountainRecipeEntries = [
     icon: 'items/charms/shieldmend-ward.png',
     description: 'When the ward shatters, it gives back a little of the blow it ate.',
     upgrades: [
-      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 57, red: 8 }, requiredBiomeLevel: 22 },
-      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 143, red: 19 }, requiredBiomeLevel: 22 },
-      { stats: { recovery: 1 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 229, red: 31 }, requiredBiomeLevel: 22 },
-      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 371, red: 51 }, requiredBiomeLevel: 22 },
-      { stats: { recovery: 0.5 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 627, red: 86 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 22 },
+      { stats: { recovery: 2.8 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 57, red: 8 }, requiredBiomeLevel: 22 },
+      { stats: { recovery: 2.8 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 143, red: 19 }, requiredBiomeLevel: 22 },
+      { stats: { recovery: 5.6 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 229, red: 31 }, requiredBiomeLevel: 22 },
+      { stats: { recovery: 2.8 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 371, red: 51 }, requiredBiomeLevel: 22 },
+      { stats: { recovery: 2.8 }, mechanicEffects: { 'defense.barrier-pct': 0.01 }, cost: { blue: 627, red: 86 }, catalystCost: { heavy: 3 }, requiredBiomeLevel: 22 },
     ],
   }],
 

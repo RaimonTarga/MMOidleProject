@@ -13,19 +13,27 @@ import { applyHealToPlayer } from './healing';
 /**
  * The Recovery engine — one healing rate, many switches.
  *
- * Recovery is the canonical HP-restoration rate: **1 Recovery = 1% of max HP per
- * second while 100% Recovery is active**, held on `hasHealth.recovery`. Out of
- * combat (past `COMBAT_REGEN_DELAY`) the player runs at 100%.
+ * Recovery is the canonical in-combat HP-restoration rate and it is FLAT:
+ * **1 Recovery = 1 HP per second while 100% Recovery is active**, held on
+ * `hasHealth.recovery` (seeded per player tier by the stat recalc, then added
+ * to by charms and skills). It does not scale with max HP — the pool is a
+ * budget, the rate is a choice (design bible §15, Phase 0b).
  *
- * In combat, effects do NOT invent their own `% max HP` heals. They ACTIVATE a
- * fraction of that one rate:
+ * In combat, effects do NOT invent their own heals. They ACTIVATE a fraction of
+ * that one rate:
  *
- *     healingPerSecond = maxHp × (recovery / 100) × activeFraction
+ *     healingPerSecond = recovery × activeFraction
  *
  * Fractions from different sources ADD (Squire 10% + Swamp pulse 30% + Second
- * Wind 50% = 90%), and are deliberately uncapped for now — extreme stacking is a
- * balance question, not an architecture one. A source that is already running
- * REFRESHES its own window rather than stacking a second copy of itself.
+ * Wind 50% = 90%), and are deliberately uncapped — under a flat rate they
+ * multiply an authored number, so stacking is bounded by what the tier's gear
+ * adds up to. A source that is already running REFRESHES its own window rather
+ * than stacking a second copy of itself.
+ *
+ * Out of combat (past `COMBAT_REGEN_DELAY`) healing is NOT Recovery: it is a
+ * fixed `maxHp × OOC_RECOVERY_PCT` per second, independent of the stat, so
+ * downtime never depends on in-combat tuning. A node hazard suppresses only
+ * that branch.
  *
  * Everything lands through `applyHealToPlayer`, so antiheal and the overheal ward
  * apply once, in one place.
@@ -112,17 +120,16 @@ export function resetRecoverySources(cs: TracksCombat): void {
 
 /**
  * Sum of every Recovery fraction currently switched on, as a fraction (0.9 = 90%).
- * Read-only — safe for HUD descriptors and tests. Out of combat this is 1 (the
- * player recovers at the full rate once the OOC delay has elapsed).
+ * Read-only — safe for HUD descriptors and tests. This is IN-COMBAT access only:
+ * out of combat it is 0, because out-of-combat healing is the fixed
+ * `oocRecoveryPerSecond` rate and not a share of the stat.
  */
 export function activeRecoveryFraction(
   player: PlayerEntity,
   inCombat: boolean,
-  oocSuppressed = false,
+  _oocSuppressed = false,
 ): number {
-  // Out of combat, past the OOC delay, the player recovers at the full rate —
-  // unless a node hazard is suppressing it (standing in lava does not heal you).
-  if (!inCombat) return oocSuppressed ? 0 : 1;
+  if (!inCombat) return 0;
   const cs = player.tracksCombat;
   const passives = player.usesSkills.passives;
 
@@ -139,9 +146,18 @@ export function activeRecoveryFraction(
   return fraction;
 }
 
-/** HP restored per second at the given active fraction. */
+/** HP restored per second at the given active fraction: the flat rate × fraction. */
 export function recoveryPerSecond(player: PlayerEntity, fraction: number): number {
-  return player.hasHealth.maxHp * ((player.hasHealth.recovery ?? 0) / 100) * fraction;
+  return (player.hasHealth.recovery ?? 0) * fraction;
+}
+
+/**
+ * Out-of-combat healing rate (HP/s): a fixed share of max HP, independent of the
+ * Recovery stat. Zero while a node hazard suppresses it.
+ */
+export function oocRecoveryPerSecond(player: PlayerEntity, oocSuppressed = false): number {
+  if (oocSuppressed) return 0;
+  return player.hasHealth.maxHp * GAME_CONFIG.OOC_RECOVERY_PCT;
 }
 
 function rampFraction(player: PlayerEntity): number {
@@ -155,13 +171,13 @@ function rampFraction(player: PlayerEntity): number {
 }
 
 /**
- * Per-tick Recovery. Advances every timed source, fires the periodic pulse, then
- * applies the summed rate exactly once.
+ * Per-tick healing. Advances every timed source, fires the periodic pulse, then
+ * applies exactly one heal: the summed in-combat rate while fighting, or the
+ * fixed out-of-combat rate otherwise.
  *
  * Timers decay whether or not the player is in combat — a window that was running
  * when the fight ended should not be waiting to resume — but only the in-combat
- * fractions are *paid out* in combat. Out of combat the player is already at 100%,
- * which is more than any stacked combat access, so the sources are irrelevant there.
+ * fractions are *paid out* in combat.
  *
  * `oocSuppressed` blocks the out-of-combat rate only (a node-feature hazard); it
  * deliberately leaves in-combat access alone, since those effects are what a
@@ -192,7 +208,9 @@ export function runRecovery(
     setCooldown(cs, PULSE_CD, pulseIntervalMs);
   }
 
-  const fraction = activeRecoveryFraction(player, inCombat, oocSuppressed);
+  const perSecond = inCombat
+    ? recoveryPerSecond(player, activeRecoveryFraction(player, true))
+    : oocRecoveryPerSecond(player, oocSuppressed);
 
   // Decay after reading, so a source activated this tick pays out for this tick.
   for (const id of TIMED_SOURCE_IDS) {
@@ -208,8 +226,8 @@ export function runRecovery(
     }
   }
 
-  if (fraction <= 0) return;
-  applyHealToPlayer(player, cs, recoveryPerSecond(player, fraction) * (dt / 1000), world);
+  if (perSecond <= 0) return;
+  applyHealToPlayer(player, cs, perSecond * (dt / 1000), world);
 }
 
 /**

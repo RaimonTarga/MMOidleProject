@@ -1,3 +1,4 @@
+import { baseRecoveryForTier } from "@mmo-idle/shared";
 import { migrateAttunement } from "@mmo-idle/shared";
 import { and, desc, eq, isNull } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
@@ -638,7 +639,7 @@ function buildFreshSlices(
     hasHealth: {
       hp:      GAME_CONFIG.PLAYER_MAX_HP,
       maxHp:   GAME_CONFIG.PLAYER_MAX_HP,
-      recovery: GAME_CONFIG.PLAYER_RECOVERY,
+      recovery: baseRecoveryForTier(0),
     },
     tracksProgression: {
       level:            0,

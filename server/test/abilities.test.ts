@@ -5,6 +5,7 @@
  * HP Below 25% -> Use Ability rule, and the cooldown lifecycle
  * across a full period — blocked while active, then re-firable once it clears.
  */
+import { baseRecoveryForTier } from '@mmo-idle/shared';
 import {
   ABILITY_GUARD_EFFECT_ID,
   GAME_CONFIG,
@@ -35,7 +36,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
     hasHealth: {
       hp: GAME_CONFIG.PLAYER_MAX_HP,
       maxHp: GAME_CONFIG.PLAYER_MAX_HP,
-      recovery: GAME_CONFIG.PLAYER_RECOVERY,
+      recovery: baseRecoveryForTier(0),
     },
     tracksProgression: {
       level: 0,

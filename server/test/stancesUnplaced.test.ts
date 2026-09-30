@@ -1,3 +1,4 @@
+import { baseRecoveryForTier } from "@mmo-idle/shared";
 import { setStanceLoadout } from "../src/systems/player/economy/stanceCrafting";
 import { resetPlayerClass } from "../src/admin/gameActions";
 import { outgoingFinalDamage } from '../src/systems/combat/damage/finalDamage';
@@ -75,7 +76,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
   return {
     isPlayer: { id: "unplaced-player", name: "Unplaced Tester" },
     hasPosition: { current: { x: 400, y: 400 }, nodeId: "node-5-5", speed: GAME_CONFIG.PLAYER_SPEED },
-    hasHealth: { hp: GAME_CONFIG.PLAYER_MAX_HP, maxHp: GAME_CONFIG.PLAYER_MAX_HP, recovery: GAME_CONFIG.PLAYER_RECOVERY },
+    hasHealth: { hp: GAME_CONFIG.PLAYER_MAX_HP, maxHp: GAME_CONFIG.PLAYER_MAX_HP, recovery: baseRecoveryForTier(0) },
     tracksProgression: {
       level: 0, skillPoints: 0,
       essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },

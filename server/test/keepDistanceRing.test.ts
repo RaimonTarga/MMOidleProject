@@ -22,6 +22,7 @@
  * call, not eventual arrival, so they keep testing the bug independent of how
  * many ticks the nav layer takes.
  */
+import { baseRecoveryForTier } from '@mmo-idle/shared';
 import {
   aabbHalfExtents,
   emptyEquipment,
@@ -58,7 +59,7 @@ function playerSlices(id: string, pos: Vec2): PersistedPlayerSlices {
     hasHealth: {
       hp: GAME_CONFIG.PLAYER_MAX_HP,
       maxHp: GAME_CONFIG.PLAYER_MAX_HP,
-      recovery: GAME_CONFIG.PLAYER_RECOVERY,
+      recovery: baseRecoveryForTier(0),
     },
     tracksProgression: {
       level: 0, skillPoints: 0,

@@ -54,8 +54,10 @@ The §4 power bands below reflect the **skill-tree T2 snapshot** (root + frame +
   (e.g. Cadence "every 5th hit ×2" → `(4 + 2)/5 = 1.2×`; DoT conversion folds in as
   `×(1 + conv × ~0.9 uptime)`).
 - **Survival time** vs an incoming DPS = `pool / max(0, incomingDPS − healRate)`.
-  Regen/in-combat-regen feed `healRate`; if `healRate ≥ incomingDPS` you don't die
-  (the immortality risk the bible's heal-throughput soft-cap exists to bound).
+  Regen/in-combat-regen feed `healRate`; if `healRate ≥ incomingDPS` you don't die.
+  Since Phase 0b (2026-09-30) `healRate` is the tier's authored flat Recovery in HP/s
+  times the active fraction — it does not grow with `pool`, so raising the pool
+  lengthens survival without lengthening it twice.
 - **TTK** vs a monster = `monsterHP / playerDPS`.
 
 > **Evasion (confirmed model).** Deterministic counter: each hit adds `evasion` to a
@@ -203,11 +205,12 @@ If Slow ever out-TTKs Fast on trash, slow weapons are overtuned.
 
 ### 6.4 Healing × the cliff = the immortality seam
 A tank already at "1/hit" from trash, *plus* any in-combat regen/absorb, is unkillable
-by that content — fine for trash, dangerous if it generalizes to bigger threats. This
-is exactly what the bible's **heal-throughput soft cap (~3–4% maxHP/s)** and
-**debt-conversion cap (≤~40–50%)** are there to bound. Keep them in the engine gate
-(Phase 0) before the item re-spec, or absorb/regen charms stacked on a plating tank
-will read as immortal in sim.
+by that content — fine for trash, dangerous if it generalizes to bigger threats. The
+**debt-conversion cap (≤~40–50%)** still bounds the absorb side. The old
+**heal-throughput soft cap (~3–4% maxHP/s)** is retired (progression rework bible
+§15, 2026-09-30): Recovery is now a flat HP/s authored per tier, so the cap is
+whatever the tier's charm and skill values add up to, and a pool raise no longer
+raises healing with it.
 
 ---
 
@@ -254,6 +257,7 @@ glass through the shield. That's the ceiling on T4 `H_med`.)
 - **T3–T4 tree nodes** — T3 is fully implemented; T4 remains target content. §4 bands are
   still the T2 snapshot; T3 paths add meaningful variance (use the report tools for
   per-spec data at T3+).
-- **Heal-throughput soft cap + debt-conversion cap** — engine gates in place per §6.4.
+- **Debt-conversion cap** — engine gate in place per §6.4. The heal-throughput soft cap
+  is retired by the flat Recovery model (2026-09-30).
 - **Boss tuning** is a separate pass; see `boss-design.md`. T1–T3 bosses have been
   rebalanced; T4 boss intent pass is pending.

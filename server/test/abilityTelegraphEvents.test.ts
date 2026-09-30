@@ -3,6 +3,7 @@
  * `player-technique-armed` node event (armed-text + red cooldown bar on the client)
  * and a firing Guard queues a `player-guard` node event (Guard FX + skill callout).
  */
+import { baseRecoveryForTier } from "@mmo-idle/shared";
 import { GAME_CONFIG, STARTER_RUNE_IDS, emptyEquipment } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { initCombatSystems } from "../src/systems/combatBootstrap";
@@ -26,7 +27,7 @@ function makePlayerSlices(): PersistedPlayerSlices {
       // Below Brace's HP Below 25% wiring so the Guard fires this tick.
       hp: Math.round(GAME_CONFIG.PLAYER_MAX_HP * 0.2),
       maxHp: GAME_CONFIG.PLAYER_MAX_HP,
-      recovery: GAME_CONFIG.PLAYER_RECOVERY,
+      recovery: baseRecoveryForTier(0),
     },
     tracksProgression: {
       level: 0,

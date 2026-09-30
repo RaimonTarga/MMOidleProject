@@ -9,6 +9,7 @@
 //
 // Run: pnpm --filter @mmo-idle/server exec tsx --conditions=development test/formationPlatingCompensation.test.ts
 
+import { baseRecoveryForTier } from '@mmo-idle/shared';
 import { GAME_CONFIG, STARTER_RUNE_IDS, emptyEquipment } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import type { MonsterEntity, PlayerEntity } from '../src/ecs/entity';
@@ -43,7 +44,7 @@ function makeSlices(opts: {
   return {
     isPlayer: { id, name: id },
     hasPosition: { current: { x: 400, y: 400 }, nodeId: NODE, speed: GAME_CONFIG.PLAYER_SPEED },
-    hasHealth: { hp: 1_000_000, maxHp: 1_000_000, recovery: GAME_CONFIG.PLAYER_RECOVERY },
+    hasHealth: { hp: 1_000_000, maxHp: 1_000_000, recovery: baseRecoveryForTier(0) },
     tracksProgression: {
       level: 0, skillPoints: 0, essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
       catalysts: {}, catalystProgress: {}, biomeXP: {}, biomeLevel: {}, unlockedRecipes: [],

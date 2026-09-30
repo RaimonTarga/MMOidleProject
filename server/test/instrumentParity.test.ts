@@ -19,6 +19,7 @@
 //
 // Run: pnpm --filter @mmo-idle/server exec tsx --conditions=development test/instrumentParity.test.ts
 
+import { baseRecoveryForTier } from '@mmo-idle/shared';
 import {
   GAME_CONFIG,
   STARTER_RUNE_IDS,
@@ -59,7 +60,7 @@ function makePlayerSlices(id: string): PersistedPlayerSlices {
   return {
     isPlayer: { id, name: "Parity Tester" },
     hasPosition: { current: { x: 400, y: 400 }, nodeId: NODE, speed: GAME_CONFIG.PLAYER_SPEED },
-    hasHealth: { hp: 1_000, maxHp: 1_000, recovery: GAME_CONFIG.PLAYER_RECOVERY },
+    hasHealth: { hp: 1_000, maxHp: 1_000, recovery: baseRecoveryForTier(0) },
     tracksProgression: {
       level: 0,
       skillPoints: 0,
@@ -280,8 +281,9 @@ reset({ playerPlating: 20, playerDr: 0 });
 
 // ── F7 — Recovery is one rate times an activation fraction ───────────────────
 //
-// `healingPerSecond = maxHp x (recovery / 100) x activeFraction`. The eHP report
-// re-implements exactly this, so the shapes must agree.
+// `healingPerSecond = recovery x activeFraction` — a FLAT HP/s rate since Phase 0b
+// (2026-09-30); max HP does not enter. The eHP report re-implements exactly this,
+// so the shapes must agree.
 
 reset();
 {
@@ -289,17 +291,21 @@ reset();
   player.hasHealth.recovery = 20;
 
   const full = recoveryPerSecond(player, 1);
-  assertClose(full, 500 * (20 / 100), 1e-9, "F7 recovery at 100%");
+  assertClose(full, 20, 1e-9, "F7 recovery at 100%");
 
   const half = recoveryPerSecond(player, 0.5);
-  assertClose(half, 500 * (20 / 100) * 0.5, 1e-9, "F7 recovery at 50%");
+  assertClose(half, 20 * 0.5, 1e-9, "F7 recovery at 50%");
+
+  // Flat: the pool must not change the payout.
+  player.hasHealth.maxHp = 2_000;
+  assertClose(recoveryPerSecond(player, 1), full, 1e-9, "F7 recovery ignores max HP");
 
   // Linear in the fraction: the report sums fractions from different sources, which
   // is only valid if the payout is linear.
   assertClose(half * 2, full, 1e-9, "F7 recovery is linear in the active fraction");
 
   player.hasHealth.maxHp = 1_000;
-  player.hasHealth.recovery = GAME_CONFIG.PLAYER_RECOVERY;
+  player.hasHealth.recovery = baseRecoveryForTier(0);
 }
 
 // ── F8 — wards drain before the barrier, and both drain before HP ────────────
