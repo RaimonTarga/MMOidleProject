@@ -214,30 +214,90 @@ Heartroot Amulet 3 → 3.9 HP/s, T2 charms 4–5 → 8–10, T3 7–10 → 23–
 Nothing else was retuned.
 
 Same bench and cells as 0a (plus T3 cave/volcanic and T4 graveyard/tundra light/heavy
-frames), 2 seeds, +3 gear; reports `recovery-flat`, `recovery-flat-seeds2`,
-`t34-before`, `t34-after`.
+frames), 2 seeds, +3 gear; reports `recovery-flat`, `recovery-flat-seeds2`, `t34-after`.
+(The T3/T4 "before" run taken at this point was invalid — it picked up the config edit
+mid-flight and ran with base Recovery 0 — and was deleted; the pre-0b reference for
+T3/T4 is the emulated `pre0b-*` runs of the charm sweep below.)
 
 - **Healing rate vs the percentage model.** The bench bots sit 15–40% above the
   reference pools (T1 139–179 HP vs 130; T2 196–286 vs 200), so their in-combat healing
   fell to 0.70–1.02× of before — least on light frames (0.87–1.0), most on heavy frames
   and Squire (0.70–0.80). That is the intended shape (the pool no longer buys healing);
   it is not "unchanged within noise" for these bots, only for a character at the
-  reference pool. At T3 the median ratio is 1.13 (pools 376–535 vs 330; charms carry
-  more of the rate), at T4 0.94 (pools 628–998 vs 560).
+  reference pool. (The T3/T4 ratios first recorded here were against the invalid
+  baseline; see the charm sweep below for the real ones.)
 - **Fight-end HP / time in band.** Plains: unchanged (0.90–1.00, ≤ 0.09 in band).
   Forest medians moved within seed noise for melee roots (Striker T1 0.72 → 0.83 / 0.63
   on fresh seeds; Squire light T2 0.64 → 0.57 / 0.56). Deaths rose where the bot was
   already marginal: Slinger T1 Forest 4 → 12 / 19, Striker T2 Forest 1–2 → 5–11. Death
   counts for the ranged roots swing by ±10 between seed pairs (Spirit T1 Forest 16 vs
   6), so only the Slinger T1 and Striker T2 Forest rises read as real.
-- **T3/T4.** Fight-end HP and deaths within seed noise on all 48 cells; no cell changed
-  outcome class. This is a fight-end check, not the time-to-death sweep the plan asks
-  for; that sweep is still owed before the pool raise.
 - **OOC.** Empty-to-full is 10 s at every tier and ignores the stat (`recovery.test.ts`).
 
-Open from 0b: the TTD-based charm sweep; whether the reference pools should be raised
-toward what a +3 character actually carries (or the pool raise simply lands there);
-the bot's charm pick was not re-checked (routes use fixed gear plans).
+### Phase 0b charm sweep against the +3 pool (2026-09-30) — provisional
+
+Per the plan's amended charm rule: the pool-factor conversion above preserved
+*naked-equivalent* healing, but the charm's job under the flat model is to cover the gap
+between the tier's entry pool and the pool a geared character carries. Every tiered
+charm (30 recipes; the Clearing charm stays at 2) was re-derived against the **median
++3 pool** of the bench bots at its tier:
+
+```
+P3 = 156 / 234.5 / 446 / 755                  (T1–T4; every +3 bench bot, all classes and frames)
+newBase = oldPct × P3/100 + 0.05 × (P3 − referencePool)     newStep = oldStepPct × P3/100
+```
+
+so a geared character with the charm heals what it did before at the median pool, the
+reference pools are untouched, and a geared character without a charm heals less by
+design. Results: T1 2.9–6 HP/s (Plains 2.9, Forest 6), T2 6.4–13.4, T3 19.2–50.4,
+T4 55–115.4. Upgrade steps ×P3/100 (T1 0.8–1.6, T4 3.8–11.3). Derivation table:
+`reports/progression-phase0/charm-derivation.json`; pre-0b values:
+`old-charm-pct.json`.
+
+**Time-to-death** (`server/bench/phase0Ttd.ts`): the bot fights in the charm's home
+node with a constant pull of 1/2/3/4 aggroed monsters (T1–T4), cap 600 s, 2 seeds,
+Striker and Slinger; pre-0b is emulated in the same world by writing
+`maxHp × (5 + oldCharmPct)/100` into the stat every tick (report `ttd-plus3`; the
+pool-factor values before the sweep are in `ttd-poolfactor`).
+
+| arm | measurable cells (not capped both sides) | TTD new/old median | within ±10% |
+|---|---|---|---|
+| geared +3 with the tier's charm | 36 of 60 | **1.00** at every tier | 30 / 36 |
+| geared +3, no charm | 52 of 52 | 0.93 / 0.99 / 0.92 / 0.94 (T1–T4) | lower by design |
+| naked at entry | 8 of 8 | 1.02 / 1.09 / 1.19 / 1.15 | T1 yes; T3/T4 no |
+
+Charm-arm outliers are the class-pool spread around the tier median: Striker (bigger
+pool) on T3 Desert/Tundra 0.78/0.71 and T2 Slinger Mountain 0.67; Slinger (smaller pool)
+on T4 Jungle 1.43–1.49. Naked-at-entry heals *more* at T3/T4 under the reference-pool
+base (16.5 / 28 HP/s against a 120–140 HP naked pool, was 6–7 HP/s) — the table's
+seeds assume entry gear; recorded, not tuned.
+
+**Fight-end metric, all 84 open-node cells, 2 seeds** (`final-charm` / `final-geared`
+vs the emulated `pre0b-charm` / `pre0b-geared`; `final-naked` dies every fight at T3/T4
+and is uninformative): with the charm, healing new/old median 1.05 / 1.04 / 1.03 / 0.99
+(T1–T4), deaths 26→27, 19→15, 1→0, 28→23, median fight-end HP unchanged (0.93/0.92,
+0.92/0.92, 0.97/0.98, 0.93/0.94). Without the charm, healing 0.87 / 0.88 / 0.76 / 0.73
+and deaths 27→52, 49→56, 21→18, 199→238.
+
+**Live bot, once, Docker up** (`live-t1-striker`, `live-t2-striker`; 40 min each,
+25× rewards, non-canonical, both bots on one server in different tiers, run at the 0b
+pool-factor charm values because the server booted before the sweep landed):
+
+| | fights | median end HP | time in band | deaths |
+|---|---|---|---|---|
+| T1 Plains (route incl. the dungeon) | 30 | 0.82 | 0.45 | 6 |
+| T1 Forest | 7 | 0.58 | 0.52 | 2 |
+| T2 Plains | 29 | 0.93 | 0.26 | 4 |
+| T2 Forest | 18 | 0.41 | 0.55 | 6 |
+
+The Forest columns sit on the Phase 0 target (0.40–0.60, >0.50); Plains stays high as
+the bench predicted. This is the first live `combat.fights` reading; it is not a
+canonical run.
+
+Open from the sweep: the naked-at-entry T3/T4 over-heal (a reference-pool question,
+deliberately not touched); the class-pool spread the median-P3 derivation cannot fix
+(per-class charm values would); the bot's charm pick was not re-checked (routes use
+fixed gear plans); then the player pool raise, bosses first.
 
 ### Still open
 

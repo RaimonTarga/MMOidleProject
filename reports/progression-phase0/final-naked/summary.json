@@ -1,0 +1,3605 @@
+{
+  "pooled": {
+    "p0-t3-striker-light-cave-naked": {
+      "fights": 86,
+      "deaths": 84,
+      "fightMs": 431500,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.016,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.661,
+      "endHpBuckets": {
+        "lt20": 84,
+        "from20to40": 1,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 1
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "cave": {
+          "fights": 86,
+          "deaths": 84,
+          "fightMs": 431500,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.016,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.661,
+          "endHpBuckets": {
+            "lt20": 84,
+            "from20to40": 1,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 1
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t3-striker-heavy-cave-naked": {
+      "fights": 65,
+      "deaths": 64,
+      "fightMs": 410100,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.013,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.716,
+      "endHpBuckets": {
+        "lt20": 64,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 1
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "cave": {
+          "fights": 65,
+          "deaths": 64,
+          "fightMs": 410100,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.013,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.716,
+          "endHpBuckets": {
+            "lt20": 64,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 1
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t3-striker-light-volcanic-naked": {
+      "fights": 87,
+      "deaths": 87,
+      "fightMs": 417000,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.618,
+      "endHpBuckets": {
+        "lt20": 87,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 1,
+      "byBiome": {
+        "volcanic": {
+          "fights": 87,
+          "deaths": 87,
+          "fightMs": 417000,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.618,
+          "endHpBuckets": {
+            "lt20": 87,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t3-striker-heavy-volcanic-naked": {
+      "fights": 76,
+      "deaths": 74,
+      "fightMs": 437200,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.003,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.537,
+      "endHpBuckets": {
+        "lt20": 76,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "volcanic": {
+          "fights": 76,
+          "deaths": 74,
+          "fightMs": 437200,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.003,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.537,
+          "endHpBuckets": {
+            "lt20": 76,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t4-striker-light-graveyard-naked": {
+      "fights": 129,
+      "deaths": 128,
+      "fightMs": 411700,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.008,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.732,
+      "endHpBuckets": {
+        "lt20": 128,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 1
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 20,
+      "byBiome": {
+        "graveyard": {
+          "fights": 129,
+          "deaths": 128,
+          "fightMs": 411700,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.008,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.732,
+          "endHpBuckets": {
+            "lt20": 128,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 1
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t4-striker-heavy-graveyard-naked": {
+      "fights": 105,
+      "deaths": 104,
+      "fightMs": 421100,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.002,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.618,
+      "endHpBuckets": {
+        "lt20": 104,
+        "from20to40": 1,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 7,
+      "byBiome": {
+        "graveyard": {
+          "fights": 105,
+          "deaths": 104,
+          "fightMs": 421100,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.002,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.618,
+          "endHpBuckets": {
+            "lt20": 104,
+            "from20to40": 1,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t4-striker-light-tundra-naked": {
+      "fights": 1,
+      "deaths": 1,
+      "fightMs": 2300,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0,
+      "endHpBuckets": {
+        "lt20": 1,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 148,
+      "byBiome": {
+        "tundra": {
+          "fights": 1,
+          "deaths": 1,
+          "fightMs": 2300,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0,
+          "endHpBuckets": {
+            "lt20": 1,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t4-striker-heavy-tundra-naked": {
+      "fights": 1,
+      "deaths": 1,
+      "fightMs": 1900,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0,
+      "endHpBuckets": {
+        "lt20": 1,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 124,
+      "byBiome": {
+        "tundra": {
+          "fights": 1,
+          "deaths": 1,
+          "fightMs": 1900,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0,
+          "endHpBuckets": {
+            "lt20": 1,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t3-squire-light-cave-naked": {
+      "fights": 67,
+      "deaths": 67,
+      "fightMs": 450600,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.675,
+      "endHpBuckets": {
+        "lt20": 67,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 1,
+      "byBiome": {
+        "cave": {
+          "fights": 67,
+          "deaths": 67,
+          "fightMs": 450600,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.675,
+          "endHpBuckets": {
+            "lt20": 67,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t3-squire-heavy-cave-naked": {
+      "fights": 50,
+      "deaths": 48,
+      "fightMs": 446400,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.016,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.482,
+      "endHpBuckets": {
+        "lt20": 49,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 1,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "cave": {
+          "fights": 50,
+          "deaths": 48,
+          "fightMs": 446400,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.016,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.482,
+          "endHpBuckets": {
+            "lt20": 49,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 1,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t3-squire-light-volcanic-naked": {
+      "fights": 70,
+      "deaths": 69,
+      "fightMs": 436100,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.006,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.569,
+      "endHpBuckets": {
+        "lt20": 69,
+        "from20to40": 0,
+        "from40to60": 1,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 1,
+      "byBiome": {
+        "volcanic": {
+          "fights": 70,
+          "deaths": 69,
+          "fightMs": 436100,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.006,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.569,
+          "endHpBuckets": {
+            "lt20": 69,
+            "from20to40": 0,
+            "from40to60": 1,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t3-squire-heavy-volcanic-naked": {
+      "fights": 45,
+      "deaths": 43,
+      "fightMs": 468100,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.009,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.538,
+      "endHpBuckets": {
+        "lt20": 43,
+        "from20to40": 2,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "volcanic": {
+          "fights": 45,
+          "deaths": 43,
+          "fightMs": 468100,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.009,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.538,
+          "endHpBuckets": {
+            "lt20": 43,
+            "from20to40": 2,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t4-squire-light-graveyard-naked": {
+      "fights": 113,
+      "deaths": 112,
+      "fightMs": 448900,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.005,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.754,
+      "endHpBuckets": {
+        "lt20": 112,
+        "from20to40": 0,
+        "from40to60": 1,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 2,
+      "byBiome": {
+        "graveyard": {
+          "fights": 113,
+          "deaths": 112,
+          "fightMs": 448900,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.005,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.754,
+          "endHpBuckets": {
+            "lt20": 112,
+            "from20to40": 0,
+            "from40to60": 1,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t4-squire-heavy-graveyard-naked": {
+      "fights": 85,
+      "deaths": 83,
+      "fightMs": 438800,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.012,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.681,
+      "endHpBuckets": {
+        "lt20": 83,
+        "from20to40": 0,
+        "from40to60": 1,
+        "from60to80": 1,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 3,
+      "byBiome": {
+        "graveyard": {
+          "fights": 85,
+          "deaths": 83,
+          "fightMs": 438800,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.012,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.681,
+          "endHpBuckets": {
+            "lt20": 83,
+            "from20to40": 0,
+            "from40to60": 1,
+            "from60to80": 1,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t4-squire-light-tundra-naked": {
+      "fights": 1,
+      "deaths": 1,
+      "fightMs": 2000,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0,
+      "endHpBuckets": {
+        "lt20": 1,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 137,
+      "byBiome": {
+        "tundra": {
+          "fights": 1,
+          "deaths": 1,
+          "fightMs": 2000,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0,
+          "endHpBuckets": {
+            "lt20": 1,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t4-squire-heavy-tundra-naked": {
+      "fights": 2,
+      "deaths": 2,
+      "fightMs": 2500,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0,
+      "endHpBuckets": {
+        "lt20": 2,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 105,
+      "byBiome": {
+        "tundra": {
+          "fights": 2,
+          "deaths": 2,
+          "fightMs": 2500,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0,
+          "endHpBuckets": {
+            "lt20": 2,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t3-apprentice-light-cave-naked": {
+      "fights": 76,
+      "deaths": 75,
+      "fightMs": 469800,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.013,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.272,
+      "endHpBuckets": {
+        "lt20": 75,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 1
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "cave": {
+          "fights": 76,
+          "deaths": 75,
+          "fightMs": 469800,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.013,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.272,
+          "endHpBuckets": {
+            "lt20": 75,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 1
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t3-apprentice-heavy-cave-naked": {
+      "fights": 59,
+      "deaths": 58,
+      "fightMs": 437800,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.01,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.35,
+      "endHpBuckets": {
+        "lt20": 58,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 1,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "cave": {
+          "fights": 59,
+          "deaths": 58,
+          "fightMs": 437800,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.01,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.35,
+          "endHpBuckets": {
+            "lt20": 58,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 1,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t3-apprentice-light-volcanic-naked": {
+      "fights": 82,
+      "deaths": 81,
+      "fightMs": 426600,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.012,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.627,
+      "endHpBuckets": {
+        "lt20": 81,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 1
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "volcanic": {
+          "fights": 82,
+          "deaths": 81,
+          "fightMs": 426600,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.012,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.627,
+          "endHpBuckets": {
+            "lt20": 81,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 1
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t3-apprentice-heavy-volcanic-naked": {
+      "fights": 72,
+      "deaths": 70,
+      "fightMs": 419300,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.006,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.564,
+      "endHpBuckets": {
+        "lt20": 71,
+        "from20to40": 0,
+        "from40to60": 1,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "volcanic": {
+          "fights": 72,
+          "deaths": 70,
+          "fightMs": 419300,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.006,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.564,
+          "endHpBuckets": {
+            "lt20": 71,
+            "from20to40": 0,
+            "from40to60": 1,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t4-apprentice-light-graveyard-naked": {
+      "fights": 132,
+      "deaths": 130,
+      "fightMs": 428900,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.01,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.502,
+      "endHpBuckets": {
+        "lt20": 130,
+        "from20to40": 1,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 1
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 6,
+      "byBiome": {
+        "graveyard": {
+          "fights": 132,
+          "deaths": 130,
+          "fightMs": 428900,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.01,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.502,
+          "endHpBuckets": {
+            "lt20": 130,
+            "from20to40": 1,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 1
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t4-apprentice-heavy-graveyard-naked": {
+      "fights": 111,
+      "deaths": 110,
+      "fightMs": 398300,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.002,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.545,
+      "endHpBuckets": {
+        "lt20": 111,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 3,
+      "byBiome": {
+        "graveyard": {
+          "fights": 111,
+          "deaths": 110,
+          "fightMs": 398300,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.002,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.545,
+          "endHpBuckets": {
+            "lt20": 111,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t4-apprentice-light-tundra-naked": {
+      "fights": 89,
+      "deaths": 89,
+      "fightMs": 277200,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0,
+      "endHpBuckets": {
+        "lt20": 89,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 1,
+      "byBiome": {
+        "tundra": {
+          "fights": 89,
+          "deaths": 89,
+          "fightMs": 277200,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0,
+          "endHpBuckets": {
+            "lt20": 89,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t4-apprentice-heavy-tundra-naked": {
+      "fights": 100,
+      "deaths": 100,
+      "fightMs": 219600,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0,
+      "endHpBuckets": {
+        "lt20": 100,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 1,
+      "byBiome": {
+        "tundra": {
+          "fights": 100,
+          "deaths": 100,
+          "fightMs": 219600,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0,
+          "endHpBuckets": {
+            "lt20": 100,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t3-slinger-light-cave-naked": {
+      "fights": 68,
+      "deaths": 66,
+      "fightMs": 469600,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.029,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.238,
+      "endHpBuckets": {
+        "lt20": 66,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 2
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "cave": {
+          "fights": 68,
+          "deaths": 66,
+          "fightMs": 469600,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.029,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.238,
+          "endHpBuckets": {
+            "lt20": 66,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 2
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t3-slinger-heavy-cave-naked": {
+      "fights": 87,
+      "deaths": 85,
+      "fightMs": 412300,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.018,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.407,
+      "endHpBuckets": {
+        "lt20": 85,
+        "from20to40": 0,
+        "from40to60": 1,
+        "from60to80": 0,
+        "ge80": 1
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "cave": {
+          "fights": 87,
+          "deaths": 85,
+          "fightMs": 412300,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.018,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.407,
+          "endHpBuckets": {
+            "lt20": 85,
+            "from20to40": 0,
+            "from40to60": 1,
+            "from60to80": 0,
+            "ge80": 1
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t3-slinger-light-volcanic-naked": {
+      "fights": 79,
+      "deaths": 78,
+      "fightMs": 464100,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.004,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.617,
+      "endHpBuckets": {
+        "lt20": 78,
+        "from20to40": 1,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "volcanic": {
+          "fights": 79,
+          "deaths": 78,
+          "fightMs": 464100,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.004,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.617,
+          "endHpBuckets": {
+            "lt20": 78,
+            "from20to40": 1,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t3-slinger-heavy-volcanic-naked": {
+      "fights": 73,
+      "deaths": 71,
+      "fightMs": 453700,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.013,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.562,
+      "endHpBuckets": {
+        "lt20": 72,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 1,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 1,
+      "byBiome": {
+        "volcanic": {
+          "fights": 73,
+          "deaths": 71,
+          "fightMs": 453700,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.013,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.562,
+          "endHpBuckets": {
+            "lt20": 72,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 1,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t4-slinger-light-graveyard-naked": {
+      "fights": 142,
+      "deaths": 141,
+      "fightMs": 438700,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.003,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.359,
+      "endHpBuckets": {
+        "lt20": 141,
+        "from20to40": 0,
+        "from40to60": 1,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 3,
+      "byBiome": {
+        "graveyard": {
+          "fights": 142,
+          "deaths": 141,
+          "fightMs": 438700,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.003,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.359,
+          "endHpBuckets": {
+            "lt20": 141,
+            "from20to40": 0,
+            "from40to60": 1,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t4-slinger-heavy-graveyard-naked": {
+      "fights": 141,
+      "deaths": 139,
+      "fightMs": 414400,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.01,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.459,
+      "endHpBuckets": {
+        "lt20": 139,
+        "from20to40": 1,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 1
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 3,
+      "byBiome": {
+        "graveyard": {
+          "fights": 141,
+          "deaths": 139,
+          "fightMs": 414400,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.01,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.459,
+          "endHpBuckets": {
+            "lt20": 139,
+            "from20to40": 1,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 1
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t4-slinger-light-tundra-naked": {
+      "fights": 62,
+      "deaths": 60,
+      "fightMs": 410000,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.032,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0,
+      "endHpBuckets": {
+        "lt20": 60,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 2
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 2,
+      "byBiome": {
+        "tundra": {
+          "fights": 62,
+          "deaths": 60,
+          "fightMs": 410000,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.032,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0,
+          "endHpBuckets": {
+            "lt20": 60,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 2
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t4-slinger-heavy-tundra-naked": {
+      "fights": 82,
+      "deaths": 81,
+      "fightMs": 278200,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.012,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0,
+      "endHpBuckets": {
+        "lt20": 81,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 1
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "tundra": {
+          "fights": 82,
+          "deaths": 81,
+          "fightMs": 278200,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.012,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0,
+          "endHpBuckets": {
+            "lt20": 81,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 1
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t3-conduit-light-cave-naked": {
+      "fights": 0,
+      "deaths": 0,
+      "fightMs": 0,
+      "medianEndHpFraction": null,
+      "meanEndHpFraction": null,
+      "medianMinHpFraction": null,
+      "timeInBandShare": null,
+      "endHpBuckets": {
+        "lt20": 0,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {},
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t3-conduit-heavy-cave-naked": {
+      "fights": 4,
+      "deaths": 4,
+      "fightMs": 20800,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.596,
+      "endHpBuckets": {
+        "lt20": 4,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "cave": {
+          "fights": 4,
+          "deaths": 4,
+          "fightMs": 20800,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.596,
+          "endHpBuckets": {
+            "lt20": 4,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t3-conduit-light-volcanic-naked": {
+      "fights": 9,
+      "deaths": 8,
+      "fightMs": 48000,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.079,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.592,
+      "endHpBuckets": {
+        "lt20": 8,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 1,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "volcanic": {
+          "fights": 9,
+          "deaths": 8,
+          "fightMs": 48000,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.079,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.592,
+          "endHpBuckets": {
+            "lt20": 8,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 1,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t3-conduit-heavy-volcanic-naked": {
+      "fights": 17,
+      "deaths": 17,
+      "fightMs": 85300,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.49,
+      "endHpBuckets": {
+        "lt20": 17,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "volcanic": {
+          "fights": 17,
+          "deaths": 17,
+          "fightMs": 85300,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.49,
+          "endHpBuckets": {
+            "lt20": 17,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t4-conduit-light-graveyard-naked": {
+      "fights": 7,
+      "deaths": 7,
+      "fightMs": 28600,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.5,
+      "endHpBuckets": {
+        "lt20": 7,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "graveyard": {
+          "fights": 7,
+          "deaths": 7,
+          "fightMs": 28600,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.5,
+          "endHpBuckets": {
+            "lt20": 7,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t4-conduit-heavy-graveyard-naked": {
+      "fights": 56,
+      "deaths": 56,
+      "fightMs": 227500,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.556,
+      "endHpBuckets": {
+        "lt20": 56,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 1,
+      "byBiome": {
+        "graveyard": {
+          "fights": 56,
+          "deaths": 56,
+          "fightMs": 227500,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.556,
+          "endHpBuckets": {
+            "lt20": 56,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t4-conduit-light-tundra-naked": {
+      "fights": 0,
+      "deaths": 0,
+      "fightMs": 0,
+      "medianEndHpFraction": null,
+      "meanEndHpFraction": null,
+      "medianMinHpFraction": null,
+      "timeInBandShare": null,
+      "endHpBuckets": {
+        "lt20": 0,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {},
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t4-conduit-heavy-tundra-naked": {
+      "fights": 10,
+      "deaths": 10,
+      "fightMs": 34300,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.041,
+      "endHpBuckets": {
+        "lt20": 10,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "tundra": {
+          "fights": 10,
+          "deaths": 10,
+          "fightMs": 34300,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.041,
+          "endHpBuckets": {
+            "lt20": 10,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t3-spirit-light-cave-naked": {
+      "fights": 70,
+      "deaths": 69,
+      "fightMs": 452400,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.014,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.296,
+      "endHpBuckets": {
+        "lt20": 69,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 1
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "cave": {
+          "fights": 70,
+          "deaths": 69,
+          "fightMs": 452400,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.014,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.296,
+          "endHpBuckets": {
+            "lt20": 69,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 1
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t3-spirit-heavy-cave-naked": {
+      "fights": 68,
+      "deaths": 67,
+      "fightMs": 449600,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.015,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.263,
+      "endHpBuckets": {
+        "lt20": 67,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 1
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 1,
+      "byBiome": {
+        "cave": {
+          "fights": 68,
+          "deaths": 67,
+          "fightMs": 449600,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.015,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.263,
+          "endHpBuckets": {
+            "lt20": 67,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 1
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t3-spirit-light-volcanic-naked": {
+      "fights": 74,
+      "deaths": 73,
+      "fightMs": 467300,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.004,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.466,
+      "endHpBuckets": {
+        "lt20": 73,
+        "from20to40": 1,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "volcanic": {
+          "fights": 74,
+          "deaths": 73,
+          "fightMs": 467300,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.004,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.466,
+          "endHpBuckets": {
+            "lt20": 73,
+            "from20to40": 1,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t3-spirit-heavy-volcanic-naked": {
+      "fights": 75,
+      "deaths": 74,
+      "fightMs": 441100,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.013,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.392,
+      "endHpBuckets": {
+        "lt20": 74,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 1
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "volcanic": {
+          "fights": 75,
+          "deaths": 74,
+          "fightMs": 441100,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.013,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.392,
+          "endHpBuckets": {
+            "lt20": 74,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 1
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t4-spirit-light-graveyard-naked": {
+      "fights": 140,
+      "deaths": 140,
+      "fightMs": 422100,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.507,
+      "endHpBuckets": {
+        "lt20": 140,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 7,
+      "byBiome": {
+        "graveyard": {
+          "fights": 140,
+          "deaths": 140,
+          "fightMs": 422100,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.507,
+          "endHpBuckets": {
+            "lt20": 140,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t4-spirit-heavy-graveyard-naked": {
+      "fights": 130,
+      "deaths": 129,
+      "fightMs": 440600,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.005,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.446,
+      "endHpBuckets": {
+        "lt20": 129,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 1,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 2,
+      "byBiome": {
+        "graveyard": {
+          "fights": 130,
+          "deaths": 129,
+          "fightMs": 440600,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.005,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.446,
+          "endHpBuckets": {
+            "lt20": 129,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 1,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t4-spirit-light-tundra-naked": {
+      "fights": 48,
+      "deaths": 47,
+      "fightMs": 444000,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.021,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0,
+      "endHpBuckets": {
+        "lt20": 47,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 1
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "tundra": {
+          "fights": 48,
+          "deaths": 47,
+          "fightMs": 444000,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.021,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0,
+          "endHpBuckets": {
+            "lt20": 47,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 1
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t4-spirit-heavy-tundra-naked": {
+      "fights": 81,
+      "deaths": 80,
+      "fightMs": 275300,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.012,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0,
+      "endHpBuckets": {
+        "lt20": 80,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 1
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "tundra": {
+          "fights": 81,
+          "deaths": 80,
+          "fightMs": 275300,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.012,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0,
+          "endHpBuckets": {
+            "lt20": 80,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 1
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t1-striker-root-plains-naked": {
+      "fights": 33,
+      "deaths": 20,
+      "fightMs": 434300,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.196,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.492,
+      "endHpBuckets": {
+        "lt20": 22,
+        "from20to40": 1,
+        "from40to60": 6,
+        "from60to80": 0,
+        "ge80": 4
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "plains": {
+          "fights": 33,
+          "deaths": 20,
+          "fightMs": 434300,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.196,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.492,
+          "endHpBuckets": {
+            "lt20": 22,
+            "from20to40": 1,
+            "from40to60": 6,
+            "from60to80": 0,
+            "ge80": 4
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t2-striker-light-plains-naked": {
+      "fights": 56,
+      "deaths": 55,
+      "fightMs": 551100,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.009,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.54,
+      "endHpBuckets": {
+        "lt20": 55,
+        "from20to40": 0,
+        "from40to60": 1,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 1,
+      "byBiome": {
+        "plains": {
+          "fights": 56,
+          "deaths": 55,
+          "fightMs": 551100,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.009,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.54,
+          "endHpBuckets": {
+            "lt20": 55,
+            "from20to40": 0,
+            "from40to60": 1,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t2-striker-heavy-plains-naked": {
+      "fights": 54,
+      "deaths": 52,
+      "fightMs": 548800,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.016,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.573,
+      "endHpBuckets": {
+        "lt20": 52,
+        "from20to40": 1,
+        "from40to60": 0,
+        "from60to80": 1,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "plains": {
+          "fights": 54,
+          "deaths": 52,
+          "fightMs": 548800,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.016,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.573,
+          "endHpBuckets": {
+            "lt20": 52,
+            "from20to40": 1,
+            "from40to60": 0,
+            "from60to80": 1,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t1-striker-root-forest-naked": {
+      "fights": 60,
+      "deaths": 58,
+      "fightMs": 568900,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.022,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.527,
+      "endHpBuckets": {
+        "lt20": 58,
+        "from20to40": 0,
+        "from40to60": 1,
+        "from60to80": 0,
+        "ge80": 1
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "forest": {
+          "fights": 60,
+          "deaths": 58,
+          "fightMs": 568900,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.022,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.527,
+          "endHpBuckets": {
+            "lt20": 58,
+            "from20to40": 0,
+            "from40to60": 1,
+            "from60to80": 0,
+            "ge80": 1
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t2-striker-light-forest-naked": {
+      "fights": 78,
+      "deaths": 77,
+      "fightMs": 414400,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.679,
+      "endHpBuckets": {
+        "lt20": 78,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "forest": {
+          "fights": 78,
+          "deaths": 77,
+          "fightMs": 414400,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.679,
+          "endHpBuckets": {
+            "lt20": 78,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t2-striker-heavy-forest-naked": {
+      "fights": 74,
+      "deaths": 73,
+      "fightMs": 398600,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.008,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.554,
+      "endHpBuckets": {
+        "lt20": 73,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 1,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "forest": {
+          "fights": 74,
+          "deaths": 73,
+          "fightMs": 398600,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.008,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.554,
+          "endHpBuckets": {
+            "lt20": 73,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 1,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t1-squire-root-plains-naked": {
+      "fights": 36,
+      "deaths": 20,
+      "fightMs": 410000,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.299,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.498,
+      "endHpBuckets": {
+        "lt20": 21,
+        "from20to40": 1,
+        "from40to60": 1,
+        "from60to80": 8,
+        "ge80": 5
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "plains": {
+          "fights": 36,
+          "deaths": 20,
+          "fightMs": 410000,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.299,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.498,
+          "endHpBuckets": {
+            "lt20": 21,
+            "from20to40": 1,
+            "from40to60": 1,
+            "from60to80": 8,
+            "ge80": 5
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t2-squire-light-plains-naked": {
+      "fights": 49,
+      "deaths": 47,
+      "fightMs": 555700,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.02,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.581,
+      "endHpBuckets": {
+        "lt20": 47,
+        "from20to40": 1,
+        "from40to60": 0,
+        "from60to80": 1,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "plains": {
+          "fights": 49,
+          "deaths": 47,
+          "fightMs": 555700,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.02,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.581,
+          "endHpBuckets": {
+            "lt20": 47,
+            "from20to40": 1,
+            "from40to60": 0,
+            "from60to80": 1,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t2-squire-heavy-plains-naked": {
+      "fights": 39,
+      "deaths": 31,
+      "fightMs": 446500,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.038,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.601,
+      "endHpBuckets": {
+        "lt20": 38,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 1
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 1,
+      "byBiome": {
+        "plains": {
+          "fights": 39,
+          "deaths": 31,
+          "fightMs": 446500,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.038,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.601,
+          "endHpBuckets": {
+            "lt20": 38,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 1
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t1-squire-root-forest-naked": {
+      "fights": 53,
+      "deaths": 51,
+      "fightMs": 558600,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.018,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.549,
+      "endHpBuckets": {
+        "lt20": 52,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 1
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "forest": {
+          "fights": 53,
+          "deaths": 51,
+          "fightMs": 558600,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.018,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.549,
+          "endHpBuckets": {
+            "lt20": 52,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 1
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t2-squire-light-forest-naked": {
+      "fights": 65,
+      "deaths": 63,
+      "fightMs": 463000,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.006,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.549,
+      "endHpBuckets": {
+        "lt20": 65,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "forest": {
+          "fights": 65,
+          "deaths": 63,
+          "fightMs": 463000,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.006,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.549,
+          "endHpBuckets": {
+            "lt20": 65,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t2-squire-heavy-forest-naked": {
+      "fights": 51,
+      "deaths": 49,
+      "fightMs": 425300,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.031,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.495,
+      "endHpBuckets": {
+        "lt20": 49,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 1,
+        "ge80": 1
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "forest": {
+          "fights": 51,
+          "deaths": 49,
+          "fightMs": 425300,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.031,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.495,
+          "endHpBuckets": {
+            "lt20": 49,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 1,
+            "ge80": 1
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t1-apprentice-root-plains-naked": {
+      "fights": 28,
+      "deaths": 4,
+      "fightMs": 316500,
+      "medianEndHpFraction": 0.546,
+      "meanEndHpFraction": 0.449,
+      "medianMinHpFraction": 0.546,
+      "timeInBandShare": 0.411,
+      "endHpBuckets": {
+        "lt20": 9,
+        "from20to40": 4,
+        "from40to60": 2,
+        "from60to80": 7,
+        "ge80": 6
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "plains": {
+          "fights": 28,
+          "deaths": 4,
+          "fightMs": 316500,
+          "medianEndHpFraction": 0.546,
+          "meanEndHpFraction": 0.449,
+          "medianMinHpFraction": 0.546,
+          "timeInBandShare": 0.411,
+          "endHpBuckets": {
+            "lt20": 9,
+            "from20to40": 4,
+            "from40to60": 2,
+            "from60to80": 7,
+            "ge80": 6
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t2-apprentice-light-plains-naked": {
+      "fights": 64,
+      "deaths": 62,
+      "fightMs": 537300,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.013,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.503,
+      "endHpBuckets": {
+        "lt20": 62,
+        "from20to40": 1,
+        "from40to60": 1,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "plains": {
+          "fights": 64,
+          "deaths": 62,
+          "fightMs": 537300,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.013,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.503,
+          "endHpBuckets": {
+            "lt20": 62,
+            "from20to40": 1,
+            "from40to60": 1,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t2-apprentice-heavy-plains-naked": {
+      "fights": 58,
+      "deaths": 54,
+      "fightMs": 524900,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.018,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.51,
+      "endHpBuckets": {
+        "lt20": 57,
+        "from20to40": 0,
+        "from40to60": 1,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "plains": {
+          "fights": 58,
+          "deaths": 54,
+          "fightMs": 524900,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.018,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.51,
+          "endHpBuckets": {
+            "lt20": 57,
+            "from20to40": 0,
+            "from40to60": 1,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t1-apprentice-root-forest-naked": {
+      "fights": 65,
+      "deaths": 63,
+      "fightMs": 562300,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.02,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.44,
+      "endHpBuckets": {
+        "lt20": 63,
+        "from20to40": 0,
+        "from40to60": 1,
+        "from60to80": 1,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "forest": {
+          "fights": 65,
+          "deaths": 63,
+          "fightMs": 562300,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.02,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.44,
+          "endHpBuckets": {
+            "lt20": 63,
+            "from20to40": 0,
+            "from40to60": 1,
+            "from60to80": 1,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t2-apprentice-light-forest-naked": {
+      "fights": 73,
+      "deaths": 71,
+      "fightMs": 447300,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.023,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.548,
+      "endHpBuckets": {
+        "lt20": 71,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 2
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "forest": {
+          "fights": 73,
+          "deaths": 71,
+          "fightMs": 447300,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.023,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.548,
+          "endHpBuckets": {
+            "lt20": 71,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 2
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t2-apprentice-heavy-forest-naked": {
+      "fights": 67,
+      "deaths": 65,
+      "fightMs": 415000,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.023,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.562,
+      "endHpBuckets": {
+        "lt20": 65,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 1,
+        "ge80": 1
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "forest": {
+          "fights": 67,
+          "deaths": 65,
+          "fightMs": 415000,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.023,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.562,
+          "endHpBuckets": {
+            "lt20": 65,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 1,
+            "ge80": 1
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t1-slinger-root-plains-naked": {
+      "fights": 33,
+      "deaths": 15,
+      "fightMs": 379800,
+      "medianEndHpFraction": 0.316,
+      "meanEndHpFraction": 0.303,
+      "medianMinHpFraction": 0.314,
+      "timeInBandShare": 0.491,
+      "endHpBuckets": {
+        "lt20": 16,
+        "from20to40": 4,
+        "from40to60": 6,
+        "from60to80": 2,
+        "ge80": 5
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "plains": {
+          "fights": 33,
+          "deaths": 15,
+          "fightMs": 379800,
+          "medianEndHpFraction": 0.316,
+          "meanEndHpFraction": 0.303,
+          "medianMinHpFraction": 0.314,
+          "timeInBandShare": 0.491,
+          "endHpBuckets": {
+            "lt20": 16,
+            "from20to40": 4,
+            "from40to60": 6,
+            "from60to80": 2,
+            "ge80": 5
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t2-slinger-light-plains-naked": {
+      "fights": 64,
+      "deaths": 62,
+      "fightMs": 552300,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.016,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.557,
+      "endHpBuckets": {
+        "lt20": 62,
+        "from20to40": 0,
+        "from40to60": 2,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "plains": {
+          "fights": 64,
+          "deaths": 62,
+          "fightMs": 552300,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.016,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.557,
+          "endHpBuckets": {
+            "lt20": 62,
+            "from20to40": 0,
+            "from40to60": 2,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t2-slinger-heavy-plains-naked": {
+      "fights": 61,
+      "deaths": 59,
+      "fightMs": 551300,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.019,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.548,
+      "endHpBuckets": {
+        "lt20": 59,
+        "from20to40": 0,
+        "from40to60": 1,
+        "from60to80": 1,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "plains": {
+          "fights": 61,
+          "deaths": 59,
+          "fightMs": 551300,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.019,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.548,
+          "endHpBuckets": {
+            "lt20": 59,
+            "from20to40": 0,
+            "from40to60": 1,
+            "from60to80": 1,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t1-slinger-root-forest-naked": {
+      "fights": 79,
+      "deaths": 77,
+      "fightMs": 546700,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.018,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.493,
+      "endHpBuckets": {
+        "lt20": 77,
+        "from20to40": 1,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 1
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "forest": {
+          "fights": 79,
+          "deaths": 77,
+          "fightMs": 546700,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.018,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.493,
+          "endHpBuckets": {
+            "lt20": 77,
+            "from20to40": 1,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 1
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t2-slinger-light-forest-naked": {
+      "fights": 63,
+      "deaths": 63,
+      "fightMs": 453600,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.651,
+      "endHpBuckets": {
+        "lt20": 63,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 2,
+      "byBiome": {
+        "forest": {
+          "fights": 63,
+          "deaths": 63,
+          "fightMs": 453600,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.651,
+          "endHpBuckets": {
+            "lt20": 63,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t2-slinger-heavy-forest-naked": {
+      "fights": 67,
+      "deaths": 66,
+      "fightMs": 443000,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.015,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.611,
+      "endHpBuckets": {
+        "lt20": 66,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 1
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 1,
+      "byBiome": {
+        "forest": {
+          "fights": 67,
+          "deaths": 66,
+          "fightMs": 443000,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.015,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.611,
+          "endHpBuckets": {
+            "lt20": 66,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 1
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t1-conduit-root-plains-naked": {
+      "fights": 19,
+      "deaths": 10,
+      "fightMs": 261500,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.277,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.476,
+      "endHpBuckets": {
+        "lt20": 11,
+        "from20to40": 0,
+        "from40to60": 3,
+        "from60to80": 4,
+        "ge80": 1
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "plains": {
+          "fights": 19,
+          "deaths": 10,
+          "fightMs": 261500,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.277,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.476,
+          "endHpBuckets": {
+            "lt20": 11,
+            "from20to40": 0,
+            "from40to60": 3,
+            "from60to80": 4,
+            "ge80": 1
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t2-conduit-light-plains-naked": {
+      "fights": 24,
+      "deaths": 23,
+      "fightMs": 217100,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.041,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.565,
+      "endHpBuckets": {
+        "lt20": 23,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 1
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "plains": {
+          "fights": 24,
+          "deaths": 23,
+          "fightMs": 217100,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.041,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.565,
+          "endHpBuckets": {
+            "lt20": 23,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 1
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t2-conduit-heavy-plains-naked": {
+      "fights": 23,
+      "deaths": 22,
+      "fightMs": 232900,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.013,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.541,
+      "endHpBuckets": {
+        "lt20": 22,
+        "from20to40": 1,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "plains": {
+          "fights": 23,
+          "deaths": 22,
+          "fightMs": 232900,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.013,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.541,
+          "endHpBuckets": {
+            "lt20": 22,
+            "from20to40": 1,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t1-conduit-root-forest-naked": {
+      "fights": 25,
+      "deaths": 21,
+      "fightMs": 183900,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.088,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.554,
+      "endHpBuckets": {
+        "lt20": 21,
+        "from20to40": 0,
+        "from40to60": 3,
+        "from60to80": 0,
+        "ge80": 1
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "forest": {
+          "fights": 25,
+          "deaths": 21,
+          "fightMs": 183900,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.088,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.554,
+          "endHpBuckets": {
+            "lt20": 21,
+            "from20to40": 0,
+            "from40to60": 3,
+            "from60to80": 0,
+            "ge80": 1
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t2-conduit-light-forest-naked": {
+      "fights": 15,
+      "deaths": 14,
+      "fightMs": 101200,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.039,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.487,
+      "endHpBuckets": {
+        "lt20": 14,
+        "from20to40": 0,
+        "from40to60": 1,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "forest": {
+          "fights": 15,
+          "deaths": 14,
+          "fightMs": 101200,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.039,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.487,
+          "endHpBuckets": {
+            "lt20": 14,
+            "from20to40": 0,
+            "from40to60": 1,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t2-conduit-heavy-forest-naked": {
+      "fights": 11,
+      "deaths": 11,
+      "fightMs": 56900,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.682,
+      "endHpBuckets": {
+        "lt20": 11,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "forest": {
+          "fights": 11,
+          "deaths": 11,
+          "fightMs": 56900,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.682,
+          "endHpBuckets": {
+            "lt20": 11,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t1-spirit-root-plains-naked": {
+      "fights": 32,
+      "deaths": 18,
+      "fightMs": 399600,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.246,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.311,
+      "endHpBuckets": {
+        "lt20": 21,
+        "from20to40": 1,
+        "from40to60": 2,
+        "from60to80": 5,
+        "ge80": 3
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "plains": {
+          "fights": 32,
+          "deaths": 18,
+          "fightMs": 399600,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.246,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.311,
+          "endHpBuckets": {
+            "lt20": 21,
+            "from20to40": 1,
+            "from40to60": 2,
+            "from60to80": 5,
+            "ge80": 3
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t2-spirit-light-plains-naked": {
+      "fights": 66,
+      "deaths": 64,
+      "fightMs": 561200,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.03,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.375,
+      "endHpBuckets": {
+        "lt20": 64,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 2
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "plains": {
+          "fights": 66,
+          "deaths": 64,
+          "fightMs": 561200,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.03,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.375,
+          "endHpBuckets": {
+            "lt20": 64,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 2
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t2-spirit-heavy-plains-naked": {
+      "fights": 65,
+      "deaths": 63,
+      "fightMs": 538500,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.016,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.383,
+      "endHpBuckets": {
+        "lt20": 63,
+        "from20to40": 1,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 1
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "plains": {
+          "fights": 65,
+          "deaths": 63,
+          "fightMs": 538500,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.016,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.383,
+          "endHpBuckets": {
+            "lt20": 63,
+            "from20to40": 1,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 1
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t1-spirit-root-forest-naked": {
+      "fights": 71,
+      "deaths": 69,
+      "fightMs": 569100,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.005,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.317,
+      "endHpBuckets": {
+        "lt20": 70,
+        "from20to40": 1,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 0
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "forest": {
+          "fights": 71,
+          "deaths": 69,
+          "fightMs": 569100,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.005,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.317,
+          "endHpBuckets": {
+            "lt20": 70,
+            "from20to40": 1,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 0
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t2-spirit-light-forest-naked": {
+      "fights": 50,
+      "deaths": 48,
+      "fightMs": 521500,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.04,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.402,
+      "endHpBuckets": {
+        "lt20": 48,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 2
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "forest": {
+          "fights": 50,
+          "deaths": 48,
+          "fightMs": 521500,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.04,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.402,
+          "endHpBuckets": {
+            "lt20": 48,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 2
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    },
+    "p0-t2-spirit-heavy-forest-naked": {
+      "fights": 67,
+      "deaths": 66,
+      "fightMs": 455500,
+      "medianEndHpFraction": 0,
+      "meanEndHpFraction": 0.015,
+      "medianMinHpFraction": 0,
+      "timeInBandShare": 0.452,
+      "endHpBuckets": {
+        "lt20": 66,
+        "from20to40": 0,
+        "from40to60": 0,
+        "from60to80": 0,
+        "ge80": 1
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "forest": {
+          "fights": 67,
+          "deaths": 66,
+          "fightMs": 455500,
+          "medianEndHpFraction": 0,
+          "meanEndHpFraction": 0.015,
+          "medianMinHpFraction": 0,
+          "timeInBandShare": 0.452,
+          "endHpBuckets": {
+            "lt20": 66,
+            "from20to40": 0,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 1
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    }
+  },
+  "burst": [
+    {
+      "source": "Rime-Tusk Mastodon",
+      "hitFraction": 2.957983193277311,
+      "hpBeforeFraction": 1,
+      "atMs": 37300,
+      "cell": "p0-t4-slinger-light-tundra-naked"
+    },
+    {
+      "source": "Rime-Tusk Mastodon",
+      "hitFraction": 2.957983193277311,
+      "hpBeforeFraction": 1,
+      "atMs": 52100,
+      "cell": "p0-t4-slinger-light-tundra-naked"
+    },
+    {
+      "source": "Rime-Tusk Mastodon",
+      "hitFraction": 2.957983193277311,
+      "hpBeforeFraction": 1,
+      "atMs": 63200,
+      "cell": "p0-t4-slinger-light-tundra-naked"
+    },
+    {
+      "source": "Rime-Tusk Mastodon",
+      "hitFraction": 2.957983193277311,
+      "hpBeforeFraction": 1,
+      "atMs": 97200,
+      "cell": "p0-t4-slinger-light-tundra-naked"
+    },
+    {
+      "source": "Rime-Tusk Mastodon",
+      "hitFraction": 2.957983193277311,
+      "hpBeforeFraction": 1,
+      "atMs": 138200,
+      "cell": "p0-t4-slinger-light-tundra-naked"
+    },
+    {
+      "source": "Rime-Tusk Mastodon",
+      "hitFraction": 2.957983193277311,
+      "hpBeforeFraction": 1,
+      "atMs": 29600,
+      "cell": "p0-t4-slinger-light-tundra-naked"
+    },
+    {
+      "source": "Rime-Tusk Mastodon",
+      "hitFraction": 2.957983193277311,
+      "hpBeforeFraction": 1,
+      "atMs": 62700,
+      "cell": "p0-t4-slinger-light-tundra-naked"
+    },
+    {
+      "source": "Rime-Tusk Mastodon",
+      "hitFraction": 2.957983193277311,
+      "hpBeforeFraction": 1,
+      "atMs": 82600,
+      "cell": "p0-t4-slinger-light-tundra-naked"
+    },
+    {
+      "source": "Rime-Tusk Mastodon",
+      "hitFraction": 2.957983193277311,
+      "hpBeforeFraction": 1,
+      "atMs": 95800,
+      "cell": "p0-t4-slinger-light-tundra-naked"
+    },
+    {
+      "source": "Rime-Tusk Mastodon",
+      "hitFraction": 2.957983193277311,
+      "hpBeforeFraction": 1,
+      "atMs": 144300,
+      "cell": "p0-t4-slinger-light-tundra-naked"
+    },
+    {
+      "source": "Rime-Tusk Mastodon",
+      "hitFraction": 2.789473684210526,
+      "hpBeforeFraction": 1,
+      "atMs": 41300,
+      "cell": "p0-t4-spirit-light-tundra-naked"
+    },
+    {
+      "source": "Rime-Tusk Mastodon",
+      "hitFraction": 2.789473684210526,
+      "hpBeforeFraction": 1,
+      "atMs": 85200,
+      "cell": "p0-t4-spirit-light-tundra-naked"
+    },
+    {
+      "source": "Rime-Tusk Mastodon",
+      "hitFraction": 2.789473684210526,
+      "hpBeforeFraction": 1,
+      "atMs": 133100,
+      "cell": "p0-t4-spirit-light-tundra-naked"
+    },
+    {
+      "source": "Rime-Tusk Mastodon",
+      "hitFraction": 2.789473684210526,
+      "hpBeforeFraction": 1,
+      "atMs": 181500,
+      "cell": "p0-t4-spirit-light-tundra-naked"
+    },
+    {
+      "source": "Rime-Tusk Mastodon",
+      "hitFraction": 2.789473684210526,
+      "hpBeforeFraction": 1,
+      "atMs": 239000,
+      "cell": "p0-t4-spirit-light-tundra-naked"
+    }
+  ]
+}

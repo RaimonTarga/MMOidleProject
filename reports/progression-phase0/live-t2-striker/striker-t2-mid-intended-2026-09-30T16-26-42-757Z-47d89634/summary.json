@@ -1,0 +1,2598 @@
+{
+  "snapshots": {
+    "schemaVersion": 1,
+    "snapshotA": null,
+    "snapshotB": null,
+    "checkpoint": null,
+    "namedCheckpoints": {}
+  },
+  "run": {
+    "schemaVersion": 6,
+    "runId": "striker-t2-mid-intended-2026-09-30T16-26-42-757Z-47d89634",
+    "botId": "striker-t2-mid-intended",
+    "devAccountId": "bot-striker-t2-mid-intended-01",
+    "characterName": "Bot striker-t2-mid 01",
+    "characterId": "62f12297-82ca-4f99-9eed-e0f27d2c5194",
+    "routeId": "striker-t2-mid",
+    "routeVersion": "1.0.0",
+    "policyId": "intended",
+    "behavior": {
+      "choices": {},
+      "upgrades": "authored",
+      "description": "A knowledgeable player following the authored route with the intended gear, upgrades and rune counters.",
+      "reachedChoices": {}
+    },
+    "classRoot": "cadence-root",
+    "frameId": "cadence-balanced",
+    "gitRevision": "f47b8e9738071a9ca6759f1bd0f67923cfb24de6",
+    "serverUrl": "http://localhost:4000",
+    "startedAt": 1790785602759,
+    "rewardMultiplier": 25,
+    "economyCandidate": {
+      "id": "t1-economy-candidate-f-2026-09-03",
+      "revision": "t1-economy-candidate-f-2026-09-03-r2",
+      "arm": "F",
+      "t1Plus5EssenceCostMultiplier": 0.6,
+      "catalystProgressPerUnitT1": 100,
+      "t1CatalystProgressRewardMultiplier": 0.5,
+      "catalystsScaledByRewardMultiplier": true,
+      "t1BiomeXpRewardMultiplier": 2,
+      "t1BiomeEssenceRewardMultiplier": 2,
+      "t1Plus5EssenceCosts": {
+        "chaotic-axe": 125,
+        "cave-vest-t1": 155,
+        "cave-charm-t1": 60,
+        "cave-boots-t1": 40,
+        "flash-rapier": 125,
+        "forest-vest-t1": 120,
+        "forest-charm-t1": 60,
+        "forest-boots-t1": 35,
+        "heavy-hammer": 125,
+        "mountain-vest-t1": 125,
+        "mountain-charm-t1": 60,
+        "mountain-boots-t1": 40,
+        "iron-broadsword": 60,
+        "plains-vest-t1": 120,
+        "plains-charm-t1": 45,
+        "plains-boots-t1": 35,
+        "ashbrand-blade": 120,
+        "swamp-vest-t1": 120,
+        "swamp-charm-t1": 60,
+        "swamp-boots-t1": 40
+      }
+    },
+    "taints": [
+      "NON_CANONICAL_REWARD_MULTIPLIER",
+      "SYNTHETIC_TIER_ENTRY"
+    ],
+    "executionMode": "single",
+    "maxConcurrency": 1,
+    "startState": {
+      "nodeId": "node-t2-sanctuary",
+      "hp": 197,
+      "maxHp": 197,
+      "activeStance": null,
+      "runesOwned": [
+        "always",
+        "in-combat",
+        "when-idle",
+        "hp-below-25",
+        "hp-above-90",
+        "target-hp-below-25",
+        "has-debuff",
+        "controlled",
+        "enemy-contact",
+        "in-party",
+        "formation-broken",
+        "n-aggro-3",
+        "inside-telegraph",
+        "target-casting",
+        "target-shielded",
+        "target-escaping",
+        "debuff-pile",
+        "stance-charged",
+        "before-empowered",
+        "target-elite",
+        "target-max-stacks",
+        "while-traveling",
+        "auto-path-enemy",
+        "chase-enemy",
+        "wait-for-regen",
+        "flee",
+        "fight-back",
+        "lead-the-way",
+        "follow-and-assist",
+        "taunt-current-target",
+        "focus-closest",
+        "use-ability",
+        "switch-stance",
+        "wait-it-out",
+        "tactical-reload",
+        "wait-for-execution",
+        "wait-for-summons",
+        "recall-summons",
+        "avoid-enemies",
+        "avoid-hazards",
+        "step-back"
+      ],
+      "unlockedRecipes": [
+        "primordial-club",
+        "clearing-vest-t1",
+        "clearing-charm-t1",
+        "clearing-boots-t1",
+        "chaotic-axe",
+        "cave-vest-t1",
+        "cave-charm-t1",
+        "cave-boots-t1",
+        "flash-rapier",
+        "forest-vest-t1",
+        "forest-charm-t1",
+        "forest-boots-t1",
+        "heavy-hammer",
+        "mountain-vest-t1",
+        "mountain-charm-t1",
+        "mountain-boots-t1",
+        "iron-broadsword",
+        "plains-vest-t1",
+        "plains-charm-t1",
+        "plains-boots-t1",
+        "ashbrand-blade",
+        "swamp-vest-t1",
+        "swamp-charm-t1",
+        "swamp-boots-t1"
+      ],
+      "level": 0,
+      "playerTier": 2,
+      "selectedClass": "cadence-root",
+      "selectedSubVariant": "balanced",
+      "selectedRange": null,
+      "unlockedSkills": [
+        "cadence-root",
+        "cadence-balanced"
+      ],
+      "skillPoints": 0,
+      "biomeLevel": {
+        "plains": 6,
+        "forest": 6,
+        "swamp": 6,
+        "mountain": 6,
+        "cave": 6,
+        "clearing": 4
+      },
+      "biomeXP": {
+        "plains": 1750,
+        "forest": 1750,
+        "swamp": 1750,
+        "mountain": 1750,
+        "cave": 1750,
+        "clearing": 860
+      },
+      "bossesCleared": [
+        "plains:1",
+        "forest:1",
+        "swamp:1",
+        "mountain:1",
+        "cave:1"
+      ],
+      "inventory": [
+        "primordial-club",
+        "clearing-vest-t1",
+        "clearing-charm-t1",
+        "clearing-boots-t1",
+        "iron-broadsword",
+        "plains-vest-t1",
+        "plains-charm-t1",
+        "flash-rapier"
+      ],
+      "equipment": {
+        "weapon": "chaotic-axe",
+        "armor": "mountain-vest-t1",
+        "recovery": "swamp-charm-t1",
+        "mobility": "plains-boots-t1",
+        "core": null,
+        "relic": null
+      },
+      "itemUpgrades": {
+        "iron-broadsword": 1,
+        "plains-vest-t1": 5,
+        "plains-charm-t1": 2,
+        "plains-boots-t1": 5,
+        "flash-rapier": 4,
+        "swamp-charm-t1": 5,
+        "mountain-vest-t1": 5,
+        "chaotic-axe": 5
+      },
+      "essences": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "catalysts": {
+        "alacrity": 0,
+        "heavy": 0,
+        "swarming": 0,
+        "dominion": 0,
+        "fortified": 0
+      },
+      "catalystProgress": {},
+      "knownAbilities": [
+        "sweep",
+        "second-wind",
+        "cleanse",
+        "expose-weakness"
+      ],
+      "attunedAbilities": {
+        "techniques": [
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind"
+        ]
+      },
+      "knownStances": [],
+      "attunedStances": [],
+      "equippedStances": {
+        "default": null
+      },
+      "knownRites": [],
+      "equippedRites": [],
+      "runesEquipped": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "chase-enemy"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ]
+    },
+    "initialEssences": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "initialCatalysts": {
+      "alacrity": 0,
+      "heavy": 0,
+      "swarming": 0,
+      "dominion": 0,
+      "fortified": 0
+    },
+    "tierEntry": {
+      "profileId": "striker-t1-t2-entry-clean",
+      "targetTier": 2,
+      "economyPolicy": "synthetic-combat-progression",
+      "classRoot": "cadence-root",
+      "frameId": "cadence-balanced",
+      "spawnNodeId": "node-t2-sanctuary",
+      "biomeLevels": {
+        "plains": 6,
+        "forest": 6,
+        "swamp": 6,
+        "mountain": 6,
+        "cave": 6,
+        "clearing": 4
+      },
+      "globalMastery": 30,
+      "bossesCleared": [
+        "plains:1",
+        "forest:1",
+        "swamp:1",
+        "mountain:1",
+        "cave:1"
+      ],
+      "equipment": {
+        "weapon": "chaotic-axe",
+        "armor": "mountain-vest-t1",
+        "recovery": "swamp-charm-t1",
+        "mobility": "plains-boots-t1",
+        "core": null,
+        "relic": null
+      },
+      "inventory": [
+        "primordial-club",
+        "clearing-vest-t1",
+        "clearing-charm-t1",
+        "clearing-boots-t1",
+        "iron-broadsword",
+        "plains-vest-t1",
+        "plains-charm-t1",
+        "flash-rapier"
+      ],
+      "itemUpgrades": {
+        "iron-broadsword": 1,
+        "plains-vest-t1": 5,
+        "plains-charm-t1": 2,
+        "plains-boots-t1": 5,
+        "flash-rapier": 4,
+        "swamp-charm-t1": 5,
+        "mountain-vest-t1": 5,
+        "chaotic-axe": 5
+      },
+      "knownAbilities": [
+        "sweep",
+        "second-wind",
+        "cleanse",
+        "expose-weakness"
+      ],
+      "attunedAbilities": {
+        "techniques": [
+          "expose-weakness"
+        ],
+        "guards": [
+          "second-wind"
+        ]
+      },
+      "runeRecipesCrafted": [
+        "rune-recipe-avoid-hazards",
+        "rune-recipe-step-back"
+      ],
+      "runesEquipped": [
+        {
+          "conditionId": "always",
+          "actionId": "auto-path-enemy"
+        },
+        {
+          "conditionId": "inside-telegraph",
+          "actionId": "step-back"
+        },
+        {
+          "conditionId": "in-combat",
+          "actionId": "chase-enemy"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "avoid-hazards"
+        },
+        {
+          "conditionId": "always",
+          "actionId": "wait-for-regen"
+        }
+      ],
+      "knownStances": [],
+      "equippedStances": {
+        "default": null
+      },
+      "activeStance": null,
+      "knownRites": [],
+      "equippedRites": [],
+      "initialEssences": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0,
+        "purple": 0
+      },
+      "initialCatalysts": {
+        "alacrity": 0,
+        "heavy": 0,
+        "swarming": 0,
+        "dominion": 0,
+        "fortified": 0
+      }
+    },
+    "templateValidation": {
+      "profileId": "striker-t1-t2-entry-clean",
+      "profilePass": true,
+      "spawnPass": true,
+      "checked": 225,
+      "failures": []
+    },
+    "endedAt": 1790788006818,
+    "durationMs": 2404059,
+    "completion": "timed-out",
+    "stallReason": "run exceeded maxRunMs (2400000ms)",
+    "canonical": false,
+    "routeCompletion": "aborted",
+    "isolationGrade": "isolated",
+    "soloBaselineEligible": false,
+    "concurrencyCohortEligible": true,
+    "combatEvidenceEligible": false,
+    "economyEvidenceEligible": false,
+    "treatmentValidity": "not-asserted"
+  },
+  "progression": {
+    "finalPlayerTier": 2,
+    "finalGlobalMastery": 42,
+    "biomeLevels": {
+      "plains": 12,
+      "forest": 12,
+      "swamp": 6,
+      "mountain": 6,
+      "cave": 6,
+      "clearing": 4
+    },
+    "bossesCleared": [
+      "plains:1",
+      "forest:1",
+      "swamp:1",
+      "mountain:1",
+      "cave:1"
+    ],
+    "milestonesReached": [
+      "t2-entry",
+      "plains-t2-entered",
+      "skip:knight-steelsword",
+      "plains-t2-maxed",
+      "plains-t2-boss-attempted",
+      "plains-t2-leg-complete",
+      "forest-t2-entered",
+      "skip:forest-vest-t2",
+      "gm-42-first-t2-upgrade",
+      "forest-t2-maxed"
+    ],
+    "routeStepsCompleted": 46,
+    "routeStepsTotal": 160
+  },
+  "productiveActivity": {
+    "thresholdMs": 60000,
+    "flaggedWindows": 0,
+    "totalFlaggedMs": 0,
+    "maxFlaggedMs": 0,
+    "windows": []
+  },
+  "biomes": [
+    {
+      "biomeGroup": "forest",
+      "timeMs": 1125321,
+      "travelMs": 273166,
+      "fightMs": 249130,
+      "deadMs": 12101,
+      "blockedOnResourceMs": 0,
+      "kills": 25,
+      "deaths": 6,
+      "deathsPerHour": 19.194523162724238,
+      "damageTaken": 3426,
+      "damageDealt": 14673,
+      "masteryGained": 3754,
+      "craftsCompleted": 0,
+      "upgradesCompleted": 1,
+      "essenceGained": {
+        "green": 2033
+      },
+      "catalystsByModifier": {
+        "alacrity": 9,
+        "swarming": 2
+      },
+      "topDamageSources": [
+        {
+          "name": "Forest Sentinel",
+          "damage": 1467
+        },
+        {
+          "name": "Dire Whelp",
+          "damage": 1346
+        },
+        {
+          "name": "Dire Wolf",
+          "damage": 306
+        },
+        {
+          "name": "Ironclaw Badger",
+          "damage": 190
+        },
+        {
+          "name": "Thorn Spitter",
+          "damage": 117
+        }
+      ],
+      "topKills": [
+        {
+          "name": "Dire Whelp",
+          "kills": 21
+        },
+        {
+          "name": "Forest Sentinel",
+          "kills": 2
+        },
+        {
+          "name": "Ironclaw Badger",
+          "kills": 1
+        },
+        {
+          "name": "Thorn Spitter",
+          "kills": 1
+        }
+      ],
+      "averageConcurrency": 0.48,
+      "maxConcurrency": 4
+    },
+    {
+      "biomeGroup": "plains",
+      "timeMs": 1062412,
+      "travelMs": 490849,
+      "fightMs": 559451,
+      "deadMs": 7048,
+      "blockedOnResourceMs": 27238,
+      "kills": 73,
+      "deaths": 4,
+      "deathsPerHour": 13.554063771870046,
+      "damageTaken": 4829,
+      "damageDealt": 21802,
+      "masteryGained": 4076,
+      "craftsCompleted": 0,
+      "upgradesCompleted": 3,
+      "essenceGained": {
+        "yellow": 6667
+      },
+      "catalystsByModifier": {
+        "dominion": 2,
+        "fortified": 1,
+        "heavy": 9,
+        "alacrity": 7,
+        "none": 1,
+        "swarming": 6
+      },
+      "topDamageSources": [
+        {
+          "name": "Prairie Yearling",
+          "damage": 1377
+        },
+        {
+          "name": "Gorging Razortusk",
+          "damage": 1273
+        },
+        {
+          "name": "Prairie Defender",
+          "damage": 875
+        },
+        {
+          "name": "Savanna Hawk",
+          "damage": 590
+        },
+        {
+          "name": "Prairie Wolf",
+          "damage": 553
+        }
+      ],
+      "topKills": [
+        {
+          "name": "Prairie Yearling",
+          "kills": 48
+        },
+        {
+          "name": "Prairie Defender",
+          "kills": 12
+        },
+        {
+          "name": "Savanna Hawk",
+          "kills": 10
+        },
+        {
+          "name": "Prairie Wolf",
+          "kills": 3
+        }
+      ],
+      "averageConcurrency": 1.26,
+      "maxConcurrency": 10
+    },
+    {
+      "biomeGroup": "sanctuary",
+      "timeMs": 216261,
+      "travelMs": 133158,
+      "fightMs": 0,
+      "deadMs": 0,
+      "blockedOnResourceMs": 0,
+      "kills": 0,
+      "deaths": 0,
+      "deathsPerHour": 0,
+      "damageTaken": 0,
+      "damageDealt": 0,
+      "masteryGained": 0,
+      "craftsCompleted": 0,
+      "upgradesCompleted": 0,
+      "essenceGained": {},
+      "catalystsByModifier": {},
+      "topDamageSources": [],
+      "topKills": [],
+      "averageConcurrency": 0,
+      "maxConcurrency": 0
+    }
+  ],
+  "combat": {
+    "totalKills": 98,
+    "totalDamageTaken": 8255,
+    "totalAbsorbed": 0,
+    "totalHealed": 5785,
+    "hpLost": 4998.82,
+    "playerDamageDealt": 36475,
+    "summonDamageDealt": 0,
+    "summonDamageShare": 0,
+    "targetSwitches": 84,
+    "stanceSwitches": [],
+    "topIncomingSources": [
+      {
+        "name": "Forest Sentinel",
+        "damage": 1467
+      },
+      {
+        "name": "Prairie Yearling",
+        "damage": 1377
+      },
+      {
+        "name": "Dire Whelp",
+        "damage": 1346
+      },
+      {
+        "name": "Gorging Razortusk",
+        "damage": 1273
+      },
+      {
+        "name": "Prairie Defender",
+        "damage": 875
+      },
+      {
+        "name": "Savanna Hawk",
+        "damage": 590
+      },
+      {
+        "name": "Prairie Wolf",
+        "damage": 553
+      },
+      {
+        "name": "Dire Wolf",
+        "damage": 306
+      },
+      {
+        "name": "Ironclaw Badger",
+        "damage": 190
+      },
+      {
+        "name": "Stampede Bull",
+        "damage": 161
+      }
+    ],
+    "incomingByDamageType": {
+      "direct": 8255
+    },
+    "damagePerTarget": [
+      {
+        "name": "Prairie Yearling",
+        "damage": 8536
+      },
+      {
+        "name": "Forest Sentinel",
+        "damage": 7847
+      },
+      {
+        "name": "Gorging Razortusk",
+        "damage": 5088
+      },
+      {
+        "name": "Dire Whelp",
+        "damage": 4269
+      },
+      {
+        "name": "Prairie Defender",
+        "damage": 3667
+      },
+      {
+        "name": "Savanna Hawk",
+        "damage": 3312
+      },
+      {
+        "name": "Dire Wolf",
+        "damage": 1159
+      },
+      {
+        "name": "Ironclaw Badger",
+        "damage": 1098
+      },
+      {
+        "name": "Prairie Wolf",
+        "damage": 1044
+      },
+      {
+        "name": "Thorn Spitter",
+        "damage": 300
+      }
+    ],
+    "concurrency": {
+      "samples": 2384,
+      "unengaged": 1581,
+      "solo": 265,
+      "two": 195,
+      "threePlus": 343
+    },
+    "fights": {
+      "fights": 47,
+      "deaths": 10,
+      "fightMs": 808581,
+      "medianEndHpFraction": 0.879,
+      "meanEndHpFraction": 0.607,
+      "medianMinHpFraction": 0.808,
+      "timeInBandShare": 0.348,
+      "endHpBuckets": {
+        "lt20": 14,
+        "from20to40": 3,
+        "from40to60": 3,
+        "from60to80": 0,
+        "ge80": 27
+      },
+      "band": {
+        "low": 0.2,
+        "high": 0.8
+      },
+      "graceMs": 3000,
+      "minFightMs": 1000,
+      "brushes": 0,
+      "byBiome": {
+        "plains": {
+          "fights": 29,
+          "deaths": 4,
+          "fightMs": 559451,
+          "medianEndHpFraction": 0.929,
+          "meanEndHpFraction": 0.712,
+          "medianMinHpFraction": 0.851,
+          "timeInBandShare": 0.258,
+          "endHpBuckets": {
+            "lt20": 6,
+            "from20to40": 2,
+            "from40to60": 0,
+            "from60to80": 0,
+            "ge80": 21
+          }
+        },
+        "forest": {
+          "fights": 18,
+          "deaths": 6,
+          "fightMs": 249130,
+          "medianEndHpFraction": 0.406,
+          "meanEndHpFraction": 0.438,
+          "medianMinHpFraction": 0.406,
+          "timeInBandShare": 0.551,
+          "endHpBuckets": {
+            "lt20": 8,
+            "from20to40": 1,
+            "from40to60": 3,
+            "from60to80": 0,
+            "ge80": 6
+          }
+        }
+      },
+      "interpretation": "A fight is contiguous engagement; target switches inside the grace stay one fight. End HP is the fraction at the last engaged sample (0 on death). Time in band is engaged time with HP in [low, high] over all engaged time. Boss fights are included when they happen in the sampled node; filter by biome for open-node evidence."
+    }
+  },
+  "deaths": {
+    "total": 10,
+    "perHour": 14.97,
+    "byBiome": {
+      "plains": 4,
+      "forest": 6
+    },
+    "byDominantSource": {
+      "Gorging Razortusk": 4,
+      "Dire Whelp": 3,
+      "Forest Sentinel": 3
+    },
+    "byRouteStep": {
+      "boss plains T2": 4,
+      "boss stance: defensive-stance": 1,
+      "boss forest T2": 5
+    }
+  },
+  "bosses": {
+    "attempts": 5,
+    "victories": 0,
+    "successRate": 0,
+    "attemptResults": [
+      {
+        "nodeId": "node-t2-plains-dungeon",
+        "biomeGroup": "plains",
+        "attempt": 1,
+        "outcome": "death",
+        "bossHpFraction": 0.7425389755011136,
+        "totalAttemptDurationMs": 147493,
+        "bossCombatStartedAtMs": 275550,
+        "bossCombatEndedAtMs": 308730,
+        "bossCombatDurationMs": 33180
+      },
+      {
+        "nodeId": "node-t2-plains-dungeon",
+        "biomeGroup": "plains",
+        "attempt": 2,
+        "outcome": "death",
+        "bossHpFraction": 0.6819599109131403,
+        "totalAttemptDurationMs": 278972,
+        "bossCombatStartedAtMs": 545302,
+        "bossCombatEndedAtMs": 592227,
+        "bossCombatDurationMs": 46925
+      },
+      {
+        "nodeId": "node-t2-plains-dungeon",
+        "biomeGroup": "plains",
+        "attempt": 3,
+        "outcome": "death",
+        "bossHpFraction": 0.6997772828507796,
+        "totalAttemptDurationMs": 289840,
+        "bossCombatStartedAtMs": 837170,
+        "bossCombatEndedAtMs": 886103,
+        "bossCombatDurationMs": 48933
+      },
+      {
+        "nodeId": "node-t2-plains-dungeon",
+        "biomeGroup": "plains",
+        "attempt": 4,
+        "outcome": "death",
+        "bossHpFraction": 0.7425389755011136,
+        "totalAttemptDurationMs": 269285,
+        "bossCombatStartedAtMs": 1125245,
+        "bossCombatEndedAtMs": 1158930,
+        "bossCombatDurationMs": 33685
+      }
+    ]
+  },
+  "mechanics": {
+    "abilityActivations": {
+      "expose-weakness": 79,
+      "second-wind": 80,
+      "sweep": 10
+    },
+    "cleanseRemovedByEffect": {},
+    "persistentHazards": {},
+    "hazardEscape": {
+      "attempts": 0,
+      "successes": 0,
+      "failures": 0,
+      "expired": 0,
+      "interrupted": 0
+    },
+    "stepBack": {
+      "activations": 0,
+      "attempts": 0,
+      "successes": 0,
+      "failures": 0,
+      "discarded": 0,
+      "damageReceived": 0
+    },
+    "apprenticeSweep": {
+      "secondaryTargets": 0,
+      "stacksApplied": 0
+    },
+    "slingerSweep": {
+      "clipsCreated": 0,
+      "shotsFired": 0,
+      "splashHits": 0,
+      "splashDamage": 0
+    },
+    "conduitFormation": {
+      "arms": 0,
+      "meanEligibleSummons": 0,
+      "deliveries": 0,
+      "sharesLost": 0,
+      "secondaryDamage": 0
+    },
+    "formationAttrition": {
+      "pulls": 0,
+      "meanAliveAtPull": 0,
+      "fullFormationPullRate": 0,
+      "summonDeaths": 0,
+      "summonDeathsPerPull": 0
+    },
+    "bossDiagnostics": {
+      "samples": 1362,
+      "range": {
+        "samples": 516,
+        "meanDistance": 47.17,
+        "maxDistance": 64,
+        "huggingFraction": 0,
+        "inReachFraction": 0,
+        "outOfReachFraction": 1
+      },
+      "adds": {
+        "meanOthers": 17.68,
+        "maxOthers": 43
+      },
+      "barrier": {
+        "samples": 0,
+        "meanFraction": 0,
+        "rechargingFraction": 0,
+        "depletedFraction": 0
+      },
+      "summons": {
+        "samples": 0,
+        "meanLiving": 0,
+        "maxLiving": 0,
+        "emptyFraction": 0
+      }
+    }
+  },
+  "equipment": {
+    "finalLoadout": {
+      "weapon": "gale-needle",
+      "armor": "plains-vest-t2",
+      "recovery": "plains-charm-t2",
+      "mobility": "plains-boots-t2",
+      "core": null,
+      "relic": null
+    },
+    "finalUpgrades": {
+      "iron-broadsword": 1,
+      "plains-vest-t1": 5,
+      "plains-charm-t1": 2,
+      "plains-boots-t1": 5,
+      "flash-rapier": 4,
+      "swamp-charm-t1": 5,
+      "mountain-vest-t1": 5,
+      "chaotic-axe": 5,
+      "plains-vest-t2": 1,
+      "plains-charm-t2": 1,
+      "plains-boots-t2": 1,
+      "gale-needle": 1
+    },
+    "runesEquipped": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "chase-enemy"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "use-ability",
+        "targetAbilityId": "second-wind"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "use-ability",
+        "targetAbilityId": "expose-weakness"
+      }
+    ],
+    "abilitiesEquipped": {
+      "techniques": [
+        "expose-weakness"
+      ],
+      "guards": [
+        "second-wind"
+      ]
+    }
+  },
+  "economy": {
+    "winCondition": "full-gauntlet",
+    "initialEssences": {
+      "red": 0,
+      "blue": 0,
+      "green": 0,
+      "yellow": 0,
+      "purple": 0
+    },
+    "initialCatalysts": {
+      "alacrity": 0,
+      "heavy": 0,
+      "swarming": 0,
+      "dominion": 0,
+      "fortified": 0
+    },
+    "finalEssences": {
+      "red": 0,
+      "blue": 0,
+      "green": 1935,
+      "yellow": 6206,
+      "purple": 0
+    },
+    "finalCatalysts": {
+      "alacrity": 16,
+      "heavy": 8,
+      "swarming": 9,
+      "dominion": 2,
+      "fortified": 0
+    },
+    "catalystsGainedByFamily": {
+      "dominion": 2,
+      "fortified": 1,
+      "heavy": 8,
+      "alacrity": 17,
+      "swarming": 9
+    },
+    "catalystsSpentByFamily": {
+      "alacrity": 3,
+      "fortified": 1
+    },
+    "essenceSpentByType": {
+      "yellow": 461,
+      "green": 98
+    },
+    "essenceGainedByBiome": {
+      "forest": {
+        "green": 2033
+      },
+      "plains": {
+        "yellow": 6667
+      },
+      "sanctuary": {}
+    },
+    "totalBlockedOnResourceMs": 27238,
+    "zoneTiming": [
+      {
+        "biomeGroup": "forest",
+        "firstEnteredAtMs": 327944,
+        "lastEnteredAtMs": 2306131,
+        "entryCount": 38,
+        "distinctNodes": [
+          "node-t2-forest-05",
+          "node-t2-forest-04",
+          "node-t2-forest-03",
+          "node-t2-forest-02",
+          "node-t2-forest-01",
+          "node-t2-forest-dungeon"
+        ],
+        "timeMs": 1125321,
+        "timeToLevelMs": {
+          "7": 935420,
+          "9": 1031303,
+          "11": 1048065,
+          "12": 1055419
+        },
+        "timeToMaxMs": 935420,
+        "kills": 25,
+        "killsPerHour": 79.98,
+        "essenceGained": {
+          "green": 2033
+        },
+        "essencePerHour": {
+          "green": 6503.74
+        },
+        "catalystsByModifier": {
+          "alacrity": 9,
+          "swarming": 2
+        },
+        "craftsCompleted": 0,
+        "upgradesCompleted": 1
+      },
+      {
+        "biomeGroup": "plains",
+        "firstEnteredAtMs": 3429,
+        "lastEnteredAtMs": 1036539,
+        "entryCount": 21,
+        "distinctNodes": [
+          "node-t2-plains-04",
+          "node-t2-plains-05",
+          "node-t2-plains-03",
+          "node-t2-plains-02",
+          "node-t2-plains-01",
+          "node-t2-plains-dungeon"
+        ],
+        "timeMs": 1062412,
+        "timeToLevelMs": {
+          "7": 11822,
+          "8": 34744,
+          "9": 90441,
+          "10": 103982,
+          "11": 132611,
+          "12": 147326
+        },
+        "timeToMaxMs": 11822,
+        "kills": 73,
+        "killsPerHour": 247.36,
+        "essenceGained": {
+          "yellow": 6667
+        },
+        "essencePerHour": {
+          "yellow": 22591.24
+        },
+        "catalystsByModifier": {
+          "dominion": 2,
+          "fortified": 1,
+          "heavy": 9,
+          "alacrity": 7,
+          "none": 1,
+          "swarming": 6
+        },
+        "craftsCompleted": 0,
+        "upgradesCompleted": 3
+      },
+      {
+        "biomeGroup": "sanctuary",
+        "firstEnteredAtMs": 1414,
+        "lastEnteredAtMs": 2393917,
+        "entryCount": 11,
+        "distinctNodes": [
+          "node-t2-sanctuary"
+        ],
+        "timeMs": 216261,
+        "timeToLevelMs": {},
+        "timeToMaxMs": null,
+        "kills": 0,
+        "killsPerHour": 0,
+        "essenceGained": {},
+        "essencePerHour": {},
+        "catalystsByModifier": {},
+        "craftsCompleted": 0,
+        "upgradesCompleted": 0
+      }
+    ],
+    "catalystGains": [
+      {
+        "atMs": 15516,
+        "family": "dominion",
+        "amount": 2,
+        "context": {
+          "nodeId": "node-t2-plains-04",
+          "biomeGroup": "plains",
+          "nodeModifier": "dominion"
+        }
+      },
+      {
+        "atMs": 38659,
+        "family": "fortified",
+        "amount": 1,
+        "context": {
+          "nodeId": "node-t2-plains-05",
+          "biomeGroup": "plains",
+          "nodeModifier": "fortified"
+        }
+      },
+      {
+        "atMs": 94070,
+        "family": "heavy",
+        "amount": 1,
+        "context": {
+          "nodeId": "node-t2-plains-02",
+          "biomeGroup": "plains",
+          "nodeModifier": "heavy"
+        }
+      },
+      {
+        "atMs": 105170,
+        "family": "heavy",
+        "amount": 1,
+        "context": {
+          "nodeId": "node-t2-plains-02",
+          "biomeGroup": "plains",
+          "nodeModifier": "heavy"
+        }
+      },
+      {
+        "atMs": 108197,
+        "family": "heavy",
+        "amount": 1,
+        "context": {
+          "nodeId": "node-t2-plains-02",
+          "biomeGroup": "plains",
+          "nodeModifier": "heavy"
+        }
+      },
+      {
+        "atMs": 115254,
+        "family": "heavy",
+        "amount": 2,
+        "context": {
+          "nodeId": "node-t2-plains-02",
+          "biomeGroup": "plains",
+          "nodeModifier": "heavy"
+        }
+      },
+      {
+        "atMs": 136435,
+        "family": "alacrity",
+        "amount": 1,
+        "context": {
+          "nodeId": "node-t2-plains-01",
+          "biomeGroup": "plains",
+          "nodeModifier": "alacrity"
+        }
+      },
+      {
+        "atMs": 159630,
+        "family": "alacrity",
+        "amount": 1,
+        "context": {
+          "nodeId": "node-t2-plains-01",
+          "biomeGroup": "plains",
+          "nodeModifier": "alacrity"
+        }
+      },
+      {
+        "atMs": 173736,
+        "family": "alacrity",
+        "amount": 1,
+        "context": {
+          "nodeId": "node-t2-plains-01",
+          "biomeGroup": "plains",
+          "nodeModifier": "alacrity"
+        }
+      },
+      {
+        "atMs": 178768,
+        "family": "alacrity",
+        "amount": 1,
+        "context": {
+          "nodeId": "node-t2-plains-01",
+          "biomeGroup": "plains",
+          "nodeModifier": "alacrity"
+        }
+      },
+      {
+        "atMs": 181774,
+        "family": "alacrity",
+        "amount": 1,
+        "context": {
+          "nodeId": "node-t2-plains-01",
+          "biomeGroup": "plains",
+          "nodeModifier": "alacrity"
+        }
+      },
+      {
+        "atMs": 183788,
+        "family": "alacrity",
+        "amount": 1,
+        "context": {
+          "nodeId": "node-t2-plains-dungeon",
+          "biomeGroup": "plains",
+          "nodeModifier": null
+        }
+      },
+      {
+        "atMs": 385355,
+        "family": "swarming",
+        "amount": 1,
+        "context": {
+          "nodeId": "node-t2-plains-03",
+          "biomeGroup": "plains",
+          "nodeModifier": "swarming"
+        }
+      },
+      {
+        "atMs": 396435,
+        "family": "swarming",
+        "amount": 2,
+        "context": {
+          "nodeId": "node-t2-plains-03",
+          "biomeGroup": "plains",
+          "nodeModifier": "swarming"
+        }
+      },
+      {
+        "atMs": 425657,
+        "family": "heavy",
+        "amount": 2,
+        "context": {
+          "nodeId": "node-t2-plains-02",
+          "biomeGroup": "plains",
+          "nodeModifier": "heavy"
+        }
+      },
+      {
+        "atMs": 711019,
+        "family": "heavy",
+        "amount": 1,
+        "context": {
+          "nodeId": "node-t2-plains-02",
+          "biomeGroup": "plains",
+          "nodeModifier": "heavy"
+        }
+      },
+      {
+        "atMs": 963885,
+        "family": "swarming",
+        "amount": 1,
+        "context": {
+          "nodeId": "node-t2-plains-03",
+          "biomeGroup": "plains",
+          "nodeModifier": "swarming"
+        }
+      },
+      {
+        "atMs": 967921,
+        "family": "swarming",
+        "amount": 1,
+        "context": {
+          "nodeId": "node-t2-plains-03",
+          "biomeGroup": "plains",
+          "nodeModifier": "swarming"
+        }
+      },
+      {
+        "atMs": 974991,
+        "family": "swarming",
+        "amount": 1,
+        "context": {
+          "nodeId": "node-t2-plains-03",
+          "biomeGroup": "plains",
+          "nodeModifier": "swarming"
+        }
+      },
+      {
+        "atMs": 979027,
+        "family": "swarming",
+        "amount": 1,
+        "context": {
+          "nodeId": "node-t2-plains-02",
+          "biomeGroup": "plains",
+          "nodeModifier": "heavy"
+        }
+      },
+      {
+        "atMs": 1026460,
+        "family": "alacrity",
+        "amount": 2,
+        "context": {
+          "nodeId": "node-t2-plains-01",
+          "biomeGroup": "plains",
+          "nodeModifier": "alacrity"
+        }
+      },
+      {
+        "atMs": 1260431,
+        "family": "alacrity",
+        "amount": 1,
+        "context": {
+          "nodeId": "node-t2-forest-05",
+          "biomeGroup": "forest",
+          "nodeModifier": "alacrity"
+        }
+      },
+      {
+        "atMs": 1263456,
+        "family": "alacrity",
+        "amount": 1,
+        "context": {
+          "nodeId": "node-t2-forest-05",
+          "biomeGroup": "forest",
+          "nodeModifier": "alacrity"
+        }
+      },
+      {
+        "atMs": 1360221,
+        "family": "alacrity",
+        "amount": 3,
+        "context": {
+          "nodeId": "node-t2-forest-01",
+          "biomeGroup": "forest",
+          "nodeModifier": "alacrity"
+        }
+      },
+      {
+        "atMs": 1376361,
+        "family": "alacrity",
+        "amount": 2,
+        "context": {
+          "nodeId": "node-t2-forest-01",
+          "biomeGroup": "forest",
+          "nodeModifier": "alacrity"
+        }
+      },
+      {
+        "atMs": 1383423,
+        "family": "alacrity",
+        "amount": 1,
+        "context": {
+          "nodeId": "node-t2-forest-01",
+          "biomeGroup": "forest",
+          "nodeModifier": "alacrity"
+        }
+      },
+      {
+        "atMs": 1438925,
+        "family": "alacrity",
+        "amount": 1,
+        "context": {
+          "nodeId": "node-t2-forest-05",
+          "biomeGroup": "forest",
+          "nodeModifier": "alacrity"
+        }
+      },
+      {
+        "atMs": 1905834,
+        "family": "swarming",
+        "amount": 1,
+        "context": {
+          "nodeId": "node-t2-forest-02",
+          "biomeGroup": "forest",
+          "nodeModifier": "swarming"
+        }
+      },
+      {
+        "atMs": 1915928,
+        "family": "swarming",
+        "amount": 1,
+        "context": {
+          "nodeId": "node-t2-forest-02",
+          "biomeGroup": "forest",
+          "nodeModifier": "swarming"
+        }
+      }
+    ],
+    "gearTimeline": {
+      "crafts": [],
+      "upgrades": [
+        {
+          "atMs": 1383874,
+          "itemId": "plains-vest-t2",
+          "fromLevel": 0,
+          "newLevel": 1,
+          "success": true,
+          "essenceSpent": {
+            "yellow": 36
+          },
+          "catalystsSpent": {},
+          "context": {
+            "nodeId": "node-t2-forest-01",
+            "biomeGroup": "forest",
+            "nodeModifier": "alacrity"
+          }
+        },
+        {
+          "atMs": 1384391,
+          "itemId": "plains-charm-t2",
+          "fromLevel": 0,
+          "newLevel": 1,
+          "success": true,
+          "essenceSpent": {
+            "yellow": 18
+          },
+          "catalystsSpent": {},
+          "context": {
+            "nodeId": "node-t2-forest-01",
+            "biomeGroup": "forest",
+            "nodeModifier": "alacrity"
+          }
+        },
+        {
+          "atMs": 1384903,
+          "itemId": "plains-boots-t2",
+          "fromLevel": 0,
+          "newLevel": 1,
+          "success": true,
+          "essenceSpent": {
+            "yellow": 12
+          },
+          "catalystsSpent": {},
+          "context": {
+            "nodeId": "node-t2-forest-01",
+            "biomeGroup": "forest",
+            "nodeModifier": "alacrity"
+          }
+        },
+        {
+          "atMs": 1385424,
+          "itemId": "gale-needle",
+          "fromLevel": 0,
+          "newLevel": 1,
+          "success": true,
+          "essenceSpent": {
+            "green": 38
+          },
+          "catalystsSpent": {},
+          "context": {
+            "nodeId": "node-t2-forest-01",
+            "biomeGroup": "forest",
+            "nodeModifier": "alacrity"
+          }
+        }
+      ],
+      "evolutions": [
+        {
+          "atMs": 142341,
+          "recipeId": "plains-vest-t2",
+          "mode": "evolve",
+          "predecessorId": "plains-vest-t1",
+          "success": true,
+          "essenceSpent": {
+            "yellow": 60
+          },
+          "catalystsSpent": {},
+          "context": {
+            "nodeId": "node-t2-plains-01",
+            "biomeGroup": "plains",
+            "nodeModifier": "alacrity"
+          }
+        },
+        {
+          "atMs": 151530,
+          "recipeId": "plains-charm-t2",
+          "mode": "reconstruct",
+          "predecessorId": "plains-charm-t1",
+          "success": true,
+          "essenceSpent": {
+            "yellow": 175
+          },
+          "catalystsSpent": {
+            "alacrity": 2
+          },
+          "context": {
+            "nodeId": "node-t2-plains-01",
+            "biomeGroup": "plains",
+            "nodeModifier": "alacrity"
+          }
+        },
+        {
+          "atMs": 154090,
+          "recipeId": "plains-boots-t2",
+          "mode": "evolve",
+          "predecessorId": "plains-boots-t1",
+          "success": true,
+          "essenceSpent": {
+            "yellow": 40
+          },
+          "catalystsSpent": {},
+          "context": {
+            "nodeId": "node-t2-plains-01",
+            "biomeGroup": "plains",
+            "nodeModifier": "alacrity"
+          }
+        },
+        {
+          "atMs": 1342054,
+          "recipeId": "gale-needle",
+          "mode": "evolve",
+          "predecessorId": "flash-rapier",
+          "success": true,
+          "essenceSpent": {
+            "green": 60
+          },
+          "catalystsSpent": {},
+          "context": {
+            "nodeId": "node-t2-forest-01",
+            "biomeGroup": "forest",
+            "nodeModifier": "alacrity"
+          }
+        }
+      ],
+      "stanceCrafts": [
+        {
+          "atMs": 136718,
+          "recipeId": "stance-recipe-offensive",
+          "stanceId": "offensive-stance",
+          "success": true,
+          "essenceSpent": {
+            "yellow": 60
+          },
+          "catalystsSpent": {
+            "alacrity": 1
+          },
+          "context": {
+            "nodeId": "node-t2-plains-01",
+            "biomeGroup": "plains",
+            "nodeModifier": "alacrity"
+          }
+        },
+        {
+          "atMs": 137228,
+          "recipeId": "stance-recipe-defensive",
+          "stanceId": "defensive-stance",
+          "success": true,
+          "essenceSpent": {
+            "yellow": 60
+          },
+          "catalystsSpent": {
+            "fortified": 1
+          },
+          "context": {
+            "nodeId": "node-t2-plains-01",
+            "biomeGroup": "plains",
+            "nodeModifier": "alacrity"
+          }
+        }
+      ],
+      "equips": [
+        {
+          "atMs": 143860,
+          "slot": "armor",
+          "definitionId": "plains-vest-t2"
+        },
+        {
+          "atMs": 153065,
+          "slot": "recovery",
+          "definitionId": "plains-charm-t2"
+        },
+        {
+          "atMs": 155618,
+          "slot": "mobility",
+          "definitionId": "plains-boots-t2"
+        },
+        {
+          "atMs": 1343592,
+          "slot": "weapon",
+          "definitionId": "gale-needle"
+        }
+      ]
+    },
+    "walletSnapshots": [
+      {
+        "atMs": 399,
+        "reason": "run-start",
+        "detail": "striker-t2-mid",
+        "essences": {
+          "red": 0,
+          "blue": 0,
+          "green": 0,
+          "yellow": 0,
+          "purple": 0
+        },
+        "catalysts": {
+          "alacrity": 0,
+          "heavy": 0,
+          "swarming": 0,
+          "dominion": 0,
+          "fortified": 0
+        },
+        "catalystProgress": {},
+        "biomeLevels": {
+          "plains": 6,
+          "forest": 6,
+          "swamp": 6,
+          "mountain": 6,
+          "cave": 6,
+          "clearing": 4
+        },
+        "globalMastery": 30,
+        "nodeId": "node-t2-sanctuary"
+      },
+      {
+        "atMs": 2454,
+        "reason": "milestone",
+        "detail": "t2-entry",
+        "essences": {
+          "red": 0,
+          "blue": 0,
+          "green": 0,
+          "yellow": 0,
+          "purple": 0
+        },
+        "catalysts": {
+          "alacrity": 0,
+          "heavy": 0,
+          "swarming": 0,
+          "dominion": 0,
+          "fortified": 0
+        },
+        "catalystProgress": {},
+        "biomeLevels": {
+          "plains": 6,
+          "forest": 6,
+          "swamp": 6,
+          "mountain": 6,
+          "cave": 6,
+          "clearing": 4
+        },
+        "globalMastery": 30,
+        "nodeId": "node-t2-sanctuary"
+      },
+      {
+        "atMs": 2964,
+        "reason": "milestone",
+        "detail": "plains-t2-entered",
+        "essences": {
+          "red": 0,
+          "blue": 0,
+          "green": 0,
+          "yellow": 0,
+          "purple": 0
+        },
+        "catalysts": {
+          "alacrity": 0,
+          "heavy": 0,
+          "swarming": 0,
+          "dominion": 0,
+          "fortified": 0
+        },
+        "catalystProgress": {},
+        "biomeLevels": {
+          "plains": 6,
+          "forest": 6,
+          "swamp": 6,
+          "mountain": 6,
+          "cave": 6,
+          "clearing": 4
+        },
+        "globalMastery": 30,
+        "nodeId": "node-t2-plains-04"
+      },
+      {
+        "atMs": 2966,
+        "reason": "block-start",
+        "detail": "stance:offensive-stance",
+        "essences": {
+          "red": 0,
+          "blue": 0,
+          "green": 0,
+          "yellow": 0,
+          "purple": 0
+        },
+        "catalysts": {
+          "alacrity": 0,
+          "heavy": 0,
+          "swarming": 0,
+          "dominion": 0,
+          "fortified": 0
+        },
+        "catalystProgress": {},
+        "biomeLevels": {
+          "plains": 6,
+          "forest": 6,
+          "swamp": 6,
+          "mountain": 6,
+          "cave": 6,
+          "clearing": 4
+        },
+        "globalMastery": 30,
+        "nodeId": "node-t2-plains-04"
+      },
+      {
+        "atMs": 136716,
+        "reason": "block-end",
+        "detail": "stance:offensive-stance",
+        "essences": {
+          "red": 0,
+          "blue": 0,
+          "green": 0,
+          "yellow": 948,
+          "purple": 0
+        },
+        "catalysts": {
+          "alacrity": 1,
+          "heavy": 5,
+          "swarming": 0,
+          "dominion": 2,
+          "fortified": 1
+        },
+        "catalystProgress": {
+          "dominion": 10,
+          "fortified": 98,
+          "heavy": 13,
+          "alacrity": 93
+        },
+        "biomeLevels": {
+          "plains": 11,
+          "forest": 6,
+          "swamp": 6,
+          "mountain": 6,
+          "cave": 6,
+          "clearing": 4
+        },
+        "globalMastery": 35,
+        "nodeId": "node-t2-plains-01"
+      },
+      {
+        "atMs": 143861,
+        "reason": "block-start",
+        "detail": "reconstruct:plains-charm-t2",
+        "essences": {
+          "red": 0,
+          "blue": 0,
+          "green": 0,
+          "yellow": 768,
+          "purple": 0
+        },
+        "catalysts": {
+          "alacrity": 0,
+          "heavy": 5,
+          "swarming": 0,
+          "dominion": 2,
+          "fortified": 0
+        },
+        "catalystProgress": {
+          "dominion": 10,
+          "fortified": 98,
+          "heavy": 13,
+          "alacrity": 93
+        },
+        "biomeLevels": {
+          "plains": 11,
+          "forest": 6,
+          "swamp": 6,
+          "mountain": 6,
+          "cave": 6,
+          "clearing": 4
+        },
+        "globalMastery": 35,
+        "nodeId": "node-t2-plains-01"
+      },
+      {
+        "atMs": 151529,
+        "reason": "block-end",
+        "detail": "reconstruct:plains-charm-t2",
+        "essences": {
+          "red": 0,
+          "blue": 0,
+          "green": 0,
+          "yellow": 932,
+          "purple": 0
+        },
+        "catalysts": {
+          "alacrity": 2,
+          "heavy": 5,
+          "swarming": 0,
+          "dominion": 2,
+          "fortified": 0
+        },
+        "catalystProgress": {
+          "dominion": 10,
+          "fortified": 98,
+          "heavy": 13,
+          "alacrity": 86
+        },
+        "biomeLevels": {
+          "plains": 12,
+          "forest": 6,
+          "swamp": 6,
+          "mountain": 6,
+          "cave": 6,
+          "clearing": 4
+        },
+        "globalMastery": 36,
+        "nodeId": "node-t2-plains-01"
+      },
+      {
+        "atMs": 155618,
+        "reason": "milestone",
+        "detail": "skip:knight-steelsword",
+        "essences": {
+          "red": 0,
+          "blue": 0,
+          "green": 0,
+          "yellow": 717,
+          "purple": 0
+        },
+        "catalysts": {
+          "alacrity": 0,
+          "heavy": 5,
+          "swarming": 0,
+          "dominion": 2,
+          "fortified": 0
+        },
+        "catalystProgress": {
+          "dominion": 10,
+          "fortified": 98,
+          "heavy": 13,
+          "alacrity": 86
+        },
+        "biomeLevels": {
+          "plains": 12,
+          "forest": 6,
+          "swamp": 6,
+          "mountain": 6,
+          "cave": 6,
+          "clearing": 4
+        },
+        "globalMastery": 36,
+        "nodeId": "node-t2-plains-01"
+      },
+      {
+        "atMs": 155619,
+        "reason": "milestone",
+        "detail": "plains-t2-maxed",
+        "essences": {
+          "red": 0,
+          "blue": 0,
+          "green": 0,
+          "yellow": 717,
+          "purple": 0
+        },
+        "catalysts": {
+          "alacrity": 0,
+          "heavy": 5,
+          "swarming": 0,
+          "dominion": 2,
+          "fortified": 0
+        },
+        "catalystProgress": {
+          "dominion": 10,
+          "fortified": 98,
+          "heavy": 13,
+          "alacrity": 86
+        },
+        "biomeLevels": {
+          "plains": 12,
+          "forest": 6,
+          "swamp": 6,
+          "mountain": 6,
+          "cave": 6,
+          "clearing": 4
+        },
+        "globalMastery": 36,
+        "nodeId": "node-t2-plains-01"
+      },
+      {
+        "atMs": 1159439,
+        "reason": "milestone",
+        "detail": "plains-t2-boss-attempted",
+        "essences": {
+          "red": 0,
+          "blue": 0,
+          "green": 0,
+          "yellow": 6272,
+          "purple": 0
+        },
+        "catalysts": {
+          "alacrity": 7,
+          "heavy": 8,
+          "swarming": 7,
+          "dominion": 2,
+          "fortified": 0
+        },
+        "catalystProgress": {
+          "dominion": 10,
+          "fortified": 98,
+          "heavy": 91,
+          "alacrity": 76,
+          "swarming": 42
+        },
+        "biomeLevels": {
+          "plains": 12,
+          "forest": 6,
+          "swamp": 6,
+          "mountain": 6,
+          "cave": 6,
+          "clearing": 4
+        },
+        "globalMastery": 36,
+        "nodeId": "node-t2-plains-dungeon"
+      },
+      {
+        "atMs": 1159439,
+        "reason": "milestone",
+        "detail": "plains-t2-leg-complete",
+        "essences": {
+          "red": 0,
+          "blue": 0,
+          "green": 0,
+          "yellow": 6272,
+          "purple": 0
+        },
+        "catalysts": {
+          "alacrity": 7,
+          "heavy": 8,
+          "swarming": 7,
+          "dominion": 2,
+          "fortified": 0
+        },
+        "catalystProgress": {
+          "dominion": 10,
+          "fortified": 98,
+          "heavy": 91,
+          "alacrity": 76,
+          "swarming": 42
+        },
+        "biomeLevels": {
+          "plains": 12,
+          "forest": 6,
+          "swamp": 6,
+          "mountain": 6,
+          "cave": 6,
+          "clearing": 4
+        },
+        "globalMastery": 36,
+        "nodeId": "node-t2-plains-dungeon"
+      },
+      {
+        "atMs": 1335927,
+        "reason": "milestone",
+        "detail": "forest-t2-entered",
+        "essences": {
+          "red": 0,
+          "blue": 0,
+          "green": 140,
+          "yellow": 6272,
+          "purple": 0
+        },
+        "catalysts": {
+          "alacrity": 9,
+          "heavy": 8,
+          "swarming": 7,
+          "dominion": 2,
+          "fortified": 0
+        },
+        "catalystProgress": {
+          "dominion": 10,
+          "fortified": 98,
+          "heavy": 91,
+          "alacrity": 42,
+          "swarming": 42
+        },
+        "biomeLevels": {
+          "plains": 12,
+          "forest": 7,
+          "swamp": 6,
+          "mountain": 6,
+          "cave": 6,
+          "clearing": 4
+        },
+        "globalMastery": 37,
+        "nodeId": "node-t2-forest-01"
+      },
+      {
+        "atMs": 1343592,
+        "reason": "milestone",
+        "detail": "skip:forest-vest-t2",
+        "essences": {
+          "red": 0,
+          "blue": 0,
+          "green": 80,
+          "yellow": 6272,
+          "purple": 0
+        },
+        "catalysts": {
+          "alacrity": 9,
+          "heavy": 8,
+          "swarming": 7,
+          "dominion": 2,
+          "fortified": 0
+        },
+        "catalystProgress": {
+          "dominion": 10,
+          "fortified": 98,
+          "heavy": 91,
+          "alacrity": 42,
+          "swarming": 42
+        },
+        "biomeLevels": {
+          "plains": 12,
+          "forest": 7,
+          "swamp": 6,
+          "mountain": 6,
+          "cave": 6,
+          "clearing": 4
+        },
+        "globalMastery": 37,
+        "nodeId": "node-t2-forest-01"
+      },
+      {
+        "atMs": 1383363,
+        "reason": "milestone",
+        "detail": "gm-42-first-t2-upgrade",
+        "essences": {
+          "red": 0,
+          "blue": 0,
+          "green": 594,
+          "yellow": 6272,
+          "purple": 0
+        },
+        "catalysts": {
+          "alacrity": 15,
+          "heavy": 8,
+          "swarming": 7,
+          "dominion": 2,
+          "fortified": 0
+        },
+        "catalystProgress": {
+          "dominion": 10,
+          "fortified": 98,
+          "heavy": 91,
+          "alacrity": 48,
+          "swarming": 42
+        },
+        "biomeLevels": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 6,
+          "mountain": 6,
+          "cave": 6,
+          "clearing": 4
+        },
+        "globalMastery": 42,
+        "nodeId": "node-t2-forest-01"
+      },
+      {
+        "atMs": 1383872,
+        "reason": "milestone",
+        "detail": "forest-t2-maxed",
+        "essences": {
+          "red": 0,
+          "blue": 0,
+          "green": 594,
+          "yellow": 6272,
+          "purple": 0
+        },
+        "catalysts": {
+          "alacrity": 15,
+          "heavy": 8,
+          "swarming": 7,
+          "dominion": 2,
+          "fortified": 0
+        },
+        "catalystProgress": {
+          "dominion": 10,
+          "fortified": 98,
+          "heavy": 91,
+          "alacrity": 48,
+          "swarming": 42
+        },
+        "biomeLevels": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 6,
+          "mountain": 6,
+          "cave": 6,
+          "clearing": 4
+        },
+        "globalMastery": 42,
+        "nodeId": "node-t2-forest-01"
+      },
+      {
+        "atMs": 1383873,
+        "reason": "pre-upgrade",
+        "detail": "plains-vest-t2+1",
+        "essences": {
+          "red": 0,
+          "blue": 0,
+          "green": 594,
+          "yellow": 6272,
+          "purple": 0
+        },
+        "catalysts": {
+          "alacrity": 15,
+          "heavy": 8,
+          "swarming": 7,
+          "dominion": 2,
+          "fortified": 0
+        },
+        "catalystProgress": {
+          "dominion": 10,
+          "fortified": 98,
+          "heavy": 91,
+          "alacrity": 48,
+          "swarming": 42
+        },
+        "biomeLevels": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 6,
+          "mountain": 6,
+          "cave": 6,
+          "clearing": 4
+        },
+        "globalMastery": 42,
+        "nodeId": "node-t2-forest-01"
+      },
+      {
+        "atMs": 1384389,
+        "reason": "pre-upgrade",
+        "detail": "plains-charm-t2+1",
+        "essences": {
+          "red": 0,
+          "blue": 0,
+          "green": 594,
+          "yellow": 6236,
+          "purple": 0
+        },
+        "catalysts": {
+          "alacrity": 15,
+          "heavy": 8,
+          "swarming": 7,
+          "dominion": 2,
+          "fortified": 0
+        },
+        "catalystProgress": {
+          "dominion": 10,
+          "fortified": 98,
+          "heavy": 91,
+          "alacrity": 48,
+          "swarming": 42
+        },
+        "biomeLevels": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 6,
+          "mountain": 6,
+          "cave": 6,
+          "clearing": 4
+        },
+        "globalMastery": 42,
+        "nodeId": "node-t2-forest-01"
+      },
+      {
+        "atMs": 1384902,
+        "reason": "pre-upgrade",
+        "detail": "plains-boots-t2+1",
+        "essences": {
+          "red": 0,
+          "blue": 0,
+          "green": 594,
+          "yellow": 6218,
+          "purple": 0
+        },
+        "catalysts": {
+          "alacrity": 15,
+          "heavy": 8,
+          "swarming": 7,
+          "dominion": 2,
+          "fortified": 0
+        },
+        "catalystProgress": {
+          "dominion": 10,
+          "fortified": 98,
+          "heavy": 91,
+          "alacrity": 48,
+          "swarming": 42
+        },
+        "biomeLevels": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 6,
+          "mountain": 6,
+          "cave": 6,
+          "clearing": 4
+        },
+        "globalMastery": 42,
+        "nodeId": "node-t2-forest-01"
+      },
+      {
+        "atMs": 1385415,
+        "reason": "pre-upgrade",
+        "detail": "gale-needle+1",
+        "essences": {
+          "red": 0,
+          "blue": 0,
+          "green": 594,
+          "yellow": 6206,
+          "purple": 0
+        },
+        "catalysts": {
+          "alacrity": 15,
+          "heavy": 8,
+          "swarming": 7,
+          "dominion": 2,
+          "fortified": 0
+        },
+        "catalystProgress": {
+          "dominion": 10,
+          "fortified": 98,
+          "heavy": 91,
+          "alacrity": 48,
+          "swarming": 42
+        },
+        "biomeLevels": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 6,
+          "mountain": 6,
+          "cave": 6,
+          "clearing": 4
+        },
+        "globalMastery": 42,
+        "nodeId": "node-t2-forest-01"
+      },
+      {
+        "atMs": 2404059,
+        "reason": "run-end",
+        "detail": "timed-out",
+        "essences": {
+          "red": 0,
+          "blue": 0,
+          "green": 1935,
+          "yellow": 6206,
+          "purple": 0
+        },
+        "catalysts": {
+          "alacrity": 16,
+          "heavy": 8,
+          "swarming": 9,
+          "dominion": 2,
+          "fortified": 0
+        },
+        "catalystProgress": {
+          "dominion": 10,
+          "fortified": 98,
+          "heavy": 91,
+          "alacrity": 31,
+          "swarming": 73
+        },
+        "biomeLevels": {
+          "plains": 12,
+          "forest": 12,
+          "swamp": 6,
+          "mountain": 6,
+          "cave": 6,
+          "clearing": 4
+        },
+        "globalMastery": 42,
+        "nodeId": "node-t2-sanctuary"
+      }
+    ],
+    "milestones": [
+      {
+        "atMs": 2454,
+        "id": "t2-entry",
+        "detail": {
+          "playerTier": 2,
+          "globalMastery": 30,
+          "bossesCleared": [
+            "plains:1",
+            "forest:1",
+            "swamp:1",
+            "mountain:1",
+            "cave:1"
+          ],
+          "nodeId": "node-t2-sanctuary"
+        }
+      },
+      {
+        "atMs": 2964,
+        "id": "plains-t2-entered",
+        "detail": {
+          "playerTier": 2,
+          "globalMastery": 30,
+          "bossesCleared": [
+            "plains:1",
+            "forest:1",
+            "swamp:1",
+            "mountain:1",
+            "cave:1"
+          ],
+          "nodeId": "node-t2-plains-04"
+        }
+      },
+      {
+        "atMs": 155618,
+        "id": "skip:knight-steelsword",
+        "detail": {
+          "playerTier": 2,
+          "globalMastery": 36,
+          "bossesCleared": [
+            "plains:1",
+            "forest:1",
+            "swamp:1",
+            "mountain:1",
+            "cave:1"
+          ],
+          "nodeId": "node-t2-plains-01"
+        }
+      },
+      {
+        "atMs": 155619,
+        "id": "plains-t2-maxed",
+        "detail": {
+          "playerTier": 2,
+          "globalMastery": 36,
+          "bossesCleared": [
+            "plains:1",
+            "forest:1",
+            "swamp:1",
+            "mountain:1",
+            "cave:1"
+          ],
+          "nodeId": "node-t2-plains-01"
+        }
+      },
+      {
+        "atMs": 1159439,
+        "id": "plains-t2-boss-attempted",
+        "detail": {
+          "playerTier": 2,
+          "globalMastery": 36,
+          "bossesCleared": [
+            "plains:1",
+            "forest:1",
+            "swamp:1",
+            "mountain:1",
+            "cave:1"
+          ],
+          "nodeId": "node-t2-plains-dungeon"
+        }
+      },
+      {
+        "atMs": 1159439,
+        "id": "plains-t2-leg-complete",
+        "detail": {
+          "playerTier": 2,
+          "globalMastery": 36,
+          "bossesCleared": [
+            "plains:1",
+            "forest:1",
+            "swamp:1",
+            "mountain:1",
+            "cave:1"
+          ],
+          "nodeId": "node-t2-plains-dungeon"
+        }
+      },
+      {
+        "atMs": 1335927,
+        "id": "forest-t2-entered",
+        "detail": {
+          "playerTier": 2,
+          "globalMastery": 37,
+          "bossesCleared": [
+            "plains:1",
+            "forest:1",
+            "swamp:1",
+            "mountain:1",
+            "cave:1"
+          ],
+          "nodeId": "node-t2-forest-01"
+        }
+      },
+      {
+        "atMs": 1343592,
+        "id": "skip:forest-vest-t2",
+        "detail": {
+          "playerTier": 2,
+          "globalMastery": 37,
+          "bossesCleared": [
+            "plains:1",
+            "forest:1",
+            "swamp:1",
+            "mountain:1",
+            "cave:1"
+          ],
+          "nodeId": "node-t2-forest-01"
+        }
+      },
+      {
+        "atMs": 1383363,
+        "id": "gm-42-first-t2-upgrade",
+        "detail": {
+          "playerTier": 2,
+          "globalMastery": 42,
+          "bossesCleared": [
+            "plains:1",
+            "forest:1",
+            "swamp:1",
+            "mountain:1",
+            "cave:1"
+          ],
+          "nodeId": "node-t2-forest-01"
+        }
+      },
+      {
+        "atMs": 1383872,
+        "id": "forest-t2-maxed",
+        "detail": {
+          "playerTier": 2,
+          "globalMastery": 42,
+          "bossesCleared": [
+            "plains:1",
+            "forest:1",
+            "swamp:1",
+            "mountain:1",
+            "cave:1"
+          ],
+          "nodeId": "node-t2-forest-01"
+        }
+      }
+    ],
+    "tierUps": []
+  },
+  "catalysts": {
+    "finalWallet": {
+      "alacrity": 16,
+      "heavy": 8,
+      "swarming": 9,
+      "dominion": 2,
+      "fortified": 0
+    },
+    "gainedByModifier": {
+      "alacrity": 16,
+      "swarming": 8,
+      "dominion": 2,
+      "fortified": 1,
+      "heavy": 9,
+      "none": 1
+    }
+  },
+  "world": {
+    "otherPlayersSeen": 0,
+    "contestedSamples": 0,
+    "contestedFraction": 0
+  },
+  "coordination": {
+    "executionMode": "single",
+    "maxConcurrency": 1,
+    "maximumSimultaneouslyProgressing": 1,
+    "leaseAcquisitions": 0,
+    "leaseReleases": 0,
+    "leaseWaitMs": 0,
+    "maximumLeaseWaitMs": 0,
+    "contaminated": false,
+    "controlledOverlaps": [],
+    "sharedAdmissions": 0,
+    "fallbacks": [],
+    "concurrencyIntervals": [],
+    "contaminatingOverlaps": 0,
+    "transitCoPresences": 0,
+    "nodeMix": [
+      {
+        "nodeId": "node-t2-plains-dungeon",
+        "biomeGroup": "plains",
+        "nodeModifier": null,
+        "timeMs": 528187
+      },
+      {
+        "nodeId": "node-t2-forest-dungeon",
+        "biomeGroup": "forest",
+        "nodeModifier": null,
+        "timeMs": 282333
+      },
+      {
+        "nodeId": "node-t2-sanctuary",
+        "biomeGroup": "sanctuary",
+        "nodeModifier": null,
+        "timeMs": 216261
+      },
+      {
+        "nodeId": "node-t2-forest-05",
+        "biomeGroup": "forest",
+        "nodeModifier": "alacrity",
+        "timeMs": 214712
+      },
+      {
+        "nodeId": "node-t2-forest-01",
+        "biomeGroup": "forest",
+        "nodeModifier": "alacrity",
+        "timeMs": 200715
+      },
+      {
+        "nodeId": "node-t2-forest-03",
+        "biomeGroup": "forest",
+        "nodeModifier": "dominion",
+        "timeMs": 171374
+      },
+      {
+        "nodeId": "node-t2-forest-02",
+        "biomeGroup": "forest",
+        "nodeModifier": "swarming",
+        "timeMs": 169453
+      },
+      {
+        "nodeId": "node-t2-plains-01",
+        "biomeGroup": "plains",
+        "nodeModifier": "alacrity",
+        "timeMs": 156195
+      },
+      {
+        "nodeId": "node-t2-plains-03",
+        "biomeGroup": "plains",
+        "nodeModifier": "swarming",
+        "timeMs": 123023
+      },
+      {
+        "nodeId": "node-t2-plains-05",
+        "biomeGroup": "plains",
+        "nodeModifier": "fortified",
+        "timeMs": 119864
+      },
+      {
+        "nodeId": "node-t2-plains-02",
+        "biomeGroup": "plains",
+        "nodeModifier": "heavy",
+        "timeMs": 118015
+      },
+      {
+        "nodeId": "node-t2-forest-04",
+        "biomeGroup": "forest",
+        "nodeModifier": "fortified",
+        "timeMs": 86734
+      },
+      {
+        "nodeId": "node-t2-plains-04",
+        "biomeGroup": "plains",
+        "nodeModifier": "dominion",
+        "timeMs": 17128
+      }
+    ]
+  },
+  "stalls": []
+}

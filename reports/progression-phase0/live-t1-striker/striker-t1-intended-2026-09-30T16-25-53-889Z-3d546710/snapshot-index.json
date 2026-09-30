@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "snapshotA": {
+    "snapshotKind": "mastery-completion",
+    "snapshotId": "striker-t1-intended-2026-09-30T16-25-53-889Z-3d546710-a",
+    "file": "snapshot-a.json",
+    "capturedAtMs": 1790785964137,
+    "elapsedMs": 410245,
+    "playerTier": 1,
+    "globalMastery": 30,
+    "nodeId": "node-t1-cave-05",
+    "canonicalAtCapture": false
+  },
+  "snapshotB": null,
+  "checkpoint": null,
+  "namedCheckpoints": {}
+}

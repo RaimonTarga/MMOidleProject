@@ -1,0 +1,337 @@
+{
+ "cave-charm-t1": {
+  "tier": 1,
+  "base": 2.0,
+  "steps": [
+   0.0,
+   0.0,
+   1.0,
+   0.0,
+   0.0
+  ]
+ },
+ "cave-charm-t2": {
+  "tier": 2,
+  "base": 4.0,
+  "steps": [
+   0.0,
+   1.0,
+   0.0,
+   1.0,
+   0.0
+  ]
+ },
+ "cave-charm-t3": {
+  "tier": 3,
+  "base": 7.0,
+  "steps": [
+   0.0,
+   1.0,
+   0.0,
+   1.0,
+   1.0
+  ]
+ },
+ "clearing-charm-t1": {
+  "tier": 0,
+  "base": 2.0,
+  "steps": []
+ },
+ "desert-charm-t2": {
+  "tier": 2,
+  "base": 5.0,
+  "steps": [
+   0.5,
+   0.5,
+   0.5,
+   0.5,
+   0.5
+  ]
+ },
+ "desert-charm-t3": {
+  "tier": 3,
+  "base": 10.0,
+  "steps": [
+   1.0,
+   1.0,
+   1.0,
+   0.5,
+   0.5
+  ]
+ },
+ "desert-charm-t4": {
+  "tier": 4,
+  "base": 14.0,
+  "steps": [
+   1.0,
+   1.5,
+   1.5,
+   1.5,
+   1.5
+  ]
+ },
+ "forest-charm-t1": {
+  "tier": 1,
+  "base": 3.0,
+  "steps": [
+   0.0,
+   1.0,
+   0.0,
+   1.0,
+   0.0
+  ]
+ },
+ "forest-charm-t2": {
+  "tier": 2,
+  "base": 5.0,
+  "steps": [
+   0.0,
+   1.0,
+   0.0,
+   1.0,
+   1.0
+  ]
+ },
+ "graveyard-charm-t4": {
+  "tier": 4,
+  "base": 14.0,
+  "steps": [
+   1.0,
+   1.5,
+   1.5,
+   1.5,
+   1.5
+  ]
+ },
+ "graveyard-charm-t4-gravetide": {
+  "tier": 4,
+  "base": 14.0,
+  "steps": [
+   1.0,
+   1.5,
+   1.5,
+   1.5,
+   1.5
+  ]
+ },
+ "jungle-charm-t2": {
+  "tier": 2,
+  "base": 5.0,
+  "steps": [
+   0.5,
+   0.5,
+   0.5,
+   0.5,
+   0.5
+  ]
+ },
+ "jungle-charm-t3": {
+  "tier": 3,
+  "base": 10.0,
+  "steps": [
+   1.0,
+   1.0,
+   1.0,
+   0.5,
+   0.5
+  ]
+ },
+ "jungle-charm-t4": {
+  "tier": 4,
+  "base": 14.0,
+  "steps": [
+   1.0,
+   1.5,
+   1.5,
+   1.5,
+   1.5
+  ]
+ },
+ "jungle-charm-t4-overgrowth": {
+  "tier": 4,
+  "base": 14.0,
+  "steps": [
+   1.0,
+   1.5,
+   1.5,
+   1.5,
+   1.5
+  ]
+ },
+ "mountain-charm-t1": {
+  "tier": 1,
+  "base": 1.0,
+  "steps": [
+   0.0,
+   0.0,
+   1.0,
+   0.0,
+   0.0
+  ]
+ },
+ "mountain-charm-t2": {
+  "tier": 2,
+  "base": 2.0,
+  "steps": [
+   0.0,
+   1.0,
+   0.0,
+   0.0,
+   0.0
+  ]
+ },
+ "mountain-charm-t3": {
+  "tier": 3,
+  "base": 3.0,
+  "steps": [
+   0.0,
+   1.0,
+   0.0,
+   1.0,
+   0.0
+  ]
+ },
+ "mountain-charm-t4": {
+  "tier": 4,
+  "base": 6.0,
+  "steps": [
+   0.5,
+   0.5,
+   1.0,
+   0.5,
+   0.5
+  ]
+ },
+ "mountain-charm-t4-shieldmend": {
+  "tier": 4,
+  "base": 6.0,
+  "steps": [
+   0.5,
+   0.5,
+   1.0,
+   0.5,
+   0.5
+  ]
+ },
+ "plains-charm-t1": {
+  "tier": 1,
+  "base": 1.0,
+  "steps": [
+   0.0,
+   0.5,
+   0.0,
+   0.5,
+   0.0
+  ]
+ },
+ "plains-charm-t2": {
+  "tier": 2,
+  "base": 2.0,
+  "steps": [
+   0.0,
+   0.5,
+   0.0,
+   0.5,
+   0.0
+  ]
+ },
+ "swamp-charm-t1": {
+  "tier": 1,
+  "base": 2.0,
+  "steps": [
+   0.0,
+   0.0,
+   1.0,
+   0.0,
+   0.0
+  ]
+ },
+ "swamp-charm-t2": {
+  "tier": 2,
+  "base": 4.0,
+  "steps": [
+   0.0,
+   1.0,
+   0.0,
+   1.0,
+   0.0
+  ]
+ },
+ "swamp-charm-t3": {
+  "tier": 3,
+  "base": 7.0,
+  "steps": [
+   0.0,
+   1.0,
+   0.0,
+   1.0,
+   1.0
+  ]
+ },
+ "trench-charm-t4": {
+  "tier": 4,
+  "base": 14.0,
+  "steps": [
+   1.0,
+   1.5,
+   1.5,
+   1.5,
+   1.5
+  ]
+ },
+ "tundra-charm-t3": {
+  "tier": 3,
+  "base": 10.0,
+  "steps": [
+   1.0,
+   1.0,
+   1.0,
+   0.5,
+   0.5
+  ]
+ },
+ "tundra-charm-t4": {
+  "tier": 4,
+  "base": 14.0,
+  "steps": [
+   1.0,
+   1.5,
+   1.5,
+   1.5,
+   1.5
+  ]
+ },
+ "tundra-charm-t4-deepfreeze": {
+  "tier": 4,
+  "base": 14.0,
+  "steps": [
+   1.0,
+   1.5,
+   1.5,
+   1.5,
+   1.5
+  ]
+ },
+ "volcanic-charm-t3": {
+  "tier": 3,
+  "base": 10.0,
+  "steps": [
+   1.0,
+   1.0,
+   1.0,
+   0.5,
+   0.5
+  ]
+ },
+ "volcanic-charm-t4": {
+  "tier": 4,
+  "base": 14.0,
+  "steps": [
+   1.0,
+   1.5,
+   1.5,
+   1.5,
+   1.5
+  ]
+ }
+}

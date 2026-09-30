@@ -1,0 +1,353 @@
+{
+  "schemaVersion": 1,
+  "snapshotKind": "mastery-completion",
+  "snapshotId": "striker-t1-intended-2026-09-30T16-25-53-889Z-3d546710-a",
+  "capturedAtMs": 1790785964137,
+  "capturedAtIso": "2026-09-30T16:32:44.137Z",
+  "elapsedMs": 410245,
+  "runId": "striker-t1-intended-2026-09-30T16-25-53-889Z-3d546710",
+  "characterId": "2fb791da-37b8-44ea-b8e3-f7f9dffce966",
+  "characterName": "Bot striker-t1 01",
+  "routeId": "striker-t1",
+  "routeVersion": "3.0.0",
+  "policyId": "intended",
+  "classRoot": "cadence-root",
+  "frameId": "cadence-balanced",
+  "gitRevision": "f47b8e9738071a9ca6759f1bd0f67923cfb24de6",
+  "serverUrl": "http://localhost:4000",
+  "canonicalAtCapture": false,
+  "economy": {
+    "candidate": {
+      "id": "t1-economy-candidate-f-2026-09-03",
+      "revision": "t1-economy-candidate-f-2026-09-03-r2",
+      "arm": "F",
+      "t1Plus5EssenceCostMultiplier": 0.6,
+      "catalystProgressPerUnitT1": 100,
+      "t1CatalystProgressRewardMultiplier": 0.5,
+      "catalystsScaledByRewardMultiplier": true,
+      "t1BiomeXpRewardMultiplier": 2,
+      "t1BiomeEssenceRewardMultiplier": 2,
+      "t1Plus5EssenceCosts": {
+        "chaotic-axe": 125,
+        "cave-vest-t1": 155,
+        "cave-charm-t1": 60,
+        "cave-boots-t1": 40,
+        "flash-rapier": 125,
+        "forest-vest-t1": 120,
+        "forest-charm-t1": 60,
+        "forest-boots-t1": 35,
+        "heavy-hammer": 125,
+        "mountain-vest-t1": 125,
+        "mountain-charm-t1": 60,
+        "mountain-boots-t1": 40,
+        "iron-broadsword": 60,
+        "plains-vest-t1": 120,
+        "plains-charm-t1": 45,
+        "plains-boots-t1": 35,
+        "ashbrand-blade": 120,
+        "swamp-vest-t1": 120,
+        "swamp-charm-t1": 60,
+        "swamp-boots-t1": 40
+      }
+    },
+    "rewardMultiplier": 25
+  },
+  "state": {
+    "classRoot": "cadence-root",
+    "frameId": "cadence-balanced",
+    "selectedSubVariant": null,
+    "selectedRange": null,
+    "unlockedSkills": [
+      "cadence-root"
+    ],
+    "passives": {
+      "weapon.dead-swing-interval": 3,
+      "guard.potency-pct": 0.22999999999999998,
+      "mobility.kill-speed-pct": 0.37,
+      "mobility.kill-speed-ms": 3000,
+      "defense.item-dr-base": 0.04,
+      "defense.recovery-pulse-interval-ms": 6000,
+      "defense.recovery-pulse-duration-ms": 4000,
+      "defense.recovery-pulse-pct": 0.43
+    },
+    "playerTier": 1,
+    "currentSkillTier": 1,
+    "level": 23,
+    "skillPoints": 0,
+    "biomeXP": {
+      "clearing": 1075,
+      "plains": 2438,
+      "forest": 1908,
+      "swamp": 1768,
+      "mountain": 2184,
+      "cave": 3710
+    },
+    "biomeLevel": {
+      "clearing": 4,
+      "plains": 6,
+      "forest": 6,
+      "swamp": 6,
+      "mountain": 6,
+      "cave": 6
+    },
+    "globalMastery": 30,
+    "unlockedRecipes": [
+      "primordial-club",
+      "clearing-vest-t1",
+      "clearing-charm-t1",
+      "clearing-boots-t1",
+      "iron-broadsword",
+      "plains-vest-t1",
+      "plains-charm-t1",
+      "plains-boots-t1",
+      "flash-rapier",
+      "forest-vest-t1",
+      "forest-charm-t1",
+      "forest-boots-t1",
+      "ashbrand-blade",
+      "swamp-vest-t1",
+      "swamp-charm-t1",
+      "swamp-boots-t1",
+      "heavy-hammer",
+      "mountain-vest-t1",
+      "mountain-charm-t1",
+      "mountain-boots-t1",
+      "chaotic-axe",
+      "cave-vest-t1",
+      "cave-charm-t1",
+      "cave-boots-t1"
+    ],
+    "bossesCleared": [],
+    "clearedNodes": [],
+    "visitedNodes": [
+      "node-t1-plains-05",
+      "node-clearing",
+      "node-t1-forest-04",
+      "node-t1-swamp-03",
+      "node-t1-cave-05",
+      "node-t1-mountain-05"
+    ],
+    "questProgress": {
+      "tier-0": 10
+    },
+    "essences": {
+      "red": 114,
+      "blue": 20,
+      "green": 683,
+      "yellow": 75,
+      "purple": 45
+    },
+    "catalysts": {
+      "fortified": 4
+    },
+    "catalystProgress": {
+      "fortified": 51.5,
+      "swarming": 63,
+      "heavy": 78
+    },
+    "inventory": [
+      "primordial-club",
+      "clearing-vest-t1",
+      "clearing-charm-t1",
+      "clearing-boots-t1",
+      "iron-broadsword",
+      "plains-charm-t1",
+      "plains-vest-t1",
+      "flash-rapier"
+    ],
+    "equipment": {
+      "weapon": "chaotic-axe",
+      "armor": "mountain-vest-t1",
+      "recovery": "swamp-charm-t1",
+      "mobility": "plains-boots-t1",
+      "core": null,
+      "relic": null
+    },
+    "itemUpgrades": {
+      "iron-broadsword": 1,
+      "plains-vest-t1": 4,
+      "plains-charm-t1": 2,
+      "plains-boots-t1": 4,
+      "flash-rapier": 4,
+      "swamp-charm-t1": 4,
+      "mountain-vest-t1": 4,
+      "chaotic-axe": 4
+    },
+    "knownAbilities": [
+      "sweep",
+      "second-wind",
+      "cleanse",
+      "expose-weakness"
+    ],
+    "attunedAbilities": {
+      "techniques": [
+        "expose-weakness"
+      ],
+      "guards": [
+        "second-wind"
+      ]
+    },
+    "runesOwned": [
+      "always",
+      "in-combat",
+      "when-idle",
+      "hp-below-25",
+      "hp-above-90",
+      "target-hp-below-25",
+      "has-debuff",
+      "controlled",
+      "enemy-contact",
+      "in-party",
+      "formation-broken",
+      "n-aggro-3",
+      "inside-telegraph",
+      "target-casting",
+      "target-shielded",
+      "target-escaping",
+      "debuff-pile",
+      "stance-charged",
+      "before-empowered",
+      "target-elite",
+      "target-max-stacks",
+      "while-traveling",
+      "auto-path-enemy",
+      "chase-enemy",
+      "wait-for-regen",
+      "flee",
+      "fight-back",
+      "lead-the-way",
+      "follow-and-assist",
+      "taunt-current-target",
+      "focus-closest",
+      "use-ability",
+      "switch-stance",
+      "wait-it-out",
+      "tactical-reload",
+      "wait-for-execution",
+      "wait-for-summons",
+      "recall-summons",
+      "avoid-enemies",
+      "avoid-hazards",
+      "step-back"
+    ],
+    "runeRecipesCrafted": [
+      "rune-recipe-avoid-hazards",
+      "rune-recipe-step-back"
+    ],
+    "runesEquipped": [
+      {
+        "conditionId": "always",
+        "actionId": "auto-path-enemy"
+      },
+      {
+        "conditionId": "inside-telegraph",
+        "actionId": "step-back"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "chase-enemy"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "avoid-hazards"
+      },
+      {
+        "conditionId": "always",
+        "actionId": "wait-for-regen"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "use-ability",
+        "targetAbilityId": "second-wind"
+      },
+      {
+        "conditionId": "in-combat",
+        "actionId": "use-ability",
+        "targetAbilityId": "expose-weakness"
+      }
+    ],
+    "knownStances": [],
+    "attunedStances": [],
+    "equippedStances": {
+      "default": null
+    },
+    "activeStance": null,
+    "knownRites": [],
+    "equippedRites": [],
+    "derivedStats": {
+      "attack": 45,
+      "onHitDamage": 0,
+      "maxHp": 177,
+      "recovery": 10.4,
+      "plating": 4,
+      "damageReduction": 0.2128,
+      "dodgeRate": 0,
+      "evadeMitigation": 0,
+      "attackRange": 12,
+      "speed": 148,
+      "attackStyle": "slash",
+      "combatArchetype": "cadence",
+      "riteSlots": 0,
+      "summonsMinions": 0
+    },
+    "classResources": {
+      "cadenceSpeedStacks": 0,
+      "cadenceCount": 0,
+      "cadenceThreshold": 5,
+      "cadenceEmpoweredArmed": false,
+      "ammoCount": 0,
+      "ammoMax": 0,
+      "heatPct": 0,
+      "laserOverheated": false,
+      "executionReady": false,
+      "executionCooldownPct": 0,
+      "energyCount": 0,
+      "energyMax": 100,
+      "flashShiftPct": 0,
+      "flashDamageShiftPct": 0,
+      "flashSpeedBonusPct": 0,
+      "flashEvasionBonusPct": 0,
+      "empoweredReady": false,
+      "targetDotStacks": 0,
+      "targetDotTickPct": 0,
+      "targetChillStacks": 0,
+      "isChanneling": false,
+      "channelingPct": 0,
+      "cannonChargePct": 0,
+      "aura": null,
+      "summonActiveCount": 0,
+      "summonRespawnMaxMs": 0
+    },
+    "runtime": {
+      "nodeId": "node-t1-cave-05",
+      "pos": {
+        "x": 531,
+        "y": 4263
+      },
+      "target": {
+        "x": 531,
+        "y": 4263
+      },
+      "hp": 177,
+      "maxHp": 177,
+      "barrier": 0,
+      "barrierMax": 0,
+      "barrierRecharging": false,
+      "wards": [],
+      "incomingDot": 0,
+      "pendingHeal": 0,
+      "attackTargetId": null,
+      "auto": false,
+      "autoTraverse": false,
+      "autoIntent": null,
+      "partyLeaderId": null,
+      "partyMembers": [],
+      "activeEffects": {},
+      "activeEffectFrames": {},
+      "activeBuffs": [],
+      "isDead": false,
+      "graveFrame": null,
+      "summonSlots": []
+    }
+  }
+}

@@ -19,7 +19,7 @@
  *   PHASE0_MAX_HP / PHASE0_BASE_FRACTION / PHASE0_SW=timed / PHASE0_SW_MULT lever overrides
  */
 import assert from 'node:assert/strict';
-import { mkdirSync, writeFileSync, appendFileSync, existsSync } from 'node:fs';
+import { mkdirSync, writeFileSync, appendFileSync, existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { ABILITY_DATABASE, GAME_CONFIG, MONSTER_DATABASE, NODE_BIOMES, type EquippedRule } from '@mmo-idle/shared';
@@ -109,6 +109,25 @@ async function main() {
   const filter = process.env.PHASE0_FILTER;
   const wiring = (process.env.PHASE0_SW ?? 'reference') as SecondWindWiring;
   const tiers = (process.env.PHASE0_TIERS ?? '1,2').split(',').map(Number);
+  // Gear arm (Phase 0b exit): 'charm' = +N gear with the biome charm (default),
+  // 'geared' = the same without a charm, 'naked' = no items at all.
+  const arm = (process.env.PHASE0_ARM ?? 'charm') as 'charm' | 'geared' | 'naked';
+  assert(arm === 'charm' || arm === 'geared' || arm === 'naked', 'PHASE0_ARM must be charm, geared or naked');
+  // PHASE0_MODEL=old emulates the pre-0b percentage model inside the current
+  // engine: every in-combat effect is a fraction of one rate, so writing
+  // maxHp × (5 + oldCharmPct) / 100 into hasHealth.recovery each tick reproduces
+  // it exactly (base 5 = Phase 0a). Old charm percentages come from
+  // reports/progression-phase0/old-charm-pct.json (extracted from the pre-0b recipes).
+  const model = (process.env.PHASE0_MODEL ?? 'new') as 'old' | 'new';
+  assert(model === 'old' || model === 'new', 'PHASE0_MODEL must be old or new');
+  const oldCharms = model === 'old'
+    ? JSON.parse(readFileSync(resolve('../reports/progression-phase0/old-charm-pct.json'), 'utf8')) as Record<string, { base: number; steps: number[] }>
+    : {};
+  const oldPctFor = (charmId: string | undefined): number => {
+    if (!charmId) return 5;
+    const c = oldCharms[charmId]; assert(c, `no pre-0b value for ${charmId}`);
+    return 5 + c.base + c.steps.slice(0, plus).reduce((a, b) => a + b, 0);
+  };
   assert(wiring === 'reference' || wiring === 'timed', 'PHASE0_SW must be reference or timed');
   // Lever overrides for the sweep. GAME_CONFIG is `as const` for types only; the
   // stat recalc reads these at call time, so mutating before any bot is built is
@@ -130,10 +149,14 @@ async function main() {
   if (!existsSync(artifact)) await writeHitboxArtifact(artifact);
   assert(hydrateHitboxCacheFromArtifact(artifact) > 0);
 
-  const selected = cells(plus, wiring, tiers).filter((c) => !filter || c.id.includes(filter));
+  const selected = cells(plus, wiring, tiers).filter((c) => !filter || c.id.includes(filter)).map((c) => {
+    if (arm === 'charm') return c;
+    const gearItemIds = arm === 'naked' ? {} : Object.fromEntries(Object.entries(c.build.gearItemIds).filter(([slot]) => slot !== 'recovery'));
+    return { ...c, id: `${c.id}-${arm}`, build: { ...c.build, id: `${c.id}-${arm}`, gearItemIds } };
+  });
   assert(selected.length > 0, 'no cells selected');
   writeFileSync(resolve(out, 'manifest.json'), JSON.stringify({
-    schema: 1, source: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(), capMs, plus, seeds, tiers, secondWind: wiring, secondWindMult: swMult,
+    schema: 1, source: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(), capMs, plus, seeds, tiers, arm, model, secondWind: wiring, secondWindMult: swMult,
     config: { PLAYER_MAX_HP: GAME_CONFIG.PLAYER_MAX_HP, RECOVERY_BASE_FRACTION: GAME_CONFIG.RECOVERY_BASE_FRACTION, RECOVERY_REFERENCE_POOL_BY_TIER: GAME_CONFIG.RECOVERY_REFERENCE_POOL_BY_TIER, OOC_RECOVERY_PCT: GAME_CONFIG.OOC_RECOVERY_PCT, COMBAT_REGEN_DELAY: GAME_CONFIG.COMBAT_REGEN_DELAY },
     scope: 'ttkSurvey reference bot, capped mastery, declared +N gear, reference ability wiring, no travel. Deaths revive in place. Provisional; not the live-bot column.',
     cells: selected.map((c) => c.id),
@@ -166,9 +189,13 @@ async function main() {
     try {
       setupArena(world, target);
       const { bot } = prepareSurveyBot(world, cell, BOT_SPAWN);
-      const maxHp = bot.hasHealth.maxHp, recovery = bot.hasHealth.recovery ?? 0;
+      const maxHp = bot.hasHealth.maxHp;
+      const oldFlat = maxHp * oldPctFor(cell.build.gearItemIds.recovery) / 100;
+      if (model === 'old') bot.hasHealth.recovery = oldFlat;
+      const recovery = bot.hasHealth.recovery ?? 0;
       lastHp = bot.hasHealth.hp;
       for (; now < capMs;) {
+        if (model === 'old') bot.hasHealth.recovery = oldFlat;
         world.tick(100, now); now += 100;
         world.pendingDeaths = [];
         world.clearNodeEvents(cell.nodeId);
@@ -217,7 +244,7 @@ async function main() {
     table.push(`| ${id} | ${group[0].maxHp} | ${s.fights} | ${fmt(s.medianEndHpFraction)} | ${fmt(s.meanEndHpFraction)} | ${fmt(s.timeInBandShare)} | ${fmt(avg(group.map((r) => r.lostPerFight)))} | ${fmt(avg(group.map((r) => r.healedPerFight)))} | ${group.reduce((a, r) => a + r.deaths, 0)} | ${group.reduce((a, r) => a + r.kills, 0)} | ${b.lt20} | ${b.from20to40} | ${b.from40to60} | ${b.from60to80} | ${b.ge80} |`);
   }
   const burstAll = rows.flatMap((r) => r.burst.map((h) => ({ ...h, cell: r.id }))).sort((a, b) => b.hitFraction - a.hitFraction).slice(0, 15);
-  const md = [`# Phase 0 recovery pass — ${new Date().toISOString()}`, '', `cap ${capMs} ms per cell per seed; seeds ${seeds.join(', ')}; gear +${plus}; Second Wind ${wiring} x${swMult}; RECOVERY_BASE_FRACTION ${GAME_CONFIG.RECOVERY_BASE_FRACTION} of pools ${GAME_CONFIG.RECOVERY_REFERENCE_POOL_BY_TIER.join('/')} (flat HP/s); OOC ${GAME_CONFIG.OOC_RECOVERY_PCT}; PLAYER_MAX_HP ${GAME_CONFIG.PLAYER_MAX_HP}`, '',
+  const md = [`# Phase 0 recovery pass — ${new Date().toISOString()}`, '', `cap ${capMs} ms per cell per seed; seeds ${seeds.join(', ')}; arm ${arm}; model ${model}; gear +${plus}; Second Wind ${wiring} x${swMult}; RECOVERY_BASE_FRACTION ${GAME_CONFIG.RECOVERY_BASE_FRACTION} of pools ${GAME_CONFIG.RECOVERY_REFERENCE_POOL_BY_TIER.join('/')} (flat HP/s); OOC ${GAME_CONFIG.OOC_RECOVERY_PCT}; PLAYER_MAX_HP ${GAME_CONFIG.PLAYER_MAX_HP}`, '',
     'Target: median fight-end HP 0.40–0.60, time in band > 0.50.', '', ...table, '', '## Largest single hits (burst watch list)', '', '| cell | source | hit / maxHp | HP before |', '|---|---|---:|---:|',
     ...burstAll.map((h) => `| ${h.cell} | ${h.source} | ${fmt(h.hitFraction)} | ${fmt(h.hpBeforeFraction)} |`), ''].join('\n');
   writeFileSync(resolve(out, 'report.md'), md);

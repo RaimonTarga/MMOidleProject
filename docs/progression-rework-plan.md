@@ -128,9 +128,26 @@ front of the four seeds), `PLAYER_RECOVERY` removed, minion regen and reconstruc
 the flat rate, all 30 charm recipes (base values and upgrade steps) converted by the
 tier's pool factor, `defensiveItemScore` weight per tier, eHP report, HUD text and units,
 tests moved to HP/s with an OOC-independence test. Numbers and what the bench could and
-could not confirm are in `recovery-current-state.md` §8. Still open: the charm sweep as a
-true time-to-death check (the conversion is analytic, checked only through the fight-end
-metric), the live-bot column, the human playtest, and the pool raise.
+could not confirm are in `recovery-current-state.md` §8.
+
+**Close-out (2026-09-30, later the same day).** Commits: design docs `a53cb6a1`, Phase 0a
+`b5f67395`, Phase 0b `f47b8e97`, charm sweep (this note's commit). Against the amended exit:
+- Charm sweep done against the +3 pool (P3 = 156 / 234.5 / 446 / 755), all 30 tiered
+  charms; time-to-death (`server/bench/phase0Ttd.ts`) geared-with-charm new/old median
+  1.00 at every tier, 30 of 36 measurable cells within ±10%; the six outliers are the
+  class-pool spread around the tier median (Striker T3 Desert/Tundra 0.71–0.78, Slinger
+  T4 Jungle 1.43–1.49, Slinger T2 Mountain 0.67).
+- Geared without a charm: TTD 0.92–0.99, fight-end deaths up at T1 and T4 — recorded.
+- Naked at entry: TTD 1.02 at T1, 1.09 at T2, **1.15–1.19 at T3/T4** (the reference-pool
+  base out-heals the old 5% of a naked pool). Not within noise at T3/T4; recorded, pools
+  untouched.
+- OOC 10 s at every tier (test).
+- Live `combat.fights` measured once with Docker up: T1 Forest 0.58 / 0.52, T2 Forest
+  0.41 / 0.55 (median end HP / time in band), Plains 0.82–0.93. Non-canonical (25×
+  rewards, two bots on one server), taken at the 0b pool-factor charm values.
+- The first T3/T4 "before" bench was invalid (base 0 mid-edit) and was replaced by an
+  in-engine emulation of the percentage model (`pre0b-*`, `PHASE0_MODEL=old`).
+Still open: the human playtest and the player pool raise (bosses first).
 
 **Progress (2026-09-30).** Shipped: the per-fight metric (`bot/src/telemetry/fightHp.ts`,
 `summary.json → combat.fights`, `experiment:report` columns) and an in-process bench,
