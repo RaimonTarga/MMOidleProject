@@ -44,7 +44,6 @@ export interface MakeEntry {
   tier: number;
   recipeGroup: string | null;
   cost: Partial<Record<EssenceType, number>>;
-  catalystCost?: Partial<Record<string, number>>;
   /**
    * Gate satisfied — the recipe may be attempted at all. Locked entries are
    * hidden by default and revealed by the browser's "Show locked" filter, which
@@ -110,7 +109,6 @@ function gearEntries(sources: MakeSources): MakeEntry[] {
       tier: recipe.tier,
       recipeGroup: recipe.recipeGroup,
       cost: recipe.cost,
-      catalystCost: recipe.catalystCost,
       unlocked,
       // Locked gear is built but hidden behind the "Show locked" filter. It used
       // to be skipped outright, which left Crafting's Progress tab as the only
@@ -130,7 +128,6 @@ interface TechniqueSpec {
     name: string;
     tier: number;
     cost: Partial<Record<EssenceType, number>>;
-    catalystCost?: Partial<Record<string, number>>;
     recipeGroup?: string;
     requiredBiomeLevel?: number;
   }>;
@@ -166,7 +163,6 @@ function techniqueEntries(spec: TechniqueSpec): MakeEntry[] {
       tier: recipe.tier,
       recipeGroup: recipe.recipeGroup ?? null,
       cost: recipe.cost,
-      catalystCost: recipe.catalystCost,
       unlocked,
       unlockHint: unlocked || !recipe.recipeGroup
         ? ''
@@ -307,11 +303,7 @@ export function buildMakeEntries(sources: MakeSources): MakeEntry[] {
 export function entryAffordable(
   entry: MakeEntry,
   essences: Record<EssenceType, number>,
-  catalysts: Record<string, number>,
 ): boolean {
-  const essenceOk = (Object.entries(entry.cost) as [EssenceType, number][])
+  return (Object.entries(entry.cost) as [EssenceType, number][])
     .every(([type, amount]) => (essences[type] ?? 0) >= amount);
-  const catalystOk = (Object.entries(entry.catalystCost ?? {}) as [string, number][])
-    .every(([family, amount]) => (catalysts[family] ?? 0) >= amount);
-  return essenceOk && catalystOk;
 }

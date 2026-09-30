@@ -6,7 +6,6 @@ import {
   ESSENCE_COLORS,
   TUTORIAL_ANCHORS,
   TEST_ROOM_NODE_ID,
-  catalystLabel,
   essenceLabel,
   ITEM_DATABASE,
   abilityDef,
@@ -23,7 +22,6 @@ import { hudBus } from '../../hudBus';
 import { tutorialFocusAtom } from '../../tutorial/atoms';
 import {
   capstonesAtom,
-  catalystsAtom,
   essencesAtom,
   inventoryAtom,
   equipmentAtom,
@@ -70,9 +68,8 @@ import { makeFiltersAtom } from '../panelFilters';
 function missingMaterials(
   entry: MakeEntry,
   essences: Record<EssenceType, number>,
-  catalysts: Record<string, number>,
 ): { key: string; label: string; amount: number; color?: string }[] {
-  const essence = (Object.entries(entry.cost) as [EssenceType, number][])
+  return (Object.entries(entry.cost) as [EssenceType, number][])
     .filter(([type, amount]) => (essences[type] ?? 0) < amount)
     .map(([type, amount]) => ({
       key: type,
@@ -80,14 +77,6 @@ function missingMaterials(
       amount: amount - (essences[type] ?? 0),
       color: ESSENCE_COLORS[type],
     }));
-  const catalyst = (Object.entries(entry.catalystCost ?? {}) as [string, number][])
-    .filter(([family, amount]) => (catalysts[family] ?? 0) < amount)
-    .map(([family, amount]) => ({
-      key: family,
-      label: catalystLabel(family),
-      amount: amount - (catalysts[family] ?? 0),
-    }));
-  return [...essence, ...catalyst];
 }
 
 type MakeSection = 'new' | 'ready' | 'short' | 'locked';
@@ -326,7 +315,6 @@ export function MakeTab() {
   const playerId = useAtomValue(playerIdAtom);
   const nodeId = useAtomValue(playerNodeIdAtom);
   const essences = useAtomValue(essencesAtom);
-  const catalysts = useAtomValue(catalystsAtom);
   const shards = useAtomValue(shardsAtom);
   const capstones = useAtomValue(capstonesAtom);
   const inventory = useAtomValue(inventoryAtom);
@@ -408,9 +396,9 @@ export function MakeTab() {
   const canMake = (entry: MakeEntry): boolean => {
     if (isTestRoom) return true;
     const recipe = entry.gear;
-    if (!recipe || !isEvolvedRecipe(recipe)) return entryAffordable(entry, essences, catalysts);
-    return checkEvolve({ recipe, inventory, equipment, itemUpgrades, essences, catalysts }).ok
-      || (!!recipe.reconstructCost && checkReconstruct({ recipe, essences, catalysts }).ok);
+    if (!recipe || !isEvolvedRecipe(recipe)) return entryAffordable(entry, essences);
+    return checkEvolve({ recipe, inventory, equipment, itemUpgrades, essences }).ok
+      || (!!recipe.reconstructCost && checkReconstruct({ recipe, essences }).ok);
   };
 
   /** The row's short "what is missing" line for an evolution whose materials are covered. */
@@ -442,7 +430,7 @@ export function MakeTab() {
       });
     }
     return stats;
-  }, [railKinds, entries, newEntries, essences, catalysts, isTestRoom, inventory, equipment, itemUpgrades]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [railKinds, entries, newEntries, essences, isTestRoom, inventory, equipment, itemUpgrades]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // A remembered category that is no longer on the rail would select nothing;
   // fall back to where the news is, then to what can be made.
@@ -527,7 +515,7 @@ export function MakeTab() {
           ? <CraftReveal key={craftResult.id} result={craftResult} />
           : <CraftStamp key={craftResult.id} result={craftResult} />
       )}
-      <WalletSummary essences={essences} catalysts={catalysts} shards={shards} capstones={capstones} />
+      <WalletSummary essences={essences} shards={shards} capstones={capstones} />
       <RailLayout>
       {rail}
       <BrowserPane
@@ -550,7 +538,7 @@ export function MakeTab() {
         renderItem={(entry) => (
           <MakeRow
             entry={entry}
-            missing={isTestRoom || canMake(entry) ? [] : missingMaterials(entry, essences, catalysts)}
+            missing={isTestRoom || canMake(entry) ? [] : missingMaterials(entry, essences)}
             need={isTestRoom || canMake(entry) ? '' : evolveNeed(entry)}
             isNew={newEntries.has(entry.key)}
             onSeen={() => newEntries.clear(entry.key)}
@@ -560,7 +548,6 @@ export function MakeTab() {
           <MakeDetail
             entry={entry}
             essences={essences}
-            catalysts={catalysts}
             inventory={inventory}
             itemUpgrades={itemUpgrades}
             abilityContext={abilityContext}
@@ -647,7 +634,6 @@ function MakeRow({
 interface MakeDetailProps {
   entry: MakeEntry;
   essences: Record<EssenceType, number>;
-  catalysts: Record<string, number>;
   inventory: readonly string[];
   itemUpgrades: Record<string, number>;
   abilityContext: AbilityContext;
@@ -675,7 +661,6 @@ function madeThingLines(entry: MakeEntry, context: AbilityContext) {
 function MakeDetail({
   entry,
   essences,
-  catalysts,
   inventory,
   itemUpgrades,
   abilityContext,
@@ -694,7 +679,7 @@ function MakeDetail({
   const equippedRites = useAtomValue(equippedRitesAtom);
   const hp = useAtomValue(hpAtom);
   const maxHp = useAtomValue(maxHpAtom);
-  const affordable = entryAffordable(entry, essences, catalysts);
+  const affordable = entryAffordable(entry, essences);
   const recipe = entry.gear;
   // Weapon tier-2+ forms are the lineage tree's gate now (LineageTreePanel, open
   // from the weapon slot) — the old evolve/reconstruct path stays live only for
@@ -702,10 +687,10 @@ function MakeDetail({
   const isWeaponLineageForm = !!recipe && recipe.slot === 'weapon' && isEvolvedRecipe(recipe);
   const evolved = recipe ? isEvolvedRecipe(recipe) && !isWeaponLineageForm : false;
   const evolveCheck = recipe && evolved
-    ? checkEvolve({ recipe, inventory, equipment, itemUpgrades, essences, catalysts, isTestRoom })
+    ? checkEvolve({ recipe, inventory, equipment, itemUpgrades, essences, isTestRoom })
     : null;
   const reconstructCheck = recipe && evolved && recipe.reconstructCost
-    ? checkReconstruct({ recipe, essences, catalysts, isTestRoom })
+    ? checkReconstruct({ recipe, essences, isTestRoom })
     : null;
   // The DPS row runs two full stat rebuilds, so the plan is only recomputed when
   // something it reads actually moves.
@@ -832,8 +817,6 @@ function MakeDetail({
           <CostDisplay
             cost={entry.cost}
             essences={essences}
-            catalystCost={entry.catalystCost}
-            catalysts={catalysts}
           />
         </>
       )}
@@ -896,7 +879,6 @@ function MakeDetail({
             <ReconstructOption
               recipe={recipe}
               essences={essences}
-              catalysts={catalysts}
               blocked={reconstructBlocked}
               onReconstruct={() => onAttempt(() => hudBus.requestEvolveItem(recipe.id, 'reconstruct'))}
             />

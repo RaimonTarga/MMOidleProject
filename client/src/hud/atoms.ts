@@ -227,8 +227,6 @@ export const globalMasteryAtom = atom((get) => globalMastery(get(biomeLevelAtom)
 export const biomeXPAtom = atom<Record<string, number>>({});
 export const questProgressAtom = atom<Record<string, number>>({});
 export const essencesAtom = atom<Record<EssenceType, number>>({ ...DEFAULT_ESSENCES });
-export const catalystsAtom = atom<Record<string, number>>({});
-export const catalystProgressAtom = atom<Record<string, number>>({});
 /** Lineage shard wallet, keyed by packet (progression rework Phase 1). */
 export const shardsAtom = atom<Partial<Record<PacketId, number>>>({});
 /** Boss capstone wallet, keyed by biome — the gate cost of a lineage form. */
@@ -887,8 +885,6 @@ function resetPlayerAtoms(): void {
   setIfShallowObjectEqual(biomeXPAtom, {});
   setIfShallowObjectEqual(questProgressAtom, {});
   setIfShallowObjectEqual(essencesAtom, { ...DEFAULT_ESSENCES });
-  setIfShallowObjectEqual(catalystsAtom, {});
-  setIfShallowObjectEqual(catalystProgressAtom, {});
   setIfShallowObjectEqual(shardsAtom, {});
   setIfShallowObjectEqual(capstonesAtom, {});
   setIfShallowObjectEqual(lineagesAtom, {});
@@ -1013,8 +1009,6 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfShallowObjectEqual(biomeXPAtom, player.biomeXP);
   setIfShallowObjectEqual(questProgressAtom, player.questProgress);
   setIfShallowObjectEqual(essencesAtom, player.essences);
-  setIfShallowObjectEqual(catalystsAtom, player.catalysts);
-  setIfShallowObjectEqual(catalystProgressAtom, player.catalystProgress);
   setIfShallowObjectEqual(shardsAtom, player.shards);
   setIfShallowObjectEqual(capstonesAtom, player.capstones);
   setIfShallowObjectEqual(lineagesAtom, player.lineages);

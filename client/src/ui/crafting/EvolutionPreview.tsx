@@ -130,13 +130,11 @@ function EvolutionChanges({ plan }: { plan: EvolutionPlan }) {
 export function ReconstructOption({
   recipe,
   essences,
-  catalysts,
   blocked,
   onReconstruct,
 }: {
   recipe: Recipe;
   essences: Record<EssenceType, number>;
-  catalysts: Record<string, number>;
   /** Authoritative reason it cannot be done, from `checkReconstruct`. Empty = ready. */
   blocked: string;
   onReconstruct: () => void;
@@ -154,8 +152,6 @@ export function ReconstructOption({
       <CostDisplay
         cost={recipe.reconstructCost}
         essences={essences}
-        catalystCost={recipe.reconstructCatalystCost}
-        catalysts={catalysts}
       />
       <div className="evo-reconstruct__actions">
         <button

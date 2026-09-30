@@ -35,8 +35,6 @@ import {
 import {
   activeStanceAtom,
   buildPanelTabAtom,
-  catalystProgressAtom,
-  catalystsAtom,
   essencesAtom,
   passivesAtom,
   unlockedRecipesAtom,

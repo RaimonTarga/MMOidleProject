@@ -10,7 +10,6 @@ import {
   getMaxUpgrade,
   requiredBiomeLevelForUpgrade,
   upgradeCostFor,
-  upgradeCatalystCostFor,
   upgradeCeilingFromGlobalMastery,
 } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
@@ -18,7 +17,6 @@ import { tutorialFocusAtom } from '../../tutorial/atoms';
 import {
   biomeLevelAtom,
   capstonesAtom,
-  catalystsAtom,
   equipmentAtom,
   essencesAtom,
   globalMasteryAtom,
@@ -101,7 +99,6 @@ export function UpgradeTab() {
   const equipment    = useAtomValue(equipmentAtom);
   const itemUpgrades = useAtomValue(itemUpgradesAtom);
   const essences     = useAtomValue(essencesAtom);
-  const catalysts    = useAtomValue(catalystsAtom);
   const shards       = useAtomValue(shardsAtom);
   const capstones    = useAtomValue(capstonesAtom);
   const biomeLevel   = useAtomValue(biomeLevelAtom);
@@ -186,7 +183,7 @@ export function UpgradeTab() {
   const stepFor = (def: UpgradeItem) => {
     const currentPlus = itemUpgrades[def.id] ?? 0;
     const haveLevel = def.biomeGroup ? (biomeLevel[def.biomeGroup] ?? 0) : 0;
-    const check = checkUpgrade({ item: def, currentPlus, biomeLevel: haveLevel, essences, catalysts, globalMastery: gm });
+    const check = checkUpgrade({ item: def, currentPlus, biomeLevel: haveLevel, essences, globalMastery: gm });
     const isMaxed = currentPlus >= getMaxUpgrade(def);
     return { currentPlus, haveLevel, isMaxed, canUpgrade: !isMaxed && (isTestRoom || check.ok) };
   };
@@ -195,7 +192,7 @@ export function UpgradeTab() {
 
   return (
     <div className="craft-body craft-body--browser">
-      <WalletSummary essences={essences} catalysts={catalysts} shards={shards} capstones={capstones} />
+      <WalletSummary essences={essences} shards={shards} capstones={capstones} />
       <BrowserPane
         label="Upgradeable items"
         className="upgrade-browser"
@@ -244,7 +241,6 @@ export function UpgradeTab() {
           const levelMet      = isTestRoom || haveLevel >= reqLevel;
           const masteryMet    = isTestRoom || gm >= reqMastery;
           const cost          = upgradeCostFor(def, currentPlus + 1);
-          const catalystCost  = upgradeCatalystCostFor(def, currentPlus + 1);
           const cardResult    = result?.itemId === def.id ? result : null;
 
           return (
@@ -307,7 +303,7 @@ export function UpgradeTab() {
                 <>
                   <div className="make-detail__cost-label">Cost</div>
                   {cost && (
-                    <CostDisplay cost={cost} essences={essences} catalystCost={catalystCost ?? undefined} catalysts={catalysts} />
+                    <CostDisplay cost={cost} essences={essences} />
                   )}
                   <div className="upgrade-detail__reqs">
                     <span className={`craft-upgrade__req${levelMet ? ' craft-upgrade__req--ok' : ' craft-upgrade__req--bad'}`}>
