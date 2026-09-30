@@ -10,7 +10,7 @@
  * family names the lane it favours and the lane it punishes, and Phase 2's family
  * data is checked against this table so no packet is unanswerable.
  */
-import type { LineageStatKey, PacketId } from './types';
+import type { DefensiveFace, LineageStatKey, PacketId } from './types';
 
 export interface PacketDefinition {
   id: PacketId;
@@ -108,6 +108,28 @@ export function packetScalingStat(id: PacketId): LineageStatKey {
   const def = PACKET_DEFINITIONS.get(id);
   if (!def) throw new Error(`unknown packet '${id}'`);
   return def.scalingStat;
+}
+
+/**
+ * The defensive face a packet expresses (design §3.1, §17): "Avoid = Engagement,
+ * Tempo, Control · Sustain = Kill chain, Barrier tempo, Affliction · Endure =
+ * Bulwark, Empowered." A defensive card's `face` is DERIVED from its lane through
+ * this table, not hand-authored per card — one source instead of 45 by-hand copies.
+ */
+const PACKET_FACE: Record<PacketId, DefensiveFace> = {
+  'tempo': 'avoid',
+  'engagement': 'avoid',
+  'control': 'avoid',
+  'kill-chain': 'sustain',
+  'barrier-tempo': 'sustain',
+  'affliction': 'sustain',
+  'bulwark': 'endure',
+  'empowered': 'endure',
+};
+
+/** The defensive face a lane expresses (design §17). */
+export function packetDefaultFace(id: PacketId): DefensiveFace {
+  return PACKET_FACE[id];
 }
 
 /**
