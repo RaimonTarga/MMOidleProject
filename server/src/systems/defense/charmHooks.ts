@@ -3,6 +3,7 @@ import type { PlayerEntity } from '../../ecs/entity';
 import type { World } from '../../world/World';
 import { restoreBarrierFraction } from './barrier/barrier';
 import { advanceRecoveryRamp, triggerRecoveryPulse } from './regen/recovery';
+import { onLineageGuardCast } from '../combat/lineageCards';
 
 /**
  * Charm Guard hooks (2026-09-26). Charms own the Recovery side of abilities: each
@@ -32,4 +33,9 @@ export function onGuardFired(world: World, player: PlayerEntity, ability: Abilit
 
   const advanceMs = passives['guard.recovery-ramp-advance-ms'] ?? 0;
   if (advanceMs > 0) advanceRecoveryRamp(player, advanceMs);
+
+  // `guard-cast` lineage cards (progression rework 1c). A Guard is not an attack
+  // and has no combat context to ride, so the card runtime hangs off the one hook
+  // every Guard already passes through rather than inventing a second one.
+  onLineageGuardCast(world, player);
 }

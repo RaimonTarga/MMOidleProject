@@ -3,6 +3,17 @@ import { registerCombatListener } from '../../combat/engine/combatPipeline';
 import type { PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { markSliceDirty } from '../../../ecs/dirtyHelpers';
+import { lineagePlatingPerStack } from '../../combat/lineageCards';
+
+/**
+ * Plating one stack is worth: the charm/armor passive plus whatever a live
+ * lineage `plating-stack` window adds. ONE definition, because the listener's
+ * gate and the tick's target must agree about whether the mechanic is on at all.
+ */
+function platingPerStack(player: PlayerEntity): number {
+  return (player.usesSkills.passives['defense.hit-plating-per-stack'] ?? 0)
+    + lineagePlatingPerStack(player.tracksCombat);
+}
 
 // Integer plating currently added to mitigatesDamage.plating from the stacks.
 const APPLIED_KEY = 'reactivePlatingApplied';
@@ -45,7 +56,7 @@ export function registerReactivePlating(): void {
 
     const player = ctx.defender;
     const passives = player.usesSkills.passives;
-    if ((passives['defense.hit-plating-per-stack'] ?? 0) <= 0) return;
+    if (platingPerStack(player) <= 0) return;
 
     const cs = player.tracksCombat;
     const maxStacks = Math.max(1, Math.round(passives['defense.hit-plating-max-stacks'] ?? 1));
@@ -61,7 +72,7 @@ export function registerReactivePlating(): void {
  */
 export function runReactivePlating(world: World, player: PlayerEntity, dt: number): void {
   const cs = player.tracksCombat;
-  const perStack = player.usesSkills.passives['defense.hit-plating-per-stack'] ?? 0;
+  const perStack = platingPerStack(player);
   let stacks = perStack > 0 ? getResource(cs, STACKS_KEY) : 0;
 
   if (stacks > 0 && !isCooldownActive(cs, HOLD_CD)) {

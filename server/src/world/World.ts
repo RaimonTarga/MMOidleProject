@@ -81,6 +81,7 @@ import { updateKnockback } from "../systems/combat/damage/knockback";
 import { updateLairDrags } from "../systems/combat/damage/lairDrag";
 import { updateMonsterSlows } from "../systems/combat/status/monsterControl";
 import { syncPlayerBuffs } from "../systems/combat/buffs/buffSync";
+import { updateLineageCards } from '../systems/combat/lineageCards';
 import { mirrorHpForecast } from "../systems/defense/core/hpForecast";
 import {
   createMonster as createMonsterInWorld,
@@ -486,6 +487,10 @@ export class World {
     syncMonsterStateMirror(this, now);
     updateCombatTransitions(this, now);
     updateDefensiveSystems(this, dt, now);
+    // `standing` and `pulse` lineage cards (progression rework 1c) — the two
+    // triggers that answer to time rather than to an event. Before the buff sync,
+    // so a window opened this tick shows its clock on the same frame.
+    updateLineageCards(this, dt);
     syncPlayerBuffs(this, now);
     mirrorHpForecast(this);
     updateAutoIntent(this);

@@ -110,6 +110,15 @@ export const BUFF_IDS = [
   'mob-rush',     // Tundra — continuous-move ramp
   'mob-volcanic', // Volcanic — passive speed (active while not suppressed)
   'mob-suppress', // Volcanic — speed suppressed after a direct hit
+  // Lineage card windows (progression rework 1c). One tile per timed payoff, fed
+  // by the `lineage.<payoff>` status effects the card runtime applies — the
+  // existing buff-sync path, with no channel of its own.
+  'lineage-damage',
+  'lineage-speed',
+  'lineage-recovery',
+  'lineage-guard',
+  'lineage-ward',
+  'lineage-plate',
   // Stances (see server/src/systems/player/stances/stanceBehaviors.ts)
   'stance-reaper',   // Reaper — on-kill momentum, outlives the stance itself
   'stance-charge',   // Powering Up — the charge accruing, shown as a filling clock

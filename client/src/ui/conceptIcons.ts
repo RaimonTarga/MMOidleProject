@@ -202,6 +202,13 @@ const BUFF_IDS = new Set([
   'stance-charge',
   'stance-reaper',
   'stance-release',
+  // Lineage card windows (progression rework 1c).
+  'lineage-damage',
+  'lineage-speed',
+  'lineage-recovery',
+  'lineage-guard',
+  'lineage-ward',
+  'lineage-plate',
 ]);
 
 const DEBUFF_IDS = new Set([

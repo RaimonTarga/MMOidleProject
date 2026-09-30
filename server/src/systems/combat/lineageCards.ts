@@ -1,0 +1,853 @@
+/**
+ * The lineage card runtime (progression rework Phase 1c).
+ *
+ * Plan: `docs/progression-rework-plan.md` §1.3 and the "Phase 1c contract"
+ * section. Design authority: `design_docs/progression-rework-design.md` §6–§8.
+ *
+ * WHAT THIS IS. A lineage card is data over a closed vocabulary: ten trigger
+ * kinds and fifteen payoff kinds (design §6). This file is the whole of that
+ * vocabulary's implementation — ONE listener per trigger kind, ONE dispatch per
+ * payoff kind, every payoff routed to a hook that already existed. Adding a card
+ * adds no code here, and a card that would need code is a design bug the card
+ * changes to answer.
+ *
+ * THE THREE RULES IT ENFORCES.
+ *
+ *  1. **Resolve once, at recalc.** `resolveActiveLineages` walks every tree the
+ *     player has opened and re-reads the magnitude table for each active card.
+ *     Nothing about that answer can change between recalcs, so it is cached on
+ *     `TracksCombat` through {@link setLineageRuntime} and read per hit.
+ *
+ *  2. **One multiplier per hit.** `damage-window` folds itself into
+ *     `ctx.metadata.empoweredMultiplier` — the same number a Technique rider
+ *     reads — instead of adding a second multiplicative layer.
+ *
+ *  3. **Evade blocks the on-target ones.** Every payoff that lands on a monster
+ *     early-returns on `evadeBlocksDebuffs(ctx)`, like every other on-hit
+ *     applier in the codebase.
+ *
+ * AND ONE VISIBLE THING PER CARD. Design §8: "every card the player buys adds one
+ * thing they can see in combat." So every successful application pushes EXACTLY
+ * ONE `card-fx` — never per tick, never for a stat row (whose cosmetic is the
+ * weapon trail, derived client-side from `PlayerView.lineages`).
+ */
+import {
+  ABILITY_FRENZY_EFFECT_ID,
+  applyStatusEffect,
+  defensiveFaceForSubVariant,
+  getCooldown,
+  getCounter,
+  getFlag,
+  getLineageRuntime,
+  getResource,
+  getStatusEffect,
+  isCooldownActive,
+  lineageStatusEffectId,
+  resolveActiveLineages,
+  resolveDotClassProfile,
+  setCooldown,
+  setCounter,
+  setFlag,
+  setLineageRuntime,
+  setResource,
+  PACKET_DEFINITIONS,
+  type BuffId,
+  type LineageFxKey,
+  type LineagePayoff,
+  type LineageTrigger,
+  type PacketId,
+  type PayoffKind,
+  type TracksCombat,
+  type TriggerKind,
+} from '@mmo-idle/shared';
+import type { MonsterEntity, PlayerEntity } from '../../ecs/entity';
+import type { World } from '../../world/World';
+import { attachMarker } from '../../ecs/markerHelpers';
+import { registerCombatListener, type CombatContext } from './engine/combatPipeline';
+import { registerMechanicFiredListener } from './engine/mechanicFired';
+import { applyPlayerDebuff } from '../classes/shared/applyPlayerDebuff';
+import { applyPlayerProcDamage } from './damage/procDamage';
+import { applyClassDotStack } from '../classes/archetypes/dot/dotPrototype';
+import { applyMonsterSlow } from './status/monsterControl';
+import { applyStun } from './status/stun';
+import { monsterIgnoresControl } from './status/controlImmunity';
+import { evadeBlocksDebuffs } from '../defense/mitigation/evasion';
+import { applyWardPercent } from '../defense/barrier/wards';
+import { activateRecovery } from '../defense/regen/recovery';
+import { isPlayerActivelyInCombat } from './ai/engagement';
+import { playerDotsOnMonster } from './damage/dotInventory';
+import { playerAoeTargets } from './damage/aoeDamage';
+import { copyPlayerDotOnto } from '../player/abilities/abilityAffliction';
+import { cleansePlayerAfflictions } from './status/cleanse';
+import { DOT_EFFECT_ID } from '../classes/archetypes/dot/t3/core/constants';
+import { defineBuff } from './buffs/descriptor';
+
+// ── Runtime constants ────────────────────────────────────────────────────────
+//
+// These are the numbers a lineage payoff needs that the magnitude table does not
+// author, because no T1 card uses the trigger or payoff that wants them. They are
+// named here rather than inlined so the designer can find them; when a card in a
+// later band actually needs one, it belongs in `magnitudes.ts` with the rest.
+
+/** How long a player must hold still in combat before a `standing` card pays. */
+const STANDING_MS = 1_500;
+/** Cadence of a `pulse` card while the player is in combat. */
+const PULSE_MS = 4_000;
+/** How far a `contagion` payoff reaches for a neighbour, in world units. */
+const CONTAGION_RADIUS = 120;
+/** Neighbours one `contagion` application infects. */
+const CONTAGION_TARGETS = 1;
+/** Tick cadence of a lineage bleed, matching the cadence root's Hemorrhage. */
+const BLEED_TICK_MS = 1_000;
+/** Debuffs one `cleanse` payoff strips, and stacks off each. */
+const CLEANSE_DEBUFFS = 1;
+const CLEANSE_STACKS = 1;
+/**
+ * A quiet spell that ends an engagement, for `first-hit`. Deliberately the same
+ * shape as `stationaryDr`'s incoming-pressure window: an engagement is "hits are
+ * still landing", and a fresh pull gets a fresh opening.
+ */
+const ENGAGEMENT_IDLE_MS = 4_000;
+
+// ── TracksCombat keys ────────────────────────────────────────────────────────
+
+const ENGAGEMENT_CD = 'lineage.engagement';
+const STANDING_MS_KEY = 'lineage.standingMs';
+/**
+ * Set once a standing payout has been spent, cleared the moment the player moves.
+ * Phrased as SPENT rather than ARMED because a flag that has never been written
+ * reads false, and "not yet spent" is the state a fresh player should be in.
+ */
+const STANDING_SPENT = 'lineage.standingSpent';
+const nthCounter = (key: string): string => `lineage.nth.${key}`;
+const firstHitFlag = (key: string): string => `lineage.first.${key}`;
+const pulseCd = (key: string): string => `lineage.pulse.${key}`;
+const standingCd = (key: string): string => `lineage.stand.${key}`;
+
+// ── The resolved-card cache ──────────────────────────────────────────────────
+
+/**
+ * Re-resolve the player's lineage cards. Called from
+ * `recalculatePlayerEntityStats`, which is the one place the inputs
+ * (`holdsInventory.lineages`, `equipment`, the frame's sub-variant) can change.
+ */
+export function refreshLineageRuntime(player: PlayerEntity): void {
+  const resolved = resolveActiveLineages(
+    player.holdsInventory,
+    defensiveFaceForSubVariant(player.usesSkills.selectedSubVariant),
+  );
+  setLineageRuntime(player.tracksCombat, {
+    cards: resolved.cards,
+    capstones: resolved.capstones,
+  });
+}
+
+/** One thing a card (or a worn form's capstone) does, when its trigger fires. */
+interface LineageFiring {
+  /** Card or capstone id — the per-card counter/flag key. */
+  key: string;
+  fx: LineageFxKey;
+  trigger: LineageTrigger;
+  payoff: LineagePayoff;
+}
+
+/**
+ * Everything on this player that fires on `kind`, cards and worn capstone alike.
+ *
+ * A capstone is a card without a row (design §5), so it goes through exactly the
+ * same dispatch and pushes the same event with its own `fx`.
+ */
+function firingsFor(player: PlayerEntity, kind: TriggerKind): LineageFiring[] {
+  const runtime = getLineageRuntime(player.tracksCombat);
+  if (!runtime) return [];
+  const out: LineageFiring[] = [];
+  for (const resolved of runtime.cards) {
+    if (!resolved.trigger || !resolved.payoff) continue; // a stat row fires on nothing
+    if (resolved.trigger.kind !== kind) continue;
+    out.push({
+      key: resolved.card.id,
+      fx: resolved.card.fx,
+      trigger: resolved.trigger,
+      payoff: resolved.payoff,
+    });
+  }
+  for (const worn of runtime.capstones) {
+    if (worn.trigger.kind !== kind) continue;
+    out.push({
+      key: worn.capstone.id,
+      fx: worn.capstone.fx,
+      trigger: worn.trigger,
+      payoff: worn.payoff,
+    });
+  }
+  return out;
+}
+
+/** Cheap pre-check so a player with no tree pays nothing per hit. */
+function hasLineageRuntime(player: PlayerEntity): boolean {
+  return getLineageRuntime(player.tracksCombat) !== undefined;
+}
+
+// ── Where a payoff lands and what it scales off ──────────────────────────────
+
+/** The monster a payoff should land on, from the exchange or the live target. */
+function targetFor(
+  world: World,
+  player: PlayerEntity,
+  ctx?: CombatContext,
+): MonsterEntity | undefined {
+  if (ctx && ctx.defenderType === 'monster') return ctx.defender;
+  const targetId = player.hasAttackTarget?.targetId;
+  const monster = targetId ? world.getMonsterEntity(targetId) : undefined;
+  return monster && monster.hasHealth.hp > 0 ? monster : undefined;
+}
+
+/**
+ * The damage a share-of-the-hit payoff takes its cut from.
+ *
+ * ONE MULTIPLIER PER HIT. A card riding an empowered hit scales the hit as it was
+ * BEFORE the empowered multiplier, exactly like a Technique rider — otherwise the
+ * card's share is multiplied twice and a finisher build gets a second, silent
+ * scaling of everything hung off it. With no exchange at all (a reload, a summon
+ * command) the basis is the player's Attack, which is what the magnitude table's
+ * flat column is seeded against.
+ */
+function hitBasis(player: PlayerEntity, ctx?: CombatContext): number {
+  if (!ctx) return Math.max(1, Math.round(player.dealsDamage.attack));
+  const empowered = Number(ctx.metadata['empoweredMultiplier'] ?? 1);
+  const base = empowered > 1 ? ctx.damage / empowered : ctx.damage;
+  return Math.max(1, Math.round(base));
+}
+
+// ── The payoff dispatch ──────────────────────────────────────────────────────
+
+interface PayoffSite {
+  world: World;
+  player: PlayerEntity;
+  /** The exchange, when the trigger rode one. */
+  ctx?: CombatContext;
+  /** The monster, when the trigger had one. */
+  target?: MonsterEntity;
+}
+
+/** Payoffs that land on a monster — the ones evade blocks and that carry a target. */
+const ON_TARGET: ReadonlySet<PayoffKind> = new Set<PayoffKind>([
+  'vulnerability', 'plating-shred', 'echo-hit', 'hemorrhage', 'poison-stack',
+  'slow', 'stun', 'contagion',
+]);
+
+/** Payoffs whose HUD clock is a `lineage.<payoff>` status effect on the player. */
+const TIMED_SELF: ReadonlySet<PayoffKind> = new Set<PayoffKind>([
+  'damage-window', 'speed-window', 'recovery-window', 'engagement-dr', 'ward',
+  'plating-stack',
+]);
+
+/**
+ * Apply one payoff. Returns the `card-fx` this application earned, or null when
+ * nothing happened — a refused payoff must not draw an effect that says it did.
+ */
+function applyPayoff(site: PayoffSite, firing: LineageFiring): CardFxDraft | null {
+  const { world, player, ctx } = site;
+  const { kind, magnitude, durationMs } = firing.payoff;
+  const sourceId = player.isPlayer.id;
+
+  if (ON_TARGET.has(kind)) {
+    // Every on-target applier early-returns on a blocking evade, like every other
+    // on-hit applier in the codebase (CLAUDE.md, "Combat And Mechanics").
+    if (ctx && evadeBlocksDebuffs(ctx)) return null;
+    const target = site.target;
+    if (!target || target.hasHealth.hp <= 0) return null;
+    return applyOnTarget(site, firing, target);
+  }
+
+  switch (kind) {
+    case 'damage-window':
+    case 'engagement-dr':
+      // Both are read back by a listener below rather than written into a stat:
+      // the window IS the status effect, so the HUD clock and the mechanic can
+      // never disagree about how long it has left.
+      applyTimedSelf(player.tracksCombat, kind, magnitude, durationMs, sourceId);
+      return { fx: firing.fx };
+
+    case 'speed-window':
+      // Read by `attackHasteBonus` — the one seam every temporary haste goes
+      // through, so the stat sheet and the cadence gate see the same number.
+      applyTimedSelf(player.tracksCombat, kind, magnitude, durationMs, sourceId);
+      return { fx: firing.fx };
+
+    case 'recovery-window':
+      // Recovery is one rate with many switches: a card ACTIVATES a fraction of
+      // it for a window, it never invents a heal of its own.
+      if (durationMs === undefined || durationMs <= 0) return null;
+      activateRecovery(player.tracksCombat, 'lineage', magnitude, durationMs);
+      applyTimedSelf(player.tracksCombat, kind, magnitude, durationMs, sourceId);
+      return { fx: firing.fx };
+
+    case 'ward':
+      applyWardPercent(world, player, magnitude, durationMs ?? 0);
+      applyTimedSelf(player.tracksCombat, kind, magnitude, durationMs, sourceId);
+      return { fx: firing.fx };
+
+    case 'plating-stack': {
+      // The flat plating a stack is worth is resolved HERE, against the plating
+      // the player has right now, and carried on the effect: `reactivePlating`
+      // reads the resolved number so the stacking, hold window and one-at-a-time
+      // fade stay in the one place that owns them.
+      const perStack = Math.max(1, Math.round(player.mitigatesDamage.plating * magnitude));
+      const effect = applyTimedSelf(
+        player.tracksCombat, kind, magnitude, durationMs, sourceId,
+      );
+      effect.data.perStack = perStack;
+      return { fx: firing.fx, stacks: effect.stacks };
+    }
+
+    case 'cleanse': {
+      const removed = cleansePlayerAfflictions(player, CLEANSE_STACKS, CLEANSE_DEBUFFS);
+      if (removed.length === 0) return null;
+      world.pushEvent(player.hasPosition.nodeId, {
+        kind: 'player-cleansed',
+        playerId: sourceId,
+      });
+      return { fx: firing.fx };
+    }
+
+    default:
+      return null;
+  }
+}
+
+function applyOnTarget(
+  site: PayoffSite,
+  firing: LineageFiring,
+  target: MonsterEntity,
+): CardFxDraft | null {
+  const { world, player, ctx } = site;
+  const { kind, magnitude, durationMs } = firing.payoff;
+  const sourceId = player.isPlayer.id;
+  const landed: CardFxDraft = {
+    fx: firing.fx,
+    targetId: target.isMonster.id,
+    targetPos: { ...target.hasPosition.current },
+  };
+
+  switch (kind) {
+    case 'vulnerability':
+      // The cadence debuff seam, and the same effect id `applyMonsterDamageTakenDebuffs`
+      // already multiplies incoming damage by.
+      applyPlayerDebuff(player, target.tracksCombat, {
+        id: 'vulnerability',
+        maxStacks: 1,
+        refreshable: true,
+        remainingMs: durationMs ?? 0,
+        sourceId,
+        data: { totalMs: durationMs ?? 0, damageMultiplier: 1 + magnitude },
+      });
+      return landed;
+
+    case 'plating-shred': {
+      // A FRACTION of the target's plating, resolved to the flat reduction
+      // `effectivePlatingAfterShred` subtracts. Resolved against the plating it
+      // has now, so shredding a heavily armoured monster is worth more — which is
+      // the point of a percentage.
+      const reduction = Math.max(1, Math.round(target.mitigatesDamage.plating * magnitude));
+      applyPlayerDebuff(player, target.tracksCombat, {
+        id: 'plating-shred',
+        maxStacks: 1,
+        refreshable: true,
+        remainingMs: durationMs ?? 0,
+        sourceId,
+        data: { totalMs: durationMs ?? 0, platingReduction: reduction },
+      });
+      return landed;
+    }
+
+    case 'echo-hit': {
+      // A second, non-empowered hit through the proc seam, which owns
+      // invulnerability, the world log, kill credit and rewards. Procs skip
+      // plating and pay half DR by design (`mitigatePlayerTickOnMonster`).
+      const damage = Math.max(1, Math.round(hitBasis(player, ctx) * magnitude));
+      const outcome = applyPlayerProcDamage(world, player, target, damage, {
+        tags: ['lineage', firing.key],
+      });
+      return outcome === 'skipped' ? null : landed;
+    }
+
+    case 'hemorrhage': {
+      // The bleed the cadence root already drives (`updateHemorrhages`, which
+      // ticks every hemorrhaged monster regardless of who bled it). Refreshed by
+      // taking the BETTER of the two axes rather than overwriting: a per-hit
+      // lineage bleed must never shrink a finisher's.
+      const ticks = Math.max(1, Math.round((durationMs ?? BLEED_TICK_MS) / BLEED_TICK_MS));
+      const perTick = Math.max(1, Math.round(hitBasis(player, ctx) * magnitude / ticks));
+      const bleed = applyPlayerDebuff(player, target.tracksCombat, {
+        id: 'cadence-hemorrhage',
+        instanced: false,
+        remainingMs: -1,
+        sourceId,
+        data: { damagePerTick: perTick, nextTickIn: BLEED_TICK_MS, tickIntervalMs: BLEED_TICK_MS },
+      });
+      bleed.data.damagePerTick = Math.max(bleed.data.damagePerTick ?? 0, perTick);
+      bleed.data.tickIntervalMs = BLEED_TICK_MS;
+      if (!(bleed.data.nextTickIn > 0)) bleed.data.nextTickIn = BLEED_TICK_MS;
+      bleed.stacks = Math.max(bleed.stacks, ticks);
+      attachMarker(world, target, 'hasHemorrhage');
+      return landed;
+    }
+
+    case 'poison-stack': {
+      // The class DoT stack, through its own authoritative applier, so the
+      // existing tick driver, the DoT inventory, Contagion and Detonate all see
+      // it. Only the per-stack damage is the card's: the cap and the tick
+      // interval come from the player's own DoT profile.
+      const profile = resolveDotClassProfile(
+        player.usesSkills.passives,
+        player.usesSkills.selectedSubVariant,
+      );
+      const damagePerStack = Math.max(1, Math.round(hitBasis(player, ctx) * magnitude));
+      applyClassDotStack(world, player, target, {
+        // The card's share is already taken out of the payoff magnitude; it does
+        // not additionally convert the direct hit the way the root does.
+        conversionPct: 0,
+        durationMs: durationMs ?? profile.durationMs,
+        maxStacks: profile.maxStacks,
+        tickIntervalMs: profile.tickIntervalMs,
+        damagePerStack,
+      });
+      const stacks = getStatusEffect(target.tracksCombat, DOT_EFFECT_ID)?.stacks;
+      return { ...landed, ...(stacks !== undefined ? { stacks } : {}) };
+    }
+
+    case 'slow':
+      // The control ladder's bottom rung. `applyMonsterSlow` stores `totalMs`,
+      // which the buff UI's clock needs.
+      applyMonsterSlow(world, target, magnitude, durationMs ?? 0, sourceId);
+      return landed;
+
+    case 'stun':
+      // Top of the ladder. A plated or control-immune boss refuses it outright
+      // rather than showing a stun its pattern then ignores.
+      if (monsterIgnoresControl(target)) return null;
+      if (!applyStun(target.tracksCombat, durationMs ?? 0, sourceId)) return null;
+      return landed;
+
+    case 'contagion': {
+      // Copy a SHARE of what this target carries onto its nearest neighbour,
+      // through Contagion's own copier so a reservoir pool, a Permafrost ramp and
+      // a stack count all transplant correctly.
+      const entries = playerDotsOnMonster(world, player, target).filter((e) => e.spreadable);
+      if (entries.length === 0) return null;
+      const victims = playerAoeTargets(
+        world, player, target.hasPosition.current, CONTAGION_RADIUS, target.isMonster.id,
+      )
+        .filter((monster) => monster.hasHealth.hp > 0)
+        .slice(0, CONTAGION_TARGETS);
+      if (victims.length === 0) return null;
+      for (const victim of victims) {
+        for (const entry of entries) copyPlayerDotOnto(world, player, victim, entry, magnitude);
+      }
+      return { ...landed, targetId: victims[0].isMonster.id, targetPos: { ...victims[0].hasPosition.current } };
+    }
+
+    default:
+      return null;
+  }
+}
+
+/**
+ * Apply the `lineage.<payoff>` status effect a timed payoff is read back from.
+ *
+ * `data: { totalMs, magnitude }` is the whole contract: `totalMs` drives the
+ * existing buff-bar clock and `magnitude` is what the reader multiplies by, so a
+ * window needs no networked flag and no channel of its own.
+ */
+function applyTimedSelf(
+  cs: TracksCombat,
+  kind: PayoffKind,
+  magnitude: number,
+  durationMs: number | undefined,
+  sourceId: string,
+) {
+  const totalMs = durationMs ?? 0;
+  const effect = applyStatusEffect(cs, {
+    id: lineageStatusEffectId(kind),
+    maxStacks: 1,
+    refreshable: true,
+    remainingMs: totalMs,
+    sourceId,
+    data: { totalMs, magnitude },
+  });
+  // A refresh keeps the existing entry's `data`, so the live values are written
+  // back — the stronger of the two wins rather than the most recent.
+  effect.data.totalMs = totalMs;
+  effect.data.magnitude = Math.max(effect.data.magnitude ?? 0, magnitude);
+  return effect;
+}
+
+// ── One card-fx per application ──────────────────────────────────────────────
+
+interface CardFxDraft {
+  fx: LineageFxKey;
+  targetId?: string;
+  targetPos?: { x: number; y: number };
+  stacks?: number;
+}
+
+/**
+ * Run every firing of one trigger kind and push exactly one `card-fx` per
+ * application that actually did something.
+ */
+function fire(site: PayoffSite, firings: readonly LineageFiring[]): number {
+  let applied = 0;
+  for (const firing of firings) {
+    const drawn = applyPayoff(site, firing);
+    if (!drawn) continue;
+    applied++;
+    site.world.pushEvent(site.player.hasPosition.nodeId, {
+      kind: 'card-fx',
+      playerId: site.player.isPlayer.id,
+      fx: drawn.fx,
+      pos: { ...site.player.hasPosition.current },
+      ...(drawn.targetId !== undefined ? { targetId: drawn.targetId } : {}),
+      ...(drawn.targetPos !== undefined ? { targetPos: drawn.targetPos } : {}),
+      ...(drawn.stacks !== undefined ? { stacks: drawn.stacks } : {}),
+    });
+  }
+  return applied;
+}
+
+// ── Registration: one listener per trigger kind ──────────────────────────────
+
+/**
+ * Register the ten trigger listeners. Called from `initCombatSystems()`, so the
+ * live server and the balance bench see an identical card runtime.
+ */
+export function registerLineageCards(): void {
+  registerHitNth();
+  registerMechanicFired();
+  registerFirstHit();
+  registerKill();
+  registerEvade();
+  registerHitTaken();
+  registerBarrierBreak();
+  registerWindowReaders();
+}
+
+/** `hit-nth` — every nth landed hit, counted per card. */
+function registerHitNth(): void {
+  registerCombatListener('onHit', (ctx, world) => {
+    if (ctx.attackerType !== 'player' || ctx.defenderType !== 'monster') return;
+    const player = ctx.attacker;
+    if (!hasLineageRuntime(player)) return;
+    const firings = firingsFor(player, 'hit-nth');
+    if (firings.length === 0) return;
+
+    // Counted per card rather than per player: two cards on different intervals
+    // must not share a clock, or the shorter one silently drives the longer.
+    const due: LineageFiring[] = [];
+    for (const firing of firings) {
+      const n = Math.max(1, Math.round(firing.trigger.n ?? 1));
+      const next = getCounter(player.tracksCombat, nthCounter(firing.key)) + 1;
+      if (next >= n) {
+        setCounter(player.tracksCombat, nthCounter(firing.key), 0);
+        due.push(firing);
+      } else {
+        setCounter(player.tracksCombat, nthCounter(firing.key), next);
+      }
+    }
+    if (due.length === 0) return;
+    fire({ world, player, ctx, target: ctx.defender }, due);
+  });
+}
+
+/** `mechanic-fired` — the class-agnostic root moment (`engine/mechanicFired.ts`). */
+function registerMechanicFired(): void {
+  registerMechanicFiredListener((world, player, ctx) => {
+    if (!hasLineageRuntime(player)) return;
+    const firings = firingsFor(player, 'mechanic-fired');
+    if (firings.length === 0) return;
+    fire({ world, player, ctx, target: targetFor(world, player, ctx) }, firings);
+  });
+}
+
+/**
+ * `first-hit` — the opening hit of an engagement.
+ *
+ * "Resets on engagement end", and an engagement ends when hits stop landing:
+ * the cooldown below is refreshed by every hit, so it lapses only during a lull
+ * and the next pull opens with a fresh window. A cooldown rather than a tick
+ * because cooldowns already decay for every player, every tick.
+ */
+function registerFirstHit(): void {
+  registerCombatListener('onHit', (ctx, world) => {
+    if (ctx.attackerType !== 'player' || ctx.defenderType !== 'monster') return;
+    const player = ctx.attacker;
+    if (!hasLineageRuntime(player)) return;
+    const cs = player.tracksCombat;
+    const fresh = !isCooldownActive(cs, ENGAGEMENT_CD);
+    setCooldown(cs, ENGAGEMENT_CD, ENGAGEMENT_IDLE_MS);
+
+    const firings = firingsFor(player, 'first-hit');
+    if (firings.length === 0) return;
+    if (fresh) for (const firing of firings) setFlag(cs, firstHitFlag(firing.key), false);
+
+    const due = firings.filter((firing) => !getFlag(cs, firstHitFlag(firing.key)));
+    if (due.length === 0) return;
+    for (const firing of due) setFlag(cs, firstHitFlag(firing.key), true);
+    fire({ world, player, ctx, target: ctx.defender }, due);
+  });
+}
+
+/** `kill` — the player put a monster down. */
+function registerKill(): void {
+  registerCombatListener('onKill', (ctx, world) => {
+    if (ctx.attackerType !== 'player' || ctx.defenderType !== 'monster') return;
+    const player = ctx.attacker;
+    if (!hasLineageRuntime(player)) return;
+    const firings = firingsFor(player, 'kill');
+    if (firings.length === 0) return;
+    // The corpse is still in the world at onKill, so a payoff that spreads OFF it
+    // (contagion) still has something to read.
+    fire({ world, player, ctx, target: ctx.defender }, firings);
+  });
+}
+
+/** `evade` — the player avoided an incoming hit. */
+function registerEvade(): void {
+  registerCombatListener('onDamageTaken', (ctx, world) => {
+    if (ctx.defenderType !== 'player') return;
+    if (ctx.metadata['evaded'] !== true) return;
+    const player = ctx.defender;
+    if (!hasLineageRuntime(player)) return;
+    const firings = firingsFor(player, 'evade');
+    if (firings.length === 0) return;
+    // The attacker is the monster here, so an on-target payoff answers whatever
+    // just missed — which is the whole read of a counter-attack card.
+    const target = ctx.attackerType === 'monster' ? ctx.attacker : undefined;
+    fire({ world, player, target }, firings);
+  });
+}
+
+/** `hit-taken` — the player took a direct hit that landed. */
+function registerHitTaken(): void {
+  registerCombatListener('onDamageTaken', (ctx, world) => {
+    if (ctx.defenderType !== 'player') return;
+    if (ctx.metadata['isDot']) return; // direct hits only, like reactive plating
+    if (ctx.damage <= 0) return;
+    const player = ctx.defender;
+    if (!hasLineageRuntime(player)) return;
+    const firings = firingsFor(player, 'hit-taken');
+    if (firings.length === 0) return;
+    const target = ctx.attackerType === 'monster' ? ctx.attacker : undefined;
+    fire({ world, player, target }, firings);
+  });
+}
+
+/**
+ * `barrier-break` — an absorb pool bottomed out.
+ *
+ * Reads the same `barrierEmptied` / `wardBrokenMax` metadata the barrier-break
+ * heal does, so "broke" means exactly one thing across the defense stack.
+ */
+function registerBarrierBreak(): void {
+  registerCombatListener('onDamageTaken', (ctx, world) => {
+    if (ctx.defenderType !== 'player') return;
+    const broke = ctx.metadata['barrierEmptied'] === true
+      || ((ctx.metadata['wardBrokenMax'] as number) ?? 0) > 0;
+    if (!broke) return;
+    const player = ctx.defender;
+    if (!hasLineageRuntime(player)) return;
+    const firings = firingsFor(player, 'barrier-break');
+    if (firings.length === 0) return;
+    const target = ctx.attackerType === 'monster' ? ctx.attacker : undefined;
+    fire({ world, player, target }, firings);
+  });
+}
+
+/**
+ * `guard-cast` — a self-facing Guard ability fired.
+ *
+ * Called from `onGuardFired`, the existing charm-hook seam every Guard already
+ * passes through, rather than from a listener of its own: a Guard is not an
+ * attack and has no combat context to ride.
+ */
+export function onLineageGuardCast(world: World, player: PlayerEntity): void {
+  if (!hasLineageRuntime(player)) return;
+  const firings = firingsFor(player, 'guard-cast');
+  if (firings.length === 0) return;
+  fire({ world, player, target: targetFor(world, player) }, firings);
+}
+
+// ── The two clock-driven triggers ────────────────────────────────────────────
+
+/**
+ * `standing` and `pulse` — the two triggers that answer to time rather than to an
+ * event. Run once per world tick from `World.tick`.
+ *
+ * `standing` pays out after {@link STANDING_MS} held still in combat and re-arms
+ * only once the player has moved, so it is a positional decision and not a second
+ * pulse. `pulse` pays out on a fixed cadence while the fight lasts.
+ */
+export function updateLineageCards(world: World, dt: number): void {
+  for (const player of world.livePlayers) {
+    if (!hasLineageRuntime(player)) continue;
+    const cs = player.tracksCombat;
+    const inCombat = isPlayerActivelyInCombat(world, player);
+
+    const standing = firingsFor(player, 'standing');
+    if (standing.length > 0) {
+      const moving = player.isMoving !== undefined;
+      if (moving || !inCombat) {
+        setResource(cs, STANDING_MS_KEY, 0);
+        setFlag(cs, STANDING_SPENT, false);
+      } else {
+        const held = getResource(cs, STANDING_MS_KEY) + dt;
+        setResource(cs, STANDING_MS_KEY, held);
+        if (held >= STANDING_MS && !getFlag(cs, STANDING_SPENT)) {
+          setFlag(cs, STANDING_SPENT, true);
+          const due = standing.filter((f) => getCooldown(cs, standingCd(f.key)) <= 0);
+          for (const firing of due) {
+            setCooldown(cs, standingCd(firing.key), firing.payoff.durationMs ?? STANDING_MS);
+          }
+          if (due.length > 0) fire({ world, player, target: targetFor(world, player) }, due);
+        }
+      }
+    }
+
+    if (!inCombat) continue;
+    const pulse = firingsFor(player, 'pulse');
+    if (pulse.length === 0) continue;
+    const due = pulse.filter((f) => !isCooldownActive(cs, pulseCd(f.key)));
+    if (due.length === 0) continue;
+    for (const firing of due) setCooldown(cs, pulseCd(firing.key), PULSE_MS);
+    fire({ world, player, target: targetFor(world, player) }, due);
+  }
+}
+
+// ── Window readers ───────────────────────────────────────────────────────────
+
+/** The live magnitude of a timed self payoff, or 0 when its window is closed. */
+function windowMagnitude(cs: TracksCombat, kind: PayoffKind): number {
+  const effect = getStatusEffect(cs, lineageStatusEffectId(kind));
+  if (!effect || effect.remainingMs <= 0) return 0;
+  return Math.max(0, effect.data.magnitude ?? 0);
+}
+
+/**
+ * Attack-speed contribution of a live `speed-window`, for `attackHasteBonus`.
+ * Summed with Frenzy and the stance windows, because they are all "+X% attack
+ * speed" promises and those add.
+ */
+export function lineageSpeedWindowBonus(cs: TracksCombat): number {
+  return windowMagnitude(cs, 'speed-window');
+}
+
+/**
+ * Flat plating one reactive-plating stack is worth from a live `plating-stack`
+ * window, for `runReactivePlating`. Resolved at application time against the
+ * player's own plating and carried on the effect, so the stacking machinery does
+ * not have to know a card exists.
+ */
+export function lineagePlatingPerStack(cs: TracksCombat): number {
+  const effect = getStatusEffect(cs, lineageStatusEffectId('plating-stack'));
+  if (!effect || effect.remainingMs <= 0) return 0;
+  return Math.max(0, effect.data.perStack ?? 0);
+}
+
+/**
+ * The two windows that act on a damage exchange.
+ *
+ * `damage-window` folds itself into `ctx.metadata.empoweredMultiplier` — ONE
+ * multiplier per hit (design §6). It never writes a second multiplier key, so a
+ * Technique rider reading `empoweredMultiplier` sees one honest number.
+ *
+ * `engagement-dr` is the mirror on the way in: a plain damage-taken multiplier,
+ * the standard shape for opening protection.
+ */
+function registerWindowReaders(): void {
+  registerCombatListener('onHit', (ctx) => {
+    if (ctx.attackerType !== 'player') return;
+    const player = ctx.attacker;
+    if (!hasLineageRuntime(player)) return;
+    const bonus = windowMagnitude(player.tracksCombat, 'damage-window');
+    if (bonus <= 0) return;
+    ctx.damage = Math.floor(ctx.damage * (1 + bonus));
+    ctx.metadata['empoweredMultiplier'] =
+      Number(ctx.metadata['empoweredMultiplier'] ?? 1) * (1 + bonus);
+  });
+
+  registerCombatListener('onDamageTaken', (ctx) => {
+    if (ctx.defenderType !== 'player') return;
+    if (ctx.metadata['isDot']) return;
+    const player = ctx.defender;
+    if (!hasLineageRuntime(player)) return;
+    const dr = windowMagnitude(player.tracksCombat, 'engagement-dr');
+    if (dr <= 0) return;
+    ctx.damage = Math.max(0, ctx.damage * (1 - Math.min(0.75, dr)));
+  });
+}
+
+// ── HUD ──────────────────────────────────────────────────────────────────────
+
+/** Lane colour for a window's tile, so the clock reads as the lane it came from. */
+const WINDOW_LANE: Partial<Record<PayoffKind, PacketId>> = {
+  'damage-window': 'empowered',
+  'speed-window': 'tempo',
+  'recovery-window': 'engagement',
+  'engagement-dr': 'engagement',
+  'ward': 'bulwark',
+  'plating-stack': 'bulwark',
+};
+
+function windowColor(kind: PayoffKind): string {
+  const lane = WINDOW_LANE[kind];
+  const packet = lane ? PACKET_DEFINITIONS.get(lane) : undefined;
+  return packet?.color ?? '#9fb4c7';
+}
+
+function defineWindowBuff<const Id extends BuffId>(
+  kind: PayoffKind,
+  id: Id,
+  label: string,
+  detail: string,
+) {
+  const color = windowColor(kind);
+  return defineBuff(
+    id,
+    ({ playerCs }) => {
+      if (!playerCs) return null;
+      const effect = getStatusEffect(playerCs, lineageStatusEffectId(kind));
+      if (!effect || effect.remainingMs <= 0) return null;
+      const magnitude = Math.max(0, effect.data.magnitude ?? 0);
+      if (magnitude <= 0) return null;
+      const totalMs = effect.data.totalMs ?? effect.remainingMs;
+      const pct = Math.round(magnitude * 100);
+      return {
+        id,
+        label,
+        stacks: effect.stacks,
+        durationPct: totalMs > 0 ? (effect.remainingMs / totalMs) * 100 : -1,
+        remainingMs: effect.remainingMs,
+        color,
+        logDetail: `${detail} +${pct}%`,
+        values: [{ label: detail, value: `+${pct}%`, good: true }],
+      };
+    },
+    { label, color, category: 'neutral' },
+  );
+}
+
+/**
+ * One tile per timed payoff, fed by the `lineage.<payoff>` effects above — the
+ * existing buff-sync path, with no new channel (Phase 1c contract).
+ */
+export const LINEAGE_BUFFS = [
+  defineWindowBuff('damage-window', 'lineage-damage', 'Surge', 'Damage'),
+  defineWindowBuff('speed-window', 'lineage-speed', 'Wake', 'Attack speed'),
+  defineWindowBuff('recovery-window', 'lineage-recovery', 'Mend', 'Recovery'),
+  defineWindowBuff('engagement-dr', 'lineage-guard', 'Brace', 'Damage reduction'),
+  defineWindowBuff('ward', 'lineage-ward', 'Shell', 'Absorb'),
+  defineWindowBuff('plating-stack', 'lineage-plate', 'Plate', 'Plating per stack'),
+] as const;
+
+/** Every timed payoff kind, for tests and diagnostics. */
+export const LINEAGE_TIMED_PAYOFFS = TIMED_SELF;

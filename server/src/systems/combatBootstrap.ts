@@ -17,6 +17,7 @@ import { initMonsterDeathEffects } from "./combat/damage/monsterDeathEffects";
 import { initPlayerAmplifiers } from "./combat/damage/playerAmplifiers";
 import { initStanceCombatEffects } from "./player/stances/stanceSwitch";
 import { initBossPatternCombat } from "./combat/engine/patternCombat";
+import { registerLineageCards } from "./combat/lineageCards";
 
 let initialized = false;
 
@@ -55,6 +56,11 @@ export function initCombatSystems(): void {
   initAllMechanics();
   // Weapon-specific hooks (first-strike, brittle, flurry, reservoir DoTs, ...).
   initWeaponEffects();
+  // Lineage cards (progression rework 1c): one listener per trigger kind. AFTER
+  // the class mechanics, so the empowered multiplier has already resolved and set
+  // `empoweredMultiplier` by the time a card reads the hit it is scaling off —
+  // one multiplier per hit depends on that order.
+  withCombatRegistrationLabel('registerLineageCards', registerLineageCards);
   // Player damage amplifiers (P3): must register BEFORE defense so the incoming
   // multiplier lands ahead of evasion / damage-cap / shields.
   withCombatRegistrationLabel('initPlayerAmplifiers', initPlayerAmplifiers);

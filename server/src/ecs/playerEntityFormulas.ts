@@ -12,11 +12,18 @@ import { resetStationaryDr } from '../systems/defense/mitigation/stationaryDr';
 import { resetReactivePlating } from '../systems/defense/mitigation/reactivePlating';
 import { resetBramblePlating } from '../systems/player/abilities/abilityBramble';
 import { syncBarrier } from '../systems/defense/barrier/barrier';
+import { refreshLineageRuntime } from '../systems/combat/lineageCards';
 
 export function recalculatePlayerEntityStats(world: World, entity: PlayerEntity): void {
   resetStationaryDr(entity);
   resetReactivePlating(entity);
   resetBramblePlating(entity);
+  // The lineage card runtime's cache (progression rework 1c). Refreshed HERE
+  // because recalc is the one place its inputs — the trees, what is equipped, and
+  // the frame's sub-variant — can have moved, and because the card runtime must
+  // never resolve lazily on a hit: two sites answering the same question is how a
+  // cache and its source drift.
+  refreshLineageRuntime(entity);
   const evadesHits = entity.evadesHits
     ? { ...entity.evadesHits }
     : { dodgeRate: 0, evadeMitigation: 0, charge: 0 };

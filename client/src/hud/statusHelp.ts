@@ -155,6 +155,17 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'stance-reaper': b('Momentum', 'Reaper Stance: a kill stores momentum. Leave Reaper to activate +35% Damage and +25% Attack Speed for 10 seconds. Re-entering ends the buff; another kill is needed to re-arm it. Stance loadout edits discard momentum.'),
   'stance-charge': b('Charge', 'Powering Up: charge banked so far. It only builds while you are fighting, and it is lost if the fight ends. Leaving the stance spends it for a burst lasting as long as you charged.'),
   'stance-release': b('Unleashed', 'Powering Up: the charge you banked, spent. Extra damage and attack speed for as long as you spent charging it.'),
+
+  // -- Lineage card windows ---------------------------------------------------
+  // One tile per timed payoff a lineage card can open. The card that opened it
+  // names itself in the tree panel; these say what the window is DOING, because
+  // that is what the player needs while it is counting down.
+  'lineage-damage': b('Surge', 'A lineage card opened a damage window. Your hits land harder until it closes — the same one-multiplier-per-hit slot an empowered attack uses, so it does not stack a second multiplier on top.'),
+  'lineage-speed': b('Wake', 'A lineage card opened an attack-speed window. It adds to Frenzy and any stance window rather than replacing them.'),
+  'lineage-recovery': b('Mend', 'A lineage card switched on a share of your Recovery rate for a window. What that converts to in HP depends on your Recovery stat.'),
+  'lineage-guard': b('Brace', 'A lineage card opened a damage-reduction window — opening protection, earned by how the card fires rather than by gear.'),
+  'lineage-ward': b('Shell', 'A lineage card granted a temporary absorb pool, spent before your barrier and your health.'),
+  'lineage-plate': b('Plate', 'A lineage card is adding plating to each reactive-plating stack you are holding. The stacks themselves still build from hits taken and fade one at a time.'),
 };
 
 // -- Target-frame statuses ---------------------------------------------------
