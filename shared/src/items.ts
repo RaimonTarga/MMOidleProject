@@ -130,11 +130,6 @@ export interface UpgradeStep {
    */
   attacksPerSecond?: number;
   cost: Partial<Record<EssenceType, number>>;
-  /**
-   * Optional catalyst cost for this step, keyed by node modifier family (e.g.
-   * `{ alacrity: 2 }`). Parallel axis to `cost`; both are spent on upgrade.
-   */
-  catalystCost?: Partial<Record<string, number>>;
   requiredBiomeLevel: number;
 }
 

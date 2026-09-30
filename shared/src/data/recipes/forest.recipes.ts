@@ -59,7 +59,7 @@ export const forestRecipeEntries = [
       { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: { green: 50 }, requiredBiomeLevel: 3 },
       { attacksPerSecond: 0.02, cost: { green: 75 }, requiredBiomeLevel: 4 },
       { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: { green: 125 }, requiredBiomeLevel: 5 },
-      { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: { green: 155 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 6 }, // +5 = evolution-ready (T2 econ pass 2026-08-29: raised from +3)
+      { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: { green: 155 }, requiredBiomeLevel: 6 }, // +5 = evolution-ready (T2 econ pass 2026-08-29: raised from +3)
     ],
   }],
 
@@ -80,7 +80,7 @@ export const forestRecipeEntries = [
       {"cost": {"green": 45}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "evasion": 0.016}},
       {"cost": {"green": 70}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "evasion": 0.016}},
       {"cost": {"green": 115}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "evasion": 0.016}},
-      {"cost": {"green": 150}, "catalystCost": {"alacrity": 1}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "evasion": 0.016}}
+      {"cost": {"green": 150}, "requiredBiomeLevel": 4, "stats": {"maxHp": 3, "evasion": 0.016}}
     ],
 
 mechanicEffects: {"defense.evade-mitigation": 0.1},
@@ -146,7 +146,7 @@ mechanicEffects: {"defense.evade-mitigation": 0.1},
     recipeGroup: 'forest', requiredBiomeLevel: 7, slot: 'weapon',
     lineageId: 'rapier', evolvesFrom: 'flash-rapier',
     cost: { green: 60 },                                     // family-tag: fast rapier → Alacrity
-    reconstructCost: { green: 210 }, reconstructCatalystCost: { alacrity: 2 }, // RECONSTRUCT (no predecessor)
+    reconstructCost: { green: 210 }, // RECONSTRUCT (no predecessor)
     // 2026-09-26 weapon normalization: Attack 9->17 (+5: 14->35). The old curve was T1-sized, so a
     // +5 Flash Rapier matched a +0 Gale Needle.
     stats: { attack: 17 }, attacksPerSecond: 1.60, tier: 2,
@@ -156,8 +156,8 @@ mechanicEffects: {"defense.evade-mitigation": 0.1},
       { stats: { attack: 4 }, attacksPerSecond: 0.02, cost: { green: 38 }, requiredBiomeLevel: 8 },
       { stats: { attack: 3 }, attacksPerSecond: 0.02, cost: { green: 94 }, requiredBiomeLevel: 9 },
       { stats: { attack: 3 }, attacksPerSecond: 0.02, cost: { green: 150 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 3 }, attacksPerSecond: 0.02, cost: { green: 244 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 11 },
-      { stats: { attack: 5 }, attacksPerSecond: 0.02, cost: { green: 414 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 12 },
+      { stats: { attack: 3 }, attacksPerSecond: 0.02, cost: { green: 244 }, requiredBiomeLevel: 11 },
+      { stats: { attack: 5 }, attacksPerSecond: 0.02, cost: { green: 414 }, requiredBiomeLevel: 12 },
     ],
   }],
 
@@ -174,15 +174,15 @@ mechanicEffects: {"defense.evade-mitigation": 0.1},
     recipeGroup: 'forest', requiredBiomeLevel: 8, slot: 'armor',
     evolvesFrom: 'forest-vest-t1',
     cost: { green: 48, yellow: 12 }, stats: {"maxHp": 52, "evasion": 0.34, "damageReduction": 0.04}, tier: 2, // family-tag: evasion armor answers frequent light hits → Alacrity
-    reconstructCost: { green: 168, yellow: 42 }, reconstructCatalystCost: { alacrity: 2 },
+    reconstructCost: { green: 168, yellow: 42 },
     icon: 'items/armor/phantom-bindings.png',
     description: "Evades soften direct hits; a full dodge also prevents on-hit ailments. Jungle weave strengthens each evade.",
     upgrades: [
       {"cost": {"green": 29, "yellow": 7}, "requiredBiomeLevel": 9, "stats": {"maxHp": 5, "evasion": 0.016}},
       {"cost": {"green": 72, "yellow": 18}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5, "evasion": 0.016}},
       {"cost": {"green": 115, "yellow": 29}, "requiredBiomeLevel": 10, "stats": {"maxHp": 6, "evasion": 0.016}},
-      {"cost": {"green": 187, "yellow": 47}, "catalystCost": {"alacrity": 1}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5, "evasion": 0.016}},
-      {"cost": {"green": 317, "yellow": 79}, "catalystCost": {"alacrity": 2}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5, "evasion": 0.016}}
+      {"cost": {"green": 187, "yellow": 47}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5, "evasion": 0.016}},
+      {"cost": {"green": 317, "yellow": 79}, "requiredBiomeLevel": 10, "stats": {"maxHp": 5, "evasion": 0.016}}
     ],
 
 mechanicEffects: {"defense.evade-mitigation": 0.1},
@@ -196,7 +196,7 @@ mechanicEffects: {"defense.evade-mitigation": 0.1},
     recipeGroup: 'forest', requiredBiomeLevel: 9, slot: 'recovery',
     evolvesFrom: 'forest-charm-t1',
     cost: { green: 50 }, stats: { recovery: 13.4 }, tier: 2,
-    reconstructCost: { green: 175 }, reconstructCatalystCost: { alacrity: 2 }, // family-tag: recovery charm → Alacrity
+    reconstructCost: { green: 175 }, // family-tag: recovery charm → Alacrity
     mechanicEffects: { 'defense.recovery-skill-potency': 0.18 },
     icon: 'items/charms/ancient-heartroot-amulet.png',
     description: 'A relic of a grove that burned an age ago, its life somehow undimmed.',
@@ -205,7 +205,7 @@ mechanicEffects: {"defense.evade-mitigation": 0.1},
       { stats: { recovery: 2.3 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 45 }, requiredBiomeLevel: 10 },
       { mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 72 }, requiredBiomeLevel: 10 },
       { stats: { recovery: 2.3 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 117 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 2.3 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 198 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 10 },
+      { stats: { recovery: 2.3 }, mechanicEffects: { 'defense.recovery-skill-potency': 0.01 }, cost: { green: 198 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -215,7 +215,7 @@ mechanicEffects: {"defense.evade-mitigation": 0.1},
     recipeGroup: 'forest', requiredBiomeLevel: 10, slot: 'mobility',
     evolvesFrom: 'forest-boots-t1',
     cost: { green: 40 }, stats: { speed: 40 }, tier: 2,
-    reconstructCost: { green: 140 }, reconstructCatalystCost: { alacrity: 2 }, // family-tag: forest mobility → Alacrity
+    reconstructCost: { green: 140 }, // family-tag: forest mobility → Alacrity
     mechanicEffects: { 'mobility.ooc-speed-pct': 0.40 },
     icon: 'items/boots/windstep-wraps.png',
     description: 'Light enough that the wind mistakes the wearer for one of its own.',
@@ -224,7 +224,7 @@ mechanicEffects: {"defense.evade-mitigation": 0.1},
       { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.03 }, cost: { green: 30 }, requiredBiomeLevel: 10 },
       { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.03 }, cost: { green: 48 }, requiredBiomeLevel: 10 },
       { stats: { speed: 3 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.03 }, cost: { green: 78 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.03 }, cost: { green: 132 }, catalystCost: { alacrity: 1 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 2 }, mechanicEffects: { 'mobility.ooc-speed-pct': 0.03 }, cost: { green: 132 }, requiredBiomeLevel: 10 },
     ],
   }],
 

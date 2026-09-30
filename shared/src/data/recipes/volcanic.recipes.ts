@@ -36,8 +36,8 @@ export const volcanicRecipeEntries = [
       { stats: { attack: 7 }, cost: { red: 96 },  requiredBiomeLevel: 2 },
       { stats: { attack: 6 }, cost: { red: 240 }, requiredBiomeLevel: 3 },
       { stats: { attack: 6 }, cost: { red: 384 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 6 }, cost: { red: 624 }, catalystCost: { swarming: 2 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 6 }, cost: { red: 1056 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 6 }, cost: { red: 624 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 6 }, cost: { red: 1056 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -51,7 +51,7 @@ export const volcanicRecipeEntries = [
     // fought the Volcano's Heat — late in a long fight hits grow and cracked it.
     evolvesFrom: 'plains-vest-t2',
     cost: { red: 120, yellow: 30 }, stats: {"maxHp": 150, "plating": 5, "damageReduction": 0.14}, // family-tag: inherits plains-vest-t2's Alacrity (plating answers frequent light hits)
-    reconstructCost: { red: 420, yellow: 105 }, reconstructCatalystCost: { alacrity: 3 },
+    reconstructCost: { red: 420, yellow: 105 },
     mechanicEffects: {"defense.hit-plating-per-stack": 1, "defense.hit-plating-max-stacks": 10, "defense.hit-plating-duration-ms": 3000},
     tier: 3,
     icon: 'items/armor/emberforge-plate.png',
@@ -60,8 +60,8 @@ export const volcanicRecipeEntries = [
       {"cost": {"red": 58, "yellow": 20}, "requiredBiomeLevel": 3, "stats": {"maxHp": 15, "plating": 1}},
       {"cost": {"red": 146, "yellow": 50}, "requiredBiomeLevel": 4, "stats": {"maxHp": 15, "plating": 1}},
       {"cost": {"red": 234, "yellow": 80}, "requiredBiomeLevel": 4, "stats": {"maxHp": 15, "plating": 0}},
-      {"cost": {"red": 380, "yellow": 130}, "catalystCost": {"alacrity": 2}, "requiredBiomeLevel": 4, "stats": {"maxHp": 15, "plating": 1}},
-      {"cost": {"red": 646, "yellow": 218}, "catalystCost": {"alacrity": 3}, "requiredBiomeLevel": 4, "stats": {"maxHp": 15, "plating": 1}}
+      {"cost": {"red": 380, "yellow": 130}, "requiredBiomeLevel": 4, "stats": {"maxHp": 15, "plating": 1}},
+      {"cost": {"red": 646, "yellow": 218}, "requiredBiomeLevel": 4, "stats": {"maxHp": 15, "plating": 1}}
     ],
   }],
 
@@ -73,7 +73,7 @@ export const volcanicRecipeEntries = [
     // `defense.recovery-on-kill-pct` key, extended with an always-active half.
     evolvesFrom: 'plains-charm-t2',
     cost: { red: 75, yellow: 25 }, stats: { recovery: 50.4 }, // family-tag: inherits plains-charm-t2's Alacrity
-    reconstructCost: { red: 263, yellow: 88 }, reconstructCatalystCost: { alacrity: 3 },
+    reconstructCost: { red: 263, yellow: 88 },
     mechanicEffects: { 'defense.recovery-active-pct': 0.06, 'defense.recovery-on-kill-pct': 0.04 },
     tier: 3,
     icon: 'items/charms/magmaheart-stone.png',
@@ -83,7 +83,7 @@ export const volcanicRecipeEntries = [
       { stats: { recovery: 4.5 }, mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 75, yellow: 25 }, requiredBiomeLevel: 4 },
       { stats: { recovery: 4.5 }, mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 120, yellow: 40 }, requiredBiomeLevel: 4 },
       { stats: { recovery: 2.2 }, mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 195, yellow: 65 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 2.2 }, mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 330, yellow: 110 }, catalystCost: { alacrity: 2 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 2.2 }, mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 330, yellow: 110 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -103,7 +103,7 @@ export const volcanicRecipeEntries = [
       { stats: { speed: 4 }, cost: { red: 61 },  requiredBiomeLevel: 4 },
       { stats: { speed: 5 }, cost: { red: 97 }, requiredBiomeLevel: 4 },
       { stats: { speed: 5 }, cost: { red: 158 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 5 }, cost: { red: 266 }, catalystCost: { swarming: 2 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 5 }, cost: { red: 266 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -122,7 +122,7 @@ export const volcanicRecipeEntries = [
     evolvesFrom: 'volcanic-cinderlash',
     // 2026-09-26 T2-T4 weapon normalization: Attack 58->65 (+5: 113->119).
     cost: { red: 308 }, stats: { attack: 65 }, attacksPerSecond: 1.80, tier: 4, // family-tag: flurry weapon → Swarming
-    reconstructCost: { red: 1078 }, reconstructCatalystCost: { swarming: 4 },
+    reconstructCost: { red: 1078 },
     mechanicEffects: { 'weapon.flurry-pct': 0.04, 'weapon.flurry-stacks': 5 },
     icon: 'items/weapons/eruption-lash.png',
     element: 'fire',   // cosmetic attack tint only
@@ -131,8 +131,8 @@ export const volcanicRecipeEntries = [
       { stats: { attack: 11 }, cost: { red: 191 }, requiredBiomeLevel: 8 },
       { stats: { attack: 11 }, cost: { red: 477 }, requiredBiomeLevel: 9 },
       { stats: { attack: 11 }, cost: { red: 764 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 11 }, cost: { red: 1241 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 10 }, cost: { red: 2099 }, catalystCost: { swarming: 4 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 11 }, cost: { red: 1241 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 10 }, cost: { red: 2099 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -148,7 +148,7 @@ export const volcanicRecipeEntries = [
     // balance question.
     // 2026-09-26 T2-T4 weapon normalization: Attack 70->105 (+5: 170->172).
     cost: { red: 290 }, stats: { attack: 105 }, attacksPerSecond: 1.20, tier: 4, // family-tag: fast-DoT weapon → Swarming
-    reconstructCost: { red: 1015 }, reconstructCatalystCost: { swarming: 4 },
+    reconstructCost: { red: 1015 },
     weaponDot: { effectId: 'cinderbrand-burn', convPct: 0.50, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'fire' },
     icon: 'items/weapons/cinderbrand.png',
     description: 'It leaves a fire under the skin that does the rest of the work while you move on.',
@@ -156,8 +156,8 @@ export const volcanicRecipeEntries = [
       { stats: { attack: 14 }, cost: { red: 192 }, requiredBiomeLevel: 8 },
       { stats: { attack: 14 }, cost: { red: 479 }, requiredBiomeLevel: 9 },
       { stats: { attack: 13 }, cost: { red: 766 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 13 }, cost: { red: 1245 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 13 }, cost: { red: 2108 }, catalystCost: { swarming: 4 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 13 }, cost: { red: 1245 }, requiredBiomeLevel: 10 },
+      { stats: { attack: 13 }, cost: { red: 2108 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -166,7 +166,7 @@ export const volcanicRecipeEntries = [
     recipeGroup: 'volcanic', requiredBiomeLevel: 8, slot: 'armor',
     evolvesFrom: 'volcanic-vest-t3',
     cost: { red: 220, yellow: 55 }, stats: {"maxHp": 288, "plating": 8, "damageReduction": 0.18}, // family-tag: reactive-plating armor → Alacrity
-    reconstructCost: { red: 770, yellow: 193 }, reconstructCatalystCost: { alacrity: 4 },
+    reconstructCost: { red: 770, yellow: 193 },
     mechanicEffects: {"defense.hit-plating-per-stack": 1, "defense.hit-plating-max-stacks": 16, "defense.hit-plating-duration-ms": 3000},
     tier: 4,
     icon: 'items/armor/pyroclasm-mantle.png',
@@ -175,8 +175,8 @@ export const volcanicRecipeEntries = [
       {"cost": {"red": 126, "yellow": 32}, "requiredBiomeLevel": 9, "stats": {"maxHp": 29, "plating": 1}},
       {"cost": {"red": 316, "yellow": 79}, "requiredBiomeLevel": 10, "stats": {"maxHp": 29, "plating": 1}},
       {"cost": {"red": 506, "yellow": 126}, "requiredBiomeLevel": 10, "stats": {"maxHp": 29, "plating": 2}},
-      {"cost": {"red": 822, "yellow": 205}, "catalystCost": {"alacrity": 3}, "requiredBiomeLevel": 10, "stats": {"maxHp": 29, "plating": 1}},
-      {"cost": {"red": 1390, "yellow": 347}, "catalystCost": {"alacrity": 4}, "requiredBiomeLevel": 10, "stats": {"maxHp": 29, "plating": 1}}
+      {"cost": {"red": 822, "yellow": 205}, "requiredBiomeLevel": 10, "stats": {"maxHp": 29, "plating": 1}},
+      {"cost": {"red": 1390, "yellow": 347}, "requiredBiomeLevel": 10, "stats": {"maxHp": 29, "plating": 1}}
     ],
   }],
 
@@ -185,7 +185,7 @@ export const volcanicRecipeEntries = [
     recipeGroup: 'volcanic', requiredBiomeLevel: 8, slot: 'armor',
     evolvesFrom: 'volcanic-vest-t3',
     cost: { red: 220, yellow: 55 }, stats: {"maxHp": 288, "plating": 8, "damageReduction": 0.18}, // family-tag: reactive-plating armor → Alacrity
-    reconstructCost: { red: 770, yellow: 193 }, reconstructCatalystCost: { alacrity: 4 },
+    reconstructCost: { red: 770, yellow: 193 },
     // † overheal-ward-pct: overheal from always-active Recovery becomes a temporary ward.
     //   Pairs naturally with Inferno Heart. (new key)
     mechanicEffects: {"defense.hit-plating-per-stack": 1, "defense.hit-plating-max-stacks": 8, "defense.hit-plating-duration-ms": 3000, "defense.overheal-ward-pct": 0.5, "defense.overheal-ward-cap-pct": 0.15},
@@ -196,8 +196,8 @@ export const volcanicRecipeEntries = [
       {"cost": {"red": 126, "yellow": 32}, "requiredBiomeLevel": 9, "stats": {"maxHp": 29, "plating": 1}},
       {"cost": {"red": 316, "yellow": 79}, "requiredBiomeLevel": 10, "stats": {"maxHp": 29, "plating": 1}},
       {"cost": {"red": 506, "yellow": 126}, "requiredBiomeLevel": 10, "stats": {"maxHp": 29, "plating": 2}},
-      {"cost": {"red": 822, "yellow": 205}, "catalystCost": {"alacrity": 3}, "requiredBiomeLevel": 10, "stats": {"maxHp": 29, "plating": 1}},
-      {"cost": {"red": 1390, "yellow": 347}, "catalystCost": {"alacrity": 4}, "requiredBiomeLevel": 10, "stats": {"maxHp": 29, "plating": 1}}
+      {"cost": {"red": 822, "yellow": 205}, "requiredBiomeLevel": 10, "stats": {"maxHp": 29, "plating": 1}},
+      {"cost": {"red": 1390, "yellow": 347}, "requiredBiomeLevel": 10, "stats": {"maxHp": 29, "plating": 1}}
     ],
   }],
 
@@ -206,7 +206,7 @@ export const volcanicRecipeEntries = [
     recipeGroup: 'volcanic', requiredBiomeLevel: 9, slot: 'recovery',
     evolvesFrom: 'volcanic-charm-t3',
     cost: { red: 200, yellow: 50 }, stats: { recovery: 115.4 }, // family-tag: on-kill Recovery charm → Alacrity
-    reconstructCost: { red: 700, yellow: 175 }, reconstructCatalystCost: { alacrity: 4 },
+    reconstructCost: { red: 700, yellow: 175 },
     mechanicEffects: { 'defense.recovery-active-pct': 0.10, 'defense.recovery-on-kill-pct': 0.08 },
     tier: 4,
     icon: 'items/charms/inferno-heart.png',
@@ -216,7 +216,7 @@ export const volcanicRecipeEntries = [
       { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 156, yellow: 39 }, requiredBiomeLevel: 10 },
       { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 250, yellow: 62 }, requiredBiomeLevel: 10 },
       { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 406, yellow: 101 }, requiredBiomeLevel: 10 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 686, yellow: 172 }, catalystCost: { alacrity: 3 }, requiredBiomeLevel: 10 },
+      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-active-pct': 0.02, 'defense.recovery-on-kill-pct': 0.02 }, cost: { red: 686, yellow: 172 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -227,7 +227,7 @@ export const volcanicRecipeEntries = [
     evolvesFrom: 'volcanic-boots-t3',
     // 2026-09-26 T2-T4 boots curve normalization: Speed 50->105 (+5: 128->128).
     cost: { red: 163 }, stats: { speed: 105 }, tier: 4, // family-tag: volcanic passive-speed mobility → Swarming
-    reconstructCost: { red: 571 }, reconstructCatalystCost: { swarming: 4 },
+    reconstructCost: { red: 571 },
     mechanicEffects: { 'mobility.passive-speed-pct': 0.70, 'mobility.suppress-ms': 3500 },
     icon: 'items/boots/pyroclast-treads.png',
     description: 'Swift as a thrown ember — until a solid blow stalls them, and the heat must build again.',
@@ -236,7 +236,7 @@ export const volcanicRecipeEntries = [
       { stats: { speed: 4 }, cost: { red: 120 }, requiredBiomeLevel: 10 },
       { stats: { speed: 6 }, cost: { red: 192 }, requiredBiomeLevel: 10 },
       { stats: { speed: 5 }, cost: { red: 311 }, requiredBiomeLevel: 10 },
-      { stats: { speed: 5 }, cost: { red: 526 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 10 },
+      { stats: { speed: 5 }, cost: { red: 526 }, requiredBiomeLevel: 10 },
     ],
   }],
 
@@ -251,7 +251,7 @@ export const volcanicRecipeEntries = [
     id: 'core-catalyst', name: 'Catalyst Core',
     recipeGroup: 'volcanic', requiredBiomeLevel: 10, slot: 'core', coreEligibility: 'unrestricted',
     lineageId: 'core-catalyst',
-    cost: { red: 2300 }, catalystCost: { swarming: 8 }, // family-tag: on-hit proc amplifier → Swarming
+    cost: { red: 2300 }, // family-tag: on-hit proc amplifier → Swarming
     stats: {}, tier: 4,
     // The specialization is the opportunity cost: no on-hit damage is granted
     // to builds without it, and the core supplies no generic damage or defense.
@@ -268,7 +268,7 @@ export const volcanicRecipeEntries = [
     id: 'relic-hastebound-dial', name: 'Hastebound Dial',
     recipeGroup: 'volcanic', requiredBiomeLevel: 11, slot: 'relic',
     lineageId: 'relic-hastebound-dial',
-    cost: { red: 3300 }, catalystCost: { swarming: 9 },
+    cost: { red: 3300 },
     stats: {}, tier: 4,
     mechanicEffects: {
       'relic.mechanic-frequency': 0.35,

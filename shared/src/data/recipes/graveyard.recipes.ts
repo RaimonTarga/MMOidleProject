@@ -24,7 +24,7 @@ export const graveyardRecipeEntries = [
     //   (no cadence count, no energy, no cooldown progress).
     // 2026-09-26 T2-T4 weapon normalization: Attack 150->140 (+5: 300->258).
     cost: { purple: 270 }, stats: { attack: 140 }, attacksPerSecond: 1.10, tier: 4, // family-tag: dead-swing axe → Swarming
-    reconstructCost: { purple: 945 }, reconstructCatalystCost: { swarming: 4 },
+    reconstructCost: { purple: 945 },
     mechanicEffects: {
       'weapon.dead-swing-interval': 3,
       'weapon.dead-swing-vuln-pct': 0.20, 'weapon.dead-swing-vuln-ms': 4000,
@@ -36,8 +36,8 @@ export const graveyardRecipeEntries = [
       { stats: { attack: 24 }, cost: { purple: 175 }, requiredBiomeLevel: 2 },
       { stats: { attack: 24 }, cost: { purple: 439 }, requiredBiomeLevel: 3 },
       { stats: { attack: 24 }, cost: { purple: 702 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 23 }, cost: { purple: 1140 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 23 }, cost: { purple: 1930 }, catalystCost: { swarming: 4 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 23 }, cost: { purple: 1140 }, requiredBiomeLevel: 4 },
+      { stats: { attack: 23 }, cost: { purple: 1930 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -46,7 +46,7 @@ export const graveyardRecipeEntries = [
     recipeGroup: 'graveyard', requiredBiomeLevel: 2, slot: 'armor',
     evolvesFrom: 'swamp-vest-t3',
     cost: { purple: 220 }, stats: {"maxHp": 302, "damageReduction": 0.18}, // family-tag: dot-resistance armor (Swamp inheritance) → Fortified
-    reconstructCost: { purple: 770 }, reconstructCatalystCost: { fortified: 4 },
+    reconstructCost: { purple: 770 },
     // 2026-09-26 armor niches: the pure Swamp continuation — resist damage over
     // time and spread hits into it. The Mantle leans on resistance, Grave Ward on
     // deferral. Its reactive plating moved to Volcanic, its debuff resist to Trench.
@@ -58,8 +58,8 @@ export const graveyardRecipeEntries = [
       {"cost": {"purple": 180}, "requiredBiomeLevel": 3, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
       {"cost": {"purple": 450}, "requiredBiomeLevel": 4, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
       {"cost": {"purple": 719}, "requiredBiomeLevel": 4, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"purple": 1169}, "catalystCost": {"fortified": 3}, "requiredBiomeLevel": 4, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"purple": 1978}, "catalystCost": {"fortified": 4}, "requiredBiomeLevel": 4, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}}
+      {"cost": {"purple": 1169}, "requiredBiomeLevel": 4, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"purple": 1978}, "requiredBiomeLevel": 4, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}}
     ],
   }],
 
@@ -68,7 +68,7 @@ export const graveyardRecipeEntries = [
     recipeGroup: 'graveyard', requiredBiomeLevel: 2, slot: 'armor',
     evolvesFrom: 'swamp-vest-t3',
     cost: { purple: 220 }, stats: {"maxHp": 302, "damageReduction": 0.18}, // family-tag: dot-resistance armor (Swamp inheritance) → Fortified
-    reconstructCost: { purple: 770 }, reconstructCatalystCost: { fortified: 4 },
+    reconstructCost: { purple: 770 },
     // Debt specialist: larger deferral, less resistance than the Mantle.
     // Debt is repaid normally; this armor grants no automatic forgiveness.
     mechanicEffects: {"defense.dot-resistance": 0.25, "defense.hit-to-dot-pct": 0.3},
@@ -79,8 +79,8 @@ export const graveyardRecipeEntries = [
       {"cost": {"purple": 180}, "requiredBiomeLevel": 3, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
       {"cost": {"purple": 450}, "requiredBiomeLevel": 4, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
       {"cost": {"purple": 719}, "requiredBiomeLevel": 4, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"purple": 1169}, "catalystCost": {"fortified": 3}, "requiredBiomeLevel": 4, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
-      {"cost": {"purple": 1978}, "catalystCost": {"fortified": 4}, "requiredBiomeLevel": 4, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}}
+      {"cost": {"purple": 1169}, "requiredBiomeLevel": 4, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}},
+      {"cost": {"purple": 1978}, "requiredBiomeLevel": 4, "stats": {"maxHp": 30}, "mechanicEffects": {"defense.dot-resistance": 0.02}}
     ],
   }],
 
@@ -89,7 +89,7 @@ export const graveyardRecipeEntries = [
     recipeGroup: 'graveyard', requiredBiomeLevel: 3, slot: 'recovery',
     evolvesFrom: 'swamp-charm-t3',
     cost: { purple: 150 }, stats: { recovery: 115.4 }, // family-tag: recovery-pulse charm (Swamp inheritance) → Fortified
-    reconstructCost: { purple: 525 }, reconstructCatalystCost: { fortified: 4 },
+    reconstructCost: { purple: 525 },
     mechanicEffects: { 'defense.recovery-pulse-pct': 0.11, 'defense.recovery-pulse-interval-ms': 6000, 'guard.cleanse-pulse': 1 },
     tier: 4,
     icon: 'items/charms/necrotic-pulse.png',
@@ -99,7 +99,7 @@ export const graveyardRecipeEntries = [
       { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.03 }, cost: { purple: 183 }, requiredBiomeLevel: 4 },
       { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.03 }, cost: { purple: 292 }, requiredBiomeLevel: 4 },
       { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.03 }, cost: { purple: 475 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.03 }, cost: { purple: 803 }, catalystCost: { fortified: 3 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.03 }, cost: { purple: 803 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -108,7 +108,7 @@ export const graveyardRecipeEntries = [
     recipeGroup: 'graveyard', requiredBiomeLevel: 3, slot: 'recovery',
     evolvesFrom: 'swamp-charm-t3',
     cost: { purple: 150 }, stats: { recovery: 115.4 }, // family-tag: recovery-pulse charm (Swamp inheritance) → Fortified
-    reconstructCost: { purple: 525 }, reconstructCatalystCost: { fortified: 4 },
+    reconstructCost: { purple: 525 },
     // Combined: slower burst, compensated by a baseline in-combat trickle.
     // +5: 12% active + 12% for 4s/8s = 18% mean access (2.88% HP/s at 16 Recovery).
     mechanicEffects: {
@@ -124,7 +124,7 @@ export const graveyardRecipeEntries = [
       { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02, 'defense.recovery-active-pct': 0.02 }, cost: { purple: 183 }, requiredBiomeLevel: 4 },
       { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.01, 'defense.recovery-active-pct': 0.01 }, cost: { purple: 292 }, requiredBiomeLevel: 4 },
       { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02, 'defense.recovery-active-pct': 0.02 }, cost: { purple: 475 }, requiredBiomeLevel: 4 },
-      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02, 'defense.recovery-active-pct': 0.02 }, cost: { purple: 803 }, catalystCost: { fortified: 3 }, requiredBiomeLevel: 4 },
+      { stats: { recovery: 11.3 }, mechanicEffects: { 'defense.recovery-pulse-pct': 0.02, 'defense.recovery-active-pct': 0.02 }, cost: { purple: 803 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -149,7 +149,7 @@ export const graveyardRecipeEntries = [
       { stats: { speed: 4 }, cost: { purple: 125 },  requiredBiomeLevel: 4 },
       { stats: { speed: 6 }, cost: { purple: 200 }, requiredBiomeLevel: 4 },
       { stats: { speed: 5 }, cost: { purple: 326 }, requiredBiomeLevel: 4 },
-      { stats: { speed: 5 }, cost: { purple: 551 }, catalystCost: { swarming: 3 }, requiredBiomeLevel: 4 },
+      { stats: { speed: 5 }, cost: { purple: 551 }, requiredBiomeLevel: 4 },
     ],
   }],
 
@@ -162,7 +162,7 @@ export const graveyardRecipeEntries = [
     id: 'core-controller', name: 'Controller Core',
     recipeGroup: 'graveyard', requiredBiomeLevel: 4, slot: 'core', coreEligibility: 'unrestricted',
     lineageId: 'core-controller',
-    cost: { purple: 2100 }, catalystCost: { fortified: 7 }, // family-tag: debuff/affliction → Fortified
+    cost: { purple: 2100 }, // family-tag: debuff/affliction → Fortified
     stats: {}, tier: 4,
     // Does nothing for a build that applies no debuffs. That is the intended
     // opportunity cost, so no direct-damage penalty is authored on top of it.
@@ -175,7 +175,7 @@ export const graveyardRecipeEntries = [
     id: 'relic-haunted-prism', name: 'Haunted Prism',
     recipeGroup: 'graveyard', requiredBiomeLevel: 6, slot: 'relic',
     lineageId: 'relic-haunted-prism',
-    cost: { purple: 3500 }, catalystCost: { fortified: 10 },
+    cost: { purple: 3500 },
     stats: {}, tier: 4,
     mechanicEffects: {
       'relic.mechanic-frequency': -0.10,
