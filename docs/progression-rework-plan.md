@@ -429,6 +429,82 @@ session. If the felt-effect claim fails here, stop and redesign before Phase 2.
   the essence spent (sum of the item's authored upgrade costs for its level); log the
   refund per character. `LEGACY_ITEM_IDS` handles nothing here.
 
+**Built 2026-09-30 (Phase 2a, `feat/variants` off `feat/lineage-data-model`).** §2.1
+plus the map half of §2.2. Shards and capstones were already live from 1b, so the reward
+seam is untouched; catalysts, modifier math and reward multipliers all still stand — that
+is §2.3/Phase 2b. Nine deliberate differences from the sketch above, and the code is the
+authority where they disagree:
+
+1. **`blend` is optional, and T2–T4 carry none** (designer decision, taken 2026-09-30).
+   The sketch's fallback of "an even blend over a synthetic family per biome" was
+   rejected: nothing fake enters `FamilyId`, and the families partition test stays
+   honest. Spawning falls back to today's flat biome-pool roll for any node with no
+   blend, which is every dungeon, every sanctuary, the Clearing, and all of T2–T4.
+2. **Node-count source, region by region.** T1 is on the blend list
+   (`RegionAuthoringInput.blends`, `regionT1.ts`); **T2, T3 and T4 are all still on the
+   modifier list**. `normalNodeCountForBiome` reads whichever exists, and the count
+   warning moved off `allowedModifiersForBiome` onto the `blends` field. Phase 2b, which
+   deletes modifiers, must give T2–T4 a count source in the same commit — and T2–T4 have
+   no family tables, so that means either authoring them or a different count source
+   (a plain per-biome node count would do).
+3. **T1 node counts are UNCHANGED: mountain 5, cave 6, forest 5, plains 5, swamp 6 = 27.**
+   Not the five-per-biome the sketch names. Three things are welded to the modifier count:
+   the hand-cut T1 mask (27 normal cells exactly, and `allocateNormalCellsByBiome` throws
+   if the capacities do not consume every cell), `validateBiomeCoverage` (one node per
+   allowed modifier, two for the native), and the display names, which still come from
+   the modifier. So `buildRegionNodes` now **throws if a biome's blend list and modifier
+   list disagree in length**, which is the seam Phase 2b opens: delete modifiers, re-cut
+   the mask to 25, drop the two extra blends, and update `EXPECTED_NORMAL_COUNTS`
+   (27 → 25) and the 170-node snapshot with it.
+4. **`modifier` survives on `WorldNodeAuthoring`, marked `@deprecated`.** Removing it
+   breaks far outside this phase: node display names (`displayNames.ts`), monster stat
+   scaling (`createMonster`, `monsterMechanics.ts`), reward multipliers (`rewards.ts`),
+   `World.ts` telemetry, `NODE_MODIFIERS`, the arrival HUD, the tutorial's node targeting,
+   the bot's route conditions, and `tools/tier-table.ts`. Phase 2b deletes the field with
+   the machinery.
+5. **⚠ THE HEADLINE GAP — T1 monster pools cannot field the blends.** The family table
+   spans tiers: a biome's three families are spread across its T1/T2/T3 pools, and each
+   T1 pool holds only two mobs. Plains T1 fields Herd and Swarm but no Sky; Forest fields
+   Pack and Grove but no Canopy; Mountain fields Ridge and Hopper but no Crag; Cave fields
+   Brute and Deep but no Brood; **Swamp T1 fields only Mire** — both of its mobs are Mire,
+   so all six Swamp nodes resolve to a single family. So `resolveNodeBlend` resolves an
+   authored blend against the node's own tier pool, drops the families that tier cannot
+   field, and re-scales the shares over what is left. The authored blend is the design
+   target; the resolved blend is what spawns and what the panel shows, so a node can never
+   advertise a family it does not field. **Closing this needs a third T1 mob per biome
+   (new monster numbers, the designer's call) — it is not a code fix, and it is beyond
+   bible open decision 2, which only asks whether the Mountain/Cave/Swamp families are the
+   right ones.** Mountain, Cave and Swamp families remain PROPOSED.
+6. **Cycling is quantized to ten slots** (`BLEND_SPAWN_SLOTS`), by largest remainder and
+   then spread so the dominant family does not arrive in one block. Ten because 70/20/10
+   should read as 7-2-1 in a single visit; the cost is that a resolved share of 0.647 is
+   met as 6/10, so the tests assert "within one mob per ten slots" and then assert that
+   thirty spawns are exactly three identical cycles. A share finer than 10% rounds away.
+7. **The cursor is per world, in a `WeakMap`, and advances on the pick** — not on a
+   successful placement, because a type that terrain or spacing will not accept would
+   otherwise be re-picked forever and stall the node. Per world so a bench never inherits
+   the live sim's cursor. Nothing is persisted or networked; a fresh world opens every
+   node on its dominant family.
+8. **A family's spawn list is deduplicated.** T1 mountain lists `cliff-hopper` twice to
+   weight the old flat roll; inside a family the blend's share is the weight now, so the
+   duplicate would only alternate two copies of one mob. Pool duplication as a weighting
+   lever dies with the flat roll.
+9. **Blends govern PICKS, not headcount.** A pack alpha still fields its followers, so on
+   a Pack-dominant Forest node the Pack's share of bodies runs well ahead of its share of
+   picks (one `wolf` pick is three wolves). Intended — that is the pack system — but it
+   means "70% Herd" is 70% of spawn events, and the panel says "of spawns here".
+
+Map surface: the node panel's headline band is now the families, their shares and their
+shards (`ShardIcon`, a lane-coloured glyph, in `ModifierIcon`'s place), with a `Mobs`
+summary row above the fold and the families this tier is missing listed as absent — so
+gap 5 reports itself in game. A dungeon's boss band names the capstone material it drops
+on every kill. Nodes with no blend keep the modifier band, so nothing lost its explanation
+mid-phase; Phase 2b deletes that branch.
+
+Tests: `server/test/variantBlend.test.ts` (authoring, the cycle, and a thirty-spawn world
+run), the blend join added to `server/test/lineageMaterials.test.ts`, and blend shape and
+coverage folded into `validateWorldMap` so dev boot catches a malformed blend.
+
 ### 2.3 Removal
 
 - Delete `nodeModifiers.ts` math, `NODE_MODIFIER_FAMILIES`, `nodeModifierMap.ts`, the
