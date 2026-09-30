@@ -20,9 +20,11 @@ import {
   DOT_FROZEN_FX,
   DOT_MAXSTACK_BURST_FX,
   DOT_RIMESHATTER_FX,
+  lineageForRecipeId,
   type CombatArchetype,
   type CombatEvent,
   type DamageElement,
+  type LineageFxKey,
   type MinionView,
   type PlayerView,
   type Vec2,
@@ -450,6 +452,252 @@ function fxAoeRing(
     duration: 420,
     ease: "Power2",
     onComplete: () => ring.destroy(),
+  });
+}
+
+// ─── Lineage card FX (progression rework Phase 1c contract) ─────────────────
+//
+// One handler per `LineageFxKey`, keyed by the lane grammar (design §8: Tempo
+// = afterimages, Empowered = glow/crash/cracks, Affliction = pips/arcs,
+// Control = drag/grasp, Kill chain = pulses, Engagement = opening flashes).
+// Colours are the brief's own palette for combat FX — distinct from the tree
+// panel's `packetDefinition().color`, which is the UI's own accent and reads
+// fine on a dark panel but washes out badly over busy terrain (cyan Tempo and
+// pink Engagement in particular). Six small, reusable primitives (ghost
+// strike, plating crack, pips, arc, flash, ring) cover every key; capstones
+// reuse the same primitives at a larger scale rather than inventing new ones.
+
+const LANE_FX_COLOR: Record<string, number> = {
+  tempo: 0xe0a23a,       // amber
+  empowered: 0xd1453f,   // crimson
+  affliction: 0x6fb35a,  // green
+  control: 0x9fd8ff,     // ice
+  "kill-chain": 0xd9b25c, // gold
+  engagement: 0xffffff,  // white
+};
+
+function laneFxColor(fx: LineageFxKey): number {
+  const lane = fx.slice(0, fx.indexOf("."));
+  return LANE_FX_COLOR[lane] ?? 0xffffff;
+}
+
+/** A short duplicate streak implying the triggering hit struck a second time. */
+function fxCardGhostStrike(scene: GameScene, at: { x: number; y: number }, color: number): void {
+  const angle = Math.random() * Math.PI * 2;
+  const dx = Math.cos(angle);
+  const dy = Math.sin(angle);
+  const g = scene.add.graphics({ x: at.x, y: at.y }).setDepth(DEPTH.FX);
+  g.lineStyle(2.5, color, 0.85);
+  g.beginPath();
+  g.moveTo(-dx * 14, -dy * 14);
+  g.lineTo(dx * 14, dy * 14);
+  g.strokePath();
+  scene.tweens.add({
+    targets: g,
+    x: at.x + dx * 12,
+    y: at.y + dy * 12,
+    alpha: 0,
+    duration: 260,
+    ease: "Cubic.Out",
+    onComplete: () => g.destroy(),
+  });
+}
+
+/** A jagged crack over the target — plating giving way. */
+function fxCardPlatingCrack(scene: GameScene, at: { x: number; y: number }, color: number): void {
+  const g = scene.add.graphics({ x: at.x, y: at.y }).setDepth(DEPTH.FX);
+  g.lineStyle(2, color, 0.9);
+  g.beginPath();
+  g.moveTo(-9, -13);
+  g.lineTo(-2, -2);
+  g.lineTo(-7, 3);
+  g.lineTo(2, 13);
+  g.strokePath();
+  scene.tweens.add({
+    targets: g,
+    alpha: 0,
+    y: at.y + 5,
+    duration: 380,
+    ease: "Cubic.Out",
+    onComplete: () => g.destroy(),
+  });
+}
+
+/** Small stack pips rising off a point — an affliction (or a count) taking hold. */
+function fxCardPips(scene: GameScene, at: { x: number; y: number }, color: number, count: number): void {
+  const n = Math.max(1, Math.min(5, Math.round(count)));
+  for (let i = 0; i < n; i++) {
+    const dx = (i - (n - 1) / 2) * 7;
+    const g = scene.add.graphics({ x: at.x + dx, y: at.y - 6 }).setDepth(DEPTH.FX);
+    g.fillStyle(color, 0.9);
+    g.fillCircle(0, 0, 2.5);
+    scene.tweens.add({
+      targets: g,
+      y: g.y - 18,
+      alpha: 0,
+      duration: 460,
+      delay: i * 40,
+      ease: "Cubic.Out",
+      onComplete: () => g.destroy(),
+    });
+  }
+}
+
+/** A short arc/tendril from the source to the target — a drag, a grasp, a spread. */
+function fxCardArc(scene: GameScene, from: { x: number; y: number }, to: { x: number; y: number }, color: number): void {
+  const g = scene.add.graphics().setDepth(DEPTH.FX);
+  const mx = (from.x + to.x) / 2;
+  const my = (from.y + to.y) / 2 - 18;
+  g.lineStyle(2, color, 0.75);
+  g.beginPath();
+  g.moveTo(from.x, from.y);
+  g.lineTo(mx, my);
+  g.lineTo(to.x, to.y);
+  g.strokePath();
+  scene.tweens.add({
+    targets: g,
+    alpha: 0,
+    duration: 340,
+    ease: "Cubic.Out",
+    onComplete: () => g.destroy(),
+  });
+}
+
+/** A quick radial flash — an opening window, a weak point marked. */
+function fxCardFlash(scene: GameScene, at: { x: number; y: number }, color: number): void {
+  const g = scene.add.graphics({ x: at.x, y: at.y }).setDepth(DEPTH.FX);
+  g.fillStyle(color, 0.9);
+  g.fillCircle(0, 0, 5);
+  scene.tweens.add({
+    targets: g,
+    scaleX: 3.2,
+    scaleY: 3.2,
+    alpha: 0,
+    duration: 240,
+    ease: "Cubic.Out",
+    onComplete: () => g.destroy(),
+  });
+}
+
+/**
+ * One handler per `LineageFxKey`. The six `.trail` keys are NOT drawn here —
+ * the stat row is a persistent cosmetic derived client-side from the active
+ * stat card (see `playLineageTrail` below), never a `card-fx` event (Phase 1c
+ * contract). Unknown keys draw nothing.
+ */
+function fxLineageCard(scene: GameScene, ev: CombatEvent & { kind: "card-fx" }): void {
+  const pos = nodeToScene(ev.pos.x, ev.pos.y);
+  const target = ev.targetPos ? nodeToScene(ev.targetPos.x, ev.targetPos.y) : pos;
+  const color = laneFxColor(ev.fx);
+
+  switch (ev.fx) {
+    // Payoff rows — a new on-screen event (design §8).
+    case "tempo.ghost-strike":
+      fxCardGhostStrike(scene, target, color);
+      return;
+    case "empowered.plating-crack":
+      fxCardPlatingCrack(scene, target, color);
+      return;
+    case "empowered.weak-point":
+      fxCardFlash(scene, target, color);
+      return;
+    case "affliction.bleed-pips":
+    case "affliction.venom-pips":
+      fxCardPips(scene, target, color, ev.stacks ?? 3);
+      return;
+    case "control.frost-drag":
+      fxCardArc(scene, pos, target, color);
+      return;
+    case "kill-chain.kill-pulse":
+      fxAoeRing(scene, ev.pos, 24, color);
+      return;
+    case "kill-chain.spread-arc":
+      fxCardArc(scene, pos, target, color);
+      return;
+    case "engagement.opening-flash":
+      fxCardFlash(scene, pos, color);
+      return;
+    case "engagement.brace-sparks":
+      fxCardPips(scene, pos, color, 4);
+      return;
+    // Capstones — the form's lasting verb (design §8: "form art changes, plus
+    // a lasting aura"), drawn as a bigger pass of the same primitives.
+    case "tempo.gale-wake":
+      fxAoeRing(scene, ev.pos, 34, color);
+      fxCardGhostStrike(scene, pos, color);
+      return;
+    case "tempo.ruin-afterimage":
+      fxCardGhostStrike(scene, target, color);
+      fxCardGhostStrike(scene, target, color);
+      return;
+    case "affliction.stinger-echo":
+      fxCardArc(scene, pos, target, color);
+      fxCardPips(scene, target, color, 2);
+      return;
+    case "empowered.quake-ring":
+      fxAoeRing(scene, ev.targetPos ?? ev.pos, 40, color);
+      return;
+    case "control.mire-grasp":
+      fxCardArc(scene, pos, target, color);
+      fxCardPips(scene, target, color, 2);
+      return;
+    case "kill-chain.steel-vigil":
+      fxAoeRing(scene, ev.pos, 30, color);
+      fxCardFlash(scene, pos, color);
+      return;
+    // Stat rows — a persistent weapon-trail cosmetic, never an event.
+    case "tempo.trail":
+    case "empowered.trail":
+    case "affliction.trail":
+    case "control.trail":
+    case "kill-chain.trail":
+    case "engagement.trail":
+      return;
+    default:
+      // Unknown key: draw nothing (contract).
+      if (import.meta.env.DEV) {
+        // eslint-disable-next-line no-console
+        console.warn(`card-fx: no client handler for '${ev.fx}'`);
+      }
+      return;
+  }
+}
+
+/**
+ * The active weapon lineage's STAT row, read as a persistent cosmetic on every
+ * basic attack. Phase 1c contract: "derived client-side from
+ * `PlayerView.lineages[<lineage>].active.stat` -> the card's `fx` key. No
+ * event." A short tinted streak from attacker to target is the "weapon trail
+ * colour/intensity" design §8 asks a stat row for.
+ */
+function weaponStatTrailColor(player: PlayerView | undefined): number | null {
+  const weaponId = player?.equipment?.weapon;
+  if (!weaponId || !player?.lineages) return null;
+  const lineage = lineageForRecipeId(weaponId);
+  if (!lineage) return null;
+  const statCardId = player.lineages[lineage.id]?.active.stat;
+  if (!statCardId) return null;
+  const card = lineage.cards.find((c) => c.id === statCardId);
+  return card ? laneFxColor(card.fx) : null;
+}
+
+function playLineageTrail(args: AttackFxArgs): void {
+  if (!shouldRunClientFx()) return;
+  const color = weaponStatTrailColor(args.player);
+  if (color === null) return;
+  const { from, to, scene } = args;
+  const g = scene.add.graphics().setDepth(DEPTH.FX);
+  g.lineStyle(2, color, 0.45);
+  g.beginPath();
+  g.moveTo(from.x, from.y);
+  g.lineTo(to.x, to.y);
+  g.strokePath();
+  scene.tweens.add({
+    targets: g,
+    alpha: 0,
+    duration: 220,
+    ease: "Cubic.Out",
+    onComplete: () => g.destroy(),
   });
 }
 
@@ -961,6 +1209,12 @@ export function dispatchCombatEvent(
   }
   if (ev.kind === "stance-switch") {
     if (ev.playerId === scene.myId) notifyStanceCooldownStarted();
+    return;
+  }
+  if (ev.kind === "card-fx") {
+    // Node-wide, like every other payoff signature: an ally should see a
+    // build's cards land exactly as they'd see a Guard or a Technique fire.
+    if (shouldRunClientFx()) fxLineageCard(scene, ev);
     return;
   }
   // dot-tick / monster-hit amounts render separately in deltaApplier.
@@ -1915,6 +2169,9 @@ function runFxForAttackStyle(
     undefined;
   const flair = attackFlairOf(player);
   const args: AttackFxArgs = { scene, ev, player, from, to, dotPath, tint, flair };
+  // The active weapon lineage's stat row is a persistent cosmetic on every
+  // basic attack, independent of which style/branch below actually fires.
+  playLineageTrail(args);
 
   // Blunderbuss volley: each pellet is its own bullet, all fired at once from a
   // shared muzzle to its own scattered endpoint (angle + distance randomized

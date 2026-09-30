@@ -17,6 +17,7 @@ import { hudBus } from '../../hudBus';
 import { tutorialFocusAtom } from '../../tutorial/atoms';
 import {
   biomeLevelAtom,
+  capstonesAtom,
   catalystsAtom,
   equipmentAtom,
   essencesAtom,
@@ -24,6 +25,7 @@ import {
   inventoryAtom,
   itemUpgradesAtom,
   playerNodeIdAtom,
+  shardsAtom,
 } from '../../hud/atoms';
 import { SLOT_LABELS, biomeName, tierColor } from './common';
 import { CostDisplay, WalletSummary } from './shared';
@@ -100,6 +102,8 @@ export function UpgradeTab() {
   const itemUpgrades = useAtomValue(itemUpgradesAtom);
   const essences     = useAtomValue(essencesAtom);
   const catalysts    = useAtomValue(catalystsAtom);
+  const shards       = useAtomValue(shardsAtom);
+  const capstones    = useAtomValue(capstonesAtom);
   const biomeLevel   = useAtomValue(biomeLevelAtom);
   const gm           = useAtomValue(globalMasteryAtom);
   const nodeId       = useAtomValue(playerNodeIdAtom);
@@ -155,12 +159,18 @@ export function UpgradeTab() {
   // off the list entirely. Equipped items sort first, then by tier, then name.
   // The dev test room also exposes legacy/dev gear so it can be bumped without
   // needing a biome-backed recipe.
+  //
+  // Weapons are excluded: the progression rework's lineage tree (LineageTreePanel,
+  // opened from the weapon slot) owns weapon progression now — the +N ladder stays
+  // live for armor/recovery/mobility/core/relic until their own trees ship (plan
+  // Phase 4).
   const items = useMemo(() => {
     const ids = new Set<string>([...inventory, ...equippedSet]);
     return Array.from(ids)
       .map(id => ITEM_DATABASE.get(id))
       .filter((def): def is NonNullable<typeof def> =>
         !!def
+        && def.slot !== 'weapon'
         && (isTestRoom || !!def.biomeGroup)
         && (
           (itemUpgrades[def.id] ?? 0) < getMaxUpgrade(def)
@@ -185,7 +195,7 @@ export function UpgradeTab() {
 
   return (
     <div className="craft-body craft-body--browser">
-      <WalletSummary essences={essences} catalysts={catalysts} />
+      <WalletSummary essences={essences} catalysts={catalysts} shards={shards} capstones={capstones} />
       <BrowserPane
         label="Upgradeable items"
         className="upgrade-browser"

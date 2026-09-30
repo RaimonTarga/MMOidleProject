@@ -7,6 +7,7 @@ import type {
   PlayerMoveOptions,
   PlayerMoveResult,
   CombatControlResult,
+  RowKind,
   StanceSlot,
   Vec2,
 } from '@mmo-idle/shared';
@@ -156,6 +157,36 @@ export function sendEvolveItem(
 
 export function sendUpgradeItem(socket: GameSocket, itemId: string): void {
   socket.emit('inventory:upgradeItem', itemId);
+}
+
+// ── Lineage trees (progression rework Phase 1) ──────────────────────────────
+
+export function sendLineageUnlockCard(
+  socket: GameSocket,
+  payload: { lineageId: string; cardId: string },
+): void {
+  socket.emit('lineage:unlockCard', payload);
+}
+
+export function sendLineageSetActive(
+  socket: GameSocket,
+  payload: { lineageId: string; row: RowKind; cardId: string | null },
+): void {
+  socket.emit('lineage:setActive', payload);
+}
+
+export function sendLineageUnlockForm(
+  socket: GameSocket,
+  payload: { lineageId: string; recipeId: string },
+): void {
+  socket.emit('lineage:unlockForm', payload);
+}
+
+export function sendLineageWearForm(
+  socket: GameSocket,
+  payload: { lineageId: string; recipeId: string },
+): void {
+  socket.emit('lineage:wearForm', payload);
 }
 
 export function sendJoinParty(socket: GameSocket, targetPlayerId: string): void {

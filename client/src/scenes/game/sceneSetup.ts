@@ -791,6 +791,11 @@ function connectSocket(scene: GameScene): () => void {
         new CustomEvent("hud:upgradeResult", { detail: result }),
       );
     },
+    onLineageResult: (result) => {
+      window.dispatchEvent(
+        new CustomEvent("hud:lineageResult", { detail: result }),
+      );
+    },
     onPlayerDied: (payload) => {
       scene.state.combatPlayback.reset();
       // Death cancels every outstanding order. The server has already stopped

@@ -1,17 +1,22 @@
 import { useAtomValue } from 'jotai';
-import { EQUIPMENT_SLOTS, ITEM_DATABASE, TEST_ROOM_NODE_ID, coreEligibilityLabel, coreIsActive, isRestrictedCore, relicIsUnlocked } from '@mmo-idle/shared';
-import { equipmentAtom, itemUpgradesAtom, playerNodeIdAtom, playerTierAtom, selectedRangeAtom } from '../../hud/atoms';
+import type { EquipmentSlot } from '@mmo-idle/shared';
+import { EQUIPMENT_SLOTS, ITEM_DATABASE, TEST_ROOM_NODE_ID, coreEligibilityLabel, coreIsActive, isRestrictedCore, lineageForRecipeId, relicIsUnlocked } from '@mmo-idle/shared';
+import { equipmentAtom, itemUpgradesAtom, lineagesAtom, playerNodeIdAtom, playerTierAtom, selectedRangeAtom } from '../../hud/atoms';
 import { SLOT_LABELS, tierColor } from './constants';
+import { lineageDisplayName } from '../lineage/lineageDisplayName';
 import { ItemIcon } from '../ItemIcon';
 import type { ComparePin } from './useFocus';
 
 interface Props {
   compare: ComparePin;
+  /** A slot holds a lineage (the item equipped is a lineage form) — open its tree. */
+  onOpenLineage?: (slot: EquipmentSlot) => void;
 }
 
-export function EquipmentSlots({ compare }: Props) {
+export function EquipmentSlots({ compare, onOpenLineage }: Props) {
   const equipment = useAtomValue(equipmentAtom);
   const itemUpgrades = useAtomValue(itemUpgradesAtom);
+  const lineages = useAtomValue(lineagesAtom);
   const selectedRange = useAtomValue(selectedRangeAtom);
   const playerTier = useAtomValue(playerTierAtom);
   const playerNodeId = useAtomValue(playerNodeIdAtom);
@@ -33,6 +38,11 @@ export function EquipmentSlots({ compare }: Props) {
             && !coreIsActive(def.coreEligibility, selectedRange);
           const relicLocked = slot === 'relic'
             && !relicIsUnlocked(playerTier, playerNodeId === TEST_ROOM_NODE_ID);
+          // The slot holds the lineage, not the item (design §2): a form's slot
+          // reads as "<Lineage name>" with the worn form's own name underneath,
+          // and tapping it opens the tree instead of pinning a compare card.
+          const lineage = filled ? lineageForRecipeId(defId!) : undefined;
+          const hasTree = !!lineage && !!lineages[lineage.id];
 
           return (
             <button
@@ -45,19 +55,27 @@ export function EquipmentSlots({ compare }: Props) {
                 isPinned ? 'inv-equip-slot--pinned' : '',
                 coreInactive ? 'inv-equip-slot--inactive' : '',
                 relicLocked ? 'inv-equip-slot--inactive' : '',
+                hasTree ? 'inv-equip-slot--lineage' : '',
               ].filter(Boolean).join(' ')}
               style={color ? { borderColor: `${color}88` } : undefined}
               title={relicLocked ? 'Relics unlock at Tier 4' : coreInactive
                 ? `Inactive — ${coreEligibilityLabel(def.coreEligibility).toLowerCase()}`
-                : undefined}
-              aria-label={filled ? `Show what ${def.name} gives you` : `${SLOT_LABELS[slot]} slot empty`}
-              aria-pressed={filled ? isPinned : undefined}
+                : hasTree ? `Open the ${lineageDisplayName(lineage!)} tree`
+                  : undefined}
+              aria-label={filled
+                ? hasTree ? `Open the ${lineageDisplayName(lineage!)} tree` : `Show what ${def.name} gives you`
+                : `${SLOT_LABELS[slot]} slot empty`}
+              aria-pressed={filled && !hasTree ? isPinned : undefined}
               disabled={!filled}
-              onMouseEnter={() => { if (filled && defId) compare.hover(defId); }}
+              onMouseEnter={() => { if (filled && defId && !hasTree) compare.hover(defId); }}
               onMouseLeave={() => compare.hover(null)}
-              onFocus={() => { if (filled && defId) compare.hover(defId); }}
+              onFocus={() => { if (filled && defId && !hasTree) compare.hover(defId); }}
               onBlur={() => compare.hover(null)}
-              onClick={() => { if (filled && defId) compare.togglePin(defId); }}
+              onClick={() => {
+                if (!filled) return;
+                if (hasTree) { onOpenLineage?.(slot); return; }
+                if (defId) compare.togglePin(defId);
+              }}
             >
               <span
                 className="inv-equip-slot__icon"
@@ -70,7 +88,9 @@ export function EquipmentSlots({ compare }: Props) {
                 )}
               </span>
               <span className="inv-equip-slot__footer">
-                <span className="inv-equip-slot__type">{SLOT_LABELS[slot]}</span>
+                <span className="inv-equip-slot__type">
+                  {hasTree ? lineageDisplayName(lineage!) : SLOT_LABELS[slot]}
+                </span>
                 {filled && (
                   <span className="inv-equip-slot__name">
                     {def.name}{plus > 0 ? ` +${plus}` : ''}
