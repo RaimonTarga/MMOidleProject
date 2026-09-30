@@ -77,11 +77,9 @@ function validatePersistent(s: ProgressionCheckpointState): void {
   unique(s.holdsInventory.inventory,'inventory'); unique(skills.unlockedSkills,'skills');
   unique([...p.attunedAbilities.techniques,...p.attunedAbilities.guards],'attuned abilities');
   for (const key of p.bossesCleared) { if(key==='ultimate:void-overlord') continue; /* legacy token in old saves; the encounter was deleted 2026-09-27 */ const [group,raw]=key.split(':');const tier=Number(raw);requireThat(Number.isInteger(tier) && tier<=p.playerTier && bossSealSourcesAtTier(tier).includes(group), `Invalid boss clear ${key}`); }
-  for (const value of Object.values(p.catalystProgress)) requireThat(value<GAME_CONFIG.CATALYST_PROGRESS_PER_UNIT,'Unminted catalyst progress exceeds current threshold');
   for (let tier=1;tier<p.playerTier;tier++) requireThat(sealsRequiredForTier(tier)>0 && sealsHeldAtTier(p.bossesCleared,tier)>=sealsRequiredForTier(tier), `Missing earned tier ${tier} seals`);
   for (const [group,level] of Object.entries(p.biomeLevel)) requireThat(BIOME_DATABASE.has(group) && Number.isInteger(level) && level<=biomeLevelCap(p.playerTier,group), `Invalid mastery ${group}`);
   for (const type of ESSENCE_TYPES) requireThat(Number.isFinite(p.essences[type]) && p.essences[type]>=0, `Missing essence ${type}`);
-  for (const amount of Object.values(p.catalysts)) requireThat(Number.isInteger(amount), 'Fractional catalysts');
   const gates={biomeLevel:p.biomeLevel,bossesCleared:p.bossesCleared};
   for (const id of p.knownAbilities) { const r=[...ABILITY_RECIPE_DATABASE.values()].find(r=>r.abilityId===id); requireThat(r && isAbilityRecipeUnlocked(r,gates), `Unreachable ability ${id}`); }
   for (const id of p.knownStances) { const r=[...STANCE_RECIPE_DATABASE.values()].find(r=>r.stanceId===id); requireThat(r && isStanceRecipeUnlocked(r,gates), `Unreachable stance ${id}`); }

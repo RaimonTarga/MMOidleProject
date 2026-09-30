@@ -29,10 +29,9 @@ export function gameplayBuild(p: PlayerEntity): GameplayBuild {
   };
 }
 function wallet(p: PlayerEntity): Record<string, number> {
-  return Object.fromEntries([
-    ...ESSENCE_TYPES.map(k => [`essence:${k}`, p.tracksProgression.essences[k] ?? 0] as const),
-    ...[...BIOME_DATABASE.keys()].map(k => [`catalyst:${k}`, p.tracksProgression.catalysts[k] ?? 0] as const),
-  ]);
+  return Object.fromEntries(
+    ESSENCE_TYPES.map(k => [`essence:${k}`, p.tracksProgression.essences[k] ?? 0] as const),
+  );
 }
 interface Attempt {
   id: string; bossId: string; bossType: string; nodeId: string; start: number; lastEngaged: number;

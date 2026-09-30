@@ -1,4 +1,4 @@
-import { NODE_BIOMES, NODE_MODIFIERS, modifierRewardMult, MONSTER_DATABASE, RECIPE_DATABASE, biomeLevelCap, biomeXpForBiomeLevel, biomeXpRewardMult, bossClearKey, BIOME_DATABASE, GAME_CONFIG, catalystProgressPerUnit, catalystProgressRewardMult, familyForMonster, CAPSTONE_MATERIALS, SHARD_BASE_PER_KILL, SHARD_TIER_MULT } from '@mmo-idle/shared';
+import { NODE_BIOMES, MONSTER_DATABASE, RECIPE_DATABASE, biomeLevelCap, biomeXpForBiomeLevel, biomeXpRewardMult, bossClearKey, BIOME_DATABASE, GAME_CONFIG, familyForMonster, CAPSTONE_MATERIALS, SHARD_BASE_PER_KILL, SHARD_TIER_MULT } from '@mmo-idle/shared';
 import type { EssenceType } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
@@ -34,31 +34,6 @@ export function rewardPlayer(entity: PlayerEntity, rewards: KillRewards): void {
 }
 
 /**
- * Add per-kill catalyst progress under a combat-family key and mint catalysts
- * whenever progress crosses the threshold (carrying the remainder). No-op when
- * the node has no pace family (excluded node) or the monster grants no weight.
- * Caller marks the slice dirty.
- *
- * The threshold is per BIOME TIER, so a tier can set its own catalyst identity
- * without touching any other tier's.
- */
-function grantCatalystProgress(
-  entity: PlayerEntity,
-  familyKey: string | undefined,
-  weight: number,
-): void {
-  if (!familyKey || weight <= 0) return;
-  const prog = entity.tracksProgression;
-  const per = catalystProgressPerUnit();
-  const total = (prog.catalystProgress[familyKey] ?? 0) + weight;
-  const minted = Math.floor(total / per);
-  prog.catalystProgress[familyKey] = total - minted * per;
-  if (minted > 0) {
-    prog.catalysts[familyKey] = (prog.catalysts[familyKey] ?? 0) + minted;
-  }
-}
-
-/**
  * Lineage shards and boss capstones (progression rework Phase 1b).
  *
  * Deterministic, like every other lineage material: every kill drops a little of
@@ -69,13 +44,15 @@ function grantCatalystProgress(
  * Phase 1 footprint, not a rule: Phase 2 authors the remaining families along
  * with per-node blends, and until then cards only exist at T1 anyway.
  *
- * Runs ALONGSIDE the catalyst accumulator, which Phase 2 deletes.
+ * Was the sibling of a per-kill catalyst accumulator (keyed by the node's
+ * modifier); Phase 2b deleted that wallet outright, so shards are now the
+ * only kill-driven material wallet.
  */
 function grantLineageMaterials(
   world: World,
   recipient: PlayerEntity,
   monster: MonsterEntity,
-  params: { biomeTier: number; biomeGroup: string | undefined; rewardMult: number; debugMult: number },
+  params: { biomeTier: number; biomeGroup: string | undefined; debugMult: number },
 ): void {
   const prog = recipient.tracksProgression;
   let touched = false;
@@ -87,7 +64,7 @@ function grantLineageMaterials(
     const amount = Math.max(
       1,
       Math.round(
-        SHARD_BASE_PER_KILL * (SHARD_TIER_MULT[params.biomeTier] ?? 1) * params.rewardMult * params.debugMult,
+        SHARD_BASE_PER_KILL * (SHARD_TIER_MULT[params.biomeTier] ?? 1) * params.debugMult,
       ),
     );
     prog.shards[family.drops] = (prog.shards[family.drops] ?? 0) + amount;
@@ -226,19 +203,13 @@ function applyKillRewardsToPlayer(
   const biomeInfo = NODE_BIOMES[nodeId];
   const biomeTier = biomeInfo?.biomeTier ?? 1;
   const essenceMult = GAME_CONFIG.BIOME_ESSENCE_TIER_MULT[biomeTier] ?? 1;
-  // Node modifiers are net difficulty increases, so they pay a matching premium on
-  // everything the kill is worth: essence, biome XP and catalyst progress alike.
-  // Bosses are modifier-immune for STATS, but the node's reward identity still
-  // applies to them (as it always has for the catalyst bundle below).
-  const nodeModifier = NODE_MODIFIERS[nodeId]?.modifier;
-  const rewardMult = modifierRewardMult(nodeModifier, biomeTier);
   // Dev-only flat scalar on top of the real reward maths, so a playtest can reach
   // late content without farming it. 1x in production and by default, which makes
   // every line below identical to the shipped formula.
   const debugMult = world.rewardMultiplier;
   const scaledEssence = Math.max(
     1,
-    Math.round(rewards.essence * essenceMult * rewardMult * debugMult),
+    Math.round(rewards.essence * essenceMult * debugMult),
   );
   rewardPlayer(recipient, { ...rewards, essence: scaledEssence });
   world.pushEvent(nodeId, {
@@ -246,38 +217,16 @@ function applyKillRewardsToPlayer(
     targetId: monster.isMonster.id, pos: { ...monster.hasPosition.current },
     amount: scaledEssence, essenceType: rewards.essenceType,
   });
-  // Catalyst progress is keyed by the NODE'S modifier (not its biome): every kill in
-  // an Alacrity node grants Alacrity Catalyst regardless of biome. The weight
-  // defaults to the monster's base essence reward (a tuned per-mob toughness
-  // number) unless it sets an explicit `catalystWeight`. No modifier
-  // (clearing / test room / throne) → no grant.
-  // The dev multiplier scales the complete kill payout. This keeps accelerated
-  // playtests from becoming catalyst-bound after essence and mastery have already
-  // advanced. Round the ordinary scaled kill-weight first, then apply T1's
-  // half-rate exactly; the HUD hides any resulting half-point without changing
-  // the authoritative accumulator.
-  const catalystWeight =
-    Math.round((def?.rewards.catalystWeight ?? rewards.essence) * rewardMult * debugMult) *
-    catalystProgressRewardMult(biomeTier);
-  if (catalystWeight > 0 && nodeModifier) {
-    grantCatalystProgress(
-      recipient,
-      nodeModifier,
-      catalystWeight,
-    );
-    markSliceDirty(world, recipient, 'tracksProgression');
-  }
   grantLineageMaterials(world, recipient, monster, {
     biomeTier,
     biomeGroup: biomeInfo?.biomeGroup,
-    rewardMult,
     debugMult,
   });
   const biomeResult = applyBiomeXP(
     world,
     recipient,
     nodeId,
-    Math.max(1, Math.round((rewards.biomeXp ?? 1) * rewardMult * debugMult)),
+    Math.max(1, Math.round((rewards.biomeXp ?? 1) * debugMult)),
   );
   const questResult = registerKillForQuests(recipient, monster.isMonster.monsterTypeId);
   if (monster.isMonster.isBoss) {
@@ -343,8 +292,8 @@ export function grantMonsterRewards(
 ): KillRewardInfo | null {
   const killer = world.getPlayerEntity(killerPlayerId);
   if (!killer) return null;
-  // A necromancer's risen dead are worth NOTHING: no essence, biome XP, catalyst
-  // progress, quest credit or party share. This single gate covers every kill
+  // A necromancer's risen dead are worth NOTHING: no essence, biome XP, lineage
+  // materials, quest credit or party share. This single gate covers every kill
   // path because they all funnel through here, and it is why the raise loop can
   // never be farmed — killing the raiser is the only way to stop the tide.
   if (monster.isRaised) return null;

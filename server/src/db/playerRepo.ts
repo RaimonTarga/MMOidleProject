@@ -6,6 +6,7 @@ import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import type {
   AdminCharacterRecord,
   CharacterSummary,
+  EssenceType,
   HasHealth,
   HasPosition,
   HoldsInventory,
@@ -28,7 +29,6 @@ import {
   globalMastery,
   runeIdsFromCraftedRecipes,
   validRiteIds,
-  NODE_MODIFIER_FAMILIES,
   PACKET_IDS,
   CAPSTONE_MATERIALS,
   normalizeLineageProgressMap,
@@ -41,6 +41,8 @@ import {
 import type { PlayerEntity } from '../ecs/entity';
 import { accounts, characters, sessions } from './schema';
 import type * as schema from './schema';
+import { weaponUpgradeRefundFor } from './weaponUpgradeRefund';
+import { log } from '../log';
 
 export type DB = NodePgDatabase<typeof schema>;
 
@@ -446,22 +448,41 @@ export async function listCharacters(db: DB): Promise<AdminCharacterRecord[]> {
 type CharacterRow = typeof characters.$inferSelect;
 
 /**
- * Keep only current modifier keys in a catalyst wallet.
+ * Progression rework Phase 2b: the weapon +N ladder is gone (the lineage tree
+ * owns weapon progression), so a save written before this phase can still hold
+ * `itemUpgrades` entries for weapon-slot items that are now unspendable data.
+ * Refund the essence those levels cost (see `weaponUpgradeRefund.ts` for the
+ * frozen authored-cost table) and drop the entry. Non-weapon `itemUpgrades`
+ * entries are untouched — armor/recovery/mobility keep their ladder.
  *
- * This is also the migration path when the modifier set changes: catalysts saved
- * under a retired key (the old blight / volatility / predation families) are simply
- * dropped on load rather than converted, since no recipe consumes them any more.
+ * Idempotent and self-healing like every other hydration transform in this
+ * file: a save with no weapon `itemUpgrades` entries left (the common case
+ * after the first load post-migration) does nothing.
  */
-function sanitizeFamilyWallet(
-  wallet: Record<string, number> | undefined,
-): Record<string, number> {
-  const out: Record<string, number> = {};
-  if (!wallet) return out;
-  for (const family of NODE_MODIFIER_FAMILIES) {
-    const value = wallet[family];
-    if (typeof value === 'number') out[family] = value;
+export function refundWeaponUpgradeEssence(
+  characterId: string,
+  inv: HoldsInventory,
+  essences: Record<EssenceType, number>,
+): void {
+  const refundTotal: Partial<Record<EssenceType, number>> = {};
+  const refundedItems: string[] = [];
+  for (const [itemId, plus] of Object.entries(inv.itemUpgrades)) {
+    if (!plus || plus <= 0) continue;
+    if (ITEM_DATABASE.get(itemId)?.slot !== 'weapon') continue;
+    const refund = weaponUpgradeRefundFor(itemId, plus);
+    for (const [type, amount] of Object.entries(refund) as [EssenceType, number][]) {
+      essences[type] = (essences[type] ?? 0) + (amount ?? 0);
+      refundTotal[type] = (refundTotal[type] ?? 0) + (amount ?? 0);
+    }
+    refundedItems.push(`${itemId}+${plus}`);
+    delete inv.itemUpgrades[itemId];
   }
-  return out;
+  if (refundedItems.length > 0) {
+    log.info(
+      { characterId, refundedItems, refundTotal },
+      'progression rework: refunded weapon upgrade essence',
+    );
+  }
 }
 
 /**
@@ -579,6 +600,17 @@ function hydratePlayerSlices(row: CharacterRow): PersistedPlayerSlices {
   migrateLegacyItems(holdsInventory);
   pruneUnknownItems(holdsInventory);
   const tracksProgression = parseSlice<TracksProgression>(row.tracksProgression);
+  tracksProgression.essences = tracksProgression.essences ?? { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 };
+  // The catalyst wallet is gone (progression rework Phase 2b). Migration 0009
+  // already strips both keys from every stored row, but hydration self-heals
+  // too, the same way pruneUnknownItems does, in case a row predates that
+  // migration or a dev reset bypassed it.
+  delete (tracksProgression as { catalysts?: unknown }).catalysts;
+  delete (tracksProgression as { catalystProgress?: unknown }).catalystProgress;
+  // Progression rework Phase 2b: refund and drop any weapon-slot itemUpgrades
+  // entry the old +N ladder left behind. Mutates holdsInventory.itemUpgrades and
+  // tracksProgression.essences in place; see weaponUpgradeRefund.ts.
+  refundWeaponUpgradeEssence(row.id, holdsInventory, tracksProgression.essences);
   tracksProgression.unlockedRecipes = migrateLegacyRecipeIds(tracksProgression.unlockedRecipes);
   const hasPosition = parseSlice<HasPosition>(row.hasPosition);
   if (!WORLD_NODES.has(hasPosition.nodeId)) {
@@ -600,11 +632,6 @@ function hydratePlayerSlices(row: CharacterRow): PersistedPlayerSlices {
     hasHealth:         parseSlice<HasHealth>(row.hasHealth),
     tracksProgression: {
       ...tracksProgression,
-      // Catalyst wallets are keyed by combat family (Map Variety Stage A). Filter
-      // to known family keys on load so any stray biome-keyed balance from before
-      // the re-key migration can never resurface.
-      catalysts:        sanitizeFamilyWallet(tracksProgression.catalysts),
-      catalystProgress: sanitizeFamilyWallet(tracksProgression.catalystProgress),
       // Lineage wallets (Phase 1). Keyed by packet and by biome respectively, and
       // absent from every save written before the progression rework.
       shards:     sanitizeShardWallet(tracksProgression.shards),
@@ -689,8 +716,6 @@ function buildFreshSlices(
       level:            0,
       skillPoints:      0,
       essences:         { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      catalysts:        {},
-      catalystProgress: {},
       shards:           {},
       capstones:        {},
       biomeXP:          {},

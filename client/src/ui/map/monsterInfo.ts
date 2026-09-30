@@ -1,13 +1,9 @@
 import {
-  modifiedDamageReduction,
-  modifiedDotDamagePerStack,
-  modifierStatScalars,
   describeMonsterAbility,
   monsterIsRanged,
   monsterKites,
   resolveMonsterDotDebuff,
   type MonsterDefinition,
-  type NodeModifierFamily,
 } from '@mmo-idle/shared';
 
 // Readable presentation of a monster's combat profile for the map info panel:
@@ -35,38 +31,19 @@ interface EffectiveMonsterStats {
 }
 
 /**
- * A monster's stats as the node's modifier actually spawns it. Mirrors the server's
- * `createMonster` reshaping so the panel never shows the authored base when the
- * player is looking at a modified node.
+ * A monster's stats as it actually spawns. Node modifiers no longer reshape
+ * monster stats (progression rework Phase 2b) — T2-T4 nodes still carry a
+ * modifier for node count/display-name identity, but it has no combat effect,
+ * so this is simply the authored base.
  */
-function effectiveMonsterStats(
-  def: MonsterDefinition,
-  modifier: NodeModifierFamily | undefined,
-  biomeTier: number,
-): EffectiveMonsterStats {
-  const base = {
+function effectiveMonsterStats(def: MonsterDefinition): EffectiveMonsterStats {
+  return {
     hp: def.stats.hp,
     attack: def.stats.attack,
     attackCooldown: def.stats.attackCooldown,
     speed: def.stats.speed,
     plating: def.stats.plating,
     damageReduction: def.stats.damageReduction,
-  };
-  if (!modifier) return base;
-  const scalars = modifierStatScalars(modifier, biomeTier);
-  return {
-    hp: Math.max(1, Math.round(base.hp * scalars.hpMult)),
-    attack: Math.max(1, Math.round(base.attack * scalars.attackMult)),
-    attackCooldown: Math.max(
-      1,
-      Math.round(base.attackCooldown * scalars.attackCooldownMult),
-    ),
-    speed: base.speed * scalars.moveSpeedMult,
-    plating: Math.round(base.plating * scalars.platingMult),
-    damageReduction: modifiedDamageReduction(
-      base.damageReduction,
-      scalars.incomingDamageMult,
-    ),
   };
 }
 
@@ -90,18 +67,14 @@ function changedCell(
 }
 
 /** Full stat grid for the expanded monster view (APS derived from cooldown). */
-export function monsterStatRows(
-  def: MonsterDefinition,
-  modifier?: NodeModifierFamily,
-  biomeTier = 0,
-): StatCell[] {
+export function monsterStatRows(def: MonsterDefinition): StatCell[] {
   const s = def.stats;
-  const effective = effectiveMonsterStats(def, modifier, biomeTier);
+  const effective = effectiveMonsterStats(def);
   const baseAps = s.attackCooldown > 0 ? 1000 / s.attackCooldown : 0;
   const effectiveAps =
     effective.attackCooldown > 0 ? 1000 / effective.attackCooldown : 0;
-  // HP, plating and DR are now modifier-reshapable too (Dominion and Fortified), so
-  // every one of them reports its base alongside the spawned value.
+  // Every row still reports base-vs-effective via changedCell for shape parity,
+  // though nothing reshapes a monster any more, so base === effective always.
   const rows: StatCell[] = [
     changedCell('HP', s.hp, effective.hp),
     changedCell('ATK', s.attack, effective.attack),
@@ -115,26 +88,16 @@ export function monsterStatRows(
   return rows;
 }
 
-export function monsterQuickStats(
-  def: MonsterDefinition,
-  modifier?: NodeModifierFamily,
-  biomeTier = 0,
-): {
+export function monsterQuickStats(def: MonsterDefinition): {
   hp: string;
   attack: string;
   hpDirection?: 'up' | 'down';
   attackDirection?: 'up' | 'down';
 } {
-  const effective = effectiveMonsterStats(def, modifier, biomeTier);
+  const effective = effectiveMonsterStats(def);
   return {
     hp: compact(effective.hp),
     attack: compact(effective.attack),
-    ...(effective.hp === def.stats.hp
-      ? {}
-      : { hpDirection: effective.hp > def.stats.hp ? 'up' : 'down' }),
-    ...(effective.attack === def.stats.attack
-      ? {}
-      : { attackDirection: effective.attack > def.stats.attack ? 'up' : 'down' }),
   };
 }
 
@@ -179,30 +142,11 @@ function summarizeBossScript(def: MonsterDefinition): string | null {
 }
 
 /** Full plain-English mechanics breakdown for the expanded monster view. */
-export function formatMonsterMechanics(
-  def: MonsterDefinition,
-  modifier?: NodeModifierFamily,
-  biomeTier = 0,
-): string[] {
+export function formatMonsterMechanics(def: MonsterDefinition): string[] {
   const lines: string[] = [];
-  // Node modifiers no longer ADD mechanics — they are pure stat and population
-  // scalars, so the list below is the monster's authored kit. The one magnitude a
-  // modifier does move here is DoT damage, which rides `attackMult` alongside direct
-  // damage; showing the base number would understate a Heavy or Dominion node.
-  const effectiveDef: MonsterDefinition =
-    def.dotEffect && modifier
-      ? {
-          ...def,
-          dotEffect: {
-            ...def.dotEffect,
-            damagePerStack: modifiedDotDamagePerStack(
-              def.dotEffect.damagePerStack,
-              modifier,
-              biomeTier,
-            ),
-          },
-        }
-      : def;
+  // Node modifiers have no combat effect any more (progression rework Phase 2b),
+  // so this is simply the monster's authored kit.
+  const effectiveDef: MonsterDefinition = def;
 
   lines.push(monsterKites(effectiveDef)
     ? `Kiter — attacks from range (${effectiveDef.attackStyle} style)`

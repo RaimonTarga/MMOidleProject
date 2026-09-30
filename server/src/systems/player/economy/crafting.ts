@@ -4,7 +4,6 @@ import {
   ESSENCE_LABELS,
   RECIPE_DATABASE,
   TEST_ROOM_NODE_ID,
-  catalystLabel,
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
 import type { PlayerEntity } from "../../../ecs/entity";
@@ -36,9 +35,6 @@ export function craftRecipe(
     for (const type of ESSENCE_TYPES) {
       entity.tracksProgression.essences[type] = TEST_ROOM_ESSENCE_AMOUNT;
     }
-    for (const group of Object.keys(recipe.catalystCost ?? {})) {
-      entity.tracksProgression.catalysts[group] = TEST_ROOM_ESSENCE_AMOUNT;
-    }
     markSliceDirty(world, entity, "tracksProgression");
   } else {
     if (recipe.requiredBossClear &&
@@ -69,23 +65,8 @@ export function craftRecipe(
     }
   }
 
-  const catalystEntries = Object.entries(recipe.catalystCost ?? {}) as [string, number][];
-  for (const [group, amount] of catalystEntries) {
-    const held = entity.tracksProgression.catalysts[group] ?? 0;
-    if (held < amount) {
-      return {
-        success: false,
-        reason: `Not enough ${catalystLabel(group)}. Need ${amount}, have ${held}.`,
-      };
-    }
-  }
-
   for (const [type, amount] of costEntries) {
     entity.tracksProgression.essences[type] -= amount;
-  }
-  for (const [group, amount] of catalystEntries) {
-    entity.tracksProgression.catalysts[group] =
-      (entity.tracksProgression.catalysts[group] ?? 0) - amount;
   }
 
   entity.holdsInventory.inventory = [

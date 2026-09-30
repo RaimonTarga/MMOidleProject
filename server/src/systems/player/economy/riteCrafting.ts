@@ -3,7 +3,7 @@ import { runicLoadoutFromProgression, runicPointEditAllowed } from "@mmo-idle/sh
  * Rite crafting + loadout (system rework Step 11).
  *
  * Crafting a rite recipe LEARNS the rite (adds it to `TracksProgression.knownRites`),
- * spending essence + catalysts and gating on Biome Mastery (T3 band) — mirroring rune /
+ * spending essence and gating on Biome Mastery (T3 band) — mirroring rune /
  * ability / stance crafting. Equipping is free slotting of learned rites into the
  * shared-RP-constrained Rite list. Rites are passive combat-boundary rules.
  */
@@ -14,7 +14,6 @@ import {
   ESSENCE_TYPES,
   ESSENCE_LABELS,
   TEST_ROOM_NODE_ID,
-  catalystLabel,
   globalMastery,
   isRiteRecipeUnlocked,
   runeBudgetForGlobalMastery,
@@ -50,9 +49,6 @@ export function craftRiteRecipe(
   const isTestRoom = entity.hasPosition.nodeId === TEST_ROOM_NODE_ID;
   if (isTestRoom) {
     for (const type of ESSENCE_TYPES) prog.essences[type] = TEST_ROOM_ESSENCE_AMOUNT;
-    for (const group of Object.keys(recipe.catalystCost ?? {})) {
-      prog.catalysts[group] = TEST_ROOM_ESSENCE_AMOUNT;
-    }
     markSliceDirty(world, entity, "tracksProgression");
   } else if (
     !isRiteRecipeUnlocked(recipe, {
@@ -78,22 +74,7 @@ export function craftRiteRecipe(
     }
   }
 
-  const catalystEntries = Object.entries(recipe.catalystCost ?? {}) as [string, number][];
-  for (const [group, amount] of catalystEntries) {
-    const held = prog.catalysts[group] ?? 0;
-    if (held < amount) {
-      return {
-        recipeId,
-        success: false,
-        reason: `Not enough ${catalystLabel(group)}. Need ${amount}, have ${held}.`,
-      };
-    }
-  }
-
   for (const [type, amount] of costEntries) prog.essences[type] -= amount;
-  for (const [group, amount] of catalystEntries) {
-    prog.catalysts[group] = (prog.catalysts[group] ?? 0) - amount;
-  }
 
   prog.knownRites = [...known, recipe.riteId];
   markSliceDirty(world, entity, "tracksProgression");
