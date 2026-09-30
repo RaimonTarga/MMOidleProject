@@ -86,7 +86,7 @@ function resetFarmedBiome(
  * the region's sanctuary and the run would otherwise silently continue somewhere
  * with nothing to kill.
  */
-function reviveInFarmNode(
+export function reviveInFarmNode(
   world: World,
   bot: PlayerEntity,
   nodeId: string,
@@ -102,6 +102,11 @@ function reviveInFarmNode(
   }
   bot.hasPosition.current = { ...BOT_SPAWN };
   bot.hasHealth.hp = bot.hasHealth.maxHp;
+  // Death cancels auto-combat on the live server (the player must press AUTO
+  // again after acknowledging the death). A bench bot has no one to press it,
+  // so without this every run went idle for good after its first death and
+  // measured an empty node from then on. Found 2026-09-30 by the Phase 0 bench.
+  Object.assign(bot.usesAutocombat, { auto: true, autoTraverse: false });
 }
 
 export interface FarmRunOptions {

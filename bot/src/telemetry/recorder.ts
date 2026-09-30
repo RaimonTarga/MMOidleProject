@@ -12,6 +12,7 @@ import type {
   WalletSnapshotReason,
 } from "./events";
 import type { TelemetrySink } from "./sink";
+import { FightHpTracker } from "./fightHp";
 
 /** A Conduit fight ends this long after the last engagement signal. */
 const FORMATION_FIGHT_GRACE_MS = 2_000;
@@ -299,6 +300,12 @@ export class Recorder {
    * `FORMATION_FIGHT_GRACE_MS` with neither, so target switches don't split it.
    */
   formationAttrition = { pulls: 0, aliveAtPullSum: 0, fullAtPull: 0, summonDeaths: 0 };
+  /**
+   * Per-fight HP (progression rework Phase 0): fight-end HP fraction and time
+   * spent in the 20–80% band, per fight. Sampled on the recorder cadence from
+   * the same engagement predicate that feeds `fightMs`.
+   */
+  readonly fightHp = new FightHpTracker();
   private formationFightUntilMs = 0;
   private formationNodeId = "";
   private livingSummonIds = new Set<string>();
@@ -546,11 +553,20 @@ export class Recorder {
     else if (this.activity === "travel") stats.travelMs += dt;
     else if (this.activity === "blocked") stats.blockedMs += dt;
     else if (this.activity === "lease-wait") this.leaseWaitMs += dt;
-    if (!dead && (attackers > 0 || (self?.attackTargetId ?? null) !== null)) {
+    const engaged = !dead && (attackers > 0 || (self?.attackTargetId ?? null) !== null);
+    if (engaged) {
       stats.fightMs += dt;
     }
 
     if (!self) return;
+
+    this.fightHp.sample(this.now(), dt, {
+      engaged,
+      dead,
+      hpFraction: self.maxHp > 0 ? self.hp / self.maxHp : 0,
+      biomeGroup: this.context(nodeId).biomeGroup ?? "unknown",
+      nodeId,
+    });
 
     // Target switching — the Apprentice question, made directly observable.
     if (self.attackTargetId !== this.lastTargetId) {

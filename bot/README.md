@@ -76,6 +76,14 @@ eight-hour run would otherwise produce a JSONL file nothing can open. The raw
 hits still exist where they matter, inside each death window. Set
 `BOT_RAW_DAMAGE=1` to stream every hit for a deep dive.
 
+`summary.json → combat.fights` is the per-fight HP digest (progression rework
+Phase 0): fight count, median fight-end HP fraction, share of fight time with HP
+in the 20–80% band, deaths, end-HP buckets, and the same per biome. A fight is
+contiguous engagement (target held or attacked), closed after 3 s without
+either, on death, or on a node change; sub-second brushes are counted apart.
+The definition lives in `src/telemetry/fightHp.ts` and is shared with the
+in-process bench `server/bench/phase0Recovery.ts`.
+
 ## Dashboard
 
 `--ui` serves a read-only page on `localhost:4500` (loopback only) showing, per

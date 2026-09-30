@@ -13,6 +13,7 @@ import type { LeaseSessionEvidence } from "../concurrency/routeLeaseSession";
 import type { Recorder } from "./recorder";
 import type { T1SnapshotManifest } from "./t1Snapshots";
 import type { ConcurrencyInterval } from "../concurrency/cohortEvidenceMonitor";
+import { summarizeFights, type FightHpSummary } from "./fightHp";
 
 export type IsolationGrade =
   | "isolated"
@@ -106,6 +107,8 @@ export interface RunSummary {
       threePlus: number;
       unengaged: number;
     };
+    /** Per-fight HP: the progression rework Phase 0 metric. */
+    fights: FightHpSummary;
   };
   deaths: {
     total: number;
@@ -616,6 +619,9 @@ export function buildSummary(params: {
         two: recorder.concurrencyBuckets.two,
         threePlus: recorder.concurrencyBuckets.threePlus,
       },
+      // `snapshot()` folds the still-open fight in without mutating, so a live
+      // dashboard summary and the final one read the same tracker.
+      fights: summarizeFights(recorder.fightHp.snapshot()),
     },
     deaths: {
       total: recorder.deathCount,

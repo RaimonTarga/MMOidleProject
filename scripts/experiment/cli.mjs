@@ -337,6 +337,11 @@ function reportExperiment() {
         if (elapsedUs > 0) maxCpuPct = Math.max(maxCpuPct, (sample.cpuUsageUsec - samples[index - 1].cpuUsageUsec) / elapsedUs * 100);
       }
     }
+    // Per-fight HP (progression rework Phase 0) is a column here, not a script:
+    // median fight-end HP and share of fight time in the 20–80% band.
+    const fights = runState.summaryPath && existsSync(runState.summaryPath)
+      ? readJson(runState.summaryPath)?.combat?.fights ?? null
+      : null;
     return {
       runKey: runState.runKey,
       routeId: runState.routeId,
@@ -349,6 +354,11 @@ function reportExperiment() {
       maxContainerCpuPct: Math.round(maxCpuPct * 10) / 10,
       maxEventLoopP99Ms: Math.round(maxEventLoopP99Ms * 10) / 10,
       resourceSamples: samples.length,
+      fights: fights?.fights ?? null,
+      fightDeaths: fights?.deaths ?? null,
+      medianFightEndHp: fights?.medianEndHpFraction ?? null,
+      fightTimeInBandShare: fights?.timeInBandShare ?? null,
+      fightsByBiome: fights?.byBiome ?? null,
     };
   });
   const report = {
@@ -369,6 +379,9 @@ function reportExperiment() {
     memoryMiB: item.maxMemoryMiB,
     cpuPct: item.maxContainerCpuPct,
     eventLoopP99Ms: item.maxEventLoopP99Ms,
+    fights: item.fights,
+    medianFightEndHp: item.medianFightEndHp,
+    fightTimeInBand: item.fightTimeInBandShare,
   })));
   console.log(`[experiment] report ${reportPath}`);
   console.log(`[experiment] existing bot reports can read recursively under ${join(experiment.dir, "runs")}`);

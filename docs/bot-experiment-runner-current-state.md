@@ -1,6 +1,6 @@
 # Frozen Bot Experiment Runner — Current State
 
-Last updated: 2026-09-05.
+Last updated: 2026-09-30.
 
 ## Purpose
 
@@ -63,7 +63,12 @@ ID, frozen options, inputs, and whether the invoking checkout was dirty.
 worker heartbeat, resource samples, terminal result, and the existing bot
 telemetry tree. `cohort-summary.json` adds peak worker memory, approximate
 container CPU, and server event-loop p99 observations without replacing the
-existing T1/T2 report commands.
+existing T1/T2 report commands. Since 2026-09-30 each run row also carries the
+per-fight HP columns read from that run's `summary.json → combat.fights`
+(`fights`, `fightDeaths`, `medianFightEndHp`, `fightTimeInBandShare`, and
+`fightsByBiome`), and `experiment:report` prints the first three in its table.
+This is the progression rework Phase 0 metric; the definition is in
+`bot/src/telemetry/fightHp.ts`.
 
 `experiment:clean` removes only containers, network, and PostgreSQL volume
 labeled/named for that exact experiment. It deliberately retains artifacts and
