@@ -1,10 +1,12 @@
-import type { EssenceType } from '@mmo-idle/shared';
-import { ESSENCE_TYPES, NODE_MODIFIER_FAMILIES } from '@mmo-idle/shared';
+import type { EssenceType, PacketId } from '@mmo-idle/shared';
+import { ESSENCE_TYPES, NODE_MODIFIER_FAMILIES, PACKET_IDS } from '@mmo-idle/shared';
 import {
+  capstoneMaterial,
   catalystMaterial,
   essenceMaterial,
   MaterialChip,
   materialKey,
+  shardMaterial,
 } from '../MaterialChip';
 
 /** True when the player holds enough of every catalyst the cost requires. */
@@ -21,16 +23,23 @@ interface WalletSummaryProps {
   essences: Record<EssenceType, number>;
   /** Catalyst wallet keyed by node modifier. */
   catalysts?: Record<string, number>;
+  /** Lineage shard wallet, keyed by packet (progression rework Phase 1). */
+  shards?: Partial<Record<PacketId, number>>;
+  /** Boss capstone wallet, keyed by biome. */
+  capstones?: Record<string, number>;
 }
 
 /**
- * The player's spendable balance. Both wallets appear together because a recipe
- * can charge either, so judging affordability from one of them is misleading.
- * Catalyst families the player has never held are omitted rather than shown as
- * zero — they arrive with the biomes that grant them.
+ * The player's spendable balance. Every wallet appears together because a
+ * recipe or a lineage card can charge any of them, so judging affordability
+ * from one alone is misleading. Catalyst families, shards and capstones the
+ * player has never held are omitted rather than shown as zero — they arrive
+ * with the biomes/lanes that grant them.
  */
-export function WalletSummary({ essences, catalysts }: WalletSummaryProps) {
+export function WalletSummary({ essences, catalysts, shards, capstones }: WalletSummaryProps) {
   const ownedFamilies = NODE_MODIFIER_FAMILIES.filter((family) => (catalysts?.[family] ?? 0) > 0);
+  const ownedShards = PACKET_IDS.filter((packet) => (shards?.[packet] ?? 0) > 0);
+  const ownedCapstones = Object.entries(capstones ?? {}).filter(([, amount]) => (amount ?? 0) > 0);
 
   return (
     <div className="craft-wallet material-chip-strip">
@@ -47,6 +56,24 @@ export function WalletSummary({ essences, catalysts }: WalletSummaryProps) {
           key={family}
           material={catalystMaterial(family)}
           held={catalysts?.[family] ?? 0}
+          size={18}
+        />
+      ))}
+      {ownedShards.length > 0 && <span className="craft-wallet__split" aria-hidden="true" />}
+      {ownedShards.map((packet) => (
+        <MaterialChip
+          key={packet}
+          material={shardMaterial(packet)}
+          held={shards?.[packet] ?? 0}
+          size={18}
+        />
+      ))}
+      {ownedCapstones.length > 0 && <span className="craft-wallet__split" aria-hidden="true" />}
+      {ownedCapstones.map(([biome, amount]) => (
+        <MaterialChip
+          key={biome}
+          material={capstoneMaterial(biome)}
+          held={amount}
           size={18}
         />
       ))}

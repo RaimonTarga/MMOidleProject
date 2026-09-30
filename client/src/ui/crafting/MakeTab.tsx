@@ -22,6 +22,7 @@ import {
 import { hudBus } from '../../hudBus';
 import { tutorialFocusAtom } from '../../tutorial/atoms';
 import {
+  capstonesAtom,
   catalystsAtom,
   essencesAtom,
   inventoryAtom,
@@ -31,7 +32,7 @@ import {
   playerNodeIdAtom,
   combatArchetypeAtom,
   passivesAtom, playerTierAtom, activeStanceAtom, equippedRitesAtom, hpAtom, maxHpAtom,
-  selectedSubVariantAtom, selectedRangeAtom, unlockedSkillsAtom,
+  selectedSubVariantAtom, selectedRangeAtom, shardsAtom, unlockedSkillsAtom,
 } from '../../hud/atoms';
 import { BrowserPane, CategoryRail, RailLayout } from '../../hud/primitives';
 import { SLOT_ABBR, biomeName, tierColor } from './common';
@@ -326,6 +327,8 @@ export function MakeTab() {
   const nodeId = useAtomValue(playerNodeIdAtom);
   const essences = useAtomValue(essencesAtom);
   const catalysts = useAtomValue(catalystsAtom);
+  const shards = useAtomValue(shardsAtom);
+  const capstones = useAtomValue(capstonesAtom);
   const inventory = useAtomValue(inventoryAtom);
   const itemUpgrades = useAtomValue(itemUpgradesAtom);
   const equipment = useAtomValue(equipmentAtom);
@@ -524,7 +527,7 @@ export function MakeTab() {
           ? <CraftReveal key={craftResult.id} result={craftResult} />
           : <CraftStamp key={craftResult.id} result={craftResult} />
       )}
-      <WalletSummary essences={essences} catalysts={catalysts} />
+      <WalletSummary essences={essences} catalysts={catalysts} shards={shards} capstones={capstones} />
       <RailLayout>
       {rail}
       <BrowserPane
@@ -693,7 +696,11 @@ function MakeDetail({
   const maxHp = useAtomValue(maxHpAtom);
   const affordable = entryAffordable(entry, essences, catalysts);
   const recipe = entry.gear;
-  const evolved = recipe ? isEvolvedRecipe(recipe) : false;
+  // Weapon tier-2+ forms are the lineage tree's gate now (LineageTreePanel, open
+  // from the weapon slot) — the old evolve/reconstruct path stays live only for
+  // slots whose trees have not shipped yet (progression rework plan Phase 4).
+  const isWeaponLineageForm = !!recipe && recipe.slot === 'weapon' && isEvolvedRecipe(recipe);
+  const evolved = recipe ? isEvolvedRecipe(recipe) && !isWeaponLineageForm : false;
   const evolveCheck = recipe && evolved
     ? checkEvolve({ recipe, inventory, equipment, itemUpgrades, essences, catalysts, isTestRoom })
     : null;
@@ -819,13 +826,17 @@ function MakeDetail({
           something the player already owns, not a fresh craft. */}
       {plan && <EvolutionPreview plan={plan} />}
 
-      <div className="make-detail__cost-label">{plan ? 'Evolution cost' : 'Cost'}</div>
-      <CostDisplay
-        cost={entry.cost}
-        essences={essences}
-        catalystCost={entry.catalystCost}
-        catalysts={catalysts}
-      />
+      {!isWeaponLineageForm && (
+        <>
+          <div className="make-detail__cost-label">{plan ? 'Evolution cost' : 'Cost'}</div>
+          <CostDisplay
+            cost={entry.cost}
+            essences={essences}
+            catalystCost={entry.catalystCost}
+            catalysts={catalysts}
+          />
+        </>
+      )}
 
       {result && !result.success && (
         <div className="craft-card-result craft-card-result--err">
@@ -836,50 +847,61 @@ function MakeDetail({
         </div>
       )}
 
-      <div className="make-detail__actions">
-        {evolved && recipe ? (
-          <>
-            <button
-              type="button"
-              className="craft-recipe__btn"
-              disabled={evolveBlocked !== ''}
-              title={evolveBlocked}
-              onClick={() => onAttempt(() => hudBus.requestEvolveItem(recipe.id, 'evolve'))}
-            >
-              Evolve
-            </button>
-            {evolveBlocked && <span className="make-detail__blocked">{evolveBlocked}</span>}
-          </>
-        ) : (
-          <>
-            <button
-              type="button"
-              className="craft-recipe__btn"
-              disabled={blocked !== ''}
-              title={blocked}
-              data-tutorial-anchor={TUTORIAL_ANCHORS.makeAction}
-              onClick={() => onAttempt(() => {
-                if (recipe) hudBus.requestCraftRecipe(recipe.id);
-                else learnIntent();
-              })}
-            >
-              {recipe ? 'Craft' : 'Learn'}
-            </button>
-            {blocked && <span className="make-detail__blocked">{blocked}</span>}
-          </>
-        )}
-      </div>
+      {isWeaponLineageForm ? (
+        // Tier-2+ weapon forms are bought at the previous band's gate, in the
+        // lineage tree — not crafted or evolved here (design §5).
+        <div className="make-detail__lineage-note">
+          Tier {recipe!.tier}+ weapon forms are unlocked from the weapon's lineage
+          tree. Open it from the weapon slot in your Equipment panel.
+        </div>
+      ) : (
+        <>
+          <div className="make-detail__actions">
+            {evolved && recipe ? (
+              <>
+                <button
+                  type="button"
+                  className="craft-recipe__btn"
+                  disabled={evolveBlocked !== ''}
+                  title={evolveBlocked}
+                  onClick={() => onAttempt(() => hudBus.requestEvolveItem(recipe.id, 'evolve'))}
+                >
+                  Evolve
+                </button>
+                {evolveBlocked && <span className="make-detail__blocked">{evolveBlocked}</span>}
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className="craft-recipe__btn"
+                  disabled={blocked !== ''}
+                  title={blocked}
+                  data-tutorial-anchor={TUTORIAL_ANCHORS.makeAction}
+                  onClick={() => onAttempt(() => {
+                    if (recipe) hudBus.requestCraftRecipe(recipe.id);
+                    else learnIntent();
+                  })}
+                >
+                  {recipe ? 'Craft' : 'Learn'}
+                </button>
+                {blocked && <span className="make-detail__blocked">{blocked}</span>}
+              </>
+            )}
+          </div>
 
-      {/* The escape hatch for a lineage the player never started, deliberately
-          below the action it is an alternative to. */}
-      {evolved && recipe && (
-        <ReconstructOption
-          recipe={recipe}
-          essences={essences}
-          catalysts={catalysts}
-          blocked={reconstructBlocked}
-          onReconstruct={() => onAttempt(() => hudBus.requestEvolveItem(recipe.id, 'reconstruct'))}
-        />
+          {/* The escape hatch for a lineage the player never started, deliberately
+              below the action it is an alternative to. */}
+          {evolved && recipe && (
+            <ReconstructOption
+              recipe={recipe}
+              essences={essences}
+              catalysts={catalysts}
+              blocked={reconstructBlocked}
+              onReconstruct={() => onAttempt(() => hudBus.requestEvolveItem(recipe.id, 'reconstruct'))}
+            />
+          )}
+        </>
       )}
     </div>
   );
