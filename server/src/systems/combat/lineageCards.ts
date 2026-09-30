@@ -32,7 +32,6 @@
  * weapon trail, derived client-side from `PlayerView.lineages`).
  */
 import {
-  ABILITY_FRENZY_EFFECT_ID,
   applyStatusEffect,
   defensiveFaceForSubVariant,
   getCooldown,
@@ -234,12 +233,6 @@ interface PayoffSite {
 const ON_TARGET: ReadonlySet<PayoffKind> = new Set<PayoffKind>([
   'vulnerability', 'plating-shred', 'echo-hit', 'hemorrhage', 'poison-stack',
   'slow', 'stun', 'contagion',
-]);
-
-/** Payoffs whose HUD clock is a `lineage.<payoff>` status effect on the player. */
-const TIMED_SELF: ReadonlySet<PayoffKind> = new Set<PayoffKind>([
-  'damage-window', 'speed-window', 'recovery-window', 'engagement-dr', 'ward',
-  'plating-stack',
 ]);
 
 /**
@@ -848,6 +841,3 @@ export const LINEAGE_BUFFS = [
   defineWindowBuff('ward', 'lineage-ward', 'Shell', 'Absorb'),
   defineWindowBuff('plating-stack', 'lineage-plate', 'Plate', 'Plating per stack'),
 ] as const;
-
-/** Every timed payoff kind, for tests and diagnostics. */
-export const LINEAGE_TIMED_PAYOFFS = TIMED_SELF;
