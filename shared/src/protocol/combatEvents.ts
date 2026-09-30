@@ -1,6 +1,7 @@
 import type { EssenceType } from '../items';
 import type { Vec2 } from '../systems/spatial';
 import type { DamageElement } from '../systems/dotElements';
+import type { LineageFxKey } from '../data/lineages/types';
 
 /** Dedicated per-tick DoT animations (distinct from element damage-number styling). */
 export type DotTickFx = 'conflagration';
@@ -291,4 +292,23 @@ type CombatEventPayload =
   | { kind: 'dot-detonate'; playerId: string; pos: Vec2; element: DamageElement }
   // A Rune changed the player's active posture. The authoritative progression
   // delta carries the state; this event exists for immediate visual feedback.
-  | { kind: 'stance-switch'; playerId: string; stanceId: string | null };
+  | { kind: 'stance-switch'; playerId: string; stanceId: string | null }
+  // A lineage card (or a worn form's capstone) paid off (progression rework
+  // Phase 1c contract). Pushed EXACTLY ONCE per payoff application, never per
+  // tick and never for a stat row (those are a cosmetic trail, derived
+  // client-side from the active stat card's fx key — no event). `pos` is the
+  // player's position; `targetId`/`targetPos` are set when the payoff landed on
+  // a monster (vulnerability, plating-shred, echo-hit, hemorrhage, poison-stack,
+  // slow, stun, contagion). `stacks` is set for payoffs that count
+  // (plating-stack, poison-stack). Added locally here ahead of the canonical
+  // combat-runtime branch (`feat/lineage-runtime`); identical shape, so the
+  // eventual merge dedupes cleanly.
+  | {
+      kind: 'card-fx';
+      playerId: string;
+      fx: LineageFxKey;
+      pos: Vec2;
+      targetId?: string;
+      targetPos?: Vec2;
+      stacks?: number;
+    };
