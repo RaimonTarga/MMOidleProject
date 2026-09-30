@@ -563,6 +563,10 @@ function cardFx(): Array<Extract<CombatEvent, { kind: 'card-fx' }>> {
     capstones: [],
   });
   world.takeNodeEvents(NODE);
+  // The monster is DEAD when onKill fires. Firing this with a live target is
+  // what let a broken contagion guard pass: the payoff reads the corpse it
+  // spreads off, so the corpse must be a corpse here too.
+  target.hasHealth.hp = 0;
   emitCombatEvent('onKill', {
     attacker: player, attackerType: 'player',
     defender: target, defenderType: 'monster',

@@ -249,7 +249,12 @@ function applyPayoff(site: PayoffSite, firing: LineageFiring): CardFxDraft | nul
     // on-hit applier in the codebase (CLAUDE.md, "Combat And Mechanics").
     if (ctx && evadeBlocksDebuffs(ctx)) return null;
     const target = site.target;
-    if (!target || target.hasHealth.hp <= 0) return null;
+    if (!target) return null;
+    // `contagion` reads the DoTs its target CARRIES and applies only to live
+    // neighbours, which it filters itself — so a corpse is a valid source, and a
+    // kill-triggered spread is the whole point of the payoff. Every other
+    // on-target payoff needs something alive to land on.
+    if (kind !== 'contagion' && target.hasHealth.hp <= 0) return null;
     return applyOnTarget(site, firing, target);
   }
 
