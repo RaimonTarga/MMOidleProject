@@ -178,15 +178,6 @@ export function upgradeCostFor(
   return { [type]: COST_PER_LEVEL * item.tier * targetPlus };
 }
 
-/** Biome-catalyst cost for going from (targetPlus-1) → targetPlus. Null = none. */
-export function upgradeCatalystCostFor(
-  item: ItemDefinition,
-  targetPlus: number,
-): Partial<Record<string, number>> | null {
-  if (!item.upgrades) return null;
-  return item.upgrades[targetPlus - 1]?.catalystCost ?? null;
-}
-
 export interface UpgradeCheck {
   ok: boolean;
   reason?: string;
@@ -198,8 +189,6 @@ export function checkUpgrade(params: {
   currentPlus: number;
   biomeLevel: number;
   essences: Record<EssenceType, number>;
-  /** Player's catalyst wallet, keyed by node modifier family. Absent treated as empty. */
-  catalysts?: Record<string, number>;
   /** Global Mastery — opens the upgrade ceiling. Absent → ceiling non-binding. */
   globalMastery?: number;
   /** Optional per-player dev experiment overlay for T1 +5 essence pricing. */
@@ -210,12 +199,15 @@ export function checkUpgrade(params: {
     currentPlus,
     biomeLevel,
     essences,
-    catalysts,
     globalMastery,
     t1Plus5EssenceCostMultiplier,
   } = params;
   const targetPlus = currentPlus + 1;
   if (!item.biomeGroup) return { ok: false, reason: 'This item cannot be upgraded.' };
+  // The lineage tree owns weapon progression now; the +N ladder never applies to weapons.
+  if (item.slot === 'weapon') {
+    return { ok: false, reason: 'Weapon upgrades are unlocked from its lineage tree.' };
+  }
   if (currentPlus >= getMaxUpgrade(item)) return { ok: false, reason: 'Already at maximum upgrade.' };
   if (globalMastery !== undefined && targetPlus > upgradeCeilingFromGlobalMastery(globalMastery, item.tier)) {
     return {
@@ -234,15 +226,6 @@ export function checkUpgrade(params: {
   for (const [type, amount] of Object.entries(cost)) {
     if ((essences[type as EssenceType] ?? 0) < (amount ?? 0)) {
       return { ok: false, reason: `Not enough ${ESSENCE_LABELS[type as EssenceType]} essence (need ${amount}).` };
-    }
-  }
-
-  const catalystCost = upgradeCatalystCostFor(item, targetPlus);
-  if (catalystCost) {
-    for (const [group, amount] of Object.entries(catalystCost)) {
-      if ((catalysts?.[group] ?? 0) < (amount ?? 0)) {
-        return { ok: false, reason: `Not enough ${group} catalysts (need ${amount}).` };
-      }
     }
   }
   return { ok: true };
