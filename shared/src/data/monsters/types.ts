@@ -583,12 +583,6 @@ export interface MonsterDefinition {
     essenceType: EssenceType;
     level: number;
     biomeXp?: number;
-    /**
-     * Per-kill catalyst progress contributed toward this biome's catalyst.
-     * Scaled by toughness tier (normal < tanky < elite < guardian). Omitted/0
-     * means the monster grants no catalyst progress.
-     */
-    catalystWeight?: number;
   };
   ai: {
     wanderRadius: number;

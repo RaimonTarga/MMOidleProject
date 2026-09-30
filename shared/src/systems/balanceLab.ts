@@ -75,7 +75,6 @@ export interface BalanceLabEncounterRow {
   range: number;
   essence: number;
   biomeXp: number;
-  catalystWeight: number;
   incomingDps: number;
   spikePctHp: number;
   playerTtlSec: number | null;
@@ -345,7 +344,6 @@ function buildEncounter(
     range: monster.stats.attackRange,
     essence: monster.rewards.essence,
     biomeXp: monster.rewards.biomeXp ?? 0,
-    catalystWeight: monster.rewards.catalystWeight ?? 0,
     incomingDps: threat.incomingDps,
     spikePctHp: threat.spikePctHp,
     playerTtlSec: finiteOrNull(threat.ttlSec),
