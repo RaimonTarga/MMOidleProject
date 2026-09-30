@@ -10,6 +10,7 @@ import { BuildPanel } from "../ui/BuildPanel";
 import { buildSectionIconSource, menuIconSource } from "../ui/systemIcons";
 import { MasteryPanel } from "../ui/MasteryPanel";
 import { InventoryPanel } from "../ui/InventoryPanel";
+import { LineageTreePanel } from "../ui/lineage/LineageTreePanel";
 import { CraftingPanel } from "../ui/CraftingPanel";
 import { MapPanel } from "../ui/MapPanel";
 import { AudioPanel } from "./AudioPanel";
@@ -56,6 +57,7 @@ import {
   buildOpenAtom,
   globalMasteryAtom,
   inventoryOpenAtom,
+  lineageTreeSlotAtom,
   mapHighlightNodesAtom,
   mapOpenAtom,
   masteryOpenAtom,
@@ -155,6 +157,7 @@ export function RightSidebar() {
   const [buildOpen, setBuildOpen] = useAtom(buildOpenAtom);
   const [masteryOpen, setMasteryOpen] = useAtom(masteryOpenAtom);
   const [invOpen, setInvOpen] = useAtom(inventoryOpenAtom);
+  const [lineageSlot, setLineageSlot] = useAtom(lineageTreeSlotAtom);
   const [craftTab, setCraftTab] = useAtom(craftTabAtom);
   const buildTab = useAtomValue(buildPanelTabAtom);
   const [mapOpen, setMapOpen] = useAtom(mapOpenAtom);
@@ -337,6 +340,9 @@ export function RightSidebar() {
       {buildOpen && <BuildPanel onClose={() => setBuildOpen(false)} />}
       {masteryOpen && <MasteryPanel onClose={() => setMasteryOpen(false)} />}
       {invOpen && <InventoryPanel onClose={() => setInvOpen(false)} />}
+      {lineageSlot !== null && (
+        <LineageTreePanel slot={lineageSlot} onClose={() => setLineageSlot(null)} />
+      )}
       {craftTab !== null && (
         <CraftingPanel
           tab={craftTab}
