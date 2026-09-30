@@ -534,3 +534,77 @@ budgets hold; the T1→T2 floor rule (weapon ladder) still cascades.
   gains a secondary shard drop, which is a data change.
 - Removing the +N ladder wipes tester progress. The refund plus retained forms is the
   agreed policy; announce it in the release record.
+
+---
+
+## Phase 1c contract — card runtime, events, and HUD state (written 2026-09-30)
+
+The runtime session and the client session build against this without talking to each
+other. The code on `feat/lineage-data-model` is the authority for names; this section
+only adds what neither 1a nor 1b defined.
+
+### The event
+
+One new member of `CombatEvent` in `shared/src/protocol/combatEvents.ts`:
+
+```ts
+| { kind: 'card-fx'; playerId: string; fx: LineageFxKey; pos: Vec2;
+    targetId?: string; targetPos?: Vec2; stacks?: number }
+```
+
+- The server pushes **exactly one** `card-fx` per payoff application, from the listener
+  that applied it, via `world.pushEvent(nodeId, …)`. Never per tick, never for stat rows.
+- `pos` is the player's position. `targetId`/`targetPos` are set when the payoff landed on
+  a monster (vulnerability, plating-shred, echo-hit, hemorrhage, poison-stack, slow, stun,
+  contagion). `stacks` is set for payoffs that count (plating-stack, poison-stack).
+- Capstones push the same event with the capstone's `fx`.
+- The client draws it in `client/src/render/combatFx.ts` next to the existing effect
+  handlers, one handler per `LineageFxKey`, keyed by the lane grammar in design §8.
+  Unknown keys draw nothing and log once in dev.
+
+### Windows and stacks on the HUD
+
+Timed payoffs (`damage-window`, `speed-window`, `recovery-window`, `engagement-dr`,
+`ward`) are also applied as **status effects** on the player with id
+`lineage.<payoff>`, `data: { totalMs, magnitude }`, so the existing buff-sync path shows
+a clock on the HUD without a new channel. `plating-stack` uses the existing hit-plating
+stack status. The client HUD reads these through the buff atoms it already has; the tree
+panel does not need them.
+
+### Stat-row trail
+
+The stat row's cosmetic (design §8) is derived **client-side** from
+`PlayerView.lineages[<lineage>].active.stat` → the card's `fx` key. No event.
+
+### `mechanic-fired`
+
+One helper, `emitMechanicFired(world, player, ctx?)`, in
+`server/src/systems/combat/engine/mechanicFired.ts`. Call sites, one each:
+
+| Root | Where |
+|---|---|
+| cadence | when the finisher's empowered flag is consumed |
+| cooldown | when the execution's empowered flag is consumed |
+| dot | when a target reaches max stacks (once per target per fill) |
+| reload | when a reload completes |
+| energy | when the burst fires |
+| summoner | when a command intent is applied |
+
+It dispatches the `mechanic-fired` lineage listeners and nothing else. Test:
+`server/test/mechanicFired.test.ts` asserts exactly one emission per event and never two
+on one hit for cadence and cooldown, and one per fill for dot.
+
+### Listener registration
+
+`server/src/systems/combat/lineageCards.ts` exports `registerLineageCards()` and is
+called from `initCombatSystems()`. One listener per `TriggerKind`, reading
+`resolveActiveLineages(player)` from a per-entity cache refreshed on recalc (store the
+resolved list on `TracksCombat` through the helper API). `hit-nth` counts per player
+per card on `TracksCombat` counters. `first-hit` resets on engagement end. Every
+on-target applier early-returns on `evadeBlocksDebuffs(ctx)`. `damage-window` writes
+`ctx.metadata.empoweredMultiplier` and never a second multiplier.
+
+### Defensive faces
+
+`OFF_FACE_SCALAR` is applied at resolve time from `defensiveFaceForSubVariant(frame)`;
+the runtime never reads the frame. Offensive cards (no `face`) are frame-neutral.

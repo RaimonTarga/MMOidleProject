@@ -1,0 +1,377 @@
+<title>Rapier Lineage Tree</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+SC:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  color-scheme: dark;
+  --bg:#14120f; --panel:#1d1a16; --panel2:#24201b; --line:#3a332b; --line2:#4d4437;
+  --ink:#ece4d4; --ink2:#a99e8a; --ink3:#6f6656;
+  --gold:#d9b25c; --gold2:#8a6d2b;
+  --tempo:#e0a23a; --empow:#d1553f; --afflict:#6fb35a;
+  --lock:#3a332b; --owned:#5b4f3a; --active:#d9b25c;
+  --mat:#7fb3d5;
+  font-family:"IBM Plex Sans",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);padding-inline:16px;padding-block:16px 40px;font-size:14px;line-height:1.4}
+h1,h2,h3{font-family:"Alegreya SC","IBM Plex Sans",serif;margin:0;text-wrap:balance}
+.eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink2)}
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+.top h1{font-size:22px;color:var(--gold)}
+.top p{margin:4px 0 0;color:var(--ink2);max-width:60ch}
+.shell{display:grid;grid-template-columns:200px minmax(0,1fr) 260px;gap:14px;align-items:start}
+@media (max-width:900px){.shell{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:6px}
+.panel>header{padding:10px 12px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.panel>header h2{font-size:15px;color:var(--gold)}
+
+/* slots rail */
+.slots{padding:8px;display:grid;gap:6px}
+.slot{display:grid;grid-template-columns:36px 1fr;gap:8px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:4px;background:var(--panel2);cursor:pointer;text-align:left;color:var(--ink);font:inherit}
+.slot:hover{border-color:var(--line2)}
+.slot.sel{border-color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold2)}
+.slot .glyph{width:36px;height:36px;border:1px dashed var(--line2);border-radius:4px;display:grid;place-items:center;font-family:"Alegreya SC",serif;color:var(--ink2);font-size:13px}
+.slot .name{font-weight:600;font-size:13px}
+.slot .sub{font-size:11px;color:var(--ink2)}
+.slot .sub b{color:var(--gold);font-weight:600}
+.slot:focus-visible,.card:focus-visible,.form:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+/* tree */
+.tree{padding:12px;display:grid;gap:14px}
+.formbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.formbar .cur{font-family:"Alegreya SC",serif;font-size:18px;color:var(--ink)}
+.formbar .cur small{font-family:"IBM Plex Sans",sans-serif;font-size:12px;color:var(--ink2);margin-left:8px}
+.lanes{display:grid;grid-template-columns:76px repeat(3,minmax(0,1fr));gap:8px;align-items:center}
+.lanes .h{font-size:11px;letter-spacing:.1em;text-transform:uppercase;text-align:center;padding:4px;border-bottom:2px solid}
+.lane-tempo{color:var(--tempo);border-color:var(--tempo)}
+.lane-empow{color:var(--empow);border-color:var(--empow)}
+.lane-afflict{color:var(--afflict);border-color:var(--afflict)}
+.band{border:1px solid var(--line);border-radius:6px;padding:10px;display:grid;gap:8px;position:relative}
+.band.lit{border-color:var(--gold2);background:linear-gradient(180deg,rgba(217,178,92,.05),transparent 40%)}
+.band.dim{opacity:.55}
+.band .bh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.band .bh h3{font-size:14px;color:var(--gold)}
+.band .bh span{font-size:11px;color:var(--ink2)}
+.row{display:grid;grid-template-columns:76px repeat(3,minmax(0,1fr));gap:8px;align-items:stretch}
+.rowlab{display:grid;align-content:center;gap:2px}
+.rowlab b{font-size:12px;font-family:"Alegreya SC",serif;letter-spacing:.04em}
+.rowlab span{font-size:10px;color:var(--ink2);line-height:1.2}
+.rowlab.locked b{color:var(--ink3)}
+.card{position:relative;border:1px solid var(--line);border-radius:5px;background:var(--panel2);padding:8px 9px 9px;min-height:84px;display:grid;grid-template-rows:auto 1fr auto;gap:4px;text-align:left;color:var(--ink);font:inherit;cursor:pointer;border-left-width:3px;transition:border-color .12s,box-shadow .12s}
+.card .t{font-weight:600;font-size:13px;display:flex;justify-content:space-between;gap:6px;align-items:baseline}
+.card .d{font-size:11.5px;color:var(--ink2);line-height:1.3}
+.card .c{font-size:11px;color:var(--ink3);display:flex;gap:8px;flex-wrap:wrap}
+.card .c .m{color:var(--mat)}
+.card .c .e{color:var(--afflict)}
+.card.tempo{border-left-color:var(--tempo)}
+.card.empow{border-left-color:var(--empow)}
+.card.afflict{border-left-color:var(--afflict)}
+.card.locked{opacity:.45;cursor:not-allowed;border-left-color:var(--lock)}
+.card.owned{border-color:var(--owned)}
+.card.owned .c .paid{color:var(--ink2)}
+.card.active{border-color:var(--active);box-shadow:0 0 0 1px var(--gold2),0 0 18px rgba(217,178,92,.18);background:#2a2419}
+.card.active .t::after{content:"active";font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.card.owned:not(.active) .t::after{content:"owned";font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2)}
+.card.silhouette{border-style:dashed;cursor:default;background:transparent}
+.card.silhouette .d{color:var(--ink3)}
+
+/* gate */
+.gate{display:grid;grid-template-columns:76px 1fr;gap:8px;align-items:stretch;margin-top:2px}
+.forms{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}
+.form{border:1px solid var(--gold2);border-radius:5px;padding:10px 12px;background:linear-gradient(180deg,#2a2419,#1f1b16);text-align:left;color:var(--ink);font:inherit;cursor:pointer;display:grid;gap:4px}
+.form .n{font-family:"Alegreya SC",serif;font-size:16px;color:var(--gold);display:flex;justify-content:space-between;gap:8px}
+.form .n small{font-family:"IBM Plex Sans",sans-serif;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2);align-self:center}
+.form .cap{font-size:12px;color:var(--ink2)}
+.form .cap b{color:var(--ink);font-weight:600}
+.form .c{font-size:11px;color:var(--ink3)}
+.form .c .boss{color:var(--empow)}
+.form.locked{opacity:.5;cursor:not-allowed}
+.form.worn{box-shadow:0 0 0 1px var(--gold),0 0 22px rgba(217,178,92,.2)}
+.form.worn .n small{color:var(--gold)}
+
+/* side */
+.side{display:grid;gap:14px}
+.side section{padding:10px 12px;display:grid;gap:8px}
+.side section+section{border-top:1px solid var(--line)}
+.side h3{font-size:13px;color:var(--gold)}
+.mastery{display:grid;gap:4px}
+.bar{height:8px;background:var(--panel2);border:1px solid var(--line);border-radius:4px;overflow:hidden;position:relative}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold2),var(--gold))}
+.ticks{display:flex;justify-content:space-between;font-size:10px;color:var(--ink3);font-variant-numeric:tabular-nums}
+.wallet{display:grid;gap:4px;font-size:12px}
+.wallet div{display:flex;justify-content:space-between;gap:8px;font-variant-numeric:tabular-nums}
+.wallet .src{color:var(--ink3);font-size:11px}
+.build{display:grid;gap:6px;font-size:12px}
+.build .line{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:baseline}
+.build .k{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);width:52px}
+.build .v b{font-weight:600}
+.build .empty{color:var(--ink3);font-style:italic}
+.readout{font-size:12px;color:var(--ink2);border-left:2px solid var(--gold2);padding-left:8px}
+.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:11px;color:var(--ink2)}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px;border:1px solid var(--line2)}
+.legend .l1::before{background:var(--panel2);opacity:.45}
+.legend .l2::before{background:var(--panel2)}
+.legend .l3::before{background:var(--owned)}
+.legend .l4::before{background:var(--active)}
+.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#2a2419;border:1px solid var(--gold2);color:var(--ink);padding:8px 14px;border-radius:4px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.show{opacity:1}
+@media (prefers-reduced-motion:reduce){.card,.toast{transition:none}}
+</style>
+
+<div class="top">
+  <div>
+    <div class="eyebrow">Mockup · Forest, biome level 4 of 6</div>
+    <h1>Rapier Lineage Tree</h1>
+    <p>Click a slot on the left to open its tree. Click a card to unlock it, or to make an owned card active. One card per row is active. Everything you paid for stays owned and can be swapped for free.</p>
+  </div>
+  <div class="legend"><span class="l1">Locked by mastery</span><span class="l2">Available</span><span class="l3">Owned</span><span class="l4">Active</span></div>
+</div>
+
+<div class="shell">
+  <div class="panel">
+    <header><h2>Equipment</h2><span class="eyebrow">Lineages</span></header>
+    <div class="slots" id="slots"></div>
+  </div>
+
+  <div class="panel">
+    <header><h2 id="treeTitle">Rapier</h2><span class="eyebrow" id="treeSub">Weapon · full tree</span></header>
+    <div class="tree" id="tree"></div>
+  </div>
+
+  <div class="panel side">
+    <section>
+      <h3>Forest mastery</h3>
+      <div class="mastery">
+        <div class="bar"><i style="width:62%"></i></div>
+        <div class="ticks"><span>L1</span><span>L2 · row 1</span><span>L4 · row 2</span><span>L5 · row 3</span><span>L6 · gate</span></div>
+      </div>
+      <div class="readout">Mastery decides when a row opens. Materials decide whether you can pay. The boss decides when the form changes.</div>
+    </section>
+    <section>
+      <h3>Materials</h3>
+      <div class="wallet" id="wallet"></div>
+    </section>
+    <section>
+      <h3>Your build</h3>
+      <div class="build" id="build"></div>
+    </section>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const WALLET = {
+  wild: { n:'Wild essence', v:340, src:'any Forest kill' },
+  quill: { n:'Thornback Quill', v:9, src:'Forest · Bramble variant' },
+  sap: { n:'Hollow Sap', v:4, src:'Forest · Rot variant' },
+  heart: { n:"Warden's Heart", v:1, src:'Forest boss, every kill' },
+  fang: { n:'Matriarch Fang', v:0, src:'Jungle boss, every kill' },
+};
+const LANES = { tempo:'Tempo', empow:'Empowered', afflict:'Affliction' };
+const LEVEL = 4;
+
+const LINEAGES = {
+  weapon: {
+    name:'Rapier', slotLabel:'Weapon', sub:'Weapon · full tree', form:'Flash Rapier', formNote:'Tier 1 form · 8 attack · 1.50 per second',
+    rows:[
+      { key:'stat', label:'Stat', hint:'what you scale', level:2, cards:[
+        { id:'w1a', lane:'tempo', t:'Quick Wrist', d:'+6% attack speed.', cost:{wild:40,quill:2} },
+        { id:'w1b', lane:'empow', t:'Keen Edge', d:'+8% attack.', cost:{wild:40,quill:2} },
+        { id:'w1c', lane:'afflict', t:'Envenomed', d:'+3 on-hit damage.', cost:{wild:40,sap:1} },
+      ]},
+      { key:'trig', label:'Trigger', hint:'when it fires', level:4, cards:[
+        { id:'w2a', lane:'tempo', t:'On Strike', d:'Every hit counts. Payoff fires on every third.', cost:{wild:80,quill:3} },
+        { id:'w2b', lane:'empow', t:'On Finish', d:'Fires when your class mechanic lands: finisher, execution, full stacks, reload.', cost:{wild:80,quill:3} },
+        { id:'w2c', lane:'afflict', t:'First Blood', d:'Fires on the first hit of each engagement.', cost:{wild:80,sap:2} },
+      ]},
+      { key:'pay', label:'Payoff', hint:'what happens', level:5, cards:[
+        { id:'w3a', lane:'tempo', t:'Echo', d:'The triggering hit strikes again for 40%.', cost:{wild:140,quill:4} },
+        { id:'w3b', lane:'empow', t:'Rend', d:'Target takes 15% more damage for 4 s.', cost:{wild:140,quill:4} },
+        { id:'w3c', lane:'afflict', t:'Bleed', d:'30% of the hit becomes a hemorrhage over 3 s.', cost:{wild:140,sap:3} },
+      ]},
+    ],
+    gate:{ level:6, forms:[
+      { id:'gf1', n:'Gale Needle', biome:'Forest', cap:'Every finisher extends your Light window by 1 s.', cost:{wild:200,heart:1}, boss:"Warden's Heart" },
+      { id:'gf2', n:'Stinger Rapier', biome:'Jungle', cap:'Hits on afflicted targets echo for 25%.', cost:{wild:200,fang:1}, boss:'Matriarch Fang' },
+    ]},
+    next:{ title:'Tier 2 · Gale Needle or Stinger', rows:[
+      ['Featherlight','Tempered','Virulent'],['On Strike II','On Finish II','Opening Wound'],['Cascade','Sunder','Festering'] ] },
+  },
+  armor: {
+    name:'Bindings', slotLabel:'Armor', sub:'Armor · trigger and payoff', form:'Shaded Bindings', formNote:'Tier 1 form · 29 HP · 28% evasion',
+    rows:[
+      { key:'trig', label:'Trigger', hint:'when it fires', level:2, cards:[
+        { id:'a1a', lane:'tempo', t:'On Evade', d:'Fires when you dodge.', cost:{wild:40,quill:2} },
+        { id:'a1b', lane:'empow', t:'Standing Ground', d:'Fires after 2 s without moving.', cost:{wild:40,quill:2} },
+        { id:'a1c', lane:'afflict', t:'On Hit Taken', d:'Fires when a hit lands on you.', cost:{wild:40,sap:1} },
+      ]},
+      { key:'pay', label:'Payoff', hint:'what happens', level:4, cards:[
+        { id:'a2a', lane:'tempo', t:'Riposte', d:'Your next hit is 50% larger.', cost:{wild:90,quill:3} },
+        { id:'a2b', lane:'empow', t:'Hit Plating', d:'Gain a plating stack, up to 3.', cost:{wild:90,quill:3} },
+        { id:'a2c', lane:'afflict', t:'Thorns', d:'Attacker takes a poison stack.', cost:{wild:90,sap:2} },
+      ]},
+    ],
+    gate:{ level:6, forms:[
+      { id:'ga1', n:'Verdant Weave', biome:'Forest', cap:'A full dodge also cleanses one affliction.', cost:{wild:180,heart:1}, boss:"Warden's Heart" },
+    ]},
+    next:{ title:'Tier 2 · Verdant Weave', rows:[['On Evade II','Rooted','On Hit Taken II'],['Counter','Bulwark','Spines']] },
+  },
+  charm: {
+    name:'Heart', slotLabel:'Charm', sub:'Charm · trigger and payoff', form:'Mossbound Heart', formNote:'Tier 1 form · +4 Recovery',
+    rows:[
+      { key:'trig', label:'Trigger', hint:'when it fires', level:2, cards:[
+        { id:'c1a', lane:'tempo', t:'On Kill', d:'Fires on each kill.', cost:{wild:40,quill:2} },
+        { id:'c1b', lane:'empow', t:'On Guard', d:'Fires when you cast a Guard ability.', cost:{wild:40,quill:2} },
+        { id:'c1c', lane:'afflict', t:'Pulse', d:'Fires every 6 s in combat.', cost:{wild:40,sap:1} },
+      ]},
+      { key:'pay', label:'Payoff', hint:'what happens', level:4, cards:[
+        { id:'c2a', lane:'tempo', t:'Kill Pulse', d:'Recovery at 60% for 3 s.', cost:{wild:90,quill:3} },
+        { id:'c2b', lane:'empow', t:'Guard Surge', d:'Gain a ward worth 10% max HP.', cost:{wild:90,quill:3} },
+        { id:'c2c', lane:'afflict', t:'Cleanse', d:'Remove one affliction stack.', cost:{wild:90,sap:2} },
+      ]},
+    ],
+    gate:{ level:6, forms:[
+      { id:'gc1', n:'Canopy Heart', biome:'Forest', cap:'Recovery ramps 50% faster while a payoff is active.', cost:{wild:180,heart:1}, boss:"Warden's Heart" },
+    ]},
+    next:{ title:'Tier 2 · Canopy Heart', rows:[['On Kill II','On Guard II','Pulse II'],['Surge','Bastion','Purge']] },
+  },
+  boots: {
+    name:'Treads', slotLabel:'Boots', sub:'Boots · trigger and payoff', form:'Fern Treads', formNote:'Tier 1 form · +8% move speed',
+    rows:[
+      { key:'trig', label:'Trigger', hint:'when it fires', level:2, cards:[
+        { id:'b1a', lane:'tempo', t:'On Kill', d:'Fires on each kill.', cost:{wild:40,quill:2} },
+        { id:'b1b', lane:'empow', t:'Standing Ground', d:'Fires after 2 s without moving.', cost:{wild:40,quill:2} },
+        { id:'b1c', lane:'afflict', t:'Engagement', d:'Fires when you close on a new target.', cost:{wild:40,sap:1} },
+      ]},
+      { key:'pay', label:'Payoff', hint:'what happens', level:4, cards:[
+        { id:'b2a', lane:'tempo', t:'Kill Speed', d:'+20% move and attack speed for 3 s.', cost:{wild:90,quill:3} },
+        { id:'b2b', lane:'empow', t:'Slow Resistance', d:'Slows are 50% weaker.', cost:{wild:90,quill:3} },
+        { id:'b2c', lane:'afflict', t:'Engagement DR', d:'20% damage reduction for 2 s.', cost:{wild:90,sap:2} },
+      ]},
+    ],
+    gate:{ level:6, forms:[
+      { id:'gb1', n:'Vine Striders', biome:'Forest', cap:'Approach speed doubles on the first target of a fight.', cost:{wild:180,heart:1}, boss:"Warden's Heart" },
+    ]},
+    next:{ title:'Tier 2 · Vine Striders', rows:[['On Kill II','Rooted','Engagement II'],['Rush','Anchor','Vanguard']] },
+  },
+  core: { name:'Core', slotLabel:'Core', sub:'Core · no tree', form:'Bruiser Core', formNote:'Cores stay single-purpose: one per biome, no tree.', rows:[], gate:null },
+  relic: { name:'Relic', slotLabel:'Relic', sub:'Relic · no tree', form:'Verdant Flywheel', formNote:'Relics stay as they are.', rows:[], gate:null },
+};
+
+// Mock save state: what the player already owns.
+const state = {
+  owned: new Set(['w1a','w1b','w2b','a1a','a2a','c1a','c2a','b1a']),
+  active: { weapon:{stat:'w1b',trig:'w2b'}, armor:{trig:'a1a',pay:'a2a'}, charm:{trig:'c1a',pay:'c2a'}, boots:{trig:'b1a'} },
+  worn: {},
+  slot:'weapon',
+};
+
+const $ = s=>document.querySelector(s);
+const laneCls = l=>({tempo:'lane-tempo',empow:'lane-empow',afflict:'lane-afflict'})[l];
+function costHtml(cost, paid){
+  return Object.entries(cost).map(([k,v])=>{
+    const m = WALLET[k]; const cls = k==='wild'?'e':(k==='heart'||k==='fang')?'boss':'m';
+    return `<span class="${cls} ${paid?'paid':''}">${v} ${m.n}</span>`;
+  }).join('');
+}
+function canPay(cost){ return Object.entries(cost).every(([k,v])=>WALLET[k].v>=v); }
+function pay(cost){ Object.entries(cost).forEach(([k,v])=>WALLET[k].v-=v); }
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),1600); }
+
+function renderSlots(){
+  const el=$('#slots'); el.innerHTML='';
+  Object.entries(LINEAGES).forEach(([key,L])=>{
+    const b=document.createElement('button'); b.className='slot'+(state.slot===key?' sel':'');
+    const worn = state.worn[key];
+    b.innerHTML=`<div class="glyph">${L.slotLabel[0]}</div><div><div class="name">${L.name}</div><div class="sub">${worn?`<b>${worn}</b>`:L.form}</div></div>`;
+    b.onclick=()=>{state.slot=key;render();};
+    el.appendChild(b);
+  });
+}
+
+function renderTree(){
+  const L=LINEAGES[state.slot]; const el=$('#tree'); el.innerHTML='';
+  $('#treeTitle').textContent=L.name; $('#treeSub').textContent=L.sub;
+  const worn = state.worn[state.slot];
+  el.insertAdjacentHTML('beforeend',`<div class="formbar"><div class="cur">${worn||L.form}<small>${worn?'Tier 2 form · worn':L.formNote}</small></div></div>`);
+  if(!L.rows.length){ el.insertAdjacentHTML('beforeend',`<div class="readout">${L.formNote}</div>`); return; }
+
+  // lane header
+  el.insertAdjacentHTML('beforeend',`<div class="lanes"><div></div>${Object.entries(LANES).map(([k,n])=>`<div class="h ${laneCls(k)}">${n}</div>`).join('')}</div>`);
+
+  // Tier 1 band
+  const band=document.createElement('div'); band.className='band lit';
+  band.innerHTML=`<div class="bh"><h3>Tier 1 · ${L.form}</h3><span>Rows open with Forest mastery. Cards cost essence plus a variant material.</span></div>`;
+  L.rows.forEach(row=>{
+    const locked = LEVEL<row.level;
+    const r=document.createElement('div'); r.className='row';
+    r.innerHTML=`<div class="rowlab ${locked?'locked':''}"><b>${row.label}</b><span>${locked?`opens at L${row.level}`:row.hint}</span></div>`;
+    row.cards.forEach(c=>{
+      const owned=state.owned.has(c.id); const active=state.active[state.slot]?.[row.key]===c.id;
+      const b=document.createElement('button');
+      b.className=`card ${c.lane} ${locked?'locked':''} ${owned?'owned':''} ${active?'active':''}`;
+      b.innerHTML=`<div class="t">${c.t}</div><div class="d">${c.d}</div><div class="c">${owned?'<span class="paid">paid</span>':costHtml(c.cost)}</div>`;
+      b.onclick=()=>{
+        if(locked){toast(`Row opens at Forest level ${row.level}.`);return;}
+        if(!owned){ if(!canPay(c.cost)){toast('Not enough materials. The map shows where they drop.');return;} pay(c.cost); state.owned.add(c.id); toast(`Unlocked ${c.t}.`); }
+        state.active[state.slot]=state.active[state.slot]||{}; state.active[state.slot][row.key]=c.id; render();
+      };
+      r.appendChild(b);
+    });
+    band.appendChild(r);
+  });
+
+  // Gate
+  if(L.gate){
+    const g=document.createElement('div'); g.className='gate';
+    const locked = LEVEL<L.gate.level;
+    g.innerHTML=`<div class="rowlab ${locked?'locked':''}"><b>Gate</b><span>${locked?`opens at L${L.gate.level}`:'transform the item'}</span></div>`;
+    const forms=document.createElement('div'); forms.className='forms';
+    L.gate.forms.forEach(f=>{
+      const owned=state.owned.has(f.id); const isWorn=state.worn[state.slot]===f.n;
+      const b=document.createElement('button'); b.className=`form ${locked?'locked':''} ${isWorn?'worn':''}`;
+      b.innerHTML=`<div class="n">${f.n}<small>${isWorn?'worn':owned?'owned · tap to wear':f.biome+' form'}</small></div><div class="cap"><b>Capstone.</b> ${f.cap}</div><div class="c">${owned?'paid':costHtml(f.cost)} · new art, new base stats, opens the Tier 2 band</div>`;
+      b.onclick=()=>{
+        if(locked){toast(`Gate opens at full Forest mastery (L${L.gate.level}).`);return;}
+        if(!owned){ if(!canPay(f.cost)){toast(`Needs ${f.boss}. It drops from the boss every kill.`);return;} pay(f.cost); state.owned.add(f.id); toast(`${L.form} became ${f.n}.`); }
+        state.worn[state.slot]=f.n; render();
+      };
+      forms.appendChild(b);
+    });
+    g.appendChild(forms); band.appendChild(g);
+  }
+  el.appendChild(band);
+
+  // Tier 2 silhouette
+  if(L.next){
+    const nb=document.createElement('div'); nb.className='band dim';
+    nb.innerHTML=`<div class="bh"><h3>${L.next.title}</h3><span>Silhouette. Opens when the gate is paid.</span></div>`;
+    const labels = L.rows.map(r=>r.label);
+    L.next.rows.forEach((names,i)=>{
+      const r=document.createElement('div'); r.className='row';
+      r.innerHTML=`<div class="rowlab"><b>${labels[i]||''}</b></div>`;
+      names.forEach((n,j)=>{ const lane=['tempo','empow','afflict'][j];
+        r.insertAdjacentHTML('beforeend',`<div class="card silhouette ${lane}"><div class="t">${n}</div><div class="d">Revealed at Tier 2.</div><div class="c"></div></div>`); });
+      nb.appendChild(r);
+    });
+    el.appendChild(nb);
+  }
+}
+
+function renderSide(){
+  $('#wallet').innerHTML=Object.values(WALLET).map(m=>`<div><span>${m.n}<br><span class="src">${m.src}</span></span><b>${m.v}</b></div>`).join('');
+  const b=$('#build'); b.innerHTML='';
+  const lanesCount={tempo:0,empow:0,afflict:0};
+  Object.entries(LINEAGES).forEach(([key,L])=>{
+    if(!L.rows.length) return;
+    const picks=L.rows.map(r=>{ const id=state.active[key]?.[r.key]; const c=r.cards.find(x=>x.id===id); if(c) lanesCount[c.lane]++; return c?c.t:null; });
+    const worn=state.worn[key];
+    b.insertAdjacentHTML('beforeend',`<div class="line"><span class="k">${L.slotLabel}</span><span class="v"><b>${worn||L.form}</b><br>${picks.map(p=>p?p:'<span class="empty">no pick</span>').join(' · ')}</span></div>`);
+  });
+  const top=Object.entries(lanesCount).sort((a,b)=>b[1]-a[1])[0];
+  const total=Object.values(lanesCount).reduce((a,c)=>a+c,0);
+  b.insertAdjacentHTML('beforeend',`<div class="readout">Leaning <b>${LANES[top[0]]}</b>: ${top[1]} of ${total} active cards. Straight down one lane is a pure build. Mixing lanes is a hybrid.</div>`);
+}
+
+function render(){ renderSlots(); renderTree(); renderSide(); }
+render();
+</script>

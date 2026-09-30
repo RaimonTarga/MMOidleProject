@@ -449,3 +449,35 @@ Decided 2026-09-30 during the proposal review: row thresholds, defensive faces, 
 weapon lane matrix, Plains and Forest families, shards by packet (every kill, essence-
 style tier scaling), boss capstone as the gate cost, any slot may complete a packet,
 50% switch discount on rows, range stays a leaf, keystones hand off to the T3 paths.
+
+---
+
+## 17. Non-weapon lane matrices (proposed 2026-09-30, for review with the tree in hand)
+
+Authored in the overnight run so the trees exist to playtest; **not approved**. Lane A is
+each biome's existing mechanic. Coverage rule for defensive slots: every packet completes
+on at least two non-weapon lineages **across the three slots** (45 lane slots for eight
+packets), not two per slot; "any slot may complete a packet" (§7) is what makes that legal.
+
+Face per packet (§3.1), so a card's `face` is derived, not authored:
+Avoid = Engagement, Tempo, Control · Sustain = Kill chain, Barrier tempo, Affliction ·
+Endure = Bulwark, Empowered.
+
+| Slot | Plains | Forest | Mountain | Cave | Swamp |
+|---|---|---|---|---|---|
+| armor | Bulwark, Empowered, Tempo | Engagement, Tempo, Affliction | Bulwark, Barrier tempo, Control | Bulwark, Kill chain, Engagement | Affliction, Control, Barrier tempo |
+| recovery | Kill chain, Tempo, Engagement | Barrier tempo, Affliction, Engagement | Barrier tempo, Bulwark, Empowered | Bulwark, Affliction, Control | Affliction, Control, Kill chain |
+| mobility | Kill chain, Tempo, Empowered | Engagement, Tempo, Affliction | Engagement, Empowered, Control | Engagement, Kill chain, Control | Control, Affliction, Bulwark |
+
+Completion count across the three slots: Tempo 5, Empowered 4, Affliction 6, Control 7,
+Kill chain 5, Engagement 6, Bulwark 6, Barrier tempo 4. Every packet ≥ 2.
+
+Non-weapon bands have no stat row (§4): T1 is one payoff row (L4) and the gate (L6); T2
+adds the amplifier. Payoff vocabulary per slot: armor fires on `evade`, `hit-taken`,
+`standing`; recovery on `kill`, `guard-cast`, `pulse`, `barrier-break`; mobility on
+`kill`, `first-hit`, `standing`. Capstones per the existing T2 forms of each line.
+
+Shard sourcing gaps this exposes (open decision 3): Bulwark and Barrier tempo cards cost
+shards no T1 family drops. Until Phase 4 reviews the families, the boss capstone of each
+biome also drops **two shards of its lineage's Lane A packet** on every kill, so a Mountain
+player can buy Bulwark cards from Behemoth kills. Provisional; remove when a family covers it.
