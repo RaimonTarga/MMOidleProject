@@ -33,13 +33,27 @@ import {
 } from '../data/lineages/resolve';
 import type {
   DefensiveFace, LineageCard, LineageDefinition, LineageForm, LineageProgress,
-  LineageProgressMap, LineageStatEffects, PacketId, ResolvedLineageCapstone,
-  ResolvedLineageCard, RowKind,
+  LineageProgressMap, LineageStatEffects, PacketId, PayoffKind,
+  ResolvedLineageCapstone, ResolvedLineageCard, RowKind,
 } from '../data/lineages/types';
 
 export interface LineageCheck {
   ok: boolean;
   reason?: string;
+}
+
+/**
+ * The status-effect id a timed payoff is carried on (progression rework 1c).
+ *
+ * A window IS its status effect: the runtime reads the magnitude back off it and
+ * the buff bar reads the clock off the same entry, so the mechanic and the HUD can
+ * never disagree about how long is left. `data` is `{ totalMs, magnitude }` — the
+ * only two numbers either side needs.
+ *
+ * Shared rather than server-local because the client's buff tiles key off the id.
+ */
+export function lineageStatusEffectId(payoff: PayoffKind): string {
+  return `lineage.${payoff}`;
 }
 
 /**

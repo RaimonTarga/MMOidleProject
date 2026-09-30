@@ -1,6 +1,7 @@
 import type { EssenceType } from '../items';
 import type { Vec2 } from '../systems/spatial';
 import type { DamageElement } from '../systems/dotElements';
+import type { LineageFxKey } from '../data/lineages/types';
 
 /** Dedicated per-tick DoT animations (distinct from element damage-number styling). */
 export type DotTickFx = 'conflagration';
@@ -291,4 +292,20 @@ type CombatEventPayload =
   | { kind: 'dot-detonate'; playerId: string; pos: Vec2; element: DamageElement }
   // A Rune changed the player's active posture. The authoritative progression
   // delta carries the state; this event exists for immediate visual feedback.
-  | { kind: 'stance-switch'; playerId: string; stanceId: string | null };
+  | { kind: 'stance-switch'; playerId: string; stanceId: string | null }
+  // A lineage card (or a worn form's capstone) paid out — progression rework 1c.
+  //
+  // Pushed EXACTLY ONCE per payoff application, from the listener that applied
+  // it. Never per tick and never for a stat row: a stat row's cosmetic is the
+  // weapon trail, which the client derives from `PlayerView.lineages` and needs
+  // no event for.
+  //
+  // `pos` is the player. `targetId`/`targetPos` are set when the payoff landed on
+  // a monster (vulnerability, plating-shred, echo-hit, hemorrhage, poison-stack,
+  // slow, stun, contagion); `stacks` when the payoff counts (plating-stack,
+  // poison-stack). A capstone pushes the same event with the capstone's own `fx`.
+  //
+  // The client draws one handler per `LineageFxKey` in `render/combatFx.ts`,
+  // keyed by the lane grammar (design §8). An unknown key draws nothing.
+  | { kind: 'card-fx'; playerId: string; fx: LineageFxKey; pos: Vec2;
+      targetId?: string; targetPos?: Vec2; stacks?: number };

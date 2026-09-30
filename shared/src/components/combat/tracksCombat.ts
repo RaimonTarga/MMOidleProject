@@ -1,4 +1,21 @@
 import type { StatusEffect } from './effects';
+import type {
+  ResolvedLineageCapstone, ResolvedLineageCard,
+} from '../../data/lineages/types';
+
+/**
+ * The lineage cards actually in play on a player, resolved once at recalc
+ * (progression rework Phase 1c).
+ *
+ * Cached rather than resolved per hit because `resolveActiveLineages` walks every
+ * lineage the player has ever opened and re-reads the magnitude table for each
+ * active card — work that cannot change between recalcs, and that would otherwise
+ * run on every swing of every player in the node.
+ */
+export interface LineageRuntime {
+  cards: ResolvedLineageCard[];
+  capstones: ResolvedLineageCapstone[];
+}
 
 /** Input shape for applyStatusEffect. All optional fields have sensible defaults. */
 export interface StatusEffectConfig {
@@ -24,6 +41,7 @@ export interface StatusEffectConfig {
  *   flags         — boolean states (stunned, shielded, empowered, etc.)
  *   strings       — arbitrary string values; used for attacker attribution, state labels, etc.
  *   statusEffects — unified buff/debuff list; managed via statusEffects.ts API
+ *   lineageRuntime — resolved lineage cards in play, refreshed on recalc
  */
 export interface TracksCombat {
   counters:      Record<string, number>;
@@ -33,6 +51,12 @@ export interface TracksCombat {
   flags:         Record<string, boolean>;
   strings:       Record<string, string>;
   statusEffects: StatusEffect[];
+  /**
+   * Resolved lineage cards, or absent when the player has no tree in play.
+   * Read through {@link getLineageRuntime} / written through
+   * {@link setLineageRuntime} — never by reaching for the field.
+   */
+  lineageRuntime?: LineageRuntime;
 }
 
 export function makeTracksCombat(): TracksCombat {
@@ -56,6 +80,30 @@ export function resetTracksCombat(state: TracksCombat): void {
   state.flags         = {};
   state.strings       = {};
   state.statusEffects = [];
+  delete state.lineageRuntime;
+}
+
+// Lineage runtime (progression rework Phase 1c)
+
+/**
+ * The resolved lineage cards in play, or undefined when none are.
+ *
+ * Undefined and an empty card list mean the same thing to a caller, so the
+ * runtime treats a missing cache as "nothing to do" rather than as a signal to
+ * resolve lazily: the cache is a recalc product, and resolving it anywhere else
+ * would make two sites responsible for the same answer.
+ */
+export function getLineageRuntime(state: TracksCombat): LineageRuntime | undefined {
+  return state.lineageRuntime;
+}
+
+/** Replace the cache. Passing nothing (or an empty runtime) clears it. */
+export function setLineageRuntime(state: TracksCombat, runtime?: LineageRuntime): void {
+  if (!runtime || (runtime.cards.length === 0 && runtime.capstones.length === 0)) {
+    delete state.lineageRuntime;
+    return;
+  }
+  state.lineageRuntime = runtime;
 }
 
 // Counters
