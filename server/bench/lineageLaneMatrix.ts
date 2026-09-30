@@ -309,6 +309,16 @@ interface Row {
    * row alone with a payoff card that never triggered.
    */
   fx: Record<string, number>;
+  /**
+   * Survival, for the lanes whose T1 payoff is not damage. Control's slow and
+   * Engagement's opening DR buy time, not throughput, so a TTK-only matrix reads
+   * them as worth nothing — which is an instrument limit, not a finding.
+   * Optional so `LANE_REPLAY` of a run made before these existed still renders.
+   */
+  damageTaken?: number;
+  /** Sum of the player's HP fraction over engaged ticks, and the tick count. */
+  hpFractionSum?: number;
+  hpSamples?: number;
 }
 
 function seededRandom(seed: number): () => number {
@@ -344,8 +354,12 @@ function measure(
   const onKill: CombatEventHandler = (ctx) => {
     if (ctx.defenderType === 'monster') kills += 1;
   };
+  let damageTaken = 0;
+  let hpFractionSum = 0;
+  let hpSamples = 0;
   const onDealt: CombatEventHandler = (ctx) => {
     if (ctx.defenderType === 'monster' && ctx.damage > 0) damageDealt += ctx.damage;
+    if (ctx.defenderType === 'player' && ctx.damage > 0) damageTaken += ctx.damage;
   };
   registerCombatListener('onKill', onKill);
   registerCombatListener('onDamageTaken', onDealt);
@@ -363,7 +377,11 @@ function measure(
       }
       world.clearNodeEvents(node.nodeId);
       const dead = bot.isDead !== undefined || bot.hasHealth.hp <= 0;
-      if (!dead && isPlayerActivelyInCombat(world, bot)) engagedMs += 100;
+      if (!dead && isPlayerActivelyInCombat(world, bot)) {
+        engagedMs += 100;
+        hpFractionSum += bot.hasHealth.hp / Math.max(1, bot.hasHealth.maxHp);
+        hpSamples += 1;
+      }
       if (dead) {
         deaths += 1;
         reviveInFarmNode(world, bot, node.nodeId);
@@ -378,6 +396,7 @@ function measure(
       nodeId: node.nodeId,
       biome: node.biome,
       seed, kills, deaths, engagedMs, capMs, damageDealt, refusals, grantedShards, mobCount, fx,
+      damageTaken, hpFractionSum, hpSamples,
     };
   } finally {
     unregisterCombatListener('onKill', onKill);
@@ -408,6 +427,10 @@ interface Cell {
   ttkMs: number | null;
   /** `card-fx` events pushed, keyed by fx — proof the lane's payoff fired. */
   fx: Record<string, number>;
+  /** Damage taken per engaged second, or null when the run did not record it. */
+  damageTakenPerSec: number | null;
+  /** Mean HP fraction while engaged, or null when the run did not record it. */
+  meanHpFraction: number | null;
 }
 
 function aggregate(rows: Row[]): Map<string, Cell> {
@@ -440,6 +463,14 @@ function aggregate(rows: Row[]): Map<string, Cell> {
         for (const [key, count] of Object.entries(r.fx)) acc[key] = (acc[key] ?? 0) + count;
         return acc;
       }, {}),
+      damageTakenPerSec: group.every((r) => r.damageTaken === undefined) || engagedMs === 0
+        ? null
+        : group.reduce((a, r) => a + (r.damageTaken ?? 0), 0) / (engagedMs / 1000),
+      meanHpFraction: (() => {
+        const samples = group.reduce((a, r) => a + (r.hpSamples ?? 0), 0);
+        if (samples === 0) return null;
+        return group.reduce((a, r) => a + (r.hpFractionSum ?? 0), 0) / samples;
+      })(),
     });
   }
   return out;
@@ -462,6 +493,9 @@ async function main(): Promise<void> {
   const seeds = (process.env.LANE_SEEDS ?? '101009,101033').split(',').map(Number);
   const filter = process.env.LANE_FILTER;
   const biomeFilter = process.env.LANE_NODES?.split(',');
+  // Node-level filter, for the narrower survival pass: the TTK matrix wants every
+  // blend, the survival pass only needs one node per biome.
+  const nodeFilter = process.env.LANE_ONLY?.split(',');
   mkdirSync(out, { recursive: true });
 
   if (!process.env.LANE_REPLAY) {
@@ -470,7 +504,9 @@ async function main(): Promise<void> {
     assert(hydrateHitboxCacheFromArtifact(artifact) > 0, 'hitbox cache is empty');
   }
 
-  const nodes = laneNodes().filter((n) => !biomeFilter || biomeFilter.includes(n.biome));
+  const nodes = laneNodes()
+    .filter((n) => !biomeFilter || biomeFilter.includes(n.biome))
+    .filter((n) => !nodeFilter || nodeFilter.includes(n.nodeId));
   const references = LINEAGE_LANE_REFERENCES.filter((r) => !filter || r.profileId.includes(filter));
   assert(nodes.length > 0 && references.length > 0, 'nothing selected');
 
@@ -707,6 +743,39 @@ async function main(): Promise<void> {
     ...controls.map((c) => `| \`${c.reference.profileId}\` | ${c.reference.classRoot.replace('-root', '')} | ${c.reference.baseForm} | ${fmt(c.mean)} | ${signedPct(controlMedian === 0 ? null : c.mean / controlMedian - 1)} |`),
   ];
 
+  // ── Survival, for the lanes whose T1 payoff is not damage ─────────────────
+  const survival: string[] = [
+    '| profile | lane | class | mean HP while engaged | damage taken / engaged s | deaths | Δ HP vs control | Δ damage taken vs control |',
+    '|---|---|---|---:|---:|---:|---:|---:|',
+  ];
+  for (const reference of references) {
+    const cellsForRef = nodes.flatMap((n) => {
+      const cell = cellFor(reference.profileId, n.nodeId);
+      return cell ? [cell] : [];
+    });
+    if (cellsForRef.length === 0) continue;
+    const withHp = cellsForRef.filter((c) => c.meanHpFraction !== null);
+    if (withHp.length === 0) continue;
+    const hp = withHp.reduce((a, c) => a + (c.meanHpFraction ?? 0), 0) / withHp.length;
+    const withDmg = cellsForRef.filter((c) => c.damageTakenPerSec !== null);
+    const dps = withDmg.length === 0
+      ? null
+      : withDmg.reduce((a, c) => a + (c.damageTakenPerSec ?? 0), 0) / withDmg.length;
+    const controls = nodes.flatMap((n) => {
+      const cell = cellFor(baselineId(reference.lineageId), n.nodeId);
+      return cell && cell.meanHpFraction !== null ? [cell] : [];
+    });
+    const controlHp = controls.length
+      ? controls.reduce((a, c) => a + (c.meanHpFraction ?? 0), 0) / controls.length
+      : null;
+    const controlDps = controls.length
+      ? controls.reduce((a, c) => a + (c.damageTakenPerSec ?? 0), 0) / controls.length
+      : null;
+    survival.push(
+      `| \`${reference.profileId}\` | ${reference.lane ?? '_control_'} | ${reference.classRoot.replace('-root', '')} | ${fmt(hp)} | ${fmt(dps)} | ${cellsForRef.reduce((a, c) => a + c.deaths, 0)} | ${reference.lane && controlHp ? signedPct(hp / controlHp - 1) : '—'} | ${reference.lane && controlDps ? signedPct((dps ?? 0) / controlDps - 1) : '—'} |`,
+    );
+  }
+
   const refusalList = [...cells.values()].filter((c) => c.refusals.length > 0);
 
   const md = [
@@ -759,6 +828,14 @@ async function main(): Promise<void> {
     '',
     ...laneSummary,
     '',
+    ...(survival.length > 2
+      ? ['## Survival — what the non-damage lanes buy instead', '',
+         'Control’s slow and Engagement’s opening DR buy time, not throughput, so the',
+         'TTK matrix above reads them as worth nothing. This is the same runs read as',
+         'survival: mean HP fraction while engaged and damage taken per engaged second,',
+         'each against the same lineage’s lane-less control.',
+         '', ...survival, '']
+      : []),
     '## Encounter check (design §9)',
     '',
     '“Does the intended lane win by ~30%? Does the punished lane still clear?” The',
