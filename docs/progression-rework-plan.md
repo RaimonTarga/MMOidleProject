@@ -395,6 +395,101 @@ Tests: `lineageEconomy` (spend/refuse/discount/gate/wear, stat row reaching stat
 name their lane unprompted; time-to-first-card under four minutes; at least one swap per
 session. If the felt-effect claim fails here, stop and redesign before Phase 2.
 
+### Phase 1c progress note — card runtime and `mechanic-fired` (2026-10-01)
+
+**Built.** The server half of the Phase 1c contract. `pnpm typecheck` clean; the lineage
+suite (7/7) plus the ability / defense / durability / recovery / archetype / HUD-tooltip
+subsets (72 files) pass.
+
+- `shared/src/protocol/combatEvents.ts` — the `card-fx` member, verbatim from the
+  contract. One per payoff APPLICATION, pushed by the listener that applied it; a payoff
+  that refused draws nothing, which is asserted.
+- `server/src/systems/combat/engine/mechanicFired.ts` — `emitMechanicFired(world, player, ctx?)`
+  and `registerMechanicFiredListener`. Dispatch only: no state, no effect, no card. The
+  `ctx` doubles as a one-per-hit latch (`ctx.metadata.mechanicFired`), so the four roots
+  whose moment is an on-hit moment can register in any order and one exchange still emits
+  once. The six call sites, one per root:
+  cadence `cadencePrototype.ts` (a new onHit registered straight after the empowered
+  multiplier, gated on `metadata.empoweredAttack` + `usesCadence`);
+  cooldown `cooldownPrototype.ts` (the existing cycle-restart handler, which already IS
+  "the execution's flag was consumed");
+  dot `dotPrototype.ts` inside `applyClassDotStack` (latched on the effect's own
+  `data.maxStackFired`, so it is once per target per fill by construction and a refill
+  re-arms when the stack drops);
+  reload `reloadLifecycle.ts` in `completeReload`;
+  energy `energyPrototype.ts` (an onHit after the empowered multiplier, gated on
+  `usesEnergy`);
+  summoner `command.ts` at the end of `applySummonerCommand` (the focus early-return
+  became an `else` so focus and move share one emission).
+- `server/src/systems/combat/lineageCards.ts` — `registerLineageCards()`, called from
+  `initCombatSystems()` right after `initWeaponEffects()` so the empowered multiplier has
+  already written `empoweredMultiplier` before a card reads the hit it scales off. Ten
+  triggers, fifteen payoffs, every payoff on a pre-existing hook. Resolved cards are
+  cached on `TracksCombat.lineageRuntime` via new `get/setLineageRuntime` helpers and
+  refreshed from `recalculatePlayerEntityStats` — the one place the inputs can move.
+- `shared/src/systems/lineages.ts` — `lineageStatusEffectId(payoff)` (`lineage.<payoff>`),
+  shared because the client's buff tiles key off the id.
+- HUD: six `lineage-*` buff ids with descriptors in `LINEAGE_BUFFS`, spread into
+  `ALL_BUFFS`. `BUFF_IDS` is guarded by a compile-time equality assert and by
+  `hudStatusTooltips.test.ts`, which also demands authored copy and an icon resolver —
+  so `client/src/hud/statusHelp.ts` and `client/src/ui/conceptIcons.ts` gained entries
+  too. Those two client edits are consequences of the ids, not UI work.
+- Tests: `server/test/mechanicFired.test.ts` (every assertion is a count) and
+  `server/test/lineageCards.wiring.test.ts` (cards seeded onto the runtime cache, since
+  T1 authors only four of the ten triggers).
+
+**Divergences from the contract, and why.**
+
+1. **`plating-stack` does not use a status "stack"** — there is no hit-plating *status*
+   to reuse. Reactive plating is resources on `TracksCombat` gated on
+   `defense.hit-plating-per-stack`. So the card applies `lineage.plating-stack` carrying
+   the flat per-stack value it resolved against the player's plating, and
+   `reactivePlating.ts` adds it to the passive in one shared `platingPerStack(player)`
+   helper used by both its listener gate and its tick. The stacking, hold window and
+   one-at-a-time fade stay where they already lived.
+2. **`engagement-dr` is read by a listener in `lineageCards.ts`, not by `engagementDr.ts`.**
+   The existing Dawn window is passive-driven and rearms on its own quiet timer; a card's
+   window is opened by its trigger and has its own clock. Folding the card into Dawn would
+   have made one window answer to two owners. The shape (a damage-taken multiplier, capped
+   at 0.75) is Dawn's.
+3. **`speed-window` and `recovery-window` DID extend their existing seams**, because there
+   is only one of each: a summand in `attackHasteBonus` (`attackCadence.ts`) and a sixth
+   `RecoverySourceId`, `'lineage'` (`recovery.ts`). A borrowed source would let a card's
+   window ride a Guard's fraction, or be downgraded by it.
+4. **`cleanse` needed a home.** `applyCleanse` was private to `abilityFiring.ts`, and
+   importing it would have made `abilityFiring -> charmHooks -> lineageCards -> abilityFiring`
+   a cycle. Moved verbatim to `server/src/systems/combat/status/cleanse.ts` as
+   `cleansePlayerAfflictions`; the Cleanse guard now calls it there. Policy unchanged.
+5. **`contagion` needed Contagion's copier.** `copyDotOnto` was private; it is now
+   `copyPlayerDotOnto` with an optional `stackFraction` (default 1, byte-identical for the
+   Technique) so a card can copy a share rather than the whole affliction.
+6. **`hemorrhage` reuses `cadence-hemorrhage`**, whose tick driver (`updateHemorrhages`)
+   runs for every hemorrhaged monster regardless of who bled it. A lineage bleed refreshes
+   by taking the BETTER of per-tick damage and remaining ticks, never by overwriting — a
+   per-hit card must not shrink a finisher's bleed.
+7. **`standing` and `pulse` need a clock**, which no combat-pipeline listener has. They run
+   from `updateLineageCards(world, dt)`, called from `World.tick` just before
+   `syncPlayerBuffs` so a window opened this tick shows its clock on the same frame. All
+   ten triggers are still owned by one module; two of them simply are not listeners.
+8. **`guard-cast` hangs off `onGuardFired`** in `charmHooks.ts` rather than a listener — a
+   Guard is not an attack and has no context to ride.
+
+**Gaps for the designer.** Named constants at the top of `lineageCards.ts`, because the
+magnitude table does not author them and no T1 card needs them yet. When a later band
+buys one of these triggers or payoffs, the number belongs in `magnitudes.ts`:
+`STANDING_MS` (1500), `PULSE_MS` (4000), `CONTAGION_RADIUS` (120) and
+`CONTAGION_TARGETS` (1), `BLEED_TICK_MS` (1000, matching the cadence root),
+`CLEANSE_STACKS`/`CLEANSE_DEBUFFS` (1/1), `ENGAGEMENT_IDLE_MS` (4000, the quiet spell that
+ends an engagement for `first-hit`). Two design questions came out of the wiring:
+`standing` and `pulse` have no authored cadence at all, and `contagion`'s radius is a
+positional lever the table has no column for. Nothing needed a new combat primitive
+beyond the `mechanic-fired` seam the contract authorises.
+
+**Not in 1c.** `previewEquipmentStats` still builds a synthetic inventory with no
+`lineages`, so the stat sheet and swap preview still ignore cards (the §1.3 known
+limitation is open). The client half — the tree panel, the `card-fx` handlers per
+`LineageFxKey`, and the stat-row trail — is the client session's.
+
 ---
 
 ## Phase 2 — Variants, shards, and removal of the old economy
