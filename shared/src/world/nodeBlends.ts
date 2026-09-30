@@ -63,7 +63,11 @@ export function resolveNodeBlend(
   const unavailable: FamilyId[] = [];
   for (const entry of blendEntries(blend)) {
     const family = FAMILY_DATABASE.get(entry.family);
-    const fielded = pool.filter((id) => family?.monsterIds.includes(id));
+    // Deduplicated: a biome pool may list a mob twice to weight the flat random
+    // pick (T1 mountain lists cliff-hopper twice). Inside a family the blend's
+    // share is the weight now, so a duplicate would only make the family
+    // alternate between two copies of one mob.
+    const fielded = [...new Set(pool.filter((id) => family?.monsterIds.includes(id)))];
     if (fielded.length === 0) {
       unavailable.push(entry.family);
       continue;
