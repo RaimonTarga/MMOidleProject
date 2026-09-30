@@ -5,10 +5,13 @@ import type {
   CombatArchetype,
   HasAutoIntent,
   EquipmentMap,
+  EquipmentSlot,
   AttunedAbilities,
   EquippedStances,
   EquippedRule,
   EssenceType,
+  LineageProgressMap,
+  PacketId,
   PartyMember,
   PassiveMap,
   PlayerBuff,
@@ -226,6 +229,12 @@ export const questProgressAtom = atom<Record<string, number>>({});
 export const essencesAtom = atom<Record<EssenceType, number>>({ ...DEFAULT_ESSENCES });
 export const catalystsAtom = atom<Record<string, number>>({});
 export const catalystProgressAtom = atom<Record<string, number>>({});
+/** Lineage shard wallet, keyed by packet (progression rework Phase 1). */
+export const shardsAtom = atom<Partial<Record<PacketId, number>>>({});
+/** Boss capstone wallet, keyed by biome — the gate cost of a lineage form. */
+export const capstonesAtom = atom<Record<string, number>>({});
+/** Lineage trees, keyed by lineage id. */
+export const lineagesAtom = atom<LineageProgressMap>({});
 
 export const activeBuffsAtom = atom<PlayerBuff[]>([]);
 export const autoPathAtom = atom<string[] | null>(null);
@@ -447,6 +456,13 @@ export const buildOpenAtom = atom<boolean>(false);
 export const buildPanelTabAtom = atom<BuildPanelTab>('abilities');
 export const masteryOpenAtom = atom<boolean>(false);
 export const inventoryOpenAtom = atom<boolean>(false);
+/**
+ * The equipment slot whose lineage tree is open, or null. A separate overlay
+ * from `inventoryOpenAtom` (not a tab of it) so either HUD shell can mount
+ * `LineageTreePanel` as its own top-level dialog — opening it replaces the
+ * Inventory dialog rather than stacking a second modal focus-trap over it.
+ */
+export const lineageTreeSlotAtom = atom<EquipmentSlot | null>(null);
 export const mapOpenAtom = atom<boolean>(false);
 export const craftTabAtom = atom<'make' | 'upgrade' | null>(null);
 export const questOpenAtom = atom<boolean>(false);
@@ -873,6 +889,9 @@ function resetPlayerAtoms(): void {
   setIfShallowObjectEqual(essencesAtom, { ...DEFAULT_ESSENCES });
   setIfShallowObjectEqual(catalystsAtom, {});
   setIfShallowObjectEqual(catalystProgressAtom, {});
+  setIfShallowObjectEqual(shardsAtom, {});
+  setIfShallowObjectEqual(capstonesAtom, {});
+  setIfShallowObjectEqual(lineagesAtom, {});
   setAutoPath(null);
   setParty(null);
   setZonePlayers([]);
@@ -996,6 +1015,9 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfShallowObjectEqual(essencesAtom, player.essences);
   setIfShallowObjectEqual(catalystsAtom, player.catalysts);
   setIfShallowObjectEqual(catalystProgressAtom, player.catalystProgress);
+  setIfShallowObjectEqual(shardsAtom, player.shards);
+  setIfShallowObjectEqual(capstonesAtom, player.capstones);
+  setIfShallowObjectEqual(lineagesAtom, player.lineages);
 
   setParty(
     player.partyLeaderId
@@ -1013,6 +1035,7 @@ export function closeEconomyPanels(): void {
   const store = getDefaultStore();
   store.set(inventoryOpenAtom, false);
   store.set(craftTabAtom, null);
+  store.set(lineageTreeSlotAtom, null);
 }
 
 export function triggerDeathOverlay(payload: PlayerDeathPayload): void {

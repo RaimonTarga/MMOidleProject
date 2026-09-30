@@ -1,4 +1,4 @@
-import type { AutocombatConfig, EquipmentSlot, AttunedAbilities, EquippedRule, EvolveMode, StanceSlot, Vec2 } from '@mmo-idle/shared';
+import type { AutocombatConfig, EquipmentSlot, AttunedAbilities, EquippedRule, EvolveMode, RowKind, StanceSlot, Vec2 } from '@mmo-idle/shared';
 
 export interface IntentMap {
   toggleAuto: undefined;
@@ -28,6 +28,11 @@ export interface IntentMap {
   craftRecipe: string;
   evolveItem: { recipeId: string; mode: EvolveMode };
   upgradeItem: string;
+  // ── Lineage trees (progression rework Phase 1) ─────────────────────────────
+  lineageUnlockCard: { lineageId: string; cardId: string };
+  lineageSetActive: { lineageId: string; row: RowKind; cardId: string | null };
+  lineageUnlockForm: { lineageId: string; recipeId: string };
+  lineageWearForm: { lineageId: string; recipeId: string };
   navigateTo: { path: string[] };
   goToTestRoom: undefined;
   teleportToNode: string;
