@@ -35,6 +35,23 @@ The optional development human-playtest filesystem recorder is unchanged. Bot/be
 - Boss encounter start/end with starting class/frame/range/skills/gear/upgrades/loadout, tier, level, biome levels, effective stats, same-node live party size, boss type, HP fraction, duration, outgoing boss damage and incoming damage during the attempt. Start is observed target acquisition or direct player/owned-minion damage involving a boss. Party members receive outcomes only when they participated, not merely because they saw the log.
 - Death context captured **before** cleanup: build, node, position, cause, authored ability, killer type, status IDs/stacks, and up to 32 recent incoming damage records from the preceding ten seconds. Damage sources already despawned can be unknown; the authoritative killing cause still carries its source snapshot.
 - Biome/tier milestones with elapsed session time.
+- Lineage-tree actions (progression rework Phase 1): `lineage.card-unlocked`,
+  `lineage.card-swapped` and `lineage.gate-paid`, recorded in the four economy
+  handlers (`server/src/systems/player/economy/lineages.ts`) as their own
+  `lineage` payload kind. Each row carries the lineage, the lane, the row, the
+  card, the card a swap displaced, the form a gate bought, the essence/shard/
+  capstone actually paid, how many cards the tree holds afterwards, and the
+  session-elapsed time. The first purchase of a session is flagged, which is
+  where `lineage.first-card-ms` in the daily table comes from, so
+  time-to-first-card survives aggregation. Only a REPLACEMENT counts as a swap:
+  buying into an empty row activates the card server-side and is one purchase,
+  not a purchase plus a swap. A refused action records nothing.
+
+  These are a separate payload kind rather than `decision` rows on purpose. A
+  `decision` is dropped unless the projected build changed, and `GameplayBuild`
+  projects no lineage state at all, so before this a payoff card — which moves no
+  projected stat — recorded nothing anywhere. Lane and row are stored as plain
+  strings so a renamed packet cannot make an old row un-typable.
 
 **Known implementation gap:** the current recorder wallet projection still
 enumerates `BIOME_DATABASE` keys for catalyst fields, while the live catalyst
@@ -61,6 +78,6 @@ Detailed events expire after 90 days; identity-free daily totals expire after 36
 
 ## Verification
 
-`gameplayTelemetry.test.ts` exercises actual socket decision handlers, world-log fanout, death cleanup, boss outcomes, pseudonymous reconnects, privacy projection, test exclusion, retry/backoff/overflow, and production admin-token validation without a database.
+`lineageTelemetry.test.ts` exercises the three lineage events through the real economy handlers on a bare `World`: costs paid against the wallet delta, the first-card flag, swap-versus-purchase, a refused action recording nothing, the privacy projection, and the daily aggregation. `gameplayTelemetry.test.ts` exercises actual socket decision handlers, world-log fanout, death cleanup, boss outcomes, pseudonymous reconnects, privacy projection, test exclusion, retry/backoff/overflow, and production admin-token validation without a database.
 
 `gameplayPersistence.test.ts` is optional: set `TEST_GAMEPLAY_DATABASE_URL` to an **empty disposable database named `codex_telemetry_test_*`**. It checks both migrations, stable random identity, persisted test exclusion, transactional rollback, duplicate protection, cohort queries and retention. It skips without that explicit URL so ordinary CI remains database-independent.

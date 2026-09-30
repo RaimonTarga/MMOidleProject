@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { BIOME_DATABASE, ESSENCE_TYPES, SKILL_TREE, NODE_BIOMES, bossClearKey, type DeathCause, type GameplayBuild, type GameplayCohort, type GameplayDamage, type GameplayEvent, type GameplayPayload, type EncounterOutcome, type WorldLogEvent } from '@mmo-idle/shared';
+import { BIOME_DATABASE, ESSENCE_TYPES, SKILL_TREE, NODE_BIOMES, bossClearKey, type DeathCause, type GameplayBuild, type GameplayCohort, type GameplayDamage, type GameplayEvent, type GameplayPayload, type EncounterOutcome, type LineageTelemetryEvent, type WorldLogEvent } from '@mmo-idle/shared';
 import type { PlayerEntity, MonsterEntity } from '../ecs/entity';
 import type { World } from '../world/World';
 import { canUnlockEntitySkill } from '../ecs/playerEntityFormulas';
@@ -44,6 +44,8 @@ interface Session {
   wallet: Record<string, number>; recentDamage: GameplayDamage[]; attempts: Map<string, Attempt>;
   alive: boolean; inCombat: boolean; afterFailure: 'death' | 'retreat' | null;
   sequence: number;
+  /** Set by the first accepted card purchase, so time-to-first-card is one row. */
+  boughtLineageCard: boolean;
 }
 export class GameplayRecorder {
   private sessions = new Map<string, Session>();
@@ -51,7 +53,7 @@ export class GameplayRecorder {
   start(p: PlayerEntity, characterId: string, cohort: GameplayCohort): void {
     if (this.sessions.has(p.isPlayer.id)) return;
     const now = this.now();
-    const s: Session = { characterId, sessionId: randomUUID(), sequence: 0, cohort, start: now, lastSample: now, nodeId: p.hasPosition.nodeId, exposure: 0, combat: 0, build: gameplayBuild(p), wallet: wallet(p), recentDamage: [], attempts: new Map(), alive: !p.isDead, inCombat: !!p.tracksEngagement, afterFailure: null };
+    const s: Session = { characterId, sessionId: randomUUID(), sequence: 0, cohort, start: now, lastSample: now, nodeId: p.hasPosition.nodeId, exposure: 0, combat: 0, build: gameplayBuild(p), wallet: wallet(p), recentDamage: [], attempts: new Map(), alive: !p.isDead, inCombat: !!p.tracksEngagement, afterFailure: null, boughtLineageCard: false };
     this.sessions.set(p.isPlayer.id, s);
     this.write(s, { kind: 'session-start', build: s.build }, now);
   }
@@ -118,6 +120,54 @@ export class GameplayRecorder {
     this.write(s, { kind: 'decision', action, choice, afterFailure: s.afterFailure, ...before, build });
     this.observeWallet(s, p);
   }
+  /**
+   * One accepted lineage-tree action, recorded where the spend is known.
+   *
+   * Deliberately not routed through `decision`: that path drops an event whose
+   * projected build did not change, and `gameplayBuild` projects no lineage
+   * state, so a payoff card recorded nothing at all. `spent` comes from the
+   * caller because only the handler knows the resolved cost it actually paid
+   * (a discounted row, or a test-room purchase that paid nothing).
+   */
+  lineage(p: PlayerEntity, event: LineageTelemetryEvent, detail: {
+    lineageId: string;
+    lane?: string | null;
+    row?: string | null;
+    cardId?: string | null;
+    replacedCardId?: string | null;
+    formRecipeId?: string | null;
+    essenceSpent?: number;
+    shardsSpent?: number;
+    capstonesSpent?: number;
+    ownedCards: number;
+  }): void {
+    const s = this.sessions.get(p.isPlayer.id);
+    if (!s) return;
+    const now = this.now();
+    this.advance(s, now);
+    this.flushExposure(s);
+    const build = gameplayBuild(p);
+    s.build = build;
+    const firstOfSession = event === 'lineage.card-unlocked' && !s.boughtLineageCard;
+    if (firstOfSession) s.boughtLineageCard = true;
+    this.write(s, {
+      kind: 'lineage', event,
+      lineageId: detail.lineageId,
+      lane: detail.lane ?? null,
+      row: detail.row ?? null,
+      cardId: detail.cardId ?? null,
+      replacedCardId: detail.replacedCardId ?? null,
+      formRecipeId: detail.formRecipeId ?? null,
+      essenceSpent: detail.essenceSpent ?? 0,
+      shardsSpent: detail.shardsSpent ?? 0,
+      capstonesSpent: detail.capstonesSpent ?? 0,
+      ownedCards: detail.ownedCards,
+      firstOfSession,
+      sessionElapsedMs: Math.max(0, now - s.start),
+    }, now, p.hasPosition.nodeId, build);
+    this.observeWallet(s, p);
+  }
+
   sample(world: World, now: number): void {
     for (const [id, s] of this.sessions) {
       const p = world.getPlayerEntity(id);
