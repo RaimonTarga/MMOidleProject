@@ -5,7 +5,18 @@ Each entry captures the feasibility verdict and the chosen direction so a future
 session doesn't re-derive it. When an entry gets scheduled, promote it to a full
 `docs/<feature>-plan.md` and mark the entry here as promoted.
 
-Status: current as of 2026-09-27.
+Status: current as of 2026-09-30.
+
+---
+
+## Progression rework — PROMOTED (2026-09-30)
+
+Item lineage trees, biome variants with family materials, frame loops, and the removal
+of catalysts, node modifiers, and the +1..+5 ladder. Promoted straight to
+[`docs/progression-rework-plan.md`](progression-rework-plan.md) with design authority in
+[`design_docs/progression-rework-design.md`](../design_docs/progression-rework-design.md).
+The player defense proposal below is folded into that program's Phase 0 (coarse
+HP/recovery pass) and Phase 4 (defensive lanes); it is not a separate track any more.
 
 ---
 
