@@ -644,6 +644,49 @@ async function main(): Promise<void> {
     }),
   ];
 
+  // ── §9 lane budget at the PACKET level ────────────────────────────────────
+  //
+  // §9's unit is the lane (the packet), not the (lineage, lane) pair: three
+  // lineages carry Tempo and they must not each be judged alone. So a packet's
+  // reading is the mean of its references' mean uplift over every node, and the
+  // band is ±10% of the median PACKET. This is the table the designer tunes
+  // `PACKET_BUDGET` from.
+  const packetRows = [...new Set(laneRefs.map((r) => r.lane!))].map((lane) => {
+    const refs = laneRefs.filter((r) => r.lane === lane);
+    const means = refs.flatMap((reference) => {
+      const values = nodes.flatMap((n) => {
+        const cell = cellFor(reference.profileId, n.nodeId);
+        if (!cell) return [];
+        const u = uplift(cell);
+        return u === null ? [] : [u];
+      });
+      return values.length === 0 ? [] : [values.reduce((a, b) => a + b, 0) / values.length];
+    });
+    const fxTotal = refs.reduce((total, reference) => total + nodes.reduce(
+      (sub, n) => sub + Object.values(cellFor(reference.profileId, n.nodeId)?.fx ?? {}).reduce((a, b) => a + b, 0),
+      0,
+    ), 0);
+    return {
+      lane,
+      lineages: refs.length,
+      mean: means.length ? means.reduce((a, b) => a + b, 0) / means.length : null,
+      fxTotal,
+      favoured: favouredNodeFor(lane) ?? null,
+    };
+  }).sort((a, b) => (b.mean ?? -1) - (a.mean ?? -1));
+  const packetMedian = median(packetRows.flatMap((r) => (r.mean === null ? [] : [r.mean])));
+  const packetBudget: string[] = [
+    `Median packet uplift: **${signedPct(packetMedian)}**. The ±10% band is` +
+    ` ${signedPct(packetMedian * 0.9)} to ${signedPct(packetMedian * 1.1)}.`,
+    '',
+    '| packet | lineages carrying it | mean uplift | x median | in ±10% | payoff fx fired | has a favouring T1 node |',
+    '|---|---:|---:|---:|:--:|---:|---|',
+    ...packetRows.map((r) => {
+      const ratio = r.mean === null || packetMedian === 0 ? null : r.mean / packetMedian;
+      return `| ${r.lane} | ${r.lineages} | ${signedPct(r.mean)} | ${ratio === null ? '—' : `${ratio.toFixed(2)}x`} | ${ratio !== null && Math.abs(ratio - 1) <= 0.10 ? 'yes' : 'NO'} | ${r.fxTotal} | ${r.favoured ? `\`${r.favoured.nodeId}\`` : '**none**'} |`;
+    }),
+  ];
+
   // ── §9 encounter check, per fieldable family ──────────────────────────────
   //
   // Two readings per side, because §9-as-written is not class-free:
@@ -819,6 +862,10 @@ async function main(): Promise<void> {
     '### How much of the absolute column is class, not lane',
     '',
     ...controlSpread,
+    '',
+    '### Lane budget per PACKET — the table `PACKET_BUDGET` is tuned from',
+    '',
+    ...packetBudget,
     '',
     '### Lane uplift over every node',
     '',
