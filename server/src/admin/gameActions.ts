@@ -20,6 +20,7 @@ import {
   TEST_ROOM_NODE_ID,
   runeIdsFromCraftedRecipes,
   normalizeAttunedAbilities,
+  normalizeLineageProgressMap,
   normalizeEquipment,
   validStanceIds,
   validRiteIds,
@@ -475,6 +476,20 @@ export function applyTierEntryProfile(
   // `attachPlayerEntity` performs would disagree with what was captured here.
   player.holdsInventory.lineages = {};
   syncLineagesFromInventory(world, player);
+  // A lane reference profile additionally DECLARES which cards it bought (the
+  // lane matrix, plan §1.5). Normalizing first drops any id static data no
+  // longer has, and merging only onto a tree the held forms already opened keeps
+  // the invariant that owning a tree means owning its slot.
+  for (const [lineageId, declared] of Object.entries(normalizeLineageProgressMap(profile.lineages))) {
+    const born = player.holdsInventory.lineages[lineageId];
+    if (!born) continue;
+    player.holdsInventory.lineages[lineageId] = {
+      ...born,
+      ownedCards: [...new Set([...born.ownedCards, ...declared.ownedCards])],
+      active: { ...born.active, ...declared.active },
+      ownedForms: [...new Set([...born.ownedForms, ...declared.ownedForms])],
+    };
+  }
   syncArchetypeSlices(world, player);
   recalculatePlayerEntityStats(world, player);
   syncArchetypeSlices(world, player);
