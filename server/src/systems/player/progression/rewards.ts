@@ -1,4 +1,4 @@
-import { NODE_BIOMES, NODE_MODIFIERS, modifierRewardMult, MONSTER_DATABASE, RECIPE_DATABASE, biomeLevelCap, biomeXpForBiomeLevel, biomeXpRewardMult, bossClearKey, BIOME_DATABASE, GAME_CONFIG, catalystProgressPerUnit, catalystProgressRewardMult, familyForMonster, CAPSTONE_MATERIALS, SHARD_BASE_PER_KILL, SHARD_TIER_MULT } from '@mmo-idle/shared';
+import { NODE_BIOMES, NODE_MODIFIERS, modifierRewardMult, MONSTER_DATABASE, RECIPE_DATABASE, biomeLevelCap, biomeXpForBiomeLevel, biomeXpRewardMult, bossClearKey, BIOME_DATABASE, GAME_CONFIG, catalystProgressPerUnit, catalystProgressRewardMult, familyForMonster, CAPSTONE_MATERIALS, SHARD_BASE_PER_KILL, SHARD_TIER_MULT, biomeDefensiveLaneAPackets } from '@mmo-idle/shared';
 import type { EssenceType } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
@@ -17,6 +17,20 @@ export interface KillRewards {
 
 const FALLBACK_REWARDS: KillRewards = { essence: 1, essenceType: 'green', level: 1 };
 const DEFAULT_BOSS_RESPAWN_MS = 30_000;
+
+/**
+ * Design §17's shard-sourcing stopgap: at T1 every node fields only
+ * `monsterPoolByTier[1]` (two mobs per biome), so three packets — Engagement,
+ * Bulwark, Barrier tempo — have NO T1 family at all and are otherwise
+ * unreachable before a biome's third family debuts at tier 2. Until Phase 4
+ * reviews the families, a biome boss kill also drops this many shards of EACH
+ * distinct Lane-A packet across its three non-weapon lineages (armor, recovery,
+ * mobility) — deduplicated per packet, so a biome whose armor and mobility
+ * lineages share a Lane A (e.g. Plains' Kill chain) pays that packet once per
+ * kill, not once per lineage that names it. Provisional; remove when a family
+ * covers it.
+ */
+const BOSS_LANE_A_SHARD_AMOUNT = 2;
 
 export interface KillRewardInfo {
   essenceGained: number;
@@ -101,6 +115,16 @@ function grantLineageMaterials(
     prog.capstones[params.biomeGroup] =
       (prog.capstones[params.biomeGroup] ?? 0) + Math.max(1, Math.round(params.debugMult));
     touched = true;
+  }
+
+  // Shard-sourcing stopgap (design §17) — see BOSS_LANE_A_SHARD_AMOUNT's comment.
+  // Same "not multiplier-scaled by node identity" treatment as the capstone above.
+  if (monster.isMonster.isBoss && params.biomeGroup) {
+    for (const packet of biomeDefensiveLaneAPackets(params.biomeGroup)) {
+      prog.shards[packet] =
+        (prog.shards[packet] ?? 0) + Math.max(1, Math.round(BOSS_LANE_A_SHARD_AMOUNT * params.debugMult));
+      touched = true;
+    }
   }
 
   if (touched) markSliceDirty(world, recipient, 'tracksProgression');
