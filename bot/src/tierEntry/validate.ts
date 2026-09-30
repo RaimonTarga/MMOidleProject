@@ -5,6 +5,7 @@ import {
   STANCE_RECIPE_DATABASE, RITE_RECIPE_DATABASE, isStanceRecipeUnlocked, isRiteRecipeUnlocked,
   ESSENCE_TYPES,
   ITEM_DATABASE,
+  LINEAGE_DATABASE,
   NODE_BIOMES,
   RECIPE_DATABASE,
   RUNE_RECIPE_DATABASE,
@@ -15,6 +16,7 @@ import {
   isAbilityRecipeUnlocked,
   isRuneRecipeUnlocked,
   requiredBiomeLevelForUpgrade,
+  resolveLineageCard,
   runeBudgetForGlobalMastery,
   runeIdsFromCraftedRecipes,
   sealsHeldAtTier, sealsRequiredForTier,
@@ -278,6 +280,46 @@ export function validateProfile(profile: TierEntryProfile): ValidationReport {
       c.ok(label + "-reachable", recipe && ("stanceId" in recipe ? isStanceRecipeUnlocked(recipe, { biomeLevel: profile.biomeLevels, bossesCleared: profile.bossesCleared }) : isRiteRecipeUnlocked(recipe, { biomeLevel: profile.biomeLevels, bossesCleared: profile.bossesCleared })), id + " is not reachable");
     }
   }
+  // Lineage trees. A template that DECLARES cards is claiming the character
+  // bought them, so the same gates a purchase pays have to admit them: the card
+  // exists in that lineage, the worn form's band covers its tier, the home
+  // biome's level and the Global Mastery band are reached, and the active card of
+  // a row is one the template owns. Without this a lane reference could hand a
+  // character a card its own mastery could never have paid for, and every lane
+  // measurement taken from it would describe a build no player can hold.
+  for (const [lineageId, tree] of Object.entries(profile.lineages ?? {})) {
+    const lineage = LINEAGE_DATABASE.get(lineageId);
+    if (!c.ok("lineage-known", lineage, `unknown lineage "${lineageId}"`)) continue;
+    c.ok("lineage-worn-form",
+      lineage!.forms.some((f) => f.recipeId === tree.wornForm) && tree.ownedForms.includes(tree.wornForm),
+      `${lineageId}: worn form "${tree.wornForm}" is not an owned form of the lineage`);
+    c.ok("lineage-slot-mirrors-form",
+      profile.equipment[lineage!.slot] === tree.wornForm,
+      `${lineageId}: equipment.${lineage!.slot} is "${profile.equipment[lineage!.slot]}" but the worn form is "${tree.wornForm}"`);
+    const wornTier = lineage!.forms.find((f) => f.recipeId === tree.wornForm)?.tier ?? 0;
+    for (const cardId of tree.ownedCards) {
+      const card = lineage!.cards.find((x) => x.id === cardId);
+      if (!c.ok("lineage-card-known", card, `${lineageId}: unknown card "${cardId}"`)) continue;
+      const resolved = resolveLineageCard(card!, lineage!);
+      c.ok("lineage-card-band", card!.tier <= wornTier,
+        `${cardId} is a tier-${card!.tier} card but the worn form is tier ${wornTier}`);
+      c.ok("lineage-card-biome-level",
+        (profile.biomeLevels[lineage!.homeBiome] ?? 0) >= resolved.requiredBiomeLevel,
+        `${cardId} needs ${lineage!.homeBiome} level ${resolved.requiredBiomeLevel}`);
+      c.ok("lineage-card-mastery", gm >= resolved.requiredGlobalMastery,
+        `${cardId} needs Global Mastery ${resolved.requiredGlobalMastery}, template has ${gm}`);
+      if (card!.modifies) c.ok("lineage-card-prerequisite", tree.ownedCards.includes(card!.modifies),
+        `${cardId} modifies ${card!.modifies}, which the template does not own`);
+    }
+    for (const [row, cardId] of Object.entries(tree.active)) {
+      c.ok("lineage-active-owned", cardId !== undefined && tree.ownedCards.includes(cardId),
+        `${lineageId}: active ${row} card "${cardId}" is not owned`);
+      c.ok("lineage-active-row",
+        lineage!.cards.find((x) => x.id === cardId)?.row === row,
+        `${lineageId}: "${cardId}" is not a ${row} card`);
+    }
+  }
+
   const build = { abilities: profile.attunedAbilities, runeRules: profile.runesEquipped,
     stances: { attuned: profile.attunedStances ?? [], default: profile.equippedStances.default }, rites: profile.equippedRites };
   const view = { knownAbilities: profile.knownAbilities, knownStances: profile.knownStances, knownRites: profile.knownRites,
