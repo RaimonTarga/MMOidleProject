@@ -1,3 +1,4 @@
+import type { NodeBlend } from '../../data/families';
 import type { NodeModifierFamily } from '../nodeModifierTypes';
 
 export type WorldRegionId = `t${number}`;
@@ -22,6 +23,19 @@ export interface WorldNodeAuthoring {
   kind: WorldNodeKind;
   biomeGroup: string;
   biomeTier: number;
+  /**
+   * What this node is made of: its biome's families and the share of spawns each
+   * one takes (design §12). Normal nodes of a biome with an authored family table
+   * carry one; every other node carries none, and spawning falls back to the flat
+   * biome pool.
+   */
+  blend?: NodeBlend;
+  /**
+   * @deprecated Superseded by `blend` (Phase 2a). Still authored and still live —
+   * node display names, monster stat scaling, catalysts and reward multipliers all
+   * read it, and the region masks are cut to the modifier count. Phase 2b deletes
+   * the field together with that machinery.
+   */
   modifier?: NodeModifierFamily;
   bossTypeId?: string;
   mobDensity?: number;

@@ -1,3 +1,4 @@
+import type { NodeBlend } from '../data/families';
 import {
   type NodeModifierFamily,
 } from './nodeModifierTypes';
@@ -42,6 +43,8 @@ export interface NodeBiomeInfo {
   kind: WorldNodeKind;
   displayName: string;
   map: WorldMapCoord;
+  /** The node's family composition (design 12). Absent outside T1 for now. */
+  blend?: NodeBlend;
   modifier?: NodeModifierFamily;
   isDungeon?: boolean;
   bossTypeId?: string;
@@ -80,6 +83,7 @@ export const NODE_BIOMES: Record<string, NodeBiomeInfo> = Object.fromEntries(
       kind: node.kind,
       displayName: node.displayName,
       map: node.map,
+      blend: node.blend,
       modifier: node.modifier,
       isDungeon: node.kind === 'dungeon' || node.kind === 'unique',
       bossTypeId: node.bossTypeId,
