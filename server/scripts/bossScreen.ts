@@ -510,7 +510,7 @@ function run(cell: Night5Cell, seed: number) {
         energyCount: view.energyCount, energyMax: view.energyMax,
         ammoCount: view.ammoCount, ammoMax: view.ammoMax,
         cadenceCount: view.cadenceCount, cadenceThreshold: view.cadenceThreshold,
-        essences: { ...view.essences }, catalysts: { ...view.catalysts },
+        essences: { ...view.essences },
       },
       /** How the encounter was initialized, stated rather than assumed. */
       encounterSetup: {

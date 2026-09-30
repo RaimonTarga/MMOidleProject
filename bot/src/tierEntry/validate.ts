@@ -265,9 +265,6 @@ export function validateProfile(profile: TierEntryProfile): ValidationReport {
     const amount = profile.wallet.essences[type];
     c.ok("wallet-essence-legal", Number.isFinite(amount) && amount >= 0, `${type} essence is ${amount}`);
   }
-  for (const [family, amount] of Object.entries(profile.wallet.catalysts)) {
-    c.ok("wallet-catalyst-legal", Number.isFinite(amount) && amount >= 0, `${family} catalysts is ${amount}`);
-  }
 
   for (const [known, recipes, unlocked, label] of [
     [profile.knownStances, STANCE_RECIPE_DATABASE, isStanceRecipeUnlocked, "stance"],
@@ -335,9 +332,6 @@ export function validateSpawn(profile: TierEntryProfile, self: PlayerView): Vali
     c.ok("live-equipment", live === id, `${slot} is ${live}, expected ${id}`);
   }
   c.ok("live-inventory", JSON.stringify([...self.inventory].sort()) === JSON.stringify([...profile.inventory].sort()), "Inventory differs from template");
-  for (const family of new Set([...Object.keys(profile.wallet.catalysts), ...Object.keys(self.catalysts)])) {
-    c.ok("live-wallet-catalyst", (self.catalysts[family] ?? 0) === (profile.wallet.catalysts[family] ?? 0), `${family} catalyst wallet differs`);
-  }
   for (const [id, plus] of Object.entries(profile.itemUpgrades)) {
     c.ok("live-upgrade-level", (self.itemUpgrades[id] ?? 0) === plus, `${id} is +${self.itemUpgrades[id] ?? 0}, expected +${plus}`);
   }

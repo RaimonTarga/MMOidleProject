@@ -252,9 +252,6 @@ for (const group of ["clearing", ...T1_BIOMES]) {
     const cost = Object.entries(r.cost)
       .map(([k, v]) => `${v} ${k}`)
       .join(" + ");
-    const cat = Object.entries(r.catalystCost ?? {})
-      .map(([k, v]) => `${v} ${k}`)
-      .join(" + ");
     const stats = [
       effects(r.stats as unknown as Record<string, number>),
       r.attacksPerSecond ? `aps ${num(r.attacksPerSecond)}` : "",
@@ -262,9 +259,7 @@ for (const group of ["clearing", ...T1_BIOMES]) {
       .filter(Boolean)
       .join(", ");
     w(
-      `| ${group} | \`${r.id}\` | ${r.slot} | ${r.requiredBiomeLevel} | ${cost}${
-        cat ? " + " + cat : ""
-      } | ${stats} | ${effects(r.mechanicEffects)} |`,
+      `| ${group} | \`${r.id}\` | ${r.slot} | ${r.requiredBiomeLevel} | ${cost} | ${stats} | ${effects(r.mechanicEffects)} |`,
     );
   }
 }

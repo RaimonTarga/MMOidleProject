@@ -111,8 +111,6 @@ function buildProfile(route: Route, economy: EntryEconomyMode): TierEntryProfile
     economyPolicy: "synthetic-combat-progression",
     wallet: {
       essences: { ...wallet.essences },
-      catalysts: { ...wallet.catalysts },
-      catalystProgress: {},
     },
     // The wallet is a labelled MODEL (see economy.ts); progression state below is
     // an explicit T1-complete manifest derived from the canonical route source.
@@ -181,7 +179,6 @@ function buildProfile(route: Route, economy: EntryEconomyMode): TierEntryProfile
 export const ENTRY_ECONOMY_MODES: readonly EntryEconomyMode[] = [
   "clean",
   "natural",
-  "catalyst-primed",
 ];
 
 export const TIER_ENTRY_PROFILES = new Map<string, TierEntryProfile>(

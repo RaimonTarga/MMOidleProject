@@ -189,12 +189,11 @@ export type WalletSnapshotReason =
 
 /**
  * One failed predicate behind a block, named precisely enough that an analysis
- * can separate essence waits from catalyst waits from gate waits without
- * guessing from the farm node.
+ * can separate essence waits from gate waits without guessing from the farm
+ * node.
  */
 export type BlockReason =
   | { kind: "essence"; essence: string; current: number; required: number; missing: number }
-  | { kind: "catalyst"; family: string; current: number; required: number; missing: number }
   | { kind: "globalMastery"; current: number; required: number; missing: number }
   | { kind: "biomeLevel"; biomeGroup: string; current: number; required: number; missing: number }
   | { kind: "recipeLocked"; recipeId: string }
@@ -394,7 +393,6 @@ export type BotEvent =
       success: boolean;
       reason?: string;
       essenceSpent: Partial<Record<EssenceType, number>>;
-      catalystsSpent: Record<string, number>;
       context: EconomyContext;
     }
   | {
@@ -407,7 +405,6 @@ export type BotEvent =
       success: boolean;
       reason?: string;
       essenceSpent: Partial<Record<EssenceType, number>>;
-      catalystsSpent: Record<string, number>;
       context: EconomyContext;
     }
   | {
@@ -419,7 +416,6 @@ export type BotEvent =
       success: boolean;
       reason?: string;
       essenceSpent: Partial<Record<EssenceType, number>>;
-      catalystsSpent: Record<string, number>;
       context: EconomyContext;
     }
   | {
@@ -430,7 +426,6 @@ export type BotEvent =
       success: boolean;
       reason?: string;
       essenceSpent: Partial<Record<EssenceType, number>>;
-      catalystsSpent: Record<string, number>;
       context: EconomyContext;
     }
   | { kind: "equip"; atMs: number; slot: string; definitionId: string | null }
@@ -443,7 +438,6 @@ export type BotEvent =
   | { kind: "build-change"; atMs: number; system: string; detail: Record<string, unknown> }
   | { kind: "biome-level-up"; atMs: number; biomeGroup: string; newLevel: number; unlockedRecipeIds: string[] }
   | { kind: "tier-up"; atMs: number; newTier: number }
-  | { kind: "catalyst-gain"; atMs: number; family: string; amount: number; context: EconomyContext }
   | {
       /**
        * A complete wallet reading at an economically meaningful instant.
@@ -456,9 +450,6 @@ export type BotEvent =
       /** Free-form tag: the milestone id, the `forWhat` of a block, etc. */
       detail?: string;
       essences: Record<string, number>;
-      catalysts: Record<string, number>;
-      /** Partial kill-weight banked toward the NEXT catalyst of each family. */
-      catalystProgress: Record<string, number>;
       biomeLevels: Record<string, number>;
       globalMastery: number;
       itemUpgrades: Record<string, number>;

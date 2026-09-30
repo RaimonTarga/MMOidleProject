@@ -505,8 +505,7 @@ export async function runBot(
       !result.success ||
       result.arm !== economyConfig.arm ||
       result.config?.revision !== economyConfig.revision ||
-      result.config?.t1Plus5EssenceCostMultiplier !== economyConfig.t1Plus5EssenceCostMultiplier ||
-      result.config?.catalystProgressPerUnitT1 !== economyConfig.catalystProgressPerUnitT1
+      result.config?.t1Plus5EssenceCostMultiplier !== economyConfig.t1Plus5EssenceCostMultiplier
     ) {
       throw new Error(
         `server rejected or mismatched T1 economy arm ${economyConfig.arm}: ${result.reason ?? "invalid acknowledgement"}`,
@@ -773,7 +772,6 @@ export async function runBot(
             equipment: { ...self.equipment },
             upgrades: { ...self.itemUpgrades },
             essences: { ...self.essences },
-            catalysts: { ...self.catalysts },
             biomeLevels: { ...self.biomeLevel },
             bossesCleared: [...self.bossesCleared],
             techniques: [...self.attunedAbilities.techniques],

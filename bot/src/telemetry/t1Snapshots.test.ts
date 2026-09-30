@@ -56,8 +56,6 @@ const self = {
   partyMembers: [],
   nodeId: "node-t2-sanctuary",
   essences: { ...sourceProfile.wallet.essences },
-  catalysts: { ...sourceProfile.wallet.catalysts },
-  catalystProgress: { ...(sourceProfile.wallet.catalystProgress ?? {}) },
   level: sourceProfile.level,
   skillPoints: sourceProfile.skillPoints,
   unlockedSkills: [sourceProfile.classRoot, sourceProfile.frameId],
@@ -152,8 +150,6 @@ const header: RunHeader = {
     revision: "t1-economy-candidate-f-2026-09-03-r1",
     arm: "F",
     t1Plus5EssenceCostMultiplier: 0.6,
-    catalystProgressPerUnitT1: 200,
-    catalystsScaledByRewardMultiplier: false,
     t1BiomeXpRewardMultiplier: 2,
     t1BiomeEssenceRewardMultiplier: 2,
     t1Plus5EssenceCosts: { "iron-broadsword": 60 },
@@ -248,7 +244,7 @@ try {
   assert(JSON.stringify(profile.itemUpgrades) === JSON.stringify(sourceProfile.itemUpgrades), "item upgrades must round-trip exactly");
   assert(JSON.stringify(profile.inventory) === JSON.stringify(sourceProfile.inventory), "inventory must round-trip exactly");
   assert(JSON.stringify(profile.bossesCleared) === JSON.stringify(sourceProfile.bossesCleared), "boss progression must round-trip exactly");
-  assert(JSON.stringify(profile.wallet) === JSON.stringify(sourceProfile.wallet), "wallet and catalyst progress must round-trip exactly");
+  assert(JSON.stringify(profile.wallet) === JSON.stringify(sourceProfile.wallet), "wallet must round-trip exactly");
   assert(JSON.stringify([...expectedUnlockedRecipes(profile)].sort()) === JSON.stringify([...loaded.state.unlockedRecipes].sort()), "recipe unlocks must be reproducible from the snapshot");
   assert(JSON.stringify(runeIdsFromCraftedRecipes(profile.runeRecipesCrafted).sort()) === JSON.stringify([...loaded.state.runesOwned].sort()), "rune ownership must remain derived-identical");
 

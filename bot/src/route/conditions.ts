@@ -4,7 +4,6 @@ import {
   SKILL_TREE,
   globalMasteryRequiredForUpgrade,
   requiredBiomeLevelForUpgrade,
-  upgradeCatalystCostFor,
   upgradeCeilingFromGlobalMastery,
   upgradeCostFor,
   remainingUpgradeCost,
@@ -29,8 +28,6 @@ export function evaluate(condition: Condition, ctx: ConditionContext): boolean {
       return obs.biomeLevel(condition.biomeGroup) >= condition.level;
     case "essenceAtLeast":
       return obs.essence(condition.essence) >= condition.amount;
-    case "catalystAtLeast":
-      return obs.catalyst(condition.family) >= condition.amount;
     case "recipeUnlocked":
       return obs.recipeUnlocked(condition.recipeId);
     case "hasItem":
@@ -104,8 +101,6 @@ export function describe(condition: Condition): string {
       return `${condition.biomeGroup} level >= ${condition.level}`;
     case "essenceAtLeast":
       return `${condition.essence} essence >= ${condition.amount}`;
-    case "catalystAtLeast":
-      return `${condition.family} catalysts >= ${condition.amount}`;
     case "recipeUnlocked":
       return `recipe ${condition.recipeId} unlocked`;
     case "hasItem":
@@ -168,11 +163,6 @@ export function shortfall(condition: Condition, obs: Observation): Record<string
         if (missing > 0) out[`essence.${c.essence}`] = missing;
         break;
       }
-      case "catalystAtLeast": {
-        const missing = c.amount - obs.catalyst(c.family);
-        if (missing > 0) out[`catalyst.${c.family}`] = missing;
-        break;
-      }
       case "biomeLevelAtLeast": {
         const missing = c.level - obs.biomeLevel(c.biomeGroup);
         if (missing > 0) out[`biomeLevel.${c.biomeGroup}`] = missing;
@@ -184,10 +174,6 @@ export function shortfall(condition: Condition, obs: Observation): Record<string
         for (const [essence, amount] of Object.entries(remaining.essence)) {
           const missing = (amount ?? 0) - obs.essence(essence as EssenceType);
           if (missing > 0) out[`essence.${essence}`] = missing;
-        }
-        for (const [family, amount] of Object.entries(remaining.catalysts)) {
-          const missing = amount - obs.catalyst(family);
-          if (missing > 0) out[`catalyst.${family}`] = missing;
         }
         break;
       }
@@ -206,7 +192,7 @@ export function shortfall(condition: Condition, obs: Observation): Record<string
   return out;
 }
 
-/** Essence and catalysts a recipe still needs, given the current wallet. */
+/** Essence a recipe still needs, given the current wallet. */
 export function recipeShortfall(recipeId: string, obs: Observation): Record<string, number> {
   const recipe = RECIPE_DATABASE.get(recipeId);
   const out: Record<string, number> = {};
@@ -215,10 +201,6 @@ export function recipeShortfall(recipeId: string, obs: Observation): Record<stri
     const missing = (amount ?? 0) - obs.essence(type as EssenceType);
     if (missing > 0) out[`essence.${type}`] = missing;
   }
-  for (const [family, amount] of Object.entries(recipe.catalystCost ?? {})) {
-    const missing = (amount ?? 0) - obs.catalyst(family);
-    if (missing > 0) out[`catalyst.${family}`] = missing;
-  }
   return out;
 }
 
@@ -226,7 +208,7 @@ export function recipeShortfall(recipeId: string, obs: Observation): Record<stri
 // ── Explicit block reasons ──────────────────────────────────────────────────
 //
 // The 2026-08-31 economy deep-dive could only attribute an upgrade wait to
-// essence-versus-catalyst by inferring it from the farm node the bot picked,
+// essence versus a gate by inferring it from the farm node the bot picked,
 // because the block event carried a bare `{blocked:1}`. Everything below
 // re-evaluates the SAME shared predicates the server uses and names each one
 // that is failing, so the attribution is direct evidence rather than inference.
@@ -274,14 +256,6 @@ export function upgradeBlockReasons(definitionId: string, obs: Observation): Blo
     }
   }
 
-  for (const [family, amount] of Object.entries(upgradeCatalystCostFor(item, targetPlus) ?? {})) {
-    const have = obs.catalyst(family);
-    const need = amount ?? 0;
-    if (have < need) {
-      out.push({ kind: "catalyst", family, current: have, required: need, missing: need - have });
-    }
-  }
-
   // A gate the shared check rejects that none of the branches above explain --
   // e.g. the item is already at its structural maximum.
   if (out.length === 0) {
@@ -319,13 +293,6 @@ export function craftBlockReasons(recipeId: string, obs: Observation): BlockReas
       out.push({ kind: "essence", essence: type, current: have, required: need, missing: need - have });
     }
   }
-  for (const [family, amount] of Object.entries(recipe.catalystCost ?? {})) {
-    const have = obs.catalyst(family);
-    const need = amount ?? 0;
-    if (have < need) {
-      out.push({ kind: "catalyst", family, current: have, required: need, missing: need - have });
-    }
-  }
   return out;
 }
 
@@ -338,13 +305,6 @@ export function conditionBlockReasons(condition: Condition, obs: Observation): B
         const have = obs.essence(c.essence);
         if (have < c.amount) {
           out.push({ kind: "essence", essence: c.essence, current: have, required: c.amount, missing: c.amount - have });
-        }
-        break;
-      }
-      case "catalystAtLeast": {
-        const have = obs.catalyst(c.family);
-        if (have < c.amount) {
-          out.push({ kind: "catalyst", family: c.family, current: have, required: c.amount, missing: c.amount - have });
         }
         break;
       }
@@ -406,9 +366,6 @@ export function missingToReasons(
     if (head === "essence") {
       const current = obs.essence(name as EssenceType);
       out.push({ kind: "essence", essence: name, current, required: current + short, missing: short });
-    } else if (head === "catalyst") {
-      const current = obs.catalyst(name);
-      out.push({ kind: "catalyst", family: name, current, required: current + short, missing: short });
     } else if (head === "biomeLevel") {
       const current = obs.biomeLevel(name);
       out.push({ kind: "biomeLevel", biomeGroup: name, current, required: current + short, missing: short });
@@ -428,7 +385,6 @@ export function reasonsToMissing(reasons: readonly BlockReason[]): Record<string
   for (const reason of reasons) {
     switch (reason.kind) {
       case "essence": out[`essence.${reason.essence}`] = reason.missing; break;
-      case "catalyst": out[`catalyst.${reason.family}`] = reason.missing; break;
       case "biomeLevel": out[`biomeLevel.${reason.biomeGroup}`] = reason.missing; break;
       case "globalMastery": out.globalMasteryNeeded = reason.missing; break;
       case "recipeLocked": out[`recipeLocked.${reason.recipeId}`] = 1; break;
@@ -466,9 +422,9 @@ export function resolveNode(ref: NodeRef, obs: Observation, rotation: number): s
  * farm ref is authored as a BIOME with `pick: "uncleared"`, so which node inside
  * the biome gets used was always the executor's dynamic choice.
  *
- * Nodes are NOT interchangeable: each carries its own node modifier, which
- * rescales monster HP/attack/plating at spawn. The chosen node is therefore
- * recorded per farm span so the difficulty a run actually met stays visible.
+ * Nodes are not otherwise interchangeable (terrain, travel distance, and for
+ * T2-T4 a display-only modifier), so the chosen node is recorded per farm
+ * span for traceability even though it carries no stat effect.
  */
 export function resolveNodeCandidates(
   ref: NodeRef,

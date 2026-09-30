@@ -115,10 +115,6 @@ export class Observation {
     return this.self?.essences[type] ?? 0;
   }
 
-  catalyst(family: string): number {
-    return this.self?.catalysts[family] ?? 0;
-  }
-
   recipeUnlocked(recipeId: string): boolean {
     return this.self?.unlockedRecipes.includes(recipeId) ?? false;
   }
@@ -165,7 +161,6 @@ export class Observation {
       return checkReconstruct({
         recipe,
         essences: self.essences,
-        catalysts: self.catalysts,
       });
     }
     return checkEvolve({
@@ -174,7 +169,6 @@ export class Observation {
       equipment: self.equipment,
       itemUpgrades: self.itemUpgrades,
       essences: self.essences,
-      catalysts: self.catalysts,
     });
   }
 
@@ -187,9 +181,6 @@ export class Observation {
     if (!self) return false;
     for (const [type, amount] of Object.entries(recipe.cost)) {
       if ((self.essences[type as EssenceType] ?? 0) < (amount ?? 0)) return false;
-    }
-    for (const [family, amount] of Object.entries(recipe.catalystCost ?? {})) {
-      if ((self.catalysts[family] ?? 0) < (amount ?? 0)) return false;
     }
     return true;
   }
@@ -209,7 +200,6 @@ export class Observation {
       currentPlus: self.itemUpgrades[definitionId] ?? 0,
       biomeLevel: self.biomeLevel[item.biomeGroup] ?? 0,
       essences: self.essences,
-      catalysts: self.catalysts,
       globalMastery: self.globalMastery,
       t1Plus5EssenceCostMultiplier: this.economyConfig?.t1Plus5EssenceCostMultiplier,
     });

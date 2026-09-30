@@ -1,5 +1,4 @@
 import {
-  NODE_BIOMES,
   RECIPE_DATABASE,
   STANCE_RECIPE_DATABASE,
   type EssenceType,
@@ -12,9 +11,8 @@ import { T2_PROGRESSION_ORDER } from "../routes/t2Common";
  *
  * A recipe gate is a biome LEVEL. Affordability is a different question, and on
  * a `clean` entry (zero carryover) it is the binding one: an essence colour can
- * only be earned in the biomes that mint it, and a catalyst family only in nodes
- * carrying that modifier. So a cost is payable at leg N only if every colour it
- * asks for is minted by some biome at leg <= N, and likewise for its catalyst.
+ * only be earned in the biomes that mint it. So a cost is payable at leg N only
+ * if every colour it asks for is minted by some biome at leg <= N.
  *
  * This matters because a route step that asks for an unpayable cost does not
  * fail — it farms forever in a node that can never produce the missing resource.
@@ -36,15 +34,6 @@ T2_PROGRESSION_ORDER.forEach((group, i) => legOf.set(group, i + 1));
 // Jungle also mints green and Desert also mints yellow, but both are later than
 // their primary source, so the earliest leg is what matters.
 
-const familyLegs = new Map<string, number>();
-for (const [, info] of Object.entries(NODE_BIOMES)) {
-  if (info.biomeTier !== 2 || info.kind !== "normal") continue;
-  const family = (info as { modifier?: string }).modifier;
-  const leg = legOf.get(info.biomeGroup);
-  if (!family || !leg) continue;
-  familyLegs.set(family, Math.min(familyLegs.get(family) ?? 99, leg));
-}
-
 interface Row {
   id: string;
   home: string;
@@ -57,7 +46,6 @@ function analyse(
   id: string,
   home: string,
   cost: Partial<Record<string, number>> | undefined,
-  catalystCost: Partial<Record<string, number>> | undefined,
 ): Row {
   const homeLeg = legOf.get(home) ?? 99;
   let payableLeg = homeLeg;
@@ -71,14 +59,6 @@ function analyse(
       blockers.push(`${amount} ${type} (first minted at leg ${leg}, ${source})`);
     }
   }
-  for (const [family, amount] of Object.entries(catalystCost ?? {})) {
-    if ((amount ?? 0) <= 0) continue;
-    const leg = familyLegs.get(family) ?? 99;
-    if (leg > payableLeg) {
-      payableLeg = leg;
-      blockers.push(`${amount} ${family} catalyst (first minted at leg ${leg})`);
-    }
-  }
   return { id, home, homeLeg, payableLeg, blockers };
 }
 
@@ -87,15 +67,14 @@ for (const r of RECIPE_DATABASE.values()) {
   if (r.tier !== 2) continue;
   // Reconstruction is the expensive path most templates are forced onto, so it
   // is the one whose affordability decides the route.
-  rows.push(analyse(r.id, r.recipeGroup, r.reconstructCost ?? r.cost, r.reconstructCatalystCost ?? r.catalystCost));
+  rows.push(analyse(r.id, r.recipeGroup, r.reconstructCost ?? r.cost));
 }
 for (const r of STANCE_RECIPE_DATABASE.values()) {
   if (r.tier !== 2) continue;
-  rows.push(analyse(`STANCE ${r.stanceId}`, r.recipeGroup ?? "forest", r.cost, r.catalystCost));
+  rows.push(analyse(`STANCE ${r.stanceId}`, r.recipeGroup ?? "forest", r.cost));
 }
 
 console.log("Control-route legs: " + T2_PROGRESSION_ORDER.map((g, i) => `${i + 1}=${g}`).join("  "));
-console.log("Catalyst families first minted at leg: " + JSON.stringify(Object.fromEntries(familyLegs)));
 console.log("\nPurchases whose HOME leg is too early to pay for them (clean entry):\n");
 let any = false;
 for (const row of rows.sort((a, b) => a.payableLeg - b.payableLeg || a.id.localeCompare(b.id))) {

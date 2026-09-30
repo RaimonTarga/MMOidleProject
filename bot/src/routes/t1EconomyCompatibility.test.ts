@@ -1,18 +1,15 @@
 import {
   ABILITY_RECIPE_DATABASE,
   ITEM_DATABASE,
-  NODE_MODIFIERS,
   RECIPE_DATABASE,
   RUNE_RECIPE_DATABASE,
   STARTER_RUNE_IDS,
   globalMastery,
-  upgradeCatalystCostFor,
   upgradeCeilingFromGlobalMastery,
   upgradeCostFor,
 } from "@mmo-idle/shared";
 import { buildConfig } from "../config";
 import type { Condition, RouteStep } from "../route/types";
-import { normalNodesFor } from "../state/observation";
 import { T1_CONTROLLED_ROUTES } from "./index";
 
 function assert(condition: unknown, message: string): asserts condition {
@@ -32,15 +29,11 @@ function applyFarm(condition: Condition, levels: Record<string, number>): void {
 }
 
 function hasHardcodedWalletThreshold(condition: Condition): boolean {
-  if (condition.type === "essenceAtLeast" || condition.type === "catalystAtLeast") return true;
+  if (condition.type === "essenceAtLeast") return true;
   if (condition.type === "allOf" || condition.type === "anyOf") {
     return condition.of.some(hasHardcodedWalletThreshold);
   }
   return condition.type === "not" && hasHardcodedWalletThreshold(condition.of);
-}
-
-function farmBiome(step: Extract<RouteStep, { type: "upgrade" }>, fallback: string): string {
-  return step.farmAt?.kind === "biome" ? step.farmAt.biomeGroup : fallback;
 }
 
 for (const route of T1_CONTROLLED_ROUTES) {
@@ -85,13 +78,6 @@ for (const route of T1_CONTROLLED_ROUTES) {
           // doUpgrade farms against checkUpgrade until the live gate opens.
           assert(authored.requiredBiomeLevel <= 6, `${route.id}: ${step.definitionId} +${plus} gate is reachable in T1`);
           levels[recipe.recipeGroup] = authored.requiredBiomeLevel;
-        }
-        for (const family of Object.keys(upgradeCatalystCostFor(item, plus) ?? {})) {
-          const biomeGroup = farmBiome(step, recipe.recipeGroup);
-          const supplier = normalNodesFor(biomeGroup, 1).find(
-            (nodeId) => NODE_MODIFIERS[nodeId]?.modifier === family,
-          );
-          assert(supplier, `${route.id}: ${biomeGroup} has live ${family} catalyst supply for ${step.definitionId} +${plus}`);
         }
       }
       itemPlus.set(step.definitionId, target);
