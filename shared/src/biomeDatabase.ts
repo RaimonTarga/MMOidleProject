@@ -1,5 +1,3 @@
-import { catalystFamilyLabel } from './world/nodeModifiers';
-
 export interface BiomeDefinition {
   id: string;
   name: string;
@@ -31,17 +29,6 @@ export interface BiomeDefinition {
    * cave/desert) pressure via per-hit. The per-mob stats assume these values.
    */
   mobDensity?: number;
-}
-
-/**
- * Player-facing name for a catalyst, e.g. `alacrity` → "Alacrity Catalyst".
- *
- * Catalyst re-keyed from per-biome-group to per-combat-family (Map Variety Stage
- * A). This delegates to `catalystFamilyLabel`; the name/signature/export are kept
- * so the ~10 existing call sites compile unchanged.
- */
-export function catalystLabel(familyKey: string): string {
-  return catalystFamilyLabel(familyKey);
 }
 
 export const BIOME_DATABASE: Map<string, BiomeDefinition> = new Map([

@@ -5,14 +5,13 @@
  * two-axis design (a mandatory "pace family" of five plus an optional, permanently
  * dormant "density" overlay of two) — the split bought nothing and the dormant half
  * meant swarm/elite ground never shipped. Density is now simply two of the five
- * modifiers, so there is one list, one field, and one catalyst per modifier.
+ * modifiers, so there is one list and one field.
  *
- * All five are NET DIFFICULTY INCREASES over an unmodified node (user decision
- * 2026-08-18). The old families were threat-budget-neutral by construction — every
- * one traded something away, so nodes differed in texture but not in difficulty.
- * They now differ in both, and rewards scale to match. Note the consequence: since
- * every combat node carries a modifier, the unmodified baseline is never actually
- * played — it exists only as the reference the multipliers are measured against.
+ * Progression rework Phase 2b (2026-10-01): modifiers no longer carry a catalyst,
+ * a stat scalar, a population scalar, or a reward multiplier. They survive purely
+ * as T2-T4 node authoring identity — node count, display name, and region mask —
+ * until those tiers get their own family tables (`shared/src/data/families/`),
+ * which is what T1 already uses in their place. See `world/nodeModifiers.ts`.
  */
 export type NodeModifierFamily =
   | 'alacrity'

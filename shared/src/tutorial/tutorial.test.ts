@@ -44,7 +44,6 @@ function view(overrides: Partial<TutorialView> = {}): TutorialView {
     globalMastery: 0,
     unlockedRecipes: [],
     essences: { ...NO_ESSENCE },
-    catalysts: {},
     inventory: [],
     equipment: emptyEquipment(),
     itemUpgrades: {},
@@ -232,7 +231,6 @@ function simulate(plan: (typeof TUTORIAL_CLASS_PLANS)[number]): void {
   };
   const rich = () => set({
     essences: { red: 1e6, blue: 1e6, green: 1e6, yellow: 1e6, purple: 1e6 },
-    catalysts: { alacrity: 1e6, heavy: 1e6, swarming: 1e6, dominion: 1e6, fortified: 1e6 },
   });
   const checkBudget = (where: string) => {
     const cost = runicPointBreakdown({ abilities: v.attunedAbilities, rules: v.runesEquipped, stances: [], rites: [] }).total;

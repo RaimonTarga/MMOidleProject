@@ -1,16 +1,9 @@
 import {
   validateNodeModifiers,
-  modifierStatScalars,
-  modifiedDamageReduction,
-  modifierDetails,
-  modifierSpawnFactor,
-  modifierRewardMult,
-  catalystFamilyLabel,
   MODIFIER_LABELS,
   MODIFIER_SUMMARIES,
   MODIFIER_COLORS,
   NODE_MODIFIER_FAMILIES,
-  MODIFIER_MAGNITUDE_BY_TIER,
   MODIFIER_BANS,
   NATIVE_MODIFIER,
 } from './nodeModifiers';
@@ -19,6 +12,17 @@ import { NODE_MODIFIERS } from './nodeModifierMap';
 function assert(cond: boolean, msg: string): void {
   if (!cond) throw new Error(msg);
 }
+
+/**
+ * Progression rework Phase 2b (2026-10-01): node modifiers no longer reshape
+ * combat, population or rewards, and the catalyst wallet they used to mint is
+ * gone. What survives is pure T2-T4 node-authoring identity — the vocabulary,
+ * the ban/native tables and the coverage validation that keep node COUNT and
+ * DISPLAY NAMES working. This file used to also assert the removed stat/
+ * population/reward math (`modifierStatScalars`, `modifierSpawnFactor`,
+ * `modifierRewardMult`, `modifiedDamageReduction`, `modifierDetails`,
+ * `catalystFamilyLabel`) — that coverage is retired along with the math.
+ */
 
 // ── 1. Authored map is valid ──────────────────────────────────────────────────
 const violations = validateNodeModifiers();
@@ -37,206 +41,9 @@ for (const family of NODE_MODIFIER_FAMILIES) {
   assert(Boolean(MODIFIER_LABELS[family]), `${family} has a label`);
   assert(Boolean(MODIFIER_SUMMARIES[family]), `${family} has a summary`);
   assert(Boolean(MODIFIER_COLORS[family]), `${family} has a color`);
-  assert(
-    catalystFamilyLabel(family) === `${MODIFIER_LABELS[family]} Catalyst`,
-    `${family} catalyst label`,
-  );
 }
 
-// ── 3. Every modifier is a NET difficulty increase ────────────────────────────
-// This is the load-bearing property of the new design: the old families were
-// threat-budget-neutral, these are not. A modifier must raise offence throughput,
-// durability, or population — never leave a node at parity, and never soften it.
-for (const tier of [1, 2, 3, 4]) {
-  const m = MODIFIER_MAGNITUDE_BY_TIER[tier];
-  assert(m !== undefined && m > 0, `magnitude for tier ${tier}`);
-
-  for (const family of NODE_MODIFIER_FAMILIES) {
-    const s = modifierStatScalars(family, tier);
-    const dpsMult = s.attackMult / s.attackCooldownMult;
-    const spawn = modifierSpawnFactor(family, tier);
-    const tougher =
-      s.hpMult > 1 || s.platingMult > 1 || s.incomingDamageMult < 1;
-    const harder = dpsMult > 1.0001 || tougher || spawn > 1;
-    assert(harder, `${family} T${tier} must be a net difficulty increase`);
-    assert(dpsMult >= 0.9999, `${family} T${tier} must not LOWER dps`);
-
-    // Rewards must pay for the added difficulty.
-    assert(modifierRewardMult(family, tier) > 1, `${family} pays extra reward`);
-  }
-}
-
-// ── 3b. Everything scales with the tier ───────────────────────────────────────
-// Modifiers are meant to be a small distinction in T1 and a real one by T4, so
-// magnitude, population swing and reward must all widen monotonically.
-for (const tier of [2, 3, 4]) {
-  const prev = tier - 1;
-  assert(
-    MODIFIER_MAGNITUDE_BY_TIER[tier]! > MODIFIER_MAGNITUDE_BY_TIER[prev]!,
-    `T${tier} magnitude exceeds T${prev}`,
-  );
-  assert(
-    modifierSpawnFactor('swarming', tier) > modifierSpawnFactor('swarming', prev),
-    `T${tier} swarming adds more bodies than T${prev}`,
-  );
-  assert(
-    modifierSpawnFactor('dominion', tier) < modifierSpawnFactor('dominion', prev),
-    `T${tier} dominion removes more bodies than T${prev}`,
-  );
-  for (const family of NODE_MODIFIER_FAMILIES) {
-    assert(
-      modifierRewardMult(family, tier) > modifierRewardMult(family, prev),
-      `T${tier} ${family} pays more than T${prev}`,
-    );
-  }
-}
-// Outside the authored tiers nothing applies at all.
-assert(modifierSpawnFactor('swarming', 99) === 1, 'unknown tier leaves population alone');
-assert(modifierRewardMult('dominion', 99) === 1, 'unknown tier pays no premium');
-
-// ── 4. Per-modifier shape ─────────────────────────────────────────────────────
-const tier = 2;
-const m = MODIFIER_MAGNITUDE_BY_TIER[tier]!;
-
-// alacrity: faster attacks AND faster movement, with damage untouched.
-const alacrity = modifierStatScalars('alacrity', tier);
-assert(alacrity.attackMult === 1, 'alacrity leaves attack damage alone');
-assert(alacrity.attackCooldownMult < 1, 'alacrity attacks faster');
-assert(alacrity.moveSpeedMult > 1, 'alacrity moves faster');
-assert(modifierSpawnFactor('alacrity', tier) === 1, 'alacrity does not change count');
-
-// heavy: bigger hits, slower cadence, net more damage.
-const heavy = modifierStatScalars('heavy', tier);
-assert(heavy.attackMult > 1 + m, 'heavy hits harder than its cadence loss');
-assert(heavy.attackCooldownMult > 1, 'heavy attacks slower');
-assert(
-  heavy.attackMult / heavy.attackCooldownMult > 1,
-  'heavy is net dps-positive',
-);
-
-// swarming: population only, stats untouched.
-const swarming = modifierStatScalars('swarming', tier);
-assert(
-  swarming.attackMult === 1 &&
-    swarming.attackCooldownMult === 1 &&
-    swarming.hpMult === 1 &&
-    swarming.platingMult === 1 &&
-    swarming.incomingDamageMult === 1 &&
-    swarming.moveSpeedMult === 1,
-  'swarming changes no stat',
-);
-assert(modifierSpawnFactor('swarming', tier) > 1, 'swarming raises the count');
-
-// dominion: fewer bodies, stronger in every respect.
-const dominion = modifierStatScalars('dominion', tier);
-assert(modifierSpawnFactor('dominion', tier) < 1, 'dominion lowers the count');
-assert(
-  dominion.attackMult > 1 &&
-    dominion.hpMult > 1 &&
-    dominion.platingMult > 1 &&
-    dominion.incomingDamageMult < 1 &&
-    dominion.moveSpeedMult > 1,
-  'dominion raises every aspect',
-);
-assert(
-  dominion.moveSpeedMult < dominion.attackMult,
-  'dominion move speed rises more slowly than its damage',
-);
-
-// fortified: defence only.
-const fortified = modifierStatScalars('fortified', tier);
-assert(
-  fortified.attackMult === 1 && fortified.attackCooldownMult === 1,
-  'fortified leaves offence alone',
-);
-assert(fortified.moveSpeedMult === 1, 'fortified leaves speed alone');
-assert(fortified.platingMult > 1, 'fortified raises plating');
-assert(fortified.incomingDamageMult < 1, 'fortified reduces damage taken');
-assert(modifierSpawnFactor('fortified', tier) === 1, 'fortified does not change count');
-
-// ── 5. Damage-reduction folding stays in range ────────────────────────────────
-// The multiplicative form must work from DR 0 (where a naive `DR × k` cannot) and
-// must never reach 1.0, which would make a monster immortal.
-assert(
-  modifiedDamageReduction(0, 1 - m) > 0,
-  'a 0-DR monster still gains reduction',
-);
-for (const baseDr of [0, 0.05, 0.1, 0.2, 0.5, 0.9, 0.95]) {
-  for (const mult of [1, 0.85, 0.7, 0.5, 0.1]) {
-    const dr = modifiedDamageReduction(baseDr, mult);
-    assert(dr >= 0 && dr <= 0.95, `DR ${baseDr}x${mult} stays within [0, 0.95]`);
-    assert(dr >= baseDr - 1e-9, `DR ${baseDr}x${mult} never drops below base`);
-  }
-}
-// Epsilon, not equality: the fold is `1 - (1 - dr) * mult`, so an identity multiplier
-// still round-trips through float subtraction (0.3 comes back as 0.30000000000000004).
-assert(
-  Math.abs(modifiedDamageReduction(0.3, 1) - 0.3) < 1e-9,
-  'a neutral multiplier is identity',
-);
-
-// ── 6. Neutral outside the authored tiers ─────────────────────────────────────
-const untiered = modifierStatScalars('dominion', 99);
-assert(
-  untiered.attackMult === 1 && untiered.hpMult === 1,
-  'unknown tier yields no reshaping',
-);
-
-// ── 7. UI details are populated and mention the reward ────────────────────────
-for (const family of NODE_MODIFIER_FAMILIES) {
-  const rows = modifierDetails(family, 1);
-  assert(rows.length > 0, `${family} has detail rows`);
-  assert(
-    rows.some((detail) => detail.label === 'Rewards'),
-    `${family} surfaces its reward bonus`,
-  );
-  for (const detail of rows) {
-    assert(detail.value.length > 0, `${family} detail '${detail.label}' has a value`);
-  }
-}
-assert(
-  modifierDetails('swarming', 1).some((d) => d.label === 'Monster count'),
-  'swarming reports its count change',
-);
-
-// The rows are a READOUT of the runtime, not a second authoring of the numbers, so
-// every displayed value must match what spawning actually applies. Dominion is the
-// case that regressed before: it displayed +M attack while spawning +2M.
-const pct = (fraction: number): string => {
-  const value = Math.round(Math.abs(fraction) * 1000) / 10;
-  return `${fraction >= 0 ? '+' : '−'}${Number.isInteger(value) ? value : value.toFixed(1)}%`;
-};
-for (const detailTier of [1, 2, 3, 4]) {
-  for (const family of NODE_MODIFIER_FAMILIES) {
-    const rows = modifierDetails(family, detailTier);
-    const scalars = modifierStatScalars(family, detailTier);
-    // A row reading 'unchanged' is prose, not a number — parity only binds numbers.
-    const find = (label: string): string | undefined => {
-      const value = rows.find((row) => row.label === label)?.value;
-      return value === 'unchanged' ? undefined : value;
-    };
-    const expect = (label: string, want: string): void => {
-      const value = find(label);
-      if (value === undefined) return; // the row is optional; a present one must be right
-      assert(value === want, `${family} T${detailTier} ${label}: ${value} vs ${want}`);
-    };
-    expect('Attack damage', pct(scalars.attackMult - 1));
-    expect('Attack interval', pct(scalars.attackCooldownMult - 1));
-    expect('Move speed', pct(scalars.moveSpeedMult - 1));
-    expect('Health', pct(scalars.hpMult - 1));
-    expect('Plating', pct(scalars.platingMult - 1));
-    expect('Damage taken', pct(scalars.incomingDamageMult - 1));
-    expect('Monster count', pct(modifierSpawnFactor(family, detailTier) - 1));
-    expect('Rewards', pct(modifierRewardMult(family, detailTier) - 1));
-    // Dominion's damage-taken reduction must be surfaced, not silently applied.
-    if (family === 'dominion') {
-      assert(find('Damage taken') !== undefined, 'dominion surfaces its damage-taken cut');
-      assert(find('Attack damage') !== undefined, 'dominion shows a numeric attack row');
-    }
-  }
-}
-
-// ── 8. A native modifier is never also banned for its own biome ───────────────
+// ── 3. A native modifier is never also banned for its own biome ───────────────
 for (const [biome, native] of Object.entries(NATIVE_MODIFIER)) {
   if (!native) continue;
   assert(
@@ -245,18 +52,10 @@ for (const [biome, native] of Object.entries(NATIVE_MODIFIER)) {
   );
 }
 
-// ── 9. The projection only ever carries known modifiers ───────────────────────
+// ── 4. The projection only ever carries known modifiers ───────────────────────
 const known = new Set<string>(NODE_MODIFIER_FAMILIES);
 for (const [nodeId, info] of Object.entries(NODE_MODIFIERS)) {
   assert(known.has(info.modifier), `${nodeId}: unknown modifier '${info.modifier}'`);
 }
-
-// ── 10. Unknown catalyst keys stay readable ───────────────────────────────────
-// Wallets persisted under a previous modifier set keep their old keys, so the label
-// helper must not return a blank or throw on them.
-assert(
-  catalystFamilyLabel('blight') === 'Blight Catalyst',
-  'a retired catalyst key still renders',
-);
 
 console.log('nodeModifiers: ok');

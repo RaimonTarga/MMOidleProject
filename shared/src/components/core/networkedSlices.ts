@@ -347,27 +347,13 @@ export interface TracksProgression {
   skillPoints: number;
   essences: Record<EssenceType, number>;
   /**
-   * Node-modifier catalyst wallet, keyed by the five modifier families (for
-   * example `alacrity`). One catalyst per family is uncapped. Minted from
-   * `catalystProgress` crossing a threshold; spent alongside essence on
-   * catalyst-gated recipes/upgrades.
-   */
-  catalysts: Record<string, number>;
-  /**
-   * Accumulating kill-progress toward the next modifier-family catalyst. Each
-   * kill in a normal node adds the monster's catalyst weight under that node's
-   * modifier; crossing `GAME_CONFIG.CATALYST_PROGRESS_PER_UNIT` mints 1
-   * catalyst and carries the remainder.
-   */
-  catalystProgress: Record<string, number>;
-  /**
    * Lineage shard wallet, keyed by PACKET (progression rework Phase 1). Eight
    * shards for the whole game; every kill drops a little of the shard its mob
    * family favours, so the material's name says what it buys and the map says
    * where it drops (design §12). Shards gate a card, essence pays the bulk.
    *
-   * Runs ALONGSIDE `catalysts` through Phase 1. Phase 2 deletes the catalyst
-   * accumulator and this becomes the only kill-driven material wallet.
+   * The only kill-driven material wallet since Phase 2b deleted the old
+   * node-modifier catalyst accumulator (`catalysts`/`catalystProgress`).
    */
   shards: Partial<Record<PacketId, number>>;
   /**

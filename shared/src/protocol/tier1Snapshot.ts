@@ -18,10 +18,6 @@ export interface T1SnapshotEconomyCandidate {
   revision: string;
   arm: T1EconomyArm;
   t1Plus5EssenceCostMultiplier: number;
-  catalystProgressPerUnitT1: number;
-  /** T1's scalar on each monster's catalyst kill-weight. Absent in older snapshots. */
-  t1CatalystProgressRewardMultiplier?: number;
-  catalystsScaledByRewardMultiplier: boolean;
   t1BiomeXpRewardMultiplier: number;
   t1BiomeEssenceRewardMultiplier: number;
   t1Plus5EssenceCosts: Record<string, number>;
@@ -127,8 +123,6 @@ export interface T1SnapshotState {
   visitedNodes: string[];
   questProgress: Record<string, number>;
   essences: PlayerView["essences"];
-  catalysts: Record<string, number>;
-  catalystProgress: Record<string, number>;
   inventory: string[];
   equipment: PlayerView["equipment"];
   itemUpgrades: Record<string, number>;
@@ -312,8 +306,6 @@ export function tierEntryProfileFromT1Snapshot(
       : {}),
     wallet: {
       essences: cloneRecord(state.essences),
-      catalysts: cloneRecord(state.catalysts),
-      catalystProgress: cloneRecord(state.catalystProgress),
     },
     level: state.level,
     skillPoints: state.skillPoints,
