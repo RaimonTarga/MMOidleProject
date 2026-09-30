@@ -54,13 +54,6 @@ export const forestRecipeEntries = [
     // to ~500, in line with Heavy Hammer/Chaotic Axe. Curve stays accelerating;
     // no attacksPerSecond/attack stat changes. +5 catalyst from its own T2
     // evolution (gale-needle), tagged alacrity.
-    upgrades: [
-      { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: { green: 25 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: { green: 50 }, requiredBiomeLevel: 3 },
-      { attacksPerSecond: 0.02, cost: { green: 75 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: { green: 125 }, requiredBiomeLevel: 5 },
-      { stats: { attack: 1 }, attacksPerSecond: 0.02, cost: { green: 155 }, requiredBiomeLevel: 6 }, // +5 = evolution-ready (T2 econ pass 2026-08-29: raised from +3)
-    ],
   }],
 
   // Evasion starts meaningful the moment the armor is obtained, and grows
@@ -152,13 +145,6 @@ mechanicEffects: {"defense.evade-mitigation": 0.1},
     stats: { attack: 17 }, attacksPerSecond: 1.60, tier: 2,
     icon: 'items/weapons/gale-needle.png',
     description: 'A fencing blade machined to an impossible point, humming faintly when drawn.',
-    upgrades: [
-      { stats: { attack: 4 }, attacksPerSecond: 0.02, cost: { green: 38 }, requiredBiomeLevel: 8 },
-      { stats: { attack: 3 }, attacksPerSecond: 0.02, cost: { green: 94 }, requiredBiomeLevel: 9 },
-      { stats: { attack: 3 }, attacksPerSecond: 0.02, cost: { green: 150 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 3 }, attacksPerSecond: 0.02, cost: { green: 244 }, requiredBiomeLevel: 11 },
-      { stats: { attack: 5 }, attacksPerSecond: 0.02, cost: { green: 414 }, requiredBiomeLevel: 12 },
-    ],
   }],
 
   // `thorn-needle` (an on-hit "branch B" of this lineage) was REMOVED 2026-09-26:

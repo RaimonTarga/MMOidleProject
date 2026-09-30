@@ -28,13 +28,6 @@ export const jungleRecipeEntries = [
     icon: 'items/weapons/stinger-rapier.png',
     element: 'poison',   // cosmetic attack tint only
     description: 'A thin blade kept slick with something the jungle distilled and never named.',
-    upgrades: [
-      { stats: { attack: 3, onHitDamage: 3 }, cost: { green: 40 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 3, onHitDamage: 3 }, cost: { green: 99 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 3, onHitDamage: 3 }, cost: { green: 158 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 2, onHitDamage: 3 }, cost: { green: 257 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 2, onHitDamage: 3 }, cost: { green: 436 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   ['jungle-vest-t2', {
@@ -111,13 +104,6 @@ mechanicEffects: {"defense.evade-mitigation": 0.2, "defense.dot-resistance": 0.1
     icon: 'items/weapons/venomthorn-rapier.png',
     element: 'poison',   // cosmetic attack tint only
     description: 'Thin and quick, and slick with a thorn-sap that bites a little more with every touch.',
-    upgrades: [
-      { stats: { attack: 5, onHitDamage: 4 }, cost: { green: 79 },  requiredBiomeLevel: 8 },
-      { stats: { attack: 4, onHitDamage: 4 }, cost: { green: 197 }, requiredBiomeLevel: 9 },
-      { stats: { attack: 4, onHitDamage: 4 }, cost: { green: 315 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 4, onHitDamage: 4 }, cost: { green: 512 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 4, onHitDamage: 4 }, cost: { green: 867 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   ['jungle-vest-t3', {
@@ -202,13 +188,6 @@ mechanicEffects: {"defense.evade-mitigation": 0.25, "defense.dot-resistance": 0.
     icon: 'items/weapons/deathfang-rapier.png',
     element: 'poison',   // cosmetic attack tint only
     description: 'Quick past seeing, and slick with something the deep jungle spent a long time perfecting.',
-    upgrades: [
-      { stats: { attack: 10, onHitDamage: 8 }, cost: { green: 157 }, requiredBiomeLevel: 14 },
-      { stats: { attack: 10, onHitDamage: 8 }, cost: { green: 392 }, requiredBiomeLevel: 15 },
-      { stats: { attack: 10, onHitDamage: 8 }, cost: { green: 627 }, requiredBiomeLevel: 16 },
-      { stats: { attack: 10, onHitDamage: 8 }, cost: { green: 1018 }, requiredBiomeLevel: 16 },
-      { stats: { attack: 9, onHitDamage: 8 }, cost: { green: 1722 }, requiredBiomeLevel: 16 },
-    ],
   }],
 
   ['jungle-vest-t4', {

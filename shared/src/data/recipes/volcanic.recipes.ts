@@ -32,13 +32,6 @@ export const volcanicRecipeEntries = [
     icon: 'items/weapons/cinderlash.png',
     element: 'fire',   // cosmetic attack tint only
     description: 'A whip of braided ember that strikes faster the longer it burns.',
-    upgrades: [
-      { stats: { attack: 7 }, cost: { red: 96 },  requiredBiomeLevel: 2 },
-      { stats: { attack: 6 }, cost: { red: 240 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 6 }, cost: { red: 384 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 6 }, cost: { red: 624 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 6 }, cost: { red: 1056 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   ['volcanic-vest-t3', {
@@ -127,13 +120,6 @@ export const volcanicRecipeEntries = [
     icon: 'items/weapons/eruption-lash.png',
     element: 'fire',   // cosmetic attack tint only
     description: 'A braided whip of ember that strikes faster the longer it is allowed to burn.',
-    upgrades: [
-      { stats: { attack: 11 }, cost: { red: 191 }, requiredBiomeLevel: 8 },
-      { stats: { attack: 11 }, cost: { red: 477 }, requiredBiomeLevel: 9 },
-      { stats: { attack: 11 }, cost: { red: 764 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 11 }, cost: { red: 1241 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 10 }, cost: { red: 2099 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   ['volcanic-blightbrand', {
@@ -152,13 +138,6 @@ export const volcanicRecipeEntries = [
     weaponDot: { effectId: 'cinderbrand-burn', convPct: 0.50, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'fire' },
     icon: 'items/weapons/cinderbrand.png',
     description: 'It leaves a fire under the skin that does the rest of the work while you move on.',
-    upgrades: [
-      { stats: { attack: 14 }, cost: { red: 192 }, requiredBiomeLevel: 8 },
-      { stats: { attack: 14 }, cost: { red: 479 }, requiredBiomeLevel: 9 },
-      { stats: { attack: 13 }, cost: { red: 766 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 13 }, cost: { red: 1245 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 13 }, cost: { red: 2108 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   ['volcanic-vest-t4', {

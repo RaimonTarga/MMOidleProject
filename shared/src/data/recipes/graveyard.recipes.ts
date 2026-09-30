@@ -32,13 +32,6 @@ export const graveyardRecipeEntries = [
     icon: 'items/weapons/plague-axe.png',
     element: 'poison',   // cosmetic attack tint only
     description: 'Every third stroke lands flat and harmless — and leaves the rot to make the next one count double.',
-    upgrades: [
-      { stats: { attack: 24 }, cost: { purple: 175 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 24 }, cost: { purple: 439 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 24 }, cost: { purple: 702 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 23 }, cost: { purple: 1140 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 23 }, cost: { purple: 1930 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   ['graveyard-vest-t4', {

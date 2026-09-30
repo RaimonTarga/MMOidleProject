@@ -51,13 +51,6 @@ export const caveRecipeEntries = [
     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, total ~501 (was 500).
     // +5 catalyst from its own T2 successor's tag ("chaotic-axe (counted
     // disruption) → Swarming").
-    upgrades: [
-      { stats: { attack: 1 }, cost: { red: 25 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 2 }, cost: { red: 45 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 2 }, cost: { red: 75 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 2 }, cost: { red: 125 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 2 }, cost: { red: 155 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   // %DR is kept well below runaway values on purpose: percentage mitigation
@@ -134,13 +127,6 @@ mechanicEffects: {},
     mechanicEffects: { 'weapon.dead-swing-interval': 4 },
     icon: 'items/weapons/ruinous-axe.png',
     description: 'Bigger, meaner, and somehow better balanced — chaos with the faintest thread of discipline.',
-    upgrades: [
-      { stats: { attack: 6 }, cost: { red: 44 }, requiredBiomeLevel: 8 },
-      { stats: { attack: 6 }, cost: { red: 110 }, requiredBiomeLevel: 9 },
-      { stats: { attack: 6 }, cost: { red: 177 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 6 }, cost: { red: 287 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 5 }, cost: { red: 486 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   // T2 economy pass (2026-08-29): now an EVOLUTION of cave-vest-t1 at +5.
@@ -216,13 +202,6 @@ mechanicEffects: {},
     mechanicEffects: { 'weapon.dead-swing-interval': 5 },
     icon: 'items/weapons/cataclysm-axe.png',
     description: 'Chaos given an edge — and, at last, a little rhythm. Every fifth swing still finds only air.',
-    upgrades: [
-      { stats: { attack: 10 }, cost: { red: 88 },  requiredBiomeLevel: 14 },
-      { stats: { attack: 9 }, cost: { red: 221 }, requiredBiomeLevel: 15 },
-      { stats: { attack: 9 }, cost: { red: 353 }, requiredBiomeLevel: 16 },
-      { stats: { attack: 8 }, cost: { red: 574 }, requiredBiomeLevel: 16 },
-      { stats: { attack: 9 }, cost: { red: 972 }, requiredBiomeLevel: 16 },
-    ],
   }],
 
   ['cave-vest-t3', {

@@ -31,13 +31,6 @@ export const trenchRecipeEntries = [
     },
     icon: 'items/weapons/abyssal-axe.png',
     description: 'Patient through the long fight, merciless at the end of it: when the abyss-thing finally weakens, it disappears.',
-    upgrades: [
-      { stats: { attack: 24 }, cost: { green: 175 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 24 }, cost: { green: 439 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 23 }, cost: { green: 702 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 23 }, cost: { green: 1140 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 23 }, cost: { green: 1930 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   ['trench-vest-t4', {

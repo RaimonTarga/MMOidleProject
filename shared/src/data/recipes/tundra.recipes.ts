@@ -25,13 +25,6 @@ export const tundraRecipeEntries = [
     icon: 'items/weapons/permafrost-maul.png',
     element: 'frost',   // cosmetic attack tint only
     description: 'Each blow leaves a deep frost-crack; armor that takes enough of them simply gives.',
-    upgrades: [
-      { stats: { attack: 13 }, cost: { blue: 93 },  requiredBiomeLevel: 2 },
-      { stats: { attack: 13 }, cost: { blue: 233 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 13 }, cost: { blue: 372 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 13 }, cost: { blue: 605 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 12 }, cost: { blue: 1023 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   // Frost DoT weapon — relocated from Swamp (was `swamp-rimebrand`). The slow,
@@ -45,13 +38,6 @@ export const tundraRecipeEntries = [
     weaponDot: { effectId: 'tundra-rimebrand-burn', convPct: 0.70, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'frost' },
     icon: 'items/weapons/rimebrand.png',
     description: 'The first true frost-brand — slow and heavy, planting a cold in the wound that goes on biting after the blade is gone.',
-    upgrades: [
-      { stats: { attack: 10 }, cost: { blue: 93 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 10 }, cost: { blue: 232 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 10 }, cost: { blue: 372 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 9 }, cost: { blue: 604 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 9 }, cost: { blue: 1023 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   ['tundra-vest-t3', {
@@ -133,13 +119,6 @@ export const tundraRecipeEntries = [
     icon: 'items/weapons/glacial-tyrant-maul.png',
     element: 'frost',   // cosmetic attack tint only
     description: 'Every blow leaves a deeper frost-crack; the eighth simply ends the argument about whether armor holds.',
-    upgrades: [
-      { stats: { attack: 35 }, cost: { blue: 185 },  requiredBiomeLevel: 8 },
-      { stats: { attack: 35 }, cost: { blue: 463 },  requiredBiomeLevel: 9 },
-      { stats: { attack: 35 }, cost: { blue: 740 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 35 }, cost: { blue: 1203 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 34 }, cost: { blue: 2036 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   ['tundra-glacial-rimebrand', {
@@ -157,13 +136,6 @@ export const tundraRecipeEntries = [
     weaponDot: { effectId: 'rimebrand-burn', convPct: 0.60, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'frost' },
     icon: 'items/weapons/glacial-rimebrand.png',
     description: 'It does not cut so much as plant a cold that goes on spreading after the blade is gone.',
-    upgrades: [
-      { stats: { attack: 29 }, cost: { blue: 185 },  requiredBiomeLevel: 8 },
-      { stats: { attack: 29 }, cost: { blue: 463 },  requiredBiomeLevel: 9 },
-      { stats: { attack: 29 }, cost: { blue: 741 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 29 }, cost: { blue: 1204 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 29 }, cost: { blue: 2037 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   ['tundra-vest-t4', {

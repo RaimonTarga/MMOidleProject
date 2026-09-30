@@ -56,13 +56,6 @@ export const plainsRecipeEntries = [
     // as before — reshaped, not inflated. No catalyst: stays neutral like its
     // own T2 successor (knight-steelsword), an intentional "flexible payment"
     // identity noted on plains-boots-t2's family-tag comment.
-    upgrades: [
-      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.02, 'technique.power-pct': 0.05 }, cost: { yellow: 10 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.05 }, cost: { yellow: 25 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.02, 'technique.power-pct': 0.05 }, cost: { yellow: 35 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 1 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.05 }, cost: { yellow: 60 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 2 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.02, 'technique.power-pct': 0.05 }, cost: { yellow: 75 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   // Plating / swarm defence. Deliberately extreme against small Plains hits —
@@ -153,13 +146,6 @@ mechanicEffects: {},
     // Arcanist Core (+20% CDR / +20% power).
     mechanicEffects: { 'technique.cooldown-reduction-pct': 0.13, 'technique.power-pct': 0.25 },
     description: 'A knight sidearm kept keen by habit and pride — plain, proven, never flashy.',
-    upgrades: [
-      { stats: { attack: 6 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.04 }, cost: { yellow: 27 }, requiredBiomeLevel: 8 },
-      { stats: { attack: 6 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.04 }, cost: { yellow: 68 }, requiredBiomeLevel: 9 },
-      { stats: { attack: 5 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.04 }, cost: { yellow: 108 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 5 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.04 }, cost: { yellow: 176 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 4 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.04 }, cost: { yellow: 296 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   // T2 economy pass (2026-08-29): now an EVOLUTION of plains-vest-t1 at +5.

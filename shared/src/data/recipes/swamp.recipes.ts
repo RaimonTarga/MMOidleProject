@@ -52,13 +52,6 @@ export const swampRecipeEntries = [
     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, same total (472).
     // +5 catalyst from ashbrand-blade's own T2 successor tag ("poison
     // DoT-conversion weapon → Fortified").
-    upgrades: [
-      { stats: { attack: 1 }, cost: { purple: 20 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 1 }, cost: { purple: 45 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 1 }, cost: { purple: 70 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 1 }, cost: { purple: 115 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 2 }, cost: { purple: 150 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   // Substantially better in a DoT-heavy fight, and deliberately so — but it
@@ -142,13 +135,6 @@ export const swampRecipeEntries = [
     weaponDot: { effectId: 'swamp-mirebrand-burn', convPct: 0.50, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'poison' },
     icon: 'items/weapons/venom-knife.png',
     description: 'The venom runs deeper now; what it touches keeps rotting.',
-    upgrades: [
-      { stats: { attack: 5 }, cost: { purple: 47 }, requiredBiomeLevel: 8 },
-      { stats: { attack: 5 }, cost: { purple: 117 }, requiredBiomeLevel: 9 },
-      { stats: { attack: 5 }, cost: { purple: 187 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 4 }, cost: { purple: 304 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 6 }, cost: { purple: 515 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   // (T2 Frostbrand removed — frost DoT now lives on Tundra. See item-identity-audit.md.)
@@ -239,13 +225,6 @@ export const swampRecipeEntries = [
     weaponDot: { effectId: 'swamp-blightbrand-burn', convPct: 0.50, tickIntervalMs: 1000, drainDurationMs: 4500, dotMultiplier: 1.50, element: 'poison' },
     icon: 'items/weapons/plague-fang.png',
     description: 'The rot it carries does more work than the edge ever could.',
-    upgrades: [
-      { stats: { attack: 7 }, cost: { purple: 93 },  requiredBiomeLevel: 14 },
-      { stats: { attack: 7 }, cost: { purple: 233 }, requiredBiomeLevel: 15 },
-      { stats: { attack: 7 }, cost: { purple: 372 }, requiredBiomeLevel: 16 },
-      { stats: { attack: 6 }, cost: { purple: 605 }, requiredBiomeLevel: 16 },
-      { stats: { attack: 5 }, cost: { purple: 1025 }, requiredBiomeLevel: 16 },
-    ],
   }],
 
   // (T3 Rimebrand removed from Swamp — relocated to Tundra as its T3 frost DoT

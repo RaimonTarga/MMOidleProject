@@ -50,13 +50,6 @@ export const desertRecipeEntries = [
     icon: 'items/weapons/sunsteel-falchion.png',
     element: 'fire',   // cosmetic attack tint only
     description: 'Sun-forged and ward-etched: the opening blow breaks, and for a few breaths after it the light does not let go.',
-    upgrades: [
-      { stats: { attack: 7 }, cost: { yellow: 48 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 7 }, cost: { yellow: 120 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 7 }, cost: { yellow: 192 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 6 }, cost: { yellow: 312 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 6 }, cost: { yellow: 528 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   ['desert-vest-t2', {
@@ -130,13 +123,6 @@ export const desertRecipeEntries = [
     icon: 'items/weapons/solar-falchion.png',
     element: 'fire',   // cosmetic attack tint only
     description: 'It spends its fury on the opening blow, then burns on a while in the wound it made.',
-    upgrades: [
-      { stats: { attack: 9 }, cost: { yellow: 97 },  requiredBiomeLevel: 8 },
-      { stats: { attack: 8 }, cost: { yellow: 242 }, requiredBiomeLevel: 9 },
-      { stats: { attack: 8 }, cost: { yellow: 388 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 8 }, cost: { yellow: 630 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 8 }, cost: { yellow: 1067 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   // DESERT TECHNIQUE STAFF (2026-09-26): continues the Plains Technique line
@@ -153,13 +139,6 @@ export const desertRecipeEntries = [
     mechanicEffects: { 'technique.cooldown-reduction-pct': 0.19, 'technique.power-pct': 0.50 },
     icon: 'items/weapons/pilgrim-quarterstaff.png',
     description: 'Sun-bleached ironwood shod in brass. It teaches the body a rhythm, and the rhythm does the rest.',
-    upgrades: [
-      { stats: { attack: 7 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.03 }, cost: { yellow: 55 }, requiredBiomeLevel: 8 },
-      { stats: { attack: 6 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0, 'technique.power-pct': 0.03 }, cost: { yellow: 137 }, requiredBiomeLevel: 9 },
-      { stats: { attack: 7 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.03 }, cost: { yellow: 220 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 6 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.03 }, cost: { yellow: 357 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 6 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.03 }, cost: { yellow: 605 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   ['desert-vest-t3', {
@@ -245,13 +224,6 @@ export const desertRecipeEntries = [
     icon: 'items/weapons/zenith-falchion.png',
     element: 'fire',   // cosmetic attack tint only
     description: 'At the sun\'s height the opening cut lets in the whole day, and it takes its time going out.',
-    upgrades: [
-      { stats: { attack: 18 }, cost: { yellow: 193 }, requiredBiomeLevel: 14 },
-      { stats: { attack: 18 }, cost: { yellow: 483 }, requiredBiomeLevel: 15 },
-      { stats: { attack: 18 }, cost: { yellow: 772 }, requiredBiomeLevel: 16 },
-      { stats: { attack: 18 }, cost: { yellow: 1255 }, requiredBiomeLevel: 16 },
-      { stats: { attack: 18 }, cost: { yellow: 2122 }, requiredBiomeLevel: 16 },
-    ],
   }],
 
   // T4 heir of the Desert technique staff: deeper Technique Power + CDR, plus KATA
@@ -270,13 +242,6 @@ export const desertRecipeEntries = [
     },
     icon: 'items/weapons/sunmonk-warstaff.png',
     description: 'Every form flows into the next, and the fourth lands like the noon sun.',
-    upgrades: [
-      { stats: { attack: 16 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.03 }, cost: { yellow: 109 }, requiredBiomeLevel: 14 },
-      { stats: { attack: 16 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0, 'technique.power-pct': 0.03 }, cost: { yellow: 274 }, requiredBiomeLevel: 15 },
-      { stats: { attack: 15 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.03 }, cost: { yellow: 438 }, requiredBiomeLevel: 16 },
-      { stats: { attack: 15 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0, 'technique.power-pct': 0.03 }, cost: { yellow: 711 }, requiredBiomeLevel: 16 },
-      { stats: { attack: 15 }, mechanicEffects: { 'technique.cooldown-reduction-pct': 0.01, 'technique.power-pct': 0.03 }, cost: { yellow: 1203 }, requiredBiomeLevel: 16 },
-    ],
   }],
 
   ['desert-vest-t4', {

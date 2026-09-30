@@ -62,13 +62,6 @@ export const mountainRecipeEntries = [
     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, total ~497 (was 496).
     // +5 catalyst from its own T2 hammer successor's tag ("slow heavy hammer →
     // Heavy").
-    upgrades: [
-      { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 25 }, requiredBiomeLevel: 2 },
-      { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 45 }, requiredBiomeLevel: 3 },
-      { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 75 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 2 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 125 }, requiredBiomeLevel: 4 },
-      { stats: { attack: 3 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 155 }, requiredBiomeLevel: 4 },
-    ],
   }],
 
   ['mountain-vest-t1', {
@@ -150,13 +143,6 @@ export const mountainRecipeEntries = [
       'technique.cast-speed-pct': 0.15,
     },
     description: 'When it lands, the ground remembers it longer than the foe does.',
-    upgrades: [
-      { stats: { attack: 9 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 47 }, requiredBiomeLevel: 8 },
-      { stats: { attack: 8 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 117 }, requiredBiomeLevel: 9 },
-      { stats: { attack: 8 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 187 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 8 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 304 }, requiredBiomeLevel: 10 },
-      { stats: { attack: 7 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 515 }, requiredBiomeLevel: 10 },
-    ],
   }],
 
   // T2 economy pass (2026-08-29): now an EVOLUTION of mountain-vest-t1 at +5.
@@ -234,13 +220,6 @@ export const mountainRecipeEntries = [
     element: 'frost',   // cosmetic attack tint only
     mechanicEffects: { 'weapon.empowered-mult-bonus': 0.37 },
     description: 'It does not so much strike as arrive, the way a slope arrives on a village.',
-    upgrades: [
-      { stats: { attack: 14 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 93 },  requiredBiomeLevel: 14 },
-      { stats: { attack: 15 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 233 }, requiredBiomeLevel: 15 },
-      { stats: { attack: 13 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 372 }, requiredBiomeLevel: 16 },
-      { stats: { attack: 13 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 605 }, requiredBiomeLevel: 16 },
-      { stats: { attack: 13 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 1025 }, requiredBiomeLevel: 16 },
-    ],
   }],
 
   // T3 is where the lineage picks the damage cap back up — see change (1) in the
@@ -319,13 +298,6 @@ export const mountainRecipeEntries = [
     reconstructCost: { blue: 896 },
     icon: 'items/weapons/earthsunder-maul.png',
     description: 'It does not strike the earth so much as remind it of an old grievance.',
-    upgrades: [
-      { stats: { attack: 45 }, cost: { blue: 185 },  requiredBiomeLevel: 20 },
-      { stats: { attack: 45 }, cost: { blue: 463 },  requiredBiomeLevel: 21 },
-      { stats: { attack: 44 }, cost: { blue: 741 },  requiredBiomeLevel: 22 },
-      { stats: { attack: 44 }, cost: { blue: 1204 }, requiredBiomeLevel: 22 },
-      { stats: { attack: 44 }, cost: { blue: 2039 }, requiredBiomeLevel: 22 },
-    ],
   }],
 
   ['mountain-warmaul', {
@@ -344,13 +316,6 @@ export const mountainRecipeEntries = [
     mechanicEffects: { 'weapon.empowered-mult-bonus': 0.48 },
     icon: 'items/weapons/warmaul.png',
     description: 'Lighter in the haft, quicker to the shoulder — it rewards the soldier who already knows when to swing.',
-    upgrades: [
-      { stats: { attack: 38 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 186 },  requiredBiomeLevel: 20 },
-      { stats: { attack: 38 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 465 },  requiredBiomeLevel: 21 },
-      { stats: { attack: 38 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 744 }, requiredBiomeLevel: 22 },
-      { stats: { attack: 34 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.02 }, cost: { blue: 1208 }, requiredBiomeLevel: 22 },
-      { stats: { attack: 38 }, mechanicEffects: { 'weapon.empowered-mult-bonus': 0.01 }, cost: { blue: 2045 }, requiredBiomeLevel: 22 },
-    ],
   }],
 
   ['mountain-vest-t4', {
