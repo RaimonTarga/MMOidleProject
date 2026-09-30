@@ -44,7 +44,7 @@
  */
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import {
@@ -464,17 +464,29 @@ async function main(): Promise<void> {
   const biomeFilter = process.env.LANE_NODES?.split(',');
   mkdirSync(out, { recursive: true });
 
-  const artifact = process.env.LANE_HITBOX ?? join(tmpdir(), 'mmo-lane-matrix-hitboxes.json');
-  if (!existsSync(artifact)) await writeHitboxArtifact(artifact);
-  assert(hydrateHitboxCacheFromArtifact(artifact) > 0, 'hitbox cache is empty');
+  if (!process.env.LANE_REPLAY) {
+    const artifact = process.env.LANE_HITBOX ?? join(tmpdir(), 'mmo-lane-matrix-hitboxes.json');
+    if (!existsSync(artifact)) await writeHitboxArtifact(artifact);
+    assert(hydrateHitboxCacheFromArtifact(artifact) > 0, 'hitbox cache is empty');
+  }
 
   const nodes = laneNodes().filter((n) => !biomeFilter || biomeFilter.includes(n.biome));
   const references = LINEAGE_LANE_REFERENCES.filter((r) => !filter || r.profileId.includes(filter));
   assert(nodes.length > 0 && references.length > 0, 'nothing selected');
 
+  // Regenerating the report is a report change, not a measurement, so it must not
+  // cost another three quarters of an hour: `LANE_REPLAY` reads a previous run's
+  // `lane-matrix.json` and rebuilds every table from its stored rows.
+  const replay = process.env.LANE_REPLAY;
   const rows: Row[] = [];
   const startedAt = Date.now();
-  for (const reference of references) {
+  if (replay) {
+    const stored = JSON.parse(readFileSync(resolve(replay), 'utf8')) as { rows: Row[] };
+    assert(Array.isArray(stored.rows) && stored.rows.length > 0, `${replay} holds no rows`);
+    rows.push(...stored.rows);
+    console.log(`replaying ${rows.length} measured rows from ${replay}`);
+  }
+  for (const reference of replay ? [] : references) {
     const profile = LINEAGE_LANE_PROFILES.get(reference.profileId)!;
     for (const node of nodes) {
       for (const seed of seeds) {
@@ -491,7 +503,7 @@ async function main(): Promise<void> {
       );
     }
   }
-  const elapsedMs = Date.now() - startedAt;
+  const elapsedMs = replay ? 0 : Date.now() - startedAt;
 
   const cells = aggregate(rows);
   const cellFor = (profileId: string, nodeId: string): Cell | undefined =>
@@ -512,6 +524,25 @@ async function main(): Promise<void> {
     '| node | biome | authored blend | resolved blend | shares this row | mobs (of 10 slots) |',
     '|---|---|---|---|---|---|',
     ...nodes.map((n) => `| \`${n.nodeId}\` | ${n.biome} | ${n.authored} | ${n.resolved} | ${n.aliases.length} node(s): ${n.aliases.map((a) => a.replace('node-t1-', '')).join(', ')} | ${n.mobs.map((m) => `${m.monsterTypeId} x${m.slots}`).join(', ')} |`),
+  ];
+
+  // ── TTK per lane per node, in one table (the brief's own ask) ─────────────
+  const pivotHeader = `| profile | lane | class | ${nodes.map((n) => n.nodeId.replace('node-t1-', '')).join(' | ')} |`;
+  const pivot: string[] = [
+    pivotHeader,
+    `|---|---|---|${nodes.map(() => '---:').join('|')}|`,
+    ...references.map((reference) => {
+      const cellsForRef = nodes.map((n) => cellFor(reference.profileId, n.nodeId));
+      return `| \`${reference.profileId}\` | ${reference.lane ?? '_control_'} | ${reference.classRoot.replace('-root', '')} | ${cellsForRef.map((c) => (c?.ttkMs == null ? '—' : String(c.ttkMs))).join(' | ')} |`;
+    }),
+  ];
+  const upliftPivot: string[] = [
+    pivotHeader,
+    `|---|---|---|${nodes.map(() => '---:').join('|')}|`,
+    ...laneRefs.map((reference) => {
+      const cellsForRef = nodes.map((n) => cellFor(reference.profileId, n.nodeId));
+      return `| \`${reference.profileId}\` | ${reference.lane} | ${reference.classRoot.replace('-root', '')} | ${cellsForRef.map((c) => (c ? signedPct(uplift(c)) : '—')).join(' | ')} |`;
+    }),
   ];
 
   const perNode: string[] = [];
@@ -697,6 +728,17 @@ async function main(): Promise<void> {
     'encounters that exist today.',
     '',
     ...matrix,
+    '',
+    '## TTK per lane per node',
+    '',
+    'Milliseconds of ENGAGED time per kill, pooled over both seeds. Lower is faster.',
+    'Columns are the eighteen distinct blends in the table above.',
+    '',
+    ...pivot,
+    '',
+    '### The same table as uplift over each lineage’s own control',
+    '',
+    ...upliftPivot,
     '',
     '## Lane budget (design §9)',
     '',
