@@ -38,6 +38,8 @@ export * from './systems/tierAdvancement';
 export * from './systems/itemUpgrades';
 export * from './systems/t1EconomyExperiment';
 export * from './systems/evolution';
+export * from './data/lineages';
+export * from './systems/lineages';
 export * from './systems/cores';
 export * from './systems/relics';
 export * from './systems/debuffScaling';

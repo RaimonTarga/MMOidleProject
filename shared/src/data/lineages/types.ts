@@ -1,0 +1,341 @@
+/**
+ * Item lineage trees — the closed vocabulary (progression rework Phase 1a).
+ *
+ * Design authority: `design_docs/progression-rework-design.md` §2–§8.
+ * Plan: `docs/progression-rework-plan.md` §1.1.
+ *
+ * Two axioms shape every type here:
+ *
+ *  1. **Closed vocabulary.** A card is data over a fixed set of trigger kinds and
+ *     payoff kinds. A card that needs bespoke code is a design bug, so the unions
+ *     below are the whole surface the card runtime (Phase 1b) has to implement.
+ *  2. **One magnitude table per tier.** An authored {@link LineageCard} carries NO
+ *     numbers at all — not a magnitude, not a duration, not a cost, not an unlock
+ *     level. Every number is derived from `magnitudes.ts` by `resolveLineageCard`.
+ *     This is structural, not a convention: there is nowhere in the authored type
+ *     to put a literal. `coverage.test.ts` also scans the card sources, so the rule
+ *     survives someone widening the type.
+ */
+import type { EquipmentSlot, EssenceType, ItemStats } from '../../items';
+import type { StatEffects } from '../skillTree/types';
+
+// ─── Packets (lanes) ─────────────────────────────────────────────────────────
+
+/**
+ * A packet is a stat the player scales, a trigger that fires, and a payoff
+ * (design §3). A lineage carries three of them as its three lanes; a packet
+ * "completes" when a weapon lane and a non-weapon lane name the same one.
+ */
+export type PacketId =
+  | 'tempo'
+  | 'empowered'
+  | 'affliction'
+  | 'control'
+  | 'kill-chain'
+  | 'engagement'
+  | 'bulwark'
+  | 'barrier-tempo';
+
+export const PACKET_IDS: readonly PacketId[] = [
+  'tempo', 'empowered', 'affliction', 'control',
+  'kill-chain', 'engagement', 'bulwark', 'barrier-tempo',
+] as const;
+
+/** The six packets weapons draw from (design §3). The last two are defensive-only. */
+export const WEAPON_PACKET_IDS: readonly PacketId[] = [
+  'tempo', 'empowered', 'affliction', 'control', 'kill-chain', 'engagement',
+] as const;
+
+/**
+ * The defensive face a frame expresses (design §3.1). Defensive cards pay out in
+ * full on the matching frame and at `OFF_FACE_SCALAR` off it — a bias, never a
+ * lock, so no encounter hard-counters a frame.
+ */
+export type DefensiveFace = 'avoid' | 'sustain' | 'endure';
+
+// ─── Rows ────────────────────────────────────────────────────────────────────
+
+/**
+ * One row per tier, each asking a different question (design §4). The band never
+ * gets wider: T1 is stat/payoff, T2 adds amplifier, T3 keystone, T4 cross.
+ * The gate is not a row — it is the form purchase at the bottom of the band.
+ */
+export type RowKind = 'stat' | 'payoff' | 'amplifier' | 'keystone' | 'cross';
+
+export const ROW_KINDS: readonly RowKind[] = ['stat', 'payoff', 'amplifier', 'keystone', 'cross'] as const;
+
+// ─── Trigger and payoff vocabulary (design §6) ───────────────────────────────
+
+/**
+ * When a card fires. Every kind but `mechanic-fired` already has a server seam;
+ * `mechanic-fired` is the one new combat primitive Phase 1b adds (a class-agnostic
+ * "your mechanic fired" event covering finisher, execution, max stacks, reload,
+ * energy burst, and a summon command).
+ */
+export type TriggerKind =
+  | 'hit-nth'
+  | 'mechanic-fired'
+  | 'first-hit'
+  | 'kill'
+  | 'evade'
+  | 'hit-taken'
+  | 'guard-cast'
+  | 'standing'
+  | 'pulse'
+  | 'barrier-break';
+
+export const TRIGGER_KINDS: readonly TriggerKind[] = [
+  'hit-nth', 'mechanic-fired', 'first-hit', 'kill', 'evade',
+  'hit-taken', 'guard-cast', 'standing', 'pulse', 'barrier-break',
+] as const;
+
+/**
+ * What a card does. Each maps onto an existing server hook (cadence aftershock /
+ * hemorrhage / rampage, cooldown rupture / overdrive, dot conflagration / chill,
+ * defense hit-plating / engagement-dr / overheal-ward, the control ladder, the
+ * affliction toolkit). If a card cannot be expressed here, the card changes.
+ */
+export type PayoffKind =
+  | 'vulnerability'
+  | 'plating-shred'
+  | 'echo-hit'
+  | 'hemorrhage'
+  | 'poison-stack'
+  | 'slow'
+  | 'stun'
+  | 'damage-window'
+  | 'speed-window'
+  | 'recovery-window'
+  | 'ward'
+  | 'cleanse'
+  | 'plating-stack'
+  | 'engagement-dr'
+  | 'contagion';
+
+export const PAYOFF_KINDS: readonly PayoffKind[] = [
+  'vulnerability', 'plating-shred', 'echo-hit', 'hemorrhage', 'poison-stack',
+  'slow', 'stun', 'damage-window', 'speed-window', 'recovery-window',
+  'ward', 'cleanse', 'plating-stack', 'engagement-dr', 'contagion',
+] as const;
+
+// ─── Stats a stat row can scale ──────────────────────────────────────────────
+
+/**
+ * The stat a lane scales on its stat row. Drawn from the two existing stat
+ * vocabularies: `ItemStats` (flat item numbers) and skill-tree `StatEffects`
+ * (the `*Pct` affinity family, summed then applied once).
+ */
+export type LineageStatKey =
+  | 'attack' | 'onHitDamage' | 'plating' | 'damageReduction' | 'evasion'
+  | 'maxHp' | 'recovery' | 'speed'
+  | 'attackPct' | 'attackSpeedPct';
+
+/**
+ * What a resolved stat row contributes. Folds into passives at recalc through the
+ * same seam `itemMechanicEffectsAt` uses (Phase 1b), so the `*Pct` members keep
+ * their sum-additively-then-apply-once semantics.
+ */
+export type LineageStatEffects =
+  Partial<Pick<ItemStats, 'attack' | 'onHitDamage' | 'plating' | 'damageReduction' | 'evasion' | 'maxHp' | 'recovery' | 'speed'>>
+  & Partial<Pick<StatEffects, 'attackPct' | 'attackSpeedPct'>>;
+
+// ─── Visual signatures (design §8) ───────────────────────────────────────────
+
+/**
+ * Every card the player buys adds one thing they can see in combat. The key is
+ * the contract between the card and the Phaser effect map (Phase 1c): the server
+ * pushes `card-fx { fx }` and the client draws it. A card with no signature is a
+ * stat, and stats are what the old system had too many of.
+ *
+ * Keys are `<lane>.<signature>` so the lane grammar (§8: Tempo = afterimages,
+ * Empowered = glow and crash, Affliction = pips and arcs) reads off the key.
+ */
+export type LineageFxKey =
+  // Stat rows — weapon trail colour / intensity in the lane colour.
+  | 'tempo.trail' | 'empowered.trail' | 'affliction.trail'
+  | 'control.trail' | 'kill-chain.trail' | 'engagement.trail'
+  // Payoff rows — a new on-screen event.
+  | 'tempo.ghost-strike'
+  | 'empowered.plating-crack' | 'empowered.weak-point'
+  | 'affliction.bleed-pips' | 'affliction.venom-pips'
+  | 'control.frost-drag'
+  | 'kill-chain.kill-pulse' | 'kill-chain.spread-arc'
+  | 'engagement.opening-flash' | 'engagement.brace-sparks'
+  // Capstones — the form's lasting verb.
+  | 'tempo.gale-wake' | 'tempo.ruin-afterimage'
+  | 'affliction.stinger-echo'
+  | 'empowered.quake-ring'
+  | 'control.mire-grasp'
+  | 'kill-chain.steel-vigil';
+
+export const LINEAGE_FX_KEYS: readonly LineageFxKey[] = [
+  'tempo.trail', 'empowered.trail', 'affliction.trail',
+  'control.trail', 'kill-chain.trail', 'engagement.trail',
+  'tempo.ghost-strike',
+  'empowered.plating-crack', 'empowered.weak-point',
+  'affliction.bleed-pips', 'affliction.venom-pips',
+  'control.frost-drag',
+  'kill-chain.kill-pulse', 'kill-chain.spread-arc',
+  'engagement.opening-flash', 'engagement.brace-sparks',
+  'tempo.gale-wake', 'tempo.ruin-afterimage',
+  'affliction.stinger-echo',
+  'empowered.quake-ring',
+  'control.mire-grasp',
+  'kill-chain.steel-vigil',
+] as const;
+
+// ─── Authored shapes (NO numbers — see the header) ───────────────────────────
+
+/**
+ * One card in a lineage's tree. Authored shape only: the lane, the row, what it
+ * fires on and what it does. Every number comes from `magnitudes.ts` via
+ * `resolveLineageCard`.
+ */
+export interface LineageCard {
+  id: string;
+  lineageId: string;
+  /** Which band this card sits in. Its unlock level and costs derive from this. */
+  tier: number;
+  row: RowKind;
+  lane: PacketId;
+  name: string;
+  /** Player-facing text WITHOUT magnitudes — the UI appends resolved numbers. */
+  description: string;
+  fx: LineageFxKey;
+  /** `stat` rows only: the stat this lane scales. */
+  statKey?: LineageStatKey;
+  /** Every row but `stat`: when it fires. */
+  trigger?: TriggerKind;
+  /** Every row but `stat`: what it does. */
+  payoff?: PayoffKind;
+  /**
+   * `amplifier` / `keystone` / `cross` rows: the card in this lineage they modify.
+   * Owning the modified card is a prerequisite (see `checkUnlockCard`).
+   */
+  modifies?: string;
+  /** `cross` rows only: the lane borrowed from, paid at the cross row scalar. */
+  borrowsLane?: PacketId;
+  /**
+   * Defensive cards only (armor / charm / boots, Phase 4): the face this card
+   * belongs to. Off-face it pays `OFF_FACE_SCALAR`. Absent = offensive, which is
+   * frame-neutral.
+   */
+  face?: DefensiveFace;
+}
+
+/**
+ * The verb a form adds (design §5). A capstone is a card without a row, an unlock
+ * level, or a cost: it is granted by wearing the form and is never bought
+ * separately. Capstones add a verb, never a number — the magnitude they do carry
+ * comes from the same table as every other payoff.
+ */
+export interface LineageCapstone {
+  id: string;
+  name: string;
+  description: string;
+  fx: LineageFxKey;
+  /** The lane this capstone crowns. Coverage requires every lane to be crowned. */
+  lane: PacketId;
+  trigger: TriggerKind;
+  payoff: PayoffKind;
+}
+
+/**
+ * A form is what the slot actually wears: name, art, and base stats come from
+ * `recipeId`, an ordinary recipe in `RECIPE_DATABASE`. Forms of the same lineage
+ * at the same tier share the band and differ only in base stats, art, and capstone.
+ *
+ * Tier-1 forms are crafted from the Make tab as today (no gate, no capstone).
+ * Tier ≥ 2 forms are bought at the previous band's gate for essence plus the boss
+ * capstone material of `biome` — which is why the boss is the only way up.
+ */
+export interface LineageForm {
+  /** Existing recipe id. The form graph is still `Recipe.lineageId`/`evolvesFrom`. */
+  recipeId: string;
+  /** The tier of the form itself; it opens the band of the same tier. */
+  tier: number;
+  /** The biome whose boss capstone opens this door (tier ≥ 2), or crafts it (tier 1). */
+  biome: string;
+  /** Tier ≥ 2 only. A tier-1 base form crowns nothing. */
+  capstone?: LineageCapstone;
+}
+
+/** The slot holds the lineage, not an item (design §2). */
+export interface LineageDefinition {
+  id: string;
+  slot: EquipmentSlot;
+  /** The T1 biome this lineage debuts in; sets the essence its cards are paid in. */
+  homeBiome: string;
+  /** The three packets this lineage carries, in matrix order (design §3.2). */
+  lanes: readonly [PacketId, PacketId, PacketId];
+  forms: readonly LineageForm[];
+  cards: readonly LineageCard[];
+}
+
+// ─── Resolved shapes (numbers, from the magnitude table) ─────────────────────
+
+export interface LineageTrigger {
+  kind: TriggerKind;
+  /** `hit-nth` only: fires on every nth hit. 1 = every hit. */
+  n?: number;
+}
+
+export interface LineagePayoff {
+  kind: PayoffKind;
+  /** Meaning is per payoff kind — see `PAYOFF_UNIT` in `magnitudes.ts`. */
+  magnitude: number;
+  durationMs?: number;
+}
+
+export interface LineageCost {
+  essence: Partial<Record<EssenceType, number>>;
+  shards: Partial<Record<PacketId, number>>;
+}
+
+/** A gate also spends the biome boss's capstone material. */
+export interface LineageGateCost extends LineageCost {
+  capstone: { biome: string; amount: number };
+}
+
+/** A card with its numbers filled in. This is what the runtime and the UI read. */
+export interface ResolvedLineageCard {
+  card: LineageCard;
+  /** Absolute level in the gating biome (not level-within-the-tier). */
+  requiredBiomeLevel: number;
+  /** Global Mastery required, from the same per-tier band the +1..+5 ladder used. */
+  requiredGlobalMastery: number;
+  cost: LineageCost;
+  statEffects?: LineageStatEffects;
+  trigger?: LineageTrigger;
+  payoff?: LineagePayoff;
+}
+
+/** A worn form's capstone with its numbers filled in. Granted, never bought. */
+export interface ResolvedLineageCapstone {
+  capstone: LineageCapstone;
+  form: LineageForm;
+  trigger: LineageTrigger;
+  payoff: LineagePayoff;
+}
+
+// ─── Player state ────────────────────────────────────────────────────────────
+
+/**
+ * Per-lineage player progress, stored on `HoldsInventory.lineages` (persisted,
+ * component-shaped). "Owned is forever, active is a choice": paying for a card or
+ * a form is permanent; swapping which owned card is active, or which owned form is
+ * worn, is free and instant.
+ */
+export interface LineageProgress {
+  /** Card ids bought. Permanent. */
+  ownedCards: string[];
+  /** One active card per row (design §4: a row is a choice, not a shopping list). */
+  active: Partial<Record<RowKind, string>>;
+  /** Recipe ids of forms bought. Permanent. */
+  ownedForms: string[];
+  /** Recipe id of the worn form. `equipment[slot]` mirrors it. */
+  wornForm: string;
+}
+
+/** Keyed by lineage id. */
+export type LineageProgressMap = Record<string, LineageProgress>;

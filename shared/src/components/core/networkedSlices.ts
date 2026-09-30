@@ -18,6 +18,7 @@ import type { EquippedRule } from '../../runeDatabase';
 import type { AttunedAbilities } from '../../abilities';
 import type { EquippedStances } from '../../stances';
 import type { EquippedRites } from '../../rites';
+import type { LineageProgressMap } from '../../data/lineages/types';
 
 export type { HasHitbox };
 
@@ -422,6 +423,20 @@ export interface HoldsInventory {
   equipment: EquipmentMap;
   /** Per-item-id upgrade level (+0..+MAX_UPGRADE). Absent key means +0. */
   itemUpgrades: Record<string, number>;
+  /**
+   * Lineage trees, keyed by lineage id (progression rework Phase 1). Per lineage:
+   * the cards bought, which owned card is active in each row, the forms bought,
+   * and the form currently worn — `equipment[slot]` mirrors `wornForm`, so stat
+   * derivation, tooltips and the ladder rules are unchanged.
+   *
+   * OPTIONAL for save and construction compatibility, exactly like
+   * `TracksProgression.visitedNodes`: a save written before Phase 1 has no
+   * lineages, and a bare test or preview inventory need not invent any. Nothing
+   * reads this field raw — `lineageProgressFor` / `normalizeLineageProgressMap`
+   * in `systems/lineages.ts` are the single readers. Phase 1b can make it
+   * required once every construction site is wired.
+   */
+  lineages?: LineageProgressMap;
 }
 
 /** Skill tree unlocks plus the derived passive map and class selections. */

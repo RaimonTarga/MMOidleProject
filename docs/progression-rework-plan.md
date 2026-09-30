@@ -225,6 +225,34 @@ Pure rules in `shared/src/systems/lineages.ts`, mirroring `checkUpgrade`/`checkE
 `resolveActiveCards(entity)`, `lineageMasteryLevelForRow(tier, row)` (reuses the GM band
 in `itemUpgrades.ts`), `lineageSwitchDiscount`.
 
+**Built 2026-09-30 (Phase 1a, `feat/lineage-data-model`).** As sketched above, with four
+deliberate differences — the code is the authority where they disagree:
+
+1. **Authored cards carry no numbers at all**, not even the ones the sketch gave them
+   (`cost`, `requiredBiomeLevel`, `trigger.n`, `payoff.magnitude`, `statEffects`). There is
+   nowhere in `LineageCard` to put a literal; `resolveLineageCard` in
+   `data/lineages/resolve.ts` produces a `ResolvedLineageCard` that carries all of them.
+   "Every number comes from the magnitude table" is structural rather than a convention.
+2. **The magnitude table has two tier columns, not one** (`TIER_SCALAR.absolute` /
+   `.fraction`). Flat quantities must keep pace with T4 damage; percentages are already
+   relative to numbers that grow, so scaling both on one column turned a 35% echo into a
+   385% echo at T4. Binary payoffs (stun, cleanse) scale on neither.
+3. **The "no literal magnitudes" source scan lives in `server/test/lineageAuthoring.test.ts`**,
+   not in `shared/src/data/lineages/coverage.test.ts`. The scan reads files and `shared/`
+   may not import Node APIs. The shared coverage test keeps every pure-data rule.
+4. **`HoldsInventory.lineages` is OPTIONAL**, like `TracksProgression.visitedNodes`, so
+   pre-Phase-1 saves and bare test/preview inventories still construct. Nothing reads it
+   raw — `lineageProgressFor` / `normalizeLineageProgressMap` are the single readers, and
+   1b can make it required once every construction site is wired.
+
+Known gap carried forward: no form's capstone crowns the **engagement** lane, because the
+only two lineages that carry it (Rapier, Hammer) spend their T1 form doors elsewhere.
+Crowning it needs a second door from the re-homing table (bible open decision 4). It is an
+explicit `UNCROWNED_LANES` allowlist entry in the coverage test, which fails if the lane is
+ever crowned, so the entry cannot outlive the gap.
+
+Every magnitude in the table is PROVISIONAL and unbenched; the lane-budget check is §1.5.
+
 ### 1.2 Protocol (`shared/src/protocol/socketEvents.ts`)
 
 Client to server: `lineage:unlockCard { lineageId, cardId }`, `lineage:setActive

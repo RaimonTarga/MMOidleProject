@@ -1,0 +1,421 @@
+/**
+ * Lineage tree rules — the shared authority (progression rework Phase 1a).
+ *
+ * These are to the lineage tree what `checkUpgrade`/`checkEvolve` are to the
+ * +N ladder: pure functions the SERVER applies and the CLIENT gates buttons with,
+ * so the two can never disagree. Nothing here mutates; the Phase 1b handlers in
+ * `server/src/systems/player/economy/lineages.ts` validate with these, then spend
+ * and mutate.
+ *
+ * Design authority: `design_docs/progression-rework-design.md` §2, §4, §5, §7.
+ *
+ * The two invariants every check enforces:
+ *  - **Owned is forever, active is a choice.** Buying is permanent and costs;
+ *    swapping which owned card is active, or which owned form is worn, is free,
+ *    instant, and never fails for economic reasons.
+ *  - **One row, one active card.** A row is a choice, not a shopping list.
+ */
+import { ESSENCE_LABELS } from '../items';
+import type { EquipmentSlot, EssenceType } from '../items';
+import { biomeLevelCap } from '../config/gameConfig';
+import type { HoldsInventory } from '../components/core/networkedSlices';
+import {
+  cardsForTier, formsAtGate, LINEAGE_DATABASE, lineageForRecipeId, lineagesForSlot,
+} from '../data/lineages';
+import { capstoneMaterialName } from '../data/lineages/capstones';
+import {
+  lineageMasteryLevelForRow, rowsForTier, tierHasRow,
+} from '../data/lineages/magnitudes';
+import {
+  formGateBiomeLevel, formGateMastery, lineageCardCost, lineageGateCost,
+  resolveLineageCapstone, resolveLineageCard,
+} from '../data/lineages/resolve';
+import type {
+  DefensiveFace, LineageCard, LineageDefinition, LineageForm, LineageProgress,
+  LineageProgressMap, LineageStatEffects, PacketId, ResolvedLineageCapstone,
+  ResolvedLineageCard, RowKind,
+} from '../data/lineages/types';
+
+export interface LineageCheck {
+  ok: boolean;
+  reason?: string;
+}
+
+const OK: LineageCheck = { ok: true };
+
+// ─── State helpers ───────────────────────────────────────────────────────────
+
+/**
+ * A fresh tree for a lineage: nothing owned but the T1 base form, which is the
+ * item the player just crafted from the Make tab.
+ */
+export function emptyLineageProgress(lineage: LineageDefinition, wornForm?: string): LineageProgress {
+  const base = wornForm ?? baseFormRecipeId(lineage);
+  return { ownedCards: [], active: {}, ownedForms: base ? [base] : [], wornForm: base ?? '' };
+}
+
+/** The tier-1 form, the one crafted rather than gated. */
+export function baseFormRecipeId(lineage: LineageDefinition): string | undefined {
+  return lineage.forms.find((f) => f.tier === 1)?.recipeId;
+}
+
+/**
+ * Hydration-safe normalization. Drops unknown lineage ids, unknown card and form
+ * ids, active entries whose card is not owned, and worn forms that are not owned
+ * — so a save written before a card was renamed or retired loads clean instead of
+ * granting a card that no longer exists.
+ */
+export function normalizeLineageProgressMap(
+  stored: Partial<Record<string, Partial<LineageProgress>>> | undefined,
+): LineageProgressMap {
+  const out: LineageProgressMap = {};
+  for (const [lineageId, raw] of Object.entries(stored ?? {})) {
+    const lineage = LINEAGE_DATABASE.get(lineageId);
+    if (!lineage || !raw) continue;
+
+    const knownCards = new Set(lineage.cards.map((c) => c.id));
+    const knownForms = new Set(lineage.forms.map((f) => f.recipeId));
+    const ownedCards = (raw.ownedCards ?? []).filter((id) => knownCards.has(id));
+    const ownedForms = (raw.ownedForms ?? []).filter((id) => knownForms.has(id));
+
+    const active: Partial<Record<RowKind, string>> = {};
+    for (const [row, cardId] of Object.entries(raw.active ?? {}) as [RowKind, string][]) {
+      const card = lineage.cards.find((c) => c.id === cardId);
+      if (card && card.row === row && ownedCards.includes(cardId)) active[row] = cardId;
+    }
+
+    const base = baseFormRecipeId(lineage);
+    if (base && !ownedForms.includes(base)) ownedForms.push(base);
+    const wornForm = raw.wornForm && ownedForms.includes(raw.wornForm)
+      ? raw.wornForm
+      : (base ?? ownedForms[0] ?? '');
+
+    out[lineageId] = { ownedCards, active, ownedForms, wornForm };
+  }
+  return out;
+}
+
+/**
+ * The player's tree for a lineage, or an untouched one. Never returns undefined,
+ * so no caller has to branch on "has this player met this lineage yet" — and
+ * nothing outside this file reads `holdsInventory.lineages` raw.
+ */
+export function lineageProgressFor(
+  inventory: Pick<HoldsInventory, 'lineages'> | undefined,
+  lineageId: string,
+): LineageProgress {
+  return inventory?.lineages?.[lineageId]
+    ?? { ownedCards: [], active: {}, ownedForms: [], wornForm: '' };
+}
+
+// ─── Mastery and the switch discount ─────────────────────────────────────────
+
+/** Re-exported so callers do not reach into the magnitude table for a gate check. */
+export { lineageMasteryLevelForRow, rowsForTier, tierHasRow };
+
+/**
+ * Whether this row is HALF PRICE on this lineage because the player already owns
+ * the same row at the same tier on another lineage of the same slot (design §2:
+ * "a respec at T2 costs an afternoon, not a restart"). Gates are never discounted.
+ */
+export function lineageSwitchDiscount(params: {
+  card: Pick<LineageCard, 'lineageId' | 'tier' | 'row'>;
+  slot: EquipmentSlot;
+  lineages: LineageProgressMap | undefined;
+}): boolean {
+  const { card, slot, lineages } = params;
+  if (!lineages) return false;
+  for (const other of lineagesForSlot(slot)) {
+    if (other.id === card.lineageId) continue;
+    const owned = lineages[other.id]?.ownedCards;
+    if (!owned?.length) continue;
+    const match = other.cards.some(
+      (c) => c.tier === card.tier && c.row === card.row && owned.includes(c.id),
+    );
+    if (match) return true;
+  }
+  return false;
+}
+
+// ─── Affordability ───────────────────────────────────────────────────────────
+
+function affordEssence(
+  cost: Partial<Record<EssenceType, number>>,
+  essences: Partial<Record<EssenceType, number>>,
+): LineageCheck {
+  for (const [type, amount] of Object.entries(cost) as [EssenceType, number][]) {
+    if ((essences[type] ?? 0) < amount) {
+      return { ok: false, reason: `Not enough ${ESSENCE_LABELS[type]} essence (need ${amount}).` };
+    }
+  }
+  return OK;
+}
+
+function affordShards(
+  cost: Partial<Record<PacketId, number>>,
+  shards: Partial<Record<PacketId, number>> | undefined,
+): LineageCheck {
+  for (const [packet, amount] of Object.entries(cost) as [PacketId, number][]) {
+    if ((shards?.[packet] ?? 0) < amount) {
+      return { ok: false, reason: `Not enough ${packet} shards (need ${amount}).` };
+    }
+  }
+  return OK;
+}
+
+// ─── The four checks ─────────────────────────────────────────────────────────
+
+/** The wallets and progression a lineage purchase is judged against. */
+export interface LineageWallet {
+  essences: Partial<Record<EssenceType, number>>;
+  /** Shard wallet, keyed by packet. Phase 2 puts it on `TracksProgression`. */
+  shards?: Partial<Record<PacketId, number>>;
+  /** Capstone wallet, keyed by biome. Phase 2 puts it on `TracksProgression`. */
+  capstones?: Record<string, number>;
+  /** Biome-local levels, keyed by biome group. */
+  biomeLevels: Record<string, number>;
+  globalMastery?: number;
+  playerTier?: number;
+  /** Test room skips ownership and cost gates, like `checkEvolve`. */
+  isTestRoom?: boolean;
+}
+
+/**
+ * Can the player BUY this card? Mastery gates *when*, materials gate *whether*
+ * (design §4).
+ */
+export function checkUnlockCard(params: {
+  lineage: LineageDefinition;
+  card: LineageCard;
+  progress: LineageProgress;
+  wallet: LineageWallet;
+  /** Cards already owned across the slot, for the switch discount. */
+  lineages?: LineageProgressMap;
+}): LineageCheck {
+  const { lineage, card, progress, wallet, lineages } = params;
+
+  if (card.lineageId !== lineage.id) return { ok: false, reason: 'That card belongs to another lineage.' };
+  if (!lineage.cards.some((c) => c.id === card.id)) return { ok: false, reason: 'Unknown card.' };
+  if (progress.ownedCards.includes(card.id)) return { ok: false, reason: 'Already owned.' };
+  if (!lineage.lanes.includes(card.lane)) return { ok: false, reason: 'That lane is not on this lineage.' };
+
+  // A band opens by wearing a form of that tier — the gate IS the band's key.
+  const wornTier = wornFormTier(lineage, progress);
+  if (card.tier > wornTier) {
+    return { ok: false, reason: `Requires a tier-${card.tier} form. Pay the tier-${card.tier - 1} gate first.` };
+  }
+
+  // Amplifier / keystone / cross rows modify a card the player must already own.
+  if (card.modifies && !progress.ownedCards.includes(card.modifies)) {
+    const target = lineage.cards.find((c) => c.id === card.modifies);
+    return { ok: false, reason: `Requires ${target?.name ?? 'the row below'} first.` };
+  }
+
+  if (wallet.isTestRoom) return OK;
+
+  const discounted = lineageSwitchDiscount({ card, slot: lineage.slot, lineages });
+  const resolved = resolveLineageCard(card, lineage, { discounted });
+
+  const level = wallet.biomeLevels[lineage.homeBiome] ?? 0;
+  if (level < resolved.requiredBiomeLevel) {
+    return { ok: false, reason: `Requires ${lineage.homeBiome} level ${resolved.requiredBiomeLevel}.` };
+  }
+  if (wallet.globalMastery !== undefined && wallet.globalMastery < resolved.requiredGlobalMastery) {
+    return { ok: false, reason: `Requires Global Mastery ${resolved.requiredGlobalMastery}.` };
+  }
+
+  const essence = affordEssence(resolved.cost.essence, wallet.essences);
+  if (!essence.ok) return essence;
+  return affordShards(resolved.cost.shards, wallet.shards);
+}
+
+/**
+ * Can the player make this owned card the active one for its row? Free, instant,
+ * and the only failure modes are "you do not own it" and "wrong row".
+ */
+export function checkSetActive(params: {
+  lineage: LineageDefinition;
+  progress: LineageProgress;
+  row: RowKind;
+  /** null clears the row. */
+  cardId: string | null;
+}): LineageCheck {
+  const { lineage, progress, row, cardId } = params;
+  if (cardId === null) return OK;
+  const card = lineage.cards.find((c) => c.id === cardId);
+  if (!card) return { ok: false, reason: 'Unknown card.' };
+  if (card.row !== row) return { ok: false, reason: `That card is a ${card.row} card, not a ${row} card.` };
+  if (!progress.ownedCards.includes(cardId)) return { ok: false, reason: 'You do not own that card.' };
+  return OK;
+}
+
+/**
+ * Can the player pay the gate that opens this form? The gate costs essence,
+ * the shard of the lane the form crowns, and the biome boss's capstone material
+ * — which is why the boss is the only way up (design §5).
+ */
+export function checkUnlockForm(params: {
+  lineage: LineageDefinition;
+  form: LineageForm;
+  progress: LineageProgress;
+  wallet: LineageWallet;
+}): LineageCheck {
+  const { lineage, form, progress, wallet } = params;
+
+  if (!lineage.forms.some((f) => f.recipeId === form.recipeId)) {
+    return { ok: false, reason: 'That form is not part of this lineage.' };
+  }
+  if (progress.ownedForms.includes(form.recipeId)) return { ok: false, reason: 'Already owned.' };
+
+  const gateTier = form.tier - 1;
+  if (gateTier < 1) return { ok: false, reason: 'That form is crafted, not gated.' };
+  if (wornFormTier(lineage, progress) < gateTier) {
+    return { ok: false, reason: `Requires a tier-${gateTier} form first.` };
+  }
+
+  if (wallet.isTestRoom) return OK;
+
+  // The gate is gated by the FORM's biome — a Jungle door needs Jungle levels.
+  const level = wallet.biomeLevels[form.biome] ?? 0;
+  const required = formGateBiomeLevel(form);
+  if (level < required) return { ok: false, reason: `Requires ${form.biome} level ${required}.` };
+  if (wallet.playerTier !== undefined && biomeLevelCap(wallet.playerTier, form.biome) < required) {
+    return { ok: false, reason: `${form.biome} cannot reach level ${required} at your tier yet.` };
+  }
+  const mastery = formGateMastery(form);
+  if (wallet.globalMastery !== undefined && wallet.globalMastery < mastery) {
+    return { ok: false, reason: `Requires Global Mastery ${mastery}.` };
+  }
+
+  const cost = lineageGateCost(form, lineage);
+  const essence = affordEssence(cost.essence, wallet.essences);
+  if (!essence.ok) return essence;
+  const shards = affordShards(cost.shards, wallet.shards);
+  if (!shards.ok) return shards;
+
+  const held = wallet.capstones?.[cost.capstone.biome] ?? 0;
+  if (held < cost.capstone.amount) {
+    return {
+      ok: false,
+      reason: `Not enough ${capstoneMaterialName(cost.capstone.biome)} (need ${cost.capstone.amount}).`,
+    };
+  }
+  return OK;
+}
+
+/** Can the player wear this owned form? Free and instant, like swapping gear. */
+export function checkWearForm(params: {
+  lineage: LineageDefinition;
+  progress: LineageProgress;
+  recipeId: string;
+}): LineageCheck {
+  const { lineage, progress, recipeId } = params;
+  if (!lineage.forms.some((f) => f.recipeId === recipeId)) {
+    return { ok: false, reason: 'That form is not part of this lineage.' };
+  }
+  if (!progress.ownedForms.includes(recipeId)) return { ok: false, reason: 'You do not own that form.' };
+  return OK;
+}
+
+// ─── Resolution for the runtime ──────────────────────────────────────────────
+
+/** The tier of the form the player is wearing; 0 when they hold none. */
+export function wornFormTier(lineage: LineageDefinition, progress: LineageProgress): number {
+  return lineage.forms.find((f) => f.recipeId === progress.wornForm)?.tier ?? 0;
+}
+
+/**
+ * The cards actually in play on one lineage: the active card of every row the
+ * player owns one for. Everything else is owned but inert.
+ */
+export function resolveLineageCards(
+  lineage: LineageDefinition,
+  progress: LineageProgress,
+  frameFace?: DefensiveFace,
+): ResolvedLineageCard[] {
+  const out: ResolvedLineageCard[] = [];
+  for (const cardId of Object.values(progress.active)) {
+    if (!cardId || !progress.ownedCards.includes(cardId)) continue;
+    const card = lineage.cards.find((c) => c.id === cardId);
+    if (card) out.push(resolveLineageCard(card, lineage, { frameFace }));
+  }
+  return out;
+}
+
+/** The worn form's capstone, if the worn form has one. Granted, never bought. */
+export function resolveWornCapstone(
+  lineage: LineageDefinition,
+  progress: LineageProgress,
+  frameFace?: DefensiveFace,
+): ResolvedLineageCapstone | undefined {
+  const form = lineage.forms.find((f) => f.recipeId === progress.wornForm);
+  return form ? resolveLineageCapstone(form, { frameFace }) : undefined;
+}
+
+export interface ActiveLineageEffects {
+  cards: ResolvedLineageCard[];
+  capstones: ResolvedLineageCapstone[];
+  /** Summed stat rows, ready to fold into the stat rebuild. */
+  statEffects: LineageStatEffects;
+}
+
+/**
+ * Everything the player's lineages contribute right now, across every slot.
+ *
+ * A lineage only contributes while its worn form is the item equipped in its
+ * slot — owning a second tree changes nothing until you wear it. This is what
+ * Phase 1b's recalc and card runtime consume.
+ */
+export function resolveActiveLineages(
+  inventory: Pick<HoldsInventory, 'equipment' | 'lineages'> | undefined,
+  frameFace?: DefensiveFace,
+): ActiveLineageEffects {
+  const cards: ResolvedLineageCard[] = [];
+  const capstones: ResolvedLineageCapstone[] = [];
+  const statEffects: LineageStatEffects = {};
+  if (!inventory) return { cards, capstones, statEffects };
+
+  for (const [lineageId, progress] of Object.entries(inventory.lineages ?? {})) {
+    const lineage = LINEAGE_DATABASE.get(lineageId);
+    if (!lineage || !progress) continue;
+    if (inventory.equipment[lineage.slot] !== progress.wornForm) continue;
+
+    for (const resolved of resolveLineageCards(lineage, progress, frameFace)) {
+      cards.push(resolved);
+      for (const [key, value] of Object.entries(resolved.statEffects ?? {}) as [keyof LineageStatEffects, number][]) {
+        statEffects[key] = (statEffects[key] ?? 0) + value;
+      }
+    }
+    const capstone = resolveWornCapstone(lineage, progress, frameFace);
+    if (capstone) capstones.push(capstone);
+  }
+  return { cards, capstones, statEffects };
+}
+
+/**
+ * The lineage an equipped item belongs to — how the inventory panel turns a slot
+ * into a tree. Falls back to undefined for items with no lineage (cores, relics).
+ */
+export function lineageForEquippedItem(recipeId: string | null | undefined): LineageDefinition | undefined {
+  return recipeId ? lineageForRecipeId(recipeId) : undefined;
+}
+
+/** The cards and forms a band shows: one lit band, plus the doors below it. */
+export function bandContents(lineage: LineageDefinition, tier: number): {
+  cards: LineageCard[];
+  gateForms: LineageForm[];
+} {
+  return { cards: cardsForTier(lineage, tier), gateForms: formsAtGate(lineage, tier) };
+}
+
+/** What a card would cost right now, discount included. For the UI's price tag. */
+export function lineageCardPrice(params: {
+  lineage: LineageDefinition;
+  card: LineageCard;
+  lineages?: LineageProgressMap;
+}) {
+  const discounted = lineageSwitchDiscount({
+    card: params.card, slot: params.lineage.slot, lineages: params.lineages,
+  });
+  return { cost: lineageCardCost(params.card, params.lineage, { discounted }), discounted };
+}
