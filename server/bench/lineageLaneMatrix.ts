@@ -303,6 +303,12 @@ interface Row {
   refusals: string[];
   grantedShards: boolean;
   mobCount: number;
+  /**
+   * `card-fx` events pushed during the run, keyed by fx. This is the proof that
+   * the LANE fired: without it a +5% uplift is indistinguishable from the stat
+   * row alone with a payoff card that never triggered.
+   */
+  fx: Record<string, number>;
 }
 
 function seededRandom(seed: number): () => number {
@@ -334,6 +340,7 @@ function measure(
   let deaths = 0;
   let engagedMs = 0;
   let damageDealt = 0;
+  const fx: Record<string, number> = {};
   const onKill: CombatEventHandler = (ctx) => {
     if (ctx.defenderType === 'monster') kills += 1;
   };
@@ -351,6 +358,9 @@ function measure(
       world.tick(100, now);
       now += 100;
       world.pendingDeaths = [];
+      for (const event of world.takeNodeEvents(node.nodeId)) {
+        if (event.kind === 'card-fx') fx[event.fx] = (fx[event.fx] ?? 0) + 1;
+      }
       world.clearNodeEvents(node.nodeId);
       const dead = bot.isDead !== undefined || bot.hasHealth.hp <= 0;
       if (!dead && isPlayerActivelyInCombat(world, bot)) engagedMs += 100;
@@ -367,7 +377,7 @@ function measure(
       classRoot: reference.classRoot,
       nodeId: node.nodeId,
       biome: node.biome,
-      seed, kills, deaths, engagedMs, capMs, damageDealt, refusals, grantedShards, mobCount,
+      seed, kills, deaths, engagedMs, capMs, damageDealt, refusals, grantedShards, mobCount, fx,
     };
   } finally {
     unregisterCombatListener('onKill', onKill);
@@ -396,6 +406,8 @@ interface Cell {
   killsPerMin: number;
   /** Mean engaged ms per kill — the TTK the brief asks for. */
   ttkMs: number | null;
+  /** `card-fx` events pushed, keyed by fx — proof the lane's payoff fired. */
+  fx: Record<string, number>;
 }
 
 function aggregate(rows: Row[]): Map<string, Cell> {
@@ -424,6 +436,10 @@ function aggregate(rows: Row[]): Map<string, Cell> {
       grantedShards: group[0].grantedShards,
       killsPerMin: kills / (capMs / 60_000),
       ttkMs: kills > 0 ? Math.round(engagedMs / kills) : null,
+      fx: group.reduce<Record<string, number>>((acc, r) => {
+        for (const [key, count] of Object.entries(r.fx)) acc[key] = (acc[key] ?? 0) + count;
+        return acc;
+      }, {}),
     });
   }
   return out;
@@ -470,6 +486,7 @@ async function main(): Promise<void> {
       console.log(
         `${reference.profileId.padEnd(30)} ${node.nodeId.padEnd(20)} kills=${String(kills).padStart(3)}` +
         ` ttk=${kills ? Math.round(engaged / kills) : '—'}ms deaths=${cell.reduce((a, r) => a + r.deaths, 0)}` +
+        ` fx=${cell.reduce((a, r) => a + Object.values(r.fx).reduce((x, y) => x + y, 0), 0)}` +
         (cell[0].refusals.length ? ` REFUSED ${cell[0].refusals.join('; ')}` : ''),
       );
     }
@@ -501,12 +518,12 @@ async function main(): Promise<void> {
   for (const node of nodes) {
     perNode.push('', `### \`${node.nodeId}\` — ${node.resolved} (${node.biome}; shared by ${node.aliases.length} authored node${node.aliases.length === 1 ? '' : 's'})`, '');
     perNode.push(`Dominant family **${short(node.dominant)}** drops \`${node.dropsLane}\`, punishes \`${node.punishesLane}\`. Authored ${node.authored}; unfieldable at T1: ${node.unavailable.map(short).join(', ') || 'none'}.`, '');
-    perNode.push('| profile | lane | class | kills | TTK (ms engaged/kill) | kills/min | uplift vs control | deaths |', '|---|---|---|---:|---:|---:|---:|---:|');
+    perNode.push('| profile | lane | class | kills | TTK (ms engaged/kill) | kills/min | uplift vs control | deaths | card-fx fired |', '|---|---|---|---:|---:|---:|---:|---:|---|');
     for (const reference of references) {
       const cell = cellFor(reference.profileId, node.nodeId);
       if (!cell) continue;
       perNode.push(
-        `| \`${reference.profileId}\` | ${reference.lane ?? '_control_'} | ${reference.classRoot.replace('-root', '')} | ${cell.kills} | ${fmt(cell.ttkMs, 0)} | ${fmt(cell.killsPerMin)} | ${reference.lane ? signedPct(uplift(cell)) : '—'} | ${cell.deaths} |` +
+        `| \`${reference.profileId}\` | ${reference.lane ?? '_control_'} | ${reference.classRoot.replace('-root', '')} | ${cell.kills} | ${fmt(cell.ttkMs, 0)} | ${fmt(cell.killsPerMin)} | ${reference.lane ? signedPct(uplift(cell)) : '—'} | ${cell.deaths} | ${Object.entries(cell.fx).map(([k, v]) => `${k} x${v}`).join(', ') || '—'} |` +
         (cell.refusals.length ? ` <!-- ${cell.refusals.join('; ')} -->` : ''),
       );
     }
@@ -624,8 +641,8 @@ async function main(): Promise<void> {
 
   // ── Per-lane summary over ALL nodes: the most robust lane signal ───────────
   const laneSummary: string[] = [
-    '| lane | profile | mean uplift over all nodes | uplift on favoured node | worst node | best node |',
-    '|---|---|---:|---:|---|---|',
+    '| lane | profile | mean uplift over all nodes | uplift on favoured node | worst node | best node | payoff fx fired (all nodes) |',
+    '|---|---|---:|---:|---|---|---:|',
   ];
   for (const reference of laneRefs) {
     const perNodeUplift = nodes.flatMap((n) => {
@@ -640,7 +657,7 @@ async function main(): Promise<void> {
     const favNode = favouredNodeFor(reference.lane!);
     const favCell = favNode ? cellFor(reference.profileId, favNode.nodeId) : undefined;
     laneSummary.push(
-      `| ${reference.lane} | \`${reference.profileId}\` | ${signedPct(mean)} | ${favCell ? signedPct(uplift(favCell)) : '—'} | ${sorted[0].nodeId.replace('node-t1-', '')} ${signedPct(sorted[0].u)} | ${sorted.at(-1)!.nodeId.replace('node-t1-', '')} ${signedPct(sorted.at(-1)!.u)} |`,
+      `| ${reference.lane} | \`${reference.profileId}\` | ${signedPct(mean)} | ${favCell ? signedPct(uplift(favCell)) : '—'} | ${sorted[0].nodeId.replace('node-t1-', '')} ${signedPct(sorted[0].u)} | ${sorted.at(-1)!.nodeId.replace('node-t1-', '')} ${signedPct(sorted.at(-1)!.u)} | ${nodes.reduce((total, n) => total + Object.values(cellFor(reference.profileId, n.nodeId)?.fx ?? {}).reduce((a, b) => a + b, 0), 0)} |`,
     );
   }
 
