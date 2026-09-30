@@ -20,6 +20,8 @@ import {
   navigationBodyHalfExtents,
   nearestWalkableCell,
   NODE_MODIFIERS,
+  blendSpawnPick,
+  nodeSpawnBlend,
   modifierStatScalars,
   modifiedDamageReduction,
   respawnNodeIdForNodeId,
@@ -323,9 +325,52 @@ export function createMonster(
 }
 
 /**
- * Pick a random monster type from the node's biome pool and attempt to
- * place it at a position that respects minimum spacing. Returns true on success.
- * When the rolled type is a pack alpha, the whole pack spawns clustered at the spot.
+ * Per-node spawn cursors for family blends (design 12).
+ *
+ * Keyed by world so benches and tests never share a cursor with the live sim, and
+ * per node inside it. Nothing here is persisted or networked: a frozen node's
+ * cursor simply resumes, and a fresh world starts every node on its dominant
+ * family.
+ */
+const blendCursorsByWorld = new WeakMap<World, Map<string, number>>();
+
+/**
+ * The cursor for this spawn, advanced immediately.
+ *
+ * Advanced on the PICK, not on a successful placement: a type that cannot be
+ * placed in a node (terrain, spacing) would otherwise be re-picked forever and
+ * stall the node's population. The cost is that a failed placement consumes a
+ * slot, which shifts composition by at most the failure rate.
+ */
+function nextBlendCursor(world: World, nodeId: string): number {
+  let cursors = blendCursorsByWorld.get(world);
+  if (!cursors) {
+    cursors = new Map<string, number>();
+    blendCursorsByWorld.set(world, cursors);
+  }
+  const cursor = cursors.get(nodeId) ?? 0;
+  cursors.set(nodeId, cursor + 1);
+  return cursor;
+}
+
+/** Test seam: forget a world's cursors so a composition run starts from slot 0. */
+export function resetBlendCursors(world: World, nodeId?: string): void {
+  if (!nodeId) {
+    blendCursorsByWorld.delete(world);
+    return;
+  }
+  blendCursorsByWorld.get(world)?.delete(nodeId);
+}
+
+/**
+ * Pick the next monster type for the node and attempt to place it at a position
+ * that respects minimum spacing. Returns true on success. When the picked type is
+ * a pack alpha, the whole pack spawns clustered at the spot.
+ *
+ * A node with an authored family blend CYCLES rather than rolls: the family comes
+ * from the blend's deterministic spawn order and the mob from that family's own
+ * list, so a 70/20/10 node visibly fields 7-2-1 per ten spawns. Nodes with no
+ * blend (dungeons, T2-T4) keep the flat random pick from the biome pool.
  */
 export function spawnMonster(world: World, nodeId: string): boolean {
   const biomeInfo = NODE_BIOMES[nodeId];
@@ -336,7 +381,11 @@ export function spawnMonster(world: World, nodeId: string): boolean {
   const pool = biome.monsterPoolByTier[biomeInfo.biomeTier] ?? [];
   if (pool.length === 0) return false;
 
-  const typeId = pool[Math.floor(Math.random() * pool.length)];
+  const blend = nodeSpawnBlend(nodeId);
+  const blendPick = blend
+    ? blendSpawnPick(blend, nextBlendCursor(world, nodeId))
+    : undefined;
+  const typeId = blendPick?.monsterTypeId ?? pool[Math.floor(Math.random() * pool.length)];
   const typeDef = MONSTER_DATABASE.get(typeId);
   const node = NODE_REGISTRY.get(nodeId) ?? world.node;
   const minDistSq = GAME_CONFIG.MONSTER_MIN_SPAWN_DIST ** 2;
