@@ -1,4 +1,12 @@
 import { BIOME_DATABASE } from '../../biomeDatabase';
+import {
+  FAMILY_BIOMES,
+  FAMILY_DATABASE,
+  blendEntries,
+  blendShareTotal,
+  familiesForBiome,
+  type FamilyId,
+} from '../../data/families';
 import { MONSTER_DATABASE } from '../../monsterDatabase';
 import {
   MODIFIER_BANS,
@@ -105,6 +113,7 @@ function validateKindsAndContent(violations: string[]): void {
 
     if (node.kind === 'normal') {
       if (!node.modifier) violations.push(`${node.id}: normal node has no modifier`);
+      if (node.blend) validateBlendShape(node, violations);
       const pool = biome.monsterPoolByTier[node.biomeTier] ?? [];
       if (pool.length === 0) {
         violations.push(`${node.id}: normal node has no monster pool`);
@@ -119,11 +128,12 @@ function validateKindsAndContent(violations: string[]): void {
       if (node.modifier) {
         violations.push(`${node.id}: dungeon must be modifier-free`);
       }
+      if (node.blend) violations.push(`${node.id}: dungeon must be blend-free`);
       if ((biome.bossPoolByTier?.[node.biomeTier] ?? []).length === 0) {
         violations.push(`${node.id}: dungeon has no boss pool`);
       }
     } else if (node.kind === 'sanctuary') {
-      if (node.modifier || node.bossTypeId || node.mobDensity !== 0) {
+      if (node.modifier || node.blend || node.bossTypeId || node.mobDensity !== 0) {
         violations.push(`${node.id}: sanctuary must be empty and modifier-free`);
       }
     } else if (node.kind === 'tutorial') {
@@ -132,6 +142,75 @@ function validateKindsAndContent(violations: string[]): void {
       }
     } else if (node.kind === 'unique') {
       violations.push(`${node.id}: no unique nodes are authored in this stage`);
+    }
+  }
+}
+
+/**
+ * A node blend names only families of its own biome and its shares sum to 1
+ * (design 12). Authored decimals do not sum exactly in binary, hence 1e-6.
+ */
+function validateBlendShape(
+  node: WorldNodeAuthoring,
+  violations: string[],
+): void {
+  const blend = node.blend;
+  if (!blend) return;
+  const keys = Object.keys(blend) as FamilyId[];
+  if (keys.length === 0) {
+    violations.push(`${node.id}: empty blend`);
+    return;
+  }
+  for (const key of keys) {
+    const family = FAMILY_DATABASE.get(key);
+    if (!family) {
+      violations.push(`${node.id}: blend names unknown family '${key}'`);
+    } else if (family.biome !== node.biomeGroup) {
+      violations.push(
+        `${node.id}: blend names '${key}', which is a ${family.biome} family`,
+      );
+    }
+    if ((blend[key] ?? 0) < 0) {
+      violations.push(`${node.id}: negative share for '${key}'`);
+    }
+  }
+  const total = blendShareTotal(blend);
+  if (Math.abs(total - 1) > 1e-6) {
+    violations.push(`${node.id}: blend shares sum to ${total}, not 1`);
+  }
+}
+
+/**
+ * Where a biome has an authored family table, every normal node of it must carry
+ * a blend, and every one of its families must be reachable on some node -- a
+ * family no node fields is a shard with no source.
+ *
+ * Only tier 1 is covered: T2-T4 families are not authored yet, so those nodes
+ * carry no blend and spawn from the flat biome pool (Phase 2a gap).
+ */
+function validateBlendCoverage(violations: string[]): void {
+  for (const biomeGroup of FAMILY_BIOMES) {
+    const normals = WORLD_NODE_LIST.filter(
+      (node) =>
+        node.kind === 'normal' &&
+        node.biomeTier === 1 &&
+        node.biomeGroup === biomeGroup,
+    );
+    if (normals.length === 0) continue;
+    const seen = new Set<FamilyId>();
+    for (const node of normals) {
+      if (!node.blend) {
+        violations.push(`${node.id}: T1 normal node has no family blend`);
+        continue;
+      }
+      for (const entry of blendEntries(node.blend)) seen.add(entry.family);
+    }
+    for (const family of familiesForBiome(biomeGroup)) {
+      if (!seen.has(family.id)) {
+        violations.push(
+          `T1 ${biomeGroup}: no node fields the ${family.name} family`,
+        );
+      }
     }
   }
 }
@@ -393,6 +472,7 @@ export function validateWorldMap(): string[] {
   validateKindsAndContent(violations);
   violations.push(...validateNodeDisplayNames(WORLD_NODE_LIST));
   validateBiomeCoverage(violations);
+  validateBlendCoverage(violations);
   validateTopology(violations);
   validateBiomeShape(violations);
   validateCountSnapshot(violations);

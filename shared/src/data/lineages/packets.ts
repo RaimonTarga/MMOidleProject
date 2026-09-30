@@ -109,3 +109,14 @@ export function packetScalingStat(id: PacketId): LineageStatKey {
   if (!def) throw new Error(`unknown packet '${id}'`);
   return def.scalingStat;
 }
+
+/**
+ * Player-facing name of a lane's shard material, e.g. `tempo` → "Tempo Shard".
+ *
+ * Shards are keyed by PACKET, not by biome (design §12), so the material's name
+ * says what it buys and the map says where it drops. There is no per-tier
+ * variant: a tier multiplies the quantity, never the name.
+ */
+export function shardName(id: PacketId): string {
+  return `${PACKET_DEFINITIONS.get(id)?.name ?? id} Shard`;
+}

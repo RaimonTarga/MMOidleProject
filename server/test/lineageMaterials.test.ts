@@ -24,7 +24,9 @@ import {
   GAME_CONFIG,
   MONSTER_DATABASE,
   PACKET_IDS,
+  WORLD_NODE_LIST,
   baseRecoveryForTier,
+  blendEntries,
   emptyEquipment,
   familyForMonster,
   shardForMonster,
@@ -77,6 +79,39 @@ for (const [id, monster] of MONSTER_DATABASE) {
 }
 // Guard the guard: a sweep that finds no monsters passes vacuously forever.
 assert(swept === claimed.size, `the partition sweep saw ${swept} monsters but the table claims ${claimed.size}`);
+
+// ─── The map and the family table name the same families ─────────────────────
+//
+// A node blend is a set of keys into this table (Phase 2a). A key that does not
+// resolve is a node that spawns nothing from a family, and a family no node names
+// is a shard with no place to farm it -- both silent. `variantBlend.test.ts` owns
+// the shares and the spawn cycle; this owns the join.
+
+const namedByNodes = new Set<string>();
+for (const node of WORLD_NODE_LIST) {
+  if (!node.blend) continue;
+  check(node.kind === 'normal', `${node.id}: only normal nodes carry a blend`);
+  for (const entry of blendEntries(node.blend)) {
+    const family = FAMILY_DATABASE.get(entry.family);
+    check(!!family, `${node.id}: blend names unknown family '${entry.family}'`);
+    check(
+      family === undefined || family.biome === node.biomeGroup,
+      `${node.id}: blend names '${entry.family}', a ${family?.biome} family`,
+    );
+    namedByNodes.add(entry.family);
+  }
+}
+for (const family of FAMILY_DATABASE.values()) {
+  check(
+    namedByNodes.has(family.id),
+    `${family.id}: no node fields it, so its ${family.drops} shard has no source`,
+  );
+}
+// Guard the guard: a join that reads no blends passes vacuously forever.
+assert(
+  namedByNodes.size === FAMILY_DATABASE.size,
+  `the blend join saw ${namedByNodes.size} families of ${FAMILY_DATABASE.size}`,
+);
 
 // Every biome that a lineage gates a form behind needs a capstone material, and
 // the boss it names has to be that biome's.

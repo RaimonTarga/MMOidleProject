@@ -86,6 +86,7 @@ export * from './protocol/progressionCheckpoint';
 export * from './world/nodeBiomes';
 export * from './world/nodeModifiers';
 export * from './world/nodeModifierMap';
+export * from './world/nodeBlends';
 export * from './world/map/validation';
 export * from './world/map/displayNames';
 export * from './world/nodeFeatures';
