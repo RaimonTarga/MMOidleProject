@@ -662,6 +662,94 @@ clears.
 **Exit.** A pure-lane build completes its packet across three slots and the bench shows
 the cross-slot completion as a measurable step (not a stat drift).
 
+### Phase 4 progress note — authoring half, defensive trees (2026-10-01)
+
+**Built.** The AUTHORING half only (data, not the family/blend review) on
+`feat/defensive-lineages`. `pnpm typecheck` clean; lineage suite 7/7, plus
+`attackProgression`/`evasion`/`monsterStyleCoverage`/`playerKillLunge`/`remotePlayerAttack`
+(the `combatFx.ts`-touching suites) and `rewardMultiplier`, all green. PROVISIONAL —
+design §17 is itself unapproved, so every file below is flagged in its header and none of
+this is final.
+
+- Fifteen lineages in `shared/src/data/lineages/`, five per non-weapon slot, lanes from
+  design §17's matrix, Lane A = the biome's existing mechanic per slot: **armor** `robe`
+  (Plains), `bindings` (Forest), `plate` (Mountain), `hide` (Cave), `wrappings` (Swamp);
+  **recovery** `stone` (Plains), `heartroot` (Forest), `barrier` (Mountain), `pulse`
+  (Cave), `eye` (Swamp); **mobility** `fleet` (Plains), `wraps` (Forest), `treads`
+  (Mountain), `wing` (Cave), `marsh` (Swamp). Each: one T1 payoff card per lane (no stat
+  row) off the biome's T1 recipe, a T2 capstone crowning Lane A off the biome's T2
+  recipe. `card.face` is derived via the new `packetDefaultFace()` (`packets.ts`), never
+  hand-authored.
+- Eight new `LineageFxKey`s, one per packet, reused by BOTH a lane's T1 payoff card and
+  the capstone that crowns it (a deliberate simplification — see divergence 3):
+  `tempo.evasive-blur`, `engagement.sidestep-blur`, `control.chill-blur` (Avoid, blur
+  grammar); `kill-chain.recovery-pulse`, `barrier-tempo.ward-shell`,
+  `affliction.toxic-pulse` (Sustain, pulse/ward-shell grammar); `bulwark.plating-chip`,
+  `empowered.guard-spark` (Endure, plating-chip grammar). Client handlers in
+  `combatFx.ts` all reuse the six existing primitives (ghost-strike, aoe-ring,
+  plating-crack, pips, flash) — no new drawing code.
+- `coverage.test.ts` extended to all four slots: the per-lane-per-row loop now skips
+  `stat` for non-weapon slots (design §4); the coverage check splits into a weapon
+  per-slot rule and a **non-weapon combined-across-three-slots** rule per §17's explicit
+  override; `UNCROWNED_LANES` is now empty (the defensive capstones crown Engagement,
+  Bulwark and Barrier tempo, closing Phase 1's one gap); a new face-derivation check
+  asserts every non-weapon card's `face` matches `packetDefaultFace(card.lane)` and every
+  weapon card carries none.
+- Boss shard stopgap in `rewards.ts`, next to the capstone grant: a biome boss kill also
+  drops `BOSS_LANE_A_SHARD_AMOUNT` (2) shards of each **distinct** Lane-A packet across
+  its biome's three non-weapon lineages, via a new shared helper
+  `biomeDefensiveLaneAPackets(biome)` (derived from the registered lineages, not a second
+  hand-kept table) — **deduplicated per packet**, so Plains (armor+mobility both name
+  Kill chain) pays Kill chain once per boss kill, not twice. Tested in
+  `lineageMaterials.test.ts`, including the dedup case.
+
+**Divergences from the brief, recorded per the brief's own instruction.**
+
+1. **Deliverable 3's wording ("weapon Lane A") was corrected by the conductor before
+   implementation** — Mountain's weapon (Hammer) Lane A is Empowered, not Bulwark, so the
+   brief as originally written sourced nothing. Implemented per design §17 (the
+   authority): non-weapon Lane A, one stopgap grant per biome boss kill covering all
+   three non-weapon lineages at once, deduplicated.
+2. **The non-weapon `+1..+5` ladder (`Recipe.upgrades`, `UpgradeTab`,
+   `EvolutionPreview`) stays live alongside these fifteen trees.** Per the designer's
+   explicit instruction this phase, armor/recovery/mobility items keep BOTH systems for
+   now — a known temporary double system; reconciling them is Phase 4's exit, not this
+   pass.
+3. **Capstone FX reuse departs from the Phase 1 weapon precedent.** Every existing
+   weapon capstone (e.g. `tempo.gale-wake` vs. the Rapier's own `tempo.ghost-strike`
+   payoff card) mints a fx key distinct from its lane's T1 payoff card, and two different
+   lineages crowning the same lane get two different keys (`tempo.gale-wake` on the
+   Rapier, `tempo.ruin-afterimage` on the Axe). Fifteen defensive capstones following that
+   pattern would have meant up to fifteen more new keys and switch cases. Instead each of
+   the eight defensive fx keys is shared by every card AND capstone on that lane, across
+   every lineage — "the same signature, permanent instead of one-off" rather than a
+   second effect. Keeps `combatFx.ts`'s addition to 31 lines. If the designer wants
+   capstones visually distinct per lineage, that is a follow-up, not a data change (the
+   fx key is just a string on each capstone).
+4. **Design §17's own summary line does not sum to 45.** Recounting the matrix table
+   directly (not the prose summary) gives Tempo 5, Empowered 4, Affliction 7, Control 7,
+   Kill chain 5, Engagement 7, Bulwark 6, Barrier tempo 4 — sums to 45 (15 lineages × 3
+   lanes), matching the stated "45 lane slots for eight packets." The doc's own prose
+   ("Affliction 6... Engagement 6") sums to 43. The matrix is what was implemented (and
+   is what `coverage.test.ts` now checks); the prose count looks like a transcription
+   slip and is worth a fix next time §17 is touched.
+5. **Mobility's trigger-per-packet assignment is per-lineage, not a single global table**,
+   unlike armor and recovery (each of which has one consistent packet -> trigger mapping
+   that happens to avoid every intra-lineage collision). Mobility's trigger set
+   (`kill`/`first-hit`/`standing`) is one shorter and Empowered's constraints from Plains
+   and Mountain mobility are mutually exclusive, so no single global choice exists. FX and
+   payoff kind stayed uniform per packet regardless; only the trigger varies per lineage.
+   Noted for the designer, not fixed — the data is still internally consistent per file.
+6. **Not touched: the Mountain/Cave/Swamp family and blend review** (bible open decisions
+   2–3) and the burst-lethal encounter reshape. Those are the rest of Phase 4's listed
+   work, out of scope for the authoring-only brief this note is attached to.
+
+**Not authored.** No amplifier/keystone/cross rows for these fifteen (T1 payoff + T2
+capstone only, per the brief). No new `PayoffKind`/`TriggerKind` — every card resolved
+inside the existing closed vocabulary, and the Phase 1c runtime already implements all
+ten triggers and fifteen payoffs (built ahead of this phase), so these cards fire in live
+combat once equipped, not just structurally validated.
+
 ---
 
 ## Phase 5 — T2 band and form re-homing
