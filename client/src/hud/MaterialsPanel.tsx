@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState, type CSSProperties } from "react";
 import { useAtomValue } from "jotai";
 import {
+  capstoneMaterialName,
   catalystLabel,
   ESSENCE_COLORS,
   ESSENCE_LABELS,
@@ -8,16 +9,20 @@ import {
   NODE_MODIFIER_FAMILIES,
   MODIFIER_COLORS,
   catalystProgressPerUnit,
+  PACKET_IDS,
+  packetDefinition,
   type EssenceType,
 } from "@mmo-idle/shared";
 import { GameIcon } from "../ui/GameIcon";
 import {
+  capstoneMaterial,
   catalystMaterial,
   essenceMaterial,
   MaterialChip,
   materialIconSource,
+  shardMaterial,
 } from "../ui/MaterialChip";
-import { catalystProgressAtom, catalystsAtom, essencesAtom } from "./atoms";
+import { capstonesAtom, catalystProgressAtom, catalystsAtom, essencesAtom, shardsAtom } from "./atoms";
 import { DisclosureHeader, EngravedMeter, HudPanel } from "./primitives";
 import { displayedCatalystProgress } from "./catalystProgress";
 import "./essence.css";
@@ -76,6 +81,8 @@ export function MaterialsPanel() {
   const essences = useAtomValue(essencesAtom);
   const catalysts = useAtomValue(catalystsAtom);
   const progress = useAtomValue(catalystProgressAtom);
+  const shards = useAtomValue(shardsAtom);
+  const capstones = useAtomValue(capstonesAtom);
   const [expanded, setExpanded] = useState(readExpandedPreference);
   const detailsId = useId();
   const flashClass = useEssenceGainFlash(essences);
@@ -84,6 +91,12 @@ export function MaterialsPanel() {
     (family) => (catalysts[family] ?? 0) > 0 || (progress[family] ?? 0) > 0,
   );
   const perUnit = catalystProgressPerUnit();
+  // Lineage wallets (progression rework Phase 1): shards by packet, touched
+  // capstones by biome. Same "hide until touched" rule as catalyst families —
+  // eight empty shard rows would swamp the early game before a player has
+  // opened a single tree.
+  const ownedShards = PACKET_IDS.filter((packet) => (shards[packet] ?? 0) > 0);
+  const ownedCapstones = Object.entries(capstones).filter(([, amount]) => (amount ?? 0) > 0);
 
   const toggleExpanded = () => {
     setExpanded((value) => {
@@ -132,6 +145,30 @@ export function MaterialsPanel() {
                     held={catalysts[family] ?? 0}
                     size={18}
                   />
+              ))}
+            </div>
+          )}
+          {ownedShards.length > 0 && (
+            <div className="materials-strip__group material-chip-strip">
+              {ownedShards.map((packet) => (
+                <MaterialChip
+                  key={packet}
+                  material={shardMaterial(packet)}
+                  held={shards[packet] ?? 0}
+                  size={18}
+                />
+              ))}
+            </div>
+          )}
+          {ownedCapstones.length > 0 && (
+            <div className="materials-strip__group material-chip-strip">
+              {ownedCapstones.map(([biome, amount]) => (
+                <MaterialChip
+                  key={biome}
+                  material={capstoneMaterial(biome)}
+                  held={amount}
+                  size={18}
+                />
               ))}
             </div>
           )}
@@ -188,6 +225,40 @@ export function MaterialsPanel() {
                   label={`${catalystLabel(family)}: ${displayedCatalystProgress(progress[family])} of ${perUnit} toward the next`}
                 />
               </span>
+            </div>
+          ))}
+
+          {ownedShards.length > 0 && <div className="materials-divider" />}
+
+          {ownedShards.map((packet) => (
+            <div key={packet} className="essence-row">
+              <GameIcon
+                source={materialIconSource(shardMaterial(packet))}
+                size={18}
+                fallback={null}
+                className="economy-icon"
+                decorative
+              />
+              <span className="essence-name" style={{ color: packetDefinition(packet)?.color }}>
+                {packetDefinition(packet)?.name ?? packet} shards
+              </span>
+              <span className="essence-value">{shards[packet] ?? 0}</span>
+            </div>
+          ))}
+
+          {ownedCapstones.length > 0 && <div className="materials-divider" />}
+
+          {ownedCapstones.map(([biome, amount]) => (
+            <div key={biome} className="essence-row">
+              <GameIcon
+                source={materialIconSource(capstoneMaterial(biome))}
+                size={18}
+                fallback={null}
+                className="economy-icon"
+                decorative
+              />
+              <span className="essence-name">{capstoneMaterialName(biome)}</span>
+              <span className="essence-value">{amount}</span>
             </div>
           ))}
         </div>
