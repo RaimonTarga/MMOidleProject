@@ -54,6 +54,7 @@ because it is detailed.
 | Monster combat rework | [monster-combat-rework-current-state.md](monster-combat-rework-current-state.md) |
 | Monster targeting | [monster-targeting-current-state.md](monster-targeting-current-state.md) |
 | Node variants (family blends) | [variants-current-state.md](variants-current-state.md) |
+| Frame loops and range mechanics | [frames-current-state.md](frames-current-state.md) |
 | Area banners and danger previews | [area-information-current-state.md](area-information-current-state.md) |
 | Map, Crafting, Upgrade, Inventory and Passive Tree panels | [map-crafting-panels-current-state.md](map-crafting-panels-current-state.md) |
 | Player movement | [player-movement-current-state.md](player-movement-current-state.md) |
@@ -63,7 +64,7 @@ because it is detailed.
 
 | System | Current-state record |
 | --- | --- |
-| Weapon lineage trees | [lineages-current-state.md](lineages-current-state.md) |
+| Lineage trees (weapon + armor/charm/boots), keystones, ability nodes | [lineages-current-state.md](lineages-current-state.md) |
 | Charms | [charms-current-state.md](charms-current-state.md) |
 | Cores | [cores-current-state.md](cores-current-state.md) |
 | Global Mastery | [global-mastery-current-state.md](global-mastery-current-state.md) |
@@ -106,12 +107,16 @@ read the linked current-state page before using it to describe shipped
 behavior.
 
 - [Future plans](future-plans.md) — backlog and deliberately deferred ideas.
-- [Progression rework plan](progression-rework-plan.md) — ACTIVE: Phases 0–1 shipped
-  (recovery pass, weapon lineage trees); **Phase 2 shipped 2026-10-01** (Plains/Forest
-  family blends, shards/capstones, and the old economy — catalysts, node-modifier
-  math, the weapon +1..+5 ladder — removed). Live state: [lineages-current-state.md](lineages-current-state.md),
-  [variants-current-state.md](variants-current-state.md). Phases 3–5 not started.
-  Design authority is
+- [Progression rework plan](progression-rework-plan.md) — now a short status index:
+  **Phases 0–5 all shipped** (at least their first slice) as of run 3, 2026-10-01. Live
+  state is [lineages-current-state.md](lineages-current-state.md) (all twenty lineages,
+  rows, keystones, cross, re-homed forms, ability nodes),
+  [variants-current-state.md](variants-current-state.md) (families/blends through T4),
+  [frames-current-state.md](frames-current-state.md) (frame loops, range mechanics), and
+  [recovery-current-state.md](recovery-current-state.md) (flat recovery, pool-raise
+  pointer). The full phase-by-phase build log is archived at
+  [archive/progression-rework-plan.md](archive/progression-rework-plan.md). Design
+  authority is
   [`design_docs/progression-rework-design.md`](../design_docs/progression-rework-design.md).
 - [Guided T1 tutorial plan](guided-tutorial-plan.md) — optional desktop guide that plays Tier 1 beat by beat from bot-validated scripts; Phase 1 in progress.
 - [Release v0.6 record](briefs/release-v0.6-2026-09-28.md) — what shipped in v0.6, merged branches, save policy, bandwidth changes, validation and the deploy check.
