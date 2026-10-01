@@ -698,6 +698,21 @@ async function main(): Promise<void> {
   const inverted = contractRows.filter((r) => r.verdict.startsWith('inverted'));
   const decisive = contractRows.filter((r) => r.verdict === 'inverted (decisive)');
 
+  /**
+   * (family, tier) pairs that got NO synthetic node because the biome's pool for that
+   * tier fields none of the family's bodies.
+   *
+   * Reported rather than skipped silently: `swamp-mire` and `jungle-stalker` having no
+   * Tier-2 member is why nine of the 37 authored Tier-2 blends do not resolve as
+   * authored, and why the Jungle's authored Stalker node collapses into an Ape node in
+   * the lane matrix. This instrument cannot measure a contract whose family the tier
+   * cannot field either — but unlike the matrix it says so instead of quietly measuring
+   * a different family.
+   */
+  const unfieldable = tiers.flatMap((tier) => families
+    .filter((family) => fieldableMobs(family, tier).length === 0)
+    .map((family) => ({ family, tier, biome: FAMILY_DATABASE.get(family)!.biome })));
+
   const nodeTable = [
     '| family | host node | tier | authored blend (OVERWRITTEN) | forced blend | bodies it fields |',
     '|---|---|---:|---|---|---|',
@@ -768,6 +783,19 @@ async function main(): Promise<void> {
     'call order. Nothing here is written to disk.',
     '',
     ...nodeTable,
+    '',
+    '### (family, tier) pairs with no node, because the tier fields none of their bodies',
+    '',
+    'Not a failure of this instrument — a gap in the monster pools. It is the same gap',
+    'that makes nine of the 37 authored Tier-2 blends resolve as something other than',
+    'what they name, so the lane matrix measures a different family on those nodes while',
+    'this bench simply has no row.',
+    '',
+    ...(unfieldable.length
+      ? ['| family | biome | tier | why |', '|---|---|---:|---|',
+         ...unfieldable.map((u) => `| ${short(u.family)} | ${u.biome} | ${u.tier}`
+           + ` | \`monsterPoolByTier[${u.tier}]\` of ${u.biome} fields none of its bodies |`)]
+      : ['None: every family selected is fieldable at every tier selected.']),
     '',
     '## The contract, per family',
     '',
@@ -848,6 +876,7 @@ async function main(): Promise<void> {
     schema: 1,
     killTarget, capMs, seeds, tiers, allLanes,
     nodes,
+    unfieldable,
     rows,
     contracts: contractRows.map((r) => ({
       family: r.node.family,
