@@ -45,7 +45,7 @@ import {
 } from '../src/systems/combat/engine/combatPipeline';
 import { emitMechanicFired } from '../src/systems/combat/engine/mechanicFired';
 import {
-  lineagePlatingPerStack, onLineageGuardCast, updateLineageCards,
+  lineagePlatingStackFraction, onLineageGuardCast, updateLineageCards,
 } from '../src/systems/combat/lineageCards';
 import { attackHasteBonus } from '../src/systems/combat/engine/attackCadence';
 import { activeRecoveryFraction } from '../src/systems/defense/regen/recovery';
@@ -509,8 +509,8 @@ function cardFx(): Array<Extract<CombatEvent, { kind: 'card-fx' }>> {
   assert(events.length === 1, `only the pulse is due on the first tick, got ${events.length}`);
   assert(events[0].fx === 'engagement.trail', 'the pulse card drew its own effect');
   assert(
-    lineagePlatingPerStack(player.tracksCombat) > 0,
-    'plating-stack should resolve a flat per-stack value for reactive plating',
+    lineagePlatingStackFraction(player.tracksCombat) > 0,
+    'plating-stack should carry its per-stack fraction for reactive plating to resolve',
   );
 
   // Long enough to have been holding still.

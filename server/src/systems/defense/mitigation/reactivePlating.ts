@@ -3,7 +3,7 @@ import { registerCombatListener } from '../../combat/engine/combatPipeline';
 import type { PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { markSliceDirty } from '../../../ecs/dirtyHelpers';
-import { lineagePlatingPerStack } from '../../combat/lineageCards';
+import { lineagePlatingStackFraction } from '../../combat/lineageCards';
 
 /**
  * Plating one stack is worth: the charm/armor passive plus whatever a live
@@ -11,8 +11,14 @@ import { lineagePlatingPerStack } from '../../combat/lineageCards';
  * gate and the tick's target must agree about whether the mechanic is on at all.
  */
 function platingPerStack(player: PlayerEntity): number {
-  return (player.usesSkills.passives['defense.hit-plating-per-stack'] ?? 0)
-    + lineagePlatingPerStack(player.tracksCombat);
+  const cs = player.tracksCombat;
+  const passive = player.usesSkills.passives['defense.hit-plating-per-stack'] ?? 0;
+  const fraction = lineagePlatingStackFraction(cs);
+  if (fraction <= 0) return passive;
+  // Base plating = the stat minus what WE have already added to it, or a card
+  // that scales off plating would compound against its own stacks every refresh.
+  const base = Math.max(0, player.mitigatesDamage.plating - Math.round(getResource(cs, APPLIED_KEY)));
+  return passive + Math.max(1, Math.round(base * fraction));
 }
 
 // Integer plating currently added to mitigatesDamage.plating from the stacks.

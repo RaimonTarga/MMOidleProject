@@ -287,15 +287,17 @@ function applyPayoff(site: PayoffSite, firing: LineageFiring): CardFxDraft | nul
       return { fx: firing.fx };
 
     case 'plating-stack': {
-      // The flat plating a stack is worth is resolved HERE, against the plating
-      // the player has right now, and carried on the effect: `reactivePlating`
-      // reads the resolved number so the stacking, hold window and one-at-a-time
-      // fade stay in the one place that owns them.
-      const perStack = Math.max(1, Math.round(player.mitigatesDamage.plating * magnitude));
+      // The card carries its FRACTION, not a resolved flat value.
+      // `mitigatesDamage.plating` already includes whatever reactive plating has
+      // added in place, so resolving here read this card's own output back and
+      // compounded on every refresh — and `standing` refreshes on a 1500 ms
+      // clock. `reactivePlating` owns that bookkeeping, so it owns the
+      // multiplication too, against the plating with its own contribution
+      // removed.
       const effect = applyTimedSelf(
         player.tracksCombat, kind, magnitude, durationMs, sourceId,
       );
-      effect.data.perStack = perStack;
+      effect.data.perStackFraction = magnitude;
       return { fx: firing.fx, stacks: effect.stacks };
     }
 
@@ -756,15 +758,15 @@ export function lineageSpeedWindowBonus(cs: TracksCombat): number {
 }
 
 /**
- * Flat plating one reactive-plating stack is worth from a live `plating-stack`
- * window, for `runReactivePlating`. Resolved at application time against the
- * player's own plating and carried on the effect, so the stacking machinery does
- * not have to know a card exists.
+ * The FRACTION of base plating one reactive-plating stack is worth from a live
+ * `plating-stack` window, for `runReactivePlating` to resolve. A fraction rather
+ * than a flat value because the plating stat already carries reactive plating's
+ * own contribution, so resolving it here compounded on every refresh.
  */
-export function lineagePlatingPerStack(cs: TracksCombat): number {
+export function lineagePlatingStackFraction(cs: TracksCombat): number {
   const effect = getStatusEffect(cs, lineageStatusEffectId('plating-stack'));
   if (!effect || effect.remainingMs <= 0) return 0;
-  return Math.max(0, effect.data.perStack ?? 0);
+  return Math.max(0, effect.data.perStackFraction ?? 0);
 }
 
 /**
