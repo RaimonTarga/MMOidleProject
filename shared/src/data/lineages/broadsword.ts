@@ -102,5 +102,55 @@ export const BROADSWORD_LINEAGE: LineageDefinition = {
       name: 'Follow Through', description: 'Every third hit carries into a second.',
       fx: 'tempo.ghost-strike', trigger: 'hit-nth', payoff: 'echo-hit',
     },
+
+    // ── T2 band (design §4): stat (L2), payoff (L3), amplifier (L5) ──────────
+    {
+      id: 'broadsword-t2-kill-chain-stat', lineageId: 'broadsword', tier: 2, row: 'stat', lane: 'kill-chain',
+      name: 'Longer Warpath', description: 'The ground between one body and the next keeps growing.',
+      fx: 'kill-chain.trail',
+    },
+    {
+      id: 'broadsword-t2-empowered-stat', lineageId: 'broadsword', tier: 2, row: 'stat', lane: 'empowered',
+      name: 'More Weight Behind It', description: 'The whole body goes into the swing now, not just the shoulder.',
+      fx: 'empowered.trail',
+    },
+    {
+      id: 'broadsword-t2-tempo-stat', lineageId: 'broadsword', tier: 2, row: 'stat', lane: 'tempo',
+      name: 'Drilled Further', description: 'The repetitions kept going after the Plains.',
+      fx: 'tempo.trail',
+    },
+
+    {
+      id: 'broadsword-t2-kill-chain-payoff', lineageId: 'broadsword', tier: 2, row: 'payoff', lane: 'kill-chain',
+      name: 'Greater Momentum', description: 'A kill hurries the next swing more than it used to.',
+      fx: 'kill-chain.kill-pulse', trigger: 'kill', payoff: 'speed-window',
+    },
+    {
+      id: 'broadsword-t2-empowered-payoff', lineageId: 'broadsword', tier: 2, row: 'payoff', lane: 'empowered',
+      name: 'Widen the Gap', description: 'Your mechanic leaves the target open for longer.',
+      fx: 'empowered.weak-point', trigger: 'mechanic-fired', payoff: 'vulnerability',
+    },
+    {
+      id: 'broadsword-t2-tempo-payoff', lineageId: 'broadsword', tier: 2, row: 'payoff', lane: 'tempo',
+      name: 'Harder Follow Through', description: 'Every third hit carries into a stronger second.',
+      fx: 'tempo.ghost-strike', trigger: 'hit-nth', payoff: 'echo-hit',
+    },
+
+    // Amplifiers modify this tier's own payoff card, not the T1 one (design §4).
+    {
+      id: 'broadsword-t2-kill-chain-amplifier', lineageId: 'broadsword', tier: 2, row: 'amplifier', lane: 'kill-chain',
+      name: 'Chained Momentum', description: 'A second kill before the window closes starts it again at full length.',
+      fx: 'kill-chain.kill-pulse', trigger: 'kill', payoff: 'speed-window', modifies: 'broadsword-t2-kill-chain-payoff',
+    },
+    {
+      id: 'broadsword-t2-empowered-amplifier', lineageId: 'broadsword', tier: 2, row: 'amplifier', lane: 'empowered',
+      name: 'Shared Gap', description: 'Whatever stands next to the opening is open too.',
+      fx: 'empowered.weak-point', trigger: 'mechanic-fired', payoff: 'vulnerability', modifies: 'broadsword-t2-empowered-payoff',
+    },
+    {
+      id: 'broadsword-t2-tempo-amplifier', lineageId: 'broadsword', tier: 2, row: 'amplifier', lane: 'tempo',
+      name: 'Second Follow Through', description: 'The carried second hit has enough left in it to carry a third.',
+      fx: 'tempo.ghost-strike', trigger: 'hit-nth', payoff: 'echo-hit', modifies: 'broadsword-t2-tempo-payoff',
+    },
   ],
 };
